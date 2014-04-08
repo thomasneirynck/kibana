@@ -37,6 +37,9 @@ function (angular, $, kbn, _, config, moment, Modernizr) {
       ],
       nav: [
         {
+          type: 'prelertindexpicker'
+        },
+        {
           type: 'timepicker'
         }
       ],
@@ -140,6 +143,8 @@ function (angular, $, kbn, _, config, moment, Modernizr) {
     // Since the dashboard is responsible for index computation, we can compute and assign the indices
     // here before telling the panels to refresh
     this.refresh = function() {
+      self.log_usage();
+      
       if(self.current.index.interval !== 'none') {
         if(_.isUndefined(filterSrv)) {
           return;
@@ -232,6 +237,44 @@ function (angular, $, kbn, _, config, moment, Modernizr) {
       self.availablePanels = _.difference(self.availablePanels,config.hidden_panels);
 
       return true;
+    };
+    
+    this.log_usage = function() {
+      // Sends basic usage information on the Prelert Engine API results dashboard to Prelert, 
+      // specifically the API product and version number, license customer ID, time, dashboard title
+      // Engine API OS version and the Job ID.
+      
+      // Get basic data on the Prelert Engine API from the usage type in the prelert-int index.
+      var request = ejs.Request().indices('prelert-int').types('usage');
+      request.query(
+              ejs.IdsQuery('usageStats')
+        ).size(1);
+      
+      var results = request.doSearch();
+      results.then(function(results) {
+          var hits = results.hits.hits;
+          if (_.size(hits) > 0) {
+              var usageStats = _.first(hits)._source;  
+              var params = $.param({
+                    "typ": "view",
+                    "prod": "engineAPI",
+                    "tm": parseInt(new Date() / 1000),
+                    "id": usageStats.customerId,
+                    "ver": usageStats.ver,
+                    "apiVer": usageStats.apiVer,
+                    "osVer": usageStats.osVer,
+                    "view": self.current.title,
+                    "jobID": self.current.index.default
+                  });
+              console.log("dashboard.js log_usage() with params:" + params);
+              var usageURL = "http://www.prelert.com/usage/usage.php?" + params;
+              //$http({
+              //    url: usageURL,
+              //    method: "GET"
+              //});
+          }
+      });
+
     };
 
     this.gist_id = function(string) {

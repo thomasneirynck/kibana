@@ -1,0 +1,63 @@
+<!-- 
+/*
+ ************************************************************
+ *                                                          *
+ * Contents of file Copyright (c) Prelert Ltd 2006-2014     *
+ *                                                          *
+ *----------------------------------------------------------*
+ *----------------------------------------------------------*
+ * WARNING:                                                 *
+ * THIS FILE CONTAINS UNPUBLISHED PROPRIETARY               *
+ * SOURCE CODE WHICH IS THE PROPERTY OF PRELERT LTD AND     *
+ * PARENT OR SUBSIDIARY COMPANIES.                          *
+ * PLEASE READ THE FOLLOWING AND TAKE CAREFUL NOTE:         *
+ *                                                          *
+ * This source code is confidential and any person who      *
+ * receives a copy of it, or believes that they are viewing *
+ * it without permission is asked to notify Prelert Ltd     *
+ * on +44 (0)20 7953 7243 or email to legal@prelert.com.    *
+ * All intellectual property rights in this source code     *
+ * are owned by Prelert Ltd.  No part of this source code   *
+ * may be reproduced, adapted or transmitted in any form or *
+ * by any means, electronic, mechanical, photocopying,      *
+ * recording or otherwise.                                  *
+ *                                                          *
+ *----------------------------------------------------------*
+ *                                                          *
+ *                                                          *
+ ************************************************************
+ */
+ -->
+
+<div ng-controller='prelertindexpicker' ng-init="init()">
+  <!--  This is a complete hack. The form actually exists in the modal, but due to transclusion
+        $scope.input isn't available on the controller unless the form element is in this file -->
+  <form name="input" style="margin:3px 0 0 0">
+    <ul class="nav nav-pills timepicker-dropdown">
+
+      <li class="dropdown">
+
+        <a class="dropdown-toggle timepicker-dropdown" data-toggle="dropdown" href="" bs-tooltip="'Click to select the job ID'" data-placement="bottom" ng-click="dismiss();">
+
+          <span ng-hide="dashboard.current.index.default">Select job</span>
+          <span ng-show="dashboard.current.index.default">Job ID: {{dashboard.current.index.default}}</span>
+          <i class="icon-caret-down"></i>
+        </a>
+
+        <ul class="dropdown-menu">
+          <!-- List all the indexes, plus an _all option -->
+          <li ng-repeat='indexname in index_names'>
+            <a ng-click="setIndex(indexname)">{{indexname}}</a>
+          </li>
+          <li>
+            <a ng-click="setIndex('_all')">All jobs</a>
+          </li>
+        </ul>
+
+      </li>
+      
+    </ul>
+
+  </form>
+</div>
+

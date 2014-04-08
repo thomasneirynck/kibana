@@ -69,7 +69,9 @@ function (Settings) {
       'query',
       'terms',
       'stats',
-      'sparklines'
+      'sparklines',
+      // Addition of Prelert panel modules for anomaly dashboard.
+      'prelertindexpicker'
     ]
   });
 });
