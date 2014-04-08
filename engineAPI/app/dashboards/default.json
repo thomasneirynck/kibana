@@ -1,0 +1,163 @@
+{
+  "title": "Anomaly Detective Engine API",
+  "services": {
+    "query": {
+      "list": {
+        "0": {
+          "query": "*",
+          "alias": "",
+          "color": "#7EB26D",
+          "id": 0,
+          "pin": false,
+          "type": "lucene",
+          "enable": true
+        }
+      },
+      "ids": [
+        0
+      ]
+    },
+    "filter": {
+      "list": {},
+      "ids": []
+    }
+  },
+  "rows": [
+    {
+      "title": "Welcome",
+      "height": "150px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 12,
+          "editable": true,
+          "type": "text",
+          "loadingEditor": false,
+          "mode": "markdown",
+          "content": "![kibanasrc](img/prelert/prelert-logo.png)\n\n#### Welcome to Automated Anomaly Detection\nPrelert is 100% self-learning so it provides value in minutes. No rules, models or thresholds to create and maintain. No days, weeks or months of implementation and 'training the algorithms.' Spend less time mining your data and more time building new capabilities.\n\nThe dashboard in this Kibana-based UI allows you to view the results of Prelert's Engine API analytics. You can see how the the anomaly score varies over the time range of your API job and a table of all the anomalies detected in your data.",
+          "style": {},
+          "title": "Prelert Engine API"
+        }
+      ],
+      "notice": false
+    },
+    {
+      "title": "Information",
+      "height": "150px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 6,
+          "editable": true,
+          "type": "text",
+          "loadingEditor": false,
+          "mode": "markdown",
+          "content": "What shall I do next?\n\n#####Not run your first Anomaly Detective Engine API job yet?\nCreate a new engine API job and then upload some data for analysis by following [these steps](http://info.prelert.com/engine-getting-started#create-new-job).\n\n#####Already run an engine API job and want to check the results?\nUse the default [Prelert Anomaly Dashboard](index.html#/dashboard/file/prelert_api_results.json)  to explore the results of your job\n\n#####Already an experienced Kibana user?\nBuild your own dashboard to explore the results of your Anomaly Detective Engine API jobs by using:\n\n1. [Sample Dashboard](index.html#/dashboard/file/guided.json) *I don't have much data yet, please extract some basics for me*\n\n2. [Unconfigured Dashboard](index.html#/dashboard/file/noted.json) *I have a lot of data and I don't want Kibana to query it at once*\n\nor visit the [default Kibana Dashboard](index.html#/dashboard/file/kibana_default.json) for more information on Kibana.",
+          "style": {},
+          "title": "Next Steps"
+        },
+        {
+          "error": false,
+          "span": 6,
+          "editable": true,
+          "type": "text",
+          "loadingEditor": false,
+          "mode": "markdown",
+          "content": "Need some extra help getting up to speed with Prelert's Engine API?\n\n#####More Info\nRead our excellent new [Getting Started Guide](http://info.prelert.com/engine-getting-started)\n\nBrowse the  [Anomaly Detective Engine API reference documentation](http://info.prelert.com/engine-api-documentation)\n\n#####Contact Us\nNeed help from a Prelert expert? Email Customer Support at [support@prelert.com](mailto:support@prelert.com)\n\nFollow us on Twitter at [@prelertsupport](https://twitter.com/#!/PrelertSupport) and [@prelert](https://twitter.com/#!/Prelert)\n\nOr call us toll free on 1-888 PRELERT (773-5378) or +1 508-309-4445.",
+          "style": {},
+          "title": "Help"
+        }
+      ],
+      "notice": false
+    }
+  ],
+  "editable": true,
+  "failover": false,
+  "index": {
+    "interval": "none",
+    "pattern": "[logstash-]YYYY.MM.DD",
+    "default": "_all",
+    "warm_fields": false
+  },
+  "style": "dark",
+  "panel_hints": true,
+  "pulldowns": [
+    {
+      "type": "query",
+      "collapse": false,
+      "notice": false,
+      "enable": false,
+      "query": "*",
+      "pinned": true,
+      "history": [],
+      "remember": 10
+    },
+    {
+      "type": "filtering",
+      "collapse": false,
+      "notice": false,
+      "enable": false
+    }
+  ],
+  "nav": [
+    {
+      "type": "prelertindexpicker",
+      "collapse": false,
+      "notice": false,
+      "enable": false,
+      "status": "Stable"
+    },
+    {
+      "type": "timepicker",
+      "collapse": false,
+      "notice": false,
+      "enable": false,
+      "status": "Stable",
+      "time_options": [
+        "5m",
+        "15m",
+        "1h",
+        "6h",
+        "12h",
+        "24h",
+        "2d",
+        "7d",
+        "30d"
+      ],
+      "refresh_intervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "timefield": "@timestamp"
+    }
+  ],
+  "loader": {
+    "save_gist": false,
+    "save_elasticsearch": true,
+    "save_local": true,
+    "save_default": true,
+    "save_temp": true,
+    "save_temp_ttl_enable": true,
+    "save_temp_ttl": "30d",
+    "load_gist": false,
+    "load_elasticsearch": true,
+    "load_elasticsearch_size": 20,
+    "load_local": false,
+    "hide": false
+  },
+  "refresh": false
+}
