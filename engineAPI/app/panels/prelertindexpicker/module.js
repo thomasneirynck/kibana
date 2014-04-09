@@ -51,6 +51,14 @@ function (angular, app, _, kbn) {
     // Set and populate defaults
     var _d = {
       status        : "Stable",
+      /**
+       * label:: Label to show next to the index picker control.
+       */
+      label : 'Index:',
+      /**
+       * omit_indices:: List of indices to omit from the available selection in the dropdown control.
+       */
+      omit_indices  : ['kibana-int', 'prelert-int']
     };
     _.defaults($scope.panel,_d);
 
@@ -70,10 +78,7 @@ function (angular, app, _, kbn) {
         var indicesCallback = function(results) {
             var indicesObject = results.indices;
             var indices = _.keys(indicesObject);
-            indices = _.sortBy(indices, _.identity);
-            // TODO - make it an option in the editor to hide particular indices.
-            // For now, just remove the internal Kibana and Prelert indexes.
-            $scope.index_names = _.without(indices, 'kibana-int', 'prelert-int');
+            $scope.index_names = _.sortBy(indices, _.identity);   
             console.log("prelertindexpicker list of indices:");
             console.log($scope.index_names);
         };
@@ -84,6 +89,10 @@ function (angular, app, _, kbn) {
             alert("An error occurred obtaining the list of Elasticsearch indices");
         };
         $scope.ejs.client.get('/_stats/indices', {}, indicesCallback, errorCallback);
+    };
+    
+    $scope.notInOmitList = function(index) {
+        return !_.contains($scope.panel.omit_indices, index);
     };
 
     $scope.setIndex = function(index) {

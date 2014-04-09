@@ -111,7 +111,12 @@
       "collapse": false,
       "notice": false,
       "enable": false,
-      "status": "Stable"
+      "status": "Stable",
+      "label": "Index:",
+      "omit_indices": [
+        "kibana-int",
+        "prelert-int"
+      ]
     },
     {
       "type": "timepicker",

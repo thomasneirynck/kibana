@@ -40,13 +40,13 @@
         <a class="dropdown-toggle timepicker-dropdown" data-toggle="dropdown" href="" bs-tooltip="'Click to select the job ID'" data-placement="bottom" ng-click="dismiss();">
 
           <span ng-hide="dashboard.current.index.default">Select job</span>
-          <span ng-show="dashboard.current.index.default">Job ID: {{dashboard.current.index.default}}</span>
+          <span ng-show="dashboard.current.index.default">{{panel.label}} {{dashboard.current.index.default}}</span>
           <i class="icon-caret-down"></i>
         </a>
 
         <ul class="dropdown-menu">
-          <!-- List all the indexes, plus an _all option -->
-          <li ng-repeat='indexname in index_names'>
+          <!-- Lists all the indexes, plus an _all option -->
+          <li ng-repeat='indexname in index_names | filter:notInOmitList'>
             <a ng-click="setIndex(indexname)">{{indexname}}</a>
           </li>
           <li>

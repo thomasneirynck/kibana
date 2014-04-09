@@ -231,7 +231,12 @@
       "collapse": false,
       "notice": false,
       "enable": true,
-      "status": "Stable"
+      "status": "Stable",
+      "label": "Job ID:",
+      "omit_indices": [
+        "kibana-int",
+        "prelert-int"
+      ]
     },
     {
       "type": "timepicker",
