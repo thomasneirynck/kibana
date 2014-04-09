@@ -9,5 +9,6 @@ define([
   './tip',
   './confirmClick',
   './esVersion',
-  './configModal'
+  './configModal',
+  './prelertLogUsage'
 ], function () {});
