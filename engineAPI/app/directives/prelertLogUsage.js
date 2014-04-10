@@ -66,7 +66,7 @@ function (angular, app, _) {
                             "typ": "view",
                             "prod": "engineAPI",
                             "tm": parseInt(new Date() / 1000),
-                            "id": usageStats.customerId,
+                            "id": usageStats.id,
                             "ver": usageStats.ver,
                             "appVer": usageStats.appVer,
                             "prelertPlatform": usageStats.prelertPlatform,
@@ -76,10 +76,10 @@ function (angular, app, _) {
                           });
                       console.log("prelertLogUsage log_usage() with params: " + params);
                       var usageURL = "http://www.prelert.com/usage/usage.php?" + params;
-                      //$http({
-                      //    url: usageURL,
-                      //    method: "GET"
-                      //});
+                      $http({
+                          url: usageURL,
+                          method: "GET"
+                      });
                   }
               });
               
