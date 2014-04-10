@@ -19,7 +19,7 @@
           "pin": false,
           "type": "lucene",
           "enable": true,
-          "query": "_type:record"
+          "query": "_type:record AND NOT isSimpleCount:true"
         }
       },
       "ids": [
@@ -213,7 +213,7 @@
       "query": "*",
       "pinned": true,
       "history": [
-        "_type:record",
+        "_type:record AND NOT isSimpleCount:true",
         "_type:bucket"
       ],
       "remember": 10
