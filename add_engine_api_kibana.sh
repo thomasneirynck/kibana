@@ -81,6 +81,24 @@ if [ ! -d "$INSTALL_DIR" ] ; then
     exit 3
 fi
 
+# The current working directory is assumed to be the directory containing this
+# script
+cd `dirname $0`
+
+VENDOR_ID=PrelertEngine
+# The vendor-specific file should pull in values for:
+# * $PRODUCT_NAME
+# * $VENDOR_NAME
+# * $VENDOR_WEBSITE
+# * $VENDOR_SUPPORT_EMAIL
+# * $API_VERSION
+. ../install/"$VENDOR_ID.profile"
+
+# Set the product name, Engine API version number and GUI URL in the root
+# index.html
+echo "Generating root index.html"
+sed "s~SUBST_PRODUCT_NAME~$PRODUCT_NAME~" < index.html | sed "s~SUBST_API_VERSION~$API_VERSION~" | sed "s~SUBST_PRELERT_GUI_URL~$PRELERT_GUI_URL~" > "$JETTY_HOME/webapps/index.html"
+
 echo "Copying base Kibana from $KIBANA_SRC_HOME"
 (cd "$KIBANA_SRC_HOME" && tar cf - .) | (cd "$INSTALL_DIR" && tar xvf -)
 
