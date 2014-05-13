@@ -1,5 +1,5 @@
 {
-  "title": "Anomaly Detective Engine API",
+  "title": "Anomaly Detective Engine Home",
   "services": {
     "query": {
       "list": {
@@ -37,9 +37,9 @@
           "type": "text",
           "loadingEditor": false,
           "mode": "markdown",
-          "content": "![kibanasrc](img/prelert/prelert-logo.png)\n\n#### Welcome to Automated Anomaly Detection\nPrelert is 100% self-learning so it provides value in minutes. No rules, models or thresholds to create and maintain. No days, weeks or months of implementation and 'training the algorithms.' Spend less time mining your data and more time building new capabilities.\n\nThe dashboard in this Kibana-based UI allows you to view the results of Prelert's Engine API analytics. You can see how the the anomaly score varies over the time range of your API job and a table of all the anomalies detected in your data.",
+          "content": "![kibanasrc](img/prelert/prelert-logo.png)\n\n#### Welcome to the Anomaly Detective Engine Dashboard",
           "style": {},
-          "title": "Prelert Engine API"
+          "title": "Dashboard Home"
         }
       ],
       "notice": false
@@ -58,20 +58,31 @@
           "type": "text",
           "loadingEditor": false,
           "mode": "markdown",
-          "content": "What shall I do next?\n\n#####Not run your first Anomaly Detective Engine API job yet?\nCreate a new engine API job and then upload some data for analysis by following [these steps](http://info.prelert.com/engine-getting-started#create-new-job).\n\n#####Already run an engine API job and want to check the results?\nUse the default [Prelert Anomaly Dashboard](index.html#/dashboard/file/prelert_api_results.json)  to explore the results of your job\n\n#####Already an experienced Kibana user?\nBuild your own dashboard to explore the results of your Anomaly Detective Engine API jobs by using:\n\n1. [Sample Dashboard](index.html#/dashboard/file/guided.json) *I don't have much data yet, please extract some basics for me*\n\n2. [Unconfigured Dashboard](index.html#/dashboard/file/noted.json) *I have a lot of data and I don't want Kibana to query it at once*\n\nor visit the [default Kibana Dashboard](index.html#/dashboard/file/kibana_default.json) for more information on Kibana.",
+          "content": "###About\n\nPrelert is 100% self-learning so it provides value in minutes. No rules, models or thresholds to create and maintain. No days, weeks or months of implementation and 'training the algorithms.' Spend less time mining your data and more time building new capabilities.\n\nThe dashboard in this Kibana-based UI allows you to view the results of Prelert's Engine API analytics. You can see how the the anomaly score varies over the time range of your API job and a table of all the anomalies detected in your data.\n\n####[Step 1: Quick Start Guide](http://www.prelert.com/docs/engine_api/latest/quick-start.html)\nFollow the guide to upload a dataset and analyze\n\n####[Step 2: View Dashboard](index.html#/dashboard/file/prelert_api_results.json)\nView the Anomaly Detective Engine results dashboard",
           "style": {},
-          "title": "Next Steps"
+          "title": "Welcome"
         },
         {
           "error": false,
-          "span": 6,
+          "span": 3,
           "editable": true,
           "type": "text",
           "loadingEditor": false,
           "mode": "markdown",
-          "content": "Need some extra help getting up to speed with Prelert's Engine API?\n\n#####More Info\nRead our excellent new [Getting Started Guide](http://info.prelert.com/engine-getting-started)\n\nBrowse the  [Anomaly Detective Engine API reference documentation](http://info.prelert.com/engine-api-documentation)\n\n#####Contact Us\nNeed help from a Prelert expert? Email Customer Support at [support@prelert.com](mailto:support@prelert.com)\n\nFollow us on Twitter at [@prelertsupport](https://twitter.com/#!/PrelertSupport) and [@prelert](https://twitter.com/#!/Prelert)\n\nOr call us toll free on 1-888 PRELERT (773-5378) or +1 508-309-4445.",
+          "content": "###Resources\n\n[Quick Start Guide](http://www.prelert.com/docs/engine_api/latest/quick-start.html)\n\n[Product Documentation](http://www.prelert.com/docs/engine_api/latest)\n\n[API Reference](http://www.prelert.com/docs/engine_api/latest/engine-api-overview.html)\n\n###Contact Us\n\nEmail: [support@prelert.com](mailto:support@prelert.com)\n\nTwitter: [@prelertsupport](https://twitter.com/#!/PrelertSupport) and [@prelert](https://twitter.com/#!/Prelert)\n\nCall: 1-888-773-5378 or +1 508-309-4445",
           "style": {},
           "title": "Help"
+        },
+        {
+          "error": false,
+          "span": 3,
+          "editable": true,
+          "type": "text",
+          "loadingEditor": false,
+          "mode": "markdown",
+          "content": "#####Already an experienced Kibana user?\nBuild your own dashboard to explore the results of your Anomaly Detective Engine jobs by using:\n\n- [Sample Dashboard](index.html#/dashboard/file/guided.json) *I don't have much data yet, please extract some basics for me*\n- [Unconfigured Dashboard](index.html#/dashboard/file/noted.json) *I have a lot of data and I don't want Kibana to query it at once*\n- [Default Kibana Dashboard](index.html#/dashboard/file/kibana_default.json) *I'm comfortable figuring it out on my own*",
+          "style": {},
+          "title": "Kibana"
         }
       ],
       "notice": false
