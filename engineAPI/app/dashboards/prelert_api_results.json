@@ -49,7 +49,7 @@
           "mode": "markdown",
           "content": "- This dashboard shows you the results of jobs you have run using the Prelert Engine API. \n- Select the ID of a job using the Job ID dropdown control at the top of the dashboard. \n- The chart will show you how the anomaly score varies over time, with peaks significantly higher than others indicating periods of anomalous activities. \n- The table below lists all the anomalies that Prelert has identified in your data. Use sort to view the biggest anomalies.",
           "style": {},
-          "title": "Prelert Engine API Results"
+          "title": "Results"
         }
       ],
       "notice": false
