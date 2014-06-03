@@ -67,7 +67,7 @@
           "type": "histogram",
           "loadingEditor": false,
           "mode": "max",
-          "time_field": "timestamp",
+          "time_field": "@timestamp",
           "value_field": "anomalyScore",
           "x-axis": true,
           "y-axis": true,
@@ -159,7 +159,7 @@
           ],
           "overflow": "min-height",
           "fields": [
-            "timestamp",
+            "@timestamp",
             "anomalyScore",
             "byFieldName",
             "byFieldValue",
@@ -176,7 +176,7 @@
           "all_fields": false,
           "trimFactor": 300,
           "localTime": true,
-          "timeField": "timestamp",
+          "timeField": "@timestamp",
           "spyable": true,
           "queries": {
             "mode": "selected",
