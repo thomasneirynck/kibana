@@ -1,0 +1,328 @@
+{
+  "title": "Engine API Jobs",
+  "services": {
+    "query": {
+      "list": {
+        "0": {
+          "query": "_type:\"job\"",
+          "alias": "",
+          "color": "#1F78C1",
+          "id": 0,
+          "pin": false,
+          "type": "lucene",
+          "enable": true
+        },
+        "1": {
+          "id": 1,
+          "color": "#7EB26D",
+          "alias": "",
+          "pin": false,
+          "type": "lucene",
+          "enable": true,
+          "query": "_type:\"job\" AND status:\"RUNNING\""
+        },
+        "2": {
+          "id": 2,
+          "color": "#EAB839",
+          "alias": "",
+          "pin": false,
+          "type": "lucene",
+          "enable": true,
+          "query": "_type:\"job\" AND status:\"CLOSED\""
+        },
+        "3": {
+          "id": 3,
+          "color": "#EF843C",
+          "alias": "",
+          "pin": false,
+          "type": "lucene",
+          "enable": true,
+          "query": "_type:\"job\" AND status:\"FAILED\""
+        },
+        "4": {
+          "id": 4,
+          "color": "#E24D42",
+          "alias": "",
+          "pin": false,
+          "type": "lucene",
+          "enable": true,
+          "query": "_type:bucket"
+        }
+      },
+      "ids": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ]
+    },
+    "filter": {
+      "list": {},
+      "ids": []
+    }
+  },
+  "rows": [
+    {
+      "title": "Summary",
+      "height": "125px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 3,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "style": {
+            "font-size": "48pt"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "queries": {
+            "mode": "selected",
+            "ids": [
+              0
+            ]
+          },
+          "title": "Total Jobs"
+        },
+        {
+          "span": 3,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "style": {
+            "font-size": "48pt"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "queries": {
+            "mode": "selected",
+            "ids": [
+              1
+            ]
+          },
+          "title": "Running Jobs"
+        },
+        {
+          "span": 3,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "style": {
+            "font-size": "48pt"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "queries": {
+            "mode": "selected",
+            "ids": [
+              2
+            ]
+          },
+          "title": "Closed Jobs"
+        },
+        {
+          "span": 3,
+          "editable": true,
+          "type": "hits",
+          "loadingEditor": false,
+          "style": {
+            "font-size": "48pt"
+          },
+          "arrangement": "horizontal",
+          "chart": "total",
+          "counter_pos": "above",
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "spyable": true,
+          "queries": {
+            "mode": "selected",
+            "ids": [
+              3
+            ]
+          },
+          "title": "Failed Jobs"
+        }
+      ],
+      "notice": false
+    },
+    {
+      "title": "Jobs Table",
+      "height": "350px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 12,
+          "editable": true,
+          "group": [
+            "default"
+          ],
+          "type": "table",
+          "size": 15,
+          "pages": 10,
+          "offset": 0,
+          "sort": [
+            "_id",
+            "asc"
+          ],
+          "style": {
+            "font-size": "9pt"
+          },
+          "overflow": "min-height",
+          "fields": [
+            "_id",
+            "createTime",
+            "analysisConfig.detectors",
+            "analysisConfig.bucketSpan",
+            "lastDataTime",
+            "status"
+          ],
+          "highlight": [],
+          "sortable": true,
+          "header": true,
+          "paging": true,
+          "spyable": true,
+          "queries": {
+            "mode": "selected",
+            "ids": [
+              0
+            ]
+          },
+          "field_list": true,
+          "status": "Stable",
+          "trimFactor": 300,
+          "normTimes": true,
+          "title": "Jobs List",
+          "all_fields": false,
+          "localTime": false,
+          "timeField": "@timestamp"
+        }
+      ],
+      "notice": false
+    },
+    {
+      "title": "Notes",
+      "height": "150px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 12,
+          "editable": true,
+          "type": "text",
+          "loadingEditor": false,
+          "mode": "markdown",
+          "content": "The status field of a job resource may have one of the following possible values:\n\n- RUNNING : The job is actively receiving and processing data. \n- CLOSED : The job finished successfully with its model state persisted. The job is still available to accept further data. \n- FAILED : The job did not finish successfully due to an error.\n\nIf you are sending data on a periodic cycle and close the job at the end of each transaction, then the job will be marked  \nas CLOSED in the intervals between data being sent. So if the data is being sent every minute say, and it takes 1 second  \nto process, then the job will be marked as CLOSED for 59 seconds.",
+          "style": {},
+          "title": "Note on Job Status"
+        }
+      ],
+      "notice": false
+    }
+  ],
+  "editable": true,
+  "index": {
+    "interval": "none",
+    "pattern": "[logstash-]YYYY.MM.DD",
+    "default": "_all",
+    "warm_fields": false
+  },
+  "style": "dark",
+  "failover": false,
+  "panel_hints": true,
+  "loader": {
+    "save_gist": false,
+    "save_elasticsearch": true,
+    "save_local": true,
+    "save_default": true,
+    "save_temp": true,
+    "save_temp_ttl_enable": true,
+    "save_temp_ttl": "30d",
+    "load_gist": true,
+    "load_elasticsearch": true,
+    "load_elasticsearch_size": 20,
+    "load_local": true,
+    "hide": false
+  },
+  "pulldowns": [
+    {
+      "type": "query",
+      "collapse": true,
+      "notice": false,
+      "query": "*",
+      "pinned": true,
+      "history": [
+        "_type:\"job\" AND status:\"FAILED\"",
+        "_type:\"job\" AND status:\"CLOSED\"",
+        "_type:\"job\" AND status:\"RUNNING\"",
+        "_type:\"job\""
+      ],
+      "remember": 10,
+      "enable": true
+    },
+    {
+      "type": "filtering",
+      "collapse": true,
+      "notice": false,
+      "enable": true
+    }
+  ],
+  "nav": [
+    {
+      "type": "timepicker",
+      "collapse": false,
+      "notice": false,
+      "status": "Stable",
+      "time_options": [
+        "5m",
+        "15m",
+        "1h",
+        "6h",
+        "12h",
+        "24h",
+        "2d",
+        "7d",
+        "30d"
+      ],
+      "refresh_intervals": [
+        "5s",
+        "10s",
+        "30s",
+        "1m",
+        "5m",
+        "15m",
+        "30m",
+        "1h",
+        "2h",
+        "1d"
+      ],
+      "timefield": "@timestamp",
+      "enable": true
+    }
+  ],
+  "refresh": false
+}
