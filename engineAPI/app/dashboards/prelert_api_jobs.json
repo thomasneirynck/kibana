@@ -224,14 +224,47 @@
     },
     {
       "title": "Notes",
-      "height": "150px",
+      "height": "200px",
       "editable": true,
       "collapse": false,
       "collapsable": true,
       "panels": [
         {
           "error": false,
-          "span": 12,
+          "span": 4,
+          "editable": true,
+          "type": "terms",
+          "loadingEditor": false,
+          "field": "_index",
+          "exclude": [],
+          "missing": false,
+          "other": true,
+          "size": 10,
+          "order": "count",
+          "style": {
+            "font-size": "10pt"
+          },
+          "donut": false,
+          "tilt": false,
+          "labels": true,
+          "arrangement": "horizontal",
+          "chart": "table",
+          "counter_pos": "above",
+          "spyable": true,
+          "queries": {
+            "mode": "selected",
+            "ids": [
+              4
+            ]
+          },
+          "tmode": "terms",
+          "tstat": "total",
+          "valuefield": "",
+          "title": "Buckets processed per job"
+        },
+        {
+          "error": false,
+          "span": 8,
           "editable": true,
           "type": "text",
           "loadingEditor": false,
@@ -248,7 +281,7 @@
   "index": {
     "interval": "none",
     "pattern": "[logstash-]YYYY.MM.DD",
-    "default": "_all",
+    "default": "201*",
     "warm_fields": false
   },
   "style": "dark",
