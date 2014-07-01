@@ -52,9 +52,9 @@ function (angular, app, _) {
               // Engine API platform, OS version and the Job ID.
               
               // Get basic data on the Prelert Engine API from the usage type in the prelert-int index. 
-              var request = scope.ejs.Request().indices('prelert-int').types('usage');
+              var request = scope.ejs.Request().indices('prelert-int').types('info');
               request.query(
-                      ejs.IdsQuery('usageStats')
+                      ejs.IdsQuery('infoStats')
                 ).size(1);
               
               var results = request.doSearch();
