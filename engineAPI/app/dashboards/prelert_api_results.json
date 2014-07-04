@@ -199,7 +199,7 @@
   "index": {
     "interval": "none",
     "pattern": "[logstash-]YYYY.MM.DD",
-    "default": "{{ARGS.index || '_all'}}",
+    "default": "{{ARGS.jobId || '_all'}}",
     "warm_fields": false
   },
   "style": "dark",
