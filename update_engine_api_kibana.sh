@@ -68,14 +68,14 @@ fi
 
 cd `dirname "$0"`/engineAPI
 pwd
-find . -name '*.rej' -o -name '*.orig' | xargs rm
+find . \( -name '*.rej' -o -name '*.orig' \) -exec rm '{}' \;
 FILES=`find . -type f | egrep -v 'prelert|kibana'`
-(cd "$KIBANA_SRC_HOME/src" && git diff --patch "$FROM_TAG" "$TO_TAG" $FILES) | patch -p2
+(cd "$KIBANA_SRC_HOME/src" && git diff "$FROM_TAG" "$TO_TAG" $FILES) | patch -p2
 if [ $? -ne 0 ] ; then
     echo ''
     echo 'SOME PATCHES COULD NOT BE APPLIED AUTOMATICALLY'
     echo 'You may need to make manual changes'
     echo 'See the text above and the following reject files:'
-    find . -name '*.rej'
+    find `pwd` -name '*.rej'
 fi
 
