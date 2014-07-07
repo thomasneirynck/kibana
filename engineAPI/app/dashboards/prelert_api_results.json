@@ -235,7 +235,8 @@
       "label": "Job ID:",
       "omit_indices": [
         "kibana-int",
-        "prelert-int"
+        "prelert-int",
+        "prelert-usage"
       ]
     },
     {
