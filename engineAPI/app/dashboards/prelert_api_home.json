@@ -80,7 +80,7 @@
           "type": "text",
           "loadingEditor": false,
           "mode": "markdown",
-          "content": "#####Already an experienced Kibana user?\nBuild your own dashboard to explore the results of your Anomaly Detective Engine jobs by using:\n\n- [Sample Dashboard](index.html#/dashboard/file/guided.json) *I don't have much data yet, please extract some basics for me*\n- [Unconfigured Dashboard](index.html#/dashboard/file/noted.json) *I have a lot of data and I don't want Kibana to query it at once*\n- [Default Kibana Dashboard](index.html#/dashboard/file/kibana_default.json) *The default Welcome page that comes with Kibana*",
+          "content": "#####Already an experienced Kibana user?\nBuild your own dashboard to explore the results of your Anomaly Detective Engine jobs by using:\n\n- [Sample Dashboard](index.html#/dashboard/file/guided.json) *I don't have much data yet, please extract some basics for me*\n- [Unconfigured Dashboard](index.html#/dashboard/file/noted.json) *I have a lot of data and I don't want Kibana to query it at once*\n- [Default Kibana Dashboard](index.html#/dashboard/file/default.json) *The default Welcome page that comes with Kibana*",
           "style": {},
           "title": "Kibana"
         }
