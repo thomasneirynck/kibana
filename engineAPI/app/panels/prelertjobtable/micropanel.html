@@ -19,7 +19,7 @@
   <tbody>
     <tr ng-repeat='field in micropanel.values'>
       <td>{{$index+1}}.</td>
-      <td style="word-wrap:break-word">{{{true: "__blank__", false:field[0] }[(field[0] == '' || field[0] == undefined) && field[0] != 0]|tableTruncate:panel.trimFactor:3}}</td>
+      <td style="word-wrap:break-word">{{{true: "__blank__", false:field[0] }[(field[0] == '' || field[0] == undefined) && field[0] != 0]|prelertjobtableTruncate:panel.trimFactor:3}}</td>
       <td class="progress" style="position:relative">
         <style scoped>
           .progress {
