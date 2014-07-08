@@ -41,7 +41,7 @@ function (Settings) {
      *
      * default_route: '/dashboard/elasticsearch/WebLogs',
      */
-    default_route     : '/dashboard/file/default.json',
+    default_route     : '/dashboard/file/prelert_api_home.json',
 
     /** @scratch /configuration/config.js/5
      *
