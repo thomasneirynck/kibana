@@ -29,10 +29,10 @@
 # This script requires that the following components be available from
 # sub-directories under $PRELERT_TOOLS_HOME:
 #
-# kibana-src-3.0.1
+# kibana-src-3.1.0
 #
 
-BASE_KIBANA_VERSION=3.0.1
+BASE_KIBANA_VERSION=3.1.0
 PRELERT_GUI_URL=dashboard
 
 if [ -z "$PRELERT_TOOLS_HOME" ] ; then
