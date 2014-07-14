@@ -4,9 +4,9 @@
     "query": {
       "list": {
         "0": {
-          "query": "_type:\"job\"",
+          "query": "_type:job",
           "alias": "",
-          "color": "#1F78C1",
+          "color": "#7EB26D",
           "id": 0,
           "pin": false,
           "type": "lucene",
@@ -14,7 +14,7 @@
         },
         "1": {
           "id": 1,
-          "color": "#7EB26D",
+          "color": "#EAB839",
           "alias": "",
           "pin": false,
           "type": "lucene",
@@ -23,7 +23,7 @@
         },
         "2": {
           "id": 2,
-          "color": "#EAB839",
+          "color": "#6ED0E0",
           "alias": "",
           "pin": false,
           "type": "lucene",
@@ -81,7 +81,7 @@
           "arrangement": "horizontal",
           "chart": "total",
           "counter_pos": "above",
-          "donut": false,
+          "donut": true,
           "tilt": false,
           "labels": true,
           "spyable": true,
@@ -167,7 +167,7 @@
     },
     {
       "title": "Jobs Table",
-      "height": "350px",
+      "height": "500px",
       "editable": true,
       "collapse": false,
       "collapsable": true,
@@ -176,48 +176,42 @@
           "error": false,
           "span": 12,
           "editable": true,
-          "group": [
-            "default"
-          ],
-          "type": "table",
-          "size": 15,
-          "pages": 10,
+          "type": "prelertjobtable",
+          "loadingEditor": false,
+          "size": 100,
+          "pages": 5,
           "offset": 0,
           "sort": [
-            "_id",
-            "asc"
+            "id",
+            "desc"
           ],
-          "style": {
-            "font-size": "9pt"
-          },
           "overflow": "min-height",
           "fields": [
-            "_id",
+            "id",
             "createTime",
-            "analysisConfig.detectors",
+            "description",
+            "counts.processedRecordCount",
             "analysisConfig.bucketSpan",
             "lastDataTime",
             "status"
           ],
-          "highlight": [],
           "sortable": true,
           "header": true,
           "paging": true,
-          "spyable": true,
-          "queries": {
-            "mode": "selected",
-            "ids": [
-              0
-            ]
-          },
           "field_list": true,
-          "status": "Stable",
-          "trimFactor": 300,
-          "normTimes": true,
-          "title": "Jobs List",
           "all_fields": false,
-          "localTime": false,
-          "timeField": "@timestamp"
+          "trimFactor": 300,
+          "localTime": true,
+          "timeFields": [
+            "createTime",
+            "lastDataTime",
+            "finishedTime"
+          ],
+          "style": {
+            "font-size": "9pt"
+          },
+          "normTimes": true,
+          "title": "Jobs List"
         }
       ],
       "notice": false
@@ -309,19 +303,17 @@
       "query": "*",
       "pinned": true,
       "history": [
-        "_type:\"job\" AND status:\"FAILED\"",
-        "_type:\"job\" AND status:\"CLOSED\"",
-        "_type:\"job\" AND status:\"RUNNING\"",
-        "_type:\"job\""
+        "_type:job",
+        "_type:jobs"
       ],
       "remember": 10,
-      "enable": true
+      "enable": false
     },
     {
       "type": "filtering",
-      "collapse": true,
-      "notice": false,
-      "enable": true
+      "collapse": false,
+      "notice": true,
+      "enable": false
     }
   ],
   "nav": [
