@@ -383,7 +383,7 @@ function (angular, $, kbn, _, config, moment, Modernizr) {
         transformResponse: function(response) {
           /*jshint -W054 */
           var _f = new Function('ARGS','kbn','_','moment','window','document','angular','require','define','$','jQuery',response);
-          return _f($routeParams,kbn,_,moment);
+          return _f($routeParams,kbn,_,moment,window,document,angular);
         }
       }).then(function(result) {
         if(!result) {
