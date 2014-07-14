@@ -11,7 +11,6 @@ function (_) {
      */
     var defaults = {
       elasticsearch     : "http://"+window.location.hostname+":9200",
-      prelertEngineAPIBaseURL: "http://"+window.location.hostname+":8080/engine/v1",
       panel_names       : [],
       kibana_index      : 'kibana-int',
       default_route     : '/dashboard/file/default.json'

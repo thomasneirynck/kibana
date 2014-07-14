@@ -47,8 +47,6 @@ require.config({
     modernizr:                '../vendor/modernizr-2.6.1',
     numeral:                '../vendor/numeral',
     elasticjs:                '../vendor/elasticjs/elastic-angular-client',
-    
-    prelert:                '../vendor/prelert/prelert-angular-client'
   },
   shim: {
     angular: {
@@ -94,8 +92,7 @@ require.config({
     timepicker:             ['jquery', 'bootstrap'],
     datepicker:             ['jquery', 'bootstrap'],
 
-    elasticjs:              ['angular', '../vendor/elasticjs/elastic'],
-    prelert:              ['angular']
+    elasticjs:              ['angular', '../vendor/elasticjs/elastic']
   },
   waitSeconds: 60,
 });
