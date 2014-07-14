@@ -10,5 +10,6 @@ define([
   './confirmClick',
   './esVersion',
   './configModal',
-  './prelertLogUsage'
+  './prelertLogUsage',
+  './resizable'
 ], function () {});
