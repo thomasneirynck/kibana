@@ -29,7 +29,7 @@ function (angular, $, _, appLevelRequire) {
     register_fns = {};
 
   // This stores the Kibana revision number (kibana source uses @REV@ which is replaced by grunt).
-  app.constant('kbnVersion',"3.0.1");
+  app.constant('kbnVersion',"3.1.0");
 
   // The minimum version that must be in the cluster
   app.constant('esMinVersion','0.90.9');
