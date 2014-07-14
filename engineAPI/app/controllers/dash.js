@@ -10,7 +10,7 @@ function (angular, config, _) {
   var module = angular.module('kibana.controllers');
 
   module.controller('DashCtrl', function(
-    $scope, $route, ejsResource, fields, dashboard, alertSrv, panelMove, esVersion, kbnVersion) {
+    $scope, $route, ejsResource, fields, dashboard, alertSrv, panelMove, esVersion, kbnVersion, prelertAPIServices) {
 
     $scope.Math = Math;
 
@@ -43,6 +43,9 @@ function (angular, config, _) {
       $scope.reset_row();
 
       $scope.ejs = ejsResource(config.elasticsearch);
+      
+      // Create the AngularJS service to query the Prelert Engine API.
+      $scope.prelertjs = prelertAPIServices(config.prelertEngineAPIBaseURL);
     };
 
     $scope.isPanel = function(obj) {

@@ -14,6 +14,7 @@ define([
   'angular-cookies',
   'extend-jquery',
   'bindonce',
+  'prelert'
 ],
 function (angular, $, _, appLevelRequire) {
 
@@ -27,8 +28,8 @@ function (angular, $, _, appLevelRequire) {
     // features if we define them after boot time
     register_fns = {};
 
-  // This stores the Kibana revision number, @REV@ is replaced by grunt.
-  app.constant('kbnVersion',"@REV@");
+  // This stores the Kibana revision number (kibana source uses @REV@ which is replaced by grunt).
+  app.constant('kbnVersion',"3.0.1");
 
   // The minimum version that must be in the cluster
   app.constant('esMinVersion','0.90.9');
@@ -100,7 +101,8 @@ function (angular, $, _, appLevelRequire) {
     'ngDragDrop',
     'ngCookies',
     'kibana',
-    'pasvaz.bindonce'
+    'pasvaz.bindonce',
+    'prelert.api.services'
   ];
 
   _.each('controllers directives factories services filters'.split(' '),
