@@ -273,7 +273,7 @@ function (angular, app, _, kbn, moment) {
       var params = {
           take: $scope.panel.size*$scope.panel.pages
       };
-      $scope.prelertAPIServices.JobsService.listJobs(params)
+      $scope.prelertjs.JobsService.listJobs(params)
       .success(function(results) {
           console.log('prelertjobtable jobs from JobService: ');
           console.log(results);
@@ -346,7 +346,7 @@ function (angular, app, _, kbn, moment) {
         var message="Are you sure you want to delete job id " + jobId + "?\nAll the results and configuration for this job will be deleted.";
         if (window.confirm(message)) {
             
-            $scope.prelertAPIServices.JobsService.deleteJob(jobId)
+            $scope.prelertjs.JobsService.deleteJob(jobId)
             .success(function(response) {
                 console.log('prelertjobtable response from delete: ');
                 console.log(response);
