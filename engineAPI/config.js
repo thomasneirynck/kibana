@@ -30,6 +30,14 @@ function (Settings) {
      *
      */
     elasticsearch: "http://"+window.location.hostname+":9200",
+    
+    /**
+     * The base URL of the Prelert Anomaly Detective Engine API. You almost certainly 
+     * want to edit this as if left unchanged it will attempt to reach the Prelert Engine API 
+     * at the same host as Kibana is installed on. You probably want to set it to the FQDN 
+     * of your Prelert Engine API host.
+     */
+    prelertEngineAPIBaseURL: "http://"+window.location.hostname+":8080/engine/v1",
 
     /** @scratch /configuration/config.js/5
      *
@@ -76,7 +84,8 @@ function (Settings) {
       'stats',
       'sparklines',
       // Addition of Prelert panel modules for anomaly dashboard.
-      'prelertindexpicker'
+      'prelertindexpicker',
+      'prelertjobtable'
     ]
   });
 });
