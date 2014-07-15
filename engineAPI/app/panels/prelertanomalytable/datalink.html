@@ -1,0 +1,57 @@
+<div class="editor-row">
+    <div class="section">
+      <div class="editor-option">
+        <h5>Show link</h5><input type="checkbox" ng-model="panel.linkShow" ng-checked="panel.linkShow">
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="editor-option">
+        <h5>Target URL <tip>URL of dashboard to open. Anomaly parameters will be added for use by scripted and template dashboards.</tip></h5><input type="text" class="input-xxlarge" ng-model="panel.linkTarget">
+      </div>
+    </div>
+</div>
+
+<div class="editor-row">
+    <div class="section">
+      <div class="editor-option">
+        <h6>Drilldown Data index <tip>Index to query for data in target dashboard</tip></h6><input type="text" class="input-medium" ng-model="panel.simpleLinkIndex">
+      </div>
+    </div>
+</div>
+
+
+<div class="editor-row">
+  <div class="section">
+    <h5>Drilldown data index <tip>Settings for the index to query for data in target dashboard</tip></h5>
+      <div ng-show="panel.linkIndex.interval != 'none'" class="row-fluid">
+         <div class="editor-option">
+          <p class="small">
+              Time stamped indices will use the time range of your selected anomaly to create a list of
+              indices that match a specified timestamp pattern. This can be very
+              efficient for some data sets (eg, logs) For example, to match the
+              default logstash index pattern you would use
+              <code>[logstash-]YYYY.MM.DD</code>. The [] in "[logstash-]" are
+              important as they instruct Kibana not to treat those letters as a
+              pattern. You may also specify multiple indices by separating them with a comma(,).
+              For example <code>[web-]YYYY.MM.DD,[mail-]YYYY.MM.DD</code>
+          </p>
+          <p class="small">
+              See <a href="http://momentjs.com/docs/#/displaying/format/">http://momentjs.com/docs/#/displaying/format/</a>
+              for documentation on date formatting.
+          </p>
+         </div>
+     </div>
+      <div class="editor-option">
+        <h6>Timestamping</h6><select class="input-small" ng-model="panel.linkIndex.interval" ng-options="f for f in ['none','hour','day','week','month','year']"></select>
+      </div>
+      <div class="editor-option" ng-show="panel.linkIndex.interval != 'none'">
+        <h6>Index pattern <small>Absolutes in []</small></h6>
+        <input type="text" class="input-large" ng-model="panel.linkIndex.pattern">
+      </div>
+      <div class="editor-option" ng-show="panel.linkIndex.interval == 'none'">
+        <h6>Default Index</h6>
+        <input type="text" class="input-medium" ng-model="panel.linkIndex.default">
+      </div>
+  </div>
+</div>
