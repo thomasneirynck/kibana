@@ -89,7 +89,7 @@ module.factory('prelertAPIServices', ['$http', function ($http) {
                 /**
                  * Supply skip and take params to obtain a specific page of results.
                  */
-                getResults: function (jobId, params) {
+                getResults: function(jobId, params) {
                     
                     return $http.get(this.urlBase+"/"+jobId, {
                         params:params
@@ -98,6 +98,25 @@ module.factory('prelertAPIServices', ['$http', function ($http) {
                 
                 getBucketRecords: function(jobId, bucketId, params) {
                     return $http.get(this.urlBase+"/"+jobId +"/"+bucketId+"/records", {
+                        params:params
+                    });
+                }
+        };
+        
+        // TODO - maybe move inside ResultsService for simplicity?
+        prelertAPIServices.RecordsService = {
+                urlBase: config.baseURL + "/records",
+                
+                /**
+                 * Queries the Prelert Engine API for the anomaly records for a job.
+                 * Optional params that can be supplied:
+                 *  - skip
+                 *  - take
+                 *  - start
+                 *  - end
+                 */
+                getRecords: function(jobId, params) {
+                    return $http.get(this.urlBase+"/"+jobId, {
                         params:params
                     });
                 }

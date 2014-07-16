@@ -1,16 +1,43 @@
-/** @scratch /panels/5
- *
- * include::panels/table.asciidoc[]
+/*
+ ************************************************************
+ *                                                          *
+ * Contents of file Copyright (c) Prelert Ltd 2006-2014     *
+ *                                                          *
+ *----------------------------------------------------------*
+ *----------------------------------------------------------*
+ * WARNING:                                                 *
+ * THIS FILE CONTAINS UNPUBLISHED PROPRIETARY               *
+ * SOURCE CODE WHICH IS THE PROPERTY OF PRELERT LTD AND     *
+ * PARENT OR SUBSIDIARY COMPANIES.                          *
+ * PLEASE READ THE FOLLOWING AND TAKE CAREFUL NOTE:         *
+ *                                                          *
+ * This source code is confidential and any person who      *
+ * receives a copy of it, or believes that they are viewing *
+ * it without permission is asked to notify Prelert Ltd     *
+ * on +44 (0)20 7953 7243 or email to legal@prelert.com.    *
+ * All intellectual property rights in this source code     *
+ * are owned by Prelert Ltd.  No part of this source code   *
+ * may be reproduced, adapted or transmitted in any form or *
+ * by any means, electronic, mechanical, photocopying,      *
+ * recording or otherwise.                                  *
+ *                                                          *
+ *----------------------------------------------------------*
+ *                                                          *
+ *                                                          *
+ ************************************************************
  */
 
-/** @scratch /panels/table/0
+
+/** @scratch /panels/prelertanomalytable/0
  *
- * == table
+ * == prelertanomalytable
  * Status: *Stable*
  *
- * The table panel contains a sortable, pagable view of documents that. It can be arranged into
- * defined columns and offers several interactions, such as performing adhoc terms aggregations.
- *
+ * The prelertanomalytable panel contains a sortable, pageable view of anomaly records
+ * obtained from the Prelert Anomaly Detective Engine API. The table is similar in 
+ * structure to the Kibana table panel, with interactions such as adhoc terms aggregations 
+ * and sorting by clicking on the table header columns. It also adds the ability to link
+ * to another dashboard or URL passing the key parameters of the anomaly of interest.
  */
 define([
   'angular',
@@ -44,91 +71,78 @@ function (angular, app, _, kbn, moment) {
         {
             title:'Data link',
             src: 'app/panels/prelertanomalytable/datalink.html'
-        },
-        {
-          title:'Queries',
-          src: 'app/partials/querySelect.html'
         }
       ],
       status: "Stable",
-      description: "A paginated table of records matching your query or queries with additional " +
-      		"custom functionality to enhance the display for Prelert anomaly data . Click on a row to "+
-        "expand it and review all of the fields associated with that document. <p>"
+      description: "A paginated table of anomaly records for a Prelert Anomaly Detective Engine API job. " +
+      		"Click on a row to expand it and review all of the fields associated with that anomaly.<p>"
     };
 
     // Set and populate defaults
     var _d = {
-      /** @scratch /panels/table/5
+      /** @scratch /panels/prelertanomalytable/1
        * === Parameters
        *
        * size:: The number of hits to show per page
        */
       size    : 100, // Per page
-      /** @scratch /panels/table/5
+      /** @scratch /panels/prelertanomalytable/1
        * pages:: The number of pages available
        */
       pages   : 5,   // Pages available
-      /** @scratch /panels/table/5
+      /** @scratch /panels/prelertanomalytable/1
        * offset:: The current page
        */
       offset  : 0,
-      /** @scratch /panels/table/5
+      /** @scratch /panels/prelertanomalytable/1
        * sort:: An array describing the sort order of the table. For example [`@timestamp',`desc']
        */
       sort    : ['_score','desc'],
-      /** @scratch /panels/table/5
+      /** @scratch /panels/prelertanomalytable/1
        * overflow:: The css overflow property. `min-height' (expand) or `auto' (scroll)
        */
       overflow: 'min-height',
-      /** @scratch /panels/table/5
+      /** @scratch /panels/prelertanomalytable/1
        * fields:: the fields used a columns of the table, in an array.
        */
       fields  : [],
-      /** @scratch /panels/table/5
-       * highlight:: The fields on which to highlight, in an array
-       */
-      highlight : [],
-      /** @scratch /panels/table/5
+      /** @scratch /panels/prelertanomalytable/1
        * sortable:: Set sortable to false to disable sorting
        */
       sortable: true,
-      /** @scratch /panels/table/5
+      /** @scratch /panels/prelertanomalytable/1
        * header:: Set to false to hide the table column names
        */
       header  : true,
-      /** @scratch /panels/table/5
+      /** @scratch /panels/prelertanomalytable/1
        * paging:: Set to false to hide the paging controls of the table
        */
       paging  : true,
-      /** @scratch /panels/table/5
+      /** @scratch /panels/prelertanomalytable/1
        * field_list:: Set to false to hide the list of fields. The user will be able to expand it,
        * but it will be hidden by default
        */
       field_list: true,
-      /** @scratch /panels/table/5
+      /** @scratch /panels/prelertanomalytable/1
        * all_fields:: Set to true to show all fields in the mapping, not just the current fields in
        * the table.
        */
       all_fields: false,
-      /** @scratch /panels/table/5
+      /** @scratch /panels/prelertanomalytable/1
        * trimFactor:: The trim factor is the length at which to truncate fields takinging into
        * consideration the number of columns in the table. For example, a trimFactor of 100, with 5
        * columns in the table, would trim each column at 20 character. The entirety of the field is
        * still available in the expanded view of the event.
        */
       trimFactor: 300,
-      /** @scratch /panels/table/5
+      /** @scratch /panels/prelertanomalytable/1
        * localTime:: Set to true to adjust the timeField to the browser's local time
        */
-      localTime: false,
-      /** @scratch /panels/table/5
+      localTime: true,
+      /** @scratch /panels/prelertanomalytable/1
        * timeField:: If localTime is set to true, this field will be adjusted to the browsers local time
        */
-      timeField: '@timestamp',
-      /** @scratch /panels/table/5
-       * spyable:: Set to false to disable the inspect icon
-       */
-      spyable : true,
+      timeField: 'timestamp',
       /** @scratch /panels/prelertanomalytabletable/1
        * linkShow:: Set to false to hide the link to a dashboard for displaying the raw data which has been analyzed for anomalies.
        */
@@ -145,18 +159,10 @@ function (angular, app, _, kbn, moment) {
           pattern: '[logstash-]YYYY.MM.DD',
           default: '_all'
       },
-      linkTarget  : '#/dashboard/script/prelert_logstash_drilldown.js',
-      /** @scratch /panels/table/5
-       *
-       * ==== Queries
-       * queries object:: This object describes the queries to use on this panel.
-       * queries.mode::: Of the queries available, which to use. Options: +all, pinned, unpinned, selected+
-       * queries.ids::: In +selected+ mode, which query ids are selected.
+      /** @scratch /panels/prelertanomalytabletable/1
+       * linkTarget:: Full or relative URL of page to open when clicking on the 'Show data' link.
        */
-      queries     : {
-        mode        : 'all',
-        ids         : []
-      },
+      linkTarget  : '#/dashboard/script/prelert_logstash_drilldown.js',
       style   : {'font-size': '9pt'},
       normTimes : true,
     };
@@ -203,21 +209,7 @@ function (angular, app, _, kbn, moment) {
     var showModal = function(panel,type) {
       $scope.facetPanel = panel;
       $scope.facetType = type;
-
-      // create a new modal. Can't reuse one modal unforunately as the directive will not
-      // re-render on show.
-      /*
-      $modal({
-        template: './app/panels/table/modal.html',
-        persist: false,
-        show: true,
-        scope: $scope.$new(),
-        keyboard: false
-      });
-      */
-
     };
-
 
 
     $scope.toggle_micropanel = function(field,groups) {
@@ -258,14 +250,6 @@ function (angular, app, _, kbn, moment) {
       }
     };
 
-    $scope.toggle_highlight = function(field) {
-      if (_.indexOf($scope.panel.highlight,field) > -1) {
-        $scope.panel.highlight = _.without($scope.panel.highlight,field);
-      } else {
-        $scope.panel.highlight.push(field);
-      }
-    };
-
     $scope.toggle_details = function(row) {
       row.kibana.details = row.kibana.details ? false : true;
       row.kibana.view = row.kibana.view || 'table';
@@ -296,132 +280,114 @@ function (angular, app, _, kbn, moment) {
       filterSrv.set({type:'exists',field:field,mandate:mandate});
     };
 
-    $scope.get_data = function(segment,query_id) {
-      var
-        _segment,
-        request,
-        boolQuery,
-        queries,
-        sort;
+    $scope.get_data = function() {
 
-      $scope.panel.error =  false;
+        $scope.panel.error =  false;
+        $scope.panelMeta.loading = true;
+        
+        $scope.panel.offset = 0;
+        $scope.hits = 0;
+        $scope.data = [];
+        $scope.current_fields = [];
+        
+        // Make sure we have everything for the request to complete
+        // TODO - check if a job is selected. If not, return.
+        //if(dashboard.indices.length === 0) {
+        //  return;
+        //}
+        
+        // TODO - add Job Picker control to nav, and get jobId from that.
+        var jobId = $scope.dashboard.current.index.default;
 
-      // Make sure we have everything for the request to complete
-      if(dashboard.indices.length === 0) {
-        return;
-      }
+        // Get the list of jobs from the Prelert Engine API.
+        // Paging behaviour is consistent with Kibana where it gets size*pages records 
+        // in one query and then does client-side paging through query results.
+        // TODO - implement skip for full paging functionality.
+        var params = {
+            take: $scope.panel.size*$scope.panel.pages
+        };
+        
+        // Check for a time filter. If present, add the last filter in the zoom 'chain'.
+        var timeFilters = filterSrv.getByType('time', false);
+        var numKeys = _.keys(timeFilters).length;
+        if (numKeys > 0) {
+            var timeFilter = timeFilters[(numKeys-1)];
+            
+            var from = kbn.parseDate(timeFilter.from);
+            var to = kbn.parseDate(timeFilter.to);
+            
+            // Default moment.js format() is ISO8601.
+            params.start = moment(from).format();
+            params.end = moment(to).format();
+        } 
+        
+        $scope.prelertjs.RecordsService.getRecords(jobId, params)
+        .success(function(results) {
+            console.log("prelertanomalytable records returned by service:");
+            console.log(results);
+            $scope.panelMeta.loading = false;
+            
+            // This is exceptionally expensive, especially on events with a large number of fields
+            $scope.data = $scope.data.concat(_.map(results.documents, function(hit) {
+              var _h = _.clone(hit);
 
-      sort = [$scope.ejs.Sort($scope.panel.sort[0]).order($scope.panel.sort[1])];
-      if($scope.panel.localTime) {
-        sort.push($scope.ejs.Sort($scope.panel.timeField).order($scope.panel.sort[1]));
-      }
+              // Update the list of fields found in alerts.
+              $scope.current_fields = $scope.current_fields.concat(_.keys(_h));
+              
+              // Add in the 'kibana' object used internally by Kibana to store details used
+              // for the table components, such as the micropanel and detail views.
+              _h.kibana = {
+                _source : kbn.flatten_json(_h)
+              };
+              
+              _h.severity = $scope.get_anomaly_severity(_h.bucketScore);
+              _h.unusualSeverity = $scope.get_anomaly_severity(_h.unusualScore);
+              
+              return _h;
+            }));
 
+            $scope.current_fields = _.uniq($scope.current_fields);
+            $scope.hits = results.hitCount;
+            
+            // Sort the data - do client-side sorting with Underscore.js
+            // since the Jobs endpoint does not have sorting capability.
+            var sortField = $scope.panel.sort[0];
+            $scope.data = _.sortBy($scope.data, function(v){
+                // Use the flattened map.
+                return v.kibana._source[sortField];
+            });
 
-      $scope.panelMeta.loading = true;
-
-      _segment = _.isUndefined(segment) ? 0 : segment;
-      $scope.segment = _segment;
-
-      request = $scope.ejs.Request().indices(dashboard.indices[_segment]);
-
-      $scope.panel.queries.ids = querySrv.idsByMode($scope.panel.queries);
-
-      queries = querySrv.getQueryObjs($scope.panel.queries.ids);
-
-      boolQuery = $scope.ejs.BoolQuery();
-      _.each(queries,function(q) {
-        boolQuery = boolQuery.should(querySrv.toEjsObj(q));
-      });
-
-      request = request.query(
-        $scope.ejs.FilteredQuery(
-          boolQuery,
-          filterSrv.getBoolFilter(filterSrv.ids())
-        ))
-        .highlight(
-          $scope.ejs.Highlight($scope.panel.highlight)
-          .fragmentSize(2147483647) // Max size of a 32bit unsigned int
-          .preTags('@start-highlight@')
-          .postTags('@end-highlight@')
-        )
-        .size($scope.panel.size*$scope.panel.pages)
-        .sort(sort);
-
-      $scope.populate_modal(request);
-
-      // Populate scope when we have results
-      request.doSearch().then(function(results) {
-        $scope.panelMeta.loading = false;
-
-        if(_segment === 0) {
-          $scope.panel.offset = 0;
-          $scope.hits = 0;
-          $scope.data = [];
-          $scope.current_fields = [];
-          query_id = $scope.query_id = new Date().getTime();
-        }
-
-        // Check for error and abort if found
-        if(!(_.isUndefined(results.error))) {
-          $scope.panel.error = $scope.parse_error(results.error);
-          return;
-        }
-
-        // Check that we're still on the same query, if not stop
-        if($scope.query_id === query_id) {
-
-          // This is exceptionally expensive, especially on events with a large number of fields
-          $scope.data = $scope.data.concat(_.map(results.hits.hits, function(hit) {
-            var
-              _h = _.clone(hit),
-              _p = _.omit(hit,'_source','sort','_score');
-
-            // _source is kind of a lie here, never display it, only select values from it
-            _h.kibana = {
-              _source : _.extend(kbn.flatten_json(hit._source),_p),
-              highlight : kbn.flatten_json(hit.highlight||{})
-            };
-
-            // Kind of cheating with the _.map here, but this is faster than kbn.get_all_fields
-            $scope.current_fields = $scope.current_fields.concat(_.keys(_h.kibana._source));
-
-            return _h;
-          }));
-
-          $scope.current_fields = _.uniq($scope.current_fields);
-          $scope.hits += results.hits.total;
-
-          // Sort the data
-          $scope.data = _.sortBy($scope.data, function(v){
-            if(!_.isUndefined(v.sort)) {
-              return v.sort[0];
-            } else {
-              return v._score;
+            // Reverse if needed
+            if($scope.panel.sort[1] === 'desc') {
+              $scope.data.reverse();
             }
-          });
-
-          // Reverse if needed
-          if($scope.panel.sort[1] === 'desc') {
-            $scope.data.reverse();
-          }
-
-          // Keep only what we need for the set
-          $scope.data = $scope.data.slice(0,$scope.panel.size * $scope.panel.pages);
-
+            
+            // Keep only what we need for the set
+            $scope.data = $scope.data.slice(0,$scope.panel.size * $scope.panel.pages);  
+            
+        })
+        .error(function (error) {
+            $scope.panelMeta.loading = false;
+            $scope.panel.error = $scope.parse_error("Error obtaining results from the Prelert Engine API." +
+                   "Please ensure the Engine API is running and configured correctly.");
+            console.log('Error loading list of results from the Prelert Engine API: ' + error.message);
+        });
+        
+    };
+    
+    $scope.get_anomaly_severity = function(score) {
+        // Returns the severity label for the provided anomaly score.
+        // TODO - separate function for unusual behaviour scores.
+        if (score > 75 ) {
+            return "critical";
+        } else if (score > 50) {
+            return "major";
+        } else if (score > 25) {
+            return "minor";
         } else {
-          return;
+            return "warning";
         }
-
-        // If we're not sorting in reverse chrono order, query every index for
-        // size*pages results
-        // Otherwise, only get size*pages results then stop querying
-        if (($scope.data.length < $scope.panel.size*$scope.panel.pages ||
-          !((_.contains(filterSrv.timeField(),$scope.panel.sort[0])) && $scope.panel.sort[1] === 'desc')) &&
-          _segment+1 < dashboard.indices.length) {
-          $scope.get_data(_segment+1,$scope.query_id);
-        }
-
-      });
+        
     };
 
     $scope.populate_modal = function(request) {
@@ -548,21 +514,6 @@ function (angular, app, _, kbn, moment) {
 
   });
 
-  // This also escapes some xml sequences
-  module.filter('prelertanomalytableHighlight', function() {
-    return function(text) {
-      if (!_.isUndefined(text) && !_.isNull(text) && text.toString().length > 0) {
-        return text.toString().
-          replace(/&/g, '&amp;').
-          replace(/</g, '&lt;').
-          replace(/>/g, '&gt;').
-          replace(/\r?\n/g, '<br/>').
-          replace(/@start-highlight@/g, '<code class="highlight">').
-          replace(/@end-highlight@/g, '</code>');
-      }
-      return '';
-    };
-  });
 
   module.filter('prelertanomalytableTruncate', function() {
     return function(text,length,factor) {
@@ -572,7 +523,6 @@ function (angular, app, _, kbn, moment) {
       return '';
     };
   });
-
 
 
   module.filter('prelertanomalytableJson', function() {
@@ -606,10 +556,11 @@ function (angular, app, _, kbn, moment) {
   });
   
   
-//WIP
+  //Filter to format time fields in the Jobs table in local time.
+  // TODO - move to generic prelert table filter if used in other Prelert panels.
   module.filter('prelertanomalytableLocalTime', function(){
     return function(text,event) {
-      return moment(event.sort[1]).format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+      return moment(event).format("YYYY-MM-DDTHH:mm:ss.SSSZ");
     };
   });
 

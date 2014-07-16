@@ -47,6 +47,24 @@
     .table-field-value {
       white-space: pre-wrap;
     }
+    
+    .anomaly-score-critical {
+      color: #ff0000;
+    }
+    
+    .anomaly-score-major {
+      color: #ffb429;
+    }
+    
+    .anomaly-score-minor {
+      color: #ffff00;
+    }
+    
+    .anomaly-score-warning {
+      color: #63b8ff;
+    }
+    
+    
   </style>
 
   <div class="table-container">
@@ -113,7 +131,8 @@
       </div>
       <table class="table-hover table table-condensed" ng-style="panel.style">
         <thead ng-show="panel.header">
-          <th ng-show="panel.linkShow">Link</th>
+          <th ng-show="panel.linkShow">&nbsp;</th>
+          <!-- <th>severity</th> -->
           <th ng-show="panel.fields.length<1">_source (select columns from the list to the left)</th>
           <th style="white-space:nowrap" ng-repeat="field in panel.fields">
             <i ng-show="!$first" class="pointer link icon-caret-left" ng-click="_.move(panel.fields,$index,$index-1)"></i>
@@ -130,16 +149,26 @@
         <tbody bindonce ng-repeat="event in data| slice:panel.offset:panel.offset+panel.size" ng-class-odd="'odd'">
           <tr ng-click="toggle_details(event)" class="pointer">
             <td ng-show="panel.linkShow">
-              <a ng-click="show_data($event, event.kibana._source)">Show data</a>
+              <a ng-click="show_data($event, event.kibana._source)" bs-tooltip="'Show data'"><i class="icon-external-link"></i></a>
             </td>
-            <td ng-if="panel.fields.length<1" bo-text="event._source|stringify|prelertanomalytableTruncate:panel.trimFactor:1"></td>
+            <!-- 
+            <td>
+              <i class='icon-flag' ng-class="'anomaly-score-' + event.severity">&nbsp;</i>
+              <i class='icon-warning-sign' ng-class="'anomaly-score-' + event.unusualSeverity">&nbsp;</i>
+            </td>
+            -->
+            <td ng-if="panel.fields.length<1" bo-text="event|stringify|prelertanomalytableTruncate:panel.trimFactor:1"></td>
             <td ng-show="panel.fields.length>0" ng-repeat="field in panel.fields">
-              <span ng-if="!panel.localTime || panel.timeField != field" bo-html="(event.kibana.highlight[field]||event.kibana._source[field]) |prelertanomalytableHighlight | prelertanomalytableTruncate:panel.trimFactor:panel.fields.length" class="table-field-value"></span>
-              <span ng-if="panel.localTime && panel.timeField == field" bo-html="event.sort[1]|prelertanomalytableLocalTime:event" class="table-field-value"></span>
+              
+              <i ng-if="field == 'bucketScore'" class='icon-flag' ng-class="'anomaly-score-' + event.severity">&nbsp;</i>
+              <i ng-if="field == 'unusualScore'" class='icon-warning-sign' ng-class="'anomaly-score-' + event.unusualSeverity">&nbsp;</i>
+              <span ng-if="!panel.localTime || panel.timeField != field" bo-html="(event[field]) | prelertanomalytableTruncate:panel.trimFactor:panel.fields.length" class="table-field-value"></span>
+              <span ng-if="panel.localTime && panel.timeField == field" bo-html="(event[field]) | prelertanomalytableLocalTime:event[field]" class="table-field-value"></span>
+              
             </td>
           </tr>
           <tr ng-if="event.kibana.details">
-            <td colspan={{panel.fields.length}} ng-switch="event.kibana.view">
+            <td colspan={{(panel.fields.length+2)}} ng-switch="event.kibana.view">
               <span>
                 View:
                 <a class="link" ng-class="{'strong':event.kibana.view == 'table'}" ng-click="event.kibana.view = 'table'">Table</a> /
