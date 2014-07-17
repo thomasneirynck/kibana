@@ -129,10 +129,10 @@
         </thead>
         <tbody bindonce ng-repeat="event in data| slice:panel.offset:panel.offset+panel.size" ng-class-odd="'odd'">
           <tr ng-click="toggle_details(event)" class="pointer">
-            <td ng-if="panel.fields.length<1" bo-text="event|stringify|prelertjobtableTruncate:panel.trimFactor:1"></td>
+            <td ng-if="panel.fields.length<1" bo-text="event|stringify|tableCellTextTruncate:panel.trimFactor:1"></td>
             <td ng-show="panel.fields.length>0" ng-repeat="field in panel.fields">
-              <span ng-if="!panel.localTime || !_.contains(panel.timeFields, field)" bo-html="(event.kibana._source[field]) | prelertjobtableTruncate:panel.trimFactor:panel.fields.length" class="table-field-value"></span>
-              <span ng-if="panel.localTime && _.contains(panel.timeFields, field)" bo-html="(event.kibana._source[field]) | prelertjobtableLocalTime:event.kibana._source[field]" class="table-field-value"></span>
+              <span ng-if="!panel.localTime || !_.contains(panel.timeFields, field)" bo-html="(event.kibana._source[field]) | tableCellTextTruncate:panel.trimFactor:panel.fields.length" class="table-field-value"></span>
+              <span ng-if="panel.localTime && _.contains(panel.timeFields, field)" bo-html="(event.kibana._source[field]) | formatLocalTime:event.kibana._source[field]" class="table-field-value"></span>
             </td>
             <td>
               <a bs-tooltip="'View job results'" ng-click="show_results($event,'{{event.id}}')"><i class="icon-list"></i></a>
@@ -163,8 +163,8 @@
                   <td style="white-space:pre-wrap;word-wrap:break-word" bo-html="value|noXml|urlLink|stringify"></td>
                 </tr>
               </table>
-              <pre style="white-space:pre-wrap;word-wrap:break-word"  bo-html="without_kibana(event)|prelertjobtableJson:2" ng-switch-when="json"></pre>
-              <pre bo-html="without_kibana(event)|prelertjobtableJson:1" ng-switch-when="raw"></pre>
+              <pre style="white-space:pre-wrap;word-wrap:break-word"  bo-html="without_kibana(event)|tableCellObjectJsonFormat:2" ng-switch-when="json"></pre>
+              <pre bo-html="without_kibana(event)|tableCellObjectJsonFormat:1" ng-switch-when="raw"></pre>
             </td>
           </tr>
         </tbody>

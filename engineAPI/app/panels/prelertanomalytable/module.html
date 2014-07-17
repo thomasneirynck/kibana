@@ -157,13 +157,13 @@
               <i class='icon-warning-sign' ng-class="'anomaly-score-' + event.unusualSeverity">&nbsp;</i>
             </td>
             -->
-            <td ng-if="panel.fields.length<1" bo-text="event|stringify|prelertanomalytableTruncate:panel.trimFactor:1"></td>
+            <td ng-if="panel.fields.length<1" bo-text="event|stringify|tableCellTextTruncate:panel.trimFactor:1"></td>
             <td ng-show="panel.fields.length>0" ng-repeat="field in panel.fields">
               
               <i ng-if="field == 'bucketScore'" class='icon-flag' ng-class="'anomaly-score-' + event.severity">&nbsp;</i>
               <i ng-if="field == 'unusualScore'" class='icon-warning-sign' ng-class="'anomaly-score-' + event.unusualSeverity">&nbsp;</i>
-              <span ng-if="!panel.localTime || panel.timeField != field" bo-html="(event[field]) | prelertanomalytableTruncate:panel.trimFactor:panel.fields.length" class="table-field-value"></span>
-              <span ng-if="panel.localTime && panel.timeField == field" bo-html="(event[field]) | prelertanomalytableLocalTime:event[field]" class="table-field-value"></span>
+              <span ng-if="!panel.localTime || panel.timeField != field" bo-html="(event[field]) | tableCellTextTruncate:panel.trimFactor:panel.fields.length" class="table-field-value"></span>
+              <span ng-if="panel.localTime && panel.timeField == field" bo-html="(event[field]) | formatLocalTime:event[field]" class="table-field-value"></span>
               
             </td>
           </tr>
@@ -193,8 +193,8 @@
                   <td style="white-space:pre-wrap;word-wrap:break-word" bo-html="value|noXml|urlLink|stringify"></td>
                 </tr>
               </table>
-              <pre style="white-space:pre-wrap;word-wrap:break-word"  bo-html="without_kibana(event)|prelertanomalytableJson:2" ng-switch-when="json"></pre>
-              <pre bo-html="without_kibana(event)|prelertanomalytableJson:1" ng-switch-when="raw"></pre>
+              <pre style="white-space:pre-wrap;word-wrap:break-word"  bo-html="without_kibana(event)|tableCellObjectJsonFormat:2" ng-switch-when="json"></pre>
+              <pre bo-html="without_kibana(event)|tableCellObjectJsonFormat:1" ng-switch-when="raw"></pre>
             </td>
           </tr>
         </tbody>
