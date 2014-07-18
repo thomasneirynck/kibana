@@ -8,6 +8,7 @@ require.config({
     config:                   '../config',
     settings:                 'components/settings',
     kbn:                      'components/kbn',
+    prelertutil:              'components/prelertutil',
 
     vendor:                   '../vendor',
     css:                      '../vendor/require/css',

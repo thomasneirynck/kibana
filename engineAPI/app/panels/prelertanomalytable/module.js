@@ -45,8 +45,9 @@ define([
   'lodash',
   'kbn',
   'moment',
+  'prelertutil'
 ],
-function (angular, app, _, kbn, moment) {
+function (angular, app, _, kbn, moment, prelertutil) {
   'use strict';
 
   var module = angular.module('prelert.panels.prelertanomalytable', []);
@@ -60,7 +61,7 @@ function (angular, app, _, kbn, moment) {
           description: "Inspect",
           icon: "icon-info-sign",
           partial: "app/partials/inspector.html",
-          show: $scope.panel.spyable
+          show: false
         }
       ],
       editorTabs : [
@@ -340,8 +341,8 @@ function (angular, app, _, kbn, moment) {
                 _source : kbn.flatten_json(_h)
               };
               
-              _h.severity = $scope.get_anomaly_severity(_h.bucketScore);
-              _h.unusualSeverity = $scope.get_anomaly_severity(_h.unusualScore);
+              _h.severity = prelertutil.get_anomaly_severity(_h.bucketScore);
+              _h.unusualSeverity = prelertutil.get_anomaly_severity(_h.unusualScore);
               
               return _h;
             }));
@@ -372,21 +373,6 @@ function (angular, app, _, kbn, moment) {
                    "Please ensure the Engine API is running and configured correctly.");
             console.log('Error loading list of results from the Prelert Engine API: ' + error.message);
         });
-        
-    };
-    
-    $scope.get_anomaly_severity = function(score) {
-        // Returns the severity label for the provided anomaly score.
-        // TODO - separate function for unusual behaviour scores.
-        if (score > 75 ) {
-            return "critical";
-        } else if (score > 50) {
-            return "major";
-        } else if (score > 25) {
-            return "minor";
-        } else {
-            return "warning";
-        }
         
     };
 
@@ -466,7 +452,7 @@ function (angular, app, _, kbn, moment) {
             }
             
             // TODO - enhancement for allowing number of buckets either side of anomaly bucket.
-            var timestamp = source['@timestamp'];
+            var timestamp = source['timestamp'];
             var from = moment(timestamp);
             var to = moment(timestamp).add('seconds', bucketSpan);
             
