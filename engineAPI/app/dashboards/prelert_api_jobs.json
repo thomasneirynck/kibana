@@ -275,7 +275,7 @@
   "index": {
     "interval": "none",
     "pattern": "[logstash-]YYYY.MM.DD",
-    "default": "201*",
+    "default": "_all",
     "warm_fields": false
   },
   "style": "dark",
