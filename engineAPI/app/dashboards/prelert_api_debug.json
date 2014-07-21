@@ -1,20 +1,30 @@
 {
-  "title": "Engine API Results",
+  "title": "Engine API Debug",
   "services": {
     "query": {
       "list": {
         "0": {
-          "query": "*",
+          "query": "_type:bucket",
           "alias": "",
           "color": "#7EB26D",
           "id": 0,
           "pin": false,
           "type": "lucene",
           "enable": true
+        },
+        "1": {
+          "id": 1,
+          "color": "#EAB839",
+          "alias": "",
+          "pin": false,
+          "type": "lucene",
+          "enable": true,
+          "query": "_type:record AND NOT isSimpleCount:true"
         }
       },
       "ids": [
-        0
+        0,
+        1
       ]
     },
     "filter": {
@@ -23,6 +33,27 @@
     }
   },
   "rows": [
+    {
+      "title": "Help Text",
+      "height": "100px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 12,
+          "editable": true,
+          "type": "text",
+          "loadingEditor": false,
+          "mode": "markdown",
+          "content": "- This dashboard shows you the raw anomaly scores (not normalized) of jobs you have run using the Prelert Engine API. \n- Select the ID of a job using the Job ID dropdown control at the top of the dashboard. \n- The chart will show you how the anomaly score varies over time, with peaks significantly higher than others indicating periods of anomalous activities. \n- The table below lists all the anomalies that Prelert has identified in your data. Use sort to view the biggest anomalies.",
+          "style": {},
+          "title": "Debug"
+        }
+      ],
+      "notice": false
+    },
     {
       "title": "Anomaly Score",
       "height": "180px",
@@ -33,10 +64,10 @@
         {
           "span": 12,
           "editable": true,
-          "type": "prelerttimeserieschart",
+          "type": "histogram",
           "loadingEditor": false,
           "mode": "max",
-          "time_field": "timestamp",
+          "time_field": "@timestamp",
           "value_field": "anomalyScore",
           "x-axis": true,
           "y-axis": true,
@@ -47,8 +78,10 @@
             "min": 0
           },
           "queries": {
-            "mode": "all",
-            "ids": []
+            "mode": "selected",
+            "ids": [
+              0
+            ]
           },
           "annotate": {
             "enable": false,
@@ -78,13 +111,13 @@
             "1y"
           ],
           "lines": true,
-          "fill": 1,
+          "fill": 2,
           "linewidth": 3,
           "points": false,
           "pointradius": 5,
           "bars": false,
           "stack": true,
-          "spyable": false,
+          "spyable": true,
           "zoomlinks": true,
           "options": true,
           "legend": true,
@@ -105,92 +138,8 @@
       "notice": false
     },
     {
-      "title": "Unusual Behavior",
-      "height": "200px",
-      "editable": true,
-      "collapse": false,
-      "collapsable": true,
-      "panels": [
-        {
-          "span": 12,
-          "editable": true,
-          "type": "prelertseveritychart",
-          "loadingEditor": false,
-          "mode": "count",
-          "time_field": "timestamp",
-          "value_field": "unusualScore",
-          "x-axis": true,
-          "y-axis": true,
-          "scale": 1,
-          "y_format": "none",
-          "grid": {
-            "max": null,
-            "min": 0
-          },
-          "severities": {
-            "mode": "all",
-            "ids": []
-          },
-          "severity_colors": {
-            "critical": "#ff0000",
-            "major": "#ffb429",
-            "minor": "#ffff00",
-            "warning": "#63b8ff"
-          },
-          "annotate": {
-            "enable": false,
-            "query": "*",
-            "size": 20,
-            "field": "_type",
-            "sort": [
-              "_score",
-              "desc"
-            ]
-          },
-          "auto_int": false,
-          "resolution": 100,
-          "interval": "1h",
-          "intervals": [
-            "auto",
-            "1s",
-            "1m",
-            "5m",
-            "10m",
-            "30m",
-            "1h",
-            "3h",
-            "12h",
-            "1d",
-            "1w",
-            "1y"
-          ],
-          "lines": false,
-          "fill": 0,
-          "linewidth": 3,
-          "points": false,
-          "pointradius": 5,
-          "bars": true,
-          "stack": true,
-          "zoomlinks": true,
-          "options": true,
-          "legend": true,
-          "interactive": true,
-          "legend_counts": true,
-          "timezone": "browser",
-          "percentage": false,
-          "zerofill": true,
-          "tooltip": {
-            "value_type": "cumulative",
-            "query_as_alias": true
-          },
-          "title": "Unusual Behavior"
-        }
-      ],
-      "notice": false
-    },
-    {
       "title": "Anomalies Table",
-      "height": "450px",
+      "height": "150px",
       "editable": true,
       "collapse": false,
       "collapsable": true,
@@ -199,20 +148,19 @@
           "error": false,
           "span": 12,
           "editable": true,
-          "type": "prelertanomalytable",
+          "type": "table",
           "loadingEditor": false,
-          "size": 100,
-          "pages": 5,
+          "size": 50,
+          "pages": 10,
           "offset": 0,
           "sort": [
-            "_score",
+            "anomalyScore",
             "desc"
           ],
           "overflow": "min-height",
           "fields": [
-            "timestamp",
-            "bucketScore",
-            "unusualScore",
+            "@timestamp",
+            "anomalyScore",
             "byFieldName",
             "byFieldValue",
             "function",
@@ -228,45 +176,19 @@
           "all_fields": false,
           "trimFactor": 300,
           "localTime": true,
-          "timeField": "timestamp",
-          "linkShow": true,
-          "simpleLinkIndex": "_all",
-          "linkIndex": {
-            "interval": "day",
-            "pattern": "[logstash-]YYYY.MM.DD",
-            "default": "_all"
-          },
-          "linkTarget": "#/dashboard/script/prelert_logstash_drilldown.js",
+          "timeField": "@timestamp",
+          "spyable": true,
           "queries": {
-            "mode": "all",
-            "ids": []
+            "mode": "selected",
+            "ids": [
+              1
+            ]
           },
           "style": {
             "font-size": "9pt"
           },
           "normTimes": true,
           "title": "Anomalies"
-        }
-      ],
-      "notice": false
-    },
-    {
-      "title": "Help Text",
-      "height": "100px",
-      "editable": true,
-      "collapse": false,
-      "collapsable": true,
-      "panels": [
-        {
-          "error": false,
-          "span": 12,
-          "editable": true,
-          "type": "text",
-          "loadingEditor": false,
-          "mode": "markdown",
-          "content": "- This dashboard shows you the results of jobs you have run using the Prelert Engine API. \n- Select the ID of a job using the Job ID dropdown control at the top of the dashboard. \n- The chart will show you how the anomaly score varies over time, with peaks significantly higher than others indicating periods of anomalous activities. \n- The table below lists all the anomalies that Prelert has identified in your data. Use sort to view the biggest anomalies.",
-          "style": {},
-          "title": "Results"
         }
       ],
       "notice": false
@@ -277,7 +199,7 @@
   "index": {
     "interval": "none",
     "pattern": "[logstash-]YYYY.MM.DD",
-    "default": "20140623113420-00004",
+    "default": "{{ARGS.jobId || '_all'}}",
     "warm_fields": false
   },
   "style": "dark",
@@ -291,23 +213,15 @@
       "query": "*",
       "pinned": true,
       "history": [
-        "*",
-        "severity:\"minor\"",
-        "severity:\"major\"",
-        "severity:\"critical\"",
-        "_type:alert",
-        "severity:\"warning\"",
-        "_type:alert AND severity:\"minor\"",
-        "_type:alert AND severity:\"major\"",
-        "_type:alert AND severity:\"critical\"",
+        "_type:record AND NOT isSimpleCount:true",
         "_type:bucket"
       ],
       "remember": 10
     },
     {
       "type": "filtering",
-      "collapse": true,
-      "notice": false,
+      "collapse": false,
+      "notice": true,
       "enable": true
     }
   ],
@@ -320,7 +234,6 @@
       "status": "Stable",
       "label": "Job ID:",
       "omit_indices": [
-        "_all",
         "kibana-int",
         "prelert-int",
         "prelert-usage"
