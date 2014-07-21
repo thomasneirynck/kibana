@@ -149,11 +149,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
        */
       linkShow  : true,
       /** @scratch /panels/prelertanomalytabletable/1
-       * linkShow:: Set to false to hide the link to a dashboard for displaying the raw data which has been analyzed for anomalies.
-       */
-      simpleLinkIndex  : '_all',
-      /** @scratch /panels/prelertanomalytabletable/1
-       * linkShow:: Set to false to hide the link to a dashboard for displaying the raw data which has been analyzed for anomalies.
+       * linkIndex:: Controls the index that is set in the target dashboard when drilling down to the raw data from an anomaly.
        */
       linkIndex: {
           interval: 'day',
@@ -442,7 +438,6 @@ function (angular, app, _, kbn, moment, prelertutil) {
             
             var params = {};
             
-            // TODO - Default to logstash date pattern.
             if ($scope.panel.linkIndex.interval == 'none') {
                 params.index = $scope.panel.linkIndex.default;
             }
