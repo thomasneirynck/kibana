@@ -83,9 +83,12 @@ function (Settings) {
       'terms',
       'stats',
       'sparklines',
-      // Addition of Prelert panel modules for anomaly dashboard.
+      // Addition of Prelert panel modules for use in anomaly dashboards.
+      'prelertanomalytable',
       'prelertindexpicker',
-      'prelertjobtable'
+      'prelertjobtable',
+      'prelertseveritychart',
+      'prelerttimeserieschart'
     ]
   });
 });

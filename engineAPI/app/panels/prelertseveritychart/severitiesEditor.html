@@ -1,0 +1,26 @@
+<h4>Charted severities</h4>
+
+<div class="row-fluid">
+  <style>
+    .severitySelect .query {
+      margin-right: 5px;
+    }
+    .severitySelect .selected {
+      border: 3px solid;
+    }
+    .severitySelect .unselected {
+      border: 0px solid;
+    }
+  </style>
+  <div class="span2" style="margin-left:0px">
+    <label class="small">Show:</label>
+    <select class="input-medium" ng-change="set_refresh(true);" ng-model="panel.severities.mode" ng-options="f for f in ['all','selected']"></select>
+  </div>
+  <div class="span9 severitySelect" ng-show="panel.severities.mode == 'selected'">
+    <label class="small">Selected severities</label>
+    <span ng-style="{'border-color': color}" ng-class="{selected:_.contains(panel.severities.ids,severity),unselected:!_.contains(panel.severities.ids,severity)}" ng-repeat="(severity,color) in panel.severity_colors" ng-click="panel.severities.ids = _.toggleInOut(panel.severities.ids,severity);set_refresh(true);" class="query pointer badge">
+      <i class="icon-circle" ng-style="{color: color}"></i>
+      <span> {{severity}}</span>
+    </span>
+  </div>
+</div>
