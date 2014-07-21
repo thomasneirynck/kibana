@@ -277,7 +277,7 @@
   "index": {
     "interval": "none",
     "pattern": "[logstash-]YYYY.MM.DD",
-    "default": "20140623113420-00004",
+    "default": "{{ARGS.jobId || '_all'}}",
     "warm_fields": false
   },
   "style": "dark",
