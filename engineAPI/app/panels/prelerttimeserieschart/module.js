@@ -68,23 +68,18 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
           description: "Inspect",
           icon: "icon-info-sign",
           partial: "app/partials/inspector.html",
-          show: $scope.panel.spyable
+          show: false
         }
       ],
       editorTabs : [
         {
           title:'Style',
           src:'app/panels/prelerttimeserieschart/styleEditor.html'
-        },
-        {
-          title:'Queries',
-          src:'app/panels/prelerttimeserieschart/queriesEditor.html'
-        },
+        }
       ],
       status  : "Stable",
-      description : "A bucketed time series chart of the current query or queries. Uses the "+
-        "Elasticsearch date_histogram facet. If using time stamped indices this panel will query"+
-        " them sequentially to attempt to apply the lighest possible load to your Elasticsearch cluster"
+      description : "A bucketed time series chart of anomaly score data obtained via the Prelert " +
+              "Anomaly Detective Engine API. It includes various options for configuring how the data is plotted."
     };
 
     // Set and populate defaults
@@ -129,17 +124,6 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
       grid          : {
         max: null,
         min: 0
-      },
-      /** @scratch /panels/prelerttimeserieschart/1
-       *
-       * ==== Queries
-       * queries object:: This object describes the queries to use on this panel.
-       * queries.mode::: Of the queries available, which to use. Options: +all, pinned, unpinned, selected+
-       * queries.ids::: In +selected+ mode, which query ids are selected.
-       */
-      queries     : {
-        mode        : 'all',
-        ids         : []
       },
       /** @scratch /panels/prelerttimeserieschart/1
        *
@@ -206,10 +190,6 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
        */
       stack         : true,
       /** @scratch /panels/prelerttimeserieschart/1
-       * spyable:: Show inspect icon
-       */
-      spyable       : true,
-      /** @scratch /panels/prelerttimeserieschart/1
        * zoomlinks:: Show `Zoom Out' link
        */
       zoomlinks     : true,
@@ -221,10 +201,6 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
        * legend:: Display the legond
        */
       legend        : true,
-      /** @scratch /panels/prelerttimeserieschart/1
-       * show_query:: If no alias is set, should the query be displayed?
-       */
-      show_query    : true,
       /** @scratch /panels/prelerttimeserieschart/1
        * interactive:: Enable click-and-drag to zoom functionality
        */
