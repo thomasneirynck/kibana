@@ -277,33 +277,12 @@
   "index": {
     "interval": "none",
     "pattern": "[logstash-]YYYY.MM.DD",
-    "default": "{{ARGS.jobId || '_all'}}",
+    "default": "{{ARGS.jobId || null}}",
     "warm_fields": false
   },
   "style": "dark",
   "panel_hints": true,
   "pulldowns": [
-    {
-      "type": "query",
-      "collapse": true,
-      "notice": false,
-      "enable": true,
-      "query": "*",
-      "pinned": true,
-      "history": [
-        "*",
-        "severity:\"minor\"",
-        "severity:\"major\"",
-        "severity:\"critical\"",
-        "_type:alert",
-        "severity:\"warning\"",
-        "_type:alert AND severity:\"minor\"",
-        "_type:alert AND severity:\"major\"",
-        "_type:alert AND severity:\"critical\"",
-        "_type:bucket"
-      ],
-      "remember": 10
-    },
     {
       "type": "filtering",
       "collapse": true,
@@ -313,18 +292,13 @@
   ],
   "nav": [
     {
-      "type": "prelertindexpicker",
+      "type": "prelertjobpicker",
       "collapse": false,
       "notice": false,
       "enable": true,
       "status": "Stable",
       "label": "Job ID:",
-      "omit_indices": [
-        "_all",
-        "kibana-int",
-        "prelert-int",
-        "prelert-usage"
-      ]
+      "maxJobs": 100
     },
     {
       "type": "timepicker",

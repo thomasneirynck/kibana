@@ -1,0 +1,59 @@
+<!-- 
+/*
+ ************************************************************
+ *                                                          *
+ * Contents of file Copyright (c) Prelert Ltd 2006-2014     *
+ *                                                          *
+ *----------------------------------------------------------*
+ *----------------------------------------------------------*
+ * WARNING:                                                 *
+ * THIS FILE CONTAINS UNPUBLISHED PROPRIETARY               *
+ * SOURCE CODE WHICH IS THE PROPERTY OF PRELERT LTD AND     *
+ * PARENT OR SUBSIDIARY COMPANIES.                          *
+ * PLEASE READ THE FOLLOWING AND TAKE CAREFUL NOTE:         *
+ *                                                          *
+ * This source code is confidential and any person who      *
+ * receives a copy of it, or believes that they are viewing *
+ * it without permission is asked to notify Prelert Ltd     *
+ * on +44 (0)20 7953 7243 or email to legal@prelert.com.    *
+ * All intellectual property rights in this source code     *
+ * are owned by Prelert Ltd.  No part of this source code   *
+ * may be reproduced, adapted or transmitted in any form or *
+ * by any means, electronic, mechanical, photocopying,      *
+ * recording or otherwise.                                  *
+ *                                                          *
+ *----------------------------------------------------------*
+ *                                                          *
+ *                                                          *
+ ************************************************************
+ */
+ -->
+
+<div ng-controller='prelertjobpicker' ng-init="init()">
+
+  <form name="input" style="margin:3px 0 0 0">
+    <ul class="nav nav-pills timepicker-dropdown">
+
+      <li class="dropdown">
+
+        <a class="dropdown-toggle timepicker-dropdown" data-toggle="dropdown" href="" bs-tooltip="'Click to select the job ID'" data-placement="bottom" ng-click="dismiss();">
+
+          <span ng-hide="dashboard.current.index.default">Select job</span>
+          <span ng-show="dashboard.current.index.default">{{panel.label}} {{dashboard.current.index.default}}</span>
+          <i class="icon-caret-down"></i>
+        </a>
+
+        <ul class="dropdown-menu">
+          <!-- Lists all the job IDs -->
+          <li ng-repeat='jobId in job_ids'>
+            <a ng-click="setJobId(jobId)">{{jobId}}</a>
+          </li>
+        </ul>
+
+      </li>
+      
+    </ul>
+
+  </form>
+</div>
+

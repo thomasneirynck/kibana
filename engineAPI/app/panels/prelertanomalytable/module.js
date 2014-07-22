@@ -258,21 +258,6 @@ function (angular, app, _, kbn, moment, prelertutil) {
       $scope.get_data();
     };
 
-    $scope.build_search = function(field,value,negate) {
-      var query;
-      // This needs to be abstracted somewhere
-      if(_.isArray(value)) {
-        query = "(" + _.map(value,function(v){return angular.toJson(v);}).join(" AND ") + ")";
-      } else if (_.isUndefined(value)) {
-        query = '*';
-        negate = !negate;
-      } else {
-        query = angular.toJson(value);
-      }
-      $scope.panel.offset = 0;
-      filterSrv.set({type:'field',field:field,query:query,mandate:(negate ? 'mustNot':'must')});
-    };
-
     $scope.fieldExists = function(field,mandate) {
       filterSrv.set({type:'exists',field:field,mandate:mandate});
     };
@@ -287,14 +272,11 @@ function (angular, app, _, kbn, moment, prelertutil) {
         $scope.data = [];
         $scope.current_fields = [];
         
-        // Make sure we have everything for the request to complete
-        // TODO - check if a job is selected. If not, return.
-        //if(dashboard.indices.length === 0) {
-        //  return;
-        //}
-        
-        // TODO - add Job Picker control to nav, and get jobId from that.
+        // If no index (i.e. job ID) is set, then return. 
         var jobId = $scope.dashboard.current.index.default;
+        if (_.isUndefined(jobId) || _.isEmpty(jobId)) {
+            return;
+        }
 
         // Get the list of jobs from the Prelert Engine API.
         // Paging behaviour is consistent with Kibana where it gets size*pages records 
@@ -322,6 +304,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
         .success(function(results) {
             console.log("prelertanomalytable records returned by service:");
             console.log(results);
+            
             $scope.panelMeta.loading = false;
             
             // This is exceptionally expensive, especially on events with a large number of fields

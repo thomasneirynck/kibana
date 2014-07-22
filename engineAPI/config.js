@@ -85,7 +85,6 @@ function (Settings) {
       'sparklines',
       // Addition of Prelert panel modules for use in anomaly dashboards.
       'prelertanomalytable',
-      'prelertindexpicker',
       'prelertjobtable',
       'prelertseveritychart',
       'prelerttimeserieschart'

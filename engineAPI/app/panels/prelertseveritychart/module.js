@@ -315,11 +315,12 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
         
       delete $scope.panel.error;
 
-      // Make sure we have everything for the request to complete
-      // TODO - check if a job is selected. If not, return.
-      //if(dashboard.indices.length === 0) {
-      //  return;
-      //}
+      // If no index (i.e. job ID) is set, then return. 
+      var jobId = $scope.dashboard.current.index.default;
+      if (_.isUndefined(jobId) || _.isEmpty(jobId)) {
+          return;
+      }
+      
       var _range = $scope.get_time_range();
       var _interval = $scope.get_interval(_range);
 
@@ -353,9 +354,6 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
       var data = [];
       $scope.annotations = [];
 
-      
-      // TODO - add Job Picker control to nav, and get jobId from that.
-      var jobId = $scope.dashboard.current.index.default;
 
       // Get the anomalies from the Engine API Records service.
       // TODO - able to remove hard-coded take=1000?
