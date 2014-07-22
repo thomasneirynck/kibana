@@ -307,11 +307,12 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
         
       delete $scope.panel.error;
 
-      // Make sure we have everything for the request to complete
-      // TODO - check if a job is selected. If not, return.
-      //if(dashboard.indices.length === 0) {
-      //  return;
-      //}
+      // If no index (i.e. job ID) is set, then return. 
+      var jobId = $scope.dashboard.current.index.default;
+      if (_.isUndefined(jobId) || _.isEmpty(jobId)) {
+          return;
+      }
+      
       var _range = $scope.get_time_range();
       var _interval = $scope.get_interval(_range);
 
@@ -327,12 +328,9 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
       var data = [];
       $scope.annotations = [];
 
-      
-      // TODO - add Job Picker control to nav, and get jobId from that.
-      var jobId = $scope.dashboard.current.index.default;
 
       // Get the anomalies from the Engine API Results service.
-      // Remove hard-coded take=1000.
+      // TODO - remove hard-coded take=500.
       // TODO - pass in any filter.
       // TODO - add a severity slider?
       // TODO - result granularity.
@@ -569,9 +567,9 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
                 mode: "time",
                 min: _.isUndefined(scope.range.from) ? null : scope.range.from.getTime(),
                 max: _.isUndefined(scope.range.to) ? null : scope.range.to.getTime(),
-                timeformat: time_format(scope.panel.interval),
+                timeformat: "%H:%M<br>%Y-%m-%d",
                 label: "Datetime",
-                ticks: elem.width()/100
+                ticks: elem.width()/120
               },
               grid: {
                 backgroundColor: null,
@@ -650,21 +648,6 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
           } catch(e) {
             // Nothing to do here
           }
-        }
-
-        function time_format(interval) {
-          var _int = kbn.interval_to_seconds(interval);
-          if(_int >= 2628000) {
-            return "%Y-%m";
-          }
-          if(_int >= 86400) {
-            return "%Y-%m-%d";
-          }
-          if(_int >= 60) {
-            return "%H:%M<br>%m-%d";
-          }
-
-          return "%H:%M:%S";
         }
 
         var $tooltip = $('<div>');
