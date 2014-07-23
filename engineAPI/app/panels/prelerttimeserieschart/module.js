@@ -330,12 +330,12 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
 
 
       // Get the anomalies from the Engine API Results service.
-      // TODO - remove hard-coded take=500.
+      // TODO - remove hard-coded take=2000 - need charting endpoint.
       // TODO - pass in any filter.
       // TODO - add a severity slider?
       // TODO - result granularity.
       var params = {
-              take: 500
+              take: 2000
       };
       
       // Check for a time filter. If present, add the last filter in the zoom 'chain'.
