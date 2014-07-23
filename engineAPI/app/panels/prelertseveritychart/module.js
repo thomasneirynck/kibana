@@ -356,10 +356,11 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
 
 
       // Get the anomalies from the Engine API Records service.
-      // TODO - able to remove hard-coded take=1000?
+      // TODO - able to remove hard-coded take=5000?
       // TODO - add a severity slider?
       var params = {
-              take: 1000
+              take: 5000,
+              norm: 'u'
       };
       
       // Check for a time filter. If present, add the last filter in the zoom 'chain'.
