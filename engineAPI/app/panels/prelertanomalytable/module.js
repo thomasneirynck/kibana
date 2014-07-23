@@ -106,7 +106,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
       /** @scratch /panels/prelertanomalytable/1
        * fields:: the fields used a columns of the table, in an array.
        */
-      fields  : [],
+      fields  : ['timestamp','anomalyScore','unusualScore','byFieldName','byFieldValue','function','fieldName','typical','actual'],
       /** @scratch /panels/prelertanomalytable/1
        * sortable:: Set sortable to false to disable sorting
        */
@@ -320,7 +320,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
                 _source : kbn.flatten_json(_h)
               };
               
-              _h.severity = prelertutil.get_anomaly_severity(_h.bucketScore);
+              _h.severity = prelertutil.get_anomaly_severity(_h.anomalyScore);
               _h.unusualSeverity = prelertutil.get_anomaly_severity(_h.unusualScore);
               
               return _h;

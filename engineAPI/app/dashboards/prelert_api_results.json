@@ -128,8 +128,12 @@
             "min": 0
           },
           "severities": {
-            "mode": "all",
-            "ids": []
+            "mode": "selected",
+            "ids": [
+              "critical",
+              "major",
+              "minor"
+            ]
           },
           "severity_colors": {
             "critical": "#ff0000",
@@ -205,13 +209,13 @@
           "pages": 5,
           "offset": 0,
           "sort": [
-            "_score",
+            "unusualScore",
             "desc"
           ],
           "overflow": "min-height",
           "fields": [
             "timestamp",
-            "bucketScore",
+            "anomalyScore",
             "unusualScore",
             "byFieldName",
             "byFieldValue",
@@ -220,7 +224,6 @@
             "typical",
             "actual"
           ],
-          "highlight": [],
           "sortable": true,
           "header": true,
           "paging": true,
@@ -230,17 +233,12 @@
           "localTime": true,
           "timeField": "timestamp",
           "linkShow": true,
-          "simpleLinkIndex": "_all",
           "linkIndex": {
             "interval": "day",
             "pattern": "[logstash-]YYYY.MM.DD",
             "default": "_all"
           },
           "linkTarget": "#/dashboard/script/prelert_logstash_drilldown.js",
-          "queries": {
-            "mode": "all",
-            "ids": []
-          },
           "style": {
             "font-size": "9pt"
           },
