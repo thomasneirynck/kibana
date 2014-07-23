@@ -48,20 +48,29 @@
       white-space: pre-wrap;
     }
     
-    .anomaly-score-critical {
+    .anomaly-score-critical,
+    .unusual-score-critical {
       color: #ff0000;
     }
     
-    .anomaly-score-major {
+    .anomaly-score-major,
+    .unusual-score-major {
       color: #ffb429;
     }
     
-    .anomaly-score-minor {
+    .anomaly-score-minor,
+    .unusual-score-minor {
       color: #ffff00;
     }
     
     .anomaly-score-warning {
       color: #63b8ff;
+    }
+    
+    .anomaly-score-none,
+    .unusual-score-none,
+    .unusual-score-warning {
+      visibility: hidden;
     }
     
     
@@ -154,7 +163,7 @@
             <td ng-show="panel.fields.length>0" ng-repeat="field in panel.fields">
               
               <i ng-if="field == 'anomalyScore'" class='icon-flag' ng-class="'anomaly-score-' + event.severity">&nbsp;</i>
-              <i ng-if="field == 'unusualScore'" class='icon-warning-sign' ng-class="'anomaly-score-' + event.unusualSeverity">&nbsp;</i>
+              <i ng-if="field == 'unusualScore'" class='icon-warning-sign' ng-class="'unusual-score-' + event.unusualSeverity">&nbsp;</i>
               <span ng-if="!panel.localTime || panel.timeField != field" bo-html="(event[field]) | tableCellTextTruncate:panel.trimFactor:panel.fields.length" class="table-field-value"></span>
               <span ng-if="panel.localTime && panel.timeField == field" bo-html="(event[field]) | formatLocalTime:event[field]" class="table-field-value"></span>
               

@@ -320,6 +320,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
                 _source : kbn.flatten_json(_h)
               };
               
+              // Store the severity labels for the bucket and unusual scores.
               _h.severity = prelertutil.get_anomaly_severity(_h.anomalyScore);
               _h.unusualSeverity = prelertutil.get_anomaly_severity(_h.unusualScore);
               
