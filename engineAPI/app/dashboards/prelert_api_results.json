@@ -96,8 +96,7 @@
           "zerofill": true,
           "derivative": false,
           "tooltip": {
-            "value_type": "cumulative",
-            "query_as_alias": true
+            "value_type": "cumulative"
           },
           "title": "Anomaly Score"
         }
@@ -184,8 +183,7 @@
           "percentage": false,
           "zerofill": true,
           "tooltip": {
-            "value_type": "cumulative",
-            "query_as_alias": true
+            "value_type": "cumulative"
           },
           "title": "Unusual Behavior"
         }
@@ -228,7 +226,6 @@
           "header": true,
           "paging": true,
           "field_list": true,
-          "all_fields": false,
           "trimFactor": 300,
           "localTime": true,
           "timeField": "timestamp",

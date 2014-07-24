@@ -84,10 +84,7 @@
         <strong>Fields <i class=" icon-chevron-sign-left pointer " ng-click="panel.field_list = !panel.field_list" bs-tooltip="'Hide field list'"></i></strong><p>
 
         <div class="small">
-          <span class="link small" ng-click="panel.all_fields = true;" ng-if="fields.list.length" ng-class="{strong:panel.all_fields}">
-            All ({{fields.list.length}})</span> /
-          <span class="link small" ng-click="panel.all_fields = false;" ng-class="{strong:!panel.all_fields}">
-            Current ({{current_fields.length || 0}})</span>
+          <span class="small strong">Current ({{current_fields.length || 0}})</span>
         </div>
 
         <div><input type="text" class="input-medium" placeholder="Type to filter..." ng-model="fieldFilter">

@@ -54,7 +54,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
   app.useModule(module);
 
   module.controller('prelertanomalytable', function($rootScope, $scope, $modal, $q, $compile, $timeout,
-    fields, querySrv, dashboard, filterSrv) {
+     querySrv, dashboard, filterSrv) {
     $scope.panelMeta = {
       modals : [
         {
@@ -125,11 +125,6 @@ function (angular, app, _, kbn, moment, prelertutil) {
        */
       field_list: true,
       /** @scratch /panels/prelertanomalytable/1
-       * all_fields:: Set to true to show all fields in the mapping, not just the current fields in
-       * the table.
-       */
-      all_fields: false,
-      /** @scratch /panels/prelertanomalytable/1
        * trimFactor:: The trim factor is the length at which to truncate fields takinging into
        * consideration the number of columns in the table. For example, a trimFactor of 100, with 5
        * columns in the table, would trim each column at 20 character. The entirety of the field is
@@ -175,7 +170,6 @@ function (angular, app, _, kbn, moment, prelertutil) {
       $scope.identity = angular.identity;
       $scope.$on('refresh',function(){$scope.get_data();});
 
-      $scope.fields = fields;
       $scope.get_data();
     };
 
