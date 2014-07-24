@@ -231,11 +231,9 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
       /** @scratch /panels/prelerttimeserieschart/1
        * tooltip object::
        * tooltip.value_type::: Individual or cumulative controls how tooltips are display on stacked charts
-       * tooltip.query_as_alias::: If no alias is set, should the query be displayed?
        */
       tooltip       : {
-        value_type: 'cumulative',
-        query_as_alias: true
+        value_type: 'cumulative'
       }
     };
 
@@ -249,10 +247,6 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
     $scope.init = function() {
       // Hide view options by default
       $scope.options = false;
-
-      // Always show the query if an alias isn't set. Users can set an alias if the query is too
-      // long
-      $scope.panel.tooltip.query_as_alias = true;
 
       $scope.get_data();
 
@@ -387,7 +381,8 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
                   time_series: time_series,
                   hits : results.hitCount,
                   counters : {},
-                  info : {color: querySrv.colors[0]}
+                  info : {color: querySrv.colors[0],
+                          label: jobId}
                 };
           // Use the jobId as the legend text.
           $scope.legend[0] = {label:jobId,hits:results.hitCount,color:querySrv.colors[0]};
@@ -514,10 +509,10 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
             elem.css({height:scope.row.height});
           } catch(e) {return;}
 
-          // Populate from the query service
+          // Set the label and color for each series.
           try {
             _.each(data, function(series) {
-              series.label = series.info.alias;
+              series.label = series.info.label;
               series.color = series.info.color;
             });
           } catch(e) {return;}
@@ -652,20 +647,17 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
 
         var $tooltip = $('<div>');
         elem.bind("plothover", function (event, pos, item) {
-          var group, value, timestamp, interval;
-          interval = " per " + (scope.panel.scaleSeconds ? '1s' : scope.panel.interval);
-          if (item) {
-            if (item.series.info.alias || scope.panel.tooltip.query_as_alias) {
-              group = '<small style="font-size:0.9em;">' +
-                '<i class="icon-circle" style="color:'+item.series.color+';"></i>' + ' ' +
-                (item.series.info.alias || item.series.info.query)+
-              '</small><br>';
-            } else {
-              group = kbn.query_color_dot(item.series.color, 15) + ' ';
-            }
+          var seriesId, value, timestamp;
+
+          if (item) {  
+            seriesId = '<small style="font-size:0.9em;">' +
+              '<i class="icon-circle" style="color:'+item.series.color+';"></i> ' + 
+              item.series.label + '</small><br>';
+
             value = (scope.panel.stack && scope.panel.tooltip.value_type === 'individual') ?
               item.datapoint[1] - item.datapoint[2] :
               item.datapoint[1];
+              
             if(scope.panel.y_format === 'bytes') {
               value = kbn.byteFormat(value,2);
             }
@@ -679,7 +671,7 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
               moment.utc(item.datapoint[0]).format('YYYY-MM-DD HH:mm:ss');
             $tooltip
               .html(
-                group + value + interval + " @ " + timestamp
+                seriesId + scope.panel.value_field + ': ' + value + " @ " + timestamp
               )
               .place_tt(pos.pageX, pos.pageY);
           } else {
