@@ -168,7 +168,9 @@ function (angular, app, _, kbn, moment, prelertutil) {
 
       $scope.Math = Math;
       $scope.identity = angular.identity;
-      $scope.$on('refresh',function(){$scope.get_data();});
+      $scope.$on('refresh',function(){
+        $scope.get_data();
+      });
 
       $scope.get_data();
     };
@@ -257,7 +259,6 @@ function (angular, app, _, kbn, moment, prelertutil) {
     };
 
     $scope.get_data = function() {
-
         $scope.panel.error =  false;
         $scope.panelMeta.loading = true;
         

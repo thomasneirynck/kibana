@@ -421,7 +421,8 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
           }
     
           if(factor > 1) {
-            filterSrv.removeByType('time');
+            // Pass 'true' as noRefresh, as dashboard will be refreshed when time filter is set below.
+            filterSrv.removeByType('time', true);
           }
           filterSrv.set({
             type:'time',
