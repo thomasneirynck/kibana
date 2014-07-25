@@ -283,10 +283,9 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
     };
 
     $scope.get_interval = function () {
-      var interval = $scope.panel.interval,
-                      range;
+      var interval = $scope.panel.interval;
       if ($scope.panel.auto_int) {
-        range = $scope.get_time_range();
+        var range = $scope.range;
         if (range) {
           interval = kbn.secondsToHms(
             kbn.calculate_interval(range.from, range.to, $scope.panel.resolution, 0) / 1000
@@ -298,12 +297,9 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
     };
 
     /**
-     * Fetch the results for the current job.
-     *
-     * The results of this function are stored on the scope's data property. This property will be an
-     * array of objects with the properties info, time_series, and hits. These objects are used in the
-     * render_panel function to create the historgram.
-     *
+     * Fetch all the data for the current job. Before obtaining the anomaly data from the 
+     * engine API, the function checks if a range has been set on the chart, and if not
+     * sets the range to between the times of the first and last buckets for the job.
      */
     $scope.get_data = function() {
         
@@ -315,145 +311,209 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
           return;
       }
       
+      // No range set (e.g. by using the time picker, or having zoomed in),
+      // so set the range to the times of the first and last buckets.
       var _range = $scope.get_time_range();
-      var _interval = $scope.get_interval(_range);
-
-      // TODO - find out why the 'Auto' option is causing an error.
-      if ($scope.panel.auto_int) {
+      if (!_range) {
           
-          if (_range) {
-              $scope.panel.interval = kbn.secondsToHms(
-                      kbn.calculate_interval(_range.from,_range.to,$scope.panel.resolution,0)/1000);
-                    console.log("_range:");
-                    console.log(_range);
-                    console.log("calculate_interval: " + kbn.calculate_interval(_range.from,_range.to,$scope.panel.resolution,0));
-                    console.log("auto_int, $scope.panel.interval: " + $scope.panel.interval);
-          }
-          else {
-              // Default to hourly intervals (rather than kbn.calculate_interval() default of 1 year).
-              $scope.panel.interval = '1h';
-          }
-          _interval = $scope.panel.interval;
+          $scope.range = {
+                  from: moment().subtract('h', 1).toDate(),
+                  to: moment().toDate(),
+                };
+
+          var request = $scope.ejs.Request({
+              'indices': jobId,
+              'types':'bucket'
+          });
+          var earliestQuery = request.query(
+                  $scope.ejs.MatchAllQuery())
+                  .fields('_source')
+                  .sort('id', 'asc')
+                  .size(1);
+          
+          earliestQuery.doSearch().then(function(results) {
+             var firstBucket = _.first(results.hits.hits);
+             var earliestDate = new Date(parseInt(firstBucket._id)*1000);
+             $scope.range.from = earliestDate;
+             
+             var latestRequest = $scope.ejs.Request({
+                 'indices': jobId,
+                 'types':'bucket'
+             });
+             
+             latestRequest = latestRequest.query(
+                     $scope.ejs.MatchAllQuery())
+                     .fields('_source')
+                     .sort('id', 'desc')
+                     .size(1);
+             
+             latestRequest.doSearch().then(function(results) {
+                var lastBucket = _.first(results.hits.hits);
+                var latestDate = new Date(parseInt(lastBucket._id)*1000);
+                if (latestDate.getTime() != $scope.range.from.getTime()) {
+                    $scope.range.to = latestDate;
+                } else {
+                    // Only one bucket - display one extra hour.
+                    $scope.range.to = new Date((parseInt(lastBucket._id)+3600)*1000);
+                }
+                
+                $scope.get_anomaly_data();
+             });
+             
+          });
+          
       }
-      
-      // Need the interval between points configured on the panel (in ms).
-      // This will be used for creating the bar chart buckets.
-      var intervalMs = kbn.interval_to_seconds($scope.panel.interval) * 1000;
-      console.log("prelertseveritychart interval in secs: " + intervalMs/1000);
-
-      $scope.panelMeta.loading = true;
-      
-      $scope.legend = [];
-      $scope.hits = 0;
-      var data = [];
-      $scope.annotations = [];
-
-
-      // Get the anomalies from the Engine API Records service.
-      // TODO - able to remove hard-coded take=5000?
-      // TODO - add a severity slider?
-      var params = {
-              take: 5000,
-              norm: 'u'
-      };
-      
-      // Check for a time filter. If present, add the last filter in the zoom 'chain'.
-      var timeFilters = filterSrv.getByType('time', false);
-      var numKeys = _.keys(timeFilters).length;
-      if (numKeys > 0) {
-          var timeFilter = timeFilters[(numKeys-1)];
-          
-          var from = kbn.parseDate(timeFilter.from);
-          var to = kbn.parseDate(timeFilter.to);
-          
-          // Default moment.js format() is ISO8601.
-          params.start = moment(from).format();
-          params.end = moment(to).format();
-      } 
-      
-      $scope.prelertjs.RecordsService.getRecords(jobId, params)
-      .success(function(results) {
-          console.log("prelertseveritychart records returned by service:");
-          console.log(results);
-          
-          $scope.panelMeta.loading = false;
-          
-          $scope.hits = results.hitCount;
-          
-          // Create a series for each severity being displayed.
-          var severitySets = _.groupBy(results.documents, function(anomaly){ 
-              return prelertutil.get_anomaly_severity(anomaly[$scope.panel.value_field]); 
-          });
-          console.log("severitySets:");
-          console.log(severitySets);
-          
-          var severityKeys;
-          if ($scope.panel.severities.mode == 'all') {
-              severityKeys = _.keys($scope.panel.severity_colors);
-          }
-          else {
-              severityKeys = $scope.panel.severities.ids;
-          }
-              
-          _.each(severityKeys, function(severity, setIndex){
-              
-              var records = severitySets[severity];
-              var counters = {};
-
-              var tsOpts = {
-                      interval: _interval,
-                      start_date: _range && _range.from,
-                      end_date: _range && _range.to,
-                      fill_style: $scope.panel.zerofill ? 'minimal' : 'no'
-                    };
-              var time_series = new timeSeries.ZeroFilled(tsOpts);
-       
-              _.each(records, function(anomaly){
-                  var bucketTime = moment(anomaly[$scope.panel.time_field]).valueOf(); // In ms.
-                  
-                  // Get the time of the data point, flooring the time of the bucket to the appropriate interval.
-                  var roundedTime = (moment(Math.floor(bucketTime / intervalMs) * intervalMs)).valueOf(); // In ms.
-                  
-                  counters[roundedTime] = (counters[roundedTime] || 0) + 1; // Would give total counts for critical, major etc.
-                  
-                  var value = (time_series._data[roundedTime] || 0) + 1;
-
-                  // Only plotting single metric value returned from endpoint -
-                  // not getting min, max, mean, count, total as Elasticsearch date histogram facet returns. 
-                  //time_series.addValue(bucketTime*1000, anomaly[$scope.panel.value_field]);
-                  time_series.addValue(roundedTime, value);
-
-              });
-
-              data[setIndex] = {
-                      time_series: time_series,
-                      hits : results.hitCount,
-                      counters : {},
-                      info : {color: $scope.panel.severity_colors[severity],
-                              label: severity}
-                    };   
-              
-              var numHits = 0;
-              if (records) {
-                  numHits = records.length;
-              }
-              $scope.legend[setIndex] = {label:severity,hits:numHits,color:$scope.panel.severity_colors[severity]};
-              
-          });
-          
-
-          // Tell the histogram directive to render.
-          $scope.$emit('render', data);
-          
-      })
-      .error(function (error) {
-          $scope.panelMeta.loading = false;
-          $scope.panel.error = $scope.parse_error("Error obtaining results from the Prelert Engine API." +
-                 "Please ensure the Engine API is running and configured correctly.");
-          console.log('Error loading list of results from the Prelert Engine API: ' + error.message);
-      });
-
+      else {
+          $scope.get_anomaly_data();
+      }
     };
+    
+    /**
+     * Fetch the anomaly data from the Prelert Engine API for the current job.
+     * The results from the API are used to create a series for each severity (critical, major,
+     * minor, warning). The data for each series is an object with the properties info, time_series, 
+     * and hits. These objects are used in the render_panel function to create the time series chart.
+     */
+    $scope.get_anomaly_data = function() {
+
+        // If no index (i.e. job ID) is set, then return. 
+        var jobId = $scope.dashboard.current.index.default;
+        if (_.isUndefined(jobId) || _.isEmpty(jobId)) {
+            return;
+        }
+        
+        var _range = $scope.range;
+        var _interval = $scope.get_interval();
+
+        // TODO - find out why the 'Auto' option is causing an error.
+        if ($scope.panel.auto_int) {
+            
+            if (_range) {
+                $scope.panel.interval = kbn.secondsToHms(
+                        kbn.calculate_interval(_range.from,_range.to,$scope.panel.resolution,0)/1000);
+            }
+            else {
+                // Default to hourly intervals (rather than kbn.calculate_interval() default of 1 year).
+                $scope.panel.interval = '1h';
+            }
+            _interval = $scope.panel.interval;
+        }
+        
+        // Need the interval between points configured on the panel (in ms).
+        // This will be used for creating the bar chart buckets.
+        var intervalMs = kbn.interval_to_seconds($scope.panel.interval) * 1000;
+
+        $scope.panelMeta.loading = true;
+        
+        $scope.legend = [];
+        $scope.hits = 0;
+        var data = [];
+        $scope.annotations = [];
+
+
+        // Get the anomalies from the Engine API Records service.
+        // TODO - able to remove hard-coded take=20000?
+        // TODO - add a severity slider?
+        var params = {
+                take: 20000,
+                norm: 'u'
+        };
+        
+        // Check for a time filter. If present, add the last filter in the zoom 'chain'.
+        var timeFilters = filterSrv.getByType('time', false);
+        var numKeys = _.keys(timeFilters).length;
+        if (numKeys > 0) {
+            var timeFilter = timeFilters[(numKeys-1)];
+            
+            var from = kbn.parseDate(timeFilter.from);
+            var to = kbn.parseDate(timeFilter.to);
+            
+            // Default moment.js format() is ISO8601.
+            params.start = moment(from).format();
+            params.end = moment(to).format();
+        } 
+        
+        
+        $scope.prelertjs.RecordsService.getRecords(jobId, params)
+        .success(function(results) {
+            console.log("prelertseveritychart records returned by service:");
+            console.log(results);
+            
+            $scope.panelMeta.loading = false;
+            
+            $scope.hits = results.hitCount;
+            
+            // Create a series for each severity being displayed.
+            var severitySets = _.groupBy(results.documents, function(anomaly){ 
+                return prelertutil.get_anomaly_severity(anomaly[$scope.panel.value_field]); 
+            });
+            
+            var severityKeys;
+            if ($scope.panel.severities.mode == 'all') {
+                severityKeys = _.keys($scope.panel.severity_colors);
+            }
+            else {
+                severityKeys = $scope.panel.severities.ids;
+            }
+                
+            _.each(severityKeys, function(severity, setIndex){
+                
+                var records = severitySets[severity];
+
+                var tsOpts = {
+                        interval: _interval,
+                        start_date: _range && _range.from,
+                        end_date: _range && _range.to,
+                        fill_style: $scope.panel.zerofill ? 'minimal' : 'no'
+                      };
+                var time_series = new timeSeries.ZeroFilled(tsOpts);
+         
+                _.each(records, function(anomaly){
+                    var bucketTime = moment(anomaly[$scope.panel.time_field]).valueOf(); // In ms.
+                    
+                    // Get the time of the data point, flooring the time of the bucket to the appropriate interval.
+                    var roundedTime = (moment(Math.floor(bucketTime / intervalMs) * intervalMs)).valueOf(); // In ms.
+                    
+                    var value = (time_series._data[roundedTime] || 0) + 1;
+
+                    // Only plotting single metric value returned from endpoint -
+                    // not getting min, max, mean, count, total as Elasticsearch date histogram facet returns. 
+                    //time_series.addValue(bucketTime*1000, anomaly[$scope.panel.value_field]);
+                    time_series.addValue(roundedTime, value);
+
+                });
+                
+                var numHits = 0;
+                if (records) {
+                    numHits = records.length;
+                }
+
+                data[setIndex] = {
+                        time_series: time_series,
+                        hits : numHits,
+                        info : {color: $scope.panel.severity_colors[severity],
+                                label: severity}
+                      };   
+                
+                $scope.legend[setIndex] = {label:severity,hits:numHits,color:$scope.panel.severity_colors[severity]};
+                
+            });
+            
+
+            // Tell the histogram directive to render.
+            $scope.$emit('render', data);
+            
+        })
+        .error(function (error) {
+            $scope.panelMeta.loading = false;
+            $scope.panel.error = $scope.parse_error("Error obtaining results from the Prelert Engine API." +
+                   "Please ensure the Engine API is running and configured correctly.");
+            console.log('Error loading list of results from the Prelert Engine API: ' + error.message);
+        });
+
+      };
+    
+    
 
     // function $scope.zoom
     // factor :: Zoom factor, so 0.5 = cuts timespan in half, 2 doubles timespan
@@ -475,7 +535,8 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
           }
     
           if(factor > 1) {
-            filterSrv.removeByType('time');
+            // Pass 'true' as noRefresh, as dashboard will be refreshed when time filter is set below.
+            filterSrv.removeByType('time', true);
           }
           filterSrv.set({
             type:'time',
@@ -483,7 +544,6 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
             to:moment.utc(_to).toDate(),
             field:$scope.panel.time_field
           });
-      
       }
     };
 
