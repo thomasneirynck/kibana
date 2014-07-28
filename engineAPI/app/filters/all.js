@@ -147,9 +147,11 @@ define([
         // Truncates text to length of trimFactor 
         // divided by numberOfCols (i.e. number of columns in the table).
         if (!_.isUndefined(text) && !_.isNull(text) && text.toString().length > 0) {
-          return text.length > trimFactor/numberOfCols ? text.substr(0,trimFactor/numberOfCols)+'...' : text;
-        }
+          return text.length > trimFactor/numberOfCols ? text.substr(0,trimFactor/numberOfCols)+'...' : text.toString();
+        } 
+
         return '';
+ 
       };
   });
 
