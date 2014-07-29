@@ -106,10 +106,6 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
        */
       'y-axis'      : true,
       /** @scratch /panels/prelertseveritychart/1
-       * y_format:: 'none','bytes','short '
-       */
-      y_format    : 'none',
-      /** @scratch /panels/prelertseveritychart/1
        * grid object:: Min and max y-axis values
        * grid.min::: Minimum y-axis value
        * grid.max::: Maximum y-axis value
@@ -455,7 +451,11 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
             else {
                 severityKeys = $scope.panel.severities.ids;
             }
-                
+            
+            // Construct a map of the totals across all severities.
+            // Use this to set the y axis max.
+            var aggregateValues = {};
+            
             _.each(severityKeys, function(severity, setIndex){
                 
                 var records = severitySets[severity];
@@ -475,11 +475,9 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
                     var roundedTime = (moment(Math.floor(bucketTime / intervalMs) * intervalMs)).valueOf(); // In ms.
                     
                     var value = (time_series._data[roundedTime] || 0) + 1;
-
-                    // Only plotting single metric value returned from endpoint -
-                    // not getting min, max, mean, count, total as Elasticsearch date histogram facet returns. 
-                    //time_series.addValue(bucketTime*1000, anomaly[$scope.panel.value_field]);
                     time_series.addValue(roundedTime, value);
+                    
+                    aggregateValues[roundedTime.toString()] = (aggregateValues[roundedTime.toString()] || 0) + 1;
 
                 });
                 
@@ -499,9 +497,10 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
                 
             });
             
+            var maxYVal = _.max(_.values(aggregateValues));
 
-            // Tell the histogram directive to render.
-            $scope.$emit('render', data);
+            // Tell the prelertseveritychart directive to render.
+            $scope.$emit('render', data, maxYVal);
             
         })
         .error(function (error) {
@@ -571,25 +570,26 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
       restrict: 'A',
       template: '<div></div>',
       link: function(scope, elem) {
-        var data, plot;
+        var data, plot, maxYVal;
 
         scope.$on('refresh',function(){
           scope.get_data();
         });
 
         // Receive render events
-        scope.$on('render',function(event,d){
+        scope.$on('render',function(event,d, maxVal){
           data = d || data;
-          render_panel(data);
+          maxYVal = maxVal || maxYVal;
+          render_panel(data, maxYVal);
         });
 
         scope.$watch('panel.span', function(){
-          render_panel(data);
+          render_panel(data, maxYVal);
         });
 
         // Re-render if the window is resized
         angular.element(window).bind('resize', function(){
-          render_panel(data);
+          render_panel(data, maxYVal);
         });
 
         var scale = function(series,factor) {
@@ -605,24 +605,43 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
         };
 
         // Function for rendering panel
-        function render_panel(data) {
+        function render_panel(data, maxYVal) {
           // IE doesn't work without this
           try {
             elem.css({height:scope.row.height});
           } catch(e) {return;}
 
           // Set the label and color for each series.
+          // Set the max value on the y axis according to maximum value, with a minimum of 5.
+          var maxYAxisVal = 1;
           try {
             _.each(data, function(series) {
               series.label = series.info.label;
               series.color = series.info.color;
             });
           } catch(e) {return;}
+          
 
           // Set barwidth based on specified interval
           var barwidth = kbn.interval_to_ms(scope.panel.interval);
 
           var stack = scope.panel.stack ? true : null;
+          
+          // Calculate the max for the y-axis.
+          var maxY = 0;
+          if (scope.panel.percentage && scope.panel.stack) {
+              maxY = 100;
+          }
+          else {
+              if (_.isNull(scope.panel.grid.max)) {
+                  // Minimum of 5 on the y axis if not configured otherwise.
+                  maxY = Math.max(5, maxYVal);
+              }
+              else {
+                  maxY = scope.panel.grid.max;
+              }
+          }
+          
 
           // Populate element
           try {
@@ -655,8 +674,9 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
               },
               yaxis: {
                 show: scope.panel['y-axis'],
+                tickDecimals: 0,
                 min: scope.panel.grid.min,
-                max: scope.panel.percentage && scope.panel.stack ? 100 : scope.panel.grid.max
+                max: maxY
               },
               xaxis: {
                 timezone: scope.panel.timezone,
@@ -675,19 +695,6 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
                 color: '#c8c8c8'
               }
             };
-
-            if (scope.panel.y_format === 'bytes') {
-              options.yaxis.mode = "byte";
-              options.yaxis.tickFormatter = function (val, axis) {
-                return kbn.byteFormat(val, 0, axis.tickSize);
-              };
-            }
-
-            if (scope.panel.y_format === 'short') {
-              options.yaxis.tickFormatter = function (val, axis) {
-                return kbn.shortFormat(val, 0, axis.tickSize);
-              };
-            }
 
             if(scope.panel.annotate.enable) {
               options.events = {
@@ -756,14 +763,8 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
             value = (scope.panel.stack && scope.panel.tooltip.value_type === 'individual') ?
               item.datapoint[1] - item.datapoint[2] :
               item.datapoint[1];
-            if(scope.panel.y_format === 'bytes') {
-              value = kbn.byteFormat(value,2);
-            }
-            if(scope.panel.y_format === 'short') {
-              value = kbn.shortFormat(value,2);
-            } else {
-              value = numeral(value).format('0,0[.]000');
-            }
+            value = numeral(value).format('0,0[.]000');
+            
             timestamp = scope.panel.timezone === 'browser' ?
               moment(item.datapoint[0]).format('YYYY-MM-DD HH:mm:ss') :
               moment.utc(item.datapoint[0]).format('YYYY-MM-DD HH:mm:ss');

@@ -121,7 +121,6 @@
           "x-axis": true,
           "y-axis": true,
           "scale": 1,
-          "y_format": "none",
           "grid": {
             "max": null,
             "min": 0
