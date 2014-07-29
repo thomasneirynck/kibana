@@ -189,4 +189,26 @@ define([
       };
     });
   
+  // Formats anomaly score values to two decimal places, whilst not 
+  // adding '.00' to whole numbers. Values greater than 0, but less than
+  // 0.01 are formatted as '0.00'.
+  module.filter('anomalyScore', [ '$filter', '$locale', function(filter, locale) {
+      var numberFilter = filter('number');
+      var formats = locale.NUMBER_FORMATS;
+      return function(number) {
+          var value = numberFilter(number, 2);
+          if (number > 0.01 || number == 0) {
+              // Split into whole and fraction parts.
+              var parts = value.split(formats.DECIMAL_SEP);
+              var whole = parts[0];
+              var fraction = parts[1] || '00';
+              fraction = fraction.substring(0,2)=='00' ? fraction.substring(2) : '.'+fraction; // remove ".00" fractions
+              return whole + fraction;
+          } else {
+              return value;
+          } 
+          
+      };
+  }]);
+  
 });
