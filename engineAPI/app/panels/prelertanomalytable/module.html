@@ -138,8 +138,8 @@
       <table class="table-hover table table-condensed" ng-style="panel.style">
         <thead ng-show="panel.header">
           <th ng-show="panel.linkShow">&nbsp;</th>
-          <th ng-show="panel.fields.length<1">_source (select columns from the list to the left)</th>
-          <th style="white-space:nowrap" ng-repeat="field in panel.fields">
+          <th ng-show="_.intersection(current_fields, panel.fields).length<1">_source (select columns from the list to the left)</th>
+          <th style="white-space:nowrap" ng-repeat="field in panel.fields" ng-show="_.contains(current_fields, field)">
             <i ng-show="!$first" class="pointer link icon-caret-left" ng-click="_.move(panel.fields,$index,$index-1)"></i>
 
             <span  class="pointer" ng-click="set_sort(field)" ng-show='panel.sortable'>
@@ -156,8 +156,8 @@
             <td ng-show="panel.linkShow">
               <a ng-click="show_data($event, event.kibana._source)" bs-tooltip="'Show data'"><i class="icon-external-link"></i></a>
             </td>
-            <td ng-if="panel.fields.length<1" bo-text="event|stringify|tableCellTextTruncate:panel.trimFactor:1"></td>
-            <td ng-show="panel.fields.length>0" ng-repeat="field in panel.fields">
+            <td ng-if="_.intersection(current_fields, panel.fields).length<1" bo-text="event|stringify|tableCellTextTruncate:panel.trimFactor:1"></td>
+            <td ng-repeat="field in panel.fields" ng-show="panel.fields.length>0 && _.contains(current_fields, field)">
               <span ng-if="field == 'anomalyScore'" class="table-field-value"><i class='icon-flag' ng-class="'anomaly-score-' + event.severity">&nbsp;</i> {{(event[field]) | anomalyScore}}</i></span>
               <span ng-if="field == 'unusualScore'" class="table-field-value"><i class='icon-warning-sign' ng-class="'unusual-score-' + event.unusualSeverity">&nbsp;</i> {{(event[field]) | anomalyScore}}</i></span>
               <span ng-if="field != 'anomalyScore' && field != 'unusualScore' && (!panel.localTime || panel.timeField != field)" bo-html="(event[field]) | tableCellTextTruncate:panel.trimFactor:panel.fields.length" class="table-field-value"></span>
