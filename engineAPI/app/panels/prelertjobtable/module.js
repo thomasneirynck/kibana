@@ -137,6 +137,10 @@ function (angular, app, _, kbn, moment) {
        * timeFields:: If localTime is set to true, these field will be adjusted to the browsers local time
        */
       timeFields: ['createTime', 'lastDataTime', 'finishedTime'],
+      /** @scratch /panels/prelertanomalytable/1
+       * timeFormat:: If localTime is set to true, the format, using moment.js tokens, in which to display time fields.
+       */
+      timeFormat: 'YYYY-MM-DD HH:mm',
       style   : {'font-size': '9pt'},
       normTimes : true,
     };
