@@ -130,12 +130,13 @@ define([
     };
   });
   
-  // Copied out of Kibana table panel module.js for all panel use.
-  // Filter to format a String recognised by moment.js into local time (ISO 8601 format).
+  // Based on the tableLocalTime filter in the Kibana table panel module.js, for all panel use.
+  // Filter to format a String recognised by moment.js into the supplied format.
+  // If format not provided, moment.js will use ISO-8601 format i.e. YYYY-MM-DDTHH:mm:ss.SSSZ
   module.filter('formatLocalTime', function(){
-    return function(input,stringToFormat) {
+    return function(input,stringToFormat,format) {
       // Would normally expect 'input' to be the string to format.
-      return moment(stringToFormat).format("YYYY-MM-DDTHH:mm:ss.SSSZ");
+      return moment(stringToFormat).format(format);
     };
   });
   
