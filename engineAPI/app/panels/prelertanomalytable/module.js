@@ -139,6 +139,10 @@ function (angular, app, _, kbn, moment, prelertutil) {
        * timeField:: If localTime is set to true, this field will be adjusted to the browsers local time
        */
       timeField: 'timestamp',
+      /** @scratch /panels/prelertanomalytable/1
+       * timeFormat:: If localTime is set to true, the format, using moment.js tokens, in which to display the time.
+       */
+      timeFormat: 'YYYY-MM-DD HH:mm',
       /** @scratch /panels/prelertanomalytabletable/1
        * linkShow:: Set to false to hide the link to a dashboard for displaying the raw data which has been analyzed for anomalies.
        */

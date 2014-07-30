@@ -27,6 +27,14 @@
         <label class="small">Time Field</label>
         <input type="text" class="input-small" ng-model="panel.timeField" ng-change="set_refresh(true)" bs-typeahead="fields.list">
       </div>
+      <div class="editor-option" ng-show="panel.localTime">
+        <label class="small">Time Format</label>
+        <input type="text" class="input-large" ng-model="panel.timeFormat" ng-change="set_refresh(true)">
+      </div>
+      <p class="small" ng-show="panel.localTime">
+        See <a href="http://momentjs.com/docs/#/displaying/format/">http://momentjs.com/docs/#/displaying/format/</a>
+        for documentation on date formatting.
+      </p>
     </div>
     <div class="section span6">
       <h5>Columns</h5>
