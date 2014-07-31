@@ -44,7 +44,7 @@ define([
   'lodash',
   'kbn',
   'moment',
-  './timeSeries',
+  'panels/histogram/timeSeries',
   'numeral',
   'jquery.flot',
   'jquery.flot.events',

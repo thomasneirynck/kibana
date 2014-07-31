@@ -45,7 +45,7 @@ define([
   'kbn',
   'moment',
   'prelertutil',
-  './timeSeries',
+  'panels/histogram/timeSeries',
   'numeral',
   'jquery.flot',
   'jquery.flot.events',
