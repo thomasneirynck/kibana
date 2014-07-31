@@ -189,21 +189,7 @@ function (angular, app, _, kbn, moment) {
     var showModal = function(panel,type) {
       $scope.facetPanel = panel;
       $scope.facetType = type;
-
-      // create a new modal. Can't reuse one modal unforunately as the directive will not
-      // re-render on show.
-      /*
-      $modal({
-        template: './app/panels/table/modal.html',
-        persist: false,
-        show: true,
-        scope: $scope.$new(),
-        keyboard: false
-      });
-      */
-
     };
-
 
 
     $scope.toggle_micropanel = function(field,groups) {
