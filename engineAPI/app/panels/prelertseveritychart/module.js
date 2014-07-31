@@ -98,6 +98,12 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
        */
       value_field   : 'unusualScore',
       /** @scratch /panels/prelertseveritychart/1
+       * max_results:: Maximum number of results to obtain from the Engine API endpoint in a single query.
+       * TODO - may be able to do away with this param if data is obtained from a 'charting' endpoint
+       *        or from Elasticsearch. 
+       */
+      max_results   : 20000,
+      /** @scratch /panels/prelertseveritychart/1
        * x-axis:: Show the x-axis
        */
       'x-axis'      : true,
@@ -408,10 +414,10 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
 
 
         // Get the anomalies from the Engine API Records service.
-        // TODO - able to remove hard-coded take=20000?
+        // TODO - with charting endpoint should be no need to have a max_results panel config option.
         // TODO - add a severity slider?
         var params = {
-                take: 20000,
+                take: $scope.panel.max_results,
                 norm: 'u'
         };
         

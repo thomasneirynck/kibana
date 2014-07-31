@@ -93,6 +93,12 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
        */
       mode          : 'count',
       /** @scratch /panels/prelerttimeserieschart/1
+       * max_results:: Maximum number of results to obtain from the Engine API endpoint in a single query.
+       * TODO - may be able to do away with this param if data is obtained from a 'charting' endpoint
+       *        or from Elasticsearch. 
+       */
+      max_results   : 2000,
+      /** @scratch /panels/prelerttimeserieschart/1
        * time_field:: x-axis field, containing date/time data from the Engine API.
        */
       time_field    : 'timestamp',
@@ -324,12 +330,12 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
 
 
       // Get the anomalies from the Engine API Results service.
-      // TODO - remove hard-coded take=2000 - need charting endpoint.
+      // TODO - with charting endpoint should be no need to have a max_results panel config option.
+      // TODO - result granularity (or done automatically with charting endpoint).
       // TODO - pass in any filter.
       // TODO - add a severity slider?
-      // TODO - result granularity.
       var params = {
-              take: 2000
+              take: $scope.panel.max_results
       };
       
       // Check for a time filter. If present, add the last filter in the zoom 'chain'.
@@ -385,7 +391,7 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
                           label: jobId}
                 };
           // Use the jobId as the legend text.
-          $scope.legend[0] = {label:jobId,hits:results.hitCount,color:querySrv.colors[0]};
+          $scope.legend[0] = {label:jobId,hits:results.documents.length,color:querySrv.colors[0]};
           
 
           // Tell the histogram directive to render.

@@ -37,4 +37,16 @@
       <input type="text" class='input-mini' ng-model="panel.interval" ng-change='set_refresh(true)'/>
     </div>
   </div>
+  <br>
+  <div class="section">
+  <h5>Query Options</h5>
+    <div class="editor-option">
+      <label class="small">Maximum results</label>
+        <input type="number" class="input-mini" ng-model="panel.max_results" ng-change="set_refresh(true)">
+    </div>
+    <p class="small">
+        <b>Note:</b> Queries that request a very large number of results may take a long time to return and
+        cause problems in the browser when the chart tries to render the data.
+    </p>
+  </div>
 </div>
