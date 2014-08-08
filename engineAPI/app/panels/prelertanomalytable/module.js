@@ -282,8 +282,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
         // in one query and then does client-side paging through query results.
         // TODO - implement skip for full paging functionality.
         var params = {
-            take: $scope.panel.size*$scope.panel.pages,
-            norm: 'both'
+            take: $scope.panel.size*$scope.panel.pages
         };
         
         // Check for a time filter. If present, add the last filter in the zoom 'chain'.
