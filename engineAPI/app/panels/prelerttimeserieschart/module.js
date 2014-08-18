@@ -372,7 +372,7 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
                 };
           var time_series = new timeSeries.ZeroFilled(tsOpts);
 
-          // push each entry into the time series, while incrementing counters
+          // push each entry into the time series.
           _.each(results.documents, function(bucket) {
             var value;
             var bucketTime = moment(bucket[$scope.panel.time_field]).unix();
@@ -386,10 +386,10 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
           data[0] = {
                   time_series: time_series,
                   hits : results.hitCount,
-                  counters : {},
                   info : {color: querySrv.colors[0],
                           label: jobId}
                 };
+
           // Use the jobId as the legend text.
           $scope.legend[0] = {label:jobId,hits:results.documents.length,color:querySrv.colors[0]};
           
@@ -551,7 +551,8 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
                   lineWidth: 0
                 },
                 points: {
-                  show: scope.panel.points,
+                  // Show point if only one data point in range.
+                  show: scope.panel.points ? scope.panel.points : data[0].hits == 1,
                   fill: 1,
                   fillColor: false,
                   radius: scope.panel.pointradius
