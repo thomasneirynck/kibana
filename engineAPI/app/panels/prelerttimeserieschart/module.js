@@ -97,7 +97,7 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
        * TODO - may be able to do away with this param if data is obtained from a 'charting' endpoint
        *        or from Elasticsearch. 
        */
-      max_results   : 2000,
+      max_results   : 20000,
       /** @scratch /panels/prelerttimeserieschart/1
        * time_field:: x-axis field, containing date/time data from the Engine API.
        */
