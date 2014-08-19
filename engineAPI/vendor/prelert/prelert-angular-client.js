@@ -87,25 +87,28 @@ module.factory('prelertAPIServices', ['$http', function ($http) {
                 urlBase: config.baseURL + "/results",
                  
                 /**
-                 * Supply skip and take params to obtain a specific page of results.
+                 * Queries the Prelert Engine API for the bucket results for a job.
+                 * Optional params that can be supplied:
+                 *  - skip
+                 *  - take
+                 *  - start
+                 *  - end
                  */
-                getResults: function(jobId, params) {
-                    
-                    return $http.get(this.urlBase+"/"+jobId, {
+                getBuckets: function(jobId, params) {
+                    return $http.get(this.urlBase+"/"+jobId+"/buckets", {
                         params:params
                     });
                 },
                 
-                getBucketRecords: function(jobId, bucketId, params) {
-                    return $http.get(this.urlBase+"/"+jobId +"/"+bucketId+"/records", {
+                /**
+                 * Queries the Prelert Engine API for a particular bucket result for a job.
+                 * Optionally supply an expand=true param to include the anomaly records for the bucket.
+                 */
+                getBucket: function(jobId, bucketId, params) {
+                    return $http.get(this.urlBase+"/"+jobId +"/buckets/"+bucketId, {
                         params:params
                     });
-                }
-        };
-        
-        // TODO - maybe move inside ResultsService for simplicity?
-        prelertAPIServices.RecordsService = {
-                urlBase: config.baseURL + "/records",
+                },
                 
                 /**
                  * Queries the Prelert Engine API for the anomaly records for a job.
@@ -116,11 +119,12 @@ module.factory('prelertAPIServices', ['$http', function ($http) {
                  *  - end
                  */
                 getRecords: function(jobId, params) {
-                    return $http.get(this.urlBase+"/"+jobId, {
+                    return $http.get(this.urlBase+"/"+jobId+"/records", {
                         params:params
                     });
                 }
         };
+        
         
         return prelertAPIServices;
     };

@@ -436,7 +436,7 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
         } 
         
         
-        $scope.prelertjs.RecordsService.getRecords(jobId, params)
+        $scope.prelertjs.ResultsService.getRecords(jobId, params)
         .success(function(results) {
             console.log("prelertseveritychart records returned by service:");
             console.log(results);

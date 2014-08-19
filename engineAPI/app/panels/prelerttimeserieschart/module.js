@@ -352,7 +352,7 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
           params.end = moment(to).format();
       } 
       
-      $scope.prelertjs.ResultsService.getResults(jobId, params)
+      $scope.prelertjs.ResultsService.getBuckets(jobId, params)
       .success(function(results) {
           
           $scope.panelMeta.loading = false;
@@ -361,7 +361,7 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
           
           // For now just plot a single series.
           // TODO - add ability to plot multiple series on a chart?
-          console.log("prelerttimeserieschart results from ResultsService-");
+          console.log("prelerttimeserieschart results from ResultsService:");
           console.log(results);
 
           var tsOpts = {

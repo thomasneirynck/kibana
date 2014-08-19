@@ -299,7 +299,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
             params.end = moment(to).format();
         } 
         
-        $scope.prelertjs.RecordsService.getRecords(jobId, params)
+        $scope.prelertjs.ResultsService.getRecords(jobId, params)
         .success(function(results) {
             console.log("prelertanomalytable records returned by service:");
             console.log(results);
