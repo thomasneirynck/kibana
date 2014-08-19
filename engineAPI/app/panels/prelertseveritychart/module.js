@@ -387,7 +387,6 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
         var _range = $scope.range;
         var _interval = $scope.get_interval();
 
-        // TODO - find out why the 'Auto' option is causing an error.
         if ($scope.panel.auto_int) {
             
             if (_range) {

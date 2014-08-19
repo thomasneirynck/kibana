@@ -151,7 +151,7 @@
               "desc"
             ]
           },
-          "auto_int": false,
+          "auto_int": true,
           "resolution": 100,
           "interval": "1h",
           "intervals": [
