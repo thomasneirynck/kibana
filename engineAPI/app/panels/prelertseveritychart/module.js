@@ -417,8 +417,7 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
         // TODO - with charting endpoint should be no need to have a max_results panel config option.
         // TODO - add a severity slider?
         var params = {
-                take: $scope.panel.max_results,
-                norm: 'u'
+                take: $scope.panel.max_results
         };
         
         // Check for a time filter. If present, add the last filter in the zoom 'chain'.
