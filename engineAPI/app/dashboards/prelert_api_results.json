@@ -24,6 +24,81 @@
   },
   "rows": [
     {
+      "title": "Event Count",
+      "height": "130px",
+      "editable": true,
+      "collapse": true,
+      "collapsable": true,
+      "panels": [
+        {
+          "span": 12,
+          "editable": true,
+          "type": "prelerttimeserieschart",
+          "loadingEditor": false,
+          "mode": "total",
+          "max_results": 20000,
+          "time_field": "timestamp",
+          "value_field": "eventCount",
+          "x-axis": true,
+          "y-axis": true,
+          "scale": 1,
+          "y_format": "none",
+          "grid": {
+            "max": null,
+            "min": 0
+          },
+          "annotate": {
+            "enable": false,
+            "query": "*",
+            "size": 20,
+            "field": "_type",
+            "sort": [
+              "_score",
+              "desc"
+            ]
+          },
+          "auto_int": true,
+          "resolution": 100,
+          "interval": "1h",
+          "intervals": [
+            "auto",
+            "1s",
+            "1m",
+            "5m",
+            "10m",
+            "30m",
+            "1h",
+            "3h",
+            "12h",
+            "1d",
+            "1w",
+            "1y"
+          ],
+          "lines": false,
+          "fill": 0,
+          "linewidth": 3,
+          "points": false,
+          "pointradius": 5,
+          "bars": true,
+          "stack": true,
+          "zoomlinks": true,
+          "options": true,
+          "legend": true,
+          "interactive": true,
+          "legend_counts": true,
+          "timezone": "browser",
+          "percentage": false,
+          "zerofill": true,
+          "derivative": false,
+          "tooltip": {
+            "value_type": "cumulative"
+          },
+          "title": "Event Count"
+        }
+      ],
+      "notice": false
+    },
+    {
       "title": "Anomaly Score",
       "height": "180px",
       "editable": true,
@@ -61,7 +136,7 @@
               "desc"
             ]
           },
-          "auto_int": false,
+          "auto_int": true,
           "resolution": 100,
           "interval": "1h",
           "intervals": [
@@ -89,7 +164,6 @@
           "zoomlinks": true,
           "options": true,
           "legend": true,
-          "show_query": true,
           "interactive": true,
           "legend_counts": true,
           "timezone": "browser",
