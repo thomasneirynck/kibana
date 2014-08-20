@@ -33,7 +33,7 @@
  * == prelerttimeserieschart
  * Status: *Stable*
  *
- * The prelerttimeserieschart panel is used for the display of time chart whose data is obtained
+ * The prelerttimeserieschart panel is used for the display of a time chart whose data is obtained
  * via the Prelert Anomaly Detective Engine API. It includes modes for displaying anomaly
  * data in a variety of ways.
  */
@@ -78,7 +78,7 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
         }
       ],
       status  : "Stable",
-      description : "A bucketed time series chart of anomaly score data obtained via the Prelert " +
+      description : "A bucketed time series chart of anomaly data obtained via the Prelert " +
               "Anomaly Detective Engine API. It includes various options for configuring how the data is plotted."
     };
 
@@ -272,8 +272,7 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
     };
 
     /**
-     * The time range effecting the panel
-     * @return {[type]} [description]
+     * Returns the time range currently set in the chart.
      */
     $scope.get_time_range = function () {
       var range = $scope.range = filterSrv.timeRange('last');
@@ -294,14 +293,11 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
       $scope.panel.interval = interval || '10m';
       return $scope.panel.interval;
     };
-
+    
     /**
-     * Fetch the results for the current job.
-     *
-     * The results of this function are stored on the scope's data property. This property will be an
-     * array of objects with the properties info, time_series, and hits. These objects are used in the
-     * render_panel function to create the historgram.
-     *
+     * Fetch all the data for the current job. Before obtaining the anomaly data from the 
+     * engine API, the function checks if a range has been set on the chart, and if not
+     * sets the range to between the times of the first and last buckets for the job.
      */
     $scope.get_data = function() {
         
@@ -313,13 +309,98 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
           return;
       }
       
+      // No range set (e.g. by using the time picker, or having zoomed in),
+      // so set the range to the times of the first and last buckets.
       var _range = $scope.get_time_range();
-      var _interval = $scope.get_interval(_range);
+      if (!_range) {
+          
+          $scope.range = {
+                  from: moment().subtract('h', 1).toDate(),
+                  to: moment().toDate(),
+                };
 
-      if ($scope.panel.auto_int) {
-        $scope.panel.interval = kbn.secondsToHms(
-          kbn.calculate_interval(_range.from,_range.to,$scope.panel.resolution,0)/1000);
+          var request = $scope.ejs.Request({
+              'indices': jobId,
+              'types':'bucket'
+          });
+          var earliestQuery = request.query(
+                  $scope.ejs.MatchAllQuery())
+                  .fields('_source')
+                  .sort('id', 'asc')
+                  .size(1);
+          
+          earliestQuery.doSearch().then(function(results) {
+             var firstBucket = _.first(results.hits.hits);
+             var earliestDate = new Date(parseInt(firstBucket._id)*1000);
+             $scope.range.from = earliestDate;
+             
+             var latestRequest = $scope.ejs.Request({
+                 'indices': jobId,
+                 'types':'bucket'
+             });
+             
+             latestRequest = latestRequest.query(
+                     $scope.ejs.MatchAllQuery())
+                     .fields('_source')
+                     .sort('id', 'desc')
+                     .size(1);
+             
+             latestRequest.doSearch().then(function(results) {
+                var lastBucket = _.first(results.hits.hits);
+                var latestDate = new Date(parseInt(lastBucket._id)*1000);
+                if (latestDate.getTime() != $scope.range.from.getTime()) {
+                    $scope.range.to = latestDate;
+                } else {
+                    // Only one bucket - display one extra hour.
+                    $scope.range.to = new Date((parseInt(lastBucket._id)+3600)*1000);
+                }
+                
+                $scope.get_anomaly_data();
+             });
+             
+          });
+          
       }
+      else {
+          $scope.get_anomaly_data();
+      }
+    };
+    
+
+    /**
+     * Fetch the anomaly data for the current job.
+     *
+     * The results of this function are stored on the scope's data property. This property will be an
+     * array of objects with the properties info, time_series, and hits. These objects are used in the
+     * render_panel function to create the time series chart.
+     */
+    $scope.get_anomaly_data = function() {
+
+      // If no index (i.e. job ID) is set, then return. 
+      var jobId = $scope.dashboard.current.index.default;
+      if (_.isUndefined(jobId) || _.isEmpty(jobId)) {
+          return;
+      }
+      
+      var _range = $scope.range;
+      var _interval = $scope.get_interval();
+      
+      if ($scope.panel.auto_int) {
+          
+          if (_range) {
+              $scope.panel.interval = kbn.secondsToHms(
+                      kbn.calculate_interval(_range.from,_range.to,$scope.panel.resolution,0)/1000);
+          }
+          else {
+              // Default to hourly intervals (rather than kbn.calculate_interval() default of 1 year).
+              $scope.panel.interval = '1h';
+          }
+          _interval = $scope.panel.interval;
+      }
+      
+      // Need the interval between points configured on the panel (in ms).
+      // This will be used for creating the bar chart buckets.
+      var intervalMs = kbn.interval_to_seconds($scope.panel.interval) * 1000;
 
       $scope.panelMeta.loading = true;
       
@@ -331,9 +412,8 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
 
       // Get the anomalies from the Engine API Results service.
       // TODO - with charting endpoint should be no need to have a max_results panel config option.
-      // TODO - result granularity (or done automatically with charting endpoint).
+      // TODO - can data source (API/ES) handle result granularity?
       // TODO - pass in any filter.
-      // TODO - add a severity slider?
       var params = {
               take: $scope.panel.max_results
       };
@@ -371,15 +451,41 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
                   fill_style: $scope.panel.derivative ? 'null' : $scope.panel.zerofill ? 'minimal' : 'no'
                 };
           var time_series = new timeSeries.ZeroFilled(tsOpts);
+          var counters = {}; // Stores the bucketed (chart buckets, not analytic buckets!) hit counts.
 
-          // push each entry into the time series.
+          // Push each entry into the time series, calculating chart bucket values
+          // according to configured chart metric and point interval.
           _.each(results.documents, function(bucket) {
             var value;
-            var bucketTime = moment(bucket[$scope.panel.time_field]).unix();
+            var bucketTime = moment(bucket[$scope.panel.time_field]).valueOf(); // In ms.
+            
+            // Get the time of the data point, flooring the time of the bucket to the appropriate interval.
+            var roundedTime = (moment(Math.floor(bucketTime / intervalMs) * intervalMs)).valueOf(); // In ms.
+            counters[roundedTime] = (counters[roundedTime] || 0) + 1; // No aggregation done by API, increment by 1.
+            
+            if ($scope.panel.mode === 'min'){
+                if(_.isUndefined(time_series._data[roundedTime])) {
+                    value = bucket[$scope.panel.value_field];
+                } else {
+                    value = Math.min(time_series._data[roundedTime], bucket[$scope.panel.value_field]);
+                }
+            } else if ($scope.panel.mode === 'max'){
+                if(_.isUndefined(time_series._data[roundedTime])) {
+                    value = bucket[$scope.panel.value_field];
+                } else {
+                    value = Math.max(time_series._data[roundedTime], bucket[$scope.panel.value_field]);
+                }
+            } else if ($scope.panel.mode === 'total'){
+                value = (time_series._data[roundedTime] || 0) + bucket[$scope.panel.value_field];
+            } else if($scope.panel.mode === 'count') {
+                value = counters[roundedTime];
+            } else if ($scope.panel.mode === 'mean') {
+                // Compute the ongoing mean by multiplying the existing mean by the existing hits
+                // plus the new mean multiplied by the new hits divided by the total hits
+                value = (((time_series._data[roundedTime] || 0)*(counters[roundedTime]-1)) + bucket[$scope.panel.value_field])/(counters[roundedTime]);
+            } 
 
-            // Only plotting single metric value returned from endpoint -
-            // not getting min, max, mean, count, total as Elasticsearch date histogram facet returns. 
-            time_series.addValue(bucketTime*1000, bucket[$scope.panel.value_field]);
+            time_series.addValue(roundedTime, value);
             
           });
           
@@ -552,7 +658,7 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
                 },
                 points: {
                   // Show point if only one data point in range.
-                  show: scope.panel.points ? scope.panel.points : data[0].hits == 1,
+                  show: scope.panel.points ? scope.panel.points : (!scope.panel.bars && data[0].hits == 1),
                   fill: 1,
                   fillColor: false,
                   radius: scope.panel.pointradius
@@ -661,6 +767,10 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
             seriesId = '<small style="font-size:0.9em;">' +
               '<i class="icon-circle" style="color:'+item.series.color+';"></i> ' + 
               item.series.label + '</small><br>';
+            
+            if (scope.panel.value_field && scope.panel.mode != 'count') {
+                seriesId = seriesId + scope.panel.value_field + ': ';
+            }
 
             value = (scope.panel.stack && scope.panel.tooltip.value_type === 'individual') ?
               item.datapoint[1] - item.datapoint[2] :
@@ -678,9 +788,7 @@ function (angular, app, $, _, kbn, moment, timeSeries, numeral) {
               moment(item.datapoint[0]).format('YYYY-MM-DD HH:mm:ss') :
               moment.utc(item.datapoint[0]).format('YYYY-MM-DD HH:mm:ss');
             $tooltip
-              .html(
-                seriesId + scope.panel.value_field + ': ' + value + " @ " + timestamp
-              )
+              .html(seriesId + value + " @ " + timestamp)
               .place_tt(pos.pageX, pos.pageY);
           } else {
             $tooltip.detach();
