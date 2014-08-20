@@ -183,7 +183,7 @@
           "offset": 0,
           "sort": [
             "id",
-            "desc"
+            "asc"
           ],
           "overflow": "min-height",
           "fields": [
