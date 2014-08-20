@@ -441,10 +441,17 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
             
             $scope.panelMeta.loading = false;
             
-            $scope.hits = results.hitCount;
+            // For 1.0 beta, filter out the results from population analyses where isOverallResult=false
+            // TODO - remove after 1.0 beta once endpoint returns these records nested 
+            //        inside the isOverallResult=true records.  
+            var overallResults = _.filter(results.documents, function(anomaly){ 
+                return (_.has(anomaly, 'isOverallResult') == false || anomaly['isOverallResult'] == true); 
+            });
+            
+            $scope.hits = overallResults.length;
             
             // Create a series for each severity being displayed.
-            var severitySets = _.groupBy(results.documents, function(anomaly){ 
+            var severitySets = _.groupBy(overallResults, function(anomaly){ 
                 return prelertutil.get_anomaly_severity(anomaly[$scope.panel.value_field]); 
             });
             
