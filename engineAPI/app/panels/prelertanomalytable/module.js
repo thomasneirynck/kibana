@@ -159,6 +159,10 @@ function (angular, app, _, kbn, moment, prelertutil) {
        * linkTarget:: Full or relative URL of page to open when clicking on the 'Show data' link.
        */
       linkTarget  : '#/dashboard/script/prelert_logstash_drilldown.js',
+      /** @scratch /panels/prelertanomalytable/1
+       * overallResultsOnly:: For 1.0 beta only, whether to filter out isOverallResult=false for population analyses with an over field.
+       */
+      overallResultsOnly: true,
       style   : {'font-size': '9pt'},
       normTimes : true,
     };
@@ -311,12 +315,15 @@ function (angular, app, _, kbn, moment, prelertutil) {
             // only be able to page through the isOverallResult=true records.
             // TODO - remove after 1.0 beta once endpoint returns these records nested 
             //        inside the isOverallResult=true records.  
-            var overallResults = _.filter(results.documents, function(anomaly){ 
-                return (_.has(anomaly, 'isOverallResult') == false || anomaly['isOverallResult'] == true); 
-            });
+            var anomalies = results.documents;
+            if ($scope.panel.overallResultsOnly == true) {
+                anomalies = _.filter(results.documents, function(anomaly){ 
+                    return (_.has(anomaly, 'isOverallResult') == false || anomaly['isOverallResult'] == true); 
+                });
+            }
             
             // This is exceptionally expensive, especially on events with a large number of fields
-            $scope.data = $scope.data.concat(_.map(overallResults, function(anomaly) {
+            $scope.data = $scope.data.concat(_.map(anomalies, function(anomaly) {
               var _h = _.clone(anomaly);
 
               // Update the list of fields found in alerts.
