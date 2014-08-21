@@ -327,15 +327,57 @@
       "notice": false
     },
     {
-      "title": "Help Text",
-      "height": "100px",
+      "title": "Info Row",
+      "height": "50px",
       "editable": true,
       "collapse": false,
       "collapsable": true,
       "panels": [
         {
           "error": false,
-          "span": 12,
+          "span": 8,
+          "editable": true,
+          "type": "prelertjobtable",
+          "loadingEditor": false,
+          "queryMode": "current",
+          "size": 100,
+          "pages": 5,
+          "offset": 0,
+          "sort": [
+            "id",
+            "asc"
+          ],
+          "overflow": "min-height",
+          "fields": [
+            "id",
+            "description",
+            "counts.processedRecordCount",
+            "analysisConfig.bucketSpan",
+            "status"
+          ],
+          "sortable": false,
+          "header": true,
+          "paging": false,
+          "field_list": false,
+          "all_fields": false,
+          "trimFactor": 400,
+          "localTime": true,
+          "timeFields": [
+            "createTime",
+            "lastDataTime",
+            "finishedTime"
+          ],
+          "timeFormat": "YYYY-MM-DD HH:mm Z",
+          "style": {
+            "font-size": "9pt"
+          },
+          "normTimes": true,
+          "title": "Job Details",
+          "actions": false
+        },
+        {
+          "error": false,
+          "span": 4,
           "editable": true,
           "type": "text",
           "loadingEditor": false,

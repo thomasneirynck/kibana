@@ -75,6 +75,15 @@ function (angular, app, _, kbn, moment) {
     // Set and populate defaults
     var _d = {
       /** @scratch /panels/prelertjobtable/1
+       *
+       * === Parameters
+       * 
+       * queryMode:: Whether the module should query for the details of all jobs, or
+       * for just the job currently set on the page. 
+       * defined. Possible values: all, current.
+       */
+      queryMode          : 'all',
+      /** @scratch /panels/prelertjobtable/1
        * === Parameters
        *
        * size:: The number of hits to show per page
@@ -108,6 +117,10 @@ function (angular, app, _, kbn, moment) {
        * header:: Set to false to hide the table column names
        */
       header  : true,
+      /** @scratch /panels/prelertjobtable/1
+       * actions:: Set to false to hide the column containing the View job results and Delete job action links.
+       */
+      actions  : true,
       /** @scratch /panels/prelertjobtable/1
        * paging:: Set to false to hide the paging controls of the table
        */
@@ -245,8 +258,16 @@ function (angular, app, _, kbn, moment) {
     $scope.fieldExists = function(field,mandate) {
       filterSrv.set({type:'exists',field:field,mandate:mandate});
     };
+    
+    $scope.get_data = function() {
+        if ($scope.panel.queryMode === 'current'){
+            $scope.get_current_job();
+        } else {
+            $scope.get_all_jobs();
+        }
+    };
 
-    $scope.get_data = function(segment,query_id) {
+    $scope.get_all_jobs = function() {
 
       $scope.panel.error =  false;
       $scope.panelMeta.loading = true;
@@ -312,6 +333,52 @@ function (angular, app, _, kbn, moment) {
       });
 
     };
+    
+    $scope.get_current_job = function() {
+        $scope.panel.error =  false;
+        $scope.panelMeta.loading = true;
+        
+        $scope.panel.offset = 0;
+        $scope.hits = 0;
+        $scope.data = [];
+        $scope.current_fields = [];
+        
+        // If no index (i.e. job ID) is set, then return. 
+        var jobId = $scope.dashboard.current.index.default;
+        if (_.isUndefined(jobId) || _.isEmpty(jobId)) {
+            return;
+        }
+
+        // Get the details of the specified job from the Prelert Engine API.
+        $scope.prelertjs.JobsService.getJobDetails(jobId)
+        .success(function(result) {
+            console.log('prelertjobtable job details from JobService: ');
+            console.log(result);
+            
+            $scope.panelMeta.loading = false;
+            
+            var job = result.document;
+            
+            // _source is kind of a lie here, never display it, only select values from it
+            job.kibana = {
+              _source : kbn.flatten_json(job)
+            };
+            
+            $scope.current_fields = $scope.current_fields.concat(_.keys(job.kibana._source));
+
+            $scope.hits = 1;
+
+            $scope.data.push(job);
+            
+        })
+        .error(function (error) {
+            $scope.panelMeta.loading = false;
+            $scope.panel.error = $scope.parse_error("Error loading details of job with ID " + jobId + 
+                   " from the Prelert Engine API. Please ensure the job exists and that the Engine API is running and configured correctly.");
+            console.log('Error loading details of job ' + jobId + ' from the Prelert Engine API: ' + error.message);
+        });
+
+      };
     
     $scope.show_results = function(event, jobId) {
         // Stop event propagation to prevent default row details expansion.

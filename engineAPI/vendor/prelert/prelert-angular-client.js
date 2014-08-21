@@ -54,6 +54,7 @@ module.factory('prelertAPIServices', ['$http', function ($http) {
             urlBase: config.baseURL + "/jobs",
              
             /**
+             * Queries the Prelert Engine API to get the details of all created jobs.
              * Supply skip and take params to obtain a specific page of results.
              */
             listJobs: function (params) {
@@ -63,10 +64,16 @@ module.factory('prelertAPIServices', ['$http', function ($http) {
                 });
             },
             
+            /**
+             * Queries the Prelert Engine API to get the details of the job with the specified ID.
+             */
             getJobDetails: function(jobId) {
-                
+                return $http.get(this.urlBase+"/"+jobId);
             },
             
+            /**
+             * Sets the description of the Prelert Engine API job with the specified ID.
+             */
             setDescription: function(jobId, description) {
                 // Need to set HTTP Content-Type header to text/plain.
                 return $http.put(this.urlBase+'/'+jobId+'/description', description, {
@@ -76,6 +83,9 @@ module.factory('prelertAPIServices', ['$http', function ($http) {
                 });
             },
             
+            /**
+             * Deletes an existing Prelert Engine API job.
+             */
             deleteJob: function(jobId) {
                 return $http.delete(this.urlBase+"/"+jobId);
             }

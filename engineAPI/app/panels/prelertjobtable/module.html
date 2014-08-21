@@ -124,7 +124,7 @@
             <span ng-show='!panel.sortable'>{{field}}</span>
             <i ng-show="!$last" class="pointer link icon-caret-right" ng-click="_.move(panel.fields,$index,$index+1)"></i>
           </th>
-          <th>Actions</th>
+          <th ng-show="panel.actions">Actions</th>
 
         </thead>
         <tbody bindonce ng-repeat="event in data| slice:panel.offset:panel.offset+panel.size" ng-class-odd="'odd'">
@@ -134,7 +134,7 @@
               <span ng-if="!panel.localTime || !_.contains(panel.timeFields, field)" bo-html="(event.kibana._source[field]) | tableCellTextTruncate:panel.trimFactor:panel.fields.length" class="table-field-value"></span>
               <span ng-if="panel.localTime && _.contains(panel.timeFields, field)" bo-html="(event.kibana._source[field]) | formatLocalTime:event.kibana._source[field]:panel.timeFormat" class="table-field-value"></span>
             </td>
-            <td>
+            <td ng-show="panel.actions">
               <a bs-tooltip="'View job results'" ng-click="show_results($event,'{{event.id}}')"><i class="icon-list"></i></a>
               <a bs-tooltip="'Delete job'" ng-click="delete_job($event,'{{event.id}}')"><i class="icon-remove"></i></a>
             </td>
