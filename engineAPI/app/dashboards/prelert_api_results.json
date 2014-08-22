@@ -367,7 +367,7 @@
             "lastDataTime",
             "finishedTime"
           ],
-          "timeFormat": "YYYY-MM-DD HH:mm Z",
+          "timeFormat": "YYYY-MM-DD HH:mm",
           "style": {
             "font-size": "9pt"
           },
