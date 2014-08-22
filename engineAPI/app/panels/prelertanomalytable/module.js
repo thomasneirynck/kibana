@@ -417,7 +417,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
         
         // Query the index of the clicked on anomaly for the bucketSpan of the job.
         var request = $scope.ejs.Request({
-            'indices': source._index,
+            'indices': $scope.dashboard.current.index.default,
             'types':'job'
         });
         request = request.query(
@@ -491,7 +491,6 @@ function (angular, app, _, kbn, moment, prelertutil) {
         });
  
     };
-
 
   });
 
