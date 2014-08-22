@@ -98,7 +98,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
       /** @scratch /panels/prelertanomalytable/1
        * sort:: An array describing the sort order of the table. For example [`@timestamp',`desc']
        */
-      sort    : ['_score','desc'],
+      sort    : ['unusualScore','desc'],
       /** @scratch /panels/prelertanomalytable/1
        * overflow:: The css overflow property. `min-height' (expand) or `auto' (scroll)
        */
@@ -142,7 +142,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
       /** @scratch /panels/prelertanomalytable/1
        * timeFormat:: If localTime is set to true, the format, using moment.js tokens, in which to display the time.
        */
-      timeFormat: 'YYYY-MM-DD HH:mm',
+      timeFormat: 'YYYY-MM-DD HH:mm Z',
       /** @scratch /panels/prelertanomalytabletable/1
        * linkShow:: Set to false to hide the link to a dashboard for displaying the raw data which has been analyzed for anomalies.
        */

@@ -308,7 +308,7 @@
           "trimFactor": 300,
           "localTime": true,
           "timeField": "timestamp",
-          "timeFormat": "YYYY-MM-DD HH:mm",
+          "timeFormat": "YYYY-MM-DD HH:mm Z",
           "linkShow": true,
           "linkIndex": {
             "interval": "day",
