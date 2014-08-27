@@ -1,6 +1,7 @@
 <div class="editor-row">
   <div class="section">
-   <div class="editor-option">
+    <h5>Display</h5>
+    <div class="editor-option">
       <label class="small">Label</label>
       <input type="text" class="input-small" ng-model="panel.label">
     </div>
@@ -9,4 +10,15 @@
       <input type="text" array-join class="input-xlarge" ng-model="panel.omit_indices">
     </div>
   </div>
+  <div class="section">
+    <h5>Show All</h5>
+    <div class="editor-option">
+      <label class="small">Display option</label><input type="checkbox" ng-change="set_refresh(true)" ng-model="panel.showAll" ng-checked="panel.showAll">
+    </div>
+    <div class="editor-option">
+      <label class="small">Label</label>
+      <input type="text" class="input-medium" ng-model="panel.showAllLabel">
+    </div>
+  </div>
+  
 </div>

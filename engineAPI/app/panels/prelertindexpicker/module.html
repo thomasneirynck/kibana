@@ -49,8 +49,8 @@
           <li ng-repeat='indexname in index_names | filter:notInOmitList'>
             <a ng-click="setIndex(indexname)">{{indexname}}</a>
           </li>
-          <li>
-            <a ng-click="setIndex('_all')">All jobs</a>
+          <li ng-show="panel.showAll">
+            <a ng-click="setIndex('_all')">{{panel.showAllLabel}}</a>
           </li>
         </ul>
 

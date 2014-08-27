@@ -50,6 +50,7 @@ function (angular, app, _, kbn) {
     
     // Set and populate defaults
     var _d = {
+      title         : "Index Picker",
       status        : "Stable",
       /**
        * label:: Label to show next to the index picker control.
@@ -58,7 +59,15 @@ function (angular, app, _, kbn) {
       /**
        * omit_indices:: List of indices to omit from the available selection in the dropdown control.
        */
-      omit_indices  : ['kibana-int', 'prelert-int']
+      omit_indices  : ['kibana-int', 'prelert-int'],
+      /**
+       * showAll:: Set to false to hide the 'All' options from the indices dropdown.
+       */
+      showAll  : true,
+      /**
+       * showAllLabel:: Label to display for the 'All indices' option in the drop control.
+       */
+      showAllLabel  : 'All indices'
     };
     _.defaults($scope.panel,_d);
 
@@ -81,6 +90,13 @@ function (angular, app, _, kbn) {
             $scope.index_names = _.sortBy(indices, _.identity);   
             console.log("prelertindexpicker list of indices:");
             console.log($scope.index_names);
+            
+            var currentIndex = $scope.dashboard.current.index.default;
+            
+            // Default to the first index in the list if a current index is not set.
+            if ( (_.isUndefined(currentIndex) || _.isEmpty(currentIndex)) &&  (_.size($scope.index_names) > 0) ) {
+                $scope.setIndex(_.first($scope.index_names));
+            }
         };
         
         var errorCallback = function() {
@@ -96,8 +112,10 @@ function (angular, app, _, kbn) {
     };
 
     $scope.setIndex = function(index) {
-      $scope.dashboard.current.index.default = index;
-      $scope.dashboard.refresh();
+        if ($scope.dashboard.current.index.default != index) {
+            $scope.dashboard.current.index.default = index;
+            $scope.dashboard.refresh();
+        }
     };
 
   });
