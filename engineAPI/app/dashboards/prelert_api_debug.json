@@ -19,12 +19,52 @@
           "pin": false,
           "type": "lucene",
           "enable": true,
-          "query": "_type:record AND NOT isSimpleCount:true"
+          "query": "_type:record"
+        },
+        "2": {
+          "id": 2,
+          "color": "#6ED0E0",
+          "alias": "",
+          "pin": false,
+          "type": "lucene",
+          "enable": true,
+          "query": "*"
+        },
+        "3": {
+          "id": 3,
+          "color": "#EF843C",
+          "alias": "",
+          "pin": false,
+          "type": "lucene",
+          "enable": true,
+          "query": "_type:job"
+        },
+        "4": {
+          "id": 4,
+          "color": "#E24D42",
+          "alias": "",
+          "pin": false,
+          "type": "lucene",
+          "enable": true,
+          "query": "_type:quantiles"
+        },
+        "5": {
+          "id": 5,
+          "color": "#1F78C1",
+          "alias": "",
+          "pin": false,
+          "type": "lucene",
+          "enable": true,
+          "query": "_type:detectorState"
         }
       },
       "ids": [
         0,
-        1
+        1,
+        2,
+        3,
+        4,
+        5
       ]
     },
     "filter": {
@@ -34,8 +74,8 @@
   },
   "rows": [
     {
-      "title": "Help Text",
-      "height": "100px",
+      "title": "Job Table",
+      "height": "90px",
       "editable": true,
       "collapse": false,
       "collapsable": true,
@@ -44,12 +84,45 @@
           "error": false,
           "span": 12,
           "editable": true,
-          "type": "text",
+          "type": "table",
           "loadingEditor": false,
-          "mode": "markdown",
-          "content": "- This dashboard shows you the raw anomaly scores (not normalized) of jobs you have run using the Prelert Engine API. \n- Select the ID of a job using the Job ID dropdown control at the top of the dashboard. \n- The chart will show you how the anomaly score varies over time, with peaks significantly higher than others indicating periods of anomalous activities. \n- The table below lists all the anomalies that Prelert has identified in your data. Use sort to view the biggest anomalies.",
-          "style": {},
-          "title": "Debug"
+          "size": 100,
+          "pages": 5,
+          "offset": 0,
+          "sort": [
+            "_score",
+            "desc"
+          ],
+          "overflow": "min-height",
+          "fields": [
+            "_id",
+            "description",
+            "counts.processedRecordCount",
+            "analysisConfig.bucketSpan",
+            "createTime",
+            "status"
+          ],
+          "highlight": [],
+          "sortable": true,
+          "header": true,
+          "paging": false,
+          "field_list": false,
+          "all_fields": false,
+          "trimFactor": 300,
+          "localTime": false,
+          "timeField": "@timestamp",
+          "spyable": true,
+          "queries": {
+            "mode": "selected",
+            "ids": [
+              3
+            ]
+          },
+          "style": {
+            "font-size": "9pt"
+          },
+          "normTimes": true,
+          "title": "Job Details"
         }
       ],
       "notice": false
@@ -132,7 +205,61 @@
             "value_type": "cumulative",
             "query_as_alias": true
           },
-          "title": "Anomaly Score"
+          "title": "Normalized Anomaly Score"
+        }
+      ],
+      "notice": false
+    },
+    {
+      "title": "Buckets Table",
+      "height": "150px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 12,
+          "editable": true,
+          "type": "table",
+          "loadingEditor": false,
+          "size": 20,
+          "pages": 25,
+          "offset": 0,
+          "sort": [
+            "anomalyScore",
+            "desc"
+          ],
+          "overflow": "min-height",
+          "fields": [
+            "@timestamp",
+            "rawAnomalyScore",
+            "anomalyScore",
+            "unusualScore",
+            "recordCount",
+            "eventCount"
+          ],
+          "highlight": [],
+          "sortable": true,
+          "header": true,
+          "paging": true,
+          "field_list": true,
+          "all_fields": false,
+          "trimFactor": 300,
+          "localTime": false,
+          "timeField": "@timestamp",
+          "spyable": true,
+          "queries": {
+            "mode": "selected",
+            "ids": [
+              0
+            ]
+          },
+          "style": {
+            "font-size": "9pt"
+          },
+          "normTimes": true,
+          "title": "Buckets"
         }
       ],
       "notice": false
@@ -150,8 +277,8 @@
           "editable": true,
           "type": "table",
           "loadingEditor": false,
-          "size": 50,
-          "pages": 10,
+          "size": 20,
+          "pages": 25,
           "offset": 0,
           "sort": [
             "anomalyScore",
@@ -161,12 +288,14 @@
           "fields": [
             "@timestamp",
             "anomalyScore",
+            "unusualScore",
             "byFieldName",
             "byFieldValue",
             "function",
             "fieldName",
             "typical",
-            "actual"
+            "actual",
+            "probability"
           ],
           "highlight": [],
           "sortable": true,
@@ -188,7 +317,28 @@
             "font-size": "9pt"
           },
           "normTimes": true,
-          "title": "Anomalies"
+          "title": "Records"
+        }
+      ],
+      "notice": false
+    },
+    {
+      "title": "Help Text",
+      "height": "100px",
+      "editable": true,
+      "collapse": false,
+      "collapsable": true,
+      "panels": [
+        {
+          "error": false,
+          "span": 12,
+          "editable": true,
+          "type": "text",
+          "loadingEditor": false,
+          "mode": "markdown",
+          "content": "- This dashboard shows you the raw anomaly scores (not normalized) of jobs you have run using the Prelert Engine API. \n- Select the ID of a job using the Job ID dropdown control at the top of the dashboard.\n- The chart will show you how the anomaly score varies over time, with peaks significantly higher than others indicating periods of anomalous activities. \n- The tables below list the bucket and anomaly records, with all the data for this dashboard coming directly from queries to Elasticsearch.",
+          "style": {},
+          "title": "Debug"
         }
       ],
       "notice": false
@@ -199,7 +349,7 @@
   "index": {
     "interval": "none",
     "pattern": "[logstash-]YYYY.MM.DD",
-    "default": "{{ARGS.jobId || '_all'}}",
+    "default": "{{ARGS.jobId || null}}",
     "warm_fields": false
   },
   "style": "dark",
@@ -213,15 +363,15 @@
       "query": "*",
       "pinned": true,
       "history": [
-        "_type:record AND NOT isSimpleCount:true",
+        "_type:record",
         "_type:bucket"
       ],
       "remember": 10
     },
     {
       "type": "filtering",
-      "collapse": false,
-      "notice": true,
+      "collapse": true,
+      "notice": false,
       "enable": true
     }
   ],
@@ -237,7 +387,10 @@
         "kibana-int",
         "prelert-int",
         "prelert-usage"
-      ]
+      ],
+      "title": "Index Picker",
+      "showAll": false,
+      "showAllLabel": "All jobs"
     },
     {
       "type": "timepicker",
