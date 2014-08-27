@@ -21,15 +21,6 @@
           "enable": true,
           "query": "_type:record"
         },
-        "2": {
-          "id": 2,
-          "color": "#6ED0E0",
-          "alias": "",
-          "pin": false,
-          "type": "lucene",
-          "enable": true,
-          "query": "*"
-        },
         "3": {
           "id": 3,
           "color": "#EF843C",
@@ -38,33 +29,12 @@
           "type": "lucene",
           "enable": true,
           "query": "_type:job"
-        },
-        "4": {
-          "id": 4,
-          "color": "#E24D42",
-          "alias": "",
-          "pin": false,
-          "type": "lucene",
-          "enable": true,
-          "query": "_type:quantiles"
-        },
-        "5": {
-          "id": 5,
-          "color": "#1F78C1",
-          "alias": "",
-          "pin": false,
-          "type": "lucene",
-          "enable": true,
-          "query": "_type:detectorState"
         }
       },
       "ids": [
         0,
         1,
-        2,
-        3,
-        4,
-        5
+        3
       ]
     },
     "filter": {
@@ -363,6 +333,7 @@
       "query": "*",
       "pinned": true,
       "history": [
+        "_type:job",
         "_type:record",
         "_type:bucket"
       ],
