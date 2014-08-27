@@ -53,6 +53,7 @@ function (angular, app, config, _) {
     // Set and populate defaults
     var _d = {
       status        : "Stable",
+      title         : "Job Picker",
       /**
        * label:: Label to show next to the job picker control.
        */
