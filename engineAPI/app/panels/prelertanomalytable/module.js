@@ -98,7 +98,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
       /** @scratch /panels/prelertanomalytable/1
        * sort:: An array describing the sort order of the table. For example [`@timestamp',`desc']
        */
-      sort    : ['unusualScore','desc'],
+      sort    : ['recordUnusualness','desc'],
       /** @scratch /panels/prelertanomalytable/1
        * overflow:: The css overflow property. `min-height' (expand) or `auto' (scroll)
        */
@@ -106,7 +106,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
       /** @scratch /panels/prelertanomalytable/1
        * fields:: the fields used a columns of the table, in an array.
        */
-      fields  : ['timestamp','anomalyScore','unusualScore','byFieldName','byFieldValue','function','fieldName','typical','actual'],
+      fields  : ['timestamp','anomalyScore','recordUnusualness','byFieldName','byFieldValue','function','fieldName','typical','actual'],
       /** @scratch /panels/prelertanomalytable/1
        * sortable:: Set sortable to false to disable sorting
        */
@@ -337,7 +337,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
               
               // Store the severity labels for the bucket and unusual scores.
               _h.severity = prelertutil.get_anomaly_severity(_h.anomalyScore);
-              _h.unusualSeverity = prelertutil.get_anomaly_severity(_h.unusualScore);
+              _h.unusualSeverity = prelertutil.get_anomaly_severity(_h.recordUnusualness);
               
               return _h;
             }));

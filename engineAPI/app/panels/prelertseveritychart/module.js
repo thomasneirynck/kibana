@@ -96,7 +96,7 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
       /** @scratch /panels/prelertseveritychart/1
        * value_field:: y-axis field if +mode+ is set to mean, max, min or total. Must be numeric.
        */
-      value_field   : 'unusualScore',
+      value_field   : 'recordUnusualness',
       /** @scratch /panels/prelertseveritychart/1
        * max_results:: Maximum number of results to obtain from the Engine API endpoint in a single query.
        * TODO - may be able to do away with this param if data is obtained from a 'charting' endpoint

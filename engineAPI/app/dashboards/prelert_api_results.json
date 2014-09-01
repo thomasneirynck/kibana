@@ -192,7 +192,7 @@
           "loadingEditor": false,
           "mode": "count",
           "time_field": "timestamp",
-          "value_field": "unusualScore",
+          "value_field": "recordUnusualness",
           "max_results": 20000,
           "x-axis": true,
           "y-axis": true,
@@ -282,14 +282,14 @@
           "pages": 5,
           "offset": 0,
           "sort": [
-            "unusualScore",
+            "recordUnusualness",
             "desc"
           ],
           "overflow": "min-height",
           "fields": [
             "timestamp",
             "anomalyScore",
-            "unusualScore",
+            "recordUnusualness",
             "byFieldName",
             "byFieldValue",
             "overFieldName",
