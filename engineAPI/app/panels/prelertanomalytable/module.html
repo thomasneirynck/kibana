@@ -90,21 +90,7 @@
         <div><input type="text" class="input-medium" placeholder="Type to filter..." ng-model="fieldFilter">
         </div>
 
-        <div ng-show="panel.all_fields" class="small muted" style="margin-bottom:10px">
-          <strong>Note</strong> These fields have been<br>
-          extracted from your mapping.<br>
-          Not all fields may be available<br>
-          in your source document.
-        </div>
-
-        <ul class="unstyled" style="{{panel.overflow}}:{{panel.height || row.height}};overflow-y:auto;overflow-x:hidden;" ng-if="panel.all_fields">
-          <li class="table-fieldname" ng-style="panel.style" ng-repeat="field in fields.list|filter:fieldFilter|orderBy:identity">
-            <i class="pointer" ng-class="{'icon-check': columns[field],'icon-check-empty': _.isUndefined(columns[field])}" ng-click="toggle_field(field)"></i>
-            <a class="pointer" data-unique="1" bs-popover="'app/panels/prelertanomalytable/micropanel.html'" data-placement="rightTop" ng-click="toggle_micropanel(field,true)" ng-class="{label: columns[field]}" bo-text="field"></a>
-          </li>
-        </ul>
-
-        <ul class="unstyled" style="{{panel.overflow}}:{{panel.height || row.height}};overflow-y:auto;overflow-x:hidden;" ng-if="!panel.all_fields">
+        <ul class="unstyled" style="{{panel.overflow}}:{{panel.height || row.height}};overflow-y:auto;overflow-x:hidden;">
           <li class="table-fieldname"  ng-style="panel.style" ng-repeat="field in current_fields|filter:fieldFilter|orderBy:identity">
             <i class="pointer" ng-class="{'icon-check': columns[field],'icon-check-empty': _.isUndefined(columns[field])}" ng-click="toggle_field(field)"></i>
             <a class="pointer" data-unique="1" bs-popover="'app/panels/prelertanomalytable/micropanel.html'" data-placement="rightTop" ng-click="toggle_micropanel(field,true)" ng-class="{label: columns[field]}" bo-text="field"></a>
@@ -168,11 +154,24 @@
             <td colspan={{(panel.fields.length+2)}} ng-switch="event.kibana.view">
               <span>
                 View:
+                <span ng-if="_.contains(current_fields, 'overFieldName')"><a class="link" ng-class="{'strong':event.kibana.view == 'causes'}" ng-click="event.kibana.view = 'causes'">Causes</a> / </span>
                 <a class="link" ng-class="{'strong':event.kibana.view == 'table'}" ng-click="event.kibana.view = 'table'">Table</a> /
                 <a class="link" ng-class="{'strong':event.kibana.view == 'json'}" ng-click="event.kibana.view = 'json'">JSON</a> /
                 <a class="link" ng-class="{'strong':event.kibana.view == 'raw'}" ng-click="event.kibana.view = 'raw'">Raw</a>
                 <i class="link pull-right icon-chevron-up" ng-click="toggle_details(event)"></i>
               </span>
+              <table class='table table-bordered table-condensed table-details' ng-switch-when="causes">
+                <th style="white-space:nowrap" ng-repeat="field in get_causes_fields(event)">
+                  <span>{{field}}</span>
+                </th>
+                <tbody bindonce ng-repeat="cause in event.causes" ng-class-odd="'odd'">
+                  <tr class="pointer">
+                    <td ng-repeat="field in get_causes_fields(event)">
+                      <span bo-html="(cause[field])" class="table-field-value"></span>
+                    </td>
+                  </tr>
+                </tbody>  
+              </table>
               <table class='table table-bordered table-condensed table-details' ng-switch-when="table">
                 <thead>
                   <th class="table-details-field">Field</th>
@@ -182,7 +181,7 @@
                 <tr ng-repeat="(key,value) in event.kibana._source track by $index" ng-class-odd="'odd'">
                   <td style="word-wrap:break-word" bo-text="key"></td>
                   <td style="white-space:nowrap">
-                    <i class="pointer icon-th" ng-click="toggle_field(key)" bs-tooltip="'Toggle table column'"></i>
+                    <i ng-if="_.contains(current_fields, key)" class="pointer icon-th" ng-click="toggle_field(key)" bs-tooltip="'Toggle table column'"></i>
                   </td>
                   <!-- At some point we need to create a more efficient way of applying the filter pipeline -->
                   <td style="white-space:pre-wrap;word-wrap:break-word" bo-html="value|noXml|urlLink|stringify"></td>
