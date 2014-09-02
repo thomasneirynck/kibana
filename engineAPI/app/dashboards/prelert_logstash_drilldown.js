@@ -32,7 +32,7 @@
  * to show the raw log data indexed in Elasticsearch by logstash.
  * 
  * The dashboard takes a number of optional, user supplied, URL parameters, which are
- * used to set the index, search andtime range, and to configure the histogram and
+ * used to set the index, search and time range, and to configure the histogram and
  * table displayed in the dashboard.
  *
  * index :: Which index to search? If this is specified, interval is set to 'none'.
