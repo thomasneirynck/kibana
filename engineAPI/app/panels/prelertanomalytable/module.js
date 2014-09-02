@@ -158,11 +158,17 @@ function (angular, app, _, kbn, moment, prelertutil) {
       /** @scratch /panels/prelertanomalytabletable/1
        * linkTarget:: Full or relative URL of page to open when clicking on the 'Show data' link.
        */
-      linkTarget  : '#/dashboard/script/prelert_logstash_drilldown.js',
+      linkTarget  : '#/dashboard/script/prelert_drilldown.js',
       /** @scratch /panels/prelertanomalytable/1
        * overallResultsOnly:: For 1.0 beta only, whether to filter out isOverallResult=false for population analyses with an over field.
        */
       overallResultsOnly: true,
+      /** @scratch /panels/prelertanomalytable/1
+       * If true then the drill down is into a logstash index else it is
+       * data persisted by the Engine.
+       */
+      logstashDrillDown: true,
+
       style   : {'font-size': '9pt'},
       normTimes : true,
     };
@@ -437,14 +443,21 @@ function (angular, app, _, kbn, moment, prelertutil) {
             var bucketSpan = firstHit._source.analysisConfig.bucketSpan;
             
             var params = {};
-            
-            if ($scope.panel.linkIndex.interval == 'none') {
-                params.index = $scope.panel.linkIndex.default;
+
+            if ($scope.panel.logstashDrillDown)
+            {
+              if ($scope.panel.linkIndex.interval == 'none') {
+                  params.index = $scope.panel.linkIndex.default;
+              }
+              else {
+                  params.pattern = $scope.panel.linkIndex.pattern;
+                  params.interval = $scope.panel.linkIndex.interval;
+              }
             }
-            else {
-                params.pattern = $scope.panel.linkIndex.pattern;
-                params.interval = $scope.panel.linkIndex.interval;
-            }
+            else
+            {
+              params.index = $scope.dashboard.current.index.default;
+            }              
             
             // TODO - enhancement for allowing number of buckets either side of anomaly bucket.
             var timestamp = source['timestamp'];
@@ -456,28 +469,60 @@ function (angular, app, _, kbn, moment, prelertutil) {
             
             // Set the Kibana chart mode, and for metric anomalies the fieldName.            
             params.func = source['function'];
+
+
             if (_.has(source, 'fieldName') ) {
                 params.fieldName = source['fieldName'];
             }
-            
-            // Add filters for each of the by/partition/over fields.
+
+            // Add filters for each of the fieldname/by/partition/over fields.
             var filters = [];
-            if (_.has(source, 'byFieldValue') ) {
-                var byFilter = {};
-                byFilter[source.byFieldName] = source.byFieldValue;
-                filters.push(byFilter);
+
+            if ($scope.panel.logstashDrillDown)
+            {
+                            // The timestamp field
+              params.timefield = '@timestamp'
+
+              if (_.has(source, 'byFieldValue') ) {
+                  var byFilter = {};
+                  byFilter[source.byFieldName] = source.byFieldValue;
+                  filters.push(byFilter);
+              }
+              
+              if (_.has(source, 'partitionFieldValue') ) {
+                  var partitionFilter = {};
+                  partitionFilter[source.partitionFieldName] = source.partitionFieldValue;
+                  filters.push(partitionFilter);
+              }
+              
+              if (_.has(source, 'overFieldValue') ) {
+                  var overFilter = {};
+                  overFilter[source.overFieldName] = source.overFieldValue;
+                  filters.push(overFilter);
+              }
             }
-            
-            if (_.has(source, 'partitionFieldValue') ) {
-                var partitionFilter = {};
-                partitionFilter[source.partitionFieldName] = source.partitionFieldValue;
-                filters.push(partitionFilter);
-            }
-            
-            if (_.has(source, 'overFieldValue') ) {
-                var overFilter = {};
-                overFilter[source.overFieldName] = source.overFieldValue;
-                filters.push(overFilter);
+            else
+            {
+              // The timestamp field
+              params.timefield = 'epoch'
+
+              if (_.has(source, 'byFieldValue') ) {
+                  var byFilter = {};
+                  byFilter['byField'] = source.byFieldValue;
+                  filters.push(byFilter);
+              }
+              
+              if (_.has(source, 'partitionFieldValue') ) {
+                  var partitionFilter = {};
+                  partitionFilter['partitionField'] = source.partitionFieldValue;
+                  filters.push(partitionFilter);
+              }
+              
+              if (_.has(source, 'overFieldValue') ) {
+                  var overFilter = {};
+                  overFilter['overField'] = source.overFieldValue;
+                  filters.push(overFilter);
+              }
             }
 
             params['filters'] = angular.toJson(filters);
@@ -485,7 +530,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
             var encodedParams = $.param(params);
             console.log("prelertanomalytable show_data() with params " + decodeURIComponent(encodedParams));
             
-            var targetUrl = $scope.panel.linkTarget + '?' + encodedParams;        
+            var targetUrl = $scope.panel.linkTarget + '?' + encodedParams;
             newWindow.location.href = targetUrl;
             
         });

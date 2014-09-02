@@ -317,6 +317,7 @@
           },
           "linkTarget": "#/dashboard/script/prelert_drilldown.js",
           "overallResultsOnly": true,
+          "logstashDrillDown" : false,
           "style": {
             "font-size": "9pt"
           },

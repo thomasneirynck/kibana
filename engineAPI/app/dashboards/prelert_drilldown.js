@@ -122,7 +122,7 @@ dashboard.nav = [
             "2h",
             "1d"
           ],
-          timefield: "@timestamp",
+          timefield: ARGS.timefield||"@timestamp",
           now: false
         }
       ];
