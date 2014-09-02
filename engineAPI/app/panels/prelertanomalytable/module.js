@@ -104,9 +104,13 @@ function (angular, app, _, kbn, moment, prelertutil) {
        */
       overflow: 'min-height',
       /** @scratch /panels/prelertanomalytable/1
-       * fields:: the fields used a columns of the table, in an array.
+       * fields:: the fields used as columns of the table, in an array.
        */
       fields  : ['timestamp','anomalyScore','recordUnusualness','byFieldName','byFieldValue','function','fieldName','typical','actual'],
+      /** @scratch /panels/prelertanomalytable/1
+       * causesFields:: all the possible fields for the expandable Causes table for population analyses with an over field.
+       */
+      causesFields  : ['byFieldName','byFieldValue', 'overFieldName', 'overFieldValue', 'probability', 'function', 'fieldName', 'typical', 'actual'],
       /** @scratch /panels/prelertanomalytable/1
        * sortable:: Set sortable to false to disable sorting
        */
@@ -160,15 +164,10 @@ function (angular, app, _, kbn, moment, prelertutil) {
        */
       linkTarget  : '#/dashboard/script/prelert_drilldown.js',
       /** @scratch /panels/prelertanomalytable/1
-       * overallResultsOnly:: For 1.0 beta only, whether to filter out isOverallResult=false for population analyses with an over field.
-       */
-      overallResultsOnly: true,
-      /** @scratch /panels/prelertanomalytable/1
        * If true then the drill down is into a logstash index else it is
        * data persisted by the Engine.
        */
       logstashDrillDown: true,
-
       style   : {'font-size': '9pt'},
       normTimes : true,
     };
@@ -259,8 +258,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
 
     $scope.toggle_details = function(row) {
       row.kibana.details = row.kibana.details ? false : true;
-      row.kibana.view = row.kibana.view || 'table';
-      //row.kibana.details = !row.kibana.details ? $scope.without_kibana(row) : false;
+      row.kibana.view = row.kibana.view || (_.contains($scope.current_fields, 'overFieldName') ? 'causes' : 'table');
     };
 
     $scope.page = function(page) {
@@ -316,24 +314,14 @@ function (angular, app, _, kbn, moment, prelertutil) {
             
             $scope.panelMeta.loading = false;
             
-            // For 1.0 beta, filter out the results from population analyses where isOverallResult=false.
-            // This will mean that even if the user is requesting 500 pageable records, they will
-            // only be able to page through the isOverallResult=true records.
-            // TODO - remove after 1.0 beta once endpoint returns these records nested 
-            //        inside the isOverallResult=true records.  
             var anomalies = results.documents;
-            if ($scope.panel.overallResultsOnly == true) {
-                anomalies = _.filter(results.documents, function(anomaly){ 
-                    return (_.has(anomaly, 'isOverallResult') == false || anomaly['isOverallResult'] == true); 
-                });
-            }
             
             // This is exceptionally expensive, especially on events with a large number of fields
             $scope.data = $scope.data.concat(_.map(anomalies, function(anomaly) {
               var _h = _.clone(anomaly);
 
               // Update the list of fields found in alerts.
-              $scope.current_fields = $scope.current_fields.concat(_.keys(_h));
+              $scope.current_fields = $scope.current_fields.concat(_.without(_.keys(_h), 'causes'));
               
               // Add in the 'kibana' object used internally by Kibana to store details used
               // for the table components, such as the micropanel and detail views.
@@ -376,6 +364,23 @@ function (angular, app, _, kbn, moment, prelertutil) {
             console.log('Error loading list of results from the Prelert Engine API: ' + error.message);
         });
         
+    };
+    
+    $scope.get_causes_fields = function(row) {
+        // Remove byFieldName/byFieldValue from the list of columns for the causes table
+        // if the first cause does not have a byFieldName.
+        // And remove fieldName if the first cause does not have a fieldName (e.g. when function = distinct_count).
+        var displayFields = _.clone($scope.panel.causesFields);
+        var firstCause = _.first(row.causes);
+        if (!_.has(firstCause, 'byFieldName')) {
+            displayFields = _.without(displayFields, 'byFieldName', 'byFieldValue');
+        }
+        
+        if (!_.has(firstCause, 'fieldName')) {
+            displayFields = _.without(displayFields, 'fieldName');
+        }
+        
+        return displayFields;
     };
 
     $scope.populate_modal = function(request) {
