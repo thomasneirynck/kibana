@@ -461,7 +461,7 @@ function (angular, app, _, kbn, moment, prelertutil) {
             }
             else
             {
-              params.index = $scope.dashboard.current.index.default;
+              params.index = $scope.dashboard.current.index.default + "_raw";
             }              
             
             // TODO - enhancement for allowing number of buckets either side of anomaly bucket.
