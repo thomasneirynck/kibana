@@ -179,7 +179,7 @@
       "notice": false
     },
     {
-      "title": "Unusual Records",
+      "title": "Anomaly Record Count",
       "height": "200px",
       "editable": true,
       "collapse": false,
@@ -260,13 +260,13 @@
           "tooltip": {
             "value_type": "cumulative"
           },
-          "title": "Unusual Records"
+          "title": "Anomaly Record Count"
         }
       ],
       "notice": false
     },
     {
-      "title": "Anomaly Records",
+      "title": "Anomaly Record Details",
       "height": "450px",
       "editable": true,
       "collapse": false,
@@ -331,7 +331,7 @@
             "font-size": "9pt"
           },
           "normTimes": true,
-          "title": "Anomaly Records"
+          "title": "Anomaly Record Details"
         }
       ],
       "notice": false
