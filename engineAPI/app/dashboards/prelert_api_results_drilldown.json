@@ -179,7 +179,7 @@
       "notice": false
     },
     {
-      "title": "Unusual Behavior",
+      "title": "Unusual Records",
       "height": "200px",
       "editable": true,
       "collapse": false,
@@ -260,13 +260,13 @@
           "tooltip": {
             "value_type": "cumulative"
           },
-          "title": "Unusual Behavior"
+          "title": "Unusual Records"
         }
       ],
       "notice": false
     },
     {
-      "title": "Anomalies Table",
+      "title": "Anomaly Records",
       "height": "450px",
       "editable": true,
       "collapse": false,
@@ -316,13 +316,23 @@
             "default": "_all"
           },
           "linkTarget": "#/dashboard/script/prelert_drilldown.js",
-          "overallResultsOnly": true,
           "logstashDrillDown" : false,
+          "causesFields": [
+            "byFieldName",
+            "byFieldValue",
+            "overFieldName",
+            "overFieldValue",
+            "probability",
+            "function",
+            "fieldName",
+            "typical",
+            "actual"
+          ],
           "style": {
             "font-size": "9pt"
           },
           "normTimes": true,
-          "title": "Anomalies"
+          "title": "Anomaly Records"
         }
       ],
       "notice": false
