@@ -91,7 +91,7 @@
           "zerofill": true,
           "derivative": false,
           "tooltip": {
-            "value_type": "cumulative"
+            "value_type": "individual"
           },
           "title": "Event Count"
         }
@@ -159,7 +159,7 @@
           "points": false,
           "pointradius": 5,
           "bars": false,
-          "stack": true,
+          "stack": false,
           "spyable": false,
           "zoomlinks": true,
           "options": true,
@@ -179,7 +179,7 @@
       "notice": false
     },
     {
-      "title": "Unusual Records",
+      "title": "Anomaly Record Count",
       "height": "200px",
       "editable": true,
       "collapse": false,
@@ -258,15 +258,15 @@
           "percentage": false,
           "zerofill": true,
           "tooltip": {
-            "value_type": "cumulative"
+            "value_type": "individual"
           },
-          "title": "Unusual Records"
+          "title": "Anomaly Record Count"
         }
       ],
       "notice": false
     },
     {
-      "title": "Anomaly Records",
+      "title": "Anomaly Record Details",
       "height": "450px",
       "editable": true,
       "collapse": false,
@@ -331,7 +331,7 @@
             "font-size": "9pt"
           },
           "normTimes": true,
-          "title": "Anomaly Records"
+          "title": "Anomaly Record Details"
         }
       ],
       "notice": false

@@ -40,7 +40,7 @@
       <input type="checkbox"  ng-model="panel.percentage" ng-checked="panel.percentage">
     </div>
     <div class="editor-option" ng-show="panel.stack">
-      <label class="small">Stacked Values <tip>How should the values in stacked charts to be calculated?</tip></label>
+      <label class="small">Stacked Values <tip>How should the values shown in tooltips in stacked charts be calculated?</tip></label>
       <select class="input-small" ng-model="panel.tooltip.value_type" ng-options="f for f in ['cumulative','individual']"></select>
     </div>
   </div>

@@ -240,10 +240,11 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
       zerofill      : true,
       /** @scratch /panels/prelertseveritychart/1
        * tooltip object::
-       * tooltip.value_type::: Individual or cumulative controls how tooltips are display on stacked charts
+       * tooltip.value_type::: Individual or cumulative controls the value that is shown in the tooltip 
+       *  when hovering over a point when multiple series are shown in 'stack' mode.
        */
       tooltip       : {
-        value_type: 'cumulative'
+        value_type: 'individual'
       }
     };
 

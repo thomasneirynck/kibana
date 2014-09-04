@@ -172,7 +172,7 @@
           "zerofill": true,
           "derivative": false,
           "tooltip": {
-            "value_type": "cumulative",
+            "value_type": "individual",
             "query_as_alias": true
           },
           "title": "Normalized Anomaly Score"
