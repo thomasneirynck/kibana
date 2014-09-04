@@ -91,7 +91,7 @@
           "zerofill": true,
           "derivative": false,
           "tooltip": {
-            "value_type": "cumulative"
+            "value_type": "individual"
           },
           "title": "Event Count"
         }
@@ -159,7 +159,7 @@
           "points": false,
           "pointradius": 5,
           "bars": false,
-          "stack": true,
+          "stack": false,
           "spyable": false,
           "zoomlinks": true,
           "options": true,
@@ -258,7 +258,7 @@
           "percentage": false,
           "zerofill": true,
           "tooltip": {
-            "value_type": "cumulative"
+            "value_type": "individual"
           },
           "title": "Anomaly Record Count"
         }
