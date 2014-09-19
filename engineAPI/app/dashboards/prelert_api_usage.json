@@ -50,7 +50,7 @@
           "loadingEditor": false,
           "mode": "total",
           "time_field": "@timestamp",
-          "value_field": "volume",
+          "value_field": "inputBytes",
           "x-axis": true,
           "y-axis": true,
           "scale": "0.000001",
@@ -142,7 +142,7 @@
           "overflow": "min-height",
           "fields": [
             "@timestamp",
-            "volume",
+            "inputBytes",
             "_index"
           ],
           "highlight": [],
