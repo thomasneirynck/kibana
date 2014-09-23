@@ -58,7 +58,7 @@
           "type": "text",
           "loadingEditor": false,
           "mode": "markdown",
-          "content": "###About\n\nPrelert is 100% self-learning so it provides value in minutes. No rules, models or thresholds to create and maintain. No days, weeks or months of implementation and 'training the algorithms.' Spend less time mining your data and more time building new capabilities.\n\nThis Kibana-based UI comes with pre-built dashboards, allowing you to explore the results of Prelert's analytics and to view the details of your Engine API jobs. You can see how the the anomaly score varies over the time range of each API job and a table of all the anomalies detected in your data.\n\n####[Step 1: Quick Start Guide](http://www.prelert.com/docs/engine_api/1.0/quick-start.html)\nFollow the guide to upload a dataset and analyze\n\n####[Step 2: Results Dashboard](index.html#/dashboard/file/prelert_api_results.json)\nView the Anomaly Detective Engine results dashboard\n\n#####System Dashboards\n- [Jobs Dashboard](index.html#/dashboard/file/prelert_api_jobs.json) *View the status of all your Anomaly Detective Engine jobs*\n- [Usage Dashboard](index.html#/dashboard/file/prelert_api_usage.json) *View the volume of data you have analyzed with the API*\n- [Debug Dashboard](index.html#/dashboard/file/prelert_api_debug.json) *View the raw anomaly scores of your Anomaly Detective Engine jobs*",
+          "content": "### [View Results Dashboard](index.html#/dashboard/file/prelert_api_results.json) \n### [View Jobs Dashboard](index.html#/dashboard/file/prelert_api_jobs.json) \n \n####Useful Links\n- [Quick Start Guide](http://www.prelert.com/docs/engine_api/1.0/quick-start.html) *Step by step instructions for new users*\n- [Usage Dashboard](index.html#/dashboard/file/prelert_api_usage.json) *View the volume of data you have analyzed with the API*\n- [Debug Dashboard](index.html#/dashboard/file/prelert_api_debug.json) *View the raw anomaly scores of your Anomaly Detective Engine jobs*\n \nPrelert is 100% self-learning so it provides value in minutes. No rules, models or thresholds to create and maintain. No days, weeks or months of implementation and 'training the algorithms'. Spend less time mining your data and more time building new capabilities.\n \nThis Kibana-based UI comes with pre-built dashboards, allowing you to explore the results of Prelert's analytics and to view the details of your Engine API jobs. You can see how the the anomaly score varies over the time range of each API job and a table of all the anomalies detected in your data.",
           "style": {},
           "title": "Welcome"
         },
@@ -127,7 +127,10 @@
       "omit_indices": [
         "kibana-int",
         "prelert-int"
-      ]
+      ],
+      "title": "Index Picker",
+      "showAll": true,
+      "showAllLabel": "All indices"
     },
     {
       "type": "timepicker",
