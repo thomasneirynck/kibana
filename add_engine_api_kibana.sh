@@ -85,7 +85,7 @@ fi
 # script
 cd `dirname $0`
 
-VENDOR_ID=PrelertEngine
+VENDOR_ID=Prelert
 # The vendor-specific file should pull in values for:
 # * $PRODUCT_NAME
 # * $VENDOR_NAME
