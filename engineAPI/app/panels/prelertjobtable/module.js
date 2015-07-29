@@ -32,7 +32,7 @@
  * == prelertjobtable
  * Status: *Stable*
  *
- * The prelertjobtable panel contains a sortable, pagable view of Prelert Engine API jobs. 
+ * The prelertjobtable panel contains a sortable, pagable view of Prelert Engine API jobs.
  * It can be arranged into defined columns and offers several interactions, such as links to the
  * results of a job and to delete a job.
  */
@@ -77,9 +77,9 @@ function (angular, app, _, kbn, moment) {
       /** @scratch /panels/prelertjobtable/1
        *
        * === Parameters
-       * 
+       *
        * queryMode:: Whether the module should query for the details of all jobs, or
-       * for just the job currently set on the page. 
+       * for just the job currently set on the page.
        * defined. Possible values: all, current.
        */
       queryMode          : 'all',
@@ -171,7 +171,7 @@ function (angular, app, _, kbn, moment) {
 
       $scope.fields = fields;
       $scope.get_data();
-      
+
       $scope.testSev = "major";
     };
 
@@ -230,7 +230,7 @@ function (angular, app, _, kbn, moment) {
       } else {
         $scope.panel.sort[0] = field;
       }
-      
+
       $scope.get_data();
     };
 
@@ -258,7 +258,7 @@ function (angular, app, _, kbn, moment) {
     $scope.fieldExists = function(field,mandate) {
       filterSrv.set({type:'exists',field:field,mandate:mandate});
     };
-    
+
     $scope.get_data = function() {
         if ($scope.panel.queryMode === 'current'){
             $scope.get_current_job();
@@ -271,14 +271,14 @@ function (angular, app, _, kbn, moment) {
 
       $scope.panel.error =  false;
       $scope.panelMeta.loading = true;
-      
+
       $scope.panel.offset = 0;
       $scope.hits = 0;
       $scope.data = [];
       $scope.current_fields = [];
 
       // Get the list of jobs from the Prelert Engine API.
-      // Paging behaviour is consistent with Kibana where it gets size*pages records 
+      // Paging behaviour is consistent with Kibana where it gets size*pages records
       // in one query and then does client-side paging through query results.
       // TODO - implement skip for full paging functionality.
       var params = {
@@ -288,9 +288,9 @@ function (angular, app, _, kbn, moment) {
       .success(function(results) {
           console.log('prelertjobtable jobs from JobService: ');
           console.log(results);
-          
+
           $scope.panelMeta.loading = false;
-          
+
           // This is exceptionally expensive, especially on events with a large number of fields
           $scope.data = $scope.data.concat(_.map(results.documents, function(hit) {
             var _h = _.clone(hit);
@@ -307,7 +307,7 @@ function (angular, app, _, kbn, moment) {
 
           $scope.current_fields = _.uniq($scope.current_fields);
           $scope.hits = results.hitCount;
-          
+
           // Sort the data - do client-side sorting with Underscore.js
           // since the Jobs endpoint does not have sorting capability.
           var sortField = $scope.panel.sort[0];
@@ -320,10 +320,10 @@ function (angular, app, _, kbn, moment) {
           if($scope.panel.sort[1] === 'desc') {
             $scope.data.reverse();
           }
-          
+
           // Keep only what we need for the set
-          $scope.data = $scope.data.slice(0,$scope.panel.size * $scope.panel.pages);  
-          
+          $scope.data = $scope.data.slice(0,$scope.panel.size * $scope.panel.pages);
+
       })
       .error(function (error) {
           $scope.panelMeta.loading = false;
@@ -333,17 +333,17 @@ function (angular, app, _, kbn, moment) {
       });
 
     };
-    
+
     $scope.get_current_job = function() {
         $scope.panel.error =  false;
         $scope.panelMeta.loading = true;
-        
+
         $scope.panel.offset = 0;
         $scope.hits = 0;
         $scope.data = [];
         $scope.current_fields = [];
-        
-        // If no index (i.e. job ID) is set, then return. 
+
+        // If no index (i.e. job ID) is set, then return.
         var jobId = $scope.dashboard.current.index.default;
         if (_.isUndefined(jobId) || _.isEmpty(jobId)) {
             return;
@@ -354,60 +354,73 @@ function (angular, app, _, kbn, moment) {
         .success(function(result) {
             console.log('prelertjobtable job details from JobService: ');
             console.log(result);
-            
+
             $scope.panelMeta.loading = false;
-            
+
             var job = result.document;
-            
+
             // _source is kind of a lie here, never display it, only select values from it
             job.kibana = {
               _source : kbn.flatten_json(job)
             };
-            
+
             $scope.current_fields = $scope.current_fields.concat(_.keys(job.kibana._source));
 
             $scope.hits = 1;
 
             $scope.data.push(job);
-            
+
         })
         .error(function (error) {
             $scope.panelMeta.loading = false;
-            $scope.panel.error = $scope.parse_error("Error loading details of job with ID " + jobId + 
+            $scope.panel.error = $scope.parse_error("Error loading details of job with ID " + jobId +
                    " from the Prelert Engine API. Please ensure the job exists and that the Engine API is running and configured correctly.");
             console.log('Error loading details of job ' + jobId + ' from the Prelert Engine API: ' + error.message);
         });
 
       };
-    
+
     $scope.show_results = function(event, jobId) {
         // Stop event propagation to prevent default row details expansion.
         event.stopPropagation();
-        
+
         // Open the API Results dashboard, passing the job id as the URL jobId parameter.
         var params = {};
         params.jobId = jobId;
         var encodedParams = $.param(params);
-        
-        var targetUrl = '#/dashboard/file/prelert_api_results.json?' + encodedParams;  
+
+        var targetUrl = '#/dashboard/file/prelert_api_results.json?' + encodedParams;
         window.open(targetUrl,"_blank");
     };
-    
-    
+
+    $scope.show_influencers = function(event, jobId) {
+        // Stop event propagation to prevent default row details expansion.
+        event.stopPropagation();
+
+        // Open the API Results dashboard, passing the job id as the URL jobId parameter.
+        var params = {};
+        params.jobId = jobId;
+        var encodedParams = $.param(params);
+
+        var targetUrl = '#/dashboard/file/prelert_api_influencers.json?' + encodedParams;
+        window.open(targetUrl,"_blank");
+    };
+
+
     $scope.delete_job = function(event, jobId) {
         // Stop event propagation to prevent default row details expansion.
         event.stopPropagation();
-        
+
         var dash = $scope.dashboard;
-        
+
         var message="Are you sure you want to delete job id " + jobId + "?\nAll the results and configuration for this job will be deleted.";
         if (window.confirm(message)) {
-            
+
             $scope.prelertjs.JobsService.deleteJob(jobId)
             .success(function(response) {
                 console.log('prelertjobtable response from delete: ');
                 console.log(response);
-                
+
                 $scope.dashboard.refresh();
             })
             .error(function (error) {
