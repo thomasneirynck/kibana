@@ -41,27 +41,27 @@ function (angular, app, _) {
       return {
         restrict: 'E',
         link: function(scope, element, attr) {
-          
-          scope.$on('refresh',function(){ 
+
+          scope.$on('refresh',function(){
               log_usage();
           });
-          
+
           function log_usage() {
-              // Sends basic usage information on the Prelert Engine API results dashboard to Prelert, 
+              // Sends basic usage information on the Prelert Engine API results dashboard to Prelert,
               // specifically the API product and version number, customer ID, time, dashboard title
               // Engine API platform, OS version and the Job ID.
-              
-              // Get basic data on the Prelert Engine API from the usage type in the prelert-int index. 
+
+              // Get basic data on the Prelert Engine API from the usage type in the prelert-int index.
               var request = scope.ejs.Request().indices('prelert-int').types('info');
               request.query(
                       ejs.IdsQuery('infoStats')
                 ).size(1);
-              
+
               var results = request.doSearch();
               results.then(function(results) {
                   var hits = results.hits.hits;
                   if (_.size(hits) > 0) {
-                      var usageStats = _.first(hits)._source;  
+                      var usageStats = _.first(hits)._source;
                       var params = $.param({
                             "typ": "view",
                             "prod": "engineAPI",
@@ -82,9 +82,9 @@ function (angular, app, _) {
                       });
                   }
               });
-              
+
           }
-          
+
         }
       };
     });
