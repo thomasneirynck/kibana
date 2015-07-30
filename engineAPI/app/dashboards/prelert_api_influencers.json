@@ -137,7 +137,7 @@
   "index": {
     "interval": "none",
     "pattern": "[logstash-]YYYY.MM.DD",
-    "default": "firewall",
+    "default": "{{ARGS.jobId || null}}",
     "warm_fields": false
   },
   "style": "dark",
@@ -164,7 +164,7 @@
   ],
   "nav": [
     {
-      "type": "prelertindexpicker",
+      "type": "prelertjobpicker",
       "collapse": false,
       "notice": false,
       "enable": true,
