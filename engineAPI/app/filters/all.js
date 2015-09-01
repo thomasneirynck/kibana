@@ -211,5 +211,32 @@ define([
           
       };
   }]);
-  
+ 
+  // Formats 'typical' and 'actual' values for time_of_day and
+  // time_of_week functions, converting the raw number, which is
+  // number of seconds since midnight, into a human-readable time
+  module.filter('timeOfWeek', function() {
+      return function(text, fx) {
+          if (fx == 'time_of_week')
+          {
+              var d = new Date();
+              var i = parseInt(text);
+              d.setTime(i * 1000);
+              return moment(d).format('ddd hh:mm');
+          }
+          else if (fx == 'time_of_day')
+          {
+              var d = new Date();
+              var i = parseInt(text);
+              d.setTime(i * 1000);
+              return moment(d).format('hh:mm');
+          }
+          else
+          {
+              return text;
+          }
+      };
+  });
+ 
+
 });
