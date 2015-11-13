@@ -112,6 +112,10 @@ function (angular, app, $, _, kbn, moment, prelertutil, timeSeries, numeral) {
        */
       'y-axis'      : true,
       /** @scratch /panels/prelertseveritychart/1
+       * scale:: Scale the y-axis by this factor
+       */
+      scale         : 1,
+      /** @scratch /panels/prelertseveritychart/1
        * grid object:: Min and max y-axis values
        * grid.min::: Minimum y-axis value
        * grid.max::: Maximum y-axis value
