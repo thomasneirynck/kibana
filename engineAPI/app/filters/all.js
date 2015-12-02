@@ -222,14 +222,14 @@ define([
               var d = new Date();
               var i = parseInt(text);
               d.setTime(i * 1000);
-              return moment(d).format('ddd hh:mm');
+              return moment(d).format('ddd HH:mm');
           }
           else if (fx == 'time_of_day')
           {
               var d = new Date();
               var i = parseInt(text);
               d.setTime(i * 1000);
-              return moment(d).format('hh:mm');
+              return moment(d).format('HH:mm');
           }
           else
           {
