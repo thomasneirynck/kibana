@@ -5,6 +5,6 @@
  */
 import { resolve } from 'path';
 export default {
-  dev: resolve(__dirname, '../../../kibana'),
-  test: resolve(__dirname, '../../../..')
+  dev: resolve(__dirname, '../../../../../kibana'),
+  test: resolve(__dirname, '../../../../../..')
 };
