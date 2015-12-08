@@ -28,10 +28,9 @@ class ClusterRow extends React.Component {
     }
 
     var licenseExpiry = (
-      <div
-        className="expires">
+      <div className="expires">
         Expires { moment(get('license.expiry_date_in_millis')).format('D MMM YY') }
-        </div>
+      </div>
     );
 
     if (get('license.expiry_date_in_millis') < moment().valueOf()) {

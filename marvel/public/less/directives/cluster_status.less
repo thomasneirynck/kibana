@@ -1,8 +1,13 @@
 marvel-cluster-status {
   margin: 10px 0;
   display: block;
+
   >div {
     display: flex;
+
+    * + * {
+      margin-left: 10px;
+    }
 
     .clusters {
       padding: 5px 10px;
@@ -12,7 +17,6 @@ marvel-cluster-status {
       a.dropdown-toggle {
         color: @white;
       }
-      margin-right: 10px;
 
       .dropdown-menu {
         padding: 0;
@@ -56,7 +60,19 @@ marvel-cluster-status {
       }
     }
 
+    .stats,
+    .clusterLicense {
+      display: flex;
+      background-color: @esDarkGray;
+      color: @white;
+      >div {
+        align-self: center;
+        padding: 5px 10px;
+      }
+    }
+
     .stats {
+      flex-grow: 1;
       border: 0;
       .loading {
         flex-grow: 1;
@@ -98,19 +114,16 @@ marvel-cluster-status {
           background-color: @esYellow;
         }
       }
-      background-color: @esDarkGray;
-      color: @white;
-      display: flex;
-      flex-grow: 1;
-      >div {
-        align-self: center;
-        padding: 5px 10px;
-      }
-
     }
 
-
+    .clusterLicense {
+      align-items: center;
+      a {
+        display: inline-block;
+        padding: 5px 10px;
+        color: @white;
+      }
+    }
 
   }
 }
-

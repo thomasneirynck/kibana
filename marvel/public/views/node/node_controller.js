@@ -49,7 +49,7 @@ mod.controller('nodeView', (timefilter, $route, globalState, Private, $executor,
 
   $scope.pageData = $route.current.locals.pageData;
 
-  var docTitle = Private(require('ui/doc_title'));
+  const docTitle = Private(require('ui/doc_title'));
   docTitle.change(`Marvel - ${$scope.pageData.nodeSummary.name}`, true);
 
   $executor.register({

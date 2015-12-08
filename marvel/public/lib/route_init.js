@@ -63,14 +63,18 @@ define(function (require) {
         .then(function () {
           var cluster = _.find(marvel.clusters, { cluster_uuid: globalState.cluster });
           var license = cluster.license;
-          if ((new Date()).getTime() > license.expiry_date_in_millis) {
-            kbnUrl.redirect('expired-license');
+          var isExpired = (new Date()).getTime() > license.expiry_date_in_millis;
+
+          if (isExpired && !_.contains(window.location.hash, 'license')) {
+            // redirect to license, but avoid infinite loop
+            kbnUrl.redirect('license');
+          } else {
+            chrome.setTabs(tabs.filter(function (tab) {
+              if (tab.id !== 'home') return true;
+              if (license.type !== 'basic') return true;
+              return false;
+            }));
           }
-          chrome.setTabs(tabs.filter(function (tab) {
-            if (tab.id !== 'home') return true;
-            if (license.type !== 'basic') return true;
-            return false;
-          }));
           return marvel;
         });
     };
