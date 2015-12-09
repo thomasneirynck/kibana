@@ -61,29 +61,37 @@ module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, 
     }
 
     checkReportStatus() {
-      var reportInterval = 86400000;
+      var reportInterval = 86400000; // 1 day
       var sendReport     = false;
 
+      // check if opt-in for phone home is enabled in config (reportStats) and browser setting (features)
       if (reportStats && features.isEnabled('report', true)) {
-        // If the last report is empty it means we've never sent an report and
-        // now is the time to send it.
+        // If the last report is empty it means user is first-time visiting
+        // Marvel app and has not had an opportunity to opt out.
         if (!this.get('lastReport')) {
-          sendReport = true;
+          // Initialize the browser data for phone home
+          // if they remain opted in, report interval will trigger 1 minute from now
+          this.set('lastReport', new Date().getTime() - (86400000 - 60000));
+          this.set('isNewUser', true);
+
+          this.saveToBrowser();
         }
         // If it's been a day since we last sent an report, send one.
         if (new Date().getTime() - parseInt(this.get('lastReport'), 10) > reportInterval) {
+          // GA beacon will load for this page, because it's in the footer and loaded last
+          // and it will load on subsequent pages as long as user doesn't opt-out
+          this.set('isNewUser', false);
           sendReport = true;
         }
       }
 
-      // If we need to send a report then we need to record the last time we
-      // sent it and store it
-      if (sendReport) {
-        return true;
-      }
+      return sendReport;
+    }
 
-      // If all else fails... don't send
-      return false;
+    // Helper method for GA
+    // Since consumers shouldn't directly call phoneHome.get() and phoneHome.set()
+    isNewUser() {
+      return this.get('isNewUser') === true || _.isUndefined(this.get('lastReport'));
     }
 
     getClusterInfo(clusterUUID) {
@@ -108,6 +116,7 @@ module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, 
           return $http(req);
         });
       })).then(() => {
+        // we sent a report, so we need to record and store the current time stamp
         this.set('lastReport', Date.now());
         this.saveToBrowser();
       })
