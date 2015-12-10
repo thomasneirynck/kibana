@@ -1,9 +1,8 @@
-const _ = require('lodash');
 const hapiAuthCookie = require('hapi-auth-cookie');
-const getAuthHeader = require('./server/lib/get_auth_header');
+const root = require('requirefrom')('');
 
 module.exports = (kibana) => new kibana.Plugin({
-  name: 'security',
+  name: 'shield',
   require: ['elasticsearch'],
 
   config(Joi) {
@@ -18,20 +17,13 @@ module.exports = (kibana) => new kibana.Plugin({
     apps: [{
       id: 'login',
       title: 'Login',
-      main: 'plugins/security/login',
+      main: 'plugins/shield/views/login',
       hidden: true,
-      autoload: kibana.autoload.styles
-    }, {
-      id: 'logout',
-      title: 'Logout',
-      main: 'plugins/security/login/logout',
-      hidden: false,
       autoload: kibana.autoload.styles
     }]
   },
 
   init(server, options) {
-    const isValidUser = require('./server/lib/is_valid_user')(server.plugins.elasticsearch.client);
     const config = server.config();
 
     server.register(hapiAuthCookie, (error) => {
@@ -39,25 +31,18 @@ module.exports = (kibana) => new kibana.Plugin({
 
       server.auth.strategy('session', 'cookie', 'required', {
         cookie: 'sid',
-        password: config.get('security.encryptionKey'),
-        ttl: config.get('security.sessionTimeout'),
+        password: config.get('shield.encryptionKey'),
+        ttl: config.get('shield.sessionTimeout'),
         clearInvalid: true,
         keepAlive: true,
         isSecure: false, // TODO: Remove this
         redirectTo: '/login',
-        validateFunc(request, session, callback) {
-          const {username, password} = session;
-
-          return isValidUser(username, password).then(() => {
-            _.assign(request.headers, getAuthHeader(username, password));
-            return callback(null, true);
-          }, (error) => {
-            return callback(error, false);
-          });
-        }
+        validateFunc: root('server/lib/validate')(server)
       });
     });
 
-    require('./server/routes/authentication')(server, this);
+    root('server/routes/api/v1/login')(server);
+    root('server/routes/views/login')(server, this);
+    root('server/routes/views/logout')(server);
   }
 });
