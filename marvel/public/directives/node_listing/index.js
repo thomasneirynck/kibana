@@ -58,7 +58,8 @@ define(function (require) {
         if (this.props.offline && dataKey.key !== 'status') {
           $content = make.div(null, make.div({className: 'big inline'}, 'N/A'));
         } else {
-          $content = make.div(null, make.div({className: 'big inline'}, value));
+          const classNames = `big inline ${dataKey.key}-${('' + value).toLowerCase()}`;
+          $content = make.div(null, make.div({className: classNames}, value));
         }
       }
       return make.td({key: idx}, $content);
