@@ -1,0 +1,12 @@
+work
+.idea
+.DS_Store
+*.iml
+*.log
+node_modules
+esvm
+build
+.aws-config.json
+html_docs
+target
+coverage
