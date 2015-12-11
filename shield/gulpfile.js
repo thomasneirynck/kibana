@@ -9,6 +9,7 @@ var eslint = require('gulp-eslint');
 var rimraf = require('rimraf');
 var tar = require('gulp-tar');
 var gzip = require('gulp-gzip');
+var aws = require('aws-sdk');
 var fs = require('fs');
 
 var pkg = require('./package.json');
@@ -100,6 +101,22 @@ gulp.task('package', ['build'], function (done) {
     .pipe(tar(packageName + '.tar'))
     .pipe(gzip())
     .pipe(gulp.dest(targetDir));
+});
+
+gulp.task('release', ['package'], function (done) {
+  var filename = packageName + '.tar.gz';
+  var key = 'kibana/shield/' + filename;
+  var s3 = new aws.S3();
+  var params = {
+    Bucket: 'download.elasticsearch.org',
+    Key: key,
+    Body: fs.createReadStream(path.join(targetDir, filename))
+  };
+  s3.upload(params, function (err, data) {
+    if (err) return done(err);
+    gulpUtil.log('Finished', gulpUtil.colors.cyan('uploaded') + ' Available at ' + data.Location);
+    done();
+  });
 });
 
 gulp.task('dev', ['sync'], function (done) {
