@@ -15,7 +15,7 @@ define(function (require) {
       var value = _.get(this.props, dataKey.key);
       var $content = null;
       // Content for the name column.
-      if (dataKey.key === 'node.name') {
+      if (dataKey.key === 'nodeName') {
         var title = this.props.node.nodeTypeLabel;
         var classes = 'fa ' + this.props.node.nodeTypeClass;
         var state = this.state || {};
@@ -27,8 +27,8 @@ define(function (require) {
             className: classes },
             null)
           ),
-          make.a({href: '#/nodes/' + state.id}, state.node.name),
-          make.div({className: 'small'}, extractIp(state.node.transport_address))); //   <div.small>
+          make.a({href: '#/nodes/' + state.id}, state.nodeName),
+          make.div({className: 'small'}, extractIp(state.transport_address))); //   <div.small>
       }
       // make the content for all of the metric columns
       if (_.isObject(value) && value.metric) {
@@ -75,8 +75,8 @@ define(function (require) {
        * "sortKey" should be a scalar */
       columns: [
         {
-          key: 'node.name',
-          sortKey: 'node.name',
+          key: 'nodeName',
+          sortKey: 'nodeName',
           sort: 1,
           title: 'Name'
         },
@@ -116,12 +116,26 @@ define(function (require) {
       restrict: 'E',
       scope: { cluster: '=', rows: '=' },
       link: function ($scope, $el) {
+
+        // copy node fields to top-level so table filtering works
+        function decorateRow(row) {
+          if (!row) return null;
+          row.nodeName = _.get(row, 'node.name');
+          row.type = _.get(row, 'node.type');
+          row.transport_address = _.get(row, 'node.transport_address');
+          row.status = row.offline ? 'Offline' : 'Online';
+          return row;
+        }
+
+        // component for each table row
         var tableRowTemplate = React.createClass({
           getInitialState: function () {
-            return _.find($scope.rows, {id: this.props.id }) || null;
+            var row = _.find($scope.rows, {id: this.props.id});
+            return decorateRow(row);
           },
           componentWillReceiveProps: function (newProps) {
-            this.setState(_.find($scope.rows, { id: newProps.id }));
+            var row = _.find($scope.rows, {id: newProps.id});
+            this.setState(decorateRow(row));
           },
           render: function () {
             var boundTemplateFn = makeTdWithPropKey.bind(this);
@@ -139,10 +153,9 @@ define(function (require) {
         });
         var tableInstance = React.render($table, $el[0]);
         $scope.$watch('rows', function (rows) {
-          rows.forEach(function (row) {
-            row.status = row.offline ? 'Offline' : 'Online';
-          });
-          tableInstance.setData(rows);
+          tableInstance.setData(rows.map(function (row) {
+            return decorateRow(row);
+          }));
         });
       }
     };

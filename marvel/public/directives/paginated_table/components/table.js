@@ -8,6 +8,7 @@ define(function (require) {
 
 
   function getFilteredData(data, filter) {
+    if (!filter) return data;
     return data.filter(function (obj) {
       var concatValues = _.values(obj)
         .filter(function (val) { return typeof val === 'string'; })
