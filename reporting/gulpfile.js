@@ -1,15 +1,19 @@
-var gulp = require('gulp');
-var _ = require('lodash');
+var fs = require('fs');
 var path = require('path');
-var gulpUtil = require('gulp-util');
+var url = require('url');
+var Promise = require('bluebird');
+var _ = require('lodash');
 var mkdirp = require('mkdirp');
 var Rsync = require('rsync');
-var Promise = require('bluebird');
-var eslint = require('gulp-eslint');
 var rimraf = require('rimraf');
+var gulp = require('gulp');
+var gulpUtil = require('gulp-util');
+var eslint = require('gulp-eslint');
 var tar = require('gulp-tar');
 var gzip = require('gulp-gzip');
-var fs = require('fs');
+var debug = require('debug');
+var request = require('request');
+var md5 = require('md5');
 
 var pkg = require('./package.json');
 var packageName = pkg.name  + '-' + pkg.version;
@@ -37,49 +41,105 @@ var excludedDeps = Object.keys(pkg.devDependencies).map(function (name) {
 });
 
 var excludedFiles = [
-  path.join('node_modules', '.bin'),
   '.DS_Store',
+  path.join('node_modules', '.bin'),
+  // path.join('.phantom', 'phantomjs*'),
 ];
 
-function syncPluginTo(dest, done) {
-  mkdirp(dest, function (err) {
-    if (err) return done(err);
-    Promise.all(include.map(function (name) {
+function syncPluginTo(dest) {
+  return Promise.fromCallback(function (cb) {
+    mkdirp(dest, cb);
+  })
+  .then(function () {
+    var logger = debug('file-sync');
+    return Promise.all(include.map(function (name) {
       var source = path.resolve(__dirname, name);
-      return new Promise(function (resolve, reject) {
+
+      return Promise.fromCallback(function (cb) {
         var rsync = new Rsync();
-        rsync
-        .source(source)
-        .destination(dest)
-        .flags('uav')
-        .recursive(true)
-        .set('delete')
-        .exclude(excludedDeps.concat(excludedFiles))
-        .output(function (data) {
-          process.stdout.write(data.toString('utf8'));
+
+        rsync.source(source).destination(dest);
+        rsync.flags('uav').recursive(true).set('delete');
+        rsync.exclude(excludedDeps.concat(excludedFiles));
+
+        // debugging output
+        rsync.output(function (data) {
+          logger(data.toString('utf8'));
         });
 
-        rsync.execute(function (err) {
-          if (err) {
-            console.log(err);
-            return reject(err);
-          }
-          resolve();
-        });
+        rsync.execute(cb);
       });
-    }))
-    .then(function () {
-      done();
-    })
-    .catch(done);
+    }));
   });
 }
 
-gulp.task('sync', function (done) {
-  syncPluginTo(kibanaPluginDir, done);
+function fetchBinaries(dest) {
+  var logger = debug('downloads');
+  var phantomDest = path.resolve(dest, '.phantom');
+  var phantomBinaries = [{
+    description: 'Windows',
+    url: 'https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-windows.zip',
+    checksum: 'c5eed3aeb356ee597a457ab5b1bea870',
+  }, {
+    description: 'Max OS X',
+    url: 'https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-macosx.zip',
+    checksum: 'fb850d56c033dd6e1142953904f62614',
+  }, {
+    description: 'Linux x86_64',
+    url: 'https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2',
+    checksum: '4ea7aa79e45fbc487a63ef4788a18ef7',
+  }, {
+    description: 'Linux x86',
+    url: 'https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-i686.tar.bz2',
+    checksum: '814a438ca515c6f7b1b2259d0d5bc804',
+  }];
+
+  logger('Downloading Phantom binaries...');
+
+  var downloads = phantomBinaries.map(function (binary) {
+    var params = url.parse(binary.url);
+    var filename = params.pathname.split('/').pop();
+    var filepath = path.join(phantomDest, filename);
+
+    // verify the download checksum
+    var verifyChecksum = function (filepath, cb) {
+      logger('Verify checksum: ' + filename);
+      fs.readFile(filepath, function (err, buf) {
+        if (err) return cb(err);
+        if (binary.checksum !== md5(buf)) return cb(binary.description + ' checksum failed');
+        cb();
+      });
+    }
+
+    return Promise.fromCallback(function (cb) {
+      verifyChecksum(filepath, cb);
+    })
+    .catch(function (err) {
+      logger('Checksum failed, downloading: ' + filename);
+
+      return Promise.fromCallback(function (cb) {
+        var ws = fs.createWriteStream(filepath)
+        .on('finish', function () {
+          logger(binary.description + ' downloaded');
+          verifyChecksum(filepath, cb);
+        });
+
+        // download binary, stream to destination
+        request(binary.url)
+        .on('error', cb)
+        .pipe(ws);
+      });
+    });
+  });
+
+  return Promise.all(downloads);
+}
+
+gulp.task('sync', function () {
+  return syncPluginTo(kibanaPluginDir);
 });
 
-gulp.task('lint', function (done) {
+gulp.task('lint', function () {
   return gulp.src(['server/**/*.js', 'public/**/*.js', 'public/**/*.jsx'])
   // eslint() attaches the lint output to the eslint property
   // of the file object so it can be used by other modules.
@@ -93,29 +153,29 @@ gulp.task('lint', function (done) {
 });
 
 gulp.task('clean', function (done) {
-  Promise.each([buildDir, targetDir], function (dir) {
-    return new Promise(function (resolve, reject) {
-      rimraf(dir, function (err) {
-        if (err) return reject(err);
-        resolve();
-      });
+  return Promise.each([buildDir, targetDir], function (dir) {
+    return Promise.fromCallback(function (cb) {
+      rimraf(dir, cb);
     });
-  }).nodeify(done);
+  });
 });
 
-gulp.task('build', ['clean'], function (done) {
-  syncPluginTo(buildTarget, done);
+gulp.task('build', ['clean'], function () {
+  // sync files ot build
+  return syncPluginTo(buildTarget)
+  .then(function () {
+    // download phantom binaries
+    return fetchBinaries(buildTarget);
+  });
 });
 
-gulp.task('package', ['build'], function (done) {
+gulp.task('package', ['build'], function () {
   return gulp.src(path.join(buildDir, '**', '*'))
   .pipe(tar(packageName + '.tar'))
   .pipe(gzip())
   .pipe(gulp.dest(targetDir));
 });
 
-gulp.task('dev', ['sync'], function (done) {
+gulp.task('dev', ['sync'], function () {
   gulp.watch(['package.json', 'index.js', 'public/**/*', 'server/**/*'], ['sync', 'lint']);
 });
-
-

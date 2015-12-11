@@ -6,6 +6,7 @@
   "scripts": {
     "start": "gulp dev",
     "build": "gulp build",
+    "clean": "gulp clean",
     "package": "gulp package"
   },
   "devDependencies": {
@@ -16,7 +17,9 @@
     "gulp-tar": "^1.5.0",
     "gulp-util": "^3.0.7",
     "lodash": "^3.10.1",
+    "md5": "^2.0.0",
     "mkdirp": "^0.5.1",
+    "request": "^2.67.0",
     "rimraf": "^2.4.3",
     "rsync": "^0.4.0"
   },
