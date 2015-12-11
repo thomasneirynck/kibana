@@ -31,9 +31,15 @@ var include = [
   '.phantom',
   '.tmp'
 ];
-var exclude = Object.keys(pkg.devDependencies).map(function (name) {
+
+var excludedDeps = Object.keys(pkg.devDependencies).map(function (name) {
   return path.join('node_modules', name);
 });
+
+var excludedFiles = [
+  path.join('node_modules', '.bin'),
+  '.DS_Store',
+];
 
 function syncPluginTo(dest, done) {
   mkdirp(dest, function (err) {
@@ -43,15 +49,16 @@ function syncPluginTo(dest, done) {
       return new Promise(function (resolve, reject) {
         var rsync = new Rsync();
         rsync
-          .source(source)
-          .destination(dest)
-          .flags('uav')
-          .recursive(true)
-          .set('delete')
-          .exclude(exclude)
-          .output(function (data) {
-            process.stdout.write(data.toString('utf8'));
-          });
+        .source(source)
+        .destination(dest)
+        .flags('uav')
+        .recursive(true)
+        .set('delete')
+        .exclude(excludedDeps.concat(excludedFiles))
+        .output(function (data) {
+          process.stdout.write(data.toString('utf8'));
+        });
+
         rsync.execute(function (err) {
           if (err) {
             console.log(err);
@@ -74,15 +81,15 @@ gulp.task('sync', function (done) {
 
 gulp.task('lint', function (done) {
   return gulp.src(['server/**/*.js', 'public/**/*.js', 'public/**/*.jsx'])
-    // eslint() attaches the lint output to the eslint property
-    // of the file object so it can be used by other modules.
-    .pipe(eslint())
-    // eslint.format() outputs the lint results to the console.
-    // Alternatively use eslint.formatEach() (see Docs).
-    .pipe(eslint.formatEach())
-    // To have the process exit with an error code (1) on
-    // lint error, return the stream and pipe to failOnError last.
-    .pipe(eslint.failOnError());
+  // eslint() attaches the lint output to the eslint property
+  // of the file object so it can be used by other modules.
+  .pipe(eslint())
+  // eslint.format() outputs the lint results to the console.
+  // Alternatively use eslint.formatEach() (see Docs).
+  .pipe(eslint.formatEach())
+  // To have the process exit with an error code (1) on
+  // lint error, return the stream and pipe to failOnError last.
+  .pipe(eslint.failOnError());
 });
 
 gulp.task('clean', function (done) {
@@ -102,9 +109,9 @@ gulp.task('build', ['clean'], function (done) {
 
 gulp.task('package', ['build'], function (done) {
   return gulp.src(path.join(buildDir, '**', '*'))
-    .pipe(tar(packageName + '.tar'))
-    .pipe(gzip())
-    .pipe(gulp.dest(targetDir));
+  .pipe(tar(packageName + '.tar'))
+  .pipe(gzip())
+  .pipe(gulp.dest(targetDir));
 });
 
 gulp.task('dev', ['sync'], function (done) {
