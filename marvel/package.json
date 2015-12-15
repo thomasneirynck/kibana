@@ -5,6 +5,7 @@
   },
   "scripts": {
     "test": "gulp test",
+    "package": "gulp package",
     "precommit": "gulp lint"
   },
   "name": "marvel",
