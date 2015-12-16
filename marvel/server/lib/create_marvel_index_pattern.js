@@ -5,7 +5,7 @@ module.exports = function (server) {
   var client = server.plugins.elasticsearch.client;
   var config = server.config();
   var marvelIndexPrefix = config.get('marvel.index_prefix');
-  var id =  '[' + marvelIndexPrefix + ']YYYY.MM.DD';
+  var id =  marvelIndexPrefix + '*';
   var type = 'index-pattern';
   return client.get({
     index: index,

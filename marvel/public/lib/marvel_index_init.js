@@ -6,7 +6,7 @@ define(function (require) {
   return function marvelIndexPatternProvider(marvelIndexPrefix, Private, indexPatterns) {
     return function () {
       var MarvelConfig = {
-        indexPattern: `[${marvelIndexPrefix}]YYYY.MM.DD`,
+        indexPattern: `${marvelIndexPrefix}*`,
         timeField: 'timestamp',
         intervalName: 'days'
       };
