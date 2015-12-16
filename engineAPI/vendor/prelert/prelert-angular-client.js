@@ -42,7 +42,7 @@ module.factory('prelertAPIServices', ['$http', function ($http) {
         
         // Set URL to default if it was not specified.
         if (config.baseURL == null) {
-          config.baseURL = "http://"+window.location.hostname+":8080/engine/v1";
+          config.baseURL = "http://"+window.location.hostname+":8080/engine/v2";
         }
         
         console.log("prelertAPIServices config: ");

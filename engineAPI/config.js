@@ -37,7 +37,7 @@ function (Settings) {
      * at the same host as Kibana is installed on. You probably want to set it to the FQDN 
      * of your Prelert Engine API host.
      */
-    prelertEngineAPIBaseURL: "http://"+window.location.hostname+":8080/engine/v1",
+    prelertEngineAPIBaseURL: "http://"+window.location.hostname+":8080/engine/v2",
 
     /** @scratch /configuration/config.js/5
      *
