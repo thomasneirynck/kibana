@@ -8,6 +8,7 @@
     "build": "gulp build",
     "clean": "gulp clean",
     "package": "gulp package",
+    "precommit": "gulp lint",
     "test": "gulp test"
   },
   "devDependencies": {
@@ -19,6 +20,7 @@
     "gulp-gzip": "^1.2.0",
     "gulp-tar": "^1.5.0",
     "gulp-util": "^3.0.7",
+    "husky": "^0.10.2",
     "lodash": "^3.10.1",
     "md5": "^2.0.0",
     "mkdirp": "^0.5.1",
