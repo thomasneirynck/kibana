@@ -9,7 +9,7 @@ var appTypes = {
         pathname: kibanaConfig.get('reporting.kibanaApp'),
         hash: '/dashboard/' + id,
       }
-    }
+    };
   },
   visualization: function (id) {
     return {
@@ -29,7 +29,7 @@ var appTypes = {
   }
 };
 
-var getAppUrl = module.exports.getAppUrl = function getAppUrl(type, id, query={}) {
+var getAppUrl = module.exports.getAppUrl = function getAppUrl(type, id, query = {}) {
   var app = appTypes[type];
   if (!app) throw new Error('Unexpected app type: ' + type);
 
@@ -45,4 +45,4 @@ var getAppUrl = module.exports.getAppUrl = function getAppUrl(type, id, query={}
   urlParams.hash += url.format({ query });
 
   return url.format(urlParams);
-}
+};

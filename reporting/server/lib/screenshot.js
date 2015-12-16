@@ -13,12 +13,15 @@ module.exports = {
 };
 
 function capture(url, bounding, filename) {
+  var filepath;
+  var op;
+
   if (typeof bounding !== 'object') {
-    var filepath = getFilepath(bounding);
-    var op = shot(url, filepath);
+    filepath = getFilepath(bounding);
+    op = shot(url, filepath);
   } else {
-    var filepath = getFilepath(filename);
-    var op = shotCropped(url, bounding, filepath);
+    filepath = getFilepath(filename);
+    op = shotCropped(url, bounding, filepath);
   }
 
   return op.catch(function (err) {
@@ -32,14 +35,14 @@ function capture(url, bounding, filename) {
 }
 
 function fetch(url) {
-  var loadDelay = phantomSettings.loadDelay
+  var loadDelay = phantomSettings.loadDelay;
   var viewport = phantomSettings.viewport;
 
   var phantomOpts = {
     phantomPath: phantomPath,
     injectJquery: false,
     timeout: 10000
-  }
+  };
 
   debug('fetching screenshot of %s', url);
   var ph = new Horseman(phantomOpts)

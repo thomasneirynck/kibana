@@ -19,7 +19,7 @@ module.exports = function (client) {
   function dashboard(dashId) {
     var req = {
       index: config.get('kibana.index'),
-      type: "dashboard",
+      type: 'dashboard',
       id: dashId
     };
 
@@ -28,7 +28,7 @@ module.exports = function (client) {
       var fields = ['title', 'description'];
       var obj = Object.assign(_.pick(source, fields), {
         id: dashId,
-        getUrl: ( query={} ) => services.getAppUrl('dashboard', dashId, query),
+        getUrl: (query = {}) => services.getAppUrl('dashboard', dashId, query),
       });
 
       return obj;
@@ -38,7 +38,7 @@ module.exports = function (client) {
   function visualization(visId, params = {}) {
     var req = {
       index: config.get('kibana.index'),
-      type: "visualization",
+      type: 'visualization',
       id: visId
     };
 
@@ -47,7 +47,7 @@ module.exports = function (client) {
       var fields = ['title', 'description'];
       var obj = Object.assign(_.pick(source, fields), {
         id: visId,
-        getUrl: (query={}) => services.getAppUrl('visualization', visId, query),
+        getUrl: (query = {}) => services.getAppUrl('visualization', visId, query),
       });
 
       return obj;
@@ -57,7 +57,7 @@ module.exports = function (client) {
   function search(searchId, params = {}) {
     var req = {
       index: config.get('kibana.index'),
-      type: "search",
+      type: 'search',
       id: searchId
     };
 
@@ -65,7 +65,7 @@ module.exports = function (client) {
     .then(function (source) {
       var fields = ['title', 'description'];
       var obj = _.pick(source, fields);
-      obj.getUrl = (query={}) => services.getAppUrl('search', searchId, query);
+      obj.getUrl = (query = {}) => services.getAppUrl('search', searchId, query);
 
       return obj;
     });

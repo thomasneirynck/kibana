@@ -11,7 +11,7 @@ module.exports = function (server) {
     return function (err) {
       if (err instanceof esErrors.NotFound) return reply('not found').code(404);
       reply(err);
-    }
+    };
   };
 
   server.route({
@@ -74,7 +74,7 @@ module.exports = function (server) {
         console.log(request.query);
         console.log('url', dash.getUrl(request.query));
         reply('TODO: fetch dash ' + dash.title);
-      })
+      });
 
       // fetch panels
       // iterate, fetching vis and search images
@@ -82,4 +82,4 @@ module.exports = function (server) {
       // export PDF
     }
   });
-}
+};

@@ -32,7 +32,7 @@ function installPhantom() {
     return extract[fileType](filepath, phantomPackage.dir)
     .then(function () {
       return Promise.try(function () {
-        fs.chmodSync(phantomPackage.binary, '755')
+        fs.chmodSync(phantomPackage.binary, '755');
         return phantomPackage.binary;
       });
     });
@@ -67,7 +67,7 @@ function getPackage() {
     binary = path.join(basename + '-linux-x86_64', 'bin', 'phantomjs');
     suffix = 'linux-x86_64.tar.bz2';
     checksum = '4ea7aa79e45fbc487a63ef4788a18ef7';
-  } else if (platform === 'linux' && arch == 'ia32') {
+  } else if (platform === 'linux' && arch === 'ia32') {
     binary = path.join(basename + '-linux-i686', 'bin', 'phantomjs');
     suffix = 'linux-i686.tar.bz2';
     checksum = '814a438ca515c6f7b1b2259d0d5bc804';
@@ -94,12 +94,12 @@ function getPackage() {
  * @return {string}
  */
 function getTargetPlatform() {
-  return process.env.PHANTOMJS_PLATFORM || process.platform
+  return process.env.PHANTOMJS_PLATFORM || process.platform;
 }
 
 /**
  * @return {string}
  */
 function getTargetArch() {
-  return process.env.PHANTOMJS_ARCH || process.arch
+  return process.env.PHANTOMJS_ARCH || process.arch;
 }
