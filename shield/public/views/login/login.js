@@ -5,22 +5,16 @@ require('ui/chrome')
 .setVisible(false)
 .setRootTemplate(require('plugins/shield/views/login/login.html'))
 .setRootController('login', ($http) => {
-  const login = {
-    loading: false,
-    kibanaLogoUrl
+  return {
+    kibanaLogoUrl,
+    submit(username, password) {
+      $http.post('/api/shield/v1/login', {
+        username: username,
+        password: password
+      }).then(
+        (response) => window.location.href = '/', // TODO: Redirect more intelligently
+        (error) => this.error = true
+      );
+    }
   };
-
-  login.submit = (username, password) => {
-    login.loading = true;
-
-    $http.post('/api/shield/v1/login', {
-      username: username,
-      password: password
-    }).then(
-      (response) => window.location.href = '/', // TODO: Redirect more intelligently
-      (error) => login.error = true
-    ).finally(() => login.loading = false);
-  };
-
-  return login;
 });
