@@ -1,4 +1,5 @@
 var url = require('url');
+var _ = require('lodash');
 var debug = require('./logger');
 var kibanaConfig = require('./kibana_config');
 
@@ -33,7 +34,7 @@ var getAppUrl = module.exports.getAppUrl = function getAppUrl(type, id, query = 
   var app = appTypes[type];
   if (!app) throw new Error('Unexpected app type: ' + type);
 
-  var urlParams = Object.assign({
+  var urlParams = _.assign({
     // TODO: get protocol from the server config
     protocol: 'http',
     hostname: kibanaConfig.get('server.host'),

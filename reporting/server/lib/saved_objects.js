@@ -26,7 +26,7 @@ module.exports = function (client) {
     return client.get(req).then(_getRecord)
     .then(function (source) {
       var fields = ['title', 'description'];
-      var obj = Object.assign(_.pick(source, fields), {
+      var obj = _.assign(_.pick(source, fields), {
         id: dashId,
         getUrl: (query = {}) => services.getAppUrl('dashboard', dashId, query),
       });
@@ -45,7 +45,7 @@ module.exports = function (client) {
     return client.get(req).then(_getRecord)
     .then(function (source) {
       var fields = ['title', 'description'];
-      var obj = Object.assign(_.pick(source, fields), {
+      var obj = _.assign(_.pick(source, fields), {
         id: visId,
         getUrl: (query = {}) => services.getAppUrl('visualization', visId, query),
       });
