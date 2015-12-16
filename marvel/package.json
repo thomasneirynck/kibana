@@ -5,10 +5,11 @@
   },
   "scripts": {
     "test": "gulp test",
+    "package": "gulp package",
     "precommit": "gulp lint"
   },
   "name": "marvel",
-  "version": "2.2.0-snapshot",
+  "version": "2.2.0-SNAPSHOT",
   "repository": {
     "type": "git",
     "url": "http://github.com/elasticsearch/elasticsearch-marvel.git"

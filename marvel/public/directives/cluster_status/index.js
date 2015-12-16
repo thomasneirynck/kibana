@@ -35,6 +35,10 @@ module.directive('marvelClusterStatus', (globalState, kbnUrl) => {
         return classes.join(' ');
       };
 
+      scope.goToLicense = () => {
+        kbnUrl.changePath('/license');
+      };
+
     }
   };
 });
