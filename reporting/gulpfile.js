@@ -7,7 +7,7 @@ var mkdirp = require('mkdirp');
 var Rsync = require('rsync');
 var rimraf = require('rimraf');
 var gulp = require('gulp');
-var gulpUtil = require('gulp-util');
+var gutil = require('gulp-util');
 var eslint = require('gulp-eslint');
 var tar = require('gulp-tar');
 var gzip = require('gulp-gzip');
@@ -150,6 +150,10 @@ gulp.task('lint', function () {
   // To have the process exit with an error code (1) on
   // lint error, return the stream and pipe to failOnError last.
   .pipe(eslint.failOnError());
+});
+
+gulp.task('test', ['lint'], function () {
+  gutil.log(gutil.colors.red('Nothing to test...'));
 });
 
 gulp.task('clean', function (done) {
