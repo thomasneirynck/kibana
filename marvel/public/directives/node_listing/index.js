@@ -9,9 +9,9 @@ define(function (require) {
   var Table = require('plugins/marvel/directives/paginated_table/components/table');
 
   // change the node to actually display the name
-  module.directive('marvelNodesListing', function () {
+  module.directive('marvelNodesListing', function (kbnUrl) {
     // makes the tds for every <tr> in the table
-    function makeTdWithPropKey(dataKey, idx) {
+    function makeTdWithPropKey($scope, dataKey, idx) {
       var value = _.get(this.props, dataKey.key);
       var $content = null;
       // Content for the name column.
@@ -27,7 +27,13 @@ define(function (require) {
             className: classes },
             null)
           ),
-          make.a({href: '#/nodes/' + state.id}, state.node.name),
+          make.a({
+            onClick: function () {
+              // Change the url the "Angular" way!
+              $scope.$evalAsync(function () { kbnUrl.changePath('/nodes/' + state.id); });
+
+            }
+          }, state.node.name),
           make.div({className: 'small'}, extractIp(state.node.transport_address))); //   <div.small>
       }
       // make the content for all of the metric columns
@@ -125,7 +131,7 @@ define(function (require) {
             this.setState(_.find($scope.rows, { id: newProps.id }));
           },
           render: function () {
-            var boundTemplateFn = makeTdWithPropKey.bind(this);
+            var boundTemplateFn = _.partial(makeTdWithPropKey.bind(this), $scope);
             var $tdsArr = initialTableOptions.columns.map(boundTemplateFn);
             return make.tr({
               className: 'big no-border',
