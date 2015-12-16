@@ -20,6 +20,12 @@ module.exports = (kibana) => new kibana.Plugin({
       main: 'plugins/shield/views/login',
       hidden: true,
       autoload: kibana.autoload.styles
+    }, {
+      id: 'logout',
+      title: 'Logout',
+      main: 'plugins/shield/views/logout',
+      hidden: true,
+      autoload: kibana.autoload.styles
     }]
   },
 
@@ -43,6 +49,6 @@ module.exports = (kibana) => new kibana.Plugin({
 
     root('server/routes/api/v1/authenticate')(server);
     root('server/routes/views/login')(server, this);
-    root('server/routes/views/logout')(server);
+    root('server/routes/views/logout')(server, this);
   }
 });

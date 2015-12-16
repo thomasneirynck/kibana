@@ -35,4 +35,16 @@ module.exports = (server) => {
       }
     }
   });
+
+  server.route({
+    method: 'POST',
+    path: '/api/shield/v1/logout',
+    handler(request, reply) {
+      request.auth.session.clear();
+      return reply({
+        statusCode: 200,
+        payload: 'success'
+      });
+    }
+  });
 };

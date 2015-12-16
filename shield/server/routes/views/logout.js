@@ -1,10 +1,10 @@
-module.exports = (server) => {
+module.exports = (server, uiExports) => {
+  const logout = uiExports.apps.byId.logout;
   server.route({
     method: 'GET',
     path: '/logout',
     handler(request, reply) {
-      request.auth.session.clear();
-      return reply.redirect('/');
+      return reply.renderApp(logout);
     }
   });
 };
