@@ -9,7 +9,7 @@ module.exports = (server) => {
     method: 'POST',
     path: '/api/shield/v1/login',
     handler(request, reply) {
-      const {username, password} = request;
+      const {username, password} = request.payload;
       return isValidUser(username, password).then(() => {
         request.auth.session.set({
           username: username,
