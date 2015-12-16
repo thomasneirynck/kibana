@@ -13,7 +13,7 @@ require('plugins/marvel/views/overview/overview_controller.js');
 require('plugins/marvel/views/settings/index.js');
 require('plugins/marvel/views/issues/issues_controller.js');
 require('plugins/marvel/views/setup/setup_controller.js');
-require('plugins/marvel/views/expired_license/index.js');
+require('plugins/marvel/views/license/index.js');
 require('ui/modules').get('kibana').config(function (PrivateProvider) {
   PrivateProvider.swap(require('ui/config/defaults'), function ($injector) {
     var defaults = $injector.invoke(require('ui/config/defaults'));
