@@ -103,7 +103,7 @@ define(function (require) {
             }
           },
           render: function () {
-            var boundTemplateFn = _.partial(makeTdWithPropKey.bind(this), scope);
+            var boundTemplateFn = _.bind(makeTdWithPropKey, this, scope);
             var dataProps = _.pluck(initialTableOptions.columns, 'key');
             var $tdsArr = initialTableOptions.columns.map(boundTemplateFn);
             var classes = [ this.state.status ];

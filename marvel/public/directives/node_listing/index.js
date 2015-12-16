@@ -11,7 +11,7 @@ define(function (require) {
   // change the node to actually display the name
   module.directive('marvelNodesListing', function (kbnUrl) {
     // makes the tds for every <tr> in the table
-    function makeTdWithPropKey($scope, dataKey, idx) {
+    function makeTdWithPropKey(scope, dataKey, idx) {
       var value = _.get(this.props, dataKey.key);
       var $content = null;
       // Content for the name column.
@@ -30,8 +30,9 @@ define(function (require) {
           make.a({
             onClick: function () {
               // Change the url the "Angular" way!
-              $scope.$evalAsync(function () { kbnUrl.changePath('/nodes/' + state.id); });
-
+              scope.$evalAsync(function () {
+                kbnUrl.changePath('/nodes/' + state.id);
+              });
             }
           }, state.nodeName),
           make.div({className: 'small'}, extractIp(state.transport_address))); //   <div.small>
@@ -122,7 +123,7 @@ define(function (require) {
     return {
       restrict: 'E',
       scope: { cluster: '=', rows: '=' },
-      link: function ($scope, $el) {
+      link: function (scope, $el) {
 
         // copy node fields to top-level so table filtering works
         function decorateRow(row) {
@@ -137,15 +138,15 @@ define(function (require) {
         // component for each table row
         var tableRowTemplate = React.createClass({
           getInitialState: function () {
-            var row = _.find($scope.rows, {id: this.props.id});
+            var row = _.find(scope.rows, {id: this.props.id});
             return decorateRow(row);
           },
           componentWillReceiveProps: function (newProps) {
-            var row = _.find($scope.rows, {id: newProps.id});
+            var row = _.find(scope.rows, {id: newProps.id});
             this.setState(decorateRow(row));
           },
           render: function () {
-            var boundTemplateFn = _.partial(makeTdWithPropKey.bind(this), $scope);
+            var boundTemplateFn = _.bind(makeTdWithPropKey, this, scope);
             var $tdsArr = initialTableOptions.columns.map(boundTemplateFn);
             return make.tr({
               className: 'big no-border',
@@ -159,7 +160,7 @@ define(function (require) {
           template: tableRowTemplate
         });
         var tableInstance = React.render($table, $el[0]);
-        $scope.$watch('rows', function (rows) {
+        scope.$watch('rows', function (rows) {
           tableInstance.setData(rows.map(function (row) {
             return decorateRow(row);
           }));
