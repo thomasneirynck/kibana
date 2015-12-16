@@ -19,11 +19,13 @@ module.exports = function (server) {
     method: 'GET',
     handler: function (request, reply) {
       var visId = request.params.visualizationId;
+      debug(request.query);
       return savedObjects.visualization(visId)
       .then(function (vis) {
-        debug('visualization found: ' + vis.url);
+        var url = vis.getUrl(request.query);
+        debug('visualization found: ' + url);
 
-        return screenshot.capture(vis.url, {
+        return screenshot.capture(url, {
           left: 363,
           scrollbar: 0,
           footer: 26
@@ -46,9 +48,10 @@ module.exports = function (server) {
       var searchId = request.params.searchId;
       return savedObjects.search(searchId)
       .then(function (search) {
-        debug('search found: ' + search.url);
+        var url = search.getUrl(request.query);
+        debug('search found: ' + url);
 
-        var filename = screenshot.capture(search.url, {
+        var filename = screenshot.capture(url, {
           left: 330,
           scrollbar: 15
         });
@@ -66,7 +69,12 @@ module.exports = function (server) {
     method: 'GET',
     handler: function (request, reply) {
       var dashId = request.params.dashboardId;
-      reply('TODO: fetch dash ' + dashId);
+      return savedObjects.dashboard(dashId)
+      .then(function (dash) {
+        console.log(request.query);
+        console.log('url', dash.getUrl(request.query));
+        reply('TODO: fetch dash ' + dash.title);
+      })
 
       // fetch panels
       // iterate, fetching vis and search images

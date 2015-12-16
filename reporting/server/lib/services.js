@@ -2,7 +2,7 @@ var url = require('url');
 var debug = require('./logger');
 var kibanaConfig = require('./kibana_config');
 
-var panelTypes = {
+var appTypes = {
   dashboard: function (id) {
     return {
       url: {
@@ -29,20 +29,20 @@ var panelTypes = {
   }
 };
 
-module.exports = {
-  getUrl: getUrl,
-};
-
-function getUrl(type, id) {
-  var panel = panelTypes[type];
-  if (!panel) throw new Error('Unexpected panel type: ' + type);
+var getAppUrl = module.exports.getAppUrl = function getAppUrl(type, id, query={}) {
+  var app = appTypes[type];
+  if (!app) throw new Error('Unexpected app type: ' + type);
 
   var urlParams = Object.assign({
     // TODO: get protocol from the server config
     protocol: 'http',
     hostname: kibanaConfig.get('server.host'),
     port: kibanaConfig.get('server.port'),
-  }, panel(id).url);
+  }, app(id).url);
+
+  // Kibana appends querystrings to the hash, and parses them as such,
+  // so we'll do the same internally so kibana understands what we want
+  urlParams.hash += url.format({ query });
 
   return url.format(urlParams);
 }

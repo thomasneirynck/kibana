@@ -23,10 +23,19 @@ module.exports = function (client) {
       id: dashId
     };
 
-    return client.get(req).then(_getRecord);
+    return client.get(req).then(_getRecord)
+    .then(function (source) {
+      var fields = ['title', 'description'];
+      var obj = Object.assign(_.pick(source, fields), {
+        id: dashId,
+        getUrl: ( query={} ) => services.getAppUrl('dashboard', dashId, query),
+      });
+
+      return obj;
+    });
   }
 
-  function visualization(visId) {
+  function visualization(visId, params = {}) {
     var req = {
       index: config.get('kibana.index'),
       type: "visualization",
@@ -36,14 +45,16 @@ module.exports = function (client) {
     return client.get(req).then(_getRecord)
     .then(function (source) {
       var fields = ['title', 'description'];
-      var obj = _.pick(source, fields);
-      obj.url = services.getUrl('visualization', visId);
+      var obj = Object.assign(_.pick(source, fields), {
+        id: visId,
+        getUrl: (query={}) => services.getAppUrl('visualization', visId, query),
+      });
 
       return obj;
     });
   }
 
-  function search(searchId) {
+  function search(searchId, params = {}) {
     var req = {
       index: config.get('kibana.index'),
       type: "search",
@@ -54,13 +65,13 @@ module.exports = function (client) {
     .then(function (source) {
       var fields = ['title', 'description'];
       var obj = _.pick(source, fields);
-      obj.url = services.getUrl('search', searchId);
+      obj.getUrl = (query={}) => services.getAppUrl('search', searchId, query);
 
       return obj;
     });
   }
 
-  function dashboardPanels(dashId) {
+  function dashboardPanels(dashId, params = {}) {
     return dashboard(dashId)
     .then(function (source) {
       var fields = ['id', 'type', 'panelIndex'];
@@ -68,7 +79,7 @@ module.exports = function (client) {
 
       return _.map(panels, function (panel) {
         var panel = _.pick(panel, fields);
-        panel.url = services.getUrl(panel.type, panel.id);
+        panel.url = services.getAppUrl(panel.type, panel.id);
 
         return panel;
       });
