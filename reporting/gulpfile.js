@@ -1,3 +1,7 @@
+require('babel-register')({
+  presets: ['es2015']
+});
+
 var fs = require('fs');
 var path = require('path');
 var url = require('url');
@@ -9,6 +13,7 @@ var rimraf = require('rimraf');
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var eslint = require('gulp-eslint');
+var mocha = require('gulp-mocha');
 var tar = require('gulp-tar');
 var gzip = require('gulp-gzip');
 var debug = require('debug');
@@ -145,6 +150,8 @@ gulp.task('lint', function () {
     'server/**/*.js',
     'public/**/*.js',
     'public/**/*.jsx',
+    'test/**/*.js',
+    '!test/fixtures/**/*.js',
   ];
 
   return gulp.src(filePaths)
@@ -160,7 +167,11 @@ gulp.task('lint', function () {
 });
 
 gulp.task('test', ['lint'], function () {
-  gutil.log(gutil.colors.red('Nothing to test...'));
+  return gulp.src([
+    'test/**/*.js',
+    '!test/fixtures/**/*.js',
+  ], {read: false})
+  .pipe(mocha({ reporter: 'dot' }));
 });
 
 gulp.task('clean', function (done) {
