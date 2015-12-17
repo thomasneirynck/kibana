@@ -1,8 +1,9 @@
 module.exports = function (server) {
   // var services = Private(require('ui/saved_objects/saved_object_registry')).byLoaderPropertiesName;
+  var config = server.config();
   var client = server.plugins.elasticsearch.client;
   var esErrors = server.plugins.elasticsearch.errors;
-  var savedObjects = require('../lib/saved_objects')(client);
+  var savedObjects = require('../lib/saved_objects')(config, client);
 
   var handleError = function (reply) {
     return function (err) {
@@ -12,10 +13,10 @@ module.exports = function (server) {
   };
 
   server.route({
-    path: '/app/reporting/api/visualization/{dashboardId}',
+    path: '/app/reporting/api/visualization/{visId}',
     method: 'GET',
     handler: function (request, reply) {
-      var dashId = request.params.dashboardId;
+      var dashId = request.params.visId;
 
       var panels = savedObjects.dashboardPanels(dashId)
       .then(function (body) {

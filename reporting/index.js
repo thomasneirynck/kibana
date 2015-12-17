@@ -1,7 +1,6 @@
 var publicRoutes = require('./server/routes/public');
 var apiRoutes = require('./server/routes/api');
 var phantom = require('./server/lib/phantom');
-var kibanaConfig = require('./server/lib/kibana_config');
 
 module.exports = function (kibana) {
   return new kibana.Plugin({
@@ -46,7 +45,6 @@ module.exports = function (kibana) {
 
     init: function (server, options) {
       // init the plugin helpers
-      kibanaConfig.set(server.config());
       var plugin = this;
 
       // Reporting routes

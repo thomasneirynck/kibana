@@ -1,11 +1,11 @@
 module.exports = function (server) {
   var fs = require('fs');
   var debug = require('../lib/logger');
-  var serviceHelper = require('../lib/services');
-  var screenshot = require('../lib/screenshot');
+  var config = server.config();
   var client = server.plugins.elasticsearch.client;
   var esErrors = server.plugins.elasticsearch.errors;
-  var savedObjects = require('../lib/saved_objects')(client);
+  var savedObjects = require('../lib/saved_objects')(config, client);
+  var screenshot = require('../lib/screenshot')(config);
 
   var handleError = function (reply) {
     return function (err) {

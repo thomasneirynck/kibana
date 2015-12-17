@@ -1,10 +1,38 @@
 var url = require('url');
 var _ = require('lodash');
 var debug = require('./logger');
-var services = require('./services');
-var config = require('./kibana_config');
 
-module.exports = function (client) {
+module.exports = function (config, client) {
+  var appTypes = {
+    dashboard: {
+      getUrlParams: function (id) {
+        return {
+          pathname: config.get('reporting.kibanaApp'),
+          hash: '/dashboard/' + id,
+        };
+      },
+      searchSourceIndex: 'kibanaSavedObjectMeta.searchSourceJSON',
+    },
+    visualization: {
+      getUrlParams: function (id) {
+        return {
+          pathname: config.get('reporting.kibanaApp'),
+          hash: '/visualize/edit/' + id,
+        };
+      },
+      searchSourceIndex: 'kibanaSavedObjectMeta.searchSourceJSON',
+    },
+    search: {
+      getUrlParams: function (id) {
+        return {
+          pathname: config.get('reporting.kibanaApp'),
+          hash: '/discover/' + id,
+        };
+      },
+      searchSourceIndex: 'kibanaSavedObjectMeta.searchSourceJSON',
+    }
+  };
+
   return {
     dashboard: dashboard,
     search: search,
@@ -12,62 +40,65 @@ module.exports = function (client) {
     dashboardPanels: dashboardPanels,
   };
 
-  function _getRecord(body) {
-    return body._source;
-  }
+  function getObject(req, fields = ['title', 'description']) {
+    var { type } = req;
 
-  function dashboard(dashId) {
-    var req = {
-      index: config.get('kibana.index'),
-      type: 'dashboard',
-      id: dashId
-    };
-
-    return client.get(req).then(_getRecord)
+    return client.get(req)
+    .then(function _getRecord(body) {
+      return body._source;
+    })
     .then(function (source) {
-      var fields = ['title', 'description'];
+      var searchSource = JSON.parse(_.get(source, appTypes[type].searchSourceIndex));
+
       var obj = _.assign(_.pick(source, fields), {
-        id: dashId,
-        getUrl: (query = {}) => services.getAppUrl('dashboard', dashId, query),
+        id: req.id,
+        getUrl: (query = {}) => getAppUrl(type, req.id, query),
+        searchSource: searchSource,
       });
 
       return obj;
+    });
+  }
+
+  function getAppUrl(type, id, query = {}) {
+    var app = appTypes[type];
+    if (!app) throw new Error('Unexpected app type: ' + type);
+
+    var urlParams = _.assign({
+      // TODO: get protocol from the server config
+      protocol: 'http',
+      hostname: config.get('server.host'),
+      port: config.get('server.port'),
+    }, app.getUrlParams(id));
+
+    // Kibana appends querystrings to the hash, and parses them as such,
+    // so we'll do the same internally so kibana understands what we want
+    urlParams.hash += url.format({ query });
+
+    return url.format(urlParams);
+  };
+
+  function dashboard(dashId) {
+    return getObject({
+      index: config.get('kibana.index'),
+      type: 'dashboard',
+      id: dashId
     });
   }
 
   function visualization(visId, params = {}) {
-    var req = {
+    return getObject({
       index: config.get('kibana.index'),
       type: 'visualization',
       id: visId
-    };
-
-    return client.get(req).then(_getRecord)
-    .then(function (source) {
-      var fields = ['title', 'description'];
-      var obj = _.assign(_.pick(source, fields), {
-        id: visId,
-        getUrl: (query = {}) => services.getAppUrl('visualization', visId, query),
-      });
-
-      return obj;
     });
   }
 
   function search(searchId, params = {}) {
-    var req = {
+    return getObject({
       index: config.get('kibana.index'),
       type: 'search',
       id: searchId
-    };
-
-    return client.get(req).then(_getRecord)
-    .then(function (source) {
-      var fields = ['title', 'description'];
-      var obj = _.pick(source, fields);
-      obj.getUrl = (query = {}) => services.getAppUrl('search', searchId, query);
-
-      return obj;
     });
   }
 
@@ -79,7 +110,7 @@ module.exports = function (client) {
 
       return _.map(panels, function (panel) {
         var panel = _.pick(panel, fields);
-        panel.url = services.getAppUrl(panel.type, panel.id);
+        panel.url = getAppUrl(panel.type, panel.id);
 
         return panel;
       });
