@@ -30,14 +30,14 @@ module.exports = function (bulks, client, marvelClient, clusterState) {
         };
         bulks.push({
           create: {
-            _index: timestamp.format('[.marvel-es-]YYYY.MM.DD'),
+            _index: timestamp.format('[.marvel-es-1-]YYYY.MM.DD'),
             _type: 'nodes'
           }
         });
         bulks.push(nodeBody);
         bulks.push({
           create: {
-            _index: '.marvel-es-data',
+            _index: '.marvel-es-data-1',
             _type: 'node',
             _id: id
           }

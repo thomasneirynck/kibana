@@ -33,8 +33,8 @@ module.exports = function (kibana) {
     config: function (Joi) {
       return Joi.object({
         enabled: Joi.boolean().default(true),
-        index: Joi.string().default('.marvel-es-data'),
-        index_prefix: Joi.string().default('.marvel-es-'),
+        index: Joi.string().default('.marvel-es-data-1'),
+        index_prefix: Joi.string().default('.marvel-es-1-'),
         missing_intervals: Joi.number().default(12),
         max_bucket_size: Joi.number().default(10000),
         min_interval_seconds: Joi.number().default(10),

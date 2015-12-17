@@ -5,7 +5,7 @@ module.exports = (req) => {
   const callWithRequest = server.plugins.elasticsearch.callWithRequest;
   const config = server.config();
   const params = {
-    index: config.get('marvel.index_prefix') + 'data',
+    index: config.get('marvel.index'),
     type: 'cluster_info',
     ignore: [404],
     body: {
