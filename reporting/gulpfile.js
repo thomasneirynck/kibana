@@ -19,11 +19,11 @@ var pkg = require('./package.json');
 var packageName = pkg.name  + '-' + pkg.version;
 
 // relative location of Kibana install
-var pathToKibana = '../../../kibana'
+var pathToKibana = '../../../kibana';
 
 var buildDir = path.resolve(__dirname, 'build');
-var targetDir = path.resolve(__dirname, 'target');
 var buildTarget = path.resolve(buildDir, pkg.name);
+var targetDir = path.resolve(__dirname, 'target');
 var kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'installedPlugins', pkg.name);
 
 var include = [
@@ -109,7 +109,7 @@ function fetchBinaries(dest) {
         if (binary.checksum !== md5(buf)) return cb(binary.description + ' checksum failed');
         cb();
       });
-    }
+    };
 
     return Promise.fromCallback(function (cb) {
       verifyChecksum(filepath, cb);
@@ -140,7 +140,14 @@ gulp.task('sync', function () {
 });
 
 gulp.task('lint', function () {
-  return gulp.src(['server/**/*.js', 'public/**/*.js', 'public/**/*.jsx'])
+  var filePaths = [
+    'gulpfile.js',
+    'server/**/*.js',
+    'public/**/*.js',
+    'public/**/*.jsx',
+  ];
+
+  return gulp.src(filePaths)
   // eslint() attaches the lint output to the eslint property
   // of the file object so it can be used by other modules.
   .pipe(eslint())
