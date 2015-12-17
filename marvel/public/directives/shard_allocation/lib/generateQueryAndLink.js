@@ -28,7 +28,7 @@ define(function (require) {
       type = 'nodes';
       ident = data.id;
     }
-    return '#/' + type + '/' + ident;
+    return '/' + type + '/' + ident;
   };
 
 });
