@@ -3,6 +3,8 @@
   border-top: 2px solid #a3a5ad;
   padding: 10px;
 
+  a[data-reactid] { cursor: pointer; }
+
   &.loading {
     text-align: center;
     padding: 30px 0;
@@ -98,6 +100,8 @@
             + .inline {
               margin-left: 5px;
             }
+            &.status-online { color: @esGreen; }
+            &.status-offline { color: @esGray; }
           }
         }
       }

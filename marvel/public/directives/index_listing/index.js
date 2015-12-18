@@ -9,13 +9,24 @@ define(function (require) {
   var SparkLines = require('plugins/marvel/directives/marvel_sparkline');
   var Table = require('plugins/marvel/directives/paginated_table/components/table');
 
-  module.directive('marvelIndexListing', function () {
-    function makeTdWithPropKey(dataKey, idx) {
+  module.directive('marvelIndexListing', function (kbnUrl) {
+    function makeTdWithPropKey(scope, dataKey, idx) {
       var rawValue = _.get(this.props, dataKey.key);
       var units;
       var innerMarkup = null;
       if (dataKey.key === 'name') {
-        innerMarkup = this.state.exists ? make.a({ href: `#/indices/${rawValue}` }, rawValue) : make.div(null, rawValue);
+        if (this.state.exists) {
+          innerMarkup = make.a({
+            onClick: function () {
+              // Change the url the "Angular" way!
+              scope.$evalAsync(function () {
+                kbnUrl.changePath('/indices/' + rawValue);
+              });
+            }
+          }, rawValue);
+        } else {
+          innerMarkup = make.div(null, rawValue);
+        }
       }
       if (_.isObject(rawValue) && rawValue.metric) {
         if (rawValue.inapplicable) {
@@ -92,7 +103,7 @@ define(function (require) {
             }
           },
           render: function () {
-            var boundTemplateFn = makeTdWithPropKey.bind(this);
+            var boundTemplateFn = _.bind(makeTdWithPropKey, this, scope);
             var dataProps = _.pluck(initialTableOptions.columns, 'key');
             var $tdsArr = initialTableOptions.columns.map(boundTemplateFn);
             var classes = [ this.state.status ];

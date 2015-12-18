@@ -21,7 +21,7 @@ define(function (require) {
   var React = require('react');
   var ClusterView = require('plugins/marvel/directives/shard_allocation/components/clusterView');
   var module = require('ui/modules').get('marvel/directives', []);
-  module.directive('clusterView', function ($parse) {
+  module.directive('clusterView', function ($parse, kbnUrl) {
     return {
       restrict: 'E',
       scope: {
@@ -32,7 +32,7 @@ define(function (require) {
         shardStats: '='
       },
       link: function (scope, element, attr) {
-        React.render(<ClusterView scope={scope}></ClusterView>, element[0]);
+        React.render(<ClusterView scope={scope} kbnUrl={kbnUrl}></ClusterView>, element[0]);
       }
     };
   });

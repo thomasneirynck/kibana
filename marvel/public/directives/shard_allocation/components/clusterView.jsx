@@ -25,7 +25,16 @@ define(function (require) {
   return React.createClass({
     displayName: 'ClusterView',
     getInitialState: function () {
-      return { labels: this.props.scope.labels || [], showing: this.props.scope.showing || [], shardStats: this.props.shardStats };
+      var scope = this.props.scope;
+      var kbnChangePath = this.props.kbnUrl.changePath;
+      return {
+        labels: this.props.scope.labels || [],
+        showing: this.props.scope.showing || [],
+        shardStats: this.props.shardStats,
+        angularChangeUrl: function (url) {
+          scope.$evalAsync(function (scope) { kbnChangePath(url); });
+        }
+      };
     },
     setLabels: function (data) {
       if (data) {
@@ -61,7 +70,8 @@ define(function (require) {
             totalCount={ this.props.scope.totalCount }
             rows={ this.state.showing }
             cols={ this.state.labels.length }
-            shardStats={ this.state.shardStats }></TableBody>
+            shardStats={ this.state.shardStats }
+            changeUrl={ this.state.angularChangeUrl }></TableBody>
         </table>
       );
     }

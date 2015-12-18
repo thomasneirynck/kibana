@@ -9,9 +9,9 @@ define(function (require) {
   var Table = require('plugins/marvel/directives/paginated_table/components/table');
 
   // change the node to actually display the name
-  module.directive('marvelNodesListing', function () {
+  module.directive('marvelNodesListing', function (kbnUrl) {
     // makes the tds for every <tr> in the table
-    function makeTdWithPropKey(dataKey, idx) {
+    function makeTdWithPropKey(scope, dataKey, idx) {
       var value = _.get(this.props, dataKey.key);
       var $content = null;
       // Content for the name column.
@@ -27,7 +27,14 @@ define(function (require) {
             className: classes },
             null)
           ),
-          make.a({href: '#/nodes/' + state.id}, state.nodeName),
+          make.a({
+            onClick: function () {
+              // Change the url the "Angular" way!
+              scope.$evalAsync(function () {
+                kbnUrl.changePath('/nodes/' + state.id);
+              });
+            }
+          }, state.nodeName),
           make.div({className: 'small'}, extractIp(state.transport_address))); //   <div.small>
       }
       // make the content for all of the metric columns
@@ -58,7 +65,8 @@ define(function (require) {
         if (this.props.offline && dataKey.key !== 'status') {
           $content = make.div(null, make.div({className: 'big inline'}, 'N/A'));
         } else {
-          $content = make.div(null, make.div({className: 'big inline'}, value));
+          const classNames = `big inline ${dataKey.key}-${('' + value).toLowerCase()}`;
+          $content = make.div(null, make.div({className: classNames}, value));
         }
       }
       return make.td({key: idx}, $content);
@@ -115,7 +123,7 @@ define(function (require) {
     return {
       restrict: 'E',
       scope: { cluster: '=', rows: '=' },
-      link: function ($scope, $el) {
+      link: function (scope, $el) {
 
         // copy node fields to top-level so table filtering works
         function decorateRow(row) {
@@ -130,15 +138,15 @@ define(function (require) {
         // component for each table row
         var tableRowTemplate = React.createClass({
           getInitialState: function () {
-            var row = _.find($scope.rows, {id: this.props.id});
+            var row = _.find(scope.rows, {id: this.props.id});
             return decorateRow(row);
           },
           componentWillReceiveProps: function (newProps) {
-            var row = _.find($scope.rows, {id: newProps.id});
+            var row = _.find(scope.rows, {id: newProps.id});
             this.setState(decorateRow(row));
           },
           render: function () {
-            var boundTemplateFn = makeTdWithPropKey.bind(this);
+            var boundTemplateFn = _.bind(makeTdWithPropKey, this, scope);
             var $tdsArr = initialTableOptions.columns.map(boundTemplateFn);
             return make.tr({
               className: 'big no-border',
@@ -152,7 +160,7 @@ define(function (require) {
           template: tableRowTemplate
         });
         var tableInstance = React.render($table, $el[0]);
-        $scope.$watch('rows', function (rows) {
+        scope.$watch('rows', function (rows) {
           tableInstance.setData(rows.map(function (row) {
             return decorateRow(row);
           }));

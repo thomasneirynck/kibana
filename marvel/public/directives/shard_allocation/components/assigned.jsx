@@ -48,8 +48,13 @@ define(function (require) {
         classes.push(shardStats[key].status);
       }
 
+      var that = this;
+      var changeUrl = function () {
+        that.props.changeUrl(generateQueryAndLink(data));
+      };
+
       var name = (
-        <a href={ generateQueryAndLink(data) }>
+        <a onClick={ changeUrl }>
           <span>{ data.name }</span>
         </a>
       );

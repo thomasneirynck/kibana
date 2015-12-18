@@ -39,7 +39,7 @@ define(function (require) {
       return (
         <tr>
           { unassigned }
-          <Assigned shardStats={ this.props.shardStats } data={ this.props.data.children }></Assigned>
+          <Assigned shardStats={ this.props.shardStats } data={ this.props.data.children } changeUrl={ this.props.changeUrl }></Assigned>
         </tr>
       );
     }
@@ -48,7 +48,7 @@ define(function (require) {
   return React.createClass({
     displayName: 'TableBody',
     createRow: function (data) {
-      return (<ShardRow key={ data.name } data={ data } {...this.props}></ShardRow>);
+      return (<ShardRow key={ data.name } data={ data } {...this.props} changeUrl={ this.props.changeUrl }></ShardRow>);
     },
     render: function () {
       if (this.props.totalCount === 0) {
