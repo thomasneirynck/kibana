@@ -1,5 +1,6 @@
 var publicRoutes = require('./server/routes/public');
 var apiRoutes = require('./server/routes/api');
+var createClient = require('./server/lib/create_client');
 var phantom = require('./server/lib/phantom');
 
 module.exports = function (kibana) {
@@ -45,7 +46,10 @@ module.exports = function (kibana) {
 
     init: function (server, options) {
       // init the plugin helpers
-      var plugin = this;
+      const plugin = this;
+
+      // create ES client instance for reporting
+      server.expose('client', createClient(server.plugins.elasticsearch, server.config()));
 
       // Reporting routes
       apiRoutes(server);
