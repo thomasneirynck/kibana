@@ -4,9 +4,8 @@ const createQuery = require('./create_query.js');
 const calcAuto = require('./calculate_auto');
 const root = require('requirefrom')('');
 const metrics = root('public/lib/metrics');
-const filterMetric = require('./filter_metric');
-const filterPartialBuckets = require('./filter_partial_buckets');
-var Promise = require('bluebird');
+const mapListingResponse = require('./map_listing_response');
+
 module.exports = (req, indices, type) => {
   const config = req.server.config();
   const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
@@ -20,29 +19,6 @@ module.exports = (req, indices, type) => {
   const clusterUuid = req.params.clusterUuid;
   const maxBucketSize = config.get('marvel.max_bucket_size');
   const minIntervalSeconds = config.get('marvel.min_interval_seconds');
-
-  function calcSlope(data) {
-    var length = data.length;
-    var xSum = data.reduce(function (prev, curr) { return prev + curr.x; }, 0);
-    var ySum = data.reduce(function (prev, curr) { return prev + curr.y; }, 0);
-    var xySum = data.reduce(function (prev, curr) { return prev + (curr.y * curr.x); }, 0);
-    var xSqSum = data.reduce(function (prev, curr) { return prev + (curr.x * curr.x); }, 0);
-    var numerator = (length * xySum) - (xSum * ySum);
-    var denominator = (length * xSqSum) - (xSum * ySum);
-    return numerator / denominator;
-  }
-
-  function mapChartData(metric) {
-    return (row) => {
-      const data = {x: row.key};
-      if (metric.derivative && row.metric_deriv) {
-        data.y = row.metric_deriv.normalized_value || row.metric_deriv.value || 0;
-      } else {
-        data.y = row.metric.value;
-      }
-      return data;
-    };
-  }
 
   function createTermAgg(type) {
     if (type === 'indices') {
@@ -122,30 +98,14 @@ module.exports = (req, indices, type) => {
     if (!resp.hits.total) {
       return [];
     }
-    const items = resp.aggregations.items.buckets;
-    const data =  _.map(items, function (item) {
-      const row = { name: item.key, metrics: {} };
-      _.each(listingMetrics, function (id) {
-        const metric = metrics[id];
-        const data = _.chain(item[id].buckets)
-          .filter(filterPartialBuckets(min, max, bucketSize))
-          .map(mapChartData(metric))
-          .value();
-        const minVal = _.min(_.pluck(data, 'y'));
-        const maxVal = _.max(_.pluck(data, 'y'));
-        const lastVal = _.last(_.pluck(data, 'y'));
-        const slope = calcSlope(data);
-        row.metrics[id] = {
-          metric: filterMetric(metric),
-          min: minVal  || 0,
-          max: maxVal || 0,
-          last: lastVal || 0,
-          slope: slope
-        };
-      }); // end each
-      return row;
-    }); // end map
-    return data;
+    // call the mapping
+    return mapListingResponse({
+      items: resp.aggregations.items.buckets,
+      listingMetrics,
+      min,
+      max,
+      bucketSize
+    });
   });
 
 };
