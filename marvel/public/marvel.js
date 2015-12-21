@@ -37,6 +37,9 @@ require('ui/modules').get('kibana').config(function (PrivateProvider) {
   });
 });
 
+// Enable Angular routing
+require('ui/routes')
+  .enable();
 
 require('ui/chrome')
   .setNavBackground('#222222')
