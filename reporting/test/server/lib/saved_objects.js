@@ -8,7 +8,7 @@ var savedObjects = lib('saved_objects');
 var mockSavedObjects = fixtures('mock_saved_objects');
 var mockServerConfig = fixtures('mock_server_config');
 
-describe('Saved Objects', function () {
+describe('saved_objects', function () {
   var mockConfig;
   var mockClient;
   var clientResponse;
