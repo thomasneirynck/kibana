@@ -1,13 +1,13 @@
 module.exports = function (server) {
-  var fs = require('fs');
-  var debug = require('../lib/logger');
-  var config = server.config();
-  var client = server.plugins.elasticsearch.client;
-  var esErrors = server.plugins.elasticsearch.errors;
-  var savedObjects = require('../lib/saved_objects')(config, client);
-  var screenshot = require('../lib/screenshot')(config);
+  const fs = require('fs');
+  const debug = require('../lib/logger');
+  const config = server.config();
+  const client = server.plugins.reporting.client;
+  const esErrors = server.plugins.elasticsearch.errors;
+  const savedObjects = require('../lib/saved_objects')(config, client);
+  const screenshot = require('../lib/screenshot')(config);
 
-  var handleError = function (reply) {
+  const handleError = function (reply) {
     return function (err) {
       if (err instanceof esErrors.NotFound) return reply('not found').code(404);
       reply(err);
@@ -18,14 +18,14 @@ module.exports = function (server) {
     path: '/app/reporting/visualization/{visualizationId}',
     method: 'GET',
     handler: function (request, reply) {
-      var visId = request.params.visualizationId;
+      const visId = request.params.visualizationId;
       debug(request.query);
       return savedObjects.visualization(visId)
       .then(function (vis) {
-        var url = vis.getUrl(request.query);
-        debug('visualization found: ' + url);
+        const visUrl = vis.getUrl(request.query);
+        debug('visualization found: ' + visUrl);
 
-        return screenshot.capture(url, {
+        return screenshot.capture(visUrl, {
           left: 363,
           scrollbar: 0,
           footer: 26
@@ -45,13 +45,13 @@ module.exports = function (server) {
     path: '/app/reporting/search/{searchId}',
     method: 'GET',
     handler: function (request, reply) {
-      var searchId = request.params.searchId;
+      const searchId = request.params.searchId;
       return savedObjects.search(searchId)
       .then(function (search) {
-        var url = search.getUrl(request.query);
+        const url = search.getUrl(request.query);
         debug('search found: ' + url);
 
-        var filename = screenshot.capture(url, {
+        const filename = screenshot.capture(url, {
           left: 330,
           scrollbar: 15
         });
@@ -68,7 +68,7 @@ module.exports = function (server) {
     path: '/app/reporting/dashboard/{dashboardId}',
     method: 'GET',
     handler: function (request, reply) {
-      var dashId = request.params.dashboardId;
+      const dashId = request.params.dashboardId;
       return savedObjects.dashboard(dashId)
       .then(function (dash) {
         console.log(request.query);
