@@ -1,7 +1,10 @@
-var expect = require('chai').expect;
-var sinon = require('sinon');
-var lib = require('requirefrom')('server/lib');
-var createClient = lib('create_client');
+const expect = require('chai').expect;
+const sinon = require('sinon');
+const Promise = require('bluebird');
+const fixtures = require('requirefrom')('test/fixtures');
+const mockClient = fixtures('mock_elasticsearch_client');
+const lib = require('requirefrom')('server/lib');
+const createClient = lib('create_client');
 
 describe('create_client', function () {
   let elasticsearch;
@@ -9,7 +12,7 @@ describe('create_client', function () {
 
   beforeEach(function () {
     elasticsearch = {
-      createClient: sinon.stub().returns({})
+      createClient: sinon.stub().returns(mockClient)
     };
 
     config = {
@@ -34,7 +37,7 @@ describe('create_client', function () {
 
   it('should use auth if provided', function () {
     // change how config works
-    var stub = sinon.stub();
+    const stub = sinon.stub();
     config = {
       get: stub
     };
@@ -46,5 +49,42 @@ describe('create_client', function () {
     expect(elasticsearch.createClient.callCount).to.equal(1);
     expect(elasticsearch.createClient.firstCall.args[0]).to.have.property('username', 'user1');
     expect(elasticsearch.createClient.firstCall.args[0]).to.have.property('password', 'mypass');
+  });
+
+  describe('custom methods', function () {
+    describe('authenticated', function () {
+      it('should contain method', function () {
+        const client = createClient(elasticsearch, config);
+        expect(client).to.respondTo('authenticated');
+      });
+
+      it('should call client.info', function () {
+        const client = createClient(elasticsearch, config);
+        const spy = sinon.spy(client, 'info');
+
+        return client.authenticated().then(function () {
+          spy.restore();
+          expect(spy.callCount).to.equal(1);
+        });
+      });
+
+      it('should be true if resolved', function () {
+        const client = createClient(elasticsearch, config);
+
+        return client.authenticated().then(function (authed) {
+          expect(authed).to.be.true;
+        });
+      });
+
+      it('should be false if rejected', function () {
+        const client = createClient(elasticsearch, config);
+        const stub = sinon.stub(client, 'info').returns(Promise.reject());
+
+        return client.authenticated().then(function (authed) {
+          stub.restore();
+          expect(authed).to.be.false;
+        });
+      });
+    });
   });
 });
