@@ -9,6 +9,7 @@
     "clean": "gulp clean",
     "package": "gulp package",
     "precommit": "gulp lint",
+    "prepush": "npm test",
     "test": "gulp test"
   },
   "devDependencies": {
