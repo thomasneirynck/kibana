@@ -9,7 +9,7 @@ describe('create_client', function () {
 
   beforeEach(function () {
     elasticsearch = {
-      createClient: sinon.spy()
+      createClient: sinon.stub().returns({})
     };
 
     config = {
