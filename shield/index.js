@@ -14,6 +14,7 @@ module.exports = (kibana) => new kibana.Plugin({
   },
 
   uiExports: {
+    chromeNavControls: ['plugins/shield/views/logout_button'],
     apps: [{
       id: 'login',
       title: 'Login',
