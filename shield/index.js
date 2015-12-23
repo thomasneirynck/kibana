@@ -9,7 +9,7 @@ module.exports = (kibana) => new kibana.Plugin({
     return Joi.object({
       enabled: Joi.boolean().default(true),
       cookieName: Joi.string().default('sid'),
-      encryptionKey: Joi.string(),
+      encryptionKey: Joi.string().required(),
       sessionTimeout: Joi.number().default(30 * 60 * 1000)
     }).default()
   },
