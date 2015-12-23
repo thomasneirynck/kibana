@@ -8,7 +8,8 @@ module.exports = (kibana) => new kibana.Plugin({
   config(Joi) {
     return Joi.object({
       enabled: Joi.boolean().default(true),
-      encryptionKey: Joi.string().required(),
+      cookieName: Joi.string().default('sid'),
+      encryptionKey: Joi.string(),
       sessionTimeout: Joi.number().default(30 * 60 * 1000)
     }).default()
   },
@@ -37,9 +38,10 @@ module.exports = (kibana) => new kibana.Plugin({
       if (error != null) throw error;
 
       server.auth.strategy('session', 'cookie', 'required', {
-        cookie: 'sid',
+        cookie: config.get('shield.cookieName'),
         password: config.get('shield.encryptionKey'),
         ttl: config.get('shield.sessionTimeout'),
+        path: config.get('server.basePath') + '/',
         clearInvalid: true,
         keepAlive: true,
         isSecure: false, // TODO: Remove this
