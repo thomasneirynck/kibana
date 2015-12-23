@@ -9,7 +9,7 @@ module.exports = (kibana) => new kibana.Plugin({
     return Joi.object({
       enabled: Joi.boolean().default(true),
       cookieName: Joi.string().default('sid'),
-      encryptionKey: Joi.string().required(),
+      encryptionKey: Joi.string(),
       sessionTimeout: Joi.number().default(30 * 60 * 1000)
     }).default()
   },
@@ -33,6 +33,7 @@ module.exports = (kibana) => new kibana.Plugin({
 
   init(server, options) {
     const config = server.config();
+    if (config.get('shield.encryptionKey') == null) throw new Error('shield.encryptionKey is required in kibana.yml.');
 
     server.register(hapiAuthCookie, (error) => {
       if (error != null) throw error;
