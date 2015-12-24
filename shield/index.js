@@ -34,6 +34,9 @@ module.exports = (kibana) => new kibana.Plugin({
   init(server, options) {
     const config = server.config();
     if (config.get('shield.encryptionKey') == null) throw new Error('shield.encryptionKey is required in kibana.yml.');
+    if (config.get('server.ssl.key') == null || config.get('server.ssl.cert') == null) {
+      throw new Error('HTTPS is required. Please set server.ssl.key and server.ssl.cert in kibana.yml.');
+    }
 
     server.register(hapiAuthCookie, (error) => {
       if (error != null) throw error;
