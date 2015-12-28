@@ -1,5 +1,6 @@
 const hapiAuthCookie = require('hapi-auth-cookie');
 const root = require('requirefrom')('');
+const basicAuth = root('server/lib/basic_auth');
 
 module.exports = (kibana) => new kibana.Plugin({
   name: 'shield',
@@ -33,7 +34,10 @@ module.exports = (kibana) => new kibana.Plugin({
 
   init(server, options) {
     const config = server.config();
-    if (config.get('shield.encryptionKey') == null) throw new Error('shield.encryptionKey is required in kibana.yml.');
+
+    if (config.get('shield.encryptionKey') == null)
+      throw new Error('shield.encryptionKey is required in kibana.yml.');
+
     if (config.get('server.ssl.key') == null || config.get('server.ssl.cert') == null) {
       throw new Error('HTTPS is required. Please set server.ssl.key and server.ssl.cert in kibana.yml.');
     }
@@ -52,6 +56,8 @@ module.exports = (kibana) => new kibana.Plugin({
         validateFunc: root('server/lib/validate')(server)
       });
     });
+
+    basicAuth.register(server);
 
     root('server/routes/api/v1/authenticate')(server);
     root('server/routes/views/login')(server, this);
