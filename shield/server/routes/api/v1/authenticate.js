@@ -23,7 +23,7 @@ module.exports = (server) => {
       }, (error) => {
         request.auth.session.clear();
         return reply(Boom.unauthorized(error));
-      })
+      });
     },
     config: {
       auth: false,

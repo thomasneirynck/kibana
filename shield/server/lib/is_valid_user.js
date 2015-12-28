@@ -8,5 +8,5 @@ module.exports = (server) => {
     return client.info({
       headers: getAuthHeader(username, password)
     });
-  }
+  };
 };
