@@ -58,7 +58,7 @@ module.exports = (kibana) => new kibana.Plugin({
       });
     });
 
-    basicAuth.register(server);
+    basicAuth.register(server, config.get('shield.cookieName'));
 
     root('server/routes/api/v1/authenticate')(server);
     root('server/routes/views/login')(server, this);

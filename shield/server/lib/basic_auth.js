@@ -32,13 +32,12 @@ function parseAuthHeader(authorization) {
   return { username, password };
 }
 
-function registerPreAuth(server) {
+function registerPreAuth(server, cookieName) {
   const isValidUser = require('./is_valid_user')(server);
-  const config = server.config();
 
   server.ext('onPreAuth', function (request, reply) {
     // continue if already authenticated
-    const existingAuth = request.state[config.get('shield.cookieName')];
+    const existingAuth = request.state[cookieName];
     if (existingAuth) return reply.continue();
 
     try {
