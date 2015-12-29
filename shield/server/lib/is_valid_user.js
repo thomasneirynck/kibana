@@ -10,5 +10,5 @@ module.exports = (server) => {
     return client.info({
       headers: authHeader
     });
-  }
+  };
 };

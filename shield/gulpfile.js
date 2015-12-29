@@ -1,3 +1,7 @@
+require('babel-register')({
+  presets: ['es2015']
+});
+
 var gulp = require('gulp');
 var _ = require('lodash');
 var path = require('path');
@@ -9,6 +13,7 @@ var eslint = require('gulp-eslint');
 var rimraf = require('rimraf');
 var tar = require('gulp-tar');
 var gzip = require('gulp-gzip');
+var mocha = require('gulp-mocha');
 var aws = require('aws-sdk');
 var fs = require('fs');
 
@@ -79,6 +84,14 @@ gulp.task('lint', function (done) {
     // To have the process exit with an error code (1) on
     // lint error, return the stream and pipe to failOnError last.
     .pipe(eslint.failOnError());
+});
+
+gulp.task('test', ['lint'], function () {
+  return gulp.src([
+    'test/**/*.js',
+    '!test/fixtures/**/*.js',
+  ], {read: false})
+  .pipe(mocha({ reporter: 'dot' }));
 });
 
 gulp.task('clean', function (done) {

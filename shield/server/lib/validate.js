@@ -14,5 +14,5 @@ module.exports = (server) => {
     }, (error) => {
       return callback(error, false);
     });
-  }
+  };
 };
