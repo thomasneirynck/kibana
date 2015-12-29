@@ -12,12 +12,14 @@ function getAuthHeader(username, password) {
 };
 
 function parseAuthHeader(authorization) {
-  if (typeof authorization !== 'string')
+  if (typeof authorization !== 'string') {
     throw new Error('Authorization should be a string');
+  }
 
   const [ authType, token ] = authorization.split(' ');
-  if (authType.toLowerCase() !== 'basic')
+  if (authType.toLowerCase() !== 'basic') {
     throw new Error('Authorization is not Basic');
+  }
 
   // base64 decode auth header
   const tokenBuffer = new Buffer(token, 'base64');
