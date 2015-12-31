@@ -41,6 +41,7 @@ module.exports = function mapListingResponse(options) {
     _.each(listingMetrics, function (id) {
       const metric = metrics[id];
       const buckets = _.chain(item[id].buckets)
+        .filter(filterPartialBuckets(min, max, bucketSize))
         .map(mapChartData(metric))
         .filter(buckets, (b) => !_.isUndefined(b))
         .value();
