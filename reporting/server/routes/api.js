@@ -1,5 +1,4 @@
 module.exports = function (server) {
-  // const services = Private(require('ui/saved_objects/saved_object_registry')).byLoaderPropertiesName;
   const debug = require('../lib/logger');
   const config = server.config();
   const client = server.plugins.reporting.client;

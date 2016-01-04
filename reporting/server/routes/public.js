@@ -51,46 +51,4 @@ module.exports = function (server) {
       .catch(handleError(reply));
     }
   });
-
-  server.route({
-    path: '/app/reporting/search/{searchId}',
-    method: 'GET',
-    handler: function (request, reply) {
-      const searchId = request.params.searchId;
-      return savedObjects.search(searchId)
-      .then(function (search) {
-        const url = search.getUrl(request.query);
-        debug('search found: ' + url);
-
-        const filename = screenshot.capture(url, {
-          left: 330,
-          scrollbar: 15
-        });
-        reply(filename);
-
-        // inject into PDF
-        // export PDF
-      })
-      .catch(handleError(reply));
-    }
-  });
-
-  server.route({
-    path: '/app/reporting/dashboard/{dashboardId}',
-    method: 'GET',
-    handler: function (request, reply) {
-      const dashId = request.params.dashboardId;
-      return savedObjects.dashboard(dashId)
-      .then(function (dash) {
-        console.log(request.query);
-        console.log('url', dash.getUrl(request.query));
-        reply('TODO: fetch dash ' + dash.title);
-      });
-
-      // fetch panels
-      // iterate, fetching vis and search images
-      // inject into PDF
-      // export PDF
-    }
-  });
 };
