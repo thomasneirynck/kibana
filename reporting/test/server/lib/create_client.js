@@ -52,17 +52,17 @@ describe('create_client', function () {
   });
 
   describe('custom methods', function () {
-    describe('authenticated', function () {
+    describe('checkConnection', function () {
       it('should contain method', function () {
         const client = createClient(elasticsearch, config);
-        expect(client).to.respondTo('authenticated');
+        expect(client).to.respondTo('checkConnection');
       });
 
       it('should call client.info', function () {
         const client = createClient(elasticsearch, config);
         const spy = sinon.spy(client, 'info');
 
-        return client.authenticated().then(function () {
+        return client.checkConnection().then(function () {
           spy.restore();
           expect(spy.callCount).to.equal(1);
         });
@@ -71,18 +71,16 @@ describe('create_client', function () {
       it('should be true if resolved', function () {
         const client = createClient(elasticsearch, config);
 
-        return client.authenticated().then(function (authed) {
-          expect(authed).to.be.true;
-        });
+        return client.checkConnection();
       });
 
       it('should be false if rejected', function () {
         const client = createClient(elasticsearch, config);
         const stub = sinon.stub(client, 'info').returns(Promise.reject());
 
-        return client.authenticated().then(function (authed) {
+        return client.checkConnection().catch(function (err) {
           stub.restore();
-          expect(authed).to.be.false;
+          expect(err).to.match(/Can not communicate with Elasticsearch/i);
         });
       });
     });

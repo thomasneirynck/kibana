@@ -1,12 +1,11 @@
 var _ = require('lodash');
 
 const methods = {
-  authenticated: function () {
+  checkConnection: function () {
     return this.info()
-    .then(
-      () => { return true; },
-      (err) => { return false; }
-    );
+    .catch(function (err) {
+      throw new Error('Can not communicate with Elasticsearch');
+    });
   }
 };
 

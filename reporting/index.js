@@ -48,17 +48,23 @@ module.exports = function (kibana) {
       // init the plugin helpers
       const plugin = this;
 
-      // create ES client instance for reporting
-      server.expose('client', createClient(server.plugins.elasticsearch, server.config()));
+      // create ES client instance for reporting, expose on server
+      const client = createClient(server.plugins.elasticsearch, server.config());
+      server.expose('client', client);
 
-      // Reporting routes
-      apiRoutes(server);
-      publicRoutes(server);
-
-      // prepare phantom binary
-      return phantom.install()
+      // make sure we can communicate with ES
+      client.checkConnection()
+      .then(function () {
+        // prepare phantom binary
+        return phantom.install()
+      })
+      .then(function () {
+        // Reporting routes
+        apiRoutes(server);
+        publicRoutes(server);
+      })
       .catch(function (err) {
-        plugin.status.red(err.message);
+        return plugin.status.red(err.message);
       });
     }
   });
