@@ -11,25 +11,22 @@ module.exports = function (phantomSettings, workingDir) {
 
   function capture(url, opts) {
     opts = opts || {};
-    var filepath = getFilepath(opts.filename);
-    var operation;
-
+    const filepath = getFilepath(opts.filename);
     const ph = fetch(url, opts);
 
-    if (opts.bounding) {
-      operation = shotCropped(ph, opts.bounding, filepath);
-    } else {
-      operation = shot(ph, filepath);
-    }
-
-    return operation.catch(function (err) {
-      debug('screenshot failed');
-      console.error(err);
+    return ph.then(function () {
+      return (opts.bounding)
+        ? shotCropped(ph, opts.bounding, filepath)
+        : shot(ph, filepath);
     })
-    // .close()
     .then(function () {
       return filepath;
-    });
+    })
+    .catch(function (err) {
+      debug('screenshot failed', err.message);
+      throw err;
+    })
+    .close();
   }
 
   function fetch(url, opts) {
@@ -37,7 +34,7 @@ module.exports = function (phantomSettings, workingDir) {
     const phantomOpts = {
       phantomPath: phantomPath,
       injectJquery: false,
-      timeout: 10000
+      timeout: 10000,
     };
 
     debug('fetching screenshot of %s', url);
@@ -63,10 +60,10 @@ module.exports = function (phantomSettings, workingDir) {
 
   function getFilepath(filename) {
     if (!filename) {
-      var ts = new Date().getTime();
+      const ts = new Date().getTime();
       filename = 'screenshot-' + ts + '.png';
     }
-    var outputDir = path.resolve(__dirname, '..', '..', workingDir);
+    const outputDir = path.resolve(__dirname, '..', '..', workingDir);
     return path.join(outputDir, filename);
   }
 
@@ -80,21 +77,20 @@ module.exports = function (phantomSettings, workingDir) {
   // cropped screenshot using DOM element or getBoundingClientRect
   // see https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
   function shotCropped(ph, bounding, filepath) {
-    var viewport = phantomSettings.viewport;
-
-    var contentOffset = _.defaults({}, bounding, {
-      top: 90,
+    const viewport = phantomSettings.viewport;
+    const contentOffset = _.defaults({}, bounding, {
+      top: 90, // top chrome
       left: 0,
-      scrollbar: 0,
-      footer: 0,
+      right: 0,
+      bottom: 0,
     });
-    bounding = _.defaults(contentOffset, {
-      width: viewport.width - contentOffset.left - contentOffset.scrollbar,
-      height: viewport.height - contentOffset.top - contentOffset.footer,
-    });
-    debug(bounding);
 
-    return ph.crop(bounding, filepath)
+    const boundingArea = _.defaults(contentOffset, {
+      width: viewport.width - contentOffset.left - contentOffset.right,
+      height: viewport.height - contentOffset.top - contentOffset.bottom,
+    });
+
+    return ph.crop(boundingArea, filepath)
     .then(function () {
       debug('cropped screenshot saved to %s', filepath);
     });

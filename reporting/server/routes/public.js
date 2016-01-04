@@ -43,6 +43,9 @@ module.exports = function (server) {
         })
         .then(function (filename) {
           return reply(fs.createReadStream(filename));
+        })
+        .catch(function (err) {
+          reply(err).code(500);
         });
 
         // inject into PDF
