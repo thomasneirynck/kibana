@@ -4,8 +4,10 @@ module.exports = function (server) {
   const config = server.config();
   const client = server.plugins.reporting.client;
   const esErrors = server.plugins.elasticsearch.errors;
-  const savedObjects = require('../lib/saved_objects')(config, client);
   const screenshot = require('../lib/screenshot')(config);
+
+  // init saved objects module
+  const savedObjects = require('../lib/saved_objects')(client, config);
 
   const handleError = function (reply) {
     return function (err) {

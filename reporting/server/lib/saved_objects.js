@@ -2,12 +2,23 @@ var url = require('url');
 var _ = require('lodash');
 var debug = require('./logger');
 
-module.exports = function (config, client) {
+module.exports = function (client, config) {
+  const opts = {
+    kibana: {
+      appPath: config.get('reporting.kibanaApp'),
+      indexName: config.get('kibana.index'),
+    },
+    server: {
+      hostname: config.get('server.host'),
+      port: config.get('server.port'),
+    }
+  };
+
   var appTypes = {
     dashboard: {
       getUrlParams: function (id) {
         return {
-          pathname: config.get('reporting.kibanaApp'),
+          pathname: opts.kibana.appPath,
           hash: '/dashboard/' + id,
         };
       },
@@ -16,7 +27,7 @@ module.exports = function (config, client) {
     visualization: {
       getUrlParams: function (id) {
         return {
-          pathname: config.get('reporting.kibanaApp'),
+          pathname: opts.kibana.appPath,
           hash: '/visualize/edit/' + id,
         };
       },
@@ -25,7 +36,7 @@ module.exports = function (config, client) {
     search: {
       getUrlParams: function (id) {
         return {
-          pathname: config.get('reporting.kibanaApp'),
+          pathname: opts.kibana.appPath,
           hash: '/discover/' + id,
         };
       },
@@ -67,8 +78,8 @@ module.exports = function (config, client) {
     var urlParams = _.assign({
       // TODO: get protocol from the server config
       protocol: 'http',
-      hostname: config.get('server.host'),
-      port: config.get('server.port'),
+      hostname: opts.server.hostname,
+      port: opts.server.port,
     }, app.getUrlParams(id));
 
     // Kibana appends querystrings to the hash, and parses them as such,
@@ -80,7 +91,7 @@ module.exports = function (config, client) {
 
   function dashboard(dashId) {
     return getObject({
-      index: config.get('kibana.index'),
+      index: opts.kibana.indexName,
       type: 'dashboard',
       id: dashId
     });
@@ -88,7 +99,7 @@ module.exports = function (config, client) {
 
   function visualization(visId, params = {}) {
     return getObject({
-      index: config.get('kibana.index'),
+      index: opts.kibana.indexName,
       type: 'visualization',
       id: visId
     });
@@ -96,7 +107,7 @@ module.exports = function (config, client) {
 
   function search(searchId, params = {}) {
     return getObject({
-      index: config.get('kibana.index'),
+      index: opts.kibana.indexName,
       type: 'search',
       id: searchId
     });

@@ -25,7 +25,7 @@ describe('saved_objects', function () {
       get: () => Promise.resolve(clientResponse)
     };
 
-    module = savedObjects(mockConfig, mockClient);
+    module = savedObjects(mockClient, mockConfig);
   });
 
   // test each of the saved object types
