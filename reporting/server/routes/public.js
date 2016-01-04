@@ -4,10 +4,14 @@ module.exports = function (server) {
   const config = server.config();
   const client = server.plugins.reporting.client;
   const esErrors = server.plugins.elasticsearch.errors;
-  const screenshot = require('../lib/screenshot')(config);
 
   // init saved objects module
   const savedObjects = require('../lib/saved_objects')(client, config);
+
+  // init the screenshot module
+  const phantomSettings = config.get('reporting.phantom');
+  const workingDir = config.get('reporting.workingDir');
+  const screenshot = require('../lib/screenshot')(phantomSettings, workingDir);
 
   const handleError = function (reply) {
     return function (err) {
@@ -21,19 +25,24 @@ module.exports = function (server) {
     method: 'GET',
     handler: function (request, reply) {
       const visId = request.params.visualizationId;
-      debug(request.query);
+
       return savedObjects.visualization(visId)
       .then(function (vis) {
         const visUrl = vis.getUrl(request.query);
         debug('visualization found: ' + visUrl);
 
         return screenshot.capture(visUrl, {
-          left: 363,
-          scrollbar: 0,
-          footer: 26
+          bounding: {
+            left: 363,
+            scrollbar: 0,
+            footer: 26
+          },
+          headers: {
+            Authorization: request.headers.authorization,
+          }
         })
         .then(function (filename) {
-          reply(fs.createReadStream(filename));
+          return reply(fs.createReadStream(filename));
         });
 
         // inject into PDF

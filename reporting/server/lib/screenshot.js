@@ -1,71 +1,64 @@
-var path = require('path');
-var _ = require('lodash');
-var Horseman = require('node-horseman');
-var phantomPath = require('./phantom').getPath();
-var debug = require('./logger');
+const path = require('path');
+const _ = require('lodash');
+const Horseman = require('node-horseman');
+const phantomPath = require('./phantom').getPath();
+const debug = require('./logger');
 
-module.exports = function (config) {
-  var kibanaConfig = config;
-  var phantomSettings = kibanaConfig.get('reporting.phantom');
-  var workingDir = kibanaConfig.get('reporting.workingDir');
-
+module.exports = function (phantomSettings, workingDir) {
   return {
     capture: capture,
-    _fetch: fetch,
   };
 
-  function capture(url, bounding, filename) {
-    var filepath;
-    var op;
+  function capture(url, opts) {
+    opts = opts || {};
+    var filepath = getFilepath(opts.filename);
+    var operation;
 
-    if (typeof bounding !== 'object') {
-      filepath = getFilepath(bounding);
-      op = shot(url, filepath);
+    const ph = fetch(url, opts);
+
+    if (opts.bounding) {
+      operation = shotCropped(ph, opts.bounding, filepath);
     } else {
-      filepath = getFilepath(filename);
-      op = shotCropped(url, bounding, filepath);
+      operation = shot(ph, filepath);
     }
 
-    return op.catch(function (err) {
+    return operation.catch(function (err) {
       debug('screenshot failed');
       console.error(err);
     })
-    .close()
+    // .close()
     .then(function () {
       return filepath;
     });
   }
 
-  function fetch(url) {
-    var loadDelay = phantomSettings.loadDelay;
-    var viewport = phantomSettings.viewport;
-
-    var phantomOpts = {
+  function fetch(url, opts) {
+    const { loadDelay, viewport } = phantomSettings;
+    const phantomOpts = {
       phantomPath: phantomPath,
       injectJquery: false,
       timeout: 10000
     };
 
     debug('fetching screenshot of %s', url);
-    var ph = new Horseman(phantomOpts)
+
+    const ph = new Horseman(phantomOpts)
     .viewport(viewport.width, viewport.height)
     .zoom(phantomSettings.zoom);
 
-    var auth = kibanaConfig.get('reporting.auth');
-    if (auth.username || auth.password) {
-      debug('Authenticating as user: ', auth.username);
-      ph = ph.authentication(auth.username, auth.password);
-    }
-
-    ph = ph.open(url)
+    return ph.then(function () {
+      if (opts.headers) {
+        debug('Setting headers', opts.headers);
+        return ph.headers(opts.headers);
+      }
+    })
+    .open(url)
     .then(function (status) {
-      debug('url open status: ' + status);
+      debug('url open status:', status, url);
       if (status !== 'success') throw new Error('URL open failed. Is the server running?');
     })
     .wait('.application visualize')
     .wait(loadDelay);
-
-    return ph;
   };
 
   function getFilepath(filename) {
@@ -77,9 +70,8 @@ module.exports = function (config) {
     return path.join(outputDir, filename);
   }
 
-  function shot(url, filepath) {
-    return fetch(url)
-    .screenshot(filepath)
+  function shot(ph, filepath) {
+    return ph.screenshot(filepath)
     .then(function () {
       debug('screenshot saved to %s', filepath);
     });
@@ -87,7 +79,7 @@ module.exports = function (config) {
 
   // cropped screenshot using DOM element or getBoundingClientRect
   // see https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
-  function shotCropped(url, bounding, filepath) {
+  function shotCropped(ph, bounding, filepath) {
     var viewport = phantomSettings.viewport;
 
     var contentOffset = _.defaults({}, bounding, {
@@ -102,8 +94,7 @@ module.exports = function (config) {
     });
     debug(bounding);
 
-    return fetch(url)
-    .crop(bounding, filepath)
+    return ph.crop(bounding, filepath)
     .then(function () {
       debug('cropped screenshot saved to %s', filepath);
     });

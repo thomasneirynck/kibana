@@ -11,7 +11,7 @@ var debug = require('./logger');
 
 module.exports = {
   install: installPhantom,
-  getPath: getBinaryPath
+  getPath: getBinaryPath,
 };
 
 function installPhantom() {
