@@ -56,6 +56,35 @@ module.exports = function (phantomSettings, workingDir) {
       if (status !== 'success') throw new Error('URL open failed. Is the server running?');
     })
     .waitForSelector('.application visualize')
+    .evaluate(function () {
+      (function (window, document) {
+        function injectStyle(styleText) {
+          var node = document.createElement('style');
+          node.media = 'all';
+          node.innerHTML = styleText;
+          document.getElementsByTagName('head')[0].appendChild(node);
+        }
+
+        // override font-awesome stuff
+        injectStyle(`
+          @font-face {
+            font-family: 'FontAwesome';
+            src: url('/app/reporting/assets/font-awesome.svg') format('svg');
+          }
+        `);
+
+        // hide visualization controls
+        injectStyle(`
+          visualize visualize-legend .legend-toggle {
+            display: none;
+          }
+
+          visualize visualize-spy .visualize-show-spy > div {
+            display: none;
+          }
+        `);
+      }(window, window.document));
+    })
     .wait(loadDelay);
   };
 
