@@ -33,9 +33,8 @@ module.exports = function (server) {
 
         return screenshot.capture(visUrl, {
           bounding: {
-            left: 363,
-            scrollbar: 0,
-            footer: 26
+            left: 362,
+            bottom: 8
           },
           headers: {
             Authorization: request.headers.authorization,
