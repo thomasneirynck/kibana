@@ -41,7 +41,7 @@ module.exports = function (server) {
           }
         })
         .then(function (filename) {
-          return reply(fs.createReadStream(filename));
+          return reply(fs.createReadStream(filename)).type('image/png');
         })
         .catch(function (err) {
           reply(err).code(500);
