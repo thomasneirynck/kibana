@@ -14,7 +14,8 @@ module.exports = function (phantomSettings, workingDir) {
     const filepath = getFilepath(opts.filename);
     const ph = fetch(url, opts);
 
-    return ph.then(function () {
+    return ph
+    .then(function () {
       return (opts.bounding)
         ? shotCropped(ph, opts.bounding, filepath)
         : shot(ph, filepath);
@@ -54,7 +55,7 @@ module.exports = function (phantomSettings, workingDir) {
       debug('url open status:', status, url);
       if (status !== 'success') throw new Error('URL open failed. Is the server running?');
     })
-    .wait('.application visualize')
+    .waitForSelector('.application visualize')
     .wait(loadDelay);
   };
 
