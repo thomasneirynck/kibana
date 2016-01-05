@@ -6,7 +6,6 @@ with Chrome 13 and Safari 5.1. As such, it has some limitations.
 - it does not support web fonts
 - it does not support flexbox
 - it does not support css3
-- Many UI controls don't make sense on a report, so they are hidden
 
 This is a collection of CSS overrides that make Kibana look better for
 generating PDF reports with Phantom.
@@ -20,7 +19,7 @@ generating PDF reports with Phantom.
   src: url('/app/reporting/assets/font-awesome.svg') format('svg');
 }
 
-/* visualization controls */
+/* many UI controls don't make sense on a report, hide them */
 
 visualize visualize-legend .legend-toggle {
   display: none;
