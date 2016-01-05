@@ -1,0 +1,16 @@
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('/app/reporting/assets/font-awesome.svg') format('svg');
+}
+
+visualize .visualize-info-tab {
+  background-color: transparent;
+}
+
+visualize visualize-legend .legend-toggle {
+  display: none;
+}
+
+visualize visualize-spy .visualize-show-spy > div {
+  display: none;
+}
