@@ -7,7 +7,6 @@ const getClustersHealth = root('server/lib/get_clusters_health');
 const getShardStatsForClusters = root('server/lib/get_shard_stats_for_clusters');
 const getNodesForClusters = root('server/lib/get_nodes_for_clusters');
 const Joi = require('joi');
-const Boom = require('boom');
 
 const calculateIndices = root('server/lib/calculate_indices');
 const calculateClusterStatus = root('server/lib/calculate_cluster_status');
@@ -16,9 +15,9 @@ const getMetrics = root('server/lib/get_metrics');
 const getShardStats = root('server/lib/get_shard_stats');
 const getLastRecovery = root('server/lib/get_last_recovery');
 const getNodes = root('server/lib/get_nodes');
+const handleError = root('server/lib/handle_error');
 
 module.exports = (server) => {
-
   const config = server.config();
   const callWithRequest = server.plugins.elasticsearch.callWithRequest;
 
@@ -27,12 +26,12 @@ module.exports = (server) => {
     path: '/api/marvel/v1/clusters',
     handler: (req, reply) => {
       return getClusters(req)
-        .then(getClustersStats(req))
-        .then(getClustersHealth(req))
-        .then(getNodesForClusters(req))
-        .then(getShardStatsForClusters(req))
-        .then((clusters) => reply(_.sortBy(clusters, 'cluster_uuid')))
-        .catch(reply);
+      .then(getClustersStats(req))
+      .then(getClustersHealth(req))
+      .then(getNodesForClusters(req))
+      .then(getShardStatsForClusters(req))
+      .then((clusters) => reply(_.sortBy(clusters, 'cluster_uuid')))
+      .catch(err => reply(handleError(err)));
     }
   });
 
@@ -67,7 +66,8 @@ module.exports = (server) => {
         });
       })
       .then(calculateClusterStatus)
-      .then(reply, reply);
+      .then(reply)
+      .catch(err => reply(handleError(err)));
     }
   });
 
@@ -88,11 +88,8 @@ module.exports = (server) => {
         id: req.params.clusterUuid
       };
       return callWithRequest(req, 'get', params)
-        .then((resp) => reply(resp._source))
-        .catch((err) => {
-          if (err.message === 'Not Found') return reply(Boom.notFound());
-          reply(err);
-        });
+      .then((resp) => reply(resp._source))
+      .catch(err => reply(handleError(err)));
     }
   });
 

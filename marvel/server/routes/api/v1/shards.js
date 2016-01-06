@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const Boom = require('boom');
-require.resolve('boom');
-module.exports = (server) => {
+const root = require('requirefrom')('');
+const handleError = root('server/lib/handle_error');
 
+module.exports = (server) => {
   const callWithRequest = server.plugins.elasticsearch.callWithRequest;
   const config = server.config();
 
@@ -41,14 +41,14 @@ module.exports = (server) => {
         });
       }
       callWithRequest(req, 'search', options)
-        .then((resp) => {
-          if (resp.hits.total) {
-            reply(resp.hits.hits.map((doc) => doc._source.shard));
-          } else {
-            reply([]);
-          }
-        })
-        .catch(reply);
+      .then((resp) => {
+        if (resp.hits.total) {
+          reply(resp.hits.hits.map((doc) => doc._source.shard));
+        } else {
+          reply([]);
+        }
+      })
+      .catch(err => reply(handleError(err)));
     }
   });
 

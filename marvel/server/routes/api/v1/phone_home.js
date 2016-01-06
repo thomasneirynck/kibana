@@ -1,5 +1,7 @@
-module.exports = (server) => {
+const root = require('requirefrom')('');
+const handleError = root('server/lib/handle_error');
 
+module.exports = (server) => {
   const callWithRequest = server.plugins.elasticsearch.callWithRequest;
   const config = server.config();
 
@@ -13,7 +15,9 @@ module.exports = (server) => {
         type: 'phone_home',
         body: body
       };
-      callWithRequest(req, 'index', options).nodeify(reply);
+      callWithRequest(req, 'index', options)
+      .then(reply)
+      .catch(err => reply(handleError(err)));
     }
   });
 };

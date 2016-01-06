@@ -4,7 +4,7 @@
 const _ = require('lodash');
 const mod = require('ui/modules').get('marvel', [ 'plugins/marvel/directives' ]);
 
-function getPageData(timefilter, globalState, $http) {
+function getPageData(timefilter, globalState, $http, Private) {
   const timeBounds = timefilter.getBounds();
   const url = `../api/marvel/v1/clusters/${globalState.cluster}/nodes`;
   return $http.post(url, {
@@ -18,8 +18,11 @@ function getPageData(timefilter, globalState, $http) {
       'node_load_average',
       'node_free_space'
     ]
-  }).then((response) => {
-    return response.data;
+  })
+  .then(response => response.data)
+  .catch((err) => {
+    const ajaxErrorHandlers = Private(require('plugins/marvel/lib/ajax_error_handlers'));
+    return ajaxErrorHandlers.fatalError(err);
   });
 }
 
@@ -51,7 +54,7 @@ mod.controller('nodes', ($route, timefilter, globalState, Private, $executor, $h
   docTitle.change('Marvel', true);
 
   $executor.register({
-    execute: () => getPageData(timefilter, globalState, $http),
+    execute: () => getPageData(timefilter, globalState, $http, Private),
     handleResponse: (response) => $scope.pageData = response
   });
 

@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const Promise = require('bluebird');
 const Joi = require('joi');
-const boom = require('boom');
 const root = require('requirefrom')('');
 const getClusterStatus = root('server/lib/get_cluster_status');
 const getNodeSummary = root('server/lib/get_node_summary');
@@ -16,6 +15,7 @@ const calculateNodeType = root('server/lib/calculate_node_type');
 const getLastState = root('server/lib/get_last_state');
 const getDefaultNodeFromId = root('server/lib/get_default_node_from_id');
 const lookups = root('server/lib/lookups');
+const handleError = root('server/lib/handle_error');
 
 module.exports = (server) => {
 
@@ -94,7 +94,8 @@ module.exports = (server) => {
       })
       // Send the response
       .then(calculateClusterStatus)
-      .then(reply, reply);
+      .then(reply)
+      .catch(err => reply(handleError(err)));
     }
   });
 
@@ -168,7 +169,8 @@ module.exports = (server) => {
 
         return body;
       })
-      .then(reply, reply);
+      .then(reply)
+      .catch(err => reply(handleError(err)));
     }
   });
 

@@ -4,7 +4,7 @@
 const _ = require('lodash');
 const mod = require('ui/modules').get('marvel', [ 'marvel/directives' ]);
 
-function getPageData(timefilter, globalState, $http) {
+function getPageData(timefilter, globalState, $http, Private) {
   const timeBounds = timefilter.getBounds();
   const url = `../api/marvel/v1/clusters/${globalState.cluster}/indices`;
   return $http.post(url, {
@@ -24,8 +24,11 @@ function getPageData(timefilter, globalState, $http) {
       'index_search_request_rate',
       'index_request_rate'
     ]
-  }).then((response) => {
-    return response.data;
+  })
+  .then(response => response.data)
+  .catch((err) => {
+    const ajaxErrorHandlers = Private(require('plugins/marvel/lib/ajax_error_handlers'));
+    return ajaxErrorHandlers.fatalError(err);
   });
 }
 
@@ -57,7 +60,7 @@ mod.controller('indices', ($route, globalState, timefilter, $http, Private, $exe
   docTitle.change('Marvel', true);
 
   $executor.register({
-    execute: () => getPageData(timefilter, globalState, $http),
+    execute: () => getPageData(timefilter, globalState, $http, Private),
     handleResponse: (response) => $scope.pageData = response
   });
 

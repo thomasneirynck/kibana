@@ -9,7 +9,8 @@ require('ui/routes')
   template: require('plugins/marvel/views/no_data/no_data_template.html'),
   resolve: {
     clusters: (marvelClusters, kbnUrl, Promise, globalState) => {
-      return marvelClusters.fetch().then((clusters) => {
+      return marvelClusters.fetch()
+      .then((clusters) => {
         if (clusters.length) {
           kbnUrl.changePath('/home');
           return Promise.reject();

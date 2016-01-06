@@ -16,7 +16,7 @@ require('ui/routes')
   }
 });
 
-function getPageData(timefilter, globalState, $route, $http) {
+function getPageData(timefilter, globalState, $route, $http, Private) {
   const timeBounds = timefilter.getBounds();
   const url = `../api/marvel/v1/clusters/${globalState.cluster}/indices/${$route.current.params.index}`;
   return $http.post(url, {
@@ -32,8 +32,11 @@ function getPageData(timefilter, globalState, $route, $http) {
       'index_document_count',
       'index_fielddata'
     ]
-  }).then((response) => {
-    return response.data;
+  })
+  .then(response => response.data)
+  .catch((err) => {
+    const ajaxErrorHandlers = Private(require('plugins/marvel/lib/ajax_error_handlers'));
+    return ajaxErrorHandlers.fatalError(err);
   });
 }
 
@@ -53,7 +56,7 @@ mod.controller('indexView', (timefilter, $route, Private, globalState, $executor
   docTitle.change(`Marvel - ${$scope.indexName}`, true);
 
   $executor.register({
-    execute: () => getPageData(timefilter, globalState, $route, $http),
+    execute: () => getPageData(timefilter, globalState, $route, $http, Private),
     handleResponse: (response) => $scope.pageData = response
   });
 

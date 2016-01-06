@@ -96,7 +96,8 @@ module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, 
 
     getClusterInfo(clusterUUID) {
       let url = `../api/marvel/v1/clusters/${clusterUUID}/info`;
-      return $http.get(url).then((resp) => {
+      return $http.get(url)
+      .then((resp) => {
         return resp.data;
       });
     }
@@ -121,7 +122,7 @@ module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, 
         this.saveToBrowser();
       })
       .catch((err) => {
-        // swallow!
+        // no ajaxErrorHandlers for phone home
         return Promise.resolve();
       });
     }
