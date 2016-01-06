@@ -10,8 +10,7 @@ module.exports = function (server) {
 
   // init the screenshot module
   const phantomSettings = config.get('reporting.phantom');
-  const workingDir = config.get('reporting.workingDir');
-  const screenshot = require('../lib/screenshot')(phantomSettings, workingDir);
+  const screenshot = require('../lib/screenshot')(phantomSettings);
 
   const handleError = function (reply) {
     return function (err) {

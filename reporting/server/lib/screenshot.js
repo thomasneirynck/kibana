@@ -1,27 +1,28 @@
 const path = require('path');
 const _ = require('lodash');
+const Promise = require('bluebird');
 const Horseman = require('node-horseman');
 const phantomPath = require('./phantom').getPath();
 const debug = require('./logger');
+const temp = require('temp').track();
 
-module.exports = function (phantomSettings, workingDir) {
+module.exports = function (phantomSettings) {
   return {
     capture: capture,
   };
 
-  function capture(url, opts) {
-    opts = opts || {};
-    const filepath = getFilepath(opts.filename);
+  function capture(url, opts = {}) {
     const ph = fetch(url, opts);
 
     return ph
-    .then(function () {
-      return (opts.bounding)
+    .then(() => getTargetFile())
+    .then(function (filepath) {
+      const operation = (opts.bounding)
         ? shotCropped(ph, opts.bounding, filepath)
         : shot(ph, filepath);
-    })
-    .then(function () {
-      return filepath;
+
+      return operation
+      .then(() => filepath);
     })
     .catch(function (err) {
       debug('screenshot failed', err.message);
@@ -56,7 +57,7 @@ module.exports = function (phantomSettings, workingDir) {
       if (status !== 'success') throw new Error('URL open failed. Is the server running?');
     })
     .on('consoleMessage', function (msg) {
-      console.log('PHANTOM:', msg);
+      debug('PHANTOM:', msg);
     })
     .waitForSelector('.application visualize')
     .evaluate(function () {
@@ -74,13 +75,11 @@ module.exports = function (phantomSettings, workingDir) {
     .wait(loadDelay);
   };
 
-  function getFilepath(filename) {
-    if (!filename) {
-      const ts = new Date().getTime();
-      filename = 'screenshot-' + ts + '.png';
-    }
-    const outputDir = path.resolve(__dirname, '..', '..', workingDir);
-    return path.join(outputDir, filename);
+  function getTargetFile() {
+    return Promise.fromCallback(function (cb) {
+      temp.open({ prefix: 'screenshot', suffix: '.png' }, cb);
+    })
+    .then((file) => file.path);
   }
 
   function shot(ph, filepath) {
