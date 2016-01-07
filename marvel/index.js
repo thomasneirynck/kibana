@@ -42,7 +42,7 @@ module.exports = function (kibana) {
         google_tag_manager_id: Joi.string().default('GTM-WXMHGM'),
         stats_report_url: Joi.when('$dev', {
           is: true,
-          then: Joi.string().default('/api/marvel/v1/phone-home'),
+          then: Joi.string().default('../api/marvel/v1/phone-home'),
           otherwise: Joi.string().default('https://marvel-stats.elasticsearch.com/appdata/marvelOpts')
         }),
         agent: Joi.object({
