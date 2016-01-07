@@ -8,8 +8,8 @@ require('ui/chrome')
   return {
     kibanaLogoUrl,
     submit(username, password) {
-      $http.post('/api/shield/v1/login', {username, password}).then(
-        (response) => window.location.href = '/', // TODO: Redirect more intelligently
+      $http.post('./api/shield/v1/login', {username, password}).then(
+        (response) => window.location.href = './',
         (error) => this.error = true
       );
     }

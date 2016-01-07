@@ -48,7 +48,7 @@ module.exports = (kibana) => new kibana.Plugin({
         path: config.get('server.basePath') + '/',
         clearInvalid: true,
         keepAlive: true,
-        redirectTo: '/login',
+        redirectTo: `${config.get('server.basePath')}/login`,
         validateFunc: root('server/lib/validate')(server)
       });
     });
