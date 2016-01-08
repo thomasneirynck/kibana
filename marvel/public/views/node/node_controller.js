@@ -52,8 +52,10 @@ mod.controller('nodeView', (timefilter, $route, globalState, Private, $executor,
   const docTitle = Private(require('ui/doc_title'));
   docTitle.change(`Marvel - ${$scope.pageData.nodeSummary.name}`, true);
 
+  $scope.search = () => getPageData(timefilter, globalState, $route, $http);
+
   $executor.register({
-    execute: () => getPageData(timefilter, globalState, $route, $http),
+    execute: $scope.search,
     handleResponse: (response) => $scope.pageData = response
   });
 

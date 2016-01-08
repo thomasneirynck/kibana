@@ -50,8 +50,10 @@ mod.controller('overview', ($route, globalState, timefilter, $http, Private, $ex
   var docTitle = Private(require('ui/doc_title'));
   docTitle.change(`Marvel - ${$scope.cluster.cluster_name}`, true);
 
+  $scope.search = () => getPageData(timefilter, globalState, $http);
+
   $executor.register({
-    execute: () => getPageData(timefilter, globalState, $http),
+    execute: $scope.search,
     handleResponse: (response) => $scope.pageData = response
   });
 
@@ -59,6 +61,7 @@ mod.controller('overview', ($route, globalState, timefilter, $http, Private, $ex
     execute: () => marvelClusters.fetch(),
     handleResponse: setClusters
   });
+
 
   // Start the executor
   $executor.start();
