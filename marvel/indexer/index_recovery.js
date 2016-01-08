@@ -26,7 +26,7 @@ module.exports = function (bulks, client, marvelClient) {
       .then(function (body) {
         bulks.push({
           index: {
-            _index: timestamp.format('[.marvel-es-]YYYY.MM.DD'),
+            _index: timestamp.format('[.marvel-es-1-]YYYY.MM.DD'),
             _type: 'index_recovery',
           }
         });

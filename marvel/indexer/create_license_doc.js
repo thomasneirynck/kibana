@@ -55,7 +55,7 @@ module.exports = function (client, marvelClient, overrides, clusterState) {
 
 
         return marvelClient.index({
-          index: '.marvel-es-data',
+          index: '.marvel-es-data-1',
           type: 'cluster_info',
           id: doc.cluster_uuid,
           body: doc

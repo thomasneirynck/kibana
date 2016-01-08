@@ -13,9 +13,6 @@ module.exports = (req, indices, type) => {
   let start = moment.utc(req.payload.timeRange.min).valueOf();
   const orgStart = start;
   const end = moment.utc(req.payload.timeRange.max).valueOf();
-  if (type === 'indices') {
-    start = moment.utc(end).subtract(2, 'minutes').valueOf();
-  }
   const clusterUuid = req.params.clusterUuid;
   const maxBucketSize = config.get('marvel.max_bucket_size');
   const minIntervalSeconds = config.get('marvel.min_interval_seconds');
@@ -49,10 +46,15 @@ module.exports = (req, indices, type) => {
     }
   };
 
-  const min = start;
   const max = end;
   const duration = moment.duration(max - orgStart, 'ms');
   const bucketSize = Math.max(minIntervalSeconds, calcAuto.near(100, duration).asSeconds());
+  if (type === 'indices') {
+    // performance optimization, just a few buckets are needed for table row listing
+    // start-end must be large enough to cover bucket size
+    start = moment.utc(end).subtract((bucketSize * 20), 'seconds').valueOf();
+  }
+  const min = start;
 
   var aggs = {
     items: {

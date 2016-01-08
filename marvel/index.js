@@ -33,8 +33,8 @@ module.exports = function (kibana) {
     config: function (Joi) {
       return Joi.object({
         enabled: Joi.boolean().default(true),
-        index: Joi.string().default('.marvel-es-data'),
-        index_prefix: Joi.string().default('.marvel-es-'),
+        index: Joi.string().default('.marvel-es-data-1'),
+        index_prefix: Joi.string().default('.marvel-es-1-'),
         missing_intervals: Joi.number().default(12),
         max_bucket_size: Joi.number().default(10000),
         min_interval_seconds: Joi.number().default(10),
@@ -42,7 +42,7 @@ module.exports = function (kibana) {
         google_tag_manager_id: Joi.string().default('GTM-WXMHGM'),
         stats_report_url: Joi.when('$dev', {
           is: true,
-          then: Joi.string().default('/api/marvel/v1/phone-home'),
+          then: Joi.string().default('../api/marvel/v1/phone-home'),
           otherwise: Joi.string().default('https://marvel-stats.elasticsearch.com/appdata/marvelOpts')
         }),
         agent: Joi.object({

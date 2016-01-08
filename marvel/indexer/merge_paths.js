@@ -15,7 +15,7 @@ module.exports = function mergePaths(bulks, marvelClient, state, paths, type, pr
       _.set(body, destPath, _.get(source, srcPath));
     });
     var head = {
-      _index: timestamp.format('[.marvel-es-]YYYY.MM.DD'),
+      _index: timestamp.format('[.marvel-es-1-]YYYY.MM.DD'),
       _type: type
     };
     if (source._id) head._id = source._id;

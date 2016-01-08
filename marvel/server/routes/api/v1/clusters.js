@@ -83,7 +83,7 @@ module.exports = (server) => {
     },
     handler: (req, reply) => {
       const params = {
-        index: config.get('marvel.index_prefix') + 'data',
+        index: config.get('marvel.index'),
         type: 'cluster_info',
         id: req.params.clusterUuid
       };
