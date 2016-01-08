@@ -40,6 +40,7 @@
     "lodash": "3.10.1",
     "moment": "2.10.6",
     "node-horseman": "2.8.2",
+    "pdfmake": "0.1.18",
     "temp": "0.8.3",
     "unzip": "0.1.11"
   }
