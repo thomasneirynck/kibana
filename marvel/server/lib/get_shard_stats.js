@@ -14,6 +14,7 @@ module.exports = (req, indices) => {
     const params = {
       index: indices,
       type: 'shards',
+      ignore: [404],
       searchType: 'count',
       body: {
         sort: { timestamp: { order: 'desc' } },

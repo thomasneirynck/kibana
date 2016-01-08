@@ -56,10 +56,8 @@ mod.controller('indices', ($route, globalState, timefilter, $http, Private, $exe
   const docTitle = Private(require('ui/doc_title'));
   docTitle.change('Marvel', true);
 
-  $scope.search = () => getPageData(timefilter, globalState, $http);
-
   $executor.register({
-    execute: $scope.search,
+    execute: () => getPageData(timefilter, globalState, $http),
     handleResponse: (response) => $scope.pageData = response
   });
 

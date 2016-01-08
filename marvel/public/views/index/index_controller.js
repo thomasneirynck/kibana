@@ -52,10 +52,8 @@ mod.controller('indexView', (timefilter, $route, Private, globalState, $executor
   var docTitle = Private(require('ui/doc_title'));
   docTitle.change(`Marvel - ${$scope.indexName}`, true);
 
-  $scope.search = () => getPageData(timefilter, globalState, $route, $http);
-
   $executor.register({
-    execute: $scope.search,
+    execute: () => getPageData(timefilter, globalState, $route, $http),
     handleResponse: (response) => $scope.pageData = response
   });
 

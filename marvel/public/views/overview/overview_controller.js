@@ -50,10 +50,8 @@ mod.controller('overview', ($route, globalState, timefilter, $http, Private, $ex
   var docTitle = Private(require('ui/doc_title'));
   docTitle.change(`Marvel - ${$scope.cluster.cluster_name}`, true);
 
-  $scope.search = () => getPageData(timefilter, globalState, $http);
-
   $executor.register({
-    execute: $scope.search,
+    execute: () => getPageData(timefilter, globalState, $http),
     handleResponse: (response) => $scope.pageData = response
   });
 

@@ -22,10 +22,11 @@ module.exports = function (req, start, end) {
   };
   return callWithRequest(req, 'fieldStats', options)
     .then(function (resp) {
+      console.log(resp);
       var indices = _.map(resp.indices, function (info, index) {
         return index;
       });
-      if (indices.length === 0) return ['-*'];
+      if (indices.length === 0) return ['.kibana-devnull'];
       return indices.filter((index) => index !== config.get('marvel.index'));
     });
 };

@@ -12,6 +12,7 @@ module.exports = (req, indices) => {
   // Build up the Elasticsearch request
   const params = {
     index: indices,
+    ignore: [404],
     type: 'index_stats',
     body: {
       size: 1,

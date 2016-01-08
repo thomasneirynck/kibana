@@ -36,6 +36,7 @@ module.exports = (req, indices, type) => {
     index: indices,
     searchType: 'count',
     ignoreUnavailable: true,
+    ignore: [404],
     body: {
       query: createQuery({
         start: start,

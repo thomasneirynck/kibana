@@ -14,14 +14,16 @@ app.directive('marvelChart', function () {
     restrict: 'E',
     template: require('plugins/marvel/directives/chart/index.html'),
     scope: {
-      search: '=',
       series: '='
     },
     link: ($scope, $elem) => {
 
       $scope.$watch('series', (series) => {
-        $scope.metric = series.metric;
-        $scope.value = numeral(_.last(series.data).y).format(series.metric.format);
+        if (series) {
+          let last = _.last(series.data);
+          $scope.metric = series.metric;
+          $scope.value = numeral(last && last.y || 0).format(series.metric.format);
+        }
       });
 
     }
@@ -33,7 +35,6 @@ app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Pri
     restrict: 'E',
     scope: {
       series: '=',
-      search: '='
     },
     link: function ($scope, $elem) {
       var legendValueNumbers;
@@ -42,7 +43,6 @@ app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Pri
         canvas: true,
         xaxis: {
           mode: 'time',
-          // tickLength: 0,
           timezone: 'browser'
         },
         selection: {
@@ -118,10 +118,11 @@ app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Pri
 
 
       $elem.on('plotselected', function (event, ranges) {
-        timefilter.time.from = moment(ranges.xaxis.from);
-        timefilter.time.to = moment(ranges.xaxis.to);
-        timefilter.time.mode = 'absolute';
-        $scope.search();
+        $scope.$evalAsync(() => {
+          timefilter.time.from = moment(ranges.xaxis.from);
+          timefilter.time.to = moment(ranges.xaxis.to);
+          timefilter.time.mode = 'absolute';
+        });
       });
 
       $elem.on('mouseleave', function () {
@@ -196,12 +197,18 @@ app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Pri
       var legendScope = $scope.$new();
       function drawPlot(chartSeries) {
 
-        if (!chartSeries || !chartSeries.data.length) {
+        if (!chartSeries) {
           $elem.empty();
           return;
         }
 
+
         var options = _.cloneDeep(defaultOptions);
+        var bounds = timefilter.getBounds();
+        if (!chartSeries.data.length) {
+          options.xaxis.min = bounds.min.valueOf();
+          options.xaxis.max = bounds.max.valueOf();
+        }
         var series = {
           shadowSize: 0,
           lines: {
@@ -218,9 +225,6 @@ app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Pri
         options.yaxis = {
           tickFormatter: (number) => numeral(number).format(chartSeries.metric.format)
         };
-
-
-
 
         $scope.plot = $.plot($elem, [ series ], options);
 

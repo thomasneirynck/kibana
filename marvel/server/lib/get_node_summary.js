@@ -13,6 +13,7 @@ module.exports = (req, indices) => {
   const params = {
     index: indices,
     type: 'node_stats',
+    ignore: [404],
     body: {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
