@@ -22,7 +22,6 @@ module.exports = function (req, start, end) {
   };
   return callWithRequest(req, 'fieldStats', options)
     .then(function (resp) {
-      console.log(resp);
       var indices = _.map(resp.indices, function (info, index) {
         return index;
       });
