@@ -1,15 +1,16 @@
-var _ = require('lodash');
-var numeral = require('numeral');
-var $ = require('jquery');
-var moment = require('moment');
+const _ = require('lodash');
+const numeral = require('numeral');
+const $ = require('jquery');
+const moment = require('moment');
 require('flot-charts/jquery.flot');
 require('flot-charts/jquery.flot.time');
 require('flot-charts/jquery.flot.canvas');
 require('flot-charts/jquery.flot.symbol');
 require('flot-charts/jquery.flot.crosshair');
 require('flot-charts/jquery.flot.selection');
-var app = require('ui/modules').get('plugins/marvel/directives', []);
-app.directive('marvelChart', function () {
+const app = require('ui/modules').get('plugins/marvel/directives', []);
+
+app.directive('marvelChart', () => {
   return {
     restrict: 'E',
     template: require('plugins/marvel/directives/chart/index.html'),
@@ -30,16 +31,16 @@ app.directive('marvelChart', function () {
   };
 });
 
-app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Private, marvelMetrics) {
+app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private, marvelMetrics) => {
   return {
     restrict: 'E',
     scope: {
       series: '=',
     },
-    link: function ($scope, $elem) {
-      var legendValueNumbers;
-      var debouncedSetLegendNumbers;
-      var defaultOptions = {
+    link: ($scope, $elem) => {
+      let legendValueNumbers;
+      let debouncedSetLegendNumbers;
+      const defaultOptions = {
         canvas: true,
         xaxis: {
           mode: 'time',
@@ -76,7 +77,7 @@ app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Pri
         legend: {
           position: 'nw',
           labelBoxBorderColor: 'rgb(255,255,255,0)',
-          labelFormatter: function (label, series) {
+          labelFormatter: (label, series) => {
             return '<span class="ngLegendValue">' +
               label +
               '<span class="ngLegendValueNumber"></span></span>';
@@ -87,16 +88,16 @@ app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Pri
       };
 
 
-      $scope.toggleSeries = function (id) {
+      $scope.toggleSeries = (id) => {
         // var series = $scope.chart[id];
         // series._hide = !series._hide;
         drawPlot($scope.series);
       };
 
-      $(window).resize(function () {
+      $(window).resize(() => {
         if (!$scope.plot) return;
         console.log('redrawing');
-        $timeout(function () {
+        $timeout(() => {
           // This is a lot faster than calling drawPlot(); Stolen from the borked flot.resize plugin
           // TODO: Currently resizing breaks tooltips
           $scope.plot.resize();
@@ -105,19 +106,19 @@ app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Pri
         }, 0);
       });
 
-      $scope.$on('$destroy', function () {
+      $scope.$on('$destroy', () => {
         $(window).off('resize'); //remove the handler added earlier
         $elem.off('plothover');
         $elem.off('plotselected');
         $elem.off('mouseleave');
       });
 
-      $elem.on('plothover',  function (event, pos, item) {
+      $elem.on('plothover',  (event, pos, item) => {
         $rootScope.$broadcast('timelionPlotHover', event, pos, item);
       });
 
 
-      $elem.on('plotselected', function (event, ranges) {
+      $elem.on('plotselected', (event, ranges) => {
         $scope.$evalAsync(() => {
           timefilter.time.from = moment(ranges.xaxis.from);
           timefilter.time.to = moment(ranges.xaxis.to);
@@ -125,21 +126,21 @@ app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Pri
         });
       });
 
-      $elem.on('mouseleave', function () {
+      $elem.on('mouseleave', () => {
         $rootScope.$broadcast('timelionPlotLeave');
       });
 
-      $scope.$on('timelionPlotHover', function (angularEvent, flotEvent, pos, time) {
+      $scope.$on('timelionPlotHover', (angularEvent, flotEvent, pos, time) => {
         $scope.plot.setCrosshair(pos);
         debouncedSetLegendNumbers(pos);
       });
 
-      $scope.$on('timelionPlotLeave', function (angularEvent, flotEvent, pos, time) {
+      $scope.$on('timelionPlotLeave', (angularEvent, flotEvent, pos, time) => {
         $scope.plot.clearCrosshair();
         clearLegendNumbers();
       });
 
-      var debounceDelay = 50;
+      const debounceDelay = 50;
       debouncedSetLegendNumbers = _.debounce(setLegendNumbers, debounceDelay, {
         maxWait: debounceDelay,
         leading: true,
@@ -148,21 +149,21 @@ app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Pri
 
       // Shamelessly borrowed from the flotCrosshairs example
       function setLegendNumbers(pos) {
-        var plot = $scope.plot;
+        const plot = $scope.plot;
 
-        var axes = plot.getAxes();
+        const axes = plot.getAxes();
         if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max) {
           return;
         }
 
-        var i;
-        var j;
-        var dataset = plot.getData();
+        let i;
+        let j;
+        const dataset = plot.getData();
         for (i = 0; i < dataset.length; ++i) {
 
-          var series = dataset[i];
-          var format = _.get(series, '_meta.metric.format', '0,0.0');
-          var units = _.get(series, '_meta.metric.units', '');
+          const series = dataset[i];
+          const format = _.get(series, '_meta.metric.format', '0,0.0');
+          const units = _.get(series, '_meta.metric.units', '');
 
           if (series._hide) continue;
 
@@ -173,7 +174,7 @@ app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Pri
             }
           }
 
-          var y;
+          let y;
           try {
             y = series.data[j][1];
           } catch (e) {
@@ -189,12 +190,10 @@ app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Pri
       }
 
       function clearLegendNumbers() {
-        _.each(legendValueNumbers, function (num) {
-          $(num).empty();
-        });
+        _.each(legendValueNumbers, (num) =>  $(num).empty());
       }
 
-      var legendScope = $scope.$new();
+      let legendScope = $scope.$new();
       function drawPlot(chartSeries) {
 
         if (!chartSeries) {
@@ -203,13 +202,13 @@ app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Pri
         }
 
 
-        var options = _.cloneDeep(defaultOptions);
-        var bounds = timefilter.getBounds();
+        const options = _.cloneDeep(defaultOptions);
+        const bounds = timefilter.getBounds();
         if (!chartSeries.data.length) {
           options.xaxis.min = bounds.min.valueOf();
           options.xaxis.max = bounds.max.valueOf();
         }
-        var series = {
+        const series = {
           shadowSize: 0,
           lines: {
             lineWidth: 2
@@ -232,7 +231,7 @@ app.directive('chart', function ($compile, $rootScope, timefilter, $timeout, Pri
         legendScope = $scope.$new();
         // Used to toggle the series, and for displaying values on hover
         legendValueNumbers = $elem.find('.ngLegendValueNumber');
-        _.each($elem.find('.ngLegendValue'), function (elem) {
+        _.each($elem.find('.ngLegendValue'), (elem) => {
           $compile(elem)(legendScope);
         });
       }
