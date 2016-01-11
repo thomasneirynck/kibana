@@ -69,7 +69,6 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private, mar
             left: null,
             bottom: '#CCC'
           },
-          borderColor: null,
           margin: 10,
           hoverable: true,
           autoHighlight: false
@@ -96,7 +95,6 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private, mar
 
       $(window).resize(() => {
         if (!$scope.plot) return;
-        console.log('redrawing');
         $timeout(() => {
           // This is a lot faster than calling drawPlot(); Stolen from the borked flot.resize plugin
           // TODO: Currently resizing breaks tooltips
@@ -114,7 +112,7 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private, mar
       });
 
       $elem.on('plothover',  (event, pos, item) => {
-        $rootScope.$broadcast('timelionPlotHover', event, pos, item);
+        $rootScope.$broadcast('marvelPlotHover', event, pos, item);
       });
 
 
@@ -127,15 +125,15 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private, mar
       });
 
       $elem.on('mouseleave', () => {
-        $rootScope.$broadcast('timelionPlotLeave');
+        $rootScope.$broadcast('marvelPlotLeave');
       });
 
-      $scope.$on('timelionPlotHover', (angularEvent, flotEvent, pos, time) => {
+      $scope.$on('marvelPlotHover', (angularEvent, flotEvent, pos, time) => {
         $scope.plot.setCrosshair(pos);
         debouncedSetLegendNumbers(pos);
       });
 
-      $scope.$on('timelionPlotLeave', (angularEvent, flotEvent, pos, time) => {
+      $scope.$on('marvelPlotLeave', (angularEvent, flotEvent, pos, time) => {
         $scope.plot.clearCrosshair();
         clearLegendNumbers();
       });
