@@ -4,6 +4,11 @@ module.exports = {
   parseHeader: parseAuthHeader,
 };
 
+const reloadMarkup = `<html>
+<head><script type="text/javascript">window.location.reload();</script></head>
+<body>reloading...</body>
+</html>`;
+
 function getAuthHeader(username, password) {
   const auth = new Buffer(`${username}:${password}`).toString('base64');
   return {
@@ -50,7 +55,7 @@ function registerPreAuth(server, cookieName) {
       .then(function () {
         // set cookie and replay the request
         request.auth.session.set({ username, password });
-        return reply('reloading').redirect(request.url.href);
+        return reply(reloadMarkup).type('text/html');
       }, () => reply.continue());
     } catch (err) {
       return reply.continue();
