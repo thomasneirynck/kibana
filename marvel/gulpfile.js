@@ -123,7 +123,8 @@ var include = [
   'index.js',
   'public',
   'node_modules',
-  'server'
+  'server',
+  'webpackShims'
 ];
 // paths to filter from include paths
 var exclude = Object.keys(pkg.devDependencies).map(function (name) {
