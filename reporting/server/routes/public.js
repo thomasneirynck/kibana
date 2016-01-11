@@ -1,6 +1,9 @@
 module.exports = function (server) {
   const fs = require('fs');
+  const _ = require('lodash');
+  const Promise = require('bluebird');
   const debug = require('../lib/logger');
+  const pdf = require('../lib/pdf');
   const config = server.config();
   const client = server.plugins.reporting.client;
   const esErrors = server.plugins.elasticsearch.errors;
@@ -17,6 +20,27 @@ module.exports = function (server) {
       if (err instanceof esErrors.NotFound) return reply('not found').code(404);
       reply(err);
     };
+  };
+
+  const createOutput = function (savedObj, format) {
+    debug('format: ' + format);
+    if (format === 'png') {
+      return Promise.resolve({
+        payload: fs.createReadStream(savedObj.filename),
+        type: 'image/png'
+      });
+    }
+
+    var output = pdf.create();
+    output.addImage(savedObj.filename, {
+      title: savedObj.title,
+      description: savedObj.description
+    });
+
+    return Promise.resolve({
+      payload: output.generate().getStream(),
+      type: 'application/pdf',
+    });
   };
 
   server.route({
@@ -41,15 +65,14 @@ module.exports = function (server) {
           }
         })
         .then(function (filename) {
-          return reply(fs.createReadStream(filename)).type('image/png');
+          return _.assign({ filename }, vis);
         })
         .catch(function (err) {
           return reply(err).code(500);
         });
-
-        // inject into PDF
-        // export PDF
       })
+      .then((obj) => createOutput(obj, request.query.format))
+      .then((output) => reply(null, output.payload).type(output.type))
       .catch(handleError(reply));
     }
   });
