@@ -1,6 +1,6 @@
-var url = require('url');
-var _ = require('lodash');
-var debug = require('./logger');
+const url = require('url');
+const _ = require('lodash');
+const debug = require('./logger');
 
 module.exports = function (client, config) {
   const opts = {
@@ -14,7 +14,7 @@ module.exports = function (client, config) {
     }
   };
 
-  var appTypes = {
+  const appTypes = {
     dashboard: {
       getUrlParams: function (id) {
         return {
@@ -45,23 +45,26 @@ module.exports = function (client, config) {
   };
 
   return {
-    dashboard: dashboard,
-    search: search,
-    visualization: visualization,
-    dashboardPanels: dashboardPanels,
+    get: getObject
   };
 
-  function getObject(req, fields = ['title', 'description']) {
-    var { type } = req;
+  function getObject(type, id, fields = []) {
+    fields = ['title', 'description'].concat(fields);
+    validateType(type);
+    const req = {
+      index: opts.kibana.indexName,
+      type: type,
+      id: id
+    };
 
     return client.get(req)
     .then(function _getRecord(body) {
       return body._source;
     })
     .then(function (source) {
-      var searchSource = JSON.parse(_.get(source, appTypes[type].searchSourceIndex));
+      const searchSource = JSON.parse(_.get(source, appTypes[type].searchSourceIndex));
 
-      var obj = _.assign(_.pick(source, fields), {
+      const obj = _.assign(_.pick(source, fields), {
         id: req.id,
         getUrl: (query = {}) => getAppUrl(type, req.id, query),
         searchSource: searchSource,
@@ -72,10 +75,10 @@ module.exports = function (client, config) {
   }
 
   function getAppUrl(type, id, query = {}) {
-    var app = appTypes[type];
+    const app = appTypes[type];
     if (!app) throw new Error('Unexpected app type: ' + type);
 
-    var urlParams = _.assign({
+    const urlParams = _.assign({
       // TODO: get protocol from the server config
       protocol: 'http',
       hostname: opts.server.hostname,
@@ -89,41 +92,20 @@ module.exports = function (client, config) {
     return url.format(urlParams);
   };
 
-  function dashboard(dashId) {
-    return getObject({
-      index: opts.kibana.indexName,
-      type: 'dashboard',
-      id: dashId
-    });
-  }
-
-  function visualization(visId, params = {}) {
-    return getObject({
-      index: opts.kibana.indexName,
-      type: 'visualization',
-      id: visId
-    });
-  }
-
-  function search(searchId, params = {}) {
-    return getObject({
-      index: opts.kibana.indexName,
-      type: 'search',
-      id: searchId
-    });
+  function validateType(type) {
+    const app = appTypes[type];
+    if (!app) throw new Error('Invalid object type: ' + type);
   }
 
   function dashboardPanels(dashId, params = {}) {
-    return dashboard(dashId)
+    return getObject('dashboard', dashId)
     .then(function (source) {
-      var fields = ['id', 'type', 'panelIndex'];
-      var panels = JSON.parse(source.panelsJSON);
+      const fields = ['id', 'type', 'panelIndex'];
+      const panels = JSON.parse(source.panelsJSON);
 
       return _.map(panels, function (panel) {
-        var panel = _.pick(panel, fields);
-        panel.url = getAppUrl(panel.type, panel.id);
-
-        return panel;
+        const url = getAppUrl(panel.type, panel.id);
+        return _.assign(_.pick(panel, fields), { url });
       });
     });
   }

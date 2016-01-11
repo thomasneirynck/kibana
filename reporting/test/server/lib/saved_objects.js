@@ -39,7 +39,7 @@ describe('saved_objects', function () {
         mockObject = mockSavedObjects[objectType];
         setClientResponse(mockObject);
 
-        return module[objectType](mockObject._id)
+        return module.get(objectType, mockObject._id)
         .then(function (obj) {
           savedObject = obj;
         });

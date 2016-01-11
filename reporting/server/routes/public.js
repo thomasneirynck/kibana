@@ -25,7 +25,7 @@ module.exports = function (server) {
     handler: function (request, reply) {
       const visId = request.params.visualizationId;
 
-      return savedObjects.visualization(visId)
+      return savedObjects.get('visualization', visId)
       .then(function (vis) {
         const visUrl = vis.getUrl(request.query);
         debug('visualization found: ' + visUrl);
@@ -44,7 +44,7 @@ module.exports = function (server) {
           return reply(fs.createReadStream(filename)).type('image/png');
         })
         .catch(function (err) {
-          reply(err).code(500);
+          return reply(err).code(500);
         });
 
         // inject into PDF
