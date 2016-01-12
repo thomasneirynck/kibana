@@ -36,6 +36,12 @@ visualize visualize-spy .visualize-show-spy > div {
   background-color: transparent;
 }
 
+/* visualization legends */
+
+visualize-legend .legend-value-title {
+  font-size: 1.2em;
+}
+
 /* line charts */
 
 .line circle {
