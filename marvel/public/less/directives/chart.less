@@ -8,14 +8,15 @@ marvel-chart {
   background-color: @white;
   border-top: @thick solid @esGray;
   padding: 15px;
+  min-height: 150px;
+  display: block;
 
   &.no-border { border-top: 0 none transparent; }
 
 
-  .vis-canvas {
-    padding: 0 5px 0 0;
+  chart {
+    display: block;
     min-height: 150px;
-    display: flex;
   }
 
   .loading {

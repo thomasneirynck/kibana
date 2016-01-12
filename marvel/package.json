@@ -47,7 +47,7 @@
   "dependencies": {
     "angular-resource": "1.4.7",
     "boom": "^2.8.0",
-    "jubilee": "git+https://github.com/panda01/jubilee.git",
+    "flot-charts": "^0.8.3",
     "react": "^0.13.3",
     "requirefrom": "^0.2.0",
     "semver": "^5.1.0"

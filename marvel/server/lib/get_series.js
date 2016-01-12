@@ -21,6 +21,7 @@ module.exports = (req, indices, metricName, filters) => {
     index: indices,
     searchType: 'count',
     ignoreUnavailable: true,
+    ignore: [404],
     body: {
       query: createQuery({
         start: start,
@@ -68,7 +69,12 @@ module.exports = (req, indices, metricName, filters) => {
   params.body.aggs = aggs;
   return callWithRequest(req, 'search', params)
   .then(function (resp) {
-    if (!resp.aggregations) return;
+    if (!resp.aggregations)  {
+      return {
+        metric: filterMetric(metric),
+        data: []
+      };
+    }
     const aggCheck = resp.aggregations.check;
     const bucketSize = aggCheck.meta.bucketSize;
     const defaultCalculation = (bucket) => {

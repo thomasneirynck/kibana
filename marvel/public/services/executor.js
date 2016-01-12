@@ -2,7 +2,7 @@ const angular = require('angular');
 const _ = require('lodash');
 
 const mod = require('ui/modules').get('marvel/executor', []);
-mod.service('$executor', (globalState, Promise, $timeout, timefilter) => {
+mod.service('$executor', ($rootScope, globalState, Promise, $timeout, timefilter) => {
 
   const queue = [];
   let executionTimer;
@@ -27,8 +27,8 @@ mod.service('$executor', (globalState, Promise, $timeout, timefilter) => {
    */
   function cancel() {
     killTimer();
-    timefilter.off('update', reset);
-    globalState.off('save_with_changes', runIfTime);
+    timefilter.off('update', killIfPaused);
+    timefilter.off('fetch', reFetch);
   }
 
   /**
@@ -63,13 +63,13 @@ mod.service('$executor', (globalState, Promise, $timeout, timefilter) => {
     .finally(reset);
   }
 
-  function runIfTime(changes) {
-    const timeChanged = _.contains(changes, 'time');
-    const refreshIntervalChanged = _.contains(changes, 'refreshInterval');
-    if (timeChanged || (refreshIntervalChanged && !timefilter.refreshInterval.pause)) {
-      cancel();
-      run();
-    } else if (refreshIntervalChanged && timefilter.refreshInterval.pause) {
+  function reFetch(changes) {
+    cancel();
+    run();
+  }
+
+  function killIfPaused() {
+    if (timefilter.refreshInterval.pause) {
       killTimer();
     }
   }
@@ -79,7 +79,8 @@ mod.service('$executor', (globalState, Promise, $timeout, timefilter) => {
    * @returns {void}
    */
   function start() {
-    globalState.on('save_with_changes', runIfTime);
+    timefilter.on('fetch', reFetch);
+    timefilter.on('update', killIfPaused);
     if (ignorePaused || !timefilter.refreshInterval.pause) {
       executionTimer = $timeout(run, timefilter.refreshInterval.value);
     }

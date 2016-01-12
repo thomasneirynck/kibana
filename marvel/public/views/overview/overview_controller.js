@@ -63,6 +63,7 @@ mod.controller('overview', ($route, globalState, timefilter, $http, Private, $ex
     handleResponse: setClusters
   });
 
+
   // Start the executor
   $executor.start();
 

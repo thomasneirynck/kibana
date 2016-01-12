@@ -12,6 +12,7 @@ module.exports = (req, indices) => {
   const params = {
     index: indices,
     type: 'nodes',
+    ignore: [404],
     body: {
       size: config.get('marvel.max_bucket_size'),
       query: createQuery({

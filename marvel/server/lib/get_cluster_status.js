@@ -15,6 +15,7 @@ module.exports = (req, indices) => {
   // Build up the Elasticsearch request
   const params = {
     index: indices,
+    ignore: [404],
     type: 'cluster_stats',
     body: {
       size: 1,
@@ -43,7 +44,8 @@ module.exports = (req, indices) => {
         memUsed: 0,
         memMax: 0
       };
-      if (resp.hits.total) {
+      let total = _.get(resp, 'hits.total', 0);
+      if (total) {
         const source = resp.hits.hits[0]._source;
         function get(path) {
           return _.get(source, path);

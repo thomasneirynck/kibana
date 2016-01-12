@@ -8,6 +8,7 @@ module.exports = (req, indices) => {
 
   const params = {
     index: indices,
+    ignore: [404],
     type: 'index_recovery',
     body: {
       size: 1,
@@ -21,7 +22,8 @@ module.exports = (req, indices) => {
 
   return callWithRequest(req, 'search', params)
   .then((resp) => {
-    if (!resp.hits.total) return [];
+    let total = _.get(resp, 'hits.total', 0);
+    if (!total) return [];
     const data = _.get(resp.hits.hits[0], '_source.index_recovery.shards') || [];
     data.sort((a, b) => b.start_time_in_mllis - a.start_time_in_mllis);
     return data;
