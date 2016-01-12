@@ -15,21 +15,42 @@ module.exports = function (server) {
   const phantomSettings = config.get('reporting.phantom');
   const screenshot = require('../lib/screenshot')(phantomSettings);
 
+  // bounding boxes for various saved object types
+  const boundingBoxes = {
+    visualization: {
+      top: 116,
+      left: 362,
+      bottom: 8
+    },
+    search: {
+      top: 116,
+      left: 230,
+      bottom: 0,
+      right: 30,
+    },
+  };
+
   // defined the public routes
   server.route({
     path: '/app/reporting/visualization/{savedId}',
     method: 'GET',
-    handler: screenshotHandler,
+    handler: (request, reply) => screenshotHandler('visualization', request, reply),
   });
 
-  function screenshotHandler(request, reply) {
+  server.route({
+    path: '/app/reporting/search/{savedId}',
+    method: 'GET',
+    handler: (request, reply) => screenshotHandler('search', request, reply),
+  });
+
+  function screenshotHandler(type, request, reply) {
     const objId = request.params.savedId;
     const query = request.query;
     const headers = {
       authorization: request.headers.authorization
     };
 
-    const screenshot = getScreenshot('visualization', objId, query, headers)
+    const screenshot = getScreenshot(type, objId, query, headers)
     .then(function (output) {
       const response = reply(output.payload);
       if (output.type) response.type(output.type);
@@ -53,13 +74,10 @@ module.exports = function (server) {
       const objUrl = savedObj.getUrl(query);
 
       debug('headers', headers);
-      return screenshot.capture(objUrl, _.assign({
-        bounding: {
-          top: 116,
-          left: 362,
-          bottom: 8
-        }
-      }, { headers }))
+      return screenshot.capture(objUrl, {
+        headers,
+        bounding: boundingBoxes[type],
+      })
       .then(function (filename) {
         return _.assign({ filename }, savedObj);
       });
