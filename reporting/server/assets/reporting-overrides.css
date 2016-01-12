@@ -36,6 +36,10 @@ visualize visualize-spy .visualize-show-spy > div {
   background-color: transparent;
 }
 
+visualize .vis-wrapper {
+  padding-left: 4px;
+}
+
 /* visualization legends */
 
 visualize-legend .legend-value-title {
