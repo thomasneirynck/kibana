@@ -83,7 +83,7 @@ class PdfMaker {
 };
 
 function getTemplate() {
-  const pageMarginTop = 60;
+  const pageMarginTop = 40;
   const pageMarginBottom = 80;
   const pageMarginWidth = 40;
 
@@ -124,15 +124,23 @@ function getTemplate() {
     styles: {
       heading: {
         alignment: 'left',
-        fontSize: 22,
-        bold: true
+        fontSize: 14,
+        bold: true,
+        marginTop: 10,
+        marginBottom: 5,
       },
       subheading: {
         alignment: 'left',
         italics: true,
-        marginLeft: 20
+        marginLeft: 20,
+        marginBottom: 5,
       },
-    }
+    },
+
+    defaultStyle: {
+      fontSize: 12,
+      font: 'Roboto',
+    },
   };
 }
 
