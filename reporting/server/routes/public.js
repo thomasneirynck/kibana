@@ -1,7 +1,7 @@
 module.exports = function (server) {
   const fs = require('fs');
   const _ = require('lodash');
-  const Promise = require('bluebird');
+  const boom = require('boom');
   const debug = require('../lib/logger');
   const pdf = require('../lib/pdf');
   const config = server.config();
@@ -15,69 +15,79 @@ module.exports = function (server) {
   const phantomSettings = config.get('reporting.phantom');
   const screenshot = require('../lib/screenshot')(phantomSettings);
 
-  const handleError = function (reply) {
-    return function (err) {
-      if (err instanceof esErrors.NotFound) return reply('not found').code(404);
-      reply(err);
-    };
-  };
+  // defined the public routes
+  server.route({
+    path: '/app/reporting/visualization/{savedId}',
+    method: 'GET',
+    handler: screenshotHandler,
+  });
 
-  const createOutput = function (savedObj, format) {
+  function screenshotHandler(request, reply) {
+    const objId = request.params.savedId;
+    const query = request.query;
+    const headers = {
+      authorization: request.headers.authorization
+    };
+
+    const screenshot = getScreenshot('visualization', objId, query, headers)
+    .then(function (output) {
+      const response = reply(output.payload);
+      if (output.type) response.type(output.type);
+      if (output.headers) _.forEach(output.headers, (value, name) => response.header(name, value));
+
+      return response;
+    })
+    .catch(function (err) {
+      if (err instanceof esErrors.NotFound) return reply(boom.notFound());
+      debug(err);
+      reply(err);
+    });
+  }
+
+  function getScreenshot(type, objId, query, headers) {
+    const date = new Date().getTime();
+    const filename = `report_${date}.pdf`;
+
+    return savedObjects.get(type, objId)
+    .then(function (savedObj) {
+      const objUrl = savedObj.getUrl(query);
+
+      debug('headers', headers);
+      return screenshot.capture(objUrl, _.assign({
+        bounding: {
+          top: 116,
+          left: 362,
+          bottom: 8
+        }
+      }, { headers }))
+      .then(function (filename) {
+        return _.assign({ filename }, savedObj);
+      });
+    })
+    .then((obj) => createOutput(obj, query.format));
+  }
+
+  function createOutput(savedObj, format) {
     if (format === 'png') {
-      return Promise.resolve({
+      return {
         payload: fs.createReadStream(savedObj.filename),
         type: 'image/png'
-      });
+      };
     }
 
-    var output = pdf.create();
+    const filename = `report_${new Date().getTime()}.pdf`;
+    const output = pdf.create();
     output.addImage(savedObj.filename, {
       title: savedObj.title,
       description: savedObj.description,
     });
 
-    return Promise.resolve({
+    return {
       payload: output.generate().getStream(),
+      // headers: {
+      //   'Content-Disposition': `attachment; filename="${filename}"`,
+      // },
       type: 'application/pdf',
-    });
-  };
-
-  server.route({
-    path: '/app/reporting/visualization/{visualizationId}',
-    method: 'GET',
-    handler: function (request, reply) {
-      const visId = request.params.visualizationId;
-      const date = new Date().getTime();
-      const filename = `report_${date}.pdf`;
-
-      return savedObjects.get('visualization', visId)
-      .then(function (vis) {
-        const visUrl = vis.getUrl(request.query);
-
-        return screenshot.capture(visUrl, {
-          bounding: {
-            top: 116,
-            left: 362,
-            bottom: 8
-          },
-          headers: {
-            Authorization: request.headers.authorization,
-          }
-        })
-        .then(function (filename) {
-          return _.assign({ filename }, vis);
-        })
-        .catch(function (err) {
-          return reply(err).code(500);
-        });
-      })
-      .then((obj) => createOutput(obj, request.query.format))
-      .then(function (output) {
-        return reply(null, output.payload)
-        // .header('content-disposition', `attachment; filename="${filename}"`)
-        .type(output.type);
-      })
-      .catch(handleError(reply));
-    }
-  });
+    };
+  }
 };
