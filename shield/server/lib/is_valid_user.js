@@ -1,12 +1,14 @@
 const root = require('requirefrom')('');
-const getAuthHeader = root('server/lib/get_auth_header');
+const basicAuth = root('server/lib/basic_auth');
 
 module.exports = (server) => {
   const client = server.plugins.elasticsearch.client;
 
   return function isValidUser(username, password) {
+    const authHeader = basicAuth.getHeader(username, password);
+
     return client.info({
-      headers: getAuthHeader(username, password)
+      headers: authHeader
     });
   };
 };

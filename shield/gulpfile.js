@@ -83,7 +83,7 @@ gulp.task('lint', function (done) {
     .pipe(eslint.formatEach())
     // To have the process exit with an error code (1) on
     // lint error, return the stream and pipe to failOnError last.
-    .pipe(eslint.failOnError());
+    .pipe(eslint.failAfterError());
 });
 
 gulp.task('test', ['lint'], function () {

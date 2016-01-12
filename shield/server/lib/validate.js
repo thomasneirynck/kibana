@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const root = require('requirefrom')('');
-const getAuthHeader = root('server/lib/get_auth_header');
+const basicAuth = root('server/lib/basic_auth');
 
 module.exports = (server) => {
   const isValidUser = root('server/lib/is_valid_user')(server);
@@ -9,7 +9,7 @@ module.exports = (server) => {
     const {username, password} = session;
 
     return isValidUser(username, password).then(() => {
-      _.assign(request.headers, getAuthHeader(username, password));
+      _.assign(request.headers, basicAuth.getHeader(username, password));
       return callback(null, true);
     }, (error) => {
       return callback(error, false);

@@ -25,12 +25,13 @@
     "gulp-util": "^3.0.7",
     "lodash": "^3.10.1",
     "mkdirp": "^0.5.1",
+    "proxyquire": "^1.7.3",
     "rimraf": "^2.4.4",
-    "rsync": "^0.4.0"
+    "rsync": "^0.4.0",
+    "sinon": "^1.17.2"
   },
   "dependencies": {
     "boom": "^2.10.0",
-    "hapi": "^11.0.2",
     "hapi-auth-cookie": "^3.1.0",
     "joi": "^6.9.1",
     "requirefrom": "^0.2.0"
