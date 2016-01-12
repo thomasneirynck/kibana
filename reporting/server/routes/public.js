@@ -56,7 +56,7 @@ module.exports = function (server) {
 
         return screenshot.capture(visUrl, {
           bounding: {
-            top: 112,
+            top: 116,
             left: 362,
             bottom: 8
           },

@@ -33,7 +33,7 @@ class PdfMaker {
     this._content.push(contents);
   }
 
-  addImage(filePath, opts) {
+  addImage(filePath, opts = {}) {
     const contents = [];
 
     if (opts.title && opts.title.length > 0) {
@@ -54,17 +54,25 @@ class PdfMaker {
       image: filePath,
       width: 500,
       alignment: 'center',
-      margin: [ 0, 10, 0, 10 ],
     };
 
-    contents.push(_.assign(img, _.omit(opts, ['title', 'description'])));
+    const wrappedImg = {
+      table: {
+        body: [
+          [ img ],
+        ],
+      },
+      layout: 'simpleBorder'
+    };
+
+    contents.push(_.assign(wrappedImg, _.omit(opts, ['title', 'description'])));
 
     this._addContents(contents);
   }
 
   generate() {
     const docTemplate = _.assign(getTemplate(), { content: this._content });
-    this._pdfDoc = this._printer.createPdfKitDocument(docTemplate);
+    this._pdfDoc = this._printer.createPdfKitDocument(docTemplate, getDocOptions());
     return this;
   }
 
@@ -124,6 +132,23 @@ function getTemplate() {
         italics: true,
         marginLeft: 20
       },
+    }
+  };
+}
+
+function getDocOptions() {
+  return {
+    tableLayouts: {
+      simpleBorder: {
+        hLineWidth: function (i, node) { return 1; },
+        vLineWidth: function (i, node) { return 1; },
+        hLineColor: function (i, node) { return 'silver'; },
+        vLineColor: function (i, node) { return 'silver'; },
+        paddingLeft: function (i, node) { return 0; },
+        paddingRight: function (i, node) { return 0; },
+        paddingTop: function (i, node) { return 0; },
+        paddingBottom: function (i, node) { return 0; },
+      }
     }
   };
 }
