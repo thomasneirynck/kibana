@@ -36,8 +36,8 @@ module.exports = function (kibana) {
         phantom: Joi.object({
           zoom: Joi.number().integer().default(1),
           viewport: Joi.object({
-            width: Joi.number().integer().default(1920),
-            height: Joi.number().integer().default(1080)
+            width: Joi.number().integer().default(1320),
+            height: Joi.number().integer().default(640)
           }).default(),
           loadDelay: Joi.number().integer().default(3000)
         }).default(),

@@ -23,7 +23,6 @@ module.exports = function (server) {
   };
 
   const createOutput = function (savedObj, format) {
-    debug('format: ' + format);
     if (format === 'png') {
       return Promise.resolve({
         payload: fs.createReadStream(savedObj.filename),
@@ -34,7 +33,7 @@ module.exports = function (server) {
     var output = pdf.create();
     output.addImage(savedObj.filename, {
       title: savedObj.title,
-      description: savedObj.description
+      description: savedObj.description,
     });
 
     return Promise.resolve({
@@ -48,11 +47,12 @@ module.exports = function (server) {
     method: 'GET',
     handler: function (request, reply) {
       const visId = request.params.visualizationId;
+      const date = new Date().getTime();
+      const filename = `report_${date}.pdf`;
 
       return savedObjects.get('visualization', visId)
       .then(function (vis) {
         const visUrl = vis.getUrl(request.query);
-        debug('visualization found: ' + visUrl);
 
         return screenshot.capture(visUrl, {
           bounding: {
@@ -72,7 +72,11 @@ module.exports = function (server) {
         });
       })
       .then((obj) => createOutput(obj, request.query.format))
-      .then((output) => reply(null, output.payload).type(output.type))
+      .then(function (output) {
+        return reply(null, output.payload)
+        // .header('content-disposition', `attachment; filename="${filename}"`)
+        .type(output.type);
+      })
       .catch(handleError(reply));
     }
   });

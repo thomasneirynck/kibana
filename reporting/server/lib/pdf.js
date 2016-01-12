@@ -19,16 +19,32 @@ class PdfMaker {
     this._printer = new Printer(fonts);
   }
 
+  _addContents(contents) {
+    const groupCount = this._content.length;
+
+    // inject a page break for every 2 groups on the page
+    if (groupCount > 0 && groupCount % 2 === 0) {
+      contents = [{
+        text: '',
+        pageBreak: 'after',
+      }].concat(contents);
+    }
+
+    this._content.push(contents);
+  }
+
   addImage(filePath, opts) {
-    if (opts.title) {
-      this._content.push({
+    const contents = [];
+
+    if (opts.title && opts.title.length > 0) {
+      contents.push({
         text: opts.title,
         style: 'heading'
       });
     }
 
-    if (opts.description) {
-      this._content.push({
+    if (opts.description && opts.description.length > 0) {
+      contents.push({
         text: opts.description,
         style: 'subheading'
       });
@@ -36,12 +52,14 @@ class PdfMaker {
 
     const img = {
       image: filePath,
-      width: 480,
-      alignment: 'left',
+      width: 500,
+      alignment: 'center',
       margin: [ 0, 10, 0, 10 ],
     };
 
-    this._content.push(_.assign(img, _.omit(opts, ['title', 'description'])));
+    contents.push(_.assign(img, _.omit(opts, ['title', 'description'])));
+
+    this._addContents(contents);
   }
 
   generate() {
