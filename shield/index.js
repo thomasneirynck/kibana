@@ -20,14 +20,12 @@ module.exports = (kibana) => new kibana.Plugin({
       id: 'login',
       title: 'Login',
       main: 'plugins/shield/views/login',
-      hidden: true,
-      autoload: kibana.autoload.styles
+      hidden: true
     }, {
       id: 'logout',
       title: 'Logout',
       main: 'plugins/shield/views/logout',
-      hidden: true,
-      autoload: kibana.autoload.styles
+      hidden: true
     }]
   },
 
