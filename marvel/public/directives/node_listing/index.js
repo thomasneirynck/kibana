@@ -34,8 +34,8 @@ define(function (require) {
                 kbnUrl.changePath('/nodes/' + state.id);
               });
             }
-          }, state.nodeName),
-          make.div({className: 'small'}, extractIp(state.transport_address))); //   <div.small>
+          }, state.node.name),
+          make.div({className: 'small'}, extractIp(state.node.transport_address))); //   <div.small>
       }
       // make the content for all of the metric columns
       if (_.isObject(value) && value.metric) {
