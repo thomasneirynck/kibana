@@ -47,10 +47,6 @@ module.exports = function (client, config) {
     }
   };
 
-  return {
-    get: getObject
-  };
-
   function getObject(type, id, fields = []) {
     fields = ['title', 'description'].concat(fields);
     validateType(type);
@@ -69,8 +65,9 @@ module.exports = function (client, config) {
 
       const obj = _.assign(_.pick(source, fields), {
         id: req.id,
-        getUrl: (query = {}) => getAppUrl(type, req.id, query),
+        type: type,
         searchSource: searchSource,
+        getUrl: (query = {}) => getAppUrl(type, req.id, query),
       });
 
       return obj;
@@ -99,16 +96,8 @@ module.exports = function (client, config) {
     if (!app) throw new Error('Invalid object type: ' + type);
   }
 
-  function dashboardPanels(dashId, params = {}) {
-    return getObject('dashboard', dashId)
-    .then(function (source) {
-      const fields = ['id', 'type', 'panelIndex'];
-      const panels = JSON.parse(source.panelsJSON);
-
-      return _.map(panels, function (panel) {
-        const url = getAppUrl(panel.type, panel.id);
-        return _.assign(_.pick(panel, fields), { url });
-      });
-    });
-  }
+  // exported methods
+  return {
+    get: getObject
+  };
 };

@@ -47,6 +47,7 @@ describe('saved_objects', function () {
 
       it('should contain specific props', function () {
         expect(savedObject).to.have.property('id', mockObject._id);
+        expect(savedObject).to.have.property('type', mockObject._type);
         expect(savedObject).to.have.property('description');
         expect(savedObject).to.have.property('searchSource');
         expect(savedObject).to.have.property('getUrl');
