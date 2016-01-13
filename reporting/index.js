@@ -48,9 +48,13 @@ module.exports = function (kibana) {
     init: function (server, options) {
       // init the plugin helpers
       const plugin = this;
+      const config = server.config();
 
       // create ES client instance for reporting, expose on server
-      const client = createClient(server.plugins.elasticsearch, server.config());
+      const client = createClient(server.plugins.elasticsearch, {
+        username: config.get('reporting.auth.username'),
+        password: config.get('reporting.auth.password'),
+      });
       server.expose('client', client);
 
       // make sure we can communicate with ES
