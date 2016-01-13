@@ -1,4 +1,5 @@
-var _ = require('lodash');
+const _ = require('lodash');
+const Joi = require('joi');
 
 const methods = {
   checkConnection: function () {
@@ -9,14 +10,9 @@ const methods = {
   }
 };
 
-module.exports = function createClient(elasticsearch, config) {
-  const username = config.get('reporting.auth.username');
-  const password = config.get('reporting.auth.password');
-  let opts = { auth: false };
-
-  if (username || password) {
-    opts = { username, password };
-  }
+module.exports = function createClient(elasticsearch, config = {}) {
+  const { username, password } = config;
+  const opts = (username || password) ? { username, password } : { auth: false };
 
   const client = elasticsearch.createClient(opts);
 

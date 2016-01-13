@@ -1,24 +1,27 @@
 const url = require('url');
 const _ = require('lodash');
+const Joi = require('joi');
 const debug = require('./logger');
 
 module.exports = function (client, config) {
-  const opts = {
-    kibana: {
-      appPath: config.get('reporting.kibanaApp'),
-      indexName: config.get('kibana.index'),
-    },
-    server: {
-      hostname: config.get('server.host'),
-      port: config.get('server.port'),
-    }
-  };
+  const schema = Joi.object().keys({
+    kibanaApp: Joi.string().required(),
+    kibanaIndex: Joi.string().required(),
+    protocol: Joi.string().valid(['http', 'https']).default('http'),
+    hostname: Joi.string().default('localhost'),
+    port: Joi.number().integer().default(5601),
+  });
+
+  const result = Joi.validate(config, schema);
+
+  if (result.error) throw result.error;
+  const opts = result.value;
 
   const appTypes = {
     dashboard: {
       getUrlParams: function (id) {
         return {
-          pathname: opts.kibana.appPath,
+          pathname: opts.kibanaApp,
           hash: '/dashboard/' + id,
         };
       },
@@ -27,7 +30,7 @@ module.exports = function (client, config) {
     visualization: {
       getUrlParams: function (id) {
         return {
-          pathname: opts.kibana.appPath,
+          pathname: opts.kibanaApp,
           hash: '/visualize/edit/' + id,
         };
       },
@@ -36,7 +39,7 @@ module.exports = function (client, config) {
     search: {
       getUrlParams: function (id) {
         return {
-          pathname: opts.kibana.appPath,
+          pathname: opts.kibanaApp,
           hash: '/discover/' + id,
         };
       },
@@ -52,7 +55,7 @@ module.exports = function (client, config) {
     fields = ['title', 'description'].concat(fields);
     validateType(type);
     const req = {
-      index: opts.kibana.indexName,
+      index: opts.kibanaIndex,
       type: type,
       id: id
     };
@@ -79,10 +82,9 @@ module.exports = function (client, config) {
     if (!app) throw new Error('Unexpected app type: ' + type);
 
     const urlParams = _.assign({
-      // TODO: get protocol from the server config
-      protocol: 'http',
-      hostname: opts.server.hostname,
-      port: opts.server.port,
+      protocol: opts.protocol,
+      hostname: opts.hostname,
+      port: opts.port,
     }, app.getUrlParams(id));
 
     // Kibana appends querystrings to the hash, and parses them as such,

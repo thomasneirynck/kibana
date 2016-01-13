@@ -6,7 +6,6 @@ var lib = require('requirefrom')('server/lib');
 var fixtures = require('requirefrom')('test/fixtures');
 var savedObjects = lib('saved_objects');
 var mockSavedObjects = fixtures('mock_saved_objects');
-var mockServerConfig = fixtures('mock_server_config');
 
 describe('saved_objects', function () {
   var mockConfig;
@@ -19,13 +18,14 @@ describe('saved_objects', function () {
   }
 
   beforeEach(function () {
-    mockConfig = mockServerConfig.create();
-
     mockClient = {
       get: () => Promise.resolve(clientResponse)
     };
 
-    module = savedObjects(mockClient, mockConfig);
+    module = savedObjects(mockClient, {
+      kibanaApp: '/app/kibana',
+      kibanaIndex: '.kibana',
+    });
   });
 
   // test each of the saved object types

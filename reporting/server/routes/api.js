@@ -3,7 +3,13 @@ module.exports = function (server) {
   const config = server.config();
   const client = server.plugins.reporting.client;
   const esErrors = server.plugins.elasticsearch.errors;
-  const savedObjects = require('../lib/saved_objects')(client, config);
+  const savedObjects = require('../lib/saved_objects')(client, {
+    'kibanaApp': config.get('reporting.kibanaApp'),
+    'kibanaIndex': config.get('kibana.index'),
+    'protocol': server.info.protocol,
+    'hostname': config.get('server.host'),
+    'port': config.get('server.port'),
+  });
 
   const handleError = function (reply) {
     return function (err) {
