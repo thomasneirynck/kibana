@@ -1,5 +1,4 @@
 var publicRoutes = require('./server/routes/public');
-var apiRoutes = require('./server/routes/api');
 var fileRoutes = require('./server/routes/file');
 var createClient = require('./server/lib/create_client');
 var phantom = require('./server/lib/phantom');
@@ -65,7 +64,6 @@ module.exports = function (kibana) {
       })
       .then(function () {
         // Reporting routes
-        apiRoutes(server);
         publicRoutes(server);
         fileRoutes(server);
       })
