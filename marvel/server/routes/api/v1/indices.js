@@ -2,6 +2,8 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const Joi = require('joi');
 const root = require('requirefrom')('');
+const calculateIndices = root('server/lib/calculate_indices');
+const getLastState = root('server/lib/get_last_state');
 const getClusterStatus = root('server/lib/get_cluster_status');
 const getIndexSummary = root('server/lib/get_index_summary');
 const getMetrics = root('server/lib/get_metrics');
@@ -9,7 +11,6 @@ const getListing = root('server/lib/get_listing');
 const getShardStats = root('server/lib/get_shard_stats');
 const getShardAllocation = root('server/lib/get_shard_allocation');
 const getNodes = root('server/lib/get_nodes');
-const calculateIndices = root('server/lib/calculate_indices');
 const calculateClusterStatus = root('server/lib/calculate_cluster_status');
 const getDefaultNodeFromId = root('server/lib/get_default_node_from_id');
 const handleError = root('server/lib/handle_error');
@@ -38,13 +39,16 @@ module.exports = (server) => {
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
       calculateIndices(req, start, end)
-      .then((indices) => {
-        return Promise.props({
-          clusterStatus: getClusterStatus(req, indices),
-          metrics: getMetrics(req, indices),
-          rows: getListing(req, indices, 'indices'),
-          shardStats: getShardStats(req, indices),
-          nodes: getNodes(req, indices)
+      .then(indices => {
+        return getLastState(req, indices)
+        .then(lastState => {
+          return Promise.props({
+            clusterStatus: getClusterStatus(req, indices, lastState),
+            metrics: getMetrics(req, indices),
+            rows: getListing(req, indices, 'indices'),
+            shardStats: getShardStats(req, indices, lastState),
+            nodes: getNodes(req, indices, lastState)
+          });
         });
       })
       // Add the index status to each index from the shardStats
@@ -92,14 +96,17 @@ module.exports = (server) => {
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
       calculateIndices(req, start, end)
-      .then((indices) => {
-        return Promise.props({
-          clusterStatus: getClusterStatus(req, indices),
-          indexSummary:  getIndexSummary(req, indices),
-          metrics: getMetrics(req, indices, [{ term: { 'index_stats.index': id } }]),
-          shards: getShardAllocation(req, indices, [{ term: { 'shard.index': id } }]),
-          shardStats: getShardStats(req, indices),
-          nodes: getNodes(req, indices)
+      .then(indices => {
+        return getLastState(req, indices)
+        .then(lastState => {
+          return Promise.props({
+            clusterStatus: getClusterStatus(req, indices, lastState),
+            indexSummary:  getIndexSummary(req, indices),
+            metrics: getMetrics(req, indices, [{ term: { 'index_stats.index': id } }]),
+            shards: getShardAllocation(req, indices, [{ term: { 'shard.index': id } }], lastState),
+            shardStats: getShardStats(req, indices, lastState),
+            nodes: getNodes(req, indices, lastState)
+          });
         });
       })
       .then(calculateClusterStatus)
