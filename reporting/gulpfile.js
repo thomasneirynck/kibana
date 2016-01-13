@@ -38,7 +38,6 @@ var include = [
   'public',
   'server',
   '.phantom',
-  '.tmp'
 ];
 
 var excludedDeps = Object.keys(pkg.devDependencies).map(function (name) {
