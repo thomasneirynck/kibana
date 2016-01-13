@@ -56,9 +56,9 @@ module.exports = function (phantomSettings) {
       debug('url open status:', status, url);
       if (status !== 'success') throw new Error('URL open failed. Is the server running?');
     })
-    .on('consoleMessage', function (msg) {
-      debug('PHANTOM:', msg);
-    })
+    // .on('consoleMessage', function (msg) {
+    //   debug('PHANTOM:', msg);
+    // })
     .waitForSelector('.application visualize')
     .evaluate(function () {
       (function (window, document) {
