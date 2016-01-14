@@ -1,3 +1,4 @@
+require('ui/autoload/styles');
 require('plugins/shield/views/login/login.less');
 const kibanaLogoUrl = require('plugins/shield/images/kibana.svg');
 
