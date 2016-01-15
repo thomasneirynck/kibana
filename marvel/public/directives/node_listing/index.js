@@ -31,7 +31,7 @@ define(function (require) {
             onClick: function () {
               // Change the url the "Angular" way!
               scope.$evalAsync(function () {
-                kbnUrl.changePath('/nodes/' + state.id);
+                kbnUrl.changePath('/nodes/' + state.resolver);
               });
             }
           }, state.node.name),
@@ -138,11 +138,11 @@ define(function (require) {
         // component for each table row
         var tableRowTemplate = React.createClass({
           getInitialState: function () {
-            var row = _.find(scope.rows, {id: this.props.id});
+            var row = _.find(scope.rows, {resolver: this.props.resolver});
             return decorateRow(row);
           },
           componentWillReceiveProps: function (newProps) {
-            var row = _.find(scope.rows, {id: newProps.id});
+            var row = _.find(scope.rows, {resolver: newProps.resolver});
             this.setState(decorateRow(row));
           },
           render: function () {
@@ -150,7 +150,7 @@ define(function (require) {
             var $tdsArr = initialTableOptions.columns.map(boundTemplateFn);
             return make.tr({
               className: 'big no-border',
-              key: 'row-' + this.props.id
+              key: `row-${this.props.resolver}`
             }, $tdsArr);
           }
         });

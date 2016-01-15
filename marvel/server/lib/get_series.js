@@ -23,12 +23,7 @@ module.exports = (req, indices, metricName, filters) => {
     ignoreUnavailable: true,
     ignore: [404],
     body: {
-      query: createQuery({
-        start: start,
-        end: end,
-        clusterUuid: clusterUuid,
-        filters: filters
-      }),
+      query: createQuery({ start, end, clusterUuid, filters }),
       aggs: {}
     }
   };
@@ -42,10 +37,7 @@ module.exports = (req, indices, metricName, filters) => {
         field: 'timestamp',
         min_doc_count: 0,
         interval: bucketSize + 's',
-        extended_bounds: {
-          min: min,
-          max: max
-        }
+        extended_bounds: { min, max }
       },
       aggs: { metric: { } },
       meta: {
@@ -67,6 +59,7 @@ module.exports = (req, indices, metricName, filters) => {
     _.assign(aggs.check.aggs, metric.aggs);
   }
   params.body.aggs = aggs;
+
   return callWithRequest(req, 'search', params)
   .then(function (resp) {
     if (!resp.aggregations)  {

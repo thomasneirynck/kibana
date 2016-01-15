@@ -8,8 +8,6 @@ module.exports = (req, indices, filters, lastState) => {
 
   const config = req.server.config();
   const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
-  const start = req.payload.timeRange.min;
-  const end = req.payload.timeRange.max;
   const clusterUuid = req.params.clusterUuid;
   const params = {
     index: config.get('marvel.index_prefix') + '*',
@@ -24,6 +22,9 @@ module.exports = (req, indices, filters, lastState) => {
   .then((resp) => {
     const hits = _.get(resp, 'hits.hits');
     if (!hits) return [];
-    return hits.map((doc) => doc._source.shard);
+    // map into object with shard and source properties
+    return hits.map(doc => _.merge(doc._source.shard, {
+      resolver: _.get(doc, `_source.source_node[${config.get('marvel.node_resolver')}]`)
+    }));
   });
 };

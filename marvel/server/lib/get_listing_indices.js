@@ -1,3 +1,15 @@
+/* Run an aggregation on index_stats to get stat data for the selected time
+ * range for all the active indices. The stat data is built up with passed-in
+ * options that are given by the UI client as an array
+ * (req.payload.listingMetrics). Every option is a key to a configuration value
+ * in public/lib/metrics. Those options are used to build up a query with a
+ * bunch of date histograms.
+ *
+ * After the result comes back from Elasticsearch, we process the date
+ * histogram data with mapListingResponse to transform it into X/Y coordinates
+ * for charting. This method is shared by the get_listing_nodes lib.
+ */
+
 const _ = require('lodash');
 const moment = require('moment');
 const createQuery = require('./create_query.js');
@@ -6,7 +18,7 @@ const root = require('requirefrom')('');
 const metrics = root('public/lib/metrics');
 const mapListingResponse = require('./map_listing_response');
 
-module.exports = (req, indices, type) => {
+module.exports = (req, indices) => {
   const config = req.server.config();
   const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
   const listingMetrics = req.payload.listingMetrics || [];
@@ -17,32 +29,14 @@ module.exports = (req, indices, type) => {
   const maxBucketSize = config.get('marvel.max_bucket_size');
   const minIntervalSeconds = config.get('marvel.min_interval_seconds');
 
-  function createTermAgg(type) {
-    if (type === 'indices') {
-      return {
-        field: 'index_stats.index',
-        size: maxBucketSize
-      };
-    }
-    if (type === 'nodes') {
-      return {
-        field: 'node_stats.node_id',
-        size: maxBucketSize
-      };
-    }
-  };
-
   const params = {
     index: indices,
+    type: 'index_stats',
     searchType: 'count',
     ignoreUnavailable: true,
     ignore: [404],
     body: {
-      query: createQuery({
-        start: start,
-        end: end,
-        clusterUuid: clusterUuid
-      }),
+      query: createQuery({ start, end, clusterUuid }),
       aggs: {}
     }
   };
@@ -50,17 +44,15 @@ module.exports = (req, indices, type) => {
   const max = end;
   const duration = moment.duration(max - orgStart, 'ms');
   const bucketSize = Math.max(minIntervalSeconds, calcAuto.near(100, duration).asSeconds());
-  if (type === 'indices') {
-    // performance optimization, just a few buckets are needed for table row listing
-    // start-end must be large enough to cover bucket size
-    start = moment.utc(end).subtract((bucketSize * 20), 'seconds').valueOf();
-  }
+  // performance optimization, just a few buckets are needed for table row listing
+  // start-end must be large enough to cover bucket size
+  start = moment.utc(end).subtract((bucketSize * 20), 'seconds').valueOf();
   const min = start;
 
   var aggs = {
     items: {
-      terms: createTermAgg(type),
-      aggs: {  }
+      terms: { field: 'index_stats.index', size: maxBucketSize },
+      aggs: {}
     }
   };
 
@@ -97,18 +89,11 @@ module.exports = (req, indices, type) => {
   params.body.aggs = aggs;
 
   return callWithRequest(req, 'search', params)
-  .then(function (resp) {
-    if (!resp.hits.total) {
-      return [];
-    }
-    // call the mapping
-    return mapListingResponse({
-      items: resp.aggregations.items.buckets,
-      listingMetrics,
-      min,
-      max,
-      bucketSize
-    });
+  .then((resp) => {
+    if (!resp.hits.total) return [];
+
+    const buckets = resp.aggregations.items.buckets;
+    return mapListingResponse({ buckets, listingMetrics, min, max, bucketSize });
   });
 
 };

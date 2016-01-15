@@ -22,7 +22,7 @@ define(function (require) {
 
   return function (shards, nodes) {
     function setNodeName(shard) {
-      var node = nodes[shard.node];
+      var node = nodes[shard.resolver];
       shard.nodeName = (node && node.name) || null;
       shard.type = 'shard';
       if (shard.state === 'INITIALIZING' && shard.relocating_node) {

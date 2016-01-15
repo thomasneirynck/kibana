@@ -39,9 +39,7 @@ define(function (require) {
     },
     setData: function (data) {
       if (data) {
-        if (!data.length) {
-          data = null;
-        }
+        // no length check so if the results is an empty set it clears the loading message
         this.setState({tableData: data});
       }
     },

@@ -59,7 +59,7 @@ define(function (require) {
         </a>
       );
       var master;
-      if (data.master) {
+      if (data.node_type === 'master') {
         master = (
           <i className="fa fa-star"></i>
         );

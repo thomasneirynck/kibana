@@ -1,9 +1,9 @@
 var Promise = require('bluebird');
 var marvelIndexPattern = require('./marvel_index_pattern.json');
 module.exports = function (server) {
-  var index = server.config().get('kibana.index');
   var client = server.plugins.elasticsearch.client;
   var config = server.config();
+  var index = config.get('kibana.index');
   var marvelIndexPrefix = config.get('marvel.index_prefix');
   var id =  marvelIndexPrefix + '*';
   var type = 'index-pattern';

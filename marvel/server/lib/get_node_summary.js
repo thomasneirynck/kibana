@@ -5,6 +5,7 @@ module.exports = (req, indices) => {
   const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
 
   // Get the params from the POST body for the request
+  const config = req.server.config();
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const clusterUuid = req.params.clusterUuid;
@@ -21,7 +22,7 @@ module.exports = (req, indices) => {
         end: end,
         clusterUuid: clusterUuid,
         filters: [{
-          term: { 'node_stats.node_id': req.params.id }
+          term: { [`source_node.${config.get('marvel.node_resolver')}`]: req.params.resolver }
         }]
       })
     }
@@ -29,12 +30,23 @@ module.exports = (req, indices) => {
 
   return callWithRequest(req, 'search', params)
   .then((resp) => {
-    const summary = { documents: 0, dataSize: 0, freeSpace: 0 };
+    const summary = { documents: 0, dataSize: 0, freeSpace: 0, node: { attributes: {} } };
     const nodeStats = _.get(resp, 'hits.hits[0]._source.node_stats');
     if (nodeStats) {
       summary.documents = _.get(nodeStats, 'indices.docs.count');
       summary.dataSize = _.get(nodeStats, 'indices.store.size_in_bytes');
       summary.freeSpace = _.get(nodeStats, 'fs.total.available_in_bytes');
+
+      const nodes = resp.hits.hits.map(hit => hit._source.source_node);
+      // using [0] value because query results are sorted desc per timestamp
+      summary.node = {
+        resolver: nodes[0][config.get('marvel.node_resolver')],
+        node_ids: nodes.map(node => node.uuid),
+        name: nodes[0].name,
+        transport_address: nodes[0].transport_address,
+        ip: nodes[0].ip,
+        attributes: nodes[0].attributes
+      };
     }
     return summary;
   });

@@ -5,10 +5,9 @@ const root = require('requirefrom')('');
 const getClusterStatus = root('server/lib/get_cluster_status');
 const getNodeSummary = root('server/lib/get_node_summary');
 const getMetrics = root('server/lib/get_metrics');
-const getListing = root('server/lib/get_listing');
+const getListing = root('server/lib/get_listing_nodes');
 const getShardStats = root('server/lib/get_shard_stats');
 const getShardAllocation = root('server/lib/get_shard_allocation');
-const getNodes = root('server/lib/get_nodes');
 const calculateIndices = root('server/lib/calculate_indices');
 const calculateClusterStatus = root('server/lib/calculate_cluster_status');
 const calculateNodeType = root('server/lib/calculate_node_type');
@@ -55,36 +54,36 @@ module.exports = (server) => {
         .then(lastState => {
           return Promise.props({
             clusterStatus: getClusterStatus(req, indices, lastState),
-            rows: getListing(req, indices, 'nodes'),
+            listing: getListing(req, indices),
             shardStats: getShardStats(req, indices, lastState),
-            nodes: getNodes(req, indices, lastState),
-            clusterState: lastState,
+            clusterState: lastState
           });
         });
       })
       // Add the index status to each index from the shardStats
       .then((body) => {
+        body.nodes = body.listing.nodes;
+        body.rows = body.listing.rows;
+        const clusterState = body.clusterState && body.clusterState.cluster_state || { nodes: {} };
         body.rows.forEach((row) => {
-          const id = row.name;
-          const shardStats = body.shardStats.nodes[id];
-          const clusterState = body.clusterState && body.clusterState.cluster_state || { nodes: {} };
-          let node = body.nodes[id];
+          const resolver = row.name;
+          const shardStats = body.shardStats.nodes[resolver];
+          let node = body.nodes[resolver];
 
           // Add some extra metrics
           row.metrics.shard_count = shardStats && shardStats.shardCount || 0;
           row.metrics.index_count = shardStats && shardStats.indexCount || 0;
 
           // copy some things over from nodes to row
-          row.id = id;
-          delete row.name;
-          if (node) {
-            row.node = node;
-          } else {
+          row.resolver = resolver;
+          row.offline = !clusterState.nodes[row.resolver];
+          if (!node) {
             // workaround for node indexed with legacy agent
-            row.node = getDefaultNodeFromId(id);
-            row.node = calculateNodeType(row.node, clusterState);
+            node = getDefaultNodeFromId(resolver);
           }
-          row.offline = !clusterState.nodes[row.id];
+          node.type = calculateNodeType(node, clusterState);
+          row.node = node;
+          delete row.name;
 
           // set type for labeling / iconography
           const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(row.node);
@@ -92,6 +91,7 @@ module.exports = (server) => {
           row.node.nodeTypeLabel = nodeTypeLabel;
           row.node.nodeTypeClass = nodeTypeClass;
         });
+        delete body.listing;
         delete body.clusterState;
         return body;
       })
@@ -104,12 +104,12 @@ module.exports = (server) => {
 
   server.route({
     method: 'POST',
-    path: '/api/marvel/v1/clusters/{clusterUuid}/nodes/{id}',
+    path: '/api/marvel/v1/clusters/{clusterUuid}/nodes/{resolver}',
     config: {
       validate: {
         params: Joi.object({
           clusterUuid: Joi.string().required(),
-          id: Joi.string().required()
+          resolver: Joi.string().required()
         }),
         payload: Joi.object({
           timeRange: Joi.object({
@@ -121,20 +121,22 @@ module.exports = (server) => {
       }
     },
     handler: (req, reply) => {
-      const id = req.params.id;
+      const config = req.server.config();
+      const resolver = req.params.resolver;
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
       calculateIndices(req, start, end)
       .then(indices => {
         return getLastState(req, indices)
         .then(lastState => {
+          const configResolver = `source_node.${config.get('marvel.node_resolver')}`;
           return Promise.props({
             clusterStatus: getClusterStatus(req, indices, lastState),
             nodeSummary: getNodeSummary(req, indices),
-            metrics: getMetrics(req, indices, [{ term: { 'node_stats.node_id': id } }]),
-            shards: getShardAllocation(req, indices, [{ term: { 'shard.node': id } }], lastState),
+            metrics: getMetrics(req, indices, [{ term: { [configResolver]: resolver } }]),
+            shards: getShardAllocation(req, indices, [{ term: { [configResolver]: resolver } }], lastState),
             shardStats: getShardStats(req, indices, lastState),
-            nodes: getNodes(req, indices, lastState),
+            nodes: {},
             clusterState: lastState
           });
         });
@@ -142,11 +144,13 @@ module.exports = (server) => {
       .then(calculateClusterStatus)
       .then(function (body) {
         const clusterState = body.clusterState && body.clusterState.cluster_state || { nodes: {} };
-        let nodeDetail = body.nodes[id];
+        let nodeDetail = body.nodeSummary.node;
         if (!nodeDetail) {
           // workaround for node indexed with legacy agent
-          nodeDetail = body.nodes[id] = calculateNodeType(getDefaultNodeFromId(id), clusterState);
+          nodeDetail = getDefaultNodeFromId(resolver);
         }
+        nodeDetail.type = calculateNodeType(nodeDetail, clusterState);
+        body.nodes[resolver] = nodeDetail;
 
         // set type for labeling / iconography
         const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(nodeDetail);
@@ -154,15 +158,15 @@ module.exports = (server) => {
         nodeDetail.nodeTypeLabel = nodeTypeLabel;
         nodeDetail.nodeTypeClass = nodeTypeClass;
 
-        body.nodeSummary.totalShards = _.get(body, `shardStats.nodes['${id}'].shardCount`);
-        body.nodeSummary.indexCount = _.get(body, `shardStats.nodes['${id}'].indexCount`);
+        body.nodeSummary.totalShards = _.get(body, `shardStats.nodes['${resolver}'].shardCount`);
+        body.nodeSummary.indexCount = _.get(body, `shardStats.nodes['${resolver}'].indexCount`);
 
         // combine data from different sources into 1 object
         body.nodeSummary = _.merge(body.nodeSummary, nodeDetail);
 
         body.nodeSummary.status = 'Online';
         // If this node is down
-        if (!clusterState.nodes[body.nodeSummary.id]) {
+        if (!clusterState.nodes[body.nodeSummary.resolver]) {
           body.nodeSummary.documents = 'N/A';
           body.nodeSummary.dataSize = 'N/A';
           body.nodeSummary.freeSpace = 'N/A';
@@ -172,7 +176,6 @@ module.exports = (server) => {
           body.nodeSummary.status = 'Offline';
         }
         delete body.clusterState;
-
         return body;
       })
       .then(reply)

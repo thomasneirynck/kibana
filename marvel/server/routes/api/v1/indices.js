@@ -7,12 +7,10 @@ const getLastState = root('server/lib/get_last_state');
 const getClusterStatus = root('server/lib/get_cluster_status');
 const getIndexSummary = root('server/lib/get_index_summary');
 const getMetrics = root('server/lib/get_metrics');
-const getListing = root('server/lib/get_listing');
+const getListing = root('server/lib/get_listing_indices');
 const getShardStats = root('server/lib/get_shard_stats');
 const getShardAllocation = root('server/lib/get_shard_allocation');
-const getNodes = root('server/lib/get_nodes');
 const calculateClusterStatus = root('server/lib/calculate_cluster_status');
-const getDefaultNodeFromId = root('server/lib/get_default_node_from_id');
 const handleError = root('server/lib/handle_error');
 
 module.exports = (server) => {
@@ -45,9 +43,8 @@ module.exports = (server) => {
           return Promise.props({
             clusterStatus: getClusterStatus(req, indices, lastState),
             metrics: getMetrics(req, indices),
-            rows: getListing(req, indices, 'indices'),
-            shardStats: getShardStats(req, indices, lastState),
-            nodes: getNodes(req, indices, lastState)
+            rows: getListing(req, indices),
+            shardStats: getShardStats(req, indices, lastState)
           });
         });
       })
@@ -105,13 +102,14 @@ module.exports = (server) => {
             metrics: getMetrics(req, indices, [{ term: { 'index_stats.index': id } }]),
             shards: getShardAllocation(req, indices, [{ term: { 'shard.index': id } }], lastState),
             shardStats: getShardStats(req, indices, lastState),
-            nodes: getNodes(req, indices, lastState)
+            lastState: lastState
           });
         });
       })
       .then(calculateClusterStatus)
       .then(function (body) {
         var shardStats = body.shardStats[id];
+        // check if we need a legacy workaround for Marvel 2.0 node data
         if (shardStats) {
           body.indexSummary.unassignedShards = shardStats.unassigned.primary + shardStats.unassigned.replica;
           body.indexSummary.totalShards = shardStats.primary + shardStats.replica + body.indexSummary.unassignedShards;
@@ -124,13 +122,12 @@ module.exports = (server) => {
           body.indexSummary.documents = 'N/A';
           body.indexSummary.dataSize = 'N/A';
         }
-        // check if we need a legacy workaround for Marvel 2.0 node data
-        if (_.isEmpty(body.nodes)) {
-          const shardNodes = _.get(body, 'shardStats.nodes');
-          _.forEach(shardNodes, function (shardNode, id) {
-            body.nodes[id] = getDefaultNodeFromId(id);
-          });
-        }
+        const shardNodes = _.get(body, 'shardStats.nodes');
+        body.nodes = {};
+        _.forEach(shardNodes, (shardNode, resolver) => {
+          body.nodes[resolver] = shardNode;
+        });
+        delete body.lastState;
         return body;
       })
       .then(reply)

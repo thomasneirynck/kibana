@@ -41,6 +41,7 @@ module.exports = function (kibana) {
         min_interval_seconds: Joi.number().default(10),
         report_stats: Joi.boolean().default(true),
         google_tag_manager_id: Joi.string().default('GTM-WXMHGM'),
+        node_resolver: Joi.string().regex(/^(?:transport_address|name)$/).default('transport_address'),
         stats_report_url: Joi.when('$dev', {
           is: true,
           then: Joi.string().default('../api/marvel/v1/phone-home'),

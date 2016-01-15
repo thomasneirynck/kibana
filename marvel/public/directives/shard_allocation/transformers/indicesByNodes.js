@@ -42,12 +42,12 @@ define(function (require) {
       }
 
       function createNodeAddShard(obj, shard) {
-        var node = shard.node;
+        var node = shard.resolver;
         var index = shard.index;
 
         // If the node is null then it's an unassigned shard and we need to
         // add it to the unassigned array.
-        if (node === null) {
+        if (shard.node === null) {
           obj[index].unassigned.push(shard);
           // if the shard is a primary we need to set the unassignedPrimaries flag
           if (shard.primary) {
@@ -60,10 +60,10 @@ define(function (require) {
         if (!nodeObj) {
           nodeObj = {
             id: node,
-            name: nodes[node].name,
             type: 'node',
-            ip_port: extractIp(nodes[node]),
-            master: nodes[node].master,
+            name: nodes[node].name,
+            node_type: nodes[node].type,
+            ip_port: nodes[node].transport_address,
             children: []
           };
           obj[index].children.push(nodeObj);
@@ -78,11 +78,10 @@ define(function (require) {
         return obj;
       }, {});
 
-      return _(data).values()
-        .sortBy(function (index) {
-          return [ !index.unassignedPrimaries, /^\./.test(index.name), index.name ];
-        })
-        .value();
+      return _(data)
+      .values()
+      .sortBy(index => [ !index.unassignedPrimaries, /^\./.test(index.name), index.name ])
+      .value();
     };
   };
 

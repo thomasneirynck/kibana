@@ -32,7 +32,8 @@ module.exports = (req) => {
             cluster.nodes = body.cluster_state.nodes;
             _.each(cluster.nodes, (node, id) => {
               node.id = id;
-              return calculateNodeType(node, body.cluster_state);
+              node.type = calculateNodeType(node, body.cluster_state);
+              return node;
             });
           }
           return cluster;

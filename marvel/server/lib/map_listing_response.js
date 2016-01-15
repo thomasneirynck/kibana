@@ -35,8 +35,8 @@ function calcSlope(data) {
 }
 
 module.exports = function mapListingResponse(options) {
-  const { items, listingMetrics, min, max, bucketSize } = options;
-  const data = _.map(items, function (item) {
+  const { buckets, listingMetrics, min, max, bucketSize } = options;
+  const data = _.map(buckets, function (item) {
     const row = { name: item.key, metrics: {} };
     _.each(listingMetrics, function (id) {
       const metric = metrics[id];

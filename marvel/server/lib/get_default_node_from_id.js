@@ -1,6 +1,6 @@
 /*
  * LEGACY: we need to handle legacy data with some workaround values
- * If node information can't be retrieved from getNodes, we call this function
+ * If node information can't be retrieved, we call this function
  * that provides some usable defaults
  */
 module.exports = function getDefaultNodeFromId(nodeId) {

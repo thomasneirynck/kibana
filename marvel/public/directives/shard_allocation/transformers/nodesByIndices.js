@@ -54,7 +54,7 @@ define(function (require) {
       }
 
       function createIndexAddShard(obj, shard) {
-        var node = shard.node || 'unassigned';
+        var node = shard.resolver || 'unassigned';
         var index = shard.index;
         if (!obj[node]) {
           createNode(obj, nodes[node], node);

@@ -14,7 +14,6 @@ const getClusterStatus = root('server/lib/get_cluster_status');
 const getMetrics = root('server/lib/get_metrics');
 const getShardStats = root('server/lib/get_shard_stats');
 const getLastRecovery = root('server/lib/get_last_recovery');
-const getNodes = root('server/lib/get_nodes');
 const calculateClusterStatus = root('server/lib/calculate_cluster_status');
 const handleError = root('server/lib/handle_error');
 
@@ -64,8 +63,7 @@ module.exports = (server) => {
             clusterStatus: getClusterStatus(req, indices, lastState),
             metrics: getMetrics(req, indices),
             shardStats: getShardStats(req, indices, lastState),
-            shardActivity: getLastRecovery(req, indices),
-            nodes: getNodes(req, indices, lastState),
+            shardActivity: getLastRecovery(req, indices)
           });
         });
       })
