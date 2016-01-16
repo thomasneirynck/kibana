@@ -7,7 +7,7 @@ module.exports = (server) => {
     method: 'GET',
     path: '/api/shield/v1/users',
     handler(request, reply) {
-      return callWithRequest(request, 'shield.getUser', {});
+
     }
   });
 
