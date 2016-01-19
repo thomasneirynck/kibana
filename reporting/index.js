@@ -5,9 +5,9 @@ var phantom = require('./server/lib/phantom');
 
 module.exports = function (kibana) {
   return new kibana.Plugin({
-
     name: 'reporting',
     require: ['kibana', 'elasticsearch'],
+
     uiExports: {
       app: {
         title: 'Reporting',
@@ -27,7 +27,7 @@ module.exports = function (kibana) {
     config: function (Joi) {
       return Joi.object({
         enabled: Joi.boolean().default(true),
-        kibanaApp: Joi.string().default('/app/kibana'),
+        kibanaApp: Joi.string().regex(/^\//).default('/app/kibana'),
         auth: Joi.object({
           username: Joi.string(),
           password: Joi.string(),

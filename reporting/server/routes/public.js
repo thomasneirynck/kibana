@@ -11,7 +11,7 @@ module.exports = function (server) {
 
   // init saved objects module
   const savedObjects = require('../lib/saved_objects')(client, {
-    'kibanaApp': config.get('reporting.kibanaApp'),
+    'kibanaApp': config.get('server.basePath') + config.get('reporting.kibanaApp'),
     'kibanaIndex': config.get('kibana.index'),
     'protocol': server.info.protocol,
     'hostname': config.get('server.host'),
