@@ -1,3 +1,4 @@
+require('ui/autoload/all');
 require('plugins/marvel/less/main.less');
 require('plugins/marvel/filters/index.js');
 require('plugins/marvel/directives/index.js');

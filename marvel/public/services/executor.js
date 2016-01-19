@@ -1,4 +1,3 @@
-const angular = require('angular');
 const _ = require('lodash');
 
 const mod = require('ui/modules').get('marvel/executor', []);

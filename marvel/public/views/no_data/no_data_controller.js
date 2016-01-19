@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const angular = require('angular');
 const chrome = require('ui/chrome');
 const mod = require('ui/modules').get('marvel', [
   'marvel/directives'
