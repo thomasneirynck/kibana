@@ -9,6 +9,9 @@ module.exports = function (kibana) {
     require: ['kibana', 'elasticsearch'],
 
     uiExports: {
+      navbarExtensions: [
+        'plugins/reporting/controls/dashboard',
+      ]
     },
 
     config: function (Joi) {
