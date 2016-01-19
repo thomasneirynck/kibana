@@ -7,7 +7,7 @@ module.exports = (server) => {
     method: 'GET',
     path: '/api/shield/v1/users',
     handler(request, reply) {
-
+      return callWithRequest(request, 'shield.getUser').then(reply, reply);
     }
   });
 
@@ -16,6 +16,7 @@ module.exports = (server) => {
     path: '/api/shield/v1/users/{username}',
     handler(request, reply) {
       const username = request.params.username;
+      return callWithRequest(request, 'shield.getUser', {username}).then(reply, reply);
     }
   });
 
