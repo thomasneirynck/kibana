@@ -1,8 +1,7 @@
 const Boom = require('boom');
-const Joi = require('joi');
 
 module.exports = (server) => {
-  const callWithRequest = server.plugins.elasticsearch.callWithRequest;
+  const callWithRequest = server.plugins.shield.callWithRequest;
 
   server.route({
     method: 'GET',
