@@ -69,7 +69,7 @@ module.exports = (server) => {
       // Send the response
       .then(calculateClusterStatus)
       .then(reply)
-      .catch(err => reply(handleError(err)));
+      .catch(err => reply(handleError(err, req)));
     }
   });
 
@@ -134,7 +134,7 @@ module.exports = (server) => {
         return body;
       })
       .then(reply)
-      .catch(err => reply(handleError(err)));
+      .catch(err => reply(handleError(err, req)));
     }
   });
 

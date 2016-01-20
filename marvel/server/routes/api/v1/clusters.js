@@ -32,7 +32,7 @@ module.exports = (server) => {
       .then(getNodesForClusters(req))
       .then(getShardStatsForClusters(req))
       .then((clusters) => reply(_.sortBy(clusters, 'cluster_uuid')))
-      .catch(err => reply(handleError(err)));
+      .catch(err => reply(handleError(err, req)));
     }
   });
 
@@ -71,7 +71,7 @@ module.exports = (server) => {
       })
       .then(calculateClusterStatus)
       .then(reply)
-      .catch(err => reply(handleError(err)));
+      .catch(err => reply(handleError(err, req)));
     }
   });
 
@@ -93,7 +93,7 @@ module.exports = (server) => {
       };
       return callWithRequest(req, 'get', params)
       .then((resp) => reply(resp._source))
-      .catch(err => reply(handleError(err)));
+      .catch(err => reply(handleError(err, req)));
     }
   });
 

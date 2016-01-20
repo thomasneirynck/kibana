@@ -48,7 +48,7 @@ module.exports = (server) => {
           reply([]);
         }
       })
-      .catch(err => reply(handleError(err)));
+      .catch(err => reply(handleError(err, req)));
     }
   });
 

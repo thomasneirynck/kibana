@@ -17,7 +17,7 @@ module.exports = (server) => {
       };
       callWithRequest(req, 'index', options)
       .then(reply)
-      .catch(err => reply(handleError(err)));
+      .catch(err => reply(handleError(err, req)));
     }
   });
 };

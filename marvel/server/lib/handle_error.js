@@ -3,8 +3,8 @@ import Boom from 'Boom';
 /**
  * TODO this behavior should be centralized and shared with all plugins
  */
-export default function handleError(err) {
-  console.error('Error in Marvel UI:\n', err.stack);
+export default function handleError(err, req) {
+  req.log(['marvel', 'error'], err);
   if (err.isBoom) return err;
   const msg = err.msg || err.message;
   if (err.statusCode === 403) return Boom.forbidden(msg);
