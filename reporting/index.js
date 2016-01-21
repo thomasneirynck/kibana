@@ -47,11 +47,16 @@ module.exports = function (kibana) {
       server.expose('client', client);
 
       // make sure we can communicate with ES
-      client.checkConnection()
-      .then(function () {
-        // prepare phantom binary
-        return phantom.install()
-      })
+      function checkESComm() {
+        client.checkConnection()
+        .then(() => plugin.status.green())
+        .catch((err) => plugin.status.red(err.message));
+      };
+      checkESComm();
+      setInterval(checkESComm, 2000);
+
+      // prepare phantom binary
+      return phantom.install()
       .then(function () {
         // Reporting routes
         publicRoutes(server);
