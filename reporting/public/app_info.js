@@ -1,32 +1,42 @@
+const url = require('url');
+const reportPrefix = '/api/reporting';
+
 module.exports = function urlInfo($location) {
   const docTypes = {
     discover: {
-      exportable: (path) => !!path.match(/\/discover\/(.+)/),
+      getParams: (path) => path.match(/\/discover\/(.+)/),
+      getReportUrl: (name, query) => `${reportPrefix}/dashboard/${name}?${query}`,
     },
     visualize: {
-      exportable: (path) => !!path.match(/\/visualize\/edit\/(.+)/),
-
+      getParams: (path) => path.match(/\/visualize\/edit\/(.+)/),
+      getReportUrl: (name, query) => `${reportPrefix}/dashboard/${name}?${query}`,
     },
     dashboard: {
-      exportable: (path) => !!path.match(/\/dashboard\/(.+)/),
+      getParams: (path) => path.match(/\/dashboard\/(.+)/),
+      getReportUrl: (name, query) => `${reportPrefix}/dashboard/${name}?${query}`,
     },
   };
 
-  function parseUrl(type) {
-    const url = $location.$$url;
-    const path = $location.$$path;
-    const hash = $location.$$hash;
-    const docType = docTypes[type];
+  function parseFromUrl() {
+    const { pathname, query } = url.parse($location.$$url, false);
+    const pathParams = pathname.match(/\/([a-z]+)?(\/?.*)/);
 
+    const type = pathParams[1];
+    const docType = docTypes[type];
     if (!docType) throw new Error('Invalid app type: ' + type);
 
-    console.log({
-      url,
-      path,
-      hash,
-      exportable: docType.exportable(path),
-    });
+    const params = docType.getParams(pathname);
+    const objectId = (!!params) ? params[1] : null;
+    const reportUrl = (!!params) ? docType.getReportUrl(objectId, query) : null;
+
+    return {
+      pathname,
+      query,
+      reportUrl,
+      objectId,
+      exportable: !!params,
+    };
   }
 
-  return parseUrl;
+  return parseFromUrl;
 };

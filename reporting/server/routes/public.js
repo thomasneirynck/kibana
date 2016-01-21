@@ -39,19 +39,19 @@ module.exports = function (server) {
 
   // defined the public routes
   server.route({
-    path: '/app/reporting/visualization/{savedId}',
+    path: '/api/reporting/visualization/{savedId}',
     method: 'GET',
     handler: (request, reply) => pdfHandler('visualization', request, reply),
   });
 
   server.route({
-    path: '/app/reporting/search/{savedId}',
+    path: '/api/reporting/search/{savedId}',
     method: 'GET',
     handler: (request, reply) => pdfHandler('search', request, reply),
   });
 
   server.route({
-    path: '/app/reporting/dashboard/{savedId}',
+    path: '/api/reporting/dashboard/{savedId}',
     method: 'GET',
     handler: (request, reply) => pdfHandler('dashboard', request, reply),
   });
