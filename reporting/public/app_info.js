@@ -5,11 +5,11 @@ module.exports = function urlInfo($location) {
   const docTypes = {
     discover: {
       getParams: (path) => path.match(/\/discover\/(.+)/),
-      getReportUrl: (name, query) => `${reportPrefix}/dashboard/${name}?${query}`,
+      getReportUrl: (name, query) => `${reportPrefix}/search/${name}?${query}`,
     },
     visualize: {
       getParams: (path) => path.match(/\/visualize\/edit\/(.+)/),
-      getReportUrl: (name, query) => `${reportPrefix}/dashboard/${name}?${query}`,
+      getReportUrl: (name, query) => `${reportPrefix}/visualization/${name}?${query}`,
     },
     dashboard: {
       getParams: (path) => path.match(/\/dashboard\/(.+)/),

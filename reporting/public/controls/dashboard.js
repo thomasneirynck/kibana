@@ -7,10 +7,10 @@ function dashboardReportProvider(Private, $window) {
     name: 'dashboardReport',
     appName: 'dashboard',
     order: 0,
-    template: require('plugins/reporting/controls/dashboard.html'),
+    template: require('plugins/reporting/controls/export_button.html'),
     link: function dashboardReport($scope, $el) {
       $scope.handleClick = function () {
-        const info = appInfo('dashboard');
+        const info = appInfo();
 
         if (!info.exportable) {
           alert('Only saved dashboards can be exported');
