@@ -50,13 +50,16 @@ module.exports = (server) => {
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
       calculateIndices(req, start, end)
-      .then((indices) => {
-        return Promise.props({
-          clusterStatus: getClusterStatus(req, indices),
-          rows: getListing(req, indices, 'nodes'),
-          shardStats: getShardStats(req, indices),
-          nodes: getNodes(req, indices),
-          clusterState: getLastState(req, indices),
+      .then(indices => {
+        return getLastState(req, indices)
+        .then(lastState => {
+          return Promise.props({
+            clusterStatus: getClusterStatus(req, indices, lastState),
+            rows: getListing(req, indices, 'nodes'),
+            shardStats: getShardStats(req, indices, lastState),
+            nodes: getNodes(req, indices, lastState),
+            clusterState: lastState,
+          });
         });
       })
       // Add the index status to each index from the shardStats
@@ -95,7 +98,7 @@ module.exports = (server) => {
       // Send the response
       .then(calculateClusterStatus)
       .then(reply)
-      .catch(err => reply(handleError(err)));
+      .catch(err => reply(handleError(err, req)));
     }
   });
 
@@ -122,15 +125,18 @@ module.exports = (server) => {
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
       calculateIndices(req, start, end)
-      .then((indices) => {
-        return Promise.props({
-          clusterStatus: getClusterStatus(req, indices),
-          nodeSummary: getNodeSummary(req, indices),
-          metrics: getMetrics(req, indices, [{ term: { 'node_stats.node_id': id } }]),
-          shards: getShardAllocation(req, indices, [{ term: { 'shard.node': id } }]),
-          shardStats: getShardStats(req, indices),
-          nodes: getNodes(req, indices),
-          clusterState: getLastState(req, indices),
+      .then(indices => {
+        return getLastState(req, indices)
+        .then(lastState => {
+          return Promise.props({
+            clusterStatus: getClusterStatus(req, indices, lastState),
+            nodeSummary: getNodeSummary(req, indices),
+            metrics: getMetrics(req, indices, [{ term: { 'node_stats.node_id': id } }]),
+            shards: getShardAllocation(req, indices, [{ term: { 'shard.node': id } }], lastState),
+            shardStats: getShardStats(req, indices, lastState),
+            nodes: getNodes(req, indices, lastState),
+            clusterState: lastState
+          });
         });
       })
       .then(calculateClusterStatus)
@@ -170,7 +176,7 @@ module.exports = (server) => {
         return body;
       })
       .then(reply)
-      .catch(err => reply(handleError(err)));
+      .catch(err => reply(handleError(err, req)));
     }
   });
 

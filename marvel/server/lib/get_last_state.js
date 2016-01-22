@@ -22,10 +22,8 @@ module.exports = (req, indices) => {
 
   return callWithRequest(req, 'search', params)
   .then((resp) => {
-    let total = _.get(resp, 'hits.total', 0);
-    if (total) {
-      return resp.hits.hits[0]._source;
-    }
+    const total = _.get(resp, 'hits.total', 0);
+    if (!total) return;
+    return _.get(resp, 'hits.hits[0]._source');
   });
-
 };

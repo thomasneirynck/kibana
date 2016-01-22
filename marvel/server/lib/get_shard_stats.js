@@ -1,70 +1,49 @@
 const createQuery = require('./create_query');
-const getLastState = require('./get_last_state');
 const _ = require('lodash');
-module.exports = (req, indices) => {
+
+module.exports = (req, indices, lastState) => {
   const config = req.server.config();
   const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const clusterUuid = req.params.clusterUuid;
-
-  return getLastState(req, indices)
-  .then((state) => {
-    if (!state) return {};
-    const params = {
-      index: indices,
-      type: 'shards',
-      ignore: [404],
-      searchType: 'count',
-      body: {
-        sort: { timestamp: { order: 'desc' } },
-        query: createQuery({
-          clusterUuid: clusterUuid,
-          filters: [ { term: { state_uuid: state.cluster_state.state_uuid } } ]
-        }),
-        aggs: {
-          indices: {
-            terms: {
-              field: 'shard.index',
-              size: config.get('marvel.max_bucket_size')
-            },
-            aggs: {
-              states: {
-                terms: {
-                  field: 'shard.state',
-                  size: 10
-                },
-                aggs: {
-                  primary: {
-                    terms: {
-                      field: 'shard.primary',
-                      size: 10
-                    }
-                  }
-                }
-              }
-            }
-          },
-          nodes: {
-            terms: {
-              field: 'shard.node',
-              size: config.get('marvel.max_bucket_size')
-            },
-            aggs: {
-              index_count: {
-                cardinality: {
-                  field: 'shard.index'
-                }
-              }
+  const params = {
+    index: indices,
+    type: 'shards',
+    ignore: [404],
+    searchType: 'count',
+    body: {
+      sort: { timestamp: { order: 'desc' } },
+      query: createQuery({
+        clusterUuid: clusterUuid,
+        filters: [ { term: { state_uuid: _.get(lastState, 'cluster_state.state_uuid') } } ]
+      }),
+      aggs: {
+        indices: {
+          terms: { field: 'shard.index', size: config.get('marvel.max_bucket_size') },
+          aggs: {
+            states: {
+              terms: { field: 'shard.state', size: 10 },
+              aggs: { primary: { terms: { field: 'shard.primary', size: 10 } } }
             }
           }
+        },
+        nodes: {
+          terms: { field: 'shard.node', size: config.get('marvel.max_bucket_size') },
+          aggs: { index_count: { cardinality: { field: 'shard.index' } } }
         }
       }
-    };
-    return callWithRequest(req, 'search', params);
-  })
+    }
+  };
+
+  return callWithRequest(req, 'search', params)
   .then((resp) => {
-    const data = { nodes: {}, totals: { primary: 0, replica: 0, unassigned: { replica: 0, primary: 0 } } };
+    const data = {
+      nodes: {},
+      totals: {
+        primary: 0, replica: 0, unassigned: { replica: 0, primary: 0 }
+      }
+    };
 
     function createNewMetric() {
       return {
@@ -119,5 +98,4 @@ module.exports = (req, indices) => {
     return data;
 
   });
-
 };

@@ -1,6 +1,5 @@
 define(function (require) {
   var _ = require('lodash');
-  var angular = require('angular');
   var moment = require('moment');
   var module = require('ui/modules').get('marvel', [
     'marvel/directives'

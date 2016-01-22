@@ -26,6 +26,7 @@ var buildTarget = path.resolve(buildDir, pkg.name);
 var kibanaPluginDir = path.resolve(__dirname, '../../../kibana/installedPlugins/' + pkg.name);
 
 var include = [
+  'webpackShims',
   'package.json',
   'index.js',
   'node_modules',

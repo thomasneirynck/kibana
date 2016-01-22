@@ -1,7 +1,9 @@
 const Boom = require('boom');
+const root = require('requirefrom')('');
+const getClient = root('server/lib/get_client_shield');
 
 module.exports = (server) => {
-  const callWithRequest = server.plugins.shield.callWithRequest;
+  const callWithRequest = getClient(server).callWithRequest;
 
   server.route({
     method: 'GET',
