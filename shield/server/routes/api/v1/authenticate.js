@@ -4,22 +4,16 @@ const root = require('requirefrom')('');
 
 module.exports = (server) => {
   const isValidUser = root('server/lib/is_valid_user')(server);
+  const success = {statusCode: 200, payload: 'success'};
 
   server.route({
     method: 'POST',
     path: '/api/shield/v1/login',
     handler(request, reply) {
       const {username, password} = request.payload;
-      return isValidUser(username, password).then(() => {
-        request.auth.session.set({
-          username: username,
-          password: password
-        });
-
-        return reply({
-          statusCode: 200,
-          payload: 'success'
-        });
+      return isValidUser(request, username, password).then(() => {
+        request.auth.session.set({username, password});
+        return reply(success);
       }, (error) => {
         request.auth.session.clear();
         return reply(Boom.unauthorized(error));
@@ -41,10 +35,7 @@ module.exports = (server) => {
     path: '/api/shield/v1/logout',
     handler(request, reply) {
       request.auth.session.clear();
-      return reply({
-        statusCode: 200,
-        payload: 'success'
-      });
+      return reply(success);
     }
   });
 };

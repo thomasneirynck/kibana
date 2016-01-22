@@ -51,7 +51,7 @@ function registerPreAuth(server, cookieName) {
       const { username, password } = parseAuthHeader(authorization);
 
       // make sure the auth info is valid
-      return isValidUser(username, password)
+      return isValidUser(request, username, password)
       .then(function () {
         // set cookie and replay the request
         request.auth.session.set({ username, password });
