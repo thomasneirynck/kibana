@@ -1,5 +1,6 @@
 const url = require('url');
-const reportPrefix = '/api/reporting';
+const chrome = require('ui/chrome');
+const reportPrefix = chrome.addBasePath('/api/reporting');
 
 module.exports = function urlInfo($location) {
   const docTypes = {
