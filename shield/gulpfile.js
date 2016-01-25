@@ -11,6 +11,7 @@ var Rsync = require('rsync');
 var Promise = require('bluebird');
 var eslint = require('gulp-eslint');
 var rimraf = require('rimraf');
+var hashsum = require('gulp-hashsum');
 var tar = require('gulp-tar');
 var gzip = require('gulp-gzip');
 var mocha = require('gulp-mocha');
@@ -110,26 +111,33 @@ gulp.task('build', ['clean'], function (done) {
   syncPluginTo(buildTarget, done);
 });
 
-gulp.task('package', ['build'], function (done) {
+gulp.task('archive', ['build'], function (done) {
   return gulp.src(path.join(buildDir, '**', '*'))
     .pipe(tar(packageName + '.tar'))
     .pipe(gzip())
     .pipe(gulp.dest(targetDir));
 });
 
+gulp.task('package', ['archive'], function (done) {
+  return gulp.src([path.join(targetDir, packageName + '.tar.gz')])
+    .pipe(hashsum({dest: targetDir, filename: packageName + '.tar.gz.sha1.txt'}));
+});
+
 gulp.task('release', ['package'], function (done) {
-  var filename = packageName + '.tar.gz';
-  var key = 'kibana/shield/' + filename;
-  var s3 = new aws.S3();
-  var params = {
-    Bucket: 'download.elasticsearch.org',
-    Key: key,
-    Body: fs.createReadStream(path.join(targetDir, filename))
-  };
-  s3.upload(params, function (err, data) {
-    if (err) return done(err);
-    gulpUtil.log('Finished', gulpUtil.colors.cyan('uploaded') + ' Available at ' + data.Location);
-    done();
+  var s3 = Promise.promisifyAll(new aws.S3());
+  return Promise.map([
+    packageName + '.tar.gz',
+    packageName + '.tar.gz.sha1.txt'
+  ], function (filename) {
+    var key = 'kibana/shield/' + filename;
+    var params = {
+      Bucket: 'download.elasticsearch.org',
+      Key: key,
+      Body: fs.createReadStream(path.join(targetDir, filename))
+    };
+    return s3.uploadAsync(params).then(function (data) {
+      gulpUtil.log('Finished', gulpUtil.colors.cyan('uploaded') + ' Available at ' + data.Location);
+    });
   });
 });
 

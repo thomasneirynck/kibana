@@ -5,8 +5,7 @@
   "main": "gulpfile.js",
   "scripts": {
     "start": "gulp dev",
-    "build": "gulp build",
-    "package": "gulp package",
+    "build": "gulp package",
     "test": "gulp test"
   },
   "devDependencies": {
@@ -20,6 +19,7 @@
     "gulp": "^3.9.0",
     "gulp-eslint": "^1.1.1",
     "gulp-gzip": "^1.2.0",
+    "gulp-hashsum": "^1.0.0",
     "gulp-mocha": "^2.2.0",
     "gulp-tar": "^1.7.0",
     "gulp-util": "^3.0.7",
