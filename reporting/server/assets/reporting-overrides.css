@@ -74,10 +74,14 @@ visualize-legend .legend-value-title {
 
 /* tilemaps */
 
-img.leaflet-tile {
+.leaflet-container img.leaflet-tile {
   /* by default, tiles are filtered to greyscale and desaturated via CSS3.
   reduced opacity is used here as a poor mans filter, and makes maps nicer */
   opacity: 0.65;
+}
+
+.leaflet-container .leaflet-top.leaflet-left {
+  display: none;
 }
 
 /* discover */
