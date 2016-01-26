@@ -6,7 +6,7 @@ const phantomPath = require('./phantom').getPath();
 const debug = require('./logger');
 const temp = require('temp').track();
 
-module.exports = function (phantomSettings) {
+module.exports = function (phantomSettings, screenshotSettings) {
   return {
     capture: capture,
   };
@@ -60,7 +60,7 @@ module.exports = function (phantomSettings) {
     //   debug('PHANTOM:', msg);
     // })
     .waitForSelector('.application visualize')
-    .evaluate(function () {
+    .evaluate(function (basePath) {
       (function (window, document) {
         function injectCSS(path) {
           var node = document.createElement('link');
@@ -69,9 +69,9 @@ module.exports = function (phantomSettings) {
           document.getElementsByTagName('head')[0].appendChild(node);
         };
 
-        injectCSS('/app/reporting/assets/reporting-overrides.css');
+        injectCSS(basePath + '/app/reporting/assets/reporting-overrides.css');
       }(window, window.document));
-    })
+    }, screenshotSettings.basePath)
     .wait(loadDelay);
   };
 

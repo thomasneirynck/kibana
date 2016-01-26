@@ -21,7 +21,8 @@ module.exports = function (server) {
 
   // init the screenshot module
   const phantomSettings = config.get('reporting.phantom');
-  const screenshot = require('../lib/screenshot')(phantomSettings);
+  const screenshotSettings = { basePath: config.get('server.basePath') };
+  const screenshot = require('../lib/screenshot')(phantomSettings, screenshotSettings);
 
   // bounding boxes for various saved object types
   const boundingBoxes = {
