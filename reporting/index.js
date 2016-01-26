@@ -20,9 +20,14 @@ module.exports = function (kibana) {
       return Joi.object({
         enabled: Joi.boolean().default(true),
         kibanaApp: Joi.string().regex(/^\//).default('/app/kibana'),
+        kibanaServer: Joi.object({
+          protocol: Joi.string().valid(['http', 'https']),
+          hostname: Joi.string(),
+          port: Joi.number().integer()
+        }).default(),
         auth: Joi.object({
           username: Joi.string(),
-          password: Joi.string(),
+          password: Joi.string()
         }).default(),
         phantom: Joi.object({
           zoom: Joi.number().integer().default(1),

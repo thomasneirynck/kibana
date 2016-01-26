@@ -10,13 +10,14 @@ module.exports = function (server) {
   const esErrors = server.plugins.elasticsearch.errors;
 
   // init saved objects module
-  const savedObjects = require('../lib/saved_objects')(client, {
+  const requestConfig = _.defaults(config.get('reporting.kibanaServer'), {
     'kibanaApp': config.get('server.basePath') + config.get('reporting.kibanaApp'),
     'kibanaIndex': config.get('kibana.index'),
     'protocol': server.info.protocol,
     'hostname': config.get('server.host'),
     'port': config.get('server.port'),
   });
+  const savedObjects = require('../lib/saved_objects')(client, requestConfig);
 
   // init the screenshot module
   const phantomSettings = config.get('reporting.phantom');
