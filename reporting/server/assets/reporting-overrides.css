@@ -29,9 +29,13 @@ visualize visualize-spy .visualize-show-spy > div {
   display: none;
 }
 
-/* hide the toaster to help prevent content from shifting */
+/* hide elements to prevent content from shifting */
 
 .toaster-container {
+  display: none;
+}
+
+filter-bar {
   display: none;
 }
 
