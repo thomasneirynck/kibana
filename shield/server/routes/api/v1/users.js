@@ -11,7 +11,7 @@ module.exports = (server) => {
     handler(request, reply) {
       return callWithRequest(request, 'shield.getUser').then(
         reply,
-        (error) => reply(error.toString())
+        (error) => reply({error: error.toString()})
       );
     }
   });
@@ -23,7 +23,7 @@ module.exports = (server) => {
       const username = request.params.username;
       return callWithRequest(request, 'shield.getUser', {username}).then(
         reply,
-        (error) => reply(error.toString())
+        (error) => reply({error: error.toString()})
       );
     }
   });
@@ -36,7 +36,7 @@ module.exports = (server) => {
       const body = request.payload;
       return callWithRequest(request, 'shield.putUser', {username, body}).then(
         reply,
-        (error) => reply(error.toString())
+        (error) => reply({error: error.toString()})
       );
     },
     config: {
@@ -57,7 +57,7 @@ module.exports = (server) => {
       const username = request.params.username;
       return callWithRequest(request, 'shield.deleteUser', {username}).then(
         reply,
-        (error) => reply(error.toString())
+        (error) => reply({error: error.toString()})
       );
     }
   });
