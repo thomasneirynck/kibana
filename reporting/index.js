@@ -35,6 +35,7 @@ module.exports = function (kibana) {
             width: Joi.number().integer().default(1320),
             height: Joi.number().integer().default(640)
           }).default(),
+          timeout: Joi.number().integer().default(6000),
           loadDelay: Joi.number().integer().default(3000)
         }).default(),
         workingDir: Joi.string().default('.tmp')

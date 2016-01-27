@@ -32,11 +32,11 @@ module.exports = function (phantomSettings, screenshotSettings) {
   }
 
   function fetch(url, opts) {
-    const { loadDelay, viewport } = phantomSettings;
+    const { loadDelay, viewport, timeout } = phantomSettings;
     const phantomOpts = {
       phantomPath: phantomPath,
+      timeout: timeout,
       injectJquery: false,
-      timeout: 10000,
     };
 
     debug('fetching screenshot of %s', url);
