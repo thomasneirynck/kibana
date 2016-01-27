@@ -68,6 +68,10 @@ define(function (require) {
         key: 'metrics.index_search_request_rate',
         sortKey: 'metrics.index_search_request_rate.last',
         title: 'Search Rate'
+      }, {
+        key: 'metrics.index_unassigned_shards',
+        sortKey: 'metrics.index_unassigned_shards',
+        title: 'Unassigned Shards'
       }]
     };
 
