@@ -69,7 +69,11 @@ visualize-legend .legend-value-title {
 .metric-vis {
   /* metric vis uses flexbox, this is an ugly hack around it */
   display: block;
-  padding-top: 140px;
+  padding-top: 92px;
+}
+
+.metric-vis .metric-container {
+  padding: 0;
 }
 
 /* tilemaps */
