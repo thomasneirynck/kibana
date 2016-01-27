@@ -37,12 +37,7 @@ define(function (require) {
           if (units) innerMarkup += units;
         }
       }
-      var chartData = _.get(this.props, dataKey.chart_data);
-      var hasChart = !!dataKey.chart_data;
-      return make.td({key: idx},
-        (hasChart ? React.createElement(SparkLines, {data: chartData}) : null),
-        make.div({className: (hasChart ? 'pull-right chart-val' : '')}, innerMarkup)
-      );
+      return make.td({key: idx}, null, make.div({className: ''}), innerMarkup);
     }
     var initialTableOptions = {
       title: 'Indices',
@@ -64,17 +59,14 @@ define(function (require) {
       }, {
         key: 'metrics.index_size',
         sortKey: 'metrics.index_size.last',
-        // chart_data: 'metrics.index_request_rate.data',
         title: 'Data'
       }, {
         key: 'metrics.index_request_rate',
         sortKey: 'metrics.index_request_rate.last',
-        // chart_data: 'metrics.index_request_rate.data',
         title: 'Index Rate'
       }, {
         key: 'metrics.index_search_request_rate',
         sortKey: 'metrics.index_search_request_rate.last',
-        // chart_data: 'metrics.index_search_request_rate.data',
         title: 'Search Rate'
       }]
     };
