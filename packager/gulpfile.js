@@ -9,8 +9,7 @@ var gulp = require('gulp');
 var g = require('gulp-load-plugins')();
 
 var pkg = require('./package.json');
-var packageName = pkg.name  + '-' + pkg.version;
-var buildTarget = path.resolve(__dirname, 'build');
+var buildTarget = path.resolve(__dirname, 'build', pkg.packageName);
 
 var ignoredPlugins = [
   path.basename(__dirname),
