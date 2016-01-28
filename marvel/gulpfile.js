@@ -1,24 +1,20 @@
-require('babel/register');
+require('babel-register')({
+  presets: ['es2015']
+});
 
 var gulp = require('gulp');
+var g = require('gulp-load-plugins')();
 var _ = require('lodash');
 var path = require('path');
 var elasticsearch = require('elasticsearch');
 var yargs = require('yargs').argv;
-var gulpUtil = require('gulp-util');
 var path = require('path');
 var mkdirp = require('mkdirp');
 var Rsync = require('rsync');
 var moment = require('moment');
 var uuid = require('node-uuid');
 var Promise = require('bluebird');
-var eslint = require('gulp-eslint');
 var rimraf = require('rimraf');
-var hashsum = require('gulp-hashsum');
-var tar = require('gulp-tar');
-var gzip = require('gulp-gzip');
-var mocha = require('gulp-mocha');
-var istanbul = require('gulp-istanbul');
 var isparta = require('isparta');
 var aws = require('aws-sdk');
 var fs = require('fs');
@@ -31,7 +27,8 @@ var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
 var buildTarget = path.resolve(buildDir, pkg.name);
 var coverageDir = path.resolve(__dirname, 'coverage');
-var kibanaPluginDir = path.resolve(require('./server/lib/kibana_home_dir').dev, 'installedPlugins/marvel');
+var kibanaDevLocation = require('./server/lib/kibana_home_dir').default.dev;
+var kibanaPluginDir = path.resolve(kibanaDevLocation, 'installedPlugins/marvel');
 
 var fakeClusterState = require('./indexer/fake_cluster_state');
 var indexRecovery = require('./indexer/index_recovery');
@@ -73,7 +70,7 @@ function index(done) {
   .then(function () {
     function index() {
       var start = moment.utc().valueOf();
-      gulpUtil.log('Starting', gulpUtil.colors.cyan('index'));
+      g.util.log('Starting', g.util.colors.cyan('index'));
       if (clusterState) {
         clusterState.state_uuid = uuid.v4();
         clusterState.version++;
@@ -102,11 +99,11 @@ function index(done) {
       })
       .then(function () {
         var end = moment.utc().valueOf();
-        gulpUtil.log('Finishing', gulpUtil.colors.cyan('index'), 'after', gulpUtil.colors.magenta((end - start) + ' ms'));
+        g.util.log('Finishing', g.util.colors.cyan('index'), 'after', g.util.colors.magenta((end - start) + ' ms'));
         setTimeout(index, interval);
       })
       .catch(function (err) {
-        gulpUtil.log(err.stack);
+        g.util.log(err.stack);
         setTimeout(index, interval);
       });
     }
@@ -173,13 +170,13 @@ gulp.task('lint', function (done) {
   return gulp.src(['server/**/*.js', 'public/**/*.js', 'public/**/*.jsx'])
     // eslint() attaches the lint output to the eslint property
     // of the file object so it can be used by other modules.
-    .pipe(eslint())
+    .pipe(g.eslint())
     // eslint.format() outputs the lint results to the console.
     // Alternatively use eslint.formatEach() (see Docs).
-    .pipe(eslint.formatEach())
+    .pipe(g.eslint.formatEach())
     // To have the process exit with an error code (1) on
     // lint error, return the stream and pipe to failOnError last.
-    .pipe(eslint.failOnError());
+    .pipe(g.eslint.failOnError());
 });
 
 function doClean(sources, done) {
@@ -212,16 +209,11 @@ gulp.task('build', ['clean-build'], function (done) {
   });
 });
 
-gulp.task('archive', ['build'], function (done) {
+gulp.task('package', ['build'], function (done) {
   return gulp.src(path.join(buildDir, '**', '*'))
-    .pipe(tar(packageName + '.tar'))
-    .pipe(gzip())
+    .pipe(g.tar(packageName + '.tar'))
+    .pipe(g.gzip())
     .pipe(gulp.dest(targetDir));
-});
-
-gulp.task('package', ['archive'], function (done) {
-  return gulp.src([path.join(targetDir, packageName + '.tar.gz')])
-    .pipe(hashsum({dest: targetDir, filename: packageName + '.tar.gz.sha1.txt'}));
 });
 
 gulp.task('release', ['package'], function (done) {
@@ -247,17 +239,16 @@ gulp.task('release', ['package'], function (done) {
 
   Promise.each([
     uploadFile(packageName + '.tar.gz'),
-    uploadFile(packageName + '.tar.gz.sha1.txt')
   ], function (result) {
     locations.push(result.Location);
   }).then(function () {
     locations.forEach(function (location) {
-      gulpUtil.log('Finished', gulpUtil.colors.cyan('uploaded') + ' Available at ' + location);
+      g.util.log('Finished', g.util.colors.cyan('uploaded') + ' Available at ' + location);
     });
     done();
   })
   .catch(function (err) {
-    gulpUtil.log('Release Error!', err.stack);
+    g.util.log('Release Error!', err.stack);
     done();
   });
 });
@@ -267,21 +258,22 @@ gulp.task('dev', ['sync'], function (done) {
 });
 
 gulp.task('pre-test', function (done) {
-  return gulp.src([kibanaPluginDir + '/server/**/*.js', '!' + kibanaPluginDir + '/**/__test__/**'])
+  return gulp.src(['./server/**/*.js', '!./**/__test__/**'])
     // instruments code for measuring test coverage
-    .pipe(istanbul({
+    .pipe(g.istanbul({
       instrumenter: isparta.Instrumenter,
       includeUntested: true
     }))
     // force `require` to return covered files
-    .pipe(istanbul.hookRequire());
+    .pipe(g.istanbul.hookRequire());
 });
-gulp.task('test', ['lint', 'clean-test', 'sync', 'pre-test'], function (done) {
-  return gulp.src([kibanaPluginDir + '/**/__test__/**/*.js'], { read: false })
+
+gulp.task('test', ['lint', 'clean-test', 'pre-test'], function (done) {
+  return gulp.src(['./**/__test__/**/*.js'], { read: false })
     // runs the unit tests
-    .pipe(mocha({
+    .pipe(g.mocha({
       ui: 'bdd'
     }))
     // generates a coverage directory with reports for finding coverage gaps
-    .pipe(istanbul.writeReports());
+    .pipe(g.istanbul.writeReports());
 });
