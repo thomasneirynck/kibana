@@ -25,5 +25,6 @@ The build operation is driven by `npm run` scripts, as follows
 script | description
 ------ | -----------
 `build` | For each plugin, resets `node_modules`, executes `npm run build`, collects the output & bundles it into the `build` path
-`justbuild` | Same as `build`, *without* resetting the `node_modules`
-
+`buildonly` | Same as `build`, *without* resetting the `node_modules`
+`package` | Runs the build, compresses the output, saves as tar.gz in `target`
+`packageonly` | Same as `package`, *without* running the build first

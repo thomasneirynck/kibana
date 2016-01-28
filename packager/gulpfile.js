@@ -9,7 +9,9 @@ var gulp = require('gulp');
 var g = require('gulp-load-plugins')();
 
 var pkg = require('./package.json');
-var buildTarget = path.resolve(__dirname, 'build', pkg.packageName);
+var buildDir = path.resolve(__dirname, 'build');
+var targetDir = path.resolve(__dirname, 'target');
+var buildTarget = path.join(buildDir, pkg.packageName);
 
 var ignoredPlugins = [
   path.basename(__dirname),
@@ -27,9 +29,9 @@ gulp.task('build', ['prepare-builds'], runBuild);
 
 gulp.task('buildOnly', runBuild);
 
-gulp.task('package', ['build'], function () {
+gulp.task('package', ['build'], runPackage);
 
-});
+gulp.task('packageOnly', runPackage);
 
 gulp.task('prepare-builds', function () {
   return Promise.mapSeries(plugins, function (plugin) {
@@ -71,6 +73,13 @@ function runBuild() {
     })
     .then(createEntry);
   });
+}
+
+function runPackage() {
+  return gulp.src(path.join(buildDir, '**', '*'))
+  .pipe(g.tar(pkg.packageName + '.tar'))
+  .pipe(g.gzip())
+  .pipe(gulp.dest(targetDir));
 }
 
 function createEntry() {
