@@ -5,6 +5,7 @@ var root = require('requirefrom')('');
 var settingSchemas = root('server/lib/setting_schemas');
 var settingsModelProvider = root('server/lib/settings');
 var getClusters = root('server/lib/get_clusters');
+var handleError = root('server/lib/handle_error');
 
 module.exports = function (server) {
   var config = server.config();
@@ -15,7 +16,8 @@ module.exports = function (server) {
     method: 'GET',
     path: '/api/marvel/v1/settings',
     handler: function (req, reply) {
-      getClusters(req).then((clusters) => {
+      return getClusters(req)
+      .then((clusters) => {
         var cluster = req.query.cluster;
         var clusterKeys = cluster && [cluster] || _.map(clusters, (cluster) => cluster.cluster_uuid);
         var keys = [];
@@ -24,10 +26,10 @@ module.exports = function (server) {
             keys.push(cluster + ':' + key);
           });
         });
-        Settings.bulkFetch({ ids: keys, req: req }).then(function (docs) {
-          reply(docs);
-        });
-      }).catch(reply);
+        return Settings.bulkFetch({ ids: keys, req: req });
+      })
+      .then(reply)
+      .catch(err => reply(handleError(err, req)));
     }
   });
 
@@ -39,15 +41,8 @@ module.exports = function (server) {
       var schema = settingSchemas[parts[1]];
       if (!schema) return reply(Boom.notFound('Resouce does not exist.'));
       return Settings.fetchById({ req: req, id: req.params.id })
-        .then(function (settings) {
-          reply(settings);
-        })
-        .catch(function (err) {
-          if (err.isBoom) return reply(err);
-          var id = req.params.cluster + ':' + req.params.id;
-          var settings = new Settings({ _id: id });
-          reply(settings);
-        });
+      .then(reply)
+      .catch(err => reply(handleError(err, req)));
     }
   });
 
@@ -68,11 +63,11 @@ module.exports = function (server) {
     },
     handler: function (req, reply) {
       var settings = req.payload;
-      settings.save({ req: req, stripDefaults: true })
-        .then(function (doc) {
-          reply(doc).code(201);
-        })
-        .catch(reply);
+      return settings.save({ req: req, stripDefaults: true })
+      .then(function (doc) {
+        reply(doc).code(201);
+      })
+      .catch(err => reply(handleError(err, req)));
     }
   });
 

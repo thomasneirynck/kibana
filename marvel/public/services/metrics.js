@@ -5,14 +5,16 @@ define(function (require) {
   var module = require('ui/modules').get('marvel/metrics', [ 'marvel/settings' ]);
 
   module.service('marvelMetrics', function (marvelSettings, $resource, Promise, Private) {
+    var ajaxErrorHandlers = Private(require('plugins/marvel/lib/ajax_error_handlers'));
     return function (cluster, field) {
-      return marvelSettings.fetch().then(function (settings) {
+      return marvelSettings.fetch()
+      .then(function (settings) {
         if (metrics[field]) {
           var metric = new Metric(field, metrics[field], settings[cluster + ':metric-thresholds']);
           return metric;
         }
-      });
+      })
+      .catch(ajaxErrorHandlers.fatalError);
     };
   });
-
 });

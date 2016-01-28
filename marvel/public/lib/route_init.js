@@ -6,6 +6,7 @@ define(function (require) {
 
     var initMarvelIndex = Private(require('plugins/marvel/lib/marvel_index_init'));
     var phoneHome = Private(require('plugins/marvel/lib/phone_home'));
+    var ajaxErrorHandlers = Private(require('plugins/marvel/lib/ajax_error_handlers'));
     return function (options) {
       options = _.defaults(options || {}, {
         force: {
@@ -76,7 +77,8 @@ define(function (require) {
             }));
           }
           return marvel;
-        });
+        })
+        .catch(ajaxErrorHandlers.fatalError);
     };
   };
 });

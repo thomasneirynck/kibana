@@ -99,6 +99,9 @@ module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, 
       return $http.get(url)
       .then((resp) => {
         return resp.data;
+      })
+      .catch((err) => {
+        return {};
       });
     }
 
