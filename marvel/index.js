@@ -6,7 +6,7 @@ var pluginSelfCheck = require('./server/lib/plugin_self_check');
 module.exports = function (kibana) {
   return new kibana.Plugin({
     require: ['elasticsearch'],
-    name: 'marvel',
+    id: 'marvel',
 
     uiExports: {
       app: {
