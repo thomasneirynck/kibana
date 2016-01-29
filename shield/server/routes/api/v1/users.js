@@ -1,6 +1,8 @@
-const Joi = require('joi');
+const {flow} = require('lodash');
 const root = require('requirefrom')('');
 const getClient = root('server/lib/get_client_shield');
+const userSchema = root('server/lib/user_schema');
+const wrapError = root('server/lib/wrap_error');
 
 module.exports = (server) => {
   const callWithRequest = getClient(server).callWithRequest;
@@ -9,10 +11,7 @@ module.exports = (server) => {
     method: 'GET',
     path: '/api/shield/v1/users',
     handler(request, reply) {
-      return callWithRequest(request, 'shield.getUser').then(
-        reply,
-        (error) => reply({error: error.toString()})
-      );
+      return callWithRequest(request, 'shield.getUser').then(reply, flow(wrapError, reply));
     }
   });
 
@@ -21,10 +20,7 @@ module.exports = (server) => {
     path: '/api/shield/v1/users/{username}',
     handler(request, reply) {
       const username = request.params.username;
-      return callWithRequest(request, 'shield.getUser', {username}).then(
-        reply,
-        (error) => reply({error: error.toString()})
-      );
+      return callWithRequest(request, 'shield.getUser', {username}).then(reply, flow(wrapError, reply));
     }
   });
 
@@ -34,18 +30,11 @@ module.exports = (server) => {
     handler(request, reply) {
       const username = request.params.username;
       const body = request.payload;
-      return callWithRequest(request, 'shield.putUser', {username, body}).then(
-        reply,
-        (error) => reply({error: error.toString()})
-      );
+      return callWithRequest(request, 'shield.putUser', {username, body}).then(reply, flow(wrapError, reply));
     },
     config: {
       validate: {
-        payload: {
-          username: Joi.string().required(),
-          password: Joi.string().required(),
-          roles: Joi.array().items(Joi.string())
-        }
+        payload: userSchema
       }
     }
   });
@@ -55,10 +44,7 @@ module.exports = (server) => {
     path: '/api/shield/v1/users/{username}',
     handler(request, reply) {
       const username = request.params.username;
-      return callWithRequest(request, 'shield.deleteUser', {username}).then(
-        reply,
-        (error) => reply({error: error.toString()})
-      );
+      return callWithRequest(request, 'shield.deleteUser', {username}).then(reply, flow(wrapError, reply));
     }
   });
 };
