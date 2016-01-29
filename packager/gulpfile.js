@@ -28,11 +28,15 @@ var templateData = {
 
 gulp.task('build', ['prepare-builds'], runBuild);
 
-gulp.task('buildOnly', runBuild);
+gulp.task('build-only', runBuild);
 
 gulp.task('package', ['build'], runPackage);
 
-gulp.task('packageOnly', runPackage);
+gulp.task('package-only', runPackage);
+
+gulp.task('clean', function () {
+  return del([buildDir, targetDir]);
+});
 
 gulp.task('prepare-builds', function () {
   return Promise.mapSeries(plugins, function (plugin) {
