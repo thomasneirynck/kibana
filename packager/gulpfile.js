@@ -5,6 +5,7 @@ var child_process = require('child_process');
 var Promise = require('bluebird');
 var rimraf = require('rimraf');
 var mkdirp = require('mkdirp');
+var argv = require('minimist')(process.argv.slice(2));
 var gulp = require('gulp');
 var g = require('gulp-load-plugins')();
 
@@ -13,9 +14,10 @@ var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
 var buildTarget = path.join(buildDir, pkg.packageName);
 
-var ignoredPlugins = [
-  path.basename(__dirname),
-];
+var ignoredPlugins = ['i', 'ignore'].reduce(function (ignore, key) {
+  if (typeof argv[key] === 'string') ignore = ignore.concat(argv[key].split(','));
+  return ignore;
+}, []).concat(path.basename(__dirname));
 
 var plugins = getPlugins();
 var templateData = {

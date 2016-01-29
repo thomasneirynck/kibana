@@ -28,3 +28,9 @@ script | description
 `buildonly` | Same as `build`, *without* resetting the `node_modules`
 `package` | Runs the build, compresses the output, saves as tar.gz in `target`
 `packageonly` | Same as `package`, *without* running the build first
+
+## Ignoring Plugins
+
+If you'd like to ignore a given, use the `-i` or `--ignore` option, and comma separate multiple plugins.
+
+For example, `npm run build -- -i reporting,shield` would create a build without reporting or shield.
