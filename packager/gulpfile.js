@@ -3,7 +3,7 @@ var path = require('path');
 var child_process = require('child_process');
 
 var Promise = require('bluebird');
-var rimraf = require('rimraf');
+var del = require('del');
 var mkdirp = require('mkdirp');
 var argv = require('minimist')(process.argv.slice(2));
 var gulp = require('gulp');
@@ -40,9 +40,7 @@ gulp.task('prepare-builds', function () {
     var modules = path.resolve(plugin.path, 'node_modules');
     g.util.log(g.util.colors.cyan(plugin.name), 'Preparing for build, this will take a moment');
 
-    return Promise.fromCallback(function (cb) {
-      rimraf(modules, cb);
-    })
+    return del(modules, { force: true })
     .then(function () {
       return exec(plugin.name, 'npm', ['install', '--silent'], { cwd: plugin.path })
     });
@@ -50,9 +48,7 @@ gulp.task('prepare-builds', function () {
 });
 
 function runBuild() {
-  return Promise.fromCallback(function (cb) {
-    rimraf(buildTarget, cb);
-  })
+  return del(buildTarget, { force: true })
   .then(function () {
     return Promise.fromCallback(function (cb) {
       mkdirp(buildTarget, cb);
