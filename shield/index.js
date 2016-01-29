@@ -3,7 +3,7 @@ const root = require('requirefrom')('');
 const basicAuth = root('server/lib/basic_auth');
 
 module.exports = (kibana) => new kibana.Plugin({
-  name: 'shield',
+  id: 'shield',
   require: ['elasticsearch'],
 
   config(Joi) {
