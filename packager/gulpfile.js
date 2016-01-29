@@ -4,7 +4,6 @@ var child_process = require('child_process');
 
 var Promise = require('bluebird');
 var del = require('del');
-var mkdirp = require('mkdirp');
 var argv = require('minimist')(process.argv.slice(2));
 var gulp = require('gulp');
 var g = require('gulp-load-plugins')();
@@ -49,11 +48,6 @@ gulp.task('prepare-builds', function () {
 
 function runBuild() {
   return del(buildTarget, { force: true })
-  .then(function () {
-    return Promise.fromCallback(function (cb) {
-      mkdirp(buildTarget, cb);
-    });
-  })
   .then(function () {
     return Promise.mapSeries(plugins, function (plugin) {
       g.util.log(g.util.colors.cyan(plugin.name), 'Building');
