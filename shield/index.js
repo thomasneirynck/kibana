@@ -11,7 +11,8 @@ module.exports = (kibana) => new kibana.Plugin({
       enabled: Joi.boolean().default(true),
       cookieName: Joi.string().default('sid'),
       encryptionKey: Joi.string(),
-      sessionTimeout: Joi.number().default(30 * 60 * 1000)
+      sessionTimeout: Joi.number().default(30 * 60 * 1000),
+      skipSslCheck: Joi.boolean().default(false)
     }).default()
   },
 
@@ -37,7 +38,8 @@ module.exports = (kibana) => new kibana.Plugin({
       throw new Error('shield.encryptionKey is required in kibana.yml.');
     }
 
-    if (config.get('server.ssl.key') == null || config.get('server.ssl.cert') == null) {
+    const isSslConfigured = config.get('server.ssl.key') != null && config.get('server.ssl.cert') != null;
+    if (!isSslConfigured && config.get('shield.skipSslCheck')) {
       throw new Error('HTTPS is required. Please set server.ssl.key and server.ssl.cert in kibana.yml.');
     }
 
