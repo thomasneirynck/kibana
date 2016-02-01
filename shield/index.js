@@ -5,6 +5,7 @@ const basicAuth = root('server/lib/basic_auth');
 module.exports = (kibana) => new kibana.Plugin({
   id: 'shield',
   require: ['elasticsearch'],
+  publicDir: join(__dirname, 'public'),
 
   config(Joi) {
     return Joi.object({
