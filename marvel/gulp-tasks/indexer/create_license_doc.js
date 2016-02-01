@@ -1,6 +1,6 @@
 var moment = require('moment');
 var _ = require('lodash');
-var licenseSample = require('../license-sample.json');
+var licenseSample = require('./license-sample.json');
 var getState = require('./get_state');
 var crypto = require('crypto');
 function sha256(input) {

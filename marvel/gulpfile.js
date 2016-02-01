@@ -4,15 +4,9 @@ require('babel-register')({
 
 var gulp = require('gulp');
 var g = require('gulp-load-plugins')();
-var _ = require('lodash');
-var path = require('path');
-var elasticsearch = require('elasticsearch');
-var yargs = require('yargs').argv;
 var path = require('path');
 var mkdirp = require('mkdirp');
 var Rsync = require('rsync');
-var moment = require('moment');
-var uuid = require('node-uuid');
 var Promise = require('bluebird');
 var rimraf = require('rimraf');
 var isparta = require('isparta');
@@ -29,89 +23,6 @@ var buildTarget = path.resolve(buildDir, pkg.name);
 var coverageDir = path.resolve(__dirname, 'coverage');
 var kibanaDevLocation = require('./server/lib/kibana_home_dir').default.dev;
 var kibanaPluginDir = path.resolve(kibanaDevLocation, 'installedPlugins/marvel');
-
-var fakeClusterState = require('./indexer/fake_cluster_state');
-var indexRecovery = require('./indexer/index_recovery');
-var indexClusterState = require('./indexer/index_cluster_state');
-var indexClusterStats = require('./indexer/index_cluster_stats');
-var indexNodeStats = require('./indexer/index_node_stats');
-var indexIndexStats = require('./indexer/index_index_stats');
-var indexIndicesStats = require('./indexer/index_indices_stats');
-var indexShards = require('./indexer/index_shards');
-var marvelIndexTemplate = require('./marvel_index_template.json');
-var createLicenseDoc = require('./indexer/create_license_doc');
-
-function index(done) {
-  var host = yargs.elasticsearch || 'localhost:9200';
-  var marvel = yargs.marvel || 'localhost:9200';
-  var licenseType = yargs.license || 'trial';
-  var expires = yargs.expires && moment(yargs.expires) || moment().add(356, 'days');
-  var interval = 5000;
-  var client = new elasticsearch.Client({ requestTimeout: 120000, host: host });
-  var marvelClient = new elasticsearch.Client({ requestTimeout: 120000, host: marvel });
-  var clusterState;
-  if (yargs.medium || yargs.gigantic) {
-    if (yargs.gigantic) {
-      clusterState = fakeClusterState({ indices: 800, nodes: 100 }) || false;
-    }
-    if (yargs.medium) {
-      clusterState = fakeClusterState({ indices: 100, nodes: 20 }) || false;
-    }
-  }
-  marvelClient.indices.putTemplate({ name: 'marvel', body: marvelIndexTemplate })
-  .then(function () {
-    var overrides = {
-      type: licenseType,
-      expiry_date_in_millis: expires.valueOf(),
-      issue_date_in_millis: expires.clone().subtract(356, 'days').valueOf()
-    };
-    return createLicenseDoc(client, marvelClient, overrides, clusterState);
-  })
-  .then(function () {
-    function index() {
-      var start = moment.utc().valueOf();
-      g.util.log('Starting', g.util.colors.cyan('index'));
-      if (clusterState) {
-        clusterState.state_uuid = uuid.v4();
-        clusterState.version++;
-      }
-      var bulks = [];
-      return Promise.each([
-        indexClusterState,
-        indexShards,
-        indexClusterStats,
-        indexIndicesStats,
-        indexNodeStats,
-        indexIndexStats,
-        indexRecovery
-      ], function (fn) {
-        return fn(bulks, client, marvelClient, clusterState);
-      })
-      .then(function () {
-        var numberOfSets = Math.ceil(bulks.length / 200);
-        var sets = [];
-        for (var n = 0; n < numberOfSets; n++) {
-          sets.push(bulks.splice(0,200));
-        }
-        return Promise.each(sets, function (set) {
-          return marvelClient.bulk({ body: set });
-        });
-      })
-      .then(function () {
-        var end = moment.utc().valueOf();
-        g.util.log('Finishing', g.util.colors.cyan('index'), 'after', g.util.colors.magenta((end - start) + ' ms'));
-        setTimeout(index, interval);
-      })
-      .catch(function (err) {
-        g.util.log(err.stack);
-        setTimeout(index, interval);
-      });
-    }
-    index();
-  })
-  .catch(done);
-}
-gulp.task('index', index);
 
 // paths to sync over to the kibana plugin dir
 var include = [
@@ -167,7 +78,7 @@ gulp.task('sync', function (done) {
 });
 
 gulp.task('lint', function (done) {
-  return gulp.src(['server/**/*.js', 'public/**/*.js', 'public/**/*.jsx'])
+  return gulp.src(['server/**/*.js', 'public/**/*.js', 'public/**/*.jsx', 'gulp-tasks/**/*.jsx'])
     // eslint() attaches the lint output to the eslint property
     // of the file object so it can be used by other modules.
     .pipe(g.eslint())
@@ -277,3 +188,5 @@ gulp.task('test', ['lint', 'clean-test', 'pre-test'], function (done) {
     // generates a coverage directory with reports for finding coverage gaps
     .pipe(g.istanbul.writeReports());
 });
+
+gulp.task('index', require('./gulp-tasks/indexer.js')(g));
