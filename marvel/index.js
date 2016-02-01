@@ -7,6 +7,7 @@ module.exports = function (kibana) {
   return new kibana.Plugin({
     require: ['elasticsearch'],
     id: 'marvel',
+    publicDir: join(__dirname, 'public'),
 
     uiExports: {
       app: {
