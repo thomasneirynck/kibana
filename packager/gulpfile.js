@@ -63,9 +63,9 @@ function runBuild() {
           var buildPath = path.resolve(plugin.path, 'build');
 
           var stream = gulp.src(path.join(buildPath, '**'))
-          .pipe(gulp.dest(buildTarget));
-
-          stream.on('finish', cb);
+          .pipe(gulp.dest(buildTarget))
+          .on('finish', cb)
+          .on('error', cb);
         })
       });
     })
