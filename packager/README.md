@@ -2,19 +2,24 @@
 
 This package simply creates an X-Pack build of all the Kibana plugins
 
-## Built Entry
+# Requirements
 
-The resulting `index.js` file, the entry point to the Pack, simply requires each of the plugins it builds.
+**The following conditions must be pet for plugins to be "packable"**
 
-**Each plugin MUST ise `index.js` as its entry file!**
+- Each plugin MUST use `index.js` as its entry file!**
+- `publicDir` MUST be defined in `index.js`
+  - `publicDir: join(__dirname, 'public')` is likely sufficient
 
 ## Built Package
 
-The resulting `package.json` file in the build is controlled by data in the main `package.json`.
+There are 2 important files in the output, avialable in the `templates` path:
 
-To change the resulting version or author, edit the values in the main file.
+File | Description
+---- | -----------
+`index.js` | the entry point to the Pack, simply requires each of the plugins it builds
+`package.json` | data here, like *version* and *author*, is controlled by data in the main `package.json`
 
-To change the resulting name, edit `packageName` in the mail file.
+To change the resulting name, edit `packageName` in the main file.
 
 # Usage
 
