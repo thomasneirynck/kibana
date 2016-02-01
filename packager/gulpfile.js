@@ -4,6 +4,7 @@ var child_process = require('child_process');
 
 var Promise = require('bluebird');
 var del = require('del');
+var checksum = require('checksum');
 var argv = require('minimist')(process.argv.slice(2));
 var gulp = require('gulp');
 var g = require('gulp-load-plugins')();
@@ -12,6 +13,7 @@ var pkg = require('./package.json');
 var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
 var buildTarget = path.join(buildDir, pkg.packageName);
+var packageFile = pkg.packageName + '.tar.gz';
 
 var ignoredPlugins = ['i', 'ignore'].reduce(function (ignore, key) {
   if (typeof argv[key] === 'string') ignore = ignore.concat(argv[key].split(','));
@@ -72,10 +74,26 @@ function runBuild() {
 }
 
 function runPackage() {
-  return gulp.src(path.join(buildDir, '**', '*'))
-  .pipe(g.tar(pkg.packageName + '.tar'))
-  .pipe(g.gzip())
-  .pipe(gulp.dest(targetDir));
+  return del(targetDir, { force: true })
+  .then(function () {
+    return Promise.fromCallback(function (cb) {
+      return gulp.src(path.join(buildDir, '**', '*'))
+      .pipe(g.tar(packageFile))
+      .pipe(g.gzip({ append: false }))
+      .pipe(gulp.dest(targetDir))
+      .on('finish', cb)
+      .on('error', cb);
+    });
+  })
+  .then(function () {
+    return Promise.fromCallback(function (cb) {
+      checksum.file(path.join(targetDir, packageFile), cb);
+    });
+  })
+  .then(function (checksum) {
+    var target = path.join(targetDir, packageFile + '.sha1.txt');
+    return fs.writeFileSync(target, checksum, { encoding: 'utf8' });
+  });
 }
 
 function createEntry() {
