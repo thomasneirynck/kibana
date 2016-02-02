@@ -1,6 +1,7 @@
 const hapiAuthCookie = require('hapi-auth-cookie');
 const root = require('requirefrom')('');
 const basicAuth = root('server/lib/basic_auth');
+const validateConfig = root('server/lib/validate_config');
 
 module.exports = (kibana) => new kibana.Plugin({
   name: 'shield',
@@ -12,6 +13,8 @@ module.exports = (kibana) => new kibana.Plugin({
       cookieName: Joi.string().default('sid'),
       encryptionKey: Joi.string(),
       sessionTimeout: Joi.number().default(30 * 60 * 1000),
+      // Only use this if SSL is still configured, but it's configured outside of the Kibana server
+      // (e.g. SSL is configured on a load balancer)
       skipSslCheck: Joi.boolean().default(false)
     }).default()
   },
@@ -33,15 +36,7 @@ module.exports = (kibana) => new kibana.Plugin({
 
   init(server, options) {
     const config = server.config();
-
-    if (config.get('shield.encryptionKey') == null) {
-      throw new Error('shield.encryptionKey is required in kibana.yml.');
-    }
-
-    const isSslConfigured = config.get('server.ssl.key') != null && config.get('server.ssl.cert') != null;
-    if (!isSslConfigured && config.get('shield.skipSslCheck')) {
-      throw new Error('HTTPS is required. Please set server.ssl.key and server.ssl.cert in kibana.yml.');
-    }
+    validateConfig(config);
 
     server.register(hapiAuthCookie, (error) => {
       if (error != null) throw error;
