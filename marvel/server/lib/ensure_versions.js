@@ -8,10 +8,11 @@ import _ from 'lodash';
 import { satisfies } from 'semver';
 
 const kbnVersionRanges = {
-  '2.1.0': '>=4.3.0',
-  '2.1.1': '>=4.3.0',
-  '2.2.0': '>=4.3.0',
-  '2.3.0': '>=4.3.0'
+  '2.1.0': '^4.3.0',
+  '2.1.1': '^4.3.0',
+  '2.1.2': '^4.3.0',
+  '2.2.0': '^4.3.0',
+  '2.3.0': '^5.0.0',
 };
 
 function cleanVersionString(string) {
