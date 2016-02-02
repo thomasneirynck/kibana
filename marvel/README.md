@@ -45,7 +45,7 @@ npm run test
 Add a `debugger` line to create a breakpoint, and then:
 
 ```
-gulp sync && mocha debug --compilers js:babel/register /pathto/kibana/installedPlugins/marvel/pathto/__test__/testfile.js
+gulp sync && mocha debug --compilers js:babel-register /pathto/kibana/installedPlugins/marvel/pathto/__test__/testfile.js
 ```
 
 ## Deploying

@@ -1,24 +1,14 @@
-require('babel/register');
+require('babel-register')({
+  presets: ['es2015']
+});
 
 var gulp = require('gulp');
-var _ = require('lodash');
-var path = require('path');
-var elasticsearch = require('elasticsearch');
-var yargs = require('yargs').argv;
-var gulpUtil = require('gulp-util');
+var g = require('gulp-load-plugins')();
 var path = require('path');
 var mkdirp = require('mkdirp');
 var Rsync = require('rsync');
-var moment = require('moment');
-var uuid = require('node-uuid');
 var Promise = require('bluebird');
-var eslint = require('gulp-eslint');
 var rimraf = require('rimraf');
-var hashsum = require('gulp-hashsum');
-var tar = require('gulp-tar');
-var gzip = require('gulp-gzip');
-var mocha = require('gulp-mocha');
-var istanbul = require('gulp-istanbul');
 var isparta = require('isparta');
 var aws = require('aws-sdk');
 var fs = require('fs');
@@ -31,90 +21,8 @@ var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
 var buildTarget = path.resolve(buildDir, pkg.name);
 var coverageDir = path.resolve(__dirname, 'coverage');
-var kibanaPluginDir = path.resolve(require('./server/lib/kibana_home_dir').dev, 'installedPlugins/marvel');
-
-var fakeClusterState = require('./indexer/fake_cluster_state');
-var indexRecovery = require('./indexer/index_recovery');
-var indexClusterState = require('./indexer/index_cluster_state');
-var indexClusterStats = require('./indexer/index_cluster_stats');
-var indexNodeStats = require('./indexer/index_node_stats');
-var indexIndexStats = require('./indexer/index_index_stats');
-var indexIndicesStats = require('./indexer/index_indices_stats');
-var indexShards = require('./indexer/index_shards');
-var marvelIndexTemplate = require('./marvel_index_template.json');
-var createLicenseDoc = require('./indexer/create_license_doc');
-
-function index(done) {
-  var host = yargs.elasticsearch || 'localhost:9200';
-  var marvel = yargs.marvel || 'localhost:9200';
-  var licenseType = yargs.license || 'trial';
-  var expires = yargs.expires && moment(yargs.expires) || moment().add(356, 'days');
-  var interval = 5000;
-  var client = new elasticsearch.Client({ requestTimeout: 120000, host: host });
-  var marvelClient = new elasticsearch.Client({ requestTimeout: 120000, host: marvel });
-  var clusterState;
-  if (yargs.medium || yargs.gigantic) {
-    if (yargs.gigantic) {
-      clusterState = fakeClusterState({ indices: 800, nodes: 100 }) || false;
-    }
-    if (yargs.medium) {
-      clusterState = fakeClusterState({ indices: 100, nodes: 20 }) || false;
-    }
-  }
-  marvelClient.indices.putTemplate({ name: 'marvel', body: marvelIndexTemplate })
-  .then(function () {
-    var overrides = {
-      type: licenseType,
-      expiry_date_in_millis: expires.valueOf(),
-      issue_date_in_millis: expires.clone().subtract(356, 'days').valueOf()
-    };
-    return createLicenseDoc(client, marvelClient, overrides, clusterState);
-  })
-  .then(function () {
-    function index() {
-      var start = moment.utc().valueOf();
-      gulpUtil.log('Starting', gulpUtil.colors.cyan('index'));
-      if (clusterState) {
-        clusterState.state_uuid = uuid.v4();
-        clusterState.version++;
-      }
-      var bulks = [];
-      return Promise.each([
-        indexClusterState,
-        indexShards,
-        indexClusterStats,
-        indexIndicesStats,
-        indexNodeStats,
-        indexIndexStats,
-        indexRecovery
-      ], function (fn) {
-        return fn(bulks, client, marvelClient, clusterState);
-      })
-      .then(function () {
-        var numberOfSets = Math.ceil(bulks.length / 200);
-        var sets = [];
-        for (var n = 0; n < numberOfSets; n++) {
-          sets.push(bulks.splice(0,200));
-        }
-        return Promise.each(sets, function (set) {
-          return marvelClient.bulk({ body: set });
-        });
-      })
-      .then(function () {
-        var end = moment.utc().valueOf();
-        gulpUtil.log('Finishing', gulpUtil.colors.cyan('index'), 'after', gulpUtil.colors.magenta((end - start) + ' ms'));
-        setTimeout(index, interval);
-      })
-      .catch(function (err) {
-        gulpUtil.log(err.stack);
-        setTimeout(index, interval);
-      });
-    }
-    index();
-  })
-  .catch(done);
-}
-gulp.task('index', index);
+var kibanaDevLocation = require('./server/lib/kibana_home_dir').default.dev;
+var kibanaPluginDir = path.resolve(kibanaDevLocation, 'installedPlugins/marvel');
 
 // paths to sync over to the kibana plugin dir
 var include = [
@@ -170,16 +78,16 @@ gulp.task('sync', function (done) {
 });
 
 gulp.task('lint', function (done) {
-  return gulp.src(['server/**/*.js', 'public/**/*.js', 'public/**/*.jsx'])
+  return gulp.src(['server/**/*.js', 'public/**/*.js', 'public/**/*.jsx', 'gulp-tasks/**/*.jsx'])
     // eslint() attaches the lint output to the eslint property
     // of the file object so it can be used by other modules.
-    .pipe(eslint())
+    .pipe(g.eslint())
     // eslint.format() outputs the lint results to the console.
     // Alternatively use eslint.formatEach() (see Docs).
-    .pipe(eslint.formatEach())
+    .pipe(g.eslint.formatEach())
     // To have the process exit with an error code (1) on
     // lint error, return the stream and pipe to failOnError last.
-    .pipe(eslint.failOnError());
+    .pipe(g.eslint.failOnError());
 });
 
 function doClean(sources, done) {
@@ -212,16 +120,11 @@ gulp.task('build', ['clean-build'], function (done) {
   });
 });
 
-gulp.task('archive', ['build'], function (done) {
+gulp.task('package', ['build'], function (done) {
   return gulp.src(path.join(buildDir, '**', '*'))
-    .pipe(tar(packageName + '.tar'))
-    .pipe(gzip())
+    .pipe(g.tar(packageName + '.tar'))
+    .pipe(g.gzip())
     .pipe(gulp.dest(targetDir));
-});
-
-gulp.task('package', ['archive'], function (done) {
-  return gulp.src([path.join(targetDir, packageName + '.tar.gz')])
-    .pipe(hashsum({dest: targetDir, filename: packageName + '.tar.gz.sha1.txt'}));
 });
 
 gulp.task('release', ['package'], function (done) {
@@ -247,17 +150,16 @@ gulp.task('release', ['package'], function (done) {
 
   Promise.each([
     uploadFile(packageName + '.tar.gz'),
-    uploadFile(packageName + '.tar.gz.sha1.txt')
   ], function (result) {
     locations.push(result.Location);
   }).then(function () {
     locations.forEach(function (location) {
-      gulpUtil.log('Finished', gulpUtil.colors.cyan('uploaded') + ' Available at ' + location);
+      g.util.log('Finished', g.util.colors.cyan('uploaded') + ' Available at ' + location);
     });
     done();
   })
   .catch(function (err) {
-    gulpUtil.log('Release Error!', err.stack);
+    g.util.log('Release Error!', err.stack);
     done();
   });
 });
@@ -267,21 +169,24 @@ gulp.task('dev', ['sync'], function (done) {
 });
 
 gulp.task('pre-test', function (done) {
-  return gulp.src([kibanaPluginDir + '/server/**/*.js', '!' + kibanaPluginDir + '/**/__test__/**'])
+  return gulp.src(['./server/**/*.js', '!./**/__test__/**'])
     // instruments code for measuring test coverage
-    .pipe(istanbul({
+    .pipe(g.istanbul({
       instrumenter: isparta.Instrumenter,
       includeUntested: true
     }))
     // force `require` to return covered files
-    .pipe(istanbul.hookRequire());
+    .pipe(g.istanbul.hookRequire());
 });
-gulp.task('test', ['lint', 'clean-test', 'sync', 'pre-test'], function (done) {
-  return gulp.src([kibanaPluginDir + '/**/__test__/**/*.js'], { read: false })
+
+gulp.task('test', ['lint', 'clean-test', 'pre-test'], function (done) {
+  return gulp.src(['./**/__test__/**/*.js'], { read: false })
     // runs the unit tests
-    .pipe(mocha({
+    .pipe(g.mocha({
       ui: 'bdd'
     }))
     // generates a coverage directory with reports for finding coverage gaps
-    .pipe(istanbul.writeReports());
+    .pipe(g.istanbul.writeReports());
 });
+
+gulp.task('index', require('./gulp-tasks/indexer.js')(g));
