@@ -1,4 +1,5 @@
 const hapiAuthCookie = require('hapi-auth-cookie');
+const join = require('path').join;
 const root = require('requirefrom')('');
 const basicAuth = root('server/lib/basic_auth');
 
@@ -13,7 +14,7 @@ module.exports = (kibana) => new kibana.Plugin({
       cookieName: Joi.string().default('sid'),
       encryptionKey: Joi.string(),
       sessionTimeout: Joi.number().default(30 * 60 * 1000)
-    }).default()
+    }).default();
   },
 
   uiExports: {
