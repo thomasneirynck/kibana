@@ -1,4 +1,4 @@
-import Boom from 'Boom';
+import Boom from 'boom';
 
 /**
  * TODO this behavior should be centralized and shared with all plugins

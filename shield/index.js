@@ -1,11 +1,13 @@
 const hapiAuthCookie = require('hapi-auth-cookie');
+const join = require('path').join;
 const root = require('requirefrom')('');
 const basicAuth = root('server/lib/basic_auth');
 const validateConfig = root('server/lib/validate_config');
 
 module.exports = (kibana) => new kibana.Plugin({
-  name: 'shield',
+  id: 'shield',
   require: ['elasticsearch'],
+  publicDir: join(__dirname, 'public'),
 
   config(Joi) {
     return Joi.object({
@@ -16,7 +18,7 @@ module.exports = (kibana) => new kibana.Plugin({
       // Only use this if SSL is still configured, but it's configured outside of the Kibana server
       // (e.g. SSL is configured on a load balancer)
       skipSslCheck: Joi.boolean().default(false)
-    }).default()
+    }).default();
   },
 
   uiExports: {
