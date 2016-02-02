@@ -5,6 +5,7 @@ var child_process = require('child_process');
 var Promise = require('bluebird');
 var del = require('del');
 var checksum = require('checksum');
+var debug = require('debug')('packager');
 var argv = require('minimist')(process.argv.slice(2));
 var gulp = require('gulp');
 var g = require('gulp-load-plugins')();
@@ -42,6 +43,7 @@ gulp.task('clean', function () {
 
 gulp.task('prepare-builds', function () {
   return Promise.mapSeries(plugins, function (plugin) {
+    debug('Resetting node modules', plugin.path);
     var modules = path.resolve(plugin.path, 'node_modules');
     g.util.log(g.util.colors.cyan(plugin.name), 'Preparing for build, this will take a moment');
 
@@ -53,6 +55,7 @@ gulp.task('prepare-builds', function () {
 });
 
 function runBuild() {
+  debug('Creating the build', buildDir);
   return del(buildTarget, { force: true })
   .then(function () {
     return Promise.mapSeries(plugins, function (plugin) {
@@ -74,6 +77,7 @@ function runBuild() {
 }
 
 function runPackage() {
+  debug('Creating the package', targetDir);
   return del(targetDir, { force: true })
   .then(function () {
     return Promise.fromCallback(function (cb) {
@@ -91,12 +95,14 @@ function runPackage() {
     });
   })
   .then(function (checksum) {
+    debug('Package checksum', checksum);
     var target = path.join(targetDir, packageFile + '.sha1.txt');
     return fs.writeFileSync(target, checksum, { encoding: 'utf8' });
   });
 }
 
 function createEntry() {
+  debug('Creating entry files');
   return Promise.fromCallback(function (cb) {
     var templatePath = path.resolve(__dirname, 'templates');
     var s = gulp.src(path.join(templatePath, '*.*'))
@@ -125,13 +131,14 @@ function getPlugins() {
 }
 
 function exec(prefix, cmd, args, opts) {
+  debug(arguments);
   args = args || [];
   opts = opts || {};
   return new Promise(function (resolve, reject) {
     var proc = child_process.spawn(cmd, args, opts);
 
     proc.stdout.on('data', function (data) {
-      // g.util.log(g.util.colors.green(prefix), data.toString('utf-8').trim());
+      debug(g.util.colors.green(prefix), data.toString('utf-8').trim());
     });
 
     proc.stderr.on('data', function (data) {
