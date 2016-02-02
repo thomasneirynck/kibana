@@ -5,8 +5,9 @@
   },
   "scripts": {
     "test": "gulp test",
-    "start": "gulp dev",
-    "build": "gulp package",
+    "start": "npm run rebuild && gulp dev",
+    "build": "npm run rebuild && gulp package",
+    "rebuild": "npm prune && npm install",
     "precommit": "gulp lint"
   },
   "name": "marvel",

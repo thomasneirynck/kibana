@@ -11,7 +11,7 @@ module.exports = function pluginSelfCheck(plugin, server) {
       isKibanaSupported,
       kibanaVersion,
       marvelVersion
-    } = ensureVersions(plugin, server);
+    } = ensureVersions(plugin);
 
     if (isKibanaSupported) {
       // start setting up the Marvel index.

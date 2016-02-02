@@ -6,6 +6,7 @@
  */
 import _ from 'lodash';
 import { satisfies } from 'semver';
+import pkg from '../../package.json';
 
 const kbnVersionRanges = {
   '2.1.0': '^4.3.0',
@@ -28,10 +29,10 @@ function cleanVersionString(string) {
   return '';
 }
 
-function ensureVersions(plugin, server) {
+function ensureVersions(plugin) {
 
   const kibanaVersion = cleanVersionString(_.get(plugin, 'kbnServer.version'));
-  const marvelVersion = cleanVersionString(_.get(plugin, 'pkg.version'));
+  const marvelVersion = cleanVersionString(pkg.version);
   const returnData = { kibanaVersion, marvelVersion };
 
   // version support check can throw a TypeError if kibanaVersion is invalid
