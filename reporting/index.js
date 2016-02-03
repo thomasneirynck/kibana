@@ -46,6 +46,7 @@ module.exports = function (kibana) {
       // init the plugin helpers
       const plugin = this;
       const config = server.config();
+      const generatePDFStream = require('./server/lib/generate_pdf_stream')(server);
 
       server.plugins.elasticsearch.status.on('green', () => {
         // create ES client instance for reporting, expose on server
@@ -54,6 +55,7 @@ module.exports = function (kibana) {
           password: config.get('reporting.auth.password'),
         });
         server.expose('client', client);
+        server.expose('generatePDFStream', generatePDFStream);
 
         // make sure we can communicate with ES
         function checkESComm() {
