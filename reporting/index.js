@@ -47,31 +47,33 @@ module.exports = function (kibana) {
       const plugin = this;
       const config = server.config();
 
-      // create ES client instance for reporting, expose on server
-      const client = createClient(server.plugins.elasticsearch, {
-        username: config.get('reporting.auth.username'),
-        password: config.get('reporting.auth.password'),
-      });
-      server.expose('client', client);
+      server.plugins.elasticsearch.status.on('green', () => {
+        // create ES client instance for reporting, expose on server
+        const client = createClient(server.plugins.elasticsearch, {
+          username: config.get('reporting.auth.username'),
+          password: config.get('reporting.auth.password'),
+        });
+        server.expose('client', client);
 
-      // make sure we can communicate with ES
-      function checkESComm() {
-        client.checkConnection()
-        .then(() => plugin.status.green())
-        .catch((err) => plugin.status.red(err.message));
-      };
-      checkESComm();
-      setInterval(checkESComm, 2000);
+        // make sure we can communicate with ES
+        function checkESComm() {
+          client.checkConnection()
+          .then(() => plugin.status.green())
+          .catch((err) => plugin.status.red(err.message));
+        };
+        checkESComm();
+        setInterval(checkESComm, 2000);
 
-      // prepare phantom binary
-      return phantom.install()
-      .then(function () {
-        // Reporting routes
-        publicRoutes(server);
-        fileRoutes(server);
-      })
-      .catch(function (err) {
-        return plugin.status.red(err.message);
+        // prepare phantom binary
+        return phantom.install()
+        .then(function () {
+          // Reporting routes
+          publicRoutes(server);
+          fileRoutes(server);
+        })
+        .catch(function (err) {
+          return plugin.status.red(err.message);
+        });
       });
     }
   });
