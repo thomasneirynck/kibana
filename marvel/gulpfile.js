@@ -8,7 +8,7 @@ var path = require('path');
 var mkdirp = require('mkdirp');
 var Rsync = require('rsync');
 var Promise = require('bluebird');
-var rimraf = require('rimraf');
+var del = require('del');
 var isparta = require('isparta');
 var aws = require('aws-sdk');
 var fs = require('fs');
@@ -90,21 +90,11 @@ gulp.task('lint', function (done) {
     .pipe(g.eslint.failOnError());
 });
 
-function doClean(sources, done) {
-  Promise.each(sources, function (dir) {
-    return new Promise(function (resolve, reject) {
-      rimraf(dir, function (err) {
-        if (err) return reject(err);
-        resolve();
-      });
-    });
-  }).nodeify(done);
-}
-gulp.task('clean-build', function (done) {
-  doClean([buildDir, targetDir], done);
+gulp.task('clean-build', function () {
+  return del([buildDir, targetDir]);
 });
-gulp.task('clean-test', function (done) {
-  doClean([coverageDir], done);
+gulp.task('clean-test', function () {
+  return del([coverageDir]);
 });
 gulp.task('clean', ['clean-build', 'clean-test']);
 
