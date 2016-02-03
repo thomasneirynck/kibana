@@ -1,4 +1,5 @@
 const url = require('url');
+const qs = require('querystring');
 const _ = require('lodash');
 const Joi = require('joi');
 const debug = require('./logger');
@@ -86,10 +87,14 @@ module.exports = function (client, config) {
 
     // Kibana appends querystrings to the hash, and parses them as such,
     // so we'll do the same internally so kibana understands what we want
-    urlParams.hash += url.format({ query });
+    urlParams.hash += '?' + qs.stringify(query, null, null, { encodeURIComponent: qsEncoder });
 
     return url.format(urlParams);
   };
+
+  function qsEncoder(str) {
+    return str;
+  }
 
   function validateType(type) {
     const app = appTypes[type];
