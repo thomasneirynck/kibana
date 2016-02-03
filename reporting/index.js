@@ -63,17 +63,17 @@ module.exports = function (kibana) {
         };
         checkESComm();
         setInterval(checkESComm, 2000);
+      });
 
-        // prepare phantom binary
-        return phantom.install()
-        .then(function () {
-          // Reporting routes
-          publicRoutes(server);
-          fileRoutes(server);
-        })
-        .catch(function (err) {
-          return plugin.status.red(err.message);
-        });
+      // prepare phantom binary
+      return phantom.install()
+      .then(function () {
+        // Reporting routes
+        publicRoutes(server);
+        fileRoutes(server);
+      })
+      .catch(function (err) {
+        return plugin.status.red(err.message);
       });
     }
   });
