@@ -66,9 +66,8 @@ describe('saved_objects', function () {
           var query = {
             _g: 'time:(from:now-1h,mode:quick,to:now))'
           };
-          var str = url.format({ query });
           var params = url.parse(savedObject.getUrl(query));
-          expect(params.hash).to.contain(str);
+          expect(params.hash).to.contain(query._g);
         });
       });
     });
