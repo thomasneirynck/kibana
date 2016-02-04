@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const moment = require('moment');
+import { get, find, indexBy } from 'lodash';
+import moment from 'moment';
 
 function isClusterCurrent(cluster) {
   const lastUpdate = moment(cluster.state_timestamp);
@@ -33,18 +33,21 @@ module.exports = function (req) {
       body: bodies
     };
     return callWithRequest(req, 'msearch', params)
-      .then((res) => {
-        res.responses.forEach((resp) => {
-          if (resp.hits.total !== 0) {
-            const clusterName = _.get(resp.hits.hits[0], '_source.cluster_uuid');
-            const cluster = _.find(clusters, { cluster_uuid: clusterName });
-            cluster.status = _.get(resp.hits.hits[0], '_source.cluster_state.status');
-            cluster.state_uuid = _.get(resp.hits.hits[0], '_source.cluster_state.state_uuid');
-            cluster.state_timestamp = _.get(resp.hits.hits[0], '_source.timestamp');
-          }
-        });
-        return clusters.filter(isClusterCurrent);
+    .then(res => {
+      res.responses.forEach(resp => {
+        const hit = get(resp, 'hits.hits[0]');
+        if (resp && resp.hits && resp.hits.total !== 0) {
+          const clusterName = get(hit, '_source.cluster_uuid');
+          const nodes = get(hit, '_source.cluster_state.nodes');
+          const cluster = find(clusters, { cluster_uuid: clusterName });
+          cluster.status = get(hit, '_source.cluster_state.status');
+          cluster.state_uuid = get(hit, '_source.cluster_state.state_uuid');
+          cluster.state_timestamp = get(hit, '_source.timestamp');
+          cluster.nodes = indexBy(nodes, config.get('monitoring.node_resolver'));
+        }
       });
+      return clusters.filter(isClusterCurrent);
+    });
   };
 };
 
