@@ -6,7 +6,7 @@ module.exports = function (server) {
   const pdf = require('../lib/pdf');
   const config = server.config();
   const esErrors = server.plugins.elasticsearch.errors;
-  const generatePDFStream = require('../lib/generate_pdf_stream')(server);
+  const generatePDFStream = server.plugins.reporting.generatePDFStream;
 
   // defined the public routes
   server.route({

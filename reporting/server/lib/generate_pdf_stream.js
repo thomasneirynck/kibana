@@ -6,7 +6,6 @@ module.exports = (server) => {
   const getScreenshot = require('./get_screenshot')(server);
   const getObjectQueue = require('./get_object_queue')(server);
   return function generatePDFStream(type, objId, query, headers) {
-    console.log(type, objId, query, headers);
     const pdfOutput = pdf.create();
     return getObjectQueue(type, objId)
     .then(function (objectQueue) {
