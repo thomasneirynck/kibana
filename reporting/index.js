@@ -1,7 +1,8 @@
-var publicRoutes = require('./server/routes/public');
-var fileRoutes = require('./server/routes/file');
-var createClient = require('./server/lib/create_client');
-var phantom = require('./server/lib/phantom');
+const publicRoutes = require('./server/routes/public');
+const fileRoutes = require('./server/routes/file');
+const createClient = require('./server/lib/create_client');
+const phantom = require('./server/lib/phantom');
+const generatePDFStream = require('./server/lib/generate_pdf_stream');
 
 module.exports = function (kibana) {
   return new kibana.Plugin({
@@ -46,7 +47,6 @@ module.exports = function (kibana) {
       // init the plugin helpers
       const plugin = this;
       const config = server.config();
-      const generatePDFStream = require('./server/lib/generate_pdf_stream')(server);
 
       server.plugins.elasticsearch.status.on('green', () => {
         // create ES client instance for reporting, expose on server
@@ -55,7 +55,7 @@ module.exports = function (kibana) {
           password: config.get('reporting.auth.password'),
         });
         server.expose('client', client);
-        server.expose('generatePDFStream', generatePDFStream);
+        server.expose('generatePDFStream', generatePDFStream(server));
 
         // make sure we can communicate with ES
         function checkESComm() {
