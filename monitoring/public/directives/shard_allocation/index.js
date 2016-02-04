@@ -15,12 +15,14 @@ app.directive('monitoringShardAllocation', () => {
       shardStats: '='
     },
     link: (scope, el, attrs) => {
-      const transformer = (scope.view === 'index') ? indicesByNodes(scope) : nodesByIndices(scope);
+      const isIndexView = scope.view === 'index';
+      const transformer = (isIndexView) ? indicesByNodes(scope) : nodesByIndices(scope);
+      scope.isIndexView = isIndexView;
       scope.$watch('shards', (shards) => {
         let view = scope.view;
         scope.totalCount = shards.length;
         scope.showing = transformer(scope.shards, scope.nodes);
-        if (view === 'index' && shards.some((shard) => shard.state === 'UNASSIGNED')) {
+        if (isIndexView && shards.some((shard) => shard.state === 'UNASSIGNED')) {
           view += 'WithUnassigned';
         }
         scope.labels = labels[view];
