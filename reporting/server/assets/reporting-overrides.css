@@ -21,12 +21,24 @@ generating PDF reports with Phantom.
 
 /* many UI controls don't make sense on a report, hide them */
 
-visualize visualize-legend .legend-toggle {
+visualize visualize-legend .legend-toggle,
+visualize visualize-spy .visualize-show-spy > div,
+visualize visualize-spy .visualize-spy-container header,
+visualize .agg-table-controls {
   display: none;
 }
 
-visualize visualize-spy .visualize-show-spy > div {
+/* pagination controls use flexbox, they mostly don't work right */
+visualize visualize-spy .pagination-size {
   display: none;
+}
+
+visualize visualize-spy .visualize-spy-container {
+  height: 298px;
+}
+
+visualize visualize-spy .visualize-spy-container.spy-only {
+  height: 900px;
 }
 
 /* hide elements to prevent content from shifting */
