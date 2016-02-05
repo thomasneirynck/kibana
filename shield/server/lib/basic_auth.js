@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   register: registerPreAuth,
   getHeader: getAuthHeader,
   parseHeader: parseAuthHeader
