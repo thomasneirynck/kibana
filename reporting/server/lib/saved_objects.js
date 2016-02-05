@@ -1,7 +1,8 @@
 const url = require('url');
-const qs = require('querystring');
+const rison = require('rison-node');
 const _ = require('lodash');
 const Joi = require('joi');
+const uriEncode = require('./uri_encode');
 const debug = require('./logger');
 
 module.exports = function (client, config) {
@@ -72,33 +73,50 @@ module.exports = function (client, config) {
         id: req.id,
         type: type,
         searchSource: searchSource,
-        getUrl: (query = {}) => getAppUrl(type, req.id, query),
         uiState: uiState,
+        getUrl: function getAppUrl(query = {}) {
+          const { id, type } = this;
+
+          const app = appTypes[type];
+          if (!app) throw new Error('Unexpected app type: ' + type);
+
+          const cleanQuery = this.getState(query);
+          debug('query', query);
+          debug('cleanQuery', cleanQuery);
+          const urlParams = _.assign({
+            protocol: opts.protocol,
+            hostname: opts.hostname,
+            port: opts.port,
+          }, app.getUrlParams(id));
+
+          // Kibana appends querystrings to the hash, and parses them as such,
+          // so we'll do the same internally so kibana understands what we want
+          // const encoder = (str) => str;
+          // const unencodedQueryString = qs.stringify(cleanQuery, null, null, { encodeURIComponent: encoder });
+          const unencodedQueryString = uriEncode.stringify(cleanQuery);
+          urlParams.hash += '?' + unencodedQueryString;
+
+          return url.format(urlParams);
+        },
+        getState: function mergeQueryState(query = {}) {
+          if (!query._a) return query;
+
+          const appState = rison.decode(query._a);
+          const correctedState = _.omit(appState, ['uiState', 'panels', 'vis']);
+          const panel = _.find(appState.panels, { panelIndex: this.panelIndex });
+          const panelState = appState.uiState[`P-${this.panelIndex}`];
+
+          // if uiState doesn't match panel, simply strip uiState
+          if (panel && panelState) {
+            correctedState.uiState = _.merge({}, this.uiState, panelState);
+          }
+
+          return _.defaults({ _a: rison.encode(correctedState) }, query);
+        }
       });
 
       return obj;
     });
-  }
-
-  function getAppUrl(type, id, query = {}) {
-    const app = appTypes[type];
-    if (!app) throw new Error('Unexpected app type: ' + type);
-
-    const urlParams = _.assign({
-      protocol: opts.protocol,
-      hostname: opts.hostname,
-      port: opts.port,
-    }, app.getUrlParams(id));
-
-    // Kibana appends querystrings to the hash, and parses them as such,
-    // so we'll do the same internally so kibana understands what we want
-    urlParams.hash += '?' + qs.stringify(query, null, null, { encodeURIComponent: qsEncoder });
-
-    return url.format(urlParams);
-  };
-
-  function qsEncoder(str) {
-    return str;
   }
 
   function validateType(type) {
