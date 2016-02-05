@@ -65,9 +65,9 @@ module.exports = function (client, config) {
     .then(function _getRecord(body) {
       return body._source;
     })
-    .then(function (source) {
-      const searchSource = JSON.parse(_.get(source, appTypes[type].searchSourceIndex));
-      const uiState = JSON.parse(_.get(source, appTypes[type].stateIndex));
+    .then(function _buildObject(source) {
+      const searchSource = JSON.parse(_.get(source, appTypes[type].searchSourceIndex, '{}'));
+      const uiState = JSON.parse(_.get(source, appTypes[type].stateIndex, '{}'));
 
       const obj = _.assign(_.pick(source, fields), {
         id: req.id,
