@@ -2,8 +2,6 @@ const _ = require('lodash');
 module.exports = (server) => {
   const client = server.plugins.reporting.client;
   const config = server.config();
-
-  // init saved objects module
   const requestConfig = _.defaults(config.get('reporting.kibanaServer'), {
     'kibanaApp': config.get('server.basePath') + config.get('reporting.kibanaApp'),
     'kibanaIndex': config.get('kibana.index'),
@@ -21,7 +19,13 @@ module.exports = (server) => {
         const fields = ['id', 'type', 'panelIndex'];
         const panels = JSON.parse(savedObj.panelsJSON);
 
-        return panels.map((panel) => savedObjects.get(panel.type, panel.id));
+        return panels.map((panel) => {
+          return savedObjects.get(panel.type, panel.id)
+          .then(function (obj) {
+            obj.panelIndex = panel.panelIndex;
+            return obj;
+          });
+        });
       });
     }
 

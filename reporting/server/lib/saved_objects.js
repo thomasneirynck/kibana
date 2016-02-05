@@ -27,6 +27,7 @@ module.exports = function (client, config) {
         };
       },
       searchSourceIndex: 'kibanaSavedObjectMeta.searchSourceJSON',
+      stateIndex: 'uiStateJSON',
     },
     visualization: {
       getUrlParams: function (id) {
@@ -36,6 +37,7 @@ module.exports = function (client, config) {
         };
       },
       searchSourceIndex: 'kibanaSavedObjectMeta.searchSourceJSON',
+      stateIndex: 'uiStateJSON',
     },
     search: {
       getUrlParams: function (id) {
@@ -45,6 +47,7 @@ module.exports = function (client, config) {
         };
       },
       searchSourceIndex: 'kibanaSavedObjectMeta.searchSourceJSON',
+      stateIndex: 'uiStateJSON',
     }
   };
 
@@ -63,12 +66,14 @@ module.exports = function (client, config) {
     })
     .then(function (source) {
       const searchSource = JSON.parse(_.get(source, appTypes[type].searchSourceIndex));
+      const uiState = JSON.parse(_.get(source, appTypes[type].stateIndex));
 
       const obj = _.assign(_.pick(source, fields), {
         id: req.id,
         type: type,
         searchSource: searchSource,
         getUrl: (query = {}) => getAppUrl(type, req.id, query),
+        uiState: uiState,
       });
 
       return obj;

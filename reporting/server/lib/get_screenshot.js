@@ -19,8 +19,10 @@ module.exports = (server) => {
   const phantomSettings = config.get('reporting.phantom');
   const screenshotSettings = { basePath: config.get('server.basePath') };
   const screenshot = require('./screenshot')(phantomSettings, screenshotSettings);
+
   return function getScreenshot(savedObj, query, headers) {
     const objUrl = savedObj.getUrl(query);
+
     return screenshot.capture(objUrl, {
       headers,
       bounding: boundingBoxes[savedObj.type],
