@@ -5,8 +5,8 @@ docs](https://github.com/elastic/elasticsearch-marvel/blob/master/docs/index.asc
 The second easiest way is to just install it.
 
 - Install the marvel plugin on kibana `./bin/kibana plugin -i elasticsearch/marvel/latest`
-- Install the License plugin on your cluster `./bin/plugin install license`
-- Install the Marvel agent on your cluster `./bin/plugin install marvel-agent`
+- Install the License plugin on your cluster `./bin/elasticsearch-plugin install license`
+- Install the Marvel agent on your cluster `./bin/elasticsearch-plugin install marvel-agent`
 
 Once done, open up the following url (assuming standard kibana config):
 [http://localhost:5601/app/marvel](http://localhost:5601/app/marvel).
