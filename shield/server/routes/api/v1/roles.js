@@ -1,8 +1,7 @@
-const Boom = require('boom');
-const root = require('requirefrom')('');
-const getClient = root('server/lib/get_client_shield');
+import Boom from 'boom';
+import getClient from '../../../lib/get_client_shield';
 
-module.exports = (server) => {
+export default (server) => {
   const callWithRequest = getClient(server).callWithRequest;
 
   server.route({

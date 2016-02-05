@@ -1,7 +1,7 @@
 module.exports = {
   register: registerPreAuth,
   getHeader: getAuthHeader,
-  parseHeader: parseAuthHeader,
+  parseHeader: parseAuthHeader
 };
 
 const reloadMarkup = `<html>
@@ -14,7 +14,7 @@ function getAuthHeader(username, password) {
   return {
     authorization: `Basic ${auth}`
   };
-};
+}
 
 function parseAuthHeader(authorization) {
   if (typeof authorization !== 'string') {
@@ -37,9 +37,7 @@ function parseAuthHeader(authorization) {
   return { username, password };
 }
 
-function registerPreAuth(server, cookieName) {
-  const isValidUser = require('./is_valid_user')(server);
-
+function registerPreAuth(server, cookieName, isValidUser) {
   server.ext('onPreAuth', function (request, reply) {
     // continue if already authenticated
     const existingAuth = request.state[cookieName];

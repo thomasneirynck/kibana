@@ -1,10 +1,9 @@
-const {flow} = require('lodash');
-const root = require('requirefrom')('');
-const getClient = root('server/lib/get_client_shield');
-const userSchema = root('server/lib/user_schema');
-const wrapError = root('server/lib/wrap_error');
+import {flow} from 'lodash';
+import getClient from '../../../lib/get_client_shield';
+import userSchema from '../../../lib/user_schema';
+import wrapError from '../../../lib/wrap_error';
 
-module.exports = (server) => {
+export default (server) => {
   const callWithRequest = getClient(server).callWithRequest;
 
   server.route({

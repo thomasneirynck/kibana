@@ -1,5 +1,6 @@
-module.exports = (server, uiExports) => {
+export default (server, uiExports) => {
   const logout = uiExports.apps.byId.logout;
+
   server.route({
     method: 'GET',
     path: '/logout',

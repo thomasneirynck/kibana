@@ -1,3 +1,5 @@
-const Boom = require('boom');
+import Boom from 'boom';
 
-module.exports = (error) => Boom.wrap(error, error.status, error.message);
+export default function wrapError(error) {
+  return Boom.wrap(error, error.status, error.message);
+};

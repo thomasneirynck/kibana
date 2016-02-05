@@ -1,9 +1,14 @@
-const hapiAuthCookie = require('hapi-auth-cookie');
-const join = require('path').join;
-const root = require('requirefrom')('');
-const basicAuth = root('server/lib/basic_auth');
+import hapiAuthCookie from 'hapi-auth-cookie';
+import {join} from 'path';
+import basicAuth from './server/lib/basic_auth';
+import getIsValidUser from './server/lib/get_is_valid_user';
+import getValidate from './server/lib/get_validate';
+import initAuthenticateApi from './server/routes/api/v1/authenticate';
+import initUsersApi from './server/routes/api/v1/users';
+import initLoginView from './server/routes/views/login';
+import initLogoutView from './server/routes/views/logout';
 
-module.exports = (kibana) => new kibana.Plugin({
+export default (kibana) => new kibana.Plugin({
   id: 'shield',
   require: ['elasticsearch'],
   publicDir: join(__dirname, 'public'),
@@ -54,15 +59,15 @@ module.exports = (kibana) => new kibana.Plugin({
         clearInvalid: true,
         keepAlive: true,
         redirectTo: `${config.get('server.basePath')}/login`,
-        validateFunc: root('server/lib/validate')(server)
+        validateFunc: getValidate(server)
       });
     });
 
-    basicAuth.register(server, config.get('shield.cookieName'));
+    basicAuth.register(server, config.get('shield.cookieName'), getIsValidUser(server));
 
-    root('server/routes/api/v1/authenticate')(server);
-    root('server/routes/api/v1/users')(server);
-    root('server/routes/views/login')(server, this);
-    root('server/routes/views/logout')(server, this);
+    initAuthenticateApi(server);
+    initUsersApi(server);
+    initLoginView(server, this);
+    initLogoutView(server, this);
   }
 });
