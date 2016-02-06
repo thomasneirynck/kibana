@@ -31,6 +31,7 @@
     "sinon": "^1.17.2"
   },
   "dependencies": {
+    "angular-resource": "1.4.9",
     "boom": "^2.10.0",
     "elasticsearch-shield": "git+ssh://github.com/elastic/elasticsearch-shield-js.git",
     "hapi-auth-cookie": "^3.1.0",
