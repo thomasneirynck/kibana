@@ -1,4 +1,49 @@
 <kbn-settings-app section="security">
   <div class="kbn-settings-security container">
+    <br />
+    <ul class="nav nav-tabs">
+      <li class="kbn-settings-tab active"><a>Users</a></li>
+      <li class="kbn-settings-tab"><a>Roles</a></li>
+    </ul>
+    <br />
+    <div class="tab-content">
+      <form role="form" class="col-md-10">
+        <input aria-label="Filter" ng-model="query" class="form-control" type="text" placeholder="Filter..." />
+      </form>
+      <button ng-click="deleteUsers()" class="btn btn-danger" ng-disabled="!selectedUsers.length">
+        <i aria-hidden="true" class="fa fa-trash"></i> Delete
+      </button>
+      <a href="#/settings/security/users" ng-click="newUser()" class="btn btn-default">
+        New User
+      </a>
+      <br />
+      <table class="table">
+        <thead>
+          <tr>
+            <th><input type="checkbox" ng-click="toggleAll()" ng-checked="allSelected()" /></th>
+            <th>Username</th>
+            <th>Roles</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="user in users | filter:query">
+            <td>
+              <input type="checkbox" ng-click="toggleSelected(user)" ng-checked="isSelected(user)" />
+            </td>
+            <td>
+              <a ng-href="#/settings/security/users/{{user.username}}">{{user.username}}</a>
+            </td>
+            <td>
+              <span ng-repeat="role in user.roles">
+                <a ng-href="#/settings/security/roles/{{role}}">{{role}}</a><span ng-if="!$last">,</span>
+              </span>
+            </td>
+          </tr>
+          <tr ng-show="!users.length">
+            <td colspan="3">No users found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </kbn-settings-app>
