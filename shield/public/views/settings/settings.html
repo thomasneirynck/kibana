@@ -3,20 +3,21 @@
     <br />
     <ul class="nav nav-tabs">
       <li class="kbn-settings-tab active"><a>Users</a></li>
-      <li class="kbn-settings-tab"><a>Roles</a></li>
+      <li class="kbn-settings-tab"><a href="#/settings/security/roles">Roles</a></li>
     </ul>
     <br />
     <div class="tab-content">
-      <form role="form" class="col-md-10">
-        <input aria-label="Filter" ng-model="query" class="form-control" type="text" placeholder="Filter..." />
-      </form>
-      <button ng-click="deleteUsers()" class="btn btn-danger" ng-disabled="!selectedUsers.length">
-        <i aria-hidden="true" class="fa fa-trash"></i> Delete
-      </button>
-      <a href="#/settings/security/users" ng-click="newUser()" class="btn btn-default">
-        New User
-      </a>
-      <br />
+      <div class="container">
+        <div class="row">
+          <form role="form" class="col-md-10">
+            <input aria-label="Filter" ng-model="query" class="form-control" type="text" placeholder="Filter..." />
+          </form>
+          <div class="pull-right">
+            <button ng-click="deleteUsers()" class="btn btn-danger" ng-disabled="!selectedUsers.length">Delete</button>
+            <a href="#/settings/security/users" ng-click="newUser()" class="btn btn-default">New User</a>
+          </div>
+        </div>
+      </div>
       <table class="table">
         <thead>
           <tr>
@@ -26,7 +27,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="user in users | filter:query">
+          <tr ng-repeat="user in users | orderBy:'username' | filter:query">
             <td>
               <input type="checkbox" ng-click="toggleSelected(user)" ng-checked="isSelected(user)" />
             </td>
@@ -39,8 +40,8 @@
               </span>
             </td>
           </tr>
-          <tr ng-show="!users.length">
-            <td colspan="3">No users found.</td>
+          <tr ng-show="!(users | filter:query).length">
+            <td colspan="3">No <span ng-show="query">matching</span> users found.</td>
           </tr>
         </tbody>
       </table>

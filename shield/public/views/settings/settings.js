@@ -3,31 +3,31 @@ import registry from 'ui/registry/settings_sections';
 import routes from 'ui/routes';
 import template from 'plugins/shield/views/settings/settings.html';
 import 'angular-resource';
-import 'plugins/shield/services/users';
+import 'plugins/shield/services/shield_user';
+import 'plugins/shield/filters/difference';
+import 'plugins/shield/views/settings/users';
 
 routes.when('/settings/security', {
   template,
   resolve: {
-    users(shieldUsers) {
-      return shieldUsers.query();
+    users(ShieldUser) {
+      return ShieldUser.query();
     }
   },
-  controller($scope, $route, $q, shieldUsers) {
+  controller($scope, $route, $q, ShieldUser) {
     $scope.users = $route.current.locals.users;
     $scope.selectedUsers = [];
 
     $scope.deleteUsers = () => {
-      if (confirm('Are you sure you want to delete the selected users? This action is irreversible!')) {
-        $q.all($scope.selectedUsers.map((user) => user.$delete()))
-        .then(() => {
-          $scope.selectedUsers.map((user) => {
-            const i = $scope.users.indexOf(user);
-            $scope.users.splice(i, 1);
-          });
-
-          $scope.selectedUsers.length = 0;
+      if (!confirm('Are you sure you want to delete the selected users? This action is irreversible!')) return;
+      $q.all($scope.selectedUsers.map((user) => user.$delete()))
+      .then(() => {
+        $scope.selectedUsers.map((user) => {
+          const i = $scope.users.indexOf(user);
+          $scope.users.splice(i, 1);
         });
-      }
+        $scope.selectedUsers.length = 0;
+      });
     };
 
     $scope.toggleAll = () => {

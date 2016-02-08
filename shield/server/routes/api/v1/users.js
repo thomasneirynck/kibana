@@ -35,22 +35,6 @@ module.exports = (server) => {
 
   server.route({
     method: 'POST',
-    path: '/api/shield/v1/users',
-    handler(request, reply) {
-      const body = request.payload;
-      return callWithRequest(request, 'shield.putUser', {username: body.username, body}).then(
-        (response) => reply(body).code(201),
-        flow(wrapError, reply));
-    },
-    config: {
-      validate: {
-        payload: userSchema
-      }
-    }
-  });
-
-  server.route({
-    method: 'PUT',
     path: '/api/shield/v1/users/{username}',
     handler(request, reply) {
       const username = request.params.username;
