@@ -9,12 +9,12 @@ var handleError = root('server/lib/handle_error');
 
 module.exports = function (server) {
   var config = server.config();
-  var index = config.get('marvel.index');
+  var index = config.get('monitoring.index');
   var Settings = settingsModelProvider(server);
 
   server.route({
     method: 'GET',
-    path: '/api/marvel/v1/settings',
+    path: '/api/monitoring/v1/settings',
     handler: function (req, reply) {
       return getClusters(req)
       .then((clusters) => {
@@ -35,7 +35,7 @@ module.exports = function (server) {
 
   server.route({
     method: 'GET',
-    path: '/api/marvel/v1/settings/{id}',
+    path: '/api/monitoring/v1/settings/{id}',
     handler: function (req, reply) {
       var parts = req.params.id.split(/:/);
       var schema = settingSchemas[parts[1]];
@@ -48,7 +48,7 @@ module.exports = function (server) {
 
   server.route({
     method: [ 'PUT', 'POST' ],
-    path: '/api/marvel/v1/settings/{id}',
+    path: '/api/monitoring/v1/settings/{id}',
     config: {
       validate: {
         payload: function (value, options, next) {

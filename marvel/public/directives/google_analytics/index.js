@@ -1,4 +1,4 @@
-const mod = require('ui/modules').get('marvel/directives', []);
+const mod = require('ui/modules').get('monitoring/directives', []);
 
 function setupGoogleTagManager(window, id) {
   window.dataLayer = window.dataLayer || [];
@@ -17,7 +17,7 @@ mod.directive('googleAnalytics', (Private, googleTagManagerId, reportStats, feat
     scope: {},
     link(scope) {
 
-      const phoneHome = Private(require('plugins/marvel/lib/phone_home'));
+      const phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
       let loaded = false;
 
       scope.$watch(() => features.isEnabled('report', true), (featureToggled) => {

@@ -7,16 +7,16 @@ module.exports = (server) => {
   const config = server.config();
 
   server.route({
-    path: '/api/marvel/v1/clusters/{cluster_uuid}/state/{state_uuid}/shards',
+    path: '/api/monitoring/v1/clusters/{cluster_uuid}/state/{state_uuid}/shards',
     method: 'GET',
     handler: (req, reply) => {
       const stateUuid = req.params.state_uuid;
       const clusterUuid = req.params.cluster_uuid;
       const options = {
-        index: config.get('marvel.index_prefix') + '*',
+        index: config.get('monitoring.index_prefix') + '*',
         type: 'shards',
         body: {
-          size: config.get('marvel.max_bucket_size'),
+          size: config.get('monitoring.max_bucket_size'),
           query: {
             filtered: {
               filter: {

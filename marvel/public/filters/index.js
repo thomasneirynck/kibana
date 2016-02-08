@@ -1,7 +1,7 @@
 define(function (require) {
-  var module = require('ui/modules').get('marvel/filters', []);
-  var formatNumber = require('plugins/marvel/lib/format_number');
-  var extractIp = require('plugins/marvel/lib/extract_ip');
+  var module = require('ui/modules').get('monitoring/filters', []);
+  var formatNumber = require('plugins/monitoring/lib/format_number');
+  var extractIp = require('plugins/monitoring/lib/extract_ip');
   var _ = require('lodash');
 
   module.filter('capitalize', function () {

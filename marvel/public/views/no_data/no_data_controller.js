@@ -1,14 +1,14 @@
 const _ = require('lodash');
 const chrome = require('ui/chrome');
-const mod = require('ui/modules').get('marvel', [
-  'marvel/directives'
+const mod = require('ui/modules').get('monitoring', [
+  'monitoring/directives'
 ]);
 require('ui/routes')
 .when('/no-data', {
-  template: require('plugins/marvel/views/no_data/no_data_template.html'),
+  template: require('plugins/monitoring/views/no_data/no_data_template.html'),
   resolve: {
-    clusters: (marvelClusters, kbnUrl, Promise, globalState) => {
-      return marvelClusters.fetch()
+    clusters: (monitoringClusters, kbnUrl, Promise, globalState) => {
+      return monitoringClusters.fetch()
       .then((clusters) => {
         if (clusters.length) {
           kbnUrl.changePath('/home');
@@ -22,7 +22,7 @@ require('ui/routes')
 })
 .otherwise({ redirectTo: '/home' });
 
-mod.controller('noData', (kbnUrl, $scope, marvelClusters, timefilter, $timeout) => {
+mod.controller('noData', (kbnUrl, $scope, monitoringClusters, timefilter, $timeout) => {
 
   timefilter.enabled = true;
   if (timefilter.refreshInterval.value === 0) {
@@ -46,7 +46,7 @@ mod.controller('noData', (kbnUrl, $scope, marvelClusters, timefilter, $timeout) 
   });
 
   function fetch() {
-    marvelClusters.fetch().then((clusters) => {
+    monitoringClusters.fetch().then((clusters) => {
       if (clusters.length) {
         kbnUrl.changePath('/home');
       }

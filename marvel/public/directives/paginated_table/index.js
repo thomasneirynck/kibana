@@ -3,9 +3,9 @@ define(function (require) {
   var _ = require('lodash');
   var $ = require('jquery');
 
-  var Table = require('plugins/marvel/directives/paginated_table/components/table');
+  var Table = require('plugins/monitoring/directives/paginated_table/components/table');
 
-  var module = require('ui/modules').get('marvel/directives', []);
+  var module = require('ui/modules').get('monitoring/directives', []);
 
   module.directive('kbPaginatedTable', function () {
     var directiveDefinition = {

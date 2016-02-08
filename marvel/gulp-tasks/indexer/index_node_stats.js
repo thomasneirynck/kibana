@@ -40,7 +40,7 @@ var paths = [
   '<%= prefix %>os.load_average'
 ];
 
-module.exports = function (bulks, client, marvelClient, clusterState) {
+module.exports = function (bulks, client, monitoringClient, clusterState) {
   return getState(client, clusterState).then(function (state) {
     return client.nodes.stats().then(function (stats) {
       if (clusterState) {
@@ -53,7 +53,7 @@ module.exports = function (bulks, client, marvelClient, clusterState) {
         nodeStats.mlockall = false;
         nodeStats.disk_threshold_watermark_high = 90.0;
         nodeStats.disk_threshold_enabled = true;
-        return mergePaths(bulks, marvelClient, state, paths, 'node_stats', 'node_stats.')(nodeStats);
+        return mergePaths(bulks, monitoringClient, state, paths, 'node_stats', 'node_stats.')(nodeStats);
       });
     });
   });

@@ -2,8 +2,8 @@ define(function (require) {
   var _ = require('lodash');
   return function SettingModelProvider($resource) {
 
-    var Resource = $resource('../api/marvel/v1/settings/:id', { id: '@_id' });
-    var Model = require('plugins/marvel/lib/model');
+    var Resource = $resource('../api/monitoring/v1/settings/:id', { id: '@_id' });
+    var Model = require('plugins/monitoring/lib/model');
 
     function Settings(data, options) {
       Model.call(this, data, options);

@@ -13,7 +13,7 @@ module.exports = (req) => {
         filtered: { filter: { term: { cluster_uuid: cluster.cluster_uuid } } }
       };
       const params = {
-        index: config.get('marvel.index_prefix') + '*',
+        index: config.get('monitoring.index_prefix') + '*',
         ignore: [404],
         type: 'cluster_stats',
         body: body

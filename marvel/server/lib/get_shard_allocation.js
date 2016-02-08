@@ -10,10 +10,10 @@ module.exports = (req, indices, filters, lastState) => {
   const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
   const clusterUuid = req.params.clusterUuid;
   const params = {
-    index: config.get('marvel.index_prefix') + '*',
+    index: config.get('monitoring.index_prefix') + '*',
     type: 'shards',
     body: {
-      size: config.get('marvel.max_bucket_size'),
+      size: config.get('monitoring.max_bucket_size'),
       query: createQuery({ clusterUuid, filters })
     }
   };
@@ -24,7 +24,7 @@ module.exports = (req, indices, filters, lastState) => {
     if (!hits) return [];
     // map into object with shard and source properties
     return hits.map(doc => _.merge(doc._source.shard, {
-      resolver: _.get(doc, `_source.source_node[${config.get('marvel.node_resolver')}]`)
+      resolver: _.get(doc, `_source.source_node[${config.get('monitoring.node_resolver')}]`)
     }));
   });
 };

@@ -13,18 +13,18 @@ const indexNodeStats = require('./indexer/index_node_stats');
 const indexIndexStats = require('./indexer/index_index_stats');
 const indexIndicesStats = require('./indexer/index_indices_stats');
 const indexShards = require('./indexer/index_shards');
-const marvelIndexTemplate = require('./indexer/marvel_index_template.json');
+const monitoringIndexTemplate = require('./indexer/monitoring_index_template.json');
 const createLicenseDoc = require('./indexer/create_license_doc');
 
 module.exports = (g) => {
   return (done) => {
     const host = yargs.elasticsearch || 'localhost:9200';
-    const marvel = yargs.marvel || 'localhost:9200';
+    const monitoring = yargs.monitoring || 'localhost:9200';
     const licenseType = yargs.license || 'trial';
     const expires = yargs.expires && moment(yargs.expires) || moment().add(356, 'days');
     const interval = 5000;
     const client = new elasticsearch.Client({ requestTimeout: 120000, host });
-    const marvelClient = new elasticsearch.Client({ requestTimeout: 120000, host: marvel });
+    const monitoringClient = new elasticsearch.Client({ requestTimeout: 120000, host: monitoring });
     let clusterState;
     if (yargs.medium || yargs.gigantic) {
       if (yargs.gigantic) {
@@ -34,14 +34,14 @@ module.exports = (g) => {
         clusterState = fakeClusterState({ indices: 100, nodes: 20 }) || false;
       }
     }
-    marvelClient.indices.putTemplate({ name: 'marvel', body: marvelIndexTemplate })
+    monitoringClient.indices.putTemplate({ name: 'monitoring', body: monitoringIndexTemplate })
     .then(() => {
       const overrides = {
         type: licenseType,
         expiry_date_in_millis: expires.valueOf(),
         issue_date_in_millis: expires.clone().subtract(356, 'days').valueOf()
       };
-      return createLicenseDoc(client, marvelClient, overrides, clusterState);
+      return createLicenseDoc(client, monitoringClient, overrides, clusterState);
     })
     .then(() => {
       function index() {
@@ -61,7 +61,7 @@ module.exports = (g) => {
           indexIndexStats,
           indexRecovery
         ], (fn) => {
-          return fn(bulks, client, marvelClient, clusterState);
+          return fn(bulks, client, monitoringClient, clusterState);
         })
         .then(() => {
           const numberOfSets = Math.ceil(bulks.length / 200);
@@ -70,7 +70,7 @@ module.exports = (g) => {
             sets.push(bulks.splice(0,200));
           }
           return Promise.each(sets, (set) => {
-            return marvelClient.bulk({ body: set });
+            return monitoringClient.bulk({ body: set });
           });
         })
         .then(() => {

@@ -1,6 +1,6 @@
-const mod = require('ui/modules').get('marvel/directives', []);
-const template = require('plugins/marvel/directives/index_summary/index.html');
-mod.directive('marvelIndexSummary', () => {
+const mod = require('ui/modules').get('monitoring/directives', []);
+const template = require('plugins/monitoring/directives/index_summary/index.html');
+mod.directive('monitoringIndexSummary', () => {
   return {
     restrict: 'E',
     template: template,

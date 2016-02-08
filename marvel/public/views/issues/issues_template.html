@@ -1,11 +1,11 @@
-<div ng-controller="issues" class="issues marvel-view">
-  <marvel-cluster-status source="cluster_status"></marvel-cluster-status>
+<div ng-controller="issues" class="issues monitoring-view">
+  <monitoring-cluster-status source="cluster_status"></monitoring-cluster-status>
   <div class="view">
-    <div class="summary marvel-element">
-      <marvel-issue-summary source="summaries.total" title="All"></marvel-issue-summary>
-      <marvel-issue-summary source="summaries.cluster" title="Cluster"></marvel-issue-summary>
-      <marvel-issue-summary source="summaries.node" title="Node"></marvel-issue-summary>
-      <marvel-issue-summary source="summaries.index" title="Indices"></marvel-issue-summary>
+    <div class="summary monitoring-element">
+      <monitoring-issue-summary source="summaries.total" title="All"></monitoring-issue-summary>
+      <monitoring-issue-summary source="summaries.cluster" title="Cluster"></monitoring-issue-summary>
+      <monitoring-issue-summary source="summaries.node" title="Node"></monitoring-issue-summary>
+      <monitoring-issue-summary source="summaries.index" title="Indices"></monitoring-issue-summary>
     </div>
     <div class="issues-table">
       <div class="filters">

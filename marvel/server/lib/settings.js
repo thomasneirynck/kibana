@@ -8,7 +8,7 @@ var moment = require('moment');
 module.exports = function settingsModelProvider(server) {
   var callWithRequest = server.plugins.elasticsearch.callWithRequest;
   var config = server.config();
-  var index = config.get('marvel.index');
+  var index = config.get('monitoring.index');
 
   function Settings(data, options) {
     Model.call(this, data, options);
@@ -76,7 +76,7 @@ module.exports = function settingsModelProvider(server) {
 
   Settings.bulkFetch = function (options) {
     var params = {
-      index: config.get('marvel.index'),
+      index: config.get('monitoring.index'),
       type: 'settings',
       body: { ids: options.ids }
     };

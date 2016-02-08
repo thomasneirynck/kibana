@@ -10,11 +10,11 @@
     "rebuild": "npm prune && npm install",
     "precommit": "gulp lint"
   },
-  "name": "marvel",
+  "name": "monitoring",
   "version": "2.3.0-SNAPSHOT",
   "repository": {
     "type": "git",
-    "url": "http://github.com/elasticsearch/elasticsearch-marvel.git"
+    "url": "http://github.com/elasticsearch/elasticsearch-monitoring.git"
   },
   "devDependencies": {
     "aws-sdk": "2.2.33",

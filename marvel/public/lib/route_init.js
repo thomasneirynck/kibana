@@ -2,11 +2,11 @@ define(function (require) {
   var _ = require('lodash');
   var chrome = require('ui/chrome');
   var tabs = require('./tabs');
-  return function routeInitProvider(Notifier, marvelSettings, Private, marvelClusters, globalState, Promise, kbnUrl) {
+  return function routeInitProvider(Notifier, monitoringSettings, Private, monitoringClusters, globalState, Promise, kbnUrl) {
 
-    var initMarvelIndex = Private(require('plugins/marvel/lib/marvel_index_init'));
-    var phoneHome = Private(require('plugins/marvel/lib/phone_home'));
-    var ajaxErrorHandlers = Private(require('plugins/marvel/lib/ajax_error_handlers'));
+    var initMonitoringIndex = Private(require('plugins/monitoring/lib/monitoring_index_init'));
+    var phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
+    var ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
     return function (options) {
       options = _.defaults(options || {}, {
         force: {
@@ -14,9 +14,9 @@ define(function (require) {
         }
       });
 
-      var marvel = {};
-      var notify = new Notifier({ location: 'Marvel' });
-      return marvelClusters.fetch(true)
+      var monitoring = {};
+      var notify = new Notifier({ location: 'Monitoring' });
+      return monitoringClusters.fetch(true)
         .then(function (clusters) {
           return phoneHome.sendIfDue(clusters).then(() => {
             return clusters;
@@ -25,7 +25,7 @@ define(function (require) {
         // Get the clusters
         .then(function (clusters) {
           var cluster;
-          marvel.clusters = clusters;
+          monitoring.clusters = clusters;
           // Check to see if the current cluster is available
           if (globalState.cluster && !_.find(clusters, { cluster_uuid: globalState.cluster })) {
             globalState.cluster = null;
@@ -40,29 +40,29 @@ define(function (require) {
           }
           // if we don't have any clusters then redirect to setup
           if (!globalState.cluster) {
-            notify.error('We can\'t seem to find any clusters in your Marvel data. Please check your Marvel agents');
+            notify.error('We can\'t seem to find any clusters in your Monitoring data. Please check your Monitoring agents');
             return kbnUrl.redirect('/home');
           }
           return globalState.cluster;
         })
-        // Get the Marvel Settings
+        // Get the Monitoring Settings
         .then(function (cluster) {
-          return marvelSettings.fetch(cluster, options.force.settings)
+          return monitoringSettings.fetch(cluster, options.force.settings)
             .then(function (settings) {
-              marvel.settings = settings;
+              monitoring.settings = settings;
               return settings;
             });
         })
-        // Get the Marvel Index Pattern
+        // Get the Monitoring Index Pattern
         .then(function (settings) {
-          return initMarvelIndex().then(function (indexPattern) {
-            marvel.indexPattern = indexPattern;
+          return initMonitoringIndex().then(function (indexPattern) {
+            monitoring.indexPattern = indexPattern;
             return indexPattern;
           });
         })
-        // Finally filter the cluster from the nav if it's light then return the Marvel object.
+        // Finally filter the cluster from the nav if it's light then return the Monitoring object.
         .then(function () {
-          var cluster = _.find(marvel.clusters, { cluster_uuid: globalState.cluster });
+          var cluster = _.find(monitoring.clusters, { cluster_uuid: globalState.cluster });
           var license = cluster.license;
           var isExpired = (new Date()).getTime() > license.expiry_date_in_millis;
 
@@ -76,7 +76,7 @@ define(function (require) {
               return false;
             }));
           }
-          return marvel;
+          return monitoring;
         })
         .catch(ajaxErrorHandlers.fatalError);
     };

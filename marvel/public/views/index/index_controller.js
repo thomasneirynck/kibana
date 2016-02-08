@@ -2,14 +2,14 @@
  * Controller for single index detail
  */
 const _ = require('lodash');
-const mod = require('ui/modules').get('marvel', []);
+const mod = require('ui/modules').get('monitoring', []);
 
 require('ui/routes')
 .when('/indices/:index', {
-  template: require('plugins/marvel/views/index/index_template.html'),
+  template: require('plugins/monitoring/views/index/index_template.html'),
   resolve: {
-    marvel: function (Private) {
-      const routeInit = Private(require('plugins/marvel/lib/route_init'));
+    monitoring: function (Private) {
+      const routeInit = Private(require('plugins/monitoring/lib/route_init'));
       return routeInit();
     },
     pageData: getPageData
@@ -18,7 +18,7 @@ require('ui/routes')
 
 function getPageData(timefilter, globalState, $route, $http, Private) {
   const timeBounds = timefilter.getBounds();
-  const url = `../api/marvel/v1/clusters/${globalState.cluster}/indices/${$route.current.params.index}`;
+  const url = `../api/monitoring/v1/clusters/${globalState.cluster}/indices/${$route.current.params.index}`;
   return $http.post(url, {
     timeRange: {
       min: timeBounds.min.toISOString(),
@@ -35,25 +35,25 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
   })
   .then(response => response.data)
   .catch((err) => {
-    const ajaxErrorHandlers = Private(require('plugins/marvel/lib/ajax_error_handlers'));
+    const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
     return ajaxErrorHandlers.fatalError(err);
   });
 }
 
-mod.controller('indexView', (timefilter, $route, Private, globalState, $executor, $http, marvelClusters, $scope) => {
+mod.controller('indexView', (timefilter, $route, Private, globalState, $executor, $http, monitoringClusters, $scope) => {
   timefilter.enabled = true;
 
   function setClusters(clusters) {
     $scope.clusters = clusters;
     $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster });
   }
-  setClusters($route.current.locals.marvel.clusters);
+  setClusters($route.current.locals.monitoring.clusters);
 
   $scope.pageData = $route.current.locals.pageData;
   $scope.indexName = $route.current.params.index;
 
   var docTitle = Private(require('ui/doc_title'));
-  docTitle.change(`Marvel - ${$scope.indexName}`, true);
+  docTitle.change(`Monitoring - ${$scope.indexName}`, true);
 
   $executor.register({
     execute: () => getPageData(timefilter, globalState, $route, $http, Private),
@@ -61,7 +61,7 @@ mod.controller('indexView', (timefilter, $route, Private, globalState, $executor
   });
 
   $executor.register({
-    execute: () => marvelClusters.fetch(),
+    execute: () => monitoringClusters.fetch(),
     handleResponse: setClusters
   });
 

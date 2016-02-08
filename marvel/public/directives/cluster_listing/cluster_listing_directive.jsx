@@ -1,9 +1,9 @@
 var React = require('react');
-var module = require('ui/modules').get('marvel/directives', []);
-var Table = require('plugins/marvel/directives/paginated_table/components/table');
+var module = require('ui/modules').get('monitoring/directives', []);
+var Table = require('plugins/monitoring/directives/paginated_table/components/table');
 var ClusterRow = require('./components/cluster_row.jsx');
 
-module.directive('marvelClusterListing', function (globalState, kbnUrl, $location) {
+module.directive('monitoringClusterListing', function (globalState, kbnUrl, $location) {
   return {
     restrict: 'E',
     scope: { clusters: '=' },

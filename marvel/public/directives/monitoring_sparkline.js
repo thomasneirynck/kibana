@@ -26,7 +26,7 @@ define(function (require) {
 
     var $svgCont = d3.select($el)
       .append('svg')
-      .attr('class', 'marvel_sparkline')
+      .attr('class', 'monitoring_sparkline')
       .attr('width', settings.width)
       .attr('height', settings.height);
     // Draw the line

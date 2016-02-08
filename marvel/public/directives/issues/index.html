@@ -7,11 +7,11 @@
         </span>
         <strong>
           <a
-            href="#/marvel/node/{{ issue.node._id }}"
+            href="#/monitoring/node/{{ issue.node._id }}"
             ng-if="issue.node">{{ issue.node.name || issue.node }}: </a>
           <a
             ng-if="issue.index"
-            href="#/marvel/index/{{ issue.index }}">{{ issue.index }}</a>
+            href="#/monitoring/index/{{ issue.index }}">{{ issue.index }}</a>
           <span
             ng-if="issue.id !== 'unassigned_primary' && issue.id !== 'unassigned_replica'">{{issue.metric && issue.metric.label || issue.field}}</span>
         </strong>

@@ -23,14 +23,14 @@ var paths = [
   '<%= prefix %>_all.total.search.query_time_in_millis',
 ];
 
-module.exports = function (bulks, client, marvelClient, clusterState) {
+module.exports = function (bulks, client, monitoringClient, clusterState) {
   return getState(client, clusterState).then(function (state) {
     return client.indices.stats()
       .then(function (stats) {
         if (clusterState) return fakeIndicesStats(stats, clusterState);
         return stats;
       })
-      .then(mergePaths(bulks, marvelClient, state, paths, 'indices_stats', 'indices_stats.'));
+      .then(mergePaths(bulks, monitoringClient, state, paths, 'indices_stats', 'indices_stats.'));
   });
 };
 

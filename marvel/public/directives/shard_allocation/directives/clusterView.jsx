@@ -19,8 +19,8 @@
 
 define(function (require) {
   var React = require('react');
-  var ClusterView = require('plugins/marvel/directives/shard_allocation/components/clusterView');
-  var module = require('ui/modules').get('marvel/directives', []);
+  var ClusterView = require('plugins/monitoring/directives/shard_allocation/components/clusterView');
+  var module = require('ui/modules').get('monitoring/directives', []);
   module.directive('clusterView', function ($parse, kbnUrl) {
     return {
       restrict: 'E',

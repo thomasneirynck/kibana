@@ -1,9 +1,9 @@
 define(function (require) {
-  var template = require('plugins/marvel/directives/shard_activity/index.html');
-  var module = require('ui/modules').get('marvel/directives', []);
-  var formatNumber = require('plugins/marvel/lib/format_number');
+  var template = require('plugins/monitoring/directives/shard_activity/index.html');
+  var module = require('ui/modules').get('monitoring/directives', []);
+  var formatNumber = require('plugins/monitoring/lib/format_number');
   var _ = require('lodash');
-  module.directive('marvelShardActivity', function () {
+  module.directive('monitoringShardActivity', function () {
     return {
       restrict: 'E',
       scope: {

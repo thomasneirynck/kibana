@@ -30,7 +30,7 @@ module.exports = (server) => {
 
   server.route({
     method: 'POST',
-    path: '/api/marvel/v1/clusters/{clusterUuid}/nodes',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}/nodes',
     config: {
       validate: {
         params: Joi.object({
@@ -104,7 +104,7 @@ module.exports = (server) => {
 
   server.route({
     method: 'POST',
-    path: '/api/marvel/v1/clusters/{clusterUuid}/nodes/{resolver}',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}/nodes/{resolver}',
     config: {
       validate: {
         params: Joi.object({
@@ -129,7 +129,7 @@ module.exports = (server) => {
       .then(indices => {
         return getLastState(req, indices)
         .then(lastState => {
-          const configResolver = `source_node.${config.get('marvel.node_resolver')}`;
+          const configResolver = `source_node.${config.get('monitoring.node_resolver')}`;
           return Promise.props({
             clusterStatus: getClusterStatus(req, indices, lastState),
             nodeSummary: getNodeSummary(req, indices),

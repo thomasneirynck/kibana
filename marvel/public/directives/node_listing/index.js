@@ -1,15 +1,15 @@
 define(function (require) {
   var _ = require('lodash');
   var numeral = require('numeral');
-  var module = require('ui/modules').get('marvel/directives', []);
+  var module = require('ui/modules').get('monitoring/directives', []);
   var React = require('react');
   var make = React.DOM;
-  var extractIp = require('plugins/marvel/lib/extract_ip');
+  var extractIp = require('plugins/monitoring/lib/extract_ip');
 
-  var Table = require('plugins/marvel/directives/paginated_table/components/table');
+  var Table = require('plugins/monitoring/directives/paginated_table/components/table');
 
   // change the node to actually display the name
-  module.directive('marvelNodesListing', function (kbnUrl) {
+  module.directive('monitoringNodesListing', function (kbnUrl) {
     // makes the tds for every <tr> in the table
     function makeTdWithPropKey(scope, dataKey, idx) {
       var value = _.get(this.props, dataKey.key);

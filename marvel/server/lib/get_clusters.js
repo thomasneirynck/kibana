@@ -1,15 +1,15 @@
 const _ = require('lodash');
-const validateMarvelLicense = require('./validate_marvel_license');
+const validateMonitoringLicense = require('./validate_monitoring_license');
 module.exports = (req) => {
   const server = req.server;
   const callWithRequest = server.plugins.elasticsearch.callWithRequest;
   const config = server.config();
   const params = {
-    index: config.get('marvel.index'),
+    index: config.get('monitoring.index'),
     type: 'cluster_info',
     ignore: [404],
     body: {
-      size: config.get('marvel.max_bucket_size')
+      size: config.get('monitoring.max_bucket_size')
     }
   };
   return callWithRequest(req, 'search', params)
@@ -21,7 +21,7 @@ module.exports = (req) => {
             cluster_uuid: doc._source.cluster_uuid
           };
           const license = doc._source.license;
-          if (license && validateMarvelLicense(cluster.cluster_uuid, license)) {
+          if (license && validateMonitoringLicense(cluster.cluster_uuid, license)) {
             cluster.license = license;
             cluster.version = doc._source.version;
           }

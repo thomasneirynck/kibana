@@ -14,7 +14,7 @@ module.exports = function (req) {
     const bodies = [];
     clusters.forEach((cluster) => {
       bodies.push({
-        index: config.get('marvel.index_prefix') + '*',
+        index: config.get('monitoring.index_prefix') + '*',
         type: 'cluster_state'
       });
       bodies.push({
@@ -35,7 +35,7 @@ module.exports = function (req) {
     });
     if (!bodies.length) return Promise.resolve();
     const params = {
-      index: config.get('marvel.index_prefix') + '*',
+      index: config.get('monitoring.index_prefix') + '*',
       type: 'cluster_state',
       body: bodies
     };

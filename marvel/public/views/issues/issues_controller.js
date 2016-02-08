@@ -1,32 +1,32 @@
 define(function (require) {
   var _ = require('lodash');
   var angular = require('angular');
-  var compareIssues = require('plugins/marvel/lib/compare_issues');
-  require('plugins/marvel/services/settings');
-  require('plugins/marvel/services/metrics');
-  require('plugins/marvel/services/clusters');
+  var compareIssues = require('plugins/monitoring/lib/compare_issues');
+  require('plugins/monitoring/services/settings');
+  require('plugins/monitoring/services/metrics');
+  require('plugins/monitoring/services/clusters');
 
-  var module = require('ui/modules').get('marvel', [
-    'marvel/directives',
-    'marvel/settings',
-    'marvel/metrics'
+  var module = require('ui/modules').get('monitoring', [
+    'monitoring/directives',
+    'monitoring/settings',
+    'monitoring/metrics'
   ]);
 
   // require('ui/routes').when('/issues', {
-  //   template: require('plugins/marvel/views/issues/issues_template.html'),
+  //   template: require('plugins/monitoring/views/issues/issues_template.html'),
   //   resolve: {
-  //     marvel: function (Private) {
-  //       var routeInit = Private(require('plugins/marvel/lib/route_init'));
+  //     monitoring: function (Private) {
+  //       var routeInit = Private(require('plugins/monitoring/lib/route_init'));
   //       return routeInit();
   //     }
   //   }
   // });
 
   module.controller('issues', function (courier, $http, $route, $scope, Promise, Private, timefilter, globalState) {
-    var clusters = $route.current.locals.marvel.clusters;
-    var indexPattern = $route.current.locals.marvel.indexPattern;
-    // var IssueDataSource = Private(require('plugins/marvel/directives/issues/data_source'));
-    // var ClusterStatusDataSource = Private(require('plugins/marvel/directives/cluster_status/data_source'));
+    var clusters = $route.current.locals.monitoring.clusters;
+    var indexPattern = $route.current.locals.monitoring.indexPattern;
+    // var IssueDataSource = Private(require('plugins/monitoring/directives/issues/data_source'));
+    // var ClusterStatusDataSource = Private(require('plugins/monitoring/directives/cluster_status/data_source'));
 
     timefilter.enabled = true;
     if (timefilter.refreshInterval.value === 0) {
@@ -49,7 +49,7 @@ define(function (require) {
     $scope.issues = [];
     $scope.allIssues = [];
     function fetch() {
-      return $http.get('../api/marvel/v1/issues/' + globalState.cluster).then(function (resp) {
+      return $http.get('../api/monitoring/v1/issues/' + globalState.cluster).then(function (resp) {
         var data = [];
         var body = resp.data;
         _.each(body, function (rows, type) {

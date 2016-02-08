@@ -40,8 +40,8 @@ module.exports = (req, indices) => {
   const orgStart = start;
   const end = moment.utc(req.payload.timeRange.max).valueOf();
   const clusterUuid = req.params.clusterUuid;
-  const maxBucketSize = config.get('marvel.max_bucket_size');
-  const minIntervalSeconds = config.get('marvel.min_interval_seconds');
+  const maxBucketSize = config.get('monitoring.max_bucket_size');
+  const minIntervalSeconds = config.get('monitoring.min_interval_seconds');
 
   const params = {
     index: indices,
@@ -64,7 +64,7 @@ module.exports = (req, indices) => {
   var aggs = {
     items: {
       terms: {
-        field: `source_node.${config.get('marvel.node_resolver')}`, // transport_address or node name
+        field: `source_node.${config.get('monitoring.node_resolver')}`, // transport_address or node name
         size: maxBucketSize
       },
       aggs: {

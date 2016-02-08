@@ -7,7 +7,7 @@ function sha256(input) {
   return crypto.createHash('sha256').update(input).digest('hex');
 }
 
-module.exports = function (client, marvelClient, overrides, clusterState) {
+module.exports = function (client, monitoringClient, overrides, clusterState) {
   overrides = overrides || {};
   return client.info().then(function (info) {
     return getState(client, clusterState).then(function (state) {
@@ -41,11 +41,11 @@ module.exports = function (client, marvelClient, overrides, clusterState) {
               site: false
             },
             {
-              name: 'marvel',
+              name: 'monitoring',
               version: '2.0.0-beta1-SNAPSHOT',
-              description: 'Elasticsearch Marvel',
+              description: 'Elasticsearch Monitoring',
               jvm: true,
-              classname: 'org.elasticsearch.marvel.MarvelPlugin',
+              classname: 'org.elasticsearch.monitoring.MonitoringPlugin',
               isolated: false,
               site: false
             }
@@ -54,8 +54,8 @@ module.exports = function (client, marvelClient, overrides, clusterState) {
         doc.cluster_stats = stats;
 
 
-        return marvelClient.index({
-          index: '.marvel-es-data-1',
+        return monitoringClient.index({
+          index: '.monitoring-es-data-1',
           type: 'cluster_info',
           id: doc.cluster_uuid,
           body: doc

@@ -6,26 +6,26 @@ var pluginSelfCheck = require('./server/lib/plugin_self_check');
 module.exports = function (kibana) {
   return new kibana.Plugin({
     require: ['elasticsearch'],
-    id: 'marvel',
+    id: 'monitoring',
     publicDir: join(__dirname, 'public'),
 
     uiExports: {
       app: {
-        title: 'Marvel',
+        title: 'Monitoring',
         description: 'Monitoring for Elasticsearch',
-        main: 'plugins/marvel/marvel',
+        main: 'plugins/monitoring/monitoring',
         injectVars: function (server, options) {
           var config = server.config();
           return {
-            maxBucketSize: config.get('marvel.max_bucket_size'),
-            minIntervalSeconds: config.get('marvel.min_interval_seconds'),
+            maxBucketSize: config.get('monitoring.max_bucket_size'),
+            minIntervalSeconds: config.get('monitoring.min_interval_seconds'),
             kbnIndex: config.get('kibana.index'),
             esApiVersion: config.get('elasticsearch.apiVersion'),
             esShardTimeout: config.get('elasticsearch.shardTimeout'),
-            statsReportUrl: config.get('marvel.stats_report_url'),
-            reportStats: config.get('marvel.report_stats'),
-            marvelIndexPrefix: config.get('marvel.index_prefix'),
-            googleTagManagerId: config.get('marvel.google_tag_manager_id')
+            statsReportUrl: config.get('monitoring.stats_report_url'),
+            reportStats: config.get('monitoring.report_stats'),
+            monitoringIndexPrefix: config.get('monitoring.index_prefix'),
+            googleTagManagerId: config.get('monitoring.google_tag_manager_id')
           };
         }
       }
@@ -44,8 +44,8 @@ module.exports = function (kibana) {
         node_resolver: Joi.string().regex(/^(?:transport_address|name)$/).default('transport_address'),
         stats_report_url: Joi.when('$dev', {
           is: true,
-          then: Joi.string().default('../api/marvel/v1/phone-home'),
-          otherwise: Joi.string().default('https://marvel-stats.elasticsearch.com/appdata/marvelOpts')
+          then: Joi.string().default('../api/monitoring/v1/phone-home'),
+          otherwise: Joi.string().default('https://monitoring-stats.elasticsearch.com/appdata/monitoringOpts')
         }),
         agent: Joi.object({
           interval: Joi.string().regex(/[\d\.]+[yMwdhms]/).default('10s')
@@ -54,7 +54,7 @@ module.exports = function (kibana) {
     },
 
     init: function (server, options) {
-      // Make sure the Marvel index is created and the Kibana version is supported
+      // Make sure the Monitoring index is created and the Kibana version is supported
       pluginSelfCheck(this, server);
       // Require all the routes
       requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server);

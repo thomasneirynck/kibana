@@ -4,14 +4,14 @@ module.exports = function ajaxErrorHandlersProvider(Notifier) {
     fatalError(err) {
       if (err.status === 403) {
         const shieldNotifier = new Notifier({ location: 'Shield' });
-        return shieldNotifier.fatal('Sorry, you are not authorized to access Marvel');
+        return shieldNotifier.fatal('Sorry, you are not authorized to access Monitoring');
       }
-      const genericNotifier = new Notifier({ location: 'Marvel' });
+      const genericNotifier = new Notifier({ location: 'Monitoring' });
       return genericNotifier.fatal(err);
     },
     /* dismissable banner message */
     nonFatal(err) {
-      const notifier = new Notifier({ location: 'Marvel' });
+      const notifier = new Notifier({ location: 'Monitoring' });
       return notifier.error(err);
     }
   };

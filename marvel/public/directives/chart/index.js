@@ -8,12 +8,12 @@ require('flot-charts/jquery.flot.canvas');
 require('flot-charts/jquery.flot.symbol');
 require('flot-charts/jquery.flot.crosshair');
 require('flot-charts/jquery.flot.selection');
-const app = require('ui/modules').get('plugins/marvel/directives', []);
+const app = require('ui/modules').get('plugins/monitoring/directives', []);
 
-app.directive('marvelChart', () => {
+app.directive('monitoringChart', () => {
   return {
     restrict: 'E',
-    template: require('plugins/marvel/directives/chart/index.html'),
+    template: require('plugins/monitoring/directives/chart/index.html'),
     scope: {
       series: '='
     },
@@ -31,7 +31,7 @@ app.directive('marvelChart', () => {
   };
 });
 
-app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private, marvelMetrics) => {
+app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private, monitoringMetrics) => {
   return {
     restrict: 'E',
     scope: {
@@ -112,7 +112,7 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private, mar
       });
 
       $elem.on('plothover',  (event, pos, item) => {
-        $rootScope.$broadcast('marvelPlotHover', event, pos, item);
+        $rootScope.$broadcast('monitoringPlotHover', event, pos, item);
       });
 
 
@@ -125,15 +125,15 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private, mar
       });
 
       $elem.on('mouseleave', () => {
-        $rootScope.$broadcast('marvelPlotLeave');
+        $rootScope.$broadcast('monitoringPlotLeave');
       });
 
-      $scope.$on('marvelPlotHover', (angularEvent, flotEvent, pos, time) => {
+      $scope.$on('monitoringPlotHover', (angularEvent, flotEvent, pos, time) => {
         $scope.plot.setCrosshair(pos);
         debouncedSetLegendNumbers(pos);
       });
 
-      $scope.$on('marvelPlotLeave', (angularEvent, flotEvent, pos, time) => {
+      $scope.$on('monitoringPlotLeave', (angularEvent, flotEvent, pos, time) => {
         $scope.plot.clearCrosshair();
         clearLegendNumbers();
       });

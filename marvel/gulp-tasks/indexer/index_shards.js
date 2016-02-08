@@ -14,7 +14,7 @@ var paths = [
   '<%= prefix %>index'
 ];
 
-module.exports = function (bulks, client, marvelClient, clusterState) {
+module.exports = function (bulks, client, monitoringClient, clusterState) {
   return client.cluster.stats().then(function (stats) {
     return getState(client, clusterState).then(function (state) {
       state.cluster_uuid = state.metadata.cluster_uuid;
@@ -36,7 +36,7 @@ module.exports = function (bulks, client, marvelClient, clusterState) {
         ].join(':');
         shard._id = id;
         shard.state_uuid = state.state_uuid;
-        return mergePaths(bulks, marvelClient, state, paths, 'shards', 'shard.')(shard);
+        return mergePaths(bulks, monitoringClient, state, paths, 'shards', 'shard.')(shard);
       });
     });
   });

@@ -19,7 +19,7 @@ var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
 var buildTarget = path.resolve(buildDir, pkg.name);
 var coverageDir = path.resolve(__dirname, 'coverage');
-var kibanaPluginDir = path.resolve(require('./server/lib/kibana_home_dir').dev, 'installedPlugins/marvel');
+var kibanaPluginDir = path.resolve(require('./server/lib/kibana_home_dir').dev, 'installedPlugins/monitoring');
 
 // paths to sync over to the kibana plugin dir
 var include = [
@@ -119,7 +119,7 @@ gulp.task('release', ['package'], function (done) {
   var locations = [];
 
   function uploadFile(filename) {
-    var key = 'elasticsearch/marvel/' + filename;
+    var key = 'elasticsearch/monitoring/' + filename;
     var params = {
       Bucket: 'download.elasticsearch.org',
       Key: key,

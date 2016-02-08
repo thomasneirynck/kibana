@@ -1,8 +1,8 @@
 define(function (require) {
   var _ = require('lodash');
-  var template = require('plugins/marvel/directives/issues/index.html');
-  var module = require('ui/modules').get('marvel/directives', []);
-  module.directive('marvelIssues', function (marvelMetrics) {
+  var template = require('plugins/monitoring/directives/issues/index.html');
+  var module = require('ui/modules').get('monitoring/directives', []);
+  module.directive('monitoringIssues', function (monitoringMetrics) {
     return {
       restrict: 'E',
       scope: {

@@ -6,7 +6,7 @@ const nodeAggVals = root('server/lib/node_agg_vals');
 
 module.exports = (req, indices, lastState) => {
   const config = req.server.config();
-  const nodeResolver = config.get('marvel.node_resolver');
+  const nodeResolver = config.get('monitoring.node_resolver');
   const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
@@ -27,7 +27,7 @@ module.exports = (req, indices, lastState) => {
         indices: {
           terms: {
             field: 'shard.index',
-            size: config.get('marvel.max_bucket_size')
+            size: config.get('monitoring.max_bucket_size')
           },
           aggs: {
             states: {
@@ -39,7 +39,7 @@ module.exports = (req, indices, lastState) => {
         nodes: {
           terms: {
             field: `source_node.${nodeResolver}`,
-            size: config.get('marvel.max_bucket_size')
+            size: config.get('monitoring.max_bucket_size')
           },
           aggs: {
             index_count: { cardinality: { field: 'shard.index' } },

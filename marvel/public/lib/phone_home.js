@@ -28,8 +28,8 @@ module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, 
     constructor() {
       this.attributes = {};
       try {
-        var marvelData = localStorage.getItem('marvel_data');
-        let attributes = marvelData && JSON.parse(marvelData) || {};
+        var monitoringData = localStorage.getItem('monitoring_data');
+        let attributes = monitoringData && JSON.parse(monitoringData) || {};
         _.defaults(this.attributes, attributes, defaults);
       } catch (e) {
         _.defaults(this.attributes, defaults);
@@ -57,7 +57,7 @@ module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, 
     }
 
     saveToBrowser() {
-      localStorage.setItem('marvel_data', JSON.stringify(this.attributes));
+      localStorage.setItem('monitoring_data', JSON.stringify(this.attributes));
     }
 
     checkReportStatus() {
@@ -67,7 +67,7 @@ module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, 
       // check if opt-in for phone home is enabled in config (reportStats) and browser setting (features)
       if (reportStats && features.isEnabled('report', true)) {
         // If the last report is empty it means user is first-time visiting
-        // Marvel app and has not had an opportunity to opt out.
+        // Monitoring app and has not had an opportunity to opt out.
         if (!this.get('lastReport')) {
           // Initialize the browser data for phone home
           // if they remain opted in, report interval will trigger 1 minute from now
@@ -95,7 +95,7 @@ module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, 
     }
 
     getClusterInfo(clusterUUID) {
-      let url = `../api/marvel/v1/clusters/${clusterUUID}/info`;
+      let url = `../api/monitoring/v1/clusters/${clusterUUID}/info`;
       return $http.get(url)
       .then((resp) => {
         return resp.data;

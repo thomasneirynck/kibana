@@ -2,14 +2,14 @@ define(function (require) {
   var _ = require('lodash');
   var numeral = require('numeral');
   var moment = require('moment');
-  var module = require('ui/modules').get('marvel/directives', []);
+  var module = require('ui/modules').get('monitoring/directives', []);
   var React = require('react');
   var make = React.DOM;
 
-  var SparkLines = require('plugins/marvel/directives/marvel_sparkline');
-  var Table = require('plugins/marvel/directives/paginated_table/components/table');
+  var SparkLines = require('plugins/monitoring/directives/monitoring_sparkline');
+  var Table = require('plugins/monitoring/directives/paginated_table/components/table');
 
-  module.directive('marvelIndexListing', function (kbnUrl) {
+  module.directive('monitoringIndexListing', function (kbnUrl) {
     function makeTdWithPropKey(scope, dataKey, idx) {
       var rawValue = _.get(this.props, dataKey.key);
       var units;

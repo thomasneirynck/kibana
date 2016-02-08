@@ -21,14 +21,14 @@ var paths = [
   '<%= prefix %>nodes.fs.available_in_bytes'
 ];
 
-module.exports = function (bulks, client, marvelClient, clusterState) {
+module.exports = function (bulks, client, monitoringClient, clusterState) {
   return getState(client, clusterState).then(function (state) {
     return client.cluster.stats()
       .then(function (stats) {
         if (clusterState) return fakeClusterStats(stats, clusterState);
         return stats;
       })
-      .then(mergePaths(bulks, marvelClient, state, paths, 'cluster_stats', 'cluster_stats.'));
+      .then(mergePaths(bulks, monitoringClient, state, paths, 'cluster_stats', 'cluster_stats.'));
   });
 };
 

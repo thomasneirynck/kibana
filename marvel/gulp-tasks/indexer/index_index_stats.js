@@ -23,7 +23,7 @@ var paths = [
   '<%= prefix %>total.fielddata.memory_size_in_bytes'
 ];
 
-module.exports = function (bulks, client, marvelClient, clusterState) {
+module.exports = function (bulks, client, monitoringClient, clusterState) {
   return getState(client, clusterState).then(function (state) {
     return client.indices.stats().then(function (stats) {
       if (clusterState) {
@@ -33,7 +33,7 @@ module.exports = function (bulks, client, marvelClient, clusterState) {
         var indexStats = stats.indices[id];
         if (indexStats) {
           indexStats.index = id;
-          return mergePaths(bulks, marvelClient, state, paths, 'index_stats', 'index_stats.')(indexStats);
+          return mergePaths(bulks, monitoringClient, state, paths, 'index_stats', 'index_stats.')(indexStats);
         }
       });
     });

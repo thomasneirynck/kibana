@@ -1,7 +1,7 @@
-const template = require('plugins/marvel/directives/cluster_status/index.html');
-const module = require('ui/modules').get('marvel/directives', []);
+const template = require('plugins/monitoring/directives/cluster_status/index.html');
+const module = require('ui/modules').get('monitoring/directives', []);
 
-module.directive('marvelClusterStatus', (globalState, kbnUrl) => {
+module.directive('monitoringClusterStatus', (globalState, kbnUrl) => {
   return {
     restrict: 'E',
     template,

@@ -4,7 +4,7 @@ var moment = require('moment');
 module.exports = function (req, start, end) {
   var server = req.server;
   var config = server.config();
-  var pattern = config.get('marvel.index_prefix') + '*';
+  var pattern = config.get('monitoring.index_prefix') + '*';
   var callWithRequest = server.plugins.elasticsearch.callWithRequest;
   var options = {
     index: pattern,
@@ -26,6 +26,6 @@ module.exports = function (req, start, end) {
         return index;
       });
       if (indices.length === 0) return ['.kibana-devnull'];
-      return indices.filter((index) => index !== config.get('marvel.index'));
+      return indices.filter((index) => index !== config.get('monitoring.index'));
     });
 };

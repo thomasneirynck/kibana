@@ -15,7 +15,7 @@ module.exports = (req, indices, metricName, filters) => {
   const end = req.payload.timeRange.max;
   const clusterUuid = req.params.clusterUuid;
   const id = req.params.id;
-  const minIntervalSeconds = config.get('marvel.min_interval_seconds');
+  const minIntervalSeconds = config.get('monitoring.min_interval_seconds');
 
   const params = {
     index: indices,

@@ -6,12 +6,12 @@ module.exports = (server) => {
   const config = server.config();
 
   server.route({
-    path: '/api/marvel/v1/phone-home',
+    path: '/api/monitoring/v1/phone-home',
     method: 'POST',
     handler: (req, reply) => {
       const body = req.payload;
       const options = {
-        index: '.marvel',
+        index: '.monitoring',
         type: 'phone_home',
         body: body
       };

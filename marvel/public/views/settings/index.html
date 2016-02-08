@@ -1,6 +1,6 @@
-<div ng-controller="settings" class="settings marvel-view">
-  <marvel-cluster-status source="dataSources['cluster_status']"></marvel-cluster-status>
-  <div class="marvel-settings container-fluid">
+<div ng-controller="settings" class="settings monitoring-view">
+  <monitoring-cluster-status source="dataSources['cluster_status']"></monitoring-cluster-status>
+  <div class="monitoring-settings container-fluid">
     <form name="settings" ng-submit="save()">
       <div class="row" ng-repeat="(id, metric) in metrics">
         <div class="col-xs-12">

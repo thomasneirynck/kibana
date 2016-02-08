@@ -1,6 +1,6 @@
 var moment = require('moment');
 var _ = require('lodash');
-module.exports = function mergePaths(bulks, marvelClient, state, paths, type, prefix) {
+module.exports = function mergePaths(bulks, monitoringClient, state, paths, type, prefix) {
   prefix = prefix || '';
   return function (source) {
     var timestamp = moment.utc();
@@ -15,7 +15,7 @@ module.exports = function mergePaths(bulks, marvelClient, state, paths, type, pr
       _.set(body, destPath, _.get(source, srcPath));
     });
     var head = {
-      _index: timestamp.format('[.marvel-es-1-]YYYY.MM.DD'),
+      _index: timestamp.format('[.monitoring-es-1-]YYYY.MM.DD'),
       _type: type
     };
     if (source._id) head._id = source._id;

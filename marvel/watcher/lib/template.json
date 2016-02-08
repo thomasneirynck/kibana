@@ -1,5 +1,5 @@
 {
-  "template": ".marvel*",
+  "template": ".monitoring*",
   "settings": {
     "number_of_shards": 1,
     "number_of_replicas": 1,
@@ -12,7 +12,7 @@
       }
     },
     "mapper.dynamic": true,
-    "marvel.index_format": 6
+    "monitoring.index_format": 6
   },
   "mappings": {
     "_default_": {

@@ -1,35 +1,35 @@
 define(function (require) {
   var _ = require('lodash');
   var angular = require('angular');
-  var metrics = require('plugins/marvel/lib/metrics');
+  var metrics = require('plugins/monitoring/lib/metrics');
 
-  require('plugins/marvel/services/settings');
+  require('plugins/monitoring/services/settings');
   require('ui/notify/notify');
 
-  var module = require('ui/modules').get('marvel', [
+  var module = require('ui/modules').get('monitoring', [
     'kibana/notify',
-    'marvel/directives',
-    'marvel/settings'
+    'monitoring/directives',
+    'monitoring/settings'
   ]);
 
   // require('ui/routes')
   // .when('/settings', {
-  //   template: require('plugins/marvel/views/settings/index.html'),
+  //   template: require('plugins/monitoring/views/settings/index.html'),
   //   resolve: {
-  //     marvel: function (Private) {
-  //       var routeInit = Private(require('plugins/marvel/lib/route_init'));
+  //     monitoring: function (Private) {
+  //       var routeInit = Private(require('plugins/monitoring/lib/route_init'));
   //       return routeInit({ force: { settings: true } });
   //     }
   //   }
   // });
 
   module.controller('settings', function (timefilter, courier, $scope, $route, Notifier, Private, globalState) {
-    // var ClusterStatusDataSource = Private(require('plugins/marvel/directives/cluster_status/data_source'));
+    // var ClusterStatusDataSource = Private(require('plugins/monitoring/directives/cluster_status/data_source'));
 
-    var notify = new Notifier({ location: 'Marvel Settings' });
-    var settings = $route.current.locals.marvel.settings[globalState.cluster + ':metric-thresholds'];
-    var indexPattern = $route.current.locals.marvel.indexPattern;
-    var clusters = $route.current.locals.marvel.clusters;
+    var notify = new Notifier({ location: 'Monitoring Settings' });
+    var settings = $route.current.locals.monitoring.settings[globalState.cluster + ':metric-thresholds'];
+    var indexPattern = $route.current.locals.monitoring.indexPattern;
+    var clusters = $route.current.locals.monitoring.clusters;
 
     $scope.metrics = metrics;
     $scope.dataSources = {};

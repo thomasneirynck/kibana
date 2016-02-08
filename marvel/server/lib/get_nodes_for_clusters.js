@@ -8,7 +8,7 @@ module.exports = (req) => {
   return (clusters) => {
     return Promise.map(clusters || [], (cluster) => {
       const params = {
-        index: config.get('marvel.index_prefix') + '*',
+        index: config.get('monitoring.index_prefix') + '*',
         ignore: [404],
         type: 'cluster_state',
         body: {

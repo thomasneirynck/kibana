@@ -1,4 +1,4 @@
-const createMarvelIndexPattern = require('./create_marvel_index_pattern');
+const createMonitoringIndexPattern = require('./create_monitoring_index_pattern');
 const ensureVersions = require('./ensure_versions');
 
 module.exports = function pluginSelfCheck(plugin, server) {
@@ -10,15 +10,15 @@ module.exports = function pluginSelfCheck(plugin, server) {
     const {
       isKibanaSupported,
       kibanaVersion,
-      marvelVersion
+      monitoringVersion
     } = ensureVersions(plugin);
 
     if (isKibanaSupported) {
-      // start setting up the Marvel index.
-      return createMarvelIndexPattern(server)
-      .then(() => plugin.status.green('Marvel index ready'));
+      // start setting up the Monitoring index.
+      return createMonitoringIndexPattern(server)
+      .then(() => plugin.status.green('Monitoring index ready'));
     } else if (!isKibanaSupported) {
-      plugin.status.red(`Marvel version ${marvelVersion} is not supported with Kibana ${kibanaVersion}`);
+      plugin.status.red(`Monitoring version ${monitoringVersion} is not supported with Kibana ${kibanaVersion}`);
     }
   });
 

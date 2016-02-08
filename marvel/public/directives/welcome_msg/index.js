@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const mod = require('ui/modules').get('marvel/directives', []);
-const template = require('plugins/marvel/directives/welcome_msg/index.html');
-mod.directive('marvelWelcomeMessage', function ($window, reportStats, features) {
+const mod = require('ui/modules').get('monitoring/directives', []);
+const template = require('plugins/monitoring/directives/welcome_msg/index.html');
+mod.directive('monitoringWelcomeMessage', function ($window, reportStats, features) {
   return {
     restrict: 'E',
     scope: {
@@ -10,7 +10,7 @@ mod.directive('marvelWelcomeMessage', function ($window, reportStats, features) 
     },
     template: template,
     link: (scope, el, attrs) => {
-      const hideBanner = $window.localStorage.getItem('marvel.hideBanner');
+      const hideBanner = $window.localStorage.getItem('monitoring.hideBanner');
       scope.showBanner = (hideBanner) ? false : true;
 
       if (scope.showBanner && scope.cluster && scope.clusters) {
@@ -26,7 +26,7 @@ mod.directive('marvelWelcomeMessage', function ($window, reportStats, features) 
 
       scope.dontShowAgain = function () {
         scope.showBanner = false;
-        $window.localStorage.setItem('marvel.hideBanner', 1);
+        $window.localStorage.setItem('monitoring.hideBanner', 1);
       };
 
       scope.reportStats = reportStats;

@@ -237,18 +237,18 @@ incorporated under laws of the Province of British Columbia.
 (2)    Export Control. You acknowledge that the goods, software and technology acquired from Elasticsearch are subject
 to the restrictions and controls set out in Section A(3) above as well as those imposed by the Export and Import Permits
 Act (Canada) and the regulations thereunder and that you will comply with all applicable laws and regulations. Without
-limitation, You acknowledge that the Marvel Software, or any portion thereof, will not be exported: (a) to any country
+limitation, You acknowledge that the Monitoring Software, or any portion thereof, will not be exported: (a) to any country
 on Canada's Area Control List; (b) to any country subject to UN Security Council embargo or action; or (c) contrary to
 Canada's Export Control List Item 5505. You are now and will remain in the future compliant with all such export control
 laws and regulations, and will not export, re-export, otherwise transfer any Elasticsearch goods, software or technology
 or disclose any Elasticsearch software or technology to any person contrary to such laws or regulations.  You will not
-export or re-export the Marvel Software, or any portion thereof, directly or indirectly, in violation of the Canadian
+export or re-export the Monitoring Software, or any portion thereof, directly or indirectly, in violation of the Canadian
 export administration laws and regulations to any country or end user, or to any end user who you know or have reason to
 know will utilize them in the design, development or production of nuclear, chemical or biological weapons. You further
-acknowledge that the Marvel Software product may include technical data subject to such Canadian export regulations.
-Elasticsearch does not represent that the Marvel Software is appropriate or available for use in all countries.
+acknowledge that the Monitoring Software product may include technical data subject to such Canadian export regulations.
+Elasticsearch does not represent that the Monitoring Software is appropriate or available for use in all countries.
 Elasticsearch prohibits accessing materials from countries or states where contents are illegal. You are using the
-Marvel Software on your own initiative and you are responsible for compliance with all applicable laws. You hereby agree
+Monitoring Software on your own initiative and you are responsible for compliance with all applicable laws. You hereby agree
 to indemnify Elasticsearch and its affiliates from any claims, actions, liability or expenses (including reasonable
 lawyers' fees) resulting from Your failure to act in accordance with the acknowledgements, agreements, and
 representations in this Section B(2).

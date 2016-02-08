@@ -1,17 +1,17 @@
 define(function (require) {
   var _ = require('lodash');
   var moment = require('moment');
-  var module = require('ui/modules').get('marvel', [
-    'marvel/directives'
+  var module = require('ui/modules').get('monitoring', [
+    'monitoring/directives'
   ]);
 
   require('ui/routes')
   .when('/home', {
-    template: require('plugins/marvel/views/home/home_template.html'),
+    template: require('plugins/monitoring/views/home/home_template.html'),
     resolve: {
-      clusters: function (Private, marvelClusters, kbnUrl, globalState) {
-        var phoneHome = Private(require('plugins/marvel/lib/phone_home'));
-        return marvelClusters.fetch().then(function (clusters) {
+      clusters: function (Private, monitoringClusters, kbnUrl, globalState) {
+        var phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
+        return monitoringClusters.fetch().then(function (clusters) {
           var cluster;
           if (!clusters.length) {
             kbnUrl.changePath('/no-data');
@@ -37,7 +37,7 @@ define(function (require) {
   })
   .otherwise({ redirectTo: '/no-data' });
 
-  module.controller('home', function ($route, $window, $scope, marvelClusters, timefilter, $timeout, Private, $executor) {
+  module.controller('home', function ($route, $window, $scope, monitoringClusters, timefilter, $timeout, Private, $executor) {
 
     // Set the key for as the cluster_uuid. This is mainly for
     // react.js so we can use the key easily.
@@ -55,12 +55,12 @@ define(function (require) {
     // timefilter.enabled = true;
 
     var docTitle = Private(require('ui/doc_title'));
-    docTitle.change('Marvel', true);
+    docTitle.change('Monitoring', true);
 
-    // Register the marvelClusters service.
+    // Register the monitoringClusters service.
     $executor.register({
       execute: function () {
-        return marvelClusters.fetch();
+        return monitoringClusters.fetch();
       },
       handleResponse: function (clusters) {
         $scope.clusters = clusters.map(setKeyForClusters);

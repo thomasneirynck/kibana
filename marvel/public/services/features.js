@@ -1,22 +1,22 @@
 const _ = require('lodash');
-const mod = require('ui/modules').get('marvel/features', []);
+const mod = require('ui/modules').get('monitoring/features', []);
 
 mod.service('features', function ($window) {
   function getData() {
-    const marvelData = $window.localStorage.getItem('marvel_data');
-    return (marvelData && JSON.parse(marvelData)) || {};
+    const monitoringData = $window.localStorage.getItem('monitoring_data');
+    return (monitoringData && JSON.parse(monitoringData)) || {};
   }
 
   function update(featureName, value) {
-    const marvelDataObj = getData();
-    marvelDataObj[featureName] = value;
-    $window.localStorage.setItem('marvel_data', JSON.stringify(marvelDataObj));
+    const monitoringDataObj = getData();
+    monitoringDataObj[featureName] = value;
+    $window.localStorage.setItem('monitoring_data', JSON.stringify(monitoringDataObj));
   }
 
   function isEnabled(featureName, defaultSetting) {
-    const marvelDataObj = getData();
-    if (_.has(marvelDataObj, featureName)) {
-      return marvelDataObj[featureName];
+    const monitoringDataObj = getData();
+    if (_.has(monitoringDataObj, featureName)) {
+      return monitoringDataObj[featureName];
     }
 
     if (_.isUndefined(defaultSetting)) {

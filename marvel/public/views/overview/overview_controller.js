@@ -1,12 +1,12 @@
 /**
  * Controller for Overview Page
  */
-const mod = require('ui/modules').get('marvel', [ 'marvel/directives' ]);
+const mod = require('ui/modules').get('monitoring', [ 'monitoring/directives' ]);
 const _ = require('lodash');
 
 function getPageData(timefilter, globalState, $http, Private) {
   const timeBounds = timefilter.getBounds();
-  const url = `../api/marvel/v1/clusters/${globalState.cluster}`;
+  const url = `../api/monitoring/v1/clusters/${globalState.cluster}`;
   return $http.post(url, {
     timeRange: {
       min: timeBounds.min.toISOString(),
@@ -21,24 +21,24 @@ function getPageData(timefilter, globalState, $http, Private) {
   })
   .then(response => response.data)
   .catch((err) => {
-    const ajaxErrorHandlers = Private(require('plugins/marvel/lib/ajax_error_handlers'));
+    const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
     return ajaxErrorHandlers.fatalError(err);
   });
 }
 
 require('ui/routes')
 .when('/overview', {
-  template: require('plugins/marvel/views/overview/overview_template.html'),
+  template: require('plugins/monitoring/views/overview/overview_template.html'),
   resolve: {
-    marvel: function (Private) {
-      const routeInit = Private(require('plugins/marvel/lib/route_init'));
+    monitoring: function (Private) {
+      const routeInit = Private(require('plugins/monitoring/lib/route_init'));
       return routeInit();
     },
     pageData: getPageData
   }
 });
 
-mod.controller('overview', ($route, globalState, timefilter, $http, Private, $executor, marvelClusters, $scope) => {
+mod.controller('overview', ($route, globalState, timefilter, $http, Private, $executor, monitoringClusters, $scope) => {
 
   timefilter.enabled = true;
 
@@ -46,12 +46,12 @@ mod.controller('overview', ($route, globalState, timefilter, $http, Private, $ex
     $scope.clusters = clusters;
     $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster });
   }
-  setClusters($route.current.locals.marvel.clusters);
+  setClusters($route.current.locals.monitoring.clusters);
 
   $scope.pageData = $route.current.locals.pageData;
 
   var docTitle = Private(require('ui/doc_title'));
-  docTitle.change(`Marvel - ${$scope.cluster.cluster_name}`, true);
+  docTitle.change(`Monitoring - ${$scope.cluster.cluster_name}`, true);
 
   $executor.register({
     execute: () => getPageData(timefilter, globalState, $http, Private),
@@ -59,7 +59,7 @@ mod.controller('overview', ($route, globalState, timefilter, $http, Private, $ex
   });
 
   $executor.register({
-    execute: () => marvelClusters.fetch(),
+    execute: () => monitoringClusters.fetch(),
     handleResponse: setClusters
   });
 

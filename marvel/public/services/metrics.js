@@ -1,13 +1,13 @@
 define(function (require) {
-  var Metric = require('plugins/marvel/lib/metric');
-  var metrics = require('plugins/marvel/lib/metrics');
-  require('plugins/marvel/services/settings');
-  var module = require('ui/modules').get('marvel/metrics', [ 'marvel/settings' ]);
+  var Metric = require('plugins/monitoring/lib/metric');
+  var metrics = require('plugins/monitoring/lib/metrics');
+  require('plugins/monitoring/services/settings');
+  var module = require('ui/modules').get('monitoring/metrics', [ 'monitoring/settings' ]);
 
-  module.service('marvelMetrics', function (marvelSettings, $resource, Promise, Private) {
-    var ajaxErrorHandlers = Private(require('plugins/marvel/lib/ajax_error_handlers'));
+  module.service('monitoringMetrics', function (monitoringSettings, $resource, Promise, Private) {
+    var ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
     return function (cluster, field) {
-      return marvelSettings.fetch()
+      return monitoringSettings.fetch()
       .then(function (settings) {
         if (metrics[field]) {
           var metric = new Metric(field, metrics[field], settings[cluster + ':metric-thresholds']);

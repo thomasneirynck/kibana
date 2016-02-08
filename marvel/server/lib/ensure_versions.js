@@ -1,7 +1,7 @@
 /*
  * Ensure version compatibility with Kibana
- * Marvel 2.2.0 should work with Kibana > v4.4.0
- * https://www.elastic.co/guide/en/marvel/current/installing-marvel.html
+ * Monitoring 2.2.0 should work with Kibana > v4.4.0
+ * https://www.elastic.co/guide/en/monitoring/current/installing-monitoring.html
  * Semver tester: http://jubianchi.github.io/semver-check/
  */
 import _ from 'lodash';
@@ -32,12 +32,12 @@ function cleanVersionString(string) {
 function ensureVersions(plugin) {
 
   const kibanaVersion = cleanVersionString(_.get(plugin, 'kbnServer.version'));
-  const marvelVersion = cleanVersionString(pkg.version);
-  const returnData = { kibanaVersion, marvelVersion };
+  const monitoringVersion = cleanVersionString(pkg.version);
+  const returnData = { kibanaVersion, monitoringVersion };
 
   // version support check can throw a TypeError if kibanaVersion is invalid
   try {
-    returnData.isKibanaSupported = satisfies(kibanaVersion, kbnVersionRanges[marvelVersion]);
+    returnData.isKibanaSupported = satisfies(kibanaVersion, kbnVersionRanges[monitoringVersion]);
   } catch (e) {
     returnData.isKibanaSupported = false;
   }

@@ -2,11 +2,11 @@
  * Controller for Node Detail
  */
 const _ = require('lodash');
-const mod = require('ui/modules').get('marvel', [ 'plugins/marvel/directives' ]);
+const mod = require('ui/modules').get('monitoring', [ 'plugins/monitoring/directives' ]);
 
 function getPageData(timefilter, globalState, $route, $http, Private) {
   const timeBounds = timefilter.getBounds();
-  const url = `../api/marvel/v1/clusters/${globalState.cluster}/nodes/${$route.current.params.node}`;
+  const url = `../api/monitoring/v1/clusters/${globalState.cluster}/nodes/${$route.current.params.node}`;
   return $http.post(url, {
     timeRange: {
       min: timeBounds.min.toISOString(),
@@ -23,24 +23,24 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
   })
   .then(response => response.data)
   .catch((err) => {
-    const ajaxErrorHandlers = Private(require('plugins/marvel/lib/ajax_error_handlers'));
+    const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
     return ajaxErrorHandlers.fatalError(err);
   });
 }
 
 require('ui/routes')
 .when('/nodes/:node', {
-  template: require('plugins/marvel/views/node/node_template.html'),
+  template: require('plugins/monitoring/views/node/node_template.html'),
   resolve: {
-    marvel: function (Private) {
-      var routeInit = Private(require('plugins/marvel/lib/route_init'));
+    monitoring: function (Private) {
+      var routeInit = Private(require('plugins/monitoring/lib/route_init'));
       return routeInit();
     },
     pageData: getPageData
   }
 });
 
-mod.controller('nodeView', (timefilter, $route, globalState, Private, $executor, $http, marvelClusters, $scope) => {
+mod.controller('nodeView', (timefilter, $route, globalState, Private, $executor, $http, monitoringClusters, $scope) => {
 
   timefilter.enabled = true;
 
@@ -48,12 +48,12 @@ mod.controller('nodeView', (timefilter, $route, globalState, Private, $executor,
     $scope.clusters = clusters;
     $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster });
   }
-  setClusters($route.current.locals.marvel.clusters);
+  setClusters($route.current.locals.monitoring.clusters);
 
   $scope.pageData = $route.current.locals.pageData;
 
   const docTitle = Private(require('ui/doc_title'));
-  docTitle.change(`Marvel - ${$scope.pageData.nodeSummary.name}`, true);
+  docTitle.change(`Monitoring - ${$scope.pageData.nodeSummary.name}`, true);
 
   $executor.register({
     execute: () => getPageData(timefilter, globalState, $route, $http, Private),
@@ -61,7 +61,7 @@ mod.controller('nodeView', (timefilter, $route, globalState, Private, $executor,
   });
 
   $executor.register({
-    execute: () => marvelClusters.fetch(),
+    execute: () => monitoringClusters.fetch(),
     handleResponse: setClusters
   });
 

@@ -3,11 +3,11 @@ var expect = require('expect.js');
 var moment = require('moment');
 var executeWatcher = lib('execute_watcher');
 var client = lib('client');
-var indexPattern = '[.marvel-]YYYY.MM.DD';
+var indexPattern = '[.monitoring-]YYYY.MM.DD';
 lib('setup_es');
 lib('setup_smtp_server');
 
-describe('Marvel Watchers', function () {
+describe('Monitoring Watchers', function () {
   describe('File Descriptors', function () {
 
     describe('above 80%', function () {

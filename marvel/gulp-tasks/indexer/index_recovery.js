@@ -1,6 +1,6 @@
 var moment = require('moment');
 var _ = require('lodash');
-module.exports = function (bulks, client, marvelClient) {
+module.exports = function (bulks, client, monitoringClient) {
   var timestamp = moment.utc();
   return client.cluster.state().then(function (clusterState) {
     return client.indices.recovery()
@@ -26,7 +26,7 @@ module.exports = function (bulks, client, marvelClient) {
       .then(function (body) {
         bulks.push({
           index: {
-            _index: timestamp.format('[.marvel-es-1-]YYYY.MM.DD'),
+            _index: timestamp.format('[.monitoring-es-1-]YYYY.MM.DD'),
             _type: 'index_recovery',
           }
         });

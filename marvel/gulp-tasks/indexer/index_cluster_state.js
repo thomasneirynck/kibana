@@ -13,7 +13,7 @@ var paths = [
   '<%= prefix %>status'
 ];
 
-module.exports = function (bulks, client, marvelClient, clusterState) {
+module.exports = function (bulks, client, monitoringClient, clusterState) {
   return client.cluster.stats().then(function (stats) {
     return getState(client, clusterState).then(function (source) {
       source.cluster_uuid = source.metadata.cluster_uuid;
@@ -30,21 +30,21 @@ module.exports = function (bulks, client, marvelClient, clusterState) {
         };
         bulks.push({
           create: {
-            _index: timestamp.format('[.marvel-es-1-]YYYY.MM.DD'),
+            _index: timestamp.format('[.monitoring-es-1-]YYYY.MM.DD'),
             _type: 'nodes'
           }
         });
         bulks.push(nodeBody);
         bulks.push({
           create: {
-            _index: '.marvel-es-data-1',
+            _index: '.monitoring-es-data-1',
             _type: 'node',
             _id: id
           }
         });
         bulks.push(nodeBody);
       });
-      return mergePaths(bulks, marvelClient, source, paths, 'cluster_state', 'cluster_state.')(source);
+      return mergePaths(bulks, monitoringClient, source, paths, 'cluster_state', 'cluster_state.')(source);
     });
   });
 };

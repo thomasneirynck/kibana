@@ -7,7 +7,7 @@ module.exports = (req) => {
   return (clusters) => {
     const bodies = [];
     clusters.forEach((cluster) => {
-      bodies.push({ index: config.get('marvel.index_prefix') + '*', type: 'shards' });
+      bodies.push({ index: config.get('monitoring.index_prefix') + '*', type: 'shards' });
       bodies.push({
         size: 0,
         query: {
@@ -18,7 +18,7 @@ module.exports = (req) => {
             meta: { state_uuid: cluster.state_uuid, cluster_uuid: cluster.cluster_uuid },
             terms: {
               field: 'shard.index',
-              size: config.get('marvel.max_bucket_size')
+              size: config.get('monitoring.max_bucket_size')
             },
             aggs: {
               states: {
@@ -41,7 +41,7 @@ module.exports = (req) => {
             meta: { state_uuid: cluster.state_uuid, cluster_uuid: cluster.cluster_uuid },
             terms: {
               field: 'shard.node',
-              size: config.get('marvel.max_bucket_size')
+              size: config.get('monitoring.max_bucket_size')
             },
             aggs: {
               index_count: {

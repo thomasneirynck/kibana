@@ -1,11 +1,11 @@
 var Promise = require('bluebird');
-var marvelIndexPattern = require('./marvel_index_pattern.json');
+var monitoringIndexPattern = require('./monitoring_index_pattern.json');
 module.exports = function (server) {
   var client = server.plugins.elasticsearch.client;
   var config = server.config();
   var index = config.get('kibana.index');
-  var marvelIndexPrefix = config.get('marvel.index_prefix');
-  var id =  marvelIndexPrefix + '*';
+  var monitoringIndexPrefix = config.get('monitoring.index_prefix');
+  var id =  monitoringIndexPrefix + '*';
   var type = 'index-pattern';
   return client.get({
     index: index,
@@ -15,12 +15,12 @@ module.exports = function (server) {
   })
   .catch(function (resp) {
     if (resp.status !== 404) return Promise.reject(resp);
-    // Create an index pattern for Marvel indices.
+    // Create an index pattern for Monitoring indices.
     return client.index({
       index: index,
       type: type,
       id: id,
-      body: marvelIndexPattern
+      body: monitoringIndexPattern
     });
   });
 };

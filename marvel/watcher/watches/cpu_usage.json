@@ -8,7 +8,7 @@
     "search": {
       "request": {
         "indices": [
-          ".marvel-*"
+          ".monitoring-*"
         ],
         "search_type": "count",
         "body": {

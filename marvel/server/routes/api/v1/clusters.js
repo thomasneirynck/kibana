@@ -23,7 +23,7 @@ module.exports = (server) => {
 
   server.route({
     method: 'GET',
-    path: '/api/marvel/v1/clusters',
+    path: '/api/monitoring/v1/clusters',
     handler: (req, reply) => {
       return getClusters(req)
       .then(getClustersStats(req))
@@ -37,7 +37,7 @@ module.exports = (server) => {
 
   server.route({
     method: 'POST',
-    path: '/api/marvel/v1/clusters/{clusterUuid}',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}',
     config: {
       validate: {
         params: Joi.object({
@@ -75,7 +75,7 @@ module.exports = (server) => {
 
   server.route({
     method: 'GET',
-    path: '/api/marvel/v1/clusters/{clusterUuid}/info',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}/info',
     config: {
       validate: {
         params: Joi.object({
@@ -85,7 +85,7 @@ module.exports = (server) => {
     },
     handler: (req, reply) => {
       const params = {
-        index: config.get('marvel.index'),
+        index: config.get('monitoring.index'),
         type: 'cluster_info',
         id: req.params.clusterUuid
       };

@@ -4,7 +4,7 @@ var expect = require('expect.js');
 var moment = require('moment');
 var executeWatcher = lib('execute_watcher');
 var options = {
-  indexPattern: '[.marvel-]YYYY.MM.DD',
+  indexPattern: '[.monitoring-]YYYY.MM.DD',
   type: 'cluster_stats',
   watcher: 'cluster_status'
 };
@@ -13,7 +13,7 @@ var client = lib('client');
 lib('setup_es');
 lib('setup_smtp_server');
 
-describe('Marvel Watchers', function () {
+describe('Monitoring Watchers', function () {
   describe('Cluster Status', function () {
 
     describe('Red for 60 seconds', function () {
@@ -25,7 +25,7 @@ describe('Marvel Watchers', function () {
           return { 'timestamp': workingDate.subtract(5, 's').format(), status: 'red' };
         });
         var fixture = {
-          indexPattern: '[.marvel-]YYYY.MM.DD',
+          indexPattern: '[.monitoring-]YYYY.MM.DD',
           type: 'cluster_stats',
           dateField: 'timestamp',
           rawData: rawData

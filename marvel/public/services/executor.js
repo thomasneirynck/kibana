@@ -1,6 +1,6 @@
 const _ = require('lodash');
 
-const mod = require('ui/modules').get('marvel/executor', []);
+const mod = require('ui/modules').get('monitoring/executor', []);
 mod.service('$executor', ($rootScope, globalState, Promise, $timeout, timefilter) => {
 
   const queue = [];

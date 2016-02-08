@@ -17,7 +17,7 @@ module.exports = (server) => {
 
   server.route({
     method: 'POST',
-    path: '/api/marvel/v1/clusters/{clusterUuid}/indices',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}/indices',
     config: {
       validate: {
         params: Joi.object({
@@ -72,7 +72,7 @@ module.exports = (server) => {
 
   server.route({
     method: 'POST',
-    path: '/api/marvel/v1/clusters/{clusterUuid}/indices/{id}',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}/indices/{id}',
     config: {
       validate: {
         params: Joi.object({
@@ -109,7 +109,7 @@ module.exports = (server) => {
       .then(calculateClusterStatus)
       .then(function (body) {
         var shardStats = body.shardStats[id];
-        // check if we need a legacy workaround for Marvel 2.0 node data
+        // check if we need a legacy workaround for Monitoring 2.0 node data
         if (shardStats) {
           body.indexSummary.unassignedShards = shardStats.unassigned.primary + shardStats.unassigned.replica;
           body.indexSummary.totalShards = shardStats.primary + shardStats.replica + body.indexSummary.unassignedShards;

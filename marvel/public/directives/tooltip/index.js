@@ -16,7 +16,7 @@ define(function (require) {
 
       return make.div({
         className: 'tooltip-inner',
-        key: 'marvel-tooltip'
+        key: 'monitoring-tooltip'
       }, contentArr);
     }
   });

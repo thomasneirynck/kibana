@@ -12,7 +12,7 @@
     "search": {
       "request": {
         "indices": [
-          ".marvel-*"
+          ".monitoring-*"
         ],
         "types": "node_stats",
         "search_type": "count",
