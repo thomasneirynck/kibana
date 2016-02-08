@@ -14,7 +14,7 @@
   "version": "2.3.0-SNAPSHOT",
   "repository": {
     "type": "git",
-    "url": "http://github.com/elasticsearch/elasticsearch-monitoring.git"
+    "url": "http://github.com/elasticsearch/x-plugins.git"
   },
   "devDependencies": {
     "aws-sdk": "2.2.33",
