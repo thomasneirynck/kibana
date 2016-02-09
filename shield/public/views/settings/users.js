@@ -4,6 +4,7 @@ import template from 'plugins/shield/views/settings/users.html';
 import 'angular-resource';
 import 'plugins/shield/services/shield_user';
 import 'plugins/shield/services/default_roles';
+import 'plugins/shield/views/settings/users.less';
 
 routes.when('/settings/security/users/:username?', {
   template,
