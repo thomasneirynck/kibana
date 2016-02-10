@@ -49,8 +49,10 @@
   },
   "dependencies": {
     "angular-resource": "1.4.9",
+    "babel-runtime": "5.8.20",
     "boom": "2.10.1",
     "flot-charts": "0.8.3",
+    "glob": "6.0.4",
     "react": "0.13.3",
     "requirefrom": "0.2.0",
     "semver": "5.1.0"
