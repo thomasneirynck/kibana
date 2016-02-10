@@ -8,6 +8,7 @@ module.exports = (req, indices) => {
 
   const params = {
     index: indices,
+    meta: 'get_last_recovery',
     ignore: [404],
     type: 'index_recovery',
     body: {

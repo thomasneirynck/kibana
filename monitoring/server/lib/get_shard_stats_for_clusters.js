@@ -55,7 +55,11 @@ module.exports = (req) => {
       });
     });
     if (!bodies.length) return Promise.resolve();
-    return callWithRequest(req, 'msearch', { body: bodies })
+    const params = {
+      meta: 'get_shard_stats_for_clusters',
+      body: bodies
+    };
+    return callWithRequest(req, 'msearch', params)
     .then((res) => {
       res.responses.forEach((resp) => {
         const data = { totals: { primary: 0, replica: 0, unassigned: { replica: 0, primary: 0 } } };

@@ -14,6 +14,7 @@ module.exports = (req) => {
       };
       const params = {
         index: config.get('monitoring.index_prefix') + '*',
+        meta: 'get_clusters_stats',
         ignore: [404],
         type: 'cluster_stats',
         body: body

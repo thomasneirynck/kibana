@@ -7,6 +7,7 @@ module.exports = (req) => {
   const params = {
     index: config.get('monitoring.index'),
     type: 'cluster_info',
+    meta: 'get_clusters',
     ignore: [404],
     body: {
       size: config.get('monitoring.max_bucket_size')

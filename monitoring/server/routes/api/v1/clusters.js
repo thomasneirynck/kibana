@@ -86,6 +86,7 @@ module.exports = (server) => {
     handler: (req, reply) => {
       const params = {
         index: config.get('monitoring.index'),
+        meta: 'route-cluster_info',
         type: 'cluster_info',
         id: req.params.clusterUuid
       };

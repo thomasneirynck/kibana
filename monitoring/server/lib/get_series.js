@@ -19,6 +19,7 @@ module.exports = (req, indices, metricName, filters) => {
 
   const params = {
     index: indices,
+    meta: `get_series-${metricName}`,
     searchType: 'count',
     ignoreUnavailable: true,
     ignore: [404],

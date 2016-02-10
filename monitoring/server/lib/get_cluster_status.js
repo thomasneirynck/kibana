@@ -3,7 +3,6 @@ const createQuery = require('./create_query.js');
 const moment = require('moment');
 
 module.exports = (req, indices, lastState) => {
-  // Alias callWithRequest so we don't have to use this long ugly string
   const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
 
   // Get the params from the POST body for the request
@@ -14,6 +13,7 @@ module.exports = (req, indices, lastState) => {
   // Build up the Elasticsearch request
   const params = {
     index: indices,
+    meta: 'get_cluster_stats',
     ignore: [404],
     type: 'cluster_stats',
     body: {

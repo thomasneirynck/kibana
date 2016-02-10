@@ -9,6 +9,7 @@ module.exports = (req) => {
     return Promise.map(clusters || [], (cluster) => {
       const params = {
         index: config.get('monitoring.index_prefix') + '*',
+        meta: 'get_nodes_for_clusters',
         ignore: [404],
         type: 'cluster_state',
         body: {

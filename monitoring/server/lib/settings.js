@@ -44,6 +44,7 @@ module.exports = function settingsModelProvider(server) {
     var self = this;
     var params = {
       index: index,
+      meta: 'settings.save',
       type: 'settings',
       id: id,
       body: Model.explode(data)
@@ -56,6 +57,7 @@ module.exports = function settingsModelProvider(server) {
   Settings.fetchById = function (options) {
     var params = {
       index: index,
+      meta: 'settings.fetchById',
       type: 'settings',
       id: options.id
     };
@@ -77,6 +79,7 @@ module.exports = function settingsModelProvider(server) {
   Settings.bulkFetch = function (options) {
     var params = {
       index: config.get('monitoring.index'),
+      meta: 'settings.bulkFetch',
       type: 'settings',
       body: { ids: options.ids }
     };

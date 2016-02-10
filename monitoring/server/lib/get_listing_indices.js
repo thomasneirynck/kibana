@@ -31,6 +31,7 @@ module.exports = (req, indices) => {
 
   const params = {
     index: indices,
+    meta: 'get_listing_indices',
     type: 'index_stats',
     searchType: 'count',
     ignoreUnavailable: true,

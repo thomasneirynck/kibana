@@ -12,6 +12,7 @@ module.exports = (server) => {
       const body = req.payload;
       const options = {
         index: '.monitoring',
+        meta: 'route-phone_home',
         type: 'phone_home',
         body: body
       };

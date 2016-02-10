@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const createQuery = require('./create_query.js');
 module.exports = (req, indices) => {
-  // Alias callWithRequest so we don't have to use this long ugly string
   const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
 
   // Get the params from the POST body for the request
@@ -13,6 +12,7 @@ module.exports = (req, indices) => {
   // Build up the Elasticsearch request
   const params = {
     index: indices,
+    meta: 'get_node_summary',
     type: 'node_stats',
     ignore: [404],
     body: {

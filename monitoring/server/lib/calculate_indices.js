@@ -9,6 +9,7 @@ module.exports = function (req, start, end) {
   var options = {
     index: pattern,
     level: 'indices',
+    meta: 'calculate_indices',
     ignoreUnavailable: true,
     body: {
       fields: ['timestamp'],

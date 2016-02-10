@@ -11,6 +11,7 @@ module.exports = (req, indices, filters, lastState) => {
   const clusterUuid = req.params.clusterUuid;
   const params = {
     index: config.get('monitoring.index_prefix') + '*',
+    meta: 'get_shard_allocation',
     type: 'shards',
     body: {
       size: config.get('monitoring.max_bucket_size'),

@@ -11,6 +11,7 @@ module.exports = (req, indices) => {
 
   const params = {
     index: indices,
+    meta: 'get_last_state',
     type: 'cluster_state',
     ignore: [404],
     body: {

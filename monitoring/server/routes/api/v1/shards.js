@@ -14,6 +14,7 @@ module.exports = (server) => {
       const clusterUuid = req.params.cluster_uuid;
       const options = {
         index: config.get('monitoring.index_prefix') + '*',
+        meta: 'route-shards',
         type: 'shards',
         body: {
           size: config.get('monitoring.max_bucket_size'),

@@ -14,6 +14,7 @@ module.exports = (req, indices, lastState) => {
   const aggSize = 10;
   const params = {
     index: indices,
+    meta: 'get_shard_stats',
     type: 'shards',
     ignore: [404],
     searchType: 'count',
