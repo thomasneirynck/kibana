@@ -1,10 +1,12 @@
-require('ui/autoload/styles');
-require('plugins/shield/views/login/login.less');
-const kibanaLogoUrl = require('plugins/shield/images/kibana.svg');
+import 'ui/autoload/styles';
+import 'plugins/shield/views/login/login.less';
+import kibanaLogoUrl from 'plugins/shield/images/kibana.svg';
+import chrome from 'ui/chrome';
+import template from 'plugins/shield/views/login/login.html';
 
-require('ui/chrome')
+chrome
 .setVisible(false)
-.setRootTemplate(require('plugins/shield/views/login/login.html'))
+.setRootTemplate(template)
 .setRootController('login', ($http) => {
   return {
     kibanaLogoUrl,

@@ -1,7 +1,7 @@
-const {once} = require('lodash');
-const elasticsearchShield = require('elasticsearch-shield');
+import {once} from 'lodash';
+import elasticsearchShield from 'elasticsearch-shield';
 
-module.exports = once((server) => {
+export default once((server) => {
   const createClient = server.plugins.elasticsearch.createClient;
   const client = createClient({
     auth: false,

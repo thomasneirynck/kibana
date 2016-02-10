@@ -1,7 +1,8 @@
-module.exports = (server, uiExports) => {
+export default (server, uiExports) => {
   const config = server.config();
   const cookieName = config.get('shield.cookieName');
   const login = uiExports.apps.byId.login;
+
   server.route({
     method: 'GET',
     path: '/login',

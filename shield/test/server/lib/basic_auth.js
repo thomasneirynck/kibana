@@ -1,10 +1,7 @@
-const expect = require('chai').expect;
-const sinon = require('sinon');
-const proxyquire = require('proxyquire');
-const Promise = require('bluebird');
-const basicAuth = proxyquire('../../../server/lib/basic_auth', {
-  './is_valid_user': (server) => Promise.resolve()
-});
+import {expect} from 'chai';
+import sinon from 'sinon';
+import Promise from 'bluebird';
+import basicAuth from '../../../server/lib/basic_auth';
 
 const authChecks = [
   ['user', 'notsecure', 'dXNlcjpub3RzZWN1cmU='],
@@ -14,17 +11,20 @@ const authChecks = [
 describe('Basic auth', function () {
   describe('register', function () {
     let mockServer;
+    let mockIsValidUser;
 
     before(function () {
       mockServer = {
         ext: sinon.stub()
       };
+      mockIsValidUser = sinon.stub().returns(Promise.resolve());
     });
 
     it('should register pre auth handler', function () {
-      basicAuth.register(mockServer, 'cookieName');
+      basicAuth.register(mockServer, 'cookieName', mockIsValidUser);
 
-      expect(mockServer.ext.callCount).to.equal(1);
+      expect(mockIsValidUser.calledOnce);
+      expect(mockServer.ext.calledOnce);
       expect(mockServer.ext.firstCall.args[0]).to.equal('onPreAuth');
       expect(mockServer.ext.firstCall.args[1]).to.be.a('function');
     });

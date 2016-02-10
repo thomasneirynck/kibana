@@ -1,9 +1,9 @@
-const Boom = require('boom');
-const Joi = require('joi');
-const root = require('requirefrom')('');
+import Boom from 'boom';
+import Joi from 'joi';
+import getIsValidUser from '../../../lib/get_is_valid_user';
 
-module.exports = (server) => {
-  const isValidUser = root('server/lib/is_valid_user')(server);
+export default (server) => {
+  const isValidUser = getIsValidUser(server);
   const success = {statusCode: 200, payload: 'success'};
 
   server.route({

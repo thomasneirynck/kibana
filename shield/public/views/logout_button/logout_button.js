@@ -1,7 +1,9 @@
-require('ui/registry/chrome_nav_controls').register(function () {
-  return {
-    name: 'logout button',
-    order: 1000,
-    template: require('plugins/shield/views/logout_button/logout_button.html')
-  };
-});
+import {constant} from 'lodash';
+import registry from 'ui/registry/chrome_nav_controls';
+import template from 'plugins/shield/views/logout_button/logout_button.html';
+
+registry.register(constant({
+  name: 'logout button',
+  order: 1000,
+  template
+}));
