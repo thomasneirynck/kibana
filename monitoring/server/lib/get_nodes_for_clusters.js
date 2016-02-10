@@ -15,15 +15,7 @@ module.exports = (req) => {
         body: {
           size: 1,
           sort: [{ timestamp: { order: 'desc' } }],
-          query: {
-            filtered: {
-              filter: {
-                term: {
-                  cluster_uuid: cluster.cluster_uuid
-                }
-              }
-            }
-          }
+          query: { term: { cluster_uuid: cluster.cluster_uuid } }
         }
       };
       return callWithRequest(req, 'search', params)

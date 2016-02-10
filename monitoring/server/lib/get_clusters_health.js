@@ -19,18 +19,8 @@ module.exports = function (req) {
       });
       bodies.push({
         size: 1,
-        sort: {
-          'timestamp': { order: 'desc' }
-        },
-        query: {
-          filtered: {
-            filter: {
-              term: {
-                'cluster_uuid': cluster.cluster_uuid
-              }
-            }
-          }
-        }
+        sort: { 'timestamp': { order: 'desc' } },
+        query: { term: { 'cluster_uuid': cluster.cluster_uuid } }
       });
     });
     if (!bodies.length) return Promise.resolve();

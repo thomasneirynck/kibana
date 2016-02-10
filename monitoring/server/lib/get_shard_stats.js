@@ -17,7 +17,7 @@ module.exports = (req, indices, lastState) => {
     meta: 'get_shard_stats',
     type: 'shards',
     ignore: [404],
-    searchType: 'count',
+    size: 0,
     body: {
       sort: { timestamp: { order: 'desc' } },
       query: createQuery({

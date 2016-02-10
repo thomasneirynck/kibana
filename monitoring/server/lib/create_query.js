@@ -1,6 +1,6 @@
 var _ = require('lodash');
 const moment = require('moment');
-module.exports = (options) => {
+module.exports = function createQuery(options) {
   options = _.defaults(options, { filters: [] });
   var clusterFilter = { term: { cluster_uuid: options.clusterUuid } };
   var timeRangeFilter = {
@@ -21,12 +21,8 @@ module.exports = (options) => {
     filters.push(timeRangeFilter);
   }
   return {
-    filtered: {
-      filter: {
-        bool: {
-          must: filters
-        }
-      }
+    bool: {
+      must: filters
     }
   };
 };

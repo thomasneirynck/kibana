@@ -47,7 +47,7 @@ module.exports = (req, indices) => {
     index: indices,
     meta: 'get_listing_nodes',
     type: 'node_stats',
-    searchType: 'count',
+    size: 0,
     ignoreUnavailable: true,
     ignore: [404],
     body: {

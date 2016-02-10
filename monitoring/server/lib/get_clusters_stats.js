@@ -10,7 +10,7 @@ module.exports = (req) => {
     return Promise.map(clusters, (cluster) => {
       const body = { size: 1, sort: [ { timestamp: 'desc' } ] };
       body.query = {
-        filtered: { filter: { term: { cluster_uuid: cluster.cluster_uuid } } }
+        term: { cluster_uuid: cluster.cluster_uuid }
       };
       const params = {
         index: config.get('monitoring.index_prefix') + '*',
