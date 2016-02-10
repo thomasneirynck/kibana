@@ -62,6 +62,7 @@ module.exports = (kibana) => new kibana.Plugin({
 
     root('server/routes/api/v1/authenticate')(server);
     root('server/routes/api/v1/users')(server);
+    root('server/routes/api/v1/roles')(server);
     root('server/routes/views/login')(server, this);
     root('server/routes/views/logout')(server, this);
   }
