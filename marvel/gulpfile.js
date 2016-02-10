@@ -1,6 +1,4 @@
-require('babel-register')({
-  presets: ['es2015']
-});
+require('babel-register');
 
 var gulp = require('gulp');
 var g = require('gulp-load-plugins')();
