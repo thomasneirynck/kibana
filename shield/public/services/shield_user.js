@@ -1,3 +1,4 @@
+import 'angular-resource';
 import uiModules from 'ui/modules';
 
 const module = uiModules.get('shield/users', ['ngResource']);

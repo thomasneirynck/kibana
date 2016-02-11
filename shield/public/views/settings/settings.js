@@ -2,7 +2,6 @@ import {constant} from 'lodash';
 import registry from 'ui/registry/settings_sections';
 import routes from 'ui/routes';
 import template from 'plugins/shield/views/settings/settings.html';
-import 'angular-resource';
 import 'plugins/shield/services/shield_user';
 import 'plugins/shield/filters/difference';
 import 'plugins/shield/views/settings/users';
