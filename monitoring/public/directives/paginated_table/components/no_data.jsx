@@ -6,7 +6,7 @@ class Loading extends React.Component {
       <tbody>
         <tr>
           <td colSpan={ colSpan } className="loading">
-            <span>There are no records that match your query.</span>
+            <span>There are no records that match your query. Try changing the time range selection.</span>
           </td>
         </tr>
       </tbody>

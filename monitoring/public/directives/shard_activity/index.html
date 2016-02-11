@@ -64,7 +64,15 @@
       </td>
     </tr>
     <tr ng-if="!visibleData.length">
-      <td colspan="8" class="no-results">There are no shard activity records for this cluster.</td>
+      <td colspan="8" class="no-results">
+        <span ng-if="onlyActive">
+          There are currently no active shard records for this cluster.
+          Try viewing <a ng-click="toggleActive()">shard history</a>.
+        </span>
+        <span ng-if="!onlyActive">
+          There are no historical shard activity records for this cluster for the selected time range.
+        </span>
+      </td>
     </tr>
   </tbody>
 </table>
