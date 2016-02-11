@@ -1,48 +1,50 @@
-import {union, difference} from 'lodash';
 import routes from 'ui/routes';
 import template from 'plugins/shield/views/settings/users.html';
-import 'angular-resource';
 import 'plugins/shield/services/shield_user';
-import 'plugins/shield/services/default_roles';
-import 'plugins/shield/views/settings/users.less';
+import 'plugins/shield/filters/difference';
 
-routes.when('/settings/security/users/:username?', {
+routes.when('/settings/security/users', {
   template,
   resolve: {
-    user($route, ShieldUser) {
-      const username = $route.current.params.username;
-      if (username != null) return ShieldUser.get({username});
-      return new ShieldUser({roles: []});
+    users(ShieldUser) {
+      return ShieldUser.query();
     }
   },
-  controller($scope, $route, $q, ShieldUser, $location, defaultRoles) {
-    $scope.isNewUser = $route.current.params.username == null;
-    $scope.user = $route.current.locals.user;
-    $scope.availableRoles = defaultRoles.slice();
-    $scope.selectedAvailableRoles = [];
-    $scope.selectedAssigneldRoles = [];
+  controller($scope, $route, $q, ShieldUser) {
+    $scope.users = $route.current.locals.users;
+    $scope.selectedUsers = [];
 
-    $scope.deleteUser = (user) => {
-      if (!confirm('Are you sure you want to delete this user? This action is irreversible!')) return;
-      user.$delete().then($scope.goToUserList);
+    $scope.deleteUsers = () => {
+      if (!confirm('Are you sure you want to delete the selected users? This action is irreversible!')) return;
+      $q.all($scope.selectedUsers.map((user) => user.$delete()))
+      .then(() => {
+        $scope.selectedUsers.map((user) => {
+          const i = $scope.users.indexOf(user);
+          $scope.users.splice(i, 1);
+        });
+        $scope.selectedUsers.length = 0;
+      });
     };
 
-    $scope.saveUser = (user) => {
-      user.$save().then($scope.goToUserList);
+    $scope.toggleAll = () => {
+      if ($scope.allSelected()) {
+        $scope.selectedUsers.length = 0;
+      } else {
+        $scope.selectedUsers = $scope.users.slice();
+      }
     };
 
-    $scope.goToUserList = () => {
-      $location.path('/settings/security');
+    $scope.allSelected = () => $scope.users.length && $scope.users.length === $scope.selectedUsers.length;
+
+    $scope.toggleSelected = (user) => {
+      const i = $scope.selectedUsers.indexOf(user);
+      if (i >= 0) {
+        $scope.selectedUsers.splice(i, 1);
+      } else {
+        $scope.selectedUsers.push(user);
+      }
     };
 
-    $scope.assignRoles = (user, roles) => {
-      user.roles = union(user.roles, roles);
-      roles.length = 0;
-    };
-
-    $scope.removeRoles = (user, roles) => {
-      user.roles = difference(user.roles, roles);
-      roles.length = 0;
-    };
+    $scope.isSelected = (user) => $scope.selectedUsers.indexOf(user) >= 0;
   }
 });
