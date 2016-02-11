@@ -10,7 +10,9 @@ module.exports = (req) => {
       bodies.push({ index: config.get('monitoring.index_prefix') + '*', type: 'shards' });
       bodies.push({
         size: 0,
-        query: { term: { 'state_uuid': cluster.state_uuid } },
+        query: { bool: { filter: {
+          term: { 'state_uuid': cluster.state_uuid }
+        } } },
         aggs: {
           indices: {
             meta: { state_uuid: cluster.state_uuid, cluster_uuid: cluster.cluster_uuid },

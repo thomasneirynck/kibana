@@ -20,7 +20,9 @@ module.exports = function (req) {
       bodies.push({
         size: 1,
         sort: { 'timestamp': { order: 'desc' } },
-        query: { term: { 'cluster_uuid': cluster.cluster_uuid } }
+        query: { bool: { filter: {
+          term: { 'cluster_uuid': cluster.cluster_uuid }
+        } } }
       });
     });
     if (!bodies.length) return Promise.resolve();

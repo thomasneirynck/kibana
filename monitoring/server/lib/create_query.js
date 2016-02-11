@@ -22,7 +22,11 @@ module.exports = function createQuery(options) {
   }
   return {
     bool: {
-      must: filters
+      filter: {
+        bool: {
+          must: filters
+        }
+      }
     }
   };
 };

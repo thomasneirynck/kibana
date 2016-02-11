@@ -8,9 +8,12 @@ module.exports = (req) => {
   return (clusters) => {
     if (!clusters) return [];
     return Promise.map(clusters, (cluster) => {
-      const body = { size: 1, sort: [ { timestamp: 'desc' } ] };
-      body.query = {
-        term: { cluster_uuid: cluster.cluster_uuid }
+      const body = {
+        size: 1,
+        sort: [ { timestamp: 'desc' } ],
+        query: { bool: { filter: {
+          term: { cluster_uuid: cluster.cluster_uuid }
+        } } }
       };
       const params = {
         index: config.get('monitoring.index_prefix') + '*',
