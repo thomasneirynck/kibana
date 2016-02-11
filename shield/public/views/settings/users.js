@@ -14,7 +14,7 @@ routes.when('/settings/security/users', {
     $scope.selectedUsers = [];
 
     $scope.deleteUsers = () => {
-      if (!confirm('Are you sure you want to delete the selected users? This action is irreversible!')) return;
+      if (!confirm('Are you sure you want to delete the selected user(s)? This action is irreversible!')) return;
       $q.all($scope.selectedUsers.map((user) => user.$delete()))
       .then(() => {
         $scope.selectedUsers.map((user) => {
