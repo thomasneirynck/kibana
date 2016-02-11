@@ -1,7 +1,6 @@
 import routes from 'ui/routes';
 import template from 'plugins/shield/views/settings/users.html';
 import 'plugins/shield/services/shield_user';
-import 'plugins/shield/filters/difference';
 
 routes.when('/settings/security/users', {
   template,
@@ -10,7 +9,7 @@ routes.when('/settings/security/users', {
       return ShieldUser.query();
     }
   },
-  controller($scope, $route, $q, ShieldUser) {
+  controller($scope, $route, $q) {
     $scope.users = $route.current.locals.users;
     $scope.selectedUsers = [];
 

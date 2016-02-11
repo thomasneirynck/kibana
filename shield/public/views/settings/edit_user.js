@@ -3,7 +3,7 @@ import routes from 'ui/routes';
 import template from 'plugins/shield/views/settings/edit_user.html';
 import 'angular-resource';
 import 'plugins/shield/services/shield_user';
-import 'plugins/shield/services/default_roles';
+import 'plugins/shield/services/shield_role';
 import 'plugins/shield/views/settings/edit_user.less';
 
 routes.when('/settings/security/users/edit/:username?', {
@@ -13,12 +13,15 @@ routes.when('/settings/security/users/edit/:username?', {
       const username = $route.current.params.username;
       if (username != null) return ShieldUser.get({username});
       return new ShieldUser({roles: []});
+    },
+    roles(ShieldRole) {
+      return ShieldRole.query();
     }
   },
-  controller($scope, $route, $q, ShieldUser, $location, defaultRoles) {
+  controller($scope, $route, $location) {
     $scope.isNewUser = $route.current.params.username == null;
     $scope.user = $route.current.locals.user;
-    $scope.availableRoles = defaultRoles.slice();
+    $scope.availableRoles = $route.current.locals.roles;
     $scope.selectedAvailableRoles = [];
     $scope.selectedAssigneldRoles = [];
 

@@ -60,7 +60,7 @@
               <input aria-label="Filter" ng-model="availableRolesQuery" class="form-control" type="text" placeholder="Filter..." />
             </form>
             <select multiple="true" class="form-control" ng-model="selectedAvailableRoles">
-              <option ng-repeat="role in availableRoles | difference:user.roles | filter:availableRolesQuery">{{role}}</option>
+              <option ng-repeat="role in availableRoles | filter:{name:availableRolesQuery}" ng-show="user.roles.indexOf(role.name) < 0">{{role.name}}</option>
             </select>
           </div>
           <div class="col-md-2 role-actions">
