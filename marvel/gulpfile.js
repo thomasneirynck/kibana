@@ -1,4 +1,4 @@
-require('babel-register');
+require('babel/register');
 
 var gulp = require('gulp');
 var g = require('gulp-load-plugins')();
@@ -19,8 +19,7 @@ var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
 var buildTarget = path.resolve(buildDir, pkg.name);
 var coverageDir = path.resolve(__dirname, 'coverage');
-var kibanaDevLocation = require('./server/lib/kibana_home_dir').default.dev;
-var kibanaPluginDir = path.resolve(kibanaDevLocation, 'installedPlugins/marvel');
+var kibanaPluginDir = path.resolve(require('./server/lib/kibana_home_dir').dev, 'installedPlugins/marvel');
 
 // paths to sync over to the kibana plugin dir
 var include = [
