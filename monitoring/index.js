@@ -13,6 +13,7 @@ module.exports = function (kibana) {
       app: {
         title: 'Monitoring',
         description: 'Monitoring for Elasticsearch',
+        icon: 'plugins/monitoring/monitoring.svg',
         main: 'plugins/monitoring/monitoring',
         injectVars: function (server, options) {
           var config = server.config();
