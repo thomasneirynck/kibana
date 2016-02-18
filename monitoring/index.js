@@ -45,7 +45,7 @@ module.exports = function (kibana) {
         stats_report_url: Joi.when('$dev', {
           is: true,
           then: Joi.string().default('../api/monitoring/v1/phone-home'),
-          otherwise: Joi.string().default('https://monitoring-stats.elasticsearch.com/appdata/monitoringOpts')
+          otherwise: Joi.string().default('https://marvel-stats.elasticsearch.com/appdata/monitoringOpts')
         }),
         agent: Joi.object({
           interval: Joi.string().regex(/[\d\.]+[yMwdhms]/).default('10s')
