@@ -7,7 +7,7 @@ const formatLargeAbbreviated = '0,0.[0]a';
 module.exports = {
   'cluster_index_request_rate': {
     active: true,
-    field: 'indices_stats._all.total.indexing.index_total',
+    field: 'indices_stats._all.primaries.indexing.index_total',
     label: 'Indexing Rate',
     description: 'The per index rate at which documents are being indexed.',
     format: formatLargeFloat,
@@ -31,17 +31,17 @@ module.exports = {
   },
   'cluster_index_latency': {
     active: true,
-    field: 'indices_stats._all.total.indexing.index_total',
+    field: 'indices_stats._all.primaries.indexing.index_total',
     label: 'Indexing Latency',
     description: 'The average indexing latency across the entire cluster.',
     format: formatLargeFloat,
     metricAgg: 'sum',
     aggs: {
       index_time_in_millis: {
-        max: { field: 'indices_stats._all.total.indexing.index_time_in_millis' }
+        max: { field: 'indices_stats._all.primaries.indexing.index_time_in_millis' }
       },
       index_total: {
-        max: { field: 'indices_stats._all.total.indexing.index_total' }
+        max: { field: 'indices_stats._all.primaries.indexing.index_total' }
       },
       index_time_in_millis_deriv: {
         derivative: { buckets_path: 'index_time_in_millis', gap_policy: 'skip' }
@@ -183,7 +183,7 @@ module.exports = {
   },
   'index_request_rate': {
     active: true,
-    field: 'index_stats.total.indexing.index_total',
+    field: 'index_stats.primaries.indexing.index_total',
     label: 'Indexing Rate',
     description: 'The per index rate at which documents are being indexed.',
     format: formatLargeFloat,
@@ -207,17 +207,17 @@ module.exports = {
   },
   'index_latency': {
     active: true,
-    field: 'index_stats.total.indexing.index_total',
+    field: 'index_stats.primaries.indexing.index_total',
     label: 'Indexing Latency',
     description: 'The average indexing latency across the entire cluster.',
     format: formatLargeFloat,
     metricAgg: 'sum',
     aggs: {
       index_time_in_millis: {
-        max: { field: 'index_stats.total.indexing.index_time_in_millis' }
+        max: { field: 'index_stats.primaries.indexing.index_time_in_millis' }
       },
       index_total: {
-        max: { field: 'index_stats.total.indexing.index_total' }
+        max: { field: 'index_stats.primaries.indexing.index_total' }
       },
       index_time_in_millis_deriv: {
         derivative: { buckets_path: 'index_time_in_millis', gap_policy: 'skip' }
