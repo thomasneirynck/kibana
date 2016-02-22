@@ -43,11 +43,9 @@ require('ui/routes')
   .enable();
 
 require('ui/chrome')
-  .setNavBackground('#222222')
   .setTabDefaults({
     resetWhenActive: true,
-    trackLastPath: true,
-    activeIndicatorColor: '#EFF0F1'
+    trackLastPath: true
   })
   .setRootController('monitoring', function ($scope, courier) {
     $scope.$on('application.load', function () {
