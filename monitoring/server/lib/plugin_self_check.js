@@ -4,6 +4,10 @@ module.exports = function pluginSelfCheck(plugin, server) {
   plugin.status.yellow('Waiting for Elasticsearch');
   var client = server.plugins.elasticsearch.client;
 
+  server.plugins.elasticsearch.status.on('red', () => {
+    plugin.status.red(`Monitoring lost connection to the Elasticsearch monitoring cluster`);
+  });
+
   server.plugins.elasticsearch.status.on('green', () => {
     // check if kibana is minimum supported version
     const {
