@@ -4,7 +4,6 @@ define(function (require) {
   var tabs = require('./tabs');
   return function routeInitProvider(Notifier, monitoringSettings, Private, monitoringClusters, globalState, Promise, kbnUrl) {
 
-    var initMonitoringIndex = Private(require('plugins/monitoring/lib/monitoring_index_init'));
     var phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
     var ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
     return function (options) {
@@ -30,7 +29,7 @@ define(function (require) {
           if (globalState.cluster && !_.find(clusters, { cluster_uuid: globalState.cluster })) {
             globalState.cluster = null;
           }
-          // if there are no clusers choosen then set the first one
+          // if there are no clusters chosen then set the first one
           if (!globalState.cluster) {
             cluster = _.first(clusters);
             if (cluster && cluster.cluster_uuid) {
@@ -38,7 +37,7 @@ define(function (require) {
               globalState.save();
             }
           }
-          // if we don't have any clusters then redirect to setup
+          // if we don't have any clusters then redirect to home
           if (!globalState.cluster) {
             notify.error('We can\'t seem to find any clusters in your Monitoring data. Please check your Monitoring agents');
             return kbnUrl.redirect('/home');
@@ -52,13 +51,6 @@ define(function (require) {
               monitoring.settings = settings;
               return settings;
             });
-        })
-        // Get the Monitoring Index Pattern
-        .then(function (settings) {
-          return initMonitoringIndex().then(function (indexPattern) {
-            monitoring.indexPattern = indexPattern;
-            return indexPattern;
-          });
         })
         // Finally filter the cluster from the nav if it's light then return the Monitoring object.
         .then(function () {
