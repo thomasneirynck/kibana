@@ -38,8 +38,7 @@ module.exports = function (kibana) {
           }).default(),
           timeout: Joi.number().integer().default(6000),
           loadDelay: Joi.number().integer().default(3000)
-        }).default(),
-        workingDir: Joi.string().default('.tmp')
+        }).default()
       }).default();
     },
 
