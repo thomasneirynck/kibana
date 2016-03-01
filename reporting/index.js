@@ -1,6 +1,5 @@
 const publicRoutes = require('./server/routes/public');
 const fileRoutes = require('./server/routes/file');
-const createClient = require('./server/lib/create_client');
 const phantom = require('./server/lib/phantom');
 const generatePDFStream = require('./server/lib/generate_pdf_stream');
 
