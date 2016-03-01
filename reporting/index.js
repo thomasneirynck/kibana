@@ -68,7 +68,9 @@ module.exports = function (kibana) {
 
       // prepare phantom binary
       return phantom.install()
-      .then(function () {
+      .then(function (binaryPath) {
+        server.log(['reporting', 'debug'], `Phantom installed at ${binaryPath}`);
+
         // Reporting routes
         publicRoutes(server);
         fileRoutes(server);

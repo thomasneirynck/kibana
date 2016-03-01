@@ -3,7 +3,6 @@ const rison = require('rison-node');
 const _ = require('lodash');
 const Joi = require('joi');
 const uriEncode = require('./uri_encode');
-const debug = require('./logger');
 
 module.exports = function (client, config) {
   const schema = Joi.object().keys({
@@ -81,8 +80,6 @@ module.exports = function (client, config) {
           if (!app) throw new Error('Unexpected app type: ' + type);
 
           const cleanQuery = this.getState(query);
-          debug('query', query);
-          debug('cleanQuery', cleanQuery);
           const urlParams = _.assign({
             protocol: opts.protocol,
             hostname: opts.hostname,

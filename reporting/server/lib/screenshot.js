@@ -3,16 +3,17 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const Horseman = require('node-horseman');
 const phantomPath = require('./phantom').getPath();
-const debug = require('./logger');
 const temp = require('temp').track();
 
 class Screenshot {
-  constructor(phantomSettings, screenshotSettings) {
+  constructor(phantomSettings, screenshotSettings, logger) {
     this.phantomSettings = phantomSettings;
     this.screenshotSettings = screenshotSettings;
+    this.logger = logger || _.noop;
   }
 
   capture(url, opts) {
+    this.logger(['reporting', 'debug'], `fetching screenshot of ${url}`);
     opts = _.assign({ basePath: this.screenshotSettings.basePath }, opts);
     const ph = fetch(url, this.phantomSettings, opts);
 
@@ -24,10 +25,11 @@ class Screenshot {
         : getShot(ph, filepath);
 
       return operation
+      .then((path) => this.logger(['reporting', 'debug'], `Screenshot saved to ${path}`))
       .then(() => filepath);
     })
-    .catch(function (err) {
-      debug('screenshot failed', err.message);
+    .catch((err) => {
+      this.logger(['reporting', 'debug'], `Screenshot failed ${err.message}`);
       throw err;
     })
     .close();
@@ -51,22 +53,19 @@ function fetch(url, phantomSettings, opts) {
     zoom: phantomSettings.zoom
   };
 
-  debug('fetching screenshot of %s', url);
   const ph = createPhantom(phantomOpts, settings);
 
   return ph.then(function () {
     if (opts.headers) {
-      debug('Setting headers', opts.headers);
       return ph.headers(opts.headers);
     }
   })
   .open(url)
   .then(function (status) {
-    debug('url open status:', status, url);
     if (status !== 'success') throw new Error('URL open failed. Is the server running?');
   })
   // .on('consoleMessage', function (msg) {
-  //   debug('PHANTOM:', msg);
+  //   console.log('PHANTOM:', msg);
   // })
   .waitForSelector('.application visualize')
   .evaluate(function (basePath) {
@@ -98,10 +97,7 @@ function getTargetFile() {
 }
 
 function getShot(ph, filepath) {
-  return ph.screenshot(filepath)
-  .then(function () {
-    debug('screenshot saved to %s', filepath);
-  });
+  return ph.screenshot(filepath);
 }
 
 // cropped screenshot using DOM element or getBoundingClientRect
@@ -119,8 +115,5 @@ function getShotCropped(ph, viewport, bounding, filepath) {
     height: viewport.height - contentOffset.top - contentOffset.bottom,
   });
 
-  return ph.crop(boundingArea, filepath)
-  .then(function () {
-    debug('cropped screenshot saved to %s', filepath);
-  });
+  return ph.crop(boundingArea, filepath);
 }

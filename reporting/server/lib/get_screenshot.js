@@ -13,17 +13,19 @@ const boundingBoxes = {
   },
 };
 
+const screenshot = require('./screenshot');
+
 module.exports = (server) => {
   const config = server.config();
   // init the screenshot module
   const phantomSettings = config.get('reporting.phantom');
   const screenshotSettings = { basePath: config.get('server.basePath') };
-  const screenshot = require('./screenshot')(phantomSettings, screenshotSettings);
+  const ss = screenshot(phantomSettings, screenshotSettings, server.log);
 
   return function getScreenshot(savedObj, query, headers) {
     const objUrl = savedObj.getUrl(query);
 
-    return screenshot.capture(objUrl, {
+    return ss.capture(objUrl, {
       headers,
       bounding: boundingBoxes[savedObj.type],
     });

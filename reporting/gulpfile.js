@@ -16,7 +16,6 @@ var eslint = require('gulp-eslint');
 var mocha = require('gulp-mocha');
 var tar = require('gulp-tar');
 var gzip = require('gulp-gzip');
-var debug = require('debug');
 var request = require('request');
 var md5 = require('md5');
 
@@ -55,7 +54,6 @@ function syncPluginTo(dest) {
     mkdirp(dest, cb);
   })
   .then(function () {
-    var logger = debug('file-sync');
     return Promise.all(include.map(function (name) {
       var source = path.resolve(__dirname, name);
 
@@ -68,7 +66,7 @@ function syncPluginTo(dest) {
 
         // debugging output
         rsync.output(function (data) {
-          logger(data.toString('utf8'));
+          // console.log(data.toString('utf-8').trim());
         });
 
         rsync.execute(cb);
@@ -78,7 +76,6 @@ function syncPluginTo(dest) {
 }
 
 function fetchBinaries(dest) {
-  var logger = debug('downloads');
   var phantomDest = path.resolve(dest, '.phantom');
   var phantomBinaries = [{
     description: 'Windows',
@@ -98,7 +95,6 @@ function fetchBinaries(dest) {
     checksum: '814a438ca515c6f7b1b2259d0d5bc804',
   }];
 
-  logger('Downloading Phantom binaries...');
 
   var downloads = phantomBinaries.map(function (binary) {
     var params = url.parse(binary.url);
@@ -107,7 +103,6 @@ function fetchBinaries(dest) {
 
     // verify the download checksum
     var verifyChecksum = function (filepath, cb) {
-      logger('Verify checksum: ' + filename);
       fs.readFile(filepath, function (err, buf) {
         if (err) return cb(err);
         if (binary.checksum !== md5(buf)) return cb(binary.description + ' checksum failed');
@@ -119,12 +114,10 @@ function fetchBinaries(dest) {
       verifyChecksum(filepath, cb);
     })
     .catch(function (err) {
-      logger('Checksum failed, downloading: ' + filename);
 
       return Promise.fromCallback(function (cb) {
         var ws = fs.createWriteStream(filepath)
         .on('finish', function () {
-          logger(binary.description + ' downloaded');
           verifyChecksum(filepath, cb);
         });
 

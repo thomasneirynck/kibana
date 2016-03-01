@@ -5,7 +5,6 @@ var path = require('path');
 var fs = require('fs');
 var Promise = require('bluebird');
 var extract = require('./extract');
-var debug = require('./logger');
 
 // var installed = false;
 
@@ -20,12 +19,10 @@ function installPhantom() {
   return Promise.try(function () {
     var installed = fs.accessSync(phantomPackage.binary);
 
-    debug('Phantom is already installed', phantomPackage.binary);
     return phantomPackage.binary;
   })
   .catch(function (err) {
     // error here means the binary does not exist, so install it
-    debug('Phantom is being installed...', phantomPackage.binary);
     var fileType = phantomPackage.ext.substring(1);
     var filepath = phantomPackage.dir + '/' + phantomPackage.base;
 

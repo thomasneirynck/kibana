@@ -1,6 +1,5 @@
 const path = require('path');
 const fs = require('fs');
-const debug = require('../lib/logger');
 
 module.exports = function (server) {
   const modulePath = path.resolve(__dirname, '..', '..', 'node_modules');

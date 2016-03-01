@@ -1,7 +1,7 @@
 const Promise = require('bluebird');
 const pdf = require('../lib/pdf');
 const _ = require('lodash');
-const debug = require('../lib/logger');
+
 module.exports = (server) => {
   const getScreenshot = require('./get_screenshot')(server);
   const getObjectQueue = require('./get_object_queue')(server);
@@ -10,7 +10,7 @@ module.exports = (server) => {
     const pdfOutput = pdf.create();
     return getObjectQueue(type, objId)
     .then(function (objectQueue) {
-      debug(`${objectQueue.length} item(s) to process`);
+      server.log(['reporting', 'debug'], `${objectQueue.length} item(s) to process`);
 
       return Promise.map(objectQueue, function (savedObj) {
         return getScreenshot(savedObj, query, headers)
