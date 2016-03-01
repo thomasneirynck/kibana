@@ -1,6 +1,6 @@
 const _ = require('lodash');
 module.exports = (server) => {
-  const client = server.plugins.reporting.client;
+  const client = server.plugins.elasticsearch.client;
   const config = server.config();
   const requestConfig = _.defaults(config.get('reporting.kibanaServer'), {
     'kibanaApp': config.get('server.basePath') + config.get('reporting.kibanaApp'),
