@@ -7,7 +7,7 @@
  */
 const { includes, isUndefined } = require('lodash');
 
-module.exports = (node, state) => {
+module.exports = function calculateNodeType(node, state) {
   const attrs = node.attributes || {};
 
   function mightBe(attr) {

@@ -1,9 +1,5 @@
-import requirefrom from 'requirefrom';
 import expect from 'expect.js';
-import _ from 'lodash';
-
-const lib = requirefrom('server/lib');
-const nodeAggVals = lib('node_agg_vals');
+const nodeAggVals = require('../node_agg_vals');
 
 describe('Grabbing Values from Node Aggregations', () => {
   it('Gets the key from the aggregation with the latest timestamp', () => {

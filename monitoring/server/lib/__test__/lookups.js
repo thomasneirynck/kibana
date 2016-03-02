@@ -1,9 +1,6 @@
-import requirefrom from 'requirefrom';
+import lookups from '../lookups';
 import expect from 'expect.js';
 import _ from 'lodash';
-
-const lib = requirefrom('server/lib');
-const lookups = lib('lookups');
 
 describe('Node Types Lookups', () => {
   it('Has matching classes and labels', () => {

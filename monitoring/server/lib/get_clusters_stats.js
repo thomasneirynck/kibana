@@ -1,11 +1,17 @@
 const moment = require('moment');
 const _ = require('lodash');
 const Promise = require('bluebird');
-module.exports = (req) => {
+
+/*
+ * @param req: server's request object
+ * @return array
+ */
+module.exports = function getClustersStats(req) {
   const server = req.server;
   const callWithRequest = server.plugins.elasticsearch.callWithRequest;
   const config = server.config();
   return (clusters) => {
+    // in case getClusters had no hits and returned undefined
     if (!clusters) return [];
     return Promise.map(clusters, (cluster) => {
       const body = {
