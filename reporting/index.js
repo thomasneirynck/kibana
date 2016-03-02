@@ -51,6 +51,9 @@ module.exports = function (kibana) {
       .then(function (binaryPath) {
         server.log(['reporting', 'debug'], `Phantom installed at ${binaryPath}`);
 
+        // expose internal assets
+        server.expose('generatePDFStream', generatePDFStream(server));
+
         // Reporting routes
         publicRoutes(server);
         fileRoutes(server);
