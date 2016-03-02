@@ -57,7 +57,7 @@ module.exports = {
     if (bound > target) return interval;
   }, true),
 
-  lessThan: find(revRoundingRules, function (bound, interval, target) {
+  lessThan: find(revRoundingRules, function lessThan(bound, interval, target) {
     if (interval < target) return interval;
   }),
 
