@@ -1,3 +1,5 @@
+const screenshot = require('./screenshot');
+
 // bounding boxes for various saved object types
 const boundingBoxes = {
   visualization: {
@@ -13,14 +15,13 @@ const boundingBoxes = {
   },
 };
 
-const screenshot = require('./screenshot');
-
 module.exports = (server) => {
   const config = server.config();
+  const logger = server.log.bind(server);
   // init the screenshot module
   const phantomSettings = config.get('reporting.phantom');
   const screenshotSettings = { basePath: config.get('server.basePath') };
-  const ss = screenshot(phantomSettings, screenshotSettings, server.log);
+  const ss = screenshot(phantomSettings, screenshotSettings, logger);
 
   return function getScreenshot(savedObj, query, headers) {
     const objUrl = savedObj.getUrl(query);

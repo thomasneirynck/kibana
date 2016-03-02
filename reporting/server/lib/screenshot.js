@@ -36,8 +36,8 @@ class Screenshot {
   }
 }
 
-module.exports = function (phantomSettings, screenshotSettings) {
-  return new Screenshot(phantomSettings, screenshotSettings);
+module.exports = function (phantomSettings, screenshotSettings, logger) {
+  return new Screenshot(phantomSettings, screenshotSettings, logger);
 };
 
 function fetch(url, phantomSettings, opts) {
