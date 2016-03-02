@@ -1,5 +1,6 @@
 const url = require('url');
 const chrome = require('ui/chrome');
+
 const mainEntry = '/api/reporting/generate';
 const reportPrefix = chrome.addBasePath(mainEntry);
 
