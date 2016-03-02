@@ -8,21 +8,23 @@ module.exports = function (server) {
   const esErrors = server.plugins.elasticsearch.errors;
   const generatePDFStream = server.plugins.reporting.generatePDFStream;
 
+  const mainEntry = '/api/reporting/generate';
+
   // defined the public routes
   server.route({
-    path: '/api/reporting/visualization/{savedId}',
+    path: `${mainEntry}/visualization/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('visualization', request, reply),
   });
 
   server.route({
-    path: '/api/reporting/search/{savedId}',
+    path: `${mainEntry}/search/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('search', request, reply),
   });
 
   server.route({
-    path: '/api/reporting/dashboard/{savedId}',
+    path: `${mainEntry}/dashboard/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('dashboard', request, reply),
   });
