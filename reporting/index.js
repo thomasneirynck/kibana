@@ -33,7 +33,11 @@ module.exports = function (kibana) {
           }).default(),
           timeout: Joi.number().integer().default(6000),
           loadDelay: Joi.number().integer().default(3000)
-        }).default()
+        }).default(),
+        capture: Joi.object({
+          // TODO: use cpu core count by default
+          concurrency: Joi.number().integer().default(4),
+        }).default(),
       }).default();
     },
 

@@ -9,6 +9,9 @@ module.exports = (server) => {
   const fetchObjectQueue = getObjectQueue(server);
   const fetchScreenshot = getScreenshot(server);
 
+  const config = server.config();
+  const captureConcurrency = config.get('reporting.capture.concurrency');
+
   return function generatePDFStream(type, objId, query, headers) {
     const pdfOutput = pdf.create();
     return fetchObjectQueue(type, objId)
