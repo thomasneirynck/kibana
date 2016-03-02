@@ -5,7 +5,7 @@ module.exports = function pluginSelfCheck(plugin, server) {
   var client = server.plugins.elasticsearch.client;
 
   server.plugins.elasticsearch.status.on('red', () => {
-    plugin.status.red(`Monitoring lost connection to the Elasticsearch monitoring cluster`);
+    plugin.status.red(`lost connection to the Elasticsearch monitoring cluster`);
   });
 
   server.plugins.elasticsearch.status.on('green', () => {
@@ -19,7 +19,7 @@ module.exports = function pluginSelfCheck(plugin, server) {
     if (isKibanaSupported) {
       plugin.status.green('Monitoring index ready');
     } else if (!isKibanaSupported) {
-      plugin.status.red(`Monitoring version ${monitoringVersion} is not supported with Kibana ${kibanaVersion}`);
+      plugin.status.red(`version ${monitoringVersion} is not supported with Kibana ${kibanaVersion}`);
     }
   });
 
