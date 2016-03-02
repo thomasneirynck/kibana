@@ -6,7 +6,6 @@
  */
 import _ from 'lodash';
 import { satisfies } from 'semver';
-import pkg from '../../package.json';
 
 const kbnVersionRanges = {
   '2.1.0': '^4.3.0',
@@ -30,7 +29,7 @@ function cleanVersionString(string) {
   return '';
 }
 
-function ensureVersions(plugin) {
+function ensureVersions(plugin, pkg) {
 
   const kibanaVersion = cleanVersionString(_.get(plugin, 'kbnServer.version'));
   const monitoringVersion = cleanVersionString(pkg.version);

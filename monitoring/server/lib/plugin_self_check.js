@@ -1,3 +1,4 @@
+import pkg from '../../package.json';
 const ensureVersions = require('./ensure_versions');
 
 module.exports = function pluginSelfCheck(plugin, server) {
@@ -14,13 +15,12 @@ module.exports = function pluginSelfCheck(plugin, server) {
       isKibanaSupported,
       kibanaVersion,
       monitoringVersion
-    } = ensureVersions(plugin);
+    } = ensureVersions(plugin, pkg);
 
     if (isKibanaSupported) {
-      plugin.status.green('Monitoring index ready');
+      plugin.status.green('Ready');
     } else if (!isKibanaSupported) {
       plugin.status.red(`version ${monitoringVersion} is not supported with Kibana ${kibanaVersion}`);
     }
   });
-
 };
