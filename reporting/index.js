@@ -25,10 +25,6 @@ module.exports = function (kibana) {
           hostname: Joi.string(),
           port: Joi.number().integer()
         }).default(),
-        auth: Joi.object({
-          username: Joi.string(),
-          password: Joi.string()
-        }).default(),
         phantom: Joi.object({
           zoom: Joi.number().integer().default(1),
           viewport: Joi.object({
