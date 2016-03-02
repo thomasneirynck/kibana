@@ -57,6 +57,7 @@ export default (kibana) => new kibana.Plugin({
         clearInvalid: true,
         keepAlive: true,
         redirectTo: `${config.get('server.basePath')}/login`,
+        appendNext: true,
         validateFunc: getValidate(server)
       });
     });
