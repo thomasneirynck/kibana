@@ -10,7 +10,7 @@ chrome
 .setRootController('login', ($http) => {
   const {search, hash} = location;
   const index = search.indexOf('?next=');
-  const next = index < 0 ? '' : decodeURIComponent(search.substr(index + '?next='.length)) + hash;
+  const next = index < 0 ? '/' : decodeURIComponent(search.substr(index + '?next='.length)) + hash;
 
   return {
     kibanaLogoUrl,
