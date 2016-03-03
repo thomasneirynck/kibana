@@ -17,9 +17,10 @@
     "url": "http://github.com/elasticsearch/x-plugins.git"
   },
   "devDependencies": {
+    "@elastic/eslint-config-kibana": "0.0.2",
     "aws-sdk": "2.2.33",
     "babel": "5.8.35",
-    "babel-eslint": "4.1.7",
+    "babel-eslint": "4.1.8",
     "bluebird": "2.10.2",
     "del": "2.2.0",
     "elasticsearch": "10.1.3",
