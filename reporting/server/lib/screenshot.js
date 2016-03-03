@@ -13,7 +13,7 @@ class Screenshot {
   }
 
   capture(url, opts) {
-    this.logger(['reporting', 'debug'], `fetching screenshot of ${url}`);
+    this.logger(`fetching screenshot of ${url}`);
     opts = _.assign({ basePath: this.screenshotSettings.basePath }, opts);
     const ph = fetch(url, this.phantomSettings, opts);
 
@@ -25,11 +25,13 @@ class Screenshot {
         : getShot(ph, filepath);
 
       return operation
-      .then((path) => this.logger(['reporting', 'debug'], `Screenshot saved to ${path}`))
-      .then(() => filepath);
+      .then(() => {
+        this.logger(`Screenshot saved to ${filepath}`);
+        return filepath;
+      });
     })
     .catch((err) => {
-      this.logger(['reporting', 'debug'], `Screenshot failed ${err.message}`);
+      this.logger(`Screenshot failed ${err.message}`);
       throw err;
     })
     .close();

@@ -17,18 +17,16 @@ const boundingBoxes = {
 
 module.exports = (server) => {
   const config = server.config();
-  const logger = server.log.bind(server);
-  // init the screenshot module
+  const logger = (msg) => server.log(['reporting', 'debug'], msg);
+
   const phantomSettings = config.get('reporting.phantom');
   const screenshotSettings = { basePath: config.get('server.basePath') };
   const ss = screenshot(phantomSettings, screenshotSettings, logger);
 
-  return function getScreenshot(savedObj, query, headers) {
-    const objUrl = savedObj.getUrl(query);
-
+  return function getScreenshot(objUrl, type, headers) {
     return ss.capture(objUrl, {
       headers,
-      bounding: boundingBoxes[savedObj.type],
+      bounding: boundingBoxes[type],
     });
   };
 };
