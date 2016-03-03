@@ -1,4 +1,5 @@
 const screenshot = require('./screenshot');
+const queue = require('queue');
 
 // bounding boxes for various saved object types
 const boundingBoxes = {
@@ -21,12 +22,26 @@ module.exports = (server) => {
 
   const phantomSettings = config.get('reporting.phantom');
   const screenshotSettings = { basePath: config.get('server.basePath') };
+  const captureConcurrency = config.get('reporting.capture.concurrency');
+
+  // init the screenshot module
   const ss = screenshot(phantomSettings, screenshotSettings, logger);
 
+  // create the process queue
+  const screenshotQueue = queue({ concurrency: captureConcurrency });
+
   return function getScreenshot(objUrl, type, headers) {
-    return ss.capture(objUrl, {
-      headers,
-      bounding: boundingBoxes[type],
+    return new Promise(function (resolve, reject) {
+      screenshotQueue.push(function (cb) {
+        return ss.capture(objUrl, {
+          headers,
+          bounding: boundingBoxes[type],
+        })
+        .then((filename) => { resolve(filename); }, (err) => reject(err))
+        .finally(cb);
+      });
+
+      if (!screenshotQueue.running) screenshotQueue.start();
     });
   };
 };
