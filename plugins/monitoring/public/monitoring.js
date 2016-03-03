@@ -12,6 +12,8 @@ require('plugins/monitoring/views/indices/indices_controller.js');
 require('plugins/monitoring/views/index/index_controller.js');
 require('plugins/monitoring/views/nodes/nodes_controller.js');
 require('plugins/monitoring/views/node/node_controller.js');
+require('plugins/monitoring/views/kibana/kibana_controller.js');
+require('plugins/monitoring/views/kibanas/kibanas_controller.js');
 require('plugins/monitoring/views/overview/overview_controller.js');
 require('plugins/monitoring/views/license/index.js');
 

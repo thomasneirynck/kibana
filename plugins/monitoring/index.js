@@ -3,6 +3,7 @@ import Promise from 'bluebird';
 import requireAllAndApply from '../../server/lib/require_all_and_apply';
 var pluginSelfCheck = require('./server/lib/plugin_self_check');
 var instantiateClient = require('./server/lib/es_client/instantiate_client');
+var initKibanaMonitoring = require('./server/kibana_monitoring');
 
 module.exports = function (kibana) {
   return new kibana.Plugin({
@@ -60,6 +61,8 @@ module.exports = function (kibana) {
         loggingTag: string().default('monitoring-ui'),
         index: string().default('.monitoring-data-2'),
         index_prefix: string().default('.monitoring-es-2-'),
+        kibana_prefix: string().default('.monitoring-kibana-2-'),
+        kibana_flush_interval: number().default(10000),
         missing_intervals: number().default(12),
         max_bucket_size: number().default(10000),
         min_interval_seconds: number().default(10),
@@ -97,6 +100,7 @@ module.exports = function (kibana) {
       return Promise.all([
         instantiateClient(server), // Instantiate the dedicated Elasticsearch client
         requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server), // Require all the routes
+        initKibanaMonitoring(this.kbnServer, server), // send kibana server ops to the monitoring bulk api
         pluginSelfCheck(this, server) // Make sure the Monitoring index is created and the Kibana version is supported
       ]);
     }

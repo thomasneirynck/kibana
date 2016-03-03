@@ -8,10 +8,23 @@ define(function (require) {
 
 
   function getFilteredData(data, filter) {
+    function flattenStrings(obj) {
+      const values = _.values(obj);
+      const nestedObjects = _.filter(values, (val) => {
+        return typeof val === 'object';
+      });
+      let searchStrings = _.filter(values, (val) => {
+        return typeof val === 'string';
+      });
+      _.each(nestedObjects, (nested) => {
+        searchStrings = searchStrings.concat(flattenStrings(nested));
+      });
+      return searchStrings;
+    }
+
     if (!filter) return data;
     return data.filter(function (obj) {
-      var concatValues = _.values(obj)
-        .filter(function (val) { return typeof val === 'string'; })
+      var concatValues = flattenStrings(obj)
         .join('|')
         .toLowerCase();
       return (concatValues.indexOf(filter.toLowerCase()) !== -1);

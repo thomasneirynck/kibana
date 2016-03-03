@@ -67,6 +67,9 @@ const formatLargeAbbreviated = '0,0.[0]a';
 const allCharts = {
   app: 'elasticsearch'
 };
+const kibanaCharts = {
+  app: 'kibana'
+};
 
 const requestRateFields = {
   ...allCharts,
@@ -526,11 +529,128 @@ module.exports = {
     field: 'total.refresh.total_time_in_millis',
     label: 'Total Refresh Time',
     description: 'The the amount of time a refresh takes',
-    type: 'index',
-    derivative: true,
     format: formatLargeFloat,
     metricAgg: 'max',
+    units: '',
+    defaults: { warning: '>1000', critical: '>5000', interval: '1m', periods: 1 },
+    type: 'index',
+    derivative: true
+  },
+  'kibana_os_load_1m': {
+    title: 'OS Load',
+    active: true,
+    field: 'kibana_stats.os.load.1m',
+    label: '1m',
+    description: 'The the amount of time a refresh takes',
+    format: formatLargeFloat,
+    metricAgg: 'avg',
+    units: '',
+    type: 'kibana',
+    derivative: false
+  },
+  'kibana_os_load_5m': {
+    title: 'OS Load',
+    active: true,
+    field: 'kibana_stats.os.load.5m',
+    label: '5m',
+    description: 'The the amount of time a refresh takes',
+    format: formatLargeFloat,
+    metricAgg: 'avg',
+    units: '',
+    type: 'kibana',
+    derivative: false
+  },
+  'kibana_os_load_15m': {
+    title: 'OS Load',
+    active: true,
+    field: 'kibana_stats.os.load.15m',
+    label: '15m',
+    description: 'The the amount of time a refresh takes',
+    format: formatLargeFloat,
+    metricAgg: 'avg',
+    units: '',
+    type: 'kibana',
+    derivative: false
+  },
+  'kibana_heap_used': {
+    title: 'Heap Usage',
+    active: true,
+    field: 'kibana_stats.process.memory.heap.used_in_bytes',
+    label: 'Used',
+    description: 'The amount of heap used',
+    format: formatLargeBytes,
+    metricAgg: 'avg',
+    units: '',
+    type: 'kibana',
+    derivative: false
+  },
+  'kibana_heap_total': {
+    title: 'Heap Usage',
+    active: true,
+    field: 'kibana_stats.process.memory.heap.total_in_bytes',
+    label: 'Total',
+    description: 'The total amount of heap',
+    format: formatLargeBytes,
+    metricAgg: 'avg',
+    units: '',
+    type: 'kibana',
+    derivative: false
+  },
+  'kibana_process_delay': {
+    active: true,
+    field: 'kibana_stats.process.event_loop_delay',
+    label: 'Event Loop Delay',
+    description: 'The Node event loop delay',
+    format: formatSmallFloat,
+    metricAgg: 'avg',
     units: 'ms',
-    ...allCharts
-  }
+    type: 'kibana',
+    derivative: false
+  },
+  'kibana_average_response_times': {
+    title: 'Response Time',
+    active: true,
+    field: 'kibana_stats.response_times.average',
+    label: 'Average',
+    description: 'The average request response time',
+    format: formatSmallFloat,
+    metricAgg: 'avg',
+    units: 'ms',
+    type: 'kibana',
+    derivative: false
+  },
+  'kibana_max_response_times': {
+    title: 'Response Time',
+    active: true,
+    field: 'kibana_stats.response_times.max',
+    label: 'Max',
+    description: 'The max request response time',
+    format: formatSmallFloat,
+    metricAgg: 'avg',
+    units: 'ms',
+    type: 'kibana',
+    derivative: false
+  },
+  'kibana_average_concurrent_connections': {
+    active: true,
+    field: 'kibana_stats.concurrent_connections',
+    label: 'Concurrent Connections',
+    description: 'The number of concurrent connections to the server',
+    format: formatSmallFloat,
+    metricAgg: 'max',
+    units: '',
+    ...kibanaCharts,
+    derivative: false
+  },
+  'kibana_requests': {
+    active: true,
+    field: 'kibana_stats.requests.total',
+    label: 'Requests',
+    description: 'The number of requests received by the server',
+    format: formatSmallFloat,
+    metricAgg: 'avg',
+    units: '',
+    ...kibanaCharts,
+    derivative: false
+  },
 };

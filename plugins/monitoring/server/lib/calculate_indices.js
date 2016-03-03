@@ -2,7 +2,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import checkMonitoringAuth from './check_monitoring_auth';
 
-module.exports = function calculateIndices(req, start, end) {
+module.exports = function calculateIndices(req, start, end, indexPattern) {
 
   /* checkMonitoringAuth tests access to monitoring indices. If access is
    * denied, the route will catch the rejected promise
@@ -12,7 +12,7 @@ module.exports = function calculateIndices(req, start, end) {
     const callWithRequest = req.server.plugins.monitoring.callWithRequest;
     const config = req.server.config();
     const options = {
-      index: `${config.get('xpack.monitoring.index_prefix')}*`,
+      index: indexPattern || `${config.get('xpack.monitoring.index_prefix')}*`,
       level: 'indices',
       meta: 'calculate_indices',
       ignoreUnavailable: true,

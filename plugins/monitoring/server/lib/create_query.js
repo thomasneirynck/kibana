@@ -4,8 +4,12 @@ const moment = require('moment');
 module.exports = function createQuery(options) {
   options = _.defaults(options, { filters: [] });
   var clusterFilter;
+  var kibanaFilter;
   if (options.clusterUuid) {
     clusterFilter = { term: { cluster_uuid: options.clusterUuid } };
+  }
+  if (options.kibanaUuid) {
+    kibanaFilter = { term: { 'kibana_stats.kibana.uuid': options.kibanaUuid } };
   }
   var timeRangeFilter = {
     range: {
@@ -20,7 +24,7 @@ module.exports = function createQuery(options) {
   if (options.end) {
     timeRangeFilter.range.timestamp.lte = moment.utc(options.end).valueOf();
   }
-  const filters = [clusterFilter].concat(options.filters);
+  const filters = [clusterFilter, kibanaFilter, ...options.filters];
   if (options.end || options.start) {
     filters.push(timeRangeFilter);
   }
@@ -28,7 +32,7 @@ module.exports = function createQuery(options) {
     bool: {
       filter: {
         bool: {
-          must: filters
+          must: _.filter(filters, (val) => !_.isUndefined(val))
         }
       }
     }

@@ -13,6 +13,7 @@ module.exports = function getSeries(req, indices, metricName, filters) {
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const clusterUuid = req.params.clusterUuid;
+  const kibanaUuid = req.params.kibanaUuid;
   const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
 
   const params = {
@@ -22,7 +23,7 @@ module.exports = function getSeries(req, indices, metricName, filters) {
     ignoreUnavailable: true,
     ignore: [404],
     body: {
-      query: createQuery({ start, end, clusterUuid, filters }),
+      query: createQuery({ start, end, clusterUuid, kibanaUuid, filters }),
       aggs: {}
     }
   };
@@ -58,7 +59,6 @@ module.exports = function getSeries(req, indices, metricName, filters) {
     _.assign(aggs.check.aggs, metric.aggs);
   }
   params.body.aggs = aggs;
-
   return callWithRequest(req, 'search', params)
   .then(function (resp) {
     if (!resp.aggregations)  {
