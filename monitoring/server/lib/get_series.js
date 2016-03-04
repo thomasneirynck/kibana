@@ -89,12 +89,9 @@ module.exports = (req, indices, metricName, filters) => {
     const boundsMax = moment.utc(aggCheck.meta.timefilterMax);
     const data = _.chain(buckets)
     .filter(filterPartialBuckets(boundsMin, boundsMax, respBucketSize))
-    .map((bucket) => {
-      return {
-        x: bucket.key,
-        y: calculation(bucket) // Why are one of these null?
-      };
-    })
+    // if doc_count === 0, replace with null, to chart a discontinuous line
+    .map(bucket => bucket.doc_count === 0 ? null : bucket)
+    .map(bucket => bucket ? { x: bucket.key, y: calculation(bucket) } : bucket)
     .value();
     return {
       metric: filterMetric(metric),

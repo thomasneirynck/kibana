@@ -163,7 +163,7 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
 
           // Nearest point
           for (j = 0; j < series.data.length; ++j) {
-            if (series.data[j][0] > pos.x) {
+            if (series.data[j] && series.data[j][0] > pos.x) {
               break;
             }
           }
@@ -211,7 +211,10 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
         };
         series._id = 0;
         series.data = chartSeries.data.map((row) => {
-          return [row.x, row.y];
+          if (row) {
+            return [row.x, row.y];
+          }
+          return row;
         });
         series.color = '#000';
         series.label = chartSeries.metric.label;
