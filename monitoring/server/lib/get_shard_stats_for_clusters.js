@@ -78,12 +78,12 @@ module.exports = (req) => {
 
         function setStats(bucket, metric, ident) {
           const states = _.filter(bucket.states.buckets, ident);
-          states.forEach((state) => {
-            metric.primary = state.primary.buckets.reduce((acc, state) => {
+          states.forEach((currentState) => {
+            metric.primary = currentState.primary.buckets.reduce((acc, state) => {
               if (state.key) acc += state.doc_count;
               return acc;
             }, metric.primary);
-            metric.replica = state.primary.buckets.reduce((acc, state) => {
+            metric.replica = currentState.primary.buckets.reduce((acc, state) => {
               if (!state.key) acc += state.doc_count;
               return acc;
             }, metric.replica);
@@ -93,7 +93,7 @@ module.exports = (req) => {
         function processIndexShards(bucket) {
           const metric = createNewMetric();
           setStats(bucket, metric, { key: 'STARTED' });
-          setStats(bucket, metric.unassigned, (bucket) => bucket.key !== 'STARTED');
+          setStats(bucket, metric.unassigned, (b) => b.key !== 'STARTED');
           data.totals.primary += metric.primary;
           data.totals.replica += metric.replica;
           data.totals.unassigned.primary += metric.unassigned.primary;

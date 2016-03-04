@@ -1,2 +1,5 @@
 ---
 extends: '@elastic/kibana'
+
+rules:
+  no-shadow: 2

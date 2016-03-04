@@ -85,12 +85,12 @@ module.exports = (req, indices, lastState) => {
 
     function setStats(bucket, metric, ident) {
       const states = _.filter(bucket.states.buckets, ident);
-      states.forEach((state) => {
-        metric.primary = state.primary.buckets.reduce((acc, state) => {
+      states.forEach((currentState) => {
+        metric.primary = currentState.primary.buckets.reduce((acc, state) => {
           if (state.key) acc += state.doc_count;
           return acc;
         }, metric.primary);
-        metric.replica = state.primary.buckets.reduce((acc, state) => {
+        metric.replica = currentState.primary.buckets.reduce((acc, state) => {
           if (!state.key) acc += state.doc_count;
           return acc;
         }, metric.replica);
@@ -100,7 +100,7 @@ module.exports = (req, indices, lastState) => {
     function processIndexShards(bucket) {
       const metric = createNewMetric();
       setStats(bucket, metric, { key: 'STARTED' });
-      setStats(bucket, metric.unassigned, (bucket) => bucket.key !== 'STARTED');
+      setStats(bucket, metric.unassigned, (b) => b.key !== 'STARTED');
       data.totals.primary += metric.primary;
       data.totals.replica += metric.replica;
       data.totals.unassigned.primary += metric.unassigned.primary;
@@ -117,7 +117,7 @@ module.exports = (req, indices, lastState) => {
         indexCount: bucket.index_count.value,
         name: nodeAggVals.getLatestAggKey(bucket.node_names.buckets),
         transport_address: nodeAggVals.getLatestAggKey(bucket.node_transport_address.buckets),
-        node_ids: bucket.node_ids.buckets.map(bucket => bucket.key),
+        node_ids: bucket.node_ids.buckets.map(b => b.key),
         attributes: {
           data: nodeAggVals.getNodeAttribute(bucket.node_data_attributes.buckets),
           master: nodeAggVals.getNodeAttribute(bucket.node_master_attributes.buckets)

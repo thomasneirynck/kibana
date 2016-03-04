@@ -27,7 +27,7 @@ define(function (require) {
       data = _.isUndefined(data) ? [] : data;
       position = _.isUndefined(position) ? 0 : position;
 
-      function handleIndexList(indices) {
+      function handleIndexList(indexList) {
         if (_.isUndefined(timeRange)) {
           let bounds = timefilter.getBounds();
           timeRange = {
@@ -37,7 +37,7 @@ define(function (require) {
           };
         }
 
-        var header = { index: indices[position], type: 'cluster_state' };
+        var header = { index: indexList[position], type: 'cluster_state' };
         var body = {
           size: size,
           from: 0,
@@ -73,7 +73,7 @@ define(function (require) {
 
             if (hits.hits.length === hits.total) {
               position++;
-              newPosition = indices[position] ? true : false;
+              newPosition = indexList[position] ? true : false;
             }
 
             var lte = moment(timeRange.lte).valueOf();
@@ -87,7 +87,7 @@ define(function (require) {
                 gte: timeRange.gte,
                 format: 'epoch_millis'
               };
-              return getTimelineData(direction, indexPattern, cluster, size, nextTimeRange, data, position, indices); // call again
+              return getTimelineData(direction, indexPattern, cluster, size, nextTimeRange, data, position, indexList); // call again
             }
 
             // flip data back to normal order
@@ -98,8 +98,8 @@ define(function (require) {
         var error = function (resp) {
           // $scope.panel.error = resp.data.error;
           position++;
-          if (indices[position]) {
-            return getTimelineData(direction, indexPattern, cluster, size, timeRange, data, position, indices); // call again
+          if (indexList[position]) {
+            return getTimelineData(direction, indexPattern, cluster, size, timeRange, data, position, indexList); // call again
           }
           return data.reverse();
         };

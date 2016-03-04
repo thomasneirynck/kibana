@@ -70,14 +70,14 @@ module.exports = (req, indices, metricName, filters) => {
       };
     }
     const aggCheck = resp.aggregations.check;
-    const bucketSize = aggCheck.meta.bucketSize;
+    const respBucketSize = aggCheck.meta.bucketSize;
     const defaultCalculation = (bucket) => {
       const key = (metric.derivative) ? 'metric_deriv' : 'metric';
       let value =  bucket[key] && bucket[key].value || 0;
       // We need to convert metric_deriv from the bucket size to seconds if
       // the units are per second
       if (metric.units === '/s') {
-        value = value / bucketSize;
+        value = value / respBucketSize;
         if (value < 0) {
           value = 0;
         }
@@ -89,7 +89,7 @@ module.exports = (req, indices, metricName, filters) => {
     const boundsMin = moment.utc(aggCheck.meta.timefilterMin);
     const boundsMax = moment.utc(aggCheck.meta.timefilterMax);
     const data = _.chain(buckets)
-    .filter(filterPartialBuckets(boundsMin, boundsMax, bucketSize))
+    .filter(filterPartialBuckets(boundsMin, boundsMax, respBucketSize))
     .map((bucket) => {
       return {
         x: bucket.key,

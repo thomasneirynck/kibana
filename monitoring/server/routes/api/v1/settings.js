@@ -19,11 +19,11 @@ module.exports = function (server) {
       return getClusters(req)
       .then((clusters) => {
         var cluster = req.query.cluster;
-        var clusterKeys = cluster && [cluster] || _.map(clusters, (cluster) => cluster.cluster_uuid);
+        var clusterKeys = cluster && [cluster] || _.map(clusters, (c) => c.cluster_uuid);
         var keys = [];
-        _.each(clusterKeys, function (cluster) {
+        _.each(clusterKeys, function (c) {
           _.each(_.keys(settingSchemas), function (key) {
-            keys.push(cluster + ':' + key);
+            keys.push(c + ':' + key);
           });
         });
         return Settings.bulkFetch({ ids: keys, req: req });
