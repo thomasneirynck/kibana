@@ -26,7 +26,7 @@ module.exports = (req, indices) => {
     let total = _.get(resp, 'hits.total', 0);
     if (!total) return [];
     const data = _.get(resp.hits.hits[0], '_source.index_recovery.shards') || [];
-    data.sort((a, b) => b.start_time_in_mllis - a.start_time_in_mllis);
+    data.sort((a, b) => b.start_time_in_millis - a.start_time_in_millis);
     return data;
   });
 
