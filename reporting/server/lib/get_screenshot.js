@@ -23,6 +23,7 @@ module.exports = (server) => {
   const phantomSettings = config.get('reporting.phantom');
   const screenshotSettings = { basePath: config.get('server.basePath') };
   const captureConcurrency = config.get('reporting.capture.concurrency');
+  logger(`Screenshot concurrency: ${captureConcurrency}`);
 
   // init the screenshot module
   const ss = screenshot(phantomSettings, screenshotSettings, logger);
