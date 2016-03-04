@@ -3,6 +3,7 @@ import {join} from 'path';
 import basicAuth from './server/lib/basic_auth';
 import getIsValidUser from './server/lib/get_is_valid_user';
 import getValidate from './server/lib/get_validate';
+import getCalculateExpires from './server/lib/get_calculate_expires';
 import initAuthenticateApi from './server/routes/api/v1/authenticate';
 import initUsersApi from './server/routes/api/v1/users';
 import initRolesApi from './server/routes/api/v1/roles';
@@ -52,17 +53,15 @@ export default (kibana) => new kibana.Plugin({
       server.auth.strategy('session', 'cookie', 'required', {
         cookie: config.get('shield.cookieName'),
         password: config.get('shield.encryptionKey'),
-        ttl: config.get('shield.sessionTimeout'),
         path: config.get('server.basePath') + '/',
         clearInvalid: true,
-        keepAlive: true,
         redirectTo: `${config.get('server.basePath')}/login`,
         appendNext: true,
         validateFunc: getValidate(server)
       });
     });
 
-    basicAuth.register(server, config.get('shield.cookieName'), getIsValidUser(server));
+    basicAuth.register(server, config.get('shield.cookieName'), getIsValidUser(server), getCalculateExpires(server));
 
     initAuthenticateApi(server);
     initUsersApi(server);
