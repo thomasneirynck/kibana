@@ -1,6 +1,7 @@
 var join = require('path').join;
 var requireAllAndApply = require('./server/lib/require_all_and_apply');
 var pluginSelfCheck = require('./server/lib/plugin_self_check');
+var instantiateClient = require('./server/lib/es_client/instantiate_client');
 
 module.exports = function (kibana) {
   return new kibana.Plugin({
@@ -32,7 +33,7 @@ module.exports = function (kibana) {
     },
 
     config: function (Joi) {
-      const { boolean, number, object, string } = Joi;
+      const { array, boolean, number, object, string } = Joi;
       return object({
         enabled: boolean().default(true),
         index: string().default('.monitoring-data-1'),
@@ -45,18 +46,37 @@ module.exports = function (kibana) {
         node_resolver: string().regex(/^(?:transport_address|name)$/).default('transport_address'),
         stats_report_url: Joi.when('$dev', {
           is: true,
-          then: Joi.string().default('../api/monitoring/v1/phone-home'),
-          otherwise: Joi.string().default('https://marvel-stats.elasticsearch.com/appdata/monitoringOpts')
+          then: string().default('../api/monitoring/v1/phone-home'),
+          otherwise: string().default('https://marvel-stats.elasticsearch.com/appdata/monitoringOpts')
         }),
-        agent: Joi.object({
-          interval: Joi.string().regex(/[\d\.]+[yMwdhms]/).default('10s')
+        agent: object({
+          interval: string().regex(/[\d\.]+[yMwdhms]/).default('10s')
+        }).default(),
+        elasticsearch: object({
+          url: string().uri({ scheme: ['http', 'https'] }).default('http://localhost:9200'),
+          username: string(),
+          password: string(),
+          requestTimeout: number().default(30000),
+          pingTimeout: number().default(30000),
+          ssl: object({
+            verify: boolean().default(true),
+            ca: array().single().items(string()),
+            cert: string(),
+            key: string()
+          }).default(),
+          apiVersion: string().default('master'),
+          engineVersion: string().valid('^5.0.0').default('^5.0.0')
         }).default()
       }).default();
     },
 
     init: function (server, _options) {
+      // Instantiate the dedicated Elasticsearch client
+      instantiateClient(server);
+
       // Make sure the Monitoring index is created and the Kibana version is supported
       pluginSelfCheck(this, server);
+
       // Require all the routes
       requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server);
     }

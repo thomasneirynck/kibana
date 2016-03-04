@@ -3,11 +3,10 @@ const _ = require('lodash');
 const createQuery = require('./create_query');
 const root = require('requirefrom')('');
 const calculateNodeType = root('server/lib/calculate_node_type');
-
 module.exports = (req, indices, lastState) => {
   const config = req.server.config();
   const nodeResolver = config.get('monitoring.node_resolver');
-  const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const clusterUuid = req.params.clusterUuid;
   const aggSize = 10;
   const params = {

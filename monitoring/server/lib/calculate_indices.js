@@ -1,10 +1,9 @@
 var _ = require('lodash');
 var moment = require('moment');
 module.exports = function (req, start, end) {
-  var server = req.server;
-  var config = server.config();
+  var callWithRequest = req.server.plugins.monitoring.callWithRequest;
+  var config = req.server.config();
   var pattern = config.get('monitoring.index_prefix') + '*';
-  var callWithRequest = server.plugins.elasticsearch.callWithRequest;
   var options = {
     index: pattern,
     level: 'indices',

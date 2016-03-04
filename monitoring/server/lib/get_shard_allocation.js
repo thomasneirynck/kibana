@@ -7,7 +7,7 @@ module.exports = (req, _indices, filters, lastState) => {
   });
 
   const config = req.server.config();
-  const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const clusterUuid = req.params.clusterUuid;
   const params = {
     /* TODO It would be more efficient to use the indices param instead of

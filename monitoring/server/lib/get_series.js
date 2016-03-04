@@ -9,7 +9,7 @@ const filterMetric = require('./filter_metric');
 
 module.exports = (req, indices, metricName, filters) => {
   const config = req.server.config();
-  const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const metric = metrics[metricName];
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;

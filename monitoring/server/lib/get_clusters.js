@@ -1,10 +1,8 @@
 const _ = require('lodash');
 const validateMonitoringLicense = require('./validate_monitoring_license');
-
 module.exports = function getClusters(req) {
-  const server = req.server;
-  const callWithRequest = server.plugins.elasticsearch.callWithRequest;
-  const config = server.config();
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
+  const config = req.server.config();
   const params = {
     index: config.get('monitoring.index'),
     type: 'cluster_info',

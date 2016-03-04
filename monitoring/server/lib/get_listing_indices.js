@@ -16,10 +16,9 @@ const calcAuto = require('./calculate_auto');
 const root = require('requirefrom')('');
 const metrics = root('server/lib/metrics');
 const mapListingResponse = require('./map_listing_response');
-
 module.exports = (req, indices) => {
   const config = req.server.config();
-  const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const listingMetrics = req.payload.listingMetrics || [];
   let start = moment.utc(req.payload.timeRange.min).valueOf();
   const orgStart = start;

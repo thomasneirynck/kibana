@@ -1,8 +1,8 @@
-import ensureVersions from '../ensure_versions';
+import ensureVersions from '../check_kbn_version';
 import expect from 'expect.js';
 import _ from 'lodash';
 
-describe('Ensure Kibana Version', () => {
+describe('Check Kibana Version Compatibility', () => {
   it('version check passes', () => {
     const plugin = _.set({}, 'kbnServer.version', '4.3.1');
     const pkg = _.set({}, 'version', '2.1.0');
