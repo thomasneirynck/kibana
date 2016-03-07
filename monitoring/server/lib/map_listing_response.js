@@ -40,19 +40,16 @@ module.exports = function mapListingResponse(options) {
     const row = { name: item.key, metrics: {} };
     _.each(listingMetrics, function (id) {
       const metric = metrics[id];
-      const buckets = _.chain(item[id].buckets)
+      const filteredBuckets = _.chain(item[id].buckets)
         .filter(filterPartialBuckets(min, max, bucketSize))
         .map(mapChartData(metric))
-        .filter(buckets, (b) => !_.isUndefined(b))
+        .filter(filteredBuckets, (b) => !_.isUndefined(b))
         .value();
 
-      const minVal = _.min(_.pluck(buckets, 'y'));
-      const maxVal = _.max(_.pluck(buckets, 'y'));
-      const lastVal = _.last(_.pluck(buckets, 'y'));
-      const slope = calcSlope(buckets);
-
-      // console.log(`${item.key}/${metric.field}-before`, item[id].buckets.map((d) => JSON.stringify(d)).join('|'));
-      // console.log(`${item.key}/${metric.field}-after`, buckets.map((d) => d.y + '').join('|'));
+      const minVal = _.min(_.pluck(filteredBuckets, 'y'));
+      const maxVal = _.max(_.pluck(filteredBuckets, 'y'));
+      const lastVal = _.last(_.pluck(filteredBuckets, 'y'));
+      const slope = calcSlope(filteredBuckets);
 
       row.metrics[id] = {
         metric: filterMetric(metric),

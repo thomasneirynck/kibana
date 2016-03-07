@@ -12,8 +12,8 @@ Model.prototype.get = function (key) {
 Model.prototype.set = function (key, val) {
   var self = this;
   if (_.isPlainObject(key)) {
-    _.each(Model.flatten(key), function (val, key) {
-      _.get(self.data, key, val);
+    _.each(Model.flatten(key), function (v, k) {
+      _.get(self.data, k, v);
     });
   } else {
     _.set(this.data, key, val);
