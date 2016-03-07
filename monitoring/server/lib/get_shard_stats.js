@@ -1,3 +1,4 @@
+import { getDefaultDataObject, processIndexShards } from './process_index_shards';
 const _ = require('lodash');
 const createQuery = require('./create_query');
 const root = require('requirefrom')('');
@@ -64,51 +65,7 @@ module.exports = (req, indices, lastState) => {
 
   return callWithRequest(req, 'search', params)
   .then((resp) => {
-    const data = {
-      nodes: {},
-      totals: {
-        primary: 0, replica: 0, unassigned: { replica: 0, primary: 0 }
-      }
-    };
-
-    function createNewMetric() {
-      return {
-        status: 'green',
-        primary: 0,
-        replica: 0,
-        unassigned: {
-          replica: 0,
-          primary: 0
-        }
-      };
-    };
-
-    function setStats(bucket, metric, ident) {
-      const states = _.filter(bucket.states.buckets, ident);
-      states.forEach((currentState) => {
-        metric.primary = currentState.primary.buckets.reduce((acc, state) => {
-          if (state.key) acc += state.doc_count;
-          return acc;
-        }, metric.primary);
-        metric.replica = currentState.primary.buckets.reduce((acc, state) => {
-          if (!state.key) acc += state.doc_count;
-          return acc;
-        }, metric.replica);
-      });
-    }
-
-    function processIndexShards(bucket) {
-      const metric = createNewMetric();
-      setStats(bucket, metric, { key: 'STARTED' });
-      setStats(bucket, metric.unassigned, (b) => b.key !== 'STARTED');
-      data.totals.primary += metric.primary;
-      data.totals.replica += metric.replica;
-      data.totals.unassigned.primary += metric.unassigned.primary;
-      data.totals.unassigned.replica += metric.unassigned.replica;
-      if (metric.unassigned.replica) metric.status = 'yellow';
-      if (metric.unassigned.primary) metric.status = 'red';
-      data[bucket.key] = metric;
-    };
+    const data = getDefaultDataObject();
 
     // Mutate "data" with a nodes object having a field for every node
     function processNodeShards(bucket) {
@@ -127,7 +84,7 @@ module.exports = (req, indices, lastState) => {
     }
 
     if (resp && resp.hits && resp.hits.total !== 0) {
-      resp.aggregations.indices.buckets.forEach(processIndexShards);
+      resp.aggregations.indices.buckets.forEach(processIndexShards(data));
       resp.aggregations.nodes.buckets.forEach(processNodeShards);
     }
 

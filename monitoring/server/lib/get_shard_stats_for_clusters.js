@@ -1,3 +1,4 @@
+import { getDefaultDataObject, processIndexShards } from './process_index_shards';
 const _ = require('lodash');
 
 module.exports = (req) => {
@@ -62,46 +63,7 @@ module.exports = (req) => {
     return callWithRequest(req, 'msearch', params)
     .then((res) => {
       res.responses.forEach((resp) => {
-        const data = { totals: { primary: 0, replica: 0, unassigned: { replica: 0, primary: 0 } } };
-
-        function createNewMetric() {
-          return {
-            status: 'green',
-            primary: 0,
-            replica: 0,
-            unassigned: {
-              replica: 0,
-              primary: 0
-            }
-          };
-        };
-
-        function setStats(bucket, metric, ident) {
-          const states = _.filter(bucket.states.buckets, ident);
-          states.forEach((currentState) => {
-            metric.primary = currentState.primary.buckets.reduce((acc, state) => {
-              if (state.key) acc += state.doc_count;
-              return acc;
-            }, metric.primary);
-            metric.replica = currentState.primary.buckets.reduce((acc, state) => {
-              if (!state.key) acc += state.doc_count;
-              return acc;
-            }, metric.replica);
-          });
-        }
-
-        function processIndexShards(bucket) {
-          const metric = createNewMetric();
-          setStats(bucket, metric, { key: 'STARTED' });
-          setStats(bucket, metric.unassigned, (b) => b.key !== 'STARTED');
-          data.totals.primary += metric.primary;
-          data.totals.replica += metric.replica;
-          data.totals.unassigned.primary += metric.unassigned.primary;
-          data.totals.unassigned.replica += metric.unassigned.replica;
-          if (metric.unassigned.replica) metric.status = 'yellow';
-          if (metric.unassigned.primary) metric.status = 'red';
-          data[bucket.key] = metric;
-        };
+        const data = getDefaultDataObject();
 
         function processNodeShards(cluster) {
           return (bucket) => {
@@ -115,7 +77,7 @@ module.exports = (req) => {
         if (resp && resp.hits && resp.hits.total !== 0) {
           const clusterUuid = resp.aggregations.indices.meta.cluster_uuid;
           const cluster = _.find(clusters, { cluster_uuid: clusterUuid });
-          resp.aggregations.indices.buckets.forEach(processIndexShards);
+          resp.aggregations.indices.buckets.forEach(processIndexShards(data));
           resp.aggregations.nodes.buckets.forEach(processNodeShards(cluster));
           cluster.shardStats = data;
         }
