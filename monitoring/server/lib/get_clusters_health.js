@@ -25,7 +25,7 @@ module.exports = function (req) {
         } } }
       });
     });
-    if (!bodies.length) return Promise.resolve();
+    if (!bodies.length) return Promise.resolve([]);
     const params = {
       index: config.get('monitoring.index_prefix') + '*',
       meta: 'get_clusters_health',
