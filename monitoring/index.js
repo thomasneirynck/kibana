@@ -33,16 +33,17 @@ module.exports = function (kibana) {
     },
 
     config: function (Joi) {
-      return Joi.object({
-        enabled: Joi.boolean().default(true),
-        index: Joi.string().default('.monitoring-es-data-1'),
-        index_prefix: Joi.string().default('.monitoring-es-1-'),
-        missing_intervals: Joi.number().default(12),
-        max_bucket_size: Joi.number().default(10000),
-        min_interval_seconds: Joi.number().default(10),
-        report_stats: Joi.boolean().default(true),
-        google_tag_manager_id: Joi.string().default('GTM-WXMHGM'),
-        node_resolver: Joi.string().regex(/^(?:transport_address|name)$/).default('transport_address'),
+      const { array, boolean, number, object, string } = Joi;
+      return object({
+        enabled: boolean().default(true),
+        index: string().default('.monitoring-data-1'),
+        index_prefix: string().default('.monitoring-es-1-'),
+        missing_intervals: number().default(12),
+        max_bucket_size: number().default(10000),
+        min_interval_seconds: number().default(10),
+        report_stats: boolean().default(true),
+        google_tag_manager_id: string().default('GTM-WXMHGM'),
+        node_resolver: string().regex(/^(?:transport_address|name)$/).default('transport_address'),
         stats_report_url: Joi.when('$dev', {
           is: true,
           then: Joi.string().default('../api/monitoring/v1/phone-home'),
