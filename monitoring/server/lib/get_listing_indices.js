@@ -2,7 +2,7 @@
  * range for all the active indices. The stat data is built up with passed-in
  * options that are given by the UI client as an array
  * (req.payload.listingMetrics). Every option is a key to a configuration value
- * in public/lib/metrics. Those options are used to build up a query with a
+ * in server/lib/metrics. Those options are used to build up a query with a
  * bunch of date histograms.
  *
  * After the result comes back from Elasticsearch, we process the date
@@ -15,7 +15,7 @@ const moment = require('moment');
 const createQuery = require('./create_query.js');
 const calcAuto = require('./calculate_auto');
 const root = require('requirefrom')('');
-const metrics = root('public/lib/metrics');
+const metrics = root('server/lib/metrics');
 const mapListingResponse = require('./map_listing_response');
 
 module.exports = (req, indices) => {
