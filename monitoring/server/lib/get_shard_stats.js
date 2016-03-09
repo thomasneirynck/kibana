@@ -1,9 +1,8 @@
-import { getDefaultDataObject, processIndexShards } from './process_index_shards';
+import { getDefaultDataObject, processIndexShards, processNodeShards } from './process_shards';
 const _ = require('lodash');
 const createQuery = require('./create_query');
 const root = require('requirefrom')('');
 const calculateNodeType = root('server/lib/calculate_node_type');
-const nodeAggVals = root('server/lib/node_agg_vals');
 
 module.exports = (req, indices, lastState) => {
   const config = req.server.config();
@@ -65,25 +64,9 @@ module.exports = (req, indices, lastState) => {
   .then((resp) => {
     const data = getDefaultDataObject();
 
-    // Mutate "data" with a nodes object having a field for every node
-    function processNodeShards(bucket) {
-      data.nodes[bucket.key] = {
-        shardCount: bucket.doc_count,
-        indexCount: bucket.index_count.value,
-        name: nodeAggVals.getLatestAggKey(bucket.node_names.buckets),
-        transport_address: nodeAggVals.getLatestAggKey(bucket.node_transport_address.buckets),
-        node_ids: bucket.node_ids.buckets.map(b => b.key),
-        attributes: {
-          data: nodeAggVals.getNodeAttribute(bucket.node_data_attributes.buckets),
-          master: nodeAggVals.getNodeAttribute(bucket.node_master_attributes.buckets)
-        }
-      };
-      data.nodes[bucket.key].resolver = data.nodes[bucket.key][nodeResolver];
-    }
-
     if (resp && resp.hits && resp.hits.total !== 0) {
       resp.aggregations.indices.buckets.forEach(processIndexShards(data));
-      resp.aggregations.nodes.buckets.forEach(processNodeShards);
+      resp.aggregations.nodes.buckets.forEach(processNodeShards(data, nodeResolver));
     }
 
     _.forEach(data.nodes, node => {

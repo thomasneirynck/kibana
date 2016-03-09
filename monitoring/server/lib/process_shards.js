@@ -4,7 +4,9 @@
  *  - Count of Unassigned Primary and Replica Shards
  *  - Counts of each type of Shards per Index
  */
-import { filter } from 'lodash';
+import { filter, get } from 'lodash';
+const root = require('requirefrom')('');
+const nodeAggVals = root('server/lib/node_agg_vals');
 function createNewMetric() {
   return {
     status: 'green',
@@ -41,6 +43,26 @@ export function getDefaultDataObject() {
       primary: 0,
       replica: 0,
       unassigned: { replica: 0, primary: 0 }
+    }
+  };
+}
+
+// Mutate "data" with a nodes object having a field for every node
+export function processNodeShards(data, nodeResolver) {
+  return (bucket) => {
+    if (bucket.key && bucket.node_transport_address && bucket.node_ids) {
+      data.nodes[bucket.key] = {
+        shardCount: bucket.doc_count,
+        indexCount: get(bucket, 'index_count.value'),
+        name: nodeAggVals.getLatestAggKey(get(bucket, 'node_names.buckets')),
+        transport_address: nodeAggVals.getLatestAggKey(bucket.node_transport_address.buckets),
+        node_ids: bucket.node_ids.buckets.map(b => b.key),
+        attributes: {
+          data: nodeAggVals.getNodeAttribute(bucket.node_data_attributes.buckets),
+          master: nodeAggVals.getNodeAttribute(bucket.node_master_attributes.buckets)
+        }
+      };
+      data.nodes[bucket.key].resolver = data.nodes[bucket.key][nodeResolver];
     }
   };
 }
