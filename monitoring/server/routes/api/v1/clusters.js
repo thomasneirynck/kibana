@@ -4,7 +4,6 @@ const root = require('requirefrom')('');
 const getClustersStats = root('server/lib/get_clusters_stats');
 const getClusters = root('server/lib/get_clusters');
 const getClustersHealth = root('server/lib/get_clusters_health');
-const getShardStatsForClusters = root('server/lib/get_shard_stats_for_clusters');
 const Joi = require('joi');
 
 const calculateIndices = root('server/lib/calculate_indices');
@@ -27,7 +26,6 @@ module.exports = (server) => {
       return getClusters(req)
       .then(getClustersStats(req))
       .then(getClustersHealth(req))
-      .then(getShardStatsForClusters(req))
       .then(clusters => reply(_.sortBy(clusters, 'cluster_name')))
       .catch(err => reply(handleError(err, req)));
     }
