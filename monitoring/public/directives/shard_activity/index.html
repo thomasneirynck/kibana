@@ -53,7 +53,7 @@
       </td>
       <td class="bytes">
         <h5></h5{{ activity.index.size.percent }}>
-        <p><span>{{ formatNumber((activity.index.size.reused_in_bytes === activity.index.size.total_in_bytes)? activity.index.size.recovered_in_bytes : activity.index.size.reused_in_bytes, 'byte') }}</span>/<span>{{ formatNumber(activity.index.size.total_in_bytes, 'byte') }}</span></p>
+        <p><span>{{ formatNumber(activity.index.size.recovered_in_bytes + activity.index.size.reused_in_bytes, 'byte') }}</span>/<span>{{ formatNumber(activity.index.size.total_in_bytes, 'byte') }}</span></p>
       </td>
       <td class="translog" ng-if="activity.translog.total <= 0">
         <h5>n/a</h5>
