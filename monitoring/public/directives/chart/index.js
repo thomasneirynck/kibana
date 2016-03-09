@@ -31,7 +31,7 @@ app.directive('monitoringChart', () => {
   };
 });
 
-app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private, monitoringMetrics) => {
+app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private) => {
   return {
     restrict: 'E',
     scope: {

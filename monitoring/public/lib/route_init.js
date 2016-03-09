@@ -2,17 +2,11 @@ define(function (require) {
   var _ = require('lodash');
   var chrome = require('ui/chrome');
   var tabs = require('./tabs');
-  return function routeInitProvider(Notifier, monitoringSettings, Private, monitoringClusters, globalState, Promise, kbnUrl) {
+  return function routeInitProvider(Notifier, Private, monitoringClusters, globalState, Promise, kbnUrl) {
 
     var phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
     var ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
-    return function (options) {
-      options = _.defaults(options || {}, {
-        force: {
-          settings: true
-        }
-      });
-
+    return function () {
       var monitoring = {};
       var notify = new Notifier({ location: 'Monitoring' });
       return monitoringClusters.fetch(true)
@@ -43,14 +37,6 @@ define(function (require) {
             return kbnUrl.redirect('/home');
           }
           return globalState.cluster;
-        })
-        // Get the Monitoring Settings
-        .then(function (cluster) {
-          return monitoringSettings.fetch(cluster, options.force.settings)
-            .then(function (settings) {
-              monitoring.settings = settings;
-              return settings;
-            });
         })
         // Finally filter the cluster from the nav if it's light then return the Monitoring object.
         .then(function () {

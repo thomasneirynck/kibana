@@ -6,7 +6,6 @@ define(function (require) {
   var React = require('react');
   var make = React.DOM;
 
-  var SparkLines = require('plugins/monitoring/directives/monitoring_sparkline');
   var Table = require('plugins/monitoring/directives/paginated_table/components/table');
 
   module.directive('monitoringIndexListing', function (kbnUrl) {
