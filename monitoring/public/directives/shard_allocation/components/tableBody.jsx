@@ -20,7 +20,6 @@
 /* jshint maxlen:false, white:false, newcap:false  */
 define(function (require) {
   var React = require('react');
-  var D = React.DOM;
   var Unassigned = require('./unassigned.jsx');
   var Assigned = require('./assigned.jsx');
 

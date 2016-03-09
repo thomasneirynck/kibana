@@ -1,6 +1,4 @@
 define(function (require) {
-  var _ = require('lodash');
-  var moment = require('moment');
   var module = require('ui/modules').get('monitoring', [
     'monitoring/directives'
   ]);

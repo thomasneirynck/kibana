@@ -20,7 +20,6 @@
 
 define(function (require) {
   var transform = require('./transform');
-  var calculateShardStats = require('plugins/monitoring/lib/calculate_shard_stats');
   var filterByName = require('./filterByName');
   var countChildren = require('./countChildren');
   var hasUnassigned = require('./hasUnassigned');

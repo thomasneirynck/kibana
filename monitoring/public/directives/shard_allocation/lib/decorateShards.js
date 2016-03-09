@@ -18,8 +18,6 @@
 
 
 define(function (require) {
-  var _ = require('lodash');
-
   return function (shards, nodes) {
     function setNodeName(shard) {
       var node = nodes[shard.resolver];

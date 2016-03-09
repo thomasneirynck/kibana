@@ -1,7 +1,4 @@
 import { get, set } from 'lodash';
-
-const root = require('requirefrom')('');
-
 // Methods for calculating metrics for
 // - Number of Primary Shards
 // - Number of Replica Shards

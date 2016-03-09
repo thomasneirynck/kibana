@@ -5,7 +5,6 @@ module.exports = (req, indices) => {
 
   // Get the params from the POST body for the request
   const config = req.server.config();
-  const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const clusterUuid = req.params.clusterUuid;
 

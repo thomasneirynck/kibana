@@ -6,7 +6,6 @@ const handleError = root('server/lib/handle_error');
 
 module.exports = (server) => {
   const callWithRequest = server.plugins.elasticsearch.callWithRequest;
-  const config = server.config();
 
   server.route({
     path: '/api/monitoring/v1/phone-home',

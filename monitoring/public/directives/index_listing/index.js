@@ -1,7 +1,6 @@
 define(function (require) {
   var _ = require('lodash');
   var numeral = require('numeral');
-  var moment = require('moment');
   var module = require('ui/modules').get('monitoring/directives', []);
   var React = require('react');
   var make = React.DOM;
@@ -99,7 +98,6 @@ define(function (require) {
           },
           render: function () {
             var boundTemplateFn = _.bind(makeTdWithPropKey, this, scope);
-            var dataProps = _.pluck(initialTableOptions.columns, 'key');
             var $tdsArr = initialTableOptions.columns.map(boundTemplateFn);
             var classes = [ this.state.status ];
             return make.tr({

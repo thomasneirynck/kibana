@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const chrome = require('ui/chrome');
 const mod = require('ui/modules').get('monitoring', [
   'monitoring/directives'

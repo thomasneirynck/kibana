@@ -37,13 +37,9 @@ module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, 
     }
 
     set(key, value) {
-      var self = this;
-      var previous;
       if (typeof key === 'object') {
-        previous = _.pick(this.attributes, _.keys(key));
         this.attributes = _.assign(this.attributes, key);
       } else {
-        previous = this.attributes[key];
         this.attributes[key] = value;
       }
     }
@@ -106,7 +102,6 @@ module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, 
     }
 
     sendIfDue(clusters) {
-      var self = this;
       if (!this.checkReportStatus()) return Promise.resolve();
       return Promise.all(clusters.map((cluster) => {
         return this.getClusterInfo(cluster.cluster_uuid).then((info) => {

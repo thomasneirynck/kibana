@@ -1,5 +1,4 @@
 var _ = require('lodash');
-var Promise = require('bluebird');
 var moment = require('moment');
 module.exports = function (req, start, end) {
   var server = req.server;

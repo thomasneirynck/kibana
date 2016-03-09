@@ -2,29 +2,6 @@ define(function (require) {
   var React = require('react');
   var make = React.DOM;
 
-
-  function sortManager(cols) {
-    var lastSortedColIdx = cols.reduce(function (prev, curr, idx) {
-      if (prev !== false) {
-        return prev;
-      }
-      return (curr.sort !== 0 ? idx : null);
-    }, false) || 0;
-
-    return function (sortObjIdx) {
-      var oldCol = cols[lastSortedColIdx];
-      var newCol = cols[sortObjIdx];
-      if (sortObjIdx === lastSortedColIdx) {
-        oldCol.sort = oldCol.sort === 1 ? -1 : 1;
-      } else {
-        oldCol.sort = 0;
-        newCol.sort = 1;
-        lastSortedColIdx = sortObjIdx;
-      }
-      return cols;
-    };
-  }
-
   var TableHead = React.createClass({
     displayName: 'TableHead',
     render: function () {

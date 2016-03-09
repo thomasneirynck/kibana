@@ -18,9 +18,6 @@
 
 
 define(function (require) {
-  var _ = require('lodash');
-  var stringify = _.compose(encodeURIComponent, JSON.stringify);
-
   return function generateQueryAndLink(data) {
     var type = 'indices';
     var ident = data.name;

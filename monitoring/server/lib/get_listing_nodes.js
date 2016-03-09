@@ -23,7 +23,6 @@
  * going up, and likewise if the metric is going down, we have a down arrow
  */
 
-const _ = require('lodash');
 const moment = require('moment');
 const createQuery = require('./create_query.js');
 const calcAuto = require('./calculate_auto');

@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const mod = require('ui/modules').get('monitoring/directives', []);
 const template = require('plugins/monitoring/directives/welcome_msg/index.html');
 mod.directive('monitoringWelcomeMessage', function ($window, reportStats, features) {

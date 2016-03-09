@@ -9,8 +9,6 @@ module.exports = (req, indices, lastState) => {
   const config = req.server.config();
   const nodeResolver = config.get('monitoring.node_resolver');
   const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
-  const start = req.payload.timeRange.min;
-  const end = req.payload.timeRange.max;
   const clusterUuid = req.params.clusterUuid;
   const aggSize = 10;
   const params = {

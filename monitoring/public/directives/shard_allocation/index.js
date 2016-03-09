@@ -1,7 +1,6 @@
 const labels = require('plugins/monitoring/directives/shard_allocation/lib/labels');
 const indicesByNodes = require('plugins/monitoring/directives/shard_allocation/transformers/indicesByNodes');
 const nodesByIndices = require('plugins/monitoring/directives/shard_allocation/transformers/nodesByIndices');
-const countChildren = require('plugins/monitoring/directives/shard_allocation/lib/countChildren');
 const app = require('ui/modules').get('monitoring/directives', []);
 require('plugins/monitoring/directives/shard_allocation/directives/clusterView');
 app.directive('monitoringShardAllocation', () => {

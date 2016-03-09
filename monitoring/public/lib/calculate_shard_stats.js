@@ -22,7 +22,6 @@ define(function (require) {
       data[shard.index] = metrics;
     };
     if (state) {
-      var clusterName = _.get(state, 'cluster_uuid');
       var shards = _.get(state, 'cluster_state.shards');
       _.each(shards, processShards);
     }

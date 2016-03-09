@@ -10,7 +10,6 @@
  * for charting. This method is shared by the get_listing_nodes lib.
  */
 
-const _ = require('lodash');
 const moment = require('moment');
 const createQuery = require('./create_query.js');
 const calcAuto = require('./calculate_auto');
