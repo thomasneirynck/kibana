@@ -1,4 +1,3 @@
-var Promise = require('bluebird');
 var join = require('path').join;
 var requireAllAndApply = require('./server/lib/require_all_and_apply');
 var pluginSelfCheck = require('./server/lib/plugin_self_check');
@@ -33,7 +32,7 @@ module.exports = function (kibana) {
     },
 
     config: function (Joi) {
-      const { array, boolean, number, object, string } = Joi;
+      const { boolean, number, object, string } = Joi;
       return object({
         enabled: boolean().default(true),
         index: string().default('.monitoring-data-1'),

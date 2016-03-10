@@ -54,10 +54,10 @@ function syncPluginTo(dest, done) {
           .output(function (data) {
             process.stdout.write(data.toString('utf8'));
           });
-        rsync.execute(function (err) {
-          if (err) {
-            console.log(err);
-            return reject(err);
+        rsync.execute(function (syncErr) {
+          if (syncErr) {
+            console.log(syncErr);
+            return reject(syncErr);
           }
           resolve();
         });
@@ -75,7 +75,7 @@ gulp.task('sync', function (done) {
 });
 
 gulp.task('lint', function (done) {
-  return gulp.src(['server/**/*.js', 'public/**/*.js', 'public/**/*.jsx', 'gulp-tasks/**/*.jsx'])
+  return gulp.src(['*.js', 'server/**/*.js', 'public/**/*.js', 'public/**/*.jsx', 'gulp-tasks/**/*.jsx'])
     // eslint() attaches the lint output to the eslint property
     // of the file object so it can be used by other modules.
     .pipe(g.eslint())
