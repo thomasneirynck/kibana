@@ -37,7 +37,7 @@ function parseAuthHeader(authorization) {
   return { username, password };
 }
 
-function registerPreAuth(server, cookieName, isValidUser) {
+function registerPreAuth(server, cookieName, isValidUser, calculateExpires) {
   server.ext('onPreAuth', function (request, reply) {
     // continue if already authenticated
     const existingAuth = request.state[cookieName];
@@ -52,7 +52,11 @@ function registerPreAuth(server, cookieName, isValidUser) {
       return isValidUser(request, username, password)
       .then(function () {
         // set cookie and replay the request
-        request.auth.session.set({ username, password });
+        request.auth.session.set({
+          username,
+          password,
+          expires: calculateExpires()
+        });
         return reply(reloadMarkup).type('text/html');
       }, () => reply.continue());
     } catch (err) {

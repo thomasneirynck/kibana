@@ -12,18 +12,21 @@ describe('Basic auth', function () {
   describe('register', function () {
     let mockServer;
     let mockIsValidUser;
+    let mockCalculateExpires;
 
     before(function () {
       mockServer = {
         ext: sinon.stub()
       };
       mockIsValidUser = sinon.stub().returns(Promise.resolve());
+      mockCalculateExpires = sinon.stub().returns(0);
     });
 
     it('should register pre auth handler', function () {
-      basicAuth.register(mockServer, 'cookieName', mockIsValidUser);
+      basicAuth.register(mockServer, 'cookieName', mockIsValidUser, mockCalculateExpires);
 
       expect(mockIsValidUser.calledOnce);
+      expect(mockCalculateExpires.calledOnce);
       expect(mockServer.ext.calledOnce);
       expect(mockServer.ext.firstCall.args[0]).to.equal('onPreAuth');
       expect(mockServer.ext.firstCall.args[1]).to.be.a('function');
