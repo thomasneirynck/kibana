@@ -21,7 +21,7 @@ define(function (require) {
   var React = require('react');
   var ClusterView = require('plugins/monitoring/directives/shard_allocation/components/clusterView');
   var module = require('ui/modules').get('monitoring/directives', []);
-  module.directive('clusterView', function ($parse, kbnUrl) {
+  module.directive('clusterView', function (kbnUrl) {
     return {
       restrict: 'E',
       scope: {
@@ -31,7 +31,7 @@ define(function (require) {
         labels: '=',
         shardStats: '='
       },
-      link: function (scope, element, attr) {
+      link: function (scope, element) {
         React.render(<ClusterView scope={scope} kbnUrl={kbnUrl}></ClusterView>, element[0]);
       }
     };

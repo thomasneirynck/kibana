@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const createQuery = require('./create_query');
 
-module.exports = (req, indices, filters, lastState) => {
+module.exports = (req, _indices, filters, lastState) => {
   filters.push({
     term: { state_uuid: _.get(lastState, 'cluster_state.state_uuid') }
   });
@@ -10,6 +10,9 @@ module.exports = (req, indices, filters, lastState) => {
   const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
   const clusterUuid = req.params.clusterUuid;
   const params = {
+    /* TODO It would be more efficient to use the indices param instead of
+    * wildcard. Needs testing to ensure the time range the indices cover always
+    * has the last data from the cluster state. */
     index: config.get('monitoring.index_prefix') + '*',
     meta: 'get_shard_allocation',
     type: 'shards',

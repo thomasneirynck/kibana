@@ -95,8 +95,7 @@ define(function (require) {
           }
         };
 
-        var error = function (resp) {
-          // $scope.panel.error = resp.data.error;
+        var error = function (_resp) {
           position++;
           if (indexList[position]) {
             return getTimelineData(direction, indexPattern, cluster, size, timeRange, data, position, indexList); // call again

@@ -2,7 +2,7 @@ define(function (require) {
   var _ = require('lodash');
   var chrome = require('ui/chrome');
   var tabs = require('./tabs');
-  return function routeInitProvider(Notifier, Private, monitoringClusters, globalState, Promise, kbnUrl) {
+  return function routeInitProvider(Notifier, Private, monitoringClusters, globalState, kbnUrl) {
 
     var phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
     var ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));

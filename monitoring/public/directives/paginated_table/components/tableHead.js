@@ -6,7 +6,7 @@ define(function (require) {
     displayName: 'TableHead',
     render: function () {
       var that = this;
-      function makeTh(config, idx) {
+      function makeTh(config) {
         var isSortCol = config.sort !== 0 && config.sort;
         var isSortAsc = config.sort === 1;
         var $icon = false;

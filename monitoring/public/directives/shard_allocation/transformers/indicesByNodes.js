@@ -21,7 +21,7 @@ define(function (require) {
   var _ = require('lodash');
   var decorateShards = require('../lib/decorateShards');
 
-  return function ($scope) {
+  return function () {
     return function indicesByNode(shards, nodes) {
 
       function createIndex(obj, shard) {

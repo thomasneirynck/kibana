@@ -3,7 +3,7 @@ var module = require('ui/modules').get('monitoring/directives', []);
 var Table = require('plugins/monitoring/directives/paginated_table/components/table');
 var ClusterRow = require('./components/cluster_row.jsx');
 
-module.directive('monitoringClusterListing', function (globalState, kbnUrl, $location) {
+module.directive('monitoringClusterListing', function (globalState, kbnUrl) {
   return {
     restrict: 'E',
     scope: { clusters: '=' },
