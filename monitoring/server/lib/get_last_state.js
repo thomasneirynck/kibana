@@ -26,7 +26,12 @@ module.exports = (req, indices) => {
     const total = _.get(resp, 'hits.total', 0);
     if (!total) {
       // time frame is out of bounds with indexed data
-      return { cluster_state: { state_uuid: 'devnull' } };
+      return {
+        cluster_state: {
+          state_uuid: 'devnull',
+          nodes: {}
+        }
+      };
     }
     const lastState = _.get(resp, 'hits.hits[0]._source');
     const nodes = _.get(lastState, 'cluster_state.nodes');

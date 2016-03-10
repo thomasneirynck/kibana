@@ -173,6 +173,7 @@ module.exports = (server) => {
           body.nodeSummary.documents = 'N/A';
           body.nodeSummary.indexCount = 'N/A';
           body.nodeSummary.totalShards = 'N/A';
+          body.nodeSummary.name = 'N/A';
           body.nodeSummary.status = 'Offline';
         }
         delete body.clusterState;
