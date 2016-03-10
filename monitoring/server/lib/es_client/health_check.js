@@ -71,7 +71,7 @@ export default function healthCheck(plugin, server) {
   function scheduleCheck(ms) {
     if (timeoutId) return;
     const myId = setTimeout(() => {
-      check().finally((result) => {
+      check().finally(() => {
         if (timeoutId === myId) startOrRestartChecking();
       });
     }, ms);

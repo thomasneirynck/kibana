@@ -53,6 +53,7 @@ module.exports = function (kibana) {
           interval: string().regex(/[\d\.]+[yMwdhms]/).default('10s')
         }).default(),
         elasticsearch: object({
+          logQueries: boolean().default(false),
           url: string().uri({ scheme: ['http', 'https'] }).default('http://localhost:9200'),
           username: string(),
           password: string(),

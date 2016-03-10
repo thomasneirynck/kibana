@@ -19,6 +19,27 @@ function exposeClient(server) {
   const callWithRequestFactory = server.plugins.elasticsearch.callWithRequestFactory;
   const ElasticsearchClientLogging = server.plugins.elasticsearch.ElasticsearchClientLogging;
 
+  /* Overrides the trace method so we can have query logging
+   * logs can be copy+pasted into Sense */
+  class MonitoringClientLogging extends ElasticsearchClientLogging {
+    trace(method, options, query, _response, statusCode) {
+      /* Check if query logging is enabled and if the query has the "meta"
+       * field which is added for traceability.
+       * It requires Kibana to be configured with verbose logging turned on. */
+      if (config.get('monitoring.elasticsearch.logQueries')) {
+        if (options.path.match(/meta=/)) {
+          const methodAndPath = `${method} ${options.path}`;
+          const queryDsl = query ? query.trim() : '';
+          server.log(['monitoring', 'es-query'], [
+            statusCode,
+            methodAndPath,
+            queryDsl
+          ].join('\n'));
+        }
+      }
+    }
+  }
+
   const options = {
     url: config.get('monitoring.elasticsearch.url'),
     username: config.get('monitoring.elasticsearch.username'),
@@ -59,7 +80,7 @@ function exposeClient(server) {
     defer: function () {
       return Promise.defer();
     },
-    log: ElasticsearchClientLogging
+    log: MonitoringClientLogging
   });
 
   const callWithRequest = callWithRequestFactory(client);
