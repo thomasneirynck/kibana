@@ -55,7 +55,7 @@ module.exports = function (kibana) {
         }).default(),
         elasticsearch: object({
           logQueries: boolean().default(false),
-          url: string().uri({ scheme: ['http', 'https'] }).default('http://localhost:9200'),
+          url: string().uri({ scheme: ['http', 'https'] }), // if empty, use Kibana's connection config
           username: string(),
           password: string(),
           requestTimeout: number().default(30000),

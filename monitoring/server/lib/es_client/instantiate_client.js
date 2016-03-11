@@ -14,6 +14,32 @@ const readFile = (file) => {
   readFileSync(file, 'utf8');
 };
 
+/* If Monitoring cluster connection is configured, use that. Otherwise default
+ * to the cluster connection config set for Kibana.  */
+function getConfigOptions(config) {
+  let prefix;
+  if (config.get('monitoring.elasticsearch.url')) {
+    prefix = 'monitoring.elasticsearch';
+  } else {
+    prefix = 'elasticsearch';
+  }
+
+  return {
+    url: config.get(`${prefix}.url`),
+    username: config.get(`${prefix}.username`),
+    password: config.get(`${prefix}.password`),
+    verifySsl: config.get(`${prefix}.ssl.verify`),
+    clientCrt: config.get(`${prefix}.ssl.cert`),
+    clientKey: config.get(`${prefix}.ssl.key`),
+    ca: config.get(`${prefix}.ssl.ca`),
+    apiVersion: config.get(`${prefix}.apiVersion`),
+    pingTimeout: config.get(`${prefix}.pingTimeout`),
+    requestTimeout: config.get(`${prefix}.requestTimeout`),
+    keepAlive: true,
+    auth: true
+  };
+}
+
 function exposeClient(server) {
   const config = server.config();
   const callWithRequestFactory = server.plugins.elasticsearch.callWithRequestFactory;
@@ -41,20 +67,9 @@ function exposeClient(server) {
     }
   }
 
-  const options = {
-    url: config.get('monitoring.elasticsearch.url'),
-    username: config.get('monitoring.elasticsearch.username'),
-    password: config.get('monitoring.elasticsearch.password'),
-    verifySsl: config.get('monitoring.elasticsearch.ssl.verify'),
-    clientCrt: config.get('monitoring.elasticsearch.ssl.cert'),
-    clientKey: config.get('monitoring.elasticsearch.ssl.key'),
-    ca: config.get('monitoring.elasticsearch.ssl.ca'),
-    apiVersion: config.get('monitoring.elasticsearch.apiVersion'),
-    pingTimeout: config.get('monitoring.elasticsearch.pingTimeout'),
-    requestTimeout: config.get('monitoring.elasticsearch.requestTimeout'),
-    keepAlive: true,
-    auth: true
-  };
+  /* Use monitoring cluster connection data if it is specified. If not, use the
+   * Kibana cluster connection data. */
+  const options = getConfigOptions(config);
 
   const uri = url.parse(options.url);
   if (options.auth && options.username && options.password) {
