@@ -28,9 +28,10 @@ function exposeClient(server) {
        * It requires Kibana to be configured with verbose logging turned on. */
       if (config.get('monitoring.elasticsearch.logQueries')) {
         if (options.path.match(/meta=/)) {
+          const loggingTag = config.get('monitoring.loggingTag');
           const methodAndPath = `${method} ${options.path}`;
           const queryDsl = query ? query.trim() : '';
-          server.log(['monitoring', 'es-query'], [
+          server.log([loggingTag, 'es-query'], [
             statusCode,
             methodAndPath,
             queryDsl

@@ -36,6 +36,7 @@ module.exports = function (kibana) {
       const { array, boolean, number, object, string } = Joi;
       return object({
         enabled: boolean().default(true),
+        loggingTag: string().default('monitoring-ui'),
         index: string().default('.monitoring-data-1'),
         index_prefix: string().default('.monitoring-es-1-'),
         missing_intervals: number().default(12),
