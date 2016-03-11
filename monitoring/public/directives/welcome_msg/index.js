@@ -8,7 +8,7 @@ mod.directive('monitoringWelcomeMessage', function ($window, reportStats, featur
       clusters: '='
     },
     template: template,
-    link: (scope, el, attrs) => {
+    link: (scope) => {
       const hideBanner = $window.localStorage.getItem('monitoring.hideBanner');
       scope.showBanner = (hideBanner) ? false : true;
 

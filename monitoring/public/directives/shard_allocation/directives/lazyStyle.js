@@ -24,7 +24,7 @@ define(function () {
       var loadedStyles = {};
       return {
         restrict: 'E',
-        link: function (scope, element, attrs) {
+        link: function (_scope, _element, attrs) {
 
           attrs.$observe('href', function (value) {
 

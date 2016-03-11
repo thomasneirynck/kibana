@@ -13,7 +13,7 @@ app.directive('monitoringShardAllocation', () => {
       nodes: '=',
       shardStats: '='
     },
-    link: (scope, el, attrs) => {
+    link: (scope) => {
       const isIndexView = scope.view === 'index';
       const transformer = (isIndexView) ? indicesByNodes(scope) : nodesByIndices(scope);
       scope.isIndexView = isIndexView;

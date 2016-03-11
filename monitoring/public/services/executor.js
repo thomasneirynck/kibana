@@ -1,7 +1,7 @@
 const _ = require('lodash');
 
 const mod = require('ui/modules').get('monitoring/executor', []);
-mod.service('$executor', ($rootScope, globalState, Promise, $timeout, timefilter) => {
+mod.service('$executor', (Promise, $timeout, timefilter) => {
 
   const queue = [];
   let executionTimer;
@@ -62,7 +62,7 @@ mod.service('$executor', ($rootScope, globalState, Promise, $timeout, timefilter
     .finally(reset);
   }
 
-  function reFetch(changes) {
+  function reFetch(_changes) {
     cancel();
     run();
   }

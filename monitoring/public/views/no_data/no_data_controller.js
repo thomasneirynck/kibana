@@ -6,7 +6,7 @@ require('ui/routes')
 .when('/no-data', {
   template: require('plugins/monitoring/views/no_data/no_data_template.html'),
   resolve: {
-    clusters: (monitoringClusters, kbnUrl, Promise, globalState) => {
+    clusters: (monitoringClusters, kbnUrl, Promise) => {
       return monitoringClusters.fetch()
       .then((clusters) => {
         if (clusters.length) {
@@ -39,7 +39,7 @@ mod.controller('noData', (kbnUrl, $scope, monitoringClusters, timefilter, $timeo
     $timeout.cancel(fetchTimer);
   }
 
-  timefilter.on('update', (time) => {
+  timefilter.on('update', (_time) => {
     cancelFetchInterval();
     startFetchInterval();
   });

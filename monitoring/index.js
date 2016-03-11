@@ -14,7 +14,7 @@ module.exports = function (kibana) {
         description: 'Monitoring for Elasticsearch',
         icon: 'plugins/monitoring/monitoring.svg',
         main: 'plugins/monitoring/monitoring',
-        injectVars: function (server, options) {
+        injectVars: function (server, _options) {
           var config = server.config();
           return {
             maxBucketSize: config.get('monitoring.max_bucket_size'),
@@ -54,7 +54,7 @@ module.exports = function (kibana) {
       }).default();
     },
 
-    init: function (server, options) {
+    init: function (server, _options) {
       // Make sure the Monitoring index is created and the Kibana version is supported
       pluginSelfCheck(this, server);
       // Require all the routes

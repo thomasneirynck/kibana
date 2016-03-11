@@ -87,7 +87,7 @@ define(function (require) {
               status: !!index ? index.status : 'disabled'
             };
           },
-          componentWillReceiveProps: function (nextProps) {
+          componentWillReceiveProps: function () {
             if (scope.data) {
               var index = _.findWhere(scope.data, {name: this.props.name});
               this.setState({

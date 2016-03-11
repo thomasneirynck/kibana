@@ -17,8 +17,7 @@ app.directive('monitoringChart', () => {
     scope: {
       series: '='
     },
-    link: ($scope, $elem) => {
-
+    link: ($scope) => {
       $scope.$watch('series', (series) => {
         if (series) {
           let last = _.last(series.data);
@@ -26,12 +25,11 @@ app.directive('monitoringChart', () => {
           $scope.value = numeral(last && last.y || 0).format(series.metric.format);
         }
       });
-
     }
   };
 });
 
-app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private) => {
+app.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
   return {
     restrict: 'E',
     scope: {
@@ -76,7 +74,7 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private) => 
         legend: {
           position: 'nw',
           labelBoxBorderColor: 'rgb(255,255,255,0)',
-          labelFormatter: (label, series) => {
+          labelFormatter: (label, _series) => {
             return '<span class="ngLegendValue">' +
               label +
               '<span class="ngLegendValueNumber"></span></span>';
@@ -87,9 +85,7 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private) => 
       };
 
 
-      $scope.toggleSeries = (id) => {
-        // var series = $scope.chart[id];
-        // series._hide = !series._hide;
+      $scope.toggleSeries = (_id) => {
         drawPlot($scope.series);
       };
 
@@ -116,7 +112,7 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private) => 
       });
 
 
-      $elem.on('plotselected', (event, ranges) => {
+      $elem.on('plotselected', (_event, ranges) => {
         $scope.$evalAsync(() => {
           timefilter.time.from = moment(ranges.xaxis.from);
           timefilter.time.to = moment(ranges.xaxis.to);
@@ -128,12 +124,12 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private) => 
         $rootScope.$broadcast('monitoringPlotLeave');
       });
 
-      $scope.$on('monitoringPlotHover', (angularEvent, flotEvent, pos, time) => {
+      $scope.$on('monitoringPlotHover', (_angularEvent, _flotEvent, pos, _time) => {
         $scope.plot.setCrosshair(pos);
         debouncedSetLegendNumbers(pos);
       });
 
-      $scope.$on('monitoringPlotLeave', (angularEvent, flotEvent, pos, time) => {
+      $scope.$on('monitoringPlotLeave', (_angularEvent, _flotEvent, _pos, _time) => {
         $scope.plot.clearCrosshair();
         clearLegendNumbers();
       });

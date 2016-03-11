@@ -9,7 +9,6 @@ ecmaFeatures:
 
 rules:
   no-shadow: 2
-# no-unused-vars: [2, {args: 'all', argsIgnorePattern: '^_'}] # more ideal setting, but lots more work is needed to cleanup
-  no-unused-vars: [2, {args: 'none'}]
+  no-unused-vars: [2, {args: 'all', argsIgnorePattern: '^_'}]
   react/jsx-uses-react: 2
   react/jsx-uses-vars: 2

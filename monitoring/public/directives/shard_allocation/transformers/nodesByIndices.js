@@ -24,7 +24,7 @@ define(function (require) {
   var decorateShards = require('../lib/decorateShards');
   var extractIp = require('../lib/extractIp');
 
-  return function ($scope) {
+  return function () {
     return function nodesByIndices(shards, nodes) {
 
       var getNodeType = function (node) {
