@@ -21,7 +21,7 @@ export default function checkEsVersion(server) {
       return 'Elasticsearch v' + node.version + ' @ ' + node.http_address + ' (' + node.ip + ')';
     });
 
-    const message = `This version of Kibana requires Elasticsearch ` +
+    const message = `This version of Monitoring requires Elasticsearch ` +
     `${engineVersion} on all nodes. I found ` +
     `the following incompatible nodes in your cluster: ${badNodeNames.join(',')}`;
 
