@@ -43,6 +43,7 @@
     "node-uuid": "1.4.7",
     "portscanner": "1.0.0",
     "rsync": "0.4.0",
+    "sinon": "1.17.3",
     "yargs": "3.32.0"
   },
   "dependencies": {
