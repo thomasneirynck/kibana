@@ -1,6 +1,6 @@
 import { filter } from 'lodash';
 import { satisfies } from 'semver';
-import processVersionString from '../process_version_string';
+import normalizeVersionString from '../normalize_version_string';
 
 export default function checkEsVersion(server) {
   const client = server.plugins.monitoring.client;
@@ -9,7 +9,7 @@ export default function checkEsVersion(server) {
   .then(info => {
     const badNodes = filter(info.nodes, function (node) {
       try {
-        const ver = processVersionString(node.version);
+        const ver = normalizeVersionString(node.version);
         return !satisfies(ver, engineVersion);
       } catch (err) {
         return false;

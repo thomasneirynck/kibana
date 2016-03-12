@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import { getDefaultDataObject, processIndexShards, processNodeShards } from '../process_shards';
+import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from '../normalize_shard_objects';
 
 function getIndexShardBucket() {
   return {
@@ -90,11 +90,11 @@ function getNodeShardBucket() {
   };
 }
 
-describe('Processing Shard Data', () => {
+describe('Normalizing Shard Data', () => {
   context('Index Shards', () => {
     it('Calculates the Index Shard data for a result bucket', () => {
       const data = getDefaultDataObject();
-      const resultFn = processIndexShards(data);
+      const resultFn = normalizeIndexShards(data);
       resultFn(getIndexShardBucket());
 
       expect(data.totals.primary).to.be.eql(1);
@@ -112,7 +112,7 @@ describe('Processing Shard Data', () => {
   context('Node Shards', () => {
     it('Calculates the Node Shard data for a result bucket', () => {
       const data = getDefaultDataObject();
-      const resultFn = processNodeShards(data, 'transport_address');
+      const resultFn = normalizeNodeShards(data, 'transport_address');
       resultFn(getNodeShardBucket());
 
       expect(data.nodes).to.be.an('object');

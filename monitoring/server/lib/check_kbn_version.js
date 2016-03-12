@@ -6,7 +6,7 @@
  */
 import { get } from 'lodash';
 import { satisfies } from 'semver';
-import processVersionString from './process_version_string';
+import normalizeVersionString from './normalize_version_string';
 
 const kbnVersionRanges = {
   '2.1.0': '^4.3.0',
@@ -19,8 +19,8 @@ const kbnVersionRanges = {
 
 function checkKbnVersion(plugin, pkg) {
 
-  const kibanaVersion = processVersionString(get(plugin, 'kbnServer.version'));
-  const monitoringVersion = processVersionString(pkg.version);
+  const kibanaVersion = normalizeVersionString(get(plugin, 'kbnServer.version'));
+  const monitoringVersion = normalizeVersionString(pkg.version);
   const returnData = { kibanaVersion, monitoringVersion };
 
   // version support check can throw a TypeError if kibanaVersion is invalid
