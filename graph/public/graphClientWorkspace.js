@@ -671,10 +671,8 @@ module.exports = (function() {
       var selection = self.getAllSelectedNodes();
       var danglingEdges = [];
       self.edges.forEach(function(edge) {
-        if (selection.indexOf(edge.source) >= 0) {
-          danglingEdges.push(edge);
-        }
-        if (selection.indexOf(edge.target) >= 0) {
+        if ( (selection.indexOf(edge.source) >= 0) ||
+              (selection.indexOf(edge.target) >= 0)) {
           delete self.edgesMap[edge.id];
           danglingEdges.push(edge);
         }
