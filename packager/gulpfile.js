@@ -22,7 +22,6 @@ var ignoredPlugins = ['i', 'ignore'].reduce(function (ignore, key) {
 }, []).concat(path.basename(__dirname));
 
 var plugins = getPlugins();
-debug('Bundling plugins: ' + plugins.map(plugin => plugin.name).join(', '));
 
 var templateData = {
   plugins: plugins,
@@ -31,9 +30,9 @@ var templateData = {
   author: pkg.author,
 };
 
-gulp.task('build', ['prepare-builds'], runBuild);
+gulp.task('build', ['show-plugins', 'prepare-builds'], runBuild);
 
-gulp.task('build-only', runBuild);
+gulp.task('build-only', ['show-plugins'], runBuild);
 
 gulp.task('package', ['build'], runPackage);
 
@@ -54,6 +53,12 @@ gulp.task('prepare-builds', function () {
       return exec(plugin.name, 'npm', ['install', '--silent'], { cwd: plugin.path })
     });
   });
+});
+
+gulp.task('show-plugins', function () {
+  g.util.log('Pack name:', g.util.colors.yellow(templateData.name));
+  g.util.log('Pack version:', g.util.colors.yellow(templateData.version));
+  g.util.log('Bundling plugins:', g.util.colors.yellow(plugins.map(plugin => plugin.name).join(', ')));
 });
 
 function runBuild() {
