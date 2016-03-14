@@ -93,7 +93,7 @@ function runPackage() {
     var zip = new AdmZip();
 
     debug('Creating the package', targetFile);
-    zip.addLocalFolder(buildDir, 'kibana');
+    zip.addLocalFolder(buildDir);
     zip.writeZip(targetFile);
   })
   .then(function (target) {
