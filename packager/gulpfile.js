@@ -13,7 +13,7 @@ var g = require('gulp-load-plugins')();
 var pkg = require('./package.json');
 var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
-var buildTarget = path.join(buildDir, pkg.packageName);
+var buildTarget = path.join(buildDir, 'kibana', pkg.packageName);
 var packageFile = pkg.packageName + '.tar.gz';
 
 var ignoredPlugins = ['i', 'ignore'].reduce(function (ignore, key) {
@@ -22,6 +22,8 @@ var ignoredPlugins = ['i', 'ignore'].reduce(function (ignore, key) {
 }, []).concat(path.basename(__dirname));
 
 var plugins = getPlugins();
+debug('Bundling plugins: ' + plugins.map(plugin => plugin.name).join(', '));
+
 var templateData = {
   plugins: plugins,
   name: pkg.packageName,
@@ -56,7 +58,7 @@ gulp.task('prepare-builds', function () {
 
 function runBuild() {
   debug('Creating the build', buildDir);
-  return del(buildTarget, { force: true })
+  return del(buildDir, { force: true })
   .then(function () {
     return Promise.mapSeries(plugins, function (plugin) {
       g.util.log(g.util.colors.cyan(plugin.name), 'Building');
@@ -84,7 +86,7 @@ function runPackage() {
       return gulp.src(path.join(buildDir, '**', '*'))
       .pipe(g.tar(packageFile))
       .pipe(g.gzip({ append: false }))
-      .pipe(gulp.dest(targetDir))
+      .pipe(gulp.dest(path.join(targetDir)))
       .on('finish', cb)
       .on('error', cb);
     });
@@ -131,7 +133,7 @@ function getPlugins() {
 }
 
 function exec(prefix, cmd, args, opts) {
-  debug(arguments);
+  debug('exec', { cmd, args, opts });
   args = args || [];
   opts = opts || {};
   return new Promise(function (resolve, reject) {
