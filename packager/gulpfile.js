@@ -5,8 +5,9 @@ var child_process = require('child_process');
 var Promise = require('bluebird');
 var del = require('del');
 var checksum = require('checksum');
-var debug = require('debug')('packager');
+var AdmZip = require('adm-zip');
 var argv = require('minimist')(process.argv.slice(2));
+var debug = require('debug')('packager');
 var gulp = require('gulp');
 var g = require('gulp-load-plugins')();
 
@@ -14,7 +15,7 @@ var pkg = require('./package.json');
 var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
 var buildTarget = path.join(buildDir, 'kibana', pkg.packageName);
-var packageFile = pkg.packageName + '.tar.gz';
+var packageFile = pkg.packageName + '.zip';
 
 var ignoredPlugins = ['i', 'ignore'].reduce(function (ignore, key) {
   if (typeof argv[key] === 'string') ignore = ignore.concat(argv[key].split(','));
@@ -84,27 +85,25 @@ function runBuild() {
 }
 
 function runPackage() {
-  debug('Creating the package', targetDir);
+  var targetFile = path.join(targetDir, packageFile);
+  var checksumFile = path.join(targetDir, packageFile + '.sha1.txt');
+
   return del(targetDir, { force: true })
   .then(function () {
-    return Promise.fromCallback(function (cb) {
-      return gulp.src(path.join(buildDir, '**', '*'))
-      .pipe(g.tar(packageFile))
-      .pipe(g.gzip({ append: false }))
-      .pipe(gulp.dest(path.join(targetDir)))
-      .on('finish', cb)
-      .on('error', cb);
-    });
+    var zip = new AdmZip();
+
+    debug('Creating the package', targetFile);
+    zip.addLocalFolder(buildDir, 'kibana');
+    zip.writeZip(targetFile);
   })
-  .then(function () {
+  .then(function (target) {
     return Promise.fromCallback(function (cb) {
-      checksum.file(path.join(targetDir, packageFile), cb);
+      checksum.file(targetFile, cb);
+    })
+    .then(function (checksum) {
+      debug('Package checksum', checksum);
+      return fs.writeFileSync(checksumFile, checksum, { encoding: 'utf8' });
     });
-  })
-  .then(function (checksum) {
-    debug('Package checksum', checksum);
-    var target = path.join(targetDir, packageFile + '.sha1.txt');
-    return fs.writeFileSync(target, checksum, { encoding: 'utf8' });
   });
 }
 
