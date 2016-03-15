@@ -2,6 +2,9 @@
   "name": "graphui-plugin",
   "version": "2.3.0",
   "description": "Graph exploration",
+  "scripts": {
+    "build": "gulp package"
+  },
   "devDependencies": {
     "bluebird": "^3.0.5",
     "gulp": "^3.9.0",
