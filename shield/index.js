@@ -13,6 +13,7 @@ import validateConfig from './server/lib/validate_config';
 
 export default (kibana) => new kibana.Plugin({
   id: 'shield',
+  configPrefix: 'xpack.shield',
   require: ['elasticsearch'],
   publicDir: join(__dirname, 'public'),
 
@@ -51,8 +52,8 @@ export default (kibana) => new kibana.Plugin({
       if (error != null) throw error;
 
       server.auth.strategy('session', 'cookie', 'required', {
-        cookie: config.get('shield.cookieName'),
-        password: config.get('shield.encryptionKey'),
+        cookie: config.get('xpack.shield.cookieName'),
+        password: config.get('xpack.shield.encryptionKey'),
         path: config.get('server.basePath') + '/',
         clearInvalid: true,
         redirectTo: `${config.get('server.basePath')}/login`,
@@ -61,7 +62,7 @@ export default (kibana) => new kibana.Plugin({
       });
     });
 
-    basicAuth.register(server, config.get('shield.cookieName'), getIsValidUser(server), getCalculateExpires(server));
+    basicAuth.register(server, config.get('xpack.shield.cookieName'), getIsValidUser(server), getCalculateExpires(server));
 
     initAuthenticateApi(server);
     initUsersApi(server);
