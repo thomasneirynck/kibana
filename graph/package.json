@@ -1,5 +1,5 @@
 {
-  "name": "graphui-plugin",
+  "name": "graph",
   "version": "2.3.0",
   "description": "Graph exploration",
   "scripts": {
