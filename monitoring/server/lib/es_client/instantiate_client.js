@@ -2,7 +2,7 @@ import { once, bindKey } from 'lodash';
 import url from 'url';
 import Promise from 'bluebird';
 import elasticsearch from 'elasticsearch';
-import getConfigOptions from './get_config_options';
+import initConfig from './init_config';
 
 /* Provide a dedicated Elasticsearch client for Monitoring
  * The connection options can be customized for the Monitoring application
@@ -37,7 +37,7 @@ function exposeClient(server) {
     }
   }
 
-  const { uri, options, ssl } = getConfigOptions(config);
+  const { options, uri, ssl } = initConfig(config);
 
   server.log([loggingTag, 'es-client'], `config sourced from: ${options.configSource} cluster (${options.url})`);
 

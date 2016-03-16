@@ -1,24 +1,25 @@
-import getConfigOptions from '../get_config_options';
+import initConfig from '../init_config';
 import expect from 'expect.js';
 import sinon from 'sinon';
 
 function getMockConfig() {
   const config = { get: sinon.stub(), set: sinon.stub() };
   config.get
-  .withArgs('elasticsearch.url').returns('http://localhost:9200')
-  .withArgs('elasticsearch.username').returns('produser')
-  .withArgs('elasticsearch.password').returns('prodpass')
-  .withArgs('elasticsearch.ssl.verify').returns(true)
-  .withArgs('monitoring.elasticsearch.username').returns('monitoringuser')
-  .withArgs('monitoring.elasticsearch.password').returns('monitoringpass')
-  .withArgs('monitoring.elasticsearch.ssl.verify').returns(true);
+  .withArgs('elasticsearch').returns({
+    url: 'http://localhost:9200',
+    username: 'produser',
+    password: 'prodpass',
+    ssl: {
+      verify: true
+    }
+  });
   return config;
 }
 
 describe('Client Config Options', () => {
   it(`Defaults to Kibana's production cluster config settings`, () => {
     const config = getMockConfig();
-    const { options, uri, ssl } = getConfigOptions(config);
+    const { options, uri, ssl } = initConfig(config);
 
     expect(options.url).to.be('http://localhost:9200');
     expect(options.configSource).to.be('production');
@@ -28,8 +29,17 @@ describe('Client Config Options', () => {
   });
   it(`Uses Monitoring cluster config settings if URL is given`, () => {
     const config = getMockConfig();
-    config.get.withArgs('monitoring.elasticsearch.url').returns('http://localhost:9210');
-    const { options, uri, ssl } = getConfigOptions(config);
+    config.get
+    .withArgs('monitoring.elasticsearch.url').returns('http://localhost:9210')
+    .withArgs('monitoring.elasticsearch').returns({
+      url: 'http://localhost:9210',
+      username: 'monitoringuser',
+      password: 'monitoringpass',
+      ssl: {
+        verify: true
+      }
+    });
+    const { options, uri, ssl } = initConfig(config);
 
     expect(options.url).to.be('http://localhost:9210');
     expect(options.configSource).to.be('monitoring');
