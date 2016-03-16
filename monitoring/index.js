@@ -69,8 +69,6 @@ module.exports = function (kibana) {
           apiVersion: string().default('master'),
           engineVersion: string().valid('^5.0.0').default('^5.0.0')
         })
-        .with('username', 'url')
-        .with('ssl', 'url')
         .default()
       }).default();
     },
