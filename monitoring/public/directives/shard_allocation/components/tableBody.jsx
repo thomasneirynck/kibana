@@ -17,7 +17,6 @@
 
 
 
-/* jshint maxlen:false, white:false, newcap:false  */
 define(function (require) {
   var React = require('react');
   var Unassigned = require('./unassigned.jsx');
