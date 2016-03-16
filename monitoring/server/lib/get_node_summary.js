@@ -21,7 +21,7 @@ module.exports = (req, indices) => {
         end: end,
         clusterUuid: clusterUuid,
         filters: [{
-          term: { [`source_node.${config.get('monitoring.node_resolver')}`]: req.params.resolver }
+          term: { [`source_node.${config.get('xpack.monitoring.node_resolver')}`]: req.params.resolver }
         }]
       })
     }
@@ -39,7 +39,7 @@ module.exports = (req, indices) => {
       const nodes = resp.hits.hits.map(hit => hit._source.source_node);
       // using [0] value because query results are sorted desc per timestamp
       summary.node = {
-        resolver: nodes[0][config.get('monitoring.node_resolver')],
+        resolver: nodes[0][config.get('xpack.monitoring.node_resolver')],
         node_ids: nodes.map(node => node.uuid),
         name: nodes[0].name,
         transport_address: nodes[0].transport_address,

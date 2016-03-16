@@ -13,11 +13,11 @@ module.exports = (req, _indices, filters, lastState) => {
     /* TODO It would be more efficient to use the indices param instead of
     * wildcard. Needs testing to ensure the time range the indices cover always
     * has the last data from the cluster state. */
-    index: config.get('monitoring.index_prefix') + '*',
+    index: config.get('xpack.monitoring.index_prefix') + '*',
     meta: 'get_shard_allocation',
     type: 'shards',
     body: {
-      size: config.get('monitoring.max_bucket_size'),
+      size: config.get('xpack.monitoring.max_bucket_size'),
       query: createQuery({ clusterUuid, filters })
     }
   };
@@ -28,7 +28,7 @@ module.exports = (req, _indices, filters, lastState) => {
     if (!hits) return [];
     // map into object with shard and source properties
     return hits.map(doc => _.merge(doc._source.shard, {
-      resolver: _.get(doc, `_source.source_node[${config.get('monitoring.node_resolver')}]`)
+      resolver: _.get(doc, `_source.source_node[${config.get('xpack.monitoring.node_resolver')}]`)
     }));
   });
 };

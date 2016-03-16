@@ -7,6 +7,7 @@ module.exports = function (kibana) {
   return new kibana.Plugin({
     require: ['elasticsearch'],
     id: 'monitoring',
+    configPrefix: 'xpack.monitoring',
     publicDir: join(__dirname, 'public'),
 
     uiExports: {
@@ -18,15 +19,15 @@ module.exports = function (kibana) {
         injectVars: function (server, _options) {
           var config = server.config();
           return {
-            maxBucketSize: config.get('monitoring.max_bucket_size'),
-            minIntervalSeconds: config.get('monitoring.min_interval_seconds'),
+            maxBucketSize: config.get('xpack.monitoring.max_bucket_size'),
+            minIntervalSeconds: config.get('xpack.monitoring.min_interval_seconds'),
             kbnIndex: config.get('kibana.index'),
             esApiVersion: config.get('elasticsearch.apiVersion'),
             esShardTimeout: config.get('elasticsearch.shardTimeout'),
-            statsReportUrl: config.get('monitoring.stats_report_url'),
-            reportStats: config.get('monitoring.report_stats'),
-            monitoringIndexPrefix: config.get('monitoring.index_prefix'),
-            googleTagManagerId: config.get('monitoring.google_tag_manager_id')
+            statsReportUrl: config.get('xpack.monitoring.stats_report_url'),
+            reportStats: config.get('xpack.monitoring.report_stats'),
+            monitoringIndexPrefix: config.get('xpack.monitoring.index_prefix'),
+            googleTagManagerId: config.get('xpack.monitoring.google_tag_manager_id')
           };
         }
       }
