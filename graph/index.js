@@ -18,8 +18,8 @@ module.exports = function (kibana) {
 
 
   return new kibana.Plugin({
-
     name: 'graphui-plugin',
+    configPrefix: 'xpack.graph',
     require: ['kibana', 'elasticsearch'],
     uiExports: {
       app: {
