@@ -1,6 +1,7 @@
 import initConfig from '../init_config';
 import expect from 'expect.js';
 import sinon from 'sinon';
+import { join } from 'path';
 
 function getMockConfig() {
   const config = { get: sinon.stub(), set: sinon.stub() };
@@ -46,5 +47,13 @@ describe('Client Config Options', () => {
     expect(uri.auth).to.be('monitoringuser:monitoringpass');
     expect(ssl.rejectUnauthorized).to.be(true);
     expect(config.set.called).to.be(false);
+  });
+});
+
+describe('File Reading Utility', () => {
+  it('Reads a utf8 file synchronously', () => {
+    const { readFile } = initConfig(getMockConfig());
+    const result = readFile(join(__dirname, '/fixture_read_file.txt'));
+    expect(result).to.be('another jejune test file\n');
   });
 });
