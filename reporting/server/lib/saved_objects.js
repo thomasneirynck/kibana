@@ -79,7 +79,16 @@ module.exports = function (client, config) {
           const app = appTypes[type];
           if (!app) throw new Error('Unexpected app type: ' + type);
 
+          // map panel state to panel from app state part of the query
           const cleanQuery = this.getState(query);
+
+          // strip the refresh value from the global state
+          if (query._g) {
+            const globalState = rison.decode(query._g);
+            delete globalState.refreshInterval;
+            _.assign(cleanQuery, { _g: rison.encode(globalState) });
+          }
+
           const urlParams = _.assign({
             protocol: opts.protocol,
             hostname: opts.hostname,

@@ -64,10 +64,20 @@ describe('saved_objects', function () {
 
         it('should take query params and append to hash', function () {
           var query = {
-            _g: 'time:(from:now-1h,mode:quick,to:now))'
+            _g: '(time:(from:now-1h,mode:quick,to:now))'
           };
           var params = url.parse(savedObject.getUrl(query));
           expect(params.hash).to.contain(query._g);
+        });
+
+        it('should remove the refreshInterval value', function () {
+          var query = {
+            _g: '(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-15m,mode:quick,to:now))'
+          };
+
+          var url = savedObject.getUrl(query);
+          expect(url).to.contain('time:(from:now-15m,mode:quick,to:now))');
+          expect(url).to.not.contain('refreshInterval');
         });
       });
     });
