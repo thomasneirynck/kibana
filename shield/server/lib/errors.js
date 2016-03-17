@@ -1,3 +1,4 @@
+import { wrap as wrapBoom } from 'boom';
 import { get } from 'lodash';
 
 export function isBoom(err) {
@@ -10,4 +11,8 @@ export function isInvalidCookie(err) {
 
 export function isUnauthorized(err) {
   return get(err, 'output.statusCode') === 401;
+}
+
+export function wrapError(error) {
+  return wrapBoom(error, error.status);
 }
