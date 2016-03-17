@@ -5,7 +5,7 @@ import { readFileSync } from 'fs';
 const readFile = file => readFileSync(file, 'utf8');
 
 function getConfigObjects(config, useMonitoring) {
-  const monitoringConfig = config.get('monitoring.elasticsearch');
+  const monitoringConfig = config.get('xpack.monitoring.elasticsearch');
   const configSource = useMonitoring ? monitoringConfig : config.get('elasticsearch');
   const esConfig = pick(configSource, 'url', 'username', 'password', 'ssl');
 

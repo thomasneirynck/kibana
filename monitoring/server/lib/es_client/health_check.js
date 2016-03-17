@@ -15,7 +15,7 @@ export default function healthCheck(plugin, server) {
   function getHealth() {
     return client.cluster.health({
       timeout: '5s',
-      index: config.get('monitoring.index'),
+      index: config.get('xpack.monitoring.index'),
       ignore: [408]
     })
     .then(resp => {
@@ -38,7 +38,7 @@ export default function healthCheck(plugin, server) {
     return client.ping()
     .catch(err => {
       if (!(err instanceof NoConnections)) throw err;
-      plugin.status.red(`Unable to connect to Elasticsearch at ${config.get('monitoring.elasticsearch.url')}.`);
+      plugin.status.red(`Unable to connect to Elasticsearch at ${config.get('xpack.monitoring.elasticsearch.url')}.`);
       return Promise.delay(REQUEST_DELAY).then(waitForPong);
     });
   }
