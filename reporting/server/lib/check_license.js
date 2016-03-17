@@ -12,16 +12,12 @@ module.exports = function (client) {
       let licenseType = body.license.type.toLowerCase();
       if (licenseType === 'subscription') licenseType = 'gold';
 
-      const nowMillis = new Date().getTime();
       const active = body.license.status === 'active';
       const checkIndex = types.indexOf(type);
       const validType = checkIndex !== -1 && types.indexOf(licenseType) >= checkIndex;
-      const expired = body.license.expiry_date_in_millis < nowMillis;
 
       if (!active) {
         throw new Error('License is not active');
-      } else if (expired) {
-        throw new Error('License is expired');
       } else if (!validType) {
         throw new Error('Incorrect license type found');
       }
