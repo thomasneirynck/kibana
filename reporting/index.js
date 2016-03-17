@@ -30,7 +30,7 @@ module.exports = function (kibana) {
         return checker.check()
         .then((check) => {
           server.log(['reporting', 'license', 'debug'], `License check: ${check.message}`);
-          registerVars(check.enabled);
+          return registerVars(check.enabled);
         })
         .catch((err) => registerVars(false));
       },
