@@ -5,7 +5,7 @@ const metrics = root('server/lib/metrics');
 const createQuery = require('./create_query.js');
 const calcAuto = require('./calculate_auto');
 const filterPartialBuckets = require('./filter_partial_buckets');
-const filterMetric = require('./filter_metric');
+const pickMetricFields = require('./pick_metric_fields');
 
 module.exports = (req, indices, metricName, filters) => {
   const config = req.server.config();
@@ -64,7 +64,7 @@ module.exports = (req, indices, metricName, filters) => {
   .then(function (resp) {
     if (!resp.aggregations)  {
       return {
-        metric: filterMetric(metric),
+        metric: pickMetricFields(metric),
         data: []
       };
     }
@@ -106,7 +106,7 @@ module.exports = (req, indices, metricName, filters) => {
     })
     .value();
     return {
-      metric: filterMetric(metric),
+      metric: pickMetricFields(metric),
       data: data
     };
   });

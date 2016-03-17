@@ -11,15 +11,25 @@ function getDelta(t1, t2) {
   return moment.duration(t1 - t2).asMilliseconds();
 }
 
-module.exports = (min, max, bucketSize) => {
+module.exports = function filterPartialBuckets(min, max, bucketSize, options = {}) {
   return (bucket) => {
-    if (getDelta(getTime(bucket).subtract(bucketSize, 'seconds'), min) < 0) {
+    const bucketTime = getTime(bucket);
+    // timestamp is too late to be complete
+    if (getDelta(max, bucketTime.add(bucketSize, 'seconds')) < 0) {
       return false;
     }
-    if (getDelta(max, getTime(bucket).add(bucketSize, 'seconds')) < 0) {
-      return false;
+
+    /* Table listing metrics don't need to filter the beginning of data for
+     * partial buckets. They just boil down the data into max/min/last/slope
+     * numbers instead of graphing it. So table listing data buckets pass
+    * ignoreEarly */
+    if (options.ignoreEarly !== true) {
+      // timestamp is too early to be complete
+      if (getDelta(bucketTime.subtract(bucketSize, 'seconds'), min) < 0) {
+        return false;
+      }
     }
+
     return true;
   };
 };
-

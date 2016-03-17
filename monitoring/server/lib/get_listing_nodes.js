@@ -131,7 +131,14 @@ module.exports = (req, indices) => {
         return prev;
       }, {}),
       // for listing metrics
-      rows: mapListingResponse({ buckets, listingMetrics, min, max, bucketSize })
+      rows: mapListingResponse({
+        type: 'nodes',
+        items: buckets,
+        listingMetrics,
+        min,
+        max,
+        bucketSize
+      })
     };
   });
 
