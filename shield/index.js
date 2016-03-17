@@ -10,6 +10,7 @@ import initRolesApi from './server/routes/api/v1/roles';
 import initLoginView from './server/routes/views/login';
 import initLogoutView from './server/routes/views/logout';
 import validateConfig from './server/lib/validate_config';
+import createScheme from './server/lib/login_scheme';
 
 export default (kibana) => new kibana.Plugin({
   id: 'shield',
@@ -51,13 +52,18 @@ export default (kibana) => new kibana.Plugin({
     server.register(hapiAuthCookie, (error) => {
       if (error != null) throw error;
 
-      server.auth.strategy('session', 'cookie', 'required', {
+      server.auth.scheme('login', createScheme({
+        redirectUrl: (path) => loginUrl(config.get('server.basePath'), path),
+        strategy: 'shield'
+      }));
+
+      server.auth.strategy('session', 'login', 'required');
+
+      server.auth.strategy('shield', 'cookie', false, {
         cookie: config.get('xpack.shield.cookieName'),
         password: config.get('xpack.shield.encryptionKey'),
         path: config.get('server.basePath') + '/',
         clearInvalid: true,
-        redirectTo: `${config.get('server.basePath')}/login`,
-        appendNext: true,
         validateFunc: getValidate(server)
       });
     });
@@ -71,3 +77,8 @@ export default (kibana) => new kibana.Plugin({
     initLogoutView(server, this);
   }
 });
+
+function loginUrl(baseUrl, requestedPath) {
+  const next = encodeURIComponent(requestedPath);
+  return `${baseUrl}/login?next=${next}`;
+}
