@@ -1,7 +1,7 @@
 import {flow} from 'lodash';
 import getClient from '../../../lib/get_client_shield';
 import userSchema from '../../../lib/user_schema';
-import wrapError from '../../../lib/wrap_error';
+import { wrapError } from '../../../lib/errors';
 
 export default (server) => {
   const callWithRequest = getClient(server).callWithRequest;
