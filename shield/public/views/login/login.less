@@ -1,7 +1,7 @@
 @import "~ui/styles/variables/colors.less";
 
-.content {
-  background: @gray2;
+.application {
+  background: @gray13;
 }
 
 .inner-addon {
@@ -10,53 +10,79 @@
 
 .inner-addon .fa {
   position: absolute;
-  padding: 10px;
+  padding: 12px;
   pointer-events: none;
-  color: @gray10;
+  color: @gray2;
 }
 
-.left-addon .fa  { left:  0px;}
-.right-addon .fa { right: 0px;}
+.left-addon .fa  { left:  0;}
+.right-addon .fa { right: 0;}
 
-.left-addon input  { padding-left:  30px !important; }
-.right-addon input { padding-right: 30px !important; }
+.left-addon input, .right-addon input {
+  padding-left: 35px !important;
+}
 
 .container {
-  width: 350px;
+  width: 620px;
+  height: 185px;
   margin: auto;
+  padding: 0;
   text-align: center;
+  background: #3caed2;
+  box-shadow: 0 0 2em @gray10;
 
-  h1, button {
-    margin: 1em;
+  &.error {
+    box-shadow: 0 0 2em @kibanaRed1;
+  }
+
+  > div {
+    float: left;
+  }
+
+  .logo-container {
+    width: 150px;
+    height: 100%;
+    padding: 20px;
+    background-color: @kibanaPink1;
+    box-shadow: inset -10px 0 20px -10px rgba(0, 0, 0, 0.5);
+
+    .logo {
+      height: 100%;
+      width: 100%;
+      background-image: url("~ui/images/kibana.svg");
+      background-repeat: no-repeat;
+      background-size: 390px 150px;
+    }
+  }
+
+  #login-form {
+    padding: 1.5em 7em;
+    width: 470px;
+    position: relative;
+
+    .form-group.error-message {
+      position: absolute;
+      left: 380px;
+      text-align: left;
+      color: white;
+    }
   }
 }
 
-.login {
-  background-color: @esGreen;
+button.login {
+  background-color: @gray2;
   color: white;
-  width: 200px;
-  font-size: 1.5em;
+  font-size: 1.25em;
   border: none;
 
   &:disabled {
-    background-color: @esGreen2;
     color: @gray;
   }
 }
 
 input.form-control {
   border: none;
-  font-size: 1.25em;
+  font-size: 1.125em;
   height: auto;
   padding: 0.5em;
-}
-
-#login-form {
-  position: relative;
-
-  .form-group.has-error {
-    position: absolute;
-    left: 335px;
-    text-align: left;
-  }
 }
