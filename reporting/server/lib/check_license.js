@@ -8,12 +8,14 @@ module.exports = function (client) {
     },
 
     validateType: function (body, type) {
-      const types = ['silver', 'gold', 'platinum', 'trial'];
+      const types = ['basic', 'standard', 'gold', 'platinum', 'trial'];
+      let licenseType = body.license.type.toLowerCase();
+      if (licenseType === 'subscription') licenseType = 'gold';
 
       const nowMillis = new Date().getTime();
       const active = body.license.status === 'active';
       const checkIndex = types.indexOf(type);
-      const validType = checkIndex !== -1 && types.indexOf(body.license.type) >= checkIndex;
+      const validType = checkIndex !== -1 && types.indexOf(licenseType) >= checkIndex;
       const expired = body.license.expiry_date_in_millis < nowMillis;
 
       if (!active) {
