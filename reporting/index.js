@@ -14,7 +14,15 @@ module.exports = function (kibana) {
         'plugins/reporting/controls/discover',
         'plugins/reporting/controls/visualize',
         'plugins/reporting/controls/dashboard',
-      ]
+      ],
+      injectDefaultVars: function (server, options) {
+        var enabled = true;
+
+        server.expose('enabled', enabled);
+        return {
+          reportingEnabled: enabled
+        };
+      },
     },
 
     config: config,
@@ -24,21 +32,30 @@ module.exports = function (kibana) {
       const plugin = this;
       const config = server.config();
 
-      // prepare phantom binary
-      return phantom.install()
-      .then(function (binaryPath) {
-        server.log(['reporting', 'debug'], `Phantom installed at ${binaryPath}`);
+      function setup() {
+        // prepare phantom binary
+        return phantom.install()
+        .then(function (binaryPath) {
+          server.log(['reporting', 'debug'], `Phantom installed at ${binaryPath}`);
 
-        // expose internal assets
-        server.expose('generatePDFStream', generatePDFStream(server));
+          // expose internal assets
+          server.expose('generatePDFStream', generatePDFStream(server));
 
-        // Reporting routes
-        publicRoutes(server);
-        fileRoutes(server);
-      })
-      .catch(function (err) {
-        return plugin.status.red(err.message);
-      });
+          // Reporting routes
+          publicRoutes(server);
+          fileRoutes(server);
+        })
+        .catch(function (err) {
+          return plugin.status.red(err.message);
+        });
+      }
+
+      if (!server.plugins.reporting.enabled) {
+        server.log(['warning', 'reporting'], 'Reporting is disabled. Please check your license.');
+        return;
+      }
+
+      return setup();
     }
   });
 };
