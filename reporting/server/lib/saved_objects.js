@@ -105,7 +105,7 @@ module.exports = function (client, config) {
           return url.format(urlParams);
         },
         getState: function mergeQueryState(query = {}) {
-          if (!query._a) return query;
+          if (!query._a || !this.panelIndex) return query;
 
           const appState = rison.decode(query._a);
           const correctedState = _.omit(appState, ['uiState', 'panels', 'vis']);
