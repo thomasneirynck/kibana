@@ -7,32 +7,20 @@ module.exports = function (client) {
       });
     },
 
-    validateType: function (body, type) {
-      const types = ['basic', 'standard', 'gold', 'platinum', 'trial'];
-      let licenseType = body.license.type.toLowerCase();
-      if (licenseType === 'subscription') licenseType = 'gold';
+    validate: function (body) {
+      if (!body.license) throw new Error('Invalid response body');
 
-      const active = body.license.status === 'active';
-      const checkIndex = types.indexOf(type);
-      const validType = checkIndex !== -1 && types.indexOf(licenseType) >= checkIndex;
+      const validLicenses = ['trial', 'platinum', 'gold', 'standard'];
+      const { status, type } = body.license;
 
-      if (!active) {
-        throw new Error('License is not active');
-      } else if (!validType) {
-        throw new Error('Incorrect license type found');
-      }
-
-      return true;
+      if (status !== 'active') throw new Error('Inactive license');
+      if (validLicenses.indexOf(type.toLowerCase()) === -1) throw new Error('Invalid license type');
     },
 
     check: function () {
-      var requiredType = 'gold';
-
       return this.getLicense()
-      .then((res) => this.validateType(res, requiredType))
+      .then(this.validate)
       .then((valid) => {
-        if (!valid) throw Error('Invalid license');
-
         return {
           enabled: true,
           message: `Valid license found`
