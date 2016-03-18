@@ -45,8 +45,8 @@ export default function initConfig(config) {
 
   if (!useMonitoring) {
     // copy calculated configs into monitoring
-    config.set('monitoring.elasticsearch', pick(configObjects.options, 'url', 'username', 'password'));
-    config.set('monitoring.elasticsearch.ssl', pick(configObjects.ssl, 'verify', 'cert', 'key', 'ca'));
+    config.set('xpack.monitoring.elasticsearch', pick(configObjects.options, 'url', 'username', 'password'));
+    config.set('xpack.monitoring.elasticsearch.ssl', pick(configObjects.ssl, 'verify', 'cert', 'key', 'ca'));
   }
 
   delete configObjects.options.ssl;
