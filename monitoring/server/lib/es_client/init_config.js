@@ -39,14 +39,14 @@ function getConfigObjects(config, useMonitoring) {
  * to the cluster connection config set for Kibana and copy all the Kibana
 * config values to monitoring. */
 export default function initConfig(config) {
-  const prefix = 'monitoring.elasticsearch';
+  const prefix = 'xpack.monitoring.elasticsearch';
   const useMonitoring = Boolean(config.get(`${prefix}.url`));
   const configObjects = getConfigObjects(config, useMonitoring);
 
   if (!useMonitoring) {
     // copy calculated configs into monitoring
-    config.set('xpack.monitoring.elasticsearch', pick(configObjects.options, 'url', 'username', 'password'));
-    config.set('xpack.monitoring.elasticsearch.ssl', pick(configObjects.ssl, 'verify', 'cert', 'key', 'ca'));
+    config.set(prefix, pick(configObjects.options, 'url', 'username', 'password'));
+    config.set(`${prefix}.ssl`, pick(configObjects.ssl, 'verify', 'cert', 'key', 'ca'));
   }
 
   delete configObjects.options.ssl;
