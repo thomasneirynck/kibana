@@ -15,7 +15,7 @@ var pkg = require('./package.json');
 var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
 var buildTarget = path.join(buildDir, 'kibana', pkg.packageName);
-var packageFile = pkg.packageName + '.zip';
+var packageFile = `${pkg.packageName}-${pkg.version}.zip`;
 
 var ignoredPlugins = ['i', 'ignore'].reduce(function (ignore, key) {
   if (typeof argv[key] === 'string') ignore = ignore.concat(argv[key].split(','));
