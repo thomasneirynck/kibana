@@ -48,7 +48,7 @@ export function getDefaultDataObject() {
 }
 
 // Mutate "data" with a nodes object having a field for every node
-export function processNodeShards(data, nodeResolver) {
+export function normalizeNodeShards(data, nodeResolver) {
   return (bucket) => {
     if (bucket.key && bucket.node_transport_address && bucket.node_ids) {
       data.nodes[bucket.key] = {
@@ -67,7 +67,7 @@ export function processNodeShards(data, nodeResolver) {
   };
 }
 
-export function processIndexShards(data) {
+export function normalizeIndexShards(data) {
   return (bucket) => {
     const metric = createNewMetric();
     setStats(bucket, metric, { key: 'STARTED' });

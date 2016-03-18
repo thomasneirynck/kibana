@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const createQuery = require('./create_query.js');
 module.exports = (req, indices) => {
-  const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const end = req.payload.timeRange.max;
   const clusterUuid = req.params.clusterUuid;
 

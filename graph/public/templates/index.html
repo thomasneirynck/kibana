@@ -65,7 +65,7 @@
       <button ng-disabled="workspace==null||workspace.nodes.length==0" tooltip="Remove vertices from workspace" ng-click="setDetail(null);workspace.deleteSelection();"><i class="fa  fa-trash"></i>
       </button>
 
-      <button ng-disabled="workspace==null||workspace.selectedNodes.length==0" tooltip="Ban selection from return to workspace" ng-click="workspace.blacklistSelection();"><i class="fa  fa-ban"></i>
+      <button ng-disabled="workspace==null||workspace.selectedNodes.length==0" tooltip="Blacklist selection from return to workspace" ng-click="workspace.blacklistSelection();"><i class="fa  fa-ban"></i>
       </button>
 
       <button ng-disabled="workspace==null||workspace.nodes.length==0" tooltip="Add links between existing terms" ng-click="workspace.expandSelecteds(false,{valueTypes: 'old'});">
@@ -207,7 +207,7 @@
 
         <!-- ====== start blacklist ====== -->
         <div class="container" ng-if="(workspace!=null)&&(configPanel=='blacklist')">
-          <p class="help-block">These terms are currently blocked from re-appearing in the workspace</p>
+          <p class="help-block">These terms are currently blacklisted from re-appearing in the workspace</p>
 
           <div class="selectionList">
             <div ng-repeat="n in workspace.blacklistedNodes">
@@ -406,7 +406,7 @@
 
           <div class="detailPanel" ng-if="(detail.showStyle)&&(workspace.selectedNodes.length>0)">
             <div class="detailHeader">
-              <i class="fa  fa-paint-brush"></i> Style selected nodes
+              <i class="fa  fa-paint-brush"></i> Style selected vertices
             </div>
             <svg id="selectedColorPalette" width="100%" height="30">
               <g ng-repeat="c in colorChoices">

@@ -43,6 +43,9 @@ export default (server) => {
     handler(request, reply) {
       request.auth.session.clear();
       return reply(success);
+    },
+    config: {
+      auth: false
     }
   });
 };

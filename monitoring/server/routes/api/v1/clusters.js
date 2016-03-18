@@ -1,11 +1,10 @@
 const Promise = require('bluebird');
 const _ = require('lodash');
+const Joi = require('joi');
 const root = require('requirefrom')('');
 const getClustersStats = root('server/lib/get_clusters_stats');
 const getClusters = root('server/lib/get_clusters');
 const getClustersHealth = root('server/lib/get_clusters_health');
-const Joi = require('joi');
-
 const calculateIndices = root('server/lib/calculate_indices');
 const getLastState = root('server/lib/get_last_state');
 const getClusterStatus = root('server/lib/get_cluster_status');
@@ -17,7 +16,7 @@ const handleError = root('server/lib/handle_error');
 
 module.exports = (server) => {
   const config = server.config();
-  const callWithRequest = server.plugins.elasticsearch.callWithRequest;
+  const callWithRequest = server.plugins.monitoring.callWithRequest;
 
   server.route({
     method: 'GET',

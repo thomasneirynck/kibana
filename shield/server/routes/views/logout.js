@@ -6,6 +6,9 @@ export default (server, uiExports) => {
     path: '/logout',
     handler(request, reply) {
       return reply.renderApp(logout);
+    },
+    config: {
+      auth: false
     }
   });
 };

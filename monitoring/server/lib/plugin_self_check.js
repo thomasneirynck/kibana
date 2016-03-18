@@ -1,25 +1,19 @@
 import pkg from '../../package.json';
-const ensureVersions = require('./ensure_versions');
+import checkKbnVersion from './check_kbn_version';
+import healthCheck from './es_client/health_check';
 
 module.exports = function pluginSelfCheck(plugin, server) {
-  plugin.status.yellow('Waiting for Elasticsearch');
+  plugin.status.yellow('Waiting for Monitoring Health Check');
+  // check if kibana is minimum supported version
+  const {
+    isKibanaSupported,
+    kibanaVersion,
+    monitoringVersion
+  } = checkKbnVersion(plugin, pkg);
 
-  server.plugins.elasticsearch.status.on('red', () => {
-    plugin.status.red(`lost connection to the Elasticsearch monitoring cluster`);
-  });
-
-  server.plugins.elasticsearch.status.on('green', () => {
-    // check if kibana is minimum supported version
-    const {
-      isKibanaSupported,
-      kibanaVersion,
-      monitoringVersion
-    } = ensureVersions(plugin, pkg);
-
-    if (isKibanaSupported) {
-      plugin.status.green('Ready');
-    } else if (!isKibanaSupported) {
-      plugin.status.red(`version ${monitoringVersion} is not supported with Kibana ${kibanaVersion}`);
-    }
-  });
+  if (isKibanaSupported) {
+    healthCheck(plugin, server).start();
+  } else {
+    plugin.status.red(`version ${monitoringVersion} is not supported with Kibana ${kibanaVersion}`);
+  }
 };

@@ -1,13 +1,12 @@
-import { getDefaultDataObject, processIndexShards, processNodeShards } from './process_shards';
+import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from './normalize_shard_objects';
 const _ = require('lodash');
 const createQuery = require('./create_query');
 const root = require('requirefrom')('');
 const calculateNodeType = root('server/lib/calculate_node_type');
-
 module.exports = (req, indices, lastState) => {
   const config = req.server.config();
   const nodeResolver = config.get('monitoring.node_resolver');
-  const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const clusterUuid = req.params.clusterUuid;
   const aggSize = 10;
   const params = {
@@ -65,8 +64,8 @@ module.exports = (req, indices, lastState) => {
     const data = getDefaultDataObject();
 
     if (resp && resp.hits && resp.hits.total !== 0) {
-      resp.aggregations.indices.buckets.forEach(processIndexShards(data));
-      resp.aggregations.nodes.buckets.forEach(processNodeShards(data, nodeResolver));
+      resp.aggregations.indices.buckets.forEach(normalizeIndexShards(data));
+      resp.aggregations.nodes.buckets.forEach(normalizeNodeShards(data, nodeResolver));
     }
 
     _.forEach(data.nodes, node => {

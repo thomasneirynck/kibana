@@ -9,7 +9,7 @@ const filterMetric = require('./filter_metric');
 
 module.exports = (req, indices, metricName, filters) => {
   const config = req.server.config();
-  const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const metric = metrics[metricName];
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
@@ -83,16 +83,25 @@ module.exports = (req, indices, metricName, filters) => {
       }
       return value;
     };
-    const calculation = metric && metric.calculation || defaultCalculation;
+
+    const calculationFn = metric && metric.calculation || defaultCalculation;
+    function calculation(bucket) {
+      if (bucket.doc_count > 0) {
+        return calculationFn(bucket);
+      }
+      return null;
+    }
+
     const buckets = aggCheck.buckets;
     const boundsMin = moment.utc(aggCheck.meta.timefilterMin);
     const boundsMax = moment.utc(aggCheck.meta.timefilterMax);
     const data = _.chain(buckets)
     .filter(filterPartialBuckets(boundsMin, boundsMax, respBucketSize))
-    .map((bucket) => {
+    // if bucket has a doc count, map it to X/Y coords for charting. Otherwise null makes the line discontinuous
+    .map(bucket => {
       return {
         x: bucket.key,
-        y: calculation(bucket) // Why are one of these null?
+        y: calculation(bucket)
       };
     })
     .value();

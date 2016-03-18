@@ -7,9 +7,8 @@ function isClusterCurrent(cluster) {
 }
 
 module.exports = function (req) {
-  const server = req.server;
-  const callWithRequest = server.plugins.elasticsearch.callWithRequest;
-  const config = server.config();
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
+  const config = req.server.config();
   return function (clusters) {
     const bodies = [];
     clusters.forEach((cluster) => {

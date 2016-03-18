@@ -1,0 +1,108 @@
+/*
+
+Phantom 1.x is based on a really old version of Webkit, roughly what shipped
+with Chrome 13 and Safari 5.1. As such, it has some limitations.
+
+- it does not support web fonts
+- it does not support flexbox
+- it does not support css3
+
+This is a collection of CSS overrides that make Kibana look better for
+generating PDF reports with Phantom.
+
+*/
+
+/* fix font-awesome fonts by using the svg version */
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('/app/reporting/assets/font-awesome.svg') format('svg');
+}
+
+/* many UI controls don't make sense on a report, hide them */
+
+visualize visualize-legend .legend-toggle,
+visualize visualize-spy .visualize-show-spy > div,
+visualize visualize-spy .visualize-spy-container header,
+visualize .agg-table-controls {
+  display: none;
+}
+
+/* pagination controls use flexbox, they mostly don't work right */
+visualize visualize-spy .pagination-size {
+  display: none;
+}
+
+visualize visualize-spy .visualize-spy-container {
+  height: 298px;
+}
+
+visualize visualize-spy .visualize-spy-container.spy-only {
+  height: 900px;
+}
+
+/* hide elements to prevent content from shifting */
+
+.toaster-container {
+  display: none;
+}
+
+filter-bar {
+  display: none;
+}
+
+/* visualizations */
+
+.visualize-info-tab {
+  /* the tab uses flexbox, and the background color exposes broken layout */
+  background-color: transparent;
+}
+
+visualize .vis-wrapper {
+  padding-left: 4px;
+}
+
+/* visualization legends */
+
+visualize-legend .legend-value-title {
+  font-size: 1.2em;
+}
+
+/* line charts */
+
+.line circle {
+  /* circles have radius 12px for the hover effect,
+  this prevents it from showing up in Phantom */
+  stroke: transparent;
+}
+
+/* metric vis */
+
+.metric-vis {
+  /* metric vis uses flexbox, this is an ugly hack around it */
+  display: block;
+  padding-top: 92px;
+}
+
+.metric-vis .metric-container {
+  padding: 0;
+}
+
+/* tilemaps */
+
+.leaflet-container img.leaflet-tile {
+  /* by default, tiles are filtered to greyscale and desaturated via CSS3.
+  reduced opacity is used here as a poor mans filter, and makes maps nicer */
+  opacity: 0.65;
+}
+
+.leaflet-container .leaflet-top.leaflet-left {
+  display: none;
+}
+
+/* discover */
+
+.discover-timechart {
+  /* hide the vis from saved searches */
+  display: none;
+}

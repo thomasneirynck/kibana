@@ -17,7 +17,6 @@
 
 
 
-/* jshint newcap:false  */
 define(function (require) {
   var _ = require('lodash');
   var React = require('react');
