@@ -23,7 +23,7 @@ module.exports = function (kibana) {
     require: ['kibana', 'elasticsearch'],
     uiExports: {
       app: {
-        title: 'Graphui Plugin',
+        title: 'Graph',
         icon: 'plugins/graphui-plugin/icon.png',
         description: 'Graph exploration',
 //2.x        main: 'plugins/graphui-plugin/app',
