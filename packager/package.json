@@ -3,7 +3,7 @@
   "version": "5.0.0-snapshot",
   "description": "Elastic Pack: Kibana Edition",
   "author": "Elastic",
-  "packageName": "x-pack",
+  "packageName": "xpack",
   "scripts": {
     "start": "echo Nothing to do, perhaps you want - npm run build",
     "build": "gulp build",
