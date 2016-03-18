@@ -5,7 +5,6 @@ var child_process = require('child_process');
 var Promise = require('bluebird');
 var del = require('del');
 var checksum = require('checksum');
-var AdmZip = require('adm-zip');
 var argv = require('minimist')(process.argv.slice(2));
 var debug = require('debug')('packager');
 var gulp = require('gulp');
@@ -90,11 +89,13 @@ function runPackage() {
 
   return del(targetDir, { force: true })
   .then(function () {
-    var zip = new AdmZip();
-
-    debug('Creating the package', targetFile);
-    zip.addLocalFolder(buildDir);
-    zip.writeZip(targetFile);
+    return Promise.fromCallback(function (cb) {
+      return gulp.src(buildDir + '/**')
+      .pipe(g.zip(packageFile))
+      .pipe(gulp.dest(targetDir))
+      .on('finish', cb)
+      .on('error', cb);
+    });
   })
   .then(function (target) {
     return Promise.fromCallback(function (cb) {
