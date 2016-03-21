@@ -60,7 +60,7 @@ require('ui/routes')
 //========  Controller for basic UI ==================
 app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) {
 
-  $scope.title = 'Graphui Plugin';
+  $scope.title = 'Graph';
   $scope.description = 'Graph exploration';
   // These control the main configuration choices
   $scope.showConfig = false; //controls visibility of the config panel

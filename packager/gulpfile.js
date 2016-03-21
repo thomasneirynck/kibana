@@ -5,16 +5,16 @@ var child_process = require('child_process');
 var Promise = require('bluebird');
 var del = require('del');
 var checksum = require('checksum');
-var debug = require('debug')('packager');
 var argv = require('minimist')(process.argv.slice(2));
+var debug = require('debug')('packager');
 var gulp = require('gulp');
 var g = require('gulp-load-plugins')();
 
 var pkg = require('./package.json');
 var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
-var buildTarget = path.join(buildDir, pkg.packageName);
-var packageFile = pkg.packageName + '.tar.gz';
+var buildTarget = path.join(buildDir, 'kibana', pkg.packageName);
+var packageFile = `${pkg.packageName}-${pkg.version}.zip`;
 
 var ignoredPlugins = ['i', 'ignore'].reduce(function (ignore, key) {
   if (typeof argv[key] === 'string') ignore = ignore.concat(argv[key].split(','));
@@ -22,6 +22,7 @@ var ignoredPlugins = ['i', 'ignore'].reduce(function (ignore, key) {
 }, []).concat(path.basename(__dirname));
 
 var plugins = getPlugins();
+
 var templateData = {
   plugins: plugins,
   name: pkg.packageName,
@@ -29,9 +30,9 @@ var templateData = {
   author: pkg.author,
 };
 
-gulp.task('build', ['prepare-builds'], runBuild);
+gulp.task('build', ['show-plugins', 'prepare-builds'], runBuild);
 
-gulp.task('build-only', runBuild);
+gulp.task('build-only', ['show-plugins'], runBuild);
 
 gulp.task('package', ['build'], runPackage);
 
@@ -54,9 +55,15 @@ gulp.task('prepare-builds', function () {
   });
 });
 
+gulp.task('show-plugins', function () {
+  g.util.log('Pack name:', g.util.colors.yellow(templateData.name));
+  g.util.log('Pack version:', g.util.colors.yellow(templateData.version));
+  g.util.log('Bundling plugins:', g.util.colors.yellow(plugins.map(plugin => plugin.name).join(', ')));
+});
+
 function runBuild() {
   debug('Creating the build', buildDir);
-  return del(buildTarget, { force: true })
+  return del(buildDir, { force: true })
   .then(function () {
     return Promise.mapSeries(plugins, function (plugin) {
       g.util.log(g.util.colors.cyan(plugin.name), 'Building');
@@ -77,27 +84,27 @@ function runBuild() {
 }
 
 function runPackage() {
-  debug('Creating the package', targetDir);
+  var targetFile = path.join(targetDir, packageFile);
+  var checksumFile = path.join(targetDir, packageFile + '.sha1.txt');
+
   return del(targetDir, { force: true })
   .then(function () {
     return Promise.fromCallback(function (cb) {
-      return gulp.src(path.join(buildDir, '**', '*'))
-      .pipe(g.tar(packageFile))
-      .pipe(g.gzip({ append: false }))
+      return gulp.src(buildDir + '/**')
+      .pipe(g.zip(packageFile))
       .pipe(gulp.dest(targetDir))
       .on('finish', cb)
       .on('error', cb);
     });
   })
-  .then(function () {
+  .then(function (target) {
     return Promise.fromCallback(function (cb) {
-      checksum.file(path.join(targetDir, packageFile), cb);
+      checksum.file(targetFile, cb);
+    })
+    .then(function (checksum) {
+      debug('Package checksum', checksum);
+      return fs.writeFileSync(checksumFile, checksum, { encoding: 'utf8' });
     });
-  })
-  .then(function (checksum) {
-    debug('Package checksum', checksum);
-    var target = path.join(targetDir, packageFile + '.sha1.txt');
-    return fs.writeFileSync(target, checksum, { encoding: 'utf8' });
   });
 }
 
@@ -131,7 +138,7 @@ function getPlugins() {
 }
 
 function exec(prefix, cmd, args, opts) {
-  debug(arguments);
+  debug('exec', { cmd, args, opts });
   args = args || [];
   opts = opts || {};
   return new Promise(function (resolve, reject) {
