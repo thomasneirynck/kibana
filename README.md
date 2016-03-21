@@ -6,7 +6,8 @@ This folder has the Kibana XPack plugin code. For developing and testing the plu
 
 *NOTE: It's way preferable to use ESVM to handle this. The manual steps here are a manual fallback to ESVM.*
 
-1. Set your JAVA_HOME variable and install "gradle" v2.8+ from Homebrew.
+1. Set your JAVA_HOME variable (on Mac, you can use `export JAVA_HOME=$(/usr/libexec/java_home)`)
+1. Install "gradle" v2.8+ from Homebrew.
 1. Create a directory called `es-build` and clone elasticsearch and x-plugins into it.
 
     ```
