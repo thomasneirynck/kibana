@@ -5,8 +5,8 @@ var av = require("./angular-venn-simple.js");
 var gws = require("./graphClientWorkspace.js");
 var utils = require("./utils.js");
 // var ConfigTemplate = require('ui/ConfigTemplate');
-require('plugins/graphui-plugin/less/main.less');
-var graphLogo = require('plugins/graphui-plugin/header.png');
+require('plugins/graph/less/main.less');
+var graphLogo = require('plugins/graph/header.png');
 require('ui/chrome').setBrand({
   'logo': 'url(' + graphLogo + ') left no-repeat',
   'smallLogo': 'url(' + graphLogo + ') left no-repeat'
@@ -51,7 +51,7 @@ if(require('ui/routes').enable){
 
 require('ui/routes')
   .when('/', {
-    template: require('plugins/graphui-plugin/templates/index.html'),
+    template: require('plugins/graph/templates/index.html'),
     resolve: {
       getIndexList: getIndexNames
     }

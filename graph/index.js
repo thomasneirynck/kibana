@@ -5,14 +5,14 @@ var getExampleDocsRoute = require('./server/routes/getExampleDocs');
 module.exports = function (kibana) {
 
     //2.x bootstrap code copied from https://github.com/elastic/timelion/pull/57/files
-    var mainFile = 'plugins/graphui-plugin/app';
+    var mainFile = 'plugins/graph/app';
      var ownDescriptor = Object.getOwnPropertyDescriptor(kibana, 'autoload');
      var protoDescriptor = Object.getOwnPropertyDescriptor(kibana.constructor.prototype, 'autoload');
      var descriptor = ownDescriptor || protoDescriptor || {};
      if (descriptor.get) {
        // the autoload list has been replaced with a getter that complains about
        // improper access, bypass that getter by seeing if it is defined
-       mainFile = 'plugins/graphui-plugin/app_with_autoload';
+       mainFile = 'plugins/graph/app_with_autoload';
      }
 
 
@@ -24,9 +24,9 @@ module.exports = function (kibana) {
     uiExports: {
       app: {
         title: 'Graph',
-        icon: 'plugins/graphui-plugin/icon.png',
+        icon: 'plugins/graph/icon.png',
         description: 'Graph exploration',
-//2.x        main: 'plugins/graphui-plugin/app',
+//2.x        main: 'plugins/graph/app',
          main: mainFile, //2.x
         injectVars: function (server, options) {
           var config = server.config();
