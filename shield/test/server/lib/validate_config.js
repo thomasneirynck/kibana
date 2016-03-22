@@ -9,18 +9,18 @@ function getValidateConfigStub(configValues) {
 }
 
 describe('Validate config', function () {
-  it('should throw an error if shield.encryptionKey is not set', function () {
+  it('should throw an error if xpack.shield.encryptionKey is not set', function () {
     const validateWithoutEncryptionKey = getValidateConfigStub({
       'server.ssl.key': 'foo',
       'server.ssl.cert': 'bar'
     });
 
-    expect(validateWithoutEncryptionKey).to.throw(/shield.encryptionKey is required/);
+    expect(validateWithoutEncryptionKey).to.throw(/xpack.shield.encryptionKey is required/);
   });
 
   it('should throw an error if SSL is not being used', function () {
     const validateWithoutSsl = getValidateConfigStub({
-      'shield.encryptionKey': 'baz'
+      'xpack.shield.encryptionKey': 'baz'
     });
 
     expect(validateWithoutSsl).to.throw(/HTTPS is required/);
@@ -28,8 +28,8 @@ describe('Validate config', function () {
 
   it('should not throw an error if SSL is not being used and the config option to skip the check is set', function () {
     const validateWithNoSslSkipCheck = getValidateConfigStub({
-      'shield.encryptionKey': 'baz',
-      'shield.skipSslCheck': true
+      'xpack.shield.encryptionKey': 'baz',
+      'xpack.shield.skipSslCheck': true
     });
 
     expect(validateWithNoSslSkipCheck).not.to.throw();
@@ -39,7 +39,7 @@ describe('Validate config', function () {
     const validateWithValidConfig = getValidateConfigStub({
       'server.ssl.key': 'foo',
       'server.ssl.cert': 'bar',
-      'shield.encryptionKey': 'baz'
+      'xpack.shield.encryptionKey': 'baz'
     });
 
     expect(validateWithValidConfig).not.to.throw();

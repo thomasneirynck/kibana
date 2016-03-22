@@ -1,6 +1,6 @@
 export default (config) => {
   if (config.get('xpack.shield.encryptionKey') == null) {
-    throw new Error('shield.encryptionKey is required in kibana.yml.');
+    throw new Error('xpack.shield.encryptionKey is required in kibana.yml.');
   }
 
   const isSslConfigured = config.get('server.ssl.key') != null && config.get('server.ssl.cert') != null;
