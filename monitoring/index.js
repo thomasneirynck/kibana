@@ -65,7 +65,7 @@ module.exports = function (kibana) {
             ca: array().single().items(string()),
             cert: string(),
             key: string()
-          }),
+          }).default(),
           apiVersion: string().default('master'),
           engineVersion: string().valid('^5.0.0').default('^5.0.0')
         })
