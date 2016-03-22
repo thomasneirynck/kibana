@@ -331,7 +331,7 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
     $http.post('../api/graphui-plugin/graphExplore', request)
       .then(function(resp) {
         if (!resp.data.ok) {
-          require("ui/notify").error(resp.data.resp);
+          require("ui/notify").error(resp.data);
           return;
         }
         if (resp.data.resp.timed_out) {
@@ -372,7 +372,7 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
     $http.post('../api/graphui-plugin/getExampleDocs', request)
       .then(function(resp) {
         if (!resp.data.ok) {
-          require("ui/notify").error(resp.data.resp);
+          require("ui/notify").error(resp.data);
           return;
         }
         responseHandler(resp.data.resp);
@@ -388,7 +388,7 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
     $http.post('../api/graphui-plugin/getExampleDocs', request)
       .then(function(resp) {
         if (!resp.data.ok) {
-          require("ui/notify").error(resp.data.resp);
+          require("ui/notify").error(resp.data);
           return;
         }
         responseHandler(resp.data.resp);
