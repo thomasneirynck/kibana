@@ -167,7 +167,7 @@ gulp.task('pre-test', function () {
 });
 
 gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
-  return gulp.src(['./**/__test__/**/*.js'], { read: false })
+  return gulp.src(['./**/__test__/**/*.js', '!./build/**'], { read: false })
     // runs the unit tests
     .pipe(g.mocha({
       ui: 'bdd'
