@@ -20,11 +20,12 @@ function getMockConfig() {
 describe('Client Config Options', () => {
   it(`Defaults to Kibana's production cluster config settings`, () => {
     const config = getMockConfig();
-    const { options, uri, ssl } = initConfig(config);
+    const { options, noAuthUri, authUri, ssl } = initConfig(config);
 
     expect(options.url).to.be('http://localhost:9200');
     expect(options.configSource).to.be('production');
-    expect(uri.auth).to.be('produser:prodpass');
+    expect(authUri.auth).to.be('produser:prodpass');
+    expect(noAuthUri.auth).to.eql(null);
     expect(ssl.rejectUnauthorized).to.be(true);
     expect(config.set.called).to.be(true);
   });
@@ -40,11 +41,12 @@ describe('Client Config Options', () => {
         verify: true
       }
     });
-    const { options, uri, ssl } = initConfig(config);
+    const { options, noAuthUri, authUri, ssl } = initConfig(config);
 
     expect(options.url).to.be('http://localhost:9210');
     expect(options.configSource).to.be('monitoring');
-    expect(uri.auth).to.be('monitoringuser:monitoringpass');
+    expect(authUri.auth).to.be('monitoringuser:monitoringpass');
+    expect(noAuthUri.auth).to.eql(null);
     expect(ssl.rejectUnauthorized).to.be(true);
     expect(config.set.called).to.be(false);
   });
