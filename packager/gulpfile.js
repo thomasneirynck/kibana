@@ -71,8 +71,9 @@ function runBuild() {
       .then(function () {
         return Promise.fromCallback(function (cb) {
           var buildPath = path.resolve(plugin.path, 'build');
+          var globs = ['*/**', '!*/node_modules/.bin/**'];
 
-          var stream = gulp.src(path.join(buildPath, '**'))
+          var stream = gulp.src(globs, { cwd: buildPath, dot: true })
           .pipe(gulp.dest(buildTarget))
           .on('finish', cb)
           .on('error', cb);
