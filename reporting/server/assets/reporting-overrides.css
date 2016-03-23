@@ -30,7 +30,7 @@ generating PDF reports with Phantom.
 
 /* many UI controls don't make sense on a report, hide them */
 
-.vis-editor-content .sidebar-collapser,
+.sidebar-collapser,
 visualize visualize-legend .legend-toggle,
 visualize visualize-spy .visualize-show-spy > div,
 visualize visualize-spy .visualize-spy-container header,
@@ -55,7 +55,12 @@ visualize visualize-spy .visualize-spy-container.spy-only {
   height: 900px;
 }
 
-/* hide elements to prevent content from shifting */
+/* hide and modify elements to prevent content from shifting */
+
+.app-container > navbar:first-child {
+  height: 32px;
+  overflow: hidden;
+}
 
 .toaster-container {
   display: none;
