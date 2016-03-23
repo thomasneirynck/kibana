@@ -42,7 +42,8 @@ var getIndexNames = function($http) {
           return 0;
       });
       return indexNames;
-    });
+    })
+    .catch(err => require('ui/notify').error(err));
 };
 
 if(require('ui/routes').enable){
@@ -311,7 +312,8 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
           $scope.setAllFieldStatesToDefault();
 
         }
-      });
+      })
+      .catch(err => require('ui/notify').error(err));
 
       // // TODO Load the list of saved visualizations for this index
       // getSavedVisualizations(selectedIndex.name, function(resp){
@@ -330,10 +332,6 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
     }
     $http.post('../api/graphui-plugin/graphExplore', request)
       .then(function(resp) {
-        if (!resp.data.ok) {
-          require("ui/notify").error(resp.data);
-          return;
-        }
         if (resp.data.resp.timed_out) {
           require("ui/notify").warning("Exploration timed out");
         }else{
@@ -349,7 +347,8 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
         }
 
         responseHandler(resp.data.resp);
-      });
+      })
+      .catch(err => require('ui/notify').error(err));
   }
 
   //Find all saved visualizations that target this index
@@ -371,12 +370,9 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
 
     $http.post('../api/graphui-plugin/getExampleDocs', request)
       .then(function(resp) {
-        if (!resp.data.ok) {
-          require("ui/notify").error(resp.data);
-          return;
-        }
         responseHandler(resp.data.resp);
-      });
+      })
+      .catch(err => require('ui/notify').error(err));
   }
 
   //TODO remove me - link to saved visualizations instead and embed them with a split-screen splitter
@@ -387,12 +383,9 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
     }
     $http.post('../api/graphui-plugin/getExampleDocs', request)
       .then(function(resp) {
-        if (!resp.data.ok) {
-          require("ui/notify").error(resp.data);
-          return;
-        }
         responseHandler(resp.data.resp);
-      });
+      })
+      .catch(err => require('ui/notify').error(err));
   }
 
   $scope.submit = function() {
