@@ -19,13 +19,27 @@ generating PDF reports with Phantom.
   src: url('/app/reporting/assets/font-awesome.svg') format('svg');
 }
 
+/* Fix for sidebar nav */
+.app-links-wrapper {
+  display: none;
+}
+
+.app-wrapper {
+  left: 0;
+}
+
 /* many UI controls don't make sense on a report, hide them */
 
+.vis-editor-content .sidebar-collapser,
 visualize visualize-legend .legend-toggle,
 visualize visualize-spy .visualize-show-spy > div,
 visualize visualize-spy .visualize-spy-container header,
 visualize .agg-table-controls {
   display: none;
+}
+
+visualize visualize-legend {
+  display: block;
 }
 
 /* pagination controls use flexbox, they mostly don't work right */
