@@ -12,7 +12,7 @@ This package simply creates an X-Pack build of all the Kibana plugins
 
 ## Built Package
 
-There are 2 important files in the output, avialable in the `templates` path:
+There are 2 important files in the output, available in the `templates` path:
 
 File | Description
 ---- | -----------
