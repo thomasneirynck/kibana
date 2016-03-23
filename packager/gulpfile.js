@@ -104,7 +104,7 @@ function runPackage() {
   return del(targetDir, { force: true })
   .then(function () {
     return Promise.fromCallback(function (cb) {
-      return gulp.src(buildDir + '/**')
+      return gulp.src(buildDir + '/**', { dot: true })
       .pipe(g.zip(packageFile))
       .pipe(gulp.dest(targetDir))
       .on('finish', cb)
