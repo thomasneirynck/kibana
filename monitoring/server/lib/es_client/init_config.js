@@ -1,4 +1,4 @@
-import { pick } from 'lodash';
+import { pick, clone } from 'lodash';
 import url from 'url';
 import { readFileSync } from 'fs';
 
@@ -13,13 +13,13 @@ function getConfigObjects(config, useMonitoring) {
     ...pick(monitoringConfig, 'apiVersion', 'pingTimeout', 'requestTimeout'),
     ...esConfig,
     configSource: useMonitoring ? 'monitoring' : 'production', // for logging and tests
-    keepAlive: true,
-    auth: true
+    keepAlive: true
   };
 
-  const uri = url.parse(options.url);
-  if (options.auth && options.username && options.password) {
-    uri.auth = `${options.username}:${options.password}`;
+  const noAuthUri = url.parse(options.url);
+  const authUri = clone(noAuthUri);
+  if (options.username && options.password) {
+    authUri.auth = `${options.username}:${options.password}`;
   }
 
   const ssl = options.ssl;
@@ -32,7 +32,7 @@ function getConfigObjects(config, useMonitoring) {
     ssl.ca = ssl.ca.map(readFile);
   }
 
-  return { options, uri, ssl };
+  return { options, noAuthUri, authUri, ssl };
 }
 
 /* If Monitoring cluster connection is configured, use that. Otherwise default
