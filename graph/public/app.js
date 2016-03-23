@@ -14,7 +14,7 @@ require('ui/chrome').setBrand({
 
 
 
-var app = require('ui/modules').get('app/graphui-plugin', ['angular-venn-simple']);
+var app = require('ui/modules').get('app/graph', ['angular-venn-simple']);
 
 app.directive('focusOn', function() {
   return function(scope, elem, attr) {
@@ -25,7 +25,7 @@ app.directive('focusOn', function() {
 });
 
 var getIndexNames = function($http) {
-  return $http.get('../api/graphui-plugin/getIndices')
+  return $http.get('../api/graph/getIndices')
     .then(function(resp) {
       var indexNames = [];
       for (var indexName in resp.data.indices) {
@@ -271,7 +271,7 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
     $scope.selectedField = null;
     $scope.selectedIndex = selectedIndex;
 
-    $http.get('../api/graphui-plugin/getFields?index=' + selectedIndex.name)
+    $http.get('../api/graph/getFields?index=' + selectedIndex.name)
       .then(function(resp) {
         $scope.allFields = [];
         var allNames = [];
@@ -328,7 +328,7 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
       index: indexName,
       query: query
     }
-    $http.post('../api/graphui-plugin/graphExplore', request)
+    $http.post('../api/graph/graphExplore', request)
       .then(function(resp) {
         if (!resp.data.ok) {
           require("ui/notify").error(resp.data.resp);
@@ -369,7 +369,7 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
       }
     }
 
-    $http.post('../api/graphui-plugin/getExampleDocs', request)
+    $http.post('../api/graph/getExampleDocs', request)
       .then(function(resp) {
         if (!resp.data.ok) {
           require("ui/notify").error(resp.data.resp);
@@ -385,7 +385,7 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
       index: indexName,
       body: query
     }
-    $http.post('../api/graphui-plugin/getExampleDocs', request)
+    $http.post('../api/graph/getExampleDocs', request)
       .then(function(resp) {
         if (!resp.data.ok) {
           require("ui/notify").error(resp.data.resp);
