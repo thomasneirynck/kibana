@@ -77,6 +77,19 @@ function runBuild() {
           .on('finish', cb)
           .on('error', cb);
         })
+      })
+      .then(function () {
+        // Ugly hack to write some needed code into the entry files
+        var indexFile = path.join(buildTarget, plugin.name, 'index.js');
+        var fileExists = fs.statSync(indexFile).isFile();
+        if (!fileExists) throw new Error('FAILED: Could not find entry index.js file');
+
+        // Need to include a custom publicDir for plugins to actually run correctly
+        var contents = fs.readFileSync(indexFile, 'utf8');
+        var newContents = contents.replace(/^/, 'import { resolve } from \'path\';\n')
+        .replace(/configPrefix:\ \'xpack\..+\',/, '$& publicDir: resolve(__dirname, \'public\'),');
+
+        fs.writeFileSync(indexFile, newContents, 'utf8');
       });
     })
     .then(createEntry);
