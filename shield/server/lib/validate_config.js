@@ -1,10 +1,10 @@
 export default (config, log) => {
-  if (config.get('shield.encryptionKey') == null) {
-    throw new Error('shield.encryptionKey is required in kibana.yml.');
+  if (config.get('xpack.shield.encryptionKey') == null) {
+    throw new Error('xpack.shield.encryptionKey is required in kibana.yml.');
   }
 
   const isSslConfigured = config.get('server.ssl.key') != null && config.get('server.ssl.cert') != null;
-  if (config.get('shield.skipSslCheck')) {
+  if (config.get('xpack.shield.skipSslCheck')) {
     log('Skipping Kibana server SSL check');
     log('SSL is still required for this plugin to function');
   } else if (!isSslConfigured) {

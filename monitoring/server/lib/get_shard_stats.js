@@ -5,7 +5,7 @@ const root = require('requirefrom')('');
 const calculateNodeType = root('server/lib/calculate_node_type');
 module.exports = (req, indices, lastState) => {
   const config = req.server.config();
-  const nodeResolver = config.get('monitoring.node_resolver');
+  const nodeResolver = config.get('xpack.monitoring.node_resolver');
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const clusterUuid = req.params.clusterUuid;
   const aggSize = 10;
@@ -25,7 +25,7 @@ module.exports = (req, indices, lastState) => {
         indices: {
           terms: {
             field: 'shard.index',
-            size: config.get('monitoring.max_bucket_size')
+            size: config.get('xpack.monitoring.max_bucket_size')
           },
           aggs: {
             states: {
@@ -37,7 +37,7 @@ module.exports = (req, indices, lastState) => {
         nodes: {
           terms: {
             field: `source_node.${nodeResolver}`,
-            size: config.get('monitoring.max_bucket_size')
+            size: config.get('xpack.monitoring.max_bucket_size')
           },
           aggs: {
             index_count: { cardinality: { field: 'shard.index' } },

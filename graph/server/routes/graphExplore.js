@@ -13,7 +13,7 @@ module.exports = function(server) {
     });
   }
   server.route({
-    path: '/api/graphui-plugin/graphExplore',
+    path: '/api/graph/graphExplore',
     method: 'POST',
     handler: function(req, reply) {
       graphExplore(req).then(function(resp) {

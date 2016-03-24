@@ -20,9 +20,9 @@ module.exports = (server) => {
   const config = server.config();
   const logger = (msg) => server.log(['reporting', 'debug'], msg);
 
-  const phantomSettings = config.get('reporting.phantom');
+  const phantomSettings = config.get('xpack.reporting.phantom');
   const screenshotSettings = { basePath: config.get('server.basePath') };
-  const captureConcurrency = config.get('reporting.capture.concurrency');
+  const captureConcurrency = config.get('xpack.reporting.capture.concurrency');
   logger(`Screenshot concurrency: ${captureConcurrency}`);
 
   // init the screenshot module

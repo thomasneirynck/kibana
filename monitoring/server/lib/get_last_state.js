@@ -5,7 +5,7 @@ module.exports = (req, indices) => {
   const end = req.payload.timeRange.max;
   const clusterUuid = req.params.clusterUuid;
   const config = req.server.config();
-  const resolver = config.get('monitoring.node_resolver');
+  const resolver = config.get('xpack.monitoring.node_resolver');
 
   const params = {
     index: indices,

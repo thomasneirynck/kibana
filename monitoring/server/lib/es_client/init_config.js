@@ -5,7 +5,7 @@ import { readFileSync } from 'fs';
 const readFile = file => readFileSync(file, 'utf8');
 
 function getConfigObjects(config, useMonitoring) {
-  const monitoringConfig = config.get('monitoring.elasticsearch');
+  const monitoringConfig = config.get('xpack.monitoring.elasticsearch');
   const configSource = useMonitoring ? monitoringConfig : config.get('elasticsearch');
   const esConfig = pick(configSource, 'url', 'username', 'password', 'ssl');
 
@@ -39,14 +39,14 @@ function getConfigObjects(config, useMonitoring) {
  * to the cluster connection config set for Kibana and copy all the Kibana
 * config values to monitoring. */
 export default function initConfig(config) {
-  const prefix = 'monitoring.elasticsearch';
+  const prefix = 'xpack.monitoring.elasticsearch';
   const useMonitoring = Boolean(config.get(`${prefix}.url`));
   const configObjects = getConfigObjects(config, useMonitoring);
 
   if (!useMonitoring) {
     // copy calculated configs into monitoring
-    config.set('monitoring.elasticsearch', pick(configObjects.options, 'url', 'username', 'password'));
-    config.set('monitoring.elasticsearch.ssl', pick(configObjects.ssl, 'verify', 'cert', 'key', 'ca'));
+    config.set(prefix, pick(configObjects.options, 'url', 'username', 'password'));
+    config.set(`${prefix}.ssl`, pick(configObjects.ssl, 'verify', 'cert', 'key', 'ca'));
   }
 
   delete configObjects.options.ssl;

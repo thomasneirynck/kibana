@@ -5,7 +5,7 @@ import Boom from 'boom';
  */
 export default function handleError(err, req) {
   const config = req.server.config();
-  const loggingTag = config.get('monitoring.loggingTag');
+  const loggingTag = config.get('xpack.monitoring.loggingTag');
   req.log([loggingTag, 'error'], err);
   if (err.isBoom) return err;
   const msg = err.msg || err.message;

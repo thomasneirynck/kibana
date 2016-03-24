@@ -4,12 +4,12 @@ module.exports = function getClusters(req) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const config = req.server.config();
   const params = {
-    index: config.get('monitoring.index'),
+    index: config.get('xpack.monitoring.index'),
     type: 'cluster_info',
     meta: 'get_clusters',
     ignore: [404],
     body: {
-      size: config.get('monitoring.max_bucket_size')
+      size: config.get('xpack.monitoring.max_bucket_size')
     }
   };
   return callWithRequest(req, 'search', params)

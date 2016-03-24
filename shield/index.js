@@ -14,6 +14,7 @@ import createScheme from './server/lib/login_scheme';
 
 export default (kibana) => new kibana.Plugin({
   id: 'shield',
+  configPrefix: 'xpack.shield',
   require: ['elasticsearch'],
   publicDir: join(__dirname, 'public'),
 
@@ -59,15 +60,15 @@ export default (kibana) => new kibana.Plugin({
       server.auth.strategy('session', 'login', 'required');
 
       server.auth.strategy('shield', 'cookie', false, {
-        cookie: config.get('shield.cookieName'),
-        password: config.get('shield.encryptionKey'),
+        cookie: config.get('xpack.shield.cookieName'),
+        password: config.get('xpack.shield.encryptionKey'),
         path: config.get('server.basePath') + '/',
         clearInvalid: true,
         validateFunc: getValidate(server)
       });
     });
 
-    basicAuth.register(server, config.get('shield.cookieName'), getIsValidUser(server), getCalculateExpires(server));
+    basicAuth.register(server, config.get('xpack.shield.cookieName'), getIsValidUser(server), getCalculateExpires(server));
 
     initAuthenticateApi(server);
     initUsersApi(server);
