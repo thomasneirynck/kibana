@@ -13,12 +13,7 @@ module.exports = function (server) {
             ok: true,
             mappings:resp[req.query.index].mappings
           });
-        }).catch(function (resp) {
-          reply({
-            ok: false,
-            resp: resp
-          });
-        });
+        }).catch(reply);
 
 
     }

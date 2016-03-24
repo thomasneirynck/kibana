@@ -10,12 +10,7 @@ module.exports = function (server) {
             ok: true,
             resp:resp
           });
-        }).catch(function (resp) {
-          reply({
-            ok: false,
-            resp: resp
-          });
-        });
+        }).catch(reply);
 
 
     }
