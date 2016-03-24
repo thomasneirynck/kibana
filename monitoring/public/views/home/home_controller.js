@@ -4,9 +4,9 @@ require('ui/routes')
 .when('/home', {
   template: require('plugins/monitoring/views/home/home_template.html'),
   resolve: {
-    clusters: (Private, monitoringClusters, kbnUrl, globalState) => {
+    clusters: (monitoringClusters, Private, kbnUrl, globalState) => {
       const phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
-      return monitoringClusters.fetch()
+      return monitoringClusters()
       .then(clusters => {
         let cluster;
         if (!clusters.length) {
@@ -41,8 +41,8 @@ module.controller('home', ($route, $scope, monitoringClusters, timefilter, Priva
     return cluster;
   }
 
-  // This will hide the timefilter
-  timefilter.enabled = false;
+  // This will show the timefilter
+  timefilter.enabled = true;
 
   $scope.clusters = $route.current.locals.clusters
   .map(setKeyForClusters);
@@ -50,18 +50,15 @@ module.controller('home', ($route, $scope, monitoringClusters, timefilter, Priva
   var docTitle = Private(require('ui/doc_title'));
   docTitle.change('Monitoring', true);
 
-  // Register the monitoringClusters service.
   $executor.register({
-    execute() {
-      return monitoringClusters.fetch();
-    },
+    execute: () => monitoringClusters(),
     handleResponse(clusters) {
       $scope.clusters = clusters.map(setKeyForClusters);
     }
   });
 
   // Start the executor
-  $executor.start({ ignorePaused: true });
+  $executor.start();
 
   // Destory the executor
   $scope.$on('$destroy', $executor.destroy);

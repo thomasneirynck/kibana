@@ -6,8 +6,8 @@ require('ui/routes')
   template: require('plugins/monitoring/views/no_data/no_data_template.html'),
   resolve: {
     clusters: (monitoringClusters, kbnUrl, Promise) => {
-      return monitoringClusters.fetch()
-      .then((clusters) => {
+      return monitoringClusters()
+      .then(clusters => {
         if (clusters.length) {
           kbnUrl.changePath('/home');
           return Promise.reject();
@@ -43,7 +43,8 @@ mod.controller('noData', (kbnUrl, $scope, monitoringClusters, timefilter, $timeo
   });
 
   function fetch() {
-    monitoringClusters.fetch().then((clusters) => {
+    monitoringClusters()
+    .then((clusters) => {
       if (clusters.length) {
         kbnUrl.changePath('/home');
       }

@@ -1,24 +1,19 @@
-define(function (require) {
-  require('angular-resource');
+const module = require('ui/modules').get('monitoring/clusters');
 
-  var module = require('ui/modules').get('monitoring/clusters', [ 'ngResource' ]);
-  module.service('monitoringClusters', function ($resource, Private) {
-
-    // always use relative paths for endpoints, because absolute will break any reverse proxying
-    var Clusters = $resource('../api/monitoring/v1/clusters/:id', { id: '@cluster_uuid' });
-
-    function fetch() {
-      return Clusters.query().$promise
-      .then(function (clusters) {
-        return clusters;
-      })
-      .catch(function (err) {
-        var ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
-        return ajaxErrorHandlers.fatalError(err);
-      });
-    }
-
-    return { fetch: fetch };
-
-  });
+module.service('monitoringClusters', (timefilter, $http, Private) => {
+  const url = '../api/monitoring/v1/clusters';
+  return () => {
+    const { min, max } = timefilter.getBounds();
+    return $http.post(url, {
+      timeRange: {
+        min: min.toISOString(),
+        max: max.toISOString()
+      }
+    })
+    .then(response => response.data)
+    .catch(err => {
+      const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
+      return ajaxErrorHandlers.fatalError(err);
+    });
+  };
 });

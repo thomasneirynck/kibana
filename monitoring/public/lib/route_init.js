@@ -7,7 +7,7 @@ define(function (require) {
     return function () {
       var monitoring = {};
       var notify = new Notifier({ location: 'Monitoring' });
-      return monitoringClusters.fetch(true)
+      return monitoringClusters(true)
         .then(function (clusters) {
           return phoneHome.sendIfDue(clusters).then(() => {
             return clusters;

@@ -19,13 +19,28 @@ module.exports = (server) => {
   const callWithRequest = server.plugins.monitoring.callWithRequest;
 
   server.route({
-    method: 'GET',
+    method: 'POST',
     path: '/api/monitoring/v1/clusters',
+    config: {
+      validate: {
+        payload: Joi.object({
+          timeRange: Joi.object({
+            min: Joi.date().required(),
+            max: Joi.date().required()
+          }).required()
+        })
+      }
+    },
     handler: (req, reply) => {
-      return getClusters(req)
-      .then(getClustersStats(req))
-      .then(getClustersHealth(req))
-      .then(clusters => reply(_.sortBy(clusters, 'cluster_name')))
+      const start = req.payload.timeRange.min;
+      const end = req.payload.timeRange.max;
+      return calculateIndices(req, start, end)
+      .then(indices => {
+        return getClusters(req, indices)
+        .then(getClustersStats(req))
+        .then(getClustersHealth(req))
+        .then(clusters => reply(_.sortBy(clusters, 'cluster_name')));
+      })
       .catch(err => reply(handleError(err, req)));
     }
   });
