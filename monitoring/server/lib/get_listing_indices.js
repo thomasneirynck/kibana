@@ -24,8 +24,8 @@ module.exports = (req, indices) => {
   const orgStart = start;
   const end = moment.utc(req.payload.timeRange.max).valueOf();
   const clusterUuid = req.params.clusterUuid;
-  const maxBucketSize = config.get('monitoring.max_bucket_size');
-  const minIntervalSeconds = config.get('monitoring.min_interval_seconds');
+  const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
+  const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
 
   const params = {
     index: indices,

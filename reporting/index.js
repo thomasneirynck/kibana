@@ -6,7 +6,8 @@ const config = require('./server/config/config');
 
 module.exports = function (kibana) {
   return new kibana.Plugin({
-    name: 'reporting',
+    id: 'reporting',
+    configPrefix: 'xpack.reporting',
     require: ['kibana', 'elasticsearch'],
 
     uiExports: {

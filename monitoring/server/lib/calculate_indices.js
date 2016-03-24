@@ -3,7 +3,7 @@ var moment = require('moment');
 module.exports = function (req, start, end) {
   var callWithRequest = req.server.plugins.monitoring.callWithRequest;
   var config = req.server.config();
-  var pattern = config.get('monitoring.index_prefix') + '*';
+  var pattern = config.get('xpack.monitoring.index_prefix') + '*';
   var options = {
     index: pattern,
     level: 'indices',
@@ -25,6 +25,6 @@ module.exports = function (req, start, end) {
         return index;
       });
       if (indices.length === 0) return ['.kibana-devnull'];
-      return indices.filter(index => index !== config.get('monitoring.index'));
+      return indices.filter(index => index !== config.get('xpack.monitoring.index'));
     });
 };

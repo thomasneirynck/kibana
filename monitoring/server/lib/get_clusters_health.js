@@ -13,7 +13,7 @@ module.exports = function (req) {
     const bodies = [];
     clusters.forEach((cluster) => {
       bodies.push({
-        index: config.get('monitoring.index_prefix') + '*',
+        index: config.get('xpack.monitoring.index_prefix') + '*',
         type: 'cluster_state'
       });
       bodies.push({
@@ -26,7 +26,7 @@ module.exports = function (req) {
     });
     if (!bodies.length) return Promise.resolve([]);
     const params = {
-      index: config.get('monitoring.index_prefix') + '*',
+      index: config.get('xpack.monitoring.index_prefix') + '*',
       meta: 'get_clusters_health',
       type: 'cluster_state',
       body: bodies
@@ -42,7 +42,7 @@ module.exports = function (req) {
           cluster.status = get(hit, '_source.cluster_state.status');
           cluster.state_uuid = get(hit, '_source.cluster_state.state_uuid');
           cluster.state_timestamp = get(hit, '_source.timestamp');
-          cluster.nodes = indexBy(nodes, config.get('monitoring.node_resolver'));
+          cluster.nodes = indexBy(nodes, config.get('xpack.monitoring.node_resolver'));
         }
       });
       return clusters.filter(isClusterCurrent);

@@ -5,8 +5,8 @@ var av = require("./angular-venn-simple.js");
 var gws = require("./graphClientWorkspace.js");
 var utils = require("./utils.js");
 // var ConfigTemplate = require('ui/ConfigTemplate');
-require('plugins/graphui-plugin/less/main.less');
-var graphLogo = require('plugins/graphui-plugin/header.png');
+require('plugins/graph/less/main.less');
+var graphLogo = require('plugins/graph/header.png');
 require('ui/chrome').setBrand({
   'logo': 'url(' + graphLogo + ') left no-repeat',
   'smallLogo': 'url(' + graphLogo + ') left no-repeat'
@@ -14,7 +14,7 @@ require('ui/chrome').setBrand({
 
 
 
-var app = require('ui/modules').get('app/graphui-plugin', ['angular-venn-simple']);
+var app = require('ui/modules').get('app/graph', ['angular-venn-simple']);
 
 app.directive('focusOn', function() {
   return function(scope, elem, attr) {
@@ -25,7 +25,7 @@ app.directive('focusOn', function() {
 });
 
 var getIndexNames = function($http) {
-  return $http.get('../api/graphui-plugin/getIndices')
+  return $http.get('../api/graph/getIndices')
     .then(function(resp) {
       var indexNames = [];
       for (var indexName in resp.data.indices) {
@@ -52,7 +52,7 @@ if(require('ui/routes').enable){
 
 require('ui/routes')
   .when('/', {
-    template: require('plugins/graphui-plugin/templates/index.html'),
+    template: require('plugins/graph/templates/index.html'),
     resolve: {
       getIndexList: getIndexNames
     }
@@ -272,7 +272,7 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
     $scope.selectedField = null;
     $scope.selectedIndex = selectedIndex;
 
-    $http.get('../api/graphui-plugin/getFields?index=' + selectedIndex.name)
+    $http.get('../api/graph/getFields?index=' + selectedIndex.name)
       .then(function(resp) {
         $scope.allFields = [];
         var allNames = [];
@@ -330,7 +330,7 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
       index: indexName,
       query: query
     }
-    $http.post('../api/graphui-plugin/graphExplore', request)
+    $http.post('../api/graph/graphExplore', request)
       .then(function(resp) {
         if (resp.data.resp.timed_out) {
           require("ui/notify").warning("Exploration timed out");
@@ -368,7 +368,7 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
       }
     }
 
-    $http.post('../api/graphui-plugin/getExampleDocs', request)
+    $http.post('../api/graph/getExampleDocs', request)
       .then(function(resp) {
         responseHandler(resp.data.resp);
       })
@@ -381,7 +381,7 @@ app.controller('graphuiPluginBasic', function($scope, $route, $interval, $http) 
       index: indexName,
       body: query
     }
-    $http.post('../api/graphui-plugin/getExampleDocs', request)
+    $http.post('../api/graph/getExampleDocs', request)
       .then(function(resp) {
         responseHandler(resp.data.resp);
       })

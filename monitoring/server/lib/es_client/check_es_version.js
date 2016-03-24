@@ -4,7 +4,7 @@ import normalizeVersionString from '../normalize_version_string';
 
 export default function checkEsVersion(server) {
   const client = server.plugins.monitoring.client;
-  const engineVersion = server.config().get('monitoring.elasticsearch.engineVersion');
+  const engineVersion = server.config().get('xpack.monitoring.elasticsearch.engineVersion');
   return client.nodes.info()
   .then(info => {
     const badNodes = filter(info.nodes, function (node) {

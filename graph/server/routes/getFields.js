@@ -1,6 +1,6 @@
 module.exports = function (server) {
   server.route({
-    path: '/api/graphui-plugin/getFields',
+    path: '/api/graph/getFields',
     method: 'GET',
     handler: function (req, reply) {
         var body = {

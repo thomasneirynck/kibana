@@ -14,7 +14,7 @@ module.exports = (req, indices, metricName, filters) => {
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const clusterUuid = req.params.clusterUuid;
-  const minIntervalSeconds = config.get('monitoring.min_interval_seconds');
+  const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
 
   const params = {
     index: indices,
