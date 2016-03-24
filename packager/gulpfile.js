@@ -71,8 +71,9 @@ function runBuild() {
       .then(function () {
         return Promise.fromCallback(function (cb) {
           var buildPath = path.resolve(plugin.path, 'build');
+          var globs = ['*/**', '!*/node_modules/.bin/**'];
 
-          var stream = gulp.src(path.join(buildPath, '**'))
+          var stream = gulp.src(globs, { cwd: buildPath, dot: true })
           .pipe(gulp.dest(buildTarget))
           .on('finish', cb)
           .on('error', cb);
@@ -103,7 +104,7 @@ function runPackage() {
   return del(targetDir, { force: true })
   .then(function () {
     return Promise.fromCallback(function (cb) {
-      return gulp.src(buildDir + '/**')
+      return gulp.src(buildDir + '/**', { dot: true })
       .pipe(g.zip(packageFile))
       .pipe(gulp.dest(targetDir))
       .on('finish', cb)
