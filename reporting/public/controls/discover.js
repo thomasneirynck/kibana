@@ -1,6 +1,9 @@
-require('ui/registry/navbar_extensions').register(discoverReportProvider);
+const navbarExtensions = require('ui/registry/navbar_extensions');
+navbarExtensions.register(discoverReportProvider);
 
-function discoverReportProvider(Private, $window) {
+function discoverReportProvider(Private, $window, reportingEnabled) {
+  if (!reportingEnabled) return;
+
   const appInfo = Private(require('plugins/reporting/app_info'));
 
   return {

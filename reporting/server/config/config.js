@@ -1,9 +1,11 @@
 const os = require('os');
-const cpuCount = () => {
+const defaultCPUCount = 2;
+
+function cpuCount() {
   try {
     return os.cpus().length;
   } catch (e) {
-    return 2;
+    return defaultCPUCount;
   }
 };
 

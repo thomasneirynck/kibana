@@ -1,6 +1,9 @@
-require('ui/registry/navbar_extensions').register(dashboardReportProvider);
+const navbarExtensions = require('ui/registry/navbar_extensions');
+navbarExtensions.register(dashboardReportProvider);
 
-function dashboardReportProvider(Private, $window) {
+function dashboardReportProvider(Private, $window, reportingEnabled) {
+  if (!reportingEnabled) return;
+
   const appInfo = Private(require('plugins/reporting/app_info'));
 
   return {
