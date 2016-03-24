@@ -8,7 +8,7 @@ export default (server) => {
 
   server.route({
     method: 'GET',
-    path: '/api/shield/v1/users',
+    path: '/api/security/v1/users',
     handler(request, reply) {
       return callWithRequest(request, 'shield.getUser').then(reply, flow(wrapError, reply));
     }
@@ -16,7 +16,7 @@ export default (server) => {
 
   server.route({
     method: 'GET',
-    path: '/api/shield/v1/users/{username}',
+    path: '/api/security/v1/users/{username}',
     handler(request, reply) {
       const username = request.params.username;
       return callWithRequest(request, 'shield.getUser', {username}).then(reply, flow(wrapError, reply));
@@ -25,7 +25,7 @@ export default (server) => {
 
   server.route({
     method: 'PUT',
-    path: '/api/shield/v1/users/{username}',
+    path: '/api/security/v1/users/{username}',
     handler(request, reply) {
       const username = request.params.username;
       const body = request.payload;
@@ -40,7 +40,7 @@ export default (server) => {
 
   server.route({
     method: 'DELETE',
-    path: '/api/shield/v1/users/{username}',
+    path: '/api/security/v1/users/{username}',
     handler(request, reply) {
       const username = request.params.username;
       return callWithRequest(request, 'shield.deleteUser', {username}).then(reply, flow(wrapError, reply));

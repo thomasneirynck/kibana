@@ -1,5 +1,5 @@
 {
-  "name": "shield",
+  "name": "security",
   "version": "5.0.0-alpha1-SNAPSHOT",
   "description": "Security plugin for Kibana",
   "scripts": {

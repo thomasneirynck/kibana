@@ -10,7 +10,7 @@ export default (server) => {
 
   server.route({
     method: 'POST',
-    path: '/api/shield/v1/login',
+    path: '/api/security/v1/login',
     handler(request, reply) {
       const {username, password} = request.payload;
       return isValidUser(request, username, password).then(() => {
@@ -39,7 +39,7 @@ export default (server) => {
 
   server.route({
     method: 'POST',
-    path: '/api/shield/v1/logout',
+    path: '/api/security/v1/logout',
     handler(request, reply) {
       request.auth.session.clear();
       return reply(success);

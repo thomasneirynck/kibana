@@ -129,7 +129,7 @@ gulp.task('release', ['package'], function (done) {
     packageName + '.tar.gz',
     packageName + '.tar.gz.sha1.txt'
   ], function (filename) {
-    var key = 'kibana/shield/' + filename;
+    var key = 'kibana/security/' + filename;
     var params = {
       Bucket: 'download.elasticsearch.org',
       Key: key,

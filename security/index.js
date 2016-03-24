@@ -13,8 +13,8 @@ import validateConfig from './server/lib/validate_config';
 import createScheme from './server/lib/login_scheme';
 
 export default (kibana) => new kibana.Plugin({
-  id: 'shield',
-  configPrefix: 'xpack.shield',
+  id: 'security',
+  configPrefix: 'xpack.security',
   require: ['elasticsearch'],
   publicDir: join(__dirname, 'public'),
 
@@ -31,44 +31,44 @@ export default (kibana) => new kibana.Plugin({
   },
 
   uiExports: {
-    chromeNavControls: ['plugins/shield/views/logout_button'],
+    chromeNavControls: ['plugins/security/views/logout_button'],
     apps: [{
       id: 'login',
       title: 'Login',
-      main: 'plugins/shield/views/login',
+      main: 'plugins/security/views/login',
       hidden: true
     }, {
       id: 'logout',
       title: 'Logout',
-      main: 'plugins/shield/views/logout',
+      main: 'plugins/security/views/logout',
       hidden: true
     }]
   },
 
   init(server, options) {
     const config = server.config();
-    validateConfig(config, message => server.log(['shield', 'warning'], message));
+    validateConfig(config, message => server.log(['security', 'warning'], message));
 
     server.register(hapiAuthCookie, (error) => {
       if (error != null) throw error;
 
       server.auth.scheme('login', createScheme({
         redirectUrl: (path) => loginUrl(config.get('server.basePath'), path),
-        strategy: 'shield'
+        strategy: 'security'
       }));
 
       server.auth.strategy('session', 'login', 'required');
 
-      server.auth.strategy('shield', 'cookie', false, {
-        cookie: config.get('xpack.shield.cookieName'),
-        password: config.get('xpack.shield.encryptionKey'),
+      server.auth.strategy('security', 'cookie', false, {
+        cookie: config.get('xpack.security.cookieName'),
+        password: config.get('xpack.security.encryptionKey'),
         path: config.get('server.basePath') + '/',
         clearInvalid: true,
         validateFunc: getValidate(server)
       });
     });
 
-    basicAuth.register(server, config.get('xpack.shield.cookieName'), getIsValidUser(server), getCalculateExpires(server));
+    basicAuth.register(server, config.get('xpack.security.cookieName'), getIsValidUser(server), getCalculateExpires(server));
 
     initAuthenticateApi(server);
     initUsersApi(server);

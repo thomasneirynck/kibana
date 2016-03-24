@@ -8,7 +8,7 @@ export default (server) => {
 
   server.route({
     method: 'GET',
-    path: '/api/shield/v1/roles',
+    path: '/api/security/v1/roles',
     handler(request, reply) {
       return callWithRequest(request, 'shield.getRole').then(reply, flow(wrapError, reply));
     }
@@ -16,7 +16,7 @@ export default (server) => {
 
   server.route({
     method: 'GET',
-    path: '/api/shield/v1/roles/{rolename}',
+    path: '/api/security/v1/roles/{rolename}',
     handler(request, reply) {
       const rolename = request.params.rolename;
       return callWithRequest(request, 'shield.getRole', {rolename}).then(reply, flow(wrapError, reply));
@@ -25,7 +25,7 @@ export default (server) => {
 
   server.route({
     method: 'PUT',
-    path: '/api/shield/v1/roles/{rolename}',
+    path: '/api/security/v1/roles/{rolename}',
     handler(request, reply) {
       const rolename = request.params.rolename;
       const body = request.payload;
@@ -40,7 +40,7 @@ export default (server) => {
 
   server.route({
     method: 'DELETE',
-    path: '/api/shield/v1/roles/{rolename}',
+    path: '/api/security/v1/roles/{rolename}',
     handler(request, reply) {
       const rolename = request.params.rolename;
       return callWithRequest(request, 'shield.deleteRole', {rolename}).then(reply, flow(wrapError, reply));

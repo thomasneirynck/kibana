@@ -1,6 +1,6 @@
 export default (server, uiExports) => {
   const config = server.config();
-  const cookieName = config.get('xpack.shield.cookieName');
+  const cookieName = config.get('xpack.security.cookieName');
   const login = uiExports.apps.byId.login;
 
   server.route({

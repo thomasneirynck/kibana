@@ -1,8 +1,8 @@
 import 'ui/autoload/styles';
-import 'plugins/shield/views/login/login.less';
-import kibanaLogoUrl from 'plugins/shield/images/kibana.svg';
+import 'plugins/security/views/login/login.less';
+import kibanaLogoUrl from 'plugins/security/images/kibana.svg';
 import chrome from 'ui/chrome';
-import template from 'plugins/shield/views/login/login.html';
+import template from 'plugins/security/views/login/login.html';
 
 chrome
 .setVisible(false)
@@ -15,7 +15,7 @@ chrome
   return {
     kibanaLogoUrl,
     submit(username, password) {
-      $http.post('./api/shield/v1/login', {username, password}).then(
+      $http.post('./api/security/v1/login', {username, password}).then(
         (response) => window.location.href = `.${next}`,
         (error) => this.error = true
       );

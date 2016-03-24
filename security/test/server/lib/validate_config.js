@@ -14,19 +14,19 @@ describe('Validate config', function () {
     logSpy = sinon.spy();
   });
 
-  it('should throw an error if xpack.shield.encryptionKey is not set', function () {
+  it('should throw an error if xpack.security.encryptionKey is not set', function () {
     const validateWithoutEncryptionKey = getValidateConfigStub({
       'server.ssl.key': 'foo',
       'server.ssl.cert': 'bar'
     }, logSpy);
 
-    expect(validateWithoutEncryptionKey).to.throw(/xpack.shield.encryptionKey is required/);
+    expect(validateWithoutEncryptionKey).to.throw(/xpack.security.encryptionKey is required/);
     sinon.assert.notCalled(logSpy);
   });
 
   it('should throw an error if SSL is not being used', function () {
     const validateWithoutSsl = getValidateConfigStub({
-      'xpack.shield.encryptionKey': 'baz'
+      'xpack.security.encryptionKey': 'baz'
     }, logSpy);
 
     expect(validateWithoutSsl).to.throw(/HTTPS is required/);
@@ -35,8 +35,8 @@ describe('Validate config', function () {
 
   it('should not throw an error if SSL is not being used and the config option to skip the check is set', function () {
     const validateWithNoSslSkipCheck = getValidateConfigStub({
-      'xpack.shield.encryptionKey': 'baz',
-      'xpack.shield.skipSslCheck': true
+      'xpack.security.encryptionKey': 'baz',
+      'xpack.security.skipSslCheck': true
     }, logSpy);
 
     expect(validateWithNoSslSkipCheck).not.to.throw();
@@ -47,7 +47,7 @@ describe('Validate config', function () {
     const validateWithValidConfig = getValidateConfigStub({
       'server.ssl.key': 'foo',
       'server.ssl.cert': 'bar',
-      'xpack.shield.encryptionKey': 'baz'
+      'xpack.security.encryptionKey': 'baz'
     }, logSpy);
 
     expect(validateWithValidConfig).not.to.throw();
