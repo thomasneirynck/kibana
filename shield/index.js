@@ -46,7 +46,7 @@ export default (kibana) => new kibana.Plugin({
 
   init(server, options) {
     const config = server.config();
-    validateConfig(config);
+    validateConfig(config, message => server.log(['shield', 'warning'], message));
 
     server.register(hapiAuthCookie, (error) => {
       if (error != null) throw error;
