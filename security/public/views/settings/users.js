@@ -1,6 +1,6 @@
 import routes from 'ui/routes';
-import template from 'plugins/shield/views/settings/users.html';
-import 'plugins/shield/services/shield_user';
+import template from 'plugins/security/views/settings/users.html';
+import 'plugins/security/services/shield_user';
 
 routes.when('/settings/security/users', {
   template,

@@ -1,6 +1,6 @@
 import routes from 'ui/routes';
-import template from 'plugins/shield/views/settings/roles.html';
-import 'plugins/shield/services/shield_role';
+import template from 'plugins/security/views/settings/roles.html';
+import 'plugins/security/services/shield_role';
 
 routes.when('/settings/security/roles', {
   template,

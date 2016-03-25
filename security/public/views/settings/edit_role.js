@@ -1,10 +1,10 @@
 import {clone} from 'lodash';
 import routes from 'ui/routes';
-import template from 'plugins/shield/views/settings/edit_role.html';
+import template from 'plugins/security/views/settings/edit_role.html';
 import 'angular-resource';
-import 'plugins/shield/services/shield_user';
-import 'plugins/shield/services/shield_role';
-import 'plugins/shield/views/settings/edit_user.less';
+import 'plugins/security/services/shield_user';
+import 'plugins/security/services/shield_role';
+import 'plugins/security/views/settings/edit_user.less';
 
 routes.when('/settings/security/roles/edit/:name?', {
   template,

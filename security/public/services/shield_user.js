@@ -3,7 +3,7 @@ import uiModules from 'ui/modules';
 
 const module = uiModules.get('shield/users', ['ngResource']);
 module.service('ShieldUser', ($resource) => {
-  return $resource('../api/shield/v1/users/:username', {
+  return $resource('../api/security/v1/users/:username', {
     username: '@username'
   });
 });
