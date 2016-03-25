@@ -32,8 +32,8 @@ describe('Client Config Options', () => {
   it(`Uses Monitoring cluster config settings if URL is given`, () => {
     const config = getMockConfig();
     config.get
-    .withArgs('monitoring.elasticsearch.url').returns('http://localhost:9210')
-    .withArgs('monitoring.elasticsearch').returns({
+    .withArgs('xpack.monitoring.elasticsearch.url').returns('http://localhost:9210')
+    .withArgs('xpack.monitoring.elasticsearch').returns({
       url: 'http://localhost:9210',
       username: 'monitoringuser',
       password: 'monitoringpass',
