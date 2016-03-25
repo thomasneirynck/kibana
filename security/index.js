@@ -24,9 +24,9 @@ export default (kibana) => new kibana.Plugin({
       cookieName: Joi.string().default('sid'),
       encryptionKey: Joi.string(),
       sessionTimeout: Joi.number().default(30 * 60 * 1000),
+      useUnsafeSession: Joi.boolean().default(false),
       // Only use this if SSL is still configured, but it's configured outside of the Kibana server
       // (e.g. SSL is configured on a load balancer)
-      useUnsafeSession: Joi.boolean().default(false),
       skipSslCheck: Joi.boolean().default(false)
     }).default();
   },
