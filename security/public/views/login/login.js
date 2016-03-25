@@ -1,10 +1,5 @@
 import 'ui/autoload/styles';
-<<<<<<< HEAD:kibana/security/public/views/login/login.js
 import 'plugins/security/views/login/login.less';
-import kibanaLogoUrl from 'plugins/security/images/kibana.svg';
-=======
-import 'plugins/shield/views/login/login.less';
->>>>>>> master:kibana/shield/public/views/login/login.js
 import chrome from 'ui/chrome';
 import template from 'plugins/security/views/login/login.html';
 
