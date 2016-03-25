@@ -26,6 +26,7 @@ export default (kibana) => new kibana.Plugin({
       sessionTimeout: Joi.number().default(30 * 60 * 1000),
       // Only use this if SSL is still configured, but it's configured outside of the Kibana server
       // (e.g. SSL is configured on a load balancer)
+      useUnsafeSession: Joi.boolean().default(false),
       skipSslCheck: Joi.boolean().default(false)
     }).default();
   },
@@ -64,7 +65,8 @@ export default (kibana) => new kibana.Plugin({
         password: config.get('xpack.security.encryptionKey'),
         path: config.get('server.basePath') + '/',
         clearInvalid: true,
-        validateFunc: getValidate(server)
+        validateFunc: getValidate(server),
+        isSecure: !config.get('xpack.security.useUnsafeSession')
       });
     });
 
