@@ -1,15 +1,12 @@
+import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from './normalize_shard_objects';
 const _ = require('lodash');
 const createQuery = require('./create_query');
 const root = require('requirefrom')('');
 const calculateNodeType = root('server/lib/calculate_node_type');
-const nodeAggVals = root('server/lib/node_agg_vals');
-
 module.exports = (req, indices, lastState) => {
   const config = req.server.config();
-  const nodeResolver = config.get('monitoring.node_resolver');
-  const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
-  const start = req.payload.timeRange.min;
-  const end = req.payload.timeRange.max;
+  const nodeResolver = config.get('xpack.monitoring.node_resolver');
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const clusterUuid = req.params.clusterUuid;
   const aggSize = 10;
   const params = {
@@ -28,7 +25,7 @@ module.exports = (req, indices, lastState) => {
         indices: {
           terms: {
             field: 'shard.index',
-            size: config.get('monitoring.max_bucket_size')
+            size: config.get('xpack.monitoring.max_bucket_size')
           },
           aggs: {
             states: {
@@ -40,7 +37,7 @@ module.exports = (req, indices, lastState) => {
         nodes: {
           terms: {
             field: `source_node.${nodeResolver}`,
-            size: config.get('monitoring.max_bucket_size')
+            size: config.get('xpack.monitoring.max_bucket_size')
           },
           aggs: {
             index_count: { cardinality: { field: 'shard.index' } },
@@ -64,71 +61,11 @@ module.exports = (req, indices, lastState) => {
 
   return callWithRequest(req, 'search', params)
   .then((resp) => {
-    const data = {
-      nodes: {},
-      totals: {
-        primary: 0, replica: 0, unassigned: { replica: 0, primary: 0 }
-      }
-    };
-
-    function createNewMetric() {
-      return {
-        status: 'green',
-        primary: 0,
-        replica: 0,
-        unassigned: {
-          replica: 0,
-          primary: 0
-        }
-      };
-    };
-
-    function setStats(bucket, metric, ident) {
-      const states = _.filter(bucket.states.buckets, ident);
-      states.forEach((state) => {
-        metric.primary = state.primary.buckets.reduce((acc, state) => {
-          if (state.key) acc += state.doc_count;
-          return acc;
-        }, metric.primary);
-        metric.replica = state.primary.buckets.reduce((acc, state) => {
-          if (!state.key) acc += state.doc_count;
-          return acc;
-        }, metric.replica);
-      });
-    }
-
-    function processIndexShards(bucket) {
-      const metric = createNewMetric();
-      setStats(bucket, metric, { key: 'STARTED' });
-      setStats(bucket, metric.unassigned, (bucket) => bucket.key !== 'STARTED');
-      data.totals.primary += metric.primary;
-      data.totals.replica += metric.replica;
-      data.totals.unassigned.primary += metric.unassigned.primary;
-      data.totals.unassigned.replica += metric.unassigned.replica;
-      if (metric.unassigned.replica) metric.status = 'yellow';
-      if (metric.unassigned.primary) metric.status = 'red';
-      data[bucket.key] = metric;
-    };
-
-    // Mutate "data" with a nodes object having a field for every node
-    function processNodeShards(bucket) {
-      data.nodes[bucket.key] = {
-        shardCount: bucket.doc_count,
-        indexCount: bucket.index_count.value,
-        name: nodeAggVals.getLatestAggKey(bucket.node_names.buckets),
-        transport_address: nodeAggVals.getLatestAggKey(bucket.node_transport_address.buckets),
-        node_ids: bucket.node_ids.buckets.map(bucket => bucket.key),
-        attributes: {
-          data: nodeAggVals.getNodeAttribute(bucket.node_data_attributes.buckets),
-          master: nodeAggVals.getNodeAttribute(bucket.node_master_attributes.buckets)
-        }
-      };
-      data.nodes[bucket.key].resolver = data.nodes[bucket.key][nodeResolver];
-    }
+    const data = getDefaultDataObject();
 
     if (resp && resp.hits && resp.hits.total !== 0) {
-      resp.aggregations.indices.buckets.forEach(processIndexShards);
-      resp.aggregations.nodes.buckets.forEach(processNodeShards);
+      resp.aggregations.indices.buckets.forEach(normalizeIndexShards(data));
+      resp.aggregations.nodes.buckets.forEach(normalizeNodeShards(data, nodeResolver));
     }
 
     _.forEach(data.nodes, node => {

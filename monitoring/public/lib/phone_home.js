@@ -16,7 +16,7 @@
  */
 
 var _ = require('lodash');
-module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, reportStats, features) {
+module.exports = function phoneHomeProvider(Promise, $http, statsReportUrl, reportStats, features) {
 
   const defaults = {
     report: true,
@@ -37,13 +37,9 @@ module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, 
     }
 
     set(key, value) {
-      var self = this;
-      var previous;
       if (typeof key === 'object') {
-        previous = _.pick(this.attributes, _.keys(key));
         this.attributes = _.assign(this.attributes, key);
       } else {
-        previous = this.attributes[key];
         this.attributes[key] = value;
       }
     }
@@ -100,13 +96,10 @@ module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, 
       .then((resp) => {
         return resp.data;
       })
-      .catch((err) => {
-        return {};
-      });
+      .catch(() => { return {}; });
     }
 
     sendIfDue(clusters) {
-      var self = this;
       if (!this.checkReportStatus()) return Promise.resolve();
       return Promise.all(clusters.map((cluster) => {
         return this.getClusterInfo(cluster.cluster_uuid).then((info) => {
@@ -124,7 +117,7 @@ module.exports = function phoneHomeProvider(Promise, es, $http, statsReportUrl, 
         this.set('lastReport', Date.now());
         this.saveToBrowser();
       })
-      .catch((err) => {
+      .catch(() => {
         // no ajaxErrorHandlers for phone home
         return Promise.resolve();
       });

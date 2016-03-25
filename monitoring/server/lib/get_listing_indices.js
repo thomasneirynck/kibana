@@ -2,7 +2,7 @@
  * range for all the active indices. The stat data is built up with passed-in
  * options that are given by the UI client as an array
  * (req.payload.listingMetrics). Every option is a key to a configuration value
- * in public/lib/metrics. Those options are used to build up a query with a
+ * in server/lib/metrics. Those options are used to build up a query with a
  * bunch of date histograms.
  *
  * After the result comes back from Elasticsearch, we process the date
@@ -10,24 +10,22 @@
  * for charting. This method is shared by the get_listing_nodes lib.
  */
 
-const _ = require('lodash');
 const moment = require('moment');
 const createQuery = require('./create_query.js');
 const calcAuto = require('./calculate_auto');
 const root = require('requirefrom')('');
-const metrics = root('public/lib/metrics');
+const metrics = root('server/lib/metrics');
 const mapListingResponse = require('./map_listing_response');
-
 module.exports = (req, indices) => {
   const config = req.server.config();
-  const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const listingMetrics = req.payload.listingMetrics || [];
   let start = moment.utc(req.payload.timeRange.min).valueOf();
   const orgStart = start;
   const end = moment.utc(req.payload.timeRange.max).valueOf();
   const clusterUuid = req.params.clusterUuid;
-  const maxBucketSize = config.get('monitoring.max_bucket_size');
-  const minIntervalSeconds = config.get('monitoring.min_interval_seconds');
+  const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
+  const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
 
   const params = {
     index: indices,

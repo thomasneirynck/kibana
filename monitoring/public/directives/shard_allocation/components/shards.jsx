@@ -17,7 +17,6 @@
 
 
 
-/* jshint newcap:false  */
 define(function (require) {
   var _ = require('lodash');
   var React = require('react');
@@ -34,9 +33,6 @@ define(function (require) {
     displayName: 'Shard',
     render: function () {
       var shard = this.props.shard;
-      var options = {
-        className: calculateClass(shard, 'shard')
-      };
       return (<div className={ calculateClass(shard, 'shard') }>{ shard.shard }</div>);
     }
   });

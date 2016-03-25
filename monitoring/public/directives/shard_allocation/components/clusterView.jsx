@@ -32,7 +32,7 @@ define(function (require) {
         showing: this.props.scope.showing || [],
         shardStats: this.props.shardStats,
         angularChangeUrl: function (url) {
-          scope.$evalAsync(function (scope) { kbnChangePath(url); });
+          scope.$evalAsync(function () { kbnChangePath(url); });
         }
       };
     },

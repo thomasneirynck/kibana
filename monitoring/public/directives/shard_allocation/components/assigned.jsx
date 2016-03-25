@@ -17,10 +17,8 @@
 
 
 
-/* jshint newcap: false */
 define(function (require) {
   var React = require('react');
-  var D = React.DOM;
   var Shard = require('./shard.jsx');
   var calculateClass = require('../lib/calculateClass');
   var _ = require('lodash');

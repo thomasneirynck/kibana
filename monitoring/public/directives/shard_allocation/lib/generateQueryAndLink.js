@@ -15,20 +15,12 @@
  * from Elasticsearch Incorporated.
  */
 
-
-
-define(function (require) {
-  var _ = require('lodash');
-  var stringify = _.compose(encodeURIComponent, JSON.stringify);
-
-  return function generateQueryAndLink(data) {
-    var type = 'indices';
-    var ident = data.name;
-    if (data.type === 'node') {
-      type = 'nodes';
-      ident = data.id;
-    }
-    return '/' + type + '/' + ident;
-  };
-
-});
+module.exports = function generateQueryAndLink(data) {
+  var type = 'indices';
+  var ident = data.name;
+  if (data.type === 'node') {
+    type = 'nodes';
+    ident = data.id;
+  }
+  return '/' + type + '/' + ident;
+};

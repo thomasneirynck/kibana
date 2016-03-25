@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const moment = require('moment');
+import { get, find, indexBy } from 'lodash';
+import moment from 'moment';
 
 function isClusterCurrent(cluster) {
   const lastUpdate = moment(cluster.state_timestamp);
@@ -7,14 +7,13 @@ function isClusterCurrent(cluster) {
 }
 
 module.exports = function (req) {
-  const server = req.server;
-  const callWithRequest = server.plugins.elasticsearch.callWithRequest;
-  const config = server.config();
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
+  const config = req.server.config();
   return function (clusters) {
     const bodies = [];
     clusters.forEach((cluster) => {
       bodies.push({
-        index: config.get('monitoring.index_prefix') + '*',
+        index: config.get('xpack.monitoring.index_prefix') + '*',
         type: 'cluster_state'
       });
       bodies.push({
@@ -25,26 +24,29 @@ module.exports = function (req) {
         } } }
       });
     });
-    if (!bodies.length) return Promise.resolve();
+    if (!bodies.length) return Promise.resolve([]);
     const params = {
-      index: config.get('monitoring.index_prefix') + '*',
+      index: config.get('xpack.monitoring.index_prefix') + '*',
       meta: 'get_clusters_health',
       type: 'cluster_state',
       body: bodies
     };
     return callWithRequest(req, 'msearch', params)
-      .then((res) => {
-        res.responses.forEach((resp) => {
-          if (resp.hits.total !== 0) {
-            const clusterName = _.get(resp.hits.hits[0], '_source.cluster_uuid');
-            const cluster = _.find(clusters, { cluster_uuid: clusterName });
-            cluster.status = _.get(resp.hits.hits[0], '_source.cluster_state.status');
-            cluster.state_uuid = _.get(resp.hits.hits[0], '_source.cluster_state.state_uuid');
-            cluster.state_timestamp = _.get(resp.hits.hits[0], '_source.timestamp');
-          }
-        });
-        return clusters.filter(isClusterCurrent);
+    .then(res => {
+      res.responses.forEach(resp => {
+        const hit = get(resp, 'hits.hits[0]');
+        if (resp && resp.hits && resp.hits.total !== 0) {
+          const clusterName = get(hit, '_source.cluster_uuid');
+          const nodes = get(hit, '_source.cluster_state.nodes');
+          const cluster = find(clusters, { cluster_uuid: clusterName });
+          cluster.status = get(hit, '_source.cluster_state.status');
+          cluster.state_uuid = get(hit, '_source.cluster_state.state_uuid');
+          cluster.state_timestamp = get(hit, '_source.timestamp');
+          cluster.nodes = indexBy(nodes, config.get('xpack.monitoring.node_resolver'));
+        }
       });
+      return clusters.filter(isClusterCurrent);
+    });
   };
 };
 

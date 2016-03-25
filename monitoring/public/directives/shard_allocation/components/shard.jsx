@@ -17,19 +17,10 @@
 
 
 
-/* jshint newcap:false  */
 define(function (require) {
-  var _ = require('lodash');
   var React = require('react');
   var calculateClass = require('../lib/calculateClass');
   var vents = require('../lib/vents');
-
-  function sortByShard(shard) {
-    if (shard.node) {
-      return shard.shard;
-    }
-    return [!shard.primary, shard.shard];
-  }
 
   return React.createClass({
     displayName: 'Shard',
@@ -40,13 +31,10 @@ define(function (require) {
 
     componentDidMount: function () {
       var key;
-      var element;
       var shard = this.props.shard;
       var self = this;
-      var placement = shard.state === 'INITIALIZING' ? 'bottom' : 'top';
       if (shard.relocating_message) {
         key = this.generateKey();
-        element = this.getDOMNode();
         vents.on(key, function (action) {
           self.setState({ tooltip: action === 'show' });
         });
@@ -63,10 +51,8 @@ define(function (require) {
 
     componentWillUnmount: function () {
       var key;
-      var element;
       var shard = this.props.shard;
       if (shard.relocating_message) {
-        element = this.getDOMNode();
         key = this.generateKey();
         vents.clear(key);
       }
@@ -83,9 +69,6 @@ define(function (require) {
 
     render: function () {
       var shard = this.props.shard;
-      var options = {
-        className: calculateClass(shard, 'shard')
-      };
       var tooltip = this.state.tooltip;
       if (tooltip) {
         tooltip = (<div className="shard-tooltip">{ this.props.shard.relocating_message }</div>);

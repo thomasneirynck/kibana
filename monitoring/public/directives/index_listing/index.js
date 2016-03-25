@@ -1,12 +1,10 @@
 define(function (require) {
   var _ = require('lodash');
   var numeral = require('numeral');
-  var moment = require('moment');
   var module = require('ui/modules').get('monitoring/directives', []);
   var React = require('react');
   var make = React.DOM;
 
-  var SparkLines = require('plugins/monitoring/directives/monitoring_sparkline');
   var Table = require('plugins/monitoring/directives/paginated_table/components/table');
 
   module.directive('monitoringIndexListing', function (kbnUrl) {
@@ -37,12 +35,7 @@ define(function (require) {
           if (units) innerMarkup += units;
         }
       }
-      var chartData = _.get(this.props, dataKey.chart_data);
-      var hasChart = !!dataKey.chart_data;
-      return make.td({key: idx},
-        (hasChart ? React.createElement(SparkLines, {data: chartData}) : null),
-        make.div({className: (hasChart ? 'pull-right chart-val' : '')}, innerMarkup)
-      );
+      return make.td({key: idx}, null, make.div({className: ''}), innerMarkup);
     }
     var initialTableOptions = {
       title: 'Indices',
@@ -64,18 +57,19 @@ define(function (require) {
       }, {
         key: 'metrics.index_size',
         sortKey: 'metrics.index_size.last',
-        // chart_data: 'metrics.index_request_rate.data',
         title: 'Data'
       }, {
         key: 'metrics.index_request_rate',
         sortKey: 'metrics.index_request_rate.last',
-        // chart_data: 'metrics.index_request_rate.data',
         title: 'Index Rate'
       }, {
         key: 'metrics.index_search_request_rate',
         sortKey: 'metrics.index_search_request_rate.last',
-        // chart_data: 'metrics.index_search_request_rate.data',
         title: 'Search Rate'
+      }, {
+        key: 'metrics.index_unassigned_shards',
+        sortKey: 'metrics.index_unassigned_shards',
+        title: 'Unassigned Shards'
       }]
     };
 
@@ -93,7 +87,7 @@ define(function (require) {
               status: !!index ? index.status : 'disabled'
             };
           },
-          componentWillReceiveProps: function (nextProps) {
+          componentWillReceiveProps: function () {
             if (scope.data) {
               var index = _.findWhere(scope.data, {name: this.props.name});
               this.setState({
@@ -104,7 +98,6 @@ define(function (require) {
           },
           render: function () {
             var boundTemplateFn = _.bind(makeTdWithPropKey, this, scope);
-            var dataProps = _.pluck(initialTableOptions.columns, 'key');
             var $tdsArr = initialTableOptions.columns.map(boundTemplateFn);
             var classes = [ this.state.status ];
             return make.tr({

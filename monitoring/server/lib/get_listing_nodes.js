@@ -2,7 +2,7 @@
  * range for all the active nodes. The stat data is built up with passed-in
  * options that are given by the UI client as an array
  * (req.payload.listingMetrics). Every option is a key to a configuration value
- * in public/lib/metrics. Those options are used to build up a query with a
+ * in server/lib/metrics. Those options are used to build up a query with a
  * bunch of date histograms.
  *
  * After the result comes back from Elasticsearch, we use it to generate:
@@ -23,25 +23,24 @@
  * going up, and likewise if the metric is going down, we have a down arrow
  */
 
-const _ = require('lodash');
 const moment = require('moment');
 const createQuery = require('./create_query.js');
 const calcAuto = require('./calculate_auto');
 const root = require('requirefrom')('');
-const metrics = root('public/lib/metrics');
+const metrics = root('server/lib/metrics');
 const nodeAggVals = root('server/lib/node_agg_vals');
 const mapListingResponse = require('./map_listing_response');
 
 module.exports = (req, indices) => {
   const config = req.server.config();
-  const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const listingMetrics = req.payload.listingMetrics || [];
   let start = moment.utc(req.payload.timeRange.min).valueOf();
   const orgStart = start;
   const end = moment.utc(req.payload.timeRange.max).valueOf();
   const clusterUuid = req.params.clusterUuid;
-  const maxBucketSize = config.get('monitoring.max_bucket_size');
-  const minIntervalSeconds = config.get('monitoring.min_interval_seconds');
+  const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
+  const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
 
   const params = {
     index: indices,
@@ -65,7 +64,7 @@ module.exports = (req, indices) => {
   var aggs = {
     items: {
       terms: {
-        field: `source_node.${config.get('monitoring.node_resolver')}`, // transport_address or node name
+        field: `source_node.${config.get('xpack.monitoring.node_resolver')}`, // transport_address or node name
         size: maxBucketSize
       },
       aggs: {

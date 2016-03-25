@@ -1,5 +1,6 @@
 var _ = require('lodash');
 const moment = require('moment');
+
 module.exports = function createQuery(options) {
   options = _.defaults(options, { filters: [] });
   var clusterFilter = { term: { cluster_uuid: options.clusterUuid } };

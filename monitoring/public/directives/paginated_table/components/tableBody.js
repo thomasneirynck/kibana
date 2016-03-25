@@ -13,7 +13,6 @@ module.exports = React.createClass({
     if (!this.props.tableData.length) {
       return React.createFactory(NoData)({ columns: this.props.columns });
     }
-    var that = this;
 
     // Sort the Data
     var sortColumn = this.props.sortColObj;

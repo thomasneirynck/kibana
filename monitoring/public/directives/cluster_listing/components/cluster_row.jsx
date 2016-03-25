@@ -15,7 +15,7 @@ function formatTime(millis) {
 
 class ClusterRow extends React.Component {
 
-  changeCluster(event) {
+  changeCluster() {
     if (this.props.license.type === 'basic') return;
     this.props.changeCluster(this.props.cluster_uuid);
   }

@@ -159,7 +159,7 @@ define(function (require) {
       return directions[0];
     }
     // TODO make this an option, so people can have a choice of where the tooltip chooses to draw
-    return directions.reduce(function (prev, side, idx, arr) {
+    return directions.reduce(function (prev, side) {
       const sideExtentsFit = (_.every(side.extents, bounds.contains, bounds));
       return prev || (sideExtentsFit ? side : false);
     }, false);

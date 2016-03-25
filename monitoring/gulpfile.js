@@ -54,10 +54,10 @@ function syncPluginTo(dest, done) {
           .output(function (data) {
             process.stdout.write(data.toString('utf8'));
           });
-        rsync.execute(function (err) {
-          if (err) {
-            console.log(err);
-            return reject(err);
+        rsync.execute(function (syncErr) {
+          if (syncErr) {
+            console.log(syncErr);
+            return reject(syncErr);
           }
           resolve();
         });
@@ -74,8 +74,8 @@ gulp.task('sync', function (done) {
   syncPluginTo(kibanaPluginDir, done);
 });
 
-gulp.task('lint', function (done) {
-  return gulp.src(['server/**/*.js', 'public/**/*.js', 'public/**/*.jsx', 'gulp-tasks/**/*.jsx'])
+gulp.task('lint', function () {
+  return gulp.src(['*.js', 'server/**/*.js', 'public/**/*.js', 'public/**/*.jsx', 'gulp-tasks/**/*.jsx'])
     // eslint() attaches the lint output to the eslint property
     // of the file object so it can be used by other modules.
     .pipe(g.eslint())
@@ -107,7 +107,7 @@ gulp.task('build', ['clean-build'], function (done) {
   });
 });
 
-gulp.task('package', ['build'], function (done) {
+gulp.task('package', ['build'], function () {
   return gulp.src(path.join(buildDir, '**', '*'))
     .pipe(g.tar(packageName + '.tar'))
     .pipe(g.gzip())
@@ -151,11 +151,11 @@ gulp.task('release', ['package'], function (done) {
   });
 });
 
-gulp.task('dev', ['sync'], function (done) {
+gulp.task('dev', ['sync'], function () {
   gulp.watch(['package.json', 'index.js', 'public/**/*', 'server/**/*', 'test/**/*'], ['sync', 'lint']);
 });
 
-gulp.task('pre-test', function (done) {
+gulp.task('pre-test', function () {
   return gulp.src(['./server/**/*.js', '!./**/__test__/**'])
     // instruments code for measuring test coverage
     .pipe(g.istanbul({
@@ -166,8 +166,8 @@ gulp.task('pre-test', function (done) {
     .pipe(g.istanbul.hookRequire());
 });
 
-gulp.task('test', ['lint', 'clean-test', 'pre-test'], function (done) {
-  return gulp.src(['./**/__test__/**/*.js'], { read: false })
+gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
+  return gulp.src(['./**/__test__/**/*.js', '!./build/**'], { read: false })
     // runs the unit tests
     .pipe(g.mocha({
       ui: 'bdd'

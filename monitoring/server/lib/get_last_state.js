@@ -1,13 +1,11 @@
 const _ = require('lodash');
 const createQuery = require('./create_query.js');
-
 module.exports = (req, indices) => {
-  const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
-  const start = req.payload.timeRange.min;
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const end = req.payload.timeRange.max;
   const clusterUuid = req.params.clusterUuid;
   const config = req.server.config();
-  const resolver = config.get('monitoring.node_resolver');
+  const resolver = config.get('xpack.monitoring.node_resolver');
 
   const params = {
     index: indices,
@@ -26,7 +24,12 @@ module.exports = (req, indices) => {
     const total = _.get(resp, 'hits.total', 0);
     if (!total) {
       // time frame is out of bounds with indexed data
-      return { cluster_state: { state_uuid: 'devnull' } };
+      return {
+        cluster_state: {
+          state_uuid: 'devnull',
+          nodes: {}
+        }
+      };
     }
     const lastState = _.get(resp, 'hits.hits[0]._source');
     const nodes = _.get(lastState, 'cluster_state.nodes');

@@ -1,0 +1,539 @@
+<div id="graphBasic" ng-controller="graphuiPluginBasic">
+
+
+  <navbar>
+    <form role="form" class="fill inline-form" style="max-width:200px">
+      <div class="input-group">
+        <select class="form-control indexDropDown" name="mySelect" ng-change="indexSelected(selectedIndex)" ng-options="option.name for option in indices" ng-model="selectedIndex">
+          <option value="">Select index...</option>
+        </select>
+      </div>
+    </form>
+
+
+    <!-- pick single field -->
+    <form ng-if="!advancedMode" role="form" class="fill inline-form" style="max-width:200px">
+      <div id="navbarSearchForm1" class="input-group">
+
+        <select class="form-control" ng-change="basicModeChangedField(basicModeSelectedSingleField)" ng-options="field.name for field in allFields" ng-model="basicModeSelectedSingleField">
+          <option value="">Select a field</option>
+        </select>
+      </div>
+    </form>
+
+    <!-- pick multiple fields that can be enabled or disabled -->
+    <div ng-if="advancedMode" class="button-group" role="toolbar">
+      <button ng-disabled="selectedIndex==null" ng-class="{'active':showFieldOptions}" tooltip="Define fields" ng-click="toggleShowAdvancedFieldsConfig()">Fields <i class="fa  fa-caret-down"></i>
+      </button>
+    </div>
+
+    <span class="noUserSelect" ng-if="advancedMode" ng-repeat="f in selectedFields" ng-attr-tooltip="Toggle if search returns {{f.name}}">
+      <svg width="30" height="30" ng-click="toggleActiveResponseField(f)" ng-class="{disabledField:!f.isActiveResponseField}">
+        <circle class="nodeCircle" r="13" cx="15" cy="15" ng-class="{type0:f.color==0,type1:f.color==1,type2:f.color==2,type3:f.color==3,type4:f.color==4,type5:f.color==5,type6:f.color==6,type7:f.color==7,type8:f.color==8,type9:f.color==9}" />
+        <text ng-if="f.icon" class="SvgIconFont" text-anchor="middle" x="15" y="20">{{f.icon.code}}</text>
+      </svg>
+    </span>
+
+    <form role="form" class="fill inline-form" ng-submit="submit()" name="graphBasicSearch">
+      <div id="navbarSearchForm" class="input-group">
+
+        <input class="col-md-6" name="myInput" id="basicSearchInputQuery" type="text" ng-disabled="liveResponseFields.length==0" ng-focus="showFieldOptions=false" placeholder="foo AND bar NOT baz" ng-model="searchTerm" autocomplete="off" />
+
+        <button type="submit" ng-disabled="liveResponseFields.length==0" aria-label="Search">
+          <span aria-hidden="true" class="fa fa-search"></span>
+        </button>
+      </div>
+    </form>
+
+
+
+
+    <div class="button-group" role="toolbar">
+      <button tooltip="Undo" type="button" ng-click="workspace.undo()" ng-disabled="workspace==null||workspace.undoLog.length <1">
+        <i class="fa  fa-history"></i>
+      </button>
+      <button tooltip="Redo" type="button" ng-disabled="workspace==null||workspace.redoLog.length == 0" ng-click="workspace.redo()">
+        <i class="fa  fa-repeat"></i>
+      </button>
+
+
+
+      <!--basic mode buttons -->
+      <button ng-disabled="workspace==null||liveResponseFields.length==0" tooltip="Expand selection" ng-click="setDetail(null);workspace.expandSelecteds(false,{valueTypes: 'new',toFields:liveResponseFields});"><i class="fa  fa-plus"></i>
+      </button>
+
+      <button ng-disabled="workspace==null||workspace.nodes.length==0" tooltip="Remove vertices from workspace" ng-click="setDetail(null);workspace.deleteSelection();"><i class="fa  fa-trash"></i>
+      </button>
+
+      <button ng-disabled="workspace==null||workspace.selectedNodes.length==0" tooltip="Blacklist selection from return to workspace" ng-click="workspace.blacklistSelection();"><i class="fa  fa-ban"></i>
+      </button>
+
+      <button ng-disabled="workspace==null||workspace.nodes.length==0" tooltip="Add links between existing terms" ng-click="workspace.expandSelecteds(false,{valueTypes: 'old'});">
+        </i><i class="fa  fa-link"></i>
+      </button>
+
+      <!-- end basic mode buttons -->
+
+      <!--begin advanced mode buttons   -->
+
+      <button ng-if="advancedMode" ng-disabled="workspace==null||workspace.selectedNodes.length==0" tooltip="Show example docs" ng-click="showSelectedDocs();"><i class="fa  fa-files-o"></i>
+      </button>
+
+      <button ng-if="advancedMode" ng-disabled="workspace==null||workspace.selectedNodes.length==0" tooltip="Custom style selected vertices" ng-click="setDetail({showStyle:true})"><i class="fa  fa-paint-brush"></i>
+      </button>
+
+      <!-- end advanced mode buttons -->
+
+      <button tooltip="Settings" type="button" ng-class="{'active':showConfig}" ng-disabled="!selectedIndex" ng-click="toggleConfigPanel()">
+        <i class="fa  fa-cog"></i></button>
+
+
+
+      <button tooltip="Advanced mode" type="button" ng-class="{'active':advancedMode}" ng-click="toggleAdvancedMode()">
+        <i class="fa  fa-flask"></i></button>
+
+
+
+    </div>
+
+  </navbar>
+
+
+  <div class="config" ng-show="showFieldOptions">
+    <div class="container-fluid">
+      <div class="container">
+
+        <!-- Yeah I know, 2016 and tables. Not up on the CSS voodoo required to layout panels how I need them... -->
+        <table>
+          <tr>
+            <td>
+              <div class="selectionList" style="width:200px;overflow-x:scroll;margin-bottom: 20px;margin-right: 10px;">
+                <div class="noUserSelect" ng-repeat="f in allFields" ng-click="selectFieldDef(f)" ng-class="{selectedFieldLine:f==selectedField}">
+                  <svg width="22" height="22" ng-click="toggleFieldSelected(f)" ng-if="f.selected">
+                    <circle class="nodeCircle" r="10" cx="12" cy="12" ng-class="{type0:f.color==0,type1:f.color==1,type2:f.color==2,type3:f.color==3,type4:f.color==4,type5:f.color==5,type6:f.color==6,type7:f.color==7,type8:f.color==8,type9:f.color==9}" />
+                    <text ng-if="f.icon" class="SvgIconFont" text-anchor="middle" x="12" y="16">{{f.icon.code}}</text>
+                  </svg>
+                  <svg width="22" height="22" ng-click="toggleFieldSelected(f)" ng-if="!f.selected">
+                    <circle class="inactiveFieldCircle" r="10" cx="12" cy="12" />
+                  </svg>
+
+                  <span style="vertical-align: top;" ng-class="{inactiveFieldName:!f.selected}">{{f.name}}</span>
+                </div>
+              </div>
+
+            </td>
+
+            <td>
+
+
+
+              <div ng-if="selectedField.selected">
+                <svg width="100%" height="30">
+                  <g ng-repeat="c in colorChoices">
+                    <circle class="nodeCircle" r="10" ng-attr-cx="{{12+(c*22)}}" cy="12" ng-click="applyColor(selectedField,c)" ng-class="{selectedNode:c==selectedField.color,type0:c==0,type1:c==1,type2:c==2,type3:c==3,type4:c==4,type5:c==5,type6:c==6,type7:c==7,type8:c==8,type9:c==9}"
+                    />
+                  </g>
+                </svg>
+
+                <svg width="100%" height="30">
+                  <g ng-repeat="i in iconChoices">
+                    <circle class="nodeCircle" r="10" ng-attr-cx="{{12+($index*22)}}" cy="12" ng-click="applyIcon(selectedField,i)" ng-class="{selectedNode:i==selectedField.icon}" />
+
+                    <text class="SvgIconFont" text-anchor="middle" ng-attr-x="{{12+($index*22)}}" y="16" ng-class="{selectedNode:i==selectedField.icon}" ng-click="applyIcon(selectedField,i)">{{i.code}}</text>
+                  </g>
+                </svg>
+
+                <form role="form" class="horizontal-form ">
+                  <div class="form-group form-group-sm">
+                    <input type="number" class="input-sm" min="1" max="100" step="1" id="qHopSize" ng-model="selectedField.hopSize">
+                    <div class="help-block">Maximum number of terms per "hop"
+                    </div>
+                  </div>
+                </form>
+
+
+              </div>
+
+            </td>
+          </tr>
+        </table>
+
+      </div>
+
+      <div class="config-close remove" ng-click="showFieldOptions=false">
+        <i class="fa fa-chevron-up"></i>
+      </div>
+
+    </div>
+  </div>
+
+
+
+  <nav class="navbar navbar-default navbar-static-top subnav" ng-show="showConfig&&selectedIndex!=null">
+    <ul class="nav navbar-nav">
+      <li ng-show="workspace" ng-class="{active:configPanel=='lastRequest'}">
+        <a class="navbar-link" ng-click="configPanel='lastRequest'">Last request</a>
+      </li>
+      <li ng-show="workspace" ng-class="{active:configPanel=='blacklist'}">
+        <a class="navbar-link" ng-click="configPanel='blacklist'">Blacklist</a>
+      </li>
+      <li ng-class="{active:configPanel=='settings'}">
+        <a class="navbar-link" ng-click="configPanel='settings'">Advanced settings</a>
+      </li>
+    </ul>
+  </nav>
+
+  <!--========= Begin config =========== -->
+  <div class="config" ng-show="showConfig">
+    <div class="container-fluid">
+
+      <!-- ====== start Spy ====== -->
+      <div class="container" ng-if="(workspace!=null)&&(configPanel=='lastRequest')">
+        <div>
+          <small class="help-block">http://host:port/{{selectedIndex.name}}/_graph/explore</small>
+          <ul class="nav nav-tabs">
+            <li ng-class="{active: spymode == 'request'}"><a ng-click="spymode='request'">Request</a></li>
+            <li ng-class="{active: spymode == 'response'}"><a ng-click="spymode='response'">Response</a></li>
+          </ul>
+
+          <div ng-show="spymode == 'request'" ui-ace="{ onLoad: aceLoaded, mode: 'json' }" ng-model="workspace.lastRequest" class="requestJsonView"></div>
+          <div ng-show="spymode == 'response'" ui-ace="{ onLoad: aceLoaded, mode: 'json' }" ng-model="workspace.lastResponse" class="requestJsonView"></div>
+        </div>
+      </div>
+      <div>
+        <!-- ====== end spy ======== -->
+
+
+
+        <!-- ====== start blacklist ====== -->
+        <div class="container" ng-if="(workspace!=null)&&(configPanel=='blacklist')">
+          <p class="help-block">These terms are currently blacklisted from re-appearing in the workspace</p>
+
+          <div class="selectionList">
+            <div ng-repeat="n in workspace.blacklistedNodes">
+              <i class="btn btn-xs fa  fa-times colored-text" ng-click="workspace.unblacklist(n)" ng-class="{type0:n.color==0,type1:n.color==1,type2:n.color==2,type3:n.color==3,type4:n.color==4,type5:n.color==5,type6:n.color==6,type7:n.color==7,type8:n.color==8,type9:n.color==9}"></i>              {{n.label}}
+            </div>
+          </div>
+          <button tooltip="Clear blacklist" type="button" class="btn btn-default btn-xs " ng-click="workspace.blacklistedNodes=[]" ng-disabled="workspace.blacklistedNodes.length ==0">
+            <i class="fa  fa-trash"></i> Clear
+          </button>
+        </div>
+        <!-- ====== end blacklist ======== -->
+
+
+        <!-- ======== begin explore settings ======= -->
+        <div class="container" ng-if="(selectedIndex!=null)&&(configPanel=='settings')">
+
+          <form class="form-horizontal">
+
+
+            <div class="form-group form-group-sm small-graph-form">
+              <label for="qIndexSampleSize" class="col-sm-4 control-label">Sample size</label>
+              <div class="col-sm-6">
+                <input type="number" class="form-control input-sm" min="1" max="500000" step="1000" id="qIndexSampleSize" ng-model="exploreControls.sampleSize">
+                <div class="help-block">Terms are identified from samples of the most relevant documents. Bigger is not necessarily better - can be slower and less relevant.
+                </div>
+              </div>
+            </div>
+
+
+            <div class="form-group">
+              <div class="col-sm-offset-4 col-sm-8">
+                <div class="checkbox">
+                  <label>
+                    <input type="checkbox" id="isSignifChk2" ng-model="exploreControls.useSignificance"> Significant links
+                  </label>
+                </div>
+                <span class="help-block">Identify terms that are "significant" rather than simply popular</span>
+              </div>
+            </div>
+
+            <div class="form-group form-group-sm small-graph-form">
+              <label for="minDocCount" class="col-sm-4 control-label">Certainty</label>
+              <div class="col-sm-6 ">
+                <input type="number" class="form-control input-sm" min="1" max="500000" step="1" id="minDocCount" ng-model="exploreControls.minDocCount">
+                <div class="help-block">The min number of documents that are required as evidence before introducing a related term</div>
+              </div>
+            </div>
+
+            <div class="form-group form-group-sm small-graph-form">
+              <label for="qDiversityField" class="col-sm-4 control-label">Diversity field</label>
+              <div class="col-sm-6 ">
+                <select name="qDiversityField" id="qDiversityField" ng-options="field.name for field in allFields" ng-model="exploreControls.sampleDiversityField">
+                  <option value="">[No diversification]</option>
+                </select>
+                <span class="help-block">To avoid document samples being dominated by a single voice, pick the field that helps identify the source of bias.
+                  <em>This must be a single-term field or searches will be rejected with an error</em>
+                </span>
+
+              </div>
+            </div>
+            <div class="form-group form-group-sm small-graph-form" ng-show="exploreControls.sampleDiversityField">
+              <label for="qMaxValuesPerDoc" class="col-sm-4 control-label">Max docs per field</label>
+              <div class="col-sm-6 ">
+                <input type="number" class="form-control input-sm" min="1" max="500000" step="1" id="qMaxValuesPerDoc" ng-model="exploreControls.maxValuesPerDoc">
+                <span class="help-block">Max number of documents in a sample that can contain the same value for the
+                  <em>{{selectedDiversityField.name}}</em> field</span>
+              </div>
+            </div>
+
+
+            <div class="form-group form-group-sm small-graph-form">
+              <label for="qTimeoutMillis" class="col-sm-4 control-label">Timeout (ms)</label>
+              <div class="col-sm-6 ">
+                <input type="number" class="form-control input-sm" min="1" max="500000" step="1" id="qTimeoutMillis" ng-model="exploreControls.timeoutMillis">
+                <span class="help-block">Max time in milliseconds a request can run</span>
+              </div>
+            </div>
+
+            <!--
+                        TODO - could add a "guiding query" search term here - would, for example, allow
+                        exploration of weblog entries from selected IP addresses etc BUT always where
+                        status==404. There's usually a desire to allow exploration to expand and move
+                        away from the seed query but sometimes a guiding hand is needed across all
+                        expand steps to stay "on topic". The search term would be added to all graph
+                        explore calls automatically.
+                  -->
+
+          </form>
+
+        </div>
+
+        <!-- ========== end explore settings =========== -->
+
+
+
+      </div>
+
+      <div class="config-close remove" ng-click="showConfig=false">
+        <i class="fa fa-chevron-up"></i>
+      </div>
+
+    </div>
+  </div>
+  <!--========= End config =========== -->
+
+
+
+  <div class="row">
+    <div class="col-12-sm" style="position:fixed;left:0;height:100%;width:100%">
+      <svg width="100%" height="100%" pointer-events="all" id="graphSvg">
+        <g id="svgRootGroup">
+          <g>
+            <line ng-repeat="edge in workspace.edges" class="edge" ng-attr-x1="{{edge.topSrc.kx}}" ng-attr-y1="{{edge.topSrc.ky}}" ng-attr-x2="{{edge.topTarget.kx}}" ng-attr-y2="{{edge.topTarget.ky}}" ng-click="workspace.getAllIntersections(handleMergeCandidatesCallback, [edge.topSrc,edge.topTarget])"
+            ng-class="{selectedEdge:edge.isSelected}" , ng-attr-style="stroke-width:{{edge.width}}px" stroke-linecap="round" />
+          </g>
+          <g ng-repeat="n in workspace.nodes" ng-if="!n.parent">
+            <circle class="nodeCircle" ng-attr-r="{{n.scaledSize}}" ng-attr-cx="{{n.kx}}" ng-attr-cy="{{n.ky}}" ng-click="nodeClick(n, $event)" ng-class="{selectedNode:n.isSelected, type0:n.color==0,type1:n.color==1,type2:n.color==2,type3:n.color==3,type4:n.color==4,type5:n.color==5,type6:n.color==6,type7:n.color==7,type8:n.color==8,type9:n.color==9}"
+            />
+            <text class="SvgIconFont lowOpacitySvgText" transform="translate(0,5)" text-anchor="middle" ng-attr-x="{{n.kx}}" ng-attr-y="{{n.ky}}" ng-if="advancedMode&&n.icon" ng-click="nodeClick(n, $event)">{{n.icon.code}}</text>
+            <text class="nodeText" text-anchor="middle" transform="translate(0,-10)" ng-attr-x="{{n.kx}}" ng-attr-y="{{n.ky}}" ng-click="nodeClick(n, $event)">
+              {{n.label}}
+            </text>
+            <g ng-if="n.numChildren>0">
+              <circle r="5" class="nodeMarkerCircle" transform="translate(10,10)" ng-attr-cx="{{n.kx}}" ng-attr-cy="{{n.ky}}" ng-click="nodeClick(n, $event)" />
+              <text class="nodeMarkerText" text-anchor="middle" transform="translate(10,11)" ng-attr-x="{{n.kx}}" ng-attr-y="{{n.ky}}" ng-click="nodeClick(n, $event)">{{n.numChildren}}
+              </text>
+
+            </g>
+          </g>
+        </g>
+      </svg>
+
+      <!--
+              Experiment with group/ungroup buttons that reveal-on-zoom on nodes.
+
+       <g ng-if="workspace.selectedNodes.length>1||(workspace.selectedNodes.length>0&&workspace.selectedNodes[0]!=n)">
+        <g ng-if="zoomLevel>10" transform="translate(-1,-7)">
+          <rect class="SvgZoomedIconButton" ng-attr-x="{{n.kx}}" ng-attr-y="{{n.ky}}" transform="translate(-1.5,-1.2)" ng-click="workspace.groupSelections(n)" width="6.5" height="2.2" rx="0.2" ry="0.2" />
+          <text class="SvgZoomedButtonText" transform="translate(3,0.3)" text-anchor="middle" ng-attr-x="{{n.kx}}" ng-attr-y="{{n.ky}}" ng-click="workspace.groupSelections(n)">group</text>
+          <text class="SvgZoomedIconButtonText" transform="translate(-0.2,0.6)" text-anchor="middle" ng-attr-x="{{n.kx}}" ng-attr-y="{{n.ky}}" ng-click="workspace.groupSelections(n)">&#xf247</text>
+        </g>
+      </g>
+      <g ng-if="zoomLevel>10" transform="translate(8,12.5)">
+        <rect class="SvgZoomedIconButton" ng-attr-x="{{n.kx}}" ng-attr-y="{{n.ky}}" transform="translate(-1.5,-1.2)" ng-click="workspace.ungroup(n)" width="7" height="2" rx="0.2" ry="0.2" />
+        <text class="SvgZoomedButtonText" transform="translate(3,0.3)" text-anchor="middle" ng-attr-x="{{n.kx}}" ng-attr-y="{{n.ky}}" ng-click="workspace.ungroup(n)">ungroup</text>
+        <text class="SvgZoomedIconButtonText" transform="translate(-0.4,0.6)" text-anchor="middle" ng-attr-x="{{n.kx}}" ng-attr-y="{{n.ky}}" ng-click="workspace.ungroup(n)">&#xf09c</text>
+      </g>
+
+    -->
+
+      <div id="sidebar" ng-if="workspace!=null&&(advancedMode||detail)">
+        <div class="sidebarPanel">
+
+
+          <div>
+
+            <!-- Include a selection management panel -->
+            <div ng-if="advancedMode">
+
+              <div class="detailHeader">
+                <i class="fa  fa-shopping-cart"></i> Selections
+              </div>
+              <button tooltip="Select all" type="button" class="btn btn-default btn-xs selButton" ng-disabled="workspace.nodes.length==0" ng-click="setDetail(null);workspace.selectAll()">
+                all
+              </button>
+              <button tooltip="Select none" type="button" class="btn btn-default btn-xs selButton" ng-disabled="workspace.nodes.length==0" ng-click="setDetail(null);workspace.selectNone()">
+                none
+              </button>
+              <button tooltip="Invert selection" type="button" class="btn btn-default btn-xs selButton" ng-disabled="workspace.nodes.length==0" ng-click="setDetail(null);workspace.selectInvert()">
+                invert
+              </button>
+              <button tooltip="Select neighbours" type="button" class="btn btn-default btn-xs selButton" ng-disabled="workspace.selectedNodes.length==0" ng-click="setDetail(null);workspace.selectNeighbours()">
+                linked
+              </button>
+              <div class="selectionList">
+                <p ng-if="workspace.selectedNodes.length==0" class="help-block">No selections. Click on vertices to add</p>
+
+                <div ng-repeat="n in workspace.selectedNodes" ng-class="{'selectedFieldLine': isSelectedSelected(n)}" ng-click="selectSelected(n)" style="line-height: 24px;">
+                  <svg width="24" height="24">
+                    <circle class="nodeCircle " r="10" cx="12" cy="12" ng-class="{selectedNode:n.isSelected,type0:n.color==0,type1:n.color==1,type2:n.color==2,type3:n.color==3,type4:n.color==4,type5:n.color==5,type6:n.color==6,type7:n.color==7,type8:n.color==8,type9:n.color==9}"
+                    ng-click="workspace.deselectNode(n)" />
+
+                    <text ng-if="n.icon" class="SvgIconFont" text-anchor="middle" x="12" y="16" ng-click="workspace.deselectNode(n)">{{n.icon.code}}</text>
+                  </svg>
+                  <span style="vertical-align: top;">{{n.label}}</span>
+                  <span style="vertical-align: top;" ng-if="n.numChildren>0"> (+{{n.numChildren}})</span>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+
+
+          <div class="detailPanel" ng-if="(detail.showStyle)&&(workspace.selectedNodes.length>0)">
+            <div class="detailHeader">
+              <i class="fa  fa-paint-brush"></i> Style selected vertices
+            </div>
+            <svg id="selectedColorPalette" width="100%" height="30">
+              <g ng-repeat="c in colorChoices">
+                <circle class="nodeCircle" r="10" ng-attr-cx="{{10+(c*22)}}" cy="10" ng-click="workspace.colorSelected(c)" ng-class="{type0:c==0,type1:c==1,type2:c==2,type3:c==3,type4:c==4,type5:c==5,type6:c==6,type7:c==7,type8:c==8,type9:c==9}" />
+              </g>
+            </svg>
+          </div>
+
+          <div class="detailPanel" ng-if="advancedMode&&(detail.latestNodeSelection)">
+            <div class="detailHeader">
+              <i class="fa  {{detail.latestNodeSelection.icon.class}}" ng-if="detail.latestNodeSelection.icon"></i> {{detail.latestNodeSelection.data.field}} {{detail.latestNodeSelection.data.term}}
+            </div>
+
+            <button class="btn btn-xs " ng-if="workspace.selectedNodes.length>1||(workspace.selectedNodes.length>0&&workspace.selectedNodes[0]!=detail.latestNodeSelection)" tooltip="group the currently selected items into {{detail.latestNodeSelection.label}}" ng-click="workspace.groupSelections(detail.latestNodeSelection)"><i class="fa  fa-object-group"></i> group
+            </button>
+
+            <button class="btn btn-xs " ng-if="detail.latestNodeSelection.numChildren>0" tooltip="ungroup {{detail.latestNodeSelection.label}}" ng-click="workspace.ungroup(detail.latestNodeSelection)"><i class="fa  fa-object-ungroup"></i> ungroup
+            </button>
+
+            <form class="form-horizontal">
+              <div class="form-group form-group-sm small-graph-form">
+                <label for="labelEdit" class="col-sm-4 control-label">Display label</label>
+                <div class="col-sm-6">
+                  <input type="text" id="labelEdit" class="form-control input-sm" ng-model="detail.latestNodeSelection.label">
+                  <div class="help-block">Change the label for this vertex</div>
+                </div>
+              </div>
+            </form>
+
+          </div>
+
+
+
+          <div class="detailPanel">
+            <div ng-if="detail.mergeCandidates.length>0" class="detailHeader">
+              <i class="fa  fa-link"></i> Link summary
+            </div>
+            <div ng-repeat="mc in detail.mergeCandidates">
+              <span>
+                <button ng-if="advancedMode" tooltip="Merge {{mc.term1}} into {{mc.term2}}" type="button" ng-attr-style="opacity:{{0.2+(mc.overlap/mc.v1)}};" class="btn btn-default btn-xs " ng-click="performMerge(mc.id2, mc.id1)">
+                  <i class="fa  fa-chevron-circle-right"></i>
+                </button>
+                <span class="vennTerm1">{{mc.term1}}</span>
+                <span class="vennTerm2">{{mc.term2}}</span>
+                <button ng-if="advancedMode" tooltip="Merge {{mc.term2}} into {{mc.term1}}" type="button" class="btn btn-default btn-xs " ng-attr-style="opacity:{{0.2+(mc.overlap/mc.v2)}};" ng-click="performMerge(mc.id1, mc.id2)">
+                  <i class="fa fa-chevron-circle-left"></i>
+                </button>
+              </span>
+
+              <!-- Venn diagram of term/shared doc intersections -->
+              <div venn="mc"></div>
+
+              <small class="vennTerm1" tooltip="{{mc.v1}} documents have term {{mc.term1}}">{{mc.v1}}</small>
+              <small class="vennTerm12" tooltip="{{mc.overlap}} documents have both terms">&nbsp;({{mc.overlap}})&nbsp;</small>
+              <small class="vennTerm2" tooltip="{{mc.v2}} documents have term {{mc.term2}}">{{mc.v2}}</small>
+            </div>
+
+            <div ng-if="detail.suggestNoGraphFixes">
+              <div class="detailHeader">
+                <i class="fa  fa-lightbulb-o"></i> Suggestion
+              </div>
+                <div class="detailPanel">
+                  <p>
+                    It looks like your choice of the {{basicModeSelectedSingleField.name}} field means you can't produce a graph.
+                  </p>
+                  <p>A single-value field on it's own cannot be used to draw a graph.</p>
+                  <p>Either:</p>
+
+                  <ul>
+                    <li>Select a multi-valued field or</li>
+                    <li>Select more than one choice of field using the "advanced mode"
+                    <button tooltip="Advanced mode" type="button" ng-class="{'active':advancedMode}" ng-click="toggleAdvancedMode()">
+                            <i class="fa  fa-flask"></i></button> </li>
+                  </ul>
+
+                </div>
+            </div>
+
+            <!--
+                  TODO This is a poor-man's visualization. Ideally we should reuse Kibana
+                  saved visualizations here for a drill-down not invent our own here.
+            -->
+            <div ng-if="detail.exampleDocs">
+              <div class="detailHeader">
+                <i class="fa  fa-files-o"></i> Example docs
+              </div>
+                <div class="detailPanel">
+                  <table class="table table-hover table-condensed fixedLayoutTable">
+                    <thead>
+                      <tr>
+                        <th>
+                          <select name="qDisplayField" id="qDisplayField" ng-change="displayFieldSelected(selectedDisplayField)" ng-options="field.name for field in allFields" ng-model="selectedDisplayField">
+                            <option value="">ID</option>
+                          </select>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr ng-repeat="hit in detail.exampleDocs" >
+                        <td ng-if="selectedDisplayField==null">{{hit._id}}
+                        </td>
+                        <td ng-if="selectedDisplayField!=null">{{hit._source[selectedDisplayField.name]}}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+            </div>
+
+
+
+
+          </div>
+          <!-- end sidebar detail panel -->
+
+        </div>
+
+
+
+      </div>
+      <!-- end sidebarPanel -->
+
+    </div>
+    <!--end col-->
+  </div>
+  <!--end row-->
+
+  {{message}}
+
+</div>

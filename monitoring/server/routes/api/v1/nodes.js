@@ -129,7 +129,7 @@ module.exports = (server) => {
       .then(indices => {
         return getLastState(req, indices)
         .then(lastState => {
-          const configResolver = `source_node.${config.get('monitoring.node_resolver')}`;
+          const configResolver = `source_node.${config.get('xpack.monitoring.node_resolver')}`;
           return Promise.props({
             clusterStatus: getClusterStatus(req, indices, lastState),
             nodeSummary: getNodeSummary(req, indices),
@@ -173,6 +173,7 @@ module.exports = (server) => {
           body.nodeSummary.documents = 'N/A';
           body.nodeSummary.indexCount = 'N/A';
           body.nodeSummary.totalShards = 'N/A';
+          body.nodeSummary.name = 'N/A';
           body.nodeSummary.status = 'Offline';
         }
         delete body.clusterState;

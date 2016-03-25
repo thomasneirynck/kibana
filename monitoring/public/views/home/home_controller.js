@@ -1,6 +1,4 @@
 define(function (require) {
-  var _ = require('lodash');
-  var moment = require('moment');
   var module = require('ui/modules').get('monitoring', [
     'monitoring/directives'
   ]);
@@ -37,7 +35,7 @@ define(function (require) {
   })
   .otherwise({ redirectTo: '/no-data' });
 
-  module.controller('home', function ($route, $window, $scope, monitoringClusters, timefilter, $timeout, Private, $executor) {
+  module.controller('home', function ($route, $scope, monitoringClusters, timefilter, Private, $executor) {
 
     // Set the key for as the cluster_uuid. This is mainly for
     // react.js so we can use the key easily.

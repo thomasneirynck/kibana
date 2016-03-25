@@ -1,11 +1,9 @@
 var _ = require('lodash');
-var Promise = require('bluebird');
 var moment = require('moment');
 module.exports = function (req, start, end) {
-  var server = req.server;
-  var config = server.config();
-  var pattern = config.get('monitoring.index_prefix') + '*';
-  var callWithRequest = server.plugins.elasticsearch.callWithRequest;
+  var callWithRequest = req.server.plugins.monitoring.callWithRequest;
+  var config = req.server.config();
+  var pattern = config.get('xpack.monitoring.index_prefix') + '*';
   var options = {
     index: pattern,
     level: 'indices',
@@ -23,10 +21,10 @@ module.exports = function (req, start, end) {
   };
   return callWithRequest(req, 'fieldStats', options)
     .then(function (resp) {
-      var indices = _.map(resp.indices, function (info, index) {
+      var indices = _.map(resp.indices, function (_info, index) {
         return index;
       });
       if (indices.length === 0) return ['.kibana-devnull'];
-      return indices.filter((index) => index !== config.get('monitoring.index'));
+      return indices.filter(index => index !== config.get('xpack.monitoring.index'));
     });
 };

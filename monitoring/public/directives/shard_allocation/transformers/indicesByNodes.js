@@ -19,10 +19,9 @@
 
 define(function (require) {
   var _ = require('lodash');
-  var extractIp = require('../lib/extractIp');
   var decorateShards = require('../lib/decorateShards');
 
-  return function ($scope) {
+  return function () {
     return function indicesByNode(shards, nodes) {
 
       function createIndex(obj, shard) {

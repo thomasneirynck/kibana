@@ -15,26 +15,19 @@
  * from Elasticsearch Incorporated.
  */
 
-
-
-define(function (require) {
-  var _ = require('lodash');
-
-  return function (shards, nodes) {
-    function setNodeName(shard) {
-      var node = nodes[shard.resolver];
-      shard.nodeName = (node && node.name) || null;
-      shard.type = 'shard';
-      if (shard.state === 'INITIALIZING' && shard.relocating_node) {
-        shard.relocating_message = 'Relocating from ' + nodes[shard.relocating_node].name;
-      }
-      if (shard.state === 'RELOCATING') {
-        shard.relocating_message = 'Relocating to ' + nodes[shard.relocating_node].name;
-      }
-      return shard;
+module.exports = function decorateShards(shards, nodes) {
+  function setNodeName(shard) {
+    var node = nodes[shard.resolver];
+    shard.nodeName = (node && node.name) || null;
+    shard.type = 'shard';
+    if (shard.state === 'INITIALIZING' && shard.relocating_node) {
+      shard.relocating_message = 'Relocating from ' + nodes[shard.relocating_node].name;
     }
+    if (shard.state === 'RELOCATING') {
+      shard.relocating_message = 'Relocating to ' + nodes[shard.relocating_node].name;
+    }
+    return shard;
+  }
 
-    return shards.map(setNodeName);
-  };
-
-});
+  return shards.map(setNodeName);
+};

@@ -2,6 +2,7 @@ require('ui/autoload/all');
 require('plugins/monitoring/less/main.less');
 require('plugins/monitoring/filters/index.js');
 require('plugins/monitoring/directives/index.js');
+require('plugins/monitoring/services/clusters');
 require('plugins/monitoring/services/features.js');
 require('plugins/monitoring/services/executor.js');
 require('plugins/monitoring/views/no_data/no_data_controller.js');
@@ -11,9 +12,6 @@ require('plugins/monitoring/views/index/index_controller.js');
 require('plugins/monitoring/views/nodes/nodes_controller.js');
 require('plugins/monitoring/views/node/node_controller.js');
 require('plugins/monitoring/views/overview/overview_controller.js');
-require('plugins/monitoring/views/settings/index.js');
-require('plugins/monitoring/views/issues/issues_controller.js');
-require('plugins/monitoring/views/setup/setup_controller.js');
 require('plugins/monitoring/views/license/index.js');
 require('ui/modules').get('kibana').config(function (PrivateProvider) {
   PrivateProvider.swap(require('ui/config/defaults'), function ($injector) {
@@ -43,11 +41,9 @@ require('ui/routes')
   .enable();
 
 require('ui/chrome')
-  .setNavBackground('#222222')
   .setTabDefaults({
     resetWhenActive: true,
-    trackLastPath: true,
-    activeIndicatorColor: '#EFF0F1'
+    trackLastPath: true
   })
   .setRootController('monitoring', function ($scope, courier) {
     $scope.$on('application.load', function () {

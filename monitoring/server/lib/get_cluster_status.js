@@ -1,12 +1,10 @@
 const _ = require('lodash');
 const createQuery = require('./create_query.js');
-const moment = require('moment');
 
 module.exports = (req, indices, lastState) => {
-  const callWithRequest = req.server.plugins.elasticsearch.callWithRequest;
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
 
   // Get the params from the POST body for the request
-  const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const clusterUuid = req.params.clusterUuid;
 

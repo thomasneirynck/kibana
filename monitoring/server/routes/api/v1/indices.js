@@ -10,6 +10,7 @@ const getMetrics = root('server/lib/get_metrics');
 const getListing = root('server/lib/get_listing_indices');
 const getShardStats = root('server/lib/get_shard_stats');
 const getShardAllocation = root('server/lib/get_shard_allocation');
+const getUnassignedShards = root('server/lib/get_unassigned_shards');
 const calculateClusterStatus = root('server/lib/calculate_cluster_status');
 const handleError = root('server/lib/handle_error');
 
@@ -53,12 +54,16 @@ module.exports = (server) => {
         body.rows.forEach((row) => {
           if (body.shardStats[row.name]) {
             row.status = body.shardStats[row.name].status;
+            // column for a metric that is calculated in code vs. calculated in a query
+            // it's not given in req.payload.listingMetrics
+            _.merge(row, getUnassignedShards(body.shardStats[row.name]));
           } else {
             row.status = 'Unknown';
             _.set(row, 'metrics.index_document_count.inapplicable', true);
             _.set(row, 'metrics.index_size.inapplicable', true);
             _.set(row, 'metrics.index_search_request_rate.inapplicable', true);
             _.set(row, 'metrics.index_request_rate.inapplicable', true);
+            _.set(row, 'metrics.index_unassigned_shards.inapplicable', true);
           }
         });
         return body;

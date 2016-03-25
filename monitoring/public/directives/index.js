@@ -1,12 +1,9 @@
 define(function (require) {
   require('plugins/monitoring/directives/cluster_status/index');
   require('plugins/monitoring/directives/chart/index');
-  require('plugins/monitoring/directives/issues/index');
   require('plugins/monitoring/directives/shard_activity/index');
   require('plugins/monitoring/directives/index_listing/index');
   require('plugins/monitoring/directives/node_listing/index');
-  require('plugins/monitoring/directives/issue_summary/index');
-  require('plugins/monitoring/directives/paginated_table/index');
   require('plugins/monitoring/directives/cluster_listing/cluster_listing_directive.jsx');
   require('plugins/monitoring/directives/node_summary/index');
   require('plugins/monitoring/directives/index_summary/index');
