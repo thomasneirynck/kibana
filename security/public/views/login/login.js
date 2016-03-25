@@ -1,16 +1,14 @@
 import 'ui/autoload/styles';
 import 'plugins/security/views/login/login.less';
 import chrome from 'ui/chrome';
+import parseNext from 'plugins/security/lib/parse_next';
 import template from 'plugins/security/views/login/login.html';
 
 chrome
 .setVisible(false)
 .setRootTemplate(template)
 .setRootController('login', ($http) => {
-  const {search, hash} = location;
-  const index = search.indexOf('?next=');
-  const next = index < 0 ? '/' : decodeURIComponent(search.substr(index + '?next='.length)) + hash;
-
+  const next = parseNext(location);
   return {
     submit(username, password) {
       this.error = false;
