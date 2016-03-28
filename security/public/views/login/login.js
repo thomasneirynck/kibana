@@ -8,7 +8,7 @@ chrome
 .setVisible(false)
 .setRootTemplate(template)
 .setRootController('login', ($http) => {
-  const next = parseNext(location);
+  const next = parseNext(window.location);
   return {
     submit(username, password) {
       this.error = false;
