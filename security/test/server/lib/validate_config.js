@@ -48,7 +48,7 @@ describe('Validate config', function () {
     const validateWithNoSslSkipCheck = getValidateConfigStub({
       'xpack.security.encryptionKey': 'baz',
       'xpack.security.skipSslCheck': true,
-      'xpack.security.useUnsafeSession': true
+      'xpack.security.useUnsafeSessions': true
     }, logSpy);
 
     expect(validateWithNoSslSkipCheck).not.to.throw();

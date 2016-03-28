@@ -24,7 +24,7 @@ export default (kibana) => new kibana.Plugin({
       cookieName: Joi.string().default('sid'),
       encryptionKey: Joi.string(),
       sessionTimeout: Joi.number().default(30 * 60 * 1000),
-      useUnsafeSession: Joi.boolean().default(false),
+      useUnsafeSessions: Joi.boolean().default(false),
       // Only use this if SSL is still configured, but it's configured outside of the Kibana server
       // (e.g. SSL is configured on a load balancer)
       skipSslCheck: Joi.boolean().default(false)
@@ -66,7 +66,7 @@ export default (kibana) => new kibana.Plugin({
         path: config.get('server.basePath') + '/',
         clearInvalid: true,
         validateFunc: getValidate(server),
-        isSecure: !config.get('xpack.security.useUnsafeSession')
+        isSecure: !config.get('xpack.security.useUnsafeSessions')
       });
     });
 
