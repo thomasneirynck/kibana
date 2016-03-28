@@ -43,7 +43,13 @@ export default (kibana) => new kibana.Plugin({
       title: 'Logout',
       main: 'plugins/security/views/logout',
       hidden: true
-    }]
+    }],
+    injectDefaultVars: function (server, options) {
+      const config = server.config();
+      return {
+        shieldUnsafeSessions: config.get('xpack.security.useUnsafeSessions')
+      };
+    }
   },
 
   init(server, options) {
