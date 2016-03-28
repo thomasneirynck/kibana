@@ -10,8 +10,10 @@ chrome
   const {search, hash} = location;
   const index = search.indexOf('?next=');
   const next = index < 0 ? '/' : decodeURIComponent(search.substr(index + '?next='.length)) + hash;
+  const isSecure = !!window.location.protocol.match(/^https/);
 
   return {
+    isSecure,
     allowUnsafe: shieldUnsafeSessions,
     submit(username, password) {
       this.error = false;
