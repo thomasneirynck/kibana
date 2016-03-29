@@ -13,7 +13,7 @@ chrome
   const isSecure = !!window.location.protocol.match(/^https/);
 
   return {
-    isSecure,
+    isDisabled: !isSecure && !shieldUnsafeSessions,
     allowUnsafe: shieldUnsafeSessions,
     submit(username, password) {
       this.error = false;
