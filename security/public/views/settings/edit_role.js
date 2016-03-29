@@ -41,16 +41,16 @@ routes.when('/settings/security/roles/edit/:name?', {
       $location.path('/settings/security/roles');
     };
 
-    $scope.removePrivilege = (index, privilege) => {
-      index.privileges.splice(index.privileges.indexOf(privilege), 1);
+    $scope.removePrivilege = (index, i) => {
+      index.privileges.splice(i, 1);
     };
 
     $scope.addPrivilege = (index, privilege) => {
       index.privileges.push(privilege);
     };
 
-    $scope.removeIndex = (role, index) => {
-      role.indices.splice(role.indices.indexOf(index), 1);
+    $scope.removeIndex = (role, i) => {
+      role.indices.splice(i, 1);
     };
 
     $scope.addIndex = (role, index) => {

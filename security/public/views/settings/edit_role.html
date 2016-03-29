@@ -67,25 +67,24 @@
         </div>
         <br />
         <h4>Indices</h4>
-        <table class="table table-striped">
+        <table class="table">
           <thead>
             <tr>
-              <th><input type="checkbox" ng-click="toggleAll()" ng-checked="allSelected()" /></th>
               <th>Name</th>
               <th>Privileges</th>
               <th>Fields</th>
               <th>Query</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr ng-repeat="index in role.indices">
-              <td><input type="checkbox" ng-click="toggleSelected(index)" ng-checked="isSelected(index)" /></td>
               <td>{{index.name}}</td>
               <td>
-                <div ng-repeat="privilege in index.privileges">
+                <span ng-repeat="privilege in index.privileges">
                   {{privilege}}
-                  <a ng-click="removePrivilege(index, privilege)">x</a>
-                </div>
+                  <a ng-click="removePrivilege(index, $index)">x</a>
+                </span>
                 <form ng-submit="addPrivilege(index, newPrivilege); newPrivilege = '';">
                   <div class="input-group">
                     <span class="input-group-addon">
@@ -97,10 +96,10 @@
               </td>
               <td></td>
               <td></td>
+              <td><button ng-click="removeIndex(role, $index)" class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
             </tr>
             <tr>
-              <td></td>
-              <td colspan="4">
+              <td colspan="5">
                 <form ng-submit="addIndex(role, newIndex); newIndex.name = '';">
                   <input type="text" class="form-control" id="index" ng-model="newIndex.name" placeholder="Add a new index..." />
                 </form>
