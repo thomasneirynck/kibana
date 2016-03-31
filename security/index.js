@@ -1,5 +1,5 @@
 import hapiAuthCookie from 'hapi-auth-cookie';
-import {resolve} from 'path';
+import { resolve } from 'path';
 import basicAuth from './server/lib/basic_auth';
 import getIsValidUser from './server/lib/get_is_valid_user';
 import getValidate from './server/lib/get_validate';
