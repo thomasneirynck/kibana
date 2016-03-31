@@ -3,16 +3,16 @@
     <ul class="nav navbar-nav" role="navigation">
       <!-- TODO: hide this tab for basic license -->
       <li ng-class="{active: isActive('home')}">
-        <a ng-click="routeTo('home')" class="navbar-link">Clusters</a>
+        <a kbn-href="#/home" class="navbar-link">Clusters</a>
       </li>
       <li ng-class="{active: isActive('overview')}">
-        <a ng-click="routeTo('overview')" class="navbar-link">Overview</a>
+        <a kbn-href="#/overview" class="navbar-link">Overview</a>
       </li>
       <li ng-class="{active: isActive('indices')}">
-        <a ng-click="routeTo('indices')" class="navbar-link">Indices</a>
+        <a kbn-href="#/indices" class="navbar-link">Indices</a>
       </li>
       <li ng-class="{active: isActive('nodes')}">
-        <a ng-click="routeTo('nodes')" class="navbar-link">Nodes</a>
+        <a kbn-href="#/nodes" class="navbar-link">Nodes</a>
       </li>
     </ul>
   </kbn-top-nav>

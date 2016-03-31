@@ -1,5 +1,5 @@
 const app = require('ui/modules').get('plugins/monitoring/directives', []);
-app.directive('monitoringMain', (kbnUrl) => {
+app.directive('monitoringMain', () => {
   return {
     restrict: 'E',
     transclude: true,
@@ -8,12 +8,6 @@ app.directive('monitoringMain', (kbnUrl) => {
       scope.name = attrs.name;
       scope.isActive = function (testPath) {
         return scope.name === testPath;
-      };
-
-      scope.routeTo = function (dest) {
-        if (dest !== scope.name) {
-          kbnUrl.changePath(`/${dest}`);
-        }
       };
     }
   };
