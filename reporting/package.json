@@ -1,6 +1,6 @@
 {
   "name": "reporting",
-  "version": "0.1.0",
+  "version": "5.0.0-alpha1-SNAPSHOT",
   "description": "An awesome Kibana reporting plugin",
   "main": "gulpfile.js",
   "scripts": {
