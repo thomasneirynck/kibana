@@ -1,5 +1,5 @@
 import hapiAuthCookie from 'hapi-auth-cookie';
-import {join} from 'path';
+import {resolve} from 'path';
 import basicAuth from './server/lib/basic_auth';
 import getIsValidUser from './server/lib/get_is_valid_user';
 import getValidate from './server/lib/get_validate';
@@ -15,8 +15,8 @@ import createScheme from './server/lib/login_scheme';
 export default (kibana) => new kibana.Plugin({
   id: 'security',
   configPrefix: 'xpack.security',
+  publicDir: resolve(__dirname, 'public'),
   require: ['elasticsearch'],
-  publicDir: join(__dirname, 'public'),
 
   config(Joi) {
     return Joi.object({
