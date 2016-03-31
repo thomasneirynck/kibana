@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 const publicRoutes = require('./server/routes/public');
 const fileRoutes = require('./server/routes/file');
 const phantom = require('./server/lib/phantom');
@@ -9,6 +10,7 @@ module.exports = function (kibana) {
   return new kibana.Plugin({
     id: 'reporting',
     configPrefix: 'xpack.reporting',
+    publicDir: resolve(__dirname, 'public'),
     require: ['kibana', 'elasticsearch'],
 
     uiExports: {

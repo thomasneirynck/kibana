@@ -33,14 +33,28 @@ describe('Validate config', function () {
     sinon.assert.notCalled(logSpy);
   });
 
-  it('should not throw an error if SSL is not being used and the config option to skip the check is set', function () {
+  it('should not throw without SSL when configured to skip check', function () {
     const validateWithNoSslSkipCheck = getValidateConfigStub({
       'xpack.security.encryptionKey': 'baz',
       'xpack.security.skipSslCheck': true
     }, logSpy);
 
     expect(validateWithNoSslSkipCheck).not.to.throw();
-    sinon.assert.calledWithMatch(logSpy, /SSL is still required/);
+    sinon.assert.calledWithMatch(logSpy, /skipping.+ssl\ check/i);
+    sinon.assert.calledWithMatch(logSpy, /ssl\ is\ required/i);
+  });
+
+  it('should not throw without SSL when configured to skip check and use insecure sessions', function () {
+    const validateWithNoSslSkipCheck = getValidateConfigStub({
+      'xpack.security.encryptionKey': 'baz',
+      'xpack.security.skipSslCheck': true,
+      'xpack.security.useUnsafeSessions': true
+    }, logSpy);
+
+    expect(validateWithNoSslSkipCheck).not.to.throw();
+    sinon.assert.calledWithMatch(logSpy, /skipping.+ssl\ check/i);
+    sinon.assert.calledWithMatch(logSpy, /insecure\ session/i);
+    sinon.assert.calledWithMatch(logSpy, /not\ recommended/i);
   });
 
   it('should not throw any errors with a valid config', function () {

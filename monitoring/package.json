@@ -11,7 +11,7 @@
     "precommit": "gulp lint"
   },
   "name": "monitoring",
-  "version": "3.0.0-SNAPSHOT",
+  "version": "5.0.0-alpha1-SNAPSHOT",
   "repository": {
     "type": "git",
     "url": "http://github.com/elasticsearch/x-plugins.git"

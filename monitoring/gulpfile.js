@@ -19,14 +19,14 @@ var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
 var buildTarget = path.resolve(buildDir, pkg.name);
 var coverageDir = path.resolve(__dirname, 'coverage');
-var kibanaPluginDir = path.resolve(require('./server/lib/kibana_home_dir').dev, 'installedPlugins/monitoring');
+var xpackBuildDir = path.resolve('../packager/build/kibana/xpack/monitoring');
 
 // paths to sync over to the kibana plugin dir
 var include = [
   'LICENSE.txt',
   'NOTICE.txt',
-  'package.json',
   'index.js',
+  'package.json',
   'public',
   'node_modules',
   'server',
@@ -71,7 +71,7 @@ function syncPluginTo(dest, done) {
 }
 
 gulp.task('sync', function (done) {
-  syncPluginTo(kibanaPluginDir, done);
+  syncPluginTo(xpackBuildDir, done);
 });
 
 gulp.task('lint', function () {

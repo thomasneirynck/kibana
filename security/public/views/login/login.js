@@ -6,12 +6,15 @@ import template from 'plugins/security/views/login/login.html';
 chrome
 .setVisible(false)
 .setRootTemplate(template)
-.setRootController('login', ($http) => {
+.setRootController('login', ($http, shieldUnsafeSessions) => {
   const {search, hash} = location;
   const index = search.indexOf('?next=');
   const next = index < 0 ? '/' : decodeURIComponent(search.substr(index + '?next='.length)) + hash;
+  const isSecure = !!window.location.protocol.match(/^https/);
 
   return {
+    isDisabled: !isSecure && !shieldUnsafeSessions,
+    allowUnsafe: shieldUnsafeSessions,
     submit(username, password) {
       this.error = false;
       $http.post('./api/security/v1/login', {username, password}).then(
