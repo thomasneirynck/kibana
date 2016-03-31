@@ -1,7 +1,5 @@
 define(function (require) {
   var _ = require('lodash');
-  var chrome = require('ui/chrome');
-  var tabs = require('./tabs');
   return function routeInitProvider(Notifier, Private, monitoringClusters, globalState, kbnUrl) {
 
     var phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
@@ -47,12 +45,6 @@ define(function (require) {
           if (isExpired && !_.contains(window.location.hash, 'license')) {
             // redirect to license, but avoid infinite loop
             kbnUrl.redirect('license');
-          } else {
-            chrome.setTabs(tabs.filter(function (tab) {
-              if (tab.id !== 'home') return true;
-              if (license.type !== 'basic') return true;
-              return false;
-            }));
           }
           return monitoring;
         })
