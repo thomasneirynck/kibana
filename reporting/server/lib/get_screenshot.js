@@ -6,7 +6,7 @@ const boundingBoxes = {
   visualization: {
     top: 70,
     left: 362,
-    bottom: 8
+    bottom: 0
   },
   search: {
     top: 70,
