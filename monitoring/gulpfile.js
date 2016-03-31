@@ -26,7 +26,6 @@ var include = [
   'LICENSE.txt',
   'NOTICE.txt',
   'package.json',
-  'index.js',
   'public',
   'node_modules',
   'server',
