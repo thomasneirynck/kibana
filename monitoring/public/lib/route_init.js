@@ -46,6 +46,7 @@ define(function (require) {
             // redirect to license, but avoid infinite loop
             kbnUrl.redirect('license');
           }
+          globalState.license = license;
           return monitoring;
         })
         .catch(ajaxErrorHandlers.fatalError);
