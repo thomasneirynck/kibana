@@ -25,6 +25,7 @@ var xpackBuildDir = path.resolve('../packager/build/kibana/xpack/monitoring');
 var include = [
   'LICENSE.txt',
   'NOTICE.txt',
+  'index.js',
   'package.json',
   'public',
   'node_modules',
