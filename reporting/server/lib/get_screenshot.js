@@ -4,13 +4,13 @@ const queue = require('queue');
 // bounding boxes for various saved object types
 const boundingBoxes = {
   visualization: {
-    top: 116,
+    top: 70,
     left: 362,
-    bottom: 8
+    bottom: 0
   },
   search: {
-    top: 116,
-    left: 230,
+    top: 70,
+    left: 222,
     bottom: 0,
     right: 30,
   },
