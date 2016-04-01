@@ -1,7 +1,6 @@
 <div class="app-container">
   <kbn-top-nav class="navbar navbar-default navbar-static-top" name="{{name}}-nav">
     <ul class="nav navbar-nav" role="navigation">
-      <!-- TODO: hide this tab for basic license -->
       <li ng-if="allowClusterTab" ng-class="{active: isActive('home')}">
         <a kbn-href="#/home" class="navbar-link">Clusters</a>
       </li>
