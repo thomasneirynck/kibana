@@ -15,6 +15,10 @@ var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
 var buildTarget = path.join(buildDir, 'kibana', pkg.packageName);
 var packageFile = `${pkg.packageName}-${pkg.version}.zip`;
+var releaseInfo = {
+  bucket: 'download.elasticsearch.org',
+  path: 'kibana/kibana/'
+};
 
 var ignoredPlugins = ['i', 'ignore'].reduce(function (ignore, key) {
   if (typeof argv[key] === 'string') ignore = ignore.concat(argv[key].split(','));
@@ -114,13 +118,24 @@ function runPackage() {
 }
 
 function runRelease() {
-  var creds;
+  var awsConfig;
   try {
-    creds = JSON.parse(fs.readFileSync('./.aws-config.json'));
+    awsConfig = JSON.parse(fs.readFileSync('./.aws-config.json'));
   } catch(e) {
     g.util.log(g.util.colors.red('Failed to read credentials from .aws-config.json'));
     throw new Error('Could not read AWS credentials');
   }
+
+  Object.assign(awsConfig, {
+    bucket: releaseInfo.bucket
+  });
+
+  var awsOptions = {
+    uploadPath: releaseInfo.path
+  };
+
+  return gulp.src('./target/*')
+  .pipe(g.s3(awsConfig, awsOptions));
 }
 
 function createEntry() {
