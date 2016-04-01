@@ -7,8 +7,13 @@ app.directive('monitoringMain', (globalState) => {
     template: require('plugins/monitoring/directives/main/index.html'),
     link: function (scope, _el, attrs) {
       scope.name = attrs.name;
+
+      // hide all the tabs for the clusters page (force to select a cluster before drill-in)
+      scope.allowTabs = scope.name !== 'clusters';
+
       // hide clusters tab for basic license
       scope.allowClusterTab = _.get(globalState, 'license.type') !== 'basic';
+
       scope.isActive = function (testPath) {
         return scope.name === testPath;
       };
