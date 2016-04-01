@@ -17,7 +17,7 @@ var buildTarget = path.join(buildDir, 'kibana', pkg.packageName);
 var packageFile = `${pkg.packageName}-${pkg.version}.zip`;
 var releaseInfo = {
   bucket: 'download.elasticsearch.org',
-  path: 'kibana/kibana/'
+  path: 'kibana/x-pack/'
 };
 
 var ignoredPlugins = ['i', 'ignore'].reduce(function (ignore, key) {
