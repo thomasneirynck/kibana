@@ -38,6 +38,10 @@ gulp.task('package', ['build'], runPackage);
 
 gulp.task('package-only', runPackage);
 
+gulp.task('release', ['package'], runRelease);
+
+gulp.task('release-only', runRelease);
+
 gulp.task('clean', function () {
   return del([buildDir, targetDir]);
 });
@@ -107,6 +111,16 @@ function runPackage() {
       return fs.writeFileSync(checksumFile, checksum, { encoding: 'utf8' });
     });
   });
+}
+
+function runRelease() {
+  var creds;
+  try {
+    creds = JSON.parse(fs.readFileSync('./.aws-config.json'));
+  } catch(e) {
+    g.util.log(g.util.colors.red('Failed to read credentials from .aws-config.json'));
+    throw new Error('Could not read AWS credentials');
+  }
 }
 
 function createEntry() {
