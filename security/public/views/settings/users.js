@@ -1,3 +1,4 @@
+import {toggleInOut, includes} from 'lodash';
 import routes from 'ui/routes';
 import template from 'plugins/security/views/settings/users.html';
 import 'plugins/security/services/shield_user';
@@ -35,15 +36,7 @@ routes.when('/settings/security/users', {
 
     $scope.allSelected = () => $scope.users.length && $scope.users.length === $scope.selectedUsers.length;
 
-    $scope.toggleSelected = (user) => {
-      const i = $scope.selectedUsers.indexOf(user);
-      if (i >= 0) {
-        $scope.selectedUsers.splice(i, 1);
-      } else {
-        $scope.selectedUsers.push(user);
-      }
-    };
-
-    $scope.isSelected = (user) => $scope.selectedUsers.indexOf(user) >= 0;
+    $scope.toggle = toggleInOut;
+    $scope.includes = includes;
   }
 });

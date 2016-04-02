@@ -12,7 +12,7 @@
           <h4 ng-if="isNewRole" class="pull-left">New Role</h4>
           <h4 ng-if="!isNewRole" class="pull-left">Edit Role</h4>
           <div class="pull-right">
-            <a ng-if="!isNewRole" ng-click="deleteRole(role)">Delete</a>
+            <button ng-if="!isNewRole" class="btn btn-danger" ng-click="deleteRole(role)">Delete</button>
             <a href="#/settings/security/roles" class="btn btn-default">Cancel</a>
             <button class="btn btn-primary" ng-click="saveRole(role)">Save</button>
           </div>
@@ -33,77 +33,91 @@
         </form>
       </div>
       <br />
-      <ul class="nav nav-tabs">
+      <!--ul class="nav nav-tabs">
         <li class="kbn-settings-tab active"><a>Permissions</a></li>
         <li class="kbn-settings-tab"><a>Assigned Users</a></li>
-      </ul>
+      </ul-->
       <div class="tab tab-content">
         <h4>Cluster</h4>
-        <div class="checkbox-inline">
+        <div class="checkbox-inline" ng-repeat="privilege in privileges.cluster">
           <label>
-            <input type="checkbox" />
-            All
-          </label>
-        </div>
-        <div class="checkbox-inline">
-          <label>
-            <input type="checkbox" />
-            Monitor
-          </label>
-        </div>
-        <div class="checkbox-inline">
-          <label>
-            <input type="checkbox" />
-            Manage Shield
+            <input type="checkbox" ng-checked="includes(role.cluster, privilege)" ng-click="toggle(role.cluster, privilege)" />
+            {{privilege}}
           </label>
         </div>
         <br />
+
         <h4>Run As</h4>
-        <div class="input-group">
-          <span class="input-group-addon">
-            <i class="fa fa-search"></i>
+        <form ng-submit="toggleSafe(role, 'run_as', runAs); runAs = '';">
+          <div class="input-group">
+            <span class="input-group-addon">
+              <i class="fa fa-search"></i>
+            </span>
+            <input type="text" class="form-control" ng-model="runAs" placeholder="Add user..." />
+          </div>
+          <span ng-repeat="user in role.run_as">
+            {{user}}
+            <a ng-click="toggle(role.run_as, user)">x</a>
           </span>
-          <input type="text" class="form-control" />
-        </div>
+        </form>
         <br />
+
         <h4>Indices</h4>
         <table class="table">
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Privileges</th>
-              <th>Fields</th>
-              <th>Query</th>
+              <th class="col-md-3">Name</th>
+              <th class="col-md-3">Privileges</th>
+              <th class="col-md-3">Query</th>
+              <th class="col-md-3">Fields</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
+            <tr>
+              <td colspan="5">
+                <form ng-submit="addIndex(role.indices, newIndex); newIndex.names[0] = '';">
+                  <div class="input-group" style="width: 100%">
+                    <span class="input-group-addon">
+                      <i class="fa fa-search"></i>
+                    </span>
+                    <input type="text" class="form-control" ng-model="newIndex.names[0]" placeholder="Add index..." />
+                  </div>
+                </form>
+              </td>
+            </tr>
             <tr ng-repeat="index in role.indices">
-              <td>{{index.name}}</td>
+              <td><div ng-repeat="name in index.names">{{name}}</div></td>
               <td>
-                <span ng-repeat="privilege in index.privileges">
-                  {{privilege}}
-                  <a ng-click="removePrivilege(index, $index)">x</a>
-                </span>
-                <form ng-submit="addPrivilege(index, newPrivilege); newPrivilege = '';">
+                <form ng-submit="toggle(index.privileges, newPrivileges[$index]); newPrivileges[$index] = '';">
                   <div class="input-group">
                     <span class="input-group-addon">
                       <i class="fa fa-search"></i>
                     </span>
-                    <input type="text" class="form-control" id="privilege" ng-model="newPrivilege" placeholder="Add a new privilege..." />
+                    <input type="text" class="form-control" ng-model="newPrivileges[$index]" placeholder="Add a new privilege..." />
                   </div>
                 </form>
+                <span ng-repeat="privilege in index.privileges">
+                  {{privilege}}
+                  <a ng-click="toggle(index.privileges, privilege)">x</a>
+                </span>
               </td>
-              <td></td>
-              <td></td>
-              <td><button ng-click="removeIndex(role, $index)" class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
-            </tr>
-            <tr>
-              <td colspan="5">
-                <form ng-submit="addIndex(role, newIndex); newIndex.name = '';">
-                  <input type="text" class="form-control" id="index" ng-model="newIndex.name" placeholder="Add a new index..." />
+              <td><textarea class="form-control" ng-model="index.query"></textarea></td>
+              <td>
+                <form ng-submit="toggleSafe(index, 'fields', newFields[$index]); newFields[$index] = '';">
+                  <div class="input-group">
+                    <span class="input-group-addon">
+                      <i class="fa fa-search"></i>
+                    </span>
+                    <input type="text" class="form-control" ng-model="newFields[$index]" placeholder="Add a new field..." />
+                  </div>
                 </form>
+                <span ng-repeat="field in index.fields">
+                  {{field}}
+                  <a ng-click="toggle(index.fields, field)">x</a>
+                </span>
               </td>
+              <td><button ng-click="toggle(role.indices, index)" class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
             </tr>
           </tbody>
         </table>

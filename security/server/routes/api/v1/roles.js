@@ -1,4 +1,4 @@
-import {flow} from 'lodash';
+import _ from 'lodash';
 import Boom from 'boom';
 import getClient from '../../../lib/get_client_shield';
 import roleSchema from '../../../lib/role_schema';
@@ -12,35 +12,38 @@ export default (server) => {
     path: '/api/security/v1/roles',
     handler(request, reply) {
       return callWithRequest(request, 'shield.getRole').then(
-        (response) => reply(response.roles),
-        flow(wrapError, reply)
+        (response) => {
+          const roles = _.map(response, (role, name) => _.assign(role, {name}));
+          return reply(roles);
+        },
+        _.flow(wrapError, reply)
       );
     }
   });
 
   server.route({
     method: 'GET',
-    path: '/api/security/v1/roles/{rolename}',
+    path: '/api/security/v1/roles/{name}',
     handler(request, reply) {
-      const rolename = request.params.rolename;
-      return callWithRequest(request, 'shield.getRole', {rolename}).then(
+      const name = request.params.name;
+      return callWithRequest(request, 'shield.getRole', {name}).then(
         (response) => {
-          if (response.found) return reply(response.roles[0]);
+          if (response[name]) return reply(_.assign(response[name], {name}));
           return reply(Boom.notFound());
         },
-        flow(wrapError, reply));
+        _.flow(wrapError, reply));
     }
   });
 
   server.route({
     method: 'POST',
-    path: '/api/security/v1/roles/{rolename}',
+    path: '/api/security/v1/roles/{name}',
     handler(request, reply) {
-      const rolename = request.params.rolename;
-      const body = request.payload;
-      return callWithRequest(request, 'shield.putRole', {rolename, body}).then(
-        (response) => reply(body),
-        flow(wrapError, reply));
+      const name = request.params.name;
+      const body = _.omit(request.payload, 'name');
+      return callWithRequest(request, 'shield.putRole', {name, body}).then(
+        (response) => reply(request.payload),
+        _.flow(wrapError, reply));
     },
     config: {
       validate: {
@@ -51,12 +54,12 @@ export default (server) => {
 
   server.route({
     method: 'DELETE',
-    path: '/api/security/v1/roles/{rolename}',
+    path: '/api/security/v1/roles/{name}',
     handler(request, reply) {
-      const rolename = request.params.rolename;
-      return callWithRequest(request, 'shield.deleteRole', {rolename}).then(
+      const name = request.params.name;
+      return callWithRequest(request, 'shield.deleteRole', {name}).then(
         (response) => reply().code(204),
-        flow(wrapError, reply));
+        _.flow(wrapError, reply));
     }
   });
 };

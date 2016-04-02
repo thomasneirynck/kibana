@@ -1,9 +1,10 @@
-import {clone} from 'lodash';
+import {cloneDeep, toggleInOut, includes} from 'lodash';
 import routes from 'ui/routes';
 import template from 'plugins/security/views/settings/edit_role.html';
 import 'angular-resource';
 import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
+import 'plugins/security/services/shield_privileges';
 import 'plugins/security/views/settings/edit_user.less';
 
 routes.when('/settings/security/roles/edit/:name?', {
@@ -14,19 +15,22 @@ routes.when('/settings/security/roles/edit/:name?', {
       if (name != null) return ShieldRole.get({name});
       return new ShieldRole({
         cluster: [],
-        indices: []
+        indices: [],
+        run_as: []
       });
     },
     users(ShieldUser) {
       return ShieldUser.query();
     }
   },
-  controller($scope, $route, $location) {
+  controller($scope, $route, $location, shieldPrivileges) {
     $scope.isNewRole = $route.current.params.name == null;
     $scope.role = $route.current.locals.role;
     $scope.users = $route.current.locals.users;
-    $scope.newIndex = {name: '', privileges: []};
-    $scope.newPrivilege = '';
+    $scope.privileges = shieldPrivileges;
+    $scope.newIndex = {names: [''], privileges: [], fields: []};
+    $scope.newPrivileges = [];
+    $scope.newFields = [];
 
     $scope.deleteRole = (role) => {
       if (!confirm('Are you sure you want to delete this role? This action is irreversible!')) return;
@@ -41,20 +45,16 @@ routes.when('/settings/security/roles/edit/:name?', {
       $location.path('/settings/security/roles');
     };
 
-    $scope.removePrivilege = (index, i) => {
-      index.privileges.splice(i, 1);
+    $scope.addIndex = (indices, index) => {
+      indices.push(cloneDeep(index));
     };
 
-    $scope.addPrivilege = (index, privilege) => {
-      index.privileges.push(privilege);
+    $scope.toggleSafe = (parent, key, item) => {
+      parent[key] = parent[key] || [];
+      toggleInOut(parent[key], item);
     };
 
-    $scope.removeIndex = (role, i) => {
-      role.indices.splice(i, 1);
-    };
-
-    $scope.addIndex = (role, index) => {
-      role.indices.push(clone(index));
-    };
+    $scope.toggle = toggleInOut;
+    $scope.includes = includes;
   }
 });

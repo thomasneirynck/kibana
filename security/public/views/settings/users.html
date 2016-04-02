@@ -29,14 +29,14 @@
         <tbody>
           <tr ng-repeat="user in users | orderBy:'username' | filter:query">
             <td>
-              <input type="checkbox" ng-click="toggleSelected(user)" ng-checked="isSelected(user)" />
+              <input type="checkbox" ng-click="toggle(selectedUsers, user)" ng-checked="includes(selectedUsers, user)" />
             </td>
             <td>
               <a ng-href="#/settings/security/users/edit/{{user.username}}">{{user.username}}</a>
             </td>
             <td>
               <span ng-repeat="role in user.roles">
-                <a ng-href="#/settings/security/roles/{{role}}">{{role}}</a><span ng-if="!$last">,</span>
+                <a ng-href="#/settings/security/roles/edit/{{role}}">{{role}}</a><span ng-if="!$last">,</span>
               </span>
             </td>
           </tr>

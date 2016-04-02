@@ -1,4 +1,4 @@
-import {flow} from 'lodash';
+import _ from 'lodash';
 import Boom from 'boom';
 import getClient from '../../../lib/get_client_shield';
 import userSchema from '../../../lib/user_schema';
@@ -12,8 +12,8 @@ export default (server) => {
     path: '/api/security/v1/users',
     handler(request, reply) {
       return callWithRequest(request, 'shield.getUser').then(
-        (response) => reply(response.users),
-        flow(wrapError, reply)
+        (response) => reply(_.values(response)),
+        _.flow(wrapError, reply)
       );
     }
   });
@@ -25,10 +25,10 @@ export default (server) => {
       const username = request.params.username;
       return callWithRequest(request, 'shield.getUser', {username}).then(
         (response) => {
-          if (response.found) return reply(response.users[0]);
+          if (response[username]) return reply(response[username]);
           return reply(Boom.notFound());
         },
-        flow(wrapError, reply));
+        _.flow(wrapError, reply));
     }
   });
 
@@ -37,10 +37,10 @@ export default (server) => {
     path: '/api/security/v1/users/{username}',
     handler(request, reply) {
       const username = request.params.username;
-      const body = request.payload;
+      const body = _(request.payload).omit('username').omit(_.isNull);
       return callWithRequest(request, 'shield.putUser', {username, body}).then(
-        (response) => reply(body),
-        flow(wrapError, reply));
+        (response) => reply(request.payload),
+        _.flow(wrapError, reply));
     },
     config: {
       validate: {
@@ -56,7 +56,7 @@ export default (server) => {
       const username = request.params.username;
       return callWithRequest(request, 'shield.deleteUser', {username}).then(
         (response) => reply().code(204),
-        flow(wrapError, reply));
+        _.flow(wrapError, reply));
     }
   });
 };
