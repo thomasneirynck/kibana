@@ -1,4 +1,3 @@
-const chrome = require('ui/chrome');
 const mod = require('ui/modules').get('monitoring', [
   'monitoring/directives'
 ]);
@@ -13,7 +12,6 @@ require('ui/routes')
           kbnUrl.changePath('/home');
           return Promise.reject();
         }
-        chrome.setTabs([]);
         return Promise.resolve();
       });
     }

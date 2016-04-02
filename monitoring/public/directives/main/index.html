@@ -1,0 +1,21 @@
+<div class="app-container">
+  <kbn-top-nav class="navbar navbar-default navbar-static-top" name="{{name}}-nav">
+    <ul class="nav navbar-nav" role="navigation">
+      <!-- TODO: hide this tab for basic license -->
+      <li ng-if="allowClusterTab" ng-class="{active: isActive('home')}">
+        <a kbn-href="#/home" class="navbar-link">Clusters</a>
+      </li>
+      <li ng-class="{active: isActive('overview')}">
+        <a kbn-href="#/overview" class="navbar-link">Overview</a>
+      </li>
+      <li ng-class="{active: isActive('indices')}">
+        <a kbn-href="#/indices" class="navbar-link">Indices</a>
+      </li>
+      <li ng-class="{active: isActive('nodes')}">
+        <a kbn-href="#/nodes" class="navbar-link">Nodes</a>
+      </li>
+    </ul>
+  </kbn-top-nav>
+  <div ng-transclude></div>
+  <google-analytics></google-analytics>
+</div>

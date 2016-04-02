@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 var getIndicesRoute = require('./server/routes/getIndices');
 var getFieldsRoute = require('./server/routes/getFields');
 var graphExploreRoute = require('./server/routes/graphExplore');
@@ -20,6 +21,7 @@ module.exports = function (kibana) {
   return new kibana.Plugin({
     id: 'graph',
     configPrefix: 'xpack.graph',
+    publicDir: resolve(__dirname, 'public'),
     require: ['kibana', 'elasticsearch'],
     uiExports: {
       app: {

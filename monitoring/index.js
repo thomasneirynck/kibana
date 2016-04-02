@@ -1,4 +1,4 @@
-var join = require('path').join;
+import { join, resolve } from 'path';
 var requireAllAndApply = require('./server/lib/require_all_and_apply');
 var pluginSelfCheck = require('./server/lib/plugin_self_check');
 var instantiateClient = require('./server/lib/es_client/instantiate_client');
@@ -8,8 +8,7 @@ module.exports = function (kibana) {
     require: ['elasticsearch'],
     id: 'monitoring',
     configPrefix: 'xpack.monitoring',
-    publicDir: join(__dirname, 'public'),
-
+    publicDir: resolve(__dirname, 'public'),
     uiExports: {
       app: {
         title: 'Monitoring',
@@ -49,7 +48,7 @@ module.exports = function (kibana) {
         stats_report_url: Joi.when('$dev', {
           is: true,
           then: string().default('../api/monitoring/v1/phone-home'),
-          otherwise: string().default('https://marvel-stats.elasticsearch.com/appdata/monitoringOpts')
+          otherwise: string().default('https://marvel-stats.elasticsearch.com/appdata/marvelOpts')
         }),
         agent: object({
           interval: string().regex(/[\d\.]+[yMwdhms]/).default('10s')

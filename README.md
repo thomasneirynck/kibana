@@ -40,7 +40,7 @@ This folder has the Kibana XPack plugin code. For developing and testing the plu
 1. Create a Shield user
 
     ```
-    ./bin/xpack/esusers useradd -r admin -p notsecure admin
+    ./bin/x-pack/esusers useradd -r admin -p notsecure admin
     ```
 1. Run the Elasticsearch instance, specifying a Unicast host
 
