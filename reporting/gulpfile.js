@@ -94,7 +94,7 @@ function fetchBinaries(dest) {
   }];
 
 
-  var downloads = phantomBinaries.map(function (binary) {
+  var downloads = phantomBinaries.reduce(function (chain, binary) {
     var params = url.parse(binary.url);
     var filename = params.pathname.split('/').pop();
     var filepath = path.join(phantomDest, filename);
@@ -108,26 +108,28 @@ function fetchBinaries(dest) {
       });
     };
 
-    return Promise.fromCallback(function (cb) {
-      verifyChecksum(filepath, cb);
-    })
-    .catch(function (err) {
-
+    return chain.delay(4).then(function () {
       return Promise.fromCallback(function (cb) {
-        var ws = fs.createWriteStream(filepath)
-        .on('finish', function () {
-          verifyChecksum(filepath, cb);
-        });
+        console.log('filepath', filepath);
+        verifyChecksum(filepath, cb);
+      })
+      .catch(function (err) {
+        return Promise.fromCallback(function (cb) {
+          var ws = fs.createWriteStream(filepath)
+          .on('finish', function () {
+            verifyChecksum(filepath, cb);
+          });
 
-        // download binary, stream to destination
-        request(binary.url)
-        .on('error', cb)
-        .pipe(ws);
+          // download binary, stream to destination
+          request(binary.url)
+          .on('error', cb)
+          .pipe(ws);
+        });
       });
     });
-  });
+  }, Promise.resolve());
 
-  return Promise.all(downloads);
+  return downloads;
 }
 
 gulp.task('sync', function () {
