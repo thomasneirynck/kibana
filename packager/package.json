@@ -3,17 +3,18 @@
   "version": "5.0.0-snapshot",
   "description": "Elastic Pack: Kibana Edition",
   "author": "Elastic",
-  "packageName": "xpack",
+  "packageName": "x-pack",
   "scripts": {
     "start": "echo Nothing to do, perhaps you want - npm run build",
     "build": "gulp build",
     "buildonly": "gulp build-only",
     "package": "gulp package",
     "packageonly": "gulp package-only",
+    "release": "gulp release",
+    "releaseonly": "gulp release-only",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "bluebird": "3.1.5",
     "checksum": "0.1.1",
@@ -22,6 +23,7 @@
     "gulp": "3.9.0",
     "gulp-gzip": "1.2.0",
     "gulp-load-plugins": "1.2.0",
+    "gulp-s3": "0.3.0",
     "gulp-tar": "1.8.0",
     "gulp-template": "3.1.0",
     "gulp-util": "3.0.7",

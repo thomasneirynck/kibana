@@ -33,6 +33,8 @@ script | description
 `buildonly` | Same as `build`, *without* resetting the `node_modules`
 `package` | Runs the build, compresses the output, saves as tar.gz in `target`
 `packageonly` | Same as `package`, *without* running the build first
+`release` | Runs the build and package steps and uploads to S3
+`releaseonly` | Same as `release`, *without* running the build and package steps
 
 ## Ignoring Plugins
 
