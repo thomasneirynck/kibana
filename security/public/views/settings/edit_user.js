@@ -1,4 +1,4 @@
-import {union, difference} from 'lodash';
+import _ from 'lodash';
 import routes from 'ui/routes';
 import template from 'plugins/security/views/settings/edit_user.html';
 import 'angular-resource';
@@ -32,7 +32,9 @@ routes.when('/settings/security/users/edit/:username?', {
     };
 
     $scope.saveUser = (user) => {
-      user.$save().then($scope.goToUserList);
+      user.$save()
+        .then($scope.goToUserList)
+        .catch(error => $scope.error = _.get(error, 'data.message') || 'Username & password are required.');
     };
 
     $scope.goToUserList = () => {
@@ -40,12 +42,12 @@ routes.when('/settings/security/users/edit/:username?', {
     };
 
     $scope.assignRoles = (user, roles) => {
-      user.roles = union(user.roles, roles);
+      user.roles = _.union(user.roles, roles);
       roles.length = 0;
     };
 
     $scope.removeRoles = (user, roles) => {
-      user.roles = difference(user.roles, roles);
+      user.roles = _.difference(user.roles, roles);
       roles.length = 0;
     };
   }
