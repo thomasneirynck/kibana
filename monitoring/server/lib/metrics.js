@@ -13,7 +13,6 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'max',
     units: '/s',
-    defaults: { warning: '>1000', critical: '>5000', interval: '1m', periods: 1 },
     type: 'index',
     derivative: true
   },
@@ -25,7 +24,6 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'max',
     units: '/s',
-    defaults: { warning: '>100', critical: '>5000', interval: '1m', periods: 1 },
     type: 'cluster',
     derivative: true
   },
@@ -51,7 +49,6 @@ module.exports = {
       }
     },
     units: 'ms',
-    defaults: { warning: '>100', critical: '>200', interval: '1m', periods: 1 },
     type: 'cluster',
     derivitave: false,
     calculation: function (last) {
@@ -89,7 +86,6 @@ module.exports = {
       }
     },
     units: 'ms',
-    defaults: { warning: '>100', critical: '>200', interval: '1m', periods: 1 },
     type: 'cluster',
     derivitave: false,
     calculation: function (last) {
@@ -127,7 +123,6 @@ module.exports = {
       }
     },
     units: 'ms',
-    defaults: { warning: '>100', critical: '>200', interval: '1m', periods: 1 },
     type: 'node',
     derivitave: false,
     calculation: function (last) {
@@ -165,7 +160,6 @@ module.exports = {
       }
     },
     units: 'ms',
-    defaults: { warning: '>100', critical: '>200', interval: '1m', periods: 1 },
     type: 'node',
     derivitave: false,
     calculation: function (last) {
@@ -189,7 +183,6 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'max',
     units: '/s',
-    defaults: { warning: '>1000', critical: '>5000', interval: '1m', periods: 1 },
     type: 'index',
     derivative: true
   },
@@ -201,7 +194,6 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'max',
     units: '/s',
-    defaults: { warning: '>100', critical: '>5000', interval: '1m', periods: 1 },
     type: 'cluster',
     derivative: true
   },
@@ -227,7 +219,6 @@ module.exports = {
       }
     },
     units: 'ms',
-    defaults: { warning: '>100', critical: '>200', interval: '1m', periods: 1 },
     type: 'cluster',
     derivitave: false,
     calculation: function (last) {
@@ -265,7 +256,6 @@ module.exports = {
       }
     },
     units: 'ms',
-    defaults: { warning: '>100', critical: '>200', interval: '1m', periods: 1 },
     type: 'cluster',
     derivitave: false,
     calculation: function (last) {
@@ -289,7 +279,6 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'avg',
     units: '%',
-    defaults: { warning: '>70', critical: '>90', interval: '1m', periods: 1 },
     type: 'node',
     derivative: false
   },
@@ -301,7 +290,6 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'avg',
     units: '',
-    defaults: { warning: '>70', critical: '>90', interval: '1m', periods: 1 },
     type: 'node',
     derivative: false
   },
@@ -313,7 +301,6 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'avg',
     units: '%',
-    defaults: { warning: '>7', critical: '>9', interval: '1m', periods: 1  },
     type: 'node',
     derivative: false
   },
@@ -325,7 +312,6 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'avg',
     units: '',
-    defaults: { warning: '>2', critical: '>4', interval: '1m', periods: 1 },
     type: 'node',
     derivative: false
   },
@@ -337,7 +323,6 @@ module.exports = {
     format: formatSmallBytes,
     metricAgg: 'max',
     units: '',
-    defaults: { warning: '>2', critical: '>4', interval: '1m', periods: 1 },
     type: 'node',
     derivative: false
   },
@@ -349,7 +334,6 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'max',
     units: 'ms',
-    defaults: { warning: '>0', critical: '>0', interval: '1m', periods: 1 },
     type: 'index',
     derivative: true
   },
@@ -361,7 +345,6 @@ module.exports = {
     format: formatSmallFloat,
     metricAgg: 'max',
     units: '',
-    defaults: { warning: '>0', critical: '>0', interval: '1m', periods: 1 },
     type: 'index',
     derivative: true
   },
@@ -373,7 +356,6 @@ module.exports = {
     format: formatLargeAbbreviated,
     metricAgg: 'max',
     units: '',
-    defaults: { warning: '>0', critical: '>0', interval: '1m', periods: 1 },
     type: 'index',
     derivative: false
   },
@@ -385,7 +367,6 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'max',
     units: '/s',
-    defaults: { warning: '>100', critical: '>5000', interval: '1m', periods: 1 },
     type: 'index',
     derivative: true
   },
@@ -397,7 +378,6 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'max',
     units: '/s',
-    defaults: { warning: '>1000', critical: '>5000', interval: '1m', periods: 1 },
     type: 'index',
     derivative: true
   },
@@ -409,7 +389,6 @@ module.exports = {
     format: formatLargeBytes,
     metricAgg: 'avg',
     units: '',
-    defaults: { warning: '>1000', critical: '>5000', interval: '1m', periods: 1 },
     type: 'index',
     derivative: false
   },
@@ -421,7 +400,6 @@ module.exports = {
     format: formatLargeBytes,
     metricAgg: 'avg',
     units: '',
-    defaults: { warning: '>1000', critical: '>5000', interval: '1m', periods: 1 },
     type: 'index',
     derivative: false
   },
@@ -433,7 +411,6 @@ module.exports = {
     format: formatLargeBytes,
     metricAgg: 'avg',
     units: '',
-    defaults: { warning: '>1000', critical: '>5000', interval: '1m', periods: 1 },
     type: 'index',
     derivative: false
   },
@@ -445,7 +422,6 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'max',
     units: '',
-    defaults: { warning: '>1000', critical: '>5000', interval: '1m', periods: 1 },
     type: 'index',
     derivative: true
   }
