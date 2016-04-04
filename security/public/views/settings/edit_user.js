@@ -24,6 +24,7 @@ routes.when('/settings/security/users/edit/:username?', {
     $scope.availableRoles = $route.current.locals.roles;
     $scope.selectedAvailableRoles = [];
     $scope.selectedAssigneldRoles = [];
+    $scope.showPasswordField = $scope.isNewUser;
 
     $scope.deleteUser = (user) => {
       if (!confirm('Are you sure you want to delete this user? This action is irreversible!')) return;
