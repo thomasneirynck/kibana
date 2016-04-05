@@ -2,6 +2,7 @@ import {cloneDeep, toggleInOut, includes} from 'lodash';
 import routes from 'ui/routes';
 import template from 'plugins/security/views/settings/edit_role.html';
 import 'angular-resource';
+import 'angular-chosen';
 import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
 import 'plugins/security/services/shield_privileges';

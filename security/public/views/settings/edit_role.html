@@ -48,18 +48,7 @@
         <br />
 
         <h4>Run As</h4>
-        <form ng-submit="toggleSafe(role, 'run_as', runAs); runAs = '';">
-          <div class="input-group">
-            <span class="input-group-addon">
-              <i class="fa fa-search"></i>
-            </span>
-            <input type="text" class="form-control" ng-model="runAs" placeholder="Add user..." />
-          </div>
-          <span ng-repeat="user in role.run_as">
-            {{user}}
-            <a ng-click="toggle(role.run_as, user)">x</a>
-          </span>
-        </form>
+        <select class="form-control" chosen multiple ng-model="role.run_as" ng-options="user.username as user.username for user in users" placeholder-text-multiple="'Add a user...'"></select>
         <br />
 
         <h4>Indices</h4>
@@ -89,18 +78,7 @@
             <tr ng-repeat="index in role.indices">
               <td><div ng-repeat="name in index.names">{{name}}</div></td>
               <td>
-                <form ng-submit="toggle(index.privileges, newPrivileges[$index]); newPrivileges[$index] = '';">
-                  <div class="input-group">
-                    <span class="input-group-addon">
-                      <i class="fa fa-search"></i>
-                    </span>
-                    <input type="text" class="form-control" ng-model="newPrivileges[$index]" placeholder="Add a new privilege..." />
-                  </div>
-                </form>
-                <span ng-repeat="privilege in index.privileges">
-                  {{privilege}}
-                  <a ng-click="toggle(index.privileges, privilege)">x</a>
-                </span>
+                <select class="form-control" chosen multiple ng-model="index.privileges" ng-options="privilege for privilege in privileges.indices" placeholder-text-multiple="'Add a new privilege...'"></select>
               </td>
               <td><textarea rows="1" class="form-control" ng-model="index.query"></textarea></td>
               <td>
