@@ -17,13 +17,16 @@ app.directive('monitoringChart', () => {
     scope: {
       series: '='
     },
-    link: ($scope) => {
-      $scope.$watch('series', (series) => {
-        if (series) {
-          let last = _.last(series.data);
-          $scope.metric = series.metric;
-          $scope.value = numeral(last && last.y || 0).format(series.metric.format);
-        }
+    link($scope) {
+      $scope.$watch('series', series => {
+        $scope.metrics = series.map(s => {
+          const last = _.last(s.data);
+          return {
+            label: s.metric.label,
+            units: s.metric.units,
+            value: numeral(last && last.y || 0).format(s.metric.format)
+          };
+        });
       });
     }
   };
@@ -84,16 +87,10 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
         colors: ['#01A4A4', '#C66', '#D0D102', '#616161', '#00A1CB', '#32742C', '#F18D05', '#113F8C', '#61AE24', '#D70060']
       };
 
-
-      $scope.toggleSeries = (_id) => {
-        drawPlot($scope.series);
-      };
-
       $(window).resize(() => {
         if (!$scope.plot) return;
         $timeout(() => {
-          // This is a lot faster than calling drawPlot(); Stolen from the borked flot.resize plugin
-          // TODO: Currently resizing breaks tooltips
+          // This is a lot faster than calling $.plot(); Stolen from the borked flot.resize plugin
           $scope.plot.resize();
           $scope.plot.setupGrid();
           $scope.plot.draw();
@@ -187,21 +184,17 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
         _.each(legendValueNumbers, (num) =>  $(num).empty());
       }
 
-      let legendScope = $scope.$new();
-      function drawPlot(chartSeries) {
+      const colorCodesForIndex = [
+        '#000', // black
+        '#105a73', // dark blue (link hover/focus color)
+      ];
 
+      function createChartData(chartSeries, idx) {
         if (!chartSeries) {
           $elem.empty();
           return;
         }
 
-
-        const options = _.cloneDeep(defaultOptions);
-        const bounds = timefilter.getBounds();
-        if (!chartSeries.data.length) {
-          options.xaxis.min = bounds.min.valueOf();
-          options.xaxis.max = bounds.max.valueOf();
-        }
         const series = {
           shadowSize: 0,
           lines: {
@@ -216,14 +209,38 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
           }
           return row;
         });
-        series.color = '#000';
+        series.color = colorCodesForIndex[idx];
         series.label = chartSeries.metric.label;
+
+        return series;
+      }
+
+      $scope.$watch('series', series => {
+        const options = _.cloneDeep(defaultOptions);
+        const data = series.map((s, idx) => createChartData(s, idx)); // chart data for each series
+
+        const dataSize = series.reduce((prev, current) => {
+          return prev + current.data.length;
+        }, 0);
+        if (!dataSize === 0) {
+          const bounds = timefilter.getBounds();
+          options.xaxis.min = bounds.min.valueOf();
+          options.xaxis.max = bounds.max.valueOf();
+        }
+
         options.yaxis = {
-          tickFormatter: (number) => numeral(number).format(chartSeries.metric.format)
+          tickFormatter: (number) => {
+            return numeral(number)
+            .format(_.chain(series)
+            .pluck('metric.format')
+            .last()
+            .value());
+          }
         };
 
-        $scope.plot = $.plot($elem, [ series ], options);
+        $scope.plot = $.plot($elem, data, options);
 
+        let legendScope = $scope.$new();
         legendScope.$destroy();
         legendScope = $scope.$new();
         // Used to toggle the series, and for displaying values on hover
@@ -231,10 +248,7 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
         _.each($elem.find('.ngLegendValue'), (elem) => {
           $compile(elem)(legendScope);
         });
-      }
-
-      $scope.$watch('series', drawPlot);
+      });
     }
   };
-
 });
