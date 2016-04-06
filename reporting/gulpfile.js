@@ -110,7 +110,6 @@ function fetchBinaries(dest) {
 
     return chain.delay(4).then(function () {
       return Promise.fromCallback(function (cb) {
-        console.log('filepath', filepath);
         verifyChecksum(filepath, cb);
       })
       .catch(function (err) {
