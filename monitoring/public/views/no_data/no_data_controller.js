@@ -19,43 +19,24 @@ require('ui/routes')
 })
 .otherwise({ redirectTo: '/home' });
 
-mod.controller('noData', (kbnUrl, $scope, monitoringClusters, timefilter, $timeout) => {
-
+mod.controller('noData', (kbnUrl, $executor, monitoringClusters, timefilter) => {
   timefilter.enabled = true;
-  if (timefilter.refreshInterval.value === 0) {
-    timefilter.refreshInterval.value = 10000;
-    timefilter.refreshInterval.display = '10 Seconds';
-  }
 
-  let fetchTimer;
-  function startFetchInterval() {
-    if (!timefilter.refreshInterval.pause) {
-      fetchTimer = $timeout(fetch, timefilter.refreshInterval.value);
-    }
-  }
-  function cancelFetchInterval() {
-    $timeout.cancel(fetchTimer);
-  }
-
-  timefilter.on('update', (_time) => {
-    cancelFetchInterval();
-    startFetchInterval();
+  timefilter.on('update', () => {
+    // re-fetch if they change the time filter
+    $executor.run();
   });
 
-  function fetch() {
-    monitoringClusters()
-    .then((clusters) => {
+  // Register the monitoringClusters service.
+  $executor.register({
+    execute: function () {
+      return monitoringClusters();
+    },
+    handleResponse: function (clusters) {
       if (clusters.length) {
         kbnUrl.changePath('/home');
       }
-      startFetchInterval();
-    });
-  }
-
-  startFetchInterval();
-  $scope.$on('$destroy', () => {
-    cancelFetchInterval();
+    }
   });
-
 });
 

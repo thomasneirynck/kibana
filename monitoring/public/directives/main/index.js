@@ -8,8 +8,9 @@ app.directive('monitoringMain', (globalState) => {
     link: function (scope, _el, attrs) {
       scope.name = attrs.name;
 
-      // hide all the tabs for the clusters page (force to select a cluster before drill-in)
-      scope.allowTabs = scope.name !== 'clusters';
+      // hide tabs for some pages (force to select a cluster before drill-in)
+      const noTabs = ['no-data', 'clusters'];
+      scope.allowTabs = !_.contains(noTabs, scope.name);
 
       // hide clusters tab for basic license
       scope.allowClusterTab = _.get(globalState, 'license.type') !== 'basic';
