@@ -1,1 +1,14 @@
-marvel
+.idea
+.DS_Store
+*.iml
+*.log
+node_modules/
+npm-debug.log
+
+esvm/
+build/
+target/
+
+reporting/.phantom/
+coverage
+.aws-config.json
