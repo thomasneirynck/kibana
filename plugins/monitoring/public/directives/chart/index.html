@@ -1,4 +1,4 @@
-<div ng-repeat="metric in metrics">
-  <b>{{metric.label}}: {{metric.value}} {{metric.units}}</b>
+<div ng-if="series">
+  <h1>{{title}}</h1>
+  <chart series="series"/>
 </div>
-<chart series="series"/>

@@ -19,6 +19,13 @@ app.directive('monitoringChart', () => {
     },
     link($scope) {
       $scope.$watch('series', series => {
+        let title;
+        title = _.chain(series).pluck('metric.title').last().value();
+        if (!title) {
+          title = _.chain(series).pluck('metric.label').last().value();
+        }
+        $scope.title = title;
+
         $scope.metrics = series.map(s => {
           const last = _.last(s.data);
           return {
