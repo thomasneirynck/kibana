@@ -1,20 +1,19 @@
 const _ = require('lodash');
 const Promise = require('bluebird');
 const Joi = require('joi');
-const root = require('requirefrom')('');
-const getClusterStatus = root('server/lib/get_cluster_status');
-const getNodeSummary = root('server/lib/get_node_summary');
-const getMetrics = root('server/lib/get_metrics');
-const getListing = root('server/lib/get_listing_nodes');
-const getShardStats = root('server/lib/get_shard_stats');
-const getShardAllocation = root('server/lib/get_shard_allocation');
-const calculateIndices = root('server/lib/calculate_indices');
-const calculateClusterStatus = root('server/lib/calculate_cluster_status');
-const calculateNodeType = root('server/lib/calculate_node_type');
-const getLastState = root('server/lib/get_last_state');
-const getDefaultNodeFromId = root('server/lib/get_default_node_from_id');
-const lookups = root('server/lib/lookups');
-const handleError = root('server/lib/handle_error');
+const getClusterStatus = require('../../../lib/get_cluster_status');
+const getNodeSummary = require('../../../lib/get_node_summary');
+const getMetrics = require('../../../lib/get_metrics');
+const getListing = require('../../../lib/get_listing_nodes');
+const getShardStats = require('../../../lib/get_shard_stats');
+const getShardAllocation = require('../../../lib/get_shard_allocation');
+const calculateIndices = require('../../../lib/calculate_indices');
+const calculateClusterStatus = require('../../../lib/calculate_cluster_status');
+const calculateNodeType = require('../../../lib/calculate_node_type');
+const getLastState = require('../../../lib/get_last_state');
+const getDefaultNodeFromId = require('../../../lib/get_default_node_from_id');
+const lookups = require('../../../lib/lookups');
+const handleError = require('../../../lib/handle_error');
 
 module.exports = (server) => {
 

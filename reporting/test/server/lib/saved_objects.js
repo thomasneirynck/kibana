@@ -2,10 +2,8 @@ var url = require('url');
 var Promise = require('bluebird');
 var sinon = require('sinon');
 var expect = require('chai').expect;
-var lib = require('requirefrom')('server/lib');
-var fixtures = require('requirefrom')('test/fixtures');
-var savedObjects = lib('saved_objects');
-var mockSavedObjects = fixtures('mock_saved_objects');
+var savedObjects = require('../../../server/lib/saved_objects');
+var mockSavedObjects = require('../../fixtures/mock_saved_objects');
 
 describe('saved_objects', function () {
   var mockConfig;

@@ -1,8 +1,7 @@
 const _ = require('lodash');
 const filterPartialBuckets = require('./filter_partial_buckets');
 const pickMetricFields = require('./pick_metric_fields');
-const root = require('requirefrom')('');
-const metrics = root('server/lib/metrics');
+const metrics = require('./metrics');
 
 function mapChartData(metric) {
   return (bucket) => {

@@ -13,8 +13,7 @@
 const moment = require('moment');
 const createQuery = require('./create_query.js');
 const calcAuto = require('./calculate_auto');
-const root = require('requirefrom')('');
-const metrics = root('server/lib/metrics');
+const metrics = require('./metrics');
 const mapListingResponse = require('./map_listing_response');
 module.exports = (req, indices) => {
   const config = req.server.config();

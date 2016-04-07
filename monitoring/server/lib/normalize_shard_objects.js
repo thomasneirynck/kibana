@@ -5,8 +5,7 @@
  *  - Counts of each type of Shards per Index
  */
 import { filter, get } from 'lodash';
-const root = require('requirefrom')('');
-const nodeAggVals = root('server/lib/node_agg_vals');
+const nodeAggVals = require('./node_agg_vals');
 function createNewMetric() {
   return {
     status: 'green',
