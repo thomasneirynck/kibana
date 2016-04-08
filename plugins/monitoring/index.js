@@ -5,7 +5,7 @@ var instantiateClient = require('./server/lib/es_client/instantiate_client');
 
 module.exports = function (kibana) {
   return new kibana.Plugin({
-    require: ['elasticsearch'],
+    require: ['kibana', 'elasticsearch'],
     id: 'monitoring',
     configPrefix: 'xpack.monitoring',
     publicDir: resolve(__dirname, 'public'),
