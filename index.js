@@ -1,10 +1,15 @@
+import graph from './plugins/graph';
+import monitoring from './plugins/monitoring';
+import reporting from './plugins/reporting';
+import security from './plugins/security';
+
 module.exports = function (kibana) {
   var plugins = [];
-  
-  plugins = plugins.concat(require('./graph')(kibana)); 
-  plugins = plugins.concat(require('./monitoring')(kibana)); 
-  plugins = plugins.concat(require('./reporting')(kibana)); 
-  plugins = plugins.concat(require('./security')(kibana)); 
+
+  plugins = plugins.concat(graph(kibana));
+  plugins = plugins.concat(monitoring(kibana));
+  plugins = plugins.concat(reporting(kibana));
+  plugins = plugins.concat(security(kibana));
 
   return plugins;
 };
