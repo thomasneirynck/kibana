@@ -15,7 +15,7 @@ const indexShards = require('./indexer/index_shards');
 const monitoringIndexTemplate = require('./indexer/monitoring_index_template.json');
 const createLicenseDoc = require('./indexer/create_license_doc');
 
-module.exports = (g) => {
+module.exports = (gulpUtil) => {
   return (done) => {
     const host = yargs.elasticsearch || 'localhost:9200';
     const monitoring = yargs.monitoring || 'localhost:9200';
@@ -45,7 +45,7 @@ module.exports = (g) => {
     .then(() => {
       function index() {
         const start = moment.utc().valueOf();
-        g.util.log('Starting', g.util.colors.cyan('index'));
+        gulpUtil.log('Starting', gulpUtil.colors.cyan('index'));
         if (clusterState) {
           clusterState.state_uuid = uuid.v4();
           clusterState.version++;
@@ -74,11 +74,11 @@ module.exports = (g) => {
         })
         .then(() => {
           const end = moment.utc().valueOf();
-          g.util.log('Finishing', g.util.colors.cyan('index'), 'after', g.util.colors.magenta((end - start) + ' ms'));
+          gulpUtil.log('Finishing', gulpUtil.colors.cyan('index'), 'after', gulpUtil.colors.magenta((end - start) + ' ms'));
           setTimeout(index, interval);
         })
         .catch((err) => {
-          g.util.log(err.stack);
+          gulpUtil.log(err.stack);
           setTimeout(index, interval);
         });
       }
