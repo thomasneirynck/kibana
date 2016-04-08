@@ -132,9 +132,7 @@ gulp.task('lint', function () {
 });
 
 gulp.task('clean', function () {
-  return Promise.map([buildDir, targetDir], function (dir) {
-    return del(dir);
-  });
+  return del([buildDir, targetDir]);
 });
 
 gulp.task('build', ['clean'], function () {
