@@ -14,7 +14,7 @@ require('ui/routes')
   }
 });
 
-mod.controller('licenseView', ($route, globalState, Private, timefilter, $scope) => {
+mod.controller('licenseView', ($route, globalState, Private, timefilter, $scope, $window) => {
 
   function setClusters(clusters) {
     $scope.clusters = clusters;
@@ -26,6 +26,10 @@ mod.controller('licenseView', ($route, globalState, Private, timefilter, $scope)
   docTitle.change('Monitoring - License', true);
 
   $scope.isExpired = (new Date()).getTime() > _.get($scope, 'cluster.license.expiry_date_in_millis');
+
+  $scope.goBack = function () {
+    $window.history.back();
+  };
 
   timefilter.enabled = false;
 
