@@ -1,4 +1,3 @@
-var moment = require('moment');
 var _ = require('lodash');
 var mergePaths = require('./merge_paths');
 var getState = require('./get_state');
@@ -20,9 +19,9 @@ module.exports = function (bulks, client, monitoringClient, clusterState) {
       state.cluster_uuid = state.metadata.cluster_uuid;
       var status = clusterState ? 'green' : stats.status;
       _.set(state, 'status', status);
-      var shards = _.reduce(state.routing_table.indices, function (memo, data, index) {
-        _.each(data.shards, function (shards) {
-          memo = memo.concat(shards);
+      var shards = _.reduce(state.routing_table.indices, function (memo, data) {
+        _.each(data.shards, function (shard) {
+          memo = memo.concat(shard);
         });
         return memo;
       }, []);

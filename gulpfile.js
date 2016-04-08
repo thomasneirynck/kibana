@@ -110,9 +110,8 @@ gulp.task('sync', function () {
 gulp.task('lint', function () {
   var filePaths = [
     'gulpfile.js',
-    'plugins/**/server/**/*.js',
-    'plugins/**/public/**/*.js',
-    'plugins/**/public/**/*.jsx',
+    'plugins/**/*.js',
+    'plugins/**/*.jsx',
     'server/**/*.js',
     'public/**/*.js',
     '!plugins/**/test/fixtures/**/*.js',

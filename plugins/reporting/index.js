@@ -3,7 +3,7 @@ const publicRoutes = require('./server/routes/public');
 const fileRoutes = require('./server/routes/file');
 const phantom = require('./server/lib/phantom');
 const generatePDFStream = require('./server/lib/generate_pdf_stream');
-const config = require('./server/config/config');
+const appConfig = require('./server/config/config');
 const checkLicense = require('./server/lib/check_license');
 
 module.exports = function (kibana) {
@@ -19,7 +19,7 @@ module.exports = function (kibana) {
         'plugins/reporting/controls/visualize',
         'plugins/reporting/controls/dashboard',
       ],
-      injectDefaultVars: function (server, options) {
+      injectDefaultVars: function (server) {
         const checker = checkLicense(server.plugins.elasticsearch.client);
 
         function registerVars(enabled) {
@@ -35,16 +35,15 @@ module.exports = function (kibana) {
           server.log(['reporting', 'license', 'debug'], `License check: ${check.message}`);
           return registerVars(check.enabled);
         })
-        .catch((err) => registerVars(false));
+        .catch(() => registerVars(false));
       },
     },
 
-    config: config,
+    config: appConfig,
 
-    init: function (server, options) {
+    init: function (server) {
       // init the plugin helpers
       const plugin = this;
-      const config = server.config();
 
       function setup() {
         // prepare phantom binary

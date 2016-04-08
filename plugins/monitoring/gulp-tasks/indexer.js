@@ -1,5 +1,4 @@
 const yargs = require('yargs').argv;
-const _ = require('lodash');
 const Promise = require('bluebird');
 const moment = require('moment');
 const uuid = require('node-uuid');
@@ -86,5 +85,5 @@ module.exports = (g) => {
       index();
     })
     .catch(done);
-  }
+  };
 };

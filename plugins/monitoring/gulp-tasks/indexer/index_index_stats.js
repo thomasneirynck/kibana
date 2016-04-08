@@ -1,5 +1,3 @@
-var moment = require('moment');
-var _ = require('lodash');
 var mergePaths = require('./merge_paths');
 var fakeIndexStats = require('./fake_index_stats');
 var Promise = require('bluebird');

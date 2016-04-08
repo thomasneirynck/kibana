@@ -1,5 +1,3 @@
-var moment = require('moment');
-var _ = require('lodash');
 var mergePaths = require('./merge_paths');
 var getState = require('./get_state');
 var fakeIndicesStats = require('./fake_indices_stats');

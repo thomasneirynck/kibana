@@ -1,6 +1,6 @@
 var moment = require('moment');
 var _ = require('lodash');
-module.exports = function (bulks, client, monitoringClient) {
+module.exports = function (bulks, client) {
   var timestamp = moment.utc();
   return client.cluster.state().then(function (clusterState) {
     return client.indices.recovery()

@@ -1,7 +1,7 @@
 var _ = require('lodash');
 
 function totalShards(state) {
-  return _.reduce(state.routing_table.indices, function (memo, data, index) {
+  return _.reduce(state.routing_table.indices, function (memo, data) {
     return memo + data.shards.length;
   }, 0);
 }
@@ -11,7 +11,6 @@ function totalIndices(state) {
 }
 
 function totalDocs(stats, state) {
-  var docCount = _.get(stats, 'indices.docs.count');
   return calculateFactor(stats, state);
 }
 

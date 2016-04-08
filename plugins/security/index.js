@@ -44,7 +44,7 @@ export default (kibana) => new kibana.Plugin({
       main: 'plugins/security/views/logout',
       hidden: true
     }],
-    injectDefaultVars: function (server, options) {
+    injectDefaultVars: function (server) {
       const config = server.config();
       return {
         shieldUnsafeSessions: config.get('xpack.security.useUnsafeSessions')
@@ -52,7 +52,7 @@ export default (kibana) => new kibana.Plugin({
     }
   },
 
-  init(server, options) {
+  init(server) {
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
 

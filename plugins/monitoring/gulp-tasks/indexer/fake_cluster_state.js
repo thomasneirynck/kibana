@@ -96,7 +96,7 @@ module.exports = function (options) {
         var shardState      = (options.nodes < 2) ? 'UNASSIGNED' : 'STARTED';
         var replicaNode     = (options.nodes < 2) ? null : getNode();
         var shardCollection = (options.nodes < 2) ? state.routing_nodes.unassigned : state.routing_nodes.nodes[replicaNode];
-        var shardObj = {
+        var replicaShardObj = {
           state           : shardState,
           primary         : false,
           node            : replicaNode,
@@ -104,8 +104,8 @@ module.exports = function (options) {
           shard           : shard,
           index           : index
         };
-        shardCollection.push(shardObj);
-        state.routing_table.indices[index].shards.push(shardObj);
+        shardCollection.push(replicaShardObj);
+        state.routing_table.indices[index].shards.push(replicaShardObj);
       });
 
     });
