@@ -7,8 +7,7 @@ module.constant('shieldPrivileges', {
     'monitor',
     'manage',
     'manage_security',
-    'manage_index_templates',
-    'transport_client',
+    'manage_index_templates'
   ],
   indices: [
     'all',
@@ -20,6 +19,7 @@ module.constant('shieldPrivileges', {
     'delete',
     'write',
     'delete_index',
-    'create_index'
+    'create_index',
+    'view_index_metadata'
   ]
 });
