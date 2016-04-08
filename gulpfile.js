@@ -13,11 +13,12 @@ var mkdirp = require('mkdirp');
 var Rsync = require('rsync');
 var del = require('del');
 var prettyData = require('pretty-data');
+var checksum = require('checksum');
 var gulp = require('gulp');
 var g = require('gulp-load-plugins')();
 
 var pkg = require('./package.json');
-// var packageName = pkg.name  + '-' + pkg.version;
+var packageFile = `${pkg.name}-${pkg.version}.zip`;
 
 var buildDir = path.resolve(__dirname, 'build');
 var buildTarget = path.resolve(buildDir, 'kibana', pkg.name);
@@ -154,4 +155,38 @@ gulp.task('build', ['clean'], function () {
   .then(function () {
     return exec('npm', ['install', '--production', '--silent'], { cwd: buildTarget });
   });
+});
+
+gulp.task('package', ['build'], function () {
+  var targetFile = path.join(targetDir, packageFile);
+  var checksumFile = path.join(targetDir, packageFile + '.sha1.txt');
+
+  return Promise.fromCallback(function (cb) {
+    return gulp.src(buildDir + '/**', { dot: true })
+    .pipe(g.zip(packageFile))
+    .pipe(gulp.dest(targetDir))
+    .on('finish', cb)
+    .on('error', cb);
+  })
+  .then(function () {
+    return Promise.fromCallback(function (cb) {
+      checksum.file(targetFile, cb);
+    })
+    .then(function (sum) {
+      log('Package checksum', sum);
+      return fs.writeFileSync(checksumFile, sum, { encoding: 'utf8' });
+    });
+  });
+});
+
+gulp.task('dev', ['sync'], function () {
+  var watchFiles = [
+    'package.json',
+    'index.js',
+    'plugins/**',
+    'public/**',
+    'server/**'
+  ];
+
+  gulp.watch(watchFiles, ['sync', 'lint']);
 });
