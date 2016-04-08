@@ -1,4 +1,4 @@
-const EventEmitter = require('events').EventEmitter;
+// const EventEmitter = require('events').EventEmitter;
 const Promise = require('bluebird');
 
 // add items to queue
@@ -22,7 +22,7 @@ class JobQueue {
 
   exec() {
     return Promise.map(this._jobs, (job) => {
-
+      return job;
     }, { concurrency: this._concurrency });
   }
 }

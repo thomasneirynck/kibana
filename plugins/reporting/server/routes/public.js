@@ -1,10 +1,5 @@
 module.exports = function (server) {
-  const fs = require('fs');
-  const _ = require('lodash');
-  const Promise = require('bluebird');
   const boom = require('boom');
-  const pdf = require('../lib/pdf');
-  const config = server.config();
   const esErrors = server.plugins.elasticsearch.errors;
   const generatePDFStream = server.plugins.reporting.generatePDFStream;
 
@@ -30,7 +25,6 @@ module.exports = function (server) {
   });
 
   function pdfHandler(type, request, reply) {
-    const pdfOutput = pdf.create();
     const objId = request.params.savedId;
     const query = request.query;
     const headers = {

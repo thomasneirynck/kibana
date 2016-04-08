@@ -20,7 +20,7 @@ module.exports = function (client) {
     check: function () {
       return this.getLicense()
       .then(this.validate)
-      .then((valid) => {
+      .then(() => {
         return {
           enabled: true,
           message: `Valid license found`

@@ -11,7 +11,7 @@ function visualizeReportProvider(Private, $window, reportingEnabled) {
     appName: 'visualize',
     order: 0,
     template: require('plugins/reporting/controls/export_button.html'),
-    link: function visualizeReport($scope, $el) {
+    link: function visualizeReport($scope) {
       $scope.handleClick = function () {
         const info = appInfo();
 

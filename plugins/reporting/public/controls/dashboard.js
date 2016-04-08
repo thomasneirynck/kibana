@@ -11,7 +11,7 @@ function dashboardReportProvider(Private, $window, reportingEnabled) {
     appName: 'dashboard',
     order: 0,
     template: require('plugins/reporting/controls/export_button.html'),
-    link: function dashboardReport($scope, $el) {
+    link: function dashboardReport($scope) {
       $scope.handleClick = function () {
         const info = appInfo();
 

@@ -1,23 +1,23 @@
-var url = require('url');
-var Promise = require('bluebird');
-var sinon = require('sinon');
-var expect = require('chai').expect;
-var savedObjects = require('../../../server/lib/saved_objects');
-var mockSavedObjects = require('../../fixtures/mock_saved_objects');
+'use strict';
+
+const url = require('url');
+const Bluebird = require('bluebird');
+const { expect } = require('chai');
+const savedObjects = require('../../../server/lib/saved_objects');
+const mockSavedObjects = require('../../fixtures/mock_saved_objects');
 
 describe('saved_objects', function () {
-  var mockConfig;
-  var mockClient;
-  var clientResponse;
-  var module;
+  let mockClient;
+  let clientResponse;
+  let module;
 
   function setClientResponse(obj) {
-    clientResponse = Promise.resolve(obj);
+    clientResponse = Bluebird.resolve(obj);
   }
 
   beforeEach(function () {
     mockClient = {
-      get: () => Promise.resolve(clientResponse)
+      get: () => Bluebird.resolve(clientResponse)
     };
 
     module = savedObjects(mockClient, {
@@ -27,11 +27,11 @@ describe('saved_objects', function () {
   });
 
   // test each of the saved object types
-  var objectTypes = ['search', 'visualization', 'dashboard'];
+  const objectTypes = ['search', 'visualization', 'dashboard'];
   objectTypes.forEach(function (objectType) {
     describe(`type ${objectType}`, function () {
-      var mockObject;
-      var savedObject;
+      let mockObject;
+      let savedObject;
 
       beforeEach(function () {
         mockObject = mockSavedObjects[objectType];
@@ -56,26 +56,26 @@ describe('saved_objects', function () {
 
       describe('getUrl', function () {
         it('should provide app url', function () {
-          var params = url.parse(savedObject.getUrl());
+          const params = url.parse(savedObject.getUrl());
           expect(params).to.have.property('hash');
         });
 
         it('should take query params and append to hash', function () {
-          var query = {
+          const query = {
             _g: '(time:(from:now-1h,mode:quick,to:now))'
           };
-          var params = url.parse(savedObject.getUrl(query));
+          const params = url.parse(savedObject.getUrl(query));
           expect(params.hash).to.contain(query._g);
         });
 
         it('should remove the refreshInterval value', function () {
-          var query = {
+          const query = {
             _g: '(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-15m,mode:quick,to:now))'
           };
 
-          var url = savedObject.getUrl(query);
-          expect(url).to.contain('time:(from:now-15m,mode:quick,to:now))');
-          expect(url).to.not.contain('refreshInterval');
+          const parsedUrl = savedObject.getUrl(query);
+          expect(parsedUrl).to.contain('time:(from:now-15m,mode:quick,to:now))');
+          expect(parsedUrl).to.not.contain('refreshInterval');
         });
       });
     });

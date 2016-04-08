@@ -5,12 +5,11 @@ var unzip = require('unzip');
 
 exports.zip = function (filepath, target) {
   return new Promise(function (resolve, reject) {
-    var i = 0;
     var extract = unzip.Extract;
 
     fs.createReadStream(filepath)
     .pipe(extract({ path: target }))
-    .on('error', function (err) {
+    .on('error', function () {
       reject(new Error('Failed to unzip file'));
     })
     .on('close', resolve);

@@ -4,7 +4,7 @@ const Printer = require('pdfmake');
 const assetPath = path.resolve(__dirname, '..', '..', 'server', 'assets');
 
 class PdfMaker {
-  constructor(options) {
+  constructor() {
     const fontPath = (filename) => path.resolve(assetPath, 'fonts', filename);
     const fonts = {
       Roboto: {
@@ -148,14 +148,15 @@ function getDocOptions() {
   return {
     tableLayouts: {
       simpleBorder: {
-        hLineWidth: function (i, node) { return 1; },
-        vLineWidth: function (i, node) { return 1; },
-        hLineColor: function (i, node) { return 'silver'; },
-        vLineColor: function (i, node) { return 'silver'; },
-        paddingLeft: function (i, node) { return 0; },
-        paddingRight: function (i, node) { return 0; },
-        paddingTop: function (i, node) { return 0; },
-        paddingBottom: function (i, node) { return 0; },
+        // format is function (i, node) { ... };
+        hLineWidth: () => 1,
+        vLineWidth: () => 1,
+        hLineColor: () => 'silver',
+        vLineColor: () => 'silver',
+        paddingLeft: () => 0,
+        paddingRight: () => 0,
+        paddingTop: () => 0,
+        paddingBottom: () => 0,
       }
     }
   };

@@ -1,4 +1,3 @@
-const path = require('path');
 const _ = require('lodash');
 const Promise = require('bluebird');
 const Horseman = require('node-horseman');

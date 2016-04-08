@@ -11,7 +11,7 @@ function discoverReportProvider(Private, $window, reportingEnabled) {
     appName: 'discover',
     order: 0,
     template: require('plugins/reporting/controls/export_button.html'),
-    link: function discoverReport($scope, $el) {
+    link: function discoverReport($scope) {
       $scope.handleClick = function () {
         const info = appInfo();
 

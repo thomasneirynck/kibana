@@ -16,7 +16,6 @@ module.exports = (server) => {
     if (type === 'dashboard') {
       return savedObjects.get(type, objId, [ 'panelsJSON'])
       .then(function (savedObj) {
-        const fields = ['id', 'type', 'panelIndex'];
         const panels = JSON.parse(savedObj.panelsJSON);
 
         return panels.map((panel) => {

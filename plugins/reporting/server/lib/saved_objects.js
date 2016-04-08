@@ -74,10 +74,8 @@ module.exports = function (client, config) {
         searchSource: searchSource,
         uiState: uiState,
         getUrl: function getAppUrl(query = {}) {
-          const { id, type } = this;
-
-          const app = appTypes[type];
-          if (!app) throw new Error('Unexpected app type: ' + type);
+          const app = appTypes[this.type];
+          if (!app) throw new Error('Unexpected app type: ' + this.type);
 
           // map panel state to panel from app state part of the query
           const cleanQuery = this.getState(query);
@@ -93,7 +91,7 @@ module.exports = function (client, config) {
             protocol: opts.protocol,
             hostname: opts.hostname,
             port: opts.port,
-          }, app.getUrlParams(id));
+          }, app.getUrlParams(this.id));
 
           // Kibana appends querystrings to the hash, and parses them as such,
           // so we'll do the same internally so kibana understands what we want

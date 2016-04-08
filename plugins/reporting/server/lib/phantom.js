@@ -17,11 +17,9 @@ function installPhantom() {
   var phantomPackage = getPackage();
 
   return Promise.try(function () {
-    var installed = fs.accessSync(phantomPackage.binary);
-
     return phantomPackage.binary;
   })
-  .catch(function (err) {
+  .catch(function () {
     // error here means the binary does not exist, so install it
     var fileType = phantomPackage.ext.substring(1);
     var filepath = phantomPackage.dir + '/' + phantomPackage.base;
@@ -52,9 +50,8 @@ function getPackage() {
   var version = '1.9.8';
   var basename = 'phantomjs-' + version;
   var suffix;
-  var checksum;
+  // var checksum;
   var binary;
-  var binaryPath;
   var filepath = getPackagePath();
 
   var platform = getTargetPlatform();
@@ -63,19 +60,19 @@ function getPackage() {
   if (platform === 'linux' && arch === 'x64') {
     binary = path.join(basename + '-linux-x86_64', 'bin', 'phantomjs');
     suffix = 'linux-x86_64.tar.bz2';
-    checksum = '4ea7aa79e45fbc487a63ef4788a18ef7';
+    // checksum = '4ea7aa79e45fbc487a63ef4788a18ef7';
   } else if (platform === 'linux' && arch === 'ia32') {
     binary = path.join(basename + '-linux-i686', 'bin', 'phantomjs');
     suffix = 'linux-i686.tar.bz2';
-    checksum = '814a438ca515c6f7b1b2259d0d5bc804';
+    // checksum = '814a438ca515c6f7b1b2259d0d5bc804';
   } else if (platform === 'darwin' || platform === 'openbsd' || platform === 'freebsd') {
     binary = path.join(basename + '-macosx', 'bin', 'phantomjs');
     suffix = 'macosx.zip';
-    checksum = 'fb850d56c033dd6e1142953904f62614';
+    // checksum = 'fb850d56c033dd6e1142953904f62614';
   } else if (platform === 'win32') {
     binary = path.join(basename + '-windows', 'phantomjs.exe');
     suffix = 'windows.zip';
-    checksum = 'c5eed3aeb356ee597a457ab5b1bea870';
+    // checksum = 'c5eed3aeb356ee597a457ab5b1bea870';
   } else {
     var msg = 'Unsupported platform: ' + platform + ' ' + arch;
     throw new Error(msg);

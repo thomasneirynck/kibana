@@ -9,8 +9,6 @@ module.exports = (server) => {
   const fetchObjectQueue = getObjectQueue(server);
   const fetchScreenshot = getScreenshot(server);
 
-  const config = server.config();
-
   function mapScreenshots(objectQueue, query, headers) {
     return Promise.map(objectQueue, function (savedObj) {
       const objUrl = savedObj.getUrl(query);
@@ -41,8 +39,8 @@ module.exports = (server) => {
       });
     })
     .then(function () {
-      const date = new Date().getTime();
-      const filename = `report_${date}.pdf`;
+      // const date = new Date().getTime();
+      // const filename = `report_${date}.pdf`;
       return pdfOutput.generate().getStream();
     });
   };
