@@ -1,5 +1,6 @@
-import {toggleInOut, includes} from 'lodash';
+import {includes} from 'lodash';
 import routes from 'ui/routes';
+import {toggle} from 'plugins/security/lib/util';
 import template from 'plugins/security/views/settings/roles.html';
 import 'plugins/security/services/shield_role';
 
@@ -36,7 +37,7 @@ routes.when('/settings/security/roles', {
 
     $scope.allSelected = () => $scope.roles.length && $scope.roles.length === $scope.selectedRoles.length;
 
-    $scope.toggle = toggleInOut;
+    $scope.toggle = toggle;
     $scope.includes = includes;
   }
 });

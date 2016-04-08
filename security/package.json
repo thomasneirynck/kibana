@@ -29,10 +29,10 @@
     "sinon": "^1.17.2"
   },
   "dependencies": {
-    "angular-chosen-localytics": "^1.4.0",
     "angular-resource": "1.4.9",
+    "angular-sanitize": "1.4.9",
+    "angular-ui-select": "^0.12.100",
     "boom": "^2.10.0",
-    "chosenjs": "^1.4.3",
     "elasticsearch-shield": "git+ssh://github.com/elastic/elasticsearch-shield-js.git",
     "hapi-auth-cookie": "^3.1.0",
     "joi": "^6.9.1",

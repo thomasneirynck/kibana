@@ -48,7 +48,17 @@
         <br />
 
         <h4>Run As</h4>
-        <select class="form-control" chosen multiple ng-model="role.run_as" ng-options="user.username as user.username for user in users" placeholder-text-multiple="'Add a user...'"></select>
+        <div class="input-group">
+          <span class="input-group-addon">
+            <i class="fa fa-search"></i>
+          </span>
+          <ui-select class="form-control" multiple ng-model="role.run_as">
+            <ui-select-match placeholder="Add a user...">{{$item.username}}</ui-select-match>
+            <ui-select-choices repeat="user.username as user in users | filter:$select.search">
+              <div ng-bind-html="user.username"></div>
+            </ui-select-choices>
+          </ui-select>
+        </div>
         <br />
 
         <h4>Indices</h4>
@@ -64,36 +74,53 @@
           </thead>
           <tbody>
             <tr>
-              <td colspan="5">
-                <form ng-submit="addIndex(role.indices, newIndex); newIndex.names[0] = '';">
-                  <div class="input-group" style="width: 100%">
-                    <span class="input-group-addon">
-                      <i class="fa fa-search"></i>
-                    </span>
-                    <input type="text" class="form-control" ng-model="newIndex.names[0]" placeholder="Add index..." />
-                  </div>
-                </form>
+              <td colspan="4">
+                <div class="input-group" style="width: 100%">
+                  <span class="input-group-addon">
+                    <i class="fa fa-search"></i>
+                  </span>
+                  <ui-select class="form-control" multiple limit="25" ng-model="newIndex.names">
+                    <ui-select-match placeholder="Add an index...">{{$item}}</ui-select-match>
+                    <ui-select-choices repeat="indexPattern in indexPatterns | filter:$select.search">
+                      <div ng-bind-html="indexPattern"></div>
+                    </ui-select-choices>
+                  </ui-select>
+                </div>
+              </td>
+              <td>
+                <button ng-click="addIndex(role.indices, newIndex)" ng-disabled="newIndex.names.length === 0" class="btn btn-primary">
+                  <i class="fa fa-plus"></i>
+                </button>
               </td>
             </tr>
             <tr ng-repeat="index in role.indices">
               <td><div ng-repeat="name in index.names">{{name}}</div></td>
               <td>
-                <select class="form-control" chosen multiple ng-model="index.privileges" ng-options="privilege for privilege in privileges.indices" placeholder-text-multiple="'Add a new privilege...'"></select>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <i class="fa fa-search"></i>
+                  </span>
+                  <ui-select class="form-control" multiple ng-model="index.privileges">
+                    <ui-select-match placeholder="Add a privilege...">{{$item}}</ui-select-match>
+                    <ui-select-choices repeat="privilege in privileges.indices | filter:$select.search" >
+                      <div ng-bind-html="privilege"></div>
+                    </ui-select-choices>
+                  </ui-select>
+                </div>
               </td>
               <td><textarea rows="1" class="form-control" ng-model="index.query"></textarea></td>
               <td>
-                <form ng-submit="toggleSafe(index, 'fields', newFields[$index]); newFields[$index] = '';">
-                  <div class="input-group">
-                    <span class="input-group-addon">
-                      <i class="fa fa-search"></i>
-                    </span>
-                    <input type="text" class="form-control" ng-model="newFields[$index]" placeholder="Add a new field..." />
-                  </div>
-                </form>
-                <span ng-repeat="field in index.fields">
-                  {{field}}
-                  <a ng-click="toggle(index.fields, field)">x</a>
-                </span>
+                <div class="input-group">
+                  <span class="input-group-addon">
+                    <i class="fa fa-search"></i>
+                  </span>
+                  <ui-select class="form-control" multiple limit="25" ng-model="index.fields">
+                    <ui-select-match placeholder="Add a field...">{{$item}}</ui-select-match>
+                    <ui-select-choices repeat="field in fieldOptions[$index] | filter:$select.search">
+                      <div ng-bind-html="field"></div>
+                    </ui-select-choices>
+                  </ui-select>
+                </div>
               </td>
               <td><button ng-click="toggle(role.indices, index)" class="btn btn-danger"><i class="fa fa-trash"></i></button></td>
             </tr>

@@ -1,12 +1,12 @@
-import {cloneDeep, toggleInOut, includes} from 'lodash';
+import {cloneDeep, map, includes} from 'lodash';
 import routes from 'ui/routes';
+import {toggle} from 'plugins/security/lib/util';
 import template from 'plugins/security/views/settings/edit_role.html';
-import 'angular-resource';
-import 'angular-chosen';
+import 'angular-ui-select';
 import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
 import 'plugins/security/services/shield_privileges';
-import 'plugins/security/views/settings/edit_user.less';
+import 'plugins/security/services/shield_indices';
 
 routes.when('/settings/security/roles/edit/:name?', {
   template,
@@ -22,16 +22,19 @@ routes.when('/settings/security/roles/edit/:name?', {
     },
     users(ShieldUser) {
       return ShieldUser.query();
+    },
+    indexPatterns(shieldIndices) {
+      return shieldIndices.getIndexPatterns();
     }
   },
-  controller($scope, $route, $location, shieldPrivileges) {
+  controller($scope, $route, $location, shieldPrivileges, shieldIndices) {
     $scope.isNewRole = $route.current.params.name == null;
     $scope.role = $route.current.locals.role;
     $scope.users = $route.current.locals.users;
+    $scope.indexPatterns = $route.current.locals.indexPatterns;
     $scope.privileges = shieldPrivileges;
-    $scope.newIndex = {names: [''], privileges: [], fields: []};
-    $scope.newPrivileges = [];
-    $scope.newFields = [];
+    $scope.newIndex = {names: [], privileges: [], fields: []};
+    $scope.fieldOptions = [];
 
     $scope.deleteRole = (role) => {
       if (!confirm('Are you sure you want to delete this role? This action is irreversible!')) return;
@@ -48,14 +51,20 @@ routes.when('/settings/security/roles/edit/:name?', {
 
     $scope.addIndex = (indices, index) => {
       indices.push(cloneDeep(index));
+      index.names.length = 0;
     };
 
-    $scope.toggleSafe = (parent, key, item) => {
-      parent[key] = parent[key] || [];
-      toggleInOut(parent[key], item);
+    $scope.getFields = (index, i) => {
+      return shieldIndices.getFields(index.names.join(','))
+      .then((fields) => $scope.fieldOptions[i] = fields)
+      .catch(() => $scope.fieldOptions[i] = []);
     };
 
-    $scope.toggle = toggleInOut;
+    $scope.$watch('role.indices.length', () => {
+      map($scope.role.indices, (index, i) => $scope.getFields(index, i));
+    });
+
+    $scope.toggle = toggle;
     $scope.includes = includes;
   }
 });
