@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import expect from 'expect.js';
 import sinon from 'sinon';
 
 import replyFixture from '../../fixtures/reply';

@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import expect from 'expect.js';
 import sinon from 'sinon';
 import validateConfig from '../../../server/lib/validate_config';
 
@@ -20,7 +20,7 @@ describe('Validate config', function () {
       'server.ssl.cert': 'bar'
     }, logSpy);
 
-    expect(validateWithoutEncryptionKey).to.throw(/xpack.security.encryptionKey is required/);
+    expect(validateWithoutEncryptionKey).to.throwError(/xpack.security.encryptionKey is required/);
     sinon.assert.notCalled(logSpy);
   });
 
@@ -29,7 +29,7 @@ describe('Validate config', function () {
       'xpack.security.encryptionKey': 'baz'
     }, logSpy);
 
-    expect(validateWithoutSsl).to.throw(/HTTPS is required/);
+    expect(validateWithoutSsl).to.throwError(/HTTPS is required/);
     sinon.assert.notCalled(logSpy);
   });
 
@@ -39,7 +39,7 @@ describe('Validate config', function () {
       'xpack.security.skipSslCheck': true
     }, logSpy);
 
-    expect(validateWithNoSslSkipCheck).not.to.throw();
+    expect(validateWithNoSslSkipCheck).not.to.throwError();
     sinon.assert.calledWithMatch(logSpy, /skipping.+ssl\ check/i);
     sinon.assert.calledWithMatch(logSpy, /ssl\ is\ required/i);
   });
@@ -51,7 +51,7 @@ describe('Validate config', function () {
       'xpack.security.useUnsafeSessions': true
     }, logSpy);
 
-    expect(validateWithNoSslSkipCheck).not.to.throw();
+    expect(validateWithNoSslSkipCheck).not.to.throwError();
     sinon.assert.calledWithMatch(logSpy, /skipping.+ssl\ check/i);
     sinon.assert.calledWithMatch(logSpy, /insecure\ session/i);
     sinon.assert.calledWithMatch(logSpy, /not\ recommended/i);
@@ -64,7 +64,7 @@ describe('Validate config', function () {
       'xpack.security.encryptionKey': 'baz'
     }, logSpy);
 
-    expect(validateWithValidConfig).not.to.throw();
+    expect(validateWithValidConfig).not.to.throwError();
     sinon.assert.notCalled(logSpy);
   });
 });

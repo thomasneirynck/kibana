@@ -1,6 +1,6 @@
 const url = require('url');
 const Bluebird = require('bluebird');
-const { expect } = require('chai');
+const expect = require('expect.js');
 const savedObjects = require('../../../server/lib/saved_objects');
 const mockSavedObjects = require('../../fixtures/mock_saved_objects');
 
@@ -48,8 +48,8 @@ describe('saved_objects', function () {
         expect(savedObject).to.have.property('searchSource');
         expect(savedObject).to.have.property('getUrl');
 
-        expect(savedObject.searchSource).to.be.instanceof(Object);
-        expect(savedObject.getUrl).to.be.instanceof(Function);
+        expect(savedObject.searchSource).to.be.an(Object);
+        expect(savedObject.getUrl).to.be.a(Function);
       });
 
       describe('getUrl', function () {

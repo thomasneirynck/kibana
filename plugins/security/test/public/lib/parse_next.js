@@ -1,4 +1,5 @@
-import {expect} from 'chai';
+import expect from 'expect.js';
+
 import parseNext from '../../../public/lib/parse_next';
 
 describe('parseNext', () => {

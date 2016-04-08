@@ -1,4 +1,4 @@
-import {expect} from 'chai';
+import expect from 'expect.js';
 import sinon from 'sinon';
 import Promise from 'bluebird';
 import basicAuth from '../../../server/lib/basic_auth';
@@ -63,21 +63,21 @@ describe('Basic auth', function () {
 
     it('should throw on non-string', function () {
       let check = () => basicAuth.parseHeader();
-      expect(check).to.throw(/should be a string/);
+      expect(check).to.throwError(/should be a string/);
 
       check = () => basicAuth.parseHeader({});
-      expect(check).to.throw(/should be a string/);
+      expect(check).to.throwError(/should be a string/);
 
       check = () => basicAuth.parseHeader([]);
-      expect(check).to.throw(/should be a string/);
+      expect(check).to.throwError(/should be a string/);
     });
 
     it('should throw if not Basic auth', function () {
       let check = () => basicAuth.parseHeader('Bearer xxxx');
-      expect(check).to.throw(/not basic/i);
+      expect(check).to.throwError(/not basic/i);
 
       check = () => basicAuth.parseHeader('blahblahblah');
-      expect(check).to.throw(/not basic/i);
+      expect(check).to.throwError(/not basic/i);
     });
   });
 });

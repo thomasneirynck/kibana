@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import expect from 'expect.js';
 import { create as createError } from 'boom';
 
 import * as errors from '../../../server/lib/errors';
