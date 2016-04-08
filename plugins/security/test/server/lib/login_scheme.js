@@ -6,14 +6,12 @@ import replyFixture from '../../fixtures/reply';
 import requestFixture from '../../fixtures/request';
 import serverFixture from '../../fixtures/server';
 
-import * as authRedirect from '../../../server/lib/auth_redirect';
 import * as loginScheme from '../../../server/lib/login_scheme';
 
 describe('lib/login_scheme', function () {
   describe('#default()', () => {
     describe('returned function', () => {
       let scheme;
-      let mock;
       let params;
       let server;
       let request;

@@ -1,5 +1,4 @@
 import { expect } from 'chai';
-import sinon from 'sinon';
 import { create as createError } from 'boom';
 
 import * as errors from '../../../server/lib/errors';

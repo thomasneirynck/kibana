@@ -6,7 +6,8 @@ describe('Validate config', function () {
   const ttl = 1000;
   const config = {get: sinon.stub().returns(ttl)};
   const server = {config: sinon.stub().returns(config)};
-  let clock, calculateExpires;
+  let clock;
+  let calculateExpires;
 
   before(() => {
     clock = sinon.useFakeTimers();
