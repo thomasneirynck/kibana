@@ -17,8 +17,8 @@ chrome
     submit(username, password) {
       this.error = false;
       $http.post('./api/security/v1/login', {username, password}).then(
-        (response) => window.location.href = `.${next}`,
-        (error) => this.error = true
+        () => window.location.href = `.${next}`,
+        () => this.error = true
       );
     }
   };

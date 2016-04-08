@@ -13,7 +13,7 @@ import authenticateFactory from './auth_redirect';
  * @return {Function}
  */
 export default function createScheme({ redirectUrl, strategy }) {
-  return (server, options) => {
+  return (server) => {
     const authenticate = authenticateFactory({
       onError: setExpirationMessage,
       redirectUrl,
