@@ -81,7 +81,7 @@
                   </span>
                   <ui-select class="form-control" multiple limit="25" ng-model="newIndex.names">
                     <ui-select-match placeholder="Add an index...">{{$item}}</ui-select-match>
-                    <ui-select-choices repeat="indexPattern in indexPatterns | filter:$select.search">
+                    <ui-select-choices repeat="indexPattern in union([$select.search], indexPatterns) | filter:$select.search">
                       <div ng-bind-html="indexPattern"></div>
                     </ui-select-choices>
                   </ui-select>
@@ -116,7 +116,7 @@
                   </span>
                   <ui-select class="form-control" multiple limit="25" ng-model="index.fields">
                     <ui-select-match placeholder="Add a field...">{{$item}}</ui-select-match>
-                    <ui-select-choices repeat="field in fieldOptions[$index] | filter:$select.search">
+                    <ui-select-choices repeat="field in union([$select.search], fieldOptions[$index]) | filter:$select.search">
                       <div ng-bind-html="field"></div>
                     </ui-select-choices>
                   </ui-select>

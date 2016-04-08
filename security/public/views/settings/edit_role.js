@@ -1,4 +1,4 @@
-import {cloneDeep, map, includes} from 'lodash';
+import _ from 'lodash';
 import routes from 'ui/routes';
 import {toggle} from 'plugins/security/lib/util';
 import template from 'plugins/security/views/settings/edit_role.html';
@@ -50,7 +50,7 @@ routes.when('/settings/security/roles/edit/:name?', {
     };
 
     $scope.addIndex = (indices, index) => {
-      indices.push(cloneDeep(index));
+      indices.push(_.cloneDeep(index));
       index.names.length = 0;
     };
 
@@ -61,10 +61,11 @@ routes.when('/settings/security/roles/edit/:name?', {
     };
 
     $scope.$watch('role.indices.length', () => {
-      map($scope.role.indices, (index, i) => $scope.getFields(index, i));
+      _.map($scope.role.indices, (index, i) => $scope.getFields(index, i));
     });
 
     $scope.toggle = toggle;
-    $scope.includes = includes;
+    $scope.includes = _.includes;
+    $scope.union = _.flow(_.union, _.compact);
   }
 });
