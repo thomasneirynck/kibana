@@ -78,7 +78,7 @@ gulp.task('clean', function () {
   return del([buildDir, targetDir]);
 });
 
-gulp.task('build', ['clean'], function () {
+gulp.task('build', ['lint', 'clean'], function () {
   const excludes = ['node_modules', 'package.json'];
   const includes = buildIncludes.filter((include) => excludes.indexOf(include) === -1);
   return syncPathsTo(includes, buildTarget)

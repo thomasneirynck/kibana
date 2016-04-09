@@ -1,7 +1,7 @@
 require('babel/register')();
 
 var gulp = require('gulp');
-var gulpUtil = require('gulp-util');
+//var gulpUtil = require('gulp-util');
 var eslint = require('gulp-eslint');
 var mocha = require('gulp-mocha');
 var istanbul = require('gulp-istanbul');
