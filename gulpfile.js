@@ -2,20 +2,19 @@ require('babel-register')();
 
 // relative location of Kibana install
 var pathToKibana = '../../kibana';
-// enable debugging output
-var DEBUG = false;
 
+var gulp = require('gulp');
+var g = require('gulp-load-plugins')();
 var path = require('path');
-var childProcess = require('child_process');
 var fs = require('fs');
-var Promise = require('bluebird');
-var mkdirp = require('mkdirp');
-var Rsync = require('rsync');
+var Bluebird = require('bluebird');
 var del = require('del');
 var prettyData = require('pretty-data');
 var checksum = require('checksum');
-var gulp = require('gulp');
-var g = require('gulp-load-plugins')();
+
+var logger = require('./gulp_helpers/logger');
+var exec = require('./gulp_helpers/exec')(g.util, logger);
+var syncPaths = require('./gulp_helpers/sync_paths');
 
 var pkg = require('./package.json');
 var packageFile = `${pkg.name}-${pkg.version}.zip`;
@@ -46,62 +45,7 @@ var excludedFiles = [
   // '.phantom/phantomjs*',
 ];
 
-function log() {
-  if (!DEBUG) return;
-  console.log.apply(console, arguments);
-}
-
-function syncPathsTo(includes, dest) {
-  log(includes);
-  // return;
-
-  return Promise.fromCallback(function (cb) {
-    mkdirp(dest, cb);
-  })
-  .then(function () {
-    Promise.mapSeries(includes, function (source) {
-      var source = path.resolve(__dirname, source);
-      var rsync = new Rsync();
-
-      rsync.source(source).destination(dest);
-      rsync.flags('uav').recursive(true).set('delete');
-      rsync.include(includes);
-      rsync.exclude(excludedDeps.concat(excludedFiles));
-
-      // debugging
-      rsync.output((data) => log(data.toString('utf-8').trim()));
-
-      return Promise.fromCallback(function (cb) {
-        rsync.execute(cb);
-      });
-    });
-  });
-}
-
-function exec(cmd, args, opts) {
-  args = args || [];
-  opts = opts || {};
-  return new Promise(function (resolve, reject) {
-    var proc = childProcess.spawn(cmd, args, opts);
-
-    proc.stdout.on('data', function (data) {
-      log(data.toString('utf-8').trim());
-    });
-
-    proc.stderr.on('data', function (data) {
-      g.util.log(data.toString('utf-8').trim());
-    });
-
-    proc.on('error', function (err) {
-      reject(err);
-    });
-
-    proc.on('close', function (code) {
-      if (code !== 0) reject(new Error('Process exited with code ' + code));
-      resolve();
-    });
-  });
-}
+var syncPathsTo = syncPaths(excludedDeps.concat(excludedFiles), logger);
 
 gulp.task('sync', function () {
   return syncPathsTo(buildIncludes, kibanaPluginDir);
@@ -158,7 +102,7 @@ gulp.task('package', ['build'], function () {
   var targetFile = path.join(targetDir, packageFile);
   var checksumFile = path.join(targetDir, packageFile + '.sha1.txt');
 
-  return Promise.fromCallback(function (cb) {
+  return Bluebird.fromCallback(function (cb) {
     return gulp.src(buildDir + '/**', { dot: true })
     .pipe(g.zip(packageFile))
     .pipe(gulp.dest(targetDir))
@@ -166,11 +110,11 @@ gulp.task('package', ['build'], function () {
     .on('error', cb);
   })
   .then(function () {
-    return Promise.fromCallback(function (cb) {
+    return Bluebird.fromCallback(function (cb) {
       checksum.file(targetFile, cb);
     })
     .then(function (sum) {
-      log('Package checksum', sum);
+      logger('Package checksum', sum);
       return fs.writeFileSync(checksumFile, sum, { encoding: 'utf8' });
     });
   });
