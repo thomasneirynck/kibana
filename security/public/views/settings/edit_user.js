@@ -33,8 +33,8 @@ routes.when('/settings/security/users/edit/:username?', {
 
     $scope.saveUser = (user) => {
       user.$save()
-        .then($scope.goToUserList)
-        .catch(error => $scope.error = _.get(error, 'data.message') || 'Username & password are required.');
+      .then($scope.goToUserList)
+      .catch(error => $scope.error = _.get(error, 'data.message') || 'Username & password are required.');
     };
 
     $scope.goToUserList = () => {

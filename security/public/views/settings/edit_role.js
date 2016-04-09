@@ -42,7 +42,9 @@ routes.when('/settings/security/roles/edit/:name?', {
     };
 
     $scope.saveRole = (role) => {
-      role.$save().then($scope.goToRoleList);
+      role.$save()
+      .then($scope.goToRoleList)
+      .catch(error => $scope.error = _.get(error, 'data.message') || 'Role name is required.');
     };
 
     $scope.goToRoleList = () => {
