@@ -13,7 +13,7 @@ var prettyData = require('pretty-data');
 var checksum = require('checksum');
 
 var logger = require('./gulp_helpers/logger');
-var exec = require('./gulp_helpers/exec')(g.util, logger);
+var exec = require('./gulp_helpers/exec')(g.util);
 var syncPaths = require('./gulp_helpers/sync_paths');
 
 var pkg = require('./package.json');
@@ -42,10 +42,9 @@ var excludedFiles = [
   '.DS_Store',
   '/**/__tests__/**',
   'node_modules/.bin',
-  // '.phantom/phantomjs*',
 ];
 
-var syncPathsTo = syncPaths(excludedDeps.concat(excludedFiles), logger);
+var syncPathsTo = syncPaths(excludedDeps.concat(excludedFiles));
 
 gulp.task('sync', function () {
   return syncPathsTo(buildIncludes, kibanaPluginDir);

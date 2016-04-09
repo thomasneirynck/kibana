@@ -1,7 +1,9 @@
 var childProcess = require('child_process');
 var Bluebird = require('bluebird');
 
-module.exports = (gulpUtil, logger) => {
+var logger = require('./logger');
+
+module.exports = (gulpUtil) => {
   return function exec(cmd, args, opts) {
     args = args || [];
     opts = opts || {};

@@ -3,7 +3,9 @@ var Bluebird = require('bluebird');
 var mkdirp = require('mkdirp');
 var Rsync = require('rsync');
 
-module.exports = (excludes, logger) => {
+var logger = require('./logger');
+
+module.exports = (excludes) => {
   return function syncPathsTo(includes, dest) {
     logger(includes);
     // return;
