@@ -9,6 +9,6 @@ esvm/
 build/
 target/
 
-reporting/.phantom/
+_phantom/
 coverage
 .aws-config.json
