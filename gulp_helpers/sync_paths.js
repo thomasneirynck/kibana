@@ -14,7 +14,7 @@ module.exports = (excludes) => {
       mkdirp(dest, cb);
     })
     .then(function () {
-      Bluebird.mapSeries(includes, function (source) {
+      return Bluebird.mapSeries(includes, function (source) {
         var source = path.resolve(__dirname, '..', source);
         var rsync = new Rsync();
 
