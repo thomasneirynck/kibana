@@ -15,6 +15,7 @@ var checksum = require('checksum');
 var logger = require('./gulp_helpers/logger');
 var exec = require('./gulp_helpers/exec')(g.util);
 var syncPaths = require('./gulp_helpers/sync_paths');
+var downloadPhantom = require('./gulp_helpers/download_phantom');
 
 var pkg = require('./package.json');
 var packageFile = `${pkg.name}-${pkg.version}.zip`;
@@ -30,6 +31,7 @@ var buildIncludes = [
   'node_modules',
   '.node-version',
   'plugins',
+  '.phantom',
   // 'public',
   // 'server',
 ];
@@ -81,6 +83,9 @@ gulp.task('build', ['lint', 'clean'], function () {
   const excludes = ['node_modules', 'package.json'];
   const includes = buildIncludes.filter((include) => excludes.indexOf(include) === -1);
   return syncPathsTo(includes, buildTarget)
+  .then(function () {
+    return downloadPhantom(path.join(buildTarget, '.phantom'));
+  })
   .then(function () {
     // create new package.json
     var includeProps = ['name', 'version', 'dependencies'];

@@ -43,7 +43,7 @@ function getBinaryPath() {
 
 function getPackagePath() {
   var dirName = '.phantom';
-  return path.resolve(__dirname, '..', '..', dirName) + '/';
+  return path.resolve(__dirname, '..', '..', '..', '..', dirName) + '/';
 }
 
 function getPackage() {
