@@ -5,7 +5,8 @@
   "scripts": {
     "start": "gulp dev",
     "build": "gulp build",
-    "package": "gulp package"
+    "package": "gulp package",
+    "release": "gulp release"
   },
   "devDependencies": {
     "@elastic/eslint-config-kibana": "0.0.2",

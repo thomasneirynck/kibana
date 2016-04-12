@@ -87,3 +87,27 @@ Make sure you have the dependencies installed by running `npm install`.
 Once complete, use `npm run build`. Output will be placed in the `build` path (it will be created).
 
 If you'd like to get a zip package and a sha1 checksum file, use `npm run package`. Output will be placed in the `target` path (it will be created). Resulting build output will also be left in the `build` path.
+
+## Releasing X-Pack UI Builds
+
+Make sure you have the dependencies installed by running `npm install`.
+
+Once complete, use `npm run release`. Build and package output will be placed in the `build` and `target` paths respectively (it will be created).
+
+Note that you will need AWS credentials for the upload to success. To provide these credentials, create a `~/.aws/credentials` file with your credentials, which should look like this:
+
+```
+[default] ; the default profile
+aws_access_key_id = ...
+aws_secret_access_key = ...
+
+[another-config] ; my "personal-account" profile
+aws_access_key_id = ...
+aws_secret_access_key = ...
+```
+
+The `default` profile is used automatically, but setting the `AWS_PROFILE` environment variable will allow you to use another profile, if you happen to have multiple.
+
+`AWS_PROFILE=another-config npm run release`
+
+See [the AWS docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Creating_the_Shared_Credentials_File)for more information.

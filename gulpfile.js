@@ -11,6 +11,7 @@ var Bluebird = require('bluebird');
 var del = require('del');
 var prettyData = require('pretty-data');
 var checksum = require('checksum');
+var aws = require('aws-sdk');
 
 var logger = require('./gulp_helpers/logger');
 var exec = require('./gulp_helpers/exec')(g.util);
@@ -19,6 +20,7 @@ var downloadPhantom = require('./gulp_helpers/download_phantom');
 
 var pkg = require('./package.json');
 var packageFile = `${pkg.name}-${pkg.version}.zip`;
+var checksumFile = packageFile + '.sha1.txt';
 
 var buildDir = path.resolve(__dirname, 'build');
 var buildTarget = path.resolve(buildDir, 'kibana', pkg.name);
@@ -104,7 +106,7 @@ gulp.task('build', ['lint', 'clean'], function () {
 
 gulp.task('package', ['build'], function () {
   var targetFile = path.join(targetDir, packageFile);
-  var checksumFile = path.join(targetDir, packageFile + '.sha1.txt');
+  var targetChecksum = path.join(targetDir, checksumFile);
 
   return Bluebird.fromCallback(function (cb) {
     return gulp.src(buildDir + '/**', { dot: true })
@@ -119,8 +121,40 @@ gulp.task('package', ['build'], function () {
     })
     .then(function (sum) {
       logger('Package checksum', sum);
-      return fs.writeFileSync(checksumFile, sum, { encoding: 'utf8' });
+      return fs.writeFileSync(targetChecksum, sum, { encoding: 'utf8' });
     });
+  });
+});
+
+gulp.task('release', ['package'], function () {
+  var s3 = new aws.S3();
+
+  function uploadFile(filename) {
+    var params = {
+      Bucket: 'download.elasticsearch.org',
+      Key: 'kibana/x-pack/' + filename,
+      Body: fs.createReadStream(path.join(targetDir, filename))
+    };
+
+    return Bluebird.fromCallback(function (cb) {
+      return s3.upload(params, cb);
+    });
+  }
+
+  var uploads = [
+    packageFile,
+    checksumFile
+  ];
+
+  return Bluebird.each(uploads, function (upload) {
+    return uploadFile(upload)
+    .then(function (result) {
+      var location = result.Location.replace(/%2F/g, '/').replace('s3.amazonaws.com/', '');
+      g.util.log(g.util.colors.green('Upload finished'), g.util.colors.yellow(location));
+    });
+  })
+  .catch(function (err) {
+    g.util.log(g.util.colors.red('Release Error!'), g.util.colors.yellow(err.message));
   });
 });
 
