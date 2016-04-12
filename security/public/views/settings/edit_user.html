@@ -14,7 +14,7 @@
           <div class="pull-right">
             <button ng-if="!isNewUser" class="btn btn-danger" ng-click="deleteUser(user)">Delete</button>
             <a href="#/settings/security/users" class="btn btn-default">Cancel</a>
-            <button class="btn btn-primary" ng-click="saveUser(user)">Save</button>
+            <button class="btn btn-primary" ng-click="saveUser(user, confirmPassword)">Save</button>
           </div>
         </div>
         <form class="form-horizontal row">
@@ -30,6 +30,12 @@
             <div class="col-md-4">
               <input type="password" ng-show="showPasswordField" class="form-control" id="password" ng-model="user.password" required />
               <a ng-click="showPasswordField = !showPasswordField" ng-show="!showPasswordField">Change Password</a>
+            </div>
+          </div>
+          <div class="form-group" ng-show="showPasswordField" >
+            <label for="confirm" class="col-md-2 control-label">Confirm Password</label>
+            <div class="col-md-4">
+              <input type="password" ng-show="showPasswordField" class="form-control" id="confirm" ng-model="confirmPassword" required />
             </div>
           </div>
           <div class="form-group">

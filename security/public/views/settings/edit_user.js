@@ -31,7 +31,9 @@ routes.when('/settings/security/users/edit/:username?', {
       user.$delete().then($scope.goToUserList);
     };
 
-    $scope.saveUser = (user) => {
+    $scope.saveUser = (user, confirmPassword) => {
+      if (user.password !== confirmPassword) return $scope.error = 'Passwords do not match.';
+
       user.$save()
       .then($scope.goToUserList)
       .catch(error => $scope.error = _.get(error, 'data.message') || 'Username & password are required.');
