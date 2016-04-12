@@ -17,7 +17,7 @@ function installPhantom() {
   var phantomPackage = getPackage();
 
   return Promise.try(function () {
-    return phantomPackage.binary;
+    return fs.accessSync(phantomPackage.binary, fs.X_OK);
   })
   .catch(function () {
     // error here means the binary does not exist, so install it
