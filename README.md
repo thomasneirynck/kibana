@@ -4,11 +4,11 @@ This folder has the Kibana X-Pack plugin code
 
 ### UI Development
 
-The easiest way to develop UI plugins is to use the built-in script to watch for changes and sync back to Kibana.
+The easiest way to develop UI plugins is to use the built-in script to watch for changes and sync them to Kibana, which will also cause Kibana to restart when running in dev mode.
 
 First, you will need the plugin dependencies, get them by running `npm install`.
 
-Once you completed, assuming that you have the `x-plugins` repo at the same base path as your `kibana`, it's really simple to get going.
+Once completed, assuming that you have the `x-plugins` repo at the same base path as your `kibana`, it's really simple to get going.
 
 ```
 $ ls
@@ -20,7 +20,7 @@ Simply use `npm start` to watch for and sync changes to Kibana.
 
 #### Alternate: Run the build
 
-If this is not the case, of if you rather lean on Kibana, you'll need to perform a build and start Kibana in dev mode with a custom plugin path.
+If this is not the case, or if you rather lean on Kibana, you'll need to perform a build and start Kibana in dev mode with a custom plugin path.
 
 ```
 # in x-plugins
@@ -30,7 +30,7 @@ npm run build
 npm start -- --plugin-path=../path/to/x-plugins/kibana/build/kibana/x-pack
 ```
 
-This is also a useful way to test the build. The downside is that **changes are not automatically synced for you**, so you will need to re-run the build every time you want to use the changes you've made (Kibana will automatically restart when you do).
+This is also a useful way to test the build. The downside is that **changes are not automatically synced for you**, so you will need to re-run the build every time you want to use the changes you've made (Kibana will automatically restart when you do, if running in dev mode).
 
 ### Elasticsearch and X-Pack from source
 
@@ -92,9 +92,9 @@ If you'd like to get a zip package and a sha1 checksum file, use `npm run packag
 
 Make sure you have the dependencies installed by running `npm install`.
 
-Once complete, use `npm run release`. Build and package output will be placed in the `build` and `target` paths respectively (it will be created).
+Once complete, use `npm run release`. Build and package output will be placed in the `build` and `target` paths respectively (they will be created).
 
-Note that you will need AWS credentials for the upload to success. To provide these credentials, create a `~/.aws/credentials` file with your credentials, which should look like this:
+Note that you will need AWS credentials for the upload to succeed. To provide these credentials, create a `~/.aws/credentials` file with your credentials, which should look like this:
 
 ```
 [default] ; the default profile
@@ -110,4 +110,4 @@ The `default` profile is used automatically, but setting the `AWS_PROFILE` envir
 
 `AWS_PROFILE=another-config npm run release`
 
-See [the AWS docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Creating_the_Shared_Credentials_File)for more information.
+See [the AWS docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Creating_the_Shared_Credentials_File) for more information.
