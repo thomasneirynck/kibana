@@ -15,7 +15,7 @@ var aws = require('aws-sdk');
 
 var logger = require('./gulp_helpers/logger');
 var exec = require('./gulp_helpers/exec')(g.util);
-var syncPaths = require('./gulp_helpers/sync_paths');
+var syncPath = require('./gulp_helpers/sync_path');
 var downloadPhantom = require('./gulp_helpers/download_phantom');
 
 var pkg = require('./package.json');
@@ -48,10 +48,12 @@ var excludedFiles = [
   'node_modules/.bin',
 ];
 
-var syncPathsTo = syncPaths(excludedDeps.concat(excludedFiles));
+var syncPathTo = syncPath(excludedDeps.concat(excludedFiles));
 
 gulp.task('sync', function () {
-  return syncPathsTo(buildIncludes, kibanaPluginDir);
+  return Bluebird.mapSeries(buildIncludes, function (source) {
+    return syncPathTo(source, kibanaPluginDir, source !== '.phantom');
+  });
 });
 
 gulp.task('lint', function () {
@@ -84,7 +86,9 @@ gulp.task('clean', function () {
 gulp.task('build', ['lint', 'clean'], function () {
   const excludes = ['node_modules', 'package.json'];
   const includes = buildIncludes.filter((include) => excludes.indexOf(include) === -1);
-  return syncPathsTo(includes, buildTarget)
+  return Bluebird.mapSeries(includes, function (source) {
+    return syncPathTo(source, buildTarget, source !== '.phantom');
+  })
   .then(function () {
     return downloadPhantom(path.join(buildTarget, '.phantom'));
   })

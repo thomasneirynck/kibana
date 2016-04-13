@@ -56,7 +56,7 @@ function fetchBinaries(dest) {
       .catch(function () {
         logger('Binary check failed, attempting to download');
 
-        return Bluebird.delay(6)
+        return Bluebird.delay(10)
         .then(function () {
           return Bluebird.fromCallback(function (cb) {
             var ws = fs.createWriteStream(filepath)
