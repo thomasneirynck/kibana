@@ -43,8 +43,11 @@ function fetchBinaries(dest) {
       fs.readFile(file, function (err, buf) {
         if (err) return cb(err);
         var checksum = md5(buf);
-        logger(checksum);
-        if (binary.checksum !== checksum) return cb(binary.description + ' checksum failed');
+        if (binary.checksum !== checksum) {
+          logger('Download checksum', checksum);
+          logger('Expected checksum', binary.checksum);
+          return cb(binary.description + ' checksum failed');
+        }
         cb();
       });
     };
@@ -58,8 +61,9 @@ function fetchBinaries(dest) {
       .catch(function () {
         logger('Binary check failed, attempting to download');
 
-        return Bluebird.delay(10)
+        return Bluebird.delay(3000)
         .then(function () {
+          logger('Downloading', binary.url);
           return Bluebird.fromCallback(function (cb) {
             var ws = fs.createWriteStream(filepath)
             .on('finish', function () {

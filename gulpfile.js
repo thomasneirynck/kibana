@@ -51,8 +51,11 @@ var excludedFiles = [
 var syncPathTo = syncPath(excludedDeps.concat(excludedFiles));
 
 gulp.task('sync', function () {
-  return Bluebird.mapSeries(buildIncludes, function (source) {
-    return syncPathTo(source, kibanaPluginDir, source !== '.phantom');
+  return downloadPhantom(path.join(__dirname, '.phantom'))
+  .then(function () {
+    return Bluebird.mapSeries(buildIncludes, function (source) {
+      return syncPathTo(source, kibanaPluginDir, source !== '.phantom');
+    });
   });
 });
 
