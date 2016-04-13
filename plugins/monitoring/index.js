@@ -37,8 +37,8 @@ module.exports = function (kibana) {
       return object({
         enabled: boolean().default(true),
         loggingTag: string().default('monitoring-ui'),
-        index: string().default('.monitoring-data-1'),
-        index_prefix: string().default('.monitoring-es-1-'),
+        index: string().default('.monitoring-data-2'),
+        index_prefix: string().default('.monitoring-es-2-'),
         missing_intervals: number().default(12),
         max_bucket_size: number().default(10000),
         min_interval_seconds: number().default(10),
