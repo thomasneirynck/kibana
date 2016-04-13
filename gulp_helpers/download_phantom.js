@@ -42,7 +42,9 @@ function fetchBinaries(dest) {
     var verifyChecksum = function (file, cb) {
       fs.readFile(file, function (err, buf) {
         if (err) return cb(err);
-        if (binary.checksum !== md5(buf)) return cb(binary.description + ' checksum failed');
+        var checksum = md5(buf);
+        logger(checksum);
+        if (binary.checksum !== checksum) return cb(binary.description + ' checksum failed');
         cb();
       });
     };

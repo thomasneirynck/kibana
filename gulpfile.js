@@ -80,6 +80,7 @@ gulp.task('lint', function () {
 });
 
 gulp.task('clean', function () {
+  logger('Deleting', [buildDir, targetDir].join(', '));
   return del([buildDir, targetDir]);
 });
 
