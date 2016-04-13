@@ -59,7 +59,7 @@ mod.controller('nodes', ($route, timefilter, globalState, Private, $executor, $h
   });
 
   $executor.register({
-    execute: () => monitoringClusters.fetch(),
+    execute: () => monitoringClusters(),
     handleResponse: setClusters
   });
 

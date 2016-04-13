@@ -1,8 +1,8 @@
 /*
  * This endpoint is ONLY for development and internal testing.
  */
-const root = require('requirefrom')('');
-const handleError = root('server/lib/handle_error');
+const handleError = require('../../../lib/handle_error');
+
 module.exports = (server) => {
   const callWithRequest = server.plugins.monitoring.callWithRequest;
   server.route({

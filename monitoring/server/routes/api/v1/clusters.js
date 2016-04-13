@@ -1,31 +1,45 @@
 const Promise = require('bluebird');
 const _ = require('lodash');
 const Joi = require('joi');
-const root = require('requirefrom')('');
-const getClustersStats = root('server/lib/get_clusters_stats');
-const getClusters = root('server/lib/get_clusters');
-const getClustersHealth = root('server/lib/get_clusters_health');
-const calculateIndices = root('server/lib/calculate_indices');
-const getLastState = root('server/lib/get_last_state');
-const getClusterStatus = root('server/lib/get_cluster_status');
-const getMetrics = root('server/lib/get_metrics');
-const getShardStats = root('server/lib/get_shard_stats');
-const getLastRecovery = root('server/lib/get_last_recovery');
-const calculateClusterStatus = root('server/lib/calculate_cluster_status');
-const handleError = root('server/lib/handle_error');
+const getClustersStats = require('../../../lib/get_clusters_stats');
+const getClusters = require('../../../lib/get_clusters');
+const getClustersHealth = require('../../../lib/get_clusters_health');
+const calculateIndices = require('../../../lib/calculate_indices');
+const getLastState = require('../../../lib/get_last_state');
+const getClusterStatus = require('../../../lib/get_cluster_status');
+const getMetrics = require('../../../lib/get_metrics');
+const getShardStats = require('../../../lib/get_shard_stats');
+const getLastRecovery = require('../../../lib/get_last_recovery');
+const calculateClusterStatus = require('../../../lib/calculate_cluster_status');
+const handleError = require('../../../lib/handle_error');
 
 module.exports = (server) => {
   const config = server.config();
   const callWithRequest = server.plugins.monitoring.callWithRequest;
 
   server.route({
-    method: 'GET',
+    method: 'POST',
     path: '/api/monitoring/v1/clusters',
+    config: {
+      validate: {
+        payload: Joi.object({
+          timeRange: Joi.object({
+            min: Joi.date().required(),
+            max: Joi.date().required()
+          }).required()
+        })
+      }
+    },
     handler: (req, reply) => {
-      return getClusters(req)
-      .then(getClustersStats(req))
-      .then(getClustersHealth(req))
-      .then(clusters => reply(_.sortBy(clusters, 'cluster_name')))
+      const start = req.payload.timeRange.min;
+      const end = req.payload.timeRange.max;
+      return calculateIndices(req, start, end)
+      .then(indices => {
+        return getClusters(req, indices)
+        .then(getClustersStats(req))
+        .then(getClustersHealth(req))
+        .then(clusters => reply(_.sortBy(clusters, 'cluster_name')));
+      })
       .catch(err => reply(handleError(err, req)));
     }
   });

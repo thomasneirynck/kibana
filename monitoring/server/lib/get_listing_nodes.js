@@ -26,9 +26,8 @@
 const moment = require('moment');
 const createQuery = require('./create_query.js');
 const calcAuto = require('./calculate_auto');
-const root = require('requirefrom')('');
-const metrics = root('server/lib/metrics');
-const nodeAggVals = root('server/lib/node_agg_vals');
+const metrics = require('./metrics');
+const nodeAggVals = require('./node_agg_vals');
 const mapListingResponse = require('./map_listing_response');
 
 module.exports = (req, indices) => {
@@ -131,7 +130,14 @@ module.exports = (req, indices) => {
         return prev;
       }, {}),
       // for listing metrics
-      rows: mapListingResponse({ buckets, listingMetrics, min, max, bucketSize })
+      rows: mapListingResponse({
+        type: 'nodes',
+        items: buckets,
+        listingMetrics,
+        min,
+        max,
+        bucketSize
+      })
     };
   });
 

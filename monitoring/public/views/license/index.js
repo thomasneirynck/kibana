@@ -1,6 +1,4 @@
 const _ = require('lodash');
-const chrome = require('ui/chrome');
-const tabs = require('../../lib/tabs');
 const mod = require('ui/modules').get('monitoring', [
   'monitoring/directives'
 ]);
@@ -30,9 +28,5 @@ mod.controller('licenseView', ($route, globalState, Private, timefilter, $scope)
   $scope.isExpired = (new Date()).getTime() > _.get($scope, 'cluster.license.expiry_date_in_millis');
 
   timefilter.enabled = false;
-
-  if ($scope.isExpired) {
-    chrome.setTabs([_.find(tabs, {id: 'home'})]);
-  }
 
 });

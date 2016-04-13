@@ -15,6 +15,10 @@ var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
 var buildTarget = path.join(buildDir, 'kibana', pkg.packageName);
 var packageFile = `${pkg.packageName}-${pkg.version}.zip`;
+var releaseInfo = {
+  bucket: 'download.elasticsearch.org',
+  path: 'kibana/x-pack/'
+};
 
 var ignoredPlugins = ['i', 'ignore'].reduce(function (ignore, key) {
   if (typeof argv[key] === 'string') ignore = ignore.concat(argv[key].split(','));
@@ -37,6 +41,10 @@ gulp.task('build-only', ['show-plugins'], runBuild);
 gulp.task('package', ['build'], runPackage);
 
 gulp.task('package-only', runPackage);
+
+gulp.task('release', ['package'], runRelease);
+
+gulp.task('release-only', runRelease);
 
 gulp.task('clean', function () {
   return del([buildDir, targetDir]);
@@ -107,6 +115,27 @@ function runPackage() {
       return fs.writeFileSync(checksumFile, checksum, { encoding: 'utf8' });
     });
   });
+}
+
+function runRelease() {
+  var awsConfig;
+  try {
+    awsConfig = JSON.parse(fs.readFileSync('./.aws-config.json'));
+  } catch(e) {
+    g.util.log(g.util.colors.red('Failed to read credentials from .aws-config.json'));
+    throw new Error('Could not read AWS credentials');
+  }
+
+  Object.assign(awsConfig, {
+    bucket: releaseInfo.bucket
+  });
+
+  var awsOptions = {
+    uploadPath: releaseInfo.path
+  };
+
+  return gulp.src('./target/*')
+  .pipe(g.s3(awsConfig, awsOptions));
 }
 
 function createEntry() {

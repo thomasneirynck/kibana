@@ -61,7 +61,7 @@ mod.controller('indexView', (timefilter, $route, Private, globalState, $executor
   });
 
   $executor.register({
-    execute: () => monitoringClusters.fetch(),
+    execute: () => monitoringClusters(),
     handleResponse: setClusters
   });
 

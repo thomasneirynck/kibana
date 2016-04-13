@@ -1,4 +1,5 @@
 define(function (require) {
+  require('plugins/monitoring/directives/main/index');
   require('plugins/monitoring/directives/cluster_status/index');
   require('plugins/monitoring/directives/chart/index');
   require('plugins/monitoring/directives/shard_activity/index');

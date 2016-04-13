@@ -65,7 +65,7 @@ mod.controller('indices', ($route, globalState, timefilter, $http, Private, $exe
   });
 
   $executor.register({
-    execute: () => monitoringClusters.fetch(),
+    execute: () => monitoringClusters(),
     handleResponse: setClusters
   });
 

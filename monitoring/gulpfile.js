@@ -19,7 +19,7 @@ var buildDir = path.resolve(__dirname, 'build');
 var targetDir = path.resolve(__dirname, 'target');
 var buildTarget = path.resolve(buildDir, pkg.name);
 var coverageDir = path.resolve(__dirname, 'coverage');
-var xpackBuildDir = path.resolve('../packager/build/kibana/xpack/monitoring');
+var xpackBuildDir = path.resolve('../packager/build/kibana/x-pack/monitoring');
 
 // paths to sync over to the kibana plugin dir
 var include = [

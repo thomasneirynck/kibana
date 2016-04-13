@@ -13,8 +13,7 @@
 const moment = require('moment');
 const createQuery = require('./create_query.js');
 const calcAuto = require('./calculate_auto');
-const root = require('requirefrom')('');
-const metrics = root('server/lib/metrics');
+const metrics = require('./metrics');
 const mapListingResponse = require('./map_listing_response');
 module.exports = (req, indices) => {
   const config = req.server.config();
@@ -43,9 +42,8 @@ module.exports = (req, indices) => {
   const max = end;
   const duration = moment.duration(max - orgStart, 'ms');
   const bucketSize = Math.max(minIntervalSeconds, calcAuto.near(100, duration).asSeconds());
-  // performance optimization, just a few buckets are needed for table row listing
-  // start-end must be large enough to cover bucket size
-  start = moment.utc(end).subtract((bucketSize * 20), 'seconds').valueOf();
+  // performance optimization to avoid overwhelming amount of results
+  start = moment.utc(end).subtract(2, 'minutes').valueOf();
   const min = start;
 
   var aggs = {
@@ -88,11 +86,19 @@ module.exports = (req, indices) => {
   params.body.aggs = aggs;
 
   return callWithRequest(req, 'search', params)
-  .then((resp) => {
-    if (!resp.hits.total) return [];
-
-    const buckets = resp.aggregations.items.buckets;
-    return mapListingResponse({ buckets, listingMetrics, min, max, bucketSize });
+  .then(resp => {
+    if (!resp.hits.total) {
+      return [];
+    }
+    // call the mapping
+    return mapListingResponse({
+      type: 'indices',
+      items: resp.aggregations.items.buckets,
+      listingMetrics,
+      min,
+      max,
+      bucketSize
+    });
   });
 
 };

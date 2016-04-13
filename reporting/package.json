@@ -1,8 +1,7 @@
 {
   "name": "reporting",
-  "version": "5.0.0-alpha1-SNAPSHOT",
+  "version": "5.0.0-snapshot",
   "description": "An awesome Kibana reporting plugin",
-  "main": "gulpfile.js",
   "scripts": {
     "start": "gulp dev",
     "build": "gulp build",
@@ -29,7 +28,6 @@
     "md5": "2.0.0",
     "mkdirp": "0.5.1",
     "request": "2.67.0",
-    "requirefrom": "0.2.0",
     "rimraf": "2.4.3",
     "rsync": "0.4.0",
     "sinon": "1.17.2"
