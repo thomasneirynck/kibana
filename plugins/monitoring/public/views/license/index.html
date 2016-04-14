@@ -1,14 +1,14 @@
 <div ng-controller="licenseView" class="monitoring-view license-view" ng-controller="home">
   <div class="license-main">
     <div ng-if="isExpired">
-      <h1>Your {{cluster.license.type|capitalize}} license expired on {{cluster.license.expiry_date_in_millis|formatNumber:'dateFullYear'}}.</h1>
+      <h1>Your {{cluster.license.type|capitalize}} license expired on {{cluster.license.expiry_date_in_millis|formatNumber:'dateFullYear'}}</h1>
       <h2 class="title">
         Your License has expired. But worry not!
       </h2>
     </div>
 
     <div ng-if="!isExpired">
-      <h1>Your {{cluster.license.type|capitalize}} license expires on {{cluster.license.expiry_date_in_millis|formatNumber:'dateFullYear'}}.</h1>
+      <h1>Your {{cluster.license.type|capitalize}} license expires on {{cluster.license.expiry_date_in_millis|formatNumber:'dateFullYear'}}</h1>
     </div>
 
     <div class="row">
@@ -22,7 +22,7 @@
 
       <div class="col-md-4">
         <div class="bold">Unlock the Full Functionality</div>
-        <p>Get Shield (security), Watcher (alerting), and all Monitoring has to offer, plus support from engineers who build the products.</p>
+        <p>Get all X-Pack has to offer: Security, Monitoring, Alerting &amp; Notification, Reporting and Graph, plus support from the engineers behind the Elastic Stack.</p>
         <div class="btn-space">
           <a href="https://www.elastic.co/subscriptions/xpack" target="_BLANK" class="btn license premium">Get It All</a>
         </div>
