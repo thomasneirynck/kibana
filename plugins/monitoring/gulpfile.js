@@ -1,15 +1,12 @@
 require('babel/register')();
 
 var gulp = require('gulp');
-//var gulpUtil = require('gulp-util');
 var eslint = require('gulp-eslint');
 var mocha = require('gulp-mocha');
 var istanbul = require('gulp-istanbul');
 var path = require('path');
 var del = require('del');
 var isparta = require('isparta');
-
-// var indexer = require('./gulp-tasks/indexer');
 
 var coverageDir = path.resolve(__dirname, 'coverage');
 
@@ -60,5 +57,3 @@ gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
     // generates a coverage directory with reports for finding coverage gaps
     .pipe(istanbul.writeReports());
 });
-
-// gulp.task('index', indexer(gulpUtil));
