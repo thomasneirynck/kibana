@@ -4,11 +4,7 @@
     "company": "Elasticsearch BV"
   },
   "scripts": {
-    "test": "gulp test",
-    "start": "npm run rebuild && gulp dev",
-    "build": "npm run rebuild && gulp package",
-    "rebuild": "npm prune && npm install",
-    "precommit": "gulp lint"
+    "test": "gulp test"
   },
   "name": "monitoring",
   "version": "5.0.0-alpha1-SNAPSHOT",
