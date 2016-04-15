@@ -12,9 +12,9 @@
           <h4 ng-if="isNewUser" class="pull-left">New User</h4>
           <h4 ng-if="!isNewUser" class="pull-left">Edit User</h4>
           <div class="pull-right">
-            <button ng-if="!isNewUser" class="btn btn-danger" ng-click="deleteUser(user)">Delete</button>
+            <button ng-if="!isNewUser && !user.metadata._reserved" class="btn btn-danger" ng-click="deleteUser(user)">Delete</button>
             <a href="#/settings/security/users" class="btn btn-default">Cancel</a>
-            <button class="btn btn-primary" ng-click="saveUser(user, confirmPassword)">Save</button>
+            <button ng-if="!user.metadata._reserved" class="btn btn-primary" ng-click="saveUser(user, confirmPassword)">Save</button>
           </div>
         </div>
         <form class="form-horizontal row">
@@ -41,16 +41,18 @@
           <div class="form-group">
             <label for="fullname" class="col-md-2 control-label">Full Name</label>
             <div class="col-md-4">
-              <input type="text" class="form-control" id="fullname" ng-model="user.full_name" />
+              <input type="text" ng-if="!user.metadata._reserved" class="form-control" id="fullname" ng-model="user.full_name" />
+              <div class="help-block" ng-if="user.metadata._reserved">{{user.full_name}}</div>
             </div>
-            <span class="help-block">Optional</span>
+            <span class="help-block" ng-if="!user.metadata._reserved">Optional</span>
           </div>
           <div class="form-group">
             <label for="email" class="col-md-2 control-label">Email</label>
             <div class="col-md-4">
-              <input type="email" class="form-control" id="email" ng-model="user.email" />
+              <input type="email" ng-if="!user.metadata._reserved" class="form-control" id="email" ng-model="user.email" />
+              <div class="help-block" ng-if="user.metadata._reserved">{{user.email}}</div>
             </div>
-            <span class="help-block">Optional</span>
+            <span class="help-block" ng-if="!user.metadata._reserved">Optional</span>
           </div>
           <div ng-show="!!error" class="form-group has-error">
             <div class="col-md-2"></div>
@@ -71,7 +73,7 @@
             <form role="form">
               <input aria-label="Filter" ng-model="availableRolesQuery" class="form-control" type="text" placeholder="Filter..." />
             </form>
-            <select multiple="true" class="form-control" ng-model="selectedAvailableRoles">
+            <select multiple="true" class="form-control" ng-model="selectedAvailableRoles" ng-disabled="user.metadata._reserved">
               <option ng-repeat="role in availableRoles | filter:{name:availableRolesQuery}" ng-show="user.roles.indexOf(role.name) < 0">{{role.name}}</option>
             </select>
           </div>
@@ -88,7 +90,7 @@
             <form role="form">
               <input aria-label="Filter" ng-model="assignedRolesQuery" class="form-control" type="text" placeholder="Filter..." />
             </form>
-            <select multiple="true" class="form-control" ng-model="selectedAssignedRoles">
+            <select multiple="true" class="form-control" ng-model="selectedAssignedRoles" ng-disabled="user.metadata._reserved">
               <option ng-repeat="role in user.roles | filter:assignedRolesQuery">{{role}}</option>
             </select>
           </div>

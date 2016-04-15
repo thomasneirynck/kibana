@@ -31,13 +31,20 @@ routes.when('/settings/security/users', {
       if ($scope.allSelected()) {
         $scope.selectedUsers.length = 0;
       } else {
-        $scope.selectedUsers = $scope.users.slice();
+        $scope.selectedUsers = getActionableUsers().slice();
       }
     };
 
-    $scope.allSelected = () => $scope.users.length && $scope.users.length === $scope.selectedUsers.length;
+    $scope.allSelected = () => {
+      const users = getActionableUsers();
+      return users.length && users.length === $scope.selectedUsers.length;
+    };
 
     $scope.toggle = toggle;
     $scope.includes = includes;
+
+    function getActionableUsers() {
+      return $scope.users.filter((user) => !user.metadata._reserved);
+    }
   }
 });
