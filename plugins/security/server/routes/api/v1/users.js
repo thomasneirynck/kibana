@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import Boom from 'boom';
+import Joi from 'joi';
 import getClient from '../../../lib/get_client_shield';
 import userSchema from '../../../lib/user_schema';
 import { wrapError } from '../../../lib/errors';
@@ -57,6 +58,25 @@ export default (server) => {
       return callWithRequest(request, 'shield.deleteUser', {username}).then(
         () => reply().code(204),
         _.flow(wrapError, reply));
+    }
+  });
+
+  server.route({
+    method: 'POST',
+    path: '/api/security/v1/users/{username}/password',
+    handler(request, reply) {
+      const username = request.params.username;
+      const body = request.payload;
+      return callWithRequest(request, 'shield.changePassword', {username, body}).then(
+        () => reply().code(204),
+        _.flow(wrapError, reply));
+    },
+    config: {
+      validate: {
+        payload: {
+          password: Joi.string().required()
+        }
+      }
     }
   });
 };

@@ -18,7 +18,7 @@ routes.when('/settings/security/users/edit/:username?', {
       return ShieldRole.query();
     }
   },
-  controller($scope, $route, $location) {
+  controller($scope, $route, $location, ShieldUser) {
     $scope.isNewUser = $route.current.params.username == null;
     $scope.user = $route.current.locals.user;
     $scope.availableRoles = $route.current.locals.roles;
@@ -32,7 +32,8 @@ routes.when('/settings/security/users/edit/:username?', {
     };
 
     $scope.saveUser = (user, confirmPassword) => {
-      if (user.password !== confirmPassword) return $scope.error = 'Passwords do not match.';
+      if (!$scope.isNewUser) delete user.password;
+      else if (user.password !== confirmPassword) return $scope.error = 'Passwords do not match.';
 
       user.$save()
       .then($scope.goToUserList)
@@ -43,6 +44,13 @@ routes.when('/settings/security/users/edit/:username?', {
       $location.path('/settings/security/users');
     };
 
+    $scope.changePassword = (user, confirmPassword) => {
+      if (user.password !== confirmPassword) return $scope.error = 'Passwords do not match.';
+      ShieldUser.changePassword(user)
+      .then($scope.toggleShowPasswordField)
+      .catch(error => $scope.error = _.get(error, 'data.message'));
+    };
+
     $scope.assignRoles = (user, roles) => {
       user.roles = _.union(user.roles, roles);
       roles.length = 0;
@@ -51,6 +59,10 @@ routes.when('/settings/security/users/edit/:username?', {
     $scope.removeRoles = (user, roles) => {
       user.roles = _.difference(user.roles, roles);
       roles.length = 0;
+    };
+
+    $scope.toggleShowPasswordField = () => {
+      $scope.showPasswordField = !$scope.showPasswordField;
     };
   }
 });
