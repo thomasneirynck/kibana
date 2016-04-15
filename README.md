@@ -32,6 +32,21 @@ npm start -- --plugin-path=../path/to/x-plugins/kibana/build/kibana/x-pack
 
 This is also a useful way to test the build. The downside is that **changes are not automatically synced for you**, so you will need to re-run the build every time you want to use the changes you've made (Kibana will automatically restart when you do, if running in dev mode).
 
+### Issues starting dev more of creating builds
+
+You may see an error like this when you are getting started:
+
+```
+[14:08:15] Error: Linux x86 checksum failed
+    at download_phantom.js:42:15
+    at process._tickDomainCallback (node.js:407:9)
+```
+
+That's thanks to the binary Phantom downloads that have to happen, and Bitbucket being annoying with throttling and redirecting or... something. The real issue eludes me, but you have 2 options to resolve it.
+
+1. Just keep re-running the command until it passes. Eventually the downloads will work, and since they are cached, it won't ever be an issue again.
+1. Download them by hand [from Bitbucket](https://bitbucket.org/ariya/phantomjs/downloads) and copy them into the `.phantom` path. We're currently using 1.9.8, and you'll need the Window, Mac, and both Linux builds.
+
 ### Elasticsearch and X-Pack from source
 
 For developing and testing the plugins, you must run an instance of Elasticsearch with the X-Pack plugin installed.
