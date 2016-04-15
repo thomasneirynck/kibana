@@ -21,7 +21,7 @@ routes.when('/settings/security/roles/edit/:name?', {
       });
     },
     users(ShieldUser) {
-      return ShieldUser.query();
+      return ShieldUser.query().$promise.then(users => _.map(users, 'username'));
     },
     indexPatterns(shieldIndices) {
       return shieldIndices.getIndexPatterns();
@@ -65,6 +65,8 @@ routes.when('/settings/security/roles/edit/:name?', {
     $scope.$watch('role.indices.length', () => {
       _.map($scope.role.indices, (index, i) => $scope.getFields(index, i));
     });
+
+    $scope.isReservedRole = (role) => ['superuser', 'transport_client'].indexOf(role.name) >= 0;
 
     $scope.toggle = toggle;
     $scope.includes = _.includes;

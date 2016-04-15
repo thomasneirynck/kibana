@@ -1,4 +1,4 @@
-import {includes} from 'lodash';
+import {includes, negate} from 'lodash';
 import routes from 'ui/routes';
 import {toggle} from 'plugins/security/lib/util';
 import template from 'plugins/security/views/settings/roles.html';
@@ -31,13 +31,22 @@ routes.when('/settings/security/roles', {
       if ($scope.allSelected()) {
         $scope.selectedRoles.length = 0;
       } else {
-        $scope.selectedRoles = $scope.roles.slice();
+        $scope.selectedRoles = getActionableRoles().slice();
       }
     };
 
-    $scope.allSelected = () => $scope.roles.length && $scope.roles.length === $scope.selectedRoles.length;
+    $scope.allSelected = () => {
+      const roles = getActionableRoles();
+      return roles.length && roles.length === $scope.selectedRoles.length;
+    };
+
+    $scope.isReservedRole = (role) => ['superuser', 'transport_client'].indexOf(role.name) >= 0;
 
     $scope.toggle = toggle;
     $scope.includes = includes;
+
+    function getActionableRoles() {
+      return $scope.roles.filter(negate($scope.isReservedRole));
+    }
   }
 });
