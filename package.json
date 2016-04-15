@@ -6,7 +6,8 @@
     "start": "gulp dev",
     "build": "gulp build",
     "package": "gulp package",
-    "release": "gulp release"
+    "release": "gulp release",
+    "test": "gulp test"
   },
   "devDependencies": {
     "@elastic/eslint-config-kibana": "0.0.2",
