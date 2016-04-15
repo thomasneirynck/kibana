@@ -59,7 +59,7 @@ For developing and testing the plugins, you must run an instance of Elasticsearc
 
     ```
     cd ~/es-build
-    cp ./x-plugins/elasticsearch/x-pack/build/distributions/xpack-*.zip .
+    cp ./x-plugins/elasticsearch/x-pack/build/distributions/x-pack-*.zip .
     cp ./elasticsearch/distribution/zip/build/distributions/elasticsearch-*.zip .
     ```
 1. Unpack the Elasticsearch build and install the X-Pack plugin
@@ -67,7 +67,7 @@ For developing and testing the plugins, you must run an instance of Elasticsearc
     ```
     unzip elasticsearch-[VERSION].zip
     cd elasticsearch-[VERSION]
-    ./bin/elasticsearch-plugin install file:../xpack-[VERSION].zip
+    ./bin/elasticsearch-plugin install file:../x-pack-[VERSION].zip
     ```
 1. Create a Shield user
 
