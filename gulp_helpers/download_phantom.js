@@ -3,7 +3,7 @@ var path = require('path');
 var Bluebird = require('bluebird');
 var mkdirp = require('mkdirp');
 var request = require('request');
-var md5 = require('md5');
+var hasha = require('hasha');
 
 var logger = require('./logger');
 
@@ -33,53 +33,51 @@ function fetchBinaries(dest) {
   }];
 
   // verify the download checksum
-  function verifyChecksum(file, binary, cb) {
-    fs.readFile(file, function (err, buf) {
-      if (err) return cb(err);
-      var checksum = md5(buf);
+  function verifyChecksum(file, binary) {
+    return hasha.fromFile(file, { algorithm: 'md5' })
+    .then(function (checksum) {
       if (binary.checksum !== checksum) {
         logger('Download checksum', checksum);
         logger('Expected checksum', binary.checksum);
-        return cb(binary.description + ' checksum failed');
+        throw new Error(binary.description + ' checksum failed');
       }
-      cb();
     });
   }
 
-  var makeTarget = Bluebird.fromCallback(function (cb) {
+  return Bluebird.fromCallback(function (cb) {
     mkdirp(phantomDest, cb);
-  });
+  })
+  .then(function () {
+    var requiredDownloads = Bluebird.map(phantomBinaries, function (binary) {
+      var filepath = path.join(phantomDest, binary.filename);
+      logger('Verifying binary', filepath);
+      return verifyChecksum(filepath, binary).then(() => false, () => binary);
+    }).then(function (downloads) {
+      return downloads.filter(Boolean);
+    });
 
-  var requiredDownloads = Bluebird.mapSeries(phantomBinaries, function (binary) {
-    var filepath = path.join(phantomDest, binary.filename);
-    logger('Verifying binary', filepath);
-    return Bluebird.fromCallback(function (cb) {
-      return verifyChecksum(filepath, binary, cb);
-    }).then(() => false, () => binary);
-  }).then(function (downloads) {
-    return downloads.filter(Boolean);
-  });
+    return Bluebird.mapSeries(requiredDownloads, function (binary, idx) {
+      var filepath = path.join(phantomDest, binary.filename);
 
-  return Bluebird.mapSeries(requiredDownloads, function (binary, idx) {
-    var filepath = path.join(phantomDest, binary.filename);
+      // add delays after the first download
+      var chain = (idx === 0) ? Bluebird.resolve() : Bluebird.delay(3000);
+      return chain.then(function () {
+        logger('Downloading', binary.url);
+        return new Bluebird(function (resolve, reject) {
+          var ws = fs.createWriteStream(filepath)
+          .on('finish', function () {
+            verifyChecksum(filepath, binary)
+            .then(resolve, reject);
+          });
 
-    // add delays after the first download
-    var chain = (idx === 0) ? Bluebird.resolve() : Bluebird.delay(3000);
-    return chain.then(function () {
-      logger('Downloading', binary.url);
-      return Bluebird.fromCallback(function (cb) {
-        var ws = fs.createWriteStream(filepath)
-        .on('finish', function () {
-          verifyChecksum(filepath, binary, cb);
+          // download binary, stream to destination
+          request(binary.url)
+          .on('error', reject)
+          .pipe(ws);
         });
-
-        // download binary, stream to destination
-        request(binary.url)
-        .on('error', cb)
-        .pipe(ws);
       });
     });
-  }, makeTarget);
+  });
 }
 
 module.exports = fetchBinaries;
