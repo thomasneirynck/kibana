@@ -1,14 +1,14 @@
 <div ng-controller="licenseView" class="monitoring-view license-view" ng-controller="home">
   <div class="license-main">
     <div ng-if="isExpired">
-      <h1>Your {{cluster.license.type|capitalize}} license expired on {{cluster.license.expiry_date_in_millis|formatNumber:'dateFullYear'}}</h1>
+      <h1>Your {{cluster.license.type|capitalize}} license expired on {{cluster.license.expiry_date|localizedDate}}</h1>
       <h2 class="title">
         Your License has expired. But worry not!
       </h2>
     </div>
 
     <div ng-if="!isExpired">
-      <h1>Your {{cluster.license.type|capitalize}} license expires on {{cluster.license.expiry_date_in_millis|formatNumber:'dateFullYear'}}</h1>
+      <h1>Your {{cluster.license.type|capitalize}} license expires on {{cluster.license.expiry_date|localizedDate}}</h1>
     </div>
 
     <div class="row">

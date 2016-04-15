@@ -5,8 +5,6 @@ define(['moment', 'numeral'], function (moment, numeral) {
     var format = '0,0.0';
     var postfix = '';
     switch (which) {
-      case 'dateFullYear':
-        return moment(num).format('D MMM YYYY HH:mm:ss');
       case 'time_since':
         return moment(moment() - num).from(moment(), true);
       case 'time':
