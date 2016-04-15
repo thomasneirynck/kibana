@@ -39,7 +39,7 @@ export default (server) => {
       const username = request.params.username;
       const body = _(request.payload).omit('username').omit(_.isNull);
       return callWithRequest(request, 'shield.putUser', {username, body}).then(
-        (response) => reply(request.payload),
+        () => reply(request.payload),
         _.flow(wrapError, reply));
     },
     config: {
@@ -55,7 +55,7 @@ export default (server) => {
     handler(request, reply) {
       const username = request.params.username;
       return callWithRequest(request, 'shield.deleteUser', {username}).then(
-        (response) => reply().code(204),
+        () => reply().code(204),
         _.flow(wrapError, reply));
     }
   });

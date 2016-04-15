@@ -42,7 +42,7 @@ export default (server) => {
       const name = request.params.name;
       const body = _.omit(request.payload, 'name');
       return callWithRequest(request, 'shield.putRole', {name, body}).then(
-        (response) => reply(request.payload),
+        () => reply(request.payload),
         _.flow(wrapError, reply));
     },
     config: {
@@ -58,7 +58,7 @@ export default (server) => {
     handler(request, reply) {
       const name = request.params.name;
       return callWithRequest(request, 'shield.deleteRole', {name}).then(
-        (response) => reply().code(204),
+        () => reply().code(204),
         _.flow(wrapError, reply));
     }
   });
