@@ -166,6 +166,8 @@ gulp.task('release', ['package'], function () {
   });
 });
 
+gulp.task('test', ['lint']);
+
 gulp.task('dev', ['sync'], function () {
   var watchFiles = [
     'package.json',
@@ -175,5 +177,5 @@ gulp.task('dev', ['sync'], function () {
     'server/**'
   ];
 
-  gulp.watch(watchFiles, ['sync', 'lint']);
+  gulp.watch(watchFiles, ['sync']);
 });
