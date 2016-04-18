@@ -14,23 +14,37 @@
           <div class="pull-right">
             <button ng-if="!isNewRole" class="btn btn-danger" ng-click="deleteRole(role)" ng-if="!isReservedRole(role)">Delete</button>
             <a href="#/settings/security/roles" class="btn btn-default">Cancel</a>
-            <button class="btn btn-primary" ng-click="saveRole(role)" ng-if="!isReservedRole(role)">Save</button>
+            <button class="btn btn-primary" ng-click="saveRole(role)" ng-if="!isReservedRole(role)" ng-disabled="form.$invalid || !areIndicesValid(role.indices)">Save</button>
           </div>
         </div>
-        <form class="form-horizontal row">
+        <form class="form-horizontal row" name="form" novalidate>
           <div class="form-group">
             <label for="name" class="col-md-2 control-label">Name</label>
             <div class="col-md-4">
-              <input type="text" class="form-control" id="name" ng-model="role.name" ng-if="isNewRole" required />
+              <input type="text" class="form-control" id="name" name="name" ng-model="role.name" ng-if="isNewRole" required pattern="[a-zA-Z_][a-zA-Z0-9_@\-\$\.]*" maxlength="30" />
               <div class="help-block" ng-if="!isNewRole">{{role.name}}</div>
             </div>
           </div>
+          <div class="form-group has-error" ng-show="form.name.$error.pattern">
+            <div class="col-md-2"></div>
+            <div class="col-md-4 help-block">
+              Name must begin with a letter or underscore and contain only letters, underscores, and numbers.
+            </div>
+          </div>
+          <div class="form-group has-error" ng-show="form.name.$touched && form.username.$error.required">
+            <div class="col-md-2"></div>
+            <div class="col-md-4 help-block">
+              Name is required.
+            </div>
+          </div>
+
           <!--div class="form-group">
             <label for="description" class="col-md-2 control-label">Description</label>
             <div class="col-md-4">
               <input type="text" class="form-control" id="description" />
             </div>
           </div-->
+
           <div ng-show="!!error" class="form-group has-error">
             <div class="col-md-2"></div>
             <div class="col-md-4 help-block">{{error}}</div>
@@ -98,6 +112,7 @@
                 </button>
               </td>
             </tr>
+
             <tr ng-repeat="index in role.indices">
               <td><div ng-repeat="name in index.names">{{name}}</div></td>
               <td>
@@ -105,7 +120,7 @@
                   <span class="input-group-addon">
                     <i class="fa fa-search"></i>
                   </span>
-                  <ui-select class="form-control" multiple ng-model="index.privileges" ng-disabled="isReservedRole(role)">
+                  <ui-select class="form-control" multiple ng-model="index.privileges" ng-disabled="isReservedRole(role)" required>
                     <ui-select-match placeholder="Add a privilege...">{{$item}}</ui-select-match>
                     <ui-select-choices repeat="privilege in privileges.indices | filter:$select.search" >
                       <div ng-bind-html="privilege"></div>
@@ -113,7 +128,9 @@
                   </ui-select>
                 </div>
               </td>
+
               <td><textarea rows="1" placeholder="Add a query..." class="form-control" ng-model="index.query" ng-disabled="isReservedRole(role)"></textarea></td>
+
               <td>
                 <div class="input-group">
                   <span class="input-group-addon">
@@ -127,7 +144,12 @@
                   </ui-select>
                 </div>
               </td>
-              <td><button ng-click="toggle(role.indices, index)" class="btn btn-danger" ng-if="isReservedRole(role)"><i class="fa fa-trash"></i></button></td>
+
+              <td><button ng-click="toggle(role.indices, index)" class="btn btn-danger" ng-if="!isReservedRole(role)"><i class="fa fa-trash"></i></button></td>
+            </tr>
+
+            <tr ng-show="!areIndicesValid(role.indices)" class="form-group has-error">
+              <td colspan="5"><span class="help-block">Indices must each contain at least one privilege.</span></td>
             </tr>
           </tbody>
         </table>

@@ -71,5 +71,9 @@ routes.when('/settings/security/roles/edit/:name?', {
     $scope.toggle = toggle;
     $scope.includes = _.includes;
     $scope.union = _.flow(_.union, _.compact);
+
+    $scope.areIndicesValid = (indices) => {
+      return indices.find((index) => index.privileges.length === 0) == null;
+    };
   }
 });
