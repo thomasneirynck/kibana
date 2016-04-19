@@ -1,8 +1,5 @@
-var path = require('path');
-var Bluebird = require('bluebird');
-var simpleGit = require('simple-git');
+var gitInfo = require('./git_info');
 var moment = require('moment');
-var gitDir = path.resolve(__dirname, '..');
 
 function createPackageFile(pkg, includeProps) {
   // create object for new package.json
@@ -12,15 +9,13 @@ function createPackageFile(pkg, includeProps) {
   }, {});
 
   // append the current commit sha
-  var git = simpleGit(gitDir);
-  return Bluebird.fromCallback(function (cb) {
-    git.log(cb);
-  })
-  .then(function (log) {
+  return gitInfo()
+  .then(function (info) {
+
     var m = moment.utc();
     pkgOutput.build = {
-      number: log.total,
-      sha: log.latest.hash,
+      number: info.number,
+      sha: info.sha,
       date: m.format()
     };
     return pkgOutput;

@@ -17,6 +17,7 @@ var logger = require('./gulp_helpers/logger');
 var exec = require('./gulp_helpers/exec')(g.util);
 var syncPath = require('./gulp_helpers/sync_path');
 var downloadPhantom = require('./gulp_helpers/download_phantom');
+var gitInfo = require('./gulp_helpers/git_info');
 var createPackageFile = require('./gulp_helpers/create_package');
 
 var pkg = require('./package.json');
@@ -88,7 +89,17 @@ gulp.task('clean', function () {
   return del([buildDir, targetDir]);
 });
 
-gulp.task('build', ['lint', 'clean'], function () {
+gulp.task('report', function () {
+  return gitInfo()
+  .then(function (info) {
+    g.util.log('Package Name', g.util.colors.yellow(pkg.name));
+    g.util.log('Version', g.util.colors.yellow(pkg.version));
+    g.util.log('Build Number', g.util.colors.yellow(info.number));
+    g.util.log('Build SHA', g.util.colors.yellow(info.sha));
+  });
+});
+
+gulp.task('build', ['lint', 'clean', 'report'], function () {
   const excludes = ['node_modules', 'package.json'];
   const includes = buildIncludes.filter((include) => excludes.indexOf(include) === -1);
 
