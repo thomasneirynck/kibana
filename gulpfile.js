@@ -96,6 +96,7 @@ gulp.task('report', function () {
     g.util.log('Version', g.util.colors.yellow(pkg.version));
     g.util.log('Build Number', g.util.colors.yellow(info.number));
     g.util.log('Build SHA', g.util.colors.yellow(info.sha));
+    g.util.log('Build Output', g.util.colors.yellow(packageFile));
   });
 });
 
