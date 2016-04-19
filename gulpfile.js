@@ -17,6 +17,7 @@ var logger = require('./gulp_helpers/logger');
 var exec = require('./gulp_helpers/exec')(g.util);
 var syncPath = require('./gulp_helpers/sync_path');
 var downloadPhantom = require('./gulp_helpers/download_phantom');
+var createPackageFile = require('./gulp_helpers/create_package');
 
 var pkg = require('./package.json');
 var packageFile = `${pkg.name}-${pkg.version}.zip`;
@@ -90,20 +91,15 @@ gulp.task('clean', function () {
 gulp.task('build', ['lint', 'clean'], function () {
   const excludes = ['node_modules', 'package.json'];
   const includes = buildIncludes.filter((include) => excludes.indexOf(include) === -1);
+
   return Bluebird.mapSeries(includes, function (source) {
     return syncPathTo(source, buildTarget, source !== '.phantom');
   })
   .then(function () {
     return downloadPhantom(path.join(buildTarget, '.phantom'));
   })
-  .then(function () {
-    // create new package.json
-    var includeProps = ['name', 'version', 'dependencies'];
-    var pkgOutput = includeProps.reduce(function (output, key) {
-      output[key] = pkg[key];
-      return output;
-    }, {});
-
+  .then(() => createPackageFile(pkg, ['name', 'version', 'dependencies']))
+  .then(function (pkgOutput) {
     var prettyOutput = prettyData.pd.json(pkgOutput);
     return fs.writeFileSync(path.join(buildTarget, 'package.json'), prettyOutput, { encoding: 'utf8' });
   })
