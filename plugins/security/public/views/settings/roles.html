@@ -30,6 +30,7 @@
               Description
               <i aria-hidden="true" class="fa" ng-show="sort.orderBy == 'description'" ng-class="{'fa-caret-down': sort.reverse, 'fa-caret-up': !sort.reverse}"></i>
             </th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -41,6 +42,12 @@
               <a ng-href="#/settings/security/roles/edit/{{role.name}}">{{role.name}}</a>
             </td>
             <td>{{role.description}}</td>
+            <td>
+              <div ng-if="isReservedRole(role)">
+                <i class="fa fa-question-circle" title="Reserved roles are built-in and cannot be removed or modified."></i>
+                Reserved
+              </div>
+            </td>
           </tr>
           <tr ng-show="!(roles | filter:query).length">
             <td colspan="3">No <span ng-show="query">matching</span> roles found.</td>
