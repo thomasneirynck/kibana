@@ -12,7 +12,7 @@
           <h4 ng-if="isNewRole" class="pull-left">New Role</h4>
           <h4 ng-if="!isNewRole" class="pull-left">Edit Role</h4>
           <div class="pull-right">
-            <button ng-if="!isNewRole" class="btn btn-danger" ng-click="deleteRole(role)" ng-if="!isReservedRole(role)">Delete</button>
+            <button ng-if="!isNewRole && !isReservedRole(role)" class="btn btn-danger" ng-click="deleteRole(role)">Delete</button>
             <a href="#/settings/security/roles" class="btn btn-default">Cancel</a>
             <button class="btn btn-primary" ng-click="saveRole(role)" ng-if="!isReservedRole(role)" ng-disabled="form.$invalid || !areIndicesValid(role.indices)">Save</button>
           </div>
