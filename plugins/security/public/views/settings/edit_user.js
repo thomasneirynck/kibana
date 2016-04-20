@@ -19,12 +19,14 @@ routes.when('/settings/security/users/edit/:username?', {
     }
   },
   controller($scope, $route, $location, ShieldUser, Notifier) {
-    $scope.isNewUser = $route.current.params.username == null;
     $scope.user = $route.current.locals.user;
     $scope.availableRoles = $route.current.locals.roles;
-    $scope.selectedAvailableRoles = [];
-    $scope.selectedAssigneldRoles = [];
-    $scope.showPasswordField = $scope.isNewUser;
+    $scope.view = {
+      isNewUser: $route.current.params.username == null,
+      selectedAvailableRoles: [],
+      selectedAssignedRoles: [],
+      changePasswordMode: false
+    };
 
     const notifier = new Notifier();
 
@@ -32,29 +34,26 @@ routes.when('/settings/security/users/edit/:username?', {
       if (!confirm('Are you sure you want to delete this user? This action is irreversible!')) return;
       user.$delete()
       .then(() => notifier.info('The user has been deleted.'))
-      .then($scope.goToUserList);
+      .then($scope.goToUserList)
+      .catch(error => notifier.error(_.get(error, 'data.message')));
     };
 
-    $scope.saveUser = (user, confirmPassword) => {
-      if (!$scope.isNewUser) delete user.password;
-      else if (user.password !== confirmPassword) return $scope.error = 'Passwords do not match.';
-
+    $scope.saveUser = (user) => {
       user.$save()
       .then(() => notifier.info('The user has been updated.'))
       .then($scope.goToUserList)
-      .catch(error => $scope.error = _.get(error, 'data.message') || 'Username & password are required.');
+      .catch(error => notifier.error(_.get(error, 'data.message')));
     };
 
     $scope.goToUserList = () => {
       $location.path('/settings/security/users');
     };
 
-    $scope.changePassword = (user, confirmPassword) => {
-      if (user.password !== confirmPassword) return $scope.error = 'Passwords do not match.';
+    $scope.changePassword = (user) => {
       ShieldUser.changePassword(user)
       .then(() => notifier.info('The password has been changed.'))
-      .then($scope.toggleShowPasswordField)
-      .catch(error => $scope.error = _.get(error, 'data.message'));
+      .then($scope.toggleChangePasswordMode)
+      .catch(error => notifier.error(_.get(error, 'data.message')));
     };
 
     $scope.assignRoles = (user, roles) => {
@@ -67,8 +66,10 @@ routes.when('/settings/security/users/edit/:username?', {
       roles.length = 0;
     };
 
-    $scope.toggleShowPasswordField = () => {
-      $scope.showPasswordField = !$scope.showPasswordField;
+    $scope.toggleChangePasswordMode = () => {
+      delete $scope.user.password;
+      delete $scope.view.confirmPassword;
+      $scope.view.changePasswordMode = !$scope.view.changePasswordMode;
     };
   }
 });

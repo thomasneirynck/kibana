@@ -28,14 +28,16 @@ routes.when('/settings/security/roles/edit/:name?', {
     }
   },
   controller($scope, $route, $location, shieldPrivileges, shieldIndices, Notifier) {
-    $scope.isNewRole = $route.current.params.name == null;
-    $scope.isReservedRole = ['superuser', 'transport_client'].indexOf($route.current.params.name) >= 0;
     $scope.role = $route.current.locals.role;
     $scope.users = $route.current.locals.users;
     $scope.indexPatterns = $route.current.locals.indexPatterns;
     $scope.privileges = shieldPrivileges;
-    $scope.newIndex = {names: [], privileges: [], fields: []};
-    $scope.fieldOptions = [];
+    $scope.view = {
+      isNewRole: $route.current.params.name == null,
+      isReservedRole: ['superuser', 'transport_client'].indexOf($route.current.params.name) >= 0,
+      newIndex: {names: [], privileges: [], fields: []},
+      fieldOptions: []
+    };
 
     const notifier = new Notifier();
 
@@ -43,14 +45,15 @@ routes.when('/settings/security/roles/edit/:name?', {
       if (!confirm('Are you sure you want to delete this role? This action is irreversible!')) return;
       role.$delete()
       .then(() => notifier.info('The role has been deleted.'))
-      .then($scope.goToRoleList);
+      .then($scope.goToRoleList)
+      .catch(error => notifier.error(_.get(error, 'data.message')));
     };
 
     $scope.saveRole = (role) => {
       role.$save()
       .then(() => notifier.info('The role has been updated.'))
       .then($scope.goToRoleList)
-      .catch(error => $scope.error = _.get(error, 'data.message') || 'Role name is required.');
+      .catch(error => notifier.error(_.get(error, 'data.message')));
     };
 
     $scope.goToRoleList = () => {
@@ -64,8 +67,8 @@ routes.when('/settings/security/roles/edit/:name?', {
 
     $scope.getFields = (index, i) => {
       return shieldIndices.getFields(index.names.join(','))
-      .then((fields) => $scope.fieldOptions[i] = fields)
-      .catch(() => $scope.fieldOptions[i] = []);
+      .then((fields) => $scope.view.fieldOptions[i] = fields)
+      .catch(() => $scope.view.fieldOptions[i] = []);
     };
 
     $scope.$watch('role.indices.length', () => {
