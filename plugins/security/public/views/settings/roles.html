@@ -22,12 +22,18 @@
         <thead>
           <tr>
             <th><input type="checkbox" ng-click="toggleAll()" ng-checked="allSelected()" /></th>
-            <th>Role</th>
-            <th>Description</th>
+            <th ng-click="toggleSort(sort, 'name')">
+              Role
+              <i aria-hidden="true" class="fa" ng-show="sort.orderBy == 'name'" ng-class="{'fa-caret-down': sort.reverse, 'fa-caret-up': !sort.reverse}"></i>
+            </th>
+            <th ng-click="toggleSort(sort, 'description')">
+              Description
+              <i aria-hidden="true" class="fa" ng-show="sort.orderBy == 'description'" ng-class="{'fa-caret-down': sort.reverse, 'fa-caret-up': !sort.reverse}"></i>
+            </th>
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="role in roles | orderBy:'name' | filter:query">
+          <tr ng-repeat="role in roles | orderBy:'name' | filter:query | orderBy:sort.orderBy:sort.reverse">
             <td>
               <input type="checkbox" ng-click="toggle(selectedRoles, role)" ng-checked="includes(selectedRoles, role)" ng-disabled="isReservedRole(role)" />
             </td>

@@ -1,6 +1,6 @@
 import {includes, negate} from 'lodash';
 import routes from 'ui/routes';
-import {toggle} from 'plugins/security/lib/util';
+import {toggle, toggleSort} from 'plugins/security/lib/util';
 import template from 'plugins/security/views/settings/roles.html';
 import 'plugins/security/services/shield_role';
 
@@ -14,6 +14,7 @@ routes.when('/settings/security/roles', {
   controller($scope, $route, $q, Notifier) {
     $scope.roles = $route.current.locals.roles;
     $scope.selectedRoles = [];
+    $scope.sort = {orderBy: 'name', reverse: false};
 
     const notifier = new Notifier();
 
@@ -47,6 +48,7 @@ routes.when('/settings/security/roles', {
 
     $scope.toggle = toggle;
     $scope.includes = includes;
+    $scope.toggleSort = toggleSort;
 
     function getActionableRoles() {
       return $scope.roles.filter(negate($scope.isReservedRole));

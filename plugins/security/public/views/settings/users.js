@@ -1,6 +1,6 @@
 import {includes} from 'lodash';
 import routes from 'ui/routes';
-import {toggle} from 'plugins/security/lib/util';
+import {toggle, toggleSort} from 'plugins/security/lib/util';
 import template from 'plugins/security/views/settings/users.html';
 import 'plugins/security/services/shield_user';
 
@@ -14,6 +14,7 @@ routes.when('/settings/security/users', {
   controller($scope, $route, $q, Notifier) {
     $scope.users = $route.current.locals.users;
     $scope.selectedUsers = [];
+    $scope.sort = {orderBy: 'username', reverse: false};
 
     const notifier = new Notifier();
 
@@ -45,6 +46,7 @@ routes.when('/settings/security/users', {
 
     $scope.toggle = toggle;
     $scope.includes = includes;
+    $scope.toggleSort = toggleSort;
 
     function getActionableUsers() {
       return $scope.users.filter((user) => !user.metadata._reserved);
