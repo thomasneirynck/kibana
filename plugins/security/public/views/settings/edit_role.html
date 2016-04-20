@@ -23,12 +23,15 @@
           <div class="form-group">
             <label for="name" class="col-md-2 control-label">Name</label>
             <div class="col-md-4">
-              <input type="text" class="form-control" id="name" name="name" ng-model="role.name" ng-if="view.isNewRole" required pattern="[a-zA-Z_][a-zA-Z0-9_@\-\$\.]*" maxlength="30" />
-              <div class="help-block" ng-if="!view.isNewRole">{{role.name}}</div>
+              <input type="text" class="form-control" id="name" name="name" ng-model="role.name" required pattern="[a-zA-Z_][a-zA-Z0-9_@\-\$\.]*" maxlength="30" ng-disabled="!view.isNewRole" />
               <div class="has-error">
                 <span class="help-block" ng-show="form.name.$error.pattern">Name must begin with a letter or underscore and contain only letters, underscores, and numbers.</span>
                 <span class="help-block" ng-show="form.name.$touched && form.name.$error.required">Name is required.</span>
               </div>
+            </div>
+            <div class="col-md-2" ng-if="view.isReservedRole">
+              <i class="fa fa-question-circle" title="Reserved roles are built-in and cannot be removed or modified."></i>
+              Reserved
             </div>
           </div>
 

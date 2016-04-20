@@ -24,12 +24,15 @@
           <div class="form-group">
             <label for="username" class="col-md-2 control-label">Username</label>
             <div class="col-md-4">
-              <input type="text" class="form-control" id="username" name="username" ng-model="user.username" ng-if="view.isNewUser" required pattern="[a-zA-Z_][a-zA-Z0-9_@\-\$\.]*" maxlength="30" />
-              <div class="help-block" ng-if="!view.isNewUser">{{user.username}}</div>
+              <input type="text" class="form-control" id="username" name="username" ng-model="user.username" required pattern="[a-zA-Z_][a-zA-Z0-9_@\-\$\.]*" maxlength="30" ng-disabled="!view.isNewUser" />
               <div class="has-error">
                 <span class="help-block" ng-show="form.username.$error.pattern">Username must begin with a letter or underscore and contain only letters, underscores, and numbers.</span>
                 <span class="help-block" ng-show="form.username.$touched && form.username.$error.required">Username is required.</span>
               </div>
+            </div>
+            <div class="col-md-2" ng-if="user.metadata._reserved">
+              <i class="fa fa-question-circle" title="Reserved users are built-in and cannot be removed or modified. Only the password may be changed."></i>
+              Reserved
             </div>
           </div>
 
