@@ -14,8 +14,8 @@
           <h4 ng-if="!view.isNewUser && user.metadata._reserved" class="pull-left">View User</h4>
 
           <div class="pull-right">
+            <a href="#/settings/security/users" class="btn btn-default">Return to All Users</a>
             <button ng-if="!view.isNewUser && !user.metadata._reserved" class="btn btn-danger" ng-click="deleteUser(user)" ng-disabled="view.changePasswordMode">Delete</button>
-            <a href="#/settings/security/users" class="btn btn-default">Cancel</a>
             <button ng-if="!user.metadata._reserved" class="btn btn-primary" ng-disabled="form.$invalid || user.password != view.confirmPassword || view.changePasswordMode" ng-click="saveUser(user)">Save</button>
           </div>
         </div>
