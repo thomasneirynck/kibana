@@ -77,40 +77,17 @@
         </form>
       </div>
 
-      <div class="container role-management">
-        <div class="row">
-          <div class="col-md-5">
-            <div>
-              <h4 class="pull-left">Available Roles</h4>
-              <div class="pull-right">
-                <a href="#/settings/security/roles">Manage Roles</a>
-              </div>
-            </div>
-            <form role="form">
-              <input aria-label="Filter" ng-model="availableRolesQuery" class="form-control" type="text" placeholder="Filter..." />
-            </form>
-            <select multiple="true" class="form-control" ng-model="view.selectedAvailableRoles" ng-disabled="user.metadata._reserved || view.changePasswordMode">
-              <option ng-repeat="role in availableRoles | filter:{name:availableRolesQuery}" ng-show="user.roles.indexOf(role.name) < 0">{{role.name}}</option>
-            </select>
-          </div>
-          <div class="col-md-2 role-actions">
-            <button ng-click="assignRoles(user, view.selectedAvailableRoles)" class="btn btn-block btn-default" ng-disabled="!view.selectedAvailableRoles.length || view.changePasswordMode">
-              Assign <i aria-hidden="true" class="fa fa-chevron-right"></i>
-            </button>
-            <button ng-click="removeRoles(user, view.selectedAssignedRoles)" class="btn btn-block btn-default" ng-disabled="!view.selectedAssignedRoles.length || view.changePasswordMode">
-              <i aria-hidden="true" class="fa fa-chevron-left"></i> Remove
-            </button>
-          </div>
-          <div class="col-md-5">
-            <h4>Assigned Roles</h4>
-            <form role="form">
-              <input aria-label="Filter" ng-model="assignedRolesQuery" class="form-control" type="text" placeholder="Filter..." />
-            </form>
-            <select multiple="true" class="form-control" ng-model="view.selectedAssignedRoles" ng-disabled="user.metadata._reserved || view.changePasswordMode">
-              <option ng-repeat="role in user.roles | filter:assignedRolesQuery">{{role}}</option>
-            </select>
-          </div>
-        </div>
+      <h4>Roles</h4>
+      <div class="input-group">
+          <span class="input-group-addon">
+            <i class="fa fa-search"></i>
+          </span>
+        <ui-select class="form-control" multiple ng-model="user.roles" ng-disabled="user.metadata._reserved || view.changePasswordMode">
+          <ui-select-match placeholder="Add a role...">{{$item}}</ui-select-match>
+          <ui-select-choices repeat="role as role in availableRoles | filter:$select.search">
+            <div ng-bind-html="role"></div>
+          </ui-select-choices>
+        </ui-select>
       </div>
     </div>
   </div>

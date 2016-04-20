@@ -21,7 +21,8 @@ routes.when('/settings/security/roles/edit/:name?', {
       });
     },
     users(ShieldUser) {
-      return ShieldUser.query().$promise.then(users => _.map(users, 'username'));
+      return ShieldUser.query().$promise
+      .then(users => _.map(users, 'username'));
     },
     indexPatterns(shieldIndices) {
       return shieldIndices.getIndexPatterns();

@@ -2,6 +2,7 @@ import _ from 'lodash';
 import routes from 'ui/routes';
 import template from 'plugins/security/views/settings/edit_user.html';
 import 'angular-resource';
+import 'angular-ui-select';
 import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
 import 'plugins/security/views/settings/edit_user.less';
@@ -15,7 +16,8 @@ routes.when('/settings/security/users/edit/:username?', {
       return new ShieldUser({roles: []});
     },
     roles(ShieldRole) {
-      return ShieldRole.query();
+      return ShieldRole.query().$promise
+      .then((roles) => _.map(roles, 'name'));
     }
   },
   controller($scope, $route, $location, ShieldUser, Notifier) {
@@ -23,8 +25,6 @@ routes.when('/settings/security/users/edit/:username?', {
     $scope.availableRoles = $route.current.locals.roles;
     $scope.view = {
       isNewUser: $route.current.params.username == null,
-      selectedAvailableRoles: [],
-      selectedAssignedRoles: [],
       changePasswordMode: false
     };
 
@@ -54,16 +54,6 @@ routes.when('/settings/security/users/edit/:username?', {
       .then(() => notifier.info('The password has been changed.'))
       .then($scope.toggleChangePasswordMode)
       .catch(error => notifier.error(_.get(error, 'data.message')));
-    };
-
-    $scope.assignRoles = (user, roles) => {
-      user.roles = _.union(user.roles, roles);
-      roles.length = 0;
-    };
-
-    $scope.removeRoles = (user, roles) => {
-      user.roles = _.difference(user.roles, roles);
-      roles.length = 0;
     };
 
     $scope.toggleChangePasswordMode = () => {
