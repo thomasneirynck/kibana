@@ -4,9 +4,12 @@ import Joi from 'joi';
 import getClient from '../../../lib/get_client_shield';
 import userSchema from '../../../lib/user_schema';
 import { wrapError } from '../../../lib/errors';
+import getCalculateExpires from '../../../lib/get_calculate_expires';
+import onChangePassword from '../../../lib/on_change_password';
 
 export default (server) => {
   const callWithRequest = getClient(server).callWithRequest;
+  const calculateExpires = getCalculateExpires(server);
 
   server.route({
     method: 'GET',
@@ -68,7 +71,7 @@ export default (server) => {
       const username = request.params.username;
       const body = request.payload;
       return callWithRequest(request, 'shield.changePassword', {username, body}).then(
-        () => reply().code(204),
+        onChangePassword(request, username, body.password, calculateExpires, reply),
         _.flow(wrapError, reply));
     },
     config: {
