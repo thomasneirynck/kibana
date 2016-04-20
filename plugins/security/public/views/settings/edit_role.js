@@ -29,6 +29,7 @@ routes.when('/settings/security/roles/edit/:name?', {
   },
   controller($scope, $route, $location, shieldPrivileges, shieldIndices, Notifier) {
     $scope.isNewRole = $route.current.params.name == null;
+    $scope.isReservedRole = ['superuser', 'transport_client'].indexOf($route.current.params.name) >= 0;
     $scope.role = $route.current.locals.role;
     $scope.users = $route.current.locals.users;
     $scope.indexPatterns = $route.current.locals.indexPatterns;
@@ -70,8 +71,6 @@ routes.when('/settings/security/roles/edit/:name?', {
     $scope.$watch('role.indices.length', () => {
       _.map($scope.role.indices, (index, i) => $scope.getFields(index, i));
     });
-
-    $scope.isReservedRole = (role) => ['superuser', 'transport_client'].indexOf(role.name) >= 0;
 
     $scope.toggle = toggle;
     $scope.includes = _.includes;

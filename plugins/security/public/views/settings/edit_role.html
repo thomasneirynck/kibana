@@ -10,11 +10,13 @@
       <div class="container">
         <div class="row">
           <h4 ng-if="isNewRole" class="pull-left">New Role</h4>
-          <h4 ng-if="!isNewRole" class="pull-left">Edit Role</h4>
+          <h4 ng-if="!isNewRole && !isReservedRole" class="pull-left">Edit Role</h4>
+          <h4 ng-if="!isNewRole && isReservedRole" class="pull-left">View Role</h4>
+
           <div class="pull-right">
-            <button ng-if="!isNewRole && !isReservedRole(role)" class="btn btn-danger" ng-click="deleteRole(role)">Delete</button>
+            <button ng-if="!isNewRole && !isReservedRole" class="btn btn-danger" ng-click="deleteRole(role)">Delete</button>
             <a href="#/settings/security/roles" class="btn btn-default">Cancel</a>
-            <button class="btn btn-primary" ng-click="saveRole(role)" ng-if="!isReservedRole(role)" ng-disabled="form.$invalid || !areIndicesValid(role.indices)">Save</button>
+            <button class="btn btn-primary" ng-click="saveRole(role)" ng-if="!isReservedRole" ng-disabled="form.$invalid || !areIndicesValid(role.indices)">Save</button>
           </div>
         </div>
         <form class="form-horizontal row" name="form" novalidate>
@@ -52,7 +54,7 @@
         <h4>Cluster</h4>
         <div class="checkbox-inline" ng-repeat="privilege in privileges.cluster">
           <label>
-            <input type="checkbox" ng-checked="includes(role.cluster, privilege)" ng-click="toggle(role.cluster, privilege)" ng-disabled="isReservedRole(role)" />
+            <input type="checkbox" ng-checked="includes(role.cluster, privilege)" ng-click="toggle(role.cluster, privilege)" ng-disabled="isReservedRole" />
             {{privilege}}
           </label>
         </div>
@@ -63,7 +65,7 @@
           <span class="input-group-addon">
             <i class="fa fa-search"></i>
           </span>
-          <ui-select class="form-control" multiple ng-model="role.run_as" ng-disabled="isReservedRole(role)">
+          <ui-select class="form-control" multiple ng-model="role.run_as" ng-disabled="isReservedRole">
             <ui-select-match placeholder="Add a user...">{{$item}}</ui-select-match>
             <ui-select-choices repeat="user as user in union([$select.search], users) | filter:$select.search">
               <div ng-bind-html="user"></div>
@@ -84,7 +86,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-if="!isReservedRole(role)">
+            <tr ng-if="!isReservedRole">
               <td colspan="4">
                 <div class="input-group" style="width: 100%">
                   <span class="input-group-addon">
@@ -112,7 +114,7 @@
                   <span class="input-group-addon">
                     <i class="fa fa-search"></i>
                   </span>
-                  <ui-select class="form-control" multiple ng-model="index.privileges" ng-disabled="isReservedRole(role)" required>
+                  <ui-select class="form-control" multiple ng-model="index.privileges" ng-disabled="isReservedRole" required>
                     <ui-select-match placeholder="Add a privilege...">{{$item}}</ui-select-match>
                     <ui-select-choices repeat="privilege in privileges.indices | filter:$select.search" >
                       <div ng-bind-html="privilege"></div>
@@ -121,14 +123,14 @@
                 </div>
               </td>
 
-              <td><textarea rows="1" placeholder="Add a query..." class="form-control" ng-model="index.query" ng-disabled="isReservedRole(role)"></textarea></td>
+              <td><textarea rows="1" placeholder="Add a query..." class="form-control" ng-model="index.query" ng-disabled="isReservedRole"></textarea></td>
 
               <td>
                 <div class="input-group">
                   <span class="input-group-addon">
                     <i class="fa fa-search"></i>
                   </span>
-                  <ui-select class="form-control" multiple limit="25" ng-model="index.fields" ng-disabled="isReservedRole(role)">
+                  <ui-select class="form-control" multiple limit="25" ng-model="index.fields" ng-disabled="isReservedRole">
                     <ui-select-match placeholder="Add a field...">{{$item}}</ui-select-match>
                     <ui-select-choices repeat="field in union([$select.search], fieldOptions[$index]) | filter:$select.search">
                       <div ng-bind-html="field"></div>
@@ -137,7 +139,7 @@
                 </div>
               </td>
 
-              <td><button ng-click="toggle(role.indices, index)" class="btn btn-danger" ng-if="!isReservedRole(role)"><i class="fa fa-trash"></i></button></td>
+              <td><button ng-click="toggle(role.indices, index)" class="btn btn-danger" ng-if="!isReservedRole"><i class="fa fa-trash"></i></button></td>
             </tr>
 
             <tr ng-show="!areIndicesValid(role.indices)" class="form-group has-error">
