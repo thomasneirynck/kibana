@@ -11,13 +11,16 @@ routes.when('/settings/security/roles', {
       return ShieldRole.query();
     }
   },
-  controller($scope, $route, $q) {
+  controller($scope, $route, $q, Notifier) {
     $scope.roles = $route.current.locals.roles;
     $scope.selectedRoles = [];
+
+    const notifier = new Notifier();
 
     $scope.deleteRoles = () => {
       if (!confirm(`Are you sure you want to delete the selected role(s)? This action is irreversible!`)) return;
       $q.all($scope.selectedRoles.map((role) => role.$delete()))
+      .then(() => notifier.info('The role(s) have been deleted.'))
       .then(() => {
         $scope.selectedRoles.map((role) => {
           const i = $scope.roles.indexOf(role);

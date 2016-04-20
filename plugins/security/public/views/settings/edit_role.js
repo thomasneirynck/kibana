@@ -27,7 +27,7 @@ routes.when('/settings/security/roles/edit/:name?', {
       return shieldIndices.getIndexPatterns();
     }
   },
-  controller($scope, $route, $location, shieldPrivileges, shieldIndices) {
+  controller($scope, $route, $location, shieldPrivileges, shieldIndices, Notifier) {
     $scope.isNewRole = $route.current.params.name == null;
     $scope.role = $route.current.locals.role;
     $scope.users = $route.current.locals.users;
@@ -36,13 +36,18 @@ routes.when('/settings/security/roles/edit/:name?', {
     $scope.newIndex = {names: [], privileges: [], fields: []};
     $scope.fieldOptions = [];
 
+    const notifier = new Notifier();
+
     $scope.deleteRole = (role) => {
       if (!confirm('Are you sure you want to delete this role? This action is irreversible!')) return;
-      role.$delete().then($scope.goToRoleList);
+      role.$delete()
+      .then(() => notifier.info('The role has been deleted.'))
+      .then($scope.goToRoleList);
     };
 
     $scope.saveRole = (role) => {
       role.$save()
+      .then(() => notifier.info('The role has been updated.'))
       .then($scope.goToRoleList)
       .catch(error => $scope.error = _.get(error, 'data.message') || 'Role name is required.');
     };

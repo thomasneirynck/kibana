@@ -11,13 +11,16 @@ routes.when('/settings/security/users', {
       return ShieldUser.query();
     }
   },
-  controller($scope, $route, $q) {
+  controller($scope, $route, $q, Notifier) {
     $scope.users = $route.current.locals.users;
     $scope.selectedUsers = [];
+
+    const notifier = new Notifier();
 
     $scope.deleteUsers = () => {
       if (!confirm('Are you sure you want to delete the selected user(s)? This action is irreversible!')) return;
       $q.all($scope.selectedUsers.map((user) => user.$delete()))
+      .then(() => notifier.info('The user(s) have been deleted.'))
       .then(() => {
         $scope.selectedUsers.map((user) => {
           const i = $scope.users.indexOf(user);
