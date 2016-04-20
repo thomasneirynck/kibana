@@ -22,6 +22,10 @@
         <thead>
           <tr>
             <th><input type="checkbox" ng-click="toggleAll()" ng-checked="allSelected()" /></th>
+            <th ng-click="toggleSort(sort, 'full_name')">
+              Full Name
+              <i aria-hidden="true" class="fa" ng-show="sort.orderBy == 'full_name'" ng-class="{'fa-caret-down': sort.reverse, 'fa-caret-up': !sort.reverse}"></i>
+            </th>
             <th ng-click="toggleSort(sort, 'username')">
               Username
               <i aria-hidden="true" class="fa" ng-show="sort.orderBy == 'username'" ng-class="{'fa-caret-down': sort.reverse, 'fa-caret-up': !sort.reverse}"></i>
@@ -36,6 +40,9 @@
           <tr ng-repeat="user in users | orderBy:'username' | filter:query | orderBy:sort.orderBy:sort.reverse">
             <td>
               <input type="checkbox" ng-click="toggle(selectedUsers, user)" ng-checked="includes(selectedUsers, user)"  ng-disabled="user.metadata._reserved" />
+            </td>
+            <td>
+              <a ng-href="#/settings/security/users/edit/{{user.username}}">{{user.full_name}}</a>
             </td>
             <td>
               <a ng-href="#/settings/security/users/edit/{{user.username}}">{{user.username}}</a>

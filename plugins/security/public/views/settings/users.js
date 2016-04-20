@@ -14,7 +14,7 @@ routes.when('/settings/security/users', {
   controller($scope, $route, $q, Notifier) {
     $scope.users = $route.current.locals.users;
     $scope.selectedUsers = [];
-    $scope.sort = {orderBy: 'username', reverse: false};
+    $scope.sort = {orderBy: 'full_name', reverse: false};
 
     const notifier = new Notifier();
 
