@@ -55,6 +55,7 @@
     "joi": "6.10.1",
     "lodash": "3.10.1",
     "moment": "2.11.2",
+    "moment-timezone": "0.5.3",
     "node-horseman": "2.8.2",
     "pdfmake": "0.1.18",
     "queue": "3.1.0",
