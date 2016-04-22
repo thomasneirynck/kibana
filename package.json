@@ -7,6 +7,7 @@
     "build": "gulp build",
     "package": "gulp package",
     "release": "gulp release",
+    "testonly": "gulp testonly",
     "test": "gulp test"
   },
   "devDependencies": {

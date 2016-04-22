@@ -195,14 +195,20 @@ gulp.task('pre-test', function () {
     .pipe(istanbul.hookRequire());
 });
 
-gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
+function runMocha() {
   return gulp.src(['./plugins/**/__test__/**/*.js', '!./build/**'], { read: false })
-    // runs the unit tests
     .pipe(mocha({
       ui: 'bdd'
-    }))
-    // generates a coverage directory with reports for finding coverage gaps
-    .pipe(istanbul.writeReports());
+    }));
+}
+
+gulp.task('testonly', function () {
+  return runMocha();
+});
+
+gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
+  // generates a coverage directory with reports for finding coverage gaps
+  return runMocha().pipe(istanbul.writeReports());
 });
 
 gulp.task('dev', ['sync'], function () {
