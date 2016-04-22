@@ -74,74 +74,66 @@
 
         <h4>Indices</h4>
         <table class="table">
-          <thead>
-            <tr>
-              <th class="col-md-3">Name</th>
-              <th class="col-md-3">Privileges</th>
-              <th class="col-md-3">Query</th>
-              <th class="col-md-3">Fields</th>
-              <th></th>
-            </tr>
-          </thead>
           <tbody>
-            <tr ng-if="!view.isReservedRole">
-              <td colspan="4">
-                <div class="input-group" style="width: 100%">
+            <tr ng-repeat="index in role.indices">
+              <td class="col-md-6">
+                <div class="input-group help-block">
                   <span class="input-group-addon">
                     <i class="fa fa-search"></i>
                   </span>
-                  <ui-select class="form-control" multiple limit="25" ng-model="view.newIndex.names">
+                  <ui-select class="form-control" multiple ng-model="index.names" ng-change="getFieldOptions(index, $index)" ng-disabled="view.isReservedRole">
                     <ui-select-match placeholder="Add an index...">{{$item}}</ui-select-match>
                     <ui-select-choices repeat="indexPattern in union([$select.search], indexPatterns) | filter:$select.search">
                       <div ng-bind-html="indexPattern"></div>
                     </ui-select-choices>
                   </ui-select>
                 </div>
-              </td>
-              <td>
-                <button ng-click="addIndex(role.indices, view.newIndex)" ng-disabled="view.newIndex.names.length === 0" class="btn btn-primary">
-                  <i class="fa fa-plus"></i>
-                </button>
-              </td>
-            </tr>
 
-            <tr ng-repeat="index in role.indices">
-              <td><div ng-repeat="name in index.names">{{name}}</div></td>
-              <td>
-                <div class="input-group">
+                <div class="help-block">
+                  <textarea rows="1" placeholder="Add a query..." class="form-control" ng-model="index.query" ng-disabled="view.isReservedRole"></textarea>
+                </div>
+
+                <div class="has-error" ng-show="index.names.length && !index.privileges.length">
+                  <span class="help-block">Indices must contain at least one privilege.</span>
+                </div>
+              </td>
+              <td class="col-md-5">
+                <div class="input-group help-block">
                   <span class="input-group-addon">
                     <i class="fa fa-search"></i>
                   </span>
-                  <ui-select class="form-control" multiple ng-model="index.privileges" ng-disabled="view.isReservedRole" required>
+                  <ui-select class="form-control" multiple ng-model="index.privileges" ng-disabled="view.isReservedRole">
                     <ui-select-match placeholder="Add a privilege...">{{$item}}</ui-select-match>
                     <ui-select-choices repeat="privilege in privileges.indices | filter:$select.search" >
                       <div ng-bind-html="privilege"></div>
                     </ui-select-choices>
                   </ui-select>
                 </div>
-              </td>
 
-              <td><textarea rows="1" placeholder="Add a query..." class="form-control" ng-model="index.query" ng-disabled="view.isReservedRole"></textarea></td>
-
-              <td>
-                <div class="input-group">
+                <div class="input-group help-block">
                   <span class="input-group-addon">
                     <i class="fa fa-search"></i>
                   </span>
                   <ui-select class="form-control" multiple limit="25" ng-model="index.fields" ng-disabled="view.isReservedRole">
                     <ui-select-match placeholder="Add a field...">{{$item}}</ui-select-match>
-                    <ui-select-choices repeat="field in union([$select.search], view.fieldOptions[$index]) | filter:$select.search">
+                    <ui-select-choices repeat="field in union([$select.search], view.fieldOptions[index.names]) | filter:$select.search">
                       <div ng-bind-html="field"></div>
                     </ui-select-choices>
                   </ui-select>
                 </div>
               </td>
-
-              <td><button ng-click="toggle(role.indices, index)" class="btn btn-danger" ng-if="!view.isReservedRole"><i class="fa fa-trash"></i></button></td>
-            </tr>
-
-            <tr ng-show="!areIndicesValid(role.indices)" class="form-group has-error">
-              <td colspan="5"><span class="help-block">Indices must each contain at least one privilege.</span></td>
+              <td class="col-md-1">
+                <div class="help-block" ng-if="!view.isReservedRole">
+                  <button class="btn btn-primary" ng-click="addIndex(role.indices)">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+                <div class="help-block" ng-if="!view.isReservedRole">
+                  <button class="btn btn-danger" ng-click="toggle(role.indices, index)">
+                    <i class="fa fa-trash"></i>
+                  </button>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>

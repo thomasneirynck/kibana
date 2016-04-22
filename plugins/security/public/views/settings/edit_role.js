@@ -36,8 +36,7 @@ routes.when('/settings/security/roles/edit/:name?', {
     $scope.view = {
       isNewRole: $route.current.params.name == null,
       isReservedRole: ['superuser', 'transport_client'].indexOf($route.current.params.name) >= 0,
-      newIndex: {names: [], privileges: [], fields: []},
-      fieldOptions: []
+      fieldOptions: {}
     };
 
     const notifier = new Notifier();
@@ -51,6 +50,7 @@ routes.when('/settings/security/roles/edit/:name?', {
     };
 
     $scope.saveRole = (role) => {
+      role.indices = role.indices.filter((index) => index.names.length);
       role.$save()
       .then(() => notifier.info('The role has been updated.'))
       .then($scope.goToRoleList)
@@ -61,27 +61,33 @@ routes.when('/settings/security/roles/edit/:name?', {
       $location.path('/settings/security/roles');
     };
 
-    $scope.addIndex = (indices, index) => {
-      indices.push(_.cloneDeep(index));
-      index.names.length = 0;
+    $scope.addIndex = (indices) => {
+      indices.push({names: [], privileges: [], fields: []});
     };
 
-    $scope.getFields = (index, i) => {
-      return shieldIndices.getFields(index.names.join(','))
-      .then((fields) => $scope.view.fieldOptions[i] = fields)
-      .catch(() => $scope.view.fieldOptions[i] = []);
+    $scope.areIndicesValid = (indices) => {
+      return indices
+        .filter((index) => index.names.length)
+        .find((index) => index.privileges.length === 0) == null;
     };
 
-    $scope.$watch('role.indices.length', () => {
-      _.map($scope.role.indices, (index, i) => $scope.getFields(index, i));
-    });
+    $scope.fetchFieldOptions = (index) => {
+      const indices = index.names.join(',');
+      const fieldOptions = $scope.view.fieldOptions;
+      if (indices && fieldOptions[indices] == null) {
+        shieldIndices.getFields(indices)
+        .then((fields) => fieldOptions[indices] = fields)
+        .catch(() => fieldOptions[indices] = []);
+      }
+    };
+
+    $scope.$watch('role.indices', (indices) => {
+      if (!indices.length) $scope.addIndex(indices);
+      else indices.forEach($scope.fetchFieldOptions);
+    }, true);
 
     $scope.toggle = toggle;
     $scope.includes = _.includes;
     $scope.union = _.flow(_.union, _.compact);
-
-    $scope.areIndicesValid = (indices) => {
-      return indices.find((index) => index.privileges.length === 0) == null;
-    };
   }
 });
