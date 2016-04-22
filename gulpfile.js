@@ -1,4 +1,4 @@
-require('babel-register')();
+require('babel/register')();
 
 // relative location of Kibana install
 var pathToKibana = '../../kibana';
