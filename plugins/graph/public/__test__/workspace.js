@@ -1,24 +1,24 @@
-var gws = require("../graphClientWorkspace.js");
-var expect = require("expect.js");
-describe("graphui-workspace", function() {
+var gws = require('../graphClientWorkspace.js');
+var expect = require('expect.js');
+describe('graphui-workspace', function () {
 
-  describe("createWorkspace()", function() {
+  describe('createWorkspace()', function () {
     // var fooResource=null;
-    var mockedResult=null;
+    var mockedResult = null;
     var init = null;
-    beforeEach(function() {
+    beforeEach(function () {
       //Setup logic here
       // fooResource={"foo":"bar"};
-      init = function() {
-        var callNodeProxy = function(indexName, query, responseHandler) {
+      init = function () {
+        var callNodeProxy = function (indexName, query, responseHandler) {
           responseHandler(mockedResult);
         };
         var options = {
-          indexName: "indexName",
+          indexName: 'indexName',
           vertex_fields: [{
-            "name": "field1"
+            'name': 'field1'
           }, {
-            "name": "field2"
+            'name': 'field2'
           }],
           graphExploreProxy: callNodeProxy,
           exploreControls: {
@@ -35,41 +35,41 @@ describe("graphui-workspace", function() {
           workspace
           //, get to(){}
 
-        }
+        };
       };
     });
-    it("initializeWorkspace", function() {
+    it('initializeWorkspace', function () {
       var {
         workspace
       } = init();
       expect(workspace.nodes).to.have.length(0);
     });
-    it("simpleSearch", function() {
+    it('simpleSearch', function () {
       //Test that a graph is loaded from a free-text search
       var {
         workspace
       } = init();
 
       mockedResult = {
-        "vertices": [{
-          "field": "field1",
-          "term": "a",
-          "weight": 1,
-          "depth": 0
+        'vertices': [{
+          'field': 'field1',
+          'term': 'a',
+          'weight': 1,
+          'depth': 0
         }, {
-          "field": "field1",
-          "term": "b",
-          "weight": 1,
-          "depth": 1
+          'field': 'field1',
+          'term': 'b',
+          'weight': 1,
+          'depth': 1
         }],
-        "connections": [{
-          "source": 0,
-          "target": 1,
-          "weight": 1,
-          "doc_count": 5
+        'connections': [{
+          'source': 0,
+          'target': 1,
+          'weight': 1,
+          'doc_count': 5
         }]
       };
-      workspace.simpleSearch("myquery", {}, 2);
+      workspace.simpleSearch('myquery', {}, 2);
 
       expect(workspace.nodes).to.have.length(2);
       expect(workspace.edges).to.have.length(1);
@@ -77,41 +77,41 @@ describe("graphui-workspace", function() {
       expect(workspace.blacklistedNodes).to.have.length(0);
 
 
-      var nodeA= workspace.getNode(workspace.makeNodeId("field1","a"));
+      var nodeA = workspace.getNode(workspace.makeNodeId('field1','a'));
       expect(nodeA).to.be.an(Object);
 
-      var nodeD= workspace.getNode(workspace.makeNodeId("field1","d"));
+      var nodeD = workspace.getNode(workspace.makeNodeId('field1','d'));
       expect(nodeD).to.be(undefined);
 
 
     });
 
-    it("expandTest", function() {
+    it('expandTest', function () {
       //Test that a graph can be expanded
       var {
         workspace
       } = init();
 
       mockedResult = {
-        "vertices": [{
-          "field": "field1",
-          "term": "a",
-          "weight": 1,
-          "depth": 0
+        'vertices': [{
+          'field': 'field1',
+          'term': 'a',
+          'weight': 1,
+          'depth': 0
         }, {
-          "field": "field1",
-          "term": "b",
-          "weight": 1,
-          "depth": 1
+          'field': 'field1',
+          'term': 'b',
+          'weight': 1,
+          'depth': 1
         }],
-        "connections": [{
-          "source": 0,
-          "target": 1,
-          "weight": 1,
-          "doc_count": 5
+        'connections': [{
+          'source': 0,
+          'target': 1,
+          'weight': 1,
+          'doc_count': 5
         }]
       };
-      workspace.simpleSearch("myquery", {}, 2);
+      workspace.simpleSearch('myquery', {}, 2);
 
       expect(workspace.nodes).to.have.length(2);
       expect(workspace.edges).to.have.length(1);
@@ -119,22 +119,22 @@ describe("graphui-workspace", function() {
       expect(workspace.blacklistedNodes).to.have.length(0);
 
       mockedResult = {
-        "vertices": [{
-          "field": "field1",
-          "term": "b",
-          "weight": 1,
-          "depth": 0
+        'vertices': [{
+          'field': 'field1',
+          'term': 'b',
+          'weight': 1,
+          'depth': 0
         }, {
-          "field": "field1",
-          "term": "c",
-          "weight": 1,
-          "depth": 1
+          'field': 'field1',
+          'term': 'c',
+          'weight': 1,
+          'depth': 1
         }],
-        "connections": [{
-          "source": 0,
-          "target": 1,
-          "weight": 1,
-          "doc_count": 5
+        'connections': [{
+          'source': 0,
+          'target': 1,
+          'weight': 1,
+          'doc_count': 5
         }]
       };
       workspace.expandGraph();
@@ -145,62 +145,62 @@ describe("graphui-workspace", function() {
     });
 
 
-    it("selectionTest", function() {
+    it('selectionTest', function () {
       //Test selections on a graph
       var {
         workspace
       } = init();
       // graph is a1->a2 and b1->b2
       mockedResult = {
-        "vertices": [{
-          "field": "field1",
-          "term": "a1",
-          "weight": 1,
-          "depth": 0
+        'vertices': [{
+          'field': 'field1',
+          'term': 'a1',
+          'weight': 1,
+          'depth': 0
         }, {
-          "field": "field1",
-          "term": "a2",
-          "weight": 1,
-          "depth": 1
+          'field': 'field1',
+          'term': 'a2',
+          'weight': 1,
+          'depth': 1
         },
          {
-          "field": "field1",
-          "term": "b1",
-          "weight": 1,
-          "depth": 1
+          'field': 'field1',
+          'term': 'b1',
+          'weight': 1,
+          'depth': 1
         },
          {
-          "field": "field1",
-          "term": "b2",
-          "weight": 1,
-          "depth": 1
+          'field': 'field1',
+          'term': 'b2',
+          'weight': 1,
+          'depth': 1
         }
        ],
-        "connections": [{
-          "source": 0,
-          "target": 1,
-          "weight": 1,
-          "doc_count": 5
+        'connections': [{
+          'source': 0,
+          'target': 1,
+          'weight': 1,
+          'doc_count': 5
         },
         {
-          "source": 2,
-          "target": 3,
-          "weight": 1,
-          "doc_count": 5
+          'source': 2,
+          'target': 3,
+          'weight': 1,
+          'doc_count': 5
         }
        ]
       };
-      workspace.simpleSearch("myquery", {}, 2);
+      workspace.simpleSearch('myquery', {}, 2);
 
       expect(workspace.selectedNodes).to.have.length(0);
 
-      var nodeA1= workspace.getNode(workspace.makeNodeId("field1","a1"));
+      var nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
       expect(nodeA1).to.be.an(Object);
-      var nodeA2= workspace.getNode(workspace.makeNodeId("field1","a2"));
+      var nodeA2 = workspace.getNode(workspace.makeNodeId('field1','a2'));
       expect(nodeA2).to.be.an(Object);
-      var nodeB1= workspace.getNode(workspace.makeNodeId("field1","b1"));
+      var nodeB1 = workspace.getNode(workspace.makeNodeId('field1','b1'));
       expect(nodeB1).to.be.an(Object);
-      var nodeB2= workspace.getNode(workspace.makeNodeId("field1","b2"));
+      var nodeB2 = workspace.getNode(workspace.makeNodeId('field1','b2'));
       expect(nodeB2).to.be.an(Object);
 
       expect(workspace.selectedNodes).to.have.length(0);
@@ -227,55 +227,55 @@ describe("graphui-workspace", function() {
 
     });
 
-    it("undoRedoDeletes", function() {
+    it('undoRedoDeletes', function () {
       var {
         workspace
       } = init();
       // graph is a1->a2
       mockedResult = {
-        "vertices": [{
-          "field": "field1",
-          "term": "a1",
-          "weight": 1,
-          "depth": 0
+        'vertices': [{
+          'field': 'field1',
+          'term': 'a1',
+          'weight': 1,
+          'depth': 0
         }, {
-          "field": "field1",
-          "term": "a2",
-          "weight": 1,
-          "depth": 1
+          'field': 'field1',
+          'term': 'a2',
+          'weight': 1,
+          'depth': 1
         }
        ],
-        "connections": [{
-          "source": 0,
-          "target": 1,
-          "weight": 1,
-          "doc_count": 5
+        'connections': [{
+          'source': 0,
+          'target': 1,
+          'weight': 1,
+          'doc_count': 5
         }
        ]
       };
-      workspace.simpleSearch("myquery", {}, 2);
+      workspace.simpleSearch('myquery', {}, 2);
 
       expect(workspace.nodes).to.have.length(2);
 
-      var nodeA1= workspace.getNode(workspace.makeNodeId("field1","a1"));
+      var nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
       expect(nodeA1).to.be.an(Object);
-      var nodeA2= workspace.getNode(workspace.makeNodeId("field1","a2"));
+      var nodeA2 = workspace.getNode(workspace.makeNodeId('field1','a2'));
       expect(nodeA2).to.be.an(Object);
 
       workspace.selectNode(nodeA1);
       workspace.deleteSelection();
       expect(workspace.nodes).to.have.length(1);
-      nodeA1= workspace.getNode(workspace.makeNodeId("field1","a1"));
+      nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
       expect(nodeA1).to.be(undefined);
 
       workspace.undo();
       expect(workspace.nodes).to.have.length(2);
-      nodeA1= workspace.getNode(workspace.makeNodeId("field1","a1"));
+      nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
       expect(nodeA1).to.be.an(Object);
 
       workspace.redo();
       expect(workspace.nodes).to.have.length(1);
-      nodeA1= workspace.getNode(workspace.makeNodeId("field1","a1"));
+      nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
       expect(nodeA1).to.be(undefined);
 
       workspace.undo();
@@ -284,39 +284,39 @@ describe("graphui-workspace", function() {
 
     });
 
-    it("undoRedoGroupings", function() {
+    it('undoRedoGroupings', function () {
       var {
         workspace
       } = init();
       // graph is a1->a2
       mockedResult = {
-        "vertices": [{
-          "field": "field1",
-          "term": "a1",
-          "weight": 1,
-          "depth": 0
+        'vertices': [{
+          'field': 'field1',
+          'term': 'a1',
+          'weight': 1,
+          'depth': 0
         }, {
-          "field": "field1",
-          "term": "a2",
-          "weight": 1,
-          "depth": 1
+          'field': 'field1',
+          'term': 'a2',
+          'weight': 1,
+          'depth': 1
         }
        ],
-        "connections": [{
-          "source": 0,
-          "target": 1,
-          "weight": 1,
-          "doc_count": 5
+        'connections': [{
+          'source': 0,
+          'target': 1,
+          'weight': 1,
+          'doc_count': 5
         }
        ]
       };
-      workspace.simpleSearch("myquery", {}, 2);
+      workspace.simpleSearch('myquery', {}, 2);
 
       expect(workspace.nodes).to.have.length(2);
 
-      var nodeA1= workspace.getNode(workspace.makeNodeId("field1","a1"));
+      var nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
       expect(nodeA1).to.be.an(Object);
-      var nodeA2= workspace.getNode(workspace.makeNodeId("field1","a2"));
+      var nodeA2 = workspace.getNode(workspace.makeNodeId('field1','a2'));
       expect(nodeA2).to.be.an(Object);
 
       workspace.selectNode(nodeA2);

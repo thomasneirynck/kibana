@@ -5,7 +5,7 @@ module.exports = function (server) {
     handler: function (req, reply) {
         var body = {
           index: req.query.index
-        }
+        };
         var callWithRequest = server.plugins.elasticsearch.callWithRequest;
         //  See https://www.elastic.co/guide/en/elasticsearch/client/javascript-api/current/api-reference.html
           callWithRequest(req, 'indices.getMapping', body).then(function (resp) {
@@ -20,4 +20,4 @@ module.exports = function (server) {
   });
 
 
-}
+};
