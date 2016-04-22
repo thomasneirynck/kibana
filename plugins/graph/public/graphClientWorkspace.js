@@ -6,19 +6,19 @@ module.exports = (function () {
   // Pluggable function to handle the comms with a server. Default impl here is
   // for use outside of Kibana server with direct access to elasticsearch
   var graphExplorer = function (indexName, typeName, request, responseHandler) {
-      var dataForServer = JSON.stringify(request);
-      $.ajax({
-        type: 'POST',
-        url: 'http://localhost:9200/' + indexName + '/_xpack/graph/_explore',
-        dataType: 'json',
-        contentType: 'application/json;charset=utf-8',
-        async: true,
-        data: dataForServer,
-        success: function (data) {
-          responseHandler(data);
-        }
-      });
-    };
+    var dataForServer = JSON.stringify(request);
+    $.ajax({
+      type: 'POST',
+      url: 'http://localhost:9200/' + indexName + '/_xpack/graph/_explore',
+      dataType: 'json',
+      contentType: 'application/json;charset=utf-8',
+      async: true,
+      data: dataForServer,
+      success: function (data) {
+        responseHandler(data);
+      }
+    });
+  };
   var searcher = function (indexName, request, responseHandler) {
     var dataForServer = JSON.stringify(request);
     $.ajax({
@@ -780,10 +780,10 @@ module.exports = (function () {
       var guiSettingsObj = self.options.exploreControls;
 
       var controls = {
-          use_significance: guiSettingsObj.useSignificance,
-          sample_size: guiSettingsObj.sampleSize,
-          timeout: parseInt(guiSettingsObj.timeoutMillis)
-        };
+        use_significance: guiSettingsObj.useSignificance,
+        sample_size: guiSettingsObj.sampleSize,
+        timeout: parseInt(guiSettingsObj.timeoutMillis)
+      };
         // console.log("guiSettingsObj",guiSettingsObj);
       if (guiSettingsObj.sampleDiversityField != null) {
         controls.sample_diversity = {
@@ -841,17 +841,17 @@ module.exports = (function () {
         }
 
         var node = {
-            x: 1,
-            y: 1,
-            numChildren: 0,
-            parent: undefined,
-            isSelected: false,
-            id: dedupedNode.id,
-            label: label,
-            color: dedupedNode.color,
-            icon: dedupedNode.icon,
-            data: dedupedNode
-          };
+          x: 1,
+          y: 1,
+          numChildren: 0,
+          parent: undefined,
+          isSelected: false,
+          id: dedupedNode.id,
+          label: label,
+          color: dedupedNode.color,
+          icon: dedupedNode.icon,
+          data: dedupedNode
+        };
           //        node.scaledSize = sizeScale(node.data.weight);
         node.scaledSize = 15;
         node.seqNumber = this.seqNumber++;
@@ -1347,10 +1347,10 @@ module.exports = (function () {
       });
 
       var allQuery = {
-          'bool': {
-            'should': allQueries
-          }
-        };
+        'bool': {
+          'should': allQueries
+        }
+      };
         //====================
       var request = {
         'query': allQuery,

@@ -340,9 +340,9 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
             && graph.connections.length == 0 && !$scope.advancedMode) {
               // We think the user has tried searching on a single-value field in basic mode.
               // Steer them to the advanced mode and using multiple fields.
-              $scope.detail = {
-                'suggestNoGraphFixes':true
-              };
+            $scope.detail = {
+              'suggestNoGraphFixes':true
+            };
           }
         }
 
@@ -360,9 +360,9 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
       type: 'visualization',
       body: {
         'query': {
-                'term':{
-                  'kibanaSavedObjectMeta.searchSourceJSON': indexName
-                }
+          'term':{
+            'kibanaSavedObjectMeta.searchSourceJSON': indexName
+          }
         },
         'size': 10
       }
@@ -475,7 +475,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
     $scope.configPanel = 'settings';
     $scope.liveResponseFields = [];
 
-   $scope.selectedDisplayField = null;
+    $scope.selectedDisplayField = null;
     $scope.exploreControls = {
       useSignificance: true,
       sampleSize: 2000,

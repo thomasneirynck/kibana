@@ -6,7 +6,6 @@ rules:
   camelcase: 0
   eqeqeq: 0
   guard-for-in: 0
-  indent: 0
   new-cap: 0
   no-loop-func: 0
   no-shadow: 0

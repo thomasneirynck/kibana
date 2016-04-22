@@ -163,13 +163,13 @@ describe('graphui-workspace', function () {
           'weight': 1,
           'depth': 1
         },
-         {
+        {
           'field': 'field1',
           'term': 'b1',
           'weight': 1,
           'depth': 1
         },
-         {
+        {
           'field': 'field1',
           'term': 'b2',
           'weight': 1,
