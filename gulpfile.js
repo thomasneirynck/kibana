@@ -1,4 +1,4 @@
-require('babel-register')();
+require('babel/register')();
 
 // relative location of Kibana install
 var pathToKibana = '../../kibana';
@@ -12,11 +12,16 @@ var del = require('del');
 var prettyData = require('pretty-data');
 var checksum = require('checksum');
 var aws = require('aws-sdk');
+var mocha = require('gulp-mocha');
+var istanbul = require('gulp-istanbul');
+var isparta = require('isparta');
 
 var logger = require('./gulp_helpers/logger');
 var exec = require('./gulp_helpers/exec')(g.util);
 var syncPath = require('./gulp_helpers/sync_path');
 var downloadPhantom = require('./gulp_helpers/download_phantom');
+var gitInfo = require('./gulp_helpers/git_info');
+var createPackageFile = require('./gulp_helpers/create_package');
 
 var pkg = require('./package.json');
 var packageFile = `${pkg.name}-${pkg.version}.zip`;
@@ -26,6 +31,8 @@ var buildDir = path.resolve(__dirname, 'build');
 var buildTarget = path.resolve(buildDir, 'kibana', pkg.name);
 var targetDir = path.resolve(__dirname, 'target');
 var kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'installedPlugins', pkg.name);
+
+var coverageDir = path.resolve(__dirname, 'coverage');
 
 var buildIncludes = [
   'package.json',
@@ -44,7 +51,7 @@ var excludedDeps = Object.keys(pkg.devDependencies).map(function (name) {
 
 var excludedFiles = [
   '.DS_Store',
-  '/**/__tests__/**',
+  '__test__',
   'node_modules/.bin',
 ];
 
@@ -66,7 +73,7 @@ gulp.task('lint', function () {
     'plugins/**/*.jsx',
     'server/**/*.js',
     'public/**/*.js',
-    '!plugins/**/test/fixtures/**/*.js',
+    '!plugins/**/__test__/fixtures/**/*.js',
     '!plugins/graph/**',
   ];
 
@@ -82,28 +89,39 @@ gulp.task('lint', function () {
   .pipe(g.eslint.failAfterError());
 });
 
-gulp.task('clean', function () {
+gulp.task('clean-test', function () {
+  logger('Deleting', coverageDir);
+  return del([coverageDir]);
+});
+
+gulp.task('clean', ['clean-test'], function () {
   logger('Deleting', [buildDir, targetDir].join(', '));
   return del([buildDir, targetDir]);
 });
 
-gulp.task('build', ['lint', 'clean'], function () {
+gulp.task('report', function () {
+  return gitInfo()
+  .then(function (info) {
+    g.util.log('Package Name', g.util.colors.yellow(pkg.name));
+    g.util.log('Version', g.util.colors.yellow(pkg.version));
+    g.util.log('Build Number', g.util.colors.yellow(info.number));
+    g.util.log('Build SHA', g.util.colors.yellow(info.sha));
+    g.util.log('Build Output', g.util.colors.yellow(packageFile));
+  });
+});
+
+gulp.task('build', ['lint', 'clean', 'report'], function () {
   const excludes = ['node_modules', 'package.json'];
   const includes = buildIncludes.filter((include) => excludes.indexOf(include) === -1);
+
   return Bluebird.mapSeries(includes, function (source) {
     return syncPathTo(source, buildTarget, source !== '.phantom');
   })
   .then(function () {
     return downloadPhantom(path.join(buildTarget, '.phantom'));
   })
-  .then(function () {
-    // create new package.json
-    var includeProps = ['name', 'version', 'dependencies'];
-    var pkgOutput = includeProps.reduce(function (output, key) {
-      output[key] = pkg[key];
-      return output;
-    }, {});
-
+  .then(() => createPackageFile(pkg, ['name', 'version', 'dependencies']))
+  .then(function (pkgOutput) {
     var prettyOutput = prettyData.pd.json(pkgOutput);
     return fs.writeFileSync(path.join(buildTarget, 'package.json'), prettyOutput, { encoding: 'utf8' });
   })
@@ -166,7 +184,32 @@ gulp.task('release', ['package'], function () {
   });
 });
 
-gulp.task('test', ['lint']);
+gulp.task('pre-test', function () {
+  return gulp.src(['./plugins/**/*.js', '!./**/__test__/**'])
+    // instruments code for measuring test coverage
+    .pipe(istanbul({
+      instrumenter: isparta.Instrumenter,
+      includeUntested: true
+    }))
+    // force `require` to return covered files
+    .pipe(istanbul.hookRequire());
+});
+
+function runMocha() {
+  return gulp.src(['./plugins/**/__test__/**/*.js', '!./build/**'], { read: false })
+    .pipe(mocha({
+      ui: 'bdd'
+    }));
+}
+
+gulp.task('testonly', function () {
+  return runMocha();
+});
+
+gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
+  // generates a coverage directory with reports for finding coverage gaps
+  return runMocha().pipe(istanbul.writeReports());
+});
 
 gulp.task('dev', ['sync'], function () {
   var watchFiles = [
