@@ -12,6 +12,9 @@ var del = require('del');
 var prettyData = require('pretty-data');
 var checksum = require('checksum');
 var aws = require('aws-sdk');
+var mocha = require('gulp-mocha');
+var istanbul = require('gulp-istanbul');
+var isparta = require('isparta');
 
 var logger = require('./gulp_helpers/logger');
 var exec = require('./gulp_helpers/exec')(g.util);
@@ -28,6 +31,8 @@ var buildDir = path.resolve(__dirname, 'build');
 var buildTarget = path.resolve(buildDir, 'kibana', pkg.name);
 var targetDir = path.resolve(__dirname, 'target');
 var kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'installedPlugins', pkg.name);
+
+var coverageDir = path.resolve(__dirname, 'coverage');
 
 var buildIncludes = [
   'package.json',
@@ -46,7 +51,7 @@ var excludedDeps = Object.keys(pkg.devDependencies).map(function (name) {
 
 var excludedFiles = [
   '.DS_Store',
-  '/**/__tests__/**',
+  '__test__',
   'node_modules/.bin',
 ];
 
@@ -68,7 +73,7 @@ gulp.task('lint', function () {
     'plugins/**/*.jsx',
     'server/**/*.js',
     'public/**/*.js',
-    '!plugins/**/test/fixtures/**/*.js',
+    '!plugins/**/__test__/fixtures/**/*.js',
     '!plugins/graph/**',
   ];
 
@@ -84,7 +89,12 @@ gulp.task('lint', function () {
   .pipe(g.eslint.failAfterError());
 });
 
-gulp.task('clean', function () {
+gulp.task('clean-test', function () {
+  logger('Deleting', coverageDir);
+  return del([coverageDir]);
+});
+
+gulp.task('clean', ['clean-test'], function () {
   logger('Deleting', [buildDir, targetDir].join(', '));
   return del([buildDir, targetDir]);
 });
@@ -174,7 +184,26 @@ gulp.task('release', ['package'], function () {
   });
 });
 
-gulp.task('test', ['lint']);
+gulp.task('pre-test', function () {
+  return gulp.src(['./plugins/**/*.js', '!./**/__test__/**'])
+    // instruments code for measuring test coverage
+    .pipe(istanbul({
+      instrumenter: isparta.Instrumenter,
+      includeUntested: true
+    }))
+    // force `require` to return covered files
+    .pipe(istanbul.hookRequire());
+});
+
+gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
+  return gulp.src(['./plugins/**/__test__/**/*.js', '!./build/**'], { read: false })
+    // runs the unit tests
+    .pipe(mocha({
+      ui: 'bdd'
+    }))
+    // generates a coverage directory with reports for finding coverage gaps
+    .pipe(istanbul.writeReports());
+});
 
 gulp.task('dev', ['sync'], function () {
   var watchFiles = [
