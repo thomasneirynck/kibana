@@ -9,7 +9,7 @@ var logger = require('./logger');
 
 function fetchBinaries(dest) {
   var phantomDest = path.resolve(dest);
-  var host = 'https://bitbucket.org/ariya/phantomjs/downloads/';
+  var host = 'https://github.com/Medium/phantomjs/releases/download/v1.9.19/';
 
   var phantomBinaries = [{
     description: 'Windows',
