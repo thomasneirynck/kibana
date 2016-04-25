@@ -206,13 +206,29 @@ function runMocha() {
     }));
 }
 
-gulp.task('testonly', function () {
+gulp.task('test', ['lint', 'clean-test', 'pre-test', 'testbrowser'], function () {
+  // generates a coverage directory with reports for finding coverage gaps
+  return runMocha().pipe(istanbul.writeReports());
+});
+
+
+gulp.task('testonly', ['testserver', 'testbrowser']);
+
+gulp.task('testserver', function () {
   return runMocha();
 });
 
-gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
-  // generates a coverage directory with reports for finding coverage gaps
-  return runMocha().pipe(istanbul.writeReports());
+const kbnBrowserArgs = [
+  '--',
+  '--kbnServer.tests_bundle.pluginId', 'graph,security,monitoring,reporting',
+  '--kbnServer.plugin-path', __dirname
+];
+gulp.task('testbrowser-dev', function () {
+  return exec('npm', ['run', 'test:dev'].concat(kbnBrowserArgs), { cwd: pathToKibana });
+});
+
+gulp.task('testbrowser', function () {
+  return exec('npm', ['run', 'test:browser'].concat(kbnBrowserArgs), { cwd: pathToKibana });
 });
 
 gulp.task('dev', ['sync'], function () {
