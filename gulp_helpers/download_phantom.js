@@ -9,25 +9,26 @@ var logger = require('./logger');
 
 function fetchBinaries(dest) {
   var phantomDest = path.resolve(dest);
+  var host = 'https://bitbucket.org/ariya/phantomjs/downloads/';
 
   var phantomBinaries = [{
     description: 'Windows',
-    url: 'https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-windows.zip',
+    url: host + 'phantomjs-1.9.8-windows.zip',
     filename: 'phantomjs-1.9.8-windows.zip',
     checksum: 'c5eed3aeb356ee597a457ab5b1bea870',
   }, {
     description: 'Max OS X',
-    url: 'https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-macosx.zip',
+    url: host + 'phantomjs-1.9.8-macosx.zip',
     filename: 'phantomjs-1.9.8-macosx.zip',
     checksum: 'fb850d56c033dd6e1142953904f62614',
   }, {
     description: 'Linux x86_64',
-    url: 'https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-x86_64.tar.bz2',
+    url: host + 'phantomjs-1.9.8-linux-x86_64.tar.bz2',
     filename: 'phantomjs-1.9.8-linux-x86_64.tar.bz2',
     checksum: '4ea7aa79e45fbc487a63ef4788a18ef7',
   }, {
     description: 'Linux x86',
-    url: 'https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-1.9.8-linux-i686.tar.bz2',
+    url: host + 'phantomjs-1.9.8-linux-i686.tar.bz2',
     filename: 'phantomjs-1.9.8-linux-i686.tar.bz2',
     checksum: '814a438ca515c6f7b1b2259d0d5bc804',
   }];
