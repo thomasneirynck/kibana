@@ -45,6 +45,9 @@
                 <span class="help-block" ng-show="form.password.$touched && form.password.$error.minlength">Password must be at least 6 characters long.</span>
                 <span class="help-block" ng-show="form.confirmPassword.$touched && user.password != view.confirmPassword">Passwords do not match.</span>
               </div>
+              <div class="has-warning" ng-show="user.metadata._reserved && user.username == 'kibana'">
+                <span class="help-block"><i class="fa fa-exclamation-triangle"></i> After changing the password for the kibana user, you will need to update kibana.yml and restart Kibana.</span>
+              </div>
             </div>
             <div class="col-md-4" ng-show="!view.changePasswordMode">
               <a ng-click="toggleChangePasswordMode()">Change Password</a>
