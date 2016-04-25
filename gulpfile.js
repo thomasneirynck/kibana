@@ -35,6 +35,8 @@ var kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'installedPlugins', 
 var coverageDir = path.resolve(__dirname, 'coverage');
 
 var buildIncludes = [
+  'LICENSE.txt',
+  'NOTICE.txt',
   'package.json',
   'index.js',
   'node_modules',
@@ -52,6 +54,7 @@ var excludedDeps = Object.keys(pkg.devDependencies).map(function (name) {
 var excludedFiles = [
   '.DS_Store',
   '__test__',
+  'README.md',
   'node_modules/.bin',
 ];
 
