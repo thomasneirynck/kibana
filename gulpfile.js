@@ -45,7 +45,7 @@ var buildIncludes = [
   'plugins',
   '.phantom',
   // 'public',
-  // 'server',
+  'server'
 ];
 
 var excludedDeps = Object.keys(pkg.devDependencies).map(function (name) {

@@ -22,7 +22,7 @@ module.exports = function (kibana) {
     id: 'graph',
     configPrefix: 'xpack.graph',
     publicDir: resolve(__dirname, 'public'),
-    require: ['kibana', 'elasticsearch'],
+    require: ['kibana', 'elasticsearch', 'xpackMain'],
     uiExports: {
       app: {
         title: 'Graph',
