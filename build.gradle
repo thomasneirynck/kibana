@@ -43,7 +43,14 @@ task npmPackage(type: LoggedExec, dependsOn: npmBuild) {
   outputs.file "target/x-pack-${VersionProperties.elasticsearch}.zip"
 }
 
-task assemble(dependsOn: npmPackage) {
+task bundlePlugin(type: Zip, dependsOn: npmBuild) {
+  from 'build/plugin'
+  destinationDir file('build/distributions')
+  baseName = 'x-pack'
+  version = VersionProperties.elasticsearch
+}
+
+task assemble(dependsOn: bundlePlugin) {
   group = 'Build'
   description = 'Assemble the x-pack kibana zip'
 }
