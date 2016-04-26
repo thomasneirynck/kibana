@@ -22,13 +22,11 @@ function main(kibana) {
 }
 
 module.exports = function (kibana) {
-  let plugins = [];
-
-  plugins = plugins.concat(main(kibana));
-  plugins = plugins.concat(graph(kibana));
-  plugins = plugins.concat(monitoring(kibana));
-  plugins = plugins.concat(reporting(kibana));
-  plugins = plugins.concat(security(kibana));
-
-  return plugins;
+  return [
+    main(kibana),
+    graph(kibana),
+    monitoring(kibana),
+    reporting(kibana),
+    security(kibana)
+  ];
 };
