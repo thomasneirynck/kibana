@@ -28,7 +28,8 @@ var packageFile = `${pkg.name}-${pkg.version}.zip`;
 var checksumFile = packageFile + '.sha1.txt';
 
 var buildDir = path.resolve(__dirname, 'build');
-var buildTarget = path.resolve(buildDir, 'kibana', pkg.name);
+var builtDir = path.join(buildDir, 'plugin');
+var buildTarget = path.resolve(builtDir, 'kibana', pkg.name);
 var targetDir = path.resolve(__dirname, 'target');
 var kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'installedPlugins', pkg.name);
 
@@ -138,7 +139,7 @@ gulp.task('package', ['build'], function () {
   var targetChecksum = path.join(targetDir, checksumFile);
 
   return Bluebird.fromCallback(function (cb) {
-    return gulp.src(buildDir + '/**', { dot: true })
+    return gulp.src(builtDir + '/**', { dot: true })
     .pipe(g.zip(packageFile))
     .pipe(gulp.dest(targetDir))
     .on('finish', cb)
