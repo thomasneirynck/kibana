@@ -37,12 +37,6 @@ task npmBuild(type: LoggedExec, dependsOn: npmInstall) {
   commandLine 'npm', 'run', 'build'
 }
 
-task npmPackage(type: LoggedExec, dependsOn: npmBuild) {
-  enabled = kibanaEnabled
-  commandLine 'npm', 'run', 'package'
-  outputs.file "target/x-pack-${VersionProperties.elasticsearch}.zip"
-}
-
 task bundlePlugin(type: Zip, dependsOn: npmBuild) {
   from 'build/plugin'
   destinationDir file('build/distributions')
