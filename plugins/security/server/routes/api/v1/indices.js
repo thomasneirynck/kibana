@@ -7,21 +7,6 @@ export default (server) => {
 
   server.route({
     method: 'GET',
-    path: '/api/security/v1/mapping/{query}',
-    handler(request, reply) {
-      return callWithRequest(request, 'indices.getFieldMapping', {
-        index: request.params.query,
-        fields: '*',
-        allowNoIndices: false,
-        includeDefaults: true
-      })
-      .then(reply)
-      .catch(_.flow(wrapError, reply));
-    }
-  });
-
-  server.route({
-    method: 'GET',
     path: '/api/security/v1/fields/{query}',
     handler(request, reply) {
       return callWithRequest(request, 'indices.getFieldMapping', {
