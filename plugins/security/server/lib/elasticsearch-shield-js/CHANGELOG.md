@@ -1,1 +1,0 @@
-# elasticsearch-shield changelog

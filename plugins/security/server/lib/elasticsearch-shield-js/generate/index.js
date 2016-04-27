@@ -7,7 +7,7 @@ var glob = require('glob');
 var imports = _.clone(require('./templateHelpers'));
 
 var rootDir = resolve(__dirname, '..');
-var apiDir = resolve(rootDir, '../x-plugins/elasticsearch/x-pack/shield/src/test/resources/rest-api-spec/api');
+var apiDir = resolve(rootDir, '../../../../../../elasticsearch/x-pack/shield/src/test/resources/rest-api-spec/api');
 var tmplDir = resolve(rootDir, 'generate/templates');
 var apiFile = resolve(rootDir, 'elasticsearch-shield.js');
 var docFile = resolve(rootDir, 'docs/api.asciidoc');
