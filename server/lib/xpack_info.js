@@ -1,5 +1,5 @@
-/* Call the XPack Info API
- * Requires and authenticated client
+/* Call the XPack Info API for feature flags and mode of license
+ * Requires an authenticated client
  */
 export default function xpackInfo(client) {
   return client.transport.request({
@@ -8,7 +8,8 @@ export default function xpackInfo(client) {
   })
   .then(response => {
     return {
-      features: response.features
+      features: response.features,
+      mode: response.license.mode
     };
   });
 };
@@ -30,5 +31,6 @@ export default function xpackInfo(client) {
      watcher:
       { description: 'Alerting, Notification and Automation for the Elastic Stack',
         available: true,
-        enabled: true } } }
+        enabled: true } },
+  mode: 'trial' }
  */
