@@ -1,0 +1,9 @@
+{
+  "name": "elasticsearch-shield",
+  "version": "1.0.0",
+  "main": "elasticsearch-shield.js",
+  "ignore": [
+    "*",
+    "!elasticsearch-shield.js"
+  ]
+}
