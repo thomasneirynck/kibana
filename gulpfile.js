@@ -206,9 +206,25 @@ function runMocha() {
     }));
 }
 
-gulp.task('test', ['lint', 'clean-test', 'pre-test', 'testbrowser'], function () {
-  // generates a coverage directory with reports for finding coverage gaps
-  return runMocha().pipe(istanbul.writeReports());
+function runNpm(flags, options) {
+  return exec('npm', ['run'].concat(flags), options);
+}
+
+
+var kbnBrowserArgs = [
+  '--',
+  '--kbnServer.tests_bundle.pluginId', 'graph,security,monitoring,reporting',
+  '--kbnServer.plugin-path', __dirname
+];
+var kbnBrowserOptions = { cwd: pathToKibana };
+
+gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
+  return Bluebird.all([
+    runNpm(['test:browser'].concat(kbnBrowserArgs), kbnBrowserOptions),
+
+    // generates a coverage directory with reports for finding coverage gaps
+    runMocha().pipe(istanbul.writeReports())
+  ]);
 });
 
 
@@ -218,17 +234,12 @@ gulp.task('testserver', function () {
   return runMocha();
 });
 
-const kbnBrowserArgs = [
-  '--',
-  '--kbnServer.tests_bundle.pluginId', 'graph,security,monitoring,reporting',
-  '--kbnServer.plugin-path', __dirname
-];
 gulp.task('testbrowser-dev', function () {
-  return exec('npm', ['run', 'test:dev'].concat(kbnBrowserArgs), { cwd: pathToKibana });
+  return runNpm(['test:dev'].concat(kbnBrowserArgs), kbnBrowserOptions);
 });
 
 gulp.task('testbrowser', function () {
-  return exec('npm', ['run', 'test:browser'].concat(kbnBrowserArgs), { cwd: pathToKibana });
+  return runNpm(['test:browser'].concat(kbnBrowserArgs), kbnBrowserOptions);
 });
 
 gulp.task('dev', ['sync'], function () {
