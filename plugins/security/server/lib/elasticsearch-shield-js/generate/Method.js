@@ -5,7 +5,7 @@ var ParamList = require('./ParamList');
 var urlParamRE = /\{(\w+)\}/g;
 
 function Method(name, props) {
-  this.name = name.split('.').map(function (part) { return camelCase(part) }).join('.');
+  this.name = name.split('.').map(function (part) { return camelCase(part); }).join('.');
   this.id = 'api-' + name.toLowerCase().replace(/[^\w]+/g, '-');
   this.docUrl = props.documentation;
   this.httpMethods = _.invoke(props.methods, 'toUpperCase');
