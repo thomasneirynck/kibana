@@ -15,7 +15,6 @@ var docFile = resolve(rootDir, 'docs/api.asciidoc');
 var read = function (filename) { return fs.readFileSync(filename, 'utf8'); };
 var parseJson = function (contents) { return JSON.parse(contents); };
 var Method = require('./Method');
-debugger;
 var methods = glob
 .sync(resolve(apiDir, 'shield.*.json'))
 .map(read)

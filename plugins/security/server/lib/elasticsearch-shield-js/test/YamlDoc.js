@@ -21,10 +21,10 @@ var implementedFeatures = ['gtelte', 'regex', 'benchmark'];
 var versionExp = '((?:\\d+\\.){0,2}\\d+)(?:\\.\\w+)?|';
 
 // match all whitespace within a "regexp" match arg
-var reWhitespace_RE = /\s+/g;
+var reWhitespaceRegex = /\s+/g;
 
 // match all comments within a "regexp" match arg
-var reComments_RE = /([\S\s]?)#[^\n]*\n/g;
+var reCommentsRegex = /([\S\s]?)#[^\n]*\n/g;
 
 /**
  * Regular Expression to extract a version number from a string
@@ -300,7 +300,7 @@ YamlDoc.prototype = {
     var catcher = new Catcher(args.catch);
     delete args.catch;
 
-    var params = _.transform(args[action], function (params, val, name) {
+    var params = _.transform(args[action], function (innerParams, val, name) {
       var camelName = camelCase(name);
 
       // search through the params and url peices to find this param name
@@ -319,28 +319,28 @@ YamlDoc.prototype = {
       }
 
       // for ercursively traversing the params to replace '$stashed' vars
-      var transformObject = function (vals, val, i) {
-        switch (typeof val) {
+      var transformObject = function (vals, innerVal, i) {
+        switch (typeof innerVal) {
+          case 'string':
+            innerVal = (innerVal[0] === '$') ? this.get(innerVal) : innerVal;
+            break;
+          case 'object':
+            innerVal = _.transform(innerVal, transformObject);
+        }
+        vals[i] = innerVal;
+      }.bind(this);
+
+      // start with the initial param, only traverse traversables
+      switch (typeof val) {
         case 'string':
           val = (val[0] === '$') ? this.get(val) : val;
           break;
         case 'object':
           val = _.transform(val, transformObject);
-        }
-        vals[i] = val;
-      }.bind(this);
-
-      // start with the initial param, only traverse traversables
-      switch (typeof val) {
-      case 'string':
-        val = (val[0] === '$') ? this.get(val) : val;
-        break;
-      case 'object':
-        val = _.transform(val, transformObject);
-        break;
+          break;
       }
 
-      params[paramName] = val;
+      innerParams[paramName] = val;
     }, {}, this);
 
     if (catcher.status) {
@@ -481,16 +481,16 @@ YamlDoc.prototype = {
         // convert the matcher into a compatible string for building a regexp
         maybeRE = match
           // replace comments, but allow the # to be escaped like \#
-          .replace(reComments_RE, function (match, prevChar) {
+          .replace(reCommentsRegex, function (innerMatch, prevChar) {
             if (prevChar === '\\') {
-              return match;
+              return innerMatch;
             } else {
               return prevChar + '\n';
             }
           })
           // remove all whitespace from the expression, all meaningful
           // whitespace is represented with \s
-          .replace(reWhitespace_RE, '');
+          .replace(reWhitespaceRegex, '');
 
         var startsWithSlash = maybeRE[0] === '/';
         var endsWithSlash = maybeRE[maybeRE.length - 1] === '/';

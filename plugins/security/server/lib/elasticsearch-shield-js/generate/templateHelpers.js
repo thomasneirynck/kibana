@@ -74,16 +74,16 @@ module.exports = {
 
   paramType: function (type) {
     switch (type && type.toLowerCase ? type.toLowerCase() : 'any') {
-    case 'time':
-      return 'Date, Number';
-    case 'any':
-      return 'Anything';
-    case 'enum':
-      return 'String';
-    case 'list':
-      return 'String, String[], Boolean';
-    default:
-      return ucfirst(type);
+      case 'time':
+        return 'Date, Number';
+      case 'any':
+        return 'Anything';
+      case 'enum':
+        return 'String';
+      case 'list':
+        return 'String, String[], Boolean';
+      default:
+        return ucfirst(type);
     }
   },
 
