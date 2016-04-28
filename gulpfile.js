@@ -216,7 +216,7 @@ var kbnBrowserArgs = [
   '--kbnServer.tests_bundle.pluginId', 'graph,security,monitoring,reporting',
   '--kbnServer.plugin-path', __dirname
 ];
-var kbnBrowserOptions = { cwd: pathToKibana };
+var kbnBrowserOptions = {cwd: pathToKibana};
 
 gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
   return Bluebird.all([
