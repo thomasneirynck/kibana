@@ -16,7 +16,7 @@ export default (kibana) => new kibana.Plugin({
   id: 'security',
   configPrefix: 'xpack.security',
   publicDir: resolve(__dirname, 'public'),
-  require: ['kibana', 'elasticsearch'],
+  require: ['kibana', 'elasticsearch', 'xpackMain'],
 
   config(Joi) {
     return Joi.object({

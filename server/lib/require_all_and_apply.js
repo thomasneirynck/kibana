@@ -1,7 +1,7 @@
-var glob = require('glob');
-var Promise = require('bluebird');
+import Promise from 'bluebird';
+import glob from 'glob';
 
-module.exports = function (path, server) {
+export default function (path, server) {
   return new Promise(function (resolve, reject) {
     glob(path, { ignore: '**/__test__/**' }, function (err, files) {
       if (err) return reject(err);

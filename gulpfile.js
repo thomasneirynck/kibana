@@ -45,7 +45,7 @@ var buildIncludes = [
   'plugins',
   '.phantom',
   // 'public',
-  // 'server',
+  'server'
 ];
 
 var excludedDeps = Object.keys(pkg.devDependencies).map(function (name) {
@@ -189,7 +189,12 @@ gulp.task('release', ['package'], function () {
 });
 
 gulp.task('pre-test', function () {
-  return gulp.src(['./plugins/**/*.js', '!./**/__test__/**'])
+  return gulp.src([
+    './server/**/*.js',
+    './public/**/*.js',
+    './plugins/**/*.js',
+    '!./**/__test__/**'
+  ])
     // instruments code for measuring test coverage
     .pipe(istanbul({
       instrumenter: isparta.Instrumenter,

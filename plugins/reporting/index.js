@@ -11,7 +11,7 @@ module.exports = function (kibana) {
     id: 'reporting',
     configPrefix: 'xpack.reporting',
     publicDir: resolve(__dirname, 'public'),
-    require: ['kibana', 'elasticsearch'],
+    require: ['kibana', 'elasticsearch', 'xpackMain'],
 
     uiExports: {
       navbarExtensions: [
