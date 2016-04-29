@@ -1,5 +1,5 @@
 var d3 = require('d3');
-var venn = require('./venn.js');
+var venn = require('venn.js');
 var dv = require('ace');
 var av = require('./angular-venn-simple.js');
 var gws = require('./graphClientWorkspace.js');

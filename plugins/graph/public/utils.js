@@ -1,5 +1,5 @@
 
-var venn = require('./venn.js');
+var venn = require('venn.js');
 module.exports = (function () {
 
   // Unwrap elasticsearch field names from mappings
