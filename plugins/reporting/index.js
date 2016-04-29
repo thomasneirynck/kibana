@@ -39,7 +39,29 @@ module.exports = function (kibana) {
       },
     },
 
-    config: appConfig,
+    config: function (Joi) {
+      return Joi.object({
+        enabled: Joi.boolean().default(true),
+        kibanaApp: Joi.string().regex(/^\//).default('/app/kibana'),
+        kibanaServer: Joi.object({
+          protocol: Joi.string().valid(['http', 'https']),
+          hostname: Joi.string(),
+          port: Joi.number().integer()
+        }).default(),
+        phantom: Joi.object({
+          zoom: Joi.number().integer().default(1),
+          viewport: Joi.object({
+            width: Joi.number().integer().default(1320),
+            height: Joi.number().integer().default(640)
+          }).default(),
+          timeout: Joi.number().integer().default(6000),
+          loadDelay: Joi.number().integer().default(3000)
+        }).default(),
+        capture: Joi.object({
+          concurrency: Joi.number().integer().default(appConfig.concurrency),
+        }).default(),
+      }).default();
+    },
 
     init: function (server) {
       // init the plugin helpers
