@@ -77,6 +77,7 @@ gulp.task('lint', function () {
     'plugins/**/*.jsx',
     'server/**/*.js',
     'public/**/*.js',
+    '!plugins/**/node_modules/**',
     '!plugins/**/__test__/fixtures/**/*.js',
     '!plugins/graph/**',
   ];
@@ -99,8 +100,13 @@ gulp.task('clean-test', function () {
 });
 
 gulp.task('clean', ['clean-test'], function () {
-  logger('Deleting', [buildDir, targetDir].join(', '));
-  return del([buildDir, targetDir]);
+  const toDelete = [
+    buildDir,
+    targetDir,
+    'plugins/**/node_modules' // elasticsearch-shield-js
+  ];
+  logger('Deleting', toDelete.join(', '));
+  return del(toDelete);
 });
 
 gulp.task('report', function () {
