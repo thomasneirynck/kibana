@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs');
 
 module.exports = function (server) {
-  const modulePath = path.resolve(__dirname, '..', '..', 'node_modules');
+  const modulePath = path.resolve(__dirname, '..', '..', '..', '..', 'node_modules');
   const assetPath = path.resolve(__dirname, '..', '..', 'server', 'assets');
 
   server.route({
