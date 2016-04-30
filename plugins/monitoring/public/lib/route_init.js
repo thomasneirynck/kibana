@@ -42,7 +42,7 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
 
       if (isExpired && !_.contains(window.location.hash, 'license')) {
         // redirect to license, but avoid infinite loop
-        kbnUrl.redirect('license');
+        kbnUrl.redirect('/license');
       }
       return monitoring;
     })
