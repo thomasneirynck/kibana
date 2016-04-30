@@ -1,4 +1,5 @@
 import { join, resolve } from 'path';
+import Promise from 'bluebird';
 import requireAllAndApply from '../../server/lib/require_all_and_apply';
 var pluginSelfCheck = require('./server/lib/plugin_self_check');
 var instantiateClient = require('./server/lib/es_client/instantiate_client');
@@ -74,14 +75,11 @@ module.exports = function (kibana) {
     },
 
     init: function (server, _options) {
-      // Instantiate the dedicated Elasticsearch client
-      instantiateClient(server);
-
-      // Make sure the Monitoring index is created and the Kibana version is supported
-      pluginSelfCheck(this, server);
-
-      // Require all the routes
-      requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server);
+      return Promise.all([
+        instantiateClient(server), // Instantiate the dedicated Elasticsearch client
+        pluginSelfCheck(this, server), // Make sure the Monitoring index is created and the Kibana version is supported
+        requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server) // Require all the routes
+      ]);
     }
   });
 };
