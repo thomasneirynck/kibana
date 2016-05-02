@@ -210,17 +210,20 @@ function runNpm(flags, options) {
   return exec('npm', ['run'].concat(flags), options);
 }
 
-
-var kbnBrowserArgs = [
-  '--',
-  '--kbnServer.tests_bundle.pluginId', 'graph,security,monitoring,reporting',
-  '--kbnServer.plugin-path', __dirname
-];
-var kbnBrowserOptions = {cwd: pathToKibana};
+function runBrowserTests(type) {
+  var kbnBrowserArgs = [
+    type,
+    '--',
+    '--kbnServer.tests_bundle.pluginId', 'graph,security,monitoring,reporting',
+    '--kbnServer.plugin-path', __dirname
+  ];
+  var kbnBrowserOptions = { cwd: pathToKibana };
+  return runNpm(kbnBrowserArgs, kbnBrowserOptions);
+}
 
 gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
   return Bluebird.all([
-    runNpm(['test:browser'].concat(kbnBrowserArgs), kbnBrowserOptions),
+    runBrowserTests('test:browser'),
 
     // generates a coverage directory with reports for finding coverage gaps
     runMocha().pipe(istanbul.writeReports())
@@ -235,11 +238,11 @@ gulp.task('testserver', function () {
 });
 
 gulp.task('testbrowser-dev', function () {
-  return runNpm(['test:dev'].concat(kbnBrowserArgs), kbnBrowserOptions);
+  return runBrowserTests('test:dev');
 });
 
 gulp.task('testbrowser', function () {
-  return runNpm(['test:browser'].concat(kbnBrowserArgs), kbnBrowserOptions);
+  return runBrowserTests('test:browser');
 });
 
 gulp.task('dev', ['sync'], function () {
