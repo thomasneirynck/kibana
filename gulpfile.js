@@ -122,6 +122,7 @@ gulp.task('report', function () {
 
 gulp.task('build', ['lint', 'clean', 'report'], function () {
   const excludes = ['node_modules', 'package.json'];
+  const pkgProps = ['name', 'version', 'dependencies'];
   const includes = buildIncludes.filter((include) => excludes.indexOf(include) === -1);
 
   return Bluebird.mapSeries(includes, function (source) {
@@ -130,15 +131,21 @@ gulp.task('build', ['lint', 'clean', 'report'], function () {
   .then(function () {
     return downloadPhantom(path.join(buildTarget, '.phantom'));
   })
-  .then(() => createPackageFile(pkg, ['name', 'version', 'dependencies']))
+  .then(() => createPackageFile(pkg, pkgProps))
   .then(function (pkgOutput) {
+    // re-write package.json, stripping unimportant bits and adding build info
     var prettyOutput = prettyData.pd.json(pkgOutput);
     return fs.writeFileSync(path.join(buildTarget, 'package.json'), prettyOutput, { encoding: 'utf8' });
   })
   .then(() => {
+    // re-write plugins' package.json, stripping unimportant bit and syncing version
     return gulp.src(['./plugins/*/package.json'])
-    .pipe(g.jsonEditor({
-      version: pkg.version
+    .pipe(g.jsonEditor(function (obj) {
+      return Object.keys(obj).reduce(function (o, key) {
+        if (pkgProps.indexOf(key) === -1) return o;
+        o[key] = (key === 'version') ? pkg.version : obj[key];
+        return o;
+      }, {});
     }))
     .pipe(gulp.dest(path.join(buildTarget, 'plugins')));
   })
