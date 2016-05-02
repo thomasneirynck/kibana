@@ -135,6 +135,13 @@ gulp.task('build', ['lint', 'clean', 'report'], function () {
     var prettyOutput = prettyData.pd.json(pkgOutput);
     return fs.writeFileSync(path.join(buildTarget, 'package.json'), prettyOutput, { encoding: 'utf8' });
   })
+  .then(() => {
+    return gulp.src(['./plugins/*/package.json'])
+    .pipe(g.jsonEditor({
+      version: pkg.version
+    }))
+    .pipe(gulp.dest(path.join(buildTarget, 'plugins')));
+  })
   .then(function () {
     return exec('npm', ['install', '--production', '--no-bin-links', '--silent'], { cwd: buildTarget });
   });
