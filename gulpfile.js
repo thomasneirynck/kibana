@@ -136,7 +136,7 @@ gulp.task('build', ['lint', 'clean', 'report'], function () {
     return fs.writeFileSync(path.join(buildTarget, 'package.json'), prettyOutput, { encoding: 'utf8' });
   })
   .then(function () {
-    return exec('npm', ['install', '--production', '--silent'], { cwd: buildTarget });
+    return exec('npm', ['install', '--production', '--no-bin-links', '--silent'], { cwd: buildTarget });
   });
 });
 
