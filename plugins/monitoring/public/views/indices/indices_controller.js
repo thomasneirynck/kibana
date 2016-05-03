@@ -15,14 +15,14 @@ function getPageData(timefilter, globalState, $http, Private) {
     metrics: [
       'cluster_search_request_rate',
       'cluster_query_latency',
-      'cluster_index_request_rate',
+      'cluster_index_request_rate_primary$cluster_index_request_rate_total',
       'cluster_index_latency'
     ],
     listingMetrics: [
       'index_document_count',
       'index_size',
       'index_search_request_rate',
-      'index_request_rate'
+      'index_request_rate_primary'
     ]
   })
   .then(response => response.data)

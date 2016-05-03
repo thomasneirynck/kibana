@@ -93,11 +93,21 @@ const indexAvgStatFields = {
 };
 
 module.exports = {
-  'cluster_index_request_rate': {
+  'cluster_index_request_rate_primary': {
     active: true,
+    title: 'Indexing Rate', // title to use for the chart
+    label: 'Primary Shards', // label to use for this line in the chart
     field: 'indices_stats._all.primaries.indexing.index_total',
-    label: 'Indexing Rate',
-    description: 'The per index rate at which documents are being indexed.',
+    description: 'The per index rate at which documents are being indexed for primary shards.',
+    type: 'index',
+    ...requestRateFields
+  },
+  'cluster_index_request_rate_total': {
+    active: true,
+    field: 'indices_stats._all.total.indexing.index_total',
+    title: 'Indexing Rate',
+    label: 'Total Shards',
+    description: 'The per index rate at which documents are being indexed for all shards.',
     type: 'index',
     ...requestRateFields
   },
@@ -145,10 +155,23 @@ module.exports = {
     type: 'node',
     ...queryLatencyFields
   },
-  'index_request_rate': {
+  'index_request_rate_primary': {
     active: true,
     field: 'index_stats.primaries.indexing.index_total',
-    label: 'Indexing Rate',
+    title: 'Indexing Rate',
+    label: 'Primary Shards',
+    description: 'The per index rate at which documents are being indexed.',
+    format: formatLargeFloat,
+    metricAgg: 'max',
+    units: '/s',
+    type: 'index',
+    derivative: true
+  },
+  'index_request_rate_total': {
+    active: true,
+    field: 'index_stats.total.indexing.index_total',
+    title: 'Indexing Rate',
+    label: 'Total Shards',
     description: 'The per index rate at which documents are being indexed.',
     type: 'index',
     ...requestRateFields
