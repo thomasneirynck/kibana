@@ -231,13 +231,43 @@ function runMocha() {
     }));
 }
 
-gulp.task('testonly', function () {
+function runNpm(flags, options) {
+  return exec('npm', ['run'].concat(flags), options);
+}
+
+function runBrowserTests(type) {
+  var kbnBrowserArgs = [
+    type,
+    '--',
+    '--kbnServer.tests_bundle.pluginId', 'graph,security,monitoring,reporting',
+    '--kbnServer.plugin-path', __dirname
+  ];
+  var kbnBrowserOptions = { cwd: pathToKibana };
+  return runNpm(kbnBrowserArgs, kbnBrowserOptions);
+}
+
+gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
+  return Bluebird.all([
+    runBrowserTests('test:browser'),
+
+    // generates a coverage directory with reports for finding coverage gaps
+    runMocha().pipe(istanbul.writeReports())
+  ]);
+});
+
+
+gulp.task('testonly', ['testserver', 'testbrowser']);
+
+gulp.task('testserver', function () {
   return runMocha();
 });
 
-gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
-  // generates a coverage directory with reports for finding coverage gaps
-  return runMocha().pipe(istanbul.writeReports());
+gulp.task('testbrowser-dev', function () {
+  return runBrowserTests('test:dev');
+});
+
+gulp.task('testbrowser', function () {
+  return runBrowserTests('test:browser');
 });
 
 gulp.task('dev', ['sync'], function () {

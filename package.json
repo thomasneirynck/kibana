@@ -8,7 +8,9 @@
     "package": "gulp package",
     "release": "gulp release",
     "testonly": "gulp testonly",
-    "test": "gulp test"
+    "test": "gulp test",
+    "test:browser:dev": "gulp testbrowser-dev",
+    "test:browser": "gulp testbrowser"
   },
   "devDependencies": {
     "@elastic/eslint-config-kibana": "0.0.2",
