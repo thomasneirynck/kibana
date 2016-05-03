@@ -28,7 +28,8 @@ var packageFile = `${pkg.name}-${pkg.version}.zip`;
 var checksumFile = packageFile + '.sha1.txt';
 
 var buildDir = path.resolve(__dirname, 'build');
-var buildTarget = path.resolve(buildDir, 'kibana', pkg.name);
+var builtDir = path.join(buildDir, 'plugin');
+var buildTarget = path.resolve(builtDir, 'kibana', pkg.name);
 var targetDir = path.resolve(__dirname, 'target');
 var kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'installedPlugins', pkg.name);
 
@@ -44,7 +45,7 @@ var buildIncludes = [
   'plugins',
   '.phantom',
   // 'public',
-  // 'server',
+  'server'
 ];
 
 var excludedDeps = Object.keys(pkg.devDependencies).map(function (name) {
@@ -76,6 +77,7 @@ gulp.task('lint', function () {
     'plugins/**/*.jsx',
     'server/**/*.js',
     'public/**/*.js',
+    '!plugins/**/node_modules/**',
     '!plugins/**/__test__/fixtures/**/*.js',
     '!plugins/graph/**',
   ];
@@ -98,8 +100,13 @@ gulp.task('clean-test', function () {
 });
 
 gulp.task('clean', ['clean-test'], function () {
-  logger('Deleting', [buildDir, targetDir].join(', '));
-  return del([buildDir, targetDir]);
+  const toDelete = [
+    buildDir,
+    targetDir,
+    'plugins/**/node_modules' // elasticsearch-shield-js
+  ];
+  logger('Deleting', toDelete.join(', '));
+  return del(toDelete);
 });
 
 gulp.task('report', function () {
@@ -115,6 +122,7 @@ gulp.task('report', function () {
 
 gulp.task('build', ['lint', 'clean', 'report'], function () {
   const excludes = ['node_modules', 'package.json'];
+  const pkgProps = ['name', 'version', 'dependencies'];
   const includes = buildIncludes.filter((include) => excludes.indexOf(include) === -1);
 
   return Bluebird.mapSeries(includes, function (source) {
@@ -123,13 +131,26 @@ gulp.task('build', ['lint', 'clean', 'report'], function () {
   .then(function () {
     return downloadPhantom(path.join(buildTarget, '.phantom'));
   })
-  .then(() => createPackageFile(pkg, ['name', 'version', 'dependencies']))
+  .then(() => createPackageFile(pkg, pkgProps))
   .then(function (pkgOutput) {
+    // re-write package.json, stripping unimportant bits and adding build info
     var prettyOutput = prettyData.pd.json(pkgOutput);
     return fs.writeFileSync(path.join(buildTarget, 'package.json'), prettyOutput, { encoding: 'utf8' });
   })
+  .then(() => {
+    // re-write plugins' package.json, stripping unimportant bit and syncing version
+    return gulp.src(['./plugins/*/package.json'])
+    .pipe(g.jsonEditor(function (obj) {
+      return Object.keys(obj).reduce(function (o, key) {
+        if (pkgProps.indexOf(key) === -1) return o;
+        o[key] = (key === 'version') ? pkg.version : obj[key];
+        return o;
+      }, {});
+    }))
+    .pipe(gulp.dest(path.join(buildTarget, 'plugins')));
+  })
   .then(function () {
-    return exec('npm', ['install', '--production', '--silent'], { cwd: buildTarget });
+    return exec('npm', ['install', '--production', '--no-bin-links', '--silent'], { cwd: buildTarget });
   });
 });
 
@@ -138,7 +159,7 @@ gulp.task('package', ['build'], function () {
   var targetChecksum = path.join(targetDir, checksumFile);
 
   return Bluebird.fromCallback(function (cb) {
-    return gulp.src(buildDir + '/**', { dot: true })
+    return gulp.src(builtDir + '/**', { dot: true })
     .pipe(g.zip(packageFile))
     .pipe(gulp.dest(targetDir))
     .on('finish', cb)
@@ -188,7 +209,12 @@ gulp.task('release', ['package'], function () {
 });
 
 gulp.task('pre-test', function () {
-  return gulp.src(['./plugins/**/*.js', '!./**/__test__/**'])
+  return gulp.src([
+    './server/**/*.js',
+    './public/**/*.js',
+    './plugins/**/*.js',
+    '!./**/__test__/**'
+  ])
     // instruments code for measuring test coverage
     .pipe(istanbul({
       instrumenter: isparta.Instrumenter,
@@ -205,13 +231,43 @@ function runMocha() {
     }));
 }
 
-gulp.task('testonly', function () {
+function runNpm(flags, options) {
+  return exec('npm', ['run'].concat(flags), options);
+}
+
+function runBrowserTests(type) {
+  var kbnBrowserArgs = [
+    type,
+    '--',
+    '--kbnServer.tests_bundle.pluginId', 'graph,security,monitoring,reporting',
+    '--kbnServer.plugin-path', __dirname
+  ];
+  var kbnBrowserOptions = { cwd: pathToKibana };
+  return runNpm(kbnBrowserArgs, kbnBrowserOptions);
+}
+
+gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
+  return Bluebird.all([
+    runBrowserTests('test:browser'),
+
+    // generates a coverage directory with reports for finding coverage gaps
+    runMocha().pipe(istanbul.writeReports())
+  ]);
+});
+
+
+gulp.task('testonly', ['testserver', 'testbrowser']);
+
+gulp.task('testserver', function () {
   return runMocha();
 });
 
-gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
-  // generates a coverage directory with reports for finding coverage gaps
-  return runMocha().pipe(istanbul.writeReports());
+gulp.task('testbrowser-dev', function () {
+  return runBrowserTests('test:dev');
+});
+
+gulp.task('testbrowser', function () {
+  return runBrowserTests('test:browser');
 });
 
 gulp.task('dev', ['sync'], function () {

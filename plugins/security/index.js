@@ -17,7 +17,7 @@ export default (kibana) => new kibana.Plugin({
   id: 'security',
   configPrefix: 'xpack.security',
   publicDir: resolve(__dirname, 'public'),
-  require: ['kibana', 'elasticsearch'],
+  require: ['kibana', 'elasticsearch', 'xpackMain'],
 
   config(Joi) {
     return Joi.object({
@@ -28,7 +28,10 @@ export default (kibana) => new kibana.Plugin({
       useUnsafeSessions: Joi.boolean().default(false),
       // Only use this if SSL is still configured, but it's configured outside of the Kibana server
       // (e.g. SSL is configured on a load balancer)
-      skipSslCheck: Joi.boolean().default(false)
+      skipSslCheck: Joi.boolean().default(false),
+      kibana: Joi.object({
+        password: Joi.string().default('changeme')
+      }).default()
     }).default();
   },
 
@@ -51,6 +54,16 @@ export default (kibana) => new kibana.Plugin({
       return {
         shieldUnsafeSessions: config.get('xpack.security.useUnsafeSessions')
       };
+    }
+  },
+
+  preInit(server) {
+    const config = server.config();
+    const {username, password} = config.get('elasticsearch');
+    const xpackPassword = config.get('xpack.security.kibana.password');
+    if (xpackPassword || !(username && password)) {
+      config.set('elasticsearch.username', 'kibana');
+      config.set('elasticsearch.password', xpackPassword);
     }
   },
 

@@ -1,8 +1,6 @@
 var childProcess = require('child_process');
 var Bluebird = require('bluebird');
 
-var logger = require('./logger');
-
 module.exports = (gulpUtil) => {
   return function exec(cmd, args, opts) {
     args = args || [];
@@ -11,7 +9,7 @@ module.exports = (gulpUtil) => {
       var proc = childProcess.spawn(cmd, args, opts);
 
       proc.stdout.on('data', function (data) {
-        logger(data.toString('utf-8').trim());
+        gulpUtil.log(data.toString('utf-8').trim());
       });
 
       proc.stderr.on('data', function (data) {

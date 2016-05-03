@@ -1,11 +1,11 @@
 import { join, resolve } from 'path';
-var requireAllAndApply = require('./server/lib/require_all_and_apply');
+import requireAllAndApply from '../../server/lib/require_all_and_apply';
 var pluginSelfCheck = require('./server/lib/plugin_self_check');
 var instantiateClient = require('./server/lib/es_client/instantiate_client');
 
 module.exports = function (kibana) {
   return new kibana.Plugin({
-    require: ['kibana', 'elasticsearch'],
+    require: ['kibana', 'elasticsearch', 'xpackMain'],
     id: 'monitoring',
     configPrefix: 'xpack.monitoring',
     publicDir: resolve(__dirname, 'public'),

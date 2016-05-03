@@ -8,7 +8,9 @@
     "package": "gulp package",
     "release": "gulp release",
     "testonly": "gulp testonly",
-    "test": "gulp test"
+    "test": "gulp test",
+    "test:browser:dev": "gulp testbrowser-dev",
+    "test:browser": "gulp testbrowser"
   },
   "devDependencies": {
     "@elastic/eslint-config-kibana": "0.0.2",
@@ -24,6 +26,7 @@
     "gulp": "3.9.1",
     "gulp-eslint": "1.1.1",
     "gulp-istanbul": "0.10.3",
+    "gulp-json-editor": "2.2.1",
     "gulp-load-plugins": "1.2.0",
     "gulp-mocha": "2.2.0",
     "gulp-util": "3.0.7",
@@ -48,7 +51,6 @@
     "boom": "3.1.1",
     "d3": "3.5.6",
     "elasticsearch": "10.1.3",
-    "elasticsearch-shield": "git+ssh://github.com/elastic/elasticsearch-shield-js.git",
     "flot-charts": "0.8.3",
     "font-awesome": "4.4.0",
     "glob": "6.0.4",
