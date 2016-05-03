@@ -247,9 +247,7 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
 
         $scope.plot = $.plot($elem, data, options);
 
-        let legendScope = $scope.$new();
-        legendScope.$destroy();
-        legendScope = $scope.$new();
+        const legendScope = $scope.$new();
         // Used to toggle the series, and for displaying values on hover
         legendValueNumbers = $elem.find('.ngLegendValueNumber');
         _.each($elem.find('.ngLegendValue'), (elem) => {
