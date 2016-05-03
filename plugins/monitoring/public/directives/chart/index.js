@@ -229,7 +229,7 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
         const dataSize = series.reduce((prev, current) => {
           return prev + current.data.length;
         }, 0);
-        if (!dataSize === 0) {
+        if (dataSize !== 0) {
           const bounds = timefilter.getBounds();
           options.xaxis.min = bounds.min.valueOf();
           options.xaxis.max = bounds.max.valueOf();
