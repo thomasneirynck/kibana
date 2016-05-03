@@ -235,6 +235,9 @@ function runNpm(flags, options) {
   return exec('npm', ['run'].concat(flags), options);
 }
 
+/*
+ * This requires Kibana to be cloned in the same parent directory as x-plugins
+ */
 function runBrowserTests(type) {
   var kbnBrowserArgs = [
     type,
@@ -247,14 +250,9 @@ function runBrowserTests(type) {
 }
 
 gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
-  return Bluebird.all([
-    runBrowserTests('test:browser'),
-
-    // generates a coverage directory with reports for finding coverage gaps
-    runMocha().pipe(istanbul.writeReports())
-  ]);
+  // generates a coverage directory with reports for finding coverage gaps
+  runMocha().pipe(istanbul.writeReports());
 });
-
 
 gulp.task('testonly', ['testserver', 'testbrowser']);
 
