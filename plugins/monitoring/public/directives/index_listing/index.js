@@ -59,8 +59,8 @@ define(function (require) {
         sortKey: 'metrics.index_size.last',
         title: 'Data'
       }, {
-        key: 'metrics.index_request_rate',
-        sortKey: 'metrics.index_request_rate.last',
+        key: 'metrics.index_request_rate_primary',
+        sortKey: 'metrics.index_request_rate_primary.last',
         title: 'Index Rate'
       }, {
         key: 'metrics.index_search_request_rate',

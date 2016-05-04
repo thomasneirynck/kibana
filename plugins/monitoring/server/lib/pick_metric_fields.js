@@ -3,6 +3,7 @@ module.exports = (metric) => {
   const fields = [
     'field',
     'label',
+    'title',
     'description',
     'units',
     'format'
