@@ -21,7 +21,7 @@
     shield.authenticate = ca({
       params: {},
       url: {
-        fmt: '/_shield/authenticate'
+        fmt: '/_xpack/security/authenticate'
       }
     });
 
@@ -40,7 +40,7 @@
       },
       urls: [
         {
-          fmt: '/_shield/user/<%=username%>/_password',
+          fmt: '/_xpack/security/user/<%=username%>/_password',
           req: {
             username: {
               type: 'string',
@@ -49,7 +49,7 @@
           }
         },
         {
-          fmt: '/_shield/user/_password'
+          fmt: '/_xpack/security/user/_password'
         }
       ],
       needBody: true,
@@ -71,7 +71,7 @@
         }
       },
       url: {
-        fmt: '/_shield/realm/<%=realms%>/_clear_cache',
+        fmt: '/_xpack/security/realm/<%=realms%>/_clear_cache',
         req: {
           realms: {
             type: 'string',
@@ -91,7 +91,7 @@
     shield.clearCachedRoles = ca({
       params: {},
       url: {
-        fmt: '/_shield/role/<%=name%>/_clear_cache',
+        fmt: '/_xpack/security/role/<%=name%>/_clear_cache',
         req: {
           name: {
             type: 'string',
@@ -116,7 +116,7 @@
         }
       },
       url: {
-        fmt: '/_shield/role/<%=name%>',
+        fmt: '/_xpack/security/role/<%=name%>',
         req: {
           name: {
             type: 'string',
@@ -141,7 +141,7 @@
         }
       },
       url: {
-        fmt: '/_shield/user/<%=username%>',
+        fmt: '/_xpack/security/user/<%=username%>',
         req: {
           username: {
             type: 'string',
@@ -162,7 +162,7 @@
       params: {},
       urls: [
         {
-          fmt: '/_shield/role/<%=name%>',
+          fmt: '/_xpack/security/role/<%=name%>',
           req: {
             name: {
               type: 'string',
@@ -171,7 +171,7 @@
           }
         },
         {
-          fmt: '/_shield/role'
+          fmt: '/_xpack/security/role'
         }
       ]
     });
@@ -186,7 +186,7 @@
       params: {},
       urls: [
         {
-          fmt: '/_shield/user/<%=username%>',
+          fmt: '/_xpack/security/user/<%=username%>',
           req: {
             username: {
               type: 'list',
@@ -195,7 +195,7 @@
           }
         },
         {
-          fmt: '/_shield/user'
+          fmt: '/_xpack/security/user'
         }
       ]
     });
@@ -214,7 +214,7 @@
         }
       },
       url: {
-        fmt: '/_shield/role/<%=name%>',
+        fmt: '/_xpack/security/role/<%=name%>',
         req: {
           name: {
             type: 'string',
@@ -240,7 +240,7 @@
         }
       },
       url: {
-        fmt: '/_shield/user/<%=username%>',
+        fmt: '/_xpack/security/user/<%=username%>',
         req: {
           username: {
             type: 'string',
