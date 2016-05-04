@@ -1,4 +1,4 @@
 <div ng-if="series">
-  <h1>{{title}} ({{units}})</h1>
+  <h1>{{title}} <span ng-if="units">({{units}})</span></h1>
   <chart series="series"/>
 </div>

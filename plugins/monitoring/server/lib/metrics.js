@@ -97,7 +97,7 @@ const indexAvgStatFields = {
   derivative: false,
   format: formatLargeBytes,
   metricAgg: 'avg',
-  units: ''
+  units: 'B'
 };
 const nodeIndexMemory = {
   ...allCharts,
