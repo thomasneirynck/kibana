@@ -30,6 +30,7 @@ app.directive('monitoringChart', () => {
           title = _.chain(series).pluck('metric.label').last().value();
         }
         $scope.title = title;
+        $scope.units = _.chain(series).pluck('metric.units').last().value();
 
         $scope.metrics = series.map(s => {
           const last = _.last(s.data);
