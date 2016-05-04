@@ -39,6 +39,11 @@ module.exports = function (kibana) {
           hostname: Joi.string(),
           port: Joi.number().integer()
         }).default(),
+        queue: Joi.object({
+          index: Joi.string().default('.reporting'),
+          interval: Joi.string().default('week'),
+          timeout: Joi.number().integer().default(30000),
+        }).default(),
         phantom: Joi.object({
           zoom: Joi.number().integer().default(1),
           viewport: Joi.object({
