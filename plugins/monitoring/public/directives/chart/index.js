@@ -15,6 +15,10 @@ const appColors = Object.freeze({
   kibana: '#e8488b'
 });
 
+function get(series, attr) {
+  return _.chain(series).pluck(attr).last().value();
+}
+
 app.directive('monitoringChart', () => {
   return {
     restrict: 'E',
@@ -24,13 +28,19 @@ app.directive('monitoringChart', () => {
     },
     link($scope) {
       $scope.$watch('series', series => {
-        let title;
-        title = _.chain(series).pluck('metric.title').last().value();
-        if (!title) {
-          title = _.chain(series).pluck('metric.label').last().value();
-        }
-        $scope.title = title;
-        $scope.units = _.chain(series).pluck('metric.units').last().value();
+        const seriesGet = _.partial(get, series);
+
+        $scope.title = (() => {
+          const title = seriesGet('metric.title');
+          if (title) return title;
+          return seriesGet('metric.label');
+        }());
+
+        $scope.units = seriesGet('metric.units');
+
+        // Commenting because some descriptions are wrong. If they are
+        // corrected, they can be shown in the UI as title text in the header
+        // $scope.description = seriesGet('metric.description');
 
         $scope.metrics = series.map(s => {
           const last = _.last(s.data);
