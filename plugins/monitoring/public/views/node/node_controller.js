@@ -13,9 +13,19 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
       max: timeBounds.max.toISOString()
     },
     metrics: [
-      'node_query_latency',
-      'node_index_latency',
+      {
+        name: 'node_latency',
+        keys: [
+          'node_query_latency',
+          'node_index_latency'
+        ]
+      },
       'node_jvm_mem_percent',
+      {
+        name: 'node_mem',
+        keys: [ 'node_index_mem_overall' ],
+        config: 'xpack.monitoring.chart.elasticsearch.node.index_memory'
+      },
       'node_cpu_utilization',
       'node_load_average',
       'node_segment_count'

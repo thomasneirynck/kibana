@@ -1,10 +1,24 @@
 const Promise = require('bluebird');
+const _ = require('lodash');
 const getSeries = require('./get_series');
+
 module.exports = function getMetrics(req, indices, filters = []) {
+  const config = req.server.config();
   const metrics = req.payload.metrics || [];
   return Promise.map(metrics, metric => {
-    // map over the multiple metric series that are separated by `$`
-    const metricNames = metric.split('$');
+    // metric names match the literal metric name, but they can be supplied in groups or individually
+    let metricNames;
+
+    if (_.isPlainObject(metric)) {
+      metricNames = metric.keys;
+
+      if (metric.config) {
+        metricNames = metricNames.concat(config.get(metric.config));
+      }
+    } else {
+      metricNames = [ metric ];
+    }
+
     return Promise.map(metricNames, metricName => {
       return getSeries(req, indices, metricName, filters);
     });
@@ -12,7 +26,9 @@ module.exports = function getMetrics(req, indices, filters = []) {
   .then(rows => {
     const data = {};
     metrics.forEach((key, index) => {
-      data[key] = rows[index];
+      // keyName must match the value stored in the html template
+      const keyName = _.isPlainObject(key) ? key.name : key;
+      data[keyName] = rows[index];
     });
     return data;
   });

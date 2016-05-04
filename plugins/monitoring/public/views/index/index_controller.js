@@ -26,7 +26,13 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
     },
     metrics: [
       'index_search_request_rate',
-      'index_request_rate_primary$index_request_rate_total',
+      {
+        name: 'index_request_rate',
+        keys: [
+          'index_request_rate_total',
+          'index_request_rate_primary'
+        ]
+      },
       'index_size',
       'index_lucene_memory',
       'index_document_count',

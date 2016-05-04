@@ -1,6 +1,7 @@
 const _ = require('lodash');
 module.exports = (metric) => {
   const fields = [
+    'app',
     'field',
     'label',
     'title',

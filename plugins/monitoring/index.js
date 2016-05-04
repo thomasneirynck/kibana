@@ -39,6 +39,26 @@ module.exports = function (kibana) {
       const { array, boolean, number, object, string } = Joi;
       return object({
         enabled: boolean().default(true),
+        chart: object({
+          elasticsearch: object({
+            node: object({
+              index_memory: array().items(string().valid(
+                'node_index_mem_doc_values',
+                'node_index_mem_fixed_bit_set',
+                'node_index_mem_norms',
+                'node_index_mem_points',
+                'node_index_mem_stored_fields',
+                'node_index_mem_term_vectors',
+                'node_index_mem_terms',
+                'node_index_mem_versions',
+                'node_index_mem_writer'
+              )).max(3).unique().single().default([
+                'node_index_mem_terms',
+                'node_index_mem_points'
+              ])
+            }).default()
+          }).default()
+        }).default(),
         loggingTag: string().default('monitoring-ui'),
         index: string().default('.monitoring-data-2'),
         index_prefix: string().default('.monitoring-es-2-'),
@@ -71,8 +91,7 @@ module.exports = function (kibana) {
           }).default(),
           apiVersion: string().default('master'),
           engineVersion: string().valid('^5.0.0').default('^5.0.0')
-        })
-        .default()
+        }).default()
       }).default();
     },
 

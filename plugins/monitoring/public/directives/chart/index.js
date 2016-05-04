@@ -1,3 +1,4 @@
+import VislibComponentsColorColorPaletteProvider from 'ui/vislib/components/color/color_palette';
 const _ = require('lodash');
 const numeral = require('numeral');
 const $ = require('jquery');
@@ -9,6 +10,10 @@ require('flot-charts/jquery.flot.symbol');
 require('flot-charts/jquery.flot.crosshair');
 require('flot-charts/jquery.flot.selection');
 const app = require('ui/modules').get('plugins/monitoring/directives', []);
+const appColors = Object.freeze({
+  elasticsearch: '#3ebeb0',
+  kibana: '#e8488b'
+});
 
 app.directive('monitoringChart', () => {
   return {
@@ -39,7 +44,9 @@ app.directive('monitoringChart', () => {
   };
 });
 
-app.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
+app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private) => {
+  const getColors = Private(VislibComponentsColorColorPaletteProvider);
+
   return {
     restrict: 'E',
     scope: {
@@ -90,8 +97,7 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
               '<span class="ngLegendValueNumber"></span></span>';
           }
         },
-        yaxes: [ {}, { position: 'right' } ],
-        colors: ['#01A4A4', '#C66', '#D0D102', '#616161', '#00A1CB', '#32742C', '#F18D05', '#113F8C', '#61AE24', '#D70060']
+        yaxes: [ {}, { position: 'right' } ]
       };
 
       $(window).resize(() => {
@@ -114,7 +120,6 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
       $elem.on('plothover',  (event, pos, item) => {
         $rootScope.$broadcast('monitoringPlotHover', event, pos, item);
       });
-
 
       $elem.on('plotselected', (_event, ranges) => {
         $scope.$evalAsync(() => {
@@ -191,40 +196,39 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
         _.each(legendValueNumbers, (num) =>  $(num).empty());
       }
 
-      const colorCodesForIndex = [
-        '#000', // black
-        '#105a73', // dark blue (link hover/focus color)
-      ];
-
-      function createChartData(chartSeries, idx) {
+      function createChartData(chartSeries, index) {
         if (!chartSeries) {
           $elem.empty();
           return;
         }
 
+        // use the seed colors for any color after the first
+        const seriesColor = (index === 0 ? appColors[chartSeries.metric.app] : getColors(index)[index - 1]);
         const series = {
-          shadowSize: 0,
+          color: seriesColor,
+          data: chartSeries.data.map((row) => {
+            if (row) {
+              return [row.x, row.y];
+            }
+            return row;
+          }),
+          label: chartSeries.metric.label,
           lines: {
             lineWidth: 2
           },
+          shadowSize: 0,
+          _id: index,
           _meta: { metric: chartSeries.metric }
         };
-        series._id = 0;
-        series.data = chartSeries.data.map((row) => {
-          if (row) {
-            return [row.x, row.y];
-          }
-          return row;
-        });
-        series.color = colorCodesForIndex[idx];
-        series.label = chartSeries.metric.label;
 
         return series;
       }
 
+      let $legendScope = null;
+
       $scope.$watch('series', series => {
         const options = _.cloneDeep(defaultOptions);
-        const data = series.map((s, idx) => createChartData(s, idx)); // chart data for each series
+        const data = series.map((s, index) => createChartData(s, index)); // chart data for each series
 
         const dataSize = series.reduce((prev, current) => {
           return prev + current.data.length;
@@ -247,11 +251,15 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
 
         $scope.plot = $.plot($elem, data, options);
 
-        const legendScope = $scope.$new();
+        if ($legendScope) {
+          $legendScope.$destroy();
+        }
+
+        $legendScope = $scope.$new();
         // Used to toggle the series, and for displaying values on hover
         legendValueNumbers = $elem.find('.ngLegendValueNumber');
         _.each($elem.find('.ngLegendValue'), (elem) => {
-          $compile(elem)(legendScope);
+          $compile(elem)($legendScope);
         });
       });
     }

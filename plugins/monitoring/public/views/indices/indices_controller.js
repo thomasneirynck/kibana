@@ -15,7 +15,13 @@ function getPageData(timefilter, globalState, $http, Private) {
     metrics: [
       'cluster_search_request_rate',
       'cluster_query_latency',
-      'cluster_index_request_rate_primary$cluster_index_request_rate_total',
+      {
+        name: 'cluster_index_request_rate',
+        keys: [
+          'cluster_index_request_rate_total',
+          'cluster_index_request_rate_primary'
+        ]
+      },
       'cluster_index_latency'
     ],
     listingMetrics: [
