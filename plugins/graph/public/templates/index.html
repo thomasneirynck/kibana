@@ -99,14 +99,14 @@
 
 
   <div class="config" ng-show="showFieldOptions">
-    <div class="container-fluid">
-      <div class="container">
+    <div class="config">
+      <div class="container-fluid no-margin-bottom">
 
         <!-- Yeah I know, 2016 and tables. Not up on the CSS voodoo required to layout panels how I need them... -->
         <table>
           <tr>
             <td>
-              <div class="selectionList" style="width:200px;overflow-x:scroll;margin-bottom: 20px;margin-right: 10px;">
+              <div class="selectionList" >
                 <div class="noUserSelect" ng-repeat="f in allFields" ng-click="selectFieldDef(f)" ng-class="{selectedFieldLine:f==selectedField}">
                   <svg width="22" height="22" ng-click="toggleFieldSelected(f)" ng-if="f.selected">
                     <circle class="nodeCircle" r="10" cx="12" cy="12" ng-class="{type0:f.color==0,type1:f.color==1,type2:f.color==2,type3:f.color==3,type4:f.color==4,type5:f.color==5,type6:f.color==6,type7:f.color==7,type8:f.color==8,type9:f.color==9}" />
@@ -160,7 +160,7 @@
       </div>
 
       <div class="config-close remove" ng-click="showFieldOptions=false">
-        <i class="fa fa-chevron-up"></i>
+        <i class="fa fa-chevron-circle-up"></i>
       </div>
 
     </div>
@@ -305,7 +305,7 @@
       </div>
 
       <div class="config-close remove" ng-click="showConfig=false">
-        <i class="fa fa-chevron-up"></i>
+        <i class="fa fa-chevron-circle-up"></i>
       </div>
 
     </div>
