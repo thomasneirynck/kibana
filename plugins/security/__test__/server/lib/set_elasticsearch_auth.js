@@ -1,5 +1,6 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
+import {USERNAME, PASSWORD} from '../../../server/lib/default_auth';
 import setElasticsearchAuth from '../../../server/lib/set_elasticsearch_auth';
 
 describe('setElasticsearchAuth', function () {
@@ -22,8 +23,8 @@ describe('setElasticsearchAuth', function () {
     config.get.withArgs('xpack.security.kibana.password').returns(undefined);
     setElasticsearchAuth(config);
 
-    sinon.assert.calledWith(config.set, 'elasticsearch.username', 'kibana');
-    sinon.assert.calledWith(config.set, 'elasticsearch.password', 'changeme');
+    sinon.assert.calledWith(config.set, 'elasticsearch.username', USERNAME);
+    sinon.assert.calledWith(config.set, 'elasticsearch.password', PASSWORD);
   });
 
   it('should use kibana/changeme when elasticsearch.username/password are not both set', function () {
@@ -31,8 +32,8 @@ describe('setElasticsearchAuth', function () {
     config.get.withArgs('xpack.security.kibana.password').returns(undefined);
     setElasticsearchAuth(config);
 
-    sinon.assert.calledWith(config.set, 'elasticsearch.username', 'kibana');
-    sinon.assert.calledWith(config.set, 'elasticsearch.password', 'changeme');
+    sinon.assert.calledWith(config.set, 'elasticsearch.username', USERNAME);
+    sinon.assert.calledWith(config.set, 'elasticsearch.password', PASSWORD);
   });
 
   it('should use xpack.security.kibana.password if set', function () {
@@ -41,7 +42,7 @@ describe('setElasticsearchAuth', function () {
     config.get.withArgs('xpack.security.kibana.password').returns(password);
     setElasticsearchAuth(config);
 
-    sinon.assert.calledWith(config.set, 'elasticsearch.username', 'kibana');
+    sinon.assert.calledWith(config.set, 'elasticsearch.username', USERNAME);
     sinon.assert.calledWith(config.set, 'elasticsearch.password', password);
   });
 
@@ -67,7 +68,7 @@ describe('setElasticsearchAuth', function () {
     config.get.withArgs('xpack.security.kibana.password').returns(password);
     setElasticsearchAuth(config);
 
-    sinon.assert.calledWith(config.set, 'elasticsearch.username', 'kibana');
+    sinon.assert.calledWith(config.set, 'elasticsearch.username', USERNAME);
     sinon.assert.calledWith(config.set, 'elasticsearch.password', password);
   });
 });
