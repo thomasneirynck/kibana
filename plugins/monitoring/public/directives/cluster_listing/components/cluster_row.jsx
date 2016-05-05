@@ -16,7 +16,6 @@ function formatTime(millis) {
 class ClusterRow extends React.Component {
 
   changeCluster() {
-    if (this.props.license.type === 'basic') return;
     this.props.changeCluster(this.props.cluster_uuid);
   }
 
@@ -38,19 +37,14 @@ class ClusterRow extends React.Component {
     }
 
     var classes = [ get('status') ];
-    var notBasic = true;
-    if (get('license.type') === 'basic') {
-      classes = [ 'basic' ];
-      notBasic = false;
-    }
 
     return (
       <tr className={ classes.join(' ') }>
         <td key="Name"><a onClick={(event) => this.changeCluster(event) }>{ get('cluster_name') }</a></td>
-        <td key="Nodes">{ notBasic ? numeral(get('stats.nodes.count.total')).format('0,0') : '-' }</td>
-        <td key="Indices">{ notBasic ? numeral(get('stats.indices.count')).format('0,0') : '-' }</td>
-        <td key="Uptime">{ notBasic ? formatTime(get('stats.nodes.jvm.max_uptime_in_millis')) : '-' }</td>
-        <td key="Data">{ notBasic ? numeral(get('stats.indices.store.size_in_bytes')).format('0,0[.]0 b') : '-' }</td>
+        <td key="Nodes">{ numeral(get('stats.nodes.count.total')).format('0,0') }</td>
+        <td key="Indices">{ numeral(get('stats.indices.count')).format('0,0') }</td>
+        <td key="Uptime">{ formatTime(get('stats.nodes.jvm.max_uptime_in_millis')) }</td>
+        <td key="Data">{ numeral(get('stats.indices.store.size_in_bytes')).format('0,0[.]0 b') }</td>
         <td key="License" className="license">
           <div className="license">{ _.capitalize(get('license.type')) }</div>
           { licenseExpiry }

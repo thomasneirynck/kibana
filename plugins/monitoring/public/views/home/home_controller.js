@@ -4,23 +4,24 @@ require('ui/routes')
 .when('/home', {
   template: require('plugins/monitoring/views/home/home_template.html'),
   resolve: {
-    clusters: (monitoringClusters, Private, kbnUrl, globalState) => {
+    /*
+     * This route is for multi-cluster monitoring
+     * Check the license type isn't basic
+     */
+    checkLicense: (licenseMode, BASIC, globalState, kbnUrl) => {
+      if (licenseMode === BASIC) {
+        globalState.save();
+        kbnUrl.changePath('/overview');
+        return Promise.reject();
+      }
+    },
+    clusters: (monitoringClusters, Private, kbnUrl) => {
       const phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
       return monitoringClusters()
       .then(clusters => {
-        let cluster;
         if (!clusters.length) {
           kbnUrl.changePath('/no-data');
           return Promise.reject();
-        }
-        if (clusters.length === 1) {
-          cluster = clusters[0];
-          globalState.cluster = cluster.cluster_uuid;
-          if (cluster.license.type === 'basic') {
-            globalState.save();
-            kbnUrl.changePath('/overview');
-            return Promise.reject();
-          }
         }
         return clusters;
       })
