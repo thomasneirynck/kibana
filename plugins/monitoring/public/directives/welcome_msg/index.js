@@ -1,6 +1,6 @@
 const mod = require('ui/modules').get('monitoring/directives', []);
 const template = require('plugins/monitoring/directives/welcome_msg/index.html');
-mod.directive('monitoringWelcomeMessage', function (licenseMode, $window, reportStats, features) {
+mod.directive('monitoringWelcomeMessage', function (licenseMode, BASIC, $window, reportStats, features) {
   return {
     restrict: 'E',
     scope: {
@@ -13,7 +13,7 @@ mod.directive('monitoringWelcomeMessage', function (licenseMode, $window, report
       scope.showBanner = (hideBanner) ? false : true;
 
       if (scope.showBanner && scope.cluster && scope.clusters) {
-        if (licenseMode !== 'basic') {
+        if (licenseMode !== BASIC) {
           scope.showBanner = false;
         }
       }
