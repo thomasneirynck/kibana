@@ -2,11 +2,11 @@ import expect from 'expect.js';
 import sinon from 'sinon';
 import { unauthorized } from 'boom';
 
-import replyFixture from '../../fixtures/reply';
-import requestFixture from '../../fixtures/request';
-import serverFixture from '../../fixtures/server';
+import replyFixture from '../../../test/fixtures/reply';
+import requestFixture from '../../../test/fixtures/request';
+import serverFixture from '../../../test/fixtures/server';
 
-import * as loginScheme from '../../../server/lib/login_scheme';
+import * as loginScheme from '../login_scheme';
 
 describe('lib/login_scheme', function () {
   describe('#default()', () => {

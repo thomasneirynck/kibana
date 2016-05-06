@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
-import validateConfig from '../../../server/lib/validate_config';
+import validateConfig from '../validate_config';
 
 function getValidateConfigStub(configValues, logFn) {
   const config = {get: () => {}};

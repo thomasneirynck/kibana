@@ -1,10 +1,10 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
 
-import replyFixture from '../../fixtures/reply';
-import requestFixture from '../../fixtures/request';
+import replyFixture from '../../../test/fixtures/reply';
+import requestFixture from '../../../test/fixtures/request';
 
-import * as authRedirect from '../../../server/lib/auth_redirect';
+import * as authRedirect from '../auth_redirect';
 
 describe('lib/auth_redirect', function () {
   describe('#default()', () => {
