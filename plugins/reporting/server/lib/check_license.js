@@ -9,8 +9,6 @@ const VALID_LICENSE_MODES_TO_ENABLE_REPORTING = [
 
 module.exports = function (xpackLicenseInfo) {
 
-  console.log(xpackLicenseInfo);
-
   const isLicenseModeValid = function () {
     return includes(VALID_LICENSE_MODES_TO_ENABLE_REPORTING, xpackLicenseInfo.mode);
   };
