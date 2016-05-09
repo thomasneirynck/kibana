@@ -1,44 +1,54 @@
-module.exports = function (client) {
+import {includes} from 'lodash';
+
+const VALID_LICENSE_MODES_TO_ENABLE_REPORTING = [
+  'trial',
+  'standard',
+  'gold',
+  'platinum'
+];
+
+module.exports = function (xpackLicenseInfo) {
+
+  console.log(xpackLicenseInfo);
+
+  const isLicenseModeValid = function () {
+    return includes(VALID_LICENSE_MODES_TO_ENABLE_REPORTING, xpackLicenseInfo.mode);
+  };
+
   return {
-    getLicense: function () {
-      return client.transport.request({
-        method: 'GET',
-        path: '_license'
-      });
-    },
-
-    validate: function (body) {
-      if (!body.license) throw new Error('Invalid response body');
-
-      const validLicenses = ['trial', 'platinum', 'gold', 'standard'];
-      const { status, type } = body.license;
-
-      if (status !== 'active') throw new Error('Inactive license');
-      if (validLicenses.indexOf(type.toLowerCase()) === -1) throw new Error('Invalid license type');
-    },
-
     check: function () {
-      return this.getLicense()
-      .then(this.validate)
-      .then(() => {
-        return {
-          enabled: true,
-          message: `Valid license found`
-        };
-      })
-      .catch((err) => {
-        let msg = 'License check failed: ';
-        if (err.statusCode) {
-          msg += err.statusCode === 403 ? 'Not authorized' : `StatusCode ${err.statusCode}`;
-        } else {
-          msg += err.message;
-        }
 
+      // Check license type (mode)
+      if (!isLicenseModeValid()) {
         return {
           enabled: false,
-          message: msg
+          message: 'Reporting is not enabled by this type of license.'
         };
-      });
+      }
+
+      // Check reporting feature enabled and available
+      const reportingFeature = xpackLicenseInfo.features.reporting;
+      if (reportingFeature.enabled && reportingFeature.available) {
+        return {
+          enabled: true,
+          message: 'Valid license found and reporting feature is enabled.'
+        };
+      } else if (reportingFeature.enabled && !reportingFeature.available) {
+        return {
+          enabled: false,
+          message: 'Reporting feature is not available (license may be expired).'
+        };
+      } else if (!reportingFeature.enabled && reportingFeature.available) {
+        return {
+          enabled: false,
+          message: 'Valid license found but reporting feature is not enabled.'
+        };
+      } else {
+        return {
+          enabled: false,
+          message: 'Reporting feature is not available (license may be expired) and not enabled.'
+        };
+      }
     }
   };
 };

@@ -20,7 +20,7 @@ module.exports = function (kibana) {
         'plugins/reporting/controls/dashboard',
       ],
       injectDefaultVars: function (server) {
-        const checker = checkLicense(server.plugins.elasticsearch.client);
+        const checker = checkLicense(server.plugins.xpackMain.info);
 
         function registerVars(enabled) {
           server.expose('enabled', enabled);
