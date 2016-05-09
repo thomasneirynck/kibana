@@ -6,7 +6,7 @@ module.exports = function(server) {
   function graphExplore(req) {
     var payload = req.payload;
     return callWithRequest(req, "transport.request", {
-      "path": "/" + encodeURIComponent(payload.index) + "/_graph/explore",
+      "path": "/" + encodeURIComponent(payload.index) + "/_xpack/graph/_explore",
       body: payload.query,
       method: "POST",
       query: {}
