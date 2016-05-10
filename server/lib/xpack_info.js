@@ -30,10 +30,15 @@ export default function xpackInfo(client) {
           return includes(candidateLicenses, get(response, 'license.mode'));
         }
       },
-      feature: {
-        isAvailable: function (feature) {
-          return get(response, 'features.' + feature + '.available');
-        }
+      feature: function (feature) {
+        return {
+          isAvailable: function () {
+            return get(response, 'features.' + feature + '.available');
+          },
+          isEnabled: function () {
+            return get(response, 'features.' + feature + '.enabled');
+          }
+        };
       }
     };
   });

@@ -75,18 +75,33 @@ describe('xpack_info', function () {
     });
   });
 
-  describe('features', function () {
+  describe('feature', function () {
     describe('isAvailable()', function () {
       it ('returns true if the given feature is available', function () {
         setClientResponse({ features: { graph: { available: true } } });
         xpackInfo(mockClient).then(info => {
-          expect(info.feature.isAvailable('graph')).to.be(true);
+          expect(info.feature('graph').isAvailable()).to.be(true);
         });
       });
       it ('returns false if the given feature is not available', function () {
         setClientResponse({ features: { graph: { available: false } } });
         xpackInfo(mockClient).then(info => {
-          expect(info.feature.isAvailable('graph')).to.be(false);
+          expect(info.feature('graph').isAvailable()).to.be(false);
+        });
+      });
+    });
+
+    describe('isEnabled()', function () {
+      it ('returns true if the given feature is enabled', function () {
+        setClientResponse({ features: { graph: { enabled: true } } });
+        xpackInfo(mockClient).then(info => {
+          expect(info.feature('graph').isEnabled()).to.be(true);
+        });
+      });
+      it ('returns false if the given feature is not enabled', function () {
+        setClientResponse({ features: { graph: { enabled: false } } });
+        xpackInfo(mockClient).then(info => {
+          expect(info.feature('graph').isEnabled()).to.be(false);
         });
       });
     });
