@@ -225,7 +225,7 @@ gulp.task('pre-test', function () {
 });
 
 function runMocha() {
-  return gulp.src(['./plugins/**/__test__/**/*.js', '!./build/**'], { read: false })
+  return gulp.src(['./server/**/__test__/**/*.js', './plugins/**/__test__/**/*.js', '!./build/**'], { read: false })
     .pipe(mocha({
       ui: 'bdd'
     }));
