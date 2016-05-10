@@ -86,7 +86,7 @@ module.exports = function (kibana) {
       .then(() => {
         xpackInfo(server.plugins.monitoring.client)
         .then(info => {
-          server.expose('isLicenseModeBasic', info.license.oneOf('basic'));
+          server.expose('isLicenseModeBasic', info.license.isOneOf('basic'));
         });
       });
     }
