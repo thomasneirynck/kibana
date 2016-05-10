@@ -26,8 +26,6 @@ export default (kibana) => new kibana.Plugin({
       encryptionKey: Joi.string(),
       sessionTimeout: Joi.number().default(30 * 60 * 1000),
       useUnsafeSessions: Joi.boolean().default(false),
-      // Only use this if SSL is still configured, but it's configured outside of the Kibana server
-      // (e.g. SSL is configured on a load balancer)
       skipSslCheck: Joi.boolean().default(false),
       kibana: Joi.object({
         password: Joi.string()
@@ -64,6 +62,7 @@ export default (kibana) => new kibana.Plugin({
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
 
+    const cookieName = config.get('xpack.security.cookieName');
     server.register(hapiAuthCookie, (error) => {
       if (error != null) throw error;
 
@@ -75,7 +74,7 @@ export default (kibana) => new kibana.Plugin({
       server.auth.strategy('session', 'login', 'required');
 
       server.auth.strategy('security', 'cookie', false, {
-        cookie: config.get('xpack.security.cookieName'),
+        cookie: cookieName,
         password: config.get('xpack.security.encryptionKey'),
         path: config.get('server.basePath') + '/',
         clearInvalid: true,
@@ -84,7 +83,7 @@ export default (kibana) => new kibana.Plugin({
       });
     });
 
-    basicAuth.register(server, config.get('xpack.security.cookieName'), getIsValidUser(server), getCalculateExpires(server));
+    basicAuth.register(server, cookieName, getIsValidUser(server), getCalculateExpires(server));
 
     initAuthenticateApi(server);
     initUsersApi(server);
