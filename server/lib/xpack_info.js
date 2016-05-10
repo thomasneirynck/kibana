@@ -30,7 +30,7 @@ export default function xpackInfo(client) {
           return includes(candidateLicenses, get(response, 'license.mode'));
         }
       },
-      features: {
+      feature: {
         isAvailable: function (feature) {
           return get(response, 'features.' + feature + '.available');
         }
