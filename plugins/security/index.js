@@ -46,10 +46,12 @@ export default (kibana) => new kibana.Plugin({
       main: 'plugins/security/views/logout',
       hidden: true
     }],
+    hacks: ['plugins/security/hacks/on_session_timeout'],
     injectDefaultVars: function (server) {
       const config = server.config();
       return {
-        shieldUnsafeSessions: config.get('xpack.security.useUnsafeSessions')
+        shieldUnsafeSessions: config.get('xpack.security.useUnsafeSessions'),
+        sessionTimeout: config.get('xpack.security.sessionTimeout')
       };
     }
   },
