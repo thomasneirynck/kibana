@@ -20,7 +20,6 @@ module.exports = function (kibana) {
         injectVars: function (server, _options) {
           var config = server.config();
           return {
-            BASIC: 'basic',
             maxBucketSize: config.get('xpack.monitoring.max_bucket_size'),
             minIntervalSeconds: config.get('xpack.monitoring.min_interval_seconds'),
             kbnIndex: config.get('kibana.index'),

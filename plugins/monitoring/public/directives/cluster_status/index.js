@@ -1,7 +1,7 @@
 const template = require('plugins/monitoring/directives/cluster_status/index.html');
 const module = require('ui/modules').get('monitoring/directives', []);
 
-module.directive('monitoringClusterStatus', (globalState, isLicenseModeBasic, BASIC, kbnUrl) => {
+module.directive('monitoringClusterStatus', (globalState, isLicenseModeBasic, kbnUrl) => {
   return {
     restrict: 'E',
     template,
