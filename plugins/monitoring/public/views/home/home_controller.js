@@ -8,8 +8,8 @@ require('ui/routes')
      * This route is for multi-cluster monitoring
      * Check the license type isn't basic
      */
-    checkLicense: (licenseMode, BASIC, globalState, kbnUrl) => {
-      if (licenseMode === BASIC) {
+    checkLicense: (isLicenseModeBasic, globalState, kbnUrl) => {
+      if (isLicenseModeBasic) {
         globalState.save();
         kbnUrl.changePath('/overview');
         return Promise.reject();
