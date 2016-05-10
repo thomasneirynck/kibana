@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
 import Promise from 'bluebird';
-import basicAuth from '../../../server/lib/basic_auth';
+import basicAuth from '../basic_auth';
 
 const authChecks = [
   ['user', 'notsecure', 'dXNlcjpub3RzZWN1cmU='],
