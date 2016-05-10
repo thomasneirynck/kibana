@@ -29,7 +29,7 @@ module.exports = function (kibana) {
             statsReportUrl: config.get('xpack.monitoring.stats_report_url'),
             reportStats: config.get('xpack.monitoring.report_stats'),
             monitoringIndexPrefix: config.get('xpack.monitoring.index_prefix'),
-            licenseMode: server.plugins.monitoring.licenseMode,
+            isLicenseModeBasic: server.plugins.monitoring.isLicenseModeBasic,
             googleTagManagerId: config.get('xpack.monitoring.google_tag_manager_id')
           };
         }
@@ -86,7 +86,8 @@ module.exports = function (kibana) {
       .then(() => {
         xpackInfo(server.plugins.monitoring.client)
         .then(info => {
-          server.expose('licenseMode', info.mode);
+          info;
+          server.expose('isLicenseModeBasic', info.license.oneOf('basic'));
         });
       });
     }
