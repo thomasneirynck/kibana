@@ -80,13 +80,13 @@ describe('xpack_info', function () {
       it ('returns true if the given feature is available', function () {
         setClientResponse({ features: { graph: { available: true } } });
         xpackInfo(mockClient).then(info => {
-          expect(info.features.isAvailable('graph')).to.be(true);
+          expect(info.feature.isAvailable('graph')).to.be(true);
         });
       });
       it ('returns false if the given feature is not available', function () {
         setClientResponse({ features: { graph: { available: false } } });
         xpackInfo(mockClient).then(info => {
-          expect(info.features.isAvailable('graph')).to.be(false);
+          expect(info.feature.isAvailable('graph')).to.be(false);
         });
       });
     });
