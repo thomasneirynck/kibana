@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import { create as createError } from 'boom';
 
-import * as errors from '../../../server/lib/errors';
+import * as errors from '../errors';
 
 describe('lib/errors', function () {
   describe('#isBoom()', () => {

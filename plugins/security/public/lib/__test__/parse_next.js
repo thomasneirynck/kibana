@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import parseNext from '../../../public/lib/parse_next';
+import parseNext from '../parse_next';
 
 describe('parseNext', () => {
   it('should return a function', () => {

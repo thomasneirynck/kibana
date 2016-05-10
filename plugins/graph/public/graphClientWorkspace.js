@@ -9,7 +9,7 @@ module.exports = (function() {
       var dataForServer = JSON.stringify(request);
       $.ajax({
         type: 'POST',
-        url: 'http://localhost:9200/' + indexName + '/_graph/explore',
+        url: 'http://localhost:9200/' + indexName + '/_xpack/graph/_explore',
         dataType: 'json',
         contentType: "application/json;charset=utf-8",
         async: true,

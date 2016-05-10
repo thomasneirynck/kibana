@@ -11,6 +11,7 @@ import initIndicesApi from './server/routes/api/v1/indices';
 import initLoginView from './server/routes/views/login';
 import initLogoutView from './server/routes/views/logout';
 import validateConfig from './server/lib/validate_config';
+import setElasticsearchAuth from './server/lib/set_elasticsearch_auth';
 import createScheme from './server/lib/login_scheme';
 
 export default (kibana) => new kibana.Plugin({
@@ -30,8 +31,8 @@ export default (kibana) => new kibana.Plugin({
       // (e.g. SSL is configured on a load balancer)
       skipSslCheck: Joi.boolean().default(false),
       kibana: Joi.object({
-        password: Joi.string().default('changeme')
-      }).default()
+        password: Joi.string()
+      })
     }).default();
   },
 
@@ -58,13 +59,7 @@ export default (kibana) => new kibana.Plugin({
   },
 
   preInit(server) {
-    const config = server.config();
-    const {username, password} = config.get('elasticsearch');
-    const xpackPassword = config.get('xpack.security.kibana.password');
-    if (xpackPassword || !(username && password)) {
-      config.set('elasticsearch.username', 'kibana');
-      config.set('elasticsearch.password', xpackPassword);
-    }
+    setElasticsearchAuth(server.config());
   },
 
   init(server) {
