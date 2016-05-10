@@ -1,10 +1,5 @@
 import { get, find, indexBy } from 'lodash';
-import moment from 'moment';
-
-function isClusterCurrent(cluster) {
-  const lastUpdate = moment(cluster.state_timestamp);
-  return lastUpdate.isAfter(moment().subtract(10, 'minutes'));
-}
+import calculateAvailability from './calculate_availability';
 
 module.exports = function (req) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
@@ -45,9 +40,9 @@ module.exports = function (req) {
           cluster.nodes = indexBy(nodes, config.get('xpack.monitoring.node_resolver'));
         }
       });
-      return clusters.filter(isClusterCurrent);
+      return clusters.filter((cluster) => {
+        return calculateAvailability(cluster.state_timestamp);
+      });
     });
   };
 };
-
-

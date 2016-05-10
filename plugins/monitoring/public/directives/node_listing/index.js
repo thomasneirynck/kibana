@@ -89,6 +89,11 @@ define(function (require) {
           title: 'Name'
         },
         {
+          key: 'status',
+          sortKey: 'offline',
+          title: 'Status'
+        },
+        {
           key: 'metrics.node_cpu_utilization',
           sortKey: 'metrics.node_cpu_utilization.last',
           title: 'CPU Usage'
@@ -111,11 +116,6 @@ define(function (require) {
         {
           key: 'metrics.shard_count',
           title: 'Shards'
-        },
-        {
-          key: 'status',
-          sortKey: 'offline',
-          title: 'Status'
         }
       ]
     };

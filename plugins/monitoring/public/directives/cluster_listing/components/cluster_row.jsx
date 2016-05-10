@@ -3,16 +3,6 @@ var numeral = require('numeral');
 var moment = require('moment');
 var _ = require('lodash');
 
-function formatTime(millis) {
-  var output = [];
-  var duration = moment.duration(millis);
-  if (millis < 60000) return `${duration.seconds()}s`;
-  if (duration.days()) output.push(`${duration.days()}d`);
-  if (duration.hours()) output.push(`${duration.hours()}h`);
-  if (duration.minutes()) output.push(`${duration.minutes()}m`);
-  return output.join(' ');
-}
-
 class ClusterRow extends React.Component {
 
   changeCluster() {
@@ -37,10 +27,10 @@ class ClusterRow extends React.Component {
       licenseExpiry = (<div className="expires expired">Expired</div>);
     }
 
-    var classes = [ get('status') ];
+    var classes = [];
     var notBasic = true;
     if (get('license.type') === 'basic') {
-      classes = [ 'basic' ];
+      classes.push('basic');
       notBasic = false;
     }
 
@@ -49,8 +39,8 @@ class ClusterRow extends React.Component {
         <td key="Name"><a onClick={(event) => this.changeCluster(event) }>{ get('cluster_name') }</a></td>
         <td key="Nodes">{ notBasic ? numeral(get('stats.nodes.count.total')).format('0,0') : '-' }</td>
         <td key="Indices">{ notBasic ? numeral(get('stats.indices.count')).format('0,0') : '-' }</td>
-        <td key="Uptime">{ notBasic ? formatTime(get('stats.nodes.jvm.max_uptime_in_millis')) : '-' }</td>
         <td key="Data">{ notBasic ? numeral(get('stats.indices.store.size_in_bytes')).format('0,0[.]0 b') : '-' }</td>
+        <td key="Kibana">{ notBasic ? numeral(get('kibana.count')).format('0,0') : '-' }</td>
         <td key="License" className="license">
           <div className="license">{ _.capitalize(get('license.type')) }</div>
           { licenseExpiry }

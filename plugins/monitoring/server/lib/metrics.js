@@ -64,7 +64,7 @@ const formatLargeBytes = '0,0.0 b';
 const formatSmallBytes = '0.0 b';
 const formatLargeAbbreviated = '0,0.[0]a';
 
-const allCharts = {
+const elasticsearchCharts = {
   app: 'elasticsearch'
 };
 const kibanaCharts = {
@@ -72,14 +72,14 @@ const kibanaCharts = {
 };
 
 const requestRateFields = {
-  ...allCharts,
+  ...elasticsearchCharts,
   derivative: true,
   format: formatLargeFloat,
   metricAgg: 'max',
   units: '/s'
 };
 const indexingLatencyFields = {
-  ...allCharts,
+  ...elasticsearchCharts,
   calculation: indexingLatencyCalculation,
   derivative: false,
   format: formatLargeFloat,
@@ -87,7 +87,7 @@ const indexingLatencyFields = {
   units: 'ms'
 };
 const queryLatencyFields = {
-  ...allCharts,
+  ...elasticsearchCharts,
   calculation: queryLatencyCalculation,
   derivative: false,
   format: formatLargeFloat,
@@ -95,7 +95,7 @@ const queryLatencyFields = {
   units: 'ms'
 };
 const indexAvgStatFields = {
-  ...allCharts,
+  ...elasticsearchCharts,
   type: 'index',
   derivative: false,
   format: formatLargeBytes,
@@ -103,7 +103,7 @@ const indexAvgStatFields = {
   units: 'B'
 };
 const nodeIndexMemory = {
-  ...allCharts,
+  ...elasticsearchCharts,
   active: true,
   title: 'Index Memory',
   type: 'node',
@@ -113,7 +113,7 @@ const nodeIndexMemory = {
   units: 'B'
 };
 const threadPoolQueue = {
-  ...allCharts,
+  ...elasticsearchCharts,
   active: true,
   title: 'Thread Pool Queues',
   type: 'node',
@@ -123,7 +123,7 @@ const threadPoolQueue = {
   units: ''
 };
 const threadPoolRejected = {
-  ...allCharts,
+  ...elasticsearchCharts,
   active: true,
   title: 'Thread Pool Rejections',
   type: 'node',
@@ -209,7 +209,7 @@ module.exports = {
     units: '/s',
     type: 'index',
     derivative: true,
-    ...allCharts
+    ...elasticsearchCharts
   },
   'index_request_rate_total': {
     active: true,
@@ -256,7 +256,7 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'avg',
     units: '%',
-    ...allCharts
+    ...elasticsearchCharts
   },
   'node_segment_count': {
     active: true,
@@ -268,7 +268,7 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'avg',
     units: '',
-    ...allCharts
+    ...elasticsearchCharts
   },
   'node_jvm_mem_percent': {
     active: true,
@@ -280,7 +280,7 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'avg',
     units: '%',
-    ...allCharts
+    ...elasticsearchCharts
   },
   'node_load_average': {
     active: true,
@@ -292,7 +292,7 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'avg',
     units: '',
-    ...allCharts
+    ...elasticsearchCharts
   },
   'node_index_mem_overall': {
     field: 'node_stats.indices.segments.memory_in_bytes',
@@ -364,7 +364,7 @@ module.exports = {
     format: formatSmallBytes,
     metricAgg: 'max',
     units: '',
-    ...allCharts
+    ...elasticsearchCharts
   },
   'node_threads_queued_bulk': {
     field: 'node_stats.thread_pool.bulk.queue',
@@ -461,7 +461,7 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'max',
     units: 'ms',
-    ...allCharts
+    ...elasticsearchCharts
   },
   'index_shard_query_rate': {
     active: false,
@@ -473,7 +473,7 @@ module.exports = {
     format: formatSmallFloat,
     metricAgg: 'max',
     units: '',
-    ...allCharts
+    ...elasticsearchCharts
   },
   'index_document_count': {
     active: false,
@@ -485,7 +485,7 @@ module.exports = {
     format: formatLargeAbbreviated,
     metricAgg: 'max',
     units: '',
-    ...allCharts
+    ...elasticsearchCharts
   },
   'index_search_request_rate': {
     active: true,
@@ -545,7 +545,7 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'avg',
     units: '',
-    type: 'kibana',
+    ...kibanaCharts,
     derivative: false
   },
   'kibana_os_load_5m': {
@@ -557,7 +557,7 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'avg',
     units: '',
-    type: 'kibana',
+    ...kibanaCharts,
     derivative: false
   },
   'kibana_os_load_15m': {
@@ -569,19 +569,7 @@ module.exports = {
     format: formatLargeFloat,
     metricAgg: 'avg',
     units: '',
-    type: 'kibana',
-    derivative: false
-  },
-  'kibana_heap_used': {
-    title: 'Heap Usage',
-    active: true,
-    field: 'kibana_stats.process.memory.heap.used_in_bytes',
-    label: 'Used',
-    description: 'The amount of heap used',
-    format: formatLargeBytes,
-    metricAgg: 'avg',
-    units: '',
-    type: 'kibana',
+    ...kibanaCharts,
     derivative: false
   },
   'kibana_heap_total': {
@@ -592,8 +580,20 @@ module.exports = {
     description: 'The total amount of heap',
     format: formatLargeBytes,
     metricAgg: 'avg',
-    units: '',
-    type: 'kibana',
+    units: 'B',
+    ...kibanaCharts,
+    derivative: false
+  },
+  'kibana_heap_used': {
+    title: 'Heap Usage',
+    active: true,
+    field: 'kibana_stats.process.memory.heap.used_in_bytes',
+    label: 'Used',
+    description: 'The amount of heap used',
+    format: formatLargeBytes,
+    metricAgg: 'avg',
+    units: 'B',
+    ...kibanaCharts,
     derivative: false
   },
   'kibana_process_delay': {
@@ -604,7 +604,7 @@ module.exports = {
     format: formatSmallFloat,
     metricAgg: 'avg',
     units: 'ms',
-    type: 'kibana',
+    ...kibanaCharts,
     derivative: false
   },
   'kibana_average_response_times': {
@@ -616,7 +616,7 @@ module.exports = {
     format: formatSmallFloat,
     metricAgg: 'avg',
     units: 'ms',
-    type: 'kibana',
+    ...kibanaCharts,
     derivative: false
   },
   'kibana_max_response_times': {
@@ -628,7 +628,7 @@ module.exports = {
     format: formatSmallFloat,
     metricAgg: 'avg',
     units: 'ms',
-    type: 'kibana',
+    ...kibanaCharts,
     derivative: false
   },
   'kibana_average_concurrent_connections': {

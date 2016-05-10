@@ -1,0 +1,11 @@
+<div class="monitoring-element monitoring-cluster-status">
+  <div ng-if="cluster" class="stats">
+    <div class="status {{ pageData.clusterStatus.status|lowercase }}">Status: <strong>{{ pageData.clusterStatus.status|capitalize }}</strong></div>
+    <div>Instances: <strong>{{pageData.clusterStatus.kibanaCount}}</strong></div>
+  </div>
+  <div ng-if="!cluster" class="stats">
+    <div class="loading">
+      <i class="fa fa-spinner fa-pulse"></i> Loading Data...
+    </div>
+  </div>
+</div>

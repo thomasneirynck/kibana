@@ -1,7 +1,8 @@
 import _ from 'lodash';
 import moment from 'moment';
-import createQuery from './create_query';
 import Promise from 'bluebird';
+import createQuery from './create_query';
+import calculateAvailability from './calculate_availability';
 
 export default function getKibanas(req, indices) {
   if (indices[0] === '.kibana-devnull') return Promise.resolve([]);
@@ -10,18 +11,16 @@ export default function getKibanas(req, indices) {
   const config = req.server.config();
   const start = moment.utc(req.payload.timeRange.min).valueOf();
   const end = moment.utc(req.payload.timeRange.max).valueOf();
+  const clusterUuid = req.params.clusterUuid;
 
   const params = {
     index: indices,
     type: 'kibana_stats',
-    meta: 'get_kibana_stats',
+    meta: 'get_kibanas',
     ignore: [404],
     body: {
       size: 0,
-      query: createQuery({
-        start,
-        end
-      }),
+      query: createQuery({ start, end, clusterUuid }),
       aggs: {
         kibana_uuids: {
           terms: {
@@ -39,13 +38,20 @@ export default function getKibanas(req, indices) {
         const infoParams = {
           index: config.get('xpack.monitoring.index'),
           type: 'kibana',
-          meta: 'get_kibana_info',
+          meta: 'get_kibanas_kibana_info',
           id: uuidBucket.key
         };
 
         return callWithRequest(req, 'get', infoParams)
         .then(infoResp => {
-          return _.get(infoResp, '_source.kibana');
+          const availability = {
+            availability: calculateAvailability(_.get(infoResp, '_source.timestamp'))
+          };
+          const info = _.get(infoResp, '_source.kibana');
+          return {
+            ...info,
+            ...availability
+          };
         });
       });
     }

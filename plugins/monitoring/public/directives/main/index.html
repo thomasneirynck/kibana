@@ -1,20 +1,44 @@
 <div class="app-container">
   <kbn-top-nav class="navbar navbar-default navbar-static-top" name="{{name}}-nav">
-    <ul ng-if="allowTabs" class="nav navbar-nav" role="navigation">
-      <li ng-if="allowClusterTab" ng-class="{active: isActive('home')}">
+    <ul role="breadcrumbs" class="breadcrumb">
+      <li>
         <a kbn-href="#/home" class="navbar-link">Clusters</a>
       </li>
-      <li ng-class="{active: isActive('overview')}">
-        <a kbn-href="#/overview" class="navbar-link">Overview</a>
+      <li ng-if="!inListing">
+        <a kbn-href="#/overview" class="navbar-link">{{clusterName}}</a>
       </li>
+      <li ng-if="inElasticsearch">
+        <a kbn-href="#/elasticsearch" class="navbar-link">Elasticsearch</a>
+      </li>
+      <li ng-if="inKibana">
+        <a kbn-href="#/kibana" class="navbar-link">Kibana</a>
+      </li>
+    </ul>
+
+    <ul ng-if="inElasticsearch" class="nav navbar-nav" role="navigation">
       <li ng-class="{active: isActive('indices')}">
         <a kbn-href="#/indices" class="navbar-link">Indices</a>
       </li>
       <li ng-class="{active: isActive('nodes')}">
         <a kbn-href="#/nodes" class="navbar-link">Nodes</a>
       </li>
-      <li ng-class="{active: isActive('kibanas')}">
+    </ul>
+
+    <ul ng-if="inKibana" class="nav navbar-nav" role="navigation">
+      <li>
         <a kbn-href="#/kibana" class="navbar-link">Kibana</a>
+      </li>
+    </ul>
+
+    <ul ng-if="inOverview" class="nav navbar-nav" role="navigation">
+      <li>
+        <a kbn-href="#/overview" class="navbar-link">Overview: {{clusterName}}</a>
+      </li>
+    </ul>
+
+    <ul ng-if="inListing" class="nav navbar-nav" role="navigation">
+      <li>
+        <a kbn-href="#/home" class="navbar-link">Monitoring</a>
       </li>
     </ul>
   </kbn-top-nav>

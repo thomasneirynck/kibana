@@ -7,12 +7,26 @@ define(function (require) {
 
   const Table = require('plugins/monitoring/directives/paginated_table/components/table');
 
-  const iconMapping = {
-    'green': 'fa-check',
-    'yellow': 'fa-warning',
-    'red': 'fa-bolt'
-  };
+  function getStatusAndClasses(value, availability) {
+    const iconMapping = {
+      'green': 'fa-check',
+      'yellow': 'fa-warning',
+      'red': 'fa-bolt'
+    };
 
+    if (availability === false) {
+      return {
+        status: 'Offline',
+        statusClass: 'offline',
+        iconClass: 'offline'
+      };
+    }
+    return {
+      status: _.capitalize(value),
+      statusClass: `status-${value}`,
+      iconClass: iconMapping[value]
+    };
+  }
   module.directive('monitoringKibanaListing', function (kbnUrl) {
     function makeTdWithPropKey(scope, dataKey, idx) {
       let value = _.get(this.props, dataKey.key);
@@ -35,21 +49,18 @@ define(function (require) {
           );
           break;
         case 'kibana.status':
-          const status = _.capitalize(value);
-          const statusClass = `status-${value}`;
-          const iconClass = iconMapping[value];
+          const { status, statusClass, iconClass } = getStatusAndClasses(value, this.props.availability);
           $content = (
-            <span className={`kibana-status ${statusClass}`}>
+            <div className={`big kibana-status ${statusClass}`}>
               {status}
               <i className={`fa ${iconClass}`}></i>
-            </span>
+            </div>
           );
           break;
         case 'process.memory.heap':
           $content = (
-            <div>
-                {`${numeral(value.used_in_bytes).format('0.00 b')} /
-                ${numeral(value.total_in_bytes).format('0.00 b')}`}
+            <div className="big">
+                {`${numeral(value.used_in_bytes).format('0.00 b')}`}
             </div>
           );
           break;
@@ -63,18 +74,14 @@ define(function (require) {
           break;
         case 'os.load':
           $content = (
-            <div>
-              {
-              `${numeral(value['1m']).format('0.00')},
-               ${numeral(value['5m']).format('0.00')},
-               ${numeral(value['15m']).format('0.00')}`
-              }
+            <div className="big">
+              {`${numeral(value['1m']).format('0.00')}`}
             </div>
           );
           break;
         case 'requests.total':
           $content = (
-            <div>{value}</div>
+            <div className="big">{value}</div>
           );
           break;
 
@@ -100,12 +107,12 @@ define(function (require) {
         {
           key: 'process.memory.heap',
           sortKey: 'process.memory.heap.used_in_bytes',
-          title: 'Memory'
+          title: 'Memory Heap Used'
         },
         {
           key: 'os.load',
           sortKey: 'os.load.1m',
-          title: 'Load'
+          title: 'Load Average'
         },
         {
           key: 'requests.total',
@@ -115,7 +122,7 @@ define(function (require) {
         {
           key: 'response_times',
           sortKey: 'response_times.average',
-          title: 'Response time'
+          title: 'Response Times'
         }
       ]
     };
