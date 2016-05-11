@@ -1,9 +1,9 @@
 import {constant} from 'lodash';
 import registry from 'ui/registry/chrome_nav_controls';
-import template from 'plugins/security/views/logout_button/logout_button.html';
+import template from 'plugins/security/views/nav_control/nav_control.html';
 
 registry.register(constant({
-  name: 'logout button',
+  name: 'security',
   order: 1000,
   template
 }));
