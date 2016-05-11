@@ -20,7 +20,6 @@ module.exports = function (kibana) {
         injectVars: function (server, _options) {
           var config = server.config();
           return {
-            BASIC: 'basic',
             maxBucketSize: config.get('xpack.monitoring.max_bucket_size'),
             minIntervalSeconds: config.get('xpack.monitoring.min_interval_seconds'),
             kbnIndex: config.get('kibana.index'),
@@ -29,7 +28,7 @@ module.exports = function (kibana) {
             statsReportUrl: config.get('xpack.monitoring.stats_report_url'),
             reportStats: config.get('xpack.monitoring.report_stats'),
             monitoringIndexPrefix: config.get('xpack.monitoring.index_prefix'),
-            licenseMode: server.plugins.monitoring.licenseMode,
+            isLicenseModeBasic: server.plugins.monitoring.isLicenseModeBasic,
             googleTagManagerId: config.get('xpack.monitoring.google_tag_manager_id')
           };
         }
@@ -86,7 +85,7 @@ module.exports = function (kibana) {
       .then(() => {
         xpackInfo(server.plugins.monitoring.client)
         .then(info => {
-          server.expose('licenseMode', info.mode);
+          server.expose('isLicenseModeBasic', info.license.isOneOf('basic'));
         });
       });
     }

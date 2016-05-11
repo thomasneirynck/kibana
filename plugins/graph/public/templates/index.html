@@ -189,7 +189,7 @@
       <!-- ====== start Spy ====== -->
       <div class="container" ng-if="(workspace!=null)&&(configPanel=='lastRequest')">
         <div>
-          <small class="help-block">http://host:port/{{selectedIndex.name}}/_graph/explore</small>
+          <small class="help-block">http://host:port/{{selectedIndex.name}}/_xpack/graph/_explore</small>
           <ul class="nav nav-tabs">
             <li ng-class="{active: spymode == 'request'}"><a ng-click="spymode='request'">Request</a></li>
             <li ng-class="{active: spymode == 'response'}"><a ng-click="spymode='response'">Response</a></li>

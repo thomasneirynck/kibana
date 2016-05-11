@@ -1,6 +1,6 @@
 import _ from 'lodash';
 const app = require('ui/modules').get('plugins/monitoring/directives', []);
-app.directive('monitoringMain', (licenseMode, BASIC) => {
+app.directive('monitoringMain', (isLicenseModeBasic) => {
   return {
     restrict: 'E',
     transclude: true,
@@ -13,7 +13,7 @@ app.directive('monitoringMain', (licenseMode, BASIC) => {
       scope.allowTabs = !_.contains(noTabs, scope.name);
 
       // hide clusters tab for basic license
-      scope.allowClusterTab = licenseMode !== BASIC;
+      scope.allowClusterTab = !isLicenseModeBasic;
 
       scope.isActive = function (testPath) {
         return scope.name === testPath;

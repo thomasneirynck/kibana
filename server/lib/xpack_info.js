@@ -3,20 +3,43 @@
  * Doesn't give detailed info about license
  */
 import moment from 'moment';
-import { get } from 'lodash';
+import { get, includes } from 'lodash';
+
+const EXPIRY_SOON_DURATION = moment.duration(30, 'days');
+
 export default function xpackInfo(client) {
   return client.transport.request({
     method: 'GET',
     path: '_xpack'
   })
   .then(response => {
-    const expiryDateMillis = get(response, 'license.expiry_date_in_millis');
-    const expirySoonDate = moment.utc(expiryDateMillis).subtract(30, 'days');
-    const expiresSoon = moment.utc().isAfter(expirySoonDate);
     return {
-      features: response.features,
-      mode: response.license.mode,
-      expiresSoon
+      license: {
+        isActive: function () {
+          return get(response, 'license.status') === 'active';
+        },
+        expiresSoon: function () {
+          const expiryDateMillis = get(response, 'license.expiry_date_in_millis');
+          const expirySoonDate = moment.utc(expiryDateMillis).subtract(EXPIRY_SOON_DURATION);
+          return moment.utc().isAfter(expirySoonDate);
+        },
+        isOneOf: function (candidateLicenses) {
+          if (!Array.isArray(candidateLicenses)) {
+            candidateLicenses = [ candidateLicenses ];
+          }
+          return includes(candidateLicenses, get(response, 'license.mode'));
+        }
+      },
+      feature: function (feature) {
+        return {
+          isAvailable: function () {
+            return get(response, 'features.' + feature + '.available');
+          },
+          isEnabled: function () {
+            return get(response, 'features.' + feature + '.enabled');
+          }
+        };
+      }
     };
   });
 };
