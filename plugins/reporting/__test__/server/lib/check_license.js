@@ -1,49 +1,32 @@
-const expect = require('expect.js');
-const checkLicense = require('../../../server/lib/check_license');
+import expect from 'expect.js';
+import { set } from 'lodash';
+import checkLicense from '../../../server/lib/check_license';
 
 describe('check_license', function () {
 
   let mockLicenseInfo;
 
   beforeEach(function () {
-    mockLicenseInfo = {
-      mode: 'trial',
-      features: {
-        reporting: {
-          description: 'Reporting for the Elastic Stack',
-          enabled: null,
-          available: null
-        }
-      }
-    };
+    mockLicenseInfo = {};
   });
 
-  it ('should set enabled to false if the license is of an invalid type', function () {
-    mockLicenseInfo.mode = 'basic';
+  it ('should set enabled to false if the license is not active', () => {
+    set(mockLicenseInfo, 'license.isActive', () => { return false; });
+    set(mockLicenseInfo, 'license.isOneOf', () => { return true; });
     expect(checkLicense(mockLicenseInfo).check().enabled).to.be(false);
   });
 
-  it ('should set enabled to true for a license where reporting feature set is enabled and available', function () {
-    mockLicenseInfo.features.reporting.enabled = true;
-    mockLicenseInfo.features.reporting.available = true;
+  it ('should set enabled to false if the license is of an invalid type', () => {
+    set(mockLicenseInfo, 'license.isActive', () => { return true; });
+    set(mockLicenseInfo, 'license.isOneOf', () => { return false; });
+    expect(checkLicense(mockLicenseInfo).check().enabled).to.be(false);
+  });
+
+  it ('should set enabled to true if the license is of a valid type and active', () => {
+    set(mockLicenseInfo, 'license.isActive', () => { return true; });
+    set(mockLicenseInfo, 'license.isOneOf', () => { return true; });
     expect(checkLicense(mockLicenseInfo).check().enabled).to.be(true);
+
   });
 
-  it ('should set enabled to false for license where reporting feature set is enabled but not available', function () {
-    mockLicenseInfo.features.reporting.enabled = true;
-    mockLicenseInfo.features.reporting.available = false;
-    expect(checkLicense(mockLicenseInfo).check().enabled).to.be(false);
-  });
-
-  it ('should set enabled to false for license where reporting feature set is not enabled but available', function () {
-    mockLicenseInfo.features.reporting.enabled = false;
-    mockLicenseInfo.features.reporting.available = true;
-    expect(checkLicense(mockLicenseInfo).check().enabled).to.be(false);
-  });
-
-  it ('should set enabled to false for license where reporting feature set is neither enabled nor available', function () {
-    mockLicenseInfo.features.reporting.enabled = false;
-    mockLicenseInfo.features.reporting.available = false;
-    expect(checkLicense(mockLicenseInfo).check().enabled).to.be(false);
-  });
 });
