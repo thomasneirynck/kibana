@@ -4,17 +4,17 @@ module.exports = function (server) {
     path: '/api/graph/getExampleDocs',
     method: 'POST',
     handler: function (req, reply) {
-        var callWithRequest = server.plugins.elasticsearch.callWithRequest;
-          callWithRequest(req, 'search', req.payload).then(function (resp) {
-          reply({
-            ok: true,
-            resp:resp
-          });
-        }).catch(reply);
+      var callWithRequest = server.plugins.elasticsearch.callWithRequest;
+      callWithRequest(req, 'search', req.payload).then(function (resp) {
+        reply({
+          ok: true,
+          resp:resp
+        });
+      }).catch(reply);
 
 
     }
   });
 
 
-}
+};

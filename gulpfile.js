@@ -78,8 +78,7 @@ gulp.task('lint', function () {
     'server/**/*.js',
     'public/**/*.js',
     '!plugins/**/node_modules/**',
-    '!plugins/**/__test__/fixtures/**/*.js',
-    '!plugins/graph/**',
+    '!plugins/**/__test__/fixtures/**/*.js'
   ];
 
   return gulp.src(filePaths)
