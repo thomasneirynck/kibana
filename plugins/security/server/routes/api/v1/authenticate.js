@@ -1,11 +1,15 @@
+import _ from 'lodash';
 import Boom from 'boom';
 import Joi from 'joi';
 import getIsValidUser from '../../../lib/get_is_valid_user';
 import getCalculateExpires from '../../../lib/get_calculate_expires';
+import getClient from '../../../lib/get_client_shield';
+import { wrapError } from '../../../lib/errors';
 
 export default (server) => {
   const isValidUser = getIsValidUser(server);
   const calculateExpires = getCalculateExpires(server);
+  const callWithRequest = getClient(server).callWithRequest;
   const success = {statusCode: 200, payload: 'success'};
 
   server.route({
@@ -46,6 +50,14 @@ export default (server) => {
     },
     config: {
       auth: false
+    }
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/api/security/v1/me',
+    handler(request, reply) {
+      return callWithRequest(request, 'shield.authenticate').then(reply, _.flow(wrapError, reply));
     }
   });
 };
