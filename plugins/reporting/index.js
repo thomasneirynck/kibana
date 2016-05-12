@@ -20,22 +20,13 @@ module.exports = function (kibana) {
         'plugins/reporting/controls/dashboard',
       ],
       injectDefaultVars: function (server) {
-        const checker = checkLicense(server.plugins.elasticsearch.client);
+        const checkResult = checkLicense(server.plugins.xpackMain.info);
 
-        function registerVars(enabled) {
-          server.expose('enabled', enabled);
-
-          return {
-            reportingEnabled: enabled
-          };
-        }
-
-        return checker.check()
-        .then((check) => {
-          server.log(['reporting', 'license', 'debug'], `License check: ${check.message}`);
-          return registerVars(check.enabled);
-        })
-        .catch(() => registerVars(false));
+        server.log(['reporting', 'license', 'debug'], `License check: ${checkResult.message}`);
+        server.expose('enabled', checkResult.enabled);
+        return {
+          reportingEnabled: checkResult.enabled
+        };
       },
     },
 
