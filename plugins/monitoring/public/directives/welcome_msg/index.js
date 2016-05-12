@@ -18,10 +18,6 @@ mod.directive('monitoringWelcomeMessage', function (isLicenseModeBasic, $window,
         }
       }
 
-      scope.hideBanner = function () {
-        scope.showBanner = false;
-      };
-
       scope.dontShowAgain = function () {
         scope.showBanner = false;
         $window.localStorage.setItem('monitoring.hideBanner', 1);
