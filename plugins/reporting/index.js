@@ -20,8 +20,7 @@ module.exports = function (kibana) {
         'plugins/reporting/controls/dashboard',
       ],
       injectDefaultVars: function (server) {
-        const checker = checkLicense(server.plugins.xpackMain.info);
-        const checkResult = checker.check();
+        const checkResult = checkLicense(server.plugins.xpackMain.info);
 
         server.log(['reporting', 'license', 'debug'], `License check: ${checkResult.message}`);
         server.expose('enabled', checkResult.enabled);

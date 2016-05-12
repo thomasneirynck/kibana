@@ -13,19 +13,19 @@ describe('check_license', function () {
   it ('should set enabled to false if the license is not active', () => {
     set(mockLicenseInfo, 'license.isActive', () => { return false; });
     set(mockLicenseInfo, 'license.isOneOf', () => { return true; });
-    expect(checkLicense(mockLicenseInfo).check().enabled).to.be(false);
+    expect(checkLicense(mockLicenseInfo).enabled).to.be(false);
   });
 
   it ('should set enabled to false if the license is of an invalid type', () => {
     set(mockLicenseInfo, 'license.isActive', () => { return true; });
     set(mockLicenseInfo, 'license.isOneOf', () => { return false; });
-    expect(checkLicense(mockLicenseInfo).check().enabled).to.be(false);
+    expect(checkLicense(mockLicenseInfo).enabled).to.be(false);
   });
 
   it ('should set enabled to true if the license is of a valid type and active', () => {
     set(mockLicenseInfo, 'license.isActive', () => { return true; });
     set(mockLicenseInfo, 'license.isOneOf', () => { return true; });
-    expect(checkLicense(mockLicenseInfo).check().enabled).to.be(true);
+    expect(checkLicense(mockLicenseInfo).enabled).to.be(true);
 
   });
 
