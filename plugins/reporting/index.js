@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import { format } from 'util';
 const publicRoutes = require('./server/routes/public');
 const fileRoutes = require('./server/routes/file');
 const phantom = require('./server/lib/phantom');
@@ -66,6 +67,11 @@ module.exports = function (kibana) {
     init: function (server) {
       // init the plugin helpers
       const plugin = this;
+      const xpackMainPluginStatus = server.plugins.xpackMain.status;
+      if (xpackMainPluginStatus.state === 'red') {
+        plugin.status.red(format(xpackMainPluginStatus.message));
+        return;
+      };
 
       function setup() {
         // prepare phantom binary

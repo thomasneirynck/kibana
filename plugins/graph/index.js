@@ -1,8 +1,10 @@
 import { resolve } from 'path';
+import { format } from 'util';
 var getIndicesRoute = require('./server/routes/getIndices');
 var getFieldsRoute = require('./server/routes/getFields');
 var graphExploreRoute = require('./server/routes/graphExplore');
 var getExampleDocsRoute = require('./server/routes/getExampleDocs');
+
 module.exports = function (kibana) {
 
     //2.x bootstrap code copied from https://github.com/elastic/timelion/pull/57/files
@@ -49,6 +51,11 @@ module.exports = function (kibana) {
     },
 
     init: function (server, options) {
+      const xpackMainPluginStatus = server.plugins.xpackMain.status;
+      if (xpackMainPluginStatus.state === 'red') {
+        this.status.red(format(xpackMainPluginStatus.message));
+        return;
+      };
       // Add server routes and initalize the plugin here
       getIndicesRoute(server);
       getFieldsRoute(server);

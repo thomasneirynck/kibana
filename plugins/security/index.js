@@ -1,5 +1,6 @@
 import hapiAuthCookie from 'hapi-auth-cookie';
 import { resolve } from 'path';
+import { format } from 'util';
 import basicAuth from './server/lib/basic_auth';
 import getIsValidUser from './server/lib/get_is_valid_user';
 import getValidate from './server/lib/get_validate';
@@ -61,6 +62,12 @@ export default (kibana) => new kibana.Plugin({
   },
 
   init(server) {
+    const xpackMainPluginStatus = server.plugins.xpackMain.status;
+    if (xpackMainPluginStatus.state === 'red') {
+      this.status.red(format(xpackMainPluginStatus.message));
+      return;
+    };
+
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
 
