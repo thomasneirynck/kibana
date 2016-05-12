@@ -28,10 +28,7 @@ export default (kibana) => new kibana.Plugin({
       useUnsafeSessions: Joi.boolean().default(false),
       // Only use this if SSL is still configured, but it's configured outside of the Kibana server
       // (e.g. SSL is configured on a load balancer)
-      skipSslCheck: Joi.boolean().default(false),
-      kibana: Joi.object({
-        password: Joi.string()
-      })
+      skipSslCheck: Joi.boolean().default(false)
     }).default();
   },
 
