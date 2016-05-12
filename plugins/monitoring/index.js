@@ -1,5 +1,4 @@
 import { join, resolve } from 'path';
-import { format } from 'util';
 import Promise from 'bluebird';
 import requireAllAndApply from '../../server/lib/require_all_and_apply';
 import xpackInfo from '../../server/lib/xpack_info';
@@ -93,7 +92,7 @@ module.exports = function (kibana) {
         .catch(reason => {
           if ((reason instanceof Error) && (reason.status === 400)) {
             const errorMessage = 'x-pack plugin is not installed on Elasticsearch cluster';
-            this.status.red(format(errorMessage));
+            this.status.red(errorMessage);
             return;
           }
         });

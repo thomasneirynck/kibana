@@ -1,5 +1,4 @@
 import { resolve } from 'path';
-import { format } from 'util';
 const publicRoutes = require('./server/routes/public');
 const fileRoutes = require('./server/routes/file');
 const phantom = require('./server/lib/phantom');
@@ -69,7 +68,7 @@ module.exports = function (kibana) {
       const plugin = this;
       const xpackMainPluginStatus = server.plugins.xpackMain.status;
       if (xpackMainPluginStatus.state === 'red') {
-        plugin.status.red(format(xpackMainPluginStatus.message));
+        plugin.status.red(xpackMainPluginStatus.message);
         return;
       };
 
