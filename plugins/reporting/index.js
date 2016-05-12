@@ -57,6 +57,11 @@ module.exports = function (kibana) {
     init: function (server) {
       // init the plugin helpers
       const plugin = this;
+      const xpackMainPluginStatus = server.plugins.xpackMain.status;
+      if (xpackMainPluginStatus.state === 'red') {
+        plugin.status.red(xpackMainPluginStatus.message);
+        return;
+      };
 
       function setup() {
         // prepare phantom binary
