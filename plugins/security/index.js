@@ -50,8 +50,10 @@ export default (kibana) => new kibana.Plugin({
     }],
     injectDefaultVars: function (server) {
       const config = server.config();
+      const securityFeature = server.plugins.xpackMain.info.feature('security');
       return {
-        shieldUnsafeSessions: config.get('xpack.security.useUnsafeSessions')
+        shieldUnsafeSessions: config.get('xpack.security.useUnsafeSessions'),
+        isSecurityFeatureAvailable: securityFeature.isAvailable()
       };
     }
   },
