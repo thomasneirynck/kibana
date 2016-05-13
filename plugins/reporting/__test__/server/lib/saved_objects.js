@@ -77,6 +77,30 @@ describe('saved_objects', function () {
           expect(parsedUrl).to.not.contain('refreshInterval');
         });
       });
+
+      describe('toJSON', function () {
+        it('should serialize the object', function () {
+          const obj = savedObject.toJSON();
+
+          expect(obj).to.have.property('id', mockObject._id);
+          expect(obj).to.have.property('type', mockObject._type);
+          expect(obj).to.have.property('title', savedObject.title);
+          expect(obj).to.have.property('description', savedObject.description);
+          expect(obj).to.have.property('searchSource');
+          expect(obj).to.have.property('url');
+        });
+
+        it('should take query params and append to hash', function () {
+          const query = {
+            _g: '(time:(from:now-1h,mode:quick,to:now))'
+          };
+
+          const obj = savedObject.toJSON(query);
+          const params = url.parse(obj.url);
+          expect(params.hash).to.contain(query._g);
+        });
+      });
+
     });
   });
 });
