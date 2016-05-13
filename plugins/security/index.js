@@ -7,6 +7,7 @@ import getCalculateExpires from './server/lib/get_calculate_expires';
 import initAuthenticateApi from './server/routes/api/v1/authenticate';
 import initUsersApi from './server/routes/api/v1/users';
 import initRolesApi from './server/routes/api/v1/roles';
+import initIndicesApi from './server/routes/api/v1/indices';
 import initLoginView from './server/routes/views/login';
 import initLogoutView from './server/routes/views/logout';
 import validateConfig from './server/lib/validate_config';
@@ -26,14 +27,13 @@ export default (kibana) => new kibana.Plugin({
       encryptionKey: Joi.string(),
       sessionTimeout: Joi.number().default(30 * 60 * 1000),
       useUnsafeSessions: Joi.boolean().default(false),
-      // Only use this if SSL is still configured, but it's configured outside of the Kibana server
-      // (e.g. SSL is configured on a load balancer)
       skipSslCheck: Joi.boolean().default(false)
     }).default();
   },
 
   uiExports: {
     chromeNavControls: ['plugins/security/views/logout_button'],
+    settingsSections: ['plugins/security/views/settings'],
     apps: [{
       id: 'login',
       title: 'Login',
@@ -45,10 +45,12 @@ export default (kibana) => new kibana.Plugin({
       main: 'plugins/security/views/logout',
       hidden: true
     }],
+    hacks: ['plugins/security/hacks/on_session_timeout'],
     injectDefaultVars: function (server) {
       const config = server.config();
       return {
-        shieldUnsafeSessions: config.get('xpack.security.useUnsafeSessions')
+        shieldUnsafeSessions: config.get('xpack.security.useUnsafeSessions'),
+        sessionTimeout: config.get('xpack.security.sessionTimeout')
       };
     }
   },
@@ -58,9 +60,16 @@ export default (kibana) => new kibana.Plugin({
   },
 
   init(server) {
+    const xpackMainPluginStatus = server.plugins.xpackMain.status;
+    if (xpackMainPluginStatus.state === 'red') {
+      this.status.red(xpackMainPluginStatus.message);
+      return;
+    };
+
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
 
+    const cookieName = config.get('xpack.security.cookieName');
     server.register(hapiAuthCookie, (error) => {
       if (error != null) throw error;
 
@@ -72,7 +81,7 @@ export default (kibana) => new kibana.Plugin({
       server.auth.strategy('session', 'login', 'required');
 
       server.auth.strategy('security', 'cookie', false, {
-        cookie: config.get('xpack.security.cookieName'),
+        cookie: cookieName,
         password: config.get('xpack.security.encryptionKey'),
         path: config.get('server.basePath') + '/',
         clearInvalid: true,
@@ -81,11 +90,12 @@ export default (kibana) => new kibana.Plugin({
       });
     });
 
-    basicAuth.register(server, config.get('xpack.security.cookieName'), getIsValidUser(server), getCalculateExpires(server));
+    basicAuth.register(server, cookieName, getIsValidUser(server), getCalculateExpires(server));
 
     initAuthenticateApi(server);
     initUsersApi(server);
     initRolesApi(server);
+    initIndicesApi(server);
     initLoginView(server, this);
     initLogoutView(server, this);
   }

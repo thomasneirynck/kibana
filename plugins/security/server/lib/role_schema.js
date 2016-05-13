@@ -7,7 +7,7 @@ export default {
     names: Joi.array().items(Joi.string()),
     fields: Joi.array().items(Joi.string()),
     privileges: Joi.array().items(Joi.string()),
-    query: Joi.string()
+    query: Joi.string().allow('')
   }),
-  run_as: Joi.string()
+  run_as: Joi.array().items(Joi.string())
 };
