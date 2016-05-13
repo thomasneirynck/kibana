@@ -3,7 +3,7 @@ import Joi from 'joi';
 import getIsValidUser from '../../../lib/get_is_valid_user';
 import getCalculateExpires from '../../../lib/get_calculate_expires';
 
-export default (server) => {
+export default (server, commonRouteConfig) => {
   const isValidUser = getIsValidUser(server);
   const calculateExpires = getCalculateExpires(server);
   const success = {statusCode: 200, payload: 'success'};
@@ -33,7 +33,8 @@ export default (server) => {
           username: Joi.string().required(),
           password: Joi.string().required()
         }
-      }
+      },
+      ...commonRouteConfig
     }
   });
 
@@ -45,7 +46,8 @@ export default (server) => {
       return reply(success);
     },
     config: {
-      auth: false
+      auth: false,
+      ...commonRouteConfig
     }
   });
 };

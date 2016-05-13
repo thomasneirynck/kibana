@@ -1,5 +1,6 @@
 import hapiAuthCookie from 'hapi-auth-cookie';
 import { resolve } from 'path';
+import Boom from 'boom';
 import basicAuth from './server/lib/basic_auth';
 import getIsValidUser from './server/lib/get_is_valid_user';
 import getValidate from './server/lib/get_validate';
@@ -94,9 +95,21 @@ export default (kibana) => new kibana.Plugin({
 
     basicAuth.register(server, config.get('xpack.security.cookieName'), getIsValidUser(server), getCalculateExpires(server));
 
-    initAuthenticateApi(server);
-    initUsersApi(server);
-    initRolesApi(server);
+    const securityFeature = server.plugins.xpackMain.info.feature('security');
+    const commonRouteConfig = {
+      pre: [
+        function isSecurityFeatureAvailable(request, reply) {
+          if (!securityFeature.isAvailable()) {
+            reply(Boom.forbidden('Security is not available with this license or license is expired'));
+          } else {
+            reply();
+          }
+        }
+      ]
+    };
+    initAuthenticateApi(server, commonRouteConfig);
+    initUsersApi(server, commonRouteConfig);
+    initRolesApi(server, commonRouteConfig);
     initLoginView(server, this);
     initLogoutView(server, this);
   }

@@ -3,7 +3,7 @@ import getClient from '../../../lib/get_client_shield';
 import roleSchema from '../../../lib/role_schema';
 import { wrapError } from '../../../lib/errors';
 
-export default (server) => {
+export default (server, commonRouteConfig) => {
   const callWithRequest = getClient(server).callWithRequest;
 
   server.route({
@@ -11,6 +11,9 @@ export default (server) => {
     path: '/api/security/v1/roles',
     handler(request, reply) {
       return callWithRequest(request, 'shield.getRole').then(reply, flow(wrapError, reply));
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 
@@ -20,6 +23,9 @@ export default (server) => {
     handler(request, reply) {
       const rolename = request.params.rolename;
       return callWithRequest(request, 'shield.getRole', {rolename}).then(reply, flow(wrapError, reply));
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 
@@ -34,7 +40,8 @@ export default (server) => {
     config: {
       validate: {
         payload: roleSchema
-      }
+      },
+      ...commonRouteConfig
     }
   });
 
@@ -44,6 +51,9 @@ export default (server) => {
     handler(request, reply) {
       const rolename = request.params.rolename;
       return callWithRequest(request, 'shield.deleteRole', {rolename}).then(reply, flow(wrapError, reply));
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 };

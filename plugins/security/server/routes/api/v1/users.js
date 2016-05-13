@@ -3,7 +3,7 @@ import getClient from '../../../lib/get_client_shield';
 import userSchema from '../../../lib/user_schema';
 import { wrapError } from '../../../lib/errors';
 
-export default (server) => {
+export default (server, commonRouteConfig) => {
   const callWithRequest = getClient(server).callWithRequest;
 
   server.route({
@@ -11,6 +11,9 @@ export default (server) => {
     path: '/api/security/v1/users',
     handler(request, reply) {
       return callWithRequest(request, 'shield.getUser').then(reply, flow(wrapError, reply));
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 
@@ -20,6 +23,9 @@ export default (server) => {
     handler(request, reply) {
       const username = request.params.username;
       return callWithRequest(request, 'shield.getUser', {username}).then(reply, flow(wrapError, reply));
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 
@@ -34,7 +40,8 @@ export default (server) => {
     config: {
       validate: {
         payload: userSchema
-      }
+      },
+      ...commonRouteConfig
     }
   });
 
@@ -44,6 +51,9 @@ export default (server) => {
     handler(request, reply) {
       const username = request.params.username;
       return callWithRequest(request, 'shield.deleteUser', {username}).then(reply, flow(wrapError, reply));
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 };
