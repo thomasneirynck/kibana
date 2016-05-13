@@ -7,9 +7,9 @@ import template from 'plugins/security/views/login/login.html';
 chrome
 .setVisible(false)
 .setRootTemplate(template)
-.setRootController('login', ($http, shieldUnsafeSessions) => {
-  const next = parseNext(window.location);
-  const isSecure = !!window.location.protocol.match(/^https/);
+.setRootController('login', ($http, $window, shieldUnsafeSessions) => {
+  const next = parseNext($window.location);
+  const isSecure = !!$window.location.protocol.match(/^https/);
 
   return {
     isDisabled: !isSecure && !shieldUnsafeSessions,
@@ -17,7 +17,7 @@ chrome
     submit(username, password) {
       this.error = false;
       $http.post('./api/security/v1/login', {username, password}).then(
-        () => window.location.href = `.${next}`,
+        () => $window.location.href = `.${next}`,
         () => this.error = true
       );
     }
