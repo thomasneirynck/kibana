@@ -1,39 +1,39 @@
 // Kibana wrapper
-var d3 = require("d3");
+var d3 = require('d3');
 
-module.exports = (function() {
+module.exports = (function () {
 
   // Pluggable function to handle the comms with a server. Default impl here is
   // for use outside of Kibana server with direct access to elasticsearch
-  var graphExplorer = function(indexName, typeName, request, responseHandler) {
-      var dataForServer = JSON.stringify(request);
-      $.ajax({
-        type: 'POST',
-        url: 'http://localhost:9200/' + indexName + '/_xpack/graph/_explore',
-        dataType: 'json',
-        contentType: "application/json;charset=utf-8",
-        async: true,
-        data: dataForServer,
-        success: function(data) {
-          responseHandler(data);
-        }
-      });
-    }
-  var searcher = function(indexName, request, responseHandler) {
+  var graphExplorer = function (indexName, typeName, request, responseHandler) {
+    var dataForServer = JSON.stringify(request);
+    $.ajax({
+      type: 'POST',
+      url: 'http://localhost:9200/' + indexName + '/_xpack/graph/_explore',
+      dataType: 'json',
+      contentType: 'application/json;charset=utf-8',
+      async: true,
+      data: dataForServer,
+      success: function (data) {
+        responseHandler(data);
+      }
+    });
+  };
+  var searcher = function (indexName, request, responseHandler) {
     var dataForServer = JSON.stringify(request);
     $.ajax({
       type: 'POST',
       url: 'http://localhost:9200/' + indexName + '/_search',
       dataType: 'json',
-      contentType: "application/json;charset=utf-8", //Not sure why this was necessary - worked without elsewhere
+      contentType: 'application/json;charset=utf-8', //Not sure why this was necessary - worked without elsewhere
       async: true,
       data: dataForServer,
-      success: function(data) {
+      success: function (data) {
         responseHandler(data);
       }
     });
 
-  }
+  };
 
   // ====== Undo operations =============
 
@@ -41,29 +41,29 @@ module.exports = (function() {
     var self = this;
     var vm = owner;
     self.node = node;
-    self.undo = function() {
+    self.undo = function () {
       vm.arrRemove(vm.nodes, self.node);
 
       delete vm.nodesMap[self.node.id];
-    }
-    self.redo = function() {
+    };
+    self.redo = function () {
       vm.nodes.push(self.node);
       vm.nodesMap[self.node.id] = self.node;
-    }
+    };
   }
 
   function AddEdgeOperation(edge, owner) {
     var self = this;
     var vm = owner;
     self.edge = edge;
-    self.undo = function() {
+    self.undo = function () {
       vm.arrRemove(vm.edges, self.edge);
       delete vm.edgesMap[self.edge.id];
-    }
-    self.redo = function() {
+    };
+    self.redo = function () {
       vm.edges.push(self.edge);
       vm.edgesMap[self.edge.id] = self.edge;
-    }
+    };
   }
 
   function ReverseOperation(operation) {
@@ -78,12 +78,12 @@ module.exports = (function() {
     var vm = vm;
     self.receiver = receiver;
     self.orphan = orphan;
-    self.undo = function() {
+    self.undo = function () {
       self.orphan.parent = undefined;
-    }
-    self.redo = function() {
+    };
+    self.redo = function () {
       self.orphan.parent = self.receiver;
-    }
+    };
   }
 
   function UnGroupOperation(parent, child, vm) {
@@ -91,12 +91,12 @@ module.exports = (function() {
     var vm = vm;
     self.parent = parent;
     self.child = child;
-    self.undo = function() {
+    self.undo = function () {
       self.child.parent = self.parent;
-    }
-    self.redo = function() {
+    };
+    self.redo = function () {
       self.child.parent = undefined;
-    }
+    };
   }
 
 
@@ -119,7 +119,7 @@ module.exports = (function() {
     }
     this.nodesMap = {};
     this.edgesMap = {};
-    this.searchTerm = "";
+    this.searchTerm = '';
 
 
     //A sequence number used to know when a node was added
@@ -137,17 +137,17 @@ module.exports = (function() {
       searcher = options.searchProxy;
     }
 
-    this.addUndoLogEntry = function(undoOperations) {
+    this.addUndoLogEntry = function (undoOperations) {
       self.undoLog.push(undoOperations);
       if (self.undoLog.length > 50) {
         //Remove the oldest
         self.undoLog.splice(0, 1);
       }
       self.redoLog = [];
-    }
+    };
 
 
-    this.undo = function() {
+    this.undo = function () {
       var lastOps = this.undoLog.pop();
       if (lastOps) {
         this.stopLayout();
@@ -157,8 +157,8 @@ module.exports = (function() {
         }
         this.runLayout();
       }
-    }
-    this.redo = function() {
+    };
+    this.redo = function () {
       var lastOps = this.redoLog.pop();
       if (lastOps) {
         this.stopLayout();
@@ -168,11 +168,11 @@ module.exports = (function() {
         }
         this.runLayout();
       }
-    }
+    };
 
 
     //Determines if 2 nodes are connected via an edge
-    this.areLinked = function(a, b) {
+    this.areLinked = function (a, b) {
       if (a == b) return true;
       var allEdges = this.edges;
       for (var e in allEdges) {
@@ -192,7 +192,7 @@ module.exports = (function() {
 
     //======== Selection functions ========
 
-    this.selectAll = function() {
+    this.selectAll = function () {
       self.selectedNodes = [];
       for (var n in self.nodes) {
         var node = self.nodes[n];
@@ -203,17 +203,17 @@ module.exports = (function() {
           node.isSelected = false;
         }
       }
-    }
+    };
 
-    this.selectNone = function() {
+    this.selectNone = function () {
       self.selectedNodes = [];
       for (var n in self.nodes) {
         var node = self.nodes[n];
         node.isSelected = false;
       }
-    }
+    };
 
-    this.selectInvert = function() {
+    this.selectInvert = function () {
       self.selectedNodes = [];
       for (var n in self.nodes) {
         var node = self.nodes[n];
@@ -225,9 +225,9 @@ module.exports = (function() {
           self.selectedNodes.push(node);
         }
       }
-    }
+    };
 
-    this.selectNodes = function(nodes) {
+    this.selectNodes = function (nodes) {
       for (var n in nodes) {
         var node = nodes[n];
         node.isSelected = true;
@@ -235,16 +235,16 @@ module.exports = (function() {
           self.selectedNodes.push(node);
         }
       }
-    }
+    };
 
-    this.selectNode = function(node) {
+    this.selectNode = function (node) {
       node.isSelected = true;
       if (self.selectedNodes.indexOf(node) < 0) {
         self.selectedNodes.push(node);
       }
-    }
+    };
 
-    this.deleteSelection = function() {
+    this.deleteSelection = function () {
       var allAndGrouped = self.returnUnpackedGroupeds(self.selectedNodes);
 
       // Nothing selected so process all nodes
@@ -263,7 +263,7 @@ module.exports = (function() {
       self.arrRemoveAll(self.nodes, allAndGrouped);
       self.arrRemoveAll(self.selectedNodes, allAndGrouped);
 
-      var danglingEdges = self.edges.filter(function(edge) {
+      var danglingEdges = self.edges.filter(function (edge) {
         return self.nodes.indexOf(edge.source) < 0 || self.nodes.indexOf(edge.target) < 0;
       });
       for (var i in danglingEdges) {
@@ -274,10 +274,10 @@ module.exports = (function() {
       self.addUndoLogEntry(undoOperations);
       self.arrRemoveAll(self.edges, danglingEdges);
       self.runLayout();
-    }
+    };
 
 
-    this.selectNeighbours = function() {
+    this.selectNeighbours = function () {
       var newSelections = [];
       for (var n in self.edges) {
         var edge = self.edges[n];
@@ -301,32 +301,32 @@ module.exports = (function() {
         self.selectedNodes.push(newlySelectedNode);
         newlySelectedNode.isSelected = true;
       }
-    }
+    };
 
-    this.selectNone = function() {
+    this.selectNone = function () {
       for (var n in self.selectedNodes) {
         self.selectedNodes[n].isSelected = false;
       }
       self.selectedNodes = [];
     };
 
-    this.deselectNode = function(node) {
+    this.deselectNode = function (node) {
       node.isSelected = false;
       self.arrRemove(self.selectedNodes, node);
-    }
+    };
 
-    this.getAllSelectedNodes = function() {
+    this.getAllSelectedNodes = function () {
       return this.returnUnpackedGroupeds(self.selectedNodes);
-    }
+    };
 
-    this.colorSelected = function(colorNum) {
+    this.colorSelected = function (colorNum) {
       var selections = self.getAllSelectedNodes();
       for (var i in selections) {
         selections[i].color = colorNum;
       }
-    }
+    };
 
-    this.getSelectionsThatAreGrouped = function() {
+    this.getSelectionsThatAreGrouped = function () {
       var result = [];
       var selections = self.selectedNodes;
       for (var i in selections) {
@@ -336,17 +336,17 @@ module.exports = (function() {
         }
       }
       return result;
-    }
+    };
 
-    this.ungroupSelection = function() {
+    this.ungroupSelection = function () {
       var selections = self.getSelectionsThatAreGrouped();
       for (var i in selections) {
         var node = selections[i];
         self.ungroup(node);
       }
-    }
+    };
 
-    this.toggleNodeSelection = function(node) {
+    this.toggleNodeSelection = function (node) {
       if (node.isSelected) {
         self.deselectNode(node);
       } else {
@@ -354,9 +354,9 @@ module.exports = (function() {
         self.selectedNodes.push(node);
       }
       return node.isSelected;
-    }
+    };
 
-    this.returnUnpackedGroupeds = function(topLevelNodeArray) {
+    this.returnUnpackedGroupeds = function (topLevelNodeArray) {
       //Gather any grouped nodes that are part of this top-level selection
       var result = topLevelNodeArray.slice();
 
@@ -399,7 +399,7 @@ module.exports = (function() {
 
     // ======= Miscellaneous functions
 
-    this.clearGraph = function() {
+    this.clearGraph = function () {
       this.stopLayout();
       this.nodes = [];
       this.edges = [];
@@ -418,7 +418,7 @@ module.exports = (function() {
       for (var i = items.length; i--;) {
         self.arrRemove(arr, items[i]);
       }
-    }
+    };
 
     this.arrRemove = function remove(arr, item) {
       for (var i = arr.length; i--;) {
@@ -428,7 +428,7 @@ module.exports = (function() {
       }
     };
 
-    this.getNeighbours = function(node) {
+    this.getNeighbours = function (node) {
       var neighbourNodes = [];
       for (var e in self.edges) {
         var edge = self.edges[e];
@@ -447,18 +447,18 @@ module.exports = (function() {
         }
       }
       return neighbourNodes;
-    }
+    };
 
     //Creates a query that represents a node - either simple term query or boolean if grouped
-    this.buildNodeQuery = function(topLevelNode) {
+    this.buildNodeQuery = function (topLevelNode) {
       var containedNodes = [topLevelNode];
-      containedNodes=self.returnUnpackedGroupeds(containedNodes);
+      containedNodes = self.returnUnpackedGroupeds(containedNodes);
       if (containedNodes.length == 1) {
         //Simple case - return a single-term query
         var tq = {};
         tq[topLevelNode.data.field] = topLevelNode.data.term;
         return {
-          "term": tq
+          'term': tq
         };
       }
       var termsByField = {};
@@ -474,36 +474,36 @@ module.exports = (function() {
       //Single field case
       if (Object.keys(termsByField).length == 1) {
         return {
-          "terms": termsByField
-        }
+          'terms': termsByField
+        };
       }
       //Multi-field case - build a bool query with per-field terms clauses.
       var q = {
-        "bool": {
-          "should": []
+        'bool': {
+          'should': []
         }
       };
       for (var field in termsByField) {
         var tq = {};
         tq[field] = termsByField[field];
         q.bool.should.push({
-          "terms": tq
+          'terms': tq
         });
       }
       return q;
-    }
+    };
 
     //====== Layout functions ========
 
-    this.stopLayout = function() {
-      if (this.force){
+    this.stopLayout = function () {
+      if (this.force) {
         this.force.stop();
       }
       this.force = null;
-    }
+    };
 
 
-    this.runLayout = function() {
+    this.runLayout = function () {
       this.stopLayout();
       // The set of nodes and edges we present to the d3 layout algorithms
       // is potentially a reduced set of nodes if the client has used any
@@ -525,12 +525,12 @@ module.exports = (function() {
 
         if (topSrc != topTarget) {
           effectiveEdges.push({
-            "source": topSrc,
-            "target": topTarget
+            'source': topSrc,
+            'target': topTarget
           });
         }
       }
-      var visibleNodes = self.nodes.filter(function(n) {
+      var visibleNodes = self.nodes.filter(function (n) {
         return n.parent == undefined;
       });
       //reset then roll-up all the counts
@@ -556,7 +556,7 @@ module.exports = (function() {
         .theta(0.99)
         .alpha(0.5)
         .size([800, 600])
-        .on("tick", function(e) {
+        .on('tick', function (e) {
           var nodeArray = self.nodes;
           var hasRollups = false;
           //Update the position of all "top level nodes"
@@ -601,9 +601,9 @@ module.exports = (function() {
     //========Grouping functions==========
 
     //Merges all selected nodes into node
-    this.groupSelections = function(node) {
+    this.groupSelections = function (node) {
       var ops = [];
-      self.nodes.forEach(function(otherNode) {
+      self.nodes.forEach(function (otherNode) {
         if ((otherNode != node) && (otherNode.isSelected) && (otherNode.parent == undefined)) {
           otherNode.parent = node;
           otherNode.isSelected = false;
@@ -617,10 +617,10 @@ module.exports = (function() {
       self.runLayout();
     };
 
-    this.mergeNeighbours = function(node) {
+    this.mergeNeighbours = function (node) {
       var neighbours = self.getNeighbours(node);
       var ops = [];
-      neighbours.forEach(function(otherNode) {
+      neighbours.forEach(function (otherNode) {
         if ((otherNode != node) && (otherNode.parent == undefined)) {
           otherNode.parent = node;
           otherNode.isSelected = false;
@@ -630,16 +630,16 @@ module.exports = (function() {
       });
       self.addUndoLogEntry(ops);
       self.runLayout();
-    }
+    };
 
-    this.mergeSelections = function(targetNode) {
+    this.mergeSelections = function (targetNode) {
       if (!targetNode) {
-        console.log("Error - merge called on undefined target")
+        console.log('Error - merge called on undefined target');
         return;
       }
       var selClone = self.selectedNodes.slice();
       var ops = [];
-      selClone.forEach(function(otherNode) {
+      selClone.forEach(function (otherNode) {
         if ((otherNode != targetNode) && (otherNode.parent == undefined)) {
           otherNode.parent = targetNode;
           otherNode.isSelected = false;
@@ -649,11 +649,11 @@ module.exports = (function() {
       });
       self.addUndoLogEntry(ops);
       self.runLayout();
-    }
+    };
 
-    this.ungroup = function(node) {
+    this.ungroup = function (node) {
       var ops = [];
-      self.nodes.forEach(function(other) {
+      self.nodes.forEach(function (other) {
         if (other.parent == node) {
           other.parent = undefined;
           ops.push(new UnGroupOperation(node, other, self));
@@ -663,15 +663,15 @@ module.exports = (function() {
       self.runLayout();
     };
 
-    this.unblacklist = function(node) {
+    this.unblacklist = function (node) {
       self.arrRemove(self.blacklistedNodes, node);
-    }
+    };
 
-    this.blacklistSelection = function() {
+    this.blacklistSelection = function () {
       var selection = self.getAllSelectedNodes();
       var danglingEdges = [];
-      self.edges.forEach(function(edge) {
-        if ( (selection.indexOf(edge.source) >= 0) ||
+      self.edges.forEach(function (edge) {
+        if ((selection.indexOf(edge.source) >= 0) ||
               (selection.indexOf(edge.target) >= 0)) {
           delete self.edgesMap[edge.id];
           danglingEdges.push(edge);
@@ -694,7 +694,7 @@ module.exports = (function() {
 
     // A "simple search" operation that requires no parameters from the client.
     // Performs numHops hops pulling in field-specific number of terms each time
-    this.simpleSearch = function(searchTerm, fieldsChoice, numHops) {
+    this.simpleSearch = function (searchTerm, fieldsChoice, numHops) {
       if (!fieldsChoice) {
         fieldsChoice = self.options.vertex_fields;
       }
@@ -702,7 +702,7 @@ module.exports = (function() {
 
       //Add any blacklisted nodes to exclusion list
       var excludeNodesByField = {};
-      var nots = []
+      var nots = [];
       var avoidNodes = this.blacklistedNodes;
       for (var i = 0; i < avoidNodes.length; i++) {
         var n = avoidNodes[i];
@@ -716,7 +716,7 @@ module.exports = (function() {
         var tq = {};
         tq[n.data.field] = n.data.term;
         nots.push({
-          "term": tq
+          'term': tq
         });
       }
 
@@ -729,9 +729,9 @@ module.exports = (function() {
           var hopSize = fieldsChoice[f].hopSize;
           var excludes = excludeNodesByField[field];
           var stepField = {
-            "field": field,
-            "size": hopSize,
-            "min_doc_count": parseInt(self.options.exploreControls.minDocCount)
+            'field': field,
+            'size': hopSize,
+            'min_doc_count': parseInt(self.options.exploreControls.minDocCount)
           };
           if (excludes) {
             stepField.exclude = excludes;
@@ -748,58 +748,58 @@ module.exports = (function() {
 
       }
       var qs = {
-        "query_string": {
+        'query_string': {
           //TODO make choice of default_field a config param?
-          "default_field": "_all",
-          "query": searchTerm
+          'default_field': '_all',
+          'query': searchTerm
         }
       };
       var query = qs;
       if (nots.length > 0) {
         query = {
-          "bool": {
-            "must": [qs],
-            "must_not": nots
+          'bool': {
+            'must': [qs],
+            'must_not': nots
           }
         };
       }
 
 
       var request = {
-        "query": query,
-        "controls": self.buildControls(),
-        "connections": rootStep.connections,
-        "vertices": rootStep.vertices
+        'query': query,
+        'controls': self.buildControls(),
+        'connections': rootStep.connections,
+        'vertices': rootStep.vertices
       };
       self.callElasticsearch(request);
 
     };
 
-    this.buildControls = function() {
+    this.buildControls = function () {
       //This is an object managed by the client that may be subject to change
       var guiSettingsObj = self.options.exploreControls;
 
       var controls = {
-          use_significance: guiSettingsObj.useSignificance,
-          sample_size: guiSettingsObj.sampleSize,
-          timeout: parseInt(guiSettingsObj.timeoutMillis)
-        }
+        use_significance: guiSettingsObj.useSignificance,
+        sample_size: guiSettingsObj.sampleSize,
+        timeout: parseInt(guiSettingsObj.timeoutMillis)
+      };
         // console.log("guiSettingsObj",guiSettingsObj);
       if (guiSettingsObj.sampleDiversityField != null) {
         controls.sample_diversity = {
           field: guiSettingsObj.sampleDiversityField.name,
           max_docs_per_value: guiSettingsObj.maxValuesPerDoc
-        }
+        };
       }
       return controls;
-    }
+    };
 
-    this.makeNodeId=function(field, term){
-      return field + ".." + term;
-    }
+    this.makeNodeId = function (field, term) {
+      return field + '..' + term;
+    };
 
     //=======  Adds new nodes retrieved from an elasticsearch search ========
-    this.mergeGraph = function(newData) {
+    this.mergeGraph = function (newData) {
       this.stopLayout();
 
       if (!newData.nodes) {
@@ -841,17 +841,17 @@ module.exports = (function() {
         }
 
         var node = {
-            x: 1,
-            y: 1,
-            numChildren: 0,
-            parent: undefined,
-            isSelected: false,
-            id: dedupedNode.id,
-            label: label,
-            color: dedupedNode.color,
-            icon: dedupedNode.icon,
-            data: dedupedNode
-          }
+          x: 1,
+          y: 1,
+          numChildren: 0,
+          parent: undefined,
+          isSelected: false,
+          id: dedupedNode.id,
+          label: label,
+          color: dedupedNode.color,
+          icon: dedupedNode.icon,
+          data: dedupedNode
+        };
           //        node.scaledSize = sizeScale(node.data.weight);
         node.scaledSize = 15;
         node.seqNumber = this.seqNumber++;
@@ -864,9 +864,9 @@ module.exports = (function() {
         var edge = newData.edges[o];
         var src = newData.nodes[edge.source];
         var target = newData.nodes[edge.target];
-        var id = src.id + "->" + target.id;
+        var id = src.id + '->' + target.id;
         if (src.id > target.id) {
-          id = target.id + "->" + src.id;
+          id = target.id + '->' + src.id;
         }
         edge.id = id;
 
@@ -886,13 +886,13 @@ module.exports = (function() {
 
         var inferred = edge.inferred ? true : false;
         var newEdge = {
-          "source": srcWrapperObj,
-          "target": targetWrapperObj,
-          "weight": edge.weight,
-          "width": edge.width,
-          "id": id,
-          "doc_count": edge.doc_count,
-          "inferred": inferred
+          'source': srcWrapperObj,
+          'target': targetWrapperObj,
+          'weight': edge.weight,
+          'width': edge.width,
+          'id': id,
+          'doc_count': edge.doc_count,
+          'inferred': inferred
         };
         this.edgesMap[newEdge.id] = newEdge;
         this.edges.push(newEdge);
@@ -905,9 +905,9 @@ module.exports = (function() {
 
       this.runLayout();
 
-    }
+    };
 
-    this.mergeIds = function(parentId, childId) {
+    this.mergeIds = function (parentId, childId) {
       var parent = self.getNode(parentId);
       var child = self.getNode(childId);
       if (child.isSelected) {
@@ -917,54 +917,54 @@ module.exports = (function() {
       child.parent = parent;
       self.addUndoLogEntry([new GroupOperation(parent, child, self)]);
       self.runLayout();
-    }
+    };
 
-    this.getNode = function(nodeId) {
+    this.getNode = function (nodeId) {
       return this.nodesMap[nodeId];
-    }
-    this.getEdge = function(edgeId) {
+    };
+    this.getEdge = function (edgeId) {
       return this.edgesMap[edgeId];
-    }
+    };
 
 
 
     //======= Expand functions to request new additions to the graph
 
-    this.expandSelecteds = function(clearExisting, targetOptions) {
+    this.expandSelecteds = function (clearExisting, targetOptions) {
       var startNodes = self.getAllSelectedNodes();
       if (startNodes.length == 0) {
         startNodes = self.nodes;
       }
       var clone = startNodes.slice();
       self.expand(clone, clearExisting, targetOptions);
-    }
+    };
 
-    this.expandGraph = function() {
+    this.expandGraph = function () {
       self.expandSelecteds(false, {
-        valueTypes: "new"
+        valueTypes: 'new'
       });
-    }
+    };
 
 
     //Add missing links between existing nodes
-    this.fillInGraph = function() {
+    this.fillInGraph = function () {
       self.expandSelecteds(false, {
-        valueTypes: "old"
+        valueTypes: 'old'
       });
-    }
+    };
 
     //Find new nodes to link to existing selected nodes
-    this.expandNode = function(node) {
+    this.expandNode = function (node) {
       self.expand(self.returnUnpackedGroupeds([node]), false, {
-        valueTypes: "new"
+        valueTypes: 'new'
       });
-    }
+    };
 
     // A manual expand function where the client provides the list
     // of existing nodes that are the start points and some options
     // about what targets are of interest.
     // Target choices are "new", "old" or "both"
-    this.expand = function(startNodes, clearExisting, targetOptions) {
+    this.expand = function (startNodes, clearExisting, targetOptions) {
       //=============================
       if (clearExisting) {
         this.clearGraph();
@@ -986,7 +986,7 @@ module.exports = (function() {
         }
       }
 
-      if (targetOptions.valueTypes == "new") {
+      if (targetOptions.valueTypes == 'new') {
         var allExistingNodes = this.nodes;
         for (var i = 0; i < allExistingNodes.length; i++) {
           var n = allExistingNodes[i];
@@ -997,7 +997,7 @@ module.exports = (function() {
           }
           arr.push(n.data.term);
         }
-      } else if (targetOptions.valueTypes == "both") {
+      } else if (targetOptions.valueTypes == 'both') {
 
         //Avoid all nodes already connected to start nodes
         // Issue: if start nodes are A and B and A is already linked to C
@@ -1040,8 +1040,8 @@ module.exports = (function() {
         }
         // pushing boosts server-side to influence sampling/direction
         arr.push({
-          "term": n.data.term,
-          "boost": n.data.weight
+          'term': n.data.term,
+          'boost': n.data.weight
         });
 
         var arr = excludeNodesByField[n.data.field];
@@ -1051,7 +1051,7 @@ module.exports = (function() {
         }
         //NOTE for the entity-building use case need to remove excludes that otherwise
         // prevent bridge-building.
-        if (targetOptions.valueTypes == "new") {
+        if (targetOptions.valueTypes == 'new') {
           if (arr.indexOf(n.data.term) < 0) {
             arr.push(n.data.term);
           }
@@ -1063,9 +1063,9 @@ module.exports = (function() {
       var secondaryVertices = [];
       for (var fieldName in nodesByField) {
         primaryVertices.push({
-          "field": fieldName,
-          "include": nodesByField[fieldName],
-          "min_doc_count": parseInt(self.options.exploreControls.minDocCount)
+          'field': fieldName,
+          'include': nodesByField[fieldName],
+          'min_doc_count': parseInt(self.options.exploreControls.minDocCount)
         });
       }
 
@@ -1080,15 +1080,15 @@ module.exports = (function() {
         var hopSize = targetFields[f].hopSize;
 
         var fieldHop = {
-          "field": fieldName,
-          "size": hopSize,
-          "min_doc_count": parseInt(self.options.exploreControls.minDocCount)
+          'field': fieldName,
+          'size': hopSize,
+          'min_doc_count': parseInt(self.options.exploreControls.minDocCount)
         };
-        if (targetOptions.valueTypes == "old") {
+        if (targetOptions.valueTypes == 'old') {
           //Look to reinforce internal links for ANY of the existing terms
-          fieldHop.include = self.nodes.filter(function(n) {
+          fieldHop.include = self.nodes.filter(function (n) {
             return n.data.field == fieldName;
-          }).map(function(n) {
+          }).map(function (n) {
             return n.data.term;
           });
           if (fieldHop.include.length == 0) {
@@ -1103,14 +1103,14 @@ module.exports = (function() {
       }
 
       var request = {
-        "controls": self.buildControls(),
-        "vertices": primaryVertices,
-        "connections": {
-          "vertices": secondaryVertices
+        'controls': self.buildControls(),
+        'vertices': primaryVertices,
+        'connections': {
+          'vertices': secondaryVertices
         }
       };
 
-      if (targetOptions.valueTypes == "old") {
+      if (targetOptions.valueTypes == 'old') {
         // Looking for connections between the provided nodes.
         // We need to ensure we select in the sample docs that contain pairings of nodes
         // - add a query that enforces this.
@@ -1122,18 +1122,18 @@ module.exports = (function() {
           }
         }
         request.query = {
-          "bool": {
-            "minimum_number_should_match": 2,
-            "should": shoulds
+          'bool': {
+            'minimum_number_should_match': 2,
+            'should': shoulds
           }
-        }
+        };
       }
 
 
 
-      self.lastRequest = JSON.stringify(request, null, "\t");
-      graphExplorer(self.options.indexName, request, function(data) {
-        self.lastResponse = JSON.stringify(data, null, "\t");
+      self.lastRequest = JSON.stringify(request, null, '\t');
+      graphExplorer(self.options.indexName, request, function (data) {
+        self.lastResponse = JSON.stringify(data, null, '\t');
         var nodes = [];
         var edges = [];
 
@@ -1176,7 +1176,7 @@ module.exports = (function() {
         // Consequently when adding edges to existing nodes ("old" expand mode) we
         // ask for all edges with 2 pairs of include statements and return ALL edges.
         // This function trims the excess of edges.
-        if (targetOptions.valueTypes == "old") {
+        if (targetOptions.valueTypes == 'old') {
           edges = self.trimExcessNewEdges(data.vertices, edges);
         }
 
@@ -1184,16 +1184,16 @@ module.exports = (function() {
 
         // Add the new nodes and edges into the existing workspace's graph
         self.mergeGraph({
-          "nodes": data.vertices,
-          "edges": edges
+          'nodes': data.vertices,
+          'edges': edges
         });
 
       });
       //===== End expand graph ========================
 
-    }
+    };
 
-    this.trimExcessNewEdges = function(newNodes, newEdges) {
+    this.trimExcessNewEdges = function (newNodes, newEdges) {
       var trimmedEdges = [];
       var maxNumEdgesToReturn = 5;
       //Trim here to just the new edges that are most interesting.
@@ -1201,11 +1201,11 @@ module.exports = (function() {
         var edge = newEdges[o];
         var src = newNodes[edge.source];
         var target = newNodes[edge.target];
-        var srcId = src.field + ".." + src.term;
-        var targetId = target.field + ".." + target.term;
-        var id = srcId + "->" + targetId;
+        var srcId = src.field + '..' + src.term;
+        var targetId = target.field + '..' + target.term;
+        var id = srcId + '->' + targetId;
         if (srcId > targetId) {
-          var id = targetId + "->" + srcId;
+          var id = targetId + '->' + srcId;
         }
         var existingSrcNode = self.nodesMap[srcId];
         var existingTargetNode = self.nodesMap[targetId];
@@ -1216,7 +1216,7 @@ module.exports = (function() {
             continue;
           }
         } else {
-          console.log("Error? Missing nodes " + srcId + " or " + targetId, self.nodesMap);
+          console.log('Error? Missing nodes ' + srcId + ' or ' + targetId, self.nodesMap);
           continue;
         }
 
@@ -1231,17 +1231,17 @@ module.exports = (function() {
       }
       if (trimmedEdges.length > maxNumEdgesToReturn) {
         //trim to only the most interesting ones
-        trimmedEdges.sort(function(a, b) {
+        trimmedEdges.sort(function (a, b) {
           return b.weight - a.weight;
         });
         trimmedEdges = trimmedEdges.splice(0, maxNumEdgesToReturn);
       }
       return trimmedEdges;
-    }
+    };
 
-    this.getSelectionsExampleDocs = function(completedHandler) {
+    this.getSelectionsExampleDocs = function (completedHandler) {
       self.getExampleDocs(self.selectedNodes, completedHandler);
-    }
+    };
 
 
 
@@ -1249,7 +1249,7 @@ module.exports = (function() {
     // TODO - this used to be part of some in-built document visualization
     // but ideally should be handled by calling saved Kibana visualizations.
     // The query-building parts of this function will be useful for this
-    this.getExampleDocs = function(startNodes, completedHandler) {
+    this.getExampleDocs = function (startNodes, completedHandler) {
       var shoulds = [];
       for (var bs in startNodes) {
         var node = startNodes[bs];
@@ -1258,23 +1258,23 @@ module.exports = (function() {
         }
       }
       var query = {
-        "bool": {
-          "should": shoulds
+        'bool': {
+          'should': shoulds
         }
-      }
+      };
 
       var request = {
-        "query": query,
-        "size": 0,
-        "aggs": {
-          "sample": {
-            "sampler": {
+        'query': query,
+        'size': 0,
+        'aggs': {
+          'sample': {
+            'sampler': {
 
             },
-            "aggs": {
-              "topHits": {
-                "top_hits": {
-                  "size": 10
+            'aggs': {
+              'topHits': {
+                'top_hits': {
+                  'size': 10
                 }
               }
             }
@@ -1282,14 +1282,14 @@ module.exports = (function() {
         }
       };
 
-      var controls = self.buildControls()
+      var controls = self.buildControls();
       if (controls.sample_diversity) {
         request.aggs.sample.sampler.max_docs_per_value = parseInt(controls.sample_diversity.max_docs_per_value);
         request.aggs.sample.sampler.field = controls.sample_diversity.field;
       }
 
       var dataForServer = JSON.stringify(request);
-      searcher(self.options.indexName, request, function(data) {
+      searcher(self.options.indexName, request, function (data) {
         var exampleDocs = [];
 
         var hits = data.aggregations.sample.topHits.hits.hits;
@@ -1297,11 +1297,11 @@ module.exports = (function() {
           completedHandler(hits);
         }
       });
-    }
+    };
 
 
 
-    this.getSelectedIntersections = function(callback) {
+    this.getSelectedIntersections = function (callback) {
       if (self.selectedNodes.length == 0) {
         return self.getAllIntersections(callback, self.nodes);
       }
@@ -1312,9 +1312,9 @@ module.exports = (function() {
         return self.getAllIntersections(callback, neighbourNodes);
       }
       return self.getAllIntersections(callback, self.getAllSelectedNodes());
-    }
+    };
 
-    this.JLHScore = function(subsetFreq, subsetSize, supersetFreq, supersetSize) {
+    this.JLHScore = function (subsetFreq, subsetSize, supersetFreq, supersetSize) {
       var subsetProbability = subsetFreq / subsetSize;
       var supersetProbability = supersetFreq / supersetSize;
 
@@ -1324,7 +1324,7 @@ module.exports = (function() {
       }
       var relativeProbabilityChange = (subsetProbability / supersetProbability);
       return absoluteProbabilityChange * relativeProbabilityChange;
-    }
+    };
 
 
 
@@ -1336,39 +1336,39 @@ module.exports = (function() {
 
     // Determines union/intersection stats for neighbours of a node.
     // TODO - could move server-side as a graph API function?
-    this.getAllIntersections = function(callback, nodes) {
+    this.getAllIntersections = function (callback, nodes) {
       //Ensure these are all top-level nodes only
-      nodes = nodes.filter(function(n) {
-        return n.parent == undefined
+      nodes = nodes.filter(function (n) {
+        return n.parent == undefined;
       });
 
-      var allQueries = nodes.map(function(node) {
-        return self.buildNodeQuery(node)
+      var allQueries = nodes.map(function (node) {
+        return self.buildNodeQuery(node);
       });
 
       var allQuery = {
-          "bool": {
-            "should": allQueries
-          }
+        'bool': {
+          'should': allQueries
         }
+      };
         //====================
       var request = {
-        "query": allQuery,
-        "size": 0,
-        "aggs": {
-          "all": {
-            "global": {}
+        'query': allQuery,
+        'size': 0,
+        'aggs': {
+          'all': {
+            'global': {}
           },
-          "sources": {
+          'sources': {
             // Could use significant_terms not filters to get stats but
             // for the fact some of the nodes are groups of terms.
-            "filters": {
-              "filters": {}
+            'filters': {
+              'filters': {}
             },
-            "aggs": {
-              "targets": {
-                "filters": {
-                  "filters": {
+            'aggs': {
+              'targets': {
+                'filters': {
+                  'filters': {
 
                   }
                 }
@@ -1379,23 +1379,23 @@ module.exports = (function() {
       };
       for (var n in allQueries) {
         // Add aggs to get intersection stats with root node.
-        request.aggs.sources.filters.filters["bg" + n] = allQueries[n];
-        request.aggs.sources.aggs.targets.filters.filters["fg" + n] = allQueries[n];
+        request.aggs.sources.filters.filters['bg' + n] = allQueries[n];
+        request.aggs.sources.aggs.targets.filters.filters['fg' + n] = allQueries[n];
       }
       var dataForServer = JSON.stringify(request);
-      searcher(self.options.indexName, request, function(data) {
+      searcher(self.options.indexName, request, function (data) {
         var termIntersects = [];
         var fullDocCounts = [];
         var allDocCount = data.aggregations.all.doc_count;
 
         // Gather the background stats for all nodes.
         for (var n in nodes) {
-          fullDocCounts.push(data.aggregations.sources.buckets["bg" + n].doc_count);
+          fullDocCounts.push(data.aggregations.sources.buckets['bg' + n].doc_count);
         }
         for (var n in nodes) {
           var rootNode = nodes[n];
           var t1 = fullDocCounts[n];
-          var baseAgg = data.aggregations.sources.buckets["bg" + n].targets.buckets;
+          var baseAgg = data.aggregations.sources.buckets['bg' + n].targets.buckets;
           for (var l in nodes) {
             var t2 = fullDocCounts[l];
             var leafNode = nodes[l];
@@ -1412,18 +1412,18 @@ module.exports = (function() {
                 continue;
               }
             }
-            var t1AndT2 = baseAgg["fg" + l].doc_count;
+            var t1AndT2 = baseAgg['fg' + l].doc_count;
             if (t1AndT2 == 0) {
               continue;
             }
             var neighbourNode = nodes[l];
             var t1Label = rootNode.data.label;
             if (rootNode.numChildren > 0) {
-              t1Label += "(+" + rootNode.numChildren + ")"
+              t1Label += '(+' + rootNode.numChildren + ')';
             }
             var t2Label = neighbourNode.data.label;
             if (neighbourNode.numChildren > 0) {
-              t2Label += "(+" + neighbourNode.numChildren + ")"
+              t2Label += '(+' + neighbourNode.numChildren + ')';
             }
 
             // A straight percentage can be poor if t1==1 (100%) - not too much strength of evidence
@@ -1447,7 +1447,7 @@ module.exports = (function() {
             termIntersects.push(termIntersect);
           }
         }
-        termIntersects.sort(function(a, b) {
+        termIntersects.sort(function (a, b) {
           if (b.mergeConfidence != a.mergeConfidence) {
             return b.mergeConfidence - a.mergeConfidence;
           }
@@ -1465,14 +1465,14 @@ module.exports = (function() {
         }
 
       });
-    }
+    };
 
     // Internal utility function for calling the Graph API and handling the response
     // by merging results into existing nodes in this workspace.
-    this.callElasticsearch = function(request) {
-      self.lastRequest = JSON.stringify(request, null, "\t");
-      graphExplorer(self.options.indexName, request, function(data) {
-        self.lastResponse = JSON.stringify(data, null, "\t");
+    this.callElasticsearch = function (request) {
+      self.lastRequest = JSON.stringify(request, null, '\t');
+      graphExplorer(self.options.indexName, request, function (data) {
+        self.lastResponse = JSON.stringify(data, null, '\t');
         var nodes = [];
         var edges = [];
         //Label the nodes with field number for CSS styling
@@ -1510,10 +1510,10 @@ module.exports = (function() {
         }
 
         self.mergeGraph({
-          "nodes": data.vertices,
-          "edges": edges
+          'nodes': data.vertices,
+          'edges': edges
         }, {
-          "labeller": self.options.labeller
+          'labeller': self.options.labeller
         });
 
       });
@@ -1525,7 +1525,7 @@ module.exports = (function() {
 
   // Begin Kibana wrapper
   return {
-    "createWorkspace": createWorkspace
+    'createWorkspace': createWorkspace
   };
 
-})();
+}());

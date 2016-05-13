@@ -20,7 +20,6 @@ module.exports = function (kibana) {
         injectVars: function (server, _options) {
           var config = server.config();
           return {
-            BASIC: 'basic',
             maxBucketSize: config.get('xpack.monitoring.max_bucket_size'),
             minIntervalSeconds: config.get('xpack.monitoring.min_interval_seconds'),
             kbnIndex: config.get('kibana.index'),
@@ -29,7 +28,7 @@ module.exports = function (kibana) {
             statsReportUrl: config.get('xpack.monitoring.stats_report_url'),
             reportStats: config.get('xpack.monitoring.report_stats'),
             monitoringIndexPrefix: config.get('xpack.monitoring.index_prefix'),
-            licenseMode: server.plugins.monitoring.licenseMode,
+            isLicenseModeBasic: server.plugins.monitoring.isLicenseModeBasic,
             googleTagManagerId: config.get('xpack.monitoring.google_tag_manager_id')
           };
         }
@@ -80,13 +79,22 @@ module.exports = function (kibana) {
     init: function (server, _options) {
       return Promise.all([
         instantiateClient(server), // Instantiate the dedicated Elasticsearch client
-        pluginSelfCheck(this, server), // Make sure the Monitoring index is created and the Kibana version is supported
         requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server), // Require all the routes
       ])
       .then(() => {
-        xpackInfo(server.plugins.monitoring.client)
+        return xpackInfo(server.plugins.monitoring.client)
         .then(info => {
-          server.expose('licenseMode', info.mode);
+          server.expose('isLicenseModeBasic', info.license.isOneOf('basic'));
+        })
+        .then(() => {
+          pluginSelfCheck(this, server); // Make sure the Monitoring index is created and the Kibana version is supported
+        })
+        .catch(reason => {
+          if ((reason instanceof Error) && (reason.status === 400)) {
+            const errorMessage = 'x-pack plugin is not installed on Elasticsearch cluster';
+            this.status.red(errorMessage);
+            return;
+          }
         });
       });
     }

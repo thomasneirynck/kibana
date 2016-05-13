@@ -10,11 +10,6 @@ module.exports = function ajaxErrorHandlersProvider(Notifier) {
       }
       const genericNotifier = new Notifier({ location: 'Monitoring' });
       return genericNotifier.fatal(err);
-    },
-    /* dismissable banner message */
-    nonFatal(err) {
-      const notifier = new Notifier({ location: 'Monitoring' });
-      return notifier.error(err);
     }
   };
 };

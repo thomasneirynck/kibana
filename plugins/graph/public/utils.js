@@ -1,6 +1,6 @@
 
-var venn = require("./venn.js")
-module.exports=(function() {
+var venn = require('venn.js');
+module.exports = (function () {
 
   // Unwrap elasticsearch field names from mappings
   // into a flattened list of field names
@@ -15,23 +15,23 @@ module.exports=(function() {
         unwrapFieldNames(child, path, fields);
         path.pop();
       } else {
-        var parentName = "";
+        var parentName = '';
         for (var i in path) {
           parentName += path[i];
-          parentName += ".";
+          parentName += '.';
         }
         // Need to clone the path array here:
         fields.push({
-          "name": parentName + p,
-          "path": path.slice(0),
-          "leafName": p
+          'name': parentName + p,
+          'path': path.slice(0),
+          'leafName': p
         });
         if (child.fields) {
           for (var mfield in child.fields) {
             fields.push({
-              "name": parentName + p + "." + mfield,
-              "path": path.slice(0),
-              "leafName": p
+              'name': parentName + p + '.' + mfield,
+              'path': path.slice(0),
+              'leafName': p
             });
 
           }
@@ -40,10 +40,10 @@ module.exports=(function() {
     }
   }
 
-  function getMergeSuggestionObjects(termIntersects){
-    var mergeCandidates=[];
-    for(var i in termIntersects){
-      var ti=termIntersects[i];
+  function getMergeSuggestionObjects(termIntersects) {
+    var mergeCandidates = [];
+    for (var i in termIntersects) {
+      var ti = termIntersects[i];
       mergeCandidates.push({
         'id1':ti.id1,
         'id2':ti.id2,
@@ -61,8 +61,8 @@ module.exports=(function() {
 
 
   return {
-    "unwrapFieldNames" : unwrapFieldNames,
-    "getMergeSuggestionObjects":getMergeSuggestionObjects
+    'unwrapFieldNames' : unwrapFieldNames,
+    'getMergeSuggestionObjects':getMergeSuggestionObjects
   };
 
-})();
+}());

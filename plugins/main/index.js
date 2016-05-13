@@ -1,6 +1,7 @@
 import { join } from 'path';
 import xpackInfo from '../../server/lib/xpack_info';
 import requireAllAndApply from '../../server/lib/require_all_and_apply';
+
 export default function (kibana) {
   return new kibana.Plugin({
     id: 'xpackMain',
@@ -11,8 +12,13 @@ export default function (kibana) {
       .then(info => {
         server.expose('info', info);
         return requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server);
+      })
+      .catch(reason => {
+        if ((reason instanceof Error) && (reason.status === 400)) {
+          const errorMessage = 'x-pack plugin is not installed on Elasticsearch cluster';
+          this.status.red(errorMessage);
+        }
       });
     }
   });
 }
-

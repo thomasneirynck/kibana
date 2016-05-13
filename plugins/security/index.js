@@ -63,6 +63,12 @@ export default (kibana) => new kibana.Plugin({
   },
 
   init(server) {
+    const xpackMainPluginStatus = server.plugins.xpackMain.status;
+    if (xpackMainPluginStatus.state === 'red') {
+      this.status.red(xpackMainPluginStatus.message);
+      return;
+    };
+
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
 
