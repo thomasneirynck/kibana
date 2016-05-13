@@ -1,5 +1,4 @@
 import expect from 'expect.js';
-
 import parseNext from '../parse_next';
 
 describe('parseNext', () => {

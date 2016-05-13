@@ -1,0 +1,59 @@
+<kbn-settings-app section="security">
+  <div class="kbn-settings-security container">
+    <br />
+    <ul class="nav nav-tabs">
+      <li class="kbn-settings-tab"><a href="#/settings/security/users">Users</a></li>
+      <li class="kbn-settings-tab active"><a href="#/settings/security/roles">Roles</a></li>
+    </ul>
+    <br />
+    <div class="tab-content">
+      <div class="container">
+        <div class="row">
+          <form role="form" class="col-md-10">
+            <input aria-label="Filter" ng-model="query" class="form-control" type="text" placeholder="Filter..." />
+          </form>
+          <div class="pull-right">
+            <button ng-click="deleteRoles()" class="btn btn-danger" ng-disabled="!selectedRoles.length">Delete</button>
+            <a href="#/settings/security/roles/edit" ng-click="newRole()" class="btn btn-default">New Role</a>
+          </div>
+        </div>
+      </div>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th><input type="checkbox" ng-click="toggleAll()" ng-checked="allSelected()" /></th>
+            <th ng-click="toggleSort(sort, 'name')">
+              Role
+              <i aria-hidden="true" class="fa" ng-show="sort.orderBy == 'name'" ng-class="{'fa-caret-down': sort.reverse, 'fa-caret-up': !sort.reverse}"></i>
+            </th>
+            <th ng-click="toggleSort(sort, 'description')">
+              Description
+              <i aria-hidden="true" class="fa" ng-show="sort.orderBy == 'description'" ng-class="{'fa-caret-down': sort.reverse, 'fa-caret-up': !sort.reverse}"></i>
+            </th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="role in roles | orderBy:'name' | filter:query | orderBy:sort.orderBy:sort.reverse">
+            <td>
+              <input type="checkbox" ng-click="toggle(selectedRoles, role)" ng-checked="includes(selectedRoles, role)" ng-disabled="isReservedRole(role)" />
+            </td>
+            <td>
+              <a ng-href="#/settings/security/roles/edit/{{role.name}}">{{role.name}}</a>
+            </td>
+            <td>{{role.description}}</td>
+            <td>
+              <div ng-if="isReservedRole(role)">
+                <i class="fa fa-question-circle" title="Reserved roles are built-in and cannot be removed or modified."></i>
+                Reserved
+              </div>
+            </td>
+          </tr>
+          <tr ng-show="!(roles | filter:query).length">
+            <td colspan="3">No <span ng-show="query">matching</span> roles found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</kbn-settings-app>
