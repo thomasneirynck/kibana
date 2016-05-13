@@ -78,8 +78,7 @@ gulp.task('lint', function () {
     'server/**/*.js',
     'public/**/*.js',
     '!plugins/**/node_modules/**',
-    '!plugins/**/__test__/fixtures/**/*.js',
-    '!plugins/graph/**',
+    '!plugins/**/__test__/fixtures/**/*.js'
   ];
 
   return gulp.src(filePaths)
@@ -210,9 +209,7 @@ gulp.task('release', ['package'], function () {
 
 gulp.task('pre-test', function () {
   return gulp.src([
-    './server/**/*.js',
-    './public/**/*.js',
-    './plugins/**/*.js',
+    './{server,public,plugins}/**/*.js',
     '!./**/__test__/**'
   ])
     // instruments code for measuring test coverage
@@ -225,7 +222,7 @@ gulp.task('pre-test', function () {
 });
 
 function runMocha() {
-  return gulp.src(['./plugins/**/__test__/**/*.js', '!./build/**'], { read: false })
+  return gulp.src(['./{plugins,server}/**/__test__/**/*.js', '!./build/**'], { read: false })
     .pipe(mocha({
       ui: 'bdd'
     }));

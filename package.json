@@ -43,7 +43,6 @@
     "yargs": "3.32.0"
   },
   "dependencies": {
-    "angular-resource": "1.4.9",
     "babel-runtime": "5.8.20",
     "bluebird": "3.1.1",
     "boom": "3.1.1",
@@ -64,6 +63,7 @@
     "rison-node": "0.3.1",
     "semver": "5.1.0",
     "temp": "0.8.3",
-    "unzip": "0.1.11"
+    "unzip": "0.1.11",
+    "venn.js": "0.2.9"
   }
 }

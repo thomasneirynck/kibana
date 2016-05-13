@@ -1,0 +1,13 @@
+globals:
+  angular: true
+  $: true
+rules:
+  block-scoped-var: 0
+  camelcase: 0
+  eqeqeq: 0
+  guard-for-in: 0
+  new-cap: 0
+  no-loop-func: 0
+  no-shadow: 0
+  no-unused-vars: 0
+  one-var: 0

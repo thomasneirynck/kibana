@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
-import getCalculateExpires from '../../../server/lib/get_calculate_expires';
+import getCalculateExpires from '../get_calculate_expires';
 
 describe('Validate config', function () {
   const ttl = 1000;

@@ -20,22 +20,13 @@ module.exports = function (kibana) {
         'plugins/reporting/controls/dashboard',
       ],
       injectDefaultVars: function (server) {
-        const checker = checkLicense(server.plugins.elasticsearch.client);
+        const checkResult = checkLicense(server.plugins.xpackMain.info);
 
-        function registerVars(enabled) {
-          server.expose('enabled', enabled);
-
-          return {
-            reportingEnabled: enabled
-          };
-        }
-
-        return checker.check()
-        .then((check) => {
-          server.log(['reporting', 'license', 'debug'], `License check: ${check.message}`);
-          return registerVars(check.enabled);
-        })
-        .catch(() => registerVars(false));
+        server.log(['reporting', 'license', 'debug'], `License check: ${checkResult.message}`);
+        server.expose('enabled', checkResult.enabled);
+        return {
+          reportingEnabled: checkResult.enabled
+        };
       },
     },
 
@@ -66,6 +57,11 @@ module.exports = function (kibana) {
     init: function (server) {
       // init the plugin helpers
       const plugin = this;
+      const xpackMainPluginStatus = server.plugins.xpackMain.status;
+      if (xpackMainPluginStatus.state === 'red') {
+        plugin.status.red(xpackMainPluginStatus.message);
+        return;
+      };
 
       function setup() {
         // prepare phantom binary

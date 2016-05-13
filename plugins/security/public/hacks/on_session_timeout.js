@@ -38,7 +38,7 @@ module.config(($httpProvider) => {
             $window.location.reload();
           }
         });
-      }, sessionTimeout - WARNING_DURATION);
+      }, Math.max(sessionTimeout - WARNING_DURATION, 0));
 
       return handleResponse(response);
     }
