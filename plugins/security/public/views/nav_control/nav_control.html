@@ -1,0 +1,15 @@
+<div ng-controller="securityNavController">
+  <div class="app-link">
+    <a>
+      <div class="app-icon">
+        <img kbn-src="/plugins/security/images/person.svg" />
+      </div>
+      <div class="app-title">{{me.full_name || me.username}}</div>
+    </a>
+  </div>
+  <div class="app-link">
+    <a href="../logout">
+      <div class="app-title">Logout</div>
+    </a>
+  </div>
+</div>
