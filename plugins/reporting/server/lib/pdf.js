@@ -1,5 +1,6 @@
 const path = require('path');
 const _ = require('lodash');
+const concat = require('concat-stream');
 const Printer = require('pdfmake');
 const assetPath = path.resolve(__dirname, '..', '..', 'server', 'assets');
 
@@ -76,7 +77,21 @@ class PdfMaker {
     return this;
   }
 
+  getBuffer() {
+    if (!this._pdfDoc) throw new Error('Document stream has not been generated');
+    return new Promise((resolve, reject) => {
+      const concatStream = concat(function (pdfBuffer) {
+        resolve(pdfBuffer.toString());
+      });
+
+      this._pdfDoc.on('error', reject);
+      this._pdfDoc.pipe(concatStream);
+      this._pdfDoc.end();
+    });
+  }
+
   getStream() {
+    if (!this._pdfDoc) throw new Error('Document stream has not been generated');
     this._pdfDoc.end();
     return this._pdfDoc;
   }
