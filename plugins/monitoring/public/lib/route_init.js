@@ -34,7 +34,7 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
       }
       return globalState.cluster;
     })
-    // Finally check if the license is expired for the current cluster
+    // Finally filter the cluster from the nav if it's light then return the Monitoring object.
     .then(function () {
       var cluster = _.find(monitoring.clusters, { cluster_uuid: globalState.cluster });
       var license = cluster.license;
@@ -44,6 +44,7 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
         // redirect to license, but avoid infinite loop
         kbnUrl.redirect('/license');
       }
+      globalState.license = license;
       return monitoring;
     })
     .catch(ajaxErrorHandlers.fatalError);

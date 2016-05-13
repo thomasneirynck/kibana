@@ -6,8 +6,8 @@
     </a>
     <ul class="dropdown-menu" role="menu" ng-show="showOrHideMenu()">
       <li ng-repeat="cluster in clusters" ng-class="createClass(cluster)">
-          <a ng-if="allowChangeCluster" ng-click="changeCluster(cluster.cluster_uuid)">{{ cluster.cluster_name}}</a>
-          <div ng-if="!allowChangeCluster">{{ cluster.cluster_name}}</div>
+          <a ng-if="cluster.license.type !== 'basic'" ng-click="changeCluster(cluster.cluster_uuid)">{{ cluster.cluster_name}}</a>
+          <div ng-if="cluster.license.type === 'basic'">{{ cluster.cluster_name}}</div>
       </li>
     </ul>
   </div>
