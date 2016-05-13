@@ -5,6 +5,7 @@ require('plugins/monitoring/directives/index.js');
 require('plugins/monitoring/services/clusters');
 require('plugins/monitoring/services/features.js');
 require('plugins/monitoring/services/executor.js');
+require('plugins/monitoring/services/license.js');
 require('plugins/monitoring/views/no_data/no_data_controller.js');
 require('plugins/monitoring/views/home/home_controller.js');
 require('plugins/monitoring/views/indices/indices_controller.js');
