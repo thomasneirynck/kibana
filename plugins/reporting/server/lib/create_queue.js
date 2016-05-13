@@ -6,7 +6,7 @@ function createQueue(server) {
   const client = server.plugins.elasticsearch.client;
 
   const queue = new Esqueue(queueConfig.index, {
-    interval: queueConfig.interval,
+    interval: queueConfig.indexInterval,
     timeout: queueConfig.timeout,
     client: client
   });
