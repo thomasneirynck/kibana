@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 const mod = require('ui/modules').get('monitoring/directives', []);
 const template = require('plugins/monitoring/directives/welcome_msg/index.html');
 mod.directive('monitoringWelcomeMessage', function ($window, reportStats, features) {
@@ -13,8 +14,8 @@ mod.directive('monitoringWelcomeMessage', function ($window, reportStats, featur
       scope.showBanner = (hideBanner) ? false : true;
 
       if (scope.showBanner && scope.cluster && scope.clusters) {
-        const license = scope.cluster.license;
-        if (license.type !== 'basic') {
+        const licenseType = get(scope, 'cluster.license.type');
+        if (licenseType !== 'basic') {
           scope.showBanner = false;
         }
       }
