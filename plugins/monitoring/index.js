@@ -1,7 +1,6 @@
 import { join, resolve } from 'path';
 import Promise from 'bluebird';
 import requireAllAndApply from '../../server/lib/require_all_and_apply';
-import xpackInfo from '../../server/lib/xpack_info';
 var pluginSelfCheck = require('./server/lib/plugin_self_check');
 var instantiateClient = require('./server/lib/es_client/instantiate_client');
 
@@ -28,7 +27,6 @@ module.exports = function (kibana) {
             statsReportUrl: config.get('xpack.monitoring.stats_report_url'),
             reportStats: config.get('xpack.monitoring.report_stats'),
             monitoringIndexPrefix: config.get('xpack.monitoring.index_prefix'),
-            isLicenseModeBasic: server.plugins.monitoring.isLicenseModeBasic,
             googleTagManagerId: config.get('xpack.monitoring.google_tag_manager_id')
           };
         }
@@ -99,23 +97,8 @@ module.exports = function (kibana) {
       return Promise.all([
         instantiateClient(server), // Instantiate the dedicated Elasticsearch client
         requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server), // Require all the routes
-      ])
-      .then(() => {
-        return xpackInfo(server.plugins.monitoring.client)
-        .then(info => {
-          server.expose('isLicenseModeBasic', info.license.isOneOf('basic'));
-        })
-        .then(() => {
-          pluginSelfCheck(this, server); // Make sure the Monitoring index is created and the Kibana version is supported
-        })
-        .catch(reason => {
-          if ((reason instanceof Error) && (reason.status === 400)) {
-            const errorMessage = 'x-pack plugin is not installed on Elasticsearch cluster';
-            this.status.red(errorMessage);
-            return;
-          }
-        });
-      });
+        pluginSelfCheck(this, server) // Make sure the Monitoring index is created and the Kibana version is supported
+      ]);
     }
   });
 };

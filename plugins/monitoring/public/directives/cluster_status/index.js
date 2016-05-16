@@ -1,7 +1,7 @@
 const template = require('plugins/monitoring/directives/cluster_status/index.html');
 const module = require('ui/modules').get('monitoring/directives', []);
 
-module.directive('monitoringClusterStatus', (globalState, isLicenseModeBasic, kbnUrl) => {
+module.directive('monitoringClusterStatus', (globalState, kbnUrl) => {
   return {
     restrict: 'E',
     template,
@@ -11,9 +11,6 @@ module.directive('monitoringClusterStatus', (globalState, isLicenseModeBasic, kb
      * control the actual showing and hiding with this directive. */
     link: (scope) => {
       let isMenuShown = false;
-
-      // show dropdown for cluster listing, with options unselectable
-      scope.allowChangeCluster = !isLicenseModeBasic;
 
       scope.toggleMenu = () => isMenuShown = !isMenuShown;
 
@@ -32,7 +29,7 @@ module.directive('monitoringClusterStatus', (globalState, isLicenseModeBasic, kb
 
       scope.createClass = (cluster) => {
         const classes = [cluster.status];
-        if (isLicenseModeBasic) {
+        if (cluster.license.type === 'basic') {
           classes.push('basic');
         }
         return classes.join(' ');

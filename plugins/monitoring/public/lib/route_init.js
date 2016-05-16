@@ -1,5 +1,5 @@
 var _ = require('lodash');
-module.exports = function routeInitProvider(Notifier, Private, monitoringClusters, globalState, kbnUrl) {
+module.exports = function routeInitProvider(Notifier, Private, monitoringClusters, globalState, license, kbnUrl) {
   var phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
   var ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
   return function () {
@@ -34,16 +34,17 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
       }
       return globalState.cluster;
     })
-    // Finally check if the license is expired for the current cluster
+    // Finally filter the cluster from the nav if it's light then return the Monitoring object.
     .then(function () {
       var cluster = _.find(monitoring.clusters, { cluster_uuid: globalState.cluster });
-      var license = cluster.license;
-      var isExpired = (new Date()).getTime() > license.expiry_date_in_millis;
+      var clusterLicense = cluster.license;
+      var isExpired = (new Date()).getTime() > clusterLicense.expiry_date_in_millis;
 
       if (isExpired && !_.contains(window.location.hash, 'license')) {
         // redirect to license, but avoid infinite loop
         kbnUrl.redirect('/license');
       }
+      license.setLicenseType(clusterLicense.type);
       return monitoring;
     })
     .catch(ajaxErrorHandlers.fatalError);
