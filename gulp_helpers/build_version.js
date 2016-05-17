@@ -1,13 +1,17 @@
 var fs = require('fs');
 var path = require('path');
 var properties = require('properties');
+var yargs = require('yargs');
 var pkg = require('../package.json');
+
+yargs
+.alias('r', 'release').describe('r', 'Create a release build, not a snapshot')
+var argv = yargs.argv;
 
 var propFile = path.resolve('..', '..', 'elasticsearch', 'buildSrc', 'version.properties');
 
 function getVersion() {
-  var isSnapshot = 1;
-  var snapshotText = (isSnapshot) ? '-SNAPSHOT' : '';
+  var snapshotText = (argv.release) ? '' : '-SNAPSHOT';
 
   try {
     // throws if file can not be read or found

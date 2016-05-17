@@ -41,7 +41,7 @@
     "rsync": "0.4.0",
     "simple-git": "1.32.1",
     "sinon": "1.17.3",
-    "yargs": "3.32.0"
+    "yargs": "4.7.1"
   },
   "dependencies": {
     "angular-resource": "1.4.9",
