@@ -74,9 +74,9 @@ export default (kibana) => new kibana.Plugin({
   },
 
   init(server) {
-    const xpackMainPlugin = server.plugins.xpackMain;
-    if (xpackMainPlugin.status.state === 'red') {
-      this.status.red(xpackMainPlugin.status.message);
+    const xpackMainPluginStatus = server.plugins.xpackMain.status;
+    if (xpackMainPluginStatus.state === 'red') {
+      this.status.red(xpackMainPluginStatus.message);
       return;
     };
 
