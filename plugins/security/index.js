@@ -49,20 +49,21 @@ export default (kibana) => new kibana.Plugin({
     hacks: ['plugins/security/hacks/on_session_timeout'],
     injectDefaultVars: function (server) {
 
+      // TODO: Refactor into server/lib/check_license module
       const xpackMainPlugin = server.plugins.xpackMain;
       const isLicenseActive = xpackMainPlugin.info.license.isActive();
       const isLicenseBasic = xpackMainPlugin.info.license.isOneOf(['basic']);
       const isEnabledInES = xpackMainPlugin.info.feature('security').isEnabled();
+      const allowLogin = isLicenseActive;
+      const showSecurityFeatures = isEnabledInES && !isLicenseBasic;
 
-      server.expose('isLicenseActive', isLicenseActive);
-      server.expose('isLicenseBasic', isLicenseBasic);
-      server.expose('isEnabledInES', isEnabledInES);
+      server.expose('allowLogin', allowLogin);
+      server.expose('showSecurityFeatures', showSecurityFeatures);
 
       const config = server.config();
       return {
-        isLicenseActive,
-        isLicenseBasic,
-        isEnabledInES,
+        allowLogin,
+        showSecurityFeatures,
         shieldUnsafeSessions: config.get('xpack.security.useUnsafeSessions'),
         sessionTimeout: config.get('xpack.security.sessionTimeout')
       };
@@ -83,7 +84,7 @@ export default (kibana) => new kibana.Plugin({
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
 
-    if (server.plugins.security.isEnabledInES && !server.plugins.security.isLicenseBasic) {
+    if (server.plugins.security.showSecurityFeatures) {
       const cookieName = config.get('xpack.security.cookieName');
       server.register(hapiAuthCookie, (error) => {
         if (error != null) throw error;
@@ -111,9 +112,7 @@ export default (kibana) => new kibana.Plugin({
     const commonRouteConfig = {
       pre: [
         function forbidApiAccess(request, reply) {
-          if (!server.plugins.security.isEnabledInES
-            || !server.plugins.security.isLicenseActive
-            || server.plugins.security.isLicenseBasic) {
+          if (!server.plugins.security.allowLogin || !server.plugins.security.showSecurityFeatures) {
             reply(Boom.forbidden('License has expired '
               + 'OR security is not available with this license '
               + 'OR security has been disabled in Elasticsearch'));

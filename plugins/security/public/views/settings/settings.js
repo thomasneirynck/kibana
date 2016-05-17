@@ -6,7 +6,7 @@ import 'plugins/security/views/settings/edit_user';
 import 'plugins/security/views/settings/edit_role';
 import chrome from 'ui/chrome';
 
-if (chrome.getInjected('isEnabledInES') && !chrome.getInjected('isLicenseBasic')) {
+if (chrome.getInjected('showSecurityFeatures')) {
   registry.register(constant({
     order: 10,
     name: 'security',

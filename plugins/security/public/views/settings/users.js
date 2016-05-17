@@ -11,8 +11,8 @@ routes.when('/settings/security/users', {
       return ShieldUser.query();
     }
   },
-  controller($scope, $route, $q, Notifier, isEnabledInES, isLicenseBasic, kbnUrl) {
-    if (!isEnabledInES || isLicenseBasic) {
+  controller($scope, $route, $q, Notifier, showSecurityFeatures, kbnUrl) {
+    if (!showSecurityFeatures) {
       kbnUrl.redirect('/');
     }
 

@@ -5,7 +5,7 @@ import template from 'plugins/security/views/nav_control/nav_control.html';
 import 'plugins/security/services/me';
 import chrome from 'ui/chrome';
 
-if (chrome.getInjected('isEnabledInES') && !chrome.getInjected('isLicenseBasic')) {
+if (chrome.getInjected('showSecurityFeatures')) {
   registry.register(constant({
     name: 'security',
     order: 1000,
