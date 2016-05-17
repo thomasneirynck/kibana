@@ -1,5 +1,6 @@
 import expect from 'expect.js';
 import { set } from 'lodash';
+import sinon from 'sinon';
 import checkLicense from '../check_license';
 
 describe('check_license', function () {
@@ -25,7 +26,7 @@ describe('check_license', function () {
   });
 
   it ('should set showSecurityFeatures to false if license is basic', () => {
-    set(mockLicenseInfo, 'license.isOneOf', () => { return true; });
+    set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(true));
     set(mockLicenseInfo, 'license.isActive', () => { return 'irrelevant'; });
     set(mockLicenseInfo, 'feature', () => {
       return {
@@ -39,6 +40,7 @@ describe('check_license', function () {
   });
 
   it ('should set allowLogin to false if license has expired even if security is enabled in Elasticsearch and license is not basic', () => {
+    set(mockLicenseInfo, 'license.isActive', () => { return false; });
     set(mockLicenseInfo, 'feature', () => {
       return {
         isEnabled: () => {
@@ -46,8 +48,7 @@ describe('check_license', function () {
         }
       };
     });
-    set(mockLicenseInfo, 'license.isOneOf', () => { return false; });
-    set(mockLicenseInfo, 'license.isActive', () => { return false; });
+    set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(false));
 
     expect(checkLicense(mockLicenseInfo).allowLogin).to.be(false);
   });
