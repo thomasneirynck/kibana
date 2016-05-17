@@ -7,7 +7,8 @@ var pkg = require('../package.json');
 
 yargs
 .alias('r', 'release').describe('r', 'Create a release build, not a snapshot')
-.alias('v', 'version').describe('v', 'Explicitely set the version');
+.alias('v', 'version').describe('v', 'Explicitely set the version')
+.describe('fallback', 'Fall back to the version in the package.json file');
 var argv = yargs.argv;
 
 var propFile = path.resolve('..', '..', 'elasticsearch', 'buildSrc', 'version.properties');
@@ -22,6 +23,7 @@ function getFileVersion() {
     var props = properties.parse(contents);
     return props.elasticsearch + snapshotText;
   } catch (e) {
+    if (!argv.fallback) throw e;
     return pkg.version.replace(/\-snapshot/i, snapshotText);
   }
 }
