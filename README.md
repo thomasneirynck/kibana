@@ -101,6 +101,10 @@ Make sure you have the dependencies installed by running `npm install`.
 
 Once complete, use `npm run build`. Output will be placed in the `build` path (it will be created).
 
+To drop the `SNAPSHOT` off the version, use the release flag, `-r` or `--release`
+
+To provide your own custom version, use the version flag, `-v` or `--version`. Note that the version must still matches the major version in the configuration file.
+
 If you'd like to get a zip package and a sha1 checksum file, use `npm run package`. Output will be placed in the `target` path (it will be created). Resulting build output will also be left in the `build` path.
 
 ## Releasing X-Pack UI Builds
