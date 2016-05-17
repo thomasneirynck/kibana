@@ -14,6 +14,7 @@ import initLogoutView from './server/routes/views/logout';
 import validateConfig from './server/lib/validate_config';
 import setElasticsearchAuth from './server/lib/set_elasticsearch_auth';
 import createScheme from './server/lib/login_scheme';
+import checkLicense from './server/lib/check_license';
 
 export default (kibana) => new kibana.Plugin({
   id: 'security',
@@ -49,21 +50,13 @@ export default (kibana) => new kibana.Plugin({
     hacks: ['plugins/security/hacks/on_session_timeout'],
     injectDefaultVars: function (server) {
 
-      // TODO: Refactor into server/lib/check_license module
-      const xpackMainPlugin = server.plugins.xpackMain;
-      const isLicenseActive = xpackMainPlugin.info.license.isActive();
-      const isLicenseBasic = xpackMainPlugin.info.license.isOneOf(['basic']);
-      const isEnabledInES = xpackMainPlugin.info.feature('security').isEnabled();
-      const showSecurityFeatures = isEnabledInES && !isLicenseBasic;
-      const allowLogin = showSecurityFeatures && isLicenseActive;
-
-      server.expose('allowLogin', allowLogin);
-      server.expose('showSecurityFeatures', showSecurityFeatures);
+      const licenseCheckResults = checkLicense(server.plugins.xpackMain.info);
+      server.expose('allowLogin', licenseCheckResults.allowLogin);
+      server.expose('showSecurityFeatures', licenseCheckResults.showSecurityFeatures);
 
       const config = server.config();
       return {
-        allowLogin,
-        showSecurityFeatures,
+        ...licenseCheckResults,
         shieldUnsafeSessions: config.get('xpack.security.useUnsafeSessions'),
         sessionTimeout: config.get('xpack.security.sessionTimeout')
       };
