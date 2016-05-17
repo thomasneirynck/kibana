@@ -22,9 +22,10 @@ var syncPath = require('./gulp_helpers/sync_path');
 var downloadPhantom = require('./gulp_helpers/download_phantom');
 var gitInfo = require('./gulp_helpers/git_info');
 var createPackageFile = require('./gulp_helpers/create_package');
+var buildVersion = require('./gulp_helpers/build_version')();
 
 var pkg = require('./package.json');
-var packageFile = `${pkg.name}-${pkg.version}.zip`;
+var packageFile = `${pkg.name}-${buildVersion}.zip`;
 var checksumFile = packageFile + '.sha1.txt';
 
 var buildDir = path.resolve(__dirname, 'build');
@@ -112,7 +113,7 @@ gulp.task('report', function () {
   return gitInfo()
   .then(function (info) {
     g.util.log('Package Name', g.util.colors.yellow(pkg.name));
-    g.util.log('Version', g.util.colors.yellow(pkg.version));
+    g.util.log('Version', g.util.colors.yellow(buildVersion));
     g.util.log('Build Number', g.util.colors.yellow(info.number));
     g.util.log('Build SHA', g.util.colors.yellow(info.sha));
     g.util.log('Build Output', g.util.colors.yellow(packageFile));
@@ -130,7 +131,7 @@ gulp.task('build', ['lint', 'clean', 'report'], function () {
   .then(function () {
     return downloadPhantom(path.join(buildTarget, '.phantom'));
   })
-  .then(() => createPackageFile(pkg, pkgProps))
+  .then(() => createPackageFile(pkg, pkgProps, buildVersion))
   .then(function (pkgOutput) {
     // re-write package.json, stripping unimportant bits and adding build info
     var prettyOutput = prettyData.pd.json(pkgOutput);
@@ -142,7 +143,7 @@ gulp.task('build', ['lint', 'clean', 'report'], function () {
     .pipe(g.jsonEditor(function (obj) {
       return Object.keys(obj).reduce(function (o, key) {
         if (pkgProps.indexOf(key) === -1) return o;
-        o[key] = (key === 'version') ? pkg.version : obj[key];
+        o[key] = (key === 'version') ? buildVersion : obj[key];
         return o;
       }, {});
     }))
