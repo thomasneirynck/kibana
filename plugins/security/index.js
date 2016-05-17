@@ -54,8 +54,8 @@ export default (kibana) => new kibana.Plugin({
       const isLicenseActive = xpackMainPlugin.info.license.isActive();
       const isLicenseBasic = xpackMainPlugin.info.license.isOneOf(['basic']);
       const isEnabledInES = xpackMainPlugin.info.feature('security').isEnabled();
-      const allowLogin = isLicenseActive;
       const showSecurityFeatures = isEnabledInES && !isLicenseBasic;
+      const allowLogin = showSecurityFeatures && isLicenseActive;
 
       server.expose('allowLogin', allowLogin);
       server.expose('showSecurityFeatures', showSecurityFeatures);
