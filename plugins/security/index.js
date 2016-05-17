@@ -5,6 +5,7 @@ import basicAuth from './server/lib/basic_auth';
 import getIsValidUser from './server/lib/get_is_valid_user';
 import getValidate from './server/lib/get_validate';
 import getCalculateExpires from './server/lib/get_calculate_expires';
+import createExpose from './server/lib/create_expose';
 import initAuthenticateApi from './server/routes/api/v1/authenticate';
 import initUsersApi from './server/routes/api/v1/users';
 import initRolesApi from './server/routes/api/v1/roles';
@@ -101,6 +102,8 @@ export default (kibana) => new kibana.Plugin({
 
       basicAuth.register(server, cookieName, getIsValidUser(server), getCalculateExpires(server));
     }
+
+    createExpose(server);
 
     const commonRouteConfig = {
       pre: [
