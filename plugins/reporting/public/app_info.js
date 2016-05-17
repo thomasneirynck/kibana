@@ -29,15 +29,16 @@ module.exports = function urlInfo($location) {
     if (!docType) throw new Error('Invalid app type: ' + type);
 
     const params = docType.getParams(pathname);
-    const objectId = (!!params) ? params[1] : null;
-    const reportUrl = (!!params) ? docType.getReportUrl(objectId, query) : null;
+    const exportable = (!!params);
+    const objectId = (exportable) ? params[1] : null;
+    const reportUrl = (exportable) ? docType.getReportUrl(objectId, query) : null;
 
     return {
       pathname,
       query,
       reportUrl,
       objectId,
-      exportable: !!params,
+      exportable,
     };
   }
 
