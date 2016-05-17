@@ -131,7 +131,7 @@ gulp.task('build', ['lint', 'clean', 'report'], function () {
   .then(function () {
     return downloadPhantom(path.join(buildTarget, '.phantom'));
   })
-  .then(() => createPackageFile(pkg, pkgProps))
+  .then(() => createPackageFile(pkg, pkgProps, buildVersion))
   .then(function (pkgOutput) {
     // re-write package.json, stripping unimportant bits and adding build info
     var prettyOutput = prettyData.pd.json(pkgOutput);

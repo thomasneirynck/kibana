@@ -10,7 +10,7 @@ function getVersion() {
   var snapshotText = (isSnapshot) ? '-SNAPSHOT' : '';
 
   try {
-    // throws if file can not be read
+    // throws if file can not be read or found
     fs.accessSync(propFile, fs.R_OK);
     var contents = fs.readFileSync(propFile, { encoding: 'utf8' });
     var props = properties.parse(contents);
