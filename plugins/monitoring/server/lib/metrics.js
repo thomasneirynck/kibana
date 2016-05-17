@@ -107,7 +107,7 @@ const nodeIndexMemory = {
   derivative: false,
   format: formatSmallBytes,
   metricAgg: 'max',
-  units: ''
+  units: 'B'
 };
 const threadPoolQueue = {
   ...allCharts,
@@ -530,7 +530,7 @@ module.exports = {
     derivative: true,
     format: formatLargeFloat,
     metricAgg: 'max',
-    units: '',
+    units: 'ms',
     ...allCharts
   }
 };

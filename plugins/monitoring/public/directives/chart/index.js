@@ -36,20 +36,26 @@ app.directive('monitoringChart', () => {
           return seriesGet('metric.label');
         }());
 
-        $scope.units = seriesGet('metric.units');
+        $scope.units = (() => {
+          let units = seriesGet('metric.units');
+
+          // For Bytes, find the largest unit from any data set's _last_ item
+          if (units === 'B') {
+            let maxLastBytes = 0;
+            _.forEach(series, (s) => {
+              const last = _.last(s.data);
+              maxLastBytes = Math.max(maxLastBytes, last && last.y || 0);
+            });
+
+            units = numeral(maxLastBytes).byteUnits();
+          }
+
+          return units;
+        }());
 
         // Commenting because some descriptions are wrong. If they are
         // corrected, they can be shown in the UI as title text in the header
         // $scope.description = seriesGet('metric.description');
-
-        $scope.metrics = series.map(s => {
-          const last = _.last(s.data);
-          return {
-            label: s.metric.label,
-            units: s.metric.units,
-            value: numeral(last && last.y || 0).format(s.metric.format)
-          };
-        });
       });
     }
   };
@@ -196,7 +202,11 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private) => 
           }
 
           if (y != null) {
-            legendValueNumbers.eq(i).text(': ' + numeral(y).format(format) + ' ' + units);
+            let formatted = ': ' + numeral(y).format(format);
+            if (units !== 'B' && units !== '') {
+              formatted += ' ' + units;
+            }
+            legendValueNumbers.eq(i).text(formatted);
           } else {
             legendValueNumbers.eq(i).empty();
           }
