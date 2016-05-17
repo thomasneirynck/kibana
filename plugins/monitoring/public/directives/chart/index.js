@@ -107,7 +107,7 @@ app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private) => 
         },
         legend: {
           position: 'nw',
-          labelBoxBorderColor: 'rgb(255,255,255,0)',
+          labelBoxBorderColor: 'rgba(255,255,255,0)',
           labelFormatter: (label, _series) => {
             return '<span class="ngLegendValue">' +
               label +

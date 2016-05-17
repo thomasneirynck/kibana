@@ -13,10 +13,20 @@ monitoring-chart {
 
   &.no-border { border-top: 0 none transparent; }
 
-
   chart {
     display: block;
     min-height: 150px;
+
+    > .legend {
+      // flot adds a div inside of the legend that uses an absolute size (not just position),
+      // which is why _dynamic_ values don't get the background;
+      > div {
+        display: none
+      }
+      > table {
+        background-color: rgba(255, 255, 255, 0.85);
+      }
+    }
   }
 
   .loading {
