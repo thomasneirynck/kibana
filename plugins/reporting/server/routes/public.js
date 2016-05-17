@@ -1,7 +1,10 @@
+var createJobFactory = require('../lib/create_job');
+var constants = require('../lib/constants');
+
 module.exports = function (server) {
   const boom = require('boom');
   const esErrors = server.plugins.elasticsearch.errors;
-  const generatePDFStream = server.plugins.reporting.generatePDFStream;
+  const createJob = createJobFactory(server);
 
   const mainEntry = '/api/reporting/generate';
 
@@ -31,15 +34,14 @@ module.exports = function (server) {
       authorization: request.headers.authorization
     };
 
-    return generatePDFStream(type, objId, query, headers)
-    .then((stream) => {
-      const response = reply(stream);
-      response.type('application/pdf');
+    return createJob(constants.JOBTYPES_PRINTABLE_PDF, type, objId, query, headers)
+    .then(function (job) {
+      const response = reply(job.toJSON());
+      response.type('application/json');
     })
     .catch(function (err) {
       if (err instanceof esErrors.NotFound) return reply(boom.notFound());
       reply(err);
     });
   }
-
 };

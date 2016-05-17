@@ -2,7 +2,7 @@ import { resolve } from 'path';
 const publicRoutes = require('./server/routes/public');
 const fileRoutes = require('./server/routes/file');
 const phantom = require('./server/lib/phantom');
-const generatePDFStream = require('./server/lib/generate_pdf_stream');
+const generateDocument = require('./server/lib/generate_document');
 const createQueue = require('./server/lib/create_queue');
 const appConfig = require('./server/config/config');
 const checkLicense = require('./server/lib/check_license');
@@ -76,8 +76,8 @@ module.exports = function (kibana) {
         .then(function (binaryPath) {
           server.log(['reporting', 'debug'], `Phantom installed at ${binaryPath}`);
 
-          // expose internal assets
-          server.expose('generatePDFStream', generatePDFStream(server));
+          // intialize and register application components
+          server.expose('generateDocument', generateDocument(server));
           server.expose('queue', createQueue(server));
 
           // Reporting routes

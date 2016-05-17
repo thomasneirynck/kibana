@@ -1,8 +1,8 @@
 const Esqueue = require('esqueue');
+const createWorker = require('./create_worker');
 
 function createQueue(server) {
-  const config = server.config();
-  const queueConfig = config.get('xpack.reporting.queue');
+  const queueConfig = server.config().get('xpack.reporting.queue');
   const client = server.plugins.elasticsearch.client;
 
   const queue = new Esqueue(queueConfig.index, {
@@ -10,6 +10,8 @@ function createQueue(server) {
     timeout: queueConfig.timeout,
     client: client
   });
+
+  createWorker(server)(queue);
 
   return queue;
 }
