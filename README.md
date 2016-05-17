@@ -99,6 +99,8 @@ For developing and testing the plugins, you must run an instance of Elasticsearc
 
 Make sure you have the dependencies installed by running `npm install`.
 
+You will also need to have the [elasticsearch](https://github.com/elastic/elasticsearch) repo checked out next to the `x-plugins` repo for the build to work, as it pulls the version from a file in that repo. Optinally, if you rather just use the version in `package.json`, pass the `--fallback` flag.
+
 Once complete, use `npm run build`. Output will be placed in the `build` path (it will be created).
 
 To drop the `SNAPSHOT` off the version, use the release flag, `-r` or `--release`
