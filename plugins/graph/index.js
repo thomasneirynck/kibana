@@ -4,6 +4,8 @@ var graphExploreRoute = require('./server/routes/graphExplore');
 var getExampleDocsRoute = require('./server/routes/getExampleDocs');
 import checkLicense from './server/lib/check_license';
 
+const APP_TITLE = 'Graph';
+
 module.exports = function (kibana) {
 
     //2.x bootstrap code copied from https://github.com/elastic/timelion/pull/57/files
@@ -26,7 +28,7 @@ module.exports = function (kibana) {
     require: ['kibana', 'elasticsearch', 'xpackMain'],
     uiExports: {
       app: {
-        title: 'Graph',
+        title: APP_TITLE,
         icon: 'plugins/graph/icon.png',
         description: 'Graph exploration',
         //2.x        main: 'plugins/graph/app',
@@ -62,7 +64,7 @@ module.exports = function (kibana) {
       if (!licenseCheckResults.showGraphFeatures) {
         // Remove graph app icon from nav
         kibana.uiExports.navLinks.inOrder.forEach((navLink) => {
-          if (navLink.title === 'Graph') {
+          if (navLink.title === APP_TITLE) {
             kibana.uiExports.navLinks.delete(navLink);
           }
         });
