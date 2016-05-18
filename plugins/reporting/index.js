@@ -44,7 +44,7 @@ module.exports = function (kibana) {
           index: Joi.string().default('.reporting'),
           indexInterval: Joi.string().default('week'),
           pollInterval: Joi.number().integer().default(3000),
-          timeout: Joi.number().integer().default(60000),
+          timeout: Joi.number().integer().default(30000),
         }).default(),
         phantom: Joi.object({
           zoom: Joi.number().integer().default(1),

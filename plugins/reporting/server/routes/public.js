@@ -1,12 +1,11 @@
-var createJobFactory = require('../lib/create_job');
-var constants = require('../lib/constants');
+const boom = require('boom');
+const createDocumentJobFactory = require('../lib/create_document_job');
+const constants = require('../lib/constants');
 
 module.exports = function (server) {
-  const boom = require('boom');
-  const esErrors = server.plugins.elasticsearch.errors;
-  const createJob = createJobFactory(server);
-
   const mainEntry = '/api/reporting/generate';
+  const createDocumentJob = createDocumentJobFactory(server);
+  const esErrors = server.plugins.elasticsearch.errors;
 
   // defined the public routes
   server.route({
@@ -27,19 +26,14 @@ module.exports = function (server) {
     handler: (request, reply) => pdfHandler('dashboard', request, reply),
   });
 
-  function pdfHandler(type, request, reply) {
-    const objId = request.params.savedId;
-    const query = request.query;
-    const headers = {
-      authorization: request.headers.authorization
-    };
-
-    return createJob(constants.JOBTYPES_PRINTABLE_PDF, type, objId, query, headers)
-    .then(function (job) {
+  function pdfHandler(objectType, request, reply) {
+    const createJob = createDocumentJob[constants.JOBTYPES_PRINTABLE_PDF];
+    return createJob(objectType, request)
+    .then((job) => {
       const response = reply(job.toJSON());
       response.type('application/json');
     })
-    .catch(function (err) {
+    .catch((err) => {
       if (err instanceof esErrors.NotFound) return reply(boom.notFound());
       reply(err);
     });
