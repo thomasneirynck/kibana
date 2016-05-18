@@ -1,5 +1,12 @@
 export default function checkLicense(xpackLicenseInfo) {
 
+  if (!xpackLicenseInfo) {
+    return {
+      showGraphFeatures: false,
+      showUpsellUser: false
+    };
+  }
+
   const graphFeature = xpackLicenseInfo.feature('graph');
   if (!graphFeature.isEnabled()) {
     return {
