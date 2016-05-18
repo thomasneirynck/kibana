@@ -1,6 +1,7 @@
 import { resolve } from 'path';
 var graphExploreRoute = require('./server/routes/graphExplore');
 var getExampleDocsRoute = require('./server/routes/getExampleDocs');
+import checkLicense from './server/lib/check_license';
 
 module.exports = function (kibana) {
 
@@ -53,6 +54,17 @@ module.exports = function (kibana) {
         this.status.red(xpackMainPluginStatus.message);
         return;
       };
+
+      const licenseCheckResults = checkLicense(server.plugins.xpackMain.info);
+      if (!licenseCheckResults.showGraphFeatures) {
+        // Remove graph app icon from nav
+        kibana.uiExports.navLinks.inOrder.forEach((navLink) => {
+          if (navLink.title === 'Graph') {
+            kibana.uiExports.navLinks.delete(navLink);
+          }
+        });
+      }
+
       // Add server routes and initalize the plugin here
       graphExploreRoute(server);
       getExampleDocsRoute(server);
