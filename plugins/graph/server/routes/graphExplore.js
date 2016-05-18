@@ -1,5 +1,5 @@
 
-module.exports = function (server) {
+module.exports = function (server, commonRouteConfig) {
 
   var callWithRequest = server.plugins.elasticsearch.callWithRequest;
 
@@ -22,6 +22,9 @@ module.exports = function (server) {
           resp: resp
         });
       }).catch(reply);
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 

@@ -1,4 +1,4 @@
-module.exports = function (server) {
+module.exports = function (server, commonRouteConfig) {
 
   server.route({
     path: '/api/graph/getExampleDocs',
@@ -13,6 +13,9 @@ module.exports = function (server) {
       }).catch(reply);
 
 
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 

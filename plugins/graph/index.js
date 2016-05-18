@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import Boom from 'boom';
 var graphExploreRoute = require('./server/routes/graphExplore');
 var getExampleDocsRoute = require('./server/routes/getExampleDocs');
 import checkLicense from './server/lib/check_license';
@@ -66,8 +67,21 @@ module.exports = function (kibana) {
       }
 
       // Add server routes and initalize the plugin here
-      graphExploreRoute(server);
-      getExampleDocsRoute(server);
+      const commonRouteConfig = {
+        pre: [
+          function forbidApiAccess(request, reply) {
+            if (!licenseCheckResults.showGraphFeatures || licenseCheckResults.shouldUpsellUser) {
+              reply(Boom.forbidden('License has expired '
+                + 'OR graph is not available with this license '
+                + 'OR graph has been disabled in Elasticsearch'));
+            } else {
+              reply();
+            }
+          }
+        ]
+      };
+      graphExploreRoute(server, commonRouteConfig);
+      getExampleDocsRoute(server, commonRouteConfig);
     }
 
   });
