@@ -41,7 +41,6 @@ module.exports = function (kibana) {
           port: Joi.number().integer()
         }).default(),
         queue: Joi.object({
-          index: Joi.string().default('.reporting'),
           indexInterval: Joi.string().default('week'),
           pollInterval: Joi.number().integer().default(3000),
           timeout: Joi.number().integer().default(30000),
