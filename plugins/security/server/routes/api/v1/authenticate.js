@@ -59,6 +59,9 @@ export default (server, commonRouteConfig) => {
     path: '/api/security/v1/me',
     handler(request, reply) {
       return callWithRequest(request, 'shield.authenticate').then(reply, _.flow(wrapError, reply));
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 };
