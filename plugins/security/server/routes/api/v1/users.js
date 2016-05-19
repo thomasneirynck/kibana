@@ -7,7 +7,7 @@ import { wrapError } from '../../../lib/errors';
 import getCalculateExpires from '../../../lib/get_calculate_expires';
 import onChangePassword from '../../../lib/on_change_password';
 
-export default (server) => {
+export default (server, commonRouteConfig) => {
   const callWithRequest = getClient(server).callWithRequest;
   const calculateExpires = getCalculateExpires(server);
 
@@ -19,6 +19,9 @@ export default (server) => {
         (response) => reply(_.values(response)),
         _.flow(wrapError, reply)
       );
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 
@@ -33,6 +36,9 @@ export default (server) => {
           return reply(Boom.notFound());
         },
         _.flow(wrapError, reply));
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 
@@ -49,7 +55,8 @@ export default (server) => {
     config: {
       validate: {
         payload: userSchema
-      }
+      },
+      ...commonRouteConfig
     }
   });
 
@@ -61,6 +68,9 @@ export default (server) => {
       return callWithRequest(request, 'shield.deleteUser', {username}).then(
         () => reply().code(204),
         _.flow(wrapError, reply));
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 
@@ -79,7 +89,8 @@ export default (server) => {
         payload: {
           password: Joi.string().required()
         }
-      }
+      },
+      ...commonRouteConfig
     }
   });
 };

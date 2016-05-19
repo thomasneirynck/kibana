@@ -11,7 +11,11 @@ routes.when('/settings/security/users', {
       return ShieldUser.query();
     }
   },
-  controller($scope, $route, $q, Notifier) {
+  controller($scope, $route, $q, Notifier, showSecurityFeatures, kbnUrl) {
+    if (!showSecurityFeatures) {
+      kbnUrl.redirect('/');
+    }
+
     $scope.users = $route.current.locals.users;
     $scope.selectedUsers = [];
     $scope.sort = {orderBy: 'full_name', reverse: false};

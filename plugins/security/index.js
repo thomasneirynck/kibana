@@ -1,5 +1,6 @@
 import hapiAuthCookie from 'hapi-auth-cookie';
 import { resolve } from 'path';
+import Boom from 'boom';
 import basicAuth from './server/lib/basic_auth';
 import getIsValidUser from './server/lib/get_is_valid_user';
 import getValidate from './server/lib/get_validate';
@@ -13,6 +14,7 @@ import initLogoutView from './server/routes/views/logout';
 import validateConfig from './server/lib/validate_config';
 import setElasticsearchAuth from './server/lib/set_elasticsearch_auth';
 import createScheme from './server/lib/login_scheme';
+import checkLicense from './server/lib/check_license';
 
 export default (kibana) => new kibana.Plugin({
   id: 'security',
@@ -47,8 +49,14 @@ export default (kibana) => new kibana.Plugin({
     }],
     hacks: ['plugins/security/hacks/on_session_timeout'],
     injectDefaultVars: function (server) {
+
+      const licenseCheckResults = checkLicense(server.plugins.xpackMain.info);
+      server.expose('allowLogin', licenseCheckResults.allowLogin);
+      server.expose('showSecurityFeatures', licenseCheckResults.showSecurityFeatures);
+
       const config = server.config();
       return {
+        ...licenseCheckResults,
         shieldUnsafeSessions: config.get('xpack.security.useUnsafeSessions'),
         sessionTimeout: config.get('xpack.security.sessionTimeout')
       };
@@ -69,32 +77,47 @@ export default (kibana) => new kibana.Plugin({
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
 
-    const cookieName = config.get('xpack.security.cookieName');
-    server.register(hapiAuthCookie, (error) => {
-      if (error != null) throw error;
+    if (server.plugins.security.showSecurityFeatures) {
+      const cookieName = config.get('xpack.security.cookieName');
+      server.register(hapiAuthCookie, (error) => {
+        if (error != null) throw error;
 
-      server.auth.scheme('login', createScheme({
-        redirectUrl: (path) => loginUrl(config.get('server.basePath'), path),
-        strategy: 'security'
-      }));
+        server.auth.scheme('login', createScheme({
+          redirectUrl: (path) => loginUrl(config.get('server.basePath'), path),
+          strategy: 'security'
+        }));
 
-      server.auth.strategy('session', 'login', 'required');
+        server.auth.strategy('session', 'login', 'required');
 
-      server.auth.strategy('security', 'cookie', false, {
-        cookie: cookieName,
-        password: config.get('xpack.security.encryptionKey'),
-        path: config.get('server.basePath') + '/',
-        clearInvalid: true,
-        validateFunc: getValidate(server),
-        isSecure: !config.get('xpack.security.useUnsafeSessions')
+        server.auth.strategy('security', 'cookie', false, {
+          cookie: cookieName,
+          password: config.get('xpack.security.encryptionKey'),
+          path: config.get('server.basePath') + '/',
+          clearInvalid: true,
+          validateFunc: getValidate(server),
+          isSecure: !config.get('xpack.security.useUnsafeSessions')
+        });
       });
-    });
 
-    basicAuth.register(server, cookieName, getIsValidUser(server), getCalculateExpires(server));
+      basicAuth.register(server, cookieName, getIsValidUser(server), getCalculateExpires(server));
+    }
 
-    initAuthenticateApi(server);
-    initUsersApi(server);
-    initRolesApi(server);
+    const commonRouteConfig = {
+      pre: [
+        function forbidApiAccess(request, reply) {
+          if (!server.plugins.security.allowLogin || !server.plugins.security.showSecurityFeatures) {
+            reply(Boom.forbidden('License has expired '
+              + 'OR security is not available with this license '
+              + 'OR security has been disabled in Elasticsearch'));
+          } else {
+            reply();
+          }
+        }
+      ]
+    };
+    initAuthenticateApi(server, commonRouteConfig);
+    initUsersApi(server, commonRouteConfig);
+    initRolesApi(server, commonRouteConfig);
     initIndicesApi(server);
     initLoginView(server, this);
     initLogoutView(server, this);

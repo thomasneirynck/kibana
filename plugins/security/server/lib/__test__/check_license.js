@@ -1,0 +1,50 @@
+import expect from 'expect.js';
+import { set } from 'lodash';
+import sinon from 'sinon';
+import checkLicense from '../check_license';
+
+describe('check_license', function () {
+
+  let mockLicenseInfo;
+
+  beforeEach(function () {
+    mockLicenseInfo = {};
+  });
+
+  it ('should set showSecurityFeatures to true and allowLogin to false if license information is not available', () => {
+    mockLicenseInfo = null;
+    const licenseCheckResults = checkLicense(mockLicenseInfo);
+    expect(licenseCheckResults.showSecurityFeatures).to.be(true);
+    expect(licenseCheckResults.allowLogin).to.be(false);
+  });
+
+  it ('should set showSecurityFeatures to false if security is disabled in Elasticsearch', () => {
+    set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
+      isEnabled: () => { return false; }
+    }));
+    set(mockLicenseInfo, 'license.isActive', () => { return 'irrelevant'; });
+    set(mockLicenseInfo, 'license.isOneOf', () => { return 'irrelevant'; });
+
+    expect(checkLicense(mockLicenseInfo).showSecurityFeatures).to.be(false);
+  });
+
+  it ('should set showSecurityFeatures to false if license is basic', () => {
+    set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(true));
+    set(mockLicenseInfo, 'license.isActive', () => { return 'irrelevant'; });
+    set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
+      isEnabled: () => { return 'irrelevant'; }
+    }));
+
+    expect(checkLicense(mockLicenseInfo).showSecurityFeatures).to.be(false);
+  });
+
+  it ('should set allowLogin to false if license has expired even if security is enabled in Elasticsearch and license is not basic', () => {
+    set(mockLicenseInfo, 'license.isActive', () => { return false; });
+    set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
+      isEnabled: () => { return true; }
+    }));
+    set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(false));
+
+    expect(checkLicense(mockLicenseInfo).allowLogin).to.be(false);
+  });
+});

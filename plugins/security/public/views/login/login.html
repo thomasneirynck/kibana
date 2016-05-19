@@ -11,18 +11,22 @@
 
       <div class="form-group inner-addon left-addon">
         <i class="fa fa-user fa-lg fa-fw"></i>
-        <input type="text" ng-disabled="login.isDisabled" ng-model="username" class="form-control" id="username" name="username" placeholder="Username" autofocus />
+        <input type="text" ng-disabled="login.isDisabled || !login.allowLogin" ng-model="username" class="form-control" id="username" name="username" placeholder="Username" autofocus />
       </div>
 
       <div class="form-group  inner-addon left-addon">
         <i class="fa fa-lock fa-lg fa-fw"></i>
-        <input type="password" ng-disabled="login.isDisabled" ng-model="password" class="form-control" id="password" name="password" placeholder="Password" />
+        <input type="password" ng-disabled="login.isDisabled|| !login.allowLogin" ng-model="password" class="form-control" id="password" name="password" placeholder="Password" />
       </div>
 
       <div class="form-group">
-        <button type="submit" ng-disabled="login.isDisabled || !username || !password" class="btn btn-block btn-default login">LOG IN</button>
+        <button type="submit" ng-disabled="login.isDisabled || !login.allowLogin || !username || !password" class="btn btn-block btn-default login">LOG IN</button>
       </div>
     </form>
+  </div>
+
+  <div ng-if="!login.allowLogin" class="warning-container">
+    Security is not available because your license has expired. Please install an active license that provides security.
   </div>
 
   <div ng-if="login.isDisabled" class="warning-container">

@@ -6,7 +6,7 @@ import getCalculateExpires from '../../../lib/get_calculate_expires';
 import getClient from '../../../lib/get_client_shield';
 import { wrapError } from '../../../lib/errors';
 
-export default (server) => {
+export default (server, commonRouteConfig) => {
   const isValidUser = getIsValidUser(server);
   const calculateExpires = getCalculateExpires(server);
   const callWithRequest = getClient(server).callWithRequest;
@@ -36,7 +36,8 @@ export default (server) => {
           username: Joi.string().required(),
           password: Joi.string().required()
         }
-      }
+      },
+      ...commonRouteConfig
     }
   });
 
@@ -48,7 +49,8 @@ export default (server) => {
       return reply().code(204);
     },
     config: {
-      auth: false
+      auth: false,
+      ...commonRouteConfig
     }
   });
 
@@ -57,6 +59,9 @@ export default (server) => {
     path: '/api/security/v1/me',
     handler(request, reply) {
       return callWithRequest(request, 'shield.authenticate').then(reply, _.flow(wrapError, reply));
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 };
