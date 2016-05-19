@@ -1,5 +1,24 @@
 <kbn-settings-app section="reporting">
   <div class="kbn-settings-reporting container">
     <h1>Reporting jobs go here</h1>
+    <table>
+      <tr>
+        <th>Created</th>
+        <th colspan="2">Status</th>
+      </tr>
+      <tr ng-repeat="job in jobs">
+        <td>
+          <div>{{ job._source.created_at }}</div>
+          <div ng-if="job._source.created_by">Owner: {{ job._source.created_by }}</div>
+        </td>
+        <td>
+          <div>{{ job._source.status }}</div>
+          <div ng-if="job._source.status === 'completed'">{{ job._source.completed_at }}</div>
+        </td>
+        <td>
+          <button ng-click=download(job._id)>Download</button>
+        </td>
+      </tr>
+    </table>
   </div>
 </kbn-settings-app>
