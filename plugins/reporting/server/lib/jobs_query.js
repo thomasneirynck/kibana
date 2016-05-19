@@ -12,7 +12,6 @@ module.exports = (server) => {
         exclude: [ 'output.content', 'payload' ]
       },
       sort: [
-        { priority: { order: 'asc' }},
         { created_at: { order: 'asc' }}
       ],
       size: defaultSize,
@@ -37,13 +36,19 @@ module.exports = (server) => {
 
   return {
     list(user, page = 0, size = defaultSize) {
-      user = user || null;
+      const nouser = false;
+      const username = get(user, 'username', nouser);
 
       const body = {
         query: {
           constant_score: {
             filter: {
-              term: { created_by: user.username }
+              bool: {
+                should: [
+                  { term: { created_by: username } },
+                  { term: { created_by: nouser } },
+                ]
+              }
             }
           }
         },

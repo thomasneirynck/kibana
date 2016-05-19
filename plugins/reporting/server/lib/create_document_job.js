@@ -1,6 +1,6 @@
 const moment = require('moment');
-const { get, noop } = require('lodash');
 const constants = require('./constants');
+const getUser = require('./get_user');
 const getObjectQueueFactory = require('./get_object_queue');
 
 module.exports = function (server) {
@@ -15,13 +15,12 @@ module.exports = function (server) {
     const date = moment().toISOString();
     const objId = request.params.savedId;
     const query = request.query;
-    const getUser = get(server.plugins, 'security.getUser', noop);
 
     const headers = {
       authorization: request.headers.authorization
     };
 
-    return Promise.resolve(getUser(request))
+    return getUser(server, request)
     .then((user) => {
       // get resulting kibana saved object documents
       return getObjectQueue(objectType, objId)
