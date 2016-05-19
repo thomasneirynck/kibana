@@ -22,6 +22,7 @@ module.exports = function (kibana) {
         'plugins/reporting/controls/visualize',
         'plugins/reporting/controls/dashboard',
       ],
+      settingsSections: ['plugins/reporting/views/settings'],
       injectDefaultVars: function (server) {
         const checkResult = checkLicense(server.plugins.xpackMain.info);
 
