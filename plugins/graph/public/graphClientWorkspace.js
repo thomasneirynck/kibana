@@ -749,8 +749,6 @@ module.exports = (function () {
       }
       var qs = {
         'query_string': {
-          //TODO make choice of default_field a config param?
-          'default_field': '_all',
           'query': searchTerm
         }
       };
