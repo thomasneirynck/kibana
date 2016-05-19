@@ -10,6 +10,11 @@ describe('check_license', function () {
     mockLicenseInfo = {};
   });
 
+  it ('should set enabled to false if license information is not available', () => {
+    mockLicenseInfo = null;
+    expect(checkLicense(mockLicenseInfo).enabled).to.be(false);
+  });
+
   it ('should set enabled to false if the license is not active', () => {
     set(mockLicenseInfo, 'license.isActive', () => { return false; });
     set(mockLicenseInfo, 'license.isOneOf', () => { return true; });
