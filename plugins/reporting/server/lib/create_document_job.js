@@ -1,4 +1,5 @@
 const moment = require('moment');
+const { get } = require('lodash');
 const constants = require('./constants');
 const getUser = require('./get_user');
 const getObjectQueueFactory = require('./get_object_queue');
@@ -35,8 +36,8 @@ module.exports = function (server) {
           const payload = { objects: savedObjects, query, headers, date };
           const options = {
             timeout: queueConfig.timeout * objectQueue.length,
+            created_by: get(user, 'username', false),
           };
-          if (user) options.created_by =  user.username;
 
           return jobQueue.addJob(JOBTYPES_PRINTABLE_PDF, payload, options);
         });
