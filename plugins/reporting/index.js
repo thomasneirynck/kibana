@@ -1,6 +1,8 @@
 import { resolve } from 'path';
 const publicRoutes = require('./server/routes/public');
 const fileRoutes = require('./server/routes/file');
+const jobRoutes = require('./server/routes/jobs');
+
 const phantom = require('./server/lib/phantom');
 const generateDocument = require('./server/lib/generate_document');
 const createQueue = require('./server/lib/create_queue');
@@ -82,6 +84,7 @@ module.exports = function (kibana) {
           // Reporting routes
           publicRoutes(server);
           fileRoutes(server);
+          jobRoutes(server);
         })
         .catch(function (err) {
           return plugin.status.red(err.message);
