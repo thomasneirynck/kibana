@@ -95,7 +95,7 @@ For developing and testing the plugins, you must run an instance of Elasticsearc
     ./bin/elasticsearch -Ddiscovery.zen.ping.unicast.hosts="localhost"
     ```
 
-## Building and Packages the X-Pack UI plugins
+## Building and Packaging the X-Pack UI plugins
 
 Make sure you have the dependencies installed by running `npm install`.
 
