@@ -11,6 +11,13 @@ describe('check_license', function () {
     mockLicenseInfo = {};
   });
 
+  it ('should set showSecurityFeatures to true and allowLogin to false if license information is not available', () => {
+    mockLicenseInfo = null;
+    const licenseCheckResults = checkLicense(mockLicenseInfo);
+    expect(licenseCheckResults.showSecurityFeatures).to.be(true);
+    expect(licenseCheckResults.allowLogin).to.be(false);
+  });
+
   it ('should set showSecurityFeatures to false if security is disabled in Elasticsearch', () => {
     set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
       isEnabled: () => { return false; }
