@@ -5,7 +5,7 @@ const WARNING_DURATION = 60 * 1000;
 
 const module = uiModules.get('shield', []);
 module.config(($httpProvider) => {
-  $httpProvider.interceptors.push(($timeout, $window, $q, $injector, sessionTimeout, Notifier) => {
+  $httpProvider.interceptors.push(($timeout, $window, $q, $injector, sessionTimeout, Notifier, chrome) => {
     const notifier = new Notifier();
     let promise;
     let notification;
@@ -31,7 +31,7 @@ module.config(($httpProvider) => {
           if (action === 'accept') {
             // Make a simple request to keep the session alive
             const $http = $injector.get('$http');
-            $http.get('../api/security/v1/me').catch(() => $window.location.reload());
+            $http.get(chrome.addBasePath('/api/security/v1/me')).catch(() => $window.location.reload());
           } else {
             // The session has expired by now, so reloading will return to the login screen with the appropriate "next"
             // parameter set
