@@ -1,10 +1,8 @@
-import uuid from 'node-uuid';
-
 export default (config, log) => {
   if (config.get('xpack.security.encryptionKey') == null) {
     log('Generating a random key for xpack.security.encryptionKey');
     log('To prevent sessions from being invalidated on restart, please set xpack.security.encryptionKey in kibana.yml');
-    config.set('xpack.security.encryptionKey', uuid.v4());
+    config.set('xpack.security.encryptionKey', Math.random().toString(36).slice(2));
   }
 
   const isSslConfigured = config.get('server.ssl.key') != null && config.get('server.ssl.cert') != null;
