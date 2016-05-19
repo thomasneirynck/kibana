@@ -1,5 +1,14 @@
 module.exports = function (xpackLicenseInfo) {
 
+  // If, for some reason, we cannot get the license information
+  // from Elasticsearch, assume worst case and disable reporting
+  if (!xpackLicenseInfo) {
+    return {
+      enabled: false,
+      message: 'License information is not available at this time.'
+    };
+  }
+
   const VALID_LICENSE_MODES_TO_ENABLE_REPORTING = [
     'trial',
     'standard',
