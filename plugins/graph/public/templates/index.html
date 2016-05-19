@@ -58,7 +58,7 @@
 
 
       <!--basic mode buttons -->
-      <button ng-disabled="workspace==null||liveResponseFields.length==0" tooltip="Expand selection" ng-click="setDetail(null);workspace.expandSelecteds(false,{valueTypes: 'new',toFields:liveResponseFields});"><i class="fa  fa-plus"></i>
+      <button ng-disabled="workspace==null||liveResponseFields.length==0||workspace.nodes.length==0" tooltip="Expand selection" ng-click="setDetail(null);workspace.expandSelecteds(false,{valueTypes: 'new',toFields:liveResponseFields});"><i class="fa  fa-plus"></i>
       </button>
 
       <button ng-disabled="workspace==null||workspace.nodes.length==0" tooltip="Remove vertices from workspace" ng-click="setDetail(null);workspace.deleteSelection();"><i class="fa  fa-trash"></i>
