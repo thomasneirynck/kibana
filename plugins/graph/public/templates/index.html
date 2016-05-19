@@ -3,8 +3,8 @@
   <navbar>
     <form role="form" class="fill inline-form" style="max-width:200px">
       <div class="input-group">
-        <select class="form-control indexDropDown" name="mySelect" ng-change="indexSelected(selectedIndex)" ng-options="option.name for option in indices" ng-model="selectedIndex">
-          <option value="">Select index...</option>
+        <select class="form-control indexDropDown" name="mySelect" ng-change="indexSelected(selectedIndex)" ng-options="option for option in indices" ng-model="selectedIndex">
+          <option value="">Select index pattern...</option>
         </select>
       </div>
     </form>

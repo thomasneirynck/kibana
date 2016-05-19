@@ -4,7 +4,7 @@ var dv = require('ace');
 var av = require('./angular-venn-simple.js');
 var gws = require('./graphClientWorkspace.js');
 var utils = require('./utils.js');
-// var ConfigTemplate = require('ui/ConfigTemplate');
+import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
 require('plugins/graph/less/main.less');
 var graphLogo = require('plugins/graph/header.png');
 require('ui/chrome').setBrand({
@@ -24,27 +24,6 @@ app.directive('focusOn', function () {
   };
 });
 
-var getIndexNames = function ($http) {
-  return $http.get('../api/graph/getIndices')
-    .then(function (resp) {
-      var indexNames = [];
-      for (var indexName in resp.data.indices) {
-        indexNames.push({
-          'name': indexName
-        });
-      }
-      indexNames.sort(function (a, b) {
-        if (a.name < b.name) {
-          return -1;
-        } else if (a.name > b.name) {
-          return 1;
-        }
-        return 0;
-      });
-      return indexNames;
-    })
-    .catch(err => require('ui/notify').error(err));
-};
 
 if (require('ui/routes').enable) {
   require('ui/routes').enable();
@@ -54,7 +33,14 @@ require('ui/routes')
   .when('/', {
     template: require('plugins/graph/templates/index.html'),
     resolve: {
-      getIndexList: getIndexNames
+      GetIndexPatternIds: function(Private){
+        const indexPatterns = Private(IndexPatternsProvider);
+        return indexPatterns.getIds();
+      },
+      GetIndexPatternProvider: function(Private){
+        return Private(IndexPatternsProvider);
+      }
+
     }
   });
 
@@ -265,61 +251,59 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
 
 
 
-  $scope.indexSelected = function (selectedIndex) {
+  $scope.indexSelected = function(selectedIndex) {
     $scope.clearWorkspace();
+    $scope.allFields = [];
     $scope.selectedFields = [];
     $scope.basicModeSelectedSingleField = null;
     $scope.selectedField = null;
     $scope.selectedIndex = selectedIndex;
 
-    $http.get('../api/graph/getFields?index=' + selectedIndex.name)
-      .then(function (resp) {
-        $scope.allFields = [];
-        var allNames = [];
-        for (var type in resp.data.mappings) {
-          var mapDef = resp.data.mappings[type];
-          if (type == '_default_') {
-            //reserved mapping name in elasticsearch
-            continue;
+    var promise = $route.current.locals.GetIndexPatternProvider.get(selectedIndex);
+    promise.then(function(indexPattern) {
+        var patternFields = indexPattern.getNonScriptedFields();
+        patternFields.forEach(function(field, index) {
+          var graphFieldDef = {
+            "name": field.name
           }
-          mapDef.name = type;
-          var fields = [];
-          var path = [];
-          utils.unwrapFieldNames(mapDef, path, fields);
-          fields.forEach(function (field, index) {
-            if (allNames.indexOf(field.name) >= 0) {
-              // A field already defined in another doc type
-              return;
-            }
-            allNames.push(field.name);
-            $scope.allFields.push(field);
-            field.hopSize = 5; //Default the number of results returned per hop
-            field.icon = $scope.iconChoices[0];
-            for (var i = 0; i < $scope.iconChoices.length; i++) {
-              var icon = $scope.iconChoices[i];
-              for (var p = 0; p < icon.patterns.length; p++) {
-                var pattern = icon.patterns[p];
-                if (pattern.test(field.name)) {
-                  field.icon = icon;
-                  break;
-                }
+          $scope.allFields.push(graphFieldDef);
+          graphFieldDef.hopSize = 5; //Default the number of results returned per hop
+          graphFieldDef.icon = $scope.iconChoices[0];
+          for (var i = 0; i < $scope.iconChoices.length; i++) {
+            var icon = $scope.iconChoices[i];
+            for (var p = 0; p < icon.patterns.length; p++) {
+              var pattern = icon.patterns[p];
+              if (pattern.test(graphFieldDef.name)) {
+                graphFieldDef.icon = icon;
+                break;
               }
             }
-            field.color = index % $scope.colorChoices.length;
-          });
+          }
+          graphFieldDef.color = index % $scope.colorChoices.length;
+        });
+        $scope.setAllFieldStatesToDefault();
 
-          //Set the selected/activated for response settings etc
-          $scope.setAllFieldStatesToDefault();
+        $scope.allFields.sort(function(a, b) {
+          // TODO - should we use "popularity" setting from index pattern definition?
+          // What is its intended use? Couldn't see it on the patternField objects
+          if (a.name < b.name)
+            return -1;
+          else if (a.name > b.name)
+            return 1;
+          else
+            return 0;
+        });
+      },
+      function(err) {
+        require('ui/notify').error(err);
+      });
 
-        }
-      })
-      .catch(err => require('ui/notify').error(err));
-
-      // // TODO Load the list of saved visualizations for this index
+      // // TODO Load the list of saved visualizations for this index pattern
       // getSavedVisualizations(selectedIndex.name, function(resp){
       //   console.log("Got saved visualizations:", resp);
       // });
       // console.log("user",toUser({"foo":["bar", "bar2"]}));
+
 
   };
 
@@ -468,6 +452,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
     $scope.detail = null;
     $scope.selectedSelectedVertex = null;
     $scope.selectedField = null;
+    $scope.allFields = [];
     $scope.clearBasicFieldSelected();
 
     $scope.hoverNode = null;
@@ -492,7 +477,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
       return;
     }
     var options = {
-      indexName: $scope.selectedIndex.name,
+      indexName: $scope.selectedIndex,
       vertex_fields: $scope.selectedFields,
       // Here we have the opportunity to look up labels for nodes...
       nodeLabeller: function (newNodes) {
@@ -510,8 +495,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
     $scope.detail = null;
   }
 
-  $scope.indices = $route.current.locals.getIndexList;
-
+  $scope.indices = $route.current.locals.GetIndexPatternIds;
 
   $scope.setDetail = function (data) {
     $scope.detail = data;
@@ -580,6 +564,12 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
     .on('DOMMouseScroll', blockScroll)
     .call(d3.behavior.zoom()
       .on('zoom', redraw));
+
+
+
+  if($scope.indices.length == 0){
+      require('ui/notify').warning('Oops, no data sources. First head over to Kibana settings and define a choice of index pattern');
+  }
 
 });
 //End controller
