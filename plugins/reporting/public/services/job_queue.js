@@ -12,6 +12,13 @@ module.service('reportingJobQueue', ($http) => {
       return $http.get(url)
       .then((res) => res.data)
       .catch((err) => genericNotifier.fatal(err));
+    },
+
+    total() {
+      const url = `${baseUrl}/count`;
+      return $http.get(url)
+      .then((res) => res.data)
+      .catch((err) => genericNotifier.fatal(err));
     }
   };
 });

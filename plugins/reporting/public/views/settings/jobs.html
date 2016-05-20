@@ -1,7 +1,8 @@
 <kbn-settings-app section="reporting">
   <div class="kbn-settings-reporting container">
     <h1>Generated Reports</h1>
-    <table class="table table-striped">
+
+    <table class="table table-striped" ng-class="{ loading: loading === true }">
       <thead>
         <tr>
           <th>Created</th>
@@ -12,10 +13,10 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-if="!jobs.length">
+        <tr ng-if="!jobs.jobs.length">
           <td colspan="5">No reports have been created</td>
         </tr>
-        <tr ng-repeat="job in jobs">
+        <tr ng-if="jobs.jobs.length" ng-repeat="job in jobs.jobs">
           <td>
             <div ng-if="job.created_by">{{ job.created_by }}</div>
             <div style="color: #acb6c0">{{ job.created_at }}</div>
@@ -36,5 +37,16 @@
         </tr>
       </tbody>
     </table>
+
+    <div style="text-align: center;">
+      <paging
+        page="currentPage"
+        page-size="10"
+        total="jobs.total"
+        show-prev-next="true"
+        show-first-last="true"
+        paging-action="setPage(page)">
+      </paging>
+    </div>
   </div>
 </kbn-settings-app>

@@ -1,12 +1,25 @@
+import 'angular-paging';
+import 'plugins/reporting/services/job_queue';
+
 import routes from 'ui/routes';
 import template from 'plugins/reporting/views/settings/jobs.html';
 
-import 'plugins/reporting/services/job_queue';
 const jobPollingDelay = 5000;
+const pageSize = 10;
 
 function getJobs(reportingJobQueue, page = 0) {
   return reportingJobQueue.list(page)
-  .then((jobs) => mapJobs(jobs));
+  .then((jobs) => {
+    return reportingJobQueue.total()
+    .then((total) => {
+      const mappedJobs = mapJobs(jobs);
+      return {
+        jobs: mappedJobs,
+        total: total,
+        pages: Math.ceil(total / pageSize),
+      };
+    });
+  });
 }
 
 function mapJobs(jobs) {
@@ -33,14 +46,30 @@ routes.when('/settings/reporting/jobs', {
     }
   },
   controller($scope, $route, $window, $interval, reportingJobQueue) {
-    $scope.page = $route.current.locals.page;
+    const updateJobs = () => {
+      return getJobs(reportingJobQueue, $scope.currentPage).then((jobs) => {
+        $scope.jobs = jobs;
+      });
+    };
+
+    $scope.loading = false;
+    $scope.pageSize = pageSize;
+    $scope.currentPage = $route.current.locals.page;
     $scope.jobs = $route.current.locals.jobs;
-    const int = $interval(() => {
-      getJobs(reportingJobQueue, $scope.page).then((jobs) => $scope.jobs = jobs);
-    }, jobPollingDelay);
+
+    // pagination logic
+    $scope.setPage = (page) => {
+      $scope.currentPage = page - 1;
+      $scope.loading = !$scope.loading;
+      updateJobs().then(() => { $scope.loading = !$scope.loading; });
+    };
+
+    // job list updating
+    const int = $interval(updateJobs, jobPollingDelay);
 
     $scope.$on('$destroy', () => $interval.cancel(int));
 
+    // control handlers
     $scope.download = (jobId) => {
       $window.open(`../api/reporting/jobs/download/${jobId}`);
     };
