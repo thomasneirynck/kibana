@@ -262,7 +262,11 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
     var promise = $route.current.locals.GetIndexPatternProvider.get(selectedIndex);
     promise.then(function(indexPattern) {
         var patternFields = indexPattern.getNonScriptedFields();
+        var blockedFieldNames = ['_id', '_index','_score','_source', '_type'];
         patternFields.forEach(function(field, index) {
+          if (blockedFieldNames.indexOf(field.name) >= 0) {
+            return;
+          }
           var graphFieldDef = {
             "name": field.name
           }
