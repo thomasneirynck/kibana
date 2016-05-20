@@ -81,7 +81,7 @@ class PdfMaker {
     if (!this._pdfDoc) throw new Error('Document stream has not been generated');
     return new Promise((resolve, reject) => {
       const concatStream = concat(function (pdfBuffer) {
-        resolve(pdfBuffer.toString());
+        resolve(pdfBuffer);
       });
 
       this._pdfDoc.on('error', reject);
