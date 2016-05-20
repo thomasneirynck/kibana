@@ -1,6 +1,6 @@
 const { get } = require('lodash');
 const { QUEUE_INDEX, QUEUE_DOCTYPE } = require('./constants');
-const defaultSize = 20;
+const defaultSize = 10;
 
 module.exports = (server) => {
   const esErrors = server.plugins.elasticsearch.errors;
