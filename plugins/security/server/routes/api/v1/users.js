@@ -7,7 +7,7 @@ import { wrapError } from '../../../lib/errors';
 import getCalculateExpires from '../../../lib/get_calculate_expires';
 import onChangePassword from '../../../lib/on_change_password';
 
-export default (server, commonRouteConfig) => {
+export default (server, {commonRouteConfig}) => {
   const callWithRequest = getClient(server).callWithRequest;
   const calculateExpires = getCalculateExpires(server);
 

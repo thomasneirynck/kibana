@@ -27,6 +27,7 @@ export default (kibana) => new kibana.Plugin({
     return Joi.object({
       enabled: Joi.boolean().default(true),
       cookieName: Joi.string().default('sid'),
+      clientCookieName: Joi.string().default('user'),
       encryptionKey: Joi.string(),
       sessionTimeout: Joi.number().default(30 * 60 * 1000),
       useUnsafeSessions: Joi.boolean().default(false),
@@ -59,7 +60,8 @@ export default (kibana) => new kibana.Plugin({
       return {
         ...licenseCheckResults,
         shieldUnsafeSessions: config.get('xpack.security.useUnsafeSessions'),
-        sessionTimeout: config.get('xpack.security.sessionTimeout')
+        sessionTimeout: config.get('xpack.security.sessionTimeout'),
+        clientCookieName: config.get('xpack.security.clientCookieName')
       };
     }
   },
@@ -78,6 +80,16 @@ export default (kibana) => new kibana.Plugin({
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
 
+    const commonCookieConfig = {
+      isSecure: !config.get('xpack.security.useUnsafeSessions'),
+      path: config.get('server.basePath') + '/'
+    };
+
+    // Registers the client-readable cookie which stores user information for display purposes
+    // (as opposed to the session cookie which is HTTP only and stores username/password)
+    const clientCookieName = config.get('xpack.security.clientCookieName');
+    server.state(clientCookieName, commonCookieConfig);
+
     if (server.plugins.security.showSecurityFeatures) {
       const cookieName = config.get('xpack.security.cookieName');
       server.register(hapiAuthCookie, (error) => {
@@ -93,10 +105,9 @@ export default (kibana) => new kibana.Plugin({
         server.auth.strategy('security', 'cookie', false, {
           cookie: cookieName,
           password: config.get('xpack.security.encryptionKey'),
-          path: config.get('server.basePath') + '/',
           clearInvalid: true,
           validateFunc: getValidate(server),
-          isSecure: !config.get('xpack.security.useUnsafeSessions')
+          ...commonCookieConfig
         });
       });
 
@@ -118,9 +129,10 @@ export default (kibana) => new kibana.Plugin({
         }
       ]
     };
-    initAuthenticateApi(server, commonRouteConfig);
-    initUsersApi(server, commonRouteConfig);
-    initRolesApi(server, commonRouteConfig);
+
+    initAuthenticateApi(server, {commonRouteConfig, clientCookieName});
+    initUsersApi(server, {commonRouteConfig});
+    initRolesApi(server, {commonRouteConfig});
     initIndicesApi(server);
     initLoginView(server, this);
     initLogoutView(server, this);

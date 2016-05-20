@@ -3,9 +3,8 @@ import Boom from 'boom';
 import Joi from 'joi';
 import getIsValidUser from '../../../lib/get_is_valid_user';
 import getCalculateExpires from '../../../lib/get_calculate_expires';
-import { wrapError } from '../../../lib/errors';
 
-export default (server, commonRouteConfig) => {
+export default (server, {commonRouteConfig, clientCookieName}) => {
   const isValidUser = getIsValidUser(server);
   const calculateExpires = getCalculateExpires(server);
 
@@ -21,7 +20,8 @@ export default (server, commonRouteConfig) => {
           password,
           expires: calculateExpires()
         });
-        return reply(response);
+
+        return reply(response).state(clientCookieName, JSON.stringify(response));
       }, (error) => {
         request.auth.session.clear();
         return reply(Boom.unauthorized(error));
@@ -44,21 +44,10 @@ export default (server, commonRouteConfig) => {
     path: '/api/security/v1/logout',
     handler(request, reply) {
       request.auth.session.clear();
-      return reply().code(204);
+      return reply().unstate(clientCookieName).code(204);
     },
     config: {
       auth: false,
-      ...commonRouteConfig
-    }
-  });
-
-  server.route({
-    method: 'GET',
-    path: '/api/security/v1/me',
-    handler(request, reply) {
-      server.plugins.security.getUser(request).then(reply, _.flow(wrapError, reply));
-    },
-    config: {
       ...commonRouteConfig
     }
   });

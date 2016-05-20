@@ -4,7 +4,7 @@ import getClient from '../../../lib/get_client_shield';
 import roleSchema from '../../../lib/role_schema';
 import { wrapError } from '../../../lib/errors';
 
-export default (server, commonRouteConfig) => {
+export default (server, {commonRouteConfig}) => {
   const callWithRequest = getClient(server).callWithRequest;
 
   server.route({
