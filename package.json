@@ -43,6 +43,7 @@
     "yargs": "4.7.1"
   },
   "dependencies": {
+    "angular-paging": "2.2.1",
     "angular-resource": "1.4.9",
     "angular-sanitize": "1.4.9",
     "angular-ui-select": "0.12.100",
