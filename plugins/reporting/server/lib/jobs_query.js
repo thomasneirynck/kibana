@@ -5,14 +5,15 @@ const defaultSize = 20;
 module.exports = (server) => {
   const esErrors = server.plugins.elasticsearch.errors;
   const client = server.plugins.elasticsearch.client;
+  const nouser = false;
 
-  function execQuery(type, body) {
+  function execQuery(body) {
     const defaultBody = {
       _source : {
         exclude: [ 'output.content', 'payload' ]
       },
       sort: [
-        { created_at: { order: 'asc' }}
+        { created_at: { order: 'desc' }}
       ],
       size: defaultSize,
     };
@@ -36,7 +37,6 @@ module.exports = (server) => {
 
   return {
     list(user, page = 0, size = defaultSize) {
-      const nouser = false;
       const username = get(user, 'username', nouser);
 
       const body = {
