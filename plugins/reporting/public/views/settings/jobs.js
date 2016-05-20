@@ -25,11 +25,11 @@ routes.when('/settings/reporting/jobs', {
       return reportingJobQueue.list();
     }
   },
-  controller($scope, $route) {
+  controller($scope, $route, $window) {
     $scope.jobs = mapJobs($route.current.locals.jobs);
 
     $scope.download = (jobId) => {
-      console.log('download', jobId);
+      $window.open(`../api/reporting/jobs/download/${jobId}`);
     };
   }
 });
