@@ -24,7 +24,7 @@ module.exports = (server) => {
       body: Object.assign(defaultBody, body)
     };
 
-    return client[type](query)
+    return client.search(query)
     .catch((err) => {
       if (err instanceof esErrors.NotFound) return;
       throw err;
@@ -56,7 +56,44 @@ module.exports = (server) => {
         size: size,
       };
 
-      return getHits(execQuery('search', body));
+      return getHits(execQuery(body));
+    },
+
+    get(user, id, includeContent = false) {
+      if (!id) return;
+      const username = get(user, 'username', nouser);
+
+      const body = {
+        query: {
+          constant_score: {
+            filter: {
+              bool: {
+                should: [
+                  { term: { created_by: nouser } },
+                  { term: { created_by: username } },
+                ],
+                filter: [
+                  { term: { _id: id } },
+                  { term: { status: 'completed' } },
+                ],
+              }
+            }
+          }
+        },
+        size: 1,
+      };
+
+      if (includeContent) {
+        body._source = {
+          exclude: []
+        };
+      }
+
+      return getHits(execQuery(body))
+      .then((hits) => {
+        if (hits.length !== 1) return;
+        return hits[0];
+      });
     }
   };
 };
