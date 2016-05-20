@@ -4,8 +4,8 @@ import template from 'plugins/reporting/views/settings/jobs.html';
 import 'plugins/reporting/services/job_queue';
 const jobPollingDelay = 5000;
 
-function getJobs(reportingJobQueue) {
-  return reportingJobQueue.list()
+function getJobs(reportingJobQueue, page = 0) {
+  return reportingJobQueue.list(page)
   .then((jobs) => mapJobs(jobs));
 }
 
@@ -27,14 +27,16 @@ function mapJobs(jobs) {
 routes.when('/settings/reporting/jobs', {
   template,
   resolve: {
+    page: () => 0,
     jobs(reportingJobQueue) {
       return getJobs(reportingJobQueue);
     }
   },
   controller($scope, $route, $window, $interval, reportingJobQueue) {
+    $scope.page = $route.current.locals.page;
     $scope.jobs = $route.current.locals.jobs;
     const int = $interval(() => {
-      getJobs(reportingJobQueue).then((jobs) => $scope.jobs = jobs);
+      getJobs(reportingJobQueue, $scope.page).then((jobs) => $scope.jobs = jobs);
     }, jobPollingDelay);
 
     $scope.$on('$destroy', () => $interval.cancel(int));

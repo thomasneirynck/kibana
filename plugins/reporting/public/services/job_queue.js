@@ -7,8 +7,8 @@ module.service('reportingJobQueue', ($http) => {
   const genericNotifier = new Notifier({ location: 'Reporting' });
 
   return {
-    list() {
-      const url = `${baseUrl}/list`;
+    list(page = 0) {
+      const url = `${baseUrl}/list?page=${page}`;
       return $http.get(url)
       .then((res) => res.data)
       .catch((err) => genericNotifier.fatal(err));
