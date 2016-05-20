@@ -7,24 +7,26 @@ module.exports = (server) => {
   const client = server.plugins.elasticsearch.client;
   const nouser = false;
 
-  function execQuery(body) {
+  function execQuery(type, body) {
     const defaultBody = {
-      _source : {
-        exclude: [ 'output.content', 'payload' ]
-      },
-      sort: [
-        { created_at: { order: 'desc' }}
-      ],
-      size: defaultSize,
+      search: {
+        _source : {
+          exclude: [ 'output.content', 'payload' ]
+        },
+        sort: [
+          { created_at: { order: 'desc' }}
+        ],
+        size: defaultSize,
+      }
     };
 
     const query = {
       index: `${QUEUE_INDEX}-*`,
       type: QUEUE_DOCTYPE,
-      body: Object.assign(defaultBody, body)
+      body: Object.assign(defaultBody[type] || {}, body)
     };
 
-    return client.search(query)
+    return client[type](query)
     .catch((err) => {
       if (err instanceof esErrors.NotFound) return;
       throw err;
@@ -56,7 +58,7 @@ module.exports = (server) => {
         size: size,
       };
 
-      return getHits(execQuery(body));
+      return getHits(execQuery('search', body));
     },
 
     get(user, id, includeContent = false) {
@@ -89,7 +91,7 @@ module.exports = (server) => {
         };
       }
 
-      return getHits(execQuery(body))
+      return getHits(execQuery('search', body))
       .then((hits) => {
         if (hits.length !== 1) return;
         return hits[0];
