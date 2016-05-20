@@ -2,69 +2,71 @@ import expect from 'expect.js';
 import sinon from 'sinon';
 import validateConfig from '../validate_config';
 
-function getValidateConfigStub(configValues, logFn) {
-  const config = {get: () => {}};
-  sinon.stub(config, 'get', (key) => configValues[key]);
-  return () => validateConfig(config, logFn);
-}
-
 describe('Validate config', function () {
-  let logSpy;
+  let config;
+  const log = sinon.spy();
+
   beforeEach(() => {
-    logSpy = sinon.spy();
+    config = {
+      get: sinon.stub(),
+      set: sinon.stub()
+    };
+    log.reset();
   });
 
-  it('should throw an error if xpack.security.encryptionKey is not set', function () {
-    const validateWithoutEncryptionKey = getValidateConfigStub({
-      'server.ssl.key': 'foo',
-      'server.ssl.cert': 'bar'
-    }, logSpy);
+  it('should log a warning and set xpack.security.encryptionKey if not set', function () {
+    config.get.withArgs('server.ssl.key').returns('foo');
+    config.get.withArgs('server.ssl.cert').returns('bar');
 
-    expect(validateWithoutEncryptionKey).to.throwError(/xpack.security.encryptionKey is required/);
-    sinon.assert.notCalled(logSpy);
+    expect(() => validateConfig(config, log)).not.to.throwError();
+
+    sinon.assert.calledWith(config.set, 'xpack.security.encryptionKey');
+    sinon.assert.calledWithMatch(log, /Generating a random key/);
+    sinon.assert.calledWithMatch(log, /please set xpack.security.encryptionKey/);
   });
 
   it('should throw an error if SSL is not being used', function () {
-    const validateWithoutSsl = getValidateConfigStub({
-      'xpack.security.encryptionKey': 'baz'
-    }, logSpy);
+    config.get.withArgs('xpack.security.encryptionKey').returns('baz');
+    console.log(config.get('server.ssl.key'));
 
-    expect(validateWithoutSsl).to.throwError(/HTTPS is required/);
-    sinon.assert.notCalled(logSpy);
+    expect(() => validateConfig(config, log)).to.throwError(/HTTPS is required/);
+
+    sinon.assert.notCalled(config.set);
+    sinon.assert.notCalled(log);
   });
 
   it('should not throw without SSL when configured to skip check', function () {
-    const validateWithNoSslSkipCheck = getValidateConfigStub({
-      'xpack.security.encryptionKey': 'baz',
-      'xpack.security.skipSslCheck': true
-    }, logSpy);
+    config.get.withArgs('xpack.security.encryptionKey').returns('baz');
+    config.get.withArgs('xpack.security.skipSslCheck').returns(true);
 
-    expect(validateWithNoSslSkipCheck).not.to.throwError();
-    sinon.assert.calledWithMatch(logSpy, /skipping.+ssl\ check/i);
-    sinon.assert.calledWithMatch(logSpy, /ssl\ is\ required/i);
+    expect(() => validateConfig(config, log)).not.to.throwError();
+
+    sinon.assert.notCalled(config.set);
+    sinon.assert.calledWithMatch(log, /skipping.+ssl\ check/i);
+    sinon.assert.calledWithMatch(log, /ssl\ is\ required/i);
   });
 
   it('should not throw without SSL when configured to skip check and use insecure sessions', function () {
-    const validateWithNoSslSkipCheck = getValidateConfigStub({
-      'xpack.security.encryptionKey': 'baz',
-      'xpack.security.skipSslCheck': true,
-      'xpack.security.useUnsafeSessions': true
-    }, logSpy);
+    config.get.withArgs('xpack.security.encryptionKey').returns('baz');
+    config.get.withArgs('xpack.security.skipSslCheck').returns(true);
+    config.get.withArgs('xpack.security.useUnsafeSessions').returns(true);
 
-    expect(validateWithNoSslSkipCheck).not.to.throwError();
-    sinon.assert.calledWithMatch(logSpy, /skipping.+ssl\ check/i);
-    sinon.assert.calledWithMatch(logSpy, /insecure\ session/i);
-    sinon.assert.calledWithMatch(logSpy, /not\ recommended/i);
+    expect(() => validateConfig(config, log)).not.to.throwError();
+
+    sinon.assert.notCalled(config.set);
+    sinon.assert.calledWithMatch(log, /skipping.+ssl\ check/i);
+    sinon.assert.calledWithMatch(log, /insecure\ session/i);
+    sinon.assert.calledWithMatch(log, /not\ recommended/i);
   });
 
   it('should not throw any errors with a valid config', function () {
-    const validateWithValidConfig = getValidateConfigStub({
-      'server.ssl.key': 'foo',
-      'server.ssl.cert': 'bar',
-      'xpack.security.encryptionKey': 'baz'
-    }, logSpy);
+    config.get.withArgs('server.ssl.key').returns('foo');
+    config.get.withArgs('server.ssl.cert').returns('bar');
+    config.get.withArgs('xpack.security.encryptionKey').returns('baz');
 
-    expect(validateWithValidConfig).not.to.throwError();
-    sinon.assert.notCalled(logSpy);
+    expect(() => validateConfig(config, log)).not.to.throwError();
+
+    sinon.assert.notCalled(config.set);
+    sinon.assert.notCalled(log);
   });
 });
