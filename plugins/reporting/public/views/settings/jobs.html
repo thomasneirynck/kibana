@@ -1,24 +1,37 @@
 <kbn-settings-app section="reporting">
   <div class="kbn-settings-reporting container">
-    <h1>Reporting jobs go here</h1>
-    <table>
-      <tr>
-        <th>Created</th>
-        <th colspan="2">Status</th>
-      </tr>
-      <tr ng-repeat="job in jobs">
-        <td>
-          <div>{{ job._source.created_at }}</div>
-          <div ng-if="job._source.created_by">Owner: {{ job._source.created_by }}</div>
-        </td>
-        <td>
-          <div>{{ job._source.status }}</div>
-          <div ng-if="job._source.status === 'completed'">{{ job._source.completed_at }}</div>
-        </td>
-        <td>
-          <button ng-click=download(job._id)>Download</button>
-        </td>
-      </tr>
+    <h1>Generated Reports</h1>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Created</th>
+          <th>Type</th>
+          <th>Start Time</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="job in jobs">
+          <td>
+            <div ng-if="job.created_by">{{ job.created_by }}</div>
+            <div style="color: #acb6c0">{{ job.created_at }}</div>
+          </td>
+          <td>
+            {{ job.type }}
+          </td>
+          <td>
+            {{ job.started_at }}
+          </td>
+          <td>
+            <div>{{ job.status }}</div>
+            <div style="color: #acb6c0" ng-if="job.status === 'completed'">{{ job.completed_at }}</div>
+          </td>
+          <td>
+            <button ng-click=download(job.id)>Download</button>
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </kbn-settings-app>
