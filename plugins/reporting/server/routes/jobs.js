@@ -7,7 +7,6 @@ module.exports = function (server) {
   const jobsQuery = jobsQueryFactory(server);
   const mainEntry = '/api/reporting/jobs';
 
-  // defined the public routes
   server.route({
     path: `${mainEntry}/list`,
     method: 'GET',
@@ -17,6 +16,17 @@ module.exports = function (server) {
 
       const results = getUser(server, request)
       .then((user) => jobsQuery.list(user, page, size));
+
+      reply(results);
+    }
+  });
+
+  server.route({
+    path: `${mainEntry}/count`,
+    method: 'GET',
+    handler: (request, reply) => {
+      const results = getUser(server, request)
+      .then((user) => jobsQuery.count(user));
 
       reply(results);
     }

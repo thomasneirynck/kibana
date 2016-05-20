@@ -61,6 +61,31 @@ module.exports = (server) => {
       return getHits(execQuery('search', body));
     },
 
+    count(user) {
+      const username = get(user, 'username', nouser);
+
+      const body = {
+        query: {
+          constant_score: {
+            filter: {
+              bool: {
+                should: [
+                  { term: { created_by: username } },
+                  { term: { created_by: nouser } },
+                ]
+              }
+            }
+          }
+        }
+      };
+
+      return execQuery('count', body)
+      .then((doc) => {
+        if (!doc) return 0;
+        return doc.count;
+      });
+    },
+
     get(user, id, includeContent = false) {
       if (!id) return;
       const username = get(user, 'username', nouser);
