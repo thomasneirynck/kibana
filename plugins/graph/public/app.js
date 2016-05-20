@@ -33,11 +33,11 @@ require('ui/routes')
   .when('/', {
     template: require('plugins/graph/templates/index.html'),
     resolve: {
-      GetIndexPatternIds: function(Private){
+      GetIndexPatternIds: function (Private) {
         const indexPatterns = Private(IndexPatternsProvider);
         return indexPatterns.getIds();
       },
-      GetIndexPatternProvider: function(Private){
+      GetIndexPatternProvider: function (Private) {
         return Private(IndexPatternsProvider);
       }
 
@@ -251,7 +251,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
 
 
 
-  $scope.indexSelected = function(selectedIndex) {
+  $scope.indexSelected = function (selectedIndex) {
     $scope.clearWorkspace();
     $scope.allFields = [];
     $scope.selectedFields = [];
@@ -260,16 +260,16 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
     $scope.selectedIndex = selectedIndex;
 
     var promise = $route.current.locals.GetIndexPatternProvider.get(selectedIndex);
-    promise.then(function(indexPattern) {
+    promise.then(function (indexPattern) {
         var patternFields = indexPattern.getNonScriptedFields();
         var blockedFieldNames = ['_id', '_index','_score','_source', '_type'];
-        patternFields.forEach(function(field, index) {
+        patternFields.forEach(function (field, index) {
           if (blockedFieldNames.indexOf(field.name) >= 0) {
             return;
           }
           var graphFieldDef = {
-            "name": field.name
-          }
+            'name': field.name
+          };
           $scope.allFields.push(graphFieldDef);
           graphFieldDef.hopSize = 5; //Default the number of results returned per hop
           graphFieldDef.icon = $scope.iconChoices[0];
@@ -287,18 +287,18 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
         });
         $scope.setAllFieldStatesToDefault();
 
-        $scope.allFields.sort(function(a, b) {
+        $scope.allFields.sort(function (a, b) {
           // TODO - should we use "popularity" setting from index pattern definition?
           // What is its intended use? Couldn't see it on the patternField objects
-          if (a.name < b.name)
+          if (a.name < b.name) {
             return -1;
-          else if (a.name > b.name)
+          } else if (a.name > b.name) {
             return 1;
-          else
-            return 0;
+          }
+          return 0;
         });
       },
-      function(err) {
+      function (err) {
         require('ui/notify').error(err);
       });
 
@@ -571,8 +571,8 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
 
 
 
-  if($scope.indices.length == 0){
-      require('ui/notify').warning('Oops, no data sources. First head over to Kibana settings and define a choice of index pattern');
+  if ($scope.indices.length == 0) {
+    require('ui/notify').warning('Oops, no data sources. First head over to Kibana settings and define a choice of index pattern');
   }
 
 });
