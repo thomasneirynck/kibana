@@ -261,54 +261,52 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
 
     var promise = $route.current.locals.GetIndexPatternProvider.get(selectedIndex);
     promise.then(function (indexPattern) {
-        var patternFields = indexPattern.getNonScriptedFields();
-        var blockedFieldNames = ['_id', '_index','_score','_source', '_type'];
-        patternFields.forEach(function (field, index) {
-          if (blockedFieldNames.indexOf(field.name) >= 0) {
-            return;
-          }
-          var graphFieldDef = {
-            'name': field.name
-          };
-          $scope.allFields.push(graphFieldDef);
-          graphFieldDef.hopSize = 5; //Default the number of results returned per hop
-          graphFieldDef.icon = $scope.iconChoices[0];
-          for (var i = 0; i < $scope.iconChoices.length; i++) {
-            var icon = $scope.iconChoices[i];
-            for (var p = 0; p < icon.patterns.length; p++) {
-              var pattern = icon.patterns[p];
-              if (pattern.test(graphFieldDef.name)) {
-                graphFieldDef.icon = icon;
-                break;
-              }
+      var patternFields = indexPattern.getNonScriptedFields();
+      var blockedFieldNames = ['_id', '_index','_score','_source', '_type'];
+      patternFields.forEach(function (field, index) {
+        if (blockedFieldNames.indexOf(field.name) >= 0) {
+          return;
+        }
+        var graphFieldDef = {
+          'name': field.name
+        };
+        $scope.allFields.push(graphFieldDef);
+        graphFieldDef.hopSize = 5; //Default the number of results returned per hop
+        graphFieldDef.icon = $scope.iconChoices[0];
+        for (var i = 0; i < $scope.iconChoices.length; i++) {
+          var icon = $scope.iconChoices[i];
+          for (var p = 0; p < icon.patterns.length; p++) {
+            var pattern = icon.patterns[p];
+            if (pattern.test(graphFieldDef.name)) {
+              graphFieldDef.icon = icon;
+              break;
             }
           }
-          graphFieldDef.color = index % $scope.colorChoices.length;
-        });
-        $scope.setAllFieldStatesToDefault();
-
-        $scope.allFields.sort(function (a, b) {
-          // TODO - should we use "popularity" setting from index pattern definition?
-          // What is its intended use? Couldn't see it on the patternField objects
-          if (a.name < b.name) {
-            return -1;
-          } else if (a.name > b.name) {
-            return 1;
-          }
-          return 0;
-        });
-      },
-      function (err) {
-        require('ui/notify').error(err);
+        }
+        graphFieldDef.color = index % $scope.colorChoices.length;
       });
+      $scope.setAllFieldStatesToDefault();
 
-      // // TODO Load the list of saved visualizations for this index pattern
-      // getSavedVisualizations(selectedIndex.name, function(resp){
-      //   console.log("Got saved visualizations:", resp);
-      // });
-      // console.log("user",toUser({"foo":["bar", "bar2"]}));
+      $scope.allFields.sort(function (a, b) {
+        // TODO - should we use "popularity" setting from index pattern definition?
+        // What is its intended use? Couldn't see it on the patternField objects
+        if (a.name < b.name) {
+          return -1;
+        } else if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      });
+    },
+    function (err) {
+      require('ui/notify').error(err);
+    });
 
-
+    // // TODO Load the list of saved visualizations for this index pattern
+    // getSavedVisualizations(selectedIndex.name, function(resp){
+    //   console.log("Got saved visualizations:", resp);
+    // });
+    // console.log("user",toUser({"foo":["bar", "bar2"]}));
   };
 
   // Replacement function for graphClientWorkspace's comms so
