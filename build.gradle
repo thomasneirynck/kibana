@@ -47,6 +47,9 @@ task npmBuild(type: LoggedExec, dependsOn: npmInstall) {
   } else {
     commandLine 'npm', 'run', 'build'
   }
+  if (System.getProperty('build.snapshot', 'true') == 'false') {
+    args '--release'
+  }
 }
 
 task bundlePlugin(type: Zip, dependsOn: npmBuild) {
