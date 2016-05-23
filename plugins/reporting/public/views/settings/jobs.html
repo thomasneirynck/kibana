@@ -30,7 +30,14 @@
             <div style="color: #acb6c0" ng-if="job.status === 'completed'">{{ job.completed_at | date : 'yyyy-MM-dd @ h:mm a' }}</div>
           </td>
           <td>
-            <button ng-if="job.status === 'completed'" ng-click=download(job.id)>Download</button>
+            <button
+              class="btn btn-default"
+              ng-if="job.status === 'completed'"
+              ng-click=download(job.id)
+              title="Download"
+              >
+              <i class="fa fa-download"></i>
+            </button>
           </td>
         </tr>
       </tbody>
