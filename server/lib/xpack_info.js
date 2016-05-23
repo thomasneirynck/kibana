@@ -28,6 +28,9 @@ export default function xpackInfo(client) {
             candidateLicenses = [ candidateLicenses ];
           }
           return includes(candidateLicenses, get(response, 'license.mode'));
+        },
+        getType: function () {
+          return get(response, 'license.type');
         }
       },
       feature: function (feature) {

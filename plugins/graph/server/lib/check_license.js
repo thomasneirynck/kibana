@@ -16,7 +16,7 @@ export default function checkLicense(xpackLicenseInfo) {
   }
 
   const commonLicenseInfo = {
-    licenseType: 'basic',
+    licenseType: xpackLicenseInfo.license.getType(),
     isLicenseActive: xpackLicenseInfo.license.isActive()
   };
 
