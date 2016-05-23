@@ -42,9 +42,10 @@ require('ui/routes')
   });
 
 //========  Controller for basic UI ==================
-app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http, kbnUrl, showGraphFeatures, shouldUpsellUser) {
+app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http
+  , kbnUrl, showGraphFeatures, shouldUpsellUser, isLicenseActive) {
 
-  if (showGraphFeatures && shouldUpsellUser) {
+  if (shouldUpsellUser || !isLicenseActive) {
     return kbnUrl.redirect('/license');
   }
 
