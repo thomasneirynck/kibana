@@ -6,7 +6,7 @@
       <thead>
         <tr>
           <th>Created</th>
-          <th>Type</th>
+          <th>Item</th>
           <th>Start Time</th>
           <th>Status</th>
           <th>Actions</th>
@@ -19,17 +19,19 @@
         <tr ng-if="jobs.jobs.length" ng-repeat="job in jobs.jobs">
           <td>
             <div ng-if="job.created_by">{{ job.created_by }}</div>
-            <div style="color: #acb6c0">{{ job.created_at }}</div>
+            <div style="color: #acb6c0">{{ job.created_at | date : 'yyyy-MM-dd' }}</div>
           </td>
           <td>
-            {{ job.type }}
+            <div>{{ job.object_title }}</div>
+            <div style="color: #acb6c0">{{ job.object_type }}</div>
+            <div style="color: #acb6c0">{{ job.type }}</div>
           </td>
           <td>
             {{ job.started_at }}
           </td>
           <td>
             <div>{{ job.status }}</div>
-            <div style="color: #acb6c0" ng-if="job.status === 'completed'">{{ job.completed_at }}</div>
+            <div style="color: #acb6c0" ng-if="job.status === 'completed'">{{ job.completed_at | date : 'yyyy-MM-dd' }}</div>
           </td>
           <td>
             <button ng-if="job.status === 'completed'" ng-click=download(job.id)>Download</button>

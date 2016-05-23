@@ -27,6 +27,8 @@ function mapJobs(jobs) {
     return {
       id: job._id,
       type: job._source.jobtype,
+      object_type: job._source.payload.type,
+      object_title: job._source.payload.title,
       created_by: job._source.created_by,
       created_at: job._source.created_at,
       started_at: job._source.started_at,
