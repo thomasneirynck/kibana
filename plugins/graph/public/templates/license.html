@@ -1,0 +1,36 @@
+<div ng-controller="licenseController" class="license-view">
+  <div class="license-main">
+
+    <div ng-if="shouldUpsellUser">
+      <h2>Your {{ licenseType }} license does not support Graph</h2>
+    </div>
+
+    <div ng-if="!isLicenseActive">
+      <h2>Your {{licenseType}} license has expired</h2>
+    </div>
+
+    <div ng-if="shouldUpsellUser || !isLicenseActive">
+      <h1 class="title">But worry not!</h1>
+    </div>
+
+
+    <div class="row">
+      <div class="bold">Unlock the Full Functionality</div>
+      <p>Get all X-Pack has to offer: Security, Monitoring, Alerting &amp; Notification, Reporting and Graph,</p>
+      <p>plus support from the engineers behind the Elastic Stack.</p>
+      <div class="btn-space">
+        <a href="https://www.elastic.co/subscriptions/xpack" target="_blank" class="btn license premium">Get It All</a>
+      </div>
+    </div>
+
+    <div class="row">&nbsp;</div>
+
+    <div class="row">
+      <p>Already have your license? Splendid! <a href="https://www.elastic.co/guide/en/x-pack/current/license-management.html" target="_blank">Install it now</a></p>
+    </div>
+
+    <div ng-if="!shouldUpsellUser && isLicenseActive">
+      <p class="license-back"><a kbn-href="#/">Back</a></p>
+    </div>
+  </div>
+</div>

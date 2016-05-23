@@ -1,0 +1,29 @@
+@import "~ui/styles/variables/colors.less";
+
+.license-view {
+  padding: 50px 125px 5px;
+  font-size: 130%;
+
+  .license-main {
+    text-align: center;
+    .btn-space {
+      margin: 20px 0;
+    }
+    a {
+      &.btn {
+        font-weight: bold;
+        color: @kibanaGray1;
+        border: 2px solid @kibanaYellow1;
+
+        &.premium {
+          background-color: @kibanaYellow1;
+        }
+      }
+    }
+  }
+  .license-back { text-align: right; }
+  .bold { font-weight: bold; }
+  .title {
+    margin-bottom: 30px;
+  }
+}

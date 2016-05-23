@@ -15,24 +15,32 @@ export default function checkLicense(xpackLicenseInfo) {
     };
   }
 
+  const commonLicenseInfo = {
+    licenseType: 'basic',
+    isLicenseActive: xpackLicenseInfo.license.isActive()
+  };
+
   if (xpackLicenseInfo.license.isOneOf([ 'basic' ])) {
     return {
       showGraphFeatures: true,
-      shouldUpsellUser: true
+      shouldUpsellUser: true,
+      ...commonLicenseInfo
     };
   }
 
   if (xpackLicenseInfo.license.isOneOf([ 'trial', 'platinum' ])) {
     return {
       showGraphFeatures: true,
-      shouldUpsellUser: !xpackLicenseInfo.license.isActive()
+      shouldUpsellUser: !xpackLicenseInfo.license.isActive(),
+      ...commonLicenseInfo
     };
   }
 
   if (xpackLicenseInfo.license.isOneOf([ 'standard', 'gold' ])) {
     return {
       showGraphFeatures: false,
-      shouldUpsellUser: true
+      shouldUpsellUser: true,
+      ...commonLicenseInfo
     };
   }
 }

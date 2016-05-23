@@ -6,8 +6,7 @@ var gws = require('./graphClientWorkspace.js');
 var utils = require('./utils.js');
 import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
 require('plugins/graph/less/main.less');
-
-
+require('plugins/graph/less/license.less');
 
 var app = require('ui/modules').get('app/graph', ['angular-venn-simple']);
 
@@ -37,6 +36,9 @@ require('ui/routes')
       }
 
     }
+  })
+  .when('/license', {
+    template: require('plugins/graph/templates/license.html')
   });
 
 //========  Controller for basic UI ==================
@@ -574,3 +576,10 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http,
 
 });
 //End controller
+
+//========  Controller for basic UI ==================
+app.controller('licenseController', function ($scope, shouldUpsellUser, licenseType, isLicenseActive) {
+  $scope.shouldUpsellUser = shouldUpsellUser;
+  $scope.isLicenseActive = isLicenseActive;
+  $scope.licenseType = licenseType;
+});
