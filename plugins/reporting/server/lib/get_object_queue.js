@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const savedObjectsFactory = require('../lib/saved_objects');
+
 module.exports = (server) => {
   const client = server.plugins.elasticsearch.client;
   const config = server.config();
@@ -10,7 +12,17 @@ module.exports = (server) => {
     'port': config.get('server.port'),
   });
 
-  const savedObjects = require('../lib/saved_objects')(client, requestConfig);
+  const savedObjects = savedObjectsFactory(client, requestConfig);
+
+  function formatObject(parent, objects) {
+    return Object.assign({
+      id: parent.id,
+      title: parent.title,
+      description: parent.description,
+      type: parent.type,
+      objects
+    });
+  }
 
   return function getObjectQueue(type, objId) {
     if (type === 'dashboard') {
@@ -18,16 +30,20 @@ module.exports = (server) => {
       .then(function (savedObj) {
         const panels = JSON.parse(savedObj.panelsJSON);
 
-        return panels.map((panel) => {
+        const panelObjects = panels.map((panel) => {
           return savedObjects.get(panel.type, panel.id)
           .then(function (obj) {
             obj.panelIndex = panel.panelIndex;
             return obj;
           });
         });
+
+        return Promise.all(panelObjects)
+        .then((objs) => formatObject(savedObj, objs));
       });
     }
 
-    return Promise.resolve([ savedObjects.get(type, objId) ]);
+    return Promise.resolve(savedObjects.get(type, objId))
+    .then((savedObj) => formatObject(savedObj, [ savedObj ]));
   };
 };

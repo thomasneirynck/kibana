@@ -28,19 +28,25 @@ module.exports = function (server) {
       .then(function (objectQueue) {
         server.log(['reporting', 'debug'], `${objectQueue.length} saved object(s) to process`);
 
-        return Promise.all(objectQueue)
-        .then((objects) => {
-          const savedObjects = objects.map((savedObj) => savedObj.toJSON(query));
+        const savedObjects = objectQueue.objects.map((savedObj) => savedObj.toJSON(query));
 
-          // TODO: check for current user
-          const payload = { objects: savedObjects, query, headers, date };
-          const options = {
-            timeout: queueConfig.timeout * objectQueue.length,
-            created_by: get(user, 'username', false),
-          };
+        const payload = {
+          id: objectQueue.id,
+          title: objectQueue.title,
+          description: objectQueue.description,
+          type: objectQueue.type,
+          objects: savedObjects,
+          date,
+          query,
+          headers,
+        };
 
-          return jobQueue.addJob(JOBTYPES_PRINTABLE_PDF, payload, options);
-        });
+        const options = {
+          timeout: queueConfig.timeout * objectQueue.length,
+          created_by: get(user, 'username', false),
+        };
+
+        return jobQueue.addJob(JOBTYPES_PRINTABLE_PDF, payload, options);
       });
     });
   };
