@@ -14,27 +14,19 @@ require('plugins/monitoring/views/nodes/nodes_controller.js');
 require('plugins/monitoring/views/node/node_controller.js');
 require('plugins/monitoring/views/overview/overview_controller.js');
 require('plugins/monitoring/views/license/index.js');
-require('ui/modules').get('kibana').config(function (PrivateProvider) {
-  PrivateProvider.swap(require('ui/config/defaults'), function ($injector) {
-    var defaults = $injector.invoke(require('ui/config/defaults'));
-    defaults['timepicker:timeDefaults'] = {
-      type: 'json',
-      value: JSON.stringify({
-        from: 'now-1h',
-        to: 'now',
-        mode: 'quick'
-      })
-    };
-    defaults['timepicker:refreshIntervalDefaults'] = {
-      type: 'json',
-      value: JSON.stringify({
-        display: '10 seconds',
-        pause: false,
-        value: 10000
-      })
-    };
-    return defaults;
-  });
+
+var _ = require('lodash');
+require('ui/modules').get('kibana').run(function (uiSettings) {
+  _.set(uiSettings, 'defaults.timepicker:timeDefaults.value', JSON.stringify({
+    from: 'now-1h',
+    to: 'now',
+    mode: 'quick'
+  }));
+  _.set(uiSettings, 'defaults.timepicker:refreshIntervalDefaults.value', JSON.stringify({
+    display: '10 seconds',
+    pause: false,
+    value: 10000
+  }));
 });
 
 // Enable Angular routing
