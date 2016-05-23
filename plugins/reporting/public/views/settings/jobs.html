@@ -5,9 +5,8 @@
     <table class="table table-striped" ng-class="{ loading: loading === true }">
       <thead>
         <tr>
-          <th>Created</th>
-          <th>Item</th>
-          <th>Start Time</th>
+          <th>Document</th>
+          <th>Added</th>
           <th>Status</th>
           <th>Actions</th>
         </tr>
@@ -18,20 +17,17 @@
         </tr>
         <tr ng-if="jobs.jobs.length" ng-repeat="job in jobs.jobs">
           <td>
-            <div ng-if="job.created_by">{{ job.created_by }}</div>
-            <div style="color: #acb6c0">{{ job.created_at | date : 'yyyy-MM-dd' }}</div>
-          </td>
-          <td>
             <div>{{ job.object_title }}</div>
             <div style="color: #acb6c0">{{ job.object_type }}</div>
-            <div style="color: #acb6c0">{{ job.type }}</div>
           </td>
           <td>
-            {{ job.started_at }}
+            <div>{{ job.created_at | date : 'yyyy-MM-dd @ h:mm a' }}</div>
+            <div style="color: #acb6c0" ng-if="job.created_by">{{ job.created_by }}</div>
           </td>
           <td>
             <div>{{ job.status }}</div>
-            <div style="color: #acb6c0" ng-if="job.status === 'completed'">{{ job.completed_at | date : 'yyyy-MM-dd' }}</div>
+            <div style="color: #acb6c0" ng-if="job.status === 'processing'">{{ job.started_at | date : 'yyyy-MM-dd @ h:mm a' }}</div>
+            <div style="color: #acb6c0" ng-if="job.status === 'completed'">{{ job.completed_at | date : 'yyyy-MM-dd @ h:mm a' }}</div>
           </td>
           <td>
             <button ng-if="job.status === 'completed'" ng-click=download(job.id)>Download</button>
