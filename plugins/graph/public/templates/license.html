@@ -5,7 +5,7 @@
       <h2>Your {{ licenseType }} license does not support Graph</h2>
     </div>
 
-    <div ng-if="!isLicenseActive">
+    <div ng-if="!shouldUpsellUser && !isLicenseActive">
       <h2>Your {{licenseType}} license has expired</h2>
     </div>
 
