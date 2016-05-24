@@ -25,6 +25,13 @@ module.service('reportingJobQueue', ($http) => {
       return $http.get(url)
       .then((res) => res.data)
       .catch(showError);
+    },
+
+    getContent(jobId) {
+      const url = `${baseUrl}/output/${jobId}`;
+      return $http.get(url)
+      .then((res) => res.data)
+      .catch(showError);
     }
   };
 });

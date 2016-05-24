@@ -101,7 +101,6 @@ module.exports = (server) => {
                 ],
                 filter: [
                   { term: { _id: id } },
-                  { term: { status: 'completed' } },
                 ],
               }
             }
