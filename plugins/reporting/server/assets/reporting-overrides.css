@@ -125,3 +125,9 @@ visualize-legend .legend-value-title {
   /* hide the vis from saved searches */
   display: none;
 }
+
+/* Markdown */
+
+.markdown-vis {
+  margin-top: 38px;
+}

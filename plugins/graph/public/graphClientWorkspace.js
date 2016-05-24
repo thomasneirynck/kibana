@@ -1121,7 +1121,7 @@ module.exports = (function () {
         }
         request.query = {
           'bool': {
-            'minimum_number_should_match': 2,
+            'minimum_should_match': 2,
             'should': shoulds
           }
         };
@@ -1241,33 +1241,46 @@ module.exports = (function () {
       self.getExampleDocs(self.selectedNodes, completedHandler);
     };
 
-
-
-
-    // TODO - this used to be part of some in-built document visualization
-    // but ideally should be handled by calling saved Kibana visualizations.
-    // The query-building parts of this function will be useful for this
-    this.getExampleDocs = function (startNodes, completedHandler) {
+    this.getQuery = function (startNodes) {
       var shoulds = [];
-      for (var bs in startNodes) {
-        var node = startNodes[bs];
+      var nodes = startNodes;
+      if (!startNodes) {
+        nodes = self.nodes;
+      }
+      for (var bs in nodes) {
+        var node = nodes[bs];
         if (node.parent == undefined) {
           shoulds.push(self.buildNodeQuery(node));
         }
       }
-      var query = {
+      return {
         'bool': {
-          'should': shoulds
+          'should': shoulds,
+          'minimum_should_match' : Math.min(shoulds.length, 2)
         }
       };
+    };
+
+
+    // TODO - this is part of some in-built document visualization
+    // but ideally should be handled by calling saved Kibana visualizations.
+    // Once Kibana visualizations are more embeddable we can delegate to those
+    this.getExampleDocs = function (startNodes, completedHandler) {
+      var query = self.getQuery(startNodes);
 
       var request = {
         'query': query,
-        'size': 0,
-        'aggs': {
-          'sample': {
-            'sampler': {
+        'size': 10
+      };
 
+      var controls = self.buildControls();
+      if (controls.sample_diversity) {
+        request.size = 0;
+        request.aggs = {
+          'sample': {
+            'diversified_sampler': {
+              'max_docs_per_value' : parseInt(controls.sample_diversity.max_docs_per_value),
+              'field' : controls.sample_diversity.field
             },
             'aggs': {
               'topHits': {
@@ -1277,20 +1290,20 @@ module.exports = (function () {
               }
             }
           }
-        }
-      };
-
-      var controls = self.buildControls();
-      if (controls.sample_diversity) {
-        request.aggs.sample.sampler.max_docs_per_value = parseInt(controls.sample_diversity.max_docs_per_value);
-        request.aggs.sample.sampler.field = controls.sample_diversity.field;
+        };
       }
 
+      self.lastRequest = JSON.stringify(request, null, '\t');
       var dataForServer = JSON.stringify(request);
       searcher(self.options.indexName, request, function (data) {
         var exampleDocs = [];
-
-        var hits = data.aggregations.sample.topHits.hits.hits;
+        self.lastResponse = JSON.stringify(data, null, '\t');
+        var hits = null;
+        if (controls.sample_diversity) {
+          hits = data.aggregations.sample.topHits.hits.hits;
+        } else {
+          hits = data.hits.hits;
+        }
         if (completedHandler) {
           completedHandler(hits);
         }
