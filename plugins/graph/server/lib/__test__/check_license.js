@@ -24,8 +24,8 @@ describe('check_license: ', function () {
       expect(licenseCheckResult.showGraphFeatures).to.be(false);
     });
 
-    it ('should set shouldUpsellUser to false', () => {
-      expect(licenseCheckResult.shouldUpsellUser).to.be(false);
+    it ('should set showLicensePage to false', () => {
+      expect(licenseCheckResult.showLicensePage).to.be(false);
     });
   });
 
@@ -48,8 +48,8 @@ describe('check_license: ', function () {
         expect(licenseCheckResult.showGraphFeatures).to.be(true);
       });
 
-      it ('should set shouldUpsellUser to true', () => {
-        expect(licenseCheckResult.shouldUpsellUser).to.be(true);
+      it ('should set showLicensePage to true', () => {
+        expect(licenseCheckResult.showLicensePage).to.be(true);
       });
     });
 
@@ -68,8 +68,8 @@ describe('check_license: ', function () {
         expect(licenseCheckResult.showGraphFeatures).to.be(true);
       });
 
-      it ('should set shouldUpsellUser to false', () => {
-        expect(licenseCheckResult.shouldUpsellUser).to.be(false);
+      it ('should set showLicensePage to false', () => {
+        expect(licenseCheckResult.showLicensePage).to.be(false);
       });
     });
 
@@ -89,8 +89,8 @@ describe('check_license: ', function () {
         expect(licenseCheckResult.showGraphFeatures).to.be(false);
       });
 
-      it ('should set shouldUpsellUser to true', () => {
-        expect(licenseCheckResult.shouldUpsellUser).to.be(true);
+      it ('should set showLicensePage to true', () => {
+        expect(licenseCheckResult.showLicensePage).to.be(true);
       });
     });
   });

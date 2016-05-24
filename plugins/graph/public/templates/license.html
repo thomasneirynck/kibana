@@ -1,15 +1,15 @@
 <div ng-controller="licenseController" class="license-view">
   <div class="license-main">
 
-    <div ng-if="shouldUpsellUser">
+    <div ng-if="showLicensePage">
       <h2>Your {{ licenseType }} license does not support Graph</h2>
     </div>
 
-    <div ng-if="!shouldUpsellUser && !isLicenseActive">
+    <div ng-if="!showLicensePage && !isLicenseActive">
       <h2>Your {{licenseType}} license has expired</h2>
     </div>
 
-    <div ng-if="shouldUpsellUser || !isLicenseActive">
+    <div ng-if="showLicensePage || !isLicenseActive">
       <h1 class="title">But worry not!</h1>
     </div>
 

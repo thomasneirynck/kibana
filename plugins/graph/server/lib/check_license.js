@@ -3,7 +3,7 @@ export default function checkLicense(xpackLicenseInfo) {
   if (!xpackLicenseInfo) {
     return {
       showGraphFeatures: false,
-      showUpsellUser: false
+      showLicensePage: false
     };
   }
 
@@ -11,7 +11,7 @@ export default function checkLicense(xpackLicenseInfo) {
   if (!graphFeature.isEnabled()) {
     return {
       showGraphFeatures: false,
-      shouldUpsellUser: false
+      showLicensePage: false
     };
   }
 
@@ -23,7 +23,7 @@ export default function checkLicense(xpackLicenseInfo) {
   if (xpackLicenseInfo.license.isOneOf([ 'basic' ])) {
     return {
       showGraphFeatures: true,
-      shouldUpsellUser: true,
+      showLicensePage: true,
       ...commonLicenseInfo
     };
   }
@@ -31,7 +31,7 @@ export default function checkLicense(xpackLicenseInfo) {
   if (xpackLicenseInfo.license.isOneOf([ 'trial', 'platinum' ])) {
     return {
       showGraphFeatures: true,
-      shouldUpsellUser: false,
+      showLicensePage: false,
       ...commonLicenseInfo
     };
   }
@@ -39,7 +39,7 @@ export default function checkLicense(xpackLicenseInfo) {
   if (xpackLicenseInfo.license.isOneOf([ 'standard', 'gold' ])) {
     return {
       showGraphFeatures: false,
-      shouldUpsellUser: true,
+      showLicensePage: true,
       ...commonLicenseInfo
     };
   }

@@ -74,7 +74,7 @@ module.exports = function (kibana) {
       const commonRouteConfig = {
         pre: [
           function forbidApiAccess(request, reply) {
-            if (!licenseCheckResults.showGraphFeatures || licenseCheckResults.shouldUpsellUser) {
+            if (!licenseCheckResults.showGraphFeatures || licenseCheckResults.showLicensePage) {
               reply(Boom.forbidden('License has expired '
                 + 'OR graph is not available with this license '
                 + 'OR graph has been disabled in Elasticsearch'));
