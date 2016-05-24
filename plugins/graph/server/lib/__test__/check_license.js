@@ -39,6 +39,8 @@ describe('check_license: ', function () {
     context('& license is basic', () => {
       beforeEach(() => {
         set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(true));
+        set(mockLicenseInfo, 'license.getType', () => { return 'basic'; });
+        set(mockLicenseInfo, 'license.isActive', () => { return true; });
         licenseCheckResult = checkLicense(mockLicenseInfo);
       });
 
@@ -58,6 +60,7 @@ describe('check_license: ', function () {
         licenseIsOneOfStub.withArgs([ 'trial', 'platinum' ]).returns(true);
         set(mockLicenseInfo, 'license.isOneOf', licenseIsOneOfStub);
         set(mockLicenseInfo, 'license.isActive', () => { return true; });
+        set(mockLicenseInfo, 'license.getType', () => { return 'platinum'; });
         licenseCheckResult = checkLicense(mockLicenseInfo);
       });
 
@@ -68,17 +71,6 @@ describe('check_license: ', function () {
       it ('should set shouldUpsellUser to false', () => {
         expect(licenseCheckResult.shouldUpsellUser).to.be(false);
       });
-
-      context('& license has expired', () => {
-        beforeEach(() => {
-          set(mockLicenseInfo, 'license.isActive', () => { return false; });
-          licenseCheckResult = checkLicense(mockLicenseInfo);
-        });
-
-        it ('should set shouldUpsellUser to true', () => {
-          expect(licenseCheckResult.shouldUpsellUser).to.be(true);
-        });
-      });
     });
 
     context('& license is standard or gold', () => {
@@ -88,6 +80,8 @@ describe('check_license: ', function () {
         licenseIsOneOfStub.withArgs([ 'trial', 'platinum' ]).returns(false);
         licenseIsOneOfStub.withArgs([ 'standard', 'gold' ]).returns(true);
         set(mockLicenseInfo, 'license.isOneOf', licenseIsOneOfStub);
+        set(mockLicenseInfo, 'license.isActive', () => { return true; });
+        set(mockLicenseInfo, 'license.getType', () => { return 'gold'; });
         licenseCheckResult = checkLicense(mockLicenseInfo);
       });
 
