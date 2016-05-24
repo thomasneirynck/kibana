@@ -50,7 +50,7 @@ routes.when('/settings/security/users/edit/:username?', {
     };
 
     $scope.changePassword = (user) => {
-      ShieldUser.changePassword(user)
+      user.$changePassword()
       .then(() => notifier.info('The password has been changed.'))
       .then($scope.toggleChangePasswordMode)
       .catch(error => notifier.error(_.get(error, 'data.message')));
