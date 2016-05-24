@@ -584,7 +584,7 @@ app.controller('licenseController', function ($scope, shouldUpsellUser, licenseT
   $scope.isLicenseActive = isLicenseActive;
   $scope.licenseType = capitalize(licenseType);
 
-  // If the user manually visits the licehse page but they don't need to be
+  // If the user manually visits the license page but they don't need to be
   // shown it, redirect them back to the app index page
   if (!shouldUpsellUser && isLicenseActive) {
     return kbnUrl.redirect('/');
