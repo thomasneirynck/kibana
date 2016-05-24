@@ -4,6 +4,7 @@ var dv = require('ace');
 var av = require('./angular-venn-simple.js');
 var gws = require('./graphClientWorkspace.js');
 var utils = require('./utils.js');
+import { capitalize } from 'lodash';
 import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
 require('plugins/graph/less/main.less');
 require('plugins/graph/less/license.less');
@@ -582,5 +583,5 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http
 app.controller('licenseController', function ($scope, shouldUpsellUser, licenseType, isLicenseActive) {
   $scope.shouldUpsellUser = shouldUpsellUser;
   $scope.isLicenseActive = isLicenseActive;
-  $scope.licenseType = licenseType;
+  $scope.licenseType = capitalize(licenseType);
 });
