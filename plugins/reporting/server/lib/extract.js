@@ -1,7 +1,7 @@
 var fs = require('fs');
-var execFile = require('child_process').execFile;
-var Promise = require('bluebird');
 var unzip = require('unzip');
+var bz2 = require('unbzip2-stream');
+var tar = require('tar-fs');
 
 exports.zip = function (filepath, target) {
   return new Promise(function (resolve, reject) {
@@ -17,19 +17,13 @@ exports.zip = function (filepath, target) {
 };
 
 exports.bz2 = function (filepath, target) {
-  // For our use case, tar.bz2 always means we're in linux,
-  // so we can defer to tar via child process
-  var options = {
-    cwd: target
-  };
-
   return new Promise(function (resolve, reject) {
-    execFile('tar', ['jxf', filepath], options, function (err) {
-      if (err) {
-        reject(err);
-      } else {
-        resolve();
-      }
-    });
+    fs.createReadStream(filepath)
+    .pipe(bz2())
+    .pipe(tar.extract(target))
+    .on('error', function () {
+      reject(new Error('Failed to unpack tar.bz2 file'));
+    })
+    .on('finish', resolve);
   });
 };
