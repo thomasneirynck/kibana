@@ -3,6 +3,7 @@ import Boom from 'boom';
 import Joi from 'joi';
 import getIsValidUser from '../../../lib/get_is_valid_user';
 import getCalculateExpires from '../../../lib/get_calculate_expires';
+import { wrapError } from '../../../lib/errors';
 
 export default (server, {commonRouteConfig, clientCookieName}) => {
   const isValidUser = getIsValidUser(server);
@@ -48,6 +49,17 @@ export default (server, {commonRouteConfig, clientCookieName}) => {
     },
     config: {
       auth: false,
+      ...commonRouteConfig
+    }
+  });
+
+  server.route({
+    method: 'GET',
+    path: '/api/security/v1/me',
+    handler(request, reply) {
+      server.plugins.security.getUser(request).then(reply, _.flow(wrapError, reply));
+    },
+    config: {
       ...commonRouteConfig
     }
   });
