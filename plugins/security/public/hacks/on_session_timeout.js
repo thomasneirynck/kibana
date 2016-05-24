@@ -3,7 +3,7 @@ import uiModules from 'ui/modules';
 
 const WARNING_DURATION = 60 * 1000;
 
-const module = uiModules.get('shield', []);
+const module = uiModules.get('security', []);
 module.config(($httpProvider) => {
   $httpProvider.interceptors.push(($timeout, $window, $q, $injector, sessionTimeout, Notifier, chrome) => {
     const notifier = new Notifier();

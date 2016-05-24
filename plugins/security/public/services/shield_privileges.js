@@ -1,6 +1,6 @@
 import uiModules from 'ui/modules';
 
-const module = uiModules.get('shield', []);
+const module = uiModules.get('security', []);
 module.constant('shieldPrivileges', {
   cluster: [
     'all',
