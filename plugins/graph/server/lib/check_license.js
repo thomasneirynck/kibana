@@ -31,7 +31,7 @@ export default function checkLicense(xpackLicenseInfo) {
   if (xpackLicenseInfo.license.isOneOf([ 'trial', 'platinum' ])) {
     return {
       showGraphFeatures: true,
-      shouldUpsellUser: !xpackLicenseInfo.license.isActive(),
+      shouldUpsellUser: false,
       ...commonLicenseInfo
     };
   }
