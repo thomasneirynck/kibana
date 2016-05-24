@@ -6,11 +6,6 @@ var gws = require('./graphClientWorkspace.js');
 var utils = require('./utils.js');
 import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
 require('plugins/graph/less/main.less');
-var graphLogo = require('plugins/graph/header.png');
-require('ui/chrome').setBrand({
-  'logo': 'url(' + graphLogo + ') left no-repeat',
-  'smallLogo': 'url(' + graphLogo + ') left no-repeat'
-}).setNavBackground('#222222').setTabs([]);
 
 
 
