@@ -1,13 +1,13 @@
 import 'angular-paging';
 import 'plugins/reporting/services/job_queue';
+import 'plugins/reporting/less/main.less';
+
 
 import routes from 'ui/routes';
-import Notifier from 'ui/notify/notifier';
 import template from 'plugins/reporting/views/settings/jobs.html';
 
 const jobPollingDelay = 5000;
 const pageSize = 10;
-const reportingNotifier = new Notifier({ location: 'Reporting' });
 
 function getJobs(reportingJobQueue, page = 0) {
   return reportingJobQueue.list(page)
@@ -22,7 +22,13 @@ function getJobs(reportingJobQueue, page = 0) {
       };
     });
   })
-  .catch((err) => reportingNotifier.error(err));
+  .catch(() => {
+    return {
+      jobs: [],
+      total: 0,
+      pages: 1,
+    };
+  });
 }
 
 function mapJobs(jobs) {

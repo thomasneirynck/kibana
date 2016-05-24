@@ -6,19 +6,25 @@ module.service('reportingJobQueue', ($http) => {
   const baseUrl = '../api/reporting/jobs';
   const genericNotifier = new Notifier({ location: 'Reporting' });
 
+  function showError(err) {
+    var msg = err.statusText || 'Request failed';
+    genericNotifier.error(msg);
+    throw err;
+  }
+
   return {
     list(page = 0) {
       const url = `${baseUrl}/list?page=${page}`;
       return $http.get(url)
       .then((res) => res.data)
-      .catch((err) => genericNotifier.fatal(err));
+      .catch(showError);
     },
 
     total() {
       const url = `${baseUrl}/count`;
       return $http.get(url)
       .then((res) => res.data)
-      .catch((err) => genericNotifier.fatal(err));
+      .catch(showError);
     }
   };
 });
