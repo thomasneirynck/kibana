@@ -580,8 +580,14 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http,
 //End controller
 
 //========  Controller for basic UI ==================
-app.controller('licenseController', function ($scope, shouldUpsellUser, licenseType, isLicenseActive) {
+app.controller('licenseController', function ($scope, shouldUpsellUser, licenseType, isLicenseActive, kbnUrl) {
   $scope.shouldUpsellUser = shouldUpsellUser;
   $scope.isLicenseActive = isLicenseActive;
   $scope.licenseType = capitalize(licenseType);
+
+  // If the user manually visits the licehse page but they don't need to be
+  // shown it, redirect them back to the app index page
+  if (!shouldUpsellUser && isLicenseActive) {
+    return kbnUrl.redirect('/');
+  }
 });
