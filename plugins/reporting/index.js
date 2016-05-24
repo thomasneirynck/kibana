@@ -1,8 +1,11 @@
 import { resolve } from 'path';
 const publicRoutes = require('./server/routes/public');
 const fileRoutes = require('./server/routes/file');
+const jobRoutes = require('./server/routes/jobs');
+
 const phantom = require('./server/lib/phantom');
-const generatePDFStream = require('./server/lib/generate_pdf_stream');
+const generateDocument = require('./server/lib/generate_document');
+const createQueue = require('./server/lib/create_queue');
 const appConfig = require('./server/config/config');
 const checkLicense = require('./server/lib/check_license');
 
@@ -19,6 +22,7 @@ module.exports = function (kibana) {
         'plugins/reporting/controls/visualize',
         'plugins/reporting/controls/dashboard',
       ],
+      settingsSections: ['plugins/reporting/views/settings'],
       injectDefaultVars: function (server) {
         const checkResult = checkLicense(server.plugins.xpackMain.info);
 
@@ -38,6 +42,11 @@ module.exports = function (kibana) {
           protocol: Joi.string().valid(['http', 'https']),
           hostname: Joi.string(),
           port: Joi.number().integer()
+        }).default(),
+        queue: Joi.object({
+          indexInterval: Joi.string().default('week'),
+          pollInterval: Joi.number().integer().default(3000),
+          timeout: Joi.number().integer().default(30000),
         }).default(),
         phantom: Joi.object({
           zoom: Joi.number().integer().default(1),
@@ -69,12 +78,14 @@ module.exports = function (kibana) {
         .then(function (binaryPath) {
           server.log(['reporting', 'debug'], `Phantom installed at ${binaryPath}`);
 
-          // expose internal assets
-          server.expose('generatePDFStream', generatePDFStream(server));
+          // intialize and register application components
+          server.expose('generateDocument', generateDocument(server));
+          server.expose('queue', createQueue(server));
 
           // Reporting routes
           publicRoutes(server);
           fileRoutes(server);
+          jobRoutes(server);
         })
         .catch(function (err) {
           return plugin.status.red(err.message);

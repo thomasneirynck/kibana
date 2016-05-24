@@ -1,10 +1,11 @@
+require('plugins/reporting/services/document_create');
+const Notifier = require('ui/notify/notifier');
 const navbarExtensions = require('ui/registry/navbar_extensions');
 navbarExtensions.register(discoverReportProvider);
 
-function discoverReportProvider(Private, $window, reportingEnabled) {
+function discoverReportProvider(reportingEnabled, reportingDocumentCreate) {
   if (!reportingEnabled) return;
-
-  const appInfo = Private(require('plugins/reporting/app_info'));
+  const genericNotifier = new Notifier({ location: 'Reporting' });
 
   return {
     name: 'discoverReport',
@@ -13,14 +14,14 @@ function discoverReportProvider(Private, $window, reportingEnabled) {
     template: require('plugins/reporting/controls/export_button.html'),
     link: function discoverReport($scope) {
       $scope.handleClick = function () {
-        const info = appInfo();
+        return reportingDocumentCreate()
+        .catch((err) => {
+          if (err.message === 'not exportable') {
+            return alert('Only saved searches can be exported. Please save your work first.');
+          }
 
-        if (!info.exportable) {
-          alert('Only saved searches can be exported');
-          return;
-        }
-
-        $window.open(info.reportUrl, info.objectId);
+          genericNotifier.error(err);
+        });
       };
     }
   };

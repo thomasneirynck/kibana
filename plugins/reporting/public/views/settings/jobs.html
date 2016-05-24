@@ -1,0 +1,74 @@
+<kbn-settings-app section="reporting">
+  <div class="kbn-settings-reporting container">
+    <h1>Generated Reports</h1>
+
+    <table class="table table-striped job-list" ng-class="{ loading: loading === true }">
+      <thead>
+        <tr>
+          <th>Document</th>
+          <th>Added</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-if="!jobs.jobs.length">
+          <td colspan="5">No reports have been created</td>
+        </tr>
+        <tr ng-if="jobs.jobs.length" ng-repeat="job in jobs.jobs">
+          <td>
+            <div>{{ job.object_title }}</div>
+            <div class="metadata">{{ job.object_type }}</div>
+          </td>
+          <td>
+            <div>{{ job.created_at | date : 'yyyy-MM-dd @ h:mm a' }}</div>
+            <div class="metadata" ng-if="job.created_by">{{ job.created_by }}</div>
+          </td>
+          <td>
+            <div>{{ job.status }}</div>
+            <div
+              class="metadata"
+              ng-if="job.status !== 'pending'"
+              >
+              {{ job.started_at | date : 'yyyy-MM-dd @ h:mm a' }}
+            </div>
+          </td>
+          <td class="actions">
+            <button
+              class="btn btn-danger"
+              ng-if="job.status === 'failed' && errorMessage.job_id !== job.id"
+              ng-click=showError(job.id)
+              >
+              <i class="fa fa-question-circle"></i>
+            </button>
+            <div
+              class="error-message"
+              ng-if="errorMessage.job_id === job.id"
+              >
+              {{ errorMessage.message }}
+            </div>
+            <button
+              ng-if="job.status === 'completed'"
+              ng-click=download(job.id)
+              class="btn btn-default"
+              title="Download"
+              >
+              <i class="fa fa-download"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div style="text-align: center;">
+      <paging
+        page="currentPage"
+        page-size="10"
+        total="jobs.total"
+        show-prev-next="true"
+        show-first-last="true"
+        paging-action="setPage(page)">
+      </paging>
+    </div>
+  </div>
+</kbn-settings-app>

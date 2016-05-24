@@ -116,6 +116,21 @@ module.exports = function (client, config) {
           }
 
           return _.defaults({ _a: rison.encode(correctedState) }, query);
+        },
+        toJSON: function (query) {
+          const savedObj = {
+            id: this.id,
+            type: this.type,
+            searchSource: this.searchSource,
+            uiState: this.uiState,
+            url: this.getUrl(query)
+          };
+
+          fields.forEach((field) => {
+            savedObj[field] = this[field];
+          });
+
+          return savedObj;
         }
       });
 
