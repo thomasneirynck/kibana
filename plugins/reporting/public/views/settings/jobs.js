@@ -84,5 +84,16 @@ routes.when('/settings/reporting/jobs', {
     $scope.download = (jobId) => {
       $window.open(`../api/reporting/jobs/download/${jobId}`);
     };
+
+    // fetch and show job error details
+    $scope.showError = (jobId) => {
+      reportingJobQueue.getContent(jobId)
+      .then((doc) => {
+        $scope.errorMessage = {
+          job_id: jobId,
+          message: doc.content,
+        };
+      });
+    };
   }
 });

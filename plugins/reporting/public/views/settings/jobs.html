@@ -2,7 +2,7 @@
   <div class="kbn-settings-reporting container">
     <h1>Generated Reports</h1>
 
-    <table class="table table-striped" ng-class="{ loading: loading === true }">
+    <table class="table table-striped job-list" ng-class="{ loading: loading === true }">
       <thead>
         <tr>
           <th>Document</th>
@@ -18,22 +18,39 @@
         <tr ng-if="jobs.jobs.length" ng-repeat="job in jobs.jobs">
           <td>
             <div>{{ job.object_title }}</div>
-            <div style="color: #acb6c0">{{ job.object_type }}</div>
+            <div class="metadata">{{ job.object_type }}</div>
           </td>
           <td>
             <div>{{ job.created_at | date : 'yyyy-MM-dd @ h:mm a' }}</div>
-            <div style="color: #acb6c0" ng-if="job.created_by">{{ job.created_by }}</div>
+            <div class="metadata" ng-if="job.created_by">{{ job.created_by }}</div>
           </td>
           <td>
             <div>{{ job.status }}</div>
-            <div style="color: #acb6c0" ng-if="job.status === 'processing'">{{ job.started_at | date : 'yyyy-MM-dd @ h:mm a' }}</div>
-            <div style="color: #acb6c0" ng-if="job.status === 'completed'">{{ job.completed_at | date : 'yyyy-MM-dd @ h:mm a' }}</div>
+            <div
+              class="metadata"
+              ng-if="job.status !== 'pending'"
+              >
+              {{ job.started_at | date : 'yyyy-MM-dd @ h:mm a' }}
+            </div>
           </td>
-          <td>
+          <td class="actions">
             <button
-              class="btn btn-default"
+              class="btn btn-danger"
+              ng-if="job.status === 'failed' && errorMessage.job_id !== job.id"
+              ng-click=showError(job.id)
+              >
+              <i class="fa fa-question-circle"></i>
+            </button>
+            <div
+              class="error-message"
+              ng-if="errorMessage.job_id === job.id"
+              >
+              {{ errorMessage.message }}
+            </div>
+            <button
               ng-if="job.status === 'completed'"
               ng-click=download(job.id)
+              class="btn btn-default"
               title="Download"
               >
               <i class="fa fa-download"></i>
