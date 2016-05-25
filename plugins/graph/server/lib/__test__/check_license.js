@@ -12,6 +12,21 @@ describe('check_license: ', function () {
     mockLicenseInfo = {};
   });
 
+  context('mockLicenseInfo is not set', () => {
+    beforeEach(() => {
+      mockLicenseInfo = null;
+      licenseCheckResult = checkLicense(mockLicenseInfo);
+    });
+
+    it ('should set showGraphFeatures to false', () => {
+      expect(licenseCheckResult.showGraphFeatures).to.be(false);
+    });
+
+    it ('should set showLicensePage to false', () => {
+      expect(licenseCheckResult.showLicensePage).to.be(false);
+    });
+  });
+
   context('graph is disabled in Elasticsearch', () => {
     beforeEach(() => {
       set(mockLicenseInfo, 'feature', sinon.stub().withArgs('graph').returns({
@@ -59,18 +74,47 @@ describe('check_license: ', function () {
         licenseIsOneOfStub.withArgs([ 'basic' ]).returns(false);
         licenseIsOneOfStub.withArgs([ 'trial', 'platinum' ]).returns(true);
         set(mockLicenseInfo, 'license.isOneOf', licenseIsOneOfStub);
-        set(mockLicenseInfo, 'license.isActive', () => { return true; });
         set(mockLicenseInfo, 'license.getType', () => { return 'platinum'; });
-        licenseCheckResult = checkLicense(mockLicenseInfo);
       });
 
-      it ('should set showGraphFeatures to true', () => {
-        expect(licenseCheckResult.showGraphFeatures).to.be(true);
+      context('&license is active', () => {
+        beforeEach(() => {
+          set(mockLicenseInfo, 'license.isActive', () => { return true; });
+          licenseCheckResult = checkLicense(mockLicenseInfo);
+        });
+
+        it ('should set isLicenseActive to true', () => {
+          expect(licenseCheckResult.isLicenseActive).to.be(true);
+        });
+
+        it ('should set showGraphFeatures to true', () => {
+          expect(licenseCheckResult.showGraphFeatures).to.be(true);
+        });
+
+        it ('should set showLicensePage to false', () => {
+          expect(licenseCheckResult.showLicensePage).to.be(false);
+        });
       });
 
-      it ('should set showLicensePage to false', () => {
-        expect(licenseCheckResult.showLicensePage).to.be(false);
+      context('& license has expired', () => {
+        beforeEach(() => {
+          set(mockLicenseInfo, 'license.isActive', () => { return false; });
+          licenseCheckResult = checkLicense(mockLicenseInfo);
+        });
+
+        it ('should set isLicenseActive to false', () => {
+          expect(licenseCheckResult.isLicenseActive).to.be(false);
+        });
+
+        it ('should set showGraphFeatures to true', () => {
+          expect(licenseCheckResult.showGraphFeatures).to.be(true);
+        });
+
+        it ('should set showLicensePage to false', () => {
+          expect(licenseCheckResult.showLicensePage).to.be(false);
+        });
       });
+
     });
 
     context('& license is standard or gold', () => {
