@@ -30,8 +30,7 @@ export default (kibana) => new kibana.Plugin({
       clientCookieName: Joi.string().default('user'),
       encryptionKey: Joi.string(),
       sessionTimeout: Joi.number().default(30 * 60 * 1000),
-      useUnsafeSessions: Joi.boolean().default(false),
-      skipSslCheck: Joi.boolean().default(false)
+      secureCookies: Joi.boolean().default(false)
     }).default();
   },
 
@@ -59,7 +58,7 @@ export default (kibana) => new kibana.Plugin({
       const config = server.config();
       return {
         ...licenseCheckResults,
-        shieldUnsafeSessions: config.get('xpack.security.useUnsafeSessions'),
+        secureCookies: config.get('xpack.security.secureCookies'),
         sessionTimeout: config.get('xpack.security.sessionTimeout'),
         clientCookieName: config.get('xpack.security.clientCookieName')
       };
@@ -81,7 +80,7 @@ export default (kibana) => new kibana.Plugin({
     validateConfig(config, message => server.log(['security', 'warning'], message));
 
     const commonCookieConfig = {
-      isSecure: !config.get('xpack.security.useUnsafeSessions'),
+      isSecure: config.get('xpack.security.secureCookies'),
       path: config.get('server.basePath') + '/'
     };
 

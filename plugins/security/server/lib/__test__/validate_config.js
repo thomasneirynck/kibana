@@ -17,56 +17,47 @@ describe('Validate config', function () {
   it('should log a warning and set xpack.security.encryptionKey if not set', function () {
     config.get.withArgs('server.ssl.key').returns('foo');
     config.get.withArgs('server.ssl.cert').returns('bar');
+    config.get.withArgs('xpack.security.secureCookies').returns(false);
 
     expect(() => validateConfig(config, log)).not.to.throwError();
 
     sinon.assert.calledWith(config.set, 'xpack.security.encryptionKey');
+    sinon.assert.calledWith(config.set, 'xpack.security.secureCookies', true);
     sinon.assert.calledWithMatch(log, /Generating a random key/);
     sinon.assert.calledWithMatch(log, /please set xpack.security.encryptionKey/);
   });
 
-  it('should throw an error if SSL is not being used', function () {
+  it('should log a warning if SSL is not configured', function () {
     config.get.withArgs('xpack.security.encryptionKey').returns('baz');
-    console.log(config.get('server.ssl.key'));
-
-    expect(() => validateConfig(config, log)).to.throwError(/HTTPS is required/);
-
-    sinon.assert.notCalled(config.set);
-    sinon.assert.notCalled(log);
-  });
-
-  it('should not throw without SSL when configured to skip check', function () {
-    config.get.withArgs('xpack.security.encryptionKey').returns('baz');
-    config.get.withArgs('xpack.security.skipSslCheck').returns(true);
+    config.get.withArgs('xpack.security.secureCookies').returns(false);
 
     expect(() => validateConfig(config, log)).not.to.throwError();
 
-    sinon.assert.notCalled(config.set);
-    sinon.assert.calledWithMatch(log, /skipping.+ssl\ check/i);
-    sinon.assert.calledWithMatch(log, /ssl\ is\ required/i);
+    sinon.assert.neverCalledWith(config.set, 'xpack.security.encryptionKey');
+    sinon.assert.neverCalledWith(config.set, 'xpack.security.secureCookies');
+    sinon.assert.calledWithMatch(log, /Session cookies will be transmitted over insecure connections/);
   });
 
-  it('should not throw without SSL when configured to skip check and use insecure sessions', function () {
+  it('should log a warning if SSL is not configured yet secure cookies are being used', function () {
     config.get.withArgs('xpack.security.encryptionKey').returns('baz');
-    config.get.withArgs('xpack.security.skipSslCheck').returns(true);
-    config.get.withArgs('xpack.security.useUnsafeSessions').returns(true);
+    config.get.withArgs('xpack.security.secureCookies').returns(true);
 
     expect(() => validateConfig(config, log)).not.to.throwError();
 
-    sinon.assert.notCalled(config.set);
-    sinon.assert.calledWithMatch(log, /skipping.+ssl\ check/i);
-    sinon.assert.calledWithMatch(log, /insecure\ session/i);
-    sinon.assert.calledWithMatch(log, /not\ recommended/i);
+    sinon.assert.neverCalledWith(config.set, 'xpack.security.encryptionKey');
+    sinon.assert.neverCalledWith(config.set, 'xpack.security.secureCookies');
+    sinon.assert.calledWithMatch(log, /SSL must be configured outside of Kibana/);
   });
 
-  it('should not throw any errors with a valid config', function () {
+  it('should set xpack.security.secureCookies if SSL is configured', function () {
     config.get.withArgs('server.ssl.key').returns('foo');
     config.get.withArgs('server.ssl.cert').returns('bar');
     config.get.withArgs('xpack.security.encryptionKey').returns('baz');
 
     expect(() => validateConfig(config, log)).not.to.throwError();
 
-    sinon.assert.notCalled(config.set);
+    sinon.assert.neverCalledWith(config.set, 'xpack.security.encryptionKey');
+    sinon.assert.calledWith(config.set, 'xpack.security.secureCookies', true);
     sinon.assert.notCalled(log);
   });
 });
