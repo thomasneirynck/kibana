@@ -195,8 +195,8 @@
             <li ng-class="{active: spymode == 'response'}"><a ng-click="spymode='response'">Response</a></li>
           </ul>
 
-          <div ng-show="spymode == 'request'" ui-ace="{ onLoad: aceLoaded, mode: 'json' }" ng-model="workspace.lastRequest" class="requestJsonView"></div>
-          <div ng-show="spymode == 'response'" ui-ace="{ onLoad: aceLoaded, mode: 'json' }" ng-model="workspace.lastResponse" class="requestJsonView"></div>
+          <div ng-show="spymode == 'request'" ui-ace="{ onLoad: aceLoaded, mode: 'json', advanced: { readOnly: true } }" ng-model="workspace.lastRequest" class="requestJsonView"></div>
+          <div ng-show="spymode == 'response'" ui-ace="{ onLoad: aceLoaded, mode: 'json', advanced: { readOnly: true } }" ng-model="workspace.lastResponse" class="requestJsonView"></div>
         </div>
       </div>
       <div>
