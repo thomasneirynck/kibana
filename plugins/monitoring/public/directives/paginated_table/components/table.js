@@ -105,7 +105,11 @@ define(function (require) {
       var filteredTableData = getFilteredData(this.state.tableData, this.state.filter);
       var viewingCount = Math.min(filteredTableData.length, this.state.itemsPerPage);
       var $count = make.div(null, viewingCount + ' of ' + this.state.tableData.length);
-      var $titleBar = make.div({className: 'title-bar'}, $title, $filter, $count, make.div({className: 'clearfix'}));
+      var titleClasses = 'title-bar';
+      if (this.props.options.title == null) {
+        titleClasses += ' no-title';
+      }
+      var $titleBar = make.div({className: titleClasses}, $title, $filter, $count, make.div({className: 'clearfix'}));
 
 
       // Make the Table

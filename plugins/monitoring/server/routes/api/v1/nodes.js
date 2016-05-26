@@ -8,7 +8,7 @@ const getListing = require('../../../lib/get_listing_nodes');
 const getShardStats = require('../../../lib/get_shard_stats');
 const getShardAllocation = require('../../../lib/get_shard_allocation');
 const calculateIndices = require('../../../lib/calculate_indices');
-const calculateClusterStatus = require('../../../lib/calculate_cluster_status');
+const calculateClusterStatus = require('../../../lib/elasticsearch/calculate_cluster_status');
 const calculateNodeType = require('../../../lib/calculate_node_type');
 const getLastState = require('../../../lib/get_last_state');
 const getDefaultNodeFromId = require('../../../lib/get_default_node_from_id');
@@ -75,7 +75,7 @@ module.exports = (server) => {
 
           // copy some things over from nodes to row
           row.resolver = resolver;
-          row.offline = !clusterState.nodes[row.resolver];
+          row.online = !_.isUndefined(clusterState.nodes[row.resolver]);
           if (!node) {
             // workaround for node indexed with legacy agent
             node = getDefaultNodeFromId(resolver);

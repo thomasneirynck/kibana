@@ -1,3 +1,14 @@
+/*
+ * Get detailed info for Kibanas in the cluster
+ * for Kibana listing page
+ * For each instance:
+ *  - name
+ *  - status
+ *  - memory
+ *  - os load average
+ *  - requests
+ *  - response times
+ */
 import _ from 'lodash';
 import moment from 'moment';
 import Promise from 'bluebird';

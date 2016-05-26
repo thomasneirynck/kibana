@@ -1,30 +1,25 @@
-define(function (require) {
-  const _ = require('lodash');
-  const numeral = require('numeral');
-  const module = require('ui/modules').get('monitoring/directives', []);
-  const React = require('react');
-  const make = React.DOM;
+import _ from 'lodash';
+import numeral from 'numeral';
+import React from 'react';
+import statusIconClass from '../../lib/status_icon_class';
 
+define(function (require) {
+  const make = React.DOM;
+  const module = require('ui/modules').get('monitoring/directives', []);
   const Table = require('plugins/monitoring/directives/paginated_table/components/table');
 
   function getStatusAndClasses(value, availability) {
-    const iconMapping = {
-      'green': 'fa-check',
-      'yellow': 'fa-warning',
-      'red': 'fa-bolt'
-    };
-
     if (availability === false) {
       return {
         status: 'Offline',
-        statusClass: 'offline',
-        iconClass: 'offline'
+        statusClass: 'status-offline',
+        iconClass: statusIconClass('offline')
       };
     }
     return {
       status: _.capitalize(value),
       statusClass: `status-${value}`,
-      iconClass: iconMapping[value]
+      iconClass: statusIconClass(value)
     };
   }
   module.directive('monitoringKibanaListing', function (kbnUrl) {
@@ -32,7 +27,21 @@ define(function (require) {
       let value = _.get(this.props, dataKey.key);
       let $content = null;
 
+      // If offline, just show the name and status. everything else N/A
+      const online = this.props.availability;
+      const applicable = _.includes(['kibana.name', 'kibana.status'], dataKey.key);
+      if (!online && !applicable) {
+        return (
+          <td>
+            <div className='big offline'>
+              N/A
+            </div>
+          </td>
+        );
+      }
+
       if (value instanceof(Array)) value = value.join(', ');
+
       switch (dataKey.key) {
         case 'kibana.name':
           $content = (
@@ -51,10 +60,9 @@ define(function (require) {
         case 'kibana.status':
           const { status, statusClass, iconClass } = getStatusAndClasses(value, this.props.availability);
           $content = (
-            <div className={`big kibana-status ${statusClass}`}>
-              {status}
-              <i className={`fa ${iconClass}`}></i>
-            </div>
+            <span className={`status ${statusClass}`}>
+              {status} <i className={`${iconClass}`}></i>
+            </span>
           );
           break;
         case 'process.memory.heap':
@@ -91,7 +99,7 @@ define(function (require) {
 
     const initialTableOptions = {
       title: 'Kibana',
-      searchPlaceholder: 'Filter Servers',
+      searchPlaceholder: 'Filter Instances',
       columns: [
         {
           key: 'kibana.name',
@@ -142,7 +150,7 @@ define(function (require) {
             const boundTemplateFn = _.bind(makeTdWithPropKey, this, scope);
             const $tdsArr = initialTableOptions.columns.map(boundTemplateFn);
             return make.tr({
-              className: 'big no-border',
+              className: 'big',
               key: `row-${this.props.resolver}`
             }, $tdsArr);
           }

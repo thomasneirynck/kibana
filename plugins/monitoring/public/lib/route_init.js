@@ -23,7 +23,6 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
       }());
 
       if (cluster) {
-        globalState.cluster_name = cluster.cluster_name;
         globalState.cluster_uuid = cluster.cluster_uuid;
         globalState.save();
       } else {

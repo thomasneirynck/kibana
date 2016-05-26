@@ -1,8 +1,29 @@
 .cluster-overview {
+  margin-left: -15px;
   .cluster-item {
+    float: left;
+    width: 585px;
     background-color: @white;
-    border-top: @thick solid @esGray;
     padding: 15px;
-    min-height: 150px;
+    margin: 15px 0 0 15px;
+    min-height: 250px;
+
+    h3 {
+      margin: -15px -15px 0 -15px;
+      padding: 10px;
+    }
+
+    .statusContainer {
+      margin: 10px 0;
+    }
+
+    dt {
+      color: #328caa;
+      font-weight: normal;
+      font-size: 18px;
+    }
+  }
+  .cluster-item:hover {
+    cursor: pointer;
   }
 }

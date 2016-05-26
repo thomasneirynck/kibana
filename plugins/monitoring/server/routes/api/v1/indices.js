@@ -10,7 +10,7 @@ const getListing = require('../../../lib/get_listing_indices');
 const getShardStats = require('../../../lib/get_shard_stats');
 const getShardAllocation = require('../../../lib/get_shard_allocation');
 const getUnassignedShards = require('../../../lib/get_unassigned_shards');
-const calculateClusterStatus = require('../../../lib/calculate_cluster_status');
+const calculateClusterStatus = require('../../../lib/elasticsearch/calculate_cluster_status');
 const handleError = require('../../../lib/handle_error');
 
 module.exports = (server) => {

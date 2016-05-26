@@ -46,14 +46,33 @@ monitoring-main {
     font-weight: normal;
   }
 
-  .fa-bolt {
-    color: @esRed;
-  }
-
-  .fa-warning {
-    color: @esYellow;
-  }
-
   a[data-reactid] { cursor: pointer; }
 
+  .status {
+    display: inline-block;
+    margin-left: 4px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: white;
+  }
+
+  .status-green {
+    background-color: @esGreen;
+  }
+
+  .status-red {
+    background-color: @esRed;
+  }
+
+  .status-yellow {
+    background-color: @esYellow;
+  }
+
+  .status-offline {
+    background-color: @esGray;
+  }
+
+  .offline {
+    color: @esDarkGray;
+  }
 }

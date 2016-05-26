@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import calculateKibanaStatus from '../calculate_cluster_health_kibana';
+import calculateKibanaStatus from '../calculate_overall_status';
 
 describe('Calculate Kibana Cluster Helath', () => {
   it('health status combined from multiple instances', () => {

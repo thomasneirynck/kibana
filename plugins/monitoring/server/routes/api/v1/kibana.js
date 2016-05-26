@@ -1,11 +1,18 @@
 import Joi from 'joi';
 import Promise from 'bluebird';
+import _ from 'lodash';
 import getKibanas from '../../../lib/get_kibanas';
 import getKibanaInfo from '../../../lib/get_kibana_info';
-import getClusterStatusKibana from '../../../lib/get_cluster_status_kibana';
+import getKibanasForClusters from '../../../lib/get_kibanas_for_clusters';
 import handleError from '../../../lib/handle_error';
 const getMetrics = require('../../..//lib/get_metrics');
 const calculateIndices = require('../../..//lib/calculate_indices');
+
+const getClusterStatus = function (req, kibanaIndices, calledFrom) {
+  const getKibanaForCluster = getKibanasForClusters(req, kibanaIndices, calledFrom);
+  return getKibanaForCluster([{ cluster_uuid: req.params.clusterUuid }])
+  .then(clusterStatus => _.get(clusterStatus, '[0].stats'));
+};
 
 module.exports = (server) => {
   server.route({
@@ -32,7 +39,7 @@ module.exports = (server) => {
       .then(kibanaIndices => {
         return Promise.props({
           kibanas: getKibanas(req, kibanaIndices),
-          clusterStatus: getClusterStatusKibana(req, kibanaIndices)
+          clusterStatus: getClusterStatus(req, kibanaIndices, 'route-kibana-listing'),
         });
       })
       .then (kibanas => reply(kibanas))
@@ -66,7 +73,7 @@ module.exports = (server) => {
       .then(kibanaIndices => {
         return Promise.props({
           metrics: getMetrics(req, kibanaIndices),
-          clusterStatus: getClusterStatusKibana(req, kibanaIndices),
+          clusterStatus: getClusterStatus(req, kibanaIndices, 'route-kibana-instance'),
           kibanaSummary: getKibanaInfo(req, req.params.kibanaUuid)
         });
       })

@@ -1,4 +1,11 @@
 <div>
+  <div>
+    Status:
+    <span class="status status-{{summaryStatus|lowercase}}">
+      {{ summaryStatus|capitalize }}
+      <i class="{{statusIconClass}}"></i>
+    </span>
+  </div>
   <div>{{ node.transport_address|extractIp }}</div>
   <div>Documents: {{ node.documents|formatNumber:'0.[0]a' }}</div>
   <div>Data: {{ node.dataSize|formatNumber:'0.0b' }}</div>
@@ -6,9 +13,5 @@
   <div>Indices: {{ node.indexCount|formatNumber:'0,0' }}</div>
   <div>Total Shards: {{ node.totalShards|formatNumber:'0,0' }}</div>
   <div>Type: {{ node.nodeTypeLabel }}</div>
-  <div>
-    Status:
-    <span class="status-{{node.status.toLowerCase()}}">{{ node.status }}</span>
-  </div>
 </div>
 

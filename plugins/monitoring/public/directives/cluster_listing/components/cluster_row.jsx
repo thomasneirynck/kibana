@@ -1,7 +1,8 @@
-var React = require('react');
-var numeral = require('numeral');
-var moment = require('moment');
-var _ = require('lodash');
+import React from 'react';
+import numeral from 'numeral';
+import moment from 'moment';
+import _ from 'lodash';
+import statusIconClass from '../../../lib/status_icon_class';
 
 class ClusterRow extends React.Component {
 
@@ -12,12 +13,12 @@ class ClusterRow extends React.Component {
 
   render() {
 
-    var self = this;
+    const self = this;
     function get(path) {
       return _.get(self.props, path);
     }
 
-    var licenseExpiry = (
+    let licenseExpiry = (
       <div className="expires">
         Expires { moment(get('license.expiry_date_in_millis')).format('D MMM YY') }
       </div>
@@ -27,19 +28,29 @@ class ClusterRow extends React.Component {
       licenseExpiry = (<div className="expires expired">Expired</div>);
     }
 
-    var classes = [];
-    var notBasic = true;
+    const classes = [];
+    let notBasic = true;
     if (get('license.type') === 'basic') {
       classes.push('basic');
       notBasic = false;
     }
 
+    const iconClass = statusIconClass(get('status'));
     return (
       <tr className={ classes.join(' ') }>
-        <td key="Name"><a onClick={(event) => this.changeCluster(event) }>{ get('cluster_name') }</a></td>
-        <td key="Nodes">{ notBasic ? numeral(get('stats.nodes.count.total')).format('0,0') : '-' }</td>
-        <td key="Indices">{ notBasic ? numeral(get('stats.indices.count')).format('0,0') : '-' }</td>
-        <td key="Data">{ notBasic ? numeral(get('stats.indices.store.size_in_bytes')).format('0,0[.]0 b') : '-' }</td>
+        <td key="Name">
+          <a className='clusterName' onClick={(event) => this.changeCluster(event) }>
+            { get('cluster_name') }
+          </a>
+        </td>
+        <td key="Status">
+          <span className={`status status-${get('status')}`}>
+            {_.capitalize(this.props.status)} <i className={iconClass}></i>
+          </span>
+        </td>
+        <td key="Nodes">{ notBasic ? numeral(get('elasticsearch.stats.nodes.count.total')).format('0,0') : '-' }</td>
+        <td key="Indices">{ notBasic ? numeral(get('elasticsearch.stats.indices.count')).format('0,0') : '-' }</td>
+        <td key="Data">{ notBasic ? numeral(get('elasticsearch.stats.indices.store.size_in_bytes')).format('0,0[.]0 b') : '-' }</td>
         <td key="Kibana">{ notBasic ? numeral(get('kibana.count')).format('0,0') : '-' }</td>
         <td key="License" className="license">
           <div className="license">{ _.capitalize(get('license.type')) }</div>

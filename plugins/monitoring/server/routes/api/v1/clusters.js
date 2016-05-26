@@ -6,13 +6,34 @@ const getClusters = require('../../../lib/get_clusters');
 const getClustersStats = require('../../../lib/get_clusters_stats');
 const getClustersHealth = require('../../../lib/get_clusters_health');
 const getKibanasForClusters = require('../../../lib/get_kibanas_for_clusters');
+const calculateOverallStatus = require('../../../lib/calculate_overall_status');
 const getLastState = require('../../../lib/get_last_state');
 const getClusterStatus = require('../../../lib/get_cluster_status');
 const getMetrics = require('../../../lib/get_metrics');
 const getShardStats = require('../../../lib/get_shard_stats');
 const getLastRecovery = require('../../../lib/get_last_recovery');
-const calculateClusterStatus = require('../../../lib/calculate_cluster_status');
+const calculateClusterStatus = require('../../../lib/elasticsearch/calculate_cluster_status');
 const handleError = require('../../../lib/handle_error');
+
+// manipulate cluster status
+function normalizeClustersData(clusters) {
+  clusters.forEach(cluster => {
+    cluster.elasticsearch = {
+      status: cluster.status,
+      stats: cluster.stats,
+      nodes: cluster.nodes,
+      indices: cluster.indices
+    };
+    cluster.status = calculateOverallStatus([
+      cluster.elasticsearch.status,
+      cluster.kibana.status
+    ]);
+    delete cluster.stats;
+    delete cluster.nodes;
+    delete cluster.indices;
+  });
+  return clusters;
+}
 
 module.exports = (server) => {
   const config = server.config();
@@ -46,7 +67,19 @@ module.exports = (server) => {
         return getClusters(req, esIndices)
         .then(getClustersStats(req))
         .then(getClustersHealth(req))
-        .then(getKibanasForClusters(req, kibanaIndices))
+        .then(clusters => {
+          const mapClusters = getKibanasForClusters(req, kibanaIndices, 'route-clusters');
+          return mapClusters(clusters)
+          .then(kibanas => {
+            // add the kibana data to each cluster
+            kibanas.forEach(kibana => {
+              const clusterIndex = _.findIndex(clusters, { cluster_uuid: kibana.clusterUuid });
+              _.set(clusters[clusterIndex], 'kibana', kibana.stats);
+            });
+            return clusters;
+          });
+        })
+        .then(clusters => normalizeClustersData(clusters))
         .then(clusters => reply(_.sortBy(clusters, 'cluster_name')));
       })
       .catch(err => reply(handleError(err, req)));

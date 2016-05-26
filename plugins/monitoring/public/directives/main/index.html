@@ -1,19 +1,13 @@
 <div class="app-container">
   <kbn-top-nav class="navbar navbar-default navbar-static-top" name="{{name}}-nav">
-    <ul role="breadcrumbs" class="breadcrumb">
-      <li>
-        <a kbn-href="#/home" class="navbar-link">Clusters</a>
-      </li>
-      <li ng-if="!inListing">
-        <a kbn-href="#/overview" class="navbar-link">{{clusterName}}</a>
-      </li>
-      <li ng-if="inElasticsearch">
-        <a kbn-href="#/elasticsearch" class="navbar-link">Elasticsearch</a>
-      </li>
-      <li ng-if="inKibana">
-        <a kbn-href="#/kibana" class="navbar-link">Kibana</a>
-      </li>
-    </ul>
+    <div class="monitoring-bread-crumbs">
+      <ul role="breadcrumbs">
+        <li ng-repeat="crumb in breadcrumbs">
+          <a kbn-href="{{crumb.url}}">{{crumb.label}}</a>
+          <span ng-hide="$last">/</span>
+        </li>
+      </ul>
+    </div>
 
     <ul ng-if="inElasticsearch" class="nav navbar-nav" role="navigation">
       <li ng-class="{active: isActive('indices')}">

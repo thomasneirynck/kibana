@@ -1,0 +1,10 @@
+<div>
+  <div>
+    Status:
+    <span class="status status-{{ statusClass }}">
+      {{ kibanaStatus|capitalize }}
+      <i class="{{statusIconClass}}"></i>
+    </span>
+  </div>
+  <div>{{ kibana.transport_address }}</div>
+</div>

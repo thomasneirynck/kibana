@@ -638,7 +638,7 @@ module.exports = {
     description: 'The number of concurrent connections to the server',
     format: formatSmallFloat,
     metricAgg: 'max',
-    units: '',
+    units: '/s',
     ...kibanaCharts,
     derivative: false
   },
@@ -649,7 +649,7 @@ module.exports = {
     description: 'The number of requests received by the server',
     format: formatSmallFloat,
     metricAgg: 'avg',
-    units: '',
+    units: '/s',
     ...kibanaCharts,
     derivative: false
   },

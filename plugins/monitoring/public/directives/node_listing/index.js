@@ -1,8 +1,10 @@
+import _ from 'lodash';
+import numeral from 'numeral';
+import React from 'react';
+import statusIconClass from '../../lib/status_icon_class';
+
 define(function (require) {
-  var _ = require('lodash');
-  var numeral = require('numeral');
   var module = require('ui/modules').get('monitoring/directives', []);
-  var React = require('react');
   var make = React.DOM;
   var extractIp = require('plugins/monitoring/lib/extract_ip');
 
@@ -46,9 +48,7 @@ define(function (require) {
           };
         }(value.metric));
         // if the node is no longer online only show N/A
-        if (this.props.offline) {
-          $content = make.div(null, make.div({className: 'big inline'}, 'N/A'));
-        } else {
+        if (this.props.online) {
           var displayVal = formatNumber(value.last);
           // make the big metric value you appear with min,
           // max, and an arrow.
@@ -58,15 +58,29 @@ define(function (require) {
             make.div({className: 'inline'},
               make.div({className: 'small'}, formatNumber(value.max) + ' max'),
               make.div({className: 'small'}, formatNumber(value.min) + ' min')));
+        } else {
+          $content = make.div(null, make.div({className: 'big offline'}, 'N/A'));
         }
       }
       // Content for non metric columns
       if (!$content && !_.isUndefined(value)) {
-        if (this.props.offline && dataKey.key !== 'status') {
-          $content = make.div(null, make.div({className: 'big inline'}, 'N/A'));
-        } else {
+        if (dataKey.key === 'status') {
+          $content = (() => {
+            const status = value.toLowerCase();
+            let statusIcon;
+            if (status === 'online') {
+              statusIcon = statusIconClass('green');
+              return make.div(null, make.span({className: 'status status-green'}, 'Online ', make.i({className: statusIcon})));
+            }
+            statusIcon = statusIconClass('offline');
+            return make.div(null, make.span({className: 'status status-offline'}, 'Offline ', make.i({className: statusIcon})));
+          }());
+        }
+        else if (this.props.online) {
           const classNames = `big inline ${dataKey.key}-${('' + value).toLowerCase()}`;
           $content = make.div(null, make.div({className: classNames}, value));
+        } else {
+          $content = make.div(null, make.div({className: 'big offline'}, 'N/A'));
         }
       }
       return make.td({key: idx}, $content);
@@ -90,7 +104,7 @@ define(function (require) {
         },
         {
           key: 'status',
-          sortKey: 'offline',
+          sortKey: 'online',
           title: 'Status'
         },
         {
@@ -131,7 +145,7 @@ define(function (require) {
           row.nodeName = _.get(row, 'node.name');
           row.type = _.get(row, 'node.type');
           row.transport_address = _.get(row, 'node.transport_address');
-          row.status = row.offline ? 'Offline' : 'Online';
+          row.status = row.online ? 'Online' : 'Offline';
           return row;
         }
 
@@ -149,7 +163,7 @@ define(function (require) {
             var boundTemplateFn = _.bind(makeTdWithPropKey, this, scope);
             var $tdsArr = initialTableOptions.columns.map(boundTemplateFn);
             return make.tr({
-              className: 'big no-border',
+              className: 'big',
               key: `row-${this.props.resolver}`
             }, $tdsArr);
           }
