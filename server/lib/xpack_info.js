@@ -1,7 +1,3 @@
-/* Call the XPack Info API for feature flags and mode of license
- * Requires an authenticated client
- * Doesn't give detailed info about license
- */
 import moment from 'moment';
 import { get, includes } from 'lodash';
 
