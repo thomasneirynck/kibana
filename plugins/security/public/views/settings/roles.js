@@ -4,7 +4,7 @@ import {toggle, toggleSort} from 'plugins/security/lib/util';
 import template from 'plugins/security/views/settings/roles.html';
 import 'plugins/security/services/shield_role';
 
-routes.when('/settings/security/roles', {
+routes.when('/management/elasticsearch/roles', {
   template,
   resolve: {
     roles(ShieldRole) {

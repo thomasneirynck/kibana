@@ -8,7 +8,7 @@ import 'plugins/security/services/shield_role';
 import 'plugins/security/services/shield_privileges';
 import 'plugins/security/services/shield_indices';
 
-routes.when('/settings/security/roles/edit/:name?', {
+routes.when('/management/elasticsearch/roles/edit/:name?', {
   template,
   resolve: {
     role($route, ShieldRole) {
@@ -58,7 +58,7 @@ routes.when('/settings/security/roles/edit/:name?', {
     };
 
     $scope.goToRoleList = () => {
-      $location.path('/settings/security/roles');
+      $location.path('/management/elasticsearch/roles');
     };
 
     $scope.addIndex = (indices) => {

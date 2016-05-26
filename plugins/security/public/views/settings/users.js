@@ -4,7 +4,7 @@ import {toggle, toggleSort} from 'plugins/security/lib/util';
 import template from 'plugins/security/views/settings/users.html';
 import 'plugins/security/services/shield_user';
 
-routes.when('/settings/security/users', {
+routes.when('/management/elasticsearch/users', {
   template,
   resolve: {
     users(ShieldUser) {

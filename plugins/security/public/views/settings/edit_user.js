@@ -7,7 +7,7 @@ import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
 import 'plugins/security/views/settings/edit_user.less';
 
-routes.when('/settings/security/users/edit/:username?', {
+routes.when('/management/elasticsearch/users/edit/:username?', {
   template,
   resolve: {
     user($route, ShieldUser) {
@@ -46,7 +46,7 @@ routes.when('/settings/security/users/edit/:username?', {
     };
 
     $scope.goToUserList = () => {
-      $location.path('/settings/security/users');
+      $location.path('/management/elasticsearch/users');
     };
 
     $scope.changePassword = (user) => {

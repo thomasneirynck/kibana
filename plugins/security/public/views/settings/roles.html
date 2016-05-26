@@ -1,13 +1,9 @@
-<kbn-settings-app section="security">
-  <div class="kbn-settings-security container" ng-if="forbidden">
+<kbn-management-app section="elasticsearch">
+  <div class="kbn-management-security container" ng-if="forbidden">
     You do not have permission to manage users/roles. Please contact your administrator.
   </div>
 
-  <div class="kbn-settings-security container" ng-if="!forbidden">
-    <ul class="nav nav-tabs">
-      <li class="kbn-settings-tab"><a href="#/settings/security/users">Users</a></li>
-      <li class="kbn-settings-tab active"><a href="#/settings/security/roles">Roles</a></li>
-    </ul>
+  <div class="kbn-management-security container-fluid" ng-if="!forbidden">
     <br />
     <div class="tab-content">
       <div class="container">
@@ -17,7 +13,7 @@
           </form>
           <div class="pull-right">
             <button ng-click="deleteRoles()" class="btn btn-danger" ng-disabled="!selectedRoles.length">Delete</button>
-            <a href="#/settings/security/roles/edit" ng-click="newRole()" class="btn btn-default">New Role</a>
+            <a href="#/management/elasticsearch/roles/edit" ng-click="newRole()" class="btn btn-default">New Role</a>
           </div>
         </div>
       </div>
@@ -42,7 +38,7 @@
               <input type="checkbox" ng-click="toggle(selectedRoles, role)" ng-checked="includes(selectedRoles, role)" ng-disabled="isReservedRole(role)" />
             </td>
             <td>
-              <a ng-href="#/settings/security/roles/edit/{{role.name}}">{{role.name}}</a>
+              <a ng-href="#/management/elasticsearch/roles/edit/{{role.name}}">{{role.name}}</a>
             </td>
             <td>{{role.description}}</td>
             <td>
@@ -59,4 +55,4 @@
       </table>
     </div>
   </div>
-</kbn-settings-app>
+</kbn-management-app>
