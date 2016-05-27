@@ -1,5 +1,7 @@
 import { join } from 'path';
+import Promise from 'bluebird';
 import xpackInfo from '../../server/lib/xpack_info';
+import xpackUsage from '../../server/lib/xpack_usage';
 import requireAllAndApply from '../../server/lib/require_all_and_apply';
 
 export default function (kibana) {
@@ -8,9 +10,15 @@ export default function (kibana) {
     require: ['elasticsearch'],
     init: function (server) {
       const client = server.plugins.elasticsearch.client; // NOTE: authenticated client using server config auth
-      return xpackInfo(client)
-      .then(info => {
+      return Promise.all([
+        xpackInfo(client),
+        xpackUsage(client)
+      ])
+      .then(([ info, usage ]) => {
         server.expose('info', info);
+        server.expose('usage', usage);
+      })
+      .then(() => {
         return requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server);
       })
       .catch(reason => {
