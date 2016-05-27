@@ -89,6 +89,17 @@ describe('xpack_info', function () {
         });
       });
     });
+
+    describe('getType()', function () {
+      it ('returns the correct license type', function () {
+        setClientResponse({ license: { type: 'basic' } });
+        xpackInfo(mockClient, pollFrequencyInMillis)
+        .then(info => {
+          info.stopPolling();
+          expect(info.license.getType()).to.be('basic');
+        });
+      });
+    });
   });
 
   describe('feature', function () {
