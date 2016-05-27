@@ -3,11 +3,11 @@ import moment from 'moment';
 import { get, includes } from 'lodash';
 
 const EXPIRY_SOON_DURATION = moment.duration(30, 'days');
-const DEFAULT_POLL_FREQUENCY_IN_MILLIS = 30 * 1000;
+const DEFAULT_POLL_FREQUENCY = moment.duration(30, 'seconds');
 
 export default function xpackInfo(server, client, pollFrequencyInMillis) {
 
-  pollFrequencyInMillis = pollFrequencyInMillis || DEFAULT_POLL_FREQUENCY_IN_MILLIS;
+  pollFrequencyInMillis = pollFrequencyInMillis || DEFAULT_POLL_FREQUENCY.asMilliseconds();
 
   let _cachedResponse;
   let _cachedResponseSignature;
