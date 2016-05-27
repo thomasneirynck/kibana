@@ -14,7 +14,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
   let _timeoutId;
 
   function _callElasticsearchXPackAPI() {
-    server.log([ 'license', 'debug', 'plugin:xpackMain' ], 'calling ES _xpack API');
+    server.log([ 'license', 'debug', 'plugin:xpackMain' ], 'Calling Elasticsearch _xpack API');
     return client.transport.request({
       method: 'GET',
       path: '_xpack'
