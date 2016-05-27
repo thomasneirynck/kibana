@@ -89,21 +89,6 @@ describe('xpack_info', function () {
         });
       });
     });
-
-    describe('getSignature()', function () {
-      it ('returns the correct signature', function () {
-        setClientResponse({ license: { status: 'active', mode: 'basic', expiry_date_in_millis: 1464315131123 }});
-        const expectedSignature = createHash('md5')
-        .update('active|1464315131123|basic')
-        .digest('hex');
-
-        xpackInfo(mockClient, pollFrequencyInMillis)
-        .then(info => {
-          info.stopPolling();
-          expect(info.getSignature()).to.be(expectedSignature);
-        });
-      });
-    });
   });
 
   describe('feature', function () {
@@ -142,6 +127,21 @@ describe('xpack_info', function () {
           info.stopPolling();
           expect(info.feature('graph').isEnabled()).to.be(false);
         });
+      });
+    });
+  });
+
+  describe('getSignature()', function () {
+    it ('returns the correct signature', function () {
+      setClientResponse({ license: { status: 'active', mode: 'basic', expiry_date_in_millis: 1464315131123 }});
+      const expectedSignature = createHash('md5')
+      .update('active|1464315131123|basic')
+      .digest('hex');
+
+      xpackInfo(mockClient, pollFrequencyInMillis)
+      .then(info => {
+        info.stopPolling();
+        expect(info.getSignature()).to.be(expectedSignature);
       });
     });
   });
