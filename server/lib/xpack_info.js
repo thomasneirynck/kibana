@@ -22,8 +22,8 @@ export default function xpackInfo(client, pollFrequencyInMillis) {
 
   function _computeResponseSignature(response) {
     const data = get(response, 'license.status')
-    + get(response, 'license.expiry_date_in_millis', '').toString()
-    + get(response, 'license.mode');
+    + '|' + get(response, 'license.expiry_date_in_millis', '').toString()
+    + '|' + get(response, 'license.mode');
 
     return createHash('md5')
     .update(data)
@@ -80,6 +80,9 @@ export default function xpackInfo(client, pollFrequencyInMillis) {
             return get(_cachedResponse, 'features.' + feature + '.enabled');
           }
         };
+      },
+      getSignature: function () {
+        return _cachedResponseSignature;
       },
       stopPolling: function () {
         // This method exists primarily for unit testing

@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 const expect = require('expect.js');
 const Bluebird = require('bluebird');
 import moment from 'moment';
@@ -88,6 +89,21 @@ describe('xpack_info', function () {
         });
       });
     });
+
+    describe('getSignature()', function () {
+      it ('returns the correct signature', function () {
+        setClientResponse({ license: { status: 'active', mode: 'basic', expiry_date_in_millis: 1464315131123 }});
+        const expectedSignature = createHash('md5')
+        .update('active|1464315131123|basic')
+        .digest('hex');
+
+        xpackInfo(mockClient, pollFrequencyInMillis)
+        .then(info => {
+          info.stopPolling();
+          expect(info.getSignature()).to.be(expectedSignature);
+        });
+      });
+    });
   });
 
   describe('feature', function () {
@@ -131,17 +147,21 @@ describe('xpack_info', function () {
   });
 
   describe('an updated response from the _xpack API', function () {
-    it ('causes the info object to be updated', function (done) {
+    it ('causes the info object and signature to be updated', function (done) {
+      let previousSignature;
       setClientResponse({ license: { status: 'active' }});
       xpackInfo(mockClient, pollFrequencyInMillis)
       .then(info => {
         expect(info.license.isActive()).to.be(true);
+        previousSignature = info.getSignature();
+
         setClientResponse({ license: { status: 'expired' }});
         return Bluebird.delay(pollFrequencyInMillis * 2, info);
       })
       .then((info) => {
         info.stopPolling();
         expect(info.license.isActive()).to.be(false);
+        expect(info.getSignature()).to.not.be(previousSignature);
       })
       .then(done);
     });
