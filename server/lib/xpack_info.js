@@ -5,7 +5,7 @@ import { get, includes } from 'lodash';
 const EXPIRY_SOON_DURATION = moment.duration(30, 'days');
 const DEFAULT_POLL_FREQUENCY_IN_MILLIS = 30 * 1000;
 
-export default function xpackInfo(client, pollFrequencyInMillis) {
+export default function xpackInfo(server, client, pollFrequencyInMillis) {
 
   pollFrequencyInMillis = pollFrequencyInMillis || DEFAULT_POLL_FREQUENCY_IN_MILLIS;
 
@@ -14,6 +14,7 @@ export default function xpackInfo(client, pollFrequencyInMillis) {
   let _timeoutId;
 
   function _callElasticsearchXPackAPI() {
+    server.log([ 'license', 'debug', 'plugin:xpackMain' ], 'calling ES _xpack API');
     return client.transport.request({
       method: 'GET',
       path: '_xpack'
@@ -33,6 +34,7 @@ export default function xpackInfo(client, pollFrequencyInMillis) {
   function _handleResponse(response) {
     const responseSignature = _computeResponseSignature(response);
     if (_cachedResponseSignature !== responseSignature) {
+      server.log([ 'license', 'info', 'plugin:xpackMain'  ], 'License information refreshed from Elasticsearch');
       _cachedResponseSignature = responseSignature;
       _cachedResponse = response;
     }

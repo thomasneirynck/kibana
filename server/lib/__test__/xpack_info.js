@@ -7,6 +7,7 @@ const xpackInfo = require('../xpack_info');
 describe('xpack_info', function () {
 
   let mockClient;
+  let mockServer;
   let clientResponse;
   const pollFrequencyInMillis = 10;
 
@@ -20,13 +21,16 @@ describe('xpack_info', function () {
         request: () => Bluebird.resolve(clientResponse)
       }
     };
+    mockServer = {
+      log: () => {}
+    };
   });
 
   describe('license', function () {
     describe('isActive()', function () {
       it ('returns true if the license is active', function () {
         setClientResponse({ license: { status: 'active' }});
-        xpackInfo(mockClient, pollFrequencyInMillis)
+        xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
         .then(info => {
           info.stopPolling();
           expect(info.license.isActive()).to.be(true);
@@ -34,7 +38,7 @@ describe('xpack_info', function () {
       });
       it ('returns false if the license has expired', function () {
         setClientResponse({ license: { status: 'expired' }});
-        xpackInfo(mockClient, pollFrequencyInMillis)
+        xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
         .then(info => {
           info.stopPolling();
           expect(info.license.isActive()).to.be(false);
@@ -46,7 +50,7 @@ describe('xpack_info', function () {
       it ('returns true if the license will expire within 30 days', function () {
         const licenseExpirationDate = moment.utc().add('20', 'days');
         setClientResponse({ license: { expiry_date_in_millis: licenseExpirationDate.valueOf() }});
-        xpackInfo(mockClient, pollFrequencyInMillis)
+        xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
         .then(info => {
           info.stopPolling();
           expect(info.license.expiresSoon()).to.be(true);
@@ -55,7 +59,7 @@ describe('xpack_info', function () {
       it ('returns false if the license will expire after 30 days', function () {
         const licenseExpirationDate = moment.utc().add('40', 'days');
         setClientResponse({ license: { expiry_date_in_millis: licenseExpirationDate.valueOf() }});
-        xpackInfo(mockClient, pollFrequencyInMillis)
+        xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
         .then(info => {
           info.stopPolling();
           expect(info.license.expiresSoon()).to.be(false);
@@ -66,7 +70,7 @@ describe('xpack_info', function () {
     describe('isOneOf()', function () {
       it ('returns true if the license is the single given mode', function () {
         setClientResponse({ license: { mode: 'gold' }});
-        xpackInfo(mockClient, pollFrequencyInMillis)
+        xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
         .then(info => {
           info.stopPolling();
           expect(info.license.isOneOf('gold')).to.be(true);
@@ -74,7 +78,7 @@ describe('xpack_info', function () {
       });
       it ('returns true if the license is one of multiple given modes', function () {
         setClientResponse({ license: { mode: 'gold' }});
-        xpackInfo(mockClient, pollFrequencyInMillis)
+        xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
         .then(info => {
           info.stopPolling();
           expect(info.license.isOneOf([ 'trial', 'gold' ])).to.be(true);
@@ -82,7 +86,7 @@ describe('xpack_info', function () {
       });
       it ('returns false if the license is not one of the multiple given modes', function () {
         setClientResponse({ license: { mode: 'basic' }});
-        xpackInfo(mockClient, pollFrequencyInMillis)
+        xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
         .then(info => {
           info.stopPolling();
           expect(info.license.isOneOf([ 'trial', 'gold' ])).to.be(false);
@@ -93,7 +97,7 @@ describe('xpack_info', function () {
     describe('getType()', function () {
       it ('returns the correct license type', function () {
         setClientResponse({ license: { type: 'basic' } });
-        xpackInfo(mockClient, pollFrequencyInMillis)
+        xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
         .then(info => {
           info.stopPolling();
           expect(info.license.getType()).to.be('basic');
@@ -106,7 +110,7 @@ describe('xpack_info', function () {
     describe('isAvailable()', function () {
       it ('returns true if the given feature is available', function () {
         setClientResponse({ features: { graph: { available: true } } });
-        xpackInfo(mockClient, pollFrequencyInMillis)
+        xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
         .then(info => {
           info.stopPolling();
           expect(info.feature('graph').isAvailable()).to.be(true);
@@ -114,7 +118,7 @@ describe('xpack_info', function () {
       });
       it ('returns false if the given feature is not available', function () {
         setClientResponse({ features: { graph: { available: false } } });
-        xpackInfo(mockClient, pollFrequencyInMillis)
+        xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
         .then(info => {
           info.stopPolling();
           expect(info.feature('graph').isAvailable()).to.be(false);
@@ -125,7 +129,7 @@ describe('xpack_info', function () {
     describe('isEnabled()', function () {
       it ('returns true if the given feature is enabled', function () {
         setClientResponse({ features: { graph: { enabled: true } } });
-        xpackInfo(mockClient, pollFrequencyInMillis)
+        xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
         .then(info => {
           info.stopPolling();
           expect(info.feature('graph').isEnabled()).to.be(true);
@@ -133,7 +137,7 @@ describe('xpack_info', function () {
       });
       it ('returns false if the given feature is not enabled', function () {
         setClientResponse({ features: { graph: { enabled: false } } });
-        xpackInfo(mockClient, pollFrequencyInMillis)
+        xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
         .then(info => {
           info.stopPolling();
           expect(info.feature('graph').isEnabled()).to.be(false);
@@ -149,7 +153,7 @@ describe('xpack_info', function () {
       .update('active|1464315131123|basic')
       .digest('hex');
 
-      xpackInfo(mockClient, pollFrequencyInMillis)
+      xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
       .then(info => {
         info.stopPolling();
         expect(info.getSignature()).to.be(expectedSignature);
@@ -161,7 +165,7 @@ describe('xpack_info', function () {
     it ('causes the info object and signature to be updated', function (done) {
       let previousSignature;
       setClientResponse({ license: { status: 'active' }});
-      xpackInfo(mockClient, pollFrequencyInMillis)
+      xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
       .then(info => {
         expect(info.license.isActive()).to.be(true);
         previousSignature = info.getSignature();

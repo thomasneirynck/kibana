@@ -8,7 +8,7 @@ export default function (kibana) {
     require: ['elasticsearch'],
     init: function (server) {
       const client = server.plugins.elasticsearch.client; // NOTE: authenticated client using server config auth
-      return xpackInfo(client)
+      return xpackInfo(server, client)
       .then(info => {
         server.expose('info', info);
         return requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server);
