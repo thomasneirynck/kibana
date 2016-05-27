@@ -26,12 +26,14 @@ describe('xpack_info', function () {
         setClientResponse({ license: { status: 'active' }});
         xpackInfo(mockClient).then(info => {
           expect(info.license.isActive()).to.be(true);
+          info.stopPolling();
         });
       });
       it ('returns false if the license has expired', function () {
         setClientResponse({ license: { status: 'expired' }});
         xpackInfo(mockClient).then(info => {
           expect(info.license.isActive()).to.be(false);
+          info.stopPolling();
         });
       });
     });
@@ -42,6 +44,7 @@ describe('xpack_info', function () {
         setClientResponse({ license: { expiry_date_in_millis: licenseExpirationDate.valueOf() }});
         xpackInfo(mockClient).then(info => {
           expect(info.license.expiresSoon()).to.be(true);
+          info.stopPolling();
         });
       });
       it ('returns false if the license will expire after 30 days', function () {
@@ -49,6 +52,7 @@ describe('xpack_info', function () {
         setClientResponse({ license: { expiry_date_in_millis: licenseExpirationDate.valueOf() }});
         xpackInfo(mockClient).then(info => {
           expect(info.license.expiresSoon()).to.be(false);
+          info.stopPolling();
         });
       });
     });
@@ -58,18 +62,21 @@ describe('xpack_info', function () {
         setClientResponse({ license: { mode: 'gold' }});
         xpackInfo(mockClient).then(info => {
           expect(info.license.isOneOf('gold')).to.be(true);
+          info.stopPolling();
         });
       });
       it ('returns true if the license is one of multiple given modes', function () {
         setClientResponse({ license: { mode: 'gold' }});
         xpackInfo(mockClient).then(info => {
           expect(info.license.isOneOf([ 'trial', 'gold' ])).to.be(true);
+          info.stopPolling();
         });
       });
       it ('returns false if the license is not one of the multiple given modes', function () {
         setClientResponse({ license: { mode: 'basic' }});
         xpackInfo(mockClient).then(info => {
           expect(info.license.isOneOf([ 'trial', 'gold' ])).to.be(false);
+          info.stopPolling();
         });
       });
     });
@@ -81,12 +88,14 @@ describe('xpack_info', function () {
         setClientResponse({ features: { graph: { available: true } } });
         xpackInfo(mockClient).then(info => {
           expect(info.feature('graph').isAvailable()).to.be(true);
+          info.stopPolling();
         });
       });
       it ('returns false if the given feature is not available', function () {
         setClientResponse({ features: { graph: { available: false } } });
         xpackInfo(mockClient).then(info => {
           expect(info.feature('graph').isAvailable()).to.be(false);
+          info.stopPolling();
         });
       });
     });
@@ -96,14 +105,34 @@ describe('xpack_info', function () {
         setClientResponse({ features: { graph: { enabled: true } } });
         xpackInfo(mockClient).then(info => {
           expect(info.feature('graph').isEnabled()).to.be(true);
+          info.stopPolling();
         });
       });
       it ('returns false if the given feature is not enabled', function () {
         setClientResponse({ features: { graph: { enabled: false } } });
         xpackInfo(mockClient).then(info => {
           expect(info.feature('graph').isEnabled()).to.be(false);
+          info.stopPolling();
         });
       });
+    });
+  });
+
+  describe('an updated response from the _xpack API', function () {
+    it ('causes the info object to be updated', function (done) {
+      setClientResponse({ license: { status: 'active' }});
+      const pollFrequencyInMillis = 10;
+      xpackInfo(mockClient, pollFrequencyInMillis)
+      .then(info => {
+        expect(info.license.isActive()).to.be(true);
+        setClientResponse({ license: { status: 'expired' }});
+        return Bluebird.delay(pollFrequencyInMillis * 2, info);
+      })
+      .then((info) => {
+        info.stopPolling();
+        expect(info.license.isActive()).to.be(false);
+      })
+      .then(done);
     });
   });
 });
