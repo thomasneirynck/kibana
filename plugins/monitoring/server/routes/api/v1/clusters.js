@@ -82,6 +82,9 @@ module.exports = (server) => {
     }
   });
 
+  /*
+   * Phone Home
+   */
   server.route({
     method: 'GET',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/info',
@@ -100,7 +103,17 @@ module.exports = (server) => {
         id: req.params.clusterUuid
       };
       return callWithRequest(req, 'get', params)
-      .then(resp => reply(resp._source))
+      .then(resp => {
+        const fields = [
+          'cluster_uuid',
+          'timestamp',
+          'cluster_name',
+          'version',
+          'license',
+          'cluster_stats'
+        ];
+        reply(_.pick(resp._source, fields));
+      })
       .catch(err => reply(handleError(err, req)));
     }
   });
