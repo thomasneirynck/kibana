@@ -44,7 +44,7 @@ routes.when('/settings/security/roles', {
       return roles.length && roles.length === $scope.selectedRoles.length;
     };
 
-    $scope.isReservedRole = (role) => ['superuser', 'transport_client'].indexOf(role.name) >= 0;
+    $scope.isReservedRole = (role) => ['superuser', 'transport_client', 'kibana_user'].indexOf(role.name) >= 0;
 
     $scope.toggle = toggle;
     $scope.includes = includes;
