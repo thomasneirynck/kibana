@@ -36,7 +36,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
   function _handleResponse(response) {
     const responseSignature = _computeResponseSignature(response);
     if (_cachedResponseSignature !== responseSignature) {
-      server.log([ 'license', 'info', 'plugin:xpackMain'  ], 'License information refreshed from Elasticsearch');
+      server.log([ 'license', 'info', 'plugin:xpackMain'  ], 'Got changed license information from Elasticsearch');
       _cachedResponseSignature = responseSignature;
       _cachedResponse = response;
     }
