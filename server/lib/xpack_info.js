@@ -40,8 +40,8 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
     }
   }
 
-  function _handleError(/* error */) {
-    server.log([ 'license', 'debug', 'plugin:xpackMain' ], 'License information could not be obtained from Elasticsearch at this time');
+  function _handleError(error) {
+    server.log([ 'license', 'debug', 'plugin:xpackMain' ], 'License information could not be obtained from Elasticsearch. ' + error);
   }
 
   // Start polling for changes
