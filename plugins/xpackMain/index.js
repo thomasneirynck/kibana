@@ -21,7 +21,10 @@ export default function (kibana) {
       })
       .then(info => {
         function injectXPackInfoSignature(request, reply) {
-          request.response.headers['kbn-xpack-sig'] = info.getSignature();
+          const signature = info.getSignature();
+          if (signature) {
+            request.response.headers['kbn-xpack-sig'] = signature;
+          }
           return reply.continue();
         };
         server.ext('onPreResponse', injectXPackInfoSignature);
