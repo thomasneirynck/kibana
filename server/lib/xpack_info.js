@@ -22,9 +22,11 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
   };
 
   function _computeResponseSignature(response) {
-    const data = get(response, 'license.status')
-    + '|' + get(response, 'license.expiry_date_in_millis', '').toString()
-    + '|' + get(response, 'license.mode');
+    const data = [
+      get(response, 'license.status'),
+      get(response, 'license.expiry_date_in_millis', '').toString(),
+      get(response, 'license.mode')
+    ].join('|');
 
     return createHash('md5')
     .update(data)
