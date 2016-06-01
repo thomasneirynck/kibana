@@ -1,9 +1,11 @@
+import _ from 'lodash';
+
 export default class Poller {
 
   constructor(options) {
     this.functionToPoll = options.functionToPoll; // Must return a Promise
-    this.successFunction = options.successFunction;
-    this.errorFunction = options.errorFunction;
+    this.successFunction = options.successFunction || _.noop;
+    this.errorFunction = options.errorFunction || _.noop;
     this.pollFrequencyInMillis = options.pollFrequencyInMillis;
     this.continuePollingOnError = options.continuePollingOnError || false;
     this._timeoutId = null;
