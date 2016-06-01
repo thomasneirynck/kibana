@@ -112,7 +112,9 @@ module.exports = (server) => {
           'license',
           'cluster_stats'
         ];
-        reply(_.pick(resp._source, fields));
+        const info = _.pick(resp._source, fields);
+        const usage = _.set({}, 'stack_stats.xpack', _.get(req, 'server.plugins.xpackMain.usage'));
+        reply(_.merge(info, usage));
       })
       .catch(err => reply(handleError(err, req)));
     }
