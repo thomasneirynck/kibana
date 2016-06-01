@@ -29,22 +29,21 @@ describe('Poller', () => {
       });
     });
 
-    it ('polls the functionToPoll multiple times', (done) => {
-      poller.start()
+    it ('polls the functionToPoll multiple times', () => {
+      return poller.start()
       .then(() => {
         return Bluebird.delay(pollFrequencyInMillis * 1.5);
       })
       .then(() => {
         poller.stop();
         expect(functionToPoll.callCount).to.be(2);
-      })
-      .then(done);
+      });
     });
 
     describe('when the function to poll succeeds', () => {
 
-      it ('calls the successFunction multiple times', (done) => {
-        poller.start()
+      it ('calls the successFunction multiple times', () => {
+        return poller.start()
         .then(() => {
           return Bluebird.delay(pollFrequencyInMillis * 1.5);
         })
@@ -52,8 +51,7 @@ describe('Poller', () => {
           poller.stop();
           expect(successFunction.callCount).to.be(2);
           expect(errorFunction.callCount).to.be(0);
-        })
-        .then(done);
+        });
       });
 
     });
@@ -75,8 +73,8 @@ describe('Poller', () => {
           });
         });
 
-        it ('calls the errorFunction exactly once and polling is stopped', (done) => {
-          poller.start()
+        it ('calls the errorFunction exactly once and polling is stopped', () => {
+          return poller.start()
           .then(() => {
             return Bluebird.delay(pollFrequencyInMillis * 3.5);
           })
@@ -84,8 +82,7 @@ describe('Poller', () => {
             expect(poller.isRunning()).to.be(false);
             expect(successFunction.callCount).to.be(0);
             expect(errorFunction.callCount).to.be(1);
-          })
-          .then(done);
+          });
         });
       });
 
@@ -101,8 +98,8 @@ describe('Poller', () => {
           });
         });
 
-        it ('calls the errorFunction multiple times', (done) => {
-          poller.start()
+        it ('calls the errorFunction multiple times', () => {
+          return poller.start()
           .then(() => {
             return Bluebird.delay(pollFrequencyInMillis * 1.5);
           })
@@ -110,8 +107,7 @@ describe('Poller', () => {
             poller.stop();
             expect(successFunction.callCount).to.be(0);
             expect(errorFunction.callCount).to.be(2);
-          })
-          .then(done);
+          });
         });
       });
 

@@ -162,10 +162,10 @@ describe('xpack_info', function () {
   });
 
   describe('an updated response from the _xpack API', function () {
-    it ('causes the info object and signature to be updated', function (done) {
+    it ('causes the info object and signature to be updated', function () {
       let previousSignature;
       setClientResponse({ license: { status: 'active' }});
-      xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
+      return xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
       .then(info => {
         expect(info.license.isActive()).to.be(true);
         previousSignature = info.getSignature();
@@ -177,8 +177,7 @@ describe('xpack_info', function () {
         info.stopPolling();
         expect(info.license.isActive()).to.be(false);
         expect(info.getSignature()).to.not.be(previousSignature);
-      })
-      .then(done);
+      });
     });
   });
 });
