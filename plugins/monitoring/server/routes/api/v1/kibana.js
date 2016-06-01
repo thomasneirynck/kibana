@@ -39,7 +39,7 @@ module.exports = (server) => {
       .then(kibanaIndices => {
         return Promise.props({
           kibanas: getKibanas(req, kibanaIndices),
-          clusterStatus: getClusterStatus(req, kibanaIndices, 'route-kibana-listing'),
+          clusterStatus: getClusterStatus(req, kibanaIndices, 'route-kibana-listing')
         });
       })
       .then (kibanas => reply(kibanas))

@@ -11,14 +11,21 @@ import _ from 'lodash';
 import moment from 'moment';
 import numeral from '@spalger/numeral';
 import calculateOverallStatus from './calculate_overall_status';
-const nodeAggVals = require('./node_agg_vals');
+const calcAuto = require('./calculate_auto');
 const createQuery = require('./create_query.js');
 export default function getKibanasForClusters(req, indices, calledFrom) {
   if (indices[0] === '.kibana-devnull') return Promise.resolve([]);
 
+
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const start = moment.utc(req.payload.timeRange.min).valueOf();
   const end = moment.utc(req.payload.timeRange.max).valueOf();
+
+  const config = req.server.config();
+  const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
+  const duration = moment.duration(end - start, 'ms');
+  const bucketSize = Math.max(minIntervalSeconds, calcAuto.near(100, duration).asSeconds());
+  const lastBucketStart = moment(end).subtract(bucketSize, 'seconds').valueOf();
   return function (clusters) {
     return Promise.map(clusters, cluster => {
       const clusterUuid = cluster.cluster_uuid;
@@ -29,33 +36,35 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
         ignoreUnavailable: true,
         type: 'kibana_stats',
         body: {
-          query: createQuery({ start, end, clusterUuid }),
+          query: createQuery({ start: lastBucketStart, end, clusterUuid }),
           aggs: {
-            kibana_cluster: {
+            concurrent_connections: {
+              avg: {
+                field: 'kibana_stats.concurrent_connections'
+              }
+            },
+            requests: {
+              avg: {
+                field: 'kibana_stats.requests.total'
+              }
+            },
+            kibana_uuids: {
               terms: {
                 field: 'kibana_stats.kibana.uuid'
+              }
+            },
+            status: {
+              terms: {
+                field: 'kibana_stats.kibana.status',
+                order: {
+                  max_timestamp: 'desc'
+                },
+                size: 1
               },
               aggs: {
-                status: {
-                  terms: {
-                    field: 'kibana_stats.kibana.status'
-                  },
-                  aggs: {
-                    max_timestamp: {
-                      max: {
-                        field: 'timestamp'
-                      }
-                    }
-                  }
-                },
-                concurrent_connections: {
-                  avg: {
-                    field: 'kibana_stats.concurrent_connections'
-                  }
-                },
-                requests: {
-                  avg: {
-                    field: 'kibana_stats.requests.total'
+                max_timestamp: {
+                  max: {
+                    field: 'timestamp'
                   }
                 }
               }
@@ -65,23 +74,18 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
       };
       return callWithRequest(req, 'search', options)
       .then(result => {
-        const buckets = _.get(result, 'aggregations.kibana_cluster.buckets');
+        const kibanaUuids =  _.get(result, 'aggregations.kibana_uuids.buckets');
+        const statusBuckets = _.get(result, 'aggregations.status.buckets');
         let status;
         let requests;
         let connections;
-        if (buckets.length) {
+        if (kibanaUuids.length) {
           // if the cluster has kibana instances at all
           status = calculateOverallStatus(
-            buckets.map(instance => {
-              if (instance.status.buckets.length > 1) {
-                // get the status with the greatest time stamp, this gets the "most recent" status
-                return nodeAggVals.getLatestAggKey(instance.status.buckets);
-              }
-              return instance.status.buckets[0].key;
-            })
+            statusBuckets.map(b => b.key)
           );
-          requests = _.last(_.map(buckets, (instance) => instance.requests.value));
-          connections = _.last(_.map(buckets, (instance) => instance.concurrent_connections.value));
+          requests = _.get(result, 'aggregations.requests.value');
+          connections = _.get(result, 'aggregations.concurrent_connections.value');
         }
 
         return {
@@ -90,7 +94,7 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
             status,
             requests: numeral(requests).format('0.00'),
             connections: numeral(connections).format('0.00'),
-            count: buckets.length
+            count: kibanaUuids.length
           }
         };
       });
