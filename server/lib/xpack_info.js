@@ -1,6 +1,7 @@
 import { createHash } from 'crypto';
 import moment from 'moment';
 import { get, includes } from 'lodash';
+import Poller from './poller';
 
 const EXPIRY_SOON_DURATION = moment.duration(30, 'days');
 const DEFAULT_POLL_FREQUENCY = moment.duration(30, 'seconds');
@@ -11,7 +12,6 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
 
   let _cachedResponse;
   let _cachedResponseSignature;
-  let _timeoutId;
 
   function _callElasticsearchXPackAPI() {
     server.log([ 'license', 'debug', 'plugin:xpackMain' ], 'Calling Elasticsearch _xpack API');
@@ -40,18 +40,13 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
     }
   }
 
-  function _pollAgain() {
-    _timeoutId = setTimeout(_poll, pollFrequencyInMillis);
-  };
-
-  function _poll() {
-    return _callElasticsearchXPackAPI()
-    .then(_handleResponse)
-    .then(_pollAgain);
-  }
-
   // Start polling for changes
-  return _poll()
+  let poller = new Poller({
+    functionToPoll: _callElasticsearchXPackAPI,
+    successFunction: _handleResponse,
+    pollFrequencyInMillis
+  });
+  return poller.start()
   .then(() => {
     return {
       license: {
@@ -88,8 +83,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
       },
       stopPolling: function () {
         // This method exists primarily for unit testing
-        clearTimeout(_timeoutId);
-        _timeoutId = null;
+        poller.stop();
       }
     };
   });
