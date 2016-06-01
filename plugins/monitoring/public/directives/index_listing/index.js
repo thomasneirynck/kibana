@@ -3,40 +3,9 @@ define(function (require) {
   var numeral = require('numeral');
   var module = require('ui/modules').get('monitoring/directives', []);
   var React = require('react');
-  var make = React.DOM;
-
   var Table = require('plugins/monitoring/directives/paginated_table/components/table');
 
   module.directive('monitoringIndexListing', function (kbnUrl) {
-    function makeTdWithPropKey(scope, dataKey, idx) {
-      var rawValue = _.get(this.props, dataKey.key);
-      var units;
-      var innerMarkup = null;
-      if (dataKey.key === 'name') {
-        if (this.state.exists) {
-          innerMarkup = make.a({
-            onClick: function () {
-              // Change the url the "Angular" way!
-              scope.$evalAsync(function () {
-                kbnUrl.changePath('/indices/' + rawValue);
-              });
-            }
-          }, rawValue);
-        } else {
-          innerMarkup = make.div(null, rawValue);
-        }
-      }
-      if (_.isObject(rawValue) && rawValue.metric) {
-        if (rawValue.inapplicable) {
-          innerMarkup = 'N/A';
-        } else {
-          if (rawValue.metric.units) units = ` ${rawValue.metric.units}`;
-          innerMarkup = (rawValue.metric.format) ? numeral(rawValue.last).format(rawValue.metric.format) : rawValue.last;
-          if (units) innerMarkup += units;
-        }
-      }
-      return make.td({key: idx}, null, make.div({className: ''}), innerMarkup);
-    }
     var initialTableOptions = {
       title: 'Indices',
       searchPlaceholder: 'Filter Indices',
@@ -97,18 +66,39 @@ define(function (require) {
             }
           },
           render: function () {
-            var boundTemplateFn = _.bind(makeTdWithPropKey, this, scope);
-            var $tdsArr = initialTableOptions.columns.map(boundTemplateFn);
-            var classes = [ this.state.status ];
-            return make.tr({
-              key: this.props.name,
-              className: classes
-            }, $tdsArr);
+            const numeralize = value => numeral(value.last).format(value.metric.format);
+            const unitize = value => `${numeralize(value)} ${value.metric.units}`;
+            const name = this.props.name;
+            const clickFn = () => {
+              scope.$evalAsync(function () {
+                kbnUrl.changePath(`/indices/${name}`);
+              });
+            };
+            const metrics = this.props.metrics;
+            const docCount = numeralize(metrics.index_document_count);
+            const indexSize = numeralize(metrics.index_size);
+            const requestRate = unitize(metrics.index_request_rate_primary);
+            const searchRate = unitize(metrics.index_search_request_rate);
+            const unassignedShards = numeralize(metrics.index_unassigned_shards);
+
+            return (
+              <tr key={name} className={[this.state.status]}>
+                <td>
+                  <a onClick={clickFn}>
+                    {name}
+                  </a>
+                </td>
+                <td>{docCount}</td>
+                <td>{indexSize}</td>
+                <td>{requestRate}</td>
+                <td>{searchRate}</td>
+                <td>{unassignedShards}</td>
+              </tr>
+            );
           }
         });
 
         var tableFactory = React.createFactory(Table);
-
         var table = React.render(tableFactory({
           scope: scope,
           options: initialTableOptions,
