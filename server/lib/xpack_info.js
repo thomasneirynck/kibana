@@ -40,11 +40,17 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
     }
   }
 
+  function _handleError(/* error */) {
+    server.log([ 'license', 'debug', 'plugin:xpackMain' ], 'License information could not be obtained from Elasticsearch at this time');
+  }
+
   // Start polling for changes
   let poller = new Poller({
     functionToPoll: _callElasticsearchXPackAPI,
     successFunction: _handleResponse,
-    pollFrequencyInMillis
+    errorFunction: _handleError,
+    pollFrequencyInMillis,
+    continuePollingOnError: true
   });
   return poller.start()
   .then(() => {
