@@ -47,7 +47,6 @@
     "angular-paging": "2.2.1",
     "angular-resource": "1.4.9",
     "angular-sanitize": "1.4.9",
-    "angular-ui-select": "0.12.100",
     "babel-runtime": "5.8.20",
     "bluebird": "3.1.1",
     "boom": "3.1.1",
@@ -71,6 +70,7 @@
     "semver": "5.1.0",
     "tar-fs": "1.13.0",
     "temp": "0.8.3",
+    "ui-select": "0.17.1",
     "unbzip2-stream": "1.0.9",
     "unzip": "0.1.11",
     "venn.js": "0.2.9"
