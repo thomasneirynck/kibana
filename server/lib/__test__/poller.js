@@ -43,18 +43,6 @@ describe('Poller', () => {
 
     describe('when the function to poll succeeds', () => {
 
-      beforeEach(() => {
-        functionToPoll = sinon.spy(() => { return Promise.resolve(42); });
-        successFunction = sinon.spy();
-        errorFunction = sinon.spy();
-        poller = new Poller({
-          functionToPoll,
-          successFunction,
-          errorFunction,
-          pollFrequencyInMillis
-        });
-      });
-
       it ('calls the successFunction multiple times', (done) => {
         poller.start()
         .then(() => {
@@ -74,8 +62,6 @@ describe('Poller', () => {
 
       beforeEach(() => {
         functionToPoll = sinon.spy(() => { return Promise.reject(42); });
-        successFunction = sinon.spy();
-        errorFunction = sinon.spy();
       });
 
       describe('when the continuePollingOnError option has not been set', () => {
