@@ -17,6 +17,14 @@ export default function (kibana) {
       .then(([ info, usage ]) => {
         server.expose('info', info);
         server.expose('usage', usage);
+        return info;
+      })
+      .then(info => {
+        function injectXPackInfoSignature(request, reply) {
+          request.response.headers['kbn-xpack-sig'] = info.getSignature();
+          return reply.continue();
+        };
+        server.ext('onPreResponse', injectXPackInfoSignature);
       })
       .then(() => {
         return requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server);
