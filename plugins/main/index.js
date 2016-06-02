@@ -11,7 +11,7 @@ export default function (kibana) {
     init: function (server) {
       const client = server.plugins.elasticsearch.client; // NOTE: authenticated client using server config auth
       return Promise.all([
-        xpackInfo(client),
+        xpackInfo(server, client),
         xpackUsage(client)
       ])
       .then(([ info, usage ]) => {
