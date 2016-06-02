@@ -1,7 +1,7 @@
 import opsBuffer from './lib/ops_buffer';
 
 export default function (serverInfo, server) {
-  const monitor = server.plugins.good.monitor;
+  const monitor = server.plugins['even-better'].monitor;
   const config = server.config();
   const buffer = opsBuffer(serverInfo, server);
   let opsHandler;
