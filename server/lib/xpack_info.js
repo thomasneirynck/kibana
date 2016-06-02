@@ -2,13 +2,11 @@ import { createHash } from 'crypto';
 import moment from 'moment';
 import { get, includes } from 'lodash';
 import Poller from './poller';
-
-const EXPIRY_SOON_DURATION = moment.duration(30, 'days');
-const DEFAULT_POLL_FREQUENCY = moment.duration(30, 'seconds');
+import { LICENSE_EXPIRY_SOON_DURATION, XPACK_INFO_API_DEFAULT_POLL_FREQUENCY } from './constants';
 
 export default function xpackInfo(server, client, pollFrequencyInMillis) {
 
-  pollFrequencyInMillis = pollFrequencyInMillis || DEFAULT_POLL_FREQUENCY.asMilliseconds();
+  pollFrequencyInMillis = pollFrequencyInMillis || XPACK_INFO_API_DEFAULT_POLL_FREQUENCY.asMilliseconds();
 
   let _cachedResponse;
   let _cachedResponseSignature;
@@ -63,7 +61,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
         },
         expiresSoon: function () {
           const expiryDateMillis = get(_cachedResponse, 'license.expiry_date_in_millis');
-          const expirySoonDate = moment.utc(expiryDateMillis).subtract(EXPIRY_SOON_DURATION);
+          const expirySoonDate = moment.utc(expiryDateMillis).subtract(LICENSE_EXPIRY_SOON_DURATION);
           return moment.utc().isAfter(expirySoonDate);
         },
         isOneOf: function (candidateLicenses) {
