@@ -31,5 +31,5 @@ function toKeyValue(obj) {
 
 module.exports = {
   stringify: toKeyValue,
-  encodeQuery: encodeUriQuery,
+  string: encodeUriQuery,
 };
