@@ -5,6 +5,7 @@ import 'plugins/security/views/settings/roles';
 import 'plugins/security/views/settings/edit_user';
 import 'plugins/security/views/settings/edit_role';
 import chrome from 'ui/chrome';
+import 'plugins/security/views/settings/settings.less';
 
 if (chrome.getInjected('showSecurityFeatures')) {
   registry.register(constant({

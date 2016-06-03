@@ -1,4 +1,4 @@
-import {includes} from 'lodash';
+import _ from 'lodash';
 import routes from 'ui/routes';
 import {toggle, toggleSort} from 'plugins/security/lib/util';
 import template from 'plugins/security/views/settings/users.html';
@@ -8,7 +8,8 @@ routes.when('/settings/security/users', {
   template,
   resolve: {
     users(ShieldUser) {
-      return ShieldUser.query();
+      return ShieldUser.query()
+      .$promise.catch(_.identity); // Return the error if there is one
     }
   },
   controller($scope, $route, $q, Notifier, showSecurityFeatures, kbnUrl) {
@@ -17,6 +18,7 @@ routes.when('/settings/security/users', {
     }
 
     $scope.users = $route.current.locals.users;
+    $scope.forbidden = !_.isArray($scope.users);
     $scope.selectedUsers = [];
     $scope.sort = {orderBy: 'full_name', reverse: false};
 
@@ -49,7 +51,7 @@ routes.when('/settings/security/users', {
     };
 
     $scope.toggle = toggle;
-    $scope.includes = includes;
+    $scope.includes = _.includes;
     $scope.toggleSort = toggleSort;
 
     function getActionableUsers() {
