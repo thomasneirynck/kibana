@@ -7,8 +7,10 @@
       </span>
     </div>
     <div>Instances: <strong>{{pageData.clusterStatus.count}}</strong></div>
-    <div>Requests: <strong>{{pageData.clusterStatus.requests}}</strong></div>
-    <div>Connections: <strong>{{pageData.clusterStatus.connections}}</strong></div>
+    <div>Requests: <strong>{{pageData.clusterStatus.requests_total}}</strong></div>
+    <div>Connections: <strong>{{pageData.clusterStatus.concurrent_connections}}</strong></div>
+    <div>Max. Response Time: <strong>{{pageData.clusterStatus.response_time_max}} ms</strong></div>
+    <div>Memory Heap Used: <strong>{{pageData.clusterStatus.memory_heap_used_max}}</strong></div>
   </div>
   <div ng-if="!cluster" class="stats">
     <div class="loading">

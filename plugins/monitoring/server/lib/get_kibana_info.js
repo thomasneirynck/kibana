@@ -12,9 +12,10 @@ export default function getKibanaInfo(req, uuid) {
 
   return callWithRequest(req, 'get', params)
   .then(resp => {
-    const kibana = _.get(resp, '_source.kibana.kibana');
-    const timestamp = _.get(resp, '_source.timestamp');
-    kibana.availability = calculateAvailability(timestamp);
-    return kibana;
+    const getSource = key => _.get(resp, `_source.kibana.${key}`);
+    const timestamp = getSource('timestamp');
+    const kibana = getSource('kibana');
+    const availability = { availability: calculateAvailability(timestamp) };
+    return _.merge(kibana, availability);
   });
 }

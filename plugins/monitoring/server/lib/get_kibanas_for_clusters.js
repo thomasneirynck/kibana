@@ -38,12 +38,22 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
         body: {
           query: createQuery({ start: lastBucketStart, end, clusterUuid }),
           aggs: {
+            response_time_max: {
+              max: {
+                field: 'kibana_stats.response_times.max'
+              }
+            },
+            memory_heap_used_max: {
+              max: {
+                field: 'kibana_stats.process.memory.heap.used_in_bytes'
+              }
+            },
             concurrent_connections: {
               max: {
                 field: 'kibana_stats.concurrent_connections'
               }
             },
-            requests: {
+            requests_total: {
               sum: {
                 field: 'kibana_stats.requests.total'
               }
@@ -74,26 +84,34 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
       };
       return callWithRequest(req, 'search', options)
       .then(result => {
-        const kibanaUuids =  _.get(result, 'aggregations.kibana_uuids.buckets');
-        const statusBuckets = _.get(result, 'aggregations.status.buckets');
+        const getResultAgg = key => _.get(result, `aggregations.${key}`);
+        const kibanaUuids =  getResultAgg('kibana_uuids.buckets');
+        const statusBuckets = getResultAgg('status.buckets');
         let status;
-        let requests;
+        let requestsTotal;
         let connections;
+        let responseTime;
+        let memoryUsed;
+
         if (kibanaUuids.length) {
           // if the cluster has kibana instances at all
           status = calculateOverallStatus(
             statusBuckets.map(b => b.key)
           );
-          requests = _.get(result, 'aggregations.requests.value');
-          connections = _.get(result, 'aggregations.concurrent_connections.value');
+          requestsTotal = getResultAgg('requests_total.value');
+          connections = getResultAgg('concurrent_connections.value');
+          responseTime = getResultAgg('response_time_max.value');
+          memoryUsed = getResultAgg('memory_heap_used_max.value');
         }
 
         return {
           clusterUuid,
           stats: {
             status,
-            requests,
-            connections: numeral(connections).format('0.00'),
+            requests_total: requestsTotal,
+            concurrent_connections: numeral(connections).format('0.[00]'),
+            response_time_max: numeral(responseTime).format('0.[00]'),
+            memory_heap_used_max: numeral(memoryUsed).format('0,0.0 b'),
             count: kibanaUuids.length
           }
         };

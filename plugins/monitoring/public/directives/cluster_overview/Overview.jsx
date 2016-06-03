@@ -49,8 +49,7 @@ const ElasticsearchRow = React.createClass({
           <div className='col-md-4'>
             <dl>
               <dt>Nodes: {formatNumber(nodes.count.total, 'int_commas')}</dt>
-              <dd>FS Available: {formatNumber(nodes.fs.available_in_bytes, 'byte')}</dd>
-              <dd>FS Total: {formatNumber(nodes.fs.total_in_bytes, 'bytes')}</dd>
+              <dd>FS: {formatNumber(nodes.fs.available_in_bytes, 'byte')} / {formatNumber(nodes.fs.total_in_bytes, 'bytes')}</dd>
             </dl>
           </div>
 
@@ -77,8 +76,10 @@ const KibanaRow = React.createClass({
 
         <dl>
           <dt>Instances: {this.props.count}</dt>
-          <dd>Requests: {this.props.requests}</dd>
-          <dd>Connections: {this.props.connections}</dd>
+          <dd>Requests: {this.props.requests_total}</dd>
+          <dd>Connections: {this.props.concurrent_connections}</dd>
+          <dd>Max. Response Time: {this.props.response_time_max} ms</dd>
+          <dd>Memory Heap Used: {this.props.memory_heap_used_max}</dd>
         </dl>
       </ClusterItemContainer>
     );

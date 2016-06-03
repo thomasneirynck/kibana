@@ -58,7 +58,16 @@ export default function getKibanas(req, indices) {
           const availability = {
             availability: calculateAvailability(_.get(infoResp, '_source.timestamp'))
           };
-          const info = _.get(infoResp, '_source.kibana');
+          // clean up the response data payloads
+          const listingFields = [
+            'kibana',
+            'os',
+            'process',
+            'requests',
+            'response_times',
+            'concurrent_connections'
+          ];
+          const info = _.pick(_.get(infoResp, '_source.kibana'), listingFields);
           return {
             ...info,
             ...availability
