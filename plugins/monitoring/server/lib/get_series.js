@@ -62,6 +62,7 @@ module.exports = function getSeries(req, indices, metricName, filters) {
   return callWithRequest(req, 'search', params)
   .then(function (resp) {
     if (!resp.aggregations)  {
+      // dead code here?
       return {
         metric: pickMetricFields(metric),
         data: []
