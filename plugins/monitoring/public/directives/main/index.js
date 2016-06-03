@@ -18,6 +18,7 @@ app.directive('monitoringMain', (license) => {
     link: function (scope, _el, attrs) {
       scope.name = attrs.name; // name of current page
       scope.product = attrs.product; // undefined, elasticsearch, or kibana
+      scope.instance = attrs.instance; // undefined or name of index, node, or kibana
       scope.clusterName = scope.cluster.cluster_name;
       const productIsIn = (checkKey) => scope.product === checkKey;
       if (scope.product) {
@@ -49,27 +50,19 @@ app.directive('monitoringMain', (license) => {
 
         // Elasticsearch crumbs
         if (scope.inElasticsearch) {
-          breadcrumbs.push(createCrumb('#/elasticsearch', 'Elasticsearch', true));
-          if (attrs.name === 'indices') {
-            breadcrumbs = breadcrumbs.concat([
-              createCrumb('#/indices', 'Indices', true),
-              createCrumb(null, attrs.index, !_.isUndefined(attrs.index))
-            ]);
-          }
-          if (attrs.name === 'nodes') {
-            breadcrumbs = breadcrumbs.concat([
-              createCrumb('#/nodes', 'Nodes', true),
-              createCrumb(null, attrs.node, !_.isUndefined(attrs.node))
-            ]);
+          breadcrumbs.push(createCrumb('#/elasticsearch', 'Elasticsearch'));
+          if (scope.instance) {
+            if (scope.name === 'indices') {
+              breadcrumbs.push(createCrumb('#/indices', 'Indices'));
+            } else if (scope.name === 'nodes') {
+              breadcrumbs.push(createCrumb('#/nodes', 'Nodes'));
+            }
           }
         }
 
         // Kibana crumbs
-        if (scope.inKibana) {
-          breadcrumbs = breadcrumbs.concat([
-            createCrumb('#/kibana', 'Kibana', true),
-            createCrumb(null, attrs.kibana, !_.isUndefined(attrs.kibana))
-          ]);
+        if (scope.inKibana && scope.instance) {
+          breadcrumbs.push(createCrumb('#/kibana', 'Kibana'));
         }
       }
       scope.breadcrumbs = breadcrumbs.filter(Boolean);

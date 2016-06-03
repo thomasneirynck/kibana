@@ -1,17 +1,18 @@
-<div>
-  <div>
-    Status:
-    <span class="status status-{{summaryStatus|lowercase}}">
-      {{ summaryStatus|capitalize }}
-      <i class="{{statusIconClass}}"></i>
-    </span>
+<div class="monitoring-element monitoring-node-status">
+  <div class="stats">
+    <div>
+      Node:
+      <span class="status status-{{ onlineClass }}">
+        {{ onlineLabel|capitalize }} <i class="{{onlineIconClass}}"></i>
+      </span>
+    </div>
+    <div><strong>{{ node.transport_address|extractIp }}</strong></div>
+    <div>Documents: <strong>{{ node.documents|formatNumber:'0.[0]a' }}</strong></div>
+    <div>Data: <strong>{{ node.dataSize|formatNumber:'0.0 b' }}</strong></div>
+    <div>Free Disk Space: <strong>{{ node.freeSpace|formatNumber:'0.0 b' }}</strong></div>
+    <div>Indices: <strong>{{ node.indexCount|formatNumber:'0,0' }}</strong></div>
+    <div>Total Shards: <strong>{{ node.totalShards|formatNumber:'0,0' }}</strong></div>
+    <div>Type: <strong>{{ node.nodeTypeLabel }}</strong></div>
   </div>
-  <div>{{ node.transport_address|extractIp }}</div>
-  <div>Documents: {{ node.documents|formatNumber:'0.[0]a' }}</div>
-  <div>Data: {{ node.dataSize|formatNumber:'0.0b' }}</div>
-  <div>Free Disk Space: {{ node.freeSpace|formatNumber:'0.0b' }}</div>
-  <div>Indices: {{ node.indexCount|formatNumber:'0,0' }}</div>
-  <div>Total Shards: {{ node.totalShards|formatNumber:'0,0' }}</div>
-  <div>Type: {{ node.nodeTypeLabel }}</div>
 </div>
 

@@ -58,13 +58,24 @@ mod.controller('nodeView', (timefilter, $route, globalState, title, Private, $ex
     $scope.clusters = clusters;
     $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
   }
+
+  function setPageIconLabel(pageData) {
+    $scope.iconClass = pageData.nodeSummary.nodeTypeClass;
+    $scope.iconLabel = pageData.nodeSummary.nodeTypeLabel;
+  }
+
   setClusters($route.current.locals.clusters);
   $scope.pageData = $route.current.locals.pageData;
+
   title($scope.cluster, `Elasticsearch - Nodes - ${$scope.pageData.nodeSummary.name}`);
+  setPageIconLabel($scope.pageData);
 
   $executor.register({
     execute: () => getPageData(timefilter, globalState, $route, $http, Private),
-    handleResponse: (response) => $scope.pageData = response
+    handleResponse: (response) => {
+      $scope.pageData = response;
+      setPageIconLabel(response);
+    }
   });
 
   $executor.register({

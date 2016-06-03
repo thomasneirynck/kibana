@@ -10,11 +10,13 @@ mod.directive('monitoringNodeSummary', () => {
       function setStatus(node) {
         const nodeStatus = node.status;
         if (nodeStatus.toLowerCase() === 'online') {
-          scope.summaryStatus = 'green';
-          scope.statusIconClass = statusIconClass('green');
+          scope.onlineLabel = 'Online';
+          scope.onlineClass = 'green';
+          scope.onlineIconClass = statusIconClass('green');
         } else {
-          scope.summaryStatus = 'offline';
-          scope.statusIconClass = statusIconClass('offline');
+          scope.onlineLabel = 'Offline';
+          scope.onlineClass = 'offline';
+          scope.onlineIconClass = statusIconClass('offline');
         }
       }
       setStatus(scope.node);

@@ -1,10 +1,11 @@
-<div>
-  <div>
-    Status:
-    <span class="status status-{{ statusClass }}">
-      {{ kibanaStatus|capitalize }}
-      <i class="{{statusIconClass}}"></i>
-    </span>
+<div class="monitoring-element monitoring-kibana-status">
+  <div class="stats">
+    <div>
+      Status:
+      <span class="status status-{{ statusClass }}">
+        {{ kibanaStatus|capitalize }} <i class="{{statusIconClass}}"></i>
+      </span>
+    </div>
+    <div><strong>{{ kibana.transport_address }}</strong></div>
   </div>
-  <div>{{ kibana.transport_address }}</div>
 </div>
