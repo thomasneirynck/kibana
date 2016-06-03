@@ -39,12 +39,12 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
           query: createQuery({ start: lastBucketStart, end, clusterUuid }),
           aggs: {
             concurrent_connections: {
-              avg: {
+              max: {
                 field: 'kibana_stats.concurrent_connections'
               }
             },
             requests: {
-              avg: {
+              sum: {
                 field: 'kibana_stats.requests.total'
               }
             },
@@ -92,7 +92,7 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
           clusterUuid,
           stats: {
             status,
-            requests: numeral(requests).format('0.00'),
+            requests,
             connections: numeral(connections).format('0.00'),
             count: kibanaUuids.length
           }

@@ -648,7 +648,7 @@ module.exports = {
     label: 'Requests',
     description: 'The number of requests received by the server',
     format: formatSmallFloat,
-    metricAgg: 'avg',
+    metricAgg: 'sum',
     units: '',
     ...kibanaCharts,
     derivative: false
