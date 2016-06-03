@@ -69,8 +69,8 @@ module.exports = function getSeries(req, indices, metricName, filters) {
     }
     const aggCheck = resp.aggregations.check;
     const respBucketSize = aggCheck.meta.bucketSize;
+    const key = (metric.derivative) ? 'metric_deriv' : 'metric';
     const defaultCalculation = (bucket) => {
-      const key = (metric.derivative) ? 'metric_deriv' : 'metric';
       let value =  bucket[key] && bucket[key].value || 0;
       // convert metric_deriv from the bucket size to seconds if units == '/s'
       if (metric.units === '/s') {
