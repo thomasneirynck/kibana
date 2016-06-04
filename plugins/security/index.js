@@ -70,11 +70,16 @@ export default (kibana) => new kibana.Plugin({
   },
 
   init(server) {
+    const plugin = this;
     const xpackMainPluginStatus = server.plugins.xpackMain.status;
     if (xpackMainPluginStatus.state === 'red') {
       this.status.red(xpackMainPluginStatus.message);
       return;
     }
+
+    // Register a function that is called whenever the xpack info changes, with the
+    // xpack info, and returns a dictionary of vars useful to this plugin's UI
+    server.plugins.xpackMain.info.feature(plugin.id).registerUIVarsGenerator(checkLicense);
 
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
