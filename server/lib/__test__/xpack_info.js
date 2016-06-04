@@ -144,6 +144,24 @@ describe('xpack_info', function () {
         });
       });
     });
+
+    describe('registerUIVarsGenerator()', () => {
+      it ('registers a generator and calls it to populate response for UI', () => {
+        const reportingUIVars = {
+          foo: 17,
+          bar: {
+            baz: 17
+          }
+        };
+        const reportingUIVarsGenerator = () => reportingUIVars;
+        return xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
+        .then(info => {
+          info.stopPolling();
+          info.feature('reporting').registerUIVarsGenerator(reportingUIVarsGenerator);
+          expect(info.toJSON()).to.eql({ features: { reporting: reportingUIVars}});
+        });
+      });
+    });
   });
 
   describe('getSignature()', function () {
@@ -177,6 +195,23 @@ describe('xpack_info', function () {
         info.stopPolling();
         expect(info.license.isActive()).to.be(false);
         expect(info.getSignature()).to.not.be(previousSignature);
+      });
+    });
+  });
+
+  describe('refreshNow()', () => {
+    it ('calls the Elasticsearch GET _xpack API immediately', () => {
+      let previousSignature;
+      setClientResponse({ license: { status: 'active' }});
+      return xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
+      .then(info => {
+        info.stopPolling();
+        previousSignature = info.getSignature();
+        setClientResponse({ license: { status: 'expired' }});
+        return info.refreshNow();
+      })
+      .then(newInfo => {
+        expect(newInfo.getSignature()).to.not.be(previousSignature);
       });
     });
   });
