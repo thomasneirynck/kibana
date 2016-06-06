@@ -110,9 +110,13 @@ module.exports = React.createClass({
   },
   render() {
     return (
-      <div>
-        <ElasticsearchRow {...this.state.elasticsearch} angularChangeUrl={this.state.angularChangeUrl}/>
-        <KibanaRow {...this.state.kibana} angularChangeUrl={this.state.angularChangeUrl}/>
+      <div className='monitoring-view'>
+        <div className='col-md-6'>
+          <ElasticsearchRow {...this.state.elasticsearch} angularChangeUrl={this.state.angularChangeUrl}/>
+        </div>
+        <div className='col-md-6'>
+          <KibanaRow {...this.state.kibana} angularChangeUrl={this.state.angularChangeUrl}/>
+        </div>
       </div>
     );
   }
