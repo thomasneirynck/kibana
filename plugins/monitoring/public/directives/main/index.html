@@ -10,6 +10,9 @@
     </div>
 
     <ul ng-if="inElasticsearch" class="nav navbar-nav" role="navigation">
+      <li ng-if="!instance" ng-class="{active: isActive('overview')}">
+        <a kbn-href="#/elasticsearch" class="navbar-link">Overview</a>
+      </li>
       <li ng-if="!instance" ng-class="{active: isActive('indices')}">
         <a kbn-href="#/indices" class="navbar-link">Indices</a>
       </li>
@@ -17,7 +20,7 @@
         <a kbn-href="#/nodes" class="navbar-link">Nodes</a>
       </li>
       <li ng-if="instance">
-        <a kbn-href class="navbar-link">
+        <a class="navbar-link">
           <i ng-if="iconClass" class="fa {{iconClass}}" title="{{iconLabel}}"></i>
           {{instance}}
         </a>
@@ -29,19 +32,19 @@
         <a kbn-href="#/kibana" class="navbar-link">Kibana</a>
       </li>
       <li ng-if="instance">
-        <a kbn-href class="navbar-link">{{instance}}</a>
+        <a class="navbar-link">{{instance}}</a>
       </li>
     </ul>
 
     <ul ng-if="inOverview" class="nav navbar-nav" role="navigation">
       <li>
-        <a kbn-href class="navbar-link">Overview: {{clusterName}}</a>
+        <a class="navbar-link">Overview: {{clusterName}}</a>
       </li>
     </ul>
 
     <ul ng-if="inListing" class="nav navbar-nav" role="navigation">
       <li>
-        <a kbn-href="#/home" class="navbar-link">Clusters</a>
+        <a class="navbar-link">Clusters</a>
       </li>
     </ul>
   </kbn-top-nav>
