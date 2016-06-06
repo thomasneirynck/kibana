@@ -1,9 +1,12 @@
+/*
+ * Kibana Listing
+ */
 const _ = require('lodash');
 const mod = require('ui/modules').get('monitoring', [
   'monitoring/directives'
 ]);
 
-function getPageData(timefilter, globalState, $http, Private) {
+function getPageData(timefilter, globalState, $http, Private, kbnUrl) {
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/kibana`;
   const timeBounds = timefilter.getBounds();
 
@@ -13,7 +16,15 @@ function getPageData(timefilter, globalState, $http, Private) {
       max: timeBounds.max.toISOString()
     }
   })
-  .then(response => response.data)
+  .then(response => {
+    const data = response.data;
+    // if there's a single instance in the cluster, redirect to Kibana instance page
+    if (data.kibanas.length === 1 && kbnUrl) {
+      const uuid = _.get(data, 'kibanas[0].kibana.uuid');
+      return kbnUrl.redirect(`/kibana/${uuid}`);
+    }
+    return data;
+  })
   .catch((err) => {
     const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
     return ajaxErrorHandlers.fatalError(err);
