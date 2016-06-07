@@ -1,4 +1,4 @@
-import { join } from 'path';
+import { join, resolve } from 'path';
 import Promise from 'bluebird';
 import xpackInfo from '../../server/lib/xpack_info';
 import xpackUsage from '../../server/lib/xpack_usage';
@@ -7,7 +7,11 @@ import requireAllAndApply from '../../server/lib/require_all_and_apply';
 export default function (kibana) {
   return new kibana.Plugin({
     id: 'xpackMain',
+    publicDir: resolve(__dirname, 'public'),
     require: ['elasticsearch'],
+    uiExports: {
+      hacks: ['plugins/xpackMain/hacks/check_xpack_info_change'],
+    },
     init: function (server) {
       const client = server.plugins.elasticsearch.client; // NOTE: authenticated client using server config auth
       return Promise.all([
