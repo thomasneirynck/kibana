@@ -38,6 +38,10 @@ module.factory('checkXPackInfoChange', ($window, $injector) => {
         $window.localStorage.setItem('xpackMain.infoSignature', xpackInfoResponse.headers('kbn-xpack-sig'));
         _isInfoUpdateInProgress = false;
         return response;
+      })
+      .catch((e) => {
+        _isInfoUpdateInProgress = false;
+        throw e;
       });
     }
   };
