@@ -16,6 +16,7 @@ export default function getKibanaInfo(req, uuid) {
     const timestamp = getSource('timestamp');
     const kibana = getSource('kibana');
     const availability = { availability: calculateAvailability(timestamp) };
-    return _.merge(kibana, availability);
+    const freeMemory = { os_memory_free: getSource('os.memory.free_in_bytes') };
+    return _.merge(kibana, availability, freeMemory);
   });
 }
