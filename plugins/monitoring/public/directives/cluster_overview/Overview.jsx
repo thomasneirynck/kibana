@@ -79,7 +79,7 @@ const KibanaRow = React.createClass({
           <dd>Requests: {this.props.requests_total}</dd>
           <dd>Connections: {this.props.concurrent_connections}</dd>
           <dd>Max. Response Time: {this.props.response_time_max} ms</dd>
-          <dd>Memory Heap Used: {this.props.memory_heap_used_max}</dd>
+          <dd>Avg. Memory Size: {this.props.memory_size}</dd>
         </dl>
       </ClusterItemContainer>
     );

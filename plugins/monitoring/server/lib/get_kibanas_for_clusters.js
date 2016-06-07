@@ -2,6 +2,11 @@
  * Get high-level info for Kibanas in a set of clusters
  * The set contains multiple clusters for cluster listing page
  * The set contains single cluster for cluster overview page and cluster status bar
+
+ * Timespan for the data is an interval of time based on calculations of an
+ * interval size using the same calculation as determinting bucketSize using
+ * the timepicker for a chart
+
  * Returns, for each cluster,
  *  - number of instances
  *  - combined health
@@ -43,9 +48,9 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
                 field: 'kibana_stats.response_times.max'
               }
             },
-            memory_heap_used_max: {
+            memory_rss: {
               max: {
-                field: 'kibana_stats.process.memory.heap.used_in_bytes'
+                field: 'kibana_stats.process.memory.resident_set_size_in_bytes'
               }
             },
             concurrent_connections: {
@@ -91,7 +96,7 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
         let requestsTotal;
         let connections;
         let responseTime;
-        let memoryUsed;
+        let memorySize;
 
         if (kibanaUuids.length) {
           // if the cluster has kibana instances at all
@@ -101,7 +106,7 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
           requestsTotal = getResultAgg('requests_total.value');
           connections = getResultAgg('concurrent_connections.value');
           responseTime = getResultAgg('response_time_max.value');
-          memoryUsed = getResultAgg('memory_heap_used_max.value');
+          memorySize = getResultAgg('memory_rss.value'); // resident set size
         }
 
         return {
@@ -111,7 +116,7 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
             requests_total: requestsTotal,
             concurrent_connections: numeral(connections).format('0.[00]'),
             response_time_max: numeral(responseTime).format('0.[00]'),
-            memory_heap_used_max: numeral(memoryUsed).format('0,0.0 b'),
+            memory_size: numeral(memorySize).format('0,0.0 b'),
             count: kibanaUuids.length
           }
         };

@@ -25,13 +25,7 @@ function getPageData(timefilter, globalState, $http, $route, Private) {
       },
       'kibana_average_concurrent_connections',
       'kibana_process_delay',
-      {
-        name: 'kibana_heap',
-        keys: [
-          'kibana_heap_total',
-          'kibana_heap_used'
-        ]
-      },
+      'kibana_memory_size',
       {
         name: 'kibana_response_times',
         keys: [

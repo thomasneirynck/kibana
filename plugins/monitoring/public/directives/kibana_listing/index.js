@@ -65,10 +65,10 @@ define(function (require) {
             </span>
           );
           break;
-        case 'process.memory.heap':
+        case 'process.memory':
           $content = (
             <div className="big">
-                {`${numeral(value.used_in_bytes).format('0.00 b')}`}
+                {`${numeral(value.resident_set_size_in_bytes).format('0.00 b')}`}
             </div>
           );
           break;
@@ -113,9 +113,9 @@ define(function (require) {
           title: 'Status'
         },
         {
-          key: 'process.memory.heap',
-          sortKey: 'process.memory.heap.used_in_bytes',
-          title: 'Memory Heap Used'
+          key: 'process.memory',
+          sortKey: 'process.memory.resident_set_size_in_bytes',
+          title: 'Memory Size'
         },
         {
           key: 'os.load',

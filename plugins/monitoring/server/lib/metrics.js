@@ -572,24 +572,12 @@ module.exports = {
     ...kibanaCharts,
     derivative: false
   },
-  'kibana_heap_total': {
-    title: 'Heap Usage',
+  'kibana_memory_size': {
+    title: 'Memory Size',
     active: true,
-    field: 'kibana_stats.process.memory.heap.total_in_bytes',
-    label: 'Total',
-    description: 'The total amount of heap',
-    format: formatLargeBytes,
-    metricAgg: 'avg',
-    units: 'B',
-    ...kibanaCharts,
-    derivative: false
-  },
-  'kibana_heap_used': {
-    title: 'Heap Usage',
-    active: true,
-    field: 'kibana_stats.process.memory.heap.used_in_bytes',
-    label: 'Used',
-    description: 'The amount of heap used',
+    field: 'kibana_stats.process.memory.resident_set_size_in_bytes',
+    label: 'Size',
+    description: 'The amount of memory in RAM used by the Kibana server process',
     format: formatLargeBytes,
     metricAgg: 'avg',
     units: 'B',
