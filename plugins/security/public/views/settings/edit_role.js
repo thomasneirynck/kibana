@@ -62,7 +62,7 @@ routes.when('/settings/security/roles/edit/:name?', {
     };
 
     $scope.addIndex = (indices) => {
-      indices.push({names: [], privileges: [], fields: []});
+      indices.push({names: [], privileges: [], fields: null});
     };
 
     $scope.areIndicesValid = (indices) => {
