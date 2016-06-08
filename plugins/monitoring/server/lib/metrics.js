@@ -572,11 +572,23 @@ module.exports = {
     ...kibanaCharts,
     derivative: false
   },
+  'kibana_memory_heap_size_limit': {
+    title: 'Memory Size',
+    active: true,
+    field: 'kibana_stats.process.memory.heap.size_limit',
+    label: 'Heap Size Limit',
+    description: 'The limit of memory usage before garbage collection',
+    format: formatLargeBytes,
+    metricAgg: 'max',
+    units: 'B',
+    ...kibanaCharts,
+    derivative: false
+  },
   'kibana_memory_size': {
     title: 'Memory Size',
     active: true,
     field: 'kibana_stats.process.memory.resident_set_size_in_bytes',
-    label: 'Size',
+    label: 'Memory Size',
     description: 'The amount of memory in RAM used by the Kibana server process',
     format: formatLargeBytes,
     metricAgg: 'avg',

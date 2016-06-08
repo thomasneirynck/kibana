@@ -2,6 +2,7 @@ import mapRequests from './map_requests';
 import mapPlugins from './map_plugins';
 import mapResponseTimes from './map_response_times';
 import mapConcurrents from './map_concurrent_connections';
+import v8 from 'v8';
 
 import moment from 'moment';
 import _ from 'lodash';
@@ -13,6 +14,8 @@ function secondsToMilliseconds(seconds) {
 const snapshotRegex = /-snapshot/i;
 export default function mapEvent(event, config, serverInfo) {
   const status = serverInfo.status.toJSON();
+  const heapStatistics = v8.getHeapStatistics();
+  const heapSizeLimit = heapStatistics.heap_size_limit;
   return {
     kibana: {
       uuid: config.get('uuid'),
@@ -41,7 +44,8 @@ export default function mapEvent(event, config, serverInfo) {
       memory: {
         heap: {
           total_in_bytes: event.psmem.heapTotal,
-          used_in_bytes: event.psmem.heapUsed
+          used_in_bytes: event.psmem.heapUsed,
+          size_limit: heapSizeLimit
         },
         resident_set_size_in_bytes: event.psmem.rss
       },
