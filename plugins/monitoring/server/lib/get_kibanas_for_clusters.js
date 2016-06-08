@@ -14,7 +14,6 @@
 import Promise from 'bluebird';
 import _ from 'lodash';
 import moment from 'moment';
-import numeral from '@spalger/numeral';
 import calculateOverallStatus from './calculate_overall_status';
 const calcAuto = require('./calculate_auto');
 const createQuery = require('./create_query.js');
@@ -114,9 +113,9 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
           stats: {
             status,
             requests_total: requestsTotal,
-            concurrent_connections: numeral(connections).format('0.[00]'),
-            response_time_max: numeral(responseTime).format('0.[00]'),
-            memory_size: numeral(memorySize).format('0,0.0 b'),
+            concurrent_connections: connections,
+            response_time_max: responseTime,
+            memory_size: memorySize,
             count: kibanaUuids.length
           }
         };
