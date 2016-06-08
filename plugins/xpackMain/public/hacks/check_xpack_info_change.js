@@ -1,4 +1,5 @@
 import uiModules from 'ui/modules';
+import chrome from 'ui/chrome';
 
 const module = uiModules.get('xpackMain', []);
 
@@ -32,7 +33,7 @@ module.factory('checkXPackInfoChange', ($window, $injector) => {
       // server. Fetch it and update local info + signature.
       _isInfoUpdateInProgress = true;
       const $http = $injector.get('$http'); // To prevent circular dependency Angular error
-      return $http.get('../api/xpack/v1/info')
+      return $http.get(chrome.addBasePath('/api/xpack/v1/info'))
       .then((xpackInfoResponse) => {
         $window.localStorage.setItem('xpackMain.info', JSON.stringify(xpackInfoResponse.data));
         $window.localStorage.setItem('xpackMain.infoSignature', xpackInfoResponse.headers('kbn-xpack-sig'));
