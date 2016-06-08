@@ -35,7 +35,7 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
 
       if (isExpired && !_.contains(window.location.hash, 'license')) {
         // redirect to license, but avoid infinite loop
-        // eventually this should be a redirect to Kibana Management page
+        // CHANGEME: should redirect to Kibana Management > License
         kbnUrl.redirect('/license');
       }
       license.setLicenseType(clusterLicense.type);
