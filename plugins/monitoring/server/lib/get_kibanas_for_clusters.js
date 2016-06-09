@@ -48,8 +48,13 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
               }
             },
             memory_rss: {
-              max: {
+              avg: {
                 field: 'kibana_stats.process.memory.resident_set_size_in_bytes'
+              }
+            },
+            memory_heap_size_limit: {
+              avg: {
+                field: 'kibana_stats.process.memory.heap.size_limit'
               }
             },
             concurrent_connections: {
@@ -96,6 +101,7 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
         let connections;
         let responseTime;
         let memorySize;
+        let memoryLimit;
 
         if (kibanaUuids.length) {
           // if the cluster has kibana instances at all
@@ -106,6 +112,7 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
           connections = getResultAgg('concurrent_connections.value');
           responseTime = getResultAgg('response_time_max.value');
           memorySize = getResultAgg('memory_rss.value'); // resident set size
+          memoryLimit = getResultAgg('memory_heap_size_limit.value'); // max old space
         }
 
         return {
@@ -116,6 +123,7 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
             concurrent_connections: connections,
             response_time_max: responseTime,
             memory_size: memorySize,
+            memory_limit: memoryLimit,
             count: kibanaUuids.length
           }
         };
