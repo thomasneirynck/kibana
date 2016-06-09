@@ -17,9 +17,6 @@ module.factory('checkXPackInfoChange', ($q, $window, $injector) => {
 
     // Get xpack info signature in response; if it's empty, continue on...
     const signatureFromServer = response.headers('kbn-xpack-sig');
-    if (!signatureFromServer) {
-      return handleResponse(response);
-    }
 
     // Get xpack info signature from local storage
     const localSignature = $window.localStorage.getItem('xpackMain.infoSignature');
