@@ -25,11 +25,25 @@ export default function (kibana) {
       })
       .then(info => {
         function injectXPackInfoSignature(request, reply) {
-          const signature = info.getSignature();
-          if (signature) {
-            request.response.headers['kbn-xpack-sig'] = signature;
+          // If we're returning an error response, refresh xpack info
+          // from Elastisearch in case the error is due to a change in
+          // license information in Elasticsearch
+          if (request.response instanceof Error) {
+            return info.refreshNow()
+            .then((refreshedInfo) => {
+              const signature = refreshedInfo.getSignature();
+              if (signature) {
+                request.response.output.headers['kbn-xpack-sig'] = signature;
+              }
+              return reply.continue();
+            });
+          } else {
+            const signature = info.getSignature();
+            if (signature) {
+              request.response.headers['kbn-xpack-sig'] = signature;
+            }
+            return reply.continue();
           }
-          return reply.continue();
         };
         server.ext('onPreResponse', injectXPackInfoSignature);
       })

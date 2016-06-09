@@ -90,7 +90,14 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
       stopPolling: function () {
         // This method exists primarily for unit testing
         poller.stop();
-      }
+      },
+      refreshNow: function () {
+        const self = this;
+        return _callElasticsearchXPackAPI()
+        .then(_handleResponse)
+        .catch(_handleError)
+        .then(() => self);
+      },
     };
   });
 }
