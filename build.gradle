@@ -53,6 +53,7 @@ task npmBuild(type: LoggedExec, dependsOn: npmInstall) {
 }
 
 task bundlePlugin(type: Zip, dependsOn: npmBuild) {
+  enabled = kibanaEnabled
   from 'build/plugin'
   destinationDir file('build/distributions')
   baseName = 'x-pack'
