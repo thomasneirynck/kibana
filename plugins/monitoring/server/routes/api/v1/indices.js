@@ -28,7 +28,6 @@ module.exports = (server) => {
             min: Joi.date().required(),
             max: Joi.date().required()
           }).required(),
-          metrics: Joi.array().required(),
           listingMetrics: Joi.array().required()
         })
       }
@@ -42,7 +41,6 @@ module.exports = (server) => {
         .then(lastState => {
           return Promise.props({
             clusterStatus: getClusterStatus(req, indices, lastState),
-            metrics: getMetrics(req, indices),
             rows: getListing(req, indices),
             shardStats: getShardStats(req, indices, lastState)
           });
