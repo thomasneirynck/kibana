@@ -32,6 +32,9 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
         const expirySoonDate = moment.utc(expiryDateMillis).subtract(LICENSE_EXPIRY_SOON_DURATION);
         return moment.utc().isAfter(expirySoonDate);
       },
+      getExpiryDateInMillis: function () {
+        return get(_cachedResponseFromElasticsearch, 'license.expiry_date_in_millis');
+      },
       isOneOf: function (candidateLicenses) {
         if (!Array.isArray(candidateLicenses)) {
           candidateLicenses = [ candidateLicenses ];

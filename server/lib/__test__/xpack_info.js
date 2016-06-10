@@ -67,6 +67,18 @@ describe('xpack_info', function () {
       });
     });
 
+    describe('getExpiryDateInMillis()', function () {
+      it ('returns the expiration date im milliseconds', function () {
+        const licenseExpirationDateInMillis = 1465527717231;
+        setClientResponse({ license: { expiry_date_in_millis: licenseExpirationDateInMillis }});
+        return xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
+        .then(info => {
+          info.stopPolling();
+          expect(info.license.getExpiryDateInMillis()).to.be(licenseExpirationDateInMillis);
+        });
+      });
+    });
+
     describe('isOneOf()', function () {
       it ('returns true if the license is the single given mode', function () {
         setClientResponse({ license: { mode: 'gold' }});
