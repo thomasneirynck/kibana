@@ -101,9 +101,15 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
   }
 
   function _generateResponseForUI() {
-    // Call UI var generators for each feature, passing them xpack info object
+    // Set response elements common to all features
+    set(_responseForUI, 'license.type', xpackInfoObject.license.getType());
+    set(_responseForUI, 'license.isActive', xpackInfoObject.license.isActive());
+    set(_responseForUI, 'license.expiryDateInMillis', xpackInfoObject.license.getExpiryDateInMillis());
+
+    // Set response elements specific to each feature To do this,
+    // call the UI var generator for each feature, passing them xpack info object
     forIn(_uiVarGenerators, (generator, feature) => {
-      const uiVarsForFeature = generator(xpackInfoObject); // expected to be a dictionary object
+      const uiVarsForFeature = generator(xpackInfoObject); // return value expected to be a dictionary object
       set(_responseForUI, [ 'features', feature ], uiVarsForFeature);
     });
   }

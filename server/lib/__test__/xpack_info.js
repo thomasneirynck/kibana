@@ -170,7 +170,7 @@ describe('xpack_info', function () {
         .then(info => {
           info.stopPolling();
           info.feature('reporting').registerUIVarsGenerator(reportingUIVarsGenerator);
-          expect(info.toJSON()).to.eql({ features: { reporting: reportingUIVars}});
+          expect(info.toJSON().features).to.eql({reporting: reportingUIVars});
         });
       });
     });
