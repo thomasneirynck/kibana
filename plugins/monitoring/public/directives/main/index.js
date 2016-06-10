@@ -19,7 +19,6 @@ app.directive('monitoringMain', (license) => {
       scope.name = attrs.name; // name of current page
       scope.product = attrs.product; // undefined, elasticsearch, or kibana
       scope.instance = attrs.instance; // undefined or name of index, node, or kibana
-      scope.clusterName = scope.cluster.cluster_name;
       const productIsIn = (checkKey) => scope.product === checkKey;
       if (scope.product) {
         scope.inElasticsearch = productIsIn('elasticsearch');
@@ -45,7 +44,7 @@ app.directive('monitoringMain', (license) => {
       if (!scope.inListing) {
         breadcrumbs = [
           createCrumb('#/home', 'Clusters'),
-          createCrumb('#/overview', scope.clusterName, !scope.inOverview),
+          createCrumb('#/overview', scope.cluster.cluster_name, !scope.inOverview),
         ];
 
         // Elasticsearch crumbs
