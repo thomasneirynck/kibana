@@ -114,10 +114,31 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
     });
   }
 
+  function _getLicenseInfoForLog(response) {
+    const mode = get(response, 'license.mode');
+    const status = get(response, 'license.status');
+    const expiryDateInMillis = get(response, 'license.expiry_date_in_millis');
+
+    return [
+      'mode: ' + mode,
+      'status: ' + status,
+      'expiry date: ' + moment(expiryDateInMillis, 'x').format()
+    ].join(' | ');
+  }
+
   function _handleResponseFromElasticsearch(response) {
     const responseSignature = _computeResponseFromElasticsearchSignature(response);
     if (_cachedResponseFromElasticsearchSignature !== responseSignature) {
-      server.log([ 'license', 'info', 'plugin:xpackMain'  ], 'Got changed license information from Elasticsearch');
+
+      let changed = '';
+      if (_cachedResponseFromElasticsearchSignature) {
+        changed = 'changed ';
+      }
+
+      const licenseInfo = _getLicenseInfoForLog(response);
+      const logMessage = `Imported ${changed}license information from Elasticsearch: ${licenseInfo}`;
+      server.log([ 'license', 'info', 'plugin:xpackMain'  ], logMessage);
+
       _cachedResponseFromElasticsearchSignature = responseSignature;
       _cachedResponseFromElasticsearch = response;
       _generateResponseForUI();
