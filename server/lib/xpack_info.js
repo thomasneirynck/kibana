@@ -39,7 +39,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
     return [
       'mode: ' + mode,
       'status: ' + status,
-      'expiry date: ' + expiryDateInMillis
+      'expiry date: ' + moment(expiryDateInMillis, 'x').format()
     ].join(' | ');
   }
 
