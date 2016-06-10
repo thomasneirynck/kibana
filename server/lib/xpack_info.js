@@ -31,10 +31,51 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
     .digest('hex');
   }
 
+  function _getFirstTimeLicenseInfoForLog(response) {
+    const mode = get(response, 'license.mode');
+    const status = get(response, 'license.status');
+    const expiryDateInMillis = get(response, 'license.expiry_date_in_millis');
+
+    return [
+      'mode: ' + mode,
+      'status: ' + status,
+      'expiry date: ' + expiryDateInMillis
+    ].join(' | ');
+  }
+
+  function _getLicenseChangesForLog(previousResponse, newResponse) {
+    let changes = [];
+
+    function detectChangeIn(propertyName, propertyPath) {
+      const previousValue = get(previousResponse, propertyPath, '-');
+      const newValue = get(newResponse, propertyPath);
+      if (previousValue !== newValue) {
+        changes.push(propertyName + ': ' + previousValue + ' -> ' + newValue);
+      }
+    }
+
+    // Check for changes in mode, status, and expiry date
+    detectChangeIn('mode', 'license.mode');
+    detectChangeIn('status', 'license.status');
+    detectChangeIn('expiry date', 'license.expiry_date_in_millis');
+
+    return changes.join(' | ');
+  }
+
   function _handleResponse(response) {
     const responseSignature = _computeResponseSignature(response);
     if (_cachedResponseSignature !== responseSignature) {
-      server.log([ 'license', 'info', 'plugin:xpackMain'  ], 'Got changed license information from Elasticsearch');
+      let logMessage;
+      if (!_cachedResponseSignature) {
+        // First time after Kibana server (re)start
+        const licenseInfo = _getFirstTimeLicenseInfoForLog(response);
+        logMessage = 'Imported license information from Elasticsearch: ' + licenseInfo;
+      } else {
+        // Subsequent times when license information changes while Kibana server is already running
+        const licenseChanges = _getLicenseChangesForLog(_cachedResponse, response);
+        logMessage = 'Imported changed license information from Elasticsearch: ' + licenseChanges;
+      }
+      server.log([ 'license', 'info', 'plugin:xpackMain'  ], logMessage);
       _cachedResponseSignature = responseSignature;
       _cachedResponse = response;
     }
