@@ -157,7 +157,7 @@ describe('xpack_info', function () {
       });
     });
 
-    describe('registerUIVarsGenerator()', () => {
+    describe('registerLicenseCheckResultsGenerator()', () => {
       it ('registers a generator and calls it to populate response for UI', () => {
         const reportingUIVars = {
           foo: 17,
@@ -165,11 +165,11 @@ describe('xpack_info', function () {
             baz: 17
           }
         };
-        const reportingUIVarsGenerator = () => reportingUIVars;
+        const reportingLicenseCheckResultsGenerator = () => reportingUIVars;
         return xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
         .then(info => {
           info.stopPolling();
-          info.feature('reporting').registerUIVarsGenerator(reportingUIVarsGenerator);
+          info.feature('reporting').registerLicenseCheckResultsGenerator(reportingLicenseCheckResultsGenerator);
           expect(info.toJSON().features).to.eql({reporting: reportingUIVars});
         });
       });

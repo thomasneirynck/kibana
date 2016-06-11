@@ -11,7 +11,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
   let _cachedResponseFromElasticsearch;
   let _cachedResponseFromElasticsearchSignature;
 
-  let _uiVarGenerators = {};
+  let _licenseCheckResultsGenerators = {};
   let _responseForUI = {};
 
   const poller = new Poller({
@@ -53,9 +53,9 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
         isEnabled: function () {
           return get(_cachedResponseFromElasticsearch, 'features.' + feature + '.enabled');
         },
-        registerUIVarsGenerator: function (generator) {
+        registerLicenseCheckResultsGenerator: function (generator) {
           if (isFunction(generator)) {
-            _uiVarGenerators[feature] = generator;
+            _licenseCheckResultsGenerators[feature] = generator;
           }
           _generateResponseForUI();
         }
@@ -107,10 +107,11 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
     set(_responseForUI, 'license.expiryDateInMillis', xpackInfoObject.license.getExpiryDateInMillis());
 
     // Set response elements specific to each feature To do this,
-    // call the UI var generator for each feature, passing them xpack info object
-    forIn(_uiVarGenerators, (generator, feature) => {
-      const uiVarsForFeature = generator(xpackInfoObject); // return value expected to be a dictionary object
-      set(_responseForUI, [ 'features', feature ], uiVarsForFeature);
+    // call the license check results generator for each feature, passing them
+    // the xpack info object
+    forIn(_licenseCheckResultsGenerators, (generator, feature) => {
+      const licenseCheckResultsForFeature = generator(xpackInfoObject); // return value expected to be a dictionary object
+      set(_responseForUI, [ 'features', feature ], licenseCheckResultsForFeature);
     });
   }
 

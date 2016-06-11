@@ -74,9 +74,9 @@ module.exports = function (kibana) {
 
       function setup() {
 
-        // Register a function that is called whenever the xpack info changes, with the
-        // xpack info, and returns a dictionary of vars useful to this plugin's UI
-        server.plugins.xpackMain.info.feature(plugin.id).registerUIVarsGenerator(checkLicense);
+        // Register a function that is called whenever the xpack info changes,
+        // to re-compute the license check results for this plugin
+        server.plugins.xpackMain.info.feature(plugin.id).registerLicenseCheckResultsGenerator(checkLicense);
 
         // prepare phantom binary
         return phantom.install()

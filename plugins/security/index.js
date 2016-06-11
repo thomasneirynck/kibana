@@ -77,9 +77,9 @@ export default (kibana) => new kibana.Plugin({
       return;
     }
 
-    // Register a function that is called whenever the xpack info changes, with the
-    // xpack info, and returns a dictionary of vars useful to this plugin's UI
-    server.plugins.xpackMain.info.feature(plugin.id).registerUIVarsGenerator(checkLicense);
+    // Register a function that is called whenever the xpack info changes,
+    // to re-compute the license check results for this plugin
+    server.plugins.xpackMain.info.feature(plugin.id).registerLicenseCheckResultsGenerator(checkLicense);
 
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
