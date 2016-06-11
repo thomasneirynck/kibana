@@ -12,7 +12,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
   let _cachedResponseFromElasticsearchSignature;
 
   let _licenseCheckResultsGenerators = {};
-  let _responseForUI = {};
+  let _licenseCheckResults = {};
 
   const poller = new Poller({
     functionToPoll: _callElasticsearchXPackAPI,
@@ -57,7 +57,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
           if (isFunction(generator)) {
             _licenseCheckResultsGenerators[feature] = generator;
           }
-          _generateResponseForUI();
+          _generateLicenseCheckResults();
         }
       };
     },
@@ -76,7 +76,14 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
       poller.stop();
     },
     toJSON: function () {
-      return _responseForUI;
+      let json = _licenseCheckResults;
+
+      // Set response elements common to all features
+      set(json, 'license.type', xpackInfoObject.license.getType());
+      set(json, 'license.isActive', xpackInfoObject.license.isActive());
+      set(json, 'license.expiryDateInMillis', xpackInfoObject.license.getExpiryDateInMillis());
+
+      return json;
     }
   };
 
@@ -100,18 +107,13 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
     .digest('hex');
   }
 
-  function _generateResponseForUI() {
-    // Set response elements common to all features
-    set(_responseForUI, 'license.type', xpackInfoObject.license.getType());
-    set(_responseForUI, 'license.isActive', xpackInfoObject.license.isActive());
-    set(_responseForUI, 'license.expiryDateInMillis', xpackInfoObject.license.getExpiryDateInMillis());
-
-    // Set response elements specific to each feature To do this,
+  function _generateLicenseCheckResults() {
+    // Set response elements specific to each feature. To do this,
     // call the license check results generator for each feature, passing them
     // the xpack info object
     forIn(_licenseCheckResultsGenerators, (generator, feature) => {
       const licenseCheckResultsForFeature = generator(xpackInfoObject); // return value expected to be a dictionary object
-      set(_responseForUI, [ 'features', feature ], licenseCheckResultsForFeature);
+      set(_licenseCheckResults, [ 'features', feature ], licenseCheckResultsForFeature);
     });
   }
 
@@ -142,7 +144,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
 
       _cachedResponseFromElasticsearchSignature = responseSignature;
       _cachedResponseFromElasticsearch = response;
-      _generateResponseForUI();
+      _generateLicenseCheckResults();
     }
   }
 
