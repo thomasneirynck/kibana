@@ -76,12 +76,15 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
       poller.stop();
     },
     toJSON: function () {
-      let json = _licenseCheckResults;
+      let json = {};
 
       // Set response elements common to all features
       set(json, 'license.type', xpackInfoObject.license.getType());
       set(json, 'license.isActive', xpackInfoObject.license.isActive());
       set(json, 'license.expiryDateInMillis', xpackInfoObject.license.getExpiryDateInMillis());
+
+      // Set response elements for each of the features
+      set(json, 'features', _licenseCheckResults);
 
       return json;
     }
@@ -113,7 +116,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
     // the xpack info object
     forIn(_licenseCheckResultsGenerators, (generator, feature) => {
       const licenseCheckResultsForFeature = generator(xpackInfoObject); // return value expected to be a dictionary object
-      set(_licenseCheckResults, [ 'features', feature ], licenseCheckResultsForFeature);
+      _licenseCheckResults[feature] = licenseCheckResultsForFeature;
     });
   }
 
