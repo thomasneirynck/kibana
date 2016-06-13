@@ -54,7 +54,6 @@ module.exports = function (kibana) {
     },
 
     init: function (server, options) {
-      const plugin = this;
       const xpackMainPluginStatus = server.plugins.xpackMain.status;
       if (xpackMainPluginStatus.state === 'red') {
         this.status.red(xpackMainPluginStatus.message);
@@ -63,7 +62,7 @@ module.exports = function (kibana) {
 
       // Register a function that is called whenever the xpack info changes,
       // to re-compute the license check results for this plugin
-      server.plugins.xpackMain.info.feature(plugin.id).registerLicenseCheckResultsGenerator(checkLicense);
+      server.plugins.xpackMain.info.feature(this.id).registerLicenseCheckResultsGenerator(checkLicense);
 
       const licenseCheckResults = checkLicense(server.plugins.xpackMain.info);
       if (!licenseCheckResults.showGraphFeatures) {

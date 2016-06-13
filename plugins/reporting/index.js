@@ -76,7 +76,7 @@ module.exports = function (kibana) {
 
         // Register a function that is called whenever the xpack info changes,
         // to re-compute the license check results for this plugin
-        server.plugins.xpackMain.info.feature(plugin.id).registerLicenseCheckResultsGenerator(checkLicense);
+        server.plugins.xpackMain.info.feature(this.id).registerLicenseCheckResultsGenerator(checkLicense);
 
         // prepare phantom binary
         return phantom.install()
