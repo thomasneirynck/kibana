@@ -18,7 +18,7 @@ import calculateOverallStatus from './calculate_overall_status';
 const calcAuto = require('./calculate_auto');
 const createQuery = require('./create_query.js');
 export default function getKibanasForClusters(req, indices, calledFrom) {
-  if (indices[0] === '.kibana-devnull') return Promise.resolve([]);
+  if (indices[0] === '.kibana-devnull') return () => Promise.resolve([]);
 
 
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;

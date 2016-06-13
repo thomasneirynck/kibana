@@ -70,7 +70,7 @@ const ElasticsearchRow = React.createClass({
 });
 const KibanaRow = React.createClass({
   render() {
-    if (this.props.count < 1) return (<div></div>);
+    if (!this.props.count) return (<div></div>);
     return (
       <ClusterItemContainer {...this.props} url='kibana' title='Kibana'>
         <StatusContainer status={this.props.status}/>

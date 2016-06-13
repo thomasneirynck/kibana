@@ -61,6 +61,11 @@ module.exports = function (kibana) {
         loggingTag: string().default('monitoring-ui'),
         index: string().default('.monitoring-data-2'),
         index_prefix: string().default('.monitoring-es-2-'),
+        kibana: object({
+          data_collection: object({
+            enabled: boolean().default(true)
+          }).default()
+        }).default(),
         kibana_prefix: string().default('.monitoring-kibana-2-'),
         kibana_flush_interval: number().default(10000),
         missing_intervals: number().default(12),

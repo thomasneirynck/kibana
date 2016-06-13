@@ -26,7 +26,7 @@ function normalizeClustersData(clusters) {
     };
     cluster.status = calculateOverallStatus([
       cluster.elasticsearch.status,
-      cluster.kibana.status
+      cluster.kibana && cluster.kibana.status || null
     ]);
     delete cluster.stats;
     delete cluster.nodes;
@@ -56,13 +56,28 @@ module.exports = (server) => {
       }
     },
     handler: (req, reply) => {
-      const start = req.payload.timeRange.min;
-      const end = req.payload.timeRange.max;
-      const kbnIndexPattern = req.server.config().get('xpack.monitoring.kibana_prefix') + '*';
-      Promise.all([
-        calculateIndices(req, start, end),
-        calculateIndices(req, start, end, kbnIndexPattern)
-      ])
+      // logic to get index patterns for the supported stack products
+      function getIndices() {
+        const start = req.payload.timeRange.min;
+        const end = req.payload.timeRange.max;
+        const kbnIndexPattern = req.server.config().get('xpack.monitoring.kibana_prefix') + '*';
+        const calculateIndicesEs = _.partial(calculateIndices, req, start, end);
+        let calculateIndicesKbn;
+
+        if (config.get('xpack.monitoring.kibana.data_collection.enabled')) {
+          calculateIndicesKbn = _.partial(calculateIndices, req, start, end, kbnIndexPattern);
+        } else {
+          // TODO: move string to a constants file
+          calculateIndicesKbn = function () { return [ '.kibana-devnull' ]; };
+        }
+
+        return Promise.all([
+          calculateIndicesEs(),
+          calculateIndicesKbn()
+        ]);
+      }
+
+      getIndices()
       .then(([esIndices, kibanaIndices]) => {
         return getClusters(req, esIndices)
         .then(getClustersStats(req))
