@@ -1,4 +1,4 @@
-const module = require('ui/modules').get('reporting/job_queue');
+const module = require('ui/modules').get('xpack/reporting');
 module.service('reportingDocumentCreate', ($http, Promise, Private) => {
   const appInfo = Private(require('plugins/reporting/app_info'));
 

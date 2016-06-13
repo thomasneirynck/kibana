@@ -6,6 +6,7 @@ module.exports = function (server) {
   const jobsQuery = jobsQueryFactory(server);
   const mainEntry = '/api/reporting/jobs';
 
+  // list jobs in the queue, paginated
   server.route({
     path: `${mainEntry}/list`,
     method: 'GET',
@@ -20,6 +21,7 @@ module.exports = function (server) {
     }
   });
 
+  // return the count of all jobs in the queue
   server.route({
     path: `${mainEntry}/count`,
     method: 'GET',
@@ -31,6 +33,7 @@ module.exports = function (server) {
     }
   });
 
+  // return the raw output from a job
   server.route({
     path: `${mainEntry}/output/{docId}`,
     method: 'GET',
@@ -46,6 +49,7 @@ module.exports = function (server) {
     }
   });
 
+  // trigger a download of the output from a job
   server.route({
     path: `${mainEntry}/download/{docId}`,
     method: 'GET',

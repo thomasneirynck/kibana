@@ -15,6 +15,7 @@ module.directive('exportConfig', (reportingDocumentCreate) => {
     template,
     link($scope, $el, $attr) {
       $scope.exportConfig.name = $attr.name;
+      $scope.exportConfig.objectType = $attr.objectType;
     },
     controller() {
       this.selectedType = 'pdf';
