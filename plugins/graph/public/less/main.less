@@ -2,64 +2,13 @@
   margin-top: 30px;
 }
 
-.inactiveFieldCircle{
-  fill: #ECF0F1;
-  stroke: #6B707B;
-  stroke-dasharray: 2,2;
-}
-
-.inactiveFieldCircle:hover{
-  stroke-color:green;
-}
-
 .selectedFieldLine{
   background: #D0D3D8;
 }
 
-
-
 .nodeCircle {
   fill: #aaaaaa;
   opacity: 0.95;
-}
-.nodeCircle.type0 {
-  fill: #99bde7;
-}
-
-.nodeCircle.type1 {
-  fill: #e3d754;
-}
-
-.nodeCircle.type2 {
-  fill: #8ee684;
-}
-
-.nodeCircle.type3 {
-  fill: #e7974c;
-}
-
-.nodeCircle.type4 {
-  fill: #e4878d;
-}
-
-.nodeCircle.type5 {
-  fill: #67adab;
-}
-
-.nodeCircle.type6 {
-  fill: #43ebcc;
-}
-
-.nodeCircle.type7 {
-  fill: #e4b4ea;
-}
-
-.nodeCircle.type8 {
-  fill: #a1a655;
-}
-
-.nodeCircle.type9 {
-  fill: #78b36e;
 }
 
 .nodeCircle.selectedNode {
@@ -70,90 +19,18 @@
     opacity:0.3;
 }
 
-.btn.type0 {
-  background-color: #99bde7;
+/* See http://zurb.com/playground/radioactive-buttons */
+@-webkit-keyframes greenPulse {
+  from { border-color: #749a02; -webkit-box-shadow: 0 0 9px #333; }
+  50% { border-color: #91bd09; -webkit-box-shadow: 0 0 18px #91bd09; }
+  to { border-color: #749a02; -webkit-box-shadow: 0 0 9px #333; }
 }
 
-.btn.type1 {
-  background-color: #e3d754;
+.pulseControl {
+  -webkit-animation-name: greenPulse;
+  -webkit-animation-duration: 1s;
+  -webkit-animation-iteration-count: infinite;
 }
-
-.btn.type2 {
-  background-color: #8ee684ff;
-}
-
-.btn.type3 {
-  background-color: #e7974c;
-}
-
-.btn.type4 {
-  background-color: #e4878d;
-}
-
-.btn.type5 {
-  background-color: #67adab;
-}
-
-.btn.type6 {
-  background-color: #43ebcc;
-}
-
-.btn.type7 {
-  background-color: #e4b4ea;
-}
-
-.btn.type8 {
-  background-color: #a1a655;
-}
-
-.btn.type9 {
-  background-color: #78b36e;
-}
-
-
-
-
-.type0 .fill-bar {
-  stroke: #99bde7;
-}
-
-.type1 .fill-bar{
-  stroke: #e3d754;
-}
-
-.type2 .fill-bar{
-  stroke: #8ee684ff;
-}
-
-.type3 .fill-bar{
-  stroke: #e7974c;
-}
-
-.type4 .fill-bar{
-  stroke: #e4878d;
-}
-
-.type5 .fill-bar{
-  stroke: #67adab;
-}
-
-.type6 .fill-bar{
-  stroke: #43ebcc;
-}
-
-.type7 .fill-bar{
-  stroke: #e4b4ea;
-}
-
-.type8 .fill-bar{
-  stroke: #a1a655;
-}
-
-.type9 .fill-bar{
-  stroke: #78b36e;
-}
-
-
 
 
 .edge {
@@ -166,15 +43,37 @@
   stroke: yellowgreen;
   stroke-opacity: 0.95;
 }
+.edge.inferredEdge {
+  stroke-dasharray: 5,5;
+}
 
 .edge:hover {
   stroke-opacity: 0.95;
 }
-.nodeText {
-  font-size: 12px;
+
+.nodeSvgText {
+  font-size: 7px;
   font-family: "Arial";
   fill: #555555;
 }
+.nodeHtmlLabel {
+  font-size: 7px;
+  font-family: "Arial";
+  color: #555555;
+  cursor:pointer;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-align: center;
+  max-width: 100px;
+  max-height: 20px;
+}
+
+.dialogFooterText {
+  position: absolute;
+  bottom: 0;
+}
+
+
 .nodeMarkerText {
   font-size: 3px;
   font-family: "Arial";
@@ -185,17 +84,36 @@
   stroke: white;
 }
 
+.help-block {
+      font-size: smaller;
+}
+
 #navbarSearchForm select {
   margin-right: 5px;
 }
 
 .indexDropDown{
   max-width: 200px;
+  margin-right: 5px;
 }
 
 #basicSearchInputQuery{
-  color: #444444;;
+  color: #444444;
+  margin-left: 2px;
 }
+
+#qDisplayField{
+  max-width: 280px;
+}
+
+#addVertexFieldButton {
+  border-radius: 15px;
+  padding: 2px 6px;
+  font-size: smaller;
+  margin-top: 5px;
+  margin-right: 5px;
+}
+
 .selButton{
   margin-right: 5px;
   margin-bottom: 2px;
@@ -213,28 +131,13 @@
   font-size:18px;
 }
 
-.dropdown-menu > li > a.inactive {
-   color: #AAAAAA;
-   pointer-events: none;
-   cursor: default;
-}
-#groupIntoSelect{
-  max-width: 210px;
-  width: 210px;
-}
-.inactiveFieldName{
-  color: #AAAAAA;
-}
-#action-dropdown{
-  width:240px;
-}
-#selectedColorPalette{
-  padding-left: 10px;
+#vertexSelectionActionBar {
+    padding-top: 2px;
 }
 
 #sidebar{
   position: absolute;
-  right: 55px;
+  right: 5px;
   top: 5px;
   width: 300px;
   z-index: 5;
@@ -251,11 +154,6 @@
   margin-bottom: 2px;
 }
 
-.pageToggleLink{
-  position:absolute;
-  right:5px;
-  top:5px;
-}
 #qDiversityField{
   max-width: 220px;
 }
@@ -263,11 +161,36 @@
   margin-bottom: 5px;
 }
 
-#fieldSelectionList{
-  width: 100%;
+#fieldList {
+      height: 100%;
+      min-width: 300px;
 }
-.iconPickerButton{
-  border-radius: 20px;
+
+.legend-value-color-picker .dot {
+    line-height: 14px;
+    margin: 2px;
+    font-size: 14px;
+}
+.legend-value-color-picker .dot:hover {
+  margin: 0px;
+  font-size: 18px;
+}
+
+.legend-value-icon-picker .icon {
+    line-height: 14px;
+    margin: 2px;
+    font-size: 14px;
+    color: grey;
+}
+.legend-value-icon-picker .icon:hover {
+  margin: 0px;
+  font-size: 18px;
+  color: black;
+}
+.legend-value-icon-picker .selectedNode{
+  margin: 0px;
+  font-size: 18px;
+  color: black;
 }
 
 .venn1 {
@@ -288,22 +211,7 @@
 .vennTerm12{
   color:#BC4A84;
 }
-#groupButton {
-  float:right;
-}
-.exampleDocText{
-  width: 250px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-// #selectionToolBar{
-//   background-color: #dddddd;
-//   padding: 5px;
-// }
-// .selectionDetailPanel{
-//   padding-top: 5px;
-// }
+
 .detailPanel{
   max-height: 300px;
   overflow: scroll;
@@ -317,17 +225,11 @@
   margin-bottom: 3px;
 }
 
-.fixedLayoutTable{
-  table-layout: fixed;
-}
-
 .selectionList{
   height: 200px;
   max-height: 200px;
-  width:450px;
   background-color: #ECF0F1;
   overflow: scroll;
-  margin-right:10px;
   margin-bottom: 0px;
 }
 
@@ -335,6 +237,8 @@
   margin-bottom:0px;
   padding-bottom: 0px;
 }
+
+
 
 .noUserSelect{
  /* See http://stackoverflow.com/questions/826782/css-rule-to-disable-text-selection-highlighting */
@@ -351,29 +255,20 @@
 
 }
 
-#GraphToolBar{
-  border-collapse: separate;
-  border-spacing: 0.5em;
-  background-color: #dddddd;
-}
-#GraphToolBar th{
-  vertical-align: top;
-  font-size: smaller;
-}
-
-#GraphToolBar button{
-  margin-bottom: 2px;
-}
-
 #GraphSvgContainer {
-  position:fixed;
-  height:100%;
-  width:100%
+  position: fixed;
+  height: 100%;
+  width: ~"calc(100% - 53px)";
+}
+
+.global-nav.is-global-nav-open + .app-wrapper #GraphSvgContainer {
+  width: ~"calc(100% - 160px)";
 }
 
 .requestJsonView{
   height:200px;
 }
+
 
 .SvgIconFont{
   font-family: FontAwesome;
@@ -406,21 +301,16 @@
 
 navbar .input-group{
     top: 2px;
+    padding-bottom: 2px;
 }
 
-#graphAdvanced{
-  padding-left: 0px;
-  padding-right: 0px;
+#fieldFinderIcon{
+  background-color: #ffffff;
+  border: none;
 }
-
-#graphAdvancedSvg{
-  /* Hack - was having trouble getting this to use 100% of available space TODO css fix! */
-   min-height: 1000px;
-   overflow-y: hidden;
-
+#fieldFinderInput{
+  border: none;
 }
-#queryLogicPanel.closed{
-  // Hack to make the collapsible-sidebar work
-  padding-left: 0px;
-  padding-right: 0px;
+#fieldIconPlaceholder{
+      min-height: 35px;
 }

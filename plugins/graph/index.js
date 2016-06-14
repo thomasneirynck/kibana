@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import Boom from 'boom';
 var graphExploreRoute = require('./server/routes/graphExplore');
-var getExampleDocsRoute = require('./server/routes/getExampleDocs');
+var searchProxyRoute = require('./server/routes/searchProxy');
 import checkLicense from './server/lib/check_license';
 import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
 
@@ -39,7 +39,8 @@ module.exports = function (kibana) {
           return {
             kbnIndex: config.get('kibana.index'),
             esApiVersion: config.get('elasticsearch.apiVersion'),
-            esShardTimeout: config.get('elasticsearch.shardTimeout')
+            esShardTimeout: config.get('elasticsearch.shardTimeout'),
+            graphSavePolicy: config.get('xpack.graph.savePolicy'),
           };
         }
       },
@@ -50,12 +51,14 @@ module.exports = function (kibana) {
     config: function (Joi) {
       return Joi.object({
         enabled: Joi.boolean().default(true),
+        savePolicy : Joi.string().valid(['config','configAndDataWithConsent','configAndData','none']).default('configAndData'),
       }).default();
     },
 
     init: function (server, options) {
       const thisPlugin = this;
       const xpackMainPlugin = server.plugins.xpack_main;
+
       mirrorPluginStatus(xpackMainPlugin, thisPlugin);
       xpackMainPlugin.status.once('green', () => {
         // Register a function that is called whenever the xpack info changes,
@@ -77,7 +80,7 @@ module.exports = function (kibana) {
         ]
       };
       graphExploreRoute(server, commonRouteConfig);
-      getExampleDocsRoute(server, commonRouteConfig);
+      searchProxyRoute(server, commonRouteConfig);
     }
   });
 };

@@ -1,7 +1,7 @@
 module.exports = function (server, commonRouteConfig) {
 
   server.route({
-    path: '/api/graph/getExampleDocs',
+    path: '/api/graph/searchProxy',
     method: 'POST',
     handler: function (req, reply) {
       var callWithRequest = server.plugins.elasticsearch.callWithRequest;

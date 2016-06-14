@@ -40,7 +40,8 @@ module.exports = function (server, commonRouteConfig) {
           return;
         }
 
-        const badQueryReason = reasons.find(cause => cause.reason.includes('Failed to parse query'));
+        const badQueryReason = reasons.find(cause => cause.reason.includes('Failed to parse query')
+          || cause.type == 'parsing_exception');
         if (badQueryReason) {
           reply(Boom.badRequest(badQueryReason.reason));
           return;

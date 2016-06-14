@@ -43,6 +43,8 @@ module.exports = (function () {
     self.node = node;
     self.undo = function () {
       vm.arrRemove(vm.nodes, self.node);
+      vm.arrRemove(vm.selectedNodes, self.node);
+      self.node.isSelected = false;
 
       delete vm.nodesMap[self.node.id];
     };
@@ -695,6 +697,15 @@ module.exports = (function () {
     // A "simple search" operation that requires no parameters from the client.
     // Performs numHops hops pulling in field-specific number of terms each time
     this.simpleSearch = function (searchTerm, fieldsChoice, numHops) {
+      var qs = {
+        'query_string': {
+          'query': searchTerm
+        }
+      };
+      return this.search(qs, fieldsChoice, numHops);
+    };
+
+    this.search = function (query, fieldsChoice, numHops) {
       if (!fieldsChoice) {
         fieldsChoice = self.options.vertex_fields;
       }
@@ -745,18 +756,12 @@ module.exports = (function () {
           step.connections = nextStep;
           step = nextStep;
         }
-
       }
-      var qs = {
-        'query_string': {
-          'query': searchTerm
-        }
-      };
-      var query = qs;
+
       if (nots.length > 0) {
         query = {
           'bool': {
-            'must': [qs],
+            'must': [query],
             'must_not': nots
           }
         };
@@ -822,7 +827,9 @@ module.exports = (function () {
         node.id = self.makeNodeId(node.field, node.term);
         if (!this.nodesMap[node.id]) {
           //Default the label
-          node.label = node.term;
+          if (!node.label) {
+            node.label = node.term;
+          }
           dedupedNodes.push(node);
         }
       }
@@ -892,6 +899,10 @@ module.exports = (function () {
           'doc_count': edge.doc_count,
           'inferred': inferred
         };
+        if (edge.label) {
+          newEdge.label = edge.label;
+        }
+
         this.edgesMap[newEdge.id] = newEdge;
         this.edges.push(newEdge);
         lastOps.push(new AddEdgeOperation(newEdge, self));
@@ -1075,7 +1086,8 @@ module.exports = (function () {
       //Identify target fields
       for (var f in targetFields) {
         var fieldName = targetFields[f].name;
-        var hopSize = targetFields[f].hopSize;
+        // Sometimes the target field is disabled from loading new hops so we need to use the last valid figure
+        var hopSize = targetFields[f].hopSize > 0 ? targetFields[f].hopSize : targetFields[f].lastValidHopSize;
 
         var fieldHop = {
           'field': fieldName,
@@ -1237,11 +1249,7 @@ module.exports = (function () {
       return trimmedEdges;
     };
 
-    this.getSelectionsExampleDocs = function (completedHandler) {
-      self.getExampleDocs(self.selectedNodes, completedHandler);
-    };
-
-    this.getQuery = function (startNodes) {
+    this.getQuery = function (startNodes, loose) {
       var shoulds = [];
       var nodes = startNodes;
       if (!startNodes) {
@@ -1256,61 +1264,10 @@ module.exports = (function () {
       return {
         'bool': {
           'should': shoulds,
-          'minimum_should_match' : Math.min(shoulds.length, 2)
+          'minimum_should_match' : Math.min(shoulds.length, loose ? 1 : 2)
         }
       };
     };
-
-
-    // TODO - this is part of some in-built document visualization
-    // but ideally should be handled by calling saved Kibana visualizations.
-    // Once Kibana visualizations are more embeddable we can delegate to those
-    this.getExampleDocs = function (startNodes, completedHandler) {
-      var query = self.getQuery(startNodes);
-
-      var request = {
-        'query': query,
-        'size': 10
-      };
-
-      var controls = self.buildControls();
-      if (controls.sample_diversity) {
-        request.size = 0;
-        request.aggs = {
-          'sample': {
-            'diversified_sampler': {
-              'max_docs_per_value' : parseInt(controls.sample_diversity.max_docs_per_value),
-              'field' : controls.sample_diversity.field
-            },
-            'aggs': {
-              'topHits': {
-                'top_hits': {
-                  'size': 10
-                }
-              }
-            }
-          }
-        };
-      }
-
-      self.lastRequest = JSON.stringify(request, null, '\t');
-      var dataForServer = JSON.stringify(request);
-      searcher(self.options.indexName, request, function (data) {
-        var exampleDocs = [];
-        self.lastResponse = JSON.stringify(data, null, '\t');
-        var hits = null;
-        if (controls.sample_diversity) {
-          hits = data.aggregations.sample.topHits.hits.hits;
-        } else {
-          hits = data.hits.hits;
-        }
-        if (completedHandler) {
-          completedHandler(hits);
-        }
-      });
-    };
-
-
 
     this.getSelectedIntersections = function (callback) {
       if (self.selectedNodes.length == 0) {
