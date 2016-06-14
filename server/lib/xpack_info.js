@@ -115,8 +115,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
     // call the license check results generator for each feature, passing them
     // the xpack info object
     forIn(_licenseCheckResultsGenerators, (generator, feature) => {
-      const licenseCheckResultsForFeature = generator(xpackInfoObject); // return value expected to be a dictionary object
-      _licenseCheckResults[feature] = licenseCheckResultsForFeature;
+      _licenseCheckResults[feature] = generator(xpackInfoObject); // return value expected to be a dictionary object
     });
   }
 
