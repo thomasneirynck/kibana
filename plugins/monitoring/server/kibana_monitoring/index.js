@@ -14,7 +14,7 @@ export default function (serverInfo, server) {
 
     server.plugins.elasticsearch.status.on('green', () => {
       monitor.on('ops', onOps);
-      opsHandler = setInterval(() => buffer.flush(), config.get('xpack.monitoring.kibana_flush_interval'));
+      opsHandler = setInterval(() => buffer.flush(), config.get('xpack.monitoring.kibana.data_collection.interval'));
     });
 
     server.plugins.elasticsearch.status.on('red', () => {

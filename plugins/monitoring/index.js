@@ -63,11 +63,11 @@ module.exports = function (kibana) {
         index_prefix: string().default('.monitoring-es-2-'),
         kibana: object({
           data_collection: object({
-            enabled: boolean().default(true)
+            enabled: boolean().default(true),
+            interval: number().default(10000)
           }).default()
         }).default(),
         kibana_prefix: string().default('.monitoring-kibana-2-'),
-        kibana_flush_interval: number().default(10000),
         missing_intervals: number().default(12),
         max_bucket_size: number().default(10000),
         min_interval_seconds: number().default(10),
