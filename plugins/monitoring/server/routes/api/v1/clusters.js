@@ -15,6 +15,29 @@ const getLastRecovery = require('../../../lib/get_last_recovery');
 const calculateClusterStatus = require('../../../lib/elasticsearch/calculate_cluster_status');
 const handleError = require('../../../lib/handle_error');
 
+function getStackIndices(req) {
+  const start = req.payload.timeRange.min;
+  const end = req.payload.timeRange.max;
+  const kbnIndexPattern = req.server.config().get('xpack.monitoring.kibana_prefix') + '*';
+  const calculateIndicesEs = _.partial(calculateIndices, req, start, end);
+  const calculateIndicesKbn = async () => {
+    try {
+      return await calculateIndices(req, start, end, kbnIndexPattern);
+    } catch (e) {
+      if (e.status === 404) {
+        // kibana data collection is disabled and no data exists
+        return [ '.kibana-devnull' ];
+      }
+      throw e;
+    }
+  };
+
+  return Promise.all([
+    calculateIndicesEs(),
+    calculateIndicesKbn()
+  ]);
+}
+
 // manipulate cluster status
 function normalizeClustersData(clusters) {
   clusters.forEach(cluster => {
@@ -57,27 +80,8 @@ module.exports = (server) => {
     },
     handler: (req, reply) => {
       // logic to get index patterns for the supported stack products
-      function getIndices() {
-        const start = req.payload.timeRange.min;
-        const end = req.payload.timeRange.max;
-        const kbnIndexPattern = req.server.config().get('xpack.monitoring.kibana_prefix') + '*';
-        const calculateIndicesEs = _.partial(calculateIndices, req, start, end);
-        let calculateIndicesKbn;
 
-        if (config.get('xpack.monitoring.kibana.data_collection.enabled')) {
-          calculateIndicesKbn = _.partial(calculateIndices, req, start, end, kbnIndexPattern);
-        } else {
-          // TODO: move string to a constants file
-          calculateIndicesKbn = function () { return [ '.kibana-devnull' ]; };
-        }
-
-        return Promise.all([
-          calculateIndicesEs(),
-          calculateIndicesKbn()
-        ]);
-      }
-
-      getIndices()
+      getStackIndices(req)
       .then(([esIndices, kibanaIndices]) => {
         return getClusters(req, esIndices)
         .then(getClustersStats(req))
