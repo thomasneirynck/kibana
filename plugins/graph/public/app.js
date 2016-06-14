@@ -25,7 +25,7 @@ if (require('ui/routes').enable) {
 }
 
 require('ui/routes')
-  .when('/', {
+  .when('/home', {
     template: require('plugins/graph/templates/index.html'),
     resolve: {
       GetIndexPatternIds: function (Private) {
@@ -40,6 +40,8 @@ require('ui/routes')
   })
   .when('/license', {
     template: require('plugins/graph/templates/license.html')
+  }).otherwise({
+    redirectTo: '/home'
   });
 
 //========  Controller for basic UI ==================

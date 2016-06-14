@@ -35,7 +35,7 @@ routes.when('/settings/security/roles/edit/:name?', {
     $scope.privileges = shieldPrivileges;
     $scope.view = {
       isNewRole: $route.current.params.name == null,
-      isReservedRole: ['superuser', 'transport_client'].indexOf($route.current.params.name) >= 0,
+      isReservedRole: ['superuser', 'transport_client', 'kibana_user'].indexOf($route.current.params.name) >= 0,
       fieldOptions: {}
     };
 
@@ -62,7 +62,7 @@ routes.when('/settings/security/roles/edit/:name?', {
     };
 
     $scope.addIndex = (indices) => {
-      indices.push({names: [], privileges: [], fields: []});
+      indices.push({names: [], privileges: [], fields: null});
     };
 
     $scope.areIndicesValid = (indices) => {

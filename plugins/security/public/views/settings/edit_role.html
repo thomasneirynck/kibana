@@ -1,6 +1,5 @@
 <kbn-settings-app section="security">
   <div class="kbn-settings-security container">
-    <br />
     <ul class="nav nav-tabs">
       <li class="kbn-settings-tab"><a href="#/settings/security/users">Users</a></li>
       <li class="kbn-settings-tab active"><a href="#/settings/security/roles">Roles</a></li>
@@ -49,7 +48,7 @@
         <li class="kbn-settings-tab"><a>Assigned Users</a></li>
       </ul-->
       <div class="tab tab-content">
-        <h4>Cluster</h4>
+        <h4>Cluster Privileges</h4>
         <div class="checkbox-inline" ng-repeat="privilege in privileges.cluster">
           <label>
             <input type="checkbox" ng-checked="includes(role.cluster, privilege)" ng-click="toggle(role.cluster, privilege)" ng-disabled="view.isReservedRole" />
@@ -58,7 +57,7 @@
         </div>
         <br />
 
-        <h4>Run As</h4>
+        <h4>Run As Privileges</h4>
         <div class="input-group">
           <span class="input-group-addon">
             <i class="fa fa-search"></i>
@@ -72,7 +71,7 @@
         </div>
         <br />
 
-        <h4>Indices</h4>
+        <h4>Indices Privileges</h4>
         <table class="table">
           <tbody>
             <tr ng-repeat="index in role.indices">

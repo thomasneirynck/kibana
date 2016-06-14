@@ -23,7 +23,7 @@ module.exports = function (client, config) {
       getUrlParams: function (id) {
         return {
           pathname: opts.kibanaApp,
-          hash: '/dashboard/' + id,
+          hash: '/dashboard/' + uriEncode.string(id, true),
         };
       },
       searchSourceIndex: 'kibanaSavedObjectMeta.searchSourceJSON',
@@ -33,7 +33,7 @@ module.exports = function (client, config) {
       getUrlParams: function (id) {
         return {
           pathname: opts.kibanaApp,
-          hash: '/visualize/edit/' + id,
+          hash: '/visualize/edit/' + uriEncode.string(id, true),
         };
       },
       searchSourceIndex: 'kibanaSavedObjectMeta.searchSourceJSON',
@@ -43,7 +43,7 @@ module.exports = function (client, config) {
       getUrlParams: function (id) {
         return {
           pathname: opts.kibanaApp,
-          hash: '/discover/' + id,
+          hash: '/discover/' + uriEncode.string(id, true),
         };
       },
       searchSourceIndex: 'kibanaSavedObjectMeta.searchSourceJSON',

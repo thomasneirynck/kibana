@@ -21,7 +21,7 @@
     shield.authenticate = ca({
       params: {},
       url: {
-        fmt: '/_xpack/security/authenticate'
+        fmt: '/_xpack/security/_authenticate'
       }
     });
 

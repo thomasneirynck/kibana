@@ -76,6 +76,10 @@ export default (kibana) => new kibana.Plugin({
       return;
     }
 
+    // Register a function that is called whenever the xpack info changes,
+    // to re-compute the license check results for this plugin
+    server.plugins.xpackMain.info.feature(this.id).registerLicenseCheckResultsGenerator(checkLicense);
+
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
 

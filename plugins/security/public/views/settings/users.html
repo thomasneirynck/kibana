@@ -1,6 +1,9 @@
 <kbn-settings-app section="security">
-  <div class="kbn-settings-security container">
-    <br />
+  <div class="kbn-settings-security container" ng-if="forbidden">
+    You do not have permission to manage users/roles. Please contact your administrator.
+  </div>
+
+  <div class="kbn-settings-security container" ng-if="!forbidden">
     <ul class="nav nav-tabs">
       <li class="kbn-settings-tab active"><a href="#/settings/security/users">Users</a></li>
       <li class="kbn-settings-tab"><a href="#/settings/security/roles">Roles</a></li>
@@ -61,7 +64,7 @@
             </td>
           </tr>
           <tr ng-show="!(users | filter:query).length">
-            <td colspan="3">No <span ng-show="query">matching</span> users found.</td>
+            <td colspan="5">No <span ng-show="query">matching</span> users found.</td>
           </tr>
         </tbody>
       </table>

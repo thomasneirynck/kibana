@@ -6,7 +6,7 @@ export default function xpackInfoRoute(server) {
     method: 'GET',
     path: '/api/xpack/v1/info',
     handler: (req, reply) => {
-      return reply(server.plugins.xpackMain.info);
+      return reply(server.plugins.xpackMain.info.toJSON());
     }
   });
 }
