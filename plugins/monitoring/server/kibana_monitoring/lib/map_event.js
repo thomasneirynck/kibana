@@ -23,7 +23,7 @@ export default function mapEvent(event, config, serverInfo) {
       host: event.host,
       transport_address: `${config.get('server.host')}:${config.get('server.port')}`,
       version: serverInfo.version.replace(snapshotRegex, ''),
-      snapshot: serverInfo.version.match(snapshotRegex).length ? true : false,
+      snapshot: snapshotRegex.test(serverInfo.version),
       status: _.get(status, 'overall.state'),
       statuses: mapPlugins(status.statuses)
     },
