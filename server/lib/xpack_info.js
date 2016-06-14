@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
 import moment from 'moment';
-import { get, set, includes, isFunction, forIn } from 'lodash';
+import { get, set, includes, forIn } from 'lodash';
 import Poller from './poller';
 import { LICENSE_EXPIRY_SOON_DURATION, XPACK_INFO_API_DEFAULT_POLL_FREQUENCY } from './constants';
 
@@ -54,9 +54,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
           return get(_cachedResponseFromElasticsearch, 'features.' + feature + '.enabled');
         },
         registerLicenseCheckResultsGenerator: function (generator) {
-          if (isFunction(generator)) {
-            _licenseCheckResultsGenerators[feature] = generator;
-          }
+          _licenseCheckResultsGenerators[feature] = generator;
           _generateLicenseCheckResults();
         }
       };
