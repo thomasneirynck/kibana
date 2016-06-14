@@ -69,7 +69,7 @@ describe('xpack_info', function () {
 
     describe('getExpiryDateInMillis()', function () {
       it ('returns the expiration date in milliseconds', function () {
-        const licenseExpirationDateInMillis = 1465527717231;
+        const licenseExpirationDateInMillis = 1465527717231; // 2016-06-10T03:01:57.231Z
         setClientResponse({ license: { expiry_date_in_millis: licenseExpirationDateInMillis }});
         return xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
         .then(info => {
