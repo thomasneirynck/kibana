@@ -1,4 +1,4 @@
-var _ = require('lodash');
+import _ from 'lodash';
 
 function Model(data, options) {
   this.options = options || {};
@@ -63,4 +63,4 @@ Model.explode = function explode(obj) {
   return newObj;
 };
 
-module.exports = Model;
+export default Model;
