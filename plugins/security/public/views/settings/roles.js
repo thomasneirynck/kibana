@@ -1,4 +1,4 @@
-import {includes, negate} from 'lodash';
+import _ from 'lodash';
 import routes from 'ui/routes';
 import {toggle, toggleSort} from 'plugins/security/lib/util';
 import template from 'plugins/security/views/settings/roles.html';
@@ -8,11 +8,13 @@ routes.when('/settings/security/roles', {
   template,
   resolve: {
     roles(ShieldRole) {
-      return ShieldRole.query();
+      return ShieldRole.query()
+      .$promise.catch(_.identity); // Return the error if there is one
     }
   },
   controller($scope, $route, $q, Notifier) {
     $scope.roles = $route.current.locals.roles;
+    $scope.forbidden = !_.isArray($scope.roles);
     $scope.selectedRoles = [];
     $scope.sort = {orderBy: 'name', reverse: false};
 
@@ -47,11 +49,11 @@ routes.when('/settings/security/roles', {
     $scope.isReservedRole = (role) => ['superuser', 'transport_client', 'kibana_user'].indexOf(role.name) >= 0;
 
     $scope.toggle = toggle;
-    $scope.includes = includes;
+    $scope.includes = _.includes;
     $scope.toggleSort = toggleSort;
 
     function getActionableRoles() {
-      return $scope.roles.filter(negate($scope.isReservedRole));
+      return $scope.roles.filter(_.negate($scope.isReservedRole));
     }
   }
 });

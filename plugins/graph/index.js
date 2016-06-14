@@ -60,6 +60,10 @@ module.exports = function (kibana) {
         return;
       };
 
+      // Register a function that is called whenever the xpack info changes,
+      // to re-compute the license check results for this plugin
+      server.plugins.xpackMain.info.feature(this.id).registerLicenseCheckResultsGenerator(checkLicense);
+
       const licenseCheckResults = checkLicense(server.plugins.xpackMain.info);
       if (!licenseCheckResults.showGraphFeatures) {
         // Remove graph app icon from nav
