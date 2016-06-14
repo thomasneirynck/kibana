@@ -31,7 +31,7 @@ module.exports = function calculateIndices(req, start, end, indexPattern) {
       var indices = _.map(resp.indices, function (_info, index) {
         return index;
       });
-      if (indices.length === 0) return ['.kibana-devnull'];
+      if (indices.length === 0) return [];
       return indices.filter(index => index !== config.get('xpack.monitoring.index'));
     });
   });

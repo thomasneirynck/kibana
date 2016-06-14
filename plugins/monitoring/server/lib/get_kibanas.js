@@ -16,7 +16,7 @@ import createQuery from './create_query';
 import calculateAvailability from './calculate_availability';
 
 export default function getKibanas(req, indices) {
-  if (indices[0] === '.kibana-devnull') return Promise.resolve([]);
+  if (indices.length < 1) return Promise.resolve([]);
 
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const config = req.server.config();

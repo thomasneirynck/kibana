@@ -26,7 +26,7 @@ function getStackIndices(req) {
     } catch (e) {
       if (e.status === 404) {
         // kibana data collection is disabled and no data exists
-        return [ '.kibana-devnull' ];
+        return [];
       }
       throw e;
     }
