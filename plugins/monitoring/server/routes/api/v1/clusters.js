@@ -37,6 +37,8 @@ function normalizeClustersData(clusters) {
 
 module.exports = (server) => {
   const config = server.config();
+  const esIndexPattern = config.get('xpack.monitoring.index_prefix') + '*';
+  const kbnIndexPattern = config.get('xpack.monitoring.kibana_prefix') + '*';
   const callWithRequest = server.plugins.monitoring.callWithRequest;
 
   /*
@@ -58,9 +60,8 @@ module.exports = (server) => {
     handler: (req, reply) => {
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
-      const kbnIndexPattern = req.server.config().get('xpack.monitoring.kibana_prefix') + '*';
       return Promise.all([
-        calculateIndices(req, start, end),
+        calculateIndices(req, start, end, esIndexPattern),
         calculateIndices(req, start, end, kbnIndexPattern)
       ])
       .then(([esIndices, kibanaIndices]) => {
@@ -109,7 +110,7 @@ module.exports = (server) => {
     handler: (req, reply) => {
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
-      calculateIndices(req, start, end)
+      calculateIndices(req, start, end, esIndexPattern)
       .then(indices => {
         return getLastState(req, indices)
         .then(lastState => {

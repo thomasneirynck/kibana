@@ -14,7 +14,8 @@ const calculateClusterStatus = require('../../../lib/elasticsearch/calculate_clu
 const handleError = require('../../../lib/handle_error');
 
 module.exports = (server) => {
-
+  const config = server.config();
+  const esIndexPattern = config.get('xpack.monitoring.index_prefix') + '*';
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/indices',
@@ -35,7 +36,7 @@ module.exports = (server) => {
     handler: (req, reply) => {
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
-      calculateIndices(req, start, end)
+      calculateIndices(req, start, end, esIndexPattern)
       .then(indices => {
         return getLastState(req, indices)
         .then(lastState => {
@@ -94,7 +95,7 @@ module.exports = (server) => {
       const id = req.params.id;
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
-      calculateIndices(req, start, end)
+      calculateIndices(req, start, end, esIndexPattern)
       .then(indices => {
         return getLastState(req, indices)
         .then(lastState => {
