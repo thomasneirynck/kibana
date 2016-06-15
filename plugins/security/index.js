@@ -52,13 +52,8 @@ export default (kibana) => new kibana.Plugin({
     hacks: ['plugins/security/hacks/on_session_timeout'],
     injectDefaultVars: function (server) {
 
-      const licenseCheckResults = checkLicense(server.plugins.xpackMain.info);
-      server.expose('allowLogin', licenseCheckResults.allowLogin);
-      server.expose('showSecurityFeatures', licenseCheckResults.showSecurityFeatures);
-
       const config = server.config();
       return {
-        ...licenseCheckResults,
         secureCookies: config.get('xpack.security.secureCookies'),
         sessionTimeout: config.get('xpack.security.sessionTimeout'),
         clientCookieName: config.get('xpack.security.clientCookieName')

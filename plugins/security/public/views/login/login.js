@@ -7,12 +7,11 @@ import template from 'plugins/security/views/login/login.html';
 chrome
 .setVisible(false)
 .setRootTemplate(template)
-.setRootController('login', ($http, $window, secureCookies, allowLogin) => {
+.setRootController('login', ($http, $window, secureCookies) => {
   const next = parseNext($window.location);
   const isSecure = !!$window.location.protocol.match(/^https/);
 
   return {
-    allowLogin,
     isDisabled: !isSecure && secureCookies,
     submit(username, password) {
       this.error = false;

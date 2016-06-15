@@ -24,15 +24,6 @@ module.exports = function (kibana) {
         'plugins/reporting/controls/dashboard',
       ],
       settingsSections: ['plugins/reporting/views/settings'],
-      injectDefaultVars: function (server) {
-        const checkResult = checkLicense(server.plugins.xpackMain.info);
-
-        server.log(['reporting', 'license', 'debug'], `License check: ${checkResult.message}`);
-        server.expose('enabled', checkResult.enabled);
-        return {
-          reportingEnabled: checkResult.enabled
-        };
-      },
     },
 
     config: function (Joi) {
@@ -94,10 +85,7 @@ module.exports = function (kibana) {
         });
       }
 
-      if (!server.plugins.reporting.enabled) {
-        server.log(['warning', 'reporting'], 'Reporting is disabled. Please check your license.');
-        return;
-      }
+      return setup();
     }
   });
 };

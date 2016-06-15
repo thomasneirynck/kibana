@@ -35,10 +35,8 @@ module.exports = function (kibana) {
         //2.x        main: 'plugins/graph/app',
         main: mainFile, //2.x
         injectVars: function (server, options) {
-          const licenseCheckResults = checkLicense(server.plugins.xpackMain.info);
           var config = server.config();
           return {
-            ...licenseCheckResults,
             kbnIndex: config.get('kibana.index'),
             esApiVersion: config.get('elasticsearch.apiVersion'),
             esShardTimeout: config.get('elasticsearch.shardTimeout')
