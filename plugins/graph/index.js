@@ -3,6 +3,7 @@ import Boom from 'boom';
 var graphExploreRoute = require('./server/routes/graphExplore');
 var getExampleDocsRoute = require('./server/routes/getExampleDocs');
 import checkLicense from './server/lib/check_license';
+import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
 
 const APP_TITLE = 'Graph';
 
@@ -54,43 +55,44 @@ module.exports = function (kibana) {
     },
 
     init: function (server, options) {
-      const xpackMainPluginStatus = server.plugins.xpackMain.status;
-      if (xpackMainPluginStatus.state === 'red') {
-        this.status.red(xpackMainPluginStatus.message);
-        return;
-      };
+      const thisPlugin = this;
+      const xpackMainPlugin = server.plugins.xpackMain;
+      mirrorPluginStatus(xpackMainPlugin, thisPlugin);
+      xpackMainPlugin.status.once('green', setup);
 
-      // Register a function that is called whenever the xpack info changes,
-      // to re-compute the license check results for this plugin
-      server.plugins.xpackMain.info.feature(this.id).registerLicenseCheckResultsGenerator(checkLicense);
+      function setup() {
+        // Register a function that is called whenever the xpack info changes,
+        // to re-compute the license check results for this plugin
+        server.plugins.xpackMain.info.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
 
-      const licenseCheckResults = checkLicense(server.plugins.xpackMain.info);
-      if (!licenseCheckResults.showGraphFeatures) {
-        // Remove graph app icon from nav
-        kibana.uiExports.navLinks.inOrder.forEach((navLink) => {
-          if (navLink.title === APP_TITLE) {
-            kibana.uiExports.navLinks.delete(navLink);
-          }
-        });
-      }
-
-      // Add server routes and initalize the plugin here
-      const commonRouteConfig = {
-        pre: [
-          function forbidApiAccess(request, reply) {
-            if (!licenseCheckResults.showGraphFeatures || licenseCheckResults.showLicensePage) {
-              reply(Boom.forbidden('License has expired '
-                + 'OR graph is not available with this license '
-                + 'OR graph has been disabled in Elasticsearch'));
-            } else {
-              reply();
+        const licenseCheckResults = checkLicense(server.plugins.xpackMain.info);
+        if (!licenseCheckResults.showGraphFeatures) {
+          // Remove graph app icon from nav
+          kibana.uiExports.navLinks.inOrder.forEach((navLink) => {
+            if (navLink.title === APP_TITLE) {
+              kibana.uiExports.navLinks.delete(navLink);
             }
-          }
-        ]
-      };
-      graphExploreRoute(server, commonRouteConfig);
-      getExampleDocsRoute(server, commonRouteConfig);
-    }
+          });
+        }
 
+        // Add server routes and initalize the plugin here
+        const commonRouteConfig = {
+          pre: [
+            function forbidApiAccess(request, reply) {
+              const licenseCheckResults = checkLicense(server.plugins.xpackMain.info);
+              if (!licenseCheckResults.showGraphFeatures || licenseCheckResults.showLicensePage) {
+                reply(Boom.forbidden('License has expired '
+                  + 'OR graph is not available with this license '
+                  + 'OR graph has been disabled in Elasticsearch'));
+              } else {
+                reply();
+              }
+            }
+          ]
+        };
+        graphExploreRoute(server, commonRouteConfig);
+        getExampleDocsRoute(server, commonRouteConfig);
+      }
+    }
   });
 };
