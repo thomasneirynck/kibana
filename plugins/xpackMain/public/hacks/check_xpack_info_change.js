@@ -37,7 +37,10 @@ module.factory('checkXPackInfoChange', ($q, $window, $injector) => {
       _isInfoUpdateInProgress = false;
       return handleResponse(response);
     })
-    .catch(() => _isInfoUpdateInProgress = false);
+    .catch(() => {
+      _isInfoUpdateInProgress = false;
+      return handleResponse(response);
+    });
   }
 
   return {
