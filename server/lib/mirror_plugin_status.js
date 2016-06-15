@@ -9,4 +9,5 @@ export default function mirrorPluginStatus(upstreamPlugin, downstreamPlugin, ...
     const { state, message } = upstreamPlugin.status;
     downstreamPlugin.status[state](message);
   }
+  mirror(); // initial mirroring
 }
