@@ -1,13 +1,10 @@
-import { join } from 'path';
 import { partial } from 'lodash';
 import Promise from 'bluebird';
 import xpackInfo from '../../../../server/lib/xpack_info';
 import xpackUsage from '../../../../server/lib/xpack_usage';
-import requireAllAndApply from '../../../../server/lib/require_all_and_apply';
 import injectXPackInfoSignature from './inject_xpack_info_signature';
 
 let preResponseHandlerRegistered = false;
-let routesRegistered = false;
 
 export default function setup(server, xpackMainPlugin) {
   const client = server.plugins.elasticsearch.client; // NOTE: authenticated client using server config auth
@@ -25,13 +22,6 @@ export default function setup(server, xpackMainPlugin) {
     if (!preResponseHandlerRegistered) {
       server.ext('onPreResponse', partial(injectXPackInfoSignature, info));
       preResponseHandlerRegistered = true;
-    }
-  })
-  .then(() => {
-    // Register routes, but only once
-    if (!routesRegistered) {
-      return requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server)
-      .then(() => routesRegistered = true);
     }
   })
   .then(() => xpackMainPlugin.status.green('Ready'))

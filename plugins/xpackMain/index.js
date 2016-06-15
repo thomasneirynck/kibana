@@ -1,6 +1,7 @@
-import { resolve } from 'path';
+import { join, resolve } from 'path';
 import { partial } from 'lodash';
 import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
+import requireAllAndApply from '../../server/lib/require_all_and_apply';
 import setup from './server/lib/setup';
 
 export default function (kibana) {
@@ -15,6 +16,8 @@ export default function (kibana) {
       const elasticsearchPlugin = server.plugins.elasticsearch;
       mirrorPluginStatus(elasticsearchPlugin, this, 'yellow', 'red');
       elasticsearchPlugin.status.on('green', partial(setup, server, this));
+
+      return requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server);
     }
   });
 }
