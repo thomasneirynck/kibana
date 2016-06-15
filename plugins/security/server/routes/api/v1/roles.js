@@ -4,7 +4,7 @@ import getClient from '../../../lib/get_client_shield';
 import roleSchema from '../../../lib/role_schema';
 import { wrapError } from '../../../lib/errors';
 
-export default (server, {commonRouteConfig}) => {
+export default (server) => {
   const callWithRequest = getClient(server).callWithRequest;
 
   server.route({
@@ -18,9 +18,6 @@ export default (server, {commonRouteConfig}) => {
         },
         _.flow(wrapError, reply)
       );
-    },
-    config: {
-      ...commonRouteConfig
     }
   });
 
@@ -35,9 +32,6 @@ export default (server, {commonRouteConfig}) => {
           return reply(Boom.notFound());
         },
         _.flow(wrapError, reply));
-    },
-    config: {
-      ...commonRouteConfig
     }
 
   });
@@ -56,7 +50,6 @@ export default (server, {commonRouteConfig}) => {
       validate: {
         payload: roleSchema
       },
-      ...commonRouteConfig
     }
   });
 
@@ -68,9 +61,6 @@ export default (server, {commonRouteConfig}) => {
       return callWithRequest(request, 'shield.deleteRole', {name}).then(
         () => reply().code(204),
         _.flow(wrapError, reply));
-    },
-    config: {
-      ...commonRouteConfig
     }
   });
 };

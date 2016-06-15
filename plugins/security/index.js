@@ -1,6 +1,5 @@
 import hapiAuthCookie from 'hapi-auth-cookie';
 import { resolve } from 'path';
-import Boom from 'boom';
 import basicAuth from './server/lib/basic_auth';
 import getIsValidUser from './server/lib/get_is_valid_user';
 import getValidate from './server/lib/get_validate';
@@ -69,73 +68,55 @@ export default (kibana) => new kibana.Plugin({
     const thisPlugin = this;
     const xpackMainPlugin = server.plugins.xpackMain;
     mirrorPluginStatus(xpackMainPlugin, thisPlugin);
-    xpackMainPlugin.status.once('green', setup);
-
-    function setup() {
+    xpackMainPlugin.status.once('green', () => {
       // Register a function that is called whenever the xpack info changes,
       // to re-compute the license check results for this plugin
-      server.plugins.xpackMain.info.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
+      xpackMainPlugin.info.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
+    });
 
-      const config = server.config();
-      validateConfig(config, message => server.log(['security', 'warning'], message));
+    const config = server.config();
+    validateConfig(config, message => server.log(['security', 'warning'], message));
 
-      const commonCookieConfig = {
-        isSecure: config.get('xpack.security.secureCookies'),
-        path: config.get('server.basePath') + '/'
-      };
+    const commonCookieConfig = {
+      isSecure: config.get('xpack.security.secureCookies'),
+      path: config.get('server.basePath') + '/'
+    };
 
-      // Registers the client-readable cookie which stores user information for display purposes
-      // (as opposed to the session cookie which is HTTP only and stores username/password)
-      const clientCookieName = config.get('xpack.security.clientCookieName');
-      server.state(clientCookieName, commonCookieConfig);
+    // Registers the client-readable cookie which stores user information for display purposes
+    // (as opposed to the session cookie which is HTTP only and stores username/password)
+    const clientCookieName = config.get('xpack.security.clientCookieName');
+    server.state(clientCookieName, commonCookieConfig);
 
-      if (server.plugins.security.showSecurityFeatures) {
-        const cookieName = config.get('xpack.security.cookieName');
-        server.register(hapiAuthCookie, (error) => {
-          if (error != null) throw error;
+    const cookieName = config.get('xpack.security.cookieName');
+    server.register(hapiAuthCookie, (error) => {
+      if (error != null) throw error;
 
-          server.auth.scheme('login', createScheme({
-            redirectUrl: (path) => loginUrl(config.get('server.basePath'), path),
-            strategy: 'security'
-          }));
+      server.auth.scheme('login', createScheme({
+        redirectUrl: (path) => loginUrl(config.get('server.basePath'), path),
+        strategy: 'security'
+      }));
 
-          server.auth.strategy('session', 'login', 'required');
+      server.auth.strategy('session', 'login', 'required');
 
-          server.auth.strategy('security', 'cookie', false, {
-            cookie: cookieName,
-            password: config.get('xpack.security.encryptionKey'),
-            clearInvalid: true,
-            validateFunc: getValidate(server),
-            ...commonCookieConfig
-          });
-        });
+      server.auth.strategy('security', 'cookie', false, {
+        cookie: cookieName,
+        password: config.get('xpack.security.encryptionKey'),
+        clearInvalid: true,
+        validateFunc: getValidate(server),
+        ...commonCookieConfig
+      });
+    });
 
-        basicAuth.register(server, cookieName, getIsValidUser(server), getCalculateExpires(server));
-      }
+    basicAuth.register(server, cookieName, getIsValidUser(server), getCalculateExpires(server));
+    createExpose(server);
 
-      createExpose(server);
+    initAuthenticateApi(server, {clientCookieName});
+    initUsersApi(server);
+    initRolesApi(server);
+    initIndicesApi(server);
+    initLoginView(server, thisPlugin);
+    initLogoutView(server, thisPlugin);
 
-      const commonRouteConfig = {
-        pre: [
-          function forbidApiAccess(request, reply) {
-            if (!server.plugins.security.allowLogin || !server.plugins.security.showSecurityFeatures) {
-              reply(Boom.forbidden('License has expired '
-                + 'OR security is not available with this license '
-                + 'OR security has been disabled in Elasticsearch'));
-            } else {
-              reply();
-            }
-          }
-        ]
-      };
-
-      initAuthenticateApi(server, {commonRouteConfig, clientCookieName});
-      initUsersApi(server, {commonRouteConfig});
-      initRolesApi(server, {commonRouteConfig});
-      initIndicesApi(server);
-      initLoginView(server, thisPlugin);
-      initLogoutView(server, thisPlugin);
-    }
   }
 });
 

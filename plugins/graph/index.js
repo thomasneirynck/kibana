@@ -56,41 +56,15 @@ module.exports = function (kibana) {
       const thisPlugin = this;
       const xpackMainPlugin = server.plugins.xpackMain;
       mirrorPluginStatus(xpackMainPlugin, thisPlugin);
-      xpackMainPlugin.status.once('green', setup);
-
-      function setup() {
+      xpackMainPlugin.status.once('green', () => {
         // Register a function that is called whenever the xpack info changes,
         // to re-compute the license check results for this plugin
-        server.plugins.xpackMain.info.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
+        xpackMainPlugin.info.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
+      });
 
-        const licenseCheckResults = checkLicense(server.plugins.xpackMain.info);
-        if (!licenseCheckResults.showGraphFeatures) {
-          // Remove graph app icon from nav
-          kibana.uiExports.navLinks.inOrder.forEach((navLink) => {
-            if (navLink.title === APP_TITLE) {
-              kibana.uiExports.navLinks.delete(navLink);
-            }
-          });
-        }
-
-        // Add server routes and initalize the plugin here
-        const commonRouteConfig = {
-          pre: [
-            function forbidApiAccess(request, reply) {
-              const licenseCheckResults = checkLicense(server.plugins.xpackMain.info);
-              if (!licenseCheckResults.showGraphFeatures || licenseCheckResults.showLicensePage) {
-                reply(Boom.forbidden('License has expired '
-                  + 'OR graph is not available with this license '
-                  + 'OR graph has been disabled in Elasticsearch'));
-              } else {
-                reply();
-              }
-            }
-          ]
-        };
-        graphExploreRoute(server, commonRouteConfig);
-        getExampleDocsRoute(server, commonRouteConfig);
-      }
+      // Add server routes and initalize the plugin here
+      graphExploreRoute(server);
+      getExampleDocsRoute(server);
     }
   });
 };

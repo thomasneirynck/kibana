@@ -59,13 +59,13 @@ module.exports = function (kibana) {
       const thisPlugin = this;
       const xpackMainPlugin = server.plugins.xpackMain;
       mirrorPluginStatus(xpackMainPlugin, thisPlugin);
-      xpackMainPlugin.status.once('green', setup);
-
-      function setup() {
+      xpackMainPlugin.status.once('green', () => {
         // Register a function that is called whenever the xpack info changes,
         // to re-compute the license check results for this plugin
-        server.plugins.xpackMain.info.feature(this.id).registerLicenseCheckResultsGenerator(checkLicense);
+        xpackMainPlugin.info.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
+      });
 
+      function setup() {
         // prepare phantom binary
         return phantom.install()
         .then(function (binaryPath) {
