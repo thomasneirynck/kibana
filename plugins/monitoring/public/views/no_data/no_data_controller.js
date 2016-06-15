@@ -19,7 +19,7 @@ require('ui/routes')
 })
 .otherwise({ redirectTo: '/home' });
 
-mod.controller('noData', (kbnUrl, $executor, monitoringClusters, timefilter) => {
+mod.controller('noData', (kbnUrl, $executor, monitoringClusters, timefilter, $scope) => {
   timefilter.enabled = true;
 
   timefilter.on('update', () => {
@@ -38,5 +38,11 @@ mod.controller('noData', (kbnUrl, $executor, monitoringClusters, timefilter) => 
       }
     }
   });
+
+  // Start the executor
+  $executor.start();
+
+  // Destory the executor
+  $scope.$on('$destroy', $executor.destroy);
 });
 
