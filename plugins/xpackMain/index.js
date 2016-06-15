@@ -51,10 +51,11 @@ export default function (kibana) {
         return requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server);
       })
       .catch(reason => {
+        let errorMessage = reason;
         if ((reason instanceof Error) && (reason.status === 400)) {
-          const errorMessage = 'x-pack plugin is not installed on Elasticsearch cluster';
-          this.status.red(errorMessage);
+          errorMessage = 'x-pack plugin is not installed on Elasticsearch cluster';
         }
+        this.status.red(errorMessage);
       });
     }
   });
