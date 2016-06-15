@@ -1,9 +1,9 @@
-import 'plugins/security/views/settings/users';
-import 'plugins/security/views/settings/roles';
-import 'plugins/security/views/settings/edit_user';
-import 'plugins/security/views/settings/edit_role';
+import 'plugins/security/views/management/users';
+import 'plugins/security/views/management/roles';
+import 'plugins/security/views/management/edit_user';
+import 'plugins/security/views/management/edit_role';
 import chrome from 'ui/chrome';
-import 'plugins/security/views/settings/settings.less';
+import 'plugins/security/views/management/management.less';
 
 import management from 'ui/management';
 

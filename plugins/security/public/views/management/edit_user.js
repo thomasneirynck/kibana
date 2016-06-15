@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import routes from 'ui/routes';
-import template from 'plugins/security/views/settings/edit_user.html';
+import template from 'plugins/security/views/management/edit_user.html';
 import 'angular-resource';
 import 'angular-ui-select';
 import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
-import 'plugins/security/views/settings/edit_user.less';
+import 'plugins/security/views/management/edit_user.less';
 
 routes.when('/management/elasticsearch/users/edit/:username?', {
   template,

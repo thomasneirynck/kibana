@@ -36,7 +36,7 @@ export default (kibana) => new kibana.Plugin({
 
   uiExports: {
     chromeNavControls: ['plugins/security/views/nav_control'],
-    managementSections: ['plugins/security/views/settings'],
+    managementSections: ['plugins/security/views/management'],
     apps: [{
       id: 'login',
       title: 'Login',

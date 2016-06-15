@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import routes from 'ui/routes';
 import {toggle} from 'plugins/security/lib/util';
-import template from 'plugins/security/views/settings/edit_role.html';
+import template from 'plugins/security/views/management/edit_role.html';
 import 'angular-ui-select';
 import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
