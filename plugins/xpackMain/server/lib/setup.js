@@ -34,7 +34,7 @@ export default function setup(server, xpackMainPlugin) {
       .then(() => routesRegistered = true);
     }
   })
-  .then(xpackMainPlugin.status.green('Ready'))
+  .then(() => xpackMainPlugin.status.green('Ready'))
   .catch(reason => {
     let errorMessage = reason;
     if ((reason instanceof Error) && (reason.status === 400)) {
