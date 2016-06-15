@@ -131,6 +131,21 @@ describe('xpack_info', function () {
         });
       });
     });
+
+    describe('getLicenseCheckResults()', () => {
+      it ('returns the latest license check results for the feature', () => {
+        const mockGraphLicenseCheckResults = {
+          showGraphFeatures: false
+        };
+        const graphLicenseCheckResultsGenerator = () => mockGraphLicenseCheckResults;
+
+        return xpackInfoTest()
+        .then(info => {
+          info.feature('graph').registerLicenseCheckResultsGenerator(graphLicenseCheckResultsGenerator);
+          expect(info.feature('graph').getLicenseCheckResults()).to.be(mockGraphLicenseCheckResults);
+        });
+      });
+    });
   });
 
   describe('getSignature()', function () {

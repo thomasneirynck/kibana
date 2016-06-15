@@ -56,6 +56,9 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
         registerLicenseCheckResultsGenerator: function (generator) {
           _licenseCheckResultsGenerators[feature] = generator;
           _generateLicenseCheckResults();
+        },
+        getLicenseCheckResults: function () {
+          return _licenseCheckResults[feature];
         }
       };
     },
