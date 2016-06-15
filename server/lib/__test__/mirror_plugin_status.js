@@ -5,6 +5,11 @@ import mirrorPluginStatus from '../mirror_plugin_status';
 describe('mirror_plugin_status', () => {
 
   class MockPluginStatus extends EventEmitter {
+    constructor() {
+      super();
+      this.state = 'unitialized';
+    }
+
     _changeState(newState, newMessage) {
       this.state = newState;
       this.message = newMessage;
@@ -15,6 +20,7 @@ describe('mirror_plugin_status', () => {
     red(message) { this._changeState('red', message); }
     yellow(message) { this._changeState('yellow', message); }
     green(message) { this._changeState('green', message); }
+    unitialized(message) { this._changeState('unitialized', message); }
   }
 
   class MockPlugin {
