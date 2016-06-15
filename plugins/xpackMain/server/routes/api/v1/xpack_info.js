@@ -13,6 +13,9 @@ export default function xpackInfoRoute(server) {
         response = {};
       }
       return reply(response);
+    },
+    config: {
+      auth: false
     }
   });
 }
