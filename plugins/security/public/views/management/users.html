@@ -1,13 +1,9 @@
-<kbn-settings-app section="security">
-  <div class="kbn-settings-security container" ng-if="forbidden">
+<kbn-management-app section="elasticsearch">
+  <div class="kbn-management-security container" ng-if="forbidden">
     You do not have permission to manage users/roles. Please contact your administrator.
   </div>
 
-  <div class="kbn-settings-security container" ng-if="!forbidden">
-    <ul class="nav nav-tabs">
-      <li class="kbn-settings-tab active"><a href="#/settings/security/users">Users</a></li>
-      <li class="kbn-settings-tab"><a href="#/settings/security/roles">Roles</a></li>
-    </ul>
+  <div class="kbn-management-security container-fluid" ng-if="!forbidden">
     <br />
     <div class="tab-content">
       <div class="container">
@@ -17,7 +13,7 @@
           </form>
           <div class="pull-right">
             <button ng-click="deleteUsers()" class="btn btn-danger" ng-disabled="!selectedUsers.length">Delete</button>
-            <a href="#/settings/security/users/edit" ng-click="newUser()" class="btn btn-default">New User</a>
+            <a href="#/management/elasticsearch/users/edit" ng-click="newUser()" class="btn btn-default">New User</a>
           </div>
         </div>
       </div>
@@ -46,14 +42,14 @@
               <input type="checkbox" ng-click="toggle(selectedUsers, user)" ng-checked="includes(selectedUsers, user)"  ng-disabled="user.metadata._reserved" />
             </td>
             <td>
-              <a ng-href="#/settings/security/users/edit/{{user.username}}">{{user.full_name}}</a>
+              <a ng-href="#/management/elasticsearch/users/edit/{{user.username}}">{{user.full_name}}</a>
             </td>
             <td>
-              <a ng-href="#/settings/security/users/edit/{{user.username}}">{{user.username}}</a>
+              <a ng-href="#/management/elasticsearch/users/edit/{{user.username}}">{{user.username}}</a>
             </td>
             <td>
               <span ng-repeat="role in user.roles">
-                <a ng-href="#/settings/security/roles/edit/{{role}}">{{role}}</a><span ng-if="!$last">,</span>
+                <a ng-href="#/management/elasticsearch/roles/edit/{{role}}">{{role}}</a><span ng-if="!$last">,</span>
               </span>
             </td>
             <td>
@@ -70,4 +66,4 @@
       </table>
     </div>
   </div>
-</kbn-settings-app>
+</kbn-management-app>

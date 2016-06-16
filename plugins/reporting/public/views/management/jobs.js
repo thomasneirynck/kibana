@@ -4,7 +4,7 @@ import 'plugins/reporting/less/main.less';
 
 
 import routes from 'ui/routes';
-import template from 'plugins/reporting/views/settings/jobs.html';
+import template from 'plugins/reporting/views/management/jobs.html';
 
 const jobPollingDelay = 5000;
 const pageSize = 10;
@@ -48,7 +48,7 @@ function mapJobs(jobs) {
   });
 }
 
-routes.when('/settings/reporting/jobs', {
+routes.when('/management/kibana/reporting', {
   template,
   resolve: {
     page: () => 0,

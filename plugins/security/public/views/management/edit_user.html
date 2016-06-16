@@ -1,9 +1,5 @@
-<kbn-settings-app section="security">
-  <div class="kbn-settings-security container">
-    <ul class="nav nav-tabs">
-      <li class="kbn-settings-tab active"><a href="#/settings/security/users">Users</a></li>
-      <li class="kbn-settings-tab"><a href="#/settings/security/roles">Roles</a></li>
-    </ul>
+<kbn-management-app section="elasticsearch">
+  <div class="kbn-management-security container-fluid">
     <br />
     <div class="tab-content">
       <div class="container">
@@ -13,7 +9,7 @@
           <h4 ng-if="!view.isNewUser && user.metadata._reserved" class="pull-left">View User</h4>
 
           <div class="pull-right">
-            <a href="#/settings/security/users" class="btn btn-default">Return to All Users</a>
+            <a href="#/management/elasticsearch/users" class="btn btn-default">Return to All Users</a>
             <button ng-if="!view.isNewUser && !user.metadata._reserved" class="btn btn-danger" ng-click="deleteUser(user)" ng-disabled="view.changePasswordMode">Delete</button>
             <button ng-if="!user.metadata._reserved" class="btn btn-primary" ng-disabled="form.$invalid || user.password != view.confirmPassword || view.changePasswordMode" ng-click="saveUser(user)">Save</button>
           </div>
@@ -93,4 +89,4 @@
       </div>
     </div>
   </div>
-</kbn-settings-app>
+</kbn-management-app>
