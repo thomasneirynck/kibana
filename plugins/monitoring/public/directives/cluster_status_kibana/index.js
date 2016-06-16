@@ -5,7 +5,6 @@ module.directive('monitoringClusterStatusKibana', () => {
   return {
     restrict: 'E',
     template: require('plugins/monitoring/directives/cluster_status_kibana/index.html'),
-    scope: true,
     link(scope) {
       const clusterStatus = _.get(scope.pageData, 'clusterStatus.status');
       scope.statusIconClass = statusIconClass(clusterStatus);

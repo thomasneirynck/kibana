@@ -6,7 +6,7 @@ module.directive('monitoringClusterStatusElasticsearch', () => {
     restrict: 'E',
     template: require('plugins/monitoring/directives/cluster_status_elasticsearch/index.html'),
     link(scope) {
-      const clusterStatus = _.get(scope, 'cluster.status');
+      const clusterStatus = _.get(scope.pageData, 'clusterStatus.status');
       scope.statusIconClass = statusIconClass(clusterStatus);
     }
   };

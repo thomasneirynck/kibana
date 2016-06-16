@@ -6,8 +6,14 @@
         {{ kibanaStatus|capitalize }} <i class="{{statusIconClass}}"></i>
       </span>
     </div>
-    <div><strong>{{ kibana.transport_address }}</strong></div>
-    <div>OS Free Memory: <strong>{{ kibana.os_memory_free|formatNumber:'0.0 b' }}</strong></div>
-    <div>Version: <strong>{{ kibana.version }}</strong></div>
+    <div>
+      <strong data-test-subj="transportAddress">{{ kibana.transport_address }}</strong>
+    </div>
+    <div>OS Free Memory:
+      <strong data-test-subj="osFreeMemory">{{ kibana.os_memory_free|formatNumber:'0.0 b' }}</strong>
+    </div>
+    <div>Version:
+      <strong data-test-subj="version">{{ kibana.version }}</strong>
+    </div>
   </div>
 </div>
