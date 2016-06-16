@@ -87,7 +87,7 @@ const KibanaRow = React.createClass({
   }
 });
 
-module.exports = React.createClass({
+export default React.createClass({
   displayName: 'Overview',
   getInitialState() {
     const scope = this.props.scope;
@@ -140,4 +140,3 @@ module.exports = React.createClass({
     );
   }
 });
-
