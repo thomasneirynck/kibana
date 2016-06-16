@@ -155,7 +155,10 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
   }
 
   function _handleErrorFromElasticsearch(error) {
-    server.log([ 'license', 'debug', 'plugin:xpackMain' ], 'License information could not be obtained from Elasticsearch. ' + error);
+    server.log([ 'license', 'warning', 'plugin:xpackMain' ], 'License information could not be obtained from Elasticsearch. ' + error);
+    _cachedResponseFromElasticsearchSignature = null;
+    _cachedResponseFromElasticsearch = null;
+    _generateLicenseCheckResults();
   }
 
   // Start polling for changes
