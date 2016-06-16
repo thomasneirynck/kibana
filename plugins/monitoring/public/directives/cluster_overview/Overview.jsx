@@ -4,7 +4,7 @@ import moment from 'moment-timezone';
 import statusIconClass from '../../lib/status_icon_class';
 const formatNumber = require('../../lib/format_number');
 
-const ClusterItemContainer = React.createClass({
+class ClusterItemContainer extends React.Component {
   render() {
     return (
       <div className="monitoring-element cluster-item" onClick={() => this.props.angularChangeUrl(this.props.url)}>
@@ -15,9 +15,9 @@ const ClusterItemContainer = React.createClass({
       </div>
     );
   }
-});
+};
 
-const StatusContainer = React.createClass({
+class StatusContainer extends React.Component {
   render() {
     const iconClass = statusIconClass(this.props.status);
 
@@ -29,9 +29,9 @@ const StatusContainer = React.createClass({
       </div>
     );
   }
-});
+};
 
-const ElasticsearchRow = React.createClass({
+class ElasticsearchRow extends React.Component {
   render() {
     const nodes = this.props.stats.nodes;
     const indices = this.props.stats.indices;
@@ -67,8 +67,9 @@ const ElasticsearchRow = React.createClass({
       </ClusterItemContainer>
     );
   }
-});
-const KibanaRow = React.createClass({
+};
+
+class KibanaRow extends React.Component {
   render() {
     if (!this.props.count) return (<div></div>);
     return (
@@ -85,19 +86,19 @@ const KibanaRow = React.createClass({
       </ClusterItemContainer>
     );
   }
-});
+};
 
-export default React.createClass({
-  displayName: 'Overview',
-  getInitialState() {
-    const scope = this.props.scope;
-    const kbnChangePath = this.props.kbnUrl.changePath;
+class Overview extends React.Component {
+  constructor(props) {
+    super(props);
+    const scope = props.scope;
+    const kbnChangePath = props.kbnUrl.changePath;
     const angularChangeUrl = target => {
       scope.$evalAsync(() => {
         kbnChangePath(target);
       });
     };
-    return {
+    this.state = {
       elasticsearch: { ...scope.cluster.elasticsearch },
       kibana: scope.cluster.kibana,
       license: scope.cluster.license,
@@ -106,7 +107,8 @@ export default React.createClass({
         angularChangeUrl('/license');
       }
     };
-  },
+  }
+
   componentWillMount() {
     this.props.scope.$watch('cluster', (cluster) => {
       this.setState({
@@ -115,7 +117,8 @@ export default React.createClass({
         license: cluster.license
       });
     });
-  },
+  }
+
   render() {
     const formatDateLocal = (input) => {
       return moment.tz(input, moment.tz.guess()).format('LL');
@@ -139,4 +142,6 @@ export default React.createClass({
       </div>
     );
   }
-});
+};
+
+export default Overview;
