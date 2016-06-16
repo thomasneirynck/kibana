@@ -1,13 +1,8 @@
 import _ from 'lodash';
 const app = require('ui/modules').get('plugins/monitoring/directives', []);
 
-function createCrumb(url, label, condition = true) {
-  if (condition) {
-    return {
-      url,
-      label
-    };
-  }
+function createCrumb(url, label) {
+  return { url, label };
 }
 
 app.directive('monitoringMain', (license) => {
@@ -42,10 +37,11 @@ app.directive('monitoringMain', (license) => {
 
       let breadcrumbs = [];
       if (!scope.inListing) {
-        breadcrumbs = [
-          createCrumb('#/home', 'Clusters'),
-          createCrumb('#/overview', scope.cluster.cluster_name, !scope.inOverview),
-        ];
+        breadcrumbs = [ createCrumb('#/home', 'Clusters') ];
+
+        if (!scope.inOverview) {
+          breadcrumbs.push(createCrumb('#/overview', scope.cluster.cluster_name));
+        }
 
         // Elasticsearch crumbs
         if (scope.inElasticsearch) {
