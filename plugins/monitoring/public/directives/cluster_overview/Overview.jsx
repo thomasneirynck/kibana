@@ -7,9 +7,9 @@ const formatNumber = require('../../lib/format_number');
 class ClusterItemContainer extends React.Component {
   render() {
     return (
-      <div className="monitoring-element cluster-item" onClick={() => this.props.angularChangeUrl(this.props.url)}>
+      <div className="monitoring-element cluster-item">
         <h3 className={this.props.url}>
-          <a>{this.props.title}</a>
+          <a onClick={() => this.props.angularChangeUrl(this.props.url)}>{this.props.title}</a>
         </h3>
         {this.props.children}
       </div>
@@ -42,21 +42,27 @@ class ElasticsearchPanel extends React.Component {
         <div className='row'>
           <div className='col-md-4'>
             <dl>
-              <dt>Overview</dt>
+              <dt>
+                <a onClick={() => this.props.angularChangeUrl('elasticsearch')}>Overview</a>
+              </dt>
               <dd>Uptime: {formatNumber(nodes.jvm.max_uptime_in_millis, 'time_since')}</dd>
             </dl>
           </div>
 
           <div className='col-md-4'>
             <dl>
-              <dt>Nodes: {formatNumber(nodes.count.total, 'int_commas')}</dt>
+              <dt>
+                <a onClick={() => this.props.angularChangeUrl('nodes')}>Nodes: {formatNumber(nodes.count.total, 'int_commas')}</a>
+              </dt>
               <dd>FS: {formatNumber(nodes.fs.available_in_bytes, 'byte')} / {formatNumber(nodes.fs.total_in_bytes, 'bytes')}</dd>
             </dl>
           </div>
 
           <div className='col-md-4'>
             <dl>
-              <dt>Indices: {formatNumber(indices.count, 'int_commas')}</dt>
+              <dt>
+                <a onClick={() => this.props.angularChangeUrl('indices')}>Indices: {formatNumber(indices.count, 'int_commas')}</a>
+              </dt>
               <dd>Doc Count: {formatNumber(indices.docs.count, 'int_commas')}</dd>
               <dd>Min. Shard Replication: {indices.shards.index.replication.min}</dd>
               <dd>Total Shards: {formatNumber(indices.shards.total, 'int_commas')}</dd>
