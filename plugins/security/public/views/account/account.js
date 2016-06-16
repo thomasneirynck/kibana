@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import routes from 'ui/routes';
-import template from 'plugins/security/views/settings/account.html';
-import 'plugins/security/services/shield_user';
+import template from './account.html';
+import '../../services/shield_user';
 
-routes.when('/settings/account', {
+routes.when('/account', {
   template,
   resolve: {
     user(ShieldUser) {
