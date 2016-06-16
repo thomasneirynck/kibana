@@ -10,7 +10,7 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
         return clusters;
       });
     })
-    // Set the clusters collection and currentn cluster in globalState
+    // Set the clusters collection and current cluster in globalState
     .then(function (clusters) {
       const cluster = (() => {
         const existingCurrent = _.find(clusters, { cluster_uuid: globalState.cluster_uuid });
@@ -35,7 +35,6 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
 
       if (isExpired && !_.contains(window.location.hash, 'license')) {
         // redirect to license, but avoid infinite loop
-        // CHANGEME: should redirect to Kibana Management > License
         kbnUrl.redirect('/license');
       }
       license.setLicenseType(clusterLicense.type);
