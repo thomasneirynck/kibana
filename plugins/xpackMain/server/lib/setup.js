@@ -1,15 +1,16 @@
-import { partial } from 'lodash';
+import { partial, once } from 'lodash';
 import Promise from 'bluebird';
 import xpackInfo from '../../../../server/lib/xpack_info';
 import xpackUsage from '../../../../server/lib/xpack_usage';
 import injectXPackInfoSignature from './inject_xpack_info_signature';
 
 let preResponseHandlerRegistered = false;
+let xpackInfoSingleton = once(xpackInfo);
 
 export default function setup(server, xpackMainPlugin) {
   const client = server.plugins.elasticsearch.client; // NOTE: authenticated client using server config auth
   return Promise.all([
-    xpackInfo(server, client),
+    xpackInfoSingleton(server, client),
     xpackUsage(client)
   ])
   .then(([ info, usage ]) => {
