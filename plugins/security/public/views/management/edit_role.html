@@ -1,9 +1,5 @@
-<kbn-settings-app section="security">
-  <div class="kbn-settings-security container">
-    <ul class="nav nav-tabs">
-      <li class="kbn-settings-tab"><a href="#/settings/security/users">Users</a></li>
-      <li class="kbn-settings-tab active"><a href="#/settings/security/roles">Roles</a></li>
-    </ul>
+<kbn-management-app section="elasticsearch">
+  <div class="kbn-management-security container-fluid">
     <br />
     <div class="tab-content">
       <div class="container">
@@ -13,7 +9,7 @@
           <h4 ng-if="!view.isNewRole && view.isReservedRole" class="pull-left">View Role</h4>
 
           <div class="pull-right">
-            <a href="#/settings/security/roles" class="btn btn-default">Return to All Roles</a>
+            <a href="#/management/elasticsearch/roles" class="btn btn-default">Return to All Roles</a>
             <button ng-if="!view.isNewRole && !view.isReservedRole" class="btn btn-danger" ng-click="deleteRole(role)">Delete</button>
             <button class="btn btn-primary" ng-click="saveRole(role)" ng-if="!view.isReservedRole" ng-disabled="form.$invalid || !areIndicesValid(role.indices)">Save</button>
           </div>
@@ -44,8 +40,8 @@
       </div>
       <br />
       <!--ul class="nav nav-tabs">
-        <li class="kbn-settings-tab active"><a>Permissions</a></li>
-        <li class="kbn-settings-tab"><a>Assigned Users</a></li>
+        <li class="kbn-management-tab active"><a>Permissions</a></li>
+        <li class="kbn-management-tab"><a>Assigned Users</a></li>
       </ul-->
       <div class="tab tab-content">
         <h4>Cluster Privileges</h4>
@@ -139,4 +135,4 @@
       </div>
     </div>
   </div>
-</kbn-settings-app>
+</kbn-management-app>

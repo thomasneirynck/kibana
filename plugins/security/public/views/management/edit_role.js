@@ -1,14 +1,14 @@
 import _ from 'lodash';
 import routes from 'ui/routes';
 import {toggle} from 'plugins/security/lib/util';
-import template from 'plugins/security/views/settings/edit_role.html';
+import template from 'plugins/security/views/management/edit_role.html';
 import 'angular-ui-select';
 import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
 import 'plugins/security/services/shield_privileges';
 import 'plugins/security/services/shield_indices';
 
-routes.when('/settings/security/roles/edit/:name?', {
+routes.when('/management/elasticsearch/roles/edit/:name?', {
   template,
   resolve: {
     role($route, ShieldRole) {
@@ -58,11 +58,11 @@ routes.when('/settings/security/roles/edit/:name?', {
     };
 
     $scope.goToRoleList = () => {
-      $location.path('/settings/security/roles');
+      $location.path('/management/elasticsearch/roles');
     };
 
     $scope.addIndex = (indices) => {
-      indices.push({names: [], privileges: [], fields: []});
+      indices.push({names: [], privileges: [], fields: null});
     };
 
     $scope.areIndicesValid = (indices) => {

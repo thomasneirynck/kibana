@@ -23,7 +23,7 @@ module.exports = function (kibana) {
         'plugins/reporting/controls/visualize',
         'plugins/reporting/controls/dashboard',
       ],
-      settingsSections: ['plugins/reporting/views/settings'],
+      managementSections: ['plugins/reporting/views/management'],
     },
 
     config: function (Joi) {
