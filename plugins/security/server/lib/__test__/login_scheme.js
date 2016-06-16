@@ -53,8 +53,8 @@ describe('lib/login_scheme', function () {
           sinon.assert.called(params.redirectUrl);
           sinon.assert.calledWith(reply.redirect, 'mock redirect url');
         });
-        it('replies with error for non-html requests on error', () => {
-          request.raw.req.headers.accept = '*/*';
+        it('replies with error for xhr requests on error', () => {
+          request.raw.req.headers['kbn-version'] = 'something';
           server.auth.test.callsArgWith(2, {});
           const { authenticate } = scheme(server);
           authenticate(request, reply);

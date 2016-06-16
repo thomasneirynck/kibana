@@ -43,13 +43,13 @@ describe('lib/auth_redirect', function () {
       context('when testRequest fails', () => {
         beforeEach(() => params.testRequest.callsArgWith(2, err));
 
-        it('replies with result of redirectUrl() as a redirect', () => {
+        it('replies with redirect to redirectUrl() for non-xhr requests', () => {
           authenticate(request, reply);
           sinon.assert.calledWith(params.redirectUrl, request.url.path);
           sinon.assert.calledWith(reply.redirect, 'mock redirect url');
         });
-        it('replies with result of onError()', () => {
-          request.raw.req.headers.accept = '*/*';
+        it('replies with result of onError() for xhr requests', () => {
+          request.raw.req.headers['kbn-version'] = 'something';
           authenticate(request, reply);
           sinon.assert.calledWith(params.onError, err);
           sinon.assert.calledWith(reply, 'mock error');
@@ -59,13 +59,13 @@ describe('lib/auth_redirect', function () {
   });
 
   describe('#shouldRedirect()', () => {
-    it('does returns true if request explicitly accepts html', () => {
-      const req = { headers: { accept: 'text/html' } };
+    it('returns true if request does not have a kbn-version header', () => {
+      const req = { headers: {} };
       const result = authRedirect.shouldRedirect(req);
       expect(result).to.equal(true);
     });
-    it('does returns false if request does not explicitly accept html', () => {
-      const req = { headers: { accept: '*/*' } };
+    it('returns false if request has a kbn-version header', () => {
+      const req = { headers: { 'kbn-version': 'something' } };
       const result = authRedirect.shouldRedirect(req);
       expect(result).to.equal(false);
     });

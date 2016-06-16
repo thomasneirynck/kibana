@@ -1,11 +1,10 @@
-import { includes } from 'lodash';
-
 /**
  * Creates a hapi authenticate function that conditionally
  * redirects on auth failure
  *
- * It's a little rudimentary, but it'll redirect any requests that accept html
- * responses and will otherwise defer to the standard error handler.
+ * Kibana requires the `kbn-version` header for xhr requests, so it is probably
+ * the safest measure we have for determining whether a request should return a
+ * 401 or a 302 when authentication fails.
  *
  * @param {object}
  *    onError:     Transform function that error is passed to before deferring
@@ -33,5 +32,5 @@ export default function factory({ onError, redirectUrl, strategy, testRequest })
 };
 
 export function shouldRedirect(req) {
-  return includes(req.headers.accept, 'html');
+  return !req.headers['kbn-version'];
 };
