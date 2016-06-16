@@ -31,7 +31,7 @@ class StatusContainer extends React.Component {
   }
 };
 
-class ElasticsearchRow extends React.Component {
+class ElasticsearchPanel extends React.Component {
   render() {
     const nodes = this.props.stats.nodes;
     const indices = this.props.stats.indices;
@@ -69,7 +69,7 @@ class ElasticsearchRow extends React.Component {
   }
 };
 
-class KibanaRow extends React.Component {
+class KibanaPanel extends React.Component {
   render() {
     if (!this.props.count) return (<div></div>);
     return (
@@ -127,10 +127,10 @@ class Overview extends React.Component {
     return (
       <div className='monitoring-view'>
         <div className='col-md-6'>
-          <ElasticsearchRow {...this.state.elasticsearch} angularChangeUrl={this.state.angularChangeUrl}/>
+          <ElasticsearchPanel {...this.state.elasticsearch} angularChangeUrl={this.state.angularChangeUrl}/>
         </div>
         <div className='col-md-6'>
-          <KibanaRow {...this.state.kibana} angularChangeUrl={this.state.angularChangeUrl}/>
+          <KibanaPanel {...this.state.kibana} angularChangeUrl={this.state.angularChangeUrl}/>
         </div>
         <div className='col-md-12'>
           <p>
