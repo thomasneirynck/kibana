@@ -1,6 +1,6 @@
 export default function checkLicense(xpackLicenseInfo) {
 
-  if (!xpackLicenseInfo) {
+  if (!xpackLicenseInfo || !xpackLicenseInfo.isAvailable()) {
     return {
       showGraphFeatures: false,
       showLicensePage: false

@@ -62,6 +62,9 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
         }
       };
     },
+    isAvailable: function () {
+      return !!_cachedResponseFromElasticsearchSignature;
+    },
     getSignature: function () {
       return _cachedResponseFromElasticsearchSignature;
     },

@@ -7,11 +7,18 @@ describe('check_license', function () {
   let mockLicenseInfo;
 
   beforeEach(function () {
-    mockLicenseInfo = {};
+    mockLicenseInfo = {
+      isAvailable: () => true
+    };
   });
 
-  it ('should set enabled to false if license information is not available', () => {
+  it ('should set enabled to false if license information is not set', () => {
     mockLicenseInfo = null;
+    expect(checkLicense(mockLicenseInfo).enabled).to.be(false);
+  });
+
+  it ('should set enabled to false if license information is set but not available', () => {
+    mockLicenseInfo = { isAvailable: () => false };
     expect(checkLicense(mockLicenseInfo).enabled).to.be(false);
   });
 

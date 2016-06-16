@@ -8,11 +8,20 @@ describe('check_license', function () {
   let mockLicenseInfo;
 
   beforeEach(function () {
-    mockLicenseInfo = {};
+    mockLicenseInfo = {
+      isAvailable: () => true
+    };
   });
 
-  it ('should set showSecurityFeatures to true and allowLogin to false if license information is not available', () => {
+  it ('should set showSecurityFeatures to true and allowLogin to false if license information is not set', () => {
     mockLicenseInfo = null;
+    const licenseCheckResults = checkLicense(mockLicenseInfo);
+    expect(licenseCheckResults.showSecurityFeatures).to.be(true);
+    expect(licenseCheckResults.allowLogin).to.be(false);
+  });
+
+  it ('should set showSecurityFeatures to true and allowLogin to false if license information is set but not available', () => {
+    mockLicenseInfo = { isAvailable: () => false };
     const licenseCheckResults = checkLicense(mockLicenseInfo);
     expect(licenseCheckResults.showSecurityFeatures).to.be(true);
     expect(licenseCheckResults.allowLogin).to.be(false);

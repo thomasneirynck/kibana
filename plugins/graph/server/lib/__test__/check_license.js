@@ -9,12 +9,29 @@ describe('check_license: ', function () {
   let licenseCheckResult;
 
   beforeEach(() => {
-    mockLicenseInfo = {};
+    mockLicenseInfo = {
+      isAvailable: () => true
+    };
   });
 
   context('mockLicenseInfo is not set', () => {
     beforeEach(() => {
       mockLicenseInfo = null;
+      licenseCheckResult = checkLicense(mockLicenseInfo);
+    });
+
+    it ('should set showGraphFeatures to false', () => {
+      expect(licenseCheckResult.showGraphFeatures).to.be(false);
+    });
+
+    it ('should set showLicensePage to false', () => {
+      expect(licenseCheckResult.showLicensePage).to.be(false);
+    });
+  });
+
+  context('mockLicenseInfo is set but not available', () => {
+    beforeEach(() => {
+      mockLicenseInfo = { isAvailable: () => false };
       licenseCheckResult = checkLicense(mockLicenseInfo);
     });
 
