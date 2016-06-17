@@ -3,7 +3,6 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
   var phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
   var ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
   return function () {
-    var monitoring = {};
     var notify = new Notifier({ location: 'Monitoring' });
     return monitoringClusters()
     .then(function (clusters) {
@@ -11,41 +10,35 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
         return clusters;
       });
     })
-    // Get the clusters
+    // Set the clusters collection and current cluster in globalState
     .then(function (clusters) {
-      var cluster;
-      monitoring.clusters = clusters;
-      // Check to see if the current cluster is available
-      if (globalState.cluster && !_.find(clusters, { cluster_uuid: globalState.cluster })) {
-        globalState.cluster = null;
-      }
-      // if there are no clusters chosen then set the first one
-      if (!globalState.cluster) {
-        cluster = _.first(clusters);
-        if (cluster && cluster.cluster_uuid) {
-          globalState.cluster = cluster.cluster_uuid;
-          globalState.save();
-        }
-      }
-      // if we don't have any clusters then redirect to home
-      if (!globalState.cluster) {
+      const cluster = (() => {
+        const existingCurrent = _.find(clusters, { cluster_uuid: globalState.cluster_uuid });
+        if (existingCurrent) return existingCurrent;
+
+        const firstCluster = _.first(clusters);
+        if (firstCluster && firstCluster.cluster_uuid) return firstCluster;
+
+        return null;
+      }());
+
+      if (cluster) {
+        globalState.cluster_uuid = cluster.cluster_uuid;
+        globalState.save();
+      } else {
         notify.error('We can\'t seem to find any clusters in your Monitoring data. Please check your Monitoring agents');
-        return kbnUrl.redirect('/home');
+        return kbnUrl.redirect('/no-data');
       }
-      return globalState.cluster;
-    })
-    // Finally filter the cluster from the nav if it's light then return the Monitoring object.
-    .then(function () {
-      var cluster = _.find(monitoring.clusters, { cluster_uuid: globalState.cluster });
-      var clusterLicense = cluster.license;
-      var isExpired = (new Date()).getTime() > clusterLicense.expiry_date_in_millis;
+
+      const clusterLicense = cluster.license;
+      const isExpired = (new Date()).getTime() > clusterLicense.expiry_date_in_millis;
 
       if (isExpired && !_.contains(window.location.hash, 'license')) {
         // redirect to license, but avoid infinite loop
         kbnUrl.redirect('/license');
       }
       license.setLicenseType(clusterLicense.type);
-      return monitoring;
+      return clusters;
     })
     .catch(ajaxErrorHandlers.fatalError);
   };

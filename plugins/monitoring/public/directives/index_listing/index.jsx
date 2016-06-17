@@ -66,7 +66,7 @@ define(function (require) {
             }
           },
           render: function () {
-            const numeralize = value => numeral(value.last).format(value.metric.format);
+            const numeralize = value => numeral(value.last).format(value.metric ? value.metric.format : null);
             const unitize = value => `${numeralize(value)} ${value.metric.units}`;
             const name = this.props.name;
             const clickFn = () => {

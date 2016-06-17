@@ -10,7 +10,7 @@ module.directive('monitoringClusterListing', function (globalState, kbnUrl) {
     link: function ($scope, $el) {
 
       var options = {
-        title: 'Your Clusters',
+        title: null,
         searchPlaceholder: 'Filter Clusters',
         // "key" properties are scalars used for sorting
         columns: [
@@ -20,24 +20,29 @@ module.directive('monitoringClusterListing', function (globalState, kbnUrl) {
             title: 'Name'
           },
           {
-            key: 'stats.nodes.count.total',
+            key: 'status',
+            sort: 0,
+            title: 'Status'
+          },
+          {
+            key: 'elasticsearch.stats.nodes.count.total',
             sort: 0,
             title: 'Nodes'
           },
           {
-            key: 'stats.indices.count',
+            key: 'elasticsearch.stats.indices.count',
             sort: 0,
             title: 'Indices'
           },
           {
-            key: 'stats.nodes.jvm.max_uptime_in_millis',
-            sort: 0,
-            title: 'Uptime'
-          },
-          {
-            key: 'stats.indices.store.size_in_bytes',
+            key: 'elasticsearch.stats.indices.store.size_in_bytes',
             sort: 0,
             title: 'Data'
+          },
+          {
+            key: 'kibana.count',
+            sort: 0,
+            title: 'Kibana'
           },
           {
             key: 'license.type',
@@ -52,9 +57,9 @@ module.directive('monitoringClusterListing', function (globalState, kbnUrl) {
         template={ ClusterRow }
         options={ options }/>, $el[0]);
 
-      function changeCluster(name) {
+      function changeCluster(uuid) {
         $scope.$evalAsync(function () {
-          globalState.cluster = name;
+          globalState.cluster_uuid = uuid;
           globalState.save();
           kbnUrl.changePath('/overview');
         });

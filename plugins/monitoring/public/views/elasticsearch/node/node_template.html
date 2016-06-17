@@ -1,0 +1,27 @@
+<div ng-controller="nodeView">
+  <monitoring-main product="elasticsearch" name="nodes" instance="{{ pageData.nodeSummary.name }}">
+    <div class="details monitoring-view">
+      <div class="col-md-12">
+        <monitoring-node-summary node="pageData.nodeSummary"></monitoring-node-summary>
+        <div class="detail-metrics monitoring-element">
+          <div class="row monitoring-element" ng-if="pageData.metrics">
+            <div class="col-md-4"><monitoring-chart series="pageData.metrics.node_latency"/></div>
+            <div class="col-md-4"><monitoring-chart series="pageData.metrics.node_jvm_mem_percent"/></div>
+            <div class="col-md-4"><monitoring-chart series="pageData.metrics.node_mem"/></div>
+          </div>
+          <div class="row monitoring-element" ng-if="pageData.metrics">
+            <div class="col-md-4"><monitoring-chart series="pageData.metrics.node_cpu_utilization"/></div>
+            <div class="col-md-4"><monitoring-chart series="pageData.metrics.node_load_average"/></div>
+            <div class="col-md-4"><monitoring-chart series="pageData.metrics.node_segment_count"/></div>
+          </div>
+        </div>
+        <monitoring-shard-allocation
+          id="nodeName"
+          view="node"
+          nodes="pageData.nodes"
+          shards="pageData.shards"
+          shard-stats="pageData.shardStats"></monitoring-shard-allocation>
+      </div>
+    </div>
+  </monitoring-main>
+</div>

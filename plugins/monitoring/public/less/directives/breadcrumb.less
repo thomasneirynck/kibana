@@ -1,0 +1,24 @@
+.monitoring-bread-crumbs {
+  ul {
+    margin: 0;
+    padding: 8px 10px;
+    list-style-type: none;
+    min-height: 37px; // affects the line-up of the top-nav with the sidebar K icon
+
+    >li {
+      display: inline;
+      >a {
+        color: @kibanaGray2;
+      }
+      >a:hover {
+        color: @kibanaGray1;
+      }
+    }
+
+    >li:last-child {
+      >a {
+        color: @kibanaGray1;
+      }
+    }
+  }
+}

@@ -1,17 +1,50 @@
 <div class="app-container">
   <kbn-top-nav class="navbar navbar-default navbar-static-top" name="{{name}}-nav">
-    <ul ng-if="allowTabs" class="nav navbar-nav" role="navigation">
-      <li ng-if="allowClusterTab" ng-class="{active: isActive('home')}">
-        <a kbn-href="#/home" class="navbar-link">Clusters</a>
+    <div class="monitoring-bread-crumbs">
+      <ul role="breadcrumbs">
+        <li ng-repeat="crumb in breadcrumbs">
+          <a kbn-href="{{crumb.url}}">{{crumb.label}}</a>
+          <span ng-hide="$last">/</span>
+        </li>
+      </ul>
+    </div>
+
+    <ul ng-if="inElasticsearch" class="nav navbar-nav" role="navigation">
+      <li ng-if="!instance" ng-class="{active: isActive('overview')}">
+        <a kbn-href="#/elasticsearch" class="navbar-link">Overview</a>
       </li>
-      <li ng-class="{active: isActive('overview')}">
-        <a kbn-href="#/overview" class="navbar-link">Overview</a>
-      </li>
-      <li ng-class="{active: isActive('indices')}">
+      <li ng-if="!instance" ng-class="{active: isActive('indices')}">
         <a kbn-href="#/indices" class="navbar-link">Indices</a>
       </li>
-      <li ng-class="{active: isActive('nodes')}">
+      <li ng-if="!instance" ng-class="{active: isActive('nodes')}">
         <a kbn-href="#/nodes" class="navbar-link">Nodes</a>
+      </li>
+      <li ng-if="instance">
+        <a class="navbar-link">
+          <i ng-if="iconClass" class="fa {{iconClass}}" title="{{iconLabel}}"></i>
+          {{instance}}
+        </a>
+      </li>
+    </ul>
+
+    <ul ng-if="inKibana" class="nav navbar-nav" role="navigation">
+      <li ng-if="!instance">
+        <a kbn-href="#/kibana" class="navbar-link">Kibana</a>
+      </li>
+      <li ng-if="instance">
+        <a class="navbar-link">{{instance}}</a>
+      </li>
+    </ul>
+
+    <ul ng-if="inOverview" class="nav navbar-nav" role="navigation">
+      <li>
+        <a class="navbar-link">{{cluster.cluster_name}}</a>
+      </li>
+    </ul>
+
+    <ul ng-if="inListing" class="nav navbar-nav" role="navigation">
+      <li>
+        <a class="navbar-link">Clusters</a>
       </li>
     </ul>
   </kbn-top-nav>

@@ -240,6 +240,7 @@ function runBrowserTests(type) {
   var kbnBrowserArgs = [
     type,
     '--',
+    // '--kbnServer.server.sslEnabled', 'false', // TODO: needs support in Kibana
     '--kbnServer.tests_bundle.pluginId', 'graph,security,monitoring,reporting',
     '--kbnServer.plugin-path', __dirname
   ];

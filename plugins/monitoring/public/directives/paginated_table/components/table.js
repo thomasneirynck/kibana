@@ -8,10 +8,23 @@ define(function (require) {
 
 
   function getFilteredData(data, filter) {
+    function flattenStrings(obj) {
+      const values = _.values(obj);
+      const nestedObjects = _.filter(values, (val) => {
+        return typeof val === 'object';
+      });
+      let searchStrings = _.filter(values, (val) => {
+        return typeof val === 'string';
+      });
+      _.each(nestedObjects, (nested) => {
+        searchStrings = searchStrings.concat(flattenStrings(nested));
+      });
+      return searchStrings;
+    }
+
     if (!filter) return data;
     return data.filter(function (obj) {
-      var concatValues = _.values(obj)
-        .filter(function (val) { return typeof val === 'string'; })
+      var concatValues = flattenStrings(obj)
         .join('|')
         .toLowerCase();
       return (concatValues.indexOf(filter.toLowerCase()) !== -1);
@@ -92,7 +105,11 @@ define(function (require) {
       var filteredTableData = getFilteredData(this.state.tableData, this.state.filter);
       var viewingCount = Math.min(filteredTableData.length, this.state.itemsPerPage);
       var $count = make.div(null, viewingCount + ' of ' + this.state.tableData.length);
-      var $titleBar = make.div({className: 'title-bar'}, $title, $filter, $count, make.div({className: 'clearfix'}));
+      var titleClasses = 'title-bar';
+      if (this.props.options.title == null) {
+        titleClasses += ' no-title';
+      }
+      var $titleBar = make.div({className: titleClasses}, $title, $filter, $count, make.div({className: 'clearfix'}));
 
 
       // Make the Table
