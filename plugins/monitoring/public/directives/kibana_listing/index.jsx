@@ -57,10 +57,10 @@ module.directive('monitoringKibanaListing', function (kbnUrl) {
         );
         break;
       case 'kibana.status':
-        const { status, statusClass, iconClass } = getStatusAndClasses(value, this.props.availability);
+        const { statusClass, iconClass } = getStatusAndClasses(value, this.props.availability);
         $content = (
           <span className={`status ${statusClass}`}>
-            {status} <i className={`${iconClass}`}></i>
+            <i className={iconClass} title={_.capitalize(value)}></i>
           </span>
         );
         break;

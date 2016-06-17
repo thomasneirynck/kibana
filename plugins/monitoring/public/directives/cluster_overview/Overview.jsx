@@ -27,9 +27,9 @@ class StatusContainer extends React.Component {
 
     return (
       <div className='statusContainer'>
-        Status <span className={`status status-${this.props.status}`}>
-          {_.capitalize(this.props.status)} <i className={iconClass}></i>
-        </span>
+        <span className={`status status-${this.props.status}`}>
+          <i className={iconClass} title={_.capitalize(this.props.status)}></i>
+        </span> Status
       </div>
     );
   }

@@ -45,7 +45,7 @@ class ClusterRow extends React.Component {
         </td>
         <td key="Status">
           <span className={`status status-${get('status')}`}>
-            {_.capitalize(this.props.status)} <i className={iconClass}></i>
+            <i className={iconClass} title={_.capitalize(this.props.status)}></i>
           </span>
         </td>
         <td key="Nodes">{ notBasic ? numeral(get('elasticsearch.stats.nodes.count.total')).format('0,0') : '-' }</td>

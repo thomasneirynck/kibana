@@ -70,10 +70,10 @@ define(function (require) {
             let statusIcon;
             if (status === 'online') {
               statusIcon = statusIconClass('green');
-              return make.div(null, make.span({className: 'status status-green'}, 'Online ', make.i({className: statusIcon})));
+              return make.div(null, make.span({className: 'status status-green'}, make.i({className: statusIcon, title: 'Online'})));
             }
             statusIcon = statusIconClass('offline');
-            return make.div(null, make.span({className: 'status status-offline'}, 'Offline ', make.i({className: statusIcon})));
+            return make.div(null, make.span({className: 'status status-offline'}, make.i({className: statusIcon, title: 'Offline'})));
           }());
         }
         else if (this.props.online) {
