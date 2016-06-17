@@ -99,7 +99,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
     });
   };
 
-  function _computeResponseFromElasticsearchSignature(response) {
+  function _computeSignature(response) {
     const data = [
       get(response, 'license.status'),
       get(response, 'license.expiry_date_in_millis', '').toString(),
@@ -133,7 +133,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
   }
 
   function _handleResponseFromElasticsearch(response) {
-    const responseSignature = _computeResponseFromElasticsearchSignature(response);
+    const responseSignature = _computeSignature(response);
     if (_cachedResponseFromElasticsearchSignature !== responseSignature) {
 
       let changed = '';
