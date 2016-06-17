@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import Boom from 'boom';
 import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
 const publicRoutes = require('./server/routes/public');
 const fileRoutes = require('./server/routes/file');
@@ -76,9 +77,22 @@ module.exports = function (kibana) {
           server.expose('queue', createQueue(server));
 
           // Reporting routes
-          publicRoutes(server);
-          fileRoutes(server);
-          jobRoutes(server);
+          const commonRouteConfig = {
+            pre: [
+              function forbidApiAccess(request, reply) {
+                const licenseCheckResults = xpackMainPlugin.info.feature(thisPlugin.id).getLicenseCheckResults();
+                if (!licenseCheckResults.enabled) {
+                  reply(Boom.forbidden(licenseCheckResults.message));
+                } else {
+                  reply();
+                }
+              }
+            ]
+          };
+
+          publicRoutes(server, commonRouteConfig);
+          fileRoutes(server, commonRouteConfig);
+          jobRoutes(server, commonRouteConfig);
         })
         .catch(function (err) {
           return thisPlugin.status.red(err.message);

@@ -133,6 +133,22 @@ describe('xpack_info', function () {
     });
   });
 
+  describe('getLicenseCheckResults()', () => {
+    it ('returns the license check results for the specified feature', () => {
+      const mockReportingLicenseCheckResults = {
+        enabled: false,
+        message: 'Reporting is not enabled in Basic license'
+      };
+      const reportingLicenseCheckResultsGenerator = () => mockReportingLicenseCheckResults;
+
+      return xpackInfoTest()
+      .then(info => {
+        info.feature('reporting').registerLicenseCheckResultsGenerator(reportingLicenseCheckResultsGenerator);
+        expect(info.feature('reporting').getLicenseCheckResults()).to.be(mockReportingLicenseCheckResults);
+      });
+    });
+  });
+
   describe('getSignature()', function () {
     it ('returns the correct signature', function () {
       const expectedSignature = createHash('md5')

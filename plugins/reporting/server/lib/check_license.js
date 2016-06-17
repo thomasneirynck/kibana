@@ -28,7 +28,7 @@ module.exports = function (xpackLicenseInfo) {
   if (!isLicenseModeValid) {
     return {
       enabled: false,
-      message: 'Reporting is not enabled by this license.'
+      message: `Your ${xpackLicenseInfo.license.getType()} license does not support Reporting. Please upgrade your license.`
     };
   }
 
