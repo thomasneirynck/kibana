@@ -37,8 +37,8 @@ function normalizeClustersData(clusters) {
 
 module.exports = (server) => {
   const config = server.config();
-  const esIndexPattern = config.get('xpack.monitoring.index_prefix') + '*';
-  const kbnIndexPattern = config.get('xpack.monitoring.kibana_prefix') + '*';
+  const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_prefix') + '*';
+  const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_prefix') + '*';
   const callWithRequest = server.plugins.monitoring.callWithRequest;
 
   /*
