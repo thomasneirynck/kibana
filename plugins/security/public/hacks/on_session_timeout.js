@@ -15,7 +15,8 @@ module.config(($httpProvider) => {
       if (notification) notification.clear();
 
       // Don't set up the notification if the user is unauthenticated
-      if (response.status === 401) return handleResponse(response);
+      const ShieldUser = $injector.get('ShieldUser');
+      if (!ShieldUser.getCurrent()) return handleResponse(response);
 
       const options = {
         type: 'warning',
