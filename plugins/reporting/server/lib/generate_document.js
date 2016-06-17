@@ -2,9 +2,10 @@ const Promise = require('bluebird');
 const _ = require('lodash');
 
 const pdf = require('./pdf');
+const oncePerServer = require('./once_per_server');
 const getScreenshot = require('./get_screenshot');
 
-module.exports = (server) => {
+module.exports = oncePerServer((server) => {
   const fetchScreenshot = getScreenshot(server);
 
   return {
@@ -31,4 +32,4 @@ module.exports = (server) => {
       return pdfOutput.generate();
     });
   };
-};
+});
