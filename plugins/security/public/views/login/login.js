@@ -14,7 +14,7 @@ chrome
 
   // Make an API call so xpack info is populated in local storage
   // by interceptor. This can be any call that doesn't require auth.
-  return $http.get(chrome.addBasePath('/login'))
+  return $http.get(chrome.addBasePath('/api/xpack/v1/info'))
   .then(() => {
     const xpackInfo = JSON.parse($window.localStorage.getItem('xpackMain.info'));
     const defaultLoginMessage = 'Login is currently disabled because the license could not be determined.';
