@@ -100,10 +100,6 @@ describe('check_license: ', function () {
           licenseCheckResult = checkLicense(mockLicenseInfo);
         });
 
-        it ('should set isLicenseActive to true', () => {
-          expect(licenseCheckResult.isLicenseActive).to.be(true);
-        });
-
         it ('should set showGraphFeatures to true', () => {
           expect(licenseCheckResult.showGraphFeatures).to.be(true);
         });
@@ -117,10 +113,6 @@ describe('check_license: ', function () {
         beforeEach(() => {
           set(mockLicenseInfo, 'license.isActive', () => { return false; });
           licenseCheckResult = checkLicense(mockLicenseInfo);
-        });
-
-        it ('should set isLicenseActive to false', () => {
-          expect(licenseCheckResult.isLicenseActive).to.be(false);
         });
 
         it ('should set showGraphFeatures to true', () => {
