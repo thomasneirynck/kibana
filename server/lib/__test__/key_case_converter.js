@@ -1,7 +1,7 @@
 import expect from 'expect.js';
-import { convertKeysToSnakeCaseDeep, convertKeysToCamelCaseDeep } from '../key_case_convertor';
+import { convertKeysToSnakeCaseDeep, convertKeysToCamelCaseDeep } from '../key_case_converter';
 
-describe('key_case_convertor', () => {
+describe('key_case_converter', () => {
 
   let testObject;
 
