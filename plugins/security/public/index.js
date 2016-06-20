@@ -1,1 +1,0 @@
-import './views/account/account';
