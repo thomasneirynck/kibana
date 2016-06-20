@@ -31,6 +31,7 @@ describe('check_license', function () {
   it ('should set enabled to false if the license is of an invalid type', () => {
     set(mockLicenseInfo, 'license.isActive', () => { return true; });
     set(mockLicenseInfo, 'license.isOneOf', () => { return false; });
+    set(mockLicenseInfo, 'license.getType', () => { return 'basic'; });
     expect(checkLicense(mockLicenseInfo).enabled).to.be(false);
   });
 
