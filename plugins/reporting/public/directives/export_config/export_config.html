@@ -1,4 +1,4 @@
-<div class="form-group" ng-if="exportConfig.exportable">
+<div class="form-group" ng-show="exportConfig.exportable">
   <label>Document Generation</label>
   <div class="input-group generate-controls">
     <button
@@ -10,7 +10,7 @@
   </div>
 </div>
 
-<div class="form-group" ng-if="exportConfig.exportable">
+<div class="form-group" ng-show="exportConfig.exportable">
   <label>Generation URL</label>
   <div class="input-group">
     <input
@@ -25,6 +25,6 @@
   </div>
 </div>
 
-<div ng-if="!exportConfig.exportable">
+<div ng-show="!exportConfig.exportable">
   Please save your work before generating a report.
 </div>
