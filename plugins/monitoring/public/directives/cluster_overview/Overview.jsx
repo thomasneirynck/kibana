@@ -7,11 +7,15 @@ const formatNumber = require('../../lib/format_number');
 class ClusterItemContainer extends React.Component {
   render() {
     return (
-      <div className="monitoring-element cluster-item">
-        <h3 className={this.props.url}>
-          <a onClick={() => this.props.angularChangeUrl(this.props.url)}>{this.props.title}</a>
+      <div className="monitoring-element cluster-item panel-product">
+        <h3
+            className={`panel-heading panel-heading-${this.props.url}`}
+            onClick={() => this.props.angularChangeUrl(this.props.url)}>
+          {this.props.title}
         </h3>
-        {this.props.children}
+        <div className="panel-body">
+          {this.props.children}
+        </div>
       </div>
     );
   }
@@ -32,9 +36,20 @@ class StatusContainer extends React.Component {
 };
 
 class ElasticsearchPanel extends React.Component {
+  constructor(props) {
+    super(props);
+    this.goToLicense = () => {
+      props.angularChangeUrl('/license');
+    };
+  }
+
   render() {
     const nodes = this.props.stats.nodes;
     const indices = this.props.stats.indices;
+    const formatDateLocal = (input) => {
+      return moment.tz(input, moment.tz.guess()).format('LL');
+    };
+
     return (
       <ClusterItemContainer {...this.props} url='elasticsearch' title='Elasticsearch'>
         <StatusContainer status={this.props.status}/>
@@ -70,6 +85,11 @@ class ElasticsearchPanel extends React.Component {
             </dl>
           </div>
         </div>
+        <p className="licenseInfo">
+          Your { _.capitalize(this.props.license.type)
+          } license will expire on <a onClick={ this.goToLicense }> {
+          formatDateLocal(this.props.license.expiry_date) }.</a>
+        </p>
       </ClusterItemContainer>
     );
   }
@@ -108,10 +128,7 @@ class Overview extends React.Component {
       elasticsearch: { ...scope.cluster.elasticsearch },
       kibana: scope.cluster.kibana,
       license: scope.cluster.license,
-      angularChangeUrl,
-      goToLicense() {
-        angularChangeUrl('/license');
-      }
+      angularChangeUrl
     };
   }
 
@@ -126,24 +143,13 @@ class Overview extends React.Component {
   }
 
   render() {
-    const formatDateLocal = (input) => {
-      return moment.tz(input, moment.tz.guess()).format('LL');
-    };
-
     return (
       <div className='monitoring-view'>
         <div className='col-md-6'>
-          <ElasticsearchPanel {...this.state.elasticsearch} angularChangeUrl={this.state.angularChangeUrl}/>
+          <ElasticsearchPanel {...this.state.elasticsearch} license={this.state.license} angularChangeUrl={this.state.angularChangeUrl}/>
         </div>
         <div className='col-md-6'>
           <KibanaPanel {...this.state.kibana} angularChangeUrl={this.state.angularChangeUrl}/>
-        </div>
-        <div className='col-md-12'>
-          <p>
-            Your { _.capitalize(this.state.license.type)
-            } license will expire on <a onClick={ this.state.goToLicense }> {
-            formatDateLocal(this.state.license.expiry_date) }.</a>
-          </p>
         </div>
       </div>
     );
