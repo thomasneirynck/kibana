@@ -14,10 +14,14 @@ describe('mirror_plugin_status', () => {
       if (this.state === newState) {
         return;
       }
+      const prevState = this.state;
+      const prevMessage = this.message;
+
       this.state = newState;
       this.message = newMessage;
-      this.emit(newState);
-      this.emit('change');
+
+      this.emit(newState, prevState, prevMessage, this.state, this.message);
+      this.emit('change', prevState, prevMessage, this.state, this.message);
     }
 
     red(message) { this._changeState('red', message); }
