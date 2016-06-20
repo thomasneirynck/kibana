@@ -41,40 +41,49 @@ describe('mirror_plugin_status', () => {
     downstreamPlugin = new MockPlugin();
     eventNotEmittedTimeout = setTimeout(() => {
       throw new Error('Event should have been emitted');
-    }, 5000);
+    }, 100);
   });
 
   it('should mirror all downstream plugin statuses to upstream plugin statuses', () => {
     mirrorPluginStatus(upstreamPlugin, downstreamPlugin);
-
-    upstreamPlugin.status.red('test message');
     downstreamPlugin.status.on('change', () => {
       clearTimeout(eventNotEmittedTimeout);
       expect(downstreamPlugin.status.state).to.be('red');
       expect(downstreamPlugin.status.message).to.be('test message');
     });
+    upstreamPlugin.status.red('test message');
   });
 
-  it('should only mirror specific downstream plugin statuses to corresponding upstream plugin statuses', () => {
-    mirrorPluginStatus(upstreamPlugin, downstreamPlugin, 'yellow', 'red');
+  describe('should only mirror specific downstream plugin statuses to corresponding upstream plugin statuses: ', () => {
 
-    upstreamPlugin.status.yellow('test yellow message');
-    downstreamPlugin.status.on('change', () => {
-      clearTimeout(eventNotEmittedTimeout);
-      expect(downstreamPlugin.status.state).to.be('yellow');
-      expect(downstreamPlugin.status.message).to.be('test yellow message');
+    beforeEach(() => {
+      mirrorPluginStatus(upstreamPlugin, downstreamPlugin, 'yellow', 'red');
+    });
 
-      upstreamPlugin.status.red('test red message');
+    it('yellow', () => {
       downstreamPlugin.status.on('change', () => {
+        clearTimeout(eventNotEmittedTimeout);
+        expect(downstreamPlugin.status.state).to.be('yellow');
+        expect(downstreamPlugin.status.message).to.be('test yellow message');
+      });
+      upstreamPlugin.status.yellow('test yellow message');
+    });
+
+    it('red', () => {
+      downstreamPlugin.status.on('change', () => {
+        clearTimeout(eventNotEmittedTimeout);
         expect(downstreamPlugin.status.state).to.be('red');
         expect(downstreamPlugin.status.message).to.be('test red message');
-
-        upstreamPlugin.status.green('test green message');
-        downstreamPlugin.status.on('change', () => {
-          expect(downstreamPlugin.status.state).not.to.be('green');
-          expect(downstreamPlugin.status.message).not.to.be('test green message');
-        });
       });
+      upstreamPlugin.status.red('test red message');
+    });
+
+    it('not green', () => {
+      clearTimeout(eventNotEmittedTimeout); // because event should not be emitted in this test
+      downstreamPlugin.status.on('change', () => {
+        throw new ('Event should NOT have been emitted');
+      });
+      upstreamPlugin.status.green('test green message');
     });
   });
 });
