@@ -4,8 +4,10 @@ import xpackInfo from '../../../../server/lib/xpack_info';
 import xpackUsage from '../../../../server/lib/xpack_usage';
 import injectXPackInfoSignature from './inject_xpack_info_signature';
 
-let preResponseHandlerRegistered = false;
 let xpackInfoSingleton = once(xpackInfo);
+let registerPreResponseHandlerSingleton = once((server, info) => {
+  server.ext('onPreResponse', partial(injectXPackInfoSignature, info));
+});
 
 export default function setup(server, xpackMainPlugin) {
   const client = server.plugins.elasticsearch.client; // NOTE: authenticated client using server config auth
@@ -19,11 +21,7 @@ export default function setup(server, xpackMainPlugin) {
     return info;
   })
   .then(info => {
-    // Register the onPreResponse handler, but only once
-    if (!preResponseHandlerRegistered) {
-      server.ext('onPreResponse', partial(injectXPackInfoSignature, info));
-      preResponseHandlerRegistered = true;
-    }
+    registerPreResponseHandlerSingleton(server, info);
   })
   .then(() => xpackMainPlugin.status.green('Ready'))
   .catch(reason => {
