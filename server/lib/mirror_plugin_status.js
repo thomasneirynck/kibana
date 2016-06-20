@@ -1,7 +1,9 @@
 export default function mirrorPluginStatus(upstreamPlugin, downstreamPlugin, ...statesToMirror) {
 
   function mirror(previousState, previousMsg, newState, newMsg) {
-    downstreamPlugin.status[newState](newMsg);
+    if (newState) {
+      downstreamPlugin.status[newState](newMsg);
+    }
   }
 
   if (statesToMirror.length === 0) {
