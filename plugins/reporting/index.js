@@ -18,8 +18,8 @@ module.exports = function (kibana) {
 
     uiExports: {
       navbarExtensions: [
-        // 'plugins/reporting/controls/discover',
-        // 'plugins/reporting/controls/visualize',
+        'plugins/reporting/controls/discover',
+        'plugins/reporting/controls/visualize',
         'plugins/reporting/controls/dashboard',
       ],
       managementSections: ['plugins/reporting/views/management'],

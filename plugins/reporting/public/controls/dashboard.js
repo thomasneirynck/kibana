@@ -1,7 +1,6 @@
 require('plugins/reporting/directives/export_config');
 
 const navbarExtensions = require('ui/registry/navbar_extensions');
-navbarExtensions.register(dashboardReportProvider);
 
 function dashboardReportProvider(reportingEnabled) {
   if (!reportingEnabled) return;
@@ -14,3 +13,5 @@ function dashboardReportProvider(reportingEnabled) {
     description: 'Dashboard Report',
   };
 }
+
+navbarExtensions.register(dashboardReportProvider);
