@@ -11,5 +11,5 @@ export default function mirrorPluginStatus(upstreamPlugin, downstreamPlugin, ...
   }
 
   statesToMirror.map(state => upstreamPlugin.status.on(state, mirror));
-  mirror(); // initial mirroring
+  mirror(null, null, upstreamPlugin.status.state, upstreamPlugin.status.message); // initial mirroring
 }
