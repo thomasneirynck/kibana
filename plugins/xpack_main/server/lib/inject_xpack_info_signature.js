@@ -14,6 +14,9 @@ export default function injectXPackInfoSignature(info, request, reply) {
     return info.refreshNow()
     .then((refreshedInfo) => {
       const signature = refreshedInfo.getSignature();
+      // Note: request.response.output is used instead of request.response
+      // because evidently HAPI does not allow headers to be set on the latter
+      // in case of error responses.
       return addSignatureHeader(request.response.output, signature);
     });
   } else {
