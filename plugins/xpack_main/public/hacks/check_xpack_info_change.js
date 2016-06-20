@@ -39,6 +39,8 @@ module.factory('checkXPackInfoChange', ($q, $window, $injector) => {
       return handleResponse(response);
     })
     .catch(() => {
+      $window.localStorage.removeItem('xpackMain.info');
+      $window.localStorage.removeItem('xpackMain.infoSignature');
       _isInfoUpdateInProgress = false;
       return handleResponse(response);
     });
