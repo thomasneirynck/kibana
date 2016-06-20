@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 const expect = require('expect.js');
 const Bluebird = require('bluebird');
 import moment from 'moment';
-const xpackInfo = require('../xpack_info');
+const _xpackInfo = require('../_xpack_info');
 
 describe('xpack_info', function () {
 
@@ -17,7 +17,7 @@ describe('xpack_info', function () {
 
   function xpackInfoTest(response) {
     setClientResponse(response);
-    return xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
+    return _xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
     .then(info => {
       info.stopPolling();
       return info;
@@ -165,7 +165,7 @@ describe('xpack_info', function () {
     it ('causes the info object and signature to be updated', function () {
       let previousSignature;
       setClientResponse({ license: { status: 'active' }});
-      return xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
+      return _xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
       .then(info => {
         expect(info.license.isActive()).to.be(true);
         previousSignature = info.getSignature();
