@@ -16,13 +16,14 @@ module.directive('exportConfig', (reportingDocumentControl) => {
     link($scope, $el, $attr) {
       $scope.exportConfig.name = $attr.name;
       $scope.exportConfig.objectType = $attr.objectType;
+      $scope.exportConfig.exportable = reportingDocumentControl.isExportable();
     },
     controller() {
       this.selectedType = 'pdf';
       this.exportTypes = {
         pdf: {
           name: 'PDF',
-          link: 'http://testing',
+          link: reportingDocumentControl.getUrl(),
         }
       };
 
