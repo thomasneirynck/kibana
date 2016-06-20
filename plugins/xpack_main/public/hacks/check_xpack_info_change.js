@@ -1,6 +1,7 @@
 import { identity } from 'lodash';
 import uiModules from 'ui/modules';
 import chrome from 'ui/chrome';
+import { convertKeysToCamelCaseDeep } from '../../../../server/lib/key_case_convertor';
 
 const module = uiModules.get('xpack_main', []);
 
@@ -32,7 +33,7 @@ module.factory('checkXPackInfoChange', ($q, $window, $injector) => {
     const $http = $injector.get('$http'); // To prevent circular dependency Angular error
     return $http.get(chrome.addBasePath('/api/xpack/v1/info'))
     .then((xpackInfoResponse) => {
-      $window.localStorage.setItem('xpackMain.info', JSON.stringify(xpackInfoResponse.data));
+      $window.localStorage.setItem('xpackMain.info', JSON.stringify(convertKeysToCamelCaseDeep(xpackInfoResponse.data)));
       $window.localStorage.setItem('xpackMain.infoSignature', xpackInfoResponse.headers('kbn-xpack-sig'));
       _isInfoUpdateInProgress = false;
       return handleResponse(response);

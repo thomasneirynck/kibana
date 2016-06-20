@@ -1,3 +1,5 @@
+import { convertKeysToSnakeCaseDeep } from '../../../../../../server/lib/key_case_convertor';
+
 /*
  * A route to provide the basic XPack info for the production cluster
  */
@@ -12,7 +14,7 @@ export default function xpackInfoRoute(server) {
       } else {
         response = {};
       }
-      return reply(response);
+      return reply(convertKeysToSnakeCaseDeep(response));
     },
     config: {
       auth: false
