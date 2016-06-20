@@ -9,11 +9,14 @@ describe('key_case_converter', () => {
     testObject = {
       topLevelKey1: {
         innerLevelKey1: 17,
-        inner_level_key2: 19,
+        inner_level_key2: [ 19, 31 ],
       },
       top_level_key2: {
-        innerLevelKey1: 23,
-        inner_level_key2: 29
+        innerLevelKey1: 'foo_fooFoo',
+        inner_level_key2: [
+          { foo_bar: 29 },
+          { barBar: 37 }
+        ]
       }
     };
   });
@@ -22,11 +25,14 @@ describe('key_case_converter', () => {
     const expectedResultObject = {
       top_level_key_1: {
         inner_level_key_1: 17,
-        inner_level_key_2: 19,
+        inner_level_key_2: [ 19, 31 ],
       },
       top_level_key_2: {
-        inner_level_key_1: 23,
-        inner_level_key_2: 29
+        inner_level_key_1: 'foo_fooFoo',
+        inner_level_key_2: [
+          { foo_bar: 29 },
+          { bar_bar: 37 }
+        ]
       }
     };
     expect(convertKeysToSnakeCaseDeep(testObject)).to.eql(expectedResultObject);
@@ -36,11 +42,14 @@ describe('key_case_converter', () => {
     const expectedResultObject = {
       topLevelKey1: {
         innerLevelKey1: 17,
-        innerLevelKey2: 19,
+        innerLevelKey2: [ 19, 31 ],
       },
       topLevelKey2: {
-        innerLevelKey1: 23,
-        innerLevelKey2: 29
+        innerLevelKey1: 'foo_fooFoo',
+        innerLevelKey2: [
+          { fooBar: 29 },
+          { barBar: 37 }
+        ]
       }
     };
     expect(convertKeysToCamelCaseDeep(testObject)).to.eql(expectedResultObject);
