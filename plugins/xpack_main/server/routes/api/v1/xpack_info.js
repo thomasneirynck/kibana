@@ -7,8 +7,8 @@ export default function xpackInfoRoute(server) {
     path: '/api/xpack/v1/info',
     handler: (req, reply) => {
       let response;
-      if (server.plugins.xpackMain.info && server.plugins.xpackMain.info.isAvailable()) {
-        response = server.plugins.xpackMain.info.toJSON();
+      if (server.plugins.xpack_main.info && server.plugins.xpack_main.info.isAvailable()) {
+        response = server.plugins.xpack_main.info.toJSON();
       } else {
         response = {};
       }

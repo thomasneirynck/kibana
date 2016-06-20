@@ -95,7 +95,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
   };
 
   function _callElasticsearchXPackAPI() {
-    server.log([ 'license', 'debug', 'plugin:xpackMain' ], 'Calling Elasticsearch _xpack API');
+    server.log([ 'license', 'debug', 'xpack' ], 'Calling Elasticsearch _xpack API');
     return client.transport.request({
       method: 'GET',
       path: '_xpack'
@@ -146,7 +146,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
 
       const licenseInfo = _getLicenseInfoForLog(response);
       const logMessage = `Imported ${changed}license information from Elasticsearch: ${licenseInfo}`;
-      server.log([ 'license', 'info', 'plugin:xpackMain'  ], logMessage);
+      server.log([ 'license', 'info', 'xpack'  ], logMessage);
 
       _cachedResponseFromElasticsearchSignature = responseSignature;
       _cachedResponseFromElasticsearch = response;
@@ -155,7 +155,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
   }
 
   function _handleErrorFromElasticsearch(error) {
-    server.log([ 'license', 'warning', 'plugin:xpackMain' ], 'License information could not be obtained from Elasticsearch. ' + error);
+    server.log([ 'license', 'warning', 'xpack' ], 'License information could not be obtained from Elasticsearch. ' + error);
     _cachedResponseFromElasticsearchSignature = null;
     _cachedResponseFromElasticsearch = null;
     _generateLicenseCheckResults();

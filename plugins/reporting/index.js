@@ -16,7 +16,7 @@ module.exports = function (kibana) {
     id: 'reporting',
     configPrefix: 'xpack.reporting',
     publicDir: resolve(__dirname, 'public'),
-    require: ['kibana', 'elasticsearch', 'xpackMain'],
+    require: ['kibana', 'elasticsearch', 'xpack_main'],
 
     uiExports: {
       navbarExtensions: [
@@ -58,7 +58,7 @@ module.exports = function (kibana) {
 
     init: function (server) {
       const thisPlugin = this;
-      const xpackMainPlugin = server.plugins.xpackMain;
+      const xpackMainPlugin = server.plugins.xpack_main;
       mirrorPluginStatus(xpackMainPlugin, thisPlugin);
       xpackMainPlugin.status.once('green', () => {
         // Register a function that is called whenever the xpack info changes,

@@ -2,7 +2,7 @@ import { identity } from 'lodash';
 import uiModules from 'ui/modules';
 import chrome from 'ui/chrome';
 
-const module = uiModules.get('xpackMain', []);
+const module = uiModules.get('xpack_main', []);
 
 module.factory('checkXPackInfoChange', ($q, $window, $injector) => {
   let _isInfoUpdateInProgress = false;

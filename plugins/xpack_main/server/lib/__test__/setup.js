@@ -65,7 +65,7 @@ describe('setup()', () => {
       });
     });
 
-    it ('xpackMain plugin should expose the xpack info property', () => {
+    it ('xpack_main plugin should expose the xpack info property', () => {
       return setup(mockServer, mockXPackMainPlugin)
       .then(() => {
         expect(mockServer.pluginProperties.info).to.be.an(Object);
@@ -74,7 +74,7 @@ describe('setup()', () => {
       });
     });
 
-    it ('xpackMain plugin should expose the xpack usage property', () => {
+    it ('xpack_main plugin should expose the xpack usage property', () => {
       return setup(mockServer, mockXPackMainPlugin)
       .then(() => {
         expect(mockServer.pluginProperties.usage).to.be('foobar');
@@ -82,7 +82,7 @@ describe('setup()', () => {
       });
     });
 
-    it ('xpackMain plugin status should be green', () => {
+    it ('xpack_main plugin status should be green', () => {
       return setup(mockServer, mockXPackMainPlugin)
       .then(() => {
         expect(mockXPackMainPlugin.status.state).to.be('green');
@@ -93,7 +93,7 @@ describe('setup()', () => {
   });
 
   describe('Elasticsearch APIs return a non-400 error response', () => {
-    it ('xpackMain plugin status should be red', () => {
+    it ('xpack_main plugin status should be red', () => {
       mockServer.plugins.elasticsearch.client.transport.request = () => {
         return new Promise((resolve, reject) => {
           reject(new MockErrorResponse(500));
@@ -108,7 +108,7 @@ describe('setup()', () => {
   });
 
   describe('Elasticsearch APIs return a 400 response', () => {
-    it ('xpackMain plugin status should be red and x-pack not installed error message should be set', () => {
+    it ('xpack_main plugin status should be red and x-pack not installed error message should be set', () => {
       mockServer.plugins.elasticsearch.client.transport.request = () => {
         return new Promise((resolve, reject) => {
           reject(new MockErrorResponse(400));

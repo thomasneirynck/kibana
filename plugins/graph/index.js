@@ -26,7 +26,7 @@ module.exports = function (kibana) {
     id: 'graph',
     configPrefix: 'xpack.graph',
     publicDir: resolve(__dirname, 'public'),
-    require: ['kibana', 'elasticsearch', 'xpackMain'],
+    require: ['kibana', 'elasticsearch', 'xpack_main'],
     uiExports: {
       app: {
         title: APP_TITLE,
@@ -54,7 +54,7 @@ module.exports = function (kibana) {
 
     init: function (server, options) {
       const thisPlugin = this;
-      const xpackMainPlugin = server.plugins.xpackMain;
+      const xpackMainPlugin = server.plugins.xpack_main;
       mirrorPluginStatus(xpackMainPlugin, thisPlugin);
       xpackMainPlugin.status.once('green', () => {
         // Register a function that is called whenever the xpack info changes,

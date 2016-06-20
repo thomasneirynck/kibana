@@ -21,7 +21,7 @@ export default (kibana) => new kibana.Plugin({
   id: 'security',
   configPrefix: 'xpack.security',
   publicDir: resolve(__dirname, 'public'),
-  require: ['kibana', 'elasticsearch', 'xpackMain'],
+  require: ['kibana', 'elasticsearch', 'xpack_main'],
 
   config(Joi) {
     return Joi.object({
@@ -66,7 +66,7 @@ export default (kibana) => new kibana.Plugin({
 
   init(server) {
     const thisPlugin = this;
-    const xpackMainPlugin = server.plugins.xpackMain;
+    const xpackMainPlugin = server.plugins.xpack_main;
     mirrorPluginStatus(xpackMainPlugin, thisPlugin);
     xpackMainPlugin.status.once('green', () => {
       // Register a function that is called whenever the xpack info changes,
