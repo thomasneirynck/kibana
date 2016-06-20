@@ -109,9 +109,9 @@
                   <span class="input-group-addon">
                     <i class="fa fa-search"></i>
                   </span>
-                  <ui-select class="form-control" multiple limit="25" ng-model="index.fields" ng-disabled="view.isReservedRole">
+                  <ui-select class="form-control" multiple ng-model="index.fields" ng-disabled="view.isReservedRole">
                     <ui-select-match placeholder="Add a field...">{{$item}}</ui-select-match>
-                    <ui-select-choices repeat="field in union([$select.search], view.fieldOptions[index.names]) | filter:$select.search">
+                    <ui-select-choices repeat="field in union([$select.search], view.fieldOptions[index.names]) | filter:$select.search | limitTo:25">
                       <div ng-bind-html="field"></div>
                     </ui-select-choices>
                   </ui-select>
