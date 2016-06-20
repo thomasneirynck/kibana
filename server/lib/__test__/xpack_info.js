@@ -151,12 +151,13 @@ describe('xpack_info', function () {
 
   describe('getSignature()', function () {
     it ('returns the correct signature', function () {
-      const expectedSignature = createHash('md5')
-      .update('active|1464315131123|basic')
-      .digest('hex');
-
-      return xpackInfoTest({ license: { status: 'active', mode: 'basic', expiry_date_in_millis: 1464315131123 }})
-      .then(info => expect(info.getSignature()).to.be(expectedSignature));
+      return xpackInfoTest({ license: { status: 'active', type: 'basic', expiry_date_in_millis: 1464315131123 }})
+      .then(info => {
+        const expectedSignature = createHash('md5')
+        .update(JSON.stringify(info.toJSON()))
+        .digest('hex');
+        expect(info.getSignature()).to.be(expectedSignature);
+      });
     });
   });
 

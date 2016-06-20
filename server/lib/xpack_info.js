@@ -9,10 +9,11 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
   pollFrequencyInMillis = pollFrequencyInMillis || XPACK_INFO_API_DEFAULT_POLL_FREQUENCY.asMilliseconds();
 
   let _cachedResponseFromElasticsearch;
-  let _cachedResponseFromElasticsearchSignature;
 
   let _licenseCheckResultsGenerators = {};
   let _licenseCheckResults = {};
+  let _cachedXPackInfoJSON;
+  let _cachedXPackInfoJSONSignature;
 
   const poller = new Poller({
     functionToPoll: _callElasticsearchXPackAPI,
@@ -55,7 +56,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
         },
         registerLicenseCheckResultsGenerator: function (generator) {
           _licenseCheckResultsGenerators[feature] = generator;
-          _generateLicenseCheckResults();
+          _updateXPackInfoJSON();
         },
         getLicenseCheckResults: function () {
           return _licenseCheckResults[feature];
@@ -63,10 +64,11 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
       };
     },
     isAvailable: function () {
-      return !!_cachedResponseFromElasticsearchSignature;
+      return false;
+      return !!_cachedXPackInfoJSONSignature;
     },
     getSignature: function () {
-      return _cachedResponseFromElasticsearchSignature;
+      return _cachedXPackInfoJSONSignature;
     },
     refreshNow: function () {
       const self = this;
@@ -80,17 +82,7 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
       poller.stop();
     },
     toJSON: function () {
-      let json = {};
-
-      // Set response elements common to all features
-      set(json, 'license.type', xpackInfoObject.license.getType());
-      set(json, 'license.isActive', xpackInfoObject.license.isActive());
-      set(json, 'license.expiryDateInMillis', xpackInfoObject.license.getExpiryDateInMillis());
-
-      // Set response elements for each of the features
-      set(json, 'features', _licenseCheckResults);
-
-      return json;
+      return _cachedXPackInfoJSON;
     }
   };
 
@@ -102,25 +94,33 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
     });
   };
 
-  function _computeSignature(response) {
-    const data = [
-      get(response, 'license.status'),
-      get(response, 'license.expiry_date_in_millis', '').toString(),
-      get(response, 'license.mode')
-    ].join('|');
+  function _updateXPackInfoJSON() {
+    let json = {};
 
-    return createHash('md5')
-    .update(data)
-    .digest('hex');
-  }
+    // Set response elements common to all features
+    set(json, 'license.type', xpackInfoObject.license.getType());
+    set(json, 'license.isActive', xpackInfoObject.license.isActive());
+    set(json, 'license.expiryDateInMillis', xpackInfoObject.license.getExpiryDateInMillis());
 
-  function _generateLicenseCheckResults() {
     // Set response elements specific to each feature. To do this,
     // call the license check results generator for each feature, passing them
     // the xpack info object
     forIn(_licenseCheckResultsGenerators, (generator, feature) => {
       _licenseCheckResults[feature] = generator(xpackInfoObject); // return value expected to be a dictionary object
     });
+    set(json, 'features', _licenseCheckResults);
+
+    _cachedXPackInfoJSON = json;
+    _cachedXPackInfoJSONSignature = createHash('md5')
+    .update(JSON.stringify(json))
+    .digest('hex');
+  }
+
+  function _hasLicenseInfoFromElasticsearchChanged(response) {
+    const cachedResponse = _cachedResponseFromElasticsearch;
+    return (get(response, 'license.mode') !== get(cachedResponse, 'license.mode')
+      || get(response, 'license.status') !== get(cachedResponse, 'license.status')
+      || get(response, 'license.expiry_date_in_millis') !== get(cachedResponse, 'license.expiry_date_in_millis'));
   }
 
   function _getLicenseInfoForLog(response) {
@@ -136,29 +136,26 @@ export default function xpackInfo(server, client, pollFrequencyInMillis) {
   }
 
   function _handleResponseFromElasticsearch(response) {
-    const responseSignature = _computeSignature(response);
-    if (_cachedResponseFromElasticsearchSignature !== responseSignature) {
 
+    if (_hasLicenseInfoFromElasticsearchChanged(response)) {
       let changed = '';
-      if (_cachedResponseFromElasticsearchSignature) {
+      if (_cachedResponseFromElasticsearch) {
         changed = 'changed ';
       }
 
       const licenseInfo = _getLicenseInfoForLog(response);
       const logMessage = `Imported ${changed}license information from Elasticsearch: ${licenseInfo}`;
       server.log([ 'license', 'info', 'xpack'  ], logMessage);
-
-      _cachedResponseFromElasticsearchSignature = responseSignature;
-      _cachedResponseFromElasticsearch = response;
-      _generateLicenseCheckResults();
     }
+
+    _cachedResponseFromElasticsearch = response;
+    _updateXPackInfoJSON();
   }
 
   function _handleErrorFromElasticsearch(error) {
     server.log([ 'license', 'warning', 'xpack' ], 'License information could not be obtained from Elasticsearch. ' + error);
-    _cachedResponseFromElasticsearchSignature = null;
     _cachedResponseFromElasticsearch = null;
-    _generateLicenseCheckResults();
+    _updateXPackInfoJSON();
   }
 
   // Start polling for changes
