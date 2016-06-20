@@ -1,11 +1,11 @@
-require('plugins/reporting/services/document_create');
+require('plugins/reporting/services/document_control');
 require('./export_config.less');
 
 const template = require('plugins/reporting/directives/export_config/export_config.html');
 const Notifier = require('ui/notify/notifier');
 const module = require('ui/modules').get('xpack/reporting');
 
-module.directive('exportConfig', (reportingDocumentCreate) => {
+module.directive('exportConfig', (reportingDocumentControl) => {
   const reportingNotifier = new Notifier({ location: 'Reporting' });
 
   return {
@@ -29,7 +29,7 @@ module.directive('exportConfig', (reportingDocumentCreate) => {
       this.export = (type) => {
         switch (type) {
           case 'pdf':
-            return reportingDocumentCreate()
+            return reportingDocumentControl.create()
             .then(() => {
               reportingNotifier.info(`${this.objectType} generation has been queued. You can track its progress under Settings.`);
             })
