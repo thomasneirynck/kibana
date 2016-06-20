@@ -25,10 +25,13 @@ describe('injectXPackInfoSignature()', () => {
     mockInfo = {
       refreshNow() {
         return new Promise((resolve) => {
+          this.signature = 'changed-signature';
           resolve(this);
         });
       },
-      getSignature: () => 'foobar'
+      getSignature() {
+        return this.signature || 'initial-signature';
+      }
     };
 
     mockReply = {
@@ -43,7 +46,7 @@ describe('injectXPackInfoSignature()', () => {
 
     return injectXPackInfoSignature(mockInfo, mockRequest, mockReply)
     .then(() => {
-      expect(mockRequest.response.output.headers['kbn-xpack-sig']).to.be('foobar');
+      expect(mockRequest.response.output.headers['kbn-xpack-sig']).to.be('changed-signature');
     });
   });
 
@@ -53,6 +56,6 @@ describe('injectXPackInfoSignature()', () => {
     };
 
     injectXPackInfoSignature(mockInfo, mockRequest, mockReply);
-    expect(mockRequest.response.headers['kbn-xpack-sig']).to.be('foobar');
+    expect(mockRequest.response.headers['kbn-xpack-sig']).to.be('initial-signature');
   });
 });
