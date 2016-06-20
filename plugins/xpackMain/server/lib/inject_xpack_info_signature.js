@@ -1,4 +1,12 @@
 export default function injectXPackInfoSignature(info, request, reply) {
+
+  function addSignatureHeader(response, signature) {
+    if (signature) {
+      response.headers['kbn-xpack-sig'] = signature;
+    }
+    return reply.continue();
+  }
+
   // If we're returning an error response, refresh xpack info
   // from Elastisearch in case the error is due to a change in
   // license information in Elasticsearch
@@ -6,16 +14,10 @@ export default function injectXPackInfoSignature(info, request, reply) {
     return info.refreshNow()
     .then((refreshedInfo) => {
       const signature = refreshedInfo.getSignature();
-      if (signature) {
-        request.response.output.headers['kbn-xpack-sig'] = signature;
-      }
-      return reply.continue();
+      return addSignatureHeader(request.response.output, signature);
     });
   } else {
     const signature = info.getSignature();
-    if (signature) {
-      request.response.headers['kbn-xpack-sig'] = signature;
-    }
-    return reply.continue();
+    return addSignatureHeader(request.response, signature);
   }
 };
