@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 const mod = require('ui/modules').get('monitoring/directives', []);
 const template = require('plugins/monitoring/directives/welcome_msg/index.html');
 mod.directive('monitoringWelcomeMessage', function ($window, reportStats, features) {
@@ -13,9 +12,10 @@ mod.directive('monitoringWelcomeMessage', function ($window, reportStats, featur
       const hideBanner = $window.localStorage.getItem('monitoring.hideBanner');
       scope.showBanner = (hideBanner) ? false : true;
 
-      if (scope.showBanner && scope.cluster && scope.clusters) {
-        const licenseType = get(scope, 'cluster.license.type');
-        if (licenseType !== 'basic') {
+      if (scope.showBanner && scope.clusters) {
+        if (scope.clusters.length > 1) {
+          // suppress the banner if it has been shown on listing page
+          // if there is 1 cluster, then the listing page has not been shown
           scope.showBanner = false;
         }
       }

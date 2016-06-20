@@ -19,7 +19,8 @@ module.controller('overview', ($scope, $route, monitoringClusters, timefilter, t
   // This will show the timefilter
   timefilter.enabled = true;
 
-  $scope.cluster = _.find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
+  $scope.clusters = $route.current.locals.clusters;
+  $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
   title($scope.cluster, 'Overview');
 
   $executor.register({
