@@ -11,6 +11,9 @@ describe('mirror_plugin_status', () => {
     }
 
     _changeState(newState, newMessage) {
+      if (this.state === newState) {
+        return;
+      }
       this.state = newState;
       this.message = newMessage;
       this.emit(newState);
