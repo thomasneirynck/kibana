@@ -115,7 +115,7 @@ module.directive('monitoringNodesListing', function (kbnUrl) {
               </td>
               <td status={`name-${this.props.resolver}`}>
                 <span className={`status status-${status}`}>
-                  <i className={statusIconClass(status)}/>
+                  <i className={statusIconClass(status)} title={_.capitalize(status)}/>
                 </span>
               </td>
               <MetricCell isOnline={isOnline} metric={this.props.metrics.node_cpu_utilization}></MetricCell>
