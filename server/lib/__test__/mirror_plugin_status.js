@@ -88,7 +88,7 @@ describe('mirror_plugin_status', () => {
     it('not green', () => {
       clearTimeout(eventNotEmittedTimeout); // because event should not be emitted in this test
       downstreamPlugin.status.on('change', () => {
-        throw new ('Event should NOT have been emitted');
+        throw new Error('Event should NOT have been emitted');
       });
       upstreamPlugin.status.green('test green message');
     });
