@@ -8,7 +8,6 @@ export default function checkLicense(xpackLicenseInfo) {
   if (!xpackLicenseInfo || !xpackLicenseInfo.isAvailable()) {
     loginMessage = 'Login is currently disabled because the license could not be determined.';
     return {
-      showSecurityFeatures: true,
       allowLogin: false,
       loginMessage
     };
@@ -18,21 +17,21 @@ export default function checkLicense(xpackLicenseInfo) {
   const isLicenseBasic = xpackLicenseInfo.license.isOneOf(['basic']);
   const isEnabledInES = xpackLicenseInfo.feature('security').isEnabled();
 
-  const showSecurityFeatures = isEnabledInES && !isLicenseBasic;
-  const allowLogin = showSecurityFeatures && isLicenseActive;
-
-  if (!allowLogin) {
-    if (!isEnabledInES) {
-      loginMessage = 'Login is disabled because security has been disabled in Elasticsearch.';
-    } else if (isLicenseBasic) {
-      loginMessage = 'Your Basic license does not support Security. Please upgrade your license.';
-    } else if (!isLicenseActive) {
-      loginMessage = 'Login is disabled because your license has expired.';
-    }
-  }
+  let allowLogin;
+  if (!isEnabledInES) {
+    loginMessage = 'Login is disabled because security has been disabled in Elasticsearch.';
+    allowLogin = false;
+  } else if (isLicenseBasic) {
+    loginMessage = 'Your Basic license does not support Security. Please upgrade your license.';
+    allowLogin = false;
+  } else if (!isLicenseActive) {
+    loginMessage = 'Login is disabled because your license has expired.';
+    allowLogin = false;
+  } else {
+    allowLogin = true;
+  };
 
   return {
-    showSecurityFeatures,
     allowLogin,
     loginMessage
   };
