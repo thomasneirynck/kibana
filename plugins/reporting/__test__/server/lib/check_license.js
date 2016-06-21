@@ -7,11 +7,18 @@ describe('check_license', function () {
   let mockLicenseInfo;
 
   beforeEach(function () {
-    mockLicenseInfo = {};
+    mockLicenseInfo = {
+      isAvailable: () => true
+    };
   });
 
-  it ('should set enabled to false if license information is not available', () => {
+  it ('should set enabled to false if license information is not set', () => {
     mockLicenseInfo = null;
+    expect(checkLicense(mockLicenseInfo).enabled).to.be(false);
+  });
+
+  it ('should set enabled to false if license information is set but not available', () => {
+    mockLicenseInfo = { isAvailable: () => false };
     expect(checkLicense(mockLicenseInfo).enabled).to.be(false);
   });
 
@@ -24,6 +31,7 @@ describe('check_license', function () {
   it ('should set enabled to false if the license is of an invalid type', () => {
     set(mockLicenseInfo, 'license.isActive', () => { return true; });
     set(mockLicenseInfo, 'license.isOneOf', () => { return false; });
+    set(mockLicenseInfo, 'license.getType', () => { return 'basic'; });
     expect(checkLicense(mockLicenseInfo).enabled).to.be(false);
   });
 

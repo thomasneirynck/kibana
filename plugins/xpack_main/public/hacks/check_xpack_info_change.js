@@ -1,8 +1,9 @@
 import { identity } from 'lodash';
 import uiModules from 'ui/modules';
 import chrome from 'ui/chrome';
+import { convertKeysToCamelCaseDeep } from '../../../../server/lib/key_case_converter';
 
-const module = uiModules.get('xpackMain', []);
+const module = uiModules.get('xpack_main', []);
 
 module.factory('checkXPackInfoChange', ($q, $window, $injector) => {
   let _isInfoUpdateInProgress = false;
@@ -32,12 +33,17 @@ module.factory('checkXPackInfoChange', ($q, $window, $injector) => {
     const $http = $injector.get('$http'); // To prevent circular dependency Angular error
     return $http.get(chrome.addBasePath('/api/xpack/v1/info'))
     .then((xpackInfoResponse) => {
-      $window.localStorage.setItem('xpackMain.info', JSON.stringify(xpackInfoResponse.data));
+      $window.localStorage.setItem('xpackMain.info', JSON.stringify(convertKeysToCamelCaseDeep(xpackInfoResponse.data)));
       $window.localStorage.setItem('xpackMain.infoSignature', xpackInfoResponse.headers('kbn-xpack-sig'));
       _isInfoUpdateInProgress = false;
       return handleResponse(response);
     })
-    .catch(() => _isInfoUpdateInProgress = false);
+    .catch(() => {
+      $window.localStorage.removeItem('xpackMain.info');
+      $window.localStorage.removeItem('xpackMain.infoSignature');
+      _isInfoUpdateInProgress = false;
+      return handleResponse(response);
+    });
   }
 
   return {

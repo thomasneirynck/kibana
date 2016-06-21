@@ -12,10 +12,7 @@ routes.when('/management/elasticsearch/users', {
       .$promise.catch(_.identity); // Return the error if there is one
     }
   },
-  controller($scope, $route, $q, Notifier, showSecurityFeatures, kbnUrl) {
-    if (!showSecurityFeatures) {
-      kbnUrl.redirect('/');
-    }
+  controller($scope, $route, $q, Notifier) {
 
     $scope.users = $route.current.locals.users;
     $scope.forbidden = !_.isArray($scope.users);

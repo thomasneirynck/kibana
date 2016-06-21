@@ -2,7 +2,7 @@ const getUser = require('../lib/get_user');
 const jobsQueryFactory = require('../lib/jobs_query');
 const boom = require('boom');
 
-module.exports = function (server) {
+module.exports = function (server, commonRouteConfig) {
   const jobsQuery = jobsQueryFactory(server);
   const mainEntry = '/api/reporting/jobs';
 
@@ -17,6 +17,9 @@ module.exports = function (server) {
       .then((user) => jobsQuery.list(user, page, size));
 
       reply(results);
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 
@@ -28,6 +31,9 @@ module.exports = function (server) {
       .then((user) => jobsQuery.count(user));
 
       reply(results);
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 
@@ -43,6 +49,9 @@ module.exports = function (server) {
         if (!doc) return reply(boom.notFound());
         reply(doc._source.output);
       });
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 
@@ -61,6 +70,9 @@ module.exports = function (server) {
         const response = reply(content);
         if (doc._source.output.content_type) response.type(doc._source.output.content_type);
       });
+    },
+    config: {
+      ...commonRouteConfig
     }
   });
 };

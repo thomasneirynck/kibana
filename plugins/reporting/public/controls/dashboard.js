@@ -3,8 +3,7 @@ const Notifier = require('ui/notify/notifier');
 const navbarExtensions = require('ui/registry/navbar_extensions');
 navbarExtensions.register(dashboardReportProvider);
 
-function dashboardReportProvider(reportingEnabled, reportingDocumentCreate) {
-  if (!reportingEnabled) return;
+function dashboardReportProvider(reportingDocumentCreate) {
   const genericNotifier = new Notifier({ location: 'Reporting' });
 
   return {

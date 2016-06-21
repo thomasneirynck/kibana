@@ -1,4 +1,4 @@
-import main from './plugins/xpackMain';
+import main from './plugins/xpack_main';
 import graph from './plugins/graph';
 import monitoring from './plugins/monitoring';
 import reporting from './plugins/reporting';

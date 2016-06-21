@@ -1,4 +1,6 @@
 import { resolve } from 'path';
+import Boom from 'boom';
+import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
 const publicRoutes = require('./server/routes/public');
 const fileRoutes = require('./server/routes/file');
 const jobRoutes = require('./server/routes/jobs');
@@ -14,7 +16,7 @@ module.exports = function (kibana) {
     id: 'reporting',
     configPrefix: 'xpack.reporting',
     publicDir: resolve(__dirname, 'public'),
-    require: ['kibana', 'elasticsearch', 'xpackMain'],
+    require: ['kibana', 'elasticsearch', 'xpack_main'],
 
     uiExports: {
       navbarExtensions: [
@@ -23,15 +25,6 @@ module.exports = function (kibana) {
         'plugins/reporting/controls/dashboard',
       ],
       managementSections: ['plugins/reporting/views/management'],
-      injectDefaultVars: function (server) {
-        const checkResult = checkLicense(server.plugins.xpackMain.info);
-
-        server.log(['reporting', 'license', 'debug'], `License check: ${checkResult.message}`);
-        server.expose('enabled', checkResult.enabled);
-        return {
-          reportingEnabled: checkResult.enabled
-        };
-      },
     },
 
     config: function (Joi) {
@@ -64,17 +57,14 @@ module.exports = function (kibana) {
     },
 
     init: function (server) {
-      // init the plugin helpers
-      const plugin = this;
-      const xpackMainPluginStatus = server.plugins.xpackMain.status;
-      if (xpackMainPluginStatus.state === 'red') {
-        plugin.status.red(xpackMainPluginStatus.message);
-        return;
-      };
-
-      // Register a function that is called whenever the xpack info changes,
-      // to re-compute the license check results for this plugin
-      server.plugins.xpackMain.info.feature(this.id).registerLicenseCheckResultsGenerator(checkLicense);
+      const thisPlugin = this;
+      const xpackMainPlugin = server.plugins.xpack_main;
+      mirrorPluginStatus(xpackMainPlugin, thisPlugin);
+      xpackMainPlugin.status.once('green', () => {
+        // Register a function that is called whenever the xpack info changes,
+        // to re-compute the license check results for this plugin
+        xpackMainPlugin.info.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
+      });
 
       function setup() {
         // prepare phantom binary
@@ -87,18 +77,26 @@ module.exports = function (kibana) {
           server.expose('queue', createQueue(server));
 
           // Reporting routes
-          publicRoutes(server);
-          fileRoutes(server);
-          jobRoutes(server);
+          const commonRouteConfig = {
+            pre: [
+              function forbidApiAccess(request, reply) {
+                const licenseCheckResults = xpackMainPlugin.info.feature(thisPlugin.id).getLicenseCheckResults();
+                if (!licenseCheckResults.enabled) {
+                  reply(Boom.forbidden(licenseCheckResults.message));
+                } else {
+                  reply();
+                }
+              }
+            ]
+          };
+
+          publicRoutes(server, commonRouteConfig);
+          fileRoutes(server, commonRouteConfig);
+          jobRoutes(server, commonRouteConfig);
         })
         .catch(function (err) {
-          return plugin.status.red(err.message);
+          return thisPlugin.status.red(err.message);
         });
-      }
-
-      if (!server.plugins.reporting.enabled) {
-        server.log(['warning', 'reporting'], 'Reporting is disabled. Please check your license.');
-        return;
       }
 
       return setup();
