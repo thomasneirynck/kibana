@@ -1,6 +1,6 @@
 export default function checkLicense(xpackLicenseInfo) {
 
-  if (!xpackLicenseInfo) {
+  if (!xpackLicenseInfo || !xpackLicenseInfo.isAvailable()) {
     return {
       showGraphFeatures: false,
       showLicensePage: false
@@ -15,32 +15,24 @@ export default function checkLicense(xpackLicenseInfo) {
     };
   }
 
-  const commonLicenseInfo = {
-    licenseType: xpackLicenseInfo.license.getType(),
-    isLicenseActive: xpackLicenseInfo.license.isActive()
-  };
-
   if (xpackLicenseInfo.license.isOneOf([ 'basic' ])) {
     return {
       showGraphFeatures: true,
-      showLicensePage: true,
-      ...commonLicenseInfo
+      showLicensePage: true
     };
   }
 
   if (xpackLicenseInfo.license.isOneOf([ 'trial', 'platinum' ])) {
     return {
       showGraphFeatures: true,
-      showLicensePage: false,
-      ...commonLicenseInfo
+      showLicensePage: false
     };
   }
 
   if (xpackLicenseInfo.license.isOneOf([ 'standard', 'gold' ])) {
     return {
       showGraphFeatures: false,
-      showLicensePage: true,
-      ...commonLicenseInfo
+      showLicensePage: true
     };
   }
 }

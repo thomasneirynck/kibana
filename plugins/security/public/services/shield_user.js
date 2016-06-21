@@ -16,7 +16,7 @@ module.service('ShieldUser', ($resource, $cookies, chrome, clientCookieName) => 
     }
   });
 
-  ShieldUser.getCurrent = () => $cookies.getObject(clientCookieName);
+  ShieldUser.getCurrent = () => new ShieldUser($cookies.getObject(clientCookieName));
 
   return ShieldUser;
 });

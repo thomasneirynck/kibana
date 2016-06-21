@@ -1,6 +1,5 @@
 import hapiAuthCookie from 'hapi-auth-cookie';
 import { resolve } from 'path';
-import Boom from 'boom';
 import basicAuth from './server/lib/basic_auth';
 import getIsValidUser from './server/lib/get_is_valid_user';
 import getValidate from './server/lib/get_validate';
@@ -16,12 +15,13 @@ import validateConfig from './server/lib/validate_config';
 import setElasticsearchAuth from './server/lib/set_elasticsearch_auth';
 import createScheme from './server/lib/login_scheme';
 import checkLicense from './server/lib/check_license';
+import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
 
 export default (kibana) => new kibana.Plugin({
   id: 'security',
   configPrefix: 'xpack.security',
   publicDir: resolve(__dirname, 'public'),
-  require: ['kibana', 'elasticsearch', 'xpackMain'],
+  require: ['kibana', 'elasticsearch', 'xpack_main'],
 
   config(Joi) {
     return Joi.object({
@@ -51,13 +51,8 @@ export default (kibana) => new kibana.Plugin({
     hacks: ['plugins/security/hacks/on_session_timeout'],
     injectDefaultVars: function (server) {
 
-      const licenseCheckResults = checkLicense(server.plugins.xpackMain.info);
-      server.expose('allowLogin', licenseCheckResults.allowLogin);
-      server.expose('showSecurityFeatures', licenseCheckResults.showSecurityFeatures);
-
       const config = server.config();
       return {
-        ...licenseCheckResults,
         secureCookies: config.get('xpack.security.secureCookies'),
         sessionTimeout: config.get('xpack.security.sessionTimeout'),
         clientCookieName: config.get('xpack.security.clientCookieName')
@@ -70,15 +65,14 @@ export default (kibana) => new kibana.Plugin({
   },
 
   init(server) {
-    const xpackMainPluginStatus = server.plugins.xpackMain.status;
-    if (xpackMainPluginStatus.state === 'red') {
-      this.status.red(xpackMainPluginStatus.message);
-      return;
-    }
-
-    // Register a function that is called whenever the xpack info changes,
-    // to re-compute the license check results for this plugin
-    server.plugins.xpackMain.info.feature(this.id).registerLicenseCheckResultsGenerator(checkLicense);
+    const thisPlugin = this;
+    const xpackMainPlugin = server.plugins.xpack_main;
+    mirrorPluginStatus(xpackMainPlugin, thisPlugin);
+    xpackMainPlugin.status.once('green', () => {
+      // Register a function that is called whenever the xpack info changes,
+      // to re-compute the license check results for this plugin
+      xpackMainPlugin.info.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
+    });
 
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
@@ -93,52 +87,36 @@ export default (kibana) => new kibana.Plugin({
     const clientCookieName = config.get('xpack.security.clientCookieName');
     server.state(clientCookieName, commonCookieConfig);
 
-    if (server.plugins.security.showSecurityFeatures) {
-      const cookieName = config.get('xpack.security.cookieName');
-      server.register(hapiAuthCookie, (error) => {
-        if (error != null) throw error;
+    const cookieName = config.get('xpack.security.cookieName');
+    server.register(hapiAuthCookie, (error) => {
+      if (error != null) throw error;
 
-        server.auth.scheme('login', createScheme({
-          redirectUrl: (path) => loginUrl(config.get('server.basePath'), path),
-          strategy: 'security'
-        }));
+      server.auth.scheme('login', createScheme({
+        redirectUrl: (path) => loginUrl(config.get('server.basePath'), path),
+        strategy: 'security'
+      }));
 
-        server.auth.strategy('session', 'login', 'required');
+      server.auth.strategy('session', 'login', 'required');
 
-        server.auth.strategy('security', 'cookie', false, {
-          cookie: cookieName,
-          password: config.get('xpack.security.encryptionKey'),
-          clearInvalid: true,
-          validateFunc: getValidate(server),
-          ...commonCookieConfig
-        });
+      server.auth.strategy('security', 'cookie', false, {
+        cookie: cookieName,
+        password: config.get('xpack.security.encryptionKey'),
+        clearInvalid: true,
+        validateFunc: getValidate(server),
+        ...commonCookieConfig
       });
+    });
 
-      basicAuth.register(server, cookieName, getIsValidUser(server), getCalculateExpires(server));
-    }
-
+    basicAuth.register(server, cookieName, getIsValidUser(server), getCalculateExpires(server));
     createExpose(server);
 
-    const commonRouteConfig = {
-      pre: [
-        function forbidApiAccess(request, reply) {
-          if (!server.plugins.security.allowLogin || !server.plugins.security.showSecurityFeatures) {
-            reply(Boom.forbidden('License has expired '
-              + 'OR security is not available with this license '
-              + 'OR security has been disabled in Elasticsearch'));
-          } else {
-            reply();
-          }
-        }
-      ]
-    };
-
-    initAuthenticateApi(server, {commonRouteConfig, clientCookieName});
-    initUsersApi(server, {commonRouteConfig});
-    initRolesApi(server, {commonRouteConfig});
+    initAuthenticateApi(server, {clientCookieName});
+    initUsersApi(server);
+    initRolesApi(server);
     initIndicesApi(server);
-    initLoginView(server, this);
-    initLogoutView(server, this);
+    initLoginView(server, thisPlugin);
+    initLogoutView(server, thisPlugin);
+
   }
 });
 

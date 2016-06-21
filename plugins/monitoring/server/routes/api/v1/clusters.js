@@ -177,7 +177,7 @@ module.exports = (server) => {
           'cluster_stats'
         ];
         const info = _.pick(resp._source, fields);
-        const usage = _.set({}, 'stack_stats.xpack', _.get(req, 'server.plugins.xpackMain.usage'));
+        const usage = _.set({}, 'stack_stats.xpack', _.get(req, 'server.plugins.xpack_main.usage'));
         reply(_.merge(info, usage));
       })
       .catch(err => reply(handleError(err, req)));

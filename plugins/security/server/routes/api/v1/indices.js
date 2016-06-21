@@ -18,6 +18,8 @@ export default (server) => {
       .then((mappings) => reply(
         _(mappings)
         .map('mappings')
+        .map(_.values)
+        .flatten()
         .map(_.keys)
         .flatten()
         .uniq()
