@@ -9,8 +9,9 @@ mod.directive('monitoringWelcomeMessage', function ($window, reportStats, featur
       case 'overview':
         // check cluster length to see if cluster listing has been bypassed
         return scope.clusters && scope.clusters.length === 1;
+      default:
+        return false;
     }
-    return false;
   }
 
   return {
