@@ -1,11 +1,11 @@
 const _ = require('lodash');
 const Promise = require('bluebird');
 const Horseman = require('node-horseman');
-const phantomPath = require('./phantom').getPath();
 const temp = require('temp').track();
 
 class Screenshot {
-  constructor(phantomSettings, screenshotSettings, logger) {
+  constructor(phantomPath, phantomSettings, screenshotSettings, logger) {
+    this.phantomPath = phantomPath;
     this.phantomSettings = phantomSettings;
     this.screenshotSettings = screenshotSettings;
     this.logger = logger || _.noop;
@@ -14,7 +14,7 @@ class Screenshot {
   capture(url, opts) {
     this.logger(`fetching screenshot of ${url}`);
     opts = _.assign({ basePath: this.screenshotSettings.basePath }, opts);
-    const ph = fetch(url, this.phantomSettings, opts);
+    const ph = fetch(url, this.phantomPath, this.phantomSettings, opts);
 
     return ph
     .then(() => getTargetFile())
@@ -37,11 +37,11 @@ class Screenshot {
   }
 }
 
-module.exports = function (phantomSettings, screenshotSettings, logger) {
-  return new Screenshot(phantomSettings, screenshotSettings, logger);
+module.exports = function (phantomPath, phantomSettings, screenshotSettings, logger) {
+  return new Screenshot(phantomPath, phantomSettings, screenshotSettings, logger);
 };
 
-function fetch(url, phantomSettings, opts) {
+function fetch(url, phantomPath, phantomSettings, opts) {
   const { loadDelay, viewport, timeout } = phantomSettings;
   const phantomOpts = {
     phantomPath: phantomPath,
