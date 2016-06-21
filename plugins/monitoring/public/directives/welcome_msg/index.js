@@ -1,12 +1,14 @@
 const mod = require('ui/modules').get('monitoring/directives', []);
 const template = require('plugins/monitoring/directives/welcome_msg/index.html');
 mod.directive('monitoringWelcomeMessage', function ($window, reportStats, features) {
-  // Determine if we can skip showing the banner here as it has already been
-  // shown on cluster listing.
-  // Listing page would show if there are 2+ clusters
-  function isAlreadyShownOnListingPage(scope) {
-    if (scope.clusters && scope.clusters.length > 1) {
-      return true;
+  function showPerContext(scope) {
+    switch (scope.context) {
+      case 'listing':
+      case 'no-data':
+        return true;
+      case 'overview':
+        // check cluster length to see if cluster listing has been bypassed
+        return scope.clusters && scope.clusters.length === 1;
     }
     return false;
   }
@@ -14,13 +16,13 @@ mod.directive('monitoringWelcomeMessage', function ($window, reportStats, featur
   return {
     restrict: 'E',
     scope: {
-      cluster: '=',
+      context: '@',
       clusters: '='
     },
     template: template,
     link: (scope) => {
       const hideBanner = $window.localStorage.getItem('monitoring.hideBanner');
-      scope.showBanner = (hideBanner) ? false : !isAlreadyShownOnListingPage(scope);
+      scope.showBanner = !hideBanner && showPerContext(scope);
 
       scope.dontShowAgain = function () {
         scope.showBanner = false;
