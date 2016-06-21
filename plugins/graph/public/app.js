@@ -7,7 +7,6 @@ var utils = require('./utils.js');
 import { capitalize } from 'lodash';
 import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
 require('plugins/graph/less/main.less');
-require('plugins/graph/less/license.less');
 
 var app = require('ui/modules').get('app/graph', ['angular-venn-simple']);
 
@@ -38,18 +37,12 @@ require('ui/routes')
 
     }
   })
-  .when('/license', {
-    template: require('plugins/graph/templates/license.html')
-  }).otherwise({
+  .otherwise({
     redirectTo: '/home'
   });
 
 //========  Controller for basic UI ==================
-app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http, kbnUrl, showLicensePage, isLicenseActive) {
-
-  if (showLicensePage || !isLicenseActive) {
-    return kbnUrl.redirect('/license');
-  }
+app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http) {
 
   $scope.title = 'Graph';
   $scope.description = 'Graph exploration';
@@ -579,16 +572,3 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http,
 
 });
 //End controller
-
-//========  Controller for basic UI ==================
-app.controller('licenseController', function ($scope, showLicensePage, licenseType, isLicenseActive, kbnUrl) {
-  $scope.showLicensePage = showLicensePage;
-  $scope.isLicenseActive = isLicenseActive;
-  $scope.licenseType = capitalize(licenseType);
-
-  // If the user manually visits the license page but they don't need to be
-  // shown it, redirect them back to the app index page
-  if (!showLicensePage && isLicenseActive) {
-    return kbnUrl.redirect('/');
-  }
-});

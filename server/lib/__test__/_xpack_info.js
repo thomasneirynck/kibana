@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 const expect = require('expect.js');
 const Bluebird = require('bluebird');
 import moment from 'moment';
-const xpackInfo = require('../xpack_info');
+const _xpackInfo = require('../_xpack_info');
 
 describe('xpack_info', function () {
 
@@ -17,7 +17,7 @@ describe('xpack_info', function () {
 
   function xpackInfoTest(response) {
     setClientResponse(response);
-    return xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
+    return _xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
     .then(info => {
       info.stopPolling();
       return info;
@@ -133,14 +133,31 @@ describe('xpack_info', function () {
     });
   });
 
+  describe('getLicenseCheckResults()', () => {
+    it ('returns the license check results for the specified feature', () => {
+      const mockReportingLicenseCheckResults = {
+        enabled: false,
+        message: 'Reporting is not enabled in Basic license'
+      };
+      const reportingLicenseCheckResultsGenerator = () => mockReportingLicenseCheckResults;
+
+      return xpackInfoTest()
+      .then(info => {
+        info.feature('reporting').registerLicenseCheckResultsGenerator(reportingLicenseCheckResultsGenerator);
+        expect(info.feature('reporting').getLicenseCheckResults()).to.be(mockReportingLicenseCheckResults);
+      });
+    });
+  });
+
   describe('getSignature()', function () {
     it ('returns the correct signature', function () {
-      const expectedSignature = createHash('md5')
-      .update('active|1464315131123|basic')
-      .digest('hex');
-
-      return xpackInfoTest({ license: { status: 'active', mode: 'basic', expiry_date_in_millis: 1464315131123 }})
-      .then(info => expect(info.getSignature()).to.be(expectedSignature));
+      return xpackInfoTest({ license: { status: 'active', type: 'basic', expiry_date_in_millis: 1464315131123 }})
+      .then(info => {
+        const expectedSignature = createHash('md5')
+        .update(JSON.stringify(info.toJSON()))
+        .digest('hex');
+        expect(info.getSignature()).to.be(expectedSignature);
+      });
     });
   });
 
@@ -148,7 +165,7 @@ describe('xpack_info', function () {
     it ('causes the info object and signature to be updated', function () {
       let previousSignature;
       setClientResponse({ license: { status: 'active' }});
-      return xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
+      return _xpackInfo(mockServer, mockClient, pollFrequencyInMillis)
       .then(info => {
         expect(info.license.isActive()).to.be(true);
         previousSignature = info.getSignature();
