@@ -14,7 +14,7 @@ require('ui/routes')
           return Promise.reject();
         }
         if (clusters.length === 1) {
-          // Do not give access to cluster listing if there is just 1 cluster
+          // Bypass the cluster listing if there is just 1 cluster
           kbnUrl.changePath('/overview');
           return Promise.reject();
         }
