@@ -12,7 +12,7 @@ module.exports = async function calculateIndices(req, start, end, indexPattern) 
   await checkMonitoringAuth(req, indexPattern);
 
   const countResults = await callWithRequest(req, 'count', {
-    meta: `check_monitoring_auth_to_${indexPattern}`,
+    meta: `check_count_${indexPattern}_indices`,
     index: indexPattern,
     ignore: [404]
   });
@@ -26,7 +26,7 @@ module.exports = async function calculateIndices(req, start, end, indexPattern) 
   const options = {
     index: indexPattern,
     level: 'indices',
-    meta: 'calculate_indices',
+    meta: `calculate_${indexPattern}_indices`,
     ignoreUnavailable: true,
     body: {
       fields: ['timestamp'],
