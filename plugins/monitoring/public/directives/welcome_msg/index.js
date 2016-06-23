@@ -1,24 +1,29 @@
-import { get } from 'lodash';
 const mod = require('ui/modules').get('monitoring/directives', []);
 const template = require('plugins/monitoring/directives/welcome_msg/index.html');
 mod.directive('monitoringWelcomeMessage', function ($window, reportStats, features) {
+  function showPerContext(scope) {
+    switch (scope.context) {
+      case 'listing':
+      case 'no-data':
+        return true;
+      case 'overview':
+        // check cluster length to see if cluster listing has been bypassed
+        return scope.clusters && scope.clusters.length === 1;
+      default:
+        return false;
+    }
+  }
+
   return {
     restrict: 'E',
     scope: {
-      cluster: '=',
+      context: '@',
       clusters: '='
     },
     template: template,
     link: (scope) => {
       const hideBanner = $window.localStorage.getItem('monitoring.hideBanner');
-      scope.showBanner = (hideBanner) ? false : true;
-
-      if (scope.showBanner && scope.cluster && scope.clusters) {
-        const licenseType = get(scope, 'cluster.license.type');
-        if (licenseType !== 'basic') {
-          scope.showBanner = false;
-        }
-      }
+      scope.showBanner = !hideBanner && showPerContext(scope);
 
       scope.dontShowAgain = function () {
         scope.showBanner = false;
