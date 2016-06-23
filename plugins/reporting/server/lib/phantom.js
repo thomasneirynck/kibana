@@ -11,8 +11,6 @@ const basename = 'phantomjs-' + version;
 const sourcePath = path.resolve(__dirname, '..', '..', '..', '..', '.phantom');
 
 function installPhantom(installPath = sourcePath) {
-  console.log('sourcePath', sourcePath);
-  console.log('installPath', installPath);
   const phantomSource = getPackage(sourcePath);
   const phantomPackage = getPackage(installPath);
 
