@@ -56,6 +56,7 @@ var excludedDeps = Object.keys(pkg.devDependencies).map(function (name) {
 var excludedFiles = [
   '.DS_Store',
   '__test__',
+  '__tests__',
   'README.md',
   'node_modules/.bin',
 ];
