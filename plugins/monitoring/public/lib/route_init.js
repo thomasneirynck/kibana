@@ -1,7 +1,8 @@
-var _ = require('lodash');
+import _ from 'lodash';
+
 module.exports = function routeInitProvider(Notifier, Private, monitoringClusters, globalState, license, kbnUrl) {
-  var phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
-  var ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
+  const phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
+  const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
 
   function isOnPage(hash) {
     return _.contains(window.location.hash, hash);
@@ -17,16 +18,16 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
     return (!isBasic || clusters.length === 1);
   }
 
-  return function () {
-    var notify = new Notifier({ location: 'Monitoring' });
+  return function routeInit() {
+    const notify = new Notifier({ location: 'Monitoring' });
     return monitoringClusters()
-    .then(function (clusters) {
+    .then((clusters) => {
       return phoneHome.sendIfDue(clusters).then(() => {
         return clusters;
       });
     })
     // Set the clusters collection and current cluster in globalState
-    .then(function (clusters) {
+    .then((clusters) => {
       const cluster = (() => {
         const existingCurrent = _.find(clusters, { cluster_uuid: globalState.cluster_uuid });
         if (existingCurrent) return existingCurrent;
