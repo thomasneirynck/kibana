@@ -3,20 +3,18 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
   var phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
   var ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
 
-  // check if the license is expired and if anything needs to be done about it
-  function isLicenseFresh(expiryDateInMillis) {
-    const isExpired = (new Date()).getTime() > expiryDateInMillis;
-    const alreadyOnLicensePage = _.contains(window.location.hash, 'license');
-    return !isExpired || alreadyOnLicensePage;
+  function isOnPage(hash) {
+    return _.contains(window.location.hash, hash);
   }
 
-  // check if the setup is multi-cluster mode, and that mode is supported
-  function isMultiClusterSupported(isBasic, clusters) {
-    const onClusterListing = _.contains(window.location.hash, 'home');
-    if (clusters.length > 1 && isBasic && !onClusterListing) {
-      return false;
-    }
-    return true;
+  // check if the license expiration is in the future
+  function isLicenseFresh(expiryDateInMillis) {
+    return (new Date()).getTime() < expiryDateInMillis;
+  }
+
+  // returns true if license is not basic or if the data just has a single cluster
+  function isClusterSupported(isBasic, clusters) {
+    return (!isBasic || clusters.length === 1);
   }
 
   return function () {
@@ -50,13 +48,13 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
       const clusterLicense = cluster.license;
       license.setLicenseType(clusterLicense.type);
 
-      // check license expiration
-      if (!isLicenseFresh(clusterLicense.expiry_date_in_millis)) {
+      // check if we need to redirect because of license expiration
+      if (!isOnPage('license') && !isLicenseFresh(clusterLicense.expiry_date_in_millis)) {
         return kbnUrl.redirect('/license');
       }
 
-      // check if multi-cluster monitoring, and if its allowed
-      if (!isMultiClusterSupported(license.isBasic(), clusters)) {
+      // check if we need to redirect because of check if multi-cluster monitoring, and if its allowed
+      if (!isOnPage('home') && !isClusterSupported(license.isBasic(), clusters)) {
         return kbnUrl.redirect('/home');
       }
 
