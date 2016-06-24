@@ -27,7 +27,7 @@ module.exports = function (kibana) {
             esShardTimeout: config.get('elasticsearch.shardTimeout'),
             statsReportUrl: config.get('xpack.monitoring.stats_report_url'),
             reportStats: config.get('xpack.monitoring.report_stats'),
-            googleTagManagerId: config.get('xpack.monitoring.google_tag_manager_id')
+            monitoringIndexPrefix: config.get('xpack.monitoring.index_prefix')
           };
         }
       }
@@ -70,7 +70,6 @@ module.exports = function (kibana) {
         max_bucket_size: number().default(10000),
         min_interval_seconds: number().default(10),
         report_stats: boolean().default(true),
-        google_tag_manager_id: string().default('GTM-WXMHGM'),
         node_resolver: string().regex(/^(?:transport_address|name)$/).default('transport_address'),
         stats_report_url: Joi.when('$dev', {
           is: true,
