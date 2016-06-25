@@ -4,7 +4,7 @@ module.exports = function (xpackLicenseInfo) {
   // from Elasticsearch, assume worst case and disable reporting
   if (!xpackLicenseInfo || !xpackLicenseInfo.isAvailable()) {
     return {
-      enabled: false,
+      showLinks: false,
       message: 'License information is not available at this time.'
     };
   }
@@ -16,25 +16,29 @@ module.exports = function (xpackLicenseInfo) {
     'platinum'
   ];
 
+  const isLicenseModeValid = xpackLicenseInfo.license.isOneOf(VALID_LICENSE_MODES_TO_ENABLE_REPORTING);
   const isLicenseActive = xpackLicenseInfo.license.isActive();
-  if (!isLicenseActive) {
+
+  // License is not valid
+  if (!isLicenseModeValid) {
     return {
-      enabled: false,
-      message: 'License is not active.'
+      showLinks: false,
+      message: `Your ${xpackLicenseInfo.license.getType()} license does not support Reporting. Please upgrade your license.`
     };
   }
 
-  const isLicenseModeValid = xpackLicenseInfo.license.isOneOf(VALID_LICENSE_MODES_TO_ENABLE_REPORTING);
-  if (!isLicenseModeValid) {
+  // License is valid but not active
+  if (!isLicenseActive) {
     return {
-      enabled: false,
-      message: `Your ${xpackLicenseInfo.license.getType()} license does not support Reporting. Please upgrade your license.`
+      showLinks: true,
+      enableLinks: false,
+      message: `You cannot use Reporting because your ${xpackLicenseInfo.license.getType()} license has expired.`
     };
   }
 
   // License is valid and active
   return {
-    enabled: true,
-    message: 'Valid license found.'
+    showLinks: true,
+    enableLinks: true
   };
 };

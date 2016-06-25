@@ -5,41 +5,68 @@ import checkLicense from '../../../server/lib/check_license';
 describe('check_license', function () {
 
   let mockLicenseInfo;
+  beforeEach(() => mockLicenseInfo = {});
 
-  beforeEach(function () {
-    mockLicenseInfo = {
-      isAvailable: () => true
-    };
+  describe('license information is not available', () => {
+    beforeEach(() => mockLicenseInfo.isAvailable = () => false);
+
+    it('should set showLinks to false', () => {
+      expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
+    });
   });
 
-  it ('should set enabled to false if license information is not set', () => {
-    mockLicenseInfo = null;
-    expect(checkLicense(mockLicenseInfo).enabled).to.be(false);
+  describe('license information is available', () => {
+    beforeEach(() => {
+      mockLicenseInfo.isAvailable = () => true;
+      set(mockLicenseInfo, 'license.getType', () => 'basic');
+    });
+
+    describe('& license is trial, standard, gold, platinum', () => {
+      beforeEach(() => set(mockLicenseInfo, 'license.isOneOf', () => true));
+
+      describe('& license is active', () => {
+        beforeEach(() => set(mockLicenseInfo, 'license.isActive', () => true));
+
+        it ('should set showLinks to true', () => {
+          expect(checkLicense(mockLicenseInfo).showLinks).to.be(true);
+        });
+
+        it ('should set enableLinks to true', () => {
+          expect(checkLicense(mockLicenseInfo).enableLinks).to.be(true);
+        });
+      });
+
+      describe('& license is expired', () => {
+        beforeEach(() => set(mockLicenseInfo, 'license.isActive', () => false));
+
+        it ('should set showLinks to true', () => {
+          expect(checkLicense(mockLicenseInfo).showLinks).to.be(true);
+        });
+
+        it ('should set enableLinks to false', () => {
+          expect(checkLicense(mockLicenseInfo).enableLinks).to.be(false);
+        });
+      });
+    });
+
+    describe('& license is basic', () => {
+      beforeEach(() => set(mockLicenseInfo, 'license.isOneOf', () => false));
+
+      describe('& license is active', () => {
+        beforeEach(() => set(mockLicenseInfo, 'license.isActive', () => true));
+
+        it ('should set showLinks to false', () => {
+          expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
+        });
+      });
+
+      describe('& license is expired', () => {
+        beforeEach(() => set(mockLicenseInfo, 'license.isActive', () => false));
+
+        it ('should set showLinks to false', () => {
+          expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
+        });
+      });
+    });
   });
-
-  it ('should set enabled to false if license information is set but not available', () => {
-    mockLicenseInfo = { isAvailable: () => false };
-    expect(checkLicense(mockLicenseInfo).enabled).to.be(false);
-  });
-
-  it ('should set enabled to false if the license is not active', () => {
-    set(mockLicenseInfo, 'license.isActive', () => { return false; });
-    set(mockLicenseInfo, 'license.isOneOf', () => { return true; });
-    expect(checkLicense(mockLicenseInfo).enabled).to.be(false);
-  });
-
-  it ('should set enabled to false if the license is of an invalid type', () => {
-    set(mockLicenseInfo, 'license.isActive', () => { return true; });
-    set(mockLicenseInfo, 'license.isOneOf', () => { return false; });
-    set(mockLicenseInfo, 'license.getType', () => { return 'basic'; });
-    expect(checkLicense(mockLicenseInfo).enabled).to.be(false);
-  });
-
-  it ('should set enabled to true if the license is of a valid type and active', () => {
-    set(mockLicenseInfo, 'license.isActive', () => { return true; });
-    set(mockLicenseInfo, 'license.isOneOf', () => { return true; });
-    expect(checkLicense(mockLicenseInfo).enabled).to.be(true);
-
-  });
-
 });
