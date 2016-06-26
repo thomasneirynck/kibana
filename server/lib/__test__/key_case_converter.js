@@ -21,7 +21,7 @@ describe('key_case_converter', () => {
     };
   });
 
-  it ('camelCaseToSnakeCaseDeep should recursively convert camelCase keys to snake_case keys', () => {
+  it ('convertKeysToSnakeCaseDeep should recursively convert camelCase keys to snake_case keys', () => {
     const expectedResultObject = {
       top_level_key_1: {
         inner_level_key_1: 17,
@@ -38,7 +38,7 @@ describe('key_case_converter', () => {
     expect(convertKeysToSnakeCaseDeep(testObject)).to.eql(expectedResultObject);
   });
 
-  it ('snakeCaseToCamelCaseDeep should recursively convert snake_case keys to camelCase keys', () => {
+  it ('convertKeysToCamelCaseDeep should recursively convert snake_case keys to camelCase keys', () => {
     const expectedResultObject = {
       topLevelKey1: {
         innerLevelKey1: 17,
