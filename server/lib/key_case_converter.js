@@ -1,16 +1,18 @@
-import { keys, mapKeys, snakeCase, camelCase } from 'lodash';
+import { clone, keys, mapKeys, snakeCase, camelCase } from 'lodash';
 
 function convertKeysToSpecifiedCaseDeep(object, caseConversionFunction) {
+  let newObject = clone(object);
+
   // First recursively convert key names in nested objects
   keys(object).map(key => {
     const value = object[key];
     if (typeof value === 'object') {
-      object[key] = convertKeysToSpecifiedCaseDeep(value, caseConversionFunction);
+      newObject[key] = convertKeysToSpecifiedCaseDeep(value, caseConversionFunction);
     }
   });
 
   // Then convert top-level key names
-  return mapKeys(object, (value, key) => {
+  return mapKeys(newObject, (value, key) => {
     return caseConversionFunction(key);
   });
 }

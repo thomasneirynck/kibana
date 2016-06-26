@@ -54,4 +54,16 @@ describe('key_case_converter', () => {
     };
     expect(convertKeysToCamelCaseDeep(testObject)).to.eql(expectedResultObject);
   });
+
+  it ('convertKeysToSnakeCaseDeep should not modify original object', () => {
+    convertKeysToSnakeCaseDeep(testObject);
+    expect(Object.keys(testObject)).to.contain('topLevelKey1');
+    expect(Object.keys(testObject.topLevelKey1)).to.contain('innerLevelKey1');
+  });
+
+  it ('convertKeysToCamelCaseDeep should not modify original object', () => {
+    convertKeysToCamelCaseDeep(testObject);
+    expect(Object.keys(testObject)).to.contain('top_level_key2');
+    expect(Object.keys(testObject.topLevelKey1)).to.contain('inner_level_key2');
+  });
 });
