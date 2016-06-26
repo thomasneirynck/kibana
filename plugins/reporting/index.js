@@ -83,7 +83,7 @@ module.exports = function (kibana) {
             pre: [
               function forbidApiAccess(request, reply) {
                 const licenseCheckResults = xpackMainPlugin.info.feature(thisPlugin.id).getLicenseCheckResults();
-                if (!licenseCheckResults.enabled) {
+                if (!licenseCheckResults.showLinks) {
                   reply(Boom.forbidden(licenseCheckResults.message));
                 } else {
                   reply();
