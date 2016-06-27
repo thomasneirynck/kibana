@@ -50,6 +50,11 @@ describe('xpack_info services', () => {
       xpackInfoService.clear();
       expect(xpackInfoService.get('foo.bar')).to.be(undefined);
     });
+
+    it ('defaults to the provided default value if the requested path is not found', () => {
+      xpackInfoService.set({ foo: 'bar' });
+      expect(xpackInfoService.get('foo.baz', 17)).to.be(17);
+    });
   });
 
   describe('xpackInfoSignature service', () => {
