@@ -1,5 +1,8 @@
 import { clone, keys, mapKeys, snakeCase, camelCase } from 'lodash';
 
+// Note: This function uses _.clone. This will clone objects created by constructors other than Object
+// to plain Object objects. Uncloneable values such as functions, DOM nodes, Maps, Sets, and WeakMaps
+// will be cloned to the empty object.
 function convertKeysToSpecifiedCaseDeep(object, caseConversionFunction) {
   let newObject = clone(object);
 
