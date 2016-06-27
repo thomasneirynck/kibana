@@ -1,7 +1,12 @@
 import expect from 'expect.js';
 import ngMock from 'ng_mock';
 
+const XPACK_INFO_KEY = 'xpackMain.info';
+const XPACK_INFO_SIG_KEY = 'xpackMain.infoSignature';
+
 describe('xpack_info services', () => {
+  let mockWindowService;
+
   beforeEach(ngMock.module('kibana', ($provide) => {
     $provide.service('$window', () => {
       let items = {};
@@ -21,10 +26,14 @@ describe('xpack_info services', () => {
     });
   }));
 
+  beforeEach(ngMock.inject($window => {
+    mockWindowService = $window;
+  }));
+
   describe('xpackInfo service', () => {
     let xpackInfoService;
 
-    beforeEach(ngMock.inject(($window, xpackInfo) => {
+    beforeEach(ngMock.inject(xpackInfo => {
       xpackInfoService = xpackInfo;
     }));
 
@@ -35,6 +44,7 @@ describe('xpack_info services', () => {
         }
       };
       xpackInfoService.set(updatedXPackInfo);
+      expect(mockWindowService.localStorage.getItem(XPACK_INFO_KEY)).to.be(JSON.stringify(updatedXPackInfo));
       expect(xpackInfoService.get('foo.bar')).to.be(17);
     });
 
@@ -48,6 +58,7 @@ describe('xpack_info services', () => {
       expect(xpackInfoService.get('foo.bar')).not.to.be(undefined);
 
       xpackInfoService.clear();
+      expect(mockWindowService.localStorage.getItem(XPACK_INFO_KEY)).to.be(undefined);
       expect(xpackInfoService.get('foo.bar')).to.be(undefined);
     });
 
@@ -60,13 +71,14 @@ describe('xpack_info services', () => {
   describe('xpackInfoSignature service', () => {
     let xpackInfoSignatureService;
 
-    beforeEach(ngMock.inject(($window, xpackInfoSignature) => {
+    beforeEach(ngMock.inject(xpackInfoSignature => {
       xpackInfoSignatureService = xpackInfoSignature;
     }));
 
     it ('updates the stored xpack info signature', () => {
       const updatedXPackInfoSignature = 'foobar';
       xpackInfoSignatureService.set(updatedXPackInfoSignature);
+      expect(mockWindowService.localStorage.getItem(XPACK_INFO_SIG_KEY)).to.be(updatedXPackInfoSignature);
       expect(xpackInfoSignatureService.get()).to.be(updatedXPackInfoSignature);
     });
 
@@ -76,6 +88,7 @@ describe('xpack_info services', () => {
       expect(xpackInfoSignatureService.get()).not.to.be(undefined);
 
       xpackInfoSignatureService.clear();
+      expect(mockWindowService.localStorage.getItem(XPACK_INFO_SIG_KEY)).to.be(undefined);
       expect(xpackInfoSignatureService.get()).to.be(undefined);
     });
   });
