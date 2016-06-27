@@ -1,12 +1,9 @@
 import { get } from 'lodash';
-import uiModules from 'ui/modules';
 
 const XPACK_INFO_KEY = 'xpackMain.info';
 const XPACK_INFO_SIG_KEY = 'xpackMain.infoSignature';
 
-const module = uiModules.get('xpack_main/services');
-
-module.service('xpackInfo', ($window) => {
+export function xpackInfoProvider($window) {
   return {
     get(path, defaultValue) {
       const xpackInfoValueInLocalStorage = $window.localStorage.getItem(XPACK_INFO_KEY);
@@ -20,9 +17,9 @@ module.service('xpackInfo', ($window) => {
       $window.localStorage.removeItem(XPACK_INFO_KEY);
     }
   };
-});
+}
 
-module.service('xpackInfoSignature', ($window) => {
+export function xpackInfoSignatureProvider($window) {
   return {
     get() {
       return $window.localStorage.getItem(XPACK_INFO_SIG_KEY);
@@ -34,4 +31,4 @@ module.service('xpackInfoSignature', ($window) => {
       $window.localStorage.removeItem(XPACK_INFO_SIG_KEY);
     }
   };
-});
+}

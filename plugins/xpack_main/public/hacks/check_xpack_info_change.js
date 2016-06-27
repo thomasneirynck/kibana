@@ -2,11 +2,14 @@ import { identity } from 'lodash';
 import uiModules from 'ui/modules';
 import chrome from 'ui/chrome';
 import { convertKeysToCamelCaseDeep } from '../../../../server/lib/key_case_converter';
-import 'plugins/xpack_main/services/xpack_info';
+import { xpackInfoProvider, xpackInfoSignatureProvider } from 'plugins/xpack_main/services/xpack_info';
 
 const module = uiModules.get('xpack_main', []);
 
-module.factory('checkXPackInfoChange', ($q, $injector, xpackInfoSignature, xpackInfo) => {
+module.factory('checkXPackInfoChange', ($q, $injector, Private) => {
+  const xpackInfo = Private(xpackInfoProvider);
+  const xpackInfoSignature = Private(xpackInfoSignatureProvider);
+
   let _isInfoUpdateInProgress = false;
 
   function interceptor(response, handleResponse) {
