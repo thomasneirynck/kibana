@@ -7,7 +7,8 @@ const XPACK_INFO_SIG_KEY = 'xpackMain.infoSignature';
 module.service('xpackInfo', ($window) => {
   return {
     get(path, defaultValue) {
-      const xpackInfo = JSON.parse($window.localStorage.getItem(XPACK_INFO_KEY)) || {};
+      const xpackInfoValueInLocalStorage = $window.localStorage.getItem(XPACK_INFO_KEY);
+      const xpackInfo = xpackInfoValueInLocalStorage ? JSON.parse(xpackInfoValueInLocalStorage) : {};
       return get(xpackInfo, path, defaultValue);
     },
     set(updatedXPackInfo) {
