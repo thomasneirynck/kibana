@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export default function routeInitProvider(Notifier, Private, monitoringClusters, globalState, license, kbnUrl) {
+export default function routeInitProvider(Private, monitoringClusters, globalState, license, kbnUrl) {
   const phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
   const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
 
@@ -40,8 +40,6 @@ export default function routeInitProvider(Notifier, Private, monitoringClusters,
         globalState.cluster_uuid = cluster.cluster_uuid;
         globalState.save();
       } else {
-        const notify = new Notifier({ location: 'Monitoring' });
-        notify.error('We can\'t seem to find any valid clusters in your Monitoring data. Please check your Monitoring agents');
         return kbnUrl.redirect('/no-data');
       }
 

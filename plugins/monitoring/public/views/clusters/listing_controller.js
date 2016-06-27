@@ -9,7 +9,7 @@ require('ui/routes')
       const routeInit = Private(require('plugins/monitoring/lib/route_init'));
       return routeInit()
       .then(clusters => {
-        if (!clusters.length) {
+        if (!clusters || !clusters.length) {
           kbnUrl.changePath('/no-data');
           return Promise.reject();
         }

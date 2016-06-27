@@ -39,8 +39,9 @@ app.directive('monitoringMain', (license) => {
       if (!scope.inListing) {
         breadcrumbs = [ createCrumb('#/home', 'Clusters') ];
 
-        if (!scope.inOverview) {
-          breadcrumbs.push(createCrumb('#/overview', scope.cluster.cluster_name));
+        const clusterName = _.get(scope, 'cluster.cluster_name');
+        if (!scope.inOverview && clusterName) {
+          breadcrumbs.push(createCrumb('#/overview', clusterName));
         }
 
         // Elasticsearch crumbs
