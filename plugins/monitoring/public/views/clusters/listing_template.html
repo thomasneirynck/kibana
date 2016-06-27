@@ -1,7 +1,7 @@
 <div ng-controller="home">
   <monitoring-main name="listing">
     <div class="monitoring-view">
-      <monitoring-welcome-message></monitoring-welcome-message>
+      <monitoring-welcome-message context="listing" clusters="clusters"></monitoring-welcome-message>
       <div class="monitoring-home">
         <monitoring-cluster-listing clusters="clusters"></monitoring-cluster-listing>
       </div>

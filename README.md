@@ -18,6 +18,8 @@ x-plugins
 
 Simply use `npm start` to watch for and sync changes to Kibana.
 
+To run on Windows, the sync task uses rsync which requires an ssh server.  Cygwin has one available. Setup details needed here.
+
 #### Alternate: Run the build
 
 If this is not the case, or if you rather lean on Kibana, you'll need to perform a build and start Kibana in dev mode with a custom plugin path.

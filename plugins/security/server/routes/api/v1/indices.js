@@ -28,22 +28,4 @@ export default (server) => {
       .catch(_.flow(wrapError, reply));
     }
   });
-
-  server.route({
-    method: 'GET',
-    path: '/api/security/v1/index_patterns',
-    handler(request, reply) {
-      return callWithRequest(request, 'search', {
-        index: server.config().get('kibana.index'),
-        type: 'index-pattern',
-        fields: [],
-        body: {
-          query: {match_all: {}},
-          size: 10000
-        }
-      })
-      .then((response) => reply(_.map(response.hits.hits, '_id')))
-      .catch(_.flow(wrapError, reply));
-    }
-  });
 };

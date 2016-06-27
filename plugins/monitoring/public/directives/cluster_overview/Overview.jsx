@@ -103,7 +103,9 @@ class KibanaPanel extends React.Component {
         <StatusContainer status={this.props.status}/>
 
         <dl>
-          <dt>Instances: {this.props.count}</dt>
+          <dt>
+            <a onClick={() => this.props.angularChangeUrl('kibana')}>Instances: {this.props.count}</a>
+          </dt>
           <dd>Requests: {this.props.requests_total}</dd>
           <dd>Connections: {formatNumber(this.props.concurrent_connections, 'int_commas')}</dd>
           <dd>Max. Response Time: {this.props.response_time_max} ms</dd>

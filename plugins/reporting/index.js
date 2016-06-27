@@ -58,6 +58,7 @@ module.exports = function (kibana) {
 
     init: function (server) {
       const thisPlugin = this;
+      const config = server.config();
       const xpackMainPlugin = server.plugins.xpack_main;
       mirrorPluginStatus(xpackMainPlugin, thisPlugin);
       xpackMainPlugin.status.once('green', () => {
@@ -68,11 +69,12 @@ module.exports = function (kibana) {
 
       function setup() {
         // prepare phantom binary
-        return phantom.install()
-        .then(function (binaryPath) {
-          server.log(['reporting', 'debug'], `Phantom installed at ${binaryPath}`);
+        return phantom.install(config.get('path.data'))
+        .then(function (phantomPackage) {
+          server.log(['reporting', 'debug'], `Phantom installed at ${phantomPackage.binary}`);
 
           // intialize and register application components
+          server.expose('phantom', phantomPackage);
           server.expose('generateDocument', generateDocument(server));
           server.expose('queue', createQueue(server));
 
