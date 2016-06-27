@@ -2,6 +2,7 @@ import { identity } from 'lodash';
 import uiModules from 'ui/modules';
 import chrome from 'ui/chrome';
 import { convertKeysToCamelCaseDeep } from '../../../../server/lib/key_case_converter';
+import 'plugins/xpack_main/services/xpack_info';
 
 const module = uiModules.get('xpack_main', []);
 
