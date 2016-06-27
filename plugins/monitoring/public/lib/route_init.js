@@ -19,7 +19,6 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
   }
 
   return function routeInit() {
-    const notify = new Notifier({ location: 'Monitoring' });
     return monitoringClusters()
     .then((clusters) => {
       return phoneHome.sendIfDue(clusters).then(() => {
@@ -42,6 +41,7 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
         globalState.cluster_uuid = cluster.cluster_uuid;
         globalState.save();
       } else {
+        const notify = new Notifier({ location: 'Monitoring' });
         notify.error('We can\'t seem to find any valid clusters in your Monitoring data. Please check your Monitoring agents');
         return kbnUrl.redirect('/no-data');
       }
