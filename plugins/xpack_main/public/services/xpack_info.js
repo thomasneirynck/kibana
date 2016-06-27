@@ -1,8 +1,10 @@
 import { get } from 'lodash';
-const module = require('ui/modules').get('xpack_main/services');
+import uiModules from 'ui/modules';
 
 const XPACK_INFO_KEY = 'xpackMain.info';
 const XPACK_INFO_SIG_KEY = 'xpackMain.infoSignature';
+
+const module = uiModules.get('xpack_main/services');
 
 module.service('xpackInfo', ($window) => {
   return {
