@@ -10,7 +10,14 @@ function convertKeysToSpecifiedCaseDeep(object, caseConversionFunction) {
   keys(object).map(key => {
     const value = object[key];
     if (typeof value === 'object') {
-      newObject[key] = convertKeysToSpecifiedCaseDeep(value, caseConversionFunction);
+      if (Array.isArray(value)) {
+        newObject[key] = [];
+        value.forEach(childValue => {
+          newObject[key].push(convertKeysToSpecifiedCaseDeep(childValue, caseConversionFunction));
+        });
+      } else {
+        newObject[key] = convertKeysToSpecifiedCaseDeep(value, caseConversionFunction);
+      }
     }
   });
 
