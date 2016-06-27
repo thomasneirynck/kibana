@@ -21,9 +21,8 @@ module.exports = function routeInitProvider(Notifier, Private, monitoringCluster
   return function routeInit() {
     return monitoringClusters()
     .then((clusters) => {
-      return phoneHome.sendIfDue(clusters).then(() => {
-        return clusters;
-      });
+      phoneHome.sendIfDue(clusters); // run in background, ignore return value
+      return clusters;
     })
     // Set the clusters collection and current cluster in globalState
     .then((clusters) => {
