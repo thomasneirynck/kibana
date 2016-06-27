@@ -13,7 +13,7 @@ module.exports = (req, _indices, filters, lastState) => {
     /* TODO It would be more efficient to use the indices param instead of
     * wildcard. Needs testing to ensure the time range the indices cover always
     * has the last data from the cluster state. */
-    index: config.get('xpack.monitoring.elasticsearch.index_prefix') + '*',
+    index: config.get('xpack.monitoring.elasticsearch.index_prefix'),
     meta: 'get_shard_allocation',
     type: 'shards',
     body: {

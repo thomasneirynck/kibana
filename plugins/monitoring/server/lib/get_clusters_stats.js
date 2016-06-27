@@ -20,7 +20,7 @@ module.exports = function getClustersStats(req) {
         } } }
       };
       const params = {
-        index: config.get('xpack.monitoring.elasticsearch.index_prefix') + '*',
+        index: config.get('xpack.monitoring.elasticsearch.index_prefix'),
         meta: 'get_clusters_stats',
         ignore: [404],
         type: 'cluster_stats',

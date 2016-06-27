@@ -60,7 +60,7 @@ module.exports = function (kibana) {
         loggingTag: string().default('monitoring-ui'),
         index: string().default('.monitoring-data-2'),
         kibana: object({
-          index_prefix: string().default('.monitoring-kibana-2-'),
+          index_prefix: string().default('.monitoring-kibana-2-*'),
           data_collection: object({
             enabled: boolean().default(true),
             interval: number().default(10000)
@@ -81,7 +81,7 @@ module.exports = function (kibana) {
           interval: string().regex(/[\d\.]+[yMwdhms]/).default('10s')
         }).default(),
         elasticsearch: object({
-          index_prefix: string().default('.monitoring-es-2-'),
+          index_prefix: string().default('.monitoring-es-2-*'),
           logQueries: boolean().default(false),
           url: string().uri({ scheme: ['http', 'https'] }), // if empty, use Kibana's connection config
           username: string(),
