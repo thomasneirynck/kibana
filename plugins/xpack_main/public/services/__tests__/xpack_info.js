@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import ngMock from 'ng_mock';
-import { xpackInfoProvider, xpackInfoSignatureProvider } from 'plugins/xpack_main/services/xpack_info';
+import { XPackInfoProvider, XPackInfoSignatureProvider } from 'plugins/xpack_main/services/xpack_info';
 
 const XPACK_INFO_KEY = 'xpackMain.info';
 const XPACK_INFO_SIG_KEY = 'xpackMain.infoSignature';
@@ -35,7 +35,7 @@ describe('xpack_info services', () => {
     let xpackInfo;
 
     beforeEach(ngMock.inject(Private => {
-      xpackInfo = Private(xpackInfoProvider);
+      xpackInfo = Private(XPackInfoProvider);
     }));
 
     it ('updates the stored xpack info', () => {
@@ -73,7 +73,7 @@ describe('xpack_info services', () => {
     let xpackInfoSignature;
 
     beforeEach(ngMock.inject(Private => {
-      xpackInfoSignature = Private(xpackInfoSignatureProvider);
+      xpackInfoSignature = Private(XPackInfoSignatureProvider);
     }));
 
     it ('updates the stored xpack info signature', () => {

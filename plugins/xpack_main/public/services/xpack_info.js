@@ -3,7 +3,7 @@ import { get } from 'lodash';
 const XPACK_INFO_KEY = 'xpackMain.info';
 const XPACK_INFO_SIG_KEY = 'xpackMain.infoSignature';
 
-export function xpackInfoProvider($window) {
+export function XPackInfoProvider($window) {
   return {
     get(path, defaultValue) {
       const xpackInfoValueInLocalStorage = $window.localStorage.getItem(XPACK_INFO_KEY);
@@ -19,7 +19,7 @@ export function xpackInfoProvider($window) {
   };
 }
 
-export function xpackInfoSignatureProvider($window) {
+export function XPackInfoSignatureProvider($window) {
   return {
     get() {
       return $window.localStorage.getItem(XPACK_INFO_SIG_KEY);
