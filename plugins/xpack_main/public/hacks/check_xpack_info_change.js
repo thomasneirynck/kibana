@@ -2,10 +2,15 @@ import { identity } from 'lodash';
 import uiModules from 'ui/modules';
 import chrome from 'ui/chrome';
 import { convertKeysToCamelCaseDeep } from '../../../../server/lib/key_case_converter';
+import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import XPackInfoSignatureProvider from 'plugins/xpack_main/services/xpack_info_signature';
 
 const module = uiModules.get('xpack_main', []);
 
-module.factory('checkXPackInfoChange', ($q, $window, $injector) => {
+module.factory('checkXPackInfoChange', ($q, $injector, Private) => {
+  const xpackInfo = Private(XPackInfoProvider);
+  const xpackInfoSignature = Private(XPackInfoSignatureProvider);
+
   let _isInfoUpdateInProgress = false;
 
   function interceptor(response, handleResponse) {
@@ -20,7 +25,7 @@ module.factory('checkXPackInfoChange', ($q, $window, $injector) => {
     const signatureFromServer = response.headers('kbn-xpack-sig');
 
     // Get xpack info signature from local storage
-    const localSignature = $window.localStorage.getItem('xpackMain.infoSignature');
+    const localSignature = xpackInfoSignature.get();
 
     // If they are the same, nothing to do; continue on...
     if (localSignature === signatureFromServer) {
@@ -33,14 +38,14 @@ module.factory('checkXPackInfoChange', ($q, $window, $injector) => {
     const $http = $injector.get('$http'); // To prevent circular dependency Angular error
     return $http.get(chrome.addBasePath('/api/xpack/v1/info'))
     .then((xpackInfoResponse) => {
-      $window.localStorage.setItem('xpackMain.info', JSON.stringify(convertKeysToCamelCaseDeep(xpackInfoResponse.data)));
-      $window.localStorage.setItem('xpackMain.infoSignature', xpackInfoResponse.headers('kbn-xpack-sig'));
+      xpackInfo.set(convertKeysToCamelCaseDeep(xpackInfoResponse.data));
+      xpackInfoSignature.set(xpackInfoResponse.headers('kbn-xpack-sig'));
       _isInfoUpdateInProgress = false;
       return handleResponse(response);
     })
     .catch(() => {
-      $window.localStorage.removeItem('xpackMain.info');
-      $window.localStorage.removeItem('xpackMain.infoSignature');
+      xpackInfo.clear();
+      xpackInfoSignature.clear();
       _isInfoUpdateInProgress = false;
       return handleResponse(response);
     });

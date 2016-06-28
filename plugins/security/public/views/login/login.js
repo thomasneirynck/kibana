@@ -1,23 +1,23 @@
 import 'ui/autoload/styles';
 import 'plugins/security/views/login/login.less';
-import { get } from 'lodash';
 import chrome from 'ui/chrome';
 import parseNext from 'plugins/security/lib/parse_next';
 import template from 'plugins/security/views/login/login.html';
+import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 
 chrome
 .setVisible(false)
 .setRootTemplate(template)
-.setRootController('login', function ($http, $window, secureCookies) {
+.setRootController('login', function ($http, $window, secureCookies, Private) {
+  const xpackInfo = Private(XPackInfoProvider);
   const next = parseNext($window.location);
   const isSecure = !!$window.location.protocol.match(/^https/);
   const self = this;
 
   function setupScope() {
-    const xpackInfo = JSON.parse($window.localStorage.getItem('xpackMain.info')) || {};
     const defaultLoginMessage = 'Login is currently disabled because the license could not be determined.';
-    self.allowLogin = get(xpackInfo, 'features.security.allowLogin', false);
-    self.loginMessage = get(xpackInfo, 'features.security.loginMessage', defaultLoginMessage);
+    self.allowLogin = xpackInfo.get('features.security.allowLogin', false);
+    self.loginMessage = xpackInfo.get('features.security.loginMessage', defaultLoginMessage);
     self.isDisabled = !isSecure && secureCookies;
     self.submit = (username, password) => {
       self.error = false;
