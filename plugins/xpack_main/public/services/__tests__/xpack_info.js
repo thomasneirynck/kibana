@@ -1,34 +1,20 @@
 import expect from 'expect.js';
 import ngMock from 'ng_mock';
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import MockWindowProvider from './_mock_window';
 
 const XPACK_INFO_KEY = 'xpackMain.info';
 
 describe('xpack_info service', () => {
-  let mockWindowService;
+  let mockWindow;
   let xpackInfo;
 
   beforeEach(ngMock.module('kibana', ($provide) => {
-    $provide.service('$window', () => {
-      let items = {};
-      return {
-        localStorage: {
-          setItem(key, value) {
-            items[key] = value;
-          },
-          getItem(key) {
-            return items[key];
-          },
-          removeItem(key) {
-            delete items[key];
-          }
-        }
-      };
-    });
+    $provide.service('$window', MockWindowProvider);
   }));
 
   beforeEach(ngMock.inject(($window, Private) => {
-    mockWindowService = $window;
+    mockWindow = $window;
     xpackInfo = Private(XPackInfoProvider);
   }));
 
@@ -39,7 +25,7 @@ describe('xpack_info service', () => {
       }
     };
     xpackInfo.set(updatedXPackInfo);
-    expect(mockWindowService.localStorage.getItem(XPACK_INFO_KEY)).to.be(JSON.stringify(updatedXPackInfo));
+    expect(mockWindow.localStorage.getItem(XPACK_INFO_KEY)).to.be(JSON.stringify(updatedXPackInfo));
     expect(xpackInfo.get('foo.bar')).to.be(17);
   });
 
@@ -53,7 +39,7 @@ describe('xpack_info service', () => {
     expect(xpackInfo.get('foo.bar')).not.to.be(undefined);
 
     xpackInfo.clear();
-    expect(mockWindowService.localStorage.getItem(XPACK_INFO_KEY)).to.be(undefined);
+    expect(mockWindow.localStorage.getItem(XPACK_INFO_KEY)).to.be(undefined);
     expect(xpackInfo.get('foo.bar')).to.be(undefined);
   });
 

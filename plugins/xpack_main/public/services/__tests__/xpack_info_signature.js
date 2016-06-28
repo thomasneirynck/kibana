@@ -1,41 +1,27 @@
 import expect from 'expect.js';
 import ngMock from 'ng_mock';
 import XPackInfoSignatureProvider from 'plugins/xpack_main/services/xpack_info_signature';
+import MockWindowProvider from './_mock_window';
 
 const XPACK_INFO_SIG_KEY = 'xpackMain.infoSignature';
 
 describe('xpack_info_signature service', () => {
-  let mockWindowService;
+  let mockWindow;
   let xpackInfoSignature;
 
   beforeEach(ngMock.module('kibana', ($provide) => {
-    $provide.service('$window', () => {
-      let items = {};
-      return {
-        localStorage: {
-          setItem(key, value) {
-            items[key] = value;
-          },
-          getItem(key) {
-            return items[key];
-          },
-          removeItem(key) {
-            delete items[key];
-          }
-        }
-      };
-    });
+    $provide.service('$window', MockWindowProvider);
   }));
 
   beforeEach(ngMock.inject(($window, Private) => {
-    mockWindowService = $window;
+    mockWindow = $window;
     xpackInfoSignature = Private(XPackInfoSignatureProvider);
   }));
 
   it ('updates the stored xpack info signature', () => {
     const updatedXPackInfoSignature = 'foobar';
     xpackInfoSignature.set(updatedXPackInfoSignature);
-    expect(mockWindowService.localStorage.getItem(XPACK_INFO_SIG_KEY)).to.be(updatedXPackInfoSignature);
+    expect(mockWindow.localStorage.getItem(XPACK_INFO_SIG_KEY)).to.be(updatedXPackInfoSignature);
     expect(xpackInfoSignature.get()).to.be(updatedXPackInfoSignature);
   });
 
@@ -45,7 +31,7 @@ describe('xpack_info_signature service', () => {
     expect(xpackInfoSignature.get()).not.to.be(undefined);
 
     xpackInfoSignature.clear();
-    expect(mockWindowService.localStorage.getItem(XPACK_INFO_SIG_KEY)).to.be(undefined);
+    expect(mockWindow.localStorage.getItem(XPACK_INFO_SIG_KEY)).to.be(undefined);
     expect(xpackInfoSignature.get()).to.be(undefined);
   });
 });
