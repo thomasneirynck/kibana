@@ -1,7 +1,45 @@
-const _ = require('lodash');
+import _ from 'lodash';
 const createQuery = require('./create_query.js');
-module.exports = (req, indices) => {
+
+/**
+ * Filter out shard activity that we do not care about.
+ *
+ * The shard activity gets returned as a big document with a lot of shard activity reported that is out of date with respect
+ * to the date range of the polling window. We only care about any shard activity that isn't finished yet, or that ended
+ * after the polling window (it's implied that the activity is relevant for the _end_ time because the document wouldn't
+ * have been returned otherwise).
+ *
+ * @param {Number} startMs Start time in milliseconds of the polling window
+ * @returns {boolean} true to keep
+ */
+export function filterOldShardActivity(startMs) {
+  return (activity) => {
+    // either it's still going and there is no stop time, or the stop time happened after we started looking for one
+    return !_.isNumber(activity.stop_time_in_millis) || activity.stop_time_in_millis >= startMs;
+  };
+}
+
+/**
+ * The response handler for {@link getLastRecovery}.
+ *
+ * This is exposed for testing.
+ * @param {Object} resp The response returned from the search request
+ * @param {Date} start The start time from the request payload (expected to be of type {@code Date})
+ * @returns {Object[]} An array of shards representing active shard activity from {@code _source.index_recovery.shards}.
+ */
+export function handleLastRecoveries(resp, start) {
+  if (resp.hits.total >= 1) {
+    const data = _.get(resp.hits.hits[0], '_source.index_recovery.shards', []).filter(filterOldShardActivity(start.getTime()));
+    data.sort((a, b) => b.start_time_in_millis - a.start_time_in_millis);
+    return data;
+  }
+
+  return [];
+}
+
+export default function getLastRecovery(req, indices) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
+  const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const clusterUuid = req.params.clusterUuid;
 
@@ -11,9 +49,11 @@ module.exports = (req, indices) => {
     ignore: [404],
     type: 'index_recovery',
     body: {
+      _source: [ 'index_recovery.shards' ],
       size: 1,
       sort: { timestamp: { order: 'desc' } },
       query: createQuery({
+        start: start,
         end: end,
         clusterUuid: clusterUuid
       })
@@ -22,11 +62,7 @@ module.exports = (req, indices) => {
 
   return callWithRequest(req, 'search', params)
   .then((resp) => {
-    let total = _.get(resp, 'hits.total', 0);
-    if (!total) return [];
-    const data = _.get(resp.hits.hits[0], '_source.index_recovery.shards') || [];
-    data.sort((a, b) => b.start_time_in_millis - a.start_time_in_millis);
-    return data;
+    return handleLastRecoveries(resp, start);
   });
 
 };

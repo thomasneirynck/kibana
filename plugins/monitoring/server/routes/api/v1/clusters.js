@@ -1,6 +1,7 @@
-const Promise = require('bluebird');
-const _ = require('lodash');
-const Joi = require('joi');
+import Promise from 'bluebird';
+import _ from 'lodash';
+import Joi from 'joi';
+import getLastRecovery from '../../../lib/get_last_recovery';
 const calculateIndices = require('../../../lib/calculate_indices');
 const getClusters = require('../../../lib/get_clusters');
 const getClustersStats = require('../../../lib/get_clusters_stats');
@@ -11,7 +12,6 @@ const getLastState = require('../../../lib/get_last_state');
 const getClusterStatus = require('../../../lib/get_cluster_status');
 const getMetrics = require('../../../lib/get_metrics');
 const getShardStats = require('../../../lib/get_shard_stats');
-const getLastRecovery = require('../../../lib/get_last_recovery');
 const calculateClusterStatus = require('../../../lib/elasticsearch/calculate_cluster_status');
 const handleError = require('../../../lib/handle_error');
 
