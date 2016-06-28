@@ -1,43 +1,45 @@
-import { clone, keys, mapKeys, snakeCase, camelCase } from 'lodash';
+import _ from 'lodash';
 
 // Note: This function uses _.clone. This will clone objects created by constructors other than Object
 // to plain Object objects. Uncloneable values such as functions, DOM nodes, Maps, Sets, and WeakMaps
 // will be cloned to the empty object.
 function convertKeysToSpecifiedCaseDeep(object, caseConversionFunction) {
-  const newObject = Array.isArray(object) ? [] : clone(object);
 
-  // If object is an array, recurse on elements
-  if (Array.isArray(object)) {
-    object.forEach(value => {
-      newObject.push(convertKeysToSpecifiedCaseDeep(value, caseConversionFunction));
-    });
-    return newObject;
-  }
-
-  // Else if object is an object
-  else if (typeof object === 'object') {
-    // First, recursively convert key names in nested objects
-    keys(object).map(key => {
-      const value = object[key];
-      newObject[key] = convertKeysToSpecifiedCaseDeep(value, caseConversionFunction);
-    });
-
-    // Then convert top-level key names
-    return mapKeys(newObject, (value, key) => {
-      return caseConversionFunction(key);
-    });
-  }
-
-  // Else, just return object as-is
-  else {
+  // Base case
+  if (!(_.isPlainObject(object) || _.isArray(object))) {
     return object;
+  }
+
+  // Clone (so we don't modify the original object that was passed in)
+  let newObject;
+  if (Array.isArray(object)) {
+    newObject = object.slice(0);
+  } else {
+    newObject = _.clone(object);
+
+    // Convert top-level keys
+    newObject = _.mapKeys(newObject, (value, key) => caseConversionFunction(key));
+  }
+
+  // Recursively convert nested object keys
+  _.mapKeys(newObject, (value, key) => newObject[key] = convertKeysToSpecifiedCaseDeep(value, caseConversionFunction));
+
+  return newObject;
+
+}
+
+function validateObject(object) {
+  if (!(_.isPlainObject(object) || _.isArray(object))) {
+    throw new Error('Specified object should be an Object or Array');
   }
 }
 
 export function convertKeysToSnakeCaseDeep(object) {
-  return convertKeysToSpecifiedCaseDeep(object, snakeCase);
+  validateObject(object);
+  return convertKeysToSpecifiedCaseDeep(object, _.snakeCase);
 }
 
 export function convertKeysToCamelCaseDeep(object) {
-  return convertKeysToSpecifiedCaseDeep(object, camelCase);
+  validateObject(object);
+  return convertKeysToSpecifiedCaseDeep(object, _.camelCase);
 }
