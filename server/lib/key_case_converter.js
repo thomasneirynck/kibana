@@ -4,27 +4,34 @@ import { clone, keys, mapKeys, snakeCase, camelCase } from 'lodash';
 // to plain Object objects. Uncloneable values such as functions, DOM nodes, Maps, Sets, and WeakMaps
 // will be cloned to the empty object.
 function convertKeysToSpecifiedCaseDeep(object, caseConversionFunction) {
-  let newObject = clone(object);
+  const newObject = Array.isArray(object) ? [] : clone(object);
 
-  // First recursively convert key names in nested objects
-  keys(object).map(key => {
-    const value = object[key];
-    if (typeof value === 'object') {
-      if (Array.isArray(value)) {
-        newObject[key] = [];
-        value.forEach(childValue => {
-          newObject[key].push(convertKeysToSpecifiedCaseDeep(childValue, caseConversionFunction));
-        });
-      } else {
-        newObject[key] = convertKeysToSpecifiedCaseDeep(value, caseConversionFunction);
-      }
-    }
-  });
+  // If object is an array, recurse on elements
+  if (Array.isArray(object)) {
+    object.forEach(value => {
+      newObject.push(convertKeysToSpecifiedCaseDeep(value, caseConversionFunction));
+    });
+    return newObject;
+  }
 
-  // Then convert top-level key names
-  return mapKeys(newObject, (value, key) => {
-    return caseConversionFunction(key);
-  });
+  // Else if object is an object
+  else if (typeof object === 'object') {
+    // First, recursively convert key names in nested objects
+    keys(object).map(key => {
+      const value = object[key];
+      newObject[key] = convertKeysToSpecifiedCaseDeep(value, caseConversionFunction);
+    });
+
+    // Then convert top-level key names
+    return mapKeys(newObject, (value, key) => {
+      return caseConversionFunction(key);
+    });
+  }
+
+  // Else, just return object as-is
+  else {
+    return object;
+  }
 }
 
 export function convertKeysToSnakeCaseDeep(object) {
