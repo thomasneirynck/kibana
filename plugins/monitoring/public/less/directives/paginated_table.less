@@ -133,20 +133,55 @@
     margin-top: 13px;
     line-height: 30px;
   }
+
   .items-per-page span {
     cursor: pointer;
   }
+
   .pagination {
+    display: inline-block;
+    padding-left: 0;
+    margin: 0 0 @line-height-computed;
+    border-radius: @border-radius-base;
     border-top: 1px solid @light-border-color;
     border-bottom: 1px solid @light-border-color;
-    margin-top: 0;
+
     > li {
+      display: inline-block;
       cursor: pointer;
       height: 30px;
       line-height: 30px;
       width: 30px;
-      display: inline-block;
       border-right: 1px solid @light-border-color;
+
+      > a,
+      > span {
+        position: relative;
+        float: left; // Collapse white-space
+        padding: @padding-base-vertical @padding-base-horizontal;
+        line-height: @line-height-base;
+        text-decoration: none;
+        color: @pagination-color;
+        background-color: @pagination-bg;
+        border: 1px solid @pagination-border;
+        margin-left: -1px;
+      }
+      &:first-child {
+        > a,
+        > span {
+          margin-left: 0;
+          border-bottom-left-radius: @border-radius-base;
+          border-top-left-radius: @border-radius-base;
+        }
+      }
+      &:last-child {
+        > a,
+        > span {
+          border-bottom-right-radius: @border-radius-base;
+          border-top-right-radius: @border-radius-base;
+        }
+      }
+
       &.current {
         background-color: #428bca;
         color: #fff;
@@ -154,6 +189,44 @@
       }
       &:first-child {
         border-left: 1px solid @light-border-color;
+      }
+    }
+
+    > li > a,
+    > li > span {
+      &:hover,
+      &:focus {
+        z-index: 2;
+        color: @pagination-hover-color;
+        background-color: @pagination-hover-bg;
+        border-color: @pagination-hover-border;
+      }
+    }
+
+    > .active > a,
+    > .active > span {
+      &,
+      &:hover,
+      &:focus {
+        z-index: 3;
+        color: @pagination-active-color;
+        background-color: @pagination-active-bg;
+        border-color: @pagination-active-border;
+        cursor: default;
+      }
+    }
+
+    > .disabled {
+      > span,
+      > span:hover,
+      > span:focus,
+      > a,
+      > a:hover,
+      > a:focus {
+        color: @pagination-disabled-color;
+        background-color: @pagination-disabled-bg;
+        border-color: @pagination-disabled-border;
+        cursor: not-allowed;
       }
     }
   }
