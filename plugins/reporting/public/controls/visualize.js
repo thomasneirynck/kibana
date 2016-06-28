@@ -2,9 +2,7 @@ require('plugins/reporting/directives/export_config');
 
 const navbarExtensions = require('ui/registry/navbar_extensions');
 
-function visualizeReportProvider(reportingEnabled) {
-  if (!reportingEnabled) return;
-
+function visualizeReportProvider() {
   return {
     appName: 'visualize',
     key: 'reporting-visualize',
