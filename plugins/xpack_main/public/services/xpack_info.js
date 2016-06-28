@@ -1,9 +1,8 @@
 import { get } from 'lodash';
 
 const XPACK_INFO_KEY = 'xpackMain.info';
-const XPACK_INFO_SIG_KEY = 'xpackMain.infoSignature';
 
-export function XPackInfoProvider($window) {
+export default function XPackInfoProvider($window) {
   return {
     get(path, defaultValue) {
       const xpackInfoValueInLocalStorage = $window.localStorage.getItem(XPACK_INFO_KEY);
@@ -15,20 +14,6 @@ export function XPackInfoProvider($window) {
     },
     clear() {
       $window.localStorage.removeItem(XPACK_INFO_KEY);
-    }
-  };
-}
-
-export function XPackInfoSignatureProvider($window) {
-  return {
-    get() {
-      return $window.localStorage.getItem(XPACK_INFO_SIG_KEY);
-    },
-    set(updatedXPackInfoSignature) {
-      $window.localStorage.setItem(XPACK_INFO_SIG_KEY, updatedXPackInfoSignature);
-    },
-    clear() {
-      $window.localStorage.removeItem(XPACK_INFO_SIG_KEY);
     }
   };
 }
