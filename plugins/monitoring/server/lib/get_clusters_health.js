@@ -8,7 +8,7 @@ module.exports = function (req) {
     const bodies = [];
     clusters.forEach((cluster) => {
       bodies.push({
-        index: config.get('xpack.monitoring.elasticsearch.index_prefix'),
+        index: config.get('xpack.monitoring.elasticsearch.index_pattern'),
         type: 'cluster_state'
       });
       bodies.push({
@@ -21,7 +21,7 @@ module.exports = function (req) {
     });
     if (!bodies.length) return Promise.resolve([]);
     const params = {
-      index: config.get('xpack.monitoring.elasticsearch.index_prefix'),
+      index: config.get('xpack.monitoring.elasticsearch.index_pattern'),
       meta: 'get_clusters_health',
       type: 'cluster_state',
       body: bodies

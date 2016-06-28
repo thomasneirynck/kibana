@@ -15,7 +15,7 @@ const handleError = require('../../../lib/handle_error');
 
 module.exports = (server) => {
   const config = server.config();
-  const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_prefix');
+  const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/indices',
