@@ -1,10 +1,11 @@
-import 'plugins/xpack_main/services/xpack_info';
+import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 require('plugins/reporting/services/document_create');
 const Notifier = require('ui/notify/notifier');
 const navbarExtensions = require('ui/registry/navbar_extensions');
 navbarExtensions.register(visualizeReportProvider);
 
-function visualizeReportProvider(reportingDocumentCreate, xpackInfo) {
+function visualizeReportProvider(reportingDocumentCreate, Private) {
+  const xpackInfo = Private(XPackInfoProvider);
   const genericNotifier = new Notifier({ location: 'Reporting' });
 
   return {
