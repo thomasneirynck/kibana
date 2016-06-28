@@ -27,9 +27,9 @@ class StatusContainer extends React.Component {
 
     return (
       <div className='statusContainer'>
-        Status <span className={`status status-${this.props.status}`}>
-          {_.capitalize(this.props.status)} <i className={iconClass}></i>
-        </span>
+        <span className={`status status-${this.props.status}`}>
+          <i className={iconClass} title={`${this.props.statusPrefix}: ${_.capitalize(this.props.status)}`}></i>
+        </span> Status
       </div>
     );
   }
@@ -52,7 +52,7 @@ class ElasticsearchPanel extends React.Component {
 
     return (
       <ClusterItemContainer {...this.props} url='elasticsearch' title='Elasticsearch'>
-        <StatusContainer status={this.props.status}/>
+        <StatusContainer statusPrefix='Cluster' status={this.props.status}/>
 
         <div className='row'>
           <div className='col-md-4'>
@@ -100,7 +100,7 @@ class KibanaPanel extends React.Component {
     if (!this.props.count) return (<div></div>);
     return (
       <ClusterItemContainer {...this.props} url='kibana' title='Kibana'>
-        <StatusContainer status={this.props.status}/>
+        <StatusContainer statusPrefix='Instances' status={this.props.status}/>
 
         <dl>
           <dt>

@@ -1,9 +1,8 @@
 <div class="monitoring-element monitoring-cluster-status">
   <div ng-if="cluster" class="stats">
     <div>
-      Cluster:
-      <span class="status status-{{ pageData.clusterStatus.status|lowercase }}">
-        {{ pageData.clusterStatus.status|capitalize }} <i class="{{statusIconClass}}"></i>
+      <span class="status status-{{pageData.clusterStatus.status|lowercase}}">
+        <i class="{{statusIconClass}}" title="Cluster: {{pageData.clusterStatus.status|capitalize}}"></i>
       </span>
     </div>
     <div>Nodes:
