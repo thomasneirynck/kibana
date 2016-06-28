@@ -22,7 +22,7 @@ function convertKeysToSpecifiedCaseDeep(object, caseConversionFunction) {
   }
 
   // Recursively convert nested object keys
-  _.mapKeys(newObject, (value, key) => newObject[key] = convertKeysToSpecifiedCaseDeep(value, caseConversionFunction));
+  _.forEach(newObject, (value, key) => newObject[key] = convertKeysToSpecifiedCaseDeep(value, caseConversionFunction));
 
   return newObject;
 
