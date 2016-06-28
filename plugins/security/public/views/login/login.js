@@ -3,12 +3,13 @@ import 'plugins/security/views/login/login.less';
 import chrome from 'ui/chrome';
 import parseNext from 'plugins/security/lib/parse_next';
 import template from 'plugins/security/views/login/login.html';
-import 'plugins/xpack_main/services/xpack_info';
+import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 
 chrome
 .setVisible(false)
 .setRootTemplate(template)
-.setRootController('login', function ($http, $window, secureCookies, xpackInfo) {
+.setRootController('login', function ($http, $window, secureCookies, Private) {
+  const xpackInfo = Private(XPackInfoProvider);
   const next = parseNext($window.location);
   const isSecure = !!$window.location.protocol.match(/^https/);
   const self = this;
