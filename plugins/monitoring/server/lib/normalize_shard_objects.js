@@ -70,7 +70,7 @@ export function normalizeIndexShards(data) {
   return (bucket) => {
     const metric = createNewMetric();
     setStats(bucket, metric, { key: 'STARTED' });
-    setStats(bucket, metric.unassigned, (b) => b.key !== 'STARTED');
+    setStats(bucket, metric.unassigned, (b) => b.key !== 'STARTED' && b.key !== 'RELOCATING');
     data.totals.primary += metric.primary;
     data.totals.replica += metric.replica;
     data.totals.unassigned.primary += metric.unassigned.primary;
