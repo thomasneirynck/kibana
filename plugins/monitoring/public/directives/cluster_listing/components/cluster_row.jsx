@@ -28,7 +28,7 @@ class ClusterRow extends React.Component {
       licenseExpiry = (<div className="expires expired">Expired</div>);
     }
 
-    const classes = [];
+    const classes = ['big'];
     let notBasic = true;
     if (get('license.type') === 'basic') {
       classes.push('basic');
