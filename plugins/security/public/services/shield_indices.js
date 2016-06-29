@@ -6,10 +6,6 @@ module.service('shieldIndices', ($http, chrome) => {
     getFields: (query) => {
       return $http.get(chrome.addBasePath(`/api/security/v1/fields/${query}`))
       .then(response => response.data);
-    },
-    getIndexPatterns: () => {
-      return $http.get(chrome.addBasePath('/api/security/v1/index_patterns'))
-      .then(response => response.data);
     }
   };
 });

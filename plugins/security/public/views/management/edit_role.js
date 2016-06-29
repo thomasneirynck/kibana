@@ -7,6 +7,8 @@ import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
 import 'plugins/security/services/shield_privileges';
 import 'plugins/security/services/shield_indices';
+import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
+
 
 routes.when('/management/elasticsearch/roles/edit/:name?', {
   template,
@@ -24,8 +26,9 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
       return ShieldUser.query().$promise
       .then(users => _.map(users, 'username'));
     },
-    indexPatterns(shieldIndices) {
-      return shieldIndices.getIndexPatterns();
+    indexPatterns(Private) {
+      const indexPatterns = Private(IndexPatternsProvider);
+      return indexPatterns.getIds();
     }
   },
   controller($scope, $route, $location, shieldPrivileges, shieldIndices, Notifier) {
