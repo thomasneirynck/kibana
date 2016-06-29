@@ -70,13 +70,8 @@ describe('key_case_converter', () => {
     });
 
     it ('should throw an error if something other an object or array is passed in', () => {
-      try {
-        convertKeysToSnakeCaseDeep('knock knock. whos there? neither an object nor an array');
-      } catch (e) {
-        expect(e).to.be.an(Error);
-        return;
-      }
-      throw new Error('this line should not be executed');
+      const expectedErrorMessageRegexp = /Specified object should be an Object or Array/;
+      expect(convertKeysToSnakeCaseDeep).withArgs('neither an object nor an array').to.throwException(expectedErrorMessageRegexp);
     });
   });
 
@@ -129,13 +124,8 @@ describe('key_case_converter', () => {
     });
 
     it ('should throw an error if something other an object or array is passed in', () => {
-      try {
-        convertKeysToCamelCaseDeep('knock knock. whos there? neither an object nor an array');
-      } catch (e) {
-        expect(e).to.be.an(Error);
-        return;
-      }
-      throw new Error('this line should not be executed');
+      const expectedErrorMessageRegexp = /Specified object should be an Object or Array/;
+      expect(convertKeysToCamelCaseDeep).withArgs('neither an object nor an array').to.throwException(expectedErrorMessageRegexp);
     });
   });
 });
