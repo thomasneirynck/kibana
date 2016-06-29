@@ -14,6 +14,9 @@ const getClusterStatus = function (req, kibanaIndices, calledFrom) {
   .then(clusterStatus => _.get(clusterStatus, '[0].stats'));
 };
 
+/*
+ * Kibana listing
+ */
 module.exports = (server) => {
   const config = server.config();
   const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');
@@ -43,11 +46,30 @@ module.exports = (server) => {
           clusterStatus: getClusterStatus(req, kibanaIndices, 'route-kibana-listing')
         });
       })
-      .then (kibanas => reply(kibanas))
+      .then (result => {
+        const data = {
+          kibanas: result.kibanas.map(k => {
+            return {
+              kibana: _.pick(k.kibana, [
+                'uuid', 'name', 'host', 'transport_address', 'version', 'status'
+              ]),
+              ..._.pick(k, [
+                'os', 'process', 'requests', 'response_times', 'concurrent_connections', 'availability'
+              ])
+            };
+          }),
+          clusterStatus: result.clusterStatus
+        };
+
+        return reply(data);
+      })
       .catch(err => reply(handleError(err, req)));
     }
   });
 
+/*
+ * Kibana instance
+ */
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/kibana/{kibanaUuid}',
