@@ -11,11 +11,11 @@ const elasticsearch = management.getSection('elasticsearch');
 elasticsearch.register('users', {
   order: 10,
   display: 'Users',
-  path: 'elasticsearch/users'
+  url: '#/management/elasticsearch/users'
 });
 
 elasticsearch.register('roles', {
   order: 20,
   display: 'Roles',
-  path: 'elasticsearch/roles'
+  url: '#/management/elasticsearch/roles'
 });
