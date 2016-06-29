@@ -68,6 +68,16 @@ describe('key_case_converter', () => {
       expect(result[1]).to.be.an(Array);
       expect(result).to.eql(expectedResultObject);
     });
+
+    it ('should throw an error if something other an object or array is passed in', () => {
+      try {
+        convertKeysToSnakeCaseDeep('knock knock. whos there? neither an object nor an array');
+        throw new Error('this line should not be executed');
+      } catch (e) {
+        expect(e).to.be.an(Error);
+        expect(e.message).not.to.be('this line should not be executed');
+      }
+    });
   });
 
   describe('convertKeysToCamelCaseDeep', () => {
@@ -116,6 +126,16 @@ describe('key_case_converter', () => {
       expect(result).to.be.an(Array);
       expect(result[1]).to.be.an(Array);
       expect(result).to.eql(expectedResultObject);
+    });
+
+    it ('should throw an error if something other an object or array is passed in', () => {
+      try {
+        convertKeysToCamelCaseDeep('knock knock. whos there? neither an object nor an array');
+        throw new Error('this line should not be executed');
+      } catch (e) {
+        expect(e).to.be.an(Error);
+        expect(e.message).not.to.be('this line should not be executed');
+      }
     });
   });
 });
