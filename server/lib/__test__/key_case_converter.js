@@ -72,11 +72,11 @@ describe('key_case_converter', () => {
     it ('should throw an error if something other an object or array is passed in', () => {
       try {
         convertKeysToSnakeCaseDeep('knock knock. whos there? neither an object nor an array');
-        throw new Error('this line should not be executed');
       } catch (e) {
         expect(e).to.be.an(Error);
-        expect(e.message).not.to.be('this line should not be executed');
+        return;
       }
+      throw new Error('this line should not be executed');
     });
   });
 
@@ -131,11 +131,11 @@ describe('key_case_converter', () => {
     it ('should throw an error if something other an object or array is passed in', () => {
       try {
         convertKeysToCamelCaseDeep('knock knock. whos there? neither an object nor an array');
-        throw new Error('this line should not be executed');
       } catch (e) {
         expect(e).to.be.an(Error);
-        expect(e.message).not.to.be('this line should not be executed');
+        return;
       }
+      throw new Error('this line should not be executed');
     });
   });
 });
