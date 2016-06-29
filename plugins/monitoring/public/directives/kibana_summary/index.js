@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import statusIconClass from '../../lib/status_icon_class';
 const mod = require('ui/modules').get('monitoring/directives', []);
 const template = require('plugins/monitoring/directives/kibana_summary/index.html');
@@ -7,23 +8,18 @@ mod.directive('monitoringKibanaSummary', () => {
     template: template,
     scope: { kibana: '=' },
     link(scope) {
-      function setStatus(kibana) {
-        const online = kibana.availability;
-        let clusterStatus = kibana.status;
-
+      scope.getSummaryStatus = () => {
+        const online = get(scope, 'kibana.availability');
+        let status = get(scope, 'kibana.status');
         if (!online) {
-          clusterStatus = 'offline';
+          status = 'offline';
         }
+        return status;
+      };
 
-        scope.kibanaStatus = clusterStatus;
-        scope.statusClass = clusterStatus;
-        scope.statusIconClass = statusIconClass(clusterStatus);
-      }
-      setStatus(scope.kibana);
-
-      scope.$watch('kibana', function (kibana) {
-        setStatus(kibana);
-      });
+      scope.getStatusIconClass = () => {
+        return statusIconClass(scope.getSummaryStatus());
+      };
     }
   };
 });

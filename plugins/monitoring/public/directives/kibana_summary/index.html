@@ -1,8 +1,8 @@
 <div class="monitoring-element monitoring-kibana-status">
   <div class="stats">
     <div>
-      <span class="status status-{{ statusClass }}">
-        <i class="{{ statusIconClass }}" title="Instance: {{ statusClass|capitalize }}"></i>
+      <span class="status status-{{ getSummaryStatus() }}">
+        <i class="{{ getStatusIconClass() }}" title="{{ 'Instance: ' + getSummaryStatus() }}"></i>
       </span>
     </div>
     <div>
