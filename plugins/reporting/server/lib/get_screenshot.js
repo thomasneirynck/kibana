@@ -1,5 +1,6 @@
-const screenshot = require('./screenshot');
 const queue = require('queue');
+const screenshot = require('./screenshot');
+const oncePerServer = require('./once_per_server');
 
 // bounding boxes for various saved object types
 const boundingBoxes = {
@@ -16,7 +17,7 @@ const boundingBoxes = {
   },
 };
 
-module.exports = (server) => {
+function getScreenshotFactory(server) {
   const config = server.config();
   const logger = (msg) => server.log(['reporting', 'debug'], msg);
 
@@ -47,3 +48,5 @@ module.exports = (server) => {
     });
   };
 };
+
+module.exports = oncePerServer(getScreenshotFactory);

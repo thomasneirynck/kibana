@@ -6,7 +6,6 @@ const fileRoutes = require('./server/routes/file');
 const jobRoutes = require('./server/routes/jobs');
 
 const phantom = require('./server/lib/phantom');
-const generateDocument = require('./server/lib/generate_document');
 const createQueue = require('./server/lib/create_queue');
 const appConfig = require('./server/config/config');
 const checkLicense = require('./server/lib/check_license');
@@ -75,7 +74,6 @@ module.exports = function (kibana) {
 
           // intialize and register application components
           server.expose('phantom', phantomPackage);
-          server.expose('generateDocument', generateDocument(server));
           server.expose('queue', createQueue(server));
 
           // Reporting routes

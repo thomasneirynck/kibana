@@ -1,11 +1,13 @@
 const moment = require('moment');
 const { get } = require('lodash');
 const constants = require('./constants');
-const getUser = require('./get_user');
+const getUserFactory = require('./get_user');
 const getObjectQueueFactory = require('./get_object_queue');
+const oncePerServer = require('./once_per_server');
 
-module.exports = function (server) {
+function createDocumentJobFactory(server) {
   const getObjectQueue = getObjectQueueFactory(server);
+  const getUser = getUserFactory(server);
   const queueConfig = server.config().get('xpack.reporting.queue');
   const jobQueue = server.plugins.reporting.queue;
   const { JOBTYPES_PRINTABLE_PDF } = constants;
@@ -21,7 +23,7 @@ module.exports = function (server) {
       authorization: request.headers.authorization
     };
 
-    return getUser(server, request)
+    return getUser(request)
     .then((user) => {
       // get resulting kibana saved object documents
       return getObjectQueue(objectType, objId)
@@ -52,5 +54,6 @@ module.exports = function (server) {
   };
 
   return jobTypes;
-};
+}
 
+module.exports = oncePerServer(createDocumentJobFactory);
