@@ -38,10 +38,6 @@ require('ui/routes')
   .enable();
 
 require('ui/chrome')
-  .setTabDefaults({
-    resetWhenActive: true,
-    trackLastPath: true
-  })
   .setRootController('monitoring', function ($scope, courier) {
     $scope.$on('application.load', function () {
       courier.start();
