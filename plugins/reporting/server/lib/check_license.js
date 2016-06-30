@@ -4,8 +4,9 @@ module.exports = function (xpackLicenseInfo) {
   // from Elasticsearch, assume worst case and disable reporting
   if (!xpackLicenseInfo || !xpackLicenseInfo.isAvailable()) {
     return {
-      showLinks: false,
-      message: 'License information is not available at this time.'
+      showLinks: true,
+      enableLinks: false,
+      message: 'You cannot use Reporting because license information is not available at this time.'
     };
   }
 

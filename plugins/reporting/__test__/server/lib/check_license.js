@@ -10,8 +10,12 @@ describe('check_license', function () {
   describe('license information is not available', () => {
     beforeEach(() => mockLicenseInfo.isAvailable = () => false);
 
-    it('should set showLinks to false', () => {
-      expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
+    it('should set showLinks to true', () => {
+      expect(checkLicense(mockLicenseInfo).showLinks).to.be(true);
+    });
+
+    it('should set enableLinks to false', () => {
+      expect(checkLicense(mockLicenseInfo).enableLinks).to.be(false);
     });
   });
 

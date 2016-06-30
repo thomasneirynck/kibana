@@ -11,7 +11,7 @@ export default function xpackInfoRoute(server) {
     handler: (req, reply) => {
       let status;
       let response;
-      if (server.plugins.xpack_main.info && server.plugins.xpack_main.info.isAvailable()) {
+      if (server.plugins.xpack_main.info) {
         response = server.plugins.xpack_main.info.toJSON();
       } else {
         status = Boom.notFound();
