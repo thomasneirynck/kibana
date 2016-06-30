@@ -1,7 +1,8 @@
 const workerType = require('./constants').JOBTYPES_PRINTABLE_PDF;
 const docJobProcessFactory = require('./doc_job_process');
+const oncePerServer = require('./once_per_server');
 
-module.exports = (server) => {
+function createWorkerFactory(server) {
   const queueConfig = server.config().get('xpack.reporting.queue');
   const docJobProcess = docJobProcessFactory(server);
 
@@ -40,3 +41,5 @@ module.exports = (server) => {
     });
   };
 };
+
+module.exports = oncePerServer(createWorkerFactory);

@@ -2,7 +2,7 @@
 const oncePerServer = require('./once_per_server');
 const generateDocumentFactory = require('./generate_document');
 
-module.exports = oncePerServer(server => {
+function docJobProcessFactory(server) {
   const { printablePdf } = generateDocumentFactory(server);
 
   return async function (job) {
@@ -13,4 +13,6 @@ module.exports = oncePerServer(server => {
       buffer: await pdfDoc.getBuffer(),
     };
   };
-});
+}
+
+module.exports = oncePerServer(docJobProcessFactory);

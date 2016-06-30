@@ -3,8 +3,9 @@ const { get } = require('lodash');
 const constants = require('./constants');
 const getUserFactory = require('./get_user');
 const getObjectQueueFactory = require('./get_object_queue');
+const oncePerServer = require('./once_per_server');
 
-module.exports = function (server) {
+function createDocumentJobFactory(server) {
   const getObjectQueue = getObjectQueueFactory(server);
   const getUser = getUserFactory(server);
   const queueConfig = server.config().get('xpack.reporting.queue');
@@ -53,5 +54,6 @@ module.exports = function (server) {
   };
 
   return jobTypes;
-};
+}
 
+module.exports = oncePerServer(createDocumentJobFactory);

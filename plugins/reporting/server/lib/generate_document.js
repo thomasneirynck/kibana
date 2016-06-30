@@ -5,7 +5,7 @@ const pdf = require('./pdf');
 const oncePerServer = require('./once_per_server');
 const getScreenshot = require('./get_screenshot');
 
-module.exports = oncePerServer((server) => {
+function generateDocumentFactory(server) {
   const fetchScreenshot = getScreenshot(server);
 
   return {
@@ -32,4 +32,6 @@ module.exports = oncePerServer((server) => {
       return pdfOutput.generate();
     });
   };
-});
+}
+
+module.exports = oncePerServer(generateDocumentFactory);

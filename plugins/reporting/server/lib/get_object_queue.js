@@ -1,7 +1,8 @@
 const _ = require('lodash');
 const savedObjectsFactory = require('../lib/saved_objects');
+const oncePerServer = require('./once_per_server');
 
-module.exports = (server) => {
+function getObjectQueueFactory(server) {
   const client = server.plugins.elasticsearch.client;
   const config = server.config();
   const requestConfig = _.defaults(config.get('xpack.reporting.kibanaServer'), {
@@ -46,4 +47,6 @@ module.exports = (server) => {
     return Promise.resolve(savedObjects.get(type, objId))
     .then((savedObj) => formatObject(savedObj, [ savedObj ]));
   };
-};
+}
+
+module.exports = oncePerServer(getObjectQueueFactory);
