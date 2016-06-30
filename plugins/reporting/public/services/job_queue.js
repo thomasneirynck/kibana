@@ -1,6 +1,5 @@
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 import Notifier from 'ui/notify/notifier';
-import 'plugins/xpack_main/services/xpack_info';
 
 const module = require('ui/modules').get('reporting/job_queue');
 
