@@ -26,8 +26,7 @@ module.exports = function (kibana) {
             esApiVersion: config.get('elasticsearch.apiVersion'),
             esShardTimeout: config.get('elasticsearch.shardTimeout'),
             statsReportUrl: config.get('xpack.monitoring.stats_report_url'),
-            reportStats: config.get('xpack.monitoring.report_stats'),
-            monitoringIndexPrefix: config.get('xpack.monitoring.index_prefix')
+            reportStats: config.get('xpack.monitoring.report_stats')
           };
         }
       }
