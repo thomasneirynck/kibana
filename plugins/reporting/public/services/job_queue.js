@@ -32,8 +32,9 @@ module.service('reportingJobQueue', ($http, kbnUrl, Private) => {
     list(page = 0) {
       const url = `${baseUrl}/list?page=${page}`;
       return $http.get(url)
-      .then((res) => res.data)
-      .catch(showError);
+      .catch(showError)
+      .then(res => licenseAllowsToShowThisPage() ? res : notifyAndRedirectToManagementOverviewPage())
+      .then((res) => res.data);
     },
 
     total() {
