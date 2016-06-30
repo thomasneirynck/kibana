@@ -16,12 +16,12 @@ module.service('reportingJobQueue', ($http, kbnUrl, Private) => {
   function notifyAndRedirectToManagementOverviewPage() {
     genericNotifier.error(xpackInfo.get('features.reporting.message'));
     kbnUrl.redirect('/management');
+    return Promise.reject();
   }
 
   function showError(err) {
     if (!licenseAllowsToShowThisPage()) {
-      notifyAndRedirectToManagementOverviewPage();
-      return Promise.reject();
+      return notifyAndRedirectToManagementOverviewPage();
     }
     var msg = err.statusText || 'Request failed';
     genericNotifier.error(msg);
