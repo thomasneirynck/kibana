@@ -1,4 +1,4 @@
-const workerType = require('./constants').JOBTYPES_PRINTABLE_PDF;
+const constants = require('./constants');
 const docJobProcessFactory = require('./doc_job_process');
 const oncePerServer = require('./once_per_server');
 
@@ -6,25 +6,26 @@ function createWorkerFactory(server) {
   const queueConfig = server.config().get('xpack.reporting.queue');
   const docJobProcess = docJobProcessFactory(server);
 
-  const workerOptions = {
-    interval: queueConfig.pollInterval
-  };
-
-  const log = (msg) => {
-    server.log(['reporting', 'worker', 'debug'], `${workerType}: ${msg}`);
-  };
-
-  const workerHandler = async (job) => {
-    log(`Converting ${job.objects.length} saved object(s) to pdf`);
-    const { contentType, buffer } = await docJobProcess(job);
-
-    return {
-      content_type: contentType,
-      content: buffer.toString('base64')
+  // Once more document types are added, this will need to be passed in
+  return function registerWorker(queue, workerType = constants.JOBTYPES_PRINTABLE_PDF) {
+    const workerOptions = {
+      interval: queueConfig.pollInterval
     };
-  };
 
-  return function registerWorkers(queue) {
+    const log = (msg) => {
+      server.log(['reporting', 'worker', 'debug'], `${workerType}: ${msg}`);
+    };
+
+    const workerHandler = async (job) => {
+      log(`Converting ${job.objects.length} saved object(s) to ${workerType}`);
+      const { contentType, buffer } = await docJobProcess(job);
+
+      return {
+        content_type: contentType,
+        content: buffer.toString('base64')
+      };
+    };
+
     log(`Registering worker`);
     const worker = queue.registerWorker(
       workerType,

@@ -3,10 +3,10 @@ const _ = require('lodash');
 
 const pdf = require('./pdf');
 const oncePerServer = require('./once_per_server');
-const getScreenshot = require('./get_screenshot');
+const getScreenshotFactory = require('./get_screenshot');
 
 function generateDocumentFactory(server) {
-  const fetchScreenshot = getScreenshot(server);
+  const getScreenshot = getScreenshotFactory(server);
 
   return {
     printablePdf: printablePdf,
@@ -16,7 +16,7 @@ function generateDocumentFactory(server) {
     const pdfOutput = pdf.create();
 
     return Promise.map(savedObjects, function (savedObj) {
-      return fetchScreenshot(savedObj.url, savedObj.type, headers)
+      return getScreenshot(savedObj.url, savedObj.type, headers)
       .then((filename) => {
         server.log(['reporting', 'debug'], `${savedObj.id} -> ${filename}`);
         return _.assign({ filename }, savedObj);
