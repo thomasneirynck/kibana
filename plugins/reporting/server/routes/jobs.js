@@ -1,9 +1,11 @@
-const getUser = require('../lib/get_user');
+const getUserFactory = require('../lib/get_user');
 const jobsQueryFactory = require('../lib/jobs_query');
 const boom = require('boom');
 
 module.exports = function (server, commonRouteConfig) {
   const jobsQuery = jobsQueryFactory(server);
+  const getUser = getUserFactory(server);
+
   const mainEntry = '/api/reporting/jobs';
 
   server.route({
@@ -13,7 +15,7 @@ module.exports = function (server, commonRouteConfig) {
       const page = parseInt(request.query.page) || 0;
       const size = Math.min(100, parseInt(request.query.size) || 10);
 
-      const results = getUser(server, request)
+      const results = getUser(request)
       .then((user) => jobsQuery.list(user, page, size));
 
       reply(results);
@@ -27,7 +29,7 @@ module.exports = function (server, commonRouteConfig) {
     path: `${mainEntry}/count`,
     method: 'GET',
     handler: (request, reply) => {
-      const results = getUser(server, request)
+      const results = getUser(request)
       .then((user) => jobsQuery.count(user));
 
       reply(results);
@@ -43,7 +45,7 @@ module.exports = function (server, commonRouteConfig) {
     handler: (request, reply) => {
       const { docId } = request.params;
 
-      getUser(server, request)
+      getUser(request)
       .then((user) => jobsQuery.get(user, docId, true))
       .then((doc) => {
         if (!doc) return reply(boom.notFound());
@@ -61,7 +63,7 @@ module.exports = function (server, commonRouteConfig) {
     handler: (request, reply) => {
       const { docId } = request.params;
 
-      getUser(server, request)
+      getUser(request)
       .then((user) => jobsQuery.get(user, docId, true))
       .then((doc) => {
         if (!doc || doc._source.status !== 'completed') return reply(boom.notFound());
