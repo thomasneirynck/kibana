@@ -16,6 +16,8 @@ const lookups = require('../../../lib/lookups');
 const handleError = require('../../../lib/handle_error');
 
 module.exports = (server) => {
+  const config = server.config();
+  const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 
   function getNodeTypeClassLabel(node) {
     const nodeType = (node.master && 'master') || node.type;
@@ -47,7 +49,7 @@ module.exports = (server) => {
     handler: (req, reply) => {
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
-      calculateIndices(req, start, end)
+      calculateIndices(req, start, end, esIndexPattern)
       .then(indices => {
         return getLastState(req, indices)
         .then(lastState => {
@@ -120,11 +122,10 @@ module.exports = (server) => {
       }
     },
     handler: (req, reply) => {
-      const config = req.server.config();
       const resolver = req.params.resolver;
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
-      calculateIndices(req, start, end)
+      calculateIndices(req, start, end, esIndexPattern)
       .then(indices => {
         return getLastState(req, indices)
         .then(lastState => {

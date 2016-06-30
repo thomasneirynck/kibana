@@ -15,6 +15,8 @@ const getClusterStatus = function (req, kibanaIndices, calledFrom) {
 };
 
 module.exports = (server) => {
+  const config = server.config();
+  const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/kibana',
@@ -34,8 +36,7 @@ module.exports = (server) => {
     handler: (req, reply) => {
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
-      const index = req.server.config().get('xpack.monitoring.kibana_prefix') + '*';
-      return calculateIndices(req, start, end, index)
+      return calculateIndices(req, start, end, kbnIndexPattern)
       .then(kibanaIndices => {
         return Promise.props({
           kibanas: getKibanas(req, kibanaIndices),
@@ -68,7 +69,6 @@ module.exports = (server) => {
     handler: (req, reply) => {
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
-      const kbnIndexPattern = req.server.config().get('xpack.monitoring.kibana_prefix') + '*';
       return calculateIndices(req, start, end, kbnIndexPattern)
       .then(kibanaIndices => {
         return Promise.props({

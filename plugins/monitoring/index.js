@@ -27,7 +27,6 @@ module.exports = function (kibana) {
             esShardTimeout: config.get('elasticsearch.shardTimeout'),
             statsReportUrl: config.get('xpack.monitoring.stats_report_url'),
             reportStats: config.get('xpack.monitoring.report_stats'),
-            monitoringIndexPrefix: config.get('xpack.monitoring.index_prefix'),
             googleTagManagerId: config.get('xpack.monitoring.google_tag_manager_id')
           };
         }
@@ -60,14 +59,13 @@ module.exports = function (kibana) {
         }).default(),
         loggingTag: string().default('monitoring-ui'),
         index: string().default('.monitoring-data-2'),
-        index_prefix: string().default('.monitoring-es-2-'),
         kibana: object({
+          index_pattern: string().default('.monitoring-kibana-2-*'),
           data_collection: object({
             enabled: boolean().default(true),
             interval: number().default(10000)
           }).default()
         }).default(),
-        kibana_prefix: string().default('.monitoring-kibana-2-'),
         missing_intervals: number().default(12),
         max_bucket_size: number().default(10000),
         min_interval_seconds: number().default(10),
@@ -83,6 +81,7 @@ module.exports = function (kibana) {
           interval: string().regex(/[\d\.]+[yMwdhms]/).default('10s')
         }).default(),
         elasticsearch: object({
+          index_pattern: string().default('.monitoring-es-2-*'),
           logQueries: boolean().default(false),
           url: string().uri({ scheme: ['http', 'https'] }), // if empty, use Kibana's connection config
           username: string(),
