@@ -1,27 +1,15 @@
-require('plugins/reporting/services/document_create');
-const Notifier = require('ui/notify/notifier');
+require('plugins/reporting/directives/export_config');
+
 const navbarExtensions = require('ui/registry/navbar_extensions');
-navbarExtensions.register(dashboardReportProvider);
 
-function dashboardReportProvider(reportingDocumentCreate) {
-  const genericNotifier = new Notifier({ location: 'Reporting' });
-
+function dashboardReportProvider() {
   return {
-    name: 'dashboardReport',
     appName: 'dashboard',
-    order: 0,
-    template: require('plugins/reporting/controls/export_button.html'),
-    link: function dashboardReport($scope) {
-      $scope.handleClick = function () {
-        return reportingDocumentCreate()
-        .catch((err) => {
-          if (err.message === 'not exportable') {
-            return alert('Only saved dashboards can be exported. Please save your work first.');
-          }
-
-          genericNotifier.error(err);
-        });
-      };
-    }
+    key: 'reporting-dashboard',
+    label: 'Reporting',
+    template: '<export-config object-type="Dashboard"></export-config>',
+    description: 'Dashboard Report',
   };
 }
+
+navbarExtensions.register(dashboardReportProvider);
