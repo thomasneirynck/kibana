@@ -42,7 +42,8 @@ module.exports = function (kibana) {
             esShardTimeout: config.get('elasticsearch.shardTimeout')
           };
         }
-      }
+      },
+      hacks: ['plugins/graph/hacks/toggle_app_link_in_nav'],
     },
     //    noParse:[{ test:function(a){console.log("Debug",a); return /node_modules[\/\\]angular-contextmenu/.test(a); }}   ], //MH change
 
