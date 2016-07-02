@@ -1,10 +1,8 @@
 import chrome from 'ui/chrome';
-import XPackInfoSignatureProvider from 'plugins/xpack_main/services/xpack_info_signature';
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 import uiModules from 'ui/modules';
 
 function toggleAppLinkInNav(Private) {
-  const xpackInfoSignature = Private(XPackInfoSignatureProvider);
   const xpackInfo = Private(XPackInfoProvider);
 
   const navLink = chrome.getNavLinkById('graph');
