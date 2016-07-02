@@ -2,10 +2,11 @@ const Promise = require('bluebird');
 const _ = require('lodash');
 
 const pdf = require('./pdf');
-const getScreenshot = require('./get_screenshot');
+const oncePerServer = require('./once_per_server');
+const getScreenshotFactory = require('./get_screenshot');
 
-module.exports = (server) => {
-  const fetchScreenshot = getScreenshot(server);
+function generateDocumentFactory(server) {
+  const getScreenshot = getScreenshotFactory(server);
 
   return {
     printablePdf: printablePdf,
@@ -15,7 +16,7 @@ module.exports = (server) => {
     const pdfOutput = pdf.create();
 
     return Promise.map(savedObjects, function (savedObj) {
-      return fetchScreenshot(savedObj.url, savedObj.type, headers)
+      return getScreenshot(savedObj.url, savedObj.type, headers)
       .then((filename) => {
         server.log(['reporting', 'debug'], `${savedObj.id} -> ${filename}`);
         return _.assign({ filename }, savedObj);
@@ -31,4 +32,6 @@ module.exports = (server) => {
       return pdfOutput.generate();
     });
   };
-};
+}
+
+module.exports = oncePerServer(generateDocumentFactory);

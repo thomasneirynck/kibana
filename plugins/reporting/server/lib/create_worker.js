@@ -1,39 +1,46 @@
-var constants = require('./constants');
+const constants = require('./constants');
+const docJobProcessFactory = require('./doc_job_process');
+const oncePerServer = require('./once_per_server');
 
-module.exports = (server) => {
+function createWorkerFactory(server) {
   const queueConfig = server.config().get('xpack.reporting.queue');
-  const generateDocument = server.plugins.reporting.generateDocument;
+  const docJobProcess = docJobProcessFactory(server);
 
-  return function registerWorkers(queue) {
-    const workerType = constants.JOBTYPES_PRINTABLE_PDF;
+  // Once more document types are added, this will need to be passed in
+  return function registerWorker(queue, workerType = constants.JOBTYPES_PRINTABLE_PDF) {
     const workerOptions = {
       interval: queueConfig.pollInterval
     };
 
-    server.log(['reporting', 'worker', 'debug'], `${workerType} worker registered`);
-    const worker = queue.registerWorker(workerType, function (payload) {
-      const { objects, query, headers } = payload;
-      server.log(['reporting', 'worker', 'debug'], `${workerType}: ${objects.length} saved object(s) to process`);
+    const log = (msg) => {
+      server.log(['reporting', 'worker', 'debug'], `${workerType}: ${msg}`);
+    };
 
-      return generateDocument.printablePdf(objects, query, headers)
-      .then((pdfDoc) => {
-        return pdfDoc.getBuffer()
-        .then((contentBuffer) => {
-          return {
-            content_type: 'application/pdf',
-            content: contentBuffer.toString('base64'),
-          };
-        });
-      });
-    }, workerOptions);
+    const workerHandler = async (job) => {
+      log(`Converting ${job.objects.length} saved object(s) to ${workerType}`);
+      const { contentType, buffer } = await docJobProcess(job);
+
+      return {
+        content_type: contentType,
+        content: buffer.toString('base64')
+      };
+    };
+
+    log(`Registering worker`);
+    const worker = queue.registerWorker(
+      workerType,
+      workerHandler,
+      workerOptions
+    );
 
     worker.on('error', (err) => {
-      server.log(['reporting', 'worker', 'debug'], `Worker error: (${err})`);
+      log(`Worker error: (${err})`);
     });
 
     worker.on('job_timeout', (err) => {
-      server.log(['reporting', 'worker', 'debug'], `Job timeout exceeded (${err.timeout})`);
+      log(`Job timeout exceeded (${err.timeout})`);
     });
   };
 };
 
+module.exports = oncePerServer(createWorkerFactory);

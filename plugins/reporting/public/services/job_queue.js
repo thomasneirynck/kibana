@@ -1,7 +1,7 @@
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 import Notifier from 'ui/notify/notifier';
 
-const module = require('ui/modules').get('reporting/job_queue');
+const module = require('ui/modules').get('xpack/reporting');
 
 module.service('reportingJobQueue', ($http, kbnUrl, Private) => {
   const xpackInfo = Private(XPackInfoProvider);

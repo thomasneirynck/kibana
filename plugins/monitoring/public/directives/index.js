@@ -13,6 +13,5 @@ define(function (require) {
   require('plugins/monitoring/directives/index_summary/index');
   require('plugins/monitoring/directives/kibana_summary/index');
   require('plugins/monitoring/directives/welcome_msg/index');
-  require('plugins/monitoring/directives/google_analytics/index');
   require('plugins/monitoring/directives/shard_allocation/index');
 });

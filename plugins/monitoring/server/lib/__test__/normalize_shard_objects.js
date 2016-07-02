@@ -4,7 +4,7 @@ import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from 
 function getIndexShardBucket() {
   return {
     key: '.kibana',
-    doc_count: 2,
+    doc_count: 5,
     states: {
       doc_count_error_upper_bound: 0,
       sum_other_doc_count: 0,
@@ -19,12 +19,30 @@ function getIndexShardBucket() {
           }
         },
         {
-          key: 'UNASSIGNED',
+          key: 'RELOCATING',
           doc_count: 1,
           primary: {
             doc_count_error_upper_bound: 0,
             sum_other_doc_count: 0,
-            buckets: [{ key: 0, key_as_string: 'false', doc_count: 1 }]
+            buckets: [{ key: 1, key_as_string: 'true', doc_count: 1 }]
+          }
+        },
+        {
+          key: 'INITIALIZING',
+          doc_count: 1,
+          primary: {
+            doc_count_error_upper_bound: 0,
+            sum_other_doc_count: 0,
+            buckets: [{ key: 1, key_as_string: 'true', doc_count: 1 }]
+          }
+        },
+        {
+          key: 'UNASSIGNED',
+          doc_count: 2,
+          primary: {
+            doc_count_error_upper_bound: 0,
+            sum_other_doc_count: 0,
+            buckets: [{ key: 0, key_as_string: 'false', doc_count: 2 }]
           }
         }
       ]
@@ -97,15 +115,18 @@ describe('Normalizing Shard Data', () => {
       const resultFn = normalizeIndexShards(data);
       resultFn(getIndexShardBucket());
 
+      // Note: the existence of relocating shards is effectively ignored.
+      // Relocating shards do not matter until they have STARTED, at which point the relocated shard
+      // is deleted, so the count stays the same!
       expect(data.totals.primary).to.be.eql(1);
       expect(data.totals.replica).to.be.eql(0);
-      expect(data.totals.unassigned.primary).to.be.eql(0);
-      expect(data.totals.unassigned.replica).to.be.eql(1);
-      expect(data['.kibana'].status).to.be.eql('yellow');
+      expect(data.totals.unassigned.primary).to.be.eql(1);
+      expect(data.totals.unassigned.replica).to.be.eql(2);
+      expect(data['.kibana'].status).to.be.eql('red');
       expect(data['.kibana'].primary).to.be.eql(1);
       expect(data['.kibana'].replica).to.be.eql(0);
-      expect(data['.kibana'].unassigned.primary).to.be.eql(0);
-      expect(data['.kibana'].unassigned.replica).to.be.eql(1);
+      expect(data['.kibana'].unassigned.primary).to.be.eql(1);
+      expect(data['.kibana'].unassigned.replica).to.be.eql(2);
     });
   });
 
