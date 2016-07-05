@@ -1,42 +1,30 @@
-<div
-  ng-show="showLinks"
-  ng-class="{ 'is-export-config-disabled': !enableLinks}"
-  tooltip="{{disabledMessage}}"
-  tooltip-placement="bottom"
-  tooltip-popup-delay="400"
-  tooltip-append-to-body="1"
->
-  <div
-    class="form-group"
-    ng-show="exportConfig.exportable"
-  >
-    <label>Document Generation</label>
-    <div class="input-group generate-controls">
-      <button
-        class="generate btn btn-primary"
-        ng-click="exportConfig.export(exportConfig.selectedType)"
+<div class="form-group" ng-show="exportConfig.exportable">
+  <label>Document Generation</label>
+  <div class="input-group generate-controls">
+    <button
+      class="generate btn btn-primary"
+      ng-click="exportConfig.export(exportConfig.selectedType)"
       >
-        Printable {{ exportConfig.exportTypes[exportConfig.selectedType].name }}
-      </button>
-    </div>
+      Printable {{ exportConfig.exportTypes[exportConfig.selectedType].name }}
+    </button>
   </div>
+</div>
 
-  <div class="form-group" ng-show="exportConfig.exportable">
-    <label>Generation URL</label>
-    <div class="input-group">
-      <input
-        class="clipboard-text form-control url"
-        type="text"
-        readonly="readonly"
-        value="{{ exportConfig.exportTypes[exportConfig.selectedType].link }}"
-        >
-      <button class="clipboard-button btn btn-default">
-        <span aria-hidden="true" class="fa fa-clipboard"></span>
-      </button>
-    </div>
+<div class="form-group" ng-show="exportConfig.exportable">
+  <label>Generation URL</label>
+  <div class="input-group">
+    <input
+      class="clipboard-text form-control url"
+      type="text"
+      readonly="readonly"
+      value="{{ exportConfig.exportTypes[exportConfig.selectedType].link }}"
+      >
+    <button class="clipboard-button btn btn-default">
+      <span aria-hidden="true" class="fa fa-clipboard"></span>
+    </button>
   </div>
+</div>
 
-  <div ng-show="!exportConfig.exportable">
-    Please save your work before generating a report.
-  </div>
+<div ng-show="!exportConfig.exportable">
+  Please save your work before generating a report.
 </div>

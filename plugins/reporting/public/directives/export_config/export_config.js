@@ -1,14 +1,12 @@
 require('plugins/reporting/services/document_control');
 require('./export_config.less');
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 
 const Clipboard = require('clipboard');
 const template = require('plugins/reporting/directives/export_config/export_config.html');
 const Notifier = require('ui/notify/notifier');
 const module = require('ui/modules').get('xpack/reporting');
 
-module.directive('exportConfig', (reportingDocumentControl, Private) => {
-  const xpackInfo = Private(XPackInfoProvider);
+module.directive('exportConfig', (reportingDocumentControl) => {
   const reportingNotifier = new Notifier({ location: 'Reporting' });
 
   return {
@@ -17,9 +15,6 @@ module.directive('exportConfig', (reportingDocumentControl, Private) => {
     controllerAs: 'exportConfig',
     template,
     link($scope, $el, $attr) {
-      $scope.showLinks = xpackInfo.get('features.reporting.showLinks', false);
-      $scope.enableLinks = xpackInfo.get('features.reporting.enableLinks', false);
-      $scope.disabledMessage = xpackInfo.get('features.reporting.message');
       $scope.exportConfig.selectedType = 'printablePdf';
       $scope.exportConfig.name = $attr.name;
       $scope.exportConfig.objectType = $attr.objectType;
