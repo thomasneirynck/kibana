@@ -32,7 +32,7 @@ var buildDir = path.resolve(__dirname, 'build');
 var builtDir = path.join(buildDir, 'plugin');
 var buildTarget = path.resolve(builtDir, 'kibana', pkg.name);
 var targetDir = path.resolve(__dirname, 'target');
-var kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'installedPlugins', pkg.name);
+var kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'plugins', pkg.name);
 
 var coverageDir = path.resolve(__dirname, 'coverage');
 
