@@ -1,8 +1,9 @@
 const { get } = require('lodash');
 const { QUEUE_INDEX, QUEUE_DOCTYPE } = require('./constants');
+const oncePerServer = require('./once_per_server');
 const defaultSize = 10;
 
-module.exports = (server) => {
+function jobsQueryFactory(server) {
   const esErrors = server.plugins.elasticsearch.errors;
   const client = server.plugins.elasticsearch.client;
   const nouser = false;
@@ -122,4 +123,6 @@ module.exports = (server) => {
       });
     }
   };
-};
+}
+
+module.exports = oncePerServer(jobsQueryFactory);

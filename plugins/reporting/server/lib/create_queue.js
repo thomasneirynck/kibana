@@ -1,8 +1,9 @@
 const Esqueue = require('esqueue');
 const createWorker = require('./create_worker');
 const { QUEUE_INDEX, QUEUE_DOCTYPE } = require('./constants');
+const oncePerServer = require('./once_per_server');
 
-function createQueue(server) {
+function createQueueFactory(server) {
   const queueConfig = server.config().get('xpack.reporting.queue');
   const client = server.plugins.elasticsearch.client;
 
@@ -18,4 +19,4 @@ function createQueue(server) {
   return queue;
 }
 
-module.exports = createQueue;
+module.exports = oncePerServer(createQueueFactory);

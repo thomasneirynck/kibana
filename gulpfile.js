@@ -32,7 +32,7 @@ var buildDir = path.resolve(__dirname, 'build');
 var builtDir = path.join(buildDir, 'plugin');
 var buildTarget = path.resolve(builtDir, 'kibana', pkg.name);
 var targetDir = path.resolve(__dirname, 'target');
-var kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'installedPlugins', pkg.name);
+var kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'plugins', pkg.name);
 
 var coverageDir = path.resolve(__dirname, 'coverage');
 
@@ -56,6 +56,7 @@ var excludedDeps = Object.keys(pkg.devDependencies).map(function (name) {
 var excludedFiles = [
   '.DS_Store',
   '__test__',
+  '__tests__',
   'README.md',
   'node_modules/.bin',
 ];

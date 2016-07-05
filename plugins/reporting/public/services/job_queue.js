@@ -1,6 +1,6 @@
 import Notifier from 'ui/notify/notifier';
 
-const module = require('ui/modules').get('reporting/job_queue');
+const module = require('ui/modules').get('xpack/reporting');
 
 module.service('reportingJobQueue', ($http) => {
   const baseUrl = '../api/reporting/jobs';

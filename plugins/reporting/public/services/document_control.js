@@ -1,10 +1,11 @@
 const url = require('url');
 const chrome = require('ui/chrome');
+const module = require('ui/modules').get('xpack/reporting');
 
-const mainEntry = '/api/reporting/generate';
-const reportPrefix = chrome.addBasePath(mainEntry);
+module.service('reportingDocumentControl', function ($http, Promise, Private, $location) {
+  const mainEntry = '/api/reporting/generate';
+  const reportPrefix = chrome.addBasePath(mainEntry);
 
-module.exports = function urlInfo($location) {
   const docTypes = {
     discover: {
       getParams: (path) => path.match(/\/discover\/(.+)/),
@@ -21,26 +22,44 @@ module.exports = function urlInfo($location) {
   };
 
   function parseFromUrl() {
-    const { pathname, query } = url.parse($location.$$url, false);
+    const { pathname, query } = url.parse($location.url(), false);
     const pathParams = pathname.match(/\/([a-z]+)?(\/?.*)/);
 
     const type = pathParams[1];
     const docType = docTypes[type];
-    if (!docType) throw new Error('Invalid app type: ' + type);
+    if (!docType) throw new Error('Unknown app type: ' + type);
 
     const params = docType.getParams(pathname);
     const exportable = (!!params);
     const objectId = (exportable) ? params[1] : null;
-    const reportUrl = (exportable) ? docType.getReportUrl(objectId, query) : null;
+    const reportPath = (exportable) ? docType.getReportUrl(objectId, query) : null;
+    const reportUrl = (exportable) ? url.resolve($location.absUrl(), reportPath) : null;
 
     return {
       pathname,
       query,
+      reportPath,
       reportUrl,
       objectId,
       exportable,
     };
   }
 
-  return parseFromUrl;
-};
+  this.getInfo = () => {
+    return parseFromUrl();
+  };
+
+  this.isExportable = () => {
+    return this.getInfo().exportable;
+  };
+
+  this.getUrl = () => {
+    return this.getInfo().reportUrl;
+  };
+
+  this.create = () => {
+    const info = this.getInfo();
+    if (!info.exportable) return Promise.reject(new Error('not exportable'));
+    return $http.get(info.reportPath);
+  };
+});
