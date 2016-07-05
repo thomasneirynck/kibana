@@ -8,7 +8,7 @@ function LicensePreRoutingFactory(server) {
   // License checking and enable/disable logic
   function forbidApiAccess(request, reply) {
     const licenseCheckResults = xpackMainPlugin.info.feature(pluginId).getLicenseCheckResults();
-    if (!licenseCheckResults.enabled) {
+    if (!licenseCheckResults.showLinks || !licenseCheckResults.enableLinks) {
       reply(Boom.forbidden(licenseCheckResults.message));
     } else {
       reply();

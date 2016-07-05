@@ -1,38 +1,35 @@
 const boom = require('boom');
 const createDocumentJobFactory = require('../lib/create_document_job');
 const constants = require('../lib/constants');
+const licensePreFactory = require ('../lib/license-pre-routing');
 
-module.exports = function (server, commonRouteConfig) {
-  const mainEntry = '/api/reporting/generate';
+module.exports = function (server) {
   const createDocumentJob = createDocumentJobFactory(server);
   const esErrors = server.plugins.elasticsearch.errors;
+  const licensePre = licensePreFactory(server);
+
+  const mainEntry = '/api/reporting/generate';
 
   // defined the public routes
   server.route({
     path: `${mainEntry}/visualization/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('visualization', request, reply),
-    config: {
-      ...commonRouteConfig
-    }
+    config: licensePre()
   });
 
   server.route({
     path: `${mainEntry}/search/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('search', request, reply),
-    config: {
-      ...commonRouteConfig
-    }
+    config: licensePre()
   });
 
   server.route({
     path: `${mainEntry}/dashboard/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('dashboard', request, reply),
-    config: {
-      ...commonRouteConfig
-    }
+    config: licensePre()
   });
 
   function pdfHandler(objectType, request, reply) {
