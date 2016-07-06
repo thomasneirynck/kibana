@@ -64,8 +64,20 @@ module.exports = function (kibana) {
       });
 
       // Add server routes and initalize the plugin here
-      graphExploreRoute(server);
-      getExampleDocsRoute(server);
+      const commonRouteConfig = {
+        pre: [
+          function forbidApiAccess(request, reply) {
+            const licenseCheckResults = xpackMainPlugin.info.feature(thisPlugin.id).getLicenseCheckResults();
+            if (!licenseCheckResults.showAppLink || !licenseCheckResults.enableAppLink) {
+              reply(Boom.forbidden(licenseCheckResults.message));
+            } else {
+              reply();
+            }
+          }
+        ]
+      };
+      graphExploreRoute(server, commonRouteConfig);
+      getExampleDocsRoute(server, commonRouteConfig);
     }
   });
 };
