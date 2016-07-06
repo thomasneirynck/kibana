@@ -29,7 +29,9 @@ export default function checkLicense(xpackLicenseInfo) {
     };
   }
 
+  message = `Your ${xpackLicenseInfo.license.getType()} license does not support Graph. Please upgrade your license.`;
   return {
-    showAppLink: false
+    showAppLink: false,
+    message
   };
 }
