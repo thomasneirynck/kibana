@@ -4,11 +4,31 @@ var dv = require('ace');
 var av = require('./angular-venn-simple.js');
 var gws = require('./graphClientWorkspace.js');
 var utils = require('./utils.js');
-import { capitalize } from 'lodash';
+import { capitalize, partial } from 'lodash';
 import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
+import KbnUrlProvider from 'ui/url';
+import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import chrome from 'ui/chrome';
+
 require('plugins/graph/less/main.less');
 
 var app = require('ui/modules').get('app/graph', ['angular-venn-simple']);
+
+function checkLicense(Private) {
+  const xpackInfo = Private(XPackInfoProvider);
+  const licenseAllowsToShowThisPage = xpackInfo.get('features.graph.showAppLink') && xpackInfo.get('features.graph.enableAppLink');
+
+  if (!licenseAllowsToShowThisPage) {
+    const message = xpackInfo.get('features.graph.message');
+    const url = `${chrome.addBasePath('/app/kibana#/discover')}?notif_loc=Graph&notif_lvl=error&notif_msg=${message}`;
+    window.location.href = url;
+    return Promise.reject();
+  }
+
+  return Promise.resolve();
+}
+
+app.run(checkLicense);
 
 app.directive('focusOn', function () {
   return function (scope, elem, attr) {
@@ -42,7 +62,17 @@ require('ui/routes')
   });
 
 //========  Controller for basic UI ==================
-app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http) {
+app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http, Private) {
+
+  function handleSuccess(data) {
+    return checkLicense(Private)
+    .then(() => data);
+  }
+
+  function handleError(err) {
+    return checkLicense(Private)
+    .then(require('ui/notify').error);
+  }
 
   $scope.title = 'Graph';
   $scope.description = 'Graph exploration';
@@ -257,7 +287,9 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
     $scope.selectedIndex = selectedIndex;
 
     var promise = $route.current.locals.GetIndexPatternProvider.get(selectedIndex);
-    promise.then(function (indexPattern) {
+    promise
+    .then(handleSuccess)
+    .then(function (indexPattern) {
       var patternFields = indexPattern.getNonScriptedFields();
       var blockedFieldNames = ['_id', '_index','_score','_source', '_type'];
       patternFields.forEach(function (field, index) {
@@ -294,10 +326,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
         }
         return 0;
       });
-    },
-    function (err) {
-      require('ui/notify').error(err);
-    });
+    }, handleError);
 
     // // TODO Load the list of saved visualizations for this index pattern
     // getSavedVisualizations(selectedIndex.name, function(resp){
@@ -313,7 +342,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
       index: indexName,
       query: query
     };
-    $http.post('../api/graph/graphExplore', request)
+    return $http.post('../api/graph/graphExplore', request)
       .then(function (resp) {
         if (resp.data.resp.timed_out) {
           require('ui/notify').warning('Exploration timed out');
@@ -331,7 +360,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
 
         responseHandler(resp.data.resp);
       })
-      .catch(err => require('ui/notify').error(err));
+      .catch(handleError);
   }
 
   //Find all saved visualizations that target this index
@@ -355,7 +384,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
       .then(function (resp) {
         responseHandler(resp.data.resp);
       })
-      .catch(err => require('ui/notify').error(err));
+      .catch(handleError);
   };
 
   //TODO remove me - link to saved visualizations instead and embed them with a split-screen splitter
@@ -368,7 +397,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
       .then(function (resp) {
         responseHandler(resp.data.resp);
       })
-      .catch(err => require('ui/notify').error(err));
+      .catch(handleError);
   };
 
   $scope.submit = function () {
