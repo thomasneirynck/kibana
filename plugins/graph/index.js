@@ -68,10 +68,10 @@ module.exports = function (kibana) {
         pre: [
           function forbidApiAccess(request, reply) {
             const licenseCheckResults = xpackMainPlugin.info.feature(thisPlugin.id).getLicenseCheckResults();
-            if (!licenseCheckResults.showAppLink || !licenseCheckResults.enableAppLink) {
-              reply(Boom.forbidden(licenseCheckResults.message));
-            } else {
+            if (licenseCheckResults.showAppLink && licenseCheckResults.enableAppLink) {
               reply();
+            } else {
+              reply(Boom.forbidden(licenseCheckResults.message));
             }
           }
         ]
