@@ -1,16 +1,15 @@
-var d3 = require('d3');
-var venn = require('venn.js');
-var dv = require('ace');
-var av = require('./angular-venn-simple.js');
-var gws = require('./graphClientWorkspace.js');
-var utils = require('./utils.js');
+import d3 from 'd3';
+import { venn } from 'venn.js';
+import 'ace';
+import './angular-venn-simple.js';
+import gws from './graphClientWorkspace.js';
+import utils from './utils.js';
 import { capitalize, partial } from 'lodash';
 import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
 import KbnUrlProvider from 'ui/url';
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 import chrome from 'ui/chrome';
-
-require('plugins/graph/less/main.less');
+import 'plugins/graph/less/main.less';
 
 var app = require('ui/modules').get('app/graph', ['angular-venn-simple']);
 
