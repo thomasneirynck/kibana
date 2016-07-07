@@ -48,16 +48,7 @@ module.exports = (server) => {
       })
       .then (result => {
         const data = {
-          kibanas: result.kibanas.map(k => {
-            return {
-              kibana: _.pick(k.kibana, [
-                'uuid', 'name', 'host', 'transport_address', 'version', 'status'
-              ]),
-              ..._.pick(k, [
-                'os', 'process', 'requests', 'response_times', 'concurrent_connections', 'availability'
-              ])
-            };
-          }),
+          kibanas: result.kibanas,
           clusterStatus: result.clusterStatus
         };
 

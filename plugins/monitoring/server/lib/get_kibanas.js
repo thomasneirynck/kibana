@@ -9,7 +9,7 @@
  *  - requests
  *  - response times
  */
-import _ from 'lodash';
+import { get, isArray } from 'lodash';
 import moment from 'moment';
 import Promise from 'bluebird';
 import createQuery from './create_query';
@@ -43,34 +43,34 @@ export default function getKibanas(req, indices) {
   };
   return callWithRequest(req, 'search', params)
   .then(statsResp => {
-    const statsBuckets = _.get(statsResp, 'aggregations.kibana_uuids.buckets');
-    if (_.isArray(statsBuckets)) {
+    const statsBuckets = get(statsResp, 'aggregations.kibana_uuids.buckets');
+    if (isArray(statsBuckets)) {
       return Promise.map(statsBuckets, (uuidBucket) => {
         const infoParams = {
           index: config.get('xpack.monitoring.index'),
           type: 'kibana',
           meta: 'get_kibanas_kibana_info',
-          id: uuidBucket.key
+          id: uuidBucket.key,
+          _source: [
+            'kibana.process.memory.resident_set_size_in_bytes',
+            'kibana.os.load.1m',
+            'kibana.response_times.average',
+            'kibana.response_times.max',
+            'kibana.requests.total',
+            'kibana.kibana.transport_address',
+            'kibana.kibana.name',
+            'kibana.kibana.host',
+            'kibana.kibana.uuid',
+            'kibana.kibana.status',
+            'kibana.concurrent_connections'
+          ]
         };
 
         return callWithRequest(req, 'get', infoParams)
         .then(infoResp => {
-          const availability = {
-            availability: calculateAvailability(_.get(infoResp, '_source.timestamp'))
-          };
-          // clean up the response data payloads
-          const listingFields = [
-            'kibana',
-            'os',
-            'process',
-            'requests',
-            'response_times',
-            'concurrent_connections'
-          ];
-          const info = _.pick(_.get(infoResp, '_source.kibana'), listingFields);
           return {
-            ...info,
-            ...availability
+            ...get(infoResp, '_source.kibana'),
+            availability: calculateAvailability(get(infoResp, '_source.timestamp'))
           };
         });
       });
