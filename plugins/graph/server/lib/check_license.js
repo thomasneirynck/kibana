@@ -11,7 +11,9 @@ export default function checkLicense(xpackLicenseInfo) {
   const graphFeature = xpackLicenseInfo.feature('graph');
   if (!graphFeature.isEnabled()) {
     return {
-      showAppLink: false
+      showAppLink: false,
+      enableAppLink: false,
+      message: 'Graph is unavailable'
     };
   }
 
@@ -32,6 +34,7 @@ export default function checkLicense(xpackLicenseInfo) {
   message = `Graph is unavailable for the current ${xpackLicenseInfo.license.getType()} license. Please upgrade your license.`;
   return {
     showAppLink: false,
+    enableAppLink: false,
     message
   };
 }
