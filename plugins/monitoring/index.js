@@ -29,7 +29,8 @@ export default function monitoringIndex(kibana) {
             reportStats: config.get('xpack.monitoring.report_stats')
           };
         }
-      }
+      },
+      hacks: ['plugins/monitoring/hacks/phone_home_notifications']
     },
 
     config: function (Joi) {
