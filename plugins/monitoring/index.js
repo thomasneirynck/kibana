@@ -60,7 +60,7 @@ module.exports = function (kibana) {
         index: string().default('.monitoring-data-2'),
         kibana: object({
           index_pattern: string().default('.monitoring-kibana-2-*'),
-          data_collection: object({
+          collection: object({
             enabled: boolean().default(true),
             interval: number().default(10000)
           }).default()
