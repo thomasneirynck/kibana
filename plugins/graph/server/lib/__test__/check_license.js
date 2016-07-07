@@ -102,6 +102,7 @@ describe('check_license: ', function () {
       beforeEach(() => {
         set(mockLicenseInfo, 'license.isOneOf', () => false);
         set(mockLicenseInfo, 'license.getType', () => 'basic');
+        set(mockLicenseInfo, 'license.isActive', () => true);
         licenseCheckResult = checkLicense(mockLicenseInfo);
       });
 
