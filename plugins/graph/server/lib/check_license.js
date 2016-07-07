@@ -4,7 +4,7 @@ export default function checkLicense(xpackLicenseInfo) {
     return {
       showAppLink: true,
       enableAppLink: false,
-      message: 'You cannot use Graph because license information is not available at this time.'
+      message: 'Graph is unavailable - license information is not available at this time.'
     };
   }
 
@@ -18,7 +18,7 @@ export default function checkLicense(xpackLicenseInfo) {
   const isLicenseActive = xpackLicenseInfo.license.isActive();
   let message;
   if (!isLicenseActive) {
-    message = `You cannot use Graph because your ${xpackLicenseInfo.license.getType()} license has expired.`;
+    message = `Graph is unavailable - license has expired.`;
   }
 
   if (xpackLicenseInfo.license.isOneOf([ 'trial', 'platinum' ])) {
@@ -29,7 +29,7 @@ export default function checkLicense(xpackLicenseInfo) {
     };
   }
 
-  message = `Your ${xpackLicenseInfo.license.getType()} license does not support Graph. Please upgrade your license.`;
+  message = `Graph is unavailable for the current ${xpackLicenseInfo.license.getType()} license. Please upgrade your license.`;
   return {
     showAppLink: false,
     message
