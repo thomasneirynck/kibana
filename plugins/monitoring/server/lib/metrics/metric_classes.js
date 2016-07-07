@@ -102,6 +102,10 @@ export class LatencyMetric extends ElasticsearchMetric {
       const timeInMillis = _.get(last, `${metric}_time_in_millis_deriv.value`);
       const timeTotal = _.get(last, `${metric}_total_deriv.value`);
       if (timeInMillis && timeTotal) {
+        // Negative values indicate blips in the data (e.g., restarting a node) that we do not want to misrepresent
+        if (timeInMillis < 0 || timeTotal < 0) {
+          return null;
+        }
         return timeInMillis / timeTotal;
       }
       return 0;

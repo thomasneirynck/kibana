@@ -4,6 +4,9 @@ function indexingLatencyCalculation(last) {
   const indexTimeInMillis = _.get(last, 'index_time_in_millis_deriv.value');
   const indexTimeTotal = _.get(last, 'index_total_deriv.value');
   if (indexTimeInMillis && indexTimeTotal) {
+    if (indexTimeInMillis < 0 || indexTimeTotal < 0) {
+      return null;
+    }
     return indexTimeInMillis / indexTimeTotal;
   }
   return 0;
@@ -13,6 +16,9 @@ function queryLatencyCalculation(last) {
   const queryTimeInMillis = _.get(last, 'query_time_in_millis_deriv.value');
   const queryTimeTotal = _.get(last, 'query_total_deriv.value');
   if (queryTimeInMillis && queryTimeTotal) {
+    if (queryTimeInMillis < 0 || queryTimeTotal < 0) {
+      return null;
+    }
     return queryTimeInMillis / queryTimeTotal;
   }
   return 0;

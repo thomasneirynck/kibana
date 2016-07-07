@@ -1,4 +1,5 @@
 import metrics from '../../metrics';
+import { LatencyMetric } from '../metric_classes';
 import expect from 'expect.js';
 import _ from 'lodash';
 import Model from './model';
@@ -15,6 +16,40 @@ describe('Metrics', () => {
   });
 
   /*eslint-disable guard-for-in, no-loop-func*/
+  for (const metricType of ['query', 'index']) {
+    const latencyMetric = new LatencyMetric({
+      metric: metricType,
+      field: metricType,
+      fieldSource: 'test_type',
+      label: `Test ${metricType} Latency Metric`,
+      description: `Testing ${metricType} Latency with negative derivatives`,
+      type: 'cluster',
+      test_derivatives: [
+        // both negative
+        {
+          [`${metricType}_time_in_millis_deriv`]: { value: -42 },
+          [`${metricType}_total_deriv`]: { value: -6 }
+        },
+        // one negative
+        {
+          [`${metricType}_time_in_millis_deriv`]: { value: 42 },
+          [`${metricType}_total_deriv`]: { value: -6 }
+        },
+        // other negative
+        {
+          [`${metricType}_time_in_millis_deriv`]: { value: -42 },
+          [`${metricType}_total_deriv`]: { value: 6 }
+        }
+      ]
+    });
+
+    for (const derivative of latencyMetric.test_derivatives) {
+      it(`LatencyMetric ${metricType} returns null for negative derivative values`, () => {
+        expect(latencyMetric.calculation(derivative)).to.be.eql(null);
+      });
+    }
+  }
+
   for (const metric in flatMetrics) {
     if (!_.isFunction(flatMetrics[metric])) {
       it(`Metric ${metric} value matches expected`, () => {

@@ -15,7 +15,7 @@ const metricInstances = {
     label: 'Primary Shards', // label to use for this line in the chart
     field: 'indices_stats._all.primaries.indexing.index_total',
     description: 'The per index rate at which documents are being indexed for primary shards.',
-    type: 'index',
+    type: 'index'
   }),
   'cluster_index_request_rate_total': new RequestRateMetric({
     field: 'indices_stats._all.total.indexing.index_total',
