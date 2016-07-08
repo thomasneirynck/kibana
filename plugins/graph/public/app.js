@@ -23,7 +23,7 @@ function checkLicense(Private) {
 
   if (!licenseAllowsToShowThisPage) {
     const message = xpackInfo.get('features.graph.message');
-    const url = `${chrome.addBasePath('/app/kibana#/discover')}?notif_loc=Graph&notif_lvl=error&notif_msg=${message}`;
+    const url = `${chrome.addBasePath('/app/kibana')}#?notif_loc=Graph&notif_lvl=error&notif_msg=${message}`;
     window.location.href = url;
     return Promise.reject();
   }
