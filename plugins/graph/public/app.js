@@ -13,17 +13,20 @@ import 'plugins/graph/less/main.less';
 import uiModules from 'ui/modules';
 import uiRoutes from 'ui/routes';
 import uiNotify from 'ui/notify';
+import Notifier from 'ui/notify/notifier';
 import appTemplate from 'plugins/graph/templates/index.html';
 
 var app = uiModules.get('app/graph', ['angular-venn-simple']);
 
 function checkLicense(Private, Promise) {
   const xpackInfo = Private(XPackInfoProvider);
-  const licenseAllowsToShowThisPage = xpackInfo.get('features.graph.showAppLink') && xpackInfo.get('features.graph.enableAppLink');
 
+  const licenseAllowsToShowThisPage = xpackInfo.get('features.graph.showAppLink') && xpackInfo.get('features.graph.enableAppLink');
   if (!licenseAllowsToShowThisPage) {
     const message = xpackInfo.get('features.graph.message');
-    const url = `${chrome.addBasePath('/app/kibana')}#?notif_loc=Graph&notif_lvl=error&notif_msg=${message}`;
+    const queryString = `?${Notifier.QS_PARAM_LOCATION}=Graph&${Notifier.QS_PARAM_LEVEL}=error&${Notifier.QS_PARAM_MESSAGE}=${message}`;
+    const url = `${chrome.addBasePath('/app/kibana')}#${queryString}`;
+
     window.location.href = url;
     return Promise.halt();
   }
