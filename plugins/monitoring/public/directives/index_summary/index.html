@@ -2,7 +2,7 @@
   <div class="stats">
     <div>
       <span class="status status-{{ getSummaryStatus()|lowercase }}">
-        <i class="{{ getStatusIconClass() }}" title="{{ 'Index: ' + getSummaryStatus() }}"></i>
+        <i class="{{ getStatusIconClass() }}" title="{{ getSummaryStatusText() }}"></i>
       </span>
     </div>
     <div>Documents: <strong>{{ summary.documents|formatNumber:'0.[0]a' }}</strong></div>

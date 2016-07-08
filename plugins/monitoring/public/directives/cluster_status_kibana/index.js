@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { capitalize, get } from 'lodash';
 import statusIconClass from '../../lib/status_icon_class';
 const module = require('ui/modules').get('monitoring/directives', []);
 module.directive('monitoringClusterStatusKibana', () => {
@@ -6,8 +6,12 @@ module.directive('monitoringClusterStatusKibana', () => {
     restrict: 'E',
     template: require('plugins/monitoring/directives/cluster_status_kibana/index.html'),
     link(scope) {
+      scope.getStatusText = () => {
+        return `Instances: ${capitalize(scope.pageData.clusterStatus.status)}`;
+      };
+
       scope.getStatusIconClass = () => {
-        return statusIconClass(_.get(scope.pageData, 'clusterStatus.status'));
+        return statusIconClass(get(scope.pageData, 'clusterStatus.status'));
       };
     }
   };
