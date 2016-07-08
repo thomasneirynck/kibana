@@ -17,7 +17,7 @@ import appTemplate from 'plugins/graph/templates/index.html';
 
 var app = uiModules.get('app/graph', ['angular-venn-simple']);
 
-function checkLicense(Private) {
+function checkLicense(Private, Promise) {
   const xpackInfo = Private(XPackInfoProvider);
   const licenseAllowsToShowThisPage = xpackInfo.get('features.graph.showAppLink') && xpackInfo.get('features.graph.enableAppLink');
 
@@ -25,7 +25,7 @@ function checkLicense(Private) {
     const message = xpackInfo.get('features.graph.message');
     const url = `${chrome.addBasePath('/app/kibana')}#?notif_loc=Graph&notif_lvl=error&notif_msg=${message}`;
     window.location.href = url;
-    return Promise.reject();
+    return Promise.halt();
   }
 
   return Promise.resolve();
@@ -65,15 +65,15 @@ uiRoutes
   });
 
 //========  Controller for basic UI ==================
-app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http, Private) {
+app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http, Private, Promise) {
 
   function handleSuccess(data) {
-    return checkLicense(Private)
+    return checkLicense(Private, Promise)
     .then(() => data);
   }
 
   function handleError(err) {
-    return checkLicense(Private)
+    return checkLicense(Private, Promise)
     .then(uiNotify.error);
   }
 
