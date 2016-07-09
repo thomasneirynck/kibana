@@ -71,6 +71,15 @@ class PdfMaker {
     this._addContents(contents);
   }
 
+  addHeading(headingText, opts = {}) {
+    const contents = [];
+    contents.push({
+      text: headingText,
+      style: ['heading'].concat(opts.styles || [])
+    });
+    this._addContents(contents);
+  }
+
   generate() {
     const docTemplate = _.assign(getTemplate(), { content: this._content });
     this._pdfDoc = this._printer.createPdfKitDocument(docTemplate, getDocOptions());
