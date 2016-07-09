@@ -7,5 +7,5 @@ module.exports = {
   JOB_COMPLETION_CHECK_FREQUENCY_IN_MS: 10000,
   JOB_COMPLETION_STORAGE_KEY_LAST_CHECK: 'xpack.reporting.jobCompletionLastCheckedOn',
 
-  API_BASE_URL: '../api/reporting/jobs'
+  API_BASE_URL: '/api/reporting'
 };
