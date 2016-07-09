@@ -150,6 +150,9 @@ function getTemplate() {
         marginLeft: 20,
         marginBottom: 5,
       },
+      warning: {
+        color: '#f39c12' // same as @brand-warning in Kibana colors.less
+      }
     },
 
     defaultStyle: {
