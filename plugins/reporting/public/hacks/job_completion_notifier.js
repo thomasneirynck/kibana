@@ -44,6 +44,6 @@ function showCompletionNotification(job) {
   const reportObjectTitle = job._source.payload.title;
   const reportObjectType = job._source.payload.type;
   const notificationMessage = `Your report for the the "${reportObjectTitle}" ${reportObjectType} is ready!`
-  + ` Pick it up from Management > Kibana > Reporting`;
+  + ` Pick it up from Management > Kibana > Reporting`; // TODO: Replace with rich text containing link
   notify.info(notificationMessage);
 }
