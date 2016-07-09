@@ -62,6 +62,32 @@ function jobsQueryFactory(server) {
       return getHits(execQuery('search', body));
     },
 
+    listCompletedSince(user, size = defaultSize, sinceInMs) {
+      const username = get(user, 'username', nouser);
+
+      const body = {
+        query: {
+          constant_score: {
+            filter: {
+              bool: {
+                should: [
+                  { term: { created_by: username } },
+                  { term: { created_by: nouser } },
+                ],
+                must: [
+                  { range: { completed_at: { gt: sinceInMs, format: 'epoch_millis' } } }
+                ]
+              }
+            }
+          }
+        },
+        size: size,
+        sort: { completed_at: 'asc' }
+      };
+
+      return getHits(execQuery('search', body));
+    },
+
     count(user) {
       const username = get(user, 'username', nouser);
 

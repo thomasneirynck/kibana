@@ -26,6 +26,24 @@ module.exports = function (server, commonRouteConfig) {
     }
   });
 
+  // list all completed jobs since a specified time
+  server.route({
+    path: `${mainEntry}/list_completed_since`,
+    method: 'GET',
+    handler: (request, reply) => {
+      const size = Math.min(100, parseInt(request.query.size) || 10);
+      const sinceInMs = Date.parse(request.query.since) || null;
+
+      const results = getUser(request)
+      .then(user => jobsQuery.listCompletedSince(user, size, sinceInMs));
+
+      reply(results);
+    },
+    config: {
+      ...commonRouteConfig
+    }
+  });
+
   // return the count of all jobs in the queue
   server.route({
     path: `${mainEntry}/count`,
