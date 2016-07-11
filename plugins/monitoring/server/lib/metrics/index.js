@@ -3,7 +3,8 @@ import _ from 'lodash';
 import {
   ElasticsearchMetric, RequestRateMetric, KibanaMetric, LatencyMetric,
   NodeIndexMemoryMetric, ThreadPoolQueueMetric, ThreadPoolRejectedMetric,
-  IndexAverageStatMetric } from './metric_classes';
+  IndexAverageStatMetric, SingleIndexMemoryMetric, IndexMemoryMetric
+} from './metric_classes';
 
 import {
   LARGE_FLOAT, SMALL_FLOAT, LARGE_BYTES, SMALL_BYTES, LARGE_ABBREVIATED
@@ -26,7 +27,8 @@ const metricInstances = {
   }),
   'cluster_search_request_rate': new RequestRateMetric({
     field: 'indices_stats._all.total.search.query_total',
-    label: 'Search Rate',
+    title: 'Search Rate',
+    label: 'Total Shards',
     description: 'The cluster wide rate at which search reqeusts are being executed.',
     type: 'cluster'
   }),
@@ -80,6 +82,77 @@ const metricInstances = {
     description: 'The average search latency across the entire cluster.',
     type: 'cluster'
   }),
+  'index_mem_overall': new SingleIndexMemoryMetric({
+    field: 'memory_in_bytes',
+    label: 'Lucene Total',
+    description: 'Memory used by open Lucene segment files'
+  }),
+  'index_mem_doc_values': new SingleIndexMemoryMetric({
+    field: 'doc_values_memory_in_bytes',
+    label: 'Doc Values',
+    description: 'Memory used for Doc Values'
+  }),
+  // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
+  'index_mem_fielddata': new IndexMemoryMetric({
+    field: 'index_stats.total.fielddata.memory_size_in_bytes',
+    label: 'Fielddata',
+    description: 'The amount of memory used by index fielddata.',
+    type: 'index'
+  }),
+  'index_mem_fixed_bit_set': new SingleIndexMemoryMetric({
+    field: 'norms_memory_in_bytes',
+    label: 'Fixed Bitsets',
+    description: 'Memory used for Nested Documents'
+  }),
+  'index_mem_norms': new SingleIndexMemoryMetric({
+    field: 'norms_memory_in_bytes',
+    label: 'Norms',
+    description: 'Memory used in Lucene segments for Norms'
+  }),
+  'index_mem_points': new SingleIndexMemoryMetric({
+    field: 'points_memory_in_bytes',
+    label: 'Points',
+    description: 'Memory used in Lucene segments for Points (e.g., numerics and geo)'
+  }),
+  // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
+  'index_mem_query_cache': new IndexMemoryMetric({
+    field: 'index_stats.total.query_cache.memory_size_in_bytes',
+    label: 'Query Cache',
+    description: 'The amount of memory used by the query cache.',
+    type: 'index'
+  }),
+  // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
+  'index_mem_request_cache': new IndexMemoryMetric({
+    field: 'index_stats.total.request_cache.memory_size_in_bytes',
+    label: 'Request Cache',
+    description: 'The amount of memory used by the request cache.',
+    type: 'index'
+  }),
+  'index_mem_stored_fields': new SingleIndexMemoryMetric({
+    field: 'stored_fields_memory_in_bytes',
+    label: 'Stored Fields',
+    description: 'Memory used in Lucene segments for Stored Fields'
+  }),
+  'index_mem_term_vectors': new SingleIndexMemoryMetric({
+    field: 'term_vectors_memory_in_bytes',
+    label: 'Term Vectors',
+    description: 'Memory used in Lucene segments for Term Vectors'
+  }),
+  'index_mem_terms': new SingleIndexMemoryMetric({
+    field: 'terms_memory_in_bytes',
+    label: 'Terms',
+    description: 'Memory used in Lucene segments for Terms'
+  }),
+  'index_mem_versions': new SingleIndexMemoryMetric({
+    field: 'version_map_memory_in_bytes',
+    label: 'Version Map',
+    description: 'Memory used for Versions'
+  }),
+  'index_mem_writer': new SingleIndexMemoryMetric({
+    field: 'index_writer_memory_in_bytes',
+    label: 'Index Writer',
+    description: 'Memory used for Lucene Index Writers'
+  }),
   'index_request_rate_primary': new ElasticsearchMetric({
     field: 'index_stats.primaries.indexing.index_total',
     title: 'Indexing Rate',
@@ -98,9 +171,19 @@ const metricInstances = {
     description: 'The per index rate at which documents are being indexed.',
     type: 'index'
   }),
+  'index_segment_count': new ElasticsearchMetric({
+    field: 'index_stats.total.segments.count',
+    label: 'Segment Count',
+    description: 'The average segment count.',
+    type: 'index',
+    format: LARGE_FLOAT,
+    metricAgg: 'avg',
+    units: ''
+  }),
   'search_request_rate': new RequestRateMetric({
     field: 'index_stats.total.search.query_total',
-    label: 'Search Rate',
+    title: 'Search Rate',
+    label: 'Total Shards',
     description: 'The cluster wide rate at which search reqeusts are being executed.',
     type: 'cluster'
   }),
@@ -141,52 +224,73 @@ const metricInstances = {
     units: ''
   }),
   'node_index_mem_overall': new NodeIndexMemoryMetric({
-    field: 'node_stats.indices.segments.memory_in_bytes',
+    field: 'memory_in_bytes',
     label: 'Lucene Total',
-    description: 'Memory used by open Lucene segment files',
+    description: 'Memory used by open Lucene segment files'
   }),
   'node_index_mem_doc_values': new NodeIndexMemoryMetric({
-    field: 'node_stats.indices.segments.doc_values_memory_in_bytes',
+    field: 'doc_values_memory_in_bytes',
     label: 'Doc Values',
     description: 'Memory used for Doc Values'
   }),
+  // Note: This is not segment memory, unlike the rest of the SingleIndexMemoryMetrics
+  'node_index_mem_fielddata': new IndexMemoryMetric({
+    field: 'node_stats.indices.fielddata.memory_size_in_bytes',
+    label: 'Fielddata',
+    description: 'The amount of memory used by shard fielddata on this node.',
+    type: 'node'
+  }),
   'node_index_mem_fixed_bit_set': new NodeIndexMemoryMetric({
-    field: 'node_stats.indices.segments.norms_memory_in_bytes',
+    field: 'norms_memory_in_bytes',
     label: 'Fixed Bitsets',
     description: 'Memory used for Nested Documents'
   }),
   'node_index_mem_norms': new NodeIndexMemoryMetric({
-    field: 'node_stats.indices.segments.norms_memory_in_bytes',
+    field: 'norms_memory_in_bytes',
     label: 'Norms',
     description: 'Memory used in Lucene segments for Norms'
   }),
   'node_index_mem_points': new NodeIndexMemoryMetric({
-    field: 'node_stats.indices.segments.points_memory_in_bytes',
+    field: 'points_memory_in_bytes',
     label: 'Points',
     description: 'Memory used in Lucene segments for Points (e.g., numerics and geo)'
   }),
+  // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
+  'node_index_mem_query_cache': new IndexMemoryMetric({
+    field: 'node_stats.indices.query_cache.memory_size_in_bytes',
+    label: 'Query Cache',
+    description: 'The amount of memory used by the query cache.',
+    type: 'index'
+  }),
+  // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
+  'node_index_mem_request_cache': new IndexMemoryMetric({
+    field: 'node_stats.indices.request_cache.memory_size_in_bytes',
+    label: 'Request Cache',
+    description: 'The amount of memory used by the request cache.',
+    type: 'index'
+  }),
   'node_index_mem_stored_fields': new NodeIndexMemoryMetric({
-    field: 'node_stats.indices.segments.stored_fields_memory_in_bytes',
+    field: 'stored_fields_memory_in_bytes',
     label: 'Stored Fields',
     description: 'Memory used in Lucene segments for Stored Fields'
   }),
   'node_index_mem_term_vectors': new NodeIndexMemoryMetric({
-    field: 'node_stats.indices.segments.term_vectors_memory_in_bytes',
+    field: 'term_vectors_memory_in_bytes',
     label: 'Term Vectors',
     description: 'Memory used in Lucene segments for Term Vectors'
   }),
   'node_index_mem_terms': new NodeIndexMemoryMetric({
-    field: 'node_stats.indices.segments.terms_memory_in_bytes',
+    field: 'terms_memory_in_bytes',
     label: 'Terms',
     description: 'Memory used in Lucene segments for Terms'
   }),
   'node_index_mem_versions': new NodeIndexMemoryMetric({
-    field: 'node_stats.indices.segments.version_map_memory_in_bytes',
+    field: 'version_map_memory_in_bytes',
     label: 'Version Map',
     description: 'Memory used for Versions'
   }),
   'node_index_mem_writer': new NodeIndexMemoryMetric({
-    field: 'node_stats.indices.segments.index_writer_memory_in_bytes',
+    field: 'index_writer_memory_in_bytes',
     label: 'Index Writer',
     description: 'Memory used for Lucene Index Writers'
   }),
@@ -300,7 +404,8 @@ const metricInstances = {
   }),
   'index_search_request_rate': new RequestRateMetric({
     field: 'index_stats.total.search.query_total',
-    label: 'Search Rate',
+    title: 'Search Rate',
+    label: 'Total Shards',
     description: 'The per index rate at which search reqeusts are being executed.',
     type: 'index'
   }),
@@ -314,11 +419,6 @@ const metricInstances = {
     field: 'index_stats.total.store.size_in_bytes',
     label: 'Index Size',
     description: 'The size of the index.'
-  }),
-  'index_lucene_memory': new IndexAverageStatMetric({
-    field: 'index_stats.total.segments.memory_in_bytes',
-    label: 'Lucene Memory',
-    description: 'The amount of memory used by Lucene.'
   }),
   'index_fielddata': new IndexAverageStatMetric({
     field: 'index_stats.total.fielddata.memory_size_in_bytes',

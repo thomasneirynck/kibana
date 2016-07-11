@@ -34,9 +34,13 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
         ]
       },
       'index_size',
-      'index_lucene_memory',
+      {
+        name: 'index_mem',
+        keys: [ 'index_mem_overall' ],
+        config: 'xpack.monitoring.chart.elasticsearch.index.index_memory'
+      },
       'index_document_count',
-      'index_fielddata'
+      'index_segment_count'
     ]
   })
   .then(response => response.data)
