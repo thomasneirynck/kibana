@@ -48,7 +48,7 @@ define(function (require) {
         data: '='
       },
       link: function (scope, $el) {
-        var tableRowTemplate = React.createClass({
+        var indexRowTemplate = React.createClass({
           getInitialState: function () {
             var index = _.findWhere(scope.data, {name: this.props.name});
             return {
@@ -102,15 +102,13 @@ define(function (require) {
         var table = React.render(tableFactory({
           scope: scope,
           options: initialTableOptions,
-          template: tableRowTemplate
+          template: indexRowTemplate
         }), $el[0]);
 
         scope.$watch('data', (data) => {
           table.setData(data);
-          table.render();
         });
       }
     };
   });
 });
-

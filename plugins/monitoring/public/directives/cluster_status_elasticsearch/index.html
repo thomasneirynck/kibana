@@ -2,7 +2,7 @@
   <div ng-if="cluster" class="stats">
     <div>
       <span class="status status-{{pageData.clusterStatus.status|lowercase}}">
-        <i class="{{statusIconClass}}" title="Cluster: {{pageData.clusterStatus.status|capitalize}}"></i>
+        <i class="{{getStatusIconClass()}}" title="{{getStatusText()}}"></i>
       </span>
     </div>
     <div>Nodes:

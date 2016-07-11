@@ -6,7 +6,7 @@ const calcAuto = require('./calculate_auto');
 const filterPartialBuckets = require('./filter_partial_buckets');
 const pickMetricFields = require('./pick_metric_fields');
 
-module.exports = function getSeries(req, indices, metricName, filters) {
+export default function getSeries(req, indices, metricName, filters) {
   const config = req.server.config();
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const metric = metrics[metricName];

@@ -16,7 +16,8 @@
  */
 
 var _ = require('lodash');
-module.exports = function phoneHomeProvider(Promise, $http, statsReportUrl, reportStats, features) {
+
+export default function phoneHomeProvider(Promise, $http, statsReportUrl, reportStats, features) {
 
   const defaults = {
     report: true,

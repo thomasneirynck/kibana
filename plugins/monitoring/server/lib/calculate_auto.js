@@ -52,7 +52,7 @@ function find(rules, check, last) {
   };
 }
 
-module.exports = {
+export default {
   near: find(revRoundingRules, function near(bound, interval, target) {
     if (bound > target) return interval;
   }, true),
@@ -65,4 +65,3 @@ module.exports = {
     if (interval <= target) return interval;
   }),
 };
-

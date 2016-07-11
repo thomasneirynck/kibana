@@ -5,7 +5,7 @@ const Promise = require('bluebird');
  * @param req: server's request object
  * @return array of cluster objects with .stats field added
  */
-module.exports = function getClustersStats(req) {
+export default function getClustersStats(req) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const config = req.server.config();
   return (clusters) => {

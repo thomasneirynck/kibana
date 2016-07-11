@@ -5,7 +5,7 @@ var pluginSelfCheck = require('./server/lib/plugin_self_check');
 var instantiateClient = require('./server/lib/es_client/instantiate_client');
 var initKibanaMonitoring = require('./server/kibana_monitoring');
 
-module.exports = function (kibana) {
+export default function monitoringIndex(kibana) {
   return new kibana.Plugin({
     require: ['kibana', 'elasticsearch', 'xpack_main'],
     id: 'monitoring',
@@ -60,7 +60,7 @@ module.exports = function (kibana) {
         index: string().default('.monitoring-data-2'),
         kibana: object({
           index_pattern: string().default('.monitoring-kibana-2-*'),
-          data_collection: object({
+          collection: object({
             enabled: boolean().default(true),
             interval: number().default(10000)
           }).default()

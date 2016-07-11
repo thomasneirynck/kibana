@@ -8,7 +8,7 @@ export default function addMonitoringApi(Client, _config, components) {
   *
   * @param {Object} params - An object with parameters used to carry out this action
   * @param {String} params.system_id - Reporting application id
-  * @param {String} params.system_version - Reporting application version
+  * @param {String} params.system_api_version - Reporting application API version
   * @param {String} params.consistency - Explicit write consistency setting for the operation
   * @param {Boolean} params.refresh - Refresh the index after performing the operation
   * @param {String} params.routing - Specific routing value
@@ -19,9 +19,9 @@ export default function addMonitoringApi(Client, _config, components) {
   monitoring.bulk = ca({
     params: {
       system_id: {
-        type: 'string',
+        type: 'string'
       },
-      system_version: {
+      system_api_version: {
         type: 'string'
       },
       type: {

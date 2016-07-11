@@ -17,3 +17,37 @@
 @thick: 2px;
 @thin: 1px;
 
+/**
+ * Bootstrap variables
+ *
+ * These have been copy/pasted from Bootstrap, since Kibana's Bootstrap
+ * dependency has been removed. At a later point, we'll refactor our styles so
+ * these variables won't be necessary at all.
+ */
+
+//== Colors
+
+@brand-primary: darken(#428bca, 6.5%); // #337ab7
+
+//== Scaffolding
+
+@link-color: @brand-primary;
+
+//== Typography
+
+@font-size-base: 14px;
+@line-height-base: 1.428571429;
+@line-height-computed: floor((@font-size-base * @line-height-base)); // ~20px
+
+//== Components
+
+@padding-base-vertical: 5px;
+@padding-base-horizontal: 15px;
+
+@border-radius-base: 4px;
+
+//== Pagination
+
+@pagination-color: @link-color;
+@pagination-bg: #fff;
+@pagination-border: #ddd;

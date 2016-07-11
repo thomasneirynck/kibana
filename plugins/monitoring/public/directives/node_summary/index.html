@@ -1,8 +1,8 @@
 <div class="monitoring-element monitoring-node-status">
   <div class="stats">
     <div>
-      <span class="status status-{{ onlineClass }}">
-        <i class="{{ onlineIconClass }}" title="Node: {{ node.status|capitalize }}"></i>
+      <span class="status status-{{ getOnlineClass() }}">
+        <i class="{{ getStatusIconClass() }}" title="{{ 'Node: ' + node.status }}"></i>
       </span>
     </div>
     <div><strong>{{ node.transport_address|extractIp }}</strong></div>

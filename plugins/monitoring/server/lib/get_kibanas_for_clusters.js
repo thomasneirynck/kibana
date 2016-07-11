@@ -76,8 +76,7 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
                 field: 'kibana_stats.kibana.status',
                 order: {
                   max_timestamp: 'desc'
-                },
-                size: 1
+                }
               },
               aggs: {
                 max_timestamp: {

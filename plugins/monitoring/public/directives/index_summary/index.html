@@ -1,8 +1,8 @@
 <div class="monitoring-element monitoring-index-status">
   <div class="stats">
     <div>
-      <span class="status status-{{ summaryStatus|lowercase }}">
-        <i class="{{ statusIconClass }}" title="Index: {{ summaryStatus|capitalize }}"></i>
+      <span class="status status-{{ getSummaryStatus()|lowercase }}">
+        <i class="{{ getStatusIconClass() }}" title="{{ getSummaryStatusText() }}"></i>
       </span>
     </div>
     <div>Documents: <strong>{{ summary.documents|formatNumber:'0.[0]a' }}</strong></div>

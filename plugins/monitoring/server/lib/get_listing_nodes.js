@@ -30,7 +30,7 @@ const metrics = require('./metrics');
 const nodeAggVals = require('./node_agg_vals');
 const mapListingResponse = require('./map_listing_response');
 
-module.exports = (req, indices) => {
+export default function getListingNodes(req, indices) {
   const config = req.server.config();
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const listingMetrics = req.payload.listingMetrics || [];

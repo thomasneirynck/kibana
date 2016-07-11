@@ -76,7 +76,7 @@ function calculateMetrics(type, partialBucketFilter) {
   return calculators[type];
 }
 
-module.exports = function mapListingResponse(options) {
+export default function mapListingResponse(options) {
   const { type, items, listingMetrics, min, max, bucketSize } = options;
   const partialBucketFilter = filterPartialBuckets(min, max, bucketSize, { ignoreEarly: true });
   const metricCalculator = calculateMetrics(type, partialBucketFilter);

@@ -11,7 +11,7 @@ function getDelta(t1, t2) {
   return moment.duration(t1 - t2).asMilliseconds();
 }
 
-module.exports = function filterPartialBuckets(min, max, bucketSize, options = {}) {
+export default function filterPartialBuckets(min, max, bucketSize, options = {}) {
   return (bucket) => {
     const bucketTime = getTime(bucket);
     // timestamp is too late to be complete

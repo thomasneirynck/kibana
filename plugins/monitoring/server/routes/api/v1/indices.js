@@ -13,7 +13,7 @@ const getUnassignedShards = require('../../../lib/get_unassigned_shards');
 const calculateClusterStatus = require('../../../lib/elasticsearch/calculate_cluster_status');
 const handleError = require('../../../lib/handle_error');
 
-module.exports = (server) => {
+export default function indicesRoutes(server) {
   const config = server.config();
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
   server.route({

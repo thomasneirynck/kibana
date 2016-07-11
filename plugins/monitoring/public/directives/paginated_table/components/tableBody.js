@@ -4,7 +4,7 @@ var make = React.DOM;
 var Loading = require('./loading.jsx');
 var NoData = require('./no_data.jsx');
 
-module.exports = React.createClass({
+export default React.createClass({
   displayName: 'TableBody',
   render: function () {
     if (!this.props.tableData) {

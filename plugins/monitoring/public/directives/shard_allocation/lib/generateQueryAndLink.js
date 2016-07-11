@@ -15,7 +15,7 @@
  * from Elasticsearch Incorporated.
  */
 
-module.exports = function generateQueryAndLink(data) {
+export default function generateQueryAndLink(data) {
   var type = 'indices';
   var ident = data.name;
   if (data.type === 'node') {

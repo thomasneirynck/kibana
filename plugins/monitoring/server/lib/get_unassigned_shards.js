@@ -1,10 +1,11 @@
 import { get, set } from 'lodash';
+
 // Methods for calculating metrics for
 // - Number of Primary Shards
 // - Number of Replica Shards
 // - Unassigned Primary Shards
 // - Unassigned Replica Shards
-module.exports = function getUnassignedShards(indexShardStats) {
+export default function getUnassignedShards(indexShardStats) {
   const returned = {};
   let unassignedShards = 0;
 

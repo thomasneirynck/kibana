@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-module.exports = function routeInitProvider(Notifier, Private, monitoringClusters, globalState, license, kbnUrl) {
+export default function routeInitProvider(Notifier, Private, monitoringClusters, globalState, license, kbnUrl) {
   const phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
   const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
 

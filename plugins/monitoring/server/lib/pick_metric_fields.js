@@ -1,5 +1,6 @@
 const _ = require('lodash');
-module.exports = (metric) => {
+
+export default function pickMetricFields(metric) {
   const fields = [
     'app',
     'field',

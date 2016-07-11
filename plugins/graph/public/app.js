@@ -1,14 +1,40 @@
-var d3 = require('d3');
-var venn = require('venn.js');
-var dv = require('ace');
-var av = require('./angular-venn-simple.js');
-var gws = require('./graphClientWorkspace.js');
-var utils = require('./utils.js');
-import { capitalize } from 'lodash';
+import d3 from 'd3';
+import { venn } from 'venn.js';
+import 'ace';
+import './angular-venn-simple.js';
+import gws from './graphClientWorkspace.js';
+import utils from './utils.js';
+import { capitalize, partial } from 'lodash';
 import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
-require('plugins/graph/less/main.less');
+import KbnUrlProvider from 'ui/url';
+import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import chrome from 'ui/chrome';
+import 'plugins/graph/less/main.less';
+import uiModules from 'ui/modules';
+import uiRoutes from 'ui/routes';
+import uiNotify from 'ui/notify';
+import Notifier from 'ui/notify/notifier';
+import appTemplate from 'plugins/graph/templates/index.html';
 
-var app = require('ui/modules').get('app/graph', ['angular-venn-simple']);
+var app = uiModules.get('app/graph', ['angular-venn-simple']);
+
+function checkLicense(Private, Promise) {
+  const xpackInfo = Private(XPackInfoProvider);
+
+  const licenseAllowsToShowThisPage = xpackInfo.get('features.graph.showAppLink') && xpackInfo.get('features.graph.enableAppLink');
+  if (!licenseAllowsToShowThisPage) {
+    const message = xpackInfo.get('features.graph.message');
+    const queryString = `?${Notifier.QS_PARAM_LOCATION}=Graph&${Notifier.QS_PARAM_LEVEL}=error&${Notifier.QS_PARAM_MESSAGE}=${message}`;
+    const url = `${chrome.addBasePath('/app/kibana')}#${queryString}`;
+
+    window.location.href = url;
+    return Promise.halt();
+  }
+
+  return Promise.resolve();
+}
+
+app.run(checkLicense);
 
 app.directive('focusOn', function () {
   return function (scope, elem, attr) {
@@ -19,13 +45,13 @@ app.directive('focusOn', function () {
 });
 
 
-if (require('ui/routes').enable) {
-  require('ui/routes').enable();
+if (uiRoutes.enable) {
+  uiRoutes.enable();
 }
 
-require('ui/routes')
+uiRoutes
   .when('/home', {
-    template: require('plugins/graph/templates/index.html'),
+    template: appTemplate,
     resolve: {
       GetIndexPatternIds: function (Private) {
         const indexPatterns = Private(IndexPatternsProvider);
@@ -42,7 +68,17 @@ require('ui/routes')
   });
 
 //========  Controller for basic UI ==================
-app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http) {
+app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http, Private, Promise) {
+
+  function handleSuccess(data) {
+    return checkLicense(Private, Promise)
+    .then(() => data);
+  }
+
+  function handleError(err) {
+    return checkLicense(Private, Promise)
+    .then(uiNotify.error);
+  }
 
   $scope.title = 'Graph';
   $scope.description = 'Graph exploration';
@@ -257,7 +293,9 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
     $scope.selectedIndex = selectedIndex;
 
     var promise = $route.current.locals.GetIndexPatternProvider.get(selectedIndex);
-    promise.then(function (indexPattern) {
+    promise
+    .then(handleSuccess)
+    .then(function (indexPattern) {
       var patternFields = indexPattern.getNonScriptedFields();
       var blockedFieldNames = ['_id', '_index','_score','_source', '_type'];
       patternFields.forEach(function (field, index) {
@@ -294,10 +332,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
         }
         return 0;
       });
-    },
-    function (err) {
-      require('ui/notify').error(err);
-    });
+    }, handleError);
 
     // // TODO Load the list of saved visualizations for this index pattern
     // getSavedVisualizations(selectedIndex.name, function(resp){
@@ -313,10 +348,10 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
       index: indexName,
       query: query
     };
-    $http.post('../api/graph/graphExplore', request)
+    return $http.post('../api/graph/graphExplore', request)
       .then(function (resp) {
         if (resp.data.resp.timed_out) {
-          require('ui/notify').warning('Exploration timed out');
+          uiNotify.warning('Exploration timed out');
         }else {
           var graph = resp.data.resp;
           if ($scope.workspace.nodes.length == 0  && graph.vertices.length > 0
@@ -331,7 +366,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
 
         responseHandler(resp.data.resp);
       })
-      .catch(err => require('ui/notify').error(err));
+      .catch(handleError);
   }
 
   //Find all saved visualizations that target this index
@@ -355,7 +390,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
       .then(function (resp) {
         responseHandler(resp.data.resp);
       })
-      .catch(err => require('ui/notify').error(err));
+      .catch(handleError);
   };
 
   //TODO remove me - link to saved visualizations instead and embed them with a split-screen splitter
@@ -368,7 +403,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
       .then(function (resp) {
         responseHandler(resp.data.resp);
       })
-      .catch(err => require('ui/notify').error(err));
+      .catch(handleError);
   };
 
   $scope.submit = function () {
@@ -567,7 +602,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http)
 
 
   if ($scope.indices.length == 0) {
-    require('ui/notify').warning('Oops, no data sources. First head over to Kibana settings and define a choice of index pattern');
+    uiNotify.warning('Oops, no data sources. First head over to Kibana settings and define a choice of index pattern');
   }
 
 });

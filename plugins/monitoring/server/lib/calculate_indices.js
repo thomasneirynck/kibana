@@ -4,7 +4,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import checkMonitoringAuth from './check_monitoring_auth';
 
-module.exports = async function calculateIndices(req, start, end, indexPattern) {
+export default async function calculateIndices(req, start, end, indexPattern) {
   const config = req.server.config();
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
 

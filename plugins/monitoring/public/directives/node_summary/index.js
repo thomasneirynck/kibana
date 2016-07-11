@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import statusIconClass from '../../lib/status_icon_class';
 const mod = require('ui/modules').get('monitoring/directives', []);
 const template = require('plugins/monitoring/directives/node_summary/index.html');
@@ -7,23 +8,18 @@ mod.directive('monitoringNodeSummary', () => {
     template: template,
     scope: { node: '=' },
     link(scope) {
-      function setStatus(node) {
-        const nodeStatus = node.status;
-        if (nodeStatus.toLowerCase() === 'online') {
-          scope.onlineLabel = 'Online';
-          scope.onlineClass = 'green';
-          scope.onlineIconClass = statusIconClass('green');
+      scope.getOnlineClass = () => {
+        const nodeStatus = get(scope, 'node.status');
+        if (nodeStatus && nodeStatus.toLowerCase() === 'online') {
+          return 'green';
         } else {
-          scope.onlineLabel = 'Offline';
-          scope.onlineClass = 'offline';
-          scope.onlineIconClass = statusIconClass('offline');
+          return 'offline';
         }
-      }
-      setStatus(scope.node);
+      };
 
-      scope.$watch('node', function (node) {
-        setStatus(node);
-      });
+      scope.getStatusIconClass = () => {
+        return statusIconClass(scope.getOnlineClass());
+      };
     }
   };
 });

@@ -90,7 +90,7 @@ const Ellipsis = React.createClass({
   }
 });
 
-module.exports = React.createClass({
+export default React.createClass({
   displayName: 'Pagination',
   render() {
     if (this.props.dataLength <= this.props.itemsPerPage) {

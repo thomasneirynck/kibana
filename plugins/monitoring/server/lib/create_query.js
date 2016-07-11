@@ -1,7 +1,7 @@
 var _ = require('lodash');
 const moment = require('moment');
 
-module.exports = function createQuery(options) {
+export default function createQuery(options) {
   options = _.defaults(options, { filters: [] });
   var clusterFilter;
   var kibanaFilter;

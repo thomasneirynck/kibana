@@ -3,7 +3,7 @@
  * If node information can't be retrieved, we call this function
  * that provides some usable defaults
  */
-module.exports = function getDefaultNodeFromId(nodeId) {
+export default function getDefaultNodeFromId(nodeId) {
   return {
     id: nodeId,
     name: nodeId,

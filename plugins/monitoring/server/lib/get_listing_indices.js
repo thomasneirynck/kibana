@@ -15,7 +15,8 @@ const createQuery = require('./create_query.js');
 const calcAuto = require('./calculate_auto');
 const metrics = require('./metrics');
 const mapListingResponse = require('./map_listing_response');
-module.exports = (req, indices) => {
+
+export default function getListingIndices(req, indices) {
   const config = req.server.config();
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const listingMetrics = req.payload.listingMetrics || [];

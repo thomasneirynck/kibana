@@ -1,5 +1,5 @@
 var React = require('react');
-class Loading extends React.Component {
+export default class Loading extends React.Component {
   render() {
     const colSpan = this.props.columns.length;
     return (
@@ -11,7 +11,6 @@ class Loading extends React.Component {
           </td>
         </tr>
       </tbody>
-      );
+    );
   }
 }
-module.exports = Loading;

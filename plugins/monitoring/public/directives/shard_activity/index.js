@@ -1,8 +1,10 @@
+import _ from 'lodash';
+import { formatDateTimeLocal } from '../../../lib/formatting';
+
 define(function (require) {
   var template = require('plugins/monitoring/directives/shard_activity/index.html');
   var module = require('ui/modules').get('monitoring/directives', []);
   var formatNumber = require('plugins/monitoring/lib/format_number');
-  var _ = require('lodash');
   module.directive('monitoringShardActivity', function () {
     return {
       restrict: 'E',
@@ -13,6 +15,7 @@ define(function (require) {
       template: template,
       link: function ($scope) {
         $scope.formatNumber = formatNumber;
+        $scope.formatDateTimeLocal = formatDateTimeLocal;
         $scope.visibleData = [];
 
         $scope.toggleActive = function () {

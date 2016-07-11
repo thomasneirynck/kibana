@@ -3,7 +3,7 @@ import opsBuffer from './lib/ops_buffer';
 export default function (serverInfo, server) {
   const config = server.config();
 
-  if (config.get('xpack.monitoring.kibana.data_collection.enabled')) {
+  if (config.get('xpack.monitoring.kibana.collection.enabled')) {
     const buffer = opsBuffer(serverInfo, server);
     const monitor = server.plugins['even-better'].monitor;
     let opsHandler;
@@ -14,7 +14,7 @@ export default function (serverInfo, server) {
 
     server.plugins.elasticsearch.status.on('green', () => {
       monitor.on('ops', onOps);
-      opsHandler = setInterval(() => buffer.flush(), config.get('xpack.monitoring.kibana.data_collection.interval'));
+      opsHandler = setInterval(() => buffer.flush(), config.get('xpack.monitoring.kibana.collection.interval'));
     });
 
     server.plugins.elasticsearch.status.on('red', () => {

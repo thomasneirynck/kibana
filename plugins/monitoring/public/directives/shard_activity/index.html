@@ -23,7 +23,10 @@
         <h6>{{ activity.stage }}</h6>
       </td>
       <td class="time">
-        <h6>{{ (activity.total_time_in_millis/1000)|formatNumber: '00:00:00' }}</h6>
+        <h6>
+          <i class="fa fa-info-circle" title="Started at {{ formatDateTimeLocal(activity.start_time_in_millis) }}"></i>
+          {{ (activity.total_time_in_millis/1000)|formatNumber: '00:00:00' }}
+        </h6>
       </td>
       <td class="source-dest">
         <div>
