@@ -42,7 +42,8 @@ module.exports = function (kibana) {
             esShardTimeout: config.get('elasticsearch.shardTimeout')
           };
         }
-      }
+      },
+      hacks: ['plugins/graph/hacks/toggle_app_link_in_nav'],
     },
     //    noParse:[{ test:function(a){console.log("Debug",a); return /node_modules[\/\\]angular-contextmenu/.test(a); }}   ], //MH change
 
@@ -63,8 +64,20 @@ module.exports = function (kibana) {
       });
 
       // Add server routes and initalize the plugin here
-      graphExploreRoute(server);
-      getExampleDocsRoute(server);
+      const commonRouteConfig = {
+        pre: [
+          function forbidApiAccess(request, reply) {
+            const licenseCheckResults = xpackMainPlugin.info.feature(thisPlugin.id).getLicenseCheckResults();
+            if (licenseCheckResults.showAppLink && licenseCheckResults.enableAppLink) {
+              reply();
+            } else {
+              reply(Boom.forbidden(licenseCheckResults.message));
+            }
+          }
+        ]
+      };
+      graphExploreRoute(server, commonRouteConfig);
+      getExampleDocsRoute(server, commonRouteConfig);
     }
   });
 };

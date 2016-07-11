@@ -36,16 +36,18 @@ module.factory('checkXPackInfoChange', ($q, $injector, Private) => {
     // server. Fetch it and update local info + signature.
     _isInfoUpdateInProgress = true;
     const $http = $injector.get('$http'); // To prevent circular dependency Angular error
+
     return $http.get(chrome.addBasePath('/api/xpack/v1/info'))
-    .then((xpackInfoResponse) => {
-      xpackInfo.set(convertKeysToCamelCaseDeep(xpackInfoResponse.data));
-      xpackInfoSignature.set(xpackInfoResponse.headers('kbn-xpack-sig'));
-      _isInfoUpdateInProgress = false;
-      return handleResponse(response);
-    })
     .catch(() => {
       xpackInfo.clear();
       xpackInfoSignature.clear();
+      _isInfoUpdateInProgress = false;
+      handleResponse(response);
+      return Promise.reject();
+    })
+    .then((xpackInfoResponse) => {
+      xpackInfo.set(convertKeysToCamelCaseDeep(xpackInfoResponse.data));
+      xpackInfoSignature.set(xpackInfoResponse.headers('kbn-xpack-sig'));
       _isInfoUpdateInProgress = false;
       return handleResponse(response);
     });

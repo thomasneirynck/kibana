@@ -2,37 +2,39 @@ export default function checkLicense(xpackLicenseInfo) {
 
   if (!xpackLicenseInfo || !xpackLicenseInfo.isAvailable()) {
     return {
-      showGraphFeatures: false,
-      showLicensePage: false
+      showAppLink: true,
+      enableAppLink: false,
+      message: 'Graph is unavailable - license information is not available at this time.'
     };
   }
 
   const graphFeature = xpackLicenseInfo.feature('graph');
   if (!graphFeature.isEnabled()) {
     return {
-      showGraphFeatures: false,
-      showLicensePage: false
+      showAppLink: false,
+      enableAppLink: false,
+      message: 'Graph is unavailable'
     };
   }
 
-  if (xpackLicenseInfo.license.isOneOf([ 'basic' ])) {
-    return {
-      showGraphFeatures: true,
-      showLicensePage: true
-    };
+  const isLicenseActive = xpackLicenseInfo.license.isActive();
+  let message;
+  if (!isLicenseActive) {
+    message = `Graph is unavailable - license has expired.`;
   }
 
   if (xpackLicenseInfo.license.isOneOf([ 'trial', 'platinum' ])) {
     return {
-      showGraphFeatures: true,
-      showLicensePage: false
+      showAppLink: true,
+      enableAppLink: isLicenseActive,
+      message
     };
   }
 
-  if (xpackLicenseInfo.license.isOneOf([ 'standard', 'gold' ])) {
-    return {
-      showGraphFeatures: false,
-      showLicensePage: true
-    };
-  }
+  message = `Graph is unavailable for the current ${xpackLicenseInfo.license.getType()} license. Please upgrade your license.`;
+  return {
+    showAppLink: false,
+    enableAppLink: false,
+    message
+  };
 }
