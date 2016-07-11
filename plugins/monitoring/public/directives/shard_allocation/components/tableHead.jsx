@@ -15,24 +15,21 @@
  * from Elasticsearch Incorporated.
  */
 
+var React = require('react');
 
-define(function (require) {
-  var React = require('react');
-
-  return React.createClass({
-    displayName: 'TableHead',
-    createColumn: function (label) {
-      return (
-        <th key={ label } colSpan={ 1 }>{ label }</th>
-      );
-    },
-    render: function () {
-      var columns = this.props.columns.map((row) => this.createColumn(row));
-      return (
-        <thead>
-          <tr>{ columns }</tr>
-        </thead>
-      );
-    }
-  });
+export default React.createClass({
+  displayName: 'TableHead',
+  createColumn: function (label) {
+    return (
+      <th key={ label } colSpan={ 1 }>{ label }</th>
+    );
+  },
+  render: function () {
+    var columns = this.props.columns.map((row) => this.createColumn(row));
+    return (
+      <thead>
+        <tr>{ columns }</tr>
+      </thead>
+    );
+  }
 });

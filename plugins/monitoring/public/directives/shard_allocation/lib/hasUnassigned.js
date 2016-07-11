@@ -15,10 +15,6 @@
  * from Elasticsearch Incorporated.
  */
 
-
-
-define(function () {
-  return function (item) {
-    return item.unassigned && item.unassigned.length > 0 || false;
-  };
-});
+export default function hasUnassigned(item) {
+  return item.unassigned && item.unassigned.length > 0 || false;
+};

@@ -15,71 +15,64 @@
  * from Elasticsearch Incorporated.
  */
 
+var React = require('react');
+var calculateClass = require('../lib/calculateClass');
+var vents = require('../lib/vents');
 
+export default React.createClass({
+  displayName: 'Shard',
 
-define(function (require) {
-  var React = require('react');
-  var calculateClass = require('../lib/calculateClass');
-  var vents = require('../lib/vents');
+  getInitialState: function () {
+    return { tooltip: false };
+  },
 
-  return React.createClass({
-    displayName: 'Shard',
-
-    getInitialState: function () {
-      return { tooltip: false };
-    },
-
-    componentDidMount: function () {
-      var key;
-      var shard = this.props.shard;
-      var self = this;
-      if (shard.relocating_message) {
-        key = this.generateKey();
-        vents.on(key, function (action) {
-          self.setState({ tooltip: action === 'show' });
-        });
-      }
-    },
-
-    generateKey: function (relocating) {
-      var shard = this.props.shard;
-      var shardType = shard.primary ? 'primary' : 'replica';
-      var additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
-      var node = relocating ? shard.relocating_node : shard.node;
-      return shard.index + '.' + node + '.' + shardType + '.' + shard.shard + additionId;
-    },
-
-    componentWillUnmount: function () {
-      var key;
-      var shard = this.props.shard;
-      if (shard.relocating_message) {
-        key = this.generateKey();
-        vents.clear(key);
-      }
-    },
-
-    toggle: function (event) {
-      if (this.props.shard.relocating_message) {
-        var action = (event.type === 'mouseenter') ? 'show' : 'hide';
-        var key = this.generateKey(true);
-        this.setState({ tooltip: action === 'show' });
-        vents.trigger(key, action);
-      }
-    },
-
-    render: function () {
-      var shard = this.props.shard;
-      var tooltip = this.state.tooltip;
-      if (tooltip) {
-        tooltip = (<div className="shard-tooltip">{ this.props.shard.relocating_message }</div>);
-      }
-      return (<div
-          onMouseEnter={ this.toggle }
-          onMouseLeave={ this.toggle }
-          className={ calculateClass(shard, 'shard') }>{ tooltip }{ shard.shard }</div>);
+  componentDidMount: function () {
+    var key;
+    var shard = this.props.shard;
+    var self = this;
+    if (shard.relocating_message) {
+      key = this.generateKey();
+      vents.on(key, function (action) {
+        self.setState({ tooltip: action === 'show' });
+      });
     }
-  });
+  },
 
+  generateKey: function (relocating) {
+    var shard = this.props.shard;
+    var shardType = shard.primary ? 'primary' : 'replica';
+    var additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
+    var node = relocating ? shard.relocating_node : shard.node;
+    return shard.index + '.' + node + '.' + shardType + '.' + shard.shard + additionId;
+  },
+
+  componentWillUnmount: function () {
+    var key;
+    var shard = this.props.shard;
+    if (shard.relocating_message) {
+      key = this.generateKey();
+      vents.clear(key);
+    }
+  },
+
+  toggle: function (event) {
+    if (this.props.shard.relocating_message) {
+      var action = (event.type === 'mouseenter') ? 'show' : 'hide';
+      var key = this.generateKey(true);
+      this.setState({ tooltip: action === 'show' });
+      vents.trigger(key, action);
+    }
+  },
+
+  render: function () {
+    var shard = this.props.shard;
+    var tooltip = this.state.tooltip;
+    if (tooltip) {
+      tooltip = (<div className="shard-tooltip">{ this.props.shard.relocating_message }</div>);
+    }
+    return (<div
+        onMouseEnter={ this.toggle }
+        onMouseLeave={ this.toggle }
+        className={ calculateClass(shard, 'shard') }>{ tooltip }{ shard.shard }</div>);
+  }
 });
-
-

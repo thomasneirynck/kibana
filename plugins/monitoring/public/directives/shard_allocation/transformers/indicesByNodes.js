@@ -15,73 +15,69 @@
  * from Elasticsearch Incorporated.
  */
 
+var _ = require('lodash');
+var decorateShards = require('../lib/decorateShards');
 
+export default function indicesByNodes() {
+  return function indicesByNode(shards, nodes) {
 
-define(function (require) {
-  var _ = require('lodash');
-  var decorateShards = require('../lib/decorateShards');
+    function createIndex(obj, shard) {
+      var id = shard.index;
+      if (obj[id]) {
+        return obj;
+      }
+      obj[id] = {
+        id: id,
+        name: id,
+        children: [],
+        unassigned: [],
+        unassignedPrimaries: false,
+        type: 'index'
+      };
+      return obj;
+    }
 
-  return function () {
-    return function indicesByNode(shards, nodes) {
+    function createNodeAddShard(obj, shard) {
+      var node = shard.resolver;
+      var index = shard.index;
 
-      function createIndex(obj, shard) {
-        var id = shard.index;
-        if (obj[id]) {
-          return obj;
+      // If the node is null then it's an unassigned shard and we need to
+      // add it to the unassigned array.
+      if (shard.node === null) {
+        obj[index].unassigned.push(shard);
+        // if the shard is a primary we need to set the unassignedPrimaries flag
+        if (shard.primary) {
+          obj[index].unassignedPrimaries = true;
         }
-        obj[id] = {
-          id: id,
-          name: id,
-          children: [],
-          unassigned: [],
-          unassignedPrimaries: false,
-          type: 'index'
+        return obj;
+      }
+
+      var nodeObj = _.find(obj[index].children, { id: node });
+      if (!nodeObj) {
+        nodeObj = {
+          id: node,
+          type: 'node',
+          name: nodes[node].name,
+          node_type: nodes[node].type,
+          ip_port: nodes[node].transport_address,
+          children: []
         };
-        return obj;
+        obj[index].children.push(nodeObj);
       }
+      nodeObj.children.push(shard);
+      return obj;
+    }
 
-      function createNodeAddShard(obj, shard) {
-        var node = shard.resolver;
-        var index = shard.index;
+    var data = _.reduce(decorateShards(shards, nodes), function (obj, shard) {
+      obj = createIndex(obj, shard);
+      obj = createNodeAddShard(obj, shard);
+      return obj;
+    }, {});
 
-        // If the node is null then it's an unassigned shard and we need to
-        // add it to the unassigned array.
-        if (shard.node === null) {
-          obj[index].unassigned.push(shard);
-          // if the shard is a primary we need to set the unassignedPrimaries flag
-          if (shard.primary) {
-            obj[index].unassignedPrimaries = true;
-          }
-          return obj;
-        }
-
-        var nodeObj = _.find(obj[index].children, { id: node });
-        if (!nodeObj) {
-          nodeObj = {
-            id: node,
-            type: 'node',
-            name: nodes[node].name,
-            node_type: nodes[node].type,
-            ip_port: nodes[node].transport_address,
-            children: []
-          };
-          obj[index].children.push(nodeObj);
-        }
-        nodeObj.children.push(shard);
-        return obj;
-      }
-
-      var data = _.reduce(decorateShards(shards, nodes), function (obj, shard) {
-        obj = createIndex(obj, shard);
-        obj = createNodeAddShard(obj, shard);
-        return obj;
-      }, {});
-
-      return _(data)
-      .values()
-      .sortBy(index => [ !index.unassignedPrimaries, /^\./.test(index.name), index.name ])
-      .value();
-    };
+    return _(data)
+    .values()
+    .sortBy(index => [ !index.unassignedPrimaries, /^\./.test(index.name), index.name ])
+    .value();
   };
+};
 
-});

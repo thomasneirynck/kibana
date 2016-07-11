@@ -15,91 +15,87 @@
  * from Elasticsearch Incorporated.
  */
 
+var _ = require('lodash');
 
+var hasPrimaryChildren = require('../lib/hasPrimaryChildren');
+var decorateShards = require('../lib/decorateShards');
+var extractIp = require('../lib/extractIp');
 
-define(function (require) {
-  var _ = require('lodash');
+export default function nodesByIndicesFn() {
+  return function nodesByIndices(shards, nodes) {
 
-  var hasPrimaryChildren = require('../lib/hasPrimaryChildren');
-  var decorateShards = require('../lib/decorateShards');
-  var extractIp = require('../lib/extractIp');
-
-  return function () {
-    return function nodesByIndices(shards, nodes) {
-
-      var getNodeType = function (node) {
-        if (node.attributes.client === 'true') {
-          return 'client';
-        }
-        if (node.attributes.data === 'false') {
-          return node.attributes.master === 'true' ? 'master' : 'client';
-        }
-        if (node.attributes.master === 'false') {
-          // we know data is true here..
-          return 'data';
-        }
-        return 'normal';
-      };
-
-      function createNode(obj, node, id) {
-        node.details = extractIp(node);
-        node.ip_port = extractIp(node);
-        node.type = 'node';
-        node.children = [];
-        var nodeType = getNodeType(node);
-        if (nodeType === 'normal' || nodeType === 'data') {
-          obj[id] = node;
-        }
-        return obj;
+    var getNodeType = function (node) {
+      if (node.attributes.client === 'true') {
+        return 'client';
       }
-
-      function createIndexAddShard(obj, shard) {
-        var node = shard.resolver || 'unassigned';
-        var index = shard.index;
-        if (!obj[node]) {
-          createNode(obj, nodes[node], node);
-        }
-        var indexObj = _.find(obj[node].children, { id: index });
-        if (!indexObj) {
-          indexObj = {
-            id: index,
-            name: index,
-            type: 'index',
-            children: []
-          };
-          obj[node].children.push(indexObj);
-        }
-        indexObj.children.push(shard);
-        return obj;
+      if (node.attributes.data === 'false') {
+        return node.attributes.master === 'true' ? 'master' : 'client';
       }
-
-      function isUnassigned(shard) {
-        return shard.state === 'UNASSIGNED';
+      if (node.attributes.master === 'false') {
+        // we know data is true here..
+        return 'data';
       }
+      return 'normal';
+    };
 
-      var data = {};
-      if (_.some(shards, isUnassigned)) {
-        data.unassigned = {
-          name: 'Unassigned',
-          master: false,
-          type: 'node',
+    function createNode(obj, node, id) {
+      node.details = extractIp(node);
+      node.ip_port = extractIp(node);
+      node.type = 'node';
+      node.children = [];
+      var nodeType = getNodeType(node);
+      if (nodeType === 'normal' || nodeType === 'data') {
+        obj[id] = node;
+      }
+      return obj;
+    }
+
+    function createIndexAddShard(obj, shard) {
+      var node = shard.resolver || 'unassigned';
+      var index = shard.index;
+      if (!obj[node]) {
+        createNode(obj, nodes[node], node);
+      }
+      var indexObj = _.find(obj[node].children, { id: index });
+      if (!indexObj) {
+        indexObj = {
+          id: index,
+          name: index,
+          type: 'index',
           children: []
         };
+        obj[node].children.push(indexObj);
       }
+      indexObj.children.push(shard);
+      return obj;
+    }
 
-      data = _.reduce(decorateShards(shards, nodes), createIndexAddShard, data);
+    function isUnassigned(shard) {
+      return shard.state === 'UNASSIGNED';
+    }
 
-      return _(data).values()
-        .sortBy(function (node) {
-          return [ node.name !== 'Unassigned', !node.master, node.name ];
-        })
-        .map(function (node) {
-          if (node.name === 'Unassigned') {
-            node.unassignedPrimaries = node.children.some(hasPrimaryChildren);
-          }
-          return node;
-        })
-        .value();
-    };
+    var data = {};
+    if (_.some(shards, isUnassigned)) {
+      data.unassigned = {
+        name: 'Unassigned',
+        master: false,
+        type: 'node',
+        children: []
+      };
+    }
+
+    data = _.reduce(decorateShards(shards, nodes), createIndexAddShard, data);
+
+    return _(data).values()
+      .sortBy(function (node) {
+        return [ node.name !== 'Unassigned', !node.master, node.name ];
+      })
+      .map(function (node) {
+        if (node.name === 'Unassigned') {
+          node.unassignedPrimaries = node.children.some(hasPrimaryChildren);
+        }
+        return node;
+      })
+      .value();
   };
-});
+};

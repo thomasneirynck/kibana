@@ -15,17 +15,14 @@
  * from Elasticsearch Incorporated.
  */
 
+var _ = require('lodash');
 
-
-define(function (require) {
-  var _ = require('lodash');
-  return function filterByName(name) {
-    return function (row) {
-      if (!_.isEmpty(name)) {
-        var regex = new RegExp(name, 'i');
-        return (row.ip_port && regex.test(row.ip_port)) || regex.test(row.name);
-      }
-      return true;
-    };
+export default function filterByName(name) {
+  return function (row) {
+    if (!_.isEmpty(name)) {
+      var regex = new RegExp(name, 'i');
+      return (row.ip_port && regex.test(row.ip_port)) || regex.test(row.name);
+    }
+    return true;
   };
-});
+};
