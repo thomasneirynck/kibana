@@ -71,9 +71,6 @@ module.directive('monitoringKibanaListing', function (kbnUrl) {
           this.setState(newProps);
         },
         render: function () {
-          // const boundTemplateFn = _.bind(makeTdWithPropKey, this, scope);
-          // const $tdsArr = initialTableOptions.columns.map(boundTemplateFn);
-          // return make.tr({}, $tdsArr);
           const { status, statusClass, iconClass } = getStatusAndClasses(this.props.kibana.status, this.props.availability);
           return (
             <tr key={`row-${this.props.resolver}`} className='big'>
