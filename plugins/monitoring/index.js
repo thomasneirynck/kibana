@@ -5,7 +5,7 @@ var pluginSelfCheck = require('./server/lib/plugin_self_check');
 var instantiateClient = require('./server/lib/es_client/instantiate_client');
 var initKibanaMonitoring = require('./server/kibana_monitoring');
 
-module.exports = function (kibana) {
+export default function monitoringIndex(kibana) {
   return new kibana.Plugin({
     require: ['kibana', 'elasticsearch', 'xpack_main'],
     id: 'monitoring',

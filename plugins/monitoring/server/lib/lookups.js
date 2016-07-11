@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   nodeTypeClass: {
     invalid: 'fa-exclamation-triangle',
     node: 'fa-server',

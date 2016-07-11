@@ -15,7 +15,7 @@
  * from Elasticsearch Incorporated.
  */
 
-module.exports = function decorateShards(shards, nodes) {
+export default function decorateShards(shards, nodes) {
   function setNodeName(shard) {
     var node = nodes[shard.resolver];
     shard.nodeName = (node && node.name) || null;

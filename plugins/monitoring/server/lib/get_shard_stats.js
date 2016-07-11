@@ -2,7 +2,8 @@ import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from 
 const _ = require('lodash');
 const createQuery = require('./create_query');
 const calculateNodeType = require('./calculate_node_type');
-module.exports = (req, indices, lastState) => {
+
+export default function getShardStats(req, indices, lastState) {
   const config = req.server.config();
   const nodeResolver = config.get('xpack.monitoring.node_resolver');
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;

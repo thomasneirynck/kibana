@@ -15,7 +15,7 @@ const getDefaultNodeFromId = require('../../../lib/get_default_node_from_id');
 const lookups = require('../../../lib/lookups');
 const handleError = require('../../../lib/handle_error');
 
-module.exports = (server) => {
+export default function nodesRoutes(server) {
   const config = server.config();
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 

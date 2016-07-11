@@ -4,7 +4,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import statusIconClass from '../../../lib/status_icon_class';
 
-class ClusterRow extends React.Component {
+export default class ClusterRow extends React.Component {
 
   changeCluster() {
     if (this.props.license.type === 'basic') return;
@@ -61,4 +61,3 @@ class ClusterRow extends React.Component {
   }
 
 }
-module.exports = ClusterRow;

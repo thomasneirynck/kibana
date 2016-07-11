@@ -35,7 +35,7 @@ function normalizeClustersData(clusters) {
   return clusters;
 }
 
-module.exports = (server) => {
+export default function clustersRoutes(server) {
   const config = server.config();
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
   const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');

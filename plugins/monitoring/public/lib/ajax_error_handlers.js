@@ -1,4 +1,4 @@
-module.exports = function ajaxErrorHandlersProvider(Notifier) {
+export default function ajaxErrorHandlersProvider(Notifier) {
   return {
     /* full-screen error message */
     fatalError(err) {

@@ -2,7 +2,8 @@ const _ = require('lodash');
 const Promise = require('bluebird');
 const createQuery = require('./create_query.js');
 const validateMonitoringLicense = require('./validate_monitoring_license');
-module.exports = function getClusters(req, indices) {
+
+export default function getClusters(req, indices) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const config = req.server.config();
   // Get the params from the POST body for the request

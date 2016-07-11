@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const createQuery = require('./create_query');
 
-module.exports = (req, _indices, filters, lastState) => {
+export default function getShardAllocation(req, _indices, filters, lastState) {
   filters.push({
     term: { state_uuid: _.get(lastState, 'cluster_state.state_uuid') }
   });

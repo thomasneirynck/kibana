@@ -2,7 +2,7 @@ const Promise = require('bluebird');
 const _ = require('lodash');
 const getSeries = require('./get_series');
 
-module.exports = function getMetrics(req, indices, filters = []) {
+export default function getMetrics(req, indices, filters = []) {
   const config = req.server.config();
   const metrics = req.payload.metrics || [];
   return Promise.map(metrics, metric => {

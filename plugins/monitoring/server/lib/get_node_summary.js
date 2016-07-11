@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const createQuery = require('./create_query.js');
-module.exports = (req, indices) => {
+
+export default function getNodeSummary(req, indices) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
 
   // Get the params from the POST body for the request

@@ -1,7 +1,7 @@
 import { get, find, indexBy } from 'lodash';
 import calculateAvailability from './calculate_availability';
 
-module.exports = function (req) {
+export default function getClustersHealth(req) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const config = req.server.config();
   return function (clusters) {

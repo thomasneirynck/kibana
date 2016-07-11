@@ -3,7 +3,7 @@
  */
 const handleError = require('../../../lib/handle_error');
 
-module.exports = (server) => {
+export default function phoneHomeRoutes(server) {
   const callWithRequest = server.plugins.monitoring.callWithRequest;
   server.route({
     path: '/api/monitoring/v1/phone-home',

@@ -17,7 +17,7 @@ const getClusterStatus = function (req, kibanaIndices, calledFrom) {
 /*
  * Kibana listing
  */
-module.exports = (server) => {
+export default function kibanaRoutes(server) {
   const config = server.config();
   const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');
   server.route({

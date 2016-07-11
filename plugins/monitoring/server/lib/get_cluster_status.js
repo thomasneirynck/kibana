@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const createQuery = require('./create_query.js');
 
-module.exports = (req, indices, lastState) => {
+export default function getClusterStatus(req, indices, lastState) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
 
   // Get the params from the POST body for the request
