@@ -1,10 +1,10 @@
-const _ = require('lodash');
-const moment = require('moment');
-const metrics = require('./metrics');
-const createQuery = require('./create_query.js');
-const calcAuto = require('./calculate_auto');
-const filterPartialBuckets = require('./filter_partial_buckets');
-const pickMetricFields = require('./pick_metric_fields');
+import _ from 'lodash';
+import moment from 'moment';
+import metrics from './metrics';
+import createQuery from './create_query.js';
+import calcAuto from './calculate_auto';
+import filterPartialBuckets from './filter_partial_buckets';
+import pickMetricFields from './pick_metric_fields';
 
 export default function getSeries(req, indices, metricName, filters) {
   const config = req.server.config();

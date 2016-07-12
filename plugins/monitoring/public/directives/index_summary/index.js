@@ -1,7 +1,9 @@
 import { capitalize, get } from 'lodash';
 import statusIconClass from '../../lib/status_icon_class';
-const mod = require('ui/modules').get('monitoring/directives', []);
-const template = require('plugins/monitoring/directives/index_summary/index.html');
+import template from 'plugins/monitoring/directives/index_summary/index.html';
+import uiModules from 'ui/modules';
+
+const mod = uiModules.get('monitoring/directives', []);
 mod.directive('monitoringIndexSummary', () => {
   return {
     restrict: 'E',

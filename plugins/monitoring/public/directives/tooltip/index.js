@@ -1,9 +1,9 @@
-const React = require('react');
-const make = React.DOM;
-const _ = require('lodash');
-const Vector = require('./vector');
-const Bounds = require('./bounds');
+import React from 'react';
+import _ from 'lodash';
+import Vector from './vector';
+import Bounds from './bounds';
 
+const make = React.DOM;
 const TooltipComponent = React.createClass({
   render: function () {
     // make the contents of the tooltip

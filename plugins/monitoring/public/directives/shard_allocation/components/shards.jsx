@@ -15,9 +15,9 @@
  * from Elasticsearch Incorporated.
  */
 
-var _ = require('lodash');
-var React = require('react');
-var calculateClass = require('../lib/calculateClass');
+import _ from 'lodash';
+import React from 'react';
+import calculateClass from '../lib/calculateClass';
 
 function sortByShard(shard) {
   if (shard.node) {
@@ -26,7 +26,7 @@ function sortByShard(shard) {
   return [!shard.primary, shard.shard];
 }
 
-var Shard = React.createClass({
+const Shard = React.createClass({
   displayName: 'Shard',
   render: function () {
     var shard = this.props.shard;

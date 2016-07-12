@@ -1,4 +1,5 @@
-var _ = require('lodash');
+import _ from 'lodash';
+
 function addOne(obj, key) {
   var value = _.get(obj, key);
   _.set(obj, key, ++value);

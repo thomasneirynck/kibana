@@ -1,7 +1,7 @@
-var React = require('react');
-var make = React.DOM;
+import React from 'react';
 
-var ToggleOnClickComponent = React.createClass({
+const make = React.DOM;
+const ToggleOnClickComponent = React.createClass({
   getInitialState: function () {
     return { visible: this.props.initiallyVisible || false };
   },

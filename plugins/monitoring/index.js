@@ -1,9 +1,9 @@
 import { join, resolve } from 'path';
 import Promise from 'bluebird';
 import requireAllAndApply from '../../server/lib/require_all_and_apply';
-var pluginSelfCheck = require('./server/lib/plugin_self_check');
-var instantiateClient = require('./server/lib/es_client/instantiate_client');
-var initKibanaMonitoring = require('./server/kibana_monitoring');
+import pluginSelfCheck from './server/lib/plugin_self_check';
+import instantiateClient from './server/lib/es_client/instantiate_client';
+import initKibanaMonitoring from './server/kibana_monitoring';
 
 export default function monitoringIndex(kibana) {
   return new kibana.Plugin({

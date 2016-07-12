@@ -15,8 +15,8 @@
  * from Elasticsearch Incorporated.
  */
 
-var indicesByNodes = require('../transformers/indicesByNodes');
-var nodesByIndices = require('../transformers/nodesByIndices');
+import indicesByNodes from '../transformers/indicesByNodes';
+import nodesByIndices from '../transformers/nodesByIndices';
 
 // This will curry a transform function based on the view.
 export default function transform(view, $scope) {

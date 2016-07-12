@@ -15,11 +15,10 @@
  * from Elasticsearch Incorporated.
  */
 
-var _ = require('lodash');
-
-var hasPrimaryChildren = require('../lib/hasPrimaryChildren');
-var decorateShards = require('../lib/decorateShards');
-var extractIp = require('../lib/extractIp');
+import _ from 'lodash';
+import hasPrimaryChildren from '../lib/hasPrimaryChildren';
+import decorateShards from '../lib/decorateShards';
+import extractIp from '../lib/extractIp';
 
 export default function nodesByIndicesFn() {
   return function nodesByIndices(shards, nodes) {

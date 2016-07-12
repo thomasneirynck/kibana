@@ -1,6 +1,6 @@
-const Promise = require('bluebird');
-const _ = require('lodash');
-const getSeries = require('./get_series');
+import _ from 'lodash';
+import Promise from 'bluebird';
+import getSeries from './get_series';
 
 export default function getMetrics(req, indices, filters = []) {
   const config = req.server.config();

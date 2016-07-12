@@ -1,25 +1,26 @@
-var module = require('ui/modules').get('monitoring/filters', []);
-var formatNumber = require('plugins/monitoring/lib/format_number');
-var extractIp = require('plugins/monitoring/lib/extract_ip');
-var moment = require('moment-timezone');
-var _ = require('lodash');
+import _ from 'lodash';
+import moment from 'moment-timezone';
+import uiModules from 'ui/modules';
+import formatNumber from 'plugins/monitoring/lib/format_number';
+import extractIp from 'plugins/monitoring/lib/extract_ip';
 
-module.filter('localizedDate', function () {
+const mod = uiModules.get('monitoring/filters', []);
+mod.filter('localizedDate', function () {
   return function (input) {
     return moment.tz(input, moment.tz.guess()).format('LLL z');
   };
 });
 
-module.filter('capitalize', function () {
+mod.filter('capitalize', function () {
   return function (input) {
     return _.capitalize(input.toLowerCase());
   };
 });
 
-module.filter('formatNumber', function () {
+mod.filter('formatNumber', function () {
   return formatNumber;
 });
 
-module.filter('extractIp', function () {
+mod.filter('extractIp', function () {
   return extractIp;
 });

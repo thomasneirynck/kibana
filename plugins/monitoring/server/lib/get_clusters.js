@@ -1,7 +1,7 @@
-const _ = require('lodash');
-const Promise = require('bluebird');
-const createQuery = require('./create_query.js');
-const validateMonitoringLicense = require('./validate_monitoring_license');
+import _ from 'lodash';
+import Promise from 'bluebird';
+import createQuery from './create_query.js';
+import validateMonitoringLicense from './validate_monitoring_license';
 
 export default function getClusters(req, indices) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;

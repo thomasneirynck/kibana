@@ -1,3 +1,5 @@
-const mod = require('ui/modules').get('monitoring/directives', []);
+import uiModules from 'ui/modules';
+
+const mod = uiModules.get('monitoring/directives', []);
 
 mod.service('sessionTimeout', () => {});

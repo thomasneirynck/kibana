@@ -15,9 +15,9 @@
  * from Elasticsearch Incorporated.
  */
 
-var React = require('react');
-var calculateClass = require('../lib/calculateClass');
-var vents = require('../lib/vents');
+import React from 'react';
+import calculateClass from '../lib/calculateClass';
+import vents from '../lib/vents';
 
 export default React.createClass({
   displayName: 'Shard',

@@ -15,9 +15,9 @@
  * from Elasticsearch Incorporated.
  */
 
-var _ = require('lodash');
-var getValueFromArrayOrString = require('../lib/getValueFromArrayOrString');
-var moment = require('moment');
+import _ from 'lodash';
+import moment from 'moment';
+import getValueFromArrayOrString from '../lib/getValueFromArrayOrString';
 
 export default function getTimelineDataFn($rootScope, timefilter, es) {
   var getTimelineData = function (direction, indexPattern, cluster, size, timeRange, data, position, indices) {

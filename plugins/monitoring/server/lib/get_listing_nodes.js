@@ -23,12 +23,12 @@
  * going up, and likewise if the metric is going down, we have a down arrow
  */
 
-const moment = require('moment');
-const createQuery = require('./create_query.js');
-const calcAuto = require('./calculate_auto');
-const metrics = require('./metrics');
-const nodeAggVals = require('./node_agg_vals');
-const mapListingResponse = require('./map_listing_response');
+import moment from 'moment';
+import createQuery from './create_query.js';
+import calcAuto from './calculate_auto';
+import metrics from './metrics';
+import { getLatestAggKey, getNodeAttribute } from './node_agg_vals';
+import mapListingResponse from './map_listing_response';
 
 export default function getListingNodes(req, indices) {
   const config = req.server.config();
@@ -119,12 +119,12 @@ export default function getListingNodes(req, indices) {
       // for node names
       nodes: buckets.reduce(function (prev, curr) {
         prev[curr.key] = {
-          name: nodeAggVals.getLatestAggKey(curr.node_name.buckets),
-          transport_address: nodeAggVals.getLatestAggKey(curr.node_transport_address.buckets),
+          name: getLatestAggKey(curr.node_name.buckets),
+          transport_address: getLatestAggKey(curr.node_transport_address.buckets),
           node_ids: curr.node_ids.buckets.map(bucket => bucket.key), // needed in calculate_node_type to check if current master node
           attributes: {
-            data: nodeAggVals.getNodeAttribute(curr.node_data_attributes.buckets),
-            master: nodeAggVals.getNodeAttribute(curr.node_master_attributes.buckets)
+            data: getNodeAttribute(curr.node_data_attributes.buckets),
+            master: getNodeAttribute(curr.node_master_attributes.buckets)
           }
         };
         return prev;

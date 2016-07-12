@@ -15,12 +15,12 @@
  * from Elasticsearch Incorporated.
  */
 
-var transform = require('./transform');
-var filterByName = require('./filterByName');
-var countChildren = require('./countChildren');
-var hasUnassigned = require('./hasUnassigned');
-var labels = require('./labels');
-var _ = require('lodash');
+import _ from 'lodash';
+import transform from './transform';
+import filterByName from './filterByName';
+import countChildren from './countChildren';
+import hasUnassigned from './hasUnassigned';
+import labels from './labels';
 
 // This function will update the state of the ui. It requires the $scope
 // to be passed in as the first argument.

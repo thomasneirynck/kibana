@@ -1,8 +1,9 @@
-var _ = require('lodash');
-var React = require('react');
-var make = React.DOM;
-var Loading = require('./loading.jsx');
-var NoData = require('./no_data.jsx');
+import _ from 'lodash';
+import React from 'react';
+import Loading from './loading.jsx';
+import NoData from './no_data.jsx';
+
+const make = React.DOM;
 
 export default React.createClass({
   displayName: 'TableBody',

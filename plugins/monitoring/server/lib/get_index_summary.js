@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const createQuery = require('./create_query.js');
+import _ from 'lodash';
+import createQuery from './create_query.js';
 
 export default function getIndexSummary(req, indices) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;

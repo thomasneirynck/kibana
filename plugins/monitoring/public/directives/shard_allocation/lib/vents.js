@@ -15,9 +15,9 @@
  * from Elasticsearch Incorporated.
  */
 
-var _ = require('lodash');
-var vents = {};
+import _ from 'lodash';
 
+const vents = {};
 export default {
   vents: vents,
   on: function (id, cb) {

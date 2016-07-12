@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import { formatDateTimeLocal } from '../../../lib/formatting';
+import template from 'plugins/monitoring/directives/shard_activity/index.html';
+import formatNumber from 'plugins/monitoring/lib/format_number';
+import uiModules from 'ui/modules';
 
-var template = require('plugins/monitoring/directives/shard_activity/index.html');
-var module = require('ui/modules').get('monitoring/directives', []);
-var formatNumber = require('plugins/monitoring/lib/format_number');
-
-module.directive('monitoringShardActivity', function () {
+const mod = uiModules.get('monitoring/directives', []);
+mod.directive('monitoringShardActivity', function () {
   return {
     restrict: 'E',
     scope: {

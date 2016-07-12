@@ -15,11 +15,12 @@
  * from Elasticsearch Incorporated.
  */
 
-var React = require('react');
-var ClusterView = require('plugins/monitoring/directives/shard_allocation/components/clusterView');
-var module = require('ui/modules').get('monitoring/directives', []);
+import React from 'react';
+import ClusterView from 'plugins/monitoring/directives/shard_allocation/components/clusterView';
+import uiModules from 'ui/modules';
 
-module.directive('clusterView', function (kbnUrl) {
+const mod = uiModules.get('monitoring/directives', []);
+mod.directive('clusterView', function (kbnUrl) {
   return {
     restrict: 'E',
     scope: {

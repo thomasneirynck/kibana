@@ -2,18 +2,18 @@ import Promise from 'bluebird';
 import _ from 'lodash';
 import Joi from 'joi';
 import getLastRecovery from '../../../lib/get_last_recovery';
-const calculateIndices = require('../../../lib/calculate_indices');
-const getClusters = require('../../../lib/get_clusters');
-const getClustersStats = require('../../../lib/get_clusters_stats');
-const getClustersHealth = require('../../../lib/get_clusters_health');
-const getKibanasForClusters = require('../../../lib/get_kibanas_for_clusters');
-const calculateOverallStatus = require('../../../lib/calculate_overall_status');
-const getLastState = require('../../../lib/get_last_state');
-const getClusterStatus = require('../../../lib/get_cluster_status');
-const getMetrics = require('../../../lib/get_metrics');
-const getShardStats = require('../../../lib/get_shard_stats');
-const calculateClusterStatus = require('../../../lib/elasticsearch/calculate_cluster_status');
-const handleError = require('../../../lib/handle_error');
+import calculateIndices from '../../../lib/calculate_indices';
+import getClusters from '../../../lib/get_clusters';
+import getClustersStats from '../../../lib/get_clusters_stats';
+import getClustersHealth from '../../../lib/get_clusters_health';
+import getKibanasForClusters from '../../../lib/get_kibanas_for_clusters';
+import calculateOverallStatus from '../../../lib/calculate_overall_status';
+import getLastState from '../../../lib/get_last_state';
+import getClusterStatus from '../../../lib/get_cluster_status';
+import getMetrics from '../../../lib/get_metrics';
+import getShardStats from '../../../lib/get_shard_stats';
+import calculateClusterStatus from '../../../lib/elasticsearch/calculate_cluster_status';
+import handleError from '../../../lib/handle_error';
 
 // manipulate cluster status
 function normalizeClustersData(clusters) {

@@ -15,8 +15,8 @@
  * from Elasticsearch Incorporated.
  */
 
-var React = require('react');
-var _ = require('lodash');
+import _ from 'lodash';
+import React from 'react';
 
 export default React.createClass({
   displayName: 'Segments',

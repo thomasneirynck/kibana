@@ -15,11 +15,11 @@
  * from Elasticsearch Incorporated.
  */
 
-var React = require('react');
-var Shard = require('./shard.jsx');
-var calculateClass = require('../lib/calculateClass');
-var _ = require('lodash');
-var generateQueryAndLink = require('../lib/generateQueryAndLink');
+import _ from 'lodash';
+import React from 'react';
+import Shard from './shard.jsx';
+import calculateClass from '../lib/calculateClass';
+import generateQueryAndLink from '../lib/generateQueryAndLink';
 
 function sortByName(item) {
   if (item.type === 'node') {

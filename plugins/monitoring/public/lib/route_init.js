@@ -1,8 +1,10 @@
 import _ from 'lodash';
+import phoneHomeProvider from 'plugins/monitoring/lib/phone_home';
+import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
 
 export default function routeInitProvider(Private, monitoringClusters, globalState, license, kbnUrl) {
-  const phoneHome = Private(require('plugins/monitoring/lib/phone_home'));
-  const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
+  const phoneHome = Private(phoneHomeProvider);
+  const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
 
   function isOnPage(hash) {
     return _.contains(window.location.hash, hash);

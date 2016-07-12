@@ -15,9 +15,9 @@
  * from Elasticsearch Incorporated.
  */
 
-var React = require('react');
-var Unassigned = require('./unassigned.jsx');
-var Assigned = require('./assigned.jsx');
+import React from 'react';
+import Unassigned from './unassigned.jsx';
+import Assigned from './assigned.jsx';
 
 class ShardRow extends React.Component {
   render() {

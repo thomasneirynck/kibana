@@ -15,9 +15,9 @@
  * from Elasticsearch Incorporated.
  */
 
-var React = require('react');
-var Shard = require('./shard.jsx');
-var _ = require('lodash');
+import _ from 'lodash';
+import React from 'react';
+import Shard from './shard.jsx';
 
 export default React.createClass({
   displayName: 'Unassigned',

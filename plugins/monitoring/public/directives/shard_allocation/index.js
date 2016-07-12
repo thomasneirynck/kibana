@@ -1,12 +1,14 @@
-const labels = require('plugins/monitoring/directives/shard_allocation/lib/labels');
-const indicesByNodes = require('plugins/monitoring/directives/shard_allocation/transformers/indicesByNodes');
-const nodesByIndices = require('plugins/monitoring/directives/shard_allocation/transformers/nodesByIndices');
-const app = require('ui/modules').get('monitoring/directives', []);
-require('plugins/monitoring/directives/shard_allocation/directives/clusterView');
-app.directive('monitoringShardAllocation', () => {
+import labels from 'plugins/monitoring/directives/shard_allocation/lib/labels';
+import indicesByNodes from 'plugins/monitoring/directives/shard_allocation/transformers/indicesByNodes';
+import nodesByIndices from 'plugins/monitoring/directives/shard_allocation/transformers/nodesByIndices';
+import uiModules from 'ui/modules';
+import template from 'plugins/monitoring/directives/shard_allocation/index.html';
+
+const mod = uiModules.get('monitoring/directives', []);
+mod.directive('monitoringShardAllocation', () => {
   return {
     restrict: 'E',
-    template: require('plugins/monitoring/directives/shard_allocation/index.html'),
+    template,
     scope: {
       view: '@',
       shards: '=',

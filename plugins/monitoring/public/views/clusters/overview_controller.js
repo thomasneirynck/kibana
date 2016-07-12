@@ -1,21 +1,24 @@
 import _ from 'lodash';
-const module = require('ui/modules').get('monitoring', ['monitoring/directives']);
+import uiRoutes from 'ui/routes';
+import uiModules from 'ui/modules';
+import routeInitProvider from 'plugins/monitoring/lib/route_init';
+import template from 'plugins/monitoring/views/clusters/overview_template.html';
 
-require('ui/routes')
-.when('/overview', {
-  template: require('plugins/monitoring/views/clusters/overview_template.html'),
+uiRoutes.when('/overview', {
+  template,
   resolve: {
     // Data for overview for single cluster simply uses the set of clusters
     // returned from routeInit, and finds the cluster with the current UUID in
     // globalState.
     clusters: function (Private) {
-      const routeInit = Private(require('plugins/monitoring/lib/route_init'));
+      const routeInit = Private(routeInitProvider);
       return routeInit();
     }
   }
 });
 
-module.controller('overview', ($scope, $route, monitoringClusters, timefilter, title, globalState, $executor) => {
+const mod = uiModules.get('monitoring', ['monitoring/directives']);
+mod.controller('overview', ($scope, $route, monitoringClusters, timefilter, title, globalState, $executor) => {
   // This will show the timefilter
   timefilter.enabled = true;
 

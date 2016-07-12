@@ -5,7 +5,7 @@
  *  - client only node: --node.data=false --node.master=false
  *  https://www.elastic.co/guide/en/elasticsearch/reference/2.x/modules-node.html
  */
-const { includes, isUndefined } = require('lodash');
+import { includes, isUndefined } from 'lodash';
 
 export default function calculateNodeType(node, state) {
   const attrs = node.attributes || {};

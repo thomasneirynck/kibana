@@ -1,8 +1,12 @@
 /**
  * Controller for Overview Page
  */
-const mod = require('ui/modules').get('monitoring', [ 'monitoring/directives' ]);
-const _ = require('lodash');
+import _ from 'lodash';
+import uiRoutes from'ui/routes';
+import uiModules from 'ui/modules';
+import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
+import routeInitProvider from 'plugins/monitoring/lib/route_init';
+import template from 'plugins/monitoring/views/elasticsearch/overview/overview_template.html';
 
 function getPageData(timefilter, globalState, $http, Private) {
   const timeBounds = timefilter.getBounds();
@@ -27,23 +31,23 @@ function getPageData(timefilter, globalState, $http, Private) {
   })
   .then(response => response.data)
   .catch((err) => {
-    const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
+    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
     return ajaxErrorHandlers.fatalError(err);
   });
 }
 
-require('ui/routes')
-.when('/elasticsearch', {
-  template: require('plugins/monitoring/views/elasticsearch/overview/overview_template.html'),
+uiRoutes.when('/elasticsearch', {
+  template,
   resolve: {
     clusters: function (Private) {
-      const routeInit = Private(require('plugins/monitoring/lib/route_init'));
+      const routeInit = Private(routeInitProvider);
       return routeInit();
     },
     pageData: getPageData
   }
 });
 
+const mod = uiModules.get('monitoring', [ 'monitoring/directives' ]);
 mod.controller('elasticsearch-overview', (
   $route, globalState, timefilter, $http, title, Private, $executor, monitoringClusters, $scope
 ) => {

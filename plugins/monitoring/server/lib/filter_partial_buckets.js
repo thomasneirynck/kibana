@@ -1,4 +1,4 @@
-const moment = require('moment');
+import moment from 'moment';
 
 /* calling .subtract or .add on a moment object mutates the object
  * so this function shortcuts creating a fresh object */

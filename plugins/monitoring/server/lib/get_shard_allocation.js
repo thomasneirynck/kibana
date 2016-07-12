@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const createQuery = require('./create_query');
+import _ from 'lodash';
+import createQuery from './create_query';
 
 export default function getShardAllocation(req, _indices, filters, lastState) {
   filters.push({

@@ -1,9 +1,9 @@
-const mod = require('ui/modules').get('monitoring', [
-  'monitoring/directives'
-]);
-require('ui/routes')
-.when('/no-data', {
-  template: require('plugins/monitoring/views/no_data/no_data_template.html'),
+import uiRoutes from 'ui/routes';
+import uiModules from 'ui/modules';
+import template from 'plugins/monitoring/views/no_data/no_data_template.html';
+
+uiRoutes.when('/no-data', {
+  template,
   resolve: {
     clusters: (monitoringClusters, kbnUrl, Promise) => {
       return monitoringClusters()
@@ -19,6 +19,7 @@ require('ui/routes')
 })
 .otherwise({ redirectTo: '/home' });
 
+const mod = uiModules.get('monitoring', [ 'monitoring/directives' ]);
 mod.controller('noData', (kbnUrl, $executor, monitoringClusters, timefilter, $scope) => {
   timefilter.enabled = true;
 

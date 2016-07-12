@@ -2,7 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import statusIconClass from '../../lib/status_icon_class';
-const formatNumber = require('../../lib/format_number');
+import formatNumber from '../../lib/format_number';
 
 class ClusterItemContainer extends React.Component {
   render() {

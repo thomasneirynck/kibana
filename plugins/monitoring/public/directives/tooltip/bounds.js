@@ -1,4 +1,4 @@
-const Vector = require('./vector');
+import Vector from './vector';
 
 export default class Bounds {
   constructor(v1, v2) {

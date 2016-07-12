@@ -15,7 +15,7 @@
  * from Elasticsearch Incorporated.
  */
 
-var _ = require('lodash');
+import _ from 'lodash';
 
 export default function hasPrimaryChildren(item)  {
   return _.some(item.children, { primary: true });

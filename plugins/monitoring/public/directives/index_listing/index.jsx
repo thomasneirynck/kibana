@@ -1,10 +1,11 @@
-var _ = require('lodash');
-var numeral = require('numeral');
-var module = require('ui/modules').get('monitoring/directives', []);
-var React = require('react');
-var Table = require('plugins/monitoring/directives/paginated_table/components/table');
+import _ from 'lodash';
+import numeral from 'numeral';
+import React from 'react';
+import Table from 'plugins/monitoring/directives/paginated_table/components/table';
+import uiModules from 'ui/modules';
 
-module.directive('monitoringIndexListing', function (kbnUrl) {
+const mod = uiModules.get('monitoring/directives', []);
+mod.directive('monitoringIndexListing', function (kbnUrl) {
   var initialTableOptions = {
     title: 'Indices',
     searchPlaceholder: 'Filter Indices',

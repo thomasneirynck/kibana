@@ -15,7 +15,7 @@
  * from Elasticsearch Incorporated.
  */
 
-var _ = require('lodash');
+import _ from 'lodash';
 
 export default function filterByName(name) {
   return function (row) {

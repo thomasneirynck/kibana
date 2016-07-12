@@ -15,9 +15,9 @@
  * from Elasticsearch Incorporated.
  */
 
-var React = require('react');
-var TableHead = require('./tableHead.jsx');
-var TableBody = require('./tableBody.jsx');
+import React from 'react';
+import TableHead from './tableHead.jsx';
+import TableBody from './tableBody.jsx';
 
 export default React.createClass({
   displayName: 'ClusterView',

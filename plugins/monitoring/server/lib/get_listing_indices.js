@@ -10,11 +10,11 @@
  * for charting. This method is shared by the get_listing_nodes lib.
  */
 
-const moment = require('moment');
-const createQuery = require('./create_query.js');
-const calcAuto = require('./calculate_auto');
-const metrics = require('./metrics');
-const mapListingResponse = require('./map_listing_response');
+import moment from 'moment';
+import createQuery from './create_query.js';
+import calcAuto from './calculate_auto';
+import metrics from './metrics';
+import mapListingResponse from './map_listing_response';
 
 export default function getListingIndices(req, indices) {
   const config = req.server.config();

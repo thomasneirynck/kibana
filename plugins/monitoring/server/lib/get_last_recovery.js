@@ -1,5 +1,5 @@
 import _ from 'lodash';
-const createQuery = require('./create_query.js');
+import createQuery from './create_query.js';
 
 /**
  * Filter out shard activity that we do not care about.

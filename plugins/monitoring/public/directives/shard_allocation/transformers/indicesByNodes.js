@@ -15,8 +15,8 @@
  * from Elasticsearch Incorporated.
  */
 
-var _ = require('lodash');
-var decorateShards = require('../lib/decorateShards');
+import _ from 'lodash';
+import decorateShards from '../lib/decorateShards';
 
 export default function indicesByNodes() {
   return function indicesByNode(shards, nodes) {

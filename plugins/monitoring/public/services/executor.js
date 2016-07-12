@@ -1,6 +1,7 @@
-const _ = require('lodash');
+import _ from 'lodash';
+import uiModules from 'ui/modules';
 
-const mod = require('ui/modules').get('monitoring/executor', []);
+const mod = uiModules.get('monitoring/executor', []);
 mod.service('$executor', (Promise, $timeout, timefilter) => {
 
   const queue = [];

@@ -1,7 +1,7 @@
+import _ from 'lodash';
 import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from './normalize_shard_objects';
-const _ = require('lodash');
-const createQuery = require('./create_query');
-const calculateNodeType = require('./calculate_node_type');
+import createQuery from './create_query';
+import calculateNodeType from './calculate_node_type';
 
 export default function getShardStats(req, indices, lastState) {
   const config = req.server.config();

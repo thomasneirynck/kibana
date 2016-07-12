@@ -1,15 +1,17 @@
+import _ from 'lodash';
+import numeral from 'numeral';
+import $ from 'jquery';
+import moment from 'moment';
 import VislibComponentsColorColorPaletteProvider from 'ui/vislib/components/color/color_palette';
-const _ = require('lodash');
-const numeral = require('numeral');
-const $ = require('jquery');
-const moment = require('moment');
-require('flot-charts/jquery.flot');
-require('flot-charts/jquery.flot.time');
-require('flot-charts/jquery.flot.canvas');
-require('flot-charts/jquery.flot.symbol');
-require('flot-charts/jquery.flot.crosshair');
-require('flot-charts/jquery.flot.selection');
-const app = require('ui/modules').get('plugins/monitoring/directives', []);
+import uiModules from 'ui/modules';
+import template from 'plugins/monitoring/directives/chart/index.html';
+import 'flot-charts/jquery.flot';
+import 'flot-charts/jquery.flot.time';
+import 'flot-charts/jquery.flot.canvas';
+import 'flot-charts/jquery.flot.symbol';
+import 'flot-charts/jquery.flot.crosshair';
+import 'flot-charts/jquery.flot.selection';
+
 const appColors = Object.freeze({
   elasticsearch: '#3ebeb0',
   kibana: '#e8488b'
@@ -19,10 +21,11 @@ function get(series, attr) {
   return _.chain(series).pluck(attr).last().value();
 }
 
-app.directive('monitoringChart', () => {
+const mod = uiModules.get('plugins/monitoring/directives', []);
+mod.directive('monitoringChart', () => {
   return {
     restrict: 'E',
-    template: require('plugins/monitoring/directives/chart/index.html'),
+    template,
     scope: {
       series: '='
     },
@@ -61,7 +64,7 @@ app.directive('monitoringChart', () => {
   };
 });
 
-app.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private) => {
+mod.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private) => {
   const getColors = Private(VislibComponentsColorColorPaletteProvider);
 
   return {

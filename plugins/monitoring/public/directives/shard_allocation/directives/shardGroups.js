@@ -15,10 +15,11 @@
  * from Elasticsearch Incorporated.
  */
 
-var module = require('ui/modules').get('monitoring/directives', []);
-var calculateClass = require('../lib/calculateClass');
+import calculateClass from '../lib/calculateClass';
+import uiModules from 'ui/modules';
 
-module.directive('shardGroups', function () {
+const mod = uiModules.get('monitoring/directives', []);
+mod.directive('shardGroups', function () {
   return {
     restrict: 'E',
     scope: {

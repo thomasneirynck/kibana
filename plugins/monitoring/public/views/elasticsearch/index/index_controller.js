@@ -1,15 +1,18 @@
 /**
  * Controller for single index detail
  */
-const _ = require('lodash');
-const mod = require('ui/modules').get('monitoring', []);
+import _ from 'lodash';
+import uiRoutes from 'ui/routes';
+import uiModules from 'ui/modules';
+import routeInitProvider from 'plugins/monitoring/lib/route_init';
+import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
+import template from 'plugins/monitoring/views/elasticsearch/index/index_template.html';
 
-require('ui/routes')
-.when('/indices/:index', {
-  template: require('plugins/monitoring/views/elasticsearch/index/index_template.html'),
+uiRoutes.when('/indices/:index', {
+  template,
   resolve: {
     clusters: function (Private) {
-      const routeInit = Private(require('plugins/monitoring/lib/route_init'));
+      const routeInit = Private(routeInitProvider);
       return routeInit();
     },
     pageData: getPageData
@@ -45,11 +48,12 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
   })
   .then(response => response.data)
   .catch((err) => {
-    const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
+    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
     return ajaxErrorHandlers.fatalError(err);
   });
 }
 
+const mod = uiModules.get('monitoring', []);
 mod.controller('indexView', (timefilter, $route, title, Private, globalState, $executor, $http, monitoringClusters, $scope) => {
   timefilter.enabled = true;
 

@@ -15,9 +15,9 @@
  * from Elasticsearch Incorporated.
  */
 
-var _ = require('lodash');
-var moment = require('moment');
-var getValue = require('./getValueFromArrayOrString');
+import _ from 'lodash';
+import moment from 'moment';
+import getValue from './getValueFromArrayOrString';
 
 function markerMaker(count, time, timestamp) {
   return {

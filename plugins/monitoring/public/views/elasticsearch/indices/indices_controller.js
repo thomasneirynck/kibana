@@ -1,8 +1,12 @@
 /**
  * Controller for Index Listing
  */
-const _ = require('lodash');
-const mod = require('ui/modules').get('monitoring', [ 'monitoring/directives' ]);
+import _ from 'lodash';
+import uiRoutes from 'ui/routes';
+import uiModules from 'ui/modules';
+import routeInitProvider from 'plugins/monitoring/lib/route_init';
+import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
+import template from 'plugins/monitoring/views/elasticsearch/indices/indices_template.html';
 
 function getPageData(timefilter, globalState, $http, Private) {
   const timeBounds = timefilter.getBounds();
@@ -21,23 +25,23 @@ function getPageData(timefilter, globalState, $http, Private) {
   })
   .then(response => response.data)
   .catch((err) => {
-    const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
+    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
     return ajaxErrorHandlers.fatalError(err);
   });
 }
 
-require('ui/routes')
-.when('/indices', {
-  template: require('plugins/monitoring/views/elasticsearch/indices/indices_template.html'),
+uiRoutes.when('/indices', {
+  template,
   resolve: {
     clusters: function (Private) {
-      const routeInit = Private(require('plugins/monitoring/lib/route_init'));
+      const routeInit = Private(routeInitProvider);
       return routeInit();
     },
     pageData: getPageData
   }
 });
 
+const mod = uiModules.get('monitoring', [ 'monitoring/directives' ]);
 mod.controller('indices', ($route, globalState, timefilter, $http, title, Private, $executor, monitoringClusters, $scope) => {
 
   timefilter.enabled = true;

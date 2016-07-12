@@ -1,5 +1,7 @@
-const mod = require('ui/modules').get('monitoring/directives', []);
-const template = require('plugins/monitoring/directives/welcome_msg/index.html');
+import template from 'plugins/monitoring/directives/welcome_msg/index.html';
+import uiModules from 'ui/modules';
+
+const mod = uiModules.get('monitoring/directives', []);
 mod.directive('monitoringWelcomeMessage', function ($window, reportStats, features) {
   function showPerContext(scope) {
     switch (scope.context) {

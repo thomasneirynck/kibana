@@ -1,19 +1,20 @@
-const _ = require('lodash');
-const mod = require('ui/modules').get('monitoring', [
-  'monitoring/directives'
-]);
+import _ from 'lodash';
+import uiModules from 'ui/modules';
+import uiRoutes from'ui/routes';
+import routeInitProvider from 'plugins/monitoring/lib/route_init';
+import template from 'plugins/monitoring/views/license/index.html';
 
-require('ui/routes')
-.when('/license', {
-  template: require('plugins/monitoring/views/license/index.html'),
+uiRoutes.when('/license', {
+  template,
   resolve: {
     clusters(Private) {
-      var routeInit = Private(require('plugins/monitoring/lib/route_init'));
+      const routeInit = Private(routeInitProvider);
       return routeInit();
     }
   }
 });
 
+const mod = uiModules.get('monitoring', [ 'monitoring/directives' ]);
 mod.controller('licenseView', ($route, globalState, title, timefilter, $scope, $window) => {
   timefilter.enabled = false;
 

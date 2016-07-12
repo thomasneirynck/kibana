@@ -1,9 +1,10 @@
-var React = require('react');
-var _ = require('lodash');
-var TableHead = require('./tableHead');
-var TableBody = require('./tableBody');
-var Pagination = require('./pagination.jsx');
-var make = React.DOM;
+import _ from 'lodash';
+import React from 'react';
+import TableHead from './tableHead';
+import TableBody from './tableBody';
+import Pagination from './pagination';
+
+const make = React.DOM;
 
 function getFilteredData(data, filter) {
   function flattenStrings(obj) {
@@ -29,7 +30,7 @@ function getFilteredData(data, filter) {
   });
 }
 
-var Table = React.createClass({
+const Table = React.createClass({
   displayName: 'Table',
   getInitialState: function () {
     var sortColObj = null;

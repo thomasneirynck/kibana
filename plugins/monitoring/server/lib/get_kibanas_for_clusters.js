@@ -15,8 +15,9 @@ import Promise from 'bluebird';
 import _ from 'lodash';
 import moment from 'moment';
 import calculateOverallStatus from './calculate_overall_status';
-const calcAuto = require('./calculate_auto');
-const createQuery = require('./create_query.js');
+import calcAuto from './calculate_auto';
+import createQuery from './create_query.js';
+
 export default function getKibanasForClusters(req, indices, calledFrom) {
   if (indices.length < 1) return () => Promise.resolve([]);
 

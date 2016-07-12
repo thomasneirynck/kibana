@@ -1,10 +1,12 @@
 /*
  * Kibana Instance
  */
-const _ = require('lodash');
-const mod = require('ui/modules').get('monitoring', [
-  'monitoring/directives'
-]);
+import _ from 'lodash';
+import uiRoutes from'ui/routes';
+import uiModules from 'ui/modules';
+import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
+import routeInitProvider from 'plugins/monitoring/lib/route_init';
+import template from 'plugins/monitoring/views/kibana/instance/kibana_template.html';
 
 function getPageData(timefilter, globalState, $http, $route, Private) {
   const timeBounds = timefilter.getBounds();
@@ -44,23 +46,23 @@ function getPageData(timefilter, globalState, $http, $route, Private) {
   })
   .then(response => response.data)
   .catch((err) => {
-    const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
+    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
     return ajaxErrorHandlers.fatalError(err);
   });
 }
 
-require('ui/routes')
-.when('/kibana/:uuid', {
-  template: require('plugins/monitoring/views/kibana/instance/kibana_template.html'),
+uiRoutes.when('/kibana/:uuid', {
+  template,
   resolve: {
     clusters(Private) {
-      var routeInit = Private(require('plugins/monitoring/lib/route_init'));
+      const routeInit = Private(routeInitProvider);
       return routeInit();
     },
     pageData: getPageData
   }
 });
 
+const mod = uiModules.get('monitoring', [ 'monitoring/directives' ]);
 mod.controller('kibana', ($route, globalState, title, Private, $executor, $http, timefilter, $scope) => {
   timefilter.enabled = true;
 

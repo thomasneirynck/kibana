@@ -1,15 +1,17 @@
 import _ from 'lodash';
-const app = require('ui/modules').get('plugins/monitoring/directives', []);
+import uiModules from 'ui/modules';
+import template from 'plugins/monitoring/directives/main/index.html';
 
 function createCrumb(url, label) {
   return { url, label };
 }
 
-app.directive('monitoringMain', (license) => {
+const mod = uiModules.get('plugins/monitoring/directives', []);
+mod.directive('monitoringMain', (license) => {
   return {
     restrict: 'E',
     transclude: true,
-    template: require('plugins/monitoring/directives/main/index.html'),
+    template,
     link: function (scope, _el, attrs) {
       scope.name = attrs.name; // name of current page
       scope.product = attrs.product; // undefined, elasticsearch, or kibana

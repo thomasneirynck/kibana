@@ -1,5 +1,5 @@
-var _ = require('lodash');
-const moment = require('moment');
+import _ from 'lodash';
+import moment from 'moment';
 
 export default function createQuery(options) {
   options = _.defaults(options, { filters: [] });

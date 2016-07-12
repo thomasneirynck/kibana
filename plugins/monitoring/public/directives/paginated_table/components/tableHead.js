@@ -1,5 +1,6 @@
-var React = require('react');
-var make = React.DOM;
+import React from 'react';
+
+const make = React.DOM;
 
 export default React.createClass({
   displayName: 'TableHead',

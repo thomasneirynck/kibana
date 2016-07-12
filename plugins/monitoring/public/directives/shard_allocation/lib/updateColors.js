@@ -15,8 +15,8 @@
  * from Elasticsearch Incorporated.
  */
 
-var _ = require('lodash');
-var getValue = require('./getValueFromArrayOrString');
+import _ from 'lodash';
+import getValue from './getValueFromArrayOrString';
 
 export default function updateColors($scope) {
   var colors = [];
