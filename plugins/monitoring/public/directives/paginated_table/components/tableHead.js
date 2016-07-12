@@ -1,7 +1,7 @@
 var React = require('react');
 var make = React.DOM;
 
-var TableHead = React.createClass({
+export default React.createClass({
   displayName: 'TableHead',
   render: function () {
     var that = this;
@@ -27,9 +27,7 @@ var TableHead = React.createClass({
         className: config.className || ''
       }, config.title, $icon);
     }
-    var $ths =  this.props.columns.map(makeTh);
+    var $ths = this.props.columns.map(makeTh);
     return make.thead(null, make.tr(null, $ths));
   }
 });
-
-export default TableHead;
