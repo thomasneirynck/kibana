@@ -1,7 +1,7 @@
 const boom = require('boom');
 const getUserFactory = require('../lib/get_user');
 const jobsQueryFactory = require('../lib/jobs_query');
-const licensePreFactory = require ('../lib/license-pre-routing');
+const licensePreFactory = require ('../lib/license_pre_routing');
 
 module.exports = function (server) {
   const jobsQuery = jobsQueryFactory(server);

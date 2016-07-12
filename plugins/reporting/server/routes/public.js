@@ -1,7 +1,7 @@
 const boom = require('boom');
 const createDocumentJobFactory = require('../lib/create_document_job');
 const constants = require('../lib/constants');
-const licensePreFactory = require ('../lib/license-pre-routing');
+const licensePreFactory = require ('../lib/license_pre_routing');
 
 module.exports = function (server) {
   const createDocumentJob = createDocumentJobFactory(server);
