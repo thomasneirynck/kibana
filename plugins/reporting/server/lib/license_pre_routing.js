@@ -16,12 +16,11 @@ function LicensePreRoutingFactory(server) {
   };
 
   return (config = {}) => {
-    if (config.pre) {
-      config.pre.unshift(forbidApiAccess);
-    } else {
-      config.pre = [ forbidApiAccess ];
+    if (!config.pre) {
+      config.pre = [];
     }
 
+    config.pre.unshift(forbidApiAccess);
     return config;
   };
 }
