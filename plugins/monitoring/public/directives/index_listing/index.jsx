@@ -37,7 +37,7 @@ define(function (require) {
         title: 'Search Rate'
       }, {
         key: 'metrics.index_unassigned_shards',
-        sortKey: 'metrics.index_unassigned_shards',
+        sortKey: 'metrics.index_unassigned_shards.last',
         title: 'Unassigned Shards'
       }]
     };
