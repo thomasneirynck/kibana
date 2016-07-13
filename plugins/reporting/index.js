@@ -23,6 +23,7 @@ module.exports = function (kibana) {
         'plugins/reporting/controls/visualize',
         'plugins/reporting/controls/dashboard',
       ],
+      hacks: [ 'plugins/reporting/hacks/job_completion_notifier'],
       managementSections: ['plugins/reporting/views/management'],
     },
 
