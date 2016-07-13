@@ -50,12 +50,6 @@ module.factory('checkXPackInfoChange', ($q, $injector, Private) => {
       xpackInfoSignature.set(xpackInfoResponse.headers('kbn-xpack-sig'));
       _isInfoUpdateInProgress = false;
       return handleResponse(response);
-    })
-    .then((xpackInfoResponse) => {
-      xpackInfo.set(convertKeysToCamelCaseDeep(xpackInfoResponse.data));
-      xpackInfoSignature.set(xpackInfoResponse.headers('kbn-xpack-sig'));
-      _isInfoUpdateInProgress = false;
-      return handleResponse(response);
     });
   }
 
