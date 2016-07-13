@@ -2,7 +2,16 @@ import notify from 'ui/notify';
 import chrome from 'ui/chrome';
 import uiModules from 'ui/modules';
 import { last } from 'lodash';
+import moment from 'moment';
 import constants from '../../server/lib/constants.js';
+
+uiModules.get('kibana')
+.config(() => {
+  // Intialize lastCheckedOn, if necessary
+  if (!getLastCheckedOn()) {
+    setLastCheckedOn(moment().subtract(constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS, 'ms').toISOString());
+  }
+});
 
 uiModules.get('kibana')
 .run(($http, $interval) => {
