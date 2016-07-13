@@ -16,16 +16,28 @@ function generateDocumentFactory(server) {
     const pdfOutput = pdf.create();
 
     return Promise.map(savedObjects, function (savedObj) {
-      return getScreenshot(savedObj.url, savedObj.type, headers)
-      .then((filename) => {
-        server.log(['reporting', 'debug'], `${savedObj.id} -> ${filename}`);
-        return _.assign({ filename }, savedObj);
-      })
-      .then((object) => {
-        return pdfOutput.addImage(object.filename, {
-          title: object.title,
-          description: object.description,
+      if (savedObj.isMissing) {
+        return savedObj;
+      } else {
+        return getScreenshot(savedObj.url, savedObj.type, headers)
+        .then((filename) => {
+          server.log(['reporting', 'debug'], `${savedObj.id} -> ${filename}`);
+          return _.assign({ filename }, savedObj);
         });
+      }
+    })
+    .then(objects => {
+      objects.forEach(object => {
+        if (object.isMissing) {
+          pdfOutput.addHeading(`${_.capitalize(object.type)} with id '${object.id}' not found`, {
+            styles: 'warning'
+          });
+        } else {
+          pdfOutput.addImage(object.filename, {
+            title: object.title,
+            description: object.description,
+          });
+        }
       });
     })
     .then(function () {
