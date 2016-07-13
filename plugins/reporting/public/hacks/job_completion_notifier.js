@@ -5,8 +5,8 @@ import { last } from 'lodash';
 import constants from '../../server/lib/constants.js';
 
 uiModules.get('kibana')
-.run(($http) => {
-  setInterval(function startChecking() {
+.run(($http, $interval) => {
+  $interval(function startChecking() {
     getJobsCompletedSinceLastCheck($http)
     .then(jobs => jobs.forEach(showCompletionNotification));
   }, constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
