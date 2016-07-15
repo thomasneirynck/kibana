@@ -110,15 +110,6 @@ export default (kibana) => new kibana.Plugin({
       });
     });
 
-    server.ext('onPreResponse', (request, reply) => {
-      const response = request.response;
-      if (response.statusCode === 401) {
-        // Prevent browser auth dialog
-        response.headers['www-authenticate'] = response.headers['www-authenticate'].replace(/basic/i, 'kbnBasic');
-      }
-      reply.continue();
-    });
-
     basicAuth.register(server, cookieName, getIsValidUser(server), getCalculateExpires(server));
     createExpose(server);
 
