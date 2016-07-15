@@ -15,15 +15,11 @@
  * from Elasticsearch Incorporated.
  */
 
-
-
-define(function () {
-  // The ui had different columns in different order depending on the
-  // $scope.pane.view variable. This provides a lookup for the column headers
-  // labels are linked to view from public/directives/shard_allocation/lib/changeData.js
-  return {
-    index: ['Nodes'], // "index detail" page shows nodes on which index shards are allocated
-    node: ['Indices'], // "node detail" page shows the indexes that have shards on this node
-    indexWithUnassigned: ['Unassigned', 'Nodes'] // NOTE: is this unused or is there even an indexWithUnassigned view?
-  };
-});
+// The ui had different columns in different order depending on the
+// $scope.pane.view variable. This provides a lookup for the column headers
+// labels are linked to view from public/directives/shard_allocation/lib/changeData.js
+export default {
+  index: ['Nodes'], // "index detail" page shows nodes on which index shards are allocated
+  node: ['Indices'], // "node detail" page shows the indexes that have shards on this node
+  indexWithUnassigned: ['Unassigned', 'Nodes'] // NOTE: is this unused or is there even an indexWithUnassigned view?
+};

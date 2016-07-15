@@ -15,66 +15,62 @@
  * from Elasticsearch Incorporated.
  */
 
+var React = require('react');
+var Shard = require('./shard.jsx');
+var calculateClass = require('../lib/calculateClass');
+var _ = require('lodash');
+var generateQueryAndLink = require('../lib/generateQueryAndLink');
 
-
-define(function (require) {
-  var React = require('react');
-  var Shard = require('./shard.jsx');
-  var calculateClass = require('../lib/calculateClass');
-  var _ = require('lodash');
-  var generateQueryAndLink = require('../lib/generateQueryAndLink');
-
-  function sortByName(item) {
-    if (item.type === 'node') {
-      return [ !item.master, item.name];
-    }
-    return [ item.name ];
+function sortByName(item) {
+  if (item.type === 'node') {
+    return [ !item.master, item.name];
   }
+  return [ item.name ];
+}
 
-  return React.createClass({
-    createShard: function (shard) {
-      var type = shard.primary ? 'primary' : 'replica';
-      var additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
-      var key = shard.index + '.' + shard.node + '.' + type + '.' + shard.state + '.' + shard.shard + additionId;
-      return (<Shard shard={ shard } key={ key }></Shard>);
-    },
-    createChild: function (data) {
-      var key = data.id;
-      var classes = ['child'];
-      var shardStats = this.props.shardStats;
-      if (shardStats && shardStats[key]) {
-        classes.push(shardStats[key].status);
-      }
+export default React.createClass({
+  createShard: function (shard) {
+    var type = shard.primary ? 'primary' : 'replica';
+    var additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
+    var key = shard.index + '.' + shard.node + '.' + type + '.' + shard.state + '.' + shard.shard + additionId;
+    return (<Shard shard={ shard } key={ key }></Shard>);
+  },
+  createChild: function (data) {
+    var key = data.id;
+    var classes = ['child'];
+    var shardStats = this.props.shardStats;
+    if (shardStats && shardStats[key]) {
+      classes.push(shardStats[key].status);
+    }
 
-      var that = this;
-      var changeUrl = function () {
-        that.props.changeUrl(generateQueryAndLink(data));
-      };
+    var that = this;
+    var changeUrl = function () {
+      that.props.changeUrl(generateQueryAndLink(data));
+    };
 
-      var name = (
-        <a onClick={ changeUrl }>
-          <span>{ data.name }</span>
-        </a>
-      );
-      var master;
-      if (data.node_type === 'master') {
-        master = (
-          <i className="fa fa-star"></i>
-        );
-      }
-      var shards = _.sortBy(data.children, 'shard').map(this.createShard);
-      return (
-        <div className={ calculateClass(data, classes.join(' ')) } key={ key }>
-          <div className='title'>{ name }{ master }</div>
-          { shards }
-        </div>
-      );
-    },
-    render: function () {
-      var data = _.sortBy(this.props.data, sortByName).map(this.createChild);
-      return (
-        <td><div className='children'>{ data }</div></td>
+    var name = (
+      <a onClick={ changeUrl }>
+        <span>{ data.name }</span>
+      </a>
+    );
+    var master;
+    if (data.node_type === 'master') {
+      master = (
+        <i className="fa fa-star"></i>
       );
     }
-  });
+    var shards = _.sortBy(data.children, 'shard').map(this.createShard);
+    return (
+      <div className={ calculateClass(data, classes.join(' ')) } key={ key }>
+        <div className='title'>{ name }{ master }</div>
+        { shards }
+      </div>
+    );
+  },
+  render: function () {
+    var data = _.sortBy(this.props.data, sortByName).map(this.createChild);
+    return (
+      <td><div className='children'>{ data }</div></td>
+    );
+  }
 });

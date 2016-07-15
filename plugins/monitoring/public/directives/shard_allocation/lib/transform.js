@@ -15,17 +15,13 @@
  * from Elasticsearch Incorporated.
  */
 
+var indicesByNodes = require('../transformers/indicesByNodes');
+var nodesByIndices = require('../transformers/nodesByIndices');
 
-
-define(function (require) {
-  var indicesByNodes = require('../transformers/indicesByNodes');
-  var nodesByIndices = require('../transformers/nodesByIndices');
-
-  // This will curry a transform function based on the view.
-  return function (view, $scope) {
-    var func = (view === 'index') ? indicesByNodes : nodesByIndices;
-    // we need to pass the scope to filter the data in the transformer functions
-    // for the auto-complete filter.
-    return func($scope);
-  };
-});
+// This will curry a transform function based on the view.
+export default function transform(view, $scope) {
+  var func = (view === 'index') ? indicesByNodes : nodesByIndices;
+  // we need to pass the scope to filter the data in the transformer functions
+  // for the auto-complete filter.
+  return func($scope);
+};

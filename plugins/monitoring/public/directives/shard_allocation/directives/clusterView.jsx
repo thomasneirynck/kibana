@@ -15,26 +15,22 @@
  * from Elasticsearch Incorporated.
  */
 
+var React = require('react');
+var ClusterView = require('plugins/monitoring/directives/shard_allocation/components/clusterView');
+var module = require('ui/modules').get('monitoring/directives', []);
 
-
-define(function (require) {
-  var React = require('react');
-  var ClusterView = require('plugins/monitoring/directives/shard_allocation/components/clusterView');
-  var module = require('ui/modules').get('monitoring/directives', []);
-  module.directive('clusterView', function (kbnUrl) {
-    return {
-      restrict: 'E',
-      scope: {
-        totalCount: '=',
-        filter: '=',
-        showing: '=',
-        labels: '=',
-        shardStats: '='
-      },
-      link: function (scope, element) {
-        React.render(<ClusterView scope={scope} kbnUrl={kbnUrl}></ClusterView>, element[0]);
-      }
-    };
-  });
+module.directive('clusterView', function (kbnUrl) {
+  return {
+    restrict: 'E',
+    scope: {
+      totalCount: '=',
+      filter: '=',
+      showing: '=',
+      labels: '=',
+      shardStats: '='
+    },
+    link: function (scope, element) {
+      React.render(<ClusterView scope={scope} kbnUrl={kbnUrl}></ClusterView>, element[0]);
+    }
+  };
 });
-
