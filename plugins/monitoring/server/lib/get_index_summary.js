@@ -2,6 +2,17 @@ import _ from 'lodash';
 import createQuery from './create_query.js';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
+export function handleResponse(resp) {
+  const indexSummary = { documents: 0, dataSize: 0 };
+  const totals = _.get(resp, 'hits.hits[0]._source.index_stats.total');
+  if (totals) {
+    indexSummary.documents = _.get(totals, 'docs.count');
+    indexSummary.dataSize = _.get(totals, 'store.size_in_bytes');
+  }
+
+  return indexSummary;
+}
+
 export default function getIndexSummary(req, indices) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
 
@@ -31,14 +42,5 @@ export default function getIndexSummary(req, indices) {
   };
 
   return callWithRequest(req, 'search', params)
-  .then((resp) => {
-    const indexSummary = { documents: 0, dataSize: 0 };
-    const totals = _.get(resp, 'hits.hits[0]._source.index_stats.total');
-    if (totals) {
-      indexSummary.documents = _.get(totals, 'docs.count');
-      indexSummary.dataSize = _.get(totals, 'store.size_in_bytes');
-    }
-
-    return indexSummary;
-  });
+  .then(handleResponse);
 };
