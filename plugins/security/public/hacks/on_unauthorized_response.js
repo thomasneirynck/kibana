@@ -2,7 +2,7 @@ import { identity } from 'lodash';
 import uiModules from 'ui/modules';
 
 function isResponseFromLoginApi(response) {
-  return response.config.url.contains('/api/security/v1/login');
+  return response.config.url.includes('/api/security/v1/login');
 }
 
 const module = uiModules.get('security');
