@@ -1008,5 +1008,53 @@ export const expected = {
     'metricAgg': 'max',
     'type': 'cluster',
     'units': '/s'
-  }
+  },
+  'node_index_mem_request_cache': {
+    'field': 'node_stats.indices.request_cache.memory_size_in_bytes',
+    'label': 'Request Cache',
+    'description': 'The amount of memory used by the request cache.',
+    'type': 'index',
+    'title': 'Index Memory',
+    'format': '0.0 b',
+    'metricAgg': 'max',
+    'units': 'B',
+    'app': 'elasticsearch',
+    'derivative': false
+  },
+  'index_mem_query_cache': {
+    'field': 'index_stats.total.query_cache.memory_size_in_bytes',
+    'label': 'Query Cache',
+    'description': 'The amount of memory used by the query cache.',
+    'type': 'index',
+    'title': 'Index Memory',
+    'format': '0.0 b',
+    'metricAgg': 'max',
+    'units': 'B',
+    'app': 'elasticsearch',
+    'derivative': false
+  },
+  'node_index_mem_query_cache': {
+    'field': 'node_stats.indices.query_cache.memory_size_in_bytes',
+    'label': 'Query Cache',
+    'description': 'The amount of memory used by the query cache.',
+    'type': 'index',
+    'title': 'Index Memory',
+    'format': '0.0 b',
+    'metricAgg': 'max',
+    'units': 'B',
+    'app': 'elasticsearch',
+    'derivative': false
+  },
+  'index_mem_request_cache': {
+    'field': 'index_stats.total.request_cache.memory_size_in_bytes',
+    'label': 'Request Cache',
+    'description': 'The amount of memory used by the request cache.',
+    'type': 'index',
+    'title': 'Index Memory',
+    'format': '0.0 b',
+    'metricAgg': 'max',
+    'units': 'B',
+    'app': 'elasticsearch',
+    'derivative': false
+  },
 };
