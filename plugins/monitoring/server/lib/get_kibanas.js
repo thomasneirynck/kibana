@@ -52,6 +52,7 @@ export default function getKibanas(req, indices) {
           meta: 'get_kibanas_kibana_info',
           id: uuidBucket.key,
           _source: [
+            'timestamp',
             'kibana.process.memory.resident_set_size_in_bytes',
             'kibana.os.load.1m',
             'kibana.response_times.average',
