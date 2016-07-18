@@ -20,7 +20,8 @@ export class Metric {
       label: opts.label,
       description: opts.description,
       format: opts.format,
-      units: opts.units
+      units: opts.units,
+      timestampField: opts.timestampField
     };
 
     const undefKey = _.findKey(requireds, _.isUndefined);
@@ -42,7 +43,8 @@ export class ElasticsearchMetric extends Metric {
   constructor(opts) {
     super({
       ...opts,
-      app: 'elasticsearch'
+      app: 'elasticsearch',
+      timestampField: 'timestamp'
     });
 
     if (_.isUndefined(this.type)) {
@@ -57,7 +59,8 @@ export class KibanaMetric extends Metric {
   constructor(opts) {
     super({
       ...opts,
-      app: 'kibana'
+      app: 'kibana',
+      timestampField: 'kibana_stats.timestamp'
     });
   }
 
