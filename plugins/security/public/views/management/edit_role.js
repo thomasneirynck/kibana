@@ -38,7 +38,6 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
     $scope.privileges = shieldPrivileges;
     $scope.view = {
       isNewRole: $route.current.params.name == null,
-      isReservedRole: ['superuser', 'transport_client', 'kibana_user'].indexOf($route.current.params.name) >= 0,
       fieldOptions: {}
     };
 
