@@ -41,7 +41,7 @@ export default function getLastRecovery(req, indices) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
-  const clusterUuid = req.params.clusterUuid;
+  const uuid = req.params.clusterUuid;
 
   const params = {
     index: indices,
@@ -52,11 +52,7 @@ export default function getLastRecovery(req, indices) {
       _source: [ 'index_recovery.shards' ],
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({
-        start: start,
-        end: end,
-        clusterUuid: clusterUuid
-      })
+      query: createQuery({ start, end, uuid })
     }
   };
 

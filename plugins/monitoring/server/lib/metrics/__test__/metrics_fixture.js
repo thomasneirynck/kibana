@@ -51,6 +51,7 @@ export const expected = {
       }
     },
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'calculation': indexingLatencyCalculation,
     'derivative': false,
@@ -64,6 +65,7 @@ export const expected = {
   },
   'cluster_index_request_rate_primary': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'The per index rate at which documents are being indexed for primary shards.',
@@ -77,6 +79,7 @@ export const expected = {
   },
   'cluster_index_request_rate_total': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'The per index rate at which documents are being indexed for all shards.',
@@ -114,6 +117,7 @@ export const expected = {
       }
     },
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'calculation': queryLatencyCalculation,
     'derivative': false,
@@ -127,6 +131,7 @@ export const expected = {
   },
   'cluster_search_request_rate': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'The cluster wide rate at which search reqeusts are being executed.',
@@ -140,6 +145,7 @@ export const expected = {
   },
   'index_document_count': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Total number of documents (in primary shards) for an index',
@@ -152,6 +158,7 @@ export const expected = {
   },
   'index_fielddata': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'The amount of memory used by fielddata.',
@@ -188,6 +195,7 @@ export const expected = {
       }
     },
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'calculation': indexingLatencyCalculation,
     'derivative': false,
@@ -201,6 +209,7 @@ export const expected = {
   },
   'index_mem_doc_values': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used for Doc Values',
@@ -214,6 +223,7 @@ export const expected = {
   },
   'index_mem_fielddata': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'The amount of memory used by index fielddata.',
@@ -227,6 +237,7 @@ export const expected = {
   },
   'index_mem_fixed_bit_set': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used for Nested Documents',
@@ -240,6 +251,7 @@ export const expected = {
   },
   'index_mem_norms': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used in Lucene segments for Norms',
@@ -253,6 +265,7 @@ export const expected = {
   },
   'index_mem_overall': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used by open Lucene segment files',
@@ -266,6 +279,7 @@ export const expected = {
   },
   'index_mem_points': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used in Lucene segments for Points (e.g., numerics and geo)',
@@ -279,6 +293,7 @@ export const expected = {
   },
   'index_mem_stored_fields': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used in Lucene segments for Stored Fields',
@@ -292,6 +307,7 @@ export const expected = {
   },
   'index_mem_term_vectors': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used in Lucene segments for Term Vectors',
@@ -305,6 +321,7 @@ export const expected = {
   },
   'index_mem_terms': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used in Lucene segments for Terms',
@@ -318,6 +335,7 @@ export const expected = {
   },
   'index_mem_versions': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used for Versions',
@@ -331,6 +349,7 @@ export const expected = {
   },
   'index_mem_writer': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used for Lucene Index Writers',
@@ -344,6 +363,7 @@ export const expected = {
   },
   'index_merge_rate': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'The per index rate at which segements are being merged.',
@@ -356,6 +376,7 @@ export const expected = {
   },
   'index_refresh_time': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'The the amount of time a refresh takes',
@@ -368,6 +389,7 @@ export const expected = {
   },
   'index_request_rate_primary': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'The per index rate at which documents are being indexed.',
@@ -381,6 +403,7 @@ export const expected = {
   },
   'index_request_rate_total': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'The per index rate at which documents are being indexed.',
@@ -394,6 +417,7 @@ export const expected = {
   },
   'index_search_request_rate': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'The per index rate at which search reqeusts are being executed.',
@@ -407,6 +431,7 @@ export const expected = {
   },
   'index_segment_count': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'The average segment count.',
@@ -419,6 +444,7 @@ export const expected = {
   },
   'index_shard_query_rate': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'Total number of requests (GET /_search)across an index (and across all relevant shards for that index) / <time range>',
@@ -431,6 +457,7 @@ export const expected = {
   },
   'index_size': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'The size of the index.',
@@ -443,6 +470,7 @@ export const expected = {
   },
   'index_throttle_time': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'The amount of load used for the last 1 minute.',
@@ -455,6 +483,7 @@ export const expected = {
   },
   'kibana_average_concurrent_connections': {
     'app': 'kibana',
+    'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
     'derivative': false,
     'description': 'The number of concurrent connections to the server',
@@ -466,6 +495,7 @@ export const expected = {
   },
   'kibana_average_response_times': {
     'app': 'kibana',
+    'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
     'derivative': false,
     'description': 'The average request response time',
@@ -478,6 +508,7 @@ export const expected = {
   },
   'kibana_max_response_times': {
     'app': 'kibana',
+    'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
     'derivative': false,
     'description': 'The max request response time',
@@ -490,6 +521,7 @@ export const expected = {
   },
   'kibana_memory_heap_size_limit': {
     'app': 'kibana',
+    'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
     'derivative': false,
     'description': 'The limit of memory usage before garbage collection',
@@ -502,6 +534,7 @@ export const expected = {
   },
   'kibana_memory_size': {
     'app': 'kibana',
+    'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
     'derivative': false,
     'description': 'The amount of memory in RAM used by the Kibana server process',
@@ -514,6 +547,7 @@ export const expected = {
   },
   'kibana_os_load_15m': {
     'app': 'kibana',
+    'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
     'derivative': false,
     'description': 'The the amount of time a refresh takes',
@@ -526,6 +560,7 @@ export const expected = {
   },
   'kibana_os_load_1m': {
     'app': 'kibana',
+    'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
     'derivative': false,
     'description': 'The the amount of time a refresh takes',
@@ -538,6 +573,7 @@ export const expected = {
   },
   'kibana_os_load_5m': {
     'app': 'kibana',
+    'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
     'derivative': false,
     'description': 'The the amount of time a refresh takes',
@@ -550,6 +586,7 @@ export const expected = {
   },
   'kibana_process_delay': {
     'app': 'kibana',
+    'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
     'derivative': false,
     'description': 'The Node event loop delay',
@@ -561,6 +598,7 @@ export const expected = {
   },
   'kibana_requests': {
     'app': 'kibana',
+    'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
     'derivative': false,
     'description': 'The number of requests received by the server',
@@ -572,6 +610,7 @@ export const expected = {
   },
   'node_cpu_utilization': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'The percentage of CPU usage.',
@@ -584,6 +623,7 @@ export const expected = {
   },
   'node_free_space': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'The free disk space available on the node',
@@ -620,6 +660,7 @@ export const expected = {
       },
     },
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'calculation': indexingLatencyCalculation,
     'derivative': false,
@@ -634,6 +675,7 @@ export const expected = {
   },
   'node_index_mem_doc_values': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used for Doc Values',
@@ -647,6 +689,7 @@ export const expected = {
   },
   'node_index_mem_fielddata': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'The amount of memory used by shard fielddata on this node.',
@@ -660,6 +703,7 @@ export const expected = {
   },
   'node_index_mem_fixed_bit_set': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used for Nested Documents',
@@ -673,6 +717,7 @@ export const expected = {
   },
   'node_index_mem_norms': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used in Lucene segments for Norms',
@@ -686,6 +731,7 @@ export const expected = {
   },
   'node_index_mem_overall': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used by open Lucene segment files',
@@ -699,6 +745,7 @@ export const expected = {
   },
   'node_index_mem_points': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used in Lucene segments for Points (e.g., numerics and geo)',
@@ -712,6 +759,7 @@ export const expected = {
   },
   'node_index_mem_stored_fields': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used in Lucene segments for Stored Fields',
@@ -725,6 +773,7 @@ export const expected = {
   },
   'node_index_mem_term_vectors': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used in Lucene segments for Term Vectors',
@@ -738,6 +787,7 @@ export const expected = {
   },
   'node_index_mem_terms': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used in Lucene segments for Terms',
@@ -751,6 +801,7 @@ export const expected = {
   },
   'node_index_mem_versions': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used for Versions',
@@ -764,6 +815,7 @@ export const expected = {
   },
   'node_index_mem_writer': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Memory used for Lucene Index Writers',
@@ -777,6 +829,7 @@ export const expected = {
   },
   'node_jvm_mem_percent': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'The amound of heap used by the JVM',
@@ -789,6 +842,7 @@ export const expected = {
   },
   'node_load_average': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'The amount of load used for the last 1 minute.',
@@ -825,6 +879,7 @@ export const expected = {
       }
     },
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'calculation': queryLatencyCalculation,
     'derivative': false,
@@ -839,6 +894,7 @@ export const expected = {
   },
   'node_segment_count': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'The average segment count.',
@@ -851,6 +907,7 @@ export const expected = {
   },
   'node_threads_queued_bulk': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Bulk thread queue. The number of bulk operations waiting to be processed.',
@@ -864,6 +921,7 @@ export const expected = {
   },
   'node_threads_queued_generic': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Generic thread queue. The number of internal, generic operations waiting to be processed.',
@@ -877,6 +935,7 @@ export const expected = {
   },
   'node_threads_queued_get': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Get thread queue. The number of get operations waiting to be processed.',
@@ -890,6 +949,7 @@ export const expected = {
   },
   'node_threads_queued_index': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Index thread queue. The number of index (not bulk) operations waiting to be processed.',
@@ -903,6 +963,7 @@ export const expected = {
   },
   'node_threads_queued_management': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Management thread queue. The number of internal management operations waiting to be processed.',
@@ -916,6 +977,7 @@ export const expected = {
   },
   'node_threads_queued_search': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Search thread queue. The number of search operations waiting to be processed.',
@@ -929,6 +991,7 @@ export const expected = {
   },
   'node_threads_queued_watcher': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
     'description': 'Watcher thread queue. The number of Watcher operations waiting to be processed.',
@@ -942,6 +1005,7 @@ export const expected = {
   },
   'node_threads_rejected_bulk': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'Bulk thread rejections. Rejections occur when the queue is full.',
@@ -955,6 +1019,7 @@ export const expected = {
   },
   'node_threads_rejected_generic': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'Generic thread rejections. Rejections occur when the queue is full.',
@@ -968,6 +1033,7 @@ export const expected = {
   },
   'node_threads_rejected_get': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'Get thread rejections. Rejections occur when the queue is full.',
@@ -981,6 +1047,7 @@ export const expected = {
   },
   'node_threads_rejected_index': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'Index thread rejections. Rejections occur when the queue is full. You should likely be using bulk!',
@@ -994,6 +1061,7 @@ export const expected = {
   },
   'node_threads_rejected_management': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'Management thread rejections. Rejections occur when the queue is full.',
@@ -1007,6 +1075,7 @@ export const expected = {
   },
   'node_threads_rejected_search': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'Search thread rejections. Rejections occur when the queue is full.',
@@ -1020,6 +1089,7 @@ export const expected = {
   },
   'node_threads_rejected_watcher': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'Watcher thread rejections. Rejections occur when the queue is full.',
@@ -1057,6 +1127,7 @@ export const expected = {
       }
     },
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'calculation': queryLatencyCalculation,
     'derivative': false,
@@ -1070,6 +1141,7 @@ export const expected = {
   },
   'search_request_rate': {
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
     'description': 'The cluster wide rate at which search reqeusts are being executed.',
@@ -1091,6 +1163,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1104,6 +1177,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1117,6 +1191,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },
@@ -1130,6 +1205,7 @@ export const expected = {
     'metricAgg': 'max',
     'units': 'B',
     'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false
   },

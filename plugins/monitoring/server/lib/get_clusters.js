@@ -21,7 +21,7 @@ export default function getClusters(req, indices) {
       query: createQuery({
         start,
         end,
-        clusterUuid: null
+        uuid: null
       }),
       aggs: {
         cluster_uuids: {

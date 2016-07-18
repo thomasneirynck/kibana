@@ -17,7 +17,7 @@ export default function getClusterStatus(req, indices, lastState) {
     body: {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({ end, clusterUuid })
+      query: createQuery({ end, uuid: clusterUuid })
     }
   };
 

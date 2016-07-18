@@ -40,7 +40,7 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
         ignoreUnavailable: true,
         type: 'kibana_stats',
         body: {
-          query: createQuery({ start: lastBucketStart, end, clusterUuid }),
+          query: createQuery({ start: lastBucketStart, end, uuid: clusterUuid }),
           aggs: {
             response_time_max: {
               max: {

@@ -4,7 +4,7 @@ import createQuery from './create_query.js';
 export default function getLastState(req, indices) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const end = req.payload.timeRange.max;
-  const clusterUuid = req.params.clusterUuid;
+  const uuid = req.params.clusterUuid;
   const config = req.server.config();
   const resolver = config.get('xpack.monitoring.node_resolver');
 
@@ -16,7 +16,7 @@ export default function getLastState(req, indices) {
     body: {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({ end, clusterUuid })
+      query: createQuery({ end, uuid })
     }
   };
 

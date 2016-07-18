@@ -8,7 +8,7 @@ export default function getShardAllocation(req, _indices, filters, lastState) {
 
   const config = req.server.config();
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
-  const clusterUuid = req.params.clusterUuid;
+  const uuid = req.params.clusterUuid;
   const params = {
     /* TODO It would be more efficient to use the indices param instead of
     * wildcard. Needs testing to ensure the time range the indices cover always
@@ -18,7 +18,7 @@ export default function getShardAllocation(req, _indices, filters, lastState) {
     type: 'shards',
     body: {
       size: config.get('xpack.monitoring.max_bucket_size'),
-      query: createQuery({ clusterUuid, filters })
+      query: createQuery({ uuid, filters })
     }
   };
 

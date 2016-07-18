@@ -6,7 +6,7 @@ export default function getIndexSummary(req, indices) {
 
   // Get the params from the POST body for the request
   const end = req.payload.timeRange.max;
-  const clusterUuid = req.params.clusterUuid;
+  const uuid = req.params.clusterUuid;
 
   // Build up the Elasticsearch request
   const params = {
@@ -18,8 +18,8 @@ export default function getIndexSummary(req, indices) {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
       query: createQuery({
-        end: end,
-        clusterUuid: clusterUuid,
+        end,
+        uuid,
         filters: [{
           term: { 'index_stats.index': req.params.id }
         }]

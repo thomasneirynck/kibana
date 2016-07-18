@@ -21,6 +21,7 @@ export class Metric {
       description: opts.description,
       format: opts.format,
       units: opts.units,
+      uuidField: opts.uuidField,
       timestampField: opts.timestampField
     };
 
@@ -44,6 +45,7 @@ export class ElasticsearchMetric extends Metric {
     super({
       ...opts,
       app: 'elasticsearch',
+      uuidField: 'cluster_uuid',
       timestampField: 'timestamp'
     });
 
@@ -60,6 +62,7 @@ export class KibanaMetric extends Metric {
     super({
       ...opts,
       app: 'kibana',
+      uuidField: 'kibana_stats.kibana.uuid',
       timestampField: 'kibana_stats.timestamp'
     });
   }

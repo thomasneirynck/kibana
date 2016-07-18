@@ -22,7 +22,7 @@ export default function getKibanas(req, indices) {
   const config = req.server.config();
   const start = moment.utc(req.payload.timeRange.min).valueOf();
   const end = moment.utc(req.payload.timeRange.max).valueOf();
-  const clusterUuid = req.params.clusterUuid;
+  const uuid = req.params.clusterUuid;
 
   const params = {
     index: indices,
@@ -31,7 +31,7 @@ export default function getKibanas(req, indices) {
     ignore: [404],
     body: {
       size: 0,
-      query: createQuery({ start, end, clusterUuid }),
+      query: createQuery({ start, end, uuid }),
       aggs: {
         kibana_uuids: {
           terms: {

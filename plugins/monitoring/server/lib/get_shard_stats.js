@@ -7,7 +7,7 @@ export default function getShardStats(req, indices, lastState) {
   const config = req.server.config();
   const nodeResolver = config.get('xpack.monitoring.node_resolver');
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
-  const clusterUuid = req.params.clusterUuid;
+  const uuid = req.params.clusterUuid;
   const aggSize = 10;
   const params = {
     index: indices,
@@ -18,7 +18,7 @@ export default function getShardStats(req, indices, lastState) {
     body: {
       sort: { timestamp: { order: 'desc' } },
       query: createQuery({
-        clusterUuid: clusterUuid,
+        uuid,
         filters: [ { term: { state_uuid: _.get(lastState, 'cluster_state.state_uuid') } } ]
       }),
       aggs: {

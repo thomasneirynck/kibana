@@ -23,7 +23,7 @@ export default function getListingIndices(req, indices) {
   let start = moment.utc(req.payload.timeRange.min).valueOf();
   const orgStart = start;
   const end = moment.utc(req.payload.timeRange.max).valueOf();
-  const clusterUuid = req.params.clusterUuid;
+  const uuid = req.params.clusterUuid;
   const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
   const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
 
@@ -35,7 +35,7 @@ export default function getListingIndices(req, indices) {
     ignoreUnavailable: true,
     ignore: [404],
     body: {
-      query: createQuery({ start, end, clusterUuid }),
+      query: createQuery({ start, end, uuid }),
       aggs: {}
     }
   };
