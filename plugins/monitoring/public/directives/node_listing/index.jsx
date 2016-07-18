@@ -8,8 +8,8 @@ import Table from 'plugins/monitoring/directives/paginated_table/components/tabl
 import uiModules from 'ui/modules';
 
 // change the node to actually display the name
-const mod = uiModules.get('monitoring/directives', []);
-mod.directive('monitoringNodesListing', function (kbnUrl) {
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringNodesListing', function (kbnUrl) {
   const initialTableOptions = {
     title: 'Nodes',
     searchPlaceholder: 'Filter Nodes',

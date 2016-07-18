@@ -4,23 +4,23 @@ import uiModules from 'ui/modules';
 import formatNumber from 'plugins/monitoring/lib/format_number';
 import extractIp from 'plugins/monitoring/lib/extract_ip';
 
-const mod = uiModules.get('monitoring/filters', []);
-mod.filter('localizedDate', function () {
+const uiModule = uiModules.get('monitoring/filters', []);
+uiModule.filter('localizedDate', function () {
   return function (input) {
     return moment.tz(input, moment.tz.guess()).format('LLL z');
   };
 });
 
-mod.filter('capitalize', function () {
+uiModule.filter('capitalize', function () {
   return function (input) {
     return _.capitalize(input.toLowerCase());
   };
 });
 
-mod.filter('formatNumber', function () {
+uiModule.filter('formatNumber', function () {
   return formatNumber;
 });
 
-mod.filter('extractIp', function () {
+uiModule.filter('extractIp', function () {
   return extractIp;
 });

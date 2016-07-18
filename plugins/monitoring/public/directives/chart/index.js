@@ -21,8 +21,8 @@ function get(series, attr) {
   return _.chain(series).pluck(attr).last().value();
 }
 
-const mod = uiModules.get('plugins/monitoring/directives', []);
-mod.directive('monitoringChart', () => {
+const uiModule = uiModules.get('plugins/monitoring/directives', []);
+uiModule.directive('monitoringChart', () => {
   return {
     restrict: 'E',
     template,
@@ -64,7 +64,7 @@ mod.directive('monitoringChart', () => {
   };
 });
 
-mod.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private) => {
+uiModule.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private) => {
   const getColors = Private(VislibComponentsColorColorPaletteProvider);
 
   return {

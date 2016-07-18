@@ -19,8 +19,8 @@ import React from 'react';
 import ClusterView from 'plugins/monitoring/directives/shard_allocation/components/clusterView';
 import uiModules from 'ui/modules';
 
-const mod = uiModules.get('monitoring/directives', []);
-mod.directive('clusterView', function (kbnUrl) {
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('clusterView', function (kbnUrl) {
   return {
     restrict: 'E',
     scope: {

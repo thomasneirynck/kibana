@@ -1,8 +1,8 @@
 import template from 'plugins/monitoring/directives/welcome_msg/index.html';
 import uiModules from 'ui/modules';
 
-const mod = uiModules.get('monitoring/directives', []);
-mod.directive('monitoringWelcomeMessage', function ($window, reportStats, features) {
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringWelcomeMessage', function ($window, reportStats, features) {
   function showPerContext(scope) {
     switch (scope.context) {
       case 'listing':

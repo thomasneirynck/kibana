@@ -20,8 +20,8 @@ function getStatusAndClasses(value, availability) {
   };
 }
 
-const mod = uiModules.get('monitoring/directives', []);
-mod.directive('monitoringKibanaListing', function (kbnUrl) {
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
   const initialTableOptions = {
     title: 'Kibana',
     searchPlaceholder: 'Filter Instances',

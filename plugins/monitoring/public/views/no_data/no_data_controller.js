@@ -19,8 +19,8 @@ uiRoutes.when('/no-data', {
 })
 .otherwise({ redirectTo: '/home' });
 
-const mod = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-mod.controller('noData', (kbnUrl, $executor, monitoringClusters, timefilter, $scope) => {
+const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
+uiModule.controller('noData', (kbnUrl, $executor, monitoringClusters, timefilter, $scope) => {
   timefilter.enabled = true;
 
   timefilter.on('update', () => {
