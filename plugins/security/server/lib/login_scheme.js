@@ -18,7 +18,8 @@ export default function createScheme({ redirectUrl, strategy }) {
       onError: setExpirationMessage,
       redirectUrl,
       strategy,
-      testRequest: server.auth.test
+      testRequest: server.auth.test,
+      securityFeatureInfo: server.plugins.xpack_main.info.feature('security')
     });
     return { authenticate };
   };
