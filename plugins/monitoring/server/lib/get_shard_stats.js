@@ -9,6 +9,7 @@ export default function getShardStats(req, indices, lastState) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const uuid = req.params.clusterUuid;
   const aggSize = 10;
+  const metric = { timestampField: 'timestamp', uuidField: 'cluster_uuid' };
   const params = {
     index: indices,
     meta: 'get_shard_stats',
@@ -19,6 +20,7 @@ export default function getShardStats(req, indices, lastState) {
       sort: { timestamp: { order: 'desc' } },
       query: createQuery({
         uuid,
+        metric,
         filters: [ { term: { state_uuid: _.get(lastState, 'cluster_state.state_uuid') } } ]
       }),
       aggs: {

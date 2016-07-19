@@ -27,6 +27,7 @@ export default function getListingIndices(req, indices) {
   const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
   const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
 
+  const metricFields = { timestampField: 'timestamp', uuidField: 'cluster_uuid' };
   const params = {
     index: indices,
     meta: 'get_listing_indices',
@@ -35,7 +36,11 @@ export default function getListingIndices(req, indices) {
     ignoreUnavailable: true,
     ignore: [404],
     body: {
-      query: createQuery({ start, end, uuid }),
+      query: createQuery({
+        start,
+        end,
+        uuid,
+        metric: metricFields }),
       aggs: {}
     }
   };

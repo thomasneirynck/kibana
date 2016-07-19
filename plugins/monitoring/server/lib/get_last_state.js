@@ -8,6 +8,7 @@ export default function getLastState(req, indices) {
   const config = req.server.config();
   const resolver = config.get('xpack.monitoring.node_resolver');
 
+  const metric = { timestampField: 'timestamp', uuidField: 'cluster_uuid' };
   const params = {
     index: indices,
     meta: 'get_last_state',
@@ -16,7 +17,7 @@ export default function getLastState(req, indices) {
     body: {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({ end, uuid })
+      query: createQuery({ end, uuid, metric })
     }
   };
 

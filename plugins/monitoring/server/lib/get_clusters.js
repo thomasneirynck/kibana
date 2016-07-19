@@ -9,7 +9,7 @@ export default function getClusters(req, indices) {
   // Get the params from the POST body for the request
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
-
+  const metric = { timestampField: 'timestamp', uuidField: 'cluster_uuid' };
   const params = {
     index: indices,
     type: 'cluster_stats',
@@ -21,7 +21,8 @@ export default function getClusters(req, indices) {
       query: createQuery({
         start,
         end,
-        uuid: null
+        uuid: null,
+        metric
       }),
       aggs: {
         cluster_uuids: {

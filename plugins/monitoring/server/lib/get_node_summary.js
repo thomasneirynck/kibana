@@ -10,6 +10,7 @@ export default function getNodeSummary(req, indices) {
   const uuid = req.params.clusterUuid;
 
   // Build up the Elasticsearch request
+  const metric = { timestampField: 'timestamp', uuidField: 'cluster_uuid' };
   const params = {
     index: indices,
     meta: 'get_node_summary',
@@ -21,6 +22,7 @@ export default function getNodeSummary(req, indices) {
       query: createQuery({
         end: end,
         uuid,
+        metric,
         filters: [{
           term: { [`source_node.${config.get('xpack.monitoring.node_resolver')}`]: req.params.resolver }
         }]

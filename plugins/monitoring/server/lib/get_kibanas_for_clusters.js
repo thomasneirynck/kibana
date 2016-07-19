@@ -33,6 +33,7 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
   return function (clusters) {
     return Promise.map(clusters, cluster => {
       const clusterUuid = cluster.cluster_uuid;
+      const metric = { timestampField: 'timestamp', uuidField: 'cluster_uuid' };
       const options = {
         size: 0,
         index: indices,
@@ -40,7 +41,12 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
         ignoreUnavailable: true,
         type: 'kibana_stats',
         body: {
-          query: createQuery({ start: lastBucketStart, end, uuid: clusterUuid }),
+          query: createQuery({
+            start: lastBucketStart,
+            end,
+            uuid: clusterUuid,
+            metric
+          }),
           aggs: {
             response_time_max: {
               max: {

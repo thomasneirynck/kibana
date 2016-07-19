@@ -6,9 +6,10 @@ export default function getClusterStatus(req, indices, lastState) {
 
   // Get the params from the POST body for the request
   const end = req.payload.timeRange.max;
-  const clusterUuid = req.params.clusterUuid;
+  const uuid = req.params.clusterUuid;
 
   // Build up the Elasticsearch request
+  const metric = { timestampField: 'timestamp', uuidField: 'cluster_uuid' };
   const params = {
     index: indices,
     meta: 'get_cluster_stats',
@@ -17,7 +18,7 @@ export default function getClusterStatus(req, indices, lastState) {
     body: {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({ end, uuid: clusterUuid })
+      query: createQuery({ end, uuid, metric })
     }
   };
 

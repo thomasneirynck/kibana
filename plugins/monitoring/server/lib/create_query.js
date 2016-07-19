@@ -1,22 +1,33 @@
 import _ from 'lodash';
+import MissingRequiredError from './error_missing_required';
 import moment from 'moment';
 
 /*
  * Options object:
  * @param {Array} options.filters - additional filters to add to the `bool` section of the query. Default: []
- * @param {string} options.uuid - a UUID of the metric to filter for
- * @param {Metric} options.metric - an instance from server/lib/metric_classes (optional, defaults to ElasticsearchMetric)
+ * @param {string} options.uuid - a UUID of the metric to filter for, or `null` if UUID should not be part of the query
  * @param {Date} options.start - numeric timestamp (optional)
  * @param {Date} options.end - numeric timestamp (optional)
+ * @param {Metric} options.metric - a metric-like object.
+ * @see 'server/lib/metrics/metric_classes'. At a minimum, options.metric should contain:
+ * @param {string} options.metric.uuidField - name of the field in the data that has UUID value (optional)
+ * @param {string} options.metric.timestampField - name of the field in the data that has the timestamp for range filter (required)
  */
 export default function createQuery(options) {
   options = _.defaults(options, { filters: [] });
-  const uuidField = _.get(options, 'metric.uuidField') || 'cluster_uuid';
-  let uuidFilter; // uuid could be null (getting all the clusters)
-  if (uuidField && options.uuid) {
+  let uuidFilter;
+  // options.uuid can be null, for example getting all the clusters
+  if (options.uuid) {
+    const uuidField = _.get(options, 'metric.uuidField');
+    if (!uuidField) {
+      throw new MissingRequiredError('options.uuid given but options.metric.uuidField is false');
+    }
     uuidFilter = { term: { [uuidField]: options.uuid } };
   }
-  const timestampField = _.get(options, 'metric.timestampField') || 'timestamp';
+  const timestampField = _.get(options, 'metric.timestampField');
+  if (!timestampField) {
+    throw new MissingRequiredError('metric.timestampField');
+  }
   const timeRangeFilter = {
     range: {
       [timestampField]: {

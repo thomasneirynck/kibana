@@ -9,6 +9,7 @@ export default function getIndexSummary(req, indices) {
   const uuid = req.params.clusterUuid;
 
   // Build up the Elasticsearch request
+  const metric = { timestampField: 'timestamp', uuidField: 'cluster_uuid' };
   const params = {
     index: indices,
     ignore: [404],
@@ -20,6 +21,7 @@ export default function getIndexSummary(req, indices) {
       query: createQuery({
         end,
         uuid,
+        metric,
         filters: [{
           term: { 'index_stats.index': req.params.id }
         }]
