@@ -18,7 +18,7 @@
 export default function factory({ onError, redirectUrl, strategy, testRequest, xpackInfo }) {
   return function authenticate(request, reply) {
     // If security is disabled, continue with no user credentials
-    if (xpackInfo.isAvailable() && !xpackInfo.feature('security').isEnabled()) {
+    if (xpackInfo && xpackInfo.isAvailable() && !xpackInfo.feature('security').isEnabled()) {
       reply.continue({ credentials: {} });
       return;
     }
