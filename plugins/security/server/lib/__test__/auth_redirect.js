@@ -21,7 +21,11 @@ describe('lib/auth_redirect', function () {
           onError: sinon.stub().returns('mock error'),
           redirectUrl: sinon.stub().returns('mock redirect url'),
           strategy: 'wat',
-          testRequest: sinon.stub()
+          testRequest: sinon.stub(),
+          xpackInfo: {
+            isAvailable: sinon.stub().returns(true),
+            feature: () => { return { isEnabled: sinon.stub().returns(true) }; }
+          }
         };
         request = requestFixture();
         reply = replyFixture();
@@ -53,6 +57,21 @@ describe('lib/auth_redirect', function () {
           authenticate(request, reply);
           sinon.assert.calledWith(params.onError, err);
           sinon.assert.calledWith(reply, 'mock error');
+        });
+      });
+
+      context('when security is disabled in elasticsearch', () => {
+        beforeEach(() => {
+          params.xpackInfo.feature = () => {
+            return {
+              isEnabled: sinon.stub().returns(false)
+            };
+          };
+        });
+
+        it ('replies with no credentials', () => {
+          authenticate(request, reply);
+          sinon.assert.calledWith(reply.continue, { credentials: {} });
         });
       });
     });

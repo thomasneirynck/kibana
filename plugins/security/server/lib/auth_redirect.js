@@ -15,10 +15,10 @@
  *    testRequest: Function to test authentication for a request
  * @return {Function}
  */
-export default function factory({ onError, redirectUrl, strategy, testRequest, securityFeatureInfo }) {
+export default function factory({ onError, redirectUrl, strategy, testRequest, xpackInfo }) {
   return function authenticate(request, reply) {
     // If security is disabled, continue with no user credentials
-    if (!securityFeatureInfo.isEnabled()) {
+    if (xpackInfo.isAvailable() && !xpackInfo.feature('security').isEnabled()) {
       reply.continue({ credentials: {} });
       return;
     }

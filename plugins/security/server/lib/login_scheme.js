@@ -19,7 +19,7 @@ export default function createScheme({ redirectUrl, strategy }) {
       redirectUrl,
       strategy,
       testRequest: server.auth.test,
-      securityFeatureInfo: server.plugins.xpack_main.info.feature('security')
+      xpackInfo: server.plugins.xpack_main.info
     });
     return { authenticate };
   };
