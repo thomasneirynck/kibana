@@ -34,7 +34,7 @@ export default function getSeries(req, indices, metricName, filters) {
   const aggs = {
     check: {
       date_histogram: {
-        field: 'timestamp',
+        field: metric.timestampField,
         min_doc_count: 0,
         interval: bucketSize + 's',
         extended_bounds: { min, max }
