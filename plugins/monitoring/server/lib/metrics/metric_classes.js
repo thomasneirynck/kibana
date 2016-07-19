@@ -1,11 +1,8 @@
 import _ from 'lodash';
+import MissingRequiredError from '../error_missing_required';
 import {
   LARGE_FLOAT, SMALL_FLOAT, LARGE_BYTES, SMALL_BYTES
 } from '../../../lib/formatting';
-
-function missingRequiredParam(param) {
-  throw new Error(`Missing required parameter: ${param}`);
-}
 
 export class Metric {
 
@@ -27,7 +24,7 @@ export class Metric {
 
     const undefKey = _.findKey(requireds, _.isUndefined);
     if (undefKey) {
-      return missingRequiredParam(undefKey);
+      throw new MissingRequiredError(undefKey);
     }
 
     _.assign(this, _.defaults(opts, props));
@@ -50,7 +47,7 @@ export class ElasticsearchMetric extends Metric {
     });
 
     if (_.isUndefined(this.type)) {
-      missingRequiredParam('type');
+      throw new MissingRequiredError('type');
     }
   }
 
@@ -79,7 +76,7 @@ export class LatencyMetric extends ElasticsearchMetric {
       units: 'ms'
     });
 
-
+    const missingRequiredParam = (param) => { throw new MissingRequiredError(param); };
     const metric = this.metric || missingRequiredParam('metric'); // "index" or "query"
     const fieldSource = this.fieldSource || missingRequiredParam('fieldSource');
     delete this.metric;
