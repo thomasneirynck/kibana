@@ -15,13 +15,9 @@ export default function checkLicense(xpackLicenseInfo) {
 
   const isLicenseActive = xpackLicenseInfo.license.isActive();
   const isLicenseBasic = xpackLicenseInfo.license.isOneOf(['basic']);
-  const isEnabledInES = xpackLicenseInfo.feature('security').isEnabled();
 
   let allowLogin;
-  if (!isEnabledInES) {
-    loginMessage = 'Login is disabled because security has been disabled in Elasticsearch.';
-    allowLogin = false;
-  } else if (isLicenseBasic) {
+  if (isLicenseBasic) {
     loginMessage = 'Your Basic license does not support Security. Please upgrade your license.';
     allowLogin = false;
   } else if (!isLicenseActive) {
