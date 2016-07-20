@@ -51,6 +51,13 @@ export class ElasticsearchMetric extends Metric {
     }
   }
 
+  // helper method
+  static getMetricFields() {
+    return {
+      timestampField: 'timestamp',
+      uuidField: 'cluster_uuid'
+    };
+  }
 }
 
 export class KibanaMetric extends Metric {

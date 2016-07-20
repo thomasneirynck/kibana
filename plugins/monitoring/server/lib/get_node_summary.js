@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import createQuery from './create_query.js';
+import { ElasticsearchMetric } from './metrics/metric_classes';
 
 export default function getNodeSummary(req, indices) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
@@ -10,7 +11,7 @@ export default function getNodeSummary(req, indices) {
   const uuid = req.params.clusterUuid;
 
   // Build up the Elasticsearch request
-  const metric = { timestampField: 'timestamp', uuidField: 'cluster_uuid' };
+  const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
     meta: 'get_node_summary',

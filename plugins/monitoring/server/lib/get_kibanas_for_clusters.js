@@ -17,6 +17,7 @@ import moment from 'moment';
 import calculateOverallStatus from './calculate_overall_status';
 import calcAuto from './calculate_auto';
 import createQuery from './create_query.js';
+import { ElasticsearchMetric } from './metrics/metric_classes';
 
 export default function getKibanasForClusters(req, indices, calledFrom) {
   if (indices.length < 1) return () => Promise.resolve([]);
@@ -33,7 +34,7 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
   return function (clusters) {
     return Promise.map(clusters, cluster => {
       const clusterUuid = cluster.cluster_uuid;
-      const metric = { timestampField: 'timestamp', uuidField: 'cluster_uuid' };
+      const metric = ElasticsearchMetric.getMetricFields();
       const options = {
         size: 0,
         index: indices,

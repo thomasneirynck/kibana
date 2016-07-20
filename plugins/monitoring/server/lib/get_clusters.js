@@ -2,6 +2,7 @@ import _ from 'lodash';
 import Promise from 'bluebird';
 import createQuery from './create_query.js';
 import validateMonitoringLicense from './validate_monitoring_license';
+import { ElasticsearchMetric } from './metrics/metric_classes';
 
 export default function getClusters(req, indices) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
@@ -9,7 +10,7 @@ export default function getClusters(req, indices) {
   // Get the params from the POST body for the request
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
-  const metric = { timestampField: 'timestamp', uuidField: 'cluster_uuid' };
+  const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
     type: 'cluster_stats',

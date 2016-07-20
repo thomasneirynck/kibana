@@ -8,10 +8,7 @@ import moment from 'moment';
  * @param {string} options.uuid - a UUID of the metric to filter for, or `null` if UUID should not be part of the query
  * @param {Date} options.start - numeric timestamp (optional)
  * @param {Date} options.end - numeric timestamp (optional)
- * @param {Metric} options.metric - a metric-like object.
- * @see 'server/lib/metrics/metric_classes'. At a minimum, options.metric should contain:
- * @param {string} options.metric.uuidField - name of the field in the data that has UUID value (optional)
- * @param {string} options.metric.timestampField - name of the field in the data that has the timestamp for range filter (required)
+ * @param {Metric} options.metric - Metric instance or metric fields object @see ElasticsearchMetric.getMetricFields
  */
 export default function createQuery(options) {
   options = _.defaults(options, { filters: [] });

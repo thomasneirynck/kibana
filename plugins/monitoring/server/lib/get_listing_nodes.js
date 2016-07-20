@@ -22,6 +22,7 @@
  * If we calculate the slope is going up, we just have an up arrow to say it's
  * going up, and likewise if the metric is going down, we have a down arrow
  */
+import { ElasticsearchMetric } from './metrics/metric_classes';
 
 import moment from 'moment';
 import createQuery from './create_query.js';
@@ -41,7 +42,7 @@ export default function getListingNodes(req, indices) {
   const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
   const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
 
-  const metricFields = { timestampField: 'timestamp', uuidField: 'cluster_uuid' };
+  const metricFields = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
     meta: 'get_listing_nodes',

@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from './normalize_shard_objects';
 import createQuery from './create_query';
 import calculateNodeType from './calculate_node_type';
+import { ElasticsearchMetric } from './metrics/metric_classes';
 
 export default function getShardStats(req, indices, lastState) {
   const config = req.server.config();
@@ -9,7 +10,7 @@ export default function getShardStats(req, indices, lastState) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const uuid = req.params.clusterUuid;
   const aggSize = 10;
-  const metric = { timestampField: 'timestamp', uuidField: 'cluster_uuid' };
+  const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
     meta: 'get_shard_stats',

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import createQuery from './create_query.js';
+import { ElasticsearchMetric } from './metrics/metric_classes';
 
 export default function getLastState(req, indices) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
@@ -8,7 +9,7 @@ export default function getLastState(req, indices) {
   const config = req.server.config();
   const resolver = config.get('xpack.monitoring.node_resolver');
 
-  const metric = { timestampField: 'timestamp', uuidField: 'cluster_uuid' };
+  const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
     meta: 'get_last_state',
