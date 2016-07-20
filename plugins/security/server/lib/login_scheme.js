@@ -19,7 +19,8 @@ export default function createScheme({ redirectUrl, strategy }) {
       redirectUrl,
       strategy,
       testRequest: server.auth.test,
-      xpackInfo: server.plugins.xpack_main.info
+      xpackInfo: server.plugins.xpack_main.info,
+      clientCookieName: server.config().get('xpack.security.clientCookieName')
     });
     return { authenticate };
   };
