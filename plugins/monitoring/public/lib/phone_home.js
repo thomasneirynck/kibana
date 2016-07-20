@@ -29,7 +29,7 @@ export default function phoneHomeProvider(Promise, $http, statsReportUrl, report
     constructor() {
       this.attributes = {};
       try {
-        var monitoringData = localStorage.getItem('monitoring_data');
+        var monitoringData = localStorage.getItem('xpack.monitoring.data');
         let attributes = monitoringData && JSON.parse(monitoringData) || {};
         _.defaults(this.attributes, attributes, defaults);
       } catch (e) {
@@ -54,7 +54,7 @@ export default function phoneHomeProvider(Promise, $http, statsReportUrl, report
     }
 
     saveToBrowser() {
-      localStorage.setItem('monitoring_data', JSON.stringify(this.attributes));
+      localStorage.setItem('xpack.monitoring.data', JSON.stringify(this.attributes));
     }
 
     checkReportStatus() {
