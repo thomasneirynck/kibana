@@ -67,11 +67,12 @@ export default (kibana) => new kibana.Plugin({
   init(server) {
     const thisPlugin = this;
     const xpackMainPlugin = server.plugins.xpack_main;
+    const xpackInfo = xpackMainPlugin.info;
     mirrorPluginStatus(xpackMainPlugin, thisPlugin);
     xpackMainPlugin.status.once('green', () => {
       // Register a function that is called whenever the xpack info changes,
       // to re-compute the license check results for this plugin
-      xpackMainPlugin.info.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
+      xpackInfo.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
     });
 
     const config = server.config();
@@ -114,7 +115,7 @@ export default (kibana) => new kibana.Plugin({
     initUsersApi(server);
     initRolesApi(server);
     initIndicesApi(server);
-    initLoginView(server, thisPlugin);
+    initLoginView(server, thisPlugin, xpackInfo);
     initLogoutView(server, thisPlugin);
 
   }

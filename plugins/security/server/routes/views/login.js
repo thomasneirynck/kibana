@@ -1,4 +1,4 @@
-export default (server, uiExports) => {
+export default (server, uiExports, xpackInfo) => {
   const config = server.config();
   const cookieName = config.get('xpack.security.cookieName');
   const login = uiExports.apps.byId.login;
@@ -7,7 +7,9 @@ export default (server, uiExports) => {
     method: 'GET',
     path: '/login',
     handler(request, reply) {
-      if (request.state[cookieName]) return reply.redirect('./');
+
+      const isSecurityDisabledInES = xpackInfo && xpackInfo.isAvailable() && !xpackInfo.feature('security').isEnabled();
+      if (request.state[cookieName] || isSecurityDisabledInES) return reply.redirect('./');
       return reply.renderApp(login);
     },
     config: {
