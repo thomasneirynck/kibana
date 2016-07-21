@@ -30,7 +30,7 @@ export default React.createClass({
     var key;
     var shard = this.props.shard;
     var self = this;
-    if (shard.relocating_message) {
+    if (shard.tooltip_message) {
       key = this.generateKey();
       vents.on(key, function (action) {
         self.setState({ tooltip: action === 'show' });
@@ -49,14 +49,14 @@ export default React.createClass({
   componentWillUnmount: function () {
     var key;
     var shard = this.props.shard;
-    if (shard.relocating_message) {
+    if (shard.tooltip_message) {
       key = this.generateKey();
       vents.clear(key);
     }
   },
 
   toggle: function (event) {
-    if (this.props.shard.relocating_message) {
+    if (this.props.shard.tooltip_message) {
       var action = (event.type === 'mouseenter') ? 'show' : 'hide';
       var key = this.generateKey(true);
       this.setState({ tooltip: action === 'show' });
@@ -68,7 +68,7 @@ export default React.createClass({
     var shard = this.props.shard;
     var tooltip = this.state.tooltip;
     if (tooltip) {
-      tooltip = (<div className="shard-tooltip">{ this.props.shard.relocating_message }</div>);
+      tooltip = (<div className="shard-tooltip">{ this.props.shard.tooltip_message }</div>);
     }
     return (<div
         onMouseEnter={ this.toggle }
