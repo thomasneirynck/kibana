@@ -6,12 +6,11 @@ function isResponseFromLoginApi(response) {
 }
 
 const module = uiModules.get('security');
-module.factory('onUnauthorizedResponse', ($q, chrome) => {
+module.factory('onUnauthorizedResponse', ($q, $window, chrome) => {
   function interceptor(response, handleResponse) {
     if (response.status === 401 && !isResponseFromLoginApi(response)) {
-      const basePathRegExp = new RegExp(`^${chrome.getBasePath()}`);
-      const next = `${window.location.pathname.replace(basePathRegExp, '')}${window.location.hash}`;
-      window.location.href = chrome.addBasePath(`/logout?next=${encodeURIComponent(next)}`);
+      const next = chrome.removeBasePath(`${window.location.pathname}${window.location.hash}`);
+      $window.location.href = chrome.addBasePath(`/logout?next=${encodeURIComponent(next)}`);
       return;
     }
     return handleResponse(response);
