@@ -46,14 +46,12 @@ routes.when('/management/elasticsearch/roles', {
       return roles.length && roles.length === $scope.selectedRoles.length;
     };
 
-    $scope.isReservedRole = (role) => ['superuser', 'transport_client', 'kibana_user'].indexOf(role.name) >= 0;
-
     $scope.toggle = toggle;
     $scope.includes = _.includes;
     $scope.toggleSort = toggleSort;
 
     function getActionableRoles() {
-      return $scope.roles.filter(_.negate($scope.isReservedRole));
+      return $scope.roles.filter((role) => !role.metadata._reserved);
     }
   }
 });
