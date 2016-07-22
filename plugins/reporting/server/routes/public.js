@@ -1,14 +1,14 @@
 const boom = require('boom');
 const createDocumentJobFactory = require('../lib/create_document_job');
-const constants = require('../lib/constants');
+const { JOBTYPES } = require('../lib/constants');
 const licensePreFactory = require ('../lib/license_pre_routing');
+
+const mainEntry = '/api/reporting/generate';
 
 module.exports = function (server) {
   const createDocumentJob = createDocumentJobFactory(server);
   const esErrors = server.plugins.elasticsearch.errors;
   const licensePre = licensePreFactory(server);
-
-  const mainEntry = '/api/reporting/generate';
 
   // defined the public routes
   server.route({
@@ -33,11 +33,19 @@ module.exports = function (server) {
   });
 
   function pdfHandler(objectType, request, reply) {
-    const createJob = createDocumentJob[constants.JOBTYPES_PRINTABLE_PDF];
+    const jobType = JOBTYPES.PRINTABLE_PDF;
+    const createJob = createDocumentJob[jobType];
+    const syncResponse = request.query.hasOwnProperty('sync');
+
     return createJob(objectType, request)
     .then((job) => {
-      const response = reply(job.toJSON());
-      response.type('application/json');
+      if (syncResponse) {
+        return reply(job.id).redirect(`/api/reporting/jobs/download/${job.id}`);
+      } else {
+        // return the queue's job information
+        const response = reply(job.toJSON());
+        response.type('application/json');
+      }
     })
     .catch((err) => {
       if (err instanceof esErrors['401']) return reply(boom.unauthorized());

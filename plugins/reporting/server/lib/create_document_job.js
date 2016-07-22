@@ -17,10 +17,10 @@ function createDocumentJobFactory(server) {
   const getUser = getUserFactory(server);
   const crypto = cryptoFactory(server);
 
-  const { JOBTYPES_PRINTABLE_PDF } = constants;
+  const { JOBTYPES } = constants;
   const jobTypes = {};
 
-  jobTypes[JOBTYPES_PRINTABLE_PDF] = async function (objectType, request) {
+  jobTypes[JOBTYPES.PRINTABLE_PDF] = async function (objectType, request) {
     const date = moment().toISOString();
     const objId = request.params.savedId;
     const query = request.query;
@@ -60,7 +60,7 @@ function createDocumentJobFactory(server) {
         const { payload, options } = params;
 
         return new Promise((resolve, reject) => {
-          const job = jobQueue.addJob(JOBTYPES_PRINTABLE_PDF, payload, options);
+          const job = jobQueue.addJob(JOBTYPES.PRINTABLE_PDF, payload, options);
           job.on(esqueueEvents.EVENT_JOB_CREATED, () => resolve(job));
           job.on(esqueueEvents.EVENT_JOB_CREATE_ERROR, reject);
         });

@@ -42,7 +42,7 @@ function jobsQueryFactory(server) {
 
   return {
     list(request, page = 0, size = defaultSize) {
-      getUser(request)
+      return getUser(request)
       .then((user) => {
         const username = get(user, 'username', nouser);
 
@@ -68,7 +68,7 @@ function jobsQueryFactory(server) {
     },
 
     listCompletedSince(request, size = defaultSize, sinceInMs) {
-      getUser(request)
+      return getUser(request)
       .then((user) => {
         const username = get(user, 'username', nouser);
 
@@ -97,7 +97,7 @@ function jobsQueryFactory(server) {
     },
 
     count(request) {
-      getUser(request)
+      return getUser(request)
       .then((user) => {
         const username = get(user, 'username', nouser);
 
@@ -127,7 +127,7 @@ function jobsQueryFactory(server) {
     get(request, id, includeContent = false) {
       if (!id) return Promise.resolve();
 
-      getUser(request)
+      return getUser(request)
       .then((user) => {
         const username = get(user, 'username', nouser);
 

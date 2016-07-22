@@ -53,8 +53,17 @@ module.service('reportingDocumentControl', function ($http, Promise, Private, $l
     return this.getInfo().exportable;
   };
 
-  this.getUrl = () => {
-    return this.getInfo().reportUrl;
+  this.getUrl = (sync) => {
+    const reportUrl = this.getInfo().reportUrl;
+    if (!reportUrl) return null;
+
+    if (sync) {
+      const parsed = url.parse(reportUrl);
+      parsed.search = (parsed.search == null) ? 'sync' : `${parsed.search}&sync`;
+      return url.format(parsed);
+    }
+
+    return reportUrl;
   };
 
   this.create = () => {

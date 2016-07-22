@@ -1,5 +1,5 @@
 const Esqueue = require('esqueue');
-const createWorker = require('./create_worker');
+const createWorkers = require('./create_workers');
 const { QUEUE_INDEX, QUEUE_DOCTYPE } = require('./constants');
 const oncePerServer = require('./once_per_server');
 
@@ -18,7 +18,7 @@ function createQueueFactory(server) {
 
   const queue = new Esqueue(QUEUE_INDEX, queueOptions);
 
-  createWorker(server)(queue);
+  createWorkers(server)(queue);
 
   return queue;
 }

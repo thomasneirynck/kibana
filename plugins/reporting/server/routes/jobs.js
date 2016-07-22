@@ -1,12 +1,83 @@
 const boom = require('boom');
+const { EVENT_WORKER_COMPLETE, EVENT_WORKER_JOB_FAIL } = require('esqueue/lib/constants/events');
+const { JOBTYPES } = require('../lib/constants');
+const workersFactory = require('../lib/workers');
 const jobsQueryFactory = require('../lib/jobs_query');
 const licensePreFactory = require ('../lib/license_pre_routing');
 
+const mainEntry = '/api/reporting/jobs';
+
 module.exports = function (server) {
+  const jobQueue = server.plugins.reporting.queue;
+  const socketTimeout = server.config().get('xpack.reporting.queue.syncSocketTimeout');
+  const workers = workersFactory(server);
   const jobsQuery = jobsQueryFactory(server);
   const licensePre = licensePreFactory(server);
 
-  const mainEntry = '/api/reporting/jobs';
+  const config = {
+    timeout: {
+      socket: socketTimeout
+    }
+  };
+
+  function encodeContent(content, jobType) {
+    const worker = workers[jobType];
+    switch (worker.encoding) {
+      case 'base64':
+        return new Buffer(content, 'base64');
+      default:
+        return content;
+    }
+  }
+
+  function formatJobOutput(source, jobType) {
+    return {
+      content: (!jobType) ? source.output.content : encodeContent(source.output.content, jobType),
+      content_type: source.output.content_type
+    };
+  }
+
+  function getJobPayload(doc, jobType) {
+    const { status } = doc._source;
+
+    return new Promise((resolve, reject) => {
+      if (status === 'completed') {
+        resolve(formatJobOutput(doc._source, jobType));
+      }
+
+      if (status === 'failed') {
+        reject(Object.assign({
+          errorCode: 204
+        }, formatJobOutput(doc._source)));
+      }
+
+      // wait for the job to be completed
+      function sendPayload(completed) {
+        // if the completed job matches this job
+        if (completed.job.id === doc._id) {
+          // remove event listener
+          cleanupListeners();
+          resolve(formatJobOutput(completed, jobType));
+        }
+      };
+
+      function errorHandler(err) {
+        // remove event listener
+        cleanupListeners();
+        reject(Object.assign({
+          errorCode: 504,
+        }, err.output));
+      };
+
+      function cleanupListeners() {
+        jobQueue.removeListener(EVENT_WORKER_COMPLETE, sendPayload);
+        jobQueue.removeListener(EVENT_WORKER_JOB_FAIL, errorHandler);
+      }
+
+      jobQueue.on(EVENT_WORKER_COMPLETE, sendPayload);
+      jobQueue.on(EVENT_WORKER_JOB_FAIL, errorHandler);
+    });
+  }
 
   // list jobs in the queue, paginated
   server.route({
@@ -60,7 +131,7 @@ module.exports = function (server) {
         reply(doc._source.output);
       });
     },
-    config: licensePre()
+    config: licensePre(config)
   });
 
   // trigger a download of the output from a job
@@ -69,16 +140,24 @@ module.exports = function (server) {
     method: 'GET',
     handler: (request, reply) => {
       const { docId } = request.params;
+      const jobType = JOBTYPES.PRINTABLE_PDF;
 
       jobsQuery.get(request, docId, true)
       .then((doc) => {
-        if (!doc || doc._source.status !== 'completed') return reply(boom.notFound());
+        if (!doc) return reply(boom.notFound());
 
-        const content = new Buffer(doc._source.output.content, 'base64');
-        const response = reply(content);
-        if (doc._source.output.content_type) response.type(doc._source.output.content_type);
+        return getJobPayload(doc, jobType)
+        .then((output) => {
+          const response = reply(output.content);
+          response.type(output.content_type);
+        })
+        .catch((err) => {
+          if (err.errorCode === 204) return reply().code(err.errorCode);
+          if (err.errorCode === 504) return reply(boom.gatewayTimeout('Report generation failed'));
+          reply(boom.badImplementation());
+        });
       });
     },
-    config: licensePre()
+    config: licensePre(config)
   });
 };
