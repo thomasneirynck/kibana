@@ -1,3 +1,4 @@
+import { parse } from 'url';
 import 'ui/autoload/styles';
 import 'plugins/security/views/login/login.less';
 import chrome from 'ui/chrome';
@@ -18,6 +19,7 @@ chrome
     const defaultLoginMessage = 'Login is currently disabled because the license could not be determined.';
     self.allowLogin = xpackInfo.get('features.security.allowLogin', false);
     self.loginMessage = xpackInfo.get('features.security.loginMessage', defaultLoginMessage);
+    self.infoMessage = parse($window.location.href, true).query.msg;
     self.isDisabled = !isSecure && secureCookies;
     self.submit = (username, password) => {
       self.error = false;
