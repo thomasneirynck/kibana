@@ -16,6 +16,7 @@ class PdfMaker {
       }
     };
 
+    this._title = '';
     this._content = [];
     this._printer = new Printer(fonts);
   }
@@ -80,8 +81,12 @@ class PdfMaker {
     this._addContents(contents);
   }
 
+  setTitle(title) {
+    this._title = title;
+  }
+
   generate() {
-    const docTemplate = _.assign(getTemplate(), { content: this._content });
+    const docTemplate = _.assign(getTemplate(this._title), { content: this._content });
     this._pdfDoc = this._printer.createPdfKitDocument(docTemplate, getDocOptions());
     return this;
   }
@@ -106,7 +111,7 @@ class PdfMaker {
   }
 };
 
-function getTemplate() {
+function getTemplate(title) {
   const pageMarginTop = 40;
   const pageMarginBottom = 80;
   const pageMarginWidth = 40;
@@ -117,13 +122,17 @@ function getTemplate() {
     pageSize: 'A4',
     pageMargins: [ pageMarginWidth, pageMarginTop, pageMarginWidth, pageMarginBottom ],
 
-    // header: function (currentPage, pageCount) {
-    //   return {
-    //     margin: [ pageMarginWidth, 0, pageMarginWidth, 0 ],
-    //     text: 'I\'m a little header, short and stout',
-    //     alignment: 'center'
-    //   };
-    // },
+    header: function () {
+      return {
+        margin: [ pageMarginWidth, pageMarginTop / 4, pageMarginWidth, 0 ],
+        text: title,
+        style: {
+          color: '#aaa',
+        },
+        fontSize: 10,
+        alignment: 'center'
+      };
+    },
 
     footer: function (currentPage, pageCount) {
       const logoPath = path.resolve(assetPath, 'img', 'logo-grey.png');
@@ -138,7 +147,7 @@ function getTemplate() {
             margin: [ 120, 10, 0, 0 ],
             text: 'Page ' + currentPage.toString() + ' of ' + pageCount,
             style: {
-              color: '#888'
+              color: '#aaa'
             },
           },
         ]
