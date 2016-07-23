@@ -12,7 +12,7 @@ function generateDocumentFactory(server) {
     printablePdf: printablePdf,
   };
 
-  function printablePdf(savedObjects, query, headers) {
+  function printablePdf(title, savedObjects, query, headers) {
     const pdfOutput = pdf.create();
 
     return Promise.map(savedObjects, function (savedObj) {
