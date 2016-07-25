@@ -4,6 +4,7 @@ const { JOBTYPES } = require('../lib/constants');
 const workersFactory = require('../lib/workers');
 const jobsQueryFactory = require('../lib/jobs_query');
 const licensePreFactory = require ('../lib/license_pre_routing');
+const userPreRoutingFactory = require('../lib/user_pre_routing');
 
 const mainEntry = '/api/reporting/jobs';
 
@@ -13,12 +14,7 @@ module.exports = function (server) {
   const workers = workersFactory(server);
   const jobsQuery = jobsQueryFactory(server);
   const licensePre = licensePreFactory(server);
-
-  const config = {
-    timeout: {
-      socket: socketTimeout
-    }
-  };
+  const userPreRouting = userPreRoutingFactory(server);
 
   function encodeContent(content, jobType) {
     const worker = workers[jobType];
@@ -131,7 +127,9 @@ module.exports = function (server) {
         reply(doc._source.output);
       });
     },
-    config: licensePre(config)
+    config: licensePre({
+      timeout: { socket: socketTimeout }
+    }),
   });
 
   // trigger a download of the output from a job
@@ -141,6 +139,8 @@ module.exports = function (server) {
     handler: (request, reply) => {
       const { docId } = request.params;
       const jobType = JOBTYPES.PRINTABLE_PDF;
+
+      return reply('ok to download');
 
       jobsQuery.get(request, docId, true)
       .then((doc) => {
@@ -158,6 +158,10 @@ module.exports = function (server) {
         });
       });
     },
-    config: licensePre(config)
+    config: licensePre({
+      pre: [ userPreRouting ],
+      timeout: { socket: socketTimeout },
+      auth: false,
+    }),
   });
 };
