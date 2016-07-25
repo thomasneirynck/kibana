@@ -47,8 +47,8 @@ uiRoutes.when('/elasticsearch', {
   }
 });
 
-const mod = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-mod.controller('elasticsearch-overview', (
+const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
+uiModule.controller('elasticsearch-overview', (
   $route, globalState, timefilter, $http, title, Private, $executor, monitoringClusters, $scope
 ) => {
 

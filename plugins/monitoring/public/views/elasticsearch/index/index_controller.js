@@ -53,8 +53,8 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
   });
 }
 
-const mod = uiModules.get('monitoring', []);
-mod.controller('indexView', (timefilter, $route, title, Private, globalState, $executor, $http, monitoringClusters, $scope) => {
+const uiModule = uiModules.get('monitoring', []);
+uiModule.controller('indexView', (timefilter, $route, title, Private, globalState, $executor, $http, monitoringClusters, $scope) => {
   timefilter.enabled = true;
 
   function setClusters(clusters) {

@@ -23,8 +23,8 @@ import 'plugins/monitoring/views/elasticsearch/node/node_controller';
 import 'plugins/monitoring/views/kibana/overview/kibanas_controller';
 import 'plugins/monitoring/views/kibana/instance/kibana_controller';
 
-const mod = uiModules.get('kibana');
-mod.run(function (uiSettings) {
+const uiModule = uiModules.get('kibana');
+uiModule.run(function (uiSettings) {
   _.set(uiSettings, 'defaults.timepicker:timeDefaults.value', JSON.stringify({
     from: 'now-1h',
     to: 'now',

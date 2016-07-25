@@ -17,8 +17,8 @@ uiRoutes.when('/overview', {
   }
 });
 
-const mod = uiModules.get('monitoring', ['monitoring/directives']);
-mod.controller('overview', ($scope, $route, monitoringClusters, timefilter, title, globalState, $executor) => {
+const uiModule = uiModules.get('monitoring', ['monitoring/directives']);
+uiModule.controller('overview', ($scope, $route, monitoringClusters, timefilter, title, globalState, $executor) => {
   // This will show the timefilter
   timefilter.enabled = true;
 

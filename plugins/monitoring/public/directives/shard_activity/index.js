@@ -4,8 +4,8 @@ import template from 'plugins/monitoring/directives/shard_activity/index.html';
 import formatNumber from 'plugins/monitoring/lib/format_number';
 import uiModules from 'ui/modules';
 
-const mod = uiModules.get('monitoring/directives', []);
-mod.directive('monitoringShardActivity', function () {
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringShardActivity', function () {
   return {
     restrict: 'E',
     scope: {

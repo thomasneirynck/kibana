@@ -14,8 +14,8 @@ uiRoutes.when('/license', {
   }
 });
 
-const mod = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-mod.controller('licenseView', ($route, globalState, title, timefilter, $scope, $window) => {
+const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
+uiModule.controller('licenseView', ($route, globalState, title, timefilter, $scope, $window) => {
   timefilter.enabled = false;
 
   function setClusters(clusters) {

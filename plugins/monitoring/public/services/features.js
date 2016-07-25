@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import uiModules from 'ui/modules';
 
-const mod = uiModules.get('monitoring/features', []);
-mod.service('features', function ($window) {
+const uiModule = uiModules.get('monitoring/features', []);
+uiModule.service('features', function ($window) {
   function getData() {
     const monitoringData = $window.localStorage.getItem('monitoring_data');
     return (monitoringData && JSON.parse(monitoringData)) || {};
