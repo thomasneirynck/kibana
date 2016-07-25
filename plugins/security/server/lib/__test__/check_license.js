@@ -106,7 +106,8 @@ describe('check_license', function () {
       }));
       set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(false));
 
-      const expectedMessage = 'Login is disabled because your license has expired.';
+      const expectedMessage = 'Login is disabled because your license has expired. '
+      + 'Please extend your license or disable Security in Elasticsearch.';
       expect(checkLicense(mockLicenseInfo).loginMessage).to.contain(expectedMessage);
     });
 

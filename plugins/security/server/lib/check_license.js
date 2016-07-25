@@ -29,7 +29,7 @@ export default function checkLicense(xpackLicenseInfo) {
     }
     allowLogin = false;
   } else if (!isLicenseActive) {
-    loginMessage = 'Login is disabled because your license has expired.';
+    loginMessage = 'Login is disabled because your license has expired. Please extend your license or disable Security in Elasticsearch.';
     allowLogin = false;
   } else {
     allowLogin = true;
