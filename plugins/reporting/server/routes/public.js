@@ -2,6 +2,7 @@ const boom = require('boom');
 const createDocumentJobFactory = require('../lib/create_document_job');
 const { JOBTYPES } = require('../lib/constants');
 const licensePreFactory = require ('../lib/license_pre_routing');
+const userPreRoutingFactory = require('../lib/user_pre_routing');
 
 const mainEntry = '/api/reporting/generate';
 
@@ -10,27 +11,28 @@ module.exports = function (server) {
   const createDocumentJob = createDocumentJobFactory(server);
   const esErrors = server.plugins.elasticsearch.errors;
   const licensePre = licensePreFactory(server);
+  const userPreRouting = userPreRoutingFactory(server);
 
   // defined the public routes
   server.route({
     path: `${mainEntry}/visualization/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('visualization', request, reply),
-    config: licensePre({ auth: false })
+    config: licensePre({ auth: false, pre: [ userPreRouting ] })
   });
 
   server.route({
     path: `${mainEntry}/search/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('search', request, reply),
-    config: licensePre({ auth: false })
+    config: licensePre({ auth: false, pre: [ userPreRouting ] })
   });
 
   server.route({
     path: `${mainEntry}/dashboard/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('dashboard', request, reply),
-    config: licensePre({ auth: false })
+    config: licensePre({ auth: false, pre: [ userPreRouting ] })
   });
 
   function pdfHandler(objectType, request, reply) {
@@ -38,7 +40,6 @@ module.exports = function (server) {
     const createJob = createDocumentJob[jobType];
     const syncResponse = request.query.hasOwnProperty('sync');
 
-    // ceateJob will forward auth failures from the server
     return createJob(objectType, request)
     .then((job) => {
       if (syncResponse) {
