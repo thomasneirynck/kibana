@@ -53,8 +53,8 @@ uiRoutes.when('/nodes/:node', {
   }
 });
 
-const mod = uiModules.get('monitoring', [ 'plugins/monitoring/directives' ]);
-mod.controller('nodeView', (timefilter, $route, globalState, title, Private, $executor, $http, monitoringClusters, $scope) => {
+const uiModule = uiModules.get('monitoring', [ 'plugins/monitoring/directives' ]);
+uiModule.controller('nodeView', (timefilter, $route, globalState, title, Private, $executor, $http, monitoringClusters, $scope) => {
 
   timefilter.enabled = true;
 

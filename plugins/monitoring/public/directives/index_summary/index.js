@@ -3,8 +3,8 @@ import statusIconClass from '../../lib/status_icon_class';
 import template from 'plugins/monitoring/directives/index_summary/index.html';
 import uiModules from 'ui/modules';
 
-const mod = uiModules.get('monitoring/directives', []);
-mod.directive('monitoringIndexSummary', () => {
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringIndexSummary', () => {
   return {
     restrict: 'E',
     template: template,

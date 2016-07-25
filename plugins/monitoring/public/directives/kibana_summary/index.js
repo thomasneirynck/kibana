@@ -3,8 +3,8 @@ import statusIconClass from '../../lib/status_icon_class';
 import template from 'plugins/monitoring/directives/kibana_summary/index.html';
 import uiModules from 'ui/modules';
 
-const mod = uiModules.get('monitoring/directives', []);
-mod.directive('monitoringKibanaSummary', () => {
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringKibanaSummary', () => {
   return {
     restrict: 'E',
     template: template,

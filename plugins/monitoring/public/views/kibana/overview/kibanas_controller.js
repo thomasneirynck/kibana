@@ -44,8 +44,8 @@ uiRoutes.when('/kibana', {
   }
 });
 
-const mod = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-mod.controller('kibanas', ($route, globalState, title, Private, $executor, $http, timefilter, $scope) => {
+const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
+uiModule.controller('kibanas', ($route, globalState, title, Private, $executor, $http, timefilter, $scope) => {
   timefilter.enabled = true;
 
   function setClusters(clusters) {

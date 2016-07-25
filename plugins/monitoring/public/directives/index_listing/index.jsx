@@ -4,8 +4,8 @@ import React from 'react';
 import Table from 'plugins/monitoring/directives/paginated_table/components/table';
 import uiModules from 'ui/modules';
 
-const mod = uiModules.get('monitoring/directives', []);
-mod.directive('monitoringIndexListing', function (kbnUrl) {
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringIndexListing', function (kbnUrl) {
   var initialTableOptions = {
     title: 'Indices',
     searchPlaceholder: 'Filter Indices',

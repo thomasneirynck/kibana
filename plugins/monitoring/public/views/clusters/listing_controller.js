@@ -27,8 +27,8 @@ uiRoutes.when('/home', {
 })
 .otherwise({ redirectTo: '/no-data' });
 
-const mod = uiModules.get('monitoring', ['monitoring/directives']);
-mod.controller('home', ($route, $scope, globalState, monitoringClusters, timefilter, title, $executor) => {
+const uiModule = uiModules.get('monitoring', ['monitoring/directives']);
+uiModule.controller('home', ($route, $scope, globalState, monitoringClusters, timefilter, title, $executor) => {
   // Set the key for the cluster_uuid. This is mainly for
   // react.js so we can use the key easily.
   function setKeyForClusters(cluster) {
