@@ -503,7 +503,7 @@ export const expected = {
     'format': '0.[00]',
     'label': 'Average',
     'metricAgg': 'avg',
-    'title': 'Response Time',
+    'title': 'Client Response Time',
     'units': 'ms'
   },
   'kibana_max_response_times': {
@@ -516,7 +516,7 @@ export const expected = {
     'format': '0.[00]',
     'label': 'Max',
     'metricAgg': 'avg',
-    'title': 'Response Time',
+    'title': 'Client Response Time',
     'units': 'ms'
   },
   'kibana_memory_heap_size_limit': {
@@ -555,7 +555,7 @@ export const expected = {
     'format': '0,0.[00]',
     'label': '15m',
     'metricAgg': 'avg',
-    'title': 'OS Load',
+    'title': 'System Load',
     'units': ''
   },
   'kibana_os_load_1m': {
@@ -568,7 +568,7 @@ export const expected = {
     'format': '0,0.[00]',
     'label': '1m',
     'metricAgg': 'avg',
-    'title': 'OS Load',
+    'title': 'System Load',
     'units': ''
   },
   'kibana_os_load_5m': {
@@ -581,7 +581,7 @@ export const expected = {
     'format': '0,0.[00]',
     'label': '5m',
     'metricAgg': 'avg',
-    'title': 'OS Load',
+    'title': 'System Load',
     'units': ''
   },
   'kibana_process_delay': {
@@ -604,7 +604,7 @@ export const expected = {
     'description': 'The number of requests received by the server',
     'field': 'kibana_stats.requests.total',
     'format': '0.[00]',
-    'label': 'Requests',
+    'label': 'Client Requests',
     'metricAgg': 'sum',
     'units': ''
   },
@@ -848,7 +848,8 @@ export const expected = {
     'description': 'The amount of load used for the last 1 minute.',
     'field': 'node_stats.os.cpu.load_average.1m',
     'format': '0,0.[00]',
-    'label': 'System Load Average',
+    'title': 'System Load',
+    'label': '1m',
     'metricAgg': 'avg',
     'type': 'node',
     'units': ''
