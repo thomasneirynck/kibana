@@ -16,21 +16,21 @@ module.exports = function (server) {
     path: `${mainEntry}/visualization/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('visualization', request, reply),
-    config: licensePre()
+    config: licensePre({ auth: false })
   });
 
   server.route({
     path: `${mainEntry}/search/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('search', request, reply),
-    config: licensePre()
+    config: licensePre({ auth: false })
   });
 
   server.route({
     path: `${mainEntry}/dashboard/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('dashboard', request, reply),
-    config: licensePre()
+    config: licensePre({ auth: false })
   });
 
   function pdfHandler(objectType, request, reply) {
@@ -38,6 +38,7 @@ module.exports = function (server) {
     const createJob = createDocumentJob[jobType];
     const syncResponse = request.query.hasOwnProperty('sync');
 
+    // ceateJob will forward auth failures from the server
     return createJob(objectType, request)
     .then((job) => {
       if (syncResponse) {
