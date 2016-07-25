@@ -6,6 +6,7 @@ const licensePreFactory = require ('../lib/license_pre_routing');
 const mainEntry = '/api/reporting/generate';
 
 module.exports = function (server) {
+  const config = server.config();
   const createDocumentJob = createDocumentJobFactory(server);
   const esErrors = server.plugins.elasticsearch.errors;
   const licensePre = licensePreFactory(server);
@@ -40,7 +41,7 @@ module.exports = function (server) {
     return createJob(objectType, request)
     .then((job) => {
       if (syncResponse) {
-        return reply(job.id).redirect(`/api/reporting/jobs/download/${job.id}`);
+        return reply(job.id).redirect(`${config.get('server.basePath')}/api/reporting/jobs/download/${job.id}`);
       } else {
         // return the queue's job information
         const response = reply(job.toJSON());
