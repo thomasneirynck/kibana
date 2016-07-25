@@ -9,7 +9,7 @@ import management from 'ui/management';
 
 routes.defaults(/\/management/, {
   resolve: {
-    managementSection: function (ShieldUser) {
+    securityManagementSection: function (ShieldUser) {
       const elasticsearch = management.getSection('elasticsearch');
       const showSecurityLinks = !!ShieldUser.getCurrent();
 
