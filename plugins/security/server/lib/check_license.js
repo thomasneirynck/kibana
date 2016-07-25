@@ -22,7 +22,7 @@ export default function checkLicense(xpackLicenseInfo) {
     loginMessage = 'Login is disabled because security has been disabled in Elasticsearch.';
     allowLogin = false;
   } else if (isLicenseBasic) {
-    loginMessage = 'Your Basic license does not support Security. Please upgrade your license.';
+    loginMessage = 'Your Basic license does not support Security. Please extend/upgrade your license or disable Security in Elasticsearch.';
     allowLogin = false;
   } else if (!isLicenseActive) {
     loginMessage = 'Login is disabled because your license has expired.';
