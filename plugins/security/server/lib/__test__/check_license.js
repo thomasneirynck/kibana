@@ -75,14 +75,27 @@ describe('check_license', function () {
       expect(checkLicense(mockLicenseInfo).loginMessage).to.contain(expectedMessage);
     });
 
-    it ('should tell users if login is disabled because license is basic', () => {
+    it ('should tell users if login is disabled because license is basic (and active)', () => {
       set(mockLicenseInfo, 'license.isActive', () => { return true; });
       set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
         isEnabled: () => { return true; }
       }));
       set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(true));
 
-      const expectedMessage = 'Your Basic license does not support Security. Please upgrade your license.';
+      const expectedMessage = 'Your Basic license does not support Security. '
+      + 'Please upgrade your license or disable Security in Elasticsearch';
+      expect(checkLicense(mockLicenseInfo).loginMessage).to.contain(expectedMessage);
+    });
+
+    it ('should tell users if login is disabled because license is basic (and expired)', () => {
+      set(mockLicenseInfo, 'license.isActive', () => { return false; });
+      set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
+        isEnabled: () => { return true; }
+      }));
+      set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(true));
+
+      const expectedMessage = 'Your Basic license does not support Security. '
+      + 'Please extend your license and disable Security in Elasticsearch';
       expect(checkLicense(mockLicenseInfo).loginMessage).to.contain(expectedMessage);
     });
 
