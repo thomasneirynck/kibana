@@ -142,7 +142,7 @@ export default function nodesRoutes(server) {
         });
       })
       .then(calculateClusterStatus)
-      .then(function (body) {
+      .then(body => {
         const clusterState = body.clusterState && body.clusterState.cluster_state || { nodes: {} };
         let nodeDetail = body.nodeSummary.node;
         if (!nodeDetail) {
