@@ -1,11 +1,16 @@
-const SimpleGit = require('simple-git');
+const path = require('path');
+const simpleGit = require('simple-git');
 
-exports.getFiles = function filesToCommit(path) {
+exports.getFiles = function filesToCommit(filePath) {
+  const gitPath = path.resolve(__dirname, '..', '..');
+  const relativePath = path.relative(gitPath, filePath);
+  const fileMatch = new RegExp(`^${relativePath}`);
+
   const options = ['--name-status', '--cached'];
-  const simpleGit = new SimpleGit(path);
+  const git = simpleGit(gitPath);
 
   return new Promise((resolve, reject) => {
-    simpleGit.diff(options, (err, output) => {
+    git.diff(options, (err, output) => {
       if (err) return reject(err);
       resolve(output);
     });
@@ -19,7 +24,8 @@ exports.getFiles = function filesToCommit(path) {
       const status = parts.shift();
       const name = parts.join('\t').trim();
       return { status, name };
-    });
+    })
+    .filter(file => fileMatch.test(exports.getFilename(file)));
   });
 };
 
