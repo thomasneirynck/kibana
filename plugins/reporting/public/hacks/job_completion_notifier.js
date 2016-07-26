@@ -4,6 +4,7 @@ import uiModules from 'ui/modules';
 import { last } from 'lodash';
 import moment from 'moment';
 import constants from '../../server/lib/constants.js';
+import '../../../security/public/services/login_page';
 
 uiModules.get('kibana')
 .config(() => {
@@ -14,11 +15,13 @@ uiModules.get('kibana')
 });
 
 uiModules.get('kibana')
-.run(($http, $interval) => {
-  $interval(function startChecking() {
-    getJobsCompletedSinceLastCheck($http)
-    .then(jobs => jobs.forEach(showCompletionNotification));
-  }, constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
+.run(($http, $interval, LoginPage) => {
+  if (!LoginPage.isOnLoginPage()) {
+    $interval(function startChecking() {
+      getJobsCompletedSinceLastCheck($http)
+      .then(jobs => jobs.forEach(showCompletionNotification));
+    }, constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
+  }
 });
 
 function getLastCheckedOn() {
