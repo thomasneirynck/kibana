@@ -8,7 +8,7 @@ import 'plugins/security/services/shield_role';
 import 'plugins/security/services/shield_privileges';
 import 'plugins/security/services/shield_indices';
 import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
-
+import checkLicenseError from 'plugins/security/lib/check_license_error';
 
 routes.when('/management/elasticsearch/roles/edit/:name?', {
   template,
@@ -22,9 +22,10 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
         run_as: []
       });
     },
-    users(ShieldUser) {
+    users(ShieldUser, kbnUrl, Promise, Private) {
       return ShieldUser.query().$promise
-      .then(users => _.map(users, 'username'));
+      .then(users => _.map(users, 'username'))
+      .catch(checkLicenseError(kbnUrl, Promise, Private));
     },
     indexPatterns(Private) {
       const indexPatterns = Private(IndexPatternsProvider);
