@@ -1,9 +1,9 @@
 import { join, resolve } from 'path';
 import Promise from 'bluebird';
 import requireAllAndApply from '../../server/lib/require_all_and_apply';
-var pluginSelfCheck = require('./server/lib/plugin_self_check');
-var instantiateClient = require('./server/lib/es_client/instantiate_client');
-var initKibanaMonitoring = require('./server/kibana_monitoring');
+import pluginSelfCheck from './server/lib/plugin_self_check';
+import instantiateClient from './server/lib/es_client/instantiate_client';
+import initKibanaMonitoring from './server/kibana_monitoring';
 
 export default function monitoringIndex(kibana) {
   return new kibana.Plugin({
@@ -38,6 +38,25 @@ export default function monitoringIndex(kibana) {
         enabled: boolean().default(true),
         chart: object({
           elasticsearch: object({
+            index: object({
+              index_memory: array().items(string().valid(
+                'index_mem_doc_values',
+                'index_mem_fixed_bit_set',
+                'index_mem_norms',
+                'index_mem_points',
+                'index_mem_stored_fields',
+                'index_mem_term_vectors',
+                'index_mem_terms',
+                'index_mem_versions',
+                'index_mem_writer',
+                'index_mem_fielddata',
+                'index_mem_query_cache',
+                'index_mem_request_cache'
+              )).max(3).unique().single().default([
+                'index_mem_terms',
+                'index_mem_points'
+              ])
+            }).default(),
             node: object({
               index_memory: array().items(string().valid(
                 'node_index_mem_doc_values',
@@ -48,7 +67,10 @@ export default function monitoringIndex(kibana) {
                 'node_index_mem_term_vectors',
                 'node_index_mem_terms',
                 'node_index_mem_versions',
-                'node_index_mem_writer'
+                'node_index_mem_writer',
+                'node_index_mem_fielddata',
+                'node_index_mem_query_cache',
+                'node_index_mem_request_cache'
               )).max(3).unique().single().default([
                 'node_index_mem_terms',
                 'node_index_mem_points'

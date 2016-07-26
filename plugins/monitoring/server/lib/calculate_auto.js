@@ -1,7 +1,7 @@
-var moment = require('moment');
-var d = moment.duration;
+import moment from 'moment';
 
-var roundingRules = [
+const d = moment.duration;
+const roundingRules = [
   [ d(500, 'ms'), d(100, 'ms') ],
   [ d(5, 'second'), d(1, 'second') ],
   [ d(7.5, 'second'), d(5, 'second') ],
@@ -20,7 +20,7 @@ var roundingRules = [
   [ Infinity, d(1, 'year') ]
 ];
 
-var revRoundingRules = roundingRules.slice(0).reverse();
+const revRoundingRules = roundingRules.slice(0).reverse();
 
 function find(rules, check, last) {
   function pick(buckets, duration) {

@@ -14,20 +14,30 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Elasticsearch Incorporated.
  */
+import { capitalize, find, get, includes } from 'lodash';
 
 export default function decorateShards(shards, nodes) {
-  function setNodeName(shard) {
-    var node = nodes[shard.resolver];
-    shard.nodeName = (node && node.name) || null;
-    shard.type = 'shard';
-    if (shard.state === 'INITIALIZING' && shard.relocating_node) {
-      shard.relocating_message = 'Relocating from ' + nodes[shard.relocating_node].name;
+  function getTooltipMessage(shard) {
+    const isRelocating = (node) => includes(node.node_ids, shard.relocating_node);
+    const nodeName = get(find(nodes, (n) => isRelocating(n)), 'name');
+
+    // messages for relocating node
+    if (nodeName) {
+      if (shard.state === 'INITIALIZING') {
+        return `Relocating from ${nodeName}`;
+      }
+      if (shard.state === 'RELOCATING') {
+        return `Relocating to ${nodeName}`;
+      }
     }
-    if (shard.state === 'RELOCATING') {
-      shard.relocating_message = 'Relocating to ' + nodes[shard.relocating_node].name;
-    }
-    return shard;
+    return capitalize(shard.state.toLowerCase());
   }
 
-  return shards.map(setNodeName);
+  return shards.map((shard) => {
+    const node = nodes[shard.resolver];
+    shard.nodeName = (node && node.name) || null;
+    shard.type = 'shard';
+    shard.tooltip_message = getTooltipMessage(shard);
+    return shard;
+  });
 };

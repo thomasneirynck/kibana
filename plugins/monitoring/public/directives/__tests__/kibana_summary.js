@@ -2,8 +2,10 @@ import angular from 'angular';
 import expect from 'expect.js';
 import ngMock from 'ng_mock';
 import $ from 'jquery';
+import findTestSubject from 'ui/jquery/find_test_subject';
 import './fixtures/providers';
-require('ui/jquery/find_test_subject')($);
+
+findTestSubject($);
 
 describe('monitoringKibanaSummary', function () {
   let $element;

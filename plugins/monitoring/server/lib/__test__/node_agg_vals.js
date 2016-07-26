@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-const nodeAggVals = require('../node_agg_vals');
+import { getLatestAggKey, getNodeAttribute } from '../node_agg_vals';
 
 describe('Grabbing Values from Node Aggregations', () => {
   it('Gets the key from the aggregation with the latest timestamp', () => {
@@ -7,7 +7,7 @@ describe('Grabbing Values from Node Aggregations', () => {
       { key: 'Node 2', max_timestamp: { value: 20 } },
       { key: 'Node 1', max_timestamp: { value: 10 } }
     ];
-    expect(nodeAggVals.getLatestAggKey(buckets)).to.be.eql('Node 2');
+    expect(getLatestAggKey(buckets)).to.be.eql('Node 2');
   });
 
   it('Gets the last attributes for the node', () => {
@@ -15,11 +15,11 @@ describe('Grabbing Values from Node Aggregations', () => {
       undefined,
       { key_as_string: 'false' }
     ];
-    expect(nodeAggVals.getNodeAttribute(buckets)).to.be.eql('false');
+    expect(getNodeAttribute(buckets)).to.be.eql('false');
   });
 
   it('Gets the undefined as last attributes for the node if no attributes set', () => {
     const buckets = [];
-    expect(nodeAggVals.getNodeAttribute(buckets)).to.be.undefined;
+    expect(getNodeAttribute(buckets)).to.be.undefined;
   });
 });

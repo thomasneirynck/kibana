@@ -2,9 +2,8 @@ import _ from 'lodash';
 import numeral from 'numeral';
 import React from 'react';
 import statusIconClass from '../../lib/status_icon_class';
-
-const module = require('ui/modules').get('monitoring/directives', []);
-const Table = require('plugins/monitoring/directives/paginated_table/components/table');
+import Table from 'plugins/monitoring/directives/paginated_table/components/table';
+import uiModules from 'ui/modules';
 
 function getStatusAndClasses(value, availability) {
   if (availability === false) {
@@ -20,7 +19,9 @@ function getStatusAndClasses(value, availability) {
     iconClass: statusIconClass(value)
   };
 }
-module.directive('monitoringKibanaListing', function (kbnUrl) {
+
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
   const initialTableOptions = {
     title: 'Kibana',
     searchPlaceholder: 'Filter Instances',

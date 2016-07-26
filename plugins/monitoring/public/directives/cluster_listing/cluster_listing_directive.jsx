@@ -1,9 +1,10 @@
-var React = require('react');
-var module = require('ui/modules').get('monitoring/directives', []);
-var Table = require('plugins/monitoring/directives/paginated_table/components/table');
-var ClusterRow = require('./components/cluster_row.jsx');
+import React from 'react';
+import Table from 'plugins/monitoring/directives/paginated_table/components/table';
+import ClusterRow from './components/cluster_row.jsx';
+import uiModules from 'ui/modules';
 
-module.directive('monitoringClusterListing', function (globalState, kbnUrl) {
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl) {
   return {
     restrict: 'E',
     scope: { clusters: '=' },

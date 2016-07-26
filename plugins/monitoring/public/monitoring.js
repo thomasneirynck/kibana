@@ -1,26 +1,30 @@
-var _ = require('lodash');
-require('ui/autoload/all');
-require('plugins/monitoring/less/main.less');
-require('plugins/monitoring/filters/index.js');
-require('plugins/monitoring/directives/index.js');
-require('plugins/monitoring/services/clusters.js');
-require('plugins/monitoring/services/features.js');
-require('plugins/monitoring/services/executor.js');
-require('plugins/monitoring/services/license.js');
-require('plugins/monitoring/services/title.js');
-require('plugins/monitoring/views/no_data/no_data_controller.js');
-require('plugins/monitoring/views/license/index.js');
-require('plugins/monitoring/views/clusters/listing_controller.js');
-require('plugins/monitoring/views/clusters/overview_controller.js');
-require('plugins/monitoring/views/elasticsearch/overview/overview_controller.js');
-require('plugins/monitoring/views/elasticsearch/indices/indices_controller.js');
-require('plugins/monitoring/views/elasticsearch/index/index_controller.js');
-require('plugins/monitoring/views/elasticsearch/nodes/nodes_controller.js');
-require('plugins/monitoring/views/elasticsearch/node/node_controller.js');
-require('plugins/monitoring/views/kibana/overview/kibanas_controller.js');
-require('plugins/monitoring/views/kibana/instance/kibana_controller.js');
+import _ from 'lodash';
+import uiModules from 'ui/modules';
+import uiRoutes from 'ui/routes';
+import uiChrome from 'ui/chrome';
+import 'ui/autoload/all';
+import 'plugins/monitoring/less/main.less';
+import 'plugins/monitoring/filters';
+import 'plugins/monitoring/directives';
+import 'plugins/monitoring/services/clusters';
+import 'plugins/monitoring/services/features';
+import 'plugins/monitoring/services/executor';
+import 'plugins/monitoring/services/license';
+import 'plugins/monitoring/services/title';
+import 'plugins/monitoring/views/no_data/no_data_controller';
+import 'plugins/monitoring/views/license';
+import 'plugins/monitoring/views/clusters/listing_controller';
+import 'plugins/monitoring/views/clusters/overview_controller';
+import 'plugins/monitoring/views/elasticsearch/overview/overview_controller';
+import 'plugins/monitoring/views/elasticsearch/indices/indices_controller';
+import 'plugins/monitoring/views/elasticsearch/index/index_controller';
+import 'plugins/monitoring/views/elasticsearch/nodes/nodes_controller';
+import 'plugins/monitoring/views/elasticsearch/node/node_controller';
+import 'plugins/monitoring/views/kibana/overview/kibanas_controller';
+import 'plugins/monitoring/views/kibana/instance/kibana_controller';
 
-require('ui/modules').get('kibana').run(function (uiSettings) {
+const uiModule = uiModules.get('kibana');
+uiModule.run(function (uiSettings) {
   _.set(uiSettings, 'defaults.timepicker:timeDefaults.value', JSON.stringify({
     from: 'now-1h',
     to: 'now',
@@ -34,13 +38,11 @@ require('ui/modules').get('kibana').run(function (uiSettings) {
 });
 
 // Enable Angular routing
-require('ui/routes')
-  .enable();
+uiRoutes.enable();
 
-require('ui/chrome')
+uiChrome
   .setRootController('monitoring', function ($scope, courier) {
     $scope.$on('application.load', function () {
       courier.start();
     });
   });
-

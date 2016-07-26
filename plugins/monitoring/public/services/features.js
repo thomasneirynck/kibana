@@ -1,7 +1,8 @@
-const _ = require('lodash');
-const mod = require('ui/modules').get('monitoring/features', []);
+import _ from 'lodash';
+import uiModules from 'ui/modules';
 
-mod.service('features', function ($window) {
+const uiModule = uiModules.get('monitoring/features', []);
+uiModule.service('features', function ($window) {
   function getData() {
     const monitoringData = $window.localStorage.getItem('monitoring_data');
     return (monitoringData && JSON.parse(monitoringData)) || {};

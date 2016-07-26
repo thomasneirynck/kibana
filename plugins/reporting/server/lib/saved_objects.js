@@ -135,6 +135,22 @@ module.exports = function (client, config) {
       });
 
       return obj;
+    })
+    .catch(() => {
+      const isMissing = true;
+      const savedObj = {
+        id,
+        type,
+        isMissing,
+        toJSON() {
+          return {
+            id,
+            type,
+            isMissing
+          };
+        }
+      };
+      return savedObj;
     });
   }
 

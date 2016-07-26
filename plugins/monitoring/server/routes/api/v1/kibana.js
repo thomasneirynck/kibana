@@ -5,8 +5,8 @@ import getKibanas from '../../../lib/get_kibanas';
 import getKibanaInfo from '../../../lib/get_kibana_info';
 import getKibanasForClusters from '../../../lib/get_kibanas_for_clusters';
 import handleError from '../../../lib/handle_error';
-const getMetrics = require('../../..//lib/get_metrics');
-const calculateIndices = require('../../..//lib/calculate_indices');
+import getMetrics from '../../..//lib/get_metrics';
+import calculateIndices from '../../..//lib/calculate_indices';
 
 const getClusterStatus = function (req, kibanaIndices, calledFrom) {
   const getKibanaForCluster = getKibanasForClusters(req, kibanaIndices, calledFrom);

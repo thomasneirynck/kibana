@@ -15,40 +15,34 @@
  * from Elasticsearch Incorporated.
  */
 
+import _ from 'lodash';
+import React from 'react';
+import calculateClass from '../lib/calculateClass';
 
-
-define(function (require) {
-  var _ = require('lodash');
-  var React = require('react');
-  var calculateClass = require('../lib/calculateClass');
-
-  function sortByShard(shard) {
-    if (shard.node) {
-      return shard.shard;
-    }
-    return [!shard.primary, shard.shard];
+function sortByShard(shard) {
+  if (shard.node) {
+    return shard.shard;
   }
+  return [!shard.primary, shard.shard];
+}
 
-  var Shard = React.createClass({
-    displayName: 'Shard',
-    render: function () {
-      var shard = this.props.shard;
-      return (<div className={ calculateClass(shard, 'shard') }>{ shard.shard }</div>);
-    }
-  });
-
-  return React.createClass({
-    createShard: function (shard) {
-      var type = shard.primary ? 'primary' : 'replica';
-      var additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
-      var key = shard.index + '.' + shard.node + '.' + type + '.' + shard.state + '.' + shard.shard + additionId;
-      return (<Shard shard={ shard } key={ key }></Shard>);
-    },
-    render: function () {
-      var shards = _.sortBy(this.props.shards, sortByShard).map(this.createShard);
-      return (<div className='shards'>{ shards }</div>);
-    }
-  });
-
+const Shard = React.createClass({
+  displayName: 'Shard',
+  render: function () {
+    var shard = this.props.shard;
+    return (<div className={ calculateClass(shard, 'shard') }>{ shard.shard }</div>);
+  }
 });
 
+export default React.createClass({
+  createShard: function (shard) {
+    var type = shard.primary ? 'primary' : 'replica';
+    var additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
+    var key = shard.index + '.' + shard.node + '.' + type + '.' + shard.state + '.' + shard.shard + additionId;
+    return (<Shard shard={ shard } key={ key }></Shard>);
+  },
+  render: function () {
+    var shards = _.sortBy(this.props.shards, sortByShard).map(this.createShard);
+    return (<div className='shards'>{ shards }</div>);
+  }
+});

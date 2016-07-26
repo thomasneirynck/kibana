@@ -15,28 +15,24 @@
  * from Elasticsearch Incorporated.
  */
 
+import _ from 'lodash';
+import React from 'react';
+import Shard from './shard.jsx';
 
-
-define(function (require) {
-  var React = require('react');
-  var Shard = require('./shard.jsx');
-  var _ = require('lodash');
-
-  return React.createClass({
-    displayName: 'Unassigned',
-    createShard: function (shard) {
-      var type = shard.primary ? 'primary' : 'replica';
-      var additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
-      var key = shard.index + '.' + shard.node + '.' + type + '.' + shard.state + '.' + shard.shard + additionId;
-      return (<Shard shard={ shard } key={ key }></Shard>);
-    },
-    render: function () {
-      var shards = _.sortBy(this.props.shards, 'shard').map(this.createShard);
-      return (
-        <td className="unassigned">
-          <div className="children">{ shards }</div>
-        </td>
-        );
-    }
-  });
+export default React.createClass({
+  displayName: 'Unassigned',
+  createShard: function (shard) {
+    var type = shard.primary ? 'primary' : 'replica';
+    var additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
+    var key = shard.index + '.' + shard.node + '.' + type + '.' + shard.state + '.' + shard.shard + additionId;
+    return (<Shard shard={ shard } key={ key }></Shard>);
+  },
+  render: function () {
+    var shards = _.sortBy(this.props.shards, 'shard').map(this.createShard);
+    return (
+      <td className="unassigned">
+        <div className="children">{ shards }</div>
+      </td>
+      );
+  }
 });

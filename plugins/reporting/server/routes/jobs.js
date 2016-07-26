@@ -1,10 +1,12 @@
+const boom = require('boom');
 const getUserFactory = require('../lib/get_user');
 const jobsQueryFactory = require('../lib/jobs_query');
-const boom = require('boom');
+const licensePreFactory = require ('../lib/license_pre_routing');
 
-module.exports = function (server, commonRouteConfig) {
+module.exports = function (server) {
   const jobsQuery = jobsQueryFactory(server);
   const getUser = getUserFactory(server);
+  const licensePre = licensePreFactory(server);
 
   const mainEntry = '/api/reporting/jobs';
 
@@ -21,9 +23,23 @@ module.exports = function (server, commonRouteConfig) {
 
       reply(results);
     },
-    config: {
-      ...commonRouteConfig
-    }
+    config: licensePre()
+  });
+
+  // list all completed jobs since a specified time
+  server.route({
+    path: `${mainEntry}/list_completed_since`,
+    method: 'GET',
+    handler: (request, reply) => {
+      const size = Math.min(100, parseInt(request.query.size) || 10);
+      const sinceInMs = Date.parse(request.query.since) || null;
+
+      const results = getUser(request)
+      .then(user => jobsQuery.listCompletedSince(user, size, sinceInMs));
+
+      reply(results);
+    },
+    config: licensePre()
   });
 
   // return the count of all jobs in the queue
@@ -36,9 +52,7 @@ module.exports = function (server, commonRouteConfig) {
 
       reply(results);
     },
-    config: {
-      ...commonRouteConfig
-    }
+    config: licensePre()
   });
 
   // return the raw output from a job
@@ -55,9 +69,7 @@ module.exports = function (server, commonRouteConfig) {
         reply(doc._source.output);
       });
     },
-    config: {
-      ...commonRouteConfig
-    }
+    config: licensePre()
   });
 
   // trigger a download of the output from a job
@@ -77,8 +89,6 @@ module.exports = function (server, commonRouteConfig) {
         if (doc._source.output.content_type) response.type(doc._source.output.content_type);
       });
     },
-    config: {
-      ...commonRouteConfig
-    }
+    config: licensePre()
   });
 };

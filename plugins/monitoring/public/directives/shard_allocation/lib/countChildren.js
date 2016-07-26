@@ -15,13 +15,9 @@
  * from Elasticsearch Incorporated.
  */
 
-
-
-define(function () {
-  return function countChildren(memo, child) {
-    if (child.name !== 'Unassigned') {
-      memo++;
-    }
-    return memo;
-  };
-});
+export default function countChildren(memo, child) {
+  if (child.name !== 'Unassigned') {
+    memo++;
+  }
+  return memo;
+};

@@ -1,8 +1,9 @@
 import React from 'react';
 import Overview from './Overview';
+import uiModules from 'ui/modules';
 
-const module = require('ui/modules').get('monitoring/directives', []);
-module.directive('monitoringClusterOverview', function (kbnUrl) {
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringClusterOverview', function (kbnUrl) {
   return {
     restrict: 'E',
     scope: { cluster: '=' },

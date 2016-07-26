@@ -1,15 +1,17 @@
 import _ from 'lodash';
-const app = require('ui/modules').get('plugins/monitoring/directives', []);
+import uiModules from 'ui/modules';
+import template from 'plugins/monitoring/directives/main/index.html';
 
 function createCrumb(url, label) {
   return { url, label };
 }
 
-app.directive('monitoringMain', (license) => {
+const uiModule = uiModules.get('plugins/monitoring/directives', []);
+uiModule.directive('monitoringMain', (license) => {
   return {
     restrict: 'E',
     transclude: true,
-    template: require('plugins/monitoring/directives/main/index.html'),
+    template,
     link: function (scope, _el, attrs) {
       scope.name = attrs.name; // name of current page
       scope.product = attrs.product; // undefined, elasticsearch, or kibana
@@ -39,8 +41,9 @@ app.directive('monitoringMain', (license) => {
       if (!scope.inListing) {
         breadcrumbs = [ createCrumb('#/home', 'Clusters') ];
 
-        if (!scope.inOverview) {
-          breadcrumbs.push(createCrumb('#/overview', scope.cluster.cluster_name));
+        const clusterName = _.get(scope, 'cluster.cluster_name');
+        if (!scope.inOverview && clusterName) {
+          breadcrumbs.push(createCrumb('#/overview', clusterName));
         }
 
         // Elasticsearch crumbs

@@ -1,6 +1,8 @@
-const module = require('ui/modules').get('monitoring/clusters');
+import uiModules from 'ui/modules';
+import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
 
-module.service('monitoringClusters', (timefilter, $http, Private) => {
+const uiModule = uiModules.get('monitoring/clusters');
+uiModule.service('monitoringClusters', (timefilter, $http, Private) => {
   const url = '../api/monitoring/v1/clusters';
   return () => {
     const { min, max } = timefilter.getBounds();
@@ -12,7 +14,7 @@ module.service('monitoringClusters', (timefilter, $http, Private) => {
     })
     .then(response => response.data)
     .catch(err => {
-      const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
+      const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
       return ajaxErrorHandlers.fatalError(err);
     });
   };

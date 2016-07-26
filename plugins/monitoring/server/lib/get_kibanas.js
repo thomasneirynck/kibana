@@ -14,6 +14,7 @@ import moment from 'moment';
 import Promise from 'bluebird';
 import createQuery from './create_query';
 import calculateAvailability from './calculate_availability';
+import { ElasticsearchMetric } from './metrics/metric_classes';
 
 export default function getKibanas(req, indices) {
   if (indices.length < 1) return Promise.resolve([]);
@@ -22,8 +23,9 @@ export default function getKibanas(req, indices) {
   const config = req.server.config();
   const start = moment.utc(req.payload.timeRange.min).valueOf();
   const end = moment.utc(req.payload.timeRange.max).valueOf();
-  const clusterUuid = req.params.clusterUuid;
+  const uuid = req.params.clusterUuid;
 
+  const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
     type: 'kibana_stats',
@@ -31,7 +33,7 @@ export default function getKibanas(req, indices) {
     ignore: [404],
     body: {
       size: 0,
-      query: createQuery({ start, end, clusterUuid }),
+      query: createQuery({ start, end, uuid, metric }),
       aggs: {
         kibana_uuids: {
           terms: {
@@ -52,6 +54,7 @@ export default function getKibanas(req, indices) {
           meta: 'get_kibanas_kibana_info',
           id: uuidBucket.key,
           _source: [
+            'timestamp',
             'kibana.process.memory.resident_set_size_in_bytes',
             'kibana.os.load.1m',
             'kibana.response_times.average',

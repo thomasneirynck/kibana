@@ -1,8 +1,10 @@
 import _ from 'lodash';
-const mod = require('ui/modules').get('monitoring/title', []);
+import uiModules from 'ui/modules';
+import docTitleModule from 'ui/doc_title';
 
-mod.service('title', (Private) => {
-  const docTitle = Private(require('ui/doc_title'));
+const uiModule = uiModules.get('monitoring/title', []);
+uiModule.service('title', (Private) => {
+  const docTitle = Private(docTitleModule);
   return function changeTitle(cluster, suffix) {
     let clusterName = _.get(cluster, 'cluster_name');
     clusterName = (clusterName) ? `- ${clusterName}` : '';

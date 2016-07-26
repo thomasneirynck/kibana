@@ -1,14 +1,16 @@
-const _ = require('lodash');
-const createQuery = require('./create_query.js');
+import _ from 'lodash';
+import createQuery from './create_query.js';
+import { ElasticsearchMetric } from './metrics/metric_classes';
 
 export default function getIndexSummary(req, indices) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
 
   // Get the params from the POST body for the request
   const end = req.payload.timeRange.max;
-  const clusterUuid = req.params.clusterUuid;
+  const uuid = req.params.clusterUuid;
 
   // Build up the Elasticsearch request
+  const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
     ignore: [404],
@@ -18,8 +20,9 @@ export default function getIndexSummary(req, indices) {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
       query: createQuery({
-        end: end,
-        clusterUuid: clusterUuid,
+        end,
+        uuid,
+        metric,
         filters: [{
           term: { 'index_stats.index': req.params.id }
         }]

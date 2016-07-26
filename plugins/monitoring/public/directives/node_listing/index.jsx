@@ -3,14 +3,13 @@ import React from 'react';
 import MetricCell from './MetricCell';
 import OfflineCell from './OfflineCell';
 import statusIconClass from '../../lib/status_icon_class';
-
-const module = require('ui/modules').get('monitoring/directives', []);
-const extractIp = require('plugins/monitoring/lib/extract_ip');
-
-const Table = require('plugins/monitoring/directives/paginated_table/components/table');
+import extractIp from 'plugins/monitoring/lib/extract_ip';
+import Table from 'plugins/monitoring/directives/paginated_table/components/table';
+import uiModules from 'ui/modules';
 
 // change the node to actually display the name
-module.directive('monitoringNodesListing', function (kbnUrl) {
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringNodesListing', function (kbnUrl) {
   const initialTableOptions = {
     title: 'Nodes',
     searchPlaceholder: 'Filter Nodes',

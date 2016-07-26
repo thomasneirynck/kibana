@@ -1,5 +1,6 @@
-const _ = require('lodash');
-const createQuery = require('./create_query.js');
+import _ from 'lodash';
+import createQuery from './create_query.js';
+import { ElasticsearchMetric } from './metrics/metric_classes';
 
 export default function getNodeSummary(req, indices) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
@@ -7,9 +8,10 @@ export default function getNodeSummary(req, indices) {
   // Get the params from the POST body for the request
   const config = req.server.config();
   const end = req.payload.timeRange.max;
-  const clusterUuid = req.params.clusterUuid;
+  const uuid = req.params.clusterUuid;
 
   // Build up the Elasticsearch request
+  const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
     meta: 'get_node_summary',
@@ -20,7 +22,8 @@ export default function getNodeSummary(req, indices) {
       sort: { timestamp: { order: 'desc' } },
       query: createQuery({
         end: end,
-        clusterUuid: clusterUuid,
+        uuid,
+        metric,
         filters: [{
           term: { [`source_node.${config.get('xpack.monitoring.node_resolver')}`]: req.params.resolver }
         }]

@@ -1,11 +1,8 @@
 import _ from 'lodash';
+import MissingRequiredError from '../error_missing_required';
 import {
   LARGE_FLOAT, SMALL_FLOAT, LARGE_BYTES, SMALL_BYTES
 } from '../../../lib/formatting';
-
-function missingRequiredParam(param) {
-  throw new Error(`Missing required parameter: ${param}`);
-}
 
 export class Metric {
 
@@ -20,12 +17,14 @@ export class Metric {
       label: opts.label,
       description: opts.description,
       format: opts.format,
-      units: opts.units
+      units: opts.units,
+      uuidField: opts.uuidField,
+      timestampField: opts.timestampField
     };
 
     const undefKey = _.findKey(requireds, _.isUndefined);
     if (undefKey) {
-      return missingRequiredParam(undefKey);
+      throw new MissingRequiredError(undefKey);
     }
 
     _.assign(this, _.defaults(opts, props));
@@ -42,14 +41,23 @@ export class ElasticsearchMetric extends Metric {
   constructor(opts) {
     super({
       ...opts,
-      app: 'elasticsearch'
+      app: 'elasticsearch',
+      uuidField: 'cluster_uuid',
+      timestampField: 'timestamp'
     });
 
     if (_.isUndefined(this.type)) {
-      missingRequiredParam('type');
+      throw new MissingRequiredError('type');
     }
   }
 
+  // helper method
+  static getMetricFields() {
+    return {
+      timestampField: 'timestamp',
+      uuidField: 'cluster_uuid'
+    };
+  }
 }
 
 export class KibanaMetric extends Metric {
@@ -57,7 +65,9 @@ export class KibanaMetric extends Metric {
   constructor(opts) {
     super({
       ...opts,
-      app: 'kibana'
+      app: 'kibana',
+      uuidField: 'kibana_stats.kibana.uuid',
+      timestampField: 'kibana_stats.timestamp'
     });
   }
 
@@ -73,7 +83,7 @@ export class LatencyMetric extends ElasticsearchMetric {
       units: 'ms'
     });
 
-
+    const missingRequiredParam = (param) => { throw new MissingRequiredError(param); };
     const metric = this.metric || missingRequiredParam('metric'); // "index" or "query"
     const fieldSource = this.fieldSource || missingRequiredParam('fieldSource');
     delete this.metric;
@@ -81,22 +91,20 @@ export class LatencyMetric extends ElasticsearchMetric {
 
     const metricField = (metric === 'index') ? 'indexing.index' : 'search.query';
 
-    this.aggs = (() => {
-      return {
-        [`${metric}_time_in_millis`]: {
-          max: { field: `${fieldSource}.${metricField}_time_in_millis` }
-        },
-        [`${metric}_total`]: {
-          max: { field: `${fieldSource}.${metricField}_total` }
-        },
-        [`${metric}_time_in_millis_deriv`]: {
-          derivative: { buckets_path: `${metric}_time_in_millis`, gap_policy: 'skip' }
-        },
-        [`${metric}_total_deriv`]: {
-          derivative: { buckets_path: `${metric}_total`, gap_policy: 'skip' }
-        }
-      };
-    }());
+    this.aggs = {
+      [`${metric}_time_in_millis`]: {
+        max: { field: `${fieldSource}.${metricField}_time_in_millis` }
+      },
+      [`${metric}_total`]: {
+        max: { field: `${fieldSource}.${metricField}_total` }
+      },
+      [`${metric}_time_in_millis_deriv`]: {
+        derivative: { buckets_path: `${metric}_time_in_millis`, gap_policy: 'skip' }
+      },
+      [`${metric}_total_deriv`]: {
+        derivative: { buckets_path: `${metric}_total`, gap_policy: 'skip' }
+      }
+    };
 
     this.calculation = (last) => {
       const timeInMillis = _.get(last, `${metric}_time_in_millis_deriv.value`);
@@ -142,21 +150,6 @@ export class IndexAverageStatMetric extends ElasticsearchMetric {
 
 }
 
-export class NodeIndexMemoryMetric extends ElasticsearchMetric {
-
-  constructor(opts) {
-    super({
-      ...opts,
-      title: 'Index Memory',
-      type: 'node',
-      format: SMALL_BYTES,
-      metricAgg: 'max',
-      units: 'B'
-    });
-  }
-
-}
-
 export class ThreadPoolQueueMetric extends ElasticsearchMetric {
 
   constructor(opts) {
@@ -184,6 +177,69 @@ export class ThreadPoolRejectedMetric extends ElasticsearchMetric {
       metricAgg: 'max',
       units: ''
     });
+  }
+
+}
+
+/**
+ * A generic {@code class} for collecting Index Memory metrics.
+ *
+ * @see IndicesMemoryMetric
+ * @see NodeIndexMemoryMetric
+ * @see SingleIndexMemoryMetric
+ */
+export class IndexMemoryMetric extends ElasticsearchMetric {
+
+  constructor(opts) {
+    super({
+      ...opts,
+      title: 'Index Memory',
+      format: SMALL_BYTES,
+      metricAgg: 'max',
+      units: 'B'
+    });
+  }
+
+}
+
+export class NodeIndexMemoryMetric extends IndexMemoryMetric {
+
+  constructor(opts) {
+    super({
+      ...opts,
+      type: 'node'
+    });
+
+    // override the field set by the super constructor
+    this.field = 'node_stats.indices.segments.' + opts.field;
+  }
+
+}
+
+export class IndicesMemoryMetric extends IndexMemoryMetric {
+
+  constructor(opts) {
+    super({
+      ...opts,
+      type: 'cluster'
+    });
+
+    // override the field set by the super constructor
+    this.field = 'index_stats.total.segments.' + opts.field;
+  }
+
+}
+
+export class SingleIndexMemoryMetric extends IndexMemoryMetric {
+
+  constructor(opts) {
+    super({
+      ...opts,
+      type: 'index'
+    });
+
+    // override the field set by the super constructor
+    this.field = 'index_stats.total.segments.' + opts.field;
   }
 
 }

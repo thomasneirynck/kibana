@@ -1,5 +1,5 @@
-const React = require('react');
-const _ = require('lodash');
+import _ from 'lodash';
+import React from 'react';
 
 const maxListSize = 10; // TODO - make this as a config option
 

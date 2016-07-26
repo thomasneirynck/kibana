@@ -15,108 +15,106 @@
  * from Elasticsearch Incorporated.
  */
 
-define(function (require) {
-  var _ = require('lodash');
-  var getValueFromArrayOrString = require('../lib/getValueFromArrayOrString');
-  var moment = require('moment');
+import _ from 'lodash';
+import moment from 'moment';
+import getValueFromArrayOrString from '../lib/getValueFromArrayOrString';
 
-  return function ($rootScope, timefilter, es) {
-    var getTimelineData = function (direction, indexPattern, cluster, size, timeRange, data, position, indices) {
-      var newPosition = false;
-      size = _.isUndefined(size) ? 300 : size;
-      data = _.isUndefined(data) ? [] : data;
-      position = _.isUndefined(position) ? 0 : position;
+export default function getTimelineDataFn($rootScope, timefilter, es) {
+  var getTimelineData = function (direction, indexPattern, cluster, size, timeRange, data, position, indices) {
+    var newPosition = false;
+    size = _.isUndefined(size) ? 300 : size;
+    data = _.isUndefined(data) ? [] : data;
+    position = _.isUndefined(position) ? 0 : position;
 
-      function handleIndexList(indexList) {
-        if (_.isUndefined(timeRange)) {
-          let bounds = timefilter.getBounds();
-          timeRange = {
-            gte: bounds.min.valueOf(),
-            lte: bounds.max.valueOf(),
-            format: 'epoch_millis'
-          };
-        }
+    function handleIndexList(indexList) {
+      if (_.isUndefined(timeRange)) {
+        let bounds = timefilter.getBounds();
+        timeRange = {
+          gte: bounds.min.valueOf(),
+          lte: bounds.max.valueOf(),
+          format: 'epoch_millis'
+        };
+      }
 
-        var header = { index: indexList[position], type: 'cluster_state' };
-        var body = {
-          size: size,
-          from: 0,
-          fields: [
-            'timestamp',
-            'cluster_state.status',
-            'cluster_state.state_uuid',
-            'cluster_uuid'
-          ],
-          sort: {
-            'timestamp': { order: direction === 'push' ? 'asc' : 'desc' }
-          },
-          query: {
-            filtered: {
-              filter: {
-                bool: {
-                  must: [
-                    { range: { 'timestamp': timeRange } },
-                    { term: { 'cluster_uuid': cluster.cluster_uuid } }
-                  ]
-                }
+      var header = { index: indexList[position], type: 'cluster_state' };
+      var body = {
+        size: size,
+        from: 0,
+        fields: [
+          'timestamp',
+          'cluster_state.status',
+          'cluster_state.state_uuid',
+          'cluster_uuid'
+        ],
+        sort: {
+          'timestamp': { order: direction === 'push' ? 'asc' : 'desc' }
+        },
+        query: {
+          filtered: {
+            filter: {
+              bool: {
+                must: [
+                  { range: { 'timestamp': timeRange } },
+                  { term: { 'cluster_uuid': cluster.cluster_uuid } }
+                ]
               }
             }
           }
-        };
+        }
+      };
 
-        var success = function (resp) {
-          if (resp && resp.responses[0] && resp.responses[0].hits) {
-            var nextTimeRange;
-            var hits = resp.responses[0].hits;
-            data.push.apply(data, hits.hits);
-            $rootScope.$broadcast('updateTimelineData', direction, hits.hits);
+      var success = function (resp) {
+        if (resp && resp.responses[0] && resp.responses[0].hits) {
+          var nextTimeRange;
+          var hits = resp.responses[0].hits;
+          data.push.apply(data, hits.hits);
+          $rootScope.$broadcast('updateTimelineData', direction, hits.hits);
 
-            if (hits.hits.length === hits.total) {
-              position++;
-              newPosition = indexList[position] ? true : false;
-            }
-
-            var lte = moment(timeRange.lte).valueOf();
-            if (hits.hits.length > 0) {
-              lte = moment(getValueFromArrayOrString(hits.hits[hits.hits.length - 1].fields.timestamp)).valueOf();
-            }
-
-            if ((hits.total > size && hits.hits.length === size) || newPosition) {
-              nextTimeRange = {
-                lte: lte,
-                gte: timeRange.gte,
-                format: 'epoch_millis'
-              };
-              return getTimelineData(direction, indexPattern, cluster, size, nextTimeRange, data, position, indexList); // call again
-            }
-
-            // flip data back to normal order
-            return data.reverse();
+          if (hits.hits.length === hits.total) {
+            position++;
+            newPosition = indexList[position] ? true : false;
           }
-        };
 
-        var error = function (_resp) {
-          position++;
-          if (indexList[position]) {
-            return getTimelineData(direction, indexPattern, cluster, size, timeRange, data, position, indexList); // call again
+          var lte = moment(timeRange.lte).valueOf();
+          if (hits.hits.length > 0) {
+            lte = moment(getValueFromArrayOrString(hits.hits[hits.hits.length - 1].fields.timestamp)).valueOf();
           }
+
+          if ((hits.total > size && hits.hits.length === size) || newPosition) {
+            nextTimeRange = {
+              lte: lte,
+              gte: timeRange.gte,
+              format: 'epoch_millis'
+            };
+            return getTimelineData(direction, indexPattern, cluster, size, nextTimeRange, data, position, indexList); // call again
+          }
+
+          // flip data back to normal order
           return data.reverse();
-        };
+        }
+      };
 
-        return es.msearch({ body: [header, body] }).then(success, error);
-      }
+      var error = function (_resp) {
+        position++;
+        if (indexList[position]) {
+          return getTimelineData(direction, indexPattern, cluster, size, timeRange, data, position, indexList); // call again
+        }
+        return data.reverse();
+      };
 
-      if (indices) {
-        return handleIndexList(indices);
-      }
+      return es.msearch({ body: [header, body] }).then(success, error);
+    }
 
-      return indexPattern.toIndexList(moment(timeRange.gte), moment(timeRange.lte)).then(function (indexList) {
-        indexList.reverse();
-        return handleIndexList(indexList);
-      });
-    };
+    if (indices) {
+      return handleIndexList(indices);
+    }
 
-    return getTimelineData;
+    return indexPattern.toIndexList(moment(timeRange.gte), moment(timeRange.lte)).then(function (indexList) {
+      indexList.reverse();
+      return handleIndexList(indexList);
+    });
   };
 
-});
+  return getTimelineData;
+};
+

@@ -9,12 +9,13 @@
  * histogram data with mapListingResponse to transform it into X/Y coordinates
  * for charting. This method is shared by the get_listing_nodes lib.
  */
+import { ElasticsearchMetric } from './metrics/metric_classes';
 
-const moment = require('moment');
-const createQuery = require('./create_query.js');
-const calcAuto = require('./calculate_auto');
-const metrics = require('./metrics');
-const mapListingResponse = require('./map_listing_response');
+import moment from 'moment';
+import createQuery from './create_query.js';
+import calcAuto from './calculate_auto';
+import metrics from './metrics';
+import mapListingResponse from './map_listing_response';
 
 export default function getListingIndices(req, indices) {
   const config = req.server.config();
@@ -23,10 +24,11 @@ export default function getListingIndices(req, indices) {
   let start = moment.utc(req.payload.timeRange.min).valueOf();
   const orgStart = start;
   const end = moment.utc(req.payload.timeRange.max).valueOf();
-  const clusterUuid = req.params.clusterUuid;
+  const uuid = req.params.clusterUuid;
   const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
   const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
 
+  const metricFields = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
     meta: 'get_listing_indices',
@@ -35,7 +37,11 @@ export default function getListingIndices(req, indices) {
     ignoreUnavailable: true,
     ignore: [404],
     body: {
-      query: createQuery({ start, end, clusterUuid }),
+      query: createQuery({
+        start,
+        end,
+        uuid,
+        metric: metricFields }),
       aggs: {}
     }
   };

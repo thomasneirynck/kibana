@@ -1,15 +1,17 @@
 import _ from 'lodash';
-const module = require('ui/modules').get('monitoring', ['monitoring/directives']);
+import uiRoutes from 'ui/routes';
+import uiModules from 'ui/modules';
+import routeInitProvider from 'plugins/monitoring/lib/route_init';
+import template from 'plugins/monitoring/views/clusters/listing_template.html';
 
-require('ui/routes')
-.when('/home', {
-  template: require('plugins/monitoring/views/clusters/listing_template.html'),
+uiRoutes.when('/home', {
+  template,
   resolve: {
     clusters: (Private, kbnUrl) => {
-      const routeInit = Private(require('plugins/monitoring/lib/route_init'));
+      const routeInit = Private(routeInitProvider);
       return routeInit()
       .then(clusters => {
-        if (!clusters.length) {
+        if (!clusters || !clusters.length) {
           kbnUrl.changePath('/no-data');
           return Promise.reject();
         }
@@ -25,7 +27,8 @@ require('ui/routes')
 })
 .otherwise({ redirectTo: '/no-data' });
 
-module.controller('home', ($route, $scope, globalState, monitoringClusters, timefilter, title, $executor) => {
+const uiModule = uiModules.get('monitoring', ['monitoring/directives']);
+uiModule.controller('home', ($route, $scope, globalState, monitoringClusters, timefilter, title, $executor) => {
   // Set the key for the cluster_uuid. This is mainly for
   // react.js so we can use the key easily.
   function setKeyForClusters(cluster) {

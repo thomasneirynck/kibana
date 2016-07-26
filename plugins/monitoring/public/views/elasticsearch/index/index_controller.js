@@ -1,15 +1,18 @@
 /**
  * Controller for single index detail
  */
-const _ = require('lodash');
-const mod = require('ui/modules').get('monitoring', []);
+import _ from 'lodash';
+import uiRoutes from 'ui/routes';
+import uiModules from 'ui/modules';
+import routeInitProvider from 'plugins/monitoring/lib/route_init';
+import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
+import template from 'plugins/monitoring/views/elasticsearch/index/index_template.html';
 
-require('ui/routes')
-.when('/indices/:index', {
-  template: require('plugins/monitoring/views/elasticsearch/index/index_template.html'),
+uiRoutes.when('/indices/:index', {
+  template,
   resolve: {
     clusters: function (Private) {
-      const routeInit = Private(require('plugins/monitoring/lib/route_init'));
+      const routeInit = Private(routeInitProvider);
       return routeInit();
     },
     pageData: getPageData
@@ -34,19 +37,24 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
         ]
       },
       'index_size',
-      'index_lucene_memory',
+      {
+        name: 'index_mem',
+        keys: [ 'index_mem_overall' ],
+        config: 'xpack.monitoring.chart.elasticsearch.index.index_memory'
+      },
       'index_document_count',
-      'index_fielddata'
+      'index_segment_count'
     ]
   })
   .then(response => response.data)
   .catch((err) => {
-    const ajaxErrorHandlers = Private(require('plugins/monitoring/lib/ajax_error_handlers'));
+    const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
     return ajaxErrorHandlers.fatalError(err);
   });
 }
 
-mod.controller('indexView', (timefilter, $route, title, Private, globalState, $executor, $http, monitoringClusters, $scope) => {
+const uiModule = uiModules.get('monitoring', []);
+uiModule.controller('indexView', (timefilter, $route, title, Private, globalState, $executor, $http, monitoringClusters, $scope) => {
   timefilter.enabled = true;
 
   function setClusters(clusters) {

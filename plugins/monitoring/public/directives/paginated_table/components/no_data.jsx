@@ -1,4 +1,5 @@
-var React = require('react');
+import React from 'react';
+
 export default class NoData extends React.Component {
   render() {
     const colSpan = this.props.columns.length;

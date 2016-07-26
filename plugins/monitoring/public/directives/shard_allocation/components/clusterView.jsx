@@ -15,65 +15,61 @@
  * from Elasticsearch Incorporated.
  */
 
+import React from 'react';
+import TableHead from './tableHead.jsx';
+import TableBody from './tableBody.jsx';
 
-
-define(function (require) {
-  var React = require('react');
-  var TableHead = require('./tableHead.jsx');
-  var TableBody = require('./tableBody.jsx');
-
-  return React.createClass({
-    displayName: 'ClusterView',
-    getInitialState: function () {
-      var scope = this.props.scope;
-      var kbnChangePath = this.props.kbnUrl.changePath;
-      return {
-        labels: this.props.scope.labels || [],
-        showing: this.props.scope.showing || [],
-        shardStats: this.props.shardStats,
-        angularChangeUrl: function (url) {
-          scope.$evalAsync(function () { kbnChangePath(url); });
-        }
-      };
-    },
-    setLabels: function (data) {
-      if (data) {
-        this.setState({ labels: data });
+export default React.createClass({
+  displayName: 'ClusterView',
+  getInitialState: function () {
+    var scope = this.props.scope;
+    var kbnChangePath = this.props.kbnUrl.changePath;
+    return {
+      labels: this.props.scope.labels || [],
+      showing: this.props.scope.showing || [],
+      shardStats: this.props.shardStats,
+      angularChangeUrl: function (url) {
+        scope.$evalAsync(function () { kbnChangePath(url); });
       }
-    },
-    setShowing: function (data) {
-      if (data) {
-        this.setState({ showing: data });
-      }
-    },
-    setShardStats: function (stats) {
-      this.setState({ shardStats: stats });
-    },
-    componentWillMount: function () {
-      this.props.scope.$watch('labels', this.setLabels);
-      this.props.scope.$watch('showing', this.setShowing);
-      this.props.scope.$watch('shardStats', this.setShardStats);
-    },
-    hasUnassigned: function () {
-      return this.state.showing.length &&
-        this.state.showing[0].unassigned &&
-        this.state.showing[0].unassigned.length;
-    },
-    render: function () {
-      return (
-        <table cellPadding="0" cellSpacing="0" className="table">
-          <TableHead
-            hasUnassigned={ this.hasUnassigned() }
-            columns={ this.state.labels }></TableHead>
-          <TableBody
-            filter={ this.props.scope.filter }
-            totalCount={ this.props.scope.totalCount }
-            rows={ this.state.showing }
-            cols={ this.state.labels.length }
-            shardStats={ this.state.shardStats }
-            changeUrl={ this.state.angularChangeUrl }></TableBody>
-        </table>
-      );
+    };
+  },
+  setLabels: function (data) {
+    if (data) {
+      this.setState({ labels: data });
     }
-  });
+  },
+  setShowing: function (data) {
+    if (data) {
+      this.setState({ showing: data });
+    }
+  },
+  setShardStats: function (stats) {
+    this.setState({ shardStats: stats });
+  },
+  componentWillMount: function () {
+    this.props.scope.$watch('labels', this.setLabels);
+    this.props.scope.$watch('showing', this.setShowing);
+    this.props.scope.$watch('shardStats', this.setShardStats);
+  },
+  hasUnassigned: function () {
+    return this.state.showing.length &&
+      this.state.showing[0].unassigned &&
+      this.state.showing[0].unassigned.length;
+  },
+  render: function () {
+    return (
+      <table cellPadding="0" cellSpacing="0" className="table">
+        <TableHead
+          hasUnassigned={ this.hasUnassigned() }
+          columns={ this.state.labels }></TableHead>
+        <TableBody
+          filter={ this.props.scope.filter }
+          totalCount={ this.props.scope.totalCount }
+          rows={ this.state.showing }
+          cols={ this.state.labels.length }
+          shardStats={ this.state.shardStats }
+          changeUrl={ this.state.angularChangeUrl }></TableBody>
+      </table>
+    );
+  }
 });

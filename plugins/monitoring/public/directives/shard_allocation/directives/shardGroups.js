@@ -15,22 +15,20 @@
  * from Elasticsearch Incorporated.
  */
 
+import calculateClass from '../lib/calculateClass';
+import uiModules from 'ui/modules';
 
-
-define(function (require) {
-  var module = require('ui/modules').get('monitoring/directives', []);
-  var calculateClass = require('../lib/calculateClass');
-  module.directive('shardGroups', function () {
-    return {
-      restrict: 'E',
-      scope: {
-        groups: '=groups',
-        unassigned: '=unassigned'
-      },
-      templateUrl: '/kibana/app/panels/monitoring/shard_allocation/directives/shardGroups.html',
-      link: function (scope) {
-        scope.calculateClass = calculateClass;
-      }
-    };
-  });
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('shardGroups', function () {
+  return {
+    restrict: 'E',
+    scope: {
+      groups: '=groups',
+      unassigned: '=unassigned'
+    },
+    templateUrl: '/kibana/app/panels/monitoring/shard_allocation/directives/shardGroups.html',
+    link: function (scope) {
+      scope.calculateClass = calculateClass;
+    }
+  };
 });

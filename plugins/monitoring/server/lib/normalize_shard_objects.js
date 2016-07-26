@@ -5,7 +5,8 @@
  *  - Counts of each type of Shards per Index
  */
 import { filter, get } from 'lodash';
-const nodeAggVals = require('./node_agg_vals');
+import { getLatestAggKey, getNodeAttribute } from './node_agg_vals';
+
 function createNewMetric() {
   return {
     status: 'green',
@@ -53,12 +54,12 @@ export function normalizeNodeShards(data, nodeResolver) {
       data.nodes[bucket.key] = {
         shardCount: bucket.doc_count,
         indexCount: get(bucket, 'index_count.value'),
-        name: nodeAggVals.getLatestAggKey(get(bucket, 'node_names.buckets')),
-        transport_address: nodeAggVals.getLatestAggKey(bucket.node_transport_address.buckets),
+        name: getLatestAggKey(get(bucket, 'node_names.buckets')),
+        transport_address: getLatestAggKey(bucket.node_transport_address.buckets),
         node_ids: bucket.node_ids.buckets.map(b => b.key),
         attributes: {
-          data: nodeAggVals.getNodeAttribute(bucket.node_data_attributes.buckets),
-          master: nodeAggVals.getNodeAttribute(bucket.node_master_attributes.buckets)
+          data: getNodeAttribute(bucket.node_data_attributes.buckets),
+          master: getNodeAttribute(bucket.node_master_attributes.buckets)
         }
       };
       data.nodes[bucket.key].resolver = data.nodes[bucket.key][nodeResolver];
