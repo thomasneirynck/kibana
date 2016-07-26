@@ -18,16 +18,16 @@ import { capitalize, find, get, includes } from 'lodash';
 
 export default function decorateShards(shards, nodes) {
   function getTooltipMessage(shard) {
-    let relocatingNode;
-    relocatingNode = find(nodes, (n) => includes(n.node_ids, shard.relocating_node));
-    relocatingNode = get(relocatingNode, 'name');
+    const isRelocating = (node) => includes(node.node_ids, shard.relocating_node);
+    const nodeName = get(find(nodes, (n) => isRelocating(n)), 'name');
 
-    if (relocatingNode) {
+    // messages for relocating node
+    if (nodeName) {
       if (shard.state === 'INITIALIZING') {
-        return `Relocating from ${relocatingNode}`;
+        return `Relocating from ${nodeName}`;
       }
       if (shard.state === 'RELOCATING') {
-        return `Relocating to ${relocatingNode}`;
+        return `Relocating to ${nodeName}`;
       }
     }
     return capitalize(shard.state.toLowerCase());
