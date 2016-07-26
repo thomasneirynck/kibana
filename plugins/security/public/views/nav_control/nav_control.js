@@ -12,6 +12,14 @@ registry.register(constant({
 }));
 
 const module = uiModules.get('security', []);
-module.controller('securityNavController', ($scope, ShieldUser) => {
+module.controller('securityNavController', ($scope, ShieldUser, globalNavState) => {
   $scope.me = ShieldUser.getCurrent;
+
+  $scope.formatTooltip = tooltip => {
+    // If the sidebar is open then we don't need to show the tooltip.
+    if (globalNavState.isOpen()) {
+      return;
+    }
+    return tooltip;
+  };
 });
