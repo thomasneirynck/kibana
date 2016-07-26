@@ -263,7 +263,7 @@ function runBrowserTests(type) {
 
 gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
   // generates a coverage directory with reports for finding coverage gaps
-  runMocha().pipe(istanbul.writeReports());
+  return runMocha().pipe(istanbul.writeReports());
 });
 
 gulp.task('testonly', ['testserver', 'testbrowser']);
