@@ -66,8 +66,8 @@ export default React.createClass({
 
   render: function () {
     var shard = this.props.shard;
-    var tooltip = this.state.tooltip;
-    if (tooltip) {
+    var tooltip;
+    if (this.state.tooltip) {
       tooltip = (<div className="shard-tooltip">{ this.props.shard.tooltip_message }</div>);
     }
     return (<div
