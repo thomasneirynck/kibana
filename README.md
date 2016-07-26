@@ -21,12 +21,12 @@ The easiest way to develop UI plugins is to use the built-in script to watch for
 Assuming that you have the `x-plugins` repo at the same base path as your `kibana`, it's really simple to get going.
 
 ```
-$ ls
+$ ls $PATH_TO_REPOS
 kibana
 x-plugins
 ```
 
-Simply use `npm start` to watch for and sync changes to Kibana.
+Simply use `npm start` from this `kibana` path in `x-plugins` to watch for and sync changes to your copy of Kibana.
 
 To run on Windows, the sync task uses rsync which requires an ssh server.  Cygwin has one available. Setup details needed here.
 
