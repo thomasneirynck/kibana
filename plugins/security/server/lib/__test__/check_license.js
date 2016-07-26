@@ -13,19 +13,21 @@ describe('check_license', function () {
     };
   });
 
-  it ('should set allowLogin to false if license information is not set', () => {
+  it ('should set allowLogin and showLinks to false if license information is not set', () => {
     mockLicenseInfo = null;
     const licenseCheckResults = checkLicense(mockLicenseInfo);
     expect(licenseCheckResults.allowLogin).to.be(false);
+    expect(licenseCheckResults.showLinks).to.be(false);
   });
 
-  it ('should set allowLogin to false if license information is set but not available', () => {
+  it ('should set allowLogin and showLinks to false if license information is set but not available', () => {
     mockLicenseInfo = { isAvailable: () => false };
     const licenseCheckResults = checkLicense(mockLicenseInfo);
     expect(licenseCheckResults.allowLogin).to.be(false);
+    expect(licenseCheckResults.showLinks).to.be(false);
   });
 
-  it ('should set allowLogin to false if license is basic', () => {
+  it ('should set allowLogin and showLinks to false if license is basic', () => {
     set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(true));
     set(mockLicenseInfo, 'license.isActive', () => { return 'irrelevant'; });
     set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
@@ -33,9 +35,10 @@ describe('check_license', function () {
     }));
 
     expect(checkLicense(mockLicenseInfo).allowLogin).to.be(false);
+    expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
   });
 
-  it ('should set allowLogin to false if license has expired even if security is enabled in Elasticsearch and license is not basic', () => {
+  it ('should set allowLogin and showLinks to false if license has expired, security is enabled in ES and license is not basic', () => {
     set(mockLicenseInfo, 'license.isActive', () => { return false; });
     set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
       isEnabled: () => { return true; }
@@ -43,6 +46,18 @@ describe('check_license', function () {
     set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(false));
 
     expect(checkLicense(mockLicenseInfo).allowLogin).to.be(false);
+    expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
+  });
+
+  it ('should set allowLogin to true and showLinks to false if security is disabled in Elasticsearch', () => {
+    set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
+      isEnabled: () => { return false; }
+    }));
+    set(mockLicenseInfo, 'license.isActive', () => { return 'irrelevant'; });
+    set(mockLicenseInfo, 'license.isOneOf', () => { return 'irrelevant'; });
+
+    expect(checkLicense(mockLicenseInfo).allowLogin).to.be(true);
+    expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
   });
 
   describe('login message', () => {
