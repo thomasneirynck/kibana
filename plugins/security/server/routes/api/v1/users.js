@@ -6,10 +6,12 @@ import userSchema from '../../../lib/user_schema';
 import { wrapError } from '../../../lib/errors';
 import getCalculateExpires from '../../../lib/get_calculate_expires';
 import onChangePassword from '../../../lib/on_change_password';
+import routePreCheckLicense from '../../../lib/route_pre_check_license';
 
 export default (server) => {
   const callWithRequest = getClient(server).callWithRequest;
   const calculateExpires = getCalculateExpires(server);
+  const routePreCheckLicenseFn = routePreCheckLicense(server);
 
   server.route({
     method: 'GET',
@@ -19,6 +21,9 @@ export default (server) => {
         (response) => reply(_.values(response)),
         _.flow(wrapError, reply)
       );
+    },
+    config: {
+      pre: [routePreCheckLicenseFn]
     }
   });
 
@@ -33,6 +38,9 @@ export default (server) => {
           return reply(Boom.notFound());
         },
         _.flow(wrapError, reply));
+    },
+    config: {
+      pre: [routePreCheckLicenseFn]
     }
   });
 
@@ -49,7 +57,8 @@ export default (server) => {
     config: {
       validate: {
         payload: userSchema
-      }
+      },
+      pre: [routePreCheckLicenseFn]
     }
   });
 
@@ -61,6 +70,9 @@ export default (server) => {
       return callWithRequest(request, 'shield.deleteUser', {username}).then(
         () => reply().code(204),
         _.flow(wrapError, reply));
+    },
+    config: {
+      pre: [routePreCheckLicenseFn]
     }
   });
 
@@ -79,7 +91,8 @@ export default (server) => {
         payload: {
           password: Joi.string().required()
         }
-      }
+      },
+      pre: [routePreCheckLicenseFn]
     }
   });
 };
