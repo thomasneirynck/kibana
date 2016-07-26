@@ -4,11 +4,21 @@ This folder has the Kibana X-Pack plugin code
 
 ### UI Development
 
+First, you will need the plugin dependencies. If you are planning to contribute code, you should also set up automated code linting. This will save you a ton of headache down the road! Fortunately, doing so is very easy, adding just 1 command.
+
+```
+npm install
+# adding the git commit hooks
+npm install husky
+```
+
+If the UI isn't your primary focus, and those hooks start to get in your way, you can remove them with a simple `npm uninstall husky`.
+
+#### The sync script
+
 The easiest way to develop UI plugins is to use the built-in script to watch for changes and sync them to Kibana, which will also cause Kibana to restart when running in dev mode.
 
-First, you will need the plugin dependencies, get them by running `npm install`.
-
-Once completed, assuming that you have the `x-plugins` repo at the same base path as your `kibana`, it's really simple to get going.
+Assuming that you have the `x-plugins` repo at the same base path as your `kibana`, it's really simple to get going.
 
 ```
 $ ls
