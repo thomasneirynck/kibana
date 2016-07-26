@@ -1,4 +1,8 @@
 <div ng-if="series">
-  <h1>{{title}} <span ng-if="units">({{units}})</span></h1>
+  <h1
+    tooltip="{{::description}}"
+    tooltip-append-to-body="true"
+    tooltip-placement="right"
+  >{{::title}} <span ng-if="units">({{::units}})</span></h1>
   <chart series="series"/>
 </div>

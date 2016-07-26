@@ -11,6 +11,7 @@ import 'flot-charts/jquery.flot.canvas';
 import 'flot-charts/jquery.flot.symbol';
 import 'flot-charts/jquery.flot.crosshair';
 import 'flot-charts/jquery.flot.selection';
+import 'ui/tooltip';
 
 const appColors = Object.freeze({
   elasticsearch: '#3ebeb0',
@@ -58,7 +59,7 @@ uiModule.directive('monitoringChart', () => {
 
         // Commenting because some descriptions are wrong. If they are
         // corrected, they can be shown in the UI as title text in the header
-        // $scope.description = seriesGet('metric.description');
+        $scope.description = seriesGet('metric.description');
       });
     }
   };
