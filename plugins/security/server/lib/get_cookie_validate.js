@@ -6,7 +6,6 @@ export default (server) => {
   const calculateExpires = getCalculateExpires(server);
 
   return function validate(request, session, callback) {
-    console.log('cookie validate');
     const {username, password, expires} = session;
     if (expires < Date.now()) return callback(new Error('Session has expired'), false);
 
