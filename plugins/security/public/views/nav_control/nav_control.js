@@ -12,10 +12,6 @@ registry.register(constant({
 }));
 
 const module = uiModules.get('security', []);
-module.controller('securityNavController', ($scope, ShieldUser, chrome) => {
+module.controller('securityNavController', ($scope, ShieldUser) => {
   $scope.me = ShieldUser.getCurrent();
-
-  $scope.formatUrl = url => {
-    return chrome.addBasePath(url);
-  };
 });
