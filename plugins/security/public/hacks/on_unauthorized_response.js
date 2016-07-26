@@ -10,7 +10,7 @@ module.factory('onUnauthorizedResponse', ($q, $window, chrome) => {
   function interceptor(response, handleResponse) {
     if (response.status === 401 && !isResponseFromLoginApi(response)) {
       const next = chrome.removeBasePath(`${window.location.pathname}${window.location.hash}`);
-      const msg = 'Your session has expired. Please log in again.';
+      const msg = 'SESSION_EXPIRED';
       $window.location.href = chrome.addBasePath(`/logout?next=${encodeURIComponent(next)}&msg=${encodeURIComponent(msg)}`);
       return;
     }
