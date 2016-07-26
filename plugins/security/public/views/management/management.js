@@ -4,14 +4,16 @@ import 'plugins/security/views/management/edit_user';
 import 'plugins/security/views/management/edit_role';
 import 'plugins/security/views/management/management.less';
 import routes from 'ui/routes';
+import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 
 import management from 'ui/management';
 
 routes.defaults(/\/management/, {
   resolve: {
-    securityManagementSection: function (ShieldUser) {
+    securityManagementSection: function (ShieldUser, Private) {
+      const xpackInfo = Private(XPackInfoProvider);
       const elasticsearch = management.getSection('elasticsearch');
-      const showSecurityLinks = !!ShieldUser.getCurrent();
+      const showSecurityLinks = !!ShieldUser.getCurrent() && xpackInfo.get('features.security.showLinks');
 
       elasticsearch.deregister('users');
       elasticsearch.deregister('roles');
