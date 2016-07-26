@@ -3,8 +3,8 @@ import Table from 'plugins/monitoring/directives/paginated_table/components/tabl
 import ClusterRow from './components/cluster_row.jsx';
 import uiModules from 'ui/modules';
 
-const mod = uiModules.get('monitoring/directives', []);
-mod.directive('monitoringClusterListing', function (globalState, kbnUrl) {
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl) {
   return {
     restrict: 'E',
     scope: { clusters: '=' },

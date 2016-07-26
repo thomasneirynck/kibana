@@ -41,8 +41,8 @@ uiRoutes.when('/indices', {
   }
 });
 
-const mod = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-mod.controller('indices', ($route, globalState, timefilter, $http, title, Private, $executor, monitoringClusters, $scope) => {
+const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
+uiModule.controller('indices', ($route, globalState, timefilter, $http, title, Private, $executor, monitoringClusters, $scope) => {
 
   timefilter.enabled = true;
 

@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import uiModules from 'ui/modules';
 
-const mod = uiModules.get('monitoring/executor', []);
-mod.service('$executor', (Promise, $timeout, timefilter) => {
+const uiModule = uiModules.get('monitoring/executor', []);
+uiModule.service('$executor', (Promise, $timeout, timefilter) => {
 
   const queue = [];
   let executionTimer;

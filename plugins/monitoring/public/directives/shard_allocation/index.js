@@ -4,8 +4,8 @@ import nodesByIndices from 'plugins/monitoring/directives/shard_allocation/trans
 import uiModules from 'ui/modules';
 import template from 'plugins/monitoring/directives/shard_allocation/index.html';
 
-const mod = uiModules.get('monitoring/directives', []);
-mod.directive('monitoringShardAllocation', () => {
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringShardAllocation', () => {
   return {
     restrict: 'E',
     template,

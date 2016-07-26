@@ -18,8 +18,8 @@
 import calculateClass from '../lib/calculateClass';
 import uiModules from 'ui/modules';
 
-const mod = uiModules.get('monitoring/directives', []);
-mod.directive('shardGroups', function () {
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('shardGroups', function () {
   return {
     restrict: 'E',
     scope: {

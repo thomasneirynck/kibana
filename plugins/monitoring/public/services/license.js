@@ -1,7 +1,7 @@
 import uiModules from 'ui/modules';
 
-const mod = uiModules.get('monitoring/license', []);
-mod.service('license', () => {
+const uiModule = uiModules.get('monitoring/license', []);
+uiModule.service('license', () => {
   let licenseType;
 
   return {

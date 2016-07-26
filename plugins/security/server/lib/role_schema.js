@@ -9,5 +9,6 @@ export default {
     privileges: Joi.array().items(Joi.string()),
     query: Joi.string().allow('')
   }),
-  run_as: Joi.array().items(Joi.string())
+  run_as: Joi.array().items(Joi.string()),
+  metadata: Joi.object()
 };

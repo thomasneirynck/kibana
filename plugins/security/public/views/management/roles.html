@@ -35,14 +35,14 @@
         <tbody>
           <tr ng-repeat="role in roles | orderBy:'name' | filter:query | orderBy:sort.orderBy:sort.reverse">
             <td>
-              <input type="checkbox" ng-click="toggle(selectedRoles, role)" ng-checked="includes(selectedRoles, role)" ng-disabled="isReservedRole(role)" />
+              <input type="checkbox" ng-click="toggle(selectedRoles, role)" ng-checked="includes(selectedRoles, role)" ng-disabled="role.metadata._reserved" />
             </td>
             <td>
               <a ng-href="#/management/elasticsearch/roles/edit/{{role.name}}">{{role.name}}</a>
             </td>
             <td>{{role.description}}</td>
             <td>
-              <div ng-if="isReservedRole(role)">
+              <div ng-if="role.metadata._reserved">
                 <i class="fa fa-question-circle" title="Reserved roles are built-in and cannot be removed or modified."></i>
                 Reserved
               </div>

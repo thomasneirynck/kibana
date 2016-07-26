@@ -2,13 +2,15 @@ import _ from 'lodash';
 import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from './normalize_shard_objects';
 import createQuery from './create_query';
 import calculateNodeType from './calculate_node_type';
+import { ElasticsearchMetric } from './metrics/metric_classes';
 
 export default function getShardStats(req, indices, lastState) {
   const config = req.server.config();
   const nodeResolver = config.get('xpack.monitoring.node_resolver');
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
-  const clusterUuid = req.params.clusterUuid;
+  const uuid = req.params.clusterUuid;
   const aggSize = 10;
+  const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
     meta: 'get_shard_stats',
@@ -18,7 +20,8 @@ export default function getShardStats(req, indices, lastState) {
     body: {
       sort: { timestamp: { order: 'desc' } },
       query: createQuery({
-        clusterUuid: clusterUuid,
+        uuid,
+        metric,
         filters: [ { term: { state_uuid: _.get(lastState, 'cluster_state.state_uuid') } } ]
       }),
       aggs: {

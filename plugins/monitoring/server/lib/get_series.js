@@ -6,14 +6,20 @@ import calcAuto from './calculate_auto';
 import filterPartialBuckets from './filter_partial_buckets';
 import pickMetricFields from './pick_metric_fields';
 
+// Use the metric object as the source of truth on where to find the UUID
+function getUuid(req, metric) {
+  if (metric.app === 'kibana') {
+    return req.params.kibanaUuid;
+  }
+  return req.params.clusterUuid;
+}
+
 export default function getSeries(req, indices, metricName, filters) {
   const config = req.server.config();
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const metric = metrics[metricName];
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
-  const clusterUuid = req.params.clusterUuid;
-  const kibanaUuid = req.params.kibanaUuid;
   const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
 
   const params = {
@@ -23,7 +29,13 @@ export default function getSeries(req, indices, metricName, filters) {
     ignoreUnavailable: true,
     ignore: [404],
     body: {
-      query: createQuery({ start, end, clusterUuid, kibanaUuid, filters }),
+      query: createQuery({
+        start,
+        end,
+        metric,
+        uuid: getUuid(req, metric),
+        filters
+      }),
       aggs: {}
     }
   };

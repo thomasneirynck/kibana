@@ -1,11 +1,8 @@
 import _ from 'lodash';
+import MissingRequiredError from '../error_missing_required';
 import {
   LARGE_FLOAT, SMALL_FLOAT, LARGE_BYTES, SMALL_BYTES
 } from '../../../lib/formatting';
-
-function missingRequiredParam(param) {
-  throw new Error(`Missing required parameter: ${param}`);
-}
 
 export class Metric {
 
@@ -21,12 +18,13 @@ export class Metric {
       description: opts.description,
       format: opts.format,
       units: opts.units,
+      uuidField: opts.uuidField,
       timestampField: opts.timestampField
     };
 
     const undefKey = _.findKey(requireds, _.isUndefined);
     if (undefKey) {
-      return missingRequiredParam(undefKey);
+      throw new MissingRequiredError(undefKey);
     }
 
     _.assign(this, _.defaults(opts, props));
@@ -44,14 +42,22 @@ export class ElasticsearchMetric extends Metric {
     super({
       ...opts,
       app: 'elasticsearch',
+      uuidField: 'cluster_uuid',
       timestampField: 'timestamp'
     });
 
     if (_.isUndefined(this.type)) {
-      missingRequiredParam('type');
+      throw new MissingRequiredError('type');
     }
   }
 
+  // helper method
+  static getMetricFields() {
+    return {
+      timestampField: 'timestamp',
+      uuidField: 'cluster_uuid'
+    };
+  }
 }
 
 export class KibanaMetric extends Metric {
@@ -60,6 +66,7 @@ export class KibanaMetric extends Metric {
     super({
       ...opts,
       app: 'kibana',
+      uuidField: 'kibana_stats.kibana.uuid',
       timestampField: 'kibana_stats.timestamp'
     });
   }
@@ -76,7 +83,7 @@ export class LatencyMetric extends ElasticsearchMetric {
       units: 'ms'
     });
 
-
+    const missingRequiredParam = (param) => { throw new MissingRequiredError(param); };
     const metric = this.metric || missingRequiredParam('metric'); // "index" or "query"
     const fieldSource = this.fieldSource || missingRequiredParam('fieldSource');
     delete this.metric;

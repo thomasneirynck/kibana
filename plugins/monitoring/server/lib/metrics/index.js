@@ -216,7 +216,8 @@ const metricInstances = {
   }),
   'node_load_average': new ElasticsearchMetric({
     field: 'node_stats.os.cpu.load_average.1m',
-    label: 'System Load Average',
+    title: 'System Load',
+    label: '1m',
     description: 'The amount of load used for the last 1 minute.',
     type: 'node',
     format: LARGE_FLOAT,
@@ -436,7 +437,7 @@ const metricInstances = {
     derivative: true
   }),
   'kibana_os_load_1m': new KibanaMetric({
-    title: 'OS Load',
+    title: 'System Load',
     field: 'kibana_stats.os.load.1m',
     label: '1m',
     description: 'The the amount of time a refresh takes',
@@ -445,7 +446,7 @@ const metricInstances = {
     units: ''
   }),
   'kibana_os_load_5m': new KibanaMetric({
-    title: 'OS Load',
+    title: 'System Load',
     field: 'kibana_stats.os.load.5m',
     label: '5m',
     description: 'The the amount of time a refresh takes',
@@ -454,7 +455,7 @@ const metricInstances = {
     units: ''
   }),
   'kibana_os_load_15m': new KibanaMetric({
-    title: 'OS Load',
+    title: 'System Load',
     field: 'kibana_stats.os.load.15m',
     label: '15m',
     description: 'The the amount of time a refresh takes',
@@ -489,7 +490,7 @@ const metricInstances = {
     units: 'ms'
   }),
   'kibana_average_response_times': new KibanaMetric({
-    title: 'Response Time',
+    title: 'Client Response Time',
     field: 'kibana_stats.response_times.average',
     label: 'Average',
     description: 'The average request response time',
@@ -498,7 +499,7 @@ const metricInstances = {
     units: 'ms'
   }),
   'kibana_max_response_times': new KibanaMetric({
-    title: 'Response Time',
+    title: 'Client Response Time',
     field: 'kibana_stats.response_times.max',
     label: 'Max',
     description: 'The max request response time',
@@ -516,7 +517,7 @@ const metricInstances = {
   }),
   'kibana_requests': new KibanaMetric({
     field: 'kibana_stats.requests.total',
-    label: 'Requests',
+    label: 'Client Requests',
     description: 'The number of requests received by the server',
     format: SMALL_FLOAT,
     metricAgg: 'sum',

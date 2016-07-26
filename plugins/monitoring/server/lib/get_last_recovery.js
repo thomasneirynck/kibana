@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import createQuery from './create_query.js';
+import { ElasticsearchMetric } from './metrics/metric_classes';
 
 /**
  * Filter out shard activity that we do not care about.
@@ -41,8 +42,9 @@ export default function getLastRecovery(req, indices) {
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
-  const clusterUuid = req.params.clusterUuid;
+  const uuid = req.params.clusterUuid;
 
+  const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
     meta: 'get_last_recovery',
@@ -52,11 +54,7 @@ export default function getLastRecovery(req, indices) {
       _source: [ 'index_recovery.shards' ],
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({
-        start: start,
-        end: end,
-        clusterUuid: clusterUuid
-      })
+      query: createQuery({ start, end, uuid, metric })
     }
   };
 

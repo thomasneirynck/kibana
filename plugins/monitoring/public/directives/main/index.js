@@ -6,8 +6,8 @@ function createCrumb(url, label) {
   return { url, label };
 }
 
-const mod = uiModules.get('plugins/monitoring/directives', []);
-mod.directive('monitoringMain', (license) => {
+const uiModule = uiModules.get('plugins/monitoring/directives', []);
+uiModule.directive('monitoringMain', (license) => {
   return {
     restrict: 'E',
     transclude: true,
