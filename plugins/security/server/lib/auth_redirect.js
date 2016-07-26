@@ -1,3 +1,6 @@
+import Boom from 'boom';
+import Promise from 'bluebird';
+
 /**
  * Creates a hapi authenticate function that conditionally
  * redirects on auth failure
@@ -11,21 +14,24 @@
  *                 to standard error handler
  *    redirectUrl: Transform function that request path is passed to before
  *                 redirecting
- *    strategy:    The name of the auth strategy to use for test
+ *    strategy:    The name of the auth strategy to use for test, or an array of auth strategy names
  *    testRequest: Function to test authentication for a request
  * @return {Function}
  */
-export default function factory({ onError, redirectUrl, strategy, testRequest }) {
+export default function factory({ redirectUrl, strategy, testRequest }) {
   return function authenticate(request, reply) {
-    testRequest(strategy, request, (err, credentials) => {
-      if (err) {
-        if (shouldRedirect(request.raw.req)) {
-          reply.redirect(redirectUrl(request.url.path));
-        } else {
-          reply(onError(err));
-        }
+    const strategies = Array.isArray(strategy) ? strategy : [strategy];
+    const testRequestPromise = Promise.promisify(testRequest);
+
+    // Test the request against all of the authentication strategies and if any succeed, continue
+    Promise.any(strategies.map((strat) => testRequestPromise(strat, request)))
+    .then((credentials) => reply.continue({ credentials }))
+    .catch(() => {
+      if (shouldRedirect(request.raw.req)) {
+        reply.redirect(redirectUrl(request.url.path));
       } else {
-        reply.continue({ credentials });
+        // The strategies will be comma-separated and set to the 'WWW-Authenticate' header
+        reply(Boom.unauthorized(null, strategies));
       }
     });
   };

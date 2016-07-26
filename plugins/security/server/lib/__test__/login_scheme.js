@@ -1,6 +1,5 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
-import { unauthorized } from 'boom';
 
 import replyFixture from '../../../__test__/fixtures/reply';
 import requestFixture from '../../../__test__/fixtures/request';
@@ -61,24 +60,6 @@ describe('lib/login_scheme', function () {
           sinon.assert.calledWith(reply, {});
         });
       });
-    });
-  });
-
-  describe('#setExpirationMessage()', () => {
-    it('changes error message when error describes an expiration', () => {
-      const err = unauthorized('Invalid cookie');
-      const result = loginScheme.setExpirationMessage(err);
-      expect(result.output.payload.message).to.equal('Session has expired');
-    });
-    it('preserves original error message when error does not describe an expiration', () => {
-      const err = unauthorized();
-      const result = loginScheme.setExpirationMessage(err);
-      expect(result.output.payload.message).not.to.equal('Session has expired');
-    });
-    it('returns error', () => {
-      const err = unauthorized();
-      const result = loginScheme.setExpirationMessage(err);
-      expect(result).to.equal(err);
     });
   });
 });

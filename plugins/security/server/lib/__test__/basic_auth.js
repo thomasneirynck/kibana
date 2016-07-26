@@ -1,6 +1,4 @@
 import expect from 'expect.js';
-import sinon from 'sinon';
-import Promise from 'bluebird';
 import basicAuth from '../basic_auth';
 
 const authChecks = [
@@ -9,30 +7,6 @@ const authChecks = [
 ];
 
 describe('Basic auth', function () {
-  describe('register', function () {
-    let mockServer;
-    let mockIsValidUser;
-    let mockCalculateExpires;
-
-    before(function () {
-      mockServer = {
-        ext: sinon.stub()
-      };
-      mockIsValidUser = sinon.stub().returns(Promise.resolve());
-      mockCalculateExpires = sinon.stub().returns(0);
-    });
-
-    it('should register pre auth handler', function () {
-      basicAuth.register(mockServer, 'cookieName', mockIsValidUser, mockCalculateExpires);
-
-      expect(mockIsValidUser.calledOnce);
-      expect(mockCalculateExpires.calledOnce);
-      expect(mockServer.ext.calledOnce);
-      expect(mockServer.ext.firstCall.args[0]).to.equal('onPreAuth');
-      expect(mockServer.ext.firstCall.args[1]).to.be.a('function');
-    });
-  });
-
   describe('getHeader', function () {
     authChecks.forEach(function (check) {
       const [ username, password, base64 ] = check;
