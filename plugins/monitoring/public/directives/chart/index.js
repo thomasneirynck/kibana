@@ -57,8 +57,6 @@ uiModule.directive('monitoringChart', () => {
           return units;
         }());
 
-        // Commenting because some descriptions are wrong. If they are
-        // corrected, they can be shown in the UI as title text in the header
         $scope.description = (() => {
           if (series.length === 1) return seriesGet('metric.description');
           return series.reduce((description, chartData) => {
