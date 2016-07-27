@@ -1,8 +1,11 @@
 <div ng-if="series">
-  <h1
-    tooltip="{{::description}}"
-    tooltip-append-to-body="true"
-    tooltip-placement="right"
-  >{{::title}} <span ng-if="units">({{::units}})</span></h1>
+  <h1>
+    <span class="monitoring-chart-title">{{::title}}</span>
+    <span ng-if="units"> ({{::units}})</span>
+    <i class="monitoring-chart-description fa fa-info-circle pull-right" ng-if="description"
+      tooltip="{{::description}}"
+      tooltip-append-to-body="true"
+    ></i>
+  </h1>
   <chart series="series"/>
 </div>
