@@ -51,7 +51,8 @@ function getJobsCompletedSinceLastCheck($http) {
 function showCompletionNotification(job) {
   const reportObjectTitle = job._source.payload.title;
   const reportObjectType = job._source.payload.type;
+  const reportingSectionLink = chrome.addBasePath('/app/kibana#management/kibana/reporting');
   const notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready!`
-  + ` Pick it up from Management > Kibana > Reporting`; // TODO: Replace with rich text containing link
+  + ` Pick it up from [Management > Kibana > Reporting](${reportingSectionLink})`;
   notify.info(notificationMessage);
 }
