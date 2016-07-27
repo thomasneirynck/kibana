@@ -59,7 +59,12 @@ uiModule.directive('monitoringChart', () => {
 
         // Commenting because some descriptions are wrong. If they are
         // corrected, they can be shown in the UI as title text in the header
-        $scope.description = seriesGet('metric.description');
+        $scope.description = (() => {
+          if (series.length === 1) return seriesGet('metric.description');
+          return series.reduce((description, chartData) => {
+            return `${description}${_.get(chartData, 'metric.label')}: ${_.get(chartData, 'metric.description')}\n`
+          }, '')
+        }());
       });
     }
   };
