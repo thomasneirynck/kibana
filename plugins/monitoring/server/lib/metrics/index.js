@@ -440,7 +440,7 @@ const metricInstances = {
     title: 'System Load',
     field: 'kibana_stats.os.load.1m',
     label: '1m',
-    description: 'The the amount of time a refresh takes',
+    description: 'Load average over the last minute',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
     units: ''
@@ -449,7 +449,7 @@ const metricInstances = {
     title: 'System Load',
     field: 'kibana_stats.os.load.5m',
     label: '5m',
-    description: 'The the amount of time a refresh takes',
+    description: 'Load average over the last 5 minutes',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
     units: ''
@@ -458,7 +458,7 @@ const metricInstances = {
     title: 'System Load',
     field: 'kibana_stats.os.load.15m',
     label: '15m',
-    description: 'The the amount of time a refresh takes',
+    description: 'Load average over the last 15 minutes',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
     units: ''
@@ -484,7 +484,7 @@ const metricInstances = {
   'kibana_process_delay': new KibanaMetric({
     field: 'kibana_stats.process.event_loop_delay',
     label: 'Event Loop Delay',
-    description: 'The Node event loop delay',
+    description: 'Delay in Kibana server event loops; longer delays may indicate blocking events in the server thread, such as synchronous functions taking large amount of CPU time.',
     format: SMALL_FLOAT,
     metricAgg: 'avg',
     units: 'ms'
@@ -493,7 +493,7 @@ const metricInstances = {
     title: 'Client Response Time',
     field: 'kibana_stats.response_times.average',
     label: 'Average',
-    description: 'The average request response time',
+    description: 'Average response time for client requests to the Kibana server',
     format: SMALL_FLOAT,
     metricAgg: 'avg',
     units: 'ms'
@@ -502,7 +502,7 @@ const metricInstances = {
     title: 'Client Response Time',
     field: 'kibana_stats.response_times.max',
     label: 'Max',
-    description: 'The max request response time',
+    description: 'Maximum response time for client requests to the Kibana server',
     format: SMALL_FLOAT,
     metricAgg: 'avg',
     units: 'ms'
@@ -510,7 +510,7 @@ const metricInstances = {
   'kibana_average_concurrent_connections': new KibanaMetric({
     field: 'kibana_stats.concurrent_connections',
     label: 'Concurrent Connections',
-    description: 'The number of concurrent connections to the server',
+    description: 'Total number of open socket connections to the Kibana server',
     format: SMALL_FLOAT,
     metricAgg: 'max',
     units: ''
@@ -518,7 +518,7 @@ const metricInstances = {
   'kibana_requests': new KibanaMetric({
     field: 'kibana_stats.requests.total',
     label: 'Client Requests',
-    description: 'The number of requests received by the server',
+    description: 'Total number of client requests received by Kibana server',
     format: SMALL_FLOAT,
     metricAgg: 'sum',
     units: ''
