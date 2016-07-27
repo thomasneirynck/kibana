@@ -8,8 +8,9 @@ export default (server, uiExports, xpackInfo) => {
     path: '/login',
     handler(request, reply) {
 
+      const isUserAlreadyLoggedIn = !!request.state[cookieName];
       const isSecurityDisabledInES = xpackInfo && xpackInfo.isAvailable() && !xpackInfo.feature('security').isEnabled();
-      if (request.state[cookieName] || isSecurityDisabledInES) return reply.redirect('./');
+      if (isUserAlreadyLoggedIn || isSecurityDisabledInES) return reply.redirect('./');
       return reply.renderApp(login);
     },
     config: {
