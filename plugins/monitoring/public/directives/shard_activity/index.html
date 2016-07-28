@@ -17,7 +17,11 @@
     <tr ng-repeat="activity in visibleData" ng-class="{ done: activity.stage === 'DONE', red: activity.primary, yellow: !activity.primary }">
       <td class="index">
         <h5><a href="#/elasticsearch/indices/{{ activity.index_name || activity.index.name }}">{{ activity.index_name || activity.index.name }}</a></h5>
-        <p><span>{{ activity.id }}</span> | <span>{{activity.type|capitalize}}</span><span ng-if="activity.type === 'RELOCATION'"> of {{ activity.primary ? 'Primary' : 'Replica' }}</span></p>
+        <p>
+          <span>{{ activity.id }}</span> |
+          <span ng-if="activity.type === 'PRIMARY_RELOCATION'">Primary Relocation</span>
+          <span ng-if="activity.type !== 'PRIMARY_RELOCATION'">{{activity.type|capitalize}}</span>
+        </p>
       </td>
       <td class="stage">
         <h6>{{ activity.stage }}</h6>
@@ -33,7 +37,10 @@
           <div>
             <h6 ng-if="!activity.source.name">n/a</h6>
             <div ng-if="activity.source.name">
-              <h6>{{ activity.source.name }}</h6>
+              <h6>
+                <abbr ng-if="!activity.primary || activity.type === 'PRIMARY_RELOCATION'" title="Copied from Primary">{{ activity.source.name }}</abbr>
+                <span ng-if="activity.primary && activity.type !== 'PRIMARY_RELOCATION'">{{ activity.source.name }}</span>
+              </h6>
               <p>{{ getIpAndPort(activity.source.transport_address )}}</p>
             </div>
           </div>
@@ -55,7 +62,7 @@
         <p><span>{{ formatNumber(activity.index.files.reused ? activity.index.files.reused : activity.index.files.recovered, '0,0') }}</span>/<span>{{ formatNumber(activity.index.files.total, '0,0') }}</span></p>
       </td>
       <td class="bytes">
-        <h5></h5{{ activity.index.size.percent }}>
+        <h5>{{ activity.index.size.percent }}</h5>
         <p><span>{{ formatNumber(activity.index.size.recovered_in_bytes + activity.index.size.reused_in_bytes, 'byte') }}</span>/<span>{{ formatNumber(activity.index.size.total_in_bytes, 'byte') }}</span></p>
       </td>
       <td class="translog" ng-if="activity.translog.total <= 0">
