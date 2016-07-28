@@ -218,7 +218,7 @@ const metricInstances = {
     field: 'node_stats.os.cpu.load_average.1m',
     title: 'System Load',
     label: '1m',
-    description: 'The amount of load used for the last 1 minute.',
+    description: 'Load average over the last minute',
     type: 'node',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
