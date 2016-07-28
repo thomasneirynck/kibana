@@ -2,31 +2,8 @@ import _ from 'lodash';
 import createQuery from './create_query.js';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
-export default function getClusterStatus(req, indices, lastState) {
-  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
-
-  // Get the params from the POST body for the request
-  const end = req.payload.timeRange.max;
-  const uuid = req.params.clusterUuid;
-
-  // Build up the Elasticsearch request
-  const metric = ElasticsearchMetric.getMetricFields();
-  const params = {
-    index: indices,
-    meta: 'get_cluster_stats',
-    ignore: [404],
-    type: 'cluster_stats',
-    body: {
-      size: 1,
-      sort: { timestamp: { order: 'desc' } },
-      query: createQuery({ end, uuid, metric })
-    }
-  };
-
-  // Send the request to Elasticsearch with authentication headers. This will handle
-  // 401 from the Sheild plugin and send them back to the browser
-  return callWithRequest(req, 'search', params)
-  .then((resp) => {
+export function handleResponse(lastState) {
+  return (resp) => {
     let clusterStatus = { status: _.get(lastState, 'cluster_state.status') };
     const total = _.get(resp, 'hits.total', 0);
 
@@ -58,5 +35,31 @@ export default function getClusterStatus(req, indices, lastState) {
     });
 
     return clusterStatus;
-  });
+  };
+}
+
+export default function getClusterStatus(req, indices, lastState) {
+  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
+
+  // Get the params from the POST body for the request
+  const end = req.payload.timeRange.max;
+  const uuid = req.params.clusterUuid;
+
+  // Build up the Elasticsearch request
+  const metric = ElasticsearchMetric.getMetricFields();
+  const params = {
+    index: indices,
+    meta: 'get_cluster_stats',
+    ignore: [404],
+    type: 'cluster_stats',
+    body: {
+      size: 1,
+      sort: { timestamp: { order: 'desc' } },
+      query: createQuery({ end, uuid, metric })
+    }
+  };
+
+  // Send the request to Elasticsearch with authentication headers. This will handle
+  // 401 from the Sheild plugin and send them back to the browser
+  return callWithRequest(req, 'search', params).then(handleResponse(lastState));
 };
