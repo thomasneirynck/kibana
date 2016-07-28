@@ -1,4 +1,4 @@
-export default (server, uiExports, xpackInfo) => {
+export default (server, uiExports, xpackMainPlugin) => {
   const config = server.config();
   const cookieName = config.get('xpack.security.cookieName');
   const login = uiExports.apps.byId.login;
@@ -8,9 +8,12 @@ export default (server, uiExports, xpackInfo) => {
     path: '/login',
     handler(request, reply) {
 
-      const isUserAlreadyLoggedIn = !!request.state[cookieName];
+      const xpackInfo = xpackMainPlugin && xpackMainPlugin.info;
       const isSecurityDisabledInES = xpackInfo && xpackInfo.isAvailable() && !xpackInfo.feature('security').isEnabled();
-      if (isUserAlreadyLoggedIn || isSecurityDisabledInES) return reply.redirect('./');
+      const isUserAlreadyLoggedIn = !!request.state[cookieName];
+      if (isUserAlreadyLoggedIn || isSecurityDisabledInES) {
+        return reply.redirect('./');
+      }
       return reply.renderApp(login);
     },
     config: {
