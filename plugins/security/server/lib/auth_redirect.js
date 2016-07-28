@@ -19,7 +19,9 @@ export default function factory({ onError, redirectUrl, strategy, testRequest, x
   return function authenticate(request, reply) {
     // If security is disabled, continue with no user credentials and delete the client cookie as well
     if (xpackInfo && xpackInfo.isAvailable() && !xpackInfo.feature('security').isEnabled()) {
-      reply.unstate(clientCookieName);
+      if (request.state[clientCookieName]) {
+        reply.unstate(clientCookieName);
+      }
       reply.continue({ credentials: {} });
       return;
     }
