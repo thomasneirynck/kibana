@@ -65,7 +65,7 @@ function initialMessage() {
  * @param features {Service} (optional) passed to action factory in getting the callback
  */
 function showNotification({ message, actionFactories }, features) {
-  const notify = new Notifier({location: 'X-Pack Monitoring'});
+  const notify = new Notifier();
   const actions = actionFactories.map(factory => {
     let callback = _.noop;
     if (factory.featuresHandler) {
@@ -77,6 +77,7 @@ function showNotification({ message, actionFactories }, features) {
   notify.custom(message, {
     type: 'banner',
     lifetime: Infinity,
+    truncationLength: 500,
     actions
   });
 }

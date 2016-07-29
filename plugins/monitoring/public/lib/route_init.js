@@ -1,9 +1,7 @@
 import _ from 'lodash';
-import phoneHomeProvider from 'plugins/monitoring/lib/phone_home';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
 
 export default function routeInitProvider(Private, monitoringClusters, globalState, license, kbnUrl) {
-  const phoneHome = Private(phoneHomeProvider);
   const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
 
   function isOnPage(hash) {
@@ -27,10 +25,6 @@ export default function routeInitProvider(Private, monitoringClusters, globalSta
 
   return function routeInit() {
     return monitoringClusters()
-    .then((clusters) => {
-      phoneHome.sendIfDue(clusters); // run in background, ignore return value
-      return clusters;
-    })
     // Set the clusters collection and current cluster in globalState
     .then((clusters) => {
       const cluster = (() => {

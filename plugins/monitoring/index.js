@@ -17,20 +17,28 @@ export default function monitoringIndex(kibana) {
         description: 'Monitoring for Elasticsearch',
         icon: 'plugins/monitoring/monitoring.svg',
         main: 'plugins/monitoring/monitoring',
-        injectVars: function (server, _options) {
+        injectVars(server) {
           var config = server.config();
           return {
             maxBucketSize: config.get('xpack.monitoring.max_bucket_size'),
             minIntervalSeconds: config.get('xpack.monitoring.min_interval_seconds'),
             kbnIndex: config.get('kibana.index'),
             esApiVersion: config.get('elasticsearch.apiVersion'),
-            esShardTimeout: config.get('elasticsearch.shardTimeout'),
-            statsReportUrl: config.get('xpack.monitoring.stats_report_url'),
-            reportStats: config.get('xpack.monitoring.report_stats')
+            esShardTimeout: config.get('elasticsearch.shardTimeout')
           };
-        }
+        },
       },
-      hacks: ['plugins/monitoring/hacks/phone_home_notifications']
+      injectDefaultVars(server) {
+        var config = server.config();
+        return {
+          statsReportUrl: config.get('xpack.monitoring.stats_report_url'),
+          reportStats: config.get('xpack.monitoring.report_stats')
+        };
+      },
+      hacks: [
+        'plugins/monitoring/hacks/phone_home_notifications',
+        'plugins/monitoring/hacks/phone_home_trigger'
+      ]
     },
 
     config: function (Joi) {
