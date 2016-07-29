@@ -6,9 +6,8 @@ function isUnauthorizedResponseAllowed(response) {
     '/api/security/v1/login'
   ];
 
-  return APIS_ALLOWED_TO_RETURN_UNAUTHORIZED_RESPONSE.reduce((isAllowed, endpoint) => {
-    return isAllowed || response.config.url.includes(endpoint);
-  }, false);
+  const url = response.config.url;
+  return APIS_ALLOWED_TO_RETURN_UNAUTHORIZED_RESPONSE.some(url.includes.bind(url));
 }
 
 const module = uiModules.get('security');
