@@ -509,7 +509,7 @@ const metricInstances = {
   }),
   'kibana_average_concurrent_connections': new KibanaMetric({
     field: 'kibana_stats.concurrent_connections',
-    label: 'Concurrent Connections',
+    label: 'HTTP Connections',
     description: 'Total number of open socket connections to the Kibana server',
     format: SMALL_FLOAT,
     metricAgg: 'max',
