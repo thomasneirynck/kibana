@@ -2,12 +2,11 @@ import { identity } from 'lodash';
 import uiModules from 'ui/modules';
 
 function isUnauthorizedResponseAllowed(response) {
-  const APIS_ALLOWED_TO_RETURN_UNAUTHORIZED_RESPONSE = [
+  const API_WHITELIST = [
     '/api/security/v1/login'
   ];
 
-  const url = response.config.url;
-  return APIS_ALLOWED_TO_RETURN_UNAUTHORIZED_RESPONSE.some(url.includes.bind(url));
+  return API_WHITELIST.some(endpoint => response.config.url.includes(endpoint));
 }
 
 const module = uiModules.get('security');
