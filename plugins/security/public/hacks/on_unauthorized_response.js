@@ -6,7 +6,8 @@ function isUnauthorizedResponseAllowed(response) {
     '/api/security/v1/login'
   ];
 
-  return API_WHITELIST.some(endpoint => response.config.url.includes(endpoint));
+  const url = response.config.url;
+  return API_WHITELIST.some(api => url.includes(api));
 }
 
 const module = uiModules.get('security');
