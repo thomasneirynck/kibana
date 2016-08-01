@@ -1,18 +1,13 @@
 <div ng-controller="securityNavController">
-  <div class="app-link">
-    <a kbn-href="#account">
-      <div class="app-icon">
-        <img kbn-src="/plugins/security/images/person.svg" />
-      </div>
-      <div class="app-title">{{me.full_name || me.username}}</div>
-    </a>
-  </div>
-  <div class="app-link">
-    <a kbn-href="/logout">
-      <div class="app-icon">
-        <img kbn-src="/plugins/security/images/logout.svg" />
-      </div>
-      <div class="app-title">Logout</div>
-    </a>
-  </div>
+  <app-switcher-link
+    app-switcher-link-kbn-route="'#account'"
+    app-switcher-link-icon="'/plugins/security/images/person.svg'"
+    app-switcher-link-title="me.full_name || me.username"
+  ></app-switcher-link>
+
+  <app-switcher-link
+    app-switcher-link-kbn-route="'/logout'"
+    app-switcher-link-icon="'/plugins/security/images/logout.svg'"
+    app-switcher-link-title="'Logout'"
+  ></app-switcher-link>
 </div>

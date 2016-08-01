@@ -91,7 +91,7 @@ export default function monitoringIndex(kibana) {
         max_bucket_size: number().default(10000),
         min_interval_seconds: number().default(10),
         report_stats: boolean().default(true),
-        node_resolver: string().regex(/^(?:transport_address|name)$/).default('transport_address'),
+        node_resolver: string().regex(/^(?:transport_address|name|uuid)$/).default('uuid'),
         stats_report_url: Joi.when('$dev', {
           is: true,
           then: string().default('../api/monitoring/v1/phone-home'),

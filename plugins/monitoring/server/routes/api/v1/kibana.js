@@ -15,11 +15,15 @@ const getClusterStatus = function (req, kibanaIndices, calledFrom) {
 };
 
 /*
- * Kibana listing
+ * Kibana routes
  */
 export default function kibanaRoutes(server) {
   const config = server.config();
   const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');
+
+  /**
+   * Kibana instances
+   */
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/kibana',
@@ -32,7 +36,9 @@ export default function kibanaRoutes(server) {
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
-          }).required()
+          }).required(),
+          metrics: Joi.array().optional(),
+          instances: Joi.boolean().default(true)
         })
       }
     },
@@ -42,25 +48,19 @@ export default function kibanaRoutes(server) {
       return calculateIndices(req, start, end, kbnIndexPattern)
       .then(kibanaIndices => {
         return Promise.props({
-          kibanas: getKibanas(req, kibanaIndices),
+          metrics: req.payload.metrics ? getMetrics(req, kibanaIndices) : {},
+          kibanas: req.payload.instances ? getKibanas(req, kibanaIndices) : [],
           clusterStatus: getClusterStatus(req, kibanaIndices, 'route-kibana-listing')
         });
       })
-      .then (result => {
-        const data = {
-          kibanas: result.kibanas,
-          clusterStatus: result.clusterStatus
-        };
-
-        return reply(data);
-      })
+      .then (reply)
       .catch(err => reply(handleError(err, req)));
     }
   });
 
-/*
- * Kibana instance
- */
+  /*
+   * Kibana instance
+   */
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/kibana/{kibanaUuid}',
