@@ -77,7 +77,7 @@ app.controller('graphuiPluginBasic', function ($scope, $route, $interval, $http,
 
   function handleError(err) {
     return checkLicense(Private, Promise)
-    .then(uiNotify.error);
+    .then(() => uiNotify.error(err));
   }
 
   $scope.title = 'Graph';
