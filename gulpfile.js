@@ -89,7 +89,7 @@ function lintFiles(filePaths) {
 gulp.task('lint', function () {
   return stagedFiles.getFiles(__dirname)
   .then((files) => {
-    const filePaths = files.map((file) => stagedFiles.getFilename(file));
+    const filePaths = files.map((file) => stagedFiles.getFilename(file).replace(/^kibana\//, ''));
     return lintFiles(filePaths);
   });
 });
