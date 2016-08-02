@@ -6,7 +6,8 @@ export default function checkLicense(xpackLicenseInfo) {
   // from Elasticsearch, assume worst-case and lock user
   // at login screen.
   if (!xpackLicenseInfo || !xpackLicenseInfo.isAvailable()) {
-    loginMessage = 'Login is currently disabled because the license could not be determined.';
+    loginMessage = 'Login is currently disabled because the license could not be determined. '
+    + 'Please check that Elasticsearch is running, then refresh this page.';
     return {
       allowLogin: false,
       loginMessage
