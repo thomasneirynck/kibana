@@ -22,9 +22,11 @@ describe('lib/auth_redirect', function () {
           redirectUrl: sinon.stub().returns('mock redirect url'),
           strategy: 'wat',
           testRequest: sinon.stub(),
-          xpackInfo: {
-            isAvailable: sinon.stub().returns(true),
-            feature: () => { return { isEnabled: sinon.stub().returns(true) }; }
+          xpackMainPlugin: {
+            info: {
+              isAvailable: sinon.stub().returns(true),
+              feature: () => { return { isEnabled: sinon.stub().returns(true) }; }
+            }
           },
           clientCookieName: 'user'
         };
@@ -63,7 +65,7 @@ describe('lib/auth_redirect', function () {
 
       context('when security is disabled in elasticsearch', () => {
         beforeEach(() => {
-          params.xpackInfo.feature = () => {
+          params.xpackMainPlugin.info.feature = () => {
             return {
               isEnabled: sinon.stub().returns(false)
             };

@@ -9,6 +9,9 @@ export default () => {
     },
     url: {
       path: '/wat'
+    },
+    state: {
+      user: 'these are the contents of the user client cookie'
     }
   };
 };
