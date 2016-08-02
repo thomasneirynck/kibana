@@ -1,33 +1,32 @@
 /**
- * Controller for Overview Page
+ * Kibana Overview
  */
 import { find } from 'lodash';
 import uiRoutes from'ui/routes';
 import uiModules from 'ui/modules';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
-import template from 'plugins/monitoring/views/elasticsearch/overview/overview_template.html';
+import template from 'plugins/monitoring/views/kibana/overview/overview_template.html';
 
 function getPageData(timefilter, globalState, $http, Private) {
   const timeBounds = timefilter.getBounds();
-  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}`;
+  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/kibana`;
   return $http.post(url, {
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
     },
     metrics: [
-      'cluster_search_request_rate',
-      'cluster_query_latency',
+      'kibana_requests',
       {
-        name: 'cluster_index_request_rate',
+        name: 'kibana_response_times',
         keys: [
-          'cluster_index_request_rate_total',
-          'cluster_index_request_rate_primary'
+          'kibana_max_response_times',
+          'kibana_average_response_times'
         ]
-      },
-      'cluster_index_latency'
-    ]
+      }
+    ],
+    instances: false
   })
   .then(response => response.data)
   .catch((err) => {
@@ -36,7 +35,7 @@ function getPageData(timefilter, globalState, $http, Private) {
   });
 }
 
-uiRoutes.when('/elasticsearch', {
+uiRoutes.when('/kibanas', {
   template,
   resolve: {
     clusters: function (Private) {
@@ -48,10 +47,7 @@ uiRoutes.when('/elasticsearch', {
 });
 
 const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-uiModule.controller('elasticsearchOverview', (
-  $route, globalState, timefilter, $http, title, Private, $executor, monitoringClusters, $scope
-) => {
-
+uiModule.controller('kibanaOverview', ($route, globalState, title, Private, $executor, $http, timefilter, $scope) => {
   timefilter.enabled = true;
 
   function setClusters(clusters) {
@@ -60,24 +56,13 @@ uiModule.controller('elasticsearchOverview', (
   }
   setClusters($route.current.locals.clusters);
   $scope.pageData = $route.current.locals.pageData;
-  title($scope.cluster, 'Elasticsearch');
+  title($scope.cluster, 'Kibana');
 
   $executor.register({
     execute: () => getPageData(timefilter, globalState, $http, Private),
     handleResponse: (response) => $scope.pageData = response
   });
-
-  $executor.register({
-    execute: () => monitoringClusters(),
-    handleResponse: setClusters
-  });
-
-
-  // Start the executor
   $executor.start();
-
-  // Destory the executor
   $scope.$on('$destroy', $executor.destroy);
-
 });
 

@@ -37,7 +37,7 @@ var kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'plugins', pkg.name)
 var coverageDir = path.resolve(__dirname, 'coverage');
 
 var buildIncludes = [
-  'LICENSE.txt',
+  '../LICENSE.txt',
   'NOTICE.txt',
   'package.json',
   'index.js',

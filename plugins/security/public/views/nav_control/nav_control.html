@@ -1,13 +1,13 @@
 <div ng-controller="securityNavController" ng-show="!!me()">
   <app-switcher-link
     app-switcher-link-kbn-route="'#account'"
-    app-switcher-link-icon="'/plugins/security/images/person.svg'"
+    app-switcher-link-icon="'plugins/security/images/person.svg'"
     app-switcher-link-title="me().full_name || me().username"
   ></app-switcher-link>
 
   <app-switcher-link
     app-switcher-link-kbn-route="'/logout'"
-    app-switcher-link-icon="'/plugins/security/images/logout.svg'"
+    app-switcher-link-icon="'plugins/security/images/logout.svg'"
     app-switcher-link-title="'Logout'"
   ></app-switcher-link>
 </div>

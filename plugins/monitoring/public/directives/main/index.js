@@ -59,8 +59,11 @@ uiModule.directive('monitoringMain', (license) => {
         }
 
         // Kibana crumbs
-        if (scope.inKibana && scope.instance) {
-          breadcrumbs.push(createCrumb('#/kibana', 'Kibana'));
+        if (scope.inKibana) {
+          breadcrumbs.push(createCrumb('#/kibanas', 'Kibana'));
+          if (scope.instance) {
+            breadcrumbs.push(createCrumb('#/kibana', 'Instances'));
+          }
         }
       }
       scope.breadcrumbs = breadcrumbs.filter(Boolean);

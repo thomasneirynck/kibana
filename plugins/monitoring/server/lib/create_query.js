@@ -44,11 +44,7 @@ export default function createQuery(options) {
   }
   return {
     bool: {
-      filter: {
-        bool: {
-          must: _.filter(filters, (val) => !_.isUndefined(val))
-        }
-      }
+      filter: _.filter(filters, (val) => !_.isUndefined(val))
     }
   };
 };

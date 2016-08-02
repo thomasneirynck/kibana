@@ -4,7 +4,8 @@ import 'plugins/security/views/logout/logout.less';
 chrome
 .setVisible(false)
 .setRootController('logout', ($http, $window) => {
+  const url = `./login${$window.location.search}`;
   $http.post('./api/security/v1/logout', {}).then(
-    () => $window.location.href = './login'
+    () => $window.location.href = url
   );
 });

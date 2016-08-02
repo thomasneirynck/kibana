@@ -6,10 +6,11 @@ import formatNumber from '../../lib/format_number';
 
 class ClusterItemContainer extends React.Component {
   render() {
+    // Note: kebabCase takes something like 'Elastic Search' and makes it 'elastic-search', which is ideal for CSS names
     return (
       <div className="monitoring-element cluster-item panel-product">
         <h3
-            className={`panel-heading panel-heading-${this.props.url}`}
+            className={`panel-heading panel-heading-${_.kebabCase(this.props.title)}`}
             onClick={() => this.props.angularChangeUrl(this.props.url)}>
           {this.props.title}
         </h3>
@@ -19,7 +20,7 @@ class ClusterItemContainer extends React.Component {
       </div>
     );
   }
-};
+}
 
 class StatusContainer extends React.Component {
   render() {
@@ -33,7 +34,7 @@ class StatusContainer extends React.Component {
       </div>
     );
   }
-};
+}
 
 class ElasticsearchPanel extends React.Component {
   constructor(props) {
@@ -93,28 +94,39 @@ class ElasticsearchPanel extends React.Component {
       </ClusterItemContainer>
     );
   }
-};
+}
 
 class KibanaPanel extends React.Component {
   render() {
     if (!this.props.count) return (<div></div>);
     return (
-      <ClusterItemContainer {...this.props} url='kibana' title='Kibana'>
+      <ClusterItemContainer {...this.props} url='kibanas' title='Kibana'>
         <StatusContainer statusPrefix='Instances' status={this.props.status}/>
 
-        <dl>
-          <dt>
-            <a onClick={() => this.props.angularChangeUrl('kibana')}>Instances: {this.props.count}</a>
-          </dt>
-          <dd>Requests: {this.props.requests_total}</dd>
-          <dd>Connections: {formatNumber(this.props.concurrent_connections, 'int_commas')}</dd>
-          <dd>Max. Response Time: {this.props.response_time_max} ms</dd>
-          <dd>Memory Usage: {formatNumber(this.props.memory_size / this.props.memory_limit, '0.00%')}</dd>
-        </dl>
+        <div className='row'>
+          <div className='col-md-4'>
+            <dl>
+              <dt>
+                <a onClick={() => this.props.angularChangeUrl('kibanas')}>Overview</a>
+              </dt>
+              <dd>Requests: {this.props.requests_total}</dd>
+              <dd>Max. Response Time: {this.props.response_time_max} ms</dd>
+            </dl>
+          </div>
+          <div className='col-md-4'>
+            <dl>
+              <dt>
+                <a onClick={() => this.props.angularChangeUrl('kibana')}>Instances: {this.props.count}</a>
+              </dt>
+              <dd>Connections: {formatNumber(this.props.concurrent_connections, 'int_commas')}</dd>
+              <dd>Memory Usage: {formatNumber(this.props.memory_size / this.props.memory_limit, '0.00%')}</dd>
+            </dl>
+          </div>
+        </div>
       </ClusterItemContainer>
     );
   }
-};
+}
 
 class Overview extends React.Component {
   constructor(props) {
@@ -156,6 +168,6 @@ class Overview extends React.Component {
       </div>
     );
   }
-};
+}
 
 export default Overview;
