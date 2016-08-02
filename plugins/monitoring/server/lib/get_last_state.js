@@ -37,8 +37,10 @@ export default function getLastState(req, indices) {
     const lastState = _.get(resp, 'hits.hits[0]._source');
     const nodes = _.get(lastState, 'cluster_state.nodes');
     if (nodes) {
-      // re-key the nodes objects to use resolver
-      lastState.cluster_state.nodes = _.indexBy(nodes, node => node[resolver]);
+      // re-key the nodes objects to use resolver if it's not the UUID (it's already keyed by UUID!)
+      if (resolver !== 'uuid') {
+        lastState.cluster_state.nodes = _.indexBy(nodes, node => node[resolver]);
+      }
     }
     return lastState;
   });

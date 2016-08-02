@@ -20,7 +20,8 @@ import 'plugins/monitoring/views/elasticsearch/indices/indices_controller';
 import 'plugins/monitoring/views/elasticsearch/index/index_controller';
 import 'plugins/monitoring/views/elasticsearch/nodes/nodes_controller';
 import 'plugins/monitoring/views/elasticsearch/node/node_controller';
-import 'plugins/monitoring/views/kibana/overview/kibanas_controller';
+import 'plugins/monitoring/views/kibana/overview/overview_controller';
+import 'plugins/monitoring/views/kibana/instances/kibanas_controller';
 import 'plugins/monitoring/views/kibana/instance/kibana_controller';
 
 const uiModule = uiModules.get('kibana');
