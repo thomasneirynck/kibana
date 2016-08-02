@@ -40,16 +40,14 @@ module.exports = function (kibana) {
           pollInterval: Joi.number().integer().default(3000),
           timeout: Joi.number().integer().default(30000),
         }).default(),
-        phantom: Joi.object({
+        capture: Joi.object({
           zoom: Joi.number().integer().default(1),
           viewport: Joi.object({
             width: Joi.number().integer().default(1320),
             height: Joi.number().integer().default(640)
           }).default(),
           timeout: Joi.number().integer().default(6000),
-          loadDelay: Joi.number().integer().default(3000)
-        }).default(),
-        capture: Joi.object({
+          loadDelay: Joi.number().integer().default(3000),
           concurrency: Joi.number().integer().default(appConfig.concurrency),
         }).default(),
       }).default();
