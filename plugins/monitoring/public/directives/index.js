@@ -13,3 +13,6 @@ import 'plugins/monitoring/directives/index_summary/index';
 import 'plugins/monitoring/directives/kibana_summary/index';
 import 'plugins/monitoring/directives/shard_allocation/index';
 import 'plugins/monitoring/directives/shard_allocation/directives/clusterView';
+import 'plugins/monitoring/directives/logstash/cluster_status/index';
+import 'plugins/monitoring/directives/logstash/listing/index';
+import 'plugins/monitoring/directives/logstash/node_summary/index';

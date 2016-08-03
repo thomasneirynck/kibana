@@ -106,6 +106,9 @@ export default function monitoringIndex(kibana) {
             interval: number().default(10000)
           }).default()
         }).default(),
+        logstash: object({
+          index_pattern: string().default('.monitoring-logstash-2-*')
+        }).default(),
         missing_intervals: number().default(12),
         max_bucket_size: number().default(10000),
         min_interval_seconds: number().default(10),

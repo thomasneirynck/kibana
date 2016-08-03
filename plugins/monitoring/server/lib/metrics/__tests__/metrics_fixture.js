@@ -24,6 +24,19 @@ function queryLatencyCalculation(last) {
   return 0;
 }
 
+function logstashEventsLatencyCalculation(last) {
+  const eventsTimeInMillis = _.get(last, 'events_time_in_millis_deriv.value');
+  const eventsTotal = _.get(last, 'events_total_deriv.value');
+  if (eventsTimeInMillis && eventsTotal) {
+    if (eventsTimeInMillis < 0 || eventsTotal < 0) {
+      return null;
+    }
+    return eventsTimeInMillis / eventsTotal;
+  }
+  return 0;
+}
+
+
 export const expected = {
   'cluster_index_request_rate_primary': {
     'title': 'Indexing Rate',
@@ -1794,6 +1807,147 @@ export const expected = {
     'app': 'kibana',
     'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
+    'derivative': false
+  },
+  'logstash_events_input_rate': {
+    'field': 'logstash_stats.events.in',
+    'label': 'Events Received Rate',
+    'description': 'Total number of events received by the Logstash node at the inputs stage.',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'units': '/s',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': true
+  },
+  'logstash_events_output_rate': {
+    'field': 'logstash_stats.events.out',
+    'label': 'Events Emitted Rate',
+    'description': 'Total number of events emitted by the Logstash node at the outputs stage.',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'units': '/s',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': true
+  },
+  'logstash_events_latency': {
+    'calculation': logstashEventsLatencyCalculation,
+    'field': 'logstash_stats.events.out',
+    'label': 'Events Latency Rate',
+    'description': (
+      'Average time spent by events in the filter and output stages, which is the total ' +
+      'time it takes to process events divided by number of events emitted.'
+    ),
+    'format': '0,0.[00]',
+    'metricAgg': 'sum',
+    'units': 'ms',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': false,
+    'aggs': {
+      'events_time_in_millis': {
+        'max': {
+          'field': 'logstash_stats.events.duration_in_millis'
+        }
+      },
+      'events_total': {
+        'max': {
+          'field': 'logstash_stats.events.out'
+        }
+      },
+      'events_time_in_millis_deriv': {
+        'derivative': {
+          'buckets_path': 'events_time_in_millis',
+          'gap_policy': 'skip'
+        }
+      },
+      'events_total_deriv': {
+        'derivative': {
+          'buckets_path': 'events_total',
+          'gap_policy': 'skip'
+        }
+      }
+    }
+  },
+  'logstash_os_load_1m': {
+    'title': 'System Load',
+    'field': 'logstash_stats.os.cpu.load_average.1m',
+    'label': '1m',
+    'description': 'Load average over the last minute.',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'units': '',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': false
+  },
+  'logstash_os_load_5m': {
+    'title': 'System Load',
+    'field': 'logstash_stats.os.cpu.load_average.5m',
+    'label': '5m',
+    'description': 'Load average over the last 5 minutes.',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'units': '',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': false
+  },
+  'logstash_os_load_15m': {
+    'title': 'System Load',
+    'field': 'logstash_stats.os.cpu.load_average.15m',
+    'label': '15m',
+    'description': 'Load average over the last 15 minutes.',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'units': '',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': false
+  },
+  'logstash_node_jvm_mem_max_in_bytes': {
+    'title': 'JVM Heap',
+    'field': 'logstash_stats.jvm.mem.heap_max_in_bytes',
+    'label': 'Max Heap',
+    'description': 'Total heap available to Logstash running in the JVM.',
+    'format': '0.0 b',
+    'metricAgg': 'max',
+    'units': 'B',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': false
+  },
+  'logstash_node_jvm_mem_used_in_bytes': {
+    'title': 'JVM Heap',
+    'field': 'logstash_stats.jvm.mem.heap_used_in_bytes',
+    'label': 'Used Heap',
+    'description': 'Total heap used by Logstash running in the JVM.',
+    'format': '0.0 b',
+    'metricAgg': 'max',
+    'units': 'B',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': false
+  },
+  'logstash_node_cpu_utilization': {
+    'field': 'logstash_stats.process.cpu.percent',
+    'label': 'CPU Utilization',
+    'description': 'Percentage of CPU usage (100% is the max).',
+    'format': '0,0.[00]',
+    'metricAgg': 'avg',
+    'units': '%',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
     'derivative': false
   }
 };

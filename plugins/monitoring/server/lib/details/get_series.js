@@ -10,6 +10,8 @@ import pickMetricFields from '../pick_metric_fields';
 function getUuid(req, metric) {
   if (metric.app === 'kibana') {
     return req.params.kibanaUuid;
+  } else if (metric.app === 'logstash') {
+    return req.params.logstashUuid;
   }
   return req.params.clusterUuid;
 }

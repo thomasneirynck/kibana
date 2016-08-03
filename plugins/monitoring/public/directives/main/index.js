@@ -23,6 +23,7 @@ uiModule.directive('monitoringMain', (license) => {
       if (scope.product) {
         scope.inElasticsearch = productIsIn('elasticsearch');
         scope.inKibana = productIsIn('kibana');
+        scope.inLogstash = productIsIn('logstash');
       } else {
         scope.product = false;
         scope.inOverview = scope.name === 'overview';
@@ -73,6 +74,17 @@ uiModule.directive('monitoringMain', (license) => {
           } else {
             // don't link to Overview when we're possibly on Overview or its sibling tabs
             breadcrumbs.push(createCrumb(null, 'Kibana'));
+          }
+        }
+
+        // Logstash crumbs
+        if (scope.inLogstash) {
+          if (scope.instance) {
+            breadcrumbs.push(createCrumb('#/logstash', 'Logstash'));
+            breadcrumbs.push(createCrumb('#/logstash/nodes', 'Nodes'));
+          } else {
+            // don't link to Overview when we're possibly on Overview or its sibling tabs
+            breadcrumbs.push(createCrumb(null, 'Logstash'));
           }
         }
       }

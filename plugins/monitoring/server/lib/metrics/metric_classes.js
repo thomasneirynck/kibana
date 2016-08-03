@@ -243,3 +243,71 @@ export class SingleIndexMemoryMetric extends IndexMemoryMetric {
   }
 
 }
+
+export class LogstashMetric extends Metric {
+
+  constructor(opts) {
+    super({
+      ...opts,
+      app: 'logstash',
+      uuidField: 'logstash_stats.logstash.uuid',
+      timestampField: 'logstash_stats.timestamp'
+    });
+  }
+
+}
+
+export class EventsLatencyMetric extends LogstashMetric {
+
+  constructor(opts) {
+    super({
+      ...opts,
+      format: LARGE_FLOAT,
+      metricAgg: 'sum',
+      units: 'ms'
+    });
+
+    this.aggs = {
+      ['events_time_in_millis']: {
+        max: { field: 'logstash_stats.events.duration_in_millis' }
+      },
+      ['events_total']: {
+        max: { field: 'logstash_stats.events.out' }
+      },
+      ['events_time_in_millis_deriv']: {
+        derivative: { buckets_path: 'events_time_in_millis', gap_policy: 'skip' }
+      },
+      ['events_total_deriv']: {
+        derivative: { buckets_path: 'events_total', gap_policy: 'skip' }
+      }
+    };
+
+    this.calculation = (last) => {
+      const timeInMillis = _.get(last, 'events_time_in_millis_deriv.value');
+      const timeTotal = _.get(last, 'events_total_deriv.value');
+      if (timeInMillis && timeTotal) {
+        // Negative values indicate blips in the data (e.g., restarting a node) that we do not want to misrepresent
+        if (timeInMillis < 0 || timeTotal < 0) {
+          return null;
+        }
+        return timeInMillis / timeTotal;
+      }
+      return 0;
+    };
+  }
+
+}
+
+export class LogstashEventsRateMetric extends LogstashMetric {
+
+  constructor(opts) {
+    super({
+      ...opts,
+      derivative: true,
+      format: LARGE_FLOAT,
+      metricAgg: 'max',
+      units: '/s'
+    });
+  }
+
+}

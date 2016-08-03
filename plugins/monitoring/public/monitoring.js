@@ -26,6 +26,9 @@ import 'plugins/monitoring/views/elasticsearch/node/node_advanced_controller';
 import 'plugins/monitoring/views/kibana/overview/overview_controller';
 import 'plugins/monitoring/views/kibana/instances/kibanas_controller';
 import 'plugins/monitoring/views/kibana/instance/kibana_controller';
+import 'plugins/monitoring/views/logstash/overview/overview_controller';
+import 'plugins/monitoring/views/logstash/nodes/nodes_controller';
+import 'plugins/monitoring/views/logstash/node/node_controller';
 
 const uiModule = uiModules.get('kibana');
 uiModule.run(function (uiSettings) {

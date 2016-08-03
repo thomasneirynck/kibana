@@ -15,6 +15,7 @@ import getMetrics from '../../../lib/details/get_metrics';
 import getShardStats from '../../../lib/get_shard_stats';
 import calculateClusterShards from '../../../lib/elasticsearch/calculate_cluster_shards';
 import handleError from '../../../lib/handle_error';
+import getLogstashForClusters from '../../../lib/logstash/get_logstash_for_clusters';
 
 // manipulate cluster status and license meta data
 function normalizeClustersData(clusters) {
@@ -51,6 +52,7 @@ export default function clustersRoutes(server) {
   const config = server.config();
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
   const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');
+  const logstashIndexPattern = config.get('xpack.monitoring.logstash.index_pattern');
   const { callWithRequest } = server.plugins.elasticsearch.getCluster('monitoring');
 
   function getClustersFromRequest(req) {
@@ -58,9 +60,10 @@ export default function clustersRoutes(server) {
     const end = req.payload.timeRange.max;
     return Promise.all([
       calculateIndices(req, start, end, esIndexPattern),
-      calculateIndices(req, start, end, kbnIndexPattern)
+      calculateIndices(req, start, end, kbnIndexPattern),
+      calculateIndices(req, start, end, logstashIndexPattern)
     ])
-    .then(([esIndices, kibanaIndices]) => {
+    .then(([esIndices, kibanaIndices, logstashIndices]) => {
       return getClusters(req, esIndices)
       .then(getClustersStats(req))
       .then(getClustersHealth(req))
@@ -73,6 +76,18 @@ export default function clustersRoutes(server) {
           kibanas.forEach(kibana => {
             const clusterIndex = _.findIndex(clusters, { cluster_uuid: kibana.clusterUuid });
             _.set(clusters[clusterIndex], 'kibana', kibana.stats);
+          });
+          return clusters;
+        });
+      })
+      .then(clusters => {
+        const mapClusters = getLogstashForClusters(req, logstashIndices);
+        return mapClusters(clusters)
+        .then(logstashes => {
+          // add the logstash data to each cluster
+          logstashes.forEach(logstash => {
+            const clusterIndex = _.findIndex(clusters, { cluster_uuid: logstash.clusterUuid });
+            _.set(clusters[clusterIndex], 'logstash', logstash.stats);
           });
           return clusters;
         });

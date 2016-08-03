@@ -3,7 +3,8 @@ import _ from 'lodash';
 import {
   ElasticsearchMetric, RequestRateMetric, KibanaMetric, LatencyMetric,
   NodeIndexMemoryMetric, ThreadPoolQueueMetric, ThreadPoolRejectedMetric,
-  IndexAverageStatMetric, SingleIndexMemoryMetric, IndexMemoryMetric
+  IndexAverageStatMetric, SingleIndexMemoryMetric, IndexMemoryMetric,
+  LogstashMetric, EventsLatencyMetric, LogstashEventsRateMetric
 } from './metric_classes';
 
 import {
@@ -921,6 +922,77 @@ const metricInstances = {
     metricAgg: 'sum',
     units: ''
   }),
+  'logstash_events_input_rate': new LogstashEventsRateMetric({
+    field: 'logstash_stats.events.in',
+    label: 'Events Received Rate',
+    description: 'Total number of events received by the Logstash node at the inputs stage.',
+  }),
+  'logstash_events_output_rate': new LogstashEventsRateMetric({
+    field: 'logstash_stats.events.out',
+    label: 'Events Emitted Rate',
+    description: 'Total number of events emitted by the Logstash node at the outputs stage.',
+  }),
+  'logstash_events_latency': new EventsLatencyMetric({
+    field: 'logstash_stats.events.out',
+    label: 'Events Latency Rate',
+    description: (
+      'Average time spent by events in the filter and output stages, which is the total ' +
+      'time it takes to process events divided by number of events emitted.'
+    ),
+  }),
+  'logstash_os_load_1m': new LogstashMetric({
+    title: 'System Load',
+    field: 'logstash_stats.os.cpu.load_average.1m',
+    label: '1m',
+    description: 'Load average over the last minute.',
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: ''
+  }),
+  'logstash_os_load_5m': new LogstashMetric({
+    title: 'System Load',
+    field: 'logstash_stats.os.cpu.load_average.5m',
+    label: '5m',
+    description: 'Load average over the last 5 minutes.',
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: ''
+  }),
+  'logstash_os_load_15m': new LogstashMetric({
+    title: 'System Load',
+    field: 'logstash_stats.os.cpu.load_average.15m',
+    label: '15m',
+    description: 'Load average over the last 15 minutes.',
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: ''
+  }),
+  'logstash_node_jvm_mem_max_in_bytes': new LogstashMetric({
+    field: 'logstash_stats.jvm.mem.heap_max_in_bytes',
+    title: 'JVM Heap',
+    label: 'Max Heap',
+    description: 'Total heap available to Logstash running in the JVM.',
+    format: SMALL_BYTES,
+    metricAgg: 'max',
+    units: 'B'
+  }),
+  'logstash_node_jvm_mem_used_in_bytes': new LogstashMetric({
+    field: 'logstash_stats.jvm.mem.heap_used_in_bytes',
+    title: 'JVM Heap',
+    label: 'Used Heap',
+    description: 'Total heap used by Logstash running in the JVM.',
+    format: SMALL_BYTES,
+    metricAgg: 'max',
+    units: 'B'
+  }),
+  'logstash_node_cpu_utilization': new LogstashMetric({
+    field: 'logstash_stats.process.cpu.percent',
+    label: 'CPU Utilization',
+    description: 'Percentage of CPU usage (100% is the max).',
+    format: LARGE_FLOAT,
+    metricAgg: 'avg',
+    units: '%'
+  })
 };
 
 const metrics = _.reduce(Object.keys(metricInstances), (accumulated, key) => {

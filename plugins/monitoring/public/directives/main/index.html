@@ -45,13 +45,19 @@
           <a ng-if="instance" class="kuiLocalTab">{{ instance }}</a>
         </div>
 
+        <div ng-if="inLogstash" class="kuiLocalTabs" role="navigation">
+            <a ng-if="!instance" kbn-href="#/logstash" class="kuiLocalTab" ng-class="{'kuiLocalTab-isSelected': isActive('overview')}">Overview</a>
+            <a ng-if="!instance" kbn-href="#/logstash/nodes" class="kuiLocalTab" ng-class="{'kuiLocalTab-isSelected': isActive('nodes')}">Nodes</a>
+            <a ng-if="instance" class="kuiLocalTab">{{ instance }}</a>
+        </div>
+
         <div ng-if="inOverview" class="kuiLocalTabs" role="navigation">
           <a class="kuiLocalTab">{{ cluster.cluster_name }}</a>
         </div>
 
         <div ng-if="inListing" class="kuiLocalTabs" role="navigation">
-          <a class="kuiLocalTab">Clusters</a>
-        </div>
+         <a class="kuiLocalTab">Clusters</a>
+       </div>
       </div>
     </div>
   </kbn-top-nav>
