@@ -1,3 +1,4 @@
+import angular from 'angular';
 import _ from 'lodash';
 import numeral from 'numeral';
 import $ from 'jquery';
@@ -5,6 +6,7 @@ import moment from 'moment';
 import VislibComponentsColorColorPaletteProvider from 'ui/vislib/components/color/color_palette';
 import uiModules from 'ui/modules';
 import template from 'plugins/monitoring/directives/chart/index.html';
+import descriptionTemplate from './description_template.html';
 import 'flot-charts/jquery.flot';
 import 'flot-charts/jquery.flot.time';
 import 'flot-charts/jquery.flot.canvas';
@@ -23,7 +25,7 @@ function get(series, attr) {
 }
 
 const uiModule = uiModules.get('plugins/monitoring/directives', []);
-uiModule.directive('monitoringChart', () => {
+uiModule.directive('monitoringChart', ($compile) => {
   return {
     restrict: 'E',
     template,
@@ -31,6 +33,8 @@ uiModule.directive('monitoringChart', () => {
       series: '='
     },
     link($scope) {
+      const compiledDescription = $compile(descriptionTemplate);
+
       $scope.$watch('series', series => {
         const seriesGet = _.partial(get, series);
 
@@ -57,12 +61,20 @@ uiModule.directive('monitoringChart', () => {
           return units;
         }());
 
-        $scope.description = (() => {
-          if (series.length === 1) return seriesGet('metric.description');
-          return series.reduce((description, chartData) => {
-            return `${description}${_.get(chartData, 'metric.label')}: ${_.get(chartData, 'metric.description')}\n`
-          }, '')
-        }());
+        const descriptions = _.assign($scope.$new(true), (() => {
+          return {
+            descriptions: series.map((chartData) => {
+              return {
+                label: _.escape(_.get(chartData, 'metric.label')),
+                description: _.escape(_.get(chartData, 'metric.description'))
+              };
+            })
+          };
+        }()));
+        const descriptionEl = compiledDescription(descriptions);
+        $scope.$evalAsync(() => {
+          $scope.description = descriptionEl.prop('outerHTML');
+        });
       });
     }
   };
