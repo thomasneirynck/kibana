@@ -1,4 +1,6 @@
-export default (server, uiExports) => {
+import { get } from 'lodash';
+
+export default (server, uiExports, xpackMainPlugin) => {
   const config = server.config();
   const cookieName = config.get('xpack.security.cookieName');
   const login = uiExports.apps.byId.login;
@@ -7,7 +9,14 @@ export default (server, uiExports) => {
     method: 'GET',
     path: '/login',
     handler(request, reply) {
-      if (request.state[cookieName]) return reply.redirect('./');
+
+      const xpackInfo = xpackMainPlugin && xpackMainPlugin.info;
+      const isSecurityDisabledInES = xpackInfo && xpackInfo.isAvailable() && !xpackInfo.feature('security').isEnabled();
+      const isUserAlreadyLoggedIn = !!request.state[cookieName];
+      if (isUserAlreadyLoggedIn || isSecurityDisabledInES) {
+        const next = get(request, 'query.next', '/');
+        return reply.redirect(`${config.get('server.basePath')}${next}`);
+      }
       return reply.renderApp(login);
     },
     config: {

@@ -15,8 +15,18 @@
  *    testRequest: Function to test authentication for a request
  * @return {Function}
  */
-export default function factory({ onError, redirectUrl, strategy, testRequest }) {
+export default function factory({ onError, redirectUrl, strategy, testRequest, xpackMainPlugin, clientCookieName }) {
   return function authenticate(request, reply) {
+    // If security is disabled, continue with no user credentials and delete the client cookie as well
+    const xpackInfo = xpackMainPlugin && xpackMainPlugin.info;
+    if (xpackInfo && xpackInfo.isAvailable() && !xpackInfo.feature('security').isEnabled()) {
+      if (request.state[clientCookieName]) {
+        reply.unstate(clientCookieName);
+      }
+      reply.continue({ credentials: {} });
+      return;
+    }
+
     testRequest(strategy, request, (err, credentials) => {
       if (err) {
         if (shouldRedirect(request.raw.req)) {
