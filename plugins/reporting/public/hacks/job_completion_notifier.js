@@ -71,6 +71,7 @@ function showCompletionNotification(job) {
   ];
   notify.custom(notificationMessage, {
     type: 'info',
+    lifetime: 0,
     actions
   });
 }
