@@ -1,7 +1,7 @@
 import notify from 'ui/notify';
 import chrome from 'ui/chrome';
 import uiModules from 'ui/modules';
-import { last } from 'lodash';
+import { last, noop } from 'lodash';
 import moment from 'moment';
 import constants from '../../server/lib/constants.js';
 
@@ -63,6 +63,10 @@ function showCompletionNotification(job) {
     {
       text: 'Download Report',
       callback: downloadReport(job._id)
+    },
+    {
+      text: 'OK',
+      callback: noop
     }
   ];
   notify.custom(notificationMessage, {
