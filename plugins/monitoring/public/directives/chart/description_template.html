@@ -1,7 +1,7 @@
 <table>
   <tbody>
     <tr ng-repeat="item in descriptions">
-      <td class="tooltip-label"><b>{{ item.label }}</b></td>
+      <td ng-if="descriptions.length > 1" class="tooltip-label"><b>{{ item.label }}</b></td>
       <td class="tooltip-value">{{ item.description }}</td>
     </tr>
   </tbody>
