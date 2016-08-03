@@ -1,3 +1,5 @@
+import { get } from 'lodash';
+
 export default (server, uiExports, xpackMainPlugin) => {
   const config = server.config();
   const cookieName = config.get('xpack.security.cookieName');
@@ -12,7 +14,8 @@ export default (server, uiExports, xpackMainPlugin) => {
       const isSecurityDisabledInES = xpackInfo && xpackInfo.isAvailable() && !xpackInfo.feature('security').isEnabled();
       const isUserAlreadyLoggedIn = !!request.state[cookieName];
       if (isUserAlreadyLoggedIn || isSecurityDisabledInES) {
-        return reply.redirect('./');
+        const next = get(request, 'query.next', '/');
+        return reply.redirect(`${config.get('server.basePath')}${next}`);
       }
       return reply.renderApp(login);
     },
