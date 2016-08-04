@@ -68,7 +68,7 @@ class ElasticsearchPanel extends React.Component {
           <div className='col-md-4'>
             <dl>
               <dt>
-                <a onClick={() => this.props.angularChangeUrl('nodes')}>Nodes: {formatNumber(nodes.count.total, 'int_commas')}</a>
+                <a onClick={() => this.props.angularChangeUrl('elasticsearch/nodes')}>Nodes: {formatNumber(nodes.count.total, 'int_commas')}</a>
               </dt>
               <dd>FS: {formatNumber(nodes.fs.available_in_bytes, 'byte')} / {formatNumber(nodes.fs.total_in_bytes, 'bytes')}</dd>
             </dl>
@@ -77,7 +77,7 @@ class ElasticsearchPanel extends React.Component {
           <div className='col-md-4'>
             <dl>
               <dt>
-                <a onClick={() => this.props.angularChangeUrl('indices')}>Indices: {formatNumber(indices.count, 'int_commas')}</a>
+                <a onClick={() => this.props.angularChangeUrl('elasticsearch/indices')}>Indices: {formatNumber(indices.count, 'int_commas')}</a>
               </dt>
               <dd>Doc Count: {formatNumber(indices.docs.count, 'int_commas')}</dd>
               <dd>Min. Shard Replication: {indices.shards.index.replication.min}</dd>
@@ -100,14 +100,14 @@ class KibanaPanel extends React.Component {
   render() {
     if (!this.props.count) return (<div></div>);
     return (
-      <ClusterItemContainer {...this.props} url='kibanas' title='Kibana'>
+      <ClusterItemContainer {...this.props} url='kibana' title='Kibana'>
         <StatusContainer statusPrefix='Instances' status={this.props.status}/>
 
         <div className='row'>
           <div className='col-md-4'>
             <dl>
               <dt>
-                <a onClick={() => this.props.angularChangeUrl('kibanas')}>Overview</a>
+                <a onClick={() => this.props.angularChangeUrl('kibana')}>Overview</a>
               </dt>
               <dd>Requests: {this.props.requests_total}</dd>
               <dd>Max. Response Time: {this.props.response_time_max} ms</dd>
@@ -116,7 +116,7 @@ class KibanaPanel extends React.Component {
           <div className='col-md-4'>
             <dl>
               <dt>
-                <a onClick={() => this.props.angularChangeUrl('kibana')}>Instances: {this.props.count}</a>
+                <a onClick={() => this.props.angularChangeUrl('kibana/instances')}>Instances: {this.props.count}</a>
               </dt>
               <dd>Connections: {formatNumber(this.props.concurrent_connections, 'int_commas')}</dd>
               <dd>Memory Usage: {formatNumber(this.props.memory_size / this.props.memory_limit, '0.00%')}</dd>

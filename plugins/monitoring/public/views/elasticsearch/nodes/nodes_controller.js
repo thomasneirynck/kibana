@@ -10,7 +10,7 @@ import template from 'plugins/monitoring/views/elasticsearch/nodes/nodes_templat
 
 function getPageData(timefilter, globalState, $http, Private) {
   const timeBounds = timefilter.getBounds();
-  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/nodes`;
+  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/nodes`;
   return $http.post(url, {
     timeRange: {
       min: timeBounds.min.toISOString(),
@@ -30,7 +30,7 @@ function getPageData(timefilter, globalState, $http, Private) {
   });
 }
 
-uiRoutes.when('/nodes', {
+uiRoutes.when('/elasticsearch/nodes', {
   template,
   resolve: {
     clusters: function (Private) {

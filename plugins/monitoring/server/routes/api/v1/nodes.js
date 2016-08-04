@@ -31,7 +31,7 @@ export default function nodesRoutes(server) {
 
   server.route({
     method: 'POST',
-    path: '/api/monitoring/v1/clusters/{clusterUuid}/nodes',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}/elasticsearch/nodes',
     config: {
       validate: {
         params: Joi.object({
@@ -105,7 +105,7 @@ export default function nodesRoutes(server) {
 
   server.route({
     method: 'POST',
-    path: '/api/monitoring/v1/clusters/{clusterUuid}/nodes/{resolver}',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}/elasticsearch/nodes/{resolver}',
     config: {
       validate: {
         params: Joi.object({

@@ -22,5 +22,5 @@ export default function generateQueryAndLink(data) {
     type = 'nodes';
     ident = data.id;
   }
-  return '/' + type + '/' + ident;
+  return '/elasticsearch/' + type + '/' + ident;
 };

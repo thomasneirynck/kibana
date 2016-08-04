@@ -51,18 +51,18 @@ uiModule.directive('monitoringMain', (license) => {
           breadcrumbs.push(createCrumb('#/elasticsearch', 'Elasticsearch'));
           if (scope.instance) {
             if (scope.name === 'indices') {
-              breadcrumbs.push(createCrumb('#/indices', 'Indices'));
+              breadcrumbs.push(createCrumb('#/elasticsearch/indices', 'Indices'));
             } else if (scope.name === 'nodes') {
-              breadcrumbs.push(createCrumb('#/nodes', 'Nodes'));
+              breadcrumbs.push(createCrumb('#/elasticsearch/nodes', 'Nodes'));
             }
           }
         }
 
         // Kibana crumbs
         if (scope.inKibana) {
-          breadcrumbs.push(createCrumb('#/kibanas', 'Kibana'));
+          breadcrumbs.push(createCrumb('#/kibana', 'Kibana'));
           if (scope.instance) {
-            breadcrumbs.push(createCrumb('#/kibana', 'Instances'));
+            breadcrumbs.push(createCrumb('#/kibana/instances', 'Instances'));
           }
         }
       }

@@ -10,7 +10,7 @@ import template from 'plugins/monitoring/views/elasticsearch/indices/indices_tem
 
 function getPageData(timefilter, globalState, $http, Private) {
   const timeBounds = timefilter.getBounds();
-  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/indices`;
+  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/indices`;
   return $http.post(url, {
     timeRange: {
       min: timeBounds.min.toISOString(),
@@ -30,7 +30,7 @@ function getPageData(timefilter, globalState, $http, Private) {
   });
 }
 
-uiRoutes.when('/indices', {
+uiRoutes.when('/elasticsearch/indices', {
   template,
   resolve: {
     clusters: function (Private) {

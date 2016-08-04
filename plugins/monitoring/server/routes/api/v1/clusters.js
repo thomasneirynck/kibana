@@ -92,7 +92,7 @@ export default function clustersRoutes(server) {
    */
   server.route({
     method: 'POST',
-    path: '/api/monitoring/v1/clusters/{clusterUuid}',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}/elasticsearch',
     config: {
       validate: {
         params: Joi.object({

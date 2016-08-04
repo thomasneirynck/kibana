@@ -14,10 +14,10 @@
         <a kbn-href="#/elasticsearch" class="navbar-link">Overview</a>
       </li>
       <li ng-if="!instance" ng-class="{active: isActive('indices')}">
-        <a kbn-href="#/indices" class="navbar-link">Indices</a>
+        <a kbn-href="#/elasticsearch/indices" class="navbar-link">Indices</a>
       </li>
       <li ng-if="!instance" ng-class="{active: isActive('nodes')}">
-        <a kbn-href="#/nodes" class="navbar-link">Nodes</a>
+        <a kbn-href="#/elasticsearch/nodes" class="navbar-link">Nodes</a>
       </li>
       <li ng-if="instance">
         <a class="navbar-link">
@@ -29,10 +29,10 @@
 
     <ul ng-if="inKibana" class="nav navbar-nav" role="navigation">
       <li ng-if="!instance" ng-class="{active: isActive('overview')}">
-        <a kbn-href="#/kibanas" class="navbar-link">Overview</a>
+        <a kbn-href="#/kibana" class="navbar-link">Overview</a>
       </li>
       <li ng-if="!instance" ng-class="{active: isActive('kibanas')}">
-        <a kbn-href="#/kibana" class="navbar-link">Instances</a>
+        <a kbn-href="#/kibana/instances" class="navbar-link">Instances</a>
       </li>
       <li ng-if="instance">
         <a class="navbar-link">{{instance}}</a>
