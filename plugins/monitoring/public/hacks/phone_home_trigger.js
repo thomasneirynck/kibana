@@ -4,11 +4,6 @@ import 'plugins/monitoring/services/clusters';
 
 function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, statsReportUrl, features) {
 
-  const defaults = {
-    report: true,
-    status: 'trial'
-  };
-
   return class PhoneHome {
 
     constructor() {
