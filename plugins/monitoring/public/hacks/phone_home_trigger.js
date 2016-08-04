@@ -47,7 +47,8 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
       let sendReport = false;
 
       // check if opt-in for phone home is enabled in config (reportStats) and browser setting (features)
-      if (reportStats && features.isEnabled('report')) {
+      // "true" param to isEnabled means enabled by default: assume true if setting doesn't exist yet
+      if (reportStats && features.isEnabled('report', true)) {
         // If the last report is empty it means we've never sent an report and
         // now is the time to send it.
         if (!this.get('lastReport')) {
