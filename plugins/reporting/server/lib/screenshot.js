@@ -4,9 +4,9 @@ const Horseman = require('node-horseman');
 const temp = require('temp').track();
 
 class Screenshot {
-  constructor(phantomPath, phantomSettings, screenshotSettings, logger) {
+  constructor(phantomPath, captureSettings, screenshotSettings, logger) {
     this.phantomPath = phantomPath;
-    this.phantomSettings = phantomSettings;
+    this.captureSettings = captureSettings;
     this.screenshotSettings = screenshotSettings;
     this.logger = logger || _.noop;
   }
@@ -14,13 +14,13 @@ class Screenshot {
   capture(url, opts) {
     this.logger(`fetching screenshot of ${url}`);
     opts = _.assign({ basePath: this.screenshotSettings.basePath }, opts);
-    const ph = fetch(url, this.phantomPath, this.phantomSettings, opts);
+    const ph = fetch(url, this.phantomPath, this.captureSettings, opts);
 
     return ph
     .then(() => getTargetFile())
     .then(filepath => {
       const operation = (opts.bounding)
-        ? getShotCropped(ph, this.phantomSettings.viewport, opts.bounding, filepath)
+        ? getShotCropped(ph, this.captureSettings.viewport, opts.bounding, filepath)
         : getShot(ph, filepath);
 
       return operation
@@ -37,12 +37,12 @@ class Screenshot {
   }
 }
 
-module.exports = function (phantomPath, phantomSettings, screenshotSettings, logger) {
-  return new Screenshot(phantomPath, phantomSettings, screenshotSettings, logger);
+module.exports = function (phantomPath, captureSettings, screenshotSettings, logger) {
+  return new Screenshot(phantomPath, captureSettings, screenshotSettings, logger);
 };
 
-function fetch(url, phantomPath, phantomSettings, opts) {
-  const { loadDelay, viewport, timeout } = phantomSettings;
+function fetch(url, phantomPath, captureSettings, opts) {
+  const { loadDelay, viewport, timeout } = captureSettings;
   const phantomOpts = {
     phantomPath: phantomPath,
     timeout: timeout,
@@ -51,7 +51,7 @@ function fetch(url, phantomPath, phantomSettings, opts) {
   const settings = {
     width: viewport.width,
     height: viewport.height,
-    zoom: phantomSettings.zoom
+    zoom: captureSettings.zoom
   };
 
   const ph = createPhantom(phantomOpts, settings);
