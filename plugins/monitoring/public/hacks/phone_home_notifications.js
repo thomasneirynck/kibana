@@ -2,9 +2,7 @@ import _ from 'lodash';
 import Notifier from 'ui/notify/notifier';
 import uiModules from 'ui/modules';
 import 'plugins/monitoring/services/features';
-
-const PHONE_HOME_FEATURE = 'report';
-const PHONE_HOME_NOTIFICATION_SEEN = 'report_notification_seen';
+import { PHONE_HOME_NOTIFICATION_SEEN } from '../../lib/constants';
 
 function confirmOptInMessage() {
   return {
