@@ -6,6 +6,7 @@ import VislibComponentsColorColorPaletteProvider from 'ui/vislib/components/colo
 import uiModules from 'ui/modules';
 import template from 'plugins/monitoring/directives/chart/index.html';
 import descriptionTemplate from './description_template.html';
+import { setLegendByX, setLegendForSeriesIndex } from './chart_helpers';
 import 'flot-charts/jquery.flot';
 import 'flot-charts/jquery.flot.time';
 import 'flot-charts/jquery.flot.canvas';
@@ -21,6 +22,27 @@ const appColors = Object.freeze({
 
 function get(series, attr) {
   return _.chain(series).pluck(attr).last().value();
+}
+
+/**
+ * Format the {@code value} based on the current {@code series}.
+ *
+ * @param series {Object} The series from the plot (chart).
+ * @param value {number} The value of a current highlighted point.
+ * @returns {String} Formatted {@code value}.
+ */
+function formatValue(series, value) {
+  const format = _.get(series, '_meta.metric.format', '0,0.0');
+  const units = _.get(series, '_meta.metric.units', '');
+
+  let formatted = numeral(value).format(format);
+
+  // numeral writes 'B' as the actual size (e.g., 'MB')
+  if (units !== 'B' && units !== '') {
+    formatted += ' ' + units;
+  }
+
+  return formatted;
 }
 
 const uiModule = uiModules.get('plugins/monitoring/directives', []);
@@ -85,11 +107,21 @@ uiModule.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private
   return {
     restrict: 'E',
     scope: {
-      series: '=',
+      series: '='
     },
     link: ($scope, $elem) => {
       let legendValueNumbers;
-      let debouncedSetLegendNumbers;
+      const debounceDelay = 50;
+      const debouncedSetLegendByX = _.debounce(setLegendByX, debounceDelay, {
+        maxWait: debounceDelay,
+        leading: true,
+        trailing: false
+      });
+      const debouncedSetLegendByIndex = _.debounce(setLegendForSeriesIndex, debounceDelay, {
+        maxWait: debounceDelay,
+        leading: true,
+        trailing: false
+      });
       const defaultOptions = {
         canvas: true,
         xaxis: {
@@ -105,6 +137,15 @@ uiModule.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private
           color: '#C66',
           lineWidth: 2
         },
+        lines: {
+          show: true,
+          lineWidth: 2
+        },
+        points: {
+          show: true,
+          radius: 1
+        },
+        shadowSize: 0,
         grid: {
           backgroundColor: '#FFF',
           borderWidth: {
@@ -121,7 +162,7 @@ uiModule.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private
           },
           margin: 10,
           hoverable: true,
-          autoHighlight: false
+          autoHighlight: true
         },
         legend: {
           position: 'nw',
@@ -168,68 +209,30 @@ uiModule.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private
         $rootScope.$broadcast('monitoringPlotLeave');
       });
 
-      $scope.$on('monitoringPlotHover', (_angularEvent, _flotEvent, pos, _time) => {
+      $scope.$on('monitoringPlotHover', (_angularEvent, _flotEvent, pos, item) => {
         $scope.plot.setCrosshair(pos);
-        debouncedSetLegendNumbers(pos);
+
+        const legend = (series, index, value) => {
+          const seriesLegend = legendValueNumbers.eq(index);
+
+          if (_.isNumber(value)) {
+            seriesLegend.text(': ' + formatValue(series, value));
+          } else {
+            seriesLegend.empty();
+          }
+        };
+
+        if (item) {
+          debouncedSetLegendByIndex(legend, $scope.plot, item.dataIndex);
+        } else {
+          debouncedSetLegendByX(legend, $scope.plot, pos.x);
+        }
       });
 
-      $scope.$on('monitoringPlotLeave', (_angularEvent, _flotEvent, _pos, _time) => {
+      $scope.$on('monitoringPlotLeave', (_angularEvent, _flotEvent, _pos, _item) => {
         $scope.plot.clearCrosshair();
         clearLegendNumbers();
       });
-
-      const debounceDelay = 50;
-      debouncedSetLegendNumbers = _.debounce(setLegendNumbers, debounceDelay, {
-        maxWait: debounceDelay,
-        leading: true,
-        trailing: false
-      });
-
-      // Shamelessly borrowed from the flotCrosshairs example
-      function setLegendNumbers(pos) {
-        const plot = $scope.plot;
-
-        const axes = plot.getAxes();
-        if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max) {
-          return;
-        }
-
-        let i;
-        let j;
-        const dataset = plot.getData();
-        for (i = 0; i < dataset.length; ++i) {
-
-          const series = dataset[i];
-          const format = _.get(series, '_meta.metric.format', '0,0.0');
-          const units = _.get(series, '_meta.metric.units', '');
-
-          if (series._hide) continue;
-
-          // Nearest point
-          for (j = 0; j < series.data.length; ++j) {
-            if (series.data[j] && series.data[j][0] > pos.x) {
-              break;
-            }
-          }
-
-          let y;
-          try {
-            y = series.data[j][1];
-          } catch (e) {
-            y = null;
-          }
-
-          if (y != null) {
-            let formatted = ': ' + numeral(y).format(format);
-            if (units !== 'B' && units !== '') {
-              formatted += ' ' + units;
-            }
-            legendValueNumbers.eq(i).text(formatted);
-          } else {
-            legendValueNumbers.eq(i).empty();
-          }
-        }
-      }
 
       function clearLegendNumbers() {
         _.each(legendValueNumbers, (num) =>  $(num).empty());
@@ -252,10 +255,6 @@ uiModule.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private
             return row;
           }),
           label: chartSeries.metric.label,
-          lines: {
-            lineWidth: 2
-          },
-          shadowSize: 0,
           _id: index,
           _meta: { metric: chartSeries.metric }
         };
