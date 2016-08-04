@@ -13,13 +13,16 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
 
     constructor() {
       this.attributes = {};
+      let storedAttributes = {};
+      const monitoringData = localStorage.getItem('xpack.monitoring.data');
+
       try {
-        const monitoringData = localStorage.getItem('xpack.monitoring.data');
-        let attributes = monitoringData && JSON.parse(monitoringData) || {};
-        _.defaults(this.attributes, attributes, defaults);
+        storedAttributes = monitoringData && JSON.parse(monitoringData) || {};
       } catch (e) {
-        _.defaults(this.attributes, defaults);
+        console.error('Monitoring UI: error parsing locally stored monitoring data', e);
       }
+
+      _.defaults(this.attributes, storedAttributes);
     }
 
     set(key, value) {

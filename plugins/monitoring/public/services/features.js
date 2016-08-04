@@ -4,8 +4,16 @@ import uiModules from 'ui/modules';
 const uiModule = uiModules.get('monitoring/features', []);
 uiModule.service('features', function ($window) {
   function getData() {
+    let returnData = {};
     const monitoringData = $window.localStorage.getItem('xpack.monitoring.data');
-    return (monitoringData && JSON.parse(monitoringData)) || {};
+
+    try {
+      returnData = (monitoringData && JSON.parse(monitoringData)) || {};
+    } catch (e) {
+      console.error('Monitoring UI: error parsing locally stored monitoring data', e);
+    }
+
+    return returnData;
   }
 
   function update(featureName, value) {
