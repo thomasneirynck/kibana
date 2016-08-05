@@ -70,7 +70,7 @@ async function showCompletionNotification(job, reportingJobQueue) {
   const isJobSuccessful = get(job, '_source.status') === 'completed';
   if (isJobSuccessful) {
     actions.push({
-      text: 'Download Report',
+      text: 'Download',
       callback: downloadReport(job._id)
     });
 
