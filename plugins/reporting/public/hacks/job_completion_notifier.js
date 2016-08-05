@@ -50,7 +50,8 @@ function getJobsCompletedSinceLastCheck($http) {
 }
 
 function downloadReport(jobId) {
-  const downloadLink = chrome.addBasePath(`/api/reporting/jobs/download/${jobId}`);
+  const apiBaseUrl = chrome.addBasePath(constants.API_BASE_URL);
+  const downloadLink = `${apiBaseUrl}/jobs/download/${jobId}`;
   return () => window.open(downloadLink);
 }
 
