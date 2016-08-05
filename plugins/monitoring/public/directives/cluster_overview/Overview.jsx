@@ -68,16 +68,19 @@ class ElasticsearchPanel extends React.Component {
           <div className='col-md-4'>
             <dl>
               <dt>
-                <a onClick={() => this.props.angularChangeUrl('elasticsearch/nodes')}>Nodes: {formatNumber(nodes.count.total, 'int_commas')}</a>
+                <a onClick={() => this.props.angularChangeUrl('elasticsearch/nodes')}>Nodes:
+                  {formatNumber(nodes.count.total, 'int_commas')}</a>
               </dt>
-              <dd>FS: {formatNumber(nodes.fs.available_in_bytes, 'byte')} / {formatNumber(nodes.fs.total_in_bytes, 'bytes')}</dd>
+              <dd>FS: {formatNumber(nodes.fs.available_in_bytes, 'byte')} /
+                {formatNumber(nodes.fs.total_in_bytes, 'bytes')}</dd>
             </dl>
           </div>
 
           <div className='col-md-4'>
             <dl>
               <dt>
-                <a onClick={() => this.props.angularChangeUrl('elasticsearch/indices')}>Indices: {formatNumber(indices.count, 'int_commas')}</a>
+                <a onClick={() => this.props.angularChangeUrl('elasticsearch/indices')}>Indices:
+                  {formatNumber(indices.count, 'int_commas')}</a>
               </dt>
               <dd>Doc Count: {formatNumber(indices.docs.count, 'int_commas')}</dd>
               <dd>Min. Shard Replication: {indices.shards.index.replication.min}</dd>
