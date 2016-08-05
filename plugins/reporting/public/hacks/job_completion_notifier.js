@@ -1,7 +1,7 @@
 import notify from 'ui/notify';
 import chrome from 'ui/chrome';
 import uiModules from 'ui/modules';
-import { get, last, noop } from 'lodash';
+import { get, last } from 'lodash';
 import moment from 'moment';
 import constants from '../../server/lib/constants.js';
 import 'plugins/reporting/services/job_queue';
@@ -63,8 +63,7 @@ async function showCompletionNotification(job, reportingJobQueue) {
   // Define actions for notification
   const actions = [
     {
-      text: 'OK',
-      callback: noop
+      text: 'OK'
     }
   ];
 
