@@ -35,7 +35,7 @@ function getPageData(timefilter, globalState, $http, Private) {
   });
 }
 
-uiRoutes.when('/kibanas', {
+uiRoutes.when('/kibana', {
   template,
   resolve: {
     clusters: function (Private) {

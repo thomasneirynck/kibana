@@ -10,7 +10,7 @@ import template from 'plugins/monitoring/views/elasticsearch/overview/overview_t
 
 function getPageData(timefilter, globalState, $http, Private) {
   const timeBounds = timefilter.getBounds();
-  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}`;
+  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch`;
   return $http.post(url, {
     timeRange: {
       min: timeBounds.min.toISOString(),

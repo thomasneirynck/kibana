@@ -8,7 +8,7 @@ import routeInitProvider from 'plugins/monitoring/lib/route_init';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
 import template from 'plugins/monitoring/views/elasticsearch/index/index_template.html';
 
-uiRoutes.when('/indices/:index', {
+uiRoutes.when('/elasticsearch/indices/:index', {
   template,
   resolve: {
     clusters: function (Private) {
@@ -21,7 +21,7 @@ uiRoutes.when('/indices/:index', {
 
 function getPageData(timefilter, globalState, $route, $http, Private) {
   const timeBounds = timefilter.getBounds();
-  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/indices/${$route.current.params.index}`;
+  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/indices/${$route.current.params.index}`;
   return $http.post(url, {
     timeRange: {
       min: timeBounds.min.toISOString(),

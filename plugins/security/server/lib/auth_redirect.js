@@ -18,9 +18,19 @@ import Promise from 'bluebird';
  *    testRequest: Function to test authentication for a request
  * @return {Function}
  */
-export default function factory({ redirectUrl, strategies, testRequest }) {
+export default function factory({ redirectUrl, strategies, testRequest, xpackMainPlugin, clientCookieName }) {
   const testRequestAsync = Promise.promisify(testRequest);
   return function authenticate(request, reply) {
+    // If security is disabled, continue with no user credentials and delete the client cookie as well
+    const xpackInfo = xpackMainPlugin && xpackMainPlugin.info;
+    if (xpackInfo && xpackInfo.isAvailable() && !xpackInfo.feature('security').isEnabled()) {
+      if (request.state[clientCookieName]) {
+        reply.unstate(clientCookieName);
+      }
+      reply.continue({ credentials: {} });
+      return;
+    }
+
     // Test the request against all of the authentication strategies and if any succeed, continue
     return Promise.any(strategies.map((strat) => testRequestAsync(strat, request)))
     .then((credentials) => reply.continue({ credentials }))

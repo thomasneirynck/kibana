@@ -86,7 +86,6 @@ export default function kibanaRoutes(server) {
       .then(kibanaIndices => {
         return Promise.props({
           metrics: getMetrics(req, kibanaIndices),
-          clusterStatus: getClusterStatus(req, kibanaIndices, 'route-kibana-instance'),
           kibanaSummary: getKibanaInfo(req, req.params.kibanaUuid)
         });
       })

@@ -18,7 +18,7 @@ export default function indicesRoutes(server) {
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
   server.route({
     method: 'POST',
-    path: '/api/monitoring/v1/clusters/{clusterUuid}/indices',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}/elasticsearch/indices',
     config: {
       validate: {
         params: Joi.object({
@@ -75,7 +75,7 @@ export default function indicesRoutes(server) {
 
   server.route({
     method: 'POST',
-    path: '/api/monitoring/v1/clusters/{clusterUuid}/indices/{id}',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}/elasticsearch/indices/{id}',
     config: {
       validate: {
         params: Joi.object({

@@ -73,7 +73,7 @@ uiModule.directive('monitoringNodesListing', function (kbnUrl) {
 
       function goToNode(resolver) {
         scope.$evalAsync(function () {
-          kbnUrl.changePath(`/nodes/${resolver}`);
+          kbnUrl.changePath(`/elasticsearch/nodes/${resolver}`);
         });
       }
 

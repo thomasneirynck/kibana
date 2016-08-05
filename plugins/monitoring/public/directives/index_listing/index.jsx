@@ -71,7 +71,7 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
           const name = this.props.name;
           const clickFn = () => {
             scope.$evalAsync(function () {
-              kbnUrl.changePath(`/indices/${name}`);
+              kbnUrl.changePath(`/elasticsearch/indices/${name}`);
             });
           };
           const metrics = this.props.metrics;

@@ -124,7 +124,7 @@ export default (kibana) => new kibana.Plugin({
     initUsersApi(server);
     initRolesApi(server);
     initIndicesApi(server);
-    initLoginView(server, thisPlugin);
+    initLoginView(server, thisPlugin, xpackMainPlugin);
     initLogoutView(server, thisPlugin);
 
   }

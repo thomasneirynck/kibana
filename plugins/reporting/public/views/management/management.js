@@ -6,7 +6,7 @@ import 'plugins/reporting/views/management/jobs';
 
 routes.defaults(/\/management/, {
   resolve: {
-    managementSection: function (Private) {
+    reportingManagementSection: function (Private) {
       const xpackInfo = Private(XPackInfoProvider);
       const kibanaManagementSection = management.getSection('kibana');
       const showReportingLinks = xpackInfo.get('features.reporting.showLinks');

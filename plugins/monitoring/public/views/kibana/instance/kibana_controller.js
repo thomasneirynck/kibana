@@ -51,7 +51,7 @@ function getPageData(timefilter, globalState, $http, $route, Private) {
   });
 }
 
-uiRoutes.when('/kibana/:uuid', {
+uiRoutes.when('/kibana/instances/:uuid', {
   template,
   resolve: {
     clusters(Private) {

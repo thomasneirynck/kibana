@@ -78,7 +78,7 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
               <td>
                 <a onClick={() => {
                   scope.$evalAsync(() => {
-                    kbnUrl.changePath('/kibana/' + _.get(this.props, 'kibana.uuid'));
+                    kbnUrl.changePath('/kibana/instances/' + _.get(this.props, 'kibana.uuid'));
                   });
                 }}>
                   <div>{this.props.kibana.name}</div>
