@@ -1,9 +1,10 @@
 import notify from 'ui/notify';
 import chrome from 'ui/chrome';
 import uiModules from 'ui/modules';
-import { last, noop } from 'lodash';
+import { get, last, noop } from 'lodash';
 import moment from 'moment';
 import constants from '../../server/lib/constants.js';
+import 'plugins/reporting/services/job_queue';
 
 uiModules.get('kibana')
 .config(() => {
@@ -14,10 +15,10 @@ uiModules.get('kibana')
 });
 
 uiModules.get('kibana')
-.run(($http, $interval) => {
+.run(($http, $interval, reportingJobQueue) => {
   $interval(function startChecking() {
     getJobsCompletedSinceLastCheck($http)
-    .then(jobs => jobs.forEach(showCompletionNotification));
+    .then(jobs => jobs.forEach(job => showCompletionNotification(job, reportingJobQueue)));
   }, constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
 });
 
@@ -53,24 +54,39 @@ function downloadReport(jobId) {
   return () => window.open(downloadLink);
 }
 
-function showCompletionNotification(job) {
+async function showCompletionNotification(job, reportingJobQueue) {
   const reportObjectTitle = job._source.payload.title;
   const reportObjectType = job._source.payload.type;
-  const reportingSectionLink = chrome.addBasePath('/app/kibana#management/kibana/reporting');
-  const notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready!`
-  + ` Pick it up from [Management > Kibana > Reporting](${reportingSectionLink})`;
+  let notificationMessage;
+  let notificationType;
+
+  // Define actions for notification
   const actions = [
-    {
-      text: 'Download Report',
-      callback: downloadReport(job._id)
-    },
     {
       text: 'OK',
       callback: noop
     }
   ];
+
+  const isJobSuccessful = get(job, '_source.status') === 'completed';
+  if (isJobSuccessful) {
+    actions.push({
+      text: 'Download Report',
+      callback: downloadReport(job._id)
+    });
+
+    const reportingSectionLink = chrome.addBasePath('/app/kibana#management/kibana/reporting');
+    notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready!`
+    + ` Pick it up from [Management > Kibana > Reporting](${reportingSectionLink})`;
+    notificationType = 'info';
+  } else {
+    const { content:error } = await reportingJobQueue.getContent(job._id);
+    notificationMessage = `There was an error generating your report for the "${reportObjectTitle}" ${reportObjectType}: ${error}`;
+    notificationType = 'error';
+  }
+
   notify.custom(notificationMessage, {
-    type: 'info',
+    type: notificationType,
     lifetime: 0,
     actions
   });
