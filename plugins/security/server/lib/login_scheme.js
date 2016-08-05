@@ -1,4 +1,4 @@
-import authenticateFactory from './auth_redirect';
+import * as authRedirect from './auth_redirect';
 
 /**
  * Creates a hapi auth scheme with conditional session
@@ -10,11 +10,11 @@ import authenticateFactory from './auth_redirect';
  *    strategy:    The name of the auth strategy to use for test
  * @return {Function}
  */
-export default function createScheme({ redirectUrl, strategy }) {
+export default function createScheme({ redirectUrl, strategies }) {
   return (server) => {
-    const authenticate = authenticateFactory({
+    const authenticate = authRedirect.default({
       redirectUrl,
-      strategy,
+      strategies,
       testRequest: server.auth.test
     });
     return { authenticate };

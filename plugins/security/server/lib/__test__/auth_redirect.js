@@ -18,9 +18,8 @@ describe('lib/auth_redirect', function () {
 
       beforeEach(() => {
         params = {
-          onError: sinon.stub().returns('mock error'),
           redirectUrl: sinon.stub().returns('mock redirect url'),
-          strategy: 'wat',
+          strategies: ['wat', 'huh'],
           testRequest: sinon.stub()
         };
         request = requestFixture();
@@ -32,27 +31,37 @@ describe('lib/auth_redirect', function () {
 
       it('invokes testRequest with strategy and request', () => {
         authenticate(request, reply);
-        sinon.assert.calledWith(params.testRequest, params.strategy, request);
+        params.strategies.forEach((strategy) => {
+          sinon.assert.calledWith(params.testRequest, strategy, request);
+        });
       });
-      it('continues request with credentials on success', () => {
-        params.testRequest.callsArgWith(2, undefined, credentials);
-        authenticate(request, reply);
-        sinon.assert.calledWith(reply.continue, { credentials });
+      it('continues request with credentials on success', (done) => {
+        params.testRequest.yields(undefined, credentials);
+        authenticate(request, reply).then(() => {
+          sinon.assert.calledWith(reply.continue, { credentials });
+          done();
+        });
       });
 
       context('when testRequest fails', () => {
-        beforeEach(() => params.testRequest.callsArgWith(2, err));
+        beforeEach(() => params.testRequest.yields(err));
 
-        it('replies with redirect to redirectUrl() for non-xhr requests', () => {
-          authenticate(request, reply);
-          sinon.assert.calledWith(params.redirectUrl, request.url.path);
-          sinon.assert.calledWith(reply.redirect, 'mock redirect url');
+        it('replies with redirect to redirectUrl() for non-xhr requests', (done) => {
+          authenticate(request, reply).then(() => {
+            sinon.assert.calledWith(params.redirectUrl, request.url.path);
+            sinon.assert.calledWith(reply.redirect, 'mock redirect url');
+            done();
+          });
         });
-        it('replies with result of onError() for xhr requests', () => {
+        it('replies with unauthorized for xhr requests', (done) => {
           request.raw.req.headers['kbn-version'] = 'something';
-          authenticate(request, reply);
-          sinon.assert.calledWith(params.onError, err);
-          sinon.assert.calledWith(reply, 'mock error');
+          authenticate(request, reply).then(() => {
+            sinon.assert.called(reply);
+            const error = reply.getCall(0).args[0];
+            expect(error.message).to.be('Unauthorized');
+            expect(error.output.payload.statusCode).to.be(401);
+            done();
+          });
         });
       });
     });

@@ -18,20 +18,17 @@ import Promise from 'bluebird';
  *    testRequest: Function to test authentication for a request
  * @return {Function}
  */
-export default function factory({ redirectUrl, strategy, testRequest }) {
+export default function factory({ redirectUrl, strategies, testRequest }) {
+  const testRequestAsync = Promise.promisify(testRequest);
   return function authenticate(request, reply) {
-    const strategies = Array.isArray(strategy) ? strategy : [strategy];
-    const testRequestPromise = Promise.promisify(testRequest);
-
     // Test the request against all of the authentication strategies and if any succeed, continue
-    Promise.any(strategies.map((strat) => testRequestPromise(strat, request)))
+    return Promise.any(strategies.map((strat) => testRequestAsync(strat, request)))
     .then((credentials) => reply.continue({ credentials }))
     .catch(() => {
       if (shouldRedirect(request.raw.req)) {
         reply.redirect(redirectUrl(request.url.path));
       } else {
-        // The strategies will be comma-separated and set to the 'WWW-Authenticate' header
-        reply(Boom.unauthorized(null, strategies));
+        reply(Boom.unauthorized());
       }
     });
   };
