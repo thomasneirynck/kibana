@@ -4,7 +4,6 @@ import uiModules from 'ui/modules';
 import { get, last } from 'lodash';
 import moment from 'moment';
 import constants from '../../server/lib/constants.js';
-import 'plugins/reporting/services/job_queue';
 import '../../../security/public/services/login_page';
 
 uiModules.get('kibana')
@@ -16,11 +15,11 @@ uiModules.get('kibana')
 });
 
 uiModules.get('kibana')
-.run(($http, $interval, reportingJobQueue, LoginPage) => {
+.run(($http, $interval, LoginPage) => {
   if (!LoginPage.isOnLoginPage()) {
     $interval(function startChecking() {
       getJobsCompletedSinceLastCheck($http)
-      .then(jobs => jobs.forEach(job => showCompletionNotification(job, reportingJobQueue)));
+      .then(jobs => jobs.forEach(job => showCompletionNotification(job)));
     }, constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
   }
 });
@@ -58,7 +57,7 @@ function downloadReport(jobId) {
   return () => window.open(downloadLink);
 }
 
-async function showCompletionNotification(job, reportingJobQueue) {
+function showCompletionNotification(job) {
   const reportObjectTitle = job._source.payload.title;
   const reportObjectType = job._source.payload.type;
   let notificationMessage;
@@ -83,7 +82,7 @@ async function showCompletionNotification(job, reportingJobQueue) {
     + ` Pick it up from [Management > Kibana > Reporting](${reportingSectionLink})`;
     notificationType = 'info';
   } else {
-    const { content:error } = await reportingJobQueue.getContent(job._id);
+    const error = get(job, '_source.output.content');
     notificationMessage = `There was an error generating your report for the "${reportObjectTitle}" ${reportObjectType}: ${error}`;
     notificationType = 'error';
   }
