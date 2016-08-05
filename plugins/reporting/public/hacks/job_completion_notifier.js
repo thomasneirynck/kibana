@@ -77,9 +77,10 @@ function showCompletionNotification(job) {
       callback: downloadReport(job._id)
     });
 
-    const reportingSectionLink = chrome.addBasePath('/app/kibana#management/kibana/reporting');
+    const managementUrl = chrome.getNavLinkById('kibana:management').url;
+    const reportingSectionUrl = `${managementUrl}/kibana/reporting`;
     notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready!`
-    + ` Pick it up from [Management > Kibana > Reporting](${reportingSectionLink})`;
+    + ` Pick it up from [Management > Kibana > Reporting](${reportingSectionUrl})`;
     notificationType = 'info';
   } else {
     const error = get(job, '_source.output.content');
