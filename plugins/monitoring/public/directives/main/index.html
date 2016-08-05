@@ -28,8 +28,11 @@
     </ul>
 
     <ul ng-if="inKibana" class="nav navbar-nav" role="navigation">
-      <li ng-if="!instance">
-        <a kbn-href="#/kibana" class="navbar-link">Kibana</a>
+      <li ng-if="!instance" ng-class="{active: isActive('overview')}">
+        <a kbn-href="#/kibanas" class="navbar-link">Overview</a>
+      </li>
+      <li ng-if="!instance" ng-class="{active: isActive('kibanas')}">
+        <a kbn-href="#/kibana" class="navbar-link">Instances</a>
       </li>
       <li ng-if="instance">
         <a class="navbar-link">{{instance}}</a>

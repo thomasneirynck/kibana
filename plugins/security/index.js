@@ -48,7 +48,10 @@ export default (kibana) => new kibana.Plugin({
       main: 'plugins/security/views/logout',
       hidden: true
     }],
-    hacks: ['plugins/security/hacks/on_session_timeout'],
+    hacks: [
+      'plugins/security/hacks/on_session_timeout',
+      'plugins/security/hacks/on_unauthorized_response'
+    ],
     injectDefaultVars: function (server) {
 
       const config = server.config();
@@ -114,7 +117,7 @@ export default (kibana) => new kibana.Plugin({
     initUsersApi(server);
     initRolesApi(server);
     initIndicesApi(server);
-    initLoginView(server, thisPlugin);
+    initLoginView(server, thisPlugin, xpackMainPlugin);
     initLogoutView(server, thisPlugin);
 
   }

@@ -5,6 +5,7 @@ import { get, last } from 'lodash';
 import moment from 'moment';
 import constants from '../../server/lib/constants.js';
 import 'plugins/reporting/services/job_queue';
+import '../../../security/public/services/login_page';
 
 uiModules.get('kibana')
 .config(() => {
@@ -15,11 +16,13 @@ uiModules.get('kibana')
 });
 
 uiModules.get('kibana')
-.run(($http, $interval, reportingJobQueue) => {
-  $interval(function startChecking() {
-    getJobsCompletedSinceLastCheck($http)
-    .then(jobs => jobs.forEach(job => showCompletionNotification(job, reportingJobQueue)));
-  }, constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
+.run(($http, $interval, reportingJobQueue, LoginPage) => {
+  if (!LoginPage.isOnLoginPage()) {
+    $interval(function startChecking() {
+      getJobsCompletedSinceLastCheck($http)
+      .then(jobs => jobs.forEach(job => showCompletionNotification(job, reportingJobQueue)));
+    }, constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
+  }
 });
 
 function getLastCheckedOn() {

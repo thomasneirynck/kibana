@@ -1,4 +1,7 @@
 
+import Boom from 'boom';
+import _ from 'lodash';
+
 module.exports = function (server, commonRouteConfig) {
 
   var callWithRequest = server.plugins.elasticsearch.callWithRequest;
@@ -6,7 +9,7 @@ module.exports = function (server, commonRouteConfig) {
   function graphExplore(req) {
     var payload = req.payload;
     return callWithRequest(req, 'transport.request', {
-      'path': '/' + encodeURIComponent(payload.index) + '/_xpack/graph/_explore',
+      'path': '/' + encodeURIComponent(payload.index) + '/_xpack/_graph/_explore',
       body: payload.query,
       method: 'POST',
       query: {}
@@ -21,6 +24,30 @@ module.exports = function (server, commonRouteConfig) {
           ok: true,
           resp: resp
         });
+      }).catch(function (err) {
+        //Extract known reasons for bad choice of field
+        const reasons = _.get(err,'body.error.root_cause', []);
+
+        const fieldDataReason = reasons.find(cause => cause.reason.includes('Fielddata is disabled on text fields'));
+        if (fieldDataReason) {
+          reply(Boom.badRequest(fieldDataReason.reason));
+          return;
+        }
+
+        const floatDataReason = reasons.find(cause => cause.reason.includes('No support for examining floating point'));
+        if (floatDataReason) {
+          reply(Boom.badRequest(floatDataReason.reason));
+          return;
+        }
+
+        const badQueryReason = reasons.find(cause => cause.reason.includes('Failed to parse query'));
+        if (badQueryReason) {
+          reply(Boom.badRequest(badQueryReason.reason));
+          return;
+        }
+
+          // Throw generic error
+        throw err;
       }).catch(reply);
     },
     config: {

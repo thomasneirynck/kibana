@@ -142,7 +142,7 @@ export default function nodesRoutes(server) {
         });
       })
       .then(calculateClusterStatus)
-      .then(function (body) {
+      .then(body => {
         const clusterState = body.clusterState && body.clusterState.cluster_state || { nodes: {} };
         let nodeDetail = body.nodeSummary.node;
         if (!nodeDetail) {
@@ -173,7 +173,6 @@ export default function nodesRoutes(server) {
           body.nodeSummary.documents = 'N/A';
           body.nodeSummary.indexCount = 'N/A';
           body.nodeSummary.totalShards = 'N/A';
-          body.nodeSummary.name = 'N/A';
           body.nodeSummary.status = 'Offline';
         }
         delete body.clusterState;

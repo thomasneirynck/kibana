@@ -25,6 +25,10 @@
     </form>
   </div>
 
+  <div ng-if="login.infoMessage" class="info-container">
+    {{login.infoMessage}}
+  </div>
+
   <div ng-if="!login.allowLogin" class="warning-container">
     {{login.loginMessage}}
   </div>

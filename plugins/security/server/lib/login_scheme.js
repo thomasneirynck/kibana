@@ -18,7 +18,9 @@ export default function createScheme({ redirectUrl, strategy }) {
       onError: setExpirationMessage,
       redirectUrl,
       strategy,
-      testRequest: server.auth.test
+      testRequest: server.auth.test,
+      xpackMainPlugin: server.plugins.xpack_main,
+      clientCookieName: server.config().get('xpack.security.clientCookieName')
     });
     return { authenticate };
   };

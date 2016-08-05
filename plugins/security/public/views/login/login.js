@@ -1,9 +1,15 @@
+import { parse } from 'url';
+import { get } from 'lodash';
 import 'ui/autoload/styles';
 import 'plugins/security/views/login/login.less';
 import chrome from 'ui/chrome';
 import parseNext from 'plugins/security/lib/parse_next';
 import template from 'plugins/security/views/login/login.html';
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+
+const messageMap = {
+  SESSION_EXPIRED: 'Your session has expired. Please log in again.'
+};
 
 chrome
 .setVisible(false)
@@ -15,9 +21,11 @@ chrome
   const self = this;
 
   function setupScope() {
-    const defaultLoginMessage = 'Login is currently disabled because the license could not be determined.';
+    const defaultLoginMessage = 'Login is currently disabled because the license could not be determined. '
+    + 'Please check that Elasticsearch is running, then refresh this page.';
     self.allowLogin = xpackInfo.get('features.security.allowLogin', false);
     self.loginMessage = xpackInfo.get('features.security.loginMessage', defaultLoginMessage);
+    self.infoMessage = get(messageMap, parse($window.location.href, true).query.msg);
     self.isDisabled = !isSecure && secureCookies;
     self.submit = (username, password) => {
       self.error = false;
