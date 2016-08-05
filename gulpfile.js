@@ -21,6 +21,7 @@ var exec = require('./gulp_helpers/exec')(g.util);
 var syncPath = require('./gulp_helpers/sync_path');
 var downloadPhantom = require('./gulp_helpers/download_phantom');
 var gitInfo = require('./gulp_helpers/git_info');
+var stagedFiles = require('./gulp_helpers/staged_files.js');
 var createPackageFile = require('./gulp_helpers/create_package');
 var buildVersion = require('./gulp_helpers/build_version')();
 
@@ -72,17 +73,7 @@ gulp.task('sync', function () {
   });
 });
 
-gulp.task('lint', function () {
-  var filePaths = [
-    'gulpfile.js',
-    'plugins/**/*.js',
-    'plugins/**/*.jsx',
-    'server/**/*.js',
-    'public/**/*.js',
-    '!plugins/**/node_modules/**',
-    '!plugins/**/__test__/fixtures/**/*.js'
-  ];
-
+function lintFiles(filePaths) {
   return gulp.src(filePaths)
   // eslint() attaches the lint output to the eslint property
   // of the file object so it can be used by other modules.
@@ -93,6 +84,27 @@ gulp.task('lint', function () {
   // To have the process exit with an error code (1) on
   // lint error, return the stream and pipe to failOnError last.
   .pipe(g.eslint.failAfterError());
+}
+
+gulp.task('lint', function () {
+  return stagedFiles.getFiles(__dirname)
+  .then((files) => {
+    const filePaths = files.map((file) => stagedFiles.getFilename(file).replace(/^kibana\//, ''));
+    return lintFiles(filePaths);
+  });
+});
+
+gulp.task('lint-all', function () {
+  var filePaths = [
+    'gulpfile.js',
+    'plugins/**/*.js',
+    'plugins/**/*.jsx',
+    'server/**/*.js',
+    'public/**/*.js',
+    '!plugins/**/node_modules/**',
+    '!plugins/**/__test__/fixtures/**/*.js'
+  ];
+  return lintFiles(filePaths);
 });
 
 gulp.task('clean-test', function () {
@@ -121,7 +133,7 @@ gulp.task('report', function () {
   });
 });
 
-gulp.task('build', ['lint', 'clean', 'report'], function () {
+gulp.task('build', ['lint-all', 'clean', 'report'], function () {
   const excludes = ['node_modules', 'package.json'];
   const pkgProps = ['name', 'version', 'dependencies'];
   const includes = buildIncludes.filter((include) => excludes.indexOf(include) === -1);
@@ -251,7 +263,7 @@ function runBrowserTests(type) {
 
 gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
   // generates a coverage directory with reports for finding coverage gaps
-  runMocha().pipe(istanbul.writeReports());
+  return runMocha().pipe(istanbul.writeReports());
 });
 
 gulp.task('testonly', ['testserver', 'testbrowser']);
