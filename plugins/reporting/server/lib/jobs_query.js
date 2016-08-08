@@ -66,9 +66,6 @@ function jobsQueryFactory(server) {
       const username = get(user, 'username', nouser);
 
       const body = {
-        _source : {
-          exclude: []
-        },
         query: {
           constant_score: {
             filter: {
