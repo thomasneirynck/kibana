@@ -42,33 +42,30 @@ describe('lib/login_scheme', function () {
             });
           });
         });
-        it('continues request with credentials on success', (done) => {
+        it('continues request with credentials on success', () => {
           server.auth.test.yields(undefined, {});
           const { authenticate } = scheme(server);
-          authenticate(request, reply).then(() => {
+          return authenticate(request, reply).then(() => {
             sinon.assert.called(reply.continue);
-            done();
           });
         });
-        it('redirects html request on error', (done) => {
+        it('redirects html request on error', () => {
           server.auth.test.yields(new Error());
           const { authenticate } = scheme(server);
-          authenticate(request, reply).then(() => {
+          return authenticate(request, reply).then(() => {
             sinon.assert.called(params.redirectUrl);
             sinon.assert.calledWith(reply.redirect, 'mock redirect url');
-            done();
           });
         });
-        it('replies with error for xhr requests on error', (done) => {
+        it('replies with error for xhr requests on error', () => {
           request.raw.req.headers['kbn-version'] = 'something';
           server.auth.test.yields(new Error());
           const { authenticate } = scheme(server);
-          authenticate(request, reply).then(() => {
+          return authenticate(request, reply).then(() => {
             sinon.assert.called(reply);
             const error = reply.getCall(0).args[0];
             expect(error.message).to.be('Unauthorized');
             expect(error.output.payload.statusCode).to.be(401);
-            done();
           });
         });
       });

@@ -37,37 +37,36 @@ describe('lib/auth_redirect', function () {
       });
 
       it('invokes testRequest with strategy and request', () => {
-        authenticate(request, reply);
-        params.strategies.forEach((strategy) => {
-          sinon.assert.calledWith(params.testRequest, strategy, request);
+        params.testRequest.yields(undefined, credentials);
+        return authenticate(request, reply).then(() => {
+          params.strategies.forEach((strategy) => {
+            sinon.assert.calledWith(params.testRequest, strategy, request);
+          });
         });
       });
-      it('continues request with credentials on success', (done) => {
+      it('continues request with credentials on success', () => {
         params.testRequest.yields(undefined, credentials);
-        authenticate(request, reply).then(() => {
+        return authenticate(request, reply).then(() => {
           sinon.assert.calledWith(reply.continue, { credentials });
-          done();
         });
       });
 
       context('when testRequest fails', () => {
         beforeEach(() => params.testRequest.yields(err));
 
-        it('replies with redirect to redirectUrl() for non-xhr requests', (done) => {
-          authenticate(request, reply).then(() => {
+        it('replies with redirect to redirectUrl() for non-xhr requests', () => {
+          return authenticate(request, reply).then(() => {
             sinon.assert.calledWith(params.redirectUrl, request.url.path);
             sinon.assert.calledWith(reply.redirect, 'mock redirect url');
-            done();
           });
         });
-        it('replies with unauthorized for xhr requests', (done) => {
+        it('replies with unauthorized for xhr requests', () => {
           request.raw.req.headers['kbn-version'] = 'something';
-          authenticate(request, reply).then(() => {
+          return authenticate(request, reply).then(() => {
             sinon.assert.called(reply);
             const error = reply.getCall(0).args[0];
             expect(error.message).to.be('Unauthorized');
             expect(error.output.payload.statusCode).to.be(401);
-            done();
           });
         });
       });
