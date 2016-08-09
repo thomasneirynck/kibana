@@ -31,7 +31,7 @@ chrome
       self.error = false;
       $http.post('./api/security/v1/login', {username, password}).then(
         () => $window.location.href = `.${next}`,
-        () => self.error = true
+        () => { setupScope(); self.error = true; }
       );
     };
   }

@@ -6,6 +6,7 @@ import 'angular-ui-select';
 import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
 import 'plugins/security/views/management/edit_user.less';
+import checkLicenseError from 'plugins/security/lib/check_license_error';
 
 routes.when('/management/elasticsearch/users/edit/:username?', {
   template,
@@ -15,9 +16,10 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
       if (username != null) return ShieldUser.get({username});
       return new ShieldUser({roles: []});
     },
-    roles(ShieldRole) {
+    roles(ShieldRole, kbnUrl, Promise, Private) {
       return ShieldRole.query().$promise
-      .then((roles) => _.map(roles, 'name'));
+      .then((roles) => _.map(roles, 'name'))
+      .catch(checkLicenseError(kbnUrl, Promise, Private));
     }
   },
   controller($scope, $route, $location, ShieldUser, Notifier) {

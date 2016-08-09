@@ -3,13 +3,15 @@ import routes from 'ui/routes';
 import {toggle, toggleSort} from 'plugins/security/lib/util';
 import template from 'plugins/security/views/management/users.html';
 import 'plugins/security/services/shield_user';
+import checkLicenseError from 'plugins/security/lib/check_license_error';
 
 routes.when('/management/elasticsearch/users', {
   template,
   resolve: {
-    users(ShieldUser) {
+    users(ShieldUser, kbnUrl, Promise, Private) {
       return ShieldUser.query()
-      .$promise.catch(_.identity); // Return the error if there is one
+      .$promise.catch(checkLicenseError(kbnUrl, Promise, Private))
+      .catch(_.identity); // Return the error if there is one
     }
   },
   controller($scope, $route, $q, Notifier) {

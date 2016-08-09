@@ -3,13 +3,15 @@ import routes from 'ui/routes';
 import {toggle, toggleSort} from 'plugins/security/lib/util';
 import template from 'plugins/security/views/management/roles.html';
 import 'plugins/security/services/shield_role';
+import checkLicenseError from 'plugins/security/lib/check_license_error';
 
 routes.when('/management/elasticsearch/roles', {
   template,
   resolve: {
-    roles(ShieldRole) {
+    roles(ShieldRole, kbnUrl, Promise, Private) {
       return ShieldRole.query()
-      .$promise.catch(_.identity); // Return the error if there is one
+      .$promise.catch(checkLicenseError(kbnUrl, Promise, Private))
+      .catch(_.identity); // Return the error if there is one
     }
   },
   controller($scope, $route, $q, Notifier) {
