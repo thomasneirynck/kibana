@@ -35,6 +35,7 @@ describe('lib/login_scheme', function () {
 
       describe('returned authentication function', () => {
         it('invokes server.auth.test with strategies', () => {
+          server.auth.test.yields(undefined, {});
           const { authenticate } = scheme(server);
           return authenticate(request, reply).then(() => {
             params.strategies.forEach((strategy) => {

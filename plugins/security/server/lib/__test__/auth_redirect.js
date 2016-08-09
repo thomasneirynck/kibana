@@ -67,6 +67,7 @@ describe('lib/auth_redirect', function () {
             const error = reply.getCall(0).args[0];
             expect(error.message).to.be('Unauthorized');
             expect(error.output.payload.statusCode).to.be(401);
+            sinon.assert.notCalled(reply.continue);
           });
         });
       });
