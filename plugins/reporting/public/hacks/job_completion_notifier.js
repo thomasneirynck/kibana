@@ -1,10 +1,11 @@
 import notify from 'ui/notify';
 import chrome from 'ui/chrome';
 import uiModules from 'ui/modules';
-import { last } from 'lodash';
+import { get, last } from 'lodash';
 import moment from 'moment';
 import constants from '../../server/lib/constants.js';
-import '../../../security/public/services/login_page';
+import 'plugins/security/services/login_page';
+import 'plugins/reporting/services/job_queue';
 
 uiModules.get('kibana')
 .config(() => {
@@ -15,11 +16,11 @@ uiModules.get('kibana')
 });
 
 uiModules.get('kibana')
-.run(($http, $interval, LoginPage) => {
+.run(($http, $interval, LoginPage, reportingJobQueue) => {
   if (!LoginPage.isOnLoginPage()) {
     $interval(function startChecking() {
       getJobsCompletedSinceLastCheck($http)
-      .then(jobs => jobs.forEach(showCompletionNotification));
+      .then(jobs => jobs.forEach(job => showCompletionNotification(job, reportingJobQueue)));
     }, constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
   }
 });
@@ -51,10 +52,47 @@ function getJobsCompletedSinceLastCheck($http) {
   });
 }
 
-function showCompletionNotification(job) {
+function downloadReport(jobId) {
+  const apiBaseUrl = chrome.addBasePath(constants.API_BASE_URL);
+  const downloadLink = `${apiBaseUrl}/jobs/download/${jobId}`;
+  return () => window.open(downloadLink);
+}
+
+async function showCompletionNotification(job, reportingJobQueue) {
   const reportObjectTitle = job._source.payload.title;
   const reportObjectType = job._source.payload.type;
-  const notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready!`
-  + ` Pick it up from Management > Kibana > Reporting`; // TODO: Replace with rich text containing link
-  notify.info(notificationMessage);
+  let notificationMessage;
+  let notificationType;
+
+  // Define actions for notification
+  const actions = [
+    {
+      text: 'OK'
+    }
+  ];
+
+  const isJobSuccessful = get(job, '_source.status') === 'completed';
+  if (isJobSuccessful) {
+    actions.push({
+      text: 'Download',
+      callback: downloadReport(job._id)
+    });
+
+    const managementUrl = chrome.getNavLinkById('kibana:management').url;
+    const reportingSectionUrl = `${managementUrl}/kibana/reporting`;
+    notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready!`
+    + ` Pick it up from [Management > Kibana > Reporting](${reportingSectionUrl})`;
+    notificationType = 'info';
+  } else {
+    const errorDoc = await reportingJobQueue.getContent(job._id);
+    const error = errorDoc.content;
+    notificationMessage = `There was an error generating your report for the "${reportObjectTitle}" ${reportObjectType}: ${error}`;
+    notificationType = 'error';
+  }
+
+  notify.custom(notificationMessage, {
+    type: notificationType,
+    lifetime: 0,
+    actions
+  });
 }
