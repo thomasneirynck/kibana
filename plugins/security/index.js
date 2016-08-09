@@ -105,11 +105,11 @@ export default (kibana) => new kibana.Plugin({
 
       server.auth.strategy('session', 'login', 'required');
 
-      server.auth.strategy('basic', 'basic', false, {
+      server.auth.strategy('security-basic', 'basic', false, {
         validateFunc: getBasicValidate(server)
       });
 
-      server.auth.strategy('cookie', 'cookie', false, {
+      server.auth.strategy('security-cookie', 'cookie', false, {
         cookie: cookieName,
         password: config.get('xpack.security.encryptionKey'),
         clearInvalid: true,

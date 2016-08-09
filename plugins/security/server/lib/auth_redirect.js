@@ -32,7 +32,7 @@ export default function factory({ redirectUrl, strategies, testRequest, xpackMai
     }
 
     // Test the request against all of the authentication strategies and if any succeed, continue
-    return Promise.any(strategies.map((strat) => testRequestAsync(strat, request)))
+    return Promise.any(strategies.map((strategy) => testRequestAsync(strategy, request)))
     .then((credentials) => reply.continue({ credentials }))
     .catch(() => {
       if (shouldRedirect(request.raw.req)) {
