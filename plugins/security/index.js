@@ -100,7 +100,7 @@ export default (kibana) => new kibana.Plugin({
     .then(() => {
       server.auth.scheme('login', createScheme({
         redirectUrl: (path) => loginUrl(config.get('server.basePath'), path),
-        strategies: ['cookie', 'basic']
+        strategies: ['security-cookie', 'security-basic']
       }));
 
       server.auth.strategy('session', 'login', 'required');
