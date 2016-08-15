@@ -1,3 +1,6 @@
+import Boom from 'boom';
+import Promise from 'bluebird';
+
 /**
  * Creates a hapi authenticate function that conditionally
  * redirects on auth failure
@@ -11,11 +14,12 @@
  *                 to standard error handler
  *    redirectUrl: Transform function that request path is passed to before
  *                 redirecting
- *    strategy:    The name of the auth strategy to use for test
+ *    strategy:    The name of the auth strategy to use for test, or an array of auth strategy names
  *    testRequest: Function to test authentication for a request
  * @return {Function}
  */
-export default function factory({ onError, redirectUrl, strategy, testRequest, xpackMainPlugin, clientCookieName }) {
+export default function factory({ redirectUrl, strategies, testRequest, xpackMainPlugin, clientCookieName }) {
+  const testRequestAsync = Promise.promisify(testRequest);
   return function authenticate(request, reply) {
     // If security is disabled, continue with no user credentials and delete the client cookie as well
     const xpackInfo = xpackMainPlugin && xpackMainPlugin.info;
@@ -27,15 +31,14 @@ export default function factory({ onError, redirectUrl, strategy, testRequest, x
       return;
     }
 
-    testRequest(strategy, request, (err, credentials) => {
-      if (err) {
-        if (shouldRedirect(request.raw.req)) {
-          reply.redirect(redirectUrl(request.url.path));
-        } else {
-          reply(onError(err));
-        }
+    // Test the request against all of the authentication strategies and if any succeed, continue
+    return Promise.any(strategies.map((strategy) => testRequestAsync(strategy, request)))
+    .then((credentials) => reply.continue({ credentials }))
+    .catch(() => {
+      if (shouldRedirect(request.raw.req)) {
+        reply.redirect(redirectUrl(request.url.path));
       } else {
-        reply.continue({ credentials });
+        reply(Boom.unauthorized());
       }
     });
   };

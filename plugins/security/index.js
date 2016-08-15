@@ -1,9 +1,9 @@
+import hapiAuthBasic from 'hapi-auth-basic';
 import hapiAuthCookie from 'hapi-auth-cookie';
 import { resolve } from 'path';
-import basicAuth from './server/lib/basic_auth';
-import getIsValidUser from './server/lib/get_is_valid_user';
-import getValidate from './server/lib/get_validate';
-import getCalculateExpires from './server/lib/get_calculate_expires';
+import Promise from 'bluebird';
+import getBasicValidate from './server/lib/get_basic_validate';
+import getCookieValidate from './server/lib/get_cookie_validate';
 import createExpose from './server/lib/create_expose';
 import initAuthenticateApi from './server/routes/api/v1/authenticate';
 import initUsersApi from './server/routes/api/v1/users';
@@ -91,26 +91,33 @@ export default (kibana) => new kibana.Plugin({
     server.state(clientCookieName, commonCookieConfig);
 
     const cookieName = config.get('xpack.security.cookieName');
-    server.register(hapiAuthCookie, (error) => {
-      if (error != null) throw error;
 
+    const register = Promise.promisify(server.register, {context: server});
+    Promise.all([
+      register(hapiAuthBasic),
+      register(hapiAuthCookie)
+    ])
+    .then(() => {
       server.auth.scheme('login', createScheme({
         redirectUrl: (path) => loginUrl(config.get('server.basePath'), path),
-        strategy: 'security'
+        strategies: ['security-cookie', 'security-basic']
       }));
 
       server.auth.strategy('session', 'login', 'required');
 
-      server.auth.strategy('security', 'cookie', false, {
+      server.auth.strategy('security-basic', 'basic', false, {
+        validateFunc: getBasicValidate(server)
+      });
+
+      server.auth.strategy('security-cookie', 'cookie', false, {
         cookie: cookieName,
         password: config.get('xpack.security.encryptionKey'),
         clearInvalid: true,
-        validateFunc: getValidate(server),
+        validateFunc: getCookieValidate(server),
         ...commonCookieConfig
       });
     });
 
-    basicAuth.register(server, cookieName, getIsValidUser(server), getCalculateExpires(server));
     createExpose(server);
 
     initAuthenticateApi(server, {clientCookieName});

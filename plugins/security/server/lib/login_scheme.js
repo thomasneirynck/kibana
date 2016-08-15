@@ -1,6 +1,4 @@
-import { set } from 'lodash';
-import { isBoom, isInvalidCookie, isUnauthorized } from './errors';
-import authenticateFactory from './auth_redirect';
+import * as authRedirect from './auth_redirect';
 
 /**
  * Creates a hapi auth scheme with conditional session
@@ -12,25 +10,15 @@ import authenticateFactory from './auth_redirect';
  *    strategy:    The name of the auth strategy to use for test
  * @return {Function}
  */
-export default function createScheme({ redirectUrl, strategy }) {
+export default function createScheme({ redirectUrl, strategies }) {
   return (server) => {
-    const authenticate = authenticateFactory({
-      onError: setExpirationMessage,
+    const authenticate = authRedirect.default({
       redirectUrl,
-      strategy,
+      strategies,
       testRequest: server.auth.test,
       xpackMainPlugin: server.plugins.xpack_main,
       clientCookieName: server.config().get('xpack.security.clientCookieName')
     });
     return { authenticate };
   };
-}
-
-export function setExpirationMessage(err) {
-  // hapi-auth-cookie's default behavior is to reject expired sessions with an
-  // "invalid cookie" 401, so we add a more friendly error message
-  if (isBoom(err) && isInvalidCookie(err) && isUnauthorized(err)) {
-    set(err, 'output.payload.message', 'Session has expired');
-  }
-  return err;
 }
