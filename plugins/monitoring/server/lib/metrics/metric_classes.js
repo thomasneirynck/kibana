@@ -155,7 +155,7 @@ export class ThreadPoolQueueMetric extends ElasticsearchMetric {
   constructor(opts) {
     super({
       ...opts,
-      title: 'Thread Pool Queues',
+      title: 'Thread Queue',
       type: 'node',
       format: SMALL_FLOAT,
       metricAgg: 'max',
@@ -170,7 +170,7 @@ export class ThreadPoolRejectedMetric extends ElasticsearchMetric {
   constructor(opts) {
     super({
       ...opts,
-      title: 'Thread Pool Rejections',
+      title: 'Thread Rejections',
       type: 'node',
       derivative: true,
       format: SMALL_FLOAT,

@@ -218,7 +218,7 @@ const metricInstances = {
     field: 'node_stats.os.cpu.load_average.1m',
     title: 'System Load',
     label: '1m',
-    description: 'Load average over the last minute',
+    description: 'Load average over the last minute.',
     type: 'node',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
@@ -306,13 +306,11 @@ const metricInstances = {
   }),
   'node_threads_queued_bulk': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.bulk.queue',
-    title: 'Thread Queue',
     label: 'Bulk',
     description: 'Number of bulk indexing operations waiting to be processed on this node. A single bulk request can create multiple bulk operations.'
   }),
   'node_threads_queued_generic': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.generic.queue',
-    title: 'Thread Queue',
     label: 'Generic',
     description: 'Number of generic (internal) operations waiting to be processed on this node.'
   }),
@@ -324,67 +322,56 @@ const metricInstances = {
   }),
   'node_threads_queued_index': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.index.queue',
-    title: 'Thread Queue',
     label: 'Index',
     description: 'Number of non-bulk, index operations waiting to be processed on this node.'
   }),
   'node_threads_queued_management': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.management.queue',
-    title: 'Thread Queue',
     label: 'Management',
     description: 'Number of management (internal) operations waiting to be processed on this node.'
   }),
   'node_threads_queued_search': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.search.queue',
-    title: 'Thread Queue',
     label: 'Search',
     description: 'Number of search operations waiting to be processed on this node. A single search request can create multiple search operations.'
   }),
   'node_threads_queued_watcher': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.watcher.queue',
-    title: 'Thread Queue',
     label: 'Watcher',
     description: 'Number of Watcher operations waiting to be processed on this node.'
   }),
   'node_threads_rejected_bulk': new ThreadPoolRejectedMetric({
     field: 'node_stats.thread_pool.bulk.rejected',
-    title: 'Thread Rejections',
     label: 'Bulk',
     description: 'Bulk rejections. These occur when the queue is full.'
   }),
   'node_threads_rejected_generic': new ThreadPoolRejectedMetric({
     field: 'node_stats.thread_pool.generic.rejected',
-    title: 'Thread Rejections',
     label: 'Generic',
     description: 'Generic (internal) rejections. These occur when the queue is full.'
   }),
   'node_threads_rejected_get': new ThreadPoolRejectedMetric({
     field: 'node_stats.thread_pool.get.rejected',
-    title: 'Thread Rejections',
     label: 'Get',
     description: 'Get rejections. These occur when the queue is full.'
   }),
   'node_threads_rejected_index': new ThreadPoolRejectedMetric({
     field: 'node_stats.thread_pool.index.rejected',
-    title: 'Thread Rejections',
     label: 'Index',
     description: 'Index rejections. These occur when the queue is full. You should look at bulk indexing.'
   }),
   'node_threads_rejected_management': new ThreadPoolRejectedMetric({
     field: 'node_stats.thread_pool.management.rejected',
-    title: 'Thread Rejections',
     label: 'Management',
     description: 'Get (internal) rejections. These occur when the queue is full.'
   }),
   'node_threads_rejected_search': new ThreadPoolRejectedMetric({
     field: 'node_stats.thread_pool.search.rejected',
-    title: 'Thread Rejections',
     label: 'Search',
     description: 'Search rejections. These occur when the queue is full. This can indicate over-sharding.'
   }),
   'node_threads_rejected_watcher': new ThreadPoolRejectedMetric({
     field: 'node_stats.thread_pool.watcher.rejected',
-    title: 'Thread Rejections',
     label: 'Watcher',
     description: 'Watch rejections. These occur when the queue is full. This can indicate stuck-Watches.'
   }),
