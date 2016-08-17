@@ -7,7 +7,7 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
   return class PhoneHome {
 
     constructor() {
-      this.attributes = {};
+      this._attributes = {};
       let storedAttributes = {};
       const monitoringData = localStorage.getItem('xpack.monitoring.data');
 
@@ -17,30 +17,30 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
         console.error('Monitoring UI: error parsing locally stored monitoring data', e);
       }
 
-      _.defaults(this.attributes, storedAttributes);
+      _.defaults(this._attributes, storedAttributes);
     }
 
-    set(key, value) {
+    _set(key, value) {
       if (typeof key === 'object') {
-        this.attributes = _.assign(this.attributes, key);
+        this._attributes = _.assign(this._attributes, key);
       } else {
-        this.attributes[key] = value;
+        this._attributes[key] = value;
       }
     }
 
-    get(key) {
+    _get(key) {
       if (_.isUndefined(key)) {
-        return this.attributes;
+        return this._attributes;
       } else {
-        return this.attributes[key];
+        return this._attributes[key];
       }
     }
 
-    saveToBrowser() {
-      localStorage.setItem('xpack.monitoring.data', JSON.stringify(this.attributes));
+    _saveToBrowser() {
+      localStorage.setItem('xpack.monitoring.data', JSON.stringify(this._attributes));
     }
 
-    checkReportStatus() {
+    _checkReportStatus() {
       const reportInterval = 86400000; // 1 day
       let sendReport = false;
 
@@ -49,11 +49,11 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
       if (reportStats && features.isEnabled('report', true)) {
         // If the last report is empty it means we've never sent an report and
         // now is the time to send it.
-        if (!this.get('lastReport')) {
+        if (!this._get('lastReport')) {
           sendReport = true;
         }
         // If it's been a day since we last sent an report, send one.
-        if (new Date().getTime() - parseInt(this.get('lastReport'), 10) > reportInterval) {
+        if (new Date().getTime() - parseInt(this._get('lastReport'), 10) > reportInterval) {
           sendReport = true;
         }
       }
@@ -61,7 +61,7 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
       return sendReport;
     }
 
-    getClusterInfo(clusterUUID) {
+    _getClusterInfo(clusterUUID) {
       let url = `../api/monitoring/v1/clusters/${clusterUUID}/info`;
       return $http.get(url)
       .then((resp) => {
@@ -70,12 +70,12 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
       .catch(() => { return {}; });
     }
 
-    sendIfDue() {
-      if (!this.checkReportStatus()) return Promise.resolve();
+    _sendIfDue() {
+      if (!this._checkReportStatus()) return Promise.resolve();
       return monitoringClusters()
       .then((clusters) => {
         return Promise.map(clusters, (cluster) => {
-          return this.getClusterInfo(cluster.cluster_uuid).then((info) => {
+          return this._getClusterInfo(cluster.cluster_uuid).then((info) => {
             const req = {
               method: 'POST',
               url: statsReportUrl,
@@ -87,8 +87,8 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
           });
         }).then(() => {
           // we sent a report, so we need to record and store the current time stamp
-          this.set('lastReport', Date.now());
-          this.saveToBrowser();
+          this._set('lastReport', Date.now());
+          this._saveToBrowser();
         })
         .catch(() => {
           // no ajaxErrorHandlers for phone home
@@ -107,7 +107,7 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
       // continuously check if it's due time for a report
       window.setInterval(() => {
         if (hasWaited) {
-          this.sendIfDue();
+          this._sendIfDue();
         }
         hasWaited = true;
       }, 60000);
