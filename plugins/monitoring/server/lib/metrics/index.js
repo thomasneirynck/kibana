@@ -100,7 +100,7 @@ const metricInstances = {
     type: 'index'
   }),
   'index_mem_fixed_bit_set': new SingleIndexMemoryMetric({
-    field: 'norms_memory_in_bytes',
+    field: 'fixed_bit_set_memory_in_bytes',
     label: 'Fixed Bitsets',
     description: 'Memory used for Nested Documents'
   }),
@@ -242,7 +242,7 @@ const metricInstances = {
     type: 'node'
   }),
   'node_index_mem_fixed_bit_set': new NodeIndexMemoryMetric({
-    field: 'norms_memory_in_bytes',
+    field: 'fixed_bit_set_memory_in_bytes',
     label: 'Fixed Bitsets',
     description: 'Memory used for Nested Documents'
   }),
