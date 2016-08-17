@@ -15,21 +15,21 @@ const metricInstances = {
     title: 'Indexing Rate', // title to use for the chart
     label: 'Primary Shards', // label to use for this line in the chart
     field: 'indices_stats._all.primaries.indexing.index_total',
-    description: 'The per index rate at which documents are being indexed for primary shards.',
+    description: 'Number of documents being indexed for primary shards.',
     type: 'index'
   }),
   'cluster_index_request_rate_total': new RequestRateMetric({
     field: 'indices_stats._all.total.indexing.index_total',
     title: 'Indexing Rate',
     label: 'Total Shards',
-    description: 'The per index rate at which documents are being indexed for all shards.',
+    description: 'Number of documents being indexed for primary and replica shards.',
     type: 'index'
   }),
   'cluster_search_request_rate': new RequestRateMetric({
     field: 'indices_stats._all.total.search.query_total',
     title: 'Search Rate',
     label: 'Total Shards',
-    description: 'The cluster wide rate at which search reqeusts are being executed.',
+    description: 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!',
     type: 'cluster'
   }),
   'cluster_index_latency': new LatencyMetric({
@@ -37,7 +37,7 @@ const metricInstances = {
     fieldSource: 'indices_stats._all.primaries',
     field: 'indices_stats._all.primaries.indexing.index_total',
     label: 'Indexing Latency',
-    description: 'The average indexing latency across the entire cluster.',
+    description: 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This only considers primary shards.',
     type: 'cluster'
   }),
   'node_index_latency': new LatencyMetric({
@@ -46,7 +46,7 @@ const metricInstances = {
     field: 'node_stats.indices.indexing.index_total',
     title: 'Latency',
     label: 'Indexing',
-    description: 'The average indexing latency',
+    description: 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This considers any shard located on this node, including replicas.',
     type: 'node'
   }),
   'index_latency': new LatencyMetric({
@@ -54,7 +54,7 @@ const metricInstances = {
     fieldSource: 'index_stats.primaries',
     field: 'index_stats.primaries.indexing.index_total',
     label: 'Indexing Latency',
-    description: 'The average indexing latency across the entire cluster.',
+    description: 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This only considers primary shards.',
     type: 'cluster'
   }),
   'cluster_query_latency': new LatencyMetric({
@@ -62,7 +62,7 @@ const metricInstances = {
     fieldSource: 'indices_stats._all.total',
     field: 'indices_stats._all.total.search.query_total',
     label: 'Search Latency',
-    description: 'The average search latency across the entire cluster.',
+    description: 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.',
     type: 'cluster'
   }),
   'node_query_latency': new LatencyMetric({
@@ -71,7 +71,7 @@ const metricInstances = {
     field: 'node_stats.indices.search.query_total',
     title: 'Latency',
     label: 'Search',
-    description: 'The average search latency',
+    description: 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.',
     type: 'node'
   }),
   'query_latency': new LatencyMetric({
@@ -79,85 +79,85 @@ const metricInstances = {
     fieldSource: 'index_stats.total',
     field: 'index_stats.total.search.query_total',
     label: 'Search Latency',
-    description: 'The average search latency across the entire cluster.',
+    description: 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.',
     type: 'cluster'
   }),
   'index_mem_overall': new SingleIndexMemoryMetric({
     field: 'memory_in_bytes',
     label: 'Lucene Total',
-    description: 'Memory used by open Lucene segment files'
+    description: 'Total heap memory used by Lucene for current index. This is a summation of other fields for primary and replica shards.'
   }),
   'index_mem_doc_values': new SingleIndexMemoryMetric({
     field: 'doc_values_memory_in_bytes',
     label: 'Doc Values',
-    description: 'Memory used for Doc Values'
+    description: 'Heap memory used by Doc Values. This is a part of Lucene Total.'
   }),
   // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
   'index_mem_fielddata': new IndexMemoryMetric({
     field: 'index_stats.total.fielddata.memory_size_in_bytes',
     label: 'Fielddata',
-    description: 'The amount of memory used by index fielddata.',
+    description: 'Heap memory used by Fielddata (e.g., global ordinals or explicitly enabled fielddata on text fields). This is for the same shards, but not a part of Lucene Total.',
     type: 'index'
   }),
   'index_mem_fixed_bit_set': new SingleIndexMemoryMetric({
     field: 'fixed_bit_set_memory_in_bytes',
     label: 'Fixed Bitsets',
-    description: 'Memory used for Nested Documents'
+    description: 'Heap memory used by Fixed Bit Sets (e.g., deeply nested documents). This is a part of Lucene Total.'
   }),
   'index_mem_norms': new SingleIndexMemoryMetric({
     field: 'norms_memory_in_bytes',
     label: 'Norms',
-    description: 'Memory used in Lucene segments for Norms'
+    description: 'Heap memory used by Norms (normalization factors for query-time, text scoring). This is a part of Lucene Total.'
   }),
   'index_mem_points': new SingleIndexMemoryMetric({
     field: 'points_memory_in_bytes',
     label: 'Points',
-    description: 'Memory used in Lucene segments for Points (e.g., numerics and geo)'
+    description: 'Heap memory used by Points (e.g., numbers, IPs, and geo data). This is a part of Lucene Total.'
   }),
   // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
   'index_mem_query_cache': new IndexMemoryMetric({
     field: 'index_stats.total.query_cache.memory_size_in_bytes',
     label: 'Query Cache',
-    description: 'The amount of memory used by the query cache.',
+    description: 'Heap memory used by Query Cache (e.g., cached filters). This is for the same shards, but not a part of Lucene Total.',
     type: 'index'
   }),
   // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
   'index_mem_request_cache': new IndexMemoryMetric({
     field: 'index_stats.total.request_cache.memory_size_in_bytes',
     label: 'Request Cache',
-    description: 'The amount of memory used by the request cache.',
+    description: 'Heap memory used by Request Cache (e.g., instant aggregations). This is for the same shards, but not a part of Lucene Total.',
     type: 'index'
   }),
   'index_mem_stored_fields': new SingleIndexMemoryMetric({
     field: 'stored_fields_memory_in_bytes',
     label: 'Stored Fields',
-    description: 'Memory used in Lucene segments for Stored Fields'
+    description: 'Heap memory used by Stored Fields (e.g., _source). This is a part of Lucene Total.'
   }),
   'index_mem_term_vectors': new SingleIndexMemoryMetric({
     field: 'term_vectors_memory_in_bytes',
     label: 'Term Vectors',
-    description: 'Memory used in Lucene segments for Term Vectors'
+    description: 'Heap memory used by Term Vectors. This is a part of Lucene Total.'
   }),
   'index_mem_terms': new SingleIndexMemoryMetric({
     field: 'terms_memory_in_bytes',
     label: 'Terms',
-    description: 'Memory used in Lucene segments for Terms'
+    description: 'Heap memory used by Terms (e.g., text). This is a part of Lucene Total.'
   }),
   'index_mem_versions': new SingleIndexMemoryMetric({
     field: 'version_map_memory_in_bytes',
     label: 'Version Map',
-    description: 'Memory used for Versions'
+    description: 'Heap memory used by Versioning (e.g., updates and deletes). This is a part of Lucene Total.'
   }),
   'index_mem_writer': new SingleIndexMemoryMetric({
     field: 'index_writer_memory_in_bytes',
     label: 'Index Writer',
-    description: 'Memory used for Lucene Index Writers'
+    description: 'Heap memory used by the Index Writer. This is a part of Lucene Total.'
   }),
   'index_request_rate_primary': new ElasticsearchMetric({
     field: 'index_stats.primaries.indexing.index_total',
     title: 'Indexing Rate',
     label: 'Primary Shards',
-    description: 'The per index rate at which documents are being indexed.',
+    description: 'Number of documents being indexed for primary shards.',
     format: LARGE_FLOAT,
     metricAgg: 'max',
     units: '/s',
@@ -168,13 +168,13 @@ const metricInstances = {
     field: 'index_stats.total.indexing.index_total',
     title: 'Indexing Rate',
     label: 'Total Shards',
-    description: 'The per index rate at which documents are being indexed.',
+    description: 'Number of documents being indexed for primary and replica shards.',
     type: 'index'
   }),
   'index_segment_count': new ElasticsearchMetric({
     field: 'index_stats.total.segments.count',
     label: 'Segment Count',
-    description: 'The average segment count.',
+    description: 'Average segment count for primary and replica shards.',
     type: 'index',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
@@ -184,13 +184,13 @@ const metricInstances = {
     field: 'index_stats.total.search.query_total',
     title: 'Search Rate',
     label: 'Total Shards',
-    description: 'The cluster wide rate at which search reqeusts are being executed.',
+    description: 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!',
     type: 'cluster'
   }),
   'node_cpu_utilization': new ElasticsearchMetric({
     field: 'node_stats.process.cpu.percent',
     label: 'CPU Utilization',
-    description: 'The percentage of CPU usage.',
+    description: 'Percentage of CPU usage (100% is the max).',
     type: 'node',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
@@ -199,7 +199,7 @@ const metricInstances = {
   'node_segment_count': new ElasticsearchMetric({
     field: 'node_stats.indices.segments.count',
     label: 'Segment Count',
-    description: 'The average segment count.',
+    description: 'Average segment count for primary and replica shards on this node.',
     type: 'node',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
@@ -208,7 +208,7 @@ const metricInstances = {
   'node_jvm_mem_percent': new ElasticsearchMetric({
     field: 'node_stats.jvm.mem.heap_used_percent',
     label: 'JVM Heap Usage',
-    description: 'The amound of heap used by the JVM',
+    description: 'Total heap used by Elasticsearch running in the JVM.',
     type: 'node',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
@@ -227,78 +227,78 @@ const metricInstances = {
   'node_index_mem_overall': new NodeIndexMemoryMetric({
     field: 'memory_in_bytes',
     label: 'Lucene Total',
-    description: 'Memory used by open Lucene segment files'
+    description: 'Total heap memory used by Lucene for current index. This is a summation of other fields for primary and replica shards on this node.'
   }),
   'node_index_mem_doc_values': new NodeIndexMemoryMetric({
     field: 'doc_values_memory_in_bytes',
     label: 'Doc Values',
-    description: 'Memory used for Doc Values'
+    description: 'Heap memory used by Doc Values. This is a part of Lucene Total.'
   }),
   // Note: This is not segment memory, unlike the rest of the SingleIndexMemoryMetrics
   'node_index_mem_fielddata': new IndexMemoryMetric({
     field: 'node_stats.indices.fielddata.memory_size_in_bytes',
     label: 'Fielddata',
-    description: 'The amount of memory used by shard fielddata on this node.',
+    description: 'Heap memory used by Fielddata (e.g., global ordinals or explicitly enabled fielddata on text fields). This is for the same shards, but not a part of Lucene Total.',
     type: 'node'
   }),
   'node_index_mem_fixed_bit_set': new NodeIndexMemoryMetric({
     field: 'fixed_bit_set_memory_in_bytes',
     label: 'Fixed Bitsets',
-    description: 'Memory used for Nested Documents'
+    description: 'Heap memory used by Fixed Bit Sets (e.g., deeply nested documents). This is a part of Lucene Total.'
   }),
   'node_index_mem_norms': new NodeIndexMemoryMetric({
     field: 'norms_memory_in_bytes',
     label: 'Norms',
-    description: 'Memory used in Lucene segments for Norms'
+    description: 'Heap memory used by Norms (normalization factors for query-time, text scoring). This is a part of Lucene Total.'
   }),
   'node_index_mem_points': new NodeIndexMemoryMetric({
     field: 'points_memory_in_bytes',
     label: 'Points',
-    description: 'Memory used in Lucene segments for Points (e.g., numerics and geo)'
+    description: 'Heap memory used by Points (e.g., numbers, IPs, and geo data). This is a part of Lucene Total.'
   }),
   // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
   'node_index_mem_query_cache': new IndexMemoryMetric({
     field: 'node_stats.indices.query_cache.memory_size_in_bytes',
     label: 'Query Cache',
-    description: 'The amount of memory used by the query cache.',
+    description: 'Heap memory used by Query Cache (e.g., cached filters). This is for the same shards, but not a part of Lucene Total.',
     type: 'index'
   }),
   // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
   'node_index_mem_request_cache': new IndexMemoryMetric({
     field: 'node_stats.indices.request_cache.memory_size_in_bytes',
     label: 'Request Cache',
-    description: 'The amount of memory used by the request cache.',
+    description: 'Heap memory used by Request Cache (e.g., instant aggregations). This is for the same shards, but not a part of Lucene Total.',
     type: 'index'
   }),
   'node_index_mem_stored_fields': new NodeIndexMemoryMetric({
     field: 'stored_fields_memory_in_bytes',
     label: 'Stored Fields',
-    description: 'Memory used in Lucene segments for Stored Fields'
+    description: 'Heap memory used by Stored Fields (e.g., _source). This is a part of Lucene Total.'
   }),
   'node_index_mem_term_vectors': new NodeIndexMemoryMetric({
     field: 'term_vectors_memory_in_bytes',
     label: 'Term Vectors',
-    description: 'Memory used in Lucene segments for Term Vectors'
+    description: 'Heap memory used by Term Vectors. This is a part of Lucene Total.'
   }),
   'node_index_mem_terms': new NodeIndexMemoryMetric({
     field: 'terms_memory_in_bytes',
     label: 'Terms',
-    description: 'Memory used in Lucene segments for Terms'
+    description: 'Heap memory used by Terms (e.g., text). This is a part of Lucene Total.'
   }),
   'node_index_mem_versions': new NodeIndexMemoryMetric({
     field: 'version_map_memory_in_bytes',
     label: 'Version Map',
-    description: 'Memory used for Versions'
+    description: 'Heap memory used by Versioning (e.g., updates and deletes). This is a part of Lucene Total.'
   }),
   'node_index_mem_writer': new NodeIndexMemoryMetric({
     field: 'index_writer_memory_in_bytes',
     label: 'Index Writer',
-    description: 'Memory used for Lucene Index Writers'
+    description: 'Heap memory used by the Index Writer. This is a part of Lucene Total.'
   }),
   'node_free_space': new ElasticsearchMetric({
     field: 'node_stats.fs.total.available_in_bytes',
     label: 'Disk Free Space',
-    description: 'The free disk space available on the node',
+    description: 'Free disk space available on the node.',
     type: 'node',
     format: SMALL_BYTES,
     metricAgg: 'max',
@@ -306,98 +306,102 @@ const metricInstances = {
   }),
   'node_threads_queued_bulk': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.bulk.queue',
+    title: 'Thread Queue',
     label: 'Bulk',
-    description: 'Bulk thread queue. The number of bulk operations waiting to be processed.'
+    description: 'Number of bulk indexing operations waiting to be processed on this node. A single bulk request can create multiple bulk operations.'
   }),
   'node_threads_queued_generic': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.generic.queue',
+    title: 'Thread Queue',
     label: 'Generic',
-    description: 'Generic thread queue. The number of internal, generic operations waiting to be processed.'
+    description: 'Number of generic (internal) operations waiting to be processed on this node.'
   }),
   'node_threads_queued_get': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.get.queue',
+    title: 'Thread Queue',
     label: 'Get',
-    description: 'Get thread queue. The number of get operations waiting to be processed.'
+    description: 'Number of get operations waiting to be processed on this node.'
   }),
   'node_threads_queued_index': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.index.queue',
+    title: 'Thread Queue',
     label: 'Index',
-    description: 'Index thread queue. The number of index (not bulk) operations waiting to be processed.'
+    description: 'Number of non-bulk, index operations waiting to be processed on this node.'
   }),
   'node_threads_queued_management': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.management.queue',
+    title: 'Thread Queue',
     label: 'Management',
-    description: 'Management thread queue. The number of internal management operations waiting to be processed.'
+    description: 'Number of management (internal) operations waiting to be processed on this node.'
   }),
   'node_threads_queued_search': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.search.queue',
+    title: 'Thread Queue',
     label: 'Search',
-    description: 'Search thread queue. The number of search operations waiting to be processed.'
+    description: 'Number of search operations waiting to be processed on this node. A single search request can create multiple search operations.'
   }),
   'node_threads_queued_watcher': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.watcher.queue',
+    title: 'Thread Queue',
     label: 'Watcher',
-    description: 'Watcher thread queue. The number of Watcher operations waiting to be processed.'
+    description: 'Number of Watcher operations waiting to be processed on this node.'
   }),
   'node_threads_rejected_bulk': new ThreadPoolRejectedMetric({
     field: 'node_stats.thread_pool.bulk.rejected',
+    title: 'Thread Rejections',
     label: 'Bulk',
-    description: 'Bulk thread rejections. Rejections occur when the queue is full.'
+    description: 'Bulk rejections. These occur when the queue is full.'
   }),
   'node_threads_rejected_generic': new ThreadPoolRejectedMetric({
     field: 'node_stats.thread_pool.generic.rejected',
+    title: 'Thread Rejections',
     label: 'Generic',
-    description: 'Generic thread rejections. Rejections occur when the queue is full.'
+    description: 'Generic (internal) rejections. These occur when the queue is full.'
   }),
   'node_threads_rejected_get': new ThreadPoolRejectedMetric({
     field: 'node_stats.thread_pool.get.rejected',
+    title: 'Thread Rejections',
     label: 'Get',
-    description: 'Get thread rejections. Rejections occur when the queue is full.'
+    description: 'Get rejections. These occur when the queue is full.'
   }),
   'node_threads_rejected_index': new ThreadPoolRejectedMetric({
     field: 'node_stats.thread_pool.index.rejected',
+    title: 'Thread Rejections',
     label: 'Index',
-    description: 'Index thread rejections. Rejections occur when the queue is full. You should likely be using bulk!'
+    description: 'Index rejections. These occur when the queue is full. You should look at bulk indexing.'
   }),
   'node_threads_rejected_management': new ThreadPoolRejectedMetric({
     field: 'node_stats.thread_pool.management.rejected',
+    title: 'Thread Rejections',
     label: 'Management',
-    description: 'Management thread rejections. Rejections occur when the queue is full.'
+    description: 'Get (internal) rejections. These occur when the queue is full.'
   }),
   'node_threads_rejected_search': new ThreadPoolRejectedMetric({
     field: 'node_stats.thread_pool.search.rejected',
+    title: 'Thread Rejections',
     label: 'Search',
-    description: 'Search thread rejections. Rejections occur when the queue is full.'
+    description: 'Search rejections. These occur when the queue is full. This can indicate over-sharding.'
   }),
   'node_threads_rejected_watcher': new ThreadPoolRejectedMetric({
     field: 'node_stats.thread_pool.watcher.rejected',
+    title: 'Thread Rejections',
     label: 'Watcher',
-    description: 'Watcher thread rejections. Rejections occur when the queue is full.'
+    description: 'Watch rejections. These occur when the queue is full. This can indicate stuck-Watches.'
   }),
   'index_throttle_time': new ElasticsearchMetric({
     field: 'index_stats.primaries.indexing.throttle_time_in_millis',
-    label: 'Indexing Throttle Time',
-    description: 'The amount of load used for the last 1 minute.',
+    label: 'Index Throttling',
+    description: 'Amount of time spent with index throttling, which indicates slow merging.',
     type: 'index',
     derivative: true,
     format: LARGE_FLOAT,
     metricAgg: 'max',
     units: 'ms'
   }),
-  'index_shard_query_rate': new ElasticsearchMetric({
-    field: 'index_stats.total.search.query_total',
-    label: 'Index Shard Search Rate',
-    description: 'Total number of requests (GET /_search)across an index (and across all relevant shards for that index) / <time range>',
-    type: 'index',
-    derivative: true,
-    format: SMALL_FLOAT,
-    metricAgg: 'max',
-    units: ''
-  }),
   'index_document_count': new ElasticsearchMetric({
     field: 'index_stats.primaries.docs.count',
     label: 'Document Count',
-    description: 'Total number of documents (in primary shards) for an index',
+    description: 'Total number of documents, only including primary shards.',
     type: 'index',
     format: LARGE_ABBREVIATED,
     metricAgg: 'max',
@@ -407,29 +411,24 @@ const metricInstances = {
     field: 'index_stats.total.search.query_total',
     title: 'Search Rate',
     label: 'Total Shards',
-    description: 'The per index rate at which search reqeusts are being executed.',
+    description: 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!',
     type: 'index'
   }),
   'index_merge_rate': new RequestRateMetric({
     field: 'index_stats.total.merges.total_size_in_bytes',
-    label: 'Indexing Rate',
-    description: 'The per index rate at which segements are being merged.',
+    label: 'Merge Rate',
+    description: 'Amount in bytes of merged segments. Larger numbers indicate heavier disk activity.',
     type: 'index'
   }),
   'index_size': new IndexAverageStatMetric({
     field: 'index_stats.total.store.size_in_bytes',
     label: 'Index Size',
-    description: 'The size of the index.'
-  }),
-  'index_fielddata': new IndexAverageStatMetric({
-    field: 'index_stats.total.fielddata.memory_size_in_bytes',
-    label: 'Fielddata Size',
-    description: 'The amount of memory used by fielddata.'
+    description: 'Size of the index on disk for primary and replica shards.'
   }),
   'index_refresh_time': new ElasticsearchMetric({
     field: 'total.refresh.total_time_in_millis',
     label: 'Total Refresh Time',
-    description: 'The the amount of time a refresh takes',
+    description: 'Time spent on Elasticsearch refresh for primary and replica shards.',
     format: LARGE_FLOAT,
     metricAgg: 'max',
     units: '',
@@ -440,7 +439,7 @@ const metricInstances = {
     title: 'System Load',
     field: 'kibana_stats.os.load.1m',
     label: '1m',
-    description: 'Load average over the last minute',
+    description: 'Load average over the last minute.',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
     units: ''
@@ -449,7 +448,7 @@ const metricInstances = {
     title: 'System Load',
     field: 'kibana_stats.os.load.5m',
     label: '5m',
-    description: 'Load average over the last 5 minutes',
+    description: 'Load average over the last 5 minutes.',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
     units: ''
@@ -458,7 +457,7 @@ const metricInstances = {
     title: 'System Load',
     field: 'kibana_stats.os.load.15m',
     label: '15m',
-    description: 'Load average over the last 15 minutes',
+    description: 'Load average over the last 15 minutes.',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
     units: ''
@@ -467,7 +466,7 @@ const metricInstances = {
     title: 'Memory Size',
     field: 'kibana_stats.process.memory.heap.size_limit',
     label: 'Heap Size Limit',
-    description: 'The limit of memory usage before garbage collection',
+    description: 'Limit of memory usage before garbage collection.',
     format: LARGE_BYTES,
     metricAgg: 'max',
     units: 'B'
@@ -476,7 +475,7 @@ const metricInstances = {
     title: 'Memory Size',
     field: 'kibana_stats.process.memory.resident_set_size_in_bytes',
     label: 'Memory Size',
-    description: 'The amount of memory in RAM used by the Kibana server process',
+    description: 'Total heap used by Kibana running in Node.js.',
     format: LARGE_BYTES,
     metricAgg: 'avg',
     units: 'B'
@@ -484,7 +483,7 @@ const metricInstances = {
   'kibana_process_delay': new KibanaMetric({
     field: 'kibana_stats.process.event_loop_delay',
     label: 'Event Loop Delay',
-    description: 'Delay in Kibana server event loops; longer delays may indicate blocking events in the server thread, such as synchronous functions taking large amount of CPU time.',
+    description: 'Delay in Kibana server event loops. Longer delays may indicate blocking events in server thread, such as synchronous functions taking large amount of CPU time.',
     format: SMALL_FLOAT,
     metricAgg: 'avg',
     units: 'ms'
@@ -493,7 +492,7 @@ const metricInstances = {
     title: 'Client Response Time',
     field: 'kibana_stats.response_times.average',
     label: 'Average',
-    description: 'Average response time for client requests to the Kibana server',
+    description: 'Average response time for client requests to the Kibana instance.',
     format: SMALL_FLOAT,
     metricAgg: 'avg',
     units: 'ms'
@@ -502,7 +501,7 @@ const metricInstances = {
     title: 'Client Response Time',
     field: 'kibana_stats.response_times.max',
     label: 'Max',
-    description: 'Maximum response time for client requests to the Kibana server',
+    description: 'Maximum response time for client requests to the Kibana instance.',
     format: SMALL_FLOAT,
     metricAgg: 'avg',
     units: 'ms'
@@ -510,7 +509,7 @@ const metricInstances = {
   'kibana_average_concurrent_connections': new KibanaMetric({
     field: 'kibana_stats.concurrent_connections',
     label: 'HTTP Connections',
-    description: 'Total number of open socket connections to the Kibana server',
+    description: 'Total number of open socket connections to the Kibana instance.',
     format: SMALL_FLOAT,
     metricAgg: 'max',
     units: ''
@@ -518,7 +517,7 @@ const metricInstances = {
   'kibana_requests': new KibanaMetric({
     field: 'kibana_stats.requests.total',
     label: 'Client Requests',
-    description: 'Total number of client requests received by Kibana server',
+    description: 'Total number of client requests received by the Kibana instance.',
     format: SMALL_FLOAT,
     metricAgg: 'sum',
     units: ''
