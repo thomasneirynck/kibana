@@ -118,7 +118,12 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
 }
 
 
-function phoneHomeStart(Private) {
+function phoneHomeStart(LoginPage, Private) {
+  // no phone home for login page
+  if (LoginPage.isOnLoginPage()) {
+    return;
+  }
+
   const PhoneHome = Private(phoneHomeClassFactory);
   const sender = new PhoneHome();
   sender.start();
