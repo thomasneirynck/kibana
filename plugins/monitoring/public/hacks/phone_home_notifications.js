@@ -30,8 +30,6 @@ function showNotification(features) {
       this.toggleOpt = () => {
         features.update(PHONE_HOME_FEATURE, !this.allowReport);
         this.allowReport = !this.allowReport;
-
-        features.update(PHONE_HOME_NOTIFICATION_SEEN, true);
       };
     }
   };
