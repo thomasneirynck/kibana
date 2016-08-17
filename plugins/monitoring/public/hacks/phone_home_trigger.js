@@ -40,6 +40,9 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
       localStorage.setItem('xpack.monitoring.data', JSON.stringify(this._attributes));
     }
 
+    /*
+     * Check for report permission and time interval passage
+     */
     _checkReportStatus() {
       const reportInterval = 86400000; // 1 day
       let sendReport = false;
@@ -61,6 +64,9 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
       return sendReport;
     }
 
+    /*
+     * Call the API to get the basic cluster info from the non-timebased index
+     */
     _getClusterInfo(clusterUUID) {
       let url = `../api/monitoring/v1/clusters/${clusterUUID}/info`;
       return $http.get(url)
@@ -70,11 +76,16 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
       .catch(() => { return {}; });
     }
 
+    /*
+     * Check report permission and if passes, send the report
+     */
     _sendIfDue() {
       if (!this._checkReportStatus()) return Promise.resolve();
+      // get the latest cluster uuids
       return monitoringClusters()
       .then((clusters) => {
         return Promise.map(clusters, (cluster) => {
+          // get the data per cluster uuid
           return this._getClusterInfo(cluster.cluster_uuid).then((info) => {
             const req = {
               method: 'POST',
