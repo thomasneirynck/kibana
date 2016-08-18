@@ -3,26 +3,29 @@ monitoring-cluster-listing {
   .paginated-table {
     padding: 8px 20px;
   }
+
   .paginated-table .table td,
   .paginated-table > .table > tbody >  tr > td {
-    vertical-align: middle;
-
     a {
       text-decoration: none
     }
+  }
 
-    .clusterName {
-      font-size: 22px;
-    }
+  .clusterName {
+    font-size: 22px;
 
-    .expires {
-      font-size: 14px;
-      color: @esGray;
+    & > * {
+      vertical-align: middle;
     }
+  }
 
-    .expired {
-      color: @esRed;
-    }
+  .expires {
+    font-size: 14px;
+    color: @esGray;
+  }
+
+  .expired {
+    color: @esRed;
   }
 
   tr.basic > td > a,
@@ -31,4 +34,9 @@ monitoring-cluster-listing {
     color: @esLightGray !important;
   }
 
+  .primary-cluster-indicator {
+    font-size: 60%;
+  }
+
 }
+
