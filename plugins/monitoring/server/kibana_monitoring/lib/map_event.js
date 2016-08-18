@@ -18,7 +18,7 @@ export default function mapEvent(event, config, serverInfo) {
   const heapSizeLimit = heapStatistics.heap_size_limit;
   return {
     kibana: {
-      uuid: config.get('uuid'),
+      uuid: config.get('server.uuid'),
       name: config.get('server.name'),
       host: event.host,
       transport_address: `${config.get('server.host')}:${config.get('server.port')}`,
