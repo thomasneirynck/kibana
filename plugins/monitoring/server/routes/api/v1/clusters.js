@@ -6,6 +6,7 @@ import calculateIndices from '../../../lib/calculate_indices';
 import getClusters from '../../../lib/get_clusters';
 import getClustersStats from '../../../lib/get_clusters_stats';
 import getClustersHealth from '../../../lib/get_clusters_health';
+import getPrimaryClusterUuid from '../../../lib/get_primary_cluster_uuid';
 import getKibanasForClusters from '../../../lib/get_kibanas_for_clusters';
 import calculateOverallStatus from '../../../lib/calculate_overall_status';
 import getLastState from '../../../lib/get_last_state';
@@ -68,6 +69,7 @@ export default function clustersRoutes(server) {
         return getClusters(req, esIndices)
         .then(getClustersStats(req))
         .then(getClustersHealth(req))
+        .then(getPrimaryClusterUuid(req))
         .then(clusters => {
           const mapClusters = getKibanasForClusters(req, kibanaIndices, 'route-clusters');
           return mapClusters(clusters)

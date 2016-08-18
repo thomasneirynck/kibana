@@ -41,6 +41,8 @@ export default class ClusterRow extends React.Component {
         <td key="Name">
           <a className='clusterName' onClick={(event) => this.changeCluster(event) }>
             { get('cluster_name') }
+            &nbsp;
+            { get('isPrimary') ? <i className="fa fa-star" title="Kibana uses this cluster as the primary connection"></i> : ''}
           </a>
         </td>
         <td key="Status">
