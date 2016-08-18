@@ -17,8 +17,11 @@ uiModules.get('kibana')
 
 uiModules.get('kibana')
 .run(($http, $interval, reportingJobQueue, Private) => {
-  const user = Private(User);
-  const shouldPoll = !!user.get();
+  const user = Private(User).getCurrent();
+  const isSecurityEnabled = user !== null;
+  const isUserSignedIn = isSecurityEnabled && !!user;
+
+  const shouldPoll = !isSecurityEnabled || isUserSignedIn;
 
   if (shouldPoll) {
     $interval(function startChecking() {
