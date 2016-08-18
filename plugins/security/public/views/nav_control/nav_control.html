@@ -1,6 +1,6 @@
 <div ng-controller="securityNavController" ng-show="!!me()">
   <global-nav-link
-    kbn-route="'#account'"
+    kbn-route="'/app/kibana#account'"
     icon="'plugins/security/images/person.svg'"
     tooltip-content="formatTooltip(me().full_name || me().username)"
     title="me().full_name || me().username"
