@@ -1,15 +1,10 @@
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
-
-export default function User(Private, $injector) {
-  const xpackInfo = Private(XPackInfoProvider);
+export default function User($injector) {
   return {
     /**
-     * @return null, if security is disabled OR undefined if user is not signed-in OR signed-in user object
+     * @return null, if security services are not available OR undefined if user is not signed-in OR signed-in user object
      **/
     getCurrent() {
-      // If security is disabled, return early because we can't use the
-      // ShieldUser service as it won't be available
-      if (!xpackInfo.get('features.security.allowLogin')) {
+      if (!$injector.has('ShieldUser')) {
         return null;
       }
 
