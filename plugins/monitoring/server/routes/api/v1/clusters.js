@@ -16,7 +16,7 @@ import getShardStats from '../../../lib/get_shard_stats';
 import calculateClusterStatus from '../../../lib/elasticsearch/calculate_cluster_status';
 import handleError from '../../../lib/handle_error';
 
-// manipulate cluster status
+// manipulate cluster status and license meta data
 function normalizeClustersData(clusters) {
   clusters.forEach(cluster => {
     cluster.elasticsearch = {
@@ -33,6 +33,17 @@ function normalizeClustersData(clusters) {
     delete cluster.nodes;
     delete cluster.indices;
   });
+
+  // if all clusters are basic, UI will allow the user to get into the primary cluster
+  const basicClusters = clusters.filter((cluster) => {
+    return cluster.license.type === 'basic';
+  });
+  if (basicClusters.length === clusters.length) {
+    clusters.forEach((cluster) => {
+      _.set(cluster, 'allBasicClusters', true);
+    });
+  }
+
   return clusters;
 }
 

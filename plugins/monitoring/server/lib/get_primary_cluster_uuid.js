@@ -9,6 +9,7 @@ export default function getPrimaryClusterUuid(req) {
     const primaryClusterUuid = get(metadata, 'metadata.cluster_uuid');
     const primaryCluster = find(clusters, { cluster_uuid: primaryClusterUuid });
     set(primaryCluster, 'isPrimary', true);
+
     return clusters;
   };
 }

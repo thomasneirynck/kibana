@@ -6,9 +6,14 @@ import statusIconClass from '../../../lib/status_icon_class';
 
 export default class ClusterRow extends React.Component {
 
+  isSupported() {
+    return this.props.license.type !== 'basic' || (this.props.isPrimary && this.props.allBasicClusters);
+  }
+
   changeCluster() {
-    if (this.props.license.type === 'basic') return;
-    this.props.changeCluster(this.props.cluster_uuid);
+    if (this.isSupported()) {
+      this.props.changeCluster(this.props.cluster_uuid);
+    }
   }
 
   render() {
@@ -29,10 +34,10 @@ export default class ClusterRow extends React.Component {
     }
 
     const classes = ['big'];
-    let notBasic = true;
-    if (get('license.type') === 'basic') {
+    let isSupported = true;
+    if (!this.isSupported()) {
       classes.push('basic');
-      notBasic = false;
+      isSupported = false;
     }
 
     const iconClass = statusIconClass(get('status'));
@@ -50,10 +55,10 @@ export default class ClusterRow extends React.Component {
             <i className={iconClass} title={_.capitalize(this.props.status)}></i>
           </span>
         </td>
-        <td key="Nodes">{ notBasic ? numeral(get('elasticsearch.stats.nodes.count.total')).format('0,0') : '-' }</td>
-        <td key="Indices">{ notBasic ? numeral(get('elasticsearch.stats.indices.count')).format('0,0') : '-' }</td>
-        <td key="Data">{ notBasic ? numeral(get('elasticsearch.stats.indices.store.size_in_bytes')).format('0,0[.]0 b') : '-' }</td>
-        <td key="Kibana">{ notBasic ? numeral(get('kibana.count')).format('0,0') : '-' }</td>
+        <td key="Nodes">{ isSupported ? numeral(get('elasticsearch.stats.nodes.count.total')).format('0,0') : '-' }</td>
+        <td key="Indices">{ isSupported ? numeral(get('elasticsearch.stats.indices.count')).format('0,0') : '-' }</td>
+        <td key="Data">{ isSupported ? numeral(get('elasticsearch.stats.indices.store.size_in_bytes')).format('0,0[.]0 b') : '-' }</td>
+        <td key="Kibana">{ isSupported ? numeral(get('kibana.count')).format('0,0') : '-' }</td>
         <td key="License" className="license">
           <div className="license">{ _.capitalize(get('license.type')) }</div>
           { licenseExpiry }

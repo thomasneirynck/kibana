@@ -15,9 +15,14 @@ export default function routeInitProvider(Private, monitoringClusters, globalSta
     return (new Date()).getTime() < expiryDateInMillis;
   }
 
-  // returns true if license is not basic or if the data just has a single cluster
-  function isClusterSupported(isBasic, clusters) {
-    return (!isBasic || clusters.length === 1);
+  /*
+   * returns true if:
+   * license is not basic or
+   * the data just has a single cluster or
+   * all the clusters are basic and this is the primary cluster
+   */
+  function isClusterSupported(isBasic, cluster, clusters) {
+    return (!isBasic || clusters.length === 1 || (cluster.isPrimary && cluster.allBasicClusters));
   }
 
   return function routeInit() {
@@ -54,7 +59,7 @@ export default function routeInitProvider(Private, monitoringClusters, globalSta
       }
 
       // check if we need to redirect because of check if multi-cluster monitoring, and if its allowed
-      if (!isOnPage('home') && !isClusterSupported(license.isBasic(), clusters)) {
+      if (!isOnPage('home') && !isClusterSupported(license.isBasic(), cluster, clusters)) {
         return kbnUrl.redirect('/home');
       }
 
