@@ -54,6 +54,7 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
 
     $scope.saveRole = (role) => {
       role.indices = role.indices.filter((index) => index.names.length);
+      role.indices.forEach((index) => index.query || delete index.query);
       role.$save()
       .then(() => notifier.info('The role has been updated.'))
       .then($scope.goToRoleList)
