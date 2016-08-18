@@ -19,7 +19,7 @@ uiModules.get('kibana')
 .run(($http, $interval, reportingJobQueue, Private) => {
   const user = Private(User).getCurrent();
   const isSecurityEnabled = user !== null;
-  const isUserSignedIn = isSecurityEnabled && !!user;
+  const isUserSignedIn = !!user;
 
   const shouldPoll = !isSecurityEnabled || isUserSignedIn;
 
