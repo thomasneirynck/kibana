@@ -1,4 +1,4 @@
-export default function User($injector) {
+export default function UserProvider($injector) {
   return {
     /**
      * @return null, if security services are not available OR undefined if user is not signed-in OR signed-in user object

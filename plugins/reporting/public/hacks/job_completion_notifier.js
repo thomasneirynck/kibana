@@ -5,7 +5,7 @@ import { get, last } from 'lodash';
 import moment from 'moment';
 import constants from '../../server/lib/constants.js';
 import 'plugins/reporting/services/job_queue';
-import User from 'plugins/reporting/services/user';
+import UserProvider from 'plugins/xpack_main/services/user';
 
 uiModules.get('kibana')
 .config(() => {
@@ -17,7 +17,7 @@ uiModules.get('kibana')
 
 uiModules.get('kibana')
 .run(($http, $interval, reportingJobQueue, Private) => {
-  const user = Private(User).getCurrent();
+  const user = Private(UserProvider).getCurrent();
   const isSecurityEnabled = user !== null;
   const isUserSignedIn = !!user;
 
