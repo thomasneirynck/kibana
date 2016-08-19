@@ -17,7 +17,7 @@ import calcAuto from './calculate_auto';
 import metrics from './metrics';
 import mapListingResponse from './map_listing_response';
 
-export default function getListingIndices(req, indices) {
+export default function getListingIndices(req, indices, showSystemIndices = false) {
   const config = req.server.config();
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const listingMetrics = req.payload.listingMetrics || [];
@@ -27,8 +27,17 @@ export default function getListingIndices(req, indices) {
   const uuid = req.params.clusterUuid;
   const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
   const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
-
   const metricFields = ElasticsearchMetric.getMetricFields();
+  const filters = [];
+
+  if (!showSystemIndices) {
+    filters.push({
+      bool: { must_not: [
+        { prefix: { 'index_stats.index': '.' } }
+      ] }
+    });
+  }
+
   const params = {
     index: indices,
     meta: 'get_listing_indices',
@@ -41,7 +50,9 @@ export default function getListingIndices(req, indices) {
         start,
         end,
         uuid,
-        metric: metricFields }),
+        metric: metricFields,
+        filters
+      }),
       aggs: {}
     }
   };

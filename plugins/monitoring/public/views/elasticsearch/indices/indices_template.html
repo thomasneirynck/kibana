@@ -3,6 +3,9 @@
     <div class="details monitoring-indices monitoring-view">
       <div class="col-md-12">
         <monitoring-cluster-status-elasticsearch></monitoring-cluster-status-elasticsearch>
+
+        <p><input type="checkbox" ng-model="showSystemToggle" ng-change="toggleShowSystemIndices(this.showSystemToggle)"/> Show system indices</p>
+
         <monitoring-index-listing data="pageData.rows"></monitoring-index-listing>
       </div>
     </div>

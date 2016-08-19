@@ -25,6 +25,7 @@ export default function indicesRoutes(server) {
           clusterUuid: Joi.string().required()
         }),
         payload: Joi.object({
+          showSystemIndices: Joi.boolean().default(false),
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
@@ -36,13 +37,14 @@ export default function indicesRoutes(server) {
     handler: (req, reply) => {
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
+      const showSystemIndices = req.payload.showSystemIndices;
       calculateIndices(req, start, end, esIndexPattern)
       .then(indices => {
         return getLastState(req, indices)
         .then(lastState => {
           return Promise.props({
             clusterStatus: getClusterStatus(req, indices, lastState),
-            rows: getListing(req, indices),
+            rows: getListing(req, indices, showSystemIndices),
             shardStats: getShardStats(req, indices, lastState)
           });
         });
