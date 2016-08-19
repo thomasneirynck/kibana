@@ -1,5 +1,6 @@
 import { identity } from 'lodash';
 import uiModules from 'ui/modules';
+import 'plugins/security/services/login_page';
 
 function isUnauthorizedResponseAllowed(response) {
   const API_WHITELIST = [
@@ -11,9 +12,13 @@ function isUnauthorizedResponseAllowed(response) {
 }
 
 const module = uiModules.get('security');
-module.factory('onUnauthorizedResponse', ($q, $window, chrome) => {
+module.factory('onUnauthorizedResponse', ($q, $window, chrome, LoginPage, Promise) => {
   function interceptor(response, handleResponse) {
-    if (response.status === 401 && !isUnauthorizedResponseAllowed(response)) {
+    if (response.status === 401) {
+      if (LoginPage.isOnLoginPage() || isUnauthorizedResponseAllowed(response)) {
+        return Promise.halt();
+      }
+
       const next = chrome.removeBasePath(`${window.location.pathname}${window.location.hash}`);
       const msg = 'SESSION_EXPIRED';
       $window.location.href = chrome.addBasePath(`/logout?next=${encodeURIComponent(next)}&msg=${encodeURIComponent(msg)}`);
