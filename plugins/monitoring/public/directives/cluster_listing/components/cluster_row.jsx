@@ -6,12 +6,12 @@ import statusIconClass from '../../../lib/status_icon_class';
 
 export default class ClusterRow extends React.Component {
 
-  isSupported() {
+  checkSupported() {
     return this.props.license.type !== 'basic' || (this.props.isPrimary && this.props.allBasicClusters);
   }
 
   changeCluster() {
-    if (this.isSupported()) {
+    if (this.checkSupported()) {
       this.props.changeCluster(this.props.cluster_uuid);
     }
   }
@@ -34,10 +34,9 @@ export default class ClusterRow extends React.Component {
     }
 
     const classes = ['big'];
-    let isSupported = true;
-    if (!this.isSupported()) {
+    const isSupported = this.checkSupported();
+    if (!isSupported) {
       classes.push('basic');
-      isSupported = false;
     }
 
     const iconClass = statusIconClass(get('status'));
