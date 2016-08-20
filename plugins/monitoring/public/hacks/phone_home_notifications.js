@@ -1,5 +1,6 @@
 import Notifier from 'ui/notify/notifier';
 import uiModules from 'ui/modules';
+import UserProvider from 'plugins/xpack_main/services/user';
 import 'plugins/monitoring/services/features';
 import { PHONE_HOME_FEATURE, PHONE_HOME_NOTIFICATION_SEEN } from '../../lib/constants';
 
@@ -49,14 +50,18 @@ function showNotification(features) {
   });
 }
 
-function customNotification(reportStats, LoginPage, features) {
+function customNotification(reportStats, Private, features) {
   // exit if the server config has phone home disabled
   if (!reportStats) {
     return;
   }
 
-  // no welcome notifications for login page
-  if (LoginPage.isOnLoginPage()) {
+  // no welcome message for non-logged in users
+  const user = Private(UserProvider).getCurrent();
+  const isSecurityEnabled = user !== null;
+  const isUserSignedIn = !!user;
+
+  if (isSecurityEnabled && !isUserSignedIn) {
     return;
   }
 

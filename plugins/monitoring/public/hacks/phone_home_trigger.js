@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import uiModules from 'ui/modules';
+import UserProvider from 'plugins/xpack_main/services/user';
 import 'plugins/monitoring/services/clusters';
 
 function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, statsReportUrl, features) {
@@ -129,9 +130,13 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
 }
 
 
-function phoneHomeStart(LoginPage, Private) {
-  // no phone home for login page
-  if (LoginPage.isOnLoginPage()) {
+function phoneHomeStart(Private) {
+  // no phone home for non-logged in users
+  const user = Private(UserProvider).getCurrent();
+  const isSecurityEnabled = user !== null;
+  const isUserSignedIn = !!user;
+
+  if (isSecurityEnabled && !isUserSignedIn) {
     return;
   }
 
