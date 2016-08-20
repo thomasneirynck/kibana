@@ -1,5 +1,6 @@
 import Boom from 'boom';
 import Promise from 'bluebird';
+import { get } from 'lodash';
 
 /**
  * Creates a hapi authenticate function that conditionally
@@ -35,7 +36,7 @@ export default function factory({ redirectUrl, strategies, testRequest, xpackMai
     return Promise.any(strategies.map((strategy) => testRequestAsync(strategy, request)))
     .then((credentials) => reply.continue({ credentials }))
     .catch(() => {
-      if (shouldRedirect(request.raw.req)) {
+      if (shouldRedirect(request)) {
         reply.redirect(redirectUrl(request.url.path));
       } else {
         reply(Boom.unauthorized());
@@ -44,6 +45,7 @@ export default function factory({ redirectUrl, strategies, testRequest, xpackMai
   };
 };
 
-export function shouldRedirect(req) {
-  return !req.headers['kbn-version'];
+export function shouldRedirect(request) {
+  if (get(request.raw.req.headers, 'kbn-version')) return false;
+  return true;
 };
