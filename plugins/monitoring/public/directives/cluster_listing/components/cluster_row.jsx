@@ -7,7 +7,7 @@ import statusIconClass from '../../../lib/status_icon_class';
 export default class ClusterRow extends React.Component {
 
   checkSupported() {
-    return this.props.license.type !== 'basic' || (this.props.isPrimary && this.props.allBasicClusters);
+    return this.props.license && (this.props.license.type !== 'basic' || (this.props.isPrimary && this.props.allBasicClusters));
   }
 
   changeCluster() {
@@ -23,15 +23,37 @@ export default class ClusterRow extends React.Component {
       return _.get(self.props, path);
     }
 
-    let licenseExpiry = (
-      <div className="expires">
-        Expires { moment(get('license.expiry_date_in_millis')).format('D MMM YY') }
-      </div>
-    );
 
-    if (get('license.expiry_date_in_millis') < moment().valueOf()) {
-      licenseExpiry = (<div className="expires expired">Expired</div>);
-    }
+
+    const licenseInfo = (() => {
+      if (get('license')) {
+        const licenseExpiry = (() => {
+          if (get('license.expiry_date_in_millis') < moment().valueOf()) {
+            // license is expired
+            return <div className="expires expired">Expired</div>;
+          }
+
+          // license is fine
+          return (
+            <div className="expires">
+              Expires { moment(get('license.expiry_date_in_millis')).format('D MMM YY') }
+            </div>
+          );
+        }());
+
+        return (
+          <div>
+            <div className="license">{ _.capitalize(get('license.type')) }</div>
+            { licenseExpiry }
+          </div>
+        );
+      }
+
+      // there is no license!
+      return (
+        <div className="license">None</div>
+      );
+    }());
 
     const classes = ['big'];
     const isSupported = this.checkSupported();
@@ -62,8 +84,7 @@ export default class ClusterRow extends React.Component {
         <td key="Data">{ isSupported ? numeral(get('elasticsearch.stats.indices.store.size_in_bytes')).format('0,0[.]0 b') : '-' }</td>
         <td key="Kibana">{ isSupported ? numeral(get('kibana.count')).format('0,0') : '-' }</td>
         <td key="License" className="license">
-          <div className="license">{ _.capitalize(get('license.type')) }</div>
-          { licenseExpiry }
+          { licenseInfo }
         </td>
       </tr>
     );
