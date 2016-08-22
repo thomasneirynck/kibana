@@ -85,7 +85,7 @@ const metricInstances = {
   'index_mem_overall': new SingleIndexMemoryMetric({
     field: 'memory_in_bytes',
     label: 'Lucene Total',
-    description: 'Total heap memory used by Lucene for current index. This is a summation of other fields for primary and replica shards.'
+    description: 'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards.'
   }),
   'index_mem_doc_values': new SingleIndexMemoryMetric({
     field: 'doc_values_memory_in_bytes',
@@ -227,7 +227,7 @@ const metricInstances = {
   'node_index_mem_overall': new NodeIndexMemoryMetric({
     field: 'memory_in_bytes',
     label: 'Lucene Total',
-    description: 'Total heap memory used by Lucene for current index. This is a summation of other fields for primary and replica shards on this node.'
+    description: 'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards on this node.'
   }),
   'node_index_mem_doc_values': new NodeIndexMemoryMetric({
     field: 'doc_values_memory_in_bytes',
