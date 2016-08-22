@@ -1,3 +1,4 @@
+import angular from 'angular';
 import _ from 'lodash';
 import numeral from 'numeral';
 import $ from 'jquery';
@@ -5,12 +6,14 @@ import moment from 'moment';
 import VislibComponentsColorColorPaletteProvider from 'ui/vislib/components/color/color_palette';
 import uiModules from 'ui/modules';
 import template from 'plugins/monitoring/directives/chart/index.html';
+import descriptionTemplate from './description_template.html';
 import 'flot-charts/jquery.flot';
 import 'flot-charts/jquery.flot.time';
 import 'flot-charts/jquery.flot.canvas';
 import 'flot-charts/jquery.flot.symbol';
 import 'flot-charts/jquery.flot.crosshair';
 import 'flot-charts/jquery.flot.selection';
+import 'ui/tooltip';
 
 const appColors = Object.freeze({
   elasticsearch: '#3ebeb0',
@@ -22,7 +25,7 @@ function get(series, attr) {
 }
 
 const uiModule = uiModules.get('plugins/monitoring/directives', []);
-uiModule.directive('monitoringChart', () => {
+uiModule.directive('monitoringChart', ($compile) => {
   return {
     restrict: 'E',
     template,
@@ -30,6 +33,8 @@ uiModule.directive('monitoringChart', () => {
       series: '='
     },
     link($scope) {
+      const compiledDescription = $compile(descriptionTemplate);
+
       $scope.$watch('series', series => {
         const seriesGet = _.partial(get, series);
 
@@ -56,9 +61,20 @@ uiModule.directive('monitoringChart', () => {
           return units;
         }());
 
-        // Commenting because some descriptions are wrong. If they are
-        // corrected, they can be shown in the UI as title text in the header
-        // $scope.description = seriesGet('metric.description');
+        const descriptions = _.assign($scope.$new(true), (() => {
+          return {
+            descriptions: series.map((chartData) => {
+              return {
+                label: _.escape(_.get(chartData, 'metric.label')),
+                description: _.escape(_.get(chartData, 'metric.description'))
+              };
+            })
+          };
+        }()));
+        const descriptionEl = compiledDescription(descriptions);
+        $scope.$evalAsync(() => {
+          $scope.description = descriptionEl.prop('outerHTML');
+        });
       });
     }
   };
