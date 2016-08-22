@@ -85,7 +85,7 @@ class ElasticsearchPanel extends React.Component {
                 </a>
               </dt>
               <dd>Doc Count: {formatNumber(indices.docs.count, 'int_commas')}</dd>
-              <dd>Min. Shard Replication: {_.get(indices, 'shards.index.replication.min')}</dd>
+              <dd>Min. Shard Replication: {_.get(indices, 'shards.index.replication.min') || 'N/A'}</dd>
               <dd>Total Shards: {formatNumber(_.get(indices, 'shards.total'), 'int_commas')}</dd>
               <dd>Data Store: {formatNumber(indices.store.size_in_bytes, 'bytes')}</dd>
             </dl>
