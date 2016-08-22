@@ -52,9 +52,10 @@ export default class ClusterRow extends React.Component {
           </a>
         </td>
         <td key="Status">
+          { isSupported ?
           <span className={`status status-${get('status')}`}>
             <i className={iconClass} title={_.capitalize(this.props.status)}></i>
-          </span>
+          </span> : '-' }
         </td>
         <td key="Nodes">{ isSupported ? numeral(get('elasticsearch.stats.nodes.count.total')).format('0,0') : '-' }</td>
         <td key="Indices">{ isSupported ? numeral(get('elasticsearch.stats.indices.count')).format('0,0') : '-' }</td>
