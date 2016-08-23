@@ -46,7 +46,8 @@ export default function factory({ redirectUrl, strategies, testRequest, xpackMai
 };
 
 export function shouldRedirect(request) {
-  if (contains(request.route.settings.tags, 'api')) return false;
-  if (get(request.raw.req.headers, 'kbn-version')) return false;
-  return true;
+  const isApiRoute = contains(request.route.settings.tags, 'api');
+  const isAjaxRequest = Boolean(get(request.raw.req.headers, 'kbn-version'));
+
+  return !isApiRoute && !isAjaxRequest;
 };
