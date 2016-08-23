@@ -54,7 +54,7 @@ export default function routeInitProvider(Private, monitoringClusters, globalSta
       license.setLicenseType(clusterLicense.type);
 
       // check if we need to redirect because of license expiration
-      if (!isOnPage('license') && !isLicenseFresh(clusterLicense.expiry_date_in_millis)) {
+      if (!(isOnPage('license') || isOnPage('home')) && !isLicenseFresh(clusterLicense.expiry_date_in_millis)) {
         return kbnUrl.redirect('/license');
       }
 
