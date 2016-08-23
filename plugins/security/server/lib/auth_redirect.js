@@ -2,6 +2,9 @@ import Boom from 'boom';
 import Promise from 'bluebird';
 import { contains, get } from 'lodash';
 
+const ROUTE_TAG_API = 'api';
+const KIBANA_XSRF_HEADER = 'kbn-version';
+
 /**
  * Creates a hapi authenticate function that conditionally
  * redirects on auth failure
@@ -46,8 +49,8 @@ export default function factory({ redirectUrl, strategies, testRequest, xpackMai
 };
 
 export function shouldRedirect(request) {
-  const isApiRoute = contains(request.route.settings.tags, 'api');
-  const isAjaxRequest = Boolean(get(request.raw.req.headers, 'kbn-version'));
+  const isApiRoute = contains(request.route.settings.tags, ROUTE_TAG_API);
+  const isAjaxRequest = Boolean(get(request.raw.req.headers, KIBANA_XSRF_HEADER));
 
   return !isApiRoute && !isAjaxRequest;
 };
