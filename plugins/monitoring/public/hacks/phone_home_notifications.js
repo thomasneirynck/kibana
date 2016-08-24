@@ -40,7 +40,6 @@ function showNotification(features) {
   notify.directive(directive, {
     type: 'banner',
     lifetime: Infinity,
-    truncationLength: 500,
     actions: [{
       text: 'Dismiss',
       callback() {
