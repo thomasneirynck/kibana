@@ -18,30 +18,30 @@ module.exports = function (server) {
     path: `${mainEntry}/visualization/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('visualization', request, reply),
-    config: licensePre({
+    config: {
       tags: ['api'],
-      pre: [ userPreRouting ],
-    })
+      pre: [ userPreRouting, licensePre ],
+    }
   });
 
   server.route({
     path: `${mainEntry}/search/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('search', request, reply),
-    config: licensePre({
+    config: {
       tags: ['api'],
-      pre: [ userPreRouting ],
-    })
+      pre: [ userPreRouting, licensePre ],
+    }
   });
 
   server.route({
     path: `${mainEntry}/dashboard/{savedId}`,
     method: 'GET',
     handler: (request, reply) => pdfHandler('dashboard', request, reply),
-    config: licensePre({
+    config: {
       tags: ['api'],
-      pre: [ userPreRouting ],
-    })
+      pre: [ userPreRouting, licensePre ],
+    }
   });
 
   function pdfHandler(objectType, request, reply) {
