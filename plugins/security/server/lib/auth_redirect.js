@@ -1,5 +1,9 @@
 import Boom from 'boom';
 import Promise from 'bluebird';
+import { contains, get } from 'lodash';
+
+const ROUTE_TAG_API = 'api';
+const KIBANA_XSRF_HEADER = 'kbn-version';
 
 /**
  * Creates a hapi authenticate function that conditionally
@@ -35,7 +39,7 @@ export default function factory({ redirectUrl, strategies, testRequest, xpackMai
     return Promise.any(strategies.map((strategy) => testRequestAsync(strategy, request)))
     .then((credentials) => reply.continue({ credentials }))
     .catch(() => {
-      if (shouldRedirect(request.raw.req)) {
+      if (shouldRedirect(request)) {
         reply.redirect(redirectUrl(request.url.path));
       } else {
         reply(Boom.unauthorized());
@@ -44,6 +48,9 @@ export default function factory({ redirectUrl, strategies, testRequest, xpackMai
   };
 };
 
-export function shouldRedirect(req) {
-  return !req.headers['kbn-version'];
+export function shouldRedirect(request) {
+  const isApiRoute = contains(request.route.settings.tags, ROUTE_TAG_API);
+  const isAjaxRequest = Boolean(get(request.raw.req.headers, KIBANA_XSRF_HEADER));
+
+  return !isApiRoute && !isAjaxRequest;
 };
