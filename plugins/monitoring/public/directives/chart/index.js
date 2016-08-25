@@ -1,4 +1,3 @@
-import angular from 'angular';
 import _ from 'lodash';
 import numeral from 'numeral';
 import $ from 'jquery';

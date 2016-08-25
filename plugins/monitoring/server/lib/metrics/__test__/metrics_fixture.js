@@ -55,7 +55,7 @@ export const expected = {
     'timestampField': 'timestamp',
     'calculation': indexingLatencyCalculation,
     'derivative': false,
-    'description': 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This only considers primary shards.',
+    'description': 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This only considers primary shards.', // eslint-disable-line max-len
     'field': 'indices_stats._all.primaries.indexing.index_total',
     'format': '0,0.[00]',
     'label': 'Indexing Latency',
@@ -121,7 +121,7 @@ export const expected = {
     'timestampField': 'timestamp',
     'calculation': queryLatencyCalculation,
     'derivative': false,
-    'description': 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.',
+    'description': 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.', // eslint-disable-line max-len
     'field': 'indices_stats._all.total.search.query_total',
     'format': '0,0.[00]',
     'label': 'Search Latency',
@@ -134,7 +134,7 @@ export const expected = {
     'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
-    'description': 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!',
+    'description': 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!', // eslint-disable-line max-len
     'field': 'indices_stats._all.total.search.query_total',
     'format': '0,0.[00]',
     'title': 'Search Rate',
@@ -186,7 +186,7 @@ export const expected = {
     'timestampField': 'timestamp',
     'calculation': indexingLatencyCalculation,
     'derivative': false,
-    'description': 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This only considers primary shards.',
+    'description': 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This only considers primary shards.', // eslint-disable-line max-len
     'field': 'index_stats.primaries.indexing.index_total',
     'format': '0,0.[00]',
     'label': 'Indexing Latency',
@@ -213,7 +213,7 @@ export const expected = {
     'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
-    'description': 'Heap memory used by Fielddata (e.g., global ordinals or explicitly enabled fielddata on text fields). This is for the same shards, but not a part of Lucene Total.',
+    'description': 'Heap memory used by Fielddata (e.g., global ordinals or explicitly enabled fielddata on text fields). This is for the same shards, but not a part of Lucene Total.', // eslint-disable-line max-len
     'field': 'index_stats.total.fielddata.memory_size_in_bytes',
     'format': '0.0 b',
     'label': 'Fielddata',
@@ -407,7 +407,7 @@ export const expected = {
     'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
-    'description': 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!',
+    'description': 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!', // eslint-disable-line max-len
     'field': 'index_stats.total.search.query_total',
     'format': '0,0.[00]',
     'title': 'Search Rate',
@@ -563,7 +563,7 @@ export const expected = {
     'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
     'derivative': false,
-    'description': 'Delay in Kibana server event loops. Longer delays may indicate blocking events in server thread, such as synchronous functions taking large amount of CPU time.',
+    'description': 'Delay in Kibana server event loops. Longer delays may indicate blocking events in server thread, such as synchronous functions taking large amount of CPU time.', // eslint-disable-line max-len
     'field': 'kibana_stats.process.event_loop_delay',
     'format': '0.[00]',
     'label': 'Event Loop Delay',
@@ -638,7 +638,7 @@ export const expected = {
     'timestampField': 'timestamp',
     'calculation': indexingLatencyCalculation,
     'derivative': false,
-    'description': 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This considers any shard located on this node, including replicas.',
+    'description': 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This considers any shard located on this node, including replicas.', // eslint-disable-line max-len
     'field': 'node_stats.indices.indexing.index_total',
     'format': '0,0.[00]',
     'label': 'Indexing',
@@ -666,7 +666,7 @@ export const expected = {
     'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
-    'description': 'Heap memory used by Fielddata (e.g., global ordinals or explicitly enabled fielddata on text fields). This is for the same shards, but not a part of Lucene Total.',
+    'description': 'Heap memory used by Fielddata (e.g., global ordinals or explicitly enabled fielddata on text fields). This is for the same shards, but not a part of Lucene Total.', // eslint-disable-line max-len
     'field': 'node_stats.indices.fielddata.memory_size_in_bytes',
     'format': '0.0 b',
     'label': 'Fielddata',
@@ -708,7 +708,7 @@ export const expected = {
     'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
-    'description': 'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards on this node.',
+    'description': 'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards on this node.', // eslint-disable-line max-len
     'field': 'node_stats.indices.segments.memory_in_bytes',
     'format': '0.0 b',
     'label': 'Lucene Total',
@@ -858,7 +858,7 @@ export const expected = {
     'timestampField': 'timestamp',
     'calculation': queryLatencyCalculation,
     'derivative': false,
-    'description': 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.',
+    'description': 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.', // eslint-disable-line max-len
     'field': 'node_stats.indices.search.query_total',
     'format': '0,0.[00]',
     'label': 'Search',
@@ -885,7 +885,7 @@ export const expected = {
     'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
-    'description': 'Number of bulk indexing operations waiting to be processed on this node. A single bulk request can create multiple bulk operations.',
+    'description': 'Number of bulk indexing operations waiting to be processed on this node. A single bulk request can create multiple bulk operations.', // eslint-disable-line max-len
     'field': 'node_stats.thread_pool.bulk.queue',
     'format': '0.[00]',
     'label': 'Bulk',
@@ -955,7 +955,7 @@ export const expected = {
     'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': false,
-    'description': 'Number of search operations waiting to be processed on this node. A single search request can create multiple search operations.',
+    'description': 'Number of search operations waiting to be processed on this node. A single search request can create multiple search operations.', // eslint-disable-line max-len
     'field': 'node_stats.thread_pool.search.queue',
     'format': '0.[00]',
     'label': 'Search',
@@ -1106,7 +1106,7 @@ export const expected = {
     'timestampField': 'timestamp',
     'calculation': queryLatencyCalculation,
     'derivative': false,
-    'description': 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.',
+    'description': 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.', // eslint-disable-line max-len
     'field': 'index_stats.total.search.query_total',
     'format': '0,0.[00]',
     'label': 'Search Latency',
@@ -1119,7 +1119,7 @@ export const expected = {
     'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp',
     'derivative': true,
-    'description': 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!',
+    'description': 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!', // eslint-disable-line max-len
     'field': 'index_stats.total.search.query_total',
     'format': '0,0.[00]',
     'title': 'Search Rate',
@@ -1131,7 +1131,7 @@ export const expected = {
   'node_index_mem_request_cache': {
     'field': 'node_stats.indices.request_cache.memory_size_in_bytes',
     'label': 'Request Cache',
-    'description': 'Heap memory used by Request Cache (e.g., instant aggregations). This is for the same shards, but not a part of Lucene Total.',
+    'description': 'Heap memory used by Request Cache (e.g., instant aggregations). This is for the same shards, but not a part of Lucene Total.', // eslint-disable-line max-len
     'type': 'index',
     'title': 'Index Memory',
     'format': '0.0 b',
@@ -1173,7 +1173,7 @@ export const expected = {
   'index_mem_request_cache': {
     'field': 'index_stats.total.request_cache.memory_size_in_bytes',
     'label': 'Request Cache',
-    'description': 'Heap memory used by Request Cache (e.g., instant aggregations). This is for the same shards, but not a part of Lucene Total.',
+    'description': 'Heap memory used by Request Cache (e.g., instant aggregations). This is for the same shards, but not a part of Lucene Total.', // eslint-disable-line max-len
     'type': 'index',
     'title': 'Index Memory',
     'format': '0.0 b',

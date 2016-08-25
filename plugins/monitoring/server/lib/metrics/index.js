@@ -29,7 +29,7 @@ const metricInstances = {
     field: 'indices_stats._all.total.search.query_total',
     title: 'Search Rate',
     label: 'Total Shards',
-    description: 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!',
+    description: 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!', // eslint-disable-line max-len
     type: 'cluster'
   }),
   'cluster_index_latency': new LatencyMetric({
@@ -37,7 +37,7 @@ const metricInstances = {
     fieldSource: 'indices_stats._all.primaries',
     field: 'indices_stats._all.primaries.indexing.index_total',
     label: 'Indexing Latency',
-    description: 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This only considers primary shards.',
+    description: 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This only considers primary shards.', // eslint-disable-line max-len
     type: 'cluster'
   }),
   'node_index_latency': new LatencyMetric({
@@ -46,7 +46,7 @@ const metricInstances = {
     field: 'node_stats.indices.indexing.index_total',
     title: 'Latency',
     label: 'Indexing',
-    description: 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This considers any shard located on this node, including replicas.',
+    description: 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This considers any shard located on this node, including replicas.', // eslint-disable-line max-len
     type: 'node'
   }),
   'index_latency': new LatencyMetric({
@@ -54,7 +54,7 @@ const metricInstances = {
     fieldSource: 'index_stats.primaries',
     field: 'index_stats.primaries.indexing.index_total',
     label: 'Indexing Latency',
-    description: 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This only considers primary shards.',
+    description: 'Average latency for indexing documents, which is time it takes to index documents divided by number that were indexed. This only considers primary shards.', // eslint-disable-line max-len
     type: 'cluster'
   }),
   'cluster_query_latency': new LatencyMetric({
@@ -62,7 +62,7 @@ const metricInstances = {
     fieldSource: 'indices_stats._all.total',
     field: 'indices_stats._all.total.search.query_total',
     label: 'Search Latency',
-    description: 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.',
+    description: 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.', // eslint-disable-line max-len
     type: 'cluster'
   }),
   'node_query_latency': new LatencyMetric({
@@ -71,7 +71,7 @@ const metricInstances = {
     field: 'node_stats.indices.search.query_total',
     title: 'Latency',
     label: 'Search',
-    description: 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.',
+    description: 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.', // eslint-disable-line max-len
     type: 'node'
   }),
   'query_latency': new LatencyMetric({
@@ -79,7 +79,7 @@ const metricInstances = {
     fieldSource: 'index_stats.total',
     field: 'index_stats.total.search.query_total',
     label: 'Search Latency',
-    description: 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.',
+    description: 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.', // eslint-disable-line max-len
     type: 'cluster'
   }),
   'index_mem_overall': new SingleIndexMemoryMetric({
@@ -96,7 +96,7 @@ const metricInstances = {
   'index_mem_fielddata': new IndexMemoryMetric({
     field: 'index_stats.total.fielddata.memory_size_in_bytes',
     label: 'Fielddata',
-    description: 'Heap memory used by Fielddata (e.g., global ordinals or explicitly enabled fielddata on text fields). This is for the same shards, but not a part of Lucene Total.',
+    description: 'Heap memory used by Fielddata (e.g., global ordinals or explicitly enabled fielddata on text fields). This is for the same shards, but not a part of Lucene Total.', // eslint-disable-line max-len
     type: 'index'
   }),
   'index_mem_fixed_bit_set': new SingleIndexMemoryMetric({
@@ -125,7 +125,7 @@ const metricInstances = {
   'index_mem_request_cache': new IndexMemoryMetric({
     field: 'index_stats.total.request_cache.memory_size_in_bytes',
     label: 'Request Cache',
-    description: 'Heap memory used by Request Cache (e.g., instant aggregations). This is for the same shards, but not a part of Lucene Total.',
+    description: 'Heap memory used by Request Cache (e.g., instant aggregations). This is for the same shards, but not a part of Lucene Total.', // eslint-disable-line max-len
     type: 'index'
   }),
   'index_mem_stored_fields': new SingleIndexMemoryMetric({
@@ -184,7 +184,7 @@ const metricInstances = {
     field: 'index_stats.total.search.query_total',
     title: 'Search Rate',
     label: 'Total Shards',
-    description: 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!',
+    description: 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!', // eslint-disable-line max-len
     type: 'cluster'
   }),
   'node_cpu_utilization': new ElasticsearchMetric({
@@ -227,7 +227,7 @@ const metricInstances = {
   'node_index_mem_overall': new NodeIndexMemoryMetric({
     field: 'memory_in_bytes',
     label: 'Lucene Total',
-    description: 'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards on this node.'
+    description: 'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards on this node.' // eslint-disable-line max-len
   }),
   'node_index_mem_doc_values': new NodeIndexMemoryMetric({
     field: 'doc_values_memory_in_bytes',
@@ -238,7 +238,7 @@ const metricInstances = {
   'node_index_mem_fielddata': new IndexMemoryMetric({
     field: 'node_stats.indices.fielddata.memory_size_in_bytes',
     label: 'Fielddata',
-    description: 'Heap memory used by Fielddata (e.g., global ordinals or explicitly enabled fielddata on text fields). This is for the same shards, but not a part of Lucene Total.',
+    description: 'Heap memory used by Fielddata (e.g., global ordinals or explicitly enabled fielddata on text fields). This is for the same shards, but not a part of Lucene Total.', // eslint-disable-line max-len
     type: 'node'
   }),
   'node_index_mem_fixed_bit_set': new NodeIndexMemoryMetric({
@@ -267,7 +267,7 @@ const metricInstances = {
   'node_index_mem_request_cache': new IndexMemoryMetric({
     field: 'node_stats.indices.request_cache.memory_size_in_bytes',
     label: 'Request Cache',
-    description: 'Heap memory used by Request Cache (e.g., instant aggregations). This is for the same shards, but not a part of Lucene Total.',
+    description: 'Heap memory used by Request Cache (e.g., instant aggregations). This is for the same shards, but not a part of Lucene Total.', // eslint-disable-line max-len
     type: 'index'
   }),
   'node_index_mem_stored_fields': new NodeIndexMemoryMetric({
@@ -307,7 +307,7 @@ const metricInstances = {
   'node_threads_queued_bulk': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.bulk.queue',
     label: 'Bulk',
-    description: 'Number of bulk indexing operations waiting to be processed on this node. A single bulk request can create multiple bulk operations.'
+    description: 'Number of bulk indexing operations waiting to be processed on this node. A single bulk request can create multiple bulk operations.' // eslint-disable-line max-len
   }),
   'node_threads_queued_generic': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.generic.queue',
@@ -333,7 +333,7 @@ const metricInstances = {
   'node_threads_queued_search': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.search.queue',
     label: 'Search',
-    description: 'Number of search operations waiting to be processed on this node. A single search request can create multiple search operations.'
+    description: 'Number of search operations waiting to be processed on this node. A single search request can create multiple search operations.' // eslint-disable-line max-len
   }),
   'node_threads_queued_watcher': new ThreadPoolQueueMetric({
     field: 'node_stats.thread_pool.watcher.queue',
@@ -398,7 +398,7 @@ const metricInstances = {
     field: 'index_stats.total.search.query_total',
     title: 'Search Rate',
     label: 'Total Shards',
-    description: 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!',
+    description: 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!', // eslint-disable-line max-len
     type: 'index'
   }),
   'index_merge_rate': new RequestRateMetric({
@@ -470,7 +470,7 @@ const metricInstances = {
   'kibana_process_delay': new KibanaMetric({
     field: 'kibana_stats.process.event_loop_delay',
     label: 'Event Loop Delay',
-    description: 'Delay in Kibana server event loops. Longer delays may indicate blocking events in server thread, such as synchronous functions taking large amount of CPU time.',
+    description: 'Delay in Kibana server event loops. Longer delays may indicate blocking events in server thread, such as synchronous functions taking large amount of CPU time.', // eslint-disable-line max-len
     format: SMALL_FLOAT,
     metricAgg: 'avg',
     units: 'ms'
