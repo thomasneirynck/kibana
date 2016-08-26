@@ -1,6 +1,7 @@
 import notify from 'ui/notify';
 import chrome from 'ui/chrome';
 import uiModules from 'ui/modules';
+import { addSystemApiHeader } from 'ui/system_api';
 import { get, last } from 'lodash';
 import moment from 'moment';
 import constants from '../../server/lib/constants.js';
@@ -45,7 +46,8 @@ function getJobsCompletedSinceLastCheck($http) {
   // Get all jobs in "completed" status since last check, sorted by completion time
   const apiBaseUrl = chrome.addBasePath(constants.API_BASE_URL);
   const url = `${apiBaseUrl}/jobs/list_completed_since?since=${lastCheckedOn}`;
-  return $http.get(url)
+  const headers = addSystemApiHeader({});
+  return $http.get(url, { headers })
   .then(res => {
     res = res.data;
     if (res.length === 0) {

@@ -11,6 +11,13 @@ export default (server) => {
 
     return isValidUser(request, username, password).then(
       () => {
+        // If this is a system API call, do NOT extend the session timeout
+        // NOTE: The header name is hardcoded here because the code to generate it lives in client-side code (in core
+        // Kibana), whereas this code here is server-side and we don't have any code sharing going on at the moment.
+        if (!!request.headers['kbn-system-api']) {
+          return callback(null, true);
+        }
+
         // Keep the session alive
         request.auth.session.set({
           username,
