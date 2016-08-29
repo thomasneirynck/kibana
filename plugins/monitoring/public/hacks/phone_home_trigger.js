@@ -3,14 +3,14 @@ import uiModules from 'ui/modules';
 import UserProvider from 'plugins/xpack_main/services/user';
 import 'plugins/monitoring/services/clusters';
 
-function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, statsReportUrl, features) {
+function phoneHomeClassFactory($window, Promise, monitoringClusters, $http, reportStats, statsReportUrl, features) {
 
   return class PhoneHome {
 
     constructor() {
       this._attributes = {};
       let storedAttributes = {};
-      const monitoringData = localStorage.getItem('xpack.monitoring.data');
+      const monitoringData = $window.localStorage.getItem('xpack.monitoring.data');
 
       try {
         storedAttributes = monitoringData && JSON.parse(monitoringData) || {};
@@ -38,7 +38,7 @@ function phoneHomeClassFactory(Promise, monitoringClusters, $http, reportStats, 
     }
 
     _saveToBrowser() {
-      localStorage.setItem('xpack.monitoring.data', JSON.stringify(this._attributes));
+      $window.localStorage.setItem('xpack.monitoring.data', JSON.stringify(this._attributes));
     }
 
     /*
