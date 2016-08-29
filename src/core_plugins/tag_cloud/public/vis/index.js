@@ -5,6 +5,7 @@ import layoutGenerator from 'plugins/tagcloud/vis/components/layout/generator';
 import chartGenerator from 'plugins/tagcloud/vis/components/visualization/generator';
 
 function vis() {
+
   var events = control();
   var layout = layoutGenerator();
   var chart = chartGenerator();
