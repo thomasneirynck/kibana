@@ -17,13 +17,14 @@ uiModule.directive('monitoringMain', (license) => {
       scope.product = attrs.product; // undefined, elasticsearch, or kibana
       scope.instance = attrs.instance; // undefined or name of index, node, or kibana
       const productIsIn = (checkKey) => scope.product === checkKey;
+
       if (scope.product) {
         scope.inElasticsearch = productIsIn('elasticsearch');
         scope.inKibana = productIsIn('kibana');
       } else {
         scope.product = false;
         scope.inOverview = scope.name === 'overview';
-        scope.inListing = scope.name === 'listing';
+        scope.inListing = scope.name === 'listing' || scope.name === 'no-data';
       }
 
       // hide tabs for some pages (force to select a cluster before drill-in)
