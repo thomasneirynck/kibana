@@ -97,19 +97,66 @@ export const iconChoices = [
 
 export var iconChoicesByClass = {};
 
-for (var i in iconChoices) {
-  var icon = iconChoices[i];
+iconChoices.forEach(icon => {
   iconChoicesByClass[icon.class] = icon;
-}
+});
 
-export function getIconsByClass() {
-  var iconChoicesByClass = {};
-  for (var i in iconChoices) {
-    var icon = iconChoices[i];
-    iconChoicesByClass[icon.class] = icon;
+
+export const drillDownIconChoices = [
+  //Patterns are used to help default icon choices for common field names
+  {
+    class: 'fa-line-chart',
+    code: '\uf201'
+  }, {
+    class: 'fa-pie-chart',
+    code: '\uf200'
+  }, {
+    class: 'fa-area-chart',
+    code: '\uf1fe'
+  }, {
+    class: 'fa-bar-chart',
+    code: '\uf080'
+  }, {
+    class: 'fa-globe',
+    code: '\uf0ac'
+  }, {
+    class: 'fa-file-text-o',
+    code: '\uf0f6'
+  }, {
+    class: 'fa-google',
+    code: '\uf1a0'
+  }, {
+    class: 'fa-eye',
+    code: '\uf06e'
+  }, {
+    class: 'fa-tachometer',
+    code: '\uf0e4'
+  }, {
+    class: 'fa-info',
+    code: '\uf129'
+  }, {
+    class: 'fa-external-link',
+    code: '\uf08e'
+  }, {
+    class: 'fa-table',
+    code: '\uf0ce'
+  }, {
+    class: 'fa-list',
+    code: '\uf03a'
+  }, {
+    class: 'fa-share-alt',
+    code: '\uf1e0'
   }
-  return iconChoicesByClass;
-}
+];
+export var drillDownIconChoicesByClass = {};
+
+drillDownIconChoices.forEach(icon => {
+  drillDownIconChoicesByClass[icon.class] = icon;
+});
+
+
+
+
 
 export const colorChoices = ['#99bde7', '#e3d754', '#8ee684', '#e7974c', '#e4878d', '#67adab',
   '#43ebcc', '#e4b4ea', '#a1a655', '#78b36e'];
