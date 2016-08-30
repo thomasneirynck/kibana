@@ -6,9 +6,14 @@ import statusIconClass from '../../../lib/status_icon_class';
 
 export default class ClusterRow extends React.Component {
 
+  checkSupported() {
+    return this.props.license.type !== 'basic' || (this.props.isPrimary && this.props.allBasicClusters);
+  }
+
   changeCluster() {
-    if (this.props.license.type === 'basic') return;
-    this.props.changeCluster(this.props.cluster_uuid);
+    if (this.checkSupported()) {
+      this.props.changeCluster(this.props.cluster_uuid);
+    }
   }
 
   render() {
@@ -29,10 +34,9 @@ export default class ClusterRow extends React.Component {
     }
 
     const classes = ['big'];
-    let notBasic = true;
-    if (get('license.type') === 'basic') {
+    const isSupported = this.checkSupported();
+    if (!isSupported) {
       classes.push('basic');
-      notBasic = false;
     }
 
     const iconClass = statusIconClass(get('status'));
@@ -41,17 +45,22 @@ export default class ClusterRow extends React.Component {
         <td key="Name">
           <a className='clusterName' onClick={(event) => this.changeCluster(event) }>
             { get('cluster_name') }
+            &nbsp;
+            { get('isPrimary') ?
+              <i className="fa fa-asterisk primary-cluster-indicator" title="Kibana uses this cluster as the primary connection"></i> :
+              '' }
           </a>
         </td>
         <td key="Status">
+          { isSupported ?
           <span className={`status status-${get('status')}`}>
             <i className={iconClass} title={_.capitalize(this.props.status)}></i>
-          </span>
+          </span> : '-' }
         </td>
-        <td key="Nodes">{ notBasic ? numeral(get('elasticsearch.stats.nodes.count.total')).format('0,0') : '-' }</td>
-        <td key="Indices">{ notBasic ? numeral(get('elasticsearch.stats.indices.count')).format('0,0') : '-' }</td>
-        <td key="Data">{ notBasic ? numeral(get('elasticsearch.stats.indices.store.size_in_bytes')).format('0,0[.]0 b') : '-' }</td>
-        <td key="Kibana">{ notBasic ? numeral(get('kibana.count')).format('0,0') : '-' }</td>
+        <td key="Nodes">{ isSupported ? numeral(get('elasticsearch.stats.nodes.count.total')).format('0,0') : '-' }</td>
+        <td key="Indices">{ isSupported ? numeral(get('elasticsearch.stats.indices.count')).format('0,0') : '-' }</td>
+        <td key="Data">{ isSupported ? numeral(get('elasticsearch.stats.indices.store.size_in_bytes')).format('0,0[.]0 b') : '-' }</td>
+        <td key="Kibana">{ isSupported ? numeral(get('kibana.count')).format('0,0') : '-' }</td>
         <td key="License" className="license">
           <div className="license">{ _.capitalize(get('license.type')) }</div>
           { licenseExpiry }

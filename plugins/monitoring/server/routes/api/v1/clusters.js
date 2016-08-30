@@ -6,6 +6,7 @@ import calculateIndices from '../../../lib/calculate_indices';
 import getClusters from '../../../lib/get_clusters';
 import getClustersStats from '../../../lib/get_clusters_stats';
 import getClustersHealth from '../../../lib/get_clusters_health';
+import getPrimaryClusterUuid from '../../../lib/get_primary_cluster_uuid';
 import getKibanasForClusters from '../../../lib/get_kibanas_for_clusters';
 import calculateOverallStatus from '../../../lib/calculate_overall_status';
 import getLastState from '../../../lib/get_last_state';
@@ -15,7 +16,7 @@ import getShardStats from '../../../lib/get_shard_stats';
 import calculateClusterStatus from '../../../lib/elasticsearch/calculate_cluster_status';
 import handleError from '../../../lib/handle_error';
 
-// manipulate cluster status
+// manipulate cluster status and license meta data
 function normalizeClustersData(clusters) {
   clusters.forEach(cluster => {
     cluster.elasticsearch = {
@@ -32,6 +33,17 @@ function normalizeClustersData(clusters) {
     delete cluster.nodes;
     delete cluster.indices;
   });
+
+  // if all clusters are basic, UI will allow the user to get into the primary cluster
+  const basicClusters = clusters.filter((cluster) => {
+    return cluster.license.type === 'basic';
+  });
+  if (basicClusters.length === clusters.length) {
+    clusters.forEach((cluster) => {
+      _.set(cluster, 'allBasicClusters', true);
+    });
+  }
+
   return clusters;
 }
 
@@ -68,6 +80,7 @@ export default function clustersRoutes(server) {
         return getClusters(req, esIndices)
         .then(getClustersStats(req))
         .then(getClustersHealth(req))
+        .then(getPrimaryClusterUuid(req))
         .then(clusters => {
           const mapClusters = getKibanasForClusters(req, kibanaIndices, 'route-clusters');
           return mapClusters(clusters)
