@@ -14,7 +14,7 @@ registry.register(constant({
 const module = uiModules.get('security', ['kibana']);
 module.controller('securityNavController', ($scope, ShieldUser, globalNavState, kbnBaseUrl) => {
   $scope.me = ShieldUser.getCurrent;
-  $scope.route = `${kbnBaseUrl}#account`;
+  $scope.route = `${kbnBaseUrl}#/account`;
 
   $scope.formatTooltip = tooltip => {
     // If the sidebar is open then we don't need to show the tooltip.
