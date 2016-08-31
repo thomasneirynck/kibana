@@ -108,7 +108,7 @@ describe('text SVG tests', function () {
 
       fixture.selectAll('text')
         .each(function () {
-          expect(_.isEqual(this.style.fill.replace(/ /g,''), element.fill()())).to.be(true);
+          expect(_.isEqual(this.style.fill.replace(/ /g, ''), element.fill()())).to.be(true);
         });
     });
   });
@@ -122,22 +122,22 @@ describe('text SVG tests', function () {
     });
 
     it('should get the property', function () {
-      expect(_.isEqual(element.text()(), defaultText)).to.be(true);
+      expect(_.isEqual(element.text()({value: 'foo'}), 'foo')).to.be(true);
     });
 
     it('should set the property', function () {
       var newText = 'new value';
       element.text(newText);
-      expect(_.isEqual(element.text()(), newText)).to.be(true);
+      expect(_.isEqual(element.text()({'new value': 'foo'}), 'foo')).to.be(true);
     });
 
     it('should set the proper value of the DOM attribute', function () {
-      element.text(defaultText);
+      element.text('innerHTML');
       fixture.call(element);
 
       fixture.selectAll('text')
         .each(function () {
-          expect(_.isEqual(this.innerHTML, element.text()())).to.be(true);
+          expect(_.isEqual(this.innerHTML, element.text()(this))).to.be(true);
         });
     });
   });
