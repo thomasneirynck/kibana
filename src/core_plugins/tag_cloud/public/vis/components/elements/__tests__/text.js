@@ -151,13 +151,13 @@ describe('text SVG tests', function () {
     });
 
     it('should get the property', function () {
-      expect(_.isEqual(element.textAnchor(), defaultAnchor)).to.be(true);
+      expect(_.isEqual(element.textAnchor()(), defaultAnchor)).to.be(true);
     });
 
     it('should set the property', function () {
       let newAnchor = 'start';
       element.textAnchor(newAnchor);
-      expect(_.isEqual(element.textAnchor(), newAnchor)).to.be(true);
+      expect(_.isEqual(element.textAnchor()(), newAnchor)).to.be(true);
     });
 
     it('should set the proper value of the DOM attribute', function () {
@@ -166,7 +166,7 @@ describe('text SVG tests', function () {
 
       fixture.selectAll('text')
         .each(function () {
-          expect(_.isEqual(this.style['text-anchor'], element.textAnchor())).to.be(true);
+          expect(_.isEqual(this.getAttribute('text-anchor'), element.textAnchor()())).to.be(true);
         });
     });
   });
