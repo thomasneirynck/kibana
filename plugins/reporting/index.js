@@ -8,6 +8,7 @@ const phantom = require('./server/lib/phantom');
 const createQueue = require('./server/lib/create_queue');
 const appConfig = require('./server/config/config');
 const checkLicense = require('./server/lib/check_license');
+import validateConfig from './server/lib/validate_config';
 
 module.exports = function (kibana) {
   return new kibana.Plugin({
@@ -50,12 +51,15 @@ module.exports = function (kibana) {
           loadDelay: Joi.number().integer().default(3000),
           concurrency: Joi.number().integer().default(appConfig.concurrency),
         }).default(),
+        encryptionKey: Joi.string().default()
       }).default();
     },
 
     init: function (server) {
       const thisPlugin = this;
       const config = server.config();
+      validateConfig(config);
+
       const xpackMainPlugin = server.plugins.xpack_main;
       mirrorPluginStatus(xpackMainPlugin, thisPlugin);
       xpackMainPlugin.status.once('green', () => {

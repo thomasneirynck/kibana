@@ -3,6 +3,7 @@ const { get } = require('lodash');
 const constants = require('./constants');
 const getUserFactory = require('./get_user');
 const getObjectQueueFactory = require('./get_object_queue');
+import cryptoFactory from './crypto';
 const oncePerServer = require('./once_per_server');
 
 function createDocumentJobFactory(server) {
@@ -13,16 +14,18 @@ function createDocumentJobFactory(server) {
 
   const getObjectQueue = getObjectQueueFactory(server);
   const getUser = getUserFactory(server);
+  const crypto = cryptoFactory(server);
 
   const { JOBTYPES_PRINTABLE_PDF } = constants;
   const jobTypes = {};
 
-  jobTypes[JOBTYPES_PRINTABLE_PDF] = function (objectType, request) {
+  jobTypes[JOBTYPES_PRINTABLE_PDF] = async function (objectType, request) {
     const date = moment().toISOString();
     const objId = request.params.savedId;
     const query = request.query;
 
     const headers = get(request, 'headers');
+    const serializedEncryptedHeaders = await crypto.encrypt(headers);
 
     return getUser(request)
     .then((user) => {
@@ -41,7 +44,7 @@ function createDocumentJobFactory(server) {
           objects: savedObjects,
           date,
           query,
-          headers,
+          headers: serializedEncryptedHeaders,
         };
 
         const options = {
