@@ -65,7 +65,7 @@ describe('text SVG tests', function () {
 
     it('should get the property', function () {
       element.transform(defaultTransform);
-      expect(_.isEqual(element.transform(), defaultTransform)).to.be(true);
+      expect(_.isEqual(element.transform()(), defaultTransform)).to.be(true);
     });
 
     it('should set the property', function () {
@@ -85,7 +85,7 @@ describe('text SVG tests', function () {
   });
 
   describe('fill API', function () {
-    let defaultFill = '#0000FF';
+    let defaultFill = 'rgb(0,0,255)';
 
     beforeEach(function () {
       removeChildren(fixture);
@@ -93,13 +93,13 @@ describe('text SVG tests', function () {
     });
 
     it('should get the property', function () {
-      expect(_.isEqual(element.fill(), defaultFill)).to.be(true);
+      expect(_.isEqual(element.fill()(), defaultFill)).to.be(true);
     });
 
     it('should set the property', function () {
-      let newFill = '#FF0000';
+      let newFill = 'rgb(255,0,0)';
       element.fill(newFill);
-      expect(_.isEqual(element.fill(), newFill)).to.be(true);
+      expect(_.isEqual(element.fill()(), newFill)).to.be(true);
     });
 
     it('should set the proper value of the DOM attribute', function () {
@@ -108,7 +108,7 @@ describe('text SVG tests', function () {
 
       fixture.selectAll('text')
         .each(function () {
-          expect(_.isEqual(this.getAttribute('fill'), element.fill())).to.be(true);
+          expect(_.isEqual(this.style.fill.replace(/ /g,''), element.fill()())).to.be(true);
         });
     });
   });
@@ -122,13 +122,13 @@ describe('text SVG tests', function () {
     });
 
     it('should get the property', function () {
-      expect(_.isEqual(element.text(), defaultText)).to.be(true);
+      expect(_.isEqual(element.text()(), defaultText)).to.be(true);
     });
 
     it('should set the property', function () {
       var newText = 'new value';
       element.text(newText);
-      expect(_.isEqual(element.text(), newText)).to.be(true);
+      expect(_.isEqual(element.text()(), newText)).to.be(true);
     });
 
     it('should set the proper value of the DOM attribute', function () {
@@ -137,7 +137,7 @@ describe('text SVG tests', function () {
 
       fixture.selectAll('text')
         .each(function () {
-          expect(_.isEqual(this.innerHTML, element.text())).to.be(true);
+          expect(_.isEqual(this.innerHTML, element.text()())).to.be(true);
         });
     });
   });
@@ -170,4 +170,5 @@ describe('text SVG tests', function () {
         });
     });
   });
+
 });
