@@ -1,5 +1,6 @@
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 import Notifier from 'ui/notify/notifier';
+import { addSystemApiHeader } from 'ui/system_api';
 
 const module = require('ui/modules').get('xpack/reporting');
 
@@ -31,14 +32,16 @@ module.service('reportingJobQueue', ($http, kbnUrl, Private) => {
   return {
     list(page = 0) {
       const url = `${baseUrl}/list?page=${page}`;
-      return $http.get(url)
+      const headers = addSystemApiHeader({});
+      return $http.get(url, { headers })
       .catch(showError)
       .then((res) => res.data);
     },
 
     total() {
       const url = `${baseUrl}/count`;
-      return $http.get(url)
+      const headers = addSystemApiHeader({});
+      return $http.get(url, { headers })
       .then((res) => res.data)
       .catch(showError);
     },
