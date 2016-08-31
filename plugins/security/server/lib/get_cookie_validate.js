@@ -12,17 +12,15 @@ export default (server) => {
 
     return isValidUser(request, username, password).then(
       () => {
-        // If this is a system API call, do NOT extend the session timeout
-        if (!!isSystemApiRequest(request)) {
-          return callback(null, true);
+        // Extend the session timeout provided this is NOT a system API call
+        if (!isSystemApiRequest(request)) {
+          // Keep the session alive
+          request.auth.session.set({
+            username,
+            password,
+            expires: calculateExpires()
+          });
         }
-
-        // Keep the session alive
-        request.auth.session.set({
-          username,
-          password,
-          expires: calculateExpires()
-        });
         return callback(null, true);
       },
       (error) => callback(error, false)
