@@ -4,6 +4,18 @@ import moment from 'moment';
 import _ from 'lodash';
 import statusIconClass from '../../../lib/status_icon_class';
 
+function isClusterSupportedFactory(isSupported) {
+  return class IsClusterSupported extends React.Component {
+    render() {
+      if (isSupported) {
+        return <span>{this.props.children}</span>;
+      } else {
+        return <span>-</span>;
+      }
+    }
+  };
+}
+
 export default class ClusterRow extends React.Component {
 
   checkSupported() {
@@ -108,38 +120,45 @@ to enjoy multi-cluster monitoring.`
   render() {
 
     const classes = ['big'];
+    const iconClass = statusIconClass(this.props.status);
     const isSupported = this.checkSupported();
+    const IsClusterSupported = isClusterSupportedFactory(isSupported);
+
     if (!isSupported) {
       classes.push('basic');
     }
 
-    const iconClass = statusIconClass(this.props.status);
     return (
       <tr className={ classes.join(' ') }>
         <td key="Name">
           { this.getClusterAction() }
         </td>
         <td key="Status">
-          { isSupported ?
+          <IsClusterSupported>
             <span className={`status status-${this.props.status}`}>
               <i className={iconClass} title={_.capitalize(this.props.status)}></i>
-            </span> : '-' }
+            </span>
+          </IsClusterSupported>
         </td>
         <td key="Nodes">
-          { isSupported ?
-            numeral(this.path('elasticsearch.stats.nodes.count.total')).format('0,0') :
-            '-' }
+          <IsClusterSupported>
+            {numeral(this.path('elasticsearch.stats.nodes.count.total')).format('0,0')}
+          </IsClusterSupported>
         </td>
-        <td key="Indices">{ isSupported ? numeral(this.path('elasticsearch.stats.indices.count')).format('0,0') : '-' }</td>
+        <td key="Indices">
+          <IsClusterSupported>
+            {numeral(this.path('elasticsearch.stats.indices.count')).format('0,0')}
+          </IsClusterSupported>
+        </td>
         <td key="Data">
-          { isSupported ?
-            numeral(this.path('elasticsearch.stats.indices.store.size_in_bytes')).format('0,0[.]0 b') :
-            '-' }
+          <IsClusterSupported>
+            {numeral(this.path('elasticsearch.stats.indices.store.size_in_bytes')).format('0,0[.]0 b')}
+          </IsClusterSupported>
         </td>
         <td key="Kibana">
-          { isSupported ?
-            numeral(this.path('kibana.count')).format('0,0') :
-            '-' }
+          <IsClusterSupported>
+            {numeral(this.path('kibana.count')).format('0,0')}
+          </IsClusterSupported>
         </td>
         <td key="License" className="license">
           { this.getLicenseInfo() }
