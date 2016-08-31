@@ -20,7 +20,7 @@ export default class ClusterRow extends React.Component {
 `You can't view the "${this.props.cluster_name}" cluster because the
 Basic license does not support multi-cluster monitoring.
 
-Need a license? [Get a license with full functionality](https://www.elastic.co/subscriptions/xpack)
+Need to monitor multiple clusters? [Get a license with full functionality](https://www.elastic.co/subscriptions/xpack)
 to enjoy multi-cluster monitoring.`
       );
     };
