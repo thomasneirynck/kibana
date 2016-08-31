@@ -4,16 +4,21 @@ import uiModules from 'ui/modules';
 const module = uiModules.get('kibana/tagcloud', ['kibana']);
 
 module.controller('KbnCloudController', function ($scope) {
-  $scope.$watch('esResponse', function (resp) {
-    if (!resp) {
+  $scope.$watch('esResponse', function (response) {
+
+    if (!response) {
       $scope.data = null;
       return;
     }
 
     const tagsAggId = _.first(_.pluck($scope.vis.aggs.bySchemaName.segment, 'id'));
-    const metricsAgg = _.first($scope.vis.aggs.bySchemaName.metric);
+    if (!tagsAggId || !response.aggregations) {
+      $scope.data = null;
+      return;
+    }
 
-    const buckets = resp.aggregations[tagsAggId].buckets;
+    const metricsAgg = _.first($scope.vis.aggs.bySchemaName.metric);
+    const buckets = response.aggregations[tagsAggId].buckets;
 
     const tags = buckets.map(function (bucket) {
       return {
@@ -22,7 +27,7 @@ module.controller('KbnCloudController', function ($scope) {
       };
     });
 
-    $scope.data = [{ tags: tags}];
+    $scope.data = [{tags: tags}];
   });
 });
 
