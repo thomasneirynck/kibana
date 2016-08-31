@@ -142,7 +142,7 @@ export default function clustersRoutes(server) {
   });
 
   /*
-   * Phone Home
+   * Phone Home Data Gathering
    */
   server.route({
     method: 'GET',
@@ -169,11 +169,10 @@ export default function clustersRoutes(server) {
           'cluster_name',
           'version',
           'license',
-          'cluster_stats'
+          'cluster_stats',
+          'stack_stats'
         ];
-        const info = _.pick(resp._source, fields);
-        const usage = _.set({}, 'stack_stats.xpack', _.get(req, 'server.plugins.xpack_main.usage'));
-        reply(_.merge(info, usage));
+        reply(_.pick(resp._source, fields));
       })
       .catch(err => reply(handleError(err, req)));
     }
