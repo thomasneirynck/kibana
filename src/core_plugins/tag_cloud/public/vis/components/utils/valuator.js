@@ -6,8 +6,8 @@ function valuator(v) {
     return v;
   }
   if (_.isString(v) || _.isNumber(v)) {
-    return function () {
-      return v;
+    return function (d) {
+      return d[v];
     };
   }
   return d3.functor(v);
