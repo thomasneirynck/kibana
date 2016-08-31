@@ -1,5 +1,5 @@
 function remove(element) {
-  element.data(null).remove();
+  element.data([]).remove();
   element = null;
 }
 
