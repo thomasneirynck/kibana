@@ -22,167 +22,31 @@ describe('text SVG tests', function () {
     expect(_.isFunction(element)).to.be(true);
   });
 
-  describe('x API', function () {
-    let defaultX;
-
-    beforeEach(function () {
-      removeChildren(fixture);
-      defaultX = function (d) {
-        return d.x;
-      };
-      element.x(defaultX);
-    });
-
-    it('should get the property', function () {
-      expect(_.isEqual(element.x(), defaultX)).to.be(true);
-    });
-
-    it('should set the property', function () {
-      let newX = function (d) {
-        return d.cx;
-      };
-      element.x(newX);
-      expect(_.isEqual(element.x(), newX)).to.be(true);
-    });
-
-    it('should set the proper value of the DOM attribute', function () {
-      element.x(defaultX);
-      fixture.call(element);
-
-      fixture.selectAll('text')
-        .each(function (d) {
-          expect(_.isEqual(this.getAttribute('x'), d.x)).to.be(true);
-        });
-    });
-  });
-
-  describe('y API', function () {
-    let defaultY;
-
-    beforeEach(function () {
-      removeChildren(fixture);
-      defaultY = function (d) {
-        return d.y;
-      };
-      element.y(defaultY);
-    });
-
-    it('should get the property', function () {
-      expect(_.isEqual(element.y(), defaultY)).to.be(true);
-    });
-
-    it('should set the property', function () {
-      let newY = function (d) {
-        return d.cy;
-      };
-      element.y(newY);
-      expect(_.isEqual(element.y(), newY)).to.be(true);
-    });
-
-    it('should set the proper value of the DOM attribute', function () {
-      element.y(defaultY);
-      fixture.call(element);
-
-      fixture.selectAll('text')
-        .each(function (d) {
-          expect(_.isEqual(this.getAttribute('y'), d.y)).to.be(true);
-        });
-    });
-  });
-
-  describe('dx API', function () {
-    let defaultDX;
-
-    beforeEach(function () {
-      removeChildren(fixture);
-      defaultDX = function (d) {
-        return d.x;
-      };
-      element.dx(defaultDX);
-    });
-
-    it('should get the property', function () {
-      expect(_.isEqual(element.dx(), defaultDX)).to.be(true);
-    });
-
-    it('should set the property', function () {
-      let newDX = function (d) {
-        return d.dx;
-      };
-      element.dx(newDX);
-      expect(_.isEqual(element.dx(), newDX)).to.be(true);
-    });
-
-    it('should set the proper value of the DOM attribute', function () {
-      element.dx(defaultDX);
-      fixture.call(element);
-
-      fixture.selectAll('text')
-        .each(function (d) {
-          expect(_.isEqual(this.getAttribute('dx'), d.x)).to.be(true);
-        });
-    });
-  });
-
-  describe('dy API', function () {
-    let defaultDY;
-
-    beforeEach(function () {
-      removeChildren(fixture);
-      defaultDY = function (d) {
-        return d.y;
-      };
-      element.dy(defaultDY);
-    });
-
-    it('should get the property', function () {
-      expect(_.isEqual(element.dy(), defaultDY)).to.be(true);
-    });
-
-    it('should set the property', function () {
-      let newDY = function (d) {
-        return d.dy;
-      };
-      element.dy(newDY);
-      expect(_.isEqual(element.dy(), newDY)).to.be(true);
-    });
-
-    it('should set the proper value of the DOM attribute', function () {
-      element.dy(defaultDY);
-      fixture.call(element);
-
-      fixture.selectAll('text')
-        .each(function (d) {
-          expect(_.isEqual(this.getAttribute('dy'), d.y)).to.be(true);
-        });
-    });
-  });
-
   describe('class API', function () {
     var defaultClass;
 
     beforeEach(function () {
       removeChildren(fixture);
       defaultClass = 'text';
-      element.class(defaultClass);
+      element.cssClass(defaultClass);
     });
 
     it('should get the property', function () {
-      expect(_.isEqual(element.class(), defaultClass)).to.be(true);
+      expect(_.isEqual(element.cssClass(), defaultClass)).to.be(true);
     });
 
     it('should set the property', function () {
-      element.class('test');
-      expect(_.isEqual(element.class(), 'test')).to.be(true);
+      element.cssClass('test');
+      expect(_.isEqual(element.cssClass(), 'test')).to.be(true);
     });
 
     it('should set the proper value of the DOM attribute', function () {
-      element.class('text');
+      element.cssClass('text');
       fixture.call(element);
 
       fixture.selectAll('text')
         .each(function () {
-          expect(_.isEqual(this.getAttribute('class'), element.class())).to.be(true);
+          expect(_.isEqual(this.getAttribute('class'), element.cssClass())).to.be(true);
         });
     });
   });
@@ -283,26 +147,26 @@ describe('text SVG tests', function () {
 
     beforeEach(function () {
       removeChildren(fixture);
-      element.anchor(defaultAnchor);
+      element.textAnchor(defaultAnchor);
     });
 
     it('should get the property', function () {
-      expect(_.isEqual(element.anchor(), defaultAnchor)).to.be(true);
+      expect(_.isEqual(element.textAnchor(), defaultAnchor)).to.be(true);
     });
 
     it('should set the property', function () {
       let newAnchor = 'start';
-      element.anchor(newAnchor);
-      expect(_.isEqual(element.anchor(), newAnchor)).to.be(true);
+      element.textAnchor(newAnchor);
+      expect(_.isEqual(element.textAnchor(), newAnchor)).to.be(true);
     });
 
     it('should set the proper value of the DOM attribute', function () {
-      element.anchor(defaultAnchor);
+      element.textAnchor(defaultAnchor);
       fixture.call(element);
 
       fixture.selectAll('text')
         .each(function () {
-          expect(_.isEqual(this.style['text-anchor'], element.anchor())).to.be(true);
+          expect(_.isEqual(this.style['text-anchor'], element.textAnchor())).to.be(true);
         });
     });
   });
