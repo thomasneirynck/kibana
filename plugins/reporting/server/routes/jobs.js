@@ -7,6 +7,7 @@ const licensePreFactory = require ('../lib/license_pre_routing');
 const userPreRoutingFactory = require('../lib/user_pre_routing');
 
 const mainEntry = '/api/reporting/jobs';
+const API_TAG = 'api';
 
 module.exports = function (server) {
   const jobQueue = server.plugins.reporting.queue;
@@ -86,7 +87,9 @@ module.exports = function (server) {
       const results = jobsQuery.list(request, page, size);
       reply(results);
     },
-    config: licensePre()
+    config: {
+      pre: [ licensePre ],
+    }
   });
 
   // list all completed jobs since a specified time
@@ -100,7 +103,9 @@ module.exports = function (server) {
       const results = jobsQuery.listCompletedSince(request, size, sinceInMs);
       reply(results);
     },
-    config: licensePre()
+    config: {
+      pre: [ licensePre ],
+    }
   });
 
   // return the count of all jobs in the queue
@@ -111,7 +116,9 @@ module.exports = function (server) {
       const results = jobsQuery.count(request);
       reply(results);
     },
-    config: licensePre()
+    config: {
+      pre: [ licensePre ],
+    }
   });
 
   // return the raw output from a job
@@ -127,9 +134,10 @@ module.exports = function (server) {
         reply(doc._source.output);
       });
     },
-    config: licensePre({
-      timeout: { socket: socketTimeout }
-    }),
+    config: {
+      pre: [ licensePre ],
+      timeout: { socket: socketTimeout },
+    }
   });
 
   // trigger a download of the output from a job
@@ -158,10 +166,10 @@ module.exports = function (server) {
         });
       });
     },
-    config: licensePre({
-      pre: [ userPreRouting ],
+    config: {
+      pre: [ licensePre, userPreRouting ],
       timeout: { socket: socketTimeout },
-      auth: false,
-    }),
+      tags: [API_TAG],
+    },
   });
 };

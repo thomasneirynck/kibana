@@ -5,6 +5,7 @@ const licensePreFactory = require ('../lib/license_pre_routing');
 const userPreRoutingFactory = require('../lib/user_pre_routing');
 
 const mainEntry = '/api/reporting/generate';
+const API_TAG = 'api';
 
 module.exports = function (server) {
   const config = server.config();
@@ -19,7 +20,7 @@ module.exports = function (server) {
     method: 'GET',
     handler: (request, reply) => pdfHandler('visualization', request, reply),
     config: {
-      tags: ['api'],
+      tags: [API_TAG],
       pre: [ userPreRouting, licensePre ],
     }
   });
@@ -29,7 +30,7 @@ module.exports = function (server) {
     method: 'GET',
     handler: (request, reply) => pdfHandler('search', request, reply),
     config: {
-      tags: ['api'],
+      tags: [API_TAG],
       pre: [ userPreRouting, licensePre ],
     }
   });
@@ -39,7 +40,7 @@ module.exports = function (server) {
     method: 'GET',
     handler: (request, reply) => pdfHandler('dashboard', request, reply),
     config: {
-      tags: ['api'],
+      tags: [API_TAG],
       pre: [ userPreRouting, licensePre ],
     }
   });
