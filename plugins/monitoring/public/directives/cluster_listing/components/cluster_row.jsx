@@ -11,7 +11,7 @@ export default class ClusterRow extends React.Component {
   }
 
   changeCluster() {
-    this.props.changeCluster(this.props.cluster_uuid);
+    return () => this.props.changeCluster(this.props.cluster_uuid);
   }
 
   handleClickIncompatibleLicense() {
@@ -39,10 +39,10 @@ to enjoy multi-cluster monitoring.`
     };
   }
 
-  getPrimaryAction() {
+  getClusterAction() {
     if (this.checkSupported()) {
       return (
-        <a className='clusterName' onClick={() => this.changeCluster() }>
+        <a className='clusterName' onClick={this.changeCluster()}>
           { this.props.cluster_name } &nbsp;
           { this.props.isPrimary ?
             <i className="fa fa-asterisk primary-cluster-indicator" title="Kibana uses this cluster as the primary connection"></i> :
@@ -117,7 +117,7 @@ to enjoy multi-cluster monitoring.`
     return (
       <tr className={ classes.join(' ') }>
         <td key="Name">
-          { this.getPrimaryAction() }
+          { this.getClusterAction() }
         </td>
         <td key="Status">
           { isSupported ?
