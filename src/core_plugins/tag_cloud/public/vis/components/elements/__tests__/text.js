@@ -3,7 +3,7 @@ import expect from 'expect.js';
 import text from 'plugins/tagcloud/vis/components/elements/text';
 import visFixture from 'plugins/tagcloud/vis/components/__tests__/fixtures/vis_fixture';
 import dataGenerator from 'plugins/tagcloud/vis/components/__tests__/fixtures/data_generator';
-import { remove, removeChildren } from 'plugins/tagcloud/vis/components/__tests__/fixtures/remove';
+import remove, {removeChildren} from 'plugins/tagcloud/vis/components/__tests__/fixtures/remove';
 
 describe('text SVG tests', function () {
   let element = text();
@@ -27,7 +27,9 @@ describe('text SVG tests', function () {
 
     beforeEach(function () {
       removeChildren(fixture);
-      defaultX = function (d) { return d.x; };
+      defaultX = function (d) {
+        return d.x;
+      };
       element.x(defaultX);
     });
 
@@ -36,7 +38,9 @@ describe('text SVG tests', function () {
     });
 
     it('should set the property', function () {
-      let newX = function (d) { return d.cx; };
+      let newX = function (d) {
+        return d.cx;
+      };
       element.x(newX);
       expect(_.isEqual(element.x(), newX)).to.be(true);
     });
@@ -57,7 +61,9 @@ describe('text SVG tests', function () {
 
     beforeEach(function () {
       removeChildren(fixture);
-      defaultY = function (d) { return d.y; };
+      defaultY = function (d) {
+        return d.y;
+      };
       element.y(defaultY);
     });
 
@@ -66,7 +72,9 @@ describe('text SVG tests', function () {
     });
 
     it('should set the property', function () {
-      let newY = function (d) { return d.cy; };
+      let newY = function (d) {
+        return d.cy;
+      };
       element.y(newY);
       expect(_.isEqual(element.y(), newY)).to.be(true);
     });
@@ -87,7 +95,9 @@ describe('text SVG tests', function () {
 
     beforeEach(function () {
       removeChildren(fixture);
-      defaultDX = function (d) { return d.x; };
+      defaultDX = function (d) {
+        return d.x;
+      };
       element.dx(defaultDX);
     });
 
@@ -96,7 +106,9 @@ describe('text SVG tests', function () {
     });
 
     it('should set the property', function () {
-      let newDX = function (d) { return d.dx; };
+      let newDX = function (d) {
+        return d.dx;
+      };
       element.dx(newDX);
       expect(_.isEqual(element.dx(), newDX)).to.be(true);
     });
@@ -117,7 +129,9 @@ describe('text SVG tests', function () {
 
     beforeEach(function () {
       removeChildren(fixture);
-      defaultDY = function (d) { return d.y; };
+      defaultDY = function (d) {
+        return d.y;
+      };
       element.dy(defaultDY);
     });
 
@@ -126,7 +140,9 @@ describe('text SVG tests', function () {
     });
 
     it('should set the property', function () {
-      let newDY = function (d) { return d.dy; };
+      let newDY = function (d) {
+        return d.dy;
+      };
       element.dy(newDY);
       expect(_.isEqual(element.dy(), newDY)).to.be(true);
     });
