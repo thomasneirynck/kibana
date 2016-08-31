@@ -1,9 +1,10 @@
 import _ from 'lodash';
+import moment from 'moment';
 import uiModules from 'ui/modules';
 import UserProvider from 'plugins/xpack_main/services/user';
 import 'plugins/monitoring/services/clusters';
 
-function phoneHomeClassFactory($window, Promise, monitoringClusters, $http, reportStats, statsReportUrl, features) {
+function phoneHomeClassFactory($window, Promise, $http, reportStats, statsReportUrl, features) {
 
   return class PhoneHome {
 
@@ -82,8 +83,16 @@ function phoneHomeClassFactory($window, Promise, monitoringClusters, $http, repo
      */
     _sendIfDue() {
       if (!this._checkReportStatus()) return Promise.resolve();
-      // get the latest cluster uuids
-      return monitoringClusters()
+      // call to get the latest cluster uuids with a time range to go back 20 minutes up to now
+      const currentClustersUrl = '../api/monitoring/v1/clusters';
+      const currentClustersTimeRange = {
+        min: moment().subtract(20, 'minutes').toISOString(),
+        max: (new Date()).toISOString()
+      };
+      return $http.post(currentClustersUrl, {
+        timeRange: currentClustersTimeRange
+      })
+      .then((clustersData) => clustersData.data)
       .then((clusters) => {
         return Promise.map(clusters, (cluster) => {
           // get the data per cluster uuid
