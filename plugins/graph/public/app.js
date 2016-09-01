@@ -102,7 +102,7 @@ uiRoutes
 
 
 //========  Controller for basic UI ==================
-app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnUrl, Private, Promise) {
+app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnUrl, Private, Promise, safeConfirm) {
 
   function handleSuccess(data) {
     return checkLicense(Private, Promise)
@@ -244,17 +244,20 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     $scope.kbnTopNav.currentKey = 'fieldConfig';
   };
 
-  $scope.uiSelectIndex = function () {
-    if ($scope.canWipeWorkspace()) {
-      $scope.indexSelected($scope.proposedIndex);
-    }else {
-      $scope.proposedIndex = $scope.selectedIndex;
+  function canWipeWorkspace(yesFn, noFn) {
+    if ($scope.selectedFields.length === 0 && $scope.workspace === null) {
+      yesFn();
+      return;
     }
-  };
+    safeConfirm('This will clear the workspace - are you sure?').then(yesFn, noFn);
+  }
 
-  $scope.canWipeWorkspace = function () {
-    return (($scope.selectedFields.length === 0 && $scope.workspace === null) ||
-        confirm('This will clear the workspace - are you sure?'));
+  $scope.uiSelectIndex = function () {
+    canWipeWorkspace(function () {
+      $scope.indexSelected($scope.proposedIndex);
+    }, function () {
+      $scope.proposedIndex = $scope.selectedIndex;
+    });
   };
 
   $scope.indexSelected = function (selectedIndex, postInitHandler) {
@@ -562,7 +565,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     key: 'new',
     description: 'New Workspace',
     tooltip: 'Create a new workspace',
-    run: function () { if ($scope.canWipeWorkspace()) {kbnUrl.change('/home', {}); } },
+    run: function () {canWipeWorkspace(function () {kbnUrl.change('/home', {}); });  },
   });
   if (!$scope.allSavingDisabled) {
     $scope.topNavMenu.push({
@@ -594,11 +597,11 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       tooltip: 'Delete this workspace',
       run: function () {
         var title = $route.current.locals.savedWorkspace.title;
-        if (confirm('Are you sure you want to delete the workspace ' + title + ' ?')) {
+        safeConfirm('Are you sure you want to delete the workspace ' + title + ' ?').then(function () {
           $route.current.locals.SavedWorkspacesProvider.delete($route.current.locals.savedWorkspace.id);
           kbnUrl.change('/home', {});
           require('ui/notify').info('Deleted ' + title);
-        }
+        });
       }
     });
   }else {
