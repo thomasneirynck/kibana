@@ -25,19 +25,26 @@ function getObjectQueueFactory(server) {
     });
   }
 
+  function getDashboardPanels(savedObj) {
+    try {
+      const panels = JSON.parse(savedObj.panelsJSON);
+      return panels.map((panel) => {
+        return savedObjects.get(panel.type, panel.id)
+        .then(function (obj) {
+          obj.panelIndex = panel.panelIndex;
+          return obj;
+        });
+      });
+    } catch (e) {
+      throw new Error('Failed to retrieve Panels from Saved Dashboard: ' + e.message);
+    }
+  }
+
   return function getObjectQueue(type, objId) {
     if (type === 'dashboard') {
       return savedObjects.get(type, objId, [ 'panelsJSON'])
       .then(function (savedObj) {
-        const panels = JSON.parse(savedObj.panelsJSON);
-
-        const panelObjects = panels.map((panel) => {
-          return savedObjects.get(panel.type, panel.id)
-          .then(function (obj) {
-            obj.panelIndex = panel.panelIndex;
-            return obj;
-          });
-        });
+        const panelObjects = getDashboardPanels(savedObj);
 
         return Promise.all(panelObjects)
         .then((objs) => formatObject(savedObj, objs));
