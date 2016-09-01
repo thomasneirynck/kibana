@@ -54,27 +54,29 @@ describe('saved_objects', function () {
       });
 
       describe('getUrl', function () {
+        let timeParam;
+        let query;
+
+        beforeEach(() => {
+          timeParam = 'time:(from:now-1h,mode:quick,to:now)';
+          query = {
+            _g: `(refreshInterval:(display:Off,pause:!f,value:0),${timeParam})`
+          };
+        });
+
         it('should provide app url', function () {
           const params = url.parse(savedObject.getUrl());
           expect(params).to.have.property('hash');
         });
 
         it('should take query params and append to hash', function () {
-          const query = {
-            _g: '(time:(from:now-1h,mode:quick,to:now))'
-          };
           const params = url.parse(savedObject.getUrl(query));
           expect(params.hash).to.contain(query._g);
         });
 
         it('should remove the refreshInterval value', function () {
-          const query = {
-            _g: '(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-15m,mode:quick,to:now))'
-          };
-
-          const parsedUrl = savedObject.getUrl(query);
-          expect(parsedUrl).to.contain('time:(from:now-15m,mode:quick,to:now))');
-          expect(parsedUrl).to.not.contain('refreshInterval');
+          var objectUrl = savedObject.getUrl(query);
+          expect(objectUrl).to.not.contain('refreshInterval');
         });
       });
 

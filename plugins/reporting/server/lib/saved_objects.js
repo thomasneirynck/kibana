@@ -1,7 +1,7 @@
 const url = require('url');
-const rison = require('rison-node');
 const _ = require('lodash');
 const Joi = require('joi');
+const parseKibanaState = require('../../../../server/lib/kibana_state');
 const uriEncode = require('./uri_encode');
 
 module.exports = function (client, config) {
@@ -80,11 +80,11 @@ module.exports = function (client, config) {
           // map panel state to panel from app state part of the query
           const cleanQuery = this.getState(query);
 
-          // strip the refresh value from the global state
-          if (query._g) {
-            const globalState = rison.decode(query._g);
-            delete globalState.refreshInterval;
-            _.assign(cleanQuery, { _g: rison.encode(globalState) });
+          // modify the global state in the query
+          const globalState = parseKibanaState(query, 'global');
+          if (globalState.exists) {
+            globalState.removeProps('refreshInterval');
+            _.assign(cleanQuery, globalState.toQuery());
           }
 
           const urlParams = _.assign({
@@ -103,19 +103,19 @@ module.exports = function (client, config) {
           return url.format(urlParams);
         },
         getState: function mergeQueryState(query = {}) {
-          if (!query._a || !this.panelIndex) return query;
+          const appState = parseKibanaState(query, 'app');
+          if (!appState.exists || !this.panelIndex) return query;
 
-          const appState = rison.decode(query._a);
-          const correctedState = _.omit(appState, ['uiState', 'panels', 'vis']);
-          const panel = _.find(appState.panels, { panelIndex: this.panelIndex });
-          const panelState = appState.uiState[`P-${this.panelIndex}`];
+          appState.removeProps(['uiState', 'panels', 'vis']);
+          const panel = _.find(appState.get('panels', []), { panelIndex: this.panelIndex });
+          const panelState = appState.get(['uiState', `P-${this.panelIndex}`]);
 
           // if uiState doesn't match panel, simply strip uiState
           if (panel && panelState) {
-            correctedState.uiState = _.merge({}, this.uiState, panelState);
+            appState.set('uiState', _.merge({}, this.uiState, panelState));
           }
 
-          return _.defaults({ _a: rison.encode(correctedState) }, query);
+          return _.assign({}, query, appState.toQuery());
         },
         toJSON: function (query) {
           const savedObj = {
