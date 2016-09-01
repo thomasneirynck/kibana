@@ -3,6 +3,7 @@ const _ = require('lodash');
 const Joi = require('joi');
 const parseKibanaState = require('../../../../server/lib/kibana_state');
 const uriEncode = require('./uri_encode');
+const getAbsoluteTime = require('./get_absolute_time');
 
 module.exports = function (client, config) {
   const schema = Joi.object().keys({
@@ -73,7 +74,10 @@ module.exports = function (client, config) {
         type: type,
         searchSource: searchSource,
         uiState: uiState,
-        getUrl: function getAppUrl(query = {}) {
+        getUrl: function getAppUrl(query = {}, urlOptions = {}) {
+          const options = _.assign({
+            useAbsoluteTime: true
+          }, urlOptions);
           const app = appTypes[this.type];
           if (!app) throw new Error('Unexpected app type: ' + this.type);
 
@@ -84,6 +88,12 @@ module.exports = function (client, config) {
           const globalState = parseKibanaState(query, 'global');
           if (globalState.exists) {
             globalState.removeProps('refreshInterval');
+
+            // transform to absolute time based on option
+            if (options.useAbsoluteTime) {
+              globalState.set('time', getAbsoluteTime(globalState.get('time')));
+            }
+
             _.assign(cleanQuery, globalState.toQuery());
           }
 
@@ -117,13 +127,13 @@ module.exports = function (client, config) {
 
           return _.assign({}, query, appState.toQuery());
         },
-        toJSON: function (query) {
+        toJSON: function (query, urlOptions) {
           const savedObj = {
             id: this.id,
             type: this.type,
             searchSource: this.searchSource,
             uiState: this.uiState,
-            url: this.getUrl(query)
+            url: this.getUrl(query, urlOptions)
           };
 
           fields.forEach((field) => {
