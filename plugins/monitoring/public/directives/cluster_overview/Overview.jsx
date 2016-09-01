@@ -57,7 +57,7 @@ class ElasticsearchPanel extends React.Component {
 
         <div className='row'>
           <div className='col-md-4'>
-            <dl>
+            <dl data-test-subj='elasticsearch_overview' data-overview-status={this.props.status}>
               <dt>
                 <a onClick={() => this.props.angularChangeUrl('elasticsearch')}>Overview</a>
               </dt>
@@ -69,7 +69,7 @@ class ElasticsearchPanel extends React.Component {
             <dl>
               <dt>
                 <a onClick={() => this.props.angularChangeUrl('elasticsearch/nodes')}>
-                  Nodes: {formatNumber(nodes.count.total, 'int_commas')}
+                  Nodes: <span data-test-subj='number_of_elasticsearch_nodes'>{formatNumber(nodes.count.total, 'int_commas')}</span>
                 </a>
               </dt>
               <dd>FS: {formatNumber(nodes.fs.available_in_bytes, 'byte')} /
@@ -110,7 +110,7 @@ class KibanaPanel extends React.Component {
 
         <div className='row'>
           <div className='col-md-4'>
-            <dl>
+            <dl data-test-subj='kibana_overview' data-overview-status={this.props.status}>
               <dt>
                 <a onClick={() => this.props.angularChangeUrl('kibana')}>Overview</a>
               </dt>
@@ -121,7 +121,9 @@ class KibanaPanel extends React.Component {
           <div className='col-md-4'>
             <dl>
               <dt>
-                <a onClick={() => this.props.angularChangeUrl('kibana/instances')}>Instances: {this.props.count}</a>
+                <a onClick={() => this.props.angularChangeUrl('kibana/instances')}>
+                  Instances: <span data-test-subj='number_of_kibana_instances'>{this.props.count}</span>
+                </a>
               </dt>
               <dd>Connections: {formatNumber(this.props.concurrent_connections, 'int_commas')}</dd>
               <dd>Memory Usage: {formatNumber(this.props.memory_size / this.props.memory_limit, '0.00%')}</dd>
