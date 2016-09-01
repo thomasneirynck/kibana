@@ -56,17 +56,18 @@ export default function getClusters(req, indices) {
           const infoDoc = infoResp._source;
 
           cluster.cluster_name = infoDoc.cluster_name;
+          cluster.version = infoDoc.version;
           const license = infoDoc.license;
           if (license && validateMonitoringLicense(cluster.cluster_uuid, license)) {
             cluster.license = license;
-            cluster.version = infoDoc.version;
+          } else {
+            // allow deleted/unknown license clusters to show in UI
+            cluster.license = null;
           }
 
           return cluster;
         });
-      })
-      // Only return clusters with valid licenses
-      .filter(cluster => cluster.license);
+      });
     }
   });
 };

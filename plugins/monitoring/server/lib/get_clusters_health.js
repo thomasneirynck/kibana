@@ -1,5 +1,4 @@
 import { get, find, indexBy } from 'lodash';
-import calculateAvailability from './calculate_availability';
 
 export function handleResponse(config, clusters) {
   return (res) => {
@@ -15,9 +14,7 @@ export function handleResponse(config, clusters) {
         cluster.nodes = indexBy(nodes, config.get('xpack.monitoring.node_resolver'));
       }
     });
-    return clusters.filter((cluster) => {
-      return calculateAvailability(cluster.state_timestamp);
-    });
+    return clusters;
   };
 }
 

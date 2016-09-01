@@ -1,6 +1,7 @@
 import React from 'react';
 import Table from 'plugins/monitoring/directives/paginated_table/components/table';
 import ClusterRow from './components/cluster_row.jsx';
+import Notifier from 'ui/notify/notifier';
 import uiModules from 'ui/modules';
 
 const uiModule = uiModules.get('monitoring/directives', []);
@@ -58,6 +59,15 @@ uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl) {
         template={ ClusterRow }
         options={ options }/>, $el[0]);
 
+      const notify = new Notifier();
+      function licenseWarning(message) {
+        $scope.$evalAsync(function () {
+          notify.warning(message, {
+            lifetime: 60000
+          });
+        });
+      }
+
       function changeCluster(uuid) {
         $scope.$evalAsync(function () {
           globalState.cluster_uuid = uuid;
@@ -70,6 +80,7 @@ uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl) {
         if (data) {
           data.forEach((cluster) => {
             cluster.changeCluster = changeCluster;
+            cluster.licenseWarning = licenseWarning;
           });
           table.setData(data);
         }

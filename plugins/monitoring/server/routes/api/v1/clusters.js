@@ -36,7 +36,7 @@ function normalizeClustersData(clusters) {
 
   // if all clusters are basic, UI will allow the user to get into the primary cluster
   const basicClusters = clusters.filter((cluster) => {
-    return cluster.license.type === 'basic';
+    return cluster.license && cluster.license.type === 'basic';
   });
   if (basicClusters.length === clusters.length) {
     clusters.forEach((cluster) => {

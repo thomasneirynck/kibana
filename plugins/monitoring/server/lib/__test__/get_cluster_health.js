@@ -43,9 +43,9 @@ describe('get_clusters_health', () => {
     });
   });
 
-  it('filters out an unavailable cluster', () => {
-    set(response, 'responses[0].hits.hits[0]._source.timestamp', moment().subtract(11, 'minutes').format());
+  it('does not filter out an unavailable cluster', () => {
+    set(response, 'responses[0].hits.hits[0]._source.timestamp', moment().subtract(30, 'minutes').format());
     const result = handleResponse(config, clusters)(response);
-    expect(result.length).to.be(0);
+    expect(result.length).to.be(1);
   });
 });

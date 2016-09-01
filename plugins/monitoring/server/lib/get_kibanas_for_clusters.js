@@ -102,12 +102,14 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
         const getResultAgg = key => _.get(result, `aggregations.${key}`);
         const kibanaUuids =  getResultAgg('kibana_uuids.buckets');
         const statusBuckets = getResultAgg('status.buckets');
-        let status;
-        let requestsTotal;
-        let connections;
-        let responseTime;
-        let memorySize;
-        let memoryLimit;
+
+        // everything is initialized such that it won't impact any rollup
+        let status = null;
+        let requestsTotal = 0;
+        let connections = 0;
+        let responseTime = 0;
+        let memorySize = 0;
+        let memoryLimit = 0;
 
         if (kibanaUuids.length) {
           // if the cluster has kibana instances at all
