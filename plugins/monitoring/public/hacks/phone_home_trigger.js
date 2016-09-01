@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import uiChrome from 'ui/chrome';
 import moment from 'moment';
 import uiModules from 'ui/modules';
 import UserProvider from 'plugins/xpack_main/services/user';
@@ -70,7 +71,7 @@ function phoneHomeClassFactory($window, Promise, $http, reportStats, statsReport
      * Call the API to get the basic cluster info from the non-timebased index
      */
     _getClusterInfo(clusterUUID) {
-      let url = `../api/monitoring/v1/clusters/${clusterUUID}/info`;
+      let url = uiChrome.addBasePath(`/api/monitoring/v1/clusters/${clusterUUID}/info`);
       return $http.get(url)
       .then((resp) => {
         return resp.data;
@@ -83,8 +84,9 @@ function phoneHomeClassFactory($window, Promise, $http, reportStats, statsReport
      */
     _sendIfDue() {
       if (!this._checkReportStatus()) return Promise.resolve();
+
       // call to get the latest cluster uuids with a time range to go back 20 minutes up to now
-      const currentClustersUrl = '../api/monitoring/v1/clusters';
+      const currentClustersUrl = uiChrome.addBasePath('/api/monitoring/v1/clusters');
       const currentClustersTimeRange = {
         min: moment().subtract(20, 'minutes').toISOString(),
         max: (new Date()).toISOString()
