@@ -51,18 +51,12 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
       var indexRowTemplate = React.createClass({
         getInitialState: function () {
           var index = _.findWhere(scope.data, {name: this.props.name});
-          return {
-            exists: !!index,
-            status: !!index ? index.status : 'disabled'
-          };
+          return { exists: !!index };
         },
         componentWillReceiveProps: function () {
           if (scope.data) {
             var index = _.findWhere(scope.data, {name: this.props.name});
-            this.setState({
-              exists: !!index,
-              status: !!index ? index.status : 'disabled'
-            });
+            this.setState({ exists: !!index });
           }
         },
         render: function () {
@@ -82,7 +76,7 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
           const unassignedShards = numeralize(metrics.index_unassigned_shards);
 
           return (
-            <tr key={name} className={[this.state.status]}>
+            <tr key={name} className={this.props.status}>
               <td>
                 <a onClick={clickFn}>
                   {name}
