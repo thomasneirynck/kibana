@@ -1,3 +1,4 @@
+import {once} from 'lodash';
 import 'angular-resource';
 import 'angular-cookies';
 import angular from 'angular';
@@ -13,6 +14,10 @@ module.service('ShieldUser', ($resource, $cookies, chrome, clientCookieName) => 
       method: 'POST',
       url: `${baseUrl}/password`,
       transformRequest: ({password}) => angular.toJson({password})
+    },
+    getCurrentUser: {
+      method: 'GET',
+      url: chrome.addBasePath('/api/security/v1/me')
     }
   });
 
@@ -24,6 +29,8 @@ module.service('ShieldUser', ($resource, $cookies, chrome, clientCookieName) => 
 
     return new ShieldUser(clientCookieValue);
   };
+
+  ShieldUser.getCurrentUser = once(ShieldUser.getCurrentUser);
 
   return ShieldUser;
 });

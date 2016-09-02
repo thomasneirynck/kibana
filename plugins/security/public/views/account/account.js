@@ -8,7 +8,7 @@ routes.when('/account', {
   template,
   resolve: {
     user(ShieldUser) {
-      return ShieldUser.getCurrent();
+      return ShieldUser.getCurrentUser();
     }
   },
   controller($scope, $route, Notifier) {
