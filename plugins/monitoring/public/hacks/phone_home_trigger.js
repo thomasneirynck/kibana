@@ -2,7 +2,7 @@ import _ from 'lodash';
 import uiChrome from 'ui/chrome';
 import moment from 'moment';
 import uiModules from 'ui/modules';
-import UserProvider from 'plugins/xpack_main/services/user';
+import PathProvider from 'plugins/xpack_main/services/path';
 import 'plugins/monitoring/services/clusters';
 
 function phoneHomeClassFactory($window, Promise, $http, reportStats, statsReportUrl, features) {
@@ -143,13 +143,7 @@ function phoneHomeClassFactory($window, Promise, $http, reportStats, statsReport
 
 function phoneHomeStart(Private) {
   // no phone home for non-logged in users
-  const user = Private(UserProvider).getCurrent();
-  const isSecurityEnabled = user !== null;
-  const isUserSignedIn = !!user;
-
-  if (isSecurityEnabled && !isUserSignedIn) {
-    return;
-  }
+  if (Private(PathProvider).isLoginOrLogout()) return;
 
   const PhoneHome = Private(phoneHomeClassFactory);
   const sender = new PhoneHome();

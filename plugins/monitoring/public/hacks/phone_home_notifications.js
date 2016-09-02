@@ -1,6 +1,6 @@
 import Notifier from 'ui/notify/notifier';
 import uiModules from 'ui/modules';
-import UserProvider from 'plugins/xpack_main/services/user';
+import PathProvider from 'plugins/xpack_main/services/path';
 import 'plugins/monitoring/services/features';
 import { PHONE_HOME_FEATURE, PHONE_HOME_NOTIFICATION_SEEN } from '../../lib/constants';
 
@@ -56,13 +56,7 @@ function customNotification(reportStats, Private, features) {
   }
 
   // no welcome message for non-logged in users
-  const user = Private(UserProvider).getCurrent();
-  const isSecurityEnabled = user !== null;
-  const isUserSignedIn = !!user;
-
-  if (isSecurityEnabled && !isUserSignedIn) {
-    return;
-  }
+  if (Private(PathProvider).isLoginOrLogout()) return;
 
   // only run once
   const hasRan = features.isEnabled(PHONE_HOME_NOTIFICATION_SEEN);
