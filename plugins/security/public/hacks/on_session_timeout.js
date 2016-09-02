@@ -5,7 +5,7 @@ import 'plugins/security/services/auto_logout';
 
 const module = uiModules.get('security', []);
 module.config(($httpProvider) => {
-  $httpProvider.interceptors.push(($timeout, $window, $q, $injector, sessionTimeout, Notifier, chrome, LoginPage, autoLogout) => {
+  $httpProvider.interceptors.push(($timeout, $window, $q, $injector, sessionTimeout, Notifier, LoginPage, autoLogout) => {
     const notifier = new Notifier();
     const notificationLifetime = 60 * 1000;
     const notificationOptions = {
@@ -33,8 +33,7 @@ module.config(($httpProvider) => {
       activeNotification = notifier.add(notificationOptions, (action) => {
         if (action === 'accept') {
           // Make a simple request to keep the session alive
-          const $http = $injector.get('$http');
-          $http.get(chrome.addBasePath('/api/security/v1/me'));
+          $injector.get('es').ping();
         } else {
           autoLogout();
         }
