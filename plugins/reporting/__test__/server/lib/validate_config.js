@@ -9,12 +9,7 @@ describe('validateConfig', () => {
     mockConfig.get = sinon.stub();
     mockConfig.get.withArgs('xpack.reporting.encryptionKey').returns(undefined);
 
-    let thrownException;
-    try {
-      validateConfig(mockConfig);
-    } catch (e) {
-      thrownException = e;
-    }
-    expect(thrownException).to.be.an(Error);
+    const validateConfigFn = () => validateConfig(mockConfig);
+    expect(validateConfigFn).to.throwException(/xpack.reporting.encryptionKey is required in kibana.yml/);
   });
 });
