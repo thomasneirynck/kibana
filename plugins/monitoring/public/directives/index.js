@@ -11,6 +11,5 @@ import 'plugins/monitoring/directives/cluster_status_elasticsearch/index';
 import 'plugins/monitoring/directives/node_summary/index';
 import 'plugins/monitoring/directives/index_summary/index';
 import 'plugins/monitoring/directives/kibana_summary/index';
-import 'plugins/monitoring/directives/welcome_msg/index';
 import 'plugins/monitoring/directives/shard_allocation/index';
 import 'plugins/monitoring/directives/shard_allocation/directives/clusterView';
