@@ -16,7 +16,7 @@ const module = uiModules.get('security', ['kibana']);
 module.controller('securityNavController', ($scope, ShieldUser, globalNavState, kbnBaseUrl, Private) => {
   if (Private(PathProvider).isLoginOrLogout()) return;
 
-  $scope.user = ShieldUser.getCurrentUser();
+  $scope.user = ShieldUser.getCurrent();
   $scope.route = `${kbnBaseUrl}#/account`;
 
   $scope.formatTooltip = tooltip => {

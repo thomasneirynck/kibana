@@ -26,8 +26,7 @@ describe('lib/auth_redirect', function () {
               isAvailable: sinon.stub().returns(true),
               feature: () => { return { isEnabled: sinon.stub().returns(true) }; }
             }
-          },
-          clientCookieName: 'user'
+          }
         };
         request = requestFixture();
         reply = replyFixture();

@@ -19,7 +19,7 @@ routes.defaults(/\/management/, {
       elasticsearch.deregister('users');
       elasticsearch.deregister('roles');
 
-      return ShieldUser.getCurrentUser().$promise
+      return ShieldUser.getCurrent().$promise
       .then(() => {
         if (showSecurityLinks) {
           elasticsearch.register('users', {
