@@ -19,6 +19,7 @@ routes.defaults(/\/management/, {
       elasticsearch.deregister('users');
       elasticsearch.deregister('roles');
 
+      // $promise is used here because the result is an ngResource, not a promise itself
       return ShieldUser.getCurrent().$promise
       .then(() => {
         if (showSecurityLinks) {

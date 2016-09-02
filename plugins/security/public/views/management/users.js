@@ -9,8 +9,9 @@ routes.when('/management/elasticsearch/users', {
   template,
   resolve: {
     users(ShieldUser, kbnUrl, Promise, Private) {
-      return ShieldUser.query()
-      .$promise.catch(checkLicenseError(kbnUrl, Promise, Private))
+      // $promise is used here because the result is an ngResource, not a promise itself
+      return ShieldUser.query().$promise
+      .catch(checkLicenseError(kbnUrl, Promise, Private))
       .catch(_.identity); // Return the error if there is one
     }
   },
