@@ -12,6 +12,7 @@ function getPageData(timefilter, globalState, $http, Private, features) {
   const timeBounds = timefilter.getBounds();
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/indices`;
   const showSystemIndices = features.isEnabled('showSystemIndices', false);
+
   return $http.post(url, {
     showSystemIndices,
     timeRange: {

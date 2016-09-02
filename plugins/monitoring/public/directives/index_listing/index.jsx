@@ -4,6 +4,86 @@ import React from 'react';
 import Table from 'plugins/monitoring/directives/paginated_table/components/table';
 import uiModules from 'ui/modules';
 
+function showSystemIndicesComponentFactory(scope) {
+  return class ShowSystemIndicesComponent extends React.Component {
+    constructor(props) {
+      super();
+      this.state = { showSystemIndices: props.showSystemIndices };
+      // method not automatically bound to the component instance because of using ES6 class syntax
+      this.toggleShowSystemIndices = this.toggleShowSystemIndices.bind(this);
+    }
+
+    toggleShowSystemIndices() {
+      this.setState({ showSystemIndices: !this.state.showSystemIndices });
+      scope.$evalAsync(() => {
+        scope.toggleShowSystemIndices();
+      });
+    }
+
+    render() {
+      return (
+        <div className='pull-left filter-member'>
+          <input type='checkbox'
+            onChange={this.toggleShowSystemIndices}
+            checked={this.state.showSystemIndices}/>&nbsp;
+          <span onClick={this.toggleShowSystemIndices}>Show system indices</span>
+        </div>
+      );
+    }
+  };
+}
+
+function indexRowTemplateFactory(scope, kbnUrl) {
+  return class IndexRowTemplate extends React.Component {
+    constructor(props) {
+      super();
+      var index = _.findWhere(scope.data, {name: props.name});
+      this.state = {
+        exists: !!index
+      };
+    }
+
+    componentWillReceiveProps() {
+      if (scope.data) {
+        var index = _.findWhere(scope.data, {name: this.props.name});
+        this.setState({ exists: !!index });
+      }
+    }
+
+    render() {
+      const numeralize = value => numeral(value.last).format(value.metric ? value.metric.format : null);
+      const unitize = value => `${numeralize(value)} ${value.metric.units}`;
+      const name = this.props.name;
+      const clickFn = () => {
+        scope.$evalAsync(function () {
+          kbnUrl.changePath(`/elasticsearch/indices/${name}`);
+        });
+      };
+      const metrics = this.props.metrics;
+      const docCount = numeralize(metrics.index_document_count);
+      const indexSize = numeralize(metrics.index_size);
+      const requestRate = unitize(metrics.index_request_rate_primary);
+      const searchRate = unitize(metrics.index_search_request_rate);
+      const unassignedShards = numeralize(metrics.index_unassigned_shards);
+
+      return (
+        <tr key={name} className={this.props.status}>
+          <td>
+            <a onClick={clickFn}>
+              {name}
+            </a>
+          </td>
+          <td>{docCount}</td>
+          <td>{indexSize}</td>
+          <td>{requestRate}</td>
+          <td>{searchRate}</td>
+          <td>{unassignedShards}</td>
+        </tr>
+      );
+    }
+  };
+}
+
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringIndexListing', function (kbnUrl) {
   var initialTableOptions = {
@@ -50,73 +130,17 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
       toggleShowSystemIndices: '='
     },
     link: function (scope, $el) {
-      var indexRowTemplate = React.createClass({
-        getInitialState: function () {
-          var index = _.findWhere(scope.data, {name: this.props.name});
-          return { exists: !!index };
-        },
-        componentWillReceiveProps: function () {
-          if (scope.data) {
-            var index = _.findWhere(scope.data, {name: this.props.name});
-            this.setState({ exists: !!index });
-          }
-        },
-        render: function () {
-          const numeralize = value => numeral(value.last).format(value.metric ? value.metric.format : null);
-          const unitize = value => `${numeralize(value)} ${value.metric.units}`;
-          const name = this.props.name;
-          const clickFn = () => {
-            scope.$evalAsync(function () {
-              kbnUrl.changePath(`/elasticsearch/indices/${name}`);
-            });
-          };
-          const metrics = this.props.metrics;
-          const docCount = numeralize(metrics.index_document_count);
-          const indexSize = numeralize(metrics.index_size);
-          const requestRate = unitize(metrics.index_request_rate_primary);
-          const searchRate = unitize(metrics.index_search_request_rate);
-          const unassignedShards = numeralize(metrics.index_unassigned_shards);
-
-          return (
-            <tr key={name} className={this.props.status}>
-              <td>
-                <a onClick={clickFn}>
-                  {name}
-                </a>
-              </td>
-              <td>{docCount}</td>
-              <td>{indexSize}</td>
-              <td>{requestRate}</td>
-              <td>{searchRate}</td>
-              <td>{unassignedShards}</td>
-            </tr>
-          );
-        }
-      });
-
-      function toggleShowSystemIndices() {
-        scope.$evalAsync(() => {
-          scope.toggleShowSystemIndices();
-        });
-      }
-
-      var tableFactory = React.createFactory(Table);
-      var table = React.render(tableFactory({
-        scope: scope,
+      const ShowSystemIndicesComponent = showSystemIndicesComponentFactory(scope);
+      const indexRowTemplate = indexRowTemplateFactory(scope, kbnUrl);
+      const $table = React.createElement(Table, {
+        scope,
         options: initialTableOptions,
-        filterMembers: [
-          <div className="filter-member">
-            <input type="checkbox"
-              onChange={toggleShowSystemIndices}
-              checked={scope.showSystemIndices}/>&nbsp;
-            <span onClick={toggleShowSystemIndices}>Show system indices</span>
-          </div>
-        ],
+        filterMembers: [<ShowSystemIndicesComponent showSystemIndices={scope.showSystemIndices}/>],
         template: indexRowTemplate
-      }), $el[0]);
-
+      });
+      const tableInstance = React.render($table, $el[0]);
       scope.$watch('data', (data) => {
-        table.setData(data);
+        tableInstance.setData(data);
       });
     }
   };
