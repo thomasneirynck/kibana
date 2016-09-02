@@ -1,6 +1,6 @@
 import { identity } from 'lodash';
 import uiModules from 'ui/modules';
-import 'plugins/security/services/login_page';
+import PathProvider from 'plugins/xpack_main/services/path';
 import 'plugins/security/services/auto_logout';
 
 function isUnauthorizedResponseAllowed(response) {
@@ -13,10 +13,11 @@ function isUnauthorizedResponseAllowed(response) {
 }
 
 const module = uiModules.get('security');
-module.factory('onUnauthorizedResponse', ($q, $window, $injector, LoginPage, autoLogout) => {
+module.factory('onUnauthorizedResponse', ($q, $window, $injector, Private, autoLogout) => {
+  const isLoginOrLogout = Private(PathProvider).isLoginOrLogout();
   function interceptorFactory(responseHandler) {
     return function interceptor(response) {
-      if (response.status === 401 && !isUnauthorizedResponseAllowed(response) && !LoginPage.isOnLoginPage()) return autoLogout();
+      if (response.status === 401 && !isUnauthorizedResponseAllowed(response) && !isLoginOrLogout) return autoLogout();
       return responseHandler(response);
     };
   }

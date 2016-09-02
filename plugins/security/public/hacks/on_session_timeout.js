@@ -1,11 +1,12 @@
 import _ from 'lodash';
 import uiModules from 'ui/modules';
-import 'plugins/security/services/login_page';
+import PathProvider from 'plugins/xpack_main/services/path';
 import 'plugins/security/services/auto_logout';
 
 const module = uiModules.get('security', []);
 module.config(($httpProvider) => {
-  $httpProvider.interceptors.push(($timeout, $window, $q, $injector, sessionTimeout, Notifier, LoginPage, autoLogout) => {
+  $httpProvider.interceptors.push(($timeout, $window, $q, $injector, sessionTimeout, Notifier, Private, autoLogout) => {
+    const isLoginOrLogout = Private(PathProvider).isLoginOrLogout();
     const notifier = new Notifier();
     const notificationLifetime = 60 * 1000;
     const notificationOptions = {
@@ -42,7 +43,7 @@ module.config(($httpProvider) => {
 
     function interceptorFactory(responseHandler) {
       return function interceptor(response) {
-        if (!LoginPage.isOnLoginPage()) {
+        if (!isLoginOrLogout) {
           clearNotifications();
           scheduleNotification();
         }
