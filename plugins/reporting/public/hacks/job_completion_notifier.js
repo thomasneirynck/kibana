@@ -18,13 +18,12 @@ uiModules.get('kibana')
 
 uiModules.get('kibana')
 .run(($http, $interval, reportingJobQueue, Private) => {
-  const isLoginOrLogout = Private(PathProvider).isLoginOrLogout();
-  if (!isLoginOrLogout) {
-    $interval(function startChecking() {
-      getJobsCompletedSinceLastCheck($http)
-      .then(jobs => jobs.forEach(job => showCompletionNotification(job, reportingJobQueue)));
-    }, constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
-  }
+  if (Private(PathProvider).isLoginOrLogout()) return;
+
+  $interval(function startChecking() {
+    getJobsCompletedSinceLastCheck($http)
+    .then(jobs => jobs.forEach(job => showCompletionNotification(job, reportingJobQueue)));
+  }, constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
 });
 
 function getLastCheckedOn() {
