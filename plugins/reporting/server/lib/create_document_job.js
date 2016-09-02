@@ -3,7 +3,7 @@ const { get } = require('lodash');
 const constants = require('./constants');
 const getUserFactory = require('./get_user');
 const getObjectQueueFactory = require('./get_object_queue');
-import cryptoFactory from './crypto';
+const cryptoFactory = require('./crypto');
 const oncePerServer = require('./once_per_server');
 
 function createDocumentJobFactory(server) {
