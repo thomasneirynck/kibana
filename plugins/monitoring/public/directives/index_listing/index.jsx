@@ -45,7 +45,9 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
   return {
     restrict: 'E',
     scope: {
-      data: '='
+      data: '=',
+      showSystemIndices: '=',
+      toggleShowSystemIndices: '='
     },
     link: function (scope, $el) {
       var indexRowTemplate = React.createClass({
@@ -92,10 +94,24 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
         }
       });
 
+      function toggleShowSystemIndices() {
+        scope.$evalAsync(() => {
+          scope.toggleShowSystemIndices();
+        });
+      }
+
       var tableFactory = React.createFactory(Table);
       var table = React.render(tableFactory({
         scope: scope,
         options: initialTableOptions,
+        filterMembers: [
+          <div className="filter-member">
+            <input type="checkbox"
+              onChange={toggleShowSystemIndices}
+              checked={scope.showSystemIndices}/>&nbsp;
+            <span onClick={toggleShowSystemIndices}>Show system indices</span>
+          </div>
+        ],
         template: indexRowTemplate
       }), $el[0]);
 

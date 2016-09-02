@@ -60,10 +60,13 @@ uiModule.controller('indices',
   const callPageData = _.partial(getPageData, timefilter, globalState, $http, Private, features);
 
   // system indices shown by default, and setting is stored in localStorage
-  $scope.showSystemToggle = features.isEnabled('showSystemIndices', false);
-  $scope.toggleShowSystemIndices = (value) => {
+  $scope.showSystemIndices = features.isEnabled('showSystemIndices', false);
+  $scope.toggleShowSystemIndices = () => {
+    // flip the boolean
+    $scope.showSystemIndices = !$scope.showSystemIndices;
     // preserve setting in localStorage
-    features.update('showSystemIndices', value);
+    features.update('showSystemIndices', $scope.showSystemIndices);
+    // update the page
     callPageData().then((pageData) => $scope.pageData = pageData);
   };
 
