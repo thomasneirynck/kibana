@@ -1,4 +1,3 @@
-import {once} from 'lodash';
 import 'angular-resource';
 import 'angular-cookies';
 import angular from 'angular';
@@ -29,8 +28,6 @@ module.service('ShieldUser', ($resource, $cookies, chrome, clientCookieName) => 
 
     return new ShieldUser(clientCookieValue);
   };
-
-  ShieldUser.getCurrentUser = once(ShieldUser.getCurrentUser);
 
   return ShieldUser;
 });
