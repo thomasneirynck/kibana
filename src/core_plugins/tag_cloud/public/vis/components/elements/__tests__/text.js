@@ -23,7 +23,7 @@ describe('text SVG tests', function () {
   });
 
   describe('class API', function () {
-    var defaultClass;
+    let defaultClass;
 
     beforeEach(function () {
       removeChildren(fixture);
@@ -126,7 +126,7 @@ describe('text SVG tests', function () {
     });
 
     it('should set the property', function () {
-      var newText = 'new value';
+      let newText = 'new value';
       element.text(newText);
       expect(_.isEqual(element.text()({'new value': 'foo'}), 'foo')).to.be(true);
     });
