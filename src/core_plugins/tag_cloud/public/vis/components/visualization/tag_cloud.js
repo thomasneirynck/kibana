@@ -23,7 +23,6 @@ function tagCloud() {
   var fontWeight = fontNormal;
   var minFontSize = 12;
   var maxFontSize = 60;
-  var timeInterval = Infinity;
   var spiral = 'archimedean';
   var padding = 1;
   var textAccessor = function (d) { return d.text; };
@@ -82,7 +81,6 @@ function tagCloud() {
         .fontStyle(fontStyle)
         .fontWeight(fontWeight)
         .fontSize(fontSize)
-        .timeInterval(timeInterval)
         .spiral(spiral)
         .padding(padding)
         .on('end', draw)
@@ -160,12 +158,6 @@ function tagCloud() {
   generator.maxFontSize = function (v) {
     if (!arguments.length) { return maxFontSize; }
     maxFontSize = v;
-    return generator;
-  };
-
-  generator.timeInterval = function (v) {
-    if (!arguments.length) { return timeInterval; }
-    timeInterval = v;
     return generator;
   };
 
