@@ -3,23 +3,23 @@ import _ from 'lodash';
 import valuator from 'plugins/tagcloud/vis/components/utils/valuator';
 
 function textGenerator() {
-  var colorScale = d3.scale.category20();
-  var cssClass = 'tag';
-  var transform = function (d) {
+  let colorScale = d3.scale.category20();
+  let cssClass = 'tag';
+  let transform = function (d) {
     return 'translate(' + [d.x, d.y] + ')rotate(' + d.rotate + ')';
   };
-  var fontSize = function (d) { return d.size + 'px'; };
-  var fontFamily = function (d) { return d.font; };
-  var fontWeight = function (d) { return d.weight; };
-  var fontStyle = function (d) { return d.style; };
-  var fill = function (d, i) { return colorScale(i); };
-  var fillOpacity = d3.functor(1);
-  var textAnchor = d3.functor('middle');
-  var textAccessor = function (d) { return d.text; };
+  let fontSize = function (d) { return d.size + 'px'; };
+  let fontFamily = function (d) { return d.font; };
+  let fontWeight = function (d) { return d.weight; };
+  let fontStyle = function (d) { return d.style; };
+  let fill = function (d, i) { return colorScale(i); };
+  let fillOpacity = d3.functor(1);
+  let textAnchor = d3.functor('middle');
+  let textAccessor = function (d) { return d.text; };
 
   function generator(selection) {
     selection.each(function (data, index) {
-      var text = d3.select(this).selectAll('text.' + cssClass)
+      let text = d3.select(this).selectAll('text.' + cssClass)
         .data(data);
 
       text.exit().remove();
