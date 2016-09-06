@@ -33,7 +33,6 @@ function TagCloudProvider(Private) {
         font: 'serif',
         fontStyle: 'normal',
         fontWeight: 'normal',
-        timeInterval: 500,
         spiral: 'archimedean',
         minFontSize: 18,
         maxFontSize: 72
