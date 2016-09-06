@@ -237,7 +237,7 @@
     <div id="sidebar" ng-if="workspace !== null">
       <div class="sidebarPanel">
 
-        <div id="vertexSelectionActionBar">
+        <div class="vertexSelectionActionBar">
           <button class="btn btn-xs btn-default" tooltip="Undo" type="button" ng-click="workspace.undo()" ng-disabled="workspace === null||workspace.undoLog.length <1">
             <i class="fa  fa-history"></i>
           </button>
@@ -260,6 +260,9 @@
           </button>
 
           <button class="btn btn-xs btn-default" ng-disabled="workspace === null ||workspace.selectedNodes.length === 0" tooltip="Custom style selected vertices" ng-click="setDetail({showStyle:true})"><i class="fa  fa-paint-brush"></i>
+          </button>
+
+          <button class="btn btn-xs btn-default" ng-disabled="workspace === null||workspace.nodes.length === 0" tooltip="Drill down" ng-click="setDetail({showDrillDowns:true})"><i class="fa  fa-info"></i>
           </button>
 
           <button class="btn btn-xs btn-default"  ng-disabled="workspace.nodes.length === 0" ng-if="workspace.nodes.length === 0||workspace.force === null " tooltip="Run layout" ng-click="workspace.runLayout()"><i class="fa  fa-play"></i>
@@ -305,9 +308,36 @@
 
               </div>
             </div>
+        </div>
 
+        <!-- Any drill-downs with a choice of button icon appear here for quick access -->
+        <div ng-if="(urlTemplates | filter:{icon: {class:''}}).length > 0" >
+          <button ng-repeat="urlTemplate in urlTemplates  | filter:{icon: {class:''}}"
+            class="btn btn-xs btn-default selButton"  tooltip="{{urlTemplate.description}}" type="button"
+            ng-disabled="workspace === null ||workspace.nodes.length === 0"
+            ng-click="openUrlTemplate(urlTemplate)" >
+            <i class="fa" ng-class="urlTemplate.icon.class"></i>
+          </button>
+        </div>
 
+        <div ng-if="detail.showDrillDowns">
+          <div class="detailHeader">
+            <i class="fa fa-info"></i> Drill-downs
+          </div>
 
+          <div class="detailPanel">
+            <p ng-if="urlTemplates.length === 0" class="help-block">
+              Configure drill-downs from the settings menu
+            </p>
+
+            <ul ng-repeat="urlTemplate in urlTemplates" class="li-striped list-group list-group-menu">
+              <li class="list-group-item">
+                <i ng-if="urlTemplate.icon" class="fa icon noUserSelect">
+                                    {{urlTemplate.icon.code}}</i>
+                  <a ng-click="openUrlTemplate(urlTemplate)">{{urlTemplate.description}}</a>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <div class="detailPanel" ng-if="(detail.showStyle)&&(workspace.selectedNodes.length>0)">
@@ -325,8 +355,6 @@
               </span>
             </div>
           </div>
-
-
         </div>
 
         <div class="detailPanel" ng-if="detail.latestNodeSelection">
@@ -351,8 +379,8 @@
           </form>
         </div>
 
-        <div class="detailPanel">
-          <div ng-if="detail.mergeCandidates.length>0" class="detailHeader">
+        <div ng-if="detail.mergeCandidates.length>0" class="detailPanel">
+          <div class="detailHeader">
             <i class="fa  fa-link"></i> Link summary
           </div>
           <div ng-repeat="mc in detail.mergeCandidates">
@@ -417,11 +445,8 @@
               </div>
             </div>
           </div>
-
-
-
         </div>
-        <!-- end sidebar detail panel -->
+        <!-- end edge-merge detail panel -->
 
       </div>
 

@@ -1269,6 +1269,94 @@ module.exports = (function () {
       };
     };
 
+    this.getSelectedOrAllNodes = function () {
+      var startNodes = self.getAllSelectedNodes();
+      if (startNodes.length === 0) {
+        startNodes = self.nodes;
+      }
+      return startNodes;
+    };
+
+    function addTermToFieldList(map, field, term) {
+      var arr = map[field];
+      if (!arr) {
+        arr = [];
+        map[field] = arr;
+      }
+      arr.push(term);
+    }
+
+    // Provide a "fuzzy find similar" query that can find similar docs but preferably
+    // not re-iterating the exact terms we already have in the workspace.
+    // We use a free-text search on the index's configured default field (typically '_all')
+    // to drill-down into docs that should be linked but aren't via the exact terms
+    // we have in the workspace
+    this.getLikeThisButNotThisQuery = function (startNodes) {
+      var likeQueries = [];
+
+      var txtsByFieldType = {};
+      startNodes.forEach(node => {
+        var txt = txtsByFieldType[node.data.field];
+        if (txt) {
+          txt = txt + ' ' + node.label;
+        }else {
+          txt = node.label;
+        }
+        txtsByFieldType[node.data.field] = txt;
+      });
+      for (var field in txtsByFieldType) {
+        likeQueries.push({
+          'more_like_this': {
+            'like': txtsByFieldType[field],
+            'min_term_freq': 1,
+            'minimum_should_match': '20%',
+            'min_doc_freq':1,
+            'boost_terms':2,
+            'max_query_terms': 25
+          }
+        });
+      }
+
+      var excludeNodesByField = {};
+      var allExistingNodes = self.nodes;
+      allExistingNodes.forEach(existingNode => {
+        addTermToFieldList(excludeNodesByField, existingNode.data.field, existingNode.data.term);
+      });
+      var blacklistedNodes = self.blacklistedNodes;
+      blacklistedNodes.forEach(blacklistedNode => {
+        addTermToFieldList(excludeNodesByField, blacklistedNode.data.field, blacklistedNode.data.term);
+      });
+
+      //Create negative boosting queries to avoid matching what you already have in the workspace.
+      var notExistingNodes = [];
+      Object.keys(excludeNodesByField).forEach(fieldName => {
+        var termsQuery = {};
+        termsQuery[fieldName] = excludeNodesByField[fieldName];
+        notExistingNodes.push({
+          'terms':termsQuery
+        });
+      });
+
+      var result = {
+        // Use a boosting query to effectively to request "similar to these IDS/labels but
+        // preferably not containing these exact IDs".
+        'boosting': {
+          'negative_boost': 0.0001,
+          'negative': {
+            'bool':{
+              'should': notExistingNodes
+            }
+          },
+          'positive': {
+            'bool':{
+              'should': likeQueries
+            }
+          }
+        }
+      };
+      return result;
+    };
+
     this.getSelectedIntersections = function (callback) {
       if (self.selectedNodes.length == 0) {
         return self.getAllIntersections(callback, self.nodes);

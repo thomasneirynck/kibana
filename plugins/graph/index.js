@@ -41,16 +41,17 @@ module.exports = function (kibana) {
             esApiVersion: config.get('elasticsearch.apiVersion'),
             esShardTimeout: config.get('elasticsearch.shardTimeout'),
             graphSavePolicy: config.get('xpack.graph.savePolicy'),
+            canEditDrillDownUrls: config.get('xpack.graph.canEditDrillDownUrls')
           };
         }
       },
       hacks: ['plugins/graph/hacks/toggle_app_link_in_nav'],
     },
-    //    noParse:[{ test:function(a){console.log("Debug",a); return /node_modules[\/\\]angular-contextmenu/.test(a); }}   ], //MH change
 
     config: function (Joi) {
       return Joi.object({
         enabled: Joi.boolean().default(true),
+        canEditDrillDownUrls: Joi.boolean().default(true),
         savePolicy : Joi.string().valid(['config','configAndDataWithConsent','configAndData','none']).default('configAndData'),
       }).default();
     },
