@@ -1,3 +1,5 @@
+@import (reference) "~ui/styles/variables";
+
 .container {
   margin-top: 30px;
 }
@@ -131,7 +133,7 @@
   font-size:18px;
 }
 
-#vertexSelectionActionBar {
+.vertexSelectionActionBar {
     padding-top: 2px;
 }
 
@@ -313,4 +315,23 @@ navbar .input-group{
 }
 #fieldIconPlaceholder{
       min-height: 35px;
+}
+.scrollable-list{
+  max-height: 180px;
+  overflow: scroll;
+}
+
+.scrollable-list ul.li-striped {
+  li {
+    border: none;
+  }
+
+  li:nth-child(even) {
+    background-color: @kibanaGray6;
+  }
+
+  li:nth-child(odd) {
+    background-color: @white;
+  }
+
 }
