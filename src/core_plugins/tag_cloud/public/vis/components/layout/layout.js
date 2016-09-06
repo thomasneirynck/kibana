@@ -2,7 +2,7 @@ import d3 from 'd3';
 import _ from 'lodash';
 
 function formatType(length, type, cols) {
-  var output = {};
+  let output = {};
 
   switch (type) {
     case 'grid':
@@ -25,28 +25,28 @@ function formatType(length, type, cols) {
 }
 
 function baseLayout() {
-  var type = 'grid'; // available types: 'rows', 'columns', 'grid'
-  var size = [250, 250]; // [width, height]
-  var rowScale = d3.scale.linear();
-  var columnScale = d3.scale.linear();
-  var numOfCols = 0;
+  let type = 'grid'; // available types: 'rows', 'columns', 'grid'
+  let size = [250, 250]; // [width, height]
+  let rowScale = d3.scale.linear();
+  let columnScale = d3.scale.linear();
+  let numOfCols = 0;
 
   function layout(data) {
-    var format = formatType(data.length, type, numOfCols);
-    var rows = format.rows;
-    var columns = format.columns;
-    var cellWidth = size[0] / columns;
-    var cellHeight = size[1] / rows;
-    var cell = 0;
-    var newData = [];
+    let format = formatType(data.length, type, numOfCols);
+    let rows = format.rows;
+    let columns = format.columns;
+    let cellWidth = size[0] / columns;
+    let cellHeight = size[1] / rows;
+    let cell = 0;
+    let newData = [];
 
     rowScale.domain([0, rows]).range([0, size[1]]);
     columnScale.domain([0, columns]).range([0, size[0]]);
 
     d3.range(rows).forEach(function (row) {
       d3.range(columns).forEach(function (col) {
-        var datum = data[cell];
-        var obj = {
+        let datum = data[cell];
+        let obj = {
           dx: columnScale(col),
           dy: rowScale(row),
           width: cellWidth,

@@ -3,9 +3,9 @@ import _ from 'lodash';
 
 // Adds event listeners to DOM elements
 function events() {
-  var processor = function (e) { return e; };
-  var listeners = {};
-  var svg;
+  let processor = function (e) { return e; };
+  let listeners = {};
+  let svg;
 
   function control(selection) {
     selection.each(function () {
