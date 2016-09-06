@@ -4,13 +4,13 @@ import builder from 'plugins/tagcloud/vis/components/utils/builder';
 import tagCloud from 'plugins/tagcloud/vis/components/visualization/tag_cloud';
 
 function chartGenerator() {
-  var opts = {};
+  let opts = {};
 
   function generator(selection) {
     selection.each(function (data) {
-      var dataOpts = (data && data.options) || {};
-      var accessor = opts.accessor || dataOpts.accessor || 'tags';
-      var chart = tagCloud()
+      let dataOpts = (data && data.options) || {};
+      let accessor = opts.accessor || dataOpts.accessor || 'tags';
+      let chart = tagCloud()
         .width(data.width)
         .height(data.height)
         .accessor(accessor);

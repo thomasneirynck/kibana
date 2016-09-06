@@ -6,12 +6,12 @@ import chartGenerator from 'plugins/tagcloud/vis/components/visualization/genera
 
 function vis() {
 
-  var events = control();
-  var layout = layoutGenerator();
-  var chart = chartGenerator();
-  var opts = {};
-  var listeners = {};
-  var size = [250, 250];
+  let events = control();
+  let layout = layoutGenerator();
+  let chart = chartGenerator();
+  let opts = {};
+  let listeners = {};
+  let size = [250, 250];
 
   function generator(selection) {
     selection.each(function (data) {

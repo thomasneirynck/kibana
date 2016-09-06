@@ -4,8 +4,8 @@ import baseLayout from 'plugins/tagcloud/vis/components/layout/layout';
 import gGenerator from 'plugins/tagcloud/vis/components/elements/g';
 
 function layoutGenerator() {
-  var layout = baseLayout();
-  var group = gGenerator();
+  let layout = baseLayout();
+  let group = gGenerator();
 
   function generator(selection) {
     selection.each(function (data) {

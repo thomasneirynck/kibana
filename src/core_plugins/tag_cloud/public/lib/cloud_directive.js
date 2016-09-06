@@ -8,21 +8,15 @@ const module = uiModules.get('kibana/tagcloud', ['kibana']);
 
 module.directive('kbnTagCloud', function () {
   function link(scope, element, attrs) {
+
     angular.element(document).ready(function () {
-      var vis = visGenerator();
-      var svg = d3.select(element[0]);
+      let vis = visGenerator();
+      let svg = d3.select(element[0]);
 
-      function onSizeChange() {
-        return {
-          width: element.parent().width(),
-          height: element.parent().height()
-        };
+
+      function containerSize() {
+        return [element.parent().width(), element.parent().height()];
       }
-
-      function getSize() {
-        var size = onSizeChange();
-        return [size.width, size.height];
-      };
 
       function render(data, opts, eventListeners) {
         opts = opts || {};
@@ -30,28 +24,21 @@ module.directive('kbnTagCloud', function () {
 
         vis.options(opts)
           .listeners(eventListeners)
-          .size(getSize());
+          .size(containerSize());
 
         if (data) {
           svg.datum(data).call(vis);
         }
-      };
+      }
 
-      scope.$watch('data', function (newVal, oldVal) {
-        render(newVal, scope.options, scope.eventListeners);
-      });
-
-      scope.$watch('options', function (newVal, oldVal) {
-        render(scope.data, newVal, scope.eventListeners);
-      });
-
-      scope.$watch('eventListeners', function (newVal, oldVal) {
-        render(scope.data, scope.options, newVal);
-      });
-
-      scope.$watch(onSizeChange, _.debounce(function () {
+      function reRender() {
         render(scope.data, scope.options, scope.eventListeners);
-      }, 250), true);
+      }
+
+      scope.$watch('data', reRender);
+      scope.$watch('options', reRender);
+      scope.$watch('eventListeners', reRender);
+      scope.$watch(containerSize, _.debounce(reRender, 250), true);
 
       element.bind('resize', function () {
         scope.$apply();

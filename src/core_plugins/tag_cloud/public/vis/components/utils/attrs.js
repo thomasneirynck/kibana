@@ -3,7 +3,7 @@ import builder from 'plugins/tagcloud/vis/components/utils/builder';
 
 function attrs(generator) {
   return function () {
-    var funcs = _.toArray(arguments);
+    let funcs = _.toArray(arguments);
 
     function filterFunctions(arr, attr) {
       return _.filter(arr, function (func) {

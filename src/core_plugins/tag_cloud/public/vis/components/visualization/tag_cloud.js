@@ -7,29 +7,29 @@ import valuator from 'plugins/tagcloud/vis/components/utils/valuator';
 import vislibComponentsSeedColorsProvider from 'ui/vislib/components/color/seed_colors';
 
 function tagCloud() {
-  var textScale = d3.scale.linear();
-  var accessor = function (d) { return d; };
-  var colorScale = d3.scale.ordinal().range(vislibComponentsSeedColorsProvider());
-  var fontNormal = d3.functor('normal');
-  var width = 250;
-  var height = 250;
-  var rotationScale = d3.scale.linear();
-  var orientations = 1;
-  var fromDegree = 0;
-  var toDegree = 0;
-  var font = d3.functor('serif');
-  var fontSize = function (d) { return textScale(d.size); };
-  var fontStyle = fontNormal;
-  var fontWeight = fontNormal;
-  var minFontSize = 12;
-  var maxFontSize = 60;
-  var spiral = 'archimedean';
-  var padding = 1;
-  var textAccessor = function (d) { return d.text; };
-  var fill = function (d, i) { return colorScale(d.text); };
-  var fillOpacity = d3.functor(1);
-  var textAnchor = d3.functor('middle');
-  var textClass = 'tag';
+  let textScale = d3.scale.linear();
+  let accessor = function (d) { return d; };
+  let colorScale = d3.scale.ordinal().range(vislibComponentsSeedColorsProvider());
+  let fontNormal = d3.functor('normal');
+  let width = 250;
+  let height = 250;
+  let rotationScale = d3.scale.linear();
+  let orientations = 1;
+  let fromDegree = 0;
+  let toDegree = 0;
+  let font = d3.functor('serif');
+  let fontSize = function (d) { return textScale(d.size); };
+  let fontStyle = fontNormal;
+  let fontWeight = fontNormal;
+  let minFontSize = 12;
+  let maxFontSize = 60;
+  let spiral = 'archimedean';
+  let padding = 1;
+  let textAccessor = function (d) { return d.text; };
+  let fill = function (d, i) { return colorScale(d.text); };
+  let fillOpacity = d3.functor(1);
+  let textAnchor = d3.functor('middle');
+  let textClass = 'tag';
 
   function getSize(d) {
     return d.size;
@@ -37,24 +37,24 @@ function tagCloud() {
 
   function generator(selection) {
     selection.each(function (data, index) {
-      var tags = accessor.call(this, data, index);
+      let tags = accessor.call(this, data, index);
 
-      var text = textElement()
+      let text = textElement()
         .cssClass(textClass)
         .fontSize(function (d) { return d.size + 'px'; })
         .fill(fill)
         .fillOpacity(fillOpacity)
         .textAnchor(textAnchor);
 
-      var group = gGenerator()
+      let group = gGenerator()
         .cssClass('tags')
         .transform('translate(' + (width / 2) + ',' + (height / 2) + ')');
 
-      var g = d3.select(this)
+      let g = d3.select(this)
         .datum([data])
         .call(group);
 
-      var numOfOrientations = orientations - 1;
+      let numOfOrientations = orientations - 1;
 
       rotationScale
         .domain([0, numOfOrientations])
@@ -180,7 +180,7 @@ function tagCloud() {
   };
 
   generator.textScale = function (v) {
-    var scales = ['linear', 'log', 'sqrt'];
+    let scales = ['linear', 'log', 'sqrt'];
     if (!arguments.length) { return textScale; }
     textScale = _.includes(scales, v) ? d3.scale[v]() : textScale;
     return generator;

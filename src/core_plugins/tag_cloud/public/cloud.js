@@ -10,8 +10,6 @@ import tagCloudVisParamsTemplate from 'plugins/tagcloud/cloud_vis_params.html';
 // register the provider with the visTypes registry
 require('ui/registry/vis_types').register(TagCloudProvider);
 
-
-
 function TagCloudProvider(Private) {
   const TemplateVisType = Private(TemplateVisTypeTemplateVisTypeProvider);
   const Schemas = Private(VisSchemasProvider);
