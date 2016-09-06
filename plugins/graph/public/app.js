@@ -10,7 +10,9 @@ import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
 import 'ui/autoload/all';
 import 'ui/directives/saved_object_finder';
 import SavedWorkspacesProvider from 'plugins/graph/services/saved_workspaces';
-import {iconChoices, colorChoices, iconChoicesByClass} from 'plugins/graph/style_choices';
+import {iconChoices, colorChoices, iconChoicesByClass, drillDownIconChoices,
+  drillDownIconChoicesByClass} from 'plugins/graph/style_choices';
+import {outlinkEncoders} from 'plugins/graph/services/outlink_encoders';
 
 import KbnUrlProvider from 'ui/url';
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
@@ -24,14 +26,14 @@ import appTemplate from 'plugins/graph/templates/index.html';
 
 var app = uiModules.get('app/graph', ['angular-venn-simple']);
 
-function checkLicense(Private, Promise) {
+function checkLicense(Private, Promise, kbnBaseUrl) {
   const xpackInfo = Private(XPackInfoProvider);
 
   const licenseAllowsToShowThisPage = xpackInfo.get('features.graph.showAppLink') && xpackInfo.get('features.graph.enableAppLink');
   if (!licenseAllowsToShowThisPage) {
     const message = xpackInfo.get('features.graph.message');
     const queryString = `?${Notifier.QS_PARAM_LOCATION}=Graph&${Notifier.QS_PARAM_LEVEL}=error&${Notifier.QS_PARAM_MESSAGE}=${message}`;
-    const url = `${chrome.addBasePath('/app/kibana')}#${queryString}`;
+    const url = `${chrome.addBasePath(kbnBaseUrl)}#${queryString}`;
 
     window.location.href = url;
     return Promise.halt();
@@ -102,15 +104,15 @@ uiRoutes
 
 
 //========  Controller for basic UI ==================
-app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnUrl, Private, Promise, safeConfirm) {
+app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnUrl, Private, Promise, safeConfirm, kbnBaseUrl) {
 
   function handleSuccess(data) {
-    return checkLicense(Private, Promise)
+    return checkLicense(Private, Promise, kbnBaseUrl)
     .then(() => data);
   }
 
   function handleError(err) {
-    return checkLicense(Private, Promise)
+    return checkLicense(Private, Promise, kbnBaseUrl)
     .then(() => uiNotify.error(err));
   }
 
@@ -118,10 +120,14 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   $scope.spymode = 'request';
 
   $scope.iconChoices = iconChoices;
+  $scope.drillDownIconChoices = drillDownIconChoices;
   $scope.colors = colorChoices;
   $scope.iconChoicesByClass = iconChoicesByClass;
 
+  $scope.outlinkEncoders = outlinkEncoders;
+
   $scope.fields = [];
+  $scope.canEditDrillDownUrls = chrome.getInjected('canEditDrillDownUrls');
 
   $scope.graphSavePolicy = chrome.getInjected('graphSavePolicy');
   $scope.allSavingDisabled = $scope.graphSavePolicy === 'none';
@@ -152,6 +158,11 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
         }
       });
     }
+  };
+
+
+  $scope.toggleDrillDownIcon = function (urlTemplate, icon) {
+    urlTemplate.icon === icon ? urlTemplate.icon = null : urlTemplate.icon = icon;
   };
 
   $scope.openSavedWorkspace = function (savedWorkspace) {
@@ -269,6 +280,18 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     $scope.selectedFieldConfig = null;
     $scope.selectedIndex = selectedIndex;
     $scope.proposedIndex = selectedIndex;
+
+    if ($scope.urlTemplates.length === 0) {
+      const discoverUrl = kbnBaseUrl + '#/discover?_g=()&_a=(columns:!(_source),index:\'' +
+          encodeURIComponent(selectedIndex)
+          + '\',interval:auto,query:[gquery],sort:!(_score,desc))';
+      $scope.urlTemplates.push({
+        url: chrome.addBasePath(discoverUrl),
+        description: 'Raw documents',
+        encoder:$scope.outlinkEncoders[0]
+      });
+
+    }
 
     var promise = $route.current.locals.GetIndexPatternProvider.get(selectedIndex);
     promise
@@ -444,6 +467,73 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     });
   };
 
+  //== Drill-down functionality ==
+  const drillDownRegex = /\[gquery\]/;
+  function detectKibanaUrlPaste(url) {
+    const defaultKibanaQuery = ',query:(query_string:(analyze_wildcard:!t,query:\'*\'))';
+    if (url.indexOf(defaultKibanaQuery) > 0) {
+      safeConfirm('This looks like a Kibana URL - convert to template?').then(function () {
+        $scope.newUrlTemplate.url = url.replace(defaultKibanaQuery,',query:[gquery]');
+      });
+    }
+  };
+
+  $scope.handleUrlTemplatePaste = function ($event) {
+    window.setTimeout(function () {
+      detectKibanaUrlPaste(angular.element($event.currentTarget).val());
+      $scope.$digest();
+    }, 0);
+  };
+
+
+  $scope.resetNewUrlTemplate = function () {
+    $scope.newUrlTemplate = {
+      url:null,
+      description: null,
+      encoder:$scope.outlinkEncoders[0]
+    };
+  };
+
+  $scope.editUrlTemplate = function (urlTemplate) {
+    Object.assign($scope.newUrlTemplate, urlTemplate, {templateBeingEdited:urlTemplate});
+  };
+
+  $scope.saveUrlTemplate = function () {
+    const found = $scope.newUrlTemplate.url.search(drillDownRegex) > -1;
+    if (!found) {
+      uiNotify.warning('Invalid URL - the url must contain a [gquery] string');
+      return;
+    }
+    if ($scope.newUrlTemplate.templateBeingEdited) {
+
+      if ($scope.urlTemplates.indexOf($scope.newUrlTemplate.templateBeingEdited) >= 0) {
+        //patch any existing object
+        Object.assign($scope.newUrlTemplate.templateBeingEdited, $scope.newUrlTemplate);
+        return;
+      }
+    }
+    $scope.urlTemplates.push($scope.newUrlTemplate);
+    $scope.resetNewUrlTemplate();
+  };
+
+  $scope.removeUrlTemplate = function (urlTemplate) {
+    var i = $scope.urlTemplates.indexOf(urlTemplate);
+    if (i != -1) {
+      safeConfirm('Remove "' + urlTemplate.description + '" drill-down?').then(function () {
+        $scope.urlTemplates.splice(i, 1);
+      });
+    }
+  };
+
+  $scope.openUrlTemplate = function (template) {
+    const url = template.url;
+    const newUrl = url.replace(drillDownRegex, template.encoder.encode($scope.workspace));
+    window.open(newUrl,'_blank');
+  };
+
+
+  //============================
+
   $scope.resetWorkspace = function () {
     $scope.clearWorkspace();
     $scope.userHasConfirmedSaveWorkspaceData = false;
@@ -454,6 +544,8 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     $scope.selectedField = null;
     $scope.description = null;
     $scope.allFields = [];
+    $scope.urlTemplates = [];
+    $scope.resetNewUrlTemplate();
 
     $scope.fieldNamesFilterString = null;
     $scope.filteredFields = [];
@@ -627,10 +719,24 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     $scope.savedWorkspace = $route.current.locals.savedWorkspace;
     $scope.description = $route.current.locals.savedWorkspace.description;
 
+    // Load any saved drill-down templates
+    wsObj.urlTemplates.forEach(urlTemplate => {
+      const encoder = $scope.outlinkEncoders.find(outlinkEncoder => outlinkEncoder.id === urlTemplate.encoderID);
+      if (encoder) {
+        const template = {
+          url: urlTemplate.url,
+          description: urlTemplate.description,
+          encoder: encoder,
+        };
+        if (urlTemplate.iconClass) {
+          template.icon = drillDownIconChoicesByClass[urlTemplate.iconClass];
+        }
+        $scope.urlTemplates.push(template);
+      }
+    });
 
     $scope.indexSelected(wsObj.indexPattern, function () {
       Object.assign($scope.exploreControls, wsObj.exploreControls);
-
 
       for (var i in wsObj.selectedFields) {
         var savedField = wsObj.selectedFields[i];
@@ -702,7 +808,6 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
         });
       }
 
-
       $scope.workspace.mergeGraph(graph);
 
       // Wire up parents and children
@@ -720,6 +825,12 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
         }
       }
       $scope.workspace.runLayout();
+
+      // Allow URLs to include a user-defined text query
+      if ($route.current.params.query) {
+        $scope.searchTerm = $route.current.params.query;
+        $scope.submit();
+      }
 
     });
   }else {
@@ -782,6 +893,18 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       });
     }
 
+    var urlTemplates = $scope.urlTemplates.map(function (template) {
+      const result = {
+        'url': template.url,
+        'description': template.description,
+        'encoderID': template.encoder.id
+      };
+      if (template.icon) {
+        result.iconClass = template.icon.class;
+      }
+      return result;
+    });
+
     $scope.savedWorkspace.wsState = JSON.stringify({
       'indexPattern': $scope.selectedIndex,
       'selectedFields': $scope.selectedFields.map(function (field) {
@@ -793,9 +916,10 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
           'hopSize':field.hopSize
         };
       }),
-      'blacklist': blacklist,
-      'vertices': vertices,
-      'links': links,
+      blacklist,
+      vertices,
+      links,
+      urlTemplates,
       exploreControls: $scope.exploreControls
     });
     $scope.savedWorkspace.numVertices = vertices.length;

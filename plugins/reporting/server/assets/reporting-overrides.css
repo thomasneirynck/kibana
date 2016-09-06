@@ -25,7 +25,7 @@ generating PDF reports with Phantom.
 }
 
 .app-wrapper {
-  left: 0;
+  left: 0 !important;
 }
 
 /* many UI controls don't make sense on a report, hide them */
