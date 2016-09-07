@@ -29,7 +29,7 @@ function createDocumentJobFactory(server) {
       // get resulting kibana saved object documents
       return getObjectQueue(objectType, objId)
       .then(function (objectQueue) {
-        server.log(['reporting', 'debug'], `${objectQueue.length} saved object(s) to process`);
+        server.log(['reporting', 'debug'], `${objectQueue.objects.length} saved object(s) to process`);
 
         const savedObjects = objectQueue.objects.map((savedObj) => savedObj.toJSON(query));
 
@@ -45,7 +45,7 @@ function createDocumentJobFactory(server) {
         };
 
         const options = {
-          timeout: queueConfig.timeout * objectQueue.length,
+          timeout: queueConfig.timeout * objectQueue.objects.length,
           created_by: get(user, 'username', false),
           headers: filterHeaders(headers, whitelistHeaders),
         };

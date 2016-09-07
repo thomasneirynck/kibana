@@ -5,7 +5,7 @@ import getIsValidUser from '../../../lib/get_is_valid_user';
 import getCalculateExpires from '../../../lib/get_calculate_expires';
 import { wrapError } from '../../../lib/errors';
 
-export default (server, {clientCookieName}) => {
+export default (server) => {
   const isValidUser = getIsValidUser(server);
   const calculateExpires = getCalculateExpires(server);
 
@@ -22,7 +22,7 @@ export default (server, {clientCookieName}) => {
           expires: calculateExpires()
         });
 
-        return reply(response).state(clientCookieName, JSON.stringify(response));
+        return reply(response);
       }, (error) => {
         request.auth.session.clear();
         return reply(Boom.unauthorized(error));
@@ -44,7 +44,7 @@ export default (server, {clientCookieName}) => {
     path: '/api/security/v1/logout',
     handler(request, reply) {
       request.auth.session.clear();
-      return reply().unstate(clientCookieName).code(204);
+      return reply().code(204);
     },
     config: {
       auth: false,
