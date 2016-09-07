@@ -30,5 +30,3 @@ module.controller('KbnCloudController', function ($scope) {
     $scope.data = [{tags: tags}];
   });
 });
-
-
