@@ -22,7 +22,7 @@ export default function MapFactory(Private, tilemap, $sanitize) {
 
   let mapTiles = {
     url: tilemap.url,
-    options: _.assign({}, tilemapOptions, { attribution })
+    options: _.assign({}, tilemapOptions, {attribution})
   };
 
   let markerTypes = {
@@ -42,6 +42,8 @@ export default function MapFactory(Private, tilemap, $sanitize) {
    * @param params {Object} Parameters used to build a map
    */
   function TileMapMap(container, chartData, params) {
+
+
     this._container = $(container).get(0);
     this._chartData = chartData;
 
@@ -51,7 +53,7 @@ export default function MapFactory(Private, tilemap, $sanitize) {
     this._valueFormatter = params.valueFormatter || _.identity;
     this._tooltipFormatter = params.tooltipFormatter || _.identity;
     this._geoJson = _.get(this._chartData, 'geoJson');
-    this._mapZoom =  Math.max(Math.min(params.zoom || defaultMapZoom, tilemapOptions.maxZoom), tilemapOptions.minZoom);
+    this._mapZoom = Math.max(Math.min(params.zoom || defaultMapZoom, tilemapOptions.maxZoom), tilemapOptions.minZoom);
     this._mapCenter = params.center || defaultMapCenter;
     this._attr = params.attr || {};
 
@@ -71,7 +73,7 @@ export default function MapFactory(Private, tilemap, $sanitize) {
     if (this._boundingControl) return;
 
     let self = this;
-    let drawOptions = { draw: {} };
+    let drawOptions = {draw: {}};
 
     _.each(['polyline', 'polygon', 'circle', 'marker', 'rectangle'], function (drawShape) {
       if (self._events && !self._events.listenerCount(drawShape)) {
@@ -103,10 +105,10 @@ export default function MapFactory(Private, tilemap, $sanitize) {
       },
       onAdd: function (map) {
         $(fitContainer).html('<a class="fa fa-crop" href="#" title="Fit Data Bounds"></a>')
-        .on('click', function (e) {
-          e.preventDefault();
-          self._fitBounds();
-        });
+          .on('click', function (e) {
+            e.preventDefault();
+            self._fitBounds();
+          });
 
         return fitContainer;
       },
@@ -279,6 +281,7 @@ export default function MapFactory(Private, tilemap, $sanitize) {
   TileMapMap.prototype._createMap = function (mapOptions) {
     if (this.map) this.destroy();
 
+
     // add map tiles layer, using the mapTiles object settings
     if (this._attr.wms && this._attr.wms.enabled) {
       _.assign(mapOptions, {
@@ -286,18 +289,32 @@ export default function MapFactory(Private, tilemap, $sanitize) {
         maxZoom: 18
       });
       this._tileLayer = L.tileLayer.wms(this._attr.wms.url, this._attr.wms.options);
+      // append tile layers, center and zoom to the map options
+      mapOptions.layers = this._tileLayer;
+      mapOptions.center = this._mapCenter;
+      mapOptions.zoom = this._mapZoom;
+
+      this.map = L.map(this._container, mapOptions);
+      this._attachEvents();
+      this._addMarkers();
     } else {
-      this._tileLayer = L.tileLayer(mapTiles.url, mapTiles.options);
+      mapTiles.url.then(function (url) {
+
+
+        this._tileLayer = L.tileLayer(url, mapTiles.options);
+        // append tile layers, center and zoom to the map options
+        mapOptions.layers = this._tileLayer;
+        mapOptions.center = this._mapCenter;
+        mapOptions.zoom = this._mapZoom;
+
+        this.map = L.map(this._container, mapOptions);
+        this._attachEvents();
+        this._addMarkers();
+      }.bind(this));
+
     }
 
-    // append tile layers, center and zoom to the map options
-    mapOptions.layers = this._tileLayer;
-    mapOptions.center = this._mapCenter;
-    mapOptions.zoom = this._mapZoom;
 
-    this.map = L.map(this._container, mapOptions);
-    this._attachEvents();
-    this._addMarkers();
   };
 
   /**

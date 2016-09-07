@@ -8,6 +8,9 @@ export default function TileMapFactory(Private) {
   let Chart = Private(VislibVisualizationsChartProvider);
   let TileMapMap = Private(VislibVisualizationsMapProvider);
 
+  let secretUrl;
+
+
   /**
    * Tile Map Visualization: renders maps
    *
@@ -91,6 +94,10 @@ export default function TileMapFactory(Private) {
     this.geoJson.properties.allmax = geoMinMax.max;
   };
 
+  TileMap.setUrl = function (promiseToUrl) {
+    secretUrl = promiseToUrl;
+  };
+
   /**
    * Renders map
    *
@@ -106,6 +113,8 @@ export default function TileMapFactory(Private) {
 
     const params = _.assign({}, _.get(this._chartData, 'geoAgg.vis.params'), uiStateParams);
 
+    this._chartData.url = secretUrl;
+
     const map = new TileMapMap(container, this._chartData, {
       center: params.mapCenter,
       zoom: params.mapZoom,
@@ -113,7 +122,7 @@ export default function TileMapFactory(Private) {
       markerType: this._attr.mapType,
       tooltipFormatter: this.tooltipFormatter,
       valueFormatter: this.valueFormatter,
-      attr: this._attr
+      attr: this._attr,
     });
 
     // add title for splits
