@@ -1,5 +1,6 @@
 const moment = require('moment');
 const { get } = require('lodash');
+const esqueueEvents = require('esqueue/lib/constants/events');
 const constants = require('./constants');
 const getUserFactory = require('./get_user');
 const getObjectQueueFactory = require('./get_object_queue');
@@ -57,8 +58,8 @@ function createDocumentJobFactory(server) {
 
         return new Promise((resolve, reject) => {
           const job = jobQueue.addJob(JOBTYPES_PRINTABLE_PDF, payload, options);
-          job.on('created', () => resolve(job));
-          job.on('error', reject);
+          job.on(esqueueEvents.EVENT_JOB_CREATED, () => resolve(job));
+          job.on(esqueueEvents.EVENT_JOB_CREATE_ERROR, reject);
         });
       });
     });
