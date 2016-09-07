@@ -65,7 +65,7 @@ function jobsQueryFactory(server) {
           size: size,
         };
 
-        return getHits(execQuery('search', body));
+        return getHits(execQuery('search', body, request));
       });
     },
 
@@ -94,7 +94,7 @@ function jobsQueryFactory(server) {
           sort: { completed_at: 'asc' }
         };
 
-        return getHits(execQuery('search', body));
+        return getHits(execQuery('search', body, request));
       });
     },
 
@@ -118,7 +118,7 @@ function jobsQueryFactory(server) {
           }
         };
 
-        return execQuery('count', body)
+        return execQuery('count', body, request)
         .then((doc) => {
           if (!doc) return 0;
           return doc.count;
@@ -157,7 +157,7 @@ function jobsQueryFactory(server) {
           };
         }
 
-        return getHits(execQuery('search', body))
+        return getHits(execQuery('search', body, request))
         .then((hits) => {
           if (hits.length !== 1) return;
           return hits[0];
