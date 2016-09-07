@@ -1,6 +1,7 @@
 const _ = require('lodash');
+const getPort = require('get-port');
 const Promise = require('bluebird');
-const Horseman = require('node-horseman');
+const Horseman = require('@elastic/node-horseman');
 const temp = require('temp').track();
 
 class Screenshot {
@@ -14,26 +15,27 @@ class Screenshot {
   capture(url, opts) {
     this.logger(`fetching screenshot of ${url}`);
     opts = _.assign({ basePath: this.screenshotSettings.basePath }, opts);
-    const ph = fetch(url, this.phantomPath, this.captureSettings, opts);
+    return fetch(url, this.phantomPath, this.captureSettings, opts)
+    .then(ph => {
+      return getTargetFile()
+      .then(filepath => {
+        const operation = (opts.bounding)
+          ? getShotCropped(ph, this.captureSettings.viewport, opts.bounding, filepath)
+          : getShot(ph, filepath);
 
-    return ph
-    .then(() => getTargetFile())
-    .then(filepath => {
-      const operation = (opts.bounding)
-        ? getShotCropped(ph, this.captureSettings.viewport, opts.bounding, filepath)
-        : getShot(ph, filepath);
-
-      return operation
-      .then(() => {
-        this.logger(`Screenshot saved to ${filepath}`);
-        return filepath;
+        return operation
+        .then(() => {
+          this.logger(`Screenshot saved to ${filepath}`);
+          ph.close();
+          return filepath;
+        });
+      })
+      .catch((err) => {
+        this.logger(`Screenshot failed ${err.message}`);
+        ph.close();
+        throw err;
       });
-    })
-    .catch((err) => {
-      this.logger(`Screenshot failed ${err.message}`);
-      throw err;
-    })
-    .close();
+    });
   }
 }
 
@@ -54,45 +56,53 @@ function fetch(url, phantomPath, captureSettings, opts) {
     zoom: captureSettings.zoom
   };
 
-  const ph = createPhantom(phantomOpts, settings);
-
-  return ph.then(function () {
-    if (opts.headers) {
-      return ph.headers(opts.headers);
-    }
+  return createPhantom(phantomOpts, settings)
+  .then((ph) => {
+    if (opts.headers) return ph.headers(opts.headers).then(() => ph);
+    return ph;
   })
-  .open(url)
-  .then(function (status) {
-    if (status !== 'success') throw new Error('URL open failed. Is the server running?');
+  .then((ph) => {
+    return ph.open(url).then(function (status) {
+      if (status !== 'success') throw new Error('URL open failed. Is the server running?');
+      return ph;
+    });
   })
-  // .on('consoleMessage', function (msg) {
-  //   console.log('PHANTOM:', msg);
-  // })
-  .waitForSelector('.application visualize')
-  .evaluate(function (basePath) {
-    (function (window, document) {
-      function injectCSS(path) {
-        var node = document.createElement('link');
-        node.rel = 'stylesheet';
-        node.href = path;
-        document.getElementsByTagName('head')[0].appendChild(node);
-      };
+  .then(ph => {
+    return ph
+    .waitForSelector('.application visualize')
+    .evaluate(function (basePath) {
+      (function (window, document) {
+        function injectCSS(path) {
+          var node = document.createElement('link');
+          node.rel = 'stylesheet';
+          node.href = path;
+          document.getElementsByTagName('head')[0].appendChild(node);
+        };
 
-      injectCSS(basePath + '/app/reporting/assets/reporting-overrides.css');
-    }(window, window.document));
-  }, opts.basePath)
-  .wait(loadDelay);
+        injectCSS(basePath + '/app/reporting/assets/reporting-overrides.css');
+      }(window, window.document));
+    }, opts.basePath)
+    .wait(loadDelay)
+    .then(() => ph);
+  });
 };
 
 function createPhantom(phantomOpts, settings) {
-  return new Horseman(phantomOpts)
-  .viewport(settings.width, settings.height)
-  .zoom(settings.zoom);
+  return Promise.resolve(getPort())
+  .then(port => {
+    const instanceOpts = Object.assign({ bridgePort: port }, phantomOpts);
+    const ph = new Horseman(instanceOpts);
+    return ph.viewport(settings.width, settings.height).zoom(settings.zoom)
+    .then(() => ph);
+  });
 }
 
 function getTargetFile() {
-  return Promise.fromCallback(function (cb) {
-    temp.open({ prefix: 'screenshot', suffix: '.png' }, cb);
+  return new Promise((resolve, reject) => {
+    temp.open({ prefix: 'screenshot', suffix: '.png' }, (err, file) => {
+      if (err) reject(err);
+      else resolve(file);
+    });
   })
   .then((file) => file.path);
 }

@@ -24,7 +24,7 @@ function getScreenshotFactory(server) {
   const phantomPath = server.plugins.reporting.phantom.binary;
   const captureSettings = config.get('xpack.reporting.capture');
   const screenshotSettings = { basePath: config.get('server.basePath') };
-  const captureConcurrency = config.get('xpack.reporting.capture.concurrency');
+  const captureConcurrency = captureSettings.concurrency;
   logger(`Screenshot concurrency: ${captureConcurrency}`);
 
   // init the screenshot module
@@ -40,8 +40,13 @@ function getScreenshotFactory(server) {
           headers,
           bounding: boundingBoxes[type],
         })
-        .then((filename) => { resolve(filename); }, (err) => reject(err))
-        .finally(cb);
+        .then((filename) => {
+          resolve(filename);
+          cb();
+        }, (err) => {
+          reject(err);
+          cb();
+        });
       });
 
       if (!screenshotQueue.running) screenshotQueue.start();
