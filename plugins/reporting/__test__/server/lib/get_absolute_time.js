@@ -112,7 +112,7 @@ describe('get_absolute_time', function () {
       const output = getAbsoluteTime(timeObj);
       const check = {
         from: /2016\-06\-26T..\:00\:00\.000Z/,
-        to: /2016\-07\-03T..\:59\:59\.999Z/,
+        to: /2016\-07\-0(2|3)T..\:59\:59\.999Z/,
       };
 
       expect(moment(output.from).toISOString()).to.match(check.from);
