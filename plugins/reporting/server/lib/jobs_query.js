@@ -31,7 +31,9 @@ function jobsQueryFactory(server) {
 
     return callWithRequest(request, type, query)
     .catch((err) => {
-      if (err instanceof esErrors.NotFound) return;
+      if (err instanceof esErrors['401']) return;
+      if (err instanceof esErrors['403']) return;
+      if (err instanceof esErrors['404']) return;
       throw err;
     });
   }
