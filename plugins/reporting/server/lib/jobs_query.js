@@ -7,10 +7,10 @@ const defaultSize = 10;
 function jobsQueryFactory(server) {
   const getUser = getUserFactory(server);
   const esErrors = server.plugins.elasticsearch.errors;
-  const client = server.plugins.elasticsearch.client;
+  const { callWithRequest } = server.plugins.elasticsearch;
   const NO_USER_IDENTIFIER = false;
 
-  function execQuery(type, body) {
+  function execQuery(type, body, request) {
     const defaultBody = {
       search: {
         _source : {
@@ -29,7 +29,7 @@ function jobsQueryFactory(server) {
       body: Object.assign(defaultBody[type] || {}, body)
     };
 
-    return client[type](query)
+    return callWithRequest(request, type, query)
     .catch((err) => {
       if (err instanceof esErrors.NotFound) return;
       throw err;
