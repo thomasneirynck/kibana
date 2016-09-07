@@ -50,7 +50,16 @@ function createDocumentJobFactory(server) {
           headers: filterHeaders(headers, whitelistHeaders),
         };
 
-        return jobQueue.addJob(JOBTYPES_PRINTABLE_PDF, payload, options);
+        return { payload, options };
+      })
+      .then(params => {
+        const { payload, options } = params;
+
+        return new Promise((resolve, reject) => {
+          const job = jobQueue.addJob(JOBTYPES_PRINTABLE_PDF, payload, options);
+          job.on('created', () => resolve(job));
+          job.on('error', reject);
+        });
       });
     });
   };
