@@ -44,6 +44,8 @@
     "yargs": "4.7.1"
   },
   "dependencies": {
+    "@elastic/node-crypto": "0.1.1",
+    "angular-cookies": "1.4.9",
     "angular-paging": "2.2.1",
     "angular-resource": "1.4.9",
     "angular-sanitize": "1.4.9",
