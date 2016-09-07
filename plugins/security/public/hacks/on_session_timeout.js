@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import uiModules from 'ui/modules';
+import {isSystemApiRequest} from 'ui/system_api';
 import PathProvider from 'plugins/xpack_main/services/path';
 import 'plugins/security/services/auto_logout';
 
@@ -43,7 +44,7 @@ module.config(($httpProvider) => {
 
     function interceptorFactory(responseHandler) {
       return function interceptor(response) {
-        if (!isLoginOrLogout) {
+        if (!isLoginOrLogout && !isSystemApiRequest(response.config)) {
           clearNotifications();
           scheduleNotification();
         }
