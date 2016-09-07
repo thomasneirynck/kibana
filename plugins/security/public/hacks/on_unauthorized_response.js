@@ -1,6 +1,7 @@
 import { identity } from 'lodash';
 import uiModules from 'ui/modules';
-import 'plugins/security/services/login_page';
+import PathProvider from 'plugins/xpack_main/services/path';
+import 'plugins/security/services/auto_logout';
 
 function isUnauthorizedResponseAllowed(response) {
   const API_WHITELIST = [
@@ -12,24 +13,18 @@ function isUnauthorizedResponseAllowed(response) {
 }
 
 const module = uiModules.get('security');
-module.factory('onUnauthorizedResponse', ($q, $window, chrome, LoginPage, Promise) => {
-  function interceptor(response, handleResponse) {
-    if (response.status === 401) {
-      if (LoginPage.isOnLoginPage() || isUnauthorizedResponseAllowed(response)) {
-        return Promise.halt();
-      }
-
-      const next = chrome.removeBasePath(`${window.location.pathname}${window.location.hash}`);
-      const msg = 'SESSION_EXPIRED';
-      $window.location.href = chrome.addBasePath(`/logout?next=${encodeURIComponent(next)}&msg=${encodeURIComponent(msg)}`);
-      return;
-    }
-    return handleResponse(response);
+module.factory('onUnauthorizedResponse', ($q, $window, $injector, Private, autoLogout) => {
+  const isLoginOrLogout = Private(PathProvider).isLoginOrLogout();
+  function interceptorFactory(responseHandler) {
+    return function interceptor(response) {
+      if (response.status === 401 && !isUnauthorizedResponseAllowed(response) && !isLoginOrLogout) return autoLogout();
+      return responseHandler(response);
+    };
   }
 
   return {
-    response: (response) => interceptor(response, identity),
-    responseError: (response) => interceptor(response, $q.reject)
+    response: interceptorFactory(identity),
+    responseError: interceptorFactory($q.reject)
   };
 });
 

@@ -23,6 +23,7 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
       });
     },
     users(ShieldUser, kbnUrl, Promise, Private) {
+      // $promise is used here because the result is an ngResource, not a promise itself
       return ShieldUser.query().$promise
       .then(users => _.map(users, 'username'))
       .catch(checkLicenseError(kbnUrl, Promise, Private));

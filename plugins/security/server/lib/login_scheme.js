@@ -16,8 +16,7 @@ export default function createScheme({ redirectUrl, strategies }) {
       redirectUrl,
       strategies,
       testRequest: server.auth.test,
-      xpackMainPlugin: server.plugins.xpack_main,
-      clientCookieName: server.config().get('xpack.security.clientCookieName')
+      xpackMainPlugin: server.plugins.xpack_main
     });
     return { authenticate };
   };

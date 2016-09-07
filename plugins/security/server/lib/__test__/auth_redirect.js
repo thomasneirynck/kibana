@@ -26,8 +26,7 @@ describe('lib/auth_redirect', function () {
               isAvailable: sinon.stub().returns(true),
               feature: () => { return { isEnabled: sinon.stub().returns(true) }; }
             }
-          },
-          clientCookieName: 'user'
+          }
         };
         request = requestFixture();
         reply = replyFixture();
@@ -84,7 +83,6 @@ describe('lib/auth_redirect', function () {
         it ('replies with no credentials', () => {
           authenticate(request, reply);
           sinon.assert.calledWith(reply.continue, { credentials: {} });
-          sinon.assert.calledWith(reply.unstate, 'user');
         });
       });
     });
