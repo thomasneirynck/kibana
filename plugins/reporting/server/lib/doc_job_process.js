@@ -18,7 +18,13 @@ function docJobProcessFactory(server) {
 
   return async function (job) {
     const { objects, query, headers:serializedEncryptedHeaders } = job;
-    const headers = omit(await crypto.decrypt(serializedEncryptedHeaders), KBN_SCREENSHOT_HEADER_BLACKLIST);
+    let decryptedHeaders;
+    try {
+      decryptedHeaders = await crypto.decrypt(serializedEncryptedHeaders);
+    } catch (e) {
+      throw new Error('Failed to decrypt report job data. Please re-generate this report.');
+    };
+    const headers = omit(decryptedHeaders, KBN_SCREENSHOT_HEADER_BLACKLIST);
     const pdfDoc = await printablePdf(objects, query, headers);
     return {
       contentType: 'application/pdf',
