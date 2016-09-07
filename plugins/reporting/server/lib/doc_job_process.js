@@ -2,7 +2,7 @@
 const oncePerServer = require('./once_per_server');
 const generateDocumentFactory = require('./generate_document');
 const makeCryptoWith = require('@elastic/node-crypto');
-import { omit } from 'lodash';
+const { omit } = require('lodash');
 
 const KBN_SCREENSHOT_HEADER_BLACKLIST = [ 'accept-encoding' ];
 

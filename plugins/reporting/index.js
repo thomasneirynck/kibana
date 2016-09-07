@@ -8,7 +8,7 @@ const phantom = require('./server/lib/phantom');
 const createQueue = require('./server/lib/create_queue');
 const appConfig = require('./server/config/config');
 const checkLicense = require('./server/lib/check_license');
-import validateConfig from './server/lib/validate_config';
+const validateConfig = require('./server/lib/validate_config');
 
 module.exports = function (kibana) {
   return new kibana.Plugin({
