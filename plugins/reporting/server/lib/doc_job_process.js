@@ -1,7 +1,7 @@
 
 const oncePerServer = require('./once_per_server');
 const generateDocumentFactory = require('./generate_document');
-const makeCryptoWith = require('@elastic/node-crypto');
+const cryptoFactory = require('./crypto');
 const { omit } = require('lodash');
 
 const KBN_SCREENSHOT_HEADER_BLACKLIST = [
@@ -11,10 +11,8 @@ const KBN_SCREENSHOT_HEADER_BLACKLIST = [
 ];
 
 function docJobProcessFactory(server) {
-  const encryptionKey = server.config().get('xpack.reporting.encryptionKey');
-
   const { printablePdf } = generateDocumentFactory(server);
-  const crypto = makeCryptoWith({ encryptionKey });
+  const crypto = cryptoFactory(server);
 
   return async function (job) {
     const { objects, query, headers:serializedEncryptedHeaders } = job;

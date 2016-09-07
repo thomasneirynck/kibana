@@ -3,7 +3,7 @@ const { get } = require('lodash');
 const constants = require('./constants');
 const getUserFactory = require('./get_user');
 const getObjectQueueFactory = require('./get_object_queue');
-const makeCryptoWith = require('@elastic/node-crypto');
+const cryptoFactory = require('./crypto');
 const oncePerServer = require('./once_per_server');
 
 function createDocumentJobFactory(server) {
@@ -11,11 +11,10 @@ function createDocumentJobFactory(server) {
   const filterHeaders = server.plugins.elasticsearch.filterHeaders;
   const queueConfig = server.config().get('xpack.reporting.queue');
   const whitelistHeaders = server.config().get('elasticsearch.requestHeadersWhitelist');
-  const encryptionKey = server.config().get('xpack.reporting.encryptionKey');
 
   const getObjectQueue = getObjectQueueFactory(server);
   const getUser = getUserFactory(server);
-  const crypto = makeCryptoWith({ encryptionKey });
+  const crypto = cryptoFactory(server);
 
   const { JOBTYPES_PRINTABLE_PDF } = constants;
   const jobTypes = {};
