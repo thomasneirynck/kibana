@@ -45,7 +45,6 @@
   },
   "dependencies": {
     "@elastic/node-crypto": "0.1.1",
-    "angular-cookies": "1.4.9",
     "@elastic/datemath": "2.3.0",
     "@elastic/node-horseman": "2.8.4",
     "angular-paging": "2.2.1",
