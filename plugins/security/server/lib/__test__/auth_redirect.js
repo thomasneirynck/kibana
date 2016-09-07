@@ -91,7 +91,7 @@ describe('lib/auth_redirect', function () {
   });
 
   describe('#shouldRedirect()', () => {
-    it('returns true if request does not have a kbn-version header', () => {
+    it('returns true if request does not have either a kbn-version or kbn-xsrf header', () => {
       const request = requestFixture();
       const result = authRedirect.shouldRedirect(request);
       expect(result).to.equal(true);
@@ -99,6 +99,12 @@ describe('lib/auth_redirect', function () {
     it('returns false if request has a kbn-version header', () => {
       const request = requestFixture();
       request.raw.req.headers['kbn-version'] = 'something';
+      const result = authRedirect.shouldRedirect(request);
+      expect(result).to.equal(false);
+    });
+    it('returns false if request has a kbn-xsrf header', () => {
+      const request = requestFixture();
+      request.raw.req.headers['kbn-xsrf'] = 'something';
       const result = authRedirect.shouldRedirect(request);
       expect(result).to.equal(false);
     });

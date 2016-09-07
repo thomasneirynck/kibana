@@ -61,13 +61,33 @@ module.exports = function (client, config) {
       id: id
     };
 
+    function parseJsonObjects(source) {
+      const searchSourceJson = _.get(source, appTypes[type].searchSourceIndex, '{}');
+      const uiStateJson = _.get(source, appTypes[type].stateIndex, '{}');
+      let searchSource;
+      let uiState;
+
+      try {
+        searchSource = JSON.parse(searchSourceJson);
+      } catch (e) {
+        searchSource = {};
+      }
+
+      try {
+        uiState = JSON.parse(uiStateJson);
+      } catch (e) {
+        uiState = {};
+      }
+
+      return { searchSource, uiState };
+    }
+
     return client.get(req)
     .then(function _getRecord(body) {
       return body._source;
     })
     .then(function _buildObject(source) {
-      const searchSource = JSON.parse(_.get(source, appTypes[type].searchSourceIndex, '{}'));
-      const uiState = JSON.parse(_.get(source, appTypes[type].stateIndex, '{}'));
+      const { searchSource, uiState } = parseJsonObjects(source);
 
       const obj = _.assign(_.pick(source, fields), {
         id: req.id,

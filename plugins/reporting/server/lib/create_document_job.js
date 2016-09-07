@@ -6,12 +6,15 @@ const getObjectQueueFactory = require('./get_object_queue');
 const oncePerServer = require('./once_per_server');
 
 function createDocumentJobFactory(server) {
+  const jobQueue = server.plugins.reporting.queue;
+  const filterHeaders = server.plugins.elasticsearch.filterHeaders;
+  const queueConfig = server.config().get('xpack.reporting.queue');
+  const whitelistHeaders = server.config().get('elasticsearch.requestHeadersWhitelist');
+
   const getObjectQueue = getObjectQueueFactory(server);
   const getUser = getUserFactory(server);
-  const queueConfig = server.config().get('xpack.reporting.queue');
-  const jobQueue = server.plugins.reporting.queue;
-  const { JOBTYPES_PRINTABLE_PDF } = constants;
 
+  const { JOBTYPES_PRINTABLE_PDF } = constants;
   const jobTypes = {};
 
   jobTypes[JOBTYPES_PRINTABLE_PDF] = function (objectType, request) {
@@ -19,9 +22,7 @@ function createDocumentJobFactory(server) {
     const objId = request.params.savedId;
     const query = request.query;
 
-    const headers = {
-      authorization: request.headers.authorization
-    };
+    const headers = get(request, 'headers');
 
     return getUser(request)
     .then((user) => {
@@ -46,6 +47,7 @@ function createDocumentJobFactory(server) {
         const options = {
           timeout: queueConfig.timeout * objectQueue.length,
           created_by: get(user, 'username', false),
+          headers: filterHeaders(headers, whitelistHeaders),
         };
 
         return jobQueue.addJob(JOBTYPES_PRINTABLE_PDF, payload, options);

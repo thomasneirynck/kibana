@@ -155,6 +155,11 @@ export default function _xpackInfo(server, client, pollFrequencyInMillis) {
     server.log([ 'license', 'warning', 'xpack' ], 'License information could not be obtained from Elasticsearch. ' + error);
     _cachedResponseFromElasticsearch = null;
     _updateXPackInfoJSON();
+
+    // allow tests to shutdown
+    error.info = xpackInfoObject;
+
+    throw error;
   }
 
   // Start polling for changes
