@@ -27,6 +27,10 @@ function showSystemIndicesComponentFactory(scope) {
             onChange={this.toggleShowSystemIndices}
             checked={this.state.showSystemIndices}/>&nbsp;
           <span onClick={this.toggleShowSystemIndices}>Show system indices</span>
+          &nbsp;
+          <i
+            className="fa fa-question-circle"
+            title="Indices managed by the Elastic Stack begin with a `.` and will be hidden by default."></i>
         </div>
       );
     }
