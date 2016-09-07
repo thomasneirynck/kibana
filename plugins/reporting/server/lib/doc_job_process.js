@@ -4,7 +4,11 @@ const generateDocumentFactory = require('./generate_document');
 const makeCryptoWith = require('@elastic/node-crypto');
 const { omit } = require('lodash');
 
-const KBN_SCREENSHOT_HEADER_BLACKLIST = [ 'accept-encoding' ];
+const KBN_SCREENSHOT_HEADER_BLACKLIST = [
+  'accept-encoding',
+  'content-length',
+  'content-type'
+];
 
 function docJobProcessFactory(server) {
   const encryptionKey = server.config().get('xpack.reporting.encryptionKey');
