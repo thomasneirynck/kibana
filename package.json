@@ -44,6 +44,7 @@
     "yargs": "4.7.1"
   },
   "dependencies": {
+    "@elastic/node-horseman": "2.8.4",
     "angular-paging": "2.2.1",
     "angular-resource": "1.4.9",
     "angular-sanitize": "1.4.9",
@@ -57,6 +58,7 @@
     "esqueue": "0.10.4",
     "flot-charts": "0.8.3",
     "font-awesome": "4.4.0",
+    "get-port": "2.1.0",
     "glob": "6.0.4",
     "hapi-auth-basic": "3.0.0",
     "hapi-auth-cookie": "3.1.0",
@@ -64,7 +66,6 @@
     "lodash": "3.10.1",
     "moment": "2.11.2",
     "moment-timezone": "0.5.3",
-    "node-horseman": "2.8.2",
     "pdfmake": "0.1.18",
     "queue": "3.1.0",
     "react": "0.13.3",
