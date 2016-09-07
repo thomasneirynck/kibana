@@ -51,7 +51,7 @@ module.exports = function (kibana) {
           loadDelay: Joi.number().integer().default(3000),
           concurrency: Joi.number().integer().default(appConfig.concurrency),
         }).default(),
-        encryptionKey: Joi.string().default()
+        encryptionKey: Joi.string()
       }).default();
     },
 
