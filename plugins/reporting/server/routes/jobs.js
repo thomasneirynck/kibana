@@ -148,8 +148,6 @@ module.exports = function (server) {
       const { docId } = request.params;
       const jobType = JOBTYPES.PRINTABLE_PDF;
 
-      return reply('ok to download');
-
       jobsQuery.get(request, docId, true)
       .then((doc) => {
         if (!doc) return reply(boom.notFound());
