@@ -1,6 +1,6 @@
 {
   "name": "security",
-  "version": "5.0.0-beta1",
+  "version": "5.1.0",
   "description": "Security plugin for Kibana",
   "scripts": {
     "start": "gulp dev",
