@@ -67,6 +67,7 @@ routes.when('/management/kibana/reporting', {
     $scope.pageSize = pageSize;
     $scope.currentPage = $route.current.locals.page;
     $scope.jobs = $route.current.locals.jobs;
+    $scope.showAll = false;
 
     // pagination logic
     $scope.setPage = (page) => {
@@ -94,6 +95,10 @@ routes.when('/management/kibana/reporting', {
           message: doc.content,
         };
       });
+    };
+
+    $scope.toggleUserFilter = () => {
+      $scope.showAll = !$scope.showAll;
     };
   }
 });

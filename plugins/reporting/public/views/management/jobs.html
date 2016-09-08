@@ -2,6 +2,17 @@
   <div class="kbn-management-reporting container-fluid">
     <h1>Generated Reports</h1>
 
+    <div>
+      Filter Reports:
+      <button
+        class="btn btn-xs"
+        ng-click="toggleUserFilter()"
+        ng-class="{ 'btn-primary': !showAll, 'btn-default': showAll }"
+        >
+        Only show my reports
+      </button>
+    </div>
+
     <table class="table table-striped job-list" ng-class="{ loading: loading === true }">
       <thead>
         <tr>
