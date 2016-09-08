@@ -9,10 +9,10 @@ import template from 'plugins/reporting/views/management/jobs.html';
 const jobPollingDelay = 5000;
 const pageSize = 10;
 
-function getJobs(reportingJobQueue, page = 0) {
-  return reportingJobQueue.list(page)
+function getJobs(reportingJobQueue, showAll, page = 0) {
+  return reportingJobQueue.list(page, showAll)
   .then((jobs) => {
-    return reportingJobQueue.total()
+    return reportingJobQueue.total(showAll)
     .then((total) => {
       const mappedJobs = mapJobs(jobs);
       return {
@@ -57,27 +57,35 @@ routes.when('/management/kibana/reporting', {
     }
   },
   controller($scope, $route, $window, $interval, reportingJobQueue) {
-    const updateJobs = () => {
-      return getJobs(reportingJobQueue, $scope.currentPage).then((jobs) => {
-        $scope.jobs = jobs;
-      });
-    };
-
     $scope.loading = false;
     $scope.pageSize = pageSize;
     $scope.currentPage = $route.current.locals.page;
     $scope.jobs = $route.current.locals.jobs;
     $scope.showAll = false;
 
+    const toggleLoading = () => $scope.loading = !$scope.loading;
+
+    const updateJobs = (showLoad = true) => {
+      if (showLoad) toggleLoading();
+
+      return getJobs(reportingJobQueue, $scope.showAll, $scope.currentPage)
+      .then((jobs) => {
+        $scope.jobs = jobs;
+      })
+      .then(() => {
+        if (showLoad) toggleLoading;
+      });
+    };
+
+
     // pagination logic
     $scope.setPage = (page) => {
       $scope.currentPage = page - 1;
-      $scope.loading = !$scope.loading;
-      updateJobs().then(() => { $scope.loading = !$scope.loading; });
+      updateJobs();
     };
 
     // job list updating
-    const int = $interval(updateJobs, jobPollingDelay);
+    const int = $interval(() => updateJobs(false), jobPollingDelay);
 
     $scope.$on('$destroy', () => $interval.cancel(int));
 
@@ -99,6 +107,7 @@ routes.when('/management/kibana/reporting', {
 
     $scope.toggleUserFilter = () => {
       $scope.showAll = !$scope.showAll;
+      updateJobs();
     };
   }
 });

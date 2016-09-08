@@ -1,3 +1,5 @@
+import url from 'url';
+import _ from 'lodash';
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 import Notifier from 'ui/notify/notifier';
 import { addSystemApiHeader } from 'ui/system_api';
@@ -30,25 +32,34 @@ module.service('reportingJobQueue', ($http, kbnUrl, Private) => {
   }
 
   return {
-    list(page = 0) {
-      const url = `${baseUrl}/list?page=${page}`;
+    list(page = 0, showAll = false) {
+      const urlObj = {
+        pathname: `${baseUrl}/list`,
+        query: {
+          page: page
+        }
+      };
+      if (showAll) _.set(urlObj, 'query.all',  true);
+
       const headers = addSystemApiHeader({});
-      return $http.get(url, { headers })
+      return $http.get(url.format(urlObj), { headers })
       .catch(showError)
       .then((res) => res.data);
     },
 
-    total() {
-      const url = `${baseUrl}/count`;
+    total(showAll = false) {
+      const urlObj = { pathname: `${baseUrl}/count` };
+      if (showAll) _.set(urlObj, 'query.all',  true);
+
       const headers = addSystemApiHeader({});
-      return $http.get(url, { headers })
+      return $http.get(url.format(urlObj), { headers })
       .then((res) => res.data)
       .catch(showError);
     },
 
     getContent(jobId) {
-      const url = `${baseUrl}/output/${jobId}`;
-      return $http.get(url)
+      const urlObj = { pathname: `${baseUrl}/output/${jobId}` };
+      return $http.get(url.format(urlObj))
       .then((res) => res.data)
       .catch(showError);
     }
