@@ -106,12 +106,6 @@ function tagCloud() {
     return generator;
   };
 
-  // generator.orientations = function (v) {
-  //   if (!arguments.length) { return orientations; }
-  //   orientations = v;
-  //   return generator;
-  // };
-
   generator.fromDegree = function (v) {
     if (!arguments.length) { return fromDegree; }
     fromDegree = v;

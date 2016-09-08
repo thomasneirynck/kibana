@@ -14,6 +14,8 @@
    *
    * @param {String|DOMNode} container The node to add the ArcInput to.
    * @param {Object} [options] Optional options object
+   * @param {String} [options.sectorFillStyle] fill style of the arc. CSS color string.
+   * @param {Number} [options.sectorLineWidth] width of the stroke.
    * @constructor Create a new input.
    */
   function ArcInput(container, options) {
@@ -60,12 +62,14 @@
 
     this._context.canvas.addEventListener('mousemove', function updateOffset(event) {
 
-      if (!(distanceSquared(event.offsetX, event.offsetY, self._centerX, self._centerY) <= Math.pow(self._radius, 2))) {//check if inside circle
+      var insideCircle = distanceSquared(event.offsetX, event.offsetY, self._centerX, self._centerY) <= Math.pow(self._radius, 2);
+      if (insideCircle) {//check if inside circle
+        self._context.canvas.style.cursor = 'pointer';
+      } else {
         self._context.canvas.style.cursor = 'default';
-        return;
       }
 
-      self._context.canvas.style.cursor = 'pointer';
+
       if (!self._down) {
         return;
       }
