@@ -26,7 +26,7 @@ function TagCloudProvider(Private) {
     params: {
       defaults: {
         textScale: 'linear',
-        orientations: 1,
+        orientations: 3,
         fromDegree: 0,
         toDegree: 0,
         font: 'serif',

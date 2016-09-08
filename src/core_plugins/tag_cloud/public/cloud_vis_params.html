@@ -35,14 +35,10 @@
     </select>
   </div>
 
-  <label>Number of orientations</label>
-  <input type="number" ng-model="vis.params.orientations" class="form-control">
-
-  <label>Minimum orientation angle - {{ vis.params.fromDegree }} degrees</label>
-  <input type="range" ng-model="vis.params.fromDegree" class="form-control" min="-90" max="90">
-
-  <label>Maximum orientation angle - {{ vis.params.toDegree }} degrees</label>
-  <input type="range" ng-model="vis.params.toDegree" class="form-control" min="-90" max="90">
+  <label>Select orientations: {{ vis.params.fromDegree }} and {{ vis.params.toDegree }} degrees</label>
+  <div style="width: 100%; height: 60px">
+    <arc-input fromDegree="{{ vis.params.toDegree }}" toDegree="{{ vis.params.toDegree }}"></arc-input>
+  </div>
 
   <label>Minimum Font Size - {{ vis.params.minFontSize }}px</label>
   <input type="range" ng-model="vis.params.minFontSize" class="form-control" min="12" max="120">
@@ -50,7 +46,5 @@
   <label>Maximum Font Size - {{ vis.params.maxFontSize }}px</label>
   <input type="range" ng-model="vis.params.maxFontSize" class="form-control" min="12" max="120">
 
-  <label>Testing ArcInput</label>
-  <arc-input></arc-input>
 
 </div>
