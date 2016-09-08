@@ -111,7 +111,7 @@ describe('get_absolute_time', function () {
     it('should map previous week values to times', function () {
       const output = getAbsoluteTime(timeObj);
       const check = {
-        from: /2016\-06\-26T..\:00\:00\.000Z/,
+        from: /2016\-06\-2(5|6)T..\:00\:00\.000Z/,
         to: /2016\-07\-0(2|3)T..\:59\:59\.999Z/,
       };
 
