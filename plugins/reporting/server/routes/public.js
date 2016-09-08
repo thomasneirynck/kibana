@@ -1,10 +1,11 @@
 const boom = require('boom');
+const { API_BASE_URL } = require('../lib/constants');
 const createDocumentJobFactory = require('../lib/create_document_job');
 const { JOBTYPES } = require('../lib/constants');
 const licensePreFactory = require ('../lib/license_pre_routing');
 const userPreRoutingFactory = require('../lib/user_pre_routing');
 
-const mainEntry = '/api/reporting/generate';
+const mainEntry = `${API_BASE_URL}/generate`;
 const API_TAG = 'api';
 
 module.exports = function (server) {
@@ -53,7 +54,8 @@ module.exports = function (server) {
     return createJob(objectType, request)
     .then((job) => {
       if (syncResponse) {
-        return reply(job.id).redirect(`${config.get('server.basePath')}/api/reporting/jobs/download/${job.id}`);
+        const basePath = config.get('server.basePath') + API_BASE_URL;
+        return reply(job.id).redirect(`${basePath}/jobs/download/${job.id}`);
       } else {
         // return the queue's job information
         const response = reply(job.toJSON());

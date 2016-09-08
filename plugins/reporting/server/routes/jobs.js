@@ -1,12 +1,12 @@
 const boom = require('boom');
 const { EVENT_WORKER_COMPLETE, EVENT_WORKER_JOB_FAIL } = require('esqueue/lib/constants/events');
-const { JOBTYPES } = require('../lib/constants');
+const { JOBTYPES, API_BASE_URL } = require('../lib/constants');
 const workersFactory = require('../lib/workers');
 const jobsQueryFactory = require('../lib/jobs_query');
 const licensePreFactory = require ('../lib/license_pre_routing');
 const userPreRoutingFactory = require('../lib/user_pre_routing');
 
-const mainEntry = '/api/reporting/jobs';
+const mainEntry = `${API_BASE_URL}/jobs`;
 const API_TAG = 'api';
 
 module.exports = function (server) {
