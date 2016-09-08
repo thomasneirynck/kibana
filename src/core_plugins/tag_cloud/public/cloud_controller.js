@@ -4,6 +4,7 @@ import uiModules from 'ui/modules';
 const module = uiModules.get('kibana/tagcloud', ['kibana']);
 
 module.controller('KbnCloudController', function ($scope) {
+
   $scope.$watch('esResponse', function (response) {
 
     if (!response) {

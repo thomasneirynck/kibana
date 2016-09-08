@@ -23,7 +23,6 @@ function tagCloud() {
   let fontWeight = fontNormal;
   let minFontSize = 12;
   let maxFontSize = 60;
-  let spiral = 'archimedean';
   let padding = 1;
   let textAccessor = function (d) { return d.text; };
   let fill = function (d, i) { return colorScale(d.text); };
@@ -36,6 +35,7 @@ function tagCloud() {
   }
 
   function generator(selection) {
+
     selection.each(function (data, index) {
       let tags = accessor.call(this, data, index);
 
@@ -80,7 +80,6 @@ function tagCloud() {
         .fontStyle(fontStyle)
         .fontWeight(fontWeight)
         .fontSize(fontSize)
-        .spiral(spiral)
         .padding(padding)
         .on('end', draw)
         .start();
@@ -151,12 +150,6 @@ function tagCloud() {
   generator.maxFontSize = function (v) {
     if (!arguments.length) { return maxFontSize; }
     maxFontSize = v;
-    return generator;
-  };
-
-  generator.spiral = function (v) {
-    if (!arguments.length) { return spiral; }
-    spiral = v;
     return generator;
   };
 

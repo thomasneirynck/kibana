@@ -9,6 +9,7 @@ const module = uiModules.get('kibana/tagcloud', ['kibana']);
 module.directive('kbnTagCloud', function () {
   function link(scope, element, attrs) {
 
+
     angular.element(document).ready(function () {
       let vis = visGenerator();
       let svg = d3.select(element[0]);
@@ -35,9 +36,18 @@ module.directive('kbnTagCloud', function () {
         render(scope.data, scope.options, scope.eventListeners);
       }
 
-      scope.$watch('data', reRender);
-      scope.$watch('options', reRender);
-      scope.$watch('eventListeners', reRender);
+      scope.$watch('data', function () {
+        reRender();
+      });
+      scope.$watch('options', function (oldOptions, newOptions) {
+        if (JSON.stringify(oldOptions) === JSON.stringify(newOptions)) {
+          return;
+        }
+        reRender();
+      });
+      scope.$watch('eventListeners', function () {
+        reRender();
+      });
       scope.$watch(containerSize, _.debounce(reRender, 250), true);
 
       element.bind('resize', function () {
