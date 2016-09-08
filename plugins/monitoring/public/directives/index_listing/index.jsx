@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import numeral from 'numeral';
 import React from 'react';
 import Table from 'plugins/monitoring/directives/paginated_table/components/table';
@@ -6,6 +5,7 @@ import uiModules from 'ui/modules';
 
 function showSystemIndicesComponentFactory(scope) {
   return class ShowSystemIndicesComponent extends React.Component {
+
     constructor(props) {
       super();
       this.state = { showSystemIndices: props.showSystemIndices };
@@ -34,35 +34,28 @@ function showSystemIndicesComponentFactory(scope) {
         </div>
       );
     }
+
   };
 }
 
-function indexRowTemplateFactory(scope, kbnUrl) {
-  return class IndexRowTemplate extends React.Component {
-    constructor(props) {
+function indexRowFactory(scope, kbnUrl) {
+  return class IndexRow extends React.Component {
+
+    constructor() {
       super();
-      var index = _.findWhere(scope.data, {name: props.name});
-      this.state = {
-        exists: !!index
-      };
+      this.changePath = this.changePath.bind(this);
     }
 
-    componentWillReceiveProps() {
-      if (scope.data) {
-        var index = _.findWhere(scope.data, {name: this.props.name});
-        this.setState({ exists: !!index });
-      }
+    changePath() {
+      scope.$evalAsync(() => {
+        kbnUrl.changePath(`/elasticsearch/indices/${this.props.name}`);
+      });
     }
 
     render() {
       const numeralize = value => numeral(value.last).format(value.metric ? value.metric.format : null);
       const unitize = value => `${numeralize(value)} ${value.metric.units}`;
       const name = this.props.name;
-      const clickFn = () => {
-        scope.$evalAsync(function () {
-          kbnUrl.changePath(`/elasticsearch/indices/${name}`);
-        });
-      };
       const metrics = this.props.metrics;
       const docCount = numeralize(metrics.index_document_count);
       const indexSize = numeralize(metrics.index_size);
@@ -73,9 +66,7 @@ function indexRowTemplateFactory(scope, kbnUrl) {
       return (
         <tr key={name} className={this.props.status}>
           <td>
-            <a onClick={clickFn}>
-              {name}
-            </a>
+            <a onClick={this.changePath}>{name}</a>
           </td>
           <td>{docCount}</td>
           <td>{indexSize}</td>
@@ -85,6 +76,7 @@ function indexRowTemplateFactory(scope, kbnUrl) {
         </tr>
       );
     }
+
   };
 }
 
@@ -133,19 +125,21 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
       showSystemIndices: '=',
       toggleShowSystemIndices: '='
     },
-    link: function (scope, $el) {
+    link(scope, $el) {
+
       const ShowSystemIndicesComponent = showSystemIndicesComponentFactory(scope);
-      const indexRowTemplate = indexRowTemplateFactory(scope, kbnUrl);
+      const IndexRow = indexRowFactory(scope, kbnUrl);
       const $table = React.createElement(Table, {
         scope,
         options: initialTableOptions,
         filterMembers: [<ShowSystemIndicesComponent showSystemIndices={scope.showSystemIndices}/>],
-        template: indexRowTemplate
+        template: IndexRow
       });
       const tableInstance = React.render($table, $el[0]);
       scope.$watch('data', (data) => {
         tableInstance.setData(data);
       });
+
     }
   };
 });

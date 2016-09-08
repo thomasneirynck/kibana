@@ -9,6 +9,7 @@ import uiModules from 'ui/modules';
 
 function toggleNodesTypesFactory(scope, type) {
   return class ToggleNodesTypes extends React.Component {
+
     constructor(props) {
       super();
       this.state = { type, checkedState: props.checkedState };
@@ -38,16 +39,11 @@ function toggleNodesTypesFactory(scope, type) {
         </div>
       );
     }
+
   };
 }
 
-function nodeRowTemplateFactory(scope, kbnUrl, decorateRow) {
-  function goToNode(resolver) {
-    scope.$evalAsync(function () {
-      kbnUrl.changePath(`/elasticsearch/nodes/${resolver}`);
-    });
-  }
-
+function nodeRowFactory(scope, kbnUrl, decorateRow) {
   function checkOnline(status) {
     return status === 'green';
   }
@@ -59,11 +55,13 @@ function nodeRowTemplateFactory(scope, kbnUrl, decorateRow) {
     return 'offline';
   }
 
-  return class NodeRowTemplate extends React.Component {
+  return class NodeRow extends React.Component {
+
     constructor(props) {
       super();
       const row = _.find(scope.rows, {resolver: props.resolver});
       this.state = decorateRow(row);
+      this.goToNode = this.goToNode.bind(this);
     }
 
     componentWillReceiveProps(newProps) {
@@ -71,34 +69,40 @@ function nodeRowTemplateFactory(scope, kbnUrl, decorateRow) {
       this.setState(decorateRow(row));
     }
 
+    goToNode() {
+      scope.$evalAsync(() => {
+        kbnUrl.changePath(`/elasticsearch/nodes/${this.state.resolver}`);
+      });
+    }
+
     render() {
-      const status = getStatus(this.props.status);
+      const status = getStatus(this.state.status);
       const isOnline = checkOnline(status);
       return (
-        <tr key={`row-${this.props.resolver}`} className='big'>
-          <td key={`name-${this.props.resolver}`}>
-            <i title={this.props.node.nodeTypeLabel} className={`fa ${this.props.node.nodeTypeClass}`}/>
+        <tr key={`row-${this.state.resolver}`} className='big'>
+          <td key={`name-${this.state.resolver}`}>
+            <i title={this.state.node.nodeTypeLabel} className={`fa ${this.state.node.nodeTypeClass}`}/>
             &nbsp;
-            <a onClick={_.partial(goToNode, this.state.resolver)}>
+            <a onClick={this.goToNode}>
               {this.state.node.name}
             </a>
             <div className='small'>{extractIp(this.state.node.transport_address)}</div>
           </td>
-          <td status={`name-${this.props.resolver}`}>
+          <td status={`name-${this.state.resolver}`}>
             <span className={`status status-${status}`}>
               <i className={statusIconClass(status)} title={_.capitalize(status)}/>
             </span>
           </td>
-          <MetricCell isOnline={isOnline} metric={this.props.metrics.node_cpu_utilization}></MetricCell>
-          <MetricCell isOnline={isOnline} metric={this.props.metrics.node_jvm_mem_percent}></MetricCell>
-          <MetricCell isOnline={isOnline} metric={this.props.metrics.node_load_average}></MetricCell>
-          <MetricCell isOnline={isOnline} metric={this.props.metrics.node_free_space}></MetricCell>
+          <MetricCell isOnline={isOnline} metric={this.state.metrics.node_cpu_utilization}></MetricCell>
+          <MetricCell isOnline={isOnline} metric={this.state.metrics.node_jvm_mem_percent}></MetricCell>
+          <MetricCell isOnline={isOnline} metric={this.state.metrics.node_load_average}></MetricCell>
+          <MetricCell isOnline={isOnline} metric={this.state.metrics.node_free_space}></MetricCell>
           {(() => {
             if (isOnline) {
               return (
-                <td shards={`name-${this.props.resolver}`}>
+                <td shards={`name-${this.state.resolver}`}>
                   <div className='big inline'>
-                    {this.props.metrics.shard_count}
+                    {this.state.metrics.shard_count}
                   </div>
                 </td>
               );
@@ -108,6 +112,7 @@ function nodeRowTemplateFactory(scope, kbnUrl, decorateRow) {
         </tr>
       );
     }
+
   };
 }
 
@@ -172,7 +177,7 @@ uiModule.directive('monitoringNodesListing', function (kbnUrl) {
       showClientNodes: '=',
       toggleShowNodes: '='
     },
-    link: function (scope, $el) {
+    link(scope, $el) {
 
       function decorateRow(row) {
         if (!row) return null;
@@ -186,7 +191,7 @@ uiModule.directive('monitoringNodesListing', function (kbnUrl) {
       const ToggleMasterNodes = toggleNodesTypesFactory(scope, 'master');
       const ToggleDataNodes = toggleNodesTypesFactory(scope, 'data');
       const ToggleClientNodes = toggleNodesTypesFactory(scope, 'client');
-      const nodeRowTemplate = nodeRowTemplateFactory(scope, kbnUrl, decorateRow);
+      const NodeRow = nodeRowFactory(scope, kbnUrl, decorateRow);
       const $table = React.createElement(Table, {
         scope,
         options: initialTableOptions,
@@ -195,7 +200,7 @@ uiModule.directive('monitoringNodesListing', function (kbnUrl) {
           <ToggleDataNodes checkedState={scope.showDataNodes}/>,
           <ToggleClientNodes checkedState={scope.showClientNodes}/>
         ],
-        template: nodeRowTemplate
+        template: NodeRow
       });
       const tableInstance = React.render($table, $el[0]);
       scope.$watch('rows', (rows) => {
