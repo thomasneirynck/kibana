@@ -3,7 +3,7 @@ const { JOBTYPES } = require('./constants');
 const workersFactory = require('./workers');
 const oncePerServer = require('./once_per_server');
 
-function createWorkerFactory(server) {
+function createWorkersFactory(server) {
   const queueConfig = server.config().get('xpack.reporting.queue');
   const workers = workersFactory(server);
 
@@ -33,4 +33,4 @@ function createWorkerFactory(server) {
   };
 };
 
-module.exports = oncePerServer(createWorkerFactory);
+module.exports = oncePerServer(createWorkersFactory);

@@ -17,7 +17,7 @@ module.directive('exportConfig', (reportingDocumentControl) => {
     controllerAs: 'exportConfig',
     template,
     link($scope, $el, $attr, controllers) {
-      const syncUrl = true;
+      const USE_SYNC_URL = true;
 
       const isDirty = () => controllers.some(ctrl => get(ctrl, 'appStatus.dirty', false));
       $scope.exportConfig.isExportable = () => !isDirty() && reportingDocumentControl.isExportable();
@@ -28,7 +28,7 @@ module.directive('exportConfig', (reportingDocumentControl) => {
       $scope.exportConfig.exportTypes = {
         printablePdf: {
           name: 'PDF',
-          link: reportingDocumentControl.getUrl(syncUrl),
+          link: reportingDocumentControl.getUrl(USE_SYNC_URL),
         }
       };
 
