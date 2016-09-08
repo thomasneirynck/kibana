@@ -1,4 +1,4 @@
-const { get } = require('lodash');
+const { get, set } = require('lodash');
 const oncePerServer = require('./once_per_server');
 const { QUEUE_INDEX, QUEUE_DOCTYPE } = require('./constants');
 const getUserFactory = require('../lib/get_user');
@@ -44,12 +44,19 @@ function jobsQueryFactory(server) {
 
   return {
     list(request, page = 0, size = defaultSize) {
+      const showAll = get(request, 'query.all', false);
+
       return getUser(request)
       .then((user) => {
         const username = get(user, 'username', NO_USER_IDENTIFIER);
 
         const body = {
-          query: {
+          from: size * page,
+          size: size,
+        };
+
+        if (!showAll) {
+          set(body, 'query', {
             constant_score: {
               filter: {
                 bool: {
@@ -60,10 +67,8 @@ function jobsQueryFactory(server) {
                 }
               }
             }
-          },
-          from: size * page,
-          size: size,
-        };
+          });
+        }
 
         return getHits(execQuery('search', body, request));
       });
@@ -99,11 +104,13 @@ function jobsQueryFactory(server) {
     },
 
     count(request) {
+      const showAll = get(request, 'query.all', false);
+
       return getUser(request)
       .then((user) => {
         const username = get(user, 'username', NO_USER_IDENTIFIER);
 
-        const body = {
+        const body = (showAll) ? {} : {
           query: {
             constant_score: {
               filter: {

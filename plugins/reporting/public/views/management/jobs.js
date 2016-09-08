@@ -77,7 +77,6 @@ routes.when('/management/kibana/reporting', {
       });
     };
 
-
     // pagination logic
     $scope.setPage = (page) => {
       $scope.currentPage = page - 1;
