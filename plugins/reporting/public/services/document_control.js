@@ -59,7 +59,7 @@ module.service('reportingDocumentControl', function ($http, Promise, Private, $l
 
     if (sync) {
       const parsed = url.parse(reportUrl);
-      parsed.search = (parsed.search == null) ? 'sync' : `${parsed.search}&sync`;
+      parsed.search = (parsed.search === null) ? 'sync' : `${parsed.search}&sync`;
       return url.format(parsed);
     }
 
