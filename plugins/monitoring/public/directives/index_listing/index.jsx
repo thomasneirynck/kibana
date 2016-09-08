@@ -28,9 +28,7 @@ function showSystemIndicesComponentFactory(scope) {
             checked={this.state.showSystemIndices}/>&nbsp;
           <span onClick={this.toggleShowSystemIndices}>Show system indices</span>
           &nbsp;
-          <i
-            className="fa fa-question-circle"
-            title="Indices managed by the Elastic Stack begin with a `.` and will be hidden by default."></i>
+          <i className="fa fa-question-circle" title="System index names begin with a dot, for example `.kibana`."></i>
         </div>
       );
     }
