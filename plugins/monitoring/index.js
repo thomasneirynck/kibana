@@ -1,7 +1,7 @@
 import { join, resolve } from 'path';
 import Promise from 'bluebird';
 import requireAllAndApply from '../../server/lib/require_all_and_apply';
-import pluginSelfCheck from './server/lib/plugin_self_check';
+import esHealthCheck from './server/lib/es_client/health_check';
 import instantiateClient from './server/lib/es_client/instantiate_client';
 import initKibanaMonitoring from './server/kibana_monitoring';
 
@@ -134,7 +134,7 @@ export default function monitoringIndex(kibana) {
         instantiateClient(server), // Instantiate the dedicated Elasticsearch client
         requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server), // Require all the routes
         initKibanaMonitoring(this.kbnServer, server), // send kibana server ops to the monitoring bulk api
-        pluginSelfCheck(this, server) // Make sure the Monitoring index is created and the Kibana version is supported
+        esHealthCheck(this, server).start() // Make sure the Monitoring index is created and ready
       ]);
     }
   });
