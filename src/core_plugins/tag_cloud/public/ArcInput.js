@@ -38,8 +38,6 @@
     this._toMaxY = 0;
 
     options = options || {};
-    this._minDomainRadians = ((typeof options.minDegrees === 'number') ? options.minDegrees : -180) * Math.PI / 180;
-    this._maxDomainRadians = ((typeof options.maxDegrees === 'number') ? options.maxDegrees : 180) * Math.PI / 180;
     this._circleStrokeStyle = options.circleStrokeStyle || 'rgb(139,137,137)';
     this._circleLineWidth = options.circleLineWidth || 1;
     this._circleFillStyle = options.circleFillStyle || 'rgba(255,255,255,0)';
@@ -77,7 +75,6 @@
       var distanceToMax = distanceToSegment(event.offsetX, event.offsetY, self._centerX, self._centerY, self._toMaxX, self._toMaxY);
 
       var angle = Math.atan2((event.offsetY - self._centerY), (event.offsetX - self._centerX));
-      angle = Math.min(Math.max(self._minDomainRadians, angle), self._maxDomainRadians);
       if (distanceToMin < distanceToMax) {
         self._moveMin(angle);
       } else {
@@ -101,10 +98,17 @@
    * Resize the control to fit to the parent container. Call this when the size of the containing node has changed.
    */
   ArcInput.prototype.resize = function () {
-    console.log(this._context.canvas.parentElement.offsetWidth, this._context.canvas.parentElement.offsetHeight);
-    this._context.canvas.width = this._context.canvas.parentElement.offsetWidth;
-    this._context.canvas.height = this._context.canvas.parentElement.offsetHeight;
-    this._invalidate();
+
+    var style = window.getComputedStyle(this._context.canvas.parentElement, null);
+    var width = parseInt(style.getPropertyValue('width'));
+    var height = parseInt(style.getPropertyValue('height'));
+
+    if (width !== this._context.canvas.width || height !== this._context.canvas.height) {
+      this._context.canvas.width = width;
+      this._context.canvas.height = height;
+      this._invalidate();
+    }
+
   };
 
   /**
@@ -143,11 +147,6 @@
     this._toMinY = this._centerY + this._radius * Math.sin(this._minRadians);
     this._toMaxX = this._centerX + this._radius * Math.cos(this._maxRadians);
     this._toMaxY = this._centerY + this._radius * Math.sin(this._maxRadians);
-
-    this._toDomainMinX = this._centerX + this._radius * Math.cos(this._minDomainRadians);
-    this._toDomainMinY = this._centerX + this._radius * Math.sin(this._maxDomainRadians);
-    this._toDomainMaxX = this._centerX + this._radius * Math.cos(this._minDomainRadians);
-    this._toDomainMaxY = this._centerX + this._radius * Math.sin(this._maxDomainRadians);
   };
   ArcInput.prototype._paint = function () {
 
