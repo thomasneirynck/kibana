@@ -1,9 +1,7 @@
-// We use this module instead of relying on Joi's required() function because
-// that throws a generic and very large exception in the logs. By contrast, this
-// module lets us thrown a shorter and more meaningful (Kibana-specific) and actionable
-// exception instead.
-module.exports = config => {
+module.exports = (config, log) => {
   if (config.get('xpack.reporting.encryptionKey') == null) {
-    throw new Error('xpack.reporting.encryptionKey is required in kibana.yml.');
+    log('Generating a random key for xpack.reporting.encryptionKey. To prevent pending reports from failing on ' +
+      'restart, please set xpack.reporting.encryptionKey in kibana.yml');
+    config.set('xpack.reporting.encryptionKey', Math.random().toString(36).slice(2));
   }
 };

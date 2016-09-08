@@ -58,7 +58,7 @@ module.exports = function (kibana) {
     init: function (server) {
       const thisPlugin = this;
       const config = server.config();
-      validateConfig(config);
+      validateConfig(config, message => server.log(['reporting', 'warning'], message));
 
       const xpackMainPlugin = server.plugins.xpack_main;
       mirrorPluginStatus(xpackMainPlugin, thisPlugin);
