@@ -49,7 +49,7 @@ export default (server) => {
     path: '/api/security/v1/users/{username}',
     handler(request, reply) {
       const username = request.params.username;
-      const body = _(request.payload).omit('username').omit('enabled').omit(_.isNull);
+      const body = _(request.payload).omit(['username', 'enabled']).omit(_.isNull);
       return callWithRequest(request, 'shield.putUser', {username, body}).then(
         () => reply(request.payload),
         _.flow(wrapError, reply));
