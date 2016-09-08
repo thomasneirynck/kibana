@@ -6,17 +6,21 @@ const module = uiModules.get('kibana/tagcloud', ['kibana']);
 module.directive('arcInput', function ($timeout) {
 
   return {
-    template: '<div style="width:40px;height:40px;border: 1px solid red"></div>',
+    template: '<div style="width: 100%; height: 60px"></div>',
     link: function (scope, element) {
+      const arcInput = new ArcInput(element[0].firstChild, {});
 
-      const arcInput = new ArcInput(element[0].firstChild);
-      arcInput.on('change', function () {
-        console.log('input changed');
+      arcInput.setMinDegrees(scope.vis.params.fromDegree);
+      arcInput.setMaxDegrees(scope.vis.params.toDegree);
+
+      arcInput.on('input', function () {
+        scope.vis.params.fromDegree = Math.round(arcInput.getMinDegrees());
+        scope.vis.params.toDegree = Math.round(arcInput.getMaxDegrees());
+        scope.$apply();
       });
-      $timeout(function () {
-        console.log('resize!');
-        arcInput.resize();
-      });
+
+      $timeout(arcInput.resize.bind(arcInput), 100);
+
     }
   };
 

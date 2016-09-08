@@ -14,7 +14,7 @@ function tagCloud() {
   let width = 250;
   let height = 250;
   let rotationScale = d3.scale.linear();
-  let orientations = 1;
+  let orientations = 2;
   let fromDegree = 0;
   let toDegree = 0;
   let font = d3.functor('serif');
@@ -55,7 +55,6 @@ function tagCloud() {
         .call(group);
 
       let numOfOrientations = orientations - 1;
-
       rotationScale
         .domain([0, numOfOrientations])
         .range([fromDegree, toDegree]);
@@ -75,7 +74,7 @@ function tagCloud() {
         .words(tags)
         .text(textAccessor)
         .rotate(function () {
-          return rotationScale(~~(Math.random() * numOfOrientations));
+          return rotationScale(Math.round(Math.random() * numOfOrientations));
         })
         .font(font)
         .fontStyle(fontStyle)
@@ -107,11 +106,11 @@ function tagCloud() {
     return generator;
   };
 
-  generator.orientations = function (v) {
-    if (!arguments.length) { return orientations; }
-    orientations = v;
-    return generator;
-  };
+  // generator.orientations = function (v) {
+  //   if (!arguments.length) { return orientations; }
+  //   orientations = v;
+  //   return generator;
+  // };
 
   generator.fromDegree = function (v) {
     if (!arguments.length) { return fromDegree; }
