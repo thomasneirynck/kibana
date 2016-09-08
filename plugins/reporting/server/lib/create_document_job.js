@@ -56,7 +56,7 @@ function createDocumentJobFactory(server) {
 
         return { payload, options };
       })
-      .then((params) => {
+      .then(params => {
         const { payload, options } = params;
 
         return new Promise((resolve, reject) => {

@@ -5,12 +5,12 @@ const getUserFactory = require('../lib/get_user');
 const defaultSize = 10;
 
 function jobsQueryFactory(server) {
-  const esErrors = server.plugins.elasticsearch.errors;
-  const client = server.plugins.elasticsearch.client;
   const getUser = getUserFactory(server);
-  const nouser = false;
+  const esErrors = server.plugins.elasticsearch.errors;
+  const { callWithRequest } = server.plugins.elasticsearch;
+  const NO_USER_IDENTIFIER = false;
 
-  function execQuery(type, body) {
+  function execQuery(type, body, request) {
     const defaultBody = {
       search: {
         _source : {
@@ -29,9 +29,11 @@ function jobsQueryFactory(server) {
       body: Object.assign(defaultBody[type] || {}, body)
     };
 
-    return client[type](query)
+    return callWithRequest(request, type, query)
     .catch((err) => {
-      if (err instanceof esErrors.NotFound) return;
+      if (err instanceof esErrors['401']) return;
+      if (err instanceof esErrors['403']) return;
+      if (err instanceof esErrors['404']) return;
       throw err;
     });
   }
@@ -44,7 +46,7 @@ function jobsQueryFactory(server) {
     list(request, page = 0, size = defaultSize) {
       return getUser(request)
       .then((user) => {
-        const username = get(user, 'username', nouser);
+        const username = get(user, 'username', NO_USER_IDENTIFIER);
 
         const body = {
           query: {
@@ -53,7 +55,7 @@ function jobsQueryFactory(server) {
                 bool: {
                   should: [
                     { term: { created_by: username } },
-                    { term: { created_by: nouser } },
+                    { term: { created_by: NO_USER_IDENTIFIER } },
                   ]
                 }
               }
@@ -63,14 +65,14 @@ function jobsQueryFactory(server) {
           size: size,
         };
 
-        return getHits(execQuery('search', body));
+        return getHits(execQuery('search', body, request));
       });
     },
 
     listCompletedSince(request, size = defaultSize, sinceInMs) {
       return getUser(request)
       .then((user) => {
-        const username = get(user, 'username', nouser);
+        const username = get(user, 'username', NO_USER_IDENTIFIER);
 
         const body = {
           query: {
@@ -79,7 +81,7 @@ function jobsQueryFactory(server) {
                 bool: {
                   should: [
                     { term: { created_by: username } },
-                    { term: { created_by: nouser } },
+                    { term: { created_by: NO_USER_IDENTIFIER } },
                   ],
                   must: [
                     { range: { completed_at: { gt: sinceInMs, format: 'epoch_millis' } } }
@@ -92,14 +94,14 @@ function jobsQueryFactory(server) {
           sort: { completed_at: 'asc' }
         };
 
-        return getHits(execQuery('search', body));
+        return getHits(execQuery('search', body, request));
       });
     },
 
     count(request) {
       return getUser(request)
       .then((user) => {
-        const username = get(user, 'username', nouser);
+        const username = get(user, 'username', NO_USER_IDENTIFIER);
 
         const body = {
           query: {
@@ -108,7 +110,7 @@ function jobsQueryFactory(server) {
                 bool: {
                   should: [
                     { term: { created_by: username } },
-                    { term: { created_by: nouser } },
+                    { term: { created_by: NO_USER_IDENTIFIER } },
                   ]
                 }
               }
@@ -116,7 +118,7 @@ function jobsQueryFactory(server) {
           }
         };
 
-        return execQuery('count', body)
+        return execQuery('count', body, request)
         .then((doc) => {
           if (!doc) return 0;
           return doc.count;
@@ -129,7 +131,8 @@ function jobsQueryFactory(server) {
 
       return getUser(request)
       .then((user) => {
-        const username = get(user, 'username', nouser);
+        if (!id) return;
+        const username = get(user, 'username', NO_USER_IDENTIFIER);
 
         const body = {
           query: {
@@ -137,7 +140,7 @@ function jobsQueryFactory(server) {
               filter: {
                 bool: {
                   should: [
-                    { term: { created_by: nouser } },
+                    { term: { created_by: NO_USER_IDENTIFIER } },
                     { term: { created_by: username } },
                   ],
                   filter: [
@@ -156,7 +159,7 @@ function jobsQueryFactory(server) {
           };
         }
 
-        return getHits(execQuery('search', body))
+        return getHits(execQuery('search', body, request))
         .then((hits) => {
           if (hits.length !== 1) return;
           return hits[0];
