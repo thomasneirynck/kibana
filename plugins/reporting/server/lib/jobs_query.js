@@ -139,24 +139,8 @@ function jobsQueryFactory(server) {
       return getUser(request)
       .then((user) => {
         if (!id) return;
-        const username = get(user, 'username', NO_USER_IDENTIFIER);
 
         const body = {
-          query: {
-            constant_score: {
-              filter: {
-                bool: {
-                  should: [
-                    { term: { created_by: NO_USER_IDENTIFIER } },
-                    { term: { created_by: username } },
-                  ],
-                  filter: [
-                    { term: { _id: id } },
-                  ],
-                }
-              }
-            }
-          },
           size: 1,
         };
 
