@@ -1,3 +1,4 @@
+const esqueueEvents = require('esqueue/lib/constants/events');
 const constants = require('./constants');
 const docJobProcessFactory = require('./doc_job_process');
 const oncePerServer = require('./once_per_server');
@@ -33,13 +34,9 @@ function createWorkerFactory(server) {
       workerOptions
     );
 
-    worker.on('error', (err) => {
-      log(`Worker error: (${err})`);
-    });
-
-    worker.on('job_timeout', (err) => {
-      log(`Job timeout exceeded (${err.timeout})`);
-    });
+    worker.on(esqueueEvents.EVENT_WORKER_COMPLETE, (res) => log(`Worker completed: (${res.job.id})`));
+    worker.on(esqueueEvents.EVENT_WORKER_JOB_EXECUTION_ERROR, (res) => log(`Worker error: (${res.job.id})`));
+    worker.on(esqueueEvents.EVENT_WORKER_JOB_TIMEOUT, (res) => log(`Job timeout exceeded: (${res.job.id})`));
   };
 };
 

@@ -34,13 +34,16 @@ module.exports = function (server) {
 
   function pdfHandler(objectType, request, reply) {
     const createJob = createDocumentJob[constants.JOBTYPES_PRINTABLE_PDF];
+
     return createJob(objectType, request)
     .then((job) => {
       const response = reply(job.toJSON());
       response.type('application/json');
     })
     .catch((err) => {
-      if (err instanceof esErrors.NotFound) return reply(boom.notFound());
+      if (err instanceof esErrors['401']) return reply(boom.unauthorized());
+      if (err instanceof esErrors['403']) return reply(boom.forbidden('Sorry, you are not authorized to create reports'));
+      if (err instanceof esErrors['404']) return reply(boom.wrap(err, 404));
       reply(err);
     });
   }
