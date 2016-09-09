@@ -4,13 +4,13 @@
 
     <div>
       Filter Reports:
-      <button
-        class="btn btn-xs"
-        ng-click="toggleUserFilter()"
-        ng-class="{ 'btn-primary': !showAll, 'btn-default': showAll }"
+      <input
+        id="report-filter"
+        type="checkbox"
+        ng-model="showMine"
+        ng-change="toggleUserFilter(showMine)"
         >
-        Only show my reports
-      </button>
+      <label for="report-filter">Only show my reports</label>
     </div>
 
     <table class="table table-striped job-list" ng-class="{ loading: loading === true }">

@@ -2,7 +2,6 @@ import 'angular-paging';
 import 'plugins/reporting/services/job_queue';
 import 'plugins/reporting/less/main.less';
 
-
 import routes from 'ui/routes';
 import template from 'plugins/reporting/views/management/jobs.html';
 
@@ -61,30 +60,33 @@ routes.when('/management/kibana/reporting', {
     $scope.pageSize = pageSize;
     $scope.currentPage = $route.current.locals.page;
     $scope.jobs = $route.current.locals.jobs;
-    $scope.showAll = false;
+    $scope.showMine = true;
 
     const toggleLoading = () => $scope.loading = !$scope.loading;
 
-    const updateJobs = (showLoad = true) => {
-      if (showLoad) toggleLoading();
 
-      return getJobs(reportingJobQueue, $scope.showAll, $scope.currentPage)
+    const updateJobs = () => {
+      const showAll = !$scope.showMine;
+
+      return getJobs(reportingJobQueue, showAll, $scope.currentPage)
       .then((jobs) => {
         $scope.jobs = jobs;
-      })
-      .then(() => {
-        if (showLoad) toggleLoading;
       });
+    };
+
+    const updateJobsLoading = () => {
+      toggleLoading();
+      updateJobs().then(toggleLoading);
     };
 
     // pagination logic
     $scope.setPage = (page) => {
       $scope.currentPage = page - 1;
-      updateJobs();
+      updateJobsLoading();
     };
 
     // job list updating
-    const int = $interval(() => updateJobs(false), jobPollingDelay);
+    const int = $interval(() => updateJobs(), jobPollingDelay);
 
     $scope.$on('$destroy', () => $interval.cancel(int));
 
@@ -104,9 +106,11 @@ routes.when('/management/kibana/reporting', {
       });
     };
 
-    $scope.toggleUserFilter = () => {
-      $scope.showAll = !$scope.showAll;
-      updateJobs();
+    // report user filter
+    $scope.toggleUserFilter = (showMine) => {
+      $scope.currentPage = 0;
+      $scope.showMine = showMine;
+      updateJobsLoading();
     };
   }
 });
