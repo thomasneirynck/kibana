@@ -17,7 +17,7 @@ export default (server, uiExports, xpackMainPlugin) => {
         const next = get(request, 'query.next', '/');
         return reply.redirect(`${config.get('server.basePath')}${next}`);
       }
-      return reply.renderApp(login);
+      return reply.renderAppWithDefaultConfig(login);
     },
     config: {
       auth: false
