@@ -69,6 +69,6 @@ module.service('reportingDocumentControl', function ($http, Promise, Private, $l
   this.create = () => {
     const info = this.getInfo();
     if (!info.exportable) return Promise.reject(new Error('not exportable'));
-    return $http.get(info.reportPath);
+    return $http.post(info.reportPath, {});
   };
 });

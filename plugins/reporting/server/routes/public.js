@@ -4,21 +4,22 @@ const createDocumentJobFactory = require('../lib/create_document_job');
 const { JOBTYPES } = require('../lib/constants');
 const licensePreFactory = require ('../lib/license_pre_routing');
 const userPreRoutingFactory = require('../lib/user_pre_routing');
+const syncJobHandlerFactory = require('../lib/sync_job_handler');
 
 const mainEntry = `${API_BASE_URL}/generate`;
 const API_TAG = 'api';
 
 module.exports = function (server) {
-  const config = server.config();
-  const createDocumentJob = createDocumentJobFactory(server);
   const esErrors = server.plugins.elasticsearch.errors;
+  const createDocumentJob = createDocumentJobFactory(server);
   const licensePre = licensePreFactory(server);
   const userPreRouting = userPreRoutingFactory(server);
+  const syncJobHandler = syncJobHandlerFactory(server);
 
   // defined the public routes
   server.route({
     path: `${mainEntry}/visualization/{savedId}`,
-    method: 'GET',
+    method: 'POST',
     handler: (request, reply) => pdfHandler('visualization', request, reply),
     config: {
       tags: [API_TAG],
@@ -28,7 +29,7 @@ module.exports = function (server) {
 
   server.route({
     path: `${mainEntry}/search/{savedId}`,
-    method: 'GET',
+    method: 'POST',
     handler: (request, reply) => pdfHandler('search', request, reply),
     config: {
       tags: [API_TAG],
@@ -38,7 +39,7 @@ module.exports = function (server) {
 
   server.route({
     path: `${mainEntry}/dashboard/{savedId}`,
-    method: 'GET',
+    method: 'POST',
     handler: (request, reply) => pdfHandler('dashboard', request, reply),
     config: {
       tags: [API_TAG],
@@ -54,8 +55,7 @@ module.exports = function (server) {
     return createJob(objectType, request)
     .then((job) => {
       if (syncResponse) {
-        const basePath = config.get('server.basePath') + API_BASE_URL;
-        return reply(job.id).redirect(`${basePath}/jobs/download/${job.id}`);
+        syncJobHandler(job.id, jobType, request, reply);
       } else {
         // return the queue's job information
         const response = reply(job.toJSON());
