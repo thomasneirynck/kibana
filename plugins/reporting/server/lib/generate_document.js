@@ -1,6 +1,6 @@
 const Promise = require('bluebird');
 const _ = require('lodash');
-import getTimeFilterRange from './get_time_filter_range';
+const getTimeFilterRange = require('./get_time_filter_range');
 
 const pdf = require('./pdf');
 const oncePerServer = require('./once_per_server');
