@@ -9,8 +9,7 @@ module.directive('arcInput', function ($timeout) {
     template: '<div style="width: 100%; height: 100px; margin: 0 auto"></div>',
     link: function (scope, element) {
       const arcInput = new ArcInput(element[0].firstChild, {
-        sectorFillStyle: 'rgba(255,255,255,1)',
-        sectorStrokeWidth: 3
+        sectorStrokeWidth: 6
       });
 
       arcInput.setMinDegrees(scope.vis.params.fromDegree);
