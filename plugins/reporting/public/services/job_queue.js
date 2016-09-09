@@ -1,5 +1,5 @@
 import url from 'url';
-import _ from 'lodash';
+import { set } from 'lodash';
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 import Notifier from 'ui/notify/notifier';
 import { addSystemApiHeader } from 'ui/system_api';
@@ -35,11 +35,12 @@ module.service('reportingJobQueue', ($http, kbnUrl, Private) => {
     list(page = 0, showAll = false) {
       const urlObj = {
         pathname: `${baseUrl}/list`,
-        query: {
-          page: page
-        }
+        query: { page }
       };
-      if (showAll) _.set(urlObj, 'query.all',  true);
+
+      if (showAll) {
+        set(urlObj, 'query.all',  true);
+      }
 
       const headers = addSystemApiHeader({});
       return $http.get(url.format(urlObj), { headers })
@@ -49,7 +50,10 @@ module.service('reportingJobQueue', ($http, kbnUrl, Private) => {
 
     total(showAll = false) {
       const urlObj = { pathname: `${baseUrl}/count` };
-      if (showAll) _.set(urlObj, 'query.all',  true);
+
+      if (showAll) {
+        set(urlObj, 'query.all',  true);
+      }
 
       const headers = addSystemApiHeader({});
       return $http.get(url.format(urlObj), { headers })

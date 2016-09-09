@@ -51,8 +51,8 @@ function jobsQueryFactory(server) {
         const username = get(user, 'username', NO_USER_IDENTIFIER);
 
         const body = {
+          size,
           from: size * page,
-          size: size,
         };
 
         if (!showAll) {
@@ -80,6 +80,8 @@ function jobsQueryFactory(server) {
         const username = get(user, 'username', NO_USER_IDENTIFIER);
 
         const body = {
+          size,
+          sort: { completed_at: 'asc' },
           query: {
             constant_score: {
               filter: {
@@ -95,8 +97,6 @@ function jobsQueryFactory(server) {
               }
             }
           },
-          size: size,
-          sort: { completed_at: 'asc' }
         };
 
         return getHits(execQuery('search', body, request));
