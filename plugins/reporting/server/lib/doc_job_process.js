@@ -15,7 +15,7 @@ function docJobProcessFactory(server) {
   const crypto = cryptoFactory(server);
 
   return async function docJobProcess(job) {
-    const { objects, query, headers:serializedEncryptedHeaders } = job;
+    const { title, objects, query, headers:serializedEncryptedHeaders } = job;
     let decryptedHeaders;
 
     try {
@@ -25,7 +25,7 @@ function docJobProcessFactory(server) {
     };
 
     const headers = omit(decryptedHeaders, KBN_SCREENSHOT_HEADER_BLACKLIST);
-    const pdfDoc = await printablePdf(objects, query, headers);
+    const pdfDoc = await printablePdf(title, objects, query, headers);
     return {
       contentType: 'application/pdf',
       buffer: await pdfDoc.getBuffer(),

@@ -52,6 +52,27 @@ module.exports = function (client, config) {
     }
   };
 
+  function getIndexPatternObject(indexPattern) {
+    const req = {
+      index: opts.kibanaIndex,
+      type: 'index-pattern',
+      id: indexPattern
+    };
+
+    return client.get(req).then(body => body._source);
+  }
+
+  async function hasTimeBasedIndexPattern(savedObjSearchSourceIndex) {
+    const indexPattern = savedObjSearchSourceIndex.index;
+    if (!indexPattern) {
+      return Promise.resolve(false);
+    }
+
+    const getIndexPatternObjectMemoized = _.memoize(getIndexPatternObject);
+    const indexPatternObj = await getIndexPatternObjectMemoized(indexPattern);
+    return !!indexPatternObj.timeFieldName;
+  }
+
   function getObject(type, id, fields = []) {
     fields = ['title', 'description'].concat(fields);
     validateType(type);
@@ -86,14 +107,17 @@ module.exports = function (client, config) {
     .then(function _getRecord(body) {
       return body._source;
     })
-    .then(function _buildObject(source) {
+    .then(async function _buildObject(source) {
       const { searchSource, uiState } = parseJsonObjects(source);
+
+      const isUsingTimeBasedIndexPattern = await hasTimeBasedIndexPattern(searchSource);
 
       const obj = _.assign(_.pick(source, fields), {
         id: req.id,
         type: type,
         searchSource: searchSource,
         uiState: uiState,
+        isUsingTimeBasedIndexPattern,
         getUrl: function getAppUrl(query = {}, urlOptions = {}) {
           const options = _.assign({
             useAbsoluteTime: true
@@ -153,6 +177,7 @@ module.exports = function (client, config) {
             type: this.type,
             searchSource: this.searchSource,
             uiState: this.uiState,
+            isUsingTimeBasedIndexPattern,
             url: this.getUrl(query, urlOptions)
           };
 

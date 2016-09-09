@@ -1,5 +1,6 @@
 const Promise = require('bluebird');
 const _ = require('lodash');
+const getTimeFilterRange = require('./get_time_filter_range');
 
 const pdf = require('./pdf');
 const oncePerServer = require('./once_per_server');
@@ -12,8 +13,12 @@ function generateDocumentFactory(server) {
     printablePdf: printablePdf,
   };
 
-  function printablePdf(savedObjects, query, headers) {
+  function printablePdf(title, savedObjects, query, headers) {
     const pdfOutput = pdf.create();
+
+    const timeRange = getTimeFilterRange(savedObjects, query);
+    title += (timeRange) ? ` — ${timeRange.from} to ${timeRange.to}` : '';
+    pdfOutput.setTitle(title);
 
     return Promise.map(savedObjects, function (savedObj) {
       if (savedObj.isMissing) {
