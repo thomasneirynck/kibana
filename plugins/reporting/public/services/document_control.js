@@ -27,7 +27,9 @@ module.service('reportingDocumentControl', function ($http, Promise, Private, $l
 
     const type = pathParams[1];
     const docType = docTypes[type];
-    if (!docType) throw new Error('Unknown app type: ' + type);
+
+    // if the doc type is unknown, return an empty object, causing other checks to be falsy
+    if (!docType) return {};
 
     const params = docType.getParams(pathname);
     const exportable = (!!params);
@@ -50,7 +52,7 @@ module.service('reportingDocumentControl', function ($http, Promise, Private, $l
   };
 
   this.isExportable = () => {
-    return this.getInfo().exportable;
+    return this.getInfo().exportable || false;
   };
 
   this.getUrl = (sync) => {
