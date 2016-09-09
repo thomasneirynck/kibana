@@ -51,9 +51,7 @@ routes.when('/management/kibana/reporting', {
   template,
   resolve: {
     page: () => 0,
-    jobs(reportingJobQueue) {
-      return getJobs(reportingJobQueue);
-    }
+    jobs: () => [],
   },
   controller($scope, $route, $window, $interval, reportingJobQueue) {
     $scope.loading = false;
@@ -79,10 +77,11 @@ routes.when('/management/kibana/reporting', {
       updateJobs().then(toggleLoading);
     };
 
+    $scope.$watchMulti(['showMine', 'currentPage'], updateJobsLoading);
+
     // pagination logic
     $scope.setPage = (page) => {
       $scope.currentPage = page - 1;
-      updateJobsLoading();
     };
 
     // job list updating
@@ -110,7 +109,6 @@ routes.when('/management/kibana/reporting', {
     $scope.toggleUserFilter = (showMine) => {
       $scope.currentPage = 0;
       $scope.showMine = showMine;
-      updateJobsLoading();
     };
   }
 });
