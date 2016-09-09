@@ -63,7 +63,8 @@
       self._emit('change', self);
     }
 
-    this._context.canvas.addEventListener('mousemove', function updateOffset(event) {
+
+    function onMove(event) {
 
       var insideCircle = distanceSquared(event.offsetX, event.offsetY, self._centerX, self._centerY) <= Math.pow(self._radius, 2);
       if (insideCircle) {//check if inside circle
@@ -90,16 +91,37 @@
       self._emit('input', self);
 
 
-    });
-    this._context.canvas.addEventListener('mousedown', function () {
+    }
+
+    this._context.canvas.addEventListener('mousemove', onMove);
+    function onDown() {
       self._down = true;
-    });
+    }
+
+    this._context.canvas.addEventListener('mousedown', onDown);
     this._context.canvas.addEventListener('mouseup', cancel);
     this._context.canvas.addEventListener('mouseout', cancel);
-    window.addEventListener('resize', this.resize.bind(this));
+    function onResize() {
+      self.resize();
+    }
+
+    window.addEventListener('resize', onResize);
     this.resize();
 
+    this.destroy = function () {
+      if (this._frameHandle !== -1) {
+        window.cancelAnimationFrame(this._frameHandle);
+      }
+      window.removeEventListener('resize', onResize);
+      self._context.canvas.removeEventListener('resize', onResize);
+      self._context.canvas.removeEventListener('mousedown', onDown);
+      self._context.canvas.removeEventListener('mouseup', cancel);
+      self._context.canvas.removeEventListener('mouseout', cancel);
+      self._context = null;
+    };
+
   }
+
 
   /**
    * Resize the control to fit to the parent container. Call this when the size of the containing node has changed.
@@ -166,6 +188,24 @@
     return toDegrees(this._maxRadians);
   };
 
+  /**
+   * Set breaks
+   * @param {Number} breaks number of breaks (>= 2)
+   */
+  ArcInput.prototype.setBreaks = function (breaks) {
+    this._breaks = breaks;
+    this._invalidate();
+  };
+
+  /**
+   * Get the number of breaks
+   * @returns {number}
+   */
+  ArcInput.prototype.getBreaks = function () {
+    return this._breaks;
+  };
+
+
   ArcInput.prototype._wash = function () {
     this._centerX = this._context.canvas.width / 2;
     this._centerY = this._context.canvas.height / 2;
@@ -178,12 +218,7 @@
     if (this._maxRadians - this._minRadians > 0) {
       this._step = (this._maxRadians - this._minRadians) / this._breaks;
     } else {
-      var a = normalizeAngle(this._maxRadians);
-      var b = normalizeAngle(this._minRadians);
-
-
       this._step = (Math.PI + (Math.PI - this._minRadians) + this._maxRadians) / this._breaks;
-
     }
 
   };
