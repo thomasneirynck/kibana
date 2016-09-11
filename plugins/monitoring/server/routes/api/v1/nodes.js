@@ -15,13 +15,6 @@ import getDefaultNodeFromId from '../../../lib/get_default_node_from_id';
 import lookups from '../../../lib/lookups';
 import handleError from '../../../lib/handle_error';
 
-function isTypeSupported(supportedNodeTypes, type) {
-  if (_.isUndefined(supportedNodeTypes[type])) {
-    throw new Error(`Unknown node type: ${type}`);
-  }
-  return supportedNodeTypes[type];
-}
-
 export default function nodesRoutes(server) {
   const config = server.config();
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
@@ -45,9 +38,6 @@ export default function nodesRoutes(server) {
           clusterUuid: Joi.string().required()
         }),
         payload: Joi.object({
-          showMasterNodes: Joi.boolean().default(true),
-          showDataNodes: Joi.boolean().default(true),
-          showClientNodes: Joi.boolean().default(true),
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
@@ -59,13 +49,6 @@ export default function nodesRoutes(server) {
     handler: (req, reply) => {
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
-      const supportedNodeTypes = {
-        master: req.payload.showMasterNodes,
-        master_only: req.payload.showMasterNodes,
-        node: req.payload.showDataNodes,
-        data: req.payload.showDataNodes,
-        client: req.payload.showClientNodes
-      };
 
       calculateIndices(req, start, end, esIndexPattern)
       .then(indices => {
@@ -112,24 +95,6 @@ export default function nodesRoutes(server) {
         });
         delete body.listing;
         delete body.clusterState;
-        return body;
-      })
-      // filtering
-      .then((body) => {
-        // filter the rows
-        const filteredRows = _.filter(body.rows, (row) => {
-          return isTypeSupported(supportedNodeTypes, row.node.type);
-        });
-        // filter the nodes
-        const filteredNodes = _.reduce(body.nodes, (prev, curr, nodeId) => {
-          if (isTypeSupported(supportedNodeTypes, curr.type)) {
-            prev[nodeId] = curr;
-          }
-          return prev;
-        }, {});
-
-        body.rows = filteredRows;
-        body.nodes = filteredNodes;
         return body;
       })
       // Send the response

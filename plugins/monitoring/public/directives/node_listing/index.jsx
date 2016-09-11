@@ -7,42 +7,6 @@ import extractIp from 'plugins/monitoring/lib/extract_ip';
 import Table from 'plugins/monitoring/directives/paginated_table/components/table';
 import uiModules from 'ui/modules';
 
-function toggleNodesTypesFactory(scope, type) {
-  return class ToggleNodesTypes extends React.Component {
-
-    constructor(props) {
-      super();
-      this.state = { type, checkedState: props.checkedState };
-      // methods not automatically bound to the component instance because of using ES6 class syntax
-      this.toggleShowNodes = this.toggleShowNodes.bind(this, type);
-      this.getTypeDisplay = this.getTypeDisplay.bind(this);
-    }
-
-    toggleShowNodes() {
-      this.setState({ checkedState: !this.state.checkedState });
-      scope.$evalAsync(() => {
-        scope.toggleShowNodes(this.state.type);
-      });
-    }
-
-    getTypeDisplay() {
-      return _.capitalize(this.state.type);
-    }
-
-    render() {
-      return (
-        <div className='pull-left filter-member'>
-          <input type='checkbox'
-            onChange={this.toggleShowNodes}
-            checked={this.state.checkedState}/>&nbsp;
-          <span onClick={this.toggleShowNodes}>Show {this.getTypeDisplay()} nodes</span>
-        </div>
-      );
-    }
-
-  };
-}
-
 function nodeRowFactory(scope, kbnUrl, decorateRow) {
   function checkOnline(status) {
     return status === 'green';
@@ -171,11 +135,7 @@ uiModule.directive('monitoringNodesListing', function (kbnUrl) {
     restrict: 'E',
     scope: {
       cluster: '=',
-      rows: '=',
-      showMasterNodes: '=',
-      showDataNodes: '=',
-      showClientNodes: '=',
-      toggleShowNodes: '='
+      rows: '='
     },
     link(scope, $el) {
 
@@ -188,18 +148,10 @@ uiModule.directive('monitoringNodesListing', function (kbnUrl) {
         return row;
       }
 
-      const ToggleMasterNodes = toggleNodesTypesFactory(scope, 'master');
-      const ToggleDataNodes = toggleNodesTypesFactory(scope, 'data');
-      const ToggleClientNodes = toggleNodesTypesFactory(scope, 'client');
       const NodeRow = nodeRowFactory(scope, kbnUrl, decorateRow);
       const $table = React.createElement(Table, {
         scope,
         options: initialTableOptions,
-        filterMembers: [
-          <ToggleMasterNodes checkedState={scope.showMasterNodes}/>,
-          <ToggleDataNodes checkedState={scope.showDataNodes}/>,
-          <ToggleClientNodes checkedState={scope.showClientNodes}/>
-        ],
         template: NodeRow
       });
       const tableInstance = React.render($table, $el[0]);

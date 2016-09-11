@@ -8,17 +8,11 @@ import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
 import template from 'plugins/monitoring/views/elasticsearch/nodes/nodes_template.html';
 
-function getPageData(timefilter, globalState, $http, Private, features) {
+function getPageData(timefilter, globalState, $http, Private) {
   const timeBounds = timefilter.getBounds();
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/nodes`;
-  const showMasterNodes = features.isEnabled('showMasterNodes', true);
-  const showDataNodes = features.isEnabled('showDataNodes', true);
-  const showClientNodes = features.isEnabled('showClientNodes', true);
 
   return $http.post(url, {
-    showMasterNodes,
-    showDataNodes,
-    showClientNodes,
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
@@ -50,7 +44,7 @@ uiRoutes.when('/elasticsearch/nodes', {
 
 const uiModule = uiModules.get('monitoring', [ 'plugins/monitoring/directives' ]);
 uiModule.controller('nodes',
-($route, timefilter, globalState, title, features, Private, $executor, $http, monitoringClusters, $scope) => {
+($route, timefilter, globalState, title, Private, $executor, $http, monitoringClusters, $scope) => {
 
   timefilter.enabled = true;
 
@@ -62,26 +56,7 @@ uiModule.controller('nodes',
   $scope.pageData = $route.current.locals.pageData;
   title($scope.cluster, 'Elasticsearch - Nodes');
 
-  const callPageData = _.partial(getPageData, timefilter, globalState, $http, Private, features);
-
-  // show/hides
-  $scope.showMasterNodes = features.isEnabled('showMasterNodes', true);
-  $scope.showDataNodes = features.isEnabled('showDataNodes', true);
-  $scope.showClientNodes = features.isEnabled('showClientNodes', true);
-  $scope.toggleShowNodes = (type) => {
-    const typeFeatureNameMap = {
-      master: 'showMasterNodes',
-      data: 'showDataNodes',
-      client: 'showClientNodes'
-    };
-    // flip the bool
-    const featureName = typeFeatureNameMap[type];
-    $scope[featureName] = !$scope[featureName];
-    // preserve in localStorage
-    features.update(featureName, $scope[featureName]);
-    // update the page
-    callPageData().then((pageData) => $scope.pageData = pageData);
-  };
+  const callPageData = _.partial(getPageData, timefilter, globalState, $http, Private);
 
   $executor.register({
     execute: () => callPageData(),

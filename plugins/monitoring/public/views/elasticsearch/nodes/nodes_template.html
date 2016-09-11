@@ -3,13 +3,7 @@
     <div class="monitoring-nodes monitoring-view">
       <div class="col-md-12">
         <monitoring-cluster-status-elasticsearch></monitoring-cluster-status-elasticsearch>
-        <monitoring-nodes-listing
-           cluster="cluster"
-           rows="pageData.rows"
-           show-master-nodes="showMasterNodes"
-           show-data-nodes="showDataNodes"
-           show-client-nodes="showClientNodes"
-           toggle-show-nodes="toggleShowNodes"></monitoring-nodes-listing>
+        <monitoring-nodes-listing cluster="cluster" rows="pageData.rows"></monitoring-nodes-listing>
       </div>
     </div>
   </monitoring-main>
