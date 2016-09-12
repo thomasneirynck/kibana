@@ -6,5 +6,6 @@ export default {
   roles: Joi.array().items(Joi.string()),
   full_name: Joi.string().allow(null, ''),
   email: Joi.string().allow(null, ''),
-  metadata: Joi.object()
+  metadata: Joi.object(),
+  enabled: Joi.boolean().default(true)
 };
