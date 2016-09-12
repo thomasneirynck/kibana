@@ -284,7 +284,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     if ($scope.urlTemplates.length === 0) {
       const discoverUrl = kbnBaseUrl + '#/discover?_g=()&_a=(columns:!(_source),index:\'' +
           encodeURIComponent(selectedIndex)
-          + '\',interval:auto,query:[gquery],sort:!(_score,desc))';
+          + '\',interval:auto,query:{{gquery}},sort:!(_score,desc))';
       $scope.urlTemplates.push({
         url: chrome.addBasePath(discoverUrl),
         description: 'Raw documents',
@@ -468,14 +468,27 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   };
 
   //== Drill-down functionality ==
-  const drillDownRegex = /\[gquery\]/;
+  const defaultKibanaQuery = ',query:(query_string:(analyze_wildcard:!t,query:\'*\'))';
+  const drillDownRegex = /\{\{gquery\}\}/;
+
+  $scope.checkForKibanaUrl = function () {
+    $scope.suggestTemplateFix = $scope.newUrlTemplate.url === $scope.lastPastedURL  && $scope.newUrlTemplate.url.indexOf(defaultKibanaQuery) > 0;
+  };
+
+  $scope.replaceKibanaUrlParam = function () {
+    $scope.newUrlTemplate.url = $scope.newUrlTemplate.url.replace(defaultKibanaQuery,',query:{{gquery}}');
+    $scope.lastPastedURL = null;
+    $scope.checkForKibanaUrl();
+  };
+
+  $scope.rejectKibanaUrlSuggestion = function () {
+    $scope.lastPastedURL = null;
+    $scope.checkForKibanaUrl();
+  };
+
   function detectKibanaUrlPaste(url) {
-    const defaultKibanaQuery = ',query:(query_string:(analyze_wildcard:!t,query:\'*\'))';
-    if (url.indexOf(defaultKibanaQuery) > 0) {
-      safeConfirm('This looks like a Kibana URL - convert to template?').then(function () {
-        $scope.newUrlTemplate.url = url.replace(defaultKibanaQuery,',query:[gquery]');
-      });
-    }
+    $scope.lastPastedURL = url;
+    $scope.checkForKibanaUrl();
   };
 
   $scope.handleUrlTemplatePaste = function ($event) {
@@ -501,7 +514,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   $scope.saveUrlTemplate = function () {
     const found = $scope.newUrlTemplate.url.search(drillDownRegex) > -1;
     if (!found) {
-      uiNotify.warning('Invalid URL - the url must contain a [gquery] string');
+      uiNotify.warning('Invalid URL - the url must contain a {{gquery}} string');
       return;
     }
     if ($scope.newUrlTemplate.templateBeingEdited) {
