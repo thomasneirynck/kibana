@@ -52,7 +52,7 @@ module.service('reportingDocumentControl', function ($http, Promise, Private, $l
   };
 
   this.isExportable = () => {
-    return this.getInfo().exportable || false;
+    return Boolean(this.getInfo().exportable);
   };
 
   this.getUrl = (sync) => {
