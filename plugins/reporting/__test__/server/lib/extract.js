@@ -3,9 +3,10 @@ import crypto from 'crypto';
 import expect from 'expect.js';
 import extract from '../../../server/lib/extract';
 
-const SRC_FILE_UNCOMPRESSED = `${__dirname}/../../fixtures/extract_test_file`;
-const EXTRACT_TARGET_FOLDER = `${__dirname}/../../fixtures/extract_target`;
-const EXTRACT_TARGET_FILE = `${EXTRACT_TARGET_FOLDER}/extract_test_file`;
+const FIXTURES_FOLDER = `${__dirname}/../../fixtures`;
+const SRC_FILE_UNCOMPRESSED = `${FIXTURES_FOLDER}/extract_test_file.js`;
+const EXTRACT_TARGET_FOLDER = `${FIXTURES_FOLDER}/extract_target`;
+const EXTRACT_TARGET_FILE = `${EXTRACT_TARGET_FOLDER}/extract_test_file.js`;
 
 function cleanup(done) {
 
@@ -81,7 +82,7 @@ describe('extract', () => {
     });
 
     it('throws an Error given a non-tar.bz2 file', async () => {
-      const srcFile = `${__dirname}/../../fixtures/extract_test_file.bz2`;
+      const srcFile = `${SRC_FILE_UNCOMPRESSED}.bz2`;
 
       let thrownException;
       try {
