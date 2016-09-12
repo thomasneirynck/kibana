@@ -5,11 +5,12 @@ import 'plugins/security/services/auto_logout';
 
 function isUnauthorizedResponseAllowed(response) {
   const API_WHITELIST = [
-    '/api/security/v1/login'
+    '/api/security/v1/login',
+    '/api/security/v1/users/.*/password'
   ];
 
   const url = response.config.url;
-  return API_WHITELIST.some(api => url.includes(api));
+  return API_WHITELIST.some(api => url.match(api));
 }
 
 const module = uiModules.get('security');

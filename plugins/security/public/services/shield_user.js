@@ -11,7 +11,7 @@ module.service('ShieldUser', ($resource, chrome) => {
     changePassword: {
       method: 'POST',
       url: `${baseUrl}/password`,
-      transformRequest: ({password}) => angular.toJson({password})
+      transformRequest: ({password, newPassword}) => angular.toJson({password, newPassword})
     },
     getCurrent: {
       method: 'GET',

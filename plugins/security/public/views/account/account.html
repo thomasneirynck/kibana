@@ -35,16 +35,19 @@
         <label for="password" class="col-md-2 control-label">Password</label>
         <div class="col-md-4">
           <input type="password" class="form-control help-block" id="password" name="password"
-                 ng-model="user.password" required placeholder="Enter password..." minlength="6" />
-          <input type="password" class="form-control help-block" name="confirmPassword"
-                 ng-model="view.confirmPassword" required placeholder="Confirm password..." minlength="6" />
+                 ng-model="user.password" required placeholder="Enter current password..." minlength="6" />
+          <input type="password" class="form-control help-block" id="newPassword" name="newPassword"
+                 ng-model="user.newPassword" required placeholder="Enter new password..." minlength="6" />
+          <input type="password" class="form-control help-block" id="confirmPassword" name="confirmPassword"
+                 ng-model="view.confirmPassword" required placeholder="Confirm new password..." minlength="6" />
           <div class="has-error">
-            <span class="help-block" ng-show="form.password.$touched && form.password.$error.minlength">
+            <span class="help-block" ng-show="form.newPassword.$touched && form.newPassword.$error.minlength">
               Password must be at least 6 characters long.
             </span>
-            <span class="help-block" ng-show="form.confirmPassword.$touched && user.password != view.confirmPassword">
+            <span class="help-block" ng-show="form.confirmPassword.$touched && user.newPassword != view.confirmPassword">
               Passwords do not match.
             </span>
+            <span class="help-block" ng-show="view.incorrectPassword">Current password is incorrect.</span>
           </div>
           <div class="has-warning" ng-show="user.metadata._reserved && user.username == 'kibana'">
             <span class="help-block">
@@ -54,7 +57,7 @@
           </div>
           <div>
             <button class="btn btn-success help-block" ng-click="changePassword(user)"
-                    ng-disabled="form.password.$invalid || user.password != view.confirmPassword">Save</button>
+                    ng-disabled="form.newPassword.$invalid || user.newPassword != view.confirmPassword">Save</button>
             <button class="btn btn-default help-block" ng-click="toggleChangePasswordMode()">Cancel</button>
           </div>
         </div>
