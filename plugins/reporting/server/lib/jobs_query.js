@@ -137,7 +137,7 @@ function jobsQueryFactory(server) {
       if (!id) return Promise.resolve();
 
       return getUser(request)
-      .then((user) => {
+      .then(() => {
         if (!id) return;
 
         const body = {
