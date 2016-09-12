@@ -1,6 +1,6 @@
 import { some } from 'lodash';
 import datemath from '@elastic/datemath';
-import rison from 'rison-node';
+import parseKibanaState from '../../../../server/lib/kibana_state';
 import moment from 'moment';
 
 export default function getTimeFilterRange(savedObjects, query = {}) {
@@ -13,12 +13,13 @@ export default function getTimeFilterRange(savedObjects, query = {}) {
     return;
   }
 
-  const globalState = rison.decode(query._g);
-  if (!globalState.time) {
+  const globalState = parseKibanaState(query, 'global');
+  const time = globalState.get('time');
+  if (!time) {
     return;
   }
 
-  const from = moment(datemath.parse(globalState.time.from).toISOString()).format('llll');
-  const to = moment(datemath.parse(globalState.time.to).toISOString()).format('llll');
+  const from = moment(datemath.parse(time.from).toISOString()).format('llll');
+  const to = moment(datemath.parse(time.to).toISOString()).format('llll');
   return { from, to };
 }
