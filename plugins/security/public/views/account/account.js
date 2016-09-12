@@ -14,7 +14,8 @@ routes.when('/account', {
   controller($scope, $route, Notifier) {
     $scope.user = $route.current.locals.user;
     $scope.view = {
-      changePasswordMode: false
+      changePasswordMode: false,
+      incorrectPassword: false
     };
 
     const notifier = new Notifier();
@@ -23,11 +24,17 @@ routes.when('/account', {
       user.$changePassword()
       .then(() => notifier.info('The password has been changed.'))
       .then($scope.toggleChangePasswordMode)
-      .catch(error => notifier.error(_.get(error, 'data.message')));
+      .catch((error) => {
+        if (error.status === 401) $scope.view.incorrectPassword = true;
+        else notifier.error(_.get(error, 'data.message'));
+      });
     };
+
+    $scope.$watch('user.password', () => $scope.view.incorrectPassword = false);
 
     $scope.toggleChangePasswordMode = () => {
       delete $scope.user.password;
+      delete $scope.user.newPassword;
       delete $scope.view.confirmPassword;
       $scope.view.changePasswordMode = !$scope.view.changePasswordMode;
     };

@@ -27,9 +27,8 @@ export default (kibana) => new kibana.Plugin({
     return Joi.object({
       enabled: Joi.boolean().default(true),
       cookieName: Joi.string().default('sid'),
-      clientCookieName: Joi.string().default('user'),
       encryptionKey: Joi.string(),
-      sessionTimeout: Joi.number().default(30 * 60 * 1000),
+      sessionTimeout: Joi.number().allow(null).default(null),
       secureCookies: Joi.boolean().default(false)
     }).default();
   },
@@ -57,8 +56,7 @@ export default (kibana) => new kibana.Plugin({
       const config = server.config();
       return {
         secureCookies: config.get('xpack.security.secureCookies'),
-        sessionTimeout: config.get('xpack.security.sessionTimeout'),
-        clientCookieName: config.get('xpack.security.clientCookieName')
+        sessionTimeout: config.get('xpack.security.sessionTimeout')
       };
     }
   },
@@ -79,16 +77,6 @@ export default (kibana) => new kibana.Plugin({
 
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
-
-    const commonCookieConfig = {
-      isSecure: config.get('xpack.security.secureCookies'),
-      path: config.get('server.basePath') + '/'
-    };
-
-    // Registers the client-readable cookie which stores user information for display purposes
-    // (as opposed to the session cookie which is HTTP only and stores username/password)
-    const clientCookieName = config.get('xpack.security.clientCookieName');
-    server.state(clientCookieName, commonCookieConfig);
 
     const cookieName = config.get('xpack.security.cookieName');
 
@@ -114,13 +102,14 @@ export default (kibana) => new kibana.Plugin({
         password: config.get('xpack.security.encryptionKey'),
         clearInvalid: true,
         validateFunc: getCookieValidate(server),
-        ...commonCookieConfig
+        isSecure: config.get('xpack.security.secureCookies'),
+        path: config.get('server.basePath') + '/'
       });
     });
 
     createExpose(server);
 
-    initAuthenticateApi(server, {clientCookieName});
+    initAuthenticateApi(server);
     initUsersApi(server);
     initRolesApi(server);
     initIndicesApi(server);

@@ -54,27 +54,49 @@ describe('saved_objects', function () {
       });
 
       describe('getUrl', function () {
+        let timeParam;
+        let query;
+
+        beforeEach(() => {
+          timeParam = 'time:(from:now-1h,mode:quick,to:now)';
+          query = {
+            _g: `(refreshInterval:(display:Off,pause:!f,value:0),${timeParam})`
+          };
+        });
+
         it('should provide app url', function () {
           const params = url.parse(savedObject.getUrl());
           expect(params).to.have.property('hash');
         });
 
-        it('should take query params and append to hash', function () {
-          const query = {
-            _g: '(time:(from:now-1h,mode:quick,to:now))'
-          };
-          const params = url.parse(savedObject.getUrl(query));
-          expect(params.hash).to.contain(query._g);
+        it('should remove the refreshInterval value', function () {
+          var objectUrl = savedObject.getUrl(query);
+          expect(objectUrl).to.not.contain('refreshInterval');
         });
 
-        it('should remove the refreshInterval value', function () {
-          const query = {
-            _g: '(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-15m,mode:quick,to:now))'
-          };
+        describe('absolute time', function () {
+          it('should use absolute time by default', function () {
+            var params = url.parse(savedObject.getUrl(query));
+            expect(params.hash).to.not.contain(query._g);
+            expect(params.hash).to.match(/time\:.+mode\:absolute/);
+            expect(params.hash).to.match(/time\:.+from\:/);
+            expect(params.hash).to.match(/time\:.+to\:/);
+          });
+        });
 
-          const parsedUrl = savedObject.getUrl(query);
-          expect(parsedUrl).to.contain('time:(from:now-15m,mode:quick,to:now))');
-          expect(parsedUrl).to.not.contain('refreshInterval');
+        describe('relative time', function () {
+          let urlOptions;
+
+          beforeEach(() => {
+            urlOptions = {
+              useAbsoluteTime: false
+            };
+          });
+
+          it('should append relative time to hash', function () {
+            var params = url.parse(savedObject.getUrl(query, urlOptions));
+            expect(params.hash).to.contain(`_g=(${timeParam})`);
+          });
         });
       });
 
@@ -95,7 +117,7 @@ describe('saved_objects', function () {
             _g: '(time:(from:now-1h,mode:quick,to:now))'
           };
 
-          const obj = savedObject.toJSON(query);
+          const obj = savedObject.toJSON(query, { useAbsoluteTime: false });
           const params = url.parse(obj.url);
           expect(params.hash).to.contain(query._g);
         });

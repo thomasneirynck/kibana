@@ -6,11 +6,13 @@ import userSchema from '../../../lib/user_schema';
 import { wrapError } from '../../../lib/errors';
 import getCalculateExpires from '../../../lib/get_calculate_expires';
 import onChangePassword from '../../../lib/on_change_password';
+import getIsValidUser from '../../../lib/get_is_valid_user';
 import routePreCheckLicense from '../../../lib/route_pre_check_license';
 
 export default (server) => {
   const callWithRequest = getClient(server).callWithRequest;
   const calculateExpires = getCalculateExpires(server);
+  const isValidUser = getIsValidUser(server);
   const routePreCheckLicenseFn = routePreCheckLicense(server);
 
   server.route({
@@ -49,7 +51,7 @@ export default (server) => {
     path: '/api/security/v1/users/{username}',
     handler(request, reply) {
       const username = request.params.username;
-      const body = _(request.payload).omit('username').omit(_.isNull);
+      const body = _(request.payload).omit(['username', 'enabled']).omit(_.isNull);
       return callWithRequest(request, 'shield.putUser', {username, body}).then(
         () => reply(request.payload),
         _.flow(wrapError, reply));
@@ -81,15 +83,24 @@ export default (server) => {
     path: '/api/security/v1/users/{username}/password',
     handler(request, reply) {
       const username = request.params.username;
-      const body = request.payload;
-      return callWithRequest(request, 'shield.changePassword', {username, body}).then(
-        onChangePassword(request, username, body.password, calculateExpires, reply),
-        _.flow(wrapError, reply));
+      const {password, newPassword} = request.payload;
+
+      let promise = Promise.resolve();
+      if (username === request.auth.credentials.username) promise = isValidUser(request, username, password);
+
+      return promise.then(() => {
+        const body = {password: newPassword};
+        return callWithRequest(request, 'shield.changePassword', {username, body})
+        .then(onChangePassword(request, username, newPassword, calculateExpires, reply))
+        .catch(_.flow(wrapError, reply));
+      })
+      .catch((error) => reply(Boom.unauthorized(error)));
     },
     config: {
       validate: {
         payload: {
-          password: Joi.string().required()
+          password: Joi.string(),
+          newPassword: Joi.string().required()
         }
       },
       pre: [routePreCheckLicenseFn]

@@ -11,7 +11,7 @@
           <div class="pull-right">
             <a href="#/management/elasticsearch/users" class="btn btn-default">Return to All Users</a>
             <button ng-if="!view.isNewUser && !user.metadata._reserved" class="btn btn-danger" ng-click="deleteUser(user)" ng-disabled="view.changePasswordMode">Delete</button>
-            <button ng-if="!user.metadata._reserved" class="btn btn-primary" ng-disabled="form.$invalid || user.password != view.confirmPassword || view.changePasswordMode" ng-click="saveUser(user)">Save</button>
+            <button ng-if="!user.metadata._reserved" class="btn btn-primary" ng-disabled="form.$invalid || user.password !== view.confirmPassword || view.changePasswordMode" ng-click="saveUser(user)">Save</button>
           </div>
         </div>
 
@@ -32,24 +32,43 @@
           </div>
 
           <div class="form-group">
-            <label for="password" class="col-md-2 control-label">Password</label>
-            <div class="col-md-4" ng-if="view.isNewUser || view.changePasswordMode">
-              <input type="password" class="form-control help-block" id="password" name="password" ng-model="user.password" required placeholder="Enter password..." minlength="6" />
-              <input type="password" class="form-control help-block" name="confirmPassword" ng-model="view.confirmPassword" required placeholder="Confirm password..." minlength="6" />
+            <label for="newPassword" class="col-md-2 control-label">Password</label>
+
+            <div class="col-md-4" ng-if="view.isNewUser">
+              <input type="password" class="form-control help-block" id="password" name="password"
+                     ng-model="user.password" required placeholder="Enter password..." minlength="6" />
+              <input type="password" class="form-control help-block" name="confirmPassword"
+                     ng-model="view.confirmPassword" required placeholder="Confirm password..." minlength="6" />
               <div class="has-error">
-                <span class="help-block" ng-show="form.password.$touched && form.password.$error.minlength">Password must be at least 6 characters long.</span>
-                <span class="help-block" ng-show="form.confirmPassword.$touched && user.password != view.confirmPassword">Passwords do not match.</span>
+                <span class="help-block" ng-show="form.password.$touched && (form.password.$error.required || form.password.$error.minlength)">Password must be at least 6 characters long.</span>
+                <span class="help-block" ng-show="form.confirmPassword.$touched && user.password !== view.confirmPassword">Passwords do not match.</span>
               </div>
-              <div class="has-warning" ng-show="user.metadata._reserved && user.username == 'kibana'">
+            </div>
+
+            <div class="col-md-4" ng-show="!view.isNewUser && !view.changePasswordMode">
+              <a ng-click="toggleChangePasswordMode()">Change Password</a>
+            </div>
+
+            <div class="col-md-4" ng-if="view.changePasswordMode">
+              <input type="password" class="form-control help-block" id="password" name="password"
+                     ng-model="user.password" ng-if="me.username === user.username" required placeholder="Enter current password..." minlength="6" />
+              <input type="password" class="form-control help-block" id="newPassword" name="newPassword"
+                     ng-model="user.newPassword" required placeholder="Enter new password..." minlength="6" />
+              <input type="password" class="form-control help-block" name="confirmPassword"
+                     ng-model="view.confirmPassword" required placeholder="Confirm new password..." minlength="6" />
+              <div class="has-error">
+                <span class="help-block" ng-show="form.newPassword.$touched && (form.newPassword.$error.required || form.newPassword.$error.minlength)">Password must be at least 6 characters long.</span>
+                <span class="help-block" ng-show="form.confirmPassword.$touched && user.newPassword !== view.confirmPassword">Passwords do not match.</span>
+                <span class="help-block" ng-show="view.incorrectPassword">Current password is incorrect.</span>
+              </div>
+              <div class="has-warning" ng-show="user.metadata._reserved && user.username === 'kibana'">
                 <span class="help-block"><i class="fa fa-exclamation-triangle"></i> After changing the password for the kibana user, you will need to update kibana.yml and restart Kibana.</span>
               </div>
             </div>
-            <div class="col-md-4" ng-show="!view.changePasswordMode">
-              <a ng-click="toggleChangePasswordMode()">Change Password</a>
-            </div>
+
             <div class="col-md-1" ng-show="view.changePasswordMode">
               <button class="btn btn-default help-block" ng-click="toggleChangePasswordMode()"><i class="fa fa-times"></i></button>
-              <button class="btn btn-success help-block" ng-click="changePassword(user)" ng-disabled="form.password.$invalid || user.password != view.confirmPassword"><i class="fa fa-save"></i></button>
+              <button class="btn btn-success help-block" ng-click="changePassword(user)" ng-disabled="form.newPassword.$invalid || user.newPassword !== view.confirmPassword"><i class="fa fa-save"></i></button>
             </div>
           </div>
 

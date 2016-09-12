@@ -15,14 +15,7 @@ function LicensePreRoutingFactory(server) {
     }
   };
 
-  return (config = {}) => {
-    if (!config.pre) {
-      config.pre = [];
-    }
-
-    config.pre.unshift(forbidApiAccess);
-    return config;
-  };
+  return forbidApiAccess;
 }
 
 module.exports = oncePerServer(LicensePreRoutingFactory);

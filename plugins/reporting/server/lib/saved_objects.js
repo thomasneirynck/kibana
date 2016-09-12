@@ -1,8 +1,9 @@
 const url = require('url');
-const rison = require('rison-node');
 const _ = require('lodash');
 const Joi = require('joi');
+const parseKibanaState = require('../../../../server/lib/kibana_state');
 const uriEncode = require('./uri_encode');
+const getAbsoluteTime = require('./get_absolute_time');
 
 module.exports = function (client, config) {
   const schema = Joi.object().keys({
@@ -51,6 +52,27 @@ module.exports = function (client, config) {
     }
   };
 
+  function getIndexPatternObject(indexPattern) {
+    const req = {
+      index: opts.kibanaIndex,
+      type: 'index-pattern',
+      id: indexPattern
+    };
+
+    return client.get(req).then(body => body._source);
+  }
+
+  async function hasTimeBasedIndexPattern(savedObjSearchSourceIndex) {
+    const indexPattern = savedObjSearchSourceIndex.index;
+    if (!indexPattern) {
+      return Promise.resolve(false);
+    }
+
+    const getIndexPatternObjectMemoized = _.memoize(getIndexPatternObject);
+    const indexPatternObj = await getIndexPatternObjectMemoized(indexPattern);
+    return !!indexPatternObj.timeFieldName;
+  }
+
   function getObject(type, id, fields = []) {
     fields = ['title', 'description'].concat(fields);
     validateType(type);
@@ -60,31 +82,63 @@ module.exports = function (client, config) {
       id: id
     };
 
+    function parseJsonObjects(source) {
+      const searchSourceJson = _.get(source, appTypes[type].searchSourceIndex, '{}');
+      const uiStateJson = _.get(source, appTypes[type].stateIndex, '{}');
+      let searchSource;
+      let uiState;
+
+      try {
+        searchSource = JSON.parse(searchSourceJson);
+      } catch (e) {
+        searchSource = {};
+      }
+
+      try {
+        uiState = JSON.parse(uiStateJson);
+      } catch (e) {
+        uiState = {};
+      }
+
+      return { searchSource, uiState };
+    }
+
     return client.get(req)
     .then(function _getRecord(body) {
       return body._source;
     })
-    .then(function _buildObject(source) {
-      const searchSource = JSON.parse(_.get(source, appTypes[type].searchSourceIndex, '{}'));
-      const uiState = JSON.parse(_.get(source, appTypes[type].stateIndex, '{}'));
+    .then(async function _buildObject(source) {
+      const { searchSource, uiState } = parseJsonObjects(source);
+
+      const isUsingTimeBasedIndexPattern = await hasTimeBasedIndexPattern(searchSource);
 
       const obj = _.assign(_.pick(source, fields), {
         id: req.id,
         type: type,
         searchSource: searchSource,
         uiState: uiState,
-        getUrl: function getAppUrl(query = {}) {
+        isUsingTimeBasedIndexPattern,
+        getUrl: function getAppUrl(query = {}, urlOptions = {}) {
+          const options = _.assign({
+            useAbsoluteTime: true
+          }, urlOptions);
           const app = appTypes[this.type];
           if (!app) throw new Error('Unexpected app type: ' + this.type);
 
           // map panel state to panel from app state part of the query
           const cleanQuery = this.getState(query);
 
-          // strip the refresh value from the global state
-          if (query._g) {
-            const globalState = rison.decode(query._g);
-            delete globalState.refreshInterval;
-            _.assign(cleanQuery, { _g: rison.encode(globalState) });
+          // modify the global state in the query
+          const globalState = parseKibanaState(query, 'global');
+          if (globalState.exists) {
+            globalState.removeProps('refreshInterval');
+
+            // transform to absolute time based on option
+            if (options.useAbsoluteTime) {
+              globalState.set('time', getAbsoluteTime(globalState.get('time')));
+            }
+
+            _.assign(cleanQuery, globalState.toQuery());
           }
 
           const urlParams = _.assign({
@@ -103,27 +157,28 @@ module.exports = function (client, config) {
           return url.format(urlParams);
         },
         getState: function mergeQueryState(query = {}) {
-          if (!query._a || !this.panelIndex) return query;
+          const appState = parseKibanaState(query, 'app');
+          if (!appState.exists || !this.panelIndex) return query;
 
-          const appState = rison.decode(query._a);
-          const correctedState = _.omit(appState, ['uiState', 'panels', 'vis']);
-          const panel = _.find(appState.panels, { panelIndex: this.panelIndex });
-          const panelState = appState.uiState[`P-${this.panelIndex}`];
+          appState.removeProps(['uiState', 'panels', 'vis']);
+          const panel = _.find(appState.get('panels', []), { panelIndex: this.panelIndex });
+          const panelState = appState.get(['uiState', `P-${this.panelIndex}`]);
 
           // if uiState doesn't match panel, simply strip uiState
           if (panel && panelState) {
-            correctedState.uiState = _.merge({}, this.uiState, panelState);
+            appState.set('uiState', _.merge({}, this.uiState, panelState));
           }
 
-          return _.defaults({ _a: rison.encode(correctedState) }, query);
+          return _.assign({}, query, appState.toQuery());
         },
-        toJSON: function (query) {
+        toJSON: function (query, urlOptions) {
           const savedObj = {
             id: this.id,
             type: this.type,
             searchSource: this.searchSource,
             uiState: this.uiState,
-            url: this.getUrl(query)
+            isUsingTimeBasedIndexPattern,
+            url: this.getUrl(query, urlOptions)
           };
 
           fields.forEach((field) => {

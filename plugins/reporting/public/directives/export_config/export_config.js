@@ -2,6 +2,7 @@ require('plugins/reporting/services/document_control');
 require('./export_config.less');
 
 const Clipboard = require('clipboard');
+const { get } = require('lodash');
 const template = require('plugins/reporting/directives/export_config/export_config.html');
 const Notifier = require('ui/notify/notifier');
 const module = require('ui/modules').get('xpack/reporting');
@@ -12,18 +13,22 @@ module.directive('exportConfig', (reportingDocumentControl) => {
   return {
     restrict: 'E',
     scope: {},
+    require: ['?^dashboardApp', '?^visualizeApp', '?^discoverApp'],
     controllerAs: 'exportConfig',
     template,
-    link($scope, $el, $attr) {
+    link($scope, $el, $attr, controllers) {
+      const USE_SYNC_URL = true;
+
+      const isDirty = () => controllers.some(ctrl => get(ctrl, 'appStatus.dirty', false));
+      $scope.exportConfig.isExportable = () => !isDirty() && reportingDocumentControl.isExportable();
       $scope.exportConfig.selectedType = 'printablePdf';
       $scope.exportConfig.name = $attr.name;
       $scope.exportConfig.objectType = $attr.objectType;
-      $scope.exportConfig.exportable = reportingDocumentControl.isExportable();
 
       $scope.exportConfig.exportTypes = {
         printablePdf: {
           name: 'PDF',
-          link: reportingDocumentControl.getUrl(),
+          link: reportingDocumentControl.getUrl(USE_SYNC_URL),
         }
       };
 

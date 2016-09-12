@@ -6,7 +6,7 @@
   "name": "elasticsearch-shield",
   "description": "Shield API plugin for the JavaScript elasticsearch client",
   "main": "elasticsearch-shield.js",
-  "version": "5.0.0-alpha1-SNAPSHOT",
+  "version": "6.0.0-alpha1",
   "license": "Apache 2.0",
   "dependencies": {},
   "engines": {

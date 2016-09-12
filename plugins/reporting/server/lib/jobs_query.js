@@ -1,14 +1,16 @@
-const { get } = require('lodash');
-const { QUEUE_INDEX, QUEUE_DOCTYPE } = require('./constants');
+const { get, set } = require('lodash');
 const oncePerServer = require('./once_per_server');
+const { QUEUE_INDEX, QUEUE_DOCTYPE } = require('./constants');
+const getUserFactory = require('../lib/get_user');
 const defaultSize = 10;
 
 function jobsQueryFactory(server) {
+  const getUser = getUserFactory(server);
   const esErrors = server.plugins.elasticsearch.errors;
-  const client = server.plugins.elasticsearch.client;
-  const nouser = false;
+  const { callWithRequest } = server.plugins.elasticsearch;
+  const NO_USER_IDENTIFIER = false;
 
-  function execQuery(type, body) {
+  function execQuery(type, body, request) {
     const defaultBody = {
       search: {
         _source : {
@@ -27,9 +29,11 @@ function jobsQueryFactory(server) {
       body: Object.assign(defaultBody[type] || {}, body)
     };
 
-    return client[type](query)
+    return callWithRequest(request, type, query)
     .catch((err) => {
-      if (err instanceof esErrors.NotFound) return;
+      if (err instanceof esErrors['401']) return;
+      if (err instanceof esErrors['403']) return;
+      if (err instanceof esErrors['404']) return;
       throw err;
     });
   }
@@ -39,113 +43,118 @@ function jobsQueryFactory(server) {
   }
 
   return {
-    list(user, page = 0, size = defaultSize) {
-      const username = get(user, 'username', nouser);
+    list(request, page = 0, size = defaultSize) {
+      const showAll = get(request, 'query.all', false);
 
-      const body = {
-        query: {
-          constant_score: {
-            filter: {
-              bool: {
-                should: [
-                  { term: { created_by: username } },
-                  { term: { created_by: nouser } },
-                ]
+      return getUser(request)
+      .then((user) => {
+        const username = get(user, 'username', NO_USER_IDENTIFIER);
+
+        const body = {
+          size,
+          from: size * page,
+        };
+
+        if (!showAll) {
+          set(body, 'query', {
+            constant_score: {
+              filter: {
+                bool: {
+                  should: [
+                    { term: { created_by: username } },
+                    { term: { created_by: NO_USER_IDENTIFIER } },
+                  ]
+                }
               }
             }
-          }
-        },
-        from: size * page,
-        size: size,
-      };
-
-      return getHits(execQuery('search', body));
-    },
-
-    listCompletedSince(user, size = defaultSize, sinceInMs) {
-      const username = get(user, 'username', nouser);
-
-      const body = {
-        query: {
-          constant_score: {
-            filter: {
-              bool: {
-                should: [
-                  { term: { created_by: username } },
-                  { term: { created_by: nouser } },
-                ],
-                must: [
-                  { range: { completed_at: { gt: sinceInMs, format: 'epoch_millis' } } }
-                ]
-              }
-            }
-          }
-        },
-        size: size,
-        sort: { completed_at: 'asc' }
-      };
-
-      return getHits(execQuery('search', body));
-    },
-
-    count(user) {
-      const username = get(user, 'username', nouser);
-
-      const body = {
-        query: {
-          constant_score: {
-            filter: {
-              bool: {
-                should: [
-                  { term: { created_by: username } },
-                  { term: { created_by: nouser } },
-                ]
-              }
-            }
-          }
+          });
         }
-      };
 
-      return execQuery('count', body)
-      .then((doc) => {
-        if (!doc) return 0;
-        return doc.count;
+        return getHits(execQuery('search', body, request));
       });
     },
 
-    get(user, id, includeContent = false) {
-      if (!id) return;
-      const username = get(user, 'username', nouser);
+    listCompletedSince(request, size = defaultSize, sinceInMs) {
+      return getUser(request)
+      .then((user) => {
+        const username = get(user, 'username', NO_USER_IDENTIFIER);
 
-      const body = {
-        query: {
-          constant_score: {
-            filter: {
-              bool: {
-                should: [
-                  { term: { created_by: nouser } },
-                  { term: { created_by: username } },
-                ],
-                filter: [
-                  { term: { _id: id } },
-                ],
+        const body = {
+          size,
+          sort: { completed_at: 'asc' },
+          query: {
+            constant_score: {
+              filter: {
+                bool: {
+                  should: [
+                    { term: { created_by: username } },
+                    { term: { created_by: NO_USER_IDENTIFIER } },
+                  ],
+                  must: [
+                    { range: { completed_at: { gt: sinceInMs, format: 'epoch_millis' } } }
+                  ]
+                }
+              }
+            }
+          },
+        };
+
+        return getHits(execQuery('search', body, request));
+      });
+    },
+
+    count(request) {
+      const showAll = get(request, 'query.all', false);
+
+      return getUser(request)
+      .then((user) => {
+        const username = get(user, 'username', NO_USER_IDENTIFIER);
+
+        const body = (showAll) ? {} : {
+          query: {
+            constant_score: {
+              filter: {
+                bool: {
+                  should: [
+                    { term: { created_by: username } },
+                    { term: { created_by: NO_USER_IDENTIFIER } },
+                  ]
+                }
               }
             }
           }
-        },
-        size: 1,
-      };
-
-      if (includeContent) {
-        body._source = {
-          exclude: []
         };
-      }
 
-      return getHits(execQuery('search', body))
-      .then((hits) => {
-        if (hits.length !== 1) return;
-        return hits[0];
+        return execQuery('count', body, request)
+        .then((doc) => {
+          if (!doc) return 0;
+          return doc.count;
+        });
+      });
+    },
+
+    get(request, id, includeContent = false) {
+      if (!id) return Promise.resolve();
+
+      return getUser(request)
+      .then(() => {
+        if (!id) return;
+
+        const body = {
+          size: 1,
+        };
+
+        if (includeContent) {
+          body._source = {
+            exclude: []
+          };
+        }
+
+        return getHits(execQuery('search', body, request))
+        .then((hits) => {
+          if (hits.length !== 1) return;
+          return hits[0];
+        });
       });
     }
   };

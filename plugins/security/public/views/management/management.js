@@ -5,6 +5,7 @@ import 'plugins/security/views/management/edit_role';
 import 'plugins/security/views/management/management.less';
 import routes from 'ui/routes';
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import '../../services/shield_user';
 
 import management from 'ui/management';
 
@@ -13,23 +14,36 @@ routes.defaults(/\/management/, {
     securityManagementSection: function (ShieldUser, Private) {
       const xpackInfo = Private(XPackInfoProvider);
       const elasticsearch = management.getSection('elasticsearch');
-      const showSecurityLinks = !!ShieldUser.getCurrent() && xpackInfo.get('features.security.showLinks');
+      const showSecurityLinks = xpackInfo.get('features.security.showLinks');
 
-      elasticsearch.deregister('users');
-      elasticsearch.deregister('roles');
-      if (showSecurityLinks) {
-        elasticsearch.register('users', {
-          order: 10,
-          display: 'Users',
-          url: '#/management/elasticsearch/users'
-        });
-
-        elasticsearch.register('roles', {
-          order: 20,
-          display: 'Roles',
-          url: '#/management/elasticsearch/roles'
-        });
+      function deregisterSecurity() {
+        elasticsearch.deregister('users');
+        elasticsearch.deregister('roles');
       }
+
+      // getCurrent will reject if there is no authenticated user, so we prevent them from seeing the security
+      // management screens
+      //
+      // $promise is used here because the result is an ngResource, not a promise itself
+      return ShieldUser.getCurrent().$promise
+      .then(() => {
+        deregisterSecurity();
+
+        if (showSecurityLinks) {
+          elasticsearch.register('users', {
+            order: 10,
+            display: 'Users',
+            url: '#/management/elasticsearch/users'
+          });
+
+          elasticsearch.register('roles', {
+            order: 20,
+            display: 'Roles',
+            url: '#/management/elasticsearch/roles'
+          });
+        }
+      })
+      .catch(deregisterSecurity);
     }
   }
 });

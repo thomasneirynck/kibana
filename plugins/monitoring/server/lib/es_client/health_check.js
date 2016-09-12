@@ -9,7 +9,7 @@ const NO_INDEX = 'no_index';
 const INITIALIZING = 'initializing';
 const READY = 'ready';
 
-export default function healthCheck(plugin, server) {
+export default function esHealthCheck(plugin, server) {
   const client = server.plugins.monitoring.client;
   const config = server.config();
   function getHealth() {
@@ -89,7 +89,11 @@ export default function healthCheck(plugin, server) {
     scheduleCheck(stopChecking() ? REQUEST_DELAY : 1);
   }
 
+
   return {
-    start: startOrRestartChecking
+    start() {
+      plugin.status.yellow('Waiting for Monitoring Health Check');
+      startOrRestartChecking();
+    }
   };
 };

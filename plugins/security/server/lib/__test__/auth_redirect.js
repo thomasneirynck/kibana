@@ -26,8 +26,7 @@ describe('lib/auth_redirect', function () {
               isAvailable: sinon.stub().returns(true),
               feature: () => { return { isEnabled: sinon.stub().returns(true) }; }
             }
-          },
-          clientCookieName: 'user'
+          }
         };
         request = requestFixture();
         reply = replyFixture();
@@ -84,14 +83,13 @@ describe('lib/auth_redirect', function () {
         it ('replies with no credentials', () => {
           authenticate(request, reply);
           sinon.assert.calledWith(reply.continue, { credentials: {} });
-          sinon.assert.calledWith(reply.unstate, 'user');
         });
       });
     });
   });
 
   describe('#shouldRedirect()', () => {
-    it('returns true if request does not have a kbn-version header', () => {
+    it('returns true if request does not have either a kbn-version or kbn-xsrf header', () => {
       const request = requestFixture();
       const result = authRedirect.shouldRedirect(request);
       expect(result).to.equal(true);
@@ -99,6 +97,12 @@ describe('lib/auth_redirect', function () {
     it('returns false if request has a kbn-version header', () => {
       const request = requestFixture();
       request.raw.req.headers['kbn-version'] = 'something';
+      const result = authRedirect.shouldRedirect(request);
+      expect(result).to.equal(false);
+    });
+    it('returns false if request has a kbn-xsrf header', () => {
+      const request = requestFixture();
+      request.raw.req.headers['kbn-xsrf'] = 'something';
       const result = authRedirect.shouldRedirect(request);
       expect(result).to.equal(false);
     });

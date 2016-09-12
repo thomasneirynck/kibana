@@ -5,7 +5,7 @@ export default (server, uiExports) => {
     method: 'GET',
     path: '/logout',
     handler(request, reply) {
-      return reply.renderApp(logout);
+      return reply.renderAppWithDefaultConfig(logout);
     },
     config: {
       auth: false

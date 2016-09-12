@@ -6,7 +6,7 @@ import { get, last } from 'lodash';
 import moment from 'moment';
 import constants from '../../server/lib/constants.js';
 import 'plugins/reporting/services/job_queue';
-import UserProvider from 'plugins/xpack_main/services/user';
+import PathProvider from 'plugins/xpack_main/services/path';
 
 uiModules.get('kibana')
 .config(() => {
@@ -18,18 +18,12 @@ uiModules.get('kibana')
 
 uiModules.get('kibana')
 .run(($http, $interval, reportingJobQueue, Private) => {
-  const user = Private(UserProvider).getCurrent();
-  const isSecurityEnabled = user !== null;
-  const isUserSignedIn = !!user;
+  if (Private(PathProvider).isLoginOrLogout()) return;
 
-  const shouldPoll = !isSecurityEnabled || isUserSignedIn;
-
-  if (shouldPoll) {
-    $interval(function startChecking() {
-      getJobsCompletedSinceLastCheck($http)
-      .then(jobs => jobs.forEach(job => showCompletionNotification(job, reportingJobQueue)));
-    }, constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
-  }
+  $interval(function startChecking() {
+    getJobsCompletedSinceLastCheck($http)
+    .then(jobs => jobs.forEach(job => showCompletionNotification(job, reportingJobQueue)));
+  }, constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
 });
 
 function getLastCheckedOn() {

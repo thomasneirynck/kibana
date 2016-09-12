@@ -1,8 +1,15 @@
-const url = require('url');
-const chrome = require('ui/chrome');
-const module = require('ui/modules').get('xpack/reporting');
+import url from 'url';
+import {
+  getUnhashableStatesProvider,
+  unhashUrl,
+} from 'ui/state_management/state_hashing';
 
-module.service('reportingDocumentControl', function ($http, Promise, Private, $location) {
+import chrome from 'ui/chrome';
+import UiModules from 'ui/modules';
+
+UiModules.get('xpack/reporting')
+.service('reportingDocumentControl', function ($http, Promise, Private, $location) {
+  const getUnhashableStates = Private(getUnhashableStatesProvider);
   const mainEntry = '/api/reporting/generate';
   const reportPrefix = chrome.addBasePath(mainEntry);
 
@@ -22,12 +29,20 @@ module.service('reportingDocumentControl', function ($http, Promise, Private, $l
   };
 
   function parseFromUrl() {
-    const { pathname, query } = url.parse($location.url(), false);
+    // We need to convert the hashed states in the URL back into their original RISON values,
+    // because this URL will be sent to the API.
+    const urlWithHashes = window.location.href;
+    const urlWithStates = unhashUrl(urlWithHashes, getUnhashableStates());
+    const appUrlWithStates = urlWithStates.split('#')[1];
+
+    const { pathname, query } = url.parse(appUrlWithStates, false);
     const pathParams = pathname.match(/\/([a-z]+)?(\/?.*)/);
 
     const type = pathParams[1];
     const docType = docTypes[type];
-    if (!docType) throw new Error('Unknown app type: ' + type);
+
+    // if the doc type is unknown, return an empty object, causing other checks to be falsy
+    if (!docType) return {};
 
     const params = docType.getParams(pathname);
     const exportable = (!!params);
@@ -50,16 +65,25 @@ module.service('reportingDocumentControl', function ($http, Promise, Private, $l
   };
 
   this.isExportable = () => {
-    return this.getInfo().exportable;
+    return Boolean(this.getInfo().exportable);
   };
 
-  this.getUrl = () => {
-    return this.getInfo().reportUrl;
+  this.getUrl = (sync) => {
+    const reportUrl = this.getInfo().reportUrl;
+    if (!reportUrl) return null;
+
+    if (sync) {
+      const parsed = url.parse(reportUrl);
+      parsed.search = (parsed.search === null) ? 'sync' : `${parsed.search}&sync`;
+      return url.format(parsed);
+    }
+
+    return reportUrl;
   };
 
   this.create = () => {
     const info = this.getInfo();
     if (!info.exportable) return Promise.reject(new Error('not exportable'));
-    return $http.get(info.reportPath);
+    return $http.post(info.reportPath, {});
   };
 });
