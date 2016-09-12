@@ -1,4 +1,4 @@
-const { get } = require('lodash');
+const { get, set } = require('lodash');
 const oncePerServer = require('./once_per_server');
 const { QUEUE_INDEX, QUEUE_DOCTYPE } = require('./constants');
 const getUserFactory = require('../lib/get_user');
@@ -44,12 +44,19 @@ function jobsQueryFactory(server) {
 
   return {
     list(request, page = 0, size = defaultSize) {
+      const showAll = get(request, 'query.all', false);
+
       return getUser(request)
       .then((user) => {
         const username = get(user, 'username', NO_USER_IDENTIFIER);
 
         const body = {
-          query: {
+          size,
+          from: size * page,
+        };
+
+        if (!showAll) {
+          set(body, 'query', {
             constant_score: {
               filter: {
                 bool: {
@@ -60,10 +67,8 @@ function jobsQueryFactory(server) {
                 }
               }
             }
-          },
-          from: size * page,
-          size: size,
-        };
+          });
+        }
 
         return getHits(execQuery('search', body, request));
       });
@@ -75,6 +80,8 @@ function jobsQueryFactory(server) {
         const username = get(user, 'username', NO_USER_IDENTIFIER);
 
         const body = {
+          size,
+          sort: { completed_at: 'asc' },
           query: {
             constant_score: {
               filter: {
@@ -90,8 +97,6 @@ function jobsQueryFactory(server) {
               }
             }
           },
-          size: size,
-          sort: { completed_at: 'asc' }
         };
 
         return getHits(execQuery('search', body, request));
@@ -99,11 +104,13 @@ function jobsQueryFactory(server) {
     },
 
     count(request) {
+      const showAll = get(request, 'query.all', false);
+
       return getUser(request)
       .then((user) => {
         const username = get(user, 'username', NO_USER_IDENTIFIER);
 
-        const body = {
+        const body = (showAll) ? {} : {
           query: {
             constant_score: {
               filter: {
@@ -132,24 +139,8 @@ function jobsQueryFactory(server) {
       return getUser(request)
       .then((user) => {
         if (!id) return;
-        const username = get(user, 'username', NO_USER_IDENTIFIER);
 
         const body = {
-          query: {
-            constant_score: {
-              filter: {
-                bool: {
-                  should: [
-                    { term: { created_by: NO_USER_IDENTIFIER } },
-                    { term: { created_by: username } },
-                  ],
-                  filter: [
-                    { term: { _id: id } },
-                  ],
-                }
-              }
-            }
-          },
           size: 1,
         };
 

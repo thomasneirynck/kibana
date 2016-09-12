@@ -2,6 +2,17 @@
   <div class="kbn-management-reporting container-fluid">
     <h1>Generated Reports</h1>
 
+    <div>
+      Filter Reports:
+      <input
+        id="report-filter"
+        type="checkbox"
+        ng-model="showMine"
+        ng-change="toggleUserFilter(showMine)"
+        >
+      <label for="report-filter">Only show my reports</label>
+    </div>
+
     <table class="table table-striped job-list" ng-class="{ loading: loading === true }">
       <thead>
         <tr>
