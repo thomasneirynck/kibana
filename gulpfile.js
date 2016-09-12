@@ -138,7 +138,7 @@ gulp.task('report', function () {
 
 gulp.task('build', ['lint-all', 'clean', 'report'], function () {
   const excludes = ['node_modules', 'package.json'];
-  const pkgProps = ['name', 'version', 'dependencies'];
+  const pkgProps = ['name', 'version', 'dependencies', 'kibana'];
   const includes = buildIncludes.filter((include) => excludes.indexOf(include) === -1);
 
   return Bluebird.mapSeries(includes, function (source) {
