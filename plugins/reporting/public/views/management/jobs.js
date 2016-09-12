@@ -50,25 +50,28 @@ function mapJobs(jobs) {
 routes.when('/management/kibana/reporting', {
   template,
   resolve: {
-    page: () => 0,
-    jobs: () => [],
+    reportingJobs(reportingJobQueue) {
+      return getJobs(reportingJobQueue);
+    }
   },
+  controllerAs: 'jobsCtrl',
   controller($scope, $route, $window, $interval, reportingJobQueue) {
-    $scope.loading = false;
-    $scope.pageSize = pageSize;
-    $scope.currentPage = $route.current.locals.page;
-    $scope.jobs = $route.current.locals.jobs;
-    $scope.showMine = true;
+    this.loading = false;
+    this.pageSize = pageSize;
+    this.currentPage = 1;
+    this.reportingJobs = $route.current.locals.reportingJobs;
+    this.showMine = true;
 
-    const toggleLoading = () => $scope.loading = !$scope.loading;
-
+    const toggleLoading = () => {
+      this.loading = !this.loading;
+    };
 
     const updateJobs = () => {
-      const showAll = !$scope.showMine;
+      const showAll = !this.showMine;
 
-      return getJobs(reportingJobQueue, showAll, $scope.currentPage)
+      return getJobs(reportingJobQueue, showAll, this.currentPage - 1)
       .then((jobs) => {
-        $scope.jobs = jobs;
+        this.reportingJobs = jobs;
       });
     };
 
@@ -77,38 +80,42 @@ routes.when('/management/kibana/reporting', {
       updateJobs().then(toggleLoading);
     };
 
-    $scope.$watchMulti(['showMine', 'currentPage'], updateJobsLoading);
-
     // pagination logic
-    $scope.setPage = (page) => {
-      $scope.currentPage = page - 1;
+    this.setPage = (page) => {
+      this.currentPage = page;
     };
 
     // job list updating
     const int = $interval(() => updateJobs(), jobPollingDelay);
 
-    $scope.$on('$destroy', () => $interval.cancel(int));
-
     // control handlers
-    $scope.download = (jobId) => {
+    this.download = (jobId) => {
       $window.open(`../api/reporting/jobs/download/${jobId}`);
     };
 
     // fetch and show job error details
-    $scope.showError = (jobId) => {
+    this.showError = (jobId) => {
       reportingJobQueue.getContent(jobId)
       .then((doc) => {
-        $scope.errorMessage = {
+        this.errorMessage = {
           job_id: jobId,
           message: doc.content,
         };
       });
     };
 
-    // report user filter
-    $scope.toggleUserFilter = (showMine) => {
-      $scope.currentPage = 0;
-      $scope.showMine = showMine;
-    };
+    $scope.$watch('jobsCtrl.currentPage', updateJobsLoading);
+    $scope.$watch('jobsCtrl.showMine', (newVal, oldVal) => {
+      if (newVal !== oldVal) {
+        if (this.currentPage === 1) {
+          // if alraedy on the first page, update the job list
+          updateJobsLoading();
+        } else {
+          // otherwise let the currentPage watcher update the list
+          this.currentPage = 1;
+        }
+      }
+    });
+    $scope.$on('$destroy', () => $interval.cancel(int));
   }
 });
