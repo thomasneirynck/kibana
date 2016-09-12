@@ -23,7 +23,9 @@ function getFileVersion() {
     var props = properties.parse(contents);
     return props.elasticsearch + snapshotText;
   } catch (e) {
-    if (!argv.fallback) throw e;
+    if (!argv.fallback) {
+      throw new Error('Could not read version from ' + propFile + ', try using --fallback');
+    }
     return pkg.version.replace(/\-snapshot/i, snapshotText);
   }
 }
