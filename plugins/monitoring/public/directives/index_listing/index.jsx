@@ -17,6 +17,7 @@ function showSystemIndicesComponentFactory(scope) {
       this.setState({ showSystemIndices: !this.state.showSystemIndices });
       scope.$evalAsync(() => {
         scope.toggleShowSystemIndices();
+        scope.resetPaging();
       });
     }
 
@@ -134,6 +135,9 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
         template: IndexRow
       });
       const tableInstance = React.render($table, $el[0]);
+      scope.resetPaging = () => {
+        tableInstance.setCurrPage(0);
+      };
       scope.$watch('data', (data) => {
         tableInstance.setData(data);
       });
