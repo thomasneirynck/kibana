@@ -28,7 +28,7 @@ export default (kibana) => new kibana.Plugin({
       enabled: Joi.boolean().default(true),
       cookieName: Joi.string().default('sid'),
       encryptionKey: Joi.string(),
-      sessionTimeout: Joi.number().default(30 * 60 * 1000),
+      sessionTimeout: Joi.number().allow(null).default(null),
       secureCookies: Joi.boolean().default(false)
     }).default();
   },

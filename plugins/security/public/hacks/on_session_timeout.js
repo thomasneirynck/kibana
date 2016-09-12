@@ -44,7 +44,7 @@ module.config(($httpProvider) => {
 
     function interceptorFactory(responseHandler) {
       return function interceptor(response) {
-        if (!isLoginOrLogout && !isSystemApiRequest(response.config)) {
+        if (!isLoginOrLogout && !isSystemApiRequest(response.config) && sessionTimeout !== null) {
           clearNotifications();
           scheduleNotification();
         }
