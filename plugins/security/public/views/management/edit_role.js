@@ -67,7 +67,7 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
     };
 
     $scope.addIndex = (indices) => {
-      indices.push({names: [], privileges: [], fields: ['*']});
+      indices.push({names: [], privileges: [], field_security: { grant: ['*']}});
     };
 
     $scope.areIndicesValid = (indices) => {
