@@ -472,7 +472,8 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   const drillDownRegex = /\{\{gquery\}\}/;
 
   $scope.checkForKibanaUrl = function () {
-    $scope.suggestTemplateFix = $scope.newUrlTemplate.url === $scope.lastPastedURL  && $scope.newUrlTemplate.url.indexOf(defaultKibanaQuery) > 0;
+    $scope.suggestTemplateFix = $scope.newUrlTemplate.url === $scope.lastPastedURL  &&
+                                $scope.newUrlTemplate.url.indexOf(defaultKibanaQuery) > 0;
   };
 
   $scope.replaceKibanaUrlParam = function () {
