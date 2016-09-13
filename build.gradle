@@ -48,7 +48,7 @@ task npmBuild(type: LoggedExec, dependsOn: npmInstall) {
     commandLine 'npm', 'run', 'build'
   }
   if (System.getProperty('build.snapshot', 'true') == 'false') {
-    args '--release'
+    args '--', '--release'
   }
 }
 
