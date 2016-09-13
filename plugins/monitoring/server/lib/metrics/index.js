@@ -205,13 +205,34 @@ const metricInstances = {
     metricAgg: 'avg',
     units: ''
   }),
+  'node_jvm_mem_max_in_bytes': new ElasticsearchMetric({
+    field: 'node_stats.jvm.mem.heap_max_in_bytes',
+    title: 'JVM Heap',
+    label: 'Max Heap',
+    description: 'Total heap available to Elasticsearch running in the JVM.',
+    type: 'node',
+    format: SMALL_BYTES,
+    metricAgg: 'max',
+    units: 'B'
+  }),
+  'node_jvm_mem_used_in_bytes': new ElasticsearchMetric({
+    field: 'node_stats.jvm.mem.heap_used_in_bytes',
+    title: 'JVM Heap',
+    label: 'Used Heap',
+    description: 'Total heap used by Elasticsearch running in the JVM.',
+    type: 'node',
+    format: SMALL_BYTES,
+    metricAgg: 'max',
+    units: 'B'
+  }),
   'node_jvm_mem_percent': new ElasticsearchMetric({
     field: 'node_stats.jvm.mem.heap_used_percent',
-    label: 'JVM Heap Usage',
+    title: 'JVM Heap',
+    label: 'Used Heap',
     description: 'Total heap used by Elasticsearch running in the JVM.',
     type: 'node',
     format: LARGE_FLOAT,
-    metricAgg: 'avg',
+    metricAgg: 'max',
     units: '%'
   }),
   'node_load_average': new ElasticsearchMetric({

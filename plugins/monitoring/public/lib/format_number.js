@@ -1,6 +1,14 @@
 import moment from 'moment';
 import numeral from 'numeral';
 
+export function formatBytesUsage(used, max) {
+  return formatNumber(used, 'bytes') + ' / ' + formatNumber(max, 'bytes');
+}
+
+export function formatPercentageUsage(used, max) {
+  return formatNumber(used / max, '0.00%');
+}
+
 export default function formatNumber(num, which) {
   if (typeof num === 'undefined') { return 0; }
   if (typeof num !== 'number') { return num; }

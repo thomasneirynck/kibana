@@ -801,6 +801,34 @@ export const expected = {
     'type': 'node',
     'units': 'B'
   },
+  'node_jvm_mem_max_in_bytes': {
+    'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
+    'timestampField': 'timestamp',
+    'derivative': false,
+    'description': 'Total heap available to Elasticsearch running in the JVM.',
+    'field': 'node_stats.jvm.mem.heap_max_in_bytes',
+    'format': '0.0 b',
+    'title': 'JVM Heap',
+    'label': 'Max Heap',
+    'metricAgg': 'max',
+    'type': 'node',
+    'units': 'B'
+  },
+  'node_jvm_mem_used_in_bytes': {
+    'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
+    'timestampField': 'timestamp',
+    'derivative': false,
+    'description': 'Total heap used by Elasticsearch running in the JVM.',
+    'field': 'node_stats.jvm.mem.heap_used_in_bytes',
+    'format': '0.0 b',
+    'title': 'JVM Heap',
+    'label': 'Used Heap',
+    'metricAgg': 'max',
+    'type': 'node',
+    'units': 'B'
+  },
   'node_jvm_mem_percent': {
     'app': 'elasticsearch',
     'uuidField': 'cluster_uuid',
@@ -809,8 +837,9 @@ export const expected = {
     'description': 'Total heap used by Elasticsearch running in the JVM.',
     'field': 'node_stats.jvm.mem.heap_used_percent',
     'format': '0,0.[00]',
-    'label': 'JVM Heap Usage',
-    'metricAgg': 'avg',
+    'title': 'JVM Heap',
+    'label': 'Used Heap',
+    'metricAgg': 'max',
     'type': 'node',
     'units': '%'
   },

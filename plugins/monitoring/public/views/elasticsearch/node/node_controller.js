@@ -24,7 +24,10 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
           'node_index_latency'
         ]
       },
-      'node_jvm_mem_percent',
+      {
+        name: 'node_jvm_mem',
+        keys: [ 'node_jvm_mem_max_in_bytes', 'node_jvm_mem_used_in_bytes' ]
+      },
       {
         name: 'node_mem',
         keys: [ 'node_index_mem_overall' ],

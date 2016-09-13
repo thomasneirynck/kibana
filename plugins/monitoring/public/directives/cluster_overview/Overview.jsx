@@ -2,11 +2,11 @@ import React from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import statusIconClass from '../../lib/status_icon_class';
-import formatNumber from '../../lib/format_number';
+import formatNumber, { formatBytesUsage, formatPercentageUsage } from '../../lib/format_number';
 
 class ClusterItemContainer extends React.Component {
   render() {
-    // Note: kebabCase takes something like 'Elastic Search' and makes it 'elastic-search', which is ideal for CSS names
+    // Note: kebabCase takes something like 'My Name' and makes it 'my-name', which is ideal for CSS names
     return (
       <div className="monitoring-element cluster-item panel-product">
         <h3
@@ -36,6 +36,26 @@ class StatusContainer extends React.Component {
   }
 }
 
+class BytesUsage extends React.Component {
+  render() {
+    return (
+      <abbr title={formatPercentageUsage(this.props.used_bytes, this.props.max_bytes)}>
+        {formatBytesUsage(this.props.used_bytes, this.props.max_bytes)}
+      </abbr>
+    );
+  }
+}
+
+class BytesPercentageUsage extends React.Component {
+  render() {
+    return (
+      <abbr title={formatBytesUsage(this.props.used_bytes, this.props.max_bytes)}>
+        {formatPercentageUsage(this.props.used_bytes, this.props.max_bytes)}
+      </abbr>
+    );
+  }
+}
+
 class ElasticsearchPanel extends React.Component {
   constructor(props) {
     super(props);
@@ -50,6 +70,10 @@ class ElasticsearchPanel extends React.Component {
     const formatDateLocal = (input) => {
       return moment.tz(input, moment.tz.guess()).format('LL');
     };
+    let replicas = _.get(indices, 'shards.replication', 'N/A');
+    if (replicas !== 'N/A') {
+      replicas = formatNumber(replicas, 'int_commas');
+    }
 
     return (
       <ClusterItemContainer {...this.props} url='elasticsearch' title='Elasticsearch'>
@@ -61,6 +85,7 @@ class ElasticsearchPanel extends React.Component {
               <dt>
                 <a onClick={() => this.props.angularChangeUrl('elasticsearch')}>Overview</a>
               </dt>
+              <dd>Version: {nodes.versions[0]}</dd>
               <dd>Uptime: {formatNumber(nodes.jvm.max_uptime_in_millis, 'time_since')}</dd>
             </dl>
           </div>
@@ -72,8 +97,10 @@ class ElasticsearchPanel extends React.Component {
                   Nodes: <span data-test-subj='number_of_elasticsearch_nodes'>{formatNumber(nodes.count.total, 'int_commas')}</span>
                 </a>
               </dt>
-              <dd>FS: {formatNumber(nodes.fs.available_in_bytes, 'byte')} /
-                {formatNumber(nodes.fs.total_in_bytes, 'bytes')}</dd>
+              <dd>Disk Available: <BytesUsage used_bytes={nodes.fs.available_in_bytes} max_bytes={nodes.fs.total_in_bytes} /></dd>
+              <dd>
+                JVM Heap: <BytesPercentageUsage used_bytes={nodes.jvm.mem.heap_used_in_bytes} max_bytes={nodes.jvm.mem.heap_max_in_bytes} />
+              </dd>
             </dl>
           </div>
 
@@ -84,10 +111,10 @@ class ElasticsearchPanel extends React.Component {
                   Indices: {formatNumber(indices.count, 'int_commas')}
                 </a>
               </dt>
-              <dd>Doc Count: {formatNumber(indices.docs.count, 'int_commas')}</dd>
-              <dd>Min. Shard Replication: {_.get(indices, 'shards.index.replication.min') || 'N/A'}</dd>
-              <dd>Total Shards: {formatNumber(_.get(indices, 'shards.total'), 'int_commas')}</dd>
-              <dd>Data Store: {formatNumber(indices.store.size_in_bytes, 'bytes')}</dd>
+              <dd>Documents: {formatNumber(indices.docs.count, 'int_commas')}</dd>
+              <dd>Disk Usage: {formatNumber(indices.store.size_in_bytes, 'bytes')}</dd>
+              <dd>Primary Shards: {formatNumber(_.get(indices, 'shards.primaries'), 'int_commas')}</dd>
+              <dd>Replica Shards: {replicas}</dd>
             </dl>
           </div>
         </div>
@@ -126,7 +153,8 @@ class KibanaPanel extends React.Component {
                 </a>
               </dt>
               <dd>Connections: {formatNumber(this.props.concurrent_connections, 'int_commas')}</dd>
-              <dd>Memory Usage: {formatNumber(this.props.memory_size / this.props.memory_limit, '0.00%')}</dd>
+              <dd>Memory Usage: <BytesPercentageUsage used_bytes={this.props.memory_size} max_bytes={this.props.memory_limit} />
+              </dd>
             </dl>
           </div>
         </div>

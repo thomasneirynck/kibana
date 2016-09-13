@@ -39,6 +39,7 @@ export default function getNodeSummary(req, indices) {
       summary.documents = _.get(nodeStats, 'indices.docs.count');
       summary.dataSize = _.get(nodeStats, 'indices.store.size_in_bytes');
       summary.freeSpace = _.get(nodeStats, 'fs.total.available_in_bytes');
+      summary.usedHeap = _.get(nodeStats, 'jvm.mem.heap_used_percent');
 
       const nodes = resp.hits.hits.map(hit => hit._source.source_node);
       // using [0] value because query results are sorted desc per timestamp
