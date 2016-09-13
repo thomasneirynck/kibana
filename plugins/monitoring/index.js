@@ -124,7 +124,7 @@ export default function monitoringIndex(kibana) {
             key: string()
           }).default(),
           apiVersion: string().default('master'),
-          engineVersion: string().valid('^5.0.0').default('^5.0.0')
+          engineVersion: string().valid('^6.0.0').default('^6.0.0')
         }).default()
       }).default();
     },
