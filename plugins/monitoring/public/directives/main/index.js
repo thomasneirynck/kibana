@@ -49,21 +49,27 @@ uiModule.directive('monitoringMain', (license) => {
 
         // Elasticsearch crumbs
         if (scope.inElasticsearch) {
-          breadcrumbs.push(createCrumb('#/elasticsearch', 'Elasticsearch'));
           if (scope.instance) {
+            breadcrumbs.push(createCrumb('#/elasticsearch', 'Elasticsearch'));
             if (scope.name === 'indices') {
               breadcrumbs.push(createCrumb('#/elasticsearch/indices', 'Indices'));
             } else if (scope.name === 'nodes') {
               breadcrumbs.push(createCrumb('#/elasticsearch/nodes', 'Nodes'));
             }
+          } else {
+            // don't link to Overview when we're possibly on Overview or its sibling tabs
+            breadcrumbs.push(createCrumb(null, 'Elasticsearch'));
           }
         }
 
         // Kibana crumbs
         if (scope.inKibana) {
-          breadcrumbs.push(createCrumb('#/kibana', 'Kibana'));
           if (scope.instance) {
+            breadcrumbs.push(createCrumb('#/kibana', 'Kibana'));
             breadcrumbs.push(createCrumb('#/kibana/instances', 'Instances'));
+          } else {
+            // don't link to Overview when we're possibly on Overview or its sibling tabs
+            breadcrumbs.push(createCrumb(null, 'Kibana'));
           }
         }
       }

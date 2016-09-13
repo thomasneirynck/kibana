@@ -3,7 +3,8 @@
     <div class="monitoring-bread-crumbs">
       <ul role="breadcrumbs">
         <li ng-repeat="crumb in breadcrumbs">
-          <a kbn-href="{{crumb.url}}">{{crumb.label}}</a>
+          <a ng-if="crumb.url" kbn-href="{{crumb.url}}">{{crumb.label}}</a>
+          <span ng-if="!crumb.url">{{crumb.label}}</span>
           <span ng-hide="$last">/</span>
         </li>
       </ul>
