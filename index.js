@@ -4,6 +4,7 @@ import monitoring from './plugins/monitoring';
 import { reporting } from './plugins/reporting';
 import security from './plugins/security';
 import searchprofiler from './plugins/searchprofiler';
+import tilemap from './plugins/tilemap';
 
 module.exports = function (kibana) {
   return [
@@ -12,6 +13,7 @@ module.exports = function (kibana) {
     monitoring(kibana),
     reporting(kibana),
     security(kibana),
-    searchprofiler(kibana)
+    searchprofiler(kibana),
+    tilemap(kibana)
   ];
 };
