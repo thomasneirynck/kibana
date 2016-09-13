@@ -20,6 +20,9 @@ exports.bz2 = function (filepath, target) {
   return new Promise(function (resolve, reject) {
     fs.createReadStream(filepath)
     .pipe(bz2())
+    .on('error', function () {
+      reject(new Error('Failed to unpack tar.bz2 file'));
+    })
     .pipe(tar.extract(target))
     .on('error', function () {
       reject(new Error('Failed to unpack tar.bz2 file'));
