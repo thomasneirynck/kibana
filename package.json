@@ -11,7 +11,7 @@
     "test": "gulp test",
     "test:browser:dev": "gulp testbrowser-dev",
     "test:browser": "gulp testbrowser",
-    "precommit": "gulp lint"
+    "precommit": "gulp lint-staged"
   },
   "devDependencies": {
     "@elastic/eslint-config-kibana": "0.0.2",

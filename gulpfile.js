@@ -86,7 +86,7 @@ function lintFiles(filePaths) {
   .pipe(g.eslint.failAfterError());
 }
 
-gulp.task('lint', function () {
+gulp.task('lint-staged', function () {
   return stagedFiles.getFiles(__dirname)
   .then((files) => {
     const filePaths = files
@@ -97,7 +97,7 @@ gulp.task('lint', function () {
   });
 });
 
-gulp.task('lint-all', function () {
+gulp.task('lint', function () {
   var filePaths = [
     'gulpfile.js',
     'plugins/**/*.js',
@@ -136,7 +136,7 @@ gulp.task('report', function () {
   });
 });
 
-gulp.task('build', ['lint-all', 'clean', 'report'], function () {
+gulp.task('build', ['lint', 'clean', 'report'], function () {
   const excludes = ['node_modules', 'package.json'];
   const pkgProps = ['name', 'version', 'dependencies'];
   const includes = buildIncludes.filter((include) => excludes.indexOf(include) === -1);
