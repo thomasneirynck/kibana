@@ -46,7 +46,8 @@ const Table = React.createClass({
       filter: '',
       title: 'Kb Paginated Table!',
       template: null,
-      tableData: null
+      tableData: null,
+      filterMembers: this.props.filterMembers || []
     };
   },
   setData: function (data) {
@@ -95,7 +96,7 @@ const Table = React.createClass({
     var that = this;
     var $filter = make.input({
       type: 'text',
-      className: 'pull-left filter-input',
+      className: 'pull-left filter-input filter-member filter-member-first',
       placeholder: this.props.options.searchPlaceholder,
       onKeyUp: function (evt) {
         that.setFilter(evt.target.value);
@@ -103,13 +104,14 @@ const Table = React.createClass({
     });
     var filteredTableData = getFilteredData(this.state.tableData, this.state.filter);
     var viewingCount = Math.min(filteredTableData.length, this.state.itemsPerPage);
-    var $count = make.div(null, viewingCount + ' of ' + this.state.tableData.length);
+    var $count = make.div({className: 'pull-left filter-member'}, `${viewingCount} of ${this.state.tableData.length}`);
     var titleClasses = 'title-bar';
     if (this.props.options.title == null) {
       titleClasses += ' no-title';
     }
-    var $titleBar = make.div({className: titleClasses}, $title, $filter, $count, make.div({className: 'clearfix'}));
 
+    var $titleBar = make.div({className: titleClasses},
+      $title, $filter, $count, ...this.state.filterMembers, make.div({className: 'clearfix'}));
 
     // Make the Table
     var $tableHead = React.createFactory(TableHead);

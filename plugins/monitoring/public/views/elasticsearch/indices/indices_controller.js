@@ -8,10 +8,13 @@ import routeInitProvider from 'plugins/monitoring/lib/route_init';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
 import template from 'plugins/monitoring/views/elasticsearch/indices/indices_template.html';
 
-function getPageData(timefilter, globalState, $http, Private) {
+function getPageData(timefilter, globalState, $http, Private, features) {
   const timeBounds = timefilter.getBounds();
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/indices`;
+  const showSystemIndices = features.isEnabled('showSystemIndices', false);
+
   return $http.post(url, {
+    showSystemIndices,
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
@@ -42,7 +45,8 @@ uiRoutes.when('/elasticsearch/indices', {
 });
 
 const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-uiModule.controller('indices', ($route, globalState, timefilter, $http, title, Private, $executor, monitoringClusters, $scope) => {
+uiModule.controller('indices',
+($route, globalState, timefilter, $http, title, Private, $executor, features, monitoringClusters, $scope) => {
 
   timefilter.enabled = true;
 
@@ -54,9 +58,22 @@ uiModule.controller('indices', ($route, globalState, timefilter, $http, title, P
   title($scope.cluster, 'Elasticsearch - Indices');
   $scope.pageData = $route.current.locals.pageData;
 
+  const callPageData = _.partial(getPageData, timefilter, globalState, $http, Private, features);
+
+  // system indices shown by default, and setting is stored in localStorage
+  $scope.showSystemIndices = features.isEnabled('showSystemIndices', false);
+  $scope.toggleShowSystemIndices = () => {
+    // flip the boolean
+    $scope.showSystemIndices = !$scope.showSystemIndices;
+    // preserve setting in localStorage
+    features.update('showSystemIndices', $scope.showSystemIndices);
+    // update the page
+    callPageData().then((pageData) => $scope.pageData = pageData);
+  };
+
   $executor.register({
-    execute: () => getPageData(timefilter, globalState, $http, Private),
-    handleResponse: (response) => $scope.pageData = response
+    execute: () => callPageData(),
+    handleResponse: (pageData) => $scope.pageData = pageData
   });
 
   $executor.register({

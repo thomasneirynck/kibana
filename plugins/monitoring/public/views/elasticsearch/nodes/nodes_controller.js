@@ -11,6 +11,7 @@ import template from 'plugins/monitoring/views/elasticsearch/nodes/nodes_templat
 function getPageData(timefilter, globalState, $http, Private) {
   const timeBounds = timefilter.getBounds();
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/nodes`;
+
   return $http.post(url, {
     timeRange: {
       min: timeBounds.min.toISOString(),
@@ -42,7 +43,8 @@ uiRoutes.when('/elasticsearch/nodes', {
 });
 
 const uiModule = uiModules.get('monitoring', [ 'plugins/monitoring/directives' ]);
-uiModule.controller('nodes', ($route, timefilter, globalState, title, Private, $executor, $http, monitoringClusters, $scope) => {
+uiModule.controller('nodes',
+($route, timefilter, globalState, title, Private, $executor, $http, monitoringClusters, $scope) => {
 
   timefilter.enabled = true;
 
@@ -54,8 +56,10 @@ uiModule.controller('nodes', ($route, timefilter, globalState, title, Private, $
   $scope.pageData = $route.current.locals.pageData;
   title($scope.cluster, 'Elasticsearch - Nodes');
 
+  const callPageData = _.partial(getPageData, timefilter, globalState, $http, Private);
+
   $executor.register({
-    execute: () => getPageData(timefilter, globalState, $http, Private),
+    execute: () => callPageData(),
     handleResponse: (response) => $scope.pageData = response
   });
 
