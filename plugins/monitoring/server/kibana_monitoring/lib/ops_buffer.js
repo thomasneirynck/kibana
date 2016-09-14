@@ -6,19 +6,19 @@ import mapEvent from './map_event';
 import monitoringBulk from './monitoring_bulk';
 
 export default function opsBuffer(serverInfo, server) {
+  const config = server.config();
+  const interval = config.get('xpack.monitoring.kibana.collection.interval') + 'ms';
   const queue = [];
   const client = server.plugins.elasticsearch.createClient({
     plugins: [monitoringBulk]
   });
   return {
     push(event) {
-      const config = server.config();
       const payload = mapEvent(event, config, serverInfo);
       return queue.push({ index: {_type: KIBANA_STATS_TYPE}}, payload);
     },
     flush() {
       if (!queue.length) return;
-      const config = server.config();
       const lastOp = queue[queue.length - 1];
       const body = queue.splice(0);
 
@@ -33,6 +33,7 @@ export default function opsBuffer(serverInfo, server) {
       return client.monitoring.bulk({
         system_id: KIBANA_SYSTEM_ID,
         system_api_version: MONITORING_SYSTEM_API_VERSION,
+        interval,
         body
       })
       .catch((err) => {

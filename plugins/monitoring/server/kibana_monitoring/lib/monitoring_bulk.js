@@ -9,6 +9,7 @@ export default function addMonitoringApi(Client, _config, components) {
   * @param {Object} params - An object with parameters used to carry out this action
   * @param {String} params.system_id - Reporting application id
   * @param {String} params.system_api_version - Reporting application API version
+  * @param {Number} params.interval - Collection interval in string format (e.g., '10s' or '10000ms')
   * @param {String} params.consistency - Explicit write consistency setting for the operation
   * @param {Boolean} params.refresh - Refresh the index after performing the operation
   * @param {String} params.routing - Specific routing value
@@ -25,6 +26,9 @@ export default function addMonitoringApi(Client, _config, components) {
         type: 'string'
       },
       type: {
+        type: 'string'
+      },
+      interval: {
         type: 'string'
       }
     },
