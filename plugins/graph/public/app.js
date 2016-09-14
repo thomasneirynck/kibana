@@ -752,6 +752,11 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     $scope.indexSelected(wsObj.indexPattern, function () {
       Object.assign($scope.exploreControls, wsObj.exploreControls);
 
+      if ($scope.exploreControls.sampleDiversityField) {
+        $scope.exploreControls.sampleDiversityField =  $scope.allFields.find(field =>
+          $scope.exploreControls.sampleDiversityField.name === field.name);
+      }
+
       for (var i in wsObj.selectedFields) {
         var savedField = wsObj.selectedFields[i];
         for (var f in $scope.allFields) {

@@ -40,6 +40,13 @@ module.exports = function (server, commonRouteConfig) {
           return;
         }
 
+        const badDiversityFieldReason = reasons.find(cause =>
+          cause.reason.includes('Sample diversifying key must be a single valued-field'));
+        if (badDiversityFieldReason) {
+          reply(Boom.badRequest(badDiversityFieldReason.reason));
+          return;
+        }
+
         const badQueryReason = reasons.find(cause => cause.reason.includes('Failed to parse query')
           || cause.type == 'parsing_exception');
         if (badQueryReason) {
