@@ -860,6 +860,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       require('ui/notify').warning('Saving is disabled');
       return;
     }
+    initWorkspaceIfRequired();
     $scope.savedWorkspace.id = $scope.savedWorkspace.title;
     const canSaveData = $scope.graphSavePolicy === 'configAndData' ||
       ($scope.graphSavePolicy === 'configAndDataWithConsent' && $scope.userHasConfirmedSaveWorkspaceData);
