@@ -57,7 +57,7 @@
     "concat-stream": "1.5.1",
     "d3": "3.5.6",
     "elasticsearch": "11.0.1",
-    "esqueue": "0.10.4",
+    "esqueue": "0.11.0",
     "flot-charts": "0.8.3",
     "font-awesome": "4.4.0",
     "get-port": "2.1.0",

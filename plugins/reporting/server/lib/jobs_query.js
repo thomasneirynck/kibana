@@ -14,7 +14,7 @@ function jobsQueryFactory(server) {
     const defaultBody = {
       search: {
         _source : {
-          exclude: [ 'output.content' ]
+          excludes: [ 'output.content' ]
         },
         sort: [
           { created_at: { order: 'desc' }}
@@ -146,7 +146,7 @@ function jobsQueryFactory(server) {
 
         if (includeContent) {
           body._source = {
-            exclude: []
+            excludes: []
           };
         }
 
