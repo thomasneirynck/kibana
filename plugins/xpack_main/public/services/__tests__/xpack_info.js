@@ -25,7 +25,7 @@ describe('xpack_info service', () => {
       }
     };
     xpackInfo.set(updatedXPackInfo);
-    expect(mockWindow.localStorage.getItem(XPACK_INFO_KEY)).to.be(JSON.stringify(updatedXPackInfo));
+    expect(mockWindow.sessionStorage.getItem(XPACK_INFO_KEY)).to.be(JSON.stringify(updatedXPackInfo));
     expect(xpackInfo.get('foo.bar')).to.be(17);
   });
 
@@ -39,7 +39,7 @@ describe('xpack_info service', () => {
     expect(xpackInfo.get('foo.bar')).not.to.be(undefined);
 
     xpackInfo.clear();
-    expect(mockWindow.localStorage.getItem(XPACK_INFO_KEY)).to.be(undefined);
+    expect(mockWindow.sessionStorage.getItem(XPACK_INFO_KEY)).to.be(undefined);
     expect(xpackInfo.get('foo.bar')).to.be(undefined);
   });
 

@@ -1,7 +1,7 @@
 export default function MockWindowProvider() {
   let items = {};
   return {
-    localStorage: {
+    sessionStorage: {
       setItem(key, value) {
         items[key] = value;
       },

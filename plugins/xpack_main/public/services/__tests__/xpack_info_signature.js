@@ -21,7 +21,7 @@ describe('xpack_info_signature service', () => {
   it ('updates the stored xpack info signature', () => {
     const updatedXPackInfoSignature = 'foobar';
     xpackInfoSignature.set(updatedXPackInfoSignature);
-    expect(mockWindow.localStorage.getItem(XPACK_INFO_SIG_KEY)).to.be(updatedXPackInfoSignature);
+    expect(mockWindow.sessionStorage.getItem(XPACK_INFO_SIG_KEY)).to.be(updatedXPackInfoSignature);
     expect(xpackInfoSignature.get()).to.be(updatedXPackInfoSignature);
   });
 
@@ -31,7 +31,7 @@ describe('xpack_info_signature service', () => {
     expect(xpackInfoSignature.get()).not.to.be(undefined);
 
     xpackInfoSignature.clear();
-    expect(mockWindow.localStorage.getItem(XPACK_INFO_SIG_KEY)).to.be(undefined);
+    expect(mockWindow.sessionStorage.getItem(XPACK_INFO_SIG_KEY)).to.be(undefined);
     expect(xpackInfoSignature.get()).to.be(undefined);
   });
 });
