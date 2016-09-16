@@ -281,18 +281,6 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     $scope.selectedIndex = selectedIndex;
     $scope.proposedIndex = selectedIndex;
 
-    if ($scope.urlTemplates.length === 0) {
-      const discoverUrl = kbnBaseUrl + '#/discover?_g=()&_a=(columns:!(_source),index:\'' +
-          encodeURIComponent(selectedIndex)
-          + '\',interval:auto,query:{{gquery}},sort:!(_score,desc))';
-      $scope.urlTemplates.push({
-        url: chrome.addBasePath(discoverUrl),
-        description: 'Raw documents',
-        encoder:$scope.outlinkEncoders[0]
-      });
-
-    }
-
     var promise = $route.current.locals.GetIndexPatternProvider.get(selectedIndex);
     promise
     .then(handleSuccess)
@@ -600,6 +588,19 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     };
     $scope.workspace = gws.createWorkspace(options);
     $scope.detail = null;
+
+    if ($scope.urlTemplates.length === 0) {
+      const discoverUrl = kbnBaseUrl + '#/discover?_g=()&_a=(columns:!(_source),index:\'' +
+              encodeURIComponent($scope.selectedIndex)
+              // addBasePath will escape any {} characters so we use [gquery] and
+              // replace with {{gquery}} after the call
+              + '\',interval:auto,query:[gquery],sort:!(_score,desc))';
+      $scope.urlTemplates.push({
+        url: chrome.addBasePath(discoverUrl).replace('[gquery]', '{{gquery}}'),
+        description: 'Raw documents',
+        encoder:$scope.outlinkEncoders[0]
+      });
+    }
   }
 
   $scope.indices = $route.current.locals.GetIndexPatternIds;
