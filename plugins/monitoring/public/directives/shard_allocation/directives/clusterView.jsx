@@ -28,10 +28,17 @@ uiModule.directive('clusterView', function (kbnUrl) {
       filter: '=',
       showing: '=',
       labels: '=',
-      shardStats: '='
+      shardStats: '=',
+      toggleShowSystemIndices: '='
     },
     link: function (scope, element) {
-      React.render(<ClusterView scope={scope} kbnUrl={kbnUrl}></ClusterView>, element[0]);
+      React.render(
+        <ClusterView
+          scope={scope}
+          kbnUrl={kbnUrl}
+          toggleShowSystemIndices={scope.toggleShowSystemIndices}></ClusterView>,
+        element[0]
+      );
     }
   };
 });

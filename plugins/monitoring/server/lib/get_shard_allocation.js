@@ -2,10 +2,19 @@ import _ from 'lodash';
 import createQuery from './create_query';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
-export default function getShardAllocation(req, _indices, filters, lastState) {
+export default function getShardAllocation(req, _indices, filters, lastState, showSystemIndices = false) {
   filters.push({
     term: { state_uuid: _.get(lastState, 'cluster_state.state_uuid') }
   });
+
+  if (!showSystemIndices) {
+    filters.push({
+      bool: { must_not: [
+        { prefix: { 'shard.index': '.' } }
+      ] }
+    });
+  }
+
 
   const config = req.server.config();
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;

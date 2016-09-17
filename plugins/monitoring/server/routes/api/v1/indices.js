@@ -25,7 +25,7 @@ export default function indicesRoutes(server) {
           clusterUuid: Joi.string().required()
         }),
         payload: Joi.object({
-          showSystemIndices: Joi.boolean().default(false),
+          showSystemIndices: Joi.boolean().default(false), // show/hide indices in listing
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
@@ -38,6 +38,7 @@ export default function indicesRoutes(server) {
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
       const showSystemIndices = req.payload.showSystemIndices;
+
       calculateIndices(req, start, end, esIndexPattern)
       .then(indices => {
         return getLastState(req, indices)

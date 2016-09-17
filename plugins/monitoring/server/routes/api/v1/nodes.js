@@ -114,6 +114,7 @@ export default function nodesRoutes(server) {
           resolver: Joi.string().required()
         }),
         payload: Joi.object({
+          showSystemIndices: Joi.boolean().default(false), // show/hide system indices in shard allocation table
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
@@ -126,6 +127,8 @@ export default function nodesRoutes(server) {
       const resolver = req.params.resolver;
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
+      const showSystemIndices = req.payload.showSystemIndices;
+
       calculateIndices(req, start, end, esIndexPattern)
       .then(indices => {
         return getLastState(req, indices)
@@ -135,7 +138,7 @@ export default function nodesRoutes(server) {
             clusterStatus: getClusterStatus(req, indices, lastState),
             nodeSummary: getNodeSummary(req, indices),
             metrics: getMetrics(req, indices, [{ term: { [configResolver]: resolver } }]),
-            shards: getShardAllocation(req, indices, [{ term: { [configResolver]: resolver } }], lastState),
+            shards: getShardAllocation(req, indices, [{ term: { [configResolver]: resolver } }], lastState, showSystemIndices),
             shardStats: getShardStats(req, indices, lastState),
             nodes: {},
             clusterState: lastState

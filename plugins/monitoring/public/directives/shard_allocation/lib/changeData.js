@@ -50,7 +50,7 @@ export default function changeData($scope) {
     var view = $scope.panel.view;
     $scope.hasUnassigned = data.some(hasUnassigned);
     if ($scope.hasUnassigned) {
-      view += 'WithUnassigned';
+      view = 'indexWithUnassigned';
     }
     $scope.panel.labels = labels[view];
   }

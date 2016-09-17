@@ -22,21 +22,19 @@ import TableBody from './tableBody.jsx';
 export default React.createClass({
   displayName: 'ClusterView',
   getInitialState: function () {
-    var scope = this.props.scope;
-    var kbnChangePath = this.props.kbnUrl.changePath;
+    const scope = this.props.scope;
+    const kbnChangePath = this.props.kbnUrl.changePath;
+
     return {
       labels: this.props.scope.labels || [],
       showing: this.props.scope.showing || [],
       shardStats: this.props.shardStats,
-      angularChangeUrl: function (url) {
-        scope.$evalAsync(function () { kbnChangePath(url); });
+      showSystemIndices: this.props.showSystemIndices,
+      toggleShowSystemIndices: this.props.toggleShowSystemIndices,
+      angularChangeUrl: (url) => {
+        scope.$evalAsync(() => kbnChangePath(url));
       }
     };
-  },
-  setLabels: function (data) {
-    if (data) {
-      this.setState({ labels: data });
-    }
   },
   setShowing: function (data) {
     if (data) {
@@ -47,7 +45,6 @@ export default React.createClass({
     this.setState({ shardStats: stats });
   },
   componentWillMount: function () {
-    this.props.scope.$watch('labels', this.setLabels);
     this.props.scope.$watch('showing', this.setShowing);
     this.props.scope.$watch('shardStats', this.setShardStats);
   },
@@ -61,7 +58,8 @@ export default React.createClass({
       <table cellPadding="0" cellSpacing="0" className="table">
         <TableHead
           hasUnassigned={ this.hasUnassigned() }
-          columns={ this.state.labels }></TableHead>
+          scope={ this.props.scope }
+          toggleShowSystemIndices={ this.state.toggleShowSystemIndices }></TableHead>
         <TableBody
           filter={ this.props.scope.filter }
           totalCount={ this.props.scope.totalCount }

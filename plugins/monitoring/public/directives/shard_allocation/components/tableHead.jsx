@@ -17,19 +17,84 @@
 
 import React from 'react';
 
-export default React.createClass({
-  displayName: 'TableHead',
-  createColumn: function (label) {
+class IndexLabel extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      showSystemIndices: props.scope.showSystemIndices
+    };
+    this.toggleShowSystemIndicesState = this.toggleShowSystemIndicesState.bind(this);
+  }
+
+  toggleShowSystemIndicesState() {
+    this.setState({
+      showSystemIndices: !this.state.showSystemIndices
+    });
+
+    this.props.scope.$evalAsync(() => {
+      this.props.toggleShowSystemIndices();
+    });
+  }
+
+  render() {
     return (
-      <th key={ label } colSpan={ 1 }>{ label }</th>
+      <div className='pull-left filter-member'>
+        Indices
+        &nbsp;
+        <input type='checkbox'
+          onChange={this.toggleShowSystemIndicesState}
+          checked={this.state.showSystemIndices}/>
+        &nbsp;
+        <span onClick={this.toggleShowSystemIndicesState}>Show system indices</span>
+        &nbsp;
+        <i
+          className="fa fa-question-circle"
+          title="System index names begin with a dot, for example `.kibana`."></i>
+      </div>
     );
-  },
-  render: function () {
-    var columns = this.props.columns.map((row) => this.createColumn(row));
+  }
+
+}
+
+export default class TableHead extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  createColumn({ key, content }) {
+    return (
+      <th key={ key } colSpan={ 1 }>{ content }</th>
+    );
+  }
+
+  render() {
+    const propLabels = this.props.scope.labels || [];
+    const labelColumns = propLabels.map((label) => {
+      const column = {
+        key: label.content.toLowerCase()
+      };
+
+      if (label.showToggleSystemIndicesComponent) {
+        // override text label content with a JSX component
+        column.content = (
+          <IndexLabel scope={ this.props.scope } toggleShowSystemIndices={ this.props.toggleShowSystemIndices } />
+        );
+      } else {
+        column.content = label.content;
+      }
+
+      return column;
+    })
+    .map(this.createColumn);
+
+
     return (
       <thead>
-        <tr>{ columns }</tr>
+        <tr>{ labelColumns }</tr>
       </thead>
     );
   }
-});
+
+};

@@ -8,10 +8,13 @@ import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
 import template from 'plugins/monitoring/views/elasticsearch/node/node_template.html';
 
-function getPageData(timefilter, globalState, $route, $http, Private) {
+function getPageData(timefilter, globalState, $route, $http, Private, features) {
   const timeBounds = timefilter.getBounds();
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/nodes/${$route.current.params.node}`;
+  const showSystemIndices = features.isEnabled('showSystemIndices', false);
+
   return $http.post(url, {
+    showSystemIndices,
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
@@ -57,7 +60,9 @@ uiRoutes.when('/elasticsearch/nodes/:node', {
 });
 
 const uiModule = uiModules.get('monitoring', [ 'plugins/monitoring/directives' ]);
-uiModule.controller('nodeView', (timefilter, $route, globalState, title, Private, $executor, $http, monitoringClusters, $scope) => {
+uiModule.controller('nodeView', (
+  timefilter, $route, globalState, title, Private, $executor, $http, monitoringClusters, $scope, features
+) => {
 
   timefilter.enabled = true;
 
@@ -77,8 +82,20 @@ uiModule.controller('nodeView', (timefilter, $route, globalState, title, Private
   title($scope.cluster, `Elasticsearch - Nodes - ${$scope.pageData.nodeSummary.name}`);
   setPageIconLabel($scope.pageData);
 
+  const callPageData = _.partial(getPageData, timefilter, globalState, $route, $http, Private, features);
+
+  // show/hide system indices in shard allocation view
+  $scope.showSystemIndices = features.isEnabled('showSystemIndices', false);
+  $scope.toggleShowSystemIndices = () => {
+    $scope.showSystemIndices = !$scope.showSystemIndices;
+    // preserve setting in localStorage
+    features.update('showSystemIndices', $scope.showSystemIndices);
+    // update the page
+    callPageData().then((pageData) => $scope.pageData = pageData);
+  };
+
   $executor.register({
-    execute: () => getPageData(timefilter, globalState, $route, $http, Private),
+    execute: () => callPageData(),
     handleResponse: (response) => {
       $scope.pageData = response;
       setPageIconLabel(response);
