@@ -10,41 +10,41 @@ const mainEntry = `${API_BASE_URL}/generate`;
 const API_TAG = 'api';
 
 module.exports = function (server) {
+  const socketTimeout = server.config().get('xpack.reporting.generate.socketTimeout');
   const esErrors = server.plugins.elasticsearch.errors;
   const createDocumentJob = createDocumentJobFactory(server);
   const licensePre = licensePreFactory(server);
   const userPreRouting = userPreRoutingFactory(server);
   const syncJobHandler = syncJobHandlerFactory(server);
 
+  function getConfig() {
+    return {
+      timeout: { socket: socketTimeout },
+      tags: [API_TAG],
+      pre: [ userPreRouting, licensePre ],
+    };
+  };
+
   // defined the public routes
   server.route({
     path: `${mainEntry}/visualization/{savedId}`,
     method: 'POST',
     handler: (request, reply) => pdfHandler('visualization', request, reply),
-    config: {
-      tags: [API_TAG],
-      pre: [ userPreRouting, licensePre ],
-    }
+    config: getConfig(),
   });
 
   server.route({
     path: `${mainEntry}/search/{savedId}`,
     method: 'POST',
     handler: (request, reply) => pdfHandler('search', request, reply),
-    config: {
-      tags: [API_TAG],
-      pre: [ userPreRouting, licensePre ],
-    }
+    config: getConfig(),
   });
 
   server.route({
     path: `${mainEntry}/dashboard/{savedId}`,
     method: 'POST',
     handler: (request, reply) => pdfHandler('dashboard', request, reply),
-    config: {
-      tags: [API_TAG],
-      pre: [ userPreRouting, licensePre ],
-    }
+    config: getConfig(),
   });
 
   function pdfHandler(objectType, request, reply) {

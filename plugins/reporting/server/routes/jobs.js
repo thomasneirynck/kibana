@@ -9,7 +9,7 @@ const mainEntry = `${API_BASE_URL}/jobs`;
 const API_TAG = 'api';
 
 module.exports = function (server) {
-  const socketTimeout = server.config().get('xpack.reporting.queue.syncSocketTimeout');
+  const socketTimeout = server.config().get('xpack.reporting.generate.socketTimeout');
   const jobsQuery = jobsQueryFactory(server);
   const licensePre = licensePreFactory(server);
   const userPreRouting = userPreRoutingFactory(server);
