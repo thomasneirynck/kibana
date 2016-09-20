@@ -4,19 +4,19 @@
   </div>
 
   <div class="kbn-management-security container-fluid" ng-if="!forbidden">
-    <br />
-    <div class="tab-content">
-      <div class="container">
-        <div class="row">
-          <form role="form" class="col-md-10">
-            <input aria-label="Filter" ng-model="query" class="form-control" type="text" placeholder="Filter..." />
-          </form>
-          <div class="pull-right">
-            <button ng-click="deleteRoles()" class="btn btn-danger" ng-disabled="!selectedRoles.length">Delete</button>
-            <a href="#/management/elasticsearch/roles/edit" ng-click="newRole()" class="btn btn-default">New Role</a>
-          </div>
-        </div>
+    <div class="row">
+      <div class="col-md-9">
+        <form role="form">
+          <input aria-label="Filter" ng-model="query" class="form-control" type="text" placeholder="Filter..." />
+        </form>
       </div>
+      <div class="col-md-3">
+        <button ng-click="deleteRoles()" class="btn btn-danger" ng-disabled="!selectedRoles.length">Delete</button>
+        <a href="#/management/elasticsearch/roles/edit" ng-click="newRole()" class="btn btn-default">New Role</a>
+      </div>
+    </div>
+
+    <div class="row">
       <table class="table table-striped">
         <thead>
           <tr>
