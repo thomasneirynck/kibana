@@ -5,6 +5,6 @@ export default function xpackUsage(client) {
    */
   return client.transport.request({
     method: 'GET',
-    path: '_xpack/usage'
+    path: '/_xpack/usage'
   });
 };

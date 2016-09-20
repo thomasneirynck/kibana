@@ -33,14 +33,14 @@ export default function addMonitoringApi(Client, _config, components) {
       }
     },
     urls: [{
-      fmt: '_xpack/monitoring/<%=type%>/_bulk',
+      fmt: '/_xpack/monitoring/<%=type%>/_bulk',
       req: {
         type: {
           type: 'string'
         }
       }
     }, {
-      fmt: '_xpack/monitoring/_bulk'
+      fmt: '/_xpack/monitoring/_bulk'
     }],
     needBody: true,
     bulkBody: true,

@@ -89,7 +89,7 @@ export default function _xpackInfo(server, client, pollFrequencyInMillis) {
     server.log([ 'license', 'debug', 'xpack' ], 'Calling Elasticsearch _xpack API');
     return client.transport.request({
       method: 'GET',
-      path: '_xpack'
+      path: '/_xpack'
     });
   };
 
