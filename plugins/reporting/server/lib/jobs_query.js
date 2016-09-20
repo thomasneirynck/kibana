@@ -141,6 +141,17 @@ function jobsQueryFactory(server) {
         if (!id) return;
 
         const body = {
+          query: {
+            constant_score: {
+              filter: {
+                bool: {
+                  filter: [
+                    { term: { _id: id } },
+                  ],
+                }
+              }
+            }
+          },
           size: 1,
         };
 
