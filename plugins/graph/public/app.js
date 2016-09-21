@@ -698,7 +698,9 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   if (!$scope.allSavingDisabled) {
     $scope.topNavMenu.push({
       key: 'delete',
-      disableButton: function () {return $route.current.locals.savedWorkspace === undefined;},
+      disableButton: function () {
+        return $route.current.locals === undefined || $route.current.locals.savedWorkspace === undefined;
+      },
       description: 'Delete Saved Workspace',
       tooltip: 'Delete this workspace',
       run: function () {
