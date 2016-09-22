@@ -27,13 +27,12 @@ class IndexLabel extends React.Component {
     this.toggleShowSystemIndicesState = this.toggleShowSystemIndicesState.bind(this);
   }
 
-  toggleShowSystemIndicesState() {
-    this.setState({
-      showSystemIndices: !this.state.showSystemIndices
-    });
-
+  // See also public/directives/index_listing/index.jsx
+  toggleShowSystemIndicesState(e) {
+    const isChecked = e.target.checked;
+    this.setState({ showSystemIndices: isChecked });
     this.props.scope.$evalAsync(() => {
-      this.props.toggleShowSystemIndices();
+      this.props.toggleShowSystemIndices(isChecked);
     });
   }
 
@@ -44,10 +43,8 @@ class IndexLabel extends React.Component {
         &nbsp;
         <input type='checkbox'
           onChange={this.toggleShowSystemIndicesState}
-          checked={this.state.showSystemIndices}/>
-        &nbsp;
-        <span onClick={this.toggleShowSystemIndicesState}>Show system indices</span>
-        &nbsp;
+          checked={this.state.showSystemIndices}/> &nbsp;
+        Show system indices &nbsp;
         <i
           className="fa fa-question-circle"
           title="System index names begin with a dot, for example `.kibana`."></i>

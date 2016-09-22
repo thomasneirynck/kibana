@@ -13,10 +13,12 @@ function showSystemIndicesComponentFactory(scope) {
       this.toggleShowSystemIndices = this.toggleShowSystemIndices.bind(this);
     }
 
-    toggleShowSystemIndices() {
+  // See also directives/shard_allocation/components/tableHead.jsx
+    toggleShowSystemIndices(e) {
+      const isChecked = e.target.checked;
       this.setState({ showSystemIndices: !this.state.showSystemIndices });
       scope.$evalAsync(() => {
-        scope.toggleShowSystemIndices();
+        scope.toggleShowSystemIndices(isChecked);
         scope.resetPaging();
       });
     }
@@ -27,8 +29,7 @@ function showSystemIndicesComponentFactory(scope) {
           <input type='checkbox'
             onChange={this.toggleShowSystemIndices}
             checked={this.state.showSystemIndices}/>&nbsp;
-          <span onClick={this.toggleShowSystemIndices}>Show system indices</span>
-          &nbsp;
+          Show system indices &nbsp;
           <i className="fa fa-question-circle" title="System index names begin with a dot, for example `.kibana`."></i>
         </div>
       );

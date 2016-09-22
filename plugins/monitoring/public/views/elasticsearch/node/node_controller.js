@@ -86,10 +86,10 @@ uiModule.controller('nodeView', (
 
   // show/hide system indices in shard allocation view
   $scope.showSystemIndices = features.isEnabled('showSystemIndices', false);
-  $scope.toggleShowSystemIndices = () => {
-    $scope.showSystemIndices = !$scope.showSystemIndices;
+  $scope.toggleShowSystemIndices = (isChecked) => {
+    $scope.showSystemIndices = isChecked;
     // preserve setting in localStorage
-    features.update('showSystemIndices', $scope.showSystemIndices);
+    features.update('showSystemIndices', isChecked);
     // update the page
     callPageData().then((pageData) => $scope.pageData = pageData);
   };
