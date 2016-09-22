@@ -116,7 +116,7 @@ const Table = React.createClass({
     // Make the Table
     var $tableHead = React.createFactory(TableHead);
     var $tableBody = React.createFactory(TableBody);
-    var $table = make.table({ key: 'table', className: 'table' },
+    var $table = make.table({ key: 'table', className: 'table monitoring-view-listing-table' },
       $tableHead({
         key: 'table.head',
         setSortCol: this.setSortCol,

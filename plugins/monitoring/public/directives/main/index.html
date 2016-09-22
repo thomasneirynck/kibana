@@ -1,56 +1,41 @@
 <div class="app-container">
-  <kbn-top-nav class="navbar navbar-default navbar-static-top" name="{{name}}-nav">
-    <div class="monitoring-bread-crumbs">
-      <ul role="breadcrumbs">
-        <li ng-repeat="crumb in breadcrumbs">
-          <a ng-if="crumb.url" kbn-href="{{crumb.url}}">{{crumb.label}}</a>
-          <span ng-if="!crumb.url">{{crumb.label}}</span>
-          <span ng-hide="$last">/</span>
-        </li>
-      </ul>
+  <!-- NOTE: The KBN breadCrumbs directive does not work for Monitoring usecase.
+    Breadcrumbs can't be automatically derived because the directive doesn't
+    automatically know to show the Clusters breadcrumb. We recreate the
+  structure and styles manually -->
+  <div class="monitoring-bread-crumbs">
+    <ul class="xpack-breadcrumbs" role="breadcrumbs">
+      <li ng-repeat="crumb in breadcrumbs">
+        <a ng-if="crumb.url" kbn-href="{{crumb.url}}">{{crumb.label}}</a>
+        <span ng-if="!crumb.url">{{crumb.label}}</span>
+        <span ng-if="!$last">/</span>
+      </li>
+    </ul>
+  </div>
+  <kbn-top-nav name="{{name}}-nav">
+    <div ng-if="inElasticsearch" class="localTabs" role="navigation">
+      <a ng-if="!instance" kbn-href="#/elasticsearch" class="localTab" ng-class="{'localTab-isSelected': isActive('overview')}">Overview</a>
+      <a ng-if="!instance" kbn-href="#/elasticsearch/indices" class="localTab" ng-class="{'localTab-isSelected': isActive('indices')}">Indices</a>
+      <a ng-if="!instance" kbn-href="#/elasticsearch/nodes" class="localTab" ng-class="{'localTab-isSelected': isActive('nodes')}">Nodes</a>
+      <a ng-if="instance" class="localTab">
+        <i ng-if="iconClass" class="fa {{iconClass}}" title="{{iconLabel}}"></i>
+        {{instance}}
+      </a>
     </div>
 
-    <ul ng-if="inElasticsearch" class="nav navbar-nav" role="navigation">
-      <li ng-if="!instance" ng-class="{active: isActive('overview')}">
-        <a kbn-href="#/elasticsearch" class="navbar-link">Overview</a>
-      </li>
-      <li ng-if="!instance" ng-class="{active: isActive('indices')}">
-        <a kbn-href="#/elasticsearch/indices" class="navbar-link">Indices</a>
-      </li>
-      <li ng-if="!instance" ng-class="{active: isActive('nodes')}">
-        <a kbn-href="#/elasticsearch/nodes" class="navbar-link">Nodes</a>
-      </li>
-      <li ng-if="instance">
-        <a class="navbar-link">
-          <i ng-if="iconClass" class="fa {{iconClass}}" title="{{iconLabel}}"></i>
-          {{instance}}
-        </a>
-      </li>
-    </ul>
+    <div ng-if="inKibana" class="localTabs" role="navigation">
+      <a ng-if="!instance" kbn-href="#/kibana" class="localTab" ng-class="{'localTab-isSelected': isActive('overview')}">Overview</a>
+      <a ng-if="!instance" kbn-href="#/kibana/instances" class="localTab" ng-class="{'localTab-isSelected': isActive('kibanas')}">Instances</a>
+      <a ng-if="instance" class="localTab">{{instance}}</a>
+    </div>
 
-    <ul ng-if="inKibana" class="nav navbar-nav" role="navigation">
-      <li ng-if="!instance" ng-class="{active: isActive('overview')}">
-        <a kbn-href="#/kibana" class="navbar-link">Overview</a>
-      </li>
-      <li ng-if="!instance" ng-class="{active: isActive('kibanas')}">
-        <a kbn-href="#/kibana/instances" class="navbar-link">Instances</a>
-      </li>
-      <li ng-if="instance">
-        <a class="navbar-link">{{instance}}</a>
-      </li>
-    </ul>
+    <div ng-if="inOverview" class="localTabs" role="navigation">
+      <a class="localTab">{{cluster.cluster_name}}</a>
+    </div>
 
-    <ul ng-if="inOverview" class="nav navbar-nav" role="navigation">
-      <li>
-        <a class="navbar-link">{{cluster.cluster_name}}</a>
-      </li>
-    </ul>
-
-    <ul ng-if="inListing" class="nav navbar-nav" role="navigation">
-      <li>
-        <a class="navbar-link">Clusters</a>
-      </li>
-    </ul>
+    <div ng-if="inListing" class="localTabs" role="navigation">
+      <a class="localTab">Clusters</a>
+    </div>
   </kbn-top-nav>
   <div ng-transclude></div>
 </div>

@@ -11,9 +11,13 @@ monitoring-shard-allocation {
   display: block;
   margin-top: 15px;
   padding: 5px;
-  background: @white;
-  border-top: @thick solid @esGray;
+  border-top: 8px solid @esVeryLightGray;
 }
+
+  .monitoring-cluster-view-title {
+    font-size: 20px;
+    margin: 0;
+  }
 
 .loading {
   color: @esGray;
@@ -179,9 +183,7 @@ monitoring-shard-allocation {
   }
 
   .legend {
-    margin-top: 10px;
     font-size: 12px;
-    border-top: 1px solid #333;
     background-color: #333;
     .title {
       margin-left: 5px;
@@ -450,7 +452,6 @@ monitoring-shard-allocation {
     }
 
     .legend {
-      border: 1px solid @esLightGray;
       background-color: @white;
       color: @esBlack;
     }

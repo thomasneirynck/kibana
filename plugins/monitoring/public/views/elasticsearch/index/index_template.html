@@ -1,18 +1,17 @@
 <div ng-controller="indexView">
   <monitoring-main product="elasticsearch" name="indices" instance="{{ indexName }}">
     <div class="details monitoring-view">
-    <div class="col-md-12">
       <monitoring-index-summary summary="pageData.indexSummary"></monitoring-index-summary>
       <div class="detail-metrics monitoring-element">
         <div class="row monitoring-element" ng-if="pageData.metrics">
-          <div class="col-md-4"><monitoring-chart series="pageData.metrics.index_mem"/></div>
-          <div class="col-md-4"><monitoring-chart series="pageData.metrics.index_search_request_rate"/></div>
-          <div class="col-md-4"><monitoring-chart series="pageData.metrics.index_request_rate"/></div>
+          <div class="col-md-4"><monitoring-chart series="pageData.metrics.index_mem"></monitoring-chart></div>
+          <div class="col-md-4"><monitoring-chart series="pageData.metrics.index_search_request_rate"></monitoring-chart></div>
+          <div class="col-md-4"><monitoring-chart series="pageData.metrics.index_request_rate"></monitoring-chart></div>
         </div>
         <div class="row monitoring-element" ng-if="pageData.metrics">
-          <div class="col-md-4"><monitoring-chart series="pageData.metrics.index_size"/></div>
-          <div class="col-md-4"><monitoring-chart series="pageData.metrics.index_document_count"/></div>
-          <div class="col-md-4"><monitoring-chart series="pageData.metrics.index_segment_count"/></div>
+          <div class="col-md-4"><monitoring-chart series="pageData.metrics.index_size"></monitoring-chart></div>
+          <div class="col-md-4"><monitoring-chart series="pageData.metrics.index_document_count"></monitoring-chart></div>
+          <div class="col-md-4"><monitoring-chart series="pageData.metrics.index_segment_count"></monitoring-chart></div>
         </div>
       </div>
       <monitoring-shard-allocation
@@ -20,8 +19,8 @@
         view="index"
         nodes="pageData.nodes"
         shards="pageData.shards"
-        shard-stats="pageData.shardStats"></monitoring-shard-allocation>
-    </div>
+        shard-stats="pageData.shardStats"
+      ></monitoring-shard-allocation>
     </div>
   </monitoring-main>
 </div>

@@ -1,5 +1,5 @@
 <div class="filter pull-right" ng-click="toggleActive()" ng-class="{ active: onlyActive }"><span ng-if="onlyActive">Show</span><span ng-if="!onlyActive">Hide</span> History</div>
-<h1>Shard Activity</h1>
+<h1 class="monitoring-cluster-view-title">Shard Activity</h1>
 <table class="table table-condensed">
   <thead>
     <tr>
@@ -16,7 +16,7 @@
   <tbody>
     <tr ng-repeat="activity in visibleData" ng-class="{ done: activity.stage === 'DONE', red: activity.primary, yellow: !activity.primary }">
       <td class="index">
-        <h5><a href="#/elasticsearch/indices/{{ activity.index_name || activity.index.name }}">{{ activity.index_name || activity.index.name }}</a></h5>
+        <h5><a ng-href="#/elasticsearch/indices/{{ activity.index_name || activity.index.name }}">{{ activity.index_name || activity.index.name }}</a></h5>
         <p>
           <span>{{ activity.id }}</span> |
           <span ng-if="activity.type === 'PRIMARY_RELOCATION'">Primary Relocation</span>
