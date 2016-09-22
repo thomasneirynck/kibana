@@ -102,11 +102,12 @@ export default function indicesRoutes(server) {
       .then(indices => {
         return getLastState(req, indices)
         .then(lastState => {
+          const showSystemIndices = true; // hardcode to true, because this could be a system index
           return Promise.props({
             clusterStatus: getClusterStatus(req, indices, lastState),
             indexSummary:  getIndexSummary(req, indices),
             metrics: getMetrics(req, indices, [{ term: { 'index_stats.index': id } }]),
-            shards: getShardAllocation(req, indices, [{ term: { 'shard.index': id } }], lastState),
+            shards: getShardAllocation(req, indices, [{ term: { 'shard.index': id } }], lastState, showSystemIndices),
             shardStats: getShardStats(req, indices, lastState),
             lastState: lastState
           });
