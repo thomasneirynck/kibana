@@ -14,6 +14,7 @@ uiModule.directive('monitoringShardAllocation', () => {
       shards: '=',
       nodes: '=',
       shardStats: '=',
+      showSystemIndices: '=',
       toggleShowSystemIndices: '='
     },
     link: (scope) => {

@@ -29,6 +29,7 @@ uiModule.directive('clusterView', function (kbnUrl) {
       showing: '=',
       labels: '=',
       shardStats: '=',
+      showSystemIndices: '=',
       toggleShowSystemIndices: '='
     },
     link: function (scope, element) {
@@ -36,6 +37,7 @@ uiModule.directive('clusterView', function (kbnUrl) {
         <ClusterView
           scope={scope}
           kbnUrl={kbnUrl}
+          showSystemIndices={scope.showSystemIndices}
           toggleShowSystemIndices={scope.toggleShowSystemIndices}></ClusterView>,
         element[0]
       );
