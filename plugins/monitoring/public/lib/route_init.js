@@ -59,6 +59,6 @@ export default function routeInitProvider(Private, monitoringClusters, globalSta
 
       return clusters;
     })
-    .catch(ajaxErrorHandlers.fatalError);
+    .catch(ajaxErrorHandlers);
   };
 };
