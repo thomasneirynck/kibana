@@ -1,4 +1,5 @@
 const boom = require('boom');
+const { has } = require('lodash');
 const { API_BASE_URL } = require('../lib/constants');
 const createDocumentJobFactory = require('../lib/create_document_job');
 const { JOBTYPES } = require('../lib/constants');
@@ -50,7 +51,7 @@ module.exports = function (server) {
   function pdfHandler(objectType, request, reply) {
     const jobType = JOBTYPES.PRINTABLE_PDF;
     const createJob = createDocumentJob[jobType];
-    const syncResponse = request.query.hasOwnProperty('sync');
+    const syncResponse = has(request.query, 'sync');
 
     return createJob(objectType, request)
     .then((job) => {
