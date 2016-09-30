@@ -44,7 +44,7 @@ module.exports = function (kibana) {
         }).default(),
         generate: Joi.object({
           socketTimeout: Joi.number().integer().default(300000),
-        }),
+        }).default(),
         capture: Joi.object({
           zoom: Joi.number().integer().default(1),
           viewport: Joi.object({
