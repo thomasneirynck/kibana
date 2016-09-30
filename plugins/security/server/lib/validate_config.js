@@ -1,8 +1,13 @@
+const crypto = require('crypto');
+
 export default (config, log) => {
   if (config.get('xpack.security.encryptionKey') == null) {
     log('Generating a random key for xpack.security.encryptionKey. To prevent sessions from being invalidated on ' +
       'restart, please set xpack.security.encryptionKey in kibana.yml');
-    config.set('xpack.security.encryptionKey', Math.random().toString(36).slice(2));
+
+    config.set('xpack.security.encryptionKey', crypto.randomBytes(16).toString('hex'));
+  } else if (config.get('xpack.security.encryptionKey').length < 32) {
+    throw new Error('xpack.security.encryptionKey must be at least 32 characters. Please update the key in kibana.yml.');
   }
 
   const isSslConfigured = config.get('server.ssl.key') != null && config.get('server.ssl.cert') != null;

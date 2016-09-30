@@ -5,6 +5,7 @@ import validateConfig from '../validate_config';
 describe('Validate config', function () {
   let config;
   const log = sinon.spy();
+  const validKey = 'd624dce49dafa1401be7f3e1182b756a';
 
   beforeEach(() => {
     config = {
@@ -27,8 +28,15 @@ describe('Validate config', function () {
     sinon.assert.calledWithMatch(log, /please set xpack.security.encryptionKey/);
   });
 
+  it('should throw error if xpack.security.encryptionKey is less than 32 characters', function () {
+    config.get.withArgs('xpack.security.encryptionKey').returns('foo');
+
+    const validateConfigFn = () => validateConfig(config);
+    expect(validateConfigFn).to.throwException(/xpack.security.encryptionKey must be at least 32 characters/);
+  });
+
   it('should log a warning if SSL is not configured', function () {
-    config.get.withArgs('xpack.security.encryptionKey').returns('baz');
+    config.get.withArgs('xpack.security.encryptionKey').returns(validKey);
     config.get.withArgs('xpack.security.secureCookies').returns(false);
 
     expect(() => validateConfig(config, log)).not.to.throwError();
@@ -39,7 +47,7 @@ describe('Validate config', function () {
   });
 
   it('should log a warning if SSL is not configured yet secure cookies are being used', function () {
-    config.get.withArgs('xpack.security.encryptionKey').returns('baz');
+    config.get.withArgs('xpack.security.encryptionKey').returns(validKey);
     config.get.withArgs('xpack.security.secureCookies').returns(true);
 
     expect(() => validateConfig(config, log)).not.to.throwError();
@@ -52,7 +60,7 @@ describe('Validate config', function () {
   it('should set xpack.security.secureCookies if SSL is configured', function () {
     config.get.withArgs('server.ssl.key').returns('foo');
     config.get.withArgs('server.ssl.cert').returns('bar');
-    config.get.withArgs('xpack.security.encryptionKey').returns('baz');
+    config.get.withArgs('xpack.security.encryptionKey').returns(validKey);
 
     expect(() => validateConfig(config, log)).not.to.throwError();
 
