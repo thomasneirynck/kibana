@@ -1,4 +1,6 @@
 const { get, set } = require('lodash');
+const { badRequest } = require('boom');
+
 const oncePerServer = require('./once_per_server');
 const { QUEUE_INDEX, QUEUE_DOCTYPE } = require('./constants');
 const getUserFactory = require('../lib/get_user');
@@ -8,7 +10,6 @@ function jobsQueryFactory(server) {
   const getUser = getUserFactory(server);
   const esErrors = server.plugins.elasticsearch.errors;
   const { callWithRequest } = server.plugins.elasticsearch;
-  const NO_USER_IDENTIFIER = false;
 
   function execQuery(type, body, request) {
     const defaultBody = {
@@ -48,21 +49,26 @@ function jobsQueryFactory(server) {
 
       return getUser(request)
       .then((user) => {
-        const username = get(user, 'username', NO_USER_IDENTIFIER);
-
         const body = {
           size,
           from: size * page,
         };
 
+        if (!showAll && !user) {
+          throw badRequest(
+            `Failed to get the current user's reports because there is no user associated with this request`
+          );
+        }
+
         if (!showAll) {
+          const username = get(user, 'username');
+
           set(body, 'query', {
             constant_score: {
               filter: {
                 bool: {
-                  should: [
+                  must: [
                     { term: { created_by: username } },
-                    { term: { created_by: NO_USER_IDENTIFIER } },
                   ]
                 }
               }
@@ -77,7 +83,13 @@ function jobsQueryFactory(server) {
     listCompletedSince(request, size = defaultSize, sinceInMs) {
       return getUser(request)
       .then((user) => {
-        const username = get(user, 'username', NO_USER_IDENTIFIER);
+        const filters = [
+          { range: { completed_at: { gt: sinceInMs, format: 'epoch_millis' } } }
+        ];
+        if (user) {
+          const username = get(user, 'username');
+          filters.push({ term: { created_by: username } });
+        }
 
         const body = {
           size,
@@ -86,13 +98,7 @@ function jobsQueryFactory(server) {
             constant_score: {
               filter: {
                 bool: {
-                  should: [
-                    { term: { created_by: username } },
-                    { term: { created_by: NO_USER_IDENTIFIER } },
-                  ],
-                  must: [
-                    { range: { completed_at: { gt: sinceInMs, format: 'epoch_millis' } } }
-                  ]
+                  must: filters
                 }
               }
             }
@@ -108,21 +114,21 @@ function jobsQueryFactory(server) {
 
       return getUser(request)
       .then((user) => {
-        const username = get(user, 'username', NO_USER_IDENTIFIER);
+        const body = {};
 
-        const body = (showAll) ? {} : {
-          query: {
+        if (!showAll) {
+          const username = get(user, 'username');
+          body.query = {
             constant_score: {
               filter: {
                 bool: {
-                  should: [
+                  must: [
                     { term: { created_by: username } },
-                    { term: { created_by: NO_USER_IDENTIFIER } },
                   ]
                 }
               }
             }
-          }
+          };
         };
 
         return execQuery('count', body, request)

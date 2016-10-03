@@ -2,7 +2,7 @@
   <div class="kbn-management-reporting container-fluid">
     <h1>Generated Reports</h1>
 
-    <div>
+    <div ng-if="jobsCtrl.shieldEnabled">
       Filter Reports:
       <input id="report-filter" type="checkbox" ng-model="jobsCtrl.showMine">
       <label for="report-filter">Only show my reports</label>

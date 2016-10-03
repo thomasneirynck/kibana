@@ -1,6 +1,7 @@
 import 'angular-paging';
 import 'plugins/reporting/services/job_queue';
 import 'plugins/reporting/less/main.less';
+import 'plugins/reporting/services/feature_check';
 
 import routes from 'ui/routes';
 import template from 'plugins/reporting/views/management/jobs.html';
@@ -49,17 +50,13 @@ function mapJobs(jobs) {
 
 routes.when('/management/kibana/reporting', {
   template,
-  resolve: {
-    reportingJobs(reportingJobQueue) {
-      return getJobs(reportingJobQueue);
-    }
-  },
   controllerAs: 'jobsCtrl',
-  controller($scope, $route, $window, $interval, reportingJobQueue) {
+  controller($scope, $route, $window, $interval, reportingJobQueue, reportingFeatureCheck) {
     this.loading = false;
     this.pageSize = pageSize;
     this.currentPage = 1;
-    this.reportingJobs = $route.current.locals.reportingJobs;
+    this.reportingJobs = [];
+    this.shieldEnabled = reportingFeatureCheck.shield();
     this.showMine = true;
 
     const toggleLoading = () => {
@@ -67,7 +64,7 @@ routes.when('/management/kibana/reporting', {
     };
 
     const updateJobs = () => {
-      const showAll = !this.showMine;
+      const showAll = !this.shieldEnabled || !this.showMine;
 
       return getJobs(reportingJobQueue, showAll, this.currentPage - 1)
       .then((jobs) => {
@@ -108,7 +105,7 @@ routes.when('/management/kibana/reporting', {
     $scope.$watch('jobsCtrl.showMine', (newVal, oldVal) => {
       if (newVal !== oldVal) {
         if (this.currentPage === 1) {
-          // if alraedy on the first page, update the job list
+          // if already on the first page, update the job list
           updateJobsLoading();
         } else {
           // otherwise let the currentPage watcher update the list
