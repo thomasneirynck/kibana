@@ -59,6 +59,12 @@ That's thanks to the binary Phantom downloads that have to happen, and Bitbucket
 1. Just keep re-running the command until it passes. Eventually the downloads will work, and since they are cached, it won't ever be an issue again.
 1. Download them by hand [from Bitbucket](https://bitbucket.org/ariya/phantomjs/downloads) and copy them into the `.phantom` path. We're currently using 1.9.8, and you'll need the Window, Mac, and both Linux builds.
 
+### Running Elasticsearch with X-Pack
+
+Assuming you have the `elasticsearch` project checked out in a sibling directory to `x-plugins`, and both are up to date, and you have
+`gradle` installed (see below if not), you can simply run `gradle run` from the root of `x-plugins`. Alternatively, you can [manually build
+Elasticsearch with X-Pack](#elasticsearch-and-x-pack-from-source).
+
 ### Elasticsearch and X-Pack from source
 
 For developing and testing the plugins, you must run an instance of Elasticsearch with the X-Pack plugin installed.
@@ -96,11 +102,6 @@ For developing and testing the plugins, you must run an instance of Elasticsearc
     cd elasticsearch-[VERSION]
     ./bin/elasticsearch-plugin install file:../x-pack-[VERSION].zip
     ```
-1. Create a Shield user
-
-    ```
-    ./bin/x-pack/esusers useradd -r admin -p notsecure admin
-    ```
 1. Run the Elasticsearch instance, specifying a Unicast host
 
     ```
@@ -111,7 +112,7 @@ For developing and testing the plugins, you must run an instance of Elasticsearc
 
 Make sure you have the dependencies installed by running `npm install`.
 
-You will also need to have the [elasticsearch](https://github.com/elastic/elasticsearch) repo checked out next to the `x-plugins` repo for the build to work, as it pulls the version from a file in that repo. Optinally, if you rather just use the version in `package.json`, pass the `--fallback` flag.
+You will also need to have the [elasticsearch](https://github.com/elastic/elasticsearch) repo checked out next to the `x-plugins` repo for the build to work, as it pulls the version from a file in that repo. Optionally, if you rather just use the version in `package.json`, pass the `--fallback` flag.
 
 Once complete, use `npm run build`. Output will be placed in the `build` path (it will be created).
 
