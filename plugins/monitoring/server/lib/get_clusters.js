@@ -14,7 +14,6 @@ export default function getClusters(req, indices) {
   const params = {
     index: indices,
     type: 'cluster_stats',
-    meta: 'get_clusters_stats',
     ignore: [404],
     // terms agg for the cluster_uuids
     body: {
@@ -47,7 +46,6 @@ export default function getClusters(req, indices) {
         const infoParams = {
           index: config.get('xpack.monitoring.index'),
           type: 'cluster_info',
-          meta: 'get_clusters_info',
           id: cluster.cluster_uuid
         };
 

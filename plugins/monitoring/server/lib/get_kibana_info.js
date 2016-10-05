@@ -16,7 +16,6 @@ export default function getKibanaInfo(req, uuid) {
   const params = {
     index: config.get('xpack.monitoring.index'),
     type: 'kibana',
-    meta: 'get_kibana_info',
     id: uuid
   };
 

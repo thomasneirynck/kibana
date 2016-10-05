@@ -49,7 +49,6 @@ export default function getClusterStatus(req, indices, lastState) {
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
-    meta: 'get_cluster_stats',
     ignore: [404],
     type: 'cluster_stats',
     body: {

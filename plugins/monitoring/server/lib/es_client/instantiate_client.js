@@ -16,27 +16,6 @@ function exposeClient(server) {
   const ElasticsearchClientLogging = server.plugins.elasticsearch.ElasticsearchClientLogging;
   const loggingTag = config.get('xpack.monitoring.loggingTag');
 
-  /* Overrides the trace method so we can have query logging
-   * logs can be copy+pasted into Sense */
-  class MonitoringClientLogging extends ElasticsearchClientLogging {
-    trace(method, options, query, _response, statusCode) {
-      /* Check if query logging is enabled and if the query has the "meta"
-       * field which is added for traceability.
-       * It requires Kibana to be configured with verbose logging turned on. */
-      if (config.get('xpack.monitoring.elasticsearch.logQueries')) {
-        if (options.path.match(/meta=/)) {
-          const methodAndPath = `${method} ${options.path}`;
-          const queryDsl = query ? query.trim() : '';
-          server.log([loggingTag, 'es-query'], [
-            statusCode,
-            methodAndPath,
-            queryDsl
-          ].join('\n'));
-        }
-      }
-    }
-  }
-
   function createClient(options, uri, ssl) {
     return new elasticsearch.Client({
       host: url.format(uri),
@@ -49,7 +28,7 @@ function exposeClient(server) {
       defer: function () {
         return Promise.defer();
       },
-      log: MonitoringClientLogging
+      log: ElasticsearchClientLogging
     });
   }
 

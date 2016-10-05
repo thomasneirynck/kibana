@@ -25,7 +25,6 @@ export default function getIndexSummary(req, indices) {
   const params = {
     index: indices,
     ignore: [404],
-    meta: 'get_index_summary',
     type: 'index_stats',
     body: {
       size: 1,

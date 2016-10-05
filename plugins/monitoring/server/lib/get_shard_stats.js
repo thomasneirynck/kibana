@@ -13,7 +13,6 @@ export default function getShardStats(req, indices, lastState) {
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
-    meta: 'get_shard_stats',
     type: 'shards',
     ignore: [404],
     size: 0,

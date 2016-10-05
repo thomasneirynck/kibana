@@ -82,7 +82,7 @@ export default function clustersRoutes(server) {
         .then(getClustersHealth(req))
         .then(getPrimaryClusterUuid(req))
         .then(clusters => {
-          const mapClusters = getKibanasForClusters(req, kibanaIndices, 'route-clusters');
+          const mapClusters = getKibanasForClusters(req, kibanaIndices);
           return mapClusters(clusters)
           .then(kibanas => {
             // add the kibana data to each cluster
@@ -157,7 +157,6 @@ export default function clustersRoutes(server) {
     handler: (req, reply) => {
       const params = {
         index: config.get('xpack.monitoring.index'),
-        meta: 'route-cluster_info',
         type: 'cluster_info',
         id: req.params.clusterUuid
       };

@@ -29,7 +29,6 @@ export default function getKibanas(req, indices) {
   const params = {
     index: indices,
     type: 'kibana_stats',
-    meta: 'get_kibanas',
     ignore: [404],
     body: {
       size: 0,
@@ -51,7 +50,6 @@ export default function getKibanas(req, indices) {
         const infoParams = {
           index: config.get('xpack.monitoring.index'),
           type: 'kibana',
-          meta: 'get_kibanas_kibana_info',
           id: uuidBucket.key,
           _source: [
             'timestamp',

@@ -45,7 +45,6 @@ export default function getListingNodes(req, indices) {
   const metricFields = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
-    meta: 'get_listing_nodes',
     type: 'node_stats',
     size: 0,
     ignoreUnavailable: true,

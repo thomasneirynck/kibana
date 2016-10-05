@@ -39,7 +39,6 @@ export default function getClustersHealth(req) {
     if (!bodies.length) return Promise.resolve([]);
     const params = {
       index: config.get('xpack.monitoring.elasticsearch.index_pattern'),
-      meta: 'get_clusters_health',
       type: 'cluster_state',
       body: bodies
     };

@@ -5,7 +5,6 @@ export default function checkMonitoringAuth(req) {
   const config = req.server.config();
 
   return callWithRequest(req, 'count', {
-    meta: 'check_monitoring_auth_to_data',
     index: config.get('xpack.monitoring.index'),
     ignore: [404]
   });

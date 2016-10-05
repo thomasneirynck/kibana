@@ -12,7 +12,6 @@ export default function getLastState(req, indices) {
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
-    meta: 'get_last_state',
     type: 'cluster_state',
     ignore: [404],
     body: {

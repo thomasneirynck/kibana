@@ -40,7 +40,6 @@ export default function getListingIndices(req, indices, showSystemIndices = fals
 
   const params = {
     index: indices,
-    meta: 'get_listing_indices',
     type: 'index_stats',
     size: 0,
     ignoreUnavailable: true,

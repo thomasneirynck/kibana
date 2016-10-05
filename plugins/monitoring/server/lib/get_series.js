@@ -24,7 +24,6 @@ export default function getSeries(req, indices, metricName, filters) {
 
   const params = {
     index: indices,
-    meta: `get_series-${metricName}`,
     size: 0,
     ignoreUnavailable: true,
     ignore: [404],

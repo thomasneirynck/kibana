@@ -14,7 +14,6 @@ export default function getNodeSummary(req, indices) {
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
-    meta: 'get_node_summary',
     type: 'node_stats',
     ignore: [404],
     body: {

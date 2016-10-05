@@ -16,7 +16,6 @@ export default function getShardAllocation(req, _indices, filters, lastState) {
     * wildcard. Needs testing to ensure the time range the indices cover always
     * has the last data from the cluster state. */
     index: config.get('xpack.monitoring.elasticsearch.index_pattern'),
-    meta: 'get_shard_allocation',
     type: 'shards',
     body: {
       size: config.get('xpack.monitoring.max_bucket_size'),

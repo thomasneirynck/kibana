@@ -8,8 +8,8 @@ import handleError from '../../../lib/handle_error';
 import getMetrics from '../../..//lib/get_metrics';
 import calculateIndices from '../../..//lib/calculate_indices';
 
-const getClusterStatus = function (req, kibanaIndices, calledFrom) {
-  const getKibanaForCluster = getKibanasForClusters(req, kibanaIndices, calledFrom);
+const getClusterStatus = function (req, kibanaIndices) {
+  const getKibanaForCluster = getKibanasForClusters(req, kibanaIndices);
   return getKibanaForCluster([{ cluster_uuid: req.params.clusterUuid }])
   .then(clusterStatus => _.get(clusterStatus, '[0].stats'));
 };
@@ -50,7 +50,7 @@ export default function kibanaRoutes(server) {
         return Promise.props({
           metrics: req.payload.metrics ? getMetrics(req, kibanaIndices) : {},
           kibanas: req.payload.instances ? getKibanas(req, kibanaIndices) : [],
-          clusterStatus: getClusterStatus(req, kibanaIndices, 'route-kibana-listing')
+          clusterStatus: getClusterStatus(req, kibanaIndices)
         });
       })
       .then (reply)

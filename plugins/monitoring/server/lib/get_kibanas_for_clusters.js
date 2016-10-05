@@ -19,7 +19,7 @@ import calcAuto from './calculate_auto';
 import createQuery from './create_query.js';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
-export default function getKibanasForClusters(req, indices, calledFrom) {
+export default function getKibanasForClusters(req, indices) {
   if (indices.length < 1) return () => Promise.resolve([]);
 
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
@@ -38,7 +38,6 @@ export default function getKibanasForClusters(req, indices, calledFrom) {
       const options = {
         size: 0,
         index: indices,
-        meta: `get_kibanas_for_cluster-${calledFrom}`,
         ignoreUnavailable: true,
         type: 'kibana_stats',
         body: {
