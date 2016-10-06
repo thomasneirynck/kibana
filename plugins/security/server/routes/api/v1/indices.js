@@ -11,7 +11,7 @@ export default (server) => {
     handler(request, reply) {
       return callWithRequest(request, 'indices.getFieldMapping', {
         index: request.params.query,
-        field_security: { grant: ['*']},
+        fields: '*',
         allowNoIndices: false,
         includeDefaults: true
       })
