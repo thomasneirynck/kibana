@@ -5,7 +5,7 @@ import Notifier from 'ui/notify/notifier';
 import uiModules from 'ui/modules';
 
 const uiModule = uiModules.get('monitoring/directives', []);
-uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl) {
+uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl, showLicenseExpiration) {
   return {
     restrict: 'E',
     scope: { clusters: '=' },
@@ -79,8 +79,10 @@ uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl) {
       $scope.$watch('clusters', (data) => {
         if (data) {
           data.forEach((cluster) => {
+            // these become props for the cluster row
             cluster.changeCluster = changeCluster;
             cluster.licenseWarning = licenseWarning;
+            cluster.showLicenseExpiration = showLicenseExpiration;
           });
           table.setData(data);
         }

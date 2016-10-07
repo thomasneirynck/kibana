@@ -78,7 +78,7 @@ to enjoy multi-cluster monitoring.`
 
   getLicenseInfo() {
     if (this.props.license) {
-      const licenseExpiry = (() => {
+      const licenseExpiry = () => {
         if (this.props.license.expiry_date_in_millis < moment().valueOf()) {
           // license is expired
           return <div className="expires expired">Expired</div>;
@@ -90,14 +90,14 @@ to enjoy multi-cluster monitoring.`
             Expires { moment(this.props.license.expiry_date_in_millis).format('D MMM YY') }
           </div>
         );
-      }());
+      };
 
       return (
         <div>
           <div className="license">
             { _.capitalize(this.props.license.type) }
           </div>
-          { licenseExpiry }
+          { this.props.showLicenseExpiration ? licenseExpiry() : '' }
         </div>
       );
     }
