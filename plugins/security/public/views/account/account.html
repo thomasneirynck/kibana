@@ -31,7 +31,7 @@
       <div class="form-group" ng-show="!view.changePasswordMode">
         <label class="col-md-2 control-label">Password</label>
         <div class="col-md-4">
-          <button class="btn btn-success help-block" ng-click="toggleChangePasswordMode()">Change Password</button>
+          <button type="button" class="btn btn-success help-block" ng-click="toggleChangePasswordMode()">Change Password</button>
         </div>
       </div>
 
@@ -60,9 +60,9 @@
             </span>
           </div>
           <div>
-            <button class="btn btn-success help-block" ng-click="changePassword(user)"
+            <button type="submit" class="btn btn-success help-block" ng-click="changePassword(user)"
                     ng-disabled="form.newPassword.$invalid || user.newPassword != view.confirmPassword">Save</button>
-            <button class="btn btn-default help-block" ng-click="toggleChangePasswordMode()">Cancel</button>
+            <button type="button" class="btn btn-default help-block" ng-click="toggleChangePasswordMode()">Cancel</button>
           </div>
         </div>
       </div>

@@ -8,8 +8,8 @@
       </div>
       <div class="col-md-6 text-right">
         <a href="#/management/elasticsearch/users" class="btn btn-default">Return to All Users</a>
-        <button ng-if="!view.isNewUser && !user.metadata._reserved" class="btn btn-danger" ng-click="deleteUser(user)" ng-disabled="view.changePasswordMode">Delete</button>
-        <button ng-if="!user.metadata._reserved" class="btn btn-primary" ng-disabled="form.$invalid || user.password !== view.confirmPassword || view.changePasswordMode" ng-click="saveUser(user)">Save</button>
+        <button type="button" ng-if="!view.isNewUser && !user.metadata._reserved" class="btn btn-danger" ng-click="deleteUser(user)" ng-disabled="view.changePasswordMode">Delete</button>
+        <button type="button" ng-if="!user.metadata._reserved" class="btn btn-primary" ng-disabled="form.$invalid || user.password !== view.confirmPassword || view.changePasswordMode" ng-click="saveUser(user)">Save</button>
       </div>
     </div>
 
@@ -65,8 +65,8 @@
         </div>
 
         <div class="col-md-1" ng-show="view.changePasswordMode">
-          <button class="btn btn-default help-block" ng-click="toggleChangePasswordMode()"><i class="fa fa-times"></i></button>
-          <button class="btn btn-success help-block" ng-click="changePassword(user)" ng-disabled="form.newPassword.$invalid || user.newPassword !== view.confirmPassword"><i class="fa fa-save"></i></button>
+          <button type="button" class="btn btn-default help-block" ng-click="toggleChangePasswordMode()"><i class="fa fa-times"></i></button>
+          <button type="button" class="btn btn-success help-block" ng-click="changePassword(user)" ng-disabled="form.newPassword.$invalid || user.newPassword !== view.confirmPassword"><i class="fa fa-save"></i></button>
         </div>
       </div>
 
