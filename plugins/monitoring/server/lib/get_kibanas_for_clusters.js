@@ -13,9 +13,7 @@
  */
 import Promise from 'bluebird';
 import _ from 'lodash';
-import moment from 'moment';
 import calculateOverallStatus from './calculate_overall_status';
-import calcAuto from './calculate_auto';
 import createQuery from './create_query.js';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
@@ -23,26 +21,21 @@ export default function getKibanasForClusters(req, indices) {
   if (indices.length < 1) return () => Promise.resolve([]);
 
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
-  const start = moment.utc(req.payload.timeRange.min).valueOf();
-  const end = moment.utc(req.payload.timeRange.max).valueOf();
+  const start = req.payload.timeRange.min;
+  const end = req.payload.timeRange.max;
 
-  const config = req.server.config();
-  const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
-  const duration = moment.duration(end - start, 'ms');
-  const bucketSize = Math.max(minIntervalSeconds, calcAuto.near(100, duration).asSeconds());
-  const lastBucketStart = moment(end).subtract(bucketSize, 'seconds').valueOf();
   return function (clusters) {
     return Promise.map(clusters, cluster => {
       const clusterUuid = cluster.cluster_uuid;
       const metric = ElasticsearchMetric.getMetricFields();
-      const options = {
+      const params = {
         size: 0,
         index: indices,
         ignoreUnavailable: true,
         type: 'kibana_stats',
         body: {
           query: createQuery({
-            start: lastBucketStart,
+            start,
             end,
             uuid: clusterUuid,
             metric
@@ -96,7 +89,7 @@ export default function getKibanasForClusters(req, indices) {
           }
         }
       };
-      return callWithRequest(req, 'search', options)
+      return callWithRequest(req, 'search', params)
       .then(result => {
         const getResultAgg = key => _.get(result, `aggregations.${key}`);
         const kibanaUuids =  getResultAgg('kibana_uuids.buckets');
