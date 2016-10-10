@@ -27,11 +27,17 @@ chrome
     self.loginMessage = xpackInfo.get('features.security.loginMessage', defaultLoginMessage);
     self.infoMessage = get(messageMap, parse($window.location.href, true).query.msg);
     self.isDisabled = !isSecure && secureCookies;
+    self.isLoading = false;
     self.submit = (username, password) => {
+      self.isLoading = true;
       self.error = false;
       $http.post('./api/security/v1/login', {username, password}).then(
         () => $window.location.href = `.${next}`,
-        () => { setupScope(); self.error = true; }
+        () => {
+          setupScope();
+          self.error = true;
+          self.isLoading = false;
+        }
       );
     };
   }
