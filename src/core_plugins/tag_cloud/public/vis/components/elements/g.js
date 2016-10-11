@@ -2,11 +2,12 @@ import d3 from 'd3';
 import _ from 'lodash';
 
 function gGenerator() {
+
   let cssClass = 'group';
   let transform = 'translate(0,0)';
 
   function generator(selection) {
-    selection.each(function (data, index) {
+    selection.each(function (data) {
       let g = d3.select(this).selectAll('g.' + cssClass)
         .data(data);
 

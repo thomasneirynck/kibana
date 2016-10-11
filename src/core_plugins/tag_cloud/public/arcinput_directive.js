@@ -26,7 +26,12 @@ module.directive('arcInput', function ($timeout) {
 
       scope.$on('$destroy', () => {
         $timeout.cancel(resizeTimeout);
-        element[0].firstChild.children[0].removeEventListener(onOrientationChange);
+        try {//gross, but watill be deletd anyway
+          element[0].firstChild.children[0].removeEventListener(onOrientationChange);
+        }catch (e) {
+          console.log('cannot clean up listener');
+        }
+
         onArcChangeHandle.remove();
       });
 

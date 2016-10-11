@@ -309,10 +309,6 @@
     return radians * 180 / Math.PI;
   }
 
-  function normalizeAngle(theta) {
-    return theta - (Math.PI * 2) * Math.floor((theta + Math.PI) / (Math.PI * 2));
-  }
-
   return ArcInput;
 
 }));
