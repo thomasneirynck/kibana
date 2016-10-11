@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import expect from 'expect.js';
-import base from 'plugins/tagcloud/vis/components/layout/layout';
+import {baseLayout} from 'plugins/tagcloud/vis/components/layout/layout';
 
-describe('Layout: base tests', function () {
+describe('Layout: baseLayout tests', function () {
   let data = [{}, {}, {}];
   let size = [300, 300];
 
@@ -11,7 +11,7 @@ describe('Layout: base tests', function () {
     let rowsData;
 
     beforeEach(function () {
-      rows = base().type('rows').size(size);
+      rows = baseLayout().type('rows').size(size);
       rowsData = rows(data);
     });
 
@@ -37,7 +37,7 @@ describe('Layout: base tests', function () {
     let colsData;
 
     beforeEach(function () {
-      cols = base().type('columns').size(size);
+      cols = baseLayout().type('columns').size(size);
       colsData = cols(data);
     });
 
@@ -63,7 +63,7 @@ describe('Layout: base tests', function () {
     let gridData;
 
     beforeEach(function () {
-      grid = base().type('grid').size(size);
+      grid = baseLayout().type('grid').size(size);
       gridData = grid(data);
     });
 

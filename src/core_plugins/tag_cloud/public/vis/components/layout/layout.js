@@ -1,3 +1,4 @@
+import gGenerator from 'plugins/tagcloud/vis/components/elements/g';
 import d3 from 'd3';
 import _ from 'lodash';
 
@@ -24,7 +25,7 @@ function formatType(length, type, cols) {
   return output;
 }
 
-function baseLayout() {
+export function baseLayout() {
   let type = 'grid'; // available types: 'rows', 'columns', 'grid'
   let size = [250, 250]; // [width, height]
   let rowScale = d3.scale.linear();
@@ -58,7 +59,9 @@ function baseLayout() {
           return a;
         }
 
-        if (!datum) { return; }
+        if (!datum) {
+          return;
+        }
 
         // Do not mutate the original data, return a new object
         newData.push(Object.keys(datum).reduce(reduce, obj));
@@ -71,19 +74,25 @@ function baseLayout() {
 
   // Public API
   layout.type = function (v) {
-    if (!arguments.length) { return type; }
+    if (!arguments.length) {
+      return type;
+    }
     type = _.isString(v) ? v : type;
     return layout;
   };
 
   layout.columns = function (v) {
-    if (!arguments.length) { return numOfCols; }
+    if (!arguments.length) {
+      return numOfCols;
+    }
     numOfCols = _.isNumber(v) ? v : numOfCols;
     return layout;
   };
 
   layout.size = function (v) {
-    if (!arguments.length) { return size; }
+    if (!arguments.length) {
+      return size;
+    }
     size = (_.isArray(v) && _.size(v) === 2 && _.all(v, _.isNumber)) ? v : size;
     return layout;
   };
@@ -91,4 +100,41 @@ function baseLayout() {
   return layout;
 }
 
-export default baseLayout;
+function translate(d) {
+  return 'translate(' + d.dx + ',' + d.dy + ')';
+}
+
+export default class LayoutGenerator {
+
+  constructor() {
+    this._layout = baseLayout();
+    this._group = gGenerator();
+  }
+
+  render(selection) {
+
+    var self = this;
+    selection.each(function (data) {
+      self._group
+        .cssClass('chart')
+        .transform(translate);
+
+      d3.select(this)
+        .datum(self._layout(data))
+        .call(self._group);
+    });
+  }
+
+  setType(type) {
+    this._layout(type);
+  };
+
+  setColumns(columns) {
+    this._layout.columns(columns);
+  };
+
+  setSize(size) {
+    this._layout.size(size);
+  };
+
+}

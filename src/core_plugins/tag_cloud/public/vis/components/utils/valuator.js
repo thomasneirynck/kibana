@@ -1,6 +1,11 @@
 import d3 from 'd3';
 import _ from 'lodash';
 
+
+/**
+ * wraps key in a function returning the value for that key
+ * (cf. 'unit'-operation of monadic pattern)
+ */
 function valuator(v) {
   if (_.isFunction(v)) {
     return v;
