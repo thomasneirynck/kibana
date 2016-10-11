@@ -69,7 +69,7 @@ Elasticsearch with X-Pack](#elasticsearch-and-x-pack-from-source).
 
 For developing and testing the plugins, you must run an instance of Elasticsearch with the X-Pack plugin installed.
 
-*NOTE: It's way preferable to use ESVM to handle this. The manual steps here are a manual fallback to ESVM.*
+*NOTE: For development purposes, this method is prefered over using ESVM. Joe created a helpful [build script](https://gist.github.com/w33ble/dd4eebeae5aff3d5adf3) which automates this process. It's worth a look for mac and linux users.*
 
 1. Set your JAVA_HOME variable (on Mac, you can use `export JAVA_HOME=$(/usr/libexec/java_home)`)
 1. Install "gradle" v2.8+ from Homebrew.
