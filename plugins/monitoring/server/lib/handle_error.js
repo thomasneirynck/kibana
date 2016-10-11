@@ -1,21 +1,5 @@
 import Boom from 'boom';
 
-/* 401 is changed to 403 because in user perception, they HAVE provided
- * crendentials for the API.
- * They should see the same message whether they're logged in but
- * insufficient permissions, or they're login is valid for the production
- * connection but not the monitoring connection
- */
-function handle4xx(statusCode) {
-  let message;
-  if (statusCode === 401) {
-    message = 'Invalid authentication for monitoring cluster';
-  } else {
-    message = 'Insufficient user permissions for monitoring data';
-  }
-  return Boom.forbidden(message);
-}
-
 export default function handleError(err, req) {
   const config = req.server.config();
   const loggingTag = config.get('xpack.monitoring.loggingTag');
@@ -23,7 +7,19 @@ export default function handleError(err, req) {
   req.log([loggingTag, 'error'], err);
 
   if (statusCode === 401 || statusCode === 403) {
-    return handle4xx(statusCode);
+    let message;
+    /* 401 is changed to 403 because in user perception, they HAVE provided
+     * crendentials for the API.
+     * They should see the same message whether they're logged in but
+     * insufficient permissions, or they're login is valid for the production
+     * connection but not the monitoring connection
+     */
+    if (statusCode === 401) {
+      message = 'Invalid authentication for monitoring cluster';
+    } else {
+      message = 'Insufficient user permissions for monitoring data';
+    }
+    return Boom.forbidden(message);
   }
 
   if (err.isBoom) return err;
