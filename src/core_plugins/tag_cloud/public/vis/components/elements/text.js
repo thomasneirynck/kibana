@@ -18,7 +18,7 @@ function textGenerator() {
   let textAccessor = function (d) { return d.text; };
 
   function generator(selection) {
-    selection.each(function (data, index) {
+    selection.each(function (data) {
       let text = d3.select(this).selectAll('text.' + cssClass)
         .data(data);
 

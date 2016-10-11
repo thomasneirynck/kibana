@@ -41,6 +41,6 @@ function attrs(generator) {
       return generator;
     };
   };
-};
+}
 
 export default attrs;

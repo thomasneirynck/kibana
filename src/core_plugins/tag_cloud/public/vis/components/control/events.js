@@ -24,12 +24,6 @@ function events() {
   }
 
   // Public API
-  control.processor = function (v) {
-    if (!arguments.length) { return processor; }
-    processor = _.isFunction(v) ? v : processor;
-    return control;
-  };
-
   control.listeners = function (v) {
     if (!arguments.length) { return listeners; }
     listeners = _.isPlainObject(v) ? v : listeners;
@@ -37,6 +31,6 @@ function events() {
   };
 
   return control;
-};
+}
 
 export default events;

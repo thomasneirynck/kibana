@@ -25,7 +25,7 @@ function tagCloud() {
   let maxFontSize = 60;
   let padding = 1;
   let textAccessor = function (d) { return d.text; };
-  let fill = function (d, i) { return colorScale(d.text); };
+  let fill = function (d) { return colorScale(d.text); };
   let fillOpacity = d3.functor(1);
   let textAnchor = d3.functor('middle');
   let textClass = 'tag';

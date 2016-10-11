@@ -14,7 +14,7 @@ function vis() {
   let size = [250, 250];
 
   function generator(selection) {
-    selection.each(function (data) {
+    selection.each(function () {
       events.listeners(listeners);
 
       layout.attr({

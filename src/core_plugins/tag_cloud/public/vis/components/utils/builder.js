@@ -17,6 +17,6 @@ function builder(obj, func) {
   });
 
   return func;
-};
+}
 
 export default builder;

@@ -7,7 +7,7 @@ import angular from 'angular';
 const module = uiModules.get('kibana/tagcloud', ['kibana']);
 
 module.directive('kbnTagCloud', function () {
-  function link(scope, element, attrs) {
+  function link(scope, element) {
 
 
     angular.element(document).ready(function () {

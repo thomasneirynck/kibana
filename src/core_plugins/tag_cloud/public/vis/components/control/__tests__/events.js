@@ -14,7 +14,7 @@ describe('events tests', function () {
     fixture = visFixture();
     events = eventsFunction();
     listeners = {
-      click: [function (e) { console.log(e); }],
+      click: [Function.prototype],
       mouseover: [function (e, d) { return d; }]
     };
     totalListenerCount = Object.keys(listeners).length;
