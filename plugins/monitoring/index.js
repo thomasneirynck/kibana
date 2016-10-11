@@ -24,7 +24,8 @@ export default function monitoringIndex(kibana) {
             minIntervalSeconds: config.get('xpack.monitoring.min_interval_seconds'),
             kbnIndex: config.get('kibana.index'),
             esApiVersion: config.get('elasticsearch.apiVersion'),
-            esShardTimeout: config.get('elasticsearch.shardTimeout')
+            esShardTimeout: config.get('elasticsearch.shardTimeout'),
+            showLicenseExpiration: config.get('xpack.monitoring.show_license_expiration')
           };
         },
       },
@@ -99,6 +100,7 @@ export default function monitoringIndex(kibana) {
         missing_intervals: number().default(12),
         max_bucket_size: number().default(10000),
         min_interval_seconds: number().default(10),
+        show_license_expiration: boolean().default(true),
         report_stats: boolean().default(true),
         node_resolver: string().regex(/^(?:transport_address|name|uuid)$/).default('uuid'),
         stats_report_url: Joi.when('$dev', {

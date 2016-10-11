@@ -75,6 +75,16 @@ class ElasticsearchPanel extends React.Component {
       replicas = formatNumber(replicas, 'int_commas');
     }
 
+    const getLicenseInfo = () => {
+      return (
+        <p className="licenseInfo">
+          Your { _.capitalize(this.props.license.type)
+          } license will expire on <a onClick={ this.goToLicense }> {
+          formatDateLocal(this.props.license.expiry_date) }.</a>
+        </p>
+      );
+    };
+
     return (
       <ClusterItemContainer {...this.props} url='elasticsearch' title='Elasticsearch'>
         <StatusContainer statusPrefix='Cluster' status={this.props.status}/>
@@ -118,11 +128,7 @@ class ElasticsearchPanel extends React.Component {
             </dl>
           </div>
         </div>
-        <p className="licenseInfo">
-          Your { _.capitalize(this.props.license.type)
-          } license will expire on <a onClick={ this.goToLicense }> {
-          formatDateLocal(this.props.license.expiry_date) }.</a>
-        </p>
+        { this.props.showLicenseExpiration ? getLicenseInfo() : '' }
       </ClusterItemContainer>
     );
   }
@@ -195,7 +201,11 @@ class Overview extends React.Component {
     return (
       <div className='monitoring-view'>
         <div className='col-md-6'>
-          <ElasticsearchPanel {...this.state.elasticsearch} license={this.state.license} angularChangeUrl={this.state.angularChangeUrl}/>
+          <ElasticsearchPanel
+            {...this.state.elasticsearch}
+            license={this.state.license}
+            angularChangeUrl={this.state.angularChangeUrl}
+            showLicenseExpiration={this.props.showLicenseExpiration}/>
         </div>
         <div className='col-md-6'>
           <KibanaPanel {...this.state.kibana} angularChangeUrl={this.state.angularChangeUrl}/>
