@@ -13,7 +13,9 @@ uiModule.directive('monitoringShardAllocation', () => {
       view: '@',
       shards: '=',
       nodes: '=',
-      shardStats: '='
+      shardStats: '=',
+      showSystemIndices: '=',
+      toggleShowSystemIndices: '='
     },
     link: (scope) => {
       const isIndexView = scope.view === 'index';
@@ -24,7 +26,7 @@ uiModule.directive('monitoringShardAllocation', () => {
         scope.totalCount = shards.length;
         scope.showing = transformer(scope.shards, scope.nodes);
         if (isIndexView && shards.some((shard) => shard.state === 'UNASSIGNED')) {
-          view += 'WithUnassigned';
+          view = 'indexWithUnassigned';
         }
         scope.labels = labels[view];
       });
