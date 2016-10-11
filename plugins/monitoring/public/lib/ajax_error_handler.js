@@ -1,10 +1,8 @@
-import uiChrome from 'ui/chrome';
-
-export default function ajaxErrorHandlersProvider(Notifier, $window, Promise) {
+export default function ajaxErrorHandlersProvider(Notifier, kbnUrl, Promise) {
   return (err) => {
     if (err.status === 403) {
       /* redirect to error message view */
-      $window.location.href = uiChrome.addBasePath('/app/monitoring#/access-denied');
+      kbnUrl.redirect('access-denied');
     } else {
       const genericNotifier = new Notifier({ location: 'Monitoring' });
       genericNotifier.fatal(err);
