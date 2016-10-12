@@ -2,6 +2,7 @@ import d3 from 'd3';
 import _ from 'lodash';
 
 function gGenerator() {
+
   let cssClass = 'group';
   let transform = 'translate(0,0)';
 

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import expect from 'expect.js';
 import visFixture from 'plugins/tagcloud/vis/components/__tests__/fixtures/vis_fixture';
 import remove from 'plugins/tagcloud/vis/components/__tests__/fixtures/remove';
-import eventsFunction from 'plugins/tagcloud/vis/components/control/events';
+import control from 'plugins/tagcloud/vis/components/control/events';
 
 describe('events tests', function () {
   let totalListenerCount;
@@ -12,7 +12,7 @@ describe('events tests', function () {
 
   beforeEach(function () {
     fixture = visFixture();
-    events = eventsFunction();
+    events = control();
     listeners = {
       click: [Function.prototype],
       mouseover: [function (e, d) { return d; }]

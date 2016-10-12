@@ -51,6 +51,7 @@ module.directive('kbnTagCloud', function () {
       scope.$watch(containerSize, _.debounce(reRender, 250), true);
 
       element.bind('resize', function () {
+        //todo: do we really want to rerender on a resize? (probably not....)
         scope.$apply();
       });
     });
