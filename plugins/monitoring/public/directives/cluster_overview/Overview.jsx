@@ -8,12 +8,13 @@ class ClusterItemContainer extends React.Component {
   render() {
     // Note: kebabCase takes something like 'My Name' and makes it 'my-name', which is ideal for CSS names
     return (
-      <div className="monitoring-element cluster-item panel-product">
-        <h3
-            className={`panel-heading panel-heading-${_.kebabCase(this.props.title)}`}
-            onClick={() => this.props.angularChangeUrl(this.props.url)}>
+      <div className="panel panel-product">
+        <div
+          className={`panel-heading panel-heading--clickable panel-heading-${_.kebabCase(this.props.title)}`}
+          onClick={() => this.props.angularChangeUrl(this.props.url)}
+        >
           {this.props.title}
-        </h3>
+        </div>
         <div className="panel-body">
           {this.props.children}
         </div>
@@ -27,7 +28,7 @@ class StatusContainer extends React.Component {
     const iconClass = statusIconClass(this.props.status);
 
     return (
-      <div className='statusContainer'>
+      <div className='status-container'>
         <span className={`status status-${this.props.status}`}>
           <i className={iconClass} title={`${this.props.statusPrefix}: ${_.capitalize(this.props.status)}`}></i>
         </span> Status
@@ -59,31 +60,15 @@ class BytesPercentageUsage extends React.Component {
 class ElasticsearchPanel extends React.Component {
   constructor(props) {
     super(props);
-    this.goToLicense = () => {
-      props.angularChangeUrl('/license');
-    };
   }
 
   render() {
     const nodes = this.props.stats.nodes;
     const indices = this.props.stats.indices;
-    const formatDateLocal = (input) => {
-      return moment.tz(input, moment.tz.guess()).format('LL');
-    };
     let replicas = _.get(indices, 'shards.replication', 'N/A');
     if (replicas !== 'N/A') {
       replicas = formatNumber(replicas, 'int_commas');
     }
-
-    const getLicenseInfo = () => {
-      return (
-        <p className="licenseInfo">
-          Your { _.capitalize(this.props.license.type)
-          } license will expire on <a onClick={ this.goToLicense }> {
-          formatDateLocal(this.props.license.expiry_date) }.</a>
-        </p>
-      );
-    };
 
     return (
       <ClusterItemContainer {...this.props} url='elasticsearch' title='Elasticsearch'>
@@ -92,7 +77,7 @@ class ElasticsearchPanel extends React.Component {
         <div className='row'>
           <div className='col-md-4'>
             <dl data-test-subj='elasticsearch_overview' data-overview-status={this.props.status}>
-              <dt>
+              <dt className='info-title'>
                 <a onClick={() => this.props.angularChangeUrl('elasticsearch')}>Overview</a>
               </dt>
               <dd>Version: {nodes.versions[0]}</dd>
@@ -102,7 +87,7 @@ class ElasticsearchPanel extends React.Component {
 
           <div className='col-md-4'>
             <dl>
-              <dt>
+              <dt className='info-title'>
                 <a onClick={() => this.props.angularChangeUrl('elasticsearch/nodes')}>
                   Nodes: <span data-test-subj='number_of_elasticsearch_nodes'>{formatNumber(nodes.count.total, 'int_commas')}</span>
                 </a>
@@ -116,7 +101,7 @@ class ElasticsearchPanel extends React.Component {
 
           <div className='col-md-4'>
             <dl>
-              <dt>
+              <dt className='info-title'>
                 <a onClick={() => this.props.angularChangeUrl('elasticsearch/indices')}>
                   Indices: {formatNumber(indices.count, 'int_commas')}
                 </a>
@@ -128,7 +113,6 @@ class ElasticsearchPanel extends React.Component {
             </dl>
           </div>
         </div>
-        { this.props.showLicenseExpiration ? getLicenseInfo() : '' }
       </ClusterItemContainer>
     );
   }
@@ -144,7 +128,7 @@ class KibanaPanel extends React.Component {
         <div className='row'>
           <div className='col-md-4'>
             <dl data-test-subj='kibana_overview' data-overview-status={this.props.status}>
-              <dt>
+              <dt className='info-title'>
                 <a onClick={() => this.props.angularChangeUrl('kibana')}>Overview</a>
               </dt>
               <dd>Requests: {this.props.requests_total}</dd>
@@ -153,7 +137,7 @@ class KibanaPanel extends React.Component {
           </div>
           <div className='col-md-4'>
             <dl>
-              <dt>
+              <dt className='info-title'>
                 <a onClick={() => this.props.angularChangeUrl('kibana/instances')}>
                   Instances: <span data-test-subj='number_of_kibana_instances'>{this.props.count}</span>
                 </a>
@@ -179,6 +163,11 @@ class Overview extends React.Component {
         kbnChangePath(target);
       });
     };
+
+    this.goToLicense = () => {
+      angularChangeUrl('/license');
+    };
+
     this.state = {
       elasticsearch: { ...scope.cluster.elasticsearch },
       kibana: scope.cluster.kibana,
@@ -198,17 +187,39 @@ class Overview extends React.Component {
   }
 
   render() {
+    const getLicenseInfo = () => {
+      const formatDateLocal = (input) => {
+        return moment.tz(input, moment.tz.guess()).format('LL');
+      };
+
+      return (
+        <div className='page-row'>
+          <div className='page-row-text'>
+            Your { _.capitalize(this.state.license.type)
+            } license will expire on <a onClick={ this.goToLicense }> {
+            formatDateLocal(this.state.license.expiry_date) }.</a>
+          </div>
+        </div>
+      );
+    };
+
     return (
       <div className='monitoring-view'>
-        <div className='col-md-6'>
+        {/* General info */}
+        { this.props.showLicenseExpiration ? getLicenseInfo() : '' }
+
+        {/* Elasticsearch info */}
+        <div className='page-row'>
           <ElasticsearchPanel
             {...this.state.elasticsearch}
             license={this.state.license}
             angularChangeUrl={this.state.angularChangeUrl}
-            showLicenseExpiration={this.props.showLicenseExpiration}/>
+          />
         </div>
-        <div className='col-md-6'>
-          <KibanaPanel {...this.state.kibana} angularChangeUrl={this.state.angularChangeUrl}/>
+
+        {/* Kibana info */}
+        <div className='page-row'>
+          <KibanaPanel {...this.state.kibana} angularChangeUrl={this.state.angularChangeUrl} />
         </div>
       </div>
     );
