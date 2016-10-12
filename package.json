@@ -44,7 +44,7 @@
     "yargs": "4.7.1"
   },
   "dependencies": {
-    "@elastic/node-crypto": "0.1.1",
+    "@elastic/node-crypto": "0.1.2",
     "@elastic/datemath": "2.3.0",
     "@elastic/node-horseman": "2.8.4",
     "angular-paging": "2.2.1",
