@@ -37,13 +37,11 @@ function vis() {
 
   // Public API
   generator.options = function (v) {
-    if (!arguments.length) { return opts; }
     opts = _.isPlainObject(v) ? v : opts;
     return generator;
   };
 
   generator.listeners = function (v) {
-    if (!arguments.length) { return listeners; }
     listeners = _.isPlainObject(v) ? v : listeners;
     return generator;
   };
