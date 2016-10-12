@@ -158,12 +158,12 @@ function tagCloud() {
     maxFontSize = v;
     return generator;
   };
-
-  generator.padding = function (v) {
-    if (!arguments.length) { return padding; }
-    padding = v;
-    return generator;
-  };
+  //
+  // generator.padding = function (v) {
+  //   if (!arguments.length) { return padding; }
+  //   padding = v;
+  //   return generator;
+  // };
 
   generator.text = function (v) {
     if (!arguments.length) { return textAccessor; }
@@ -178,17 +178,17 @@ function tagCloud() {
     return generator;
   };
 
-  generator.fill = function (v) {
-    if (!arguments.length) { return fill; }
-    fill = v;
-    return generator;
-  };
+  // generator.fill = function (v) {
+  //   if (!arguments.length) { return fill; }
+  //   fill = v;
+  //   return generator;
+  // };
 
-  generator.fillOpacity = function (v) {
-    if (!arguments.length) { return fillOpacity; }
-    fillOpacity = v;
-    return generator;
-  };
+  // generator.fillOpacity = function (v) {
+  //   if (!arguments.length) { return fillOpacity; }
+  //   fillOpacity = v;
+  //   return generator;
+  // };
 
   generator.textAnchor = function (v) {
     if (!arguments.length) { return textAnchor; }
@@ -196,11 +196,11 @@ function tagCloud() {
     return generator;
   };
 
-  generator.textClass = function (v) {
-    if (!arguments.length) { return textClass; }
-    textClass = v;
-    return generator;
-  };
+  // generator.textClass = function (v) {
+  //   if (!arguments.length) { return textClass; }
+  //   textClass = v;
+  //   return generator;
+  // };
 
   return generator;
 }
