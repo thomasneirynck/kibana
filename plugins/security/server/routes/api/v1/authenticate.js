@@ -16,7 +16,7 @@ export default (server) => {
       const {username, password} = request.payload;
       return isValidUser(request, username, password).then((response) => {
         // Initialize the session
-        request.auth.session.set({
+        request.cookieAuth.set({
           username,
           password,
           expires: calculateExpires()
@@ -24,7 +24,7 @@ export default (server) => {
 
         return reply(response);
       }, (error) => {
-        request.auth.session.clear();
+        request.cookieAuth.clear();
         return reply(Boom.unauthorized(error));
       });
     },
@@ -43,7 +43,7 @@ export default (server) => {
     method: 'POST',
     path: '/api/security/v1/logout',
     handler(request, reply) {
-      request.auth.session.clear();
+      request.cookieAuth.clear();
       return reply().code(204);
     },
     config: {

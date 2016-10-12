@@ -12,8 +12,8 @@ describe('On change password', () => {
 
   beforeEach(() => {
     request = {
+      cookieAuth: {set: sinon.spy()},
       auth: {
-        session: {set: sinon.spy()},
         credentials: {username}
       }
     };
@@ -26,13 +26,13 @@ describe('On change password', () => {
   it('should update the session if changing the password of the current user', () => {
     onChangePassword(request, username, password, calculateExpires, reply)();
 
-    sinon.assert.calledOnce(request.auth.session.set);
-    sinon.assert.calledWith(request.auth.session.set, {username, password, expires});
+    sinon.assert.calledOnce(request.cookieAuth.set);
+    sinon.assert.calledWith(request.cookieAuth.set, {username, password, expires});
   });
 
   it('should not update the session if changing the password of a user other than the current user', () => {
     onChangePassword(request, 'kibana', password, calculateExpires, reply)();
 
-    sinon.assert.notCalled(request.auth.session.set);
+    sinon.assert.notCalled(request.cookieAuth.set);
   });
 });
