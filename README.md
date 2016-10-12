@@ -72,7 +72,7 @@ For developing and testing the plugins, you must run an instance of Elasticsearc
 *NOTE: For development purposes, this method is prefered over using ESVM. Joe created a helpful [build script](https://gist.github.com/w33ble/dd4eebeae5aff3d5adf3) which automates this process. It's worth a look for mac and linux users.*
 
 1. Set your JAVA_HOME variable (on Mac, you can use `export JAVA_HOME=$(/usr/libexec/java_home)`)
-1. Install "gradle" v2.8+ from Homebrew.
+1. Install "gradle" from Homebrew (use the [version specified by Elasticsearch](https://github.com/elastic/elasticsearch/blob/master/README.textile#building-from-source), currently 2.13).
 1. Create a directory called `es-build` and clone elasticsearch and x-plugins into it.
 
     ```
