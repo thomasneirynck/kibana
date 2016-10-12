@@ -1,5 +1,6 @@
 import numeral from 'numeral';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Table from 'plugins/monitoring/directives/paginated_table/components/table';
 import uiModules from 'ui/modules';
 
@@ -68,7 +69,7 @@ function indexRowFactory(scope, kbnUrl) {
       return (
         <tr key={name} className={this.props.status}>
           <td>
-            <a onClick={this.changePath}>{name}</a>
+            <a className='link' onClick={this.changePath}>{name}</a>
           </td>
           <td>{docCount}</td>
           <td>{indexSize}</td>
@@ -137,7 +138,7 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
         filterMembers: [<ShowSystemIndicesComponent showSystemIndices={scope.showSystemIndices}/>],
         template: IndexRow
       });
-      const tableInstance = React.render($table, $el[0]);
+      const tableInstance = ReactDOM.render($table, $el[0]);
       scope.resetPaging = () => {
         tableInstance.setCurrPage(0);
       };

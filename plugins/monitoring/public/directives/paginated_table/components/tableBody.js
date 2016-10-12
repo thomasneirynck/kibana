@@ -30,8 +30,10 @@ export default React.createClass({
     var paginatedData = sortedData.slice(start, end);
     var template = React.createFactory(this.props.template);
 
-    var createRow = function (row, idx) {
-      return template(row, idx);
+    var createRow = function (data, idx) {
+      // each child in the array needs a unique "key" prop
+      data.key = `paginated-table-row-${idx}`;
+      return template(data, idx);
     };
 
     // Draw the data

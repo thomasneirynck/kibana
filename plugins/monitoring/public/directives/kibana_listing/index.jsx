@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import numeral from 'numeral';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import statusIconClass from '../../lib/status_icon_class';
 import Table from 'plugins/monitoring/directives/paginated_table/components/table';
 import uiModules from 'ui/modules';
@@ -76,7 +77,7 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
           return (
             <tr key={`row-${this.props.resolver}`} className='big'>
               <td>
-                <a onClick={() => {
+                <a className='link' onClick={() => {
                   scope.$evalAsync(() => {
                     kbnUrl.changePath('/kibana/instances/' + _.get(this.props, 'kibana.uuid'));
                   });
@@ -118,7 +119,7 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
         options: initialTableOptions,
         template: tableRowTemplate
       });
-      const tableInstance = React.render($table, $el[0]);
+      const tableInstance = ReactDOM.render($table, $el[0]);
       scope.$watch('rows', function (rows) {
         tableInstance.setData(rows);
       });

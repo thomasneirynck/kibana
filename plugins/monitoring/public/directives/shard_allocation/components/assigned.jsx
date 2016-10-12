@@ -49,15 +49,13 @@ export default React.createClass({
     };
 
     var name = (
-      <a onClick={ changeUrl }>
+      <a onClick={ changeUrl } className='link'>
         <span>{ data.name }</span>
       </a>
     );
     var master;
     if (data.node_type === 'master') {
-      master = (
-        <i className="fa fa-star"></i>
-      );
+      master = <i className="fa fa-star"></i>;
     }
     var shards = _.sortBy(data.children, 'shard').map(this.createShard);
     return (

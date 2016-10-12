@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Overview from './Overview';
 import uiModules from 'ui/modules';
 
@@ -8,7 +9,7 @@ uiModule.directive('monitoringClusterOverview', function (kbnUrl, showLicenseExp
     restrict: 'E',
     scope: { cluster: '=' },
     link: function (scope, element) {
-      React.render(
+      ReactDOM.render(
         <Overview
           scope={scope}
           kbnUrl={kbnUrl}

@@ -54,7 +54,7 @@ to enjoy multi-cluster monitoring.`
   getClusterAction() {
     if (this.checkSupported()) {
       return (
-        <a className='clusterName' onClick={this.changeCluster()}>
+        <a className='clusterName link' onClick={this.changeCluster()}>
           { this.props.cluster_name } &nbsp;
           { this.props.isPrimary ?
             <i className="fa fa-asterisk primary-cluster-indicator" title="Kibana uses this cluster as the primary connection"></i> :
@@ -66,13 +66,13 @@ to enjoy multi-cluster monitoring.`
     // not supported because license is basic/not compatible with multi-cluster
     if (this.props.license) {
       return (
-        <a className='clusterName' onClick={this.handleClickIncompatibleLicense()}>{ this.props.cluster_name }</a>
+        <a className='clusterName link' onClick={this.handleClickIncompatibleLicense()}>{ this.props.cluster_name }</a>
       );
     }
 
     // not supported because license is invalid
     return (
-      <a className='clusterName' onClick={this.handleClickInvalidLicense()}>{ this.props.cluster_name }</a>
+      <a className='clusterName link' onClick={this.handleClickInvalidLicense()}>{ this.props.cluster_name }</a>
     );
   }
 
@@ -104,7 +104,7 @@ to enjoy multi-cluster monitoring.`
 
     // there is no license!
     return (
-      <div className="license" onClick={this.handleClickInvalidLicense()}>
+      <div className='license link' onClick={this.handleClickInvalidLicense()}>
         N/A
       </div>
     );

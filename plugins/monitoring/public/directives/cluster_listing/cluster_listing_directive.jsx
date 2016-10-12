@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import Table from 'plugins/monitoring/directives/paginated_table/components/table';
 import ClusterRow from './components/cluster_row.jsx';
 import Notifier from 'ui/notify/notifier';
@@ -54,7 +55,7 @@ uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl, sh
         ]
       };
 
-      var table = React.render(<Table
+      var table = ReactDOM.render(<Table
         scope={ $scope }
         template={ ClusterRow }
         options={ options }/>, $el[0]);

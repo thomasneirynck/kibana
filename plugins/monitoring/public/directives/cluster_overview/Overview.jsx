@@ -78,7 +78,7 @@ class ElasticsearchPanel extends React.Component {
           <div className='col-md-4'>
             <dl data-test-subj='elasticsearch_overview' data-overview-status={this.props.status}>
               <dt className='info-title'>
-                <a onClick={() => this.props.angularChangeUrl('elasticsearch')}>Overview</a>
+                <a className='link' onClick={() => this.props.angularChangeUrl('elasticsearch')}>Overview</a>
               </dt>
               <dd>Version: {nodes.versions[0]}</dd>
               <dd>Uptime: {formatNumber(nodes.jvm.max_uptime_in_millis, 'time_since')}</dd>
@@ -88,7 +88,7 @@ class ElasticsearchPanel extends React.Component {
           <div className='col-md-4'>
             <dl>
               <dt className='info-title'>
-                <a onClick={() => this.props.angularChangeUrl('elasticsearch/nodes')}>
+                <a className='link' onClick={() => this.props.angularChangeUrl('elasticsearch/nodes')}>
                   Nodes: <span data-test-subj='number_of_elasticsearch_nodes'>{formatNumber(nodes.count.total, 'int_commas')}</span>
                 </a>
               </dt>
@@ -102,7 +102,7 @@ class ElasticsearchPanel extends React.Component {
           <div className='col-md-4'>
             <dl>
               <dt className='info-title'>
-                <a onClick={() => this.props.angularChangeUrl('elasticsearch/indices')}>
+                <a className='link' onClick={() => this.props.angularChangeUrl('elasticsearch/indices')}>
                   Indices: {formatNumber(indices.count, 'int_commas')}
                 </a>
               </dt>
@@ -129,7 +129,7 @@ class KibanaPanel extends React.Component {
           <div className='col-md-4'>
             <dl data-test-subj='kibana_overview' data-overview-status={this.props.status}>
               <dt className='info-title'>
-                <a onClick={() => this.props.angularChangeUrl('kibana')}>Overview</a>
+                <a className='link' onClick={() => this.props.angularChangeUrl('kibana')}>Overview</a>
               </dt>
               <dd>Requests: {this.props.requests_total}</dd>
               <dd>Max. Response Time: {this.props.response_time_max} ms</dd>
@@ -138,7 +138,7 @@ class KibanaPanel extends React.Component {
           <div className='col-md-4'>
             <dl>
               <dt className='info-title'>
-                <a onClick={() => this.props.angularChangeUrl('kibana/instances')}>
+                <a className='link' onClick={() => this.props.angularChangeUrl('kibana/instances')}>
                   Instances: <span data-test-subj='number_of_kibana_instances'>{this.props.count}</span>
                 </a>
               </dt>
@@ -196,7 +196,7 @@ class Overview extends React.Component {
         <div className='page-row'>
           <div className='page-row-text'>
             Your { _.capitalize(this.state.license.type)
-            } license will expire on <a onClick={ this.goToLicense }> {
+            } license will expire on <a className='link' onClick={ this.goToLicense }> {
             formatDateLocal(this.state.license.expiry_date) }.</a>
           </div>
         </div>

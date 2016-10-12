@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import ReactDOM from 'react-dom';
 import MetricCell from './MetricCell';
 import OfflineCell from './OfflineCell';
 import statusIconClass from '../../lib/status_icon_class';
@@ -43,16 +44,16 @@ function nodeRowFactory(scope, kbnUrl, decorateRow) {
       const status = getStatus(this.state.status);
       const isOnline = checkOnline(status);
       return (
-        <tr key={`row-${this.state.resolver}`} className='big'>
-          <td key={`name-${this.state.resolver}`}>
+        <tr className='big'>
+          <td>
             <i title={this.state.node.nodeTypeLabel} className={`fa ${this.state.node.nodeTypeClass}`}/>
             &nbsp;
-            <a onClick={this.goToNode}>
+            <a className='link' onClick={this.goToNode}>
               {this.state.node.name}
             </a>
             <div className='small'>{extractIp(this.state.node.transport_address)}</div>
           </td>
-          <td status={`name-${this.state.resolver}`}>
+          <td>
             <span className={`status status-${status}`}>
               <i className={statusIconClass(status)} title={_.capitalize(status)}/>
             </span>
@@ -64,14 +65,14 @@ function nodeRowFactory(scope, kbnUrl, decorateRow) {
           {(() => {
             if (isOnline) {
               return (
-                <td shards={`name-${this.state.resolver}`}>
+                <td>
                   <div className='big inline'>
                     {this.state.metrics.shard_count}
                   </div>
                 </td>
               );
             }
-            return <OfflineCell key='shards'/>;
+            return <OfflineCell/>;
           }())}
         </tr>
       );
@@ -154,7 +155,7 @@ uiModule.directive('monitoringNodesListing', function (kbnUrl) {
         options: initialTableOptions,
         template: NodeRow
       });
-      const tableInstance = React.render($table, $el[0]);
+      const tableInstance = ReactDOM.render($table, $el[0]);
       scope.$watch('rows', (rows) => {
         tableInstance.setData(rows.map((row) => decorateRow(row)));
       });

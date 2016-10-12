@@ -8,7 +8,7 @@ const ItemsPerPageLink = React.createClass({
     this.props.setItemsPerPage(this.props.choice);
   },
   render() {
-    return <span onClick={this.handleClick}>{this.props.choice}</span>;
+    return <span className='link' onClick={this.handleClick}>{this.props.choice}</span>;
   }
 });
 
@@ -34,16 +34,18 @@ const ItemsPerPageSet = React.createClass({
     itemsPerPageChoices.forEach((choice, idx) => {
       if (idx !== 0) {
         // add a vertical line separator before every non-first choice
-        itemsPerPageLinks.push(<span> | </span>);
+        itemsPerPageLinks.push(<span key={`table-page-link-item-${idx}`}> | </span>);
       }
-      itemsPerPageLinks.push(<ItemsPerPageLink
-        setItemsPerPage={this.props.setItemsPerPage}
-        choice={choice}/>);
+      itemsPerPageLinks.push(
+        <ItemsPerPageLink setItemsPerPage={this.props.setItemsPerPage} choice={choice} key={`table-page-items-per-${idx}`}/>
+      );
     });
 
-    return <div className='pull-right items-per-page'>
+    return (
+      <div className='pull-right items-per-page'>
         {itemsPerPageLinks}
-      </div>;
+      </div>
+    );
   }
 });
 
@@ -56,9 +58,11 @@ const Chevron = React.createClass({
     }
   },
   render() {
-    return <li onClick={this.scrollRightOrLeft}>
+    return (
+      <a onClick={this.scrollRightOrLeft} className='link'>
         <i className={`fa fa-chevron-${this.props.direction}`} />
-      </li>;
+      </a>
+    );
   }
 });
 
@@ -69,9 +73,11 @@ const PageLink = React.createClass({
   },
   render() {
     const currentClass = this.props.isCurrent ? 'current' : '';
-    return <li onClick={this.goToPage} className={currentClass}>
+    return (
+      <a onClick={this.goToPage} className={`${currentClass} link`}>
         {this.props.pageIdx}
-      </li>;
+      </a>
+    );
   }
 });
 
@@ -86,7 +92,7 @@ const Ellipsis = React.createClass({
   },
   render() {
     // HTML entity for ellipsis
-    return <li onClick={this.scrollList}>&hellip;</li>;
+    return <a onClick={this.scrollList} className='link'>&hellip;</a>;
   }
 });
 
@@ -167,17 +173,19 @@ export default React.createClass({
       }
     }
 
-    let pagination = <ul className='pagination'></ul>;
+    let pagination = <div className='pagination'></div>;
     if (numPages > 1) {
-      pagination = <ul className='pagination'>
-        {chevronLeft}
-        {jumpStart}
-        {ellipsisLeft}
-        {pageLinks}
-        {ellipsisRight}
-        {jumpEnd}
-        {chevronRight}
-      </ul>;
+      pagination = (
+        <div className='pagination'>
+          {chevronLeft}
+          {jumpStart}
+          {ellipsisLeft}
+          {pageLinks}
+          {ellipsisRight}
+          {jumpEnd}
+          {chevronRight}
+        </div>
+      );
     }
     // markup that ties sub-components together
     return <div className='footer'>

@@ -16,6 +16,7 @@
  */
 
 import React from 'react';
+import ReactDOM from 'react-dom';
 import ClusterView from 'plugins/monitoring/directives/shard_allocation/components/clusterView';
 import uiModules from 'ui/modules';
 
@@ -33,7 +34,7 @@ uiModule.directive('clusterView', function (kbnUrl) {
       toggleShowSystemIndices: '='
     },
     link: function (scope, element) {
-      React.render(
+      ReactDOM.render(
         <ClusterView
           scope={scope}
           kbnUrl={kbnUrl}
