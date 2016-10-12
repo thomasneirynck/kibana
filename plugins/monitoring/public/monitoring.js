@@ -12,6 +12,7 @@ import 'plugins/monitoring/services/executor';
 import 'plugins/monitoring/services/license';
 import 'plugins/monitoring/services/title';
 import 'plugins/monitoring/views/no_data/no_data_controller';
+import 'plugins/monitoring/views/access_denied/access_denied_controller';
 import 'plugins/monitoring/views/license';
 import 'plugins/monitoring/views/clusters/listing_controller';
 import 'plugins/monitoring/views/clusters/overview_controller';

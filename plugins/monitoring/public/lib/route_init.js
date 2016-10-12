@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
+import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
 
 export default function routeInitProvider(Private, monitoringClusters, globalState, license, kbnUrl) {
   const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
@@ -59,6 +59,6 @@ export default function routeInitProvider(Private, monitoringClusters, globalSta
 
       return clusters;
     })
-    .catch(ajaxErrorHandlers.fatalError);
+    .catch(ajaxErrorHandlers);
   };
 };

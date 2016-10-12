@@ -1,5 +1,5 @@
 import uiModules from 'ui/modules';
-import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
+import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
 
 const uiModule = uiModules.get('monitoring/clusters');
 uiModule.service('monitoringClusters', (timefilter, $http, Private) => {
@@ -15,7 +15,7 @@ uiModule.service('monitoringClusters', (timefilter, $http, Private) => {
     .then(response => response.data)
     .catch(err => {
       const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
-      return ajaxErrorHandlers.fatalError(err);
+      return ajaxErrorHandlers(err);
     });
   };
 });

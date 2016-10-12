@@ -4,7 +4,7 @@
 import { find } from 'lodash';
 import uiRoutes from'ui/routes';
 import uiModules from 'ui/modules';
-import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
+import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
 import template from 'plugins/monitoring/views/kibana/overview/overview_template.html';
 
@@ -31,7 +31,7 @@ function getPageData(timefilter, globalState, $http, Private) {
   .then(response => response.data)
   .catch((err) => {
     const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
-    return ajaxErrorHandlers.fatalError(err);
+    return ajaxErrorHandlers(err);
   });
 }
 

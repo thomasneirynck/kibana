@@ -5,7 +5,7 @@ import _ from 'lodash';
 import uiRoutes from 'ui/routes';
 import uiModules from 'ui/modules';
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
-import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handlers';
+import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
 import template from 'plugins/monitoring/views/elasticsearch/index/index_template.html';
 
 uiRoutes.when('/elasticsearch/indices/:index', {
@@ -49,7 +49,7 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
   .then(response => response.data)
   .catch((err) => {
     const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
-    return ajaxErrorHandlers.fatalError(err);
+    return ajaxErrorHandlers(err);
   });
 }
 
