@@ -1,6 +1,6 @@
 import d3 from 'd3';
 import _ from 'lodash';
-import tagCloud from 'plugins/tagcloud/vis/tag_cloud';
+import TagCloudVisualization from 'plugins/tagcloud/vis/tag_cloud';
 import uiModules from 'ui/modules';
 import angular from 'angular';
 
@@ -22,7 +22,7 @@ module.directive('kbnTagCloud', function () {
       //todo: this seems cheap, the element should alwaye readys b
       angular.element(document).ready(function () {
 
-        const tagCloudVis = tagCloud();
+        const tagCloudVis = new TagCloudVisualization();
         const svgContainer = d3.select(element[0]);
 
 
@@ -34,13 +34,13 @@ module.directive('kbnTagCloud', function () {
           opts = opts || {};
           eventListeners = eventListeners || {};
 
-          tagCloudVis.options(opts)
-            .listeners(eventListeners)
-            .size(containerSize());
+          tagCloudVis.setOptions(opts);
+          tagCloudVis.setListeners(eventListeners);
+          tagCloudVis.setSize(containerSize());
 
           if (data) {
-            svgContainer.datum(data).call(tagCloudVis);
-            // tagCloudVis(svgContainer.datum(data));
+            // svgContainer.datum(data).call(tagCloudVis);
+            tagCloudVis.render(svgContainer.datum(data));
           }
         }
 

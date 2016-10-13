@@ -68,15 +68,6 @@ function makeTagCloud() {
         .textAnchor(textAnchor);
 
 
-
-      // console.log('translating', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
-
-      if (width < 1 || height < 1) {
-        debugger;
-        return;
-      }
-
-
       let group = gGenerator()
         .cssClass('tags')
         .transform('translate(' + (width > 0 ? width / 2 : 1) + ',' + (height > 0 ? height / 2 : 1) + ')');
@@ -133,8 +124,7 @@ function makeTagCloud() {
       return width;
     }
     console.log('set width', v);
-    if (!v){
-      debugger;
+    if (!v) {
       return generator;
     }
     width = v;
@@ -146,8 +136,7 @@ function makeTagCloud() {
       return height;
     }
     console.log('set height', v);
-    if (!v){
-      debugger;
+    if (!v) {
       return generator;
     }
     height = v;
@@ -299,68 +288,54 @@ function tagCloudGenerator() {
 }
 
 
-function tagCloudVisualization() {
+export default class TagCloudVisualization {
 
+  constructor() {
+    this._events = control();
+    this._layout = layoutGenerator();
+    this._tagCloud = tagCloudGenerator();
+    this._opts = {};
+    this._listeners = {};
+    this._size = [250, 250];
+  }
 
-  console.log('new tag cloud vis');
-  let events = control();
-  let layout = layoutGenerator();
-  let tagCloud = tagCloudGenerator();
-  let opts = {};
-  let listeners = {};
-  let size = [250, 250];
-
-  function generator(selection) {
+  render(selection) {
 
     console.log('dump it in da thing');
-
-    selection.each(function () {
+    var self = this;
+    selection.each(function () {//cannot use anonymous function, d3 needs the special d3-provided `this` scope.
 
       //todo: there is no reason we should expect multiple data here, but somehow we do....
-      events.listeners(listeners);
-
-      layout.attr({
-        type: opts.layout || 'grid',
-        columns: opts.numOfColumns || 0,
-        size: size
+      self._events.listeners(self._listeners);
+      self._layout.attr({
+        type: self._opts.layout || 'grid',
+        columns: self._opts.numOfColumns || 0,
+        size: self._size
       });
 
-      tagCloud.options(opts);
+      self._tagCloud.options(self._opts);
 
       const groupSelection = d3.select(this)
         .attr('width', '100%')
-        .attr('height', size[1])
-        .call(events)
-        .call(layout)
+        .attr('height', self._size[1])
+        .call(self._events)
+        .call(self._layout)
         .selectAll('g.chart');
 
-      // events(groupSelection);
-      // layout(groupSelection);
-      // groupSelection.selectAll('g.chart');
-
-
-      tagCloud(groupSelection);
+      self._tagCloud(groupSelection);
     });
   }
 
-  // Public API
-  generator.options = function (v) {
-    opts = _.isPlainObject(v) ? v : opts;
-    return generator;
-  };
+  setOptions(v) {
+    this._opts = _.isPlainObject(v) ? v : this._opts;
+  }
 
-  generator.listeners = function (v) {
-    listeners = _.isPlainObject(v) ? v : listeners;
-    return generator;
-  };
+  setListeners(v) {
+    this._listeners = _.isPlainObject(v) ? v : this._listeners;
+  }
 
-  generator.size = function (v) {
-    if (!arguments.length) { return size; }
-    size = (_.isArray(v) && _.size(v) === 2) ? v : size;
-    return generator;
-  };
+  setSize(v) {
+    this._size = (_.isArray(v) && _.size(v) === 2) ? v : this._size;
+  }
 
-  return generator;
-}
-
-export default tagCloudVisualization;
+};
