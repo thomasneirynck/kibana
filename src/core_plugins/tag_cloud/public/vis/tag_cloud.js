@@ -244,56 +244,11 @@ function makeTagCloud() {
   return generator;
 }
 
-
-function tagCloudGenerator() {
-
-  console.log('intialize visualization module');
-  let options = {};
-
-  function generator(selection) {
-
-    console.log('layout the tag cloud', selection);
-
-    selection.each(function (data) {
-      console.log('data', data);
-
-      const dataOpts = (data && data.options) || {};
-      const accessor = options.accessor || dataOpts.accessor || 'tags';
-      const tagCloud = makeTagCloud()
-        .width(data.width)
-        .height(data.height)
-        .accessor(accessor);
-
-      builder(options, tagCloud);
-      builder(dataOpts, tagCloud);
-
-      console.log('drawing the chart');
-      // d3.select(this).call(tagCloud); // Draw Chart
-      tagCloud(d3.select(this));
-    });
-  }
-
-  // Public API
-  generator.options = function (v) {
-    if (!arguments.length) {
-      console.log('get the options: ', arguments);
-      return options;
-    }
-    console.log('set te options');
-    options = _.isPlainObject(v) && !_.isArray(v) ? v : options;
-    return generator;
-  };
-
-  return generator;
-}
-
-
 export default class TagCloudVisualization {
 
   constructor() {
     this._events = control();
     this._layout = layoutGenerator();
-    this._tagCloud = tagCloudGenerator();
     this._opts = {};
     this._listeners = {};
     this._size = [250, 250];
@@ -301,7 +256,6 @@ export default class TagCloudVisualization {
 
   render(selection) {
 
-    console.log('dump it in da thing');
     var self = this;
     selection.each(function () {//cannot use anonymous function, d3 needs the special d3-provided `this` scope.
 
@@ -313,8 +267,6 @@ export default class TagCloudVisualization {
         size: self._size
       });
 
-      self._tagCloud.options(self._opts);
-
       const groupSelection = d3.select(this)
         .attr('width', '100%')
         .attr('height', self._size[1])
@@ -322,7 +274,22 @@ export default class TagCloudVisualization {
         .call(self._layout)
         .selectAll('g.chart');
 
-      self._tagCloud(groupSelection);
+      groupSelection.each(function (data) {
+
+        const dataOpts = (data && data.options) || {};
+        const accessor = self._opts.accessor || dataOpts.accessor || 'tags';
+        const tagCloud = makeTagCloud()
+          .width(data.width)
+          .height(data.height)
+          .accessor(accessor);
+
+        builder(self._opts, tagCloud);
+        builder(dataOpts, tagCloud);
+
+        console.log('drawing the chart');
+        tagCloud(d3.select(this));
+      });
+
     });
   }
 
