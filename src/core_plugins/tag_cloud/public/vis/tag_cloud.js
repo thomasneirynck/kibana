@@ -54,8 +54,8 @@ function makeTagCloud() {
 
     selection.each(function (data, index) {
 
-      // let tags = accessor.call(this, data, index);
-      let tags = data[index].tags;
+      let tags = accessor.call(this, data, index);
+      // let tags = data[index].tags;
       console.log('tags', tags);
 
       let text = textElement()
@@ -71,10 +71,15 @@ function makeTagCloud() {
 
       // console.log('translating', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
 
+      if (width < 1 || height < 1) {
+        debugger;
+        return;
+      }
+
 
       let group = gGenerator()
         .cssClass('tags')
-        .transform('translate(' + (width > 0 ? width / 2 : 0) + ',' + (height > 0 ? height / 2 : 0) + ')');
+        .transform('translate(' + (width > 0 ? width / 2 : 1) + ',' + (height > 0 ? height / 2 : 1) + ')');
 
       let g = d3.select(this)
         .datum([data])
@@ -128,6 +133,10 @@ function makeTagCloud() {
       return width;
     }
     console.log('set width', v);
+    if (!v){
+      debugger;
+      return generator;
+    }
     width = v;
     return generator;
   };
@@ -137,6 +146,10 @@ function makeTagCloud() {
       return height;
     }
     console.log('set height', v);
+    if (!v){
+      debugger;
+      return generator;
+    }
     height = v;
     return generator;
   };
@@ -316,12 +329,14 @@ function tagCloudVisualization() {
 
       const groupSelection = d3.select(this)
         .attr('width', '100%')
-        .attr('height', size[1]);
+        .attr('height', size[1])
+        .call(events)
+        .call(layout)
+        .selectAll('g.chart');
 
-      events(groupSelection);
-      layout(groupSelection);
-
-      groupSelection.selectAll('g.chart');
+      // events(groupSelection);
+      // layout(groupSelection);
+      // groupSelection.selectAll('g.chart');
 
 
       tagCloud(groupSelection);
