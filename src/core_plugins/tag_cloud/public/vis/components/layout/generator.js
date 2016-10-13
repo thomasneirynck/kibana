@@ -9,6 +9,9 @@ function layoutGenerator() {
   let group = gGenerator();
 
   function generator(selection) {
+
+    console.log('layour generator generate');
+
     selection.each(function (data) {
       group.cssClass('chart')
         .transform(function (d) {

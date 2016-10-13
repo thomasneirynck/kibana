@@ -1,6 +1,6 @@
 import d3 from 'd3';
 import _ from 'lodash';
-import visGenerator from 'plugins/tagcloud/vis/index';
+import tagCloud from 'plugins/tagcloud/vis/tag_cloud';
 import uiModules from 'ui/modules';
 import angular from 'angular';
 
@@ -19,10 +19,9 @@ module.directive('kbnTagCloud', function () {
     replace: 'true',
     link: function (scope, element) {
 
-
       angular.element(document).ready(function () {
 
-        const tagCloudVis = visGenerator();
+        const tagCloudVis = tagCloud();
         const svgContainer = d3.select(element[0]);
 
 
@@ -63,6 +62,7 @@ module.directive('kbnTagCloud', function () {
 
         element.bind('resize', function () {
           //todo: do we really want to rerender on a resize? (probably not....)
+          console.log('reszigin...');
           scope.$apply();
         });
       });

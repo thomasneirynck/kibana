@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 
 /**
- * wraps value in a function returning the p
+ * wraps key in a function returning the value for that key
  * (cf. 'unit'-operation of monadic pattern)
  */
 function valuator(v) {
