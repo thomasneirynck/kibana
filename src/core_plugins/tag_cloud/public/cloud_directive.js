@@ -19,6 +19,7 @@ module.directive('kbnTagCloud', function () {
     replace: 'true',
     link: function (scope, element) {
 
+      //todo: this seems cheap, the element should alwaye readys b
       angular.element(document).ready(function () {
 
         const tagCloudVis = tagCloud();
@@ -39,6 +40,7 @@ module.directive('kbnTagCloud', function () {
 
           if (data) {
             svgContainer.datum(data).call(tagCloudVis);
+            // tagCloudVis(svgContainer.datum(data));
           }
         }
 
@@ -62,6 +64,7 @@ module.directive('kbnTagCloud', function () {
 
         element.bind('resize', function () {
           //todo: do we really want to rerender on a resize? (probably not....)
+          //basically, if the data doesn't change, we only want to reposition
           console.log('reszigin...');
           scope.$apply();
         });

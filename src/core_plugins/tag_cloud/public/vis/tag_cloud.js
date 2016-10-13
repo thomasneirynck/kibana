@@ -54,7 +54,9 @@ function makeTagCloud() {
 
     selection.each(function (data, index) {
 
-      let tags = accessor.call(this, data, index);
+      // let tags = accessor.call(this, data, index);
+      let tags = data[index].tags;
+      console.log('tags', tags);
 
       let text = textElement()
         .cssClass(textClass)
@@ -65,9 +67,14 @@ function makeTagCloud() {
         .fillOpacity(fillOpacity)
         .textAnchor(textAnchor);
 
+
+
+      // console.log('translating', 'translate(' + (width / 2) + ',' + (height / 2) + ')');
+
+
       let group = gGenerator()
         .cssClass('tags')
-        .transform('translate(' + (width / 2) + ',' + (height / 2) + ')');
+        .transform('translate(' + (width > 0 ? width / 2 : 0) + ',' + (height > 0 ? height / 2 : 0) + ')');
 
       let g = d3.select(this)
         .datum([data])
@@ -83,6 +90,7 @@ function makeTagCloud() {
         .range([minFontSize, maxFontSize]);
 
       function draw(tags) {
+        console.log('tags', tags);
         g.select('g.' + group.cssClass())
           .datum(tags)
           .call(text);
@@ -115,9 +123,11 @@ function makeTagCloud() {
   };
 
   generator.width = function (v) {
+
     if (!arguments.length) {
       return width;
     }
+    console.log('set width', v);
     width = v;
     return generator;
   };
@@ -126,6 +136,7 @@ function makeTagCloud() {
     if (!arguments.length) {
       return height;
     }
+    console.log('set height', v);
     height = v;
     return generator;
   };
@@ -242,6 +253,7 @@ function tagCloudGenerator() {
     console.log('layout the tag cloud', selection);
 
     selection.each(function (data) {
+      console.log('data', data);
 
       const dataOpts = (data && data.options) || {};
       const accessor = options.accessor || dataOpts.accessor || 'tags';
