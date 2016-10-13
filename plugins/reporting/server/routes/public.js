@@ -26,6 +26,18 @@ module.exports = function (server) {
     };
   };
 
+  // show error about method to user
+  server.route({
+    path: `${mainEntry}/{p*}`,
+    method: 'GET',
+    handler: (request, reply) => {
+      const err = boom.methodNotAllowed('GET is not allowed');
+      err.output.headers.allow = 'POST';
+      reply(err);
+    },
+    config: getConfig(),
+  });
+
   // defined the public routes
   server.route({
     path: `${mainEntry}/visualization/{savedId}`,
