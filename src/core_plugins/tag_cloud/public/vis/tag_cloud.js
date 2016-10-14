@@ -1,4 +1,3 @@
-import control from 'plugins/tagcloud/vis/components/control/events';
 import layoutGenerator from 'plugins/tagcloud/vis/components/layout/generator';
 import d3 from 'd3';
 import _ from 'lodash';
@@ -247,7 +246,7 @@ function makeTagCloud() {
 export default class TagCloudVisualization {
 
   constructor() {
-    this._events = control();
+
     this._layout = layoutGenerator();
     this._opts = {};
     this._listeners = {};
@@ -260,7 +259,6 @@ export default class TagCloudVisualization {
     selection.each(function () {//cannot use anonymous function, d3 needs the special d3-provided `this` scope.
 
       //todo: there is no reason we should expect multiple data here, but somehow we do....
-      self._events.listeners(self._listeners);
       self._layout.attr({
         type: self._opts.layout || 'grid',
         columns: self._opts.numOfColumns || 0,
@@ -270,7 +268,6 @@ export default class TagCloudVisualization {
       const groupSelection = d3.select(this)
         .attr('width', '100%')
         .attr('height', self._size[1])
-        .call(self._events)
         .call(self._layout)
         .selectAll('g.chart');
 
