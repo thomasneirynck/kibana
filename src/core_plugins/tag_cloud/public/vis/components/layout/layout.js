@@ -103,39 +103,40 @@ function baseLayout() {
 function translate(d) {
   return 'translate(' + d.dx + ',' + d.dy + ')';
 }
-function layoutGenerator() {
 
-  let layout = baseLayout();
-  let group = gGenerator();
+export default class LayoutGenerator {
 
-  function generator(selection) {
 
-    console.log('layour generator generate');
+  constructor() {
+    this._layout = baseLayout();
+    this._group = gGenerator();
+  }
 
+  render(selection) {
+
+    var self = this;
     selection.each(function (data) {
-      group.cssClass('chart')
+      self._group
+        .cssClass('chart')
         .transform(translate);
 
       d3.select(this)
-        .datum(layout(data))
-        .call(group);
+        .datum(self._layout(data))
+        .call(self._group);
     });
   }
 
-  // Public API
-  generator.setType = function (type) {
-    layout(type);
+
+  setType(type) {
+    this._layout(type);
   };
 
-  generator.setColumns = function (columns) {
-    layout.columns(columns);
+  setColumns(columns) {
+    this._layout.columns(columns);
   };
 
-  generator.setSize = function (size) {
-    layout.size(size);
+  setSize(size) {
+    this._layout.size(size);
   };
 
-  return generator;
 }
-
-export default layoutGenerator;
