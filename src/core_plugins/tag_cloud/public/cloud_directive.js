@@ -1,8 +1,6 @@
-import d3 from 'd3';
 import _ from 'lodash';
-import MultiTagCloud from 'plugins/tagcloud/vis/tag_cloud';
 import uiModules from 'ui/modules';
-import angular from 'angular';
+import TagCloud from 'plugins/tagcloud/tag_cloud';
 
 const module = uiModules.get('kibana/tagcloud', ['kibana']);
 
@@ -18,49 +16,28 @@ module.directive('kbnTagCloud', function () {
     replace: 'true',
     link: function (scope, element) {
 
-      //todo: this seems cheap, the element should always be ready
-      angular.element(document).ready(function () {
+      const tagCloud = new TagCloud(element[0], containerSize());
 
-        const tagCloudVis = new MultiTagCloud();
-        const svgContainer = d3.select(element[0]);
+      function containerSize() {
+        return [element.parent().width(), element.parent().height()];
+      }
 
-
-        function containerSize() {
-          return [element.parent().width(), element.parent().height()];
+      scope.$watch('data', function () {
+        if (!scope.data) {
+          return;
         }
-
-        function render(data, opts) {
-          opts = opts || {};
-
-          tagCloudVis.setOptions(opts);
-          tagCloudVis.setSize(containerSize());
-
-          if (data) {
-            tagCloudVis.render(svgContainer.datum(data));
-          }
+        if (scope.data.length > 1) {//cannot happen, since UI-form doesn't allow it.
+          throw new Error('Cannot render multiple datasets.');
         }
-
-        function reRender() {
-          render(scope.data, scope.options);
-        }
-
-        scope.$watch('data', function () {
-          reRender();
-        });
-        scope.$watch('options', function (oldOptions, newOptions) {
-          if (JSON.stringify(oldOptions) === JSON.stringify(newOptions)) {
-            return;
-          }
-          reRender();
-        });
-        scope.$watch(containerSize, _.debounce(reRender, 250), true);
-
-        element.bind('resize', function () {
-          //todo: do we really want to rerender on a resize? (probably not....)
-          //basically, if the data doesn't change, we only want to reposition
-          scope.$apply();
-        });
+        tagCloud.setData(scope.data[0].tags);
       });
+      scope.$watch('options', function (options) {
+        tagCloud.setOptions(options);
+      });
+      scope.$watch(containerSize, _.debounce(function () {
+        tagCloud.setSize(containerSize());
+      }, 250), true);
+
     }
   };
 });
