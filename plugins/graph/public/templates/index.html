@@ -1,63 +1,100 @@
 <div id="graphBasic" ng-controller="graphuiPlugin">
+  <!-- Local nav. -->
+  <kbn-top-nav name="workspacesTopNav" config="topNavMenu">
+    <!-- Transcluded elements. -->
+    <div data-transclude-slots>
+      <!-- Title. -->
+      <div data-transclude-slot="topLeftCorner" class="localTitle">
+        <strong>{{ savedWorkspace.title }}</strong>
+      </div>
 
-    <kbn-top-nav name="workspacesTopNav" config="topNavMenu">
-      <form role="form" class="fill inline-form" >
-        <span class="input-group">
-          <select class="form-control indexDropDown" name="mySelect"
-            ng-change="uiSelectIndex()"
-            ng-class="{pulseControl:selectedIndex === null}"
-            ng-options="option for option in indices"
-            ng-model="grr.proposedIndex">
-            <option value="">Select index pattern...</option>
-          </select>
+      <div data-transclude-slot="bottomRow" class="flexGroup">
+        <!-- Select index pattern. -->
+        <select
+          class="form-control indexDropDown"
+          name="mySelect"
+          ng-change="uiSelectIndex()"
+          ng-class="{pulseControl:selectedIndex === null}"
+          ng-options="option for option in indices"
+          ng-model="grr.proposedIndex"
+        >
+          <option value="">Select index pattern...</option>
+        </select>
 
-      </form>
+        <!-- Added fields. -->
+        <span
+          class="noUserSelect"
+          ng-repeat="f in selectedFields"
+          ng-attr-tooltip="Shift + click to toggle if search returns {{f.name}}"
+        >
+          <svg
+            width="30"
+            height="30"
+            ng-click="clickVertexFieldIcon(f, $event)"
+            ng-class="{disabledField:f.hopSize<=0}"
+          >
+            <circle
+              class="nodeCircle"
+              r="13"
+              cx="15"
+              cy="15"
+              ng-class="{selectedNode:kbnTopNav.currentKey === 'fieldConfig'&&f === selectedFieldConfig}"
+              style="fill:{{f.color}}"
+            />
+            <text ng-if="f.icon" class="SvgIconFont" text-anchor="middle" x="15" y="20">
+              {{f.icon.code}}
+            </text>
+          </svg>
+        </span>
 
-        <span id="fieldIconPlaceholder"> </span>
-          <span class="noUserSelect" ng-repeat="f in selectedFields" ng-attr-tooltip="Shift + click to toggle if search returns {{f.name}}">
-            <svg width="30" height="30"
-                ng-click="clickVertexFieldIcon(f, $event)"
-                ng-class="{disabledField:f.hopSize<=0}">
-              <circle class="nodeCircle" r="13" cx="15" cy="15"
-                  ng-class="{selectedNode:kbnTopNav.currentKey === 'fieldConfig'&&f === selectedFieldConfig}"
-                  style="fill:{{f.color}}"
-               />
-              <text ng-if="f.icon" class="SvgIconFont" text-anchor="middle" x="15" y="20">{{f.icon.code}}</text>
-            </svg>
-          </span>
+        <!-- Add field button. -->
+        <span class="noUserSelect" ng-attr-tooltip="Add a field source for vertices">
+          <button
+            ng-disabled="selectedIndex === null"
+            aria-label="Add a field"
+            id="addVertexFieldButton"
+            ng-class="{pulseControl:selectedIndex !== null&&selectedFields.length === 0}"
+            ng-click="toggleShowAdvancedFieldsConfig()"
+          >
+            <span aria-hidden="true" class="fa fa-plus"></span>
+          </button>
+        </span>
 
-
-          <span class="noUserSelect" ng-attr-tooltip="Add a field source for vertices">
-            <button  ng-disabled="selectedIndex === null" aria-label="Add a field"
-                    id="addVertexFieldButton"
-                    ng-class="{pulseControl:selectedIndex !== null&&selectedFields.length === 0}"
-                    ng-click="toggleShowAdvancedFieldsConfig()"
-                >
-              <span aria-hidden="true" class="fa fa-plus"></span>
+        <!-- Search. -->
+        <form
+          ng-submit="submit()"
+          name="graphBasicSearch"
+          class="flexGroup__filler"
+          style="width: 100%"
+        >
+          <div class="localSearch">
+            <input
+              name="searchTerm"
+              type="text"
+              class="localSearchInput"
+              ng-model="grr.searchTerm"
+              ng-disabled="liveResponseFields.length === 0"
+              ng-focus="kbnTopNav.close()"
+              placeholder="foo AND bar NOT baz"
+              autocomplete="off"
+            >
+            <button
+              class="localSearchButton"
+              type="submit"
+              ng-disabled="liveResponseFields.length === 0"
+              aria-label="Search"
+            >
+              <span aria-hidden="true" class="fa fa-search"></span>
             </button>
-          </span>
+          </div>
+        </form>
+      </div>
+    </div>
+  </kbn-top-nav>
 
-
-
-          <form  ng-submit="submit()" name="graphBasicSearch">
-            <span id="navbarSearchForm" class="input-group">
-
-                <input  name="searchTerm" id="basicSearchInputQuery" type="text" ng-model="grr.searchTerm" ng-disabled="liveResponseFields.length === 0"
-                    ng-focus="kbnTopNav.close()" placeholder="foo AND bar NOT baz"  autocomplete="off" />
-
-                <button type="submit" ng-disabled="liveResponseFields.length === 0" aria-label="Search">
-                  <span aria-hidden="true" class="fa fa-search"></span>
-                </button>
-            </span>
-          </form>
-    </kbn-top-nav>
-
-
-  <div class="config"  ng-show="kbnTopNav.currentKey === 'fields'">
+  <div class="config" ng-show="kbnTopNav.currentKey === 'fields'">
     <div class="config">
       <div class="container-fluid no-margin-bottom">
-
-
         <label >Add a field source for vertices</label>
               <form>
                 <div class="input-group form-group finder-form " style="width:100%">
@@ -83,7 +120,6 @@
                   ng-dblclick="addFieldToSelection()"
                   ng-model="selectedField"></select>
 
-
              <div>
                   <!-- TODO look at the field chooser directive in Discover to give type icons etc to
                   field types. This may filter out indexed-only fields though? -->
@@ -92,7 +128,6 @@
                     ng-click="addFieldToSelection()"
                     class="btn btn-s btn-primary " >Add</button>
               </div>
-
       </div>
 
       <div class="config-close remove" ng-click="kbnTopNav.close()">

@@ -1,7 +1,6 @@
 require('plugins/reporting/services/document_control');
 require('./export_config.less');
 
-const Clipboard = require('clipboard');
 const { get } = require('lodash');
 const template = require('plugins/reporting/directives/export_config/export_config.html');
 const Notifier = require('ui/notify/notifier');
@@ -31,26 +30,8 @@ module.directive('exportConfig', (reportingDocumentControl) => {
           link: reportingDocumentControl.getUrl(USE_SYNC_URL),
         }
       };
-
-      const clipboard = new Clipboard($el.find('button.clipboard-button')[0], {
-        text: function () {
-          return $el.find('input.clipboard-text').attr('value');
-        }
-      });
-
-      clipboard.on('success', function () {
-        reportingNotifier.info('URL copied to clipboard.');
-      });
-
-      clipboard.on('error', () => {
-        reportingNotifier.info('URL selected. Press Ctrl+C to copy.');
-      });
-
-      $scope.$on('$destroy', () => {
-        clipboard.destroy();
-      });
     },
-    controller() {
+    controller($document) {
       this.export = (type) => {
         switch (type) {
           case 'printablePdf':
@@ -68,6 +49,23 @@ module.directive('exportConfig', (reportingDocumentControl) => {
           default:
             reportingNotifier.error(`Invalid export type specified: ${type}`);
 
+        }
+      };
+
+      this.copyToClipboard = selector => {
+        // Select the text to be copied. If the copy fails, the user can easily copy it manually.
+        const copyTextarea = $document.find(selector)[0];
+        copyTextarea.select();
+
+        try {
+          const isCopied = document.execCommand('copy');
+          if (isCopied) {
+            reportingNotifier.info('URL copied to clipboard.');
+          } else {
+            reportingNotifier.info('URL selected. Press Ctrl+C to copy.');
+          }
+        } catch (err) {
+          reportingNotifier.info('URL selected. Press Ctrl+C to copy.');
         }
       };
     }
