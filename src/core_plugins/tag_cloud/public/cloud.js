@@ -1,6 +1,5 @@
 import 'plugins/tagcloud/cloud.less';
 import 'plugins/tagcloud/cloud_controller.js';
-import 'plugins/tagcloud/arcinput_directive.js';
 import 'plugins/tagcloud/cloud_directive.js';
 import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
@@ -25,10 +24,7 @@ function TagCloudProvider(Private) {
     params: {
       defaults: {
         textScale: 'linear',
-        orientations: 2,
-        fromDegree: 0,
-        toDegree: 0,
-        font: 'serif',
+        orientations: 'single',
         fontStyle: 'normal',
         fontWeight: 'normal',
         minFontSize: 18,
