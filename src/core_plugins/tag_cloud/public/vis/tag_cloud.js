@@ -243,27 +243,28 @@ function makeTagCloud() {
   return generator;
 }
 
+
+/**
+ * Renders a tagcloud for each data-set.
+ */
 export default class TagCloudVisualization {
 
   constructor() {
-
     this._layout = layoutGenerator();
     this._opts = {};
-    this._listeners = {};
     this._size = [250, 250];
   }
 
   render(selection) {
 
     var self = this;
+
+    //todo: there is no reason we should expect multiple data here, but somehow we do....
     selection.each(function () {//cannot use anonymous function, d3 needs the special d3-provided `this` scope.
 
-      //todo: there is no reason we should expect multiple data here, but somehow we do....
-      self._layout.attr({
-        type: self._opts.layout || 'grid',
-        columns: self._opts.numOfColumns || 0,
-        size: self._size
-      });
+      self._layout.setType(self._opts.layout || 'grid');
+      self._layout.setColumns(self._opts.numOfColumns || 0);
+      self._layout.setSize(self._size);
 
       const groupSelection = d3.select(this)
         .attr('width', '100%')
@@ -292,10 +293,6 @@ export default class TagCloudVisualization {
 
   setOptions(v) {
     this._opts = _.isPlainObject(v) ? v : this._opts;
-  }
-
-  setListeners(v) {
-    this._listeners = _.isPlainObject(v) ? v : this._listeners;
   }
 
   setSize(v) {
