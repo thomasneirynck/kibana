@@ -1,7 +1,6 @@
 import layoutGenerator from 'plugins/tagcloud/vis/components/layout/layout';
 import d3 from 'd3';
 import _ from 'lodash';
-import builder from 'plugins/tagcloud/vis/components/utils/builder';
 import layoutCloud from 'd3-cloud';
 import gGenerator from 'plugins/tagcloud/vis/components/elements/g';
 import textElement from 'plugins/tagcloud/vis/components/elements/text';
@@ -239,6 +238,14 @@ function makeTagCloud() {
     return generator;
   };
 
+  generator.setOptions = function (options) {
+    for (let key in options) {//safe prop loop, options is always simple json
+      if (options.hasOwnProperty(key)) {
+        generator[key](options[key]);
+      }
+    }
+  };
+
   return generator;
 }
 
@@ -279,8 +286,7 @@ export default class TagCloudVisualization {
           .height(data.height)
           .accessor(accessor);
 
-        builder(self._opts, tagCloud);
-
+        tagCloud.setOptions(self._opts);
         tagCloud(d3.select(this));
       });
 
