@@ -1,6 +1,6 @@
 import d3 from 'd3';
 import _ from 'lodash';
-import TagCloudVisualization from 'plugins/tagcloud/vis/tag_cloud';
+import MultiTagCloud from 'plugins/tagcloud/vis/tag_cloud';
 import uiModules from 'ui/modules';
 import angular from 'angular';
 
@@ -18,10 +18,10 @@ module.directive('kbnTagCloud', function () {
     replace: 'true',
     link: function (scope, element) {
 
-      //todo: this seems cheap, the element should alwaye readys b
+      //todo: this seems cheap, the element should always be ready
       angular.element(document).ready(function () {
 
-        const tagCloudVis = new TagCloudVisualization();
+        const tagCloudVis = new MultiTagCloud();
         const svgContainer = d3.select(element[0]);
 
 
@@ -58,7 +58,6 @@ module.directive('kbnTagCloud', function () {
         element.bind('resize', function () {
           //todo: do we really want to rerender on a resize? (probably not....)
           //basically, if the data doesn't change, we only want to reposition
-          console.log('reszigin...');
           scope.$apply();
         });
       });

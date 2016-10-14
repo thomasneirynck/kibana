@@ -22,14 +22,12 @@ function gGenerator() {
 
   // Public API
   generator.cssClass = function (v) {
-    console.log('cssClass');
     if (!arguments.length) { return cssClass; }
     cssClass = _.isString(v) ? v : cssClass;
     return generator;
   };
 
   generator.transform = function (v) {
-    console.log('transform');
     if (!arguments.length) { return transform; }
     transform = d3.functor(v);
     return generator;

@@ -127,9 +127,9 @@ function fontSizeAsPixels(d) {
 }
 
 /**
- * Renders a tagcloud for each data-set.
+ * Renders a tagcloud for each data-set in the grid
  */
-export default class TagCloudVisualization {
+export default class MultiTagCloud {
 
   constructor() {
     this._layout = new LayoutGenerator();
@@ -164,6 +164,7 @@ export default class TagCloudVisualization {
 
         tagCloud.setOptions(self._opts);
         tagCloud.render(d3.select(this));
+
       });
 
     });
