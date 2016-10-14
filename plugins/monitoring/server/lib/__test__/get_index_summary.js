@@ -18,11 +18,13 @@ describe('get_index_summary', () => {
             _source: {
               index_stats: {
                 total: {
-                  docs: {
-                    count: 250
-                  },
                   store: {
                     size_in_bytes: 250000
+                  }
+                },
+                primaries: {
+                  docs: {
+                    count: 250
                   }
                 }
               }

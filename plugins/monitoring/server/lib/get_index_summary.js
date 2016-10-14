@@ -3,14 +3,11 @@ import createQuery from './create_query.js';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
 export function handleResponse(resp) {
-  const indexSummary = { documents: 0, dataSize: 0 };
-  const totals = _.get(resp, 'hits.hits[0]._source.index_stats.total');
-  if (totals) {
-    indexSummary.documents = _.get(totals, 'docs.count');
-    indexSummary.dataSize = _.get(totals, 'store.size_in_bytes');
-  }
-
-  return indexSummary;
+  const sourceIndexStats = _.get(resp, 'hits.hits[0]._source.index_stats');
+  return {
+    documents: _.get(sourceIndexStats, 'primaries.docs.count', 0),
+    dataSize: _.get(sourceIndexStats, 'total.store.size_in_bytes', 0)
+  };
 }
 
 export default function getIndexSummary(req, indices) {
