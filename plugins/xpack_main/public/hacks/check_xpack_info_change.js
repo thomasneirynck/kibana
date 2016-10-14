@@ -1,7 +1,5 @@
 import { identity } from 'lodash';
 import uiModules from 'ui/modules';
-import chrome from 'ui/chrome';
-import { convertKeysToCamelCaseDeep } from '../../../../server/lib/key_case_converter';
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 import XPackInfoSignatureProvider from 'plugins/xpack_main/services/xpack_info_signature';
 
@@ -35,22 +33,11 @@ module.factory('checkXPackInfoChange', ($q, $injector, Private) => {
     // Signatures differ so xpack info has changed on Kibana
     // server. Fetch it and update local info + signature.
     _isInfoUpdateInProgress = true;
-    const $http = $injector.get('$http'); // To prevent circular dependency Angular error
 
-    return $http.get(chrome.addBasePath('/api/xpack/v1/info'))
-    .catch(() => {
-      xpackInfo.clear();
-      xpackInfoSignature.clear();
-      _isInfoUpdateInProgress = false;
-      handleResponse(response);
-      return Promise.reject();
-    })
-    .then((xpackInfoResponse) => {
-      xpackInfo.set(convertKeysToCamelCaseDeep(xpackInfoResponse.data));
-      xpackInfoSignature.set(xpackInfoResponse.headers('kbn-xpack-sig'));
-      _isInfoUpdateInProgress = false;
-      return handleResponse(response);
-    });
+    xpackInfo.refresh()
+    .finally(() => _isInfoUpdateInProgress = false);
+
+    return handleResponse(response);
   }
 
   return {

@@ -5,14 +5,17 @@ import uiModules from 'ui/modules';
 function toggleAppLinkInNav(Private) {
   const xpackInfo = Private(XPackInfoProvider);
 
-  const navLink = chrome.getNavLinkById('graph');
+  const resolveXPackInfo = !!xpackInfo.get('features.graph') ? Promise.resolve() : xpackInfo.refresh();
+  resolveXPackInfo.then(() => {
+    const navLink = chrome.getNavLinkById('graph');
 
-  const showAppLink = xpackInfo.get('features.graph.showAppLink', false);
-  navLink.hidden = !showAppLink;
-  if (showAppLink) {
-    navLink.disabled = !xpackInfo.get('features.graph.enableAppLink', false);
-    navLink.tooltip = xpackInfo.get('features.graph.message');
-  }
+    const showAppLink = xpackInfo.get('features.graph.showAppLink', false);
+    navLink.hidden = !showAppLink;
+    if (showAppLink) {
+      navLink.disabled = !xpackInfo.get('features.graph.enableAppLink', false);
+      navLink.tooltip = xpackInfo.get('features.graph.message');
+    }
+  });
 }
 
 uiModules.get('kibana').run(toggleAppLinkInNav);

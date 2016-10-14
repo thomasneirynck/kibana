@@ -42,10 +42,6 @@ chrome
     };
   }
 
-  // Make an API call so xpack info is populated in local storage
-  // by interceptor. This can be any call that doesn't require auth.
-  $http.get(chrome.addBasePath('/api/xpack/v1/info'))
-  .then(setupScope)
-  .catch(setupScope);
-
+  xpackInfo.refresh()
+  .finally(setupScope);
 });
