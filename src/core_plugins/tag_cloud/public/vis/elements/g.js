@@ -8,14 +8,12 @@ function gGenerator() {
 
   function generator(selection) {
     selection.each(function (data) {
-      let g = d3.select(this).selectAll('g.' + cssClass)
+      const g = d3.select(this).selectAll('g.' + cssClass)
         .data(data);
 
       g.exit().remove();
-
       g.enter().append('g')
         .attr('class', cssClass);
-
       g.attr('transform', transform);
     });
   }

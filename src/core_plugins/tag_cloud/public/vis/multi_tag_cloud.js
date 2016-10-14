@@ -1,10 +1,10 @@
-import LayoutGenerator from 'plugins/tagcloud/vis/components/layout/layout';
+import LayoutGenerator from 'plugins/tagcloud/vis/layout/layout';
 import d3 from 'd3';
 import _ from 'lodash';
-import layoutCloud from 'd3-cloud';
-import gGenerator from 'plugins/tagcloud/vis/components/elements/g';
-import textElement from 'plugins/tagcloud/vis/components/elements/text';
-import valuator from 'plugins/tagcloud/vis/components/utils/valuator';
+import d3TagCloud from 'd3-cloud';
+import gGenerator from 'plugins/tagcloud/vis/elements/g';
+import textElement from 'plugins/tagcloud/vis/elements/text';
+import valuator from 'plugins/tagcloud/vis/utils/valuator';
 import vislibComponentsSeedColorsProvider from 'ui/vislib/components/color/seed_colors';
 
 
@@ -43,15 +43,18 @@ class TagCloud {
     this.textClass = 'tag';
   }
 
+  invalidate() {
+    this.render();
+  }
+
 
   render(selection) {
-
     const self = this;
     selection.each(function (data, index) {
 
-      let tags = self.accessor.call(this, data, index);
+      const tags = self.accessor.call(this, data, index);
 
-      let text = textElement()
+      const text = textElement()
         .cssClass(self.textClass)
         .fontSize(fontSizeAsPixels)
         .fill(self.fill)
@@ -59,15 +62,15 @@ class TagCloud {
         .textAnchor(self.textAnchor);
 
 
-      let group = gGenerator()
+      const group = gGenerator()
         .cssClass('tags')
         .transform('translate(' + (self.width > 0 ? self.width / 2 : 1) + ',' + (self.height > 0 ? self.height / 2 : 1) + ')');
 
-      let g = d3.select(this)
+      const g = d3.select(this)
         .datum([data])
         .call(group);
 
-      let numOfOrientations = self.orientations - 1;
+      const numOfOrientations = self.orientations - 1;
       self.rotationScale
         .domain([0, numOfOrientations])
         .range([self.fromDegree, self.toDegree]);
@@ -76,13 +79,8 @@ class TagCloud {
         .domain(d3.extent(tags, getSize))
         .range([self.minFontSize, self.maxFontSize]);
 
-      function draw(tags) {
-        g.select('g.' + group.cssClass())
-          .datum(tags)
-          .call(text);
-      }
-
-      layoutCloud()
+      console.log('tags', tags);
+      d3TagCloud()
         .size([self.width, self.height])
         .words(tags)
         .text(self.textAccessor)
@@ -94,17 +92,27 @@ class TagCloud {
         .fontWeight(self.fontWeight)
         .fontSize(self.fontSize)
         .padding(self.padding)
-        .on('end', draw)
-        .start();
+        .on('end', tags => {
+
+          console.log('on end', arguments);
+
+          g.select('g.' + group.cssClass())
+            .datum(tags)
+            .call(text);
+        })
+        .start()
+        .stop();
     });
   }
 
+  destroy() {
+    //noop now.
+  }
 
   setOptions(options) {
-    for (let key in options) {//safe prop loop, options is always simple json
+    for (let key in options) {
       if (options.hasOwnProperty(key)) {
-
-        if (key === 'textScale') {
+        if (key === 'textScale') {//only exception, needs to be wrapped
           this[key] = d3.scale[options[key]]();
         } else {
           this[key] = options[key];
@@ -128,24 +136,34 @@ function fontSizeAsPixels(d) {
 
 /**
  * Renders a tagcloud for each data-set in the grid
+ * In practice this will always be just one cloud (due to restrictions in the vis data configurator)
+ * todo: evaluate if this indirection should be maintained
  */
 export default class MultiTagCloud {
 
   constructor() {
     this._layout = new LayoutGenerator();
-    this._opts = {};
+    this._options = {};
     this._size = [250, 250];
+    this._data = null;
+    this._tagClouds = [];
   }
 
-  render(selection) {
+  invalidate() {
+    if (!this._data) {
+      return;
+    }
+
+    this._render(this._data);
+  }
+
+  _render(selection) {
 
     var self = this;
-
-    //todo: there is no reason we should expect multiple data here, but somehow we do....
     selection.each(function () {//cannot use anonymous function, d3 needs the special d3-provided `this` scope.
 
-      self._layout.setType(self._opts.layout || 'grid');
-      self._layout.setColumns(self._opts.numOfColumns || 0);
+      self._layout.setType(self._options.layout || 'grid');
+      self._layout.setColumns(self._options.numOfColumns || 0);
       self._layout.setSize(self._size);
 
       let groupSelection = d3.select(this)
@@ -162,7 +180,7 @@ export default class MultiTagCloud {
         tagCloud.height = data.height;
         tagCloud.accessor = valuator(accessor);
 
-        tagCloud.setOptions(self._opts);
+        tagCloud.setOptions(self._options);
         tagCloud.render(d3.select(this));
 
       });
@@ -170,12 +188,29 @@ export default class MultiTagCloud {
     });
   }
 
-  setOptions(v) {
-    this._opts = _.isPlainObject(v) ? v : this._opts;
+  destroy() {
+    this._tagClouds.forEach(tagCloud => tagCloud.destroy());
   }
 
-  setSize(v) {
-    this._size = (_.isArray(v) && _.size(v) === 2) ? v : this._size;
+  setOptions(options) {
+    if (JSON.stringify(this._options) === JSON.stringify(options)) {
+      return;
+    }
+    this._options = options;
+    this.invalidate();
+  }
+
+  setSize(size) {
+    if (size[0] === this._size[0] && this._size[1] === size[1]) {
+      return;
+    }
+    this._size = (_.isArray(size) && _.size(size) === 2) ? size : this._size;
+    this.invalidate();
+  }
+
+  setData(data) {
+    this._data = data;
+    this.invalidate();
   }
 
 };

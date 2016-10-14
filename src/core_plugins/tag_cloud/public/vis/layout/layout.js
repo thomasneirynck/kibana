@@ -1,21 +1,20 @@
-import gGenerator from 'plugins/tagcloud/vis/components/elements/g';
+import gGenerator from 'plugins/tagcloud/vis/elements/g';
 import d3 from 'd3';
 import _ from 'lodash';
 
 function formatType(length, type, cols) {
-  let output = {};
+
+  const output = {rows: null, columns: null};
 
   switch (type) {
     case 'grid':
       output.rows = cols ? Math.ceil(length / cols) : Math.round(Math.sqrt(length));
       output.columns = cols || Math.ceil(Math.sqrt(length));
       break;
-
     case 'columns':
       output.rows = 1;
       output.columns = length;
       break;
-
     default:
       output.rows = length;
       output.columns = 1;
@@ -33,13 +32,13 @@ export function baseLayout() {
   let numOfCols = 0;
 
   function layout(data) {
-    let format = formatType(data.length, type, numOfCols);
-    let rows = format.rows;
-    let columns = format.columns;
-    let cellWidth = size[0] / columns;
-    let cellHeight = size[1] / rows;
+    const format = formatType(data.length, type, numOfCols);
+    const rows = format.rows;
+    const columns = format.columns;
+    const cellWidth = size[0] / columns;
+    const cellHeight = size[1] / rows;
     let cell = 0;
-    let newData = [];
+    const newData = [];
 
     rowScale.domain([0, rows]).range([0, size[1]]);
     columnScale.domain([0, columns]).range([0, size[0]]);
@@ -112,7 +111,6 @@ export default class LayoutGenerator {
   }
 
   render(selection) {
-
     var self = this;
     selection.each(function (data) {
       self._group

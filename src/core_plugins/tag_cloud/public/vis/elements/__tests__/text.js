@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import expect from 'expect.js';
-import text from 'plugins/tagcloud/vis/components/elements/text';
-import visFixture from 'plugins/tagcloud/vis/components/__tests__/fixtures/vis_fixture';
-import dataGenerator from 'plugins/tagcloud/vis/components/__tests__/fixtures/data_generator';
-import remove, {removeChildren} from 'plugins/tagcloud/vis/components/__tests__/fixtures/remove';
+import text from 'plugins/tagcloud/vis/elements/text';
+import visFixture from 'plugins/tagcloud/vis/__tests__/fixtures/vis_fixture';
+import dataGenerator from 'plugins/tagcloud/vis/__tests__/fixtures/data_generator';
+import remove, {removeChildren} from 'plugins/tagcloud/vis/__tests__/fixtures/remove';
 
 describe('text SVG tests', function () {
   let element = text();

@@ -1,6 +1,6 @@
 import d3 from 'd3';
 import _ from 'lodash';
-import valuator from 'plugins/tagcloud/vis/components/utils/valuator';
+import valuator from 'plugins/tagcloud/vis/utils/valuator';
 
 function textGenerator() {
   let colorScale = d3.scale.category20();
@@ -19,7 +19,7 @@ function textGenerator() {
 
   function generator(selection) {
     selection.each(function (data) {
-      let text = d3.select(this).selectAll('text.' + cssClass)
+      const text = d3.select(this).selectAll('text.' + cssClass)
         .data(data);
 
       text.exit().remove();

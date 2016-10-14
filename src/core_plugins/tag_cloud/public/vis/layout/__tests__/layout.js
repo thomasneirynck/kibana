@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import expect from 'expect.js';
-import {baseLayout} from 'plugins/tagcloud/vis/components/layout/layout';
+import {baseLayout} from 'plugins/tagcloud/vis/layout/layout';
 
 describe('Layout: baseLayout tests', function () {
   let data = [{}, {}, {}];
