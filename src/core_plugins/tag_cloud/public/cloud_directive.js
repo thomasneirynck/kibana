@@ -12,8 +12,7 @@ module.directive('kbnTagCloud', function () {
     restrict: 'E',
     scope: {
       data: '=',
-      options: '=',
-      eventListeners: '='
+      options: '='
     },
     template: '<svg class="parent"></svg>',
     replace: 'true',
@@ -30,22 +29,19 @@ module.directive('kbnTagCloud', function () {
           return [element.parent().width(), element.parent().height()];
         }
 
-        function render(data, opts, eventListeners) {
+        function render(data, opts) {
           opts = opts || {};
-          eventListeners = eventListeners || {};
 
           tagCloudVis.setOptions(opts);
-          tagCloudVis.setListeners(eventListeners);
           tagCloudVis.setSize(containerSize());
 
           if (data) {
-            // svgContainer.datum(data).call(tagCloudVis);
             tagCloudVis.render(svgContainer.datum(data));
           }
         }
 
         function reRender() {
-          render(scope.data, scope.options, scope.eventListeners);
+          render(scope.data, scope.options);
         }
 
         scope.$watch('data', function () {
@@ -55,9 +51,6 @@ module.directive('kbnTagCloud', function () {
           if (JSON.stringify(oldOptions) === JSON.stringify(newOptions)) {
             return;
           }
-          reRender();
-        });
-        scope.$watch('eventListeners', function () {
           reRender();
         });
         scope.$watch(containerSize, _.debounce(reRender, 250), true);
