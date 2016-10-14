@@ -1,4 +1,4 @@
-import layoutGenerator from 'plugins/tagcloud/vis/components/layout/generator';
+import layoutGenerator from 'plugins/tagcloud/vis/components/layout/layout';
 import d3 from 'd3';
 import _ from 'lodash';
 import builder from 'plugins/tagcloud/vis/components/utils/builder';
@@ -50,7 +50,6 @@ function makeTagCloud() {
   function generator(selection) {
 
     console.log('make tag cloud', selection);
-
     selection.each(function (data, index) {
 
       let tags = accessor.call(this, data, index);
@@ -274,17 +273,14 @@ export default class TagCloudVisualization {
 
       groupSelection.each(function (data) {
 
-        const dataOpts = (data && data.options) || {};
-        const accessor = self._opts.accessor || dataOpts.accessor || 'tags';
+        const accessor = 'tags';
         const tagCloud = makeTagCloud()
           .width(data.width)
           .height(data.height)
           .accessor(accessor);
 
         builder(self._opts, tagCloud);
-        builder(dataOpts, tagCloud);
 
-        console.log('drawing the chart');
         tagCloud(d3.select(this));
       });
 
