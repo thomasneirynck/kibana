@@ -25,7 +25,7 @@ function formatType(length, type, cols) {
   return output;
 }
 
-function baseLayout() {
+export function baseLayout() {
   let type = 'grid'; // available types: 'rows', 'columns', 'grid'
   let size = [250, 250]; // [width, height]
   let rowScale = d3.scale.linear();
@@ -106,7 +106,6 @@ function translate(d) {
 
 export default class LayoutGenerator {
 
-
   constructor() {
     this._layout = baseLayout();
     this._group = gGenerator();
@@ -125,7 +124,6 @@ export default class LayoutGenerator {
         .call(self._group);
     });
   }
-
 
   setType(type) {
     this._layout(type);
