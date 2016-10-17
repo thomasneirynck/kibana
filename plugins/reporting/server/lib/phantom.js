@@ -6,11 +6,11 @@ var fs = require('fs');
 var Promise = require('bluebird');
 var extract = require('./extract');
 
-const version = '1.9.8';
+const version = '2.1.1';
 const basename = 'phantomjs-' + version;
 const sourcePath = path.resolve(__dirname, '..', '..', '..', '..', '.phantom');
 
-function installPhantom(installPath = sourcePath) {
+export function installPhantom(installPath = sourcePath) {
   const phantomSource = getPackage(sourcePath);
   const phantomPackage = getPackage(installPath);
 
@@ -75,7 +75,3 @@ function getTargetPlatform() {
 function getTargetArch() {
   return process.env.PHANTOMJS_ARCH || process.arch;
 }
-
-module.exports = {
-  install: installPhantom
-};

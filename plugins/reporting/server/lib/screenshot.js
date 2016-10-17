@@ -79,7 +79,7 @@ function fetch(url, phantomPath, captureSettings, opts) {
           document.getElementsByTagName('head')[0].appendChild(node);
         };
 
-        injectCSS(basePath + '/app/reporting/assets/reporting-overrides.css');
+        injectCSS(basePath + '/plugins/reporting/styles/reporting-overrides.css');
       }(window, window.document));
     }, opts.basePath)
     .wait(loadDelay)

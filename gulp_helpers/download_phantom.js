@@ -9,28 +9,28 @@ var logger = require('./logger');
 
 function fetchBinaries(dest) {
   var phantomDest = path.resolve(dest);
-  var host = 'https://github.com/Medium/phantomjs/releases/download/v1.9.19/';
+  var host = 'https://github.com/Medium/phantomjs/releases/download/v2.1.1/';
 
   var phantomBinaries = [{
     description: 'Windows',
-    url: host + 'phantomjs-1.9.8-windows.zip',
-    filename: 'phantomjs-1.9.8-windows.zip',
-    checksum: 'c5eed3aeb356ee597a457ab5b1bea870',
+    url: host + 'phantomjs-2.1.1-windows.zip',
+    filename: 'phantomjs-2.1.1-windows.zip',
+    checksum: '4104470d43ddf2a195e8869deef0aa69',
   }, {
     description: 'Max OS X',
-    url: host + 'phantomjs-1.9.8-macosx.zip',
-    filename: 'phantomjs-1.9.8-macosx.zip',
-    checksum: 'fb850d56c033dd6e1142953904f62614',
+    url: host + 'phantomjs-2.1.1-macosx.zip',
+    filename: 'phantomjs-2.1.1-macosx.zip',
+    checksum: 'b0c038bd139b9ecaad8fd321070c1651',
   }, {
     description: 'Linux x86_64',
-    url: host + 'phantomjs-1.9.8-linux-x86_64.tar.bz2',
-    filename: 'phantomjs-1.9.8-linux-x86_64.tar.bz2',
-    checksum: '4ea7aa79e45fbc487a63ef4788a18ef7',
+    url: host + 'phantomjs-2.1.1-linux-x86_64.tar.bz2',
+    filename: 'phantomjs-2.1.1-linux-x86_64.tar.bz2',
+    checksum: '1c947d57fce2f21ce0b43fe2ed7cd361',
   }, {
     description: 'Linux x86',
-    url: host + 'phantomjs-1.9.8-linux-i686.tar.bz2',
-    filename: 'phantomjs-1.9.8-linux-i686.tar.bz2',
-    checksum: '814a438ca515c6f7b1b2259d0d5bc804',
+    url: host + 'phantomjs-2.1.1-linux-i686.tar.bz2',
+    filename: 'phantomjs-2.1.1-linux-i686.tar.bz2',
+    checksum: '0396e8249e082f72c1e39d33fc9d8de6',
   }];
 
   // verify the download checksum

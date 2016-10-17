@@ -5,15 +5,16 @@ const oncePerServer = require('./once_per_server');
 // bounding boxes for various saved object types
 const boundingBoxes = {
   visualization: {
-    top: 70,
-    left: 362,
-    bottom: 0
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
   },
   search: {
-    top: 70,
-    left: 222,
+    top: 0,
+    left: 0,
     bottom: 0,
-    right: 30,
+    right: 16, // scrollbar in discover refuses to hide with ::-webkit-scrollbar css rule
   },
 };
 

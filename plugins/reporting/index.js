@@ -1,16 +1,15 @@
 import { resolve } from 'path';
 import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
-const publicRoutes = require('./server/routes/public');
-const fileRoutes = require('./server/routes/file');
-const jobRoutes = require('./server/routes/jobs');
+import publicRoutes from './server/routes/public';
+import jobRoutes from './server/routes/jobs';
 
-const phantom = require('./server/lib/phantom');
-const createQueue = require('./server/lib/create_queue');
-const appConfig = require('./server/config/config');
-const checkLicense = require('./server/lib/check_license');
-const validateConfig = require('./server/lib/validate_config');
+import { installPhantom } from './server/lib/phantom';
+import createQueue from './server/lib/create_queue';
+import appConfig from './server/config/config';
+import checkLicense from './server/lib/check_license';
+import validateConfig from './server/lib/validate_config';
 
-module.exports = function (kibana) {
+export default function (kibana) {
   return new kibana.Plugin({
     id: 'reporting',
     configPrefix: 'xpack.reporting',
@@ -46,10 +45,10 @@ module.exports = function (kibana) {
           socketTimeout: Joi.number().integer().default(300000),
         }).default(),
         capture: Joi.object({
-          zoom: Joi.number().integer().default(1),
+          zoom: Joi.number().integer().default(2),
           viewport: Joi.object({
-            width: Joi.number().integer().default(1320),
-            height: Joi.number().integer().default(640)
+            width: Joi.number().integer().default(1950),
+            height: Joi.number().integer().default(1200)
           }).default(),
           timeout: Joi.number().integer().default(6000),
           loadDelay: Joi.number().integer().default(3000),
@@ -74,7 +73,7 @@ module.exports = function (kibana) {
 
       function setup() {
         // prepare phantom binary
-        return phantom.install(config.get('path.data'))
+        return installPhantom(config.get('path.data'))
         .then(function (phantomPackage) {
           server.log(['reporting', 'debug'], `Phantom installed at ${phantomPackage.binary}`);
 
@@ -84,7 +83,6 @@ module.exports = function (kibana) {
 
           // Reporting routes
           publicRoutes(server);
-          fileRoutes(server);
           jobRoutes(server);
         })
         .catch(function (err) {
