@@ -2,8 +2,10 @@ var fs = require('fs');
 var path = require('path');
 var Bluebird = require('bluebird');
 var mkdirp = require('mkdirp');
+var del = require('del');
 var request = require('request');
 var hasha = require('hasha');
+var _ = require('lodash');
 
 var logger = require('./logger');
 
@@ -46,7 +48,28 @@ function fetchBinaries(dest) {
   }
 
   return Bluebird.fromCallback(function (cb) {
+    logger('Phantom target:', phantomDest);
     mkdirp(phantomDest, cb);
+  })
+  .then(function () {
+    // clean up non-matching phantom binaries
+    var allowedFiles = phantomBinaries.map(function (binary) {
+      return binary.filename;
+    });
+
+    return Bluebird.fromCallback(function (cb) {
+      fs.readdir(phantomDest, cb);
+    })
+    .then(function (files) {
+      return files.map(function (file) {
+        if (file === '.empty') return false;
+        if (_.contains(allowedFiles, file)) return false;
+        return path.join(phantomDest, file);
+      }).filter(Boolean);
+    })
+    .then(function (extraFiles) {
+      return del(extraFiles);
+    });
   })
   .then(function () {
     var requiredDownloads = Bluebird.map(phantomBinaries, function (binary) {
@@ -57,25 +80,23 @@ function fetchBinaries(dest) {
       return downloads.filter(Boolean);
     });
 
-    return Bluebird.mapSeries(requiredDownloads, function (binary, idx) {
+    return Bluebird.mapSeries(requiredDownloads, function (binary) {
       var filepath = path.join(phantomDest, binary.filename);
 
       // add delays after the first download
-      var chain = (idx === 0) ? Bluebird.resolve() : Bluebird.delay(3000);
-      return chain.then(function () {
-        logger('Downloading', binary.url);
-        return new Bluebird(function (resolve, reject) {
-          var ws = fs.createWriteStream(filepath)
-          .on('finish', function () {
-            verifyChecksum(filepath, binary)
-            .then(resolve, reject);
-          });
-
-          // download binary, stream to destination
-          request(binary.url)
-          .on('error', reject)
-          .pipe(ws);
+      logger('Downloading', binary.url);
+      return new Bluebird(function (resolve, reject) {
+        var ws = fs.createWriteStream(filepath)
+        .on('finish', function () {
+          logger('Verifying binary', filepath);
+          verifyChecksum(filepath, binary)
+          .then(resolve, reject);
         });
+
+        // download binary, stream to destination
+        request(binary.url)
+        .on('error', reject)
+        .pipe(ws);
       });
     });
   });

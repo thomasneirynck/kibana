@@ -68,7 +68,9 @@ gulp.task('sync', function () {
   return downloadPhantom(path.join(__dirname, '.phantom'))
   .then(function () {
     return Bluebird.mapSeries(buildIncludes, function (source) {
-      return syncPathTo(source, kibanaPluginDir, source !== '.phantom');
+      return syncPathTo(source, kibanaPluginDir, {
+        delete: source !== '.phantom'
+      });
     });
   });
 });
@@ -142,7 +144,9 @@ gulp.task('build', ['lint', 'clean', 'report'], function () {
   const includes = buildIncludes.filter((include) => excludes.indexOf(include) === -1);
 
   return Bluebird.mapSeries(includes, function (source) {
-    return syncPathTo(source, buildTarget, source !== '.phantom');
+    return syncPathTo(source, buildTarget, {
+      delete: source !== '.phantom'
+    });
   })
   .then(function () {
     return downloadPhantom(path.join(buildTarget, '.phantom'));

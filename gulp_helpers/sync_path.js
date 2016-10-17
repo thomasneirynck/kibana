@@ -6,8 +6,9 @@ var Rsync = require('rsync');
 var logger = require('./logger');
 
 module.exports = (excludes) => {
-  return function syncPathsTo(source, dest, setDelete) {
+  return function syncPathsTo(source, dest, options) {
     logger('Sync path:', source);
+    options = options || {};
 
     return Bluebird.fromCallback(function (cb) {
       mkdirp(dest, cb);
@@ -18,7 +19,7 @@ module.exports = (excludes) => {
 
       rsync.source(source).destination(dest);
       rsync.flags('uav').recursive(true);
-      if (setDelete) rsync.set('delete');
+      if (options.delete) rsync.set('delete');
       rsync.exclude(excludes);
 
       // debugging
