@@ -2,10 +2,10 @@ import _ from 'lodash';
 import numeral from 'numeral';
 import $ from 'jquery';
 import moment from 'moment';
-import VislibComponentsColorColorPaletteProvider from 'ui/vislib/components/color/color_palette';
 import uiModules from 'ui/modules';
 import template from 'plugins/monitoring/directives/chart/index.html';
 import descriptionTemplate from './description_template.html';
+import getColor from './get_color';
 import { setLegendByX, setLegendForSeriesIndex } from './chart_helpers';
 import 'flot-charts/jquery.flot';
 import 'flot-charts/jquery.flot.time';
@@ -14,11 +14,6 @@ import 'flot-charts/jquery.flot.symbol';
 import 'flot-charts/jquery.flot.crosshair';
 import 'flot-charts/jquery.flot.selection';
 import 'ui/tooltip';
-
-const appColors = Object.freeze({
-  elasticsearch: '#3ebeb0',
-  kibana: '#e8488b'
-});
 
 function get(series, attr) {
   return _.chain(series).pluck(attr).last().value();
@@ -101,9 +96,7 @@ uiModule.directive('monitoringChart', ($compile) => {
   };
 });
 
-uiModule.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private) => {
-  const getColors = Private(VislibComponentsColorColorPaletteProvider);
-
+uiModule.directive('chart', ($compile, $rootScope, timefilter, $timeout) => {
   return {
     restrict: 'E',
     scope: {
@@ -244,10 +237,8 @@ uiModule.directive('chart', ($compile, $rootScope, timefilter, $timeout, Private
           return;
         }
 
-        // use the seed colors for any color after the first
-        const seriesColor = (index === 0 ? appColors[chartSeries.metric.app] : getColors(index)[index - 1]);
         const series = {
-          color: seriesColor,
+          color: getColor(chartSeries.metric.app, index),
           data: chartSeries.data.map((row) => {
             if (row) {
               return [row.x, row.y];
