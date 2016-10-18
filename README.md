@@ -92,7 +92,7 @@ For developing and testing the plugins, you must run an instance of Elasticsearc
 
     ```
     cd ~/es-build
-    cp ./x-plugins/elasticsearch/x-pack/build/distributions/x-pack-*.zip .
+    cp ./x-plugins/elasticsearch/build/distributions/x-pack-*.zip .
     cp ./elasticsearch/distribution/zip/build/distributions/elasticsearch-*.zip .
     ```
 1. Unpack the Elasticsearch build and install the X-Pack plugin
