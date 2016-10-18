@@ -14,9 +14,18 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
     me(ShieldUser) {
       return ShieldUser.getCurrent();
     },
-    user($route, ShieldUser) {
+    user($route, ShieldUser, kbnUrl, Promise, Notifier) {
       const username = $route.current.params.username;
-      if (username != null) return ShieldUser.get({username});
+      if (username != null) {
+        return ShieldUser.get({username}).$promise
+        .catch((response) => {
+          const notifier = new Notifier();
+          if (response.status !== 404) return notifier.fatal(response);
+          notifier.error(`No "${username}" user found.`);
+          kbnUrl.redirect('/management/elasticsearch/users');
+          return Promise.halt();
+        });
+      }
       return new ShieldUser({roles: []});
     },
     roles(ShieldRole, kbnUrl, Promise, Private) {
@@ -26,7 +35,7 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
       .catch(checkLicenseError(kbnUrl, Promise, Private));
     }
   },
-  controller($scope, $route, $location, ShieldUser, Notifier) {
+  controller($scope, $route, kbnUrl, ShieldUser, Notifier) {
     $scope.me = $route.current.locals.me;
     $scope.user = $route.current.locals.user;
     $scope.availableRoles = $route.current.locals.roles;
@@ -55,7 +64,7 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
     };
 
     $scope.goToUserList = () => {
-      $location.path('/management/elasticsearch/users');
+      kbnUrl.redirect('/management/elasticsearch/users');
     };
 
     $scope.changePassword = (user) => {

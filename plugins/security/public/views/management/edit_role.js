@@ -13,9 +13,18 @@ import checkLicenseError from 'plugins/security/lib/check_license_error';
 routes.when('/management/elasticsearch/roles/edit/:name?', {
   template,
   resolve: {
-    role($route, ShieldRole) {
+    role($route, ShieldRole, kbnUrl, Promise, Notifier) {
       const name = $route.current.params.name;
-      if (name != null) return ShieldRole.get({name});
+      if (name != null) {
+        return ShieldRole.get({name}).$promise
+        .catch((response) => {
+          const notifier = new Notifier();
+          if (response.status !== 404) return notifier.fatal(response);
+          notifier.error(`No "${name}" role found.`);
+          kbnUrl.redirect('/management/elasticsearch/roles');
+          return Promise.halt();
+        });
+      }
       return new ShieldRole({
         cluster: [],
         indices: [],
@@ -33,7 +42,7 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
       return indexPatterns.getIds();
     }
   },
-  controller($scope, $route, $location, shieldPrivileges, shieldIndices, Notifier) {
+  controller($scope, $route, kbnUrl, shieldPrivileges, shieldIndices, Notifier) {
     $scope.role = $route.current.locals.role;
     $scope.users = $route.current.locals.users;
     $scope.indexPatterns = $route.current.locals.indexPatterns;
@@ -63,7 +72,7 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
     };
 
     $scope.goToRoleList = () => {
-      $location.path('/management/elasticsearch/roles');
+      kbnUrl.redirect('/management/elasticsearch/roles');
     };
 
     $scope.addIndex = (indices) => {
