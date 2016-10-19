@@ -110,7 +110,7 @@ export default React.createClass({
     // list of page links
     let listBeginning = 1;
 
-    if (this.props.pageIdx >= Math.floor(maxListSize / 2)) {
+    if (numPages > maxListSize && this.props.pageIdx >= Math.floor(maxListSize / 2)) {
       // keep a shortened list of 5 on the left, 4 on the right of current
       listBeginning = this.props.pageIdx - Math.floor(maxListSize / 2) + 1;
       // if we're at the end of the list, the window shows the last 10 pages
