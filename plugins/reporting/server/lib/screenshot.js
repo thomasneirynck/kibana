@@ -1,8 +1,11 @@
+const path = require('path');
 const _ = require('lodash');
 const getPort = require('get-port');
 const Promise = require('bluebird');
+const Puid = require('puid');
 const Horseman = require('@elastic/node-horseman');
-const temp = require('temp').track();
+
+const puid = new Puid();
 
 class Screenshot {
   constructor(phantomPath, captureSettings, screenshotSettings, logger) {
@@ -17,18 +20,16 @@ class Screenshot {
     opts = _.assign({ basePath: this.screenshotSettings.basePath }, opts);
     return fetch(url, this.phantomPath, this.captureSettings, opts)
     .then(ph => {
-      return getTargetFile()
-      .then(filepath => {
-        const operation = (opts.bounding)
-          ? getShotCropped(ph, this.captureSettings.viewport, opts.bounding, filepath)
-          : getShot(ph, filepath);
+      const filepath = getTargetFile(this.screenshotSettings.imagePath);
+      const operation = (opts.bounding)
+        ? getShotCropped(ph, this.captureSettings.viewport, opts.bounding, filepath)
+        : getShot(ph, filepath);
 
-        return operation
-        .then(() => {
-          this.logger(`Screenshot saved to ${filepath}`);
-          ph.close();
-          return filepath;
-        });
+      return operation
+      .then(() => {
+        this.logger(`Screenshot saved to ${filepath}`);
+        ph.close();
+        return filepath;
       })
       .catch((err) => {
         this.logger(`Screenshot failed ${err.message}`);
@@ -72,10 +73,10 @@ function fetch(url, phantomPath, captureSettings, opts) {
     .waitForSelector('.application visualize')
     .evaluate(function (basePath) {
       (function (window, document) {
-        function injectCSS(path) {
+        function injectCSS(cssPath) {
           var node = document.createElement('link');
           node.rel = 'stylesheet';
-          node.href = path;
+          node.href = cssPath;
           document.getElementsByTagName('head')[0].appendChild(node);
         };
 
@@ -97,14 +98,8 @@ function createPhantom(phantomOpts, settings) {
   });
 }
 
-function getTargetFile() {
-  return new Promise((resolve, reject) => {
-    temp.open({ prefix: 'screenshot', suffix: '.png' }, (err, file) => {
-      if (err) reject(err);
-      else resolve(file);
-    });
-  })
-  .then((file) => file.path);
+function getTargetFile(imagePath) {
+  return path.join(imagePath, `screenshot-${puid.generate()}.png`);
 }
 
 function getShot(ph, filepath) {

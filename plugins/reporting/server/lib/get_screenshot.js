@@ -24,7 +24,7 @@ function getScreenshotFactory(server) {
 
   const phantomPath = server.plugins.reporting.phantom.binary;
   const captureSettings = config.get('xpack.reporting.capture');
-  const screenshotSettings = { basePath: config.get('server.basePath') };
+  const screenshotSettings = { basePath: config.get('server.basePath'), imagePath: config.get('path.data') };
   const captureConcurrency = captureSettings.concurrency;
   logger(`Screenshot concurrency: ${captureConcurrency}`);
 
