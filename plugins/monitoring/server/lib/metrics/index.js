@@ -202,7 +202,7 @@ const metricInstances = {
     description: 'Average segment count for primary and replica shards on this node.',
     type: 'node',
     format: LARGE_FLOAT,
-    metricAgg: 'avg',
+    metricAgg: 'max',
     units: ''
   }),
   'node_jvm_mem_max_in_bytes': new ElasticsearchMetric({
@@ -242,7 +242,7 @@ const metricInstances = {
     description: 'Load average over the last minute.',
     type: 'node',
     format: LARGE_FLOAT,
-    metricAgg: 'avg',
+    metricAgg: 'max',
     units: ''
   }),
   'node_index_mem_overall': new NodeIndexMemoryMetric({
@@ -449,7 +449,7 @@ const metricInstances = {
     label: '1m',
     description: 'Load average over the last minute.',
     format: LARGE_FLOAT,
-    metricAgg: 'avg',
+    metricAgg: 'max',
     units: ''
   }),
   'kibana_os_load_5m': new KibanaMetric({
@@ -458,7 +458,7 @@ const metricInstances = {
     label: '5m',
     description: 'Load average over the last 5 minutes.',
     format: LARGE_FLOAT,
-    metricAgg: 'avg',
+    metricAgg: 'max',
     units: ''
   }),
   'kibana_os_load_15m': new KibanaMetric({
@@ -467,7 +467,7 @@ const metricInstances = {
     label: '15m',
     description: 'Load average over the last 15 minutes.',
     format: LARGE_FLOAT,
-    metricAgg: 'avg',
+    metricAgg: 'max',
     units: ''
   }),
   'kibana_memory_heap_size_limit': new KibanaMetric({
@@ -485,7 +485,7 @@ const metricInstances = {
     label: 'Memory Size',
     description: 'Total heap used by Kibana running in Node.js.',
     format: LARGE_BYTES,
-    metricAgg: 'avg',
+    metricAgg: 'max',
     units: 'B'
   }),
   'kibana_process_delay': new KibanaMetric({
@@ -493,7 +493,7 @@ const metricInstances = {
     label: 'Event Loop Delay',
     description: 'Delay in Kibana server event loops. Longer delays may indicate blocking events in server thread, such as synchronous functions taking large amount of CPU time.', // eslint-disable-line max-len
     format: SMALL_FLOAT,
-    metricAgg: 'avg',
+    metricAgg: 'max',
     units: 'ms'
   }),
   'kibana_average_response_times': new KibanaMetric({
@@ -502,7 +502,7 @@ const metricInstances = {
     label: 'Average',
     description: 'Average response time for client requests to the Kibana instance.',
     format: SMALL_FLOAT,
-    metricAgg: 'avg',
+    metricAgg: 'max',
     units: 'ms'
   }),
   'kibana_max_response_times': new KibanaMetric({
@@ -511,7 +511,7 @@ const metricInstances = {
     label: 'Max',
     description: 'Maximum response time for client requests to the Kibana instance.',
     format: SMALL_FLOAT,
-    metricAgg: 'avg',
+    metricAgg: 'max',
     units: 'ms'
   }),
   'kibana_average_concurrent_connections': new KibanaMetric({

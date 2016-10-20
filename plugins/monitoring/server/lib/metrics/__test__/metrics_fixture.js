@@ -476,7 +476,7 @@ export const expected = {
     'field': 'kibana_stats.response_times.average',
     'format': '0.[00]',
     'label': 'Average',
-    'metricAgg': 'avg',
+    'metricAgg': 'max',
     'title': 'Client Response Time',
     'units': 'ms'
   },
@@ -489,7 +489,7 @@ export const expected = {
     'field': 'kibana_stats.response_times.max',
     'format': '0.[00]',
     'label': 'Max',
-    'metricAgg': 'avg',
+    'metricAgg': 'max',
     'title': 'Client Response Time',
     'units': 'ms'
   },
@@ -515,7 +515,7 @@ export const expected = {
     'field': 'kibana_stats.process.memory.resident_set_size_in_bytes',
     'format': '0,0.0 b',
     'label': 'Memory Size',
-    'metricAgg': 'avg',
+    'metricAgg': 'max',
     'title': 'Memory Size',
     'units': 'B'
   },
@@ -528,7 +528,7 @@ export const expected = {
     'field': 'kibana_stats.os.load.15m',
     'format': '0,0.[00]',
     'label': '15m',
-    'metricAgg': 'avg',
+    'metricAgg': 'max',
     'title': 'System Load',
     'units': ''
   },
@@ -541,7 +541,7 @@ export const expected = {
     'field': 'kibana_stats.os.load.1m',
     'format': '0,0.[00]',
     'label': '1m',
-    'metricAgg': 'avg',
+    'metricAgg': 'max',
     'title': 'System Load',
     'units': ''
   },
@@ -554,7 +554,7 @@ export const expected = {
     'field': 'kibana_stats.os.load.5m',
     'format': '0,0.[00]',
     'label': '5m',
-    'metricAgg': 'avg',
+    'metricAgg': 'max',
     'title': 'System Load',
     'units': ''
   },
@@ -567,7 +567,7 @@ export const expected = {
     'field': 'kibana_stats.process.event_loop_delay',
     'format': '0.[00]',
     'label': 'Event Loop Delay',
-    'metricAgg': 'avg',
+    'metricAgg': 'max',
     'units': 'ms'
   },
   'kibana_requests': {
@@ -853,7 +853,7 @@ export const expected = {
     'format': '0,0.[00]',
     'title': 'System Load',
     'label': '1m',
-    'metricAgg': 'avg',
+    'metricAgg': 'max',
     'type': 'node',
     'units': ''
   },
@@ -905,7 +905,7 @@ export const expected = {
     'field': 'node_stats.indices.segments.count',
     'format': '0,0.[00]',
     'label': 'Segment Count',
-    'metricAgg': 'avg',
+    'metricAgg': 'max',
     'type': 'node',
     'units': ''
   },
