@@ -1,53 +1,89 @@
-<div ng-controller="licenseView" class="monitoring-view license-view" ng-controller="home">
-  <div class="license-main">
-    <div ng-if="isExpired">
-      <h1>Your {{cluster.license.type|capitalize}} license expired on {{cluster.license.expiry_date|localizedDate}}</h1>
-      <h2 class="title">
-        Your License has expired. But worry not!
-      </h2>
-    </div>
-
-    <div ng-if="!isExpired">
-      <h1>Your {{cluster.license.type|capitalize}} license expires on {{cluster.license.expiry_date|localizedDate}}</h1>
-    </div>
-
-    <div class="row">
-      <div class="col-md-4 col-md-offset-2">
-        <div class="bold">Register for a Basic License</div>
-        <p>Monitoring is available for free with a Basic License. Simply register, check your inbox, and enjoy!</p>
+<div ng-controller="licenseView" class="kbnPageView">
+  <div class="kbnPageView__content">
+    <div class="kbnNotice">
+      <!-- Back button -->
+      <div ng-if="!isExpired">
+        <p class="license-back">
+          <a kbn-href="#/overview">« Cluster Overview</a>
+        </p>
       </div>
 
-      <div class="col-md-4">
-        <div class="bold">Unlock the Full Functionality</div>
-        <p>Get all X-Pack has to offer: Security, Monitoring, Alerting &amp; Notification, Reporting and Graph, plus support from the engineers behind the Elastic Stack.</p>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-4 col-md-offset-2">
-        <div class="btn-space">
-          <a class="btn license basic" href="https://register.elastic.co/xpack_register" target="_BLANK">Get Basic</a>
+      <!-- Title (expired license) -->
+      <div ng-if="isExpired" class="kbnNotice__header">
+        <h1 class="kbnNoticeTitle">
+          <span class="fa fa-times kbnIcon--danger"></span>
+          Your {{cluster.license.type|capitalize}} license has expired
+        </h1>
+        <div class="kbnNoticeText">
+          Your license expired on {{cluster.license.expiry_date|localizedDate}}.
         </div>
       </div>
-      <div class="col-md-4">
-        <div class="btn-space">
-          <a href="https://www.elastic.co/subscriptions/xpack" target="_BLANK" class="btn license premium">Get It All</a>
+
+      <!-- Title (active license) -->
+      <div ng-if="!isExpired" class="kbnNotice__header">
+        <h1 class="kbnNoticeTitle">
+          <span class="fa fa-check kbnIcon--success"></span>
+          Your {{cluster.license.type|capitalize}} license is active
+        </h1>
+        <div class="kbnNoticeText">
+          Your license will expire on {{cluster.license.expiry_date|localizedDate}}.
         </div>
       </div>
+
+      <!-- Options -->
+      <div class="kbnCardGroup">
+        <!-- Basic license -->
+        <div class="kbnCard kbnCardGroup__card">
+          <div class="kbnCard__description kbnCardGroup__cardDescription">
+            <div class="kbnCard__descriptionTitle">
+              Register for a Basic License
+            </div>
+            <div class="kbnCard__descriptionText">
+              Monitoring is available for free with a Basic License. Simply register, check your inbox, and enjoy!
+            </div>
+          </div>
+          <div class="kbnCard__footer">
+            <a
+              class="kbnButton kbnButton--default"
+              href="https://register.elastic.co/xpack_register"
+              target="_blank"
+            >
+              Get Basic
+            </a>
+          </div>
+        </div>
+
+        <!-- Full X-Pack -->
+        <div class="kbnCard kbnCardGroup__card">
+          <div class="kbnCard__description kbnCardGroup__cardDescription">
+            <div class="kbnCard__descriptionTitle">
+              Unlock the Full Functionality
+            </div>
+            <div class="kbnCard__descriptionText">
+              Get all X-Pack has to offer: security, monitoring, alerting, reporting, and Graph, plus support from the engineers behind the Elastic Stack.
+            </div>
+          </div>
+          <div class="kbnCard__footer">
+            <a
+              class="kbnButton kbnButton--primary"
+              href="https://www.elastic.co/subscriptions/xpack"
+              target="_blank"
+            >
+              Get It All
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Install existing license -->
+      <p>
+        <span ng-if="isExpired">
+          Already have your license?
+        </span>
+        <span ng-if="!isExpired">
+          Have a newer license?
+        </span> Splendid! <a href="https://www.elastic.co/guide/en/x-pack/current/license-management.html" target="_BLANK">Install it now.</a>
+      </p>
     </div>
-
-    <p>
-      <span ng-if="isExpired">
-        Already have your license?
-      </span>
-      <span ng-if="!isExpired">
-        Have a newer license?
-      </span> Splendid! <a href="https://www.elastic.co/guide/en/x-pack/current/license-management.html" target="_BLANK">Install it now</a>
-    </p>
-  </div>
-
-  <div ng-if="!isExpired">
-    <p class="license-back">
-      <a kbn-href="#/overview">Back</a>
-    </p>
   </div>
 </div>
