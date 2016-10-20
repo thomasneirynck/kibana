@@ -5,35 +5,60 @@ import { convertKeysToCamelCaseDeep } from '../../../../server/lib/key_case_conv
 
 const XPACK_INFO_KEY = 'xpackMain.info';
 
-export default function XPackInfoProvider($window, $injector, Private) {
+export default function XPackInfoProvider($window, Private, Promise, $http) {
   const xpackInfoSignature = Private(XPackInfoSignatureProvider);
 
-  const xpackInfoObj = {
-    get(path, defaultValue) {
-      const xpackInfoValueInLocalStorage = $window.sessionStorage.getItem(XPACK_INFO_KEY);
-      const xpackInfo = xpackInfoValueInLocalStorage ? JSON.parse(xpackInfoValueInLocalStorage) : {};
-      return get(xpackInfo, path, defaultValue);
+  let inProgressRefreshPromise = null;
+
+  const xpackInfo = {
+    init() {
+      if ($window.sessionStorage.getItem(XPACK_INFO_KEY) !== null) {
+        return Promise.resolve();
+      }
+
+      return xpackInfo.refresh();
     },
-    set(updatedXPackInfo) {
+
+    get(path, defaultValue) {
+      const xpackInfoValuesJson = $window.sessionStorage.getItem(XPACK_INFO_KEY);
+      const xpackInfoValues = xpackInfoValuesJson ? JSON.parse(xpackInfoValuesJson) : {};
+      return get(xpackInfoValues, path, defaultValue);
+    },
+
+    setAll(updatedXPackInfo) {
       $window.sessionStorage.setItem(XPACK_INFO_KEY, JSON.stringify(updatedXPackInfo));
     },
+
     clear() {
       $window.sessionStorage.removeItem(XPACK_INFO_KEY);
     },
+
     refresh() {
-      const $http = $injector.get('$http');
-      return $http.get(chrome.addBasePath('/api/xpack/v1/info'))
-      .catch(() => {
-        xpackInfoObj.clear();
-        xpackInfoSignature.clear();
-        return Promise.reject();
-      })
-      .then((xpackInfoResponse) => {
-        xpackInfoObj.set(convertKeysToCamelCaseDeep(xpackInfoResponse.data));
-        xpackInfoSignature.set(xpackInfoResponse.headers('kbn-xpack-sig'));
-      });
+      if (inProgressRefreshPromise) {
+        return inProgressRefreshPromise;
+      }
+
+      // store the promise in a shared location so that calls to
+      // refresh() before this is complete will get the same promise
+      inProgressRefreshPromise = (
+        $http.get(chrome.addBasePath('/api/xpack/v1/info'))
+        .catch((err) => {
+          // if we are unable to fetch the updated info, we should
+          // prevent reusing stale info
+          xpackInfo.clear();
+          xpackInfoSignature.clear();
+          throw err;
+        })
+        .then((xpackInfoResponse) => {
+          xpackInfo.setAll(convertKeysToCamelCaseDeep(xpackInfoResponse.data));
+          xpackInfoSignature.set(xpackInfoResponse.headers('kbn-xpack-sig'));
+        })
+        .finally(() => {
+          inProgressRefreshPromise = null;
+        })
+      );
     }
   };
 
-  return xpackInfoObj;
+  return xpackInfo;
 }

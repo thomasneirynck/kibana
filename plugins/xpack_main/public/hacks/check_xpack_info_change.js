@@ -9,33 +9,25 @@ module.factory('checkXPackInfoChange', ($q, $injector, Private) => {
   const xpackInfo = Private(XPackInfoProvider);
   const xpackInfoSignature = Private(XPackInfoSignatureProvider);
 
-  let _isInfoUpdateInProgress = false;
-
+  /**
+   *  Intercept each network response to look for the kbn-xpack-sig header.
+   *  When that header is detected, compare it's value with the value cached
+   *  in the browser storage. When the value is new, call `xpackInfo.refresh()`
+   *  so that it will pull down the latest x-pack info
+   *
+   *  @param  {object} response - the angular $http response object
+   *  @param  {function} handleResponse - callback, expects to receive the response
+   *  @return
+   */
   function interceptor(response, handleResponse) {
-    // If another instance of this response interceptor is
-    // already updating the info and signature, continue on
-    // to avoid an infinite loop
-    if (_isInfoUpdateInProgress) {
-      return handleResponse(response);
+    const currentSignature = response.headers('kbn-xpack-sig');
+    const cachedSignature = xpackInfoSignature.get();
+
+    if (currentSignature && cachedSignature !== currentSignature) {
+      // Signature from the server differ from the signature of our
+      // cached info, so we need to refresh it.
+      xpackInfo.refresh();
     }
-
-    // Get xpack info signature in response; if it's empty, continue on...
-    const signatureFromServer = response.headers('kbn-xpack-sig');
-
-    // Get xpack info signature from local storage
-    const localSignature = xpackInfoSignature.get();
-
-    // If they are the same, nothing to do; continue on...
-    if (localSignature === signatureFromServer) {
-      return handleResponse(response);
-    }
-
-    // Signatures differ so xpack info has changed on Kibana
-    // server. Fetch it and update local info + signature.
-    _isInfoUpdateInProgress = true;
-
-    xpackInfo.refresh()
-    .finally(() => _isInfoUpdateInProgress = false);
 
     return handleResponse(response);
   }

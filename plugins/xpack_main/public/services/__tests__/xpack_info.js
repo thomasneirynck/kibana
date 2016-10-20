@@ -24,7 +24,7 @@ describe('xpack_info service', () => {
         bar: 17
       }
     };
-    xpackInfo.set(updatedXPackInfo);
+    xpackInfo.setAll(updatedXPackInfo);
     expect(mockWindow.sessionStorage.getItem(XPACK_INFO_KEY)).to.be(JSON.stringify(updatedXPackInfo));
     expect(xpackInfo.get('foo.bar')).to.be(17);
   });
@@ -35,7 +35,7 @@ describe('xpack_info service', () => {
         bar: 17
       }
     };
-    xpackInfo.set(updatedXPackInfo);
+    xpackInfo.setAll(updatedXPackInfo);
     expect(xpackInfo.get('foo.bar')).not.to.be(undefined);
 
     xpackInfo.clear();
@@ -44,7 +44,7 @@ describe('xpack_info service', () => {
   });
 
   it ('defaults to the provided default value if the requested path is not found', () => {
-    xpackInfo.set({ foo: 'bar' });
+    xpackInfo.setAll({ foo: 'bar' });
     expect(xpackInfo.get('foo.baz', 17)).to.be(17);
   });
 });
