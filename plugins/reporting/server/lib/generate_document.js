@@ -1,5 +1,6 @@
-const Promise = require('bluebird');
-const _ = require('lodash');
+const { unlink } = require('fs');
+const { map } = require('bluebird');
+const { capitalize } = require('lodash');
 const getTimeFilterRange = require('./get_time_filter_range');
 
 const pdf = require('./pdf');
@@ -8,10 +9,26 @@ const getScreenshotFactory = require('./get_screenshot');
 
 function generateDocumentFactory(server) {
   const getScreenshot = getScreenshotFactory(server);
+  const warningLog = (msg) => server.log(['reporting', 'warning'], msg);
 
   return {
     printablePdf: printablePdf,
   };
+
+  function cleanImages(cleanupPaths) {
+    return Promise.all(cleanupPaths.map(imagePath => {
+      return new Promise((resolve, reject) => {
+        return unlink(imagePath, (err) => {
+          if (err) { return reject(err); }
+          resolve();
+        });
+      });
+    }))
+    .catch((err) => {
+      // any failures to remove images are silently swallowed
+      warningLog(`Failed to remove screenshot image: ${err.path}`);
+    });
+  }
 
   function printablePdf(title, savedObjects, query, headers) {
     const pdfOutput = pdf.create();
@@ -20,33 +37,45 @@ function generateDocumentFactory(server) {
     title += (timeRange) ? ` — ${timeRange.from} to ${timeRange.to}` : '';
     pdfOutput.setTitle(title);
 
-    return Promise.map(savedObjects, function (savedObj) {
+    return map(savedObjects, function (savedObj) {
       if (savedObj.isMissing) {
         return savedObj;
       } else {
         return getScreenshot(savedObj.url, savedObj.type, headers)
-        .then((filename) => {
-          server.log(['reporting', 'debug'], `${savedObj.id} -> ${filename}`);
-          return _.assign({ filename }, savedObj);
+        .then((imagePath) => {
+          server.log(['reporting', 'debug'], `${savedObj.id} -> ${imagePath}`);
+          return { imagePath, savedObj };
         });
       }
     })
     .then(objects => {
+      const cleanupPaths = [];
+
       objects.forEach(object => {
-        if (object.isMissing) {
-          pdfOutput.addHeading(`${_.capitalize(object.type)} with id '${object.id}' not found`, {
+        const { imagePath, savedObj } = object;
+        cleanupPaths.push(imagePath);
+
+        if (savedObj.isMissing) {
+          pdfOutput.addHeading(`${capitalize(savedObj.type)} with id '${savedObj.id}' not found`, {
             styles: 'warning'
           });
         } else {
-          pdfOutput.addImage(object.filename, {
-            title: object.title,
-            description: object.description,
+          pdfOutput.addImage(imagePath, {
+            title: savedObj.title,
+            description: savedObj.description,
           });
         }
       });
+
+      return cleanupPaths;
     })
-    .then(function () {
-      return pdfOutput.generate();
+    .then(cleanupPaths => {
+      try {
+        const pdfInstance = pdfOutput.generate();
+        return cleanImages(cleanupPaths).then(() => pdfInstance);
+      } catch (err) {
+        return cleanImages(cleanupPaths).then(() => { throw err; });
+      }
     });
   };
 }

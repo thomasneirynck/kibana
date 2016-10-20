@@ -1,5 +1,5 @@
 const queue = require('queue');
-const screenshot = require('./screenshot');
+const screenshotFactory = require('./screenshot');
 const oncePerServer = require('./once_per_server');
 
 // bounding boxes for various saved object types
@@ -29,7 +29,7 @@ function getScreenshotFactory(server) {
   logger(`Screenshot concurrency: ${captureConcurrency}`);
 
   // init the screenshot module
-  const ss = screenshot(phantomPath, captureSettings, screenshotSettings, logger);
+  const screenshot = screenshotFactory(phantomPath, captureSettings, screenshotSettings, logger);
 
   // create the process queue
   const screenshotQueue = queue({ concurrency: captureConcurrency });
@@ -37,7 +37,7 @@ function getScreenshotFactory(server) {
   return function getScreenshot(objUrl, type, headers) {
     return new Promise(function (resolve, reject) {
       screenshotQueue.push(function (cb) {
-        return ss.capture(objUrl, {
+        return screenshot.capture(objUrl, {
           headers,
           bounding: boundingBoxes[type],
         })
