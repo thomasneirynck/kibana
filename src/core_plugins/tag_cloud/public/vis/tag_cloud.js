@@ -1,22 +1,6 @@
 import d3 from 'd3';
 import d3TagCloud from 'd3-cloud';
 
-function getText(word) {
-  return word.text;
-}
-
-function positionWord(word) {
-  return 'translate(' + [word.x, word.y] + ')rotate(' + word.rotate + ')';
-}
-
-function getSize(tag) {
-  return tag.size;
-}
-
-function getFill(tag) {
-  // return tag.fill;
-  return 'red';
-}
 
 export default class TagCloud {
 
@@ -26,7 +10,6 @@ export default class TagCloud {
     this._element = element;
     this._d3SvgContainer = d3.select(element);
     this._svgGroup = this._d3SvgContainer.append('g');
-
 
   }
 
@@ -44,33 +27,26 @@ export default class TagCloud {
 
   _onLayoutEnd(wordsWithLayout) {
 
-    console.log('DRAW yo data!', JSON.stringify(wordsWithLayout));
-
     const svgTextNodes = this._svgGroup.selectAll('text');
     const stage = svgTextNodes.data(wordsWithLayout, getText);
 
     const enterSelection = stage.enter();
     const enteringTags = enterSelection.append('text');
-    enteringTags.style('font-size', getSize);
+    enteringTags.style('font-size', getSizeInPixels);
     enteringTags.style('font-family', 'Impact');
     enteringTags.style('fill', getFill);
     enteringTags.attr('text-anchor', 'middle');
     enteringTags.attr('transform', positionWord);
     enteringTags.text(getText);
 
-    const cloud = stage;
-    //Entering and existing words
-    cloud
+    stage
       .transition()
       .duration(600)
-      .style('font-size', function (d) { return d.size + 'px'; })
-      .attr('transform', function (d) {
-        return 'translate(' + [d.x, d.y] + ')rotate(' + d.rotate + ')';
-      })
+      .style('font-size', getSizeInPixels)
+      .attr('transform', positionWord)
       .style('fill-opacity', 1);
 
-    //Exiting words
-    cloud.exit()
+    stage.exit()
       .transition()
       .duration(200)
       .style('fill-opacity', 1e-6)
@@ -136,3 +112,25 @@ export default class TagCloud {
 
 
 };
+
+
+function getText(word) {
+  return word.text;
+}
+
+function positionWord(word) {
+  return 'translate(' + [word.x, word.y] + ')rotate(' + word.rotate + ')';
+}
+
+function getSize(tag) {
+  return tag.size;
+}
+
+function getSizeInPixels(d) {
+  return d.size + 'px';
+}
+
+function getFill(tag) {
+  // return tag.fill;
+  return 'red';
+}
