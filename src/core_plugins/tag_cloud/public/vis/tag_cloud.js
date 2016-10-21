@@ -2,7 +2,6 @@ import d3 from 'd3';
 import d3TagCloud from 'd3-cloud';
 
 function getText(word) {
-  console.log('getting text', word.text);
   return word.text;
 }
 
@@ -58,6 +57,25 @@ export default class TagCloud {
     enteringTags.attr('text-anchor', 'middle');
     enteringTags.attr('transform', positionWord);
     enteringTags.text(getText);
+
+    const cloud = stage;
+    //Entering and existing words
+    cloud
+      .transition()
+      .duration(600)
+      .style('font-size', function (d) { return d.size + 'px'; })
+      .attr('transform', function (d) {
+        return 'translate(' + [d.x, d.y] + ')rotate(' + d.rotate + ')';
+      })
+      .style('fill-opacity', 1);
+
+    //Exiting words
+    cloud.exit()
+      .transition()
+      .duration(200)
+      .style('fill-opacity', 1e-6)
+      .attr('font-size', 1)
+      .remove();
   };
 
   /**
