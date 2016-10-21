@@ -30,6 +30,7 @@ module.exports = function (kibana) {
     uiExports: {
       app: {
         title: APP_TITLE,
+        order: 9000,
         icon: 'plugins/graph/icon.png',
         description: 'Graph exploration',
         //2.x        main: 'plugins/graph/app',

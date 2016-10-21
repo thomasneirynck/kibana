@@ -14,6 +14,7 @@ export default function monitoringIndex(kibana) {
     uiExports: {
       app: {
         title: 'Monitoring',
+        order: 9002,
         description: 'Monitoring for Elasticsearch',
         icon: 'plugins/monitoring/monitoring.svg',
         main: 'plugins/monitoring/monitoring',
