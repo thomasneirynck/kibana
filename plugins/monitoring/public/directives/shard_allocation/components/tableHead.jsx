@@ -16,6 +16,7 @@
  */
 
 import React from 'react';
+import Tooltip from 'plugins/monitoring/lib/tooltip_component';
 
 class IndexLabel extends React.Component {
 
@@ -43,13 +44,14 @@ class IndexLabel extends React.Component {
         &nbsp;
         <input type='checkbox'
           onChange={this.toggleShowSystemIndicesState}
-          checked={this.state.showSystemIndices}/>
+          checked={this.state.showSystemIndices}
+        />
         &nbsp;
         Show system indices
         &nbsp;
-        <i
-          className="fa fa-question-circle"
-          title="System index names begin with a dot, for example `.kibana`."></i>
+        <Tooltip placement='right' text='System index names begin with a dot, for example `.kibana`.'>
+          <i className='fa fa-question-circle noUserSelect'></i>
+        </Tooltip>
       </div>
     );
   }
