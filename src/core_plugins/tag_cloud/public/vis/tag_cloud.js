@@ -1,23 +1,21 @@
 import d3 from 'd3';
 import d3TagCloud from 'd3-cloud';
 
-
 export default class TagCloud {
 
-  constructor(element) {
-
+  constructor(element, size) {
     window.TC = this;
     this._element = element;
     this._d3SvgContainer = d3.select(element);
     this._svgGroup = this._d3SvgContainer.append('g');
-
+    this._size = [1, 1];//initialize array
+    this.setSize(size);
   }
 
   /**
    * @param options
    */
   setOptions(options) {
-    console.log('setting options', JSON.stringify(options), JSON.stringify(this._options));
     if (JSON.stringify(options) === JSON.stringify(this._options)) {
       return;
     }
@@ -25,7 +23,7 @@ export default class TagCloud {
     this.invalidate();
   }
 
-  _onLayoutEnd(wordsWithLayout) {
+  _onLayoutEnd(resolve, reject, wordsWithLayout) {
 
     const svgTextNodes = this._svgGroup.selectAll('text');
     const stage = svgTextNodes.data(wordsWithLayout, getText);
@@ -39,35 +37,56 @@ export default class TagCloud {
     enteringTags.attr('transform', positionWord);
     enteringTags.text(getText);
 
-    stage
-      .transition()
-      .duration(600)
-      .style('font-size', getSizeInPixels)
-      .attr('transform', positionWord)
-      .style('fill-opacity', 1);
+    const movingTags = stage.transition();
+    movingTags.duration(600);
+    movingTags.style('font-size', getSizeInPixels);
+    movingTags.attr('transform', positionWord);
+    movingTags.style('fill-opacity', 1);
 
-    stage.exit()
-      .transition()
-      .duration(200)
-      .style('fill-opacity', 1e-6)
-      .attr('font-size', 1)
-      .remove();
+    const exitingTags = stage.exit();
+    const exitTransition = exitingTags.transition();
+    exitTransition.duration(200);
+    exitingTags.style('fill-opacity', 1e-6);
+    exitingTags.attr('font-size', 1);
+    exitingTags.remove();
+
+    let exits = 0;
+    let moves = 0;
+    const checkIfDone = () => {
+      if (exits === 0 && moves === 0) {
+        this._viewDirtyPromise = null;
+        resolve(true);
+      }
+    };
+    exitTransition.each(_ => exits += 1);
+    exitTransition.each('end', _ => {
+      exits -= 1;
+      checkIfDone();
+    });
+    movingTags.each(_ => moves += 1);
+    movingTags.each('end', _ => {
+      moves -= 1;
+      checkIfDone();
+    });
+
   };
 
   /**
    * Set size of the container
    * @param size
    */
-  setSize(size) {
-    this._size = size;
+  setSize(newSize) {
+    if (newSize[0] === 0 || newSize[1] === 0) {
+      return;
+    }
+    if (newSize[0] === this._size[0] && newSize[1] === this._size[1]) {
+      return;
+    }
+    this._size = newSize;
     this.invalidate();
   }
 
-  /**
-   * array of words
-   */
   setData(data) {
-    console.log('set data', data);
     // this._words = this._d3SvgContainer.datum(data.tags);
     this._words = data.map((tag) => {
       return {text: tag.text, size: 10 + Math.random() * 90};
@@ -77,37 +96,58 @@ export default class TagCloud {
     this.invalidate();
   }
 
+  destroy() {
+    if (this._viewDirtyPromise) {
+      //wait until ready.
+    }
+    this._element.innerHTML = '';
+  }
 
   invalidate() {
-    console.log('invalidate the tag-cloud');
     if (!this._words) {
       return;
     }
-    this._render();
+    this._render().then(_ => {
+      //fire complete event here!
+    });
   }
 
   _render() {
-    console.log('start the layout....');
 
-    this._layout = d3TagCloud();
-    this._layout.size([500, 500]);
-    this._layout.padding(5);
-    this._layout.rotate(function () {
-      return ~~(Math.random() * 2) * 90;
-    });
-    this._layout.font(this._font);
-    this._layout.fontSize(getSize);
-    this._layout.on('end', this._onLayoutEnd.bind(this));
-    this._layout.words(this._words);
+    const render = () => {
+      this._viewDirtyPromise = new Promise((resolve, reject) => {
 
-    const width = this._layout.size()[0];
-    const height = this._layout.size()[1];
+        const layout = d3TagCloud();
+        layout.size(this._size);
+        layout.padding(5);
+        layout.rotate(function () {
+          return ~~(Math.random() * 2) * 90;
+        });
+        layout.font(this._font);
+        layout.fontSize(getSize);
+        layout.on('end', this._onLayoutEnd.bind(this, resolve, reject));
+        layout.words(this._words);
 
-    this._d3SvgContainer.attr('width', width);
-    this._d3SvgContainer.attr('height', height);
-    this._svgGroup.attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
+        this._d3SvgContainer.attr('width', this._size[0]);
+        this._d3SvgContainer.attr('height', this._size[1]);
+        this._svgGroup.attr('transform', 'translate(' + this._size[0] / 2 + ',' + this._size[1] / 2 + ')');
 
-    this._layout.start();
+        layout.start();
+
+      });
+    };
+
+    // if (this._viewDirtyPromise) {
+    //   this._viewDirtyPromise.then(render);
+    // } else {
+    //   render();
+    // }
+    //
+    // return this._viewDirtyPromise;
+
+    render();
+    return this._viewDirtyPromise;
+
   }
 
 
