@@ -32,8 +32,6 @@ function showSystemIndicesComponentFactory(scope) {
             checked={this.state.showSystemIndices}/>
           &nbsp;
           Show system indices
-          &nbsp;
-          <i className="fa fa-question-circle" title="System index names begin with a dot, for example `.kibana`."></i>
         </div>
       );
     }

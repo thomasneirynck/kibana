@@ -16,7 +16,6 @@
  */
 
 import React from 'react';
-import Tooltip from 'plugins/monitoring/lib/tooltip_component';
 
 class IndexLabel extends React.Component {
 
@@ -48,10 +47,6 @@ class IndexLabel extends React.Component {
         />
         &nbsp;
         Show system indices
-        &nbsp;
-        <Tooltip placement='right' text='System index names begin with a dot, for example `.kibana`.'>
-          <i className='fa fa-question-circle noUserSelect'></i>
-        </Tooltip>
       </div>
     );
   }
