@@ -3,6 +3,7 @@ import _ from 'lodash';
 import moment from 'moment-timezone';
 import statusIconClass from '../../lib/status_icon_class';
 import formatNumber, { formatBytesUsage, formatPercentageUsage } from '../../lib/format_number';
+import Tooltip from 'plugins/monitoring/lib/tooltip_component';
 
 class ClusterItemContainer extends React.Component {
   render() {
@@ -40,9 +41,11 @@ class StatusContainer extends React.Component {
 class BytesUsage extends React.Component {
   render() {
     return (
-      <abbr title={formatPercentageUsage(this.props.used_bytes, this.props.max_bytes)}>
-        {formatBytesUsage(this.props.used_bytes, this.props.max_bytes)}
-      </abbr>
+      <span className='hoverText'>
+        <Tooltip text={formatPercentageUsage(this.props.used_bytes, this.props.max_bytes)} trigger='hover' placement='right'>
+          {formatBytesUsage(this.props.used_bytes, this.props.max_bytes)}
+        </Tooltip>
+      </span>
     );
   }
 }
@@ -50,9 +53,11 @@ class BytesUsage extends React.Component {
 class BytesPercentageUsage extends React.Component {
   render() {
     return (
-      <abbr title={formatBytesUsage(this.props.used_bytes, this.props.max_bytes)}>
-        {formatPercentageUsage(this.props.used_bytes, this.props.max_bytes)}
-      </abbr>
+      <span className='hoverText'>
+        <Tooltip text={formatBytesUsage(this.props.used_bytes, this.props.max_bytes)} trigger='hover' placement='right'>
+          {formatPercentageUsage(this.props.used_bytes, this.props.max_bytes)}
+        </Tooltip>
+      </span>
     );
   }
 }
