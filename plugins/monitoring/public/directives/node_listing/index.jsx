@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import MetricCell from './metric_cell_component';
 import OfflineCell from './offline_cell_component';
 import statusIconClass from '../../lib/status_icon_class';
+import Tooltip from 'plugins/monitoring/lib/tooltip_component';
 import extractIp from 'plugins/monitoring/lib/extract_ip';
 import Table from 'plugins/monitoring/directives/paginated_table/components/table';
 import uiModules from 'ui/modules';
@@ -46,7 +47,9 @@ function nodeRowFactory(scope, kbnUrl, decorateRow) {
       return (
         <tr className='big'>
           <td>
-            <i title={this.state.node.nodeTypeLabel} className={`fa ${this.state.node.nodeTypeClass}`}/>
+            <Tooltip text={this.state.node.nodeTypeLabel} trigger='hover' placement='bottom'>
+              <i className={`fa ${this.state.node.nodeTypeClass}`}/>
+            </Tooltip>
             &nbsp;
             <a className='link' onClick={this.goToNode}>
               {this.state.node.name}
