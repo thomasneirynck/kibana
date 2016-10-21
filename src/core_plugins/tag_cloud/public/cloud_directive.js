@@ -26,13 +26,13 @@ module.directive('kbnTagCloud', function () {
         if (!scope.data) {
           return;
         }
-        if (scope.data.length > 1) {
+        if (scope.data.length > 1) {//cannot happen, since UI-form doesn't allow it.
           throw new Error('Cannot render multiple datasets.');
         }
         tagCloud.setData(scope.data[0].tags);
       });
-      scope.$watch('options', function (oldOptions, newOptions) {
-        tagCloud.setOptions(newOptions);
+      scope.$watch('options', function (options) {
+        tagCloud.setOptions(options);
       });
       scope.$watch(containerSize, _.debounce(function () {
         tagCloud.setSize(containerSize());

@@ -29,19 +29,13 @@
   </div>
 
   <div class="form-group">
-    <label>Font Weight</label>
+    <label>Orientations</label>
     <select ng-model="vis.params.orientations" class="form-control">
       <option value="single" selected="selected">single</option>
       <option value="rightAngled">right angles</option>
       <option value="multi">multiple</option>
     </select>
   </div>
-
-
-  <!--<label>{{vis.params.orientations}} orientations between {{ vis.params.fromDegree }} and {{ vis.params.toDegree }} degrees</label>-->
-  <!--<div>-->
-    <!--<arc-input fromDegree="{{ vis.params.toDegree }}" toDegree="{{ vis.params.toDegree }}"></arc-input>-->
-  <!--</div>-->
 
   <label>Minimum Font Size - {{ vis.params.minFontSize }}px</label>
   <input type="range" ng-model="vis.params.minFontSize" class="form-control" min="12" max="120">
