@@ -27,6 +27,9 @@ function textGenerator() {
       text.enter().append('text')
         .attr('class', cssClass);
 
+
+      console.log('text wtf is this bullshit...');
+
       text
         .attr('transform', transform)
         .attr('text-anchor', textAnchor)

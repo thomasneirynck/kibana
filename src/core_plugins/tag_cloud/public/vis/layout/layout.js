@@ -111,6 +111,9 @@ export default class LayoutGenerator {
   }
 
   render(selection) {
+
+    console.log('rendering the selection', selection);
+
     var self = this;
     selection.each(function (data) {
       self._group

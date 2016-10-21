@@ -53,14 +53,12 @@ class TagCloud {
     selection.each(function (data, index) {
 
       const tags = self.accessor.call(this, data, index);
-
       const text = textElement()
         .cssClass(self.textClass)
         .fontSize(fontSizeAsPixels)
         .fill(self.fill)
         .fillOpacity(self.fillOpacity)
         .textAnchor(self.textAnchor);
-
 
       const group = gGenerator()
         .cssClass('tags')
@@ -93,9 +91,7 @@ class TagCloud {
         .fontSize(self.fontSize)
         .padding(self.padding)
         .on('end', tags => {
-
           console.log('on end', arguments);
-
           g.select('g.' + group.cssClass())
             .datum(tags)
             .call(text);
@@ -154,13 +150,18 @@ export default class MultiTagCloud {
       return;
     }
 
-    this._render(this._data);
+    this._render();
   }
 
-  _render(selection) {
+  _render() {
+
+
+    console.log('multi-tag-cloud-render', this._data);
 
     var self = this;
-    selection.each(function () {//cannot use anonymous function, d3 needs the special d3-provided `this` scope.
+    this._data.each(function () {//cannot use anonymous function, d3 needs the special d3-provided `this` scope.
+
+      console.log('what the fuck is this THIS', this);
 
       self._layout.setType(self._options.layout || 'grid');
       self._layout.setColumns(self._options.numOfColumns || 0);
@@ -172,7 +173,13 @@ export default class MultiTagCloud {
       self._layout.render(groupSelection);
 
       const charts = groupSelection.selectAll('g.chart');
+
+      console.log('what are these charts', charts);
+
       charts.each(function (data) {
+
+        console.log('what is this data', data);
+        console.log('what is this nested this', this);
 
         const accessor = 'tags';
         const tagCloud = new TagCloud();
@@ -204,6 +211,8 @@ export default class MultiTagCloud {
     if (size[0] === this._size[0] && this._size[1] === size[1]) {
       return;
     }
+
+    console.log('size...', size);
     this._size = (_.isArray(size) && _.size(size) === 2) ? size : this._size;
     this.invalidate();
   }

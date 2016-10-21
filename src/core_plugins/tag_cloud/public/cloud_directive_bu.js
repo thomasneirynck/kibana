@@ -1,6 +1,7 @@
+import d3 from 'd3';
 import _ from 'lodash';
+import MultiTagCloud from 'plugins/tagcloud/vis/multi_tag_cloud';
 import uiModules from 'ui/modules';
-import TagCloud from 'plugins/tagcloud/vis/tag_cloud';
 
 const module = uiModules.get('kibana/tagcloud', ['kibana']);
 
@@ -16,16 +17,15 @@ module.directive('kbnTagCloud', function () {
     replace: 'true',
     link: function (scope, element) {
 
-      const tagCloud = new TagCloud(element[0]);
-      tagCloud.setSize(containerSize());
+      const svgContainer = d3.select(element[0]);
+      const multiTagCloud = new MultiTagCloud();
+      multiTagCloud.setSize(containerSize());
 
       function containerSize() {
         return [element.parent().width(), element.parent().height()];
       }
 
       scope.$watch('data', function () {
-        console.log('data!');
-
         if (!scope.data) {
           return;
         }
@@ -33,15 +33,15 @@ module.directive('kbnTagCloud', function () {
         if (scope.data.length > 1) {
           throw new Error('Cannot render multiple datasets.');
         }
-        tagCloud.setData(scope.data[0]);
+        multiTagCloud.setData(svgContainer.datum(scope.data));
       });
       scope.$watch('options', function (oldOptions, newOptions) {
-        tagCloud.setOptions(newOptions);
+        multiTagCloud.setOptions(newOptions);
       });
       scope.$watch(containerSize, _.debounce(function () {
         console.log('containersize', containerSize());
         const size = containerSize();
-        tagCloud.setSize(size);
+        multiTagCloud.setSize(size);
       }, 250), true);
 
     }
