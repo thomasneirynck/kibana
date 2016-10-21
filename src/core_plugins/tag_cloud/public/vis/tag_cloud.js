@@ -14,6 +14,10 @@ function getSize(tag) {
   return tag.size;
 }
 
+function getFill(tag) {
+  // return tag.fill;
+  return 'red';
+}
 
 export default class TagCloud {
 
@@ -24,13 +28,14 @@ export default class TagCloud {
     this._d3SvgContainer = d3.select(element);
     this._svgGroup = this._d3SvgContainer.append('g');
 
+
   }
 
   /**
    * @param options
    */
   setOptions(options) {
-    console.log('setting options');
+    console.log('setting options', JSON.stringify(options), JSON.stringify(this._options));
     if (JSON.stringify(options) === JSON.stringify(this._options)) {
       return;
     }
@@ -41,33 +46,18 @@ export default class TagCloud {
   _onLayoutEnd(wordsWithLayout) {
 
     console.log('DRAW yo data!', JSON.stringify(wordsWithLayout));
-    const width = this._layout.size()[0];
-    const height = this._layout.size()[1];
 
-    this._d3SvgContainer.attr('width', width);
-    this._d3SvgContainer.attr('height', height);
+    const svgTextNodes = this._svgGroup.selectAll('text');
+    const stage = svgTextNodes.data(wordsWithLayout, getText);
 
-    // const svgGroup = this._d3SvgContainer.append('g');
-    // const svgGroup = this._d3SvgContainer.get('g');
-    this._svgGroup.attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
-
-    const textGroups = this._svgGroup.selectAll('text');
-    const stage = textGroups.data(wordsWithLayout);
-    const boundWords = stage.enter();
-
-    const tags = boundWords.append('text');
-
-    tags.style('font-size', function (d) {
-      return d.size + 'px';
-    });
-    // svgText.style('font-family', 'Impact');
-    tags.style('fill', function (d, i) {
-      // return fill(i);
-      return 'red';
-    });
-    tags.attr('text-anchor', 'middle');
-    tags.attr('transform', positionWord);
-    tags.text(getText);
+    const enterSelection = stage.enter();
+    const enteringTags = enterSelection.append('text');
+    enteringTags.style('font-size', getSize);
+    enteringTags.style('font-family', 'Impact');
+    enteringTags.style('fill', getFill);
+    enteringTags.attr('text-anchor', 'middle');
+    enteringTags.attr('transform', positionWord);
+    enteringTags.text(getText);
   };
 
   /**
@@ -111,10 +101,17 @@ export default class TagCloud {
     this._layout.rotate(function () {
       return ~~(Math.random() * 2) * 90;
     });
-    this._layout.font('Sans-serif   ');
+    this._layout.font(this._font);
     this._layout.fontSize(getSize);
     this._layout.on('end', this._onLayoutEnd.bind(this));
     this._layout.words(this._words);
+
+    const width = this._layout.size()[0];
+    const height = this._layout.size()[1];
+
+    this._d3SvgContainer.attr('width', width);
+    this._d3SvgContainer.attr('height', height);
+    this._svgGroup.attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')');
 
     this._layout.start();
   }
