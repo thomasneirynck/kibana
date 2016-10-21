@@ -33,7 +33,7 @@ module.directive('kbnTagCloud', function () {
         if (scope.data.length > 1) {
           throw new Error('Cannot render multiple datasets.');
         }
-        tagCloud.setData(scope.data[0]);
+        tagCloud.setData(scope.data[0].tags);
       });
       scope.$watch('options', function (oldOptions, newOptions) {
         tagCloud.setOptions(newOptions);
