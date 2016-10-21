@@ -13,10 +13,6 @@ monitoring-cluster-listing {
 
   .clusterName {
     font-size: 22px;
-
-    & > * {
-      vertical-align: middle;
-    }
   }
 
   .expires {
@@ -35,6 +31,8 @@ monitoring-cluster-listing {
   }
 
   .primary-cluster-indicator {
+    position: relative;
+    bottom: 3px; // push it up for middle-alignment
     font-size: 60%;
   }
 

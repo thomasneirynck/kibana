@@ -2,7 +2,8 @@ import React from 'react';
 import numeral from 'numeral';
 import moment from 'moment';
 import _ from 'lodash';
-import statusIconClass from '../../../lib/status_icon_class';
+import statusIconClass from 'plugins/monitoring/lib/status_icon_class';
+import Tooltip from 'plugins/monitoring/lib/tooltip_component';
 
 function isClusterSupportedFactory(isSupported) {
   return class IsClusterSupported extends React.Component {
@@ -57,7 +58,9 @@ to enjoy multi-cluster monitoring.`
         <a className='clusterName link' onClick={this.changeCluster()}>
           { this.props.cluster_name } &nbsp;
           { this.props.isPrimary ?
-            <i className="fa fa-asterisk primary-cluster-indicator" title="Kibana uses this cluster as the primary connection"></i> :
+            <Tooltip text='Kibana uses this cluster as the primary connection' placement='right' trigger='hover'>
+              <i className='fa fa-asterisk primary-cluster-indicator'></i>
+            </Tooltip> :
             '' }
         </a>
       );
