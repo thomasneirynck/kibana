@@ -153,6 +153,7 @@ export default class TagCloud {
 
     clearTimeout(this._timeoutHandle);
     this._timeoutHandle = setTimeout(() => {
+      this._timeoutHandle = null;
       this._render().then(() => console.log('done.. requires some massaging to deal with multiple renderings..'));
     }, 1000);
 
