@@ -64,14 +64,7 @@ export default class TagCloud {
     if (newSize[0] === this._size[0] && newSize[1] === this._size[1]) {
       return;
     }
-
     this._size = newSize;
-    this._d3SvgContainer.attr('width', this._size[0]);
-    this._d3SvgContainer.attr('height', this._size[1]);
-    this._svgGroup.attr('height', this._size[1]);
-    this._svgGroup.attr('height', this._size[1]);
-    this._svgGroup.attr('transform', 'translate(' + this._size[0] / 2 + ',' + this._size[1] / 2 + ')');
-
     this._invalidate();
   }
 
@@ -167,24 +160,29 @@ export default class TagCloud {
 
   _render() {
 
+    this._d3SvgContainer.attr('width', this._size[0]);
+    this._d3SvgContainer.attr('height', this._size[1]);
+    this._svgGroup.attr('width', this._size[0]);
+    this._svgGroup.attr('height', this._size[1]);
+    this._svgGroup.attr('transform', 'translate(' + this._size[0] / 2 + ',' + this._size[1] / 2 + ')');
+
+    const tagCloud = d3TagCloud();
+    tagCloud.size(this._size);
+    tagCloud.padding(5);
+    tagCloud.rotate(ORIENTATIONS[this._orientations]);
+    tagCloud.font(this._fontFamily);
+    tagCloud.fontStyle(this._fontStyle);
+    tagCloud.fontWeight(this._fontWeight);
+    tagCloud.fontSize(tag =>this._mapSizeToFontSize(tag.size));
+    tagCloud.random(_ => 0.5); //consistently seed the layout
+    tagCloud.spiral('archimedean');
+    tagCloud.words(this._words);
+    tagCloud.timeInterval(1000);//never run longer than a second
+
+
     return new Promise((resolve, reject) => {
-
-      const tagCloud = d3TagCloud();
-
-      tagCloud.size(this._size);
-      tagCloud.padding(5);
-      tagCloud.rotate(ORIENTATIONS[this._orientations]);
-      tagCloud.font(this._fontFamily);
-      tagCloud.fontStyle(this._fontStyle);
-      tagCloud.fontWeight(this._fontWeight);
-      tagCloud.fontSize(tag =>this._mapSizeToFontSize(tag.size));
-      tagCloud.random(_ => 0.5); //consistently seed the layout
-      tagCloud.spiral('archimedean');
-      tagCloud.words(this._words);
-      tagCloud.timeInterval(1000);//never run longer than a second
       tagCloud.on('end', this._onLayoutEnd.bind(this, resolve, reject));
       tagCloud.start();
-
     });
   }
 
