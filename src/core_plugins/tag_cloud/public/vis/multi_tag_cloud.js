@@ -165,6 +165,7 @@ export default class MultiTagCloud {
 
       self._layout.setType(self._options.layout || 'grid');
       self._layout.setColumns(self._options.numOfColumns || 0);
+
       self._layout.setSize(self._size);
 
       let groupSelection = d3.select(this)

@@ -1,5 +1,9 @@
 import d3 from 'd3';
 import d3TagCloud from 'd3-cloud';
+import vislibComponentsSeedColorsProvider from 'ui/vislib/components/color/seed_colors';
+
+
+const colorScale = d3.scale.ordinal().range(vislibComponentsSeedColorsProvider());
 
 
 const ORIENTATIONS = {
@@ -117,6 +121,7 @@ export default class TagCloud {
       return;
     }
 
+    console.log('set new size', newSize);
     this._size = newSize;
     this._d3SvgContainer.attr('width', this._size[0]);
     this._d3SvgContainer.attr('height', this._size[1]);
@@ -158,6 +163,8 @@ export default class TagCloud {
     return new Promise((resolve, reject) => {
 
       const tagCloud = d3TagCloud();
+
+      console.log('actual size', this._size);
       tagCloud.size(this._size);
       tagCloud.padding(5);
       tagCloud.rotate(ORIENTATIONS[this._orientations]);
@@ -195,6 +202,5 @@ function getSizeInPixels(tag) {
 }
 
 function getFill(tag) {
-  // return tag.fill;
-  return 'red';
+  return colorScale(tag.text);
 }
