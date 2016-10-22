@@ -21,6 +21,7 @@ export default class TagCloud {
     this._element = element;
     this._d3SvgContainer = d3.select(element);
     this._svgGroup = this._d3SvgContainer.append('g');
+    this._canvas = document.createElement('canvas');
 
     this._fontFamily = 'Impact';
     this._fontStyle = 'normal';
@@ -115,7 +116,14 @@ export default class TagCloud {
     if (newSize[0] === this._size[0] && newSize[1] === this._size[1]) {
       return;
     }
+
     this._size = newSize;
+    this._d3SvgContainer.attr('width', this._size[0]);
+    this._d3SvgContainer.attr('height', this._size[1]);
+    this._svgGroup.attr('height', this._size[1]);
+    this._svgGroup.attr('height', this._size[1]);
+    this._svgGroup.attr('transform', 'translate(' + this._size[0] / 2 + ',' + this._size[1] / 2 + ')');
+
     this.invalidate();
   }
 
@@ -157,17 +165,11 @@ export default class TagCloud {
       tagCloud.fontStyle(this._fontStyle);
       tagCloud.fontWeight(this._fontWeight);
       tagCloud.fontSize(getSize);
-      tagCloud.on('end', this._onLayoutEnd.bind(this, resolve, reject));
-      tagCloud.words(this._words);
       tagCloud.random(_ => 0.5); //consistently seed the layout
+      tagCloud.spiral('archimedean');
+      tagCloud.words(this._words);
       tagCloud.timeInterval(1000);//never run longer than a second
-
-      console.log('set the with, height', this._size);
-
-      this._d3SvgContainer.attr('width', this._size[0]);
-      this._d3SvgContainer.attr('height', this._size[1]);
-      this._svgGroup.attr('transform', 'translate(' + this._size[0] / 2 + ',' + this._size[1] / 2 + ')');
-
+      tagCloud.on('end', this._onLayoutEnd.bind(this, resolve, reject));
       tagCloud.start();
 
     });
@@ -188,8 +190,8 @@ function getSize(tag) {
   return tag.size;
 }
 
-function getSizeInPixels(d) {
-  return d.size + 'px';
+function getSizeInPixels(tag) {
+  return tag.size + 'px';
 }
 
 function getFill(tag) {

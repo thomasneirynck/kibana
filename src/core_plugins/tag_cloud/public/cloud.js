@@ -8,7 +8,6 @@ import tagCloudTemplate from 'plugins/tagcloud/cloud.html';
 import tagCloudVisParamsTemplate from 'plugins/tagcloud/cloud_vis_params.html';
 
 
-// register the provider with the visTypes registry
 require('ui/registry/vis_types').register(TagCloudProvider);
 
 function TagCloudProvider(Private) {
@@ -26,10 +25,7 @@ function TagCloudProvider(Private) {
     params: {
       defaults: {
         textScale: 'linear',
-        orientations: 2,
-        fromDegree: 0,
-        toDegree: 0,
-        font: 'serif',
+        orientations: 'single',
         fontStyle: 'normal',
         fontWeight: 'normal',
         minFontSize: 18,
