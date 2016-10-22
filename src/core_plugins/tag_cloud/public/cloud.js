@@ -1,6 +1,5 @@
 import 'plugins/tagcloud/cloud.less';
 import 'plugins/tagcloud/cloud_controller.js';
-import 'plugins/tagcloud/arcinput_directive.js';
 import 'plugins/tagcloud/cloud_directive.js';
 import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';

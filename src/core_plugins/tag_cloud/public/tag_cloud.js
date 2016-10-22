@@ -3,20 +3,17 @@ import d3TagCloud from 'd3-cloud';
 import vislibComponentsSeedColorsProvider from 'ui/vislib/components/color/seed_colors';
 
 
-const colorScale = d3.scale.ordinal().range(vislibComponentsSeedColorsProvider());
-
-
 const ORIENTATIONS = {
-  'single': function () {
-    return 0;
-  },
-  'rightAngled': function () {
-    return ~~(Math.random() * 2) * 90;//random rotation for words
-  },
-  'multi': function () {
-    return ~~(Math.random() * 6) * 15;//ensure not
-  }
+  'single': (tag) => 0,
+  'rightAngled': (tag) =>~~(Math.random() * 2) * 90,
+  'multi': (tag) => ~~(Math.random() * 6) * 15
 };
+const D3_SCALING_FUNCTIONS = {
+  'linear': d3.scale.linear(),
+  'log': d3.scale.log(),
+  'sqrt': d3.scale.sqrt()
+};
+
 
 export default class TagCloud {
 
@@ -25,7 +22,6 @@ export default class TagCloud {
     this._element = element;
     this._d3SvgContainer = d3.select(element);
     this._svgGroup = this._d3SvgContainer.append('g');
-    this._canvas = document.createElement('canvas');
 
     this._fontFamily = 'Impact';
     this._fontStyle = 'normal';
@@ -56,8 +52,45 @@ export default class TagCloud {
     this._minFontSize = Math.min(options.minFontSize, options.maxFontSize);
     this._maxFontSize = Math.max(options.minFontSize, options.maxFontSize);
     this._textScale = options.textScale;
+    this._makeTextSizeMapper();
 
-    this.invalidate();
+    this._invalidate();
+  }
+
+  setSize(newSize) {
+    if (newSize[0] === 0 || newSize[1] === 0) {
+      return;
+    }
+    if (newSize[0] === this._size[0] && newSize[1] === this._size[1]) {
+      return;
+    }
+
+    this._size = newSize;
+    this._d3SvgContainer.attr('width', this._size[0]);
+    this._d3SvgContainer.attr('height', this._size[1]);
+    this._svgGroup.attr('height', this._size[1]);
+    this._svgGroup.attr('height', this._size[1]);
+    this._svgGroup.attr('transform', 'translate(' + this._size[0] / 2 + ',' + this._size[1] / 2 + ')');
+
+    this._invalidate();
+  }
+
+  setData(data) {
+    this._words = data.map(word => {
+      return {
+        size: word.size,
+        text: word.text,
+        orientation: null
+      };
+    });
+    this._makeTextSizeMapper();
+    this._invalidate();
+  }
+
+
+  destroy() {
+    //need to interrupt any ongoing rendering.
+    this._element.innerHTML = '';
   }
 
   _onLayoutEnd(resolve, reject, wordsWithLayout) {
@@ -97,63 +130,37 @@ export default class TagCloud {
       }
     };
     exitTransition.each(_ => exits += 1);
-    exitTransition.each('end', _ => {
+    exitTransition.each('end', () => {
       exits -= 1;
       checkIfDone();
     });
     movingTags.each(_ => moves += 1);
-    movingTags.each('end', _ => {
+    movingTags.each('end', () => {
       moves -= 1;
       checkIfDone();
     });
 
   };
 
-  /**
-   * Set size of the container
-   * @param size
-   */
-  setSize(newSize) {
-    if (newSize[0] === 0 || newSize[1] === 0) {
-      return;
+
+  _makeTextSizeMapper() {
+    this._mapSizeToFontSize = D3_SCALING_FUNCTIONS[this._textScale];
+    this._mapSizeToFontSize.range([this._minFontSize, this._maxFontSize]);
+    if (this._words) {
+      this._mapSizeToFontSize.domain(d3.extent(this._words, getSize));
     }
-    if (newSize[0] === this._size[0] && newSize[1] === this._size[1]) {
-      return;
-    }
-
-    console.log('set new size', newSize);
-    this._size = newSize;
-    this._d3SvgContainer.attr('width', this._size[0]);
-    this._d3SvgContainer.attr('height', this._size[1]);
-    this._svgGroup.attr('height', this._size[1]);
-    this._svgGroup.attr('height', this._size[1]);
-    this._svgGroup.attr('transform', 'translate(' + this._size[0] / 2 + ',' + this._size[1] / 2 + ')');
-
-    this.invalidate();
   }
 
-  setData(data) {
-    // this._words = this._d3SvgContainer.datum(data.tags);
-    this._words = data.map((tag) => {
-      return {text: tag.text, size: 10 + Math.random() * 90};
-    });
-    this.invalidate();
-  }
 
-  destroy() {
-    //need to interrupt any ongoing rendering.
-    this._element.innerHTML = '';
-  }
-
-  invalidate() {
+  _invalidate() {
 
     if (!this._words) {
       return;
     }
 
     clearTimeout(this._timeoutHandle);
-    this._timeoutHandle = setTimeout(_ => {
-      this._render().then(_ => console.log('done.. requires some massaging to deal with multiple renderings..'));
+    this._timeoutHandle = setTimeout(() => {
+      this._render().then(() => console.log('done.. requires some massaging to deal with multiple renderings..'));
     }, 1000);
 
   }
@@ -164,14 +171,13 @@ export default class TagCloud {
 
       const tagCloud = d3TagCloud();
 
-      console.log('actual size', this._size);
       tagCloud.size(this._size);
       tagCloud.padding(5);
       tagCloud.rotate(ORIENTATIONS[this._orientations]);
       tagCloud.font(this._fontFamily);
       tagCloud.fontStyle(this._fontStyle);
       tagCloud.fontWeight(this._fontWeight);
-      tagCloud.fontSize(getSize);
+      tagCloud.fontSize(tag =>this._mapSizeToFontSize(tag.size));
       tagCloud.random(_ => 0.5); //consistently seed the layout
       tagCloud.spiral('archimedean');
       tagCloud.words(this._words);
@@ -190,7 +196,7 @@ function getText(word) {
 }
 
 function positionWord(word) {
-  return 'translate(' + [word.x, word.y] + ')rotate(' + word.rotate + ')';
+  return `translate(${word.x}, ${word.y})rotate(${word.rotate})`;
 }
 
 function getSize(tag) {
@@ -201,6 +207,7 @@ function getSizeInPixels(tag) {
   return tag.size + 'px';
 }
 
+const colorScale = d3.scale.ordinal().range(vislibComponentsSeedColorsProvider());
 function getFill(tag) {
   return colorScale(tag.text);
 }

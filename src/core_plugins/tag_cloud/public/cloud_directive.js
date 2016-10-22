@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import uiModules from 'ui/modules';
-import TagCloud from 'plugins/tagcloud/vis/tag_cloud';
+import TagCloud from 'plugins/tagcloud/tag_cloud';
 
 const module = uiModules.get('kibana/tagcloud', ['kibana']);
 
