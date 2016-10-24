@@ -28,7 +28,11 @@
       </td>
       <td class="time">
         <h6>
-          <i class="fa fa-info-circle" title="Started at {{ formatDateTimeLocal(activity.start_time_in_millis) }}"></i>
+          <i
+            class="fa fa-info-circle"
+            tooltip="Started at {{ formatDateTimeLocal(activity.start_time_in_millis) }}"
+            tooltip-placement="bottom"
+          ></i>
           {{ (activity.total_time_in_millis/1000)|formatNumber: '00:00:00' }}
         </h6>
       </td>

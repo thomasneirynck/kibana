@@ -3,6 +3,7 @@ import { formatDateTimeLocal } from '../../../lib/formatting';
 import template from 'plugins/monitoring/directives/shard_activity/index.html';
 import formatNumber from 'plugins/monitoring/lib/format_number';
 import uiModules from 'ui/modules';
+import 'ui/tooltip';
 
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringShardActivity', function () {
