@@ -6,7 +6,7 @@ import vislibComponentsSeedColorsProvider from 'ui/vislib/components/color/seed_
 const ORIENTATIONS = {
   'single': (tag) => 0,
   'rightAngled': (tag) =>~~(Math.random() * 2) * 90,
-  'multi': (tag) => ~~(Math.random() * 6) * 15
+  'multi': (tag) => (~~(Math.random() * 12) * 15) - 90
 };
 const D3_SCALING_FUNCTIONS = {
   'linear': d3.scale.linear(),
@@ -31,7 +31,7 @@ export default class TagCloud {
     this._minFontSize = 10;
     this._maxFontSize = 36;
     this._textScale = 'linear';
-
+    this._padding = 5;
   }
 
   setOptions(options) {
@@ -46,11 +46,11 @@ export default class TagCloud {
     this._minFontSize = Math.min(options.minFontSize, options.maxFontSize);
     this._maxFontSize = Math.max(options.minFontSize, options.maxFontSize);
     this._textScale = options.textScale;
-    this._makeTextSizeMapper();
 
     this._washWords();
     this._invalidate();
   }
+
 
   setSize(newSize) {
     if (newSize[0] === 0 || newSize[1] === 0) {
@@ -59,9 +59,18 @@ export default class TagCloud {
     if (newSize[0] === this._size[0] && newSize[1] === this._size[1]) {
       return;
     }
+
     this._size = newSize;
+
+
+    if (this._complete && this._cloudWidth < this._size[0] && this._cloudHeight < this._size[1]) {
+      this._updateContainerSize();
+      return;
+    }
+
     this._washWords();
     this._invalidate();
+
   }
 
   setData(data) {
@@ -77,20 +86,26 @@ export default class TagCloud {
     this._element.innerHTML = '';
   }
 
+
+  _updateContainerSize() {
+    this._d3SvgContainer.attr('width', this._size[0]);
+    this._d3SvgContainer.attr('height', this._size[1]);
+    this._svgGroup.attr('width', this._size[0]);
+    this._svgGroup.attr('height', this._size[1]);
+    this._svgGroup.attr('transform', 'translate(' + this._size[0] / 2 + ',' + this._size[1] / 2 + ')');
+  }
+
   _washWords() {
     if (!this._words) {
       return;
     }
 
-    //the tagCloudLayoutGenerator clobbers the word-object with location info. This causes corrupt states sometimes
+    //the tagCloudLayoutGenerator clobbers the word-object with metadata about positioning.
+    //This can causes corrupt states in the layout-generator
     //where words get collapsed to the same location and do not reposition correctly.
-    //=> we recreate an empty word object
-    this._words = this._words.map(words => {
-      return {
-        text: words.text,
-        size: words.size
-      };
-    });
+    //=> we recreate an empty word object without the metadata
+    this._words = this._words.map(toWordTag);
+    this._makeTextSizeMapper();
   }
 
   _onLayoutEnd(resolve, reject, wordsWithLayout) {
@@ -127,7 +142,7 @@ export default class TagCloud {
     const resolveWhenDone = () => {
       if (exits === 0 && moves === 0) {
         resolve(true);
-        //fire event here..
+        //fire rendered event here..
       }
     };
     exitTransition.each(_ => exits += 1);
@@ -140,6 +155,12 @@ export default class TagCloud {
       moves -= 1;
       resolveWhenDone();
     });
+
+    const cloudBBox = this._svgGroup[0][0].getBBox();
+    this._cloudWidth = cloudBBox.width;
+    this._cloudHeight = cloudBBox.height;
+    this._complete = this._svgGroup[0][0].childNodes.length === this._words.length;
+
   };
 
 
@@ -162,21 +183,19 @@ export default class TagCloud {
     cancelAnimationFrame(this._domManipulationFrame);
     this._timeoutHandle = setTimeout(() => {
       this._timeoutHandle = null;
-      this._render();/*.then(() => //..done!);*/
+      this._updateLayout();
+      /*.then(() => //..done!);*/
     }, 100);
   }
 
-  _render() {
 
-    this._d3SvgContainer.attr('width', this._size[0]);
-    this._d3SvgContainer.attr('height', this._size[1]);
-    this._svgGroup.attr('width', this._size[0]);
-    this._svgGroup.attr('height', this._size[1]);
-    this._svgGroup.attr('transform', 'translate(' + this._size[0] / 2 + ',' + this._size[1] / 2 + ')');
+  _updateLayout() {
+
+    this._updateContainerSize();
 
     const tagCloudLayoutGenerator = d3TagCloud();
     tagCloudLayoutGenerator.size(this._size);
-    tagCloudLayoutGenerator.padding(5);
+    tagCloudLayoutGenerator.padding(this._padding);
     tagCloudLayoutGenerator.rotate(ORIENTATIONS[this._orientations]);
     tagCloudLayoutGenerator.font(this._fontFamily);
     tagCloudLayoutGenerator.fontStyle(this._fontStyle);
