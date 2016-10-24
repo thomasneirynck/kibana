@@ -5,7 +5,7 @@ import { convertKeysToCamelCaseDeep } from '../../../../server/lib/key_case_conv
 
 const XPACK_INFO_KEY = 'xpackMain.info';
 
-export default function XPackInfoProvider($window, Private, Promise, $http) {
+export default function XPackInfoProvider($window, $injector, Private, Promise) {
   const xpackInfoSignature = Private(XPackInfoSignatureProvider);
 
   let inProgressRefreshPromise = null;
@@ -40,6 +40,7 @@ export default function XPackInfoProvider($window, Private, Promise, $http) {
 
       // store the promise in a shared location so that calls to
       // refresh() before this is complete will get the same promise
+      const $http = $injector.get('$http');
       inProgressRefreshPromise = (
         $http.get(chrome.addBasePath('/api/xpack/v1/info'))
         .catch((err) => {
