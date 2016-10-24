@@ -58,6 +58,7 @@ export default function XPackInfoProvider($window, $injector, Private, Promise) 
           inProgressRefreshPromise = null;
         })
       );
+      return inProgressRefreshPromise;
     }
   };
 
