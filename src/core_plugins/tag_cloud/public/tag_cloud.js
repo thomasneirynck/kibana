@@ -22,25 +22,21 @@ export default class TagCloud {
     this._element = element;
     this._d3SvgContainer = d3.select(element);
     this._svgGroup = this._d3SvgContainer.append('g');
+    this._size = [1, 1];
+    this.setSize(size);
 
     this._fontFamily = 'Impact';
     this._fontStyle = 'normal';
     this._fontWeight = 'normal';
     this._orientations = 'single';
-
     this._minFontSize = 10;
     this._maxFontSize = 36;
     this._textScale = 'linear';
 
-
-    this._size = [1, 1];
-    this.setSize(size);
   }
 
   setOptions(options) {
-
     if (JSON.stringify(options) === this._optionBackup) {
-      //todo: super hacky
       return;
     }
 
@@ -48,12 +44,12 @@ export default class TagCloud {
     this._fontStyle = options.fontStyle;
     this._fontWeight = options.fontWeight;
     this._orientations = options.orientations;
-
     this._minFontSize = Math.min(options.minFontSize, options.maxFontSize);
     this._maxFontSize = Math.max(options.minFontSize, options.maxFontSize);
     this._textScale = options.textScale;
     this._makeTextSizeMapper();
 
+    this._washWords();
     this._invalidate();
   }
 
@@ -65,6 +61,7 @@ export default class TagCloud {
       return;
     }
     this._size = newSize;
+    this._washWords();
     this._invalidate();
   }
 
@@ -72,8 +69,7 @@ export default class TagCloud {
     this._words = data.map(word => {
       return {
         size: word.size,
-        text: word.text,
-        orientation: null
+        text: word.text
       };
     });
     this._makeTextSizeMapper();
@@ -82,12 +78,29 @@ export default class TagCloud {
 
 
   destroy() {
-    //need to interrupt any ongoing rendering.
+    cancelAnimationFrame(this._domManipulationFrame);
+    clearTimeout(this._timeoutHandle);
     this._element.innerHTML = '';
   }
 
-  _onLayoutEnd(resolve, reject, wordsWithLayout) {
+  _washWords() {
+    if (!this._words) {
+      return;
+    }
 
+    //the tagCloudLayoutGenerator clobbers the word-object with location info. This causes corrupt states sometimes
+    //where words get collapsed to the same location and do not reposition correctly.
+    //=> we recreate an empty word object
+    this._words = this._words.map(words => {
+      return {
+        text: words.text,
+        size: words.size
+      };
+    });
+  }
+
+  _onLayoutEnd(resolve, reject, wordsWithLayout) {
+    this._domManipulationFrame = null;
     const svgTextNodes = this._svgGroup.selectAll('text');
     const stage = svgTextNodes.data(wordsWithLayout, getText);
 
@@ -103,7 +116,7 @@ export default class TagCloud {
     enteringTags.text(getText);
 
     const movingTags = stage.transition();
-    movingTags.duration(300);
+    movingTags.duration(600);
     movingTags.style('font-size', getSizeInPixels);
     movingTags.attr('transform', positionWord);
     movingTags.style('fill-opacity', 1);
@@ -117,22 +130,22 @@ export default class TagCloud {
 
     let exits = 0;
     let moves = 0;
-    const checkIfDone = () => {
+    const resolveWhenDone = () => {
       if (exits === 0 && moves === 0) {
         resolve(true);
+        //fire event here..
       }
     };
     exitTransition.each(_ => exits += 1);
     exitTransition.each('end', () => {
       exits -= 1;
-      checkIfDone();
+      resolveWhenDone();
     });
     movingTags.each(_ => moves += 1);
     movingTags.each('end', () => {
       moves -= 1;
-      checkIfDone();
+      resolveWhenDone();
     });
-
   };
 
 
@@ -152,11 +165,11 @@ export default class TagCloud {
     }
 
     clearTimeout(this._timeoutHandle);
+    cancelAnimationFrame(this._domManipulationFrame);
     this._timeoutHandle = setTimeout(() => {
       this._timeoutHandle = null;
-      this._render().then(() => console.log('done.. requires some massaging to deal with multiple renderings..'));
-    }, 1000);
-
+      this._render();/*.then(() => //..done!);*/
+    }, 100);
   }
 
   _render() {
@@ -167,24 +180,28 @@ export default class TagCloud {
     this._svgGroup.attr('height', this._size[1]);
     this._svgGroup.attr('transform', 'translate(' + this._size[0] / 2 + ',' + this._size[1] / 2 + ')');
 
-    const tagCloud = d3TagCloud();
-    tagCloud.size(this._size);
-    tagCloud.padding(5);
-    tagCloud.rotate(ORIENTATIONS[this._orientations]);
-    tagCloud.font(this._fontFamily);
-    tagCloud.fontStyle(this._fontStyle);
-    tagCloud.fontWeight(this._fontWeight);
-    tagCloud.fontSize(tag =>this._mapSizeToFontSize(tag.size));
-    tagCloud.random(_ => 0.5); //consistently seed the layout
-    tagCloud.spiral('archimedean');
-    tagCloud.words(this._words);
-    tagCloud.text(getText);
-    tagCloud.timeInterval(1000);//never run longer than a second
-
+    const tagCloudLayoutGenerator = d3TagCloud();
+    tagCloudLayoutGenerator.size(this._size);
+    tagCloudLayoutGenerator.padding(5);
+    tagCloudLayoutGenerator.rotate(ORIENTATIONS[this._orientations]);
+    tagCloudLayoutGenerator.font(this._fontFamily);
+    tagCloudLayoutGenerator.fontStyle(this._fontStyle);
+    tagCloudLayoutGenerator.fontWeight(this._fontWeight);
+    tagCloudLayoutGenerator.fontSize(tag =>this._mapSizeToFontSize(tag.size));
+    tagCloudLayoutGenerator.random(_ => 0.5); //consistently seed the layout
+    tagCloudLayoutGenerator.spiral('archimedean');
+    tagCloudLayoutGenerator.words(this._words);
+    tagCloudLayoutGenerator.text(getText);
+    tagCloudLayoutGenerator.timeInterval(1000);//never run longer than a second
 
     return new Promise((resolve, reject) => {
-      tagCloud.on('end', this._onLayoutEnd.bind(this, resolve, reject));
-      tagCloud.start();
+      tagCloudLayoutGenerator.on('end', (words) => {
+        cancelAnimationFrame(this._domManipulationFrame);
+        this._domManipulationFrame = requestAnimationFrame(()=> {
+          this._onLayoutEnd(resolve, reject, words);
+        });
+      });
+      tagCloudLayoutGenerator.start();
     });
   }
 
