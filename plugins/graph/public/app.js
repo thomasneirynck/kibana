@@ -28,18 +28,19 @@ var app = uiModules.get('app/graph', ['angular-venn-simple']);
 
 function checkLicense(Private, Promise, kbnBaseUrl) {
   const xpackInfo = Private(XPackInfoProvider);
+  return xpackInfo.init().then(() => {
+    const licenseAllowsToShowThisPage = xpackInfo.get('features.graph.showAppLink') && xpackInfo.get('features.graph.enableAppLink');
+    if (!licenseAllowsToShowThisPage) {
+      const message = xpackInfo.get('features.graph.message');
+      const queryString = `?${Notifier.QS_PARAM_LOCATION}=Graph&${Notifier.QS_PARAM_LEVEL}=error&${Notifier.QS_PARAM_MESSAGE}=${message}`;
+      const url = `${chrome.addBasePath(kbnBaseUrl)}#${queryString}`;
 
-  const licenseAllowsToShowThisPage = xpackInfo.get('features.graph.showAppLink') && xpackInfo.get('features.graph.enableAppLink');
-  if (!licenseAllowsToShowThisPage) {
-    const message = xpackInfo.get('features.graph.message');
-    const queryString = `?${Notifier.QS_PARAM_LOCATION}=Graph&${Notifier.QS_PARAM_LEVEL}=error&${Notifier.QS_PARAM_MESSAGE}=${message}`;
-    const url = `${chrome.addBasePath(kbnBaseUrl)}#${queryString}`;
+      window.location.href = url;
+      return Promise.halt();
+    }
 
-    window.location.href = url;
-    return Promise.halt();
-  }
-
-  return Promise.resolve();
+    return Promise.resolve();
+  });
 }
 
 app.run(checkLicense);
