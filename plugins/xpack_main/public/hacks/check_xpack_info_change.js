@@ -5,7 +5,7 @@ import XPackInfoSignatureProvider from 'plugins/xpack_main/services/xpack_info_s
 
 const module = uiModules.get('xpack_main', []);
 
-module.factory('checkXPackInfoChange', ($q, $injector, Private) => {
+module.factory('checkXPackInfoChange', ($q, Private) => {
   const xpackInfo = Private(XPackInfoProvider);
   const xpackInfoSignature = Private(XPackInfoSignatureProvider);
 
