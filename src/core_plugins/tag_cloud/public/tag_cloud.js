@@ -18,7 +18,6 @@ const D3_SCALING_FUNCTIONS = {
 export default class TagCloud {
 
   constructor(element, size) {
-
     this._element = element;
     this._d3SvgContainer = d3.select(element);
     this._svgGroup = this._d3SvgContainer.append('g');
@@ -66,12 +65,7 @@ export default class TagCloud {
   }
 
   setData(data) {
-    this._words = data.map(word => {
-      return {
-        size: word.size,
-        text: word.text
-      };
-    });
+    this._words = data.map(toWordTag);
     this._makeTextSizeMapper();
     this._invalidate();
   }
@@ -187,7 +181,7 @@ export default class TagCloud {
     tagCloudLayoutGenerator.font(this._fontFamily);
     tagCloudLayoutGenerator.fontStyle(this._fontStyle);
     tagCloudLayoutGenerator.fontWeight(this._fontWeight);
-    tagCloudLayoutGenerator.fontSize(tag =>this._mapSizeToFontSize(tag.size));
+    tagCloudLayoutGenerator.fontSize(tag => this._mapSizeToFontSize(tag.size));
     tagCloudLayoutGenerator.random(_ => 0.5); //consistently seed the layout
     tagCloudLayoutGenerator.spiral('archimedean');
     tagCloudLayoutGenerator.words(this._words);
@@ -206,6 +200,13 @@ export default class TagCloud {
   }
 
 };
+
+function toWordTag(word) {
+  return {
+    size: word.size,
+    text: word.text
+  };
+}
 
 
 function getText(word) {

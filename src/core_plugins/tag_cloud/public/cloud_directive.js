@@ -36,7 +36,9 @@ module.directive('kbnTagCloud', function () {
       });
       scope.$watch(containerSize, _.debounce(function () {
         tagCloud.setSize(containerSize());
-      }, 250), true);
+      }, 1000, {
+        trailing: true
+      }), true);
 
     }
   };
