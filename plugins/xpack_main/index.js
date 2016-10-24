@@ -47,7 +47,10 @@ export default function (kibana) {
     publicDir: resolve(__dirname, 'public'),
     require: ['elasticsearch'],
     uiExports: {
-      hacks: ['plugins/xpack_main/hacks/check_xpack_info_change'],
+      hacks: [
+        'plugins/xpack_main/hacks/check_xpack_info_change',
+        'plugins/xpack_main/hacks/init_xpack_info'
+      ],
     },
     init: function (server) {
       const elasticsearchPlugin = server.plugins.elasticsearch;
