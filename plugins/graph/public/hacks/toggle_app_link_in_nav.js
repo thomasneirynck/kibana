@@ -1,8 +1,8 @@
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
-import uiRoutes from 'ui/routes';
 import chrome from 'ui/chrome';
+import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import uiModules from 'ui/modules';
 
-uiRoutes.addSetupWork((Private) => {
+function toggleAppLinkInNav(Private) {
   const xpackInfo = Private(XPackInfoProvider);
 
   return xpackInfo.init().then(() => {
@@ -15,4 +15,6 @@ uiRoutes.addSetupWork((Private) => {
       navLink.tooltip = xpackInfo.get('features.graph.message');
     }
   });
-});
+}
+
+uiModules.get('kibana').run(toggleAppLinkInNav);
