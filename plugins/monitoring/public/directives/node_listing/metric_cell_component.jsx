@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import React from 'react';
 import numeral from 'numeral';
-import OfflineCell from './OfflineCell';
+import OfflineCell from './offline_cell_component';
 export default class MetricCell extends React.Component {
   constructor(props) {
     super(props);

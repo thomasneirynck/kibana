@@ -133,12 +133,15 @@ export default function monitoringIndex(kibana) {
     },
 
     init: function (server, _options) {
-      return Promise.all([
-        instantiateClient(server), // Instantiate the dedicated Elasticsearch client
-        requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server), // Require all the routes
-        initKibanaMonitoring(this.kbnServer, server), // send kibana server ops to the monitoring bulk api
-        esHealthCheck(this, server).start() // Make sure the Monitoring index is created and ready
-      ]);
+      const xpackMainPlugin = server.plugins.xpack_main;
+      return xpackMainPlugin.status.once('green', () => {
+        return Promise.all([
+          instantiateClient(server), // Instantiate the dedicated Elasticsearch client
+          requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server), // Require all the routes
+          initKibanaMonitoring(this.kbnServer, server), // send kibana server ops to the monitoring bulk api
+          esHealthCheck(this, server).start() // Make sure the Monitoring index is created and ready
+        ]);
+      });
     }
   });
 };

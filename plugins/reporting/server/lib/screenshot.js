@@ -50,6 +50,7 @@ function fetch(url, phantomPath, captureSettings, opts) {
     phantomPath: phantomPath,
     timeout: timeout,
     injectJquery: false,
+    ignoreSSLErrors: true,
   };
   const settings = {
     width: viewport.width,
