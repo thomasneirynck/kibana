@@ -4,10 +4,12 @@ import uiRoutes from 'ui/routes';
 
 uiRoutes.addSetupWork((Private) => {
   const xpackInfo = Private(XPackInfoProvider);
-  return xpackInfo.init().then(() => {
-    const navLink = chrome.getNavLinkById('graph');
-    if (!navLink) return;
+  const navLink = chrome.getNavLinkById('graph');
+  if (!navLink) return;
 
+  // hide by default, only show once the xpackInfo is initialized
+  navLink.hidden = true;
+  return xpackInfo.init().then(() => {
     const showAppLink = xpackInfo.get('features.graph.showAppLink', false);
     navLink.hidden = !showAppLink;
     if (showAppLink) {
