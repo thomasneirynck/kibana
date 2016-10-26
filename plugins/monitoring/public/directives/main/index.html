@@ -6,31 +6,31 @@
   <div class="monitoring-bread-crumbs">
     <ul class="xpack-breadcrumbs" role="breadcrumbs">
       <li ng-repeat="crumb in breadcrumbs">
-        <a ng-if="crumb.url" kbn-href="{{crumb.url}}">{{crumb.label}}</a>
-        <span ng-if="!crumb.url">{{crumb.label}}</span>
+        <a ng-if="crumb.url" kbn-href="{{ crumb.url }}">{{ crumb.label }}</a>
+        <span ng-if="!crumb.url">{{ crumb.label }}</span>
         <span ng-if="!$last">/</span>
       </li>
     </ul>
   </div>
-  <kbn-top-nav name="{{name}}-nav">
+  <kbn-top-nav name="{{ name }}-nav">
     <div ng-if="inElasticsearch" class="localTabs" role="navigation">
       <a ng-if="!instance" kbn-href="#/elasticsearch" class="localTab" ng-class="{'localTab-isSelected': isActive('overview')}">Overview</a>
       <a ng-if="!instance" kbn-href="#/elasticsearch/indices" class="localTab" ng-class="{'localTab-isSelected': isActive('indices')}">Indices</a>
       <a ng-if="!instance" kbn-href="#/elasticsearch/nodes" class="localTab" ng-class="{'localTab-isSelected': isActive('nodes')}">Nodes</a>
       <a ng-if="instance" class="localTab">
-        <span ng-if="iconClass" class="fa {{iconClass}}" title="{{iconLabel}}"></span>
-        {{instance}}
+        <span ng-if="iconClass" class="fa {{ iconClass }}" title="{{ iconLabel }}"></span>
+        {{ instance }}
       </a>
     </div>
 
     <div ng-if="inKibana" class="localTabs" role="navigation">
       <a ng-if="!instance" kbn-href="#/kibana" class="localTab" ng-class="{'localTab-isSelected': isActive('overview')}">Overview</a>
       <a ng-if="!instance" kbn-href="#/kibana/instances" class="localTab" ng-class="{'localTab-isSelected': isActive('kibanas')}">Instances</a>
-      <a ng-if="instance" class="localTab">{{instance}}</a>
+      <a ng-if="instance" class="localTab">{{ instance }}</a>
     </div>
 
     <div ng-if="inOverview" class="localTabs" role="navigation">
-      <a class="localTab">{{cluster.cluster_name}}</a>
+      <a class="localTab">{{ cluster.cluster_name }}</a>
     </div>
 
     <div ng-if="inListing" class="localTabs" role="navigation">
