@@ -1,7 +1,9 @@
 import numeral from 'numeral';
+import { capitalize } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Table from 'plugins/monitoring/directives/paginated_table/components/table';
+import statusIconClass from 'plugins/monitoring/lib/status_icon_class';
 import uiModules from 'ui/modules';
 
 function showSystemIndicesComponentFactory(scope) {
@@ -56,8 +58,10 @@ function indexRowFactory(scope, kbnUrl) {
     render() {
       const numeralize = value => numeral(value.last).format(value.metric ? value.metric.format : null);
       const unitize = value => `${numeralize(value)} ${value.metric.units}`;
+
       const name = this.props.name;
       const metrics = this.props.metrics;
+      const status = this.props.status;
       const docCount = numeralize(metrics.index_document_count);
       const indexSize = numeralize(metrics.index_size);
       const requestRate = unitize(metrics.index_request_rate_primary);
@@ -65,9 +69,14 @@ function indexRowFactory(scope, kbnUrl) {
       const unassignedShards = numeralize(metrics.index_unassigned_shards);
 
       return (
-        <tr key={name} className={this.props.status}>
+        <tr className='big'>
           <td>
             <a className='link' onClick={this.changePath}>{name}</a>
+          </td>
+          <td>
+            <span className={`status status-${status}`}>
+              <span className={statusIconClass(status)} title={capitalize(status)}></span>
+            </span>
           </td>
           <td>{docCount}</td>
           <td>{indexSize}</td>
@@ -92,31 +101,42 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
      *      - "metric" object
      *      - "last" scalar
      * "sortKey" should be a scalar */
-    columns: [{
-      key: 'name',
-      sort: 1,
-      title: 'Name'
-    }, {
-      key: 'metrics.index_document_count',
-      sortKey: 'metrics.index_document_count.last',
-      title: 'Document Count'
-    }, {
-      key: 'metrics.index_size',
-      sortKey: 'metrics.index_size.last',
-      title: 'Data'
-    }, {
-      key: 'metrics.index_request_rate_primary',
-      sortKey: 'metrics.index_request_rate_primary.last',
-      title: 'Index Rate'
-    }, {
-      key: 'metrics.index_search_request_rate',
-      sortKey: 'metrics.index_search_request_rate.last',
-      title: 'Search Rate'
-    }, {
-      key: 'metrics.index_unassigned_shards',
-      sortKey: 'metrics.index_unassigned_shards.last',
-      title: 'Unassigned Shards'
-    }]
+    columns: [
+      {
+        key: 'name',
+        title: 'Name'
+      },
+      {
+        key: 'status',
+        sort: 1,
+        title: 'Status'
+      },
+      {
+        key: 'metrics.index_document_count',
+        sortKey: 'metrics.index_document_count.last',
+        title: 'Document Count'
+      },
+      {
+        key: 'metrics.index_size',
+        sortKey: 'metrics.index_size.last',
+        title: 'Data'
+      },
+      {
+        key: 'metrics.index_request_rate_primary',
+        sortKey: 'metrics.index_request_rate_primary.last',
+        title: 'Index Rate'
+      },
+      {
+        key: 'metrics.index_search_request_rate',
+        sortKey: 'metrics.index_search_request_rate.last',
+        title: 'Search Rate'
+      },
+      {
+        key: 'metrics.index_unassigned_shards',
+        sortKey: 'metrics.index_unassigned_shards.last',
+        title: 'Unassigned Shards'
+      }
+    ]
   };
 
   return {
