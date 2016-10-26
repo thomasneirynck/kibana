@@ -60,7 +60,7 @@ const Chevron = React.createClass({
   render() {
     return (
       <a onClick={this.scrollRightOrLeft} className='link'>
-        <i className={`fa fa-chevron-${this.props.direction}`} />
+        <span className={`fa fa-chevron-${this.props.direction}`}></span>
       </a>
     );
   }

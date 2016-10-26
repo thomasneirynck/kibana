@@ -6,7 +6,7 @@
       <th>Index</th>
       <th>Stage</th>
       <th>Total Time</th>
-      <th>Source <i class="fa fa-arrow-right"></i> Destination</th>
+      <th>Source <span class="fa fa-arrow-right"></span> Destination</th>
       <th>Snapshot / Repository</th>
       <th>Files</th>
       <th>Bytes</th>
@@ -28,11 +28,11 @@
       </td>
       <td class="time">
         <h6>
-          <i
+          <span
             class="fa fa-info-circle"
             tooltip="Started at {{ formatDateTimeLocal(activity.start_time_in_millis) }}"
             tooltip-placement="bottom"
-          ></i>
+          ></span>
           {{ (activity.total_time_in_millis/1000)|formatNumber: '00:00:00' }}
         </h6>
       </td>
@@ -48,7 +48,7 @@
               <p>{{ getIpAndPort(activity.source.transport_address )}}</p>
             </div>
           </div>
-          <div><h6><i class="fa fa-arrow-right"></i></h6></div>
+          <div><h6><span class="fa fa-arrow-right"></span></h6></div>
           <div>
             <div>
               <h6>{{ activity.target.name }}</h6>

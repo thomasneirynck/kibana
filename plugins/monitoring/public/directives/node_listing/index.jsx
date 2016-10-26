@@ -48,7 +48,7 @@ function nodeRowFactory(scope, kbnUrl, decorateRow) {
         <tr className='big'>
           <td>
             <Tooltip text={this.state.node.nodeTypeLabel} trigger='hover' placement='bottom'>
-              <i className={`fa ${this.state.node.nodeTypeClass}`}/>
+              <span className={`fa ${this.state.node.nodeTypeClass}`}></span>
             </Tooltip>
             &nbsp;
             <a className='link' onClick={this.goToNode}>
@@ -58,7 +58,7 @@ function nodeRowFactory(scope, kbnUrl, decorateRow) {
           </td>
           <td>
             <span className={`status status-${status}`}>
-              <i className={statusIconClass(status)} title={_.capitalize(status)}/>
+              <span className={statusIconClass(status)} title={_.capitalize(status)}></span>
             </span>
           </td>
           <MetricCell isOnline={isOnline} metric={this.state.metrics.node_cpu_utilization}></MetricCell>

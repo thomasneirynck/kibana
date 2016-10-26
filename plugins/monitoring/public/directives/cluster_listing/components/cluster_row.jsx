@@ -59,7 +59,7 @@ to enjoy multi-cluster monitoring.`
           { this.props.cluster_name } &nbsp;
           { this.props.isPrimary ?
             <Tooltip text='Kibana uses this cluster as the primary connection' placement='right' trigger='hover'>
-              <i className='fa fa-asterisk primary-cluster-indicator'></i>
+              <span className='fa fa-asterisk primary-cluster-indicator'></span>
             </Tooltip> :
             '' }
         </a>
@@ -139,7 +139,7 @@ to enjoy multi-cluster monitoring.`
         <td key="Status">
           <IsClusterSupported>
             <span className={`status status-${this.props.status}`}>
-              <i className={iconClass} title={_.capitalize(this.props.status)}></i>
+              <span className={iconClass} title={_.capitalize(this.props.status)}></span>
             </span>
           </IsClusterSupported>
         </td>

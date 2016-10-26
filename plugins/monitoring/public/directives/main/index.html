@@ -18,7 +18,7 @@
       <a ng-if="!instance" kbn-href="#/elasticsearch/indices" class="localTab" ng-class="{'localTab-isSelected': isActive('indices')}">Indices</a>
       <a ng-if="!instance" kbn-href="#/elasticsearch/nodes" class="localTab" ng-class="{'localTab-isSelected': isActive('nodes')}">Nodes</a>
       <a ng-if="instance" class="localTab">
-        <i ng-if="iconClass" class="fa {{iconClass}}" title="{{iconLabel}}"></i>
+        <span ng-if="iconClass" class="fa {{iconClass}}" title="{{iconLabel}}"></span>
         {{instance}}
       </a>
     </div>

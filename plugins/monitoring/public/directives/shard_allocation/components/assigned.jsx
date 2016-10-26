@@ -55,7 +55,7 @@ export default React.createClass({
     );
     var master;
     if (data.node_type === 'master') {
-      master = <i className="fa fa-star"></i>;
+      master = <span className="fa fa-star"></span>;
     }
     var shards = _.sortBy(data.children, 'shard').map(this.createShard);
     return (

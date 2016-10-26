@@ -27,7 +27,7 @@ export default class MetricCell extends React.Component {
           <div className='big inline'>
             {formatMetric(this.props.metric, 'last')}
           </div>
-          <i className={`big inline fa fa-long-arrow-${slopeArrow(this.props.metric)}`}/>
+          <span className={`big inline fa fa-long-arrow-${slopeArrow(this.props.metric)}`}></span>
           <div className='inline'>
             <div className='small'>
               {formatMetric(this.props.metric, 'max')} max

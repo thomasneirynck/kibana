@@ -86,7 +86,7 @@ const Table = React.createClass({
     if (isLoading) {
       return (
         <div className='paginated-table loading'>
-          <i className='fa fa-spinner fa-pulse'></i>
+          <span className='fa fa-spinner fa-pulse'></span>
           <span>Loading Data...</span>
         </div>
       );

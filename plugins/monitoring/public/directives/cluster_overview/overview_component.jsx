@@ -30,7 +30,7 @@ class StatusContainer extends React.Component {
     return (
       <div className='status-container'>
         <span className={`status status-${this.props.status}`}>
-          <i className={iconClass} title={`${this.props.statusPrefix}: ${_.capitalize(this.props.status)}`}></i>
+          <span className={iconClass} title={`${this.props.statusPrefix}: ${_.capitalize(this.props.status)}`}></span>
         </span> Status
       </div>
     );

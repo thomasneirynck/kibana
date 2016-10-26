@@ -2,7 +2,7 @@
   <div class="stats">
     <div>
       <span class="status status-{{ getOnlineClass() }}">
-        <i class="{{ getStatusIconClass() }}" title="{{ 'Node: ' + node.status }}"></i>
+        <span class="{{ getStatusIconClass() }}" title="{{ 'Node: ' + node.status }}"></span>
       </span>
     </div>
     <div><strong>{{ node.transport_address|extractIp }}</strong></div>

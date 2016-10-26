@@ -7,7 +7,7 @@ export default class Loading extends React.Component {
       <tbody>
         <tr>
           <td colSpan={ colSpan } className="loading">
-            <i className="fa fa-spinner fa-pulse"></i>
+            <span className="fa fa-spinner fa-pulse"></span>
             <span>Loading data...</span>
           </td>
         </tr>

@@ -88,7 +88,7 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
               </td>
               <td>
                 <span className={`status ${statusClass}`}>
-                  <i className={iconClass} title={_.capitalize(status)}></i>
+                  <span className={iconClass} title={_.capitalize(status)}></span>
                 </span>
               </td>
               <td>
