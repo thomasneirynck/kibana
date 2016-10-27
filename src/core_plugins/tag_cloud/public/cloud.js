@@ -5,9 +5,9 @@ import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/templat
 import VisSchemasProvider from 'ui/vis/schemas';
 import tagCloudTemplate from 'plugins/tagcloud/cloud.html';
 import tagCloudVisParamsTemplate from 'plugins/tagcloud/cloud_vis_params.html';
+import visTypes from 'ui/registry/vis_types';
 
-
-require('ui/registry/vis_types').register(TagCloudProvider);
+visTypes.register(TagCloudProvider);
 
 function TagCloudProvider(Private) {
   const TemplateVisType = Private(TemplateVisTypeTemplateVisTypeProvider);

@@ -4,14 +4,14 @@ import vislibComponentsSeedColorsProvider from 'ui/vislib/components/color/seed_
 
 
 const ORIENTATIONS = {
-  'single': (tag) => 0,
-  'rightAngled': (tag) =>~~(Math.random() * 2) * 90,
-  'multi': (tag) => (~~(Math.random() * 12) * 15) - 90
+  single: () => 0,
+  rightAngled: () =>~~(Math.random() * 2) * 90,
+  multi: () => (~~(Math.random() * 12) * 15) - 90
 };
 const D3_SCALING_FUNCTIONS = {
-  'linear': d3.scale.linear(),
-  'log': d3.scale.log(),
-  'sqrt': d3.scale.sqrt()
+  linear: d3.scale.linear(),
+  log: d3.scale.log(),
+  sqrt: d3.scale.sqrt()
 };
 
 
@@ -35,11 +35,11 @@ export default class TagCloud {
   }
 
   setOptions(options) {
-    if (JSON.stringify(options) === this._optionBackup) {
+    if (JSON.stringify(options) === this._optionsAsString) {
       return;
     }
 
-    this._optionBackup = JSON.stringify(options);
+    this._optionsAsString = JSON.stringify(options);
     this._fontStyle = options.fontStyle;
     this._fontWeight = options.fontWeight;
     this._orientations = options.orientations;
@@ -61,8 +61,6 @@ export default class TagCloud {
     }
 
     this._size = newSize;
-
-
     if (this._complete && this._cloudWidth < this._size[0] && this._cloudHeight < this._size[1]) {
       this._updateContainerSize();
       return;
@@ -127,8 +125,10 @@ export default class TagCloud {
     const movingTags = stage.transition();
     movingTags.duration(600);
     movingTags.style('font-size', getSizeInPixels);
+    movingTags.style('font-style', this._fontStyle);
+    movingTags.style('font-weight', () => this._fontWeight);
+    movingTags.style('font-family', () => this._fontFamily);
     movingTags.attr('transform', positionWord);
-    movingTags.style('fill-opacity', 1);
 
     const exitingTags = stage.exit();
     const exitTransition = exitingTags.transition();
@@ -142,17 +142,16 @@ export default class TagCloud {
     const resolveWhenDone = () => {
       if (exits === 0 && moves === 0) {
         resolve(true);
-        //fire rendered event here..
       }
     };
-    exitTransition.each(_ => exits += 1);
+    exitTransition.each(_ => exits++);
     exitTransition.each('end', () => {
-      exits -= 1;
+      exits--;
       resolveWhenDone();
     });
-    movingTags.each(_ => moves += 1);
+    movingTags.each(_ => moves++);
     movingTags.each('end', () => {
-      moves -= 1;
+      moves--;
       resolveWhenDone();
     });
 
@@ -184,7 +183,6 @@ export default class TagCloud {
     this._timeoutHandle = setTimeout(() => {
       this._timeoutHandle = null;
       this._updateLayout();
-      /*.then(() => //..done!);*/
     }, 100);
   }
 
@@ -201,7 +199,7 @@ export default class TagCloud {
     tagCloudLayoutGenerator.fontStyle(this._fontStyle);
     tagCloudLayoutGenerator.fontWeight(this._fontWeight);
     tagCloudLayoutGenerator.fontSize(tag => this._mapSizeToFontSize(tag.size));
-    tagCloudLayoutGenerator.random(_ => 0.5); //consistently seed the layout
+    tagCloudLayoutGenerator.random(() => 0.5); //consistently seed the layout
     tagCloudLayoutGenerator.spiral('archimedean');
     tagCloudLayoutGenerator.words(this._words);
     tagCloudLayoutGenerator.text(getText);
@@ -221,10 +219,7 @@ export default class TagCloud {
 };
 
 function toWordTag(word) {
-  return {
-    size: word.size,
-    text: word.text
-  };
+  return {size: word.size, text: word.text};
 }
 
 
@@ -241,7 +236,7 @@ function getSize(tag) {
 }
 
 function getSizeInPixels(tag) {
-  return tag.size + 'px';
+  return `${tag.size}px`;
 }
 
 const colorScale = d3.scale.ordinal().range(vislibComponentsSeedColorsProvider());

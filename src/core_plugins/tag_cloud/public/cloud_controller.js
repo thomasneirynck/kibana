@@ -28,6 +28,7 @@ module.controller('KbnCloudController', function ($scope) {
       };
     });
 
-    $scope.data = [{tags: tags}];
+    // $scope.data = [{tags: tags}];
+    $scope.data = tags;
   });
 });

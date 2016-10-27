@@ -16,9 +16,9 @@ module.directive('kbnTagCloud', function () {
     replace: 'true',
     link: function (scope, element) {
 
-      const tagCloud = new TagCloud(element[0], containerSize());
+      const tagCloud = new TagCloud(element[0], getContainerSize());
 
-      function containerSize() {
+      function getContainerSize() {
         return [element.parent().width(), element.parent().height()];
       }
 
@@ -26,16 +26,13 @@ module.directive('kbnTagCloud', function () {
         if (!scope.data) {
           return;
         }
-        if (scope.data.length > 1) {//cannot happen, since UI-form doesn't allow it.
-          throw new Error('Cannot render multiple datasets.');
-        }
-        tagCloud.setData(scope.data[0].tags);
+        tagCloud.setData(scope.data);
       });
       scope.$watch('options', function (options) {
         tagCloud.setOptions(options);
       });
-      scope.$watch(containerSize, _.debounce(function () {
-        tagCloud.setSize(containerSize());
+      scope.$watch(getContainerSize, _.debounce(function () {
+        tagCloud.setSize(getContainerSize());
       }, 1000, {
         trailing: true
       }), true);
