@@ -35,9 +35,8 @@ const Table = React.createClass({
   getInitialState: function () {
     var sortColObj = null;
     if (this.props.options.columns) {
-      sortColObj = this.props.options.columns.reduce((prev, dataKey) => {
-        return prev || (dataKey.sort !== 0 ? dataKey : null);
-      }, null);
+      const columnWithSort = _.find(this.props.options.columns, (col) => col.sort === 1);
+      sortColObj = columnWithSort || _.first(this.props.options.columns);
     }
     return {
       itemsPerPage: 20,
