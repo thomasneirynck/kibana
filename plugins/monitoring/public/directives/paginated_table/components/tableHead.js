@@ -12,7 +12,10 @@ export default React.createClass({
       var $icon = false;
       if (isSortCol) {
         var iconClassName = 'fa fa-sort-amount-' + (isSortAsc ? 'asc' : 'desc');
-        $icon = make.i({className: iconClassName});
+        $icon = make.span(null, [
+          make.span({key: 'iconspace'}, ' '),
+          make.span({key: 'icon', className: iconClassName})
+        ]);
       }
 
       return make.th({
