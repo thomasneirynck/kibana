@@ -1,5 +1,5 @@
 import uiModules from 'ui/modules';
-
+import somDirective from 'plugins/som/som_directive.html';
 
 const module = uiModules.get('kibana/tagcloud', ['kibana']);
 module.directive('kbnSom', function () {
@@ -10,7 +10,7 @@ module.directive('kbnSom', function () {
       data: '=',
       options: '='
     },
-    template: '<svg class="parent"></svg>',
+    template: somDirective,
     replace: 'true',
     link: function (scope, element) {
       console.log('som directive ready!', arguments);

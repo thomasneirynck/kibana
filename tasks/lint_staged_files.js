@@ -39,8 +39,9 @@ export default function (grunt) {
 
       return true;
     });
-
+    
     grunt.config.set('eslint.staged.options.paths', files);
-    grunt.task.run(['eslint:staged']);
+    grunt.config.set('eslint.staged.files.src', files);
+    // grunt.task.run(['eslint:staged']);
   });
 }
