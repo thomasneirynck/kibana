@@ -19,6 +19,6 @@ export default function (grunt) {
     .filter(file => grunt.file.isMatch(patterns, file));
 
     grunt.config.set('eslint.staged.files.src', files);
-    grunt.task.run(['eslint:staged']);
+    // grunt.task.run(['eslint:staged']);
   });
 }

@@ -1,9 +1,11 @@
 import 'plugins/som/som.less';
+import 'plugins/som/ponder/ponder.less';
 import 'plugins/som/som_controller.js';
 import 'plugins/som/som_directive.js';
 import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
 import somTemplate from 'plugins/som/som.html';
+
 import somParamTemplate from 'plugins/som/som_params.html';
 import visTypes from 'ui/registry/vis_types';
 
