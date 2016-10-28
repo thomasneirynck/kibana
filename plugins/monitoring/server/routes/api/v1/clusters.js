@@ -13,7 +13,7 @@ import getLastState from '../../../lib/get_last_state';
 import getClusterStatus from '../../../lib/get_cluster_status';
 import getMetrics from '../../../lib/get_metrics';
 import getShardStats from '../../../lib/get_shard_stats';
-import calculateClusterStatus from '../../../lib/elasticsearch/calculate_cluster_status';
+import calculateClusterShards from '../../../lib/elasticsearch/calculate_cluster_shards';
 import handleError from '../../../lib/handle_error';
 
 // manipulate cluster status and license meta data
@@ -135,7 +135,7 @@ export default function clustersRoutes(server) {
           });
         });
       })
-      .then(calculateClusterStatus)
+      .then(calculateClusterShards)
       .then(reply)
       .catch(err => reply(handleError(err, req)));
     }

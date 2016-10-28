@@ -13,7 +13,6 @@
  */
 import Promise from 'bluebird';
 import _ from 'lodash';
-import calculateOverallStatus from './calculate_overall_status';
 import createQuery from './create_query.js';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
@@ -103,11 +102,13 @@ export default function getKibanasForClusters(req, indices) {
         let memorySize = 0;
         let memoryLimit = 0;
 
+        // if the cluster has kibana instances at all
         if (kibanaUuids.length) {
-          // if the cluster has kibana instances at all
-          status = calculateOverallStatus(
-            statusBuckets.map(b => b.key)
-          );
+          // get instance status by finding the latest status bucket
+          const latestTimestamp = _.chain(statusBuckets).map(bucket => bucket.max_timestamp.value).max().value();
+          const latestBucket = _.find(statusBuckets, (bucket) => bucket.max_timestamp.value === latestTimestamp);
+          status = _.get(latestBucket, 'key');
+
           requestsTotal = getResultAgg('requests_total.value');
           connections = getResultAgg('concurrent_connections.value');
           responseTime = getResultAgg('response_time_max.value');

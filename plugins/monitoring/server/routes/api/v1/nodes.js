@@ -8,7 +8,7 @@ import getListing from '../../../lib/get_listing_nodes';
 import getShardStats from '../../../lib/get_shard_stats';
 import getShardAllocation from '../../../lib/get_shard_allocation';
 import calculateIndices from '../../../lib/calculate_indices';
-import calculateClusterStatus from '../../../lib/elasticsearch/calculate_cluster_status';
+import calculateClusterShards from '../../../lib/elasticsearch/calculate_cluster_shards';
 import calculateNodeType from '../../../lib/calculate_node_type';
 import getLastState from '../../../lib/get_last_state';
 import getDefaultNodeFromId from '../../../lib/get_default_node_from_id';
@@ -98,7 +98,7 @@ export default function nodesRoutes(server) {
         return body;
       })
       // Send the response
-      .then(calculateClusterStatus)
+      .then(calculateClusterShards)
       .then(reply)
       .catch(err => reply(handleError(err, req)));
     }
@@ -145,7 +145,7 @@ export default function nodesRoutes(server) {
           });
         });
       })
-      .then(calculateClusterStatus)
+      .then(calculateClusterShards)
       .then(body => {
         const clusterState = body.clusterState && body.clusterState.cluster_state || { nodes: {} };
         let nodeDetail = body.nodeSummary.node;

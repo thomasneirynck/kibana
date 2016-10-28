@@ -10,7 +10,7 @@ import getListing from '../../../lib/get_listing_indices';
 import getShardStats from '../../../lib/get_shard_stats';
 import getShardAllocation from '../../../lib/get_shard_allocation';
 import getUnassignedShards from '../../../lib/get_unassigned_shards';
-import calculateClusterStatus from '../../../lib/elasticsearch/calculate_cluster_status';
+import calculateClusterShards from '../../../lib/elasticsearch/calculate_cluster_shards';
 import handleError from '../../../lib/handle_error';
 
 export default function indicesRoutes(server) {
@@ -70,7 +70,7 @@ export default function indicesRoutes(server) {
         return body;
       })
       // Send the response
-      .then(calculateClusterStatus)
+      .then(calculateClusterShards)
       .then(reply)
       .catch(err => reply(handleError(err, req)));
     }
@@ -113,7 +113,7 @@ export default function indicesRoutes(server) {
           });
         });
       })
-      .then(calculateClusterStatus)
+      .then(calculateClusterShards)
       .then(function (body) {
         var shardStats = body.shardStats[id];
         // check if we need a legacy workaround for Monitoring 2.0 node data
