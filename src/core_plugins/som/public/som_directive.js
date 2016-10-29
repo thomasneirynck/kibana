@@ -19,6 +19,7 @@ module.directive('kbnSom', function () {
       console.log('som directive ready!', arguments);
 
 
+
       let somApp;
 
       scope.$watch('data', function () {
@@ -69,6 +70,18 @@ module.directive('kbnSom', function () {
 
 
       });
+
+
+      scope.$watch(getContainerSize, function () {
+        console.log('fit!');
+        if (somApp) {
+          somApp.fit();
+        }
+      }, true);
+      function getContainerSize() {
+        return [element.parent().width(), element.parent().height()];
+      }
+
 
 
     }
