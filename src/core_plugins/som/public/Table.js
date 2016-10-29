@@ -5,37 +5,39 @@ export default function makeTable(esResponse){
   const ponder = window.PONDER;
 
   class Table extends ponder.Table {
-    constructor(esResponse) {
+    constructor(tabifiedResponse) {
       super();
-      this._esResponse = esResponse;
+      this._table = tabifiedResponse;
     }
 
-    // columnType(index) {
-    //   // var label = this._columns[index];
-    //   //
-    //   // return (this._selectedCategoryColumns.indexOf(label) >= 0) ? PONDER.Table.CATEGORY :
-    //   //   (this._selectedOrdinalColumns.indexOf(label) >= 0) ? PONDER.Table.ORDINAL :
-    //   //     PONDER.Table.IGNORE;
-    // }
-    //
-    // getName () {
-    //   return this._name;
-    // }
-    //
-    // columnCount () {
-    //   return this._columns.length;
-    // }
-    //
-    // rowCount () {
-    //   return this._data.length;
-    // }
-    //
-    // columnLabel (index) {
-    //   return this._columns[index];
-    // }
-    // getValue (row, column) {
-    //   return this._data[row][column];
-    // }
+    columnType(index) {
+      if (index === 0) {
+        return ponder.Table.IGNORE;
+      } else {
+        return ponder.Table.ORDINAL;
+      }
+    }
+
+    getName() {
+      return 'Elasticsearch results';
+    }
+
+    columnCount() {
+      return this._table.columns.length;
+    }
+
+    rowCount() {
+      //of course, we will need to unpack this once we do sub-buckets on terms
+      return this._table.rows.length;
+    }
+
+    columnLabel(index) {
+      return this._table.columns[index].title;
+    }
+
+    getValue(row, column) {
+      return this._table.rows[row][column].value;
+    }
   }
 
 
