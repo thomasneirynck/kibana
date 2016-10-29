@@ -1,5 +1,6 @@
 import uiModules from 'ui/modules';
 import somDirective from 'plugins/som/som_directive.html';
+import ponderTemplate from 'plugins/som/ponder_template.html';
 import Table from 'plugins/som/Table';
 
 const module = uiModules.get('kibana/tagcloud', ['kibana']);
@@ -24,18 +25,20 @@ module.directive('kbnSom', function () {
         const ponder = window.PONDER;
 
         if (somApp){
+          console.log('destory da app');
           somApp.destroy();
         }
-        
+
+        element[0].innerHTML = null;
+
+
         if (!scope.data) {
           return;
         }
 
+        element[0].innerHTML = ponderTemplate;
+
         const table = new Table(scope.data);
-        console.log('table', table);
-
-
-        window.table = table;
 
          somApp = ponder.createSOM({
           table: table,
