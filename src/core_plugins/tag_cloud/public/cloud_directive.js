@@ -19,7 +19,7 @@ module.directive('kbnTagCloud', function () {
       const tagCloud = new TagCloud(element[0], getContainerSize());
 
       function getContainerSize() {
-        return [element.parent().width(), element.parent().height()];
+        return {width: element.parent().width(), height: element.parent().height()};
       }
 
       scope.$watch('data', function () {

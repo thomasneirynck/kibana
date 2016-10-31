@@ -53,14 +53,15 @@ export default class TagCloud {
 
 
   setSize(newSize) {
-    if (newSize[0] === 0 || newSize[1] === 0) {
+    if (newSize.width === 0 || newSize.height === 0) {
       return;
     }
-    if (newSize[0] === this._size[0] && newSize[1] === this._size[1]) {
+    if (newSize.width === this._size[0] && newSize === this._size[1]) {
       return;
     }
 
-    this._size = newSize;
+    this._size[0] = newSize.width;
+    this._size[1] = newSize.height;
     if (this._complete && this._cloudWidth < this._size[0] && this._cloudHeight < this._size[1]) {
       this._updateContainerSize();
       return;
