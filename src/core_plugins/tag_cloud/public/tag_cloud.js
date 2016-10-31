@@ -5,8 +5,12 @@ import vislibComponentsSeedColorsProvider from 'ui/vislib/components/color/seed_
 
 const ORIENTATIONS = {
   single: () => 0,
-  rightAngled: () =>~~(Math.random() * 2) * 90,
-  multi: () => (~~(Math.random() * 12) * 15) - 90
+  rightAngled: (tag) => {
+    return hashCode(tag.text) % 2 * 90;
+  },
+  multi: (tag) => {
+    return (~~(hashCode(tag.text) % 12) * 15) - 90;
+  }
 };
 const D3_SCALING_FUNCTIONS = {
   linear: d3.scale.linear(),
@@ -243,4 +247,22 @@ function getSizeInPixels(tag) {
 const colorScale = d3.scale.ordinal().range(vislibComponentsSeedColorsProvider());
 function getFill(tag) {
   return colorScale(tag.text);
+}
+
+/**
+ * Hash a string to a number. Removes random element
+ * Retrieved from http://stackoverflow.com/questions/26057572/string-to-unique-hash-in-javascript-jquery
+ * @param string
+ */
+function hashCode(str) {
+  let hash = 0;
+  if (str.length === 0) {
+    return hash;
+  }
+  for (let i = 0; i < str.length; i++) {
+    let char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash;
 }

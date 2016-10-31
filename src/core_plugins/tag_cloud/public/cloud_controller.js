@@ -21,14 +21,11 @@ module.controller('KbnCloudController', function ($scope) {
     const metricsAgg = _.first($scope.vis.aggs.bySchemaName.metric);
     const buckets = response.aggregations[tagsAggId].buckets;
 
-    const tags = buckets.map(function (bucket) {
+    $scope.data = buckets.map((bucket) => {
       return {
         text: bucket.key,
         size: metricsAgg.getValue(bucket)
       };
     });
-
-    // $scope.data = [{tags: tags}];
-    $scope.data = tags;
   });
 });
