@@ -1,8 +1,8 @@
-import labels from 'plugins/monitoring/directives/shard_allocation/lib/labels';
-import indicesByNodes from 'plugins/monitoring/directives/shard_allocation/transformers/indicesByNodes';
-import nodesByIndices from 'plugins/monitoring/directives/shard_allocation/transformers/nodesByIndices';
 import uiModules from 'ui/modules';
-import template from 'plugins/monitoring/directives/shard_allocation/index.html';
+import labels from './lib/labels';
+import indicesByNodes from './transformers/indicesByNodes';
+import nodesByIndices from './transformers/nodesByIndices';
+import template from './index.html';
 
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringShardAllocation', () => {
@@ -18,18 +18,22 @@ uiModule.directive('monitoringShardAllocation', () => {
       toggleShowSystemIndices: '='
     },
     link: (scope) => {
+
       const isIndexView = scope.view === 'index';
-      const transformer = (isIndexView) ? indicesByNodes(scope) : nodesByIndices(scope);
+      const transformer = (isIndexView) ? indicesByNodes() : nodesByIndices();
+
       scope.isIndexView = isIndexView;
+
       scope.$watch('shards', (shards) => {
         let view = scope.view;
         scope.totalCount = shards.length;
-        scope.showing = transformer(scope.shards, scope.nodes);
+        scope.showing = transformer(shards, scope.nodes);
         if (isIndexView && shards.some((shard) => shard.state === 'UNASSIGNED')) {
           view = 'indexWithUnassigned';
         }
         scope.labels = labels[view];
       });
+
     }
   };
 });

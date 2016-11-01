@@ -24,7 +24,7 @@ class ShardRow extends React.Component {
     var unassigned;
     if (this.props.data.unassigned && this.props.data.unassigned.length) {
       unassigned = (
-        <Unassigned shards={ this.props.data.unassigned }></Unassigned>
+        <Unassigned shards={ this.props.data.unassigned }/>
       );
     } else {
       if (this.props.cols === 3) {
@@ -34,7 +34,11 @@ class ShardRow extends React.Component {
     return (
       <tr>
         { unassigned }
-        <Assigned shardStats={ this.props.shardStats } data={ this.props.data.children } changeUrl={ this.props.changeUrl }></Assigned>
+        <Assigned
+          shardStats={ this.props.shardStats }
+          data={ this.props.data.children }
+          changeUrl={ this.props.changeUrl }
+        />
       </tr>
     );
   }
@@ -43,7 +47,14 @@ class ShardRow extends React.Component {
 export default React.createClass({
   displayName: 'TableBody',
   createRow: function (data) {
-    return (<ShardRow key={ data.name } data={ data } {...this.props} changeUrl={ this.props.changeUrl }></ShardRow>);
+    return (
+      <ShardRow
+        key={ data.name }
+        data={ data }
+        {...this.props}
+        changeUrl={ this.props.changeUrl }
+      />
+    );
   },
   render: function () {
     if (this.props.totalCount === 0) {
@@ -52,7 +63,7 @@ export default React.createClass({
           <tr>
             <td colSpan={ this.props.cols }>
               <div>
-                <p style={{ margin: '10px 0' }} className="text-center lead">
+                <p style={{ margin: '10px 0' }} className='text-center lead'>
                   There are no shards allocated.
                 </p>
               </div>
@@ -65,7 +76,9 @@ export default React.createClass({
     if (this.props.shardStats) {
       if (this.props.rows.length) {
         return (
-          <tbody>{ this.props.rows.map(this.createRow) }</tbody>
+          <tbody>
+            { this.props.rows.map(this.createRow) }
+          </tbody>
         );
       }
     }

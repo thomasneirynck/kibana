@@ -18,8 +18,8 @@
 import _ from 'lodash';
 import decorateShards from '../lib/decorateShards';
 
-export default function indicesByNodes() {
-  return function indicesByNode(shards, nodes) {
+export default function indicesByNodesFn() {
+  return function indicesByNodes(shards, nodes) {
 
     function createIndex(obj, shard) {
       var id = shard.index;

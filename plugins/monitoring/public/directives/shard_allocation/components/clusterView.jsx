@@ -59,14 +59,16 @@ export default React.createClass({
         <TableHead
           hasUnassigned={ this.hasUnassigned() }
           scope={ this.props.scope }
-          toggleShowSystemIndices={ this.state.toggleShowSystemIndices }></TableHead>
+          toggleShowSystemIndices={ this.state.toggleShowSystemIndices }
+        ></TableHead>
         <TableBody
           filter={ this.props.scope.filter }
           totalCount={ this.props.scope.totalCount }
           rows={ this.state.showing }
           cols={ this.state.labels.length }
           shardStats={ this.state.shardStats }
-          changeUrl={ this.state.angularChangeUrl }></TableBody>
+          changeUrl={ this.state.angularChangeUrl }
+        ></TableBody>
       </table>
     );
   }

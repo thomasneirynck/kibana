@@ -29,11 +29,13 @@ function sortByName(item) {
 }
 
 export default React.createClass({
-  createShard: function (shard) {
+  createShard: function (shard, index) {
     var type = shard.primary ? 'primary' : 'replica';
     var additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
-    var key = shard.index + '.' + shard.node + '.' + type + '.' + shard.state + '.' + shard.shard + additionId;
-    return (<Shard shard={ shard } key={ key }></Shard>);
+    var key = `${shard.index}.${shard.node}.${type}.${shard.state}.${shard.shard}${additionId}-${index}`;
+    return (
+      <Shard shard={ shard } key={ key }/>
+    );
   },
   createChild: function (data) {
     var key = data.id;
@@ -55,7 +57,9 @@ export default React.createClass({
     );
     var master;
     if (data.node_type === 'master') {
-      master = <span className="fa fa-star"></span>;
+      master = (
+        <span className="fa fa-star"></span>
+      );
     }
     var shards = _.sortBy(data.children, 'shard').map(this.createShard);
     return (
@@ -68,7 +72,11 @@ export default React.createClass({
   render: function () {
     var data = _.sortBy(this.props.data, sortByName).map(this.createChild);
     return (
-      <td><div className='children'>{ data }</div></td>
+      <td>
+        <div className='children'>
+          { data }
+        </div>
+      </td>
     );
   }
 });

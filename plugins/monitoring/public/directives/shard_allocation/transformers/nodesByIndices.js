@@ -85,7 +85,8 @@ export default function nodesByIndicesFn() {
 
     data = _.reduce(decorateShards(shards, nodes), createIndexAddShard, data);
 
-    return _(data).values()
+    return _(data)
+      .values()
       .sortBy(function (node) {
         return [ node.name !== 'Unassigned', !node.master, node.name ];
       })
