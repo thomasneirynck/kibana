@@ -21,12 +21,12 @@ const D3_SCALING_FUNCTIONS = {
 
 export default class TagCloud {
 
-  constructor(element, size) {
+  constructor(element) {
     this._element = element;
     this._d3SvgContainer = d3.select(element);
     this._svgGroup = this._d3SvgContainer.append('g');
     this._size = [1, 1];
-    this.setSize(size);
+    this.resize();
 
     this._fontFamily = 'Impact';
     this._fontStyle = 'normal';
@@ -56,16 +56,16 @@ export default class TagCloud {
   }
 
 
-  setSize(newSize) {
-    if (newSize.width === 0 || newSize.height === 0) {
-      return;
-    }
-    if (newSize.width === this._size[0] && newSize === this._size[1]) {
+  resize() {
+
+    const newWidth = this._element.parentNode.offsetWidth;
+    const newHeight = this._element.parentNode.offsetHeight;
+    if (newWidth === this._size[0] && newHeight === this._size[1]) {
       return;
     }
 
-    this._size[0] = newSize.width;
-    this._size[1] = newSize.height;
+    this._size[0] = newWidth;
+    this._size[1] = newHeight;
     if (this._complete && this._cloudWidth < this._size[0] && this._cloudHeight < this._size[1]) {
       this._updateContainerSize();
       return;
@@ -73,7 +73,6 @@ export default class TagCloud {
 
     this._washWords();
     this._invalidate();
-
   }
 
   setData(data) {
@@ -183,12 +182,10 @@ export default class TagCloud {
       return;
     }
 
-    clearTimeout(this._timeoutHandle);
-    cancelAnimationFrame(this._domManipulationFrame);
-    this._timeoutHandle = setTimeout(() => {
+    this._timeoutHandle = requestAnimationFrame(() => {
       this._timeoutHandle = null;
       this._updateLayout();
-    }, 100);
+    });
   }
 
 
@@ -212,10 +209,7 @@ export default class TagCloud {
 
     return new Promise((resolve, reject) => {
       tagCloudLayoutGenerator.on('end', (words) => {
-        cancelAnimationFrame(this._domManipulationFrame);
-        this._domManipulationFrame = requestAnimationFrame(()=> {
-          this._onLayoutEnd(resolve, reject, words);
-        });
+        this._onLayoutEnd(resolve, reject, words);
       });
       tagCloudLayoutGenerator.start();
     });

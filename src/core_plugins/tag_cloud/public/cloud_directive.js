@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import uiModules from 'ui/modules';
 import TagCloud from 'plugins/tagcloud/tag_cloud';
+import template from 'plugins/tagcloud/cloud_directive.html';
 
 const module = uiModules.get('kibana/tagcloud', ['kibana']);
 
@@ -12,11 +13,11 @@ module.directive('kbnTagCloud', function () {
       data: '=',
       options: '='
     },
-    template: '<svg class="parent"></svg>',
+    template: template,
     replace: 'true',
     link: function (scope, element) {
 
-      const tagCloud = new TagCloud(element[0], getContainerSize());
+      const tagCloud = new TagCloud(element[0]);
 
       function getContainerSize() {
         return {width: element.parent().width(), height: element.parent().height()};
@@ -32,7 +33,7 @@ module.directive('kbnTagCloud', function () {
         tagCloud.setOptions(options);
       });
       scope.$watch(getContainerSize, _.debounce(function () {
-        tagCloud.setSize(getContainerSize());
+        tagCloud.resize();
       }, 1000, {
         trailing: true
       }), true);
