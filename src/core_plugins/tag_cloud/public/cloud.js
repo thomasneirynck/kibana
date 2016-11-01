@@ -7,9 +7,7 @@ import tagCloudTemplate from 'plugins/tagcloud/cloud.html';
 import tagCloudVisParamsTemplate from 'plugins/tagcloud/cloud_vis_params.html';
 import visTypes from 'ui/registry/vis_types';
 
-visTypes.register(TagCloudProvider);
-
-function TagCloudProvider(Private) {
+visTypes.register(function TagCloudProvider(Private) {
   const TemplateVisType = Private(TemplateVisTypeTemplateVisTypeProvider);
   const Schemas = Private(VisSchemasProvider);
 
@@ -17,8 +15,8 @@ function TagCloudProvider(Private) {
     name: 'tagcloud',
     title: 'Tag cloud',
     description: 'A tag cloud visualization is a visual representation of text data, ' +
-     'typically used to visualize free form text. Tags are usually single words, ' +
-     'and the importance of each tag is shown with font size or color.',
+    'typically used to visualize free form text. Tags are usually single words, ' +
+    'and the importance of each tag is shown with font size or color.',
     icon: 'fa-cloud',
     template: tagCloudTemplate,
     params: {
@@ -55,6 +53,6 @@ function TagCloudProvider(Private) {
       }
     ])
   });
-}
+});
 
-export default TagCloudProvider;
+
