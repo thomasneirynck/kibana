@@ -1,6 +1,7 @@
 import d3 from 'd3';
 import d3TagCloud from 'd3-cloud';
 import vislibComponentsSeedColorsProvider from 'ui/vislib/components/color/seed_colors';
+import {EventEmitter} from 'events';
 
 
 const ORIENTATIONS = {
@@ -19,9 +20,10 @@ const D3_SCALING_FUNCTIONS = {
 };
 
 
-export default class TagCloud {
+export default class TagCloud extends EventEmitter {
 
   constructor(element) {
+    super();
     this._element = element;
     this._d3SvgContainer = d3.select(element);
     this._svgGroup = this._d3SvgContainer.append('g');
@@ -126,6 +128,19 @@ export default class TagCloud {
     enteringTags.attr('transform', positionWord);
     enteringTags.text(getText);
 
+    const self = this;
+    enteringTags.on({
+      click: function (event) {
+        self.emit('select', event.text);
+      },
+      mouseover: function (d) {
+        d3.select(this).style('cursor', 'pointer');
+      },
+      mouseout: function (d) {
+        d3.select(this).style('cursor', 'default');
+      }
+    });
+
     const movingTags = stage.transition();
     movingTags.duration(600);
     movingTags.style('font-size', getSizeInPixels);
@@ -133,6 +148,7 @@ export default class TagCloud {
     movingTags.style('font-weight', () => this._fontWeight);
     movingTags.style('font-family', () => this._fontFamily);
     movingTags.attr('transform', positionWord);
+
 
     const exitingTags = stage.exit();
     const exitTransition = exitingTags.transition();
