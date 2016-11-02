@@ -22,11 +22,16 @@ const D3_SCALING_FUNCTIONS = {
 
 export default class TagCloud extends EventEmitter {
 
-  constructor(element) {
+  constructor(domNode) {
+
     super();
-    this._element = element;
-    this._d3SvgContainer = d3.select(element);
+
+    this._element = domNode;
+
+    const containerSelection = d3.select(this._element);
+    this._d3SvgContainer = containerSelection.append('svg');
     this._svgGroup = this._d3SvgContainer.append('g');
+
     this._size = [1, 1];
     this.resize();
 
@@ -62,8 +67,8 @@ export default class TagCloud extends EventEmitter {
 
   resize() {
 
-    const newWidth = this._element.parentNode.offsetWidth;
-    const newHeight = this._element.parentNode.offsetHeight;
+    const newWidth = this._element.offsetWidth;
+    const newHeight = this._element.offsetHeight;
 
     if (newWidth < 1 || newHeight < 1) {
       return;
@@ -124,6 +129,7 @@ export default class TagCloud extends EventEmitter {
   }
 
   _onLayoutEnd(wordsWithLayout) {
+
     this._domManipulationFrame = null;
     const affineTransform = positionWord.bind(null, this._size[0] / 2, this._size[1] / 2);
     const svgTextNodes = this._svgGroup.selectAll('text');
@@ -161,7 +167,6 @@ export default class TagCloud extends EventEmitter {
     movingTags.style('font-family', () => this._fontFamily);
     movingTags.attr('transform', affineTransform);
 
-
     const exitingTags = stage.exit();
     const exitTransition = exitingTags.transition();
     exitTransition.duration(200);
@@ -187,11 +192,6 @@ export default class TagCloud extends EventEmitter {
       moves--;
       resolveWhenDone();
     });
-
-    const cloudBBox = this._svgGroup[0][0].getBBox();
-    this._cloudWidth = cloudBBox.width;
-    this._cloudHeight = cloudBBox.height;
-    this._complete = this._svgGroup[0][0].childNodes.length === this._words.length;
 
   };
 

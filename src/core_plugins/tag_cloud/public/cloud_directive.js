@@ -31,7 +31,7 @@ module.directive('kbnTagCloud', function (Private, getAppState) {
       });
 
       function getContainerSize() {
-        return {width: element.parent().width(), height: element.parent().height()};
+        return {width: element.width(), height: element.height()};
       }
 
       scope.$watch('data', async function () {
