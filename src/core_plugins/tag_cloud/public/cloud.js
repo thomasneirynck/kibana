@@ -1,9 +1,8 @@
 import 'plugins/tagcloud/cloud.less';
 import 'plugins/tagcloud/cloud_controller.js';
-import 'plugins/tagcloud/cloud_directive.js';
 import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
-import tagCloudTemplate from 'plugins/tagcloud/cloud.html';
+import tagCloudTemplate from 'plugins/tagcloud/cloud_controller.html';
 import tagCloudVisParamsTemplate from 'plugins/tagcloud/cloud_vis_params.html';
 import visTypes from 'ui/registry/vis_types';
 

@@ -27,11 +27,8 @@ export default class TagCloud extends EventEmitter {
     super();
 
     this._element = domNode;
-
-    const containerSelection = d3.select(this._element);
-    this._d3SvgContainer = containerSelection.append('svg');
+    this._d3SvgContainer = d3.select(this._element).append('svg');
     this._svgGroup = this._d3SvgContainer.append('g');
-
     this._size = [1, 1];
     this.resize();
 
