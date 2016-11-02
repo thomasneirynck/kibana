@@ -62,17 +62,17 @@ export default class TagCloud extends EventEmitter {
 
     const newWidth = this._element.parentNode.offsetWidth;
     const newHeight = this._element.parentNode.offsetHeight;
+
+    if (newWidth < 1 || newHeight < 1) {
+      return;
+    }
+
     if (newWidth === this._size[0] && newHeight === this._size[1]) {
       return;
     }
 
     this._size[0] = newWidth;
     this._size[1] = newHeight;
-    if (this._complete && this._cloudWidth < this._size[0] && this._cloudHeight < this._size[1]) {
-      this._updateContainerSize();
-      return;
-    }
-
     this._washWords();
     this._invalidate();
   }
@@ -96,7 +96,6 @@ export default class TagCloud extends EventEmitter {
     this._d3SvgContainer.attr('height', this._size[1]);
     this._svgGroup.attr('width', this._size[0]);
     this._svgGroup.attr('height', this._size[1]);
-    this._svgGroup.attr('transform', 'translate(' + this._size[0] / 2 + ',' + this._size[1] / 2 + ')');
   }
 
   _washWords() {
@@ -114,6 +113,7 @@ export default class TagCloud extends EventEmitter {
 
   _onLayoutEnd(resolve, reject, wordsWithLayout) {
     this._domManipulationFrame = null;
+    const affineTransform = positionWord.bind(null, this._size[0] / 2, this._size[1] / 2);
     const svgTextNodes = this._svgGroup.selectAll('text');
     const stage = svgTextNodes.data(wordsWithLayout, getText);
 
@@ -125,7 +125,7 @@ export default class TagCloud extends EventEmitter {
     enteringTags.style('font-family', () => this._fontFamily);
     enteringTags.style('fill', getFill);
     enteringTags.attr('text-anchor', () => 'middle');
-    enteringTags.attr('transform', positionWord);
+    enteringTags.attr('transform', affineTransform);
     enteringTags.text(getText);
 
     const self = this;
@@ -147,7 +147,7 @@ export default class TagCloud extends EventEmitter {
     movingTags.style('font-style', this._fontStyle);
     movingTags.style('font-weight', () => this._fontWeight);
     movingTags.style('font-family', () => this._fontFamily);
-    movingTags.attr('transform', positionWord);
+    movingTags.attr('transform', affineTransform);
 
 
     const exitingTags = stage.exit();
@@ -242,8 +242,8 @@ function getText(word) {
   return word.text;
 }
 
-function positionWord(word) {
-  return `translate(${word.x}, ${word.y})rotate(${word.rotate})`;
+function positionWord(xTranslate, yTranslate, word) {
+  return `translate(${word.x + xTranslate}, ${word.y + yTranslate})rotate(${word.rotate})`;
 }
 
 function getSize(tag) {
