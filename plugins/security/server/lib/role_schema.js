@@ -5,7 +5,10 @@ export default {
   cluster: Joi.array().items(Joi.string()),
   indices: Joi.array().items({
     names: Joi.array().items(Joi.string()),
-    field_security: Joi.object().keys({grant: Joi.array().items(Joi.string()), except:  Joi.array().items(Joi.string())}),
+    field_security: Joi.object().keys({
+      grant: Joi.array().items(Joi.string()),
+      except:  Joi.array().items(Joi.string())
+    }),
     privileges: Joi.array().items(Joi.string()),
     query: Joi.string().allow('')
   }),
