@@ -38,7 +38,9 @@ export default class TagCloud extends EventEmitter {
     this._maxFontSize = 36;
     this._textScale = 'linear';
     this._padding = 5;
+
   }
+
 
   setOptions(options) {
     if (JSON.stringify(options) === this._optionsAsString) {
@@ -90,6 +92,16 @@ export default class TagCloud extends EventEmitter {
     this._element.innerHTML = '';
   }
 
+  async whenRendered() {
+
+    if (this._dirtyPromise) {//rendering is in-flight
+      return this._dirtyPromise;
+    }
+
+    return new Promise(resolve => {
+      resolve(true);
+    });
+  }
 
   _updateContainerSize() {
     this._d3SvgContainer.attr('width', this._size[0]);
@@ -111,7 +123,7 @@ export default class TagCloud extends EventEmitter {
     this._makeTextSizeMapper();
   }
 
-  _onLayoutEnd(resolve, reject, wordsWithLayout) {
+  _onLayoutEnd(wordsWithLayout) {
     this._domManipulationFrame = null;
     const affineTransform = positionWord.bind(null, this._size[0] / 2, this._size[1] / 2);
     const svgTextNodes = this._svgGroup.selectAll('text');
@@ -161,7 +173,8 @@ export default class TagCloud extends EventEmitter {
     let moves = 0;
     const resolveWhenDone = () => {
       if (exits === 0 && moves === 0) {
-        resolve(true);
+        this._dirtyPromise = null;
+        this._resolve(true);
       }
     };
     exitTransition.each(_ => exits++);
@@ -198,6 +211,12 @@ export default class TagCloud extends EventEmitter {
       return;
     }
 
+    if (!this._dirtyPromise) {
+      this._dirtyPromise = new Promise((resolve, reject) => {
+        this._resolve = resolve;
+      });
+    }
+
     this._timeoutHandle = requestAnimationFrame(() => {
       this._timeoutHandle = null;
       this._updateLayout();
@@ -222,13 +241,11 @@ export default class TagCloud extends EventEmitter {
     tagCloudLayoutGenerator.words(this._words);
     tagCloudLayoutGenerator.text(getText);
     tagCloudLayoutGenerator.timeInterval(1000);//never run longer than a second
-
-    return new Promise((resolve, reject) => {
-      tagCloudLayoutGenerator.on('end', (words) => {
-        this._onLayoutEnd(resolve, reject, words);
-      });
-      tagCloudLayoutGenerator.start();
+    tagCloudLayoutGenerator.on('end', (words) => {
+      this._onLayoutEnd(words);
     });
+    tagCloudLayoutGenerator.start();
+
   }
 
 };

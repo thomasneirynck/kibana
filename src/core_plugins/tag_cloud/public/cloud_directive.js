@@ -21,13 +21,11 @@ module.directive('kbnTagCloud', function (Private, getAppState) {
     replace: 'true',
     link: function (scope, element) {
 
-      let vis;
-
       const tagCloud = new TagCloud(element[0]);
       tagCloud.on('select', (event) => {
         const appState = getAppState();
         const clickHandler = filterBarClickHandler(appState);
-        const aggs = vis.aggs.getResponseAggs();
+        const aggs = scope.data.vis.aggs.getResponseAggs();
         const aggConfigResult = new AggConfigResult(aggs[0], false, event, event);
         clickHandler({point: {aggConfigResult: aggConfigResult}});
       });
@@ -36,12 +34,15 @@ module.directive('kbnTagCloud', function (Private, getAppState) {
         return {width: element.parent().width(), height: element.parent().height()};
       }
 
-      scope.$watch('data', function () {
+      scope.$watch('data', async function () {
         if (!scope.data) {
           return;
         }
-        vis = scope.data.vis;
         tagCloud.setData(scope.data.tags);
+
+        await tagCloud.whenRendered();
+        scope.$emit('rendered');//depends on https://github.com/elastic/kibana/pull/8914 to work (should support Reporting)
+
       });
       scope.$watch('options', function (options) {
         tagCloud.setOptions(options);
