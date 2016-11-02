@@ -64,15 +64,34 @@ class BytesPercentageUsage extends React.Component {
 class ElasticsearchPanel extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      primaries: 'N/A',
+      replicas: 'N/A'
+    };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    const indices = nextProps.stats.indices;
+    const total = _.get(indices, 'shards.total', 0);
+    let primaries = _.get(indices, 'shards.primaries', 'N/A');
+    let replicas = 'N/A';
+
+    // we subtract primaries from total to get replica count, so if we don't know primaries, then
+    //  we cannot know replicas (because we'd be showing the wrong number!)
+    if (primaries !== 'N/A') {
+      primaries = formatNumber(primaries, 'int_commas');
+      replicas = formatNumber(total - primaries, 'int_commas');
+    }
+
+    this.setState({
+      primaries,
+      replicas
+    });
   }
 
   render() {
     const nodes = this.props.stats.nodes;
     const indices = this.props.stats.indices;
-    let replicas = _.get(indices, 'shards.replication', 'N/A');
-    if (replicas !== 'N/A') {
-      replicas = formatNumber(replicas, 'int_commas');
-    }
 
     return (
       <ClusterItemContainer {...this.props} url='elasticsearch' title='Elasticsearch'>
@@ -112,8 +131,8 @@ class ElasticsearchPanel extends React.Component {
               </dt>
               <dd>Documents: {formatNumber(indices.docs.count, 'int_commas')}</dd>
               <dd>Disk Usage: {formatNumber(indices.store.size_in_bytes, 'bytes')}</dd>
-              <dd>Primary Shards: {formatNumber(_.get(indices, 'shards.primaries'), 'int_commas')}</dd>
-              <dd>Replica Shards: {replicas}</dd>
+              <dd>Primary Shards: {this.state.primaries}</dd>
+              <dd>Replica Shards: {this.state.replicas}</dd>
             </dl>
           </div>
         </div>
