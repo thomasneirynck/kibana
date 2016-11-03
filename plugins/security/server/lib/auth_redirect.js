@@ -26,9 +26,11 @@ const KIBANA_VERSION_HEADER = 'kbn-version';
 export default function factory({ redirectUrl, strategies, testRequest, xpackMainPlugin }) {
   const testRequestAsync = Promise.promisify(testRequest);
   return function authenticate(request, reply) {
-    // If security is disabled, continue with no user credentials and delete the client cookie as well
+    // If security is disabled or license is basic, continue with no user credentials and delete the client cookie as well
     const xpackInfo = xpackMainPlugin && xpackMainPlugin.info;
-    if (xpackInfo && xpackInfo.isAvailable() && !xpackInfo.feature('security').isEnabled()) {
+    if (xpackInfo
+        && xpackInfo.isAvailable()
+        && (!xpackInfo.feature('security').isEnabled() || xpackInfo.license.isOneOf('basic'))) {
       reply.continue({ credentials: {} });
       return;
     }

@@ -11,9 +11,11 @@ export default (server, uiExports, xpackMainPlugin) => {
     handler(request, reply) {
 
       const xpackInfo = xpackMainPlugin && xpackMainPlugin.info;
-      const isSecurityDisabledInES = xpackInfo && xpackInfo.isAvailable() && !xpackInfo.feature('security').isEnabled();
+      const licenseCheckResults = xpackInfo && xpackInfo.isAvailable() && xpackInfo.feature('security').getLicenseCheckResults();
+      const showLogin = get(licenseCheckResults, 'showLogin');
+
       const isUserAlreadyLoggedIn = !!request.state[cookieName];
-      if (isUserAlreadyLoggedIn || isSecurityDisabledInES) {
+      if (isUserAlreadyLoggedIn || !showLogin) {
         const next = get(request, 'query.next', '/');
         return reply.redirect(`${config.get('server.basePath')}${next}`);
       }

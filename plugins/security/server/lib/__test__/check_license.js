@@ -13,50 +13,45 @@ describe('check_license', function () {
     };
   });
 
-  it ('should set allowLogin and showLinks to false if license information is not set', () => {
+  it ('should show login page but not allow login if license information is not set', () => {
     mockLicenseInfo = null;
     const licenseCheckResults = checkLicense(mockLicenseInfo);
+
+    expect(licenseCheckResults.showLogin).to.be(true);
     expect(licenseCheckResults.allowLogin).to.be(false);
     expect(licenseCheckResults.showLinks).to.be(false);
   });
 
-  it ('should set allowLogin and showLinks to false if license information is set but not available', () => {
+  it ('should show login page but not allow login if license information is set but not available', () => {
     mockLicenseInfo = { isAvailable: () => false };
     const licenseCheckResults = checkLicense(mockLicenseInfo);
+
+    expect(licenseCheckResults.showLogin).to.be(true);
     expect(licenseCheckResults.allowLogin).to.be(false);
     expect(licenseCheckResults.showLinks).to.be(false);
   });
 
-  it ('should set allowLogin and showLinks to false if license is basic', () => {
+  it ('should not show login page or other security elements if license is basic or security is disabled in Elasticsearch', () => {
     set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(true));
     set(mockLicenseInfo, 'license.isActive', () => { return 'irrelevant'; });
     set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
       isEnabled: () => { return 'irrelevant'; }
     }));
 
-    expect(checkLicense(mockLicenseInfo).allowLogin).to.be(false);
+    expect(checkLicense(mockLicenseInfo).showLogin).to.be(false);
+    expect(checkLicense(mockLicenseInfo).allowLogin).to.be(null);
     expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
   });
 
-  it ('should set allowLogin and showLinks to false if license has expired, security is enabled in ES and license is not basic', () => {
+  it ('should show login page but not allow login if license has expired, security is enabled in ES and license is not basic', () => {
     set(mockLicenseInfo, 'license.isActive', () => { return false; });
     set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
       isEnabled: () => { return true; }
     }));
     set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(false));
 
+    expect(checkLicense(mockLicenseInfo).showLogin).to.be(true);
     expect(checkLicense(mockLicenseInfo).allowLogin).to.be(false);
-    expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
-  });
-
-  it ('should set allowLogin to true and showLinks to false if security is disabled in Elasticsearch', () => {
-    set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
-      isEnabled: () => { return false; }
-    }));
-    set(mockLicenseInfo, 'license.isActive', () => { return 'irrelevant'; });
-    set(mockLicenseInfo, 'license.isOneOf', () => { return 'irrelevant'; });
-
-    expect(checkLicense(mockLicenseInfo).allowLogin).to.be(true);
     expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
   });
 
@@ -68,18 +63,6 @@ describe('check_license', function () {
       const expectedMessage = 'Login is currently disabled because the license could not be determined. '
       + 'Please check that Elasticsearch is running, then refresh this page.';
       expect(checkLicense(mockLicenseInfo).loginMessage).to.contain(expectedMessage);
-    });
-
-    it ('should tell users if login is disabled because license is basic', () => {
-      set(mockLicenseInfo, 'license.isActive', () => { return true; });
-      set(mockLicenseInfo, 'feature', sinon.stub().withArgs('security').returns({
-        isEnabled: () => { return true; }
-      }));
-      set(mockLicenseInfo, 'license.isOneOf', sinon.stub().withArgs([ 'basic' ]).returns(true));
-
-      const expectedMessage = 'Your Basic license does not support Security. '
-      + 'Please upgrade your license or disable Security in Elasticsearch.';
-      expect(checkLicense(mockLicenseInfo).loginMessage).to.be(expectedMessage);
     });
 
     it ('should tell users if login is disabled because license has expired', () => {

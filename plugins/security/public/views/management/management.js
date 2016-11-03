@@ -21,27 +21,26 @@ routes.defaults(/\/management/, {
         elasticsearch.deregister('roles');
       }
 
+      deregisterSecurity();
+      if (!showSecurityLinks) return;
+
       // getCurrent will reject if there is no authenticated user, so we prevent them from seeing the security
       // management screens
       //
       // $promise is used here because the result is an ngResource, not a promise itself
       return ShieldUser.getCurrent().$promise
       .then(() => {
-        deregisterSecurity();
+        elasticsearch.register('users', {
+          order: 10,
+          display: 'Users',
+          url: '#/management/elasticsearch/users'
+        });
 
-        if (showSecurityLinks) {
-          elasticsearch.register('users', {
-            order: 10,
-            display: 'Users',
-            url: '#/management/elasticsearch/users'
-          });
-
-          elasticsearch.register('roles', {
-            order: 20,
-            display: 'Roles',
-            url: '#/management/elasticsearch/roles'
-          });
-        }
+        elasticsearch.register('roles', {
+          order: 20,
+          display: 'Roles',
+          url: '#/management/elasticsearch/roles'
+        });
       })
       .catch(deregisterSecurity);
     }

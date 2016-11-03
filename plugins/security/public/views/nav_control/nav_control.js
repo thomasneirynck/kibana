@@ -5,6 +5,7 @@ import template from 'plugins/security/views/nav_control/nav_control.html';
 import 'plugins/security/services/shield_user';
 import '../account/account';
 import PathProvider from 'plugins/xpack_main/services/path';
+import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 
 registry.register(constant({
   name: 'security',
@@ -14,7 +15,9 @@ registry.register(constant({
 
 const module = uiModules.get('security', ['kibana']);
 module.controller('securityNavController', ($scope, ShieldUser, globalNavState, kbnBaseUrl, Private) => {
-  if (Private(PathProvider).isLoginOrLogout()) return;
+  const xpackInfo = Private(XPackInfoProvider);
+  const showSecurityLinks = xpackInfo.get('features.security.showLinks');
+  if (Private(PathProvider).isLoginOrLogout() || !showSecurityLinks) return;
 
   $scope.user = ShieldUser.getCurrent();
   $scope.route = `${kbnBaseUrl}#/account`;

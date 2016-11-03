@@ -23,6 +23,9 @@ describe('lib/auth_redirect', function () {
           testRequest: sinon.stub(),
           xpackMainPlugin: {
             info: {
+              license: {
+                isOneOf: sinon.stub().returns(false)
+              },
               isAvailable: sinon.stub().returns(true),
               feature: () => { return { isEnabled: sinon.stub().returns(true) }; }
             }
@@ -78,6 +81,17 @@ describe('lib/auth_redirect', function () {
               isEnabled: sinon.stub().returns(false)
             };
           };
+        });
+
+        it ('replies with no credentials', () => {
+          authenticate(request, reply);
+          sinon.assert.calledWith(reply.continue, { credentials: {} });
+        });
+      });
+
+      context('when license is basic', () => {
+        beforeEach(() => {
+          params.xpackMainPlugin.info.license.isOneOf = sinon.stub().returns(true);
         });
 
         it ('replies with no credentials', () => {
