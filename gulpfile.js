@@ -261,7 +261,7 @@ function runBrowserTests(type) {
     type,
     '--',
     // '--kbnServer.server.sslEnabled', 'false', // TODO: needs support in Kibana
-    '--kbnServer.tests_bundle.pluginId=graph,security,monitoring,reporting,xpack_main',
+    '--kbnServer.tests_bundle.pluginId=graph,security,monitoring,reporting,xpack_main,profiler',
     `--kbnServer.plugin-path=${__dirname}`
   ];
   var kbnBrowserOptions = { cwd: pathToKibana };
