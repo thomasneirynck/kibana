@@ -41,6 +41,8 @@ export default class TagCloud extends EventEmitter {
     this._textScale = 'linear';
     this._padding = 5;
 
+    this._complete = false;
+
   }
 
 
@@ -58,7 +60,7 @@ export default class TagCloud extends EventEmitter {
     this._textScale = options.textScale;
 
     this._washWords();
-    this._invalidate();
+    this._invalidate(false);
   }
 
 
@@ -75,16 +77,27 @@ export default class TagCloud extends EventEmitter {
       return;
     }
 
+    const didOverflow = this._size[0] < this._cloudWidth || this._size[1] < this._cloudHeight;
+    const willNotOverflow = this._cloudWidth <= newWidth && this._cloudHeight <= newHeight;
+
     this._size[0] = newWidth;
     this._size[1] = newHeight;
-    this._washWords();
-    this._invalidate();
+
+    if (!didOverflow && willNotOverflow && this._complete) {
+      this._invalidate(true);
+    } else {
+      this._washWords();
+      this._invalidate(false);
+    }
+
+
+
   }
 
   setData(data) {
     this._words = data.map(toWordTag);
     this._makeTextSizeMapper();
-    this._invalidate();
+    this._invalidate(false);
   }
 
 
@@ -125,12 +138,12 @@ export default class TagCloud extends EventEmitter {
     this._makeTextSizeMapper();
   }
 
-  _onLayoutEnd(wordsWithLayout) {
+  _onLayoutEnd() {
 
     this._domManipulationFrame = null;
     const affineTransform = positionWord.bind(null, this._size[0] / 2, this._size[1] / 2);
     const svgTextNodes = this._svgGroup.selectAll('text');
-    const stage = svgTextNodes.data(wordsWithLayout, getText);
+    const stage = svgTextNodes.data(this._words, getText);
 
     const enterSelection = stage.enter();
     const enteringTags = enterSelection.append('text');
@@ -175,6 +188,10 @@ export default class TagCloud extends EventEmitter {
     let moves = 0;
     const resolveWhenDone = () => {
       if (exits === 0 && moves === 0) {
+        const cloudBBox = this._svgGroup[0][0].getBBox();
+        this._cloudWidth = cloudBBox.width;
+        this._cloudHeight = cloudBBox.height;
+        this._complete = this._svgGroup[0][0].childNodes.length === this._words.length;
         this._dirtyPromise = null;
         this._resolve(true);
       }
@@ -201,9 +218,8 @@ export default class TagCloud extends EventEmitter {
     }
   }
 
-
-  _invalidate() {
-
+  _invalidate(keepLayout) {
+    this._complete = false;
     if (!this._words) {
       return;
     }
@@ -216,14 +232,16 @@ export default class TagCloud extends EventEmitter {
 
     this._timeoutHandle = requestAnimationFrame(() => {
       this._timeoutHandle = null;
-      this._updateLayout();
+      this._updateContainerSize();
+      if (keepLayout) {
+        this._onLayoutEnd();
+      } else {
+        this._updateLayout();
+      }
     });
   }
 
-
   _updateLayout() {
-
-    this._updateContainerSize();
 
     const tagCloudLayoutGenerator = d3TagCloud();
     tagCloudLayoutGenerator.size(this._size);
@@ -238,9 +256,7 @@ export default class TagCloud extends EventEmitter {
     tagCloudLayoutGenerator.words(this._words);
     tagCloudLayoutGenerator.text(getText);
     tagCloudLayoutGenerator.timeInterval(1000);//never run longer than a second
-    tagCloudLayoutGenerator.on('end', (words) => {
-      this._onLayoutEnd(words);
-    });
+    tagCloudLayoutGenerator.on('end', this._onLayoutEnd.bind(this));
     tagCloudLayoutGenerator.start();
 
   }
