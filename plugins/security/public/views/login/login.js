@@ -42,6 +42,6 @@ chrome
     };
   }
 
-  xpackInfo.init()
+  xpackInfo.refresh()
   .finally(setupScope);
 });
