@@ -78,11 +78,31 @@ function indexRowFactory(scope, kbnUrl) {
               <span className={statusIconClass(status)} title={capitalize(status)}></span>
             </span>
           </td>
-          <td>{docCount}</td>
-          <td>{indexSize}</td>
-          <td>{requestRate}</td>
-          <td>{searchRate}</td>
-          <td>{unassignedShards}</td>
+          <td>
+            <div className='big inline'>
+              {docCount}
+            </div>
+          </td>
+          <td>
+            <div className='big inline'>
+              {indexSize}
+            </div>
+          </td>
+          <td>
+            <div className='big inline'>
+              {requestRate}
+            </div>
+          </td>
+          <td>
+            <div className='big inline'>
+              {searchRate}
+            </div>
+          </td>
+          <td>
+            <div className='big inline'>
+              {unassignedShards}
+            </div>
+          </td>
         </tr>
       );
     }
