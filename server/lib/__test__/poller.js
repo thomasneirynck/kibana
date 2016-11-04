@@ -36,7 +36,7 @@ describe('Poller', () => {
       })
       .then(() => {
         poller.stop();
-        expect(functionToPoll.callCount).to.be(2);
+        expect(functionToPoll.callCount).to.be.greaterThan(1);
       });
     });
 
@@ -49,7 +49,7 @@ describe('Poller', () => {
         })
         .then(() => {
           poller.stop();
-          expect(successFunction.callCount).to.be(2);
+          expect(successFunction.callCount).to.be.greaterThan(1);
           expect(errorFunction.callCount).to.be(0);
         });
       });
@@ -106,7 +106,7 @@ describe('Poller', () => {
           .then(() => {
             poller.stop();
             expect(successFunction.callCount).to.be(0);
-            expect(errorFunction.callCount).to.be(2);
+            expect(errorFunction.callCount).to.be.greaterThan(1);
           });
         });
       });
