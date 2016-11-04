@@ -41,7 +41,6 @@ export default class TagCloud extends EventEmitter {
     this._textScale = 'linear';
     this._padding = 5;
 
-    this._complete = false;
 
   }
 
@@ -83,7 +82,7 @@ export default class TagCloud extends EventEmitter {
     this._size[0] = newWidth;
     this._size[1] = newHeight;
 
-    if (!didOverflow && willNotOverflow && this._complete) {
+    if (!didOverflow && willNotOverflow) {
       this._invalidate(true);
     } else {
       this._washWords();
@@ -102,7 +101,6 @@ export default class TagCloud extends EventEmitter {
 
 
   destroy() {
-    cancelAnimationFrame(this._domManipulationFrame);
     clearTimeout(this._timeoutHandle);
     this._element.innerHTML = '';
   }
@@ -140,8 +138,7 @@ export default class TagCloud extends EventEmitter {
 
   _onLayoutEnd() {
 
-    this._domManipulationFrame = null;
-    const affineTransform = positionWord.bind(null, this._size[0] / 2, this._size[1] / 2);
+    const affineTransform = positionWord.bind(null, this._element.offsetWidth / 2, this._element.offsetHeight / 2);
     const svgTextNodes = this._svgGroup.selectAll('text');
     const stage = svgTextNodes.data(this._words, getText);
 
@@ -191,7 +188,6 @@ export default class TagCloud extends EventEmitter {
         const cloudBBox = this._svgGroup[0][0].getBBox();
         this._cloudWidth = cloudBBox.width;
         this._cloudHeight = cloudBBox.height;
-        this._complete = this._svgGroup[0][0].childNodes.length === this._words.length;
         this._dirtyPromise = null;
         this._resolve(true);
       }
@@ -219,7 +215,8 @@ export default class TagCloud extends EventEmitter {
   }
 
   _invalidate(keepLayout) {
-    this._complete = false;
+
+
     if (!this._words) {
       return;
     }
@@ -230,6 +227,7 @@ export default class TagCloud extends EventEmitter {
       });
     }
 
+    clearTimeout(this._timeoutHandle);
     this._timeoutHandle = requestAnimationFrame(() => {
       this._timeoutHandle = null;
       this._updateContainerSize();
@@ -251,17 +249,21 @@ export default class TagCloud extends EventEmitter {
     tagCloudLayoutGenerator.fontStyle(this._fontStyle);
     tagCloudLayoutGenerator.fontWeight(this._fontWeight);
     tagCloudLayoutGenerator.fontSize(tag => this._mapSizeToFontSize(tag.size));
-    tagCloudLayoutGenerator.random(() => 0.5); //consistently seed the layout
+    tagCloudLayoutGenerator.random(seed);
     tagCloudLayoutGenerator.spiral('archimedean');
     tagCloudLayoutGenerator.words(this._words);
     tagCloudLayoutGenerator.text(getText);
-    tagCloudLayoutGenerator.timeInterval(1000);//never run longer than a second
+    tagCloudLayoutGenerator.timeInterval(100);//never run longer than 100ms at each interval
     tagCloudLayoutGenerator.on('end', this._onLayoutEnd.bind(this));
     tagCloudLayoutGenerator.start();
 
   }
 
 };
+
+function seed() {
+  return 0.5;//constant seed for constant layouts
+}
 
 function toWordTag(word) {
   return {size: word.size, text: word.text};
