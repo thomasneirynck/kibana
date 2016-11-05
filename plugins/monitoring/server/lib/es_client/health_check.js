@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import elasticsearch from 'elasticsearch';
-import { partial } from 'lodash';
 import checkEsVersion from './check_es_version';
+import kibanaVersion from './kibana_version';
 
 const NoConnections = elasticsearch.errors.NoConnections;
 const REQUEST_DELAY = 2500;
@@ -63,7 +63,7 @@ export default function esHealthCheck(plugin, server) {
 
   function check() {
     return waitForPong()
-    .then(partial(checkEsVersion, server))
+    .then(() => checkEsVersion(server, kibanaVersion.get()))
     .then(waitForShards)
     .catch(err => plugin.status.red(err));
   }
