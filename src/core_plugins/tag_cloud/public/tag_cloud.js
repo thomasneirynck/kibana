@@ -39,6 +39,8 @@ export default class TagCloud extends EventEmitter {
     this._minFontSize = 10;
     this._maxFontSize = 36;
     this._textScale = 'linear';
+    this._spiral = 'archimedean';//layout shape
+    this._timeInterval = 1000;//time allowed for layout algorithm
     this._padding = 5;
 
 
@@ -51,8 +53,6 @@ export default class TagCloud extends EventEmitter {
     }
 
     this._optionsAsString = JSON.stringify(options);
-    this._fontStyle = options.fontStyle;
-    this._fontWeight = options.fontWeight;
     this._orientations = options.orientations;
     this._minFontSize = Math.min(options.minFontSize, options.maxFontSize);
     this._maxFontSize = Math.max(options.minFontSize, options.maxFontSize);
@@ -250,10 +250,10 @@ export default class TagCloud extends EventEmitter {
     tagCloudLayoutGenerator.fontWeight(this._fontWeight);
     tagCloudLayoutGenerator.fontSize(tag => this._mapSizeToFontSize(tag.size));
     tagCloudLayoutGenerator.random(seed);
-    tagCloudLayoutGenerator.spiral('archimedean');
+    tagCloudLayoutGenerator.spiral(this._spiral);
     tagCloudLayoutGenerator.words(this._words);
     tagCloudLayoutGenerator.text(getText);
-    tagCloudLayoutGenerator.timeInterval(100);//never run longer than 100ms at each interval
+    tagCloudLayoutGenerator.timeInterval(this._timeInterval);
     tagCloudLayoutGenerator.on('end', this._onLayoutEnd.bind(this));
     tagCloudLayoutGenerator.start();
 

@@ -22,8 +22,6 @@ visTypes.register(function TagCloudProvider(Private) {
       defaults: {
         textScale: 'linear',
         orientations: 'single',
-        fontStyle: 'normal',
-        fontWeight: 'normal',
         minFontSize: 18,
         maxFontSize: 72
       },
