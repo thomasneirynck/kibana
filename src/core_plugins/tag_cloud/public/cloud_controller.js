@@ -43,8 +43,10 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
     tagCloud.setData(tags);
 
     await tagCloud.whenRendered();
-    $scope.$emit('rendered');//depends on https://github.com/elastic/kibana/pull/8914 to work (should support Reporting)
-
+    //todo: remove the conditional once https://github.com/elastic/kibana/pull/8914 is merged
+    if (typeof $scope.vis.emit === 'function') {
+      $scope.vis.emit('renderComplete');
+    }
   });
 
 
