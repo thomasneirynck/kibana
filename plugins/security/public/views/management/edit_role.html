@@ -64,13 +64,13 @@
     <h4>Indices Privileges</h4>
     <table class="table row">
       <tbody>
-        <tr ng-repeat="index in role.indices">
+        <tr ng-repeat="index in role.indices" data-test-subj="{{ 'indicesPrivileges' + $index }}">
           <td class="col-md-6">
             <div class="input-group help-block">
               <span class="input-group-addon">
                 <i class="fa fa-search"></i>
               </span>
-              <ui-select class="form-control" multiple ng-model="index.names" ng-change="getFieldOptions(index, $index)" ng-disabled="role.metadata._reserved">
+              <ui-select data-test-subj="{{ 'indicesInput' + $index }}" class="form-control" multiple ng-model="index.names" ng-change="getFieldOptions(index, $index)" ng-disabled="role.metadata._reserved">
                 <ui-select-match placeholder="Add an index...">{{$item}}</ui-select-match>
                 <ui-select-choices repeat="indexPattern in union([$select.search], indexPatterns) | filter:$select.search">
                   <div ng-bind-html="indexPattern"></div>
@@ -79,7 +79,7 @@
             </div>
 
             <div class="help-block">
-              <textarea rows="1" placeholder="Add a query..." class="form-control" ng-model="index.query" ng-disabled="role.metadata._reserved"></textarea>
+              <textarea data-test-subj="{{ 'queryInput' + $index }}" rows="1" placeholder="Add a query..." class="form-control" ng-model="index.query" ng-disabled="role.metadata._reserved"></textarea>
             </div>
 
             <div class="has-error" ng-show="index.names.length && !index.privileges.length">
@@ -92,7 +92,7 @@
               <span class="input-group-addon">
                 <i class="fa fa-search"></i>
               </span>
-              <ui-select class="form-control" multiple ng-model="index.privileges" ng-disabled="role.metadata._reserved">
+              <ui-select data-test-subj="{{ 'privilegesInput' + $index }}" class="form-control" multiple ng-model="index.privileges" ng-disabled="role.metadata._reserved">
                 <ui-select-match placeholder="Add a privilege...">{{$item}}</ui-select-match>
                 <ui-select-choices repeat="privilege in privileges.indices | filter:$select.search" >
                   <div ng-bind-html="privilege"></div>
@@ -104,7 +104,7 @@
               <span class="input-group-addon">
                 <i class="fa fa-search"></i>
               </span>
-              <ui-select class="form-control" multiple ng-model="index.field_security.grant" ng-disabled="role.metadata._reserved">
+              <ui-select data-test-subj="{{ 'fieldInput' + $index }}" class="form-control" multiple ng-model="index.field_security.grant" ng-disabled="role.metadata._reserved">
                 <ui-select-match placeholder="Add a field...">{{$item}}</ui-select-match>
                 <ui-select-choices repeat="field in union([$select.search], view.fieldOptions[index.names]) | filter:$select.search | limitTo:25">
                   <div ng-bind-html="field"></div>
@@ -115,12 +115,12 @@
 
           <td class="col-md-1">
             <div class="help-block" ng-if="!role.metadata._reserved">
-              <button class="btn btn-primary" ng-click="addIndex(role.indices)">
+              <button data-test-subj="{{ 'addIndicesPrivileges' + $index }}" class="btn btn-primary" ng-click="addIndex(role.indices)">
                 <i class="fa fa-plus"></i>
               </button>
             </div>
             <div class="help-block" ng-if="!role.metadata._reserved">
-              <button class="btn btn-danger" ng-click="toggle(role.indices, index)">
+              <button data-test-subj="{{ 'removeIndicesPrivileges' + $index }}" class="btn btn-danger" ng-click="toggle(role.indices, index)">
                 <i class="fa fa-trash"></i>
               </button>
             </div>
