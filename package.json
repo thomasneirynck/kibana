@@ -46,7 +46,7 @@
   "dependencies": {
     "@elastic/datemath": "2.3.0",
     "@elastic/node-crypto": "0.1.2",
-    "@elastic/node-horseman": "3.1.1",
+    "@elastic/node-phantom-simple": "2.2.4",
     "angular-paging": "2.2.1",
     "angular-resource": "1.4.9",
     "angular-sanitize": "1.4.9",

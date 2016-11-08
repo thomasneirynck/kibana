@@ -3,7 +3,7 @@ import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
 import publicRoutes from './server/routes/public';
 import jobRoutes from './server/routes/jobs';
 
-import { installPhantom } from './server/lib/phantom';
+import phantom from './server/lib/phantom';
 import createQueue from './server/lib/create_queue';
 import appConfig from './server/config/config';
 import checkLicense from './server/lib/check_license';
@@ -73,7 +73,7 @@ export default function (kibana) {
 
       function setup() {
         // prepare phantom binary
-        return installPhantom(config.get('path.data'))
+        return phantom.install(config.get('path.data'))
         .then(function (phantomPackage) {
           server.log(['reporting', 'debug'], `Phantom installed at ${phantomPackage.binary}`);
 

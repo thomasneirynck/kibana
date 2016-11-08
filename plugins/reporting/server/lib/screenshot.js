@@ -1,9 +1,7 @@
-const path = require('path');
-const _ = require('lodash');
-const getPort = require('get-port');
-const Promise = require('bluebird');
-const Puid = require('puid');
-const Horseman = require('@elastic/node-horseman');
+import path from 'path';
+import getPort from 'get-port';
+import Puid from 'puid';
+import phantom from './phantom';
 
 const puid = new Puid();
 
@@ -12,115 +10,74 @@ class Screenshot {
     this.phantomPath = phantomPath;
     this.captureSettings = captureSettings;
     this.screenshotSettings = screenshotSettings;
-    this.logger = logger || _.noop;
+    this.logger = logger || function () {};
   }
 
   capture(url, opts) {
     this.logger(`fetching screenshot of ${url}`);
-    opts = _.assign({ basePath: this.screenshotSettings.basePath }, opts);
-    return fetch(url, this.phantomPath, this.captureSettings, opts)
+    opts = Object.assign({ basePath: this.screenshotSettings.basePath }, opts);
+
+    return createPhantom(this.phantomPath, this.captureSettings)
     .then(ph => {
       const filepath = getTargetFile(this.screenshotSettings.imagePath);
-      const operation = (opts.bounding)
-        ? getShotCropped(ph, this.captureSettings.viewport, opts.bounding, filepath)
-        : getShot(ph, filepath);
 
-      return operation
+      return loadUrl(ph, url, this.captureSettings, opts)
+      .then(() => ph.screenshot(filepath, { bounding: opts.bounding }))
       .then(() => {
         this.logger(`Screenshot saved to ${filepath}`);
-        ph.close();
-        return filepath;
+        return ph.destroy().then(() => filepath);
       })
-      .catch((err) => {
+      .catch(err => {
         this.logger(`Screenshot failed ${err.message}`);
-        ph.close();
-        throw err;
+        return ph.destroy().then(() => { throw err; });
       });
     });
   }
 }
 
-module.exports = function (phantomPath, captureSettings, screenshotSettings, logger) {
+export default function screenshot(phantomPath, captureSettings, screenshotSettings, logger) {
   return new Screenshot(phantomPath, captureSettings, screenshotSettings, logger);
 };
 
-function fetch(url, phantomPath, captureSettings, opts) {
-  const { loadDelay, viewport, timeout } = captureSettings;
-  const phantomOpts = {
-    phantomPath: phantomPath,
-    timeout: timeout,
-    injectJquery: false,
-    ignoreSSLErrors: true,
-  };
-  const settings = {
-    width: viewport.width,
-    height: viewport.height,
-    zoom: captureSettings.zoom
-  };
+function createPhantom(phantomPath, captureSettings) {
+  const { timeout } = captureSettings;
 
-  return createPhantom(phantomOpts, settings)
-  .then((ph) => {
-    if (opts.headers) return ph.headers(opts.headers).then(() => ph);
-    return ph;
-  })
-  .then((ph) => {
-    return ph.open(url).then(function (status) {
-      if (status !== 'success') throw new Error('URL open failed. Is the server running?');
-      return ph;
-    });
-  })
-  .then(ph => {
-    return ph
-    .waitForSelector('.application visualize')
-    .evaluate(function (basePath) {
-      (function (window, document) {
-        function injectCSS(cssPath) {
-          var node = document.createElement('link');
-          node.rel = 'stylesheet';
-          node.href = cssPath;
-          document.getElementsByTagName('head')[0].appendChild(node);
-        };
-
-        injectCSS(basePath + '/plugins/reporting/styles/reporting-overrides.css');
-      }(window, window.document));
-    }, opts.basePath)
-    .wait(loadDelay)
-    .then(() => ph);
-  });
-};
-
-function createPhantom(phantomOpts, settings) {
   return Promise.resolve(getPort())
   .then(port => {
-    const instanceOpts = Object.assign({ bridgePort: port }, phantomOpts);
-    const ph = new Horseman(instanceOpts);
-    return ph.viewport(settings.width, settings.height).zoom(settings.zoom)
-    .then(() => ph);
+    return phantom.create({
+      ignoreSSLErrors: true,
+      phantomPath: phantomPath,
+      bridgePort: port,
+      timeout,
+    });
   });
 }
+
+function loadUrl(ph, url, captureSettings, opts) {
+  const { timeout, viewport, zoom, loadDelay } = captureSettings;
+
+  return ph.open(url, {
+    headers: opts.headers,
+    waitForSelector: '.application visualize',
+    timeout,
+    zoom,
+    viewport,
+  })
+  .then(() => ph.evaluate(function (basePath) {
+    (function (window, document) {
+      function injectCSS(cssPath) {
+        var node = document.createElement('link');
+        node.rel = 'stylesheet';
+        node.href = cssPath;
+        document.getElementsByTagName('head')[0].appendChild(node);
+      };
+
+      injectCSS(basePath + '/plugins/reporting/styles/reporting-overrides.css');
+    }(window, window.document));
+  }, opts.basePath))
+  .then(() => ph.wait(loadDelay));
+};
 
 function getTargetFile(imagePath) {
   return path.join(imagePath, `screenshot-${puid.generate()}.png`);
-}
-
-function getShot(ph, filepath) {
-  return ph.screenshot(filepath);
-}
-
-// cropped screenshot using DOM element or getBoundingClientRect
-// see https://developer.mozilla.org/en-US/docs/Web/API/Element/getBoundingClientRect
-function getShotCropped(ph, viewport, bounding, filepath) {
-  const contentOffset = _.defaults({}, bounding, {
-    top: 90, // top chrome
-    left: 0,
-    right: 0,
-    bottom: 0,
-  });
-
-  const boundingArea = _.defaults(contentOffset, {
-    width: viewport.width - contentOffset.left - contentOffset.right,
-    height: viewport.height - contentOffset.top - contentOffset.bottom,
-  });
-
-  return ph.crop(boundingArea, filepath);
 }
