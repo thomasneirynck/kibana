@@ -42,7 +42,7 @@ export default function (kibana) {
           syncSocketTimeout: Joi.number().integer(),
         }).default(),
         generate: Joi.object({
-          socketTimeout: Joi.number().integer().default(300000),
+          socketTimeout: Joi.number().integer(),
         }).default(),
         capture: Joi.object({
           zoom: Joi.number().integer().default(2),

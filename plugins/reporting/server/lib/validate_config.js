@@ -7,11 +7,16 @@ module.exports = (config, log) => {
     config.set('xpack.reporting.encryptionKey', crypto.randomBytes(16).toString('hex'));
   }
 
+  // queue.syncSocketTimeout was replaced by generate.socketTimeout
   const syncSocketTimeout = config.get('xpack.reporting.queue.syncSocketTimeout');
   if (syncSocketTimeout != null) {
-    const message = 'xpack.reporting.queue.syncSocketTimeout has been deprecated.'
-      + ' Please use xpack.reporting.generate.socketTimeout instead.';
-    log (message);
-    config.set('xpack.reporting.generate.socketTimeout', syncSocketTimeout);
+    log('xpack.reporting.queue.syncSocketTimeout has been deprecated.');
+  }
+
+  // generate.socketTimeout is depricated and going away in 6.0
+  const socketTimeout = config.get('xpack.reporting.generate.socketTimeout');
+  if (socketTimeout) {
+    log('The "&sync" parameter and xpack.reporting.generate.socketTimeout setting have been deprecated ' +
+      'and will be removed in 6.0.');
   }
 };

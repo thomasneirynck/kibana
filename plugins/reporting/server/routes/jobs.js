@@ -3,17 +3,18 @@ const { JOBTYPES, API_BASE_URL } = require('../lib/constants');
 const jobsQueryFactory = require('../lib/jobs_query');
 const licensePreFactory = require ('../lib/license_pre_routing');
 const userPreRoutingFactory = require('../lib/user_pre_routing');
-const syncJobHandlerFactory = require('../lib/sync_job_handler');
+const jobResponseHandlerFactory = require('../lib/job_response_handler');
 
 const mainEntry = `${API_BASE_URL}/jobs`;
 const API_TAG = 'api';
 
 module.exports = function (server) {
-  const socketTimeout = server.config().get('xpack.reporting.generate.socketTimeout');
+  const config = server.config();
+  const socketTimeout = config.get('xpack.reporting.generate.socketTimeout');
   const jobsQuery = jobsQueryFactory(server);
   const licensePre = licensePreFactory(server);
   const userPreRouting = userPreRoutingFactory(server);
-  const syncJobHandler = syncJobHandlerFactory(server);
+  const jobResponseHandler = jobResponseHandlerFactory(server);
 
   // list jobs in the queue, paginated
   server.route({
@@ -67,7 +68,7 @@ module.exports = function (server) {
     handler: (request, reply) => {
       const { docId } = request.params;
 
-      jobsQuery.get(request, docId, true)
+      jobsQuery.get(request, docId, { includeContent: true })
       .then((doc) => {
         if (!doc) return reply(boom.notFound());
         reply(doc._source.output);
@@ -87,7 +88,7 @@ module.exports = function (server) {
       const { docId } = request.params;
       const jobType = JOBTYPES.PRINTABLE_PDF;
 
-      syncJobHandler(docId, jobType, request, reply);
+      jobResponseHandler(request, reply, { docId, jobType }, { sync: true });
     },
     config: {
       pre: [ licensePre, userPreRouting ],

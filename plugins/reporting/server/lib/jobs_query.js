@@ -139,7 +139,7 @@ function jobsQueryFactory(server) {
       });
     },
 
-    get(request, id, includeContent = false) {
+    get(request, id, opts = {}) {
       if (!id) return Promise.resolve();
 
       return getUser(request)
@@ -161,7 +161,7 @@ function jobsQueryFactory(server) {
           size: 1,
         };
 
-        if (includeContent) {
+        if (opts.includeContent) {
           body._source = {
             excludes: []
           };

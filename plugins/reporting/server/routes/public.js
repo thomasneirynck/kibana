@@ -5,18 +5,22 @@ const createDocumentJobFactory = require('../lib/create_document_job');
 const { JOBTYPES } = require('../lib/constants');
 const licensePreFactory = require ('../lib/license_pre_routing');
 const userPreRoutingFactory = require('../lib/user_pre_routing');
-const syncJobHandlerFactory = require('../lib/sync_job_handler');
+const jobResponseHandlerFactory = require('../lib/job_response_handler');
 
 const mainEntry = `${API_BASE_URL}/generate`;
 const API_TAG = 'api';
 
 module.exports = function (server) {
-  const socketTimeout = server.config().get('xpack.reporting.generate.socketTimeout');
+  const config = server.config();
+  const DOWNLOAD_BASE_URL = config.get('server.basePath') + `${API_BASE_URL}/jobs/download`;
+  const socketTimeout = config.get('xpack.reporting.generate.socketTimeout');
+
   const esErrors = server.plugins.elasticsearch.errors;
+
   const createDocumentJob = createDocumentJobFactory(server);
   const licensePre = licensePreFactory(server);
   const userPreRouting = userPreRoutingFactory(server);
-  const syncJobHandler = syncJobHandlerFactory(server);
+  const jobResponseHandler = jobResponseHandlerFactory(server);
 
   function getConfig() {
     return {
@@ -68,10 +72,15 @@ module.exports = function (server) {
     return createJob(objectType, request)
     .then((job) => {
       if (syncResponse) {
-        syncJobHandler(job.id, jobType, request, reply);
+        jobResponseHandler(request, reply, { docId: job.id, jobType }, { sync: true });
       } else {
         // return the queue's job information
-        const response = reply(job.toJSON());
+        const jobJson = job.toJSON();
+
+        const response = reply({
+          path: `${DOWNLOAD_BASE_URL}/${jobJson.id}`,
+          job: jobJson,
+        });
         response.type('application/json');
       }
     })
