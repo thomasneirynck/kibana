@@ -18,9 +18,6 @@ export default function xpackInfoRoute(server) {
         response = {};
       }
       return reply(status, convertKeysToSnakeCaseDeep(response));
-    },
-    config: {
-      auth: false
     }
   });
 }
