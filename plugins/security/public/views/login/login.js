@@ -1,7 +1,6 @@
 import { parse } from 'url';
 import { get } from 'lodash';
 import 'ui/autoload/styles';
-import 'plugins/security/services/login_state';
 import 'plugins/security/views/login/login.less';
 import chrome from 'ui/chrome';
 import parseNext from 'plugins/security/lib/parse_next';
