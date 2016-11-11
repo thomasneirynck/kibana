@@ -9,7 +9,6 @@ import initAuthenticateApi from './server/routes/api/v1/authenticate';
 import initUsersApi from './server/routes/api/v1/users';
 import initRolesApi from './server/routes/api/v1/roles';
 import initIndicesApi from './server/routes/api/v1/indices';
-import loginStateApi from './server/routes/api/v1/login_state';
 import initLoginView from './server/routes/views/login';
 import initLogoutView from './server/routes/views/logout';
 import validateConfig from './server/lib/validate_config';
@@ -41,7 +40,20 @@ export default (kibana) => new kibana.Plugin({
       id: 'login',
       title: 'Login',
       main: 'plugins/security/views/login',
-      hidden: true
+      hidden: true,
+      injectVars(server) {
+        const pluginId = 'security';
+        const xpackInfo = server.plugins.xpack_main.info;
+        const { showLogin, loginMessage, allowLogin } = xpackInfo.feature(pluginId).getLicenseCheckResults();
+
+        return {
+          loginState: {
+            showLogin,
+            allowLogin,
+            loginMessage
+          }
+        };
+      }
     }, {
       id: 'logout',
       title: 'Logout',
@@ -114,7 +126,6 @@ export default (kibana) => new kibana.Plugin({
     initUsersApi(server);
     initRolesApi(server);
     initIndicesApi(server);
-    loginStateApi(server);
     initLoginView(server, thisPlugin, xpackMainPlugin);
     initLogoutView(server, thisPlugin);
 

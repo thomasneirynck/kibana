@@ -19,7 +19,9 @@ chrome
   const isSecure = !!$window.location.protocol.match(/^https/);
   const self = this;
 
-  function setupScope({ allowLogin, loginMessage }) {
+  const { allowLogin, loginMessage } = loginState;
+
+  function setupScope() {
     const defaultLoginMessage = 'Login is currently disabled because the license could not be determined. '
     + 'Please check that Elasticsearch is running, then refresh this page.';
 
@@ -42,6 +44,5 @@ chrome
     };
   }
 
-  loginState.get()
-  .then(setupScope);
+  setupScope();
 });
