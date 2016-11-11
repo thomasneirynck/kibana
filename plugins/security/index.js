@@ -44,7 +44,7 @@ export default (kibana) => new kibana.Plugin({
       injectVars(server) {
         const pluginId = 'security';
         const xpackInfo = server.plugins.xpack_main.info;
-        const { showLogin, loginMessage, allowLogin } = xpackInfo.feature(pluginId).getLicenseCheckResults();
+        const { showLogin, loginMessage, allowLogin } = xpackInfo.feature(pluginId).getLicenseCheckResults() || {};
 
         return {
           loginState: {
