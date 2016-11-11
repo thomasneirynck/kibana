@@ -9,6 +9,7 @@ import initAuthenticateApi from './server/routes/api/v1/authenticate';
 import initUsersApi from './server/routes/api/v1/users';
 import initRolesApi from './server/routes/api/v1/roles';
 import initIndicesApi from './server/routes/api/v1/indices';
+import loginStateApi from './server/routes/api/v1/login_state';
 import initLoginView from './server/routes/views/login';
 import initLogoutView from './server/routes/views/logout';
 import validateConfig from './server/lib/validate_config';
@@ -126,6 +127,7 @@ export default (kibana) => new kibana.Plugin({
     initUsersApi(server);
     initRolesApi(server);
     initIndicesApi(server);
+    loginStateApi(server);
     initLoginView(server, thisPlugin, xpackMainPlugin);
     initLogoutView(server, thisPlugin);
 
