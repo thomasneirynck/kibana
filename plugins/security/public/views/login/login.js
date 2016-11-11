@@ -18,14 +18,12 @@ chrome
   const isSecure = !!$window.location.protocol.match(/^https/);
   const self = this;
 
-  const { allowLogin, loginMessage } = loginState;
-
   function setupScope() {
     const defaultLoginMessage = 'Login is currently disabled because the license could not be determined. '
     + 'Please check that Elasticsearch is running, then refresh this page.';
 
-    self.allowLogin = allowLogin;
-    self.loginMessage = loginMessage || defaultLoginMessage;
+    self.allowLogin = loginState.allowLogin;
+    self.loginMessage = loginState.loginMessage || defaultLoginMessage;
     self.infoMessage = get(messageMap, parse($window.location.href, true).query.msg);
     self.isDisabled = !isSecure && secureCookies;
     self.isLoading = false;
