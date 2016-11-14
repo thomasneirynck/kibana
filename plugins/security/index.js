@@ -4,7 +4,8 @@ import { resolve } from 'path';
 import Promise from 'bluebird';
 import getBasicValidate from './server/lib/get_basic_validate';
 import getCookieValidate from './server/lib/get_cookie_validate';
-import createExpose from './server/lib/create_expose';
+import getUserProvider from './server/lib/get_user';
+import isAuthenticatedProvider from './server/lib/is_authenticated';
 import initAuthenticateApi from './server/routes/api/v1/authenticate';
 import initUsersApi from './server/routes/api/v1/users';
 import initRolesApi from './server/routes/api/v1/roles';
@@ -65,7 +66,6 @@ export default (kibana) => new kibana.Plugin({
       'plugins/security/hacks/on_unauthorized_response'
     ],
     injectDefaultVars: function (server) {
-
       const config = server.config();
       return {
         secureCookies: config.get('xpack.security.secureCookies'),
@@ -120,7 +120,8 @@ export default (kibana) => new kibana.Plugin({
       });
     });
 
-    createExpose(server);
+    getUserProvider(server);
+    isAuthenticatedProvider(server);
 
     initAuthenticateApi(server);
     initUsersApi(server);

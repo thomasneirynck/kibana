@@ -5,20 +5,12 @@ import { convertKeysToCamelCaseDeep } from '../../../../server/lib/key_case_conv
 
 const XPACK_INFO_KEY = 'xpackMain.info';
 
-export default function XPackInfoProvider($window, $injector, Private, Promise) {
+export default function XPackInfoProvider($window, $injector, Private) {
   const xpackInfoSignature = Private(XPackInfoSignatureProvider);
 
   let inProgressRefreshPromise = null;
 
   const xpackInfo = {
-    init() {
-      if ($window.sessionStorage.getItem(XPACK_INFO_KEY) !== null) {
-        return Promise.resolve();
-      }
-
-      return xpackInfo.refresh();
-    },
-
     get(path, defaultValue) {
       const xpackInfoValuesJson = $window.sessionStorage.getItem(XPACK_INFO_KEY);
       const xpackInfoValues = xpackInfoValuesJson ? JSON.parse(xpackInfoValuesJson) : {};
@@ -61,6 +53,8 @@ export default function XPackInfoProvider($window, $injector, Private, Promise) 
       return inProgressRefreshPromise;
     }
   };
+
+  xpackInfo.setAll(chrome.getInjected('xpackInitialInfo') || {});
 
   return xpackInfo;
 }

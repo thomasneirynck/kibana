@@ -49,9 +49,22 @@ export default function (kibana) {
     uiExports: {
       hacks: [
         'plugins/xpack_main/hacks/check_xpack_info_change',
-        'plugins/xpack_main/hacks/init_xpack_info'
       ],
+
+      async replaceInjectedVars(originalInjectedVars, request, server) {
+        if (server.plugins.security) {
+          if (!await server.plugins.security.isAuthenticated(request)) {
+            return originalInjectedVars;
+          }
+        }
+
+        return {
+          ...originalInjectedVars,
+          xpackInitialInfo: server.plugins.xpack_main.info.toJSON(),
+        };
+      }
     },
+
     init: function (server) {
       const elasticsearchPlugin = server.plugins.elasticsearch;
       mirrorPluginStatus(elasticsearchPlugin, this, 'yellow', 'red');
