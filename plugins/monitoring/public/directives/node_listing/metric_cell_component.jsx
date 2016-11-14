@@ -23,7 +23,7 @@ export default class MetricCell extends React.Component {
 
     if (this.props.isOnline) {
       return (
-        <td key={this.props.metric}>
+        <td>
           <div className='big inline'>
             {formatMetric(this.props.metric, 'last')}
           </div>

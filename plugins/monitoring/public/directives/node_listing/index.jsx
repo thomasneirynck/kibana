@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import MetricCell from './metric_cell_component';
 import OfflineCell from './offline_cell_component';
-import statusIconClass from '../../lib/status_icon_class';
+import statusIconClass from 'plugins/monitoring/lib/status_icon_class';
 import Tooltip from 'plugins/monitoring/lib/tooltip_component';
 import extractIp from 'plugins/monitoring/lib/extract_ip';
 import Table from 'plugins/monitoring/directives/paginated_table/components/table';
