@@ -57,8 +57,6 @@ export default class TagCloud extends EventEmitter {
     this._minFontSize = Math.min(options.minFontSize, options.maxFontSize);
     this._maxFontSize = Math.max(options.minFontSize, options.maxFontSize);
     this._textScale = options.textScale;
-
-    this._washWords();
     this._invalidate(false);
   }
 
@@ -85,7 +83,6 @@ export default class TagCloud extends EventEmitter {
     if (!didOverflow && willNotOverflow) {
       this._invalidate(true);
     } else {
-      this._washWords();
       this._invalidate(false);
     }
 
@@ -95,6 +92,7 @@ export default class TagCloud extends EventEmitter {
 
   setData(data) {
     this._words = data.map(toWordTag);
+    console.log(this._words);
     this._makeTextSizeMapper();
     this._invalidate(false);
   }
@@ -207,6 +205,7 @@ export default class TagCloud extends EventEmitter {
 
 
   _makeTextSizeMapper() {
+    console.log('make text size apper');
     this._mapSizeToFontSize = D3_SCALING_FUNCTIONS[this._textScale];
     this._mapSizeToFontSize.range([this._minFontSize, this._maxFontSize]);
     if (this._words) {
@@ -234,6 +233,7 @@ export default class TagCloud extends EventEmitter {
       if (keepLayout) {
         this._onLayoutEnd();
       } else {
+        this._washWords();
         this._updateLayout();
       }
     });
@@ -283,6 +283,7 @@ function getSize(tag) {
 }
 
 function getSizeInPixels(tag) {
+  console.log('get size', tag.size);
   return `${tag.size}px`;
 }
 

@@ -36,14 +36,12 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
     const tags = buckets.map((bucket) => {
       return {
         text: bucket.key,
-        size: metricsAgg.getValue(bucket)
+        size: metricsAgg.getValue(bucket) || metricsAgg.getValue
       };
     });
-
     tagCloud.setData(tags);
 
     await tagCloud.whenRendered();
-    //todo: remove the conditional once https://github.com/elastic/kibana/pull/8914 is merged
     if (typeof $scope.vis.emit === 'function') {
       $scope.vis.emit('renderComplete');
     }
