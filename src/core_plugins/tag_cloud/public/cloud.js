@@ -34,6 +34,7 @@ visTypes.register(function TagCloudProvider(Private) {
         title: 'Tag Size',
         min: 1,
         max: 1,
+        aggFilter: ['!std_dev'],
         defaults: [
           { schema: 'metric', type: 'count' }
         ]
