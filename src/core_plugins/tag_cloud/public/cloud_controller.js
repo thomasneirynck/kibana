@@ -39,28 +39,41 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
         size: metricsAgg.getValue(bucket) || metricsAgg.getValue
       };
     });
+
     tagCloud.setData(tags);
-
     await tagCloud.whenRendered();
-    if (typeof $scope.vis.emit === 'function') {
-      $scope.vis.emit('renderComplete');
-    }
+    updateState();
+
   });
 
 
-  $scope.$watch('vis.params', function (options) {
+  $scope.$watch('vis.params', async function (options) {
     tagCloud.setOptions(options);
+    await tagCloud.whenRendered();
+    updateState();
   });
 
-  $scope.$watch(getContainerSize, _.debounce(function () {
+  $scope.$watch(getContainerSize, _.debounce(async function () {
     tagCloud.resize();
-  }, 1000, {
-    trailing: true
-  }), true);
+    await tagCloud.whenRendered();
+    updateState();
+  }, 1000, {trailing: true}), true);
 
 
   function getContainerSize() {
     return {width: $element.width(), height: $element.height()};
+  }
+
+  function updateState() {
+    const incompleteMessage = $element[0].querySelector('.tagcloud-incomplete-message');
+    if (TagCloud.STATUS.COMPLETE === tagCloud.getStatus()) {
+      incompleteMessage.style.display = 'none';
+    } else if (TagCloud.STATUS.INCOMPLETE === tagCloud.getStatus()) {
+      incompleteMessage.style.display = 'block';
+    }
+    if (typeof $scope.vis.emit === 'function') {
+      $scope.vis.emit('renderComplete');
+    }
   }
 
 });

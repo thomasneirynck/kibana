@@ -20,7 +20,7 @@ const D3_SCALING_FUNCTIONS = {
 };
 
 
-export default class TagCloud extends EventEmitter {
+class TagCloud extends EventEmitter {
 
   constructor(domNode) {
 
@@ -98,6 +98,10 @@ export default class TagCloud extends EventEmitter {
   destroy() {
     clearTimeout(this._timeoutHandle);
     this._element.innerHTML = '';
+  }
+
+  getStatus() {
+    return this._allInViewBox ? TagCloud.STATUS.COMPLETE : TagCloud.STATUS.INCOMPLETE;
   }
 
   async whenRendered() {
@@ -278,10 +282,12 @@ export default class TagCloud extends EventEmitter {
 
   }
 
-};
+}
+
+TagCloud.STATUS = {COMPLETE: 0, INCOMPLETE: 1};
 
 function seed() {
-  return 0.5;//constant seed for constant layouts
+  return 0.5;//constant random seed to ensure constant layouts for identical data
 }
 
 function toWordTag(word) {
@@ -327,3 +333,5 @@ function hashCode(str) {
   }
   return hash;
 }
+
+export default TagCloud;
