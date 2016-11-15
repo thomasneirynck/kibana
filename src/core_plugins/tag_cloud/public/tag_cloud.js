@@ -92,7 +92,6 @@ export default class TagCloud extends EventEmitter {
 
   setData(data) {
     this._words = data.map(toWordTag);
-    console.log(this._words);
     this._makeTextSizeMapper();
     this._invalidate(false);
   }
@@ -205,7 +204,6 @@ export default class TagCloud extends EventEmitter {
 
 
   _makeTextSizeMapper() {
-    console.log('make text size apper');
     this._mapSizeToFontSize = D3_SCALING_FUNCTIONS[this._textScale];
     this._mapSizeToFontSize.range([this._minFontSize, this._maxFontSize]);
     if (this._words) {
@@ -283,7 +281,6 @@ function getSize(tag) {
 }
 
 function getSizeInPixels(tag) {
-  console.log('get size', tag.size);
   return `${tag.size}px`;
 }
 
