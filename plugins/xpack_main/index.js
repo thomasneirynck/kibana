@@ -3,6 +3,7 @@ import { join, resolve } from 'path';
 import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
 import requireAllAndApply from '../../server/lib/require_all_and_apply';
 import injectXPackInfoSignature from './server/lib/inject_xpack_info_signature';
+import replaceInjectedVars from './server/lib/replace_injected_vars';
 import xpackInfo from '../../server/lib/xpack_info';
 
 const registerPreResponseHandlerSingleton = once((server, info) => {
@@ -50,19 +51,7 @@ export default function (kibana) {
       hacks: [
         'plugins/xpack_main/hacks/check_xpack_info_change',
       ],
-
-      async replaceInjectedVars(originalInjectedVars, request, server) {
-        if (server.plugins.security) {
-          if (!await server.plugins.security.isAuthenticated(request)) {
-            return originalInjectedVars;
-          }
-        }
-
-        return {
-          ...originalInjectedVars,
-          xpackInitialInfo: server.plugins.xpack_main.info.toJSON(),
-        };
-      }
+      replaceInjectedVars
     },
 
     init: function (server) {
