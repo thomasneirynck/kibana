@@ -34,7 +34,6 @@ visTypes.register(function TagCloudProvider(Private) {
         title: 'Tag Size',
         min: 1,
         max: 1,
-        aggFilter: ['avg', 'sum', 'count', 'min', 'max', 'median', 'cardinality'],
         defaults: [
           { schema: 'metric', type: 'count' }
         ]
@@ -46,7 +45,7 @@ visTypes.register(function TagCloudProvider(Private) {
         title: 'Tags',
         min: 1,
         max: 1,
-        aggFilter: ['terms', 'significant_terms']
+        aggFilter: ['terms']
       }
     ])
   });
