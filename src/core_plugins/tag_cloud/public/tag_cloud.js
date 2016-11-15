@@ -205,7 +205,12 @@ export default class TagCloud extends EventEmitter {
 
   _makeTextSizeMapper() {
     this._mapSizeToFontSize = D3_SCALING_FUNCTIONS[this._textScale];
-    this._mapSizeToFontSize.range([this._minFontSize, this._maxFontSize]);
+    if (this._words.length === 1) {
+      this._mapSizeToFontSize.range([this._maxFontSize, this._maxFontSize]);
+    } else {
+      this._mapSizeToFontSize.range([this._minFontSize, this._maxFontSize]);
+    }
+
     if (this._words) {
       this._mapSizeToFontSize.domain(d3.extent(this._words, getSize));
     }
