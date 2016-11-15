@@ -80,13 +80,11 @@ export default class TagCloud extends EventEmitter {
     this._size[0] = newWidth;
     this._size[1] = newHeight;
 
-    if (!didOverflow && willNotOverflow) {
+    if (!didOverflow && willNotOverflow && this._allInViewBox) {
       this._invalidate(true);
     } else {
       this._invalidate(false);
     }
-
-
 
   }
 
@@ -135,7 +133,21 @@ export default class TagCloud extends EventEmitter {
 
   _onLayoutEnd() {
 
+    window.TC = this;
+
+
+    function inViewPort(word, width, height) {
+      return [word.text, word.x, word.x0, word.x1, word.y, word.y0, word.y1];
+    }
+
+    const inport = this._words.map(a => {
+      return inViewPort(a, this._element.offsetWidth, this._element.offsetHeight);
+    });
+
     const affineTransform = positionWord.bind(null, this._element.offsetWidth / 2, this._element.offsetHeight / 2);
+    const pos = this._words.map(affineTransform);
+
+
     const svgTextNodes = this._svgGroup.selectAll('text');
     const stage = svgTextNodes.data(this._words, getText);
 
@@ -185,6 +197,10 @@ export default class TagCloud extends EventEmitter {
         const cloudBBox = this._svgGroup[0][0].getBBox();
         this._cloudWidth = cloudBBox.width;
         this._cloudHeight = cloudBBox.height;
+        this._allInViewBox = cloudBBox.x >= 0 && cloudBBox.y >= 0 &&
+          cloudBBox.x + cloudBBox.width <= this._element.offsetWidth &&
+          cloudBBox.y + cloudBBox.height <= this._element.offsetHeight;
+
         this._dirtyPromise = null;
         this._resolve(true);
       }
