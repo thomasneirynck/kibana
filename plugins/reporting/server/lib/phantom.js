@@ -1,4 +1,5 @@
 import path from 'path';
+import { randomBytes } from 'crypto';
 import fs from 'fs';
 import { fromCallback } from 'bluebird';
 import driver from '@elastic/node-phantom-simple';
@@ -54,10 +55,12 @@ function Phantom(options) {
     this.page = page;
   });
 
-  return _createPhantomInstance(ready, this, options);
+  return _createPhantomInstance(ready, this, {
+    timeout: options.timeout
+  });
 }
 
-function _createPhantomInstance(ready, phantom, options) {
+function _createPhantomInstance(ready, phantom, phantomOptions) {
   const validateInstance = () => {
     if (phantom.page === false || phantom.browser === false) throw new Error('Phantom instance is closed');
   };
@@ -88,8 +91,9 @@ function _createPhantomInstance(ready, phantom, options) {
         .then(status => {
           if (status !== 'success') throw new Error('URL open failed. Is the server running?');
           if (pageOptions.waitForSelector) {
-            const WAIT_TIMEOUT = pageOptions.timeout || options.timeout || 10000;
-            return fromCallback(cb => phantom.page.waitForSelector(pageOptions.waitForSelector, WAIT_TIMEOUT, cb));
+            return this.waitFor(function (selector) {
+              return !!document.querySelector(selector);
+            }, true, pageOptions.waitForSelector);
           }
         });
       });
@@ -98,7 +102,117 @@ function _createPhantomInstance(ready, phantom, options) {
     evaluate(fn, ...args) {
       return ready.then(() => {
         validateInstance();
-        return fromCallback(cb => phantom.page.evaluate(fn, ...args, cb));
+
+        const uniqId = [
+          randomBytes(6).toString('base64'),
+          randomBytes(9).toString('base64'),
+          randomBytes(6).toString('base64'),
+        ].join('-');
+
+        return _injectPromise(phantom.page)
+        .then(() => {
+          return fromCallback(cb => {
+            phantom.page.evaluate(evaluateWrapper, fn.toString(), uniqId, args, cb);
+
+            // The original function is passed here as a string, and eval'd in phantom's context.
+            // It's then executed in phantom's context and the result is attached to a __reporting
+            // property on window. Promises can be used, and the result will be handled in the next
+            // block. If the original function does not return a promise, its result is passed on.
+            function evaluateWrapper(userFnStr, cbIndex, origArgs) {
+              // you can't pass a function to phantom, so we pass the string and eval back into a function
+              var userFn;
+              eval('userFn = ' + userFnStr); // eslint-disable-line no-eval
+
+              // keep a record of the resulting execution for future calls (used when async)
+              window.__reporting = window.__reporting || {};
+              window.__reporting[cbIndex] = undefined;
+
+              // used to format the response consistently
+              function done(err, res) {
+                if (window.__reporting[cbIndex]) {
+                  return;
+                }
+
+                var isErr = err instanceof Error;
+                if (isErr) {
+                  var keys = Object.getOwnPropertyNames(err);
+                  err = keys.reduce(function copyErr(obj, key) {
+                    obj[key] = err[key];
+                    return obj;
+                  }, {});
+                }
+
+                return window.__reporting[cbIndex] = {
+                  err: err,
+                  res: res,
+                };
+              }
+
+              try {
+                // execute the original function
+                var res = userFn.apply(this, origArgs);
+
+                if (res && typeof res.then === 'function') {
+                  // handle async resolution via Promises
+                  res.then((val) => {
+                    done(null, val);
+                  }, (err) => {
+                    done(err);
+                  });
+                  return '__promise__';
+                } else {
+                  // if not given a promise, execute as sync
+                  return done(null, res);
+                }
+              } catch (err) {
+                // any error during execution should be dealt with
+                return done(err);
+              }
+            }
+          })
+          .then((res) => {
+            // if the response is not a promise, pass it along
+            if (res !== '__promise__') {
+              return res;
+            }
+
+            // promise response means async, so wait for its resolution
+            return this.waitFor(function (cbIndex) {
+              // resolves when the result object is no longer undefined
+              return !!window.__reporting[cbIndex];
+            }, true, uniqId)
+            .then(() => {
+              // once the original promise is resolved, pass along its value
+              return fromCallback(cb => {
+                phantom.page.evaluate(function (cbIndex) {
+                  return window.__reporting[cbIndex];
+                }, uniqId, cb);
+              });
+            });
+          })
+          .then((res) => {
+            if (res.err) {
+              // Make long/normal stack traces work
+              res.err.name = res.err.name || 'Error';
+
+              if (!res.err.stack) {
+                res.err.stack = res.err.toString();
+              }
+
+              res.err.stack.replace(/\n*$/g, '\n');
+
+              if (res.err.stack) {
+                res.err.toString = function () {
+                  return this.name + ': ' + this.message;
+                };
+              }
+
+              return Promise.reject(res.err);
+            }
+
+            return res.res;
+          });
+        });
       });
     },
 
@@ -106,6 +220,51 @@ function _createPhantomInstance(ready, phantom, options) {
       return ready.then(() => {
         validateInstance();
         return new Promise(resolve => setTimeout(resolve, timeout));
+      });
+    },
+
+    waitFor(fn, value, ...args) {
+      const WAIT_TIMEOUT = phantomOptions.timeout || 10000;
+      const INTERVAL_TIME = 250;
+
+      if (typeof value === 'undefined') return ready.then(() => Promise.resolve());
+
+      return ready.then(() => {
+        return new Promise((resolve, reject) => {
+          const self = this;
+          const start = Date.now();
+
+          // track resolution state, prevent extraneous code execution due to pending setInterval calls
+          let isResolved = false;
+
+          const checkInterval = setInterval(waitForCheck, INTERVAL_TIME);
+          const stopTimer = () => { isResolved = true; return clearInterval(checkInterval); };
+
+          function waitForCheck() {
+            if (isResolved) return;
+
+            if ((Date.now() - start) > WAIT_TIMEOUT) {
+              stopTimer();
+              return reject(new Error(`Timeout exceeded (${WAIT_TIMEOUT})`));
+            }
+
+            return self.evaluate(fn, ...args)
+            .then(res => {
+              if (isResolved) return;
+
+              if (res === value) {
+                stopTimer();
+                resolve();
+              }
+            })
+            .catch(err => {
+              if (isResolved) return;
+
+              stopTimer();
+              reject(err);
+            });
+          }
+        });
       });
     },
 
@@ -172,6 +331,36 @@ function _getPhantomOptions(options = {}) {
     path: options.phantomPath || 'phantomjs',
     bridge: { port: options.bridgePort || 0 },
   };
+}
+
+function _injectPromise(page) {
+  function checkForPromise() {
+    return fromCallback(cb => {
+      page.evaluate(function hasPromise() {
+        return (typeof window.Promise !== 'undefined');
+      }, cb);
+    });
+  }
+
+  return checkForPromise()
+  .then(hasPromise => {
+    if (hasPromise) return;
+
+    const nodeModules = path.resolve(__dirname, '..', '..', '..', '..', 'node_modules');
+    const promisePath = path.join(nodeModules, 'bluebird', 'js', 'browser', 'bluebird.js');
+    return fromCallback(cb => page.injectJs(promisePath, cb))
+    .then(status => {
+      if (status !== true) {
+        return Promise.reject('Failed to load Promise library');
+      }
+    })
+    .then(checkForPromise)
+    .then(hasPromiseLoaded => {
+      if (hasPromiseLoaded !== true) {
+        return Promise.reject('Failed to inject Promise');
+      }
+    });
+  });
 }
 
 function _getPackage(installPath) {

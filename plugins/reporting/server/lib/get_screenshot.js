@@ -45,6 +45,7 @@ function getScreenshotFactory(server) {
           resolve(filename);
           cb();
         }, (err) => {
+          screenshotQueue.end(err);
           reject(err);
           cb();
         });
