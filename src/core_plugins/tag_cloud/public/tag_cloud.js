@@ -104,16 +104,16 @@ class TagCloud extends EventEmitter {
     return this._allInViewBox ? TagCloud.STATUS.COMPLETE : TagCloud.STATUS.INCOMPLETE;
   }
 
-  async whenRendered() {
-
-    if (this._dirtyPromise) {//rendering is in-flight
-      return this._dirtyPromise;
-    }
-
-    return new Promise(resolve => {
-      resolve(true);
-    });
-  }
+  // async whenRendered() {
+  //
+  //   if (this._dirtyPromise) {//rendering is in-flight
+  //     return this._dirtyPromise;
+  //   }
+  //
+  //   return new Promise(resolve => {
+  //     resolve(true);
+  //   });
+  // }
 
   _updateContainerSize() {
     this._d3SvgContainer.attr('width', this._size[0]);
@@ -137,21 +137,7 @@ class TagCloud extends EventEmitter {
 
   _onLayoutEnd() {
 
-    window.TC = this;
-
-
-    function inViewPort(word, width, height) {
-      return [word.text, word.x, word.x0, word.x1, word.y, word.y0, word.y1];
-    }
-
-    const inport = this._words.map(a => {
-      return inViewPort(a, this._element.offsetWidth, this._element.offsetHeight);
-    });
-
     const affineTransform = positionWord.bind(null, this._element.offsetWidth / 2, this._element.offsetHeight / 2);
-    const pos = this._words.map(affineTransform);
-
-
     const svgTextNodes = this._svgGroup.selectAll('text');
     const stage = svgTextNodes.data(this._words, getText);
 
@@ -207,6 +193,7 @@ class TagCloud extends EventEmitter {
 
         this._dirtyPromise = null;
         this._resolve(true);
+        this.emit('renderComplete');
       }
     };
     exitTransition.each(_ => exits++);

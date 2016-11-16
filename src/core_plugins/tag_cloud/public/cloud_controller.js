@@ -20,6 +20,21 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
     const aggConfigResult = new AggConfigResult(aggs[0], false, event, event);
     clickHandler({point: {aggConfigResult: aggConfigResult}});
   });
+  tagCloud.on('renderComplete', () => {
+    const bucketName = containerNode.querySelector('.tagcloud-custom-label');
+    bucketName.innerHTML = $scope.vis.aggs[1].makeLabel();
+
+    const incompleteMessage = containerNode.querySelector('.tagcloud-incomplete-message');
+    const status = tagCloud.getStatus();
+    if (TagCloud.STATUS.COMPLETE === status) {
+      incompleteMessage.style.display = 'none';
+    } else if (TagCloud.STATUS.INCOMPLETE === status) {
+      incompleteMessage.style.display = 'block';
+    }
+    if (typeof $scope.vis.emit === 'function') {
+      $scope.vis.emit('renderComplete');
+    }
+  });
 
   $scope.$watch('esResponse', async function (response) {
 
@@ -42,21 +57,15 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
     });
 
     tagCloud.setData(tags);
-    await tagCloud.whenRendered();
-    updateState();
   });
 
 
   $scope.$watch('vis.params', async function (options) {
     tagCloud.setOptions(options);
-    await tagCloud.whenRendered();
-    updateState();
   });
 
   $scope.$watch(getContainerSize, _.debounce(async function () {
     tagCloud.resize();
-    await tagCloud.whenRendered();
-    updateState();
   }, 1000, {trailing: true}), true);
 
 
@@ -64,22 +73,5 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
     return {width: $element.width(), height: $element.height()};
   }
 
-  function updateState() {
-
-    const bucketName = containerNode.querySelector('.tagcloud-custom-label');
-    bucketName.innerHTML = $scope.vis.aggs[1].makeLabel();
-
-    const incompleteMessage = containerNode.querySelector('.tagcloud-incomplete-message');
-    if (TagCloud.STATUS.COMPLETE === tagCloud.getStatus()) {
-      incompleteMessage.style.display = 'none';
-    } else if (TagCloud.STATUS.INCOMPLETE === tagCloud.getStatus()) {
-      incompleteMessage.style.display = 'block';
-    }
-
-    if (typeof $scope.vis.emit === 'function') {
-      $scope.vis.emit('renderComplete');
-    }
-
-  }
 
 });
