@@ -9,8 +9,10 @@ const module = uiModules.get('kibana/tagcloud', ['kibana']);
 
 module.controller('KbnCloudController', function ($scope, $element, Private, getAppState) {
 
+  const containerNode = $element[0];
   const filterBarClickHandler = Private(FilterBarFilterBarClickHandlerProvider);
-  const tagCloud = new TagCloud($element[0]);
+
+  const tagCloud = new TagCloud(containerNode);
   tagCloud.on('select', (event) => {
     const appState = getAppState();
     const clickHandler = filterBarClickHandler(appState);
@@ -32,7 +34,6 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
 
     const metricsAgg = _.first($scope.vis.aggs.bySchemaName.metric);
     const buckets = response.aggregations[tagsAggId].buckets;
-
     const tags = buckets.map((bucket) => {
       return {
         text: bucket.key,
@@ -43,7 +44,6 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
     tagCloud.setData(tags);
     await tagCloud.whenRendered();
     updateState();
-
   });
 
 
@@ -65,15 +65,21 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
   }
 
   function updateState() {
-    const incompleteMessage = $element[0].querySelector('.tagcloud-incomplete-message');
+
+    const bucketName = containerNode.querySelector('.tagcloud-custom-label');
+    bucketName.innerHTML = $scope.vis.aggs[1].makeLabel();
+
+    const incompleteMessage = containerNode.querySelector('.tagcloud-incomplete-message');
     if (TagCloud.STATUS.COMPLETE === tagCloud.getStatus()) {
       incompleteMessage.style.display = 'none';
     } else if (TagCloud.STATUS.INCOMPLETE === tagCloud.getStatus()) {
       incompleteMessage.style.display = 'block';
     }
+
     if (typeof $scope.vis.emit === 'function') {
       $scope.vis.emit('renderComplete');
     }
+
   }
 
 });
