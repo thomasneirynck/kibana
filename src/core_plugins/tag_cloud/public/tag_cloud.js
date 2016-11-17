@@ -275,6 +275,13 @@ function getText(word) {
 }
 
 function positionWord(xTranslate, yTranslate, word) {
+
+  if (isNaN(word.x) || isNaN(word.y) || isNaN(word.rotate)) {
+    //something went wrong in the layout. Shift words outside screen
+    console.log('uh oh', word);
+    return `translate(${xTranslate * 3}, ${yTranslate * 3})rotate(0)`;
+  }
+
   return `translate(${word.x + xTranslate}, ${word.y + yTranslate})rotate(${word.rotate})`;
 }
 
