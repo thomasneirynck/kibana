@@ -53,6 +53,19 @@ function Phantom(options) {
   .then(page => {
     if (!page) throw new Error('Phantom driver failed to create the page instance');
     this.page = page;
+  })
+  .catch(err => {
+    const message = err.toString();
+
+    if (message.includes('Phantom immediately exited with: 126')) {
+      throw new Error('Cannot execute phantom binary, incorrect format');
+    }
+
+    if (message.includes('Phantom immediately exited with: 127')) {
+      throw new Error('You must install fontconfig and freetype for Reporting to work');
+    }
+
+    throw err;
   });
 
   return _createPhantomInstance(ready, this, {
@@ -93,7 +106,16 @@ function _createPhantomInstance(ready, phantom, phantomOptions) {
           if (pageOptions.waitForSelector) {
             return this.waitFor(function (selector) {
               return !!document.querySelector(selector);
-            }, true, pageOptions.waitForSelector);
+            }, true, pageOptions.waitForSelector)
+            .catch(err => {
+              const message = (err.message) ? err.message : err.toString();
+
+              if (message.includes('Timeout exceeded')) {
+                throw new Error(`Kibana took too long to load - ${message}`);
+              }
+
+              throw err;
+            });
           }
         });
       });
