@@ -7,7 +7,7 @@ import FilterBarFilterBarClickHandlerProvider from 'ui/filter_bar/filter_bar_cli
 const module = uiModules.get('kibana/tagcloud', ['kibana']);
 
 
-module.controller('KbnCloudController', function ($scope, $element, Private, getAppState) {
+module.controller('KbnTagCloudController', function ($scope, $element, Private, getAppState) {
 
   const containerNode = $element[0];
   const filterBarClickHandler = Private(FilterBarFilterBarClickHandlerProvider);
