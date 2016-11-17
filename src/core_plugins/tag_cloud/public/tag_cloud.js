@@ -14,9 +14,9 @@ const ORIENTATIONS = {
   }
 };
 const D3_SCALING_FUNCTIONS = {
-  linear: d3.scale.linear(),
-  log: d3.scale.log(),
-  sqrt: d3.scale.sqrt()
+  'linear': d3.scale.linear(),
+  'log': d3.scale.log(),
+  'square root': d3.scale.sqrt()
 };
 
 
@@ -43,7 +43,6 @@ class TagCloud extends EventEmitter {
     this._timeInterval = 1000;//time allowed for layout algorithm
     this._padding = 5;
 
-
   }
 
 
@@ -56,7 +55,7 @@ class TagCloud extends EventEmitter {
     this._orientations = options.orientations;
     this._minFontSize = Math.min(options.minFontSize, options.maxFontSize);
     this._maxFontSize = Math.max(options.minFontSize, options.maxFontSize);
-    this._textScale = options.textScale;
+    this._textScale = options.scale;
     this._invalidate(false);
   }
 
@@ -103,17 +102,6 @@ class TagCloud extends EventEmitter {
   getStatus() {
     return this._allInViewBox ? TagCloud.STATUS.COMPLETE : TagCloud.STATUS.INCOMPLETE;
   }
-
-  // async whenRendered() {
-  //
-  //   if (this._dirtyPromise) {//rendering is in-flight
-  //     return this._dirtyPromise;
-  //   }
-  //
-  //   return new Promise(resolve => {
-  //     resolve(true);
-  //   });
-  // }
 
   _updateContainerSize() {
     this._d3SvgContainer.attr('width', this._size[0]);

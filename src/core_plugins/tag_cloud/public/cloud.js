@@ -20,11 +20,12 @@ visTypes.register(function TagCloudProvider(Private) {
     template: tagCloudTemplate,
     params: {
       defaults: {
-        textScale: 'linear',
+        scale: 'linear',
         orientations: 'single',
         minFontSize: 18,
         maxFontSize: 72
       },
+      scales: ['linear', 'log', 'square root'],
       editor: tagCloudVisParamsTemplate
     },
     schemas: new Schemas([
