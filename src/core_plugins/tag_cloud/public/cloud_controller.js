@@ -22,7 +22,7 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
   });
   tagCloud.on('renderComplete', () => {
     const bucketName = containerNode.querySelector('.tagcloud-custom-label');
-    bucketName.innerHTML = $scope.vis.aggs[1].makeLabel();
+    bucketName.innerHTML = `${$scope.vis.aggs[0].makeLabel()} - ${$scope.vis.aggs[1].makeLabel()}`;
 
     const incompleteMessage = containerNode.querySelector('.tagcloud-incomplete-message');
     const status = tagCloud.getStatus();
