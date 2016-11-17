@@ -73,13 +73,13 @@ class TagCloud extends EventEmitter {
       return;
     }
 
-    const didOverflow = this._size[0] < this._cloudWidth || this._size[1] < this._cloudHeight;
-    const willNotOverflow = this._cloudWidth <= newWidth && this._cloudHeight <= newHeight;
+    const wasInside = this._size[0] >= this._cloudWidth && this._size[1] >= this._cloudHeight;
+    const willBeInside = this._cloudWidth <= newWidth && this._cloudHeight <= newHeight;
 
     this._size[0] = newWidth;
     this._size[1] = newHeight;
 
-    if (!didOverflow && willNotOverflow && this._allInViewBox) {
+    if (wasInside && willBeInside && this._allInViewBox) {
       this._invalidate(true);
     } else {
       this._invalidate(false);
