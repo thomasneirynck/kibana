@@ -11,6 +11,8 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
 
   const containerNode = $element[0];
   const filterBarClickHandler = Private(FilterBarFilterBarClickHandlerProvider);
+  const maxTagCount = 200;
+  let truncated = false;
 
   const tagCloud = new TagCloud(containerNode);
   tagCloud.on('select', (event) => {
@@ -21,11 +23,16 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
     clickHandler({point: {aggConfigResult: aggConfigResult}});
   });
   tagCloud.on('renderComplete', () => {
+
     const bucketName = containerNode.querySelector('.tagcloud-custom-label');
     bucketName.innerHTML = `${$scope.vis.aggs[0].makeLabel()} - ${$scope.vis.aggs[1].makeLabel()}`;
 
+    const truncatedMessage = containerNode.querySelector('.tagcloud-truncated-message');
+    truncatedMessage.style.display = truncated ? 'block' : 'none';
+
     const incompleteMessage = containerNode.querySelector('.tagcloud-incomplete-message');
     const status = tagCloud.getStatus();
+
     if (TagCloud.STATUS.COMPLETE === status) {
       incompleteMessage.style.display = 'none';
     } else if (TagCloud.STATUS.INCOMPLETE === status) {
@@ -55,6 +62,16 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
         size: metricsAgg.getValue(bucket) || metricsAgg.getValue
       };
     });
+
+
+    if (tags.length > maxTagCount) {
+      tags.length = maxTagCount;
+      truncated = true;
+    } else {
+      truncated = false;
+    }
+
+
 
     tagCloud.setData(tags);
   });
