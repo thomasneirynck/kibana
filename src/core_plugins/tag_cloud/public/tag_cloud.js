@@ -5,11 +5,11 @@ import {EventEmitter} from 'events';
 
 
 const ORIENTATIONS = {
-  single: () => 0,
-  rightAngled: (tag) => {
+  'single': () => 0,
+  'right angled': (tag) => {
     return hashCode(tag.text) % 2 * 90;
   },
-  multi: (tag) => {
+  'multiple': (tag) => {
     return (~~(hashCode(tag.text) % 12) * 15) - 90;
   }
 };
@@ -35,7 +35,7 @@ class TagCloud extends EventEmitter {
     this._fontFamily = 'Impact';
     this._fontStyle = 'normal';
     this._fontWeight = 'normal';
-    this._orientations = 'single';
+    this._orientation = 'single';
     this._minFontSize = 10;
     this._maxFontSize = 36;
     this._textScale = 'linear';
@@ -52,7 +52,7 @@ class TagCloud extends EventEmitter {
     }
 
     this._optionsAsString = JSON.stringify(options);
-    this._orientations = options.orientations;
+    this._orientation = options.orientation;
     this._minFontSize = Math.min(options.minFontSize, options.maxFontSize);
     this._maxFontSize = Math.max(options.minFontSize, options.maxFontSize);
     this._textScale = options.scale;
@@ -242,7 +242,7 @@ class TagCloud extends EventEmitter {
     const tagCloudLayoutGenerator = d3TagCloud();
     tagCloudLayoutGenerator.size(this._size);
     tagCloudLayoutGenerator.padding(this._padding);
-    tagCloudLayoutGenerator.rotate(ORIENTATIONS[this._orientations]);
+    tagCloudLayoutGenerator.rotate(ORIENTATIONS[this._orientation]);
     tagCloudLayoutGenerator.font(this._fontFamily);
     tagCloudLayoutGenerator.fontStyle(this._fontStyle);
     tagCloudLayoutGenerator.fontWeight(this._fontWeight);

@@ -7,11 +7,7 @@
 
   <div class="form-group">
     <label>Orientations</label>
-    <select ng-model="vis.params.orientations" class="form-control">
-      <option value="single" selected="selected">single</option>
-      <option value="rightAngled">right angles</option>
-      <option value="multi">multiple</option>
-    </select>
+    <select class="form-control" ng-model="vis.params.orientation" ng-options="mode for mode in vis.type.params.orientations"></select>
   </div>
 
   <label>Minimum Font Size - {{ vis.params.minFontSize }}px</label>
