@@ -36,7 +36,7 @@ visTypes.register(function TagCloudProvider(Private) {
         title: 'Tag Size',
         min: 1,
         max: 1,
-        aggFilter: ['!std_dev', '!median'],
+        aggFilter: ['!std_dev', '!percentiles', '!percentile_ranks'],
         defaults: [
           { schema: 'metric', type: 'count' }
         ]

@@ -277,8 +277,6 @@ function getText(word) {
 function positionWord(xTranslate, yTranslate, word) {
 
   if (isNaN(word.x) || isNaN(word.y) || isNaN(word.rotate)) {
-    //something went wrong in the layout. Shift words outside screen
-    console.log('uh oh', word);
     return `translate(${xTranslate * 3}, ${yTranslate * 3})rotate(0)`;
   }
 
@@ -303,13 +301,14 @@ function getFill(tag) {
  * Retrieved from http://stackoverflow.com/questions/26057572/string-to-unique-hash-in-javascript-jquery
  * @param string
  */
-function hashCode(str) {
+function hashCode(string) {
+  string = JSON.stringify(string);
   let hash = 0;
-  if (str.length === 0) {
+  if (string.length === 0) {
     return hash;
   }
-  for (let i = 0; i < str.length; i++) {
-    let char = str.charCodeAt(i);
+  for (let i = 0; i < string.length; i++) {
+    let char = string.charCodeAt(i);
     hash = ((hash << 5) - hash) + char;
     hash = hash & hash; // Convert to 32bit integer
   }

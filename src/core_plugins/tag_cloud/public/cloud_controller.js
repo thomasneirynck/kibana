@@ -56,10 +56,11 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
 
     const metricsAgg = _.first($scope.vis.aggs.bySchemaName.metric);
     const buckets = response.aggregations[tagsAggId].buckets;
+
     const tags = buckets.map((bucket) => {
       return {
         text: bucket.key,
-        size: metricsAgg.getValue(bucket) || metricsAgg.getValue
+        size: getValue(metricsAgg, bucket)
       };
     });
 
@@ -70,8 +71,6 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
     } else {
       truncated = false;
     }
-
-
 
     tagCloud.setData(tags);
   });
@@ -88,6 +87,18 @@ module.controller('KbnCloudController', function ($scope, $element, Private, get
 
   function getContainerSize() {
     return {width: $element.width(), height: $element.height()};
+  }
+
+  function getValue(metricsAgg, bucket) {
+    let size = metricsAgg.getValue(bucket);
+    if (typeof size !== 'number' || isNaN(size)) {
+      try {
+        size = bucket[1].values[0].value;//lift out first value (e.g. median aggregations return as array)
+      } catch (e) {
+        size = 1;//punt
+      }
+    }
+    return size;
   }
 
 
