@@ -3,6 +3,7 @@ import { join, resolve } from 'path';
 import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
 import requireAllAndApply from '../../server/lib/require_all_and_apply';
 import injectXPackInfoSignature from './server/lib/inject_xpack_info_signature';
+import replaceInjectedVars from './server/lib/replace_injected_vars';
 import xpackInfo from '../../server/lib/xpack_info';
 
 const registerPreResponseHandlerSingleton = once((server, info) => {
@@ -49,9 +50,10 @@ export default function (kibana) {
     uiExports: {
       hacks: [
         'plugins/xpack_main/hacks/check_xpack_info_change',
-        'plugins/xpack_main/hacks/init_xpack_info'
       ],
+      replaceInjectedVars
     },
+
     init: function (server) {
       const elasticsearchPlugin = server.plugins.elasticsearch;
       mirrorPluginStatus(elasticsearchPlugin, this, 'yellow', 'red');
