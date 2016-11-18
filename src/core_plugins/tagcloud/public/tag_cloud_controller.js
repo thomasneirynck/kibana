@@ -76,11 +76,9 @@ module.controller('KbnTagCloudController', function ($scope, $element, Private, 
   });
 
 
-  $scope.$watch('vis.params', async function (options) {
-    tagCloud.setOptions(options);
-  });
+  $scope.$watch('vis.params', (options) => tagCloud.setOptions(options));
 
-  $scope.$watch(getContainerSize, _.debounce(async function () {
+  $scope.$watch(getContainerSize, _.debounce(() => {
     tagCloud.resize();
   }, 1000, {trailing: true}), true);
 
