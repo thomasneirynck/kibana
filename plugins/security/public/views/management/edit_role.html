@@ -95,7 +95,7 @@
               <ui-select data-test-subj="{{ 'privilegesInput' + $index }}" class="form-control" multiple ng-model="index.privileges" ng-disabled="role.metadata._reserved">
                 <ui-select-match placeholder="Add a privilege...">{{$item}}</ui-select-match>
                 <ui-select-choices repeat="privilege in privileges.indices | filter:$select.search" >
-                  <div ng-bind-html="privilege"></div>
+                  <div ng-bind-html="privilege" data-test-subj="{{ 'privilegeOption-'+  privilege }}"></div>
                 </ui-select-choices>
               </ui-select>
             </div>
