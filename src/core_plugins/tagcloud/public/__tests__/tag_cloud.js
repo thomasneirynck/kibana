@@ -81,15 +81,82 @@ describe('tag cloud', function () {
       const tagCloud = new TagCloud(domNode);
       tagCloud.setData(test.data);
       tagCloud.setOptions(test.options);
-      tagCloud.on('renderComplete', _ => {
+      tagCloud.on('renderComplete', function onRender() {
+        tagCloud.removeListener('renderComplete', onRender);
         const textElements = domNode.querySelectorAll('text');
-        verifyExpectedValues(test.expected, textElements);
+        verifyTagProperties(test.expected, textElements);
+        expect(tagCloud.getStatus()).to.equal(TagCloud.STATUS.COMPLETE);
         done();
       });
     });
   });
 
-  function verifyExpectedValues(expectedValues, actualElements) {
+  it(`should not put elements in view when container to small`, function (done) {
+
+    domNode.style.width = '1px';
+    domNode.style.height = '1px';
+
+    const tagCloud = new TagCloud(domNode);
+    tagCloud.setData(baseTestConfig.data);
+    tagCloud.setOptions(baseTestConfig.options);
+    tagCloud.on('renderComplete', function onRender() {
+      tagCloud.removeListener('renderComplete', onRender);
+      expect(tagCloud.getStatus()).to.equal(TagCloud.STATUS.INCOMPLETE);
+      const textElements = domNode.querySelectorAll('text');
+      for (let i = 0; i < textElements; i++) {
+        const bbox = textElements[i].getBoundingClientRect();
+        verifyBbox(bbox, false);
+      }
+      done();
+    });
+  });
+
+
+  it(`tags should fit after making container bigger`, function (done) {
+
+    domNode.style.width = '1px';
+    domNode.style.height = '1px';
+
+    const tagCloud = new TagCloud(domNode);
+    tagCloud.setData(baseTestConfig.data);
+    tagCloud.setOptions(baseTestConfig.options);
+    tagCloud.on('renderComplete', function onRender() {
+      tagCloud.removeListener('renderComplete', onRender);
+      expect(tagCloud.getStatus()).to.equal(TagCloud.STATUS.INCOMPLETE);
+
+      domNode.style.width = '512px';
+      domNode.style.height = '512px';
+      tagCloud.on('renderComplete', _ => {
+        expect(tagCloud.getStatus()).to.equal(TagCloud.STATUS.COMPLETE);
+        done();
+      });
+      tagCloud.resize();
+
+    });
+  });
+
+  it(`tags should no longer fit after making container smaller`, function (done) {
+
+    const tagCloud = new TagCloud(domNode);
+    tagCloud.setData(baseTestConfig.data);
+    tagCloud.setOptions(baseTestConfig.options);
+    tagCloud.on('renderComplete', function onRender() {
+      tagCloud.removeListener('renderComplete', onRender);
+      expect(tagCloud.getStatus()).to.equal(TagCloud.STATUS.COMPLETE);
+
+      domNode.style.width = '1px';
+      domNode.style.height = '1px';
+      tagCloud.on('renderComplete', _ => {
+        expect(tagCloud.getStatus()).to.equal(TagCloud.STATUS.INCOMPLETE);
+        done();
+      });
+      tagCloud.resize();
+
+    });
+
+  });
+
+  function verifyTagProperties(expectedValues, actualElements) {
     expect(actualElements.length).to.equal(expectedValues.length);
     expectedValues.forEach((test, index) => {
       expect(actualElements[index].style.fontSize).to.equal(test.fontSize);
@@ -98,13 +165,16 @@ describe('tag cloud', function () {
     });
   }
 
-
   function isInsideContainer(actualElement) {
     const bbox = actualElement.getBoundingClientRect();
-    expect(bbox.top >= 0 && bbox.top <= domNode.offsetHeight).to.be(true);
-    expect(bbox.bottom >= 0 && bbox.bottom <= domNode.offsetHeight).to.be(true);
-    expect(bbox.left >= 0 && bbox.left <= domNode.offsetWidth).to.be(true);
-    expect(bbox.right >= 0 && bbox.right <= domNode.offsetWidth).to.be(true);
+    verifyBbox(bbox, true);
+  }
+
+  function verifyBbox(bbox, shouldBeInside) {
+    expect(bbox.top >= 0 && bbox.top <= domNode.offsetHeight).to.be(shouldBeInside);
+    expect(bbox.bottom >= 0 && bbox.bottom <= domNode.offsetHeight).to.be(shouldBeInside);
+    expect(bbox.left >= 0 && bbox.left <= domNode.offsetWidth).to.be(shouldBeInside);
+    expect(bbox.right >= 0 && bbox.right <= domNode.offsetWidth).to.be(shouldBeInside);
   }
 
 
