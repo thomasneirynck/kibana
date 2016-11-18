@@ -3,7 +3,7 @@ import { capitalize } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Table from 'plugins/monitoring/directives/paginated_table/components/table';
-import statusIconClass from 'plugins/monitoring/lib/status_icon_class';
+import { statusIconClass } from 'plugins/monitoring/lib/map_status_classes';
 import uiModules from 'ui/modules';
 
 function showSystemIndicesComponentFactory(scope) {

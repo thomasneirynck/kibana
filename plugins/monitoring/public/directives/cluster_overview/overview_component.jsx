@@ -1,7 +1,7 @@
 import React from 'react';
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import statusIconClass from '../../lib/status_icon_class';
+import { translateKibanaStatus, statusIconClass } from '../../lib/map_status_classes';
 import formatNumber, { formatBytesUsage, formatPercentageUsage } from '../../lib/format_number';
 
 class ClusterItemContainer extends React.Component {
@@ -144,13 +144,16 @@ class ElasticsearchPanel extends React.Component {
 class KibanaPanel extends React.Component {
   render() {
     if (!this.props.count) return (<div></div>);
+
+    const status = translateKibanaStatus(this.props.status);
+
     return (
       <ClusterItemContainer {...this.props} url='kibana' title='Kibana'>
-        <StatusContainer statusPrefix='Instances' status={this.props.status}/>
+        <StatusContainer statusPrefix='Instances' status={status}/>
 
         <div className='row'>
           <div className='col-md-4'>
-            <dl data-test-subj='kibana_overview' data-overview-status={this.props.status}>
+            <dl data-test-subj='kibana_overview' data-overview-status={status}>
               <dt className='info-title'>
                 <a className='link' onClick={() => this.props.angularChangeUrl('kibana')}>Overview</a>
               </dt>

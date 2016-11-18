@@ -1,5 +1,5 @@
 import { capitalize, get } from 'lodash';
-import statusIconClass from '../../lib/status_icon_class';
+import { translateKibanaStatus, statusIconClass } from '../../lib/map_status_classes';
 import uiModules from 'ui/modules';
 import template from 'plugins/monitoring/directives/cluster_status_kibana/index.html';
 
@@ -13,8 +13,15 @@ uiModule.directive('monitoringClusterStatusKibana', () => {
         return `Instances: ${capitalize(scope.pageData.clusterStatus.status)}`;
       };
 
+      scope.getStatusClass = () => {
+        return translateKibanaStatus(get(scope.pageData, 'clusterStatus.status'));
+      };
+
       scope.getStatusIconClass = () => {
-        return statusIconClass(get(scope.pageData, 'clusterStatus.status'));
+        // get a status that can be mapped to one of the available status icons
+        // e.g. if we want a yellow status then it should map to warning icon
+        const status = scope.getStatusClass();
+        return statusIconClass(status);
       };
     }
   };

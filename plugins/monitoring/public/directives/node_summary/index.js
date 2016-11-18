@@ -1,5 +1,5 @@
 import { get } from 'lodash';
-import statusIconClass from '../../lib/status_icon_class';
+import { statusIconClass } from '../../lib/map_status_classes';
 import template from 'plugins/monitoring/directives/node_summary/index.html';
 import uiModules from 'ui/modules';
 
