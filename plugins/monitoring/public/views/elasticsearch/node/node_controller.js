@@ -60,7 +60,7 @@ uiRoutes.when('/elasticsearch/nodes/:node', {
 });
 
 const uiModule = uiModules.get('monitoring', [ 'plugins/monitoring/directives' ]);
-uiModule.controller('nodeView', (
+uiModule.controller('esNode', (
   timefilter, $route, globalState, title, Private, $executor, $http, monitoringClusters, $scope, features
 ) => {
 
@@ -79,7 +79,7 @@ uiModule.controller('nodeView', (
   setClusters($route.current.locals.clusters);
   $scope.pageData = $route.current.locals.pageData;
 
-  title($scope.cluster, `Elasticsearch - Nodes - ${$scope.pageData.nodeSummary.name}`);
+  title($scope.cluster, `Elasticsearch - Nodes - ${$scope.pageData.nodeSummary.name} - Overview`);
   setPageIconLabel($scope.pageData);
 
   const callPageData = _.partial(getPageData, timefilter, globalState, $route, $http, Private, features);

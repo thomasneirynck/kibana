@@ -20,9 +20,22 @@
           <a ng-if="!instance" kbn-href="#/elasticsearch" class="localTab" ng-class="{'localTab-isSelected': isActive('overview')}">Overview</a>
           <a ng-if="!instance" kbn-href="#/elasticsearch/indices" class="localTab" ng-class="{'localTab-isSelected': isActive('indices')}">Indices</a>
           <a ng-if="!instance" kbn-href="#/elasticsearch/nodes" class="localTab" ng-class="{'localTab-isSelected': isActive('nodes')}">Nodes</a>
-          <a ng-if="instance" class="localTab">
+          <a
+            ng-if="instance"
+            kbn-href="#/elasticsearch/nodes/{{resolver}}"
+            class="localTab"
+            ng-class="{'localTab-isSelected': page === 'overview'}"
+          >
             <span ng-if="iconClass" class="fa {{ iconClass }}" title="{{ iconLabel }}"></span>
-            {{ instance }}
+            Overview
+          </a>
+          <a
+            ng-if="instance"
+            kbn-href="#/elasticsearch/nodes/{{resolver}}/advanced"
+            class="localTab"
+            ng-class="{'localTab-isSelected': page === 'advanced'}"
+          >
+            Advanced
           </a>
         </div>
 

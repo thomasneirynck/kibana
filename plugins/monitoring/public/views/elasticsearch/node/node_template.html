@@ -1,5 +1,11 @@
-<div ng-controller="nodeView">
-  <monitoring-main product="elasticsearch" name="nodes" instance="{{ pageData.nodeSummary.name }}">
+<div ng-controller="esNode">
+  <monitoring-main
+    product="elasticsearch"
+    name="nodes"
+    instance="{{ pageData.nodeSummary.name }}"
+    resolver="{{ pageData.nodeSummary.resolver }}"
+    page="overview"
+  >
     <div class="details monitoring-view">
       <monitoring-node-summary node="pageData.nodeSummary"></monitoring-node-summary>
       <div class="detail-metrics monitoring-element">

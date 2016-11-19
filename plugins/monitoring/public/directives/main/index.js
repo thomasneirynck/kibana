@@ -15,7 +15,9 @@ uiModule.directive('monitoringMain', (license) => {
     link: function (scope, _el, attrs) {
       scope.name = attrs.name; // name of current page
       scope.product = attrs.product; // undefined, elasticsearch, or kibana
-      scope.instance = attrs.instance; // undefined or name of index, node, or kibana
+      scope.instance = attrs.instance; // undefined or name of index or instance (e.g., node)
+      scope.resolver = attrs.resolver; // undefined or id of index or instance (e.g., node)
+      scope.page = attrs.page; // undefined or the tab for an instance
       const productIsIn = (checkKey) => scope.product === checkKey;
 
       if (scope.product) {
@@ -56,6 +58,7 @@ uiModule.directive('monitoringMain', (license) => {
             } else if (scope.name === 'nodes') {
               breadcrumbs.push(createCrumb('#/elasticsearch/nodes', 'Nodes'));
             }
+            breadcrumbs.push(createCrumb(null, scope.instance));
           } else {
             // don't link to Overview when we're possibly on Overview or its sibling tabs
             breadcrumbs.push(createCrumb(null, 'Elasticsearch'));

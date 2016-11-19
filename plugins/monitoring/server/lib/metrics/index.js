@@ -205,6 +205,50 @@ const metricInstances = {
     metricAgg: 'max',
     units: ''
   }),
+  'node_jvm_gc_old_count': new ElasticsearchMetric({
+    field: 'node_stats.jvm.gc.collectors.old.collection_count',
+    title: 'GC Count',
+    label: 'Old',
+    description: 'Number of old Garbage Collections.',
+    derivative: true,
+    format: SMALL_FLOAT,
+    metricAgg: 'max',
+    units: '',
+    type: 'node'
+  }),
+  'node_jvm_gc_old_time': new ElasticsearchMetric({
+    field: 'node_stats.jvm.gc.collectors.old.collection_time_in_millis',
+    title: 'GC Duration',
+    label: 'Old',
+    derivative: true,
+    description: 'Time spent performing old Garbage Collections.',
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: 'ms',
+    type: 'node'
+  }),
+  'node_jvm_gc_young_count': new ElasticsearchMetric({
+    field: 'node_stats.jvm.gc.collectors.young.collection_count',
+    title: 'GC Count',
+    label: 'Young',
+    description: 'Number of young Garbage Collections.',
+    derivative: true,
+    format: SMALL_FLOAT,
+    metricAgg: 'max',
+    units: '',
+    type: 'node'
+  }),
+  'node_jvm_gc_young_time': new ElasticsearchMetric({
+    field: 'node_stats.jvm.gc.collectors.young.collection_time_in_millis',
+    title: 'GC Duration',
+    label: 'Young',
+    description: 'Time spent performing young Garbage Collections.',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: 'ms',
+    type: 'node'
+  }),
   'node_jvm_mem_max_in_bytes': new ElasticsearchMetric({
     field: 'node_stats.jvm.mem.heap_max_in_bytes',
     title: 'JVM Heap',
@@ -282,14 +326,14 @@ const metricInstances = {
     field: 'node_stats.indices.query_cache.memory_size_in_bytes',
     label: 'Query Cache',
     description: 'Heap memory used by Query Cache (e.g., cached filters). This is for the same shards, but not a part of Lucene Total.',
-    type: 'index'
+    type: 'node'
   }),
   // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
   'node_index_mem_request_cache': new IndexMemoryMetric({
     field: 'node_stats.indices.request_cache.memory_size_in_bytes',
     label: 'Request Cache',
     description: 'Heap memory used by Request Cache (e.g., instant aggregations). This is for the same shards, but not a part of Lucene Total.', // eslint-disable-line max-len
-    type: 'index'
+    type: 'node'
   }),
   'node_index_mem_stored_fields': new NodeIndexMemoryMetric({
     field: 'stored_fields_memory_in_bytes',
@@ -315,6 +359,126 @@ const metricInstances = {
     field: 'index_writer_memory_in_bytes',
     label: 'Index Writer',
     description: 'Heap memory used by the Index Writer. This is a part of Lucene Total.'
+  }),
+  'node_index_threads_bulk_queue': new ElasticsearchMetric({
+    field: 'node_stats.thread_pool.bulk.queue',
+    title: 'Indexing Threads',
+    label: 'Bulk Queue',
+    description: 'Number of bulk operations in the queue.',
+    type: 'node',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: '',
+    min: 0
+  }),
+  'node_index_threads_bulk_rejected': new ElasticsearchMetric({
+    field: 'node_stats.thread_pool.bulk.rejected',
+    title: 'Indexing Threads',
+    label: 'Bulk Rejections',
+    description: 'Number of bulk operations that have been rejected, which occurs when the queue is full.',
+    type: 'node',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: '',
+    min: 0
+  }),
+  'node_index_threads_get_queue': new ElasticsearchMetric({
+    field: 'node_stats.thread_pool.get.queue',
+    title: 'GET Threads',
+    label: 'GET Queue',
+    description: 'Number of GET operations in the queue.',
+    type: 'node',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: '',
+    min: 0
+  }),
+  'node_index_threads_get_rejected': new ElasticsearchMetric({
+    field: 'node_stats.thread_pool.get.rejected',
+    title: 'GET Threads',
+    label: 'GET Rejections',
+    description: 'Number of GET operations that have been rejected, which occurs when the queue is full.',
+    type: 'node',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: '',
+    min: 0
+  }),
+  'node_index_threads_index_queue': new ElasticsearchMetric({
+    field: 'node_stats.thread_pool.index.queue',
+    title: 'Indexing Threads',
+    label: 'Index Queue',
+    description: 'Number of non-bulk, index operations in the queue.',
+    type: 'node',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: '',
+    min: 0
+  }),
+  'node_index_threads_index_rejected': new ElasticsearchMetric({
+    field: 'node_stats.thread_pool.index.rejected',
+    title: 'Indexing Threads',
+    label: 'Index Rejections',
+    description:
+      'Number of non-bulk, index operations that have been rejected, which occurs when the queue is full. ' +
+      'Generally indicates that bulk should be used.',
+    type: 'node',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: '',
+    min: 0
+  }),
+  'node_index_threads_search_queue': new ElasticsearchMetric({
+    field: 'node_stats.thread_pool.search.queue',
+    title: 'Search Threads',
+    label: 'Search Queue',
+    description: 'Number of search operations in the queue (e.g., shard level searches).',
+    type: 'node',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: '',
+    min: 0
+  }),
+  'node_index_threads_search_rejected': new ElasticsearchMetric({
+    field: 'node_stats.thread_pool.search.rejected',
+    title: 'Search Threads',
+    label: 'Search Rejections',
+    description: 'Number of search operations that have been rejected, which occurs when the queue is full.',
+    type: 'node',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: '',
+    min: 0
+  }),
+  'node_index_total': new ElasticsearchMetric({
+    field: 'node_stats.indices.indexing.index_total',
+    title: 'Indexing Rate',
+    label: 'Total',
+    description: 'Amount of indexing operations.',
+    type: 'node',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: ''
+  }),
+  'node_index_time': new ElasticsearchMetric({
+    field: 'node_stats.indices.indexing.index_time_in_millis',
+    title: 'Indexing Time',
+    label: 'Index Time',
+    description: 'Amount of time spent on indexing operations.',
+    type: 'node',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: 'ms'
   }),
   'node_free_space': new ElasticsearchMetric({
     field: 'node_stats.fs.total.available_in_bytes',
@@ -396,9 +560,33 @@ const metricInstances = {
     label: 'Watcher',
     description: 'Watch rejections. These occur when the queue is full. This can indicate stuck-Watches.'
   }),
+  'node_throttle_index_time': new ElasticsearchMetric({
+    field: 'node_stats.indices.indexing.throttle_time_in_millis',
+    title: 'Throttling Time',
+    label: 'Index',
+    description: 'Amount of time spent with index throttling, which indicates slow disks on a node.',
+    type: 'node',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: 'ms',
+    min: 0
+  }),
+  'node_throttle_store_time': new ElasticsearchMetric({
+    field: 'node_stats.indices.store.throttle_time_in_millis',
+    title: 'Throttling Time',
+    label: 'Store',
+    description: 'Amount of time spent with index throttling, which indicates slow merging on a node, but it is not always a problem.',
+    type: 'node',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: 'ms',
+    min: 0
+  }),
   'index_throttle_time': new ElasticsearchMetric({
     field: 'index_stats.primaries.indexing.throttle_time_in_millis',
-    label: 'Index Throttling',
+    label: 'Index Throttling Time',
     description: 'Amount of time spent with index throttling, which indicates slow merging.',
     type: 'index',
     derivative: true,
