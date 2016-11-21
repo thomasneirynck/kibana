@@ -25,16 +25,12 @@
           <div class="col-md-6"><monitoring-chart series="pageData.metrics.node_index_4"/></div>
         </div>
         <div class="row monitoring-element" ng-if="pageData.metrics">
-          <div class="col-md-6"><monitoring-chart series="pageData.metrics.node_index_total"/></div>
           <div class="col-md-6"><monitoring-chart series="pageData.metrics.node_index_time"/></div>
+          <div class="col-md-6"><monitoring-chart series="pageData.metrics.node_request_total"/></div>
         </div>
         <div class="row monitoring-element" ng-if="pageData.metrics">
           <div class="col-md-6"><monitoring-chart series="pageData.metrics.node_index_threads"/></div>
-          <div class="col-md-6"><monitoring-chart series="pageData.metrics.node_throttling"/></div>
-        </div>
-        <div class="row monitoring-element" ng-if="pageData.metrics">
-          <div class="col-md-6"><monitoring-chart series="pageData.metrics.node_search_threads"/></div>
-          <div class="col-md-6"><monitoring-chart series="pageData.metrics.node_get_threads"/></div>
+          <div class="col-md-6"><monitoring-chart series="pageData.metrics.node_read_threads"/></div>
         </div>
       </div>
     </div>

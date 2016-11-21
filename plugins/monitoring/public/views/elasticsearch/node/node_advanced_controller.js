@@ -71,8 +71,20 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
           'node_index_mem_writer'
         ]
       },
-      'node_index_total',
-      'node_index_time',
+      {
+        name: 'node_request_total',
+        keys: [
+          'node_search_total',
+          'node_index_total'
+        ]
+      },
+      {
+        name: 'node_index_time',
+        keys: [
+          'node_index_time',
+          'node_throttle_index_time'
+        ]
+      },
       {
         name: 'node_index_threads',
         keys: [
@@ -83,27 +95,15 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
         ]
       },
       {
-        name: 'node_throttling',
-        keys: [
-          'node_throttle_index_time',
-          'node_throttle_store_time'
-        ]
-      },
-      'node_cpu_utilization',
-      {
-        name: 'node_search_threads',
+        name: 'node_read_threads',
         keys: [
           'node_index_threads_search_queue',
-          'node_index_threads_search_rejected'
-        ]
-      },
-      {
-        name: 'node_get_threads',
-        keys: [
+          'node_index_threads_search_rejected',
           'node_index_threads_get_queue',
           'node_index_threads_get_rejected'
         ]
-      }
+      },
+      'node_cpu_utilization'
     ]
   })
   .then(response => response.data)

@@ -590,7 +590,7 @@ const metricInstances = {
   }),
   'node_index_threads_get_queue': new ElasticsearchMetric({
     field: 'node_stats.thread_pool.get.queue',
-    title: 'GET Threads',
+    title: 'Read Threads',
     label: 'GET Queue',
     description: 'Number of GET operations in the queue.',
     type: 'node',
@@ -602,7 +602,7 @@ const metricInstances = {
   }),
   'node_index_threads_get_rejected': new ElasticsearchMetric({
     field: 'node_stats.thread_pool.get.rejected',
-    title: 'GET Threads',
+    title: 'Read Threads',
     label: 'GET Rejections',
     description: 'Number of GET operations that have been rejected, which occurs when the queue is full.',
     type: 'node',
@@ -640,7 +640,7 @@ const metricInstances = {
   }),
   'node_index_threads_search_queue': new ElasticsearchMetric({
     field: 'node_stats.thread_pool.search.queue',
-    title: 'Search Threads',
+    title: 'Read Threads',
     label: 'Search Queue',
     description: 'Number of search operations in the queue (e.g., shard level searches).',
     type: 'node',
@@ -652,7 +652,7 @@ const metricInstances = {
   }),
   'node_index_threads_search_rejected': new ElasticsearchMetric({
     field: 'node_stats.thread_pool.search.rejected',
-    title: 'Search Threads',
+    title: 'Read Threads',
     label: 'Search Rejections',
     description: 'Number of search operations that have been rejected, which occurs when the queue is full.',
     type: 'node',
@@ -664,8 +664,8 @@ const metricInstances = {
   }),
   'node_index_total': new ElasticsearchMetric({
     field: 'node_stats.indices.indexing.index_total',
-    title: 'Indexing Rate',
-    label: 'Total',
+    title: 'Request Rate',
+    label: 'Indexing Total',
     description: 'Amount of indexing operations.',
     type: 'node',
     derivative: true,
@@ -690,6 +690,17 @@ const metricInstances = {
     description: 'Free disk space available on the node.',
     type: 'node',
     format: SMALL_BYTES,
+    metricAgg: 'max',
+    units: ''
+  }),
+  'node_search_total': new ElasticsearchMetric({
+    field: 'node_stats.indices.search.query_total',
+    title: 'Request Rate',
+    label: 'Search Total',
+    description: 'Amount of search operations (per shard).',
+    type: 'node',
+    derivative: true,
+    format: LARGE_FLOAT,
     metricAgg: 'max',
     units: ''
   }),
@@ -766,21 +777,9 @@ const metricInstances = {
   }),
   'node_throttle_index_time': new ElasticsearchMetric({
     field: 'node_stats.indices.indexing.throttle_time_in_millis',
-    title: 'Throttling Time',
-    label: 'Index',
+    title: 'Indexing Time',
+    label: 'Index Throttling Time',
     description: 'Amount of time spent with index throttling, which indicates slow disks on a node.',
-    type: 'node',
-    derivative: true,
-    format: LARGE_FLOAT,
-    metricAgg: 'max',
-    units: 'ms',
-    min: 0
-  }),
-  'node_throttle_store_time': new ElasticsearchMetric({
-    field: 'node_stats.indices.store.throttle_time_in_millis',
-    title: 'Throttling Time',
-    label: 'Store',
-    description: 'Amount of time spent with index throttling, which indicates slow merging on a node, but it is not always a problem.',
     type: 'node',
     derivative: true,
     format: LARGE_FLOAT,
