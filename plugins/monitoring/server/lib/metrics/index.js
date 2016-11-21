@@ -82,8 +82,59 @@ const metricInstances = {
     description: 'Average latency for searching, which is time it takes to execute searches divided by number of searches submitted. This considers primary and replica shards.', // eslint-disable-line max-len
     type: 'cluster'
   }),
+  'index_indexing_primaries_time': new ElasticsearchMetric({
+    field: 'index_stats.primaries.indexing.index_time_in_millis',
+    title: 'Request Time',
+    label: 'Indexing (Primaries)',
+    description: 'Amount of time spent performing index operations on primary shards only.',
+    type: 'index',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: 'ms'
+  }),
+  'index_indexing_total_time': new ElasticsearchMetric({
+    field: 'index_stats.total.indexing.index_time_in_millis',
+    title: 'Request Time',
+    label: 'Indexing',
+    description: 'Amount of time spent performing index operations on primary and replica shards.',
+    type: 'index',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: 'ms'
+  }),
+  'index_indexing_total': new ElasticsearchMetric({
+    field: 'index_stats.primaries.indexing.index_total',
+    title: 'Request Rate',
+    label: 'Index Total',
+    description: 'Amount of indexing operations.',
+    type: 'index',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: ''
+  }),
   'index_mem_overall': new SingleIndexMemoryMetric({
     field: 'memory_in_bytes',
+    label: 'Lucene Total',
+    description: 'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards.'
+  }),
+  'index_mem_overall_1': new SingleIndexMemoryMetric({
+    field: 'memory_in_bytes',
+    title: 'Index Memory - Lucene 1',
+    label: 'Lucene Total',
+    description: 'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards.'
+  }),
+  'index_mem_overall_2': new SingleIndexMemoryMetric({
+    field: 'memory_in_bytes',
+    title: 'Index Memory - Lucene 2',
+    label: 'Lucene Total',
+    description: 'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards.'
+  }),
+  'index_mem_overall_3': new SingleIndexMemoryMetric({
+    field: 'memory_in_bytes',
+    title: 'Index Memory - Lucene 3',
     label: 'Lucene Total',
     description: 'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards.'
   }),
@@ -121,6 +172,13 @@ const metricInstances = {
     description: 'Heap memory used by Query Cache (e.g., cached filters). This is for the same shards, but not a part of Lucene Total.',
     type: 'index'
   }),
+  'index_mem_query_cache_4': new IndexMemoryMetric({
+    field: 'index_stats.total.query_cache.memory_size_in_bytes',
+    title: 'Index Memory - Elasticsearch',
+    label: 'Query Cache',
+    description: 'Heap memory used by Query Cache (e.g., cached filters). This is for the same shards, but not a part of Lucene Total.',
+    type: 'index'
+  }),
   // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
   'index_mem_request_cache': new IndexMemoryMetric({
     field: 'index_stats.total.request_cache.memory_size_in_bytes',
@@ -146,7 +204,7 @@ const metricInstances = {
   'index_mem_versions': new SingleIndexMemoryMetric({
     field: 'version_map_memory_in_bytes',
     label: 'Version Map',
-    description: 'Heap memory used by Versioning (e.g., updates and deletes). This is a part of Lucene Total.'
+    description: 'Heap memory used by Versioning (e.g., updates and deletes). This is NOT a part of Lucene Total.',
   }),
   'index_mem_writer': new SingleIndexMemoryMetric({
     field: 'index_writer_memory_in_bytes',
@@ -171,14 +229,135 @@ const metricInstances = {
     description: 'Number of documents being indexed for primary and replica shards.',
     type: 'index'
   }),
-  'index_segment_count': new ElasticsearchMetric({
-    field: 'index_stats.total.segments.count',
-    label: 'Segment Count',
-    description: 'Average segment count for primary and replica shards.',
+  'index_searching_time': new ElasticsearchMetric({
+    field: 'index_stats.total.search.query_time_in_millis',
+    title: 'Request Time',
+    label: 'Search',
+    description: 'Amount of time spent performing search operations (per shard).',
+    type: 'index',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: 'ms'
+  }),
+  'index_searching_total': new ElasticsearchMetric({
+    field: 'index_stats.total.search.query_total',
+    title: 'Request Rate',
+    label: 'Search Total',
+    description: 'Amount of search operations (per shard).',
+    type: 'index',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: ''
+  }),
+  'index_segment_count_primaries': new ElasticsearchMetric({
+    field: 'index_stats.primaries.segments.count',
+    title: 'Segments',
+    label: 'Primaries',
+    description: 'Number of segments for primary shards.',
     type: 'index',
     format: LARGE_FLOAT,
-    metricAgg: 'avg',
+    metricAgg: 'max',
     units: ''
+  }),
+  'index_segment_count_total': new ElasticsearchMetric({
+    field: 'index_stats.total.segments.count',
+    title: 'Segments',
+    label: 'Total',
+    description: 'Number of segments for primary and replica shards.',
+    type: 'index',
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: ''
+  }),
+  'index_segment_merge_primaries_size': new ElasticsearchMetric({
+    field: 'index_stats.primaries.merges.total_size_in_bytes',
+    title: 'Disk',
+    label: 'Merges (Primaries)',
+    description: 'Size of merges on primary shards.',
+    type: 'index',
+    derivative: true,
+    format: LARGE_BYTES,
+    metricAgg: 'max',
+    units: 'B'
+  }),
+  'index_segment_merge_total_size': new ElasticsearchMetric({
+    field: 'index_stats.total.merges.total_size_in_bytes',
+    title: 'Disk',
+    label: 'Merges',
+    description: 'Size of merges on primary and replica shards.',
+    type: 'index',
+    derivative: true,
+    format: LARGE_BYTES,
+    metricAgg: 'max',
+    units: 'B'
+  }),
+  'index_segment_refresh_primaries_time': new ElasticsearchMetric({
+    field: 'index_stats.primaries.refresh.total_time_in_millis',
+    title: 'Refresh Time',
+    label: 'Primaries',
+    description: 'Amount of time spent to perform refresh operations on primary shards.',
+    type: 'index',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: 'ms'
+  }),
+  'index_segment_refresh_total_time': new ElasticsearchMetric({
+    field: 'index_stats.total.refresh.total_time_in_millis',
+    title: 'Refresh Time',
+    label: 'Total',
+    description: 'Amount of time spent to perform refresh operations on primary and replica shards.',
+    type: 'index',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: 'ms'
+  }),
+  'index_throttling_indexing_primaries_time': new ElasticsearchMetric({
+    field: 'index_stats.primaries.indexing.throttle_time_in_millis',
+    title: 'Throttle Time',
+    label: 'Indexing (Primaries)',
+    description: 'Amount of time spent throttling index operations on primary shards.',
+    type: 'index',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: 'ms'
+  }),
+  'index_throttling_indexing_total_time': new ElasticsearchMetric({
+    field: 'index_stats.total.indexing.throttle_time_in_millis',
+    title: 'Throttle Time',
+    label: 'Indexing',
+    description: 'Amount of time spent throttling index operations on primary and replica shards.',
+    type: 'index',
+    derivative: true,
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    units: 'ms'
+  }),
+  'index_store_primaries_size': new ElasticsearchMetric({
+    field: 'index_stats.primaries.store.size_in_bytes',
+    title: 'Disk',
+    label: 'Store (Primaries)',
+    description: 'Size of primary shards on disk.',
+    type: 'index',
+    derivative: false,
+    format: LARGE_BYTES,
+    metricAgg: 'max',
+    units: 'B'
+  }),
+  'index_store_total_size': new ElasticsearchMetric({
+    field: 'index_stats.total.store.size_in_bytes',
+    title: 'Disk',
+    label: 'Store',
+    description: 'Size of primary and replica shards on disk.',
+    type: 'index',
+    derivative: false,
+    format: LARGE_BYTES,
+    metricAgg: 'max',
+    units: 'B'
   }),
   'search_request_rate': new RequestRateMetric({
     field: 'index_stats.total.search.query_total',
@@ -294,6 +473,24 @@ const metricInstances = {
     label: 'Lucene Total',
     description: 'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards on this node.' // eslint-disable-line max-len
   }),
+  'node_index_mem_overall_1': new NodeIndexMemoryMetric({
+    field: 'memory_in_bytes',
+    label: 'Lucene Total',
+    title: 'Index Memory - Lucene 1',
+    description: 'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards on this node.' // eslint-disable-line max-len
+  }),
+  'node_index_mem_overall_2': new NodeIndexMemoryMetric({
+    field: 'memory_in_bytes',
+    label: 'Lucene Total',
+    title: 'Index Memory - Lucene 2',
+    description: 'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards on this node.' // eslint-disable-line max-len
+  }),
+  'node_index_mem_overall_3': new NodeIndexMemoryMetric({
+    field: 'memory_in_bytes',
+    label: 'Lucene Total',
+    title: 'Index Memory - Lucene 3',
+    description: 'Total heap memory used by Lucene for current index. This is the sum of other fields for primary and replica shards on this node.' // eslint-disable-line max-len
+  }),
   'node_index_mem_doc_values': new NodeIndexMemoryMetric({
     field: 'doc_values_memory_in_bytes',
     label: 'Doc Values',
@@ -328,6 +525,13 @@ const metricInstances = {
     description: 'Heap memory used by Query Cache (e.g., cached filters). This is for the same shards, but not a part of Lucene Total.',
     type: 'node'
   }),
+  'node_index_mem_query_cache_4': new IndexMemoryMetric({
+    field: 'node_stats.indices.query_cache.memory_size_in_bytes',
+    label: 'Query Cache',
+    title: 'Index Memory - Elasticsearch',
+    description: 'Heap memory used by Query Cache (e.g., cached filters). This is for the same shards, but not a part of Lucene Total.',
+    type: 'node'
+  }),
   // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
   'node_index_mem_request_cache': new IndexMemoryMetric({
     field: 'node_stats.indices.request_cache.memory_size_in_bytes',
@@ -353,7 +557,7 @@ const metricInstances = {
   'node_index_mem_versions': new NodeIndexMemoryMetric({
     field: 'version_map_memory_in_bytes',
     label: 'Version Map',
-    description: 'Heap memory used by Versioning (e.g., updates and deletes). This is a part of Lucene Total.'
+    description: 'Heap memory used by Versioning (e.g., updates and deletes). This is NOT a part of Lucene Total.'
   }),
   'node_index_mem_writer': new NodeIndexMemoryMetric({
     field: 'index_writer_memory_in_bytes',

@@ -1,5 +1,11 @@
-<div ng-controller="indexView">
-  <monitoring-main product="elasticsearch" name="indices" instance="{{ indexName }}">
+<div ng-controller="esIndex">
+  <monitoring-main
+    product="elasticsearch"
+    name="indices"
+    instance="{{ indexName }}"
+    resolver="{{ indexName }}"
+    page="overview"
+  >
     <div class="details monitoring-view">
       <monitoring-index-summary summary="pageData.indexSummary"></monitoring-index-summary>
       <div class="detail-metrics monitoring-element">

@@ -22,7 +22,7 @@
           <a ng-if="!instance" kbn-href="#/elasticsearch/nodes" class="localTab" ng-class="{'localTab-isSelected': isActive('nodes')}">Nodes</a>
           <a
             ng-if="instance"
-            kbn-href="#/elasticsearch/nodes/{{resolver}}"
+            kbn-href="#/elasticsearch/{{name}}/{{resolver}}"
             class="localTab"
             ng-class="{'localTab-isSelected': page === 'overview'}"
           >
@@ -31,7 +31,7 @@
           </a>
           <a
             ng-if="instance"
-            kbn-href="#/elasticsearch/nodes/{{resolver}}/advanced"
+            kbn-href="#/elasticsearch/{{name}}/{{resolver}}/advanced"
             class="localTab"
             ng-class="{'localTab-isSelected': page === 'advanced'}"
           >

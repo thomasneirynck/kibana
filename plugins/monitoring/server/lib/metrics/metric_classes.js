@@ -192,8 +192,8 @@ export class IndexMemoryMetric extends ElasticsearchMetric {
 
   constructor(opts) {
     super({
-      ...opts,
       title: 'Index Memory',
+      ...opts,
       format: SMALL_BYTES,
       metricAgg: 'max',
       units: 'B'

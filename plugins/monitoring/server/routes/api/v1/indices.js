@@ -90,7 +90,8 @@ export default function indicesRoutes(server) {
             min: Joi.date().required(),
             max: Joi.date().required()
           }).required(),
-          metrics: Joi.array().required()
+          metrics: Joi.array().required(),
+          shards: Joi.boolean().default(true)
         })
       }
     },
@@ -98,16 +99,21 @@ export default function indicesRoutes(server) {
       const id = req.params.id;
       const start = req.payload.timeRange.min;
       const end = req.payload.timeRange.max;
+      const collectShards = req.payload.shards;
       calculateIndices(req, start, end, esIndexPattern)
       .then(indices => {
         return getLastState(req, indices)
         .then(lastState => {
           const showSystemIndices = true; // hardcode to true, because this could be a system index
+          let shards;
+          if (collectShards) {
+            shards = getShardAllocation(req, indices, [{ term: { 'shard.index': id } }], lastState, showSystemIndices);
+          }
           return Promise.props({
             clusterStatus: getClusterStatus(req, indices, lastState),
             indexSummary:  getIndexSummary(req, indices),
             metrics: getMetrics(req, indices, [{ term: { 'index_stats.index': id } }]),
-            shards: getShardAllocation(req, indices, [{ term: { 'shard.index': id } }], lastState, showSystemIndices),
+            shards,
             shardStats: getShardStats(req, indices, lastState),
             lastState: lastState
           });

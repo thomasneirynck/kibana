@@ -39,16 +39,16 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
       {
         name: 'node_index_1',
         keys: [
-          'node_index_mem_overall',
+          'node_index_mem_overall_1',
           'node_index_mem_stored_fields',
           'node_index_mem_doc_values',
-          'node_index_mem_versions'
+          'node_index_mem_norms'
         ]
       },
       {
         name: 'node_index_2',
         keys: [
-          'node_index_mem_overall',
+          'node_index_mem_overall_2',
           'node_index_mem_terms',
           'node_index_mem_points'
         ]
@@ -56,16 +56,16 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
       {
         name: 'node_index_3',
         keys: [
-          'node_index_mem_overall',
-          'node_index_mem_norms',
+          'node_index_mem_overall_3',
           'node_index_mem_fixed_bit_set',
-          'node_index_mem_term_vectors'
+          'node_index_mem_term_vectors',
+          'node_index_mem_versions'
         ]
       },
       {
         name: 'node_index_4',
         keys: [
-          'node_index_mem_query_cache',
+          'node_index_mem_query_cache_4',
           'node_index_mem_request_cache',
           'node_index_mem_fielddata',
           'node_index_mem_writer'

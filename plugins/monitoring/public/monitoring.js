@@ -19,6 +19,7 @@ import 'plugins/monitoring/views/clusters/overview_controller';
 import 'plugins/monitoring/views/elasticsearch/overview/overview_controller';
 import 'plugins/monitoring/views/elasticsearch/indices/indices_controller';
 import 'plugins/monitoring/views/elasticsearch/index/index_controller';
+import 'plugins/monitoring/views/elasticsearch/index/index_advanced_controller';
 import 'plugins/monitoring/views/elasticsearch/nodes/nodes_controller';
 import 'plugins/monitoring/views/elasticsearch/node/node_controller';
 import 'plugins/monitoring/views/elasticsearch/node/node_advanced_controller';

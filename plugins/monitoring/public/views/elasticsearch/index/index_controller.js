@@ -43,7 +43,13 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
         config: 'xpack.monitoring.chart.elasticsearch.index.index_memory'
       },
       'index_document_count',
-      'index_segment_count'
+      {
+        name: 'index_segment_count',
+        keys: [
+          'index_segment_count_primaries',
+          'index_segment_count_total'
+        ]
+      }
     ]
   })
   .then(response => response.data)
@@ -54,7 +60,9 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
 }
 
 const uiModule = uiModules.get('monitoring', []);
-uiModule.controller('indexView', (timefilter, $route, title, Private, globalState, $executor, $http, monitoringClusters, $scope) => {
+uiModule.controller('esIndex', (
+  timefilter, $route, title, Private, globalState, $executor, $http, monitoringClusters, $scope
+) => {
   timefilter.enabled = true;
 
   function setClusters(clusters) {
@@ -65,7 +73,7 @@ uiModule.controller('indexView', (timefilter, $route, title, Private, globalStat
 
   $scope.pageData = $route.current.locals.pageData;
   $scope.indexName = $route.current.params.index;
-  title($scope.cluster, `Elasticsearch - Indices - ${$scope.indexName}`);
+  title($scope.cluster, `Elasticsearch - Indices - ${$scope.indexName} - Overview`);
 
   $executor.register({
     execute: () => getPageData(timefilter, globalState, $route, $http, Private),
