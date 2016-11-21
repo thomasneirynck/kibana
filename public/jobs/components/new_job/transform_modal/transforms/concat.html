@@ -1,0 +1,52 @@
+<div>
+  <div class="form-group help-pane">
+    <small>
+      The concat command simply concatenates all the input fields together. This may be useful if you wish to create a unique key for use as a by field from by related fields together.
+      <div><prl-engine-api-help-link prl-uri="{{helpLink.uri}}" prl-label="{{helpLink.label}}"></prl-engine-api-help-link></div>
+    </small>
+  </div>
+
+  <div class="form-group" ng-repeat="input in transform.inputs track by $index">
+    <label>Input {{$index + 1}}</label><i prl-info-icon="new_job_transform_inputs" />
+    <input
+      ng-model="transform.inputs[$index]"
+      tabindex="1"
+      list='properties_datalist'
+      ng-class="{'extra_field':$index > (ui.getTransform(transform.transform).minInputs - 1)}"
+      class="form-control" />
+      <button
+        ng-show="$index > (ui.getTransform(transform.transform).minInputs - 1)"
+        ng-click="removeInput($index)"
+        tooltip-append-to-body="true"
+        type="button"
+        class="btn btn-xs btn-danger remove-button">
+          <i aria-hidden="true" class="fa fa-times"></i>
+      </button>
+  </div>
+  <div class="form-group" >
+    <button aria-label="Add input" ng-click="transform.inputs.push('')" type="button" class="btn btn-primary btn-xs">
+      <span class="sr-only">Add input</span>
+      <i aria-hidden="true" class="fa fa-plus"></i> Add input
+    </button>
+  </div>
+
+  <div class="form-group">
+    <label>Delimiter (optional)</label><i prl-info-icon="new_job_transform_arguments" />
+    <input
+      ng-model="transform.arguments[0]"
+      type="text"
+      tabindex="2"
+      class="form-control" />
+  </div>
+
+  <div class="form-group">
+    <label>Output</label><i prl-info-icon="new_job_transform_outputs" />
+    <input
+      ng-model="transform.outputs[0]"
+      type="text"
+      tabindex="2"
+      placeholder="{{DEFAULT_OUTPUTS.concat[0]}}"
+      class="form-control" />
+  </div>
+
+</div>

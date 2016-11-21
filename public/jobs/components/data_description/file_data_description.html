@@ -1,0 +1,107 @@
+<div class="file-data-description-container">
+
+  <prl-data-upload
+    prl-read-success-callback="readSuccessCallback"
+    prl-properties="properties"
+    prl-upload-data="uploadData"
+    prl-data-ready="dataReady"
+    prl-maximum-file-size="maximumFileSize"
+    >
+  </prl-data-upload>
+
+  <div class="form-group help-pane" ng-show="(uploadData.dataPreview === '')">
+    <small class="form-group " >
+      <div >Select a file containing a data set.</div>
+      <div >Maximum file size is {{maximumFileSize}}MB.</div>
+      <br />
+
+      <div class="title">Compatible data formats:</div>
+      <div >Delimited</div>
+      <div >JSON</div>
+      <div >Single line</div>
+      <div ><a href="http://www.prelert.com/docs/engine_api/2.0/engine_api_reference/data/data.html#data-format" target="_blank">Data format help <i class="fa fa-external-link"></i></a></div>
+
+    </small>
+  </div>
+
+  <div ng-show="(uploadData.dataPreview !== '')">
+
+    <div class="form-group">
+      <label>Data Format</label>
+      <select
+        ng-model="dataDescription.format"
+        ng-disabled="ui.isScheduled"
+        ng-options="item.value as item.title for item in ui.inputDataFormat"
+        ng-change="dataFormatChange()"
+        class="form-control">
+      </select>
+    </div>
+
+    <prl-job-delimited-options ng-show="(dataDescription.format==='DELIMITED' || dataDescription.format==='JSON')">
+      <div class="form-group" ng-show="dataDescription.format==='DELIMITED'">
+        <label>Delimiter</label>
+        <select
+          ng-model="delimiter"
+          ng-change="guessFields()"
+          class="form-control">
+          <option disabled >Suggested delimiter{{(delimters.length>1?"s":"")}}</option>
+          <option ng-repeat="del in delimiters" value="{{del}}">{{ui.friendlyFieldDelimiter(del)}}</option>
+          <option disabled >Standard delimiters</option>
+          <option ng-repeat="del in ui.delimiters" value="{{del}}">{{ui.friendlyFieldDelimiter(del)}}</option>
+          <option value="custom">Custom</option>
+        </select>
+        <input
+          ng-model="ui.customFieldDelimiter"
+          ng-show="ui.selectedFieldDelimiter==='custom'"
+          ng-required="dataDescription.format==='DELIMITED' && ui.selectedFieldDelimiter==='custom'"
+          class="form-control" />
+      </div>
+
+      <div class="form-group" ng-show="dataDescription.format==='DELIMITED'">
+        <label>Quote character</label>
+          <input
+            ng-model="dataDescription.quoteCharacter"
+            ng-required="dataDescription.format==='DELIMITED'"
+            ng-change="guessFields()"
+            placeholder=""
+            class="form-control" />
+      </div>
+
+      <div ng-show="(uploadData.dataPreview !== '' && typesGuessed)" >
+
+        <div class="form-group">
+          <label>Fields</label>
+          <div class="properties-list">
+            <div class="checkbox" ng-repeat="(key, value) in ui.properties" >
+              <label><input type="checkbox" ng-checked="properties[key] !== undefined" ng-click="toggleTypes(key, value)" >{{key}}</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Time-field name</label>
+          <select
+            ng-model="dataDescription.timeField"
+            ng-change="guessTimeFormat()"
+            class="form-control">
+            <option ng-repeat="(key, value) in properties">{{key}}</option>
+          </select>
+        </div>
+
+        <div class="form-group" ng-show="dataDescription.timeField !==''">
+          <label>Time format</label>
+          <input
+            ng-model="dataDescription.timeFormat"
+            required
+            placeholder=""
+            ng-change="getExampleTime()"
+            class="form-control" />
+          <div class="time-example">{{ ((exampleTime)?"e.g. "+ exampleTime:"") }}</div>
+        </div>
+      </div>
+
+    </prl-job-delimited-options>
+
+  </div>
+
+</div>

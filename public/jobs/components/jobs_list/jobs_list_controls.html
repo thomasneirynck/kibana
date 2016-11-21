@@ -1,0 +1,71 @@
+<div class="actions">
+
+  <!-- start -->
+  <button
+    ng-show="job.schedulerConfig && job.schedulerStatus!=='STOPPING' && job.schedulerStatus!=='STARTING'"
+    ng-click="((job.schedulerStatus && job.schedulerStatus==='STARTED')?stopScheduler(job):startScheduler(job))"
+    class="btn btn-xs btn-default"
+    data-toggle="tooltip"
+    tooltip="{{((job.schedulerStatus && job.schedulerStatus==='STARTED')?'Stop':'Start')}} scheduler for {{job.id}}">
+      <i ng-show="job.schedulerStatus && job.schedulerStatus==='STARTED'" aria-hidden="true" class="fa fa-stop"></i>
+      <i ng-show="job.schedulerStatus && job.schedulerStatus==='STOPPED'" aria-hidden="true" class="fa fa-play"></i>
+      <i ng-show="job.schedulerConfig && job.schedulerStatus===undefined" aria-hidden="true" class="fa fa-play"></i>
+  </button>
+
+  <!-- stop -->
+  <button
+    disabled
+    ng-show="(!job.schedulerConfig) || (job.schedulerStatus==='STOPPING' || job.schedulerStatus==='STARTING')"
+    class="btn btn-xs btn-default"
+    data-toggle="tooltip"
+    aria-label="Preview Job"
+    tooltip="No scheduler settings for {{job.id}}">
+      <i aria-hidden="true" class="fa fa-clock-o"></i>
+  </button>
+
+  <!-- results -->
+  <button
+    ng-click="viewResults(job, 'summaryview')"
+    class="btn btn-xs btn-default"
+    data-toggle="tooltip"
+    tooltip="Open results for {{job.id}}">
+      <i aria-hidden="true" class="fa fa-bar-chart"></i>
+  </button>
+
+  <!-- anomaly explorer -->
+  <button
+    ng-click="viewResults(job, 'anomalyexplorer')"
+    class="btn btn-xs btn-default"
+    data-toggle="tooltip"
+    tooltip="Open explorer for {{job.id}}">
+      <i aria-hidden="true" class="fa fa-table"></i>
+  </button>
+
+  <!-- edit job -->
+  <button
+    ng-click="editJob(job)"
+    class="btn btn-xs btn-default"
+    data-toggle="tooltip"
+    tooltip="Edit job" >
+      <i aria-hidden="true" class="fa fa-pencil-square-o"></i>
+  </button>
+
+  <!-- clone job -->
+  <button
+    ng-click="cloneJob(job)"
+    class="btn btn-xs btn-default"
+    data-toggle="tooltip"
+    tooltip="Clone job" >
+      <i aria-hidden="true" class="fa fa-clone"></i>
+  </button>
+
+  <!-- delete job -->
+  <button
+    confirm-click="deleteJob({{job}})"
+    confirmation="Are you sure want to delete job '{{job.id}}'?"
+    class="btn btn-xs btn-danger"
+    data-toggle="tooltip"
+    tooltip="Delete job">
+      <i aria-hidden="true" class="fa fa-trash"></i>
+  </button>
+</div>

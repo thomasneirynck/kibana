@@ -1,0 +1,93 @@
+<div ng-controller='JobPreviewController'>
+  <!-- <h4>{{job.id}}</h4> -->
+  <div>
+    <prl-job-item ng-repeat="(key, value) in job">
+      <div ng-switch="key">
+        <span ng-switch-when="counts">
+          <!-- do nothing yet -->
+        </span>
+        <span ng-switch-when="modelSizeStats">
+          <!-- do nothing yet -->
+        </span>
+        <div ng-switch-when="analysisConfig">
+          <prl-job-item ng-repeat="(key1, value1) in value">
+            <div ng-switch="key1">
+              <span ng-switch-when="detectors">
+                <!-- do nothing yet -->
+              </span>
+              <span ng-switch-when="influencers">
+                <!-- do nothing yet -->
+              </span>
+              <div ng-switch-default>
+                <div class="prl_job_row">
+                  <div class="prl_job_item_key">{{key1}}</div>
+                  <div class="prl_job_item_value">{{value1}}</div>
+                </div>
+              </div>
+            </div>
+          </prl-job-item>
+          <prl-job-item ng-repeat="(key1, value1) in value">
+            <div ng-switch="key1">
+              <div ng-switch-when="detectors">
+                <div>Detectors:</div>
+                <div class="prl_job_detector_list">
+                  <prl-job-item ng-repeat="(key2, value2) in value1">
+                    <div class="prl_job_row">
+                      <prl-job-item ng-repeat="(key3, value3) in value2">
+                        <div class="prl_job_item_key">{{key3}}</div>
+                        <div class="prl_job_item_value">{{value3}}</div>
+                      </prl-job-item>
+                    </div>
+                  </prl-job-item>
+                </div>
+              </div>
+              <div ng-switch-when="influencers">
+                <div class="prl_job_row">
+                  <div class="prl_job_item_key">Influencers:</div>
+                  <div class="prl_job_item_value">
+                    <prl-job-item ng-repeat="value2 in value1">
+                      <!-- <div>{{value2}}</div> -->
+                      {{value2}},
+                    </prl-job-item>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </prl-job-item>
+        </div>
+        <div ng-switch-when="dataDescription">
+          <prl-job-item ng-repeat="(key1, value1) in value">
+            <div class="prl_job_row">
+              <div class="prl_job_item_key">{{key1}}</div>
+              <div class="prl_job_item_value">{{value1}}</div>
+            </div>
+          </prl-job-item>
+        </div>
+        <div ng-switch-when="counts">
+          <div>Counts:</div>
+          <prl-job-item ng-repeat="(key1, value1) in value">
+            <div class="prl_job_row">
+              <div class="prl_job_item_key">{{key1}}</div>
+              <div class="prl_job_item_value">{{value1}}</div>
+            </div>
+          </prl-job-item>
+        </div>
+        <div ng-switch-when="modelSizeStats">
+          <div>Model size stats:</div>
+          <prl-job-item ng-repeat="(key1, value1) in value">
+            <div class="prl_job_row">
+              <div class="prl_job_item_key">{{key1}}</div>
+              <div class="prl_job_item_value">{{value1}}</div>
+            </div>
+          </prl-job-item>
+        </div>
+        <div ng-switch-default>
+          <div class="prl_job_row">
+            <div class="prl_job_item_key">{{key}}</div>
+            <div class="prl_job_item_value">{{value}}</div>
+          </div>
+        </div>
+      </div>
+    </prl-job-item>
+  </div>
+</div>

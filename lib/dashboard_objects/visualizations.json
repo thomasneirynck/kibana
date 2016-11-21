@@ -1,0 +1,129 @@
+[
+  {
+    "_id": "Average-event-rate-per-minute",
+    "_type": "visualization",
+    "_source": {
+      "title": "Average event rate per minute",
+      "visState": "{\"type\":\"histogram\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"scale\":\"linear\",\"mode\":\"stacked\",\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"metric\",\"params\":{\"field\":\"eventCount\"}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"m\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"group\",\"params\":{\"field\":\"jobId\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"prelertresults-*\",\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"_type:bucket\"}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Anomaly-summary",
+    "_type": "visualization",
+    "_source": {
+      "title": "Anomaly summary",
+      "visState": "{\"type\":\"prlSummarySwimlanes\",\"params\":{\"interval\":{\"display\":\"Auto\",\"val\":\"auto\",\"description\":\"day\"}},\"aggs\":[{\"id\":\"1\",\"type\":\"max\",\"schema\":\"metric\",\"params\":{\"field\":\"anomalyScore\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"viewBy\",\"params\":{\"field\":\"jobId\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"secondaryViewBy\",\"params\":{\"field\":\"influencerFieldName\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"4\",\"type\":\"date_histogram\",\"schema\":\"timeSplit\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"prelertresults-*\",\"query\":{\"query_string\":{\"query\":\"_type:bucketInfluencer\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Top-influencers",
+    "_type": "visualization",
+    "_source": {
+      "title": "Top influencers",
+      "visState": "{\"type\":\"prlTopScoresTable\",\"params\":{},\"aggs\":[{\"id\":\"1\",\"type\":\"max\",\"schema\":\"value\",\"params\":{\"field\":\"anomalyScore\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"viewBy\",\"params\":{\"field\":\"influencerFieldValue\",\"size\":15,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"prelertresults-*\",\"query\":{\"query_string\":{\"query\":\"_type:influencer\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Anomaly-timeline",
+    "_type": "visualization",
+    "_source": {
+      "title": "Anomaly timeline",
+      "visState": "{\"type\":\"prlSwimlane\",\"params\":{\"interval\":{\"display\":\"Auto\",\"val\":\"auto\",\"description\":\"hour\"},\"mode\":\"records\",\"viewBy\":{\"field\":\"detectorIndex\",\"label\":\"detector\"},\"showViewByControl\":true},\"aggs\":[{\"id\":\"1\",\"type\":\"max\",\"schema\":\"metric\",\"params\":{\"field\":\"normalizedProbability\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"viewBy\",\"params\":{\"field\":\"detectorIndex\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"4\",\"type\":\"terms\",\"schema\":\"secondaryViewBy\",\"params\":{\"field\":\"jobId\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"3\",\"type\":\"date_histogram\",\"schema\":\"timeSplit\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"prelertresults-*\",\"query\":{\"query_string\":{\"query\":\"_type:record\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Influencers",
+    "_type": "visualization",
+    "_source": {
+      "title": "Influencers",
+      "visState": "{\"type\":\"prlInfluencersList\",\"params\":{},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"totalScore\",\"params\":{\"field\":\"anomalyScore\"}},{\"id\":\"2\",\"type\":\"max\",\"schema\":\"maxScore\",\"params\":{\"field\":\"anomalyScore\"}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"viewBy1\",\"params\":{\"field\":\"influencerFieldName\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"2\"}},{\"id\":\"4\",\"type\":\"terms\",\"schema\":\"viewBy2\",\"params\":{\"field\":\"influencerFieldValue\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"2\"}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"prelertresults-*\",\"query\":{\"query_string\":{\"query\":\"_type:influencer\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Anomalies",
+    "_type": "visualization",
+    "_source": {
+      "title": "Anomalies",
+      "visState": "{\"type\":\"prlAnomalySummaryTable\",\"params\":{},\"aggs\":[],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "savedSearchId": "Anomaly-records",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Useful-links",
+    "_type": "visualization",
+    "_source": {
+      "title": "Useful links",
+      "visState": "{\"type\":\"markdown\",\"params\":{\"markdown\":\"#### Resources\\n\\n[Online Help](http://www.prelert.com/docs/engine_api/2.0/index.html)\\n\\n#### Contact Us\\nEmail: [support@prelert.com](mailto:support@prelert.com)\"},\"aggs\":[],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"prelertresults-*\",\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "Influencer-connections",
+    "_type": "visualization",
+    "_source": {
+      "title": "Influencer connections",
+      "visState": "{\"type\": \"prlConnectionsMap\",\"params\": {\"viewBy\": {\"field\": \"prelert-detector\",\"label\": \"detector\"},\"jobs\": [],\"threshold\": {\"display\": \"minor\",\"val\": 25}},\"aggs\": [],\"listeners\": {}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\": \"prelertresults-*\",\"query\": {\"query_string\": {\"query\": \"*\",\"analyze_wildcard\": true}},\"filter\": []}"
+      }
+    }
+  },
+  {
+    "_id": "Audited-running-jobs-and-detectors",
+    "_type": "visualization",
+    "_source": {
+      "title": "Audited running jobs and detectors",
+      "visState": "{\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"showCircles\":true,\"smoothLines\":false,\"interpolate\":\"linear\",\"scale\":\"linear\",\"drawLinesBetweenPoints\":true,\"radiusRatio\":9,\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"max\",\"schema\":\"metric\",\"params\":{\"field\":\"runningJobs\"}},{\"id\":\"2\",\"type\":\"max\",\"schema\":\"metric\",\"params\":{\"field\":\"runningDetectors\"}},{\"id\":\"3\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"M\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+      "uiStateJSON": "{}",
+      "description": "",
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"prelert-int\",\"query\":{\"query_string\":{\"query\":\"_type:auditActivity\",\"analyze_wildcard\":true}},\"filter\":[]}"
+      }
+    }
+  }
+]

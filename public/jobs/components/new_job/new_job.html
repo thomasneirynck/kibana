@@ -1,0 +1,531 @@
+<kbn-top-nav name="dashboard" config="topNavMenu">
+  <div class="kibana-nav-info">
+    <span class="kibana-nav-info-title">
+      <span >Create a new job</span>
+    </span>
+  </div>
+</kbn-top-nav>
+<prl-new-job>
+  <prl-message-bar></prl-message-bar>
+  <div ng-controller="PrlNewJob" class="container">
+    <!-- first view of wizard -->
+    <div ng-show="ui.wizard.step === 0" class="wizard-step-0">
+      <div>
+        <label>Choose a data source</label>
+
+        <div ng-mouseenter="ui.wizard.stepHovering=1" ng-mouseleave="ui.wizard.stepHovering=0" ng-click="ui.wizard.setDataLocation('ES')" >
+          <label class="data-location">
+            <div class="prl-round-number" ng-class="{'prl-round-number-pop':ui.wizard.stepHovering===1}">
+              <i aria-hidden="true" class="fa fa-database"></i>
+            </div>
+            <div>
+              <div>Elasticsearch server</div>
+              <div>Specify the address of an Elasticsearch server.</div>
+            </div>
+          </label>
+        </div>
+
+        <div ng-mouseenter="ui.wizard.stepHovering=2" ng-mouseleave="ui.wizard.stepHovering=0" ng-click="ui.wizard.setDataLocation('FILE')">
+          <label class="data-location">
+            <div class="prl-round-number" ng-class="{'prl-round-number-pop':ui.wizard.stepHovering===2}">
+              <i aria-hidden="true" class="fa fa-file-text-o"></i>
+            </div>
+            <div>
+              <div>File upload</div>
+              <div>Upload a file containing a data set. Maximum size is {{maximumFileSize}}MB.</div>
+            </div>
+          </label>
+        </div>
+
+        <div ng-mouseenter="ui.wizard.stepHovering=3" ng-mouseleave="ui.wizard.stepHovering=0" ng-click="ui.wizard.setDataLocation('NONE')">
+          <label class="data-location">
+            <div class="prl-round-number" ng-class="{'prl-round-number-pop':ui.wizard.stepHovering===3}">
+              <i aria-hidden="true" class="fa fa-upload"></i>
+            </div>
+            <div>
+              <div>Other data source</div>
+              <div>Create a job without reference to source data. Specify fields manually and upload data later using the API.</div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- second view of wizard -->
+    <div ng-show="ui.wizard.step === 1" class="wizard-step-1">
+      <!-- Elasticsearch server configuration -->
+      <div ng-show="ui.wizard.dataLocation === 'ES'">
+
+        <prl-elastic-data-description
+          prl-ui="ui"
+          prl-properties="properties"
+          prl-date-properties="dateProperties"
+          prl-indices="indices"
+          prl-types="types"
+          prl-data-description="job.dataDescription"
+          prl-exposed-functions="prlElasticDataDescriptionExposedFunctions"
+          prl-elastic-server-info="elasticServerInfo"
+
+        ></prl-elastic-data-description >
+
+      </div>
+
+      <!-- file upload configuration -->
+      <div ng-show="ui.wizard.dataLocation === 'FILE'">
+        <prl-file-data-description
+          prl-file-uploaded="ui.wizard.fileUploaded"
+          prl-data-ready="ui.wizard.dataReady"
+          prl-uploaded-data="ui.wizard.uploadedData"
+          prl-uploaded-data-preview="ui.wizard.dataPreview"
+          prl-uploaded-data-file-name="ui.wizard.fileName"
+          prl-properties="properties"
+          prl-selected-field-delimiter="ui.selectedFieldDelimiter"
+          prl-data-description="job.dataDescription"
+          prl-influencers="ui.influencers"
+          prl--maximum-file-size="maximumFileSize"
+
+        ></prl-file-data-description >
+      </div>
+
+      <button
+        ng-click="ui.wizard.back();"
+        class="btn btn-info"
+        aria-label="Back">
+        Back
+      </button>
+      <button
+        ng-click="ui.wizard.forward();"
+        class="btn btn-info"
+        ng-disabled="(ui.esServerOk !== 1 || !indexSelected() || !timeFieldSelected() ) && ui.wizard.dataReady === false"
+        aria-label="Next">
+        Next
+      </button>
+    </div>
+
+    <!-- third view of wizard -->
+    <div ng-show="ui.wizard.step === 2"  class="wizard-step-2">
+        <ul class="nav nav-tabs">
+          <li
+            class="kbn-settings-tab"
+            ng-class="{ active: ui.currentTab === tab.index }"
+            ng-repeat="tab in ui.tabs"
+            ng-hide="ui.tabs[{{tab.index}}].hidden">
+
+            <a ng-click="ui.changeTab(tab)">
+              {{ tab.title }}
+              <i ng-hide='ui.validation.tabs[tab.index].valid' class='validataion-error fa fa-exclamation-circle'></i>
+            </a>
+          </li>
+        </ul>
+
+        <!-- tab 0 Job Details -->
+        <prl-job-tab-0 class="tab" ng-show="ui.currentTab === 0">
+          <div class="tab_contents">
+            <!-- ID -->
+            <div class="form-group">
+              <label>Name</label><i prl-info-icon="new_job_id" />
+              <input
+                ng-model="job.id"
+                required
+                placeholder="Job ID"
+                ng-change="changeJobIDCase()"
+                input-focus
+                class="form-control lowercase" />
+              <div ng-hide="ui.validation.tabs[0].checks.jobId.valid" class="validation-error">{{ ( ui.validation.tabs[0].checks.jobId.message || "Enter a name for the job" ) }}</div>
+            </div>
+            <!-- description -->
+            <div class="form-group">
+              <label>Description</label><i prl-info-icon="new_job_description" />
+              <input ng-model="job.description" placeholder="Job description" class="form-control" />
+            </div>
+
+            <div class="form-group">
+              <label>Custom URLs</label> <i prl-info-icon="new_job_custom_urls" />
+              <div ng-if="job.customSettings && job.customSettings.customUrls">
+                <div ng-repeat="item in job.customSettings.customUrls track by $index" class="custom-url">
+                  <div class="field-cols">
+
+                    <div class="form-group">
+                      <label>Label</label>
+                      <input
+                        ng-model="item.urlName"
+                        type="text"
+                        class="form-control" />
+                    </div>
+                  </div>
+
+                  <div class="field-cols">
+                    <div class="form-group">
+                      <label>URL</label>
+                      <textarea
+                        ng-model="item.urlValue"
+                        type="text"
+                        class="form-control" />
+                    </div>
+                  </div>
+
+                  <button
+                    ng-click="removeCustomUrl($index)"
+                    tooltip-append-to-body="true"
+                    type="button"
+                    class="btn btn-xs btn-danger remove-button">
+                      <i aria-hidden="true" class="fa fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <div>
+                <button aria-label="Add Custom URL" ng-click="addCustomUrl()" type="button" class="btn btn-primary btn-xs">
+                  <span class="sr-only">Add Custom URL</span>
+                  <i aria-hidden="true" class="fa fa-plus"></i> Add Custom URL
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        </prl-job-tab-0>
+
+        <!-- tab 1 Transforms -->
+        <prl-job-tab-1 ng-show="ui.currentTab === 1">
+          <div class="tab_contents">
+            <label>
+              <input
+                ng-model="ui.hasTransforms"
+                ng-change="hasTransformChange()"
+                type="checkbox" />
+              Enable transforms
+            </label><i prl-info-icon="new_job_enable_transforms" />
+            <div class="form-group" ng-if="ui.hasTransforms">
+              <div prl-job-transforms-list
+                prl-transforms="job.transforms"
+                prl-detectors="job.analysisConfig.detectors"
+                prl-indices="indices"
+                prl-properties="properties"
+                prl-influencers="ui.influencers"
+                prl-add-transforms-to-properties="addTransformsToProperties"
+                prl-data-format="job.dataDescription.format"
+                ></div>
+            </div>
+          </div>
+        </prl-job-tab-1>
+
+        <!-- tab2 2 Analysis Configuration -->
+        <prl-job-tab-2 ng-show="ui.currentTab === 2">
+          <div class="tab_contents">
+            <datalist id="properties_datalist">
+              <option ng-repeat="(key, prop) in properties" >{{key}}</option>
+            </datalist>
+            <datalist id="properties_datalist_no_transforms">
+              <option ng-repeat="(key, prop) in properties | filterTransforms">{{key}}</option>
+            </datalist>
+
+            <div class="form-group">
+              <label>bucketSpan</label><i prl-info-icon="new_job_bucketspan" />
+              <select
+                ng-model="job.analysisConfig.bucketSpan"
+                ng-options="bs.value as bs.title for bs in ui.bucketSpanValues"
+                ng-change="calculateSchedulerFrequencyDefault()"
+                class="form-control">
+              </select>
+            </div>
+            <div class="form-group">
+              <label>summaryCountFieldName</label><i prl-info-icon="new_job_summarycountfieldname" />
+              <input
+                type="text"
+                ng-model="job.analysisConfig.summaryCountFieldName"
+                placeholder=""
+                ng-change="generalAnalysisConfigFieldNameChange('summaryCountFieldName')"
+                list='properties_datalist_no_transforms'
+                class="form-control"  />
+            </div>
+            <div class="form-group">
+              <label>categorizationFieldName</label><i prl-info-icon="new_job_categorizationfieldname" />
+              <input
+                type="text"
+                ng-model="job.analysisConfig.categorizationFieldName"
+                placeholder=""
+                ng-change="generalAnalysisConfigFieldNameChange('categorizationFieldName')"
+                ng-change="categorizationFieldNameChange()"
+                list='properties_datalist'
+                class="form-control"  />
+            </div>
+
+            <div class="form-group"
+              ng-show="(job.analysisConfig.categorizationFieldName !== undefined && job.analysisConfig.categorizationFieldName !== '') ||
+                       (job.analysisConfig.categorizationFilters && job.analysisConfig.categorizationFilters.length)">
+
+              <label>Categorization Filters</label> <i prl-info-icon="new_job_categorizationfilters" />
+              <div ng-if="job.analysisConfig && job.analysisConfig.categorizationFilters">
+                <div ng-repeat="item in job.analysisConfig.categorizationFilters track by $index" class="categorization-filter">
+                  <div class="field-cols">
+
+                    <div class="form-group">
+                      <input
+                        ng-model="job.analysisConfig.categorizationFilters[$index]"
+                        type="text"
+                        class="form-control" />
+                    </div>
+                  </div>
+
+                  <button
+                    ng-click="removeCategorizationFilter($index)"
+                    tooltip-append-to-body="true"
+                    type="button"
+                    class="btn btn-xs btn-danger remove-button">
+                      <i aria-hidden="true" class="fa fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <div>
+                <button
+                  aria-label="Add Categorization Filter"
+                  ng-click="addCategorizationFilter()"
+                  type="button"
+                  ng-disabled="job.analysisConfig.categorizationFieldName === undefined || job.analysisConfig.categorizationFieldName === ''"
+                  class="btn btn-primary btn-xs">
+                  <span class="sr-only">Add Categorization Filter</span>
+                  <i aria-hidden="true" class="fa fa-plus"></i> Add Categorization Filter
+                </button>
+              </div>
+            </div>
+            <div ng-hide="ui.validation.tabs[2].checks.categorizationFilters.valid" class="validation-error">
+              {{ ( ui.validation.tabs[2].checks.categorizationFilters.message || "Categorization filters must all be valid regular expressions" ) }}
+            </div>
+
+            <hr />
+            <label>Detectors</label><i prl-info-icon="new_job_detectors" />
+            <div prl-job-detectors-list
+              prl-detectors="job.analysisConfig.detectors"
+              prl-indices="indices"
+              prl-properties="properties"
+              prl-cat-field-name-selected="(job.analysisConfig.categorizationFieldName?true:false)"
+              prl-edit-mode="'NEW'"
+              ></div>
+            <div ng-hide="ui.validation.tabs[2].checks.detectors.valid" class="validation-error">
+              {{ ( ui.validation.tabs[2].checks.detectors.message || "At least one detector should be configured" ) }}
+            </div>
+            <hr />
+            <label>Influencers</label><i prl-info-icon="new_job_influencers" />
+            <div class="influencer-list-container">
+
+              <div class="checkbox" ng-repeat="inf in ui.allInfluencers()" >
+                <label><input type="checkbox" ng-checked="influencerChecked(inf)" ng-click="toggleInfluencer(inf)" >{{inf}}</label>
+              </div>
+
+              <div class="custom-influencer">
+                <input
+                  type="text"
+                  ng-model="ui.tempCustomInfluencer"
+                  placeholder="Custom influencer"
+                  class="form-control"  />
+                <button aria-label="Add "
+                  ng-click="addCustomInfluencer()"
+                  ng-disabled="ui.tempCustomInfluencer===''"
+                  type="button"
+                  class="btn btn-primary btn-xs" >
+                  <span class="sr-only">Add Custom Influencer</span>
+                  <i aria-hidden="true" class="fa fa-plus"></i> Add
+                </button>
+              </div>
+            </div>
+            <div ng-hide="ui.validation.tabs[2].checks.influencers.valid" class="validation-error">
+              {{ ( ui.validation.tabs[2].checks.influencers.message || "At least one influencer should be selected" ) }}
+            </div>
+          </div>
+        </prl-job-tab-2>
+
+
+        <!-- tab 3 Data Description -->
+        <prl-job-tab-3 ng-show="ui.currentTab === 3">
+          <div class="tab_contents">
+            <label>Data format</label><i prl-info-icon="new_job_data_format" />
+            <select
+              ng-model="job.dataDescription.format"
+              ng-disabled="ui.isScheduled"
+              ng-options="item.value as item.title for item in ui.inputDataFormat"
+              class="form-control">
+            </select>
+
+            <prl-job-delimited-options ng-show="job.dataDescription.format==='DELIMITED'">
+              <label>Delimiter</label><i prl-info-icon="new_job_delimiter" />
+              <select
+                ng-model="ui.selectedFieldDelimiter"
+                ng-options="item.value as item.title for item in ui.fieldDelimiterOptions"
+                class="form-control" />
+              <input
+                ng-model="ui.customFieldDelimiter"
+                ng-show="ui.selectedFieldDelimiter==='custom'"
+                ng-required="job.dataDescription.format==='DELIMITED' && ui.selectedFieldDelimiter==='custom'"
+                class="form-control" />
+
+              <label>Quote character</label><i prl-info-icon="new_job_quote_character" />
+              <input
+                ng-model="job.dataDescription.quoteCharacter"
+                ng-required="job.dataDescription.format==='DELIMITED'"
+                placeholder=""
+                class="form-control" />
+            </prl-job-delimited-options>
+
+            <label>Time field</label><i prl-info-icon="new_job_time_field" />
+            <input
+              ng-model="job.dataDescription.timeField"
+              required
+              placeholder=""
+              class="form-control" />
+            <div ng-hide="ui.validation.tabs[3].checks.timeField.valid" class="validation-error">
+              {{ ( ui.validation.tabs[3].checks.timeField.message || "Time field should be specified" ) }}
+            </div>
+
+            <label>Time format</label><i prl-info-icon="new_job_time_format" />
+            <input
+              ng-model="job.dataDescription.timeFormat"
+              required
+              placeholder=""
+              ng-change="getExampleTime()"
+              class="form-control" />
+            <div ng-hide="ui.validation.tabs[3].checks.timeFormat.valid" class="validation-error">
+              {{ ( ui.validation.tabs[3].checks.timeFormat.message || "Time format should be specified" ) }}
+            </div>
+            <div class="time-example">{{ ((exampleTime)?"e.g. "+ exampleTime:"") }}</div>
+
+          </div>
+        </prl-job-tab-3>
+
+        <!-- tab 4 Scheduler -->
+        <prl-job-tab-4 ng-show="ui.currentTab === 4">
+          <div class="tab_contents">
+            <label>
+              <input
+                ng-model="ui.isScheduled"
+                ng-change="schedulerChange()"
+                ng-disabled="job.dataDescription.format!=='ELASTICSEARCH'"
+                type="checkbox" />
+              Scheduled job
+            </label><i prl-info-icon="new_job_enable_scheduled_job" />
+            <div ng-hide="ui.validation.tabs[4].checks.isScheduled.valid" class="validation-error">
+              {{ ( ui.validation.tabs[4].checks.isScheduled.message ) }}
+            </div>
+            <div class="form-group help-pane" ng-show="job.dataDescription.format!=='ELASTICSEARCH'"><small class="info">Data format must be set to 'Elasticsearch' to enable the scheduler.</small></div>
+            <div class="form-group" ng-if="ui.isScheduled">
+              <label>Data source</label><i prl-info-icon="new_job_data_source" />
+              <select
+                ng-model="ui.scheduler.dataSourceText"
+                placeholder=""
+                class="form-control">
+                  <option ng-repeat="index in ui.dataSources" value="{{index.value}}" >{{index.title}}</option>
+              </select>
+
+              <label>Query</label><i prl-info-icon="new_job_scheduler_query" />
+              <input
+                ng-model="ui.scheduler.queryText"
+                placeholder='{ "match_all": {}}'
+                class="form-control" />
+
+              <label>Query delay (seconds)</label><i prl-info-icon="new_job_scheduler_query_delay" />
+              <input
+                ng-model="ui.scheduler.queryDelayText"
+                placeholder="60"
+                type="number"
+                min="0"
+                class="form-control" />
+
+              <label>Frequency (seconds)</label><i prl-info-icon="new_job_scheduler_frequency" />
+              <input
+                ng-model="ui.scheduler.frequencyText"
+                placeholder="{{ui.scheduler.frequencyDefault}}"
+                type="number"
+                min="0"
+                class="form-control" />
+
+              <label>scrollSize</label><i prl-info-icon="new_job_scheduler_scrollsize" />
+              <input
+                ng-model="ui.scheduler.scrollSizeText"
+                placeholder="{{ui.scheduler.scrollSizeDefault}}"
+                type="number"
+                min="0"
+                class="form-control" />
+
+              <prl-elastic-data-description
+                prl-ui="ui"
+                prl-properties="properties"
+                prl-date-properties="dateProperties"
+                prl-indices="indices"
+                prl-types="types"
+                prl-data-description="job.dataDescription"
+                prl-simple-mode="(true)"
+                prl-mode= "mode"
+                prl-scheduler-config="job.schedulerConfig"
+                prl-data-loaded-callback="cloneJobDataDescriptionCallback"
+                prl-exposed-functions="prlElasticDataDescriptionExposedFunctions"
+                prl-elastic-server-info="elasticServerInfo"
+
+              ></prl-elastic-data-description >
+
+              <label>
+                <input
+                  ng-model="ui.scheduler.retrieveWholeSource"
+                  type="checkbox" />
+                Retrieve whole _source document
+              </label><i prl-info-icon="new_job_scheduler_retrieve_source" />
+
+              <div class="clearfix"></div>
+
+            </div>
+          </div>
+        </prl-job-tab-4>
+
+        <!-- tab 5 Edit JSON -->
+        <prl-job-tab-5 ng-show="ui.currentTab === 5" class="prl_json_tab">
+          <div class="tab_contents">
+            <label>JSON</label>
+            <textarea
+              ng-model="ui.jsonText"
+              class="form-control json-textarea"
+              ng-change="jsonTextChange()" >
+            </textarea>
+          </div>
+        </prl-job-tab-5>
+
+        <!-- tab 6 Data preview -->
+        <prl-job-tab-6 ng-show="ui.currentTab === 6">
+          <div class="tab_contents">
+            <label>Data preview</label>
+            <div class="upload-data-container">
+              <div ng-hide="(dataPreview === '')" >
+                <span ng-show="ui.wizard.dataLocation === 'FILE'" >First {{ui.wizard.CHAR_LIMIT}} characters of file {{ui.wizard.fileName}}:</span>
+                <div class="prl-pre" >{{ui.wizard.dataPreview}}</div>
+              </div>
+            </div>
+          </div>
+        </prl-job-tab-6>
+
+        <hr />
+
+         <div ng-show="ui.wizard.dataLocation === 'FILE' && ui.wizard.uploadedData !== '' " class="form-group">
+          <label>
+            <input
+              ng-model="ui.postSaveUpload"
+              type="checkbox" />
+            Upload data from {{ui.wizard.fileName}} after save
+          </label>
+        </div>
+
+
+        <button
+          ng-click="save()"
+          ng-disabled="(saveLock === true || ui.esServerOk === 2)"
+          class="btn btn-info"
+          aria-label="Save">
+          Save
+        </button>
+        <button
+          ng-click="cancel()"
+          ng-disabled="(saveLock === true)"
+          class="btn btn-info"
+          aria-label="Cancel">
+          Cancel
+        </button>
+
+    </div>
+  </div>
+</prl-new-job>

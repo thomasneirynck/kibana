@@ -1,0 +1,190 @@
+<div class="edit-job-modal">
+  <prl-message-bar ></prl-message-bar>
+  <h3>{{ui.title}}</h3>
+
+  <ul class="nav nav-tabs" >
+    <li
+      class="kbn-settings-tab"
+      ng-class="{ active: ui.currentTab === tab.index }"
+      ng-repeat="tab in ui.tabs"
+      ng-hide="ui.tabs[{{tab.index}}].hidden">
+
+      <a ng-click="ui.changeTab(tab)">
+        {{ tab.title }}
+      </a>
+    </li>
+  </ul>
+
+  <div class="tab_contents" ng-show="ui.currentTab === 0">
+    <div class="form-group">
+      <label>Job description</label>
+      <input
+        ng-model="job.description"
+        tabindex="1"
+        class="form-control" />
+    </div>
+
+    <hr />
+
+    <div class="form-group">
+      <label>Custom URLs</label>
+      <div ng-if="job.customSettings && job.customSettings.customUrls">
+        <div ng-repeat="item in job.customSettings.customUrls track by $index" class="custom-url">
+          <div class="field-cols">
+
+            <div class="form-group">
+              <label>Label</label>
+              <input
+                ng-model="item.urlName"
+                type="text"
+                class="form-control" />
+            </div>
+          </div>
+
+          <div class="field-cols">
+            <div class="form-group">
+              <label>URL</label>
+              <textarea
+                ng-model="item.urlValue"
+                type="text"
+                class="form-control" />
+            </div>
+          </div>
+
+          <button
+            ng-click="removeCustomUrl($index)"
+            tooltip-append-to-body="true"
+            type="button"
+            class="btn btn-xs btn-danger remove-button">
+              <i aria-hidden="true" class="fa fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <div>
+        <button aria-label="Add Custom URL" ng-click="addCustomUrl()" type="button" class="btn btn-primary btn-xs">
+          <span class="sr-only">Add Custom URL</span>
+          <i aria-hidden="true" class="fa fa-plus"></i> Add Custom URL
+        </button>
+      </div>
+    </div>
+
+
+    <div class="form-group"
+    ng-show="(job.analysisConfig.categorizationFieldName !== undefined && job.analysisConfig.categorizationFieldName !== '') ||
+             (job.analysisConfig.categorizationFilters && job.analysisConfig.categorizationFilters.length)">
+    <hr />
+
+    <label>Categorization Filters</label>
+    <div ng-if="job.analysisConfig && job.analysisConfig.categorizationFilters">
+      <div ng-repeat="item in job.analysisConfig.categorizationFilters track by $index" class="categorization-filter">
+        <div class="field-cols">
+          <div class="form-group">
+            <input
+              ng-model="job.analysisConfig.categorizationFilters[$index]"
+              type="text"
+              class="form-control" />
+          </div>
+        </div>
+
+        <button
+          ng-click="removeCategorizationFilter($index)"
+          tooltip-append-to-body="true"
+          type="button"
+          class="btn btn-xs btn-danger remove-button">
+            <i aria-hidden="true" class="fa fa-times"></i>
+        </button>
+      </div>
+    </div>
+    <div>
+      <button
+        aria-label="Add Categorization Filter"
+        ng-click="addCategorizationFilter()"
+        type="button"
+        ng-disabled="job.analysisConfig.categorizationFieldName === undefined || job.analysisConfig.categorizationFieldName === ''"
+        class="btn btn-primary btn-xs">
+        <span class="sr-only">Add Categorization Filter</span>
+        <i aria-hidden="true" class="fa fa-plus"></i> Add Categorization Filter
+      </button>
+    </div>
+  </div>
+
+  <div ng-hide="ui.validation.tabs[0].checks.categorizationFilters.valid" class="validation-error">
+    {{ ( ui.validation.tabs[2].checks.categorizationFilters.message || "Categorization filters must all be valid regular expressions" ) }}
+  </div>
+
+  </div>
+
+  <div class="tab_contents" ng-show="ui.currentTab === 1">
+
+    <div ng-show="ui.schedulerStopped" >
+      <div class="form-group" >
+        <label>Query</label>
+        <input
+          ng-model="ui.scheduler.queryText"
+          placeholder='{ "match_all": {}}'
+          class="form-control" />
+
+        <label>scrollSize</label>
+        <input
+          ng-model="ui.scheduler.scrollSizeText"
+          placeholder="{{ui.scheduler.scrollSizeDefault}}"
+          type="number"
+          min="0"
+          class="form-control" />
+      </div>
+
+      <div class="form-group" >
+        <label>
+        <input
+          ng-model="ui.scheduler.serverAuthenticated"
+          ng-change="toggleAuthenticated()"
+          type="checkbox" />
+          Authenticated
+        </label>
+        <div ng-show="ui.scheduler.serverAuthenticated">
+          <label>Username</label>
+          <input
+            ng-model="ui.scheduler.usernameText"
+            placeholder="optional username - leave blank if none"
+            class="form-control" />
+          <label>Password</label>
+          <input
+            ng-model="ui.scheduler.passwordText"
+            placeholder="{{ui.scheduler.passwordPlaceholder}}"
+            class="form-control"
+            type="password" />
+        </div>
+      </div>
+    </div>
+    <div ng-hide="ui.schedulerStopped" >
+      <div>Scheduler settings cannot be edited while the scheduler is running.</div>
+      <div ng-show="ui.stoppingScheduler===false"><a ng-click="stopScheduler()">Stop scheduler now</a></div>
+      <div ng-show="ui.stoppingScheduler===true">Stopping...</div>
+    </div>
+  </div>
+
+  <div class="tab_contents" ng-show="ui.currentTab === 2">
+    <div prl-job-detectors-list
+      prl-detectors="job.analysisConfig.detectors"
+      prl-indices="indices"
+      prl-properties="properties"
+      prl-edit-mode="'EDIT'"
+      ></div>
+  </div>
+
+  <hr />
+
+  <button
+    ng-click="save()"
+    ng-disabled="(saveLock === true)"
+    class="btn btn-info" >
+    Update
+  </button>
+  <button
+    ng-click="cancel()"
+    ng-disabled="(saveLock === true)"
+    class="btn btn-info"
+    aria-label="Cancel">
+    Cancel
+  </button>
+</div>

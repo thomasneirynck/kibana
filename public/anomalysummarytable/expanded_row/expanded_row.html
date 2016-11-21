@@ -1,0 +1,93 @@
+<div class="prl-tablerow-expanded">
+  <span class="prl-tablerow-expanded-heading">Description:</span>
+  {{description}}
+  <span ng-if="multiVariateDescription" class="prl-tablerow-expanded-mv-description">{{multiVariateDescription}}</span>
+
+  <span ng-if="isShowingAggregatedData === true" class="prl-tablerow-expanded-heading">Details on highest severity anomaly:</span>
+  <span ng-if="isShowingAggregatedData === false" class="prl-tablerow-expanded-heading">Anomaly Details:</span>
+  <div ng-if="isInterim === true" class="prl-anomaly-summary-interim"><i class="fa fa-exclamation-triangle"></i> Interim result</div>
+  <table>
+    <tr ng-if="record.source.partitionFieldValue">
+      <td>{{record.source.partitionFieldName}}:</td>
+      <td>{{record.source.partitionFieldValue}}
+        <i ng-click="filter(record.source.partitionFieldName, record.source.partitionFieldValue, '+')"
+            tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        <i ng-click="filter(record.source.partitionFieldName, record.source.partitionFieldValue, '-')"
+            tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+      </td>
+    </tr>
+    <tr ng-if="record.source.byFieldValue">
+      <td>{{record.source.byFieldName}}:</td>
+      <td>{{record.source.byFieldValue}}
+        <i ng-click="filter(record.source.byFieldName, record.source.byFieldValue, '+')"
+            tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        <i ng-click="filter(record.source.byFieldName, record.source.byFieldValue, '-')"
+            tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+      </td>
+    </tr>
+    <tr ng-if="singleCauseByFieldValue">
+      <td>{{singleCauseByFieldName}}:</td>
+      <td>{{singleCauseByFieldValue}}
+        <i ng-click="filter(singleCauseByFieldName, singleCauseByFieldValue, '+')"
+            tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        <i ng-click="filter(singleCauseByFieldName, singleCauseByFieldValue, '-')"
+            tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+      </td>
+    </tr>
+    <tr ng-if="record.source.overFieldValue">
+      <td>{{record.source.overFieldName}}:</td>
+      <td>{{record.source.overFieldValue}}
+        <i ng-click="filter(record.source.overFieldName, record.source.overFieldValue, '+')"
+            tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        <i ng-click="filter(record.source.overFieldName, record.source.overFieldValue, '-')"
+            tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+      </td>
+    </tr>
+    <tr ng-if="anomalyEndTime"><td>time:</td><td>{{anomalyTime}} to {{anomalyEndTime}}</td></tr>
+    <tr ng-if="!anomalyEndTime"><td>time:</td><td>{{anomalyTime}}</td></tr>
+    <tr ng-if="examples" ng-repeat="example in examples track by $index">
+      <td ng-if="$index === 0">category examples:</td><td ng-if="$index > 0">&nbsp;</td>
+      <td>{{example}}</td>
+    </tr>
+    <tr><td>function:</td><td>{{record.source.function}}</td></tr>
+    <tr ng-if="record.source.fieldName"><td>fieldName:</td><td>{{record.source.fieldName}}</td></tr>
+    <tr ng-if="actual !== undefined"><td>actual:</td><td>{{actual | timeOfWeek:record.source.function}}</td></tr>
+    <tr ng-if="typical !== undefined"><td>typical:</td><td>{{typical | timeOfWeek:record.source.function}}</td></tr>
+    <tr>
+      <td>job ID:</td>
+      <td>{{record.jobId}}
+        <i ng-click="filter('jobId', record.jobId, '+')"
+            tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        <i ng-click="filter('jobId', record.jobId, '-')"
+            tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+      </td>
+
+    </tr>
+    </tr>
+    <tr><td>probability:</td><td>{{record.source.probability}}</td></tr>
+    <tr ng-if="causes" ng-repeat="cause in causes track by $index">
+      <td ng-if="$index === 0">{{cause.entityName}} values:</td><td ng-if="$index > 0">&nbsp;</td>
+      <td>{{cause.entityValue}} (actual {{cause.actual}}, typical {{cause.typical}}, probability {{cause.probability}})
+        <i ng-click="filter(cause.entityName, cause.entityValue, '+')"
+            tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        <i ng-click="filter(cause.entityName, cause.entityValue, '-')"
+            tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+      </td>
+    </tr>
+  </table>
+
+  <span ng-if="influencers" class="prl-tablerow-expanded-heading">Influenced by:</span>
+  <table ng-if="influencers">
+    <tr ng-repeat="influencer in influencers">
+      <td>{{influencer.name}}</td>
+      <td>{{influencer.value}}
+        <i ng-click="filter(influencer.name, influencer.value, '+')"
+            tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        <i ng-click="filter(influencer.name, influencer.value, '-')"
+            tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+      </td>
+
+    </tr>
+  </table>
+
+</div>

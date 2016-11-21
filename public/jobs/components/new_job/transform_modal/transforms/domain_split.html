@@ -1,0 +1,40 @@
+<div>
+  <div class="form-group help-pane">
+    <small>
+      The domain_split transform splits the domain name into its highest registered domain and the sub-domain (which is everything to the left of the highest registered domain).
+      <div><prl-engine-api-help-link prl-uri="{{helpLink.uri}}" prl-label="{{helpLink.label}}"></prl-engine-api-help-link></div>
+    </small>
+  </div>
+
+  <div class="form-group">
+    <label>Input</label><i prl-info-icon="new_job_transform_inputs" />
+    <input
+      ng-model="transform.inputs[0]"
+      required
+      tabindex="1"
+      list='properties_datalist'
+      class="form-control" />
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-6">
+      <label>Output 1</label><i prl-info-icon="new_job_transform_outputs" />
+      <input
+        ng-model="transform.outputs[0]"
+        type="text"
+        tabindex="2"
+        placeholder="{{DEFAULT_OUTPUTS.domain_split[0]}}"
+        class="form-control" />
+    </div>
+
+    <div class="form-group col-md-6">
+      <label>Output 2</label>
+      <input
+        ng-model="transform.outputs[1]"
+        type="text"
+        tabindex="3"
+        placeholder="{{DEFAULT_OUTPUTS.domain_split[1]}}"
+        class="form-control" />
+    </div>
+  </div>
+</div>

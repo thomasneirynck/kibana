@@ -1,0 +1,211 @@
+<div ng-show="service.records !== null && service.visible" class="anomaly-details-bubble">
+  <div class="arrow" ></div>
+  <div class="title">{{title}}
+    <span class="pull-right">
+      <i ng-class="{'pin-selected': (service.$lockedCell !== null)}"  ng-click="service.toggleLock()" class="fa fa-thumb-tack pin" data-tooltip="Anomaly details pinned" ></i>
+    </span>
+  </div>
+  <!-- <div >{{service.records[0].description}}</div> -->
+  <div class="heading">
+    <div class="card-container" ng-show="service.laneLabel !== ''">
+      <div class="small-card" style="background-color:{{service.cardColor}};">{{service.bucketScore}}</div>
+      {{service.laneLabel}}
+      <div class='date'>{{service.bucketTimeFormated}}</div>
+    </div>
+
+    <div class="button-container pull-right">
+      <button
+        ng-click="openExplorer()"
+        class="btn btn-xs btn-info"
+        data-toggle="tooltip"
+        title="Open explorer">
+          <i aria-hidden="true" class="fa fa-table"></i>
+      </button>
+
+      <button
+        ng-click="openConnections()"
+        class="btn btn-xs btn-info"
+        data-toggle="tooltip"
+        title="Open connections">
+          <i aria-hidden="true" class="fa fa-link"></i>
+      </button>
+    </div>
+
+
+  </div>
+  <div ng-show="!service.initialised" class="anomaly-bubble-help">
+    <div><i class="fa fa-info-circle" ></i>No anomalies selected</div>
+    Hover over an anomaly to see records and top scoring influencers.
+    <br />
+    <br />
+    Alternatively, drag over muiltple anomalies to see a zoomed in view of that area.
+  </div>
+  <div class="record-list" >
+    <div ng-repeat="(index, detector) in service.recordsPerDetector" class="dtr">
+      <div class="title">{{index}}</div>
+      <div ng-repeat="record in detector | limitTo: service.recordLimit" class="record">
+
+        <div>
+          <div ng-show="(record.score !== undefined)" class="small-card" style="background-color:{{record.cardColor}};" >{{record.score}}</div>
+          <span class="title">{{record.description}} <span class="detector-title">{{record.detectorText}}</span> {{record.descriptionExtra}}</span>
+        </div>
+        <table>
+
+          <!-- <tr && record.byFieldName">
+            <td colspan="2">{{record.function}}</td>
+            <td>{{record.function}}</td>
+          </tr> -->
+        <!--
+          <tr ng-if="record.partitionFieldValue" >
+            <td>{{record.partitionFieldName}}:</td>
+            <td>{{record.partitionFieldValue}}</td>
+          </tr>
+          -->
+        <!--
+          <tr ng-if="record.byFieldValue" >
+            <td>{{record.byFieldName}}:</td>
+            <td>{{record.byFieldValue}}</td>
+          </tr>
+          -->
+<!--           <tr ng-if="record.singleCauseByFieldValue" >
+            <td>{{record.singleCauseByFieldName}}:</td>
+            <td>{{record.singleCauseByFieldValue}}</td>
+          </tr>
+ -->
+
+<!--           <tr ng-if="record.overFieldValue" >
+            <td>{{record.overFieldName}}:</td>
+            <td>{{record.overFieldValue}}</td>
+          </tr>
+ -->
+          <!-- <tr >
+            <td>function:</td>
+            <td>{{record.function}}</td>
+          </tr> -->
+
+          <!-- <tr ng-if="record.fieldName" >
+            <td>fieldName:</td>
+            <td>{{record.fieldName}}</td>
+          </tr> -->
+
+          <tr ng-if="record.partitionFieldValue" >
+            <td>{{record.partitionFieldName}}:</td>
+            <td>{{record.partitionFieldValue}}</td>
+          </tr>
+
+          <tr ng-if="record.detector !== undefined && record.detector.fieldName" >
+            <td colspan="2">{{record.detector.function}}({{(record.detector.partitionFieldName && record.byFieldValue) ?  record.byFieldValue : record.detector.fieldName}})</td>
+            <!-- <td colspan="2">{{record.detector.function}}({{record.byFieldValue || record.detector.fieldName}})</td> -->
+          </tr>
+
+          <tr ng-if="record.actual !== undefined" >
+            <td>actual:</td>
+            <td>{{record.actual}}</td>
+          </tr>
+
+          <tr ng-if="record.typical" >
+            <td>typical:</td>
+            <td>{{record.typical}}</td>
+          </tr>
+
+<!--           <tr >
+            <td>probability:</td>
+            <td>{{record.probability}}</td>
+          </tr>
+ -->
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="top-influencers" ng-show="service.showTopInfluencers">
+
+    <div class="title" ng-click='expandInfluencers()'>
+      <i class="fa discover-table-open-icon" ng-class="{ 'fa-caret-down': service.influencersExpanded, 'fa-caret-right': !service.influencersExpanded }"></i>
+       Top Influencers
+    </div>
+
+    <div ng-show="service.influencersExpanded">
+      <ul class="nav nav-tabs" >
+        <li
+          class="kbn-settings-tab"
+          ng-class="{ active: service.topInfluencerTab===0 }"
+          ng-show="service.initialised"
+          >
+          <a ng-click="service.changeTab(0)">
+            List
+          </a>
+        </li>
+
+        <li
+          class="kbn-settings-tab"
+          ng-class="{ active: service.topInfluencerTab===1 }"
+          ng-show="service.initialised"
+          >
+          <a ng-click="service.changeTab(1)">
+            Bubble chart
+          </a>
+        </li>
+        <li
+          class="kbn-settings-tab"
+          ng-class="{ active: (service.topInfluencerTab===2 || service.initialised === false) }"
+          >
+          <a ng-click="service.changeTab(2)">
+            Overview
+          </a>
+        </li>
+      </ul>
+
+
+      <div id="top-influencers-container" class="prl-influencers-list" >
+        <div  id="top-influencers-list" ng-show="service.topInfluencerTab===0" >
+          <div ng-repeat="influencer in service.topInfluencerList | limitTo:10" class="influencer-content">
+            <div class="field-label">
+              <div ng-if="influencerfieldname !== 'prelertcategory'" class="influencerfieldvalue">{{influencer.id}}</div>
+            </div>
+
+            <div>
+              <div class="progress" value="{{influencer.severity}}" max="100">
+                <div class="progress-bar {{influencer.severity}}" style="width: {{influencer.max}}%;"
+                     tooltip-placement="left" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
+                  <span class="score-label">{{((influencer.max < 1)?"<1":influencer.max)}}</span>
+                </div>
+              </div>
+              <div ng-if="influencer.sum > 0" class="score-label total-score-label" tooltip-placement="left" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
+                {{influencer.sum | abbreviateWholeNumber:4}}
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div id="top-influencers-bubble-chart" ng-show="service.topInfluencerTab===1">
+
+        </div>
+
+        <div id="top-influencers-for-page-container" ng-show="service.topInfluencerTab===2 || service.initialised === false">
+          <div ng-repeat="influencer in service.topInfluencerForPage | limitTo:10" class="influencer-content">
+            <div class="field-label">
+              <div ng-if="influencerfieldname !== 'prelertcategory'" class="influencerfieldvalue">{{influencer.id}}</div>
+            </div>
+
+            <div>
+              <div class="progress" value="{{influencer.severity}}" max="100">
+                <div class="progress-bar {{influencer.severity}}" style="width: {{influencer.max}}%;"
+                     tooltip-placement="left" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
+                  <span class="score-label">{{((influencer.max < 1)?"<1":influencer.max)}}</span>
+                </div>
+              </div>
+              <div ng-if="influencer.sum > 0" class="score-label total-score-label" tooltip-placement="left" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
+                {{influencer.sum | abbreviateWholeNumber:4}}
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

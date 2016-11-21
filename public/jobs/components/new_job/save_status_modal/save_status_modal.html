@@ -1,0 +1,40 @@
+<div class="save-status-modal">
+  <!-- <prl-message-bar ></prl-message-bar> -->
+  <h3>Saving new job</h3>
+  <div class="status-item">Saving job... 
+  	<i ng-show="pscope.ui.saveStatus.job === -1" aria-hidden="true" style="color:red;" class="fa fa-remove"></i>
+  	<i ng-show="pscope.ui.saveStatus.job === 1" aria-hidden="true" class="fa fa-spinner fa-spin"></i>
+  	<i ng-show="pscope.ui.saveStatus.job === 2" aria-hidden="true" style="color:green;" class="fa fa-check"></i>
+  </div>
+
+	<div class="status-item" ng-show="ui.showUploadStatus">Uploading data...
+  	<i ng-show="pscope.ui.saveStatus.upload === -1" aria-hidden="true" style="color:red;" class="fa fa-remove"></i>
+  	<i ng-show="pscope.ui.saveStatus.upload === 1" aria-hidden="true" class="fa fa-spinner fa-spin"></i>
+  	<i ng-show="pscope.ui.saveStatus.upload === 2" aria-hidden="true" style="color:green;" class="fa fa-check"></i>
+  </div>
+
+  <div ng-show="pscope.ui.uploadPercentage >= 0" class="progress" value="{{pscope.ui.uploadPercentage}}" max="100">
+    <div class="progress-bar upload-progress" style="width: {{pscope.ui.uploadPercentage}}%;">
+      <span class="progress-label ng-binding">{{pscope.ui.uploadPercentage}}%</span>
+    </div>
+  </div>
+
+  <hr />  
+
+  <button 
+    ng-show="(!ui.showUploadStatus && pscope.ui.saveStatus.job === 2 && pscope.ui.isScheduled)" 
+    ng-disabled="pscope.saveLock"
+    ng-click="openScheduler();" 
+    class="btn btn-info"
+    aria-label="Back">
+      Start scheduler
+  </button>
+
+  <button 
+  	ng-disabled="pscope.saveLock"
+    ng-click="close();" 
+    class="btn btn-info"
+    aria-label="Back">
+    	Close
+  </button>
+</div>

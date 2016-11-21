@@ -1,0 +1,66 @@
+<kbn-top-nav name="dashboard" config="topNavMenu">
+  <div class="kibana-nav-info">
+    <span class="kibana-nav-info-title">
+      <span >Anomaly search jobs</span>
+    </span>
+  </div>
+</kbn-top-nav>
+<prl-config-jobs>
+  <prl-message-bar ></prl-message-bar>
+
+  <div ng-controller="PrlJobsList" class="jobs-container">
+    <div>
+      <header>
+        <div class="row" >
+        <div class="col-xs-10" >
+        <a
+          ng-href="#/jobs/new_job"
+          class="btn btn-info"
+          aria-label="Create new job">
+          <i aria-hidden="true" class="fa fa-plus"></i>
+          Create new job
+        </a>
+        </div>
+
+
+        <div class="col-xs-2" >
+          <input
+            ng-model="filterText"
+            placeholder="Job filter"
+            ng-change="applyFilter()"
+            class="form-control job-filter-input"
+             />
+          <div class="job-filter-progress-icon" >
+            <div class="filter-icon" ng-show="filterIcon===1">
+              <i class='fa fa-spinner fa-spin'></i>
+            </div>
+            <div class="filter-icon" ng-show="filterIcon===0">
+              <a aria-label="Clear filter" ng-click="clearFilter()">
+                <i class="fa fa-times-circle"></i>
+              </a>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+      </header>
+      <prl-paginated-table
+        columns="table.columns"
+        rows="table.rows"
+        per-page="table.perPage">
+      </prl-paginated-table>
+
+      <div class="jobs-count" ng-show="jobsCount > 0">Total number of jobs: {{jobsCount}}</div>
+      <div class="no-jobs-warning" ng-show="filterText && table.rows.length===0">No jobs found</div>
+      <div class="no-jobs-warning" ng-show="noJobsCreated===true">No jobs configured</div>
+      <div class="no-jobs-warning" ng-show="noJobsCreated===undefined">
+        <div class="loading-jobs"><i class='fa fa-spinner fa-spin'></i></div>
+        <div>Loading Jobs</div>
+      </div>
+
+    </div>
+  </div>
+  <prl-log-usage view="Jobs" actionID="list"></prl-log-usage>
+</prl-config-jobs>

@@ -1,0 +1,53 @@
+<div>
+  <div class="form-group help-pane">
+    <small>
+      Split a single field into multiple fields around matches of the given regular expression argument.
+      <div><prl-engine-api-help-link prl-uri="{{helpLink.uri}}" prl-label="{{helpLink.label}}"></prl-engine-api-help-link></div>
+    </small>
+  </div>
+
+  <div class="form-group">
+    <label>Input</label><i prl-info-icon="new_job_transform_inputs" />
+    <input
+      ng-model="transform.inputs[0]"
+      required
+      tabindex="1"
+      list='properties_datalist'
+      class="form-control" />
+  </div>
+
+  <div class="form-group">
+    <label>Regular expression</label><i prl-info-icon="new_job_transform_arguments" />
+    <input
+      ng-model="transform.arguments[0]"
+      required
+      tabindex="1"
+      class="form-control" />
+  </div>
+
+  <div class="form-group" ng-repeat="output in transform.outputs track by $index">
+    <label>Output {{$index + 1}}</label><i prl-info-icon="new_job_transform_outputs" />
+    <input
+      ng-model="transform.outputs[$index]"
+      type="text"
+      tabindex="2"
+      placeholder="{{DEFAULT_OUTPUTS.split[0]}}"
+      ng-class="{'extra_field':$index > (ui.getTransform(transform.transform).minOutputs - 1)}"
+      class="form-control" />
+      <button
+        ng-show="$index > (ui.getTransform(transform.transform).minOutputs - 1)"
+        ng-click="removeOutput($index)"
+        tooltip-append-to-body="true"
+        type="button"
+        class="btn btn-xs btn-danger remove-button">
+          <i aria-hidden="true" class="fa fa-times"></i>
+      </button>
+  </div>
+  <div class="form-group" >
+    <button aria-label="Add input" ng-click="transform.outputs.push('')" type="button" class="btn btn-primary btn-xs">
+      <span class="sr-only">Add output</span>
+      <i aria-hidden="true" class="fa fa-plus"></i> Add output
+    </button>
+  </div>
+
+</div>

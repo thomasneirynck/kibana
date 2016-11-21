@@ -1,0 +1,145 @@
+<div class="elastic-data-description-container">
+	<div class="form-group">
+    <label>Elasticsearch server address</label><i prl-info-icon="new_job_elasticsearch_server" />
+    <div class="input-group">
+      <input
+        ng-model="ui.scheduler.baseUrlText"
+        placeholder="http://server:port"
+        ng-change="getIndicesWithDelay()"
+        class="form-control"
+        list='urls_datalist'
+        aria-describedby="server-status"  />
+      <span class="input-group-addon" id="server-status">
+        <i ng-show="ui.esServerOk === 1" aria-hidden="true" style='color:green;' class="fa fa-check"></i>
+        <i ng-show="ui.esServerOk === 0" aria-hidden="true" style='color:red;' class="fa fa-remove"></i>
+        <i ng-show="ui.esServerOk === -1" aria-hidden="true" style='color:red;' class="fa fa-remove"></i>
+        <i ng-show="ui.esServerOk === 2" aria-hidden="true" style='color:#999999;' class="fa fa-spinner fa-spin"></i>
+      </span>
+      <datalist id="urls_datalist">
+        <option ng-repeat="url in ui.storedUrls" >{{url}}</option>
+      </datalist>
+    </div>
+
+    <label>
+      <input
+        ng-model="ui.wizard.serverAuthenticated"
+        ng-change="toggleAuthenticated()"
+        type="checkbox" />
+      Authenticated
+    </label><i prl-info-icon="new_job_enable_authenticated" />
+    <div ng-show="ui.wizard.serverAuthenticated">
+      <label>Username</label>
+      <div class="input-group">
+        <input
+          ng-model="ui.scheduler.usernameText"
+          placeholder="optional username - leave blank if none"
+          ng-change="getIndicesWithDelay()"
+          class="form-control"
+          aria-describedby="server-status"  />
+        <span class="input-group-addon" id="server-status">
+          <i ng-show="ui.esServerOk === 1" aria-hidden="true" style='color:green;' class="fa fa-check"></i>
+          <i ng-show="ui.esServerOk === 0" aria-hidden="true" style='color:red;' class="fa fa-remove"></i>
+          <i ng-show="ui.esServerOk === -1" aria-hidden="true" style='color:red;' class="fa fa-remove"></i>
+          <i ng-show="ui.esServerOk === 2" aria-hidden="true" style='color:#999999;' class="fa fa-spinner fa-spin"></i>
+        </span>
+      </div>
+      <label>Password</label>
+      <div class="input-group">
+        <input
+          ng-model="ui.scheduler.passwordText"
+          placeholder="optional password - leave blank if none"
+          ng-change="getIndicesWithDelay()"
+          class="form-control"
+          type="password"
+          aria-describedby="server-status"  />
+        <span class="input-group-addon" id="server-status">
+          <i ng-show="ui.esServerOk === 1" aria-hidden="true" style='color:green;' class="fa fa-check"></i>
+          <i ng-show="ui.esServerOk === 0" aria-hidden="true" style='color:red;' class="fa fa-remove"></i>
+          <i ng-show="ui.esServerOk === -1" aria-hidden="true" style='color:red;' class="fa fa-remove"></i>
+          <i ng-show="ui.esServerOk === 2" aria-hidden="true" style='color:#999999;' class="fa fa-spinner fa-spin"></i>
+        </span>
+      </div>
+    </div>
+    <div class="validation-error" ng-show="(ui.validation.serverAuthenticationError!=='')">{{ui.validation.serverAuthenticationError}}</div>
+
+  </div>
+
+  <div ng-show="ui.esServerOk === 1">
+
+    <div class="form-group" ng-hide="simpleMode">
+      <div><label><input type="radio" name="indexRadio" ng-model="ui.wizard.indexInputType" value="TEXT" /> Input index</label></div>
+      <div><label><input type="radio" name="indexRadio" ng-model="ui.wizard.indexInputType" value="LIST" /> Choose index from list</label></div>
+    </div>
+
+    <!-- text input index list -->
+    <div ng-show="ui.wizard.indexInputType === 'TEXT'" class="form-group">
+      <label>Index</label>
+      <div class="input-group">
+      <input
+        ng-model="ui.scheduler.indicesText"$
+        placeholder=""
+        class="form-control"
+        ng-change="extractFields()"
+        aria-describedby="index-text-status"
+        list='index_datalist' />
+        <span class="input-group-addon" id="index-text-status">
+          <i ng-show="ui.indexTextOk === true" aria-hidden="true" style='color:green;' class="fa fa-check"></i>
+          <i ng-show="ui.indexTextOk === false" aria-hidden="true" style='color:red;' class="fa fa-remove"></i>
+        </span>
+        <datalist id="index_datalist">
+          <option ng-repeat="(key, value) in ui.sortByKey(ui.indices)" >{{key}}</option>
+        </datalist>
+      </div>
+    </div>
+
+    <!-- checkbox index list -->
+    <div ng-show="ui.wizard.indexInputType === 'LIST'" class="form-group">
+      <label>Indexes</label>
+      <div>
+        <div class="index-list-container">
+          <div class="checkbox" ng-repeat="(key, value) in ui.sortByKey(ui.indices)" >
+            <label><input type="checkbox" ng-checked="indices[key] !== undefined" ng-click="toggleIndex(key, value)" >{{key}}</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- checkbox index list -->
+    <div ng-show="ui.indexTextOk" class="form-group">
+      <label>Types</label>
+      <div>
+        <div class="types-list-container">
+          <div class="checkbox all_types" ng-show="(uiTypeKeys().length > 1)"><label><input type="checkbox" ng-checked="allTypesSelected()" ng-click="toggleAllTypes()" >All types</label></div>
+          <div ng-class="{checkbox: (uiTypeKeys().length > 1)}" ></div>
+          <div class="checkbox" ng-repeat="(key, value) in ui.types" >
+            <label><input type="checkbox" ng-checked="types[key] !== undefined" ng-click="toggleTypes(key, value)" >{{key}}</label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div ng-show="ui.indexTextOk" class="form-group">
+      <label>Time-field name</label>
+      <select
+        ng-model="dataDescription.timeField"
+        ng-change="guessTimeFormat()"
+        class="form-control">
+        <option ng-repeat="(key, value) in dateProperties">{{key}}</option>
+      </select>
+    </div>
+
+    <div ng-show="ui.indexTextOk && dataDescription.timeField !==''" class="form-group">
+      <label>Time format</label>
+      <input
+        ng-model="dataDescription.timeFormat"
+        required
+        ng-change="getExampleTime()"
+        placeholder=""
+        class="form-control" />
+      <div class="time-example">{{ ((exampleTime)?"e.g. "+ exampleTime:"") }}</div>
+    </div>
+
+  </div>
+
+</div>

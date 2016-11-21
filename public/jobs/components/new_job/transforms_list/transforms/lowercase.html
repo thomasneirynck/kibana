@@ -1,0 +1,12 @@
+<table>
+  <tr>
+    <td>Input:</td> <td style="padding-left:10px;">{{transform.inputs[0]}}</td>
+  </tr>
+  <tr>
+    <td>Output:</td>
+    <td style="padding-left:10px;">
+      <span ng-show="transform.outputs[0]">{{transform.outputs[0]}}</span>
+      <span ng-hide="transform.outputs[0]" style='font-style:italic;'>{{DEFAULT_OUTPUTS.lowercase[0]}} (default)</span>
+    </td>
+  </tr>
+</table>

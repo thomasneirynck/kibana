@@ -1,0 +1,38 @@
+.popover {
+  max-width: 600px;
+  
+}
+
+prl-job-item {
+  .prl_job_row {
+    border-bottom: 1px solid #EEEEEE;
+
+    div {
+      display: inline-block;
+      width: 200px;
+      vertical-align: top;
+      padding: 3px;
+    }
+  }
+
+  .prl_job_detector_list {
+    max-height: 150px; 
+    overflow:auto;
+  }
+
+  div[ng-switch-when="detectors"] {
+    border-bottom: 1px solid #EEEEEE;
+
+    & > div {
+      padding: 3px;
+    }
+
+    prl-job-item div {
+      padding-left: 0px;
+    }
+
+    prl-job-item:last-child > div {
+      border-bottom: none;
+    }
+  }
+}

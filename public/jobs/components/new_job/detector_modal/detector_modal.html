@@ -1,0 +1,119 @@
+<div class="detector-modal">
+  <prl-message-bar ></prl-message-bar>
+  <h3>{{title}}</h3>
+
+  <div class="form-group">
+    <label>Description</label><i prl-info-icon="new_job_detector_description" />
+    <input
+      ng-model="detector.detectorDescription"
+      tabindex="1"
+      placeholder="{{ detectorToString(detector) }}"
+      class="form-control" />
+  </div>
+
+  <div class="editor-color detector_field_form">
+
+    <datalist id="functions_datalist">
+      <option ng-repeat="func in functions" >{{func.id}}</option>
+    </datalist>
+
+    <datalist id="properties_datalist">
+      <option ng-repeat="(key, prop) in properties" >{{key}}</option>
+    </datalist>
+
+    <datalist id="properties_datalist_byFieldName">
+      <option ng-repeat="(key, prop) in properties_byFieldName" >{{key}}</option>
+    </datalist>
+
+    <datalist id="exclude_frequent_datalist">
+      <option value="true">true</option>
+      <option value="false">false</option>
+      <!-- <option value="by">by </option> -->
+      <!-- <option value="over">over</option> -->
+    </datalist>
+
+    <div class="field-cols">
+      <div class="form-group">
+        <label>function</label><i prl-info-icon="new_job_detector_function" />
+
+        <input
+          ng-model="detector.function"
+          required
+          tabindex="2"
+          ng-change="functionChange()"
+          list='functions_datalist'
+          class="form-control" />
+      </div>
+      <div class="form-group">
+        <label>overFieldName</label><i prl-info-icon="new_job_detector_overfieldname" />
+        <input
+          ng-model="detector.overFieldName"
+          type="text"
+          tabindex="5"
+          list='properties_datalist'
+          class="form-control" />
+      </div>
+    </div>
+
+    <div class="field-cols">
+      <div class="form-group">
+        <label>fieldName</label><i prl-info-icon="new_job_detector_fieldname" />
+        <input
+          ng-model="detector.fieldName"
+          type="text"
+          tabindex="3"
+          list='properties_datalist'
+          class="form-control" />
+      </div>
+      <div class="form-group">
+        <label>partitionFieldName</label><i prl-info-icon="new_job_detector_partitionfieldname" />
+        <input
+          ng-model="detector.partitionFieldName"
+          type="text"
+          tabindex="6"
+          list='properties_datalist'
+          class="form-control" />
+      </div>
+    </div>
+
+    <div class="field-cols">
+      <div class="form-group">
+        <label>byFieldName</label><i prl-info-icon="new_job_detector_byfieldname" />
+        <input
+          ng-model="detector.byFieldName"
+          type="text"
+          tabindex="4"
+          list='properties_datalist_byFieldName'
+          class="form-control" />
+      </div>
+      <div class="form-group">
+        <label>excludeFrequent</label><i prl-info-icon="new_job_detector_excludefrequent" />
+        <input
+          ng-model="detector.excludeFrequent"
+          type="text"
+          tabindex="7"
+          list='exclude_frequent_datalist'
+          class="form-control" />
+      </div>
+    </div>
+
+  </div>
+  <small><div class='help-pane'><prl-engine-api-help-link prl-uri="{{helpLink.uri}}" prl-label="{{helpLink.label}}"></prl-engine-api-help-link></div></small>
+
+  <hr />
+
+  <button
+    ng-click="save()"
+    ng-disabled="(saveLock === true)"
+    class="btn btn-info"
+    aria-label="Save">
+    {{ (editMode? "Update" : "Add") }}
+  </button>
+  <button
+    ng-click="cancel()"
+    ng-disabled="(saveLock === true)"
+    class="btn btn-info"
+    aria-label="Cancel">
+    Cancel
+  </button>
+</div>

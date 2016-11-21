@@ -1,0 +1,109 @@
+.prl-influencer-heatmap {
+  font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  padding: 20px;
+  width: 920px; 
+  height: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  
+  svg {
+  
+    .node {
+      rect, circle {
+        opacity: 1;
+        fill: #81a6ad;
+        fill-opacity: 0.25;
+      }
+    }
+  
+    .node.leaf {
+      rect, circle {
+        fill-opacity: 1;
+      }
+    }
+  
+    .node.leaf.critical {
+      rect, circle {
+        fill: #fe5050;
+      }
+    }
+  
+    .node.leaf.major {
+      rect, circle {
+        fill: #fba740;
+      }
+    }
+  
+    .node.leaf.minor {
+      rect, circle {
+        fill: #fbfb49;
+      }
+    }
+  
+    .node.leaf.warning {
+      rect, circle {
+        fill: #8bc8fb;
+      }
+    }
+  
+    .node.leaf.unknown {
+      rect, circle {
+        fill: #c0c0c0;
+      }
+    }
+  }
+
+  div.treemap {
+    
+    .node {
+      border: solid 1px white;
+      line-height: 18px;
+      overflow: hidden;
+      position: absolute;
+      text-align: center;
+      background: #4d515b;
+      color: #ffffff;
+    }
+    
+    .node.leaf {
+      color: #000000;
+    }
+    
+    .node.leaf.critical {
+        background: #fe5050;
+    }
+      
+    .node.leaf.major {
+        background: #fba740;
+    }
+      
+    .node.leaf.minor {
+        background: #fbfb49;
+    }
+      
+    .node.leaf.warning {
+        background: #8bc8fb;
+    }
+      
+    .node.leaf.unknown {
+        background: #c0c0c0;
+    }
+    
+  }
+  
+}
+
+.prl-influencer-heatmap-tooltip {
+  color: #ffffff;
+  background-color: #303030;
+  font-family: Roboto, Droid, Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  text-align: left;
+  
+  hr {
+    margin-top: 3px;
+    margin-bottom: 3px;
+    border-color: #95a5a6;
+  }
+}
