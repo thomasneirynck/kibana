@@ -1,90 +1,37 @@
-monitoring-chart {display: block;}
-.monitoring-chart,
-monitoring-chart {
-  h1 {
-    font-size: 24px;
-    margin: 0;
-  }
-  .tooltip-inner {
-    text-align: left;
-    td {
-     padding: 4px;
-    }
-  }
-  .monitoring-chart-description {
-    color: @kibanaBlue2;
-    font-size: 12px;
-    position: relative;
-    top: 24px;
-    right: 15px;
-    cursor: pointer;
-  }
-  background-color: @white;
-  padding: 15px;
-  min-height: 150px;
-  display: block;
-
-  chart {
-    display: block;
-    min-height: 150px;
-
-    > .legend {
-      // flot adds a div inside of the legend that uses an absolute size (not just position),
-      // which is why _dynamic_ values don't get the background;
-      > div {
-        display: none
-      }
-      > table {
-        background-color: rgba(255, 255, 255, 0.85);
-      }
-    }
-  }
-
-  .loading {
-    flex-grow: 1;
-    justify-content: center;
-    align-self: center;
-    text-align: center;
-    font-size: 18px;
-    color: @esDarkGray;
-    height: 150px;
-    line-height: 150px;
-  }
-
-  .nvd3 {
-    flex-grow: 1;
-  }
-
+.monitoring-chart__container {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 auto;
+  height: 200px;
 }
 
-/***************************/
-/****** MonitoringCharts! ******/
-/***************************/
+.monitoring-chart__title {
+  font-size: 18px;
+  margin: 0;
+}
 
-.jubilee {
+.monitoring-chart-tooltip__trigger {
+  font-size: 16px;
   position: relative;
-  > svg {
-    z-index: 2;
-    position: relative;
-  }
-  g {
-    > line { stroke: @esLightGray; }
-    > path { stroke: @esBlack; }
-  }
-  .axis {
-    text {
-      font-size: 13px;
-      color: @esDarkGray;
-    }
-    &.y {
-      > path { display: none; }
-      > line { stroke: @esLightGray; }
-    }
-    &.x {
-      > path { stroke: @esBlack; }
-      > line { stroke: @esLightGray; }
-      .domain { display: block; }
-    }
+  top: 6px;
+  right: 15px;
+  cursor: pointer;
+
+  // override style from pui-react-tooltip lib
+  &.overlay-trigger {
+    color: @kibanaBlue2;
   }
 }
 
+
+.monitoring-chart-tooltip__label,
+.monitoring-chart-tooltip__value {
+  text-align: left;
+  font-size: 12px;
+  padding: 4px;
+}
+
+
+.monitoring-chart-tooltip__label {
+  font-weight: bold;
+}

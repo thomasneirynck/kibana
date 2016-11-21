@@ -106,10 +106,7 @@ export default function getSeries(req, indices, metricName, filters) {
     .filter(filterPartialBuckets(boundsMin, boundsMax, respBucketSize))
     // if bucket has a doc count, map it to X/Y coords for charting. Otherwise null makes the line discontinuous
     .map(bucket => {
-      return {
-        x: bucket.key,
-        y: calculation(bucket)
-      };
+      return [ bucket.key, calculation(bucket) ]; // jquery flot data format
     })
     .value();
     return {

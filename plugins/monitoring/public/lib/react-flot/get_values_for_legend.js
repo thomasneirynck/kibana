@@ -1,13 +1,11 @@
 /**
  * Set the {@code legend} using the supplied data {@code index} in each series.
  *
- * @param legend {Function} The legend containing each series item.
- * @param plot {Object} The plot dataset.
+ * @param datasets {Array} The plot's datasets.
  * @param index {number} The index of the data to show in each series.
+ * @param callback {Function} The function to handle the calculation
  */
-export function setLegendForSeriesIndex(legend, plot, index) {
-  const datasets = plot.getData();
-
+export function getValuesForSeriesIndex(datasets, index, callback) {
   for (let i = 0; i < datasets.length; i++) {
     const series = datasets[i];
     const data = series.data;
@@ -18,7 +16,7 @@ export function setLegendForSeriesIndex(legend, plot, index) {
       y = data[index][1];
     }
 
-    legend(series, i, y);
+    callback(series.id, y);
   }
 }
 
@@ -32,28 +30,19 @@ export function setLegendForSeriesIndex(legend, plot, index) {
  * The fix for that is to perform this check per series rather than per plot, and to perform it on the
  * {@code item.datapoint[0]} value from the plotHover event instead of its raw index value.
  *
- * @param legend {Function} The legend containing each series item.
- * @param plot {Object} The plot tool.
+ * @param datasets {Array} The plot's datasets.
  * @param x {number} The X coordinate of the cursor.
+ * @param callback {Function} The callback to handle the calculation
  */
-export function setLegendByX(legend, plot, x) {
-  const axes = plot.getAxes();
-
-  if (x < axes.xaxis.min || x > axes.xaxis.max) {
-    // note: this does _not_ clear it if they just moved their mouse out, but it won't initialize it either
-    return;
-  }
-
-  const datasets = plot.getData();
-
-  // Check each series for the closest point; first one to match wins!
-  // Note: All series _should_ have the same X coordinates
+export function getValuesByX(datasets, x, callback) {
+  // Check each dataset for the closest point; first one to match wins!
+  // Note: All datasets _should_ have the same X coordinates
   for (let i = 0; i < datasets.length; i++) {
     const index = findIndexByX(datasets[i].data, x);
 
-    // It's possible that a given series is blank, so we just go onto the next one
+    // It's possible that a given dataset is blank, so we just go onto the next one
     if (index !== -1) {
-      setLegendForSeriesIndex(legend, plot, index);
+      getValuesForSeriesIndex(datasets, index, callback);
       break;
     }
   }

@@ -22,3 +22,9 @@ export const PHONE_HOME_FEATURE = 'report';
  * name of the boolean for phone home if the notification has been dismissed
  */
 export const PHONE_HOME_NOTIFICATION_SEEN = 'report_notification_seen';
+
+/*
+ * Chart colors
+ */
+export const CHART_LINE_COLOR = '#d2d2d2';
+export const CHART_TEXT_COLOR = '#9c9c9c';
