@@ -2,6 +2,7 @@ import uiModules from 'ui/modules';
 import somDirective from 'plugins/som/som_directive.html';
 import ponderTemplate from 'plugins/som/ponder_template.html';
 import Table from 'plugins/som/Table';
+import TableFromTabified from 'plugins/som/TableFromTabified';
 
 const module = uiModules.get('kibana/tagcloud', ['kibana']);
 module.directive('kbnSom', function () {
@@ -16,33 +17,39 @@ module.directive('kbnSom', function () {
     replace: 'true',
     link: function (scope, element) {
 
-      console.log('som directive ready!', arguments);
-
-
 
       let somApp;
-
       scope.$watch('data', function () {
-        const ponder = window.PONDER;
 
-        if (somApp){
-          console.log('destory da app');
-          somApp.destroy();
+
+        if (!scope.data){
+          return;
         }
 
+        const tableData = scope.data.table;
+        console.log('orig args', scope.data.aggs);
+
+        const ponder = window.PONDER;
+        if (somApp) {
+          somApp.destroy();
+        }
         element[0].innerHTML = null;
 
 
-        if (!scope.data) {
+        if (!tableData) {
           return;
         }
 
         element[0].innerHTML = ponderTemplate;
 
-        const table = new Table(scope.data);
 
-         somApp = ponder.createSOM({
-          table: table,
+        const tableFromTab = new TableFromTabified(tableData, scope.data.aggs);
+        console.log('tabied', tableFromTab);
+        window.tab = tableFromTab;
+
+
+        somApp = ponder.createSOM({
+          table: tableFromTab,
           nodes: {
             toolbar: "mapToolContainer",
             mapTableToggle: "toggle",
@@ -61,7 +68,6 @@ module.directive('kbnSom', function () {
 
 
         somApp.on("AppLoaded", function () {
-          //fuck da intro!
           console.log('loaded');
         });
 
@@ -81,7 +87,6 @@ module.directive('kbnSom', function () {
       function getContainerSize() {
         return [element.parent().width(), element.parent().height()];
       }
-
 
 
     }
