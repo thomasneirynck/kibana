@@ -21,11 +21,18 @@ uiRoutes.when('/no-data', {
 
 const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
 uiModule.controller('noData', (kbnUrl, $executor, monitoringClusters, timefilter, $scope) => {
+  $scope.hasData = false; // control flag to control a redirect
   timefilter.enabled = true;
 
   timefilter.on('update', () => {
     // re-fetch if they change the time filter
     $executor.run();
+  });
+
+  $scope.$watch('hasData', hasData => {
+    if (hasData) {
+      kbnUrl.redirect('/home');
+    }
   });
 
   // Register the monitoringClusters service.
@@ -35,7 +42,8 @@ uiModule.controller('noData', (kbnUrl, $executor, monitoringClusters, timefilter
     },
     handleResponse: function (clusters) {
       if (clusters.length) {
-        kbnUrl.changePath('/home');
+        // use the control flag because we can't redirect from inside here
+        $scope.hasData = true;
       }
     }
   });

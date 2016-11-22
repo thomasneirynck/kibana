@@ -10,7 +10,7 @@ uiModule.directive('monitoringClusterStatusKibana', () => {
     template,
     link(scope) {
       scope.getStatusText = () => {
-        return `Instances: ${capitalize(scope.pageData.clusterStatus.status)}`;
+        return `Instances: ${capitalize(get(scope.pageData, 'clusterStatus.status'))}`;
       };
 
       scope.getStatusClass = () => {
