@@ -708,7 +708,7 @@ export const expected = {
   },
   'index_segment_count_primaries': {
     'field': 'index_stats.primaries.segments.count',
-    'title': 'Segments',
+    'title': 'Segment Count',
     'label': 'Primaries',
     'description': 'Number of segments for primary shards.',
     'type': 'index',
@@ -722,7 +722,7 @@ export const expected = {
   },
   'index_segment_count_total': {
     'field': 'index_stats.total.segments.count',
-    'title': 'Segments',
+    'title': 'Segment Count',
     'label': 'Total',
     'description': 'Number of segments for primary and replica shards.',
     'type': 'index',

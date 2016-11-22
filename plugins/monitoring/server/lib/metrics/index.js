@@ -253,7 +253,7 @@ const metricInstances = {
   }),
   'index_segment_count_primaries': new ElasticsearchMetric({
     field: 'index_stats.primaries.segments.count',
-    title: 'Segments',
+    title: 'Segment Count',
     label: 'Primaries',
     description: 'Number of segments for primary shards.',
     type: 'index',
@@ -263,7 +263,7 @@ const metricInstances = {
   }),
   'index_segment_count_total': new ElasticsearchMetric({
     field: 'index_stats.total.segments.count',
-    title: 'Segments',
+    title: 'Segment Count',
     label: 'Total',
     description: 'Number of segments for primary and replica shards.',
     type: 'index',
