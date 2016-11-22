@@ -19,7 +19,7 @@ export default function SomProvider(Private) {
   return new TemplateVisType({
     name: 'som',
     title: 'Self Organizing Map',
-    description: 'som description here',
+    description: 'Create conceptual maps of data. This places related elements closer together, while it places dissimilar items further away.',
     icon: 'fa-map-o',
     template: somTemplate,
     params: {
