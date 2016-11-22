@@ -42,6 +42,7 @@
     "properties": "1.2.1",
     "request": "2.67.0",
     "rsync": "0.4.0",
+    "semver": "5.1.0",
     "simple-git": "1.32.1",
     "sinon": "1.17.3",
     "yargs": "4.7.1"

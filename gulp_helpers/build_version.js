@@ -23,9 +23,11 @@ function getFileVersion() {
     var props = properties.parse(contents);
     return props.elasticsearch + snapshotText;
   } catch (e) {
-    if (!argv.fallback) {
-      throw new Error('Could not read version from ' + propFile + ', try using --fallback');
-    }
+    // norelease need to add this back at some point when we work out how to add the flag from gradle
+    // and pass it through to npm and gulp
+    // if (!argv.fallback) {
+    //   throw new Error('Could not read version from ' + propFile + ', try using --fallback');
+    // }
     return pkg.version.replace(/\-snapshot/i, snapshotText);
   }
 }
