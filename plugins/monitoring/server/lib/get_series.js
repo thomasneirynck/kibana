@@ -86,9 +86,10 @@ export default function getSeries(req, indices, metricName, filters) {
       let value =  bucket[key] && bucket[key].value || 0;
       // convert metric_deriv from the bucket size to seconds if units == '/s'
       if (metric.units === '/s') {
-        value = Math.max(value / respBucketSize, 0);
+        value = value / respBucketSize;
       }
-      return value;
+      // negatives suggest derivatives that have been reset (usually due to restarts that reset the count)
+      return Math.max(value, 0);
     };
 
     const calculationFn = metric && metric.calculation || defaultCalculation;
