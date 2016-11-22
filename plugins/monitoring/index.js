@@ -1,5 +1,6 @@
 import { join, resolve } from 'path';
 import Promise from 'bluebird';
+import elasticsearch from 'elasticsearch';
 import requireAllAndApply from '../../server/lib/require_all_and_apply';
 import esHealthCheck from './server/lib/es_client/health_check';
 import instantiateClient from './server/lib/es_client/instantiate_client';
@@ -113,6 +114,7 @@ export default function monitoringIndex(kibana) {
           interval: string().regex(/[\d\.]+[yMwdhms]/).default('10s')
         }).default(),
         elasticsearch: object({
+          customHeaders: object().default({}),
           index_pattern: string().default('.monitoring-es-2-*'),
           logQueries: boolean().default(false),
           url: string().uri({ scheme: ['http', 'https'] }), // if empty, use Kibana's connection config
@@ -136,7 +138,7 @@ export default function monitoringIndex(kibana) {
       const xpackMainPlugin = server.plugins.xpack_main;
       return xpackMainPlugin.status.once('green', () => {
         return Promise.all([
-          instantiateClient(server), // Instantiate the dedicated Elasticsearch client
+          instantiateClient(server, elasticsearch), // Instantiate the dedicated ES client. Dependency injection for ES for test mocking
           requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server), // Require all the routes
           initKibanaMonitoring(this.kbnServer, server), // send kibana server ops to the monitoring bulk api
           esHealthCheck(this, server).start() // Make sure the Monitoring index is created and ready

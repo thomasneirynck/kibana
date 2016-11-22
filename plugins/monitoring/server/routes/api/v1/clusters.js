@@ -53,6 +53,36 @@ export default function clustersRoutes(server) {
   const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');
   const callWithRequest = server.plugins.monitoring.callWithRequest;
 
+  function getClustersFromRequest(req) {
+    const start = req.payload.timeRange.min;
+    const end = req.payload.timeRange.max;
+    return Promise.all([
+      calculateIndices(req, start, end, esIndexPattern),
+      calculateIndices(req, start, end, kbnIndexPattern)
+    ])
+    .then(([esIndices, kibanaIndices]) => {
+      return getClusters(req, esIndices)
+      .then(getClustersStats(req))
+      .then(getClustersHealth(req))
+      .then(getPrimaryClusterUuid(req))
+      .then(clusters => {
+        const mapClusters = getKibanasForClusters(req, kibanaIndices);
+        return mapClusters(clusters)
+        .then(kibanas => {
+          // add the kibana data to each cluster
+          kibanas.forEach(kibana => {
+            const clusterIndex = _.findIndex(clusters, { cluster_uuid: kibana.clusterUuid });
+            _.set(clusters[clusterIndex], 'kibana', kibana.stats);
+          });
+          return clusters;
+        });
+      })
+      .then(clusters => normalizeClustersData(clusters))
+      .then(clusters => _.sortBy(clusters, 'cluster_name'));
+    });
+    // reply() and catch() is handled by the caller
+  }
+
   /*
    * Monitoring Home, Route Init
    */
@@ -70,32 +100,8 @@ export default function clustersRoutes(server) {
       }
     },
     handler: (req, reply) => {
-      const start = req.payload.timeRange.min;
-      const end = req.payload.timeRange.max;
-      return Promise.all([
-        calculateIndices(req, start, end, esIndexPattern),
-        calculateIndices(req, start, end, kbnIndexPattern)
-      ])
-      .then(([esIndices, kibanaIndices]) => {
-        return getClusters(req, esIndices)
-        .then(getClustersStats(req))
-        .then(getClustersHealth(req))
-        .then(getPrimaryClusterUuid(req))
-        .then(clusters => {
-          const mapClusters = getKibanasForClusters(req, kibanaIndices);
-          return mapClusters(clusters)
-          .then(kibanas => {
-            // add the kibana data to each cluster
-            kibanas.forEach(kibana => {
-              const clusterIndex = _.findIndex(clusters, { cluster_uuid: kibana.clusterUuid });
-              _.set(clusters[clusterIndex], 'kibana', kibana.stats);
-            });
-            return clusters;
-          });
-        })
-        .then(clusters => normalizeClustersData(clusters))
-        .then(clusters => reply(_.sortBy(clusters, 'cluster_name')));
-      })
+      return getClustersFromRequest(req)
+      .then(reply)
       .catch(err => reply(handleError(err, req)));
     }
   });
@@ -137,13 +143,36 @@ export default function clustersRoutes(server) {
       })
       .then(calculateClusterShards)
       .then(reply)
-      .catch(err => reply(handleError(err, req)));
+      .catch(() => reply([]));
     }
   });
 
   /*
    * Phone Home Data Gathering
    */
+  server.route({
+    method: 'POST',
+    path: '/api/monitoring/v1/clusters_stats',
+    config: {
+      validate: {
+        payload: Joi.object({
+          timeRange: Joi.object({
+            min: Joi.date().required(),
+            max: Joi.date().required()
+          }).required()
+        })
+      }
+    },
+    handler: (req, reply) => {
+      return getClustersFromRequest(req)
+      .then(reply)
+      .catch(() => {
+        // ignore errors, return empty set and a 200
+        reply([]).code(200);
+      });
+    }
+  });
+
   server.route({
     method: 'GET',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/info',

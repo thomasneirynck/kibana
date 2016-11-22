@@ -86,7 +86,7 @@ function phoneHomeClassFactory($window, Promise, $http, reportStats, statsReport
       if (!this._checkReportStatus()) return Promise.resolve();
 
       // call to get the latest cluster uuids with a time range to go back 20 minutes up to now
-      const currentClustersUrl = uiChrome.addBasePath('/api/monitoring/v1/clusters');
+      const currentClustersUrl = uiChrome.addBasePath('/api/monitoring/v1/clusters_stats');
       const currentClustersTimeRange = {
         min: moment().subtract(20, 'minutes').toISOString(),
         max: (new Date()).toISOString()

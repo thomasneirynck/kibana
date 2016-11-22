@@ -7,7 +7,7 @@ const readFile = file => readFileSync(file, 'utf8');
 function getConfigObjects(config, useMonitoring) {
   const monitoringConfig = config.get('xpack.monitoring.elasticsearch');
   const configSource = useMonitoring ? monitoringConfig : config.get('elasticsearch');
-  const esConfig = pick(configSource, 'url', 'username', 'password', 'ssl');
+  const esConfig = pick(configSource, 'url', 'username', 'password', 'ssl', 'customHeaders');
 
   const options = {
     ...pick(monitoringConfig, 'apiVersion', 'pingTimeout', 'requestTimeout'),
@@ -45,7 +45,7 @@ export default function initConfig(config) {
 
   if (!useMonitoring) {
     // copy calculated configs into monitoring
-    config.set(prefix, pick(configObjects.options, 'url', 'username', 'password'));
+    config.set(prefix, pick(configObjects.options, 'url', 'username', 'password', 'customHeaders'));
     config.set(`${prefix}.ssl`, pick(configObjects.ssl, 'verify', 'cert', 'key', 'ca'));
   }
 

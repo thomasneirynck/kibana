@@ -10,6 +10,7 @@ function getMockConfig() {
     url: 'http://localhost:9200',
     username: 'produser',
     password: 'prodpass',
+    customHeaders: { 'cluster-id': 'foo123' },
     ssl: {
       verify: true
     }
@@ -23,6 +24,7 @@ describe('Client Config Options', () => {
     const { options, noAuthUri, authUri, ssl } = initConfig(config);
 
     expect(options.url).to.be('http://localhost:9200');
+    expect(options.customHeaders).to.eql({ 'cluster-id': 'foo123' });
     expect(options.configSource).to.be('production');
     expect(authUri.auth).to.be('produser:prodpass');
     expect(noAuthUri.auth).to.eql(null);
@@ -37,6 +39,7 @@ describe('Client Config Options', () => {
       url: 'http://localhost:9210',
       username: 'monitoringuser',
       password: 'monitoringpass',
+      customHeaders: { 'cluster-id': 'monitoring-foo123' },
       ssl: {
         verify: true
       }
@@ -44,6 +47,7 @@ describe('Client Config Options', () => {
     const { options, noAuthUri, authUri, ssl } = initConfig(config);
 
     expect(options.url).to.be('http://localhost:9210');
+    expect(options.customHeaders).to.eql({ 'cluster-id': 'monitoring-foo123' });
     expect(options.configSource).to.be('monitoring');
     expect(authUri.auth).to.be('monitoringuser:monitoringpass');
     expect(noAuthUri.auth).to.eql(null);
