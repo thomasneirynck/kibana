@@ -6,10 +6,16 @@ const module = uiModules.get('kibana/som', ['kibana']);
 module.controller('KbnSomController', function ($scope, Private) {
 
   const tabifyAggResponse = Private(AggResponseTabifyTabifyProvider);
+  window.scop = $scope;
 
   $scope.$watch('esResponse', function (response) {
 
     if (!response){
+      return;
+    }
+
+    if (scop.vis.aggs.length === 1) {
+      console.log('must have more configs')
       return;
     }
 
@@ -19,8 +25,12 @@ module.controller('KbnSomController', function ($scope, Private) {
       asAggConfigResults: true
     });
 
-    console.log(tableGroups.tables[0]);
-    $scope.data = tableGroups.tables[0];
+    window.response = response;
+
+    $scope.data = {
+      table: tableGroups.tables[0],
+      aggs: $scope.vis.aggs
+    }
 
 
   });

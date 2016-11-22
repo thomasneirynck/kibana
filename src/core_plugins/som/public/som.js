@@ -32,11 +32,7 @@ export default function SomProvider(Private) {
         group: 'metrics',
         name: 'metric',
         title: 'Metric',
-        min: 1,
-        aggFilter: ['avg', 'sum', 'count', 'min', 'max', 'median', 'cardinality'],
-        defaults: [
-          { schema: 'metric', type: 'count' }
-        ]
+        aggFilter: ['sum', 'min', 'max', 'count']
       },
       {
         group: 'buckets',
@@ -44,7 +40,6 @@ export default function SomProvider(Private) {
         icon: 'fa fa-map-o',
         title: 'Tags',
         min: 1,
-        max: 1,//we can relax this later. but it's harder to reason about non-metric args.
         aggFilter: ['terms', 'significant_terms']
       }
     ])
