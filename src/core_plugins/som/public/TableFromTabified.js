@@ -106,8 +106,14 @@ export default function makeTable(table, configs) {
       }
       this._rows = [];
       for (let key in this._map) {
+        for (let c = 0; c < this._columns.length; c += 1) {
+          if (this._columns[c].som_type === ponder.Table.TAGLIST) {
+            this._map[key][c].sort();
+          }
+        }
         this._rows.push(this._map[key]);
       }
+
       console.log('constructed da table', this);
       window._daTable = this;
 
