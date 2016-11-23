@@ -44,14 +44,15 @@ class TagCloud extends EventEmitter {
     this._timeInterval = 1000;//time allowed for layout algorithm
     this._padding = 5;
 
-  }
+    this._animationFrameHandle = null;
+    this._optionsAsString = null;
 
+  }
 
   setOptions(options) {
     if (JSON.stringify(options) === this._optionsAsString) {
       return;
     }
-
     this._optionsAsString = JSON.stringify(options);
     this._orientation = options.orientation;
     this._minFontSize = Math.min(options.minFontSize, options.maxFontSize);
@@ -90,13 +91,12 @@ class TagCloud extends EventEmitter {
 
   setData(data) {
     this._words = data.map(toWordTag);
-    this._makeTextSizeMapper();
     this._invalidate(false);
   }
 
 
   destroy() {
-    clearTimeout(this._timeoutHandle);
+    clearTimeout(this._animationFrameHandle);
     this._element.innerHTML = '';
   }
 
@@ -125,6 +125,13 @@ class TagCloud extends EventEmitter {
   }
 
   _onLayoutEnd() {
+
+
+    if (this._animationFrameHandle !== null) {
+      //there was a state-change in between when the layout was started, and when it was complete.
+      //we will not need to draw this as a new layout will be triggered.
+      return;
+    }
 
     const affineTransform = positionWord.bind(null, this._element.offsetWidth / 2, this._element.offsetHeight / 2);
     const svgTextNodes = this._svgGroup.selectAll('text');
@@ -180,8 +187,6 @@ class TagCloud extends EventEmitter {
           cloudBBox.x + cloudBBox.width <= this._element.offsetWidth &&
           cloudBBox.y + cloudBBox.height <= this._element.offsetHeight;
 
-        this._dirtyPromise = null;
-        this._resolve(true);
         this.emit('renderComplete');
       }
     };
@@ -200,6 +205,9 @@ class TagCloud extends EventEmitter {
 
 
   _makeTextSizeMapper() {
+    if (!this._words) {
+      return;
+    }
     this._mapSizeToFontSize = D3_SCALING_FUNCTIONS[this._textScale];
     if (this._words.length === 1) {
       this._mapSizeToFontSize.range([this._maxFontSize, this._maxFontSize]);
@@ -207,9 +215,8 @@ class TagCloud extends EventEmitter {
       this._mapSizeToFontSize.range([this._minFontSize, this._maxFontSize]);
     }
 
-    if (this._words) {
-      this._mapSizeToFontSize.domain(d3.extent(this._words, getSize));
-    }
+    this._mapSizeToFontSize.domain(d3.extent(this._words, getSize));
+
   }
 
   _invalidate(keepLayout) {
@@ -219,15 +226,9 @@ class TagCloud extends EventEmitter {
       return;
     }
 
-    if (!this._dirtyPromise) {
-      this._dirtyPromise = new Promise((resolve, reject) => {
-        this._resolve = resolve;
-      });
-    }
-
-    clearTimeout(this._timeoutHandle);
-    this._timeoutHandle = requestAnimationFrame(() => {
-      this._timeoutHandle = null;
+    clearTimeout(this._animationFrameHandle);
+    this._animationFrameHandle = setTimeout(() => {
+      this._animationFrameHandle = null;
       this._updateContainerSize();
       if (keepLayout) {
         this._onLayoutEnd();
@@ -235,11 +236,10 @@ class TagCloud extends EventEmitter {
         this._washWords();
         this._updateLayout();
       }
-    });
+    }, 10);
   }
 
   _updateLayout() {
-
     const tagCloudLayoutGenerator = d3TagCloud();
     tagCloudLayoutGenerator.size(this._size);
     tagCloudLayoutGenerator.padding(this._padding);
@@ -255,7 +255,6 @@ class TagCloud extends EventEmitter {
     tagCloudLayoutGenerator.timeInterval(this._timeInterval);
     tagCloudLayoutGenerator.on('end', this._onLayoutEnd.bind(this));
     tagCloudLayoutGenerator.start();
-
   }
 
 }
