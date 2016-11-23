@@ -15,6 +15,7 @@ var aws = require('aws-sdk');
 var mocha = require('gulp-mocha');
 var istanbul = require('gulp-istanbul');
 var isparta = require('isparta');
+var childProcess = require('child_process');
 
 var logger = require('./gulp_helpers/logger');
 var exec = require('./gulp_helpers/exec')(g.util);
@@ -162,7 +163,7 @@ gulp.task('build', ['clean', 'report'], function () {
     .pipe(gulp.dest(path.join(buildTarget, 'plugins')));
   })
   .then(function () {
-    return exec('npm', ['install', '--production', '--no-bin-links', '--silent'], { cwd: buildTarget });
+    return childProcess.execSync('npm install --production --no-bin-links --silent', { cwd: buildTarget });
   });
 });
 
@@ -242,7 +243,7 @@ function runMocha() {
 }
 
 function runNpm(flags, options) {
-  return exec('npm', ['run'].concat(flags), options);
+  return childProcess.execSync('npm run ' + flags.join(' '), options);
 }
 
 /*

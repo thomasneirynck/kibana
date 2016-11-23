@@ -14,10 +14,13 @@ module.exports = (excludes) => {
       mkdirp(dest, cb);
     })
     .then(function () {
-      source = path.resolve(__dirname, '..', source);
+      // On Windows relative paths must be used rather than absolute, as the
+      // colons in Windows absolute paths confuse rsync
+      var relSource = path.relative(path.resolve(__dirname, '..'), source);
+      var relDest = path.relative(path.resolve(__dirname, '..'), dest);
       var rsync = new Rsync();
 
-      rsync.source(source).destination(dest);
+      rsync.source(relSource).destination(relDest);
       rsync.flags('uav').recursive(true);
       if (options.delete) rsync.set('delete');
       rsync.exclude(excludes);
