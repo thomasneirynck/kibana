@@ -5,7 +5,7 @@ const parseKibanaState = require('../../../../server/lib/kibana_state');
 const uriEncode = require('./uri_encode');
 const getAbsoluteTime = require('./get_absolute_time');
 
-module.exports = function (client, config) {
+module.exports = function (callWithRequest, config) {
   const schema = Joi.object().keys({
     kibanaApp: Joi.string().required(),
     kibanaIndex: Joi.string().required(),
@@ -52,31 +52,30 @@ module.exports = function (client, config) {
     }
   };
 
-  function getIndexPatternObject(indexPattern) {
-    const req = {
+  function getIndexPatternObject(request, indexPattern) {
+    const body = {
       index: opts.kibanaIndex,
       type: 'index-pattern',
       id: indexPattern
     };
 
-    return client.get(req).then(body => body._source);
+    return callWithRequest(request, 'get', body).then(response => response._source);
   }
 
-  async function hasTimeBasedIndexPattern(savedObjSearchSourceIndex) {
+  async function hasTimeBasedIndexPattern(request, savedObjSearchSourceIndex) {
     const indexPattern = savedObjSearchSourceIndex.index;
     if (!indexPattern) {
       return Promise.resolve(false);
     }
 
-    const getIndexPatternObjectMemoized = _.memoize(getIndexPatternObject);
-    const indexPatternObj = await getIndexPatternObjectMemoized(indexPattern);
+    const indexPatternObj = await getIndexPatternObject(request, indexPattern);
     return !!indexPatternObj.timeFieldName;
   }
 
-  function getObject(type, id, fields = []) {
+  function getObject(request, type, id, fields = []) {
     fields = ['title', 'description'].concat(fields);
     validateType(type);
-    const req = {
+    const body = {
       index: opts.kibanaIndex,
       type: type,
       id: id
@@ -103,17 +102,17 @@ module.exports = function (client, config) {
       return { searchSource, uiState };
     }
 
-    return client.get(req)
-    .then(function _getRecord(body) {
-      return body._source;
+    return callWithRequest(request, 'get', body)
+    .then(function _getRecord(response) {
+      return response._source;
     })
     .then(async function _buildObject(source) {
       const { searchSource, uiState } = parseJsonObjects(source);
 
-      const isUsingTimeBasedIndexPattern = await hasTimeBasedIndexPattern(searchSource);
+      const isUsingTimeBasedIndexPattern = await hasTimeBasedIndexPattern(request, searchSource);
 
       const obj = _.assign(_.pick(source, fields), {
-        id: req.id,
+        id: body.id,
         type: type,
         searchSource: searchSource,
         uiState: uiState,

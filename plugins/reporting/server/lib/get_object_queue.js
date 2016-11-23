@@ -3,7 +3,7 @@ const savedObjectsFactory = require('../lib/saved_objects');
 const oncePerServer = require('./once_per_server');
 
 function getObjectQueueFactory(server) {
-  const client = server.plugins.elasticsearch.client;
+  const callWithRequest = server.plugins.elasticsearch.callWithRequest;
   const config = server.config();
   const requestConfig = _.defaults(config.get('xpack.reporting.kibanaServer'), {
     'kibanaApp': config.get('server.basePath') + config.get('xpack.reporting.kibanaApp'),
@@ -13,7 +13,7 @@ function getObjectQueueFactory(server) {
     'port': config.get('server.port'),
   });
 
-  const savedObjects = savedObjectsFactory(client, requestConfig);
+  const savedObjects = savedObjectsFactory(callWithRequest, requestConfig);
 
   function formatObject(parent, objects) {
     return Object.assign({
@@ -25,11 +25,11 @@ function getObjectQueueFactory(server) {
     });
   }
 
-  function getDashboardPanels(savedObj) {
+  function getDashboardPanels(request, savedObj) {
     try {
       const panels = JSON.parse(savedObj.panelsJSON);
       return panels.map((panel) => {
-        return savedObjects.get(panel.type, panel.id)
+        return savedObjects.get(request, panel.type, panel.id)
         .then(function (obj) {
           obj.panelIndex = panel.panelIndex;
           return obj;
@@ -40,18 +40,18 @@ function getObjectQueueFactory(server) {
     }
   }
 
-  return function getObjectQueue(type, objId) {
+  return function getObjectQueue(request, type, objId) {
     if (type === 'dashboard') {
-      return savedObjects.get(type, objId, [ 'panelsJSON'])
+      return savedObjects.get(request, type, objId, [ 'panelsJSON'])
       .then(function (savedObj) {
-        const panelObjects = getDashboardPanels(savedObj);
+        const panelObjects = getDashboardPanels(request, savedObj);
 
         return Promise.all(panelObjects)
         .then((objs) => formatObject(savedObj, objs));
       });
     }
 
-    return Promise.resolve(savedObjects.get(type, objId))
+    return Promise.resolve(savedObjects.get(request, type, objId))
     .then((savedObj) => formatObject(savedObj, [ savedObj ]));
   };
 }

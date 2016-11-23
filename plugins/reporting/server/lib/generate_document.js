@@ -33,13 +33,15 @@ function generateDocumentFactory(server) {
   function printablePdf(title, savedObjects, query, headers) {
     const pdfOutput = pdf.create();
 
-    const timeRange = getTimeFilterRange(savedObjects, query);
-    title += (timeRange) ? ` — ${timeRange.from} to ${timeRange.to}` : '';
-    pdfOutput.setTitle(title);
+    if (title) {
+      const timeRange = getTimeFilterRange(savedObjects, query);
+      title += (timeRange) ? ` — ${timeRange.from} to ${timeRange.to}` : '';
+      pdfOutput.setTitle(title);
+    }
 
     return map(savedObjects, function (savedObj) {
       if (savedObj.isMissing) {
-        return savedObj;
+        return  { savedObj };
       } else {
         return getScreenshot(savedObj.url, savedObj.type, headers)
         .then((imagePath) => {
@@ -53,7 +55,7 @@ function generateDocumentFactory(server) {
 
       objects.forEach(object => {
         const { imagePath, savedObj } = object;
-        cleanupPaths.push(imagePath);
+        if (imagePath) cleanupPaths.push(imagePath);
 
         if (savedObj.isMissing) {
           pdfOutput.addHeading(`${capitalize(savedObj.type)} with id '${savedObj.id}' not found`, {

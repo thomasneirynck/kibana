@@ -31,7 +31,7 @@ function createDocumentJobFactory(server) {
     return getUser(request)
     .then((user) => {
       // get resulting kibana saved object documents
-      return getObjectQueue(objectType, objId)
+      return getObjectQueue(request, objectType, objId)
       .then(function (objectQueue) {
         server.log(['reporting', 'debug'], `${objectQueue.objects.length} saved object(s) to process`);
 

@@ -5,7 +5,8 @@ const savedObjects = require('../../../server/lib/saved_objects');
 const mockSavedObjects = require('../../fixtures/mock_saved_objects');
 
 describe('saved_objects', function () {
-  let mockClient;
+  let mockCallWithRequest;
+  let mockRequest;
   let clientResponse;
   let module;
 
@@ -14,11 +15,10 @@ describe('saved_objects', function () {
   }
 
   beforeEach(function () {
-    mockClient = {
-      get: () => Bluebird.resolve(clientResponse)
-    };
+    mockRequest = {};
+    mockCallWithRequest = () => Bluebird.resolve(clientResponse);
 
-    module = savedObjects(mockClient, {
+    module = savedObjects(mockCallWithRequest, {
       kibanaApp: '/app/kibana',
       kibanaIndex: '.kibana',
     });
@@ -35,7 +35,7 @@ describe('saved_objects', function () {
         mockObject = mockSavedObjects[objectType];
         setClientResponse(mockObject);
 
-        return module.get(objectType, mockObject._id)
+        return module.get(mockRequest, objectType, mockObject._id)
         .then(function (obj) {
           savedObject = obj;
         });
