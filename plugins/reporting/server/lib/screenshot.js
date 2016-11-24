@@ -54,17 +54,19 @@ function createPhantom(phantomPath, captureSettings) {
 }
 
 function loadUrl(ph, url, captureSettings, opts) {
-  const { timeout, viewport, zoom, loadDelay } = captureSettings;
+  const { timeout, viewport, zoom, loadDelay, settleTime } = captureSettings;
+  const waitForSelector = '.application';
 
   return ph.open(url, {
     headers: opts.headers,
-    waitForSelector: '.application visualize',
+    waitForSelector,
     timeout,
     zoom,
     viewport,
   })
-  .then(() => ph.evaluate(function (basePath) {
-    (function (window, document) {
+  .then(() => {
+    return ph.evaluate(function (basePath) {
+      // inject custom CSS rules
       function injectCSS(cssPath) {
         var node = document.createElement('link');
         node.rel = 'stylesheet';
@@ -73,9 +75,74 @@ function loadUrl(ph, url, captureSettings, opts) {
       };
 
       injectCSS(basePath + '/plugins/reporting/styles/reporting-overrides.css');
-    }(window, window.document));
-  }, opts.basePath))
-  .then(() => ph.wait(loadDelay));
+    }, opts.basePath);
+  })
+  .then(() => {
+    return ph.waitForSelector('[render-counter]');
+  })
+  .then(() => {
+    // this is run in phantom
+    function listenForComplete(visLoadDelay, visLoadTimeout, visSettleTime) {
+      // wait for visualizations to finish loading
+      var visualizations = document.querySelectorAll('[render-counter]');
+      var visCount = visualizations.length;
+      const renderedTasks = [];
+
+      // used when visualizations have a render-count attribute
+      function waitForRenderCount(visualization) {
+        return new Promise(function (resolve, reject) {
+          var CHECK_DELAY = 300;
+          var start = Date.now();
+          var lastRenderCount = 0;
+
+          (function checkRenderCount() {
+            var renderCount = parseInt(visualization.getAttribute('render-counter'));
+
+            // if the timeout has exceeded, abort and reject
+            if ((start + visLoadTimeout) < Date.now()) {
+              return reject(new Error('Visualization took too long to load'));
+            }
+
+            // vis has rendered at least once
+            if (renderCount > 0) {
+              // resolve once the current and previous render count match
+              if (renderCount === lastRenderCount) {
+                return resolve();
+              }
+
+              // if they don't match, wait for the visualization to settle and try again
+              lastRenderCount = renderCount;
+              return setTimeout(checkRenderCount, visSettleTime);
+            }
+
+            setTimeout(checkRenderCount, CHECK_DELAY);
+          }());
+        });
+      }
+
+      // timeout resolution, used when visualizations don't have a render-count attribute
+      function waitForRenderDelay() {
+        return new Promise(function (resolve) {
+          setTimeout(resolve, visLoadDelay);
+        });
+      }
+
+      for (var i = 0; i < visCount; i++) {
+        var visualization = visualizations[i];
+        var renderCounter = visualization.getAttribute('render-counter');
+
+        if (renderCounter !== 'disabled') {
+          renderedTasks.push(waitForRenderCount(visualization));
+        } else {
+          renderedTasks.push(waitForRenderDelay());
+        }
+      }
+
+      return Promise.all(renderedTasks);
+    }
+
+    return ph.evaluate(listenForComplete, loadDelay, timeout, settleTime);
+  });
 };
 
 function getTargetFile(imagePath) {

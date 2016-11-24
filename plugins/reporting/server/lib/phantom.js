@@ -2,6 +2,7 @@ import path from 'path';
 import { randomBytes } from 'crypto';
 import fs from 'fs';
 import { fromCallback } from 'bluebird';
+import { PHANTOM_MAX_LOAD_TIMEOUT } from './constants';
 import driver from '@elastic/node-phantom-simple';
 import extract from './extract';
 
@@ -99,14 +100,13 @@ function _createPhantomInstance(ready, phantom, phantomOptions) {
     open(url, pageOptions) {
       return ready.then(() => {
         validateInstance();
+
         return configurePage(pageOptions)
         .then(() => fromCallback(cb => phantom.page.open(url, cb)))
         .then(status => {
           if (status !== 'success') throw new Error('URL open failed. Is the server running?');
           if (pageOptions.waitForSelector) {
-            return this.waitFor(function (selector) {
-              return !!document.querySelector(selector);
-            }, true, pageOptions.waitForSelector)
+            return this.waitForSelector(pageOptions.waitForSelector, PHANTOM_MAX_LOAD_TIMEOUT)
             .catch(err => {
               const message = (err.message) ? err.message : err.toString();
 
@@ -179,6 +179,9 @@ function _createPhantomInstance(ready, phantom, phantomOptions) {
                   res.then((val) => {
                     done(null, val);
                   }, (err) => {
+                    if (!(err instanceof Error)) {
+                      err = new Error(err || 'Unspecified error');
+                    }
                     done(err);
                   });
                   return '__promise__';
@@ -241,60 +244,68 @@ function _createPhantomInstance(ready, phantom, phantomOptions) {
     wait(timeout) {
       return ready.then(() => {
         validateInstance();
+
         return new Promise(resolve => setTimeout(resolve, timeout));
       });
     },
 
     waitFor(fn, value, ...args) {
-      const WAIT_TIMEOUT = phantomOptions.timeout || 10000;
+      return ready.then(() => {
+        validateInstance();
+
+        const timeout = phantomOptions.timeout || 10000;
+        return this.waitForTime(fn, value, timeout, ...args);
+      });
+    },
+
+    waitForSelector(selector, timeout = phantomOptions.timeout) {
+      return ready.then(() => {
+        validateInstance();
+
+        return this.waitForTime(function (cssSelector) {
+          return !!document.querySelector(cssSelector);
+        }, true, timeout, selector);
+      });
+    },
+
+    waitForTime(fn, value, timeout, ...args) {
       const INTERVAL_TIME = 250;
 
       if (typeof value === 'undefined') return ready.then(() => Promise.resolve());
+      if (timeout < INTERVAL_TIME) timeout = INTERVAL_TIME;
 
       return ready.then(() => {
+        validateInstance();
+
         return new Promise((resolve, reject) => {
           const self = this;
           const start = Date.now();
 
-          // track resolution state, prevent extraneous code execution due to pending setInterval calls
-          let isResolved = false;
-
-          const checkInterval = setInterval(waitForCheck, INTERVAL_TIME);
-          const stopTimer = () => { isResolved = true; return clearInterval(checkInterval); };
-
-          function waitForCheck() {
-            if (isResolved) return;
-
-            if ((Date.now() - start) > WAIT_TIMEOUT) {
-              stopTimer();
-              return reject(new Error(`Timeout exceeded (${WAIT_TIMEOUT})`));
+          (function waitForCheck() {
+            if ((Date.now() - start) > timeout) {
+              return reject(new Error(`Timeout exceeded (${timeout})`));
             }
 
             return self.evaluate(fn, ...args)
             .then(res => {
-              if (isResolved) return;
-
               if (res === value) {
-                stopTimer();
-                resolve();
+                return resolve();
               }
+
+              setTimeout(waitForCheck, INTERVAL_TIME);
             })
             .catch(err => {
-              if (isResolved) return;
-
-              stopTimer();
               reject(err);
             });
-          }
+          }());
         });
       });
     },
 
     screenshot(screenshotPath, screenshotOptions) {
-      validateInstance();
-
 
       return ready.then(() => {
+        validateInstance();
         function saveScreenshot() {
           return fromCallback(cb => phantom.page.render(screenshotPath, cb));
         }
@@ -330,9 +341,9 @@ function _createPhantomInstance(ready, phantom, phantomOptions) {
     },
 
     destroy() {
-      validateInstance();
-
       return ready.then(() => {
+        validateInstance();
+
         return fromCallback(cb => phantom.browser.exit(cb))
         .then(() => {
           phantom.browser = false;

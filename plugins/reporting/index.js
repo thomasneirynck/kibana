@@ -52,6 +52,7 @@ export default function (kibana) {
           }).default(),
           timeout: Joi.number().integer().default(6000),
           loadDelay: Joi.number().integer().default(3000),
+          settleTime: Joi.number().integer().default(1000),
           concurrency: Joi.number().integer().default(appConfig.concurrency),
         }).default(),
         encryptionKey: Joi.string()
