@@ -1,7 +1,7 @@
 /*
  * Kibana Instance
  */
-import _ from 'lodash';
+import { get, find } from 'lodash';
 import uiRoutes from'ui/routes';
 import uiModules from 'ui/modules';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
@@ -68,11 +68,11 @@ uiModule.controller('kibana', ($route, globalState, title, Private, $executor, $
 
   function setClusters(clusters) {
     $scope.clusters = clusters;
-    $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
+    $scope.cluster = find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
   }
   setClusters($route.current.locals.clusters);
   $scope.pageData = $route.current.locals.pageData;
-  title($scope.cluster, `Kibana - ${$scope.pageData.kibanaSummary.name}`);
+  title($scope.cluster, `Kibana - ${get($scope.pageData, 'kibanaSummary.name')}`);
 
   $executor.register({
     execute: () => getPageData(timefilter, globalState, $http, $route, Private),

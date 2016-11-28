@@ -32,6 +32,7 @@ export default function getKibanasForClusters(req, indices) {
         index: indices,
         ignoreUnavailable: true,
         type: 'kibana_stats',
+        ignore: [404],
         body: {
           query: createQuery({
             start,

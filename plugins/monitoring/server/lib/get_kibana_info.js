@@ -15,6 +15,7 @@ export default function getKibanaInfo(req, uuid) {
   const config = req.server.config();
   const params = {
     index: config.get('xpack.monitoring.index'),
+    ignore: [404],
     type: 'kibana',
     id: uuid
   };
