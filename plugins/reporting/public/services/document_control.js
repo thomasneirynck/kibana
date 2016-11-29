@@ -68,16 +68,8 @@ UiModules.get('xpack/reporting')
     return Boolean(this.getInfo().exportable);
   };
 
-  this.getUrl = (opts = {}) => {
-    const reportUrl = this.getInfo().reportUrl;
-    if (!reportUrl) return null;
-
-    if (opts.sync) {
-      const parsed = url.parse(reportUrl);
-      parsed.search = (parsed.search === null) ? 'sync' : `${parsed.search}&sync`;
-      return url.format(parsed);
-    }
-
+  this.getUrl = () => {
+    const { reportUrl } = this.getInfo();
     return reportUrl;
   };
 

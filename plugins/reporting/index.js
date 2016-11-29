@@ -39,10 +39,6 @@ export default function (kibana) {
           indexInterval: Joi.string().default('week'),
           pollInterval: Joi.number().integer().default(3000),
           timeout: Joi.number().integer().default(30000),
-          syncSocketTimeout: Joi.number().integer(),
-        }).default(),
-        generate: Joi.object({
-          socketTimeout: Joi.number().integer(),
         }).default(),
         capture: Joi.object({
           zoom: Joi.number().integer().default(2),

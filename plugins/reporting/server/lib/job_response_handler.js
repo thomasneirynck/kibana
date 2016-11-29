@@ -13,17 +13,20 @@ function jobResponseHandlerFactory(server) {
     .then((doc) => {
       if (!doc) return reply(boom.notFound());
 
-      return getDocumentPayload(doc, jobType, { sync: opts.sync })
+      return getDocumentPayload(doc, jobType)
       .then((output) => {
         const response = reply(output.content);
         response.type(output.contentType);
       })
       .catch((err) => {
-        // 503 here means that the document is still pending and we are not faking
-        // a synchronous response inside getDocumentPayload
+        // 503 here means that the document is still pending
         if (err.statusCode === 503) {
-          const response = reply(boom.serverUnavailable(err.content));
+          // Boom 3.x hijacks the reply object
+          // since we need to add headers to the response, we can't use it here
+          // Boom 4.2.0+ is required to work completely, and without the header
+          const response = reply(err.content);
           response.type(err.contentType);
+          response.code(err.statusCode);
 
           // The Retry-After header is added to tell the client to check back later
           // to see if the document is ready. We use it to indicate that the client

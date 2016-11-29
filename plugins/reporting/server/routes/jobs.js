@@ -9,8 +9,6 @@ const mainEntry = `${API_BASE_URL}/jobs`;
 const API_TAG = 'api';
 
 module.exports = function (server) {
-  const config = server.config();
-  const socketTimeout = config.get('xpack.reporting.generate.socketTimeout');
   const jobsQuery = jobsQueryFactory(server);
   const licensePre = licensePreFactory(server);
   const userPreRouting = userPreRoutingFactory(server);
@@ -76,7 +74,6 @@ module.exports = function (server) {
     },
     config: {
       pre: [ licensePre ],
-      timeout: { socket: socketTimeout },
     }
   });
 
@@ -88,11 +85,10 @@ module.exports = function (server) {
       const { docId } = request.params;
       const jobType = JOBTYPES.PRINTABLE_PDF;
 
-      jobResponseHandler(request, reply, { docId, jobType }, { sync: true });
+      jobResponseHandler(request, reply, { docId, jobType });
     },
     config: {
       pre: [ licensePre, userPreRouting ],
-      timeout: { socket: socketTimeout },
       tags: [API_TAG],
     },
   });
