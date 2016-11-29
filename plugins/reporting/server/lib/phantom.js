@@ -415,7 +415,7 @@ function _getPackage(installPath) {
     binary = path.join(basename + '-macosx', 'bin', 'phantomjs');
     suffix = 'macosx.zip';
   } else if (platform === 'win32') {
-    binary = path.join(basename + '-windows', 'phantomjs.exe');
+    binary = path.join(basename + '-windows', 'bin', 'phantomjs.exe');
     suffix = 'windows.zip';
   } else {
     const msg = 'Unsupported platform: ' + platform + ' ' + arch;
