@@ -91,11 +91,11 @@ export default class ChartTarget extends React.Component {
         this.plot.resize();
         this.plot.setupGrid();
         this.plot.draw();
-      } catch (e) {
-        console.log({
-          error: e,
-          dimensions: this.plot.height() * this.plot.height()
-        });
+      }
+      catch (e) { // eslint-disable-line no-empty
+        /* It is ok to silently swallow the error here. Resize events fire
+         * continously so the proper resize will happen in a later firing of
+         * the event */
       }
     };
 
