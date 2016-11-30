@@ -21,6 +21,24 @@ routes.defaults(/\/management/, {
         elasticsearch.deregister('roles');
       }
 
+      function registerSecurity() {
+        if (!elasticsearch.hasItem('users')) {
+          elasticsearch.register('users', {
+            order: 10,
+            display: 'Users',
+            url: '#/management/elasticsearch/users'
+          });
+        }
+
+        if (!elasticsearch.hasItem('roles')) {
+          elasticsearch.register('roles', {
+            order: 20,
+            display: 'Roles',
+            url: '#/management/elasticsearch/roles'
+          });
+        }
+      }
+
       deregisterSecurity();
       if (!showSecurityLinks) return;
 
@@ -29,19 +47,7 @@ routes.defaults(/\/management/, {
       //
       // $promise is used here because the result is an ngResource, not a promise itself
       return ShieldUser.getCurrent().$promise
-      .then(() => {
-        elasticsearch.register('users', {
-          order: 10,
-          display: 'Users',
-          url: '#/management/elasticsearch/users'
-        });
-
-        elasticsearch.register('roles', {
-          order: 20,
-          display: 'Roles',
-          url: '#/management/elasticsearch/roles'
-        });
-      })
+      .then(registerSecurity)
       .catch(deregisterSecurity);
     }
   }
