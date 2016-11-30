@@ -2,9 +2,9 @@ import _ from 'lodash';
 import React from 'react';
 import $ from 'jquery-flot'; // webpackShim
 import eventBus from './event_bus';
-import { findDOMNode } from 'react-dom';
 import getChartOptions from './get_chart_options';
-import ResizeAware from 'react-resize-aware';
+
+const RESIZE_TIMEOUT = 250; // resize handler to execute at a rate of 4fps
 
 export default class ChartTarget extends React.Component {
   shouldComponentUpdate() {
@@ -30,7 +30,7 @@ export default class ChartTarget extends React.Component {
 
   componentWillUnmount() {
     this.shutdownChart();
-    findDOMNode(this.refs.resize).removeEventListener('resize', this.handleResize);
+    window.removeEventListener('resize', this.resizeThrottler);
   }
 
   filterByShow(seriesToShow) {
@@ -53,12 +53,10 @@ export default class ChartTarget extends React.Component {
 
   componentDidMount() {
     this.renderChart();
-    findDOMNode(this.refs.resize).addEventListener('resize', this.handleResize);
+    window.addEventListener('resize', this.resizeThrottler, false);
 
-    // resizes legend after each series is initialized
-    window.setTimeout(() => {
-      this.handleResize();
-    }, 0);
+    // resizes legend container after each series is initialized
+    this.resizeThrottler();
   }
 
   componentDidUpdate() {
@@ -87,11 +85,29 @@ export default class ChartTarget extends React.Component {
 
     this.plot = $.plot(target, data, this.getOptions());
 
-    this.handleResize = (_event) => {
+    this._handleResize = () => {
       if (!this.plot) return;
-      this.plot.resize();
-      this.plot.setupGrid();
-      this.plot.draw();
+      try {
+        this.plot.resize();
+        this.plot.setupGrid();
+        this.plot.draw();
+      } catch (e) {
+        console.log({
+          error: e,
+          dimensions: this.plot.height() * this.plot.height()
+        });
+      }
+    };
+
+    // simulate the "end" of the resize action
+    // needs setTimeout/clearTimeout since resize events are continous
+    // http://stackoverflow.com/a/5490021
+    let resizeTimeout;
+    this.resizeThrottler = () => {
+      resizeTimeout = window.setTimeout(() => {
+        clearTimeout(resizeTimeout);
+        this._handleResize(); // actual resize handler
+      }, RESIZE_TIMEOUT);
     };
 
     this.handleMouseOver = (...args) => {
@@ -163,9 +179,9 @@ export default class ChartTarget extends React.Component {
       rowDirection: 'column',
       flex: '1 0 auto'
     };
+
     return (
-      <ResizeAware ref="resize" style={style}>
-        <div ref="target" style={style} />
-      </ResizeAware>);
+      <div ref="target" style={style} />
+    );
   }
 }
