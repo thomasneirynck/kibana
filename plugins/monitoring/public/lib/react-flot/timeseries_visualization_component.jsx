@@ -10,7 +10,6 @@ export default class TimeseriesVisualization extends React.Component {
   constructor() {
     super();
 
-    this.plothover = this.plothover.bind(this);
     this.updateLegend = this.updateLegend.bind(this);
     this.toggleFilter = this.toggleFilter.bind(this);
 
@@ -99,10 +98,6 @@ export default class TimeseriesVisualization extends React.Component {
     }
 
     this.setState(nextState);
-  }
-
-  plothover(_event, pos, item) {
-    this.updateLegend(pos, item);
   }
 
   render() {

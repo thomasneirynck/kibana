@@ -14,7 +14,6 @@ export default class ChartTarget extends React.Component {
   shutdownChart() {
     if (!this.plot) return;
     const { target } = this.refs;
-    $(target).unbind('plothover', this.props.plothover);
     $(target).on('plothover', this.handleMouseOver);
     $(target).on('mouseleave', this.handleMouseLeave);
     $(target).off('plotselected', this.brushChart);
@@ -79,11 +78,23 @@ export default class ChartTarget extends React.Component {
   }
 
   renderChart() {
-    const { target} = this.refs;
+    const { target } = this.refs;
     const { series } = this.props;
     const data = this.filterData(series, this.props.seriesToShow);
 
     this.plot = $.plot(target, data, this.getOptions());
+
+    this.plotHover = (pos, item, originalPlot) => {
+      if (this.plot !== originalPlot) {
+        // the crosshair is set for the original chart already
+        this.plot.setCrosshair({ x: _.get(pos, 'x')});
+      }
+      this.props.updateLegend(pos, item);
+    };
+
+    // 17ms, which is roughly 60fps
+    const debounceMillis = 17;
+    const debouncedThorPlotHover = _.debounce(this.plotHover, debounceMillis, { leading: true });
 
     this._handleResize = () => {
       if (!this.plot) return;
@@ -126,16 +137,13 @@ export default class ChartTarget extends React.Component {
     };
 
     $(target).on('plothover', this.handlePlothover);
-    $(target).bind('plothover', this.props.plothover);
 
     this.handleThorPlothover = (_event, pos, item, originalPlot) => {
-      if (this.plot !== originalPlot) {
-        this.plot.setCrosshair({ x: _.get(pos, 'x')});
-        this.props.updateLegend(pos, item);
-      }
+      debouncedThorPlotHover(pos, item, originalPlot);
     };
 
     this.handleThorPlotleave = () => {
+      debouncedThorPlotHover.cancel();
       this.props.updateLegend(); // gets last values
       this.plot.clearCrosshair();
     };
