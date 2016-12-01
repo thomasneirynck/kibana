@@ -1,6 +1,5 @@
 import React from 'react';
 import ChartTarget from './chart_target_component';
-import Tooltip from './timeseries_tooltip_component';
 
 export default class TimeseriesContainer extends React.Component {
   constructor() {
@@ -57,9 +56,6 @@ export default class TimeseriesContainer extends React.Component {
   }
 
   render() {
-    const item = this.state.item;
-    const { series } = this.props;
-
     const container = {
       display: 'flex',
       rowDirection: 'column',
@@ -69,7 +65,6 @@ export default class TimeseriesContainer extends React.Component {
 
     return (
       <div ref="container" style={container}>
-        <Tooltip item={item} series={series} tickFormatter={this.props.tickFormatter} {...this.state} />
         <ChartTarget onMouseOver={this.handleMouseOver} {...this.props}/>
       </div>
     );
