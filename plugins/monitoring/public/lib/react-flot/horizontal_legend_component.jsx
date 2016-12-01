@@ -18,7 +18,7 @@ export default class HorizontalLegend extends React.Component {
   createSeries(row) {
     const formatter = row.tickFormatter || this.formatter;
     const value = formatter(this.props.seriesValues[row.id]);
-    const classes = ['rhythm_chart__legend_item'];
+    const classes = ['col-md-4 col-xs-6 rhythm_chart__legend-item'];
     const key = row.id;
 
     if (!includes(this.props.seriesFilter, row.id)) {
@@ -36,11 +36,11 @@ export default class HorizontalLegend extends React.Component {
         onClick={event => this.props.onToggle(event, row.id)}
         key={key}
       >
-        <div className='rhythm_chart__legend_label'>
-          <span className='fa fa-circle' style={{color: row.color}}/>
-          <span>{row.label}</span>
-        </div>
-        <div className='rhythm_chart__legend_value'>{value}</div>
+        <span className='rhythm_chart__legend-label'>
+          <span className='fa fa-circle rhythm_chart__legend-indicator' style={{color: row.color}}/>
+          {row.label}
+        </span>
+        <span className='rhythm_chart__legend-value'>{value}</span>
       </div>
     );
   }
@@ -50,10 +50,7 @@ export default class HorizontalLegend extends React.Component {
 
     return (
       <div className='rhythm_chart__legend-horizontal'>
-        <div className='rhythm_chart__legend-control'>
-          <span>&nbsp;</span>
-        </div>
-        <div className='rhythm_chart__legend-series'>
+        <div className='row rhythm_chart__legend-series'>
           {rows}
         </div>
       </div>

@@ -38,58 +38,31 @@
   }
 }
 
-.rhythm_chart__legend-series {
-  flex-grow: 1;
-}
-
-.rhythm_chart__legend {
-  display: flex;
-  font-size: 11px;
-  width: 200px;
-  padding: 5px 0;
-  overflow: auto;
-}
-
-.rhythm_chart__legend_item {
+.rhythm_chart__legend-item {
   &.disabled {
     opacity: 0.5;
   }
-  padding: 5px;
-  display: flex;
-  max-width: 170px;
+  font-size: 12px;
   cursor: pointer;
   color: @textColor;
 }
 
-.rhythm_chart__legend_label {
-  flex-grow: 1;
-  overflow: hidden;
-  white-space: nowrap;
-  span {
-    margin-left: 5px;
-  }
-}
-
-.rhythm_chart__legend_value {
-  margin-left: 3px;
+.rhythm_chart__legend-indicator {
+  margin-right: 3px;
 }
 
 .rhythm_chart__legend-horizontal {
-  width: auto;
-  display: flex;
-  .rhythm_chart__legend-series {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  .rhythm_chart__legend_label {
-    flex: 0 1 auto;
-  }
-  .rhythm_chart__legend_item {
-    max-width: inherit;
-    font-size: 12px;
-    display: flex;
-    margin-right: 10px;
-    border-bottom: none;
-    &:first-child { border-top: none; }
-  }
+  margin-top: 3px;
+}
+
+.rhythm_chart__legend-series {
+}
+.rhythm_chart__legend-label {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.rhythm_chart__legend-value {
+  overflow: hidden;
+  white-space: nowrap;
+  margin-left: 3px;
 }
