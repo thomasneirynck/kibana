@@ -14,17 +14,17 @@ export default class ChartTarget extends React.Component {
   shutdownChart() {
     if (!this.plot) return;
     const { target } = this.refs;
-    $(target).on('plothover', this.handleMouseOver);
-    $(target).on('mouseleave', this.handleMouseLeave);
-    $(target).off('plotselected', this.brushChart);
+    $(target).off('plothover');
+    $(target).off('mouseleave');
+    $(target).off('plotselected');
+    $(target).off('plotselecting');
 
     this.plot.shutdown();
 
-    $(target).off('plothover', this.handlePlothover);
-    eventBus.off('thorPlothover', this.handleThorPlothover);
-    eventBus.off('thorPlotleave', this.handleThorPlotleave);
-    eventBus.off('thorPlotselecting', this.handleThorPlotselecting);
-    eventBus.off('thorPlotbrush', this.handleThorPlotbrush);
+    eventBus.off('thorPlotHover');
+    eventBus.off('thorPlotLeave');
+    eventBus.off('thorPlotSelecting');
+    eventBus.off('thorPlotBrush');
   }
 
   componentWillUnmount() {
@@ -42,7 +42,7 @@ export default class ChartTarget extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (this.plot) {
+    if (this.plot && !_.isEqual(newProps, this.props)) {
       const { series } = newProps;
       this.plot.setData(this.filterData(series, newProps.seriesToShow));
       this.plot.setupGrid();
@@ -84,18 +84,6 @@ export default class ChartTarget extends React.Component {
 
     this.plot = $.plot(target, data, this.getOptions());
 
-    this.plotHover = (pos, item, originalPlot) => {
-      if (this.plot !== originalPlot) {
-        // the crosshair is set for the original chart already
-        this.plot.setCrosshair({ x: _.get(pos, 'x')});
-      }
-      this.props.updateLegend(pos, item);
-    };
-
-    // 17ms, which is roughly 60fps
-    const debounceMillis = 17;
-    const debouncedThorPlotHover = _.debounce(this.plotHover, debounceMillis, { leading: true });
-
     this._handleResize = () => {
       if (!this.plot) return;
       try {
@@ -121,63 +109,59 @@ export default class ChartTarget extends React.Component {
       }, RESIZE_TIMEOUT);
     };
 
-    this.handleMouseOver = (...args) => {
-      this.props.onMouseOver(...args, this.plot);
-    };
-
     this.handleMouseLeave = () => {
-      eventBus.trigger('thorPlotleave', []);
+      eventBus.trigger('thorPlotLeave', []);
     };
 
-    $(target).on('plothover', this.handleMouseOver);
-    $(target).on('mouseleave', this.handleMouseLeave);
-
-    this.handlePlothover = (_event, pos, item) => {
-      eventBus.trigger('thorPlothover', [pos, item, this.plot]);
+    this.handlePlotHover = (_event, pos, item) => {
+      eventBus.trigger('thorPlotHover', [pos, item, this.plot]);
     };
 
-    $(target).on('plothover', this.handlePlothover);
-
-    this.handleThorPlothover = (_event, pos, item, originalPlot) => {
-      debouncedThorPlotHover(pos, item, originalPlot);
+    this.handleThorPlotHover = (_event, pos, item, originalPlot) => {
+      if (this.plot !== originalPlot) {
+        // the crosshair is set for the original chart already
+        this.plot.setCrosshair({ x: _.get(pos, 'x')});
+      }
+      this.props.updateLegend(pos, item);
     };
 
-    this.handleThorPlotleave = () => {
-      debouncedThorPlotHover.cancel();
-      this.props.updateLegend(); // gets last values
+    this.handleThorPlotLeave = () => {
       this.plot.clearCrosshair();
+      this.props.updateLegend(); // gets last values
     };
 
-    this.handleThorPlotselecting = (_event, xaxis, originalPlot) => {
+    this.handleThorPlotSelecting = (_event, xaxis, originalPlot) => {
       if (this.plot !== originalPlot) {
         const preventEvent = true;
         this.plot.setSelection({ xaxis }, preventEvent);
       }
     };
 
-    this.handleThorPlotbrush = () => {
+    this.handleThorPlotBrush = () => {
       this.plot.clearSelection();
     };
-
-    eventBus.on('thorPlothover', this.handleThorPlothover);
-    eventBus.on('thorPlotleave', this.handleThorPlotleave);
-    eventBus.on('thorPlotselecting', this.handleThorPlotselecting);
-    eventBus.on('thorPlotbrush', this.handleThorPlotbrush);
 
     this.selectingChart = (_event, ranges) => {
       if (ranges) {
         const xaxis = ranges.xaxis;
-        eventBus.trigger('thorPlotselecting', [xaxis, this.plot]);
+        eventBus.trigger('thorPlotSelecting', [xaxis, this.plot]);
       }
     };
 
     this.brushChart = (_event, ranges) => {
       this.props.onBrush(ranges);
-      eventBus.trigger('thorPlotbrush');
+      eventBus.trigger('thorPlotBrush');
     };
 
-    $(target).on('plotselecting', this.selectingChart);
+    $(target).on('plothover', this.handlePlotHover);
+    $(target).on('mouseleave', this.handleMouseLeave);
     $(target).on('plotselected', this.brushChart);
+    $(target).on('plotselecting', this.selectingChart);
+
+    eventBus.on('thorPlotHover', this.handleThorPlotHover);
+    eventBus.on('thorPlotLeave', this.handleThorPlotLeave);
+    eventBus.on('thorPlotSelecting', this.handleThorPlotSelecting);
+    eventBus.on('thorPlotBrush', this.handleThorPlotBrush);
   }
 
   render() {

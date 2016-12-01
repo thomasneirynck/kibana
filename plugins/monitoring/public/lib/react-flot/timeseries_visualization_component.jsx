@@ -10,7 +10,11 @@ export default class TimeseriesVisualization extends React.Component {
   constructor() {
     super();
 
-    this.updateLegend = this.updateLegend.bind(this);
+    // 17ms, which is roughly 60fps
+    const debounceMillis = 17;
+    this.debouncedUpdateLegend = _.debounce(this.updateLegend, debounceMillis);
+    this.debouncedUpdateLegend = this.debouncedUpdateLegend.bind(this);
+
     this.toggleFilter = this.toggleFilter.bind(this);
 
     this.state = {
@@ -112,8 +116,7 @@ export default class TimeseriesVisualization extends React.Component {
           <div className='rhythm_chart__visualization'>
             <TimeseriesContainer
               seriesToShow={this.state.seriesToShow}
-              updateLegend={this.updateLegend}
-              plothover={this.plothover}
+              updateLegend={this.debouncedUpdateLegend}
               {...this.props}
             />
           </div>
