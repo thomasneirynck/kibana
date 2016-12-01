@@ -10,6 +10,8 @@ const version = '2.1.1';
 const basename = 'phantomjs-' + version;
 const sourcePath = path.resolve(__dirname, '..', '..', '..', '..', '.phantom');
 
+const noop = function () {};
+
 export default {
   install(installPath = sourcePath) {
     return new Promise((resolve, reject) => {
@@ -43,8 +45,9 @@ export default {
 };
 
 function Phantom(options) {
-  const phantomOptions = _getPhantomOptions(options);
+  const logger = options.logger || noop;
 
+  const phantomOptions = _getPhantomOptions(options);
   const ready = fromCallback(cb => driver.create(phantomOptions, cb))
   .then(browser => {
     if (!browser) throw new Error('Phantom driver failed to initialize');
@@ -54,6 +57,7 @@ function Phantom(options) {
   .then(page => {
     if (!page) throw new Error('Phantom driver failed to create the page instance');
     this.page = page;
+    this.page.onConsoleMessage = (msg) => logger(msg, ['phantomConsole']);
   })
   .catch(err => {
     const message = err.toString();

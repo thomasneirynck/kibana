@@ -1,3 +1,4 @@
+const createTaggedLogger = require('./create_tagged_logger');
 const queue = require('queue');
 const screenshotFactory = require('./screenshot');
 const oncePerServer = require('./once_per_server');
@@ -20,7 +21,8 @@ const boundingBoxes = {
 
 function getScreenshotFactory(server) {
   const config = server.config();
-  const logger = (msg) => server.log(['reporting', 'debug'], msg);
+
+  const logger = createTaggedLogger(server, ['reporting', 'debug']);
 
   const phantomPath = server.plugins.reporting.phantom.binary;
   const captureSettings = config.get('xpack.reporting.capture');

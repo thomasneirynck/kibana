@@ -4,20 +4,21 @@ import Puid from 'puid';
 import phantom from './phantom';
 
 const puid = new Puid();
+const noop = function () {};
 
 class Screenshot {
   constructor(phantomPath, captureSettings, screenshotSettings, logger) {
     this.phantomPath = phantomPath;
     this.captureSettings = captureSettings;
     this.screenshotSettings = screenshotSettings;
-    this.logger = logger || function () {};
+    this.logger = logger || noop;
   }
 
   capture(url, opts) {
     this.logger(`fetching screenshot of ${url}`);
     opts = Object.assign({ basePath: this.screenshotSettings.basePath }, opts);
 
-    return createPhantom(this.phantomPath, this.captureSettings)
+    return createPhantom(this.phantomPath, this.captureSettings, this.logger)
     .then(ph => {
       const filepath = getTargetFile(this.screenshotSettings.imagePath);
 
@@ -39,7 +40,7 @@ export default function screenshot(phantomPath, captureSettings, screenshotSetti
   return new Screenshot(phantomPath, captureSettings, screenshotSettings, logger);
 };
 
-function createPhantom(phantomPath, captureSettings) {
+function createPhantom(phantomPath, captureSettings, logger) {
   const { timeout } = captureSettings;
 
   return Promise.resolve(getPort())
@@ -49,6 +50,7 @@ function createPhantom(phantomPath, captureSettings) {
       phantomPath: phantomPath,
       bridgePort: port,
       timeout,
+      logger
     });
   });
 }
