@@ -138,15 +138,18 @@
     outline:solid 1px #aaa;
   }
 
-  .tv-row {
+  .tv-row,
+  .tv-row-header {
       display: table;
       width: 100%;
       table-layout: fixed;
   }
 
-  .tv-row-header > .cell {
-    font-weight: bold;
-    color: #777;
+  .tv-row-header {
+     > .cell {
+      font-weight: bold;
+      color: #777;
+    }
   }
 
   .cell {
