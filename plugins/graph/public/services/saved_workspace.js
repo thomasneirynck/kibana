@@ -34,8 +34,8 @@ export default function SavedWorkspaceProvider(courier) {
 
   // if type:workspace has no mapping, we push this mapping into ES
   SavedWorkspace.mapping = {
-    title: 'string',
-    description: 'string',
+    title: 'text',
+    description: 'text',
     numLinks: 'integer',
     numVertices: 'integer',
     version: 'integer',
