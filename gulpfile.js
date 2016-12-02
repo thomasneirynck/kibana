@@ -24,6 +24,7 @@ var gitInfo = require('./gulp_helpers/git_info');
 var stagedFiles = require('./gulp_helpers/staged_files.js');
 var createPackageFile = require('./gulp_helpers/create_package');
 var buildVersion = require('./gulp_helpers/build_version')();
+var fileGlobs = require('./gulp_helpers/globs');
 
 var pkg = require('./package.json');
 var packageFile = `${pkg.name}-${buildVersion}.zip`;
@@ -89,11 +90,13 @@ function lintFiles(filePaths) {
 }
 
 gulp.task('lint-staged', function () {
+  const kibanaPath = new RegExp('^kibana/');
+
   return stagedFiles.getFiles(__dirname)
   .then((files) => {
     const filePaths = files
     .filter((file) => stagedFiles.getFilename(file).match(/\.jsx?$/))
-    .map((file) => stagedFiles.getFilename(file).replace(/^kibana\//, ''));
+    .map((file) => stagedFiles.getFilename(file).replace(kibanaPath, ''));
 
     return lintFiles(filePaths);
   });
@@ -102,13 +105,12 @@ gulp.task('lint-staged', function () {
 gulp.task('lint', function () {
   var filePaths = [
     'gulpfile.js',
-    'plugins/**/*.js',
-    'plugins/**/*.jsx',
-    'server/**/*.js',
-    'public/**/*.js',
+    './{server,public}/**/*.js',
     '!plugins/**/node_modules/**',
     '!plugins/**/__test__/fixtures/**/*.js'
-  ];
+  ]
+  .concat(fileGlobs.forPlugins('js', 'jsx'));
+
   return lintFiles(filePaths);
 });
 
@@ -229,10 +231,12 @@ gulp.task('release', ['package'], function () {
 });
 
 gulp.task('pre-test', function () {
-  return gulp.src([
-    './{server,public,plugins}/**/*.js',
+  const globs = [
+    './{server,public}/**/*.js',
     '!./**/__test__/**'
-  ])
+  ].concat(fileGlobs.forPlugins());
+
+  return gulp.src(globs)
     // instruments code for measuring test coverage
     .pipe(istanbul({
       instrumenter: isparta.Instrumenter,
@@ -243,7 +247,13 @@ gulp.task('pre-test', function () {
 });
 
 function runMocha() {
-  return gulp.src(['./{plugins,server}/**/__test__/**/*.js', '!./build/**'], { read: false })
+
+  const globs = [
+    './server/**/__test__/**/*.js',
+    '!./build/**'
+  ].concat(fileGlobs.forPluginTests());
+
+  return gulp.src(globs, { read: false })
     .pipe(mocha({
       ui: 'bdd'
     }));

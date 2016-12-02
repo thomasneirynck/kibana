@@ -44,6 +44,20 @@ npm start -- --plugin-path=../path/to/x-plugins/kibana/build/kibana/x-pack
 
 This is also a useful way to test the build. The downside is that **changes are not automatically synced for you**, so you will need to re-run the build every time you want to use the changes you've made (Kibana will automatically restart when you do, if running in dev mode).
 
+#### Running unit tests_bundle
+
+You can run server-side unit tests by running:
+
+```
+npm run test
+```
+
+If you want to run tests only for a specific plugin (to save some time), you can run:
+
+```
+npm run test -- --plugins <plugin>[,<plugin>]*    # where <plugin> is "reporting", etc.
+```
+
 ### Issues starting dev more of creating builds
 
 You may see an error like this when you are getting started:
