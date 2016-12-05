@@ -34,6 +34,9 @@ export default {
           } catch (chmodErr) {
             reject(chmodErr);
           }
+        })
+        .catch(function (err) {
+          reject(err);
         });
       }
     });
