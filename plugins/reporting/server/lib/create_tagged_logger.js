@@ -12,7 +12,7 @@
  * @param {string[]} tags - tags to always be passed into the `logger` function
  * @returns taggedLogger
  */
-export default function createTaggedLogger(server, tags) {
+export function createTaggedLogger(server, tags) {
   return (msg, additionalTags = []) => {
     server.log([...tags, ...additionalTags], msg);
   };
