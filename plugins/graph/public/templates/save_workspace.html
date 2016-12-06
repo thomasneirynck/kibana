@@ -4,6 +4,7 @@
     <label for="workspaceTitle">Name</label>
     <input id="workspaceTitle" type="text" ng-model="savedWorkspace.title" class="form-control" placeholder="Graph workspace name" input-focus="select">
   </div>
+  <saved-object-save-as-check-box saved-object="savedWorkspace"></saved-object-save-as-check-box>
   <div class="form-group">
     <label for="workspaceTitle">Description</label>
     <textarea class="form-control input-sm" rows="5" id="notesEdit" placeholder="Any notes.."  ng-model="grr.description"></textarea>

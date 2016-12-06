@@ -5,7 +5,7 @@
     <div data-transclude-slots>
       <!-- Title. -->
       <div data-transclude-slot="topLeftCorner" class="localTitle">
-        <strong>{{ savedWorkspace.title }}</strong>
+        <strong>{{ savedWorkspace.lastSavedTitle || 'New Graph Workspace' }}</strong>
       </div>
 
       <div data-transclude-slot="bottomRow" class="flexGroup">

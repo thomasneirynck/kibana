@@ -867,7 +867,6 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       return;
     }
     initWorkspaceIfRequired();
-    $scope.savedWorkspace.id = $scope.savedWorkspace.title;
     const canSaveData = $scope.graphSavePolicy === 'configAndData' ||
       ($scope.graphSavePolicy === 'configAndDataWithConsent' && $scope.userHasConfirmedSaveWorkspaceData);
 
