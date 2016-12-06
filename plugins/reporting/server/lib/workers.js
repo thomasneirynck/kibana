@@ -1,15 +1,15 @@
-const { JOBTYPES } = require('./constants');
-const oncePerServer = require('./once_per_server');
-const docJobProcessFactory = require('./doc_job_process');
+import { constants } from './constants';
+import { oncePerServer } from './once_per_server';
+import { docJobProcessFactory } from './doc_job_process';
 
-function workersFactory(server) {
+function workersFN(server) {
   const docJobProcess = docJobProcessFactory(server);
 
   const workers = {};
 
   // printable PDFs
-  workers[JOBTYPES.PRINTABLE_PDF] = async function (payload) {
-    const workerType = JOBTYPES.PRINTABLE_PDF;
+  workers[constants.JOBTYPES.PRINTABLE_PDF] = async function (payload) {
+    const workerType = constants.JOBTYPES.PRINTABLE_PDF;
 
     server.log(['reporting', 'worker', 'debug'], `Converting ${payload.objects.length} saved object(s) to ${workerType}`);
     const { contentType, buffer } = await docJobProcess(payload);
@@ -19,10 +19,10 @@ function workersFactory(server) {
       content: buffer.toString('base64')
     };
   };
-  workers[JOBTYPES.PRINTABLE_PDF].encoding = 'base64';
-  workers[JOBTYPES.PRINTABLE_PDF].contentType = docJobProcess.contentType;
+  workers[constants.JOBTYPES.PRINTABLE_PDF].encoding = 'base64';
+  workers[constants.JOBTYPES.PRINTABLE_PDF].contentType = docJobProcess.contentType;
 
   return workers;
 };
 
-module.exports = oncePerServer(workersFactory);
+export const workersFactory = oncePerServer(workersFN);

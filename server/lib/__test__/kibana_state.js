@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import rison from 'rison-node';
-import parseKibanaState from '../kibana_state';
+import { parseKibanaState } from '../parse_kibana_state';
 
 const stateIndices = {
   'global': '_g',

@@ -1,15 +1,15 @@
 import { resolve } from 'path';
 import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
-import publicRoutes from './server/routes/public';
-import jobRoutes from './server/routes/jobs';
+import { main as mainRoutes } from './server/routes/main';
+import { jobs as jobRoutes } from './server/routes/jobs';
 
-import phantom from './server/lib/phantom';
-import createQueue from './server/lib/create_queue';
-import appConfig from './server/config/config';
-import checkLicense from './server/lib/check_license';
-import validateConfig from './server/lib/validate_config';
+import { phantom } from './server/lib/phantom';
+import { createQueueFactory } from './server/lib/create_queue';
+import { config as appConfig } from './server/config/config';
+import { checkLicense } from './server/lib/check_license';
+import { validateConfig } from './server/lib/validate_config';
 
-export default function (kibana) {
+export function reporting(kibana) {
   return new kibana.Plugin({
     id: 'reporting',
     configPrefix: 'xpack.reporting',
@@ -76,10 +76,10 @@ export default function (kibana) {
 
           // intialize and register application components
           server.expose('phantom', phantomPackage);
-          server.expose('queue', createQueue(server));
+          server.expose('queue', createQueueFactory(server));
 
           // Reporting routes
-          publicRoutes(server);
+          mainRoutes(server);
           jobRoutes(server);
         })
         .catch(function (err) {

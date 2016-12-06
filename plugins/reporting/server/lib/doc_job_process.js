@@ -1,8 +1,7 @@
-
-const oncePerServer = require('./once_per_server');
-const generateDocumentFactory = require('./generate_document');
-const cryptoFactory = require('./crypto');
-const { omit } = require('lodash');
+import { omit } from 'lodash';
+import { oncePerServer } from './once_per_server';
+import { generateDocumentFactory } from './generate_document';
+import { cryptoFactory } from './crypto';
 
 const KBN_SCREENSHOT_HEADER_BLACKLIST = [
   'accept-encoding',
@@ -10,7 +9,7 @@ const KBN_SCREENSHOT_HEADER_BLACKLIST = [
   'content-type'
 ];
 
-function docJobProcessFactory(server) {
+function docJobProcessFn(server) {
   const { printablePdf } = generateDocumentFactory(server);
   const crypto = cryptoFactory(server);
 
@@ -33,4 +32,4 @@ function docJobProcessFactory(server) {
   };
 }
 
-module.exports = oncePerServer(docJobProcessFactory);
+export const docJobProcessFactory = oncePerServer(docJobProcessFn);

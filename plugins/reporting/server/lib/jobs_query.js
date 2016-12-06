@@ -1,12 +1,12 @@
-const { get, set } = require('lodash');
-const { badRequest } = require('boom');
+import { get, set } from 'lodash';
+import { badRequest } from 'boom';
+import { constants } from './constants';
+import { oncePerServer } from './once_per_server';
+import { getUserFactory } from './get_user';
 
-const oncePerServer = require('./once_per_server');
-const { QUEUE_INDEX, QUEUE_DOCTYPE } = require('./constants');
-const getUserFactory = require('../lib/get_user');
 const defaultSize = 10;
 
-function jobsQueryFactory(server) {
+function jobsQueryFn(server) {
   const getUser = getUserFactory(server);
   const esErrors = server.plugins.elasticsearch.errors;
   const { callWithRequest } = server.plugins.elasticsearch;
@@ -25,8 +25,8 @@ function jobsQueryFactory(server) {
     };
 
     const query = {
-      index: `${QUEUE_INDEX}-*`,
-      type: QUEUE_DOCTYPE,
+      index: `${constants.QUEUE_INDEX}-*`,
+      type: constants.QUEUE_DOCTYPE,
       body: Object.assign(defaultBody[type] || {}, body)
     };
 
@@ -177,4 +177,4 @@ function jobsQueryFactory(server) {
   };
 }
 
-module.exports = oncePerServer(jobsQueryFactory);
+export const jobsQueryFactory = oncePerServer(jobsQueryFn);

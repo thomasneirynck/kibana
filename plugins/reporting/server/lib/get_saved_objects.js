@@ -1,11 +1,11 @@
-const url = require('url');
-const _ = require('lodash');
-const Joi = require('joi');
-const parseKibanaState = require('../../../../server/lib/kibana_state');
-const uriEncode = require('./uri_encode');
-const getAbsoluteTime = require('./get_absolute_time');
+import url from 'url';
+import { get, pick, find, merge } from 'lodash';
+import Joi from 'joi';
+import { parseKibanaState } from '../../../../server/lib/parse_kibana_state';
+import { uriEncode } from './uri_encode';
+import { getAbsoluteTime } from './get_absolute_time';
 
-module.exports = function (callWithRequest, config) {
+export function getSavedObjects(callWithRequest, config) {
   const schema = Joi.object().keys({
     kibanaApp: Joi.string().required(),
     kibanaIndex: Joi.string().required(),
@@ -82,8 +82,8 @@ module.exports = function (callWithRequest, config) {
     };
 
     function parseJsonObjects(source) {
-      const searchSourceJson = _.get(source, appTypes[type].searchSourceIndex, '{}');
-      const uiStateJson = _.get(source, appTypes[type].stateIndex, '{}');
+      const searchSourceJson = get(source, appTypes[type].searchSourceIndex, '{}');
+      const uiStateJson = get(source, appTypes[type].stateIndex, '{}');
       let searchSource;
       let uiState;
 
@@ -111,14 +111,14 @@ module.exports = function (callWithRequest, config) {
 
       const isUsingTimeBasedIndexPattern = await hasTimeBasedIndexPattern(request, searchSource);
 
-      const obj = _.assign(_.pick(source, fields), {
+      const obj = Object.assign(pick(source, fields), {
         id: body.id,
         type: type,
         searchSource: searchSource,
         uiState: uiState,
         isUsingTimeBasedIndexPattern,
         getUrl: function getAppUrl(query = {}, urlOptions = {}) {
-          const options = _.assign({
+          const options = Object.assign({
             useAbsoluteTime: true
           }, urlOptions);
           const app = appTypes[this.type];
@@ -137,10 +137,10 @@ module.exports = function (callWithRequest, config) {
               globalState.set('time', getAbsoluteTime(globalState.get('time')));
             }
 
-            _.assign(cleanQuery, globalState.toQuery());
+            Object.assign(cleanQuery, globalState.toQuery());
           }
 
-          const urlParams = _.assign({
+          const urlParams = Object.assign({
             protocol: opts.protocol,
             hostname: opts.hostname,
             port: opts.port,
@@ -160,15 +160,15 @@ module.exports = function (callWithRequest, config) {
           if (!appState.exists || !this.panelIndex) return query;
 
           appState.removeProps(['uiState', 'panels', 'vis']);
-          const panel = _.find(appState.get('panels', []), { panelIndex: this.panelIndex });
+          const panel = find(appState.get('panels', []), { panelIndex: this.panelIndex });
           const panelState = appState.get(['uiState', `P-${this.panelIndex}`]);
 
           // if uiState doesn't match panel, simply strip uiState
           if (panel && panelState) {
-            appState.set('uiState', _.merge({}, this.uiState, panelState));
+            appState.set('uiState', merge({}, this.uiState, panelState));
           }
 
-          return _.assign({}, query, appState.toQuery());
+          return Object.assign({}, query, appState.toQuery());
         },
         toJSON: function (query, urlOptions) {
           const savedObj = {

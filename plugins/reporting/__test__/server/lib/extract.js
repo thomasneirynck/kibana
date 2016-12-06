@@ -1,7 +1,7 @@
 import fs from 'fs';
 import crypto from 'crypto';
 import expect from 'expect.js';
-import extract from '../../../server/lib/extract';
+import { unzip, bunzip2 } from '../../../server/lib/extract';
 
 const FIXTURES_FOLDER = `${__dirname}/../../fixtures`;
 const SRC_FILE_UNCOMPRESSED = `${FIXTURES_FOLDER}/extract_test_file.js`;
@@ -48,7 +48,7 @@ describe('extract', () => {
     it('throws an Error given a non-zip file', async () => {
       let thrownException;
       try {
-        await extract.zip(SRC_FILE_UNCOMPRESSED, EXTRACT_TARGET_FOLDER);
+        await unzip(SRC_FILE_UNCOMPRESSED, EXTRACT_TARGET_FOLDER);
       } catch (e) {
         thrownException = e;
       }
@@ -58,7 +58,7 @@ describe('extract', () => {
 
     it('successfully extracts a valid zip file to the given target', async () => {
       const srcFileCompressed = `${SRC_FILE_UNCOMPRESSED}.zip`;
-      await extract.zip(srcFileCompressed, EXTRACT_TARGET_FOLDER);
+      await unzip(srcFileCompressed, EXTRACT_TARGET_FOLDER);
 
       const stats = fs.statSync(EXTRACT_TARGET_FILE);
       expect(stats).to.be.an(Object);
@@ -73,7 +73,7 @@ describe('extract', () => {
     it('throws an Error given a non-bz2 file', async () => {
       let thrownException;
       try {
-        await extract.bz2(SRC_FILE_UNCOMPRESSED, EXTRACT_TARGET_FOLDER);
+        await bunzip2(SRC_FILE_UNCOMPRESSED, EXTRACT_TARGET_FOLDER);
       } catch (e) {
         thrownException = e;
       }
@@ -86,7 +86,7 @@ describe('extract', () => {
 
       let thrownException;
       try {
-        await extract.bz2(srcFile, EXTRACT_TARGET_FOLDER);
+        await bunzip2(srcFile, EXTRACT_TARGET_FOLDER);
       } catch (e) {
         thrownException = e;
       }
@@ -96,7 +96,7 @@ describe('extract', () => {
 
     it('successfully extracts a valid tar.bz2 file to the given target', async () => {
       const srcFileCompressed = `${SRC_FILE_UNCOMPRESSED}.tar.bz2`;
-      await extract.bz2(srcFileCompressed, EXTRACT_TARGET_FOLDER);
+      await bunzip2(srcFileCompressed, EXTRACT_TARGET_FOLDER);
 
       const stats = fs.statSync(EXTRACT_TARGET_FILE);
       expect(stats).to.be.an(Object);

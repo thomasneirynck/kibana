@@ -1,7 +1,7 @@
-import oncePerServer from './once_per_server';
-import workersFactory from './workers';
+import { oncePerServer } from './once_per_server';
+import { workersFactory } from './workers';
 
-function getDocumentPayloadFactory(server) {
+function getDocumentPayloadFn(server) {
   const workers = workersFactory(server);
 
   function encodeContent(content, jobType) {
@@ -62,4 +62,4 @@ function getDocumentPayloadFactory(server) {
   return getDocumentPayload;
 }
 
-export default oncePerServer(getDocumentPayloadFactory);
+export const getDocumentPayloadFactory = oncePerServer(getDocumentPayloadFn);

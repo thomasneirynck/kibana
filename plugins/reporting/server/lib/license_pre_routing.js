@@ -1,12 +1,12 @@
-const Boom = require('boom');
-const oncePerServer = require('./once_per_server');
+import Boom from 'boom';
+import { oncePerServer } from './once_per_server';
 
-function LicensePreRoutingFactory(server) {
+function licensePreRoutingFn(server) {
   const xpackMainPlugin = server.plugins.xpack_main;
   const pluginId = 'reporting';
 
   // License checking and enable/disable logic
-  function forbidApiAccess(request, reply) {
+  function licensePreRouting(request, reply) {
     const licenseCheckResults = xpackMainPlugin.info.feature(pluginId).getLicenseCheckResults();
     if (!licenseCheckResults.showLinks || !licenseCheckResults.enableLinks) {
       reply(Boom.forbidden(licenseCheckResults.message));
@@ -15,8 +15,8 @@ function LicensePreRoutingFactory(server) {
     }
   };
 
-  return forbidApiAccess;
+  return licensePreRouting;
 }
 
-module.exports = oncePerServer(LicensePreRoutingFactory);
+export const licensePreRoutingFactory = oncePerServer(licensePreRoutingFn);
 

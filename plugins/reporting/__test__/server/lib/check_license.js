@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import { set } from 'lodash';
-import checkLicense from '../../../server/lib/check_license';
+import { checkLicense } from '../../../server/lib/check_license';
 
 describe('check_license', function () {
 

@@ -1,8 +1,7 @@
-const url = require('url');
-const Bluebird = require('bluebird');
-const expect = require('expect.js');
-const savedObjects = require('../../../server/lib/saved_objects');
-const mockSavedObjects = require('../../fixtures/mock_saved_objects');
+import url from 'url';
+import expect from 'expect.js';
+import { getSavedObjects } from '../../../server/lib/get_saved_objects';
+import * as mockSavedObjects from '../../fixtures/mock_saved_objects';
 
 describe('saved_objects', function () {
   let mockCallWithRequest;
@@ -11,14 +10,14 @@ describe('saved_objects', function () {
   let module;
 
   function setClientResponse(obj) {
-    clientResponse = Bluebird.resolve(obj);
+    clientResponse = Promise.resolve(obj);
   }
 
   beforeEach(function () {
     mockRequest = {};
-    mockCallWithRequest = () => Bluebird.resolve(clientResponse);
+    mockCallWithRequest = () => Promise.resolve(clientResponse);
 
-    module = savedObjects(mockCallWithRequest, {
+    module = getSavedObjects(mockCallWithRequest, {
       kibanaApp: '/app/kibana',
       kibanaIndex: '.kibana',
     });

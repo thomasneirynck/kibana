@@ -1,19 +1,18 @@
-const _ = require('lodash');
-const savedObjectsFactory = require('../lib/saved_objects');
-const oncePerServer = require('./once_per_server');
+import { getSavedObjects } from './get_saved_objects';
+import { oncePerServer } from './once_per_server';
 
-function getObjectQueueFactory(server) {
+function getObjectQueueFn(server) {
   const callWithRequest = server.plugins.elasticsearch.callWithRequest;
   const config = server.config();
-  const requestConfig = _.defaults(config.get('xpack.reporting.kibanaServer'), {
+  const requestConfig = Object.assign({
     'kibanaApp': config.get('server.basePath') + config.get('xpack.reporting.kibanaApp'),
     'kibanaIndex': config.get('kibana.index'),
     'protocol': server.info.protocol,
     'hostname': config.get('server.host'),
     'port': config.get('server.port'),
-  });
+  }, config.get('xpack.reporting.kibanaServer'));
 
-  const savedObjects = savedObjectsFactory(callWithRequest, requestConfig);
+  const savedObjects = getSavedObjects(callWithRequest, requestConfig);
 
   function formatObject(parent, objects) {
     return Object.assign({
@@ -56,4 +55,4 @@ function getObjectQueueFactory(server) {
   };
 }
 
-module.exports = oncePerServer(getObjectQueueFactory);
+export const getObjectQueueFactory = oncePerServer(getObjectQueueFn);

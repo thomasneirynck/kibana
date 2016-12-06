@@ -1,13 +1,13 @@
-const moment = require('moment');
-const { get } = require('lodash');
-const esqueueEvents = require('esqueue/lib/constants/events');
-const constants = require('./constants');
-const getUserFactory = require('./get_user');
-const getObjectQueueFactory = require('./get_object_queue');
-const cryptoFactory = require('./crypto');
-const oncePerServer = require('./once_per_server');
+import moment from 'moment';
+import { get } from 'lodash';
+import esqueueEvents from 'esqueue/lib/constants/events';
+import { constants } from './constants';
+import { getUserFactory } from './get_user';
+import { getObjectQueueFactory } from './get_object_queue';
+import { cryptoFactory } from './crypto';
+import { oncePerServer } from './once_per_server';
 
-function createDocumentJobFactory(server) {
+function createDocumentJobFn(server) {
   const jobQueue = server.plugins.reporting.queue;
   const filterHeaders = server.plugins.elasticsearch.filterHeaders;
   const queueConfig = server.config().get('xpack.reporting.queue');
@@ -71,4 +71,4 @@ function createDocumentJobFactory(server) {
   return jobTypes;
 }
 
-module.exports = oncePerServer(createDocumentJobFactory);
+export const createDocumentJobFactory = oncePerServer(createDocumentJobFn);

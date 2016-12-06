@@ -1,13 +1,11 @@
-const { unlink } = require('fs');
-const { map } = require('bluebird');
-const { capitalize } = require('lodash');
-const getTimeFilterRange = require('./get_time_filter_range');
+import { unlink } from 'fs';
+import { capitalize } from 'lodash';
+import { getTimeFilterRange } from './get_time_filter_range';
+import { pdf } from './pdf';
+import { oncePerServer } from './once_per_server';
+import { getScreenshotFactory } from './get_screenshot';
 
-const pdf = require('./pdf');
-const oncePerServer = require('./once_per_server');
-const getScreenshotFactory = require('./get_screenshot');
-
-function generateDocumentFactory(server) {
+function generateDocumentFn(server) {
   const getScreenshot = getScreenshotFactory(server);
   const warningLog = (msg) => server.log(['reporting', 'warning'], msg);
 
@@ -39,7 +37,7 @@ function generateDocumentFactory(server) {
       pdfOutput.setTitle(title);
     }
 
-    return map(savedObjects, function (savedObj) {
+    return Promise.all(savedObjects.map((savedObj) => {
       if (savedObj.isMissing) {
         return  { savedObj };
       } else {
@@ -49,7 +47,7 @@ function generateDocumentFactory(server) {
           return { imagePath, savedObj };
         });
       }
-    })
+    }))
     .then(objects => {
       const cleanupPaths = [];
 
@@ -82,4 +80,4 @@ function generateDocumentFactory(server) {
   };
 }
 
-module.exports = oncePerServer(generateDocumentFactory);
+export const generateDocumentFactory = oncePerServer(generateDocumentFn);

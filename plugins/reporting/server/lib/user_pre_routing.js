@@ -1,7 +1,7 @@
-const getUserFactory = require('./get_user');
-const oncePerServer = require('./once_per_server');
+import { getUserFactory } from './get_user';
+import { oncePerServer } from './once_per_server';
 
-function userPreRoutingFactory(server) {
+function userPreRoutingFn(server) {
   const getUser = getUserFactory(server);
 
   return function userPreRouting(request, reply) {
@@ -9,5 +9,5 @@ function userPreRoutingFactory(server) {
   };
 }
 
-module.exports = oncePerServer(userPreRoutingFactory);
+export const userPreRoutingFactory = oncePerServer(userPreRoutingFn);
 

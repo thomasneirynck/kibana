@@ -1,16 +1,16 @@
-const boom = require('boom');
-const { JOBTYPES, API_BASE_URL } = require('../lib/constants');
-const jobsQueryFactory = require('../lib/jobs_query');
-const licensePreFactory = require ('../lib/license_pre_routing');
-const userPreRoutingFactory = require('../lib/user_pre_routing');
-const jobResponseHandlerFactory = require('../lib/job_response_handler');
+import boom from 'boom';
+import { constants } from '../lib/constants';
+import { jobsQueryFactory } from '../lib/jobs_query';
+import { licensePreRoutingFactory } from'../lib/license_pre_routing';
+import { userPreRoutingFactory } from '../lib/user_pre_routing';
+import { jobResponseHandlerFactory } from '../lib/job_response_handler';
 
-const mainEntry = `${API_BASE_URL}/jobs`;
+const mainEntry = `${constants.API_BASE_URL}/jobs`;
 const API_TAG = 'api';
 
-module.exports = function (server) {
+export function jobs(server) {
   const jobsQuery = jobsQueryFactory(server);
-  const licensePre = licensePreFactory(server);
+  const licensePreRouting = licensePreRoutingFactory(server);
   const userPreRouting = userPreRoutingFactory(server);
   const jobResponseHandler = jobResponseHandlerFactory(server);
 
@@ -26,7 +26,7 @@ module.exports = function (server) {
       reply(results);
     },
     config: {
-      pre: [ licensePre ],
+      pre: [ licensePreRouting ],
     }
   });
 
@@ -42,7 +42,7 @@ module.exports = function (server) {
       reply(results);
     },
     config: {
-      pre: [ licensePre ],
+      pre: [ licensePreRouting ],
     }
   });
 
@@ -55,7 +55,7 @@ module.exports = function (server) {
       reply(results);
     },
     config: {
-      pre: [ licensePre ],
+      pre: [ licensePreRouting ],
     }
   });
 
@@ -73,7 +73,7 @@ module.exports = function (server) {
       });
     },
     config: {
-      pre: [ licensePre ],
+      pre: [ licensePreRouting ],
     }
   });
 
@@ -83,12 +83,12 @@ module.exports = function (server) {
     method: 'GET',
     handler: (request, reply) => {
       const { docId } = request.params;
-      const jobType = JOBTYPES.PRINTABLE_PDF;
+      const jobType = constants.JOBTYPES.PRINTABLE_PDF;
 
       jobResponseHandler(request, reply, { docId, jobType });
     },
     config: {
-      pre: [ licensePre, userPreRouting ],
+      pre: [ licensePreRouting, userPreRouting ],
       tags: [API_TAG],
     },
   });

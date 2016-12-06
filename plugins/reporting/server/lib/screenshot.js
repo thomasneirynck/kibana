@@ -1,7 +1,7 @@
 import path from 'path';
 import getPort from 'get-port';
 import Puid from 'puid';
-import phantom from './phantom';
+import { phantom } from './phantom';
 
 const puid = new Puid();
 const noop = function () {};
@@ -35,10 +35,6 @@ class Screenshot {
     });
   }
 }
-
-export default function screenshot(phantomPath, captureSettings, screenshotSettings, logger) {
-  return new Screenshot(phantomPath, captureSettings, screenshotSettings, logger);
-};
 
 function createPhantom(phantomPath, captureSettings, logger) {
   const { timeout } = captureSettings;
@@ -150,3 +146,7 @@ function loadUrl(ph, url, captureSettings, opts) {
 function getTargetFile(imagePath) {
   return path.join(imagePath, `screenshot-${puid.generate()}.png`);
 }
+
+export function screenshot(phantomPath, captureSettings, screenshotSettings, logger) {
+  return new Screenshot(phantomPath, captureSettings, screenshotSettings, logger);
+};

@@ -1,27 +1,26 @@
-const boom = require('boom');
-const { API_BASE_URL } = require('../lib/constants');
-const createDocumentJobFactory = require('../lib/create_document_job');
-const { JOBTYPES } = require('../lib/constants');
-const licensePreFactory = require ('../lib/license_pre_routing');
-const userPreRoutingFactory = require('../lib/user_pre_routing');
+import boom from 'boom';
+import { constants } from '../lib/constants';
+import { createDocumentJobFactory } from '../lib/create_document_job';
+import { licensePreRoutingFactory } from '../lib/license_pre_routing';
+import { userPreRoutingFactory } from '../lib/user_pre_routing';
 
-const mainEntry = `${API_BASE_URL}/generate`;
+const mainEntry = `${constants.API_BASE_URL}/generate`;
 const API_TAG = 'api';
 
-module.exports = function (server) {
+export function main(server) {
   const config = server.config();
-  const DOWNLOAD_BASE_URL = config.get('server.basePath') + `${API_BASE_URL}/jobs/download`;
+  const DOWNLOAD_BASE_URL = config.get('server.basePath') + `${constants.API_BASE_URL}/jobs/download`;
 
   const esErrors = server.plugins.elasticsearch.errors;
 
   const createDocumentJob = createDocumentJobFactory(server);
-  const licensePre = licensePreFactory(server);
+  const licensePreRouting = licensePreRoutingFactory(server);
   const userPreRouting = userPreRoutingFactory(server);
 
   function getConfig() {
     return {
       tags: [API_TAG],
-      pre: [ userPreRouting, licensePre ],
+      pre: [ userPreRouting, licensePreRouting ],
     };
   };
 
@@ -60,7 +59,7 @@ module.exports = function (server) {
   });
 
   function pdfHandler(objectType, request, reply) {
-    const jobType = JOBTYPES.PRINTABLE_PDF;
+    const jobType = constants.JOBTYPES.PRINTABLE_PDF;
     const createJob = createDocumentJob[jobType];
 
     return createJob(objectType, request)

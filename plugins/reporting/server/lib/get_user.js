@@ -1,11 +1,11 @@
-const { get, noop } = require('lodash');
-const oncePerServer = require('./once_per_server');
+import { get } from 'lodash';
+import { oncePerServer } from './once_per_server';
 
-function getUserFactory(server) {
+function getUserFactoryFn(server) {
   return (request) => {
-    const getUser = get(server.plugins, 'security.getUser', noop);
+    const getUser = get(server.plugins, 'security.getUser', function () {});
     return Promise.resolve(getUser(request));
   };
 }
 
-module.exports = oncePerServer(getUserFactory);
+export const getUserFactory = oncePerServer(getUserFactoryFn);

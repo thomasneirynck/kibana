@@ -1,7 +1,8 @@
-const path = require('path');
-const _ = require('lodash');
-const concat = require('concat-stream');
-const Printer = require('pdfmake');
+import path from 'path';
+import _ from 'lodash';
+import concat from 'concat-stream';
+import Printer from 'pdfmake';
+
 const assetPath = path.resolve(__dirname, '..', '..', 'server', 'assets');
 
 class PdfMaker {
@@ -198,6 +199,6 @@ function getDocOptions() {
   };
 }
 
-module.exports = {
-  create: () => new PdfMaker(),
+export const pdf = {
+  create: () => new PdfMaker()
 };

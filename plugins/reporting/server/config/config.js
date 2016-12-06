@@ -1,14 +1,15 @@
-const os = require('os');
+import { cpus } from 'os';
+
 const defaultCPUCount = 2;
 
 function cpuCount() {
   try {
-    return os.cpus().length;
+    return cpus().length;
   } catch (e) {
     return defaultCPUCount;
   }
 };
 
-module.exports = {
+export const config = {
   concurrency: cpuCount()
 };

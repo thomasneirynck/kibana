@@ -1,4 +1,6 @@
-exports.search = {
+/* eslint max-len: 0, quotes: 0 */
+
+export const search = {
   "_index": ".kibana",
   "_type": "search",
   "_id": "mock-search",
@@ -22,7 +24,7 @@ exports.search = {
   }
 };
 
-exports.visualization = {
+export const visualization = {
   "_index": ".kibana",
   "_type": "visualization",
   "_id": "mock-visualization",
@@ -40,7 +42,7 @@ exports.visualization = {
   }
 };
 
-exports.dashboard = {
+export const dashboard = {
   "_index": ".kibana",
   "_type": "dashboard",
   "_id": "mock-dashboard",

@@ -1,9 +1,9 @@
 import boom from 'boom';
-import oncePerServer from './once_per_server';
-import jobsQueryFactory from './jobs_query';
-import getDocumentPayloadFactory from './get_document_payload';
+import { oncePerServer } from './once_per_server';
+import { jobsQueryFactory } from './jobs_query';
+import { getDocumentPayloadFactory } from './get_document_payload';
 
-function jobResponseHandlerFactory(server) {
+function jobResponseHandlerFn(server) {
   const jobsQuery = jobsQueryFactory(server);
   const getDocumentPayload = getDocumentPayloadFactory(server);
 
@@ -47,4 +47,4 @@ function jobResponseHandlerFactory(server) {
   };
 }
 
-export default oncePerServer(jobResponseHandlerFactory);
+export const jobResponseHandlerFactory = oncePerServer(jobResponseHandlerFn);

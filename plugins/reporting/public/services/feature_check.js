@@ -1,4 +1,6 @@
-const module = require('ui/modules').get('reporting/job_queue');
+import modules from 'ui/modules';
+
+const module = modules.get('reporting/job_queue');
 
 module.service('reportingFeatureCheck', ($injector) => {
   return {

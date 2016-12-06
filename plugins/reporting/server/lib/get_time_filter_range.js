@@ -1,9 +1,9 @@
 import { some } from 'lodash';
-import datemath from '@elastic/datemath';
-import parseKibanaState from '../../../../server/lib/kibana_state';
 import moment from 'moment';
+import datemath from '@elastic/datemath';
+import { parseKibanaState } from '../../../../server/lib/parse_kibana_state';
 
-export default function getTimeFilterRange(savedObjects, query = {}) {
+export function getTimeFilterRange(savedObjects, query = {}) {
   if (!query._g) {
     return;
   }

@@ -1,18 +1,17 @@
 import path from 'path';
-import { randomBytes } from 'crypto';
 import fs from 'fs';
+import { randomBytes } from 'crypto';
 import { fromCallback } from 'bluebird';
-import { PHANTOM_MAX_LOAD_TIMEOUT } from './constants';
 import driver from '@elastic/node-phantom-simple';
-import extract from './extract';
+import { unzip, bunzip2 } from './extract';
+import { PHANTOM_MAX_LOAD_TIMEOUT } from './constants';
 
 const version = '2.1.1';
 const basename = 'phantomjs-' + version;
 const sourcePath = path.resolve(__dirname, '..', '..', '..', '..', '.phantom');
-
 const noop = function () {};
 
-export default {
+export const phantom = {
   install(installPath = sourcePath) {
     return new Promise((resolve, reject) => {
       const phantomPackage = _getPackage(installPath);
@@ -25,9 +24,20 @@ export default {
         const phantomSource = _getPackage(sourcePath);
         const fileType = phantomSource.ext.substring(1);
         const filepath = phantomSource.dir + '/' + phantomSource.base;
+        let unpacker;
 
-        return extract[fileType](filepath, phantomPackage.dir)
-        .then(function () {
+        switch (fileType) {
+          case 'bz2':
+            unpacker = bunzip2(filepath, phantomPackage.dir);
+            break;
+          case 'zip':
+            unpacker = unzip(filepath, phantomPackage.dir);
+            break;
+          default:
+            throw new Error(`Unable to unpack filetype: ${fileType}`);
+        }
+
+        unpacker.then(function () {
           try {
             fs.chmodSync(phantomPackage.binary, '755');
             resolve(phantomPackage);
@@ -81,24 +91,24 @@ function Phantom(options) {
   });
 }
 
-function _createPhantomInstance(ready, phantom, phantomOptions) {
+function _createPhantomInstance(ready, ph, phantomOptions) {
   const validateInstance = () => {
-    if (phantom.page === false || phantom.browser === false) throw new Error('Phantom instance is closed');
+    if (ph.page === false || ph.browser === false) throw new Error('Phantom instance is closed');
   };
 
   const configurePage = (pageOptions) => {
     const RESOURCE_TIMEOUT = 5000;
 
     return ready.then(() => {
-      return fromCallback(cb => phantom.page.set('resourceTimeout', RESOURCE_TIMEOUT, cb))
+      return fromCallback(cb => ph.page.set('resourceTimeout', RESOURCE_TIMEOUT, cb))
       .then(() => {
-        if (pageOptions.viewport) return fromCallback(cb => phantom.page.set('viewportSize', pageOptions.viewport, cb));
+        if (pageOptions.viewport) return fromCallback(cb => ph.page.set('viewportSize', pageOptions.viewport, cb));
       })
       .then(() => {
-        if (pageOptions.zoom) return fromCallback(cb => phantom.page.set('zoomFactor', pageOptions.zoom, cb));
+        if (pageOptions.zoom) return fromCallback(cb => ph.page.set('zoomFactor', pageOptions.zoom, cb));
       })
       .then(() => {
-        if (pageOptions.headers) return fromCallback(cb => phantom.page.set('customHeaders', pageOptions.headers, cb));
+        if (pageOptions.headers) return fromCallback(cb => ph.page.set('customHeaders', pageOptions.headers, cb));
       });
     });
   };
@@ -109,7 +119,7 @@ function _createPhantomInstance(ready, phantom, phantomOptions) {
         validateInstance();
 
         return configurePage(pageOptions)
-        .then(() => fromCallback(cb => phantom.page.open(url, cb)))
+        .then(() => fromCallback(cb => ph.page.open(url, cb)))
         .then(status => {
           if (status !== 'success') throw new Error('URL open failed. Is the server running?');
           if (pageOptions.waitForSelector) {
@@ -138,10 +148,10 @@ function _createPhantomInstance(ready, phantom, phantomOptions) {
           randomBytes(6).toString('base64'),
         ].join('-');
 
-        return _injectPromise(phantom.page)
+        return _injectPromise(ph.page)
         .then(() => {
           return fromCallback(cb => {
-            phantom.page.evaluate(evaluateWrapper, fn.toString(), uniqId, args, cb);
+            ph.page.evaluate(evaluateWrapper, fn.toString(), uniqId, args, cb);
 
             // The original function is passed here as a string, and eval'd in phantom's context.
             // It's then executed in phantom's context and the result is attached to a __reporting
@@ -216,7 +226,7 @@ function _createPhantomInstance(ready, phantom, phantomOptions) {
             .then(() => {
               // once the original promise is resolved, pass along its value
               return fromCallback(cb => {
-                phantom.page.evaluate(function (cbIndex) {
+                ph.page.evaluate(function (cbIndex) {
                   return window.__reporting[cbIndex];
                 }, uniqId, cb);
               });
@@ -314,14 +324,14 @@ function _createPhantomInstance(ready, phantom, phantomOptions) {
       return ready.then(() => {
         validateInstance();
         function saveScreenshot() {
-          return fromCallback(cb => phantom.page.render(screenshotPath, cb));
+          return fromCallback(cb => ph.page.render(screenshotPath, cb));
         }
 
         if (!screenshotOptions.bounding) {
           return saveScreenshot();
         }
 
-        return fromCallback(cb => phantom.page.get('viewportSize', cb))
+        return fromCallback(cb => ph.page.get('viewportSize', cb))
         .then(viewportSize => {
           const contentOffset = Object.assign({
             top: 90, // top chrome
@@ -337,11 +347,11 @@ function _createPhantomInstance(ready, phantom, phantomOptions) {
             height: viewportSize.height - contentOffset.top - contentOffset.bottom,
           };
 
-          return fromCallback(cb => phantom.page.get('clipRect', cb))
+          return fromCallback(cb => ph.page.get('clipRect', cb))
           .then(prevClipRect => {
-            return fromCallback(cb => phantom.page.set('clipRect', boundingArea, cb))
+            return fromCallback(cb => ph.page.set('clipRect', boundingArea, cb))
             .then(saveScreenshot)
-            .then(() => fromCallback(cb => phantom.page.set('clipRect', prevClipRect, cb)));
+            .then(() => fromCallback(cb => ph.page.set('clipRect', prevClipRect, cb)));
           });
         });
       });
@@ -351,10 +361,10 @@ function _createPhantomInstance(ready, phantom, phantomOptions) {
       return ready.then(() => {
         validateInstance();
 
-        return fromCallback(cb => phantom.browser.exit(cb))
+        return fromCallback(cb => ph.browser.exit(cb))
         .then(() => {
-          phantom.browser = false;
-          phantom.page = false;
+          ph.browser = false;
+          ph.page = false;
         });
       });
     }

@@ -1,5 +1,5 @@
 // Stolen from Angular, used to get reliable encoded URIs
-const _ = require('lodash');
+import { forEach, isArray } from 'lodash';
 
 function encodeUriQuery(val, pctEncodeSpaces) {
   return encodeURIComponent(val)
@@ -13,9 +13,9 @@ function encodeUriQuery(val, pctEncodeSpaces) {
 
 function toKeyValue(obj) {
   var parts = [];
-  _.forEach(obj, function (value, key) {
-    if (_.isArray(value)) {
-      _.forEach(value, function (arrayValue) {
+  forEach(obj, function (value, key) {
+    if (isArray(value)) {
+      forEach(value, function (arrayValue) {
         const keyStr = encodeUriQuery(key, true);
         const valStr = (arrayValue === true ? '' : '=' + encodeUriQuery(arrayValue, true));
         parts.push(keyStr + valStr);
@@ -29,7 +29,7 @@ function toKeyValue(obj) {
   return parts.length ? parts.join('&') : '';
 };
 
-module.exports = {
+export const uriEncode = {
   stringify: toKeyValue,
   string: encodeUriQuery,
 };

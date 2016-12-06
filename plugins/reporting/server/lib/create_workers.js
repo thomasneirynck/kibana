@@ -1,17 +1,16 @@
-const esqueueEvents = require('esqueue/lib/constants/events');
-const { JOBTYPES } = require('./constants');
-const workersFactory = require('./workers');
-const oncePerServer = require('./once_per_server');
+import esqueueEvents from 'esqueue/lib/constants/events';
+import { constants } from './constants';
+import { workersFactory } from './workers';
+import { oncePerServer } from './once_per_server';
 
-function createWorkersFactory(server) {
+function createWorkersFn(server) {
   const queueConfig = server.config().get('xpack.reporting.queue');
   const workers = workersFactory(server);
 
   // Once more document types are added, this will need to be passed in
-  return function registerWorkers(queue) {
-
+  return function createWorkers(queue) {
     const workerTypes = [
-      JOBTYPES.PRINTABLE_PDF
+      constants.JOBTYPES.PRINTABLE_PDF
     ];
 
     workerTypes.forEach((workerType) => {
@@ -33,4 +32,4 @@ function createWorkersFactory(server) {
   };
 };
 
-module.exports = oncePerServer(createWorkersFactory);
+export const createWorkersFactory = oncePerServer(createWorkersFn);

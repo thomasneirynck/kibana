@@ -1,14 +1,12 @@
-var fs = require('fs');
-var unzip = require('unzip');
-var bz2 = require('unbzip2-stream');
-var tar = require('tar-fs');
+import fs from 'fs';
+import { Extract as extractZip } from 'unzip';
+import bz2Stream from 'unbzip2-stream';
+import tar from 'tar-fs';
 
-exports.zip = function (filepath, target) {
+export function unzip(filepath, target) {
   return new Promise(function (resolve, reject) {
-    var extract = unzip.Extract;
-
     fs.createReadStream(filepath)
-    .pipe(extract({ path: target }))
+    .pipe(extractZip({ path: target }))
     .on('error', function () {
       reject(new Error('Failed to unzip file'));
     })
@@ -16,10 +14,10 @@ exports.zip = function (filepath, target) {
   });
 };
 
-exports.bz2 = function (filepath, target) {
+export function bunzip2(filepath, target) {
   return new Promise(function (resolve, reject) {
     fs.createReadStream(filepath)
-    .pipe(bz2())
+    .pipe(bz2Stream())
     .on('error', function () {
       reject(new Error('Failed to unpack tar.bz2 file'));
     })

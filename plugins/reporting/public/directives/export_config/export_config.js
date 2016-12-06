@@ -1,10 +1,11 @@
-require('plugins/reporting/services/document_control');
-require('./export_config.less');
+import { get } from 'lodash';
+import 'plugins/reporting/services/document_control';
+import './export_config.less';
+import template from 'plugins/reporting/directives/export_config/export_config.html';
+import Notifier from 'ui/notify/notifier';
+import modules from 'ui/modules';
 
-const { get } = require('lodash');
-const template = require('plugins/reporting/directives/export_config/export_config.html');
-const Notifier = require('ui/notify/notifier');
-const module = require('ui/modules').get('xpack/reporting');
+const module = modules.get('xpack/reporting');
 
 module.directive('exportConfig', (reportingDocumentControl) => {
   const reportingNotifier = new Notifier({ location: 'Reporting' });

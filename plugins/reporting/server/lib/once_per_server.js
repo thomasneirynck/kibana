@@ -1,4 +1,4 @@
-const { memoize } = require('lodash');
+import { memoize } from 'lodash';
 
 /**
  * allow this function to be called multiple times, but
@@ -11,7 +11,7 @@ const { memoize } = require('lodash');
  * @param  {Function} fn - the factory function
  * @return {any}
  */
-module.exports = function (fn) {
+export function oncePerServer(fn) {
   const memoized = memoize(function (server) {
     if (arguments.length !== 1) {
       throw new TypeError('This function expects to be called with a single argument');

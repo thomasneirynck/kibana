@@ -1,5 +1,4 @@
-module.exports = function (xpackLicenseInfo) {
-
+export function checkLicense(xpackLicenseInfo) {
   // If, for some reason, we cannot get the license information
   // from Elasticsearch, assume worst case and disable reporting
   if (!xpackLicenseInfo || !xpackLicenseInfo.isAvailable()) {

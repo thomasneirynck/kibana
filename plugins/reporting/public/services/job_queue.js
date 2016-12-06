@@ -2,9 +2,10 @@ import url from 'url';
 import { set } from 'lodash';
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 import Notifier from 'ui/notify/notifier';
+import modules from 'ui/modules';
 import { addSystemApiHeader } from 'ui/system_api';
 
-const module = require('ui/modules').get('xpack/reporting');
+const module = modules.get('xpack/reporting');
 
 module.service('reportingJobQueue', ($http, kbnUrl, Private) => {
   const xpackInfo = Private(XPackInfoProvider);

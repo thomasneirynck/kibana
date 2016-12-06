@@ -43,6 +43,6 @@ class KibanaState {
   }
 }
 
-export default function parseState(query, type) {
+export function parseKibanaState(query, type) {
   return new KibanaState(query, type);
 }

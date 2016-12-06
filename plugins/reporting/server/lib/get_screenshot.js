@@ -1,7 +1,7 @@
-const createTaggedLogger = require('./create_tagged_logger');
-const queue = require('queue');
-const screenshotFactory = require('./screenshot');
-const oncePerServer = require('./once_per_server');
+import queue from 'queue';
+import { oncePerServer } from './once_per_server';
+import { screenshot } from './screenshot';
+import { createTaggedLogger } from './create_tagged_logger';
 
 // bounding boxes for various saved object types
 const boundingBoxes = {
@@ -19,7 +19,7 @@ const boundingBoxes = {
   },
 };
 
-function getScreenshotFactory(server) {
+function getScreenshotFn(server) {
   const config = server.config();
 
   const logger = createTaggedLogger(server, ['reporting', 'debug']);
@@ -31,7 +31,7 @@ function getScreenshotFactory(server) {
   logger(`Screenshot concurrency: ${captureConcurrency}`);
 
   // init the screenshot module
-  const screenshot = screenshotFactory(phantomPath, captureSettings, screenshotSettings, logger);
+  const ss = screenshot(phantomPath, captureSettings, screenshotSettings, logger);
 
   // create the process queue
   const screenshotQueue = queue({ concurrency: captureConcurrency });
@@ -39,7 +39,7 @@ function getScreenshotFactory(server) {
   return function getScreenshot(objUrl, type, headers) {
     return new Promise(function (resolve, reject) {
       screenshotQueue.push(function (cb) {
-        return screenshot.capture(objUrl, {
+        return ss.capture(objUrl, {
           headers,
           bounding: boundingBoxes[type],
         })
@@ -58,4 +58,4 @@ function getScreenshotFactory(server) {
   };
 };
 
-module.exports = oncePerServer(getScreenshotFactory);
+export const getScreenshotFactory = oncePerServer(getScreenshotFn);
