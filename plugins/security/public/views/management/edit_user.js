@@ -5,7 +5,6 @@ import 'angular-resource';
 import 'angular-ui-select';
 import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
-import 'plugins/security/views/management/edit_user.less';
 import checkLicenseError from 'plugins/security/lib/check_license_error';
 
 routes.when('/management/elasticsearch/users/edit/:username?', {
@@ -35,15 +34,13 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
       .catch(checkLicenseError(kbnUrl, Promise, Private));
     }
   },
+  controllerAs: 'editUser',
   controller($scope, $route, kbnUrl, ShieldUser, Notifier) {
     $scope.me = $route.current.locals.me;
     $scope.user = $route.current.locals.user;
     $scope.availableRoles = $route.current.locals.roles;
-    $scope.view = {
-      isNewUser: $route.current.params.username == null,
-      changePasswordMode: false,
-      incorrectPassword: false
-    };
+
+    this.isNewUser = $route.current.params.username == null;
 
     const notifier = new Notifier();
 
@@ -56,6 +53,7 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
     };
 
     $scope.saveUser = (user) => {
+      // newPassword is unexepcted by the API.
       delete user.newPassword;
       user.$save()
       .then(() => notifier.info('The user has been updated.'))
@@ -67,22 +65,22 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
       kbnUrl.redirect('/management/elasticsearch/users');
     };
 
-    $scope.changePassword = (user) => {
-      user.$changePassword()
+    $scope.saveNewPassword = (newPassword, currentPassword, onSuccess, onIncorrectPassword) => {
+      $scope.user.newPassword = newPassword;
+      if (currentPassword) {
+        // If the currentPassword is null, we shouldn't send it.
+        $scope.user.password = currentPassword;
+      }
+
+      $scope.user.$changePassword()
       .then(() => notifier.info('The password has been changed.'))
-      .then($scope.toggleChangePasswordMode)
-      .catch((error) => {
-        if (error.status === 401) $scope.view.incorrectPassword = true;
+      .then(onSuccess)
+      .catch(error => {
+        if (error.status === 401) {
+          onIncorrectPassword();
+        }
         else notifier.error(_.get(error, 'data.message'));
       });
-    };
-
-    $scope.toggleChangePasswordMode = () => {
-      delete $scope.user.password;
-      delete $scope.user.newPassword;
-      delete $scope.view.confirmPassword;
-      $scope.view.changePasswordMode = !$scope.view.changePasswordMode;
-      $scope.view.incorrectPassword = false;
     };
   }
 });

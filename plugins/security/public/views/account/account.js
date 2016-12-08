@@ -11,32 +11,33 @@ routes.when('/account', {
       return ShieldUser.getCurrent();
     }
   },
+  controllerAs: 'accountController',
   controller($scope, $route, Notifier) {
     $scope.user = $route.current.locals.user;
-    $scope.view = {
-      changePasswordMode: false,
-      incorrectPassword: false
-    };
 
     const notifier = new Notifier();
 
-    $scope.changePassword = (user) => {
-      user.$changePassword()
+    $scope.saveNewPassword = (newPassword, currentPassword, onSuccess, onIncorrectPassword) => {
+      $scope.user.newPassword = newPassword;
+      if (currentPassword) {
+        // If the currentPassword is null, we shouldn't send it.
+        $scope.user.password = currentPassword;
+      }
+
+      $scope.user.$changePassword()
       .then(() => notifier.info('The password has been changed.'))
-      .then($scope.toggleChangePasswordMode)
-      .catch((error) => {
-        if (error.status === 401) $scope.view.incorrectPassword = true;
+      .then(onSuccess)
+      .catch(error => {
+        if (error.status === 401) {
+          onIncorrectPassword();
+        }
         else notifier.error(_.get(error, 'data.message'));
       });
     };
 
-    $scope.$watch('user.password', () => $scope.view.incorrectPassword = false);
-
-    $scope.toggleChangePasswordMode = () => {
-      delete $scope.user.password;
-      delete $scope.user.newPassword;
-      delete $scope.view.confirmPassword;
-      $scope.view.changePasswordMode = !$scope.view.changePasswordMode;
+    this.getEmail = () => {
+      if ($scope.user.email) return $scope.user.email;
+      return '(No email)';
     };
   }
 });

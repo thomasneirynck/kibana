@@ -42,15 +42,15 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
       return indexPatterns.getIds();
     }
   },
+  controllerAs: 'editRole',
   controller($scope, $route, kbnUrl, shieldPrivileges, shieldIndices, Notifier) {
     $scope.role = $route.current.locals.role;
     $scope.users = $route.current.locals.users;
     $scope.indexPatterns = $route.current.locals.indexPatterns;
     $scope.privileges = shieldPrivileges;
-    $scope.view = {
-      isNewRole: $route.current.params.name == null,
-      fieldOptions: {}
-    };
+
+    this.isNewRole = $route.current.params.name == null;
+    this.fieldOptions = {};
 
     const notifier = new Notifier();
 
@@ -75,7 +75,7 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
       kbnUrl.redirect('/management/elasticsearch/roles');
     };
 
-    $scope.addIndex = (indices) => {
+    $scope.addIndex = indices => {
       indices.push({names: [], privileges: [], field_security: { grant: ['*']}});
     };
 
@@ -87,7 +87,7 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
 
     $scope.fetchFieldOptions = (index) => {
       const indices = index.names.join(',');
-      const fieldOptions = $scope.view.fieldOptions;
+      const fieldOptions = this.fieldOptions;
       if (indices && fieldOptions[indices] == null) {
         shieldIndices.getFields(indices)
         .then((fields) => fieldOptions[indices] = fields)

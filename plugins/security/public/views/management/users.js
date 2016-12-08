@@ -16,7 +16,6 @@ routes.when('/management/elasticsearch/users', {
     }
   },
   controller($scope, $route, $q, Notifier) {
-
     $scope.users = $route.current.locals.users;
     $scope.forbidden = !_.isArray($scope.users);
     $scope.selectedUsers = [];
