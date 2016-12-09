@@ -1,26 +1,37 @@
 import fs from 'fs';
 import crypto from 'crypto';
 import expect from 'expect.js';
-import { unzip, bunzip2 } from '../../../server/lib/extract';
+
+import { unzip, bunzip2, ExtractError } from '../../../server/lib/extract';
+import { promisify } from 'bluebird';
 
 const FIXTURES_FOLDER = `${__dirname}/../../fixtures`;
 const SRC_FILE_UNCOMPRESSED = `${FIXTURES_FOLDER}/extract_test_file.js`;
+const SRC_FILE_COMPRESSED_ZIP = `${SRC_FILE_UNCOMPRESSED}.zip`;
+const SRC_FILE_COMPRESSED_BZ2 = `${SRC_FILE_UNCOMPRESSED}.bz2`;
+const SRC_FILE_COMPRESSED_TAR_BZ2 = `${SRC_FILE_UNCOMPRESSED}.tar.bz2`;
 const EXTRACT_TARGET_FOLDER = `${FIXTURES_FOLDER}/extract_target`;
 const EXTRACT_TARGET_FILE = `${EXTRACT_TARGET_FOLDER}/extract_test_file.js`;
 
-function cleanup(done) {
+const fsp = {
+  mkdir: promisify(fs.mkdir),
+  rmdir: promisify(fs.rmdir),
+  unlink: promisify(fs.unlink)
+};
 
-  const deleteFolder = () => fs.rmdir(EXTRACT_TARGET_FOLDER, done);
+const ignoreErrorCodes = async (codes, promise) => {
+  try {
+    await promise;
+  } catch (err) {
+    if (!codes.includes(err.code)) {
+      throw err;
+    }
+  }
+};
 
-  fs.stat(EXTRACT_TARGET_FOLDER, folderDoesNotExist => {
-    if (folderDoesNotExist) return done();
-
-    fs.stat(EXTRACT_TARGET_FILE, fileDoesNotExist => {
-      if (fileDoesNotExist) return deleteFolder();
-
-      fs.unlink(EXTRACT_TARGET_FILE, deleteFolder);
-    });
-  });
+async function cleanup() {
+  await ignoreErrorCodes(['ENOENT', 'EACCES'], fsp.unlink(EXTRACT_TARGET_FILE));
+  await ignoreErrorCodes(['ENOENT'], fsp.rmdir(EXTRACT_TARGET_FOLDER));
 }
 
 function fileHash(filepath) {
@@ -44,6 +55,8 @@ describe('extract', () => {
   beforeEach(cleanup);
   afterEach(cleanup);
 
+  const isWindows = /^win/.test(process.platform);
+
   describe('zip()', () => {
     it('throws an Error given a non-zip file', async () => {
       let thrownException;
@@ -53,12 +66,11 @@ describe('extract', () => {
         thrownException = e;
       }
 
-      expect(thrownException).to.be.an(Error);
+      expect(thrownException).to.be.an(ExtractError);
     });
 
     it('successfully extracts a valid zip file to the given target', async () => {
-      const srcFileCompressed = `${SRC_FILE_UNCOMPRESSED}.zip`;
-      await unzip(srcFileCompressed, EXTRACT_TARGET_FOLDER);
+      await unzip(SRC_FILE_COMPRESSED_ZIP, EXTRACT_TARGET_FOLDER);
 
       const stats = fs.statSync(EXTRACT_TARGET_FILE);
       expect(stats).to.be.an(Object);
@@ -67,9 +79,27 @@ describe('extract', () => {
       const targetFileHash = await fileHash(EXTRACT_TARGET_FILE);
       expect(targetFileHash).to.eql(srcFileHash);
     });
+
+    if (isWindows) {
+      it(`Windows doesn't support chmod, so it's missing access tests. Windows is throwing EEXIST.`);
+    } else {
+      it(`throws an ExtractError with cause.code of EACESS when target is un-writeable`, async () => {
+        await fsp.mkdir(EXTRACT_TARGET_FOLDER, 0o444);
+
+        let thrownException;
+        try {
+          await unzip(SRC_FILE_COMPRESSED_ZIP, EXTRACT_TARGET_FOLDER);
+        } catch (e) {
+          thrownException = e;
+        }
+
+        expect(thrownException).to.be.an(ExtractError);
+        expect(thrownException.cause.code).to.eql('EACCES');
+      });
+    }
   });
 
-  describe('bz2()', () => {
+  describe('bunzip2()', () => {
     it('throws an Error given a non-bz2 file', async () => {
       let thrownException;
       try {
@@ -78,25 +108,22 @@ describe('extract', () => {
         thrownException = e;
       }
 
-      expect(thrownException).to.be.an(Error);
+      expect(thrownException).to.be.an(ExtractError);
     });
 
     it('throws an Error given a non-tar.bz2 file', async () => {
-      const srcFile = `${SRC_FILE_UNCOMPRESSED}.bz2`;
-
       let thrownException;
       try {
-        await bunzip2(srcFile, EXTRACT_TARGET_FOLDER);
+        await bunzip2(SRC_FILE_COMPRESSED_BZ2, EXTRACT_TARGET_FOLDER);
       } catch (e) {
         thrownException = e;
       }
 
-      expect(thrownException).to.be.an(Error);
+      expect(thrownException).to.be.an(ExtractError);
     });
 
     it('successfully extracts a valid tar.bz2 file to the given target', async () => {
-      const srcFileCompressed = `${SRC_FILE_UNCOMPRESSED}.tar.bz2`;
-      await bunzip2(srcFileCompressed, EXTRACT_TARGET_FOLDER);
+      await bunzip2(SRC_FILE_COMPRESSED_TAR_BZ2, EXTRACT_TARGET_FOLDER);
 
       const stats = fs.statSync(EXTRACT_TARGET_FILE);
       expect(stats).to.be.an(Object);
@@ -105,5 +132,23 @@ describe('extract', () => {
       const targetFileHash = await fileHash(EXTRACT_TARGET_FILE);
       expect(targetFileHash).to.eql(srcFileHash);
     });
+
+    if (isWindows) {
+      it(`Windows doesn't support chmod, so it's missing access tests. Windows is throwing EEXIST.`);
+    } else {
+      it('throws an ExtractError with cause.code of EACESS when target is un-writeable', async() => {
+        await fsp.mkdir(EXTRACT_TARGET_FOLDER, 0o444);
+
+        let thrownException;
+        try {
+          await bunzip2(SRC_FILE_COMPRESSED_TAR_BZ2, EXTRACT_TARGET_FOLDER);
+        } catch (e) {
+          thrownException = e;
+        }
+
+        expect(thrownException).to.be.an(ExtractError);
+        expect(thrownException.cause.code).to.eql('EACCES');
+      });
+    }
   });
 });

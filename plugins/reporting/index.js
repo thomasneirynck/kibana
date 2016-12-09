@@ -8,6 +8,7 @@ import { createQueueFactory } from './server/lib/create_queue';
 import { config as appConfig } from './server/config/config';
 import { checkLicense } from './server/lib/check_license';
 import { validateConfig } from './server/lib/validate_config';
+import { ExtractError } from './server/lib/extract';
 
 export function reporting(kibana) {
   return new kibana.Plugin({
@@ -83,7 +84,23 @@ export function reporting(kibana) {
           jobRoutes(server);
         })
         .catch(function (err) {
-          return thisPlugin.status.red(err.message);
+          server.log(['reporting', 'error'], err);
+
+          if (!err instanceof ExtractError) {
+            thisPlugin.status.red('Failed to install phantom.js. See kibana logs for more details.');
+            return;
+          }
+
+          server.log(['reporting', 'error'], err.cause);
+
+          if (['EACCES', 'EEXIST'].includes(err.cause.code)) {
+            thisPlugin.status.red(
+              'Insufficient permissions for extracting the phantom.js archive. ' +
+              'Make sure the Kibana data directory (path.data) is owned by the same user that is running Kibana.'
+            );
+          } else {
+            thisPlugin.status.red('Failed to extract the phantom.js archive. See kibana logs for more details.');
+          }
         });
       }
 
