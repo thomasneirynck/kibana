@@ -25,11 +25,16 @@ export default function SavedWorkspaceProvider(courier) {
         }
 
       });
+
+      // Overwrite the default getDisplayName function which uses type and which is not very
+      // user friendly for this object.
+      this.getDisplayName = function () {
+        return 'graph workspace';
+      };
     }
 
   }; //End of class
 
-  // save these objects with the 'dashboard' type
   SavedWorkspace.type = 'graph-workspace';
 
   // if type:workspace has no mapping, we push this mapping into ES
