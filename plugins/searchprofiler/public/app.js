@@ -12,11 +12,11 @@ import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 import _ from 'lodash';
 import 'ace';
 import 'angular-ui-ace';
-import 'plugins/profiler/directives';
+import 'plugins/searchprofiler/directives';
 import Range from './range';
-import nsToPretty from 'plugins/profiler/filters/ns_to_pretty';
-import msToPretty from 'plugins/profiler/filters/ms_to_pretty';
-import checkForParseErrors from 'plugins/profiler/app_util.js';
+import nsToPretty from 'plugins/searchprofiler/filters/ns_to_pretty';
+import msToPretty from 'plugins/searchprofiler/filters/ms_to_pretty';
+import checkForParseErrors from 'plugins/searchprofiler/app_util.js';
 
 // Styles and templates
 import 'ui/autoload/all';
@@ -28,17 +28,17 @@ import defaultQuery from './templates/default_query';
 
 devTools.register(() => ({
   order: 5,
-  name: 'profiler',
-  display: 'Profiler',
-  url: '#/dev_tools/profiler'
+  name: 'searchprofiler',
+  display: 'Search Profiler',
+  url: '#/dev_tools/searchprofiler'
 }));
 
-uiRoutes.when('/dev_tools/profiler', {
+uiRoutes.when('/dev_tools/searchprofiler', {
   template: template
 });
 
 uiModules
-  .get('app/profiler', ['ui.bootstrap.buttons', 'ui.ace'])
+  .get('app/searchprofiler', ['ui.bootstrap.buttons', 'ui.ace'])
   .controller('profileViz', profileVizController)
   .filter('nsToPretty', () => nsToPretty)
   .filter('msToPretty', () => msToPretty)
@@ -50,8 +50,8 @@ uiModules
   });
 
 function profileVizController($scope, $route, $interval, $http, HighlightService, Private) {
-  $scope.title = 'Profile Vizualization';
-  $scope.description = 'Query profiling and visualization';
+  $scope.title = 'Search Profile';
+  $scope.description = 'Search profiling and visualization';
   $scope.profileResponse = [];
   $scope.highlight = HighlightService;
 
@@ -65,7 +65,7 @@ function profileVizController($scope, $route, $interval, $http, HighlightService
   $scope.markers = [];
   $scope.query = defaultQuery;
   const xpackInfo = Private(XPackInfoProvider);
-  $scope.licenseEnabled = xpackInfo.get('features.profiler.enableAppLink');
+  $scope.licenseEnabled = xpackInfo.get('features.searchprofiler.enableAppLink');
 
   $scope.aceLoaded = (_editor) => {
     $scope.ace = _editor;
@@ -114,7 +114,7 @@ function profileVizController($scope, $route, $interval, $http, HighlightService
   };
 
   $scope.executeRemoteQuery = requestBody => {
-    $http.post('../api/profiler/profile', requestBody).then(resp => {
+    $http.post('../api/searchprofiler/profile', requestBody).then(resp => {
       if (!resp.data.ok) {
         notify.error(resp.data.err.msg);
 

@@ -1,8 +1,8 @@
-import template from 'plugins/profiler/directives/profile_tree/index.html';
-import *  as util from 'plugins/profiler/directives/profile_tree/util';
+import template from 'plugins/searchprofiler/directives/profile_tree/index.html';
+import *  as util from 'plugins/searchprofiler/directives/profile_tree/util';
 import uiModules from 'ui/modules';
 
-const uiModule = uiModules.get('app/profiler/directives', []);
+const uiModule = uiModules.get('app/searchprofiler/directives', []);
 uiModule.directive('profiletree',  HighlightService => {
   return {
     restrict: 'E',

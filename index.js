@@ -3,7 +3,7 @@ import graph from './plugins/graph';
 import monitoring from './plugins/monitoring';
 import { reporting } from './plugins/reporting';
 import security from './plugins/security';
-import profiler from './plugins/profiler';
+import searchprofiler from './plugins/searchprofiler';
 
 module.exports = function (kibana) {
   return [
@@ -12,6 +12,6 @@ module.exports = function (kibana) {
     monitoring(kibana),
     reporting(kibana),
     security(kibana),
-    profiler(kibana)
+    searchprofiler(kibana)
   ];
 };

@@ -3,7 +3,7 @@ import Joi from 'joi';
 export default (server, commonRouteConfig) => {
 
   server.route({
-    path: '/api/profiler/profile',
+    path: '/api/searchprofiler/profile',
     method: 'POST',
     config: {
       ...commonRouteConfig,

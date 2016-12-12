@@ -4,14 +4,14 @@ export default function checkLicense(xpackLicenseInfo) {
     return {
       showAppLink: true,
       enableAppLink: false,
-      message: 'Profiler is unavailable - license information is not available at this time.'
+      message: 'Search Profiler is unavailable - license information is not available at this time.'
     };
   }
 
   const isLicenseActive = xpackLicenseInfo.license.isActive();
   let message;
   if (!isLicenseActive) {
-    message = `Profiler is unavailable - license has expired.`;
+    message = `Search Profiler is unavailable - license has expired.`;
   }
 
   if (xpackLicenseInfo.license.isOneOf([ 'trial', 'basic', 'standard', 'gold', 'platinum' ])) {
@@ -22,7 +22,7 @@ export default function checkLicense(xpackLicenseInfo) {
     };
   }
 
-  message = `Profiler is unavailable for the current ${xpackLicenseInfo.license.getType()} license. Please upgrade your license.`;
+  message = `Search Profiler is unavailable for the current ${xpackLicenseInfo.license.getType()} license. Please upgrade your license.`;
   return {
     showAppLink: false,
     enableAppLink: false,

@@ -10,12 +10,12 @@ import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
 export default kibana => {
   return new kibana.Plugin({
     require: ['elasticsearch', 'xpack_main'],
-    id: 'profiler',
-    configPrefix: 'xpack.profiler',
+    id: 'searchprofiler',
+    configPrefix: 'xpack.searchprofiler',
     publicDir: resolve(__dirname, 'public'),
 
     uiExports: {
-      devTools: ['plugins/profiler/app']
+      devTools: ['plugins/searchprofiler/app']
     },
     init: function (server) {
       const thisPlugin = this;
