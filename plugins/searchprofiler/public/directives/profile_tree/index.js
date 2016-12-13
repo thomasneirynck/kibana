@@ -52,7 +52,6 @@ uiModule.directive('profiletree',  HighlightService => {
         $scope.visible = {};
         let indices = {};
 
-        let allTime = 0;
         for (let shard of data) {
           initShardTargets(shard);
 
@@ -73,7 +72,6 @@ uiModule.directive('profiletree',  HighlightService => {
           }
           indices[shard.id[1]].shards.push(shard);
           indices[shard.id[1]].time[$scope.target] += shard.time[$scope.target];
-          allTime += shard.time[$scope.target];
         }
         data = null;
         const finalIndices = util.normalizeIndices(indices, $scope.indexVisibility, $scope.target);
