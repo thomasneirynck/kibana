@@ -33,6 +33,6 @@ export default React.createClass({
       <td className="unassigned">
         <div className="children">{ shards }</div>
       </td>
-      );
+    );
   }
 });

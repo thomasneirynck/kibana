@@ -175,7 +175,7 @@ describe('graphui-workspace', function () {
           'weight': 1,
           'depth': 1
         }
-       ],
+        ],
         'connections': [{
           'source': 0,
           'target': 1,
@@ -188,7 +188,7 @@ describe('graphui-workspace', function () {
           'weight': 1,
           'doc_count': 5
         }
-       ]
+        ]
       };
       workspace.simpleSearch('myquery', {}, 2);
 
@@ -244,14 +244,14 @@ describe('graphui-workspace', function () {
           'weight': 1,
           'depth': 1
         }
-       ],
+        ],
         'connections': [{
           'source': 0,
           'target': 1,
           'weight': 1,
           'doc_count': 5
         }
-       ]
+        ]
       };
       workspace.simpleSearch('myquery', {}, 2);
 
@@ -301,14 +301,14 @@ describe('graphui-workspace', function () {
           'weight': 1,
           'depth': 1
         }
-       ],
+        ],
         'connections': [{
           'source': 0,
           'target': 1,
           'weight': 1,
           'doc_count': 5
         }
-       ]
+        ]
       };
       workspace.simpleSearch('myquery', {}, 2);
 
