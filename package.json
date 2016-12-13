@@ -20,6 +20,7 @@
     "babel-eslint": "4.1.8",
     "checksum": "0.1.1",
     "del": "2.2.0",
+    "dotenv": "2.0.0",
     "eslint": "1.10.3",
     "eslint-plugin-mocha": "1.1.0",
     "eslint-plugin-react": "4.2.1",

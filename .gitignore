@@ -13,3 +13,4 @@ target/
 .phantom/
 coverage
 .aws-config.json
+.env
