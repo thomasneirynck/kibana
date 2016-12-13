@@ -105,10 +105,8 @@ gulp.task('lint-staged', function () {
 
 gulp.task('lint', function () {
   var filePaths = [
-    'gulpfile.js',
-    './{server,public}/**/*.js',
-    '!plugins/**/node_modules/**',
-    '!plugins/**/__test__/fixtures/**/*.js'
+    './*.js',
+    './{server,gulp_helpers}/**/*.js',
   ]
   .concat(fileGlobs.forPlugins('js', 'jsx'));
 
