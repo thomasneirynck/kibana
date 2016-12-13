@@ -1,0 +1,5 @@
+---
+root: true
+extends: ../../.eslintrc.yaml
+rules:
+  no-unused-vars: [error, {args: 'all', argsIgnorePattern: '^_'}]
