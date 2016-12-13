@@ -76,7 +76,7 @@ function nodeRowFactory(scope, kbnUrl, decorateRow) {
               );
             }
             return <OfflineCell/>;
-          }())}
+          })()}
         </tr>
       );
     }

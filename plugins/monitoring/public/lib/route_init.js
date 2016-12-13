@@ -35,7 +35,7 @@ export default function routeInitProvider(Private, monitoringClusters, globalSta
         if (firstCluster && firstCluster.cluster_uuid) return firstCluster;
 
         return null;
-      }());
+      })();
 
       if (cluster && cluster.license) {
         globalState.cluster_uuid = cluster.cluster_uuid;
