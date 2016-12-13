@@ -1,8 +1,4 @@
 ---
-root: true
-
-extends: ../../.eslintrc.yaml
-
 globals:
   angular: true
   $: true
