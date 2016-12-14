@@ -1,33 +1,20 @@
 /*
- ************************************************************
- *                                                          *
- * Contents of file Copyright (c) Prelert Ltd 2006-2016     *
- *                                                          *
- *----------------------------------------------------------*
- *----------------------------------------------------------*
- * WARNING:                                                 *
- * THIS FILE CONTAINS UNPUBLISHED PROPRIETARY               *
- * SOURCE CODE WHICH IS THE PROPERTY OF PRELERT LTD AND     *
- * PARENT OR SUBSIDIARY COMPANIES.                          *
- * PLEASE READ THE FOLLOWING AND TAKE CAREFUL NOTE:         *
- *                                                          *
- * This source code is confidential and any person who      *
- * receives a copy of it, or believes that they are viewing *
- * it without permission is asked to notify Prelert Ltd     *
- * on +44 (0)20 3567 1249 or email to legal@prelert.com.    *
- * All intellectual property rights in this source code     *
- * are owned by Prelert Ltd.  No part of this source code   *
- * may be reproduced, adapted or transmitted in any form or *
- * by any means, electronic, mechanical, photocopying,      *
- * recording or otherwise.                                  *
- *                                                          *
- *----------------------------------------------------------*
- *                                                          *
- *                                                          *
- ************************************************************
+ * ELASTICSEARCH CONFIDENTIAL
+ *
+ * Copyright (c) 2016 Elasticsearch BV. All Rights Reserved.
+ *
+ * Notice: this software, and all information contained
+ * therein, is the exclusive property of Elasticsearch BV
+ * and its licensors, if any, and is protected under applicable
+ * domestic and foreign law, and international treaties.
+ *
+ * Reproduction, republication or distribution without the
+ * express written consent of Elasticsearch BV is
+ * strictly prohibited.
  */
 
 import _ from 'lodash';
+import angular from 'angular';
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 import 'plugins/prelert/services/prelert_angular_client';
 import 'plugins/prelert/services/info_service';
@@ -36,48 +23,67 @@ import 'plugins/prelert/messagebar';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/prelert');
 
-module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIServices', 'prlMessageBarService', 'prlInfoService', function ($rootScope, $http, $q, es, prelertAPIServices, prlMessageBarService, prlInfoService) {
-  var apiService = prelertAPIServices();
-  var msgs = prlMessageBarService;
-  var jobs = [];
+module.service('prlJobService', function ($rootScope, $http, $q, es, prelertAPIService, prlMessageBarService, prlInfoService) {
+  const apiService = prelertAPIService;
+  const msgs = prlMessageBarService;
+  let jobs = [];
   this.currentJob = undefined;
   this.jobs = [];
   this.basicJobs = {};
   this.jobDescriptions = {};
   this.detectorDescriptions = {};
   this.detectorsByJob = {};
+  this.customUrlsByJob = {};
 
   // private function used to check the job saving response
   function checkSaveResponse(resp, origJob) {
-    if(resp) {
-      if(resp.id) {
-        if(resp.id === origJob.id) {
-          console.log("checkSaveResponse(): save successful");
+    if (resp) {
+      if (resp.id) {
+        if (resp.id === origJob.id) {
+          console.log('checkSaveResponse(): save successful');
           return true;
         }
       } else {
-        if(resp.errorCode) {
-          console.log("checkSaveResponse(): save failed", resp);
+        if (resp.errorCode) {
+          console.log('checkSaveResponse(): save failed', resp);
           return false;
         }
       }
     } else {
-      console.log("checkSaveResponse(): response is empty");
+      console.log('checkSaveResponse(): response is empty');
       return false;
     }
   }
 
+  this.getBlankJob = function () {
+    return {
+      id: '',
+      description: '',
+      analysisConfig: {
+        bucketSpan: 300,
+        influencers:[],
+        detectors :[]
+      },
+      dataDescription : {
+        timeField:      '',
+        timeFormat:     '', // 'epoch',
+        fieldDelimiter: '',
+        quoteCharacter: '"',
+        format:         'DELIMITED'
+      }
+    };
+  };
 
-  this.loadJobs = function() {
-    var that = this;
+  this.loadJobs = function () {
+    const that = this;
     jobs = [];
 
     // use the apiService to load the list of jobs
     // listJobs returns the $http request promise chain which we pass straight through
     // adding our own .then function to create the jobs list and broadcast the fact we've done so
-    return apiService.JobsService.listJobs()
+    return apiService.listJobs()
       .then(function (resp) {
-        console.log("PrlJobsList controller query response:", resp);
+        console.log('PrlJobsList controller query response:', resp);
 
         // make deep copy of jobs
         angular.copy(resp.documents, jobs);
@@ -89,11 +95,11 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
         return jobs;
 
       }).catch(function (err) {
-        console.log("PrlJobsList error getting list of jobs:", err);
-        msgs.error("Jobs list could not be retrieved");
-        if(err.message) {
-          if(err.message.match("getaddrinfo")) {
-            msgs.error("The Prelert Engine API server could not be found.");
+        console.log('PrlJobsList error getting list of jobs:', err);
+        msgs.error('Jobs list could not be retrieved');
+        if (err.message) {
+          if (err.message.match('getaddrinfo')) {
+            msgs.error('The Prelert Engine API server could not be found.');
           }
           msgs.error(err.message);
         }
@@ -101,16 +107,16 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
       });
   };
 
-  this.refreshJob = function(jobId) {
-    return apiService.JobsService.getJobDetails({jobId: jobId})
+  this.refreshJob = function (jobId) {
+    return apiService.getJobDetails({jobId: jobId})
       .then(function (resp) {
-        console.log("refreshJob controller query response:", resp);
-        var newJob = {};
+        console.log('refreshJob controller query response:', resp);
+        let newJob = {};
         angular.copy(resp.document, newJob);
 
         // replace the job in the jobs array
-        for(var i=0;i<jobs.length;i++) {
-          if(jobs[i].id === jobId) {
+        for (let i = 0; i < jobs.length; i++) {
+          if (jobs[i].id === jobId) {
             jobs[i] = newJob;
           }
         }
@@ -120,28 +126,28 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
         return newJob;
 
       }).catch(function (err) {
-        console.log("refreshJob error getting job details for "+jobId+":", err);
-        msgs.error("Job details for "+jobId+" could not be retrieved");
-        if(err.message) {
+        console.log('refreshJob error getting job details for ' + jobId + ':', err);
+        msgs.error('Job details for ' + jobId + ' could not be retrieved');
+        if (err.message) {
           msgs.error(err.message);
         }
         return null;
       });
   };
 
-  this.updateSingleJobCounts = function(jobId) {
-    console.log("prlJobService: update job counts and status for "+jobId);
-    return apiService.JobsService.getJobDetails({jobId: jobId})
+  this.updateSingleJobCounts = function (jobId) {
+    console.log('prlJobService: update job counts and status for ' + jobId);
+    return apiService.getJobDetails({jobId: jobId})
       .then(function (resp) {
-        console.log("updateSingleJobCounts controller query response:", resp);
-        var newJob = {};
+        console.log('updateSingleJobCounts controller query response:', resp);
+        let newJob = {};
         angular.copy(resp.document, newJob);
 
         // replace the job in the jobs array
-        for(var i=0;i<jobs.length;i++) {
-          if(jobs[i].id === jobId) {
+        for (let i = 0; i < jobs.length; i++) {
+          if (jobs[i].id === jobId) {
             jobs[i].counts = newJob.counts;
-            if(newJob.modelSizeStats) {
+            if (newJob.modelSizeStats) {
               jobs[i].modelSizeStats = newJob.modelSizeStats;
             }
             jobs[i].lastDataTime = newJob.lastDataTime;
@@ -153,32 +159,32 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
         return newJob;
 
       }).catch(function (err) {
-        console.log("updateSingleJobCounts error getting job details:", err);
-        msgs.error("Job details could not be retrieved for " + jobId);
-        if(err.message) {
+        console.log('updateSingleJobCounts error getting job details:', err);
+        msgs.error('Job details could not be retrieved for ' + jobId);
+        if (err.message) {
           msgs.error(err.message);
         }
         return null;
       });
   };
 
-  this.updateAllJobCounts = function() {
-    var that = this;
-    console.log("prlJobService: update all jobs counts and status");
-    return apiService.JobsService.listJobs()
+  this.updateAllJobCounts = function () {
+    const that = this;
+    console.log('prlJobService: update all jobs counts and status');
+    return apiService.listJobs()
       .then(function (resp) {
-        console.log("updateAllJobCounts controller query response:", resp);
-        for(var d=0; d<resp.documents.length;d++) {
-          var newJob = {};
-          var jobExists = false;
+        console.log('updateAllJobCounts controller query response:', resp);
+        for (let d = 0; d < resp.documents.length; d++) {
+          let newJob = {};
+          let jobExists = false;
           angular.copy(resp.documents[d], newJob);
 
           // update parts of the job
-          for(var i=0;i<jobs.length;i++) {
-            if(jobs[i].id === resp.documents[d].id) {
+          for (let i = 0; i < jobs.length; i++) {
+            if (jobs[i].id === resp.documents[d].id) {
               jobExists = true;
               jobs[i].counts = newJob.counts;
-              if(newJob.modelSizeStats) {
+              if (newJob.modelSizeStats) {
                 jobs[i].modelSizeStats = newJob.modelSizeStats;
               }
               jobs[i].lastDataTime = newJob.lastDataTime;
@@ -189,7 +195,7 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
           }
 
           // a new job has been added, add it to the list and broadcast an update
-          if(!jobExists) {
+          if (!jobExists) {
             // add it to the same index position as it's found in documents.
             jobs.splice(d, 0, newJob);
             $rootScope.$broadcast('jobsUpdated', jobs);
@@ -199,105 +205,115 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
         // if after adding missing jobs, the retrieved number of jobs still differs from
         // the local copy, reload the whole list from scratch. some non-running jobs may have
         // been deleted by a different user.
-        if(resp.documents.length !== jobs.length) {
-          console.log("updateAllJobCounts: number of jobs differs. reloading all jobs");
+        if (resp.documents.length !== jobs.length) {
+          console.log('updateAllJobCounts: number of jobs differs. reloading all jobs');
           that.loadJobs();
         }
 
       }).catch(function (err) {
-        console.log("updateAllJobCounts error getting job details:", err);
-        msgs.error("Job details could not be retrieved");
-        if(err.message) {
+        console.log('updateAllJobCounts error getting job details:', err);
+        msgs.error('Job details could not be retrieved');
+        if (err.message) {
           msgs.error(err.message);
         }
       });
   };
 
-  this.checkStatus = function() {
-    var that = this;
-    var jobsMissing = false;
+  this.checkStatus = function () {
+    const that = this;
+    let jobsMissing = false;
 
-    var runningJobs = _.where(jobs, {status : "RUNNING"});
-    var counter = runningJobs.length;
-    console.log("prlJobService: check status for "+runningJobs.length+" running jobs");
-    _.each(runningJobs, function(job) {
+    const runningJobs = _.where(jobs, {status : 'RUNNING'});
+    let counter = runningJobs.length;
+    console.log('prlJobService: check status for ' + runningJobs.length + ' running jobs');
+    _.each(runningJobs, (job) => {
       that.updateSingleJobCounts(job.id)
-      .then(function(resp){
-        if(resp.exists === false) {
+      .then((resp) => {
+        if (resp.exists === false) {
           jobsMissing = true;
         }
         counter--;
         // once all job have been checked, reload the job list if
         // any jobs are missing. they may have been deleted by a
         // different user.
-        if(counter === 0 && jobsMissing) {
+        if (counter === 0 && jobsMissing) {
           that.loadJobs();
         }
       });
     });
-
   };
 
-  this.saveNewJob = function(job, overwrite) {
-    var params = {};
-    if(overwrite) {
+  this.updateSingleJobSchedulerStatus = function (jobId) {
+    const deferred = $q.defer();
+    apiService.getJobDetails({jobId: jobId})
+    .then((resp) => {
+      // console.log('updateSingleJobCounts controller query response:', resp);
+      deferred.resolve(resp.document.schedulerStatus);
+    })
+    .catch((resp) => {
+      deferred.reject(resp);
+    });
+
+    return deferred.promise;
+  };
+
+  this.saveNewJob = function (job, overwrite) {
+    const params = {};
+    if (overwrite) {
       params.overwrite = true;
     }
 
     // run then and catch through the same check
-    var func = function(resp){
-      console.log("Response for job query:", resp);
-      prlInfoService.logUsageInfo({'view':'Jobs', 'actionID':'create'});
-      var success = checkSaveResponse(resp, job);
+    const func = function (resp) {
+      console.log('Response for job query:', resp);
+      const success = checkSaveResponse(resp, job);
       return {success:success, job: job, resp: resp};
     };
 
     // return the promise chain
-    return apiService.JobsService.saveNewJob(job, params)
+    return apiService.saveNewJob(job, params)
       .then(func).catch(func);
   };
 
-  this.deleteJob = function(job) {
-    console.log("deleting job: "+ job.id);
+  this.deleteJob = function (job) {
+    console.log('deleting job: ' + job.id);
 
     // return the promise chain
-    return apiService.JobsService.deleteJob(job.id)
-      .then(function (resp) {
-          console.log("delete job", resp);
-          prlInfoService.logUsageInfo({'view':'Jobs', 'actionID':'delete'});
-          return {success: true};
-      }).catch(function (err) {
-          // msgs.error("Could not delete job: "+ job.id);
-          msgs.error(err.message);
-          console.log("delete job", err);
-          return {success: false};
+    return apiService.deleteJob(job.id)
+      .then((resp) => {
+        console.log('delete job', resp);
+        return {success: true};
+      }).catch((err) => {
+          // msgs.error('Could not delete job: '+ job.id);
+        msgs.error(err.message);
+        console.log('delete job', err);
+        return {success: false};
       });
   };
 
-  this.cloneJob = function(job) {
+  this.cloneJob = function (job) {
     // create a deep copy of a job object
     // also remove items from the job which are set by the server and not needed
     // in the future this formatting could be optional
-    var tempJob = this.removeJobEndpoints(angular.copy(job, tempJob));
+    let tempJob = this.removeJobEndpoints(angular.copy(job, tempJob));
     return tempJob;
   };
 
-  this.updateJob = function(jobId, data) {
+  this.updateJob = function (jobId, data) {
     // return the promise chain
-    return apiService.JobsService.updateJob(jobId, data)
-      .then(function (resp) {
-          console.log("update job", resp);
-          prlInfoService.logUsageInfo({'view':'Jobs', 'actionID':'edit'});
-          return {success: true};
-      }).catch(function (err) {
-          msgs.error("Could not update job: "+ jobId);
-          console.log("update job", err);
-          return {success: false, message: err.message};
+    return apiService.updateJob(jobId, data)
+      .then((resp) => {
+        console.log('update job', resp);
+        return {success: true};
+      }).catch((err) => {
+        msgs.error('Could not update job: ' + jobId);
+        console.log('update job', err);
+        return {success: false, message: err.message};
       });
   };
 
   // remove end point paths from job JSON
-  this.removeJobEndpoints = function(job) {
+  this.removeJobEndpoints = function (job) {
     delete job.location;
     delete job.dataEndpoint;
     delete job.endpoints;
@@ -311,7 +327,7 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
   };
 
   // remove counts, times and status for cloning a job
-  this.removeJobCounts = function(job) {
+  this.removeJobCounts = function (job) {
     delete job.status;
     delete job.counts;
     delete job.createTime;
@@ -325,9 +341,9 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
   };
 
   // find a job based on the id
-  this.getJob = function(jobId) {
-    var job ;
-    job = _.find(jobs, function(job) {
+  this.getJob = function (jobId) {
+    let job;
+    job = _.find(jobs, (job) => {
       return job.id === jobId;
     });
 
@@ -336,52 +352,52 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
 
   // use elastic search to load the start and end timestamps
   // add them to our own promise object and return that rather than the search results object
-  this.jobTimeRange = function(jobId) {
-    var deferred = $q.defer();
-    var obj = {success: true, start: {epoch:0, string:""}, end: {epoch:0, string:""}};
+  this.jobTimeRange = function (jobId) {
+    const deferred = $q.defer();
+    const obj = {success: true, start: {epoch:0, string:''}, end: {epoch:0, string:''}};
 
     es.search({
-      index: "prelertresults-" + jobId,
+      index: 'prelertresults-' + jobId,
       size: 0,
       body: {
-        "query": {
-          "bool": {
-            "filter": [
+        'query': {
+          'bool': {
+            'filter': [
               {
-                "query_string": {
-                  "query": "jobId: " + jobId,
-                  "analyze_wildcard": true
+                'query_string': {
+                  'query': 'jobId: ' + jobId,
+                  'analyze_wildcard': true
                 }
               },
-              {"term": {"_type":"bucket"}}
+              {'term': {'_type':'bucket'}}
             ]
           }
         },
-        "aggs": {
-          "earliest": {
-            "min": {
-              "field": "@timestamp"
+        'aggs': {
+          'earliest': {
+            'min': {
+              'field': '@timestamp'
             }
           },
-          "latest": {
-            "max": {
-              "field": "@timestamp"
+          'latest': {
+            'max': {
+              'field': '@timestamp'
             }
           }
         }
       }
     })
-    .then(function(resp) {
-      if(resp.aggregations && resp.aggregations["earliest"] && resp.aggregations["latest"]) {
-        obj.start.epoch = resp.aggregations["earliest"].value;
-        obj.start.string = resp.aggregations["earliest"].value_as_string;
+    .then((resp) => {
+      if (resp.aggregations && resp.aggregations.earliest && resp.aggregations.latest) {
+        obj.start.epoch = resp.aggregations.earliest.value;
+        obj.start.string = resp.aggregations.earliest.value_as_string;
 
-        obj.end.epoch = resp.aggregations["latest"].value;
-        obj.end.string = resp.aggregations["latest"].value_as_string;
+        obj.end.epoch = resp.aggregations.latest.value;
+        obj.end.string = resp.aggregations.latest.value_as_string;
       }
       deferred.resolve(obj);
     })
-    .catch(function(resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
     return deferred.promise;
@@ -391,46 +407,46 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
   // dashboards in the Prelert plugin. Returned response contains a jobs property,
   // which is an array of objects containing id, description, bucketSpan and detectorDescriptions,
   // plus a customUrls key if custom URLs have been configured for the job.
-  this.getBasicJobInfo = function(index) {
-    var that = this;
-    var deferred = $q.defer();
-    var obj = {success: true, jobs: []};
+  this.getBasicJobInfo = function (index) {
+    const that = this;
+    const deferred = $q.defer();
+    const obj = {success: true, jobs: []};
 
     es.search({
       index: index,
       size: 500,
       body: {
-        "_source" : ["description", "analysisConfig.bucketSpan", "analysisConfig.detectors", "customSettings"],
-        "query": {
-          "bool" : {
-            "filter" : [
-              {"type" : { "value" : "job" }}
+        '_source' : ['description', 'analysisConfig.bucketSpan', 'analysisConfig.detectors', 'customSettings'],
+        'query': {
+          'bool' : {
+            'filter' : [
+              {'type' : { 'value' : 'job' }}
             ]
           }
         }
       }
     })
-    .then(function(resp) {
+    .then((resp) => {
       if (resp.hits.total !== 0) {
-        var detectorDescriptionsByJob = {};
-        var detectorsByJob = {};
-        _.each(resp.hits.hits, function(hit){
-          var fields = hit.fields;
-          var job = {'id':hit._id};
+        let detectorDescriptionsByJob = {};
+        const detectorsByJob = {};
+        const customUrlsByJob = {};
+        _.each(resp.hits.hits, (hit)=> {
+          const job = {'id':hit._id};
 
           job.bucketSpan = _.get(hit, '_source.analysisConfig.bucketSpan');
 
           job.detectorDescriptions = [];
           job.detectors = [];
-          var detectors = _.get(hit, '_source.analysisConfig.detectors', []);
-          _.each(detectors, function(detector){
+          const detectors = _.get(hit, '_source.analysisConfig.detectors', []);
+          _.each(detectors, (detector)=> {
             if (_.has(detector, 'detectorDescription')) {
-              job.detectorDescriptions.push(detector['detectorDescription']);
+              job.detectorDescriptions.push(detector.detectorDescription);
               job.detectors.push(detector);
             }
           });
 
-          if (_.has(hit, '_source.description') && /^\s*$/.test(hit._source.description) === false){
+          if (_.has(hit, '_source.description') && /^\s*$/.test(hit._source.description) === false) {
             job.description = hit._source.description;
           } else {
             // Just use the id as the description.
@@ -439,11 +455,15 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
 
           if (_.has(hit, '_source.customSettings.customUrls')) {
             job.customUrls = [];
-            _.each(hit._source.customSettings.customUrls, function(url) {
+            _.each(hit._source.customSettings.customUrls, (url) => {
               if (_.has(url, 'urlName') && _.has(url, 'urlValue')) {
-                job.customUrls.push({"urlName": url.urlName, "urlValue":url.urlValue});
+                job.customUrls.push({'urlName': url.urlName, 'urlValue':url.urlValue});
               }
             });
+            // Only add an entry for a job if customUrls have been defined.
+            if (job.customUrls.length > 0) {
+              customUrlsByJob[job.id] = job.customUrls;
+            }
           }
 
           that.jobDescriptions[job.id] = job.description;
@@ -454,16 +474,17 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
         });
 
         detectorDescriptionsByJob = anomalyUtils.labelDuplicateDetectorDescriptions(detectorDescriptionsByJob);
-        _.each(detectorsByJob, function(dtrs, jobId) {
-          _.each(dtrs, function(dtr, i) {
+        _.each(detectorsByJob, (dtrs, jobId) => {
+          _.each(dtrs, (dtr, i) => {
             dtr.detectorDescription = detectorDescriptionsByJob[jobId][i];
           });
         });
         that.detectorsByJob = detectorsByJob;
+        that.customUrlsByJob = customUrlsByJob;
       }
       deferred.resolve(obj);
     })
-    .catch(function(resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
     return deferred.promise;
@@ -473,28 +494,28 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
   // specified ID from the given index and job ID.
   // Returned response contains four properties - categoryId, regex, examples
   // and terms (space delimited String of the common tokens matched in values of the category).
-  this.getCategoryDefinition = function(index, jobId, categoryId) {
-    var deferred = $q.defer();
-    var obj = {success: true, categoryId: categoryId, terms: null, regex: null, examples: []};
+  this.getCategoryDefinition = function (index, jobId, categoryId) {
+    const deferred = $q.defer();
+    const obj = {success: true, categoryId: categoryId, terms: null, regex: null, examples: []};
 
     es.search({
       index: index,
       size: 1,
       body: {
-        "query": {
-          "bool": {
-            "filter": [
-              {"term": {"_type": "categoryDefinition"}},
-              {"term": {"jobId": jobId}},
-              {"term": {"categoryId": categoryId}}
+        'query': {
+          'bool': {
+            'filter': [
+              {'term': {'_type': 'categoryDefinition'}},
+              {'term': {'jobId': jobId}},
+              {'term': {'categoryId': categoryId}}
             ]
           }
         }
       }
     })
-    .then(function(resp) {
+    .then((resp) => {
       if (resp.hits.total !== 0) {
-        var source = _.first(resp.hits.hits)._source;
+        const source = _.first(resp.hits.hits)._source;
         obj.categoryId = source.categoryId;
         obj.regex = source.regex;
         obj.terms = source.terms;
@@ -502,7 +523,7 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
       }
       deferred.resolve(obj);
     })
-    .catch(function(resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
     return deferred.promise;
@@ -511,45 +532,45 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
   // use elastic search to load the scheduler state data
   // endTimeMillis is used to prepopulate the scheduler start modal
   // when a job has previously been set up with an end time
-  this.jobSchedulerState = function(jobId) {
-    var deferred = $q.defer();
-    var obj = {startTimeMillis:null, endTimeMillis:null };
+  this.jobSchedulerState = function (jobId) {
+    const deferred = $q.defer();
+    const obj = {startTimeMillis:null, endTimeMillis:null };
 
     es.search({
-      index: "prelertresults-" + jobId,
+      index: 'prelertresults-' + jobId,
       size: 1,
       body: {
-        "query": {
-          "bool": {
-            "filter": [
+        'query': {
+          'bool': {
+            'filter': [
               {
-                "type": {
-                  "value": "schedulerState"
+                'type': {
+                  'value': 'schedulerState'
                 }
               }
             ]
           }
         },
-        "_source": ["endTimeMillis", "startTimeMillis"]
+        '_source': ['endTimeMillis', 'startTimeMillis']
       }
     })
-    .then(function(resp) {
+    .then((resp) => {
       if (resp.hits.total !== 0) {
-        _.each(resp.hits.hits, function(hit){
-          var _source = hit._source;
+        _.each(resp.hits.hits, (hit)=> {
+          const _source = hit._source;
 
-          if (_.has(_source, 'startTimeMillis')){
+          if (_.has(_source, 'startTimeMillis')) {
             obj.startTimeMillis = _source.startTimeMillis[0];
           }
 
-          if (_.has(_source, 'endTimeMillis')){
+          if (_.has(_source, 'endTimeMillis')) {
             obj.endTimeMillis = _source.endTimeMillis[0];
           }
         });
       }
       deferred.resolve(obj);
     })
-    .catch(function(resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
     return deferred.promise;
@@ -558,24 +579,24 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
   // search for audit messages, jobId is optional.
   // without it, all jobs will be listed.
   // fromRange should be a string formatted in ES time units. e.g. 12h, 1d, 7d
-  this.getJobAuditMessages = function(fromRange, jobId) {
-    var deferred = $q.defer();
-    var messages = [];
+  this.getJobAuditMessages = function (fromRange, jobId) {
+    const deferred = $q.defer();
+    const messages = [];
 
-    var jobFilter = {};
+    let jobFilter = {};
     // if no jobId specified, load all of the messages
-    if(jobId !== undefined) {
+    if (jobId !== undefined) {
       jobFilter = {
-        "bool": {
-          "should": [
+        'bool': {
+          'should': [
             {
-              "term": {
-                "jobId": "" // catch system messages
+              'term': {
+                'jobId': '' // catch system messages
               }
             },
             {
-              "term": {
-                "jobId": jobId // messages for specified jobId
+              'term': {
+                'jobId': jobId // messages for specified jobId
               }
             }
           ]
@@ -583,36 +604,36 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
       };
     }
 
-    var timeFilter = {};
-    if(fromRange !== undefined && fromRange !== "") {
+    let timeFilter = {};
+    if (fromRange !== undefined && fromRange !== '') {
       timeFilter = {
-        "range": {
-          "@timestamp": {
-            "gte": "now-" + fromRange,
-            "lte": "now"
+        'range': {
+          '@timestamp': {
+            'gte': 'now-' + fromRange,
+            'lte': 'now'
           }
         }
       };
     }
 
     es.search({
-      index: "prelert-int",
+      index: 'prelert-int',
       size: 1000,
       body:
       {
         sort : [
-          { "@timestamp" : {"order" : "asc"}},
-          { "jobId" : {"order" : "asc"}}
+          { '@timestamp' : {'order' : 'asc'}},
+          { 'jobId' : {'order' : 'asc'}}
         ],
-        "query": {
-          "bool": {
-            "filter": [
-              {"term": {"_type": "auditMessage"}},
+        'query': {
+          'bool': {
+            'filter': [
+              {'term': {'_type': 'auditMessage'}},
               {
-                "bool": {
-                  "must_not": {
-                    "term": {
-                      "level": "ACTIVITY"
+                'bool': {
+                  'must_not': {
+                    'term': {
+                      'level': 'ACTIVITY'
                     }
                   }
                 }
@@ -623,62 +644,62 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
         }
       }
     })
-    .then(function(resp) {
+    .then((resp) => {
       if (resp.hits.total !== 0) {
-        _.each(resp.hits.hits, function(hit) {
+        _.each(resp.hits.hits, (hit) => {
           messages.push(hit._source);
         });
       }
       deferred.resolve(messages);
     })
-    .catch(function(resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
     return deferred.promise;
   };
 
   // search highest, most recent audit messages for all jobs for the last 24hrs.
-  this.getAuditMessagesSummary = function() {
-    var deferred = $q.defer();
-    var aggs = [];
+  this.getAuditMessagesSummary = function () {
+    const deferred = $q.defer();
+    const aggs = [];
 
     es.search({
-      index: "prelert-int",
+      index: 'prelert-int',
       body: {
-        "query": {
-          "bool": {
-            "filter": {
-              "range": {
-                "@timestamp": {
-                  "gte": "now-1d"
+        'query': {
+          'bool': {
+            'filter': {
+              'range': {
+                '@timestamp': {
+                  'gte': 'now-1d'
                 }
               }
             }
           }
         },
-        "aggs": {
-          "levelsPerJob": {
-            "terms": {
-              "field": "jobId",
+        'aggs': {
+          'levelsPerJob': {
+            'terms': {
+              'field': 'jobId',
             },
-            "aggs": {
-              "levels": {
-                "terms": {
-                  "field": "level",
+            'aggs': {
+              'levels': {
+                'terms': {
+                  'field': 'level',
                 },
-                "aggs": {
-                  "latestMessage": {
-                    "terms": {
-                      "field": "message",
-                      "size": 1,
-                      "order": {
-                        "latestMessage": "desc"
+                'aggs': {
+                  'latestMessage': {
+                    'terms': {
+                      'field': 'message.raw',
+                      'size': 1,
+                      'order': {
+                        'latestMessage': 'desc'
                       }
                     },
-                    "aggs": {
-                      "latestMessage": {
-                        "max": {
-                          "field": "@timestamp"
+                    'aggs': {
+                      'latestMessage': {
+                        'max': {
+                          'field': '@timestamp'
                         }
                       }
                     }
@@ -690,150 +711,150 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
         }
       }
     })
-    .then(function(resp) {
+    .then((resp) => {
       if (resp.hits.total !== 0 &&
         resp.aggregations &&
         resp.aggregations.levelsPerJob &&
         resp.aggregations.levelsPerJob.buckets &&
-        resp.aggregations.levelsPerJob.buckets.length ) {
-        _.each(resp.aggregations.levelsPerJob.buckets, function(agg) {
+        resp.aggregations.levelsPerJob.buckets.length) {
+        _.each(resp.aggregations.levelsPerJob.buckets, (agg) => {
           aggs.push(agg);
         });
       }
       deferred.resolve(aggs);
     })
-    .catch(function(resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
     return deferred.promise;
   };
 
   // search to load a few records to extract the time field
-  this.searchTimeFields = function(url, username, password, index, type, field) {
-    var deferred = $q.defer();
-    var obj = {time: ""};
+  this.searchTimeFields = function (url, username, password, index, type, field) {
+    const deferred = $q.defer();
+    const obj = {time: ''};
 
-    var data = {url: url + "/" + index + "/" + type + "/_search?size=1&_source=" + encodeURIComponent(field)};
-    apiService.JobsService.getExternalUrl(this.makeHeaders(username, password), data)
-    .then(function(resp) {
+    const data = {url: url + '/' + index + '/' + type + '/_search?size=1&_source=' + encodeURIComponent(field)};
+    apiService.getExternalUrl(this.makeHeaders(username, password), data)
+    .then((resp) => {
       if (resp.hits.total !== 0 && resp.hits.hits.length) {
-        var hit = resp.hits.hits[0];
-        if(hit._source && hit._source[field]) {
+        const hit = resp.hits.hits[0];
+        if (hit._source && hit._source[field]) {
           obj.time = hit._source[field];
         }
       }
       deferred.resolve(obj);
     })
-    .catch(function(resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
     return deferred.promise;
   };
 
-  this.searchPreview = function(url, username, password, indices, types, job) {
-    var url = url + "/"+ indices.join(",") + "/" + types.join(",") +"/_search/";
-    console.log("searchPreview:  url ", url);
-    var deferred = $q.defer();
+  this.searchPreview = function (url, username, password, indices, types, job) {
+    url = url + '/' + indices.join(',') + '/' + types.join(',') + '/_search/';
+    console.log('searchPreview:  url ', url);
+    const deferred = $q.defer();
 
-    if(job.schedulerConfig) {
-      var data = {};
+    if (job.schedulerConfig) {
+      const data = {};
 
-      var query = { "match_all": {} };
+      let query = { 'match_all': {} };
       // if query is set, add it to the search, otherwise use match_all
-      if(job.schedulerConfig.query) {
+      if (job.schedulerConfig.query) {
         query = job.schedulerConfig.query;
       }
       data.query = query;
 
       // if aggs or aggregations is set, add it to the search
-      var aggregations = job.schedulerConfig.aggs || job.schedulerConfig.aggregations;
-      if(aggregations && Object.keys(aggregations).length) {
+      const aggregations = job.schedulerConfig.aggs || job.schedulerConfig.aggregations;
+      if (aggregations && Object.keys(aggregations).length) {
         data.size = 0;
         data.aggregations = aggregations;
 
         // add script_fields if present
-        var script_fields = job.schedulerConfig.script_fields;
-        if(script_fields && Object.keys(script_fields).length) {
-          data.script_fields = script_fields;
+        const scriptFields = job.schedulerConfig.script_fields;
+        if (scriptFields && Object.keys(scriptFields).length) {
+          data.script_fields = scriptFields;
         }
 
       } else {
         // if aggregations is not set and retrieveWholeSource is not set, add all of the fields from the job
         data.size = 10;
 
-        if(!job.schedulerConfig.retrieveWholeSource) {
+        if (!job.schedulerConfig.retrieveWholeSource) {
 
           // add script_fields if present
-          var script_fields = job.schedulerConfig.script_fields;
-          if(script_fields && Object.keys(script_fields).length) {
-            data.script_fields = script_fields;
+          const scriptFields = job.schedulerConfig.script_fields;
+          if (scriptFields && Object.keys(scriptFields).length) {
+            data.script_fields = scriptFields;
           }
 
 
-          var fields = {};
+          const fields = {};
 
           // get fields from detectors
-          if(job.analysisConfig.detectors) {
-            _.each(job.analysisConfig.detectors, function(dtr) {
-              if(dtr.byFieldName) {
+          if (job.analysisConfig.detectors) {
+            _.each(job.analysisConfig.detectors, (dtr) => {
+              if (dtr.byFieldName) {
                 fields[dtr.byFieldName] = {};
               }
-              if(dtr.fieldName) {
+              if (dtr.fieldName) {
                 fields[dtr.fieldName] = {};
               }
-              if(dtr.overFieldName) {
+              if (dtr.overFieldName) {
                 fields[dtr.overFieldName] = {};
               }
-              if(dtr.partitionFieldName) {
+              if (dtr.partitionFieldName) {
                 fields[dtr.partitionFieldName] = {};
               }
             });
           }
 
           // get fields from influencers
-          if(job.analysisConfig.influencers) {
-            _.each(job.analysisConfig.influencers, function(inf) {
+          if (job.analysisConfig.influencers) {
+            _.each(job.analysisConfig.influencers, (inf) => {
               fields[inf] = {};
             });
           }
 
           // get fields from categorizationFieldName
-          if(job.analysisConfig.categorizationFieldName) {
+          if (job.analysisConfig.categorizationFieldName) {
             fields[job.analysisConfig.categorizationFieldName] = {};
           }
 
           // get fields from summaryCountFieldName
-          if(job.analysisConfig.summaryCountFieldName) {
+          if (job.analysisConfig.summaryCountFieldName) {
             fields[job.analysisConfig.summaryCountFieldName] = {};
           }
 
           // get fields from timeField
-          if(job.dataDescription.timeField) {
+          if (job.dataDescription.timeField) {
             fields[job.dataDescription.timeField] = {};
           }
 
           // get fields from transform inputs
-          if(job.transforms) {
-            _.each(job.transforms, function(trfm) {
-              _.each(trfm.inputs, function(inp) {
+          if (job.transforms) {
+            _.each(job.transforms, (trfm) => {
+              _.each(trfm.inputs, (inp) => {
                 fields[inp] = {};
               });
             });
           }
 
-          // console.log("fields: ", fields);
-          var fieldsList = Object.keys(fields);
-          if(fieldsList.length) {
+          // console.log('fields: ', fields);
+          const fieldsList = Object.keys(fields);
+          if (fieldsList.length) {
             data._source = fieldsList;
           }
         }
       }
 
-      apiService.JobsService.postExternalUrl(this.makeHeaders(username, password), url, data)
-      .then(function(resp) {
+      apiService.postExternalUrl(this.makeHeaders(username, password), url, data)
+      .then((resp) => {
         deferred.resolve(resp);
       })
-      .catch(function(resp) {
+      .catch((resp) => {
         deferred.reject(resp);
       });
     }
@@ -842,15 +863,15 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
   };
 
   // server.maxPayloadBytes: <value>
-  this.uploadData = function(jobId, data) {
-    var deferred = $q.defer();
-    if(jobId && data) {
-      apiService.JobsService.uploadJobData(jobId, data)
-        .then(function(resp) {
+  this.uploadData = function (jobId, data) {
+    const deferred = $q.defer();
+    if (jobId && data) {
+      apiService.uploadJobData(jobId, data)
+        .then((resp) => {
           // console.log(resp);
           deferred.resolve(resp);
         })
-        .catch(function(resp) {
+        .catch((resp) => {
           // console.log(resp);
           deferred.reject(resp);
         });
@@ -862,24 +883,21 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
 
   // start the scheduler for a given job
   // refresh the job status on start success
-  this.startScheduler = function(jobId, params) {
-    var deferred = $q.defer();
-    var that = this;
-    apiService.JobsService.schedulerControl(jobId, "start", params)
-      .then(function (resp) {
-
-        prlInfoService.logUsageInfo({'view':'Jobs', 'actionID':'start'});
-
+  this.startScheduler = function (jobId, params) {
+    const deferred = $q.defer();
+    const that = this;
+    apiService.schedulerControl(jobId, 'start', params)
+      .then((resp) => {
         // console.log(resp);
         // refresh the status for the job as it's now changed
         that.updateSingleJobCounts(jobId);
         // return resp;
         deferred.resolve(resp);
 
-      }).catch(function (err) {
-        console.log("PrlJobsList error starting scheduler:", err);
-        msgs.error("Could not start scheduler for "+jobId);
-        if(err.message) {
+      }).catch((err) => {
+        console.log('PrlJobsList error starting scheduler:', err);
+        msgs.error('Could not start scheduler for ' + jobId);
+        if (err.message) {
           msgs.error(err.message);
         }
         deferred.reject(err);
@@ -890,13 +908,11 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
 
   // stop the scheduler for a given job
   // refresh the job status on stop success
-  this.stopScheduler = function(jobId) {
-    var deferred = $q.defer();
-    var that = this;
-    apiService.JobsService.schedulerControl(jobId, "stop")
+  this.stopScheduler = function (jobId) {
+    const deferred = $q.defer();
+    const that = this;
+    apiService.schedulerControl(jobId, 'stop')
       .then(function (resp) {
-        prlInfoService.logUsageInfo({'view':'Jobs', 'actionID':'stop'});
-
         // console.log(resp);
         // refresh the status for the job as it's now changed
         that.updateSingleJobCounts(jobId);
@@ -904,9 +920,9 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
         // return resp;
 
       }).catch(function (err) {
-        console.log("PrlJobsList error stoping scheduler:", err);
-        msgs.error("Could not stop scheduler for "+jobId);
-        if(err.message) {
+        console.log('PrlJobsList error stoping scheduler:', err);
+        msgs.error('Could not stop scheduler for ' + jobId);
+        if (err.message) {
           msgs.error(err.message);
         }
         deferred.reject(err);
@@ -917,14 +933,14 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
 
   // true if the Engine API server is part
   // of a distributed group of nodes
-  this.isDistributed = function() {
-    var deferred = $q.defer();
+  this.isDistributed = function () {
+    const deferred = $q.defer();
 
-    apiService.JobsService.status()
-      .then(function (resp) {
-        deferred.resolve(resp['engineHosts'].length > 1);
-      }).catch(function (err) {
-        console.log("isDistributed error", err);
+    apiService.status()
+      .then((resp) => {
+        deferred.resolve(resp.engineHosts.length > 1);
+      }).catch((err) => {
+        console.log('isDistributed error', err);
         deferred.reject(err);
       });
 
@@ -934,13 +950,13 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
   // returns a map of job -> host
   // Only the actively running jobs are in the map
   this.jobHosts = function () {
-    var deferred = $q.defer();
+    const deferred = $q.defer();
 
-    apiService.JobsService.status()
-      .then(function (resp) {
-        deferred.resolve(resp['hostByJob']);
-      }).catch(function (err) {
-        console.log("jobHosts error", err);
+    apiService.status()
+      .then((resp) => {
+        deferred.resolve(resp.hostByJob);
+      }).catch((err) => {
+        console.log('jobHosts error', err);
         deferred.reject(err);
       });
 
@@ -951,7 +967,7 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
   // are for a server accessed from the UI server, send these to the UI server
   // in a header that won't conflict if the UI server itself is authenticated.
   // (Will be empty if the username is blank.)
-  this.makeHeaders = function(username, password) {
+  this.makeHeaders = function (username, password) {
     if (username) {
       return {prelertextauthorization: 'Basic ' + new Buffer(username + ':' + password, 'binary').toString('base64')};
     }
@@ -960,26 +976,26 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
 
   // call the _cat/indices endpoint for a given ES server
   // returns an array of indices
-  this.getESIndices = function(url, username, password) {
-    var deferred = $q.defer();
-    var indices = [];
+  this.getESIndices = function (url, username, password) {
+    const deferred = $q.defer();
+    const indices = [];
 
-    var data = {url: url + "/_cat/indices"};
-    apiService.JobsService.getExternalUrl(this.makeHeaders(username, password), data)
-        .then(function(resp) {
-          var rows = resp.split("\n");
-          _.each(rows, function(row) {
-            var cols = row.split(" ");
-            if(cols.length) {
-              if(/*cols[0] === "green" &&*/
-                 cols[1] === "open") {
+    const data = {url: url + '/_cat/indices'};
+    apiService.getExternalUrl(this.makeHeaders(username, password), data)
+        .then((resp) => {
+          const rows = resp.split('\n');
+          _.each(rows, (row) => {
+            const cols = row.split(' ');
+            if (cols.length) {
+              if (/*cols[0] === 'green' &&*/
+                 cols[1] === 'open') {
                 indices.push(cols[2]);
               }
             }
           });
           deferred.resolve(indices);
         })
-        .catch(function(resp) {
+        .catch((resp) => {
           deferred.resolve(indices);
         });
 
@@ -988,25 +1004,25 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
 
   // call the _mappings endpoint for a given ES server
   // returns an object of indices and their types
-  this.getESMappings = function(url, username, password) {
-    var deferred = $q.defer();
-    var mappings = {};
+  this.getESMappings = function (url, username, password) {
+    const deferred = $q.defer();
+    let mappings = {};
 
-    var data = {url: url + "/_mappings"};
-    apiService.JobsService.getExternalUrl(this.makeHeaders(username, password), data)
-      .then(function(resp) {
-        _.each(resp, function(index, i) {
-          // switch the "mappings" for "types" for consistency.
+    const data = {url: url + '/_mappings'};
+    apiService.getExternalUrl(this.makeHeaders(username, password), data)
+      .then((resp) => {
+        _.each(resp, (index, i) => {
+          // switch the 'mappings' for 'types' for consistency.
           if (index.mappings !== index.types) {
-            Object.defineProperty(index, "types",
-                Object.getOwnPropertyDescriptor(index, "mappings"));
+            Object.defineProperty(index, 'types',
+                Object.getOwnPropertyDescriptor(index, 'mappings'));
             delete index.mappings;
           }
         });
         mappings = resp;
         deferred.resolve(mappings);
       })
-      .catch(function(resp) {
+      .catch((resp) => {
         deferred.reject(resp);
       });
 
@@ -1015,30 +1031,30 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
 
   // call the ES server to recieve basic information about the server
   // used to find out the ES version
-  this.getESServerInfo = function(url, username, password) {
-    var deferred = $q.defer();
-    var mappings = {};
+  this.getESServerInfo = function (url, username, password) {
+    const deferred = $q.defer();
+    const mappings = {};
 
-    var data = {url: url};
-    apiService.JobsService.getExternalUrl(this.makeHeaders(username, password), data)
-      .then(function(resp) {
+    const data = {url: url};
+    apiService.getExternalUrl(this.makeHeaders(username, password), data)
+      .then((resp) => {
         deferred.resolve(resp);
       })
-      .catch(function(resp) {
+      .catch((resp) => {
         deferred.reject(resp);
       });
 
     return deferred.promise;
   };
 
-  this.validateDetector = function(dtr) {
-    var deferred = $q.defer();
-    if(dtr) {
-      apiService.JobsService.validateDetector(dtr)
-        .then(function(resp) {
+  this.validateDetector = function (dtr) {
+    const deferred = $q.defer();
+    if (dtr) {
+      apiService.validateDetector(dtr)
+        .then((resp) => {
           deferred.resolve(resp);
         })
-        .catch(function(resp) {
+        .catch((resp) => {
           deferred.reject(resp);
         });
     } else {
@@ -1047,14 +1063,14 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
     return deferred.promise;
   };
 
-  this.validateTransforms = function(trfm) {
-    var deferred = $q.defer();
-    if(trfm) {
-      apiService.JobsService.validateTransforms(trfm)
-        .then(function(resp) {
+  this.validateTransforms = function (trfm) {
+    const deferred = $q.defer();
+    if (trfm) {
+      apiService.validateTransforms(trfm)
+        .then((resp) => {
           deferred.resolve(resp);
         })
-        .catch(function(resp) {
+        .catch((resp) => {
           deferred.reject(resp);
         });
     } else {
@@ -1064,18 +1080,18 @@ module.service('prlJobService', ['$rootScope', '$http', '$q', 'es', 'prelertAPIS
   };
 
   // simple function to load a single job without refreshing the version in the global jobs list
-  this.loadJob = function(jobId) {
-    return apiService.JobsService.getJobDetails({jobId: jobId})
-      .then(function (resp) {
-        // console.log("loadJob controller query response:", resp);
-        var newJob = {};
+  this.loadJob = function (jobId) {
+    return apiService.getJobDetails({jobId: jobId})
+      .then((resp) => {
+        // console.log('loadJob controller query response:', resp);
+        let newJob = {};
         angular.copy(resp.document, newJob);
         return newJob;
 
-      }).catch(function (err) {
-        console.log("loadJob: error getting job details for "+jobId+":", err);
+      }).catch((err) => {
+        console.log('loadJob: error getting job details for ' + jobId + ':', err);
         return null;
       });
   };
 
-}]);
+});

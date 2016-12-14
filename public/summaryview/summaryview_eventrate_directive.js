@@ -1,31 +1,18 @@
 /*
- ************************************************************
- *                                                          *
- * Contents of file Copyright (c) Prelert Ltd 2006-2016     *
- *                                                          *
- *----------------------------------------------------------*
- *----------------------------------------------------------*
- * WARNING:                                                 *
- * THIS FILE CONTAINS UNPUBLISHED PROPRIETARY               *
- * SOURCE CODE WHICH IS THE PROPERTY OF PRELERT LTD AND     *
- * PARENT OR SUBSIDIARY COMPANIES.                          *
- * PLEASE READ THE FOLLOWING AND TAKE CAREFUL NOTE:         *
- *                                                          *
- * This source code is confidential and any person who      *
- * receives a copy of it, or believes that they are viewing *
- * it without permission is asked to notify Prelert Ltd     *
- * on +44 (0)20 3567 1249 or email to legal@prelert.com.    *
- * All intellectual property rights in this source code     *
- * are owned by Prelert Ltd.  No part of this source code   *
- * may be reproduced, adapted or transmitted in any form or *
- * by any means, electronic, mechanical, photocopying,      *
- * recording or otherwise.                                  *
- *                                                          *
- *----------------------------------------------------------*
- *                                                          *
- *                                                          *
- ************************************************************
+ * ELASTICSEARCH CONFIDENTIAL
+ *
+ * Copyright (c) 2016 Elasticsearch BV. All Rights Reserved.
+ *
+ * Notice: this software, and all information contained
+ * therein, is the exclusive property of Elasticsearch BV
+ * and its licensors, if any, and is protected under applicable
+ * domestic and foreign law, and international treaties.
+ *
+ * Reproduction, republication or distribution without the
+ * express written consent of Elasticsearch BV is
+ * strictly prohibited.
  */
+
 
 /*
  * stacked bar chart showing event rate for each job.
@@ -35,6 +22,7 @@ import _ from 'lodash';
 import $ from 'jquery';
 import d3 from 'd3';
 import moment from 'moment';
+import angular from 'angular';
 import 'ui/timefilter';
 
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
@@ -43,13 +31,13 @@ import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/prelert');
 
-module.directive('prlSummaryViewEventRate', function($compile, $timeout, timefilter, prlJobService, prlAnomalyRecordDetailsService, prlSwimlaneInspectorService, prlSwimlaneSelectionService) {
+module.directive('prlSummaryViewEventRate', function ($compile, $timeout, timefilter, prlJobService, prlAnomalyRecordDetailsService, prlSwimlaneInspectorService, prlSwimlaneSelectionService) {
 
   function link(scope, element, attrs) {
-    var rendered = false;
+    let rendered = false;
 
-    scope.$on('render',function(event, d){
-      if(!rendered) {
+    scope.$on('render',(event, d) => {
+      if (!rendered) {
         rendered = true;
         render();
       }
@@ -64,111 +52,111 @@ module.directive('prlSummaryViewEventRate', function($compile, $timeout, timefil
         return;
       }
 
-      var lanes = Object.keys(scope.chartData.data);
+      let lanes = Object.keys(scope.chartData.data);
 
-      var times = scope.chartData.times;
-      var startTime = scope.chartData.earliest;
-      var endTime = scope.chartData.latest;
-      var stepSecs = scope.chartData.interval;
-      var totalMax = 0;
-      _.each(scope.chartData.max, function(jobMax) {
+      const times = scope.chartData.times;
+      const startTime = scope.chartData.earliest;
+      const endTime = scope.chartData.latest;
+      const stepSecs = scope.chartData.interval;
+      let totalMax = 0;
+      _.each(scope.chartData.max, (jobMax) => {
         totalMax += jobMax;
       });
 
 
-      var data = {};
-      _.each(times, function(t) {
+      const data = {};
+      _.each(times, (t) => {
         data[t] = {};
-        _.each(scope.chartData.data, function(job, jobId) {
-          if(job[t] !== undefined) {
+        _.each(scope.chartData.data, (job, jobId) => {
+          if (job[t] !== undefined) {
             data[t][jobId] = job[t];
           }
         });
       });
-      var margin = { top: 0, right: 0, bottom: 0, left: 0 };
+      const margin = { top: 0, right: 0, bottom: 0, left: 0 };
 
       scope.chartWidth = scope.$parent.chartWidth;
-      var numBuckets = parseInt((endTime-startTime)/stepSecs);
+      const numBuckets = parseInt((endTime - startTime) / stepSecs);
 
-      var height = 100;
+      const height = 100;
 
-      var eventRateScale = d3.scale.linear().domain([0, totalMax]).range([0, height]);
+      const eventRateScale = d3.scale.linear().domain([0, totalMax]).range([0, height]);
 
       element.css('height', (height + 20) + 'px');
 
-      var $eventrate = element.find("#eventrate");
-      var $eventrateLegend = element.find("#eventrate-legend");
+      const $eventrate = element.find('#eventrate');
+      const $eventrateLegend = element.find('#eventrate-legend');
       $eventrate.empty();
 
-      // console.log("chart",scope.chartWidth);
-      var cellWidth = Math.floor(scope.chartWidth / numBuckets);
-      var cellsPerTick = 1;
+      // console.log('chart',scope.chartWidth);
+      const cellWidth = Math.floor(scope.chartWidth / numBuckets);
+      let cellsPerTick = 1;
       if (cellWidth < 100) {
-        var numTickLabels = scope.chartWidth/100;
-        cellsPerTick = Math.max(Math.floor(numBuckets/numTickLabels), 2);
+        const numTickLabels = scope.chartWidth / 100;
+        cellsPerTick = Math.max(Math.floor(numBuckets / numTickLabels), 2);
       }
 
-      var timeTickLabels = [];
-      for (var i = 0; i < numBuckets; i+=cellsPerTick) {
-        timeTickLabels.push(moment.unix(startTime + (i*stepSecs)).format('MMM DD HH:mm'));
+      const timeTickLabels = [];
+      for (let i = 0; i < numBuckets; i += cellsPerTick) {
+        timeTickLabels.push(moment.unix(startTime + (i * stepSecs)).format('MMM DD HH:mm'));
       }
 
       scope.$parent.lanes[scope.swimlaneType] = [];
       scope.lanes = scope.$parent.lanes;
       scope.laneMarkers = scope.$parent.laneMarkers;
 
-      var monitorCellsContainer;
+      let monitorCellsContainer;
 
       function cellHover($event, index, time) {
-        if(monitorCellsContainer === undefined) {
-          monitorCellsContainer = angular.element("prl-summary-view-swimlane[swimlane-type='MONITOR'] .cells-container");
+        if (monitorCellsContainer === undefined) {
+          monitorCellsContainer = angular.element('prl-summary-view-swimlane[swimlane-type="MONITOR"] .cells-container');
         }
-        if(monitorCellsContainer !== undefined) {
+        if (monitorCellsContainer !== undefined) {
           monitorCellsContainer.scope().hoverFuncs[index](scope.swimlaneType);
         }
       }
       scope.cellHover = cellHover;
 
-      var color = d3.scale.category10();
-      var jobColors = {};
+      const color = d3.scale.category10();
+      const jobColors = {};
 
 
       // dish out colurs before sorting by description so that the
       // naturally first job (the largest event count) has is blue.
       // because it looks nicer
-      _.each(lanes, function(job, id){
+      _.each(lanes, (job, id) => {
         jobColors[job] = color(id);
       });
 
       // sort jobs by description
-      lanes = lanes.sort(function(a, b) {
+      lanes = lanes.sort((a, b) => {
         return prlJobService.jobDescriptions[a] > prlJobService.jobDescriptions[b];
       });
 
-      _.each(lanes, function(job, id){
+      _.each(lanes, (job, id) => {
         // jobColors[job] = color(id);
-        var desc = prlJobService.jobDescriptions[job];
-        var $job = $("<div>", {
-          "class": "job",
-          "data-tooltip": desc,
-          html: "<div class='bullet' style='background-color:"+jobColors[job]+"'></div>"+ desc
+        const desc = prlJobService.jobDescriptions[job];
+        const $job = $('<div>', {
+          'class': 'job',
+          'data-tooltip': desc,
+          html: '<div class="bullet" style="background-color:' + jobColors[job] + '"></div>' + desc
         });
         $eventrateLegend.append($job);
       });
 
-      var $cellsMarkerContainer = $("<div>", {
-        "class": "cells-marker-container"
+      const $cellsMarkerContainer = $('<div>', {
+        'class': 'cells-marker-container'
       });
 
-      var cells = [];
-      var time = startTime;
-      for(var i=0;i<numBuckets;i++) {
-        var $cell = $("<div>", {
-          "class": "sl-cell",
+      const cells = [];
+      let time = startTime;
+      for (let i = 0; i < numBuckets; i++) {
+        const $cell = $('<div>', {
+          'class': 'sl-cell',
           css: {
-            "width": cellWidth+"px"
+            'width': cellWidth + 'px'
           },
-          html: "<div class='floating-time-label'>"+(moment.unix(time).format('MMM DD HH:mm'))+"</div><i class='fa fa-caret-down'></i>"
+          html: '<div class="floating-time-label">' + (moment.unix(time).format('MMM DD HH:mm')) + '</div><i class="fa fa-caret-down"></i>'
         });
         $cellsMarkerContainer.append($cell);
         cells.push($cell);
@@ -177,58 +165,58 @@ module.directive('prlSummaryViewEventRate', function($compile, $timeout, timefil
       scope.laneMarkers.push({swimlaneType: scope.swimlaneType, lane: cells});
       $eventrate.append($cellsMarkerContainer);
 
-      var $cellsContainer = $("<div>", {
-        "class": "cells-container"
+      const $cellsContainer = $('<div>', {
+        'class': 'cells-container'
       });
       $eventrate.append($cellsContainer);
 
-      var time = startTime;
-      for(var i=0;i<numBuckets;i++) {
-        var $cell = $("<div>", {
-          "class": "sl-cell",
+      time = startTime;
+      for (let i = 0; i < numBuckets; i++) {
+        const $cell = $('<div>', {
+          'class': 'sl-cell',
           css: {
-            "width": cellWidth+"px"
+            'width': cellWidth + 'px'
           },
-          "data-lane-label": scope.swimlaneType,
-          "data-time": time,
+          'data-lane-label': scope.swimlaneType,
+          'data-time': time,
 
         });
 
         $cell.attr({
-          "ng-mouseover": "cellHover($event, "+i+", "+time+")",
+          'ng-mouseover': 'cellHover($event, ' + i + ', ' + time + ')',
         });
         $cellsContainer.append($cell);
         time += stepSecs;
         scope.lanes[scope.swimlaneType].push($cell);
       }
 
-      var barWidth = (cellWidth*numBuckets) / times.length;
+      const barWidth = (cellWidth * numBuckets) / times.length;
 
-      _.each(times, function(t) {
-        var $col = $("<div>", {
-          "class": "col",
+      _.each(times, (t) => {
+        const $col = $('<div>', {
+          'class': 'col',
           css: {
-            "width": barWidth+"px",
-            "height": height+"px"
+            'width': barWidth + 'px',
+            'height': height + 'px'
           },
-          "data-time": t
+          'data-time': t
         });
 
-        var d = data[t];
-        if(d !== undefined) {
-          var lastH = 0;
-          _.each(d, function(job, jobId) {
-            var h = eventRateScale(job);
-            h = Math.round((h * 100) ) / 100;
-            var $jobBar = $("<div>", {
-              "class": "job-bar",
+        const d = data[t];
+        if (d !== undefined) {
+          let lastH = 0;
+          _.each(d, (job, jobId) => {
+            let h = eventRateScale(job);
+            h = Math.round((h * 100)) / 100;
+            const $jobBar = $('<div>', {
+              'class': 'job-bar',
               css: {
-                "width": (barWidth-1)+"px",
-                "height": h+"px",
-                "top": height - lastH - h + "px",
-                "background-color": jobColors[jobId],
+                'width': (barWidth - 1) + 'px',
+                'height': h + 'px',
+                'top': height - lastH - h + 'px',
+                'background-color': jobColors[jobId],
               },
-              "data-time": t
+              'data-time': t
             });
             $col.append($jobBar);
             lastH += h;
@@ -238,15 +226,15 @@ module.directive('prlSummaryViewEventRate', function($compile, $timeout, timefil
         $eventrate.append($col);
       });
 
-      var $laneTimes = $("<div>", {
-        "class": "time-tick-labels"
+      const $laneTimes = $('<div>', {
+        'class': 'time-tick-labels'
       });
-      _.each(timeTickLabels, function(label, i) {
-        $laneTimes.append($("<span>", {
-          "class": "tick-label",
-          "text": label,
-          "css": {
-            "margin-left": (i * cellWidth * cellsPerTick)+"px"
+      _.each(timeTickLabels, (label, i) => {
+        $laneTimes.append($('<span>', {
+          'class': 'tick-label',
+          'text': label,
+          'css': {
+            'margin-left': (i * cellWidth * cellsPerTick) + 'px'
           }
         }));
       });
@@ -260,17 +248,17 @@ module.directive('prlSummaryViewEventRate', function($compile, $timeout, timefil
 
   return {
     scope: {
-      chartTitle: "@",
-      chartData: "=",
-      expansionDirective: "@",
-      expansionChartData: "=",
-      swimlaneType: "@",
-      containerId: "@",
-      selectedJobIds: "=",
-      expanded: "=",
-      chartWidth: "@",
+      chartTitle: '@',
+      chartData: '=',
+      expansionDirective: '@',
+      expansionChartData: '=',
+      swimlaneType: '@',
+      containerId: '@',
+      selectedJobIds: '=',
+      expanded: '=',
+      chartWidth: '@',
     },
     link: link,
-    template: "<div><div id='eventrate-legend'></div><div id='eventrate'></div></div>"
+    template: '<div><div id="eventrate-legend"></div><div id="eventrate"></div></div>'
   };
 });

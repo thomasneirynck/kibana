@@ -1,0 +1,83 @@
+<div class="transform-modal">
+  <prl-message-bar ></prl-message-bar>
+  <h3>{{title}}</h3>
+
+  <div class="form-group">
+    <label>Transform type</label><i prl-info-icon="new_job_transform_name" />
+    <select
+      ng-model="typeId"
+      ng-options="t.id as t.id for t in ui.types"
+      ng-change="transformChange(typeId)"
+      class="form-control">
+    </select>
+  </div>
+  <div>
+    <datalist id="properties_datalist">
+      <option ng-repeat="(key, prop) in properties" >{{key}}</option>
+    </datalist>
+
+    <!-- domain split -->
+    <div ng-show="typeId==='domain_split'">
+      <ng-include src="urlBasePath+'/plugins/prelert/jobs/components/new_job_advanced/transform_modal/transforms/domain_split.html'" />
+    </div>
+
+    <!-- concat -->
+    <div ng-show="typeId==='concat'">
+      <ng-include src="urlBasePath+'/plugins/prelert/jobs/components/new_job_advanced/transform_modal/transforms/concat.html'" />
+    </div>
+
+    <!-- exclude -->
+    <div ng-show="typeId==='exclude'">
+      <ng-include src="urlBasePath+'/plugins/prelert/jobs/components/new_job_advanced/transform_modal/transforms/exclude.html'" />
+    </div>
+
+    <!-- extract -->
+    <div ng-show="typeId==='extract'">
+      <ng-include src="urlBasePath+'/plugins/prelert/jobs/components/new_job_advanced/transform_modal/transforms/extract.html'" />
+    </div>
+
+    <!-- split -->
+    <div ng-show="typeId==='split'">
+      <ng-include src="urlBasePath+'/plugins/prelert/jobs/components/new_job_advanced/transform_modal/transforms/split.html'" />
+    </div>
+
+    <!-- trim -->
+    <div ng-show="typeId==='trim'">
+      <ng-include src="urlBasePath+'/plugins/prelert/jobs/components/new_job_advanced/transform_modal/transforms/trim.html'" />
+    </div>
+
+    <!-- lowercase -->
+    <div ng-show="typeId==='lowercase'">
+      <ng-include src="urlBasePath+'/plugins/prelert/jobs/components/new_job_advanced/transform_modal/transforms/lowercase.html'" />
+    </div>
+
+    <!-- uppercase -->
+    <div ng-show="typeId==='uppercase'">
+      <ng-include src="urlBasePath+'/plugins/prelert/jobs/components/new_job_advanced/transform_modal/transforms/uppercase.html'" />
+    </div>
+
+    <!-- geo_unhash -->
+    <div ng-show="typeId==='geo_unhash'">
+      <ng-include src="urlBasePath+'/plugins/prelert/jobs/components/new_job_advanced/transform_modal/transforms/geo_unhash.html'" />
+    </div>
+
+
+  </div>
+
+  <hr />
+
+  <button
+    ng-click="save()"
+    ng-disabled="(saveLock === true)"
+    class="btn btn-info"
+    aria-label="Save">
+    {{ (editMode? "Update" : "Add") }}
+  </button>
+  <button
+    ng-click="cancel()"
+    ng-disabled="(saveLock === true)"
+    class="btn btn-info"
+    aria-label="Cancel">
+    Cancel
+  </button>
+</div>

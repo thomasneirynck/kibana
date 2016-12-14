@@ -9,10 +9,9 @@ resize event plugin) - if the size changes, it will redraw the plot.
 There are no options. If you need to disable the plugin for some plots, you
 can just fix the size of their placeholders.
 
- */
+*/
 
-/* Inline dependency 
- * (Prelert note: uses source on http://benalman.com/projects/jquery-resize-plugin/) rather than version shipped with flot 0.8.3).
+/* Inline dependency:
  * jQuery resize event - v1.1 - 3/14/2010
  * http://benalman.com/projects/jquery-resize-plugin/
  *
@@ -20,210 +19,10 @@ can just fix the size of their placeholders.
  * Dual licensed under the MIT and GPL licenses.
  * http://benalman.com/about/license/
  */
-(function($,window,undefined){
-  '$:nomunge'; // Used by YUI compressor.
-  
-  
-  // A jQuery object containing all non-window elements to which the resize
-  // event is bound.
-  var elems = $([]),
-    
-    // Extend $.resize if it already exists, otherwise create it.
-    jq_resize = $.resize = $.extend( $.resize, {} ),
-    
-    timeout_id,
-    
-    // Reused strings.
-    str_setTimeout = 'setTimeout',
-    str_resize = 'resize',
-    str_data = str_resize + '-special-event',
-    str_delay = 'delay',
-    str_throttle = 'throttleWindow';
-  
-  // Property: jQuery.resize.delay
-  // 
-  // The numeric interval (in milliseconds) at which the resize event polling
-  // loop executes. Defaults to 250.
-  
-  jq_resize[ str_delay ] = 250;
-  
-  // Property: jQuery.resize.throttleWindow
-  // 
-  // Throttle the native window object resize event to fire no more than once
-  // every <jQuery.resize.delay> milliseconds. Defaults to true.
-  // 
-  // Because the window object has its own resize event, it doesn't need to be
-  // provided by this plugin, and its execution can be left entirely up to the
-  // browser. However, since certain browsers fire the resize event continuously
-  // while others do not, enabling this will throttle the window resize event,
-  // making event behavior consistent across all elements in all browsers.
-  // 
-  // While setting this property to false will disable window object resize
-  // event throttling, please note that this property must be changed before any
-  // window object resize event callbacks are bound.
-  
-  jq_resize[ str_throttle ] = true;
-  
-  // Event: resize event
-  // 
-  // Fired when an element's width or height changes. Because browsers only
-  // provide this event for the window element, for other elements a polling
-  // loop is initialized, running every <jQuery.resize.delay> milliseconds
-  // to see if elements' dimensions have changed. You may bind with either
-  // .resize( fn ) or .bind( "resize", fn ), and unbind with .unbind( "resize" ).
-  // 
-  // Usage:
-  // 
-  // > jQuery('selector').bind( 'resize', function(e) {
-  // >   // element's width or height has changed!
-  // >   ...
-  // > });
-  // 
-  // Additional Notes:
-  // 
-  // * The polling loop is not created until at least one callback is actually
-  //   bound to the 'resize' event, and this single polling loop is shared
-  //   across all elements.
-  // 
-  // Double firing issue in jQuery 1.3.2:
-  // 
-  // While this plugin works in jQuery 1.3.2, if an element's event callbacks
-  // are manually triggered via .trigger( 'resize' ) or .resize() those
-  // callbacks may double-fire, due to limitations in the jQuery 1.3.2 special
-  // events system. This is not an issue when using jQuery 1.4+.
-  // 
-  // > // While this works in jQuery 1.4+
-  // > $(elem).css({ width: new_w, height: new_h }).resize();
-  // > 
-  // > // In jQuery 1.3.2, you need to do this:
-  // > var elem = $(elem);
-  // > elem.css({ width: new_w, height: new_h });
-  // > elem.data( 'resize-special-event', { width: elem.width(), height: elem.height() } );
-  // > elem.resize();
-      
-  $.event.special[ str_resize ] = {
-    
-    // Called only when the first 'resize' event callback is bound per element.
-    setup: function() {
-      // Since window has its own native 'resize' event, return false so that
-      // jQuery will bind the event using DOM methods. Since only 'window'
-      // objects have a .setTimeout method, this should be a sufficient test.
-      // Unless, of course, we're throttling the 'resize' event for window.
-      if ( !jq_resize[ str_throttle ] && this[ str_setTimeout ] ) { return false; }
-      
-      var elem = $(this);
-      
-      // Add this element to the list of internal elements to monitor.
-      elems = elems.add( elem );
-      
-      // Initialize data store on the element.
-      $.data( this, str_data, { w: elem.width(), h: elem.height() } );
-      
-      // If this is the first element added, start the polling loop.
-      if ( elems.length === 1 ) {
-        loopy();
-      }
-    },
-    
-    // Called only when the last 'resize' event callback is unbound per element.
-    teardown: function() {
-      // Since window has its own native 'resize' event, return false so that
-      // jQuery will unbind the event using DOM methods. Since only 'window'
-      // objects have a .setTimeout method, this should be a sufficient test.
-      // Unless, of course, we're throttling the 'resize' event for window.
-      if ( !jq_resize[ str_throttle ] && this[ str_setTimeout ] ) { return false; }
-      
-      var elem = $(this);
-      
-      // Remove this element from the list of internal elements to monitor.
-      elems = elems.not( elem );
-      
-      // Remove any data stored on the element.
-      elem.removeData( str_data );
-      
-      // If this is the last element removed, stop the polling loop.
-      if ( !elems.length ) {
-        clearTimeout( timeout_id );
-      }
-    },
-    
-    // Called every time a 'resize' event callback is bound per element (new in
-    // jQuery 1.4).
-    add: function( handleObj ) {
-      // Since window has its own native 'resize' event, return false so that
-      // jQuery doesn't modify the event object. Unless, of course, we're
-      // throttling the 'resize' event for window.
-      if ( !jq_resize[ str_throttle ] && this[ str_setTimeout ] ) { return false; }
-      
-      var old_handler;
-      
-      // The new_handler function is executed every time the event is triggered.
-      // This is used to update the internal element data store with the width
-      // and height when the event is triggered manually, to avoid double-firing
-      // of the event callback. See the "Double firing issue in jQuery 1.3.2"
-      // comments above for more information.
-      
-      function new_handler( e, w, h ) {
-        var elem = $(this),
-          data = $.data( this, str_data );
-        
-        // If called from the polling loop, w and h will be passed in as
-        // arguments. If called manually, via .trigger( 'resize' ) or .resize(),
-        // those values will need to be computed.
-        data.w = w !== undefined ? w : elem.width();
-        data.h = h !== undefined ? h : elem.height();
-        
-        old_handler.apply( this, arguments );
-      };
-      
-      // This may seem a little complicated, but it normalizes the special event
-      // .add method between jQuery 1.4/1.4.1 and 1.4.2+
-      if ( $.isFunction( handleObj ) ) {
-        // 1.4, 1.4.1
-        old_handler = handleObj;
-        return new_handler;
-      } else {
-        // 1.4.2+
-        old_handler = handleObj.handler;
-        handleObj.handler = new_handler;
-      }
-    }
-    
-  };
-  
-  function loopy() {
-    
-    // Start the polling loop, asynchronously.
-      
-    
-    timeout_id = window[ str_setTimeout ](function(){
-      
-      // Iterate over all elements to which the 'resize' event is bound.
-      elems.each(function(){
-        var elem = $(this),
-          width = elem.width(),
-          height = elem.height(),
-          data = $.data( this, str_data );
-        
-        // If element size has changed since the last time, update the element
-        // data store and trigger the 'resize' event.
-        if ( width !== data.w || height !== data.h ) {
-          elem.trigger( str_resize, [ data.w = width, data.h = height ] );
-        }
-        
-      });
-      
-      // Loop.
-      loopy();
-      
-    }, jq_resize[ str_delay ] );
-    
-  };
-  
-})(jQuery,window); // Prelert edit - changed from (jQuery,this) to (jQuery,window) as window is global when used with Webpack module bundler in Kibana.
+(function($,e,t){"$:nomunge";var i=[],n=$.resize=$.extend($.resize,{}),a,r=false,s="setTimeout",u="resize",m=u+"-special-event",o="pendingDelay",l="activeDelay",f="throttleWindow";n[o]=200;n[l]=20;n[f]=true;$.event.special[u]={setup:function(){if(!n[f]&&this[s]){return false}var e=$(this);i.push(this);e.data(m,{w:e.width(),h:e.height()});if(i.length===1){a=t;h()}},teardown:function(){if(!n[f]&&this[s]){return false}var e=$(this);for(var t=i.length-1;t>=0;t--){if(i[t]==this){i.splice(t,1);break}}e.removeData(m);if(!i.length){if(r){cancelAnimationFrame(a)}else{clearTimeout(a)}a=null}},add:function(e){if(!n[f]&&this[s]){return false}var i;function a(e,n,a){var r=$(this),s=r.data(m)||{};s.w=n!==t?n:r.width();s.h=a!==t?a:r.height();i.apply(this,arguments)}if($.isFunction(e)){i=e;return a}else{i=e.handler;e.handler=a}}};function h(t){if(r===true){r=t||1}for(var s=i.length-1;s>=0;s--){var l=$(i[s]);if(l[0]==e||l.is(":visible")){var f=l.width(),c=l.height(),d=l.data(m);if(d&&(f!==d.w||c!==d.h)){l.trigger(u,[d.w=f,d.h=c]);r=t||true}}else{d=l.data(m);d.w=0;d.h=0}}if(a!==null){if(r&&(t==null||t-r<1e3)){a=e.requestAnimationFrame(h)}else{a=setTimeout(h,n[o]);r=false}}}if(!e.requestAnimationFrame){e.requestAnimationFrame=function(){return e.webkitRequestAnimationFrame||e.mozRequestAnimationFrame||e.oRequestAnimationFrame||e.msRequestAnimationFrame||function(t,i){return e.setTimeout(function(){t((new Date).getTime())},n[l])}}()}if(!e.cancelAnimationFrame){e.cancelAnimationFrame=function(){return e.webkitCancelRequestAnimationFrame||e.mozCancelRequestAnimationFrame||e.oCancelRequestAnimationFrame||e.msCancelRequestAnimationFrame||clearTimeout}()}})(jQuery,this);
 
-(function($) {
-    var options = {}; // no options
+(function ($) {
+    var options = { }; // no options
 
     function init(plot) {
         function onResize() {
@@ -238,7 +37,7 @@ can just fix the size of their placeholders.
             plot.setupGrid();
             plot.draw();
         }
-
+        
         function bindEvents(plot, eventHolder) {
             plot.getPlaceholder().resize(onResize);
         }
@@ -246,15 +45,15 @@ can just fix the size of their placeholders.
         function shutdown(plot, eventHolder) {
             plot.getPlaceholder().unbind("resize", onResize);
         }
-
+        
         plot.hooks.bindEvents.push(bindEvents);
         plot.hooks.shutdown.push(shutdown);
     }
-
+    
     $.plot.plugins.push({
-        init : init,
-        options : options,
-        name : 'resize',
-        version : '1.0'
+        init: init,
+        options: options,
+        name: 'resize',
+        version: '1.0'
     });
 })(jQuery);

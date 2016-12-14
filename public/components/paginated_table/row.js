@@ -1,30 +1,16 @@
 /*
- ************************************************************
- *                                                          *
- * Contents of file Copyright (c) Prelert Ltd 2006-2016     *
- *                                                          *
- *----------------------------------------------------------*
- *----------------------------------------------------------*
- * WARNING:                                                 *
- * THIS FILE CONTAINS UNPUBLISHED PROPRIETARY               *
- * SOURCE CODE WHICH IS THE PROPERTY OF PRELERT LTD AND     *
- * PARENT OR SUBSIDIARY COMPANIES.                          *
- * PLEASE READ THE FOLLOWING AND TAKE CAREFUL NOTE:         *
- *                                                          *
- * This source code is confidential and any person who      *
- * receives a copy of it, or believes that they are viewing *
- * it without permission is asked to notify Prelert Ltd     *
- * on +44 (0)20 3567 1249 or email to legal@prelert.com.    *
- * All intellectual property rights in this source code     *
- * are owned by Prelert Ltd.  No part of this source code   *
- * may be reproduced, adapted or transmitted in any form or *
- * by any means, electronic, mechanical, photocopying,      *
- * recording or otherwise.                                  *
- *                                                          *
- *----------------------------------------------------------*
- *                                                          *
- *                                                          *
- ************************************************************
+ * ELASTICSEARCH CONFIDENTIAL
+ *
+ * Copyright (c) 2016 Elasticsearch BV. All Rights Reserved.
+ *
+ * Notice: this software, and all information contained
+ * therein, is the exclusive property of Elasticsearch BV
+ * and its licensors, if any, and is protected under applicable
+ * domestic and foreign law, and international treaties.
+ *
+ * Reproduction, republication or distribution without the
+ * express written consent of Elasticsearch BV is
+ * strictly prohibited.
  */
 
  // copy of ui/public/directives/row.js
@@ -38,22 +24,24 @@ import uiModules from 'ui/modules';
 let module = uiModules.get('apps/prelert');
 
 module.directive('prlRows', function ($compile, $rootScope, getAppState, Private) {
-  var filterBarClickHandler = Private(require('ui/filter_bar/filter_bar_click_handler'));
+  const filterBarClickHandler = Private(require('ui/filter_bar/filter_bar_click_handler'));
   return {
     restrict: 'A',
 
     link: function ($scope, $el, attr) {
       function addCell($tr, contents) {
-        var $cell = $(document.createElement('td'));
+        let $cell = $(document.createElement('td'));
 
         // TODO: It would be better to actually check the type of the field, but we don't have
         // access to it here. This may become a problem with the switch to BigNumber
-        if (_.isNumeric(contents)) $cell.addClass('numeric-value');
+        if (_.isNumeric(contents)) {
+          $cell.addClass('numeric-value');
+        }
 
-        var createAggConfigResultCell = function (aggConfigResult) {
-          var $cell = $(document.createElement('td'));
-          var $state = getAppState();
-          var clickHandler = filterBarClickHandler($state);
+        const createAggConfigResultCell = function (aggConfigResult) {
+          const $cell = $(document.createElement('td'));
+          const $state = getAppState();
+          const clickHandler = filterBarClickHandler($state);
           $cell.scope = $scope.$new();
           $cell.addClass('cell-hover');
           $cell.attr('ng-click', 'clickHandler($event)');
@@ -104,67 +92,61 @@ module.directive('prlRows', function ($compile, $rootScope, getAppState, Private
         attr.prlRows,
         attr.prlRowsMin
       ], function (vals) {
-        var rows = vals[0];
-        var min = vals[1];
+        let rows = vals[0];
+        const min = vals[1];
 
         $el.empty();
 
         if (!_.isArray(rows)) rows = [];
-        var width = rows.reduce(maxRowSize, 0);
+        const width = rows.reduce(maxRowSize, 0);
 
         if (isFinite(min) && rows.length < min) {
           // clone the rows so that we can add elements to it without upsetting the original
           rows = _.clone(rows);
-          // crate the empty row which will be pushed into the row list over and over
-          // var emptyRow = new Array(width);
-          // fill the empty row with values
-          // _.times(width, function (i) { emptyRow[i] = ''; });
-          // push as many empty rows into the row array as needed
-          // _.times(min - rows.length, function () { rows.push(emptyRow); });
         }
 
         rows.forEach(function (row) {
-          if(row.length) {
-            var rowScope = row[0].scope;
-            var $tr = $(document.createElement('tr')).appendTo($el);
+          if (row.length) {
+            const rowScope = row[0].scope;
+            const $tr = $(document.createElement('tr')).appendTo($el);
             row.forEach(function (cell) {
               addCell($tr, cell);
             });
 
-            if( rowScope &&
+            if (rowScope &&
                 rowScope.expandable &&
                 rowScope.expandElement && // the tag name of the element which contains the expanded row's contents
-                row.join("") !== "") { // empty rows are passed in as an array of empty cols, ie ["","",""]
+                row.join('') !== '') {    // empty rows are passed in as an array of empty cols, ie ['','','']
 
-              if(rowScope.open === undefined) {
+              if (rowScope.open === undefined) {
                 rowScope.open = false;
               }
 
-              if(rowScope.rowInitialised === undefined) {
+              if (rowScope.rowInitialised === undefined) {
                 rowScope.rowInitialised = false;
               }
 
-              rowScope.toggleRow = function() {
+              rowScope.toggleRow = function () {
                 this.open = !this.open;
-                if(this.initRow && this.rowInitialised === false) {
+                if (this.initRow && this.rowInitialised === false) {
                   this.rowInitialised = true;
                   this.initRow();
                 }
               };
 
-              var $trExpand = $(document.createElement('tr')).appendTo($el);
-              $trExpand.attr("ng-show", "open");
-              $trExpand.addClass("row-expand");
+              const $trExpand = $(document.createElement('tr')).appendTo($el);
+              $trExpand.attr('ng-show', 'open');
+              $trExpand.addClass('row-expand');
 
-              var $td = $(document.createElement('td')).appendTo($trExpand);
-              $td.attr("colspan", row.length);
+              const $td = $(document.createElement('td')).appendTo($trExpand);
+              $td.attr('colspan', row.length);
 
-              var expEl = rowScope.expandElement;
-              var $exp = $(document.createElement(expEl)).appendTo($td);
+              const expEl = rowScope.expandElement;
+              const $exp = $(document.createElement(expEl)).appendTo($td);
 
               // if expand element already exits and has child elements,
               // copy them to the new expand element
-              if(rowScope.$expandElement && rowScope.$expandElement.children().length) {
+              if (rowScope.$expandElement && rowScope.$expandElement.children().length) {
                 $exp.append(rowScope.$expandElement.children()[0]);
               }
 

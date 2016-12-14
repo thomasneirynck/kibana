@@ -1,30 +1,16 @@
 /*
- ************************************************************
- *                                                          *
- * Contents of file Copyright (c) Prelert Ltd 2006-2016     *
- *                                                          *
- *----------------------------------------------------------*
- *----------------------------------------------------------*
- * WARNING:                                                 *
- * THIS FILE CONTAINS UNPUBLISHED PROPRIETARY               *
- * SOURCE CODE WHICH IS THE PROPERTY OF PRELERT LTD AND     *
- * PARENT OR SUBSIDIARY COMPANIES.                          *
- * PLEASE READ THE FOLLOWING AND TAKE CAREFUL NOTE:         *
- *                                                          *
- * This source code is confidential and any person who      *
- * receives a copy of it, or believes that they are viewing *
- * it without permission is asked to notify Prelert Ltd     *
- * on +44 (0)20 3567 1249 or email to legal@prelert.com.    *
- * All intellectual property rights in this source code     *
- * are owned by Prelert Ltd.  No part of this source code   *
- * may be reproduced, adapted or transmitted in any form or *
- * by any means, electronic, mechanical, photocopying,      *
- * recording or otherwise.                                  *
- *                                                          *
- *----------------------------------------------------------*
- *                                                          *
- *                                                          *
- ************************************************************
+ * ELASTICSEARCH CONFIDENTIAL
+ *
+ * Copyright (c) 2016 Elasticsearch BV. All Rights Reserved.
+ *
+ * Notice: this software, and all information contained
+ * therein, is the exclusive property of Elasticsearch BV
+ * and its licensors, if any, and is protected under applicable
+ * domestic and foreign law, and international treaties.
+ *
+ * Reproduction, republication or distribution without the
+ * express written consent of Elasticsearch BV is
+ * strictly prohibited.
  */
 
 /*
@@ -35,6 +21,7 @@
 
 import _ from 'lodash';
 import $ from 'jquery';
+import angular from 'angular';
 import chrome from 'ui/chrome';
 
 //include the bootstrap patch for better popovers
@@ -58,8 +45,6 @@ import 'plugins/kibana/dashboard/styles/main.less';
 import '../styles/main.less';
 
 import 'plugins/prelert/components/job_select_list';
-import 'plugins/prelert/components/log_usage';
-
 
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/prelert');
@@ -87,15 +72,15 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
         }
       }
 
-      prlDashboardService.listenJobSelectionChange($scope, function(event, selections){
-        var selectedJobIds = selections.length > 0 ? selections : ['*'];
-        $scope.selectedJobs = _.map(selectedJobIds, function(jobId){
-            return {id:jobId};
+      prlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
+        const selectedJobIds = selections.length > 0 ? selections : ['*'];
+        $scope.selectedJobs = _.map(selectedJobIds, function (jobId) {
+          return {id:jobId};
         });
         buildSelectedJobObjects(selectedJobIds);
 
         if (selections.length > 0) {
-            $location.search('jobId', selections);
+          $location.search('jobId', selections);
         }
 
         $scope.filterResults();
@@ -141,21 +126,21 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
 
       function init() {
         // Look to see if a jobId(s) has been passed in the URL.
-        var selectedJobIds = ['*'];
-        var urlSearch = $location.search();
+        let selectedJobIds = ['*'];
+        const urlSearch = $location.search();
         if (_.has(urlSearch, 'jobId')) {
-          var jobIdParam = urlSearch.jobId;
-          if (_.isArray(jobIdParam) == true) {
-              selectedJobIds = jobIdParam;
+          const jobIdParam = urlSearch.jobId;
+          if (_.isArray(jobIdParam) === true) {
+            selectedJobIds = jobIdParam;
           } else {
-              selectedJobIds = [jobIdParam];
+            selectedJobIds = [jobIdParam];
           }
         }
 
-        $scope.selectedJobs = _.map(selectedJobIds, function(jobId){
+        $scope.selectedJobs = _.map(selectedJobIds, function (jobId) {
           return {id:jobId};
         });
-        console.log("dashboard_app_directive, selectedJobIds:", $scope.selectedJobs);
+        console.log('dashboard_app_directive, selectedJobIds:', $scope.selectedJobs);
         buildSelectedJobObjects(selectedJobIds);
 
         updateQueryOnRootSource();
@@ -200,14 +185,14 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
       function updateQueryOnRootSource() {
         const filters = queryFilter.getFilters();
 
-        var jobIdFilters = [];
+        let jobIdFilters = [];
         if ($scope.selectedJobs) {
-          var jobIdFilterStr = "";
-          _.each($scope.selectedJobs, function(job, i){
+          let jobIdFilterStr = '';
+          _.each($scope.selectedJobs, function (job, i) {
             if (i > 0) {
-              jobIdFilterStr += " OR ";
+              jobIdFilterStr += ' OR ';
             }
-            jobIdFilterStr += "jobId:";
+            jobIdFilterStr += 'jobId:';
             jobIdFilterStr += job.id;
           });
           jobIdFilters = [{query: {query_string:{analyze_wildcard:true, query:jobIdFilterStr}}}];
@@ -229,9 +214,9 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
 
         // Crop long job IDs for display in the button text.
         // The first full job ID is displayed in the tooltip.
-        var firstJobId = selectedJobIds[0];
+        let firstJobId = selectedJobIds[0];
         if (selectedJobIds.length > 1 && firstJobId.length > 22) {
-          firstJobId = firstJobId.substring(0, 19) + "...";
+          firstJobId = firstJobId.substring(0, 19) + '...';
         }
         $scope.selectJobBtnJobIdLabel = firstJobId;
       }

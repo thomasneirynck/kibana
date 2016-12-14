@@ -1,30 +1,16 @@
 /*
- ************************************************************
- *                                                          *
- * Contents of file Copyright (c) Prelert Ltd 2006-2016     *
- *                                                          *
- *----------------------------------------------------------*
- *----------------------------------------------------------*
- * WARNING:                                                 *
- * THIS FILE CONTAINS UNPUBLISHED PROPRIETARY               *
- * SOURCE CODE WHICH IS THE PROPERTY OF PRELERT LTD AND     *
- * PARENT OR SUBSIDIARY COMPANIES.                          *
- * PLEASE READ THE FOLLOWING AND TAKE CAREFUL NOTE:         *
- *                                                          *
- * This source code is confidential and any person who      *
- * receives a copy of it, or believes that they are viewing *
- * it without permission is asked to notify Prelert Ltd     *
- * on +44 (0)20 3567 1249 or email to legal@prelert.com.    *
- * All intellectual property rights in this source code     *
- * are owned by Prelert Ltd.  No part of this source code   *
- * may be reproduced, adapted or transmitted in any form or *
- * by any means, electronic, mechanical, photocopying,      *
- * recording or otherwise.                                  *
- *                                                          *
- *----------------------------------------------------------*
- *                                                          *
- *                                                          *
- ************************************************************
+ * ELASTICSEARCH CONFIDENTIAL
+ *
+ * Copyright (c) 2016 Elasticsearch BV. All Rights Reserved.
+ *
+ * Notice: this software, and all information contained
+ * therein, is the exclusive property of Elasticsearch BV
+ * and its licensors, if any, and is protected under applicable
+ * domestic and foreign law, and international treaties.
+ *
+ * Reproduction, republication or distribution without the
+ * express written consent of Elasticsearch BV is
+ * strictly prohibited.
  */
 
 /*
@@ -32,16 +18,14 @@
  * different values of fields in Prelert results.
  */
 
-
 import 'plugins/prelert/swimlane/swimlane_controller.js';
 import 'plugins/prelert/swimlane/swimlane.less';
 
 import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
 
-var module = require('ui/modules').get('prelert/swimlane');
-
-module.run(function($templateCache) {
+const module = require('ui/modules').get('prelert/swimlane');
+module.run(function ($templateCache) {
   // Load the templates into the cache for quick retrieval.
   $templateCache.put('plugins/prelert/swimlane/swimlane.html', require('plugins/prelert/swimlane/swimlane.html'));
   $templateCache.put('plugins/prelert/swimlane/swimlane_editor.html', require('plugins/prelert/swimlane/swimlane_editor.html'));
@@ -54,13 +38,13 @@ export default function SwimlaneVisType(Private, $templateCache) {
   return new TemplateVisType({
     name: 'prlSwimlane',
     title: 'Prelert Swimlane',
-    icon: 'fa-bars', 
-    description: 'Prelert visualization displaying the behavior of a metric '+
+    icon: 'fa-bars',
+    description: 'Prelert visualization displaying the behavior of a metric ' +
       'over time across Prelert jobs, or fields from influencer or record type results, in a swimlane chart.',
-    template: $templateCache.get('plugins/prelert/swimlane/swimlane.html'), 
+    template: $templateCache.get('plugins/prelert/swimlane/swimlane.html'),
     params: {
-      editor: $templateCache.get('plugins/prelert/swimlane/swimlane_editor.html'), 
-      defaults: { 
+      editor: $templateCache.get('plugins/prelert/swimlane/swimlane_editor.html'),
+      defaults: {
         interval: {display:'Auto', val:'auto'},
         mode: 'jobs',   // jobs, influencers or records
         viewBy: {field:'jobId', label:'Job ID'},
@@ -119,6 +103,3 @@ export default function SwimlaneVisType(Private, $templateCache) {
     ])
   });
 };
-
-
-

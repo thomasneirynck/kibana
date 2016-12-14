@@ -1,34 +1,21 @@
 /*
- ************************************************************
- *                                                          *
- * Contents of file Copyright (c) Prelert Ltd 2006-2016     *
- *                                                          *
- *----------------------------------------------------------*
- *----------------------------------------------------------*
- * WARNING:                                                 *
- * THIS FILE CONTAINS UNPUBLISHED PROPRIETARY               *
- * SOURCE CODE WHICH IS THE PROPERTY OF PRELERT LTD AND     *
- * PARENT OR SUBSIDIARY COMPANIES.                          *
- * PLEASE READ THE FOLLOWING AND TAKE CAREFUL NOTE:         *
- *                                                          *
- * This source code is confidential and any person who      *
- * receives a copy of it, or believes that they are viewing *
- * it without permission is asked to notify Prelert Ltd     *
- * on +44 (0)20 3567 1249 or email to legal@prelert.com.    *
- * All intellectual property rights in this source code     *
- * are owned by Prelert Ltd.  No part of this source code   *
- * may be reproduced, adapted or transmitted in any form or *
- * by any means, electronic, mechanical, photocopying,      *
- * recording or otherwise.                                  *
- *                                                          *
- *----------------------------------------------------------*
- *                                                          *
- *                                                          *
- ************************************************************
+ * ELASTICSEARCH CONFIDENTIAL
+ *
+ * Copyright (c) 2016 Elasticsearch BV. All Rights Reserved.
+ *
+ * Notice: this software, and all information contained
+ * therein, is the exclusive property of Elasticsearch BV
+ * and its licensors, if any, and is protected under applicable
+ * domestic and foreign law, and international treaties.
+ *
+ * Reproduction, republication or distribution without the
+ * express written consent of Elasticsearch BV is
+ * strictly prohibited.
  */
 
 import moment from 'moment';
 import _ from 'lodash';
+import $ from 'jquery';
 import d3 from 'd3';
 import stringUtils from 'plugins/prelert/util/string_utils';
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
@@ -37,45 +24,45 @@ import 'plugins/prelert/filters/abbreviate_whole_number';
 let module = uiModules.get('apps/prelert');
 import uiModules from 'ui/modules';
 
-module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlAnomalyRecordDetailsService', 'prlSwimlaneService', function($location, prlJobService, prlAnomalyRecordDetailsService, prlSwimlaneService) {
+module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, prlAnomalyRecordDetailsService, prlSwimlaneService) {
   return {
     restrict: 'AE',
     replace: false,
     // scope: {},
     template: require('plugins/prelert/summaryview/anomaly_details_bubble/anomaly_details_bubble.html'),
-    link: function($scope, $element, $attrs) {
-      $scope.title = "Highest anomaly per detector";
+    link: function ($scope, $element, $attrs) {
+      $scope.title = 'Highest anomaly per detector';
       $scope.service = prlAnomalyRecordDetailsService;
 
-      $scope.openExplorer = function() {
+      $scope.openExplorer = function () {
         prlSwimlaneService.openExplorer();
       };
 
-      $scope.openConnections = function() {
+      $scope.openConnections = function () {
         prlSwimlaneService.openConnections();
       };
 
-      $scope.expandInfluencers = function() {
+      $scope.expandInfluencers = function () {
         $scope.service.expandInfluencers();
-      }
+      };
     }
   };
-}])
-.service("prlAnomalyRecordDetailsService", function($q, $timeout, es, timefilter, prlJobService, prlSwimlaneSearchService) {
-  var TimeBuckets = require('ui/time_buckets');
+})
+.service('prlAnomalyRecordDetailsService', function ($q, $timeout, es, timefilter, prlJobService, prlSwimlaneSearchService) {
+  const TimeBuckets = require('ui/time_buckets');
 
-  var PRELERT_RESULTS_INDEX_ID = 'prelertresults-*';
+  const PRELERT_RESULTS_INDEX_ID = 'prelertresults-*';
   // number of records loaded once when the page opens
-  var RECORD_COUNT = 1000;
+  const RECORD_COUNT = 1000;
 
-  var selectedJobIds = {};
-  var bucketInterval = null;
-  var bounds = timefilter.getActiveBounds();
-  var times = [];
-  var timesFormated = {};
-  var allRecordResults;
+  let selectedJobIds = {};
+  let bucketInterval = null;
+  let bounds = timefilter.getActiveBounds();
+  let times = [];
+  let timesFormated = {};
+  let allRecordResults;
 
-  var highestRecords = {
+  const highestRecords = {
     JOB:        {},
     MONITOR:    {},
     DETECTOR:   {},
@@ -83,7 +70,7 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
     INSPECTOR:  {}
   };
 
-  var that = this;
+  const that = this;
   this.type = {
     MONITOR:   0,
     JOB:       1,
@@ -102,22 +89,22 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
   this.bubbleHeight = 0;
   this.recordListHeight = 0;
   this.bubbleTop = 0;
-  this.laneLabel = "";
+  this.laneLabel = '';
   this.$bubble;
   this.$bubbleHeading;
   this.$arrow;
-  this.cardColor = "#FFFFFF";
+  this.cardColor = '#FFFFFF';
   this.bucketTime = 0;
-  this.bucketTimeFormated = "";
+  this.bucketTimeFormated = '';
   this.showTopInfluencers = true;
   this.influencersExpanded = true;
   this.$lockedCell = null;
   this.topInfluencerTab = 0;
   this.recordLimit = 3;
   this.initialised = false;
-  this.changeTab = function(i) {
+  this.changeTab = function (i) {
     this.topInfluencerTab = i;
-    if(i===1) {
+    if (i === 1) {
       drawBubbleChart();
     }
   };
@@ -140,40 +127,40 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
     INF_VALUE: {}
   };
 
-  this.setSelectedJobIds = function(jobs) {
+  this.setSelectedJobIds = function (jobs) {
     selectedJobIds = jobs;
   };
-  this.setBucketInterval = function(b) {
+  this.setBucketInterval = function (b) {
     bucketInterval = b;
   };
-  this.getBucketInterval = function() {
+  this.getBucketInterval = function () {
     return bucketInterval;
   };
-  this.setTimes = function(timesIn) {
-    _.each(timesIn, function(t){
-      var time = +t;
-      if(times[time] === undefined) {
+  this.setTimes = function (timesIn) {
+    _.each(timesIn, (t) => {
+      const time = +t;
+      if (times[time] === undefined) {
         times.push(+t);
-        timesFormated[time] = moment((time)*1000).format('MMMM Do YYYY, HH:mm:ss');
+        timesFormated[time] = moment((time) * 1000).format('MMMM Do YYYY, HH:mm:ss');
       }
     });
   };
 
-  this.clearTimes = function() {
+  this.clearTimes = function () {
     times = [];
   };
-  this.getTimes = function() {
+  this.getTimes = function () {
     return times;
   };
-  this.setBounds = function(b) {
+  this.setBounds = function (b) {
     bounds = b;
   };
 
-  this.load = function (){
+  this.load = function () {
     refresh();
   };
 
-  this.hide = function() {
+  this.hide = function () {
     this.visible = false;
   };
 
@@ -201,21 +188,21 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
     this.inspectorTopInfluencers.INF_VALUE = {};
   };
 
-  this.toggleLock = function($target) {
-    if(this.$lockedCell === null && $target !== undefined) {
-      $target.html($("<i>", {
-        "class": "fa fa-thumb-tack pin",
+  this.toggleLock = function ($target) {
+    if (this.$lockedCell === null && $target !== undefined) {
+      $target.html($('<i>', {
+        'class': 'fa fa-thumb-tack pin',
       }));
       this.$lockedCell = $target;
     } else {
-      if(this.$lockedCell) {
+      if (this.$lockedCell) {
         this.$lockedCell.empty();
       }
 
       this.$lockedCell = null;
     }
   };
-  this.isLocked = function() {
+  this.isLocked = function () {
     return this.$lockedCell !== null;
   };
 
@@ -226,71 +213,71 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
     // load records for the page
     prlSwimlaneSearchService.getRecords(PRELERT_RESULTS_INDEX_ID, selectedJobIds,
         bounds.min.valueOf(), bounds.max.valueOf(), RECORD_COUNT)
-    .then(function(resp){
-      console.log("anomaly bubble refresh data:", resp);
+    .then((resp) => {
+      console.log('anomaly bubble refresh data:', resp);
 
       allRecordResults = resp.records;
-      var bucketedResults = bucketResults(allRecordResults, times);
+      const bucketedResults = bucketResults(allRecordResults, times);
       processRecordResults(bucketedResults, highestRecords);
 
       // init position
       that.visible = true;
 
-      if(that.$bubble === undefined) {
-        that.$bubble = $(".anomaly-details-bubble");
-        that.$bubbleHeading = that.$bubble.find(".heading");
-        that.$arrow = that.$bubble.find(".arrow");
-        that.$recordList = that.$bubble.find(".record-list");
+      if (that.$bubble === undefined) {
+        that.$bubble = $('.anomaly-details-bubble');
+        that.$bubbleHeading = that.$bubble.find('.heading');
+        that.$arrow = that.$bubble.find('.arrow');
+        that.$recordList = that.$bubble.find('.record-list');
       }
       that.position(true);
 
-    }).catch(function(resp) {
-      console.log("SummaryView visualization - error getting scores by influencer data from elasticsearch:", resp);
+    }).catch((resp) => {
+      console.log('SummaryView visualization - error getting scores by influencer data from elasticsearch:', resp);
     });
   }
 
   // load top influencers for the page
-  this.loadTopInfluencersForPage = function() {
-    loadTopInfluencersForPage(selectedJobIds, (bounds.min.valueOf()/1000), (bounds.max.valueOf()/1000) );
+  this.loadTopInfluencersForPage = function () {
+    loadTopInfluencersForPage(selectedJobIds, (bounds.min.valueOf() / 1000), (bounds.max.valueOf() / 1000));
   };
 
   function bucketResults(data, times) {
-    var recordsPerTimeInterval = {};
+    const recordsPerTimeInterval = {};
 
-    for(var r in data) {
-      var record = data[r];
-      if(record.time === undefined) {
-        record.time = moment(record["@timestamp"]).unix();
+    for (let r in data) {
+      const record = data[r];
+      if (record.time === undefined) {
+        record.time = moment(record['@timestamp']).unix();
       }
     }
 
-    data = _.sortBy(data, "time");
+    data = _.sortBy(data, 'time');
 
-    var counter = 0;
-    for(var r in data) {
-      var record = data[r];
-      if(record.detectorText === undefined) {
+    let counter = 0;
+    for (let r in data) {
+      const record = data[r];
+      if (record.detectorText === undefined) {
         record.detector = prlJobService.detectorsByJob[record.jobId][record.detectorIndex];
         record.detectorText = record.detector.detectorDescription;
         // console.log(record.detector)
       }
 
-      var lastT = null;
-      for(var i=0;i<times.length;i++) {
-        var t = +times[i];
-        var found = false;
+      let lastT = null;
+      for (let i = 0; i < times.length; i++) {
+        const t = +times[i];
+        let found = false;
 
-        if(lastT === null) {
+        if (lastT === null) {
           lastT = t;
         }
-        if(recordsPerTimeInterval[t] === undefined) {
+        if (recordsPerTimeInterval[t] === undefined) {
           recordsPerTimeInterval[t] = [];
         }
 
-        if(record.time < t) {
+        if (record.time < t) {
           recordsPerTimeInterval[lastT].push(record);
           found = true;
-        } else if(counter === data.length-1 && record.time === t) {
+        } else if (counter === data.length - 1 && record.time === t) {
           // the last result will be missed, so check for that.
           recordsPerTimeInterval[t].push(record);
           found = true;
@@ -298,7 +285,7 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
 
         lastT = t;
 
-        if(found) {
+        if (found) {
           break;
         }
       }
@@ -309,39 +296,39 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
 
   function processRecordResults(recordsPerTimeInterval, highestRecordsIn) {
 
-    // console.log("all the records!!!!", recordsPerTimeInterval)
-    var tempHighestRecordPerBucket = {};
-    var tempHighestRecordPerInfluencer = {};
-    var tempHighestRecordPerInfluencerType = {};
-    var tempMonitorHighestRecordPerBucket = {};
-    var tempDetectorHighestRecordPerBucket = {};
+    // console.log('all the records!!!!', recordsPerTimeInterval)
+    const tempHighestRecordPerBucket = {};
+    const tempHighestRecordPerInfluencer = {};
+    const tempHighestRecordPerInfluencerType = {};
+    const tempMonitorHighestRecordPerBucket = {};
+    const tempDetectorHighestRecordPerBucket = {};
 
-    _.each(recordsPerTimeInterval, function(bucket, t) {
-      bucket = _.sortBy(bucket, "normalizedProbability").reverse();
+    _.each(recordsPerTimeInterval, (bucket, t) => {
+      bucket = _.sortBy(bucket, 'normalizedProbability').reverse();
 
       tempHighestRecordPerBucket[t] = {};
-      tempMonitorHighestRecordPerBucket[t] = {"All jobs": []};
+      tempMonitorHighestRecordPerBucket[t] = {'All jobs': []};
 
-      var highestJobCounts = {};
-      var highestMonitorCounts = {};
-      var highestDetectorCounts = {};
-      var highestInfluencerCounts = {};
-      var highestInfluencerTypeCounts = {};
+      const highestJobCounts = {};
+      const highestMonitorCounts = {};
+      const highestDetectorCounts = {};
+      const highestInfluencerCounts = {};
+      const highestInfluencerTypeCounts = {};
 
-      _.each(bucket, function(record){
+      _.each(bucket, (record) => {
         buildDescription(record);
-        var jobId = record.jobId;
-        if(highestJobCounts[jobId] === undefined) {
+        const jobId = record.jobId;
+        if (highestJobCounts[jobId] === undefined) {
           highestJobCounts[jobId] = {};
         }
 
-        if(highestJobCounts[jobId][record.detectorText] === undefined ) {
+        if (highestJobCounts[jobId][record.detectorText] === undefined) {
           highestJobCounts[jobId][record.detectorText] = [];
         }
-        if(highestMonitorCounts[record.detectorText] === undefined ) {
+        if (highestMonitorCounts[record.detectorText] === undefined) {
           highestMonitorCounts[record.detectorText] = [];
         }
-        if(highestDetectorCounts[record.detectorText] === undefined ) {
+        if (highestDetectorCounts[record.detectorText] === undefined) {
           highestDetectorCounts[record.detectorText] = {};
           highestDetectorCounts[record.detectorText][record.detectorText] = [];
         }
@@ -352,23 +339,23 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
 
         tempHighestRecordPerBucket[t][jobId] = highestJobCounts[jobId];
 
-        _.each(record.influencers, function(inf) {
-          if(highestInfluencerTypeCounts[inf.influencerFieldName] === undefined ) {
+        _.each(record.influencers, (inf) => {
+          if (highestInfluencerTypeCounts[inf.influencerFieldName] === undefined) {
             highestInfluencerTypeCounts[inf.influencerFieldName] = {};
           }
-          if(highestInfluencerTypeCounts[inf.influencerFieldName][record.detectorText] === undefined ) {
+          if (highestInfluencerTypeCounts[inf.influencerFieldName][record.detectorText] === undefined) {
             highestInfluencerTypeCounts[inf.influencerFieldName][record.detectorText] = [];
           }
           highestInfluencerTypeCounts[inf.influencerFieldName][record.detectorText].push(record);
 
-          _.each(inf.influencerFieldValues, function(infVal) {
-            if(highestInfluencerCounts[infVal] === undefined ) {
+          _.each(inf.influencerFieldValues, (infVal) => {
+            if (highestInfluencerCounts[infVal] === undefined) {
               highestInfluencerCounts[infVal] = {};
             }
-            if(highestInfluencerCounts[infVal][record.detectorText] === undefined ) {
+            if (highestInfluencerCounts[infVal][record.detectorText] === undefined) {
               highestInfluencerCounts[infVal][record.detectorText] = [];
             }
-            if(_.indexOf(highestInfluencerCounts[infVal][record.detectorText], record) === -1) {
+            if (_.indexOf(highestInfluencerCounts[infVal][record.detectorText], record) === -1) {
               highestInfluencerCounts[infVal][record.detectorText].push(record);
             }
           });
@@ -377,7 +364,7 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
 
       tempHighestRecordPerInfluencer[t] = highestInfluencerCounts;
       tempHighestRecordPerInfluencerType[t] = highestInfluencerTypeCounts;
-      tempMonitorHighestRecordPerBucket[t]["All jobs"] = highestMonitorCounts;
+      tempMonitorHighestRecordPerBucket[t]['All jobs'] = highestMonitorCounts;
       tempDetectorHighestRecordPerBucket[t] = highestDetectorCounts;
     });
 
@@ -391,54 +378,55 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
     // console.log(highestRecordsIn);
   }
 
-  this.createInspectorRecords = function(swimlaneSubType, recordJobIds, swimlaneTimeRange, times) {
-    var newResults = [];
-    _.each(allRecordResults, function(res) {
-      if(res.time >= swimlaneTimeRange.start && res.time < (swimlaneTimeRange.end+swimlaneTimeRange.interval)) {
+  this.createInspectorRecords = function (swimlaneSubType, recordJobIds, swimlaneTimeRange, times) {
+    const newResults = [];
+    _.each(allRecordResults, (res) => {
+      if (res.time >= swimlaneTimeRange.start && res.time < (swimlaneTimeRange.end + swimlaneTimeRange.interval)) {
         // if JOB type, only use the one supplied job id. otherwise, search through all job ids
-        if(that.type[swimlaneSubType] !== that.type.JOB || (that.type[swimlaneSubType] === that.type.JOB && res.jobId === recordJobIds[0])) {
+        if (that.type[swimlaneSubType] !== that.type.JOB ||
+          (that.type[swimlaneSubType] === that.type.JOB && res.jobId === recordJobIds[0])) {
           newResults.push(res);
         }
       }
     });
 
-    var bucketedResults = bucketResults(newResults, times);
-    var tempHighestRecords = {};
+    const bucketedResults = bucketResults(newResults, times);
+    const tempHighestRecords = {};
     processRecordResults(bucketedResults, tempHighestRecords);
     // the INSPECTOR type can contain data for any other type
     highestRecords.INSPECTOR = tempHighestRecords[swimlaneSubType];
   };
 
   function buildDescription(record) {
-    var description = anomalyUtils.getSeverity(record.normalizedProbability) + " anomaly in " ;//+ record.detectorText;
-    var descriptionExtra = "";
+    const description = anomalyUtils.getSeverity(record.normalizedProbability) + ' anomaly in ';//+ record.detectorText;
+    let descriptionExtra = '';
 
-    if (_.has(record, 'partitionFieldName') && (record.partitionFieldName != record.entityName) ) {
-        descriptionExtra += " detected in " + record.partitionFieldName;
-        descriptionExtra += " ";
-        descriptionExtra += record.partitionFieldValue;
+    if (_.has(record, 'partitionFieldName') && (record.partitionFieldName !== record.entityName)) {
+      descriptionExtra += ' detected in ' + record.partitionFieldName;
+      descriptionExtra += ' ';
+      descriptionExtra += record.partitionFieldValue;
     }
     if (_.has(record, 'byFieldValue')) {
-        descriptionExtra += " for " + record.byFieldName;
-        descriptionExtra += " ";
-        descriptionExtra += record.byFieldValue;
+      descriptionExtra += ' for ' + record.byFieldName;
+      descriptionExtra += ' ';
+      descriptionExtra += record.byFieldValue;
     } else if (_.has(record, 'overFieldValue')) {
-        descriptionExtra += " for " + record.overFieldName;
-        descriptionExtra += " ";
-        descriptionExtra += record.overFieldValue;
+      descriptionExtra += ' for ' + record.overFieldName;
+      descriptionExtra += ' ';
+      descriptionExtra += record.overFieldValue;
     }
 
     if (_.has(record, 'entityName')) {
-        descriptionExtra += " found for " + record.entityName;
-        descriptionExtra += " ";
-        descriptionExtra += record.entityValue;
+      descriptionExtra += ' found for ' + record.entityName;
+      descriptionExtra += ' ';
+      descriptionExtra += record.entityValue;
     }
 
 
 
     record.description = description;
     record.descriptionExtra = descriptionExtra;
-    record.score = (record.normalizedProbability < 1)?"<1":Math.floor(record.normalizedProbability);
+    record.score = (record.normalizedProbability < 1) ? '<1' : Math.floor(record.normalizedProbability);
     // record.severityLabel = anomalyUtils.getSeverity(record.normalizedProbability);
     record.cardColor = anomalyUtils.getSeverityColor(record.normalizedProbability);
     // $scope.description = description;
@@ -446,37 +434,37 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
     // Check for a correlatedByFieldValue in the source which will be present for multivariate analyses
     // where the record is anomalous due to relationship with another 'by' field value.
     if (_.has(record, 'correlatedByFieldValue')) {
-        var mvDescription = "multivariate correlations found in ";
-        mvDescription += record.byFieldName;
-        mvDescription += "; ";
-        mvDescription += record.byFieldValue;
-        mvDescription += " is considered anomalous given ";
-        mvDescription += record.correlatedByFieldValue;
-        record.multiVariateDescription = mvDescription;
+      let mvDescription = 'multivariate correlations found in ';
+      mvDescription += record.byFieldName;
+      mvDescription += '; ';
+      mvDescription += record.byFieldValue;
+      mvDescription += ' is considered anomalous given ';
+      mvDescription += record.correlatedByFieldValue;
+      record.multiVariateDescription = mvDescription;
     }
 
   }
 
-  this.position = function(scrolling) {
-    var doc = document.documentElement;
-    var scrollTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
+  this.position = function (scrolling) {
+    const doc = document.documentElement;
+    const scrollTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
     this.arrowTop = this.targetTop + 43 - scrollTop;
 
 
-    if(this.$target !== undefined) {
-      if(this.$target.parent().hasClass("cells-container-inspector")) {
-        this.arrowTop += $("#swimlane-inspector").position().top;
+    if (this.$target !== undefined) {
+      if (this.$target.parent().hasClass('cells-container-inspector')) {
+        this.arrowTop += $('#swimlane-inspector').position().top;
       }
     } else {
       // nothing has been hovered over, default to the monitor swimlane
       this.arrowTop = 259;
     }
 
-    if(this.arrowTop < 5) {
+    if (this.arrowTop < 5) {
       this.arrowTop = -10000;
     }
 
-    if(scrollTop > 73) {
+    if (scrollTop > 73) {
       this.bubbleTop = scrollTop - 73;
       this.bubbleHeight = doc.offsetHeight - 10;
 
@@ -485,56 +473,56 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
       this.bubbleHeight = doc.offsetHeight - 83  + scrollTop;
     }
 
-    if(scrolling && this.$bubble !== undefined) {
+    if (scrolling && this.$bubble !== undefined) {
       this.$bubble.css({
-        "top": this.bubbleTop,
-        "height": this.bubbleHeight
+        'top': this.bubbleTop,
+        'height': this.bubbleHeight
       });
       this.$arrow.css({
-        "top": this.arrowTop,
+        'top': this.arrowTop,
       });
-      var height = 473;
-      if(!this.influencersExpanded) {
+      let height = 473;
+      if (!this.influencersExpanded) {
         height = 73;
       }
-      if(!this.showTopInfluencers) {
+      if (!this.showTopInfluencers) {
         height = 45;
       }
       this.$recordList.css({
-        "height": this.bubbleHeight - this.$bubbleHeading.height() - height,
+        'height': this.bubbleHeight - this.$bubbleHeading.height() - height,
       });
     }
   };
 
-  window.onscroll = function() {
+  window.onscroll = function () {
     that.position(true);
   };
   // window.onscroll = _.debounce(function() {
   //   that.position(true);
   // }, 100);
 
-  this.hover = function(time, laneLabel, bucketScore, top, target, swimlaneType, inspector) {
+  this.hover = function (time, laneLabel, bucketScore, top, target, swimlaneType, inspector) {
     this.initialised = true;
 
-    if(this.$lockedCell === null) {
-      var type = this.type[swimlaneType];
+    if (this.$lockedCell === null) {
+      const type = this.type[swimlaneType];
       this.recordLimit = 3;
 
       this.$target = $(target);
 
-      if(bucketScore !== undefined) {
+      if (bucketScore !== undefined) {
         this.targetTop = top;
-        if(type === this.type.JOB) {
+        if (type === this.type.JOB) {
           this.laneLabel = prlJobService.jobDescriptions[laneLabel];
         } else {
           this.laneLabel = laneLabel;
         }
-        this.bucketScore = (+bucketScore < 1)?"<1":Math.floor(bucketScore);
-        this.cardColor = (target && target.lastChild) ? target.lastChild.style.backgroundColor: "#FFFFFF";
+        this.bucketScore = (+bucketScore < 1) ? '<1' : Math.floor(bucketScore);
+        this.cardColor = (target && target.lastChild) ? target.lastChild.style.backgroundColor : '#FFFFFF';
         this.bucketTime = time;
         this.bucketTimeFormated = timesFormated[time];
 
-        if(highestRecords[swimlaneType] && highestRecords[swimlaneType][time]) {
+        if (highestRecords[swimlaneType] && highestRecords[swimlaneType][time]) {
           this.recordsPerDetector = highestRecords[swimlaneType][time][laneLabel];
           this.visible = true;
         } else {
@@ -545,48 +533,57 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
       }
 
       // display top influencers
-      if(type === this.type.MONITOR || type === this.type.INF_TYPE) {
+      if (type === this.type.MONITOR || type === this.type.INF_TYPE) {
 
-        loadTopInfluencers(that.topInfluencers, laneLabel, selectedJobIds, swimlaneType, time, (time+bucketInterval.asSeconds()) );
+        loadTopInfluencers(that.topInfluencers, laneLabel, selectedJobIds, swimlaneType, time, (time + bucketInterval.asSeconds()));
         this.showTopInfluencers = true;
         this.visible = true;
 
-      } else if(type === this.type.JOB) {
+      } else if (type === this.type.JOB) {
 
-        loadTopInfluencers(that.topInfluencers, laneLabel, [laneLabel], swimlaneType, time, (time+bucketInterval.asSeconds()) );
+        loadTopInfluencers(that.topInfluencers, laneLabel, [laneLabel], swimlaneType, time, (time + bucketInterval.asSeconds()));
         this.showTopInfluencers = true;
         this.visible = true;
 
-      } else if(type === this.type.INSPECTOR) {
+      } else if (type === this.type.INSPECTOR) {
         // inspector
         // console.log(laneLabel, [laneLabel], swimlaneType, time, (time+bucketInterval.asSeconds()) , inspector);
 
-        var parentType = this.type[inspector.swimlaneType];
+        const parentType = this.type[inspector.swimlaneType];
 
-        if(parentType === this.type.MONITOR || parentType === this.type.INF_TYPE) {
-          loadTopInfluencers(that.inspectorTopInfluencers, laneLabel, inspector.selectedJobIds, inspector.swimlaneType, time, time + inspector.timeRange.interval );
+        if (parentType === this.type.MONITOR || parentType === this.type.INF_TYPE) {
+          loadTopInfluencers(that.inspectorTopInfluencers,
+            laneLabel,
+            inspector.selectedJobIds,
+            inspector.swimlaneType,
+            time, time + inspector.timeRange.interval);
           this.showTopInfluencers = true;
           this.visible = true;
 
-        } else if(parentType === this.type.JOB) {
-          loadTopInfluencers(that.inspectorTopInfluencers, laneLabel, [laneLabel], inspector.swimlaneType, time, time + inspector.timeRange.interval );
+        } else if (parentType === this.type.JOB) {
+          loadTopInfluencers(that.inspectorTopInfluencers,
+            laneLabel,
+            [laneLabel],
+            inspector.swimlaneType,
+            time,
+            time + inspector.timeRange.interval);
           this.showTopInfluencers = true;
           this.visible = true;
-        } else if(parentType === this.type.INF_VALUE || parentType === this.type.DETECTOR){
+        } else if (parentType === this.type.INF_VALUE || parentType === this.type.DETECTOR) {
           this.showTopInfluencers = false;
           this.recordLimit = 50;
         } else {
           this.showTopInfluencers = false;
         }
 
-      } else if(type === this.type.INF_VALUE || type === this.type.DETECTOR){
+      } else if (type === this.type.INF_VALUE || type === this.type.DETECTOR) {
         this.showTopInfluencers = false;
         this.recordLimit = 50;
       } else {
         this.showTopInfluencers = false;
       }
 
-      if(this.$recordList) {
+      if (this.$recordList) {
         this.$recordList.scrollTop(0);
       }
       this.position(true);
@@ -594,29 +591,29 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
   };
 
   function loadTopInfluencers(topInfluencers, laneLabel, jobIds, swimlaneType, earliestMs, latestMs) {
-    if(topInfluencers[swimlaneType][laneLabel] === undefined || topInfluencers[swimlaneType][laneLabel][earliestMs] === undefined) {
+    if (topInfluencers[swimlaneType][laneLabel] === undefined || topInfluencers[swimlaneType][laneLabel][earliestMs] === undefined) {
 
       // placeholder to stop loading if the previous results aren't back yet
-      if(topInfluencers[swimlaneType][laneLabel] === undefined ) {
+      if (topInfluencers[swimlaneType][laneLabel] === undefined) {
         topInfluencers[swimlaneType][laneLabel] = {};
       }
       topInfluencers[swimlaneType][laneLabel][earliestMs] = null;
 
       prlSwimlaneSearchService.getTopInfluencers(PRELERT_RESULTS_INDEX_ID, laneLabel, jobIds, swimlaneType,
           earliestMs, latestMs, 0, that.type)
-      .then(function(resp){
-        // console.log("top influencer data:", resp);
+      .then((resp) => {
+        // console.log('top influencer data:', resp);
 
         processTopInfluencersResults(topInfluencers, resp.results, earliestMs, laneLabel, swimlaneType);
 
         // console.log(topInfluencers);
         drawTopInfluencers(topInfluencers[swimlaneType][laneLabel][earliestMs]);
 
-      }).catch(function(resp) {
-        console.log("SummaryView visualization - error getting scores by influencer data from elasticsearch:", resp);
+      }).catch((resp)  => {
+        console.log('SummaryView visualization - error getting scores by influencer data from elasticsearch:', resp);
       });
-    } else if(topInfluencers[swimlaneType][laneLabel][earliestMs] === null) {
-      // console.log("loadTopInfluencers(): still loading top influencers")
+    } else if (topInfluencers[swimlaneType][laneLabel][earliestMs] === null) {
+      // console.log('loadTopInfluencers(): still loading top influencers')
     } else {
       drawTopInfluencers(topInfluencers[swimlaneType][laneLabel][earliestMs]);
 
@@ -626,14 +623,14 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
 
 
   function processTopInfluencersResults(topInfluencers, results, time, laneLabel, swimlaneType) {
-    // console.log("processTopInfluencersResults():", results);
-    var list = _.uniq(_.union(results.topMax, results.topSum), false, function(item, key, id){ return item.id; });
+    // console.log('processTopInfluencersResults():', results);
+    const list = _.uniq(_.union(results.topMax, results.topSum), false, (item, key, id) => { return item.id; });
     topInfluencers[swimlaneType][laneLabel][time] = list;
   }
 
   function drawTopInfluencers(inf) {
     that.topInfluencerList = inf;
-    if(that.topInfluencerTab === 0) {
+    if (that.topInfluencerTab === 0) {
       // drawList();
     } else {
       drawBubbleChart();
@@ -647,107 +644,107 @@ module.directive('prlAnomalyDetailsBubble', ['$location', 'prlJobService', 'prlA
 
   function loadTopInfluencersForPage(jobIds, earliestMs, latestMs) {
 
-    var swimlaneType = that.type.JOB;
-    prlSwimlaneSearchService.getTopInfluencers(PRELERT_RESULTS_INDEX_ID, "", jobIds, swimlaneType,
+    const swimlaneType = that.type.JOB;
+    prlSwimlaneSearchService.getTopInfluencers(PRELERT_RESULTS_INDEX_ID, '', jobIds, swimlaneType,
         earliestMs, latestMs, 0, that.type)
-    .then(function(resp){
+    .then((resp) => {
 
-      var list = _.uniq(_.union(resp.results.topMax, resp.results.topSum), false, function(item, key, id){ return item.id; });
+      const list = _.uniq(_.union(resp.results.topMax, resp.results.topSum), false, (item, key, id) => { return item.id; });
       that.topInfluencerForPage = list;
 
-    }).catch(function(resp) {
-      console.log("loadTopInfluencersForPage - error getting scores by influencer data from elasticsearch:", resp);
+    }).catch((resp) => {
+      console.log('loadTopInfluencersForPage - error getting scores by influencer data from elasticsearch:', resp);
     });
   }
 
-  this.expandInfluencers = function() {
+  this.expandInfluencers = function () {
     this.influencersExpanded = !this.influencersExpanded;
     this.position(true);
   };
 
   function drawBubbleChart() {
-    var influencers = {"children":[]};
+    const influencers = {'children':[]};
 
-    _.each(that.topInfluencerList, function(point) {
-      influencers.children.push({"label":point.id, "value": point.sum, "color": point.max});
+    _.each(that.topInfluencerList, (point) => {
+      influencers.children.push({'label':point.id, 'value': point.sum, 'color': point.max});
     });
 
-    var width = $(".prl-anomaly-details-margin").width() - 20;
-    var height = width - 25;
-    var radius = Math.min(width, height) / 2;
-    var diameter = (radius * 2) ;
-    var margin = {
-        top:    0,
-        right:  0,
-        bottom: 0,
-        left:   0
-      };
+    const width = $('.prl-anomaly-details-margin').width() - 20;
+    const height = width - 25;
+    const radius = Math.min(width, height) / 2;
+    const diameter = (radius * 2);
+    const margin = {
+      top:    0,
+      right:  0,
+      bottom: 0,
+      left:   0
+    };
 
-    var format = d3.format(",d");
+    const format = d3.format(',d');
 
-    var $topInfluencersContainer = $("#top-influencers-bubble-chart");
+    const $topInfluencersContainer = $('#top-influencers-bubble-chart');
     $topInfluencersContainer.empty();
 
-    if(influencers.children.length) {
-      var chartContainerElement = d3.select($topInfluencersContainer.get(0));
-      var svg = chartContainerElement.append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g");
+    if (influencers.children.length) {
+      const chartContainerElement = d3.select($topInfluencersContainer.get(0));
+      const svg = chartContainerElement.append('svg')
+        .attr('width', width + margin.left + margin.right)
+        .attr('height', height + margin.top + margin.bottom)
+        .append('g');
 
-      var circleG = svg
-        .append("g")
-        .attr("class", "circles")
-        .attr("transform", function(d) {
-          return "translate(" + (margin.left ) + "," + (margin.top ) + ")";
+      const circleG = svg
+        .append('g')
+        .attr('class', 'circles')
+        .attr('transform', (d) => {
+          return 'translate(' + (margin.left) + ',' + (margin.top) + ')';
         });
 
-      var bubble = d3.layout.pack()
+      const bubble = d3.layout.pack()
         .sort(null)
         .size([diameter, diameter])
-        .padding(radius*0.1);
+        .padding(radius * 0.1);
 
-      var circles = circleG.selectAll(".circle")
+      const circles = circleG.selectAll('.circle')
         .data(bubble.nodes(influencers)
-          .filter(function(d) {
+          .filter((d) => {
             return !d.children;
           }))
-        .enter().append("g")
-        .attr("class", "fadable circle")
-        .attr("transform", function(d) {
-          if(isNaN(d.x)) {
-            return "translate(0, 0)";
+        .enter().append('g')
+        .attr('class', 'fadable circle')
+        .attr('transform', (d) => {
+          if (isNaN(d.x)) {
+            return 'translate(0, 0)';
           } else {
-            return "translate(" + d.x + "," + d.y + ")";
+            return 'translate(' + d.x + ',' + d.y + ')';
           }
         });
 
-      circles.append("circle")
-        .attr("r", function(d) {
-          return (isNaN(d.r)? 0:d.r);
+      circles.append('circle')
+        .attr('r', (d) => {
+          return (isNaN(d.r) ? 0 : d.r);
         })
-        .style("fill", colorScore);
+        .style('fill', colorScore);
 
-      circles.append("text")
-        .attr("dy", "0em")
-        .style("text-anchor", "middle")
-        .text(function(d) {
+      circles.append('text')
+        .attr('dy', '0em')
+        .style('text-anchor', 'middle')
+        .text((d) => {
           return d.label;
         });
 
-      circles.append("text")
-        .attr("dy", "1em")
-        .style("text-anchor", "middle")
-        .text(function(d) {
+      circles.append('text')
+        .attr('dy', '1em')
+        .style('text-anchor', 'middle')
+        .text((d) => {
           return Math.floor(d.color);
         });
     }
   }
 
-  var colors = ['#FFFFFF', '#d2e9f7', '#8bc8fb', '#ffdd00', '#ff7e00', '#ff5300', '#fe1d1d'];
-  var colorScale = d3.scale.linear()
-        .domain([0, 1, 3, 25, 50, 75, 100])
-        .range(colors);
+  const colors = ['#FFFFFF', '#d2e9f7', '#8bc8fb', '#ffdd00', '#ff7e00', '#ff5300', '#fe1d1d'];
+  const colorScale = d3.scale.linear()
+    .domain([0, 1, 3, 25, 50, 75, 100])
+    .range(colors);
 
 
   function colorScore(d) {

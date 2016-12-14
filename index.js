@@ -1,30 +1,16 @@
 /*
- ************************************************************
- *                                                          *
- * Contents of file Copyright (c) Prelert Ltd 2006-2016     *
- *                                                          *
- *----------------------------------------------------------*
- *----------------------------------------------------------*
- * WARNING:                                                 *
- * THIS FILE CONTAINS UNPUBLISHED PROPRIETARY               *
- * SOURCE CODE WHICH IS THE PROPERTY OF PRELERT LTD AND     *
- * PARENT OR SUBSIDIARY COMPANIES.                          *
- * PLEASE READ THE FOLLOWING AND TAKE CAREFUL NOTE:         *
- *                                                          *
- * This source code is confidential and any person who      *
- * receives a copy of it, or believes that they are viewing *
- * it without permission is asked to notify Prelert Ltd     *
- * on +44 (0)20 3567 1249 or email to legal@prelert.com.    *
- * All intellectual property rights in this source code     *
- * are owned by Prelert Ltd.  No part of this source code   *
- * may be reproduced, adapted or transmitted in any form or *
- * by any means, electronic, mechanical, photocopying,      *
- * recording or otherwise.                                  *
- *                                                          *
- *----------------------------------------------------------*
- *                                                          *
- *                                                          *
- ************************************************************
+ * ELASTICSEARCH CONFIDENTIAL
+ *
+ * Copyright (c) 2016 Elasticsearch BV. All Rights Reserved.
+ *
+ * Notice: this software, and all information contained
+ * therein, is the exclusive property of Elasticsearch BV
+ * and its licensors, if any, and is protected under applicable
+ * domestic and foreign law, and international treaties.
+ *
+ * Reproduction, republication or distribution without the
+ * express written consent of Elasticsearch BV is
+ * strictly prohibited.
  */
 
 import path from 'path';
@@ -45,20 +31,21 @@ module.exports = function (kibana) {
         icon: 'plugins/prelert/prelert-white.png',
         main: 'plugins/prelert/app',
         uses: [
-               'visTypes',
-               'spyModes'
-             ],
+          'visTypes',
+          'spyModes'
+        ],
         injectVars: function (server, options) {
-          var config = server.config();
+          const config = server.config();
           return {
             kbnIndex: config.get('kibana.index'),
-            tilemap: config.get('tilemap')
+            tilemap: config.get('tilemap'),
+            esServerUrl: config.get('elasticsearch.url'),
           };
         }
       },
       visTypes: [
-                 'plugins/prelert/prelert_vis_types'
-             ],
+        'plugins/prelert/prelert_vis_types'
+      ],
       modules: {
         pako$: {
           path: path.resolve(__dirname, 'bower_components/pako/index.js'),
@@ -80,10 +67,10 @@ module.exports = function (kibana) {
       createProxy(server, 'POST', 'prelert_ext/{paths*}');
       createProxy(server, 'GET', 'prelert_support/{paths*}');
 
-      var prelertConfig = readPrelertConfig();
+      const prelertConfig = readPrelertConfig();
       // Configure a configuration route that supplies the value of the
       // reporting.enabled property from the prelert.yml config file.
-      var reportingEnabled = _.get(prelertConfig, 'reporting.enabled', true);
+      const reportingEnabled = _.get(prelertConfig, 'reporting.enabled', true);
       server.route({
         method: 'GET',
         path: '/prelert_config/reporting_enabled',

@@ -42,10 +42,12 @@ var buildIncludes = [
   // 'NOTICE.txt',
   'package.json',
   'index.js',
+  'prelert.yml',
   'node_modules',
+  'bower_components',
+  'lib',
   '.node-version',
   'public',
-  // 'server'
 ];
 
 var excludedDeps = Object.keys(pkg.devDependencies).map(function (name) {

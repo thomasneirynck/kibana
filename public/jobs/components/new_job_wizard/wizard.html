@@ -1,0 +1,41 @@
+<kbn-top-nav name="dashboard" config="topNavMenu">
+  <div class="kibana-nav-info">
+    <span class="kibana-nav-info-title">
+      <span >Create a new job</span>
+    </span>
+  </div>
+</kbn-top-nav>
+<prl-new-job>
+  <prl-message-bar></prl-message-bar>
+  <div ng-controller="PrlNewJobWizard" class="container">
+    <!-- first view of wizard -->
+    <div ng-show="ui.wizard.step === 0" class="wizard-step-0">
+      <div>
+
+        <div ng-mouseenter="ui.wizard.stepHovering=1" ng-mouseleave="ui.wizard.stepHovering=0" ng-click="ui.wizard.setJobMode('jobs/new_job_simple')" >
+          <label class="data-location">
+            <div class="prl-round-number" ng-class="{'prl-round-number-pop':ui.wizard.stepHovering===1}">
+              <i aria-hidden="true" class="fa fa-area-chart"></i>
+            </div>
+            <div>
+              <div>Create a simple job</div>
+              <div>Based on a kibana index pattern or saved search</div>
+            </div>
+          </label>
+        </div>
+        <div ng-mouseenter="ui.wizard.stepHovering=2" ng-mouseleave="ui.wizard.stepHovering=0" ng-click="ui.wizard.setJobMode('jobs/new_job_advanced')" >
+          <label class="data-location">
+            <div class="prl-round-number" ng-class="{'prl-round-number-pop':ui.wizard.stepHovering===2}">
+              <i aria-hidden="true" class="fa fa-cog"></i>
+            </div>
+            <div>
+              <div>Create an advanced job</div>
+              <div>Advanced configuration options for creating a job</div>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</prl-new-job>

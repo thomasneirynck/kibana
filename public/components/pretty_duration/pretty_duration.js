@@ -1,30 +1,16 @@
 /*
- ************************************************************
- *                                                          *
- * Contents of file Copyright (c) Prelert Ltd 2006-2016     *
- *                                                          *
- *----------------------------------------------------------*
- *----------------------------------------------------------*
- * WARNING:                                                 *
- * THIS FILE CONTAINS UNPUBLISHED PROPRIETARY               *
- * SOURCE CODE WHICH IS THE PROPERTY OF PRELERT LTD AND     *
- * PARENT OR SUBSIDIARY COMPANIES.                          *
- * PLEASE READ THE FOLLOWING AND TAKE CAREFUL NOTE:         *
- *                                                          *
- * This source code is confidential and any person who      *
- * receives a copy of it, or believes that they are viewing *
- * it without permission is asked to notify Prelert Ltd     *
- * on +44 (0)20 3567 1249 or email to legal@prelert.com.    *
- * All intellectual property rights in this source code     *
- * are owned by Prelert Ltd.  No part of this source code   *
- * may be reproduced, adapted or transmitted in any form or *
- * by any means, electronic, mechanical, photocopying,      *
- * recording or otherwise.                                  *
- *                                                          *
- *----------------------------------------------------------*
- *                                                          *
- *                                                          *
- ************************************************************
+ * ELASTICSEARCH CONFIDENTIAL
+ *
+ * Copyright (c) 2016 Elasticsearch BV. All Rights Reserved.
+ *
+ * Notice: this software, and all information contained
+ * therein, is the exclusive property of Elasticsearch BV
+ * and its licensors, if any, and is protected under applicable
+ * domestic and foreign law, and international treaties.
+ *
+ * Reproduction, republication or distribution without the
+ * express written consent of Elasticsearch BV is
+ * strictly prohibited.
  */
 
  // a copy of kibanan's pretty duration directive
@@ -34,6 +20,7 @@
 import _ from 'lodash';
 import dateMath from '@elastic/datemath';
 import moment from 'moment';
+import angular from 'angular';
 
 import 'ui/timepicker/quick_ranges';
 import 'ui/timepicker/time_units';
@@ -52,24 +39,24 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
       to: '='
     },
     link: function ($scope, $elem) {
-      var dateFormat = config.get('dateFormat');
+      const dateFormat = config.get('dateFormat');
 
-      var lookupByRange = {};
+      const lookupByRange = {};
       _.each(quickRanges, function (frame) {
         lookupByRange[frame.from + ' to ' + frame.to] = frame;
       });
 
       function stringify() {
-        var text;
+        let text;
         // If both parts are date math, try to look up a reasonable string
         if ($scope.from && $scope.to && !moment.isMoment($scope.from) && !moment.isMoment($scope.to)) {
-          var tryLookup = lookupByRange[$scope.from.toString() + ' to ' + $scope.to.toString()];
+          const tryLookup = lookupByRange[$scope.from.toString() + ' to ' + $scope.to.toString()];
           if (tryLookup) {
             $elem.text(tryLookup.display);
           } else {
-            var fromParts = $scope.from.toString().split('-');
+            const fromParts = $scope.from.toString().split('-');
             if ($scope.to.toString() === 'now' && fromParts[0] === 'now' && fromParts[1]) {
-              var rounded = fromParts[1].split('/');
+              const rounded = fromParts[1].split('/');
               text = 'Last ' + rounded[0];
               if (rounded[1]) {
                 text = text + ' rounded to the ' + timeUnits[rounded[1]];
@@ -86,7 +73,7 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
       };
 
       function cantLookup() {
-        var display = {};
+        const display = {};
         _.each(['from', 'to'], function (time) {
           if (moment.isMoment($scope[time])) {
             display[time] = $scope[time].format(dateFormat);
@@ -94,7 +81,7 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
             if ($scope[time] === 'now') {
               display[time] = 'now';
             } else {
-              var tryParse = dateMath.parse($scope[time], time === 'to' ? true : false);
+              const tryParse = dateMath.parse($scope[time], time === 'to' ? true : false);
               display[time] = moment.isMoment(tryParse) ? '~ ' + tryParse.fromNow() : $scope[time];
             }
           }
@@ -105,12 +92,12 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
       // add the arrow elements to the page outside the <pretty_duration>'s parent anchor element
       // however, they are given <pretty_duration>'s scope to allow access to the back and forward functions
       function addArrows() {
-        $elem.parent().css("display", "inline-block");
-        var fwdButton = angular.element("<i ng-click='foward()' class='prl-time-button fa fa-arrow-right' ></i>");
-        var backButton = angular.element("<i ng-click='back()' class='prl-time-button fa fa-arrow-left' ></i>");
-        var zoomOutButton = angular.element("<i ng-click='zoomOut()' class='prl-time-button fa fa-search-minus' ></i>");
-        var zoomInButton = angular.element("<i ng-click='zoomIn()' class='prl-time-button fa fa-search-plus' ></i>");
-        var separator = angular.element("<div class='prl-time-button-separator' ></div>");
+        $elem.parent().css('display', 'inline-block');
+        const fwdButton = angular.element('<i ng-click="forward()"" class="prl-time-button fa fa-arrow-right" ></i>');
+        const backButton = angular.element('<i ng-click="back()"" class="prl-time-button fa fa-arrow-left" ></i>');
+        const zoomOutButton = angular.element('<i ng-click="zoomOut()" class="prl-time-button fa fa-search-minus" ></i>');
+        const zoomInButton = angular.element('<i ng-click="zoomIn()" class="prl-time-button fa fa-search-plus" ></i>');
+        const separator = angular.element('<div class="prl-time-button-separator" ></div>');
 
         $elem.parent().before(zoomInButton);
         $elem.parent().before(zoomOutButton);
@@ -128,61 +115,61 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
       // if a quick or relative mode has been selected, work out the
       // absolute times and then change the mode to absolute
       function getFromTo() {
-        if(timefilter.time.mode === "absolute") {
+        if (timefilter.time.mode === 'absolute') {
           return {
             to:   moment(timefilter.time.to),
             from: moment(timefilter.time.from)
-          }
+          };
         } else {
-          timefilter.time.mode = "absolute";
+          timefilter.time.mode = 'absolute';
           return {
             to:   dateMath.parse(timefilter.time.to, true),
             from: dateMath.parse(timefilter.time.from)
-          }
+          };
         }
       }
 
       // travel forward in time based on the interval between from and to
-      $scope.foward = function() {
-        var time = getFromTo();
-        var diff = time.to.diff(time.from);
-        var origTo = time.to.toISOString();
+      $scope.forward = function () {
+        const time = getFromTo();
+        const diff = time.to.diff(time.from);
+        const origTo = time.to.toISOString();
 
-        time.to.add(diff, "milliseconds");
+        time.to.add(diff, 'milliseconds');
         timefilter.time.from = origTo;
         timefilter.time.to = time.to.toISOString();
       };
 
       // travel backwards in time based on the interval between from and to
-      $scope.back = function() {
-        var time = getFromTo();
-        var diff = time.to.diff(time.from);
-        var origFrom = time.from.toISOString();
+      $scope.back = function () {
+        const time = getFromTo();
+        const diff = time.to.diff(time.from);
+        const origFrom = time.from.toISOString();
 
-        time.from.subtract(diff, "milliseconds");
+        time.from.subtract(diff, 'milliseconds');
         timefilter.time.to = origFrom;
         timefilter.time.from = time.from.toISOString();
       };
 
       // zoom out, doubling the difference between start and end, keeping the same time range center
-      $scope.zoomOut = function() {
-        var time = getFromTo();
-        var from = time.from.unix() * 1000;
-        var to = time.to.unix() * 1000;
+      $scope.zoomOut = function () {
+        const time = getFromTo();
+        const from = time.from.unix() * 1000;
+        const to = time.to.unix() * 1000;
 
-        var diff = Math.floor((to - from) / 2);
+        const diff = Math.floor((to - from) / 2);
 
         timefilter.time.from = moment(from - diff).toISOString();
         timefilter.time.to = moment(to + diff).toISOString();
       };
 
       // zoom in, halving the difference between start and end, keeping the same time range center
-      $scope.zoomIn = function() {
-        var time = getFromTo();
-        var from = time.from.unix() * 1000;
-        var to = time.to.unix() * 1000;
+      $scope.zoomIn = function () {
+        const time = getFromTo();
+        const from = time.from.unix() * 1000;
+        const to = time.to.unix() * 1000;
 
-        var diff = Math.floor((to - from) / 4);
+        const diff = Math.floor((to - from) / 4);
 
         timefilter.time.from = moment(from + diff).toISOString();
         timefilter.time.to = moment(to - diff).toISOString();

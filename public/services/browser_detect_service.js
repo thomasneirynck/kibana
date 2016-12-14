@@ -1,30 +1,16 @@
 /*
- ************************************************************
- *                                                          *
- * Contents of file Copyright (c) Prelert Ltd 2006-2016     *
- *                                                          *
- *----------------------------------------------------------*
- *----------------------------------------------------------*
- * WARNING:                                                 *
- * THIS FILE CONTAINS UNPUBLISHED PROPRIETARY               *
- * SOURCE CODE WHICH IS THE PROPERTY OF PRELERT LTD AND     *
- * PARENT OR SUBSIDIARY COMPANIES.                          *
- * PLEASE READ THE FOLLOWING AND TAKE CAREFUL NOTE:         *
- *                                                          *
- * This source code is confidential and any person who      *
- * receives a copy of it, or believes that they are viewing *
- * it without permission is asked to notify Prelert Ltd     *
- * on +44 (0)20 3567 1249 or email to legal@prelert.com.    *
- * All intellectual property rights in this source code     *
- * are owned by Prelert Ltd.  No part of this source code   *
- * may be reproduced, adapted or transmitted in any form or *
- * by any means, electronic, mechanical, photocopying,      *
- * recording or otherwise.                                  *
- *                                                          *
- *----------------------------------------------------------*
- *                                                          *
- *                                                          *
- ************************************************************
+ * ELASTICSEARCH CONFIDENTIAL
+ *
+ * Copyright (c) 2016 Elasticsearch BV. All Rights Reserved.
+ *
+ * Notice: this software, and all information contained
+ * therein, is the exclusive property of Elasticsearch BV
+ * and its licensors, if any, and is protected under applicable
+ * domestic and foreign law, and international treaties.
+ *
+ * Reproduction, republication or distribution without the
+ * express written consent of Elasticsearch BV is
+ * strictly prohibited.
  */
 
 // simple check for browser name
@@ -32,20 +18,20 @@
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/prelert');
 
-module.service('prlBrowserDetectService', ['$window', function ($window) {
+module.service('prlBrowserDetectService', function ($window) {
 
-  return function() {
+  return function () {
 
-    var userAgent = $window.navigator.userAgent;
+    const userAgent = $window.navigator.userAgent;
 
-    var browsers = {
+    const browsers = {
       chrome: /chrome/i,
       safari: /safari/i,
       firefox: /firefox/i,
       ie: /internet explorer/i
     };
 
-    for (var key in browsers) {
+    for (let key in browsers) {
       if (browsers[key].test(userAgent)) {
         return key;
       }
@@ -53,4 +39,4 @@ module.service('prlBrowserDetectService', ['$window', function ($window) {
 
     return 'unknown';
   };
-}]);
+});
