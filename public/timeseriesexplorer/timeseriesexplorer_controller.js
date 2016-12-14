@@ -291,6 +291,9 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
     globalState.zoom = zoomState;
     globalState.save();
 
+    $scope.zoomFrom = selection.from;
+    $scope.zoomTo = selection.to;
+
     $scope.refreshFocusData(selection.from, selection.to);
   });
 
@@ -298,6 +301,12 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
     // Get the time span of data in the context chart.
     const earliestDataDate = _.first($scope.contextChartData).date;
     const latestDataDate = _.last($scope.contextChartData).date;
+
+    // Calculate the 'auto' zoom duration which shows data at bucket span granularity.
+    // Get the minimum bucket span of selected jobs.
+    // TODO - only look at jobs for which data has been returned?
+    const minBucketSpan = _.reduce($scope.selectedJobs, (memo, job) => Math.min(memo, job.bucketSpan) , 86400);
+    $scope.autoZoomDuration = (minBucketSpan * 1000) * (CHARTS_POINT_TARGET - 1);
 
     // Check for a zoom parameter in the globalState (URL).
     if (globalState.zoom !== undefined) {
@@ -310,12 +319,8 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
     }
 
     // Set the range of the focus chart to show the most recent data at bucket span granularity.
-    // Get the minimum bucket span of selected jobs.
-    // TODO - only look at jobs for which data has been returned?
-    const minBucketSpan = _.reduce($scope.selectedJobs, (memo, job) => Math.min(memo, job.bucketSpan) , 86400);
     const latestMsToLoad = latestDataDate.getTime() + $scope.contextAggregationInterval.asMilliseconds();
-    const earliestMsToLoad = Math.max(earliestDataDate.getTime(), latestMsToLoad - ((minBucketSpan * 1000) * (CHARTS_POINT_TARGET - 1)));
-
+    const earliestMsToLoad = Math.max(earliestDataDate.getTime(), latestMsToLoad - $scope.autoZoomDuration);
     return [new Date(earliestMsToLoad), new Date(latestMsToLoad)];
 
   }

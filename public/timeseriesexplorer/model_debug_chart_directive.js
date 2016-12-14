@@ -49,6 +49,14 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
     const svgHeight = focusHeight + contextChartHeight + swimlaneHeight + margin.top + margin.bottom;
     let vizWidth  = svgWidth  - margin.left - margin.right;
 
+    const ZOOM_INTERVAL_OPTIONS = [
+      { duration: moment.duration(1, 'h'), label: '1h'},
+      { duration: moment.duration(12, 'h'), label: '12h'},
+      { duration: moment.duration(1, 'd'), label: '1d'},
+      { duration: moment.duration(1, 'w'), label: '1w'},
+      { duration: moment.duration(2, 'w'), label: '2w'},
+      { duration: moment.duration(1, 'M'), label: '1M'}];
+
     // Set up the color scale to use for indicating score.
     const anomalyColorScale = d3.scale.threshold()
       .domain([3, 25, 50, 75, 100])
@@ -162,28 +170,28 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
       drawContextElements(context, vizWidth, contextChartHeight, swimlaneHeight);
 
       // Make appropriate selection in the context chart to trigger loading of the focus chart.
-      let contextLoadFrom;
-      let contextLoadTo;
+      let focusLoadFrom;
+      let focusLoadTo;
       const contextXMin = contextXScale.domain()[0].getTime();
       const contextXMax = contextXScale.domain()[1].getTime();
 
       if (scope.zoomFrom) {
-        contextLoadFrom = scope.zoomFrom.getTime();
+        focusLoadFrom = scope.zoomFrom.getTime();
       } else {
-        contextLoadFrom = _.reduce(scope.contextChartData, (memo, point) =>
+        focusLoadFrom = _.reduce(scope.contextChartData, (memo, point) =>
           Math.min(memo, point.date.getTime()) , new Date(2099, 12, 31).getTime());
       }
-      contextLoadFrom = Math.max(contextLoadFrom, contextXMin);
+      focusLoadFrom = Math.max(focusLoadFrom, contextXMin);
 
       if (scope.zoomTo) {
-        contextLoadTo = scope.zoomTo.getTime();
+        focusLoadTo = scope.zoomTo.getTime();
       } else {
-        contextLoadTo = _.reduce(scope.contextChartData, (memo, point) => Math.max(memo, point.date.getTime()) , 0);
+        focusLoadTo = _.reduce(scope.contextChartData, (memo, point) => Math.max(memo, point.date.getTime()) , 0);
       }
-      contextLoadTo = Math.min(contextLoadTo, contextXMax);
+      focusLoadTo = Math.min(focusLoadTo, contextXMax);
 
-      if ((contextLoadFrom !== contextXMin) || (contextLoadTo !== contextXMax)) {
-        setContextBrushExtent(new Date(contextLoadFrom), new Date(contextLoadTo), true);
+      if ((focusLoadFrom !== contextXMin) || (focusLoadTo !== contextXMax)) {
+        setContextBrushExtent(new Date(focusLoadFrom), new Date(focusLoadTo), true);
       } else {
         // Don't set the brush if the selection is the full context chart domain.
         const selectedBounds = contextXScale.domain();
@@ -196,10 +204,8 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
       // Split out creation of the focus chart from the rendering,
       // as we want to re-render the paths and points when the zoom area changes.
 
-      scope.selectedBounds = timefilter.getActiveBounds();
-
-      // Add a group at the top to display info on the zoom aggregation interval.
-      // TODO - add links to set the brush span to e.g. 1h, 1d, 1w.
+      // Add a group at the top to display info on the chart aggregation interval
+      // and links to set the brush span to 1h, 1d, 1w etc.
       const zoomGroup = focusGroup.append('g')
         .attr('class', 'focus-zoom');
       zoomGroup.append('rect')
@@ -208,18 +214,7 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
         .attr('width', focusWidth)
         .attr('height', focusZoomPanelHeight)
         .attr('class', 'chart-border');
-      const zoomText = zoomGroup.append('text')
-        .attr('class', 'zoom-info')
-        .attr('x', focusWidth - 15)
-        .attr('y', focusZoomPanelHeight * 0.6)
-        .attr('text-anchor', 'end');
-      zoomText.append('tspan')
-        .attr('alignment-baseline', 'middle')
-        .text('Zoom interval: ');
-      zoomText.append('tspan')
-        .attr('class', 'zoom-interval')
-        .attr('alignment-baseline', 'middle')
-        .text('');
+      updateZoomInfoElements(zoomGroup, focusWidth);
 
       // Add border round plot area.
       const chartBorder = focusGroup.append('rect')
@@ -299,6 +294,8 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
       focusChart.select('.zoom-interval')
         .text(scope.focusAggregationInterval.expression);
 
+      angular.element('.zoom-aggregation-interval').text(scope.focusAggregationInterval.expression);
+
       // Render the axes.
 
       // Calculate the x axis domain.
@@ -357,6 +354,39 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
           return markerClass;
         });
 
+    }
+
+
+
+    function updateZoomInfoElements() {
+      // Update the zoom duration links to those applicable for the current time span.
+      // Don't add links for any durations which would give a brush extent less than 10px.
+      const bounds = timefilter.getActiveBounds();
+      const boundsSecs = bounds.max.unix() - bounds.min.unix();
+      const minSecs = (10 / vizWidth) * boundsSecs;
+
+      let zoomLinks = '<a data-ms="' + scope.autoZoomDuration + '">auto</a> ';
+      for (let i = 0; i < ZOOM_INTERVAL_OPTIONS.length; i++) {
+        if (ZOOM_INTERVAL_OPTIONS[i].duration.asSeconds() > minSecs &&
+            ZOOM_INTERVAL_OPTIONS[i].duration.asSeconds() < boundsSecs) {
+          zoomLinks += '<a data-ms="' + ZOOM_INTERVAL_OPTIONS[i].duration.asMilliseconds() + '">';
+          zoomLinks += ZOOM_INTERVAL_OPTIONS[i].label;
+          zoomLinks += '</a> ';
+        }
+      }
+
+      const zoomInfoGroup = d3.select('.focus-zoom');
+      const links = zoomInfoGroup.append('foreignObject')
+        .attr('width', 400)
+        .html('<div class="zoom-links">Zoom: ' + zoomLinks +
+          '<span class="zoom-aggregation-interval-label">(aggregation interval: ' +
+          '<span class="zoom-aggregation-interval"></span>' +
+          ')</span></div>');
+
+      $('.focus-zoom a').click(function (e) {
+        e.preventDefault();
+        setZoomInterval($(this).attr('data-ms'));
+      });
     }
 
     function drawContextElements(contextGroup, contextWidth, contextChartHeight, swimlaneHeight) {
@@ -602,84 +632,6 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
 
     }
 
-    function drawLowGranularitySwimlane(swimlaneGroup, swimlaneWidth, swimlaneHeight) {
-      // TODO - the original low granularity, Summary View like swimlane.
-      // This can be removed assuming it doesn't make a comeback.
-      const data = scope.swimlaneData;
-
-      // Calculate the x axis domain.
-      // Elasticsearch aggregation returns points at start of bucket,
-      // so set the x-axis min to the start of the aggregation interval.
-      // Need to use the min(earliest) and max(earliest) of the swimlane and
-      // context chart aggregations to align the axes of the two context elements.
-      const bounds = timefilter.getActiveBounds();
-      const aggMs = scope.swimlaneAggregationInterval.asMilliseconds();
-      const xAxisDomain = calculateContextXAxisDomain();
-      const x = d3.time.scale().range([0, swimlaneWidth])
-        .domain(xAxisDomain);
-
-      const y = d3.scale.linear().range([swimlaneHeight, 0])
-        .domain([0, swimlaneHeight]);
-
-      // Set the x axis tick values to exact bucket spacings.
-      // Ticks should be positioned so that they surround the buckets of data.
-      const xAxisTickValues = [];
-      const firstDataTime = _.first(data).date.getTime();
-      let tickMs = firstDataTime;
-      while ((tickMs - aggMs) > xAxisDomain[0].getTime()) {
-        tickMs -= aggMs;
-      }
-      while (tickMs < xAxisDomain[1].getTime()) {
-        xAxisTickValues.push(new Date(tickMs));
-        tickMs += aggMs;
-      }
-
-      const xAxis = d3.svg.axis()
-        .scale(x)
-        .orient('bottom')
-        .tickValues(xAxisTickValues)
-        .innerTickSize(-swimlaneHeight)
-        .outerTickSize(0);
-
-      const yAxis = d3.svg.axis()
-        .scale(y)
-        .orient('left')
-        .tickValues(y.domain())
-        .innerTickSize(-swimlaneWidth)
-        .outerTickSize(0);
-
-      const axes = swimlaneGroup.append('g');
-
-      axes.append('g')
-        .attr('class', 'x axis')
-        .attr('transform', 'translate(0,' + (swimlaneHeight) + ')')
-        .call(xAxis);
-
-      axes.append('g')
-        .attr('class', 'y axis')
-        .call(yAxis);
-
-      const earliest = xAxisDomain[0].getTime();
-      const latest = xAxisDomain[1].getTime();
-      const cellWidth = swimlaneWidth / ((latest - earliest) / aggMs);
-
-      const cells = swimlaneGroup.append('g')
-        .attr('class', 'swimlane-cells')
-        .selectAll('cells')
-        .data(data);
-
-      cells.enter().append('rect')
-        .attr('x', function (d) { return x(d.date) + 2; })
-        .attr('y', 2)
-        .attr('rx', 2)
-        .attr('ry', 2)
-        .attr('class', function (d) { return d.score > 0 ? 'swimlane-cell' : 'swimlane-cell-hidden';})
-        .attr('width', cellWidth - 4)
-        .attr('height', swimlaneHeight - 4)
-        .style('fill', function (d) { return anomalyColorScale(d.score);});
-
-    }
-
     function calculateContextXAxisDomain() {
       // Calculates the x axis domain for the context elements.
       // Elasticsearch aggregation returns points at start of bucket,
@@ -696,13 +648,32 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
       return [new Date(earliestMs), new Date(latestMs)];
     }
 
+    // Sets the extent of the brush on the context chart to the
+    // supplied from and to Date objects.
     function setContextBrushExtent(from, to, fireEvent) {
       brush.extent([from, to]);
       brush(d3.select('.brush'));
       if (fireEvent) {
         brush.event(d3.select('.brush'));
       }
+    }
 
+    function setZoomInterval(ms) {
+      let bounds = timefilter.getActiveBounds();
+      const minBoundsMs = bounds.min.valueOf();
+      const maxBoundsMs = bounds.max.valueOf();
+
+      // Attempt to retain the same zoom end time.
+      // If not, go back to the bounds start and add on the required millis.
+      const millis = +ms;
+      let to = scope.zoomTo.getTime();
+      let from = to - millis;
+      if (from < minBoundsMs) {
+        from = minBoundsMs;
+        to = Math.min(minBoundsMs + millis, maxBoundsMs);
+      }
+
+      setContextBrushExtent(new Date(from), new Date(to), true);
     }
 
     function showFocusChartTooltip(d) {
@@ -761,7 +732,8 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
       contextAggregationInterval: '=',
       focusAggregationInterval: '=',
       zoomFrom: '=',
-      zoomTo: '='
+      zoomTo: '=',
+      autoZoomDuration: '='
     },
     link: link
   };
