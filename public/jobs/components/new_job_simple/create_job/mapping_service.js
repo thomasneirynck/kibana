@@ -27,25 +27,18 @@ module.service('prlESMappingService', function ($q, es, timefilter, prlJobServic
 
   this.indexes = {};
 
-  this.getMappings = function (serverConfig) {
+  this.getMappings = function () {
     let deferred = $q.defer();
 
-    const url = serverConfig.url || '';
-    const username = serverConfig.username || '';
-    const password = serverConfig.password || '';
+    prlJobService.getESMappings()
+    .then(mappings => {
+      this.indexes = mappings;
+      deferred.resolve(mappings);
 
-    if (url.match(/^https?:\/\//)) {
-      prlJobService.getESMappings(url, username, password)
-      .then(mappings => {
-        this.indexes = mappings;
-        deferred.resolve(mappings);
+    }).catch(err => {
+      console.log('getMappings:', err);
+    });
 
-      }).catch(err => {
-        console.log('getMappings:', err);
-      });
-    } else {
-      // clearMappings();
-    }
     return deferred.promise;
   };
 

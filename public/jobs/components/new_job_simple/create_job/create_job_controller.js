@@ -56,7 +56,6 @@ module
   $window,
   courier,
   timefilter,
-  esServerUrl,
   Private,
   prlJobService,
   prlSimpleJobService,
@@ -167,7 +166,7 @@ module
     loadTimeFields();
     $scope.ui.isFormValid();
     $scope.ui.dirty = true;
-    prlESMappingService.getMappings({url: esServerUrl})
+    prlESMappingService.getMappings()
     .then((r) => {
     });
   };
@@ -227,12 +226,14 @@ module
       makeTheSame = true;
     }
 
-    const prlName = $scope.formConfig.agg.type.prlName;
-    if (prlName === 'count' ||
-      prlName === 'low_count' ||
-      prlName === 'high_count' ||
-      prlName === 'distinct_count') {
-      makeTheSame = true;
+    if ($scope.formConfig.agg.type !== undefined) {
+      const prlName = $scope.formConfig.agg.type.prlName;
+      if (prlName === 'count' ||
+        prlName === 'low_count' ||
+        prlName === 'high_count' ||
+        prlName === 'distinct_count') {
+        makeTheSame = true;
+      }
     }
 
     if (makeTheSame) {

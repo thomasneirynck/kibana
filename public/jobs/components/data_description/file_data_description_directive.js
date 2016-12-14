@@ -24,7 +24,7 @@ import 'plugins/prelert/lib/bower_components/jquery-csv/src/jquery.csv';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/prelert');
 
-module.directive('prlFileDataDescription', ['$http', function($http) {
+module.directive('prlFileDataDescription', function ($http) {
   return {
     restrict: 'AE',
     replace: true,
@@ -331,5 +331,5 @@ module.directive('prlFileDataDescription', ['$http', function($http) {
 
     }
   };
-}]);
+});
 

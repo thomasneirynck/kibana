@@ -49,6 +49,7 @@ function (
   es,
   Private,
   timefilter,
+  esServerUrl,
   prlJobService,
   prlMessageBarService,
   prlSchedulerService,
@@ -83,13 +84,13 @@ function (
   $scope.ui = {
     pageTitle: 'Create a new job',
     wizard: {
-      step:                 0,
+      step:                 1,
       stepHovering:         0,
       CHAR_LIMIT:           500,
       fileUploaded:         0,
       fileName:             '',
       dataLocation:         'ES',
-      indexInputType:       'TEXT',
+      indexInputType:       'LIST',
       serverAuthenticated:  false,
       uploadedData:         '',
       dataPreview:          '',
@@ -184,7 +185,7 @@ function (
       frequencyDefault:      '',
       scrollSizeText:        '',
       scrollSizeDefault:     1000,
-      baseUrlText:           '',
+      baseUrlText:           esServerUrl,
       usernameText:          '',
       passwordText:          '',
       indicesText:           '',
@@ -649,7 +650,7 @@ function (
       // load the mappings from the configured server
       // via the functions exposed in the elastic data controller
       if (typeof $scope.prlElasticDataDescriptionExposedFunctions.extractFields === 'function') {
-        $scope.prlElasticDataDescriptionExposedFunctions.getMappings(function () {
+        $scope.prlElasticDataDescriptionExposedFunctions.getMappings().then(() => {
           $scope.prlElasticDataDescriptionExposedFunctions.extractFields({types: $scope.types});
         });
       }
@@ -1174,12 +1175,9 @@ function (
 
     const indices = Object.keys($scope.indices);
     const types = Object.keys($scope.types);
-    const url = $scope.ui.scheduler.baseUrlText;
-    const username = $scope.ui.scheduler.usernameText;
-    const password = $scope.ui.scheduler.passwordText;
     const job = $scope.job;
     if (indices.length) {
-      prlJobService.searchPreview(url, username, password, indices, types, job)
+      prlJobService.searchPreview(indices, types, job)
       .then(function (resp) {
         $scope.ui.wizard.dataPreview = angular.toJson(resp, true);
       })

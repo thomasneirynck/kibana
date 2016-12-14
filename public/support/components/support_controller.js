@@ -40,19 +40,6 @@ module.controller('PrlSupport', function ($scope, $http, es, kbnVersion, timefil
 
   $scope.supportBundleEnabled = (prlBrowserDetectService() !== 'safari');
 
-  function getESVersion() {
-    let host = 'http://localhost:5601/elasticsearch';
-    if (es.transport && es.transport._config && es.transport._config.host) {
-      host = es.transport._config.host;
-    }
-    apiService.getExternalUrl({}, {url: host})
-    .then((resp) => {
-      if (resp && resp.version) {
-        $scope.esVersion = resp.version.number;
-      }
-    });
-  }
-
   function getEngineApiVersion() {
     prlInfoService.getEngineInfo()
     .then((resp) => {
@@ -89,7 +76,6 @@ module.controller('PrlSupport', function ($scope, $http, es, kbnVersion, timefil
     });
   };
 
-  // getESVersion();
   getEngineApiVersion();
 
   $scope.$emit('application.load');

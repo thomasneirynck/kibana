@@ -47,7 +47,7 @@ module.service('prlSimpleJobService', function (
   this.job = {};
 
   this.getLineChartResults = function (formConfig) {
-    let deferred = $q.defer();
+    const deferred = $q.defer();
 
     this.chartData.line = [];
     this.chartData.model = [];
@@ -256,7 +256,6 @@ module.service('prlSimpleJobService', function (
     if (formConfig.field && formConfig.field.displayName) {
       dtr.fieldName = formConfig.field.displayName;
     }
-
     job.analysisConfig.detectors.push(dtr);
     job.analysisConfig.bucketSpan = bucketSpan;
 
@@ -295,13 +294,10 @@ module.service('prlSimpleJobService', function (
     const deferred = $q.defer();
 
     this.job = getJobFromConfig(formConfig);
-    const url = this.job.schedulerConfig.baseUrl;
-    let username;
-    let password;
     const index = formConfig.indexPattern.id;
     const types = formConfig.mappingTypes.join(',');
 
-    prlJobService.searchTimeFields(url, username, password, index, types, this.job.dataDescription.timeField)
+    prlJobService.searchTimeFields(index, types, this.job.dataDescription.timeField)
     .then((resp) => {
       this.job.dataDescription.timeFormat = stringUtils.guessTimeFormat(resp.time);
       // console.log('guessTimeFormat: guessed time format: ', this.job.dataDescription.timeFormat);

@@ -20,7 +20,7 @@ import stringUtils from 'plugins/prelert/util/string_utils';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/prelert');
 
-module.directive('prlElasticDataDescription', ['$http', function($http) {
+module.directive('prlElasticDataDescription', function ($http) {
   return {
     restrict: 'AE',
     replace: true,
@@ -80,10 +80,13 @@ module.directive('prlElasticDataDescription', ['$http', function($http) {
         }
         // if this is a scheduled job being cloned
         // load the indices and types
-        if ($scope.mode === MODE.CLONE && $scope.ui.isScheduled) {
+        getMappings().then(() => {
+          if ($scope.mode === MODE.CLONE && $scope.ui.isScheduled) {
            // first load mappings, then extract types and fields.
-          getMappings(setUpClonedJob);
-        }
+            setUpClonedJob();
+          }
+        });
+
         $scope.getExampleTime();
       }
 
@@ -156,7 +159,7 @@ module.directive('prlElasticDataDescription', ['$http', function($http) {
 
         const ignoreFields = collectCopyToFields($scope.types);
         const flatFields = extractFlatFields($scope.types);
-        _.each(flatFields, function (prop, key) {
+        _.each(flatFields, (prop, key) => {
 
           if (ignoreFields[key]) {
             return;
@@ -244,46 +247,42 @@ module.directive('prlElasticDataDescription', ['$http', function($http) {
         }, 1000);
       };
 
-      function getMappings(callback) {
+      function getMappings() {
+        const deferred = $q.defer();
+
         $scope.ui.validation.serverAuthenticationError = '';
         $scope.ui.validation.setTabValid(4, true);
-        const url = $scope.ui.scheduler.baseUrlText;
-        const username = $scope.ui.scheduler.usernameText;
-        const password = $scope.ui.scheduler.passwordText;
-        if (url.match(/^https?:\/\//)) {
-          prlJobService.getESMappings(url, username, password).then((mappings) => {
-            $scope.ui.indices = mappings;
-            $scope.ui.esServerOk = 1;
-            console.log('getMappings():', $scope.ui.indices);
+        prlJobService.getESMappings().then((mappings) => {
+          $scope.ui.indices = mappings;
+          $scope.ui.esServerOk = 1;
+          console.log('getMappings():', $scope.ui.indices);
 
-            if ($scope.mode === MODE.CLONE) {
-              setUpClonedJob();
-            }
+          if ($scope.mode === MODE.CLONE) {
+            setUpClonedJob();
+          }
 
-            // load the server version information and pass the callback through
-            getServerInfo(callback);
+          deferred.resolve();
 
-          }).catch((err) => {
-            console.log('getMappings:', err);
-            if (err.status) {
-              if (err.status === 401) {
-                $scope.ui.wizard.serverAuthenticated = true;
-                $scope.ui.validation.serverAuthenticationError = 'Username or password incorrect';
-                $scope.ui.validation.setTabValid(4, false);
-              } else if (err.status === 403) {
-                $scope.ui.validation.serverAuthenticationError = err.reason;
-                $scope.ui.validation.setTabValid(4, false);
-              } else {
-                clearMappings();
-              }
-              $scope.ui.esServerOk = -1;
+        }).catch((err) => {
+          console.log('getMappings:', err);
+          if (err.status) {
+            if (err.status === 401) {
+              $scope.ui.wizard.serverAuthenticated = true;
+              $scope.ui.validation.serverAuthenticationError = 'Username or password incorrect';
+              $scope.ui.validation.setTabValid(4, false);
+            } else if (err.status === 403) {
+              $scope.ui.validation.serverAuthenticationError = err.reason;
+              $scope.ui.validation.setTabValid(4, false);
             } else {
               clearMappings();
             }
-          });
-        } else {
-          clearMappings();
-        }
+            $scope.ui.esServerOk = -1;
+          } else {
+            clearMappings();
+          }
+
+          deferred.reject();
+        });
 
         function clearMappings() {
           $scope.ui.indices = [];
@@ -291,30 +290,8 @@ module.directive('prlElasticDataDescription', ['$http', function($http) {
           $scope.ui.scheduler.typesText = '';
           $scope.ui.scheduler.indicesText = '';
         }
-      }
 
-      // load server version information
-      // this gets called every time the mappings are loaded
-      function getServerInfo(callback) {
-        const url = $scope.ui.scheduler.baseUrlText;
-        const username = $scope.ui.scheduler.usernameText;
-        const password = $scope.ui.scheduler.passwordText;
-        prlJobService.getESServerInfo(url, username, password).then((info) => {
-          $scope.serverInfo = info;
-          setServerVersion(info);
-          console.log('getServerInfo: ',info);
-          if (callback) {
-            callback();
-          }
-        })
-        .catch((err) => {
-          console.log('getServerInfo: error loading ES server information', err);
-          // default to 2.x version
-          setServerVersion({version: { number: '2.x'}});
-          if (callback) {
-            callback();
-          }
-        });
+        return deferred.promise;
       }
 
       // store ES version numbers and accordingly the datasource identifier
@@ -490,10 +467,7 @@ module.directive('prlElasticDataDescription', ['$http', function($http) {
 
         if (index && type) {
           // search for some times fields
-          const url = $scope.ui.scheduler.baseUrlText;
-          const username = $scope.ui.scheduler.usernameText;
-          const password = $scope.ui.scheduler.passwordText;
-          prlJobService.searchTimeFields(url, username, password, index, type, $scope.dataDescription.timeField)
+          prlJobService.searchTimeFields(index, type, $scope.dataDescription.timeField)
           .then((resp) => {
             $scope.dataDescription.timeFormat = stringUtils.guessTimeFormat(resp.time);
             $scope.getExampleTime();
@@ -513,4 +487,4 @@ module.directive('prlElasticDataDescription', ['$http', function($http) {
       init();
     }
   };
-}]);
+});

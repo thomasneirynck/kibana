@@ -730,12 +730,17 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, prelertAPIS
   };
 
   // search to load a few records to extract the time field
-  this.searchTimeFields = function (url, username, password, index, type, field) {
+  this.searchTimeFields = function (index, type, field) {
     const deferred = $q.defer();
     const obj = {time: ''};
 
-    const data = {url: url + '/' + index + '/' + type + '/_search?size=1&_source=' + encodeURIComponent(field)};
-    apiService.getExternalUrl(this.makeHeaders(username, password), data)
+    es.search({
+      method: 'GET',
+      index: index,
+      type: type,
+      size: 1,
+      _source: field,
+    })
     .then((resp) => {
       if (resp.hits.total !== 0 && resp.hits.hits.length) {
         const hit = resp.hits.hits[0];
@@ -751,43 +756,45 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, prelertAPIS
     return deferred.promise;
   };
 
-  this.searchPreview = function (url, username, password, indices, types, job) {
-    url = url + '/' + indices.join(',') + '/' + types.join(',') + '/_search/';
-    console.log('searchPreview:  url ', url);
+  this.searchPreview = function (indices, types, job) {
     const deferred = $q.defer();
 
     if (job.schedulerConfig) {
-      const data = {};
+      const data = {
+        index:indices,
+        '&type': types.join(',')
+      };
+      const body = {};
 
       let query = { 'match_all': {} };
       // if query is set, add it to the search, otherwise use match_all
       if (job.schedulerConfig.query) {
         query = job.schedulerConfig.query;
       }
-      data.query = query;
+      body.query = query;
 
       // if aggs or aggregations is set, add it to the search
       const aggregations = job.schedulerConfig.aggs || job.schedulerConfig.aggregations;
       if (aggregations && Object.keys(aggregations).length) {
-        data.size = 0;
-        data.aggregations = aggregations;
+        body.size = 0;
+        body.aggregations = aggregations;
 
         // add script_fields if present
         const scriptFields = job.schedulerConfig.script_fields;
         if (scriptFields && Object.keys(scriptFields).length) {
-          data.script_fields = scriptFields;
+          body.script_fields = scriptFields;
         }
 
       } else {
         // if aggregations is not set and retrieveWholeSource is not set, add all of the fields from the job
-        data.size = 10;
+        body.size = 10;
 
         if (!job.schedulerConfig.retrieveWholeSource) {
 
           // add script_fields if present
           const scriptFields = job.schedulerConfig.script_fields;
           if (scriptFields && Object.keys(scriptFields).length) {
-            data.script_fields = scriptFields;
+            body.script_fields = scriptFields;
           }
 
 
@@ -845,12 +852,14 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, prelertAPIS
           // console.log('fields: ', fields);
           const fieldsList = Object.keys(fields);
           if (fieldsList.length) {
-            data._source = fieldsList;
+            body._source = fieldsList;
           }
         }
       }
 
-      apiService.postExternalUrl(this.makeHeaders(username, password), url, data)
+      data.body = body;
+
+      es.search(data)
       .then((resp) => {
         deferred.resolve(resp);
       })
@@ -963,53 +972,13 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, prelertAPIS
     return deferred.promise;
   };
 
-  // Make appropriate HTTP headers given a username and password.  Since these
-  // are for a server accessed from the UI server, send these to the UI server
-  // in a header that won't conflict if the UI server itself is authenticated.
-  // (Will be empty if the username is blank.)
-  this.makeHeaders = function (username, password) {
-    if (username) {
-      return {prelertextauthorization: 'Basic ' + new Buffer(username + ':' + password, 'binary').toString('base64')};
-    }
-    return {};
-  };
-
-  // call the _cat/indices endpoint for a given ES server
-  // returns an array of indices
-  this.getESIndices = function (url, username, password) {
-    const deferred = $q.defer();
-    const indices = [];
-
-    const data = {url: url + '/_cat/indices'};
-    apiService.getExternalUrl(this.makeHeaders(username, password), data)
-        .then((resp) => {
-          const rows = resp.split('\n');
-          _.each(rows, (row) => {
-            const cols = row.split(' ');
-            if (cols.length) {
-              if (/*cols[0] === 'green' &&*/
-                 cols[1] === 'open') {
-                indices.push(cols[2]);
-              }
-            }
-          });
-          deferred.resolve(indices);
-        })
-        .catch((resp) => {
-          deferred.resolve(indices);
-        });
-
-    return deferred.promise;
-  };
-
   // call the _mappings endpoint for a given ES server
   // returns an object of indices and their types
-  this.getESMappings = function (url, username, password) {
+  this.getESMappings = function () {
     const deferred = $q.defer();
     let mappings = {};
 
-    const data = {url: url + '/_mappings'};
-    apiService.getExternalUrl(this.makeHeaders(username, password), data)
+    es.indices.getMapping('_all')
       .then((resp) => {
         _.each(resp, (index, i) => {
           // switch the 'mappings' for 'types' for consistency.
@@ -1021,24 +990,6 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, prelertAPIS
         });
         mappings = resp;
         deferred.resolve(mappings);
-      })
-      .catch((resp) => {
-        deferred.reject(resp);
-      });
-
-    return deferred.promise;
-  };
-
-  // call the ES server to recieve basic information about the server
-  // used to find out the ES version
-  this.getESServerInfo = function (url, username, password) {
-    const deferred = $q.defer();
-    const mappings = {};
-
-    const data = {url: url};
-    apiService.getExternalUrl(this.makeHeaders(username, password), data)
-      .then((resp) => {
-        deferred.resolve(resp);
       })
       .catch((resp) => {
         deferred.reject(resp);
