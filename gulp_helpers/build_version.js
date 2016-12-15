@@ -11,7 +11,7 @@ yargs
 .describe('fallback', 'Fall back to the version in the package.json file');
 var argv = yargs.argv;
 
-var propFile = path.resolve('..', '..', 'elasticsearch', 'buildSrc', 'version.properties');
+var propFile = path.resolve('..', '..', '..', 'elasticsearch', 'buildSrc', 'version.properties');
 
 function getFileVersion() {
   var snapshotText = (argv.release) ? '' : '-SNAPSHOT';
