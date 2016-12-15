@@ -1,6 +1,6 @@
 <div ng-show="exportConfig.isExportable()">
-  <div class="localDropdownSection">
-    <div class="localDropdownTitle">Reporting</div>
+  <div class="kuiLocalDropdownSection">
+    <div class="kuiLocalDropdownTitle">Reporting</div>
     <div class="input-group generate-controls">
       <button
         class="generate btn btn-primary"
@@ -11,16 +11,16 @@
     </div>
   </div>
 
-  <div class="localDropdownSection">
+  <div class="kuiLocalDropdownSection">
 
     <!-- Header -->
-    <div class="localDropdownHeader">
-      <div class="localDropdownHeader__label">
+    <div class="kuiLocalDropdownHeader">
+      <div class="kuiLocalDropdownHeader__label">
         Generation URL
       </div>
-      <div class="localDropdownHeader__actions">
+      <div class="kuiLocalDropdownHeader__actions">
         <a
-          class="localDropdownHeader__action"
+          class="kuiLocalDropdownHeader__action"
           ng-click="exportConfig.copyToClipboard('#reportGenerationUrl')"
         >
           Copy
@@ -31,7 +31,7 @@
     <!-- Input -->
     <input
       id="reportGenerationUrl"
-      class="localDropdownInput"
+      class="kuiLocalDropdownInput"
       type="text"
       readonly
       value="{{ exportConfig.exportTypes[exportConfig.selectedType].link }}"

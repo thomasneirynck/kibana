@@ -4,7 +4,7 @@
     <!-- Transcluded elements. -->
     <div data-transclude-slots>
       <!-- Title. -->
-      <div data-transclude-slot="topLeftCorner" class="localTitle">
+      <div data-transclude-slot="topLeftCorner" class="kuiLocalTitle">
         <strong>{{ savedWorkspace.lastSavedTitle || 'New Graph Workspace' }}</strong>
       </div>
 
@@ -67,11 +67,11 @@
           class="flexGroup__filler"
           style="width: 100%"
         >
-          <div class="localSearch">
+          <div class="kuiLocalSearch">
             <input
               name="searchTerm"
               type="text"
-              class="localSearchInput"
+              class="kuiLocalSearchInput"
               ng-model="grr.searchTerm"
               ng-disabled="liveResponseFields.length === 0"
               ng-focus="kbnTopNav.close()"
@@ -79,7 +79,7 @@
               autocomplete="off"
             >
             <button
-              class="localSearchButton"
+              class="kuiLocalSearchButton"
               type="submit"
               ng-disabled="liveResponseFields.length === 0"
               aria-label="Search"

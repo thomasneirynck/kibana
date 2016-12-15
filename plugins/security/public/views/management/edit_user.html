@@ -20,7 +20,7 @@
         tooltip="Delete User"
         data-test-subj="userFormDeleteButton"
       >
-        <span class="fa fa-trash"></span>
+        <span class="kuiButton__icon kuiIcon fa-trash"></span>
       </button>
       <div
         ng-if="user.metadata._reserved"
@@ -155,7 +155,7 @@
       </button>
 
       <a
-        class="kuiButton kuiButton--default"
+        class="kuiButton kuiButton--basic"
         ng-if="!user.metadata._reserved"
         href="#/management/elasticsearch/users"
         data-test-subj="userFormCancelButton"
