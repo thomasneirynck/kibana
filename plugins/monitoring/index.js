@@ -35,12 +35,14 @@ export default function monitoringIndex(kibana) {
         var config = server.config();
         return {
           statsReportUrl: config.get('xpack.monitoring.stats_report_url'),
-          reportStats: config.get('xpack.monitoring.report_stats')
+          reportStats: config.get('xpack.monitoring.report_stats'),
+          monitoringUiEnabled: config.get('xpack.monitoring.ui.enabled')
         };
       },
       hacks: [
         'plugins/monitoring/hacks/phone_home_notifications',
-        'plugins/monitoring/hacks/phone_home_trigger'
+        'plugins/monitoring/hacks/phone_home_trigger',
+        'plugins/monitoring/hacks/toggle_app_link_in_nav'
       ]
     },
 
@@ -48,6 +50,9 @@ export default function monitoringIndex(kibana) {
       const { array, boolean, number, object, string } = Joi;
       return object({
         enabled: boolean().default(true),
+        ui: object({
+          enabled: boolean().default(true)
+        }).default(),
         chart: object({
           elasticsearch: object({
             index: object({

@@ -150,4 +150,4 @@ function phoneHomeStart(Private) {
   sender.start();
 }
 
-uiModules.get('kibana').run(phoneHomeStart);
+uiModules.get('monitoring/hacks').run(phoneHomeStart);

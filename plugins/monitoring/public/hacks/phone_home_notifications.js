@@ -67,4 +67,4 @@ function customNotification(reportStats, Private, features) {
   showNotification(features);
 }
 
-uiModules.get('kibana').run(customNotification);
+uiModules.get('monitoring/hacks').run(customNotification);
