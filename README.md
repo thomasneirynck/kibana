@@ -18,15 +18,17 @@ If the UI isn't your primary focus, and those hooks start to get in your way, yo
 
 The easiest way to develop UI plugins is to use the built-in script to watch for changes and sync them to Kibana, which will also cause Kibana to restart when running in dev mode.
 
-Assuming that you have the `x-plugins` repo at the same base path as your `kibana`, it's really simple to get going.
+Assuming that you have the `x-pack` repo inside an `elasticsearch-extra` directory at the same base path as your `kibana`, it's really simple to get going.
 
 ```
 $ ls $PATH_TO_REPOS
-kibana
-x-plugins
+ ├── kibana
+ └── elasticsearch (optional) 
+ └── elasticsearch-extra
+     └── x-pack 
 ```
 
-Simply use `npm start` from this `kibana` path in `x-plugins` to watch for and sync changes to your copy of Kibana.
+Simply use `npm start` from  `elasticsearch-extra/x-pack/kibana` to watch for and sync changes to your copy of Kibana.
 
 To run on Windows, the sync task uses rsync which requires an ssh server.  Cygwin has one available. Setup details needed here.
 
@@ -35,11 +37,11 @@ To run on Windows, the sync task uses rsync which requires an ssh server.  Cygwi
 If this is not the case, or if you rather lean on Kibana, you'll need to perform a build and start Kibana in dev mode with a custom plugin path.
 
 ```
-# in x-plugins
+# in x-pack
 npm run build
 
 # in kibana
-npm start -- --plugin-path=../path/to/x-plugins/kibana/build/kibana/x-pack
+npm start -- --plugin-path=../path/to/elasticsearch-extra/x-pack/kibana/build/kibana/x-pack
 ```
 
 This is also a useful way to test the build. The downside is that **changes are not automatically synced for you**, so you will need to re-run the build every time you want to use the changes you've made (Kibana will automatically restart when you do, if running in dev mode).
@@ -75,8 +77,8 @@ That's thanks to the binary Phantom downloads that have to happen, and Bitbucket
 
 ### Running Elasticsearch with X-Pack
 
-Assuming you have the `elasticsearch` project checked out in a sibling directory to `x-plugins`, and both are up to date, and you have
-`gradle` installed (see below if not), you can simply run `gradle run` from the root of `x-plugins`. Alternatively, you can [manually build
+Assuming you have the `elasticsearch` project checked out in a sibling directory to `elasticsearch-extra`, and both are up to date, and you have
+`gradle` installed (see below if not), you can simply run `gradle run` from the root of `elasticsearch-extra/x-pack`. Alternatively, you can [manually build
 Elasticsearch with X-Pack](#elasticsearch-and-x-pack-from-source).
 
 ### Elasticsearch and X-Pack from source
@@ -87,26 +89,27 @@ For developing and testing the plugins, you must run an instance of Elasticsearc
 
 1. Set your JAVA_HOME variable (on Mac, you can use `export JAVA_HOME=$(/usr/libexec/java_home)`)
 1. Install "gradle" from Homebrew (use the [version specified by Elasticsearch](https://github.com/elastic/elasticsearch/blob/master/README.textile#building-from-source), currently 2.13).
-1. Create a directory called `es-build` and clone elasticsearch and x-plugins into it.
+1. Create a directory called `es-build` and clone elasticsearch into it. In that same directory, create a directory called `elasticsearch-extra` and clone `x-pack` in there.
 
     ```
-    mkdir ~/es-build && cd $_
-    git clone git@github.com:elastic/x-plugins.git
-    git clone git@github.com:elastic/elasticsearch.git
+    mkdir ~/es-build && cd $_    
+    git clone https://github.com/elastic/x-pack.git elasticsearch-extra/x-pack
+    git clone https://github.com/elastic/elasticsearch.git elasticsearch     
     ```
    - Now your directory structure looks like:
 
       ```
       es-build
       ├── elasticsearch
-      └── x-plugins
+      └── elasticsearch-extra
+          └── x-pack 
       ```
 1. `cd` into each project clone directory and run `gradle assemble` in each
 1. Copy the build artifacts into the parent directory
 
     ```
     cd ~/es-build
-    cp ./x-plugins/elasticsearch/build/distributions/x-pack-*.zip .
+    cp ./elasticsearch-extra/x-pack/elasticsearch/build/distributions/x-pack-*.zip .
     cp ./elasticsearch/distribution/zip/build/distributions/elasticsearch-*.zip .
     ```
 1. Unpack the Elasticsearch build and install the X-Pack plugin
@@ -126,7 +129,7 @@ For developing and testing the plugins, you must run an instance of Elasticsearc
 
 Make sure you have the dependencies installed by running `npm install`.
 
-You will also need to have the [elasticsearch](https://github.com/elastic/elasticsearch) repo checked out next to the `x-plugins` repo for the build to work, as it pulls the version from a file in that repo. Optionally, if you rather just use the version in `package.json`, pass the `--fallback` flag.
+You will also need to have the [elasticsearch](https://github.com/elastic/elasticsearch) repo checked out next to the `elasticsearch-extra` folder for the build to work, as it pulls the version from a file in that repo. Optionally, if you rather just use the version in `package.json`, pass the `--fallback` flag.
 
 Once complete, use `npm run build`. Output will be placed in the `build` path (it will be created).
 
