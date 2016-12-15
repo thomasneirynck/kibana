@@ -2,7 +2,7 @@ require('babel/register')();
 require('dotenv').config({ silent: true });
 
 // relative location of Kibana install
-var pathToKibana = process.env.KIBANA_PATH || '../../kibana';
+var pathToKibana = process.env.KIBANA_PATH || '../../../kibana';
 
 var gulp = require('gulp');
 var g = require('gulp-load-plugins')();
