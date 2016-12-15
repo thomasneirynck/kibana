@@ -23,7 +23,8 @@ import 'ui/notify';
 import 'ui/typeahead';
 import 'ui/share';
 import 'plugins/kibana/dashboard/directives/grid';
-import 'plugins/kibana/dashboard/components/panel/panel';
+import 'plugins/kibana/dashboard/directives/dashboard_panel';
+
 import 'plugins/kibana/dashboard/services/saved_dashboards';
 import 'plugins/kibana/dashboard/styles/main.less';
 import FilterBarQueryFilterProvider from 'ui/filter_bar/query_filter';

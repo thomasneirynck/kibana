@@ -38,7 +38,8 @@ import FilterBarQueryFilterProvider from 'ui/filter_bar/query_filter';
 import stateMonitorFactory  from 'ui/state_management/state_monitor_factory';
 
 import 'plugins/kibana/dashboard/directives/grid';
-import 'plugins/kibana/dashboard/components/panel/panel';
+import 'plugins/kibana/dashboard/directives/dashboard_panel';
+
 import 'plugins/kibana/dashboard/services/saved_dashboards';
 import 'plugins/kibana/discover/styles/main.less';
 import 'plugins/kibana/dashboard/styles/main.less';

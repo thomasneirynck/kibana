@@ -19,7 +19,7 @@ import 'ui/persisted_log';
 import 'ui/autoload/all';
 
 import 'plugins/prelert/jobs/index';
-// import 'plugins/prelert/results/index';
+import 'plugins/prelert/results/index';
 import 'plugins/prelert/support/index';
 import 'plugins/prelert/services/prelert_angular_client';
 import 'plugins/prelert/services/prelert_clipboard_service';
