@@ -49,6 +49,7 @@
           required
           pattern="[a-zA-Z_][a-zA-Z0-9_@\-\$\.]*"
           maxlength="30"
+          data-test-subj="roleFormNameInput"
         />
 
         <!-- Errors -->
@@ -120,13 +121,24 @@
     </form>
 
     <!-- Form actions -->
-    <button
-      class="kuiButton kuiButton--primary"
-      ng-click="saveRole(role)"
-      ng-if="!role.metadata._reserved"
-      ng-disabled="form.$invalid || !areIndicesValid(role.indices)"
-    >
-      Save
-    </button>
+    <div class="kuiFormSection kuiFormFooter">
+      <button
+        class="kuiButton kuiButton--primary"
+        ng-click="saveRole(role)"
+        ng-if="!role.metadata._reserved"
+        ng-disabled="form.$invalid || !areIndicesValid(role.indices)"
+        data-test-subj="roleFormSaveButton"
+      >
+        Save
+      </button>
+
+      <a
+        class="kuiButton kuiButton--default"
+        ng-if="!role.metadata._reserved"
+        href="#/management/elasticsearch/roles"
+      >
+        Cancel
+      </a>
+    </div>
   </div>
 </kbn-management-app>

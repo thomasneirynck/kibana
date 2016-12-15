@@ -29,6 +29,7 @@
           class="kuiButton kuiButton--primary kuiTableControlAction"
           ng-show="!selectedRoles.length"
           tooltip="Create new role"
+          data-test-subj="createRoleButton"
         >
           <span class="fa fa-plus"></span>
         </a>
@@ -64,17 +65,26 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="role in roles | orderBy:'name' | filter:query | orderBy:sort.orderBy:sort.reverse">
+        <tr
+          ng-repeat="role in roles | orderBy:'name' | filter:query | orderBy:sort.orderBy:sort.reverse"
+          data-test-subj="roleRow"
+        >
           <td>
             <input type="checkbox" ng-click="toggle(selectedRoles, role)" ng-checked="includes(selectedRoles, role)" ng-disabled="role.metadata._reserved" />
           </td>
           <td>
-            <a ng-href="#/management/elasticsearch/roles/edit/{{role.name}}">{{role.name}}</a>
+            <a
+              ng-href="#/management/elasticsearch/roles/edit/{{role.name}}"
+              data-test-subj="roleRowName"
+            >
+              {{role.name}}
+            </a>
           </td>
           <td>
             <div
               ng-if="role.metadata._reserved"
               class="fa fa-check"
+              data-test-subj="roleRowReserved"
             ></div>
           </td>
         </tr>

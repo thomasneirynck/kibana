@@ -104,7 +104,7 @@
           >
             <ui-select-match>{{$item}}</ui-select-match>
             <ui-select-choices repeat="field in indexPrivilegesController.union([$select.search], fieldOptions[index.names]) | filter:$select.search | limitTo:25">
-              <div ng-bind-html="field"></div>
+              <div ng-bind-html="field" data-test-subj="{{ 'fieldOption-' + field }}"></div>
             </ui-select-choices>
           </ui-select>
         <!-- TODO: Minimize markup so we don't need to worry about whitespsace. -->

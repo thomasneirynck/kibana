@@ -18,6 +18,7 @@
         class="kuiButton kuiButton--danger"
         ng-click="deleteUser(user)"
         tooltip="Delete User"
+        data-test-subj="userFormDeleteButton"
       >
         <span class="fa fa-trash"></span>
       </button>
@@ -48,6 +49,7 @@
           required pattern="[a-zA-Z_][a-zA-Z0-9_@\-\$\.]*"
           maxlength="30"
           ng-disabled="!editUser.isNewUser"
+          data-test-subj="userFormUserNameInput"
         />
 
         <!-- Errors -->
@@ -84,6 +86,7 @@
           ng-model="user.full_name"
           required
           ng-disabled="editUser.changePasswordMode"
+          data-test-subj="userFormFullNameInput"
         />
 
         <!-- Errors -->
@@ -108,6 +111,7 @@
           ng-model="user.email"
           required
           ng-disabled="editUser.changePasswordMode"
+          data-test-subj="userFormEmailInput"
         />
 
         <!-- Errors -->
@@ -128,6 +132,7 @@
           multiple
           ng-model="user.roles"
           ng-disabled="user.metadata._reserved"
+          data-test-subj="userFormRolesDropdown"
         >
           <ui-select-match placeholder="Add a role...">{{$item}}</ui-select-match>
           <ui-select-choices repeat="role as role in availableRoles | filter:$select.search">
@@ -138,15 +143,25 @@
     </form>
 
     <!-- Form actions -->
-    <div class="kuiFormSection">
+    <div class="kuiFormSection kuiFormFooter">
       <button
         class="kuiButton kuiButton--primary"
         ng-if="!user.metadata._reserved"
         ng-disabled="form.$invalid"
         ng-click="saveUser(user)"
+        data-test-subj="userFormSaveButton"
       >
         Save
       </button>
+
+      <a
+        class="kuiButton kuiButton--default"
+        ng-if="!user.metadata._reserved"
+        href="#/management/elasticsearch/users"
+        data-test-subj="userFormCancelButton"
+      >
+        Cancel
+      </a>
     </div>
 
     <!-- Existing user password -->

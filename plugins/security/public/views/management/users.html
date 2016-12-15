@@ -29,6 +29,7 @@
           class="kuiButton kuiButton--primary kuiTableControlAction"
           ng-show="!selectedUsers.length"
           tooltip="Create new user"
+          data-test-subj="createUserButton"
         >
           <span class="fa fa-plus"></span>
         </a>
@@ -72,17 +73,30 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="user in users | orderBy:'username' | filter:query | orderBy:sort.orderBy:sort.reverse">
+        <tr
+          ng-repeat="user in users | orderBy:'username' | filter:query | orderBy:sort.orderBy:sort.reverse"
+          data-test-subj="userRow"
+        >
           <td>
             <input type="checkbox" ng-click="toggle(selectedUsers, user)" ng-checked="includes(selectedUsers, user)"  ng-disabled="user.metadata._reserved" />
           </td>
           <td>
-            <a ng-href="#/management/elasticsearch/users/edit/{{user.username}}">{{user.full_name}}</a>
+            <a
+              ng-href="#/management/elasticsearch/users/edit/{{user.username}}"
+              data-test-subj="userRowFullName"
+            >
+              {{user.full_name}}
+            </a>
           </td>
           <td>
-            <a ng-href="#/management/elasticsearch/users/edit/{{user.username}}">{{user.username}}</a>
+            <a
+              ng-href="#/management/elasticsearch/users/edit/{{user.username}}"
+              data-test-subj="userRowUserName"
+            >
+              {{user.username}}
+            </a>
           </td>
-          <td>
+          <td data-test-subj="userRowRoles">
             <span ng-repeat="role in user.roles">
               <a ng-href="#/management/elasticsearch/roles/edit/{{role}}">{{role}}</a><span ng-if="!$last">,</span>
             </span>
@@ -91,6 +105,7 @@
             <div
               ng-if="user.metadata._reserved"
               class="fa fa-check"
+              data-test-subj="userRowReserved"
             ></div>
           </td>
         </tr>
