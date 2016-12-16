@@ -6,32 +6,9 @@ import Pagination from './pagination';
 
 const make = React.DOM;
 
-function getFilteredData(data, filter) {
-  function flattenStrings(obj) {
-    const values = _.values(obj);
-    const nestedObjects = _.filter(values, (val) => {
-      return typeof val === 'object';
-    });
-    let searchStrings = _.filter(values, (val) => {
-      return typeof val === 'string';
-    });
-    _.each(nestedObjects, (nested) => {
-      searchStrings = searchStrings.concat(flattenStrings(nested));
-    });
-    return searchStrings;
-  }
-
-  if (!filter) return data;
-  return data.filter(function (obj) {
-    var concatValues = flattenStrings(obj)
-      .join('|')
-      .toLowerCase();
-    return (concatValues.indexOf(filter.toLowerCase()) !== -1);
-  });
-}
-
 const Table = React.createClass({
   displayName: 'Table',
+
   getInitialState: function () {
     var sortColObj = null;
     if (this.props.options.columns) {
@@ -49,12 +26,14 @@ const Table = React.createClass({
       filterMembers: this.props.filterMembers || []
     };
   },
+
   setData: function (data) {
     if (data) {
       // no length check so if the results is an empty set it clears the loading message
       this.setState({tableData: data});
     }
   },
+
   setSortCol: function (colObj) {
     if (colObj) {
       if (this.state.sortColObj && colObj !== this.state.sortColObj) {
@@ -63,10 +42,12 @@ const Table = React.createClass({
       this.setState({sortColObj: colObj});
     }
   },
+
   setFilter: function (str) {
     str = str || '';
     this.setState({filter: str, pageIdx: 0});
   },
+
   setItemsPerPage: function (num) {
     // Must be all;
     if (_.isNaN(+num)) {
@@ -77,9 +58,25 @@ const Table = React.createClass({
       pageIdx: 0
     });
   },
+
   setCurrPage: function (idx) {
     this.setState({pageIdx: idx});
   },
+
+  getFilteredData() {
+    const data = this.state.tableData;
+    const filter = this.state.filter;
+
+    if (!filter) return data;
+
+    const getFilterValueString = (obj) => {
+      const valueSet = this.props.options.filterFields.map((field) => _.get(obj, field));
+      return valueSet.join(' ').toLowerCase();
+    };
+
+    return data.filter((obj) => _.includes(getFilterValueString(obj), filter.toLowerCase()));
+  },
+
   render: function () {
     var isLoading = (this.state.tableData === null);
     if (isLoading) {
@@ -102,7 +99,7 @@ const Table = React.createClass({
         that.setFilter(evt.target.value);
       }
     });
-    var filteredTableData = getFilteredData(this.state.tableData, this.state.filter);
+    var filteredTableData = this.getFilteredData();
     var viewingCount = Math.min(filteredTableData.length, this.state.itemsPerPage);
     var $count = make.div({className: 'pull-left filter-member'}, `${viewingCount} of ${this.state.tableData.length}`);
     var titleClasses = 'title-bar';

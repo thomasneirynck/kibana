@@ -26,6 +26,7 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
   const initialTableOptions = {
     title: 'Kibana',
     searchPlaceholder: 'Filter Instances',
+    filterFields: ['kibana.name', 'kibana.host', 'kibana.status', 'kibana.transport_address'],
     columns: [
       {
         key: 'kibana.name',

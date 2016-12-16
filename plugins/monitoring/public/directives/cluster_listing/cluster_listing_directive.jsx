@@ -15,6 +15,7 @@ uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl, sh
       var options = {
         title: null,
         searchPlaceholder: 'Filter Clusters',
+        filterFields: ['cluster_name', 'status', 'license.type'],
         // "key" properties are scalars used for sorting
         columns: [
           {

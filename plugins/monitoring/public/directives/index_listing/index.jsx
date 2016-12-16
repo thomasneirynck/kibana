@@ -115,6 +115,7 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
   var initialTableOptions = {
     title: 'Indices',
     searchPlaceholder: 'Filter Indices',
+    filterFields: ['name', 'status'],
     /* "key" should be an object
      *   - unless it's the "name" key
      *   - the key object should have:

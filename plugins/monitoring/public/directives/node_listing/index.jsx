@@ -90,6 +90,7 @@ uiModule.directive('monitoringNodesListing', function (kbnUrl) {
   const initialTableOptions = {
     title: 'Nodes',
     searchPlaceholder: 'Filter Nodes',
+    filterFields: ['nodeName', 'status', 'type', 'transport_address'],
     /* "key" should be an object
      *   - unless it's the "name" key
      *   - the key object should have:
