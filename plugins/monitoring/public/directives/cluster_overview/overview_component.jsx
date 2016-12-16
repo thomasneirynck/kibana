@@ -128,25 +128,19 @@ class ElasticsearchPanel extends React.Component {
             <dl>
               <dt className='info-title'>
                 <a className='link' onClick={() => this.props.angularChangeUrl('elasticsearch/nodes')}>
-                  Nodes:
-                  &nbsp;
-                  <span data-test-subj='number_of_elasticsearch_nodes'>
+                  Nodes: <span data-test-subj='number_of_elasticsearch_nodes'>
                     {formatNumber(get(nodes, 'count.total'), 'int_commas')}
                   </span>
                 </a>
               </dt>
               <dd>
-                Disk Available:
-                &nbsp;
-                <BytesUsage
+                Disk Available: <BytesUsage
                   used_bytes={get(nodes, 'fs.available_in_bytes')}
                   max_bytes={get(nodes, 'fs.total_in_bytes')}
                 />
               </dd>
               <dd>
-                JVM Heap:
-                &nbsp;
-                <BytesPercentageUsage
+                JVM Heap: <BytesPercentageUsage
                   used_bytes={get(nodes, 'jvm.mem.heap_used_in_bytes')}
                   max_bytes={get(nodes, 'jvm.mem.heap_max_in_bytes')}
                 />
