@@ -1,9 +1,9 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
 
-import replyFixture from '../../../__test__/fixtures/reply';
-import requestFixture from '../../../__test__/fixtures/request';
-import serverFixture from '../../../__test__/fixtures/server';
+import replyFixture from '../../../__tests__/fixtures/reply';
+import requestFixture from '../../../__tests__/fixtures/request';
+import serverFixture from '../../../__tests__/fixtures/server';
 
 import * as loginScheme from '../login_scheme';
 

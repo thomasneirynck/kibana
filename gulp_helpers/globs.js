@@ -1,43 +1,26 @@
-var yargs = require('yargs');
+const getPlugins = require('./get_plugins');
 
-var argv = yargs
-  .describe('plugins', 'Comma-separated list of plugins')
-  .argv;
-
-function getPluginPaths(extensions, opts = {}) {
-  const testPath = opts.tests ? '/__test__/**' : '';
+function getPluginPaths(plugins, extensions, opts = {}) {
+  const testPath = opts.tests ? '/__tests__/**' : '';
   if (extensions.length === 0) extensions.push('js');
 
-  if (opts.plugins) {
-    return opts.plugins.reduce((paths, plugin) => {
-      const pluginPath = `${plugin.trim()}/**`;
-      const rootPath = `./plugins/${pluginPath}${testPath}`;
-      const extensionPaths = extensions.map(extension => `${rootPath}/*.${extension}`);
+  return plugins.reduce((paths, plugin) => {
+    const pluginPath = `${plugin.trim()}/**`;
+    const publicPath = `${plugin.trim()}/public`;
+    const rootPath = `./plugins/${pluginPath}${testPath}`;
+    const excludePublicPaths = (!opts.browser) ? [`!./plugins/${publicPath}/**`] : [];
+    const extensionPaths = extensions.map(extension => `${rootPath}/*.${extension}`);
 
-      return paths.concat(extensionPaths);
-    }, []);
-  }
-
-  const pluginPath = '**';
-  const rootPath = `./plugins/${pluginPath}${testPath}`;
-
-  return extensions.map(extension => `${rootPath}/*.${extension}`);
-}
-
-function getPlugins() {
-  const plugins = argv.plugins && argv.plugins.split(',');
-  if (!Array.isArray(plugins) || plugins.length === 0) {
-    return false;
-  }
-  return plugins;
+    return paths.concat(extensionPaths).concat(excludePublicPaths);
+  }, []);
 }
 
 exports.forPlugins = function (...extensions) {
   const plugins = getPlugins();
-  return getPluginPaths(extensions, { plugins });
+  return getPluginPaths(plugins, extensions, { browser: true });
 };
 
-exports.forPluginTests = function (...extensions) {
+exports.forPluginServerTests = function (...extensions) {
   const plugins = getPlugins();
-  return getPluginPaths(extensions, { plugins, tests: true });
+  return getPluginPaths(plugins, extensions, { tests: true });
 };

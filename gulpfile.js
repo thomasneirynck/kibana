@@ -16,6 +16,7 @@ var aws = require('aws-sdk');
 var mocha = require('gulp-mocha');
 var istanbul = require('gulp-istanbul');
 var isparta = require('isparta');
+var runSequence = require('run-sequence');
 
 var logger = require('./gulp_helpers/logger');
 var exec = require('./gulp_helpers/exec')(g.util);
@@ -26,6 +27,7 @@ var stagedFiles = require('./gulp_helpers/staged_files.js');
 var createPackageFile = require('./gulp_helpers/create_package');
 var buildVersion = require('./gulp_helpers/build_version')();
 var fileGlobs = require('./gulp_helpers/globs');
+var getPlugins = require('./gulp_helpers/get_plugins');
 
 var pkg = require('./package.json');
 var packageFile = `${pkg.name}-${buildVersion}.zip`;
@@ -48,23 +50,21 @@ var buildIncludes = [
   '.node-version',
   'plugins',
   '.phantom',
-  // 'public',
   'server'
 ];
 
-var excludedDeps = Object.keys(pkg.devDependencies).map(function (name) {
+var excludedSyncDeps = Object.keys(pkg.devDependencies).map(function (name) {
   return path.join('node_modules', name);
 });
 
-var excludedFiles = [
+var excludedSyncFiles = [
   '.DS_Store',
-  '__test__',
   '__tests__',
   'README.md',
   'node_modules/.bin',
 ];
 
-var syncPathTo = syncPath(excludedDeps.concat(excludedFiles));
+var syncPathTo = syncPath(excludedSyncDeps.concat(excludedSyncFiles));
 
 gulp.task('sync', function () {
   return downloadPhantom(path.join(__dirname, '.phantom'))
@@ -232,7 +232,7 @@ gulp.task('release', ['package'], function () {
 gulp.task('pre-test', function () {
   const globs = [
     './{server,public}/**/*.js',
-    '!./**/__test__/**'
+    '!./**/__tests__/**'
   ].concat(fileGlobs.forPlugins());
 
   return gulp.src(globs)
@@ -246,11 +246,10 @@ gulp.task('pre-test', function () {
 });
 
 function runMocha() {
-
   const globs = [
-    './server/**/__test__/**/*.js',
+    './server/**/__tests__/**/*.js',
     '!./build/**'
-  ].concat(fileGlobs.forPluginTests());
+  ].concat(fileGlobs.forPluginServerTests());
 
   return gulp.src(globs, { read: false })
     .pipe(mocha({
@@ -266,26 +265,29 @@ function runNpm(flags, options) {
  * This requires Kibana to be cloned in the same parent directory as x-plugins
  */
 function runBrowserTests(type) {
-  var kbnBrowserArgs = [
+  const plugins = getPlugins();
+  const kbnBrowserArgs = [
     type,
     '--',
+    // TODO: re-enable SSL, pending https://github.com/elastic/kibana/pull/8855
     // '--kbnServer.server.sslEnabled', 'false', // TODO: needs support in Kibana
-    '--kbnServer.tests_bundle.pluginId=graph,security,monitoring,reporting,xpack_main,profiler',
+    `--kbnServer.tests_bundle.pluginId=${plugins.join(',')}`,
     `--kbnServer.plugin-path=${__dirname}`
   ];
-  var kbnBrowserOptions = { cwd: pathToKibana };
+  const kbnBrowserOptions = { cwd: pathToKibana };
   return runNpm(kbnBrowserArgs, kbnBrowserOptions);
 }
 
-gulp.task('test', ['lint', 'clean-test', 'pre-test'], function () {
-  // generates a coverage directory with reports for finding coverage gaps
-  return runMocha().pipe(istanbul.writeReports());
+gulp.task('test', function (cb) {
+  const preTasks = ['lint', 'clean-test'];
+  // TODO: enable testbrowser, pening https://github.com/elastic/x-pack/issues/4321
+  runSequence(preTasks, 'testserver', /*'testbrowser',*/ cb);
 });
 
 gulp.task('testonly', ['testserver', 'testbrowser']);
 
-gulp.task('testserver', function () {
-  return runMocha();
+gulp.task('testserver', ['pre-test'], function () {
+  return runMocha().pipe(istanbul.writeReports());
 });
 
 gulp.task('testbrowser-dev', function () {
