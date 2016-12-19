@@ -978,9 +978,9 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, prelertAPIS
     const deferred = $q.defer();
     let mappings = {};
 
-    es.indices.getMapping('_all')
+    es.indices.getMapping()
       .then((resp) => {
-        _.each(resp, (index, i) => {
+        _.each(resp, (index) => {
           // switch the 'mappings' for 'types' for consistency.
           if (index.mappings !== index.types) {
             Object.defineProperty(index, 'types',
