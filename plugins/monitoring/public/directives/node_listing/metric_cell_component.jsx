@@ -2,45 +2,40 @@ import { get } from 'lodash';
 import React from 'react';
 import numeral from 'numeral';
 import OfflineCell from './offline_cell_component';
-export default class MetricCell extends React.Component {
-  constructor(props) {
-    super(props);
+
+function formatMetric(metric, key) {
+  const meta = metric.metric;
+  const value = get(metric, key);
+  if (!meta.format) { return value; }
+  return numeral(value).format(meta.format) + meta.units;
+}
+
+function slopeArrow(metric) {
+  if (metric.slope > 0) {
+    return 'up';
   }
-  render() {
-    function formatMetric(metric, key) {
-      const meta = metric.metric;
-      const value = get(metric, key);
-      if (!meta.format) { return value; }
-      return numeral(value).format(meta.format) + meta.units;
-    }
+  return 'down';
+}
 
-    function slopeArrow(metric) {
-      if (metric.slope > 0) {
-        return 'up';
-      }
-      return 'down';
-    }
-
-    if (this.props.isOnline) {
-      return (
-        <td>
-          <div className='big inline'>
-            {formatMetric(this.props.metric, 'last')}
+export default function MetricCell(props) {
+  if (props.isOnline) {
+    return (
+      <td>
+        <div className='big inline'>
+          {formatMetric(props.metric, 'last')}
+        </div>
+        <span className={`big inline fa fa-long-arrow-${slopeArrow(props.metric)}`}></span>
+        <div className='inline'>
+          <div className='small'>
+            {formatMetric(props.metric, 'max')} max
           </div>
-          <span className={`big inline fa fa-long-arrow-${slopeArrow(this.props.metric)}`}></span>
-          <div className='inline'>
-            <div className='small'>
-              {formatMetric(this.props.metric, 'max')} max
-            </div>
-            <div className='small'>
-              {formatMetric(this.props.metric, 'min')} min
-            </div>
+          <div className='small'>
+            {formatMetric(props.metric, 'min')} min
           </div>
-        </td>
-      );
-    }
-
-    return <OfflineCell/>;
-
+        </div>
+      </td>
+    );
   }
+
+  return <OfflineCell/>;
 };
