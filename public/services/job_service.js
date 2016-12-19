@@ -23,7 +23,7 @@ import 'plugins/prelert/messagebar';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/prelert');
 
-module.service('prlJobService', function ($rootScope, $http, $q, es, prelertAPIService, prlMessageBarService, prlInfoService) {
+module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelertAPIService, prlMessageBarService, prlInfoService) {
   const apiService = prelertAPIService;
   const msgs = prlMessageBarService;
   let jobs = [];
@@ -81,12 +81,12 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, prelertAPIS
     // use the apiService to load the list of jobs
     // listJobs returns the $http request promise chain which we pass straight through
     // adding our own .then function to create the jobs list and broadcast the fact we've done so
-    return apiService.listJobs()
+    return ml.jobConfigs()
       .then(function (resp) {
         console.log('PrlJobsList controller query response:', resp);
 
         // make deep copy of jobs
-        angular.copy(resp.documents, jobs);
+        angular.copy(resp.jobs, jobs);
         that.jobs = jobs;
 
         // broadcast that the jobs list has been updated

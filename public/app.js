@@ -46,6 +46,7 @@ import modules from 'ui/modules';
 
 import logo from 'plugins/prelert/header.png';
 import favicon from 'plugins/prelert/favicon.png';
+const ml = require('plugins/prelert/services/ml');
 
 // switch the kibana favicon to the prelert icon
 // $("head link[rel='shortcut icon']").attr("href", favicon);
