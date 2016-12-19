@@ -23,11 +23,11 @@ import $ from 'jquery';
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/prelert');
 
 module.directive('prlSwimlaneInfluencers', function ($timeout, prlResultsService) {
 
-  function link(scope, $element, $attrs) {
+  function link(scope, $element) {
     scope.indexPattern = scope.$parent.indexPattern;
     scope.influencerFieldName = scope.$parent.influencerFieldName;
     scope.selectedJobIds = scope.$parent.selectedJobIds;
@@ -69,8 +69,6 @@ module.directive('prlSwimlaneInfluencers', function ($timeout, prlResultsService
 
         scope.influencers = _.map(resp.results, function (result) {
           const score = parseInt(result.maxAnomalyScore);
-          const bandScore = score !== 0 ? score : 1;
-          const displayScore = score !== 0 ? score : '< 1';
           const severity = anomalyUtils.getSeverity(score);
           const influencer = {'influencerFieldValue': result.influencerFieldValue,
             'bandScore': score > 3 ? score : 3,  // Gives the band some visible width for low scores.
@@ -88,7 +86,7 @@ module.directive('prlSwimlaneInfluencers', function ($timeout, prlResultsService
 
     // If the scope is destroyed, cancel the timer so that we don't request
     // the top influencer data for a tooltip that is no longer showing.
-    scope.$on('$destroy', function (event) {
+    scope.$on('$destroy', function () {
       $timeout.cancel(timer);
     });
   }

@@ -38,7 +38,7 @@ import 'plugins/prelert/services/results_service';
 import './swimlane_influencers/swimlane_influencers_directive';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/prelert');
 
 module.controller('PrlSwimlaneController', function ($scope,
  $route,
@@ -56,8 +56,8 @@ module.controller('PrlSwimlaneController', function ($scope,
   prlJobService.getBasicJobInfo($scope.vis.indexPattern.id)
   .then(function (resp) {
     if (resp.jobs.length > 0) {
-      let descriptions = {};
-      let detectorsByJob = {};
+      const descriptions = {};
+      const detectorsByJob = {};
       _.each(resp.jobs, function (job) {
         descriptions[job.id] = job.description;
         detectorsByJob[job.id] = job.detectorDescriptions;
@@ -169,8 +169,8 @@ module.controller('PrlSwimlaneController', function ($scope,
     // open the Explorer dashboard, passing query and time range.
 
     // Add hour either side of time span if duration < 1 day.
-    let fromMoment = moment(data.time);
-    let toMoment = moment(data.time).add(data.durationMs, 'ms');
+    const fromMoment = moment(data.time);
+    const toMoment = moment(data.time).add(data.durationMs, 'ms');
     if (data.durationMs < 86400000) {
       fromMoment.subtract(1, 'h');
       toMoment.add(1, 'h');
@@ -245,7 +245,7 @@ module.controller('PrlSwimlaneController', function ($scope,
 
   $scope.processAggregations = function (aggregations) {
 
-    let dataByViewBy = {};
+    const dataByViewBy = {};
 
     if (aggregations && $scope.vis.aggs.bySchemaName.viewBy !== undefined
       && $scope.vis.aggs.bySchemaName.timeSplit !== undefined) {
@@ -261,7 +261,7 @@ module.controller('PrlSwimlaneController', function ($scope,
 
       if (!secondaryViewByAgg) {
         // Get the buckets of the viewBy aggregation.
-        let buckets = aggregations[viewByAgg.id].buckets;
+        const buckets = aggregations[viewByAgg.id].buckets;
         _.each(buckets, function (bucket) {
           // There will be 1 bucket for each 'view by' value.
           const viewByValue = bucket.key;
@@ -282,8 +282,8 @@ module.controller('PrlSwimlaneController', function ($scope,
         const secondaryAggId = secondaryViewByAgg.id;
 
         // Just support detectorIndex-jobId.
-        const isDetector = ((viewByAgg.fieldDisplayName() === 'detectorIndex') &&
-            (secondaryViewByAgg.fieldDisplayName() === 'jobId'));
+        const isDetector = ((viewByAgg.getFieldDisplayName() === 'detector_index') &&
+            (secondaryViewByAgg.getFieldDisplayName() === 'job_id'));
 
         const buckets = aggregations[viewByAgg.id].buckets;
         _.each(buckets, function (bucket) {
@@ -292,7 +292,7 @@ module.controller('PrlSwimlaneController', function ($scope,
           _.each(bucketsForViewByValue, function (secondaryBucket) {
             let secondaryViewByValue = secondaryBucket.key;
             if (isDetector === true) {
-              // Obtain detectorDescription from map jobId (secondary bucket key) and detectorIndex (first bucket key).
+              // Obtain detectorDescription from map job_id (secondary bucket key) and detector_index (first bucket key).
               secondaryViewByValue = $scope.detectorsByJob[secondaryBucket.key][bucket.key];
             }
 
@@ -329,8 +329,9 @@ module.controller('PrlSwimlaneController', function ($scope,
     // Update the scope 'View By' field.
     if ($scope.vis.aggs.bySchemaName.viewBy !== undefined) {
       const viewByAgg = $scope.vis.aggs.bySchemaName.viewBy[0];
-      const aggViewByField = viewByAgg.fieldDisplayName();
-      if ($scope.isShowingJobDescription() && aggViewByField === 'jobId') {
+      console.log('syncViewControls viewByAgg:', viewByAgg);
+      const aggViewByField = viewByAgg.getFieldDisplayName();
+      if ($scope.isShowingJobDescription() && aggViewByField === 'job_id') {
         // Leave selection as Job Description, as otherwise would switch back to jobID.
       } else {
         if ($scope.vis.params.mode === 'jobs') {
@@ -416,17 +417,17 @@ module.controller('PrlSwimlaneController', function ($scope,
         'schema': 'secondaryViewBy',
         'type': 'terms',
         'params': {
-          'field':'jobId',
+          'field':'job_id',
           'order':'desc',
           'orderBy':'1',
           'size': 10
         }
       };
 
-      const isDetector = ($scope.vis.params.viewBy.field === 'detectorIndex');
+      const isDetector = ($scope.vis.params.viewBy.field === 'detector_index');
       if (isDetector === true) {
         if (visState.aggs.length === 3) {
-          // Add in a secondaryViewBy aggregation for 'jobId'.
+          // Add in a secondaryViewBy aggregation for 'job_id'.
           visState.aggs.splice(2, 0, secondaryAgg);
         }
       } else {
@@ -464,7 +465,7 @@ module.controller('PrlSwimlaneController', function ($scope,
 
         if (isDetector === true) {
           if (editableVisState.aggs.length === 3) {
-            // Add in a secondaryViewBy aggregation for 'jobId'.
+            // Add in a secondaryViewBy aggregation for 'job_id'.
             editableVisState.aggs.splice(2, 0, secondaryAgg);
           }
         } else {
@@ -493,13 +494,12 @@ module.controller('PrlSwimlaneController', function ($scope,
 })
 .directive('prlSwimlane', function ($location, $compile, timefilter) {
 
-  function link(scope, element, attrs) {
+  function link(scope, element) {
 
     scope._previousHoverPoint = null;
     scope._influencerHoverScope = null;
 
-    scope.$on('render',function (event, d) {
-
+    scope.$on('render',function () {
       renderSwimlane();
     });
 
@@ -652,7 +652,7 @@ module.controller('PrlSwimlaneController', function ($scope,
       element.height((laneIds.length * 32) + 50);
 
       // Draw the plot.
-      let plot = $.plot(element, allSeries, options);
+      const plot = $.plot(element, allSeries, options);
 
       // Add tooltips to the y-axis labels to display the full 'viewBy' field
       // - useful for cases where a long text value has been cropped.
@@ -736,11 +736,11 @@ module.controller('PrlSwimlaneController', function ($scope,
               const dataModel = item.series.data[item.dataIndex][2];
 
               const clickData = {'time':item.datapoint[0],
-                  'durationMs':bucketInterval.asMilliseconds(),
-                  'field': scope.vis.params.viewBy.field,
-                  'value': fieldValue,
-                  'severity': item.series.label,
-                  'score': dataModel.score};
+                'durationMs':bucketInterval.asMilliseconds(),
+                'field': scope.vis.params.viewBy.field,
+                'value': fieldValue,
+                'severity': item.series.label,
+                'score': dataModel.score};
 
               plot.highlight(item.series, item.datapoint);
               scope.$emit('swimlaneClick', clickData);
@@ -750,7 +750,7 @@ module.controller('PrlSwimlaneController', function ($scope,
       }
     }
 
-    function drawChartSymbol(ctx, x, y, radius, shadow) {
+    function drawChartSymbol(ctx, x, y, radius) {
       const size = radius * Math.sqrt(Math.PI) / 2;
       ctx.rect(x - size, y - 14, size + size, 28);
     }

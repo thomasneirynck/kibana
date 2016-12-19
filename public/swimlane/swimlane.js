@@ -47,13 +47,13 @@ export default function SwimlaneVisType(Private, $templateCache) {
       defaults: {
         interval: {display:'Auto', val:'auto'},
         mode: 'jobs',   // jobs, influencers or records
-        viewBy: {field:'jobId', label:'Job ID'},
+        viewBy: {field:'job_id', label:'Job ID'},
         showViewByControl: true
       },
-      jobViewByOptions: [{field:'jobId', label:'Job ID'},
-                 {field:'jobId', label:'Job description'}],
-      influencerViewByOptions: [{field:'influencerFieldName', label:'Influencer type'}],
-      recordViewByOptions: [{field:'detectorIndex', label:'detector'}],
+      jobViewByOptions: [{field:'job_id', label:'Job ID'},
+                 {field:'job_id', label:'Job description'}],
+      influencerViewByOptions: [{field:'influencer_field_name', label:'Influencer type'}],
+      recordViewByOptions: [{field:'detector_index', label:'detector'}],
       intervalOptions: [{display:'Auto', val:'auto'},
                 {display:'5 minutes', val:'custom', customInterval:'5m'},
                 {display:'10 minutes', val:'custom', customInterval:'10m'},
@@ -102,4 +102,4 @@ export default function SwimlaneVisType(Private, $templateCache) {
       }
     ])
   });
-};
+}
