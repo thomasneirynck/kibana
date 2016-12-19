@@ -36,7 +36,7 @@ module.service('prlResultsService', function ($q, es) {
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': earliestMs,
           'lte': latestMs,
           'format': 'epoch_millis'
@@ -49,7 +49,7 @@ module.service('prlResultsService', function ($q, es) {
         if (i > 0) {
           jobIdFilterStr += ' OR ';
         }
-        jobIdFilterStr += 'jobId:';
+        jobIdFilterStr += 'job_id:';
         jobIdFilterStr += jobId;
       });
       boolCriteria.push({
@@ -69,7 +69,7 @@ module.service('prlResultsService', function ($q, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:influencer AND influencerFieldName:' + influencerFieldName,
+                  'query': '_type:result AND result_type:influencer AND influencer_field_name:' + influencerFieldName,
                   'analyze_wildcard': true
                 }
               },
@@ -84,7 +84,7 @@ module.service('prlResultsService', function ($q, es) {
         'aggs': {
           'influencerFieldValues': {
             'terms': {
-              'field': 'influencerFieldValue',
+              'field': 'influencer_field_value',
               'size': maxResults !== undefined ? maxResults : 2,
               'order': {
                 'maxAnomalyScore': 'desc'
@@ -93,12 +93,12 @@ module.service('prlResultsService', function ($q, es) {
             'aggs': {
               'maxAnomalyScore': {
                 'max': {
-                  'field': 'anomalyScore'
+                  'field': 'anomaly_score'
                 }
               },
               'sumAnomalyScore': {
                 'sum': {
-                  'field': 'anomalyScore'
+                  'field': 'anomaly_score'
                 }
               }
             }
@@ -135,6 +135,8 @@ module.service('prlResultsService', function ($q, es) {
   // Contains an addition '*' key which holds an array of the
   // unique fields across all jobs.
   this.getJobViewByFields = function (index) {
+    // TODO - this info needs to be obtained from an ml endpoint.
+    // - move into job_service.js
     const deferred = $q.defer();
     const obj = {success: true, fieldsByJob: {'*':[]}};
 
@@ -142,7 +144,7 @@ module.service('prlResultsService', function ($q, es) {
       index: index,
       size: 500,
       body: {
-        '_source': ['id', 'analysisConfig.detectors.*'],
+        '_source': ['id', 'analysis_config.detectors.*'],
         'query': {
           'bool' : {
             'filter' : [
@@ -158,19 +160,19 @@ module.service('prlResultsService', function ($q, es) {
         _.each(resp.hits.hits, (hit) => {
           // Add the list of distinct by, over and partition fields for each job.
           const fieldsForJob = [];
-          const detectors = _.get(hit, '_source.analysisConfig.detectors', []);
+          const detectors = _.get(hit, '_source.analysis_config.detectors', []);
           _.each(detectors, (detector) => {
-            if (_.has(detector, 'partitionFieldName')) {
-              fieldsForJob.push(detector.partitionFieldName);
+            if (_.has(detector, 'partition_field_name')) {
+              fieldsForJob.push(detector.partition_field_name);
             }
-            if (_.has(detector, 'overFieldName')) {
-              fieldsForJob.push(detector.overFieldName);
+            if (_.has(detector, 'over_field_name')) {
+              fieldsForJob.push(detector.over_field_name);
             }
             // For jobs with by and over fields, don't add the 'by' field as this
             // field will only be added to the top-level fields for record type results
             // if it also an influencer over the bucket.
-            if (_.has(detector, 'byFieldName') && !(_.has(detector, 'overFieldName'))) {
-              fieldsForJob.push(detector.byFieldName);
+            if (_.has(detector, 'by_field_name') && !(_.has(detector, 'over_field_name'))) {
+              fieldsForJob.push(detector.by_field_name);
             }
           });
 
@@ -209,9 +211,9 @@ module.service('prlResultsService', function ($q, es) {
         'query': {
           'bool': {
             'filter': [
-              {'term': {'_type': 'categoryDefinition'}},
-              {'term': {'jobId': jobId}},
-              {'terms': {'categoryId': categoryIds}}
+              {'term': {'_type': 'category_definition'}},
+              {'term': {'job_id': jobId}},
+              {'terms': {'category_id': categoryIds}}
             ]
           }
         }
@@ -221,10 +223,10 @@ module.service('prlResultsService', function ($q, es) {
       if (resp.hits.total !== 0) {
         _.each(resp.hits.hits, (hit) => {
           if (maxExamples) {
-            obj.examplesByCategoryId[hit._source.categoryId] =
+            obj.examplesByCategoryId[hit._source.category_id] =
               _.slice(hit._source.examples, 0, Math.min(hit._source.examples.length, maxExamples));
           } else {
-            obj.examplesByCategoryId[hit._source.categoryId] = hit._source.examples;
+            obj.examplesByCategoryId[hit._source.category_id] = hit._source.examples;
           }
 
         });
@@ -242,7 +244,7 @@ module.service('prlResultsService', function ($q, es) {
   // for the specified job(s), normalized probability threshold, and time range.
   // Pass an empty array or ['*'] to search over all job IDs.
   // Returned response contains a records property, with each record containing
-  // only the fields jobId, detectorIndex, normalizedProbability and influencers.
+  // only the fields job_id, detector_index, normalized_probability and influencers.
   this.getRecordInfluencers = function (index, jobIds, threshold, earliestMs, latestMs, maxResults) {
     const deferred = $q.defer();
     const obj = {success: true, records: []};
@@ -268,7 +270,7 @@ module.service('prlResultsService', function ($q, es) {
 
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': earliestMs,
           'lte': latestMs,
           'format': 'epoch_millis'
@@ -278,7 +280,7 @@ module.service('prlResultsService', function ($q, es) {
 
     boolCriteria.push({
       'range': {
-        'normalizedProbability': {
+        'normalized_probability': {
           'gte': threshold,
         }
       }
@@ -290,7 +292,7 @@ module.service('prlResultsService', function ($q, es) {
         if (i > 0) {
           jobIdFilterStr += ' OR ';
         }
-        jobIdFilterStr += 'jobId:';
+        jobIdFilterStr += 'job_id:';
         jobIdFilterStr += jobId;
       });
       boolCriteria.push({
@@ -305,13 +307,13 @@ module.service('prlResultsService', function ($q, es) {
       index: index,
       size: maxResults !== undefined ? maxResults : 100,
       body: {
-        '_source': ['jobId', 'detectorIndex', 'influencers', 'normalizedProbability'],
+        '_source': ['jobId', 'detector_index', 'influencers', 'normalized_probability'],
         'query': {
           'bool': {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:record',
+                  'query': '_type:result AND result_type:record',
                   'analyze_wildcard': true
                 }
               },
@@ -324,7 +326,7 @@ module.service('prlResultsService', function ($q, es) {
           }
         },
         'sort' : [
-          { 'normalizedProbability' : {'order' : 'desc'}}
+          { 'normalized_probability' : {'order' : 'desc'}}
         ],
       }
     })
@@ -357,7 +359,7 @@ module.service('prlResultsService', function ($q, es) {
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': earliestMs,
           'lte': latestMs,
           'format': 'epoch_millis'
@@ -367,7 +369,7 @@ module.service('prlResultsService', function ($q, es) {
 
     boolCriteria.push({
       'range': {
-        'normalizedProbability': {
+        'normalized_probability': {
           'gte': threshold,
         }
       }
@@ -379,7 +381,7 @@ module.service('prlResultsService', function ($q, es) {
         if (i > 0) {
           jobIdFilterStr += ' OR ';
         }
-        jobIdFilterStr += 'jobId:';
+        jobIdFilterStr += 'job_id:';
         jobIdFilterStr += jobId;
       });
       boolCriteria.push({
@@ -400,12 +402,12 @@ module.service('prlResultsService', function ($q, es) {
               'must': [
                 {
                   'match': {
-                    'influencers.influencerFieldName': influencer.fieldName
+                    'influencers.influencer_field_name': influencer.fieldName
                   }
                 },
                 {
                   'match': {
-                    'influencers.influencerFieldValues': influencer.fieldValue
+                    'influencers.influencer_field_values': influencer.fieldValue
                   }
                 }
               ]
@@ -424,7 +426,7 @@ module.service('prlResultsService', function ($q, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:record',
+                  'query': '_type:result AND result_type:record',
                   'analyze_wildcard': true
                 }
               },
@@ -437,7 +439,7 @@ module.service('prlResultsService', function ($q, es) {
           }
         },
         'sort' : [
-          { 'normalizedProbability' : {'order' : 'desc'}}
+          { 'normalized_probability' : {'order' : 'desc'}}
         ],
       }
     })
@@ -469,7 +471,7 @@ module.service('prlResultsService', function ($q, es) {
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': earliestMs,
           'lte': latestMs,
           'format': 'epoch_millis'
@@ -477,12 +479,12 @@ module.service('prlResultsService', function ($q, es) {
       }
     });
 
-    boolCriteria.push({ 'term': { 'jobId': jobId} });
-    boolCriteria.push({ 'term': { 'detectorIndex': detectorIndex} });
+    boolCriteria.push({ 'term': { 'job_id': jobId} });
+    boolCriteria.push({ 'term': { 'detector_index': detectorIndex} });
 
     boolCriteria.push({
       'range': {
-        'normalizedProbability': {
+        'normalized_probability': {
           'gte': threshold,
         }
       }
@@ -498,12 +500,12 @@ module.service('prlResultsService', function ($q, es) {
               'must': [
                 {
                   'match': {
-                    'influencers.influencerFieldName': influencerFieldName
+                    'influencers.influencer_field_name': influencerFieldName
                   }
                 },
                 {
                   'match': {
-                    'influencers.influencerFieldValues': influencerFieldValue
+                    'influencers.influencer_field_values': influencerFieldValue
                   }
                 }
               ]
@@ -539,7 +541,7 @@ module.service('prlResultsService', function ($q, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:record',
+                  'query': '_type:result AND result_type:record',
                   'analyze_wildcard': true
                 }
               },
@@ -552,7 +554,7 @@ module.service('prlResultsService', function ($q, es) {
           }
         },
         'sort' : [
-          { 'normalizedProbability' : {'order' : 'desc'}}
+          { 'normalized_probability' : {'order' : 'desc'}}
         ],
       }
     })
