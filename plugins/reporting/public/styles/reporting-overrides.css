@@ -54,10 +54,16 @@ visualize-app .vis-editor-content > :not(.vis-editor-canvas)/* all non-canvas co
 }
 
 /* remove left padding from visualizations so that map lines up with container and so
- * visualizations rendre just like they do in dashboard panels
+ * visualizations render just like they do in dashboard panels.
+ * setting the position to be fixed and to take up the entire screen, because some zoom levels/viewports
+ * are triggering the media breakpoints that cause the .vis-editor-canvas to take up more room than the viewport
 */
 visualize-app .vis-editor-canvas {
   padding-left: 0px;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0; left: 0;
 }
 
 
