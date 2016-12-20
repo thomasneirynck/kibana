@@ -115,9 +115,9 @@ module.controller('PrlSummarySwimlanesController', function (
     // Build the query to pass to the Explorer dashboard.
 
     // If clicking on the influencer types swimlane, we want to drill down to show all values
-    // of that influencerFieldName. For bucketTime drill down to show all (*).
+    // of that influencerFieldName. For bucket_time drill down to show all (*).
     let query = '*';
-    if (data.mode === 'influencerTypes' && data.value !== 'bucketTime') {
+    if (data.mode === 'influencerTypes' && data.value !== 'bucket_time') {
       query = encodeURIComponent(data.value) + ':*';
     }
 
@@ -475,7 +475,7 @@ module.controller('PrlSummarySwimlanesController', function (
         if (scope.mode === 'jobs') {
           labelText = scope.jobDescriptions[labelId];
         } else {
-          labelText = (labelId === 'bucketTime' ? 'Overall' : labelId);
+          labelText = (labelId === 'bucket_time' ? 'Overall' : labelId);
         }
 
         // Crop y-axis 'viewBy' labels over 30 chars of more.
@@ -519,7 +519,7 @@ module.controller('PrlSummarySwimlanesController', function (
         if (scope.mode === 'jobs') {
           labelText = scope.jobDescriptions[labelId];
         } else {
-          labelText = (labelId === 'bucketTime' ? 'Overall' : labelId);
+          labelText = (labelId === 'bucket_time' ? 'Overall' : labelId);
         }
         $(yAxisLabelDivs[i]).attr('title', labelText);
       });
@@ -607,10 +607,10 @@ module.controller('PrlSummarySwimlanesController', function (
       // Sort the lane labels in reverse so that the order is a-z from the top.
       keys = keys.reverse();
 
-      // For influencer types, put the 'bucketTime' lane at the top.
+      // For influencer types, put the 'bucket_time' lane at the top.
       if (scope.mode === 'influencerTypes') {
-        keys = _.without(keys, 'bucketTime');
-        keys.push('bucketTime');
+        keys = _.without(keys, 'bucket_time');
+        keys.push('bucket_time');
       }
 
       return _.object(keys, _.map(keys, function (key) {
@@ -656,7 +656,7 @@ module.controller('PrlSummarySwimlanesController', function (
       }).appendTo('body').fadeIn(200);
 
 
-      if (scope.mode === 'influencerTypes' && laneLabel !== 'bucketTime') {
+      if (scope.mode === 'influencerTypes' && laneLabel !== 'bucket_time') {
         // Display top influencer field values in the tooltip
         // using the prl-swimlane-influencers directive.
 

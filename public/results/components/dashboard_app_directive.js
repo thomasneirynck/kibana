@@ -193,7 +193,7 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
             if (i > 0) {
               jobIdFilterStr += ' OR ';
             }
-            jobIdFilterStr += 'jobId:';
+            jobIdFilterStr += 'job_id:';
             jobIdFilterStr += job.id;
           });
           jobIdFilters = [{query: {query_string:{analyze_wildcard:true, query:jobIdFilterStr}}}];

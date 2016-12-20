@@ -21,7 +21,6 @@
  */
 import rison from 'rison-node';
 import _ from 'lodash';
-import $ from 'jquery';
 import moment from 'moment';
 
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
@@ -29,7 +28,7 @@ import stringUtils from'plugins/prelert/util/string_utils';
 import chrome from 'ui/chrome';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/prelert');
 
 module.controller('PrlTopScoresTableController', function ($scope, $route, $window, $location, timefilter) {
 
@@ -52,7 +51,7 @@ module.controller('PrlTopScoresTableController', function ($scope, $route, $wind
       // Retrieve the id of the configured viewBy aggregation.
       const viewByAgg = $scope.vis.aggs.bySchemaName.viewBy[0];
       const viewByAggId = viewByAgg.id;
-      const viewByAggFieldName = viewByAgg.fieldDisplayName();
+      const viewByAggFieldName = viewByAgg.getFieldDisplayName();
       const isTimeField = (viewByAggFieldName === $scope.vis.indexPattern.timeFieldName);
 
       // Retrieve the 'value' metric aggregation.
@@ -127,9 +126,9 @@ module.controller('PrlTopScoresTableController', function ($scope, $route, $wind
     // Build the query to pass to the Explorer dashboard.
 
     // If clicking on the influencer types swimlane, we want to drill down to show all values
-    // of that influencerFieldName. For bucketTime drill down to show all (*).
+    // of that influencer_field_name. For bucketTime drill down to show all (*).
     let query = '*';
-    if (item.fieldName === 'influencerFieldValue') {
+    if (item.fieldName === 'influencer_field_value') {
       const escapedFieldValue = stringUtils.escapeForElasticsearchQuery(item.fieldValue);
       // the arguments list in the path is actually a rison string and needs to be escaped differently
       // use rison's url encoder because it escapes quote characters correctly

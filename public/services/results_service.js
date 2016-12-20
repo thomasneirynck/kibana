@@ -307,7 +307,7 @@ module.service('prlResultsService', function ($q, es) {
       index: index,
       size: maxResults !== undefined ? maxResults : 100,
       body: {
-        '_source': ['jobId', 'detector_index', 'influencers', 'normalized_probability'],
+        '_source': ['job_id', 'detector_index', 'influencers', 'normalized_probability'],
         'query': {
           'bool': {
             'filter': [

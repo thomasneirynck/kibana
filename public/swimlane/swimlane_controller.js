@@ -181,9 +181,9 @@ module.controller('PrlSwimlaneController', function ($scope,
     // Build the query to pass to the Explorer dashboard.
 
     // If showing influencer types, we want to drilldown to show all values
-    // of that influencerFieldName. For bucketTime drilldown to show all (*).
+    // of that influencerFieldName. For bucket_time drilldown to show all (*).
     let query = '*';
-    if ($scope.vis.params.mode === 'influencers' && data.value !== 'bucketTime') {
+    if ($scope.vis.params.mode === 'influencers' && data.value !== 'bucket_time') {
       const fieldName = ($scope.vis.params.mode === 'influencers' ? data.value : data.field);
       const fieldValue = ($scope.vis.params.mode === 'influencers' ? '*' : data.value);
       query = encodeURIComponent(fieldName) + ':';
@@ -292,6 +292,7 @@ module.controller('PrlSwimlaneController', function ($scope,
           _.each(bucketsForViewByValue, function (secondaryBucket) {
             let secondaryViewByValue = secondaryBucket.key;
             if (isDetector === true) {
+              console.log('+++ swimlane_controller, isDetector=true, $scope.detectorsByJob:', $scope.detectorsByJob);
               // Obtain detectorDescription from map job_id (secondary bucket key) and detector_index (first bucket key).
               secondaryViewByValue = $scope.detectorsByJob[secondaryBucket.key][bucket.key];
             }
@@ -786,7 +787,7 @@ module.controller('PrlSwimlaneController', function ($scope,
         'left': x + offset
       }).appendTo('body').fadeIn(200);
 
-      if (scope.vis.params.mode === 'influencers' && laneLabel !== 'bucketTime') {
+      if (scope.vis.params.mode === 'influencers' && laneLabel !== 'bucket_time') {
 
         // Display top influencer field values in the tooltip
         // using the prl-swimlane-influencers directive.

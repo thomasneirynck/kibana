@@ -24,11 +24,9 @@ import 'plugins/prelert/connectionsmap/connectionsmap_directive.js';
 import 'plugins/prelert/connectionsmap/connectionsmap.less';
 
 import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
-import VisSchemasProvider from 'ui/vis/schemas';
 
 export default function ConnectionsMapVisType(Private) {
   const TemplateVisType = Private(TemplateVisTypeProvider);
-  const Schemas = Private(VisSchemasProvider);
 
   // Return a new instance describing this visualization.
   return new TemplateVisType({
@@ -55,4 +53,4 @@ export default function ConnectionsMapVisType(Private) {
                          {display:'warning', val:0}]
     }
   });
-};
+}

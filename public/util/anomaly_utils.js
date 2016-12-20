@@ -18,10 +18,10 @@
 * to extract information for display in dashboards.
 */
 
-let _ = require('lodash');
+const _ = require('lodash');
 
 // List of function descriptions for which actual and display values from record level results should be displayed.
-let METRIC_DISPLAY_FUNCTIONS = ['count', 'distinct_count', 'lat_long', 'mean', 'max', 'min', 'sum', 'median', 'letp'];
+const METRIC_DISPLAY_FUNCTIONS = ['count', 'distinct_count', 'lat_long', 'mean', 'max', 'min', 'sum', 'median', 'letp'];
 
 // Returns a severity label (one of critical, major, minor, warning or unknown)
 // for the supplied normalized anomaly score (a value between 0 and 100).
@@ -101,40 +101,40 @@ function labelDuplicateDetectorDescriptions(detectorsByJob) {
 }
 
 // Returns the name of the field to use as the entity name from the source record
-// obtained from Elasticsearch. The function looks first for a byField, then overField,
-// then partitionField, returning undefined if none of these fields are present.
+// obtained from Elasticsearch. The function looks first for a by_field, then over_field,
+// then partition_field, returning undefined if none of these fields are present.
 function getEntityFieldName(record) {
-  // Analyses with by and over fields, will have a top-level byFieldName, but
-  // the byFieldValue(s) will be in the nested causes array.
-  if (_.has(record, 'byFieldName') && _.has(record, 'byFieldValue')) {
-    return record.byFieldName;
+  // Analyses with by and over fields, will have a top-level by_field_name, but
+  // the by_field_value(s) will be in the nested causes array.
+  if (_.has(record, 'by_field_name') && _.has(record, 'by_field_value')) {
+    return record.by_field_name;
   }
 
-  if (_.has(record, 'overFieldName')) {
-    return record.overFieldName;
+  if (_.has(record, 'over_field_name')) {
+    return record.over_field_name;
   }
 
-  if (_.has(record, 'partitionFieldName')) {
-    return record.partitionFieldName;
+  if (_.has(record, 'partition_field_name')) {
+    return record.partition_field_name;
   }
 
   return undefined;
 }
 
 // Returns the value of the field to use as the entity value from the source record
-// obtained from Elasticsearch. The function looks first for a byField, then overField,
-// then partitionField, returning undefined if none of these fields are present.
+// obtained from Elasticsearch. The function looks first for a by_field, then over_field,
+// then partition_field, returning undefined if none of these fields are present.
 function getEntityFieldValue(record) {
-  if (_.has(record, 'byFieldValue')) {
-    return record.byFieldValue;
+  if (_.has(record, 'by_field_value')) {
+    return record.by_field_value;
   }
 
-  if (_.has(record, 'overFieldValue')) {
-    return record.overFieldValue;
+  if (_.has(record, 'over_field_value')) {
+    return record.over_field_value;
   }
 
-  if (_.has(record, 'partitionFieldValue')) {
-    return record.partitionFieldValue;
+  if (_.has(record, 'partition_field_value')) {
+    return record.partition_field_value;
   }
 
   return undefined;
@@ -143,7 +143,7 @@ function getEntityFieldValue(record) {
 // Returns whether actual and typical metric values should be displayed for a record
 // with the specified function description.
 // Note that the 'function' field in a record contains what the user entered e.g. 'high_count',
-// whereas the 'functionDescription' field holds a Prelert-built display hint for function e.g. 'count'.
+// whereas the 'function_description' field holds a Prelert-built display hint for function e.g. 'count'.
 function showMetricsForFunction(functionDescription) {
   return _.indexOf(METRIC_DISPLAY_FUNCTIONS, functionDescription) > -1;
 }

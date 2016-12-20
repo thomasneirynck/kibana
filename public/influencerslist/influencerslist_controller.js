@@ -21,7 +21,6 @@
  * by field name and value.
  */
 import _ from 'lodash';
-import $ from 'jquery';
 
 import 'plugins/prelert/lib/angular_bootstrap_patch';
 import 'plugins/prelert/filters/abbreviate_whole_number';
@@ -30,7 +29,7 @@ import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 import FilterManagerProvider from 'ui/filter_manager';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/prelert');
 
 module.controller('PrlInfluencersListController', function ($scope, Private) {
 

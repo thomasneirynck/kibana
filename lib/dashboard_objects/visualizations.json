@@ -32,7 +32,7 @@
     "_type": "visualization",
     "_source": {
       "title": "Top influencers",
-      "visState": "{\"type\":\"prlTopScoresTable\",\"params\":{},\"aggs\":[{\"id\":\"1\",\"type\":\"max\",\"schema\":\"value\",\"params\":{\"field\":\"anomaly_score\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"viewBy\",\"params\":{\"field\":\"influencerFieldValue\",\"size\":15,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "visState": "{\"type\":\"prlTopScoresTable\",\"params\":{},\"aggs\":[{\"id\":\"1\",\"type\":\"max\",\"schema\":\"value\",\"params\":{\"field\":\"anomaly_score\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"viewBy\",\"params\":{\"field\":\"influencer_field_value\",\"size\":15,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,

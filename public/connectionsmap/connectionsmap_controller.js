@@ -18,8 +18,6 @@
  */
 import rison from 'rison-node';
 import _ from 'lodash';
-import $ from 'jquery';
-import d3 from 'd3';
 import moment from 'moment';
 import chrome from 'ui/chrome';
 import 'ui/courier';
@@ -34,7 +32,7 @@ import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 import stringUtils from 'plugins/prelert/util/string_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/prelert');
 
 module.controller('PrlConnectionsMapController', function (
   $scope,
@@ -153,8 +151,8 @@ module.controller('PrlConnectionsMapController', function (
       _.each(resp.records, function (record) {
         const influencers = _.get(record, 'influencers', []);
         _.each(influencers, function (influencer) {
-          if (_.indexOf(influencerFieldNames, influencer.influencerFieldName) === -1) {
-            influencerFieldNames.push(influencer.influencerFieldName);
+          if (_.indexOf(influencerFieldNames, influencer.influencer_field_name) === -1) {
+            influencerFieldNames.push(influencer.influencer_field_name);
           }
         });
       });
@@ -381,9 +379,9 @@ module.controller('PrlConnectionsMapController', function (
     //        'Freq rare URI': [ {field: 'status', value: 404, score: 95, scoreForAllValues: 95}, {..} ],
     //        'High count URI': [ {field: 'uri', value: 'login.php', score: 75, scoreForAllValues: 174}, {..}]
     //    };
-    // where score = sum(normalizedProbability) of records with
+    // where score = sum(normalized_probability) of records with
     //    (influencer/detector name, influencer/detector value, influencer) triple
-    // and scoreForAllValues = sum(normalizedProbability) of records with (influencer/detector name, influencer) pair
+    // and scoreForAllValues = sum(normalized_probability) of records with (influencer/detector name, influencer) pair
     // These are used to calculate the 'strength' of the connection.
 
     console.log('Connections map processForDetectors() passed:', records);
@@ -392,10 +390,10 @@ module.controller('PrlConnectionsMapController', function (
     $scope.maxNormProbByField = {'prelert-detector':{}};
 
     _.each(records, function (record) {
-      const detectorDesc = $scope.detectorsByJob[record.jobId][record.detectorIndex];
+      const detectorDesc = $scope.detectorsByJob[record.job_id][record.detector_index];
       const maxNormProbByDetector = $scope.maxNormProbByField['prelert-detector'];
       maxNormProbByDetector[detectorDesc] =
-        Math.max(_.get(maxNormProbByDetector, detectorDesc, 0), record.normalizedProbability);
+        Math.max(_.get(maxNormProbByDetector, detectorDesc, 0), record.normalized_probability);
       const key = detectorDesc;
       let connections = [];
       if (_.has(dataset, key)) {
@@ -406,29 +404,28 @@ module.controller('PrlConnectionsMapController', function (
 
       const influencers = record.influencers;
       _.each(influencers, function (influencer) {
-        const fieldName = influencer.influencerFieldName;
-        _.each(influencer.influencerFieldValues, function (fieldValue) {
+        const fieldName = influencer.influencer_field_name;
+        _.each(influencer.influencer_field_values, function (fieldValue) {
 
           const connection = _.findWhere(connections, {field: fieldName, value:fieldValue});
           if (connection === undefined) {
             connections.push({
               field: fieldName,
               value: fieldValue,
-              score: record.normalizedProbability
+              score: record.normalized_probability
             });
           } else {
-            connection.score = connection.score + record.normalizedProbability;
+            connection.score = connection.score + record.normalized_probability;
           }
 
           const maxNormProbByFieldName = ($scope.maxNormProbByField[fieldName] || {});
-          maxNormProbByFieldName[fieldValue] = Math.max(_.get(maxNormProbByFieldName, fieldValue, 0), record.normalizedProbability);
+          maxNormProbByFieldName[fieldValue] = Math.max(_.get(maxNormProbByFieldName, fieldValue, 0), record.normalized_probability);
           $scope.maxNormProbByField[fieldName] = maxNormProbByFieldName;
         });
       });
     });
 
-    const scoresForDetectorAndFieldName = [];
-    _.each(dataset, function (connections, key) {
+    _.each(dataset, function (connections) {
 
       _.each(connections, function (connection) {
         const detectorFieldNameList = _.where(connections, {field: connection.field});
@@ -449,9 +446,9 @@ module.controller('PrlConnectionsMapController', function (
     //        301: [ {field: 'prelert-detector', value: 'Freq rare URI', score: 95, scoreForAllValues: 95}, {..} ],
     //        404: [ {field: 'uri', value: 'login.php', score: 75, scoreForAllValues: 174}, {..}]
     //    };
-    // where score = sum(normalizedProbability) of records with
+    // where score = sum(normalized_probability) of records with
     //    (influencer/detector name, influencer/detector value, influencer) triple
-    // and scoreForAllValues = sum(normalizedProbability) of records with (influencer/detector name, influencer) pair
+    // and scoreForAllValues = sum(normalized_probability) of records with (influencer/detector name, influencer) pair
     // These are used to calculate the 'strength' of the connection.
 
     console.log('Connections map processForInfluencers() passed:', records);
@@ -463,16 +460,16 @@ module.controller('PrlConnectionsMapController', function (
       const influencers = record.influencers;
 
       const dataForFieldName = _.find(influencers, function (influencer) {
-        return influencer.influencerFieldName === influencerFieldName;
+        return influencer.influencer_field_name === influencerFieldName;
       });
 
       if (dataForFieldName !== undefined) {
-        // Filter influencers for those not for the specified influencerFieldName.
+        // Filter influencers for those not for the specified influencer_field_name.
         const dataForOtherFieldNames = _.filter(influencers, function (influencer) {
-          return influencer.influencerFieldName !== influencerFieldName;
+          return influencer.influencer_field_name !== influencerFieldName;
         });
 
-        const influencerFieldValues = dataForFieldName.influencerFieldValues;
+        const influencerFieldValues = dataForFieldName.influencer_field_values;
         _.each(influencerFieldValues, function (fieldValue) {
           const key = fieldValue;
           let connections = [];
@@ -483,51 +480,50 @@ module.controller('PrlConnectionsMapController', function (
           }
 
           let maxNormProbByFieldName = ($scope.maxNormProbByField[influencerFieldName] || {});
-          maxNormProbByFieldName[fieldValue] = Math.max(_.get(maxNormProbByFieldName, fieldValue, 0), record.normalizedProbability);
+          maxNormProbByFieldName[fieldValue] = Math.max(_.get(maxNormProbByFieldName, fieldValue, 0), record.normalized_probability);
           $scope.maxNormProbByField[influencerFieldName] = maxNormProbByFieldName;
 
           _.each(dataForOtherFieldNames, function (influencer) {
-            _.each(influencer.influencerFieldValues, function (fieldValue) {
-              const fieldName = influencer.influencerFieldName;
+            _.each(influencer.influencer_field_values, function (fieldValue) {
+              const fieldName = influencer.influencer_field_name;
               const connection = _.findWhere(connections, {field: fieldName, value:fieldValue});
               if (connection === undefined) {
                 connections.push({
                   field: fieldName,
                   value: fieldValue,
-                  score: record.normalizedProbability
+                  score: record.normalized_probability
                 });
               } else {
-                connection.score = connection.score + record.normalizedProbability;
+                connection.score = connection.score + record.normalized_probability;
               }
 
               maxNormProbByFieldName = ($scope.maxNormProbByField[fieldName] || {});
-              maxNormProbByFieldName[fieldValue] = Math.max(_.get(maxNormProbByFieldName, fieldValue, 0), record.normalizedProbability);
+              maxNormProbByFieldName[fieldValue] = Math.max(_.get(maxNormProbByFieldName, fieldValue, 0), record.normalized_probability);
               $scope.maxNormProbByField[fieldName] = maxNormProbByFieldName;
             });
           });
 
           // Add connection for the detector.
-          const detectorDesc = $scope.detectorsByJob[record.jobId][record.detectorIndex];
+          const detectorDesc = $scope.detectorsByJob[record.job_id][record.detector_index];
           const detectorConnection = _.findWhere(connections, {field: 'prelert-detector', value:detectorDesc});
           if (detectorConnection === undefined) {
             connections.push({
               field: 'prelert-detector',
               value: detectorDesc,
-              score: record.normalizedProbability
+              score: record.normalized_probability
             });
           } else {
-            detectorConnection.score = detectorConnection.score + record.normalizedProbability;
+            detectorConnection.score = detectorConnection.score + record.normalized_probability;
           }
 
           const maxNormProbByDetector = $scope.maxNormProbByField['prelert-detector'];
           maxNormProbByDetector[detectorDesc] =
-            Math.max(_.get(maxNormProbByDetector, detectorDesc, 0), record.normalizedProbability);
+            Math.max(_.get(maxNormProbByDetector, detectorDesc, 0), record.normalized_probability);
         });
       }
     });
 
-    const scoresForInfluencerAndFieldName = [];
-    _.each(dataset, function (connections, key) {
+    _.each(dataset, function (connections) {
 
       _.each(connections, function (connection) {
         const forFieldNameList = _.where(connections, {field: connection.field});
@@ -543,13 +539,12 @@ module.controller('PrlConnectionsMapController', function (
   // Aggregates by 'entity' or 'detector', to show a summary of anomalies for the selected
   // node or link, including details of the record with the maximum normalized probability.
   function setSummaryTableRecords(records, aggregateBy) {
+
     let summaryRecords = [];
     const categoryIdsByJobId = {};
 
     _.each(records, function (record) {
-      const jobId = record.jobId;
-      const detectorIndex = record.detectorIndex;
-      const detectorDesc = $scope.detectorsByJob[record.jobId][record.detectorIndex];
+      const detectorDesc = $scope.detectorsByJob[record.job_id][record.detector_index];
       const entityFieldName = anomalyUtils.getEntityFieldName(record);
       const entityFieldValue = anomalyUtils.getEntityFieldValue(record);
 
@@ -562,14 +557,14 @@ module.controller('PrlConnectionsMapController', function (
           'entityFieldName': entityFieldName,
           'entityFieldValue':entityFieldValue,
           'count': 1,
-          'sumScore': record.normalizedProbability,
+          'sumScore': record.normalized_probability,
           'maxScoreRecord': record
         };
         summaryRecords.push(summary);
       } else {
         summary.count = summary.count + 1;
-        summary.sumScore = summary.sumScore + record.normalizedProbability;
-        if (record.normalizedProbability > summary.maxScoreRecord.normalizedProbability) {
+        summary.sumScore = summary.sumScore + record.normalized_probability;
+        if (record.normalized_probability > summary.maxScoreRecord.normalized_probability) {
           summary.maxScoreRecord = record;
           summary.entityFieldName = anomalyUtils.getEntityFieldName(record);
           summary.entityFieldValue = anomalyUtils.getEntityFieldValue(record);
@@ -585,7 +580,7 @@ module.controller('PrlConnectionsMapController', function (
     _.each(summaryRecords, function (summary) {
       // Calculate scores used in the summary visual.
       const maxScoreRecord = summary.maxScoreRecord;
-      const maxScore = parseInt(maxScoreRecord.normalizedProbability);
+      const maxScore = parseInt(maxScoreRecord.normalized_probability);
       const totalScore = parseInt(summary.sumScore);
       const barScore = maxScore !== 0 ? maxScore : 1;
       const maxScoreLabel = maxScore !== 0 ? maxScore : '< 1';
@@ -594,17 +589,17 @@ module.controller('PrlConnectionsMapController', function (
       summary.barScore = barScore;
       summary.maxScoreLabel = maxScoreLabel;
       summary.totalScore = totalScore;
-      summary.severity = anomalyUtils.getSeverity(maxScoreRecord.normalizedProbability);
+      summary.severity = anomalyUtils.getSeverity(maxScoreRecord.normalized_probability);
       summary.tooltip = compiledTooltip({
         'maxScoreValue':maxScoreLabel,
         'totalScoreValue':totalScoreLabel
       });
 
       const stringTime = maxScoreRecord[$scope.vis.indexPattern.timeFieldName];
-      summary.anomalyTime = moment(stringTime, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true).format('MMM Do YYYY, HH:mm:ss');
+      summary.anomalyTime = moment(stringTime).format('MMM Do YYYY, HH:mm:ss');
 
       // Store metric information.
-      const functionDescription = _.get(maxScoreRecord, 'functionDescription', '');
+      const functionDescription = _.get(maxScoreRecord, 'function_description', '');
       if (anomalyUtils.showMetricsForFunction (functionDescription) === true) {
         if (!_.has(maxScoreRecord, 'causes')) {
           summary.actual = maxScoreRecord.actual;
@@ -621,10 +616,10 @@ module.controller('PrlConnectionsMapController', function (
       }
 
       if (_.has(maxScoreRecord, 'prelertcategory')) {
-        if (!_.has(categoryIdsByJobId, maxScoreRecord.jobId)) {
-          categoryIdsByJobId[maxScoreRecord.jobId] = [];
+        if (!_.has(categoryIdsByJobId, maxScoreRecord.job_id)) {
+          categoryIdsByJobId[maxScoreRecord.job_id] = [];
         }
-        categoryIdsByJobId[maxScoreRecord.jobId].push(maxScoreRecord.prelertcategory);
+        categoryIdsByJobId[maxScoreRecord.job_id].push(maxScoreRecord.prelertcategory);
       }
 
       // Store causes information for analyses with by and over fields.
