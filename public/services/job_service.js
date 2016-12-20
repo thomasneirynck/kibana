@@ -18,6 +18,7 @@ import angular from 'angular';
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 import 'plugins/prelert/services/prelert_angular_client';
 import 'plugins/prelert/services/info_service';
+import 'plugins/prelert/services/ml';
 import 'plugins/prelert/messagebar';
 
 import uiModules from 'ui/modules';
@@ -407,86 +408,81 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
   // dashboards in the Prelert plugin. Returned response contains a jobs property,
   // which is an array of objects containing id, description, bucketSpan and detectorDescriptions,
   // plus a customUrls key if custom URLs have been configured for the job.
-  this.getBasicJobInfo = function (index) {
+  this.getBasicJobInfo = function () {
     const that = this;
     const deferred = $q.defer();
     const obj = {success: true, jobs: []};
 
-    es.search({
-      index: index,
-      size: 500,
-      body: {
-        '_source' : ['description', 'analysisConfig.bucketSpan', 'analysisConfig.detectors', 'customSettings'],
-        'query': {
-          'bool' : {
-            'filter' : [
-              {'type' : { 'value' : 'job' }}
-            ]
-          }
-        }
-      }
-    })
-    .then((resp) => {
-      if (resp.hits.total !== 0) {
-        let detectorDescriptionsByJob = {};
-        const detectorsByJob = {};
-        const customUrlsByJob = {};
-        _.each(resp.hits.hits, (hit)=> {
-          const job = {'id':hit._id};
+    ml.jobConfigs()
+      .then(function (resp) {
 
-          job.bucketSpan = _.get(hit, '_source.analysisConfig.bucketSpan');
+        if (resp.jobs && resp.jobs.length > 0) {
+          let detectorDescriptionsByJob = {};
+          const detectorsByJob = {};
+          const customUrlsByJob = {};
 
-          job.detectorDescriptions = [];
-          job.detectors = [];
-          const detectors = _.get(hit, '_source.analysisConfig.detectors', []);
-          _.each(detectors, (detector)=> {
-            if (_.has(detector, 'detectorDescription')) {
-              job.detectorDescriptions.push(detector.detectorDescription);
-              job.detectors.push(detector);
+          _.each(resp.jobs, (jobObj) => {
+            const analysisConfig = jobObj.analysis_config;
+            const job = {
+              id:jobObj.job_id,
+              bucketSpan: +analysisConfig.bucket_span
+            };
+
+            if (_.has(jobObj, 'description') && /^\s*$/.test(jobObj.description) === false) {
+              job.description = jobObj.description;
+            } else {
+              // Just use the id as the description.
+              job.description = jobObj.job_id;
             }
-          });
 
-          if (_.has(hit, '_source.description') && /^\s*$/.test(hit._source.description) === false) {
-            job.description = hit._source.description;
-          } else {
-            // Just use the id as the description.
-            job.description = hit._id;
-          }
-
-          if (_.has(hit, '_source.customSettings.customUrls')) {
-            job.customUrls = [];
-            _.each(hit._source.customSettings.customUrls, (url) => {
-              if (_.has(url, 'urlName') && _.has(url, 'urlValue')) {
-                job.customUrls.push({'urlName': url.urlName, 'urlValue':url.urlValue});
+            job.detectorDescriptions = [];
+            job.detectors = [];
+            const detectors = _.get(analysisConfig, 'detectors', []);
+            _.each(detectors, (detector)=> {
+              if (_.has(detector, 'detector_description')) {
+                job.detectorDescriptions.push(detector.detector_description);
+                job.detectors.push(detector);
               }
             });
-            // Only add an entry for a job if customUrls have been defined.
-            if (job.customUrls.length > 0) {
-              customUrlsByJob[job.id] = job.customUrls;
+
+
+            if (_.has(jobObj, 'custom_settings.custom_urls')) {
+              job.customUrls = [];
+              _.each(jobObj.custom_settings.custom_urls, (url) => {
+                if (_.has(url, 'url_name') && _.has(url, 'url_value')) {
+                  job.customUrls.push(url);
+                }
+              });
+              // Only add an entry for a job if customUrls have been defined.
+              if (job.customUrls.length > 0) {
+                customUrlsByJob[job.id] = job.customUrls;
+              }
             }
-          }
 
-          that.jobDescriptions[job.id] = job.description;
-          detectorDescriptionsByJob[job.id] = job.detectorDescriptions;
-          detectorsByJob[job.id] = job.detectors;
-          that.basicJobs[job.id] = job;
-          obj.jobs.push(job);
-        });
-
-        detectorDescriptionsByJob = anomalyUtils.labelDuplicateDetectorDescriptions(detectorDescriptionsByJob);
-        _.each(detectorsByJob, (dtrs, jobId) => {
-          _.each(dtrs, (dtr, i) => {
-            dtr.detectorDescription = detectorDescriptionsByJob[jobId][i];
+            that.jobDescriptions[job.id] = job.description;
+            detectorDescriptionsByJob[job.id] = job.detectorDescriptions;
+            detectorsByJob[job.id] = job.detectors;
+            that.basicJobs[job.id] = job;
+            obj.jobs.push(job);
           });
-        });
-        that.detectorsByJob = detectorsByJob;
-        that.customUrlsByJob = customUrlsByJob;
-      }
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
+
+          detectorDescriptionsByJob = anomalyUtils.labelDuplicateDetectorDescriptions(detectorDescriptionsByJob);
+          _.each(detectorsByJob, (dtrs, jobId) => {
+            _.each(dtrs, (dtr, i) => {
+              dtr.detector_description = detectorDescriptionsByJob[jobId][i];
+            });
+          });
+          that.detectorsByJob = detectorsByJob;
+          that.customUrlsByJob = customUrlsByJob;
+        }
+
+        deferred.resolve(obj);
+
+      }).catch(function (err) {
+        console.log('getBasicJobInfo error getting list of jobs:', err);
+
+      });
+
     return deferred.promise;
   };
 
