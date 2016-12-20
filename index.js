@@ -15,7 +15,7 @@
 
 import path from 'path';
 import _ from 'lodash';
-import createProxy from './lib/create_proxy';
+import createProxy from '../../src/core_plugins/elasticsearch/lib/create_proxy';
 import initializationChecks from './lib/initialization_checks';
 import readPrelertConfig from './lib/read_prelert_config';
 
@@ -59,13 +59,9 @@ module.exports = function (kibana) {
 
     init: function (server, options) {
 
-      createProxy(server, 'GET', 'prelert/{paths*}');
-      createProxy(server, 'POST', 'prelert/{paths*}');
-      createProxy(server, 'PUT', 'prelert/{paths*}');
-      createProxy(server, 'DELETE', 'prelert/{paths*}');
-      createProxy(server, 'GET', 'prelert_ext/{paths*}');
-      createProxy(server, 'POST', 'prelert_ext/{paths*}');
-      createProxy(server, 'GET', 'prelert_support/{paths*}');
+      createProxy(server, 'PUT', '/_xpack/prelert/{paths*}');
+      createProxy(server, 'POST', '/_xpack/prelert/{paths*}');
+      createProxy(server, 'DELETE', '/_xpack/prelert/{paths*}');
 
       const prelertConfig = readPrelertConfig();
       // Configure a configuration route that supplies the value of the

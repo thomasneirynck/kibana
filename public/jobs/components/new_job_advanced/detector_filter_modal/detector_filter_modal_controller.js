@@ -69,17 +69,17 @@ module.controller('PrlDetectorFilterModal', function ($scope, $modalInstance, pa
   ];
 */
   $scope.fields = [];
-  if ($scope.detector.fieldName) {
-    $scope.fields.push($scope.detector.fieldName);
+  if ($scope.detector.field_name) {
+    $scope.fields.push($scope.detector.field_name);
   }
-  if ($scope.detector.byFieldName) {
-    $scope.fields.push($scope.detector.byFieldName);
+  if ($scope.detector.by_field_name) {
+    $scope.fields.push($scope.detector.by_field_name);
   }
-  if ($scope.detector.overFieldName) {
-    $scope.fields.push($scope.detector.overFieldName);
+  if ($scope.detector.over_field_name) {
+    $scope.fields.push($scope.detector.over_field_name);
   }
-  if ($scope.detector.partitionFieldName) {
-    $scope.fields.push($scope.detector.partitionFieldName);
+  if ($scope.detector.partition_field_name) {
+    $scope.fields.push($scope.detector.partition_field_name);
   }
 
 
@@ -213,14 +213,14 @@ module.controller('PrlDetectorFilterModal', function ($scope, $modalInstance, pa
     // and send it off for validation.
     // if it passes, add the filter to the real detector.
     const dtr = angular.copy($scope.detector);
-    if (dtr.detectorRules === undefined) {
-      dtr.detectorRules = [];
+    if (dtr.detector_rules === undefined) {
+      dtr.detector_rules = [];
     }
 
     if (index >= 0) {
-      dtr.detectorRules[index] = filter;
+      dtr.detector_rules[index] = filter;
     } else {
-      dtr.detectorRules.push(filter);
+      dtr.detector_rules.push(filter);
     }
 
     validate(dtr)

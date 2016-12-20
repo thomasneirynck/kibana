@@ -52,7 +52,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
         if (i > 0) {
           jobIdFilterStr += ' OR ';
         }
-        jobIdFilterStr += 'jobId:';
+        jobIdFilterStr += 'job_id:';
         jobIdFilterStr += jobId;
       });
       boolCriteria.push({
@@ -85,7 +85,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
         'aggs': {
           'jobId': {
             'terms': {
-              'field': 'jobId',
+              'field': 'job_id',
               'size': maxResults !== undefined ? maxResults : 5,
               'order': {
                 'anomalyScore': 'desc'
@@ -94,7 +94,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
             'aggs': {
               'anomalyScore': {
                 'max': {
-                  'field': 'anomalyScore'
+                  'field': 'anomaly_score'
                 }
               },
               'byTime': {
@@ -110,7 +110,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
                 'aggs': {
                   'anomalyScore': {
                     'max': {
-                      'field': 'anomalyScore'
+                      'field': 'anomaly_score'
                     }
                   }
                 }
@@ -148,7 +148,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
     return deferred.promise;
   };
 
-  // Obtains the record level normalizedProbability values by detector ID
+  // Obtains the record level normalized_probability values by detector ID
   // for a particular job ID(s).
   // Pass an empty array or ['*'] to search over all job IDs.
   // Returned response contains a results property, which contains a
@@ -176,7 +176,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
         if (i > 0) {
           jobIdFilterStr += ' OR ';
         }
-        jobIdFilterStr += 'jobId:';
+        jobIdFilterStr += 'job_id:';
         jobIdFilterStr += jobId;
       });
       boolCriteria.push({
@@ -212,30 +212,30 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
         'aggs': {
           'jobId': {
             'terms': {
-              'field': 'jobId',
+              'field': 'job_id',
               'size': maxResults !== undefined ? maxResults : 5,
               'order': {
-                'normalizedProbability': 'desc'
+                'normalized_probability': 'desc'
               }
             },
             'aggs': {
               'normalizedProbability': {
                 'max': {
-                  'field': 'normalizedProbability'
+                  'field': 'normalized_probability'
                 }
               },
-              'detectorIndex': {
+              'detector_index': {
                 'terms': {
-                  'field': 'detectorIndex',
+                  'field': 'detector_index',
                   'size': maxResults !== undefined ? maxResults : 5,
                   'order': {
-                    'normalizedProbability': 'desc'
+                    'normalized_probability': 'desc'
                   }
                 },
                 'aggs': {
                   'normalizedProbability': {
                     'max': {
-                      'field': 'normalizedProbability'
+                      'field': 'normalized_probability'
                     }
                   },
                   'byTime': {
@@ -251,7 +251,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
                     'aggs': {
                       'normalizedProbability': {
                         'max': {
-                          'field': 'normalizedProbability'
+                          'field': 'normalized_probability'
                         }
                       }
                     }
@@ -271,7 +271,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
         const resultsForJob = {};
         const jobId = dataForJob.key;
 
-        const dataByDetectorId = _.get(dataForJob, ['detectorIndex', 'buckets'], []);
+        const dataByDetectorId = _.get(dataForJob, ['detector_index', 'buckets'], []);
         _.each(dataByDetectorId, (dataForDetector) => {
           const resultsForDetectorId = {};
           const detectorId = dataForDetector.key;
@@ -299,7 +299,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
   };
 
 
-  // Obtains the record level normalizedProbability values by detector ID
+  // Obtains the record level normalized_probability values by detector ID
   // for a particular job ID(s).
   // Pass an empty array or ['*'] to search over all job IDs.
   // Returned response contains a results property, which contains a
@@ -327,7 +327,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
         if (i > 0) {
           jobIdFilterStr += ' OR ';
         }
-        jobIdFilterStr += 'jobId:';
+        jobIdFilterStr += 'job_id:';
         jobIdFilterStr += jobId;
       });
       boolCriteria.push({
@@ -363,7 +363,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
         'aggs': {
           'influencerFieldName': {
             'terms': {
-              'field': 'influencerFieldName',
+              'field': 'influencer_field_name',
               'size': maxResults !== undefined ? maxResults : 10,
               'order': {
                 'anomalyScore': 'desc'
@@ -372,7 +372,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
             'aggs': {
               'anomalyScore': {
                 'max': {
-                  'field': 'anomalyScore'
+                  'field': 'anomaly_score'
                 }
               },
               'byTime': {
@@ -388,7 +388,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
                 'aggs': {
                   'anomalyScore': {
                     'max': {
-                      'field': 'anomalyScore'
+                      'field': 'anomaly_score'
                     }
                   }
                 }
@@ -453,7 +453,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
         if (i > 0) {
           jobIdFilterStr += ' OR ';
         }
-        jobIdFilterStr += 'jobId:';
+        jobIdFilterStr += 'job_id:';
         jobIdFilterStr += jobId;
       });
       boolCriteria.push({
@@ -489,7 +489,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
         'aggs': {
           'influencerFieldValue': {
             'terms': {
-              'field': 'influencerFieldValue',
+              'field': 'influencer_field_value',
               'size': maxResults !== undefined ? maxResults : 10,
               'order': {
                 'anomalyScore': 'desc'
@@ -498,7 +498,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
             'aggs': {
               'anomalyScore': {
                 'max': {
-                  'field': 'anomalyScore'
+                  'field': 'anomaly_score'
                 }
               },
               'byTime': {
@@ -514,7 +514,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
                 'aggs': {
                   'anomalyScore': {
                     'max': {
-                      'field': 'anomalyScore'
+                      'field': 'anomaly_score'
                     }
                   }
                 }
@@ -579,7 +579,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
 
     boolCriteria.push({
       'range': {
-        'normalizedProbability': {
+        'normalized_probability': {
           'gte': 0//($scope.vis.params.threshold || 0),
         }
       }
@@ -591,7 +591,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
         if (i > 0) {
           jobIdFilterStr += ' OR ';
         }
-        jobIdFilterStr += 'jobId:';
+        jobIdFilterStr += 'job_id:';
         jobIdFilterStr += jobId;
       });
       boolCriteria.push({
@@ -606,28 +606,28 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
       index: index,
       size: maxResults !== undefined ? maxResults : 100,
       body: {
-        '_source': ['jobId',
+        '_source': ['job_id',
         '@timestamp',
-        'detectorIndex',
+        'detector_index',
         'influencers',
-        'normalizedProbability',
+        'normalized_probability',
         'actual',
         'typical',
-        'byFieldName',
-        'byFieldValue',
+        'by_field_name',
+        'by_field_value',
         'function',
-        'functionDescription',
+        'function_description',
         'probability',
-        'partitionFieldValue',
-        'partitionFieldName',
-        'singleCauseByFieldName',
-        'singleCauseByFieldValue',
-        'overFieldName',
-        'overFieldValue',
-        'isInterim',
-        'entityName',
-        'entityValue',
-        'correlatedByFieldValue'],
+        'partition_field_value',
+        'partition_field_name',
+        'single_cause_by_field_name',
+        'single_cause_by_field_value',
+        'over_field_name',
+        'over_field_value',
+        'is_interim',
+        'entity_name',
+        'entity_value',
+        'correlated_by_field_value'],
         'query': {
           'bool': {
             'filter': [
@@ -646,7 +646,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
           }
         },
         'sort' : [
-          { 'normalizedProbability' : {'order' : 'desc'}}
+          { 'normalized_probability' : {'order' : 'desc'}}
         ],
       }
     })
@@ -696,7 +696,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
         if (i > 0) {
           jobIdFilterStr += ' OR ';
         }
-        jobIdFilterStr += 'jobId:';
+        jobIdFilterStr += 'job_id:';
         jobIdFilterStr += jobId;
       });
       boolCriteria.push({
@@ -710,7 +710,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
     const resutsSize = 20;
     let query = '_type:influencer';
     if (type[swimlaneType] === type.INF_TYPE) {
-      query +=  'AND influencerFieldName:' + laneLabel;
+      query +=  'AND influencer_field_name:' + laneLabel;
     }
 
     es.search({
@@ -737,7 +737,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
         'aggs': {
           'maxInfluencerFieldValues': {
             'terms': {
-              'field': 'influencerFieldValue',
+              'field': 'influencer_field_value',
               'size': resutsSize,
               'order': {
                 'maxAnomalyScore': 'desc'
@@ -746,19 +746,19 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
             'aggs': {
               'maxAnomalyScore': {
                 'max': {
-                  'field': 'anomalyScore'
+                  'field': 'anomaly_score'
                 }
               },
               'sumAnomalyScore': {
                 'sum': {
-                  'field': 'anomalyScore'
+                  'field': 'anomaly_score'
                 }
               }
             }
           },
           'sumInfluencerFieldValues': {
             'terms': {
-              'field': 'influencerFieldValue',
+              'field': 'influencer_field_value',
               'size': resutsSize,
               'order': {
                 'sumAnomalyScore': 'desc'
@@ -767,12 +767,12 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
             'aggs': {
               'sumAnomalyScore': {
                 'sum': {
-                  'field': 'anomalyScore'
+                  'field': 'anomaly_score'
                 }
               },
               'maxAnomalyScore': {
                 'max': {
-                  'field': 'anomalyScore'
+                  'field': 'anomaly_score'
                 }
               }
             }
@@ -846,7 +846,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
         if (i > 0) {
           jobIdFilterStr += ' OR ';
         }
-        jobIdFilterStr += 'jobId:';
+        jobIdFilterStr += 'job_id:';
         jobIdFilterStr += jobId;
       });
       boolCriteria.push({
@@ -894,7 +894,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
             'aggs': {
               'jobs': {
                 'terms': {
-                  'field': 'jobId',
+                  'field': 'job_id',
                   'size': maxResults !== undefined ? maxResults : 10,
                   'order': {
                     'sumEventCount': 'desc'
@@ -903,7 +903,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
                 'aggs': {
                   'sumEventCount': {
                     'sum': {
-                      'field': 'eventCount'
+                      'field': 'event_count'
                     }
                   }
                 }

@@ -59,7 +59,7 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
     const schedulerConfig = $scope.job.schedulerConfig;
     $scope.ui.isScheduled = true;
     $scope.ui.tabs[1].hidden = false;
-    $scope.ui.schedulerStopped = (!$scope.job.schedulerStatus || $scope.job.schedulerStatus === 'STOPPED');
+    $scope.ui.schedulerStopped = (!$scope.job.scheduler_status || $scope.job.scheduler_status === 'STOPPED');
 
     $scope.ui.scheduler.queryText = angular.toJson(schedulerConfig.query, true);
     $scope.ui.scheduler.scrollSizeText = schedulerConfig.scrollSize;
@@ -93,19 +93,19 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
 
   // add new categorization filter
   $scope.addCategorizationFilter = function () {
-    if ($scope.job.analysisConfig) {
-      if (!$scope.job.analysisConfig.categorizationFilters) {
-        $scope.job.analysisConfig.categorizationFilters = [];
+    if ($scope.job.analysis_config) {
+      if (!$scope.job.analysis_config.categorization_filters) {
+        $scope.job.analysis_config.categorization_filters = [];
       }
 
-      $scope.job.analysisConfig.categorizationFilters.push('');
+      $scope.job.analysis_config.categorization_filters.push('');
     }
   };
 
   // remove selected categorization filter
   $scope.removeCategorizationFilter = function (index) {
-    if ($scope.job.analysisConfig && $scope.job.analysisConfig.categorizationFilters) {
-      $scope.job.analysisConfig.categorizationFilters.splice(index, 1);
+    if ($scope.job.analysis_config && $scope.job.analysis_config.categorization_filters) {
+      $scope.job.analysis_config.categorization_filters.splice(index, 1);
     }
   };
 
@@ -133,9 +133,9 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
       });
     });
 
-    if ($scope.job.analysisConfig.categorizationFilters) {
+    if ($scope.job.analysis_config.categorization_filters) {
       let v = true;
-      _.each($scope.job.analysisConfig.categorizationFilters, (d) => {
+      _.each($scope.job.analysis_config.categorization_filters, (d) => {
         try {
           new RegExp(d);
         } catch (e) {
@@ -143,7 +143,7 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
         }
 
         if (d === '' || v === false) {
-          tabs[0].checks.categorizationFilters.valid = false;
+          tabs[0].checks.categorization_filters.valid = false;
           valid = false;
         }
       });
@@ -169,20 +169,20 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
     }
 
     // check each detector. if the description or filters have changed, add it to the data json
-    _.each($scope.job.analysisConfig.detectors, (d, i) => {
+    _.each($scope.job.analysis_config.detectors, (d, i) => {
       let changes = 0;
 
       const obj = {
         index: i,
       };
 
-      if (d.detectorDescription !== params.job.analysisConfig.detectors[i].detectorDescription) {
-        obj.description = d.detectorDescription;
+      if (d.detector_description !== params.job.analysis_config.detectors[i].detector_description) {
+        obj.description = d.detector_description;
         changes++;
       }
 
-      if (d.detectorRules !== params.job.analysisConfig.detectors[i].detectorRules) {
-        obj.detectorRules = d.detectorRules;
+      if (d.detector_rules !== params.job.analysis_config.detectors[i].detectorRules) {
+        obj.detector_rules = d.detector_rules;
         changes++;
       }
 
@@ -195,22 +195,22 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
     });
 
     // check each categorization filter. if any have changed, add all to the data json
-    if ($scope.job.analysisConfig.categorizationFilters) {
+    if ($scope.job.analysis_config.categorization_filters) {
       let doUpdate = false;
 
       // array lengths are different
-      if ($scope.job.analysisConfig.categorizationFilters.length !== params.job.analysisConfig.categorizationFilters.length) {
+      if ($scope.job.analysis_config.categorization_filters.length !== params.job.analysis_config.categorization_filters.length) {
         doUpdate = true;
       }
 
-      _.each($scope.job.analysisConfig.categorizationFilters, (d, i) => {
-        if (d !== params.job.analysisConfig.categorizationFilters[i]) {
+      _.each($scope.job.analysis_config.categorization_filters, (d, i) => {
+        if (d !== params.job.analysis_config.categorization_filters[i]) {
           doUpdate = true;
         }
       });
 
       if (doUpdate) {
-        data.categorizationFilters = $scope.job.analysisConfig.categorizationFilters;
+        data.categorization_filters = $scope.job.analysis_config.categorization_filters;
       }
     }
 

@@ -70,17 +70,17 @@
 
 
     <div class="form-group"
-    ng-show="(job.analysisConfig.categorizationFieldName !== undefined && job.analysisConfig.categorizationFieldName !== '') ||
-             (job.analysisConfig.categorizationFilters && job.analysisConfig.categorizationFilters.length)">
+    ng-show="(job.analysis_config.categorization_field_name !== undefined && job.analysis_config.categorization_field_name !== '') ||
+             (job.analysis_config.categorization_filters && job.analysis_config.categorization_filters.length)">
     <hr />
 
     <label>Categorization Filters</label>
-    <div ng-if="job.analysisConfig && job.analysisConfig.categorizationFilters">
-      <div ng-repeat="item in job.analysisConfig.categorizationFilters track by $index" class="categorization-filter">
+    <div ng-if="job.analysis_config && job.analysis_config.categorization_filters">
+      <div ng-repeat="item in job.analysis_config.categorization_filters track by $index" class="categorization-filter">
         <div class="field-cols">
           <div class="form-group">
             <input
-              ng-model="job.analysisConfig.categorizationFilters[$index]"
+              ng-model="job.analysis_config.categorization_filters[$index]"
               type="text"
               class="form-control" />
           </div>
@@ -100,7 +100,7 @@
         aria-label="Add Categorization Filter"
         ng-click="addCategorizationFilter()"
         type="button"
-        ng-disabled="job.analysisConfig.categorizationFieldName === undefined || job.analysisConfig.categorizationFieldName === ''"
+        ng-disabled="job.analysis_config.categorization_field_name === undefined || job.analysis_config.categorization_field_name === ''"
         class="btn btn-primary btn-xs">
         <span class="sr-only">Add Categorization Filter</span>
         <i aria-hidden="true" class="fa fa-plus"></i> Add Categorization Filter
@@ -108,8 +108,8 @@
     </div>
   </div>
 
-  <div ng-hide="ui.validation.tabs[0].checks.categorizationFilters.valid" class="validation-error">
-    {{ ( ui.validation.tabs[2].checks.categorizationFilters.message || "Categorization filters must all be valid regular expressions" ) }}
+  <div ng-hide="ui.validation.tabs[0].checks.categorization_filters.valid" class="validation-error">
+    {{ ( ui.validation.tabs[2].checks.categorization_filters.message || "Categorization filters must all be valid regular expressions" ) }}
   </div>
 
   </div>
@@ -165,7 +165,7 @@
 
   <div class="tab_contents" ng-show="ui.currentTab === 2">
     <div prl-job-detectors-list
-      prl-detectors="job.analysisConfig.detectors"
+      prl-detectors="job.analysis_config.detectors"
       prl-indices="indices"
       prl-properties="properties"
       prl-edit-mode="'EDIT'"

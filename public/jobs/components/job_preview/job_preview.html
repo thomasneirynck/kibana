@@ -6,10 +6,10 @@
         <span ng-switch-when="counts">
           <!-- do nothing yet -->
         </span>
-        <span ng-switch-when="modelSizeStats">
+        <span ng-switch-when="model_size_stats">
           <!-- do nothing yet -->
         </span>
-        <div ng-switch-when="analysisConfig">
+        <div ng-switch-when="analysis_config">
           <prl-job-item ng-repeat="(key1, value1) in value">
             <div ng-switch="key1">
               <span ng-switch-when="detectors">
@@ -55,7 +55,7 @@
             </div>
           </prl-job-item>
         </div>
-        <div ng-switch-when="dataDescription">
+        <div ng-switch-when="data_description">
           <prl-job-item ng-repeat="(key1, value1) in value">
             <div class="prl_job_row">
               <div class="prl_job_item_key">{{key1}}</div>
@@ -72,7 +72,7 @@
             </div>
           </prl-job-item>
         </div>
-        <div ng-switch-when="modelSizeStats">
+        <div ng-switch-when="model_size_stats">
           <div>Model size stats:</div>
           <prl-job-item ng-repeat="(key1, value1) in value">
             <div class="prl_job_row">

@@ -63,19 +63,19 @@ module.directive('prlJobDetectorsList', function ($modal, $q, prlJobService) {
       // add a filter to the detector
       // called from inside the filter modal
       $scope.addFilter = function (dtr, filter, filterIndex) {
-        if (dtr.detectorRules === undefined) {
-          dtr.detectorRules = [];
+        if (dtr.detector_rules === undefined) {
+          dtr.detector_rules = [];
         }
 
         if (filterIndex >= 0) {
-          dtr.detectorRules[filterIndex] = filter;
+          dtr.detector_rules[filterIndex] = filter;
         } else {
-          dtr.detectorRules.push(filter);
+          dtr.detector_rules.push(filter);
         }
       };
 
       $scope.removeFilter = function (detector, filterIndex) {
-        detector.detectorRules.splice(filterIndex, 1);
+        detector.detector_rules.splice(filterIndex, 1);
       };
 
       $scope.editFilter = function (detector, index) {
@@ -149,7 +149,7 @@ module.directive('prlJobDetectorsList', function ($modal, $q, prlJobService) {
         filterIndex = (filterIndex !== undefined ? filterIndex : -1);
         let filter;
         if (filterIndex >= 0) {
-          filter = angular.copy(dtr.detectorRules[filterIndex]);
+          filter = angular.copy(dtr.detector_rules[filterIndex]);
         }
         const modalInstance = $modal.open({
           template: require('plugins/prelert/jobs/components/new_job_advanced/detector_filter_modal/detector_filter_modal.html'),

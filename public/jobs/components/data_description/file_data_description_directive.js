@@ -35,7 +35,7 @@ module.directive('prlFileDataDescription', function ($http) {
       fileName:        '=prlUploadedDataFileName',
       dataReady:       '=prlDataReady',
       delimiter:       '=prlSelectedFieldDelimiter',
-      dataDescription: '=prlDataDescription',
+      data_description: '=prlDataDescription',
       influencers:     '=prlInfluencers',
       maximumFileSize: '=prlMaximumFileSize',
     },
@@ -86,11 +86,11 @@ module.directive('prlFileDataDescription', function ($http) {
       $scope.delimiters = [];
 
       function resetData() {
-        $scope.dataDescription.format = 'DELIMITED';
-        $scope.dataDescription.fieldDelimiter = '';
-        $scope.dataDescription.timeField = '';
-        $scope.dataDescription.timeFormat = '';
-        $scope.dataDescription.quoteCharacter = '"';
+        $scope.data_description.format = 'DELIMITED';
+        $scope.data_description.field_delimiter = '';
+        $scope.data_description.time_field = '';
+        $scope.data_description.time_format = '';
+        $scope.data_description.quote_character = '"';
         $scope.firstLine = '';
 
         $scope.ui.properties = {};
@@ -116,8 +116,8 @@ module.directive('prlFileDataDescription', function ($http) {
       };
 
       function checkDataReady() {
-        if ($scope.dataDescription.format === 'DELIMITED' ||
-           $scope.dataDescription.format === 'JSON') {
+        if ($scope.data_description.format === 'DELIMITED' ||
+           $scope.data_description.format === 'JSON') {
           $scope.dataReady = (($scope.delimiterGuessed &&
             $scope.typesGuessed &&
             $scope.timeFormatGuessed) || $scope.forceDataReady);
@@ -128,7 +128,7 @@ module.directive('prlFileDataDescription', function ($http) {
       }
 
       $scope.dataFormatChange = function () {
-        if ($scope.dataDescription.format === 'DELIMITED') {
+        if ($scope.data_description.format === 'DELIMITED') {
           findFirstLine();
           guessDelimiters();
         }
@@ -141,20 +141,20 @@ module.directive('prlFileDataDescription', function ($http) {
 
       function guessDataFormat() {
         if ($scope.uploadData.fileName.match('.csv')) {
-          $scope.dataDescription.format = 'DELIMITED';
+          $scope.data_description.format = 'DELIMITED';
         } else if ($scope.uploadData.fileName.match('.json')) {
-          $scope.dataDescription.format = 'JSON';
+          $scope.data_description.format = 'JSON';
           $scope.forceDataReady = true;
         } else {
           // make a crude guess at the contents by looking at the first
           // character of the file.
           if ($scope.uploadData.data[0] === '{' ||
              $scope.uploadData.data[0] === '[') {
-            $scope.dataDescription.format = 'JSON';
+            $scope.data_description.format = 'JSON';
             $scope.forceDataReady = true;
           }
         }
-        console.log('guessDataFormat: guessed data format: ' + $scope.dataDescription.format);
+        console.log('guessDataFormat: guessed data format: ' + $scope.data_description.format);
 
       }
 
@@ -175,11 +175,11 @@ module.directive('prlFileDataDescription', function ($http) {
       }
 
       function guessFields() {
-        if ($scope.dataDescription.format === 'DELIMITED' && $scope.delimiter) {
+        if ($scope.data_description.format === 'DELIMITED' && $scope.delimiter) {
           $scope.ui.properties = {};
           $scope.properties = {};
           const properties = $scope.firstLine.split($scope.delimiter);
-          const reg = new RegExp($scope.dataDescription.quoteCharacter, 'g');
+          const reg = new RegExp($scope.data_description.quote_character, 'g');
           _.each(properties, (f) => {
             f = f.replace(reg, '');
             $scope.ui.properties[f] = f;
@@ -188,7 +188,7 @@ module.directive('prlFileDataDescription', function ($http) {
           console.log('guessFields: guessed delimited fields: ', $scope.properties);
           $scope.influencers = Object.keys($scope.properties);
           $scope.typesGuessed = true;
-        } else if ($scope.dataDescription.format === 'JSON') {
+        } else if ($scope.data_description.format === 'JSON') {
           let json;
           try {
             json = angular.fromJson($scope.uploadData.data);
@@ -230,7 +230,7 @@ module.directive('prlFileDataDescription', function ($http) {
       $scope.guessFields = guessFields;
 
       function guessTimeField() {
-        let match = $scope.dataDescription.timeField;
+        let match = $scope.data_description.time_field;
         _.each($scope.properties, (prop, i) => {
           // loop through properties and find the first item that matches 'time'
           if (match === '' && i.match('time')) {
@@ -238,25 +238,25 @@ module.directive('prlFileDataDescription', function ($http) {
           }
         });
         if (match !== '') {
-          $scope.dataDescription.timeField = match;
+          $scope.data_description.time_field = match;
           console.log('guessTimeField: guessed time fields: ', match);
         }
       }
 
       function guessTimeFormat() {
-        if ($scope.dataDescription.timeField !== '') {
-          $scope.dataDescription.timeFormat = '';
+        if ($scope.data_description.time_field !== '') {
+          $scope.data_description.time_format = '';
 
           const testData = $scope.uploadData.data;
-          const quo = $scope.dataDescription.quoteCharacter;
+          const quo = $scope.data_description.quote_character;
 
           const jqueryCsvOptions = {
             separator: $scope.delimiter,
-            delimiter: $scope.dataDescription.quoteCharacter,
+            delimiter: $scope.data_description.quote_character,
             state: {}
           };
 
-          if ($scope.dataDescription.format === 'DELIMITED') {
+          if ($scope.data_description.format === 'DELIMITED') {
             try {
               let lines = testData.split('\n');
               // better splitter, but crashes the page in chrome for some large csv files
@@ -273,7 +273,7 @@ module.directive('prlFileDataDescription', function ($http) {
                 const quoReg = new RegExp(quo, 'g');
                 _.each(cols, (col, i) => {
                   col = col.replace(quoReg, '');
-                  if (col === $scope.dataDescription.timeField) {
+                  if (col === $scope.data_description.time_field) {
                     colIndex = i;
                   }
                 });
@@ -289,19 +289,19 @@ module.directive('prlFileDataDescription', function ($http) {
                 const cols = $.csv.toArray(line, jqueryCsvOptions);
                 const col = cols[colIndex];
 
-                $scope.dataDescription.timeFormat = stringUtils.guessTimeFormat(col);
+                $scope.data_description.time_format = stringUtils.guessTimeFormat(col);
                 $scope.timeFormatGuessed = true;
               }
             } catch (e) {
               console.log('guessTimeFormat: error spliting file up by delimiter', e);
             }
-          } else if ($scope.dataDescription.format === 'JSON') {
+          } else if ($scope.data_description.format === 'JSON') {
             // because of the way the properties were detected in guessFields().
-            // $scope.properties[$scope.dataDescription.timeField] contains real data
+            // $scope.properties[$scope.data_description.time_field] contains real data
             // which can be used to detect the time format.
-            const tf = $scope.properties[$scope.dataDescription.timeField];
-            $scope.dataDescription.timeFormat = stringUtils.guessTimeFormat(tf);
-            if ($scope.dataDescription.timeFormat) {
+            const tf = $scope.properties[$scope.data_description.time_field];
+            $scope.data_description.time_format = stringUtils.guessTimeFormat(tf);
+            if ($scope.data_description.time_format) {
               $scope.timeFormatGuessed = true;
             }
           }
@@ -326,7 +326,7 @@ module.directive('prlFileDataDescription', function ($http) {
       };
 
       $scope.getExampleTime = function () {
-        $scope.exampleTime = stringUtils.generateExampleTime($scope.dataDescription.timeFormat);
+        $scope.exampleTime = stringUtils.generateExampleTime($scope.data_description.time_format);
       };
 
     }

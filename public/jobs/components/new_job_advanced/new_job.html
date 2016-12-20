@@ -62,7 +62,7 @@
           prl-date-properties="dateProperties"
           prl-indices="indices"
           prl-types="types"
-          prl-data-description="job.dataDescription"
+          prl-data-description="job.data_description"
           prl-exposed-functions="prlElasticDataDescriptionExposedFunctions"
           prl-elastic-server-info="elasticServerInfo"
 
@@ -80,7 +80,7 @@
           prl-uploaded-data-file-name="ui.wizard.fileName"
           prl-properties="properties"
           prl-selected-field-delimiter="ui.selectedFieldDelimiter"
-          prl-data-description="job.dataDescription"
+          prl-data-description="job.data_description"
           prl-influencers="ui.influencers"
           prl--maximum-file-size="maximumFileSize"
 
@@ -127,7 +127,7 @@
             <div class="form-group">
               <label>Name</label><i prl-info-icon="new_job_id" />
               <input
-                ng-model="job.id"
+                ng-model="job.job_id"
                 required
                 placeholder="Job ID"
                 ng-change="changeJobIDCase()"
@@ -200,12 +200,12 @@
             <div class="form-group" ng-if="ui.hasTransforms">
               <div prl-job-transforms-list
                 prl-transforms="job.transforms"
-                prl-detectors="job.analysisConfig.detectors"
+                prl-detectors="job.analysis_config.detectors"
                 prl-indices="indices"
                 prl-properties="properties"
                 prl-influencers="ui.influencers"
                 prl-add-transforms-to-properties="addTransformsToProperties"
-                prl-data-format="job.dataDescription.format"
+                prl-data-format="job.data_description.format"
                 ></div>
             </div>
           </div>
@@ -222,48 +222,48 @@
             </datalist>
 
             <div class="form-group">
-              <label>bucketSpan</label><i prl-info-icon="new_job_bucketspan" />
+              <label>bucket_span</label><i prl-info-icon="new_job_bucketspan" />
               <select
-                ng-model="job.analysisConfig.bucketSpan"
+                ng-model="job.analysis_config.bucket_span"
                 ng-options="bs.value as bs.title for bs in ui.bucketSpanValues"
                 ng-change="calculateSchedulerFrequencyDefault()"
                 class="form-control">
               </select>
             </div>
             <div class="form-group">
-              <label>summaryCountFieldName</label><i prl-info-icon="new_job_summarycountfieldname" />
+              <label>summary_count_field_name</label><i prl-info-icon="new_job_summarycountfieldname" />
               <input
                 type="text"
-                ng-model="job.analysisConfig.summaryCountFieldName"
+                ng-model="job.analysis_config.summary_count_field_name"
                 placeholder=""
-                ng-change="generalAnalysisConfigFieldNameChange('summaryCountFieldName')"
+                ng-change="generalAnalysisConfigFieldNameChange('summary_count_field_name')"
                 list='properties_datalist_no_transforms'
                 class="form-control"  />
             </div>
             <div class="form-group">
-              <label>categorizationFieldName</label><i prl-info-icon="new_job_categorizationfieldname" />
+              <label>categorization_field_name</label><i prl-info-icon="new_job_categorizationfieldname" />
               <input
                 type="text"
-                ng-model="job.analysisConfig.categorizationFieldName"
+                ng-model="job.analysis_config.categorization_field_name"
                 placeholder=""
-                ng-change="generalAnalysisConfigFieldNameChange('categorizationFieldName')"
+                ng-change="generalAnalysisConfigFieldNameChange('categorization_field_name')"
                 ng-change="categorizationFieldNameChange()"
                 list='properties_datalist'
                 class="form-control"  />
             </div>
 
             <div class="form-group"
-              ng-show="(job.analysisConfig.categorizationFieldName !== undefined && job.analysisConfig.categorizationFieldName !== '') ||
-                       (job.analysisConfig.categorizationFilters && job.analysisConfig.categorizationFilters.length)">
+              ng-show="(job.analysis_config.categorization_field_name !== undefined && job.analysis_config.categorization_field_name !== '') ||
+                       (job.analysis_config.categorization_filters && job.analysis_config.categorization_filters.length)">
 
               <label>Categorization Filters</label> <i prl-info-icon="new_job_categorizationfilters" />
-              <div ng-if="job.analysisConfig && job.analysisConfig.categorizationFilters">
-                <div ng-repeat="item in job.analysisConfig.categorizationFilters track by $index" class="categorization-filter">
+              <div ng-if="job.analysis_config && job.analysis_config.categorization_filters">
+                <div ng-repeat="item in job.analysis_config.categorization_filters track by $index" class="categorization-filter">
                   <div class="field-cols">
 
                     <div class="form-group">
                       <input
-                        ng-model="job.analysisConfig.categorizationFilters[$index]"
+                        ng-model="job.analysis_config.categorization_filters[$index]"
                         type="text"
                         class="form-control" />
                     </div>
@@ -283,7 +283,7 @@
                   aria-label="Add Categorization Filter"
                   ng-click="addCategorizationFilter()"
                   type="button"
-                  ng-disabled="job.analysisConfig.categorizationFieldName === undefined || job.analysisConfig.categorizationFieldName === ''"
+                  ng-disabled="job.analysis_config.categorization_field_name === undefined || job.analysis_config.categorization_field_name === ''"
                   class="btn btn-primary btn-xs">
                   <span class="sr-only">Add Categorization Filter</span>
                   <i aria-hidden="true" class="fa fa-plus"></i> Add Categorization Filter
@@ -297,10 +297,10 @@
             <hr />
             <label>Detectors</label><i prl-info-icon="new_job_detectors" />
             <div prl-job-detectors-list
-              prl-detectors="job.analysisConfig.detectors"
+              prl-detectors="job.analysis_config.detectors"
               prl-indices="indices"
               prl-properties="properties"
-              prl-cat-field-name-selected="(job.analysisConfig.categorizationFieldName?true:false)"
+              prl-cat-field-name-selected="(job.analysis_config.categorization_field_name?true:false)"
               prl-edit-mode="'NEW'"
               ></div>
             <div ng-hide="ui.validation.tabs[2].checks.detectors.valid" class="validation-error">
@@ -342,13 +342,13 @@
           <div class="tab_contents">
             <label>Data format</label><i prl-info-icon="new_job_data_format" />
             <select
-              ng-model="job.dataDescription.format"
+              ng-model="job.data_description.format"
               ng-disabled="ui.isScheduled"
               ng-options="item.value as item.title for item in ui.inputDataFormat"
               class="form-control">
             </select>
 
-            <prl-job-delimited-options ng-show="job.dataDescription.format==='DELIMITED'">
+            <prl-job-delimited-options ng-show="job.data_description.format==='DELIMITED'">
               <label>Delimiter</label><i prl-info-icon="new_job_delimiter" />
               <select
                 ng-model="ui.selectedFieldDelimiter"
@@ -357,20 +357,20 @@
               <input
                 ng-model="ui.customFieldDelimiter"
                 ng-show="ui.selectedFieldDelimiter==='custom'"
-                ng-required="job.dataDescription.format==='DELIMITED' && ui.selectedFieldDelimiter==='custom'"
+                ng-required="job.data_description.format==='DELIMITED' && ui.selectedFieldDelimiter==='custom'"
                 class="form-control" />
 
               <label>Quote character</label><i prl-info-icon="new_job_quote_character" />
               <input
-                ng-model="job.dataDescription.quoteCharacter"
-                ng-required="job.dataDescription.format==='DELIMITED'"
+                ng-model="job.data_description.quote_character"
+                ng-required="job.data_description.format==='DELIMITED'"
                 placeholder=""
                 class="form-control" />
             </prl-job-delimited-options>
 
             <label>Time field</label><i prl-info-icon="new_job_time_field" />
             <input
-              ng-model="job.dataDescription.timeField"
+              ng-model="job.data_description.time_field"
               required
               placeholder=""
               class="form-control" />
@@ -380,7 +380,7 @@
 
             <label>Time format</label><i prl-info-icon="new_job_time_format" />
             <input
-              ng-model="job.dataDescription.timeFormat"
+              ng-model="job.data_description.time_format"
               required
               placeholder=""
               ng-change="getExampleTime()"
@@ -400,14 +400,14 @@
               <input
                 ng-model="ui.isScheduled"
                 ng-change="schedulerChange()"
-                ng-disabled="job.dataDescription.format!=='ELASTICSEARCH'"
+                ng-disabled="job.data_description.format!=='ELASTICSEARCH'"
                 type="checkbox" />
               Scheduled job
             </label><i prl-info-icon="new_job_enable_scheduled_job" />
             <div ng-hide="ui.validation.tabs[4].checks.isScheduled.valid" class="validation-error">
               {{ ( ui.validation.tabs[4].checks.isScheduled.message ) }}
             </div>
-            <div class="form-group help-pane" ng-show="job.dataDescription.format!=='ELASTICSEARCH'"><small class="info">Data format must be set to 'Elasticsearch' to enable the scheduler.</small></div>
+            <div class="form-group help-pane" ng-show="job.data_description.format!=='ELASTICSEARCH'"><small class="info">Data format must be set to 'Elasticsearch' to enable the scheduler.</small></div>
             <div class="form-group" ng-if="ui.isScheduled">
               <label>Data source</label><i prl-info-icon="new_job_data_source" />
               <select
@@ -453,10 +453,10 @@
                 prl-date-properties="dateProperties"
                 prl-indices="indices"
                 prl-types="types"
-                prl-data-description="job.dataDescription"
+                prl-data-description="job.data_description"
                 prl-simple-mode="(true)"
                 prl-mode= "mode"
-                prl-scheduler-config="job.schedulerConfig"
+                prl-scheduler-config="job.scheduler_config"
                 prl-data-loaded-callback="cloneJobDataDescriptionCallback"
                 prl-exposed-functions="prlElasticDataDescriptionExposedFunctions"
                 prl-elastic-server-info="elasticServerInfo"

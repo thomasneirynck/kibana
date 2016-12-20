@@ -29,7 +29,7 @@
     <div class="form-group">
       <label>Data Format</label>
       <select
-        ng-model="dataDescription.format"
+        ng-model="data_description.format"
         ng-disabled="ui.isScheduled"
         ng-options="item.value as item.title for item in ui.inputDataFormat"
         ng-change="dataFormatChange()"
@@ -37,8 +37,8 @@
       </select>
     </div>
 
-    <prl-job-delimited-options ng-show="(dataDescription.format==='DELIMITED' || dataDescription.format==='JSON')">
-      <div class="form-group" ng-show="dataDescription.format==='DELIMITED'">
+    <prl-job-delimited-options ng-show="(data_description.format==='DELIMITED' || data_description.format==='JSON')">
+      <div class="form-group" ng-show="data_description.format==='DELIMITED'">
         <label>Delimiter</label>
         <select
           ng-model="delimiter"
@@ -53,15 +53,15 @@
         <input
           ng-model="ui.customFieldDelimiter"
           ng-show="ui.selectedFieldDelimiter==='custom'"
-          ng-required="dataDescription.format==='DELIMITED' && ui.selectedFieldDelimiter==='custom'"
+          ng-required="data_description.format==='DELIMITED' && ui.selectedFieldDelimiter==='custom'"
           class="form-control" />
       </div>
 
-      <div class="form-group" ng-show="dataDescription.format==='DELIMITED'">
+      <div class="form-group" ng-show="data_description.format==='DELIMITED'">
         <label>Quote character</label>
           <input
-            ng-model="dataDescription.quoteCharacter"
-            ng-required="dataDescription.format==='DELIMITED'"
+            ng-model="data_description.quote_character"
+            ng-required="data_description.format==='DELIMITED'"
             ng-change="guessFields()"
             placeholder=""
             class="form-control" />
@@ -81,17 +81,17 @@
         <div class="form-group">
           <label>Time-field name</label>
           <select
-            ng-model="dataDescription.timeField"
+            ng-model="data_description.time_field"
             ng-change="guessTimeFormat()"
             class="form-control">
             <option ng-repeat="(key, value) in properties">{{key}}</option>
           </select>
         </div>
 
-        <div class="form-group" ng-show="dataDescription.timeField !==''">
+        <div class="form-group" ng-show="data_description.time_field !==''">
           <label>Time format</label>
           <input
-            ng-model="dataDescription.timeFormat"
+            ng-model="data_description.time_format"
             required
             placeholder=""
             ng-change="getExampleTime()"

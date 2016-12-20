@@ -244,7 +244,7 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
           let parentJobId;
           // find the job id based on the detector's description
           _.each(prlJobService.detectorsByJob, function (dtrs, jobId) {
-            const descriptions = _.map(dtrs, function (dtr) {return dtr.detectorDescription;});
+            const descriptions = _.map(dtrs, function (dtr) {return dtr.detector_description;});
             if (_.indexOf(descriptions, lane) !== -1) {
               parentJobId = jobId;
             }

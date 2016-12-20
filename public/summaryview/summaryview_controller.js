@@ -337,7 +337,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
     // Get the descriptions of the detectors to use as lane labels.
     _.each(dataByJob, (jobData, jobId) => {
       _.each(jobData, (detectorData, detectorIndex) => {
-        const detectorDesc = prlJobService.detectorsByJob[jobId][detectorIndex].detectorDescription;
+        const detectorDesc = prlJobService.detectorsByJob[jobId][detectorIndex].detector_description;
         // If a duplicate detector description has been used across jobs append job ID.
         const laneLabel = _.indexOf(dataset.laneLabels, detectorDesc) === -1 ?
             detectorDesc : detectorDesc + ' (' + jobId + ')';

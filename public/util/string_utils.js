@@ -19,8 +19,8 @@
 import 'plugins/prelert/lib/bower_components/moment-jdateformatparser/moment-jdateformatparser';
 
 
-let _ = require('lodash');
-let moment = require('moment-timezone');
+const _ = require('lodash');
+const moment = require('moment-timezone');
 
 // Replaces all instances of dollar delimited tokens in the specified String
 // with corresponding values from the supplied object, optionally
@@ -46,39 +46,39 @@ function replaceStringTokens(str, valuesByTokenName, encodeForURI) {
 function detectorToString(dtr) {
   const BY_TOKEN = ' by ';
   const OVER_TOKEN = ' over ';
-  const USE_NULL_OPTION = ' usenull=';
-  const PARTITION_FIELD_OPTION = ' partitionfield=';
-  const EXCLUDE_FREQUENT_OPTION = ' excludefrequent=';
+  const USE_NULL_OPTION = ' use_null=';
+  const PARTITION_FIELD_OPTION = ' partition_field_name=';
+  const EXCLUDE_FREQUENT_OPTION = ' exclude_frequent=';
 
   let txt = '';
 
   if (dtr.function !== undefined && dtr.function !== '') {
     txt += dtr.function;
-    if (dtr.fieldName !== undefined && dtr.fieldName !== '') {
-      txt += '(' + quoteField(dtr.fieldName) + ')';
+    if (dtr.field_name !== undefined && dtr.field_name !== '') {
+      txt += '(' + quoteField(dtr.field_name) + ')';
     }
-  } else if (dtr.fieldName !== undefined && dtr.fieldName !== '') {
-    txt += quoteField(dtr.fieldName);
+  } else if (dtr.field_name !== undefined && dtr.field_name !== '') {
+    txt += quoteField(dtr.field_name);
   }
 
-  if (dtr.byFieldName !== undefined && dtr.byFieldName !== '') {
-    txt += BY_TOKEN + quoteField(dtr.byFieldName);
+  if (dtr.by_field_name !== undefined && dtr.by_field_name !== '') {
+    txt += BY_TOKEN + quoteField(dtr.by_field_name);
   }
 
-  if (dtr.overFieldName !== undefined && dtr.overFieldName !== '') {
-    txt += OVER_TOKEN + quoteField(dtr.overFieldName);
+  if (dtr.over_field_name !== undefined && dtr.over_field_name !== '') {
+    txt += OVER_TOKEN + quoteField(dtr.over_field_name);
   }
 
-  if (dtr.useNull !== undefined) {
-    txt += USE_NULL_OPTION + dtr.useNull;
+  if (dtr.use_null !== undefined) {
+    txt += USE_NULL_OPTION + dtr.use_null;
   }
 
-  if (dtr.partitionFieldName !== undefined && dtr.partitionFieldName !== '') {
-    txt += PARTITION_FIELD_OPTION + quoteField(dtr.partitionFieldName);
+  if (dtr.partition_field_name !== undefined && dtr.partition_field_name !== '') {
+    txt += PARTITION_FIELD_OPTION + quoteField(dtr.partition_field_name);
   }
 
-  if (dtr.excludeFrequent !== undefined && dtr.excludeFrequent !== '') {
-    txt += EXCLUDE_FREQUENT_OPTION + dtr.excludeFrequent;
+  if (dtr.exclude_frequent !== undefined && dtr.exclude_frequent !== '') {
+    txt += EXCLUDE_FREQUENT_OPTION + dtr.exclude_frequent;
   }
 
   return txt;
@@ -150,7 +150,7 @@ function guessDelimiters(text, possibleDelimiters) {
           return true;
         }
 
-        let length = line.split(delimiter).length;
+        const length = line.split(delimiter).length;
         if (cache < 0) {
           cache = length;
         }

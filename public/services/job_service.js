@@ -18,13 +18,12 @@ import angular from 'angular';
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 import 'plugins/prelert/services/prelert_angular_client';
 import 'plugins/prelert/services/info_service';
-import 'plugins/prelert/services/ml';
 import 'plugins/prelert/messagebar';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/prelert');
 
-module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelertAPIService, prlMessageBarService, prlInfoService) {
+module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelertAPIService, prlMessageBarService) {
   const apiService = prelertAPIService;
   const msgs = prlMessageBarService;
   let jobs = [];
@@ -39,8 +38,8 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
   // private function used to check the job saving response
   function checkSaveResponse(resp, origJob) {
     if (resp) {
-      if (resp.id) {
-        if (resp.id === origJob.id) {
+      if (resp.job_id) {
+        if (resp.job_id === origJob.job_id) {
           console.log('checkSaveResponse(): save successful');
           return true;
         }
@@ -58,61 +57,82 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
 
   this.getBlankJob = function () {
     return {
-      id: '',
+      job_id: '',
       description: '',
-      analysisConfig: {
-        bucketSpan: 300,
+      analysis_config: {
+        bucket_span: 300,
         influencers:[],
         detectors :[]
       },
-      dataDescription : {
-        timeField:      '',
-        timeFormat:     '', // 'epoch',
-        fieldDelimiter: '',
-        quoteCharacter: '"',
+      data_description : {
+        time_field:      '',
+        time_format:     '', // 'epoch',
+        field_delimiter: '',
+        quote_character: '"',
         format:         'DELIMITED'
       }
     };
   };
 
   this.loadJobs = function () {
-    const that = this;
     jobs = [];
 
     // use the apiService to load the list of jobs
     // listJobs returns the $http request promise chain which we pass straight through
     // adding our own .then function to create the jobs list and broadcast the fact we've done so
     return ml.jobConfigs()
-      .then(function (resp) {
-        console.log('PrlJobsList controller query response:', resp);
+      .then((configResp) => {
+        console.log('PrlJobsList controller query response:', configResp);
 
         // make deep copy of jobs
-        angular.copy(resp.jobs, jobs);
-        that.jobs = jobs;
+        angular.copy(configResp.jobs, jobs);
 
-        // broadcast that the jobs list has been updated
-        $rootScope.$broadcast('jobsUpdated', jobs);
-        // also return the jobs list in case this function has been called directly
-        return jobs;
+        // load jobs stats
+        ml.jobStats()
+          .then((statsResp) => {
+            // merge jobs stats into jobs
+            _.each(jobs, (job) => {
+              _.each(statsResp.jobs, (statsJob) => {
+                if (job.job_id === statsJob.job_id) {
+                  // create empty placeholders for stats objects
+                  job.data_counts = {};
+                  job.model_size_stats = {};
 
-      }).catch(function (err) {
-        console.log('PrlJobsList error getting list of jobs:', err);
-        msgs.error('Jobs list could not be retrieved');
-        if (err.message) {
-          if (err.message.match('getaddrinfo')) {
-            msgs.error('The Prelert Engine API server could not be found.');
-          }
-          msgs.error(err.message);
-        }
-        return jobs;
+                  job.status = statsJob.status;
+                  angular.copy(statsJob.data_counts, job.data_counts);
+                  angular.copy(statsJob.model_size_stats, job.model_size_stats);
+                }
+              });
+            });
+            this.jobs = jobs;
+            // broadcast that the jobs list has been updated
+            $rootScope.$broadcast('jobsUpdated', jobs);
+          })
+          .catch((err) => {
+            error(err);
+          });
+      }).catch((err) => {
+        error(err);
       });
+
+    function error(err) {
+      console.log('PrlJobsList error getting list of jobs:', err);
+      msgs.error('Jobs list could not be retrieved');
+      if (err.message) {
+        if (err.message.match('getaddrinfo')) {
+          msgs.error('The Prelert Engine API server could not be found.');
+        }
+        msgs.error(err.message);
+      }
+      return jobs;
+    }
   };
 
   this.refreshJob = function (jobId) {
     return apiService.getJobDetails({jobId: jobId})
       .then(function (resp) {
         console.log('refreshJob controller query response:', resp);
-        let newJob = {};
+        const newJob = {};
         angular.copy(resp.document, newJob);
 
         // replace the job in the jobs array
@@ -141,20 +161,20 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
     return apiService.getJobDetails({jobId: jobId})
       .then(function (resp) {
         console.log('updateSingleJobCounts controller query response:', resp);
-        let newJob = {};
+        const newJob = {};
         angular.copy(resp.document, newJob);
 
         // replace the job in the jobs array
         for (let i = 0; i < jobs.length; i++) {
           if (jobs[i].id === jobId) {
-            jobs[i].counts = newJob.counts;
-            if (newJob.modelSizeStats) {
-              jobs[i].modelSizeStats = newJob.modelSizeStats;
+            jobs[i].data_counts = newJob.data_counts;
+            if (newJob.model_size_stats) {
+              jobs[i].model_size_stats = newJob.model_size_stats;
             }
-            jobs[i].lastDataTime = newJob.lastDataTime;
+            jobs[i].last_data_time = newJob.last_data_time;
             jobs[i].createTime = newJob.createTime;
             jobs[i].status = newJob.status;
-            jobs[i].schedulerStatus = newJob.schedulerStatus;
+            jobs[i].scheduler_status = newJob.scheduler_status;
           }
         }
         return newJob;
@@ -184,14 +204,14 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
           for (let i = 0; i < jobs.length; i++) {
             if (jobs[i].id === resp.documents[d].id) {
               jobExists = true;
-              jobs[i].counts = newJob.counts;
-              if (newJob.modelSizeStats) {
-                jobs[i].modelSizeStats = newJob.modelSizeStats;
+              jobs[i].data_counts = newJob.data_counts;
+              if (newJob.model_size_stats) {
+                jobs[i].model_size_stats = newJob.model_size_stats;
               }
-              jobs[i].lastDataTime = newJob.lastDataTime;
+              jobs[i].last_data_time = newJob.last_data_time;
               jobs[i].createTime = newJob.createTime;
               jobs[i].status = newJob.status;
-              jobs[i].schedulerStatus = newJob.schedulerStatus;
+              jobs[i].scheduler_status = newJob.scheduler_status;
             }
           }
 
@@ -228,7 +248,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
     let counter = runningJobs.length;
     console.log('prlJobService: check status for ' + runningJobs.length + ' running jobs');
     _.each(runningJobs, (job) => {
-      that.updateSingleJobCounts(job.id)
+      that.updateSingleJobCounts(job.job_id)
       .then((resp) => {
         if (resp.exists === false) {
           jobsMissing = true;
@@ -249,7 +269,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
     apiService.getJobDetails({jobId: jobId})
     .then((resp) => {
       // console.log('updateSingleJobCounts controller query response:', resp);
-      deferred.resolve(resp.document.schedulerStatus);
+      deferred.resolve(resp.document.scheduler_status);
     })
     .catch((resp) => {
       deferred.reject(resp);
@@ -272,20 +292,20 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
     };
 
     // return the promise chain
-    return apiService.saveNewJob(job, params)
+    return ml.addJob({body:job})
       .then(func).catch(func);
   };
 
   this.deleteJob = function (job) {
-    console.log('deleting job: ' + job.id);
+    console.log('deleting job: ' + job.job_id);
 
     // return the promise chain
-    return apiService.deleteJob(job.id)
+    return ml.deleteJob({jobId: job.job_id})
       .then((resp) => {
         console.log('delete job', resp);
         return {success: true};
       }).catch((err) => {
-          // msgs.error('Could not delete job: '+ job.id);
+          // msgs.error('Could not delete job: '+ job.job_id);
         msgs.error(err.message);
         console.log('delete job', err);
         return {success: false};
@@ -330,13 +350,13 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
   // remove counts, times and status for cloning a job
   this.removeJobCounts = function (job) {
     delete job.status;
-    delete job.counts;
-    delete job.createTime;
-    delete job.finishedTime;
-    delete job.lastDataTime;
-    delete job.modelSizeStats;
-    delete job.schedulerStatus;
-    delete job.averageBucketProcessingTimeMs;
+    delete job.data_counts;
+    delete job.create_time;
+    delete job.finished_time;
+    delete job.last_data_time;
+    delete job.model_size_stats;
+    delete job.scheduler_status;
+    delete job.average_bucket_processing_time_ms;
 
     return job;
   };
@@ -345,7 +365,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
   this.getJob = function (jobId) {
     let job;
     job = _.find(jobs, (job) => {
-      return job.id === jobId;
+      return job.job_id === jobId;
     });
 
     return job;
@@ -797,43 +817,43 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
           const fields = {};
 
           // get fields from detectors
-          if (job.analysisConfig.detectors) {
-            _.each(job.analysisConfig.detectors, (dtr) => {
-              if (dtr.byFieldName) {
-                fields[dtr.byFieldName] = {};
+          if (job.analysis_config.detectors) {
+            _.each(job.analysis_config.detectors, (dtr) => {
+              if (dtr.by_field_name) {
+                fields[dtr.by_field_name] = {};
               }
-              if (dtr.fieldName) {
-                fields[dtr.fieldName] = {};
+              if (dtr.field_name) {
+                fields[dtr.field_name] = {};
               }
-              if (dtr.overFieldName) {
-                fields[dtr.overFieldName] = {};
+              if (dtr.over_field_name) {
+                fields[dtr.over_field_name] = {};
               }
-              if (dtr.partitionFieldName) {
-                fields[dtr.partitionFieldName] = {};
+              if (dtr.partition_field_name) {
+                fields[dtr.partition_field_name] = {};
               }
             });
           }
 
           // get fields from influencers
-          if (job.analysisConfig.influencers) {
-            _.each(job.analysisConfig.influencers, (inf) => {
+          if (job.analysis_config.influencers) {
+            _.each(job.analysis_config.influencers, (inf) => {
               fields[inf] = {};
             });
           }
 
           // get fields from categorizationFieldName
-          if (job.analysisConfig.categorizationFieldName) {
-            fields[job.analysisConfig.categorizationFieldName] = {};
+          if (job.analysis_config.categorization_field_name) {
+            fields[job.analysis_config.categorization_field_name] = {};
           }
 
-          // get fields from summaryCountFieldName
-          if (job.analysisConfig.summaryCountFieldName) {
-            fields[job.analysisConfig.summaryCountFieldName] = {};
+          // get fields from summary_count_field_name
+          if (job.analysis_config.summary_count_field_name) {
+            fields[job.analysis_config.summary_count_field_name] = {};
           }
 
-          // get fields from timeField
-          if (job.dataDescription.timeField) {
-            fields[job.dataDescription.timeField] = {};
+          // get fields from time_field
+          if (job.data_description.time_field) {
+            fields[job.data_description.time_field] = {};
           }
 
           // get fields from transform inputs
@@ -996,6 +1016,13 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
 
   this.validateDetector = function (dtr) {
     const deferred = $q.defer();
+
+    // temp fix for missing validation endpoint
+    window.setTimeout(() => {
+      deferred.resolve({acknowledgement: true});
+    }, 1);
+    return deferred.promise;
+
     if (dtr) {
       apiService.validateDetector(dtr)
         .then((resp) => {

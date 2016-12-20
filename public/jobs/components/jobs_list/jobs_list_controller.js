@@ -64,7 +64,7 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
       .then(function (resp) {
         if (resp.success) {
           msgs.clear();
-          msgs.info('Job \'' + job.id + '\' deleted');
+          msgs.info('Job \'' + job.job_id + '\' deleted');
           prlJobService.loadJobs();
         }
       });
@@ -83,7 +83,7 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
     const success = prlClipboardService.copy(angular.toJson(job));
     if (success) {
       msgs.clear();
-      msgs.info(job.id + ' JSON copied to clipboard');
+      msgs.info(job.job_id + ' JSON copied to clipboard');
     } else {
       msgs.error('Job could not be copied to the clipboard');
     }
@@ -95,15 +95,15 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
 
   $scope.stopScheduler = function (job) {
     // setting the status to STOPPING disables the stop button
-    job.schedulerStatus = 'STOPPING';
-    prlJobService.stopScheduler(job.id);
+    job.scheduler_status = 'STOPPING';
+    prlJobService.stopScheduler(job.job_id);
   };
 
 
   $scope.viewResults = function (job, page) {
     if (job && page) {
       // get the time range first
-      prlJobService.jobTimeRange(job.id)
+      prlJobService.jobTimeRange(job.job_id)
         .then((resp) => {
           // if no times are found, use last 24hrs to now
           const from = (resp.start.string) ? '\'' + resp.start.string + '\'' : 'now-24h';
@@ -113,7 +113,7 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
           path += '/app/prelert#/' + page;
           path += '?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:' + from;
           path += ',mode:absolute,to:' + to;
-          path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))&jobId=' + job.id;
+          path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))&jobId=' + job.job_id;
 
           // in safari, window.open does not work unless it has
           // been fired from an onclick event.
@@ -126,18 +126,19 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
             $window.open(path, '_blank');
           }
         }).catch((resp) => {
-          msgs.error('Job results for ' + job.id + ' could not be opened');
+          msgs.error('Job results for ' + job.job_id + ' could not be opened');
         });
     }
   };
 
-  // function for displaying the time for a job based on latestRecordTimeStamp
+  // function for displaying the time for a job based on latest_record_timestamp
   // added to rowScope so it can be updated live when data changes
-  function latestTimeStamp(counts) {
+  function latestTimeStamp(dataCounts) {
     const obj = {string:'', unix: 0};
-    if (counts.latestRecordTimeStamp) {
-      obj.string = counts.latestRecordTimeStamp.replace(/\.\d{3}\+/, '+');
-      obj.unix = moment(counts.latestRecordTimeStamp).unix();
+    if (dataCounts.latest_record_timestamp) {
+      const ts = moment(dataCounts.latest_record_timestamp);
+      obj.string = ts.format(TIME_FORMAT);
+      obj.unix = ts;
     }
     return obj;
   }
@@ -153,7 +154,7 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
     // any rows the user had open.
     const rowStates = {};
     _.each(rowScopes, function (rs) {
-      rowStates[rs.job.id] = {
+      rowStates[rs.job.job_id] = {
         open: rs.open,
         $expandElement: rs.$expandElement
       };
@@ -190,7 +191,7 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
       rowScope.job = job;
       rowScope.jobAudit = {messages:'', update: function () {}, jobWarningClass: '', jobWarningText: ''};
 
-      // rowScope.unsafeHtml = '<prl-job-preview prl-job-id=''+job.id+''></prl-job-preview>';
+      // rowScope.unsafeHtml = '<prl-job-preview prl-job-id=''+job.job_id+''></prl-job-preview>';
 
       rowScope.expandable = true;
       rowScope.expandElement = 'prl-job-list-expanded-row-container';
@@ -206,17 +207,16 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
       rowScope.time = latestTimeStamp;
 
       rowScopes.push(rowScope);
-      const analysisConfig = job.analysisConfig;
+      const analysisConfig = job.analysis_config;
       const jobDescription = job.description || '';
-
       // col array
-      if ($scope.filterText === undefined || $scope.filterText === '' || job.id.match(filterRegexp) || jobDescription.match(filterRegexp)) {
+      if ($scope.filterText === undefined || $scope.filterText === '' || job.job_id.match(filterRegexp) || jobDescription.match(filterRegexp)) {
         const tableRow = [{
           markup: jobsListArrow,
           scope:  rowScope
         }, {
-          markup: filterHighlight(job.id),
-          value:  job.id
+          markup: filterHighlight(job.job_id),
+          value:  job.job_id
         }, {
           markup: '<i ng-show="tab.jobWarningClass !== \'\'" tooltip="{{jobAudit.jobWarningText}}" class="{{jobAudit.jobWarningClass}}"></i>',
           scope:  rowScope
@@ -224,26 +224,26 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
           markup: filterHighlight(stringUtils.escape(jobDescription)),
           value:  jobDescription
         }, {
-          markup: '<div class="col-align-right">{{toLocaleString(job.counts.processedRecordCount)}}</div>',
-          value:  job.counts.processedRecordCount ,
+          markup: '<div class="col-align-right">{{toLocaleString(job.data_counts.processed_record_count)}}</div>',
+          value:  job.data_counts.processed_record_count ,
           scope:  rowScope
         }, {
-          markup: '{{job.modelSizeStats.memoryStatus}}',
-          value:  (() => { return (job.modelSizeStats) ? job.modelSizeStats.memoryStatus : ''; }),
+          markup: '{{job.model_size_stats.memory_status}}',
+          value:  (() => { return (job.model_size_stats) ? job.model_size_stats.memory_status : ''; }),
           scope:  rowScope
         }, {
           markup: '{{job.status}}',
           value:  job.status,
           scope:  rowScope
         }, {
-          markup: '{{job.schedulerStatus}}',
-          value:  job.schedulerStatus,
+          markup: '{{job.scheduler_status}}',
+          value:  job.scheduler_status,
           scope:  rowScope
         }, {
-          markup: '{{ time(job.counts).string }}',
+          markup: '{{ time(job.data_counts).string }}',
           // use a function which returns the value as the time stamp value can change
           // but still needs be run though the time function to format it to unix time stamp
-          value:  (() => { return rowScope.time(job.counts).unix; }),
+          value:  (() => { return rowScope.time(job.data_counts).unix; }),
           scope:  rowScope
         }, {
           markup: jobsListControlsHtml,
@@ -251,7 +251,7 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
         }];
 
         if (isDistributed) {
-          const hostname = jobHosts[job.id];
+          const hostname = jobHosts[job.job_id];
           tableRow.splice(8, 0, {
             markup:  hostname,
             scope:  rowScope
@@ -271,19 +271,19 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
     });
     $scope.table.rows = rows;
 
-    loadAuditSummary(jobs, rowScopes);
+    // loadAuditSummary(jobs, rowScopes);
 
     // reapply the open flag for all rows.
     _.each(rowScopes, (rs) => {
-      if (rowStates[rs.job.id]) {
-        rs.open = rowStates[rs.job.id].open;
-        rs.$expandElement = rowStates[rs.job.id].$expandElement;
+      if (rowStates[rs.job.job_id]) {
+        rs.open = rowStates[rs.job.job_id].open;
+        rs.$expandElement = rowStates[rs.job.job_id].$expandElement;
       }
     });
 
     refreshCounter = 0;
     clearTimeout(window.singleJobTimeout);
-    refreshCounts();
+    // refreshCounts();
 
     // clear the filter spinner if it's running
     $scope.filterIcon = 0;
@@ -340,12 +340,12 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
     const aDayAgo = moment().subtract(1, 'days');
 
     _.each(jobs, (job) => {
-      if (auditMessages[job.id] === undefined) {
-        auditMessages[job.id] = [];
+      if (auditMessages[job.job_id] === undefined) {
+        auditMessages[job.job_id] = [];
       }
       // keep track of the job create times
       // only messages newer than the job's create time should be displayed.
-      createTimes[job.id] = moment(job.createTime).unix();
+      createTimes[job.job_id] = moment(job.createTime).unix();
     });
 
     // function for adding messages to job
@@ -382,8 +382,8 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
         auditMessages[jobId] = _.sortBy(auditMessages[jobId], 'unixTime');
 
         _.each(rowScopes, (rs) => {
-          if (rs.job.id === jobId) {
-            rs.jobAudit.messages = auditMessages[rs.job.id];
+          if (rs.job.job_id === jobId) {
+            rs.jobAudit.messages = auditMessages[rs.job.job_id];
           }
         });
 
@@ -406,7 +406,7 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
     _.each(jobs, (job) => {
       // keep track of the job create times
       // only messages newer than the job's create time should be displayed.
-      createTimes[job.id] = moment(job.createTime).unix();
+      createTimes[job.job_id] = moment(job.createTime).unix();
     });
 
     prlJobService.getAuditMessagesSummary()
@@ -459,11 +459,11 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
         rs.jobAudit.update = function () {
           // return the promise chain from prlJobService.getJobAuditMessages
           // so we can scroll to the bottom of the list once it has loaded
-          return loadAuditMessages(jobs, [rs], rs.job.id);
+          return loadAuditMessages(jobs, [rs], rs.job.job_id);
         };
 
-        const job = jobMessages[rs.job.id];
-        if (job && job.msgTime > createTimes[job.id]) {
+        const job = jobMessages[rs.job.job_id];
+        if (job && job.msgTime > createTimes[job.job_id]) {
           rs.jobAudit.jobWarningClass = '';
           rs.jobAudit.jobWarningText = job.highestLevelText;
           if (job.highestLevel === 1) {
@@ -558,6 +558,7 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
   });
 
 
+  /*
   prlJobService.isDistributed().then(function (value) {
     isDistributed = value;
 
@@ -583,6 +584,8 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
     // trigger the first load
     prlJobService.loadJobs();
   });
+  */
+  prlJobService.loadJobs();
 
   $scope.$emit('application.load');
 });

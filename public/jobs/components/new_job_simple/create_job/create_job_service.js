@@ -244,10 +244,10 @@ module.service('prlSimpleJobService', function (
     const mappingTypes = formConfig.mappingTypes;
 
     const job = prlJobService.getBlankJob();
-    job.dataDescription.timeField = formConfig.timeField.name;
-    job.dataDescription.timeFormat = formConfig.format;
+    job.data_description.time_field = formConfig.timeField.name;
+    job.data_description.time_format = formConfig.format;
 
-    // job.analysisConfig.influencers.push(obj.params.field);
+    // job.analysis_config.influencers.push(obj.params.field);
 
     const dtr = {
       function: formConfig.agg.type.prlName
@@ -256,14 +256,14 @@ module.service('prlSimpleJobService', function (
     if (formConfig.field && formConfig.field.displayName) {
       dtr.fieldName = formConfig.field.displayName;
     }
-    job.analysisConfig.detectors.push(dtr);
-    job.analysisConfig.bucketSpan = bucketSpan;
+    job.analysis_config.detectors.push(dtr);
+    job.analysis_config.bucket_span = bucketSpan;
 
-    job.dataDescription.format = 'ELASTICSEARCH';
-    delete job.dataDescription.fieldDelimiter;
-    delete job.dataDescription.quoteCharacter;
+    job.data_description.format = 'ELASTICSEARCH';
+    delete job.data_description.field_delimiter;
+    delete job.data_description.quote_character;
 
-    job.schedulerConfig = {
+    job.scheduler_config = {
       query: {
         match_all: {}
       },
@@ -280,9 +280,9 @@ module.service('prlSimpleJobService', function (
     job.id = formConfig.jobId;
     job.description = formConfig.description;
 
-    job.modelDebugConfig =  {
-      boundsPercentile: 95.0,
-      writeTo : 'data_store'
+    job.model_debug_config =  {
+      bounds_percentile: 95.0,
+      write_to : 'data_store'
     };
 
     console.log('auto created job: ', job);
@@ -297,10 +297,10 @@ module.service('prlSimpleJobService', function (
     const index = formConfig.indexPattern.id;
     const types = formConfig.mappingTypes.join(',');
 
-    prlJobService.searchTimeFields(index, types, this.job.dataDescription.timeField)
+    prlJobService.searchTimeFields(index, types, this.job.data_description.time_field)
     .then((resp) => {
-      this.job.dataDescription.timeFormat = stringUtils.guessTimeFormat(resp.time);
-      // console.log('guessTimeFormat: guessed time format: ', this.job.dataDescription.timeFormat);
+      this.job.data_description.time_format = stringUtils.guessTimeFormat(resp.time);
+      // console.log('guessTimeFormat: guessed time format: ', this.job.data_description.time_format);
 
       // DO THE SAVE
       prlJobService.saveNewJob(this.job, true)

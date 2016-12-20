@@ -3,12 +3,12 @@
     <div ng-repeat="detector in detectors track by $index">
       <div class="detector" ng-class="{'detector-edit-mode':(editMode==='EDIT')}">
         <div class="detector-fields">
-          <div aria-label="Customised description" ng-hide="editMode==='EDIT' || detector.detectorDescription === '' || detector.detectorDescription === detectorToString(detector) ">{{ detector.detectorDescription }}</div>
+          <div aria-label="Customised description" ng-hide="editMode==='EDIT' || detector.detector_description === '' || detector.detector_description === detectorToString(detector) ">{{ detector.detector_description }}</div>
           <div aria-label="Default description" style="font-style:italic;" >{{ detectorToString(detector) }}</div>
 
           <input
             ng-show="editMode==='EDIT'"
-            ng-model="detector.detectorDescription"
+            ng-model="detector.detector_description"
             tabindex="2"
             class="form-control" />
 
@@ -34,9 +34,9 @@
           </button>
         </div>
 
-        <div ng-show="detector.detectorRules.length > 0" class="filter-list">
+        <div ng-show="detector.detector_rules.length > 0" class="filter-list">
           <div>Filters:</div>
-          <div ng-repeat="filter in detector.detectorRules track by $index" class="filter">
+          <div ng-repeat="filter in detector.detector_rules track by $index" class="filter">
             {{ filter.ruleAction }} ({{filter.ruleConditions.length}} condition{{(filter.ruleConditions.length>1)?"s":""}})
             <div class="button-container">
               <button

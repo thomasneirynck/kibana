@@ -512,7 +512,7 @@ module
 
   $scope.stopJob = function (jobId) {
     // setting the status to STOPPING disables the stop button
-    // job.schedulerStatus = 'STOPPING';
+    // job.scheduler_status = 'STOPPING';
     $scope.jobState = JOB_STATE.STOPPING;
     prlJobService.stopScheduler(jobId);
   };

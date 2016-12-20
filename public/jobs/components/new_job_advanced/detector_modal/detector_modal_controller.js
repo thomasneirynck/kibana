@@ -67,10 +67,10 @@ module.controller('PrlDetectorModal', function ($scope, $modalInstance, params, 
 
   $scope.properties = params.properties;
 
-  // properties list for byFieldName field only
+  // properties list for by_field_name field only
   $scope.properties_byFieldName = angular.copy($scope.properties);
   // if data has been added to the categorizationFieldName,
-  // add the option prelertcategory to the byFieldName datalist
+  // add the option prelertcategory to the by_field_name datalist
   if (params.catFieldNameSelected) {
     $scope.properties_byFieldName.prelertcategory = 'prelertcategory';
   }
@@ -110,9 +110,9 @@ module.controller('PrlDetectorModal', function ($scope, $modalInstance, params, 
       .then((resp) => {
         $scope.saveLock = false;
         if (resp.success) {
-          if ($scope.detector.detectorDescription === '') {
+          if ($scope.detector.detector_description === '') {
             // remove blank description so server generated one is used.
-            delete $scope.detector.detectorDescription;
+            delete $scope.detector.detector_description;
           }
           add($scope.detector, index);
           $modalInstance.close($scope.detector);

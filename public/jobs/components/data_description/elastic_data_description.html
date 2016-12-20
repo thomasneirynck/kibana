@@ -123,17 +123,17 @@
     <div ng-show="ui.indexTextOk" class="form-group">
       <label>Time-field name</label>
       <select
-        ng-model="dataDescription.timeField"
+        ng-model="data_description.time_field"
         ng-change="guessTimeFormat()"
         class="form-control">
         <option ng-repeat="(key, value) in dateProperties">{{key}}</option>
       </select>
     </div>
 
-    <div ng-show="ui.indexTextOk && dataDescription.timeField !==''" class="form-group">
+    <div ng-show="ui.indexTextOk && data_description.time_field !==''" class="form-group">
       <label>Time format</label>
       <input
-        ng-model="dataDescription.timeFormat"
+        ng-model="data_description.time_format"
         required
         ng-change="getExampleTime()"
         placeholder=""

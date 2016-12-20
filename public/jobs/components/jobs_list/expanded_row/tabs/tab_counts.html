@@ -4,14 +4,14 @@
     <div class="col-md-6">
       <div ng-repeat="(key, value) in job">
         <div ng-switch="key">
-          <div ng-switch-when="counts">
+          <div ng-switch-when="data_counts">
             <div class="prl_sub_heading">Counts</div>
             <div class='prl_job_section_container'>
               <div>
                 <prl-job-item ng-repeat="(key1, value1) in value">
                   <div ng-switch="key1">
-                    
-                    <div ng-switch-when="inputBytes">
+
+                    <div ng-switch-when="input_bytes">
                       <div class="prl_job_row row">
                         <div class="col-md-6">{{key1}}</div>
                         <div class="col-md-6" title="{{value1}} bytes">{{formatData(value1)}}</div>
@@ -37,14 +37,14 @@
     <div class="col-md-6">
       <div ng-repeat="(key, value) in job">
         <div ng-switch="key">
-          <div ng-switch-when="modelSizeStats">
+          <div ng-switch-when="model_size_stats">
             <div class="prl_sub_heading">Model size stats</div>
             <div class='prl_job_section_container'>
               <div>
                 <prl-job-item ng-repeat="(key1, value1) in value">
                   <div ng-switch="key1">
-                    
-                    <div ng-switch-when="modelBytes">
+
+                    <div ng-switch-when="model_bytes">
                       <div class="prl_job_row row">
                         <div class="col-md-6">{{key1}}</div>
                         <div class="col-md-6" title="{{value1}} bytes">{{formatData(value1)}}</div>

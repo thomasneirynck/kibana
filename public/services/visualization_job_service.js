@@ -82,7 +82,7 @@ module.service('prlVisualizationJobService', function (
 
       _.each(visState.aggs, (obj) => {
         if (obj.type === 'date_histogram') {
-          this.job.dataDescription.timeField = obj.params.field;
+          this.job.data_description.time_field = obj.params.field;
           if (obj.params.customInterval !== undefined) {
             const ci = obj.params.customInterval;
 
@@ -101,15 +101,15 @@ module.service('prlVisualizationJobService', function (
         if (obj.schema === 'group') {
           if (obj.params && obj.params.field) {
             dtr.byFieldName = obj.params.field;
-            this.job.analysisConfig.influencers.push(obj.params.field);
+            this.job.analysis_config.influencers.push(obj.params.field);
             // $scope.ui.influencers.push(obj.params.field);
           }
         }
       });
-      this.job.analysisConfig.detectors.push(dtr);
-      this.job.dataDescription.format = 'ELASTICSEARCH';
+      this.job.analysis_config.detectors.push(dtr);
+      this.job.data_description.format = 'ELASTICSEARCH';
 
-      this.job.schedulerConfig = {
+      this.job.scheduler_config = {
         query: {
           match_all: {}
         },
@@ -189,7 +189,7 @@ module.service('prlVisualizationJobService', function (
         /*
       _.each(visState.aggs, (obj) => {
         if (obj.type === 'date_histogram') {
-          this.job.dataDescription.timeField = obj.params.field;
+          this.job.data_description.time_field = obj.params.field;
           if (obj.params.customInterval !== undefined) {
             const ci = obj.params.customInterval;
 
@@ -208,7 +208,7 @@ module.service('prlVisualizationJobService', function (
         if (obj.schema === 'group') {
           if (obj.params && obj.params.field) {
             dtr.byFieldName = obj.params.field;
-            this.job.analysisConfig.influencers.push(obj.params.field);
+            this.job.analysis_config.influencers.push(obj.params.field);
             // $scope.ui.influencers.push(obj.params.field);
           }
         }

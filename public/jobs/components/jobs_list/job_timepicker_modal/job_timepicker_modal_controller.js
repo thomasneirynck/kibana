@@ -33,15 +33,15 @@ module.controller('PrlJobTimepickerModal', function ($scope, $modalInstance, par
   $scope.end = '';
 
   let lastTime = '';
-  if (job.counts && job.counts.latestRecordTimeStamp) {
-    const time = moment(job.counts.latestRecordTimeStamp);
+  if (job.data_counts && job.data_counts.latest_record_timestamp) {
+    const time = moment(job.data_counts.latest_record_timestamp);
     lastTime = time.format('YYYY-MM-DD HH:mm:ss');
   }
 
   let uiEndRadio = '1';
   let uiTo = moment();
   $scope.isNew = true;
-  if (job.counts && job.counts.inputRecordCount > 0) {
+  if (job.data_counts && job.data_counts.input_record_count > 0) {
     $scope.isNew = false;
 
     // if the job previously had an end time set. default to that.

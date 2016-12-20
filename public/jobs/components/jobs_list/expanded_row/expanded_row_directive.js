@@ -64,7 +64,7 @@ module.directive('prlJobListExpandedRow', function ($location, prlMessageBarServ
               // list once it's loaded
               $scope.jobAudit.update().then(() => {
                 // auto scroll to the bottom of the message list.
-                const div = angular.element('#prl-job-audit-list-' + $scope.job.id);
+                const div = angular.element('#prl-job-audit-list-' + $scope.job.job_id);
                 if (div && div.length) {
                   // run this asynchronously in a timeout to allow angular time to render the contents first
                   window.setTimeout(() => {
@@ -83,7 +83,7 @@ module.directive('prlJobListExpandedRow', function ($location, prlMessageBarServ
           $scope.ui.tabs.splice(2, 0, { index: 2, title: 'Scheduler' });
         }
 
-        if ($scope.job.counts.inputRecordCount === 0 &&
+        if ($scope.job.data_counts.input_record_count === 0 &&
            typeof $scope.job.schedulerConfig === 'undefined') {
           $scope.ui.tabs.splice(4, 0, { index: 5, title: 'Upload Data'});
         }
@@ -110,7 +110,7 @@ module.directive('prlJobListExpandedRow', function ($location, prlMessageBarServ
         let success = prlClipboardService.copy(angular.toJson(newJob));
         if (success) {
           // msgs.clear();
-          // msgs.info(job.id+' JSON copied to clipboard');
+          // msgs.info(job.job_id+' JSON copied to clipboard');
 
           // flash the background color of the json box
           // to show the contents has been copied.
@@ -168,7 +168,7 @@ module.directive('prlJobListExpandedRow', function ($location, prlMessageBarServ
   };
 })
 // custom filter to filter out objects from a collection
-// used when listing job settings, as id and status are siblings to objects like counts and dataDescription
+// used when listing job settings, as id and status are siblings to objects like counts and data_description
 .filter('filterObjects', function () {
   return function (input) {
     const tempObj = {};

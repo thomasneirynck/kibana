@@ -188,12 +188,12 @@ module.directive('prlDataUpload', ['$http', function ($http) {
           that.ui.buttonText = 'Uploading...';
 
           that.ui.saveStatus.upload = 1;
-          fileUploadProgress(that.job.id);
+          fileUploadProgress(that.job.job_id);
 
           if (this.uploadData.data) {
-            prlJobService.uploadData(that.job.id, that.uploadData.data)
+            prlJobService.uploadData(that.job.job_id, that.uploadData.data)
               .then(function (resp) {
-                msgs.info(that.file.name + ' uploaded to ' + that.job.id);
+                msgs.info(that.file.name + ' uploaded to ' + that.job.job_id);
                 that.ui.saveStatus.upload = 2;
                 that.ui.uploadPercentage = 100;
 
@@ -208,7 +208,7 @@ module.directive('prlDataUpload', ['$http', function ($http) {
                     that.changeTab({index:3});
                   }
                   // refresh the selected job
-                  prlJobService.refreshJob(that.job.id)
+                  prlJobService.refreshJob(that.job.job_id)
                     .then(function (job) {
                       // no need to do anything. the job service broadcasts a jobs list update event
                     })
@@ -231,7 +231,7 @@ module.directive('prlDataUpload', ['$http', function ($http) {
           }
         }
       };
-      // while data is being uploaded, load the processedRecordCount and work out
+      // while data is being uploaded, load the processed_record_count and work out
       // a progress percentage based on a guess of the records count in the file.
       function fileUploadProgress(jobId) {
         let trackFileUploadTimeout;
@@ -239,11 +239,11 @@ module.directive('prlDataUpload', ['$http', function ($http) {
         const pollTime = 2; // seconds
 
         try {
-          if ($scope.job.dataDescription.format === 'DELIMITED') {
+          if ($scope.job.data_description.format === 'DELIMITED') {
             // assume each line is a record
             records = $scope.uploadData.data.split('\n').length;
             records = records - 2;
-          } else if ($scope.job.dataDescription.format === 'JSON') {
+          } else if ($scope.job.data_description.format === 'JSON') {
             // if the json is an array, assume each element is a record
             if (Array.isArray($scope.uploadData.data)) {
               records = $scope.uploadData.data.length;
@@ -257,7 +257,7 @@ module.directive('prlDataUpload', ['$http', function ($http) {
             prlJobService.loadJob(jobId)
             .then(function (resp) {
               if (resp && $scope.ui.saveStatus.upload !== -1) {
-                $scope.ui.uploadPercentage = Math.round((resp.counts.processedRecordCount / records) * 100);
+                $scope.ui.uploadPercentage = Math.round((resp.data_counts.processed_record_count / records) * 100);
                 if ($scope.ui.uploadPercentage <= 100) {
                   // console.log('fileUploadProgress():', $scope.ui.uploadPercentage);
                   if ($scope.ui.saveStatus.upload === 1) {

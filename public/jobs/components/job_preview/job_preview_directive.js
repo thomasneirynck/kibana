@@ -27,8 +27,8 @@ module.directive('prlJobPreview', function (prlMessageBarService, prlJobService)
     link: function (scope, element, attrs) {
       scope.job = prlJobService.removeJobEndpoints(prlJobService.getJob(attrs.prlJobId));
       // make the delimiter user readable
-      if (scope.job.dataDescription && scope.job.dataDescription.format === 'DELIMITED') {
-        scope.job.dataDescription.fieldDelimiter = scope.formatDelimiter(scope.job.dataDescription.fieldDelimiter);
+      if (scope.job.data_description && scope.job.data_description.format === 'DELIMITED') {
+        scope.job.data_description.field_delimiter = scope.formatDelimiter(scope.job.data_description.field_delimiter);
       }
     }
   };

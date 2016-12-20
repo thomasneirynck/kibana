@@ -51,31 +51,31 @@
         </div>
         <table>
 
-          <!-- <tr && record.byFieldName">
+          <!-- <tr && record.by_field_name">
             <td colspan="2">{{record.function}}</td>
             <td>{{record.function}}</td>
           </tr> -->
         <!--
-          <tr ng-if="record.partitionFieldValue" >
-            <td>{{record.partitionFieldName}}:</td>
-            <td>{{record.partitionFieldValue}}</td>
+          <tr ng-if="record.partition_field_value" >
+            <td>{{record.partition_field_name}}:</td>
+            <td>{{record.partition_field_value}}</td>
           </tr>
           -->
         <!--
-          <tr ng-if="record.byFieldValue" >
-            <td>{{record.byFieldName}}:</td>
-            <td>{{record.byFieldValue}}</td>
+          <tr ng-if="record.by_field_value" >
+            <td>{{record.by_field_name}}:</td>
+            <td>{{record.by_field_value}}</td>
           </tr>
           -->
-<!--           <tr ng-if="record.singleCauseByFieldValue" >
-            <td>{{record.singleCauseByFieldName}}:</td>
-            <td>{{record.singleCauseByFieldValue}}</td>
+<!--           <tr ng-if="record.single_cause_by_field_alue" >
+            <td>{{record.single_cause_by_field_name}}:</td>
+            <td>{{record.single_cause_by_field_alue}}</td>
           </tr>
  -->
 
-<!--           <tr ng-if="record.overFieldValue" >
-            <td>{{record.overFieldName}}:</td>
-            <td>{{record.overFieldValue}}</td>
+<!--           <tr ng-if="record.over_field_value" >
+            <td>{{record.over_field_name}}:</td>
+            <td>{{record.over_field_value}}</td>
           </tr>
  -->
           <!-- <tr >
@@ -83,19 +83,19 @@
             <td>{{record.function}}</td>
           </tr> -->
 
-          <!-- <tr ng-if="record.fieldName" >
-            <td>fieldName:</td>
-            <td>{{record.fieldName}}</td>
+          <!-- <tr ng-if="record.field_name" >
+            <td>field_name:</td>
+            <td>{{record.field_name}}</td>
           </tr> -->
 
-          <tr ng-if="record.partitionFieldValue" >
-            <td>{{record.partitionFieldName}}:</td>
-            <td>{{record.partitionFieldValue}}</td>
+          <tr ng-if="record.partition_field_value" >
+            <td>{{record.partition_field_name}}:</td>
+            <td>{{record.partition_field_value}}</td>
           </tr>
 
-          <tr ng-if="record.detector !== undefined && record.detector.fieldName" >
-            <td colspan="2">{{record.detector.function}}({{(record.detector.partitionFieldName && record.byFieldValue) ?  record.byFieldValue : record.detector.fieldName}})</td>
-            <!-- <td colspan="2">{{record.detector.function}}({{record.byFieldValue || record.detector.fieldName}})</td> -->
+          <tr ng-if="record.detector !== undefined && record.detector.field_name" >
+            <td colspan="2">{{record.detector.function}}({{(record.detector.partition_field_name && record.by_field_value) ?  record.by_field_value : record.detector.field_name}})</td>
+            <!-- <td colspan="2">{{record.detector.function}}({{record.by_field_value || record.detector.field_name}})</td> -->
           </tr>
 
           <tr ng-if="record.actual !== undefined" >

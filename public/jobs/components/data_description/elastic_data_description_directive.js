@@ -32,8 +32,8 @@ module.directive('prlElasticDataDescription', function ($http) {
       types:              '=prlTypes',
       simpleMode:         '=prlSimpleMode',
       mode:               '=prlMode',
-      schedulerConfig:    '=prlSchedulerConfig',
-      dataDescription:    '=prlDataDescription',
+      scheduler_config:    '=prlSchedulerConfig',
+      data_description:    '=prlDataDescription',
       dataLoadedCallback: '=prlDataLoadedCallback',
       exposedFunctions:   '=prlExposedFunctions',
       serverInfo:         '=prlElasticServerInfo'
@@ -98,7 +98,7 @@ module.directive('prlElasticDataDescription', function ($http) {
 
         // create $scope.types by looping through the type names
         // in the cloning job object,
-        _.each($scope.schedulerConfig.types, (t) => {
+        _.each($scope.scheduler_config.types, (t) => {
           t = t.trim();
           $scope.types[t] = $scope.ui.types[t];
         });
@@ -186,7 +186,7 @@ module.directive('prlElasticDataDescription', function ($http) {
         });
 
         if ($scope.mode === MODE.CLONE && $scope.ui.isScheduled) {
-          // when cloning a scheduled job, don't initially detect the timeField or format
+          // when cloning a scheduled job, don't initially detect the time_field or format
           // just rely on the incoming settings
         } else {
           guessTimeField();
@@ -426,7 +426,7 @@ module.directive('prlElasticDataDescription', function ($http) {
       }
 
       function guessTimeField() {
-        let match = $scope.dataDescription.timeField;
+        let match = $scope.data_description.time_field;
         if ($scope.dateProperties[match] === undefined) {
           match = '';
         }
@@ -437,7 +437,7 @@ module.directive('prlElasticDataDescription', function ($http) {
           }
         });
         if (match !== '') {
-          $scope.dataDescription.timeField = match;
+          $scope.data_description.time_field = match;
           $scope.guessTimeFormat();
           console.log('guessTimeField: guessed time fields: ', match);
         }
@@ -445,15 +445,15 @@ module.directive('prlElasticDataDescription', function ($http) {
 
       $scope.guessTimeFormat = function () {
         let index;
-        if ($scope.dateProperties[$scope.dataDescription.timeField] === undefined) {
-          // if the selected timefield no longer exists in the dropdown
+        if ($scope.dateProperties[$scope.data_description.time_field] === undefined) {
+          // if the selected time_field no longer exists in the dropdown
           // have a go at guessing it.
           guessTimeField();
           return;
         }
 
         // ensure we search for the correct type
-        const type = $scope.dateProperties[$scope.dataDescription.timeField].__type;
+        const type = $scope.dateProperties[$scope.data_description.time_field].__type;
         // ensure we search under the correct index
         _.each($scope.indices, (ind, key) => {
           if (ind) {
@@ -467,9 +467,9 @@ module.directive('prlElasticDataDescription', function ($http) {
 
         if (index && type) {
           // search for some times fields
-          prlJobService.searchTimeFields(index, type, $scope.dataDescription.timeField)
+          prlJobService.searchTimeFields(index, type, $scope.data_description.time_field)
           .then((resp) => {
-            $scope.dataDescription.timeFormat = stringUtils.guessTimeFormat(resp.time);
+            $scope.data_description.time_format = stringUtils.guessTimeFormat(resp.time);
             $scope.getExampleTime();
           })
           .catch((resp) => {
@@ -481,7 +481,7 @@ module.directive('prlElasticDataDescription', function ($http) {
       };
 
       $scope.getExampleTime = function () {
-        $scope.exampleTime = stringUtils.generateExampleTime($scope.dataDescription.timeFormat);
+        $scope.exampleTime = stringUtils.generateExampleTime($scope.data_description.time_format);
       };
 
       init();

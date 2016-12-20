@@ -257,8 +257,8 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
     for (let r in data) {
       const record = data[r];
       if (record.detectorText === undefined) {
-        record.detector = prlJobService.detectorsByJob[record.jobId][record.detectorIndex];
-        record.detectorText = record.detector.detectorDescription;
+        record.detector = prlJobService.detectorsByJob[record.jobId][record.detector_index];
+        record.detectorText = record.detector.detector_description;
         // console.log(record.detector)
       }
 
@@ -304,7 +304,7 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
     const tempDetectorHighestRecordPerBucket = {};
 
     _.each(recordsPerTimeInterval, (bucket, t) => {
-      bucket = _.sortBy(bucket, 'normalizedProbability').reverse();
+      bucket = _.sortBy(bucket, 'normalized_probability').reverse();
 
       tempHighestRecordPerBucket[t] = {};
       tempMonitorHighestRecordPerBucket[t] = {'All jobs': []};
@@ -398,48 +398,48 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
   };
 
   function buildDescription(record) {
-    const description = anomalyUtils.getSeverity(record.normalizedProbability) + ' anomaly in ';//+ record.detectorText;
+    const description = anomalyUtils.getSeverity(record.normalized_probability) + ' anomaly in ';//+ record.detectorText;
     let descriptionExtra = '';
 
-    if (_.has(record, 'partitionFieldName') && (record.partitionFieldName !== record.entityName)) {
-      descriptionExtra += ' detected in ' + record.partitionFieldName;
+    if (_.has(record, 'partition_field_name') && (record.partition_field_name !== record.entity_name)) {
+      descriptionExtra += ' detected in ' + record.partition_field_name;
       descriptionExtra += ' ';
-      descriptionExtra += record.partitionFieldValue;
+      descriptionExtra += record.partition_field_value;
     }
-    if (_.has(record, 'byFieldValue')) {
-      descriptionExtra += ' for ' + record.byFieldName;
+    if (_.has(record, 'by_field_value')) {
+      descriptionExtra += ' for ' + record.by_field_name;
       descriptionExtra += ' ';
-      descriptionExtra += record.byFieldValue;
-    } else if (_.has(record, 'overFieldValue')) {
-      descriptionExtra += ' for ' + record.overFieldName;
+      descriptionExtra += record.by_field_value;
+    } else if (_.has(record, 'over_field_value')) {
+      descriptionExtra += ' for ' + record.over_field_name;
       descriptionExtra += ' ';
-      descriptionExtra += record.overFieldValue;
+      descriptionExtra += record.over_field_value;
     }
 
-    if (_.has(record, 'entityName')) {
-      descriptionExtra += ' found for ' + record.entityName;
+    if (_.has(record, 'entity_name')) {
+      descriptionExtra += ' found for ' + record.entity_name;
       descriptionExtra += ' ';
-      descriptionExtra += record.entityValue;
+      descriptionExtra += record.entity_value;
     }
 
 
 
     record.description = description;
     record.descriptionExtra = descriptionExtra;
-    record.score = (record.normalizedProbability < 1) ? '<1' : Math.floor(record.normalizedProbability);
-    // record.severityLabel = anomalyUtils.getSeverity(record.normalizedProbability);
-    record.cardColor = anomalyUtils.getSeverityColor(record.normalizedProbability);
+    record.score = (record.normalized_probability < 1) ? '<1' : Math.floor(record.normalized_probability);
+    // record.severityLabel = anomalyUtils.getSeverity(record.normalized_probability);
+    record.cardColor = anomalyUtils.getSeverityColor(record.normalized_probability);
     // $scope.description = description;
 
-    // Check for a correlatedByFieldValue in the source which will be present for multivariate analyses
+    // Check for a correlated_by_field_value in the source which will be present for multivariate analyses
     // where the record is anomalous due to relationship with another 'by' field value.
-    if (_.has(record, 'correlatedByFieldValue')) {
+    if (_.has(record, 'correlated_by_field_value')) {
       let mvDescription = 'multivariate correlations found in ';
-      mvDescription += record.byFieldName;
+      mvDescription += record.by_field_name;
       mvDescription += '; ';
-      mvDescription += record.byFieldValue;
+      mvDescription += record.by_field_value;
       mvDescription += ' is considered anomalous given ';
-      mvDescription += record.correlatedByFieldValue;
+      mvDescription += record.correlated_by_field_value;
       record.multiVariateDescription = mvDescription;
     }
 
