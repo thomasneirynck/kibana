@@ -24,11 +24,9 @@ import 'plugins/prelert/services/job_service';
 import 'plugins/prelert/services/results_service';
 
 import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
-import VisSchemasProvider from 'ui/vis/schemas';
 
 export default function AnomalySummaryTableVisType(Private) {
   const TemplateVisType = Private(TemplateVisTypeProvider);
-  const Schemas = Private(VisSchemasProvider);
 
   // Return a new instance describing this visualization.
   return new TemplateVisType({
@@ -54,4 +52,4 @@ export default function AnomalySummaryTableVisType(Private) {
                         {display:'Show all', val:'second'}]
     }
   });
-};
+}
