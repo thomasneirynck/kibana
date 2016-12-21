@@ -13,7 +13,6 @@
  * strictly prohibited.
  */
 
-import path from 'path';
 import _ from 'lodash';
 import createProxy from '../../src/core_plugins/elasticsearch/lib/create_proxy';
 import initializationChecks from './lib/initialization_checks';
@@ -26,6 +25,7 @@ module.exports = function (kibana) {
 
     uiExports: {
       app: {
+        id: 'prelert',
         title: 'Prelert',
         description: 'Prelert behavioral analytics for machine data',
         icon: 'plugins/prelert/prelert-white.png',
@@ -45,15 +45,7 @@ module.exports = function (kibana) {
       },
       visTypes: [
         'plugins/prelert/prelert_vis_types'
-      ],
-      modules: {
-        pako$: {
-          path: path.resolve(__dirname, 'bower_components/pako/index.js'),
-        },
-        jszip$: {
-          path: path.resolve(__dirname, 'bower_components/jszip/lib/index.js'),
-        }
-      }
+      ]
     },
 
 
