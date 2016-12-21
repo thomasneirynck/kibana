@@ -1,9 +1,9 @@
-var path = require('path');
-var Bluebird = require('bluebird');
-var mkdirp = require('mkdirp');
-var Rsync = require('rsync');
+const path = require('path');
+const Bluebird = require('bluebird');
+const mkdirp = require('mkdirp');
+const Rsync = require('rsync');
 
-var logger = require('./logger');
+const logger = require('./logger');
 
 module.exports = (excludes) => {
   return function syncPathsTo(source, dest, options) {
@@ -15,7 +15,7 @@ module.exports = (excludes) => {
     })
     .then(function () {
       source = path.resolve(__dirname, '..', source);
-      var rsync = new Rsync();
+      const rsync = new Rsync();
 
       rsync.source(source).destination(dest);
       rsync.flags('uav').recursive(true);

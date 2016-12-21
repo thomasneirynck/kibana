@@ -20,15 +20,15 @@ import moment from 'moment';
 import getValueFromArrayOrString from '../lib/getValueFromArrayOrString';
 
 export default function getTimelineDataFn($rootScope, timefilter, es) {
-  var getTimelineData = function (direction, indexPattern, cluster, size, timeRange, data, position, indices) {
-    var newPosition = false;
+  const getTimelineData = function (direction, indexPattern, cluster, size, timeRange, data, position, indices) {
+    let newPosition = false;
     size = _.isUndefined(size) ? 300 : size;
     data = _.isUndefined(data) ? [] : data;
     position = _.isUndefined(position) ? 0 : position;
 
     function handleIndexList(indexList) {
       if (_.isUndefined(timeRange)) {
-        let bounds = timefilter.getBounds();
+        const bounds = timefilter.getBounds();
         timeRange = {
           gte: bounds.min.valueOf(),
           lte: bounds.max.valueOf(),
@@ -36,8 +36,8 @@ export default function getTimelineDataFn($rootScope, timefilter, es) {
         };
       }
 
-      var header = { index: indexList[position], type: 'cluster_state' };
-      var body = {
+      const header = { index: indexList[position], type: 'cluster_state' };
+      const body = {
         size: size,
         from: 0,
         fields: [
@@ -63,10 +63,10 @@ export default function getTimelineDataFn($rootScope, timefilter, es) {
         }
       };
 
-      var success = function (resp) {
+      const success = function (resp) {
         if (resp && resp.responses[0] && resp.responses[0].hits) {
-          var nextTimeRange;
-          var hits = resp.responses[0].hits;
+          let nextTimeRange;
+          const hits = resp.responses[0].hits;
           data.push.apply(data, hits.hits);
           $rootScope.$broadcast('updateTimelineData', direction, hits.hits);
 
@@ -75,7 +75,7 @@ export default function getTimelineDataFn($rootScope, timefilter, es) {
             newPosition = indexList[position] ? true : false;
           }
 
-          var lte = moment(timeRange.lte).valueOf();
+          let lte = moment(timeRange.lte).valueOf();
           if (hits.hits.length > 0) {
             lte = moment(getValueFromArrayOrString(hits.hits[hits.hits.length - 1].fields.timestamp)).valueOf();
           }
@@ -94,7 +94,7 @@ export default function getTimelineDataFn($rootScope, timefilter, es) {
         }
       };
 
-      var error = function (_resp) {
+      const error = function (_resp) {
         position++;
         if (indexList[position]) {
           return getTimelineData(direction, indexPattern, cluster, size, timeRange, data, position, indexList); // call again

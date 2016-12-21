@@ -4,7 +4,7 @@ module.exports = function (server, commonRouteConfig) {
     path: '/api/graph/searchProxy',
     method: 'POST',
     handler: function (req, reply) {
-      var callWithRequest = server.plugins.elasticsearch.callWithRequest;
+      const callWithRequest = server.plugins.elasticsearch.callWithRequest;
       callWithRequest(req, 'search', req.payload).then(function (resp) {
         reply({
           ok: true,

@@ -21,7 +21,7 @@ import Assigned from './assigned.jsx';
 
 class ShardRow extends React.Component {
   render() {
-    var unassigned;
+    let unassigned;
     if (this.props.data.unassigned && this.props.data.unassigned.length) {
       unassigned = (
         <Unassigned shards={ this.props.data.unassigned }/>

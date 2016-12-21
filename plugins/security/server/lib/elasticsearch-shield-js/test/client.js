@@ -1,14 +1,14 @@
-var es = require('elasticsearch');
-var Promise = require('bluebird');
+const es = require('elasticsearch');
+const Promise = require('bluebird');
 
 // current client
-var client = null;
+let client = null;
 
 module.exports = {
   create: function create(port) {
     doCreateClient({ logConfig: null });
-    var attemptsRemaining = 60;
-    var timeout = 500;
+    let attemptsRemaining = 60;
+    const timeout = 500;
 
     return (function ping() {
       return client.info({

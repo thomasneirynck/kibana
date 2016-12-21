@@ -2,7 +2,7 @@ import clarinet from 'clarinet';
 import Range from './range';
 
 export function checkForParseErrors(json, markers, ace) {
-  for (let i in markers) {
+  for (const i in markers) {
     if (markers.hasOwnProperty(i)) {
       ace.session.removeMarker(markers[i]);
     }

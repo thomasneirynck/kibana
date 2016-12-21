@@ -16,21 +16,21 @@ export default React.createClass({
     }
 
     // Sort the Data
-    var sortColumn = this.props.sortColObj;
-    var sortedData = this.props.tableData.sort(function (a, b) {
-      var aVal = _.get(a, sortColumn.sortKey || sortColumn.key);
-      var bVal = _.get(b, sortColumn.sortKey || sortColumn.key);
-      var sortDir = sortColumn.sort > 0 ? (aVal < bVal) : (aVal > bVal);
+    const sortColumn = this.props.sortColObj;
+    const sortedData = this.props.tableData.sort(function (a, b) {
+      const aVal = _.get(a, sortColumn.sortKey || sortColumn.key);
+      const bVal = _.get(b, sortColumn.sortKey || sortColumn.key);
+      const sortDir = sortColumn.sort > 0 ? (aVal < bVal) : (aVal > bVal);
       return sortDir ? -1 : 1;
     });
 
     // Paginate the Data
-    var start = this.props.pageIdx * this.props.itemsPerPage;
-    var end = start + (this.props.itemsPerPage || sortedData.length);
-    var paginatedData = sortedData.slice(start, end);
-    var template = React.createFactory(this.props.template);
+    const start = this.props.pageIdx * this.props.itemsPerPage;
+    const end = start + (this.props.itemsPerPage || sortedData.length);
+    const paginatedData = sortedData.slice(start, end);
+    const template = React.createFactory(this.props.template);
 
-    var createRow = function (data, idx) {
+    const createRow = function (data, idx) {
       // each child in the array needs a unique "key" prop
       data.key = `paginated-table-row-${idx}`;
       return template(data, idx);

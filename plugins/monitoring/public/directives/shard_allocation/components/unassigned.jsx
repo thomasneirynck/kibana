@@ -22,13 +22,13 @@ import Shard from './shard.jsx';
 export default React.createClass({
   displayName: 'Unassigned',
   createShard: function (shard) {
-    var type = shard.primary ? 'primary' : 'replica';
-    var additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
-    var key = shard.index + '.' + shard.node + '.' + type + '.' + shard.state + '.' + shard.shard + additionId;
+    const type = shard.primary ? 'primary' : 'replica';
+    const additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
+    const key = shard.index + '.' + shard.node + '.' + type + '.' + shard.state + '.' + shard.shard + additionId;
     return (<Shard shard={ shard } key={ key }></Shard>);
   },
   render: function () {
-    var shards = _.sortBy(this.props.shards, 'shard').map(this.createShard);
+    const shards = _.sortBy(this.props.shards, 'shard').map(this.createShard);
     return (
       <td className="unassigned">
         <div className="children">{ shards }</div>

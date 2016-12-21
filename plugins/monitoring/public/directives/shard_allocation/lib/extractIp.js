@@ -19,7 +19,7 @@ export default function extractIp(node) {
   if (!node) {
     return null;
   }
-  var matches = node.transport_address.match(/inet\[[^\/]*\/([^\/\]]+)\]/);
+  const matches = node.transport_address.match(/inet\[[^\/]*\/([^\/\]]+)\]/);
   if (matches) {
     return matches[1];
   }

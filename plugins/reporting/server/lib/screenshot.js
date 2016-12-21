@@ -66,7 +66,7 @@ function loadUrl(ph, url, captureSettings, opts) {
     return ph.evaluate(function (basePath) {
       // inject custom CSS rules
       function injectCSS(cssPath) {
-        var node = document.createElement('link');
+        const node = document.createElement('link');
         node.rel = 'stylesheet';
         node.href = cssPath;
         document.getElementsByTagName('head')[0].appendChild(node);
@@ -82,19 +82,19 @@ function loadUrl(ph, url, captureSettings, opts) {
     // this is run in phantom
     function listenForComplete(visLoadDelay, visLoadTimeout, visSettleTime) {
       // wait for visualizations to finish loading
-      var visualizations = document.querySelectorAll('[render-counter]');
-      var visCount = visualizations.length;
+      const visualizations = document.querySelectorAll('[render-counter]');
+      const visCount = visualizations.length;
       const renderedTasks = [];
 
       // used when visualizations have a render-count attribute
       function waitForRenderCount(visualization) {
         return new Promise(function (resolve, reject) {
-          var CHECK_DELAY = 300;
-          var start = Date.now();
-          var lastRenderCount = 0;
+          const CHECK_DELAY = 300;
+          const start = Date.now();
+          let lastRenderCount = 0;
 
           (function checkRenderCount() {
-            var renderCount = parseInt(visualization.getAttribute('render-counter'));
+            const renderCount = parseInt(visualization.getAttribute('render-counter'));
 
             // if the timeout has exceeded, abort and reject
             if ((start + visLoadTimeout) < Date.now()) {
@@ -125,9 +125,9 @@ function loadUrl(ph, url, captureSettings, opts) {
         });
       }
 
-      for (var i = 0; i < visCount; i++) {
-        var visualization = visualizations[i];
-        var renderCounter = visualization.getAttribute('render-counter');
+      for (let i = 0; i < visCount; i++) {
+        const visualization = visualizations[i];
+        const renderCounter = visualization.getAttribute('render-counter');
 
         if (renderCounter !== 'disabled') {
           renderedTasks.push(waitForRenderCount(visualization));

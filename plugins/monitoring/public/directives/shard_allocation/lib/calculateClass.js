@@ -16,7 +16,7 @@
  */
 
 export default function calculateClass(item, initial) {
-  var classes = [item.type];
+  const classes = [item.type];
   if (initial) {
     classes.push(initial);
   }

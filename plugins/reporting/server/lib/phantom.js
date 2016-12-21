@@ -159,7 +159,7 @@ function _createPhantomInstance(ready, ph, phantomOptions) {
             // block. If the original function does not return a promise, its result is passed on.
             function evaluateWrapper(userFnStr, cbIndex, origArgs) {
               // you can't pass a function to phantom, so we pass the string and eval back into a function
-              var userFn;
+              let userFn;
               eval('userFn = ' + userFnStr); // eslint-disable-line no-eval
 
               // keep a record of the resulting execution for future calls (used when async)
@@ -172,9 +172,9 @@ function _createPhantomInstance(ready, ph, phantomOptions) {
                   return;
                 }
 
-                var isErr = err instanceof Error;
+                const isErr = err instanceof Error;
                 if (isErr) {
-                  var keys = Object.getOwnPropertyNames(err);
+                  const keys = Object.getOwnPropertyNames(err);
                   err = keys.reduce(function copyErr(obj, key) {
                     obj[key] = err[key];
                     return obj;
@@ -189,7 +189,7 @@ function _createPhantomInstance(ready, ph, phantomOptions) {
 
               try {
                 // execute the original function
-                var res = userFn.apply(this, origArgs);
+                const res = userFn.apply(this, origArgs);
 
                 if (res && typeof res.then === 'function') {
                   // handle async resolution via Promises

@@ -19,13 +19,13 @@ import _ from 'lodash';
 import getValue from './getValueFromArrayOrString';
 
 export default function updateColors($scope) {
-  var colors = [];
-  var previous = {};
-  var runningTotal = 0;
-  var grandTotal = $scope.timelineData.length;
+  let colors = [];
+  let previous = {};
+  let runningTotal = 0;
+  const grandTotal = $scope.timelineData.length;
   _.each($scope.timelineData, function (row) {
-    var status = getValue(row.fields['cluster_state.status']) || 'green';
-    var last = _.last(colors);
+    const status = getValue(row.fields['cluster_state.status']) || 'green';
+    let last = _.last(colors);
     if (!last) {
       last = { status: status , count: 0 };
       colors.push(last);

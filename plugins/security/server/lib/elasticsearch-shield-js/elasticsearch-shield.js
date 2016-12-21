@@ -8,10 +8,10 @@
   }
 }(this, function () {
   return function addShieldApi(Client, config, components) {
-    var ca = components.clientAction.factory;
+    const ca = components.clientAction.factory;
 
     Client.prototype.shield = components.clientAction.namespaceFactory();
-    var shield = Client.prototype.shield.prototype;
+    const shield = Client.prototype.shield.prototype;
 
     /**
      * Perform a [shield.authenticate](Retrieve details about the currently authenticated user) request

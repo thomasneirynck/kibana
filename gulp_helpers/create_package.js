@@ -1,9 +1,9 @@
-var gitInfo = require('./git_info');
-var moment = require('moment');
+const gitInfo = require('./git_info');
+const moment = require('moment');
 
 function createPackageFile(pkg, includeProps, buildVersion) {
   // create object for new package.json
-  var pkgOutput = includeProps.reduce(function (output, key) {
+  const pkgOutput = includeProps.reduce(function (output, key) {
     if (buildVersion && key === 'version') output[key] = buildVersion;
     else output[key] = pkg[key];
     return output;
@@ -13,7 +13,7 @@ function createPackageFile(pkg, includeProps, buildVersion) {
   return gitInfo()
   .then(function (info) {
 
-    var m = moment.utc();
+    const m = moment.utc();
     pkgOutput.build = {
       number: info.number,
       sha: info.sha,

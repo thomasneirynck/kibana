@@ -24,9 +24,9 @@ function parseAuthHeader(authorization) {
   const tokenBuffer = new Buffer(token, 'base64');
   const tokenString = tokenBuffer.toString();
 
-  // parse auth data
-  let [ username, ...password ] = tokenString.split(/:/);
-  password = password.join(':');
+  // everything after the first : is the password
+  const [ username, ...passwordParts ] = tokenString.split(/:/);
+  const password = passwordParts.join(':');
 
   return { username, password };
 }

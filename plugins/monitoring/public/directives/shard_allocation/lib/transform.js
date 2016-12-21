@@ -20,7 +20,7 @@ import nodesByIndices from '../transformers/nodesByIndices';
 
 // This will curry a transform function based on the view.
 export default function transform(view, $scope) {
-  var func = (view === 'index') ? indicesByNodes : nodesByIndices;
+  const func = (view === 'index') ? indicesByNodes : nodesByIndices;
   // we need to pass the scope to filter the data in the transformer functions
   // for the auto-complete filter.
   return func($scope);

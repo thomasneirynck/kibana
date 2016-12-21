@@ -1,7 +1,7 @@
 //MH TODO - I'm not 100% on managing dependencies. I added these 2 dependencies
 // to the source code and it seems to work.
-var d3 = require('d3');
-var venn = require('venn.js');
+const d3 = require('d3');
+const venn = require('venn.js');
 
 
 angular.module('angular-venn-simple', [])
@@ -16,51 +16,51 @@ angular.module('angular-venn-simple', [])
     restrict: 'AE',
     controller: function ($scope, $element) {
       $scope.$watch('venn', function () {
-        var element = $element[0];
+        const element = $element[0];
         //Remove current contents
         while (element.firstChild) {
           element.removeChild(element.firstChild);
         }
-        var params = $scope.venn;
+        const params = $scope.venn;
         if (!params) {
           return;
         }
-        var height = params.height ? params.height : '50px';
-        var width = params.width ? params.width : '200px';
-        var v1 = params.v1 ? params.v1 : 10;
-        var v2 = params.v2 ? params.v2 : 10;
-        var overlap = params.overlap ? params.overlap : 5;
-        var v1Class = params.v1Class ? params.v1Class : 'venn1';
-        var v2Class = params.v2Class ? params.v2Class : 'venn2';
-        var r1 = Math.sqrt(v1 / Math.PI);
-        var r2 = Math.sqrt(v2 / Math.PI);
+        const height = params.height ? params.height : '50px';
+        const width = params.width ? params.width : '200px';
+        const v1 = params.v1 ? params.v1 : 10;
+        const v2 = params.v2 ? params.v2 : 10;
+        const overlap = params.overlap ? params.overlap : 5;
+        const v1Class = params.v1Class ? params.v1Class : 'venn1';
+        const v2Class = params.v2Class ? params.v2Class : 'venn2';
+        const r1 = Math.sqrt(v1 / Math.PI);
+        const r2 = Math.sqrt(v2 / Math.PI);
 
-        var maxR = Math.max(r1,r2);
-        var x1 = r1;
-        var y1 = maxR;
-        var x2 = x1 + venn.distanceFromIntersectArea(r1,r2,overlap);
-        var y2 = maxR;
+        const maxR = Math.max(r1,r2);
+        let x1 = r1;
+        const y1 = maxR;
+        let x2 = x1 + venn.distanceFromIntersectArea(r1,r2,overlap);
+        const y2 = maxR;
 
         //Shift right to centre image
-        var imageWidth = (maxR * 4);
-        var blankRight = imageWidth - (x2 + r2);
+        const imageWidth = (maxR * 4);
+        const blankRight = imageWidth - (x2 + r2);
         x1 += blankRight / 2;
         x2 += blankRight / 2;
 
-        var viewBoxDims = '0 0 ' + imageWidth + ' ' + (maxR * 2);
-        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        const viewBoxDims = '0 0 ' + imageWidth + ' ' + (maxR * 2);
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('width',width);
         svg.setAttribute('height',height);
         svg.setAttribute('viewBox', viewBoxDims);
-        var g = document.createElementNS('http://www.w3.org/2000/svg','g');
-        var circle1 = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+        const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+        const circle1 = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
         circle1.setAttribute('cx',x1);
         circle1.setAttribute('cy',y1);
         circle1.setAttribute('rx',r1);
         circle1.setAttribute('ry',r1);
         circle1.setAttribute('class',v1Class);
         g.appendChild(circle1);
-        var circle2 = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
+        const circle2 = document.createElementNS('http://www.w3.org/2000/svg','ellipse');
         circle2.setAttribute('cx',x2);
         circle2.setAttribute('cy',y2);
         circle2.setAttribute('rx',r2);

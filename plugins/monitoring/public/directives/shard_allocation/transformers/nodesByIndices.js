@@ -23,7 +23,7 @@ import extractIp from '../lib/extractIp';
 export default function nodesByIndicesFn() {
   return function nodesByIndices(shards, nodes) {
 
-    var getNodeType = function (node) {
+    const getNodeType = function (node) {
       if (node.attributes.client === 'true') {
         return 'client';
       }
@@ -42,7 +42,7 @@ export default function nodesByIndicesFn() {
       node.ip_port = extractIp(node);
       node.type = 'node';
       node.children = [];
-      var nodeType = getNodeType(node);
+      const nodeType = getNodeType(node);
       if (nodeType === 'normal' || nodeType === 'data') {
         obj[id] = node;
       }
@@ -50,12 +50,12 @@ export default function nodesByIndicesFn() {
     }
 
     function createIndexAddShard(obj, shard) {
-      var node = shard.resolver || 'unassigned';
-      var index = shard.index;
+      const node = shard.resolver || 'unassigned';
+      const index = shard.index;
       if (!obj[node]) {
         createNode(obj, nodes[node], node);
       }
-      var indexObj = _.find(obj[node].children, { id: index });
+      let indexObj = _.find(obj[node].children, { id: index });
       if (!indexObj) {
         indexObj = {
           id: index,
@@ -73,7 +73,7 @@ export default function nodesByIndicesFn() {
       return shard.state === 'UNASSIGNED';
     }
 
-    var data = {};
+    let data = {};
     if (_.some(shards, isUnassigned)) {
       data.unassigned = {
         name: 'Unassigned',

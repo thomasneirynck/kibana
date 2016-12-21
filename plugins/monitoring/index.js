@@ -20,7 +20,7 @@ export default function monitoringIndex(kibana) {
         icon: 'plugins/monitoring/monitoring.svg',
         main: 'plugins/monitoring/monitoring',
         injectVars(server) {
-          var config = server.config();
+          const config = server.config();
           return {
             maxBucketSize: config.get('xpack.monitoring.max_bucket_size'),
             minIntervalSeconds: config.get('xpack.monitoring.min_interval_seconds'),
@@ -32,7 +32,7 @@ export default function monitoringIndex(kibana) {
         },
       },
       injectDefaultVars(server) {
-        var config = server.config();
+        const config = server.config();
         return {
           statsReportUrl: config.get('xpack.monitoring.stats_report_url'),
           reportStats: config.get('xpack.monitoring.report_stats'),

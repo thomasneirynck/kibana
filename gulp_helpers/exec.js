@@ -1,12 +1,12 @@
-var childProcess = require('child_process');
-var Bluebird = require('bluebird');
+const childProcess = require('child_process');
+const Bluebird = require('bluebird');
 
 module.exports = (gulpUtil) => {
   return function exec(cmd, args, opts) {
     args = args || [];
     opts = opts || {};
     return new Bluebird(function (resolve, reject) {
-      var proc = childProcess.spawn(cmd, args, opts);
+      const proc = childProcess.spawn(cmd, args, opts);
 
       proc.stdout.on('data', function (data) {
         gulpUtil.log(data.toString('utf-8').trim());

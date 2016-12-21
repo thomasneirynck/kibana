@@ -21,7 +21,7 @@ export default function extractIp(transport) {
   if (typeof transport !== 'string') {
     return null;
   }
-  var matches = transport.match(/inet\[[^\/]*\/([^\/\]]+)\]/);
+  const matches = transport.match(/inet\[[^\/]*\/([^\/\]]+)\]/);
   if (matches) {
     return matches[1];
   }

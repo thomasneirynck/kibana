@@ -95,7 +95,7 @@ export const iconChoices = [
   }
 ];
 
-export var iconChoicesByClass = {};
+export const iconChoicesByClass = {};
 
 iconChoices.forEach(icon => {
   iconChoicesByClass[icon.class] = icon;
@@ -148,7 +148,7 @@ export const drillDownIconChoices = [
     code: '\uf1e0'
   }
 ];
-export var drillDownIconChoicesByClass = {};
+export const drillDownIconChoicesByClass = {};
 
 drillDownIconChoices.forEach(icon => {
   drillDownIconChoicesByClass[icon.class] = icon;

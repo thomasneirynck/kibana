@@ -136,7 +136,7 @@ function profileVizController($scope, $route, $interval, $http, HighlightService
   };
 
   $scope.renderProfile = data => {
-    for (let shard of data) {
+    for (const shard of data) {
       shard.id = shard.id.match(/\[([^\]\[]*?)\]/g);
       shard.id = _.map(shard.id, id => {
         return id.replace('[', '').replace(']', '');

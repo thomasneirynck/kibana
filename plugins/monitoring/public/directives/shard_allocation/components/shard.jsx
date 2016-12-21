@@ -27,9 +27,9 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    var key;
-    var shard = this.props.shard;
-    var self = this;
+    let key;
+    const shard = this.props.shard;
+    const self = this;
     if (shard.tooltip_message) {
       key = this.generateKey();
       vents.on(key, function (action) {
@@ -39,16 +39,16 @@ export default React.createClass({
   },
 
   generateKey: function (relocating) {
-    var shard = this.props.shard;
-    var shardType = shard.primary ? 'primary' : 'replica';
-    var additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
-    var node = relocating ? shard.relocating_node : shard.node;
+    const shard = this.props.shard;
+    const shardType = shard.primary ? 'primary' : 'replica';
+    const additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
+    const node = relocating ? shard.relocating_node : shard.node;
     return shard.index + '.' + node + '.' + shardType + '.' + shard.shard + additionId;
   },
 
   componentWillUnmount: function () {
-    var key;
-    var shard = this.props.shard;
+    let key;
+    const shard = this.props.shard;
     if (shard.tooltip_message) {
       key = this.generateKey();
       vents.clear(key);
@@ -57,16 +57,16 @@ export default React.createClass({
 
   toggle: function (event) {
     if (this.props.shard.tooltip_message) {
-      var action = (event.type === 'mouseenter') ? 'show' : 'hide';
-      var key = this.generateKey(true);
+      const action = (event.type === 'mouseenter') ? 'show' : 'hide';
+      const key = this.generateKey(true);
       this.setState({ tooltip: action === 'show' });
       vents.trigger(key, action);
     }
   },
 
   render: function () {
-    var shard = this.props.shard;
-    var tooltip;
+    const shard = this.props.shard;
+    let tooltip;
     if (this.state.tooltip) {
       tooltip = (<div className="shard-tooltip">{ this.props.shard.tooltip_message }</div>);
     }

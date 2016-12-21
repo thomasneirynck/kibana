@@ -1,7 +1,7 @@
 module.exports = Catcher;
 
-var RE_STRING_RE = /^\/(.*)\/$/;
-var NUMERIC_RE = /^[0-9]+$/;
+const RE_STRING_RE = /^\/(.*)\/$/;
+const NUMERIC_RE = /^[0-9]+$/;
 
 function Catcher(setting) {
   if (!setting) return;

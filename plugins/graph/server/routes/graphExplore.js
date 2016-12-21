@@ -4,10 +4,10 @@ import _ from 'lodash';
 
 module.exports = function (server, commonRouteConfig) {
 
-  var callWithRequest = server.plugins.elasticsearch.callWithRequest;
+  const callWithRequest = server.plugins.elasticsearch.callWithRequest;
 
   function graphExplore(req) {
-    var payload = req.payload;
+    const payload = req.payload;
     return callWithRequest(req, 'transport.request', {
       'path': '/' + encodeURIComponent(payload.index) + '/_xpack/_graph/_explore',
       body: payload.query,

@@ -10,7 +10,7 @@ const Table = React.createClass({
   displayName: 'Table',
 
   getInitialState: function () {
-    var sortColObj = null;
+    let sortColObj = null;
     if (this.props.options.columns) {
       const columnWithSort = _.find(this.props.options.columns, (col) => col.sort === 1);
       sortColObj = columnWithSort || _.first(this.props.options.columns);
@@ -78,7 +78,7 @@ const Table = React.createClass({
   },
 
   render: function () {
-    var isLoading = (this.state.tableData === null);
+    const isLoading = (this.state.tableData === null);
     if (isLoading) {
       return (
         <div className='paginated-table loading'>
@@ -89,9 +89,9 @@ const Table = React.createClass({
     }
 
     // Make the Title Bar
-    var $title = make.h3({className: 'pull-left title'}, this.props.options.title);
-    var that = this;
-    var $filter = make.input({
+    const $title = make.h3({className: 'pull-left title'}, this.props.options.title);
+    const that = this;
+    const $filter = make.input({
       type: 'text',
       className: 'pull-left filter-input filter-member filter-member-first',
       placeholder: this.props.options.searchPlaceholder,
@@ -99,21 +99,21 @@ const Table = React.createClass({
         that.setFilter(evt.target.value);
       }
     });
-    var filteredTableData = this.getFilteredData();
-    var viewingCount = Math.min(filteredTableData.length, this.state.itemsPerPage);
-    var $count = make.div({className: 'pull-left filter-member'}, `${viewingCount} of ${this.state.tableData.length}`);
-    var titleClasses = 'title-bar';
+    const filteredTableData = this.getFilteredData();
+    const viewingCount = Math.min(filteredTableData.length, this.state.itemsPerPage);
+    const $count = make.div({className: 'pull-left filter-member'}, `${viewingCount} of ${this.state.tableData.length}`);
+    let titleClasses = 'title-bar';
     if (this.props.options.title == null) {
       titleClasses += ' no-title';
     }
 
-    var $titleBar = make.div({className: titleClasses},
+    const $titleBar = make.div({className: titleClasses},
       $title, $filter, $count, ...this.state.filterMembers, make.div({className: 'clearfix'}));
 
     // Make the Table
-    var $tableHead = React.createFactory(TableHead);
-    var $tableBody = React.createFactory(TableBody);
-    var $table = make.table({ key: 'table', className: 'table monitoring-view-listing-table' },
+    const $tableHead = React.createFactory(TableHead);
+    const $tableBody = React.createFactory(TableBody);
+    const $table = make.table({ key: 'table', className: 'table monitoring-view-listing-table' },
       $tableHead({
         key: 'table.head',
         setSortCol: this.setSortCol,
@@ -131,7 +131,7 @@ const Table = React.createClass({
       }));
 
     // Footer
-    var $pagination = React.createElement(Pagination, {
+    const $pagination = React.createElement(Pagination, {
       dataLength: filteredTableData.length,
       itemsPerPage: this.state.itemsPerPage,
       pageIdx: this.state.pageIdx,

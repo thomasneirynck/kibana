@@ -35,7 +35,7 @@ export default function getListingNodes(req, indices) {
   const config = req.server.config();
   const callWithRequest = req.server.plugins.monitoring.callWithRequest;
   const listingMetrics = req.payload.listingMetrics || [];
-  let start = moment.utc(req.payload.timeRange.min).valueOf();
+  const start = moment.utc(req.payload.timeRange.min).valueOf();
   const orgStart = start;
   const end = moment.utc(req.payload.timeRange.max).valueOf();
   const uuid = req.params.clusterUuid;
@@ -65,7 +65,7 @@ export default function getListingNodes(req, indices) {
   const min = start;
   const aggSize = 10000;
 
-  var aggs = {
+  const aggs = {
     items: {
       terms: {
         field: `source_node.${config.get('xpack.monitoring.node_resolver')}`, // transport_address or node name

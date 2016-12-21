@@ -1,13 +1,13 @@
 module.exports = ParamList;
 
-var _ = require('lodash');
-var camelCase = require('camelcase');
+const _ = require('lodash');
+const camelCase = require('camelcase');
 
 function ParamList(vals) {
-  var self = this;
+  const self = this;
 
   _.forOwn(vals, function (param, oldKey) {
-    var name = camelCase(oldKey);
+    const name = camelCase(oldKey);
     self[name] = param;
 
     if (name !== oldKey) param.name = oldKey;

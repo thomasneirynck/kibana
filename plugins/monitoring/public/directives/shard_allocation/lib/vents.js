@@ -30,8 +30,8 @@ export default {
     delete vents[id];
   },
   trigger: function () {
-    var args = Array.prototype.slice.call(arguments);
-    var id = args.shift();
+    const args = Array.prototype.slice.call(arguments);
+    const id = args.shift();
     if (vents[id]) {
       _.each(vents[id], function (cb) {
         cb.apply(null, args);

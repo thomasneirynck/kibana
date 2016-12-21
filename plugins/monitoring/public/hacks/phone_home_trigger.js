@@ -71,7 +71,7 @@ function phoneHomeClassFactory($window, Promise, $http, reportStats, statsReport
      * Call the API to get the basic cluster info from the non-timebased index
      */
     _getClusterInfo(clusterUUID) {
-      let url = uiChrome.addBasePath(`/api/monitoring/v1/clusters/${clusterUUID}/info`);
+      const url = uiChrome.addBasePath(`/api/monitoring/v1/clusters/${clusterUUID}/info`);
       return $http.get(url)
       .then((resp) => {
         return resp.data;

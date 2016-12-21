@@ -121,7 +121,7 @@ export default function indicesRoutes(server) {
       })
       .then(calculateClusterShards)
       .then(function (body) {
-        var shardStats = body.shardStats[id];
+        const shardStats = body.shardStats[id];
         // check if we need a legacy workaround for Monitoring 2.0 node data
         if (shardStats) {
           body.indexSummary.unassignedShards = shardStats.unassigned.primary + shardStats.unassigned.replica;

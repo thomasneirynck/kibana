@@ -10,7 +10,7 @@ Model.prototype.get = function (key) {
 };
 
 Model.prototype.set = function (key, val) {
-  var self = this;
+  const self = this;
   if (_.isPlainObject(key)) {
     _.each(Model.flatten(key), function (v, k) {
       _.get(self.data, k, v);
@@ -22,7 +22,7 @@ Model.prototype.set = function (key, val) {
 
 Model.prototype.toObject = function (options) {
   options = _.defaults({}, options, this.options);
-  var data = this.data;
+  let data = this.data;
   if (options.flatten) data = Model.flatten(data);
   return data;
 };
@@ -32,7 +32,7 @@ Model.prototype.toJSON = function () {
 };
 
 Model.stripEmpties = function (obj) {
-  for (var i in obj) {
+  for (const i in obj) {
     if (_.isEmpty(obj[i])) {
       delete obj[i];
     } else if (typeof obj[i] === 'object') {
@@ -45,7 +45,7 @@ Model.stripEmpties = function (obj) {
 Model.flatten = function flatten(obj, path, newObj) {
   newObj = newObj || {};
   path = path || [];
-  for (var i in obj) {
+  for (const i in obj) {
     if (_.isPlainObject(obj[i]) && !_.isArray(obj[i])) {
       flatten(obj[i], path.concat(i), newObj);
     } else {
@@ -56,7 +56,7 @@ Model.flatten = function flatten(obj, path, newObj) {
 };
 
 Model.explode = function explode(obj) {
-  var newObj = {};
+  const newObj = {};
   _.each(obj, function (val, key) {
     _.set(newObj, key, val);
   });

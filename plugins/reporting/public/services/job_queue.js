@@ -27,7 +27,7 @@ module.service('reportingJobQueue', ($http, kbnUrl, Private) => {
     if (!licenseAllowsToShowThisPage()) {
       return notifyAndRedirectToManagementOverviewPage();
     }
-    var msg = err.statusText || 'Request failed';
+    const msg = err.statusText || 'Request failed';
     genericNotifier.error(msg);
     throw err;
   }

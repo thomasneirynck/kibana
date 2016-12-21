@@ -16,8 +16,8 @@
  */
 
 export default function generateQueryAndLink(data) {
-  var type = 'indices';
-  var ident = data.name;
+  let type = 'indices';
+  let ident = data.name;
   if (data.type === 'node') {
     type = 'nodes';
     ident = data.id;

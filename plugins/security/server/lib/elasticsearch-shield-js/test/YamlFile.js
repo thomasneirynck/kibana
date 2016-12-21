@@ -6,13 +6,13 @@
  */
 module.exports = YamlFile;
 
-var Promise = require('bluebird');
-var YamlDoc = require('./YamlDoc');
-var client = require('./client');
-var _ = require('lodash');
+const Promise = require('bluebird');
+const YamlDoc = require('./YamlDoc');
+const client = require('./client');
+const _ = require('lodash');
 
 function YamlFile(filename, docs) {
-  var file = this;
+  const file = this;
 
   // file level skipping flag
   file.skipping = false;
@@ -37,7 +37,7 @@ function YamlFile(filename, docs) {
 
 function runDoc(doc) {
   return function docRunner() {
-    var steps = _.pluck(doc._actions, 'testable');
+    const steps = _.pluck(doc._actions, 'testable');
     return Promise.resolve(steps).each(function (step) {
       return Promise.try(step);
     });

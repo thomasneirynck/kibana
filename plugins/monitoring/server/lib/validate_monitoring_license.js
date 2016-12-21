@@ -5,6 +5,6 @@ function sha256(input) {
 }
 
 export default function validateMonitoringLicense(id, license) {
-  let hash = sha256(`${license.status}${license.uid}${license.type}${license.expiry_date_in_millis}${id}`);
+  const hash = sha256(`${license.status}${license.uid}${license.type}${license.expiry_date_in_millis}${id}`);
   return hash === license.hkey;
 };

@@ -1,8 +1,8 @@
-var _ = require('lodash');
-var camelCase = require('camelcase');
-var ParamList = require('./ParamList');
+const _ = require('lodash');
+const camelCase = require('camelcase');
+const ParamList = require('./ParamList');
 
-var urlParamRE = /\{(\w+)\}/g;
+const urlParamRE = /\{(\w+)\}/g;
 
 function Method(name, props) {
   this.name = name.split('.').map(function (part) { return camelCase(part); }).join('.');
@@ -23,8 +23,8 @@ function Method(name, props) {
     this.bulkBody = true;
   }
 
-  var urls = props.url.paths.map(_.partial(parseUrl, props.url.parts));
-  var urlSignatures = urls.map(function (url) {
+  const urls = props.url.paths.map(_.partial(parseUrl, props.url.parts));
+  const urlSignatures = urls.map(function (url) {
     return _.union(_.keys(url.opt), _.keys(url.req)).sort().join(':');
   });
 
@@ -63,17 +63,17 @@ function Method(name, props) {
 
 
 function parseUrl(urlParts, url) {
-  var opt = {};
-  var req = {};
+  const opt = {};
+  const req = {};
 
   if (url.charAt(0) !== '/') {
     url = '/' + url;
   }
 
-  var fmt = url.replace(urlParamRE, function (full, snakeCaseName) {
-    var name = camelCase(snakeCaseName);
-    var param = urlParts[name] || {};
-    var target = (param.required || !param.default) ? req : opt;
+  const fmt = url.replace(urlParamRE, function (full, snakeCaseName) {
+    const name = camelCase(snakeCaseName);
+    const param = urlParts[name] || {};
+    const target = (param.required || !param.default) ? req : opt;
     target[name] = _.omit(param, 'required', 'description', 'name');
 
     return '<%=' + name + '%>';

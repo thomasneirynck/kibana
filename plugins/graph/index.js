@@ -1,7 +1,7 @@
 import { resolve } from 'path';
 import Boom from 'boom';
-var graphExploreRoute = require('./server/routes/graphExplore');
-var searchProxyRoute = require('./server/routes/searchProxy');
+const graphExploreRoute = require('./server/routes/graphExplore');
+const searchProxyRoute = require('./server/routes/searchProxy');
 import checkLicense from './server/lib/check_license';
 import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
 
@@ -10,10 +10,10 @@ const APP_TITLE = 'Graph';
 module.exports = function (kibana) {
 
     //2.x bootstrap code copied from https://github.com/elastic/timelion/pull/57/files
-  var mainFile = 'plugins/graph/app';
-  var ownDescriptor = Object.getOwnPropertyDescriptor(kibana, 'autoload');
-  var protoDescriptor = Object.getOwnPropertyDescriptor(kibana.constructor.prototype, 'autoload');
-  var descriptor = ownDescriptor || protoDescriptor || {};
+  let mainFile = 'plugins/graph/app';
+  const ownDescriptor = Object.getOwnPropertyDescriptor(kibana, 'autoload');
+  const protoDescriptor = Object.getOwnPropertyDescriptor(kibana.constructor.prototype, 'autoload');
+  const descriptor = ownDescriptor || protoDescriptor || {};
   if (descriptor.get) {
     // the autoload list has been replaced with a getter that complains about
     // improper access, bypass that getter by seeing if it is defined
@@ -36,7 +36,7 @@ module.exports = function (kibana) {
         //2.x        main: 'plugins/graph/app',
         main: mainFile, //2.x
         injectVars: function (server, options) {
-          var config = server.config();
+          const config = server.config();
           return {
             kbnIndex: config.get('kibana.index'),
             esApiVersion: config.get('elasticsearch.apiVersion'),

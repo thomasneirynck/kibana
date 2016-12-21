@@ -12,7 +12,7 @@ function encodeUriQuery(val, pctEncodeSpaces) {
 };
 
 function toKeyValue(obj) {
-  var parts = [];
+  const parts = [];
   forEach(obj, function (value, key) {
     if (isArray(value)) {
       forEach(value, function (arrayValue) {

@@ -1,12 +1,12 @@
 // Kibana wrapper
-var d3 = require('d3');
+const d3 = require('d3');
 
 module.exports = (function () {
 
   // Pluggable function to handle the comms with a server. Default impl here is
   // for use outside of Kibana server with direct access to elasticsearch
-  var graphExplorer = function (indexName, typeName, request, responseHandler) {
-    var dataForServer = JSON.stringify(request);
+  let graphExplorer = function (indexName, typeName, request, responseHandler) {
+    const dataForServer = JSON.stringify(request);
     $.ajax({
       type: 'POST',
       url: 'http://localhost:9200/' + indexName + '/_xpack/graph/_explore',
@@ -19,8 +19,8 @@ module.exports = (function () {
       }
     });
   };
-  var searcher = function (indexName, request, responseHandler) {
-    var dataForServer = JSON.stringify(request);
+  let searcher = function (indexName, request, responseHandler) {
+    const dataForServer = JSON.stringify(request);
     $.ajax({
       type: 'POST',
       url: 'http://localhost:9200/' + indexName + '/_search',
@@ -38,8 +38,8 @@ module.exports = (function () {
   // ====== Undo operations =============
 
   function AddNodeOperation(node, owner) {
-    var self = this;
-    var vm = owner;
+    const self = this;
+    const vm = owner;
     self.node = node;
     self.undo = function () {
       vm.arrRemove(vm.nodes, self.node);
@@ -55,8 +55,8 @@ module.exports = (function () {
   }
 
   function AddEdgeOperation(edge, owner) {
-    var self = this;
-    var vm = owner;
+    const self = this;
+    const vm = owner;
     self.edge = edge;
     self.undo = function () {
       vm.arrRemove(vm.edges, self.edge);
@@ -69,15 +69,14 @@ module.exports = (function () {
   }
 
   function ReverseOperation(operation) {
-    var self = this;
-    var reverseOperation = operation;
+    const self = this;
+    const reverseOperation = operation;
     self.undo = reverseOperation.redo;
     self.redo = reverseOperation.undo;
   }
 
   function GroupOperation(receiver, orphan, vm) {
-    var self = this;
-    var vm = vm;
+    const self = this;
     self.receiver = receiver;
     self.orphan = orphan;
     self.undo = function () {
@@ -89,8 +88,7 @@ module.exports = (function () {
   }
 
   function UnGroupOperation(parent, child, vm) {
-    var self = this;
-    var vm = vm;
+    const self = this;
     self.parent = parent;
     self.child = child;
     self.undo = function () {
@@ -108,7 +106,7 @@ module.exports = (function () {
 
   // The main constructor for our GraphWorkspace
   function GraphWorkspace(options) {
-    var self = this;
+    const self = this;
     this.blacklistedNodes = [];
     this.options = options;
     this.undoLog = [];
@@ -150,22 +148,22 @@ module.exports = (function () {
 
 
     this.undo = function () {
-      var lastOps = this.undoLog.pop();
+      const lastOps = this.undoLog.pop();
       if (lastOps) {
         this.stopLayout();
         this.redoLog.push(lastOps);
-        for (var i in lastOps) {
+        for (const i in lastOps) {
           lastOps[i].undo();
         }
         this.runLayout();
       }
     };
     this.redo = function () {
-      var lastOps = this.redoLog.pop();
+      const lastOps = this.redoLog.pop();
       if (lastOps) {
         this.stopLayout();
         this.undoLog.push(lastOps);
-        for (var i in lastOps) {
+        for (const i in lastOps) {
           lastOps[i].redo();
         }
         this.runLayout();
@@ -176,8 +174,8 @@ module.exports = (function () {
     //Determines if 2 nodes are connected via an edge
     this.areLinked = function (a, b) {
       if (a == b) return true;
-      var allEdges = this.edges;
-      for (var e in allEdges) {
+      const allEdges = this.edges;
+      for (const e in allEdges) {
         if (e.source == a) {
           if (e.target == b) {
             return true;
@@ -196,8 +194,8 @@ module.exports = (function () {
 
     this.selectAll = function () {
       self.selectedNodes = [];
-      for (var n in self.nodes) {
-        var node = self.nodes[n];
+      for (const n in self.nodes) {
+        const node = self.nodes[n];
         if (node.parent == undefined) {
           node.isSelected = true;
           self.selectedNodes.push(node);
@@ -209,16 +207,16 @@ module.exports = (function () {
 
     this.selectNone = function () {
       self.selectedNodes = [];
-      for (var n in self.nodes) {
-        var node = self.nodes[n];
+      for (const n in self.nodes) {
+        const node = self.nodes[n];
         node.isSelected = false;
       }
     };
 
     this.selectInvert = function () {
       self.selectedNodes = [];
-      for (var n in self.nodes) {
-        var node = self.nodes[n];
+      for (const n in self.nodes) {
+        const node = self.nodes[n];
         if (node.parent != undefined) {
           continue;
         }
@@ -230,8 +228,8 @@ module.exports = (function () {
     };
 
     this.selectNodes = function (nodes) {
-      for (var n in nodes) {
-        var node = nodes[n];
+      for (const n in nodes) {
+        const node = nodes[n];
         node.isSelected = true;
         if (self.selectedNodes.indexOf(node) < 0) {
           self.selectedNodes.push(node);
@@ -247,16 +245,16 @@ module.exports = (function () {
     };
 
     this.deleteSelection = function () {
-      var allAndGrouped = self.returnUnpackedGroupeds(self.selectedNodes);
+      let allAndGrouped = self.returnUnpackedGroupeds(self.selectedNodes);
 
       // Nothing selected so process all nodes
       if (allAndGrouped.length == 0) {
         allAndGrouped = self.nodes.slice(0);
       }
 
-      var undoOperations = [];
-      for (var i in allAndGrouped) {
-        var node = allAndGrouped[i];
+      const undoOperations = [];
+      for (const i in allAndGrouped) {
+        const node = allAndGrouped[i];
         //We set selected to false because despite being deleted, node objects sit in an undo log
         node.isSelected = false;
         delete self.nodesMap[node.id];
@@ -265,11 +263,11 @@ module.exports = (function () {
       self.arrRemoveAll(self.nodes, allAndGrouped);
       self.arrRemoveAll(self.selectedNodes, allAndGrouped);
 
-      var danglingEdges = self.edges.filter(function (edge) {
+      const danglingEdges = self.edges.filter(function (edge) {
         return self.nodes.indexOf(edge.source) < 0 || self.nodes.indexOf(edge.target) < 0;
       });
-      for (var i in danglingEdges) {
-        var edge = danglingEdges[i];
+      for (const i in danglingEdges) {
+        const edge = danglingEdges[i];
         delete self.edgesMap[edge.id];
         undoOperations.push(new ReverseOperation(new AddEdgeOperation(edge, self)));
       }
@@ -280,9 +278,9 @@ module.exports = (function () {
 
 
     this.selectNeighbours = function () {
-      var newSelections = [];
-      for (var n in self.edges) {
-        var edge = self.edges[n];
+      const newSelections = [];
+      for (const n in self.edges) {
+        const edge = self.edges[n];
         if (!edge.topSrc.isSelected) {
           if (self.selectedNodes.indexOf(edge.topTarget) >= 0) {
             if (newSelections.indexOf(edge.topSrc) < 0) {
@@ -298,15 +296,15 @@ module.exports = (function () {
           }
         }
       }
-      for (var i in newSelections) {
-        var newlySelectedNode = newSelections[i];
+      for (const i in newSelections) {
+        const newlySelectedNode = newSelections[i];
         self.selectedNodes.push(newlySelectedNode);
         newlySelectedNode.isSelected = true;
       }
     };
 
     this.selectNone = function () {
-      for (var n in self.selectedNodes) {
+      for (const n in self.selectedNodes) {
         self.selectedNodes[n].isSelected = false;
       }
       self.selectedNodes = [];
@@ -322,17 +320,17 @@ module.exports = (function () {
     };
 
     this.colorSelected = function (colorNum) {
-      var selections = self.getAllSelectedNodes();
-      for (var i in selections) {
+      const selections = self.getAllSelectedNodes();
+      for (const i in selections) {
         selections[i].color = colorNum;
       }
     };
 
     this.getSelectionsThatAreGrouped = function () {
-      var result = [];
-      var selections = self.selectedNodes;
-      for (var i in selections) {
-        var node = selections[i];
+      const result = [];
+      const selections = self.selectedNodes;
+      for (const i in selections) {
+        const node = selections[i];
         if (node.numChildren > 0) {
           result.push(node);
         }
@@ -341,9 +339,9 @@ module.exports = (function () {
     };
 
     this.ungroupSelection = function () {
-      var selections = self.getSelectionsThatAreGrouped();
-      for (var i in selections) {
-        var node = selections[i];
+      const selections = self.getSelectionsThatAreGrouped();
+      for (const i in selections) {
+        const node = selections[i];
         self.ungroup(node);
       }
     };
@@ -360,22 +358,22 @@ module.exports = (function () {
 
     this.returnUnpackedGroupeds = function (topLevelNodeArray) {
       //Gather any grouped nodes that are part of this top-level selection
-      var result = topLevelNodeArray.slice();
+      const result = topLevelNodeArray.slice();
 
 
       // We iterate over edges not nodes because edges conveniently hold the top-most
       // node information.
 
-      var edges = this.edges;
-      for (var i = 0; i < edges.length; i++) {
-        var edge = edges[i];
+      const edges = this.edges;
+      for (let i = 0; i < edges.length; i++) {
+        const edge = edges[i];
 
-        var topLevelSource = edge.topSrc;
-        var topLevelTarget = edge.topTarget;
+        const topLevelSource = edge.topSrc;
+        const topLevelTarget = edge.topTarget;
 
         if (result.indexOf(topLevelTarget) >= 0) {
           //visible top-level node is selected - add all nesteds starting from bottom up
-          var target = edge.target;
+          let target = edge.target;
           while (target.parent != undefined) {
             if (result.indexOf(target) < 0) {
               result.push(target);
@@ -386,7 +384,7 @@ module.exports = (function () {
 
         if (result.indexOf(topLevelSource) >= 0) {
           //visible top-level node is selected - add all nesteds starting from bottom up
-          var source = edge.source;
+          let source = edge.source;
           while (source.parent != undefined) {
             if (result.indexOf(source) < 0) {
               result.push(source);
@@ -417,13 +415,13 @@ module.exports = (function () {
 
 
     this.arrRemoveAll = function remove(arr, items) {
-      for (var i = items.length; i--;) {
+      for (let i = items.length; i--;) {
         self.arrRemove(arr, items[i]);
       }
     };
 
     this.arrRemove = function remove(arr, item) {
-      for (var i = arr.length; i--;) {
+      for (let i = arr.length; i--;) {
         if (arr[i] === item) {
           arr.splice(i, 1);
         }
@@ -431,9 +429,9 @@ module.exports = (function () {
     };
 
     this.getNeighbours = function (node) {
-      var neighbourNodes = [];
-      for (var e in self.edges) {
-        var edge = self.edges[e];
+      const neighbourNodes = [];
+      for (const e in self.edges) {
+        const edge = self.edges[e];
         if (edge.topSrc == edge.topTarget) {
           continue;
         }
@@ -453,20 +451,20 @@ module.exports = (function () {
 
     //Creates a query that represents a node - either simple term query or boolean if grouped
     this.buildNodeQuery = function (topLevelNode) {
-      var containedNodes = [topLevelNode];
+      let containedNodes = [topLevelNode];
       containedNodes = self.returnUnpackedGroupeds(containedNodes);
       if (containedNodes.length == 1) {
         //Simple case - return a single-term query
-        var tq = {};
+        const tq = {};
         tq[topLevelNode.data.field] = topLevelNode.data.term;
         return {
           'term': tq
         };
       }
-      var termsByField = {};
-      for (var i in containedNodes) {
-        var node = containedNodes[i];
-        var termsList = termsByField[node.data.field];
+      const termsByField = {};
+      for (const i in containedNodes) {
+        const node = containedNodes[i];
+        let termsList = termsByField[node.data.field];
         if (!termsList) {
           termsList = [];
           termsByField[node.data.field] = termsList;
@@ -480,13 +478,13 @@ module.exports = (function () {
         };
       }
       //Multi-field case - build a bool query with per-field terms clauses.
-      var q = {
+      const q = {
         'bool': {
           'should': []
         }
       };
-      for (var field in termsByField) {
-        var tq = {};
+      for (const field in termsByField) {
+        const tq = {};
         tq[field] = termsByField[field];
         q.bool.should.push({
           'terms': tq
@@ -510,12 +508,12 @@ module.exports = (function () {
       // The set of nodes and edges we present to the d3 layout algorithms
       // is potentially a reduced set of nodes if the client has used any
       // grouping of nodes into parent nodes.
-      var effectiveEdges = [];
-      var edges = self.edges;
-      for (var e in edges) {
-        var edge = edges[e];
-        var topSrc = edge.source;
-        var topTarget = edge.target;
+      const effectiveEdges = [];
+      const edges = self.edges;
+      for (const e in edges) {
+        const edge = edges[e];
+        let topSrc = edge.source;
+        let topTarget = edge.target;
         while (topSrc.parent != undefined) {
           topSrc = topSrc.parent;
         }
@@ -532,17 +530,17 @@ module.exports = (function () {
           });
         }
       }
-      var visibleNodes = self.nodes.filter(function (n) {
+      const visibleNodes = self.nodes.filter(function (n) {
         return n.parent == undefined;
       });
       //reset then roll-up all the counts
-      var allNodes = self.nodes;
-      for (var n in allNodes) {
-        var node = allNodes[n];
+      const allNodes = self.nodes;
+      for (const n in allNodes) {
+        const node = allNodes[n];
         node.numChildren = 0;
       }
-      for (var n in allNodes) {
-        var node = allNodes[n];
+      for (const n in allNodes) {
+        let node = allNodes[n];
         while (node.parent != undefined) {
           node = node.parent;
           node.numChildren = node.numChildren + 1;
@@ -559,11 +557,11 @@ module.exports = (function () {
         .alpha(0.5)
         .size([800, 600])
         .on('tick', function (e) {
-          var nodeArray = self.nodes;
-          var hasRollups = false;
+          const nodeArray = self.nodes;
+          let hasRollups = false;
           //Update the position of all "top level nodes"
-          for (var i in nodeArray) {
-            var n = nodeArray[i];
+          for (const i in nodeArray) {
+            const n = nodeArray[i];
             //Code to support roll-ups
             if (n.parent == undefined) {
               n.kx = n.x;
@@ -573,13 +571,13 @@ module.exports = (function () {
             }
           };
           if (hasRollups) {
-            for (var i in nodeArray) {
-              var n = nodeArray[i];
+            for (const i in nodeArray) {
+              const n = nodeArray[i];
               //Code to support roll-ups
               if (n.parent != undefined) {
                 // Is a grouped node - inherit parent's position so edges point into parent
                 // d3 thinks it has moved it to x and y but we have final say using kx and ky.
-                var topLevelNode = n.parent;
+                let topLevelNode = n.parent;
                 while (topLevelNode.parent != undefined) {
                   topLevelNode = topLevelNode.parent;
                 }
@@ -604,7 +602,7 @@ module.exports = (function () {
 
     //Merges all selected nodes into node
     this.groupSelections = function (node) {
-      var ops = [];
+      const ops = [];
       self.nodes.forEach(function (otherNode) {
         if ((otherNode != node) && (otherNode.isSelected) && (otherNode.parent == undefined)) {
           otherNode.parent = node;
@@ -620,8 +618,8 @@ module.exports = (function () {
     };
 
     this.mergeNeighbours = function (node) {
-      var neighbours = self.getNeighbours(node);
-      var ops = [];
+      const neighbours = self.getNeighbours(node);
+      const ops = [];
       neighbours.forEach(function (otherNode) {
         if ((otherNode != node) && (otherNode.parent == undefined)) {
           otherNode.parent = node;
@@ -639,8 +637,8 @@ module.exports = (function () {
         console.log('Error - merge called on undefined target');
         return;
       }
-      var selClone = self.selectedNodes.slice();
-      var ops = [];
+      const selClone = self.selectedNodes.slice();
+      const ops = [];
       selClone.forEach(function (otherNode) {
         if ((otherNode != targetNode) && (otherNode.parent == undefined)) {
           otherNode.parent = targetNode;
@@ -654,7 +652,7 @@ module.exports = (function () {
     };
 
     this.ungroup = function (node) {
-      var ops = [];
+      const ops = [];
       self.nodes.forEach(function (other) {
         if (other.parent == node) {
           other.parent = undefined;
@@ -670,8 +668,8 @@ module.exports = (function () {
     };
 
     this.blacklistSelection = function () {
-      var selection = self.getAllSelectedNodes();
-      var danglingEdges = [];
+      const selection = self.getAllSelectedNodes();
+      const danglingEdges = [];
       self.edges.forEach(function (edge) {
         if ((selection.indexOf(edge.source) >= 0) ||
               (selection.indexOf(edge.target) >= 0)) {
@@ -679,8 +677,8 @@ module.exports = (function () {
           danglingEdges.push(edge);
         }
       });
-      for (var n in selection) {
-        var node = selection[n];
+      for (const n in selection) {
+        const node = selection[n];
         delete self.nodesMap[node.id];
         self.blacklistedNodes.push(node);
         node.isSelected = false;
@@ -697,7 +695,7 @@ module.exports = (function () {
     // A "simple search" operation that requires no parameters from the client.
     // Performs numHops hops pulling in field-specific number of terms each time
     this.simpleSearch = function (searchTerm, fieldsChoice, numHops) {
-      var qs = {
+      const qs = {
         'query_string': {
           'query': searchTerm
         }
@@ -709,37 +707,37 @@ module.exports = (function () {
       if (!fieldsChoice) {
         fieldsChoice = self.options.vertex_fields;
       }
-      var step = {};
+      let step = {};
 
       //Add any blacklisted nodes to exclusion list
-      var excludeNodesByField = {};
-      var nots = [];
-      var avoidNodes = this.blacklistedNodes;
-      for (var i = 0; i < avoidNodes.length; i++) {
-        var n = avoidNodes[i];
-        var arr = excludeNodesByField[n.data.field];
+      const excludeNodesByField = {};
+      const nots = [];
+      const avoidNodes = this.blacklistedNodes;
+      for (let i = 0; i < avoidNodes.length; i++) {
+        const n = avoidNodes[i];
+        let arr = excludeNodesByField[n.data.field];
         if (!arr) {
           arr = [];
           excludeNodesByField[n.data.field] = arr;
         }
         arr.push(n.data.term);
         //Add to list of must_nots in guiding query
-        var tq = {};
+        const tq = {};
         tq[n.data.field] = n.data.term;
         nots.push({
           'term': tq
         });
       }
 
-      var rootStep = step;
-      for (var hopNum = 0; hopNum < numHops; hopNum++) {
-        var arr = [];
+      const rootStep = step;
+      for (let hopNum = 0; hopNum < numHops; hopNum++) {
+        const arr = [];
 
-        for (var f in fieldsChoice) {
-          var field = fieldsChoice[f].name;
-          var hopSize = fieldsChoice[f].hopSize;
-          var excludes = excludeNodesByField[field];
-          var stepField = {
+        for (const f in fieldsChoice) {
+          const field = fieldsChoice[f].name;
+          const hopSize = fieldsChoice[f].hopSize;
+          const excludes = excludeNodesByField[field];
+          const stepField = {
             'field': field,
             'size': hopSize,
             'min_doc_count': parseInt(self.options.exploreControls.minDocCount)
@@ -752,7 +750,7 @@ module.exports = (function () {
         step.vertices = arr;
         if (hopNum < (numHops - 1)) {
           // if (s < (stepSizes.length - 1)) {
-          var nextStep = {};
+          const nextStep = {};
           step.connections = nextStep;
           step = nextStep;
         }
@@ -768,7 +766,7 @@ module.exports = (function () {
       }
 
 
-      var request = {
+      const request = {
         'query': query,
         'controls': self.buildControls(),
         'connections': rootStep.connections,
@@ -780,9 +778,9 @@ module.exports = (function () {
 
     this.buildControls = function () {
       //This is an object managed by the client that may be subject to change
-      var guiSettingsObj = self.options.exploreControls;
+      const guiSettingsObj = self.options.exploreControls;
 
-      var controls = {
+      const controls = {
         use_significance: guiSettingsObj.useSignificance,
         sample_size: guiSettingsObj.sampleSize,
         timeout: parseInt(guiSettingsObj.timeoutMillis)
@@ -808,7 +806,7 @@ module.exports = (function () {
       if (!newData.nodes) {
         newData.nodes = [];
       }
-      var lastOps = [];
+      const lastOps = [];
 
       // === Commented out - not sure it was obvious to users what various circle sizes meant
       // var minCircleSize = 5;
@@ -820,9 +818,9 @@ module.exports = (function () {
       //   .range([minCircleSize, maxCircleSize]);
 
       //Remove nodes we already have
-      var dedupedNodes = [];
-      for (var o in newData.nodes) {
-        var node = newData.nodes[o];
+      const dedupedNodes = [];
+      for (const o in newData.nodes) {
+        const node = newData.nodes[o];
         //Assign an ID
         node.id = self.makeNodeId(node.field, node.term);
         if (!this.nodesMap[node.id]) {
@@ -838,14 +836,14 @@ module.exports = (function () {
         this.options.nodeLabeller(dedupedNodes);
       }
 
-      for (var o in dedupedNodes) {
-        var dedupedNode = dedupedNodes[o];
-        var label = dedupedNode.term;
+      for (const o in dedupedNodes) {
+        const dedupedNode = dedupedNodes[o];
+        let label = dedupedNode.term;
         if (dedupedNode.label) {
           label = dedupedNode.label;
         }
 
-        var node = {
+        const node = {
           x: 1,
           y: 1,
           numChildren: 0,
@@ -865,21 +863,21 @@ module.exports = (function () {
         this.nodesMap[node.id] = node;
       }
 
-      for (var o in newData.edges) {
-        var edge = newData.edges[o];
-        var src = newData.nodes[edge.source];
-        var target = newData.nodes[edge.target];
-        var id = src.id + '->' + target.id;
+      for (const o in newData.edges) {
+        const edge = newData.edges[o];
+        const src = newData.nodes[edge.source];
+        const target = newData.nodes[edge.target];
+        let id = src.id + '->' + target.id;
         if (src.id > target.id) {
           id = target.id + '->' + src.id;
         }
         edge.id = id;
 
         //Lookup the wrappers object that will hold display Info like x/y coordinates
-        var srcWrapperObj = this.nodesMap[src.id];
-        var targetWrapperObj = this.nodesMap[target.id];
+        const srcWrapperObj = this.nodesMap[src.id];
+        const targetWrapperObj = this.nodesMap[target.id];
 
-        var existingEdge = this.edgesMap[id];
+        const existingEdge = this.edgesMap[id];
         if (existingEdge) {
           existingEdge.weight = Math.max(existingEdge.weight, edge.weight);
           //TODO update width too?
@@ -889,8 +887,8 @@ module.exports = (function () {
         // Inferred edges were a feature that used Levenshtein edit distance on node labels
         // to determine connections - removed that feature but may bring back.
 
-        var inferred = edge.inferred ? true : false;
-        var newEdge = {
+        const inferred = edge.inferred ? true : false;
+        const newEdge = {
           'source': srcWrapperObj,
           'target': targetWrapperObj,
           'weight': edge.weight,
@@ -917,8 +915,8 @@ module.exports = (function () {
     };
 
     this.mergeIds = function (parentId, childId) {
-      var parent = self.getNode(parentId);
-      var child = self.getNode(childId);
+      const parent = self.getNode(parentId);
+      const child = self.getNode(childId);
       if (child.isSelected) {
         child.isSelected = false;
         self.arrRemove(self.selectedNodes, child);
@@ -940,11 +938,11 @@ module.exports = (function () {
     //======= Expand functions to request new additions to the graph
 
     this.expandSelecteds = function (clearExisting, targetOptions) {
-      var startNodes = self.getAllSelectedNodes();
+      let startNodes = self.getAllSelectedNodes();
       if (startNodes.length == 0) {
         startNodes = self.nodes;
       }
-      var clone = startNodes.slice();
+      const clone = startNodes.slice();
       self.expand(clone, clearExisting, targetOptions);
     };
 
@@ -978,14 +976,14 @@ module.exports = (function () {
       if (clearExisting) {
         this.clearGraph();
       }
-      var nodesByField = {};
-      var excludeNodesByField = {};
+      const nodesByField = {};
+      const excludeNodesByField = {};
 
       //Add any blacklisted nodes to exclusion list
-      var avoidNodes = this.blacklistedNodes;
-      for (var i = 0; i < avoidNodes.length; i++) {
-        var n = avoidNodes[i];
-        var arr = excludeNodesByField[n.data.field];
+      const avoidNodes = this.blacklistedNodes;
+      for (let i = 0; i < avoidNodes.length; i++) {
+        const n = avoidNodes[i];
+        let arr = excludeNodesByField[n.data.field];
         if (!arr) {
           arr = [];
           excludeNodesByField[n.data.field] = arr;
@@ -996,10 +994,10 @@ module.exports = (function () {
       }
 
       if (targetOptions.valueTypes == 'new') {
-        var allExistingNodes = this.nodes;
-        for (var i = 0; i < allExistingNodes.length; i++) {
-          var n = allExistingNodes[i];
-          var arr = excludeNodesByField[n.data.field];
+        const allExistingNodes = this.nodes;
+        for (let i = 0; i < allExistingNodes.length; i++) {
+          const n = allExistingNodes[i];
+          let arr = excludeNodesByField[n.data.field];
           if (!arr) {
             arr = [];
             excludeNodesByField[n.data.field] = arr;
@@ -1015,10 +1013,10 @@ module.exports = (function () {
         //Note: for the entity-building use case need to remove excludes caused by above...
         // (this comment likely means something profound but until I immerse myself in
         // entity-building logic again the significance is lost on me.... :-(   )
-        var allExistingEdges = this.edges;
-        for (var i = 0; i < allExistingEdges.length; i++) {
-          var e = allExistingEdges[i];
-          var n = null;
+        const allExistingEdges = this.edges;
+        for (let i = 0; i < allExistingEdges.length; i++) {
+          const e = allExistingEdges[i];
+          let n = null;
           if (startNodes.indexOf(e.source) >= 0) {
             n = e.target;
           }
@@ -1026,7 +1024,7 @@ module.exports = (function () {
             n = e.source;
           }
           if (n != null) {
-            var arr = excludeNodesByField[n.data.field];
+            let arr = excludeNodesByField[n.data.field];
             if (!arr) {
               arr = [];
               excludeNodesByField[n.data.field] = arr;
@@ -1040,9 +1038,9 @@ module.exports = (function () {
 
 
       //Organize nodes by field
-      for (var i = 0; i < startNodes.length; i++) {
-        var n = startNodes[i];
-        var arr = nodesByField[n.data.field];
+      for (let i = 0; i < startNodes.length; i++) {
+        const n = startNodes[i];
+        let arr = nodesByField[n.data.field];
         if (!arr) {
           arr = [];
           nodesByField[n.data.field] = arr;
@@ -1053,7 +1051,7 @@ module.exports = (function () {
           'boost': n.data.weight
         });
 
-        var arr = excludeNodesByField[n.data.field];
+        arr = excludeNodesByField[n.data.field];
         if (!arr) {
           arr = [];
           excludeNodesByField[n.data.field] = arr;
@@ -1068,9 +1066,9 @@ module.exports = (function () {
       }
 
 
-      var primaryVertices = [];
-      var secondaryVertices = [];
-      for (var fieldName in nodesByField) {
+      const primaryVertices = [];
+      const secondaryVertices = [];
+      for (const fieldName in nodesByField) {
         primaryVertices.push({
           'field': fieldName,
           'include': nodesByField[fieldName],
@@ -1078,18 +1076,18 @@ module.exports = (function () {
         });
       }
 
-      var targetFields = this.options.vertex_fields;
+      let targetFields = this.options.vertex_fields;
       if (targetOptions.toFields) {
         targetFields = targetOptions.toFields;
       }
 
       //Identify target fields
-      for (var f in targetFields) {
-        var fieldName = targetFields[f].name;
+      for (const f in targetFields) {
+        const fieldName = targetFields[f].name;
         // Sometimes the target field is disabled from loading new hops so we need to use the last valid figure
-        var hopSize = targetFields[f].hopSize > 0 ? targetFields[f].hopSize : targetFields[f].lastValidHopSize;
+        const hopSize = targetFields[f].hopSize > 0 ? targetFields[f].hopSize : targetFields[f].lastValidHopSize;
 
-        var fieldHop = {
+        const fieldHop = {
           'field': fieldName,
           'size': hopSize,
           'min_doc_count': parseInt(self.options.exploreControls.minDocCount)
@@ -1112,7 +1110,7 @@ module.exports = (function () {
 
       }
 
-      var request = {
+      const request = {
         'controls': self.buildControls(),
         'vertices': primaryVertices,
         'connections': {
@@ -1124,9 +1122,9 @@ module.exports = (function () {
         // Looking for connections between the provided nodes.
         // We need to ensure we select in the sample docs that contain pairings of nodes
         // - add a query that enforces this.
-        var shoulds = [];
-        for (var bs in startNodes) {
-          var node = startNodes[bs];
+        const shoulds = [];
+        for (const bs in startNodes) {
+          const node = startNodes[bs];
           if (node.parent == undefined) {
             shoulds.push(self.buildNodeQuery(node));
           }
@@ -1144,14 +1142,14 @@ module.exports = (function () {
       self.lastRequest = JSON.stringify(request, null, '\t');
       graphExplorer(self.options.indexName, request, function (data) {
         self.lastResponse = JSON.stringify(data, null, '\t');
-        var nodes = [];
-        var edges = [];
+        const nodes = [];
+        let edges = [];
 
         //Label fields with a field number for CSS styling
-        for (var n in data.vertices) {
-          var node = data.vertices[n];
-          for (var f in targetFields) {
-            var fieldDef = targetFields[f];
+        for (const n in data.vertices) {
+          const node = data.vertices[n];
+          for (const f in targetFields) {
+            const fieldDef = targetFields[f];
             if (node.field == fieldDef.name) {
               node.color = fieldDef.color;
               node.icon = fieldDef.icon;
@@ -1162,15 +1160,15 @@ module.exports = (function () {
         }
 
         // Size the edges based on the maximum weight
-        var minLineSize = 2;
-        var maxLineSize = 10;
-        var maxEdgeWeight = 0.00000001;
-        for (var e in data.connections) {
-          var edge = data.connections[e];
+        const minLineSize = 2;
+        const maxLineSize = 10;
+        let maxEdgeWeight = 0.00000001;
+        for (const e in data.connections) {
+          const edge = data.connections[e];
           maxEdgeWeight = Math.max(maxEdgeWeight, edge.weight);
         }
-        for (var e in data.connections) {
-          var edge = data.connections[e];
+        for (const e in data.connections) {
+          const edge = data.connections[e];
           edges.push({
             source: edge.source,
             target: edge.target,
@@ -1204,21 +1202,21 @@ module.exports = (function () {
     };
 
     this.trimExcessNewEdges = function (newNodes, newEdges) {
-      var trimmedEdges = [];
-      var maxNumEdgesToReturn = 5;
+      let trimmedEdges = [];
+      const maxNumEdgesToReturn = 5;
       //Trim here to just the new edges that are most interesting.
-      for (var o in newEdges) {
-        var edge = newEdges[o];
-        var src = newNodes[edge.source];
-        var target = newNodes[edge.target];
-        var srcId = src.field + '..' + src.term;
-        var targetId = target.field + '..' + target.term;
-        var id = srcId + '->' + targetId;
+      for (const o in newEdges) {
+        const edge = newEdges[o];
+        const src = newNodes[edge.source];
+        const target = newNodes[edge.target];
+        const srcId = src.field + '..' + src.term;
+        const targetId = target.field + '..' + target.term;
+        const id = srcId + '->' + targetId;
         if (srcId > targetId) {
-          var id = targetId + '->' + srcId;
+          const id = targetId + '->' + srcId;
         }
-        var existingSrcNode = self.nodesMap[srcId];
-        var existingTargetNode = self.nodesMap[targetId];
+        const existingSrcNode = self.nodesMap[srcId];
+        const existingTargetNode = self.nodesMap[targetId];
         if (existingSrcNode != null && existingTargetNode != null) {
           if (existingSrcNode.parent != undefined && existingTargetNode.parent != undefined) {
             // both nodes are rolled-up and grouped so this edge would not be a visible
@@ -1230,7 +1228,7 @@ module.exports = (function () {
           continue;
         }
 
-        var existingEdge = self.edgesMap[id];
+        const existingEdge = self.edgesMap[id];
         if (existingEdge) {
           existingEdge.weight = Math.max(existingEdge.weight, edge.weight);
           existingEdge.doc_count = Math.max(existingEdge.doc_count, edge.doc_count);
@@ -1250,13 +1248,13 @@ module.exports = (function () {
     };
 
     this.getQuery = function (startNodes, loose) {
-      var shoulds = [];
-      var nodes = startNodes;
+      const shoulds = [];
+      let nodes = startNodes;
       if (!startNodes) {
         nodes = self.nodes;
       }
-      for (var bs in nodes) {
-        var node = nodes[bs];
+      for (const bs in nodes) {
+        const node = nodes[bs];
         if (node.parent == undefined) {
           shoulds.push(self.buildNodeQuery(node));
         }
@@ -1270,7 +1268,7 @@ module.exports = (function () {
     };
 
     this.getSelectedOrAllNodes = function () {
-      var startNodes = self.getAllSelectedNodes();
+      let startNodes = self.getAllSelectedNodes();
       if (startNodes.length === 0) {
         startNodes = self.nodes;
       }
@@ -1278,7 +1276,7 @@ module.exports = (function () {
     };
 
     function addTermToFieldList(map, field, term) {
-      var arr = map[field];
+      let arr = map[field];
       if (!arr) {
         arr = [];
         map[field] = arr;
@@ -1292,11 +1290,11 @@ module.exports = (function () {
     // to drill-down into docs that should be linked but aren't via the exact terms
     // we have in the workspace
     this.getLikeThisButNotThisQuery = function (startNodes) {
-      var likeQueries = [];
+      const likeQueries = [];
 
-      var txtsByFieldType = {};
+      const txtsByFieldType = {};
       startNodes.forEach(node => {
-        var txt = txtsByFieldType[node.data.field];
+        let txt = txtsByFieldType[node.data.field];
         if (txt) {
           txt = txt + ' ' + node.label;
         }else {
@@ -1304,7 +1302,7 @@ module.exports = (function () {
         }
         txtsByFieldType[node.data.field] = txt;
       });
-      for (var field in txtsByFieldType) {
+      for (const field in txtsByFieldType) {
         likeQueries.push({
           'more_like_this': {
             'like': txtsByFieldType[field],
@@ -1317,27 +1315,27 @@ module.exports = (function () {
         });
       }
 
-      var excludeNodesByField = {};
-      var allExistingNodes = self.nodes;
+      const excludeNodesByField = {};
+      const allExistingNodes = self.nodes;
       allExistingNodes.forEach(existingNode => {
         addTermToFieldList(excludeNodesByField, existingNode.data.field, existingNode.data.term);
       });
-      var blacklistedNodes = self.blacklistedNodes;
+      const blacklistedNodes = self.blacklistedNodes;
       blacklistedNodes.forEach(blacklistedNode => {
         addTermToFieldList(excludeNodesByField, blacklistedNode.data.field, blacklistedNode.data.term);
       });
 
       //Create negative boosting queries to avoid matching what you already have in the workspace.
-      var notExistingNodes = [];
+      const notExistingNodes = [];
       Object.keys(excludeNodesByField).forEach(fieldName => {
-        var termsQuery = {};
+        const termsQuery = {};
         termsQuery[fieldName] = excludeNodesByField[fieldName];
         notExistingNodes.push({
           'terms':termsQuery
         });
       });
 
-      var result = {
+      const result = {
         // Use a boosting query to effectively to request "similar to these IDS/labels but
         // preferably not containing these exact IDs".
         'boosting': {
@@ -1362,8 +1360,8 @@ module.exports = (function () {
         return self.getAllIntersections(callback, self.nodes);
       }
       if (self.selectedNodes.length == 1) {
-        var selectedNode = self.selectedNodes[0];
-        var neighbourNodes = self.getNeighbours(selectedNode);
+        const selectedNode = self.selectedNodes[0];
+        const neighbourNodes = self.getNeighbours(selectedNode);
         neighbourNodes.push(selectedNode);
         return self.getAllIntersections(callback, neighbourNodes);
       }
@@ -1371,14 +1369,14 @@ module.exports = (function () {
     };
 
     this.JLHScore = function (subsetFreq, subsetSize, supersetFreq, supersetSize) {
-      var subsetProbability = subsetFreq / subsetSize;
-      var supersetProbability = supersetFreq / supersetSize;
+      const subsetProbability = subsetFreq / subsetSize;
+      const supersetProbability = supersetFreq / supersetSize;
 
-      var absoluteProbabilityChange = subsetProbability - supersetProbability;
+      const absoluteProbabilityChange = subsetProbability - supersetProbability;
       if (absoluteProbabilityChange <= 0) {
         return 0;
       }
-      var relativeProbabilityChange = (subsetProbability / supersetProbability);
+      const relativeProbabilityChange = (subsetProbability / supersetProbability);
       return absoluteProbabilityChange * relativeProbabilityChange;
     };
 
@@ -1398,17 +1396,17 @@ module.exports = (function () {
         return n.parent == undefined;
       });
 
-      var allQueries = nodes.map(function (node) {
+      const allQueries = nodes.map(function (node) {
         return self.buildNodeQuery(node);
       });
 
-      var allQuery = {
+      const allQuery = {
         'bool': {
           'should': allQueries
         }
       };
         //====================
-      var request = {
+      const request = {
         'query': allQuery,
         'size': 0,
         'aggs': {
@@ -1433,28 +1431,28 @@ module.exports = (function () {
           }
         }
       };
-      for (var n in allQueries) {
+      for (const n in allQueries) {
         // Add aggs to get intersection stats with root node.
         request.aggs.sources.filters.filters['bg' + n] = allQueries[n];
         request.aggs.sources.aggs.targets.filters.filters['fg' + n] = allQueries[n];
       }
-      var dataForServer = JSON.stringify(request);
+      const dataForServer = JSON.stringify(request);
       searcher(self.options.indexName, request, function (data) {
-        var termIntersects = [];
-        var fullDocCounts = [];
-        var allDocCount = data.aggregations.all.doc_count;
+        const termIntersects = [];
+        const fullDocCounts = [];
+        const allDocCount = data.aggregations.all.doc_count;
 
         // Gather the background stats for all nodes.
-        for (var n in nodes) {
+        for (const n in nodes) {
           fullDocCounts.push(data.aggregations.sources.buckets['bg' + n].doc_count);
         }
-        for (var n in nodes) {
-          var rootNode = nodes[n];
-          var t1 = fullDocCounts[n];
-          var baseAgg = data.aggregations.sources.buckets['bg' + n].targets.buckets;
-          for (var l in nodes) {
-            var t2 = fullDocCounts[l];
-            var leafNode = nodes[l];
+        for (const n in nodes) {
+          const rootNode = nodes[n];
+          const t1 = fullDocCounts[n];
+          const baseAgg = data.aggregations.sources.buckets['bg' + n].targets.buckets;
+          for (const l in nodes) {
+            const t2 = fullDocCounts[l];
+            const leafNode = nodes[l];
             if (l == n) {
               continue;
             }
@@ -1468,16 +1466,16 @@ module.exports = (function () {
                 continue;
               }
             }
-            var t1AndT2 = baseAgg['fg' + l].doc_count;
+            const t1AndT2 = baseAgg['fg' + l].doc_count;
             if (t1AndT2 == 0) {
               continue;
             }
-            var neighbourNode = nodes[l];
-            var t1Label = rootNode.data.label;
+            const neighbourNode = nodes[l];
+            let t1Label = rootNode.data.label;
             if (rootNode.numChildren > 0) {
               t1Label += '(+' + rootNode.numChildren + ')';
             }
-            var t2Label = neighbourNode.data.label;
+            let t2Label = neighbourNode.data.label;
             if (neighbourNode.numChildren > 0) {
               t2Label += '(+' + neighbourNode.numChildren + ')';
             }
@@ -1486,9 +1484,9 @@ module.exports = (function () {
             //  var mergeConfidence=t1AndT2/t1;
 
             // So using Significance heuristic instead
-            var mergeConfidence = self.JLHScore(t1AndT2, t2, t1, allDocCount);
+            const mergeConfidence = self.JLHScore(t1AndT2, t2, t1, allDocCount);
 
-            var termIntersect = {
+            const termIntersect = {
               id1: rootNode.id,
               id2: neighbourNode.id,
               term1: t1Label,
@@ -1529,13 +1527,13 @@ module.exports = (function () {
       self.lastRequest = JSON.stringify(request, null, '\t');
       graphExplorer(self.options.indexName, request, function (data) {
         self.lastResponse = JSON.stringify(data, null, '\t');
-        var nodes = [];
-        var edges = [];
+        const nodes = [];
+        const edges = [];
         //Label the nodes with field number for CSS styling
-        for (var n in data.vertices) {
-          var node = data.vertices[n];
-          for (var f in self.options.vertex_fields) {
-            var fieldDef = self.options.vertex_fields[f];
+        for (const n in data.vertices) {
+          const node = data.vertices[n];
+          for (const f in self.options.vertex_fields) {
+            const fieldDef = self.options.vertex_fields[f];
             if (node.field == fieldDef.name) {
               node.color = fieldDef.color;
               node.icon = fieldDef.icon;
@@ -1546,16 +1544,16 @@ module.exports = (function () {
         }
 
         //Size the edges depending on weight
-        var minLineSize = 2;
-        var maxLineSize = 10;
-        var maxEdgeWeight = 0.00000001;
-        for (var e in data.connections) {
-          var edge = data.connections[e];
+        const minLineSize = 2;
+        const maxLineSize = 10;
+        let maxEdgeWeight = 0.00000001;
+        for (const e in data.connections) {
+          const edge = data.connections[e];
           maxEdgeWeight = Math.max(maxEdgeWeight, edge.weight);
 
         }
-        for (var e in data.connections) {
-          var edge = data.connections[e];
+        for (const e in data.connections) {
+          const edge = data.connections[e];
           edges.push({
             source: edge.source,
             target: edge.target,

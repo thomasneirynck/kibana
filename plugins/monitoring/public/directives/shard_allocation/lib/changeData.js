@@ -26,14 +26,14 @@ import labels from './labels';
 // to be passed in as the first argument.
 export default function changeData($scope) {
   if ($scope.currentState && $scope.panel) {
-    var data = _.cloneDeep($scope.currentState);
+    let data = _.cloneDeep($scope.currentState);
     $scope.current = data.timestamp;
     // Create the transformer. The transformer returned is based on the
     // $scope.panel.view
-    var transformer = transform($scope.panel.view, $scope);
+    const transformer = transform($scope.panel.view, $scope);
 
     // Create a filter using the filter entered by the user
-    var filter = filterByName($scope.panel.filter);
+    const filter = filterByName($scope.panel.filter);
 
     // Transform and filter the data
     data = transformer(data);
@@ -47,7 +47,7 @@ export default function changeData($scope) {
 
     // For the Indices view we need to check to see if there are any unassigned
     // shards. If so we need to use a special set of labels for the extra column.
-    var view = $scope.panel.view;
+    let view = $scope.panel.view;
     $scope.hasUnassigned = data.some(hasUnassigned);
     if ($scope.hasUnassigned) {
       view = 'indexWithUnassigned';

@@ -2,10 +2,10 @@
 // Pulled from Ace because I can't for the life of me
 // figure out how to import it.  This needs to be fixed TODO
 
-var comparePoints = function (p1, p2) {
+const comparePoints = function (p1, p2) {
   return p1.row - p2.row || p1.column - p2.column;
 };
-var Range = function (startRow, startColumn, endRow, endColumn) {
+const Range = function (startRow, startColumn, endRow, endColumn) {
   this.start = {
     row: startRow,
     column: startColumn
@@ -33,9 +33,9 @@ var Range = function (startRow, startColumn, endRow, endColumn) {
     return this.compare(row, column) === 0;
   };
   this.compareRange = function (range) {
-    var cmp;
-    var end = range.end;
-    var start = range.start;
+    let cmp;
+    const end = range.end;
+    const start = range.start;
 
     cmp = this.compare(end.row, end.column);
     if (cmp === 1) {
@@ -67,7 +67,7 @@ var Range = function (startRow, startColumn, endRow, endColumn) {
     return this.comparePoint(range.start) === 0 && this.comparePoint(range.end) === 0;
   };
   this.intersects = function (range) {
-    var cmp = this.compareRange(range);
+    const cmp = this.compareRange(range);
     return (cmp === -1 || cmp === 0 || cmp === 1);
   };
   this.isEnd = function (row, column) {
@@ -177,8 +177,8 @@ var Range = function (startRow, startColumn, endRow, endColumn) {
     }
   };
   this.clipRows = function (firstRow, lastRow) {
-    var end;
-    var start;
+    let end;
+    let start;
     if (this.end.row > lastRow) {
       end = {row: lastRow + 1, column: 0};
     } else if (this.end.row < firstRow) {
@@ -193,13 +193,13 @@ var Range = function (startRow, startColumn, endRow, endColumn) {
     return Range.fromPoints(start || this.start, end || this.end);
   };
   this.extend = function (row, column) {
-    var cmp = this.compare(row, column);
+    const cmp = this.compare(row, column);
 
     if (cmp === 0) {
       return this;
     }
-    var start;
-    var end;
+    let start;
+    let end;
     if (cmp === -1) {
       start = {row: row, column: column};
     } else {
@@ -224,8 +224,8 @@ var Range = function (startRow, startColumn, endRow, endColumn) {
     return new Range(this.start.row, 0, this.end.row, 0);
   };
   this.toScreenRange = function (session) {
-    var screenPosStart = session.documentToScreenPosition(this.start);
-    var screenPosEnd = session.documentToScreenPosition(this.end);
+    const screenPosStart = session.documentToScreenPosition(this.start);
+    const screenPosEnd = session.documentToScreenPosition(this.end);
 
     return new Range(
             screenPosStart.row, screenPosStart.column,

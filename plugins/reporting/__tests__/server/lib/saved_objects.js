@@ -69,13 +69,13 @@ describe('saved_objects', function () {
         });
 
         it('should remove the refreshInterval value', function () {
-          var objectUrl = savedObject.getUrl(query);
+          const objectUrl = savedObject.getUrl(query);
           expect(objectUrl).to.not.contain('refreshInterval');
         });
 
         describe('absolute time', function () {
           it('should use absolute time by default', function () {
-            var params = url.parse(savedObject.getUrl(query));
+            const params = url.parse(savedObject.getUrl(query));
             expect(params.hash).to.not.contain(query._g);
             expect(params.hash).to.match(/time\:.+mode\:absolute/);
             expect(params.hash).to.match(/time\:.+from\:/);
@@ -93,7 +93,7 @@ describe('saved_objects', function () {
           });
 
           it('should append relative time to hash', function () {
-            var params = url.parse(savedObject.getUrl(query, urlOptions));
+            const params = url.parse(savedObject.getUrl(query, urlOptions));
             expect(params.hash).to.contain(`_g=(${timeParam})`);
           });
         });

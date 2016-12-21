@@ -1,5 +1,5 @@
 
-var venn = require('venn.js');
+const venn = require('venn.js');
 module.exports = (function () {
 
   // Unwrap elasticsearch field names from mappings
@@ -8,15 +8,15 @@ module.exports = (function () {
     if (!obj.properties) {
       return;
     }
-    for (var p in obj.properties) {
-      var child = obj.properties[p];
+    for (const p in obj.properties) {
+      const child = obj.properties[p];
       if (child.properties) {
         path.push(p);
         unwrapFieldNames(child, path, fields);
         path.pop();
       } else {
-        var parentName = '';
-        for (var i in path) {
+        let parentName = '';
+        for (const i in path) {
           parentName += path[i];
           parentName += '.';
         }
@@ -27,7 +27,7 @@ module.exports = (function () {
           'leafName': p
         });
         if (child.fields) {
-          for (var mfield in child.fields) {
+          for (const mfield in child.fields) {
             fields.push({
               'name': parentName + p + '.' + mfield,
               'path': path.slice(0),
@@ -41,9 +41,9 @@ module.exports = (function () {
   }
 
   function getMergeSuggestionObjects(termIntersects) {
-    var mergeCandidates = [];
-    for (var i in termIntersects) {
-      var ti = termIntersects[i];
+    const mergeCandidates = [];
+    for (const i in termIntersects) {
+      const ti = termIntersects[i];
       mergeCandidates.push({
         'id1':ti.id1,
         'id2':ti.id2,

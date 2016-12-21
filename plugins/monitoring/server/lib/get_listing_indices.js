@@ -63,7 +63,7 @@ export default function getListingIndices(req, indices, showSystemIndices = fals
   start = moment.utc(end).subtract(2, 'minutes').valueOf();
   const min = start;
 
-  var aggs = {
+  const aggs = {
     items: {
       terms: { field: 'index_stats.index', size: maxBucketSize },
       aggs: {}

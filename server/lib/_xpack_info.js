@@ -10,8 +10,8 @@ export default function _xpackInfo(server, client, pollFrequencyInMillis) {
 
   let _cachedResponseFromElasticsearch;
 
-  let _licenseCheckResultsGenerators = {};
-  let _licenseCheckResults = {};
+  const _licenseCheckResultsGenerators = {};
+  const _licenseCheckResults = {};
   let _cachedXPackInfoJSON;
   let _cachedXPackInfoJSONSignature;
 
@@ -94,7 +94,7 @@ export default function _xpackInfo(server, client, pollFrequencyInMillis) {
   };
 
   function _updateXPackInfoJSON() {
-    let json = {};
+    const json = {};
 
     // Set response elements common to all features
     set(json, 'license.type', xpackInfoObject.license.getType());

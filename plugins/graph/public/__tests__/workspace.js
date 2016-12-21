@@ -1,19 +1,19 @@
-var gws = require('../graphClientWorkspace.js');
-var expect = require('expect.js');
+const gws = require('../graphClientWorkspace.js');
+const expect = require('expect.js');
 describe('graphui-workspace', function () {
 
   describe('createWorkspace()', function () {
     // var fooResource=null;
-    var mockedResult = null;
-    var init = null;
+    let mockedResult = null;
+    let init = null;
     beforeEach(function () {
       //Setup logic here
       // fooResource={"foo":"bar"};
       init = function () {
-        var callNodeProxy = function (indexName, query, responseHandler) {
+        const callNodeProxy = function (indexName, query, responseHandler) {
           responseHandler(mockedResult);
         };
-        var options = {
+        const options = {
           indexName: 'indexName',
           vertex_fields: [{
             'name': 'field1'
@@ -30,7 +30,7 @@ describe('graphui-workspace', function () {
             minDocCount: 1
           }
         };
-        var workspace = gws.createWorkspace(options);
+        const workspace = gws.createWorkspace(options);
         return {
           workspace
           //, get to(){}
@@ -39,14 +39,14 @@ describe('graphui-workspace', function () {
       };
     });
     it('initializeWorkspace', function () {
-      var {
+      const {
         workspace
       } = init();
       expect(workspace.nodes).to.have.length(0);
     });
     it('simpleSearch', function () {
       //Test that a graph is loaded from a free-text search
-      var {
+      const {
         workspace
       } = init();
 
@@ -77,10 +77,10 @@ describe('graphui-workspace', function () {
       expect(workspace.blacklistedNodes).to.have.length(0);
 
 
-      var nodeA = workspace.getNode(workspace.makeNodeId('field1','a'));
+      const nodeA = workspace.getNode(workspace.makeNodeId('field1','a'));
       expect(nodeA).to.be.an(Object);
 
-      var nodeD = workspace.getNode(workspace.makeNodeId('field1','d'));
+      const nodeD = workspace.getNode(workspace.makeNodeId('field1','d'));
       expect(nodeD).to.be(undefined);
 
 
@@ -88,7 +88,7 @@ describe('graphui-workspace', function () {
 
     it('expandTest', function () {
       //Test that a graph can be expanded
-      var {
+      const {
         workspace
       } = init();
 
@@ -147,7 +147,7 @@ describe('graphui-workspace', function () {
 
     it('selectionTest', function () {
       //Test selections on a graph
-      var {
+      const {
         workspace
       } = init();
       // graph is a1->a2 and b1->b2
@@ -194,13 +194,13 @@ describe('graphui-workspace', function () {
 
       expect(workspace.selectedNodes).to.have.length(0);
 
-      var nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
+      const nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
       expect(nodeA1).to.be.an(Object);
-      var nodeA2 = workspace.getNode(workspace.makeNodeId('field1','a2'));
+      const nodeA2 = workspace.getNode(workspace.makeNodeId('field1','a2'));
       expect(nodeA2).to.be.an(Object);
-      var nodeB1 = workspace.getNode(workspace.makeNodeId('field1','b1'));
+      const nodeB1 = workspace.getNode(workspace.makeNodeId('field1','b1'));
       expect(nodeB1).to.be.an(Object);
-      var nodeB2 = workspace.getNode(workspace.makeNodeId('field1','b2'));
+      const nodeB2 = workspace.getNode(workspace.makeNodeId('field1','b2'));
       expect(nodeB2).to.be.an(Object);
 
       expect(workspace.selectedNodes).to.have.length(0);
@@ -228,7 +228,7 @@ describe('graphui-workspace', function () {
     });
 
     it('undoRedoDeletes', function () {
-      var {
+      const {
         workspace
       } = init();
       // graph is a1->a2
@@ -257,9 +257,9 @@ describe('graphui-workspace', function () {
 
       expect(workspace.nodes).to.have.length(2);
 
-      var nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
+      let nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
       expect(nodeA1).to.be.an(Object);
-      var nodeA2 = workspace.getNode(workspace.makeNodeId('field1','a2'));
+      const nodeA2 = workspace.getNode(workspace.makeNodeId('field1','a2'));
       expect(nodeA2).to.be.an(Object);
 
       workspace.selectNode(nodeA1);
@@ -285,7 +285,7 @@ describe('graphui-workspace', function () {
     });
 
     it('undoRedoGroupings', function () {
-      var {
+      const {
         workspace
       } = init();
       // graph is a1->a2
@@ -314,15 +314,15 @@ describe('graphui-workspace', function () {
 
       expect(workspace.nodes).to.have.length(2);
 
-      var nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
+      const nodeA1 = workspace.getNode(workspace.makeNodeId('field1','a1'));
       expect(nodeA1).to.be.an(Object);
-      var nodeA2 = workspace.getNode(workspace.makeNodeId('field1','a2'));
+      const nodeA2 = workspace.getNode(workspace.makeNodeId('field1','a2'));
       expect(nodeA2).to.be.an(Object);
 
       workspace.selectNode(nodeA2);
       workspace.mergeSelections(nodeA1);
 
-      var groupedItems = workspace.returnUnpackedGroupeds([nodeA1]);
+      let groupedItems = workspace.returnUnpackedGroupeds([nodeA1]);
       expect(groupedItems).to.have.length(2);
       workspace.undo();
       groupedItems = workspace.returnUnpackedGroupeds([nodeA1]);

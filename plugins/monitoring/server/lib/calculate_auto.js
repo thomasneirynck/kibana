@@ -24,12 +24,12 @@ const revRoundingRules = roundingRules.slice(0).reverse();
 
 function find(rules, check, last) {
   function pick(buckets, duration) {
-    var target = duration / buckets;
-    var lastResp;
+    const target = duration / buckets;
+    let lastResp;
 
-    for (var i = 0; i < rules.length; i++) {
-      var rule = rules[i];
-      var resp = check(rule[0], rule[1], target);
+    for (let i = 0; i < rules.length; i++) {
+      const rule = rules[i];
+      const resp = check(rule[0], rule[1], target);
 
       if (resp == null) {
         if (!last) continue;
@@ -42,12 +42,12 @@ function find(rules, check, last) {
     }
 
     // fallback to just a number of milliseconds, ensure ms is >= 1
-    var ms = Math.max(Math.floor(target), 1);
+    const ms = Math.max(Math.floor(target), 1);
     return moment.duration(ms, 'ms');
   }
 
   return function (buckets, duration) {
-    var interval = pick(buckets, duration);
+    const interval = pick(buckets, duration);
     if (interval) return moment.duration(interval._data);
   };
 }

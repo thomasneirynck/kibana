@@ -1,19 +1,19 @@
-var fs = require('fs');
-var path = require('path');
-var Bluebird = require('bluebird');
-var mkdirp = require('mkdirp');
-var del = require('del');
-var request = require('request');
-var hasha = require('hasha');
-var _ = require('lodash');
+const fs = require('fs');
+const path = require('path');
+const Bluebird = require('bluebird');
+const mkdirp = require('mkdirp');
+const del = require('del');
+const request = require('request');
+const hasha = require('hasha');
+const _ = require('lodash');
 
-var logger = require('./logger');
+const logger = require('./logger');
 
 function fetchBinaries(dest) {
-  var phantomDest = path.resolve(dest);
-  var host = 'https://github.com/Medium/phantomjs/releases/download/v2.1.1/';
+  const phantomDest = path.resolve(dest);
+  const host = 'https://github.com/Medium/phantomjs/releases/download/v2.1.1/';
 
-  var phantomBinaries = [{
+  const phantomBinaries = [{
     description: 'Windows',
     url: host + 'phantomjs-2.1.1-windows.zip',
     filename: 'phantomjs-2.1.1-windows.zip',
@@ -53,7 +53,7 @@ function fetchBinaries(dest) {
   })
   .then(function () {
     // clean up non-matching phantom binaries
-    var allowedFiles = phantomBinaries.map(function (binary) {
+    const allowedFiles = phantomBinaries.map(function (binary) {
       return binary.filename;
     });
 
@@ -72,8 +72,8 @@ function fetchBinaries(dest) {
     });
   })
   .then(function () {
-    var requiredDownloads = Bluebird.map(phantomBinaries, function (binary) {
-      var filepath = path.join(phantomDest, binary.filename);
+    const requiredDownloads = Bluebird.map(phantomBinaries, function (binary) {
+      const filepath = path.join(phantomDest, binary.filename);
       logger('Verifying binary', filepath);
       return verifyChecksum(filepath, binary).then(() => false, () => binary);
     }).then(function (downloads) {
@@ -81,12 +81,12 @@ function fetchBinaries(dest) {
     });
 
     return Bluebird.mapSeries(requiredDownloads, function (binary) {
-      var filepath = path.join(phantomDest, binary.filename);
+      const filepath = path.join(phantomDest, binary.filename);
 
       // add delays after the first download
       logger('Downloading', binary.url);
       return new Bluebird(function (resolve, reject) {
-        var ws = fs.createWriteStream(filepath)
+        const ws = fs.createWriteStream(filepath)
         .on('finish', function () {
           logger('Verifying binary', filepath);
           verifyChecksum(filepath, binary)

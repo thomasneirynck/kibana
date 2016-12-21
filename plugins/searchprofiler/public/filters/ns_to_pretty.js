@@ -5,7 +5,7 @@ export function nsToPretty(ns, precision) {
     precision = 1;
   }
   const units = ['ns', 'µs'];
-  for (let i in units) {
+  for (const i in units) {
     if (ns < 1000) {
       return ns.toFixed(precision) + units[i];
     }

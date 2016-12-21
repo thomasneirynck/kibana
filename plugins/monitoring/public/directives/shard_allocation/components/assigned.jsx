@@ -30,38 +30,38 @@ function sortByName(item) {
 
 export default React.createClass({
   createShard: function (shard, index) {
-    var type = shard.primary ? 'primary' : 'replica';
-    var additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
-    var key = `${shard.index}.${shard.node}.${type}.${shard.state}.${shard.shard}${additionId}-${index}`;
+    const type = shard.primary ? 'primary' : 'replica';
+    const additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
+    const key = `${shard.index}.${shard.node}.${type}.${shard.state}.${shard.shard}${additionId}-${index}`;
     return (
       <Shard shard={ shard } key={ key }/>
     );
   },
   createChild: function (data) {
-    var key = data.id;
-    var classes = ['child'];
-    var shardStats = this.props.shardStats;
+    const key = data.id;
+    const classes = ['child'];
+    const shardStats = this.props.shardStats;
     if (shardStats && shardStats[key]) {
       classes.push(shardStats[key].status);
     }
 
-    var that = this;
-    var changeUrl = function () {
+    const that = this;
+    const changeUrl = function () {
       that.props.changeUrl(generateQueryAndLink(data));
     };
 
-    var name = (
+    const name = (
       <a onClick={ changeUrl } className='link'>
         <span>{ data.name }</span>
       </a>
     );
-    var master;
+    let master;
     if (data.node_type === 'master') {
       master = (
         <span className="fa fa-star"></span>
       );
     }
-    var shards = _.sortBy(data.children, 'shard').map(this.createShard);
+    const shards = _.sortBy(data.children, 'shard').map(this.createShard);
     return (
       <div className={ calculateClass(data, classes.join(' ')) } key={ key }>
         <div className='title'>{ name }{ master }</div>
@@ -70,7 +70,7 @@ export default React.createClass({
     );
   },
   render: function () {
-    var data = _.sortBy(this.props.data, sortByName).map(this.createChild);
+    const data = _.sortBy(this.props.data, sortByName).map(this.createChild);
     return (
       <td>
         <div className='children'>

@@ -12,8 +12,8 @@ export function formatPercentageUsage(used, max) {
 export default function formatNumber(num, which) {
   if (typeof num === 'undefined' || isNaN(num)) { return 0; }
   if (typeof num !== 'number') { return num; }
-  var format = '0,0.0';
-  var postfix = '';
+  let format = '0,0.0';
+  let postfix = '';
   switch (which) {
     case 'time_since':
       return moment(moment() - num).from(moment(), true);

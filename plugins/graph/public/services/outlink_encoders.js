@@ -33,10 +33,10 @@ export const outlinkEncoders = [{
   title: 'plain text',
   description: 'Text of selected vertex labels as a plain url-encoded string',
   encode: function (workspace) {
-    var q = '';
+    let q = '';
     const nodes = workspace.getSelectedOrAllNodes();
-    for (var i = 0; i < nodes.length; i++) {
-      var node = nodes[i];
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
       if (i > 0) {
         q += ' ';
       }
@@ -49,10 +49,10 @@ export const outlinkEncoders = [{
   title: 'Lucene-escaped text',
   description: 'Text of selected vertex labels with any Lucene special characters encoded',
   encode: function (workspace) {
-    var q = '';
+    let q = '';
     const nodes = workspace.getSelectedOrAllNodes();
-    for (var i = 0; i < nodes.length; i++) {
-      var node = nodes[i];
+    for (let i = 0; i < nodes.length; i++) {
+      const node = nodes[i];
       if (i > 0) {
         q += ' ';
       }

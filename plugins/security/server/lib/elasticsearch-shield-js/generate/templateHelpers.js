@@ -1,8 +1,8 @@
-var _ = require('lodash');
-var fs = require('fs');
-var join = require('path').join;
+const _ = require('lodash');
+const fs = require('fs');
+const join = require('path').join;
 
-var docsDir = join(__dirname, '..', 'docs');
+const docsDir = join(__dirname, '..', 'docs');
 
 /**
  * we want strings in code to use single-quotes, so this will JSON encode vars, but then
@@ -59,7 +59,7 @@ module.exports = {
   _: _,
 
   indent: function (block, spaces) {
-    var indent = repeat(' ', spaces);
+    const indent = repeat(' ', spaces);
     return block.split('\n').map(function (line) {
       return !line.trim() ? '' : indent + line;
     }).join('\n');

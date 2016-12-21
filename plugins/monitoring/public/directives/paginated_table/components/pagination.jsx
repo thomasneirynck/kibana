@@ -15,7 +15,7 @@ const ItemsPerPageLink = React.createClass({
 const ItemsPerPageSet = React.createClass({
   render() {
     // choices for how many results to show per page
-    let itemsPerPageChoices = [];
+    const itemsPerPageChoices = [];
     if (this.props.dataLength > 20) {
       itemsPerPageChoices.push(20);
     }
@@ -30,7 +30,7 @@ const ItemsPerPageSet = React.createClass({
     }
 
     // markup for the choices
-    let itemsPerPageLinks = [];
+    const itemsPerPageLinks = [];
     itemsPerPageChoices.forEach((choice, idx) => {
       if (idx !== 0) {
         // add a vertical line separator before every non-first choice
@@ -117,8 +117,8 @@ export default React.createClass({
       listBeginning = Math.min(listBeginning, numPages - maxListSize + 1);
     }
 
-    let pageLinks = [];
-    let listEnd = Math.min(numPages, listBeginning + maxListSize - 1);
+    const pageLinks = [];
+    const listEnd = Math.min(numPages, listBeginning + maxListSize - 1);
     for (let i = listBeginning; i <= listEnd; i++) {
       pageLinks.push(
           <PageLink

@@ -24,7 +24,7 @@ import uiNotify from 'ui/notify';
 import Notifier from 'ui/notify/notifier';
 import appTemplate from 'plugins/graph/templates/index.html';
 
-var app = uiModules.get('app/graph', ['angular-venn-simple']);
+const app = uiModules.get('app/graph', ['angular-venn-simple']);
 
 function checkLicense(Private, Promise, kbnBaseUrl) {
   const xpackInfo = Private(XPackInfoProvider);
@@ -174,7 +174,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     // Without the shift key we deselect all prior selections (perhaps not
     // a great idea for touch devices with no concept of shift key)
     if (!$event.shiftKey) {
-      var prevSelection = n.isSelected;
+      const prevSelection = n.isSelected;
       $scope.workspace.selectNone();
       n.isSelected = prevSelection;
     }
@@ -279,27 +279,27 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     $scope.selectedIndex = selectedIndex;
     $scope.proposedIndex = selectedIndex;
 
-    var promise = $route.current.locals.GetIndexPatternProvider.get(selectedIndex);
+    const promise = $route.current.locals.GetIndexPatternProvider.get(selectedIndex);
     promise
     .then(handleSuccess)
     .then(function (indexPattern) {
-      var patternFields = indexPattern.getNonScriptedFields();
-      var blockedFieldNames = ['_id', '_index','_score','_source', '_type'];
+      const patternFields = indexPattern.getNonScriptedFields();
+      const blockedFieldNames = ['_id', '_index','_score','_source', '_type'];
       patternFields.forEach(function (field, index) {
         if (blockedFieldNames.indexOf(field.name) >= 0) {
           return;
         }
-        var graphFieldDef = {
+        const graphFieldDef = {
           'name': field.name
         };
         $scope.allFields.push(graphFieldDef);
         graphFieldDef.hopSize = 5; //Default the number of results returned per hop
         graphFieldDef.lastValidHopSize = graphFieldDef.hopSize;
         graphFieldDef.icon = $scope.iconChoices[0];
-        for (var i = 0; i < $scope.iconChoices.length; i++) {
-          var icon = $scope.iconChoices[i];
-          for (var p = 0; p < icon.patterns.length; p++) {
-            var pattern = icon.patterns[p];
+        for (let i = 0; i < $scope.iconChoices.length; i++) {
+          const icon = $scope.iconChoices[i];
+          for (let p = 0; p < icon.patterns.length; p++) {
+            const pattern = icon.patterns[p];
             if (pattern.test(graphFieldDef.name)) {
               graphFieldDef.icon = icon;
               break;
@@ -346,7 +346,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   // Replacement function for graphClientWorkspace's comms so
   // that it works with Kibana.
   function callNodeProxy(indexName, query, responseHandler) {
-    var request = {
+    const request = {
       index: indexName,
       query: query
     };
@@ -362,8 +362,8 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
 
 
   //Helper function for the graphClientWorkspace to perform a query
-  var callSearchNodeProxy = function (indexName, query, responseHandler) {
-    var request = {
+  const callSearchNodeProxy = function (indexName, query, responseHandler) {
+    const request = {
       index: indexName,
       body: query
     };
@@ -377,10 +377,10 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   $scope.submit = function () {
     $scope.hideAllConfigPanels();
     initWorkspaceIfRequired();
-    var numHops = 2;
+    const numHops = 2;
     if ($scope.searchTerm.startsWith('{')) {
       try {
-        var query = JSON.parse($scope.searchTerm);
+        const query = JSON.parse($scope.searchTerm);
         if (query.vertices) {
           // Is a graph explore request
           $scope.workspace.callElasticsearch(query);
@@ -426,7 +426,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     $scope.selectedFieldConfig.selected = false;
     // Find and remove field from array (important not to just make a new filtered array because
     // this array instance is shared with $scope.workspace)
-    var i = $scope.selectedFields.indexOf($scope.selectedFieldConfig);
+    const i = $scope.selectedFields.indexOf($scope.selectedFieldConfig);
     if (i !== -1) {
       $scope.selectedFields.splice(i, 1);
     }
@@ -517,7 +517,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   };
 
   $scope.removeUrlTemplate = function (urlTemplate) {
-    var i = $scope.urlTemplates.indexOf(urlTemplate);
+    const i = $scope.urlTemplates.indexOf(urlTemplate);
     if (i != -1) {
       safeConfirm('Remove "' + urlTemplate.description + '" drill-down?').then(function () {
         $scope.urlTemplates.splice(i, 1);
@@ -569,7 +569,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     if ($scope.workspace) {
       return;
     }
-    var options = {
+    const options = {
       indexName: $scope.selectedIndex,
       vertex_fields: $scope.selectedFields,
       // Here we have the opportunity to look up labels for nodes...
@@ -608,11 +608,11 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   };
 
   $scope.performMerge = function (parentId, childId) {
-    var found = true;
+    let found = true;
     while (found) {
       found = false;
-      for (var i in $scope.detail.mergeCandidates) {
-        var mc = $scope.detail.mergeCandidates[i];
+      for (const i in $scope.detail.mergeCandidates) {
+        const mc = $scope.detail.mergeCandidates[i];
         if ((mc.id1 === childId) || (mc.id2 === childId)) {
           $scope.detail.mergeCandidates.splice(i, 1);
           found = true;
@@ -632,7 +632,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   };
 
   // Zoom functions for the SVG-based graph
-  var redraw = function () {
+  const redraw = function () {
     d3.select('#svgRootGroup')
       .attr('transform',
         'translate(' + d3.event.translate + ')' + 'scale(' + d3.event.scale + ')')
@@ -648,7 +648,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   $scope.resetWorkspace();
 
 
-  var blockScroll = function () {
+  const blockScroll = function () {
     d3.event.preventDefault();
   };
   d3.select('#graphSvg')
@@ -703,7 +703,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       description: 'Delete Saved Workspace',
       tooltip: 'Delete this workspace',
       run: function () {
-        var title = $route.current.locals.savedWorkspace.title;
+        const title = $route.current.locals.savedWorkspace.title;
         safeConfirm('Are you sure you want to delete the workspace ' + title + ' ?').then(function () {
           $route.current.locals.SavedWorkspacesProvider.delete($route.current.locals.savedWorkspace.id);
           kbnUrl.change('/home', {});
@@ -730,7 +730,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   // Deal with situation of request to open saved workspace
   if ($route.current.locals.savedWorkspace) {
 
-    var wsObj = JSON.parse($route.current.locals.savedWorkspace.wsState);
+    const wsObj = JSON.parse($route.current.locals.savedWorkspace.wsState);
     $scope.savedWorkspace = $route.current.locals.savedWorkspace;
     $scope.description = $route.current.locals.savedWorkspace.description;
 
@@ -758,10 +758,10 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
           $scope.exploreControls.sampleDiversityField.name === field.name);
       }
 
-      for (var i in wsObj.selectedFields) {
-        var savedField = wsObj.selectedFields[i];
-        for (var f in $scope.allFields) {
-          var field = $scope.allFields[f];
+      for (const i in wsObj.selectedFields) {
+        const savedField = wsObj.selectedFields[i];
+        for (const f in $scope.allFields) {
+          const field = $scope.allFields[f];
           if (savedField.name === field.name) {
             field.hopSize = savedField.hopSize;
             field.lastValidHopSize = savedField.lastValidHopSize;
@@ -777,13 +777,13 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
 
       $scope.updateLiveResponseFields();
       initWorkspaceIfRequired();
-      var graph = {
+      const graph = {
         nodes:[],
         edges:[]
       };
-      for (var i in wsObj.vertices) {
-        var vertex = wsObj.vertices[i];
-        var node = {
+      for (const i in wsObj.vertices) {
+        var vertex = wsObj.vertices[i]; // eslint-disable-line no-var
+        const node = {
           field:vertex.field,
           term:vertex.term,
           label:vertex.label,
@@ -795,13 +795,13 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
         };
         graph.nodes.push(node);
       }
-      for (var i in wsObj.blacklist) {
-        var vertex = wsObj.blacklist[i];
-        var fieldDef = $scope.allFields.filter(function (fieldDef) {
+      for (const i in wsObj.blacklist) {
+        var vertex = wsObj.vertices[i]; // eslint-disable-line no-var
+        const fieldDef = $scope.allFields.filter(function (fieldDef) {
           return vertex.field === fieldDef.name;
         })[0];
         if (fieldDef) {
-          var node = {
+          const node = {
             field:vertex.field,
             term:vertex.term,
             label:vertex.label,
@@ -815,8 +815,8 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
           $scope.workspace.blacklistedNodes.push(node);
         }
       }
-      for (var i in wsObj.links) {
-        var link = wsObj.links[i];
+      for (const i in wsObj.links) {
+        const link = wsObj.links[i];
         graph.edges.push({
           source: link.source,
           target: link.target,
@@ -831,16 +831,16 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       $scope.workspace.mergeGraph(graph);
 
       // Wire up parents and children
-      for (var i in wsObj.vertices) {
-        var vertex = wsObj.vertices[i];
-        var vId = $scope.workspace.makeNodeId(vertex.field, vertex.term);
-        var visNode = $scope.workspace.nodesMap[vId];
+      for (const i in wsObj.vertices) {
+        const vertex = wsObj.vertices[i];
+        const vId = $scope.workspace.makeNodeId(vertex.field, vertex.term);
+        const visNode = $scope.workspace.nodesMap[vId];
         // Default the positions.
         visNode.x = vertex.x;
         visNode.y = vertex.y;
         if (vertex.parent !== null) {
-          var parentSavedObj = graph.nodes[vertex.parent];
-          var parentId = $scope.workspace.makeNodeId(parentSavedObj.field, parentSavedObj.term);
+          const parentSavedObj = graph.nodes[vertex.parent];
+          const parentId = $scope.workspace.makeNodeId(parentSavedObj.field, parentSavedObj.term);
           visNode.parent = $scope.workspace.nodesMap[parentId];
         }
       }
@@ -871,9 +871,9 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       ($scope.graphSavePolicy === 'configAndDataWithConsent' && $scope.userHasConfirmedSaveWorkspaceData);
 
 
-    var blacklist = [];
-    var vertices = [];
-    var links = [];
+    let blacklist = [];
+    let vertices = [];
+    let links = [];
     if (canSaveData) {
       blacklist = $scope.workspace.blacklistedNodes.map(function (node) {
         return {
@@ -913,7 +913,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       });
     }
 
-    var urlTemplates = $scope.urlTemplates.map(function (template) {
+    const urlTemplates = $scope.urlTemplates.map(function (template) {
       const result = {
         'url': template.url,
         'description': template.description,
@@ -951,7 +951,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       $scope.kbnTopNav.close('save');
       $scope.userHasConfirmedSaveWorkspaceData = false; //reset flag
       if (id) {
-        var message = 'Saved Workspace "' + $scope.savedWorkspace.title + '"';
+        let message = 'Saved Workspace "' + $scope.savedWorkspace.title + '"';
         if (!canSaveData && $scope.workspace.nodes.length > 0) {
           message += ' (the workspace configuration but not the data was saved)';
         }

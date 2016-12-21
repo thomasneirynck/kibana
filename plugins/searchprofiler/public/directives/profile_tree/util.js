@@ -35,7 +35,7 @@ export function calcTimes(data, parentId) {
 
   let totalTime = 0;
   //First pass to collect total
-  for (let child of data) {
+  for (const child of data) {
     child.time = parseFloat(child.time.replace('ms',''));
     totalTime += child.time;  //in ms
     child.id = UUID.v4();
@@ -49,7 +49,7 @@ export function calcTimes(data, parentId) {
       child.hasChildren = true;
 
       // Save the IDs of our children, has to be called after calcTimes recursion above
-      for (let c of child.children) {
+      for (const c of child.children) {
         child.childrenIds.push(c.id);
       }
     }
@@ -59,8 +59,8 @@ export function calcTimes(data, parentId) {
 }
 
 export function normalizeBreakdown(breakdown) {
-  let final = [];
-  let total = Object.keys(breakdown).reduce((partialTotal, currentKey) => {
+  const final = [];
+  const total = Object.keys(breakdown).reduce((partialTotal, currentKey) => {
     if (currentKey.indexOf('_count') === -1) {
       partialTotal += breakdown[currentKey];
     }
@@ -85,7 +85,7 @@ export function normalizeBreakdown(breakdown) {
 
 export function normalizeTimes(data, totalTime, depth) {
   //Second pass to normalize
-  for (let child of data) {
+  for (const child of data) {
     child.timePercentage = ((child.time / totalTime) * 100).toFixed(2);
     child.absoluteColor = tinycolor.mix('#F5F5F5', '#FFAFAF', child.timePercentage).toHexString();
     child.depth = depth;
@@ -124,10 +124,10 @@ export function normalizeIndices(indices, visibility, target) {
       return comparator(aTime, bTime);
     };
   }
-  let sortedIndices = [];
-  for (let [key, index] of Object.entries(indices)) {
+  const sortedIndices = [];
+  for (const [key, index] of Object.entries(indices)) {
     index.shards.sort(sortQueryComponents);
-    for (let shard of index.shards) {
+    for (const shard of index.shards) {
       shard.relative[target] = ((shard.time[target] / index.time[target]) * 100).toFixed(2);
       shard.color[target] = tinycolor.mix('#F5F5F5', '#FFAFAF', shard.relative[target]).toHexString();
     }
@@ -145,7 +145,7 @@ export function flattenResults(data, accumulator, depth, visibleMap) {
     return;
   }
 
-  for (let child of data) {
+  for (const child of data) {
 
     // For bwc of older profile responses
     if (!child.description) {
@@ -188,7 +188,7 @@ export function closeNode(visibleMap, id) {
     return;
   }
 
-  for (let child of visibleMap[id].children) {
+  for (const child of visibleMap[id].children) {
     closeNode(visibleMap, child.id);
   }
 }

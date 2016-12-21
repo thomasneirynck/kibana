@@ -22,7 +22,7 @@ export default (server, commonRouteConfig) => {
       parsed.profile = true;
       parsed = JSON.stringify(parsed, null, 2);
 
-      let body = {
+      const body = {
         index: request.payload.index,
         type: request.payload.type,
         body: parsed

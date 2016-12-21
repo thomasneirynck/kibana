@@ -9,7 +9,7 @@ describe('checkForParseErrors', function () {
       getLength: () => {},
       addMarker: () => {}
     };
-    let mockSession = sinon.mock(session);
+    const mockSession = sinon.mock(session);
     mockSession.expects('getLength').once().returns(10);
     mockSession.expects('addMarker').once().returns('marker');
 
@@ -17,7 +17,7 @@ describe('checkForParseErrors', function () {
       session: session,
       gotoLine: () => {}
     };
-    let mockAce = sinon.mock(ace);
+    const mockAce = sinon.mock(ace);
     mockAce.expects('gotoLine').once();
 
     const json = '{"foo": {"bar": {"baz": "buzz}}}';
@@ -36,7 +36,7 @@ describe('checkForParseErrors', function () {
       getLength: () => {},
       addMarker: () => {}
     };
-    let mockSession = sinon.mock(session);
+    const mockSession = sinon.mock(session);
     mockSession.expects('getLength').never();
     mockSession.expects('addMarker').never();
 
@@ -44,7 +44,7 @@ describe('checkForParseErrors', function () {
       session: session,
       gotoLine: () => {}
     };
-    let mockAce = sinon.mock(ace);
+    const mockAce = sinon.mock(ace);
     mockAce.expects('gotoLine').never();
 
     const json = '{"foo": {"bar": {"baz": "buzz"}}}';

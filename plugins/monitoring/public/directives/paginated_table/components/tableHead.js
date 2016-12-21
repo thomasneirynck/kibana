@@ -5,13 +5,13 @@ const make = React.DOM;
 export default React.createClass({
   displayName: 'TableHead',
   render: function () {
-    var that = this;
+    const that = this;
     function makeTh(config) {
-      var isSortCol = config.sort !== 0 && config.sort;
-      var isSortAsc = config.sort === 1;
-      var $icon = false;
+      const isSortCol = config.sort !== 0 && config.sort;
+      const isSortAsc = config.sort === 1;
+      let $icon = false;
       if (isSortCol) {
-        var iconClassName = 'fa fa-sort-amount-' + (isSortAsc ? 'asc' : 'desc');
+        const iconClassName = 'fa fa-sort-amount-' + (isSortAsc ? 'asc' : 'desc');
         $icon = make.span(null, [
           make.span({key: 'iconspace'}, ' '),
           make.span({key: 'icon', className: iconClassName})
@@ -31,7 +31,7 @@ export default React.createClass({
         className: config.className || ''
       }, config.title, $icon);
     }
-    var $ths = this.props.columns.map(makeTh);
+    const $ths = this.props.columns.map(makeTh);
     return make.thead(null, make.tr(null, $ths));
   }
 });

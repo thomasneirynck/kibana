@@ -29,7 +29,7 @@ describe('flattenResults', function () {
   it('returns correct flattening', function () {
     // Deep clone the object to preserve the original
     const input = JSON.parse(JSON.stringify(normalizedTimes));
-    let flat = [];
+    const flat = [];
     util.flattenResults(input, flat, 0, []);
     expect(JSON.parse(JSON.stringify(flat))).to.eql(flatTimes);
   });
@@ -38,7 +38,7 @@ describe('flattenResults', function () {
 describe('normalizeIndices', function () {
   it('returns correct ordering', function () {
     // Deep clone the object to preserve the original
-    let input = JSON.parse(JSON.stringify(inputIndices));
+    const input = JSON.parse(JSON.stringify(inputIndices));
     const result = util.normalizeIndices(input, [], 'searches');
     expect(result).to.eql(normalizedIndices);
   });

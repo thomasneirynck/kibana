@@ -7,36 +7,36 @@
  */
 module.exports = YamlDoc;
 
-var _ = require('lodash');
-var Promise = require('bluebird');
-var expect = require('expect.js');
-var camelCase = require('camelcase');
-var client = require('./client');
-var Catcher = require('./Catcher');
-var inspect = require('util').inspect;
+const _ = require('lodash');
+const Promise = require('bluebird');
+const expect = require('expect.js');
+const camelCase = require('camelcase');
+const client = require('./client');
+const Catcher = require('./Catcher');
+const inspect = require('util').inspect;
 
-var implementedFeatures = ['gtelte', 'regex', 'benchmark'];
+const implementedFeatures = ['gtelte', 'regex', 'benchmark'];
 
 // core expression for finding a version
-var versionExp = '((?:\\d+\\.){0,2}\\d+)(?:\\.\\w+)?|';
+const versionExp = '((?:\\d+\\.){0,2}\\d+)(?:\\.\\w+)?|';
 
 // match all whitespace within a "regexp" match arg
-var reWhitespaceRegex = /\s+/g;
+const reWhitespaceRegex = /\s+/g;
 
 // match all comments within a "regexp" match arg
-var reCommentsRegex = /([\S\s]?)#[^\n]*\n/g;
+const reCommentsRegex = /([\S\s]?)#[^\n]*\n/g;
 
 /**
  * Regular Expression to extract a version number from a string
  * @type {RegExp}
  */
-var versionRE = new RegExp('^(?:' + versionExp + ')$');
+const versionRE = new RegExp('^(?:' + versionExp + ')$');
 
 /**
  * Regular Expression to extract a version range from a string
  * @type {RegExp}
  */
-var versionRangeRE = new RegExp('^(?:' + versionExp + ')\\s*\\-\\s*(?:' + versionExp + ')$');
+const versionRangeRE = new RegExp('^(?:' + versionExp + ')\\s*\\-\\s*(?:' + versionExp + ')$');
 
 /**
  * Fetches the client.info, and parses out the version number to a comparable string
@@ -66,7 +66,7 @@ function versionToComparableString(version, def) {
     return def;
   }
 
-  var parts = _.map(version.split('.'), function (part) {
+  const parts = _.map(version.split('.'), function (part) {
     part = '' + _.parseInt(part);
     return (new Array(Math.max(4 - part.length, 0))).join('0') + part;
   });
@@ -98,7 +98,7 @@ function rangeMatchesCurrentVersion(rangeString) {
 
 
 function YamlDoc(doc, file) {
-  var self = this;
+  const self = this;
 
   self.file = file;
   self.description = _.keys(doc).shift();
@@ -108,7 +108,7 @@ function YamlDoc(doc, file) {
   // setup the actions, creating a bound and testable method for each
   self._actions = _.map(self.flattenTestActions(doc[self.description]), function (action) {
     // get the method that will do the action
-    var method = self['do_' + action.name];
+    const method = self['do_' + action.name];
 
     // check that it's a function
     expect(method || 'YamlDoc#' + action.name).to.be.a('function');
@@ -131,14 +131,14 @@ function YamlDoc(doc, file) {
 
 YamlDoc.compareRangeToVersion = function (range, version) {
   expect(range).to.match(versionRangeRE);
-  var rangeMatch = versionRangeRE.exec(range);
+  const rangeMatch = versionRangeRE.exec(range);
 
   expect(version).to.match(versionRE);
-  var versionMatch = versionRE.exec(version);
+  const versionMatch = versionRE.exec(version);
 
-  var min = versionToComparableString(rangeMatch[1], -Infinity);
-  var max = versionToComparableString(rangeMatch[2], Infinity);
-  var comp = versionToComparableString(versionMatch[1], Infinity);
+  const min = versionToComparableString(rangeMatch[1], -Infinity);
+  const max = versionToComparableString(rangeMatch[2], Infinity);
+  const comp = versionToComparableString(versionMatch[1], Infinity);
 
   return (min === -Infinity || min <= comp) && (max === Infinity || max >= comp);
 };
@@ -155,7 +155,7 @@ YamlDoc.prototype = {
   flattenTestActions: function (config) {
     // creates [ [ {name:"", args:"" }, ... ], ... ]
     // from [ {name:args, name:args}, {name:args} ]
-    var actionSets = _.map(config, function (set) {
+    const actionSets = _.map(config, function (set) {
       return _.map(_.pairs(set), function (pair) {
         return { name: pair[0], args: pair[1] };
       });
@@ -175,7 +175,7 @@ YamlDoc.prototype = {
    * @return {undefined}
    */
   each: function (ittr) {
-    for (var i = 0; i < this._actions.length; i++) {
+    for (let i = 0; i < this._actions.length; i++) {
       if (ittr(this._actions[i].testable, this._actions[i].name) === false) {
         break;
       }
@@ -205,8 +205,8 @@ YamlDoc.prototype = {
    * @return {*} - The value requested, or undefined if it was not found
    */
   get: function (path, from) {
-    var log = process.env.LOG_GETS ? console.log.bind(console) : function () {};
-    var i;
+    const log = process.env.LOG_GETS ? console.log.bind(console) : function () {};
+    let i;
 
     if (path === '$body') {
       // shortcut, the test just wants the whole body
@@ -224,10 +224,10 @@ YamlDoc.prototype = {
       }
     }
 
-    var steps = _.map(path ? path.replace(/\\\./g, '\uffff').split('.') : [], function (step) {
+    const steps = _.map(path ? path.replace(/\\\./g, '\uffff').split('.') : [], function (step) {
       return step.replace(/\uffff/g, '.');
     });
-    var remainingSteps;
+    let remainingSteps;
 
     for (i = 0; from != null && i < steps.length; i++) {
       if (from[steps[i]] === void 0) {
@@ -251,7 +251,7 @@ YamlDoc.prototype = {
    * @param done
    */
   do_skip: function (args) {
-    var self = this;
+    const self = this;
 
     if (args.version) {
       return rangeMatchesCurrentVersion(args.version)
@@ -269,8 +269,8 @@ YamlDoc.prototype = {
     }
 
     if (args.features) {
-      var features = Array.isArray(args.features) ? args.features : [args.features];
-      var notImplemented = _.difference(features, implementedFeatures);
+      const features = Array.isArray(args.features) ? args.features : [args.features];
+      const notImplemented = _.difference(features, implementedFeatures);
 
       if (notImplemented.length) {
         if (this.description === 'setup') {
@@ -292,22 +292,22 @@ YamlDoc.prototype = {
    * @return {[type]}        [description]
    */
   do_do: function (args) {
-    var self = this;
-    var action = _.keys(args).pop();
-    var clientActionName = _.map(action.split('.'), camelCase).join('.');
-    var clientAction = this.get(clientActionName, client.get());
+    const self = this;
+    const action = _.keys(args).pop();
+    const clientActionName = _.map(action.split('.'), camelCase).join('.');
+    const clientAction = this.get(clientActionName, client.get());
 
-    var catcher = new Catcher(args.catch);
+    const catcher = new Catcher(args.catch);
     delete args.catch;
 
-    var params = _.transform(args[action], function (innerParams, val, name) {
-      var camelName = camelCase(name);
+    const params = _.transform(args[action], function (innerParams, val, name) {
+      const camelName = camelCase(name);
 
       // search through the params and url peices to find this param name
-      var paramName = name;
-      var spec = clientAction && clientAction.spec;
-      var knownParam = spec && spec.params && spec.params[camelName];
-      var knownUrlParam = spec && !knownParam && !!_.find(spec.url ? [spec.url] : spec.urls, function (url) {
+      let paramName = name;
+      const spec = clientAction && clientAction.spec;
+      const knownParam = spec && spec.params && spec.params[camelName];
+      const knownUrlParam = spec && !knownParam && !!_.find(spec.url ? [spec.url] : spec.urls, function (url) {
         if ((url.opt && url.opt[camelName]) || (url.req && url.req[camelName])) {
           return true;
         }
@@ -319,7 +319,7 @@ YamlDoc.prototype = {
       }
 
       // for ercursively traversing the params to replace '$stashed' vars
-      var transformObject = function (vals, innerVal, i) {
+      const transformObject = function (vals, innerVal, i) {
         switch (typeof innerVal) {
           case 'string':
             innerVal = (innerVal[0] === '$') ? this.get(innerVal) : innerVal;
@@ -350,9 +350,9 @@ YamlDoc.prototype = {
     expect(clientAction || clientActionName).to.be.a('function');
 
     return new Promise(function (resolve, reject) {
-      var req = clientAction.call(client.get(), params);
+      const req = clientAction.call(client.get(), params);
 
-      var timeoutId = setTimeout(function () {
+      const timeoutId = setTimeout(function () {
         // request timed out, so we will skip the rest of the tests and continue
         req.abort();
         self.skipping = true;
@@ -458,7 +458,7 @@ YamlDoc.prototype = {
    * @return {undefined}
    */
   do_match: function (args) {
-    var self = this;
+    const self = this;
 
     // recursively replace all $var within args
     _.forOwn(args, function recurse(val, key, lvl) {
@@ -472,10 +472,10 @@ YamlDoc.prototype = {
     });
 
     _.forOwn(args, function (match, path) {
-      var origMatch = match;
+      const origMatch = match;
 
-      var maybeRE = false;
-      var usedRE = false;
+      let maybeRE = false;
+      let usedRE = false;
 
       if (_.isString(match)) {
         // convert the matcher into a compatible string for building a regexp
@@ -492,8 +492,8 @@ YamlDoc.prototype = {
           // whitespace is represented with \s
           .replace(reWhitespaceRegex, '');
 
-        var startsWithSlash = maybeRE[0] === '/';
-        var endsWithSlash = maybeRE[maybeRE.length - 1] === '/';
+        const startsWithSlash = maybeRE[0] === '/';
+        const endsWithSlash = maybeRE[maybeRE.length - 1] === '/';
 
         if (startsWithSlash && endsWithSlash) {
           usedRE = true;
@@ -501,8 +501,8 @@ YamlDoc.prototype = {
         }
       }
 
-      var val = this.get(path);
-      var test = 'eql';
+      let val = this.get(path);
+      let test = 'eql';
 
       if (match instanceof RegExp) {
         test = 'match';
@@ -515,7 +515,7 @@ YamlDoc.prototype = {
       try {
         expect(val).to[test](match);
       } catch (e) {
-        var msg = [
+        const msg = [
           '\nUnable to match',
           inspect(match),
           'with the path',

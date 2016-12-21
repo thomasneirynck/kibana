@@ -1,10 +1,10 @@
-var path = require('path');
-var Bluebird = require('bluebird');
-var simpleGit = require('simple-git');
-var gitDir = path.resolve(__dirname, '..');
+const path = require('path');
+const Bluebird = require('bluebird');
+const simpleGit = require('simple-git');
+const gitDir = path.resolve(__dirname, '..');
 
 function gitInfo() {
-  var git = simpleGit(gitDir);
+  const git = simpleGit(gitDir);
   return Bluebird.fromCallback(function (cb) {
     git.log(cb);
   })

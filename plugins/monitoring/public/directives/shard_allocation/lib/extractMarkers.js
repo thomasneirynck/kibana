@@ -29,11 +29,11 @@ function markerMaker(count, time, timestamp) {
 
 export default function extractMarkers(data) {
   // data has to be sorted by time and may contain duplicates
-  var total = 0;
-  var currentMarker = null;
-  var markers = _.reduce(data, function (memo, item) {
-    var timestamp = getValue(item.fields.timestamp);
-    var time = moment.utc(timestamp).startOf('day').format('YYYY-MM-DD');
+  let total = 0;
+  let currentMarker = null;
+  const markers = _.reduce(data, function (memo, item) {
+    const timestamp = getValue(item.fields.timestamp);
+    const time = moment.utc(timestamp).startOf('day').format('YYYY-MM-DD');
     if (!currentMarker) {
       // first marker
       currentMarker = markerMaker(0, time, timestamp);

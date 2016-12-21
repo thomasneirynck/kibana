@@ -1,7 +1,7 @@
 export default function addMonitoringApi(Client, _config, components) {
   const ca = components.clientAction.factory;
   Client.prototype.monitoring = components.clientAction.namespaceFactory();
-  let monitoring = Client.prototype.monitoring.prototype;
+  const monitoring = Client.prototype.monitoring.prototype;
 
  /**
   * Perform a [monitoring.bulk](http://www.elastic.co/guide/en/elasticsearch/reference/master/docs-bulk.html) request

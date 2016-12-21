@@ -22,7 +22,7 @@ export default function indicesByNodesFn() {
   return function indicesByNodes(shards, nodes) {
 
     function createIndex(obj, shard) {
-      var id = shard.index;
+      const id = shard.index;
       if (obj[id]) {
         return obj;
       }
@@ -38,8 +38,8 @@ export default function indicesByNodesFn() {
     }
 
     function createNodeAddShard(obj, shard) {
-      var node = shard.resolver;
-      var index = shard.index;
+      const node = shard.resolver;
+      const index = shard.index;
 
       // If the node is null then it's an unassigned shard and we need to
       // add it to the unassigned array.
@@ -52,7 +52,7 @@ export default function indicesByNodesFn() {
         return obj;
       }
 
-      var nodeObj = _.find(obj[index].children, { id: node });
+      let nodeObj = _.find(obj[index].children, { id: node });
       if (!nodeObj) {
         nodeObj = {
           id: node,
@@ -68,7 +68,7 @@ export default function indicesByNodesFn() {
       return obj;
     }
 
-    var data = _.reduce(decorateShards(shards, nodes), function (obj, shard) {
+    const data = _.reduce(decorateShards(shards, nodes), function (obj, shard) {
       obj = createIndex(obj, shard);
       obj = createNodeAddShard(obj, shard);
       return obj;

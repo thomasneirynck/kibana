@@ -12,7 +12,7 @@ uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl, sh
     scope: { clusters: '=' },
     link: function ($scope, $el) {
 
-      var options = {
+      const options = {
         title: null,
         searchPlaceholder: 'Filter Clusters',
         filterFields: ['cluster_name', 'status', 'license.type'],
@@ -56,7 +56,7 @@ uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl, sh
         ]
       };
 
-      var table = ReactDOM.render(<Table
+      const table = ReactDOM.render(<Table
         scope={ $scope }
         template={ ClusterRow }
         options={ options }/>, $el[0]);

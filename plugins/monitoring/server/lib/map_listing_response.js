@@ -19,13 +19,13 @@ function mapChartData(metric) {
 }
 
 function calcSlope(data) {
-  var length = data.length;
-  var xSum = data.reduce(function (prev, curr) { return prev + curr.x; }, 0);
-  var ySum = data.reduce(function (prev, curr) { return prev + curr.y; }, 0);
-  var xySum = data.reduce(function (prev, curr) { return prev + (curr.y * curr.x); }, 0);
-  var xSqSum = data.reduce(function (prev, curr) { return prev + (curr.x * curr.x); }, 0);
-  var numerator = (length * xySum) - (xSum * ySum);
-  var denominator = (length * xSqSum) - (xSum * ySum);
+  const length = data.length;
+  const xSum = data.reduce(function (prev, curr) { return prev + curr.x; }, 0);
+  const ySum = data.reduce(function (prev, curr) { return prev + curr.y; }, 0);
+  const xySum = data.reduce(function (prev, curr) { return prev + (curr.y * curr.x); }, 0);
+  const xSqSum = data.reduce(function (prev, curr) { return prev + (curr.x * curr.x); }, 0);
+  const numerator = (length * xySum) - (xSum * ySum);
+  const denominator = (length * xSqSum) - (xSum * ySum);
   return numerator / denominator;
 }
 

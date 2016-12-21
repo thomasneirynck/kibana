@@ -52,7 +52,7 @@ uiModule.directive('profiletree',  HighlightService => {
         $scope.visible = {};
         let indices = {};
 
-        for (let shard of data) {
+        for (const shard of data) {
           initShardTargets(shard);
 
           if ($scope.target === 'searches') {
@@ -87,13 +87,13 @@ uiModule.directive('profiletree',  HighlightService => {
         shard.rewrite_time = 0;
 
         let shardTime = 0;
-        for (let search of shard.searches) {
+        for (const search of shard.searches) {
           shard.rewrite_time += search.rewrite_time;
           const totalTime = util.calcTimes(search.query);
           shardTime += totalTime;
           util.normalizeTimes(search.query, totalTime, 0);
 
-          let flat = [];
+          const flat = [];
           util.flattenResults(search.query, flat, 0, $scope.visible);
           search.flat = flat;
           search.query = null;
@@ -106,14 +106,14 @@ uiModule.directive('profiletree',  HighlightService => {
           return 0;
         }
         let shardTime = 0;
-        for (let agg of shard.aggregations) {
+        for (const agg of shard.aggregations) {
           const totalTime = util.calcTimes([agg]);
           shardTime += totalTime;
         }
-        for (let agg of shard.aggregations) {
+        for (const agg of shard.aggregations) {
           util.normalizeTimes([agg], shardTime, 0);
 
-          let flat = [];
+          const flat = [];
           util.flattenResults([agg], flat, 0, $scope.visible);
           agg.flat = flat;
         }

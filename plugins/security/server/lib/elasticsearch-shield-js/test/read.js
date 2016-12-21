@@ -1,15 +1,15 @@
 /* global describe, before */
-var resolve = require('path').resolve;
-var glob = require('glob');
-var jsYaml = require('js-yaml');
-var readFile = require('fs').readFileSync;
-var relative = require('path').relative;
+const resolve = require('path').resolve;
+const glob = require('glob');
+const jsYaml = require('js-yaml');
+const readFile = require('fs').readFileSync;
+const relative = require('path').relative;
 
-var YamlFile = require('./YamlFile');
-var client = require('./client');
+const YamlFile = require('./YamlFile');
+const client = require('./client');
 
-var port = parseFloat(process.env.ES_PORT || 9200);
-var testDir = resolve(__dirname, '../../x-plugins/elasticsearch/x-pack/shield/src/test/resources/rest-api-spec/test');
+const port = parseFloat(process.env.ES_PORT || 9200);
+const testDir = resolve(__dirname, '../../x-plugins/elasticsearch/x-pack/shield/src/test/resources/rest-api-spec/test');
 
 describe('', function () {
   this.timeout(30000);
@@ -24,15 +24,15 @@ describe('', function () {
     });
   });
 
-  var files = glob.sync(resolve(testDir, '**', '*.yaml'));
+  const files = glob.sync(resolve(testDir, '**', '*.yaml'));
   files.map(function (filename) {
-    var docs = [];
+    const docs = [];
 
     jsYaml.safeLoadAll(readFile(filename), function (doc) {
       docs.push(doc);
     });
 
-    var relName = relative(testDir, filename);
+    const relName = relative(testDir, filename);
     // console.log(relName, docs);
     return new YamlFile(relName, docs);
   });

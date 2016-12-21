@@ -2,46 +2,46 @@ require('babel/register')();
 require('dotenv').config({ silent: true });
 
 // relative location of Kibana install
-var pathToKibana = process.env.KIBANA_PATH || '../../../kibana';
+const pathToKibana = process.env.KIBANA_PATH || '../../../kibana';
 
-var gulp = require('gulp');
-var g = require('gulp-load-plugins')();
-var path = require('path');
-var fs = require('fs');
-var Bluebird = require('bluebird');
-var del = require('del');
-var prettyData = require('pretty-data');
-var checksum = require('checksum');
-var aws = require('aws-sdk');
-var mocha = require('gulp-mocha');
-var istanbul = require('gulp-istanbul');
-var isparta = require('isparta');
-var runSequence = require('run-sequence');
+const gulp = require('gulp');
+const g = require('gulp-load-plugins')();
+const path = require('path');
+const fs = require('fs');
+const Bluebird = require('bluebird');
+const del = require('del');
+const prettyData = require('pretty-data');
+const checksum = require('checksum');
+const aws = require('aws-sdk');
+const mocha = require('gulp-mocha');
+const istanbul = require('gulp-istanbul');
+const isparta = require('isparta');
+const runSequence = require('run-sequence');
 
-var logger = require('./gulp_helpers/logger');
-var exec = require('./gulp_helpers/exec')(g.util);
-var syncPath = require('./gulp_helpers/sync_path');
-var downloadPhantom = require('./gulp_helpers/download_phantom');
-var gitInfo = require('./gulp_helpers/git_info');
-var stagedFiles = require('./gulp_helpers/staged_files.js');
-var createPackageFile = require('./gulp_helpers/create_package');
-var buildVersion = require('./gulp_helpers/build_version')();
-var fileGlobs = require('./gulp_helpers/globs');
-var getPlugins = require('./gulp_helpers/get_plugins');
+const logger = require('./gulp_helpers/logger');
+const exec = require('./gulp_helpers/exec')(g.util);
+const syncPath = require('./gulp_helpers/sync_path');
+const downloadPhantom = require('./gulp_helpers/download_phantom');
+const gitInfo = require('./gulp_helpers/git_info');
+const stagedFiles = require('./gulp_helpers/staged_files.js');
+const createPackageFile = require('./gulp_helpers/create_package');
+const buildVersion = require('./gulp_helpers/build_version')();
+const fileGlobs = require('./gulp_helpers/globs');
+const getPlugins = require('./gulp_helpers/get_plugins');
 
-var pkg = require('./package.json');
-var packageFile = `${pkg.name}-${buildVersion}.zip`;
-var checksumFile = packageFile + '.sha1.txt';
+const pkg = require('./package.json');
+const packageFile = `${pkg.name}-${buildVersion}.zip`;
+const checksumFile = packageFile + '.sha1.txt';
 
-var buildDir = path.resolve(__dirname, 'build');
-var builtDir = path.join(buildDir, 'plugin');
-var buildTarget = path.resolve(builtDir, 'kibana', pkg.name);
-var targetDir = path.resolve(__dirname, 'target');
-var kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'plugins', pkg.name);
+const buildDir = path.resolve(__dirname, 'build');
+const builtDir = path.join(buildDir, 'plugin');
+const buildTarget = path.resolve(builtDir, 'kibana', pkg.name);
+const targetDir = path.resolve(__dirname, 'target');
+const kibanaPluginDir = path.resolve(__dirname, pathToKibana, 'plugins', pkg.name);
 
-var coverageDir = path.resolve(__dirname, 'coverage');
+const coverageDir = path.resolve(__dirname, 'coverage');
 
-var buildIncludes = [
+const buildIncludes = [
   '../LICENSE.txt',
   'NOTICE.txt',
   'package.json',
@@ -53,18 +53,18 @@ var buildIncludes = [
   'server'
 ];
 
-var excludedSyncDeps = Object.keys(pkg.devDependencies).map(function (name) {
+const excludedSyncDeps = Object.keys(pkg.devDependencies).map(function (name) {
   return path.join('node_modules', name);
 });
 
-var excludedSyncFiles = [
+const excludedSyncFiles = [
   '.DS_Store',
   '__tests__',
   'README.md',
   'node_modules/.bin',
 ];
 
-var syncPathTo = syncPath(excludedSyncDeps.concat(excludedSyncFiles));
+const syncPathTo = syncPath(excludedSyncDeps.concat(excludedSyncFiles));
 
 gulp.task('sync', function () {
   return downloadPhantom(path.join(__dirname, '.phantom'))
@@ -104,7 +104,7 @@ gulp.task('lint-staged', function () {
 });
 
 gulp.task('lint', function () {
-  var filePaths = [
+  const filePaths = [
     './*.js',
     './{server,gulp_helpers}/**/*.js',
   ]
@@ -155,7 +155,7 @@ gulp.task('build', ['lint', 'clean', 'report'], function () {
   .then(() => createPackageFile(pkg, pkgProps, buildVersion))
   .then(function (pkgOutput) {
     // re-write package.json, stripping unimportant bits and adding build info
-    var prettyOutput = prettyData.pd.json(pkgOutput);
+    const prettyOutput = prettyData.pd.json(pkgOutput);
     return fs.writeFileSync(path.join(buildTarget, 'package.json'), prettyOutput, { encoding: 'utf8' });
   })
   .then(() => {
@@ -176,8 +176,8 @@ gulp.task('build', ['lint', 'clean', 'report'], function () {
 });
 
 gulp.task('package', ['build'], function () {
-  var targetFile = path.join(targetDir, packageFile);
-  var targetChecksum = path.join(targetDir, checksumFile);
+  const targetFile = path.join(targetDir, packageFile);
+  const targetChecksum = path.join(targetDir, checksumFile);
 
   return Bluebird.fromCallback(function (cb) {
     return gulp.src(builtDir + '/**', { dot: true })
@@ -198,10 +198,10 @@ gulp.task('package', ['build'], function () {
 });
 
 gulp.task('release', ['package'], function () {
-  var s3 = new aws.S3();
+  const s3 = new aws.S3();
 
   function uploadFile(filename) {
-    var params = {
+    const params = {
       Bucket: 'download.elasticsearch.org',
       Key: 'kibana/x-pack/' + filename,
       Body: fs.createReadStream(path.join(targetDir, filename))
@@ -212,7 +212,7 @@ gulp.task('release', ['package'], function () {
     });
   }
 
-  var uploads = [
+  const uploads = [
     packageFile,
     checksumFile
   ];
@@ -220,7 +220,7 @@ gulp.task('release', ['package'], function () {
   return Bluebird.each(uploads, function (upload) {
     return uploadFile(upload)
     .then(function (result) {
-      var location = result.Location.replace(/%2F/g, '/').replace('s3.amazonaws.com/', '');
+      const location = result.Location.replace(/%2F/g, '/').replace('s3.amazonaws.com/', '');
       g.util.log(g.util.colors.green('Upload finished'), g.util.colors.yellow(location));
     });
   })
@@ -299,7 +299,7 @@ gulp.task('testbrowser', function () {
 });
 
 gulp.task('dev', ['sync'], function () {
-  var watchFiles = [
+  const watchFiles = [
     'package.json',
     'index.js',
     'plugins/**',

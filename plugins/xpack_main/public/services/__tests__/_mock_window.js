@@ -1,5 +1,5 @@
 export default function MockWindowProvider() {
-  let items = {};
+  const items = {};
   return {
     sessionStorage: {
       setItem(key, value) {

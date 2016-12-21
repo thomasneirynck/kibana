@@ -112,7 +112,7 @@ function indexRowFactory(scope, kbnUrl) {
 
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringIndexListing', function (kbnUrl) {
-  var initialTableOptions = {
+  const initialTableOptions = {
     title: 'Indices',
     searchPlaceholder: 'Filter Indices',
     filterFields: ['name', 'status'],

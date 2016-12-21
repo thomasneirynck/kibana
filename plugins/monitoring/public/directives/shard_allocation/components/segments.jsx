@@ -24,7 +24,7 @@ export default React.createClass({
     return { colors: this.props.scope.colors || [], total: this.props.scope.total };
   },
   componentWillMount: function () {
-    var self = this;
+    const self = this;
     this.props.scope.$watch('colors', function (val) {
       self.setState({ colors: val });
     });
@@ -33,8 +33,8 @@ export default React.createClass({
     });
   },
   createSegment: function (data) {
-    var className = 'segment ' + data.status;
-    var width = ((data.count / this.state.total) * 100) + '%';
+    const className = 'segment ' + data.status;
+    const width = ((data.count / this.state.total) * 100) + '%';
     return (
       <div
         className={ className }
