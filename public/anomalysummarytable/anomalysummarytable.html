@@ -1,7 +1,7 @@
 <div class="prl-anomaly-summary-table" ng-controller="PrlAnomalySummaryTableController">
-    
+
   <div>
-    <label class="small">Severity threshold:</label>    
+    <label>Severity threshold:</label>
     <div class="btn-group" dropdown>
       <button type="button" class="form-control prl-anomaly-summary-dropdown dropdown-toggle" dropdown-toggle ng-disabled="disabled">
         <span><i class="fa fa-exclamation-triangle icon-severity-{{vis.params.threshold.display}}"></i> {{vis.params.threshold.display}}</span> <span class="caret"></span>
@@ -10,7 +10,7 @@
         <li ng-repeat="thresholdOption in vis.type.params.thresholdOptions"><a ng-click="setThreshold(thresholdOption)"><i class="fa fa-exclamation-triangle icon-severity-{{thresholdOption.display}}"></i> {{thresholdOption.display}}</a></li>
       </ul>
     </div>
-  
+
     <label class="small" style="padding-left: 15px;">Interval:</label>
     <div class="btn-group" dropdown>
       <button type="button" class="form-control prl-anomaly-summary-dropdown dropdown-toggle" dropdown-toggle ng-disabled="disabled">
@@ -20,17 +20,17 @@
         <li ng-repeat="intervalOption in vis.type.params.intervalOptions"><a ng-click="setInterval(intervalOption)">{{intervalOption.display}}</a></li>
       </ul>
     </div>
-    
+
   </div>
-    
+
   <div class="no-results-item" ng-if="table.rows.length === 0">
     <h4>No matching results found</h4>
-  </div> 
-    
+  </div>
+
   <prl-paginated-table ng-hide="table.rows.length === 0"
     columns="table.columns"
     rows="table.rows"
-    per-page="table.perPage"> 
+    per-page="table.perPage">
   </prl-paginated-table>
-    
+
 </div>

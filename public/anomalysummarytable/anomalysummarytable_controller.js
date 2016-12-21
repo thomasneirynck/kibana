@@ -187,7 +187,6 @@ module.controller('PrlAnomalySummaryTableController', function (
     if ($scope.isShowingAggregatedData()) {
       summaryRecords = $scope.aggregateAnomalies();
     } else {
-      console.log('updateTableData, show all');
       // Show every record.
       momentInterval = $scope.vis.params.interval.val;
       const filteredHits = _.filter($scope.hits, function (hit) {
@@ -207,7 +206,7 @@ module.controller('PrlAnomalySummaryTableController', function (
           'time': source[timeFieldName],
           'max severity': source.normalized_probability,
           'detector': detector,
-          'jobId': source.jobId,
+          'jobId': source.job_id,
           'source': source
         };
 
@@ -469,7 +468,7 @@ module.controller('PrlAnomalySummaryTableController', function (
         source.latest = roundedMoment.toISOString();      // e.g. 2016-02-08T18:59:59.999Z
       } else {
         // Show the time span of the selected record's bucket.
-        const latestMoment = moment(timestamp).add(source.bucketSpan, 's');
+        const latestMoment = moment(timestamp).add(source.bucket_span, 's');
         source.latest = latestMoment.toISOString();
       }
     }

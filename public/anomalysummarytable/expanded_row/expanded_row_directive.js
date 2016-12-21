@@ -83,7 +83,7 @@ module.directive('prlAnomalySummaryExpandedRow', function () {
         rowDescription += record.entityValue;
       }
 
-      if (_.has(record.source, 'partitionFieldName') && (record.source.partition_field_name !== record.entityName)) {
+      if (_.has(record.source, 'partition_field_name') && (record.source.partition_field_name !== record.entityName)) {
         rowDescription += ' detected in ' + record.source.partition_field_name;
         rowDescription += ' ';
         rowDescription += record.source.partition_field_value;
