@@ -13,19 +13,15 @@
  * strictly prohibited.
  */
 
-import moment from 'moment';
 import _ from 'lodash';
-import 'ui/timefilter';
-
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/prelert');
 
-module.service('prlTimeSeriesSearchService', function ($q, $timeout, es, timefilter) {
+module.service('prlTimeSeriesSearchService', function ($q, $timeout, es) {
 
   this.getModelDebugOutput = function (index, jobIds, earliestMs, latestMs, interval) {
-    let deferred = $q.defer();
+    const deferred = $q.defer();
     const obj = {
       success: true,
       results: {}
@@ -36,7 +32,7 @@ module.service('prlTimeSeriesSearchService', function ($q, $timeout, es, timefil
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': earliestMs,
           'lte': latestMs,
           'format': 'epoch_millis'
@@ -50,7 +46,7 @@ module.service('prlTimeSeriesSearchService', function ($q, $timeout, es, timefil
         if (i > 0) {
           jobIdFilterStr += ' OR ';
         }
-        jobIdFilterStr += 'jobId:';
+        jobIdFilterStr += 'job_id:';
         jobIdFilterStr += jobId;
       });
       boolCriteria.push({
@@ -69,7 +65,7 @@ module.service('prlTimeSeriesSearchService', function ($q, $timeout, es, timefil
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:modelDebugOutput',
+                'query': '_type:result AND result_type:model_debug_output',
                 'analyze_wildcard': true
               }
             }, {
@@ -82,7 +78,7 @@ module.service('prlTimeSeriesSearchService', function ($q, $timeout, es, timefil
         'aggs': {
           'times': {
             'date_histogram': {
-              'field': '@timestamp',
+              'field': 'timestamp',
               'interval': interval,
               'min_doc_count': 1
             },
@@ -94,12 +90,12 @@ module.service('prlTimeSeriesSearchService', function ($q, $timeout, es, timefil
               },
               'debugUpper': {
                 'max': {
-                  'field': 'debugUpper'
+                  'field': 'debug_upper'
                 }
               },
               'debugLower': {
                 'min': {
-                  'field': 'debugLower'
+                  'field': 'debug_lower'
                 }
               }
             }
@@ -141,7 +137,7 @@ module.service('prlTimeSeriesSearchService', function ($q, $timeout, es, timefil
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': earliestMs,
           'lte': latestMs,
           'format': 'epoch_millis'
@@ -155,7 +151,7 @@ module.service('prlTimeSeriesSearchService', function ($q, $timeout, es, timefil
         if (i > 0) {
           jobIdFilterStr += ' OR ';
         }
-        jobIdFilterStr += 'jobId:';
+        jobIdFilterStr += 'job_id:';
         jobIdFilterStr += jobId;
       });
       boolCriteria.push({
@@ -175,7 +171,7 @@ module.service('prlTimeSeriesSearchService', function ($q, $timeout, es, timefil
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:bucket',
+                'query': '_type:result AND result_type:bucket',
                 'analyze_wildcard': true
               }
             }, {
@@ -188,14 +184,14 @@ module.service('prlTimeSeriesSearchService', function ($q, $timeout, es, timefil
         'aggs': {
           'times': {
             'date_histogram': {
-              'field': '@timestamp',
+              'field': 'timestamp',
               'interval': interval,
               'min_doc_count': 1
             },
             'aggs': {
               'anomalyScore': {
                 'max': {
-                  'field': 'anomalyScore'
+                  'field': 'anomaly_score'
                 }
               }
             }

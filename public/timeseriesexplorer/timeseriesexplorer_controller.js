@@ -21,7 +21,6 @@
 
 import _ from 'lodash';
 import $ from 'jquery';
-import angular from 'angular';
 import moment from 'moment';
 import uiRoutes from 'ui/routes';
 import 'ui/timefilter';
@@ -30,32 +29,26 @@ import 'plugins/prelert/services/job_service';
 import 'plugins/prelert/services/prelert_dashboard_service';
 import 'plugins/prelert/services/results_service';
 
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
-import stringUtils from 'plugins/prelert/util/string_utils';
-import chrome from 'ui/chrome';
-
-
 uiRoutes
 .when('/timeseriesexplorer/?', {
   template: require('./timeseriesexplorer.html')
 });
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/prelert');
 
 module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $timeout, $compile, $location,
   Private, $q, es, timefilter, globalState, prlJobService, prlResultsService, prlDashboardService, prlTimeSeriesSearchService) {
 
   // TODO - move the index pattern into a setting?
   $scope.indexPatternId = 'prelertresults-*';
-  $scope.timeFieldName = '@timestamp';
+  $scope.timeFieldName = 'timestamp';
   timefilter.enabled = true;
 
 
   const CHARTS_POINT_TARGET = 500;
-  const SWIMLANE_BUCKETS_TARGET = 125;
   const ANOMALIES_MAX_RESULTS = 500;
-  let TimeBuckets = Private(require('plugins/prelert/util/prelert_time_buckets'));
+  const TimeBuckets = Private(require('plugins/prelert/util/prelert_time_buckets'));
 
   $scope.loading = true;
   $scope.hasResults = false;
@@ -146,7 +139,7 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
     prlTimeSeriesSearchService.getModelDebugOutput($scope.indexPatternId, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.contextAggregationInterval.expression)
     .then(function (resp) {
-      let fullRangeChartData = processModelDebugResults(resp.results);
+      const fullRangeChartData = processModelDebugResults(resp.results);
       $scope.contextChartData = fullRangeChartData;
 
       console.log('Time series explorer model debug context chart data set:', $scope.contextChartData);
@@ -169,7 +162,7 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
     prlTimeSeriesSearchService.getScoresByBucket($scope.indexPatternId, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.contextAggregationInterval.expression)
     .then(function (resp) {
-      let fullRangeBucketScoreData = processBucketScoreResults(resp.results);
+      const fullRangeBucketScoreData = processBucketScoreResults(resp.results);
       $scope.swimlaneData = fullRangeBucketScoreData;
       console.log('Time series explorer swimlane anomalies data set:', $scope.swimlaneData);
 

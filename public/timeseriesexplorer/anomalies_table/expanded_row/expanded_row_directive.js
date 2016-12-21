@@ -28,7 +28,7 @@ import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 import 'plugins/prelert/filters/time_of_week';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/prelert');
 
 module.directive('prlAnomaliesTableExpandedRow', function () {
 
@@ -37,12 +37,11 @@ module.directive('prlAnomaliesTableExpandedRow', function () {
     scope.filter = scope.$parent.filter;
     scope.isShowingAggregatedData = scope.$parent.isShowingAggregatedData;
 
-    const timeFieldName = '@timestamp';
-    const stringTime = scope.record.source[timeFieldName];
-    const momentTime = moment(stringTime, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
+    const timeFieldName = 'timestamp';
+    const momentTime = moment(scope.record.source[timeFieldName]);
     scope.anomalyTime = momentTime.format('MMMM Do YYYY, HH:mm:ss');
-    if (_.has(scope.record.source, 'bucketSpan')) {
-      scope.anomalyEndTime = momentTime.add(scope.record.source.bucketSpan, 's').format('MMMM Do YYYY, HH:mm:ss');
+    if (_.has(scope.record.source, 'bucket_span')) {
+      scope.anomalyEndTime = momentTime.add(scope.record.source.bucket_span, 's').format('MMMM Do YYYY, HH:mm:ss');
     }
 
     scope.$on('initRow', function (event, record) {
@@ -84,34 +83,34 @@ module.directive('prlAnomaliesTableExpandedRow', function () {
         rowDescription += record.entityValue;
       }
 
-      if (_.has(record.source, 'partitionFieldName') && (record.source.partitionFieldName !== record.entityName)) {
-        rowDescription += ' detected in ' + record.source.partitionFieldName;
+      if (_.has(record.source, 'partition_field_name') && (record.source.partition_field_name !== record.entityName)) {
+        rowDescription += ' detected in ' + record.source.partition_field_name;
         rowDescription += ' ';
-        rowDescription += record.source.partitionFieldValue;
+        rowDescription += record.source.partition_field_value;
       }
 
       scope.description = rowDescription;
 
       // Check for a correlatedByFieldValue in the source which will be present for multivariate analyses
       // where the record is anomalous due to relationship with another 'by' field value.
-      if (_.has(record.source, 'correlatedByFieldValue')) {
+      if (_.has(record.source, 'correlated_by_field_value')) {
         let mvDescription = 'multivariate correlations found in ';
-        mvDescription += record.source.byFieldName;
+        mvDescription += record.source.by_field_name;
         mvDescription += '; ';
-        mvDescription += record.source.byFieldValue;
+        mvDescription += record.source.by_field_value;
         mvDescription += ' is considered anomalous given ';
-        mvDescription += record.source.correlatedByFieldValue;
+        mvDescription += record.source.correlated_by_field_value;
         scope.multiVariateDescription = mvDescription;
       }
 
 
       // Display a warning below the description if the record is an interim result.
-      scope.isInterim = _.get(record, 'source.isInterim', false);
+      scope.isInterim = _.get(record, 'source.is_interim', false);
     }
 
     function buildMetrics() {
       const record = scope.record;
-      const functionDescription = _.get(record, 'source.functionDescription', '');
+      const functionDescription = _.get(record, 'source.function_description', '');
       if (anomalyUtils.showMetricsForFunction(functionDescription) === true) {
         if (!_.has(scope.record.source, 'causes')) {
           scope.actual = record.source.actual;
@@ -141,17 +140,17 @@ module.directive('prlAnomaliesTableExpandedRow', function () {
           // If cause has byFieldValue, move it to a top level fields for display.
           const cause = _.first(causes);
           if (_.has(cause, 'byFieldName')) {
-            scope.singleCauseByFieldName = cause.byFieldName;
-            scope.singleCauseByFieldValue = cause.byFieldValue;
+            scope.singleCauseByFieldName = cause.by_field_name;
+            scope.singleCauseByFieldValue = cause.by_field_value;
           }
         } else {
           scope.causes = _.map(causes, function (cause) {
             const simplified = _.pick(cause, 'typical', 'actual', 'probability');
             // Get the 'entity field name/value' to display in the cause -
-            // For by and over, use byFieldName/Value (overFieldName/Value are in the toplevel fields)
-            // For just an 'over' field - the overFieldName/Value appear in both top level and cause.
-            simplified.entityName = _.has(cause, 'byFieldName') ? cause.byFieldName : cause.overFieldName;
-            simplified.entityValue = _.has(cause, 'byFieldValue') ? cause.byFieldValue : cause.overFieldValue;
+            // For by and over, use by_field_name/Value (over_field_name/Value are in the toplevel fields)
+            // For just an 'over' field - the over_field_name/Value appear in both top level and cause.
+            simplified.entityName = _.has(cause, 'by_field_name') ? cause.by_field_name : cause.over_field_name;
+            simplified.entityValue = _.has(cause, 'by_field_value') ? cause.by_field_value : cause.over_field_value;
             return simplified;
           });
         }

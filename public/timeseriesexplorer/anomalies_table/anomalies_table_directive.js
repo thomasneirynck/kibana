@@ -27,7 +27,7 @@ import './expanded_row/expanded_row_directive';
 import linkControlsHtml from './anomalies_table_links.html';
 import openRowArrow from 'ui/doc_table/components/table_row/open.html';
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/prelert');
 
 module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResultsService) {
   return {
@@ -97,11 +97,11 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
       scope.openLink = function (link, record) {
         console.log('Anomalies Table - open link for record:', link, record);
 
-        // If urlValue contains $earliest$ and $latest$ tokens, add in times to the source record.
-        const stringTime = record[scope.timeFieldName];
-        const configuredUrlValue = link.urlValue;
+        // If url_value contains $earliest$ and $latest$ tokens, add in times to the source record.
+        const timestamp = record[scope.timeFieldName];
+        const configuredUrlValue = link.url_value;
         if (configuredUrlValue.includes('$earliest$')) {
-          let roundedMoment = moment(stringTime, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true).startOf(scope.momentInterval);
+          const roundedMoment = moment(timestamp).startOf(scope.momentInterval);
           if (scope.momentInterval === 'hour') {
             // Start from the previous hour.
             roundedMoment.subtract(1, 'h');
@@ -111,7 +111,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
 
         if (configuredUrlValue.includes('$latest$')) {
           if (scope.isShowingAggregatedData()) {
-            let roundedMoment = moment(stringTime, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true).endOf(scope.momentInterval);
+            const roundedMoment = moment(timestamp).endOf(scope.momentInterval);
             if (scope.momentInterval === 'hour') {
               // Show to the end of the next hour.
               roundedMoment.add(1, 'h');
@@ -119,7 +119,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
             record.latest = roundedMoment.toISOString();      // e.g. 2016-02-08T18:59:59.999Z
           } else {
             // Show the time span of the selected record's bucket.
-            const latestMoment = moment(stringTime, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true).add(record.bucketSpan, 's');
+            const latestMoment = moment(timestamp).add(record.bucket_span, 's');
             record.latest = latestMoment.toISOString();
           }
         }
@@ -128,7 +128,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         // terms and regex for the selected categoryId to the source record.
         if ((configuredUrlValue.includes('$prelertcategoryterms$') || configuredUrlValue.includes('$prelertcategoryregex$'))
                 && _.has(record, 'prelertcategory')) {
-          const jobId = record.jobId;
+          const jobId = record.job_id;
           const categoryId = record.prelertcategory;
 
           prlJobService.getCategoryDefinition(scope.indexPattern.id, jobId, categoryId)
@@ -151,7 +151,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         } else {
           // Replace any tokens in the configured urlValue with values from the source record,
           // and then open link in a new tab/window.
-          const urlPath = stringUtils.replaceStringTokens(link.urlValue, record, true);
+          const urlPath = stringUtils.replaceStringTokens(link.url_value, record, true);
           $window.open(urlPath, '_blank');
         }
 
@@ -165,22 +165,21 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         } else {
           // Show all anomaly records.
           scope.momentInterval = scope.interval.val;
-          let filteredRecords = _.filter(scope.anomalyRecords, function (record) {
-            return Number(record.normalizedProbability) >= scope.threshold.val;
+          const filteredRecords = _.filter(scope.anomalyRecords, function (record) {
+            return Number(record.normalized_probability) >= scope.threshold.val;
           });
 
           _.each(filteredRecords, function (record) {
-            const stringTime = record[scope.timeFieldName];
-            const detectorIndex = record.detectorIndex;
-            const jobId = record.jobId;
+            const detectorIndex = record.detector_index;
+            const jobId = record.job_id;
             let detector = record.functionDescription;
             if ((_.has(prlJobService.detectorsByJob, jobId)) && (detectorIndex < prlJobService.detectorsByJob[jobId].length)) {
-              detector = prlJobService.detectorsByJob[jobId][detectorIndex].detectorDescription;
+              detector = prlJobService.detectorsByJob[jobId][detectorIndex].detector_description;
             }
 
             const displayRecord = {
-              'time': moment(stringTime, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true).unix(),
-              'max severity': record.normalizedProbability,
+              'time': record[scope.timeFieldName],
+              'max severity': record.normalized_probability,
               'detector': detector,
               'jobId': jobId,
               'source': record
@@ -192,17 +191,17 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
               displayRecord.entityValue = anomalyUtils.getEntityFieldValue(record);
             }
 
-            if (_.has(record, 'partitionFieldName')) {
-              displayRecord.partitionFieldName = record.partitionFieldName;
-              displayRecord.partitionFieldValue = record.partitionFieldValue;
+            if (_.has(record, 'partition_field_name')) {
+              displayRecord.partitionFieldName = record.partition_field_name;
+              displayRecord.partitionFieldValue = record.partition_field_value;
             }
 
             if (_.has(record, 'influencers')) {
               const influencers = [];
-              const sourceInfluencers = _.sortBy(record.influencers, 'influencerFieldName');
+              const sourceInfluencers = _.sortBy(record.influencers, 'influencer_field_name');
               _.each(sourceInfluencers, function (influencer) {
-                const influencerFieldName = influencer.influencerFieldName;
-                _.each(influencer.influencerFieldValues, function (influencerFieldValue) {
+                const influencerFieldName = influencer.influencer_field_name;
+                _.each(influencer.influencer_field_values, function (influencerFieldValue) {
                   const influencerToAdd = {};
                   influencerToAdd[influencerFieldName] = influencerFieldValue;
                   influencers.push(influencerToAdd);
@@ -211,7 +210,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
               displayRecord.influencers = influencers;
             }
 
-            const functionDescription = _.get(record, 'functionDescription', '');
+            const functionDescription = _.get(record, 'function_description', '');
             if (anomalyUtils.showMetricsForFunction(functionDescription) === true) {
               if (_.has(record, 'actual')) {
                 displayRecord.actual = record.actual;
@@ -246,10 +245,10 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
           const categoryRecords = _.where(summaryRecords, {entityName: 'prelertcategory'});
           const categoryIdsByJobId = {};
           _.each(categoryRecords, function (record) {
-            if (!_.has(categoryIdsByJobId, record.jobId)) {
-              categoryIdsByJobId[record.jobId] = [];
+            if (!_.has(categoryIdsByJobId, record.job_id)) {
+              categoryIdsByJobId[record.job_id] = [];
             }
-            categoryIdsByJobId[record.jobId].push(record.entityValue);
+            categoryIdsByJobId[record.job_id].push(record.entityValue);
           });
           loadCategoryExamples(categoryIdsByJobId);
         } else {
@@ -277,8 +276,8 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
 
         // Determine the aggregation interval - records in scope are in descending time order.
         if (scope.interval.val === 'auto') {
-          const earliest = moment(_.last(scope.anomalyRecords)[scope.timeFieldName], 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
-          const latest = moment(_.first(scope.anomalyRecords)[scope.timeFieldName], 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
+          const earliest = moment(_.last(scope.anomalyRecords)[scope.timeFieldName]);
+          const latest = moment(_.first(scope.anomalyRecords)[scope.timeFieldName]);
           const daysDiff = latest.diff(earliest, 'days');
           scope.momentInterval = (daysDiff < 2 ? 'hour' : 'day');
         } else {
@@ -288,28 +287,27 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         // Only show records passing the severity threshold.
         const filteredRecords = _.filter(scope.anomalyRecords, function (record) {
 
-          return Number(record.normalizedProbability) >= scope.threshold.val;
+          return Number(record.normalized_probability) >= scope.threshold.val;
         });
 
-        let aggregatedData = {};
+        const aggregatedData = {};
         _.each(filteredRecords, function (record) {
-          const stringTime = record[scope.timeFieldName];
 
           // Use moment.js to get start of interval. This will use browser timezone.
           // TODO - support choice of browser or UTC timezone once funcitonality is in Kibana.
-          const roundedTime = moment(stringTime, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true).startOf(scope.momentInterval).unix();
+          const roundedTime = moment(record[scope.timeFieldName]).startOf(scope.momentInterval).valueOf();
           if (!_.has(aggregatedData, roundedTime)) {
             aggregatedData[roundedTime] = {};
           }
 
           // Aggregate by detector - default to functionDescription if no description available.
-          const detectorIndex = record.detectorIndex;
-          const jobId = record.jobId;
-          let detector = record.functionDescription;
+          const detectorIndex = record.detector_index;
+          const jobId = record.job_id;
+          let detector = record.function_description;
           if ((_.has(prlJobService.detectorsByJob, jobId)) && (detectorIndex < prlJobService.detectorsByJob[jobId].length)) {
-            detector = prlJobService.detectorsByJob[jobId][detectorIndex].detectorDescription;
+            detector = prlJobService.detectorsByJob[jobId][detectorIndex].detector_description;
           }
-          let detectorsAtTime = aggregatedData[roundedTime];
+          const detectorsAtTime = aggregatedData[roundedTime];
           if (!_.has(detectorsAtTime, detector)) {
             detectorsAtTime[detector] = {};
           }
@@ -317,7 +315,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
           // Now add an object for the anomaly with the highest anomaly score per entity.
           // For the choice of entity, look in order for byField, overField, partitionField.
           // If no by/over/partition, default to an empty String.
-          let entitiesForDetector = detectorsAtTime[detector];
+          const entitiesForDetector = detectorsAtTime[detector];
 
           // TODO - are we worried about different byFields having the same
           // value e.g. host=server1 and machine=server1?
@@ -328,8 +326,8 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
           if (!_.has(entitiesForDetector, entity)) {
             entitiesForDetector[entity] = record;
           } else {
-            const score = record.normalizedProbability;
-            if (score > entitiesForDetector[entity].normalizedProbability) {
+            const score = record.normalized_probability;
+            if (score > entitiesForDetector[entity].normalized_probability) {
               entitiesForDetector[entity] = record;
             }
           }
@@ -342,11 +340,11 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         _.each(aggregatedData, function (timeDetectors, roundedTime) {
           _.each(timeDetectors, function (entityDetectors, detector) {
             _.each(entityDetectors, function (record, entity) {
-              let displayRecord = {
-                'time': roundedTime,
-                'max severity': record.normalizedProbability,
+              const displayRecord = {
+                'time': +roundedTime,
+                'max severity': record.normalized_probability,
                 'detector': detector,
-                'jobId': record.jobId,
+                'jobId': record.job_id,
                 'source': record
               };
 
@@ -356,17 +354,17 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
                 displayRecord.entityValue = entity;
               }
 
-              if (_.has(record, 'partitionFieldName')) {
-                displayRecord.partitionFieldName = record.partitionFieldName;
-                displayRecord.partitionFieldValue = record.partitionFieldValue;
+              if (_.has(record, 'partition_field_name')) {
+                displayRecord.partitionFieldName = record.partition_field_name;
+                displayRecord.partitionFieldValue = record.partition_field_value;
               }
 
               if (_.has(record, 'influencers')) {
                 const influencers = [];
-                const sourceInfluencers = _.sortBy(record.influencers, 'influencerFieldName');
+                const sourceInfluencers = _.sortBy(record.influencers, 'influencer_field_name');
                 _.each(sourceInfluencers, function (influencer) {
-                  const influencerFieldName = influencer.influencerFieldName;
-                  _.each(influencer.influencerFieldValues, function (influencerFieldValue) {
+                  const influencerFieldName = influencer.influencer_field_name;
+                  _.each(influencer.influencer_field_values, function (influencerFieldValue) {
                     const influencerToAdd = {};
                     influencerToAdd[influencerFieldName] = influencerFieldValue;
                     influencers.push(influencerToAdd);
@@ -376,7 +374,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
               }
 
               // Copy actual and typical values to the top level for display.
-              const functionDescription = _.get(record, 'functionDescription', '');
+              const functionDescription = _.get(record, 'function_description', '');
               if (anomalyUtils.showMetricsForFunction(functionDescription) === true) {
                 if (_.has(record, 'actual')) {
                   displayRecord.actual = record.actual;
@@ -393,8 +391,8 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
 
 
               // TODO - do we always want the links column visible even when no customUrls have been defined?
-              if (_.has(prlJobService.customUrlsByJob, record.jobId)) {
-                displayRecord.links = prlJobService.customUrlsByJob[record.jobId];
+              if (_.has(prlJobService.customUrlsByJob, record.job_id)) {
+                displayRecord.links = prlJobService.customUrlsByJob[record.job_id];
               }
 
               summaryRecords.push(displayRecord);
@@ -418,10 +416,10 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         // influenced by (if influencers)
         // actual
         // typical
-        // jobId
+        // job_id
         // links (if links configured)
         // category examples (if by prelertcategory)
-        let paginatedTableColumns = [
+        const paginatedTableColumns = [
           { title: '', sortable: false, class: 'col-expand-arrow' },
           { title: 'time', sortable: true },
           { title: 'max severity', sortable: true },
@@ -444,7 +442,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
           paginatedTableColumns.push({ title: 'typical', sortable: true });
           paginatedTableColumns.push({ title: 'description', sortable: true });
         }
-        paginatedTableColumns.push({ title: 'jobId', sortable: true });
+        paginatedTableColumns.push({ title: 'job ID', sortable: true });
         if (showLinks === true) {
           paginatedTableColumns.push({ title: 'links', sortable: false });
         }
@@ -457,7 +455,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
 
 
       function createTableRow(record) {
-        let rowScope = scope.$new();
+        const rowScope = scope.$new();
         rowScope.expandable = true;
         rowScope.expandElement = 'prl-anomalies-table-expanded-row';
         rowScope.record = record;
@@ -466,7 +464,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         rowScope.initRow = function () {
           if (_.has(record, 'entityValue') && record.entityName === 'prelertcategory') {
             // Obtain the category definition and display the examples in the expanded row.
-            prlJobService.getCategoryDefinition(scope.indexPatternId, record.jobId, record.entityValue)
+            prlJobService.getCategoryDefinition(scope.indexPatternId, record.job_id, record.entityValue)
             .then(function (resp) {
               rowScope.categoryDefinition = {
                 'examples':_.slice(resp.examples, 0, Math.min(resp.examples.length, MAX_NUMBER_CATEGORY_EXAMPLES))};
@@ -485,7 +483,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         //   detector
         //   found for (if by/over/partition)
         //   influenced by (if influencers)
-        //   jobId
+        //   job_id
         //   links (if links configured)
         const addEntity = _.findWhere(scope.table.columns, {'title':'found for'});
         const addInfluencers = _.findWhere(scope.table.columns, {'title':'influenced by'});
@@ -499,7 +497,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
             scope:  rowScope
           },
           {
-            markup: formatUnixTimestamp(record.time),
+            markup: formatTimestamp(record.time),
             value: record.time
           },
           {
@@ -608,7 +606,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
       }
 
       function loadCategoryExamples(categoryIdsByJobId) {
-        // Load the example events for the specified map of jobIds and categoryIds from Elasticsearch.
+        // Load the example events for the specified map of job_ids and categoryIds from Elasticsearch.
         scope.categoryExamplesByJob = {};
         _.each(categoryIdsByJobId, function (categoryIds, jobId) {
           prlResultsService.getCategoryExamples(scope.indexPatternId, jobId, categoryIds, MAX_NUMBER_CATEGORY_EXAMPLES)
@@ -620,8 +618,8 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         });
       }
 
-      function formatUnixTimestamp(epochSecs) {
-        const time = moment.unix(epochSecs);
+      function formatTimestamp(epochMs) {
+        const time = moment(epochMs);
         if (scope.momentInterval === 'hour') {
           return time.format('MMMM Do YYYY, HH:mm');
         } else if (scope.momentInterval === 'second') {

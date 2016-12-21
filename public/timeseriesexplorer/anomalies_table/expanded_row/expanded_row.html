@@ -7,21 +7,21 @@
   <span ng-if="isShowingAggregatedData === false" class="prl-tablerow-expanded-heading">Anomaly Details:</span>
   <div ng-if="isInterim === true" class="prl-anomaly-interim-result"><i class="fa fa-exclamation-triangle"></i> Interim result</div>
   <table>
-    <tr ng-if="record.source.partitionFieldValue">
-      <td>{{record.source.partitionFieldName}}:</td>
-      <td>{{record.source.partitionFieldValue}}
-        <i ng-click="filter(record.source.partitionFieldName, record.source.partitionFieldValue, '+')"
+    <tr ng-if="record.source.partition_field_value">
+      <td>{{record.source.partition_field_name}}:</td>
+      <td>{{record.source.partition_field_value}}
+        <i ng-click="filter(record.source.partition_field_name, record.source.partition_field_value, '+')"
             tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
-        <i ng-click="filter(record.source.partitionFieldName, record.source.partitionFieldValue, '-')"
+        <i ng-click="filter(record.source.partition_field_name, record.source.partition_field_value, '-')"
             tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
       </td>
     </tr>
-    <tr ng-if="record.source.byFieldValue">
-      <td>{{record.source.byFieldName}}:</td>
-      <td>{{record.source.byFieldValue}}
-        <i ng-click="filter(record.source.byFieldName, record.source.byFieldValue, '+')"
+    <tr ng-if="record.source.by_field_value">
+      <td>{{record.source.by_field_name}}:</td>
+      <td>{{record.source.by_field_value}}
+        <i ng-click="filter(record.source.by_field_name, record.source.by_field_value, '+')"
             tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
-        <i ng-click="filter(record.source.byFieldName, record.source.byFieldValue, '-')"
+        <i ng-click="filter(record.source.by_field_name, record.source.by_field_value, '-')"
             tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
       </td>
     </tr>
@@ -34,12 +34,12 @@
             tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
       </td>
     </tr>
-    <tr ng-if="record.source.overFieldValue">
-      <td>{{record.source.overFieldName}}:</td>
-      <td>{{record.source.overFieldValue}}
-        <i ng-click="filter(record.source.overFieldName, record.source.overFieldValue, '+')"
+    <tr ng-if="record.source.over_field_value">
+      <td>{{record.source.over_field_name}}:</td>
+      <td>{{record.source.over_field_value}}
+        <i ng-click="filter(record.source.over_field_name, record.source.over_field_value, '+')"
             tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
-        <i ng-click="filter(record.source.overFieldName, record.source.overFieldValue, '-')"
+        <i ng-click="filter(record.source.over_field_name, record.source.over_field_value, '-')"
             tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
       </td>
     </tr>
@@ -50,7 +50,7 @@
       <td>{{example}}</td>
     </tr>
     <tr><td>function:</td><td>{{record.source.function}}</td></tr>
-    <tr ng-if="record.source.fieldName"><td>fieldName:</td><td>{{record.source.fieldName}}</td></tr>
+    <tr ng-if="record.source.field_name"><td>fieldName:</td><td>{{record.source.field_name}}</td></tr>
     <tr ng-if="actual !== undefined"><td>actual:</td><td>{{actual | timeOfWeek:record.source.function}}</td></tr>
     <tr ng-if="typical !== undefined"><td>typical:</td><td>{{typical | timeOfWeek:record.source.function}}</td></tr>
     <tr>
