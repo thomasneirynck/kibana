@@ -32,7 +32,7 @@ module.directive('prlJobSelectList', ['prlJobService', 'prlDashboardService', fu
     template: require('plugins/prelert/components/job_select_list/job_select_list.html'),
     controller: function ($scope, prlJobService) {
 
-      prlJobService.getBasicJobInfo('prelertresults-*')
+      prlJobService.getBasicJobInfo('.ml-anomalies-*')
         .then(function (resp) {
           if (resp.jobs.length > 0) {
             const jobs = [];

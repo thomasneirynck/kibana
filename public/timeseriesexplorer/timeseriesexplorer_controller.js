@@ -41,7 +41,7 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
   Private, $q, es, timefilter, globalState, prlJobService, prlResultsService, prlDashboardService, prlTimeSeriesSearchService) {
 
   // TODO - move the index pattern into a setting?
-  $scope.indexPatternId = 'prelertresults-*';
+  $scope.indexPatternId = '.ml-anomalies-*';
   $scope.timeFieldName = 'timestamp';
   timefilter.enabled = true;
 

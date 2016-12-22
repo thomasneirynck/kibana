@@ -51,7 +51,7 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
 .service('prlAnomalyRecordDetailsService', function ($q, $timeout, es, timefilter, prlJobService, prlSwimlaneSearchService) {
   const TimeBuckets = require('ui/time_buckets');
 
-  const PRELERT_RESULTS_INDEX_ID = 'prelertresults-*';
+  const PRELERT_RESULTS_INDEX_ID = '.ml-anomalies-*';
   // number of records loaded once when the page opens
   const RECORD_COUNT = 1000;
 

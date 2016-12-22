@@ -48,7 +48,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
 
   // TODO - move the index pattern into an editor setting,
   //        or configure the visualization to use a search?
-  const PRELERT_RESULTS_INDEX_ID = 'prelertresults-*';
+  const PRELERT_RESULTS_INDEX_ID = '.ml-anomalies-*';
   timefilter.enabled = true;
 
   const TimeBuckets = Private(require('ui/time_buckets'));

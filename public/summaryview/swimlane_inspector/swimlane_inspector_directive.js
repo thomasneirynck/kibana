@@ -64,7 +64,7 @@ module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimla
 
   const swimlanesHTML = require('plugins/prelert/summaryview/swimlane_inspector/swimlanes.html');
 
-  const PRELERT_RESULTS_INDEX_ID = 'prelertresults-*';
+  const PRELERT_RESULTS_INDEX_ID = '.ml-anomalies-*';
 
   let id = '';
   const controls = {

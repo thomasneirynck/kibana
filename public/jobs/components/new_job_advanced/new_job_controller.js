@@ -412,11 +412,11 @@ function (
               // After the job has been successfully created the Elasticsearch
               // mappings should be fully set up, but the Kibana mappings then
               // need to be refreshed to reflect the Elasticsearch mappings
-              courier.indexPatterns.get('prelertresults-*')
+              courier.indexPatterns.get('.ml-anomalies-*')
               .then((indexPattern) => {
                 indexPattern.refreshFields()
                 .then(() => {
-                  console.log('refreshed fields for index pattern prelertresults-*');
+                  console.log('refreshed fields for index pattern .ml-anomalies-*');
 
                   // wait for mappings refresh before continuing on with the post save stuff
                   msgs.info('New Job \'' + result.resp.id + '\' added');

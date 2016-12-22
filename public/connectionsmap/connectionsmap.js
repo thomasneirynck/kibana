@@ -37,7 +37,7 @@ export default function ConnectionsMapVisType(Private) {
       'the detectors and influencers of anomalies. Influencers and detectors are connected ' +
       'if they occur together in an anomaly record.',
     requiresSearch : false, // Uses searches created in the visualization controller.
-    indexPattern: 'prelertresults-*',
+    indexPattern: '.ml-anomalies-*',
     template : require('plugins/prelert/connectionsmap/connectionsmap.html'),
     params : {
       editor : require('plugins/prelert/connectionsmap/connectionsmap_editor.html'),

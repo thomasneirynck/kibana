@@ -197,7 +197,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:record',
+                  'query': 'result_type:record',
                   'analyze_wildcard': true
                 }
               },
@@ -633,7 +633,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:record',
+                  'query': 'result_type:record',
                   'analyze_wildcard': true
                 }
               },

@@ -9,7 +9,7 @@
       "description": "",
       "version": 1,
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"prelertresults-*\",\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"_type:result AND result_type:bucket\"}},\"filter\":[]}"
+        "searchSourceJSON": "{\"index\":\".ml-anomalies-*\",\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"_type:result AND result_type:bucket\"}},\"filter\":[]}"
       }
     }
   },
@@ -23,7 +23,7 @@
       "description": "",
       "version": 1,
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"prelertresults-*\",\"query\":{\"query_string\":{\"query\":\"_type:result AND result_type:bucket_influencer\",\"analyze_wildcard\":true}},\"filter\":[]}"
+        "searchSourceJSON": "{\"index\":\".ml-anomalies-*\",\"query\":{\"query_string\":{\"query\":\"_type:result AND result_type:bucket_influencer\",\"analyze_wildcard\":true}},\"filter\":[]}"
       }
     }
   },
@@ -37,7 +37,7 @@
       "description": "",
       "version": 1,
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"prelertresults-*\",\"query\":{\"query_string\":{\"query\":\"_type:result AND result_type:influencer\",\"analyze_wildcard\":true}},\"filter\":[]}"
+        "searchSourceJSON": "{\"index\":\".ml-anomalies-*\",\"query\":{\"query_string\":{\"query\":\"_type:result AND result_type:influencer\",\"analyze_wildcard\":true}},\"filter\":[]}"
       }
     }
   },
@@ -51,7 +51,7 @@
       "description": "",
       "version": 1,
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"prelertresults-*\",\"query\":{\"query_string\":{\"query\":\"_type:result AND result_type:record\",\"analyze_wildcard\":true}},\"filter\":[]}"
+        "searchSourceJSON": "{\"index\":\".ml-anomalies-*\",\"query\":{\"query_string\":{\"query\":\"_type:result AND result_type:record\",\"analyze_wildcard\":true}},\"filter\":[]}"
       }
     }
   },
@@ -65,7 +65,7 @@
       "description": "",
       "version": 1,
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"prelertresults-*\",\"query\":{\"query_string\":{\"query\":\"_type:result AND result_type:influencer\",\"analyze_wildcard\":true}},\"filter\":[]}"
+        "searchSourceJSON": "{\"index\":\".ml-anomalies-*\",\"query\":{\"query_string\":{\"query\":\"_type:result AND result_type:influencer\",\"analyze_wildcard\":true}},\"filter\":[]}"
       }
     }
   },
@@ -94,7 +94,7 @@
       "description": "",
       "version": 1,
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"prelertresults-*\",\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}},\"filter\":[]}"
+        "searchSourceJSON": "{\"index\":\".ml-anomalies-*\",\"query\":{\"query_string\":{\"analyze_wildcard\":true,\"query\":\"*\"}},\"filter\":[]}"
       }
     }
   },
@@ -108,7 +108,7 @@
       "description": "",
       "version": 1,
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\": \"prelertresults-*\",\"query\": {\"query_string\": {\"query\": \"*\",\"analyze_wildcard\": true}},\"filter\": []}"
+        "searchSourceJSON": "{\"index\": \".ml-anomalies-*\",\"query\": {\"query_string\": {\"query\": \"*\",\"analyze_wildcard\": true}},\"filter\": []}"
       }
     }
   },
@@ -122,7 +122,7 @@
       "description": "",
       "version": 1,
       "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\"prelertresults-*\",\"query\":{\"query_string\":{\"query\":\"_type:audit_activity\",\"analyze_wildcard\":true}},\"filter\":[]}"
+        "searchSourceJSON": "{\"index\":\".ml-anomalies-*\",\"query\":{\"query_string\":{\"query\":\"_type:audit_activity\",\"analyze_wildcard\":true}},\"filter\":[]}"
       }
     }
   }

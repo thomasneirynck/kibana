@@ -362,12 +362,12 @@ module.controller('PrlConnectionsMapController', function (
     $scope.initializeVis();
   } else {
     // TODO - move the default index pattern into an editor setting?
-    courier.indexPatterns.get('prelertresults-*')
+    courier.indexPatterns.get('.ml-anomalies-*')
     .then(function (indexPattern) {
       $scope.vis.indexPattern = indexPattern;
       $scope.initializeVis();
     }).catch(function (resp) {
-      console.log('Connections map - error loading prelertresults-* index pattern:', resp);
+      console.log('Connections map - error loading .ml-anomalies-* index pattern:', resp);
     });
   }
 

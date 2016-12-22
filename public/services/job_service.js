@@ -378,7 +378,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
     const obj = {success: true, start: {epoch:0, string:''}, end: {epoch:0, string:''}};
 
     es.search({
-      index: 'prelertresults-' + jobId,
+      index: '.ml-anomalies-' + jobId,
       size: 0,
       body: {
         'query': {
@@ -553,7 +553,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
     const obj = {startTimeMillis:null, endTimeMillis:null };
 
     es.search({
-      index: 'prelertresults-' + jobId,
+      index: '.ml-anomalies-' + jobId,
       size: 1,
       body: {
         'query': {

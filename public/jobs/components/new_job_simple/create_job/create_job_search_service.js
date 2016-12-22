@@ -52,7 +52,7 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
         jobIdFilterStr += 'jobId:';
         jobIdFilterStr += jobId;
 
-        indexString += 'prelertresults-' + jobId;
+        indexString += '.ml-anomalies-' + jobId;
       });
       boolCriteria.push({
         'query_string': {
@@ -151,7 +151,7 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
         jobIdFilterStr += 'jobId:';
         jobIdFilterStr += jobId;
 
-        indexString += 'prelertresults-' + jobId;
+        indexString += '.ml-anomalies-' + jobId;
       });
       boolCriteria.push({
         'query_string': {
