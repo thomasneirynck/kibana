@@ -159,9 +159,10 @@ export function getSavedObjects(callWithRequest, config) {
           const appState = parseKibanaState(query, 'app');
           if (!appState.exists || !this.panelIndex) return query;
 
-          appState.removeProps(['uiState', 'panels', 'vis']);
           const panel = find(appState.get('panels', []), { panelIndex: this.panelIndex });
           const panelState = appState.get(['uiState', `P-${this.panelIndex}`]);
+
+          appState.removeProps(['uiState', 'panels', 'vis']);
 
           // if uiState doesn't match panel, simply strip uiState
           if (panel && panelState) {
