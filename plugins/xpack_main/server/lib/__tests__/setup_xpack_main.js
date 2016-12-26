@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import { set } from 'lodash';
-import { setupXPackMain } from '../index';
-import xpackInfo from '../../../server/lib/_xpack_info';
+import xpackInfo from '../../../../../server/lib/_xpack_info';
+import { setupXPackMain } from '../setup_xpack_main';
 
 describe('setupXPackMain()', () => {
 

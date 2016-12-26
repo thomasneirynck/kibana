@@ -1,7 +1,7 @@
 import url from 'url';
 import expect from 'expect.js';
-import { getSavedObjects } from '../../../server/lib/get_saved_objects';
-import * as mockSavedObjects from '../../fixtures/mock_saved_objects';
+import { getSavedObjects } from '../get_saved_objects';
+import * as mockSavedObjects from './__fixtures__/mock_saved_objects';
 
 describe('saved_objects', function () {
   let mockCallWithRequest;

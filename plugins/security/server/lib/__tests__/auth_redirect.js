@@ -1,8 +1,8 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
 
-import replyFixture from '../../../__tests__/fixtures/reply';
-import requestFixture from '../../../__tests__/fixtures/request';
+import replyFixture from './__fixtures__/reply';
+import requestFixture from './__fixtures__/request';
 
 import * as authRedirect from '../auth_redirect';
 

@@ -2,10 +2,10 @@ import fs from 'fs';
 import crypto from 'crypto';
 import expect from 'expect.js';
 
-import { unzip, bunzip2, ExtractError } from '../../../server/lib/extract';
+import { unzip, bunzip2, ExtractError } from '../extract';
 import { promisify } from 'bluebird';
 
-const FIXTURES_FOLDER = `${__dirname}/../../fixtures`;
+const FIXTURES_FOLDER = `${__dirname}/__fixtures__`;
 const SRC_FILE_UNCOMPRESSED = `${FIXTURES_FOLDER}/extract_test_file.js`;
 const SRC_FILE_COMPRESSED_ZIP = `${SRC_FILE_UNCOMPRESSED}.zip`;
 const SRC_FILE_COMPRESSED_BZ2 = `${SRC_FILE_UNCOMPRESSED}.bz2`;

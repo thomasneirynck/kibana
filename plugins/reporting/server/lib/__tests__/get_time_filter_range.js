@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import { getTimeFilterRange } from '../../../server/lib/get_time_filter_range';
+import { getTimeFilterRange } from '../get_time_filter_range';
 
 describe('getTimeFilterRange', () => {
   const query = {

@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import moment from 'moment';
 import sinon from 'sinon';
-import { getAbsoluteTime } from '../../../server/lib/get_absolute_time';
+import { getAbsoluteTime } from '../get_absolute_time';
 
 describe('get_absolute_time', function () {
   let anchor;

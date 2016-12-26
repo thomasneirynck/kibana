@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import { set } from 'lodash';
-import checkLicense from '../../../server/lib/check_license';
+import { checkLicense } from '../check_license';
 
 describe('check_license', function () {
 
@@ -11,11 +11,11 @@ describe('check_license', function () {
     beforeEach(() => mockLicenseInfo.isAvailable = () => false);
 
     it('should set showLinks to true', () => {
-      expect(checkLicense(mockLicenseInfo).showAppLink).to.be(true);
+      expect(checkLicense(mockLicenseInfo).showLinks).to.be(true);
     });
 
     it('should set enableLinks to false', () => {
-      expect(checkLicense(mockLicenseInfo).enableAppLink).to.be(false);
+      expect(checkLicense(mockLicenseInfo).enableLinks).to.be(false);
     });
   });
 
@@ -32,11 +32,11 @@ describe('check_license', function () {
         beforeEach(() => set(mockLicenseInfo, 'license.isActive', () => true));
 
         it ('should set showLinks to true', () => {
-          expect(checkLicense(mockLicenseInfo).showAppLink).to.be(true);
+          expect(checkLicense(mockLicenseInfo).showLinks).to.be(true);
         });
 
         it ('should set enableLinks to true', () => {
-          expect(checkLicense(mockLicenseInfo).enableAppLink).to.be(true);
+          expect(checkLicense(mockLicenseInfo).enableLinks).to.be(true);
         });
       });
 
@@ -44,11 +44,11 @@ describe('check_license', function () {
         beforeEach(() => set(mockLicenseInfo, 'license.isActive', () => false));
 
         it ('should set showLinks to true', () => {
-          expect(checkLicense(mockLicenseInfo).showAppLink).to.be(true);
+          expect(checkLicense(mockLicenseInfo).showLinks).to.be(true);
         });
 
         it ('should set enableLinks to false', () => {
-          expect(checkLicense(mockLicenseInfo).enableAppLink).to.be(false);
+          expect(checkLicense(mockLicenseInfo).enableLinks).to.be(false);
         });
       });
     });
@@ -60,7 +60,7 @@ describe('check_license', function () {
         beforeEach(() => set(mockLicenseInfo, 'license.isActive', () => true));
 
         it ('should set showLinks to false', () => {
-          expect(checkLicense(mockLicenseInfo).showAppLink).to.be(false);
+          expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
         });
       });
 
@@ -68,7 +68,7 @@ describe('check_license', function () {
         beforeEach(() => set(mockLicenseInfo, 'license.isActive', () => false));
 
         it ('should set showLinks to false', () => {
-          expect(checkLicense(mockLicenseInfo).showAppLink).to.be(false);
+          expect(checkLicense(mockLicenseInfo).showLinks).to.be(false);
         });
       });
     });
