@@ -239,7 +239,10 @@ gulp.task('pre-test', function () {
     // instruments code for measuring test coverage
     .pipe(istanbul({
       instrumenter: isparta.Instrumenter,
-      includeUntested: true
+      includeUntested: true,
+      babel: {
+        stage: 1 // should match https://github.com/elastic/kibana/blob/master/src/optimize/babel_options.js#L12
+      }
     }))
     // force `require` to return covered files
     .pipe(istanbul.hookRequire());
