@@ -1,5 +1,5 @@
 <kbn-management-app section="elasticsearch">
-  <div class="kuiPage">
+  <div class="kuiViewContent kuiViewContent--constrainedWidth">
     <!-- Subheader -->
     <div class="kuiSubHeader">
       <!-- Title -->
@@ -15,19 +15,20 @@
       <!-- Delete button -->
       <button
         ng-if="!editUser.isNewUser && !user.metadata._reserved"
-        class="kuiButton kuiButton--danger"
+        class="kuiButton kuiButton--danger kuiButton--iconText"
         ng-click="deleteUser(user)"
         tooltip="Delete User"
         data-test-subj="userFormDeleteButton"
       >
         <span class="kuiButton__icon kuiIcon fa-trash"></span>
+        Delete role
       </button>
       <div
         ng-if="user.metadata._reserved"
         class="kuiBadge kuiBadge--default"
         tooltip="Reserved users are built-in and cannot be removed or modified. Only the password may be changed."
       >
-        <span class="fa fa-lock"></span>
+        <span class="kuiIcon fa-lock"></span>
         Reserved
       </div>
     </div>
@@ -41,7 +42,7 @@
         </label>
         <input
           type="text"
-          ng-class="::editUser.isNewUser ? 'kuiInput' : 'kuiStaticInput'"
+          ng-class="::editUser.isNewUser ? 'kuiTextInput fullWidth' : 'kuiStaticInput'"
           ng-disabled="!editUser.isNewUser"
           id="username"
           name="username"
@@ -80,7 +81,7 @@
         </label>
         <input
           type="text"
-          class="kuiInput"
+          class="kuiTextInput fullWidth"
           id="fullname"
           name="fullname"
           ng-model="user.full_name"
@@ -105,7 +106,7 @@
         </label>
         <input
           type="email"
-          class="kuiInput"
+          class="kuiTextInput fullWidth"
           id="email"
           name="email"
           ng-model="user.email"

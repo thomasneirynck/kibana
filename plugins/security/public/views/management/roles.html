@@ -2,7 +2,7 @@
   <div class="kuiNotice" ng-if="forbidden">
     <div class="kuiNotice__header">
       <h1 class="kuiNoticeTitle">
-        <span class="fa fa-times kuiIcon--danger"></span>
+        <span class="kuiIcon fa-times kuiIcon--error"></span>
         You do not have permission to manage roles
       </h1>
       <div class="kuiNoticeText">
@@ -11,87 +11,148 @@
     </div>
   </div>
 
-  <div class="kuiPage" ng-if="!forbidden">
-    <!-- Table controls -->
-    <div class="kuiTableControls">
-      <div class="kuiTableControls__actions">
-        <button
-          ng-click="deleteRoles()"
-          class="kuiButton kuiButton--danger kuiTableControlAction"
-          ng-show="selectedRoles.length"
-          tooltip="Delete selected roles"
-        >
-          <span class="kuiButton__icon kuiIcon fa-trash"></span>
-        </button>
-        <a
-          href="#/management/elasticsearch/roles/edit"
-          ng-click="newRole()"
-          class="kuiButton kuiButton--primary kuiTableControlAction"
-          ng-show="!selectedRoles.length"
-          tooltip="Create new role"
-          data-test-subj="createRoleButton"
-        >
-          <span class="kuiButton__icon kuiIcon fa-plus"></span>
-        </a>
+  <div class="kuiViewContent kuiViewContent--constrainedWidth" ng-if="!forbidden">
+    <!-- ControlledTable -->
+    <div class="kuiControlledTable">
+      <!-- ToolBar -->
+      <div class="kuiToolBar">
+        <div class="kuiToolBarSearch">
+          <div class="kuiToolBarSearchBox">
+            <div class="kuiToolBarSearchBox__icon kuiIcon fa-search"></div>
+            <input
+              class="kuiToolBarSearchBox__input"
+              type="text"
+              placeholder="Search..."
+              aria-label="Filter"
+              ng-model="query"
+            >
+          </div>
+        </div>
+
+        <div class="kuiToolBarSection">
+          <!-- Delete roles button -->
+          <button
+            ng-click="deleteRoles()"
+            class="kuiButton kuiButton--danger kuiButton--iconText"
+            ng-if="selectedRoles.length"
+          >
+            <span class="kuiButton__icon kuiIcon fa-trash"></span>
+            Delete
+          </button>
+
+          <!-- Create role button -->
+          <a
+            href="#/management/elasticsearch/roles/edit"
+            ng-click="newRole()"
+            class="kuiButton kuiButton--primary kuiButton--iconText"
+            ng-if="!selectedRoles.length"
+            data-test-subj="createRoleButton"
+          >
+            <span class="kuiButton__icon kuiIcon fa-plus"></span>
+            Create role
+          </a>
+        </div>
+
+        <div class="kuiToolBarSection">
+          <!-- We need an empty section for the buttons to be positioned consistently. -->
+        </div>
       </div>
-      <div class="kuiTableControls__input">
-        <form role="form" class="fullWidth">
-          <input
-            aria-label="Filter"
-            ng-model="query"
-            class="kuiInput"
-            type="text" placeholder="Filter..."
-          />
-        </form>
+
+      <!-- NoResults -->
+      <div class="kuiPanel kuiPanel--centered" ng-show="!(roles | filter:query).length">
+        <div class="kuiNoResults">
+          No <span ng-show="query">matching</span> roles found.
+        </div>
+      </div>
+
+      <!-- Table -->
+      <table class="kuiTable" ng-show="(roles | filter:query).length">
+        <thead>
+          <tr>
+            <th class="kuiTableHeaderCell kuiTableHeaderCell--checkBox">
+              <input
+                type="checkbox"
+                class="kuiCheckBox"
+                ng-checked="allSelected()"
+                ng-click="toggleAll()"
+              >
+            </th>
+
+            <th
+              class="kuiTableHeaderCell kuiTableHeaderCell--sortable"
+              ng-click="toggleSort(sort, 'name')"
+            >
+              Role
+              <span
+                aria-hidden="true"
+                class="kuiTableSortIcon kuiIcon fa-long-arrow-up"
+                ng-show="sort.orderBy == 'name'"
+                ng-class="{'fa-long-arrow-down': sort.reverse, 'fa-long-arrow-up': !sort.reverse}"
+              ></span>
+            </th>
+
+            <th class="kuiTableHeaderCell">
+              Reserved
+              <span
+                class="kuiIcon fa-question-circle"
+                tooltip="Reserved roles are built-in and cannot be removed or modified. Only the password may be changed."
+              ></span>
+            </th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr
+            ng-repeat="role in roles | orderBy:'name' | filter:query | orderBy:sort.orderBy:sort.reverse"
+            data-test-subj="roleRow"
+            class="kuiTableRow"
+          >
+            <td class="kuiTableRowCell kuiTableRowCell--checkBox">
+              <input
+                type="checkbox"
+                class="kuiCheckBox"
+                ng-click="toggle(selectedRoles, role)"
+                ng-checked="includes(selectedRoles, role)"
+                ng-disabled="role.metadata._reserved"
+              >
+            </td>
+
+            <td class="kuiTableRowCell">
+              <div class="kuiTableRowCell__liner">
+                <a
+                  class="kuiLink"
+                  ng-href="#/management/elasticsearch/roles/edit/{{role.name}}"
+                  data-test-subj="roleRowName"
+                >
+                  {{ role.name }}
+                </a>
+              </div>
+            </td>
+
+            <td class="kuiTableRowCell">
+              <div class="kuiTableRowCell__liner">
+                <div
+                  ng-if="role.metadata._reserved"
+                  class="kuiIcon fa-check"
+                  data-test-subj="roleRowReserved"
+                ></div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- ToolBarFooter -->
+      <div class="kuiToolBarFooter">
+        <div class="kuiToolBarFooterSection">
+          <div class="kuiToolBarText" ng-hide="selectedRoles.length === 0">
+            {{ selectedRoles.length }} roles selected
+          </div>
+        </div>
+        <div class="kuiToolBarFooterSection">
+          <!-- We need an empty section for the buttons to be positioned consistently. -->
+        </div>
       </div>
     </div>
-
-    <!-- Table -->
-    <table class="table">
-      <thead>
-        <tr>
-          <th><input type="checkbox" ng-click="toggleAll()" ng-checked="allSelected()" /></th>
-          <th ng-click="toggleSort(sort, 'name')">
-            Role
-            <span aria-hidden="true" class="fa" ng-show="sort.orderBy == 'name'" ng-class="{'fa-caret-down': sort.reverse, 'fa-caret-up': !sort.reverse}"></span>
-          </th>
-          <th>
-            Reserved
-            <span
-              class="fa fa-question-circle"
-              tooltip="Reserved roles are built-in and cannot be removed or modified. Only the password may be changed."
-            ></span>
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          ng-repeat="role in roles | orderBy:'name' | filter:query | orderBy:sort.orderBy:sort.reverse"
-          data-test-subj="roleRow"
-        >
-          <td>
-            <input type="checkbox" ng-click="toggle(selectedRoles, role)" ng-checked="includes(selectedRoles, role)" ng-disabled="role.metadata._reserved" />
-          </td>
-          <td>
-            <a
-              ng-href="#/management/elasticsearch/roles/edit/{{role.name}}"
-              data-test-subj="roleRowName"
-            >
-              {{role.name}}
-            </a>
-          </td>
-          <td>
-            <div
-              ng-if="role.metadata._reserved"
-              class="fa fa-check"
-              data-test-subj="roleRowReserved"
-            ></div>
-          </td>
-        </tr>
-        <tr ng-show="!(roles | filter:query).length">
-          <td colspan="4">No <span ng-show="query">matching</span> roles found.</td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 </kbn-management-app>

@@ -1,6 +1,6 @@
 <kbn-management-app section="elasticsearch">
   <!-- This content gets injected below the localNav. -->
-  <div class="kuiPage">
+  <div class="kuiViewContent kuiViewContent--constrainedWidth">
     <!-- Subheader -->
     <div class="kuiSubHeader">
       <!-- Title -->
@@ -16,18 +16,19 @@
       <!-- Delete button -->
       <button
         ng-if="!editRole.isNewRole && !role.metadata._reserved"
-        class="kuiButton kuiButton--danger"
+        class="kuiButton kuiButton--danger kuiButton--iconText"
         ng-click="deleteRole(role)"
         tooltip="Delete Role"
       >
         <span class="kuiButton__icon kuiIcon fa-trash"></span>
+        Delete role
       </button>
       <div
         ng-if="role.metadata._reserved"
         class="kuiBadge kuiBadge--default"
         tooltip="Reserved roles are built-in and cannot be removed or modified."
       >
-        <span class="fa fa-lock"></span>
+        <span class="kuiIcon fa-lock"></span>
         Reserved
       </div>
     </div>
@@ -41,7 +42,7 @@
         </label>
         <input
           type="text"
-          ng-class="::editRole.isNewRole ? 'kuiInput' : 'kuiStaticInput'"
+          ng-class="::editRole.isNewRole ? 'kuiTextInput' : 'kuiStaticInput'"
           ng-disabled="!editRole.isNewRole"
           id="name"
           name="name"
@@ -76,7 +77,7 @@
         <div ng-repeat="privilege in privileges.cluster">
           <label>
             <input
-              class="kuiCheckbox"
+              class="kuiCheckBox"
               type="checkbox"
               ng-checked="includes(role.cluster, privilege)"
               ng-click="toggle(role.cluster, privilege)"
