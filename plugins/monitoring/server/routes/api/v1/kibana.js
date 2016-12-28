@@ -1,12 +1,12 @@
 import Joi from 'joi';
 import Promise from 'bluebird';
 import _ from 'lodash';
-import getKibanas from '../../../lib/get_kibanas';
+import getKibanas from '../../../lib/lists/get_kibanas';
 import getKibanaInfo from '../../../lib/get_kibana_info';
 import getKibanasForClusters from '../../../lib/get_kibanas_for_clusters';
 import handleError from '../../../lib/handle_error';
-import getMetrics from '../../..//lib/get_metrics';
-import calculateIndices from '../../..//lib/calculate_indices';
+import getMetrics from '../../../lib/details/get_metrics';
+import calculateIndices from '../../../lib/calculate_indices';
 
 const getClusterStatus = function (req, kibanaIndices) {
   const getKibanaForCluster = getKibanasForClusters(req, kibanaIndices);
@@ -22,7 +22,7 @@ export default function kibanaRoutes(server) {
   const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');
 
   /**
-   * Kibana instances
+   * Kibana overview and listing
    */
   server.route({
     method: 'POST',

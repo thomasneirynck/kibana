@@ -12,9 +12,9 @@
 import { get, isArray } from 'lodash';
 import moment from 'moment';
 import Promise from 'bluebird';
-import createQuery from './create_query';
-import calculateAvailability from './calculate_availability';
-import { ElasticsearchMetric } from './metrics/metric_classes';
+import createQuery from '../create_query';
+import calculateAvailability from '../calculate_availability';
+import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 export default function getKibanas(req, indices) {
   if (indices.length < 1) return Promise.resolve([]);
@@ -29,7 +29,6 @@ export default function getKibanas(req, indices) {
   const params = {
     index: indices,
     type: 'kibana_stats',
-    ignore: [404],
     body: {
       size: 0,
       query: createQuery({ start, end, uuid, metric }),

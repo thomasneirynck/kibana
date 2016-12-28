@@ -11,7 +11,7 @@ import getKibanasForClusters from '../../../lib/get_kibanas_for_clusters';
 import calculateOverallStatus from '../../../lib/calculate_overall_status';
 import getLastState from '../../../lib/get_last_state';
 import getClusterStatus from '../../../lib/get_cluster_status';
-import getMetrics from '../../../lib/get_metrics';
+import getMetrics from '../../../lib/details/get_metrics';
 import getShardStats from '../../../lib/get_shard_stats';
 import calculateClusterShards from '../../../lib/elasticsearch/calculate_cluster_shards';
 import handleError from '../../../lib/handle_error';

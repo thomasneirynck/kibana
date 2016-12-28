@@ -1,0 +1,142 @@
+[
+   {
+      "metric" : {
+         "value" : null
+      },
+      "key_as_string" : "2016-12-19T22:32:20.000Z",
+      "key" : 1482186740000,
+      "doc_count" : 0
+   },
+   {
+      "key_as_string" : "2016-12-19T22:32:30.000Z",
+      "doc_count" : 25,
+      "key" : 1482186750000,
+      "metric_deriv" : {
+         "value" : null
+      },
+      "metric" : {
+         "value" : 255007
+      }
+   },
+   {
+      "metric" : {
+         "value" : 255114
+      },
+      "metric_deriv" : {
+         "value" : 107
+      },
+      "doc_count" : 25,
+      "key" : 1482186760000,
+      "key_as_string" : "2016-12-19T22:32:40.000Z"
+   },
+   {
+      "key_as_string" : "2016-12-19T22:32:50.000Z",
+      "key" : 1482186770000,
+      "doc_count" : 25,
+      "metric_deriv" : {
+         "value" : 107
+      },
+      "metric" : {
+         "value" : 255221
+      }
+   },
+   {
+      "metric_deriv" : {
+         "value" : 107
+      },
+      "metric" : {
+         "value" : 255328
+      },
+      "doc_count" : 25,
+      "key" : 1482186780000,
+      "key_as_string" : "2016-12-19T22:33:00.000Z"
+   },
+   {
+      "key_as_string" : "2016-12-19T22:33:10.000Z",
+      "key" : 1482186790000,
+      "doc_count" : 25,
+      "metric_deriv" : {
+         "value" : 108
+      },
+      "metric" : {
+         "value" : 255436
+      }
+   },
+   {
+      "key_as_string" : "2016-12-19T22:33:20.000Z",
+      "key" : 1482186800000,
+      "doc_count" : 25,
+      "metric_deriv" : {
+         "value" : 108
+      },
+      "metric" : {
+         "value" : 255544
+      }
+   },
+   {
+      "metric_deriv" : {
+         "value" : 108
+      },
+      "metric" : {
+         "value" : 255652
+      },
+      "key" : 1482186810000,
+      "doc_count" : 25,
+      "key_as_string" : "2016-12-19T22:33:30.000Z"
+   },
+   {
+      "metric_deriv" : {
+         "value" : 107
+      },
+      "metric" : {
+         "value" : 255759
+      },
+      "key_as_string" : "2016-12-19T22:33:40.000Z",
+      "doc_count" : 25,
+      "key" : 1482186820000
+   },
+   {
+      "key" : 1482186830000,
+      "doc_count" : 25,
+      "key_as_string" : "2016-12-19T22:33:50.000Z",
+      "metric" : {
+         "value" : 255866
+      },
+      "metric_deriv" : {
+         "value" : 107
+      }
+   },
+   {
+      "metric" : {
+         "value" : 255973
+      },
+      "metric_deriv" : {
+         "value" : 107
+      },
+      "key" : 1482186840000,
+      "doc_count" : 25,
+      "key_as_string" : "2016-12-19T22:34:00.000Z"
+   },
+   {
+      "key_as_string" : "2016-12-19T22:34:10.000Z",
+      "key" : 1482186850000,
+      "doc_count" : 103,
+      "metric" : {
+         "value" : 256081
+      },
+      "metric_deriv" : {
+         "value" : 108
+      }
+   },
+   {
+      "metric" : {
+         "value" : null
+      },
+      "metric_deriv" : {
+         "value" : null
+      },
+      "key" : 1482186860000,
+      "doc_count" : 0,
+      "key_as_string" : "2016-12-19T22:34:20.000Z"
+   }
+]

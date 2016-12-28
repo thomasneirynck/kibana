@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { isPlainObject } from 'lodash';
 import Promise from 'bluebird';
 import getSeries from './get_series';
 
@@ -9,7 +9,7 @@ export default function getMetrics(req, indices, filters = []) {
     // metric names match the literal metric name, but they can be supplied in groups or individually
     let metricNames;
 
-    if (_.isPlainObject(metric)) {
+    if (isPlainObject(metric)) {
       metricNames = metric.keys;
 
       if (metric.config) {
@@ -27,7 +27,7 @@ export default function getMetrics(req, indices, filters = []) {
     const data = {};
     metrics.forEach((key, index) => {
       // keyName must match the value stored in the html template
-      const keyName = _.isPlainObject(key) ? key.name : key;
+      const keyName = isPlainObject(key) ? key.name : key;
       data[keyName] = rows[index];
     });
     return data;

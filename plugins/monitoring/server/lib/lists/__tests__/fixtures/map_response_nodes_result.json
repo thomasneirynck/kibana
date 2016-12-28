@@ -1,0 +1,65 @@
+[
+   {
+      "name" : "kMbgaT0tTMKUAUTDDBX5UA",
+      "metrics" : {
+         "node_load_average" : {
+            "metric" : {
+               "field" : "node_stats.os.cpu.load_average.1m",
+               "units" : "",
+               "description" : "Load average over the last minute.",
+               "label" : "1m",
+               "title" : "System Load",
+               "format" : "0,0.[00]",
+               "app" : "elasticsearch"
+            },
+            "last" : 3.7685546875,
+            "max" : 4.58251953125,
+            "slope" : -5.238474487326187e-20,
+            "min" : 1.48193359375
+         },
+         "node_free_space" : {
+            "metric" : {
+               "field" : "node_stats.fs.total.available_in_bytes",
+               "label" : "Disk Free Space",
+               "units" : "",
+               "description" : "Free disk space available on the node.",
+               "format" : "0.0 b",
+               "app" : "elasticsearch"
+            },
+            "last" : 246955941888,
+            "max" : 247324069888,
+            "slope" : -6.052997443812028e-11,
+            "min" : 246955941888
+         },
+         "node_jvm_mem_percent" : {
+            "metric" : {
+               "format" : "0,0.[00]",
+               "app" : "elasticsearch",
+               "description" : "Total heap used by Elasticsearch running in the JVM.",
+               "units" : "%",
+               "label" : "Used Heap",
+               "field" : "node_stats.jvm.mem.heap_used_percent",
+               "title" : "JVM Heap"
+            },
+            "last" : 28,
+            "max" : 31,
+            "min" : 16,
+            "slope" : 8.454236016400544e-19
+         },
+         "node_cpu_utilization" : {
+            "metric" : {
+               "app" : "elasticsearch",
+               "format" : "0,0.[00]",
+               "field" : "node_stats.process.cpu.percent",
+               "label" : "CPU Utilization",
+               "units" : "%",
+               "description" : "Percentage of CPU usage (100% is the max)."
+            },
+            "last": 2,
+            "max" : 9,
+            "slope" : null,
+            "min" : 0.333333333333333
+         }
+      }
+   }
+]

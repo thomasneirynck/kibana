@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import filterPartialBuckets from './filter_partial_buckets';
-import pickMetricFields from './pick_metric_fields';
-import metrics from './metrics';
+import filterPartialBuckets from '../filter_partial_buckets';
+import pickMetricFields from '../pick_metric_fields';
+import metrics from '../metrics';
 
 function mapChartData(metric) {
   return (bucket) => {
@@ -20,13 +20,14 @@ function mapChartData(metric) {
 
 function calcSlope(data) {
   const length = data.length;
-  const xSum = data.reduce(function (prev, curr) { return prev + curr.x; }, 0);
-  const ySum = data.reduce(function (prev, curr) { return prev + curr.y; }, 0);
-  const xySum = data.reduce(function (prev, curr) { return prev + (curr.y * curr.x); }, 0);
-  const xSqSum = data.reduce(function (prev, curr) { return prev + (curr.x * curr.x); }, 0);
+  const xSum = data.reduce((prev, curr) => { return prev + curr.x; }, 0);
+  const ySum = data.reduce((prev, curr) => { return prev + curr.y; }, 0);
+  const xySum = data.reduce((prev, curr) => { return prev + (curr.y * curr.x); }, 0);
+  const xSqSum = data.reduce((prev, curr) => { return prev + (curr.x * curr.x); }, 0);
   const numerator = (length * xySum) - (xSum * ySum);
   const denominator = (length * xSqSum) - (xSum * ySum);
-  return numerator / denominator;
+  const slope = numerator / denominator;
+  return slope || null; // convert possible NaN to `null` for JSON-friendliness
 }
 
 /*
@@ -40,6 +41,7 @@ function calculateMetrics(type, partialBucketFilter) {
   let lastVal;
 
   const calculators = {
+
     nodes: function (buckets, metric) {
       const results = _.chain(buckets)
       .filter(partialBucketFilter) // buckets with whole start/end time range
@@ -71,35 +73,63 @@ function calculateMetrics(type, partialBucketFilter) {
 
       return { minVal, maxVal, slope, lastVal };
     }
+
   };
 
   return calculators[type];
 }
 
-export default function mapListingResponse(options) {
-  const { type, items, listingMetrics, min, max, bucketSize } = options;
+function reduceMetrics(options) {
+  const { item, type, min, max, bucketSize } = options;
   const partialBucketFilter = filterPartialBuckets(min, max, bucketSize, { ignoreEarly: true });
   const metricCalculator = calculateMetrics(type, partialBucketFilter);
 
-  const data = _.map(items, function (item) {
-    const row = { name: item.key, metrics: {} };
+  const reducers = {
 
-    _.each(listingMetrics, function (id) {
-      const metric = metrics[id];
-      const buckets = item[id].buckets;
+    nodes(metricName) {
+      const metric = metrics[metricName];
+      const buckets = item[metricName].buckets;
       const { minVal, maxVal, slope, lastVal } = metricCalculator(buckets, metric);
-
-      row.metrics[id] = {
+      return {
         metric: pickMetricFields(metric),
         min: minVal,
         max: maxVal,
         slope: slope,
         last: lastVal
       };
-    });
+    },
 
-    return row;
+    indices(metricName) {
+      const metric = metrics[metricName];
+      const buckets = item[metricName].buckets;
+      const { lastVal } = metricCalculator(buckets, metric);
+      return {
+        metric: pickMetricFields(metric),
+        last: lastVal
+      };
+    }
+
+  };
+
+  return reducers[type];
+}
+
+function getMappedMetrics(options) {
+  const reducer = reduceMetrics(options);
+  return options.listingMetrics.reduce((mapped, metricName) => {
+    // add the new metric to the set and return
+    return {
+      [metricName]: { ...reducer(metricName) },
+      ...mapped
+    };
+  }, {});
+}
+
+export default function mapResponse(options) {
+  return options.items.map((item) => {
+    return {
+      name: item.key,
+      metrics: getMappedMetrics({ item, ...options })
+    };
   });
-
-  return data;
 };
