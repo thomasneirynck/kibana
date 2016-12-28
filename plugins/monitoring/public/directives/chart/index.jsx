@@ -50,7 +50,7 @@ uiModule.directive('monitoringChart', (timefilter) => {
               overlay={<Tooltip><ChartTooltip series={series}/></Tooltip>}
             >
               <i
-                className='overlay-trigger monitoring-chart-tooltip__trigger fa fa-info-circle pull-right'
+                className='overlay-trigger monitoring-chart-tooltip__trigger fa fa-info-circle'
                 tabIndex='0'
               ></i>
             </OverlayTrigger>

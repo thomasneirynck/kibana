@@ -2,14 +2,16 @@ import { CHART_LINE_COLOR, CHART_TEXT_COLOR } from '../../../lib/constants';
 
 export default function getChartOptions(options) {
   const opts = {
-    legend: { show: false },
-    lines: {
-      show: true,
-      lineWidth: 2
+    legend: {
+      show: false
     },
-    points: {
-      show: true,
-      radius: 1
+    xaxis: {
+      color: CHART_LINE_COLOR,
+      timezone: 'browser',
+      mode: 'time', // requires `time` flot plugin
+      font: {
+        color: CHART_TEXT_COLOR
+      }
     },
     yaxis: {
       color: CHART_LINE_COLOR,
@@ -18,27 +20,29 @@ export default function getChartOptions(options) {
       },
       tickFormatter: options.tickFormatter
     },
-    xaxis: {
-      color: CHART_LINE_COLOR,
-      timezone: 'browser',
-      mode: 'time',
-      font: {
-        color: CHART_TEXT_COLOR
-      }
+    series: {
+      points: {
+        show: true,
+        radius: 1
+      },
+      lines: {
+        show: true,
+        lineWidth: 2
+      },
+      shadowSize: 0
     },
-    series: { shadowSize: 0 },
     grid: {
       margin: 0,
       borderWidth: 1,
       borderColor: CHART_LINE_COLOR,
       hoverable: true
     },
-    crosshair: {
+    crosshair: { // requires `crosshair` flot plugin
       mode: 'x',
       color: '#c66',
       lineWidth: 2
     },
-    selection: {
+    selection: { // requires `selection` flot plugin
       mode: 'x',
       color: CHART_TEXT_COLOR
     }
