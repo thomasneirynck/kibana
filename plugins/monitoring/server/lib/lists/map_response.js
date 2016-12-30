@@ -69,7 +69,8 @@ function calculateMetrics(type, partialBucketFilter) {
         idx -= 1;
       }
 
-      lastVal = mapChartData(metric)(currentBucket).y;
+      // the y-val can't be undefined, or else table column sorting won't work
+      lastVal = mapChartData(metric)(currentBucket).y || 0;
 
       return { minVal, maxVal, slope, lastVal };
     }
