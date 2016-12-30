@@ -125,6 +125,14 @@
                   data-test-subj="roleRowName"
                 >
                   {{ role.name }}
+                  <span
+                    ng-if="!isRoleEnabled(role)"
+                    class="kuiBadge kuiBadge--default"
+                    tooltip="This role is currently disabled. You may only view or delete it."
+                  >
+                    <span class="kuiIcon fa-warning"></span>
+                    Disabled
+                  </span>
                 </a>
               </div>
             </td>

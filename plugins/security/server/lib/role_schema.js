@@ -13,5 +13,6 @@ export default {
     query: Joi.string().allow('')
   }),
   run_as: Joi.array().items(Joi.string()),
-  metadata: Joi.object()
+  metadata: Joi.object(),
+  transient_metadata: Joi.object()
 };

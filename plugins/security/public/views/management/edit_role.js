@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import routes from 'ui/routes';
 import {toggle} from 'plugins/security/lib/util';
+import {isRoleEnabled} from 'plugins/security/lib/role';
 import template from 'plugins/security/views/management/edit_role.html';
 import 'angular-ui-select';
 import 'plugins/security/services/shield_user';
@@ -8,6 +9,7 @@ import 'plugins/security/services/shield_role';
 import 'plugins/security/services/shield_privileges';
 import 'plugins/security/services/shield_indices';
 import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
+import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 import checkLicenseError from 'plugins/security/lib/check_license_error';
 import GateKeeperProvider from 'plugins/xpack_main/services/gate_keeper';
 
@@ -49,7 +51,7 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
     }
   },
   controllerAs: 'editRole',
-  controller($scope, $route, kbnUrl, shieldPrivileges, shieldIndices, Notifier) {
+  controller($scope, $route, kbnUrl, shieldPrivileges, shieldIndices, Notifier, Private) {
     $scope.role = $route.current.locals.role;
     $scope.users = $route.current.locals.users;
     $scope.indexPatterns = $route.current.locals.indexPatterns;
@@ -100,6 +102,12 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
         .catch(() => fieldOptions[indices] = []);
       }
     };
+
+    $scope.isRoleEnabled = isRoleEnabled;
+
+    const xpackInfo = Private(XPackInfoProvider);
+    $scope.allowDocumentLevelSecurity = xpackInfo.get('features.security.allowRoleDocumentLevelSecurity');
+    $scope.allowFieldLevelSecurity = xpackInfo.get('features.security.allowRoleFieldLevelSecurity');
 
     $scope.$watch('role.indices', (indices) => {
       if (!indices.length) $scope.addIndex(indices);

@@ -7,11 +7,15 @@ module.directive('kbnIndexPrivilegesForm', function () {
   return {
     template,
     scope: {
+      isNewRole: '=',
       indices: '=',
       indexPatterns: '=',
       privileges: '=',
       fieldOptions: '=',
       isReserved: '=',
+      isEnabled: '=',
+      allowDocumentLevelSecurity: '=',
+      allowFieldLevelSecurity: '=',
       addIndex: '&',
       removeIndex: '&',
     },
@@ -34,6 +38,17 @@ module.directive('kbnIndexPrivilegesForm', function () {
       };
 
       this.union = _.flow(_.union, _.compact);
+
+      // If editing an existing role while that has been disabled, always show the FLS/DLS fields because currently
+      // a role is only marked as disabled if it has FLS/DLS setup (usually before the user changed to a license that
+      // doesn't permit FLS/DLS).
+      if (!$scope.isNewRole && !$scope.isEnabled) {
+        this.showDocumentLevelSecurity = true;
+        this.showFieldLevelSecurity = true;
+      } else {
+        this.showDocumentLevelSecurity = $scope.allowDocumentLevelSecurity;
+        this.showFieldLevelSecurity = $scope.allowFieldLevelSecurity;
+      }
     },
   };
 });

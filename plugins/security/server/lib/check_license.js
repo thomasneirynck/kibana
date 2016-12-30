@@ -3,6 +3,8 @@ export default function checkLicense(xpackLicenseInfo) {
   let showLogin; // show login page or skip it?
   let allowLogin; // allow login or disable it on the login page?
   let showLinks; // show security links throughout the kibana app?
+  let allowRoleDocumentLevelSecurity; // allow users to define document level security in roles?
+  let allowRoleFieldLevelSecurity; // allow users to define field level security in roles?
 
   let loginMessage; // message to show on login page
   let linksMessage; // message to show when security links are clicked throughout the kibana app
@@ -17,6 +19,8 @@ export default function checkLicense(xpackLicenseInfo) {
       showLogin: true,
       allowLogin: false,
       showLinks: false,
+      allowRoleDocumentLevelSecurity: false,
+      allowRoleFieldLevelSecurity: false,
       loginMessage,
       linksMessage
     };
@@ -24,6 +28,7 @@ export default function checkLicense(xpackLicenseInfo) {
 
   const isLicenseActive = xpackLicenseInfo.license.isActive();
   const isLicenseBasic = xpackLicenseInfo.license.isOneOf(['basic']);
+  const isLicenseGold = xpackLicenseInfo.license.isOneOf(['gold']);
   const isEnabledInES = xpackLicenseInfo.feature('security').isEnabled();
 
   if (!isEnabledInES) {
@@ -31,21 +36,36 @@ export default function checkLicense(xpackLicenseInfo) {
     showLogin = false;
     allowLogin = null;
     showLinks = false;
+    allowRoleDocumentLevelSecurity = false;
+    allowRoleFieldLevelSecurity = false;
   } else if (isLicenseBasic) {
     linksMessage = 'Your Basic license does not support Security. Please upgrade your license.';
     showLogin = false;
     allowLogin = null;
     showLinks = false;
+    allowRoleDocumentLevelSecurity = false;
+    allowRoleFieldLevelSecurity = false;
+  } else if (isLicenseGold) {
+    linksMessage = null;
+    showLogin = true;
+    allowLogin = true;
+    showLinks = true;
+    allowRoleDocumentLevelSecurity = false;
+    allowRoleFieldLevelSecurity = false;
   } else if (!isLicenseActive) {
     loginMessage = 'Login is disabled because your license has expired. Please extend your license or disable Security in Elasticsearch.';
     linksMessage = 'Access is denied because your license has expired. Please extend your license.';
     showLogin = true;
     allowLogin = false;
     showLinks = false;
+    allowRoleDocumentLevelSecurity = false;
+    allowRoleFieldLevelSecurity = false;
   } else {
     showLogin = true;
     allowLogin = true;
     showLinks = true;
+    allowRoleDocumentLevelSecurity = true;
+    allowRoleFieldLevelSecurity = true;
   };
 
   return {
@@ -53,7 +73,9 @@ export default function checkLicense(xpackLicenseInfo) {
     allowLogin,
     showLinks,
     loginMessage,
-    linksMessage
+    linksMessage,
+    allowRoleDocumentLevelSecurity,
+    allowRoleFieldLevelSecurity
   };
 
 };

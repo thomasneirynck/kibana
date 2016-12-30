@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import routes from 'ui/routes';
 import {toggle, toggleSort} from 'plugins/security/lib/util';
+import {isRoleEnabled} from 'plugins/security/lib/role';
 import template from 'plugins/security/views/management/roles.html';
 import 'plugins/security/services/shield_role';
 import checkLicenseError from 'plugins/security/lib/check_license_error';
@@ -54,6 +55,8 @@ routes.when('/management/elasticsearch/roles', {
       const roles = getActionableRoles();
       return roles.length && roles.length === $scope.selectedRoles.length;
     };
+
+    $scope.isRoleEnabled = isRoleEnabled;
 
     $scope.toggle = toggle;
     $scope.includes = _.includes;
