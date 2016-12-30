@@ -3,8 +3,7 @@ import Boom from 'boom';
 import _ from 'lodash';
 
 module.exports = function (server, commonRouteConfig) {
-
-  const callWithRequest = server.plugins.elasticsearch.callWithRequest;
+  const { callWithRequest } = server.plugins.elasticsearch.getCluster('data');
 
   function graphExplore(req) {
     const payload = req.payload;

@@ -10,8 +10,7 @@ const API_TAG = 'api';
 export function main(server) {
   const config = server.config();
   const DOWNLOAD_BASE_URL = config.get('server.basePath') + `${constants.API_BASE_URL}/jobs/download`;
-
-  const esErrors = server.plugins.elasticsearch.errors;
+  const { errors:esErrors } = server.plugins.elasticsearch.getCluster('admin');
 
   const createDocumentJob = createDocumentJobFactory(server);
   const licensePreRouting = licensePreRoutingFactory(server);

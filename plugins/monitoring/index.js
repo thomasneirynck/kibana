@@ -47,7 +47,9 @@ export default function monitoringIndex(kibana) {
     },
 
     config: function (Joi) {
+      const DEFAULT_REQUEST_HEADERS = [ 'authorization' ];
       const { array, boolean, number, object, string } = Joi;
+
       return object({
         enabled: boolean().default(true),
         ui: object({
@@ -122,6 +124,7 @@ export default function monitoringIndex(kibana) {
           customHeaders: object().default({}),
           index_pattern: string().default('.monitoring-es-2-*'),
           logQueries: boolean().default(false),
+          requestHeadersWhitelist: array().items().single().default(DEFAULT_REQUEST_HEADERS),
           url: string().uri({ scheme: ['http', 'https'] }), // if empty, use Kibana's connection config
           username: string(),
           password: string(),

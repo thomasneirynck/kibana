@@ -16,12 +16,18 @@ import isEsCompatibleWithKibana from './is_es_compatible_with_kibana';
  */
 const lastWarnedNodesForServer = new WeakMap();
 
-module.exports = function checkEsVersion(server, kibanaVersion) {
+export function ensureEsVersion(server, kibanaVersion) {
   server.log(['plugin', 'debug'], 'Checking Elasticsearch version');
 
-  const client = server.plugins.elasticsearch.client;
+  const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('monitoring');
 
-  return client.nodes.info()
+  return callWithInternalUser('nodes.info', {
+    filterPath: [
+      'nodes.*.version',
+      'nodes.*.http.publish_address',
+      'nodes.*.ip',
+    ]
+  })
   .then(function (info) {
     // Aggregate incompatible ES nodes.
     const incompatibleNodes = [];
@@ -91,4 +97,3 @@ module.exports = function checkEsVersion(server, kibanaVersion) {
     return true;
   });
 };
-

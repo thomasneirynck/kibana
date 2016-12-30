@@ -11,7 +11,7 @@ export function handleResponse(resp) {
 }
 
 export default function getIndexSummary(req, indices) {
-  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
 
   // Get the params from the POST body for the request
   const end = req.payload.timeRange.max;

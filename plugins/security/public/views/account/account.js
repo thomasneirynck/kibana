@@ -3,10 +3,16 @@ import routes from 'ui/routes';
 import template from './account.html';
 import './account.less';
 import '../../services/shield_user';
+import GateKeeperProvider from 'plugins/xpack_main/services/gate_keeper';
 
 routes.when('/account', {
   template,
   resolve: {
+    tribeRedirect(Private) {
+      const gateKeeper = Private(GateKeeperProvider);
+      gateKeeper.redirectAndNotifyIfTribe();
+    },
+
     user(ShieldUser) {
       return ShieldUser.getCurrent();
     }

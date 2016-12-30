@@ -1,7 +1,8 @@
 import Promise from 'bluebird';
 import elasticsearch from 'elasticsearch';
-import checkEsVersion from './check_es_version';
 import kibanaVersion from './kibana_version';
+import { ensureNotTribe } from './ensure_not_tribe';
+import { ensureEsVersion } from './ensure_es_version';
 
 const NoConnections = elasticsearch.errors.NoConnections;
 const REQUEST_DELAY = 2500;
@@ -10,10 +11,10 @@ const INITIALIZING = 'initializing';
 const READY = 'ready';
 
 export default function esHealthCheck(plugin, server) {
-  const client = server.plugins.monitoring.client;
+  const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('monitoring');
   const config = server.config();
   function getHealth() {
-    return client.cluster.health({
+    return callWithInternalUser('cluster.health', {
       timeout: '5s',
       index: config.get('xpack.monitoring.index'),
       ignore: [408]
@@ -35,7 +36,7 @@ export default function esHealthCheck(plugin, server) {
   }
 
   function waitForPong() {
-    return client.ping()
+    return callWithInternalUser('ping')
     .catch(err => {
       if (!(err instanceof NoConnections)) throw err;
       plugin.status.red(`Unable to connect to Elasticsearch at ${config.get('xpack.monitoring.elasticsearch.url')}.`);
@@ -63,7 +64,13 @@ export default function esHealthCheck(plugin, server) {
 
   function check() {
     return waitForPong()
-    .then(() => checkEsVersion(server, kibanaVersion.get()))
+    .then(() => {
+      // execute version and tribe checks in parallel
+      // but always report the version check result first
+      const versionPromise = ensureEsVersion(server, kibanaVersion.get());
+      const tribePromise = ensureNotTribe(callWithInternalUser);
+      return versionPromise.then(() => tribePromise);
+    })
     .then(waitForShards)
     .catch(err => plugin.status.red(err));
   }

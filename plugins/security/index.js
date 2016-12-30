@@ -67,6 +67,7 @@ export default (kibana) => new kibana.Plugin({
     ],
     injectDefaultVars: function (server) {
       const config = server.config();
+
       return {
         secureCookies: config.get('xpack.security.secureCookies'),
         sessionTimeout: config.get('xpack.security.sessionTimeout')

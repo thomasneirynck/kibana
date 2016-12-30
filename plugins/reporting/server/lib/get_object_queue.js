@@ -2,7 +2,7 @@ import { getSavedObjects } from './get_saved_objects';
 import { oncePerServer } from './once_per_server';
 
 function getObjectQueueFn(server) {
-  const callWithRequest = server.plugins.elasticsearch.callWithRequest;
+  const { callWithRequest } = server.plugins.elasticsearch.getCluster('admin');
   const config = server.config();
   const requestConfig = Object.assign({
     'kibanaApp': config.get('server.basePath') + config.get('xpack.reporting.kibanaApp'),

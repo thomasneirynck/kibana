@@ -83,7 +83,7 @@ export default function getListingNodes(req, indices) {
     }
   };
 
-  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
   .then((resp) => {
     if (!resp.hits.total) {

@@ -9,10 +9,12 @@ export default function opsBuffer(serverInfo, server) {
   const config = server.config();
   const interval = config.get('xpack.monitoring.kibana.collection.interval') + 'ms';
   const monitoringTag = config.get('xpack.monitoring.loggingTag');
-  const client = server.plugins.elasticsearch.createClient({
+  const client = server.plugins.elasticsearch.getCluster('admin').createClient({
     plugins: [monitoringBulk]
   });
+
   let lastOp = null;
+
   return {
     push(event) {
       lastOp = {

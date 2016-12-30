@@ -51,7 +51,7 @@ export default function clustersRoutes(server) {
   const config = server.config();
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
   const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');
-  const callWithRequest = server.plugins.monitoring.callWithRequest;
+  const { callWithRequest } = server.plugins.elasticsearch.getCluster('monitoring');
 
   function getClustersFromRequest(req) {
     const start = req.payload.timeRange.min;

@@ -14,10 +14,11 @@ import management from 'ui/management';
 
 routes.defaults(/\/management/, {
   resolve: {
-    securityManagementSection: function (ShieldUser, Private) {
+    securityManagementSection: function (ShieldUser, Private, esDataIsTribe) {
       const xpackInfo = Private(XPackInfoProvider);
       const elasticsearch = management.getSection('elasticsearch');
       const showSecurityLinks = xpackInfo.get('features.security.showLinks');
+      const tribeTooltip = 'Not available when using a tribe node.';
 
       function deregisterSecurity() {
         elasticsearch.deregister('users');
@@ -26,19 +27,29 @@ routes.defaults(/\/management/, {
 
       function registerSecurity() {
         if (!elasticsearch.hasItem('users')) {
-          elasticsearch.register('users', {
+          const options = {
             order: 10,
-            display: 'Users',
-            url: '#/management/elasticsearch/users'
-          });
+            display: 'Users'
+          };
+          if (esDataIsTribe) {
+            options.tooltip = tribeTooltip;
+          } else {
+            options.url = '#/management/elasticsearch/users';
+          }
+          elasticsearch.register('users', options);
         }
 
         if (!elasticsearch.hasItem('roles')) {
-          elasticsearch.register('roles', {
+          const options = {
             order: 20,
-            display: 'Roles',
-            url: '#/management/elasticsearch/roles'
-          });
+            display: 'Roles'
+          };
+          if (esDataIsTribe) {
+            options.tooltip = tribeTooltip;
+          } else {
+            options. url = '#/management/elasticsearch/roles';
+          }
+          elasticsearch.register('roles', options);
         }
       }
 

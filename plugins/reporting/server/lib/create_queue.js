@@ -8,13 +8,14 @@ const dateSeparator = '.';
 function createQueueFn(server) {
   const queueConfig = server.config().get('xpack.reporting.queue');
   const createWorkers = createWorkersFactory(server);
-  const client = server.plugins.elasticsearch.client;
+  const { getClient } = server.plugins.elasticsearch.getCluster('admin');
+
   const queueOptions = {
     doctype: constants.QUEUE_DOCTYPE,
     interval: queueConfig.indexInterval,
     timeout: queueConfig.timeout,
     dateSeparator: dateSeparator,
-    client: client
+    client: getClient()
   };
 
   const queue = new Esqueue(constants.QUEUE_INDEX, queueOptions);

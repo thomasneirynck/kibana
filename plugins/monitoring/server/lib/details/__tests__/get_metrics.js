@@ -21,9 +21,9 @@ function getMockReq(metricsBuckets = [], payloadMetrics = []) {
         return config;
       },
       plugins: {
-        monitoring: {
-          callWithRequest() {
-            return Promise.resolve({
+        elasticsearch: {
+          getCluster: sinon.stub().withArgs('monitoring').returns({
+            callWithRequest: sinon.stub().returns(Promise.resolve({
               aggregations: {
                 check: {
                   meta: {
@@ -34,8 +34,8 @@ function getMockReq(metricsBuckets = [], payloadMetrics = []) {
                   buckets: metricsBuckets
                 }
               }
-            });
-          }
+            }))
+          })
         }
       }
     },

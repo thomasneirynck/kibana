@@ -4,7 +4,8 @@ module.exports = function (server, commonRouteConfig) {
     path: '/api/graph/searchProxy',
     method: 'POST',
     handler: function (req, reply) {
-      const callWithRequest = server.plugins.elasticsearch.callWithRequest;
+      const { callWithRequest } = server.plugins.elasticsearch.getCluster('data');
+
       callWithRequest(req, 'search', req.payload).then(function (resp) {
         reply({
           ok: true,

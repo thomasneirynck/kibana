@@ -4,8 +4,7 @@ import { get, set, includes, forIn } from 'lodash';
 import Poller from './poller';
 import { LICENSE_EXPIRY_SOON_DURATION, XPACK_INFO_API_DEFAULT_POLL_FREQUENCY } from './constants';
 
-export default function _xpackInfo(server, client, pollFrequencyInMillis) {
-
+export default function _xpackInfo(server, pollFrequencyInMillis) {
   pollFrequencyInMillis = pollFrequencyInMillis || XPACK_INFO_API_DEFAULT_POLL_FREQUENCY.asMilliseconds();
 
   let _cachedResponseFromElasticsearch;
@@ -85,9 +84,11 @@ export default function _xpackInfo(server, client, pollFrequencyInMillis) {
     }
   };
 
+  const cluster = server.plugins.elasticsearch.getCluster('data');
+
   function _callElasticsearchXPackAPI() {
     server.log([ 'license', 'debug', 'xpack' ], 'Calling Elasticsearch _xpack API');
-    return client.transport.request({
+    return cluster.callWithInternalUser('transport.request', {
       method: 'GET',
       path: '/_xpack'
     });

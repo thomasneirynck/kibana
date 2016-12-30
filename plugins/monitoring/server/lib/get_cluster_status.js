@@ -39,7 +39,7 @@ export function handleResponse(lastState) {
 }
 
 export default function getClusterStatus(req, indices, lastState) {
-  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
 
   // Get the params from the POST body for the request
   const end = req.payload.timeRange.max;

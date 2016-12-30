@@ -19,7 +19,7 @@ import { ElasticsearchMetric } from '../metrics/metric_classes';
 export default function getKibanas(req, indices) {
   if (indices.length < 1) return Promise.resolve([]);
 
-  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const config = req.server.config();
   const start = moment.utc(req.payload.timeRange.min).valueOf();
   const end = moment.utc(req.payload.timeRange.max).valueOf();

@@ -17,7 +17,7 @@ export default (server, commonRouteConfig) => {
     },
     handler: (request, reply) => {
 
-      const callWithRequest = server.plugins.elasticsearch.callWithRequest;
+      const { callWithRequest } = server.plugins.elasticsearch.getCluster('data');
       let parsed = request.payload.query;
       parsed.profile = true;
       parsed = JSON.stringify(parsed, null, 2);

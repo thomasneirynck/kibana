@@ -6,13 +6,20 @@ import 'angular-ui-select';
 import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
 import checkLicenseError from 'plugins/security/lib/check_license_error';
+import GateKeeperProvider from 'plugins/xpack_main/services/gate_keeper';
 
 routes.when('/management/elasticsearch/users/edit/:username?', {
   template,
   resolve: {
+    tribeRedirect(Private) {
+      const gateKeeper = Private(GateKeeperProvider);
+      gateKeeper.redirectAndNotifyIfTribe();
+    },
+
     me(ShieldUser) {
       return ShieldUser.getCurrent();
     },
+
     user($route, ShieldUser, kbnUrl, Promise, Notifier) {
       const username = $route.current.params.username;
       if (username != null) {
@@ -27,6 +34,7 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
       }
       return new ShieldUser({roles: []});
     },
+
     roles(ShieldRole, kbnUrl, Promise, Private) {
       // $promise is used here because the result is an ngResource, not a promise itself
       return ShieldRole.query().$promise

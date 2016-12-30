@@ -8,8 +8,7 @@ const defaultSize = 10;
 
 function jobsQueryFn(server) {
   const getUser = getUserFactory(server);
-  const esErrors = server.plugins.elasticsearch.errors;
-  const { callWithRequest } = server.plugins.elasticsearch;
+  const { callWithRequest, errors:esErrors } = server.plugins.elasticsearch.getCluster('admin');
 
   function execQuery(type, body, request) {
     const defaultBody = {

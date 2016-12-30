@@ -7,7 +7,7 @@ import { ElasticsearchMetric } from './metrics/metric_classes';
 export default function getShardStats(req, indices, lastState) {
   const config = req.server.config();
   const nodeResolver = config.get('xpack.monitoring.node_resolver');
-  const callWithRequest = req.server.plugins.monitoring.callWithRequest;
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const uuid = req.params.clusterUuid;
   const aggSize = 10;
   const metric = ElasticsearchMetric.getMetricFields();

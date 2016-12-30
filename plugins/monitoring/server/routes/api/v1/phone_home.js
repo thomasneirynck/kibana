@@ -4,7 +4,8 @@
 import handleError from '../../../lib/handle_error';
 
 export default function phoneHomeRoutes(server) {
-  const callWithRequest = server.plugins.monitoring.callWithRequest;
+  const { callWithRequest } = server.plugins.elasticsearch.getCluster('monitoring');
+
   server.route({
     path: '/api/monitoring/v1/phone-home',
     method: 'POST',
