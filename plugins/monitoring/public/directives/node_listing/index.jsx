@@ -9,7 +9,7 @@ import extractIp from 'plugins/monitoring/lib/extract_ip';
 import Table from 'plugins/monitoring/directives/paginated_table/components/table';
 import uiModules from 'ui/modules';
 
-function nodeRowFactory(scope, kbnUrl, decorateRow) {
+function nodeRowFactory(scope, kbnUrl, createRow) {
   function checkOnline(status) {
     return status === 'green';
   }
@@ -25,14 +25,16 @@ function nodeRowFactory(scope, kbnUrl, decorateRow) {
 
     constructor(props) {
       super();
-      const row = _.find(scope.rows, {resolver: props.resolver});
-      this.state = decorateRow(row);
+      const rowData = _.find(scope.rows, {resolver: props.resolver});
+      this.state = createRow(rowData);
       this.goToNode = this.goToNode.bind(this);
     }
 
     componentWillReceiveProps(newProps) {
-      const row = _.find(scope.rows, {resolver: newProps.resolver});
-      this.setState(decorateRow(row));
+      if (!_.isEqual(newProps, this.props)) {
+        const rowData = _.find(scope.rows, {resolver: newProps.resolver});
+        this.setState(createRow(rowData));
+      }
     }
 
     goToNode() {
@@ -144,16 +146,17 @@ uiModule.directive('monitoringNodesListing', function (kbnUrl) {
     },
     link(scope, $el) {
 
-      function decorateRow(row) {
-        if (!row) return null;
-        row.nodeName = _.get(row, 'node.name');
-        row.type = _.get(row, 'node.type');
-        row.transport_address = _.get(row, 'node.transport_address');
-        row.status = row.online ? 'Online' : 'Offline';
-        return row;
+      function createRow(rowData) {
+        if (!rowData) return null;
+
+        return {
+          nodeName: _.get(rowData, 'node.name'),
+          status: rowData.online ? 'Online' : 'Offline',
+          ...rowData
+        };
       }
 
-      const NodeRow = nodeRowFactory(scope, kbnUrl, decorateRow);
+      const NodeRow = nodeRowFactory(scope, kbnUrl, createRow);
       const $table = React.createElement(Table, {
         scope,
         options: initialTableOptions,
@@ -161,7 +164,7 @@ uiModule.directive('monitoringNodesListing', function (kbnUrl) {
       });
       const tableInstance = ReactDOM.render($table, $el[0]);
       scope.$watch('rows', (rows) => {
-        tableInstance.setData(rows.map((row) => decorateRow(row)));
+        tableInstance.setData(rows.map((rowData) => createRow(rowData)));
       });
 
     }
