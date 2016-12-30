@@ -103,7 +103,21 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
           'node_index_threads_get_rejected'
         ]
       },
-      'node_cpu_utilization'
+      'node_cpu_utilization',
+      {
+        name: 'node_cgroup_cpu',
+        keys: [
+          'node_cgroup_usage',
+          'node_cgroup_throttled'
+        ]
+      },
+      {
+        name: 'node_cgroup_stats',
+        keys: [
+          'node_cgroup_periods',
+          'node_cgroup_throttled_count'
+        ]
+      }
     ]
   })
   .then(response => response.data)

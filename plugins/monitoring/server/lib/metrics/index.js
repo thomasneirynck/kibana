@@ -367,6 +367,52 @@ const metricInstances = {
     description: 'Number of search requests being executed across primary and replica shards. A single search can run against multiple shards!', // eslint-disable-line max-len
     type: 'cluster'
   }),
+  'node_cgroup_periods': new ElasticsearchMetric({
+    field: 'node_stats.os.cgroup.cpu.stat.number_of_elapsed_periods',
+    title: 'Cgroup CFS Stats',
+    label: 'Cgroup Elapsed Periods',
+    description: (
+      'The number of sampling periods from the Completely Fair Scheduler (CFS). Compare against the number of times throttled.'
+    ),
+    type: 'node',
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    derivative: true,
+    units: ''
+  }),
+  'node_cgroup_throttled': new ElasticsearchMetric({
+    field: 'node_stats.os.cgroup.cpu.stat.time_throttled_nanos',
+    title: 'Cgroup CPU Performance',
+    label: 'Cgroup Throttling',
+    description: 'The amount of throttled time, reported in nanoseconds, of the Cgroup.',
+    type: 'node',
+    format: LARGE_ABBREVIATED,
+    metricAgg: 'max',
+    derivative: true,
+    units: 'ns'
+  }),
+  'node_cgroup_throttled_count': new ElasticsearchMetric({
+    field: 'node_stats.os.cgroup.cpu.stat.number_of_times_throttled',
+    title: 'Cgroup CFS Stats',
+    label: 'Cgroup Throttled Count',
+    description: 'The number of times that the CPU was throttled by the Cgroup.',
+    type: 'node',
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    derivative: true,
+    units: ''
+  }),
+  'node_cgroup_usage': new ElasticsearchMetric({
+    field: 'node_stats.os.cgroup.cpuacct.usage_nanos',
+    title: 'Cgroup CPU Performance',
+    label: 'Cgroup Usage',
+    description: 'The usage, reported in nanoseconds, of the Cgroup. Compare this with the throttling to discover issues.',
+    type: 'node',
+    format: LARGE_ABBREVIATED,
+    metricAgg: 'max',
+    derivative: true,
+    units: 'ns'
+  }),
   'node_cpu_utilization': new ElasticsearchMetric({
     field: 'node_stats.process.cpu.percent',
     label: 'CPU Utilization',

@@ -819,6 +819,64 @@ export const expected = {
     'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp'
   },
+  'node_cgroup_periods': {
+    'field': 'node_stats.os.cgroup.cpu.stat.number_of_elapsed_periods',
+    'title': 'Cgroup CFS Stats',
+    'label': 'Cgroup Elapsed Periods',
+    'description': (
+      'The number of sampling periods from the Completely Fair Scheduler (CFS). Compare against the number of times throttled.'
+    ),
+    'type': 'node',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'units': '',
+    'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
+    'timestampField': 'timestamp',
+    'derivative': true
+  },
+  'node_cgroup_throttled': {
+    'field': 'node_stats.os.cgroup.cpu.stat.time_throttled_nanos',
+    'title': 'Cgroup CPU Performance',
+    'label': 'Cgroup Throttling',
+    'description': 'The amount of throttled time, reported in nanoseconds, of the Cgroup.',
+    'type': 'node',
+    'format': '0,0.[0]a',
+    'metricAgg': 'max',
+    'units': 'ns',
+    'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
+    'timestampField': 'timestamp',
+    'derivative': true
+  },
+  'node_cgroup_throttled_count': {
+    'field': 'node_stats.os.cgroup.cpu.stat.number_of_times_throttled',
+    'title': 'Cgroup CFS Stats',
+    'label': 'Cgroup Throttled Count',
+    'description': 'The number of times that the CPU was throttled by the Cgroup.',
+    'type': 'node',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'units': '',
+    'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
+    'timestampField': 'timestamp',
+    'derivative': true
+  },
+  'node_cgroup_usage': {
+    'field': 'node_stats.os.cgroup.cpuacct.usage_nanos',
+    'title': 'Cgroup CPU Performance',
+    'label': 'Cgroup Usage',
+    'description': 'The usage, reported in nanoseconds, of the Cgroup. Compare this with the throttling to discover issues.',
+    'type': 'node',
+    'format': '0,0.[0]a',
+    'metricAgg': 'max',
+    'units': 'ns',
+    'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
+    'timestampField': 'timestamp',
+    'derivative': true
+  },
   'node_cpu_utilization': {
     'field': 'node_stats.process.cpu.percent',
     'label': 'CPU Utilization',
