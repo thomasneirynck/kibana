@@ -8,9 +8,23 @@ import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
 import template from 'plugins/monitoring/views/elasticsearch/nodes/nodes_template.html';
 
-function getPageData(timefilter, globalState, $http, Private) {
+function getPageData(timefilter, globalState, $http, Private, showCgroupMetricsElasticsearch) {
+
   const timeBounds = timefilter.getBounds();
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/nodes`;
+
+  const cpuListingMetrics = (() => {
+    if (showCgroupMetricsElasticsearch) {
+      return [
+        'node_cgroup_usage',
+        'node_cgroup_throttled'
+      ];
+    }
+    return [
+      'node_cpu_utilization',
+      'node_load_average'
+    ];
+  })();
 
   return $http.post(url, {
     timeRange: {
@@ -18,9 +32,8 @@ function getPageData(timefilter, globalState, $http, Private) {
       max: timeBounds.max.toISOString()
     },
     listingMetrics: [
-      'node_cpu_utilization',
+      ...cpuListingMetrics,
       'node_jvm_mem_percent',
-      'node_load_average',
       'node_free_space'
     ]
   })
@@ -29,6 +42,7 @@ function getPageData(timefilter, globalState, $http, Private) {
     const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
     return ajaxErrorHandlers(err);
   });
+
 }
 
 uiRoutes.when('/elasticsearch/nodes', {
@@ -44,7 +58,7 @@ uiRoutes.when('/elasticsearch/nodes', {
 
 const uiModule = uiModules.get('monitoring', [ 'plugins/monitoring/directives' ]);
 uiModule.controller('nodes',
-($route, timefilter, globalState, title, Private, $executor, $http, monitoringClusters, $scope) => {
+($route, timefilter, globalState, title, Private, $executor, $http, monitoringClusters, $scope, showCgroupMetricsElasticsearch) => {
 
   timefilter.enabled = true;
 
@@ -56,7 +70,7 @@ uiModule.controller('nodes',
   $scope.pageData = $route.current.locals.pageData;
   title($scope.cluster, 'Elasticsearch - Nodes');
 
-  const callPageData = _.partial(getPageData, timefilter, globalState, $http, Private);
+  const callPageData = _.partial(getPageData, timefilter, globalState, $http, Private, showCgroupMetricsElasticsearch);
 
   $executor.register({
     execute: () => callPageData(),

@@ -9,7 +9,7 @@ import extractIp from 'plugins/monitoring/lib/extract_ip';
 import Table from 'plugins/monitoring/directives/paginated_table/components/table';
 import uiModules from 'ui/modules';
 
-function nodeRowFactory(scope, kbnUrl, createRow) {
+function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch) {
   function checkOnline(status) {
     return status === 'green';
   }
@@ -25,14 +25,14 @@ function nodeRowFactory(scope, kbnUrl, createRow) {
 
     constructor(props) {
       super();
-      const rowData = _.find(scope.rows, {resolver: props.resolver});
+      const rowData = _.find(scope.rows, { resolver: props.resolver });
       this.state = createRow(rowData);
       this.goToNode = this.goToNode.bind(this);
     }
 
     componentWillReceiveProps(newProps) {
       if (!_.isEqual(newProps, this.props)) {
-        const rowData = _.find(scope.rows, {resolver: newProps.resolver});
+        const rowData = _.find(scope.rows, { resolver: newProps.resolver });
         this.setState(createRow(rowData));
       }
     }
@@ -46,6 +46,20 @@ function nodeRowFactory(scope, kbnUrl, createRow) {
     render() {
       const status = getStatus(this.state.status);
       const isOnline = checkOnline(status);
+
+      const cpuColumnsComponents = (() => {
+        if (showCgroupMetricsElasticsearch) {
+          return [
+            <MetricCell key="cpuCol1" isOnline={isOnline} metric={this.state.metrics.node_cgroup_usage}></MetricCell>,
+            <MetricCell key="cpuCol2" isOnline={isOnline} metric={this.state.metrics.node_cgroup_throttled}></MetricCell>
+          ];
+        }
+        return [
+          <MetricCell key="cpuCol1" isOnline={isOnline} metric={this.state.metrics.node_cpu_utilization}></MetricCell>,
+          <MetricCell key="cpuCol2" isOnline={isOnline} metric={this.state.metrics.node_load_average}></MetricCell>
+        ];
+      })();
+
       return (
         <tr className='big'>
           <td>
@@ -63,9 +77,8 @@ function nodeRowFactory(scope, kbnUrl, createRow) {
               <span className={statusIconClass(status)} title={_.capitalize(status)}></span>
             </span>
           </td>
-          <MetricCell isOnline={isOnline} metric={this.state.metrics.node_cpu_utilization}></MetricCell>
+          {cpuColumnsComponents}
           <MetricCell isOnline={isOnline} metric={this.state.metrics.node_jvm_mem_percent}></MetricCell>
-          <MetricCell isOnline={isOnline} metric={this.state.metrics.node_load_average}></MetricCell>
           <MetricCell isOnline={isOnline} metric={this.state.metrics.node_free_space}></MetricCell>
           {(() => {
             if (isOnline) {
@@ -88,17 +101,40 @@ function nodeRowFactory(scope, kbnUrl, createRow) {
 
 // change the node to actually display the name
 const uiModule = uiModules.get('monitoring/directives', []);
-uiModule.directive('monitoringNodesListing', function (kbnUrl) {
+uiModule.directive('monitoringNodesListing', function (kbnUrl, showCgroupMetricsElasticsearch) {
+  const cpuColumnsConfig = (() => {
+    if (showCgroupMetricsElasticsearch) {
+      return [
+        {
+          key: 'metrics.node_cgroup_usage',
+          sortKey: 'metrics.node_cgroup_usage.last',
+          title: 'CPU Cgroup Usage'
+        },
+        {
+          key: 'metrics.node_cgroup_throttled',
+          sortKey: 'metrics.node_cgroup_throttled.last',
+          title: 'CPU Cgroup Throttling'
+        },
+      ];
+    }
+    return [
+      {
+        key: 'metrics.node_cpu_utilization',
+        sortKey: 'metrics.node_cpu_utilization.last',
+        title: 'CPU Usage'
+      },
+      {
+        key: 'metrics.node_load_average',
+        sortKey: 'metrics.node_load_average.last',
+        title: 'Load Average'
+      },
+    ];
+  })();
+
   const initialTableOptions = {
     title: 'Nodes',
     searchPlaceholder: 'Filter Nodes',
     filterFields: ['nodeName', 'status', 'type', 'transport_address'],
-    /* "key" should be an object
-     *   - unless it's the "name" key
-     *   - the key object should have:
-     *      - "metric" object
-     *      - "last" scalar
-     * "sortKey" should be a scalar */
     columns: [
       {
         key: 'nodeName',
@@ -111,20 +147,11 @@ uiModule.directive('monitoringNodesListing', function (kbnUrl) {
         sortKey: 'online',
         title: 'Status'
       },
-      {
-        key: 'metrics.node_cpu_utilization',
-        sortKey: 'metrics.node_cpu_utilization.last',
-        title: 'CPU Usage'
-      },
+      ...cpuColumnsConfig,
       {
         key: 'metrics.node_jvm_mem_percent',
         sortKey: 'metrics.node_jvm_mem_percent.last',
         title: 'JVM Memory'
-      },
-      {
-        key: 'metrics.node_load_average',
-        sortKey: 'metrics.node_load_average.last',
-        title: 'Load Average'
       },
       {
         key: 'metrics.node_free_space',
@@ -156,7 +183,7 @@ uiModule.directive('monitoringNodesListing', function (kbnUrl) {
         };
       }
 
-      const NodeRow = nodeRowFactory(scope, kbnUrl, createRow);
+      const NodeRow = nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch);
       const $table = React.createElement(Table, {
         scope,
         options: initialTableOptions,

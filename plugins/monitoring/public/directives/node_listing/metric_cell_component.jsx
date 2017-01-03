@@ -7,7 +7,7 @@ function formatMetric(metric, key) {
   const meta = metric.metric;
   const value = get(metric, key);
   if (!meta.format) { return value; }
-  return numeral(value).format(meta.format) + meta.units;
+  return numeral(value).format(meta.format) + ' ' + meta.units;
 }
 
 function slopeArrow(metric) {

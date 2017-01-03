@@ -27,7 +27,8 @@ export default function monitoringIndex(kibana) {
             kbnIndex: config.get('kibana.index'),
             esApiVersion: config.get('elasticsearch.apiVersion'),
             esShardTimeout: config.get('elasticsearch.shardTimeout'),
-            showLicenseExpiration: config.get('xpack.monitoring.show_license_expiration')
+            showLicenseExpiration: config.get('xpack.monitoring.show_license_expiration'),
+            showCgroupMetricsElasticsearch: config.get('xpack.monitoring.ui.container.elasticsearch.enabled')
           };
         },
       },
@@ -53,7 +54,12 @@ export default function monitoringIndex(kibana) {
       return object({
         enabled: boolean().default(true),
         ui: object({
-          enabled: boolean().default(true)
+          enabled: boolean().default(true),
+          container: object({
+            elasticsearch: object({
+              enabled: boolean().default(false)
+            }).default()
+          }).default()
         }).default(),
         chart: object({
           elasticsearch: object({

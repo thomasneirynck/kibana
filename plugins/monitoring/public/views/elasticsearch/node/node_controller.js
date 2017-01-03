@@ -8,7 +8,7 @@ import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
 import template from 'plugins/monitoring/views/elasticsearch/node/node_template.html';
 
-function getPageData(timefilter, globalState, $route, $http, Private, features) {
+function getPageData(timefilter, globalState, $route, $http, Private, features, showCgroupMetricsElasticsearch) {
   const timeBounds = timefilter.getBounds();
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/nodes/${$route.current.params.node}`;
   const showSystemIndices = features.isEnabled('showSystemIndices', false);
@@ -36,7 +36,12 @@ function getPageData(timefilter, globalState, $route, $http, Private, features) 
         keys: [ 'node_index_mem_overall' ],
         config: 'xpack.monitoring.chart.elasticsearch.node.index_memory'
       },
-      'node_cpu_utilization',
+      {
+        name: 'node_cpu_metric',
+        keys: showCgroupMetricsElasticsearch ?
+          [ 'node_cgroup_usage', 'node_cgroup_throttled' ] :
+          [ 'node_cpu_utilization' ]
+      },
       'node_load_average',
       'node_segment_count'
     ]
@@ -61,7 +66,7 @@ uiRoutes.when('/elasticsearch/nodes/:node', {
 
 const uiModule = uiModules.get('monitoring', [ 'plugins/monitoring/directives' ]);
 uiModule.controller('esNode', (
-  timefilter, $route, globalState, title, Private, $executor, $http, monitoringClusters, $scope, features
+  timefilter, $route, globalState, title, Private, $executor, $http, monitoringClusters, $scope, features, showCgroupMetricsElasticsearch
 ) => {
 
   timefilter.enabled = true;
@@ -82,7 +87,9 @@ uiModule.controller('esNode', (
   title($scope.cluster, `Elasticsearch - Nodes - ${$scope.pageData.nodeSummary.name} - Overview`);
   setPageIconLabel($scope.pageData);
 
-  const callPageData = _.partial(getPageData, timefilter, globalState, $route, $http, Private, features);
+  const callPageData = _.partial(
+    getPageData, timefilter, globalState, $route, $http, Private, features, showCgroupMetricsElasticsearch
+  );
 
   // show/hide system indices in shard allocation view
   $scope.showSystemIndices = features.isEnabled('showSystemIndices', false);
