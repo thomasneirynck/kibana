@@ -105,7 +105,7 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
       _.each(aggregationsByTime, function (dataForTime) {
         const time = dataForTime.key;
         obj.results[time] = {
-          'anomalyScore': _.get(dataForTime, ['anomaly_score', 'value']),
+          'anomalyScore': _.get(dataForTime, ['anomalyScore', 'value']),
         };
       });
 
@@ -215,10 +215,24 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
       _.each(aggregationsByTime, function (dataForTime) {
         const time = dataForTime.key;
+        let debugUpper = _.get(dataForTime, ['debugUpper', 'value']);
+        let debugLower = _.get(dataForTime, ['debugLower', 'value']);
+
+        if (debugUpper !== undefined) {
+          debugUpper = debugUpper.toFixed(4);
+        } else {
+          debugUpper = 0;
+        }
+        if (debugLower !== undefined) {
+          debugLower = debugLower.toFixed(4);
+        } else {
+          debugLower = 0;
+        }
+
         obj.results[time] = {
           actual: _.get(dataForTime, ['actual', 'value']),
-          debugUpper: _.get(dataForTime, ['debug_upper', 'value']).toFixed(4),
-          debugLower: _.get(dataForTime, ['debug_lower', 'value']).toFixed(4)
+          debugUpper: debugUpper,
+          debugLower: debugLower
         };
       });
 

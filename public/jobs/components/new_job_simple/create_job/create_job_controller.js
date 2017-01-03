@@ -523,7 +523,7 @@ module
   function viewResults(job, page) {
     if (job && page) {
       // get the time range first
-      prlJobService.jobTimeRange(job.job_id)
+      prlJobService.jobTimeRange(job.id)
         .then((resp) => {
           // if no times are found, use last 24hrs to now
           const from = (resp.start.string) ? '\'' + resp.start.string + '\'' : 'now-24h';
@@ -533,7 +533,7 @@ module
           path += '/app/prelert#/' + page;
           path += '?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:' + from;
           path += ',mode:absolute,to:' + to;
-          path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))&jobId=' + job.job_id;
+          path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))&jobId=' + job.id;
 
           // in safari, window.open does not work unless it has
           // been fired from an onclick event.

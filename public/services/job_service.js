@@ -435,23 +435,22 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
             'filter': [
               {
                 'query_string': {
-                  'query': 'jobId: ' + jobId,
+                  'query': '_type:result AND result_type:bucket',
                   'analyze_wildcard': true
                 }
-              },
-              {'term': {'_type':'bucket'}}
+              }
             ]
           }
         },
         'aggs': {
           'earliest': {
             'min': {
-              'field': '@timestamp'
+              'field': 'timestamp'
             }
           },
           'latest': {
             'max': {
-              'field': '@timestamp'
+              'field': 'timestamp'
             }
           }
         }
