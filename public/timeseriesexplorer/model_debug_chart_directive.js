@@ -28,9 +28,8 @@ import 'ui/timefilter';
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 import ContextChartMask from 'plugins/prelert/timeseriesexplorer/context_chart_mask';
 
-import chrome from 'ui/chrome';
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/prelert');
 
 module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter) {
 
@@ -67,7 +66,7 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
       .domain([3, 25, 50, 75, 100])
       .range(['#dce7ed', '#b0c5d6', '#b1a34e', '#b17f4e', '#c88686']);
 
-    let focusXScale = d3.time.scale().range([0, vizWidth]);
+    const focusXScale = d3.time.scale().range([0, vizWidth]);
     let focusYScale = d3.scale.linear().range([focusHeight, focusZoomPanelHeight]);
 
     const focusXAxis = d3.svg.axis().scale(focusXScale).orient('bottom')
@@ -116,10 +115,10 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
 
       // Clear any existing elements from the visualization,
       // then build the svg elements for the bubble chart.
-      let chartElement = d3.select(element.get(0));
+      const chartElement = d3.select(element.get(0));
       chartElement.selectAll('*').remove();
 
-      let svg = chartElement.append('svg')
+      const svg = chartElement.append('svg')
         .attr('width',  svgWidth)
         .attr('height', svgHeight);
 
@@ -143,7 +142,6 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
         .enter()
         .append('text')
         .text(function (d) {
-          const formattedText = focusYScale.tickFormat()(d);
           return focusYScale.tickFormat()(d);
         })
         .each(function (d) {
@@ -157,11 +155,11 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
       focusXScale.range([0, vizWidth]);
       focusYAxis.innerTickSize(-vizWidth);
 
-      let focus = svg.append('g')
+      const focus = svg.append('g')
         .attr('class', 'focus-chart')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-      let context = svg.append('g')
+      const context = svg.append('g')
         .attr('class', 'context-chart')
         .attr('transform', 'translate(' + margin.left + ',' + (focusHeight + margin.top + chartSpacing) + ')');
 
@@ -249,7 +247,7 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
         .attr('y2', focusHeight + chartSpacing);
 
 
-      let axes = focusGroup.append('g');
+      const axes = focusGroup.append('g');
       axes.append('g')
         .attr('class', 'x axis')
         .attr('transform', 'translate(0,' + focusHeight + ')');
@@ -268,7 +266,7 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
       // Define the div for the tooltip.
       // TODO - append to the chartElement rather than the body.
       d3.select('body').selectAll('div.prl-model-debug-point-tooltip').remove();
-      let tooltipDiv = d3.select('body').append('div')
+      const tooltipDiv = d3.select('body').append('div')
         .attr('class', 'prl-model-debug-point-tooltip')
         .style('opacity', 0);
 
@@ -287,7 +285,7 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
         return;
       }
 
-      let data = scope.focusChartData;
+      const data = scope.focusChartData;
 
       const focusChart = d3.select('.focus-chart');
 
@@ -302,10 +300,10 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
       // Elasticsearch aggregation returns points at start of bucket,
       // so set the x-axis min to the start of the first aggregation interval,
       // and the x-axis max to the end of the last aggregation interval.
-      let bounds = scope.selectedBounds;
+      const bounds = scope.selectedBounds;
       const aggMs = scope.focusAggregationInterval.asMilliseconds();
-      let earliest = moment(Math.floor((bounds.min.valueOf()) / aggMs) * aggMs);
-      let latest = moment(Math.ceil((bounds.max.valueOf()) / aggMs) * aggMs);
+      const earliest = moment(Math.floor((bounds.min.valueOf()) / aggMs) * aggMs);
+      const latest = moment(Math.ceil((bounds.max.valueOf()) / aggMs) * aggMs);
 
       focusXScale.domain([earliest.toDate(), latest.toDate()]);
       if (scope.focusChartData.length > 0) {
@@ -331,7 +329,7 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
 
       // Render circle markers for the points.
       // These are used for displaying tooltips on mouseover.
-      let dots = d3.select('.focus-chart-markers').selectAll('.metric-value')
+      const dots = d3.select('.focus-chart-markers').selectAll('.metric-value')
         .data(data);
 
       // Remove dots that are no longer needed i.e. if number of chart points has decreased.
@@ -378,6 +376,7 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
       const zoomInfoGroup = d3.select('.focus-zoom');
       const links = zoomInfoGroup.append('foreignObject')
         .attr('width', 400)
+        .attr('height', 25)
         .html('<div class="zoom-links">Zoom: ' + zoomLinks +
           '<span class="zoom-aggregation-interval-label">(aggregation interval: ' +
           '<span class="zoom-aggregation-interval"></span>' +
@@ -553,7 +552,7 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
         const selectionMax = selectedBounds[1].getTime();
 
         // Set the color of the swimlane cells according to whether they are inside the selection.
-        let swimlaneCells = contextGroup.selectAll('.swimlane-cell')
+        const swimlaneCells = contextGroup.selectAll('.swimlane-cell')
           .style('fill', function (d) {
             const cellMs = d.date.getTime();
             if (cellMs < selectionMin || cellMs > selectionMax) {
@@ -638,7 +637,7 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
       // so set the x-axis min to the start of the first aggregation interval,
       // and the x-axis max to the end of the last aggregation interval.
       // Context chart and swimlane use the same aggregation interval.
-      let bounds = timefilter.getActiveBounds();
+      const bounds = timefilter.getActiveBounds();
       const earliest = Math.min(_.first(scope.swimlaneData).date.getTime(), bounds.min.valueOf());
 
       const contextAggMs = scope.contextAggregationInterval.asMilliseconds();
@@ -659,7 +658,7 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
     }
 
     function setZoomInterval(ms) {
-      let bounds = timefilter.getActiveBounds();
+      const bounds = timefilter.getActiveBounds();
       const minBoundsMs = bounds.min.valueOf();
       const maxBoundsMs = bounds.max.valueOf();
 
@@ -688,12 +687,12 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
       contents += ('<br/>lower bounds: ' + numeral(d.lower).format('0,0.[00]'));
 
       if (_.has(d, 'anomalyScore')) {
-        let score = parseInt(d.anomalyScore);
-        let displayScore = (score > 0 ? score : '< 1');
+        const score = parseInt(d.anomalyScore);
+        const displayScore = (score > 0 ? score : '< 1');
         contents += ('<br/>anomaly score: ' + displayScore);
       }
 
-      let tooltipDiv = d3.select('.prl-model-debug-point-tooltip');
+      const tooltipDiv = d3.select('.prl-model-debug-point-tooltip');
       tooltipDiv.transition()
         .duration(200)
         .style('opacity', .9);
@@ -714,7 +713,7 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
     }
 
     function hideFocusChartTooltip() {
-      let tooltipDiv = d3.select('.prl-model-debug-point-tooltip');
+      const tooltipDiv = d3.select('.prl-model-debug-point-tooltip');
       tooltipDiv.transition()
         .duration(500)
         .style('opacity', 0);
