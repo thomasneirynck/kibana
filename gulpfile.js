@@ -45,6 +45,7 @@ var buildIncludes = [
   'prelert.yml',
   'node_modules',
   'bower_components',
+  'webpackShims',
   'lib',
   '.node-version',
   'public',
