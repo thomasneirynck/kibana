@@ -116,14 +116,10 @@ module.service('prlVisualizationJobService', function (
         types: [
           'response'
         ],
-        dataSource: 'ELASTICSEARCH',
-        dataSourceCompatibility: '2.x.x',
-        queryDelay: 60,
+        query_delay: 60,
         frequency: 150,
-        baseUrl: 'http://localhost:9200',
         indexes: [index],
-        retrieveWholeSource: true,
-        scrollSize: 1000
+        scroll_size: 1000
       };
       this.job.id = visState.title;
       console.log('getJobFromVisJson: ', this.job);

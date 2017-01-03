@@ -44,7 +44,7 @@ module.service('prlSchedulerService', function ($modal, prlJobService) {
     }
     // before we display the modal, load the scheduler state to see
     // if an end time was previously set
-    loadStartEnd(job.id).then(func).catch(func);
+    loadStartEnd(job.job_id).then(func).catch(func);
   };
 
 });

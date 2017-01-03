@@ -25348,15 +25348,15 @@
   api.jobStats = ca({
     urls: [
       {
-        fmt: '/_xpack/prelert/anomaly_detectors/_all/_stats',
-      },
-      {
         fmt: '/_xpack/prelert/anomaly_detectors/<%=jobId%>/_stats',
         req: {
           jobId: {
             type: 'list'
           }
         }
+      },
+      {
+        fmt: '/_xpack/prelert/anomaly_detectors/_all/_stats',
       }
     ],
     method: 'GET'
@@ -25372,6 +25372,34 @@
     method: 'PUT'
   });
 
+  api.openJob = ca({
+    urls: [
+      {
+        fmt: '/_xpack/prelert/anomaly_detectors/<%=jobId%>/_open',
+        req: {
+          jobId: {
+            type: 'string'
+          }
+        }
+      }
+    ],
+    method: 'POST'
+  });
+
+  api.closeJob = ca({
+    urls: [
+      {
+        fmt: '/_xpack/prelert/anomaly_detectors/<%=jobId%>/_close',
+        req: {
+          jobId: {
+            type: 'string'
+          }
+        }
+      }
+    ],
+    method: 'POST'
+  });
+
   api.deleteJob = ca({
     url: {
       fmt: '/_xpack/prelert/anomaly_detectors/<%=jobId%>',
@@ -25384,12 +25412,69 @@
     method: 'DELETE'
   });
 
+  api.addScheduler = ca({
+    urls: [
+      {
+        fmt: '/_xpack/prelert/schedulers/<%=schedulerId%>',
+        req: {
+          schedulerId: {
+            type: 'string'
+          }
+        }
+      }
+    ],
+    needBody: true,
+    method: 'PUT'
+  });
+
+  api.deleteScheduler = ca({
+    url: {
+      fmt: '/_xpack/prelert/schedulers/<%=schedulerId%>',
+      req: {
+        schedulerId: {
+          type: 'string'
+        }
+      }
+    },
+    method: 'DELETE'
+  });
+
+  api.startScheduler = ca({
+    urls: [
+      {
+        fmt: '/_xpack/prelert/schedulers/<%=schedulerId%>/_start?&start=<%=start%>&end=<%=end%>',
+        req: {
+          schedulerId: {
+            type: 'string'
+          },
+          start: {
+            type: 'string'
+          },
+          end: {
+            type: 'string'
+          }
+        }
+      }
+    ],
+    method: 'POST'
+  });
+
+  api.stopScheduler = ca({
+    urls: [
+      {
+        fmt: '/_xpack/prelert/schedulers/<%=schedulerId%>/_stop',
+        req: {
+          schedulerId: {
+            type: 'string'
+          }
+        }
+      }
+    ],
+    method: 'POST'
+  });
 
   api.getShedulerStats = ca({
     urls: [
-      {
-        fmt: '/_xpack/prelert/schedulers/_all/_stats',
-      },
       {
         fmt: '/_xpack/prelert/schedulers/<%=schedulerId%>/_stats',
         req: {
@@ -25397,6 +25482,9 @@
             type: 'list'
           }
         }
+      },
+      {
+        fmt: '/_xpack/prelert/schedulers/_all/_stats',
       }
     ],
     method: 'GET'

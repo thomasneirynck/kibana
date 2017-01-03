@@ -72,7 +72,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:bucket',
+                'query': '_type:result AND result_type:bucket',
                 'analyze_wildcard': true
               }
             }, {
@@ -197,7 +197,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
             'filter': [
               {
                 'query_string': {
-                  'query': 'result_type:record',
+                  'query': '_type:result AND result_type:record',
                   'analyze_wildcard': true
                 }
               },
@@ -348,7 +348,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:bucketInfluencer',
+                  'query': '_type:result AND result_type:bucket_influencer',
                   'analyze_wildcard': true
                 }
               },
@@ -474,7 +474,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:influencer',
+                  'query': '_type:result AND result_type:influencer',
                   'analyze_wildcard': true
                 }
               },
@@ -633,7 +633,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
             'filter': [
               {
                 'query_string': {
-                  'query': 'result_type:record',
+                  'query': '_type:result AND result_type:record',
                   'analyze_wildcard': true
                 }
               },
@@ -708,7 +708,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
     }
 
     const resutsSize = 20;
-    let query = '_type:influencer';
+    let query = '_type:result AND result_type:influencer';
     if (type[swimlaneType] === type.INF_TYPE) {
       query +=  'AND influencer_field_name:' + laneLabel;
     }
@@ -867,7 +867,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:bucket',
+                  'query': '_type:result AND result_type:bucket',
                   'analyze_wildcard': true
                 }
               },

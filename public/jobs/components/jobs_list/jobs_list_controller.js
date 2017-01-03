@@ -283,7 +283,7 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
 
     refreshCounter = 0;
     clearTimeout(window.singleJobTimeout);
-    // refreshCounts();
+    refreshCounts();
 
     // clear the filter spinner if it's running
     $scope.filterIcon = 0;
@@ -311,7 +311,7 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
         }
 
         // also reload all of the jobs messages
-        loadAuditSummary($scope.jobs, rowScopes);
+        // loadAuditSummary($scope.jobs, rowScopes);
       } else {
         // check to see if any jobs are 'running' if so, reload their counts
         prlJobService.checkStatus();

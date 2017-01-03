@@ -294,23 +294,6 @@ module.directive('prlElasticDataDescription', function ($http) {
         return deferred.promise;
       }
 
-      // store ES version numbers and accordingly the datasource identifier
-      function setServerVersion(info) {
-        if (info && info.version && (typeof info.version.number === 'string')) {
-          const versionNumbers = info.version.number.split('.');
-          $scope.ui.scheduler.esMajorVersionNumber = +versionNumbers[0];
-          if ($scope.ui.scheduler.esMajorVersionNumber === '1') {
-            $scope.ui.scheduler.dataSourceText = 'ELASTICSEARCH_17X';
-          } else {
-            $scope.ui.scheduler.dataSourceText = 'ELASTICSEARCH_2X';
-            if ($scope.ui.scheduler.esMajorVersionNumber >= 5) {
-              // from Elasticsearch 5 fields are no longer pulled out of source
-              $scope.ui.scheduler.retrieveWholeSource = true;
-            }
-          }
-        }
-      }
-
       $scope.toggleIndex = function (key, index) {
         const idx = $scope.indices[key];
         if (idx === undefined) {
@@ -355,11 +338,6 @@ module.directive('prlElasticDataDescription', function ($http) {
 
       $scope.allTypesSelected = function () {
         return ($scope.uiTypeKeys().length === Object.keys($scope.types).length);
-      };
-
-      $scope.toggleAuthenticated = function () {
-        $scope.ui.scheduler.usernameText = '';
-        $scope.ui.scheduler.passwordText = '';
       };
 
       function collectCopyToFields(data) {

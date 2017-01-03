@@ -87,11 +87,11 @@ module.controller('PrlDetectorFilterModal', function ($scope, $modalInstance, pa
   if (params.filter === undefined) {
     $scope.filter = {
       ruleAction: 'FILTER_RESULTS',
-      targetFieldName: '',
-      targetFieldValue: '',
-      conditionsConnective: 'OR',
-      ruleConditions: [],
-      valueList: []
+      target_field_name: '',
+      target_field_value: '',
+      conditions_connective: 'OR',
+      rule_conditions: [],
+      value_list: []
     };
   } else {
     // edting an existing filter
@@ -103,11 +103,11 @@ module.controller('PrlDetectorFilterModal', function ($scope, $modalInstance, pa
 
   $scope.ui = {
     ruleAction:['FILTER_RESULTS'],
-    targetFieldName: '',
-    targetFieldValue: '',
-    conditionsConnective: ['OR', 'AND'],
+    target_field_name: '',
+    target_field_value: '',
+    conditions_connective: ['OR', 'AND'],
     ruleCondition: {
-      conditionType: [{
+      condition_type: [{
         label: 'actual',
         value: 'NUMERICAL_ACTUAL'
       },{
@@ -121,8 +121,8 @@ module.controller('PrlDetectorFilterModal', function ($scope, $modalInstance, pa
         value: 'CATEGORICAL'
       }*/
       ],
-      fieldName: '',
-      fieldValue: '',
+      field_name: '',
+      field_value: '',
       condition: {
         operator: [{
           label:'<',
@@ -138,15 +138,15 @@ module.controller('PrlDetectorFilterModal', function ($scope, $modalInstance, pa
           value: 'GTE'
         }]
       },
-      valueList: []
+      value_list: []
     }
   };
 
   $scope.addNewCondition = function () {
-    $scope.filter.ruleConditions.push({
-      conditionType: 'NUMERICAL_ACTUAL',
-      fieldName: '',
-      fieldValue: '',
+    $scope.filter.rule_conditions.push({
+      condition_type: 'NUMERICAL_ACTUAL',
+      field_name: '',
+      field_value: '',
       condition: {
         operator: 'LT',
         value: ''
@@ -155,7 +155,7 @@ module.controller('PrlDetectorFilterModal', function ($scope, $modalInstance, pa
   };
 
   $scope.removeCondition = function (index) {
-    $scope.filter.ruleConditions.splice(index, 1);
+    $scope.filter.rule_conditions.splice(index, 1);
   };
 
 
@@ -182,31 +182,31 @@ module.controller('PrlDetectorFilterModal', function ($scope, $modalInstance, pa
   $scope.save = function () {
     const filter = angular.copy($scope.filter);
 
-    if (!filter.ruleConditions.length) {
+    if (!filter.rule_conditions.length) {
       return;
     }
     $scope.saveLock = true;
 
     // remove any properties that aren't being used
-    if (filter.targetFieldName === '') {
-      delete filter.targetFieldName;
+    if (filter.target_field_name === '') {
+      delete filter.target_field_name;
     }
-    if (filter.targetFieldValue === '') {
-      delete filter.targetFieldValue;
+    if (filter.target_field_value === '') {
+      delete filter.target_field_value;
     }
 
-    _.each(filter.ruleConditions, (cond) => {
+    _.each(filter.rule_conditions, (cond) => {
       delete cond.$$hashKey;
-      if (cond.fieldName === '') {
-        delete cond.fieldName;
-      }
+      if (cond.field_name === '') {
+        delete cond.field_vname;
+   _v  }
       if (cond.fieldValue === '') {
         delete cond.fieldValue;
       }
     });
 
-    if (filter.valueList && filter.valueList.length === 0) {
-      delete filter.valueList;
+    if (filter.value_list && filter.value_list.length === 0) {
+      delete filter.value_list;
     }
 
     // make a local copy of the detector, add the new fitler

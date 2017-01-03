@@ -409,13 +409,6 @@
             </div>
             <div class="form-group help-pane" ng-show="job.data_description.format!=='ELASTICSEARCH'"><small class="info">Data format must be set to 'Elasticsearch' to enable the scheduler.</small></div>
             <div class="form-group" ng-if="ui.isScheduled">
-              <label>Data source</label><i prl-info-icon="new_job_data_source" />
-              <select
-                ng-model="ui.scheduler.dataSourceText"
-                placeholder=""
-                class="form-control">
-                  <option ng-repeat="index in ui.dataSources" value="{{index.value}}" >{{index.title}}</option>
-              </select>
 
               <label>Query</label><i prl-info-icon="new_job_scheduler_query" />
               <input
@@ -439,7 +432,7 @@
                 min="0"
                 class="form-control" />
 
-              <label>scrollSize</label><i prl-info-icon="new_job_scheduler_scrollsize" />
+              <label>scroll_size</label><i prl-info-icon="new_job_scheduler_scrollsize" />
               <input
                 ng-model="ui.scheduler.scrollSizeText"
                 placeholder="{{ui.scheduler.scrollSizeDefault}}"
@@ -462,14 +455,6 @@
                 prl-elastic-server-info="elasticServerInfo"
 
               ></prl-elastic-data-description >
-
-              <label>
-                <input
-                  ng-model="ui.scheduler.retrieveWholeSource"
-                  ng-disabled="ui.scheduler.esMajorVersionNumber >= 5"
-                  type="checkbox" />
-                Retrieve whole _source document
-              </label><i prl-info-icon="new_job_scheduler_retrieve_source" />
 
               <div class="clearfix"></div>
 

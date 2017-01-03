@@ -79,12 +79,12 @@ module.directive('prlJobListExpandedRow', function ($location, prlMessageBarServ
           }
         };
 
-        if (typeof $scope.job.schedulerConfig !== 'undefined') {
+        if (typeof $scope.job.scheduler_config !== 'undefined') {
           $scope.ui.tabs.splice(2, 0, { index: 2, title: 'Scheduler' });
         }
 
         if ($scope.job.data_counts.input_record_count === 0 &&
-           typeof $scope.job.schedulerConfig === 'undefined') {
+           typeof $scope.job.scheduler_config === 'undefined') {
           $scope.ui.tabs.splice(4, 0, { index: 5, title: 'Upload Data'});
         }
 

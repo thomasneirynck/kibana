@@ -27,7 +27,6 @@ let module = uiModules.get('apps/prelert');
 module.service('prlSimpleJobService', function (
   $q,
   es,
-  esServerUrl,
   timefilter,
   Private,
   prlJobService,
@@ -254,7 +253,7 @@ module.service('prlSimpleJobService', function (
     };
 
     if (formConfig.field && formConfig.field.displayName) {
-      dtr.fieldName = formConfig.field.displayName;
+      dtr.field_name = formConfig.field.displayName;
     }
     job.analysis_config.detectors.push(dtr);
     job.analysis_config.bucket_span = bucketSpan;
@@ -268,16 +267,12 @@ module.service('prlSimpleJobService', function (
         match_all: {}
       },
       types: mappingTypes,
-      dataSource: 'ELASTICSEARCH',
-      dataSourceCompatibility: '2.x.x',
-      queryDelay: 60,
+      query_delay: 60,
       frequency: jobUtils.calculateSchedulerFrequencyDefault(bucketSpan),
-      baseUrl: esServerUrl,
       indexes: [formConfig.indexPattern.id],
-      retrieveWholeSource: true,
-      scrollSize: 1000
+      scroll_size: 1000
     };
-    job.id = formConfig.jobId;
+    job.job_id = formConfig.jobId;
     job.description = formConfig.description;
 
     job.model_debug_config =  {
@@ -290,24 +285,36 @@ module.service('prlSimpleJobService', function (
     return job;
   }
 
+  function createJobForSaving(job) {
+    const newJob = angular.copy(job);
+    delete newJob.scheduler_config;
+    return newJob;
+  }
+
   this.createJob = function (formConfig) {
     const deferred = $q.defer();
 
     this.job = getJobFromConfig(formConfig);
+    const job = createJobForSaving(this.job);
+
     const index = formConfig.indexPattern.id;
     const types = formConfig.mappingTypes.join(',');
 
-    prlJobService.searchTimeFields(index, types, this.job.data_description.time_field)
+    prlJobService.searchTimeFields(index, types, job.data_description.time_field)
     .then((resp) => {
-      this.job.data_description.time_format = stringUtils.guessTimeFormat(resp.time);
+      job.data_description.time_format = stringUtils.guessTimeFormat(resp.time);
       // console.log('guessTimeFormat: guessed time format: ', this.job.data_description.time_format);
 
       // DO THE SAVE
-      prlJobService.saveNewJob(this.job, true)
+      prlJobService.saveNewJob(job, true)
       .then((resp) => {
         // console.log('createJob: ', resp);
         if (resp.success) {
-          deferred.resolve(resp);
+          prlJobService.saveNewScheduler(this.job.scheduler_config, this.job.job_id)
+          .then(resp => {
+            deferred.resolve(resp);
+          })
+          .catch(resp => {});
         } else {
           deferred.reject(resp);
         }
@@ -323,12 +330,8 @@ module.service('prlSimpleJobService', function (
   };
 
   this.startScheduler = function (formConfig) {
-    const params = {
-      start: formConfig.start,
-      end: formConfig.end,
-    };
-
-    return prlJobService.startScheduler(formConfig.jobId, params);
+    const schedulerId = 'scheduler-' + formConfig.jobId;
+    return prlJobService.startScheduler(schedulerId, formConfig.jobId, formConfig.start, formConfig.end);
   };
 
   this.checkSchedulerStatus = function (formConfig) {

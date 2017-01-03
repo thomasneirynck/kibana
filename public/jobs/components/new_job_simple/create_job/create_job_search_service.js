@@ -32,7 +32,7 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': earliestMs,
           'lte': latestMs,
           'format': 'epoch_millis'
@@ -49,7 +49,7 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
           jobIdFilterStr += ' OR ';
           indexString += ',';
         }
-        jobIdFilterStr += 'jobId:';
+        jobIdFilterStr += 'job_id:';
         jobIdFilterStr += jobId;
 
         indexString += '.ml-anomalies-' + jobId;
@@ -70,7 +70,7 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:bucket',
+                'query': '_type:result AND result_type:bucket',
                 'analyze_wildcard': true
               }
             }, {
@@ -83,14 +83,14 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
         'aggs': {
           'times': {
             'date_histogram': {
-              'field': '@timestamp',
+              'field': 'timestamp',
               'interval': interval,
               'min_doc_count': 1
             },
             'aggs': {
               'anomalyScore': {
                 'max': {
-                  'field': 'anomalyScore'
+                  'field': 'anomaly_score'
                 }
               }
             }
@@ -105,7 +105,7 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
       _.each(aggregationsByTime, function (dataForTime) {
         const time = dataForTime.key;
         obj.results[time] = {
-          'anomalyScore': _.get(dataForTime, ['anomalyScore', 'value']),
+          'anomalyScore': _.get(dataForTime, ['anomaly_score', 'value']),
         };
       });
 
@@ -131,7 +131,7 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': earliestMs,
           'lte': latestMs,
           'format': 'epoch_millis'
@@ -148,7 +148,7 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
           jobIdFilterStr += ' OR ';
           indexString += ',';
         }
-        jobIdFilterStr += 'jobId:';
+        jobIdFilterStr += 'job_id:';
         jobIdFilterStr += jobId;
 
         indexString += '.ml-anomalies-' + jobId;
@@ -169,7 +169,7 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:modelDebugOutput',
+                'query': '_type:result AND result_type:model_debug_output',
                 'analyze_wildcard': true
               }
             }, {
@@ -182,7 +182,7 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
         'aggs': {
           'times': {
             'date_histogram': {
-              'field': '@timestamp',
+              'field': 'timestamp',
               'interval': interval,
               'min_doc_count': 1
             },
@@ -195,13 +195,13 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
               'debugUpper': {
                 // 'max': {
                 [aggType.max]: {
-                  'field': 'debugUpper'
+                  'field': 'debug_upper'
                 }
               },
               'debugLower': {
                 // 'min': {
                 [aggType.min]: {
-                  'field': 'debugLower'
+                  'field': 'debug_lower'
                 }
               }
             }
@@ -217,8 +217,8 @@ module.service('prlSimpleJobSearchService', function ($q, es) {
         const time = dataForTime.key;
         obj.results[time] = {
           actual: _.get(dataForTime, ['actual', 'value']),
-          debugUpper: _.get(dataForTime, ['debugUpper', 'value']).toFixed(4),
-          debugLower: _.get(dataForTime, ['debugLower', 'value']).toFixed(4)
+          debugUpper: _.get(dataForTime, ['debug_upper', 'value']).toFixed(4),
+          debugLower: _.get(dataForTime, ['debug_lower', 'value']).toFixed(4)
         };
       });
 

@@ -2,24 +2,24 @@
 
   <!-- start -->
   <button
-    ng-show="job.schedulerConfig && job.scheduler_status!=='STOPPING' && job.scheduler_status!=='STARTING'"
+    ng-show="job.scheduler_config && job.scheduler_status!=='STOPPING' && job.scheduler_status!=='STARTING'"
     ng-click="((job.scheduler_status && job.scheduler_status==='STARTED')?stopScheduler(job):startScheduler(job))"
     class="btn btn-xs btn-default"
     data-toggle="tooltip"
-    tooltip="{{((job.scheduler_status && job.scheduler_status==='STARTED')?'Stop':'Start')}} scheduler for {{job.id}}">
+    tooltip="{{((job.scheduler_status && job.scheduler_status==='STARTED')?'Stop':'Start')}} scheduler for {{job.job_id}}">
       <i ng-show="job.scheduler_status && job.scheduler_status==='STARTED'" aria-hidden="true" class="fa fa-stop"></i>
       <i ng-show="job.scheduler_status && job.scheduler_status==='STOPPED'" aria-hidden="true" class="fa fa-play"></i>
-      <i ng-show="job.schedulerConfig && job.scheduler_status===undefined" aria-hidden="true" class="fa fa-play"></i>
+      <i ng-show="job.scheduler_config && job.scheduler_status===undefined" aria-hidden="true" class="fa fa-play"></i>
   </button>
 
   <!-- stop -->
   <button
     disabled
-    ng-show="(!job.schedulerConfig) || (job.scheduler_status==='STOPPING' || job.scheduler_status==='STARTING')"
+    ng-show="(!job.scheduler_config) || (job.scheduler_status==='STOPPING' || job.scheduler_status==='STARTING')"
     class="btn btn-xs btn-default"
     data-toggle="tooltip"
     aria-label="Preview Job"
-    tooltip="No scheduler settings for {{job.id}}">
+    tooltip="No scheduler settings for {{job.job_id}}">
       <i aria-hidden="true" class="fa fa-clock-o"></i>
   </button>
 
@@ -28,7 +28,7 @@
     ng-click="viewResults(job, 'summaryview')"
     class="btn btn-xs btn-default"
     data-toggle="tooltip"
-    tooltip="Open results for {{job.id}}">
+    tooltip="Open results for {{job.job_id}}">
       <i aria-hidden="true" class="fa fa-bar-chart"></i>
   </button>
 
@@ -37,7 +37,7 @@
     ng-click="viewResults(job, 'anomalyexplorer')"
     class="btn btn-xs btn-default"
     data-toggle="tooltip"
-    tooltip="Open explorer for {{job.id}}">
+    tooltip="Open explorer for {{job.job_id}}">
       <i aria-hidden="true" class="fa fa-table"></i>
   </button>
 
@@ -62,7 +62,7 @@
   <!-- delete job -->
   <button
     confirm-click="deleteJob({{job}})"
-    confirmation="Are you sure want to delete job '{{job.id}}'?"
+    confirmation="Are you sure want to delete job '{{job.job_id}}'?"
     class="btn btn-xs btn-danger"
     data-toggle="tooltip"
     tooltip="Delete job">

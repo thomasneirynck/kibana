@@ -172,26 +172,17 @@ function (
     indices: {},
     types: {},
     isScheduled: false,
-    dataSources:[
-      { value:'ELASTICSEARCH_2X', title:'Elasticsearch 2.x, 5.0', dataFormat:'ELASTICSEARCH' },
-      { value:'ELASTICSEARCH_17X', title:'Elasticsearch 1.7.x', dataFormat:'ELASTICSEARCH' }
-    ],
+
     scheduler: {
-      dataSourceText:        'ELASTICSEARCH_2X',
       queryText:             '{"match_all":{}}',
       queryDelayText:        60,
-      retrieveWholeSource:   true,
       frequencyText:         '',
       frequencyDefault:      '',
       scrollSizeText:        '',
       scrollSizeDefault:     1000,
-      baseUrlText:           esServerUrl,
-      usernameText:          '',
-      passwordText:          '',
       indicesText:           '',
       typesText:             '',
     },
-    storedUrls: loadStoredBaseUrls(),
     postSaveUpload: true,
     saveStatus: {
       job:     0,
@@ -247,12 +238,6 @@ function (
           // note, when cloning an ES job, the influencers are created once the
           // ES data directive has loaded the server details.
           // cloneJobDataDescriptionCallback() is called once the server details have loaded
-        } else {
-          // remove encryptedPassword when cloning a job, so the user has to
-          // has to re-enter the password
-          if ($scope.job.scheduler_config.encryptedPassword) {
-            delete $scope.job.scheduler_config.encryptedPassword;
-          }
         }
       }
 
@@ -368,36 +353,23 @@ function (
         // check that they have chosen some influencers
         if ($scope.job.analysis_config.influencers &&
            $scope.job.analysis_config.influencers.length) {
-          checkAuthentication();
+          saveFunc();
         } else {
           // if there are no influencers set, open a confirmation
           prlConfirm.open({
             message: 'You have not chosen any influencers, do you want to continue?',
             title: 'No Influencers'
-          }).then(checkAuthentication)
+          }).then(saveFunc)
             .catch(function () {
               changeTab({index:2});
             });
         }
       }
 
-      function checkAuthentication() {
-        // check that the password has been set if a username has
-        if (!$scope.ui.isScheduled) {
-          saveFunc();
-        } else {
-          if ($scope.job.scheduler_config.username && !$scope.job.scheduler_config.password) {
-            prlConfirm.open({
-              message: 'You have entered an empty password',
-              title: 'No password'
-            }).then(saveFunc)
-              .catch(() => {
-                changeTab({index:4});
-              });
-          } else {
-            saveFunc();
-          }
-        }
+      function createJobForSaving(job) {
+        const newJob = angular.copy(job);
+        delete newJob.scheduler_config;
+        return newJob;
       }
 
       function saveFunc() {
@@ -406,7 +378,9 @@ function (
         $scope.ui.uploadPercentage = -1;
         openSaveStatusWindow();
 
-        prlJobService.saveNewJob($scope.job, overwrite)
+        const job = createJobForSaving($scope.job);
+
+        prlJobService.saveNewJob(job, overwrite)
           .then((result) => {
             if (result.success) {
               // After the job has been successfully created the Elasticsearch
@@ -419,9 +393,7 @@ function (
                   console.log('refreshed fields for index pattern .ml-anomalies-*');
 
                   // wait for mappings refresh before continuing on with the post save stuff
-                  msgs.info('New Job \'' + result.resp.id + '\' added');
-                  // remember the es server url for next time
-                  storeBaseUrl($scope.ui.scheduler.baseUrlText);
+                  msgs.info('New Job \'' + result.resp.job_id + '\' added');
                   // update status
                   $scope.ui.saveStatus.job = 2;
 
@@ -459,8 +431,14 @@ function (
                     });
 
                   } else {
-                    $scope.saveLock = false;
-                    // no data to upload, go back to the jobs list
+
+                    prlJobService.saveNewScheduler($scope.job.scheduler_config, $scope.job.job_id)
+                    .then(resp => {
+
+                      $scope.saveLock = false;
+                      // no data to upload, go back to the jobs list
+                    })
+                    .catch(resp => {});
                   }
                 });
               });
@@ -549,11 +527,6 @@ function (
   $scope.schedulerChange = function () {
     if ($scope.ui.isScheduled) {
       $scope.job.scheduler_config = {};
-      for (let i = 0; i < $scope.ui.dataSources.length; i++) {
-        if ($scope.ui.dataSources[i].value === $scope.ui.scheduler.dataSourceText) {
-          $scope.job.data_description.format = $scope.ui.dataSources[i].dataFormat;
-        }
-      }
     } else {
       delete $scope.job.scheduler_config;
       $scope.job.data_description.format = 'DELIMITED';
@@ -603,9 +576,9 @@ function (
       }
 
       const scrollSizeDefault = $scope.ui.scheduler.scrollSizeDefault;
-      let scrollSize = schedulerConfig.scrollSize;
-      if ($scope.ui.scheduler.scrollSizeDefault === schedulerConfig.scrollSize) {
-        scrollSize = '';
+      let scroll_size = schedulerConfig.scroll_size;
+      if ($scope.ui.scheduler.scrollSizeDefault === schedulerConfig.scroll_size) {
+        scroll_size = '';
       }
 
 
@@ -619,34 +592,16 @@ function (
         $scope.indices[index] = $scope.ui.indices[index];
       });
 
-      // note, this will be overwritten when the mappings are loaded
-      // if the ES server is a different version, this value will change
-      // to the correct one.
-      let dataSourceText = 'ELASTICSEARCH_2X';
-      if (schedulerConfig.dataSourceCompatibility === '1.7.x') {
-        dataSourceText = 'ELASTICSEARCH_17X';
-      }
-
       $scope.ui.scheduler = {
-        dataSourceText:        dataSourceText,
         queryText:             angular.toJson(schedulerConfig.query, true),
-        queryDelayText:        +schedulerConfig.queryDelay,
-        retrieveWholeSource:   schedulerConfig.retrieveWholeSource,
+        queryDelayText:        +schedulerConfig.query_delay,
         frequencyText:         freq,
         frequencyDefault:      frequencyDefault,
-        scrollSizeText:        scrollSize,
+        scrollSizeText:        scroll_size,
         scrollSizeDefault:     scrollSizeDefault,
-        baseUrlText:           schedulerConfig.baseUrl,
-        usernameText:          schedulerConfig.username,
-        passwordText:          schedulerConfig.password,
         indicesText:           schedulerConfig.indexes.join(','),
         typesText:             schedulerConfig.types.join(','),
       };
-
-      // if the username is set, show the authentication fields
-      if ($scope.ui.scheduler.usernameText) {
-        $scope.ui.wizard.serverAuthenticated = true;
-      }
 
       // load the mappings from the configured server
       // via the functions exposed in the elastic data controller
@@ -782,38 +737,14 @@ function (
         $scope.job.scheduler_config = {};
       }
 
-      const dataSourceText = 'ELASTICSEARCH';
-      let dataSourceCompatibility = '2.x.x';
-      if (sch.dataSourceText === 'ELASTICSEARCH_17X') {
-        dataSourceCompatibility = '1.7.x';
-      }
-
       const config = $scope.job.scheduler_config;
 
-      config.dataSource =               dataSourceText;
-      config.dataSourceCompatibility =  dataSourceCompatibility;
       config.query =                    query;
-      config.queryDelay =               sch.queryDelayText;
-      config.retrieveWholeSource =      sch.retrieveWholeSource;
+      config.query_delay =               sch.queryDelayText;
       config.frequency =                ((sch.frequencyText === '' || sch.frequencyText === null || sch.frequencyText === undefined) ? sch.frequencyDefault : sch.frequencyText);
-      config.scrollSize =               ((sch.scrollSizeText === '' || sch.scrollSizeText === null || sch.scrollSizeText === undefined) ? sch.scrollSizeDefault : sch.scrollSizeText);
-      config.baseUrl =                  sch.baseUrlText;
+      config.scroll_size =               ((sch.scrollSizeText === '' || sch.scrollSizeText === null || sch.scrollSizeText === undefined) ? sch.scrollSizeDefault : sch.scrollSizeText);
       config.indexes =                  indexes;
       config.types =                    types;
-
-      // set or delete username
-      if (sch.usernameText) {
-        config.username = sch.usernameText;
-      } else {
-        delete config.username;
-      }
-
-      // set or delete passwords
-      if (sch.passwordText) {
-        config.password = sch.passwordText;
-      } else {
-        delete config.password;
-      }
     }
   }
 
@@ -1072,31 +1003,6 @@ function (
     }
     return exists;
   }
-
-  // add url to localstorage
-  // note, this is only stored if save was successful
-  function storeBaseUrl(url) {
-    const list = $scope.ui.storedUrls;
-    if (_.contains(list, url) === false) {
-      if (typeof Storage !== 'undefined' && list !== undefined) {
-        list.push(url);
-        window.localStorage['storedUrls'] = JSON.stringify(list);
-      } else {
-        console.log('rememberBaseUrl: url could not be added to local storage');
-      }
-    }
-  }
-
-  // retrieve array of urls from localstorage
-  function loadStoredBaseUrls() {
-    let list = [];
-    if (typeof Storage !== 'undefined' &&
-       window.localStorage['storedUrls']) {
-      list = JSON.parse(window.localStorage['storedUrls']);
-    }
-    return list;
-  }
-
 
   function openSaveStatusWindow() {
     const modalInstance = $modal.open({

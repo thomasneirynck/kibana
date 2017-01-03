@@ -27,7 +27,8 @@ module.controller('PrlJobTimepickerModal', function ($scope, $modalInstance, par
   $scope.saveLock = false;
 
   const job = angular.copy(params.job);
-  $scope.jobId = job.id;
+  $scope.jobId = job.job_id;
+  $scope.schedulerId = 'scheduler-' + job.job_id;
 
   $scope.start = '';
   $scope.end = '';
@@ -72,16 +73,16 @@ module.controller('PrlJobTimepickerModal', function ($scope, $modalInstance, par
       $scope.start = 'now';
     }
     else if ($scope.ui.startRadio === '1') {
-      $scope.start = '';
+      $scope.start = '0';
     }
     else if ($scope.ui.startRadio === '2') {
-      $scope.start = moment($scope.ui.timepicker.from).unix();
+      $scope.start = moment($scope.ui.timepicker.from).unix() * 1000;
     }
 
     if ($scope.ui.endRadio === '0') {
       $scope.end = '';
     } else if ($scope.ui.endRadio === '1') {
-      $scope.end = moment($scope.ui.timepicker.to).unix();
+      $scope.end = moment($scope.ui.timepicker.to).unix() * 1000;
     }
   }
 
@@ -90,12 +91,7 @@ module.controller('PrlJobTimepickerModal', function ($scope, $modalInstance, par
 
     extractForm();
 
-    const params = {
-      start: $scope.start,
-      end: $scope.end,
-    };
-
-    prlJobService.startScheduler($scope.jobId, params)
+    prlJobService.startScheduler($scope.schedulerId, $scope.jobId, $scope.start, $scope.end)
       .then((resp) => {
         prlJobService.refreshJob($scope.jobId)
           .then((job) => {

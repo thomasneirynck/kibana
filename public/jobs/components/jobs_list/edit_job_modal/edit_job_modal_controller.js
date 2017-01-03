@@ -30,7 +30,7 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
   $scope.job = angular.copy(params.job);
 
   $scope.ui = {
-    title: 'Edit ' + $scope.job.id,
+    title: 'Edit ' + $scope.job.job_id,
     currentTab: 0,
     tabs: [
       { index: 0, title: 'Job Details', hidden: false },
@@ -46,7 +46,6 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
       scrollSizeDefault: 1000,
     },
     stoppingScheduler: false,
-    passwordPlaceholder: '',
     validation: {
       tabs:[
         {index: 0, valid: true, checks: { categorizationFilters: {valid: true} }}
@@ -55,25 +54,14 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
   };
 
   // extract scheduler settings
-  if ($scope.job.schedulerConfig) {
-    const schedulerConfig = $scope.job.schedulerConfig;
+  if ($scope.job.scheduler_config) {
+    const schedulerConfig = $scope.job.scheduler_config;
     $scope.ui.isScheduled = true;
     $scope.ui.tabs[1].hidden = false;
     $scope.ui.schedulerStopped = (!$scope.job.scheduler_status || $scope.job.scheduler_status === 'STOPPED');
 
     $scope.ui.scheduler.queryText = angular.toJson(schedulerConfig.query, true);
-    $scope.ui.scheduler.scrollSizeText = schedulerConfig.scrollSize;
-
-    $scope.ui.scheduler.serverAuthenticated = (schedulerConfig.username && schedulerConfig.username !== '');
-
-    if ($scope.ui.scheduler.serverAuthenticated) {
-      $scope.ui.scheduler.usernameText = schedulerConfig.username;
-      $scope.ui.scheduler.passwordText = '';
-
-      $scope.ui.scheduler.passwordPlaceholder = 'The password for this job needs to be entered again, even if it has not changed.';
-
-      delete $scope.job.schedulerConfig.encryptedPassword;
-    }
+    $scope.ui.scheduler.scrollSizeText = schedulerConfig.scroll_size;
   }
 
   $scope.addCustomUrl = function () {
@@ -112,7 +100,7 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
   // convenient function to stop the scheduler from inside the edit dialog
   $scope.stopScheduler = function () {
     $scope.ui.stoppingScheduler = true;
-    prlJobService.stopScheduler($scope.job.id)
+    prlJobService.stopScheduler($scope.job.job_id)
       .then((resp) => {
         if (resp.acknowledgement && resp.acknowledgement === true) {
           $scope.ui.schedulerStopped = true;
@@ -160,7 +148,7 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
 
     $scope.saveLock = true;
 
-    const jobId = $scope.job.id;
+    const jobId = $scope.job.job_id;
     const data = {};
 
     // if the job description has changed, add it to the data json
@@ -256,10 +244,10 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
     }
 
     // check scheduler
-    if ($scope.job.schedulerConfig && $scope.ui.schedulerStopped) {
+    if ($scope.job.scheduler_config && $scope.ui.schedulerStopped) {
       let doUpdate = false;
 
-      const schedulerConfig = $scope.job.schedulerConfig;
+      const schedulerConfig = $scope.job.scheduler_config;
       const sch = $scope.ui.scheduler;
 
       // set query text
@@ -281,31 +269,10 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
       }
 
       // only update if it has changed from the original
-      if (sch.scrollSizeText !== schedulerConfig.scrollSize) {
-        schedulerConfig.scrollSize = ((sch.scrollSizeText === '' || sch.scrollSizeText === null || sch.scrollSizeText === undefined)
+      if (sch.scrollSizeText !== schedulerConfig.scroll_size) {
+        schedulerConfig.scroll_size = ((sch.scrollSizeText === '' || sch.scrollSizeText === null || sch.scrollSizeText === undefined)
           ? sch.scrollSizeDefault : sch.scrollSizeText);
         doUpdate = true;
-      }
-
-
-      if (sch.serverAuthenticated) {
-        // if the authentication tickbox is checked
-        // check to see if the username has changed
-        // the password will be blank as it needs to be reentered by the user
-        if (sch.usernameText !== schedulerConfig.username ||
-           sch.passwordText !== '') {
-          schedulerConfig.username = sch.usernameText;
-          schedulerConfig.password = sch.passwordText;
-          doUpdate = true;
-        }
-      } else {
-        // if the original config had a username but the tickbox is now unchecked
-        // the user wants to remove authentication
-        if (schedulerConfig.username) {
-          delete schedulerConfig.username;
-          delete schedulerConfig.password;
-          doUpdate = true;
-        }
       }
 
       // if changes have happened, add the whole schedulerConfig to the payload

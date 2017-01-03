@@ -124,36 +124,13 @@
           placeholder='{ "match_all": {}}'
           class="form-control" />
 
-        <label>scrollSize</label>
+        <label>scroll_size</label>
         <input
           ng-model="ui.scheduler.scrollSizeText"
           placeholder="{{ui.scheduler.scrollSizeDefault}}"
           type="number"
           min="0"
           class="form-control" />
-      </div>
-
-      <div class="form-group" >
-        <label>
-        <input
-          ng-model="ui.scheduler.serverAuthenticated"
-          ng-change="toggleAuthenticated()"
-          type="checkbox" />
-          Authenticated
-        </label>
-        <div ng-show="ui.scheduler.serverAuthenticated">
-          <label>Username</label>
-          <input
-            ng-model="ui.scheduler.usernameText"
-            placeholder="optional username - leave blank if none"
-            class="form-control" />
-          <label>Password</label>
-          <input
-            ng-model="ui.scheduler.passwordText"
-            placeholder="{{ui.scheduler.passwordPlaceholder}}"
-            class="form-control"
-            type="password" />
-        </div>
       </div>
     </div>
     <div ng-hide="ui.schedulerStopped" >

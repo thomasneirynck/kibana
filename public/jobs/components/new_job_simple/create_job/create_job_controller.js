@@ -378,7 +378,6 @@ module
   $scope.createJob = function () {
     if ($scope.formConfig.jobId !== '') {
       $scope.formConfig.mappingTypes = prlESMappingService.getTypesFromMapping($scope.formConfig.indexPattern.id);
-
       prlSimpleJobService.createJob($scope.formConfig)
       .then(() => {
         prlSimpleJobService.startScheduler($scope.formConfig)
@@ -524,7 +523,7 @@ module
   function viewResults(job, page) {
     if (job && page) {
       // get the time range first
-      prlJobService.jobTimeRange(job.id)
+      prlJobService.jobTimeRange(job.job_id)
         .then((resp) => {
           // if no times are found, use last 24hrs to now
           const from = (resp.start.string) ? '\'' + resp.start.string + '\'' : 'now-24h';
@@ -534,7 +533,7 @@ module
           path += '/app/prelert#/' + page;
           path += '?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:' + from;
           path += ',mode:absolute,to:' + to;
-          path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))&jobId=' + job.id;
+          path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))&jobId=' + job.job_id;
 
           // in safari, window.open does not work unless it has
           // been fired from an onclick event.
@@ -547,7 +546,7 @@ module
             $window.open(path, '_blank');
           }
         }).catch(function (resp) {
-          // msgs.error("Job results for "+job.id+" could not be opened");
+          // msgs.error("Job results for "+job.job_id+" could not be opened");
         });
     }
   };
