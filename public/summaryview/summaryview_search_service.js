@@ -21,7 +21,7 @@ import 'ui/timefilter';
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/prelert');
 
 module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilter) {
 
@@ -38,7 +38,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': earliestMs,
           'lte': latestMs,
           'format': 'epoch_millis'
@@ -99,7 +99,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
               },
               'byTime': {
                 'date_histogram': {
-                  'field': '@timestamp',
+                  'field': 'timestamp',
                   'interval': interval,
                   'min_doc_count': 1,
                   'extended_bounds': {
@@ -163,7 +163,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': earliestMs,
           'lte': latestMs,
           'format': 'epoch_millis'
@@ -215,7 +215,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
               'field': 'job_id',
               'size': maxResults !== undefined ? maxResults : 5,
               'order': {
-                'normalized_probability': 'desc'
+                'normalizedProbability': 'desc'
               }
             },
             'aggs': {
@@ -229,7 +229,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
                   'field': 'detector_index',
                   'size': maxResults !== undefined ? maxResults : 5,
                   'order': {
-                    'normalized_probability': 'desc'
+                    'normalizedProbability': 'desc'
                   }
                 },
                 'aggs': {
@@ -240,7 +240,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
                   },
                   'byTime': {
                     'date_histogram': {
-                      'field': '@timestamp',
+                      'field': 'timestamp',
                       'interval': interval,
                       'min_doc_count': 1,
                       'extended_bounds': {
@@ -314,7 +314,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': earliestMs,
           'lte': latestMs,
           'format': 'epoch_millis'
@@ -377,7 +377,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
               },
               'byTime': {
                 'date_histogram': {
-                  'field': '@timestamp',
+                  'field': 'timestamp',
                   'interval': interval,
                   'min_doc_count': 1,
                   'extended_bounds': {
@@ -440,7 +440,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': earliestMs,
           'lte': latestMs,
           'format': 'epoch_millis'
@@ -503,7 +503,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
               },
               'byTime': {
                 'date_histogram': {
-                  'field': '@timestamp',
+                  'field': 'timestamp',
                   'interval': interval,
                   'min_doc_count': 1,
                   'extended_bounds': {
@@ -569,7 +569,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': earliestMs,
           'lte': latestMs,
           'format': 'epoch_millis'
@@ -606,28 +606,30 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
       index: index,
       size: maxResults !== undefined ? maxResults : 100,
       body: {
-        '_source': ['job_id',
-        '@timestamp',
-        'detector_index',
-        'influencers',
-        'normalized_probability',
-        'actual',
-        'typical',
-        'by_field_name',
-        'by_field_value',
-        'function',
-        'function_description',
-        'probability',
-        'partition_field_value',
-        'partition_field_name',
-        'single_cause_by_field_name',
-        'single_cause_by_field_value',
-        'over_field_name',
-        'over_field_value',
-        'is_interim',
-        'entity_name',
-        'entity_value',
-        'correlated_by_field_value'],
+        '_source': [
+          'job_id',
+          'timestamp',
+          'detector_index',
+          'influencers',
+          'normalized_probability',
+          'actual',
+          'typical',
+          'by_field_name',
+          'by_field_value',
+          'function',
+          'function_description',
+          'probability',
+          'partition_field_value',
+          'partition_field_name',
+          'single_cause_by_field_name',
+          'single_cause_by_field_value',
+          'over_field_name',
+          'over_field_value',
+          'is_interim',
+          'entity_name',
+          'entity_value',
+          'correlated_by_field_value'
+        ],
         'query': {
           'bool': {
             'filter': [
@@ -674,7 +676,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': (earliestMs * 1000),
           'lte': (latestMs * 1000),
           'format': 'epoch_millis'
@@ -710,7 +712,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
     const resutsSize = 20;
     let query = '_type:result AND result_type:influencer';
     if (type[swimlaneType] === type.INF_TYPE) {
-      query +=  'AND influencer_field_name:' + laneLabel;
+      query +=  ' AND influencer_field_name:' + laneLabel;
     }
 
     es.search({
@@ -833,7 +835,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
-        '@timestamp': {
+        'timestamp': {
           'gte': earliestMs,
           'lte': latestMs,
           'format': 'epoch_millis'
@@ -882,8 +884,7 @@ module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilte
         'aggs': {
           'times': {
             'date_histogram': {
-              'field': '@timestamp',
-              // 'interval': '2820s',
+              'field': 'timestamp',
               'interval': interval,
               'min_doc_count': 1,
               'extended_bounds': {

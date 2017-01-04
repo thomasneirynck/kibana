@@ -17,12 +17,11 @@ import moment from 'moment';
 import _ from 'lodash';
 import $ from 'jquery';
 import d3 from 'd3';
-import stringUtils from 'plugins/prelert/util/string_utils';
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 import 'plugins/prelert/filters/abbreviate_whole_number';
 
-let module = uiModules.get('apps/prelert');
 import uiModules from 'ui/modules';
+const module = uiModules.get('apps/prelert');
 
 module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, prlAnomalyRecordDetailsService, prlSwimlaneService) {
   return {
@@ -247,7 +246,7 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
     for (let r in data) {
       const record = data[r];
       if (record.time === undefined) {
-        record.time = moment(record['@timestamp']).unix();
+        record.time = moment(record['timestamp']).unix();
       }
     }
 
@@ -257,7 +256,7 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
     for (let r in data) {
       const record = data[r];
       if (record.detectorText === undefined) {
-        record.detector = prlJobService.detectorsByJob[record.jobId][record.detector_index];
+        record.detector = prlJobService.detectorsByJob[record.job_id][record.detector_index];
         record.detectorText = record.detector.detector_description;
         // console.log(record.detector)
       }
@@ -296,7 +295,6 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
 
   function processRecordResults(recordsPerTimeInterval, highestRecordsIn) {
 
-    // console.log('all the records!!!!', recordsPerTimeInterval)
     const tempHighestRecordPerBucket = {};
     const tempHighestRecordPerInfluencer = {};
     const tempHighestRecordPerInfluencerType = {};
@@ -317,7 +315,7 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
 
       _.each(bucket, (record) => {
         buildDescription(record);
-        const jobId = record.jobId;
+        const jobId = record.job_id;
         if (highestJobCounts[jobId] === undefined) {
           highestJobCounts[jobId] = {};
         }
@@ -340,15 +338,15 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
         tempHighestRecordPerBucket[t][jobId] = highestJobCounts[jobId];
 
         _.each(record.influencers, (inf) => {
-          if (highestInfluencerTypeCounts[inf.influencerFieldName] === undefined) {
-            highestInfluencerTypeCounts[inf.influencerFieldName] = {};
+          if (highestInfluencerTypeCounts[inf.influencer_field_name] === undefined) {
+            highestInfluencerTypeCounts[inf.influencer_field_name] = {};
           }
-          if (highestInfluencerTypeCounts[inf.influencerFieldName][record.detectorText] === undefined) {
-            highestInfluencerTypeCounts[inf.influencerFieldName][record.detectorText] = [];
+          if (highestInfluencerTypeCounts[inf.influencer_field_name][record.detectorText] === undefined) {
+            highestInfluencerTypeCounts[inf.influencer_field_name][record.detectorText] = [];
           }
-          highestInfluencerTypeCounts[inf.influencerFieldName][record.detectorText].push(record);
+          highestInfluencerTypeCounts[inf.influencer_field_name][record.detectorText].push(record);
 
-          _.each(inf.influencerFieldValues, (infVal) => {
+          _.each(inf.influencer_field_values, (infVal) => {
             if (highestInfluencerCounts[infVal] === undefined) {
               highestInfluencerCounts[infVal] = {};
             }
@@ -384,7 +382,7 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
       if (res.time >= swimlaneTimeRange.start && res.time < (swimlaneTimeRange.end + swimlaneTimeRange.interval)) {
         // if JOB type, only use the one supplied job id. otherwise, search through all job ids
         if (that.type[swimlaneSubType] !== that.type.JOB ||
-          (that.type[swimlaneSubType] === that.type.JOB && res.jobId === recordJobIds[0])) {
+          (that.type[swimlaneSubType] === that.type.JOB && res.job_id === recordJobIds[0])) {
           newResults.push(res);
         }
       }
@@ -534,7 +532,6 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
 
       // display top influencers
       if (type === this.type.MONITOR || type === this.type.INF_TYPE) {
-
         loadTopInfluencers(that.topInfluencers, laneLabel, selectedJobIds, swimlaneType, time, (time + bucketInterval.asSeconds()));
         this.showTopInfluencers = true;
         this.visible = true;
@@ -602,8 +599,6 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
       prlSwimlaneSearchService.getTopInfluencers(PRELERT_RESULTS_INDEX_ID, laneLabel, jobIds, swimlaneType,
           earliestMs, latestMs, 0, that.type)
       .then((resp) => {
-        // console.log('top influencer data:', resp);
-
         processTopInfluencersResults(topInfluencers, resp.results, earliestMs, laneLabel, swimlaneType);
 
         // console.log(topInfluencers);
@@ -651,7 +646,6 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
 
       const list = _.uniq(_.union(resp.results.topMax, resp.results.topSum), false, (item, key, id) => { return item.id; });
       that.topInfluencerForPage = list;
-
     }).catch((resp) => {
       console.log('loadTopInfluencersForPage - error getting scores by influencer data from elasticsearch:', resp);
     });

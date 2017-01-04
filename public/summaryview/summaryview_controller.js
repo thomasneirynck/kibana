@@ -31,8 +31,6 @@ import 'plugins/prelert/services/job_service';
 import 'plugins/prelert/services/prelert_dashboard_service';
 import 'plugins/prelert/services/results_service';
 
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
-import stringUtils from 'plugins/prelert/util/string_utils';
 import swimlanes from 'plugins/prelert/summaryview/swimlanes.html';
 import chrome from 'ui/chrome';
 
@@ -42,7 +40,7 @@ uiRoutes
 });
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/prelert');
 
 module.controller('PrlSummaryViewController', function ($scope, $route, $timeout, $compile, $location, Private, $q, es, prlJobService, timefilter, globalState, prlAnomalyRecordDetailsService, prlDashboardService, prlSwimlaneSearchService, prlSwimlaneService) {
 
@@ -89,7 +87,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
       }
 
     }).catch((resp) => {
-      console.log('Connections map - error getting job info from elasticsearch:', resp);
+      console.log('SummaryView - error getting job info from elasticsearch:', resp);
     });
 
   };
