@@ -20,6 +20,7 @@ import stringUtils from 'plugins/prelert/util/string_utils';
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 
 import 'plugins/prelert/components/paginated_table';
+import 'plugins/prelert/filters/format_value';
 import 'plugins/prelert/filters/metric_change_description';
 import 'plugins/prelert/services/job_service';
 import './expanded_row/expanded_row_directive';
@@ -29,7 +30,7 @@ import openRowArrow from 'ui/doc_table/components/table_row/open.html';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/prelert');
 
-module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResultsService) {
+module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResultsService, formatValueFilter) {
   return {
     restrict: 'E',
     scope: {
@@ -556,12 +557,14 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
 
         if (addMetrics !== undefined) {
           if (_.has(record, 'actual')) {
-            tableRow.push({markup: '{{ record.actual | timeOfWeek:record.source.function}}', value: record.actual, scope: rowScope });
-            tableRow.push({markup: '{{ record.typical | timeOfWeek:record.source.function}}', value: record.typical, scope: rowScope });
+            const actualVal = formatValueFilter(record.actual, record.source.function);
+            const typicalVal = formatValueFilter(record.typical, record.source.function);
+            tableRow.push({markup: actualVal, value: actualVal, scope: rowScope });
+            tableRow.push({markup: typicalVal, value: typicalVal, scope: rowScope });
 
             // Use the metricChangeDescription filter to format a textual description of actual vs typical.
-            const factor = (record.actual > record.typical) ? record.actual / record.typical : record.typical / record. actual;
-            tableRow.push({markup: '<span ng-bind-html="' + record.actual + ' | metricChangeDescription:record.typical"></span>',
+            const factor = (actualVal > typicalVal) ? actualVal / typicalVal : typicalVal / actualVal;
+            tableRow.push({markup: '<span ng-bind-html="' + actualVal + ' | metricChangeDescription:' + typicalVal + '"></span>',
               value: Math.abs(factor), scope: rowScope });
           } else {
             tableRow.push({markup: '', value: '' });

@@ -19,6 +19,7 @@ import $ from 'jquery';
 import d3 from 'd3';
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 import 'plugins/prelert/filters/abbreviate_whole_number';
+import 'plugins/prelert/filters/format_value';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/prelert');

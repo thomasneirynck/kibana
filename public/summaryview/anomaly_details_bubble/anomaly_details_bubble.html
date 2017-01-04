@@ -100,12 +100,12 @@
 
           <tr ng-if="record.actual !== undefined" >
             <td>actual:</td>
-            <td>{{record.actual}}</td>
+            <td>{{record.actual | formatValue:record.function}}</td>
           </tr>
 
           <tr ng-if="record.typical" >
             <td>typical:</td>
-            <td>{{record.typical}}</td>
+            <td>{{record.typical | formatValue:record.function}}</td>
           </tr>
 
 <!--           <tr >

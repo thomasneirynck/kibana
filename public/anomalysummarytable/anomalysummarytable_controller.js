@@ -19,7 +19,7 @@
 import _  from 'lodash';
 import moment from 'moment';
 
-import 'plugins/prelert/filters/time_of_week';
+import 'plugins/prelert/filters/format_value';
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 import stringUtils from 'plugins/prelert/util/string_utils';
 import getSort from 'ui/doc_table/lib/get_sort';
@@ -42,7 +42,8 @@ module.controller('PrlAnomalySummaryTableController', function (
   Notifier,
   Private,
   prlJobService,
-  prlResultsService) {
+  prlResultsService,
+  formatValueFilter) {
 
   // Obtain the mappings for detector descriptions by jobId/detector index.
   $scope.detectorsByJob = {};
@@ -673,8 +674,10 @@ module.controller('PrlAnomalySummaryTableController', function (
 
     if (addMetrics !== undefined) {
       if (_.has(record, 'actual')) {
-        tableRow.push({markup: '{{ record.actual | timeOfWeek:record.source.function}}', value: record.actual, scope: rowScope });
-        tableRow.push({markup: '{{ record.typical | timeOfWeek:record.source.function}}', value: record.typical, scope: rowScope });
+        const actualVal = formatValueFilter(record.actual, record.source.function);
+        const typicalVal = formatValueFilter(record.typical, record.source.function);
+        tableRow.push({markup: actualVal, value: actualVal, scope: rowScope });
+        tableRow.push({markup: typicalVal, value: typicalVal, scope: rowScope });
       } else {
         tableRow.push({markup: '', value: '' });
         tableRow.push({markup: '', value: '' });

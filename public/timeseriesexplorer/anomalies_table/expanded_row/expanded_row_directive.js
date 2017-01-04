@@ -25,7 +25,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
-import 'plugins/prelert/filters/time_of_week';
+import 'plugins/prelert/filters/format_value';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/prelert');

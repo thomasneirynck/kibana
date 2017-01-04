@@ -51,8 +51,8 @@
     </tr>
     <tr><td>function:</td><td>{{record.source.function}}</td></tr>
     <tr ng-if="record.source.field_name"><td>fieldName:</td><td>{{record.source.field_name}}</td></tr>
-    <tr ng-if="actual !== undefined"><td>actual:</td><td>{{actual | timeOfWeek:record.source.function}}</td></tr>
-    <tr ng-if="typical !== undefined"><td>typical:</td><td>{{typical | timeOfWeek:record.source.function}}</td></tr>
+    <tr ng-if="actual !== undefined"><td>actual:</td><td>{{actual | formatValue:record.source.function}}</td></tr>
+    <tr ng-if="typical !== undefined"><td>typical:</td><td>{{typical | formatValue:record.source.function}}</td></tr>
     <tr>
       <td>job ID:</td>
       <td>{{record.jobId}}

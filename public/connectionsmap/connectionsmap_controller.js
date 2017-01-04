@@ -24,7 +24,7 @@ import 'ui/courier';
 
 import 'plugins/prelert/components/paginated_table';
 import 'plugins/prelert/filters/abbreviate_whole_number';
-import 'plugins/prelert/filters/time_of_week';
+import 'plugins/prelert/filters/format_value';
 import 'plugins/prelert/services/job_service';
 import 'plugins/prelert/services/results_service';
 import 'plugins/prelert/services/prelert_dashboard_service';
