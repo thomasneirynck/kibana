@@ -34,7 +34,6 @@ import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 import stringUtils from 'plugins/prelert/util/string_utils';
 import 'plugins/prelert/services/job_service';
 import 'plugins/prelert/services/prelert_dashboard_service';
-import 'plugins/prelert/services/results_service';
 import './swimlane_influencers/swimlane_influencers_directive';
 
 import uiModules from 'ui/modules';
@@ -46,8 +45,7 @@ module.controller('PrlSwimlaneController', function ($scope,
  $location,
  courier,
  prlJobService,
- prlDashboardService,
- prlResultsService) {
+ prlDashboardService) {
 
   // Obtain the descriptions for each job and detector.
   $scope.jobDescriptions = {};
@@ -72,7 +70,7 @@ module.controller('PrlSwimlaneController', function ($scope,
   });
 
   // Obtain the list of 'View by' fields per job for record type results.
-  prlResultsService.getJobViewByFields($scope.vis.indexPattern.id)
+  prlJobService.getJobViewByFields()
   .then(function (resp) {
     if (resp.fieldsByJob) {
       $scope.fieldsByJob = resp.fieldsByJob;
@@ -98,7 +96,7 @@ module.controller('PrlSwimlaneController', function ($scope,
       });
     }
   }).catch(function (resp) {
-    console.log('Swimlane - error getting job detector fields info from ES:', resp);
+    console.log('Swimlane - error getting job viewBy fields:', resp);
   });
 
 

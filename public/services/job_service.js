@@ -546,9 +546,71 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
 
         deferred.resolve(obj);
 
-      }).catch(function (err) {
-        console.log('getBasicJobInfo error getting list of jobs:', err);
+      })
+      .catch((resp) => {
+        console.log('getBasicJobInfo error getting list of jobs:', resp);
+        deferred.reject(resp);
+      });
 
+    return deferred.promise;
+  };
+
+  // Obtains the list of fields by which record level results may be viewed for all
+  // the jobs that have been created. Essentially this is the list of unique 'by',
+  // 'over' and 'partition' fields that have been defined across all the detectors for
+  // a job, although for detectors with both 'by' and 'over' fields, the 'by' field name
+  // is not returned since this field is not added to the top-level record fields.
+  // Returned response contains a fieldsByJob property, with job ID keys
+  // against an array of the field names by which record type results may be viewed
+  // for that job.
+  // Contains an addition '*' key which holds an array of the
+  // unique fields across all jobs.
+  this.getJobViewByFields = function () {
+    const deferred = $q.defer();
+    const obj = {success: true, fieldsByJob: {'*':[]}};
+
+    ml.jobConfigs()
+      .then(function (resp) {
+        if (resp.jobs && resp.jobs.length > 0) {
+          _.each(resp.jobs, (jobObj) => {
+            // Add the list of distinct by, over and partition fields for each job.
+            const fieldsForJob = [];
+
+            const analysisConfig = jobObj.analysis_config;
+            const detectors = analysisConfig.detectors || [];
+            _.each(detectors, (detector) => {
+              if (_.has(detector, 'partition_field_name')) {
+                fieldsForJob.push(detector.partition_field_name);
+              }
+              if (_.has(detector, 'over_field_name')) {
+                fieldsForJob.push(detector.over_field_name);
+              }
+              // For jobs with by and over fields, don't add the 'by' field as this
+              // field will only be added to the top-level fields for record type results
+              // if it also an influencer over the bucket.
+              if (_.has(detector, 'by_field_name') && !(_.has(detector, 'over_field_name'))) {
+                fieldsForJob.push(detector.by_field_name);
+              }
+            });
+
+            obj.fieldsByJob[jobObj.job_id] = _.uniq(fieldsForJob);
+            obj.fieldsByJob['*'] = _.union(obj.fieldsByJob['*'], obj.fieldsByJob[jobObj.job_id]);
+          });
+
+          // Sort fields alphabetically.
+          _.each(obj.fieldsByJob, (fields, jobId)=> {
+            obj.fieldsByJob[jobId] = _.sortBy(fields, (field) => {
+              return field.toLowerCase();
+            });
+          });
+        }
+
+        deferred.resolve(obj);
+
+      })
+      .catch((resp) => {
+        console.log('getJobViewByFields error getting list of viewBy fields:', resp);
+        deferred.reject(resp);
       });
 
     return deferred.promise;
