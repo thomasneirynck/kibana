@@ -92,23 +92,16 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
       // add the arrow elements to the page outside the <pretty_duration>'s parent anchor element
       // however, they are given <pretty_duration>'s scope to allow access to the back and forward functions
       function addArrows() {
-        $elem.parent().css('display', 'inline-block');
-        const fwdButton = angular.element('<i ng-click="forward()"" class="prl-time-button fa fa-arrow-right" ></i>');
-        const backButton = angular.element('<i ng-click="back()"" class="prl-time-button fa fa-arrow-left" ></i>');
         const zoomOutButton = angular.element('<i ng-click="zoomOut()" class="prl-time-button fa fa-search-minus" ></i>');
         const zoomInButton = angular.element('<i ng-click="zoomIn()" class="prl-time-button fa fa-search-plus" ></i>');
         const separator = angular.element('<div class="prl-time-button-separator" ></div>');
 
-        $elem.parent().before(zoomInButton);
-        $elem.parent().before(zoomOutButton);
-        $elem.parent().before(separator);
-        $elem.parent().before(backButton);
-        $elem.parent().after(fwdButton);
+        $($elem.parent()[0].previousElementSibling).before(zoomInButton);
+        $($elem.parent()[0].previousElementSibling).before(zoomOutButton);
+        $($elem.parent()[0].previousElementSibling).before(separator);
         // compile the new html and attach this scope to allow access to the back and forward functions
         $compile(zoomInButton)($scope);
         $compile(zoomOutButton)($scope);
-        $compile(backButton)($scope);
-        $compile(fwdButton)($scope);
       }
 
       // find the from and to values from the timefilter
@@ -128,28 +121,6 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
           };
         }
       }
-
-      // travel forward in time based on the interval between from and to
-      $scope.forward = function () {
-        const time = getFromTo();
-        const diff = time.to.diff(time.from);
-        const origTo = time.to.toISOString();
-
-        time.to.add(diff, 'milliseconds');
-        timefilter.time.from = origTo;
-        timefilter.time.to = time.to.toISOString();
-      };
-
-      // travel backwards in time based on the interval between from and to
-      $scope.back = function () {
-        const time = getFromTo();
-        const diff = time.to.diff(time.from);
-        const origFrom = time.from.toISOString();
-
-        time.from.subtract(diff, 'milliseconds');
-        timefilter.time.to = origFrom;
-        timefilter.time.from = time.from.toISOString();
-      };
 
       // zoom out, doubling the difference between start and end, keeping the same time range center
       $scope.zoomOut = function () {
