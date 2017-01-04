@@ -24,6 +24,9 @@ export default function _xpackInfo(server, pollFrequencyInMillis) {
 
   const xpackInfoObject = {
     license: {
+      getUid: function () {
+        return get(_cachedResponseFromElasticsearch, 'license.uid');
+      },
       isActive: function () {
         return get(_cachedResponseFromElasticsearch, 'license.status') === 'active';
       },
