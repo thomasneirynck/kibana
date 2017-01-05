@@ -375,32 +375,65 @@ module
 
   let ignoreModel = false;
   let refreshInterval = REFRESH_INTERVAL_MS;
+  // function for creating a new job.
+  // creates the job, opens it, creates the scheduler and starts it.
+  // the job may fail to open, but the scheduler should still be created
+  // if the job save was successful.
   $scope.createJob = function () {
     if ($scope.formConfig.jobId !== '') {
+      msgs.clear();
       $scope.formConfig.mappingTypes = prlESMappingService.getTypesFromMapping($scope.formConfig.indexPattern.id);
+      // create the new job
       prlSimpleJobService.createJob($scope.formConfig)
-      .then(() => {
-        prlSimpleJobService.startScheduler($scope.formConfig)
+      .then((job) => {
+        // if save was successful, open the job
+        prlJobService.openJob(job.job_id)
         .then((resp) => {
-          $scope.jobState = JOB_STATE.RUNNING;
-          refreshCounter = 0;
-          ignoreModel = false;
-          refreshInterval = REFRESH_INTERVAL_MS;
-          loadCharts();
+          // if open was successful create a new scheduler
+          saveNewScheduler(job, true);
         })
         .catch((resp) => {
-          // scheduler failed
-          msgs.error(resp.message);
+          msgs.error('Could not open job: ', resp);
+          msgs.error('Job created, creating scheduler anyway');
+          // if open failed, still attempt to create the scheduler
+          // as it may have failed because we've hit the limit of open jobs
+          saveNewScheduler(job, false);
         });
+
       })
       .catch((resp) => {
         // save failed
-        msgs.error('Save failed: ' + resp.message);
+        msgs.error('Save failed: ', resp.resp);
+      });
+    }
+
+    // save new scheduler internal function
+    // creates a new scheduler and attempts to start it depending
+    // on startSchedulerAfterSave flag
+    function saveNewScheduler(job, startSchedulerAfterSave) {
+      prlJobService.saveNewScheduler(job.scheduler_config, job.job_id)
+      .then((resp) => {
+
+        if (startSchedulerAfterSave) {
+          prlSimpleJobService.startScheduler($scope.formConfig)
+          .then((resp) => {
+            $scope.jobState = JOB_STATE.RUNNING;
+            refreshCounter = 0;
+            ignoreModel = false;
+            refreshInterval = REFRESH_INTERVAL_MS;
+            loadCharts();
+          })
+          .catch((resp) => {
+            // scheduler failed
+            msgs.error('Could not start scheduler: ', resp);
+          });
+        }
+      })
+      .catch((resp) => {
+        msgs.error('Save scheduler failed: ', resp)
       });
     }
   };
-
-  // $scope.loadCharts = loadCharts; // for debugging, REMOVE
 
   function loadCharts() {
     let forceStop = false;
@@ -509,11 +542,11 @@ module
     $scope.loadVis();
   };
 
-  $scope.stopJob = function (jobId) {
+  $scope.stopJob = function () {
     // setting the status to STOPPING disables the stop button
     // job.scheduler_status = 'STOPPING';
     $scope.jobState = JOB_STATE.STOPPING;
-    prlJobService.stopScheduler(jobId);
+    prlSimpleJobService.stopScheduler($scope.formConfig);
   };
 
   $scope.viewResults = function (page) {

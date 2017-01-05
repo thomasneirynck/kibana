@@ -310,11 +310,7 @@ module.service('prlSimpleJobService', function (
       .then((resp) => {
         // console.log('createJob: ', resp);
         if (resp.success) {
-          prlJobService.saveNewScheduler(this.job.scheduler_config, this.job.job_id)
-          .then(resp => {
-            deferred.resolve(resp);
-          })
-          .catch(resp => {});
+          deferred.resolve(this.job);
         } else {
           deferred.reject(resp);
         }
@@ -332,6 +328,11 @@ module.service('prlSimpleJobService', function (
   this.startScheduler = function (formConfig) {
     const schedulerId = 'scheduler-' + formConfig.jobId;
     return prlJobService.startScheduler(schedulerId, formConfig.jobId, formConfig.start, formConfig.end);
+  };
+
+  this.stopScheduler = function (formConfig) {
+    const schedulerId = 'scheduler-' + formConfig.jobId;
+    return prlJobService.stopScheduler(schedulerId, formConfig.jobId);
   };
 
   this.checkSchedulerStatus = function (formConfig) {

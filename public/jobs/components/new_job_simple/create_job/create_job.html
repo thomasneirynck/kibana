@@ -127,7 +127,7 @@
 
       <button
         aria-label="Stop Job"
-        ng-click="stopJob(formConfig.jobId)"
+        ng-click="stopJob()"
         type="button"
         ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
         ng-disabled="jobState === JOB_STATE.STOPPING"

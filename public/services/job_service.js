@@ -351,13 +351,13 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
     }
 
     ml.stopScheduler({schedulerId: 'scheduler-' + job.job_id})
-    .finally(resp => {
+    .finally((resp) => {
       ml.deleteScheduler({schedulerId: 'scheduler-' + job.job_id})
-      .finally(resp => {
+      .finally((resp) => {
         ml.closeJob({jobId: job.job_id})
         .finally(func);
-      })
-    })
+      });
+    });
     return deferred.promise;
   };
 
@@ -412,8 +412,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
 
   // find a job based on the id
   this.getJob = function (jobId) {
-    let job;
-    job = _.find(jobs, (job) => {
+    const job = _.find(jobs, (job) => {
       return job.job_id === jobId;
     });
 
@@ -1026,31 +1025,13 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
 
 
   this.saveNewScheduler = function (schedulerConfig, jobId) {
-    const deferred = $q.defer();
-
     const schedulerId = 'scheduler-' + jobId;
-    // run then and catch through the same check
-    const func = function (resp) {
-      // TODO - check resp for error, in case job was already open.
+    schedulerConfig.job_id = jobId;
 
-      schedulerConfig.job_id = jobId;
-
-      ml.addScheduler({
-        schedulerId: schedulerId,
-        body: schedulerConfig
-      })
-      .then(resp => {
-        deferred.resolve(resp);
-      })
-      .catch(resp => {
-        deferred.reject(resp);
-      });
-    };
-
-    this.openJob(jobId)
-      .then(func).catch(func);
-
-    return deferred.promise;
+    return ml.addScheduler({
+      schedulerId: schedulerId,
+      body: schedulerConfig
+    });
   };
 
   this.deleteScheduler = function () {
@@ -1061,7 +1042,6 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
   // refresh the job status on start success
   this.startScheduler = function (schedulerId, jobId, start, end) {
     const deferred = $q.defer();
-    // apiService.schedulerControl(jobId, 'start', params)
     ml.startScheduler({
       schedulerId: schedulerId,
       start: start,
@@ -1071,41 +1051,33 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
         // console.log(resp);
         // refresh the status for the job as it's now changed
         this.updateSingleJobCounts(jobId);
-        // return resp;
         deferred.resolve(resp);
 
       }).catch((err) => {
         console.log('PrlJobsList error starting scheduler:', err);
-        msgs.error('Could not start scheduler for ' + jobId);
-        if (err.message) {
-          msgs.error(err.message);
-        }
+        msgs.error('Could not start scheduler for ' + jobId, err);
         deferred.reject(err);
-        // return err;
       });
     return deferred.promise;
   };
 
   // stop the scheduler for a given job
   // refresh the job status on stop success
-  this.stopScheduler = function (jobId) {
+  this.stopScheduler = function (schedulerId, jobId) {
     const deferred = $q.defer();
-    apiService.schedulerControl(jobId, 'stop')
-      .then(function (resp) {
+    ml.stopScheduler({
+      schedulerId: schedulerId
+    })
+      .then((resp) => {
         // console.log(resp);
         // refresh the status for the job as it's now changed
         this.updateSingleJobCounts(jobId);
         deferred.resolve(resp);
-        // return resp;
 
-      }).catch(function (err) {
+      }).catch((err) => {
         console.log('PrlJobsList error stoping scheduler:', err);
-        msgs.error('Could not stop scheduler for ' + jobId);
-        if (err.message) {
-          msgs.error(err.message);
-        }
+        msgs.error('Could not stop scheduler for ' + jobId, err);
         deferred.reject(err);
-        // return err;
       });
     return deferred.promise;
   };

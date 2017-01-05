@@ -431,14 +431,26 @@ function (
                     });
 
                   } else {
+                    // save successful, attempt to open the job
+                    prlJobService.openJob($scope.job.job_id)
+                    .then((resp) => {
+                      // open job successful, create a new scheduler
+                      prlJobService.saveNewScheduler($scope.job.scheduler_config, $scope.job.job_id)
+                      .then(resp => {
 
-                    prlJobService.saveNewScheduler($scope.job.scheduler_config, $scope.job.job_id)
-                    .then(resp => {
-
-                      $scope.saveLock = false;
-                      // no data to upload, go back to the jobs list
+                        $scope.saveLock = false;
+                        // no data to upload, go back to the jobs list
+                      })
+                      .catch((resp) => {
+                        msgs.error('Could not start scheduler: ', resp);
+                        $scope.saveLock = false;
+                      });
                     })
-                    .catch(resp => {});
+                    .catch((resp) => {
+                      msgs.error('Could not open job: ', resp);
+                      msgs.error('Job created, creating scheduler anyway');
+                      $scope.saveLock = false;
+                    });
                   }
                 });
               });

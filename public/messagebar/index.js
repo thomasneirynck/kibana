@@ -46,10 +46,21 @@ module.service('prlMessageBarService', function ($http, $q) {
     this.addMessage({text: text, style: MSG_STYLE.WARNING});
   };
 
-  this.error = function (text) {
-    this.addMessage({text: text, style: MSG_STYLE.ERROR});
+  this.error = function (text, resp) {
+    const txt = text + expandErrorMessageObj(resp);
+    this.addMessage({text: txt, style: MSG_STYLE.ERROR});
   };
 
+  function expandErrorMessageObj(resp) {
+    let txt = '';
+    if (resp !== undefined && typeof resp === 'object') {
+      const respObj = JSON.parse(resp.response);
+      if (typeof respObj === 'object' && respObj.error !== undefined) {
+        txt = respObj.error.reason;
+      }
+    }
+    return txt;
+  }
 })
 
 .controller('PrlMessageBarController', function ($scope, prlMessageBarService) {
