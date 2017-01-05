@@ -51,9 +51,9 @@ module.exports = function (kibana) {
 
     init: function (server, options) {
 
-      createProxy(server, 'PUT', '/_xpack/prelert/{paths*}');
-      createProxy(server, 'POST', '/_xpack/prelert/{paths*}');
-      createProxy(server, 'DELETE', '/_xpack/prelert/{paths*}');
+      createProxy(server, 'PUT', '/_xpack/ml/{paths*}');
+      createProxy(server, 'POST', '/_xpack/ml/{paths*}');
+      createProxy(server, 'DELETE', '/_xpack/ml/{paths*}');
 
       const prelertConfig = readPrelertConfig();
       // Configure a configuration route that supplies the value of the

@@ -25331,10 +25331,10 @@
   api.jobConfigs = ca({
     urls: [
       {
-        fmt: '/_xpack/prelert/anomaly_detectors/_all',
+        fmt: '/_xpack/ml/anomaly_detectors/_all',
       },
       {
-        fmt: '/_xpack/prelert/anomaly_detectors/<%=jobId%>',
+        fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>',
         req: {
           jobId: {
             type: 'list'
@@ -25348,7 +25348,7 @@
   api.jobStats = ca({
     urls: [
       {
-        fmt: '/_xpack/prelert/anomaly_detectors/<%=jobId%>/_stats',
+        fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>/_stats',
         req: {
           jobId: {
             type: 'list'
@@ -25356,7 +25356,7 @@
         }
       },
       {
-        fmt: '/_xpack/prelert/anomaly_detectors/_all/_stats',
+        fmt: '/_xpack/ml/anomaly_detectors/_all/_stats',
       }
     ],
     method: 'GET'
@@ -25365,7 +25365,7 @@
   api.addJob = ca({
     urls: [
       {
-        fmt: '/_xpack/prelert/anomaly_detectors'
+        fmt: '/_xpack/ml/anomaly_detectors'
       }
     ],
     needBody: true,
@@ -25375,7 +25375,7 @@
   api.openJob = ca({
     urls: [
       {
-        fmt: '/_xpack/prelert/anomaly_detectors/<%=jobId%>/_open',
+        fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>/_open',
         req: {
           jobId: {
             type: 'string'
@@ -25389,7 +25389,7 @@
   api.closeJob = ca({
     urls: [
       {
-        fmt: '/_xpack/prelert/anomaly_detectors/<%=jobId%>/_close',
+        fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>/_close',
         req: {
           jobId: {
             type: 'string'
@@ -25402,7 +25402,7 @@
 
   api.deleteJob = ca({
     url: {
-      fmt: '/_xpack/prelert/anomaly_detectors/<%=jobId%>',
+      fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>',
       req: {
         jobId: {
           type: 'string'
@@ -25415,7 +25415,7 @@
   api.addScheduler = ca({
     urls: [
       {
-        fmt: '/_xpack/prelert/schedulers/<%=schedulerId%>',
+        fmt: '/_xpack/ml/schedulers/<%=schedulerId%>',
         req: {
           schedulerId: {
             type: 'string'
@@ -25429,7 +25429,7 @@
 
   api.deleteScheduler = ca({
     url: {
-      fmt: '/_xpack/prelert/schedulers/<%=schedulerId%>',
+      fmt: '/_xpack/ml/schedulers/<%=schedulerId%>',
       req: {
         schedulerId: {
           type: 'string'
@@ -25442,7 +25442,7 @@
   api.startScheduler = ca({
     urls: [
       {
-        fmt: '/_xpack/prelert/schedulers/<%=schedulerId%>/_start?&start=<%=start%>&end=<%=end%>',
+        fmt: '/_xpack/ml/schedulers/<%=schedulerId%>/_start?&start=<%=start%>&end=<%=end%>',
         req: {
           schedulerId: {
             type: 'string'
@@ -25462,7 +25462,7 @@
   api.stopScheduler = ca({
     urls: [
       {
-        fmt: '/_xpack/prelert/schedulers/<%=schedulerId%>/_stop',
+        fmt: '/_xpack/ml/schedulers/<%=schedulerId%>/_stop',
         req: {
           schedulerId: {
             type: 'string'
@@ -25476,7 +25476,7 @@
   api.getShedulerStats = ca({
     urls: [
       {
-        fmt: '/_xpack/prelert/schedulers/<%=schedulerId%>/_stats',
+        fmt: '/_xpack/ml/schedulers/<%=schedulerId%>/_stats',
         req: {
           schedulerId: {
             type: 'list'
@@ -25484,7 +25484,7 @@
         }
       },
       {
-        fmt: '/_xpack/prelert/schedulers/_all/_stats',
+        fmt: '/_xpack/ml/schedulers/_all/_stats',
       }
     ],
     method: 'GET'
