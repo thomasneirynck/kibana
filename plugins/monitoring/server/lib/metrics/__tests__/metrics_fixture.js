@@ -36,6 +36,21 @@ function logstashEventsLatencyCalculation(last) {
   return 0;
 }
 
+function quotaMetricCalculation(bucket) {
+  const quota = _.get(bucket, 'quota.value');
+  const deltaUsage = _.get(bucket, 'usage_deriv.value');
+  const deltaPeriods = _.get(bucket, 'periods_deriv.value');
+
+  if (deltaUsage && deltaPeriods && quota > -1) {
+    // if throttling is configured
+    const factor = deltaUsage / (deltaPeriods * quota * 1000); // convert quota from microseconds to nanoseconds by multiplying 1000
+    return factor * 100; // convert factor to percentage
+
+  }
+  // if throttling is NOT configured
+  return _.get(bucket, 'metric.value'); // "metric" is an auto-added aggregation for `this.field`, which is the "actual" cpu
+}
+
 
 export const expected = {
   'cluster_index_request_rate_primary': {
@@ -835,6 +850,22 @@ export const expected = {
     'timestampField': 'timestamp',
     'derivative': true
   },
+  'node_cgroup_periods': {
+    'field': 'node_stats.os.cgroup.cpu.stat.number_of_elapsed_periods',
+    'title': 'Cgroup CFS Stats',
+    'label': 'Cgroup Elapsed Periods',
+    'description': (
+      'The number of sampling periods from the Completely Fair Scheduler (CFS). Compare against the number of times throttled.'
+    ),
+    'type': 'node',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'units': '',
+    'app': 'elasticsearch',
+    'uuidField': 'cluster_uuid',
+    'timestampField': 'timestamp',
+    'derivative': true
+  },
   'node_cgroup_throttled': {
     'field': 'node_stats.os.cgroup.cpu.stat.time_throttled_nanos',
     'title': 'Cgroup CPU Performance',
@@ -877,10 +908,111 @@ export const expected = {
     'timestampField': 'timestamp',
     'derivative': true
   },
+  'node_cgroup_quota': {
+    'fieldSource': 'node_stats.os.cgroup',
+    'usageField': 'cpuacct.usage_nanos',
+    'periodsField': 'cpu.stat.number_of_elapsed_periods',
+    'quotaField': 'cpu.cfs_quota_micros',
+    'field': 'node_stats.process.cpu.percent',
+    'label': 'Cgroup CPU Utilization',
+    'title': 'CPU Utilization',
+    'description': (
+      'CPU Usage time compared to the CPU quota shown in percentage. If CPU ' +
+      'quotas are not set, then the OS level CPU usage in percentage is shown.'
+    ),
+    'type': 'node',
+    'app': 'elasticsearch',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'derivative': false,
+    'timestampField': 'timestamp',
+    'units': '%',
+    'uuidField': 'cluster_uuid',
+    'calculation': quotaMetricCalculation,
+    'aggs': {
+      'periods': {
+        'max': {
+          'field': 'node_stats.os.cgroup.cpu.stat.number_of_elapsed_periods'
+        }
+      },
+      'periods_deriv': {
+        'derivative': {
+          'buckets_path': 'periods',
+          'gap_policy': 'skip'
+        }
+      },
+      'quota': {
+        'min': {
+          'field': 'node_stats.os.cgroup.cpu.cfs_quota_micros'
+        }
+      },
+      'usage': {
+        'max': {
+          'field': 'node_stats.os.cgroup.cpuacct.usage_nanos'
+        }
+      },
+      'usage_deriv': {
+        'derivative': {
+          'buckets_path': 'usage',
+          'gap_policy': 'skip'
+        }
+      }
+    }
+  },
+  'node_cgroup_quota_as_cpu_utilization': {
+    'fieldSource': 'node_stats.os.cgroup',
+    'usageField': 'cpuacct.usage_nanos',
+    'periodsField': 'cpu.stat.number_of_elapsed_periods',
+    'quotaField': 'cpu.cfs_quota_micros',
+    'field': 'node_stats.process.cpu.percent',
+    'label': 'CPU Utilization',
+    'description': (
+      'CPU Usage time compared to the CPU quota shown in percentage. If CPU ' +
+      'quotas are not set, then the OS level CPU usage in percentage is shown.'
+    ),
+    'type': 'node',
+    'app': 'elasticsearch',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'derivative': false,
+    'timestampField': 'timestamp',
+    'units': '%',
+    'uuidField': 'cluster_uuid',
+    'calculation': quotaMetricCalculation,
+    'aggs': {
+      'periods': {
+        'max': {
+          'field': 'node_stats.os.cgroup.cpu.stat.number_of_elapsed_periods'
+        }
+      },
+      'periods_deriv': {
+        'derivative': {
+          'buckets_path': 'periods',
+          'gap_policy': 'skip'
+        }
+      },
+      'quota': {
+        'min': {
+          'field': 'node_stats.os.cgroup.cpu.cfs_quota_micros'
+        }
+      },
+      'usage': {
+        'max': {
+          'field': 'node_stats.os.cgroup.cpuacct.usage_nanos'
+        }
+      },
+      'usage_deriv': {
+        'derivative': {
+          'buckets_path': 'usage',
+          'gap_policy': 'skip'
+        }
+      }
+    }
+  },
   'node_cpu_utilization': {
     'field': 'node_stats.process.cpu.percent',
     'label': 'CPU Utilization',
-    'description': 'Percentage of CPU usage (100% is the max).',
+    'description': 'Percentage of CPU usage reported by the OS (100% is the max).',
     'type': 'node',
     'format': '0,0.[00]',
     'metricAgg': 'avg',

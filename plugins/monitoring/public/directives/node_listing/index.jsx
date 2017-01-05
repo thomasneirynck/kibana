@@ -47,10 +47,10 @@ function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch
       const status = getStatus(this.state.status);
       const isOnline = checkOnline(status);
 
-      const cpuColumnsComponents = (() => {
+      const cpuComponents = (() => {
         if (showCgroupMetricsElasticsearch) {
           return [
-            <MetricCell key="cpuCol1" isOnline={isOnline} metric={this.state.metrics.node_cgroup_usage}></MetricCell>,
+            <MetricCell key="cpuCol1" isOnline={isOnline} metric={this.state.metrics.node_cgroup_quota}></MetricCell>,
             <MetricCell key="cpuCol2" isOnline={isOnline} metric={this.state.metrics.node_cgroup_throttled}></MetricCell>
           ];
         }
@@ -77,7 +77,7 @@ function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch
               <span className={statusIconClass(status)} title={_.capitalize(status)}></span>
             </span>
           </td>
-          {cpuColumnsComponents}
+          {cpuComponents}
           <MetricCell isOnline={isOnline} metric={this.state.metrics.node_jvm_mem_percent}></MetricCell>
           <MetricCell isOnline={isOnline} metric={this.state.metrics.node_free_space}></MetricCell>
           {(() => {
@@ -102,18 +102,18 @@ function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch
 // change the node to actually display the name
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringNodesListing', function (kbnUrl, showCgroupMetricsElasticsearch) {
-  const cpuColumnsConfig = (() => {
+  const cpuColumns = (() => {
     if (showCgroupMetricsElasticsearch) {
       return [
         {
-          key: 'metrics.node_cgroup_usage',
-          sortKey: 'metrics.node_cgroup_usage.last',
-          title: 'CPU Cgroup Usage'
+          key: 'metrics.node_cgroup_quota',
+          sortKey: 'metrics.node_cgroup_quota.last',
+          title: 'CPU Usage'
         },
         {
           key: 'metrics.node_cgroup_throttled',
           sortKey: 'metrics.node_cgroup_throttled.last',
-          title: 'CPU Cgroup Throttling'
+          title: 'CPU Throttling'
         },
       ];
     }
@@ -147,7 +147,7 @@ uiModule.directive('monitoringNodesListing', function (kbnUrl, showCgroupMetrics
         sortKey: 'online',
         title: 'Status'
       },
-      ...cpuColumnsConfig,
+      ...cpuColumns,
       {
         key: 'metrics.node_jvm_mem_percent',
         sortKey: 'metrics.node_jvm_mem_percent.last',

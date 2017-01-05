@@ -45,20 +45,6 @@
             "max" : 31,
             "min" : 16,
             "slope" : 8.454236016400544e-19
-         },
-         "node_cpu_utilization" : {
-            "metric" : {
-               "app" : "elasticsearch",
-               "format" : "0,0.[00]",
-               "field" : "node_stats.process.cpu.percent",
-               "label" : "CPU Utilization",
-               "units" : "%",
-               "description" : "Percentage of CPU usage (100% is the max)."
-            },
-            "last": 2,
-            "max" : 9,
-            "slope" : null,
-            "min" : 0.333333333333333
          }
       }
    }

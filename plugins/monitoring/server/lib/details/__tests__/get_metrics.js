@@ -63,7 +63,7 @@ describe('getMetrics and getSeries', () => {
           {
             metric: {
               app: 'elasticsearch',
-              description: 'Percentage of CPU usage (100% is the max).',
+              description: 'Percentage of CPU usage reported by the OS (100% is the max).',
               field: 'node_stats.process.cpu.percent',
               label: 'CPU Utilization',
               format: '0,0.[00]',

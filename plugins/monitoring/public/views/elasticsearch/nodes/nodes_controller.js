@@ -16,7 +16,7 @@ function getPageData(timefilter, globalState, $http, Private, showCgroupMetricsE
   const cpuListingMetrics = (() => {
     if (showCgroupMetricsElasticsearch) {
       return [
-        'node_cgroup_usage',
+        'node_cgroup_quota',
         'node_cgroup_throttled'
       ];
     }

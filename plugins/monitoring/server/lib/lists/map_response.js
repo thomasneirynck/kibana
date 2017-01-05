@@ -3,18 +3,33 @@ import filterPartialBuckets from '../filter_partial_buckets';
 import pickMetricFields from '../pick_metric_fields';
 import metrics from '../metrics';
 
+function createDataObject(x, y) {
+  return { x, y };
+}
+
+// TODO refactor metric classes to give every metric a calculation fn?
 function mapChartData(metric) {
   return (bucket) => {
-    const bucketMetricDeriv = bucket.metric_deriv;
-    const bucketMetricValue = bucket.metric.value;
-    const data = { x: bucket.key };
-    if (metric.derivative && bucketMetricDeriv) {
-      data.y = bucketMetricDeriv.normalized_value || bucketMetricDeriv.value || 0;
-    } else if (bucketMetricValue) {
-      data.y = bucketMetricValue;
+    const _createDataObject = _.partial(createDataObject, bucket.key);
+
+    if (metric.calculation) {
+      return _createDataObject(metric.calculation(bucket));
     }
 
-    return data;
+    const bucketMetricDeriv = bucket.metric_deriv;
+    if (metric.derivative && bucketMetricDeriv) {
+      return _createDataObject(
+        bucketMetricDeriv.normalized_value || bucketMetricDeriv.value || 0
+      );
+    }
+
+    const bucketMetricValue = _.get(bucket, 'metric.value');
+    if (bucketMetricValue) {
+      return _createDataObject(bucketMetricValue);
+    }
+
+    return _createDataObject(null);
+
   };
 }
 

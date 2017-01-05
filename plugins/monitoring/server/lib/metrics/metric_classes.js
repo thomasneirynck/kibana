@@ -122,6 +122,59 @@ export class LatencyMetric extends ElasticsearchMetric {
 
 }
 
+export class QuotaMetric extends ElasticsearchMetric {
+
+  constructor(opts) {
+    super({
+      ...opts,
+      format: LARGE_FLOAT,
+      metricAgg: 'max', // makes an average metric of `this.field`, which is the "actual cpu utilization"
+      units: '%'
+    });
+
+    this.aggs = {
+      usage: {
+        max: { field: `${this.fieldSource}.${this.usageField}` }
+      },
+      periods: {
+        max: { field: `${this.fieldSource}.${this.periodsField}` }
+      },
+      quota: {
+        // Use min for this value. Basically equivalient to max, but picks -1
+        // as the value if quota is disabled in one of the docs, which affects
+        // the logic by routing to the non-quota scenario
+        min: {
+          field: `${this.fieldSource}.${this.quotaField}`
+        }
+      },
+      usage_deriv: {
+        derivative: { buckets_path: 'usage', gap_policy: 'skip' }
+      },
+      periods_deriv: {
+        derivative: { buckets_path: 'periods', gap_policy: 'skip' }
+      },
+    };
+
+    this.calculation = (bucket) => {
+
+      const quota = _.get(bucket, 'quota.value');
+      const deltaUsage = _.get(bucket, 'usage_deriv.value');
+      const deltaPeriods = _.get(bucket, 'periods_deriv.value');
+
+      if (deltaUsage && deltaPeriods && quota > 0) {
+        // if throttling is configured
+        const factor = deltaUsage / (deltaPeriods * quota * 1000); // convert quota from microseconds to nanoseconds by multiplying 1000
+        return factor * 100; // convert factor to percentage
+
+      }
+      // if throttling is NOT configured
+      return _.get(bucket, 'metric.value'); // "metric" is an auto-added aggregation for `this.field`, which is the "actual" cpu
+
+    };
+  }
+
+}
+
 export class RequestRateMetric extends ElasticsearchMetric {
 
   constructor(opts) {
@@ -268,16 +321,16 @@ export class EventsLatencyMetric extends LogstashMetric {
     });
 
     this.aggs = {
-      ['events_time_in_millis']: {
+      events_time_in_millis: {
         max: { field: 'logstash_stats.events.duration_in_millis' }
       },
-      ['events_total']: {
+      events_total: {
         max: { field: 'logstash_stats.events.out' }
       },
-      ['events_time_in_millis_deriv']: {
+      events_time_in_millis_deriv: {
         derivative: { buckets_path: 'events_time_in_millis', gap_policy: 'skip' }
       },
-      ['events_total_deriv']: {
+      events_total_deriv: {
         derivative: { buckets_path: 'events_total', gap_policy: 'skip' }
       }
     };

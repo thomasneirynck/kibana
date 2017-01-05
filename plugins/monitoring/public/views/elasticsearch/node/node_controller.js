@@ -39,7 +39,7 @@ function getPageData(timefilter, globalState, $route, $http, Private, features, 
       {
         name: 'node_cpu_metric',
         keys: showCgroupMetricsElasticsearch ?
-          [ 'node_cgroup_usage', 'node_cgroup_throttled' ] :
+          [ 'node_cgroup_quota_as_cpu_utilization' ] :
           [ 'node_cpu_utilization' ]
       },
       'node_load_average',

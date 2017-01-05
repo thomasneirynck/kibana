@@ -2,9 +2,9 @@ import _ from 'lodash';
 
 import {
   ElasticsearchMetric, RequestRateMetric, KibanaMetric, LatencyMetric,
-  NodeIndexMemoryMetric, ThreadPoolQueueMetric, ThreadPoolRejectedMetric,
-  IndexAverageStatMetric, SingleIndexMemoryMetric, IndexMemoryMetric,
-  LogstashMetric, EventsLatencyMetric, LogstashEventsRateMetric
+  QuotaMetric, NodeIndexMemoryMetric, ThreadPoolQueueMetric,
+  ThreadPoolRejectedMetric, IndexAverageStatMetric, SingleIndexMemoryMetric,
+  IndexMemoryMetric, LogstashMetric, EventsLatencyMetric, LogstashEventsRateMetric
 } from './metric_classes';
 
 import {
@@ -413,10 +413,36 @@ const metricInstances = {
     derivative: true,
     units: 'ns'
   }),
+  ...(() => {
+    // CGroup CPU Utilization Fields
+    const quotaMetricConfig = {
+      fieldSource: 'node_stats.os.cgroup',
+      usageField: 'cpuacct.usage_nanos',
+      periodsField: 'cpu.stat.number_of_elapsed_periods',
+      quotaField: 'cpu.cfs_quota_micros',
+      field: 'node_stats.process.cpu.percent', // backup field if quota is not configured
+      label: 'Cgroup CPU Utilization',
+      description: (
+        'CPU Usage time compared to the CPU quota shown in percentage. If CPU ' +
+        'quotas are not set, then the OS level CPU usage in percentage is shown.'
+      ),
+      type: 'node'
+    };
+    return {
+      'node_cgroup_quota': new QuotaMetric({
+        ...quotaMetricConfig,
+        title: 'CPU Utilization'
+      }),
+      'node_cgroup_quota_as_cpu_utilization': new QuotaMetric({
+        ...quotaMetricConfig,
+        label: 'CPU Utilization' //  override the "Cgroup CPU..." label
+      })
+    };
+  })(),
   'node_cpu_utilization': new ElasticsearchMetric({
     field: 'node_stats.process.cpu.percent',
     label: 'CPU Utilization',
-    description: 'Percentage of CPU usage (100% is the max).',
+    description: 'Percentage of CPU usage reported by the OS (100% is the max).',
     type: 'node',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
