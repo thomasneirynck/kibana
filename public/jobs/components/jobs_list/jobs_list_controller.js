@@ -38,9 +38,25 @@ uiRoutes
 });
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert', ['ui.bootstrap']);
+const module = uiModules.get('apps/prelert', ['ui.bootstrap']);
 
-module.controller('PrlJobsList', function ($scope, $route, $location, $window, $timeout, $compile, $modal, es, timefilter, Private, prlMessageBarService, prlClipboardService, prlJobService, prlSchedulerService, prlBrowserDetectService) {
+module.controller('PrlJobsList',
+function (
+  $scope,
+  $route,
+  $location,
+  $window,
+  $timeout,
+  $compile,
+  $modal,
+  es,
+  timefilter,
+  Private,
+  prlMessageBarService,
+  prlClipboardService,
+  prlJobService,
+  prlSchedulerService,
+  prlBrowserDetectService) {
 
   timefilter.enabled = false; // remove time picker from top of page
   const rowScopes = []; // track row scopes, so they can be destroyed as needed
@@ -52,8 +68,6 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
   $scope.toLocaleString = stringUtils.toLocaleString; // add toLocaleString to the scope to display nicer numbers
   $scope.filterText = '';
   $scope.filterIcon = 0;
-  let isDistributed = false;
-  let jobHosts = {};
   let filterRegexp;
   let jobFilterTimeout;
 
@@ -180,10 +194,6 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
       { title: 'Actions', sortable: false, class: 'col-action' }
     ];
 
-    if (isDistributed) {
-      $scope.table.columns.splice(8, 0, { title: 'Host'});
-    }
-
     $scope.kbnUrl = Private(require('ui/url'));
 
     let rows = jobs.map(function (job) {
@@ -250,14 +260,6 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
           scope:  rowScope
         }];
 
-        if (isDistributed) {
-          const hostname = jobHosts[job.job_id];
-          tableRow.splice(8, 0, {
-            markup:  hostname,
-            scope:  rowScope
-          });
-        }
-
         return tableRow;
       }
     });
@@ -297,18 +299,7 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
       // every 5th time, reload the counts and statuses of all the jobs
       if (refreshCounter % 5 === 0) {
 
-        if (isDistributed) {
-          prlJobService.jobHosts().then(
-            function (jobHostsMap) {
-              console.log('updated jobs hosts', jobHostsMap);
-              jobHosts = jobHostsMap;
-
-              prlJobService.updateAllJobCounts();
-            });
-
-        } else {
-          prlJobService.updateAllJobCounts();
-        }
+        prlJobService.updateAllJobCounts();
 
         // also reload all of the jobs messages
         // loadAuditSummary($scope.jobs, rowScopes);
@@ -336,7 +327,7 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
   // log also includes system messages
   function loadAuditMessages(jobs, rowScopes, jobId) {
     const createTimes = {};
-    let fromRange = '1M';
+    const fromRange = '1M';
     const aDayAgo = moment().subtract(1, 'days');
 
     _.each(jobs, (job) => {
@@ -521,7 +512,7 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
     // display the spinner icon after 250ms of typing.
     // the spinner is a nice way of showing that something is
     // happening as we're stalling for the user to stop tying.
-    const $progress = $('.job-filter-progress-icon');
+    // const $progress = $('.job-filter-progress-icon');
     $timeout(() => {
       $scope.filterIcon = 1;
     }, 250);
@@ -550,41 +541,13 @@ module.controller('PrlJobsList', function ($scope, $route, $location, $window, $
   }
 
   // set up event listener
-  $scope.$on('jobsUpdated', function (event, jobs, refreshedJob) {
+  $scope.$on('jobsUpdated', function (event, jobs) {
     // jobs = [];
     $scope.noJobsCreated = (jobs.length === 0);
     // jobs have been updated, redraw the list
     displayJobs(jobs);
   });
 
-
-  /*
-  prlJobService.isDistributed().then(function (value) {
-    isDistributed = value;
-
-    if (value) {
-      prlJobService.jobHosts()
-      .then(function (jobHostsMap) {
-        console.log('Got jobs hosts', jobHostsMap);
-        jobHosts = jobHostsMap;
-
-        // trigger the first load
-        prlJobService.loadJobs();
-      }, function (reason) {
-        console.log('jobHosts failed', reason);
-        jobHosts = {};
-
-        // trigger the first load
-        prlJobService.loadJobs();
-      });
-    } else {
-      prlJobService.loadJobs();
-    }
-  }, function (reason) {
-    // trigger the first load
-    prlJobService.loadJobs();
-  });
-  */
   prlJobService.loadJobs();
 
   $scope.$emit('application.load');

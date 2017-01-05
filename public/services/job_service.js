@@ -120,12 +120,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
     function error(err) {
       console.log('PrlJobsList error getting list of jobs:', err);
       msgs.error('Jobs list could not be retrieved');
-      if (err.message) {
-        if (err.message.match('getaddrinfo')) {
-          msgs.error('The Prelert Engine API server could not be found.');
-        }
-        msgs.error(err.message);
-      }
+      msgs.error('', err);
       return jobs;
     }
   };
@@ -171,12 +166,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
     function error(err) {
       console.log('PrlJobsList error getting list of jobs:', err);
       msgs.error('Jobs list could not be retrieved');
-      if (err.message) {
-        if (err.message.match('getaddrinfo')) {
-          msgs.error('The Prelert Engine API server could not be found.');
-        }
-        msgs.error(err.message);
-      }
+      msgs.error('', err);
       return jobs;
     }
   };
@@ -365,8 +355,8 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
     // create a deep copy of a job object
     // also remove items from the job which are set by the server and not needed
     // in the future this formatting could be optional
-    let tempJob = this.removeJobEndpoints(angular.copy(job, tempJob));
-    return tempJob;
+    const tempJob = angular.copy(job);
+    return this.removeJobEndpoints(tempJob);
   };
 
   this.updateJob = function (jobId, data) {
@@ -1079,38 +1069,6 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
         msgs.error('Could not stop scheduler for ' + jobId, err);
         deferred.reject(err);
       });
-    return deferred.promise;
-  };
-
-  // true if the Engine API server is part
-  // of a distributed group of nodes
-  this.isDistributed = function () {
-    const deferred = $q.defer();
-
-    apiService.status()
-      .then((resp) => {
-        deferred.resolve(resp.engineHosts.length > 1);
-      }).catch((err) => {
-        console.log('isDistributed error', err);
-        deferred.reject(err);
-      });
-
-    return deferred.promise;
-  };
-
-  // returns a map of job -> host
-  // Only the actively running jobs are in the map
-  this.jobHosts = function () {
-    const deferred = $q.defer();
-
-    apiService.status()
-      .then((resp) => {
-        deferred.resolve(resp.hostByJob);
-      }).catch((err) => {
-        console.log('jobHosts error', err);
-        deferred.reject(err);
-      });
-
     return deferred.promise;
   };
 
