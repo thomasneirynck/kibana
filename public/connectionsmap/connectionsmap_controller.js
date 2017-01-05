@@ -631,9 +631,9 @@ module.controller('PrlConnectionsMapController', function (
           // Metrics will already have been placed at the top level.
           // If cause has byFieldValue, move it to a top level fields for display.
           const cause = _.first(causes);
-          if (_.has(cause, 'byFieldName')) {
-            summary.singleCauseByFieldName = cause.byFieldName;
-            summary.singleCauseByFieldValue = cause.byFieldValue;
+          if (_.has(cause, 'by_field_name')) {
+            summary.singleCauseByFieldName = cause.by_field_name;
+            summary.singleCauseByFieldValue = cause.by_field_value;
           }
         } else {
           summary.causes = _.map(causes, function (cause) {
@@ -641,8 +641,8 @@ module.controller('PrlConnectionsMapController', function (
             // For by and over, use byFieldName/Value (overFieldName/Value are in the top level fields)
             // For just an 'over' field - the overFieldName/Value appear in both top level and cause.
             const simplified = {
-              entityName: (_.has(cause, 'byFieldName') ? cause.byFieldName : cause.overFieldName),
-              entityValue: (_.has(cause, 'byFieldValue') ? cause.byFieldValue : cause.overFieldValue)
+              entityName: (_.has(cause, 'by_field_name') ? cause.by_field_name : cause.over_field_name),
+              entityValue: (_.has(cause, 'by_field_value') ? cause.by_field_value : cause.over_field_value)
             };
             if (anomalyUtils.showMetricsForFunction (functionDescription) === true) {
               simplified.typical = cause.typical;

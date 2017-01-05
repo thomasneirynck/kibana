@@ -113,30 +113,30 @@
         </tr>
         <tr>
           <td>function:</td>
-          <td ng-if="summaryRecord.maxScoreRecord.fieldName">{{summaryRecord.maxScoreRecord.function}}({{summaryRecord.maxScoreRecord.fieldName}})</td>
-          <td ng-if="!summaryRecord.maxScoreRecord.fieldName">{{summaryRecord.maxScoreRecord.function}}</td>
+          <td ng-if="summaryRecord.maxScoreRecord.field_name">{{summaryRecord.maxScoreRecord.function}}({{summaryRecord.maxScoreRecord.field_name}})</td>
+          <td ng-if="!summaryRecord.maxScoreRecord.field_name">{{summaryRecord.maxScoreRecord.function}}</td>
         </tr>
         <tr ng-if="summaryRecord.count > 1"><td colspan="2" style="padding-top: 5px;">Details for highest severity anomaly:</td></tr>
         <tr><td>time:</td><td>{{summaryRecord.anomalyTime}}</td></tr>
-        <tr ng-if="summaryRecord.maxScoreRecord.partitionFieldValue">
-          <td>{{summaryRecord.maxScoreRecord.partitionFieldName}}:</td>
-          <td>{{summaryRecord.maxScoreRecord.partitionFieldValue}}</td>
+        <tr ng-if="summaryRecord.maxScoreRecord.partition_field_value">
+          <td>{{summaryRecord.maxScoreRecord.partition_field_name}}:</td>
+          <td>{{summaryRecord.maxScoreRecord.partition_field_value}}</td>
         </tr>
-        <tr ng-if="summaryRecord.maxScoreRecord.byFieldValue">
-          <td>{{summaryRecord.maxScoreRecord.byFieldName}}:</td>
-          <td ng-if="summaryRecord.maxScoreRecord.correlatedByFieldValue">{{summaryRecord.maxScoreRecord.byFieldValue}}
-            (multivariate correlations found in {{summaryRecord.maxScoreRecord.byFieldName}};
-            {{summaryRecord.maxScoreRecord.byFieldValue}} is considered anomalous given {{summaryRecord.maxScoreRecord.correlatedByFieldValue}})
+        <tr ng-if="summaryRecord.maxScoreRecord.by_field_value">
+          <td>{{summaryRecord.maxScoreRecord.by_field_name}}:</td>
+          <td ng-if="summaryRecord.maxScoreRecord.correlated_by_field_value">{{summaryRecord.maxScoreRecord.by_field_value}}
+            (multivariate correlations found in {{summaryRecord.maxScoreRecord.by_field_name}};
+            {{summaryRecord.maxScoreRecord.by_field_value}} is considered anomalous given {{summaryRecord.maxScoreRecord.correlated_by_field_value}})
           </td>
-          <td ng-if="!summaryRecord.maxScoreRecord.correlatedByFieldValue">{{summaryRecord.maxScoreRecord.byFieldValue}}</td>
+          <td ng-if="!summaryRecord.maxScoreRecord.correlate_by_field_value">{{summaryRecord.maxScoreRecord.by_field_value}}</td>
         </tr>
         <tr ng-if="summaryRecord.singleCauseByFieldValue">
           <td>{{summaryRecord.singleCauseByFieldName}}:</td>
           <td>{{summaryRecord.singleCauseByFieldValue}}</td>
         </tr>
-        <tr ng-if="summaryRecord.maxScoreRecord.overFieldValue">
-          <td>{{summaryRecord.maxScoreRecord.overFieldName}}:</td>
-          <td>{{summaryRecord.maxScoreRecord.overFieldValue}}</td>
+        <tr ng-if="summaryRecord.maxScoreRecord.over_field_value">
+          <td>{{summaryRecord.maxScoreRecord.over_field_name}}:</td>
+          <td>{{summaryRecord.maxScoreRecord.over_field_value}}</td>
         </tr>
         <tr ng-if="summaryRecord.maxScoreRecord.prelertcategory" ng-repeat="example in getExamplesForCategory(summaryRecord.maxScoreRecord.jobId, summaryRecord.maxScoreRecord.prelertcategory) track by $index">
          <td ng-if="$index === 0">category examples:</td><td ng-if="$index > 0">&nbsp;</td>
