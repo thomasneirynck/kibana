@@ -31,12 +31,11 @@ uiRoutes
   template: require('./new_job.html')
 });
 
-import moment from 'moment-timezone';
 import stringUtils from 'plugins/prelert/util/string_utils';
 import jobUtils from 'plugins/prelert/util/job_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/prelert');
 
 module.controller('PrlNewJob',
 function (
@@ -64,7 +63,6 @@ function (
     EDIT: 1,
     CLONE: 2
   };
-  let keyPressTimeout = null;
   // ui model, used to store and control job data that wont be posted to the server.
   const msgs = prlMessageBarService;
   const prlConfirm = prlConfirmModalService;
@@ -238,6 +236,10 @@ function (
           // note, when cloning an ES job, the influencers are created once the
           // ES data directive has loaded the server details.
           // cloneJobDataDescriptionCallback() is called once the server details have loaded
+        } else {
+          delete $scope.job.scheduler_config.scheduler_id;
+          delete $scope.job.scheduler_config.job_id;
+          delete $scope.job.scheduler_config.status;
         }
       }
 
@@ -588,19 +590,19 @@ function (
       }
 
       const scrollSizeDefault = $scope.ui.scheduler.scrollSizeDefault;
-      let scroll_size = schedulerConfig.scroll_size;
+      let scrollSize = schedulerConfig.scroll_size;
       if ($scope.ui.scheduler.scrollSizeDefault === schedulerConfig.scroll_size) {
-        scroll_size = '';
+        scrollSize = '';
       }
 
 
       clear($scope.types);
-      _.each(schedulerConfig.types, function (type, key) {
+      _.each(schedulerConfig.types, function (type) {
         $scope.types[type] = $scope.ui.types[type];
       });
 
       clear($scope.indices);
-      _.each(schedulerConfig.indexes, function (index, key) {
+      _.each(schedulerConfig.indexes, function (index) {
         $scope.indices[index] = $scope.ui.indices[index];
       });
 
@@ -609,7 +611,7 @@ function (
         queryDelayText:        +schedulerConfig.query_delay,
         frequencyText:         freq,
         frequencyDefault:      frequencyDefault,
-        scrollSizeText:        scroll_size,
+        scrollSizeText:        scrollSize,
         scrollSizeDefault:     scrollSizeDefault,
         indicesText:           schedulerConfig.indexes.join(','),
         typesText:             schedulerConfig.types.join(','),
@@ -1017,7 +1019,7 @@ function (
   }
 
   function openSaveStatusWindow() {
-    const modalInstance = $modal.open({
+    $modal.open({
       template: require('plugins/prelert/jobs/components/new_job_advanced/save_status_modal/save_status_modal.html'),
       controller: 'PrlSaveStatusModal',
       backdrop: 'static',
@@ -1030,7 +1032,7 @@ function (
             openScheduler:    function () {
               prlSchedulerService.openJobTimepickerWindow($scope.job);
             },
-            showUploadStatus: ( ($scope.ui.wizard.dataLocation === 'FILE' && $scope.ui.wizard.uploadedData !== '' && $scope.ui.postSaveUpload) ? true : false)
+            showUploadStatus: (($scope.ui.wizard.dataLocation === 'FILE' && $scope.ui.wizard.uploadedData !== '' && $scope.ui.postSaveUpload) ? true : false)
           };
         }
       }
@@ -1040,7 +1042,6 @@ function (
   // while data is being uploaded, load the processed_record_count and work out
   // a progress percentage based on a guess of the records count in the file.
   function fileUploadProgress(jobId) {
-    let trackFileUploadTimeout;
     let records = 0;
     const pollTime = 2; // seconds
 
@@ -1067,7 +1068,7 @@ function (
             if ($scope.ui.uploadPercentage <= 100) {
               // console.log('fileUploadProgress():', $scope.ui.uploadPercentage);
               if ($scope.ui.saveStatus.upload === 1) {
-                trackFileUploadTimeout = $timeout(refresh, (pollTime * 1000));
+                $timeout(refresh, (pollTime * 1000));
               }
             } else {
               // more than 100% ?

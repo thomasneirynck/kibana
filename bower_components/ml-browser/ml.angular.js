@@ -25328,7 +25328,7 @@
 
   api._namespaces = ['cat', 'cluster', 'indices', 'ingest', 'nodes', 'snapshot', 'tasks'];
 
-  api.jobConfigs = ca({
+  api.jobs = ca({
     urls: [
       {
         fmt: '/_xpack/ml/anomaly_detectors/_all',
@@ -25410,6 +25410,40 @@
       }
     },
     method: 'DELETE'
+  });
+
+  api.schedulers = ca({
+    urls: [
+      {
+        fmt: '/_xpack/ml/schedulers/_all',
+      },
+      {
+        fmt: '/_xpack/ml/schedulers/<%=schedulerId%>',
+        req: {
+          schedulerId: {
+            type: 'list'
+          }
+        }
+      }
+    ],
+    method: 'GET'
+  });
+
+  api.schedulerStats = ca({
+    urls: [
+      {
+        fmt: '/_xpack/ml/schedulers/<%=schedulerId%>/_stats',
+        req: {
+          schedulerId: {
+            type: 'list'
+          }
+        }
+      },
+      {
+        fmt: '/_xpack/ml/schedulers/_all/_stats',
+      }
+    ],
+    method: 'GET'
   });
 
   api.addScheduler = ca({

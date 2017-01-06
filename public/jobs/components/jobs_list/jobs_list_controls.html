@@ -2,20 +2,20 @@
 
   <!-- start -->
   <button
-    ng-show="job.scheduler_config && job.scheduler_status!=='STOPPING' && job.scheduler_status!=='STARTING'"
-    ng-click="((job.scheduler_status && job.scheduler_status==='STARTED')?stopScheduler(job):startScheduler(job))"
+    ng-show="job.scheduler_config && job.scheduler_config.status!=='STOPPING' && job.scheduler_config.status!=='STARTING'"
+    ng-click="((job.scheduler_config && job.scheduler_config.status==='STARTED')?stopScheduler(job):startScheduler(job))"
     class="btn btn-xs btn-default"
     data-toggle="tooltip"
-    tooltip="{{((job.scheduler_status && job.scheduler_status==='STARTED')?'Stop':'Start')}} scheduler for {{job.job_id}}">
-      <i ng-show="job.scheduler_status && job.scheduler_status==='STARTED'" aria-hidden="true" class="fa fa-stop"></i>
-      <i ng-show="job.scheduler_status && job.scheduler_status==='STOPPED'" aria-hidden="true" class="fa fa-play"></i>
-      <i ng-show="job.scheduler_config && job.scheduler_status===undefined" aria-hidden="true" class="fa fa-play"></i>
+    tooltip="{{((job.scheduler_config && job.scheduler_config.status==='STARTED')?'Stop':'Start')}} scheduler for {{job.job_id}}">
+      <i ng-show="job.scheduler_config && job.scheduler_config.status==='STARTED'" aria-hidden="true" class="fa fa-stop"></i>
+      <i ng-show="job.scheduler_config && job.scheduler_config.status==='STOPPED'" aria-hidden="true" class="fa fa-play"></i>
+      <i ng-show="job.scheduler_config && job.scheduler_config.status===undefined" aria-hidden="true" class="fa fa-play"></i>
   </button>
 
   <!-- stop -->
   <button
     disabled
-    ng-show="(!job.scheduler_config) || (job.scheduler_status==='STOPPING' || job.scheduler_status==='STARTING')"
+    ng-show="(!job.scheduler_config) || (job.scheduler_config.status==='STOPPING' || job.scheduler_config.status==='STARTING')"
     class="btn btn-xs btn-default"
     data-toggle="tooltip"
     aria-label="Preview Job"

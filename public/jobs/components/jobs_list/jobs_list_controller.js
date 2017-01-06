@@ -109,8 +109,10 @@ function (
 
   $scope.stopScheduler = function (job) {
     // setting the status to STOPPING disables the stop button
+
     job.scheduler_status = 'STOPPING';
-    prlJobService.stopScheduler(job.job_id);
+    const schedulerId = 'scheduler-' + job.job_id;
+    prlJobService.stopScheduler(schedulerId, job.job_id);
   };
 
 
@@ -246,8 +248,8 @@ function (
           value:  job.status,
           scope:  rowScope
         }, {
-          markup: '{{job.scheduler_status}}',
-          value:  job.scheduler_status,
+          markup: '{{job.scheduler_config.status}}',
+          value:  (() => { return (job.scheduler_config.status) ? job.scheduler_config.status : ''; }),
           scope:  rowScope
         }, {
           markup: '{{ time(job.data_counts).string }}',
