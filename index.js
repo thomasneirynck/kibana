@@ -36,9 +36,24 @@ module.exports = function (kibana) {
         ],
         injectVars: function (server, options) {
           const config = server.config();
+
+          // tilemapsConfig settings are still needed even though the plugin
+          // doesn't use Tilemap directly.
+          // DEPRECATED SETTINGS
+          // if the url is set, the old settings must be used.
+          // keeping this logic for backward compatibilty.
+          const configuredUrl = server.config().get('tilemap.url');
+          const isOverridden = typeof configuredUrl === 'string' && configuredUrl !== '';
+          const tilemapConfig = config.get('tilemap');
           return {
             kbnIndex: config.get('kibana.index'),
-            tilemap: config.get('tilemap'),
+            tilemapsConfig: {
+              deprecated: {
+                isOverridden: isOverridden,
+                config: tilemapConfig,
+              },
+              manifestServiceUrl: config.get('tilemap.manifestServiceUrl')
+            },
             esServerUrl: config.get('elasticsearch.url'),
           };
         }
