@@ -244,10 +244,10 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
 
 
   this.updateSingleJobCounts = function (jobId) {
-    console.log('updateSingleJobCounts: IGNORE ME I FAIL. FIX ME PLEASE');
+    const deferred = $q.defer();
     console.log('prlJobService: update job counts and status for ' + jobId);
-    return ml.jobStats({jobId: jobId})
-      .then(function (resp) {
+    ml.jobStats({jobId: jobId})
+      .then((resp) => {
         console.log('updateSingleJobCounts controller query response:', resp);
         if (resp.jobs && resp.jobs.length) {
           const newJob = {};
@@ -255,31 +255,49 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
 
           // replace the job in the jobs array
           for (let i = 0; i < jobs.length; i++) {
-            const job = jobs[i];
-            if (job.job_id === jobId) {
+            if (jobs[i].job_id === jobId) {
+              const job = jobs[i];
               job.data_counts = newJob.data_counts;
               if (newJob.model_size_stats) {
                 job.model_size_stats = newJob.model_size_stats;
               }
-              // job.last_data_time = newJob.last_data_time;
               job.create_time = newJob.create_time;
               job.status = newJob.status;
-              // job.scheduler_status = newJob.scheduler_status;
             }
           }
-          return newJob;
+
+          const schedulerId = 'scheduler-' + jobId;
+          this.loadSchedulers(schedulerId)
+          .then((schedulers) => {
+            for (let i = 0; i < jobs.length; i++) {
+              for (let j = 0; j < schedulers.length; j++) {
+                if (jobs[i].job_id === schedulers[j].job_id) {
+                  jobs[i].scheduler_config = schedulers[j];
+                }
+              }
+            }
+            deferred.resolve(this.jobs);
+          })
+          .catch((err) => {
+            console.log('updateSingleJobCounts error getting scheduler details:', err);
+            if (err.message) {
+              msgs.error(err.message);
+            }
+            deferred.reject(err);
+          });
         } else {
-          return {};
+          deferred.resolve(this.jobs);
         }
 
-      }).catch(function (err) {
+      }).catch((err) => {
         console.log('updateSingleJobCounts error getting job details:', err);
         msgs.error('Job details could not be retrieved for ' + jobId);
         if (err.message) {
           msgs.error(err.message);
         }
-        return null;
+        deferred.reject(err);
       });
+    return deferred.promise;
   };
 
   this.updateAllJobCounts = function () {
@@ -348,8 +366,6 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
   };
 
   this.checkStatus = function () {
-    let jobsMissing = false;
-
     const runningJobs = [];
     _.each(jobs, (job) => {
       if (job.scheduler_config && job.scheduler_config.status === 'STARTED') {
@@ -357,22 +373,9 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
       }
     });
 
-    let counter = runningJobs.length;
     console.log('prlJobService: check status for ' + runningJobs.length + ' running jobs');
     _.each(runningJobs, (job) => {
-      this.refreshJob(job.job_id)
-      .then((resp) => {
-        // if (resp.exists === false) {
-        //   jobsMissing = true;
-        // }
-        counter--;
-        // once all job have been checked, reload the job list if
-        // any jobs are missing. they may have been deleted by a
-        // different user.
-        if (counter === 0 && jobsMissing) {
-          this.loadJobs();
-        }
-      });
+      this.updateSingleJobCounts(job.job_id);
     });
   };
 
