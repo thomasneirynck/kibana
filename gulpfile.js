@@ -42,7 +42,6 @@ var buildIncludes = [
   // 'NOTICE.txt',
   'package.json',
   'index.js',
-  'prelert.yml',
   'node_modules',
   'bower_components',
   'webpackShims',

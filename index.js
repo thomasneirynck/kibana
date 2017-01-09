@@ -13,10 +13,8 @@
  * strictly prohibited.
  */
 
-import _ from 'lodash';
 import createProxy from '../../src/core_plugins/elasticsearch/lib/create_proxy';
 import initializationChecks from './lib/initialization_checks';
-import readPrelertConfig from './lib/read_prelert_config';
 
 module.exports = function (kibana) {
 
@@ -65,22 +63,9 @@ module.exports = function (kibana) {
 
 
     init: function (server, options) {
-
       createProxy(server, 'PUT', '/_xpack/ml/{paths*}');
       createProxy(server, 'POST', '/_xpack/ml/{paths*}');
       createProxy(server, 'DELETE', '/_xpack/ml/{paths*}');
-
-      const prelertConfig = readPrelertConfig();
-      // Configure a configuration route that supplies the value of the
-      // reporting.enabled property from the prelert.yml config file.
-      const reportingEnabled = _.get(prelertConfig, 'reporting.enabled', true);
-      server.route({
-        method: 'GET',
-        path: '/prelert_config/reporting_enabled',
-        handler: function (request, reply) {
-          reply({'reportingEnabled':reportingEnabled});
-        }
-      });
 
       initializationChecks(this, server).start();
     }
