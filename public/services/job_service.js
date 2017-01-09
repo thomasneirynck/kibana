@@ -18,6 +18,7 @@ import angular from 'angular';
 import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
 import 'plugins/prelert/services/prelert_angular_client';
 import 'plugins/prelert/services/info_service';
+import 'plugins/prelert/services/ml';
 import 'plugins/prelert/messagebar';
 
 import uiModules from 'ui/modules';
