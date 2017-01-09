@@ -611,7 +611,7 @@ export const expected = {
   'index_mem_writer': {
     'field': 'index_stats.total.segments.index_writer_memory_in_bytes',
     'label': 'Index Writer',
-    'description': 'Heap memory used by the Index Writer. This is a part of Lucene Total.',
+    'description': 'Heap memory used by the Index Writer. This is NOT a part of Lucene Total.',
     'type': 'index',
     'title': 'Index Memory',
     'format': '0.0 b',
@@ -1386,7 +1386,7 @@ export const expected = {
   'node_index_mem_writer': {
     'field': 'node_stats.indices.segments.index_writer_memory_in_bytes',
     'label': 'Index Writer',
-    'description': 'Heap memory used by the Index Writer. This is a part of Lucene Total.',
+    'description': 'Heap memory used by the Index Writer. This is NOT a part of Lucene Total.',
     'type': 'node',
     'title': 'Index Memory',
     'format': '0.0 b',

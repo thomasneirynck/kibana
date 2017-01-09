@@ -210,7 +210,7 @@ const metricInstances = {
   'index_mem_writer': new SingleIndexMemoryMetric({
     field: 'index_writer_memory_in_bytes',
     label: 'Index Writer',
-    description: 'Heap memory used by the Index Writer. This is a part of Lucene Total.'
+    description: 'Heap memory used by the Index Writer. This is NOT a part of Lucene Total.'
   }),
   'index_request_rate_primary': new ElasticsearchMetric({
     field: 'index_stats.primaries.indexing.index_total',
@@ -635,7 +635,7 @@ const metricInstances = {
   'node_index_mem_writer': new NodeIndexMemoryMetric({
     field: 'index_writer_memory_in_bytes',
     label: 'Index Writer',
-    description: 'Heap memory used by the Index Writer. This is a part of Lucene Total.'
+    description: 'Heap memory used by the Index Writer. This is NOT a part of Lucene Total.'
   }),
   'node_index_threads_bulk_queue': new ElasticsearchMetric({
     field: 'node_stats.thread_pool.bulk.queue',
