@@ -25365,7 +25365,7 @@
   api.addJob = ca({
     urls: [
       {
-        fmt: '/_xpack/ml/anomaly_detectors'
+        fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>'
       }
     ],
     needBody: true,

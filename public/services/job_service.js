@@ -412,7 +412,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
     };
 
     // return the promise chain
-    return ml.addJob({body:job})
+    return ml.addJob({jobId: job.job_id, body: job})
       .then(func).catch(func);
   };
 
