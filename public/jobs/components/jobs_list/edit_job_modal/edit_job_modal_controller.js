@@ -102,7 +102,7 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
     $scope.ui.stoppingScheduler = true;
     prlJobService.stopScheduler($scope.job.job_id)
       .then((resp) => {
-        if (resp.acknowledgement && resp.acknowledgement === true) {
+        if (resp.acknowledged && resp.acknowledged === true) {
           $scope.ui.schedulerStopped = true;
         }
       });

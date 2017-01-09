@@ -107,7 +107,7 @@ module.directive('prlJobDetectorsList', function ($modal, $q, prlJobService) {
         return prlJobService.validateDetector(dtr)
         .then((resp) => {
           return {
-            success: (resp.acknowledgement || false)
+            success: (resp.acknowledged || false)
           };
         })
         .catch((resp) => {

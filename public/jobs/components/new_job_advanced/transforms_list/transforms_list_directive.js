@@ -84,7 +84,7 @@ module.directive('prlJobTransformsList', function ($modal, $q, prlJobService) {
         return prlJobService.validateTransforms(tempTransforms)
         .then((resp) => {
           return {
-            success: (resp.acknowledgement || false)
+            success: (resp.acknowledged || false)
           };
         })
         .catch((resp) => {

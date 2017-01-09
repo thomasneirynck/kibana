@@ -1196,15 +1196,8 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
 
   this.validateDetector = function (dtr) {
     const deferred = $q.defer();
-
-    // temp fix for missing validation endpoint
-    window.setTimeout(() => {
-      deferred.resolve({acknowledgement: true});
-    }, 1);
-    return deferred.promise;
-
     if (dtr) {
-      apiService.validateDetector(dtr)
+      ml.validateDetector({body:dtr})
         .then((resp) => {
           deferred.resolve(resp);
         })
@@ -1220,7 +1213,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
   this.validateTransforms = function (trfm) {
     const deferred = $q.defer();
     if (trfm) {
-      apiService.validateTransforms(trfm)
+      ml.validateTransforms({body:trfm})
         .then((resp) => {
           deferred.resolve(resp);
         })
