@@ -236,15 +236,25 @@ module.controller('PrlAnomalySummaryTableController', function (
           record.influencers = influencers;
         }
         const functionDescription = _.get(source, 'function_description', '');
-        if (anomalyUtils.showMetricsForFunction (functionDescription) === true) {
+        if (anomalyUtils.showActualForFunction (functionDescription) === true) {
           if (_.has(source, 'actual')) {
             record.actual = source.actual;
-            record.typical = source.typical;
           } else {
-            // If only a single cause, copy values to the top level.
+            // If only a single cause, copy value to the top level.
             if (_.get(source, 'causes', []).length === 1) {
               const cause = _.first(source.causes);
               record.actual = cause.actual;
+            }
+          }
+        }
+
+        if (anomalyUtils.showTypicalForFunction (functionDescription) === true) {
+          if (_.has(source, 'typical')) {
+            record.typical = source.typical;
+          } else {
+            // If only a single cause, copy value to the top level.
+            if (_.get(source, 'causes', []).length === 1) {
+              const cause = _.first(source.causes);
               record.typical = cause.typical;
             }
           }
@@ -403,15 +413,24 @@ module.controller('PrlAnomalySummaryTableController', function (
 
           // Copy actual and typical values to the top level for display.
           const functionDescription = _.get(record, 'source.function_description', '');
-          if (anomalyUtils.showMetricsForFunction (functionDescription) === true) {
+          if (anomalyUtils.showActualForFunction (functionDescription) === true) {
             if (_.has(source, 'actual')) {
               record.actual = source.actual;
-              record.typical = source.typical;
             } else {
-              // If only a single cause, copy values to the top level.
+              // If only a single cause, copy value to the top level.
               if (_.get(source, 'causes', []).length === 1) {
                 const cause = _.first(source.causes);
                 record.actual = cause.actual;
+              }
+            }
+          }
+          if (anomalyUtils.showTypicalForFunction (functionDescription) === true) {
+            if (_.has(source, 'typical')) {
+              record.typical = source.typical;
+            } else {
+              // If only a single cause, copy value to the top level.
+              if (_.get(source, 'causes', []).length === 1) {
+                const cause = _.first(source.causes);
                 record.typical = cause.typical;
               }
             }
@@ -544,7 +563,8 @@ module.controller('PrlAnomalySummaryTableController', function (
 
     const showEntity = _.some(summaryRecords, 'entityValue');
     const showInfluencers = _.some(summaryRecords, 'influencers');
-    const showMetrics = _.some(summaryRecords, 'actual');
+    const showActual = _.some(summaryRecords, 'actual');
+    const showTypical = _.some(summaryRecords, 'typical');
     const showExamples = _.some(summaryRecords, {'entityName': 'prelertcategory'});
     const showLinks = _.some(summaryRecords, 'links');
 
@@ -554,8 +574,10 @@ module.controller('PrlAnomalySummaryTableController', function (
     if (showInfluencers === true) {
       paginatedTableColumns.push({ title: 'influenced by', sortable: true });
     }
-    if (showMetrics === true) {
+    if (showActual === true) {
       paginatedTableColumns.push({ title: 'actual', sortable: true });
+    }
+    if (showTypical === true) {
       paginatedTableColumns.push({ title: 'typical', sortable: true });
     }
     paginatedTableColumns.push({ title: 'job ID', sortable: true });
@@ -604,7 +626,8 @@ module.controller('PrlAnomalySummaryTableController', function (
     //   links (if links configured)
     const addEntity = _.findWhere($scope.table.columns, {'title':'found for'});
     const addInfluencers = _.findWhere($scope.table.columns, {'title':'influenced by'});
-    const addMetrics = _.findWhere($scope.table.columns, {'title':'actual'});
+    const addActual = _.findWhere($scope.table.columns, {'title':'actual'});
+    const addTypical = _.findWhere($scope.table.columns, {'title':'typical'});
     const addExamples = _.findWhere($scope.table.columns, {'title':'category examples'});
     const addLinks = _.findWhere($scope.table.columns, {'title':'links'});
 
@@ -672,14 +695,20 @@ module.controller('PrlAnomalySummaryTableController', function (
       }
     }
 
-    if (addMetrics !== undefined) {
+    if (addActual !== undefined) {
       if (_.has(record, 'actual')) {
         const actualVal = formatValueFilter(record.actual, record.source.function);
-        const typicalVal = formatValueFilter(record.typical, record.source.function);
         tableRow.push({markup: actualVal, value: actualVal, scope: rowScope });
-        tableRow.push({markup: typicalVal, value: typicalVal, scope: rowScope });
       } else {
         tableRow.push({markup: '', value: '' });
+      }
+    }
+
+    if (addTypical !== undefined) {
+      if (_.has(record, 'typical')) {
+        const typicalVal = formatValueFilter(record.typical, record.source.function);
+        tableRow.push({markup: typicalVal, value: typicalVal, scope: rowScope });
+      } else {
         tableRow.push({markup: '', value: '' });
       }
     }

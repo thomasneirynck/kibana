@@ -111,16 +111,27 @@ module.directive('prlAnomalySummaryExpandedRow', function () {
     function buildMetrics() {
       const record = $scope.record;
       const functionDescription = _.get(record, 'source.function_description', '');
-      if (anomalyUtils.showMetricsForFunction(functionDescription) === true) {
+      if (anomalyUtils.showActualForFunction(functionDescription) === true) {
         if (!_.has($scope.record.source, 'causes')) {
           $scope.actual = record.source.actual;
+        } else {
+          const causes = $scope.record.source.causes;
+          if (causes.length === 1) {
+            // If only one 'cause', move value to top level.
+            const cause = _.first(causes);
+            $scope.actual = cause.actual;
+          }
+        }
+      }
+
+      if (anomalyUtils.showTypicalForFunction(functionDescription) === true) {
+        if (!_.has($scope.record.source, 'causes')) {
           $scope.typical = record.source.typical;
         } else {
           const causes = $scope.record.source.causes;
           if (causes.length === 1) {
-            // If only one 'cause', move values to top level.
+            // If only one 'cause', move value to top level.
             const cause = _.first(causes);
-            $scope.actual = cause.actual;
             $scope.typical = cause.typical;
           }
         }

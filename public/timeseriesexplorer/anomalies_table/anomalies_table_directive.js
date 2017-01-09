@@ -212,15 +212,24 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
             }
 
             const functionDescription = _.get(record, 'function_description', '');
-            if (anomalyUtils.showMetricsForFunction(functionDescription) === true) {
+            if (anomalyUtils.showActualForFunction(functionDescription) === true) {
               if (_.has(record, 'actual')) {
                 displayRecord.actual = record.actual;
-                displayRecord.typical = record.typical;
               } else {
                 // If only a single cause, copy values to the top level.
                 if (_.get(record, 'causes', []).length === 1) {
                   const cause = _.first(record.causes);
                   displayRecord.actual = cause.actual;
+                }
+              }
+            }
+            if (anomalyUtils.showTypicalForFunction(functionDescription) === true) {
+              if (_.has(record, 'typical')) {
+                displayRecord.typical = record.typical;
+              } else {
+                // If only a single cause, copy values to the top level.
+                if (_.get(record, 'causes', []).length === 1) {
+                  const cause = _.first(record.causes);
                   displayRecord.typical = cause.typical;
                 }
               }
@@ -376,20 +385,28 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
 
               // Copy actual and typical values to the top level for display.
               const functionDescription = _.get(record, 'function_description', '');
-              if (anomalyUtils.showMetricsForFunction(functionDescription) === true) {
+              if (anomalyUtils.showActualForFunction(functionDescription) === true) {
                 if (_.has(record, 'actual')) {
                   displayRecord.actual = record.actual;
-                  displayRecord.typical = record.typical;
                 } else {
-                  // If only a single cause, copy values to the top level.
+                  // If only a single cause, copy value to the top level.
                   if (_.get(record, 'causes', []).length === 1) {
                     const cause = _.first(record.causes);
                     displayRecord.actual = cause.actual;
+                  }
+                }
+              }
+              if (anomalyUtils.showTypicalForFunction(functionDescription) === true) {
+                if (_.has(record, 'typical')) {
+                  displayRecord.typical = record.typical;
+                } else {
+                  // If only a single cause, copy value to the top level.
+                  if (_.get(record, 'causes', []).length === 1) {
+                    const cause = _.first(record.causes);
                     displayRecord.typical = cause.typical;
                   }
                 }
               }
-
 
               // TODO - do we always want the links column visible even when no customUrls have been defined?
               if (_.has(prlJobService.customUrlsByJob, record.job_id)) {
@@ -417,6 +434,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         // influenced by (if influencers)
         // actual
         // typical
+        // description (how actual compares to typical)
         // job_id
         // links (if links configured)
         // category examples (if by prelertcategory)
@@ -428,7 +446,8 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
 
         const showEntity = _.some(summaryRecords, 'entityValue');
         const showInfluencers = _.some(summaryRecords, 'influencers');
-        const showMetrics = _.some(summaryRecords, 'actual');
+        const showActual = _.some(summaryRecords, 'actual');
+        const showTypical = _.some(summaryRecords, 'typical');
         const showExamples = _.some(summaryRecords, {'entityName': 'prelertcategory'});
         const showLinks = _.some(summaryRecords, 'links');
 
@@ -438,8 +457,12 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         if (showInfluencers === true) {
           paginatedTableColumns.push({ title: 'influenced by', sortable: true });
         }
-        if (showMetrics === true) {
+        if (showActual === true) {
           paginatedTableColumns.push({ title: 'actual', sortable: true });
+        }
+        if (showTypical === true) {
+          // Assume that if we are showing typical, there will be an actual too,
+          // so we can add a column to describe how actual compares to typical.
           paginatedTableColumns.push({ title: 'typical', sortable: true });
           paginatedTableColumns.push({ title: 'description', sortable: true });
         }
@@ -484,11 +507,19 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         //   detector
         //   found for (if by/over/partition)
         //   influenced by (if influencers)
+        //   actual
+        //   typical
+        //   description (how actual compares to typical)
         //   job_id
         //   links (if links configured)
+        //   category examples (if by prelertcategory)
         const addEntity = _.findWhere(scope.table.columns, {'title':'found for'});
         const addInfluencers = _.findWhere(scope.table.columns, {'title':'influenced by'});
-        const addMetrics = _.findWhere(scope.table.columns, {'title':'actual'});
+
+        // Assume that if we are showing typical, there will be an actual too,
+        // so we can add a column to describe how actual compares to typical.
+        const addActual = _.findWhere(scope.table.columns, {'title':'actual'});
+        const addTypical = _.findWhere(scope.table.columns, {'title':'typical'});
         const addExamples = _.findWhere(scope.table.columns, {'title':'category examples'});
         const addLinks = _.findWhere(scope.table.columns, {'title':'links'});
 
@@ -555,19 +586,25 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
           }
         }
 
-        if (addMetrics !== undefined) {
+        if (addActual !== undefined) {
           if (_.has(record, 'actual')) {
             const actualVal = formatValueFilter(record.actual, record.source.function);
-            const typicalVal = formatValueFilter(record.typical, record.source.function);
             tableRow.push({markup: actualVal, value: actualVal, scope: rowScope });
+          } else {
+            tableRow.push({markup: '', value: '' });
+          }
+        }
+        if (addTypical !== undefined) {
+          if (_.has(record, 'typical')) {
+            const typicalVal = formatValueFilter(record.typical, record.source.function);
             tableRow.push({markup: typicalVal, value: typicalVal, scope: rowScope });
 
             // Use the metricChangeDescription filter to format a textual description of actual vs typical.
+            const actualVal = formatValueFilter(record.actual, record.source.function);
             const factor = (actualVal > typicalVal) ? actualVal / typicalVal : typicalVal / actualVal;
             tableRow.push({markup: '<span ng-bind-html="' + actualVal + ' | metricChangeDescription:' + typicalVal + '"></span>',
               value: Math.abs(factor), scope: rowScope });
           } else {
-            tableRow.push({markup: '', value: '' });
             tableRow.push({markup: '', value: '' });
             tableRow.push({markup: '', value: '' });
           }

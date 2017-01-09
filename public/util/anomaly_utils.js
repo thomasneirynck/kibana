@@ -20,8 +20,11 @@
 
 const _ = require('lodash');
 
-// List of function descriptions for which actual and display values from record level results should be displayed.
-const METRIC_DISPLAY_FUNCTIONS = ['count', 'distinct_count', 'lat_long', 'mean', 'max', 'min', 'sum', 'median', 'letp'];
+// List of function descriptions for which actual values from record level results should be displayed.
+const DISPLAY_ACTUAL_FUNCTIONS = ['count', 'distinct_count', 'lat_long', 'mean', 'max', 'min', 'sum', 'median', 'varp'];
+
+// List of function descriptions for which typical values from record level results should be displayed.
+const DISPLAY_TYPICAL_FUNCTIONS = ['count', 'distinct_count', 'mean', 'max', 'min', 'sum', 'median', 'varp'];
 
 // Returns a severity label (one of critical, major, minor, warning or unknown)
 // for the supplied normalized anomaly score (a value between 0 and 100).
@@ -140,12 +143,18 @@ function getEntityFieldValue(record) {
   return undefined;
 }
 
-// Returns whether actual and typical metric values should be displayed for a record
-// with the specified function description.
+// Returns whether actual values should be displayed for a record with the specified function description.
 // Note that the 'function' field in a record contains what the user entered e.g. 'high_count',
 // whereas the 'function_description' field holds a Prelert-built display hint for function e.g. 'count'.
-function showMetricsForFunction(functionDescription) {
-  return _.indexOf(METRIC_DISPLAY_FUNCTIONS, functionDescription) > -1;
+function showActualForFunction(functionDescription) {
+  return _.indexOf(DISPLAY_ACTUAL_FUNCTIONS, functionDescription) > -1;
+}
+
+// Returns whether typical values should be displayed for a record with the specified function description.
+// Note that the 'function' field in a record contains what the user entered e.g. 'high_count',
+// whereas the 'function_description' field holds a Prelert-built display hint for function e.g. 'count'.
+function showTypicalForFunction(functionDescription) {
+  return _.indexOf(DISPLAY_TYPICAL_FUNCTIONS, functionDescription) > -1;
 }
 
 export default {
@@ -155,5 +164,6 @@ export default {
   labelDuplicateDetectorDescriptions: labelDuplicateDetectorDescriptions,
   getEntityFieldName: getEntityFieldName,
   getEntityFieldValue: getEntityFieldValue,
-  showMetricsForFunction: showMetricsForFunction
+  showActualForFunction: showActualForFunction,
+  showTypicalForFunction: showTypicalForFunction
 };

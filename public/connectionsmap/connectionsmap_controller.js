@@ -600,16 +600,26 @@ module.controller('PrlConnectionsMapController', function (
 
       // Store metric information.
       const functionDescription = _.get(maxScoreRecord, 'function_description', '');
-      if (anomalyUtils.showMetricsForFunction (functionDescription) === true) {
+      if (anomalyUtils.showActualForFunction (functionDescription) === true) {
         if (!_.has(maxScoreRecord, 'causes')) {
           summary.actual = maxScoreRecord.actual;
+        } else {
+          const causes = maxScoreRecord.causes;
+          if (causes.length === 1) {
+            // If only one 'cause', move value to top level.
+            const cause = _.first(causes);
+            summary.actual = cause.actual;
+          }
+        }
+      }
+      if (anomalyUtils.showTypicalForFunction (functionDescription) === true) {
+        if (!_.has(maxScoreRecord, 'causes')) {
           summary.typical = maxScoreRecord.typical;
         } else {
           const causes = maxScoreRecord.causes;
           if (causes.length === 1) {
-            // If only one 'cause', move values to top level.
+            // If only one 'cause', move value to top level.
             const cause = _.first(causes);
-            summary.actual = cause.actual;
             summary.typical = cause.typical;
           }
         }
@@ -644,9 +654,11 @@ module.controller('PrlConnectionsMapController', function (
               entityName: (_.has(cause, 'by_field_name') ? cause.by_field_name : cause.over_field_name),
               entityValue: (_.has(cause, 'by_field_value') ? cause.by_field_value : cause.over_field_value)
             };
-            if (anomalyUtils.showMetricsForFunction (functionDescription) === true) {
-              simplified.typical = cause.typical;
+            if (anomalyUtils.showActualForFunction (functionDescription) === true) {
               simplified.actual = cause.actual;
+            }
+            if (anomalyUtils.showTypicalForFunction (functionDescription) === true) {
+              simplified.typical = cause.typical;
             }
             return simplified;
           });
