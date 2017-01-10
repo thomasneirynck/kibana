@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import uiModules from 'ui/modules';
-import template from 'plugins/monitoring/directives/main/index.html';
+import template from './index.html';
 
 function createCrumb(url, label) {
   return { url, label };

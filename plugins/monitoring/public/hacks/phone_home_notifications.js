@@ -2,7 +2,7 @@ import Notifier from 'ui/notify/notifier';
 import uiModules from 'ui/modules';
 import PathProvider from 'plugins/xpack_main/services/path';
 import 'plugins/monitoring/services/features';
-import { PHONE_HOME_FEATURE, PHONE_HOME_NOTIFICATION_SEEN } from '../../lib/constants';
+import { PHONE_HOME_FEATURE, PHONE_HOME_NOTIFICATION_SEEN } from 'monitoring-constants';
 
 /*
  * @param features {Service} (optional) passed to action factory in getting the callback

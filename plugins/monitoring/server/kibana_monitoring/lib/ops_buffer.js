@@ -1,6 +1,6 @@
 import {
   MONITORING_SYSTEM_API_VERSION, KIBANA_SYSTEM_ID, KIBANA_STATS_TYPE
-} from '../../../lib/constants';
+} from '../../../common/constants';
 import _ from 'lodash';
 import { mapEvent, rollupEvent } from './map_event';
 import monitoringBulk from './monitoring_bulk';

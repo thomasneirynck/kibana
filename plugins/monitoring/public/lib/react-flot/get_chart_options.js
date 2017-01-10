@@ -1,4 +1,4 @@
-import { CHART_LINE_COLOR, CHART_TEXT_COLOR } from '../../../lib/constants';
+import { CHART_LINE_COLOR, CHART_TEXT_COLOR } from 'monitoring-constants';
 
 export default function getChartOptions(options) {
   const opts = {

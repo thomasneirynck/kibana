@@ -1,7 +1,7 @@
 import { capitalize, get } from 'lodash';
-import { translateKibanaStatus, statusIconClass } from '../../lib/map_status_classes';
+import { translateKibanaStatus, statusIconClass } from 'plugins/monitoring/lib/map_status_classes';
 import uiModules from 'ui/modules';
-import template from 'plugins/monitoring/directives/cluster_status_kibana/index.html';
+import template from './index.html';
 
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringClusterStatusKibana', () => {

@@ -1,5 +1,5 @@
 <div class="app-container">
-  <kbn-top-nav name="{{name}}-nav">
+  <kbn-top-nav name="{{ name }}-nav">
     <!-- Transcluded elements. -->
     <div data-transclude-slots>
       <!-- Breadcrumbs. -->
@@ -22,7 +22,7 @@
           <a ng-if="!instance" kbn-href="#/elasticsearch/nodes" class="kuiLocalTab" ng-class="{'kuiLocalTab-isSelected': isActive('nodes')}">Nodes</a>
           <a
             ng-if="instance"
-            kbn-href="#/elasticsearch/{{name}}/{{resolver}}"
+            kbn-href="#/elasticsearch/{{ name }}/{{ resolver }}"
             class="kuiLocalTab"
             ng-class="{'kuiLocalTab-isSelected': page === 'overview'}"
           >
@@ -31,7 +31,7 @@
           </a>
           <a
             ng-if="instance"
-            kbn-href="#/elasticsearch/{{name}}/{{resolver}}/advanced"
+            kbn-href="#/elasticsearch/{{ name }}/{{ resolver }}/advanced"
             class="kuiLocalTab"
             ng-class="{'kuiLocalTab-isSelected': page === 'advanced'}"
           >

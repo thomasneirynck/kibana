@@ -15,7 +15,7 @@
  * from Elasticsearch Incorporated.
  */
 
-import _ from 'lodash';
+import { sortBy } from 'lodash';
 import React from 'react';
 import calculateClass from '../lib/calculateClass';
 
@@ -42,7 +42,7 @@ export default React.createClass({
     return (<Shard shard={ shard } key={ key }></Shard>);
   },
   render: function () {
-    const shards = _.sortBy(this.props.shards, sortByShard).map(this.createShard);
+    const shards = sortBy(this.props.shards, sortByShard).map(this.createShard);
     return (<div className='shards'>{ shards }</div>);
   }
 });

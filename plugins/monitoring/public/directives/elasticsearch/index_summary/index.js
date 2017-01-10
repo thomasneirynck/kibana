@@ -1,7 +1,7 @@
 import { capitalize, get } from 'lodash';
-import { statusIconClass } from '../../lib/map_status_classes';
-import template from 'plugins/monitoring/directives/index_summary/index.html';
+import { statusIconClass } from 'plugins/monitoring/lib/map_status_classes';
 import uiModules from 'ui/modules';
+import template from './index.html';
 
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringIndexSummary', () => {

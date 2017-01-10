@@ -9,7 +9,7 @@ import {
 
 import {
   LARGE_FLOAT, SMALL_FLOAT, LARGE_BYTES, SMALL_BYTES, LARGE_ABBREVIATED
-} from '../../../lib/formatting';
+} from '../../../common/formatting';
 
 const metricInstances = {
   'cluster_index_request_rate_primary': new RequestRateMetric({

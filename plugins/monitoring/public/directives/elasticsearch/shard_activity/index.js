@@ -1,9 +1,9 @@
-import _ from 'lodash';
-import { formatDateTimeLocal } from '../../../lib/formatting';
-import template from 'plugins/monitoring/directives/shard_activity/index.html';
+import { filter } from 'lodash';
+import { formatDateTimeLocal } from 'monitoring-formatting';
 import formatNumber from 'plugins/monitoring/lib/format_number';
 import uiModules from 'ui/modules';
 import 'ui/tooltip';
+import template from './index.html';
 
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringShardActivity', function () {
@@ -34,7 +34,7 @@ uiModule.directive('monitoringShardActivity', function () {
 
       function filterData() {
         if ($scope.data) {
-          $scope.visibleData = _.filter($scope.data, function (item) {
+          $scope.visibleData = filter($scope.data, function (item) {
             if ($scope.onlyActive) {
               return item.stage !== 'DONE';
             }
