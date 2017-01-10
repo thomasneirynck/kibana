@@ -24,8 +24,8 @@ module.exports = function (kibana) {
     uiExports: {
       app: {
         id: 'ml',
-        title: 'Ml',
-        description: 'Ml behavioral analytics for machine data',
+        title: 'Machine Learning',
+        description: 'Elastic behavioral analytics for machine data',
         icon: 'plugins/ml/ml-white.png',
         main: 'plugins/ml/app',
         uses: [
