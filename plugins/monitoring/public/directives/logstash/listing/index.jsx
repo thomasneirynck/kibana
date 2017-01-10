@@ -11,6 +11,7 @@ uiModule.directive('monitoringLogstashNodeListing', function (kbnUrl) {
   const initialTableOptions = {
     title: 'Nodes',
     searchPlaceholder: 'Filter Nodes',
+    filterFields: ['logstash.name', 'logstash.host', 'logstash.http_address'],
     columns: [
       {
         key: 'logstash.name',

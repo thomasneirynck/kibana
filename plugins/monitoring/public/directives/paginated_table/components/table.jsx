@@ -70,7 +70,8 @@ const Table = React.createClass({
     if (!filter) return data;
 
     const getFilterValueString = (obj) => {
-      const valueSet = this.props.options.filterFields.map((field) => _.get(obj, field));
+      const filterFields = this.props.options.filterFields || [];
+      const valueSet = filterFields.map((field) => _.get(obj, field));
       return valueSet.join(' ').toLowerCase();
     };
 
