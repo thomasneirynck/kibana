@@ -5,9 +5,9 @@
     </span>
   </div>
 </kbn-top-nav>
-<prl-support>
-  <prl-message-bar ></prl-message-bar>
-  <div ng-controller="PrlSupport" class="container">
+<ml-support>
+  <ml-message-bar ></ml-message-bar>
+  <div ng-controller="MlSupport" class="container">
   	<h2>Support for Behavioral Analytics for the Elastic Stack</h2>
   	<div class="support-section">
 	  	<div ng-show="(apiVersion!==undefined)">Ml Engine API version: {{apiVersion}}</div>
@@ -32,4 +32,4 @@
 	  	<div ng-hide="supportBundleEnabled">Downloading of the support bundle is not supported in Safari. Please use a different browser.</div>
 		</div>
  	</div>
-</prl-support>
+</ml-support>

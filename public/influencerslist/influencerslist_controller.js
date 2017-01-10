@@ -31,7 +31,7 @@ import FilterManagerProvider from 'ui/filter_manager';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('PrlInfluencersListController', function ($scope, Private) {
+module.controller('MlInfluencersListController', function ($scope, Private) {
 
   const filterManager = Private(FilterManagerProvider);
 
@@ -41,7 +41,7 @@ module.controller('PrlInfluencersListController', function ($scope, Private) {
       return;
     }
 
-    console.log('PrlInfluencersListController esResponse:', resp);
+    console.log('MlInfluencersListController esResponse:', resp);
 
     // Process the aggregations in the ES response which provide the data for the chart.
     $scope.processAggregations(resp.aggregations);
@@ -69,7 +69,7 @@ module.controller('PrlInfluencersListController', function ($scope, Private) {
       const totalScoreMetricLabel = totalScoreAgg.makeLabel();
 
       const compiledTooltip = _.template(
-        '<div class="prl-influencers-list-tooltip"><%= influencerFieldName %>: <%= influencerFieldValue %>' +
+        '<div class="ml-influencers-list-tooltip"><%= influencerFieldName %>: <%= influencerFieldValue %>' +
         '<hr/><%= maxScoreMetricLabel %>: <%= maxScoreValue %>' +
         '<hr/><%= totalScoreMetricLabel %>: <%= totalScoreValue %></div>');
 
@@ -113,7 +113,7 @@ module.controller('PrlInfluencersListController', function ($scope, Private) {
 
         dataByViewBy[influencerFieldName] = _.sortBy(valuesForViewBy, 'maxScorePrecise').reverse();
       });
-      console.log('PrlInfluencersListController processAggregations processed data:', dataByViewBy);
+      console.log('MlInfluencersListController processAggregations processed data:', dataByViewBy);
 
     }
 

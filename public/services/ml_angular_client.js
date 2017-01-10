@@ -23,9 +23,9 @@ import 'plugins/ml/services/server_request_service';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('mlAPIService', function ($http, $q, prlServerRequestService) {
+module.service('mlAPIService', function ($http, $q, mlServerRequestService) {
 
-  const http = prlServerRequestService;
+  const http = mlServerRequestService;
   const urlBasePath = chrome.getBasePath();
 
   const urlBase = '/jobs';

@@ -30,7 +30,7 @@ export default function AnomalySummaryTableVisType(Private) {
 
   // Return a new instance describing this visualization.
   return new TemplateVisType({
-    name: 'prlAnomalySummaryTable',
+    name: 'mlAnomalySummaryTable',
     title: 'Anomaly Summary',
     icon: 'fa-table',
     description: 'Ml anomaly summary visualization displaying ' +

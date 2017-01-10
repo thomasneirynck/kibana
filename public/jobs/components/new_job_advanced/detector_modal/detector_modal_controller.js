@@ -20,8 +20,8 @@ import angular from 'angular';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.controller('PrlDetectorModal', function ($scope, $modalInstance, params, prlJobService, prlMessageBarService) {
-  const msgs = prlMessageBarService;
+module.controller('MlDetectorModal', function ($scope, $modalInstance, params, mlJobService, mlMessageBarService) {
+  const msgs = mlMessageBarService;
   msgs.clear();
   $scope.title = 'Add new detector';
   $scope.detector = {'function': ''};

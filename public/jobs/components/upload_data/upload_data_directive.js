@@ -21,22 +21,22 @@ import stringUtils from 'plugins/ml/util/string_utils';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.directive('prlDataUpload', ['$http', function ($http) {
+module.directive('mlDataUpload', ['$http', function ($http) {
   return {
     restrict: 'AE',
     replace: true,
     scope: {
-      job:                 '=prlJob',
-      changeTab:           '=prlchangeTab',
-      dataReady:           '=prlDataReady',
-      showImport:          '=prlShowImport',
-      uploadData:          '=prlUploadData',
-      readSuccessCallback: '=prlReadSuccessCallback',
-      maximumFileSize:     '=prlMaximumFileSize',
+      job:                 '=mlJob',
+      changeTab:           '=mlchangeTab',
+      dataReady:           '=mlDataReady',
+      showImport:          '=mlShowImport',
+      uploadData:          '=mlUploadData',
+      readSuccessCallback: '=mlReadSuccessCallback',
+      maximumFileSize:     '=mlMaximumFileSize',
     },
     template: require('plugins/ml/jobs/components/upload_data/upload_data.html'),
-    controller: function ($scope, $q, $timeout, prlJobService, prlMessageBarService, prlBrowserDetectService) {
-      const msgs = prlMessageBarService; // set a reference to the message bar service
+    controller: function ($scope, $q, $timeout, mlJobService, mlMessageBarService, mlBrowserDetectService) {
+      const msgs = mlMessageBarService; // set a reference to the message bar service
       $scope.CHAR_LIMIT = 500;
       $scope.file = undefined;
       $scope.data = '';
@@ -60,7 +60,7 @@ module.directive('prlDataUpload', ['$http', function ($http) {
       // set maximum file upload size
       // chrome has a bug which causes it to crash when uploading a file around 120MB
       // so to be safe, set the limit to 100MB
-      const MAX_FILE_SIZE_MB = (prlBrowserDetectService() === 'chrome') ? 100 : 200;
+      const MAX_FILE_SIZE_MB = (mlBrowserDetectService() === 'chrome') ? 100 : 200;
       $scope.maximumFileSize = MAX_FILE_SIZE_MB;
       const DATA_TYPE = {TEXT: 0, GZIP: 1, ZIP: 2};
 
@@ -191,7 +191,7 @@ module.directive('prlDataUpload', ['$http', function ($http) {
           fileUploadProgress(that.job.job_id);
 
           if (this.uploadData.data) {
-            prlJobService.uploadData(that.job.job_id, that.uploadData.data)
+            mlJobService.uploadData(that.job.job_id, that.uploadData.data)
               .then(function (resp) {
                 msgs.info(that.file.name + ' uploaded to ' + that.job.job_id);
                 that.ui.saveStatus.upload = 2;
@@ -208,7 +208,7 @@ module.directive('prlDataUpload', ['$http', function ($http) {
                     that.changeTab({index:3});
                   }
                   // refresh the selected job
-                  prlJobService.refreshJob(that.job.job_id)
+                  mlJobService.refreshJob(that.job.job_id)
                     .then(function (job) {
                       // no need to do anything. the job service broadcasts a jobs list update event
                     })
@@ -254,7 +254,7 @@ module.directive('prlDataUpload', ['$http', function ($http) {
           }
 
           const refresh = function () {
-            prlJobService.loadJob(jobId)
+            mlJobService.loadJob(jobId)
             .then(function (resp) {
               if (resp && $scope.ui.saveStatus.upload !== -1) {
                 $scope.ui.uploadPercentage = Math.round((resp.data_counts.processed_record_count / records) * 100);

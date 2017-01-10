@@ -18,7 +18,7 @@ import _ from 'lodash';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('prlTimeSeriesSearchService', function ($q, $timeout, es) {
+module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
 
   this.getModelDebugOutput = function (index, jobIds, earliestMs, latestMs, interval) {
     const deferred = $q.defer();

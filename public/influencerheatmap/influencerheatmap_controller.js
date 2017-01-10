@@ -28,7 +28,7 @@ import angular from 'angular';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.controller('PrlInfluencerHeatmapController', function ($scope) {
+module.controller('MlInfluencerHeatmapController', function ($scope) {
 
   /**
    * Recreate the heatmap when:
@@ -41,7 +41,7 @@ module.controller('PrlInfluencerHeatmapController', function ($scope) {
       return;
     }
 
-    console.log('PrlInfluencerHeatmapController esResponse:', resp);
+    console.log('MlInfluencerHeatmapController esResponse:', resp);
 
     // Process the aggregations in the ES response which provide the data for the chart.
     $scope.processAggregations(resp.aggregations);
@@ -92,7 +92,7 @@ module.controller('PrlInfluencerHeatmapController', function ($scope) {
 
 
 })
-.directive('prlInfluencerHeatmap', function ($compile) {
+.directive('mlInfluencerHeatmap', function ($compile) {
 
   function link(scope, element, attrs) {
 
@@ -174,7 +174,7 @@ module.controller('PrlInfluencerHeatmapController', function ($scope) {
       const colorByMetricLabel = scope.vis.aggs.bySchemaName.colorBy[0].makeLabel();
       const sizeByMetricLabel = scope.vis.aggs.bySchemaName.sizeBy[0].makeLabel();
 
-      const compiledTooltip = _.template('<div class="prl-influencer-heatmap-tooltip"><%= group %>: <%= name %>' +
+      const compiledTooltip = _.template('<div class="ml-influencer-heatmap-tooltip"><%= group %>: <%= name %>' +
           '<hr/><%= colorByMetricLabel %>: <%= colorByValue %>' +
           '<hr/><%= sizeByMetricLabel %>: <%= sizeByValue %></div>');
 
@@ -240,7 +240,7 @@ module.controller('PrlInfluencerHeatmapController', function ($scope) {
       const colorByMetricLabel = scope.vis.aggs.bySchemaName.colorBy[0].makeLabel();
       const sizeByMetricLabel = scope.vis.aggs.bySchemaName.sizeBy[0].makeLabel();
 
-      const compiledTooltip = _.template('<div class="prl-influencer-heatmap-tooltip"><%= group %>: <%= name %>' +
+      const compiledTooltip = _.template('<div class="ml-influencer-heatmap-tooltip"><%= group %>: <%= name %>' +
         '<hr/><%= colorByMetricLabel %>: <%= colorByValue %>' +
         '<hr/><%= sizeByMetricLabel %>: <%= sizeByValue %></div>');
 
@@ -336,7 +336,7 @@ module.controller('PrlInfluencerHeatmapController', function ($scope) {
       const colorByMetricLabel = scope.vis.aggs.bySchemaName.colorBy[0].makeLabel();
       const sizeByMetricLabel = scope.vis.aggs.bySchemaName.sizeBy[0].makeLabel();
 
-      const compiledTooltip = _.template('<div class="prl-influencer-heatmap-tooltip"><%= group %>: <%= name %>' +
+      const compiledTooltip = _.template('<div class="ml-influencer-heatmap-tooltip"><%= group %>: <%= name %>' +
           '<hr/><%= colorByMetricLabel %>: <%= colorByValue %>' +
           '<hr/><%= sizeByMetricLabel %>: <%= sizeByValue %></div>');
 
@@ -512,7 +512,7 @@ module.controller('PrlInfluencerHeatmapController', function ($scope) {
       const colorByMetricLabel = scope.vis.aggs.bySchemaName.colorBy[0].makeLabel();
       const sizeByMetricLabel = scope.vis.aggs.bySchemaName.sizeBy[0].makeLabel();
 
-      const compiledTooltip = _.template('<div class="prl-influencer-heatmap-tooltip"><%= group %>: <%= name %>' +
+      const compiledTooltip = _.template('<div class="ml-influencer-heatmap-tooltip"><%= group %>: <%= name %>' +
           '<hr/><%= colorByMetricLabel %>: <%= colorByValue %>' +
           '<hr/><%= sizeByMetricLabel %>: <%= sizeByValue %></div>');
 

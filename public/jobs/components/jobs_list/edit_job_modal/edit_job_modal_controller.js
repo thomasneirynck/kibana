@@ -22,8 +22,8 @@ import angular from 'angular';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, params, prlJobService, prlMessageBarService) {
-  const msgs = prlMessageBarService;
+module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, params, mlJobService, mlMessageBarService) {
+  const msgs = mlMessageBarService;
   msgs.clear();
   $scope.saveLock = false;
   $scope.pscope = params.pscope;
@@ -100,7 +100,7 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
   // convenient function to stop the scheduler from inside the edit dialog
   $scope.stopScheduler = function () {
     $scope.ui.stoppingScheduler = true;
-    prlJobService.stopScheduler($scope.job.job_id)
+    mlJobService.stopScheduler($scope.job.job_id)
       .then((resp) => {
         if (resp.acknowledged && resp.acknowledged === true) {
           $scope.ui.schedulerStopped = true;
@@ -283,13 +283,13 @@ module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, p
 
     // if anything has changed, post the changes
     if (Object.keys(data).length) {
-      prlJobService.updateJob(jobId, data)
+      mlJobService.updateJob(jobId, data)
       .then((resp) => {
         $scope.saveLock = false;
         if (resp.success) {
           console.log(resp);
           msgs.clear();
-          prlJobService.refreshJob(jobId)
+          mlJobService.refreshJob(jobId)
             .then((job) => {
               // no need to do anything. the job service broadcasts a jobs list update event
             })

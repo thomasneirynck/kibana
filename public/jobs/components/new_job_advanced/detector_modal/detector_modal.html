@@ -1,9 +1,9 @@
 <div class="detector-modal">
-  <prl-message-bar ></prl-message-bar>
+  <ml-message-bar ></ml-message-bar>
   <h3>{{title}}</h3>
 
   <div class="form-group">
-    <label>Description</label><i prl-info-icon="new_job_detector_description" />
+    <label>Description</label><i ml-info-icon="new_job_detector_description" />
     <input
       ng-model="detector.detector_description"
       tabindex="1"
@@ -34,7 +34,7 @@
 
     <div class="field-cols">
       <div class="form-group">
-        <label>function</label><i prl-info-icon="new_job_detector_function" />
+        <label>function</label><i ml-info-icon="new_job_detector_function" />
 
         <input
           ng-model="detector.function"
@@ -45,7 +45,7 @@
           class="form-control" />
       </div>
       <div class="form-group">
-        <label>over_field_name</label><i prl-info-icon="new_job_detector_overfieldname" />
+        <label>over_field_name</label><i ml-info-icon="new_job_detector_overfieldname" />
         <input
           ng-model="detector.over_field_name"
           type="text"
@@ -57,7 +57,7 @@
 
     <div class="field-cols">
       <div class="form-group">
-        <label>field_name</label><i prl-info-icon="new_job_detector_fieldname" />
+        <label>field_name</label><i ml-info-icon="new_job_detector_fieldname" />
         <input
           ng-model="detector.field_name"
           type="text"
@@ -66,7 +66,7 @@
           class="form-control" />
       </div>
       <div class="form-group">
-        <label>partition_field_name</label><i prl-info-icon="new_job_detector_partitionfieldname" />
+        <label>partition_field_name</label><i ml-info-icon="new_job_detector_partitionfieldname" />
         <input
           ng-model="detector.partition_field_name"
           type="text"
@@ -78,7 +78,7 @@
 
     <div class="field-cols">
       <div class="form-group">
-        <label>by_field_name</label><i prl-info-icon="new_job_detector_byfieldname" />
+        <label>by_field_name</label><i ml-info-icon="new_job_detector_byfieldname" />
         <input
           ng-model="detector.by_field_name"
           type="text"
@@ -87,7 +87,7 @@
           class="form-control" />
       </div>
       <div class="form-group">
-        <label>exclude_frequent</label><i prl-info-icon="new_job_detector_excludefrequent" />
+        <label>exclude_frequent</label><i ml-info-icon="new_job_detector_excludefrequent" />
         <input
           ng-model="detector.exclude_frequent"
           type="text"
@@ -98,7 +98,7 @@
     </div>
 
   </div>
-  <small><div class='help-pane'><prl-engine-api-help-link prl-uri="{{helpLink.uri}}" prl-label="{{helpLink.label}}"></prl-engine-api-help-link></div></small>
+  <small><div class='help-pane'><ml-engine-api-help-link ml-uri="{{helpLink.uri}}" ml-label="{{helpLink.label}}"></ml-engine-api-help-link></div></small>
 
   <hr />
 

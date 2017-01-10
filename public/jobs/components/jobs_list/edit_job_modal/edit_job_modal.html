@@ -1,5 +1,5 @@
 <div class="edit-job-modal">
-  <prl-message-bar ></prl-message-bar>
+  <ml-message-bar ></ml-message-bar>
   <h3>{{ui.title}}</h3>
 
   <ul class="nav nav-tabs" >
@@ -141,11 +141,11 @@
   </div>
 
   <div class="tab_contents" ng-show="ui.currentTab === 2">
-    <div prl-job-detectors-list
-      prl-detectors="job.analysis_config.detectors"
-      prl-indices="indices"
-      prl-properties="properties"
-      prl-edit-mode="'EDIT'"
+    <div ml-job-detectors-list
+      ml-detectors="job.analysis_config.detectors"
+      ml-indices="indices"
+      ml-properties="properties"
+      ml-edit-mode="'EDIT'"
       ></div>
   </div>
 

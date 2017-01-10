@@ -39,19 +39,19 @@ import './swimlane_influencers/swimlane_influencers_directive';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('PrlSwimlaneController', function ($scope,
+module.controller('MlSwimlaneController', function ($scope,
  $route,
  $window,
  $location,
  courier,
- prlJobService,
- prlDashboardService) {
+ mlJobService,
+ mlDashboardService) {
 
   // Obtain the descriptions for each job and detector.
   $scope.jobDescriptions = {};
   $scope.detectorsByJob = {};
   $scope.fieldsByJob = {};
-  prlJobService.getBasicJobInfo($scope.vis.indexPattern.id)
+  mlJobService.getBasicJobInfo($scope.vis.indexPattern.id)
   .then(function (resp) {
     if (resp.jobs.length > 0) {
       const descriptions = {};
@@ -70,7 +70,7 @@ module.controller('PrlSwimlaneController', function ($scope,
   });
 
   // Obtain the list of 'View by' fields per job for record type results.
-  prlJobService.getJobViewByFields()
+  mlJobService.getJobViewByFields()
   .then(function (resp) {
     if (resp.fieldsByJob) {
       $scope.fieldsByJob = resp.fieldsByJob;
@@ -110,10 +110,10 @@ module.controller('PrlSwimlaneController', function ($scope,
     if (resp.hits.total !== 0) {
       // Remove ng-hide from the parent div as that has display:none,
       // resulting in the flot chart labels falling inside the chart area on first render.
-      $('prl-swimlane').closest('.ng-hide').removeClass('ng-hide');
+      $('ml-swimlane').closest('.ng-hide').removeClass('ng-hide');
     }
 
-    console.log('PrlSwimlaneController esResponse:', resp);
+    console.log('MlSwimlaneController esResponse:', resp);
 
     // Process the aggregations in the ES response.
     $scope.processAggregations(resp.aggregations);
@@ -125,7 +125,7 @@ module.controller('PrlSwimlaneController', function ($scope,
 
   });
 
-  prlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
+  mlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
     const selectedJobIds = selections.length > 0 ? selections : ['*'];
 
     // Update the record 'View by' options with the fields for the currently selected job(s).
@@ -491,7 +491,7 @@ module.controller('PrlSwimlaneController', function ($scope,
   }
 
 })
-.directive('prlSwimlane', function ($location, $compile, timefilter) {
+.directive('mlSwimlane', function ($location, $compile, timefilter) {
 
   function link(scope, element) {
 
@@ -672,12 +672,12 @@ module.controller('PrlSwimlaneController', function ($scope,
       element.bind('plothover', function (event, pos, item) {
         if (item) {
           if (scope.vis.params.mode === 'jobs' || scope.vis.params.mode === 'influencers') {
-            element.addClass('prl-swimlane-point-over');
+            element.addClass('ml-swimlane-point-over');
           }
 
           if (scope._previousHoverPoint !== item.dataIndex) {
             scope._previousHoverPoint = item.dataIndex;
-            $('.prl-swimlane-tooltip').remove();
+            $('.ml-swimlane-tooltip').remove();
             if (scope._influencerHoverScope) {
               scope._influencerHoverScope.$destroy();
             }
@@ -688,9 +688,9 @@ module.controller('PrlSwimlaneController', function ($scope,
           }
         } else {
           if (scope.vis.params.mode === 'jobs' || scope.vis.params.mode === 'influencers') {
-            element.removeClass('prl-swimlane-point-over');
+            element.removeClass('ml-swimlane-point-over');
           }
-          $('.prl-swimlane-tooltip').remove();
+          $('.ml-swimlane-tooltip').remove();
           scope._previousHoverPoint = null;
           if (scope._influencerHoverScope) {
             scope._influencerHoverScope.$destroy();
@@ -777,7 +777,7 @@ module.controller('PrlSwimlaneController', function ($scope,
       const x = item.pageX;
       const y = item.pageY;
       const offset = 5;
-      $('<div class="prl-swimlane-tooltip">' + contents + '</div>').css({
+      $('<div class="ml-swimlane-tooltip">' + contents + '</div>').css({
         'position': 'absolute',
         'display': 'none',
         'z-index': 1,
@@ -788,7 +788,7 @@ module.controller('PrlSwimlaneController', function ($scope,
       if (scope.vis.params.mode === 'influencers' && laneLabel !== 'bucket_time') {
 
         // Display top influencer field values in the tooltip
-        // using the prl-swimlane-influencers directive.
+        // using the ml-swimlane-influencers directive.
 
         // Store the attributes required for querying elasticsearch in the child scope.
         const timeAgg = scope.vis.aggs.bySchemaName.timeSplit[0];
@@ -815,22 +815,22 @@ module.controller('PrlSwimlaneController', function ($scope,
           }
         }
 
-        // Compile the contents to link the prl-swimlane-influencers directive to the child scope.
-        const $topInfluencersContent = $('<br/><hr/><prl-swimlane-influencers/>');
-        $('.prl-swimlane-tooltip').addClass('influencers-mode');
-        $('.prl-swimlane-tooltip').append($topInfluencersContent);
-        $compile($('.prl-swimlane-tooltip'))(scope._influencerHoverScope);
+        // Compile the contents to link the ml-swimlane-influencers directive to the child scope.
+        const $topInfluencersContent = $('<br/><hr/><ml-swimlane-influencers/>');
+        $('.ml-swimlane-tooltip').addClass('influencers-mode');
+        $('.ml-swimlane-tooltip').append($topInfluencersContent);
+        $compile($('.ml-swimlane-tooltip'))(scope._influencerHoverScope);
       }
 
       // Position the tooltip.
       const $win = $(window);
       const winHeight = $win.height();
       const yOffset = window.pageYOffset;
-      const width = $('.prl-swimlane-tooltip').outerWidth(true);
-      const height = $('.prl-swimlane-tooltip').outerHeight(true);
+      const width = $('.ml-swimlane-tooltip').outerWidth(true);
+      const height = $('.ml-swimlane-tooltip').outerHeight(true);
 
-      $('.prl-swimlane-tooltip').css('left', x + offset + width > $win.width() ? x - offset - width : x + offset);
-      $('.prl-swimlane-tooltip').css('top', y + height < winHeight + yOffset ? y : y - height);
+      $('.ml-swimlane-tooltip').css('left', x + offset + width > $win.width() ? x - offset - width : x + offset);
+      $('.ml-swimlane-tooltip').css('top', y + height < winHeight + yOffset ? y : y - height);
 
     }
   }

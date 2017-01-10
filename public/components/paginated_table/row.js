@@ -23,7 +23,7 @@ import AggConfigResult from 'ui/vis/agg_config_result';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.directive('prlRows', function ($compile, $rootScope, getAppState, Private) {
+module.directive('mlRows', function ($compile, $rootScope, getAppState, Private) {
   const filterBarClickHandler = Private(require('ui/filter_bar/filter_bar_click_handler'));
   return {
     restrict: 'A',
@@ -89,8 +89,8 @@ module.directive('prlRows', function ($compile, $rootScope, getAppState, Private
       }
 
       $scope.$watchMulti([
-        attr.prlRows,
-        attr.prlRowsMin
+        attr.mlRows,
+        attr.mlRowsMin
       ], function (vals) {
         let rows = vals[0];
         const min = vals[1];

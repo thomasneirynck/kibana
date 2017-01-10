@@ -18,17 +18,17 @@ import _ from 'lodash';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.service('prlSchedulerService', function ($modal, prlJobService) {
+module.service('mlSchedulerService', function ($modal, mlJobService) {
 
   function loadStartEnd(jobId) {
-    return prlJobService.jobSchedulerState(jobId);
+    return mlJobService.jobSchedulerState(jobId);
   }
 
   this.openJobTimepickerWindow = function (job) {
     function func(obj) {
       const modalInstance = $modal.open({
         template: require('plugins/ml/jobs/components/jobs_list/job_timepicker_modal/job_timepicker_modal.html'),
-        controller: 'PrlJobTimepickerModal',
+        controller: 'MlJobTimepickerModal',
         backdrop: 'static',
         keyboard: false,
         // size: 'lg',

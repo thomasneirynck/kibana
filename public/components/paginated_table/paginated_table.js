@@ -28,7 +28,7 @@ import _ from 'lodash';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.directive('prlPaginatedTable', function ($filter) {
+module.directive('mlPaginatedTable', function ($filter) {
   const orderBy = $filter('orderBy');
 
   return {
@@ -42,7 +42,7 @@ module.directive('prlPaginatedTable', function ($filter) {
       sortHandler: '=?',
       showSelector: '=?'
     },
-    controllerAs: 'prlPaginatedTable',
+    controllerAs: 'mlPaginatedTable',
     controller: function ($scope) {
       const self = this;
       self.sort = {
@@ -99,7 +99,7 @@ module.directive('prlPaginatedTable', function ($filter) {
       $scope.$watchMulti([
         'rows',
         'columns',
-        '[]prlPaginatedTable.sort'
+        '[]mlPaginatedTable.sort'
       ], function resortRows() {
         if (!$scope.rows || !$scope.columns) {
           $scope.sortedRows = false;

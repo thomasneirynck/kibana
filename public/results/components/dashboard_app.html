@@ -7,33 +7,33 @@
 </kbn-top-nav>
 
 <navbar ng-show="chrome.getVisible()">
-  <div class="prl-job-select-btn-label">Job</div>
+  <div class="ml-job-select-btn-label">Job</div>
   <div style="flex:0 0 auto;">
     <button ng-if="selectedJobs.length == 1 && selectedJobs[0].id === '*'"
             popover-placement="bottom" popover-html-unsafe="{{unsafeHtml}}" popover-append-to-body="true" popover-trigger="click"
-            class="btn btn-default prl-job-select-btn" tooltip="All jobs selected" tooltip-append-to-body="true">
-      <span class="prl-job-select-btn-text">All jobs</span>
+            class="btn btn-default ml-job-select-btn" tooltip="All jobs selected" tooltip-append-to-body="true">
+      <span class="ml-job-select-btn-text">All jobs</span>
       <span class="caret"></span>
     </button>
 
     <button ng-if="selectedJobs.length == 1 && selectedJobs[0].id !== '*'" popover-placement="bottom"
             popover-placement="bottom" popover-html-unsafe="{{unsafeHtml}}" popover-append-to-body="true" popover-trigger="click"
-            class="btn btn-default prl-job-select-btn" tooltip="{{selectedJobs[0].id}} selected" tooltip-append-to-body="true">
-      <span class="prl-job-select-btn-text">{{selectedJobs[0].id}}</span>
+            class="btn btn-default ml-job-select-btn" tooltip="{{selectedJobs[0].id}} selected" tooltip-append-to-body="true">
+      <span class="ml-job-select-btn-text">{{selectedJobs[0].id}}</span>
       <span class="caret"></span>
     </button>
 
     <button ng-if="selectedJobs.length == 2" popover-placement="bottom"
             popover-placement="bottom" popover-html-unsafe="{{unsafeHtml}}" popover-append-to-body="true" popover-trigger="click"
-            class="btn btn-default prl-job-select-btn" tooltip="{{selectedJobs[0].id}} and 1 other job selected" tooltip-append-to-body="true">
-      <span class="prl-job-select-btn-text">{{selectJobBtnJobIdLabel}} and 1 other</span>
+            class="btn btn-default ml-job-select-btn" tooltip="{{selectedJobs[0].id}} and 1 other job selected" tooltip-append-to-body="true">
+      <span class="ml-job-select-btn-text">{{selectJobBtnJobIdLabel}} and 1 other</span>
       <span class="caret"></span>
     </button>
 
     <button ng-if="selectedJobs.length > 2" popover-placement="bottom"
             popover-placement="bottom" popover-html-unsafe="{{unsafeHtml}}" popover-append-to-body="true" popover-trigger="click"
-            class="btn btn-default prl-job-select-btn" tooltip="{{selectedJobs[0].id}} and {{selectedJobs.length-1}} other jobs selected" tooltip-append-to-body="true">
-      <span class="prl-job-select-btn-text">{{selectJobBtnJobIdLabel}} and {{selectedJobs.length-1}} others</span>
+            class="btn btn-default ml-job-select-btn" tooltip="{{selectedJobs[0].id}} and {{selectedJobs.length-1}} other jobs selected" tooltip-append-to-body="true">
+      <span class="ml-job-select-btn-text">{{selectJobBtnJobIdLabel}} and {{selectedJobs.length-1}} others</span>
       <span class="caret"></span>
     </button>
 

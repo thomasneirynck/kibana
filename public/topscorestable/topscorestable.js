@@ -30,7 +30,7 @@ export default function TopScoresTableVisType(Private) {
 
   // Return a new instance describing this visualization.
   return new TemplateVisType({
-    name: 'prlTopScoresTable',
+    name: 'mlTopScoresTable',
     title: 'Top scores',
     icon: 'fa-sort-amount-desc',
     description: 'Ml visualization designed to display a list of the top anomaly ' +

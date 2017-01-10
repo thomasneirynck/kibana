@@ -20,27 +20,27 @@ import stringUtils from 'plugins/ml/util/string_utils';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.directive('prlElasticDataDescription', function ($http) {
+module.directive('mlElasticDataDescription', function ($http) {
   return {
     restrict: 'AE',
     replace: true,
     scope: {
-      ui:                 '=prlUi',
-      properties:         '=prlProperties',
-      dateProperties:     '=prlDateProperties',
-      indices:            '=prlIndices',
-      types:              '=prlTypes',
-      simpleMode:         '=prlSimpleMode',
-      mode:               '=prlMode',
-      scheduler_config:    '=prlSchedulerConfig',
-      data_description:    '=prlDataDescription',
-      dataLoadedCallback: '=prlDataLoadedCallback',
-      exposedFunctions:   '=prlExposedFunctions',
-      serverInfo:         '=prlElasticServerInfo'
+      ui:                 '=mlUi',
+      properties:         '=mlProperties',
+      dateProperties:     '=mlDateProperties',
+      indices:            '=mlIndices',
+      types:              '=mlTypes',
+      simpleMode:         '=mlSimpleMode',
+      mode:               '=mlMode',
+      scheduler_config:    '=mlSchedulerConfig',
+      data_description:    '=mlDataDescription',
+      dataLoadedCallback: '=mlDataLoadedCallback',
+      exposedFunctions:   '=mlExposedFunctions',
+      serverInfo:         '=mlElasticServerInfo'
     },
     template: require('plugins/ml/jobs/components/data_description/elastic_data_description.html'),
-    controller: function ($scope, $q, $location, prlJobService, prlMessageBarService) {
-      const msgs = prlMessageBarService; // set a reference to the message bar service
+    controller: function ($scope, $q, $location, mlJobService, mlMessageBarService) {
+      const msgs = mlMessageBarService; // set a reference to the message bar service
       const MODE = {NEW: 0, EDIT: 1, CLONE: 2};
       $scope.saveLock = false;
       let keyPressTimeout = null;
@@ -252,7 +252,7 @@ module.directive('prlElasticDataDescription', function ($http) {
 
         $scope.ui.validation.serverAuthenticationError = '';
         $scope.ui.validation.setTabValid(4, true);
-        prlJobService.getESMappings().then((mappings) => {
+        mlJobService.getESMappings().then((mappings) => {
           $scope.ui.indices = mappings;
           $scope.ui.esServerOk = 1;
           console.log('getMappings():', $scope.ui.indices);
@@ -445,7 +445,7 @@ module.directive('prlElasticDataDescription', function ($http) {
 
         if (index && type) {
           // search for some times fields
-          prlJobService.searchTimeFields(index, type, $scope.data_description.time_field)
+          mlJobService.searchTimeFields(index, type, $scope.data_description.time_field)
           .then((resp) => {
             $scope.data_description.time_format = stringUtils.guessTimeFormat(resp.time);
             $scope.getExampleTime();

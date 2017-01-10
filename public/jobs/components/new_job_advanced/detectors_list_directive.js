@@ -24,16 +24,16 @@ import stringUtils from 'plugins/ml/util/string_utils';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.directive('prlJobDetectorsList', function ($modal, $q, prlJobService) {
+module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
   return {
     restrict: 'AE',
     replace: true,
     scope: {
-      detectors:            '=prlDetectors',
-      indices:              '=prlIndices',
-      properties:           '=prlProperties',
-      catFieldNameSelected: '=prlCatFieldNameSelected',
-      editMode:             '=prlEditMode',
+      detectors:            '=mlDetectors',
+      indices:              '=mlIndices',
+      properties:           '=mlProperties',
+      catFieldNameSelected: '=mlCatFieldNameSelected',
+      editMode:             '=mlEditMode',
     },
     template: require('plugins/ml/jobs/components/new_job_advanced/detectors_list.html'),
     controller: function ($scope) {
@@ -104,7 +104,7 @@ module.directive('prlJobDetectorsList', function ($modal, $q, prlJobService) {
         }
 
         // post detector to server for in depth validation
-        return prlJobService.validateDetector(dtr)
+        return mlJobService.validateDetector(dtr)
         .then((resp) => {
           return {
             success: (resp.acknowledged || false)
@@ -126,7 +126,7 @@ module.directive('prlJobDetectorsList', function ($modal, $q, prlJobService) {
         }
         const modalInstance = $modal.open({
           template: require('plugins/ml/jobs/components/new_job_advanced/detector_modal/detector_modal.html'),
-          controller: 'PrlDetectorModal',
+          controller: 'MlDetectorModal',
           backdrop: 'static',
           keyboard: false,
           size: 'lg',
@@ -153,7 +153,7 @@ module.directive('prlJobDetectorsList', function ($modal, $q, prlJobService) {
         }
         const modalInstance = $modal.open({
           template: require('plugins/ml/jobs/components/new_job_advanced/detector_filter_modal/detector_filter_modal.html'),
-          controller: 'PrlDetectorFilterModal',
+          controller: 'MlDetectorFilterModal',
           backdrop: 'static',
           keyboard: false,
           size: 'lg',

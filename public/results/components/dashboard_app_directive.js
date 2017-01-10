@@ -55,7 +55,7 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
     restrict: 'E',
     template: require('plugins/ml/results/components/dashboard_app.html'),
     controllerAs: 'dashboardApp',
-    controller: function ($scope, $rootScope, $route, $routeParams, $location, Private, getAppState, prlDashboardService) {
+    controller: function ($scope, $rootScope, $route, $routeParams, $location, Private, getAppState, mlDashboardService) {
 
       const queryFilter = Private(FilterBarQueryFilterProvider);
 
@@ -73,7 +73,7 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
         }
       }
 
-      prlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
+      mlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
         const selectedJobIds = selections.length > 0 ? selections : ['*'];
         $scope.selectedJobs = _.map(selectedJobIds, function (jobId) {
           return {id:jobId};
@@ -211,7 +211,7 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
 
       function buildSelectedJobObjects(selectedJobIds) {
         // Build scope objects used in the HTML template.
-        $scope.unsafeHtml = '<prl-job-select-list selected="' + selectedJobIds.join(' ') + '"></prl-job-select-list>';
+        $scope.unsafeHtml = '<ml-job-select-list selected="' + selectedJobIds.join(' ') + '"></ml-job-select-list>';
 
         // Crop long job IDs for display in the button text.
         // The first full job ID is displayed in the tooltip.

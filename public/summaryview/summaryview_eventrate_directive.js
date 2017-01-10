@@ -31,7 +31,7 @@ import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.directive('prlSummaryViewEventRate', function ($compile, $timeout, timefilter, prlJobService, prlAnomalyRecordDetailsService, prlSwimlaneInspectorService, prlSwimlaneSelectionService) {
+module.directive('mlSummaryViewEventRate', function ($compile, $timeout, timefilter, mlJobService, mlAnomalyRecordDetailsService, mlSwimlaneInspectorService, mlSwimlaneSelectionService) {
 
   function link(scope, element, attrs) {
     let rendered = false;
@@ -109,7 +109,7 @@ module.directive('prlSummaryViewEventRate', function ($compile, $timeout, timefi
 
       function cellHover($event, index, time) {
         if (monitorCellsContainer === undefined) {
-          monitorCellsContainer = angular.element('prl-summary-view-swimlane[swimlane-type="MONITOR"] .cells-container');
+          monitorCellsContainer = angular.element('ml-summary-view-swimlane[swimlane-type="MONITOR"] .cells-container');
         }
         if (monitorCellsContainer !== undefined) {
           monitorCellsContainer.scope().hoverFuncs[index](scope.swimlaneType);
@@ -130,12 +130,12 @@ module.directive('prlSummaryViewEventRate', function ($compile, $timeout, timefi
 
       // sort jobs by description
       lanes = lanes.sort((a, b) => {
-        return prlJobService.jobDescriptions[a] > prlJobService.jobDescriptions[b];
+        return mlJobService.jobDescriptions[a] > mlJobService.jobDescriptions[b];
       });
 
       _.each(lanes, (job, id) => {
         // jobColors[job] = color(id);
-        const desc = prlJobService.jobDescriptions[job];
+        const desc = mlJobService.jobDescriptions[job];
         const $job = $('<div>', {
           'class': 'job',
           'data-tooltip': desc,

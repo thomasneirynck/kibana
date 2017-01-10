@@ -9,7 +9,7 @@
         <tr>
           <th
             ng-repeat="col in columns"
-            ng-click="prlPaginatedTable.sortColumn($index)"
+            ng-click="mlPaginatedTable.sortColumn($index)"
             class="{{ col.class }}">
             <span ng-bind="col.title"></span>
             <kbn-info ng-if="col.info" info="{{ col.info }}" placement="top"></kbn-info>
@@ -17,16 +17,16 @@
               ng-if="col.sortable !== false"
               class="fa"
               ng-class="{
-                'fa-sort-asc': prlPaginatedTable.sort.columnIndex === $index && prlPaginatedTable.sort.direction === 'asc',
-                'fa-sort-desc': prlPaginatedTable.sort.columnIndex === $index && prlPaginatedTable.sort.direction === 'desc',
-                'fa-sort': prlPaginatedTable.sort.columnIndex !== $index || prlPaginatedTable.sort.direction === null
+                'fa-sort-asc': mlPaginatedTable.sort.columnIndex === $index && mlPaginatedTable.sort.direction === 'asc',
+                'fa-sort-desc': mlPaginatedTable.sort.columnIndex === $index && mlPaginatedTable.sort.direction === 'desc',
+                'fa-sort': mlPaginatedTable.sort.columnIndex !== $index || mlPaginatedTable.sort.direction === null
               }">
             </i>
             <i aria-label="Click on a cell to filter" ng-if="col.filterable" class="fa fa-search" ng-click="$event.stopPropagation()" tooltip="Click on a cell to filter"></i>
           </th>
         </tr>
       </thead>
-      <tbody prl-rows="page" prl-rows-min="perPage"></tbody>
+      <tbody ml-rows="page" ml-rows-min="perPage"></tbody>
     </table>
   </div>
 

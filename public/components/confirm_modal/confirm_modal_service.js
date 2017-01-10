@@ -18,13 +18,13 @@
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.service('prlConfirmModalService', ['$modal', '$q',  function ($modal, $q) {
+module.service('mlConfirmModalService', ['$modal', '$q',  function ($modal, $q) {
 
   this.open = function (options) {
     const deferred = $q.defer();
     const modalInstance = $modal.open({
       template: require('plugins/ml/components/confirm_modal/confirm_modal.html'),
-      controller: 'PrlConfirmModal',
+      controller: 'MlConfirmModal',
       backdrop: 'static',
       keyboard: false,
       size: (options.size === undefined) ? 'sm' : options.size,

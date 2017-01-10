@@ -92,9 +92,9 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
       // add the arrow elements to the page outside the <pretty_duration>'s parent anchor element
       // however, they are given <pretty_duration>'s scope to allow access to the back and forward functions
       function addArrows() {
-        const zoomOutButton = angular.element('<i ng-click="zoomOut()" class="prl-time-button fa fa-search-minus" ></i>');
-        const zoomInButton = angular.element('<i ng-click="zoomIn()" class="prl-time-button fa fa-search-plus" ></i>');
-        const separator = angular.element('<div class="prl-time-button-separator" ></div>');
+        const zoomOutButton = angular.element('<i ng-click="zoomOut()" class="ml-time-button fa fa-search-minus" ></i>');
+        const zoomInButton = angular.element('<i ng-click="zoomIn()" class="ml-time-button fa fa-search-plus" ></i>');
+        const separator = angular.element('<div class="ml-time-button-separator" ></div>');
 
         $($elem.parent()[0].previousElementSibling).before(zoomInButton);
         $($elem.parent()[0].previousElementSibling).before(zoomOutButton);

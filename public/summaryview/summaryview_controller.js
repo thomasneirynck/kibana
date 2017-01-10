@@ -42,7 +42,7 @@ uiRoutes
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('PrlSummaryViewController', function ($scope, $route, $timeout, $compile, $location, Private, $q, es, prlJobService, timefilter, globalState, prlAnomalyRecordDetailsService, prlDashboardService, prlSwimlaneSearchService, prlSwimlaneService) {
+module.controller('MlSummaryViewController', function ($scope, $route, $timeout, $compile, $location, Private, $q, es, mlJobService, timefilter, globalState, mlAnomalyRecordDetailsService, mlDashboardService, mlSwimlaneSearchService, mlSwimlaneService) {
 
   // TODO - move the index pattern into an editor setting,
   //        or configure the visualization to use a search?
@@ -61,7 +61,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
 
   $scope.initializeVis = function () {
     // Load the job info needed by the visualization, then do the first load.
-    prlJobService.getBasicJobInfo(ML_RESULTS_INDEX_ID)
+    mlJobService.getBasicJobInfo(ML_RESULTS_INDEX_ID)
     .then((resp) => {
       if (resp.jobs.length > 0) {
         // Set any jobs passed in the URL as selected, otherwise check any saved in the Vis.
@@ -135,13 +135,13 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
         $timeout(() => {
           if ($scope.monitorChartData.points && $scope.monitorChartData.points.length) {
             $scope.hasResults = true;
-            prlAnomalyRecordDetailsService.load();
+            mlAnomalyRecordDetailsService.load();
             $scope.lanes = {};
             $scope.laneMarkers = [];
             $compile($('.swimlane-container').html(swimlanes))($scope);
             $scope.$broadcast('render');
 
-            prlAnomalyRecordDetailsService.loadTopInfluencersForPage();
+            mlAnomalyRecordDetailsService.loadTopInfluencersForPage();
           } else {
             $scope.hasResults = false;
           }
@@ -151,18 +151,18 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
     }
 
     const bounds = timefilter.getActiveBounds();
-    prlAnomalyRecordDetailsService.setBounds(bounds);
+    mlAnomalyRecordDetailsService.setBounds(bounds);
     const selectedJobIds = $scope.getSelectedJobIds();
 
-    prlSwimlaneService.setTimeRange({start: (bounds.min.valueOf() / 1000), end: (bounds.max.valueOf() / 1000)});
-    prlSwimlaneService.setSelectedJobIds(selectedJobIds);
-    prlAnomalyRecordDetailsService.setSelectedJobIds(selectedJobIds);
+    mlSwimlaneService.setTimeRange({start: (bounds.min.valueOf() / 1000), end: (bounds.max.valueOf() / 1000)});
+    mlSwimlaneService.setSelectedJobIds(selectedJobIds);
+    mlAnomalyRecordDetailsService.setSelectedJobIds(selectedJobIds);
 
     $scope.bucketInterval = calculateBucketInterval();
-    prlAnomalyRecordDetailsService.setBucketInterval($scope.bucketInterval);
+    mlAnomalyRecordDetailsService.setBucketInterval($scope.bucketInterval);
 
     // 1 - load job results
-    prlSwimlaneSearchService.getScoresByBucket(ML_RESULTS_INDEX_ID, selectedJobIds,
+    mlSwimlaneSearchService.getScoresByBucket(ML_RESULTS_INDEX_ID, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.bucketInterval.expression, 10)
     .then((resp) => {
       console.log('SummaryView bucket swimlane refresh data:', resp);
@@ -179,7 +179,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
     });
 
     // 2 - load detector results
-    prlSwimlaneSearchService.getScoresByDetector(ML_RESULTS_INDEX_ID, selectedJobIds,
+    mlSwimlaneSearchService.getScoresByDetector(ML_RESULTS_INDEX_ID, selectedJobIds,
         bounds.min.valueOf(), bounds.max.valueOf(), $scope.bucketInterval.expression, 10)
     .then((resp)=> {
       console.log('SummaryView detector swimlane refresh data:', resp);
@@ -192,7 +192,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
     });
 
     // 3 - load influencer type results
-    prlSwimlaneSearchService.getScoresByInfluencerType(ML_RESULTS_INDEX_ID, selectedJobIds,
+    mlSwimlaneSearchService.getScoresByInfluencerType(ML_RESULTS_INDEX_ID, selectedJobIds,
         bounds.min.valueOf(), bounds.max.valueOf(), $scope.bucketInterval.expression, 20)
     .then((resp)=> {
       console.log('SummaryView influencer type swimlane refresh data:', resp);
@@ -205,7 +205,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
     });
 
     // 4 - load influencer value results
-    prlSwimlaneSearchService.getScoresByInfluencerValue(ML_RESULTS_INDEX_ID, selectedJobIds,
+    mlSwimlaneSearchService.getScoresByInfluencerValue(ML_RESULTS_INDEX_ID, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.bucketInterval.expression, 20)
     .then((resp) => {
       console.log('SummaryView influencer value swimlane refresh data:', resp);
@@ -231,7 +231,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
 
       $scope.chartWidth = chartWidth;
 
-      prlSwimlaneSearchService.getEventRate(ML_RESULTS_INDEX_ID, selectedJobIds,
+      mlSwimlaneSearchService.getEventRate(ML_RESULTS_INDEX_ID, selectedJobIds,
         bounds.min.valueOf(), bounds.max.valueOf(), (interval + 'ms'), 500)
       .then(function (resp) {
         console.log('SummaryView event rate refresh data:', resp);
@@ -284,14 +284,14 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
 
   function getGridWidth() {
     // grid width is 3 quarters of of the window, minus 170 for the lane labels, minus 50 padding
-    return (($('.prl-summary-view').width() / 4) * 3) - 170 - 50;
+    return (($('.ml-summary-view').width() / 4) * 3) - 170 - 50;
   }
 
   function processJobResults(dataByJob) {
     const dataset = {'laneLabels':[], 'points':[]};
     const timeObjs = {};
 
-    prlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
+    mlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
 
     // Use job ids as lane labels.
     _.each(dataByJob, (jobData, jobId) => {
@@ -314,8 +314,8 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
     let times = Object.keys(timeObjs);
     times = times.sort();
 
-    prlAnomalyRecordDetailsService.clearTimes();
-    prlAnomalyRecordDetailsService.setTimes(times);
+    mlAnomalyRecordDetailsService.clearTimes();
+    mlAnomalyRecordDetailsService.setTimes(times);
 
     console.log('SummaryView jobs swimlane dataset:', dataset);
     $scope.jobChartData = dataset;
@@ -325,7 +325,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
     const dataset = {'laneLabels':[], 'points':[]};
     const datasetPerJob = {};
 
-    prlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
+    mlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
 
     // clone the basic dataset for each job
     _.each(dataByJob, (jobData, jobId) => {
@@ -335,7 +335,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
     // Get the descriptions of the detectors to use as lane labels.
     _.each(dataByJob, (jobData, jobId) => {
       _.each(jobData, (detectorData, detectorIndex) => {
-        const detectorDesc = prlJobService.detectorsByJob[jobId][detectorIndex].detector_description;
+        const detectorDesc = mlJobService.detectorsByJob[jobId][detectorIndex].detector_description;
         // If a duplicate detector description has been used across jobs append job ID.
         const laneLabel = _.indexOf(dataset.laneLabels, detectorDesc) === -1 ?
             detectorDesc : detectorDesc + ' (' + jobId + ')';
@@ -396,7 +396,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
   function processInfluencerResults(dataByInfluencer) {
     const dataset = {'laneLabels':[], 'points':[]};
 
-    prlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
+    mlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
 
     _.each(dataByInfluencer, (influencerData, influencerFieldValue) => {
       dataset.laneLabels.push(influencerFieldValue);
@@ -417,7 +417,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
   function processInfluencerTypeResults(dataByInfluencerType) {
     const dataset = {'laneLabels':[], 'points':[]};
 
-    prlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
+    mlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
 
     _.each(dataByInfluencerType, (influencerData, influencerFieldType) => {
       dataset.laneLabels.push(influencerFieldType);
@@ -439,7 +439,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
   function processEventRateResults(data) {
     const dataset = {'laneLabels':[], 'points':[]};
 
-    prlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
+    mlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
 
     const maximums = {};
     $scope.eventRateChartData = {};
@@ -487,7 +487,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
   $scope.$listen(timefilter, 'fetch', $scope.refresh);
 
   // When inside a dashboard in the Ml plugin, listen for changes to job selection.
-  prlDashboardService.listenJobSelectionChange($scope, (event, selections) => {
+  mlDashboardService.listenJobSelectionChange($scope, (event, selections) => {
     $scope.setSelectedJobs(selections);
   });
 
@@ -504,7 +504,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
     });
 
     // Build scope objects used in the HTML template.
-    $scope.unsafeHtml = '<prl-job-select-list selected="' + selectedJobIds.join(' ') + '"></prl-job-select-list>';
+    $scope.unsafeHtml = '<ml-job-select-list selected="' + selectedJobIds.join(' ') + '"></ml-job-select-list>';
 
     // Crop long job IDs for display in the button text.
     // The first full job ID is displayed in the tooltip.
@@ -523,7 +523,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
   $scope.initializeVis();
   $scope.$emit('application.load');
 })
-.service('prlSwimlaneService', function ($window, prlJobService, prlBrowserDetectService) {
+.service('mlSwimlaneService', function ($window, mlJobService, mlBrowserDetectService) {
   let selectedJobIds = [];
   let timeRange = {start:0, end:0};
 
@@ -555,7 +555,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
     path += '\',mode:absolute,to:\'' + to;
     path += '\'))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))&jobId=' + jobString;
 
-    if (prlBrowserDetectService() === 'safari') {
+    if (mlBrowserDetectService() === 'safari') {
       location.href = path;
     } else {
       $window.open(path, '_blank');

@@ -47,7 +47,7 @@ import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module
-.controller('PrlCreateSimpleJob', function (
+.controller('MlCreateSimpleJob', function (
   $scope,
   $route,
   $location,
@@ -57,15 +57,15 @@ module
   courier,
   timefilter,
   Private,
-  prlJobService,
-  prlSimpleJobService,
-  prlMessageBarService,
-  prlESMappingService,
-  prlBrowserDetectService) {
+  mlJobService,
+  mlSimpleJobService,
+  mlMessageBarService,
+  mlESMappingService,
+  mlBrowserDetectService) {
 
   timefilter.enabled = true;
-  const msgs = prlMessageBarService;
-  const PrlTimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
+  const msgs = mlMessageBarService;
+  const MlTimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
   const filterAggTypes = require('plugins/ml/jobs/components/new_job_simple/create_job/filter_agg_types');
 
   const aggTypes = Private(AggTypesIndexProvider);
@@ -73,7 +73,7 @@ module
   $scope.courier = courier;
 
   $scope.index = $route.current.params.index;
-  $scope.chartData = prlSimpleJobService.chartData;
+  $scope.chartData = mlSimpleJobService.chartData;
 
   const PAGE_WIDTH = angular.element('.jobs-container').width();
   const BAR_TARGET = PAGE_WIDTH / 2;
@@ -150,7 +150,7 @@ module
     },
     field: null,
     bucketSpan: '5m',
-    jobInterval: new PrlTimeBuckets(),
+    jobInterval: new MlTimeBuckets(),
     chartInterval: undefined,
     start: 0,
     end: 0,
@@ -166,7 +166,7 @@ module
     loadTimeFields();
     $scope.ui.isFormValid();
     $scope.ui.dirty = true;
-    prlESMappingService.getMappings()
+    mlESMappingService.getMappings()
     .then((r) => {
     });
   };
@@ -202,7 +202,7 @@ module
     }
 
     const bounds = timefilter.getActiveBounds();
-    $scope.formConfig.chartInterval = new PrlTimeBuckets();
+    $scope.formConfig.chartInterval = new MlTimeBuckets();
     $scope.formConfig.chartInterval.setBarTarget(BAR_TARGET);
     $scope.formConfig.chartInterval.setMaxBars(MAX_BARS);
     $scope.formConfig.chartInterval.setInterval('auto');
@@ -227,11 +227,11 @@ module
     }
 
     if ($scope.formConfig.agg.type !== undefined) {
-      const prlName = $scope.formConfig.agg.type.prlName;
-      if (prlName === 'count' ||
-        prlName === 'low_count' ||
-        prlName === 'high_count' ||
-        prlName === 'distinct_count') {
+      const mlName = $scope.formConfig.agg.type.mlName;
+      if (mlName === 'count' ||
+        mlName === 'low_count' ||
+        mlName === 'high_count' ||
+        mlName === 'distinct_count') {
         makeTheSame = true;
       }
     }
@@ -257,7 +257,7 @@ module
   }
 
   function loadTimeFields() {
-    $scope.ui.timeFields = prlSimpleJobService.getTimeFields($scope.indexPattern);
+    $scope.ui.timeFields = mlSimpleJobService.getTimeFields($scope.indexPattern);
     if ($scope.ui.timeFields.length === 1) {
       $scope.formConfig.timeField = $scope.ui.timeFields[0];
     }
@@ -302,7 +302,7 @@ module
       // $scope.formConfig.jobId = '';
       $scope.ui.dirty = false;
 
-      prlSimpleJobService.getLineChartResults($scope.formConfig)
+      mlSimpleJobService.getLineChartResults($scope.formConfig)
       .then((results) => {
         // console.log('chart results', results);
         $scope.hasResults = true;
@@ -382,12 +382,12 @@ module
   $scope.createJob = function () {
     if ($scope.formConfig.jobId !== '') {
       msgs.clear();
-      $scope.formConfig.mappingTypes = prlESMappingService.getTypesFromMapping($scope.formConfig.indexPattern.id);
+      $scope.formConfig.mappingTypes = mlESMappingService.getTypesFromMapping($scope.formConfig.indexPattern.id);
       // create the new job
-      prlSimpleJobService.createJob($scope.formConfig)
+      mlSimpleJobService.createJob($scope.formConfig)
       .then((job) => {
         // if save was successful, open the job
-        prlJobService.openJob(job.job_id)
+        mlJobService.openJob(job.job_id)
         .then((resp) => {
           // if open was successful create a new scheduler
           saveNewScheduler(job, true);
@@ -411,11 +411,11 @@ module
     // creates a new scheduler and attempts to start it depending
     // on startSchedulerAfterSave flag
     function saveNewScheduler(job, startSchedulerAfterSave) {
-      prlJobService.saveNewScheduler(job.scheduler_config, job.job_id)
+      mlJobService.saveNewScheduler(job.scheduler_config, job.job_id)
       .then((resp) => {
 
         if (startSchedulerAfterSave) {
-          prlSimpleJobService.startScheduler($scope.formConfig)
+          mlSimpleJobService.startScheduler($scope.formConfig)
           .then((resp) => {
             $scope.jobState = JOB_STATE.RUNNING;
             refreshCounter = 0;
@@ -442,7 +442,7 @@ module
     const counterLimit = 20 - (refreshInterval / REFRESH_INTERVAL_MS);
     if (refreshCounter >=  counterLimit) {
       refreshCounter = 0;
-      prlSimpleJobService.checkSchedulerStatus($scope.formConfig)
+      mlSimpleJobService.checkSchedulerStatus($scope.formConfig)
       .then((status) => {
         if (status === 'STOPPED') {
           console.log('Stopping poll because scheduler status is: ' + status);
@@ -503,12 +503,12 @@ module
   }
 
   function reloadModelChart() {
-    return prlSimpleJobService.loadModelData($scope.formConfig);
+    return mlSimpleJobService.loadModelData($scope.formConfig);
   };
 
 
   function reloadSwimlane() {
-    return prlSimpleJobService.loadSwimlaneData($scope.formConfig);
+    return mlSimpleJobService.loadSwimlaneData($scope.formConfig);
   };
 
   function adjustRefreshInterval(loadingDifference, currentInterval) {
@@ -529,7 +529,7 @@ module
   }
 
   $scope.setFullTimeRange = function () {
-    prlSimpleJobService.indexTimeRange($scope.indexPattern)
+    mlSimpleJobService.indexTimeRange($scope.indexPattern)
     .then((resp) => {
       timefilter.time.from = moment(resp.start.epoch).toISOString();
       timefilter.time.to = moment(resp.end.epoch).toISOString();
@@ -546,7 +546,7 @@ module
     // setting the status to STOPPING disables the stop button
     // job.scheduler_status = 'STOPPING';
     $scope.jobState = JOB_STATE.STOPPING;
-    prlSimpleJobService.stopScheduler($scope.formConfig);
+    mlSimpleJobService.stopScheduler($scope.formConfig);
   };
 
   $scope.viewResults = function (page) {
@@ -556,7 +556,7 @@ module
   function viewResults(job, page) {
     if (job && page) {
       // get the time range first
-      prlJobService.jobTimeRange(job.id)
+      mlJobService.jobTimeRange(job.id)
         .then((resp) => {
           // if no times are found, use last 24hrs to now
           const from = (resp.start.string) ? '\'' + resp.start.string + '\'' : 'now-24h';
@@ -573,7 +573,7 @@ module
           // we can't used onclick for these buttons as they need
           // to contain angular expressions
           // therefore in safari we just redirect the page using location.href
-          if (prlBrowserDetectService() === 'safari') {
+          if (mlBrowserDetectService() === 'safari') {
             location.href = path;
           } else {
             $window.open(path, '_blank');

@@ -5,14 +5,14 @@
       <div ng-repeat="(key, value) in job">
         <div ng-switch="key">
           <div ng-switch-when="scheduler_config">
-            <div class="prl_sub_heading">Scheduler</div>
-            <div class='prl_job_section_container'>
+            <div class="ml_sub_heading">Scheduler</div>
+            <div class='ml_job_section_container'>
               <div>
-                <prl-job-item ng-repeat="(key1, value1) in value">
+                <ml-job-item ng-repeat="(key1, value1) in value">
                   <div ng-switch="key1">
 
                     <div ng-switch-when="types">
-                      <div class="prl_job_row row">
+                      <div class="ml_job_row row">
                         <div class="col-md-3">types:</div>
                         <div class="col-md-9">
                           {{value1.join(",")}}
@@ -21,7 +21,7 @@
                     </div>
 
                     <div ng-switch-when="indexes">
-                      <div class="prl_job_row row">
+                      <div class="ml_job_row row">
                         <div class="col-md-3">indexes:</div>
                         <div class="col-md-9">
                           {{value1.join(",")}}
@@ -30,14 +30,14 @@
                     </div>
 
                     <div ng-switch-default>
-                      <div class="prl_job_row row">
+                      <div class="ml_job_row row">
                         <div class="col-md-3">{{key1}}</div>
                         <div class="col-md-9">{{value1}}</div>
                       </div>
                     </div>
 
                   </div>
-                </prl-job-item>
+                </ml-job-item>
               </div>
             </div>
           </div>

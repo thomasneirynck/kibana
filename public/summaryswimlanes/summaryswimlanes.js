@@ -41,7 +41,7 @@ export default function SummarySwimlanesVisType(Private, $templateCache) {
 
   // Return a new instance describing this visualization.
   return new TemplateVisType({
-    name: 'prlSummarySwimlanes',
+    name: 'mlSummarySwimlanes',
     title: 'Job Swimlanes',
     icon: 'fa-bars',
     description: 'Ml visualization consisting of two swimlanes, designed to show the ' +

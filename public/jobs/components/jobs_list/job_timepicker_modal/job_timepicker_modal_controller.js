@@ -21,8 +21,8 @@ import angular from 'angular';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.controller('PrlJobTimepickerModal', function ($scope, $modalInstance, params, prlJobService, prlMessageBarService) {
-  const msgs = prlMessageBarService;
+module.controller('MlJobTimepickerModal', function ($scope, $modalInstance, params, mlJobService, mlMessageBarService) {
+  const msgs = mlMessageBarService;
   // msgs.clear();
   $scope.saveLock = false;
 
@@ -91,9 +91,9 @@ module.controller('PrlJobTimepickerModal', function ($scope, $modalInstance, par
 
     extractForm();
 
-    prlJobService.startScheduler($scope.schedulerId, $scope.jobId, $scope.start, $scope.end)
+    mlJobService.startScheduler($scope.schedulerId, $scope.jobId, $scope.start, $scope.end)
       .then((resp) => {
-        prlJobService.refreshJob($scope.jobId)
+        mlJobService.refreshJob($scope.jobId)
           .then((job) => {
             // no need to do anything. the job service broadcasts a jobs list update event
           })

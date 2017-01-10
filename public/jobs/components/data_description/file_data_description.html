@@ -1,13 +1,13 @@
 <div class="file-data-description-container">
 
-  <prl-data-upload
-    prl-read-success-callback="readSuccessCallback"
-    prl-properties="properties"
-    prl-upload-data="uploadData"
-    prl-data-ready="dataReady"
-    prl-maximum-file-size="maximumFileSize"
+  <ml-data-upload
+    ml-read-success-callback="readSuccessCallback"
+    ml-properties="properties"
+    ml-upload-data="uploadData"
+    ml-data-ready="dataReady"
+    ml-maximum-file-size="maximumFileSize"
     >
-  </prl-data-upload>
+  </ml-data-upload>
 
   <div class="form-group help-pane" ng-show="(uploadData.dataPreview === '')">
     <small class="form-group " >
@@ -37,7 +37,7 @@
       </select>
     </div>
 
-    <prl-job-delimited-options ng-show="(data_description.format==='DELIMITED' || data_description.format==='JSON')">
+    <ml-job-delimited-options ng-show="(data_description.format==='DELIMITED' || data_description.format==='JSON')">
       <div class="form-group" ng-show="data_description.format==='DELIMITED'">
         <label>Delimiter</label>
         <select
@@ -100,7 +100,7 @@
         </div>
       </div>
 
-    </prl-job-delimited-options>
+    </ml-job-delimited-options>
 
   </div>
 

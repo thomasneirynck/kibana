@@ -19,8 +19,8 @@ import chrome from 'ui/chrome';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.controller('PrlTransformModal', function ($scope, $modalInstance, params, prlJobService, prlMessageBarService) {
-  const msgs = prlMessageBarService;
+module.controller('MlTransformModal', function ($scope, $modalInstance, params, mlJobService, mlMessageBarService) {
+  const msgs = mlMessageBarService;
   msgs.clear();
   $scope.title = 'Add new transform';
   $scope.transform = {};

@@ -31,7 +31,7 @@ import ContextChartMask from 'plugins/ml/timeseriesexplorer/context_chart_mask';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter) {
+module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter) {
 
   function link(scope, element, attrs) {
 
@@ -265,9 +265,9 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
 
       // Define the div for the tooltip.
       // TODO - append to the chartElement rather than the body.
-      d3.select('body').selectAll('div.prl-model-debug-point-tooltip').remove();
+      d3.select('body').selectAll('div.ml-model-debug-point-tooltip').remove();
       const tooltipDiv = d3.select('body').append('div')
-        .attr('class', 'prl-model-debug-point-tooltip')
+        .attr('class', 'ml-model-debug-point-tooltip')
         .style('opacity', 0);
 
       focusGroup.append('rect')
@@ -692,7 +692,7 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
         contents += ('<br/>anomaly score: ' + displayScore);
       }
 
-      const tooltipDiv = d3.select('.prl-model-debug-point-tooltip');
+      const tooltipDiv = d3.select('.ml-model-debug-point-tooltip');
       tooltipDiv.transition()
         .duration(200)
         .style('opacity', .9);
@@ -713,7 +713,7 @@ module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter)
     }
 
     function hideFocusChartTooltip() {
-      const tooltipDiv = d3.select('.prl-model-debug-point-tooltip');
+      const tooltipDiv = d3.select('.ml-model-debug-point-tooltip');
       tooltipDiv.transition()
         .duration(500)
         .style('opacity', 0);

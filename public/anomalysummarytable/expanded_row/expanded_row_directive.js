@@ -30,7 +30,7 @@ import 'plugins/ml/filters/format_value';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('prlAnomalySummaryExpandedRow', function () {
+module.directive('mlAnomalySummaryExpandedRow', function () {
 
   function link($scope) {
     $scope.record = $scope.$parent.record;

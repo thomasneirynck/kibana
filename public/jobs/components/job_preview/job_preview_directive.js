@@ -18,14 +18,14 @@ import chrome from 'ui/chrome';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.directive('prlJobPreview', function (prlMessageBarService, prlJobService) {
+module.directive('mlJobPreview', function (mlMessageBarService, mlJobService) {
   return {
     restrict: 'AE',
     replace: true,
     transclude: true,
     template: require('plugins/ml/jobs/components/job_preview/job_preview.html'),
     link: function (scope, element, attrs) {
-      scope.job = prlJobService.removeJobEndpoints(prlJobService.getJob(attrs.prlJobId));
+      scope.job = mlJobService.removeJobEndpoints(mlJobService.getJob(attrs.mlJobId));
       // make the delimiter user readable
       if (scope.job.data_description && scope.job.data_description.format === 'DELIMITED') {
         scope.job.data_description.field_delimiter = scope.formatDelimiter(scope.job.data_description.field_delimiter);
@@ -34,7 +34,7 @@ module.directive('prlJobPreview', function (prlMessageBarService, prlJobService)
   };
 })
 
-.directive('prlJobItem', function () {
+.directive('mlJobItem', function () {
   return {
     replace: true,
     restrict: 'EA',

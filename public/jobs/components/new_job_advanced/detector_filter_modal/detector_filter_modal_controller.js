@@ -20,8 +20,8 @@ import angular from 'angular';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.controller('PrlDetectorFilterModal', function ($scope, $modalInstance, params, prlJobService, prlMessageBarService) {
-  const msgs = prlMessageBarService;
+module.controller('MlDetectorFilterModal', function ($scope, $modalInstance, params, mlJobService, mlMessageBarService) {
+  const msgs = mlMessageBarService;
   msgs.clear();
   $scope.title = 'Add new filter';
   $scope.detector = params.detector;
@@ -159,7 +159,7 @@ module.controller('PrlDetectorFilterModal', function ($scope, $modalInstance, pa
   };
 
 
-  // console.log('PrlDetectorFilterModal detector:', $scope.detector)
+  // console.log('MlDetectorFilterModal detector:', $scope.detector)
 
   $scope.helpLink = {};
 

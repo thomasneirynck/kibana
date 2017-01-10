@@ -34,16 +34,16 @@ import stringUtils from 'plugins/ml/util/string_utils';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('PrlConnectionsMapController', function (
+module.controller('MlConnectionsMapController', function (
   $scope,
   $route,
   $location,
   $window,
   timefilter,
   courier,
-  prlJobService,
-  prlResultsService,
-  prlDashboardService) {
+  mlJobService,
+  mlResultsService,
+  mlDashboardService) {
   $scope.detectorsByJob = {};
   $scope.numberHits = -1;
 
@@ -87,7 +87,7 @@ module.controller('PrlConnectionsMapController', function (
 
   $scope.initializeVis = function () {
     // Load the job info needed by the visualization, then do the first load.
-    prlJobService.getBasicJobInfo($scope.vis.indexPattern.id)
+    mlJobService.getBasicJobInfo($scope.vis.indexPattern.id)
     .then(function (resp) {
       if (resp.jobs.length > 0) {
         // Set any jobs passed in the URL as selected, otherwise check any saved in the Vis.
@@ -141,7 +141,7 @@ module.controller('PrlConnectionsMapController', function (
     $scope.timeRangeLabel = bounds.min.format('MMMM Do YYYY, HH:mm') + ' to ' + bounds.max.format('MMMM Do YYYY, HH:mm');
 
     const selectedJobIds = $scope.getSelectedJobIds();
-    prlResultsService.getRecordInfluencers($scope.vis.indexPattern.id, selectedJobIds,
+    mlResultsService.getRecordInfluencers($scope.vis.indexPattern.id, selectedJobIds,
         $scope.vis.params.threshold.val, bounds.min.valueOf(), bounds.max.valueOf(), 500)
     .then(function (resp) {
       $scope.numberHits = resp.records.length;
@@ -207,14 +207,14 @@ module.controller('PrlConnectionsMapController', function (
         }
       });
 
-      prlResultsService.getRecordsForDetector($scope.vis.indexPattern.id, selectedJobId, selectedDetectorIndex, true, null, null,
+      mlResultsService.getRecordsForDetector($scope.vis.indexPattern.id, selectedJobId, selectedDetectorIndex, true, null, null,
           $scope.vis.params.threshold.val, bounds.min.valueOf(), bounds.max.valueOf(), 500)
       .then(function (resp) {
         setSummaryTableRecords(resp.records, 'entity');
       });
 
     } else {
-      prlResultsService.getRecordsForInfluencer($scope.vis.indexPattern.id, selectedJobIds, [node],
+      mlResultsService.getRecordsForInfluencer($scope.vis.indexPattern.id, selectedJobIds, [node],
           $scope.vis.params.threshold.val, bounds.min.valueOf(), bounds.max.valueOf(), 500)
       .then(function (resp) {
         setSummaryTableRecords(resp.records, 'detector');
@@ -262,7 +262,7 @@ module.controller('PrlConnectionsMapController', function (
       link.detector = detectorNode.fieldValue;
       link.influencer1FieldName = influencer1.fieldName;
       link.influencer1FieldValue = influencer1.fieldValue;
-      prlResultsService.getRecordsForDetector($scope.vis.indexPattern.id, selectedJobId, selectedDetectorIndex,
+      mlResultsService.getRecordsForDetector($scope.vis.indexPattern.id, selectedJobId, selectedDetectorIndex,
           true, influencer1.fieldName, influencer1.fieldValue,
           $scope.vis.params.threshold.val, bounds.min.valueOf(), bounds.max.valueOf(), 500)
       .then(function (resp) {
@@ -274,7 +274,7 @@ module.controller('PrlConnectionsMapController', function (
       link.influencer2FieldName = link.outer.fieldName;
       link.influencer2FieldValue = link.outer.fieldValue;
 
-      prlResultsService.getRecordsForInfluencer($scope.vis.indexPattern.id, selectedJobIds, [link.inner, link.outer],
+      mlResultsService.getRecordsForInfluencer($scope.vis.indexPattern.id, selectedJobIds, [link.inner, link.outer],
           $scope.vis.params.threshold.val, bounds.min.valueOf(), bounds.max.valueOf(), 500)
       .then(function (resp) {
         setSummaryTableRecords(resp.records, 'detector');
@@ -335,7 +335,7 @@ module.controller('PrlConnectionsMapController', function (
   $scope.$listen(timefilter, 'fetch', $scope.refresh);
 
   // When inside a dashboard in the Ml plugin, listen for changes to job selection.
-  prlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
+  mlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
     const selectAll = ((selections.length === 1 && selections[0] === '*') || selections.length === 0);
     _.each($scope.vis.params.jobs, function (job) {
       job.selected = (selectAll || _.indexOf(selections, job.id) !== -1);
@@ -575,7 +575,7 @@ module.controller('PrlConnectionsMapController', function (
     // Only show top 5 by max normalized probability.
     summaryRecords = _.take(summaryRecords, 5);
 
-    const compiledTooltip = _.template('<div class="prl-connections-map-score-tooltip">maximum score: <%= maxScoreValue %>' +
+    const compiledTooltip = _.template('<div class="ml-connections-map-score-tooltip">maximum score: <%= maxScoreValue %>' +
         '<hr/>total score: <%= totalScoreValue %></div>');
     _.each(summaryRecords, function (summary) {
       // Calculate scores used in the summary visual.
@@ -671,7 +671,7 @@ module.controller('PrlConnectionsMapController', function (
       // Load examples for any mlcategory anomalies.
       $scope.categoryExamplesByJob = {};
       _.each(categoryIdsByJobId, function (categoryIds, jobId) {
-        prlResultsService.getCategoryExamples($scope.vis.indexPattern.id, jobId, categoryIds, 10)
+        mlResultsService.getCategoryExamples($scope.vis.indexPattern.id, jobId, categoryIds, 10)
         .then(function (resp) {
           $scope.categoryExamplesByJob[jobId] = resp.examplesByCategoryId;
         }).catch(function (resp) {

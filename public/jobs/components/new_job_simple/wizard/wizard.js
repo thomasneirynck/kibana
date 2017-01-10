@@ -45,7 +45,7 @@ uiRoutes
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.controller('PrlNewJobStep1', (
+module.controller('MlNewJobStep1', (
   $scope,
   $route,
   timefilter) => {

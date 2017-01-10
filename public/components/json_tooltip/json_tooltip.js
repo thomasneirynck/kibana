@@ -22,8 +22,8 @@ import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 // service for retrieving text from the tooltip.json file
 // to add a tooltip to any element:
-// <... tooltip="{{prlJsonTooltipService.text('my_id')}}" ...>
-module.service('prlJsonTooltipService', function () {
+// <... tooltip="{{mlJsonTooltipService.text('my_id')}}" ...>
+module.service('mlJsonTooltipService', function () {
   this.text = function (id) {
     if (tooltips[id]) {
       return tooltips[id].text;
@@ -34,12 +34,12 @@ module.service('prlJsonTooltipService', function () {
 })
 
 // directive for placing an i icon with a popover tooltip anywhere on a page
-// tooltip format: <i prl-info-icon="the_id" />
+// tooltip format: <i ml-info-icon="the_id" />
 // the_id will match an entry in tooltips.json
-.directive('prlInfoIcon', function () {
+.directive('mlInfoIcon', function () {
   return {
     scope: {
-      id: '@prlInfoIcon',
+      id: '@mlInfoIcon',
     },
     restrict: 'AE',
     replace: true,

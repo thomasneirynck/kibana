@@ -18,7 +18,7 @@
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.service('prlDashboardService', function ($rootScope) {
+module.service('mlDashboardService', function ($rootScope) {
 
   // Broadcasts that a change has been made to the selected jobs.
   this.broadcastJobSelectionChange = function (selectedJobIds) {

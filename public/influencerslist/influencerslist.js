@@ -32,7 +32,7 @@ export default function InfluencersListVisType(Private) {
 
   // Return a new instance describing this visualization.
   return new TemplateVisType({
-    name: 'prlInfluencersList',
+    name: 'mlInfluencersList',
     title: 'Influencers list',
     icon: 'fa-list',
     description: 'Ml visualization designed to display a list of the top influencers ' +

@@ -21,14 +21,14 @@ import 'plugins/ml/services/info_service';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.service('prlVisualizationJobService', function (
+module.service('mlVisualizationJobService', function (
   $rootScope,
   $http,
   $q,
   es,
   mlAPIService,
-  prlInfoService,
-  prlJobService
+  mlInfoService,
+  mlJobService
 ) {
   this.job = {};
 

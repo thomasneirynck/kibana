@@ -16,7 +16,7 @@
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.controller('PrlConfirmModal', function ($scope, $modalInstance, params) {
+module.controller('MlConfirmModal', function ($scope, $modalInstance, params) {
 
   $scope.okFunc = params.ok;
   $scope.cancelFunc = params.cancel;

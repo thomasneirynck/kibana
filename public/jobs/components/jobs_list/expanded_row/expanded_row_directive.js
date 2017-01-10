@@ -23,14 +23,14 @@ import angular from 'angular';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.directive('prlJobListExpandedRow', function ($location, prlMessageBarService, prlJobService, prlClipboardService) {
+module.directive('mlJobListExpandedRow', function ($location, mlMessageBarService, mlJobService, mlClipboardService) {
   return {
     restrict: 'AE',
     replace: false,
     scope: {},
     template: require('plugins/ml/jobs/components/jobs_list/expanded_row/expanded_row.html'),
     link: function ($scope, $element, $attrs) {
-      const msgs = prlMessageBarService; // set a reference to the message bar service
+      const msgs = mlMessageBarService; // set a reference to the message bar service
 
       $scope.urlBasePath = chrome.getBasePath();
 
@@ -64,7 +64,7 @@ module.directive('prlJobListExpandedRow', function ($location, prlMessageBarServ
               // list once it's loaded
               $scope.jobAudit.update().then(() => {
                 // auto scroll to the bottom of the message list.
-                const div = angular.element('#prl-job-audit-list-' + $scope.job.job_id);
+                const div = angular.element('#ml-job-audit-list-' + $scope.job.job_id);
                 if (div && div.length) {
                   // run this asynchronously in a timeout to allow angular time to render the contents first
                   window.setTimeout(() => {
@@ -104,17 +104,17 @@ module.directive('prlJobListExpandedRow', function ($location, prlMessageBarServ
 
       $scope.copyToClipboard = function (job) {
         let newJob = angular.copy(job, newJob);
-        newJob = prlJobService.removeJobEndpoints(newJob);
-        newJob = prlJobService.removeJobCounts(newJob);
+        newJob = mlJobService.removeJobEndpoints(newJob);
+        newJob = mlJobService.removeJobCounts(newJob);
 
-        let success = prlClipboardService.copy(angular.toJson(newJob));
+        let success = mlClipboardService.copy(angular.toJson(newJob));
         if (success) {
           // msgs.clear();
           // msgs.info(job.job_id+' JSON copied to clipboard');
 
           // flash the background color of the json box
           // to show the contents has been copied.
-          const el = $element.find('.prl-pre');
+          const el = $element.find('.ml-pre');
           el.css('transition', 'none');
           el.css('background-color', 'aliceblue');
           el.css('color', 'white');

@@ -1,20 +1,20 @@
 <div class="job-timepicker-modal">
-  <prl-message-bar ></prl-message-bar>
+  <ml-message-bar ></ml-message-bar>
   <h3>Start scheduler for {{jobId}}</h3>
 
-  <div class="prl-timepicker-contents" >
-    <form name="prlAbsoluteTime">
+  <div class="ml-timepicker-contents" >
+    <form name="mlAbsoluteTime">
       <div class="row">
         <div 
-          class="prl-timepicker-section" 
+          class="ml-timepicker-section" 
           ng-class="{ 
-            'prl-timepicker-right-border': 
+            'ml-timepicker-right-border': 
               (+ui.startRadio <= 1 && ui.endRadio === '0') || 
               (ui.startRadio === '2' && +ui.endRadio <= 1) 
           }">
           <label>Search start time</label>
 
-          <div class="prl-timepicker-radios" >
+          <div class="ml-timepicker-radios" >
             <ul class="nav nav-pills nav-stacked">
               <li ng-class="{ active: ui.startRadio === '1' }">
                 <a ng-click="ui.startRadio = '1'" >{{ ( isNew?"Start at beginning of data" : "Continue from " + ui.lastTime ) }}</a>
@@ -23,11 +23,11 @@
                 <a ng-click="ui.startRadio = '0'">{{ ( isNew?"Start now" : "Continue from now" ) }}</a>
               </li>
               <li ng-class="{ active: ui.startRadio === '2' }">
-                <a ng-click="ui.startRadio = '2'" ng-class="{'prl-timepicker-radio-bottom': ui.startRadio === '2'}">{{ ( isNew?"Specify start time" : "Continue from specified time" ) }}</a>
+                <a ng-click="ui.startRadio = '2'" ng-class="{'ml-timepicker-radio-bottom': ui.startRadio === '2'}">{{ ( isNew?"Specify start time" : "Continue from specified time" ) }}</a>
               </li>
             </ul>
           </div>
-          <div class='prl-timepicker' ng-show="ui.startRadio == '2'">
+          <div class='ml-timepicker' ng-show="ui.startRadio == '2'">
             <div>
               <input type="text" class="form-control" input-datetime="YYYY-MM-DD HH:mm:ss" ng-model="ui.timepicker.from" >
             </div>
@@ -41,23 +41,23 @@
           </div>
         </div>
 
-        <div class="prl-timepicker-section"
+        <div class="ml-timepicker-section"
           ng-class="{ 
-            'prl-timepicker-left-border': 
+            'ml-timepicker-left-border': 
               (+ui.startRadio <= 1 && ui.endRadio === '1') 
           }">
           <label>Search end time</label>
-          <div class="prl-timepicker-radios" >
+          <div class="ml-timepicker-radios" >
             <ul class="nav nav-pills nav-stacked">
               <li ng-class="{ active: ui.endRadio === '0' }">
                 <a ng-click="ui.endRadio = '0'">No end time (Realtime search)</a>
               </li>
               <li ng-class="{ active: ui.endRadio === '1' }">
-                <a ng-click="ui.endRadio = '1'" ng-class="{'prl-timepicker-radio-bottom': ui.endRadio === '1'}">Specify end time</a>
+                <a ng-click="ui.endRadio = '1'" ng-class="{'ml-timepicker-radio-bottom': ui.endRadio === '1'}">Specify end time</a>
               </li>
             </ul>
           </div>
-          <div class='prl-timepicker' ng-show="ui.endRadio == '1'">
+          <div class='ml-timepicker' ng-show="ui.endRadio == '1'">
             <div>
               <input type="text" class="form-control" input-datetime="{{format}}" ng-model="ui.timepicker.to">
             </div>

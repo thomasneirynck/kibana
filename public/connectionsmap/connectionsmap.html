@@ -1,11 +1,11 @@
-<div class="prl-connections-map" ng-controller="PrlConnectionsMapController" >
+<div class="ml-connections-map" ng-controller="MlConnectionsMapController" >
 
-  <div class="prl-connections-map-map-container">
+  <div class="ml-connections-map-map-container">
 
     <div style="display:block;">
       <label class="small">View by:</label>
       <div class="btn-group" dropdown>
-        <button type="button" class="form-control prl-connections-map-dropdown viewby-dropdown dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+        <button type="button" class="form-control ml-connections-map-dropdown viewby-dropdown dropdown-toggle" dropdown-toggle ng-disabled="disabled">
           <span>{{vis.params.viewBy.label}}</span> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
@@ -15,7 +15,7 @@
 
       <label class="small" style="padding-left: 15px;">Severity threshold:</label>
       <div class="btn-group" dropdown>
-        <button type="button" class="form-control prl-connections-map-dropdown threshold-dropdown dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+        <button type="button" class="form-control ml-connections-map-dropdown threshold-dropdown dropdown-toggle" dropdown-toggle ng-disabled="disabled">
           <span><i class="fa fa-exclamation-triangle icon-severity-{{vis.params.threshold.display}}"></i> {{vis.params.threshold.display}}</span> <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
@@ -30,28 +30,28 @@
       <h4>No results found</h4>
     </div>
 
-    <div ng-class="{'hidden-element': (numberHits === 0)}" class="prl-connections-map-container" style="width:800px;">
-      <prl-connections-map></prl-connections-map>
+    <div ng-class="{'hidden-element': (numberHits === 0)}" class="ml-connections-map-container" style="width:800px;">
+      <ml-connections-map></ml-connections-map>
     </div>
   </div>
 
-  <div ng-hide="selectedNode === null && selectedLink === null" class="prl-connections-map-table-container">
-    <div ng-if="selectedNode" class="prl-connections-map-table-header">
-      <div class="prl-connections-map-table-label" ng-if="selectedNode.fieldName !== 'ml-detector'">Top anomalies for {{selectedNode.fieldName}} {{selectedNode.fieldValue}}</div>
-      <div class="prl-connections-map-table-label" ng-if="selectedNode.fieldName === 'ml-detector'">Top anomalies in detector {{selectedNode.fieldValue}}</div>
-      <div class="prl-connections-map-explorer-link" style="display:inline; width:50px; vertical-align:middle;">
+  <div ng-hide="selectedNode === null && selectedLink === null" class="ml-connections-map-table-container">
+    <div ng-if="selectedNode" class="ml-connections-map-table-header">
+      <div class="ml-connections-map-table-label" ng-if="selectedNode.fieldName !== 'ml-detector'">Top anomalies for {{selectedNode.fieldName}} {{selectedNode.fieldValue}}</div>
+      <div class="ml-connections-map-table-label" ng-if="selectedNode.fieldName === 'ml-detector'">Top anomalies in detector {{selectedNode.fieldValue}}</div>
+      <div class="ml-connections-map-explorer-link" style="display:inline; width:50px; vertical-align:middle;">
         <span ng-class="{'hidden-element': (selectedNode.fieldName === 'ml-detector')}" tooltip="Explore anomalies for {{selectedNode.fieldName}} {{selectedNode.fieldValue}}" tooltip-placement="bottom" tooltip-popup-delay="400" tooltip-append-to-body="true">
           <button ng-click="viewInExplorer([selectedNode])" aria-label="Explorer anomalies for {{selectedNode.fieldName}} {{selectedNode.fieldValue}}"><i aria-hidden="true" class="fa fa-table"></i></button>
         </span>
       </div>
     </div>
 
-    <div ng-if="selectedLink" class="prl-connections-map-table-header">
-      <div class="prl-connections-map-table-label" ng-if="selectedLink.detector">Top anomalies in {{ selectedLink.detector }} for {{selectedLink.influencer1FieldName}} {{selectedLink.influencer1FieldValue}}</div>
-      <div class="prl-connections-map-table-label" ng-if="selectedLink.influencer2FieldName">Top anomalies for {{selectedLink.influencer1FieldName}} {{selectedLink.influencer1FieldValue}}
+    <div ng-if="selectedLink" class="ml-connections-map-table-header">
+      <div class="ml-connections-map-table-label" ng-if="selectedLink.detector">Top anomalies in {{ selectedLink.detector }} for {{selectedLink.influencer1FieldName}} {{selectedLink.influencer1FieldValue}}</div>
+      <div class="ml-connections-map-table-label" ng-if="selectedLink.influencer2FieldName">Top anomalies for {{selectedLink.influencer1FieldName}} {{selectedLink.influencer1FieldValue}}
       with {{selectedLink.influencer2FieldName}} {{selectedLink.influencer2FieldValue}}
       </div>
-      <div class="prl-connections-map-explorer-link" style="display:inline; width:50px; vertical-align:middle;">
+      <div class="ml-connections-map-explorer-link" style="display:inline; width:50px; vertical-align:middle;">
         <span ng-if="selectedLink.detector" tooltip="Explore anomalies for {{selectedLink.influencer1FieldName}} {{selectedLink.influencer1FieldValue}}"
               tooltip-placement="bottom" tooltip-popup-delay="400" tooltip-append-to-body="true">
           <button ng-click="viewInExplorer([selectedLink.inner, selectedLink.outer])" aria-label="Explore anomalies for {{selectedLink.influencer1FieldName}} {{selectedLink.influencer1FieldValue}}">
@@ -67,22 +67,22 @@
       </div>
     </div>
 
-    <div ng-repeat="summaryRecord in summaryRecords" class="prl-connections-map-summary-record">
+    <div ng-repeat="summaryRecord in summaryRecords" class="ml-connections-map-summary-record">
       <div class="title">
-        <div ng-if="selectedNode.fieldName === 'ml-detector' && summaryRecord.entityFieldName && summaryRecord.count === 1" class="prl-connections-map-table-label">
+        <div ng-if="selectedNode.fieldName === 'ml-detector' && summaryRecord.entityFieldName && summaryRecord.count === 1" class="ml-connections-map-table-label">
           Anomaly for {{summaryRecord.entityFieldName}} {{summaryRecord.entityFieldValue}}
         </div>
-        <div ng-if="selectedNode.fieldName === 'ml-detector' && summaryRecord.entityFieldName && summaryRecord.count > 1" class="prl-connections-map-table-label">
+        <div ng-if="selectedNode.fieldName === 'ml-detector' && summaryRecord.entityFieldName && summaryRecord.count > 1" class="ml-connections-map-table-label">
           Anomaly for {{summaryRecord.entityFieldName}} {{summaryRecord.entityFieldValue}}
         </div>
-        <div ng-if="(selectedNode.fieldName !== 'ml-detector' || !summaryRecord.entityFieldName) && summaryRecord.count === 1" class="prl-connections-map-table-label">
+        <div ng-if="(selectedNode.fieldName !== 'ml-detector' || !summaryRecord.entityFieldName) && summaryRecord.count === 1" class="ml-connections-map-table-label">
           Anomaly in {{summaryRecord.detectorDescription}}
         </div>
-        <div ng-if="(selectedNode.fieldName !== 'ml-detector' || !summaryRecord.entityFieldName) && summaryRecord.count > 1" class="prl-connections-map-table-label">
+        <div ng-if="(selectedNode.fieldName !== 'ml-detector' || !summaryRecord.entityFieldName) && summaryRecord.count > 1" class="ml-connections-map-table-label">
           Anomalies in {{summaryRecord.detectorDescription}}
         </div>
 
-        <div class="prl-connections-map-explorer-link" style="display:inline; width:50px; vertical-align:middle;">
+        <div class="ml-connections-map-explorer-link" style="display:inline; width:50px; vertical-align:middle;">
           <span ng-if="summaryRecord.entityFieldName" ng-class="{'hidden-element': (selectedNode.fieldName !== 'ml-detector')}" tooltip="Explore anomalies for {{summaryRecord.entityFieldName}} {{summaryRecord.entityFieldValue}}" tooltip-placement="bottom" tooltip-popup-delay="400" tooltip-append-to-body="true">
             <button ng-click="viewInExplorer([{fieldName: summaryRecord.entityFieldName, fieldValue: summaryRecord.entityFieldValue}])" aria-label="Explore anomalies for {{summaryRecord.entityFieldName}} {{summaryRecord.entityFieldValue}}"><i aria-hidden="true" class="fa fa-table"></i></button>
           </span>

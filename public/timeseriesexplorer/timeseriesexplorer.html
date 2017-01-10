@@ -5,35 +5,35 @@
     </span>
   </div>
 </kbn-top-nav>
-<div class="prl-time-series-explorer" ng-controller="PrlTimeSeriesExplorerController">
+<div class="ml-time-series-explorer" ng-controller="MlTimeSeriesExplorerController">
   <navbar ng-show="chrome.getVisible()">
-    <div class="prl-job-select-btn-label">Job</div>
+    <div class="ml-job-select-btn-label">Job</div>
     <div style="flex:0 0 auto;">
       <button ng-if="selectedJobs.length == 1 && selectedJobs[0].id === '*'"
               popover-placement="bottom" popover-html-unsafe="{{unsafeHtml}}" popover-append-to-body="false" popover-trigger="click"
-              class="btn btn-default prl-job-select-btn" tooltip="All jobs selected">
-        <span class="prl-job-select-btn-text">All jobs</span>
+              class="btn btn-default ml-job-select-btn" tooltip="All jobs selected">
+        <span class="ml-job-select-btn-text">All jobs</span>
         <span class="caret"></span>
       </button>
 
       <button ng-if="selectedJobs.length == 1 && selectedJobs[0].id !== '*'" popover-placement="bottom"
               popover-placement="bottom" popover-html-unsafe="{{unsafeHtml}}" popover-append-to-body="false" popover-trigger="click"
-              class="btn btn-default prl-job-select-btn" tooltip="{{selectedJobs[0].id}} selected">
-        <span class="prl-job-select-btn-text">{{selectedJobs[0].id}}</span>
+              class="btn btn-default ml-job-select-btn" tooltip="{{selectedJobs[0].id}} selected">
+        <span class="ml-job-select-btn-text">{{selectedJobs[0].id}}</span>
         <span class="caret"></span>
       </button>
 
       <button ng-if="selectedJobs.length == 2" popover-placement="bottom"
               popover-placement="bottom" popover-html-unsafe="{{unsafeHtml}}" popover-append-to-body="false" popover-trigger="click"
-              class="btn btn-default prl-job-select-btn" tooltip="{{selectedJobs[0].id}} and 1 other job selected">
-        <span class="prl-job-select-btn-text">{{selectJobBtnJobIdLabel}} and 1 other</span>
+              class="btn btn-default ml-job-select-btn" tooltip="{{selectedJobs[0].id}} and 1 other job selected">
+        <span class="ml-job-select-btn-text">{{selectJobBtnJobIdLabel}} and 1 other</span>
         <span class="caret"></span>
       </button>
 
       <button ng-if="selectedJobs.length > 2" popover-placement="bottom"
               popover-placement="bottom" popover-html-unsafe="{{unsafeHtml}}" popover-append-to-body="false" popover-trigger="click"
-              class="btn btn-default prl-job-select-btn" tooltip="{{selectedJobs[0].id}} and {{selectedJobs.length-1}} other jobs selected">
-        <span class="prl-job-select-btn-text">{{selectJobBtnJobIdLabel}} and {{selectedJobs.length-1}} others</span>
+              class="btn btn-default ml-job-select-btn" tooltip="{{selectedJobs[0].id}} and {{selectedJobs.length-1}} other jobs selected">
+        <span class="ml-job-select-btn-text">{{selectJobBtnJobIdLabel}} and {{selectedJobs.length-1}} others</span>
         <span class="caret"></span>
       </button>
 
@@ -59,8 +59,8 @@
       <span class="panel-title">
         Time series analysis
       </span>
-      <div class="prl-model-debug-chart">
-        <prl-model-debug-chart  style="width: 1200px; height: 400px;"
+      <div class="ml-model-debug-chart">
+        <ml-model-debug-chart  style="width: 1200px; height: 400px;"
           context-chart-data="contextChartData"
           context-aggregation-interval="contextAggregationInterval"
           focus-aggregation-interval="focusAggregationInterval"
@@ -69,17 +69,17 @@
           zoom-from="zoomFrom"
           zoom-to="zoomTo"
           auto-zoom-duration="autoZoomDuration">
-        </prl-model-debug-chart>
+        </ml-model-debug-chart>
       </div>
 
       <span class="panel-title">
         Anomalies
       </span>
-      <prl-anomalies-table
+      <ml-anomalies-table
         anomaly-records="anomalyRecords"
         index-pattern-id="indexPatternId"
         time-field-name="timeFieldName">
-      </prl-anomalies-table>
+      </ml-anomalies-table>
 
     </div>
   </div>

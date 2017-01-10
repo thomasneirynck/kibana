@@ -25,7 +25,7 @@ import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('prlSwimlaneInfluencers', function ($timeout, prlResultsService) {
+module.directive('mlSwimlaneInfluencers', function ($timeout, mlResultsService) {
 
   function link(scope, $element) {
     scope.indexPattern = scope.$parent.indexPattern;
@@ -52,7 +52,7 @@ module.directive('prlSwimlaneInfluencers', function ($timeout, prlResultsService
 
     // Call results service to get top 5 influencer field values.
     function getTopInfluencersData() {
-      prlResultsService.getTopInfluencerValues(
+      mlResultsService.getTopInfluencerValues(
           scope.indexPattern.id, scope.selectedJobIds, scope.influencerFieldName, scope.earliestMs, scope.latestMs, 5)
       .then(function (resp) {
         scope.loadedInfluencers = true;
@@ -62,9 +62,9 @@ module.directive('prlSwimlaneInfluencers', function ($timeout, prlResultsService
           const $win = $(window);
           const winHeight = $win.height();
           const yOffset = window.pageYOffset;
-          const height = $('.prl-swimlane-tooltip').outerHeight(true) + (resp.results.length * 37);
+          const height = $('.ml-swimlane-tooltip').outerHeight(true) + (resp.results.length * 37);
           const itemY = scope.itemPageY;
-          $('.prl-swimlane-tooltip').css('top', itemY + height < winHeight + yOffset ? itemY : itemY - height);
+          $('.ml-swimlane-tooltip').css('top', itemY + height < winHeight + yOffset ? itemY : itemY - height);
         }
 
         scope.influencers = _.map(resp.results, function (result) {
@@ -80,7 +80,7 @@ module.directive('prlSwimlaneInfluencers', function ($timeout, prlResultsService
 
       }).catch(function (resp) {
         scope.loadedInfluencers = true;
-        console.log('prlSwimlaneInfluencers directive - error getting top influencer field values info from ES:', resp);
+        console.log('mlSwimlaneInfluencers directive - error getting top influencer field values info from ES:', resp);
       });
     }
 

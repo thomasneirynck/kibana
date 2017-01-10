@@ -30,7 +30,7 @@ export default function ConnectionsMapVisType(Private) {
 
   // Return a new instance describing this visualization.
   return new TemplateVisType({
-    name : 'prlConnectionsMap',
+    name : 'mlConnectionsMap',
     title : 'Connections map',
     icon : 'fa-link',
     description : 'Ml visualization for displaying connections between ' +

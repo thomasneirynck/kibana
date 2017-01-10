@@ -7,7 +7,7 @@
   <div class="middle-section" ng-show="controls.showTopInfluencerList">
     <div class="top-influencers">
       <div class="title">Top influencers in time range</div>
-      <div id="top-influencers-container" class="prl-influencers-list">
+      <div id="top-influencers-container" class="ml-influencers-list">
         <div ng-repeat="influencer in controls.topInfluencerList | limitTo:10" class="influencer-content">
           <div class="field-label">
             <div ng-if="influencerfieldname !== 'mlcategory'" class="influencerfieldvalue">{{influencer.id}}</div>

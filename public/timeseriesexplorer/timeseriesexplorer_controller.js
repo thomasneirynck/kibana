@@ -37,8 +37,8 @@ uiRoutes
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $timeout, $compile, $location,
-  Private, $q, es, timefilter, globalState, prlJobService, prlResultsService, prlDashboardService, prlTimeSeriesSearchService) {
+module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $timeout, $compile, $location,
+  Private, $q, es, timefilter, globalState, mlJobService, mlResultsService, mlDashboardService, mlTimeSeriesSearchService) {
 
   // TODO - move the index pattern into a setting?
   $scope.indexPatternId = '.ml-anomalies-*';
@@ -60,7 +60,7 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
 
   $scope.initializeVis = function () {
     // Load the job info needed by the visualization, then do the first load.
-    prlJobService.getBasicJobInfo($scope.indexPatternId)
+    mlJobService.getBasicJobInfo($scope.indexPatternId)
     .then(function (resp) {
       if (resp.jobs.length > 0) {
         // Set any jobs passed in the URL as selected, otherwise check any saved in the Vis.
@@ -136,7 +136,7 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
     console.log('aggregationInterval for context data (s):', $scope.contextAggregationInterval.asSeconds());
 
     // Query 1 - load model debug data at low granularity across full time range.
-    prlTimeSeriesSearchService.getModelDebugOutput($scope.indexPatternId, selectedJobIds,
+    mlTimeSeriesSearchService.getModelDebugOutput($scope.indexPatternId, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.contextAggregationInterval.expression)
     .then(function (resp) {
       const fullRangeChartData = processModelDebugResults(resp.results);
@@ -159,7 +159,7 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
 
     // Query 2 - load max anomalyScore by bucket at same granularity as context chart
     // across full time range for use in the swimlane.
-    prlTimeSeriesSearchService.getScoresByBucket($scope.indexPatternId, selectedJobIds,
+    mlTimeSeriesSearchService.getScoresByBucket($scope.indexPatternId, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.contextAggregationInterval.expression)
     .then(function (resp) {
       const fullRangeBucketScoreData = processBucketScoreResults(resp.results);
@@ -211,7 +211,7 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
     console.log('aggregationInterval for focus data (s):', $scope.focusAggregationInterval.asSeconds());
 
     // Query 1 - load model debug data across selected time range.
-    prlTimeSeriesSearchService.getModelDebugOutput($scope.indexPatternId, selectedJobIds,
+    mlTimeSeriesSearchService.getModelDebugOutput($scope.indexPatternId, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.focusAggregationInterval.expression)
     .then(function (resp) {
       $scope.focusChartData = processModelDebugResults(resp.results);
@@ -221,7 +221,7 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
     });
 
     // Query 2 - load max anomalyScore by bucket across selected time range.
-    prlTimeSeriesSearchService.getScoresByBucket($scope.indexPatternId, selectedJobIds,
+    mlTimeSeriesSearchService.getScoresByBucket($scope.indexPatternId, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.focusAggregationInterval.expression)
     .then(function (resp) {
       $scope.focusChartBucketScoreData = processBucketScoreResults(resp.results);
@@ -231,7 +231,7 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
     });
 
     // Query 3 - load records across full time range.
-    prlResultsService.getRecords($scope.indexPatternId, selectedJobIds,
+    mlResultsService.getRecords($scope.indexPatternId, selectedJobIds,
       0, bounds.min.valueOf(), bounds.max.valueOf(), ANOMALIES_MAX_RESULTS)
     .then(function (resp) {
       // Sort in descending time order before storing in scope.
@@ -254,7 +254,7 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
     });
 
     // Build scope objects used in the HTML template.
-    $scope.unsafeHtml = '<prl-job-select-list selected="' + selectedJobIds.join(' ') + '"></prl-job-select-list>';
+    $scope.unsafeHtml = '<ml-job-select-list selected="' + selectedJobIds.join(' ') + '"></ml-job-select-list>';
 
     // Crop long job IDs for display in the button text.
     // The first full job ID is displayed in the tooltip.
@@ -274,7 +274,7 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
   $scope.$listen(timefilter, 'fetch', $scope.refresh);
 
   // When inside a dashboard in the Ml plugin, listen for changes to job selection.
-  prlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
+  mlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
     $scope.setSelectedJobs(selections);
   });
 
@@ -329,7 +329,7 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
     // Use width of top level container as the swimlane div will not initially be rendered.
     // Remove 50px for padding.
     // Max bars for the aggregation is 10% greater than the bar target
-    const swimlaneWidth = $('.prl-time-series-explorer').width() - 50;
+    const swimlaneWidth = $('.ml-time-series-explorer').width() - 50;
     const cellWidthForMaxBars = Math.floor(swimlaneWidth / (bucketsTarget * 1.1));
     const target = (cellWidthForMaxBars >= minCellWidth ? (bucketsTarget * 1.1) : (Math.ceil(swimlaneWidth / minCellWidth)));
     return calculateAggregationInterval(bounds, target);

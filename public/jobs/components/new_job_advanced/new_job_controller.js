@@ -37,7 +37,7 @@ import jobUtils from 'plugins/ml/util/job_utils';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('PrlNewJob',
+module.controller('MlNewJob',
 function (
   $scope,
   $route,
@@ -49,12 +49,12 @@ function (
   Private,
   timefilter,
   esServerUrl,
-  prlJobService,
-  prlMessageBarService,
-  prlSchedulerService,
-  prlConfirmModalService,
-  prlTransformsDefaultOutputs,
-  prlVisualizationJobService) {
+  mlJobService,
+  mlMessageBarService,
+  mlSchedulerService,
+  mlConfirmModalService,
+  mlTransformsDefaultOutputs,
+  mlVisualizationJobService) {
 
 
   timefilter.enabled = false; // remove time picker from top of page
@@ -64,8 +64,8 @@ function (
     CLONE: 2
   };
   // ui model, used to store and control job data that wont be posted to the server.
-  const msgs = prlMessageBarService;
-  const prlConfirm = prlConfirmModalService;
+  const msgs = mlMessageBarService;
+  const mlConfirm = mlConfirmModalService;
   msgs.clear();
 
   $scope.job = {};
@@ -76,7 +76,7 @@ function (
   $scope.properties = {};
   $scope.dateProperties = {};
   $scope.maximumFileSize;
-  $scope.prlElasticDataDescriptionExposedFunctions = {};
+  $scope.mlElasticDataDescriptionExposedFunctions = {};
   $scope.elasticServerInfo = {};
 
   $scope.ui = {
@@ -193,27 +193,27 @@ function (
 
   function init() {
     // load the jobs list for job id validation later on
-    prlJobService.loadJobs();
+    mlJobService.loadJobs();
 
     // check to see whether currentJob is set.
     // if it is, this isn't a new job, it's either a clone or an edit.
-    if (prlJobService.currentJob) {
+    if (mlJobService.currentJob) {
       // try to get the jobId from the url.
       // if it's set, this is a job edit
       const jobId = $route.current.params.jobId;
 
       // make a copy of the currentJob object. so we don't corrupt the real jobs
-      $scope.job = prlJobService.cloneJob(prlJobService.currentJob);
-      $scope.job = prlJobService.removeJobCounts($scope.job);
+      $scope.job = mlJobService.cloneJob(mlJobService.currentJob);
+      $scope.job = mlJobService.removeJobCounts($scope.job);
 
       if (jobId) {
         $scope.mode = MODE.EDIT;
-        console.log('Editing job', prlJobService.currentJob);
+        console.log('Editing job', mlJobService.currentJob);
         $scope.ui.pageTitle = 'Editing Job ' + $scope.job.job_id;
       } else {
         $scope.mode = MODE.CLONE;
         $scope.ui.wizard.step = 2;
-        console.log('Cloning job', prlJobService.currentJob);
+        console.log('Cloning job', mlJobService.currentJob);
         $scope.ui.pageTitle = 'Clone Job from ' + $scope.job.job_id;
         $scope.job.job_id = '';
         setSchedulerUIText();
@@ -244,12 +244,12 @@ function (
       }
 
       // clear the current job
-      prlJobService.currentJob = undefined;
+      mlJobService.currentJob = undefined;
 
     } else {
       $scope.mode = MODE.NEW;
       console.log('Creating new job');
-      $scope.job = prlJobService.getBlankJob();
+      $scope.job = mlJobService.getBlankJob();
 
       calculateSchedulerFrequencyDefault();
     }
@@ -309,11 +309,11 @@ function (
       // check that the job id doesn't already exist
       // if they want to replace or the job id is fine, move the next step, checkInfluencers.
       // if (jobExists($scope.job.job_id)) {
-      const tempJob = prlJobService.getJob($scope.job.job_id);
+      const tempJob = mlJobService.getJob($scope.job.job_id);
       if (tempJob) {
         // if the job id exists and that job is currently CLOSED, display a warning
         if (tempJob.status === 'CLOSED') {
-          prlConfirm.open({
+          mlConfirm.open({
             message: 'Job \'' + $scope.job.job_id + '\' already exists. <br />Overwriting it will remove all previous results which cannot be undone.<br />Do you wish to continue?',
             title: $scope.job.job_id + ' already exists',
             okLabel: 'Overwrite',
@@ -328,7 +328,7 @@ function (
           });
         } else {
           // if the job is not CLOSED, stop the save altogether and display a message
-          prlConfirm.open({
+          mlConfirm.open({
             message: 'Only jobs which are CLOSED can be overwritten.<br />Please choose a different name or close the job',
             title: 'Job \'' + $scope.job.job_id +  '\' already exists and is ' + tempJob.status,
             okLabel: 'OK',
@@ -358,7 +358,7 @@ function (
           saveFunc();
         } else {
           // if there are no influencers set, open a confirmation
-          prlConfirm.open({
+          mlConfirm.open({
             message: 'You have not chosen any influencers, do you want to continue?',
             title: 'No Influencers'
           }).then(saveFunc)
@@ -382,7 +382,7 @@ function (
 
         const job = createJobForSaving($scope.job);
 
-        prlJobService.saveNewJob(job, overwrite)
+        mlJobService.saveNewJob(job, overwrite)
           .then((result) => {
             if (result.success) {
               // After the job has been successfully created the Elasticsearch
@@ -409,7 +409,7 @@ function (
                     fileUploadProgress($scope.job.job_id);
 
                     // upload the data
-                    prlJobService.uploadData($scope.job.job_id, $scope.ui.wizard.uploadedData)
+                    mlJobService.uploadData($scope.job.job_id, $scope.ui.wizard.uploadedData)
                     .then((resp) => {
                       // update status
                       $scope.ui.saveStatus.upload = 2;
@@ -434,10 +434,10 @@ function (
 
                   } else {
                     // save successful, attempt to open the job
-                    prlJobService.openJob($scope.job.job_id)
+                    mlJobService.openJob($scope.job.job_id)
                     .then((resp) => {
                       // open job successful, create a new scheduler
-                      prlJobService.saveNewScheduler($scope.job.scheduler_config, $scope.job.job_id)
+                      mlJobService.saveNewScheduler($scope.job.scheduler_config, $scope.job.job_id)
                       .then(resp => {
 
                         $scope.saveLock = false;
@@ -477,7 +477,7 @@ function (
   };
 
   $scope.cancel = function () {
-    prlConfirm.open({
+    mlConfirm.open({
       message:'Are you sure you want to cancel job creation?',
       title: 'Are you sure?'
     })
@@ -619,9 +619,9 @@ function (
 
       // load the mappings from the configured server
       // via the functions exposed in the elastic data controller
-      if (typeof $scope.prlElasticDataDescriptionExposedFunctions.extractFields === 'function') {
-        $scope.prlElasticDataDescriptionExposedFunctions.getMappings().then(() => {
-          $scope.prlElasticDataDescriptionExposedFunctions.extractFields({types: $scope.types});
+      if (typeof $scope.mlElasticDataDescriptionExposedFunctions.extractFields === 'function') {
+        $scope.mlElasticDataDescriptionExposedFunctions.getMappings().then(() => {
+          $scope.mlElasticDataDescriptionExposedFunctions.extractFields({types: $scope.types});
         });
       }
 
@@ -861,7 +861,7 @@ function (
     let allOutputs = [];
     _.each($scope.job.transforms, function (trfm) {
       let outputs = trfm.outputs;
-      const DEFAULT_OUTPUTS = prlTransformsDefaultOutputs;
+      const DEFAULT_OUTPUTS = mlTransformsDefaultOutputs;
 
       // no outputs, use defaults for the transform
       if (outputs === undefined) {
@@ -1011,7 +1011,7 @@ function (
   // check that a job id hasn't already been used
   function jobExists(jobId) {
     let exists = false;
-    const jobIds = _.map(prlJobService.jobs, function (job) {return job.job_id;});
+    const jobIds = _.map(mlJobService.jobs, function (job) {return job.job_id;});
     if (_.indexOf(jobIds, jobId) >= 0) {
       exists = true;
     }
@@ -1021,7 +1021,7 @@ function (
   function openSaveStatusWindow() {
     $modal.open({
       template: require('plugins/ml/jobs/components/new_job_advanced/save_status_modal/save_status_modal.html'),
-      controller: 'PrlSaveStatusModal',
+      controller: 'MlSaveStatusModal',
       backdrop: 'static',
       keyboard: false,
       size: 'sm',
@@ -1030,7 +1030,7 @@ function (
           return {
             pscope:           $scope,
             openScheduler:    function () {
-              prlSchedulerService.openJobTimepickerWindow($scope.job);
+              mlSchedulerService.openJobTimepickerWindow($scope.job);
             },
             showUploadStatus: (($scope.ui.wizard.dataLocation === 'FILE' && $scope.ui.wizard.uploadedData !== '' && $scope.ui.postSaveUpload) ? true : false)
           };
@@ -1061,7 +1061,7 @@ function (
       }
 
       const refresh = function () {
-        prlJobService.loadJob(jobId)
+        mlJobService.loadJob(jobId)
         .then(function (resp) {
           if (resp && $scope.ui.saveStatus.upload !== -1) {
             $scope.ui.uploadPercentage = Math.round((resp.data_counts.processed_record_count / records) * 100);
@@ -1097,7 +1097,7 @@ function (
     const types = Object.keys($scope.types);
     const job = $scope.job;
     if (indices.length) {
-      prlJobService.searchPreview(indices, types, job)
+      mlJobService.searchPreview(indices, types, job)
       .then(function (resp) {
         $scope.ui.wizard.dataPreview = angular.toJson(resp, true);
       })
@@ -1140,7 +1140,7 @@ function (
 
 
   $scope.getJobFromVisId = function (id) {
-    prlVisualizationJobService.getJobFromVisId($scope.job, id)
+    mlVisualizationJobService.getJobFromVisId($scope.job, id)
     .then(() => {
       setSchedulerUIText();
     });

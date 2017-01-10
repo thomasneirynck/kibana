@@ -1,9 +1,9 @@
-<div class="prl-anomaly-summary-table" ng-controller="PrlAnomalySummaryTableController">
+<div class="ml-anomaly-summary-table" ng-controller="MlAnomalySummaryTableController">
 
   <div>
     <label>Severity threshold:</label>
     <div class="btn-group" dropdown>
-      <button type="button" class="form-control prl-anomaly-summary-dropdown dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+      <button type="button" class="form-control ml-anomaly-summary-dropdown dropdown-toggle" dropdown-toggle ng-disabled="disabled">
         <span><i class="fa fa-exclamation-triangle icon-severity-{{vis.params.threshold.display}}"></i> {{vis.params.threshold.display}}</span> <span class="caret"></span>
       </button>
       <ul class="dropdown-menu" role="menu">
@@ -13,7 +13,7 @@
 
     <label class="small" style="padding-left: 15px;">Interval:</label>
     <div class="btn-group" dropdown>
-      <button type="button" class="form-control prl-anomaly-summary-dropdown dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+      <button type="button" class="form-control ml-anomaly-summary-dropdown dropdown-toggle" dropdown-toggle ng-disabled="disabled">
         <span>{{vis.params.interval.display}}</span> <span class="caret"></span>
       </button>
       <ul class="dropdown-menu" role="menu">
@@ -27,10 +27,10 @@
     <h4>No matching results found</h4>
   </div>
 
-  <prl-paginated-table ng-hide="table.rows.length === 0"
+  <ml-paginated-table ng-hide="table.rows.length === 0"
     columns="table.columns"
     rows="table.rows"
     per-page="table.perPage">
-  </prl-paginated-table>
+  </ml-paginated-table>
 
 </div>

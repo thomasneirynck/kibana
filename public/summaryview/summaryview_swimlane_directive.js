@@ -29,9 +29,9 @@ import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefilter, prlJobService, prlAnomalyRecordDetailsService, prlSwimlaneInspectorService, prlSwimlaneSelectionService) {
+module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilter, mlJobService, mlAnomalyRecordDetailsService, mlSwimlaneInspectorService, mlSwimlaneSelectionService) {
 
-  const SWIMLANE_TYPES = prlAnomalyRecordDetailsService.type;
+  const SWIMLANE_TYPES = mlAnomalyRecordDetailsService.type;
 
   function link(scope, element, attrs) {
     let rendered = false;
@@ -124,10 +124,10 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
 
       function cellHover($event, laneLabel, bucketScore, index, time, swimlaneType) {
 
-        if (!prlAnomalyRecordDetailsService.isLocked()) {
+        if (!mlAnomalyRecordDetailsService.isLocked()) {
           const isInspector = SWIMLANE_TYPES[scope.swimlaneType] === SWIMLANE_TYPES.INSPECTOR;
-          if ((!prlSwimlaneInspectorService.controls.visible || (prlSwimlaneInspectorService.controls.visible && isInspector))
-            && !prlSwimlaneSelectionService.selection.active) {
+          if ((!mlSwimlaneInspectorService.controls.visible || (mlSwimlaneInspectorService.controls.visible && isInspector))
+            && !mlSwimlaneSelectionService.selection.active) {
             // console.log(laneLabel,index,time)
             _.each(scope.lanes, function (l) {
               for (let j = 0; j < l.length; j++) {
@@ -156,9 +156,9 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
               let inspector = {};
               if (isInspector) {
                 inspector = {
-                  swimlaneType: prlSwimlaneInspectorService.getSwimlaneType(),
-                  timeRange: prlSwimlaneInspectorService.getTimeRange(),
-                  selectedJobIds: prlSwimlaneInspectorService.getSelectedJobIds(),
+                  swimlaneType: mlSwimlaneInspectorService.getSwimlaneType(),
+                  timeRange: mlSwimlaneInspectorService.getTimeRange(),
+                  selectedJobIds: mlSwimlaneInspectorService.getSelectedJobIds(),
                 };
               }
 
@@ -167,7 +167,7 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
                 swimlaneType = 'MONITOR';
               }
 
-              prlAnomalyRecordDetailsService.hover(time, laneLabel, bucketScore, top, target, swimlaneType, inspector);
+              mlAnomalyRecordDetailsService.hover(time, laneLabel, bucketScore, top, target, swimlaneType, inspector);
             }
           }
         }
@@ -184,10 +184,10 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
           const isEmptyCell = ($event.currentTarget.children.length === 0);
           // don't toggle the lock if the inspector is still visible
           // or allow toggle if inspector is visible and you're clicking on a card in the inspector.
-          if (!prlSwimlaneInspectorService.controls.visible ||
-            (prlSwimlaneInspectorService.controls.visible && SWIMLANE_TYPES[swimlaneType] === SWIMLANE_TYPES.INSPECTOR)) {
+          if (!mlSwimlaneInspectorService.controls.visible ||
+            (mlSwimlaneInspectorService.controls.visible && SWIMLANE_TYPES[swimlaneType] === SWIMLANE_TYPES.INSPECTOR)) {
             // if cell is empty, only toggle disable lock by passing undefined
-            prlAnomalyRecordDetailsService.toggleLock(isEmptyCell ? undefined : $target);
+            mlAnomalyRecordDetailsService.toggleLock(isEmptyCell ? undefined : $target);
           }
           // force the hover event on the target, so the disable click highlights the current card
           // placed in a 1ms timeout because the inspector's mouse up event must must happen first
@@ -203,7 +203,7 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
       // if job, sort lanes based on job description
       if (SWIMLANE_TYPES[scope.swimlaneType] === SWIMLANE_TYPES.JOB) {
         lanes = lanes.sort(function (a, b) {
-          return prlJobService.jobDescriptions[a] > prlJobService.jobDescriptions[b];
+          return mlJobService.jobDescriptions[a] > mlJobService.jobDescriptions[b];
         });
       }
       _.each(lanes, function (lane) {
@@ -217,7 +217,7 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
 
         rowScope.cellHover = cellHover;
         rowScope.cellClick = cellClick;
-        rowScope.startDrag = prlSwimlaneSelectionService.startDrag;
+        rowScope.startDrag = mlSwimlaneSelectionService.startDrag;
 
         rowScope.detectorPerJobChartData = scope.$parent.detectorPerJobChartData;
         const orginalSelectedJobIds = rowScope.selectedJobIds;
@@ -235,15 +235,15 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
         // ie, the lowest level we can zoom to
         if (SWIMLANE_TYPES[rowScope.swimlaneType] === SWIMLANE_TYPES.JOB ||
           (SWIMLANE_TYPES[rowScope.swimlaneType] === SWIMLANE_TYPES.INSPECTOR &&
-            SWIMLANE_TYPES[prlSwimlaneInspectorService.getSwimlaneType()] === SWIMLANE_TYPES.JOB)) {
-          label = prlJobService.jobDescriptions[lane];
-          isBucketWidth = (prlJobService.basicJobs[lane].bucketSpan === stepSecs);
+            SWIMLANE_TYPES[mlSwimlaneInspectorService.getSwimlaneType()] === SWIMLANE_TYPES.JOB)) {
+          label = mlJobService.jobDescriptions[lane];
+          isBucketWidth = (mlJobService.basicJobs[lane].bucketSpan === stepSecs);
         } else if (SWIMLANE_TYPES[rowScope.swimlaneType] === SWIMLANE_TYPES.DETECTOR ||
           (SWIMLANE_TYPES[rowScope.swimlaneType] === SWIMLANE_TYPES.INSPECTOR &&
-            SWIMLANE_TYPES[prlSwimlaneInspectorService.getSwimlaneType()] === SWIMLANE_TYPES.DETECTOR)) {
+            SWIMLANE_TYPES[mlSwimlaneInspectorService.getSwimlaneType()] === SWIMLANE_TYPES.DETECTOR)) {
           let parentJobId;
           // find the job id based on the detector's description
-          _.each(prlJobService.detectorsByJob, function (dtrs, jobId) {
+          _.each(mlJobService.detectorsByJob, function (dtrs, jobId) {
             const descriptions = _.map(dtrs, function (dtr) {return dtr.detector_description;});
             if (_.indexOf(descriptions, lane) !== -1) {
               parentJobId = jobId;
@@ -251,7 +251,7 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
           });
 
           if (parentJobId !== undefined) {
-            isBucketWidth = (prlJobService.basicJobs[parentJobId].bucketSpan === stepSecs);
+            isBucketWidth = (mlJobService.basicJobs[parentJobId].bucketSpan === stepSecs);
           }
         }
 
@@ -334,7 +334,7 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
 
           $laneExp.append($('<div>', {'class': 'title', 'text':'Detectors for ' + label}));
 
-          $laneExp.append($('<prl-summary-view-swimlane chart-data=\'detectorPerJobChartData["' + lane + '"]\' swimlane-type="DETECTOR" selected-job-ids="selectedJobIds"  chart-width="chartWidth" container-id="swimlanes" expanded="true" style="width: 100%; height: 250px;"></prl-summary-view-swimlane>'));
+          $laneExp.append($('<ml-summary-view-swimlane chart-data=\'detectorPerJobChartData["' + lane + '"]\' swimlane-type="DETECTOR" selected-job-ids="selectedJobIds"  chart-width="chartWidth" container-id="swimlanes" expanded="true" style="width: 100%; height: 250px;"></ml-summary-view-swimlane>'));
 
           $swimlanes.append($laneExp);
 
@@ -378,8 +378,8 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
     template: '<div ng-show=\'chartTitle!==undefined\' class=\'title\'><i ng-click=\'toggleRow()\' class=\'fa expand-arrow\' ng-class=\"{ \'fa-caret-down\': expanded, \'fa-caret-right\': !expanded }\"> </i>{{chartTitle}}</div><div><div id=\'swimlanes\' ng-show=\'expanded\'></div></div>'
   };
 })
-.service('prlSwimlaneSelectionService', function ($timeout, prlSwimlaneInspectorService, prlAnomalyRecordDetailsService) {
-  const SWIMLANE_TYPES = prlAnomalyRecordDetailsService.type;
+.service('mlSwimlaneSelectionService', function ($timeout, mlSwimlaneInspectorService, mlAnomalyRecordDetailsService) {
+  const SWIMLANE_TYPES = mlAnomalyRecordDetailsService.type;
 
   const selection = {
     firstX: -1,
@@ -446,7 +446,7 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
     // console.log($event);
     // placed in a timeout to allow mouse click events to finish first
     $timeout(function () {
-      prlSwimlaneInspectorService.hide();
+      mlSwimlaneInspectorService.hide();
       if (selection.active) {
         selection.endCell = selection.startCell;
 
@@ -471,9 +471,9 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
         if (!isNaN(selection.startTime) && !isNaN(selection.endTime) && !isNaN(selection.interval)) {
           const timeRange = {start: selection.startTime, end: selection.endTime, interval: selection.interval};
 
-          prlSwimlaneInspectorService.show(timeRange, selection.laneLabel, $lane, $highlight, selection.swimlaneType, $lane.data('jobIds'));
-          prlAnomalyRecordDetailsService.toggleLock();
-          prlAnomalyRecordDetailsService.clearInspectorTopInfluencers();
+          mlSwimlaneInspectorService.show(timeRange, selection.laneLabel, $lane, $highlight, selection.swimlaneType, $lane.data('jobIds'));
+          mlAnomalyRecordDetailsService.toggleLock();
+          mlAnomalyRecordDetailsService.clearInspectorTopInfluencers();
         } else {
           $highlight.remove();
         }
@@ -521,7 +521,7 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
   }
 
   function calculateTimeRange() {
-    const interval = prlAnomalyRecordDetailsService.getBucketInterval().asSeconds();
+    const interval = mlAnomalyRecordDetailsService.getBucketInterval().asSeconds();
     selection.interval = interval;
 
     selection.startTime = (+selection.startCell.dataset.time);

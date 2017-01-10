@@ -30,18 +30,18 @@ uiRoutes
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.controller('PrlSupport', function ($scope, $http, es, kbnVersion, timefilter, mlAPIService, prlInfoService, prlBrowserDetectService, prlMessageBarService) {
+module.controller('MlSupport', function ($scope, $http, es, kbnVersion, timefilter, mlAPIService, mlInfoService, mlBrowserDetectService, mlMessageBarService) {
   const apiService = mlAPIService;
-  const msgs = prlMessageBarService; // set a reference to the message bar service
+  const msgs = mlMessageBarService; // set a reference to the message bar service
   timefilter.enabled = false; // remove time picker from top of page
   msgs.clear();
 
   $scope.kbnVersion = kbnVersion;
 
-  $scope.supportBundleEnabled = (prlBrowserDetectService() !== 'safari');
+  $scope.supportBundleEnabled = (mlBrowserDetectService() !== 'safari');
 
   function getEngineApiVersion() {
-    prlInfoService.getEngineInfo()
+    mlInfoService.getEngineInfo()
     .then((resp) => {
       if (resp && resp.info) {
         $scope.analyticsVersion = resp.info.ver;

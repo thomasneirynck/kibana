@@ -23,14 +23,14 @@ import stringUtils from 'plugins/ml/util/string_utils';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.service('prlESMappingService', function ($q, es, timefilter, prlJobService) {
+module.service('mlESMappingService', function ($q, es, timefilter, mlJobService) {
 
   this.indexes = {};
 
   this.getMappings = function () {
     let deferred = $q.defer();
 
-    prlJobService.getESMappings()
+    mlJobService.getESMappings()
     .then(mappings => {
       this.indexes = mappings;
       deferred.resolve(mappings);

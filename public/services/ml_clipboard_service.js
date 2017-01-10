@@ -16,12 +16,12 @@
 // service for copying text to the users clipboard
 // can only work when triggered via a user event, as part of an onclick or ng-click
 // returns success
-// e.g. prlClipboardService.copy("this could be abused!");
+// e.g. mlClipboardService.copy("this could be abused!");
 
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.service('prlClipboardService', function () {
+module.service('mlClipboardService', function () {
 
   function copyTextToClipboard(text) {
     const textArea = document.createElement('textarea');

@@ -22,7 +22,7 @@ import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 import { addSystemApiHeader } from 'ui/system_api';
 
-module.service('prlServerRequestService', function ($http, $q) {
+module.service('mlServerRequestService', function ($http, $q) {
 
   this.urlBase = window.location.origin + chrome.getBasePath() + '/ml';
 

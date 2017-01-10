@@ -18,7 +18,7 @@
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.service('prlBrowserDetectService', function ($window) {
+module.service('mlBrowserDetectService', function ($window) {
 
   return function () {
 

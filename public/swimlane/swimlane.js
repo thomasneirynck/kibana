@@ -36,7 +36,7 @@ export default function SwimlaneVisType(Private, $templateCache) {
   const Schemas = Private(VisSchemasProvider);
 
   return new TemplateVisType({
-    name: 'prlSwimlane',
+    name: 'mlSwimlane',
     title: 'Ml Swimlane',
     icon: 'fa-bars',
     description: 'Ml visualization displaying the behavior of a metric ' +

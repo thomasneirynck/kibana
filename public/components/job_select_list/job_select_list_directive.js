@@ -14,7 +14,7 @@
  */
 
 /*
- * prl-job-select-list directive for rendering a multi-select control for selecting
+ * ml-job-select-list directive for rendering a multi-select control for selecting
  * one or more jobs from the list of configured jobs.
  */
 
@@ -24,15 +24,15 @@ import $ from 'jquery';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.directive('prlJobSelectList', ['prlJobService', 'prlDashboardService', function (prlJobService, prlDashboardService) {
+module.directive('mlJobSelectList', ['mlJobService', 'mlDashboardService', function (mlJobService, mlDashboardService) {
   return {
     restrict: 'AE',
     replace: true,
     transclude: true,
     template: require('plugins/ml/components/job_select_list/job_select_list.html'),
-    controller: function ($scope, prlJobService) {
+    controller: function ($scope, mlJobService) {
 
-      prlJobService.getBasicJobInfo('.ml-anomalies-*')
+      mlJobService.getBasicJobInfo('.ml-anomalies-*')
         .then(function (resp) {
           if (resp.jobs.length > 0) {
             const jobs = [];
@@ -47,14 +47,14 @@ module.directive('prlJobSelectList', ['prlJobService', 'prlDashboardService', fu
             }
           }
         }).catch(function (resp) {
-          console.log('prlJobSelectList controller - error getting job info from ES:', resp);
+          console.log('mlJobSelectList controller - error getting job info from ES:', resp);
         });
 
       $scope.apply = function () {
         if ($scope.selections.length === $scope.jobs.length) {
-          prlDashboardService.broadcastJobSelectionChange(['*']);
+          mlDashboardService.broadcastJobSelectionChange(['*']);
         } else {
-          prlDashboardService.broadcastJobSelectionChange($scope.selections);
+          mlDashboardService.broadcastJobSelectionChange($scope.selections);
         }
         $scope.closePopover();
       };
@@ -89,7 +89,7 @@ module.directive('prlJobSelectList', ['prlJobService', 'prlDashboardService', fu
       };
 
       // Giving the parent div focus fixes checkbox tick UI selection on IE.
-      $('.prl-select-list', element).focus();
+      $('.ml-select-list', element).focus();
     }
   };
 }])

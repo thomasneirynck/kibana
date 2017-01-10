@@ -24,9 +24,9 @@ import 'plugins/ml/messagebar';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('prlJobService', function ($rootScope, $http, $q, es, ml, mlAPIService, prlMessageBarService) {
+module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlAPIService, mlMessageBarService) {
   const apiService = mlAPIService;
-  const msgs = prlMessageBarService;
+  const msgs = mlMessageBarService;
   let jobs = [];
   this.currentJob = undefined;
   this.jobs = [];
@@ -129,7 +129,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, mlAPISe
       });
 
     function error(err) {
-      console.log('PrlJobsList error getting list of jobs:', err);
+      console.log('MlJobsList error getting list of jobs:', err);
       msgs.error('Jobs list could not be retrieved');
       msgs.error('', err);
       return jobs;
@@ -188,7 +188,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, mlAPISe
       });
 
     function error(err) {
-      console.log('PrlJobsList error getting list of jobs:', err);
+      console.log('MlJobsList error getting list of jobs:', err);
       msgs.error('Jobs list could not be retrieved');
       msgs.error('', err);
       return jobs;
@@ -246,7 +246,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, mlAPISe
 
   this.updateSingleJobCounts = function (jobId) {
     const deferred = $q.defer();
-    console.log('prlJobService: update job counts and status for ' + jobId);
+    console.log('mlJobService: update job counts and status for ' + jobId);
     ml.jobStats({jobId: jobId})
       .then((resp) => {
         console.log('updateSingleJobCounts controller query response:', resp);
@@ -302,7 +302,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, mlAPISe
   };
 
   this.updateAllJobCounts = function () {
-    console.log('prlJobService: update all jobs counts and status');
+    console.log('mlJobService: update all jobs counts and status');
     return ml.jobStats()
       .then((resp) => {
         console.log('updateAllJobCounts controller query response:', resp);
@@ -374,7 +374,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, mlAPISe
       }
     });
 
-    console.log('prlJobService: check status for ' + runningJobs.length + ' running jobs');
+    console.log('mlJobService: check status for ' + runningJobs.length + ' running jobs');
     _.each(runningJobs, (job) => {
       this.updateSingleJobCounts(job.job_id);
     });
@@ -1140,7 +1140,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, mlAPISe
         deferred.resolve(resp);
 
       }).catch((err) => {
-        console.log('PrlJobsList error starting scheduler:', err);
+        console.log('MlJobsList error starting scheduler:', err);
         msgs.error('Could not start scheduler for ' + jobId, err);
         deferred.reject(err);
       });
@@ -1162,7 +1162,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, mlAPISe
         deferred.resolve(resp);
 
       }).catch((err) => {
-        console.log('PrlJobsList error stoping scheduler:', err);
+        console.log('MlJobsList error stoping scheduler:', err);
         msgs.error('Could not stop scheduler for ' + jobId, err);
         deferred.reject(err);
       });

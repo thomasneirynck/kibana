@@ -4,29 +4,29 @@
       <div ng-repeat="(key, value) in job">
         <div ng-switch="key">
           <div ng-switch-when="analysis_config">
-            <div class="prl_sub_heading">Detectors</div>
-            <div class='prl_job_section_container'>
+            <div class="ml_sub_heading">Detectors</div>
+            <div class='ml_job_section_container'>
               <div>
-                <prl-job-item ng-repeat="(key2, value2) in value.detectors">
-                  <div class="prl_job_row row">
+                <ml-job-item ng-repeat="(key2, value2) in value.detectors">
+                  <div class="ml_job_row row">
                     <div class="col-md-6"> {{ detectorToString(value2) }} </div>
                     <div class="col-md-6" ng-show="(detectorToString(value2) !== value2.detector_description)"> {{ value2.detector_description }} </div>
                   </div>
-                </prl-job-item>
+                </ml-job-item>
               </div>
             </div>
 
             <div ng-show="(value.influencers && value.influencers.length)">
-            <div class="prl_sub_heading">Influencers</div>
-              <div class='prl_job_section_container'>
+            <div class="ml_sub_heading">Influencers</div>
+              <div class='ml_job_section_container'>
                 <div>
-                  <prl-job-item >
-                    <div class="prl_job_row row">
+                  <ml-job-item >
+                    <div class="ml_job_row row">
                       <div class="col-md-12">
                         {{value.influencers.join(", ")}}
                       </div>
                     </div>
-                  </prl-job-item>
+                  </ml-job-item>
                 </div>
               </div>
             </div>
@@ -38,15 +38,15 @@
       <div ng-repeat="(key, value) in job">
         <div ng-switch="key">
           <div ng-switch-when="analysis_config">
-            <div class="prl_sub_heading">Analysis Config</div>
-            <div class='prl_job_section_container'>
+            <div class="ml_sub_heading">Analysis Config</div>
+            <div class='ml_job_section_container'>
               <div>
-                <prl-job-item ng-repeat="(key1, value1) in value | filterObjects">
-                  <div class="prl_job_row row">
+                <ml-job-item ng-repeat="(key1, value1) in value | filterObjects">
+                  <div class="ml_job_row row">
                     <div class="col-md-6">{{key1}}</div>
                     <div class="col-md-6">{{value1}}</div>
                   </div>
-                </prl-job-item>
+                </ml-job-item>
               </div>
             </div>
           </div>
@@ -59,14 +59,14 @@
         <div ng-switch="key">
           <div ng-switch-when="analysis_config">
 
-            <div class="prl_sub_heading">Categorization Filters</div>
-            <div class='prl_job_section_container'>
+            <div class="ml_sub_heading">Categorization Filters</div>
+            <div class='ml_job_section_container'>
               <div>
-                <prl-job-item ng-repeat="value2 in value.categorization_filters">
-                  <div class="prl_job_row row">
+                <ml-job-item ng-repeat="value2 in value.categorization_filters">
+                  <div class="ml_job_row row">
                     <div class="col-md-6" > {{ value2 }} </div>
                   </div>
-                </prl-job-item>
+                </ml-job-item>
               </div>
             </div>
 
@@ -77,14 +77,14 @@
       <div ng-repeat="(key, value) in job">
         <div ng-switch="key">
           <div ng-switch-when="transforms" ng-show="transforms.length > 0">
-            <div class="prl_sub_heading">Transforms</div>
-            <div class='prl_job_section_container'>
+            <div class="ml_sub_heading">Transforms</div>
+            <div class='ml_job_section_container'>
               <div>
-                <prl-job-item ng-repeat="value1 in value">
-                  <div class="prl_job_row row">
+                <ml-job-item ng-repeat="value1 in value">
+                  <div class="ml_job_row row">
                     <div class="col-md-12">{{value1}}</div>
                   </div>
-                </prl-job-item>
+                </ml-job-item>
               </div>
             </div>
           </div>
@@ -98,15 +98,15 @@
       <div ng-repeat="(key, value) in job">
         <div ng-switch="key">
           <div ng-switch-when="data_description">
-            <div class="prl_sub_heading">Data Description</div>
-            <div class='prl_job_section_container'>
+            <div class="ml_sub_heading">Data Description</div>
+            <div class='ml_job_section_container'>
               <div>
-                <prl-job-item ng-repeat="(key1, value1) in value">
-                  <div class="prl_job_row row">
+                <ml-job-item ng-repeat="(key1, value1) in value">
+                  <div class="ml_job_row row">
                     <div class="col-md-3">{{key1}}</div>
                     <div class="col-md-9">{{value1}}</div>
                   </div>
-                </prl-job-item>
+                </ml-job-item>
               </div>
             </div>
           </div>

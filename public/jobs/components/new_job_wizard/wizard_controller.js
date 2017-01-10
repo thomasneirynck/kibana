@@ -25,7 +25,7 @@ uiRoutes
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.controller('PrlNewJobWizard',
+module.controller('MlNewJobWizard',
 function (
   $scope,
   $route,

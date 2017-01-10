@@ -24,14 +24,14 @@ import jobUtils from 'plugins/ml/util/job_utils';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.service('prlSimpleJobService', function (
+module.service('mlSimpleJobService', function (
   $q,
   es,
   timefilter,
   Private,
-  prlJobService,
-  prlSimpleJobSearchService,
-  prlESMappingService) {
+  mlJobService,
+  mlSimpleJobSearchService,
+  mlESMappingService) {
   const TimeBuckets = Private(require('ui/time_buckets'));
 
   this.chartData = {
@@ -239,17 +239,17 @@ module.service('prlSimpleJobService', function (
   function getJobFromConfig(formConfig) {
     const bucketSpan = formConfig.jobInterval.getInterval().asSeconds();
 
-    // const mappingTypes = prlESMappingService.getTypesFromMapping(formConfig.indexPattern.id);
+    // const mappingTypes = mlESMappingService.getTypesFromMapping(formConfig.indexPattern.id);
     const mappingTypes = formConfig.mappingTypes;
 
-    const job = prlJobService.getBlankJob();
+    const job = mlJobService.getBlankJob();
     job.data_description.time_field = formConfig.timeField.name;
     job.data_description.time_format = formConfig.format;
 
     // job.analysis_config.influencers.push(obj.params.field);
 
     const dtr = {
-      function: formConfig.agg.type.prlName
+      function: formConfig.agg.type.mlName
     };
 
     if (formConfig.field && formConfig.field.displayName) {
@@ -300,13 +300,13 @@ module.service('prlSimpleJobService', function (
     const index = formConfig.indexPattern.id;
     const types = formConfig.mappingTypes.join(',');
 
-    prlJobService.searchTimeFields(index, types, job.data_description.time_field)
+    mlJobService.searchTimeFields(index, types, job.data_description.time_field)
     .then((resp) => {
       job.data_description.time_format = stringUtils.guessTimeFormat(resp.time);
       // console.log('guessTimeFormat: guessed time format: ', this.job.data_description.time_format);
 
       // DO THE SAVE
-      prlJobService.saveNewJob(job, true)
+      mlJobService.saveNewJob(job, true)
       .then((resp) => {
         // console.log('createJob: ', resp);
         if (resp.success) {
@@ -327,16 +327,16 @@ module.service('prlSimpleJobService', function (
 
   this.startScheduler = function (formConfig) {
     const schedulerId = 'scheduler-' + formConfig.jobId;
-    return prlJobService.startScheduler(schedulerId, formConfig.jobId, formConfig.start, formConfig.end);
+    return mlJobService.startScheduler(schedulerId, formConfig.jobId, formConfig.start, formConfig.end);
   };
 
   this.stopScheduler = function (formConfig) {
     const schedulerId = 'scheduler-' + formConfig.jobId;
-    return prlJobService.stopScheduler(schedulerId, formConfig.jobId);
+    return mlJobService.stopScheduler(schedulerId, formConfig.jobId);
   };
 
   this.checkSchedulerStatus = function (formConfig) {
-    return prlJobService.updateSingleJobSchedulerStatus(formConfig.jobId);
+    return mlJobService.updateSingleJobSchedulerStatus(formConfig.jobId);
   };
 
   this.loadModelData = function (formConfig) {
@@ -353,13 +353,13 @@ module.service('prlSimpleJobService', function (
       }
     }
 
-    prlSimpleJobSearchService.getModelDebugOutput(
+    mlSimpleJobSearchService.getModelDebugOutput(
       formConfig.indexPattern.id,
       [formConfig.jobId],
       start,
       formConfig.end,
       formConfig.chartInterval.getInterval().asSeconds() + 's',
-      formConfig.agg.type.prlDebugAgg
+      formConfig.agg.type.mlDebugAgg
     )
     .then(data => {
       this.chartData.model = this.chartData.model.concat(processLineChartResults(data.results));
@@ -375,7 +375,7 @@ module.service('prlSimpleJobService', function (
   this.loadSwimlaneData = function (formConfig) {
     const deferred = $q.defer();
 
-    prlSimpleJobSearchService.getScoresByBucket(
+    mlSimpleJobSearchService.getScoresByBucket(
       formConfig.indexPattern.id,
       [formConfig.jobId],
       formConfig.start,

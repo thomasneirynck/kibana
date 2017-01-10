@@ -1,6 +1,6 @@
-<span class="prl-swimlane-top-influencers-heading">Top influencers:</span>
+<span class="ml-swimlane-top-influencers-heading">Top influencers:</span>
 <div ng-if="loadedInfluencers === false">Loading data...</div>
-<div ng-repeat="influencer in influencers" class="prl-swimlane-top-influencers-item">
+<div ng-repeat="influencer in influencers" class="ml-swimlane-top-influencers-item">
   <div ng-if="influencerFieldName !== 'mlcategory'" class="field-label">{{influencer.influencerFieldValue}}</div>
   <div ng-if="influencerFieldName === 'mlcategory'" class="field-label">mlcategory {{influencer.influencerFieldValue}}</div>
   <span>

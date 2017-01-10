@@ -5,10 +5,10 @@
     </span>
   </div>
 </kbn-top-nav>
-<prl-config-jobs>
-  <prl-message-bar ></prl-message-bar>
+<ml-config-jobs>
+  <ml-message-bar ></ml-message-bar>
 
-  <div ng-controller="PrlJobsList" class="jobs-container">
+  <div ng-controller="MlJobsList" class="jobs-container">
     <div>
       <header>
         <div class="row" >
@@ -46,11 +46,11 @@
       </div>
 
       </header>
-      <prl-paginated-table
+      <ml-paginated-table
         columns="table.columns"
         rows="table.rows"
         per-page="table.perPage">
-      </prl-paginated-table>
+      </ml-paginated-table>
 
       <div class="jobs-count" ng-show="jobsCount > 0">Total number of jobs: {{jobsCount}}</div>
       <div class="no-jobs-warning" ng-show="filterText && table.rows.length===0">No jobs found</div>
@@ -62,4 +62,4 @@
 
     </div>
   </div>
-</prl-config-jobs>
+</ml-config-jobs>

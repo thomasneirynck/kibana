@@ -30,7 +30,7 @@ import chrome from 'ui/chrome';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('PrlTopScoresTableController', function ($scope, $route, $window, $location, timefilter) {
+module.controller('MlTopScoresTableController', function ($scope, $route, $window, $location, timefilter) {
 
   $scope.$watch('esResponse', function (resp) {
 
@@ -63,7 +63,7 @@ module.controller('PrlTopScoresTableController', function ($scope, $route, $wind
       // Get the labels for the metric aggregation, used in the tooltip.
       const scoreMetricLabel = valueAgg.makeLabel();
 
-      const compiledTooltip = _.template('<div class="prl-top-scores-table-tooltip"><%= fieldName %>: <%= fieldValue %>'
+      const compiledTooltip = _.template('<div class="ml-top-scores-table-tooltip"><%= fieldName %>: <%= fieldValue %>'
               + '<hr/><%= scoreMetricLabel %>: <%= scoreText %></div>');
 
       _.each(buckets, function (bucket) {

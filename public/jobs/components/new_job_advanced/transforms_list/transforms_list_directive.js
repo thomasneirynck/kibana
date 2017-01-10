@@ -23,24 +23,24 @@ import 'plugins/ml/jobs/components/new_job_advanced/transform_modal';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.directive('prlJobTransformsList', function ($modal, $q, prlJobService) {
+module.directive('mlJobTransformsList', function ($modal, $q, mlJobService) {
 
   return {
     restrict: 'AE',
     replace: true,
     scope: {
-      transforms:                '=prlTransforms',
-      detectors:                 '=prlDetectors',
-      indices:                   '=prlIndices',
-      properties:                '=prlProperties',
-      influencers:               '=prlInfluencers',
-      addTransformsToProperties: '=prlAddTransformsToProperties',
-      dataFormat:                '=prlDataFormat'
+      transforms:                '=mlTransforms',
+      detectors:                 '=mlDetectors',
+      indices:                   '=mlIndices',
+      properties:                '=mlProperties',
+      influencers:               '=mlInfluencers',
+      addTransformsToProperties: '=mlAddTransformsToProperties',
+      dataFormat:                '=mlDataFormat'
     },
     template: require('plugins/ml/jobs/components/new_job_advanced/transforms_list/transforms_list.html'),
-    controller: function ($scope, prlTransformsDefaultOutputs) {
+    controller: function ($scope, mlTransformsDefaultOutputs) {
 
-      $scope.DEFAULT_OUTPUTS = prlTransformsDefaultOutputs;
+      $scope.DEFAULT_OUTPUTS = mlTransformsDefaultOutputs;
       $scope.urlBasePath = chrome.getBasePath();
 
       $scope.addTransform = function (trfm, index) {
@@ -81,7 +81,7 @@ module.directive('prlJobTransformsList', function ($modal, $q, prlJobService) {
         }
 
         // send to endpoint for validation
-        return prlJobService.validateTransforms(tempTransforms)
+        return mlJobService.validateTransforms(tempTransforms)
         .then((resp) => {
           return {
             success: (resp.acknowledged || false)
@@ -104,7 +104,7 @@ module.directive('prlJobTransformsList', function ($modal, $q, prlJobService) {
         }
         const modalInstance = $modal.open({
           template: require('plugins/ml/jobs/components/new_job_advanced/transform_modal/transform_modal.html'),
-          controller: 'PrlTransformModal',
+          controller: 'MlTransformModal',
           backdrop: 'static',
           keyboard: false,
           size: 'lg',
@@ -128,7 +128,7 @@ module.directive('prlJobTransformsList', function ($modal, $q, prlJobService) {
     }
   };
 })
-.constant('prlTransformsDefaultOutputs', {
+.constant('mlTransformsDefaultOutputs', {
   domain_split: ['subDomain', 'hrd'],
   concat:       ['concat'],
   extract:      ['extract'],

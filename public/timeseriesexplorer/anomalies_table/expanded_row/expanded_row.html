@@ -1,11 +1,11 @@
-<div class="prl-tablerow-expanded">
-  <span class="prl-tablerow-expanded-heading">Description:</span>
+<div class="ml-tablerow-expanded">
+  <span class="ml-tablerow-expanded-heading">Description:</span>
   {{description}}
-  <span ng-if="multiVariateDescription" class="prl-tablerow-expanded-mv-description">{{multiVariateDescription}}</span>
+  <span ng-if="multiVariateDescription" class="ml-tablerow-expanded-mv-description">{{multiVariateDescription}}</span>
 
-  <span ng-if="isShowingAggregatedData === true" class="prl-tablerow-expanded-heading">Details on highest severity anomaly:</span>
-  <span ng-if="isShowingAggregatedData === false" class="prl-tablerow-expanded-heading">Anomaly Details:</span>
-  <div ng-if="isInterim === true" class="prl-anomaly-interim-result"><i class="fa fa-exclamation-triangle"></i> Interim result</div>
+  <span ng-if="isShowingAggregatedData === true" class="ml-tablerow-expanded-heading">Details on highest severity anomaly:</span>
+  <span ng-if="isShowingAggregatedData === false" class="ml-tablerow-expanded-heading">Anomaly Details:</span>
+  <div ng-if="isInterim === true" class="ml-anomaly-interim-result"><i class="fa fa-exclamation-triangle"></i> Interim result</div>
   <table>
     <tr ng-if="record.source.partition_field_value">
       <td>{{record.source.partition_field_name}}:</td>
@@ -76,7 +76,7 @@
     </tr>
   </table>
 
-  <span ng-if="influencers" class="prl-tablerow-expanded-heading">Influenced by:</span>
+  <span ng-if="influencers" class="ml-tablerow-expanded-heading">Influenced by:</span>
   <table ng-if="influencers">
     <tr ng-repeat="influencer in influencers">
       <td>{{influencer.name}}</td>

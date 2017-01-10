@@ -33,7 +33,7 @@ export default function InfluencerHeatmapVisType(Private) {
 
   // Return a new instance describing this visualization.
   return new TemplateVisType({
-    name: 'prlInfluencerHeatmap',
+    name: 'mlInfluencerHeatmap',
     title: 'Influencer heatmap',
     icon: 'fa-sitemap',
     description: 'Ml influencer heatmap visualization displaying the relative sizes ' +

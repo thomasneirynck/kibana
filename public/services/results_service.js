@@ -20,7 +20,7 @@ import _ from 'lodash';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('prlResultsService', function ($q, es) {
+module.service('mlResultsService', function ($q, es) {
 
   // Obtains the top influencer field values, by maximum anomaly score, for a
   // particular influencer index, field name and job ID(s).

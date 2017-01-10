@@ -40,7 +40,7 @@ uiRoutes
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml', ['ui.bootstrap']);
 
-module.controller('PrlJobsList',
+module.controller('MlJobsList',
 function (
   $scope,
   $route,
@@ -53,15 +53,15 @@ function (
   timefilter,
   kbnUrl,
   Private,
-  prlMessageBarService,
-  prlClipboardService,
-  prlJobService,
-  prlSchedulerService,
-  prlBrowserDetectService) {
+  mlMessageBarService,
+  mlClipboardService,
+  mlJobService,
+  mlSchedulerService,
+  mlBrowserDetectService) {
 
   timefilter.enabled = false; // remove time picker from top of page
   const rowScopes = []; // track row scopes, so they can be destroyed as needed
-  const msgs = prlMessageBarService; // set a reference to the message bar service
+  const msgs = mlMessageBarService; // set a reference to the message bar service
   const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
   let refreshCounter = 0;
   const auditMessages = {};
@@ -77,12 +77,12 @@ function (
   // functions for job list buttons
   // called from jobs_list_controls.html
   $scope.deleteJob = function (job) {
-    prlJobService.deleteJob(job)
+    mlJobService.deleteJob(job)
       .then(function (resp) {
         if (resp.success) {
           msgs.clear();
           msgs.info('Job \'' + job.job_id + '\' deleted');
-          prlJobService.loadJobs();
+          mlJobService.loadJobs();
         }
       });
   };
@@ -92,12 +92,12 @@ function (
   };
 
   $scope.cloneJob = function (job) {
-    prlJobService.currentJob = job;
+    mlJobService.currentJob = job;
     $location.path('jobs/new_job_advanced');
   };
 
   $scope.copyToClipboard = function (job) {
-    const success = prlClipboardService.copy(angular.toJson(job));
+    const success = mlClipboardService.copy(angular.toJson(job));
     if (success) {
       msgs.clear();
       msgs.info(job.job_id + ' JSON copied to clipboard');
@@ -107,7 +107,7 @@ function (
   };
 
   $scope.startScheduler = function (job) {
-    prlSchedulerService.openJobTimepickerWindow(job, $scope);
+    mlSchedulerService.openJobTimepickerWindow(job, $scope);
   };
 
   $scope.stopScheduler = function (job) {
@@ -115,14 +115,14 @@ function (
 
     job.scheduler_status = 'STOPPING';
     const schedulerId = 'scheduler-' + job.job_id;
-    prlJobService.stopScheduler(schedulerId, job.job_id);
+    mlJobService.stopScheduler(schedulerId, job.job_id);
   };
 
 
   $scope.viewResults = function (job, page) {
     if (job && page) {
       // get the time range first
-      prlJobService.jobTimeRange(job.job_id)
+      mlJobService.jobTimeRange(job.job_id)
         .then((resp) => {
           // if no times are found, use last 24hrs to now
           const from = (resp.start.string) ? '\'' + resp.start.string + '\'' : 'now-24h';
@@ -139,7 +139,7 @@ function (
           // we can't used onclick for these buttons as they need
           // to contain angular expressions
           // therefore in safari we just redirect the page using location.href
-          if (prlBrowserDetectService() === 'safari') {
+          if (mlBrowserDetectService() === 'safari') {
             location.href = path;
           } else {
             $window.open(path, '_blank');
@@ -164,7 +164,7 @@ function (
 
   // function for displaying jobs list
   // this is never called directly. below it a listener is set for a jobsUpdated event
-  // this is triggered (broadcasted) in prlJobService.loadJobs()
+  // this is triggered (broadcasted) in mlJobService.loadJobs()
   // anytime the jobs list is reloaded, the display will be freshed.
   function displayJobs(jobs) {
 
@@ -204,15 +204,15 @@ function (
       rowScope.job = job;
       rowScope.jobAudit = {messages:'', update: function () {}, jobWarningClass: '', jobWarningText: ''};
 
-      // rowScope.unsafeHtml = '<prl-job-preview prl-job-id=''+job.job_id+''></prl-job-preview>';
+      // rowScope.unsafeHtml = '<ml-job-preview ml-job-id=''+job.job_id+''></ml-job-preview>';
 
       rowScope.expandable = true;
-      rowScope.expandElement = 'prl-job-list-expanded-row-container';
+      rowScope.expandElement = 'ml-job-list-expanded-row-container';
       rowScope.initRow = function () {
         // function called when row is opened for the first time
         if (rowScope.$expandElement &&
            rowScope.$expandElement.children().length === 0) {
-          const $el = $(document.createElement('prl-job-list-expanded-row')).appendTo(this.$expandElement);
+          const $el = $(document.createElement('ml-job-list-expanded-row')).appendTo(this.$expandElement);
           $compile($el)(this);
         }
       };
@@ -302,13 +302,13 @@ function (
       // every 5th time, reload the counts and statuses of all the jobs
       if (refreshCounter % 5 === 0) {
 
-        prlJobService.updateAllJobCounts();
+        mlJobService.updateAllJobCounts();
 
         // also reload all of the jobs messages
         // loadAuditSummary($scope.jobs, rowScopes);
       } else {
         // check to see if any jobs are 'running' if so, reload their counts
-        prlJobService.checkStatus();
+        mlJobService.checkStatus();
       }
 
 
@@ -353,7 +353,7 @@ function (
       }
     }
 
-    return prlJobService.getJobAuditMessages(fromRange, jobId)
+    return mlJobService.getJobAuditMessages(fromRange, jobId)
       .then((resp) => {
         _.each(resp, (msg) => {
           const time = moment(msg['@timestamp']);
@@ -403,7 +403,7 @@ function (
       createTimes[job.job_id] = moment(job.createTime).unix();
     });
 
-    prlJobService.getAuditMessagesSummary()
+    mlJobService.getAuditMessagesSummary()
     .then((resp) => {
       _.each(resp, (job) => {
         // ignore system messages (id==='')
@@ -451,7 +451,7 @@ function (
         // create the update function,
         // this is called when the messages tab is clicked for this row
         rs.jobAudit.update = function () {
-          // return the promise chain from prlJobService.getJobAuditMessages
+          // return the promise chain from mlJobService.getJobAuditMessages
           // so we can scroll to the bottom of the list once it has loaded
           return loadAuditMessages(jobs, [rs], rs.job.job_id);
         };
@@ -481,7 +481,7 @@ function (
   function openEditJobWindow(job) {
     const modalInstance = $modal.open({
       template: require('plugins/ml/jobs/components/jobs_list/edit_job_modal/edit_job_modal.html'),
-      controller: 'PrlEditJobModal',
+      controller: 'MlEditJobModal',
       backdrop: 'static',
       keyboard: false,
       size: 'lg',
@@ -538,7 +538,7 @@ function (
   // highlight which part of the job ID matches the filter text
   function filterHighlight(txt) {
     if ($scope.filterText && filterRegexp) {
-      txt = txt.replace(filterRegexp, '<span class="prl-mark">$1</span>');
+      txt = txt.replace(filterRegexp, '<span class="ml-mark">$1</span>');
     }
     return txt;
   }
@@ -551,7 +551,7 @@ function (
     displayJobs(jobs);
   });
 
-  prlJobService.loadJobs();
+  mlJobService.loadJobs();
 
   $scope.$emit('application.load');
 });

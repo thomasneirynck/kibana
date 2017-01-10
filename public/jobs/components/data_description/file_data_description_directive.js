@@ -24,24 +24,24 @@ import 'plugins/ml/lib/bower_components/jquery-csv/src/jquery.csv';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.directive('prlFileDataDescription', function ($http) {
+module.directive('mlFileDataDescription', function ($http) {
   return {
     restrict: 'AE',
     replace: true,
     scope: {
-      properties:      '=prlProperties',
-      data:            '=prlUploadedData',
-      dataPreview:     '=prlUploadedDataPreview',
-      fileName:        '=prlUploadedDataFileName',
-      dataReady:       '=prlDataReady',
-      delimiter:       '=prlSelectedFieldDelimiter',
-      data_description: '=prlDataDescription',
-      influencers:     '=prlInfluencers',
-      maximumFileSize: '=prlMaximumFileSize',
+      properties:      '=mlProperties',
+      data:            '=mlUploadedData',
+      dataPreview:     '=mlUploadedDataPreview',
+      fileName:        '=mlUploadedDataFileName',
+      dataReady:       '=mlDataReady',
+      delimiter:       '=mlSelectedFieldDelimiter',
+      data_description: '=mlDataDescription',
+      influencers:     '=mlInfluencers',
+      maximumFileSize: '=mlMaximumFileSize',
     },
     template: require('plugins/ml/jobs/components/data_description/file_data_description.html'),
-    controller: function ($scope, $q, prlJobService, prlMessageBarService) {
-      const msgs = prlMessageBarService; // set a reference to the message bar service
+    controller: function ($scope, $q, mlJobService, mlMessageBarService) {
+      const msgs = mlMessageBarService; // set a reference to the message bar service
       $scope.CHAR_LIMIT = 500;
       $scope.saveLock = false;
 

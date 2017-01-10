@@ -21,43 +21,43 @@ import _ from 'lodash';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimlaneInspectorService, prlSwimlaneSelectionService, prlSwimlaneService) {
+module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlaneInspectorService, mlSwimlaneSelectionService, mlSwimlaneService) {
   return {
     restrict: 'AE',
     replace: false,
     scope: {},
     template: require('plugins/ml/summaryview/swimlane_inspector/swimlane_inspector.html'),
     link: function ($scope, $element, $attrs) {
-      $scope.controls = prlSwimlaneInspectorService.controls;
+      $scope.controls = mlSwimlaneInspectorService.controls;
       $scope.controls.scope = $scope;
 
-      $scope.chartData = prlSwimlaneInspectorService.chartData;
+      $scope.chartData = mlSwimlaneInspectorService.chartData;
 
       $scope.lanes = {};
       $scope.laneMarkers = [];
 
       $scope.applyZoom = function () {
-        prlSwimlaneInspectorService.hide();
-        prlSwimlaneInspectorService.applyZoom();
+        mlSwimlaneInspectorService.hide();
+        mlSwimlaneInspectorService.applyZoom();
       };
 
       $scope.openExplorer = function () {
-        prlSwimlaneService.openExplorer(prlSwimlaneInspectorService.getTimeRange());
+        mlSwimlaneService.openExplorer(mlSwimlaneInspectorService.getTimeRange());
       };
 
       $scope.openConnections = function () {
-        prlSwimlaneService.openConnections(prlSwimlaneInspectorService.getTimeRange());
+        mlSwimlaneService.openConnections(mlSwimlaneInspectorService.getTimeRange());
       };
 
       $scope.close = function () {
-        prlSwimlaneInspectorService.hide();
-        prlSwimlaneSelectionService.hide();
+        mlSwimlaneInspectorService.hide();
+        mlSwimlaneSelectionService.hide();
       };
 
     },
   };
 })
-.service('prlSwimlaneInspectorService', function ($q, $timeout, $rootScope, $compile, es, Private, timefilter, prlJobService, prlAnomalyRecordDetailsService, prlSwimlaneSearchService) {
+.service('mlSwimlaneInspectorService', function ($q, $timeout, $rootScope, $compile, es, Private, timefilter, mlJobService, mlAnomalyRecordDetailsService, mlSwimlaneSearchService) {
   const TimeBuckets = Private(require('ui/time_buckets'));
 
   const swimlanesHTML = require('plugins/ml/summaryview/swimlane_inspector/swimlanes.html');
@@ -110,7 +110,7 @@ module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimla
     $lane = $laneIn;
     selectedJobIds = selectedJobIdsIn;
 
-    controls.labels.laneLabel = prlJobService.jobDescriptions[laneLabel];
+    controls.labels.laneLabel = mlJobService.jobDescriptions[laneLabel];
     controls.labels.start = moment.unix(timeRange.start).format('MMM DD HH:mm');
     controls.labels.end = moment.unix(timeRange.end).format('MMM DD HH:mm');
 
@@ -123,8 +123,8 @@ module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimla
   this.hide = function () {
     // if clicking on a card outside of the inspector, unlock any locked cards in the inspector
     // before the inspector closes
-    if (controls.visible && prlAnomalyRecordDetailsService.isLocked()) {
-      prlAnomalyRecordDetailsService.toggleLock(false);
+    if (controls.visible && mlAnomalyRecordDetailsService.isLocked()) {
+      mlAnomalyRecordDetailsService.toggleLock(false);
     }
     controls.visible = false;
     id = '';
@@ -138,7 +138,7 @@ module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimla
   function position($target) {
     const pos = $target.position();
     const width = $target.width();
-    const bubbleMarginWidth = $('.prl-anomaly-details-margin').width();
+    const bubbleMarginWidth = $('.ml-anomaly-details-margin').width();
     const appWidth = $('.application').width();
 
     const selection = {
@@ -169,56 +169,56 @@ module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimla
   }
 
   function loadSwimlane() {
-    const type = prlAnomalyRecordDetailsService.type[swimlaneType];
-    const types = prlAnomalyRecordDetailsService.type;
+    const type = mlAnomalyRecordDetailsService.type[swimlaneType];
+    const types = mlAnomalyRecordDetailsService.type;
     let interval = calculateBucketInterval();
 
     let recordJobIds;
 
     function fin() {
-      prlAnomalyRecordDetailsService.setTimes(times);
-      prlAnomalyRecordDetailsService.createInspectorRecords(swimlaneType, recordJobIds, timeRange, times);
+      mlAnomalyRecordDetailsService.setTimes(times);
+      mlAnomalyRecordDetailsService.createInspectorRecords(swimlaneType, recordJobIds, timeRange, times);
     }
 
     if (type === types.MONITOR) {
       // MONITOR
       recordJobIds = selectedJobIds;
-      loadResults(prlSwimlaneSearchService.getScoresByBucket, recordJobIds, interval, (results) => {
+      loadResults(mlSwimlaneSearchService.getScoresByBucket, recordJobIds, interval, (results) => {
         processJobResults(results, laneLabel);
         processMonitorResults(controls.inspectorChartData);
         fin();
       });
     } else if (type === types.JOB) {
       // JOB
-      const job = prlJobService.basicJobs[laneLabel];
+      const job = mlJobService.basicJobs[laneLabel];
       interval = calculateBucketInterval(job.bucketSpan);
 
       recordJobIds = [laneLabel];
-      loadResults(prlSwimlaneSearchService.getScoresByBucket, recordJobIds, interval, (results) => {
+      loadResults(mlSwimlaneSearchService.getScoresByBucket, recordJobIds, interval, (results) => {
         processJobResults(results, laneLabel);
         fin();
       });
     } else if (type === types.DETECTOR) {
       // DETECTOR
       recordJobIds = selectedJobIds;
-      const job = prlJobService.basicJobs[recordJobIds[0]];
+      const job = mlJobService.basicJobs[recordJobIds[0]];
       interval = calculateBucketInterval(job.bucketSpan);
 
-      loadResults(prlSwimlaneSearchService.getScoresByDetector, recordJobIds, interval, (results) => {
+      loadResults(mlSwimlaneSearchService.getScoresByDetector, recordJobIds, interval, (results) => {
         processDetectorResults(results, laneLabel);
         fin();
       });
     } else if (type === types.INF_TYPE) {
       // INFLUENCER TYPE
       recordJobIds = selectedJobIds;
-      loadResults(prlSwimlaneSearchService.getScoresByInfluencerType, recordJobIds, interval, (results) => {
+      loadResults(mlSwimlaneSearchService.getScoresByInfluencerType, recordJobIds, interval, (results) => {
         processInfluencerResults(results.influencerTypes, laneLabel);
         fin();
       });
     } else if (type === types.INF_VALUE) {
       // INFLUENCER TYPE
       recordJobIds = selectedJobIds;
-      loadResults(prlSwimlaneSearchService.getScoresByInfluencerValue, recordJobIds, interval, (results) => {
+      loadResults(mlSwimlaneSearchService.getScoresByInfluencerValue, recordJobIds, interval, (results) => {
         processInfluencerResults(results.influencerValues, laneLabel);
         fin();
       });
@@ -291,7 +291,7 @@ module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimla
       min: moment(timeRange.start * 1000),
       max: moment(timeRange.end * 1000)
     };
-    prlSwimlaneSearchService.calculateBounds(dataset, timeRange.interval, bounds);
+    mlSwimlaneSearchService.calculateBounds(dataset, timeRange.interval, bounds);
 
     // Use job ids as lane labels.
     _.each(dataByJob, (jobData, jobId) => {
@@ -327,12 +327,12 @@ module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimla
       max: moment(timeRange.end * 1000)
     };
 
-    prlSwimlaneSearchService.calculateBounds(dataset, timeRange.interval, bounds);
+    mlSwimlaneSearchService.calculateBounds(dataset, timeRange.interval, bounds);
 
     // Get the descriptions of the detectors to use as lane labels.
     _.each(dataByJob, (jobData, jobId) => {
       _.each(jobData, (detectorData, detectorIndex) => {
-        const detectorDesc = prlJobService.detectorsByJob[jobId][detectorIndex].detector_description;
+        const detectorDesc = mlJobService.detectorsByJob[jobId][detectorIndex].detector_description;
         // If a duplicate detector description has been used across jobs append job ID.
         const ll = _.indexOf(dataset.laneLabels, detectorDesc) === -1 ?
             detectorDesc : detectorDesc + ' (' + jobId + ')';
@@ -368,7 +368,7 @@ module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimla
       min: moment(timeRange.start * 1000),
       max: moment(timeRange.end * 1000)
     };
-    prlSwimlaneSearchService.calculateBounds(dataset, timeRange.interval, bounds);
+    mlSwimlaneSearchService.calculateBounds(dataset, timeRange.interval, bounds);
 
     _.each(dataByInfluencerType, (influencerData, influencerFieldType) => {
       if (influencerFieldType === laneLabel) {
@@ -402,7 +402,7 @@ module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimla
       min: moment(timeRange.start * 1000),
       max: moment(timeRange.end * 1000)
     };
-    prlSwimlaneSearchService.calculateBounds(dataset, timeRange.interval, bounds);
+    mlSwimlaneSearchService.calculateBounds(dataset, timeRange.interval, bounds);
 
     _.each(dataByInfluencer, (influencerData, influencerFieldValue) => {
       if (influencerFieldValue === laneLabel) {
@@ -457,8 +457,8 @@ module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimla
     controls.topInfluencerList = {};
     controls.showTopInfluencerList = false;
 
-    prlSwimlaneSearchService.getTopInfluencers(ML_RESULTS_INDEX_ID, laneLabel, selectedJobIds, swimlaneType,
-        timeRange.start, timeRange.end, 0, prlAnomalyRecordDetailsService.type)
+    mlSwimlaneSearchService.getTopInfluencers(ML_RESULTS_INDEX_ID, laneLabel, selectedJobIds, swimlaneType,
+        timeRange.start, timeRange.end, 0, mlAnomalyRecordDetailsService.type)
     .then((resp) => {
 
       const list = _.uniq(_.union(resp.results.topMax, resp.results.topSum), false, (item, key, id) => { return item.id; });

@@ -27,7 +27,7 @@ import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.directive('prlConnectionsMap', function ($compile) {
+module.directive('mlConnectionsMap', function ($compile) {
 
   function link(scope, element, attrs) {
 

@@ -19,8 +19,8 @@ import './styles/main.less';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.service('prlMessageBarService', function ($http, $q) {
-  const MSG_STYLE = {INFO: 'prl-message-info', WARNING: 'prl-message-warning', ERROR: 'prl-message-error'};
+module.service('mlMessageBarService', function ($http, $q) {
+  const MSG_STYLE = {INFO: 'ml-message-info', WARNING: 'ml-message-warning', ERROR: 'ml-message-error'};
 
   this.messages = [];
 
@@ -63,12 +63,12 @@ module.service('prlMessageBarService', function ($http, $q) {
   }
 })
 
-.controller('PrlMessageBarController', function ($scope, prlMessageBarService) {
-  $scope.messages = prlMessageBarService.messages;
-  $scope.removeMessage = prlMessageBarService.removeMessage;
+.controller('MlMessageBarController', function ($scope, mlMessageBarService) {
+  $scope.messages = mlMessageBarService.messages;
+  $scope.removeMessage = mlMessageBarService.removeMessage;
 })
 
-.directive('prlMessageBar', function (prlMessageBarService) {
+.directive('mlMessageBar', function (mlMessageBarService) {
   return {
     restrict: 'AE',
     template: require('plugins/ml/messagebar/messagebar.html')

@@ -30,7 +30,7 @@ import openRowArrow from 'ui/doc_table/components/table_row/open.html';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResultsService, formatValueFilter) {
+module.directive('mlAnomaliesTable', function ($window, mlJobService, mlResultsService, formatValueFilter) {
   return {
     restrict: 'E',
     scope: {
@@ -40,7 +40,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
     },
     template: require('plugins/ml/timeseriesexplorer/anomalies_table/anomalies_table.html'),
     link: function (scope, element, $attrs) {
-      console.log('prlAnomaliesTable scope:', scope);
+      console.log('mlAnomaliesTable scope:', scope);
 
       scope.thresholdOptions = [
         {display:'critical', val:75},
@@ -132,7 +132,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
           const jobId = record.job_id;
           const categoryId = record.mlcategory;
 
-          prlJobService.getCategoryDefinition(scope.indexPattern.id, jobId, categoryId)
+          mlJobService.getCategoryDefinition(scope.indexPattern.id, jobId, categoryId)
           .then(function (resp) {
             // Prefix each of the terms with '+' so that the Elasticsearch Query String query
             // run in a drilldown Kibana dashboard has to match on all terms.
@@ -174,8 +174,8 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
             const detectorIndex = record.detector_index;
             const jobId = record.job_id;
             let detector = record.functionDescription;
-            if ((_.has(prlJobService.detectorsByJob, jobId)) && (detectorIndex < prlJobService.detectorsByJob[jobId].length)) {
-              detector = prlJobService.detectorsByJob[jobId][detectorIndex].detector_description;
+            if ((_.has(mlJobService.detectorsByJob, jobId)) && (detectorIndex < mlJobService.detectorsByJob[jobId].length)) {
+              detector = mlJobService.detectorsByJob[jobId][detectorIndex].detector_description;
             }
 
             const displayRecord = {
@@ -235,8 +235,8 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
               }
             }
 
-            if (_.has(prlJobService.customUrlsByJob, jobId)) {
-              displayRecord.links = prlJobService.customUrlsByJob[jobId];
+            if (_.has(mlJobService.customUrlsByJob, jobId)) {
+              displayRecord.links = mlJobService.customUrlsByJob[jobId];
             }
 
             summaryRecords.push(displayRecord);
@@ -314,8 +314,8 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
           const detectorIndex = record.detector_index;
           const jobId = record.job_id;
           let detector = record.function_description;
-          if ((_.has(prlJobService.detectorsByJob, jobId)) && (detectorIndex < prlJobService.detectorsByJob[jobId].length)) {
-            detector = prlJobService.detectorsByJob[jobId][detectorIndex].detector_description;
+          if ((_.has(mlJobService.detectorsByJob, jobId)) && (detectorIndex < mlJobService.detectorsByJob[jobId].length)) {
+            detector = mlJobService.detectorsByJob[jobId][detectorIndex].detector_description;
           }
           const detectorsAtTime = aggregatedData[roundedTime];
           if (!_.has(detectorsAtTime, detector)) {
@@ -409,8 +409,8 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
               }
 
               // TODO - do we always want the links column visible even when no customUrls have been defined?
-              if (_.has(prlJobService.customUrlsByJob, record.job_id)) {
-                displayRecord.links = prlJobService.customUrlsByJob[record.job_id];
+              if (_.has(mlJobService.customUrlsByJob, record.job_id)) {
+                displayRecord.links = mlJobService.customUrlsByJob[record.job_id];
               }
 
               summaryRecords.push(displayRecord);
@@ -481,14 +481,14 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
       function createTableRow(record) {
         const rowScope = scope.$new();
         rowScope.expandable = true;
-        rowScope.expandElement = 'prl-anomalies-table-expanded-row';
+        rowScope.expandElement = 'ml-anomalies-table-expanded-row';
         rowScope.record = record;
         rowScope.isShowingAggregatedData = scope.isShowingAggregatedData();
 
         rowScope.initRow = function () {
           if (_.has(record, 'entityValue') && record.entityName === 'mlcategory') {
             // Obtain the category definition and display the examples in the expanded row.
-            prlJobService.getCategoryDefinition(scope.indexPatternId, record.job_id, record.entityValue)
+            mlJobService.getCategoryDefinition(scope.indexPatternId, record.job_id, record.entityValue)
             .then(function (resp) {
               rowScope.categoryDefinition = {
                 'examples':_.slice(resp.examples, 0, Math.min(resp.examples.length, MAX_NUMBER_CATEGORY_EXAMPLES))};
@@ -649,7 +649,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         // Load the example events for the specified map of job_ids and categoryIds from Elasticsearch.
         scope.categoryExamplesByJob = {};
         _.each(categoryIdsByJobId, function (categoryIds, jobId) {
-          prlResultsService.getCategoryExamples(scope.indexPatternId, jobId, categoryIds, MAX_NUMBER_CATEGORY_EXAMPLES)
+          mlResultsService.getCategoryExamples(scope.indexPatternId, jobId, categoryIds, MAX_NUMBER_CATEGORY_EXAMPLES)
           .then(function (resp) {
             scope.categoryExamplesByJob[jobId] = resp.examplesByCategoryId;
           }).catch(function (resp) {

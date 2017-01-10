@@ -22,7 +22,7 @@ import $ from 'jquery';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.service('prlInfoService', ['$q', 'es', '$http', function ($q, es, $http) {
+module.service('mlInfoService', ['$q', 'es', '$http', function ($q, es, $http) {
 
   // Returns information on the installed version of Ml API engine,
   // specifically the API product and version numbers, server operating

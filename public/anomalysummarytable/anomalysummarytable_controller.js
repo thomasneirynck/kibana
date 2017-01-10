@@ -34,21 +34,21 @@ import './expanded_row/expanded_row_directive';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('PrlAnomalySummaryTableController', function (
+module.controller('MlAnomalySummaryTableController', function (
   $scope,
   $window,
   $location,
   savedSearches,
   Notifier,
   Private,
-  prlJobService,
-  prlResultsService,
+  mlJobService,
+  mlResultsService,
   formatValueFilter) {
 
   // Obtain the mappings for detector descriptions by jobId/detector index.
   $scope.detectorsByJob = {};
   $scope.customUrlsByJob = {};
-  prlJobService.getBasicJobInfo($scope.vis.indexPattern.id)
+  mlJobService.getBasicJobInfo($scope.vis.indexPattern.id)
     .then(function (resp) {
       console.log('Anomaly Summary Table getBasicJobInfo jobs :', resp.jobs);
       // Build mappings of jobIds against detector descriptions.
@@ -500,7 +500,7 @@ module.controller('PrlAnomalySummaryTableController', function (
       const jobId = source.jobId;
       const categoryId = source.mlcategory;
 
-      prlJobService.getCategoryDefinition($scope.indexPattern.id, jobId, categoryId)
+      mlJobService.getCategoryDefinition($scope.indexPattern.id, jobId, categoryId)
       .then(function (resp) {
         // Prefix each of the terms with '+' so that the Elasticsearch Query String query
         // run in a drilldown Kibana dashboard has to match on all terms.
@@ -533,7 +533,7 @@ module.controller('PrlAnomalySummaryTableController', function (
     // Load the example events for the specified map of jobIds and categoryIds from Elasticsearch.
     $scope.categoryExamplesByJob = {};
     _.each(categoryIdsByJobId, function (categoryIds, jobId) {
-      prlResultsService.getCategoryExamples($scope.vis.indexPattern.id, jobId, categoryIds, MAX_NUMBER_CATEGORY_EXAMPLES)
+      mlResultsService.getCategoryExamples($scope.vis.indexPattern.id, jobId, categoryIds, MAX_NUMBER_CATEGORY_EXAMPLES)
       .then(function (resp) {
         $scope.categoryExamplesByJob[jobId] = resp.examplesByCategoryId;
       }).catch(function (resp) {
@@ -595,7 +595,7 @@ module.controller('PrlAnomalySummaryTableController', function (
   function createTableRow(record) {
     const rowScope = $scope.$new();
     rowScope.expandable = true;
-    rowScope.expandElement = 'prl-anomaly-summary-expanded-row';
+    rowScope.expandElement = 'ml-anomaly-summary-expanded-row';
     rowScope.record = record;
     rowScope.filter = $scope.filter;
     rowScope.isShowingAggregatedData = $scope.isShowingAggregatedData();
@@ -603,7 +603,7 @@ module.controller('PrlAnomalySummaryTableController', function (
     rowScope.initRow = function () {
       if (_.has(record, 'entityValue') && record.entityName === 'mlcategory') {
         // Obtain the category definition and display the examples in the expanded row.
-        prlJobService.getCategoryDefinition($scope.vis.indexPattern.id, record.jobId, record.entityValue)
+        mlJobService.getCategoryDefinition($scope.vis.indexPattern.id, record.jobId, record.entityValue)
         .then(function (resp) {
           rowScope.categoryDefinition =
             {'examples':_.slice(resp.examples, 0, Math.min(resp.examples.length, MAX_NUMBER_CATEGORY_EXAMPLES))};

@@ -1,4 +1,4 @@
-<div class="form-group prl-connections-map-vis-options">
+<div class="form-group ml-connections-map-vis-options">
   <label>
     Severity threshold:
   </label>
@@ -7,7 +7,7 @@
           ng-options="threshold as threshold.display for threshold in vis.type.params.thresholdOptions track by threshold.display"></select>
   
   <h4>Job(s):</h4>
-  <div class="prl-connections-map-jobs-list">
+  <div class="ml-connections-map-jobs-list">
     <label ng-repeat="job in vis.params.jobs">
       <input type="checkbox" value="{{job.id}}" ng-model="job.selected"/>{{job.id}}
     </label>

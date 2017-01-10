@@ -30,7 +30,7 @@ import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.directive('prlNewJobChart', function (timefilter, prlSimpleJobService) {
+module.directive('mlNewJobChart', function (timefilter, mlSimpleJobService) {
 
   function link(scope, element, attrs) {
 

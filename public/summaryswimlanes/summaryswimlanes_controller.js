@@ -41,15 +41,15 @@ import 'plugins/ml/swimlane/swimlane_influencers/swimlane_influencers_directive'
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.controller('PrlSummarySwimlanesController', function (
+module.controller('MlSummarySwimlanesController', function (
   $scope,
   $route,
   $window,
   $location,
   courier,
-  prlJobService,
-  prlDashboardService,
-  prlResultsService) {
+  mlJobService,
+  mlDashboardService,
+  mlResultsService) {
 
   $scope.jobData = {};
   $scope.influencerTypeData = {};
@@ -57,7 +57,7 @@ module.controller('PrlSummarySwimlanesController', function (
 
   // Obtain the descriptions for each job.
   $scope.jobDescriptions = {};
-  prlJobService.getBasicJobInfo($scope.vis.indexPattern.id)
+  mlJobService.getBasicJobInfo($scope.vis.indexPattern.id)
   .then(function (resp) {
     if (resp.jobs.length > 0) {
       const descriptions = {};
@@ -83,7 +83,7 @@ module.controller('PrlSummarySwimlanesController', function (
       // Remove ng-hide from the parent div as that has display:none, which can
       // result in the flot chart labels falling inside the chart area on first render
       // and x-axis labels not being laid out correctly.
-      $('.prl-summary-swimlanes').closest('.ng-hide').removeClass('ng-hide');
+      $('.ml-summary-swimlanes').closest('.ng-hide').removeClass('ng-hide');
     }
 
     console.log('Summary Swimlanes esResponse:', resp);
@@ -336,7 +336,7 @@ module.controller('PrlSummarySwimlanesController', function (
   }
 
 })
-.directive('prlSummarySwimlane', function ($location, $compile, timefilter) {
+.directive('mlSummarySwimlane', function ($location, $compile, timefilter) {
 
   function link(scope, element, attrs) {
 
@@ -579,7 +579,7 @@ module.controller('PrlSummarySwimlanesController', function (
           element.addClass('swimlane-point-over');
           if (scope._previousHoverPoint !== item.dataIndex) {
             scope._previousHoverPoint = item.dataIndex;
-            $('.prl-swimlane-tooltip').remove();
+            $('.ml-swimlane-tooltip').remove();
             if (scope._influencerHoverScope) {
               scope._influencerHoverScope.$destroy();
             }
@@ -590,7 +590,7 @@ module.controller('PrlSummarySwimlanesController', function (
           }
         } else {
           element.removeClass('swimlane-point-over');
-          $('.prl-swimlane-tooltip').remove();
+          $('.ml-swimlane-tooltip').remove();
           scope._previousHoverPoint = null;
           if (scope._influencerHoverScope) {
             scope._influencerHoverScope.$destroy();
@@ -647,7 +647,7 @@ module.controller('PrlSummarySwimlanesController', function (
       const x = item.pageX;
       const y = item.pageY;
       const offset = 5;
-      const $prlSwimlaneTooltip = $('<div class="prl-swimlane-tooltip">' + contents + '</div>').css({
+      const $mlSwimlaneTooltip = $('<div class="ml-swimlane-tooltip">' + contents + '</div>').css({
         'position': 'absolute',
         'display': 'none',
         'z-index': 1,
@@ -658,7 +658,7 @@ module.controller('PrlSummarySwimlanesController', function (
 
       if (scope.mode === 'influencerTypes' && laneLabel !== 'bucket_time') {
         // Display top influencer field values in the tooltip
-        // using the prl-swimlane-influencers directive.
+        // using the ml-swimlane-influencers directive.
 
         // Store the attributes required for querying elasticsearch in the child scope.
         const timeAgg = scope.vis.aggs.bySchemaName.timeSplit[0];
@@ -685,22 +685,22 @@ module.controller('PrlSummarySwimlanesController', function (
           }
         }
 
-        // Compile the contents to link the prl-swimlane-influencers directive to the child scope.
-        const $topInfluencersContent = $('<br/><hr/><prl-swimlane-influencers/>');
-        $prlSwimlaneTooltip.addClass('influencers-mode');
-        $prlSwimlaneTooltip.append($topInfluencersContent);
-        $compile($prlSwimlaneTooltip)(scope._influencerHoverScope);
+        // Compile the contents to link the ml-swimlane-influencers directive to the child scope.
+        const $topInfluencersContent = $('<br/><hr/><ml-swimlane-influencers/>');
+        $mlSwimlaneTooltip.addClass('influencers-mode');
+        $mlSwimlaneTooltip.append($topInfluencersContent);
+        $compile($mlSwimlaneTooltip)(scope._influencerHoverScope);
       }
 
       // Position the tooltip.
       const $win = $(window);
       const winHeight = $win.height();
       const yOffset = window.pageYOffset;
-      const width = $prlSwimlaneTooltip.outerWidth(true);
-      const height = $prlSwimlaneTooltip.outerHeight(true);
+      const width = $mlSwimlaneTooltip.outerWidth(true);
+      const height = $mlSwimlaneTooltip.outerHeight(true);
 
-      $prlSwimlaneTooltip.css('left', x + offset + width > $win.width() ? x - offset - width : x + offset);
-      $prlSwimlaneTooltip.css('top', y + height < winHeight + yOffset ? y : y - height);
+      $mlSwimlaneTooltip.css('left', x + offset + width > $win.width() ? x - offset - width : x + offset);
+      $mlSwimlaneTooltip.css('top', y + height < winHeight + yOffset ? y : y - height);
 
     }
   }
