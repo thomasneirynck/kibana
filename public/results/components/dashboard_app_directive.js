@@ -15,7 +15,7 @@
 
 /*
  * dashboard-app directive used for displaying pre-built Kibana dashboards inside
- * the Prelert plugin. Based on the dashboard-app directive from the dashboard view
+ * the Ml plugin. Based on the dashboard-app directive from the dashboard view
  * of the standard Kibana plugin.
  */
 
@@ -25,7 +25,7 @@ import angular from 'angular';
 import chrome from 'ui/chrome';
 
 //include the bootstrap patch for better popovers
-import 'plugins/prelert/lib/angular_bootstrap_patch';
+import 'plugins/ml/lib/angular_bootstrap_patch';
 
 import 'ui/courier';
 import 'ui/notify';
@@ -45,15 +45,15 @@ import 'plugins/kibana/discover/styles/main.less';
 import 'plugins/kibana/dashboard/styles/main.less';
 import '../styles/main.less';
 
-import 'plugins/prelert/components/job_select_list';
+import 'plugins/ml/components/job_select_list';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.directive('dashboardApp', function (Notifier, courier, AppState, timefilter, kbnUrl) {
   return {
     restrict: 'E',
-    template: require('plugins/prelert/results/components/dashboard_app.html'),
+    template: require('plugins/ml/results/components/dashboard_app.html'),
     controllerAs: 'dashboardApp',
     controller: function ($scope, $rootScope, $route, $routeParams, $location, Private, getAppState, prlDashboardService) {
 

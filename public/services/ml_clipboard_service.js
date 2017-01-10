@@ -19,7 +19,7 @@
 // e.g. prlClipboardService.copy("this could be abused!");
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.service('prlClipboardService', function () {
 

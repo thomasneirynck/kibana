@@ -13,10 +13,10 @@
  * strictly prohibited.
  */
 
-// Service with functions used across Prelert dashboards, such as broadcasting
+// Service with functions used across Ml dashboards, such as broadcasting
 // and listening for events.
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.service('prlDashboardService', function ($rootScope) {
 

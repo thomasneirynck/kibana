@@ -15,8 +15,8 @@
 
 import _ from 'lodash';
 // import moment from 'moment-timezone';
-// import stringUtils from 'plugins/prelert/util/string_utils';
-// import 'plugins/prelert/lib/minify.json';
+// import stringUtils from 'plugins/ml/util/string_utils';
+// import 'plugins/ml/lib/minify.json';
 import 'ui/courier';
 
 // import 'plugins/kibana/visualize/saved_visualizations/saved_visualizations';
@@ -24,7 +24,7 @@ import 'ui/courier';
 // import 'ui/directives/paginated_selectable_list';
 // import 'plugins/kibana/discover/saved_searches/saved_searches';
 
-// import 'plugins/prelert/services/visualization_job_service';
+// import 'plugins/ml/services/visualization_job_service';
 import 'plugins/kibana/visualize/styles/main.less';
 import AggTypesIndexProvider from 'ui/agg_types/index';
 
@@ -44,7 +44,7 @@ uiRoutes
 });
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module
 .controller('PrlCreateSimpleJob', function (
@@ -65,8 +65,8 @@ module
 
   timefilter.enabled = true;
   const msgs = prlMessageBarService;
-  const PrlTimeBuckets = Private(require('plugins/prelert/util/prelert_time_buckets'));
-  const filterAggTypes = require('plugins/prelert/jobs/components/new_job_simple/create_job/filter_agg_types');
+  const PrlTimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
+  const filterAggTypes = require('plugins/ml/jobs/components/new_job_simple/create_job/filter_agg_types');
 
   const aggTypes = Private(AggTypesIndexProvider);
   $scope.groupName = 'metrics';
@@ -140,9 +140,9 @@ module
     }]
   };
 
-  $scope.img1 = chrome.getBasePath() + '/plugins/prelert/jobs/components/new_job_simple/img/results_1.png';
-  $scope.img2 = chrome.getBasePath() + '/plugins/prelert/jobs/components/new_job_simple/img/results_2.png';
-  $scope.img3 = chrome.getBasePath() + '/plugins/prelert/jobs/components/new_job_simple/img/results_3.png';
+  $scope.img1 = chrome.getBasePath() + '/plugins/ml/jobs/components/new_job_simple/img/results_1.png';
+  $scope.img2 = chrome.getBasePath() + '/plugins/ml/jobs/components/new_job_simple/img/results_2.png';
+  $scope.img3 = chrome.getBasePath() + '/plugins/ml/jobs/components/new_job_simple/img/results_3.png';
 
   $scope.formConfig = {
     agg: {
@@ -563,7 +563,7 @@ module
           const to = (resp.end.string) ?  '\'' + resp.end.string + '\'' : 'now';
 
           let path = chrome.getBasePath();
-          path += '/app/prelert#/' + page;
+          path += '/app/ml#/' + page;
           path += '?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:' + from;
           path += ',mode:absolute,to:' + to;
           path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))&jobId=' + job.id;

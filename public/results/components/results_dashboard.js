@@ -43,7 +43,7 @@ savedObjectRegistry.register(require('plugins/kibana/dashboard/services/saved_da
 import 'plugins/kibana/visualize/saved_visualizations/saved_visualizations';
 import 'plugins/kibana/discover/saved_searches/saved_searches';
 
-const module = uiModules.get('apps/prelert', [
+const module = uiModules.get('apps/ml', [
   'elasticsearch',
   'ngRoute',
   'kibana/courier',

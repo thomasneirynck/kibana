@@ -15,7 +15,7 @@
 
 /*
  * Angular directive for rendering the expanded row content in the
- * Prelert Anomaly Summary table Kibana visualization. It displays
+ * Ml Anomaly Summary table Kibana visualization. It displays
  * more details on the anomaly summarized in the row, including
  * field names, actual and typical values for the analyzed metric,
  * plus causes and examples events according to the detector configuration.
@@ -24,11 +24,11 @@
 import _ from 'lodash';
 import moment from 'moment';
 
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
-import 'plugins/prelert/filters/format_value';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import 'plugins/ml/filters/format_value';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.directive('prlAnomaliesTableExpandedRow', function () {
 
@@ -55,7 +55,7 @@ module.directive('prlAnomaliesTableExpandedRow', function () {
       buildContent();
     }
 
-    if (_.has(scope.record, 'entityValue') && scope.record.entityName === 'prelertcategory') {
+    if (_.has(scope.record, 'entityValue') && scope.record.entityName === 'mlcategory') {
       // For categorization results, controller will obtain the definition when the
       // row is first expanded and place the categoryDefinition in the row scope.
       const unbindWatch = scope.$parent.$watch('categoryDefinition', function (categoryDefinition) {
@@ -186,7 +186,7 @@ module.directive('prlAnomaliesTableExpandedRow', function () {
     restrict: 'AE',
     replace: false,
     scope: {},
-    template: require('plugins/prelert/timeseriesexplorer/anomalies_table/expanded_row/expanded_row.html'),
+    template: require('plugins/ml/timeseriesexplorer/anomalies_table/expanded_row/expanded_row.html'),
     link: link
   };
 });

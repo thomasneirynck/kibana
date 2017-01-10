@@ -17,7 +17,7 @@ import _ from 'lodash';
 import chrome from 'ui/chrome';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.controller('PrlTransformModal', function ($scope, $modalInstance, params, prlJobService, prlMessageBarService) {
   const msgs = prlMessageBarService;

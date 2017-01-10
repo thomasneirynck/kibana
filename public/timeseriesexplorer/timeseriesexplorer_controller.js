@@ -14,7 +14,7 @@
  */
 
 /*
- * Angular controller for the Prelert summary view visualization. The controller makes
+ * Angular controller for the Ml summary view visualization. The controller makes
  * multiple queries to Elasticsearch to obtain the data to populate all the components
  * in the view.
  */
@@ -25,9 +25,9 @@ import moment from 'moment';
 import uiRoutes from 'ui/routes';
 import 'ui/timefilter';
 
-import 'plugins/prelert/services/job_service';
-import 'plugins/prelert/services/prelert_dashboard_service';
-import 'plugins/prelert/services/results_service';
+import 'plugins/ml/services/job_service';
+import 'plugins/ml/services/ml_dashboard_service';
+import 'plugins/ml/services/results_service';
 
 uiRoutes
 .when('/timeseriesexplorer/?', {
@@ -35,7 +35,7 @@ uiRoutes
 });
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $timeout, $compile, $location,
   Private, $q, es, timefilter, globalState, prlJobService, prlResultsService, prlDashboardService, prlTimeSeriesSearchService) {
@@ -48,7 +48,7 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
 
   const CHARTS_POINT_TARGET = 500;
   const ANOMALIES_MAX_RESULTS = 500;
-  const TimeBuckets = Private(require('plugins/prelert/util/prelert_time_buckets'));
+  const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
 
   $scope.loading = true;
   $scope.hasResults = false;
@@ -273,7 +273,7 @@ module.controller('PrlTimeSeriesExplorerController', function ($scope, $route, $
   // Refresh the data when the time range is altered.
   $scope.$listen(timefilter, 'fetch', $scope.refresh);
 
-  // When inside a dashboard in the Prelert plugin, listen for changes to job selection.
+  // When inside a dashboard in the Ml plugin, listen for changes to job selection.
   prlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
     $scope.setSelectedJobs(selections);
   });

@@ -15,8 +15,8 @@
 
 import _ from 'lodash';
 // import moment from 'moment-timezone';
-// import stringUtils from 'plugins/prelert/util/string_utils';
-// import 'plugins/prelert/lib/minify.json';
+// import stringUtils from 'plugins/ml/util/string_utils';
+// import 'plugins/ml/lib/minify.json';
 import 'ui/courier';
 
 // import 'plugins/kibana/visualize/saved_visualizations/saved_visualizations';
@@ -24,7 +24,7 @@ import 'ui/courier';
 // import 'ui/directives/paginated_selectable_list';
 // import 'plugins/kibana/discover/saved_searches/saved_searches';
 
-// import 'plugins/prelert/services/visualization_job_service';
+// import 'plugins/ml/services/visualization_job_service';
 import 'plugins/kibana/visualize/styles/main.less';
 // /Users/james/dev/kibana-5.0/src/core_plugins/kibana/public/visualize/styles/main.less
 
@@ -43,7 +43,7 @@ uiRoutes
 // .register(require('plugins/kibana/visualize/saved_visualizations/saved_visualization_register'));
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.controller('PrlNewJobStep1', (
   $scope,

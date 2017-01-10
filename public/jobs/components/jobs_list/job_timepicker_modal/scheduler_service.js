@@ -16,7 +16,7 @@
 import _ from 'lodash';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.service('prlSchedulerService', function ($modal, prlJobService) {
 
@@ -27,7 +27,7 @@ module.service('prlSchedulerService', function ($modal, prlJobService) {
   this.openJobTimepickerWindow = function (job) {
     function func(obj) {
       const modalInstance = $modal.open({
-        template: require('plugins/prelert/jobs/components/jobs_list/job_timepicker_modal/job_timepicker_modal.html'),
+        template: require('plugins/ml/jobs/components/jobs_list/job_timepicker_modal/job_timepicker_modal.html'),
         controller: 'PrlJobTimepickerModal',
         backdrop: 'static',
         keyboard: false,

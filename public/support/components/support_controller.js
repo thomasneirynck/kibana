@@ -20,7 +20,7 @@ import moment from 'moment-timezone';
 import filesaver from '@spalger/filesaver';
 let saveAs = filesaver.saveAs;
 
-import stringUtils from 'plugins/prelert/util/string_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
 
 uiRoutes
 .when('/support/?', {
@@ -28,10 +28,10 @@ uiRoutes
 });
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
-module.controller('PrlSupport', function ($scope, $http, es, kbnVersion, timefilter, prelertAPIService, prlInfoService, prlBrowserDetectService, prlMessageBarService) {
-  const apiService = prelertAPIService;
+module.controller('PrlSupport', function ($scope, $http, es, kbnVersion, timefilter, mlAPIService, prlInfoService, prlBrowserDetectService, prlMessageBarService) {
+  const apiService = mlAPIService;
   const msgs = prlMessageBarService; // set a reference to the message bar service
   timefilter.enabled = false; // remove time picker from top of page
   msgs.clear();
@@ -54,7 +54,7 @@ module.controller('PrlSupport', function ($scope, $http, es, kbnVersion, timefil
   $scope.getSupportBundle = function () {
     msgs.clear();
 
-    $http.get(chrome.getBasePath() + '/prelert_support/', {
+    $http.get(chrome.getBasePath() + '/ml_support/', {
       responseType: 'arraybuffer'
     })
     .then((resp) =>{
@@ -63,13 +63,13 @@ module.controller('PrlSupport', function ($scope, $http, es, kbnVersion, timefil
       if (resp && resp.data) {
         const data = resp.data;
         const blob = new Blob([ data ], { type : 'application/octet-stream' });
-        saveAs(blob, 'prelert_support_bundle.zip');
+        saveAs(blob, 'ml_support_bundle.zip');
       } else {
-        msgs.error('Prelert support bundle could not be generated');
+        msgs.error('Ml support bundle could not be generated');
       }
     })
     .catch((resp) => {
-      msgs.error('Prelert support bundle could not be generated');
+      msgs.error('Ml support bundle could not be generated');
       if (resp && resp.message) {
         msgs.error(resp.message);
       }

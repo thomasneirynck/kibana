@@ -14,7 +14,7 @@
  */
 
 /*
- * Angular controller for the Prelert summary swimlane visualization, which builds the
+ * Angular controller for the Ml summary swimlane visualization, which builds the
  * two swimlane charts showing maximum anomaly score by job and influencer type, from
  * the aggregation data received from Elasticsearch.
  */
@@ -32,14 +32,14 @@ import chrome from 'ui/chrome';
 import 'ui/courier';
 import 'ui/timefilter';
 
-import stringUtils from 'plugins/prelert/util/string_utils';
-import 'plugins/prelert/services/job_service';
-import 'plugins/prelert/services/prelert_dashboard_service';
-import 'plugins/prelert/services/results_service';
-import 'plugins/prelert/swimlane/swimlane_influencers/swimlane_influencers_directive';
+import stringUtils from 'plugins/ml/util/string_utils';
+import 'plugins/ml/services/job_service';
+import 'plugins/ml/services/ml_dashboard_service';
+import 'plugins/ml/services/results_service';
+import 'plugins/ml/swimlane/swimlane_influencers/swimlane_influencers_directive';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.controller('PrlSummarySwimlanesController', function (
   $scope,
@@ -138,7 +138,7 @@ module.controller('PrlSummarySwimlanesController', function (
       }
     }
 
-    let path = chrome.getBasePath() + '/app/prelert#/anomalyexplorer?_g=(refreshInterval:(display:Off,pause:!f,value:0),' +
+    let path = chrome.getBasePath() + '/app/ml#/anomalyexplorer?_g=(refreshInterval:(display:Off,pause:!f,value:0),' +
       'time:(from:\'' + from + '\',mode:absolute,to:\'' + to + '\'))' +
       '&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'' + query + '\')))';
 

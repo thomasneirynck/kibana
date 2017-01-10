@@ -24,10 +24,10 @@ import d3 from 'd3';
 import moment from 'moment';
 import 'ui/timefilter';
 
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefilter, prlJobService, prlAnomalyRecordDetailsService, prlSwimlaneInspectorService, prlSwimlaneSelectionService) {
 
@@ -374,7 +374,7 @@ module.directive('prlSummaryViewSwimlane', function ($compile, $timeout, timefil
       chartWidth: '@',
     },
     link: link,
-    // templateUrl: '/plugins/prelert/summaryview/detector_swimlane.html',
+    // templateUrl: '/plugins/ml/summaryview/detector_swimlane.html',
     template: '<div ng-show=\'chartTitle!==undefined\' class=\'title\'><i ng-click=\'toggleRow()\' class=\'fa expand-arrow\' ng-class=\"{ \'fa-caret-down\': expanded, \'fa-caret-right\': !expanded }\"> </i>{{chartTitle}}</div><div><div id=\'swimlanes\' ng-show=\'expanded\'></div></div>'
   };
 })

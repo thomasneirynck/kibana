@@ -15,17 +15,17 @@
 
 import _ from 'lodash';
 import angular from 'angular';
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
-import 'plugins/prelert/services/prelert_angular_client';
-import 'plugins/prelert/services/info_service';
-import 'plugins/prelert/services/ml';
-import 'plugins/prelert/messagebar';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import 'plugins/ml/services/ml_angular_client';
+import 'plugins/ml/services/info_service';
+import 'plugins/ml/services/ml';
+import 'plugins/ml/messagebar';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
-module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelertAPIService, prlMessageBarService) {
-  const apiService = prelertAPIService;
+module.service('prlJobService', function ($rootScope, $http, $q, es, ml, mlAPIService, prlMessageBarService) {
+  const apiService = mlAPIService;
   const msgs = prlMessageBarService;
   let jobs = [];
   this.currentJob = undefined;
@@ -557,7 +557,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
   };
 
   // use elasticsearch to load basic information on jobs, as used by various result
-  // dashboards in the Prelert plugin. Returned response contains a jobs property,
+  // dashboards in the Ml plugin. Returned response contains a jobs property,
   // which is an array of objects containing id, description, bucketSpan and detectorDescriptions,
   // plus a customUrls key if custom URLs have been configured for the job.
   this.getBasicJobInfo = function () {
@@ -827,7 +827,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
     }
 
     es.search({
-      index: 'prelert-int',
+      index: 'ml-int',
       size: 1000,
       body:
       {
@@ -874,7 +874,7 @@ module.service('prlJobService', function ($rootScope, $http, $q, es, ml, prelert
     const aggs = [];
 
     es.search({
-      index: 'prelert-int',
+      index: 'ml-int',
       body: {
         'query': {
           'bool': {

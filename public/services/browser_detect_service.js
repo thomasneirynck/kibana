@@ -16,7 +16,7 @@
 // simple check for browser name
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.service('prlBrowserDetectService', function ($window) {
 

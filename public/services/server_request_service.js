@@ -14,17 +14,17 @@
  */
 
 // service for interacting with the server
-// used by prelert_angular_client.js
+// used by ml_angular_client.js
 
 import chrome from 'ui/chrome';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 import { addSystemApiHeader } from 'ui/system_api';
 
 module.service('prlServerRequestService', function ($http, $q) {
 
-  this.urlBase = window.location.origin + chrome.getBasePath() + '/prelert';
+  this.urlBase = window.location.origin + chrome.getBasePath() + '/ml';
 
   // request function returns a promise object
   // once resolved, just the data response is returned

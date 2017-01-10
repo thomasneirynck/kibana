@@ -13,5 +13,5 @@
  * strictly prohibited.
  */
 
-import 'plugins/prelert/support/styles/main.less';
+import 'plugins/ml/support/styles/main.less';
 import './components/support_controller';

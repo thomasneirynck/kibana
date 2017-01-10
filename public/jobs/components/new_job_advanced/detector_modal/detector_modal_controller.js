@@ -14,11 +14,11 @@
  */
 
 import _ from 'lodash';
-import stringUtils from 'plugins/prelert/util/string_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
 import angular from 'angular';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.controller('PrlDetectorModal', function ($scope, $modalInstance, params, prlJobService, prlMessageBarService) {
   const msgs = prlMessageBarService;
@@ -70,9 +70,9 @@ module.controller('PrlDetectorModal', function ($scope, $modalInstance, params, 
   // properties list for by_field_name field only
   $scope.properties_byFieldName = angular.copy($scope.properties);
   // if data has been added to the categorizationFieldName,
-  // add the option prelertcategory to the by_field_name datalist
+  // add the option mlcategory to the by_field_name datalist
   if (params.catFieldNameSelected) {
-    $scope.properties_byFieldName.prelertcategory = 'prelertcategory';
+    $scope.properties_byFieldName.mlcategory = 'mlcategory';
   }
 
   const validate = params.validate;

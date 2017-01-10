@@ -21,7 +21,7 @@ import _ from 'lodash';
 import AggConfigResult from 'ui/vis/agg_config_result';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.directive('prlRows', function ($compile, $rootScope, getAppState, Private) {
   const filterBarClickHandler = Private(require('ui/filter_bar/filter_bar_click_handler'));

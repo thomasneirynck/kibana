@@ -14,15 +14,15 @@
  */
 
 /*
- * Prelert influencer heatmap visualization displaying the relative sizes
+ * Ml influencer heatmap visualization displaying the relative sizes
  * of two metrics over two levels of aggregation buckets. Results can be
  * displayed in a treemap or a circle packing bubble chart. The visualization
- * is used in Prelert dashboards to display the relative importance of the
+ * is used in Ml dashboards to display the relative importance of the
  * different influencer types that have been configured for a job.
  */
 
-import 'plugins/prelert/influencerheatmap/influencerheatmap_controller.js';
-import 'plugins/prelert/influencerheatmap/influencerheatmap.less';
+import 'plugins/ml/influencerheatmap/influencerheatmap_controller.js';
+import 'plugins/ml/influencerheatmap/influencerheatmap.less';
 
 import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
@@ -36,14 +36,14 @@ export default function InfluencerHeatmapVisType(Private) {
     name: 'prlInfluencerHeatmap',
     title: 'Influencer heatmap',
     icon: 'fa-sitemap',
-    description: 'Prelert influencer heatmap visualization displaying the relative sizes ' +
+    description: 'Ml influencer heatmap visualization displaying the relative sizes ' +
       'of two metrics over two levels of aggregation buckets. Results can be ' +
       'displayed in a treemap or a circle packing bubble chart. The visualization ' +
-      'is used in Prelert dashboards to display the relative importance of the ' +
+      'is used in Ml dashboards to display the relative importance of the ' +
       'different influencer types that have been configured for a job.',
-    template: require('plugins/prelert/influencerheatmap/influencerheatmap.html'),
+    template: require('plugins/ml/influencerheatmap/influencerheatmap.html'),
     params: {
-      editor: require('plugins/prelert/influencerheatmap/influencerheatmap_editor.html'),
+      editor: require('plugins/ml/influencerheatmap/influencerheatmap_editor.html'),
       defaults: {
         chartType: 'treemap'
       }

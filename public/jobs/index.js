@@ -13,7 +13,7 @@
  * strictly prohibited.
  */
 
-import 'plugins/prelert/jobs/styles/main.less';
+import 'plugins/ml/jobs/styles/main.less';
 import './components/jobs_list';
 import './components/new_job_advanced';
 import './components/new_job_simple';

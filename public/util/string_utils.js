@@ -16,7 +16,7 @@
 /*
 * Contains utility functions for performing operations on Strings.
 */
-import 'plugins/prelert/lib/bower_components/moment-jdateformatparser/moment-jdateformatparser';
+import 'plugins/ml/lib/bower_components/moment-jdateformatparser/moment-jdateformatparser';
 
 
 const _ = require('lodash');

@@ -14,16 +14,16 @@
  */
 
 /*
-Angular.js service to the Prelert Anomaly Detective Engine API. This module can simply
+Angular.js service to the Ml Anomaly Detective Engine API. This module can simply
 be injected into your angular controllers.
 */
 import chrome from 'ui/chrome';
-import 'plugins/prelert/services/server_request_service';
+import 'plugins/ml/services/server_request_service';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
-module.service('prelertAPIService', function ($http, $q, prlServerRequestService) {
+module.service('mlAPIService', function ($http, $q, prlServerRequestService) {
 
   const http = prlServerRequestService;
   const urlBasePath = chrome.getBasePath();
@@ -31,7 +31,7 @@ module.service('prelertAPIService', function ($http, $q, prlServerRequestService
   const urlBase = '/jobs';
 
   /**
-   * Queries the Prelert Engine API to get the details of all created jobs.
+   * Queries the Ml Engine API to get the details of all created jobs.
    * Supply skip and take params to obtain a specific page of results.
    */
   this.listJobs = function () {
@@ -41,7 +41,7 @@ module.service('prelertAPIService', function ($http, $q, prlServerRequestService
   };
 
   /**
-   * Queries the Prelert Engine API to get the details of the job with the specified ID.
+   * Queries the Ml Engine API to get the details of the job with the specified ID.
    */
   this.getJobDetails = function (params) {
     const jobId = params.jobId;
@@ -88,7 +88,7 @@ module.service('prelertAPIService', function ($http, $q, prlServerRequestService
   };
 
   /**
-   * Deletes an existing Prelert Engine API job.
+   * Deletes an existing Ml Engine API job.
    */
   this.deleteJob = function (jobId) {
     if (jobId !== undefined) {
@@ -142,7 +142,7 @@ module.service('prelertAPIService', function ($http, $q, prlServerRequestService
       url: '/ext',
       method: 'GET',
       headers: headers,
-      urlBase: urlBasePath + '/prelert_ext', // note, used to override the '/prelert' in server_request_service.js
+      urlBase: urlBasePath + '/ml_ext', // note, used to override the '/ml' in server_request_service.js
       params: params
     });
   };
@@ -155,7 +155,7 @@ module.service('prelertAPIService', function ($http, $q, prlServerRequestService
       url: '/ext',
       method: 'POST',
       headers: headers,
-      urlBase: urlBasePath + '/prelert_ext', // note, used to override the '/prelert' in server_request_service.js
+      urlBase: urlBasePath + '/ml_ext', // note, used to override the '/ml' in server_request_service.js
       params: {url:url},
       data: data
     });

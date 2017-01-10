@@ -37,10 +37,10 @@
 
   <div ng-hide="selectedNode === null && selectedLink === null" class="prl-connections-map-table-container">
     <div ng-if="selectedNode" class="prl-connections-map-table-header">
-      <div class="prl-connections-map-table-label" ng-if="selectedNode.fieldName !== 'prelert-detector'">Top anomalies for {{selectedNode.fieldName}} {{selectedNode.fieldValue}}</div>
-      <div class="prl-connections-map-table-label" ng-if="selectedNode.fieldName === 'prelert-detector'">Top anomalies in detector {{selectedNode.fieldValue}}</div>
+      <div class="prl-connections-map-table-label" ng-if="selectedNode.fieldName !== 'ml-detector'">Top anomalies for {{selectedNode.fieldName}} {{selectedNode.fieldValue}}</div>
+      <div class="prl-connections-map-table-label" ng-if="selectedNode.fieldName === 'ml-detector'">Top anomalies in detector {{selectedNode.fieldValue}}</div>
       <div class="prl-connections-map-explorer-link" style="display:inline; width:50px; vertical-align:middle;">
-        <span ng-class="{'hidden-element': (selectedNode.fieldName === 'prelert-detector')}" tooltip="Explore anomalies for {{selectedNode.fieldName}} {{selectedNode.fieldValue}}" tooltip-placement="bottom" tooltip-popup-delay="400" tooltip-append-to-body="true">
+        <span ng-class="{'hidden-element': (selectedNode.fieldName === 'ml-detector')}" tooltip="Explore anomalies for {{selectedNode.fieldName}} {{selectedNode.fieldValue}}" tooltip-placement="bottom" tooltip-popup-delay="400" tooltip-append-to-body="true">
           <button ng-click="viewInExplorer([selectedNode])" aria-label="Explorer anomalies for {{selectedNode.fieldName}} {{selectedNode.fieldValue}}"><i aria-hidden="true" class="fa fa-table"></i></button>
         </span>
       </div>
@@ -69,24 +69,24 @@
 
     <div ng-repeat="summaryRecord in summaryRecords" class="prl-connections-map-summary-record">
       <div class="title">
-        <div ng-if="selectedNode.fieldName === 'prelert-detector' && summaryRecord.entityFieldName && summaryRecord.count === 1" class="prl-connections-map-table-label">
+        <div ng-if="selectedNode.fieldName === 'ml-detector' && summaryRecord.entityFieldName && summaryRecord.count === 1" class="prl-connections-map-table-label">
           Anomaly for {{summaryRecord.entityFieldName}} {{summaryRecord.entityFieldValue}}
         </div>
-        <div ng-if="selectedNode.fieldName === 'prelert-detector' && summaryRecord.entityFieldName && summaryRecord.count > 1" class="prl-connections-map-table-label">
+        <div ng-if="selectedNode.fieldName === 'ml-detector' && summaryRecord.entityFieldName && summaryRecord.count > 1" class="prl-connections-map-table-label">
           Anomaly for {{summaryRecord.entityFieldName}} {{summaryRecord.entityFieldValue}}
         </div>
-        <div ng-if="(selectedNode.fieldName !== 'prelert-detector' || !summaryRecord.entityFieldName) && summaryRecord.count === 1" class="prl-connections-map-table-label">
+        <div ng-if="(selectedNode.fieldName !== 'ml-detector' || !summaryRecord.entityFieldName) && summaryRecord.count === 1" class="prl-connections-map-table-label">
           Anomaly in {{summaryRecord.detectorDescription}}
         </div>
-        <div ng-if="(selectedNode.fieldName !== 'prelert-detector' || !summaryRecord.entityFieldName) && summaryRecord.count > 1" class="prl-connections-map-table-label">
+        <div ng-if="(selectedNode.fieldName !== 'ml-detector' || !summaryRecord.entityFieldName) && summaryRecord.count > 1" class="prl-connections-map-table-label">
           Anomalies in {{summaryRecord.detectorDescription}}
         </div>
 
         <div class="prl-connections-map-explorer-link" style="display:inline; width:50px; vertical-align:middle;">
-          <span ng-if="summaryRecord.entityFieldName" ng-class="{'hidden-element': (selectedNode.fieldName !== 'prelert-detector')}" tooltip="Explore anomalies for {{summaryRecord.entityFieldName}} {{summaryRecord.entityFieldValue}}" tooltip-placement="bottom" tooltip-popup-delay="400" tooltip-append-to-body="true">
+          <span ng-if="summaryRecord.entityFieldName" ng-class="{'hidden-element': (selectedNode.fieldName !== 'ml-detector')}" tooltip="Explore anomalies for {{summaryRecord.entityFieldName}} {{summaryRecord.entityFieldValue}}" tooltip-placement="bottom" tooltip-popup-delay="400" tooltip-append-to-body="true">
             <button ng-click="viewInExplorer([{fieldName: summaryRecord.entityFieldName, fieldValue: summaryRecord.entityFieldValue}])" aria-label="Explore anomalies for {{summaryRecord.entityFieldName}} {{summaryRecord.entityFieldValue}}"><i aria-hidden="true" class="fa fa-table"></i></button>
           </span>
-          <span ng-if="!summaryRecord.entityFieldName" ng-class="{'hidden-element': (selectedNode.fieldName !== 'prelert-detector')}" tooltip="Explore anomalies" tooltip-placement="bottom" tooltip-popup-delay="400" tooltip-append-to-body="true">
+          <span ng-if="!summaryRecord.entityFieldName" ng-class="{'hidden-element': (selectedNode.fieldName !== 'ml-detector')}" tooltip="Explore anomalies" tooltip-placement="bottom" tooltip-popup-delay="400" tooltip-append-to-body="true">
             <button ng-click="viewInExplorer([])" aria-label="Explore anomalies"><i aria-hidden="true" class="fa fa-table"></i></button>
           </span>
         </div>
@@ -138,7 +138,7 @@
           <td>{{summaryRecord.maxScoreRecord.over_field_name}}:</td>
           <td>{{summaryRecord.maxScoreRecord.over_field_value}}</td>
         </tr>
-        <tr ng-if="summaryRecord.maxScoreRecord.prelertcategory" ng-repeat="example in getExamplesForCategory(summaryRecord.maxScoreRecord.jobId, summaryRecord.maxScoreRecord.prelertcategory) track by $index">
+        <tr ng-if="summaryRecord.maxScoreRecord.mlcategory" ng-repeat="example in getExamplesForCategory(summaryRecord.maxScoreRecord.jobId, summaryRecord.maxScoreRecord.mlcategory) track by $index">
          <td ng-if="$index === 0">category examples:</td><td ng-if="$index > 0">&nbsp;</td>
          <td>{{example}}</td>
         </tr>

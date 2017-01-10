@@ -163,7 +163,7 @@
     }
   }
 
-  // prelert, changed to force else condition
+  // ml, changed to force else condition
   if (false && typeof this.moment === 'undefined' && typeof require !== 'undefined' && require !== null) {
     if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') { //Check if the environment is Node.js
       hookMoment(require('moment')); //if it is, we have to require it different (without the surrounding Array)
@@ -173,7 +173,7 @@
       });
     }
   } else {
-    // prelert - changed to include moment-timezone and because require calls above fail in kibana's bundling steps
+    // ml - changed to include moment-timezone and because require calls above fail in kibana's bundling steps
     hookMoment(require('moment-timezone'));
   }
 

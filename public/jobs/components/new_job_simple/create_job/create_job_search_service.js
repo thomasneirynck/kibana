@@ -16,7 +16,7 @@
 import _ from 'lodash';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.service('prlSimpleJobSearchService', function ($q, es) {
 

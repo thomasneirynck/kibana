@@ -23,11 +23,11 @@ module.exports = function (kibana) {
 
     uiExports: {
       app: {
-        id: 'prelert',
-        title: 'Prelert',
-        description: 'Prelert behavioral analytics for machine data',
-        icon: 'plugins/prelert/prelert-white.png',
-        main: 'plugins/prelert/app',
+        id: 'ml',
+        title: 'Ml',
+        description: 'Ml behavioral analytics for machine data',
+        icon: 'plugins/ml/ml-white.png',
+        main: 'plugins/ml/app',
         uses: [
           'visTypes',
           'spyModes'
@@ -57,7 +57,7 @@ module.exports = function (kibana) {
         }
       },
       visTypes: [
-        'plugins/prelert/prelert_vis_types'
+        'plugins/ml/ml_vis_types'
       ]
     },
 

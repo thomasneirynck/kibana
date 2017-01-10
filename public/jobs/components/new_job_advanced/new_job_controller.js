@@ -16,12 +16,12 @@
 import _ from 'lodash';
 import angular from 'angular';
 import uiRoutes from 'ui/routes';
-import 'plugins/prelert/jobs/components/new_job_advanced/detectors_list_directive';
-import 'plugins/prelert/jobs/components/new_job_advanced/transforms_list';
-import 'plugins/prelert/jobs/components/new_job_advanced/save_status_modal';
-import 'plugins/prelert/lib/bower_components/JSON.minify/minify.json';
+import 'plugins/ml/jobs/components/new_job_advanced/detectors_list_directive';
+import 'plugins/ml/jobs/components/new_job_advanced/transforms_list';
+import 'plugins/ml/jobs/components/new_job_advanced/save_status_modal';
+import 'plugins/ml/lib/bower_components/JSON.minify/minify.json';
 import 'ui/courier';
-import 'plugins/prelert/services/visualization_job_service';
+import 'plugins/ml/services/visualization_job_service';
 
 uiRoutes
 .when('/jobs/new_job_advanced', {
@@ -31,11 +31,11 @@ uiRoutes
   template: require('./new_job.html')
 });
 
-import stringUtils from 'plugins/prelert/util/string_utils';
-import jobUtils from 'plugins/prelert/util/job_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
+import jobUtils from 'plugins/ml/util/job_utils';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.controller('PrlNewJob',
 function (
@@ -1020,7 +1020,7 @@ function (
 
   function openSaveStatusWindow() {
     $modal.open({
-      template: require('plugins/prelert/jobs/components/new_job_advanced/save_status_modal/save_status_modal.html'),
+      template: require('plugins/ml/jobs/components/new_job_advanced/save_status_modal/save_status_modal.html'),
       controller: 'PrlSaveStatusModal',
       backdrop: 'static',
       keyboard: false,

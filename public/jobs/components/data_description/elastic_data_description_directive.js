@@ -15,10 +15,10 @@
 
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import stringUtils from 'plugins/prelert/util/string_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.directive('prlElasticDataDescription', function ($http) {
   return {
@@ -38,7 +38,7 @@ module.directive('prlElasticDataDescription', function ($http) {
       exposedFunctions:   '=prlExposedFunctions',
       serverInfo:         '=prlElasticServerInfo'
     },
-    template: require('plugins/prelert/jobs/components/data_description/elastic_data_description.html'),
+    template: require('plugins/ml/jobs/components/data_description/elastic_data_description.html'),
     controller: function ($scope, $q, $location, prlJobService, prlMessageBarService) {
       const msgs = prlMessageBarService; // set a reference to the message bar service
       const MODE = {NEW: 0, EDIT: 1, CLONE: 2};

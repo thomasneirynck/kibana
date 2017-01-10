@@ -14,14 +14,14 @@
  */
 
 
-import 'plugins/prelert/services/job_service';
+import 'plugins/ml/services/job_service';
 
-import 'plugins/prelert/summaryview/summaryview_controller.js';
-import 'plugins/prelert/summaryview/styles/main.less';
-import 'plugins/prelert/summaryview/summaryview_search_service.js';
+import 'plugins/ml/summaryview/summaryview_controller.js';
+import 'plugins/ml/summaryview/styles/main.less';
+import 'plugins/ml/summaryview/summaryview_search_service.js';
 
-import 'plugins/prelert/summaryview/summaryview_swimlane_directive';
-import 'plugins/prelert/summaryview/summaryview_eventrate_directive';
-import 'plugins/prelert/summaryview/anomaly_details_bubble';
-import 'plugins/prelert/summaryview/swimlane_inspector';
+import 'plugins/ml/summaryview/summaryview_swimlane_directive';
+import 'plugins/ml/summaryview/summaryview_eventrate_directive';
+import 'plugins/ml/summaryview/anomaly_details_bubble';
+import 'plugins/ml/summaryview/swimlane_inspector';
 

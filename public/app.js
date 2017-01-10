@@ -18,25 +18,25 @@ import 'ui-bootstrap';
 import 'ui/persisted_log';
 import 'ui/autoload/all';
 
-import 'plugins/prelert/jobs/index';
-import 'plugins/prelert/results/index';
-import 'plugins/prelert/support/index';
-import 'plugins/prelert/services/prelert_angular_client';
-import 'plugins/prelert/services/prelert_clipboard_service';
-import 'plugins/prelert/services/server_request_service';
-import 'plugins/prelert/services/info_service';
-import 'plugins/prelert/services/job_service';
-import 'plugins/prelert/services/browser_detect_service';
-import 'plugins/prelert/services/prelert_dashboard_service';
-import 'plugins/prelert/services/results_service';
-import 'plugins/prelert/messagebar';
-import 'plugins/prelert/summaryview';
-import 'plugins/prelert/timeseriesexplorer';
-import 'plugins/prelert/components/json_tooltip';
-import 'plugins/prelert/components/engine_api_help_link';
-import 'plugins/prelert/components/confirm_modal';
-import 'plugins/prelert/app.less';
-import 'plugins/prelert/components/pretty_duration';
+import 'plugins/ml/jobs/index';
+import 'plugins/ml/results/index';
+import 'plugins/ml/support/index';
+import 'plugins/ml/services/ml_angular_client';
+import 'plugins/ml/services/ml_clipboard_service';
+import 'plugins/ml/services/server_request_service';
+import 'plugins/ml/services/info_service';
+import 'plugins/ml/services/job_service';
+import 'plugins/ml/services/browser_detect_service';
+import 'plugins/ml/services/ml_dashboard_service';
+import 'plugins/ml/services/results_service';
+import 'plugins/ml/messagebar';
+import 'plugins/ml/summaryview';
+import 'plugins/ml/timeseriesexplorer';
+import 'plugins/ml/components/json_tooltip';
+import 'plugins/ml/components/engine_api_help_link';
+import 'plugins/ml/components/confirm_modal';
+import 'plugins/ml/app.less';
+import 'plugins/ml/components/pretty_duration';
 
 import moment from 'moment-timezone';
 
@@ -44,10 +44,10 @@ import chrome from 'ui/chrome';
 import routes from 'ui/routes';
 import modules from 'ui/modules';
 
-import logo from 'plugins/prelert/header.png';
-import favicon from 'plugins/prelert/favicon.png';
+import logo from 'plugins/ml/header.png';
+import favicon from 'plugins/ml/favicon.png';
 
-// switch the kibana favicon to the prelert icon
+// switch the kibana favicon to the ml icon
 // $("head link[rel='shortcut icon']").attr("href", favicon);
 
 // From Kibana 4.4+, plugins are required to explicitly enable AngularJS routing,
@@ -64,7 +64,7 @@ routes
 });
 
 chrome
-.setRootController('prelert', function ($scope, $rootScope, kbnUrl) {
+.setRootController('ml', function ($scope, $rootScope, kbnUrl) {
 
   $scope.topNavMenu = [{
     key: 'jobs',

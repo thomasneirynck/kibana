@@ -13,18 +13,18 @@
  * strictly prohibited.
  */
 
-// Service for obtaining information on the installed version of the Prelert API engine,
+// Service for obtaining information on the installed version of the Ml API engine,
 
 import chrome from 'ui/chrome';
 import _ from 'lodash';
 import $ from 'jquery';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.service('prlInfoService', ['$q', 'es', '$http', function ($q, es, $http) {
 
-  // Returns information on the installed version of Prelert API engine,
+  // Returns information on the installed version of Ml API engine,
   // specifically the API product and version numbers, server operating
   // system platform and version, and customer ID.
   this.getEngineInfo = function () {
@@ -32,7 +32,7 @@ module.service('prlInfoService', ['$q', 'es', '$http', function ($q, es, $http) 
     const obj = {success: true, info: {}};
 
     es.search({
-      index: 'prelert-int',
+      index: 'ml-int',
       size: 1,
       body: {
         'query': {
@@ -49,7 +49,7 @@ module.service('prlInfoService', ['$q', 'es', '$http', function ($q, es, $http) 
         var source = _.first(resp.hits.hits)._source;
         obj.info.ver = source.ver;
         obj.info.appVer = source.appVer;
-        obj.info.prelertPlatform = source.prelertPlatform;
+        obj.info.mlPlatform = source.mlPlatform;
         obj.info.osVer = source.osVer;
         obj.info.id = source.id;
       }

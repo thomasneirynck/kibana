@@ -14,14 +14,14 @@
  */
 
 /*
- * Prelert visualization displaying a list of the top influencers for the
- * selected Prelert job(s).
+ * Ml visualization displaying a list of the top influencers for the
+ * selected Ml job(s).
  * Progress bar style components are used to show the maximum and total
  * anomaly score by influencer field name and value.
  */
 
-import 'plugins/prelert/influencerslist/influencerslist_controller.js';
-import 'plugins/prelert/influencerslist/influencerslist.less';
+import 'plugins/ml/influencerslist/influencerslist_controller.js';
+import 'plugins/ml/influencerslist/influencerslist.less';
 
 import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
@@ -35,11 +35,11 @@ export default function InfluencersListVisType(Private) {
     name: 'prlInfluencersList',
     title: 'Influencers list',
     icon: 'fa-list',
-    description: 'Prelert visualization designed to display a list of the top influencers ' +
-      'by maximum and total anomaly score across Prelert jobs.',
-    template: require('plugins/prelert/influencerslist/influencerslist.html'),
+    description: 'Ml visualization designed to display a list of the top influencers ' +
+      'by maximum and total anomaly score across Ml jobs.',
+    template: require('plugins/ml/influencerslist/influencerslist.html'),
     params: {
-      editor: require('plugins/prelert/influencerslist/influencerslist_editor.html'),
+      editor: require('plugins/ml/influencerslist/influencerslist_editor.html'),
     },
     schemas: new Schemas([
       {

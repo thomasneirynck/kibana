@@ -20,7 +20,7 @@
 import moment from 'moment';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.filter('metricChangeDescription', function () {
   return function (actual, typical) {

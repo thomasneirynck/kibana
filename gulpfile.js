@@ -197,7 +197,7 @@ gulp.task('release', ['package'], function () {
   function uploadFile(filename) {
     var params = {
       Bucket: 'download.elasticsearch.org',
-      Key: 'kibana/prelert/' + filename,
+      Key: 'kibana/ml/' + filename,
       Body: fs.createReadStream(path.join(targetDir, filename))
     };
 
@@ -256,7 +256,7 @@ function runBrowserTests(type) {
     type,
     '--',
     // '--kbnServer.server.sslEnabled', 'false', // TODO: needs support in Kibana
-    '--kbnServer.tests_bundle.pluginId=prelert',
+    '--kbnServer.tests_bundle.pluginId=ml',
     `--kbnServer.plugin-path=${__dirname}`
   ];
   var kbnBrowserOptions = { cwd: pathToKibana };

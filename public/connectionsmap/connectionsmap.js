@@ -14,14 +14,14 @@
  */
 
 /*
- * Prelert visualization for displaying a map of connections between the influencers
+ * Ml visualization for displaying a map of connections between the influencers
  * and detectors in anomalies. Influencers and detectors are 'connected' if they
  * occur together in an anomaly record.
  */
 
-import 'plugins/prelert/connectionsmap/connectionsmap_controller.js';
-import 'plugins/prelert/connectionsmap/connectionsmap_directive.js';
-import 'plugins/prelert/connectionsmap/connectionsmap.less';
+import 'plugins/ml/connectionsmap/connectionsmap_controller.js';
+import 'plugins/ml/connectionsmap/connectionsmap_directive.js';
+import 'plugins/ml/connectionsmap/connectionsmap.less';
 
 import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 
@@ -33,20 +33,20 @@ export default function ConnectionsMapVisType(Private) {
     name : 'prlConnectionsMap',
     title : 'Connections map',
     icon : 'fa-link',
-    description : 'Prelert visualization for displaying connections between ' +
+    description : 'Ml visualization for displaying connections between ' +
       'the detectors and influencers of anomalies. Influencers and detectors are connected ' +
       'if they occur together in an anomaly record.',
     requiresSearch : false, // Uses searches created in the visualization controller.
     indexPattern: '.ml-anomalies-*',
-    template : require('plugins/prelert/connectionsmap/connectionsmap.html'),
+    template : require('plugins/ml/connectionsmap/connectionsmap.html'),
     params : {
-      editor : require('plugins/prelert/connectionsmap/connectionsmap_editor.html'),
+      editor : require('plugins/ml/connectionsmap/connectionsmap_editor.html'),
       defaults: {
-        viewBy: {field:'prelert-detector', label:'detector'},
+        viewBy: {field:'ml-detector', label:'detector'},
         jobs: [],
         threshold: {display:'minor', val:25},
       },
-      viewByOptions: [{field:'prelert-detector', label:'detector'}],
+      viewByOptions: [{field:'ml-detector', label:'detector'}],
       thresholdOptions: [{display:'critical', val:75},
                          {display:'major', val:50},
                          {display:'minor', val:25},

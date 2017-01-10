@@ -2,7 +2,7 @@
     
   <div class="swimlane-controls" ng-show="hasSwimlaneData">
     <label class="small">Interval:</label>
-    <select class="form-control" ng-model='vis.params.interval' ng-options='interval as interval.display for interval in vis.type.params.intervalOptions track by interval.display' ng-change='updateViewState()' class='prelert-swimlane-select'>
+    <select class="form-control" ng-model='vis.params.interval' ng-options='interval as interval.display for interval in vis.type.params.intervalOptions track by interval.display' ng-change='updateViewState()' class='ml-swimlane-select'>
     </select>
     <kbn-info
       ng-show="vis.params.interval.scaled"

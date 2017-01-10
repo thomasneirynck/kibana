@@ -14,11 +14,11 @@
  */
 
 import _ from 'lodash';
-import stringUtils from 'plugins/prelert/util/string_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
 import angular from 'angular';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.controller('PrlDetectorFilterModal', function ($scope, $modalInstance, params, prlJobService, prlMessageBarService) {
   const msgs = prlMessageBarService;

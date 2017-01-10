@@ -25,11 +25,11 @@ import moment from 'moment';
 import numeral from 'numeral';
 import 'ui/timefilter';
 
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
-import ContextChartMask from 'plugins/prelert/timeseriesexplorer/context_chart_mask';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import ContextChartMask from 'plugins/ml/timeseriesexplorer/context_chart_mask';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.directive('prlModelDebugChart', function ($compile, $timeout, timefilter) {
 

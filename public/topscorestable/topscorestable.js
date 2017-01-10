@@ -14,12 +14,12 @@
  */
 
 /*
- * Prelert visualization displaying a list of the top scores by
- * specified attribute value for the selected Prelert job(s).
+ * Ml visualization displaying a list of the top scores by
+ * specified attribute value for the selected Ml job(s).
  */
 
-import 'plugins/prelert/topscorestable/topscorestable_controller.js';
-import 'plugins/prelert/topscorestable/topscorestable.less';
+import 'plugins/ml/topscorestable/topscorestable_controller.js';
+import 'plugins/ml/topscorestable/topscorestable.less';
 
 import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
@@ -33,11 +33,11 @@ export default function TopScoresTableVisType(Private) {
     name: 'prlTopScoresTable',
     title: 'Top scores',
     icon: 'fa-sort-amount-desc',
-    description: 'Prelert visualization designed to display a list of the top anomaly ' +
-      'scores by an attribute value, such as influencer, job ID or time, across Prelert jobs.',
-    template: require('plugins/prelert/topscorestable/topscorestable.html'),
+    description: 'Ml visualization designed to display a list of the top anomaly ' +
+      'scores by an attribute value, such as influencer, job ID or time, across Ml jobs.',
+    template: require('plugins/ml/topscorestable/topscorestable.html'),
     params: {
-      editor: require('plugins/prelert/topscorestable/topscorestable_editor.html')
+      editor: require('plugins/ml/topscorestable/topscorestable_editor.html')
     },
     schemas: new Schemas([
       {

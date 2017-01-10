@@ -16,14 +16,14 @@
 import chrome from 'ui/chrome';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.directive('prlJobPreview', function (prlMessageBarService, prlJobService) {
   return {
     restrict: 'AE',
     replace: true,
     transclude: true,
-    template: require('plugins/prelert/jobs/components/job_preview/job_preview.html'),
+    template: require('plugins/ml/jobs/components/job_preview/job_preview.html'),
     link: function (scope, element, attrs) {
       scope.job = prlJobService.removeJobEndpoints(prlJobService.getJob(attrs.prlJobId));
       // make the delimiter user readable
@@ -44,6 +44,6 @@ module.directive('prlJobPreview', function (prlMessageBarService, prlJobService)
 // add the job preview template to the template cache so there's no delay in displaying it
 // which can cause positioning mistakes
 .run(function ($templateRequest) {
-  $templateRequest(chrome.getBasePath() + '/plugins/prelert/jobs/components/job_preview/job_preview.html', true);
+  $templateRequest(chrome.getBasePath() + '/plugins/ml/jobs/components/job_preview/job_preview.html', true);
 });
 

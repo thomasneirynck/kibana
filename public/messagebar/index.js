@@ -17,7 +17,7 @@ import _ from 'lodash';
 import './styles/main.less';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.service('prlMessageBarService', function ($http, $q) {
   const MSG_STYLE = {INFO: 'prl-message-info', WARNING: 'prl-message-warning', ERROR: 'prl-message-error'};
@@ -71,7 +71,7 @@ module.service('prlMessageBarService', function ($http, $q) {
 .directive('prlMessageBar', function (prlMessageBarService) {
   return {
     restrict: 'AE',
-    template: require('plugins/prelert/messagebar/messagebar.html')
+    template: require('plugins/ml/messagebar/messagebar.html')
   };
 
 });

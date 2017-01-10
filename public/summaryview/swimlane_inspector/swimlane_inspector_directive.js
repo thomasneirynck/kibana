@@ -19,14 +19,14 @@ import $ from 'jquery';
 import _ from 'lodash';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimlaneInspectorService, prlSwimlaneSelectionService, prlSwimlaneService) {
   return {
     restrict: 'AE',
     replace: false,
     scope: {},
-    template: require('plugins/prelert/summaryview/swimlane_inspector/swimlane_inspector.html'),
+    template: require('plugins/ml/summaryview/swimlane_inspector/swimlane_inspector.html'),
     link: function ($scope, $element, $attrs) {
       $scope.controls = prlSwimlaneInspectorService.controls;
       $scope.controls.scope = $scope;
@@ -60,9 +60,9 @@ module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimla
 .service('prlSwimlaneInspectorService', function ($q, $timeout, $rootScope, $compile, es, Private, timefilter, prlJobService, prlAnomalyRecordDetailsService, prlSwimlaneSearchService) {
   const TimeBuckets = Private(require('ui/time_buckets'));
 
-  const swimlanesHTML = require('plugins/prelert/summaryview/swimlane_inspector/swimlanes.html');
+  const swimlanesHTML = require('plugins/ml/summaryview/swimlane_inspector/swimlanes.html');
 
-  const PRELERT_RESULTS_INDEX_ID = '.ml-anomalies-*';
+  const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
 
   let id = '';
   const controls = {
@@ -228,7 +228,7 @@ module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimla
 
   function loadResults(func, jobIds, interval, callback) {
 
-    func(PRELERT_RESULTS_INDEX_ID, jobIds,
+    func(ML_RESULTS_INDEX_ID, jobIds,
       (timeRange.start * 1000), (timeRange.end * 1000), interval.expression, 10)
     .then((resp) => {
       console.log('Swimlane inspector data:', resp);
@@ -457,7 +457,7 @@ module.directive('prlSwimlaneInspector', function ($location, $window, prlSwimla
     controls.topInfluencerList = {};
     controls.showTopInfluencerList = false;
 
-    prlSwimlaneSearchService.getTopInfluencers(PRELERT_RESULTS_INDEX_ID, laneLabel, selectedJobIds, swimlaneType,
+    prlSwimlaneSearchService.getTopInfluencers(ML_RESULTS_INDEX_ID, laneLabel, selectedJobIds, swimlaneType,
         timeRange.start, timeRange.end, 0, prlAnomalyRecordDetailsService.type)
     .then((resp) => {
 

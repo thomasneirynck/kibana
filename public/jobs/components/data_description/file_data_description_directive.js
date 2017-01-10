@@ -17,12 +17,12 @@
 import moment from 'moment-timezone';
 import _ from 'lodash';
 import $ from 'jquery';
-import stringUtils from 'plugins/prelert/util/string_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
 import angular from 'angular';
-import 'plugins/prelert/lib/bower_components/jquery-csv/src/jquery.csv';
+import 'plugins/ml/lib/bower_components/jquery-csv/src/jquery.csv';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.directive('prlFileDataDescription', function ($http) {
   return {
@@ -39,7 +39,7 @@ module.directive('prlFileDataDescription', function ($http) {
       influencers:     '=prlInfluencers',
       maximumFileSize: '=prlMaximumFileSize',
     },
-    template: require('plugins/prelert/jobs/components/data_description/file_data_description.html'),
+    template: require('plugins/ml/jobs/components/data_description/file_data_description.html'),
     controller: function ($scope, $q, prlJobService, prlMessageBarService) {
       const msgs = prlMessageBarService; // set a reference to the message bar service
       $scope.CHAR_LIMIT = 500;

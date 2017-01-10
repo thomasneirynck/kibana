@@ -15,7 +15,7 @@
 
 
 /*
- * Angular controller for the Prelert summary view visualization. The controller makes
+ * Angular controller for the Ml summary view visualization. The controller makes
  * multiple queries to Elasticsearch to obtain the data to populate all the components
  * in the view.
  */
@@ -27,11 +27,11 @@ import angular from 'angular';
 import uiRoutes from 'ui/routes';
 import 'ui/timefilter';
 
-import 'plugins/prelert/services/job_service';
-import 'plugins/prelert/services/prelert_dashboard_service';
-import 'plugins/prelert/services/results_service';
+import 'plugins/ml/services/job_service';
+import 'plugins/ml/services/ml_dashboard_service';
+import 'plugins/ml/services/results_service';
 
-import swimlanes from 'plugins/prelert/summaryview/swimlanes.html';
+import swimlanes from 'plugins/ml/summaryview/swimlanes.html';
 import chrome from 'ui/chrome';
 
 uiRoutes
@@ -40,13 +40,13 @@ uiRoutes
 });
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.controller('PrlSummaryViewController', function ($scope, $route, $timeout, $compile, $location, Private, $q, es, prlJobService, timefilter, globalState, prlAnomalyRecordDetailsService, prlDashboardService, prlSwimlaneSearchService, prlSwimlaneService) {
 
   // TODO - move the index pattern into an editor setting,
   //        or configure the visualization to use a search?
-  const PRELERT_RESULTS_INDEX_ID = '.ml-anomalies-*';
+  const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
   timefilter.enabled = true;
 
   const TimeBuckets = Private(require('ui/time_buckets'));
@@ -61,7 +61,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
 
   $scope.initializeVis = function () {
     // Load the job info needed by the visualization, then do the first load.
-    prlJobService.getBasicJobInfo(PRELERT_RESULTS_INDEX_ID)
+    prlJobService.getBasicJobInfo(ML_RESULTS_INDEX_ID)
     .then((resp) => {
       if (resp.jobs.length > 0) {
         // Set any jobs passed in the URL as selected, otherwise check any saved in the Vis.
@@ -162,7 +162,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
     prlAnomalyRecordDetailsService.setBucketInterval($scope.bucketInterval);
 
     // 1 - load job results
-    prlSwimlaneSearchService.getScoresByBucket(PRELERT_RESULTS_INDEX_ID, selectedJobIds,
+    prlSwimlaneSearchService.getScoresByBucket(ML_RESULTS_INDEX_ID, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.bucketInterval.expression, 10)
     .then((resp) => {
       console.log('SummaryView bucket swimlane refresh data:', resp);
@@ -179,7 +179,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
     });
 
     // 2 - load detector results
-    prlSwimlaneSearchService.getScoresByDetector(PRELERT_RESULTS_INDEX_ID, selectedJobIds,
+    prlSwimlaneSearchService.getScoresByDetector(ML_RESULTS_INDEX_ID, selectedJobIds,
         bounds.min.valueOf(), bounds.max.valueOf(), $scope.bucketInterval.expression, 10)
     .then((resp)=> {
       console.log('SummaryView detector swimlane refresh data:', resp);
@@ -192,7 +192,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
     });
 
     // 3 - load influencer type results
-    prlSwimlaneSearchService.getScoresByInfluencerType(PRELERT_RESULTS_INDEX_ID, selectedJobIds,
+    prlSwimlaneSearchService.getScoresByInfluencerType(ML_RESULTS_INDEX_ID, selectedJobIds,
         bounds.min.valueOf(), bounds.max.valueOf(), $scope.bucketInterval.expression, 20)
     .then((resp)=> {
       console.log('SummaryView influencer type swimlane refresh data:', resp);
@@ -205,7 +205,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
     });
 
     // 4 - load influencer value results
-    prlSwimlaneSearchService.getScoresByInfluencerValue(PRELERT_RESULTS_INDEX_ID, selectedJobIds,
+    prlSwimlaneSearchService.getScoresByInfluencerValue(ML_RESULTS_INDEX_ID, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.bucketInterval.expression, 20)
     .then((resp) => {
       console.log('SummaryView influencer value swimlane refresh data:', resp);
@@ -231,7 +231,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
 
       $scope.chartWidth = chartWidth;
 
-      prlSwimlaneSearchService.getEventRate(PRELERT_RESULTS_INDEX_ID, selectedJobIds,
+      prlSwimlaneSearchService.getEventRate(ML_RESULTS_INDEX_ID, selectedJobIds,
         bounds.min.valueOf(), bounds.max.valueOf(), (interval + 'ms'), 500)
       .then(function (resp) {
         console.log('SummaryView event rate refresh data:', resp);
@@ -486,7 +486,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
   // Refresh the data when the time range is altered.
   $scope.$listen(timefilter, 'fetch', $scope.refresh);
 
-  // When inside a dashboard in the Prelert plugin, listen for changes to job selection.
+  // When inside a dashboard in the Ml plugin, listen for changes to job selection.
   prlDashboardService.listenJobSelectionChange($scope, (event, selections) => {
     $scope.setSelectedJobs(selections);
   });
@@ -550,7 +550,7 @@ module.controller('PrlSummaryViewController', function ($scope, $route, $timeout
 
     const jobString = selectedJobIds.join('&jobId=');
 
-    let path = chrome.getBasePath() + '/app/prelert#/' + page;
+    let path = chrome.getBasePath() + '/app/ml#/' + page;
     path += '?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:\'' + from;
     path += '\',mode:absolute,to:\'' + to;
     path += '\'))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))&jobId=' + jobString;

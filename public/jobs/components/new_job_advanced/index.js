@@ -15,5 +15,5 @@
 
 import './styles/main.less';
 import './new_job_controller';
-import 'plugins/prelert/jobs/components/data_description';
-import 'plugins/prelert/jobs/components/upload_data';
+import 'plugins/ml/jobs/components/data_description';
+import 'plugins/ml/jobs/components/upload_data';

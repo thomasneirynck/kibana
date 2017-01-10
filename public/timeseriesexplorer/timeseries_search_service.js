@@ -16,7 +16,7 @@
 import _ from 'lodash';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.service('prlTimeSeriesSearchService', function ($q, $timeout, es) {
 

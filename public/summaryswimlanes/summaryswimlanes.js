@@ -15,24 +15,24 @@
 
 /*
  * Visualization consisting of two swimlanes, designed to show the maximum score by job,
- * and the maximum anomaly score by influencer type, from Prelert results over time.
+ * and the maximum anomaly score by influencer type, from Ml results over time.
  */
 
-import 'plugins/prelert/summaryswimlanes/summaryswimlanes_controller.js';
-import 'plugins/prelert/summaryswimlanes/summaryswimlanes.less';
-import 'plugins/prelert/swimlane/swimlane.less';    // Uses common tooltip styles.
+import 'plugins/ml/summaryswimlanes/summaryswimlanes_controller.js';
+import 'plugins/ml/summaryswimlanes/summaryswimlanes.less';
+import 'plugins/ml/swimlane/swimlane.less';    // Uses common tooltip styles.
 
 import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
 
-const module = require('ui/modules').get('prelert/summaryswimlanes');
+const module = require('ui/modules').get('ml/summaryswimlanes');
 
 module.run(function ($templateCache) {
   // Load the templates into the cache for quick retrieval.
-  $templateCache.put('plugins/prelert/summaryswimlanes/summaryswimlanes.html',
-    require('plugins/prelert/summaryswimlanes/summaryswimlanes.html'));
-  $templateCache.put('plugins/prelert/summaryswimlanes/summaryswimlanes_editor.html',
-    require('plugins/prelert/summaryswimlanes/summaryswimlanes_editor.html'));
+  $templateCache.put('plugins/ml/summaryswimlanes/summaryswimlanes.html',
+    require('plugins/ml/summaryswimlanes/summaryswimlanes.html'));
+  $templateCache.put('plugins/ml/summaryswimlanes/summaryswimlanes_editor.html',
+    require('plugins/ml/summaryswimlanes/summaryswimlanes_editor.html'));
 });
 
 export default function SummarySwimlanesVisType(Private, $templateCache) {
@@ -44,11 +44,11 @@ export default function SummarySwimlanesVisType(Private, $templateCache) {
     name: 'prlSummarySwimlanes',
     title: 'Job Swimlanes',
     icon: 'fa-bars',
-    description: 'Prelert visualization consisting of two swimlanes, designed to show the ' +
+    description: 'Ml visualization consisting of two swimlanes, designed to show the ' +
       'maximum anomaly score by job, and the maximum anomaly score by influencer type, over time.',
-    template: $templateCache.get('plugins/prelert/summaryswimlanes/summaryswimlanes.html'),
+    template: $templateCache.get('plugins/ml/summaryswimlanes/summaryswimlanes.html'),
     params: {
-      editor: $templateCache.get('plugins/prelert/summaryswimlanes/summaryswimlanes_editor.html'),
+      editor: $templateCache.get('plugins/ml/summaryswimlanes/summaryswimlanes_editor.html'),
       defaults: {
         interval: {display:'Auto', val:'auto'}
       },

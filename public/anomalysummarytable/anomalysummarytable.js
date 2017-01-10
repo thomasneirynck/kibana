@@ -14,14 +14,14 @@
  */
 
 /*
- * Prelert anomaly summary table visualization.
+ * Ml anomaly summary table visualization.
  */
 
-import 'plugins/prelert/anomalysummarytable/anomalysummarytable_controller.js';
-import 'plugins/prelert/anomalysummarytable/anomalysummarytable.less';
+import 'plugins/ml/anomalysummarytable/anomalysummarytable_controller.js';
+import 'plugins/ml/anomalysummarytable/anomalysummarytable.less';
 
-import 'plugins/prelert/services/job_service';
-import 'plugins/prelert/services/results_service';
+import 'plugins/ml/services/job_service';
+import 'plugins/ml/services/results_service';
 
 import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 
@@ -33,11 +33,11 @@ export default function AnomalySummaryTableVisType(Private) {
     name: 'prlAnomalySummaryTable',
     title: 'Anomaly Summary',
     icon: 'fa-table',
-    description: 'Prelert anomaly summary visualization displaying ' +
+    description: 'Ml anomaly summary visualization displaying ' +
       'a summary of anomaly records.',
-    template: require('plugins/prelert/anomalysummarytable/anomalysummarytable.html'),
+    template: require('plugins/ml/anomalysummarytable/anomalysummarytable.html'),
     params: {
-      editor: require('plugins/prelert/anomalysummarytable/anomalysummarytable_editor.html'),
+      editor: require('plugins/ml/anomalysummarytable/anomalysummarytable_editor.html'),
       defaults: {
         threshold: {display:'minor', val:25},
         interval: {display:'Auto', val:'auto'}

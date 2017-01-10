@@ -15,7 +15,7 @@
 
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.controller('JobPreviewController', function ($scope) {
   // space and tab characters don't display nicely in html

@@ -19,7 +19,7 @@ import tooltips from './tooltips.json';
 import './styles/main.less';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 // service for retrieving text from the tooltip.json file
 // to add a tooltip to any element:
 // <... tooltip="{{prlJsonTooltipService.text('my_id')}}" ...>

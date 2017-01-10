@@ -17,19 +17,19 @@ import moment from 'moment';
 import _ from 'lodash';
 import $ from 'jquery';
 import d3 from 'd3';
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
-import 'plugins/prelert/filters/abbreviate_whole_number';
-import 'plugins/prelert/filters/format_value';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import 'plugins/ml/filters/abbreviate_whole_number';
+import 'plugins/ml/filters/format_value';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, prlAnomalyRecordDetailsService, prlSwimlaneService) {
   return {
     restrict: 'AE',
     replace: false,
     // scope: {},
-    template: require('plugins/prelert/summaryview/anomaly_details_bubble/anomaly_details_bubble.html'),
+    template: require('plugins/ml/summaryview/anomaly_details_bubble/anomaly_details_bubble.html'),
     link: function ($scope, $element, $attrs) {
       $scope.title = 'Highest anomaly per detector';
       $scope.service = prlAnomalyRecordDetailsService;
@@ -51,7 +51,7 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
 .service('prlAnomalyRecordDetailsService', function ($q, $timeout, es, timefilter, prlJobService, prlSwimlaneSearchService) {
   const TimeBuckets = require('ui/time_buckets');
 
-  const PRELERT_RESULTS_INDEX_ID = '.ml-anomalies-*';
+  const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
   // number of records loaded once when the page opens
   const RECORD_COUNT = 1000;
 
@@ -211,7 +211,7 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
     that.clearTopInfluencers();
 
     // load records for the page
-    prlSwimlaneSearchService.getRecords(PRELERT_RESULTS_INDEX_ID, selectedJobIds,
+    prlSwimlaneSearchService.getRecords(ML_RESULTS_INDEX_ID, selectedJobIds,
         bounds.min.valueOf(), bounds.max.valueOf(), RECORD_COUNT)
     .then((resp) => {
       console.log('anomaly bubble refresh data:', resp);
@@ -597,7 +597,7 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
       }
       topInfluencers[swimlaneType][laneLabel][earliestMs] = null;
 
-      prlSwimlaneSearchService.getTopInfluencers(PRELERT_RESULTS_INDEX_ID, laneLabel, jobIds, swimlaneType,
+      prlSwimlaneSearchService.getTopInfluencers(ML_RESULTS_INDEX_ID, laneLabel, jobIds, swimlaneType,
           earliestMs, latestMs, 0, that.type)
       .then((resp) => {
         processTopInfluencersResults(topInfluencers, resp.results, earliestMs, laneLabel, swimlaneType);
@@ -641,7 +641,7 @@ module.directive('prlAnomalyDetailsBubble', function ($location, prlJobService, 
   function loadTopInfluencersForPage(jobIds, earliestMs, latestMs) {
 
     const swimlaneType = that.type.JOB;
-    prlSwimlaneSearchService.getTopInfluencers(PRELERT_RESULTS_INDEX_ID, '', jobIds, swimlaneType,
+    prlSwimlaneSearchService.getTopInfluencers(ML_RESULTS_INDEX_ID, '', jobIds, swimlaneType,
         earliestMs, latestMs, 0, that.type)
     .then((resp) => {
 

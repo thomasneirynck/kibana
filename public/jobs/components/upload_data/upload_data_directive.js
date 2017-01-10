@@ -16,10 +16,10 @@
 import _ from 'lodash';
 import JSZip from 'jszip';
 import pako from 'pako';
-import stringUtils from 'plugins/prelert/util/string_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.directive('prlDataUpload', ['$http', function ($http) {
   return {
@@ -34,7 +34,7 @@ module.directive('prlDataUpload', ['$http', function ($http) {
       readSuccessCallback: '=prlReadSuccessCallback',
       maximumFileSize:     '=prlMaximumFileSize',
     },
-    template: require('plugins/prelert/jobs/components/upload_data/upload_data.html'),
+    template: require('plugins/ml/jobs/components/upload_data/upload_data.html'),
     controller: function ($scope, $q, $timeout, prlJobService, prlMessageBarService, prlBrowserDetectService) {
       const msgs = prlMessageBarService; // set a reference to the message bar service
       $scope.CHAR_LIMIT = 500;

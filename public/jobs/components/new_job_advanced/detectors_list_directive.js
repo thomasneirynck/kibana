@@ -17,12 +17,12 @@
 
 import angular from 'angular';
 import _ from 'lodash';
-import 'plugins/prelert/jobs/components/new_job_advanced/detector_modal';
-import 'plugins/prelert/jobs/components/new_job_advanced/detector_filter_modal';
-import stringUtils from 'plugins/prelert/util/string_utils';
+import 'plugins/ml/jobs/components/new_job_advanced/detector_modal';
+import 'plugins/ml/jobs/components/new_job_advanced/detector_filter_modal';
+import stringUtils from 'plugins/ml/util/string_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.directive('prlJobDetectorsList', function ($modal, $q, prlJobService) {
   return {
@@ -35,7 +35,7 @@ module.directive('prlJobDetectorsList', function ($modal, $q, prlJobService) {
       catFieldNameSelected: '=prlCatFieldNameSelected',
       editMode:             '=prlEditMode',
     },
-    template: require('plugins/prelert/jobs/components/new_job_advanced/detectors_list.html'),
+    template: require('plugins/ml/jobs/components/new_job_advanced/detectors_list.html'),
     controller: function ($scope) {
 
       $scope.addDetector = function (dtr, index) {
@@ -125,7 +125,7 @@ module.directive('prlJobDetectorsList', function ($modal, $q, prlJobService) {
           dtr = angular.copy($scope.detectors[index]);
         }
         const modalInstance = $modal.open({
-          template: require('plugins/prelert/jobs/components/new_job_advanced/detector_modal/detector_modal.html'),
+          template: require('plugins/ml/jobs/components/new_job_advanced/detector_modal/detector_modal.html'),
           controller: 'PrlDetectorModal',
           backdrop: 'static',
           keyboard: false,
@@ -152,7 +152,7 @@ module.directive('prlJobDetectorsList', function ($modal, $q, prlJobService) {
           filter = angular.copy(dtr.detector_rules[filterIndex]);
         }
         const modalInstance = $modal.open({
-          template: require('plugins/prelert/jobs/components/new_job_advanced/detector_filter_modal/detector_filter_modal.html'),
+          template: require('plugins/ml/jobs/components/new_job_advanced/detector_filter_modal/detector_filter_modal.html'),
           controller: 'PrlDetectorFilterModal',
           backdrop: 'static',
           keyboard: false,

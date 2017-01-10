@@ -23,7 +23,7 @@ uiRoutes
 });
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.controller('PrlNewJobWizard',
 function (

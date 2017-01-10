@@ -18,10 +18,10 @@ import moment from 'moment';
 import _ from 'lodash';
 import 'ui/timefilter';
 
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.service('prlSwimlaneSearchService', function ($q, $timeout, es, timefilter) {
 

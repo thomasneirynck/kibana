@@ -21,15 +21,15 @@ import uiRoutes from 'ui/routes';
 import angular from 'angular';
 
 // include the bootstrap patch for better popovers
-import 'plugins/prelert/lib/angular_bootstrap_patch';
+import 'plugins/ml/lib/angular_bootstrap_patch';
 
 import jobsListControlsHtml from './jobs_list_controls.html';
 import jobsListArrow from 'ui/doc_table/components/table_row/open.html';
-import stringUtils from 'plugins/prelert/util/string_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
 import 'ui/directives/confirm_click';
-import 'plugins/prelert/components/paginated_table';
-import 'plugins/prelert/jobs/components/jobs_list/edit_job_modal';
-import 'plugins/prelert/jobs/components/jobs_list/job_timepicker_modal';
+import 'plugins/ml/components/paginated_table';
+import 'plugins/ml/jobs/components/jobs_list/edit_job_modal';
+import 'plugins/ml/jobs/components/jobs_list/job_timepicker_modal';
 import './expanded_row';
 
 uiRoutes
@@ -38,7 +38,7 @@ uiRoutes
 });
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert', ['ui.bootstrap']);
+const module = uiModules.get('apps/ml', ['ui.bootstrap']);
 
 module.controller('PrlJobsList',
 function (
@@ -126,7 +126,7 @@ function (
           const to = (resp.end.string) ? '\'' + resp.end.string + '\'' : 'now';
 
           let path = chrome.getBasePath();
-          path += '/app/prelert#/' + page;
+          path += '/app/ml#/' + page;
           path += '?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:' + from;
           path += ',mode:absolute,to:' + to;
           path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))&jobId=' + job.job_id;
@@ -479,7 +479,7 @@ function (
   // create modal dialog for editing job descriptions
   function openEditJobWindow(job) {
     const modalInstance = $modal.open({
-      template: require('plugins/prelert/jobs/components/jobs_list/edit_job_modal/edit_job_modal.html'),
+      template: require('plugins/ml/jobs/components/jobs_list/edit_job_modal/edit_job_modal.html'),
       controller: 'PrlEditJobModal',
       backdrop: 'static',
       keyboard: false,

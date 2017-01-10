@@ -14,7 +14,7 @@
  */
 
 /*
- * Angular controller for the Prelert top scores table.
+ * Angular controller for the Ml top scores table.
  * The controller processes the aggregation received from Elasticsearch,
  * placing a metricsData object in scope containing the data in the appropriate
  * format for rendering a list of the top scores by chosen field value.
@@ -23,12 +23,12 @@ import rison from 'rison-node';
 import _ from 'lodash';
 import moment from 'moment';
 
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
-import stringUtils from'plugins/prelert/util/string_utils';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import stringUtils from'plugins/ml/util/string_utils';
 import chrome from 'ui/chrome';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.controller('PrlTopScoresTableController', function ($scope, $route, $window, $location, timefilter) {
 
@@ -162,7 +162,7 @@ module.controller('PrlTopScoresTableController', function ($scope, $route, $wind
       }
     }
 
-    let path = chrome.getBasePath() + '/app/prelert#/anomalyexplorer?_g=(refreshInterval:(display:Off,pause:!f,value:0),' +
+    let path = chrome.getBasePath() + '/app/ml#/anomalyexplorer?_g=(refreshInterval:(display:Off,pause:!f,value:0),' +
       'time:(from:\'' + from + '\',mode:absolute,to:\'' + to + '\'))' +
       '&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'' + query + '\')))';
 

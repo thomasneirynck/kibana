@@ -14,7 +14,7 @@
  */
 
 /*
- * Angular controller for the Prelert influencer list visualization.
+ * Angular controller for the Ml influencer list visualization.
  * The controller processes the total score and maximum score aggregations
  * received from Elasticsearch, placing a metricsData object in scope containing
  * the data in the appropriate format for rendering a list of the top influencers
@@ -22,14 +22,14 @@
  */
 import _ from 'lodash';
 
-import 'plugins/prelert/lib/angular_bootstrap_patch';
-import 'plugins/prelert/filters/abbreviate_whole_number';
+import 'plugins/ml/lib/angular_bootstrap_patch';
+import 'plugins/ml/filters/abbreviate_whole_number';
 
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 import FilterManagerProvider from 'ui/filter_manager';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.controller('PrlInfluencersListController', function ($scope, Private) {
 
@@ -92,7 +92,7 @@ module.controller('PrlInfluencersListController', function ($scope, Private) {
           // reliable sorting by max score.
           // If it was sorted as an object, the order when rendered using the AngularJS
           // ngRepeat directive could not be relied upon to be the same as they were
-          // returned in the ES aggregation e.g. for numeric keys from a prelertcategory influencer.
+          // returned in the ES aggregation e.g. for numeric keys from a mlcategory influencer.
           valuesForViewBy.push({
             'influencerFieldValue':valueBucket.key,
             'maxScorePrecise': maxScorePrecise,

@@ -21,7 +21,7 @@
  //   - edit to the lessThan rule so that the interval returned gives
  //     fewer buckets than the supplied target.
  //   - edits to the list of roundingRules to align better with the
- //    Prelert job bucket span options.
+ //    Ml job bucket span options.
 
 import { duration as d } from 'moment';
 import moment from 'moment';

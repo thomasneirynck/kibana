@@ -161,7 +161,7 @@
         <div  id="top-influencers-list" ng-show="service.topInfluencerTab===0" >
           <div ng-repeat="influencer in service.topInfluencerList | limitTo:10" class="influencer-content">
             <div class="field-label">
-              <div ng-if="influencerfieldname !== 'prelertcategory'" class="influencerfieldvalue">{{influencer.id}}</div>
+              <div ng-if="influencerfieldname !== 'mlcategory'" class="influencerfieldvalue">{{influencer.id}}</div>
             </div>
 
             <div>
@@ -186,7 +186,7 @@
         <div id="top-influencers-for-page-container" ng-show="service.topInfluencerTab===2 || service.initialised === false">
           <div ng-repeat="influencer in service.topInfluencerForPage | limitTo:10" class="influencer-content">
             <div class="field-label">
-              <div ng-if="influencerfieldname !== 'prelertcategory'" class="influencerfieldvalue">{{influencer.id}}</div>
+              <div ng-if="influencerfieldname !== 'mlcategory'" class="influencerfieldvalue">{{influencer.id}}</div>
             </div>
 
             <div>

@@ -15,20 +15,20 @@
 
 /*
  * Swimlane visualization, displaying the behavior of a metric over time across
- * different values of fields in Prelert results.
+ * different values of fields in Ml results.
  */
 
-import 'plugins/prelert/swimlane/swimlane_controller.js';
-import 'plugins/prelert/swimlane/swimlane.less';
+import 'plugins/ml/swimlane/swimlane_controller.js';
+import 'plugins/ml/swimlane/swimlane.less';
 
 import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
 
-const module = require('ui/modules').get('prelert/swimlane');
+const module = require('ui/modules').get('ml/swimlane');
 module.run(function ($templateCache) {
   // Load the templates into the cache for quick retrieval.
-  $templateCache.put('plugins/prelert/swimlane/swimlane.html', require('plugins/prelert/swimlane/swimlane.html'));
-  $templateCache.put('plugins/prelert/swimlane/swimlane_editor.html', require('plugins/prelert/swimlane/swimlane_editor.html'));
+  $templateCache.put('plugins/ml/swimlane/swimlane.html', require('plugins/ml/swimlane/swimlane.html'));
+  $templateCache.put('plugins/ml/swimlane/swimlane_editor.html', require('plugins/ml/swimlane/swimlane_editor.html'));
 });
 
 export default function SwimlaneVisType(Private, $templateCache) {
@@ -37,13 +37,13 @@ export default function SwimlaneVisType(Private, $templateCache) {
 
   return new TemplateVisType({
     name: 'prlSwimlane',
-    title: 'Prelert Swimlane',
+    title: 'Ml Swimlane',
     icon: 'fa-bars',
-    description: 'Prelert visualization displaying the behavior of a metric ' +
-      'over time across Prelert jobs, or fields from influencer or record type results, in a swimlane chart.',
-    template: $templateCache.get('plugins/prelert/swimlane/swimlane.html'),
+    description: 'Ml visualization displaying the behavior of a metric ' +
+      'over time across Ml jobs, or fields from influencer or record type results, in a swimlane chart.',
+    template: $templateCache.get('plugins/ml/swimlane/swimlane.html'),
     params: {
-      editor: $templateCache.get('plugins/prelert/swimlane/swimlane_editor.html'),
+      editor: $templateCache.get('plugins/ml/swimlane/swimlane_editor.html'),
       defaults: {
         interval: {display:'Auto', val:'auto'},
         mode: 'jobs',   // jobs, influencers or records

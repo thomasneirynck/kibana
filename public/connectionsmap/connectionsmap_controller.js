@@ -14,7 +14,7 @@
  */
 
 /*
- * Angular controller for the Prelert Connections map visualization.
+ * Angular controller for the Ml Connections map visualization.
  */
 import rison from 'rison-node';
 import _ from 'lodash';
@@ -22,17 +22,17 @@ import moment from 'moment';
 import chrome from 'ui/chrome';
 import 'ui/courier';
 
-import 'plugins/prelert/components/paginated_table';
-import 'plugins/prelert/filters/abbreviate_whole_number';
-import 'plugins/prelert/filters/format_value';
-import 'plugins/prelert/services/job_service';
-import 'plugins/prelert/services/results_service';
-import 'plugins/prelert/services/prelert_dashboard_service';
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
-import stringUtils from 'plugins/prelert/util/string_utils';
+import 'plugins/ml/components/paginated_table';
+import 'plugins/ml/filters/abbreviate_whole_number';
+import 'plugins/ml/filters/format_value';
+import 'plugins/ml/services/job_service';
+import 'plugins/ml/services/results_service';
+import 'plugins/ml/services/ml_dashboard_service';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.controller('PrlConnectionsMapController', function (
   $scope,
@@ -157,7 +157,7 @@ module.controller('PrlConnectionsMapController', function (
         });
       });
 
-      const viewByOptions = [{field:'prelert-detector', label:'detector'}];
+      const viewByOptions = [{field:'ml-detector', label:'detector'}];
       _.each(influencerFieldNames, function (influencerFieldName) {
         viewByOptions.push({field:influencerFieldName, label:influencerFieldName});
       });
@@ -174,7 +174,7 @@ module.controller('PrlConnectionsMapController', function (
         $scope.vis.params.viewBy = $scope.vis.type.params.viewByOptions[0];
       }
 
-      if ($scope.vis.params.viewBy.field === 'prelert-detector') {
+      if ($scope.vis.params.viewBy.field === 'ml-detector') {
         processForDetectors(resp.records);
       } else {
         processForInfluencers(resp.records, $scope.vis.params.viewBy.field);
@@ -193,7 +193,7 @@ module.controller('PrlConnectionsMapController', function (
     const bounds = timefilter.getActiveBounds();
     const selectedJobIds = $scope.getSelectedJobIds();
 
-    if (node.fieldName === 'prelert-detector') {
+    if (node.fieldName === 'ml-detector') {
       // Get the corresponding job ID and detector index.
       let selectedJobId = '';
       let selectedDetectorIndex = -1;
@@ -228,19 +228,19 @@ module.controller('PrlConnectionsMapController', function (
     const selectedJobIds = $scope.getSelectedJobIds();
 
     let detectorNode = null;
-    if (link.inner.fieldName === 'prelert-detector') {
+    if (link.inner.fieldName === 'ml-detector') {
       detectorNode = link.inner;
     } else {
-      if (link.outer.fieldName === 'prelert-detector') {
+      if (link.outer.fieldName === 'ml-detector') {
         detectorNode = link.outer;
       }
     }
 
     let influencer1 = null;
-    if (link.inner.fieldName !== 'prelert-detector') {
+    if (link.inner.fieldName !== 'ml-detector') {
       influencer1 = link.inner;
     } else {
-      if (link.outer.fieldName !== 'prelert-detector') {
+      if (link.outer.fieldName !== 'ml-detector') {
         influencer1 = link.outer;
       }
     }
@@ -298,7 +298,7 @@ module.controller('PrlConnectionsMapController', function (
     if (nodes.length > 0) {
       query = '';
       _.each(nodes, function (node, i) {
-        if (node.fieldName !== 'prelert-detector') {
+        if (node.fieldName !== 'ml-detector') {
           if (query.length > 0 && i > 0) {
             query += ' AND ';
           }
@@ -313,7 +313,7 @@ module.controller('PrlConnectionsMapController', function (
       query = rison.encode_uri(query);
     }
 
-    let path = chrome.getBasePath() + '/app/prelert#/anomalyexplorer?_g=(refreshInterval:(display:Off,pause:!f,value:0),' +
+    let path = chrome.getBasePath() + '/app/ml#/anomalyexplorer?_g=(refreshInterval:(display:Off,pause:!f,value:0),' +
       'time:(from:\'' + from + '\',mode:absolute,to:\'' + to + '\'))' +
       '&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:' + query + ')))';
 
@@ -334,7 +334,7 @@ module.controller('PrlConnectionsMapController', function (
   // Refresh the data when the time range is altered.
   $scope.$listen(timefilter, 'fetch', $scope.refresh);
 
-  // When inside a dashboard in the Prelert plugin, listen for changes to job selection.
+  // When inside a dashboard in the Ml plugin, listen for changes to job selection.
   prlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
     const selectAll = ((selections.length === 1 && selections[0] === '*') || selections.length === 0);
     _.each($scope.vis.params.jobs, function (job) {
@@ -387,11 +387,11 @@ module.controller('PrlConnectionsMapController', function (
     console.log('Connections map processForDetectors() passed:', records);
 
     const dataset = {};
-    $scope.maxNormProbByField = {'prelert-detector':{}};
+    $scope.maxNormProbByField = {'ml-detector':{}};
 
     _.each(records, function (record) {
       const detectorDesc = $scope.detectorsByJob[record.job_id][record.detector_index];
-      const maxNormProbByDetector = $scope.maxNormProbByField['prelert-detector'];
+      const maxNormProbByDetector = $scope.maxNormProbByField['ml-detector'];
       maxNormProbByDetector[detectorDesc] =
         Math.max(_.get(maxNormProbByDetector, detectorDesc, 0), record.normalized_probability);
       const key = detectorDesc;
@@ -443,7 +443,7 @@ module.controller('PrlConnectionsMapController', function (
     // Produce an object in the following form:
     //    const dataset = {
     //        200: [ {field: 'uri', value: 'login.php', score: 75, scoreForAllValues: 120}, {..} ] ,
-    //        301: [ {field: 'prelert-detector', value: 'Freq rare URI', score: 95, scoreForAllValues: 95}, {..} ],
+    //        301: [ {field: 'ml-detector', value: 'Freq rare URI', score: 95, scoreForAllValues: 95}, {..} ],
     //        404: [ {field: 'uri', value: 'login.php', score: 75, scoreForAllValues: 174}, {..}]
     //    };
     // where score = sum(normalized_probability) of records with
@@ -454,7 +454,7 @@ module.controller('PrlConnectionsMapController', function (
     console.log('Connections map processForInfluencers() passed:', records);
 
     const dataset = {};
-    $scope.maxNormProbByField = {'prelert-detector':{}};
+    $scope.maxNormProbByField = {'ml-detector':{}};
 
     _.each(records, function (record) {
       const influencers = record.influencers;
@@ -505,10 +505,10 @@ module.controller('PrlConnectionsMapController', function (
 
           // Add connection for the detector.
           const detectorDesc = $scope.detectorsByJob[record.job_id][record.detector_index];
-          const detectorConnection = _.findWhere(connections, {field: 'prelert-detector', value:detectorDesc});
+          const detectorConnection = _.findWhere(connections, {field: 'ml-detector', value:detectorDesc});
           if (detectorConnection === undefined) {
             connections.push({
-              field: 'prelert-detector',
+              field: 'ml-detector',
               value: detectorDesc,
               score: record.normalized_probability
             });
@@ -516,7 +516,7 @@ module.controller('PrlConnectionsMapController', function (
             detectorConnection.score = detectorConnection.score + record.normalized_probability;
           }
 
-          const maxNormProbByDetector = $scope.maxNormProbByField['prelert-detector'];
+          const maxNormProbByDetector = $scope.maxNormProbByField['ml-detector'];
           maxNormProbByDetector[detectorDesc] =
             Math.max(_.get(maxNormProbByDetector, detectorDesc, 0), record.normalized_probability);
         });
@@ -625,11 +625,11 @@ module.controller('PrlConnectionsMapController', function (
         }
       }
 
-      if (_.has(maxScoreRecord, 'prelertcategory')) {
+      if (_.has(maxScoreRecord, 'mlcategory')) {
         if (!_.has(categoryIdsByJobId, maxScoreRecord.job_id)) {
           categoryIdsByJobId[maxScoreRecord.job_id] = [];
         }
-        categoryIdsByJobId[maxScoreRecord.job_id].push(maxScoreRecord.prelertcategory);
+        categoryIdsByJobId[maxScoreRecord.job_id].push(maxScoreRecord.mlcategory);
       }
 
       // Store causes information for analyses with by and over fields.
@@ -668,7 +668,7 @@ module.controller('PrlConnectionsMapController', function (
     });
 
     if (!_.isEmpty(categoryIdsByJobId)) {
-      // Load examples for any prelertcategory anomalies.
+      // Load examples for any mlcategory anomalies.
       $scope.categoryExamplesByJob = {};
       _.each(categoryIdsByJobId, function (categoryIds, jobId) {
         prlResultsService.getCategoryExamples($scope.vis.indexPattern.id, jobId, categoryIds, 10)

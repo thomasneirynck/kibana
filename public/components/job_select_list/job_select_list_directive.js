@@ -22,14 +22,14 @@ import _ from 'lodash';
 import $ from 'jquery';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.directive('prlJobSelectList', ['prlJobService', 'prlDashboardService', function (prlJobService, prlDashboardService) {
   return {
     restrict: 'AE',
     replace: true,
     transclude: true,
-    template: require('plugins/prelert/components/job_select_list/job_select_list.html'),
+    template: require('plugins/ml/components/job_select_list/job_select_list.html'),
     controller: function ($scope, prlJobService) {
 
       prlJobService.getBasicJobInfo('.ml-anomalies-*')
@@ -97,6 +97,6 @@ module.directive('prlJobSelectList', ['prlJobService', 'prlDashboardService', fu
 // Add the job select template to the template cache so there's no delay in displaying it
 // which can cause positioning mistakes.
 .run(function ($templateRequest) {
-  // $templateRequest('/plugins/prelert/components/job_select_list/job_select_list.html', true);
+  // $templateRequest('/plugins/ml/components/job_select_list/job_select_list.html', true);
 });
 

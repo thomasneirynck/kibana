@@ -15,20 +15,20 @@
 
 import _ from 'lodash';
 import moment from 'moment';
-import stringUtils from 'plugins/prelert/util/string_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
 import numeral from 'numeral';
 import chrome from 'ui/chrome';
 import angular from 'angular';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.directive('prlJobListExpandedRow', function ($location, prlMessageBarService, prlJobService, prlClipboardService) {
   return {
     restrict: 'AE',
     replace: false,
     scope: {},
-    template: require('plugins/prelert/jobs/components/jobs_list/expanded_row/expanded_row.html'),
+    template: require('plugins/ml/jobs/components/jobs_list/expanded_row/expanded_row.html'),
     link: function ($scope, $element, $attrs) {
       const msgs = prlMessageBarService; // set a reference to the message bar service
 

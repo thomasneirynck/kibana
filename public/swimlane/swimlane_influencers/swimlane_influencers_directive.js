@@ -20,10 +20,10 @@
  */
 import _ from 'lodash';
 import $ from 'jquery';
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.directive('prlSwimlaneInfluencers', function ($timeout, prlResultsService) {
 
@@ -95,7 +95,7 @@ module.directive('prlSwimlaneInfluencers', function ($timeout, prlResultsService
     restrict: 'AE',
     replace: false,
     scope: {},
-    template: require('plugins/prelert/swimlane/swimlane_influencers/swimlane_influencers.html'),
+    template: require('plugins/ml/swimlane/swimlane_influencers/swimlane_influencers.html'),
     link: link
   };
 });

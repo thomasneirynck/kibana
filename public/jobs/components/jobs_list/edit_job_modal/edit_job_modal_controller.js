@@ -14,13 +14,13 @@
  */
 
 import _ from 'lodash';
-import stringUtils from 'plugins/prelert/util/string_utils';
-import 'plugins/prelert/jobs/components/new_job_advanced/detectors_list_directive';
+import stringUtils from 'plugins/ml/util/string_utils';
+import 'plugins/ml/jobs/components/new_job_advanced/detectors_list_directive';
 import './styles/main.less';
 import angular from 'angular';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.controller('PrlEditJobModal', function ($scope, $modalInstance, $modal, params, prlJobService, prlMessageBarService) {
   const msgs = prlMessageBarService;

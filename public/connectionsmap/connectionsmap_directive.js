@@ -14,7 +14,7 @@
  */
 
 /*
- * Angular directive for rendering the Prelert Connections map for displaying connections
+ * Angular directive for rendering the Ml Connections map for displaying connections
  * between detectors and influencers.
  */
 
@@ -22,10 +22,10 @@ import _ from 'lodash';
 import $ from 'jquery';
 import d3 from 'd3';
 
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.directive('prlConnectionsMap', function ($compile) {
 
@@ -164,7 +164,7 @@ module.directive('prlConnectionsMap', function ($compile) {
       data.fields = _.map(fieldNames, function (fieldName, i) {
         return {
           fieldName:fieldName,
-          fieldLabel:fieldName !== 'prelert-detector' ? fieldName : 'detector',
+          fieldLabel:fieldName !== 'ml-detector' ? fieldName : 'detector',
           nodes:[]
         };
       });
@@ -365,7 +365,7 @@ module.directive('prlConnectionsMap', function ($compile) {
         cropLabels(this, d, outerLabelWidth);
       })
       .append('title').text(function (d, i) {
-        return (d.fieldName !== 'prelert-detector' ? d.fieldName : 'detector') + ':' + d.fieldValue;
+        return (d.fieldName !== 'ml-detector' ? d.fieldName : 'detector') + ':' + d.fieldValue;
       });
 
       // Inner nodes

@@ -17,11 +17,11 @@ import moment from 'moment';
 import _ from 'lodash';
 import 'ui/timefilter';
 
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
-import stringUtils from 'plugins/prelert/util/string_utils';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.service('prlESMappingService', function ($q, es, timefilter, prlJobService) {
 

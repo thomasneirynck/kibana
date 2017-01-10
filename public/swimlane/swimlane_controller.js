@@ -14,7 +14,7 @@
  */
 
 /*
- * Angular controller for the Prelert swimlane visualization.
+ * Angular controller for the Ml swimlane visualization.
  */
 import _ from 'lodash';
 import $ from 'jquery';
@@ -30,14 +30,14 @@ import chrome from 'ui/chrome';
 import 'ui/courier';
 import 'ui/timefilter';
 
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
-import stringUtils from 'plugins/prelert/util/string_utils';
-import 'plugins/prelert/services/job_service';
-import 'plugins/prelert/services/prelert_dashboard_service';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
+import 'plugins/ml/services/job_service';
+import 'plugins/ml/services/ml_dashboard_service';
 import './swimlane_influencers/swimlane_influencers_directive';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.controller('PrlSwimlaneController', function ($scope,
  $route,
@@ -209,7 +209,7 @@ module.controller('PrlSwimlaneController', function ($scope,
       }
     }
 
-    let path = chrome.getBasePath() + '/app/prelert#/anomalyexplorer?_g=(refreshInterval:(display:Off,pause:!f,value:0),' +
+    let path = chrome.getBasePath() + '/app/ml#/anomalyexplorer?_g=(refreshInterval:(display:Off,pause:!f,value:0),' +
       'time:(from:\'' + from + '\',mode:absolute,to:\'' + to + '\'))' +
       '&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'' + query + '\')))';
 

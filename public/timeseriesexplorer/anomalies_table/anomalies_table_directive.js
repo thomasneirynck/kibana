@@ -16,19 +16,19 @@
 import moment from 'moment';
 import _ from 'lodash';
 
-import stringUtils from 'plugins/prelert/util/string_utils';
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 
-import 'plugins/prelert/components/paginated_table';
-import 'plugins/prelert/filters/format_value';
-import 'plugins/prelert/filters/metric_change_description';
-import 'plugins/prelert/services/job_service';
+import 'plugins/ml/components/paginated_table';
+import 'plugins/ml/filters/format_value';
+import 'plugins/ml/filters/metric_change_description';
+import 'plugins/ml/services/job_service';
 import './expanded_row/expanded_row_directive';
 
 import linkControlsHtml from './anomalies_table_links.html';
 import openRowArrow from 'ui/doc_table/components/table_row/open.html';
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResultsService, formatValueFilter) {
   return {
@@ -38,7 +38,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
       indexPatternId: '=',
       timeFieldName: '='
     },
-    template: require('plugins/prelert/timeseriesexplorer/anomalies_table/anomalies_table.html'),
+    template: require('plugins/ml/timeseriesexplorer/anomalies_table/anomalies_table.html'),
     link: function (scope, element, $attrs) {
       console.log('prlAnomaliesTable scope:', scope);
 
@@ -125,20 +125,20 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
           }
         }
 
-        // If urlValue contains $prelertcategoryterms$ or $prelertcategoryregex$, add in the
+        // If urlValue contains $mlcategoryterms$ or $mlcategoryregex$, add in the
         // terms and regex for the selected categoryId to the source record.
-        if ((configuredUrlValue.includes('$prelertcategoryterms$') || configuredUrlValue.includes('$prelertcategoryregex$'))
-                && _.has(record, 'prelertcategory')) {
+        if ((configuredUrlValue.includes('$mlcategoryterms$') || configuredUrlValue.includes('$mlcategoryregex$'))
+                && _.has(record, 'mlcategory')) {
           const jobId = record.job_id;
-          const categoryId = record.prelertcategory;
+          const categoryId = record.mlcategory;
 
           prlJobService.getCategoryDefinition(scope.indexPattern.id, jobId, categoryId)
           .then(function (resp) {
             // Prefix each of the terms with '+' so that the Elasticsearch Query String query
             // run in a drilldown Kibana dashboard has to match on all terms.
             const termsArray = _.map(resp.terms.split(' '), function (term) { return '+' + term; });
-            record.prelertcategoryterms = termsArray.join(' ');
-            record.prelertcategoryregex = resp.regex;
+            record.mlcategoryterms = termsArray.join(' ');
+            record.mlcategoryregex = resp.regex;
 
             // Replace any tokens in the configured urlValue with values from the source record,
             // and then open link in a new tab/window.
@@ -247,12 +247,12 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         _.invoke(scope.rowScopes, '$destroy');
         scope.rowScopes.length = 0;
 
-        const showExamples = _.some(summaryRecords, {'entityName': 'prelertcategory'});
+        const showExamples = _.some(summaryRecords, {'entityName': 'mlcategory'});
         if (showExamples) {
           // Obtain the list of categoryIds by jobId for which we need to obtain the examples.
-          // Note category examples will not be displayed if prelertcategory is used just an
+          // Note category examples will not be displayed if mlcategory is used just an
           // influencer or as a partition field in a config with other by/over fields.
-          const categoryRecords = _.where(summaryRecords, {entityName: 'prelertcategory'});
+          const categoryRecords = _.where(summaryRecords, {entityName: 'mlcategory'});
           const categoryIdsByJobId = {};
           _.each(categoryRecords, function (record) {
             if (!_.has(categoryIdsByJobId, record.job_id)) {
@@ -437,7 +437,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         // description (how actual compares to typical)
         // job_id
         // links (if links configured)
-        // category examples (if by prelertcategory)
+        // category examples (if by mlcategory)
         const paginatedTableColumns = [
           { title: '', sortable: false, class: 'col-expand-arrow' },
           { title: 'time', sortable: true },
@@ -448,7 +448,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         const showInfluencers = _.some(summaryRecords, 'influencers');
         const showActual = _.some(summaryRecords, 'actual');
         const showTypical = _.some(summaryRecords, 'typical');
-        const showExamples = _.some(summaryRecords, {'entityName': 'prelertcategory'});
+        const showExamples = _.some(summaryRecords, {'entityName': 'mlcategory'});
         const showLinks = _.some(summaryRecords, 'links');
 
         if (showEntity === true) {
@@ -486,7 +486,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         rowScope.isShowingAggregatedData = scope.isShowingAggregatedData();
 
         rowScope.initRow = function () {
-          if (_.has(record, 'entityValue') && record.entityName === 'prelertcategory') {
+          if (_.has(record, 'entityValue') && record.entityName === 'mlcategory') {
             // Obtain the category definition and display the examples in the expanded row.
             prlJobService.getCategoryDefinition(scope.indexPatternId, record.job_id, record.entityValue)
             .then(function (resp) {
@@ -512,7 +512,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         //   description (how actual compares to typical)
         //   job_id
         //   links (if links configured)
-        //   category examples (if by prelertcategory)
+        //   category examples (if by mlcategory)
         const addEntity = _.findWhere(scope.table.columns, {'title':'found for'});
         const addInfluencers = _.findWhere(scope.table.columns, {'title':'influenced by'});
 
@@ -547,14 +547,14 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
 
         if (addEntity !== undefined) {
           if (_.has(record, 'entityValue')) {
-            if (record.entityName !== 'prelertcategory') {
+            if (record.entityName !== 'mlcategory') {
               tableRow.push({
                 markup: record.entityValue,
                 value:  record.entityValue
               });
             } else {
               tableRow.push({
-                markup: 'prelertcategory ' + record.entityValue,
+                markup: 'mlcategory ' + record.entityValue,
                 value:  record.entityValue
               });
             }
@@ -631,7 +631,7 @@ module.directive('prlAnomaliesTable', function ($window, prlJobService, prlResul
         }
 
         if (addExamples !== undefined) {
-          if (record.entityName === 'prelertcategory') {
+          if (record.entityName === 'mlcategory') {
             tableRow.push({ markup: '<span style="display: block; white-space:nowrap;" ' +
               'ng-repeat="item in getExamplesForCategory(record.jobId, record.entityValue)">{{item}}</span>', scope:  rowScope });
           } else {

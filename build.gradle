@@ -55,16 +55,16 @@ task bundlePlugin(type: Zip, dependsOn: npmBuild) {
   enabled = kibanaEnabled
   from 'build/plugin'
   destinationDir file('build/distributions')
-  baseName = 'prelert'
+  baseName = 'ml'
   version = project.version
 }
 
 task assemble(dependsOn: bundlePlugin) {
   group = 'Build'
-  description = 'Assemble the prelert kibana zip'
+  description = 'Assemble the ml kibana zip'
 }
 
 task build(dependsOn: [check, assemble]) {
   group = 'Build'
-  description = 'Assembles and tests the kibana prelert'
+  description = 'Assembles and tests the kibana ml'
 }

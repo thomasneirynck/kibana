@@ -103,7 +103,7 @@
     "_type": "visualization",
     "_source": {
       "title": "Influencer connections",
-      "visState": "{\"type\": \"prlConnectionsMap\",\"params\": {\"viewBy\": {\"field\": \"prelert-detector\",\"label\": \"detector\"},\"jobs\": [],\"threshold\": {\"display\": \"minor\",\"val\": 25}},\"aggs\": [],\"listeners\": {}}",
+      "visState": "{\"type\": \"prlConnectionsMap\",\"params\": {\"viewBy\": {\"field\": \"ml-detector\",\"label\": \"detector\"},\"jobs\": [],\"threshold\": {\"display\": \"minor\",\"val\": 25}},\"aggs\": [],\"listeners\": {}}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,

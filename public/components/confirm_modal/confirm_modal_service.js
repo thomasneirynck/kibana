@@ -16,14 +16,14 @@
 // service for displaying a modal confirmation dialog with OK and Cancel buttons.
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.service('prlConfirmModalService', ['$modal', '$q',  function ($modal, $q) {
 
   this.open = function (options) {
     const deferred = $q.defer();
     const modalInstance = $modal.open({
-      template: require('plugins/prelert/components/confirm_modal/confirm_modal.html'),
+      template: require('plugins/ml/components/confirm_modal/confirm_modal.html'),
       controller: 'PrlConfirmModal',
       backdrop: 'static',
       keyboard: false,

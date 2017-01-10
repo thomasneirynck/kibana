@@ -17,12 +17,12 @@ import moment from 'moment';
 import _ from 'lodash';
 import 'ui/timefilter';
 
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
-import stringUtils from 'plugins/prelert/util/string_utils';
-import jobUtils from 'plugins/prelert/util/job_utils';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
+import jobUtils from 'plugins/ml/util/job_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.service('prlSimpleJobService', function (
   $q,

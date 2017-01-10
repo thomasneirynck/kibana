@@ -16,12 +16,12 @@
 // directive for displaying detectors form list.
 
 import chrome from 'ui/chrome';
-import stringUtils from 'plugins/prelert/util/string_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
 import angular from 'angular';
-import 'plugins/prelert/jobs/components/new_job_advanced/transform_modal';
+import 'plugins/ml/jobs/components/new_job_advanced/transform_modal';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.directive('prlJobTransformsList', function ($modal, $q, prlJobService) {
 
@@ -37,7 +37,7 @@ module.directive('prlJobTransformsList', function ($modal, $q, prlJobService) {
       addTransformsToProperties: '=prlAddTransformsToProperties',
       dataFormat:                '=prlDataFormat'
     },
-    template: require('plugins/prelert/jobs/components/new_job_advanced/transforms_list/transforms_list.html'),
+    template: require('plugins/ml/jobs/components/new_job_advanced/transforms_list/transforms_list.html'),
     controller: function ($scope, prlTransformsDefaultOutputs) {
 
       $scope.DEFAULT_OUTPUTS = prlTransformsDefaultOutputs;
@@ -103,7 +103,7 @@ module.directive('prlJobTransformsList', function ($modal, $q, prlJobService) {
           trfm = angular.copy($scope.transforms[index]);
         }
         const modalInstance = $modal.open({
-          template: require('plugins/prelert/jobs/components/new_job_advanced/transform_modal/transform_modal.html'),
+          template: require('plugins/ml/jobs/components/new_job_advanced/transform_modal/transform_modal.html'),
           controller: 'PrlTransformModal',
           backdrop: 'static',
           keyboard: false,

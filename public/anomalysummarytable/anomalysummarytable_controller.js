@@ -14,25 +14,25 @@
  */
 
 /*
-* Angular controller for the Prelert anomaly summary table visualization.
+* Angular controller for the Ml anomaly summary table visualization.
 */
 import _  from 'lodash';
 import moment from 'moment';
 
-import 'plugins/prelert/filters/format_value';
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
-import stringUtils from 'plugins/prelert/util/string_utils';
+import 'plugins/ml/filters/format_value';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import stringUtils from 'plugins/ml/util/string_utils';
 import getSort from 'ui/doc_table/lib/get_sort';
 import openRowArrow from 'ui/doc_table/components/table_row/open.html';
 import linkControlsHtml from './anomalysummarytable_links.html';
 import FilterManagerProvider from 'ui/filter_manager';
 
 import 'ui/doc_table/doc_table.less';
-import 'plugins/prelert/components/paginated_table';
+import 'plugins/ml/components/paginated_table';
 import './expanded_row/expanded_row_directive';
 
 import uiModules from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.controller('PrlAnomalySummaryTableController', function (
   $scope,
@@ -113,7 +113,7 @@ module.controller('PrlAnomalySummaryTableController', function (
   }());
 
 
-  // Obtain the 'Prelert Anomaly Records' saved search to run this visualization off.
+  // Obtain the 'Ml Anomaly Records' saved search to run this visualization off.
   // TODO find a way of using the search source used by the visualization
   //      and setting the searchSource size so we can the actual documents hits and
   //      not just the hit count and aggregations object. Without manually setting the
@@ -273,12 +273,12 @@ module.controller('PrlAnomalySummaryTableController', function (
     rowScopes.length = 0;
 
 
-    const showExamples = _.some(summaryRecords, {'entityName': 'prelertcategory'});
+    const showExamples = _.some(summaryRecords, {'entityName': 'mlcategory'});
     if (showExamples) {
       // Obtain the list of categoryIds by jobId for which we need to obtain the examples.
-      // Note category examples will not be displayed if prelertcategory is used just an
+      // Note category examples will not be displayed if mlcategory is used just an
       // influencer or as a partition field in a config with other by/over fields.
-      const categoryRecords = _.where(summaryRecords, {entityName: 'prelertcategory'});
+      const categoryRecords = _.where(summaryRecords, {entityName: 'mlcategory'});
       const categoryIdsByJobId = {};
       _.each(categoryRecords, function (record) {
         if (!_.has(categoryIdsByJobId, record.jobId)) {
@@ -493,20 +493,20 @@ module.controller('PrlAnomalySummaryTableController', function (
       }
     }
 
-    // If urlValue contains $prelertcategoryterms$ or $prelertcategoryregex$, add in the
+    // If urlValue contains $mlcategoryterms$ or $mlcategoryregex$, add in the
     // terms and regex for the selected categoryId to the source record.
-    if ((configuredUrlValue.includes('$prelertcategoryterms$') || configuredUrlValue.includes('$prelertcategoryregex$'))
-          && _.has(source, 'prelertcategory')) {
+    if ((configuredUrlValue.includes('$mlcategoryterms$') || configuredUrlValue.includes('$mlcategoryregex$'))
+          && _.has(source, 'mlcategory')) {
       const jobId = source.jobId;
-      const categoryId = source.prelertcategory;
+      const categoryId = source.mlcategory;
 
       prlJobService.getCategoryDefinition($scope.indexPattern.id, jobId, categoryId)
       .then(function (resp) {
         // Prefix each of the terms with '+' so that the Elasticsearch Query String query
         // run in a drilldown Kibana dashboard has to match on all terms.
         const termsArray = _.map(resp.terms.split(' '), function (term) { return '+' + term; });
-        source.prelertcategoryterms = termsArray.join(' ');
-        source.prelertcategoryregex = resp.regex;
+        source.mlcategoryterms = termsArray.join(' ');
+        source.mlcategoryregex = resp.regex;
 
         // Replace any tokens in the configured url_value with values from the source record,
         // and then open link in a new tab/window.
@@ -554,7 +554,7 @@ module.controller('PrlAnomalySummaryTableController', function (
     // typical
     // jobId
     // links (if links configured)
-    // category examples (if by prelertcategory)
+    // category examples (if by mlcategory)
     const paginatedTableColumns = [
       { title: '', sortable: false, class: 'col-expand-arrow' },
       { title: 'time', sortable: true },
@@ -565,7 +565,7 @@ module.controller('PrlAnomalySummaryTableController', function (
     const showInfluencers = _.some(summaryRecords, 'influencers');
     const showActual = _.some(summaryRecords, 'actual');
     const showTypical = _.some(summaryRecords, 'typical');
-    const showExamples = _.some(summaryRecords, {'entityName': 'prelertcategory'});
+    const showExamples = _.some(summaryRecords, {'entityName': 'mlcategory'});
     const showLinks = _.some(summaryRecords, 'links');
 
     if (showEntity === true) {
@@ -601,7 +601,7 @@ module.controller('PrlAnomalySummaryTableController', function (
     rowScope.isShowingAggregatedData = $scope.isShowingAggregatedData();
 
     rowScope.initRow = function () {
-      if (_.has(record, 'entityValue') && record.entityName === 'prelertcategory') {
+      if (_.has(record, 'entityValue') && record.entityName === 'mlcategory') {
         // Obtain the category definition and display the examples in the expanded row.
         prlJobService.getCategoryDefinition($scope.vis.indexPattern.id, record.jobId, record.entityValue)
         .then(function (resp) {
@@ -656,14 +656,14 @@ module.controller('PrlAnomalySummaryTableController', function (
 
     if (addEntity !== undefined) {
       if (_.has(record, 'entityValue')) {
-        if (record.entityName !== 'prelertcategory') {
+        if (record.entityName !== 'mlcategory') {
           tableRow.push({
             markup: record.entityValue,
             value:  record.entityValue
           });
         } else {
           tableRow.push({
-            markup: 'prelertcategory ' + record.entityValue,
+            markup: 'mlcategory ' + record.entityValue,
             value:  record.entityValue
           });
         }
@@ -733,7 +733,7 @@ module.controller('PrlAnomalySummaryTableController', function (
     }
 
     if (addExamples !== undefined) {
-      if (record.entityName === 'prelertcategory') {
+      if (record.entityName === 'mlcategory') {
         tableRow.push({ markup: '<span style="display: block; white-space:nowrap;" ' +
           'ng-repeat="item in getExamplesForCategory(record.jobId, record.entityValue)">{{item}}</span>', scope:  rowScope });
       } else {

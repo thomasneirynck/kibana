@@ -13,7 +13,7 @@
  * strictly prohibited.
  */
 
-const module = require('ui/modules').get('apps/prelert')
+const module = require('ui/modules').get('apps/ml')
 
 .controller('TabController', function ($scope) {
   // space and tab characters don't display nicely in html

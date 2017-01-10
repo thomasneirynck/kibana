@@ -25,10 +25,10 @@ import numeral from 'numeral';
 import angular from 'angular';
 import 'ui/timefilter';
 
-import anomalyUtils from 'plugins/prelert/util/anomaly_utils';
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.directive('prlNewJobChart', function (timefilter, prlSimpleJobService) {
 

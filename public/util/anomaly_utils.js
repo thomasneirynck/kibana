@@ -145,14 +145,14 @@ function getEntityFieldValue(record) {
 
 // Returns whether actual values should be displayed for a record with the specified function description.
 // Note that the 'function' field in a record contains what the user entered e.g. 'high_count',
-// whereas the 'function_description' field holds a Prelert-built display hint for function e.g. 'count'.
+// whereas the 'function_description' field holds a Ml-built display hint for function e.g. 'count'.
 function showActualForFunction(functionDescription) {
   return _.indexOf(DISPLAY_ACTUAL_FUNCTIONS, functionDescription) > -1;
 }
 
 // Returns whether typical values should be displayed for a record with the specified function description.
 // Note that the 'function' field in a record contains what the user entered e.g. 'high_count',
-// whereas the 'function_description' field holds a Prelert-built display hint for function e.g. 'count'.
+// whereas the 'function_description' field holds a Ml-built display hint for function e.g. 'count'.
 function showTypicalForFunction(functionDescription) {
   return _.indexOf(DISPLAY_TYPICAL_FUNCTIONS, functionDescription) > -1;
 }

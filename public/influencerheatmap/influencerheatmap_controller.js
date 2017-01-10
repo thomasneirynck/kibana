@@ -15,7 +15,7 @@
 
 
 /*
- * Angular controller for the Prelert influencer heatmap visualization.
+ * Angular controller for the Ml influencer heatmap visualization.
  * The controller builds and renders the appropriate chart type (treemap,
  * flat or nested bubble chart) depending on the visualization 'chartType' parameter.
  */
@@ -26,7 +26,7 @@ import moment from 'moment';
 import angular from 'angular';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/prelert');
+let module = uiModules.get('apps/ml');
 
 module.controller('PrlInfluencerHeatmapController', function ($scope) {
 
