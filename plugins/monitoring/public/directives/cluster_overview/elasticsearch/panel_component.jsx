@@ -62,14 +62,14 @@ export default class ElasticsearchPanel extends React.Component {
               </dt>
               <dd>
                 Disk Available: <BytesUsage
-                  used_bytes={get(nodes, 'fs.available_in_bytes')}
-                  max_bytes={get(nodes, 'fs.total_in_bytes')}
+                  usedBytes={get(nodes, 'fs.available_in_bytes')}
+                  maxBytes={get(nodes, 'fs.total_in_bytes')}
                 />
               </dd>
               <dd>
                 JVM Heap: <BytesPercentageUsage
-                  used_bytes={get(nodes, 'jvm.mem.heap_used_in_bytes')}
-                  max_bytes={get(nodes, 'jvm.mem.heap_max_in_bytes')}
+                  usedBytes={get(nodes, 'jvm.mem.heap_used_in_bytes')}
+                  maxBytes={get(nodes, 'jvm.mem.heap_max_in_bytes')}
                 />
               </dd>
             </dl>

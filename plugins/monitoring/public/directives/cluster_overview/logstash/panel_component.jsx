@@ -27,7 +27,7 @@ export default class LogstashPanel extends React.Component {
               </dt>
               <dd>Uptime: {formatNumber(this.props.max_uptime, 'time_since')}</dd>
               <dd>
-                JVM Heap: <BytesPercentageUsage used_bytes={this.props.avg_memory_used} max_bytes={this.props.avg_memory} />
+                JVM Heap: <BytesPercentageUsage usedBytes={this.props.avg_memory_used} maxBytes={this.props.avg_memory} />
               </dd>
             </dl>
           </div>

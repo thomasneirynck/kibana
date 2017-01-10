@@ -31,7 +31,7 @@ export default class KibanaPanel extends React.Component {
                 </a>
               </dt>
               <dd>Connections: {formatNumber(this.props.concurrent_connections, 'int_commas')}</dd>
-              <dd>Memory Usage: <BytesPercentageUsage used_bytes={this.props.memory_size} max_bytes={this.props.memory_limit} />
+              <dd>Memory Usage: <BytesPercentageUsage usedBytes={this.props.memory_size} maxBytes={this.props.memory_limit} />
               </dd>
             </dl>
           </div>
