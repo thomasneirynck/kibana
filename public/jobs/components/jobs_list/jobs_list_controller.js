@@ -51,6 +51,7 @@ function (
   $modal,
   es,
   timefilter,
+  kbnUrl,
   Private,
   prlMessageBarService,
   prlClipboardService,
@@ -70,6 +71,8 @@ function (
   $scope.filterIcon = 0;
   let filterRegexp;
   let jobFilterTimeout;
+
+  $scope.kbnUrl = kbnUrl;
 
   // functions for job list buttons
   // called from jobs_list_controls.html
@@ -195,8 +198,6 @@ function (
       { title: 'Latest timestamp' },
       { title: 'Actions', sortable: false, class: 'col-action' }
     ];
-
-    $scope.kbnUrl = Private(require('ui/url'));
 
     let rows = jobs.map(function (job) {
       const rowScope = $scope.$new();
