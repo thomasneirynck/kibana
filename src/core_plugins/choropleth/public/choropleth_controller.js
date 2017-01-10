@@ -48,6 +48,14 @@ module.controller('KbnChoroplethController', function ($scope, $element, Private
     choroplethMap.resize();
   });
 
+  $scope.$watch(getContainerSize, _.debounce(() => {
+    choroplethMap.resize();
+  }, 500, {trailing: true}), true);
+
+  function getContainerSize() {
+    return {width: $element.width(), height: $element.height()};
+  }
+
 
 });
 
