@@ -1,12 +1,24 @@
 import uiModules from 'ui/modules';
 import ChoroplethMap from './choropleth_map';
 import _ from 'lodash';
+import AggConfigResult from 'ui/vis/agg_config_result';
+import FilterBarFilterBarClickHandlerProvider from 'ui/filter_bar/filter_bar_click_handler';
 
 const module = uiModules.get('kibana/choropleth', ['kibana']);
 module.controller('KbnChoroplethController', function ($scope, $element, Private, getAppState) {
 
   const containerNode = $element[0];
   const choroplethMap = new ChoroplethMap(containerNode);
+  const filterBarClickHandler = Private(FilterBarFilterBarClickHandlerProvider);
+
+
+  choroplethMap.on('select', function (event) {
+    const appState = getAppState();
+    const clickHandler = filterBarClickHandler(appState);
+    const aggs = $scope.vis.aggs.getResponseAggs();
+    const aggConfigResult = new AggConfigResult(aggs[0], false, event, event);
+    clickHandler({point: {aggConfigResult: aggConfigResult}});
+  });
 
   $scope.$watch('esResponse', async function (response) {
 
@@ -80,6 +92,9 @@ function makeStyleFunction(data) {
 
 const ramp = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026'];
 function getColor(value, min, max) {
+  if (min === max) {
+    return ramp[ramp.length - 1];
+  }
   const fraction = (value - min) / (max - min);
   const index = Math.round(ramp.length * fraction) - 1;
   let i = Math.max(Math.min(ramp.length - 1, index), 0);
