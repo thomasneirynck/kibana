@@ -16,4 +16,3 @@
 import './styles/main.less';
 import './expanded_row_directive';
 import './tabs/tab_controller';
-import 'plugins/ml/jobs/components/upload_data';

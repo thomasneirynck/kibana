@@ -21,7 +21,7 @@ import chrome from 'ui/chrome';
 import angular from 'angular';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.directive('mlJobListExpandedRow', function ($location, mlMessageBarService, mlJobService, mlClipboardService) {
   return {
@@ -29,7 +29,7 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
     replace: false,
     scope: {},
     template: require('plugins/ml/jobs/components/jobs_list/expanded_row/expanded_row.html'),
-    link: function ($scope, $element, $attrs) {
+    link: function ($scope, $element) {
       const msgs = mlMessageBarService; // set a reference to the message bar service
 
       $scope.urlBasePath = chrome.getBasePath();
@@ -37,7 +37,6 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
       $scope.toLocaleString = stringUtils.toLocaleString; // add toLocaleString to the scope to display nicer numbers
 
       // scope population is inside a function so it can be called later from somewhere else
-      // for example, after data has been uploaded, the expanded row can be updated
       $scope.init = function () {
         $scope.job = $scope.$parent.job;
         $scope.jobAudit = $scope.$parent.jobAudit;
@@ -53,7 +52,7 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
             { index: 1, title: 'Job config' },
             { index: 3, title: 'Counts' },
             { index: 4, title: 'JSON' },
-            { index: 6, title: 'Job Messages' , showIcon: true },
+            // { index: 5, title: 'Job Messages' , showIcon: true }, // temporarily removed
           ],
           changeTab: function (tab) {
             this.currentTab = tab.index;
@@ -83,11 +82,6 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
           $scope.ui.tabs.splice(2, 0, { index: 2, title: 'Scheduler' });
         }
 
-        if ($scope.job.data_counts.input_record_count === 0 &&
-           typeof $scope.job.scheduler_config === 'undefined') {
-          $scope.ui.tabs.splice(4, 0, { index: 5, title: 'Upload Data'});
-        }
-
         // replace localhost in any of the job's urls with the host in the browser's address bar
         if ($scope.job.location) {
           $scope.job.location = replaceHost($scope.job.location);
@@ -103,11 +97,11 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
       $scope.init();
 
       $scope.copyToClipboard = function (job) {
-        let newJob = angular.copy(job, newJob);
+        let newJob = angular.copy(job);
         newJob = mlJobService.removeJobEndpoints(newJob);
         newJob = mlJobService.removeJobCounts(newJob);
 
-        let success = mlClipboardService.copy(angular.toJson(newJob));
+        const success = mlClipboardService.copy(angular.toJson(newJob));
         if (success) {
           // msgs.clear();
           // msgs.info(job.job_id+' JSON copied to clipboard');

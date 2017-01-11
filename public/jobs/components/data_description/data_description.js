@@ -13,6 +13,5 @@
  * strictly prohibited.
  */
 
-import './file_data_description_directive';
 import './elastic_data_description_directive';
 import './styles/main.less';

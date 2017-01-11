@@ -14,19 +14,16 @@
  */
 
 import _ from 'lodash';
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
-import 'plugins/ml/services/ml_angular_client';
 import 'plugins/ml/services/info_service';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.service('mlVisualizationJobService', function (
   $rootScope,
   $http,
   $q,
   es,
-  mlAPIService,
   mlInfoService,
   mlJobService
 ) {

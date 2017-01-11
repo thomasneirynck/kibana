@@ -13,17 +13,13 @@
  * strictly prohibited.
  */
 
-import _ from 'lodash';
-import stringUtils from 'plugins/ml/util/string_utils';
-
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.controller('MlSaveStatusModal', function ($scope, $location, $modalInstance, params) {
 
   $scope.pscope = params.pscope;
   $scope.ui = {
-    showUploadStatus: params.showUploadStatus,
     showTimepicker: false,
   };
 
@@ -34,17 +30,13 @@ module.controller('MlSaveStatusModal', function ($scope, $location, $modalInstan
     params.openScheduler();
   };
 
-  // once the job is saved and optional upload is complete.
-  // close modal and return to jobs list
+  // once the job is saved close modal and return to jobs list
   $scope.close = function () {
-    if ($scope.pscope.ui.saveStatus.job === 2 &&
-      ($scope.ui.showUploadStatus === false ||
-      ($scope.ui.showUploadStatus === true && $scope.pscope.ui.saveStatus.upload === 2))) {
+    if ($scope.pscope.ui.saveStatus.job === 2) {
       $location.path('jobs');
     }
 
     $scope.pscope.ui.saveStatus.job = 0;
-    $scope.pscope.ui.saveStatus.upload = 0;
     $modalInstance.dismiss('cancel');
   };
 

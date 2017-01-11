@@ -21,9 +21,7 @@ import 'ui/autoload/all';
 import 'plugins/ml/jobs/index';
 import 'plugins/ml/results/index';
 import 'plugins/ml/support/index';
-import 'plugins/ml/services/ml_angular_client';
 import 'plugins/ml/services/ml_clipboard_service';
-import 'plugins/ml/services/server_request_service';
 import 'plugins/ml/services/info_service';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/browser_detect_service';
@@ -38,11 +36,11 @@ import 'plugins/ml/components/confirm_modal';
 import 'plugins/ml/app.less';
 import 'plugins/ml/components/pretty_duration';
 
+const _ = require('lodash');
 import moment from 'moment-timezone';
 
 import chrome from 'ui/chrome';
 import routes from 'ui/routes';
-import modules from 'ui/modules';
 
 import logo from 'plugins/ml/header.png';
 import favicon from 'plugins/ml/favicon.png';

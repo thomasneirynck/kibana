@@ -16,7 +16,6 @@
 import _ from 'lodash';
 import angular from 'angular';
 import anomalyUtils from 'plugins/ml/util/anomaly_utils';
-import 'plugins/ml/services/ml_angular_client';
 import 'plugins/ml/services/info_service';
 import 'plugins/ml/services/ml';
 import 'plugins/ml/messagebar';
@@ -24,8 +23,7 @@ import 'plugins/ml/messagebar';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlAPIService, mlMessageBarService) {
-  const apiService = mlAPIService;
+module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessageBarService) {
   const msgs = mlMessageBarService;
   let jobs = [];
   this.currentJob = undefined;
@@ -78,7 +76,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlAPISer
   this.loadJobs = function () {
     jobs = [];
 
-    // use the apiService to load the list of jobs
     // listJobs returns the $http request promise chain which we pass straight through
     // adding our own .then function to create the jobs list and broadcast the fact we've done so
     return ml.jobs()
@@ -455,7 +452,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlAPISer
 
   this.updateJob = function (jobId, data) {
     // return the promise chain
-    return apiService.updateJob(jobId, data)
+    return ml.updateJob({jobId: jobId, body: data})
       .then((resp) => {
         console.log('update job', resp);
         return {success: true};
@@ -1081,25 +1078,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlAPISer
     return deferred.promise;
   };
 
-  // server.maxPayloadBytes: <value>
-  this.uploadData = function (jobId, data) {
-    const deferred = $q.defer();
-    if (jobId && data) {
-      apiService.uploadJobData(jobId, data)
-        .then((resp) => {
-          // console.log(resp);
-          deferred.resolve(resp);
-        })
-        .catch((resp) => {
-          // console.log(resp);
-          deferred.reject(resp);
-        });
-    } else {
-      deferred.reject({});
-    }
-    return deferred.promise;
-  };
-
   this.openJob = function (jobId) {
     return ml.openJob({jobId:jobId});
   };
@@ -1225,21 +1203,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlAPISer
       deferred.reject({});
     }
     return deferred.promise;
-  };
-
-  // simple function to load a single job without refreshing the version in the global jobs list
-  this.loadJob = function (jobId) {
-    return apiService.getJobDetails({jobId: jobId})
-      .then((resp) => {
-        // console.log('loadJob controller query response:', resp);
-        const newJob = {};
-        angular.copy(resp.document, newJob);
-        return newJob;
-
-      }).catch((err) => {
-        console.log('loadJob: error getting job details for ' + jobId + ':', err);
-        return null;
-      });
   };
 
 });

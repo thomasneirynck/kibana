@@ -45,19 +45,8 @@
       </div>
     </ml-job-tab-4>
 
-    <!-- tab 5 Data upload -->
+    <!-- tab 5 Job log -->
     <ml-job-tab-5 ng-show="ui.currentTab === 5" >
-      <div class="tab_contents">
-        <ml-data-upload
-          ml-show-import="true"
-          ml-job="job"
-          ml-change-tab="ui.changeTab"
-          ></ml-data-upload>
-      </div>
-    </ml-job-tab-5>
-
-    <!-- tab 6 Job log -->
-    <ml-job-tab-6 ng-show="ui.currentTab === 6" >
       <div class="tab_contents">
         <button ng-click="jobAudit.update()" class="btn btn-info">
           Refresh
@@ -84,7 +73,7 @@
         </table>
         </div>
       </div>
-    </ml-job-tab-6>
+    </ml-job-tab-5>
 
 
   </div>

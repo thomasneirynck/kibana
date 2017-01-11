@@ -16,4 +16,3 @@
 import './styles/main.less';
 import './new_job_controller';
 import 'plugins/ml/jobs/components/data_description';
-import 'plugins/ml/jobs/components/upload_data';

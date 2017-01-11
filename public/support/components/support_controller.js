@@ -15,12 +15,8 @@
 
 import uiRoutes from 'ui/routes';
 import chrome from 'ui/chrome';
-import _ from 'lodash';
-import moment from 'moment-timezone';
 import filesaver from '@spalger/filesaver';
-let saveAs = filesaver.saveAs;
-
-import stringUtils from 'plugins/ml/util/string_utils';
+const saveAs = filesaver.saveAs;
 
 uiRoutes
 .when('/support/?', {
@@ -28,10 +24,19 @@ uiRoutes
 });
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
-module.controller('MlSupport', function ($scope, $http, es, kbnVersion, timefilter, mlAPIService, mlInfoService, mlBrowserDetectService, mlMessageBarService) {
-  const apiService = mlAPIService;
+module.controller('MlSupport',
+function (
+  $scope,
+  $http,
+  es,
+  kbnVersion,
+  timefilter,
+  mlInfoService,
+  mlBrowserDetectService,
+  mlMessageBarService) {
+
   const msgs = mlMessageBarService; // set a reference to the message bar service
   timefilter.enabled = false; // remove time picker from top of page
   msgs.clear();
