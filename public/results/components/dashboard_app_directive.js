@@ -151,7 +151,7 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
           docTitle.change(dash.title);
         }
 
-        initPanelIndices();
+        initPanelIndexes();
 
         // watch for state changes and update the appStatus.dirty value
         stateMonitor = stateMonitorFactory.create($state, stateDefaults);
@@ -163,7 +163,7 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
         $scope.$emit('application.load');
       }
 
-      function initPanelIndices() {
+      function initPanelIndexes() {
         // find the largest panelIndex in all the panels
         let maxIndex = getMaxPanelIndex();
 

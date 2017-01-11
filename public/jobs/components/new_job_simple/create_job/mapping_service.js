@@ -13,27 +13,22 @@
  * strictly prohibited.
  */
 
-import moment from 'moment';
 import _ from 'lodash';
-import 'ui/timefilter';
-
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
-import stringUtils from 'plugins/ml/util/string_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
-module.service('mlESMappingService', function ($q, es, timefilter, mlJobService) {
+module.service('mlESMappingService', function ($q, mlJobService) {
 
   this.indexes = {};
 
   this.getMappings = function () {
-    let deferred = $q.defer();
+    const deferred = $q.defer();
 
     mlJobService.getESMappings()
-    .then(mappings => {
-      this.indexes = mappings;
-      deferred.resolve(mappings);
+    .then(indexes => {
+      this.indexes = indexes;
+      deferred.resolve(indexes);
 
     }).catch(err => {
       console.log('getMappings:', err);
@@ -43,18 +38,14 @@ module.service('mlESMappingService', function ($q, es, timefilter, mlJobService)
   };
 
   this.getTypesFromMapping = function (index) {
-    // let keys = Object.keys(indexes);
     let types = [];
-
-    let found = false;
-    let type = '';
     let ind = index.trim();
 
     if (ind.match(/\*/g)) {
       // use a regex to find all the indexes that match the name
       ind = ind.replace(/\*/g, '.+');
       const reg = new RegExp('^' + ind + '$');
-      let tempTypes = {};
+      const tempTypes = {};
 
       _.each(this.indexes, (index, key) => {
         if (key.match(reg)) {
@@ -68,12 +59,6 @@ module.service('mlESMappingService', function ($q, es, timefilter, mlJobService)
       types = Object.keys(this.indexes[index].types);
     }
 
-    // remove the * mapping type
-    _.each(types, (t, i) => {
-      if (t === '*') {
-        types.splice(i, 1);
-      }
-    });
     return types;
   };
 

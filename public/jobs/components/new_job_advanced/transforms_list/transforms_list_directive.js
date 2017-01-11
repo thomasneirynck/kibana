@@ -21,7 +21,7 @@ import angular from 'angular';
 import 'plugins/ml/jobs/components/new_job_advanced/transform_modal';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.directive('mlJobTransformsList', function ($modal, $q, mlJobService) {
 
@@ -31,7 +31,7 @@ module.directive('mlJobTransformsList', function ($modal, $q, mlJobService) {
     scope: {
       transforms:                '=mlTransforms',
       detectors:                 '=mlDetectors',
-      indices:                   '=mlIndices',
+      indexes:                   '=mlIndexes',
       properties:                '=mlProperties',
       influencers:               '=mlInfluencers',
       addTransformsToProperties: '=mlAddTransformsToProperties',

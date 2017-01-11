@@ -30,7 +30,7 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
     replace: true,
     scope: {
       detectors:            '=mlDetectors',
-      indices:              '=mlIndices',
+      indexes:              '=mlIndexes',
       properties:           '=mlProperties',
       catFieldNameSelected: '=mlCatFieldNameSelected',
       editMode:             '=mlEditMode',

@@ -11,7 +11,7 @@
       <label>Index</label>
       <div class="input-group">
       <input
-        ng-model="ui.scheduler.indicesText"$
+        ng-model="ui.scheduler.indexesText"$
         placeholder=""
         class="form-control"
         ng-change="extractFields()"
@@ -22,7 +22,7 @@
           <i ng-show="ui.indexTextOk === false" aria-hidden="true" style='color:red;' class="fa fa-remove"></i>
         </span>
         <datalist id="index_datalist">
-          <option ng-repeat="(key, value) in ui.sortByKey(ui.indices)" >{{key}}</option>
+          <option ng-repeat="(key, value) in ui.sortByKey(ui.indexes)" >{{key}}</option>
         </datalist>
       </div>
     </div>
@@ -32,8 +32,8 @@
       <label>Indexes</label>
       <div>
         <div class="index-list-container">
-          <div class="checkbox" ng-repeat="(key, value) in ui.sortByKey(ui.indices)" >
-            <label><input type="checkbox" ng-checked="indices[key] !== undefined" ng-click="toggleIndex(key, value)" >{{key}}</label>
+          <div class="checkbox" ng-repeat="(key, value) in ui.sortByKey(ui.indexes)" >
+            <label><input type="checkbox" ng-checked="indexes[key] !== undefined" ng-click="toggleIndex(key, value)" >{{key}}</label>
           </div>
         </div>
       </div>

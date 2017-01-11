@@ -71,7 +71,7 @@ function (
   $scope.job = {};
   $scope.mode = MODE.NEW;
   $scope.saveLock = false;
-  $scope.indices = {};
+  $scope.indexes = {};
   $scope.types = {};
   $scope.properties = {};
   $scope.dateProperties = {};
@@ -164,7 +164,7 @@ function (
     customFieldDelimiter: '',
     esServerOk: 0,
     indexTextOk: false,
-    indices: {},
+    indexes: {},
     types: {},
     isScheduled: false,
 
@@ -175,7 +175,7 @@ function (
       frequencyDefault:      '',
       scrollSizeText:        '',
       scrollSizeDefault:     1000,
-      indicesText:           '',
+      indexesText:           '',
       typesText:             '',
     },
     saveStatus: {
@@ -450,9 +450,9 @@ function (
     if ($scope.ui.wizard.indexInputType === 'TEXT') {
       // if the user is entering index text manually, check that the text isn't blank
       // and a match to an index has been made resulting in some fields.
-      return ($scope.ui.scheduler.indicesText.length && Object.keys($scope.properties).length) ? true : false;
+      return ($scope.ui.scheduler.indexesText.length && Object.keys($scope.properties).length) ? true : false;
     } else {
-      return Object.keys($scope.indices).length ? true : false;
+      return Object.keys($scope.indexes).length ? true : false;
     }
   };
 
@@ -555,9 +555,9 @@ function (
         $scope.types[type] = $scope.ui.types[type];
       });
 
-      clear($scope.indices);
+      clear($scope.indexes);
       _.each(schedulerConfig.indexes, function (index) {
-        $scope.indices[index] = $scope.ui.indices[index];
+        $scope.indexes[index] = $scope.ui.indexes[index];
       });
 
       $scope.ui.scheduler = {
@@ -567,7 +567,7 @@ function (
         frequencyDefault:      frequencyDefault,
         scrollSizeText:        scrollSize,
         scrollSizeDefault:     scrollSizeDefault,
-        indicesText:           schedulerConfig.indexes.join(','),
+        indexesText:           schedulerConfig.indexes.join(','),
         typesText:             schedulerConfig.types.join(','),
       };
 
@@ -685,8 +685,8 @@ function (
       }
 
       let indexes = [];
-      if (sch.indicesText) {
-        indexes = sch.indicesText.split(',');
+      if (sch.indexesText) {
+        indexes = sch.indexesText.split(',');
         for (let i = 0; i < indexes.length; i++) {
           indexes[i] = indexes[i].trim();
         }
@@ -984,17 +984,17 @@ function (
     });
   }
 
-  // using the selected indices and types, perform a search
+  // using the selected indexes and types, perform a search
   // on the ES server and display the results in the Data preview tab
   function loadDataPreview() {
     createJSONText();
     $scope.ui.wizard.dataPreview = '';
 
-    const indices = Object.keys($scope.indices);
+    const indexes = Object.keys($scope.indexes);
     const types = Object.keys($scope.types);
     const job = $scope.job;
-    if (indices.length) {
-      mlJobService.searchPreview(indices, types, job)
+    if (indexes.length) {
+      mlJobService.searchPreview(indexes, types, job)
       .then(function (resp) {
         $scope.ui.wizard.dataPreview = angular.toJson(resp, true);
       })

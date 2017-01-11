@@ -239,7 +239,6 @@ module.service('mlSimpleJobService', function (
   function getJobFromConfig(formConfig) {
     const bucketSpan = formConfig.jobInterval.getInterval().asSeconds();
 
-    // const mappingTypes = mlESMappingService.getTypesFromMapping(formConfig.indexPattern.id);
     const mappingTypes = formConfig.mappingTypes;
 
     const job = mlJobService.getBlankJob();
@@ -303,7 +302,6 @@ module.service('mlSimpleJobService', function (
     mlJobService.searchTimeFields(index, types, job.data_description.time_field)
     .then((resp) => {
       job.data_description.time_format = stringUtils.guessTimeFormat(resp.time);
-      // console.log('guessTimeFormat: guessed time format: ', this.job.data_description.time_format);
 
       // DO THE SAVE
       mlJobService.saveNewJob(job, true)

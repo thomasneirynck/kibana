@@ -25417,6 +25417,21 @@
     method: 'DELETE'
   });
 
+  api.updateJob = ca({
+    urls: [
+      {
+        fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>/_update',
+        req: {
+          jobId: {
+            type: 'string'
+          }
+        }
+      }
+    ],
+    needBody: true,
+    method: 'PUT'
+  });
+
   api.schedulers = ca({
     urls: [
       {

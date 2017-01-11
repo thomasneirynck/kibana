@@ -963,12 +963,12 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     return deferred.promise;
   };
 
-  this.searchPreview = function (indices, types, job) {
+  this.searchPreview = function (indexes, types, job) {
     const deferred = $q.defer();
 
     if (job.scheduler_config) {
       const data = {
-        index:indices,
+        index:indexes,
         // removed for now because it looks like kibana are now escaping the & and it breaks
         // it was done this way in the first place because you can't sent <index>/<type>/_search through
         // kibana's proxy. it doesn't like type
@@ -1164,6 +1164,16 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           }
         });
         mappings = resp;
+
+        // remove the * mapping type
+        _.each(mappings, (m) => {
+          _.each(m.types, (t, i) => {
+            if(i === '*') {
+              delete m.types[i];
+            }
+          });
+        });
+
         deferred.resolve(mappings);
       })
       .catch((resp) => {
