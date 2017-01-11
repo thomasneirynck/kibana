@@ -236,6 +236,13 @@ module.directive('mlElasticDataDescription', function ($http) {
             });
           });
         }
+
+        // remove the * mapping type
+        _.each($scope.ui.types, (t, i) => {
+          if (i === '*') {
+            delete $scope.ui.types[i];
+          }
+        });
       }
 
       $scope.getIndicesWithDelay = function () {

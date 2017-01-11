@@ -68,6 +68,12 @@ module.service('mlESMappingService', function ($q, es, timefilter, mlJobService)
       types = Object.keys(this.indexes[index].types);
     }
 
+    // remove the * mapping type
+    _.each(types, (t, i) => {
+      if (t === '*') {
+        types.splice(i, 1);
+      }
+    });
     return types;
   };
 
