@@ -42,14 +42,15 @@ uiRoutes
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('MlSummaryViewController', function ($scope, $route, $timeout, $compile, $location, Private, $q, es, mlJobService, timefilter, globalState, mlAnomalyRecordDetailsService, mlDashboardService, mlSwimlaneSearchService, mlSwimlaneService) {
+module.controller('MlSummaryViewController', function ($scope, $route, $timeout, $compile, $location, Private, $q, es, globalState,
+  mlJobService, timefilter, mlAnomalyRecordDetailsService, mlDashboardService, mlSwimlaneSearchService, mlSwimlaneService) {
 
   // TODO - move the index pattern into an editor setting,
   //        or configure the visualization to use a search?
   const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
   timefilter.enabled = true;
 
-  const TimeBuckets = Private(require('ui/time_buckets'));
+  const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
 
   $scope.loading = true;
   $scope.hasResults = false;
@@ -112,23 +113,62 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
         // elasticsearch may return results earlier than requested.
         // e.g. when it has decided to use 1w as the interval, it will round to the nearest week start
         // therefore we should make sure all datasets have the same earliest and so are drawn starting at the same time
-        const earliest = _.min([
-          $scope.jobChartData.earliest,
-          $scope.detectorChartData.earliest,
-          $scope.monitorChartData.earliest,
-          $scope.influencerChartData.earliest,
-          $scope.influencerTypeChartData.earliest,
-          $scope.eventRateChartData.earliest
-        ]);
+
+        // The earliest and latest times of aggregations returned by ES have been stored for the job data.
+        // Adjust the earliest back to the first bucket at or before the start time in the time picker,
+        // and the latest forward to the end of the bucket at or after the end time in the time picker.
+        // Due to the way the swimlane sections are plotted, the chart buckets
+        // must coincide with the times of the buckets in the data.
+        let earliest = $scope.jobChartData.earliest;
+        let latest = $scope.jobChartData.latest;
+
+        const bounds = timefilter.getActiveBounds();
+        const boundsMin = bounds.min.valueOf() / 1000;
+        const boundsMax = bounds.max.valueOf() / 1000;
+        const bucketIntervalSecs = $scope.bucketInterval.asSeconds();
+        if (earliest > boundsMin) {
+          earliest = earliest - (Math.ceil((earliest - boundsMin) / bucketIntervalSecs) * bucketIntervalSecs);
+        }
+        if (latest < boundsMax) {
+          latest = latest + (Math.ceil((boundsMax - latest) / bucketIntervalSecs) * bucketIntervalSecs);
+        }
+
         $scope.jobChartData.earliest = earliest;
+        $scope.jobChartData.latest = latest;
         $scope.detectorChartData.earliest = earliest;
-        $scope.monitorChartData.earliest = earliest;
-        $scope.influencerChartData.earliest = earliest;
-        $scope.influencerTypeChartData.earliest = earliest;
-        $scope.eventRateChartData.earliest = earliest;
-        _.each($scope.detectorPerJobChartData, (d) => {
-          d.earliest = earliest;
+        $scope.detectorChartData.latest = latest;
+        _.each($scope.detectorPerJobChartData, (jobData) => {
+          jobData.earliest = earliest;
+          jobData.latest = latest;
         });
+        $scope.monitorChartData.earliest = earliest;
+        $scope.monitorChartData.latest = latest;
+        $scope.influencerChartData.earliest = earliest;
+        $scope.influencerChartData.latest = latest;
+        $scope.influencerTypeChartData.earliest = earliest;
+        $scope.influencerTypeChartData.latest = latest;
+        $scope.eventRateChartData.earliest = earliest;
+        $scope.eventRateChartData.latest = latest;
+
+
+        // pad out times either side of the earliest and latest in the event rate dataset
+        const evTimes = $scope.eventRateChartData.times;
+        const interval = $scope.bucketInterval.asSeconds();
+        if ((latest - earliest) / interval !== evTimes.length) {
+          const evInterval = evTimes[1] - evTimes[0];
+          if (earliest < evTimes[0]) {
+            while (earliest < evTimes[0]) {
+              evTimes.splice(0, 0, (evTimes[0] - evInterval));
+            }
+          }
+
+          if ((latest - interval) > evTimes[evTimes.length - 1]) {
+            while ((latest - interval) > evTimes[evTimes.length - 1]) {
+              evTimes.push((evTimes[evTimes.length - 1] + evInterval));
+            }
+          }
+        }
+
 
         // Tell the swimlane directives to render.
         // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
@@ -159,6 +199,7 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
     mlAnomalyRecordDetailsService.setSelectedJobIds(selectedJobIds);
 
     $scope.bucketInterval = calculateBucketInterval();
+    console.log('SummaryView bucketInterval:', $scope.bucketInterval);
     mlAnomalyRecordDetailsService.setBucketInterval($scope.bucketInterval);
 
     // 1 - load job results
@@ -253,10 +294,6 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
     const buckets = new TimeBuckets();
     buckets.setInterval('auto');
     buckets.setBounds(bounds);
-    console.log('calculateBucketInterval() buckets interval:', buckets.getInterval());
-
-    const selectedJobs = _.filter($scope.jobs, job => job.selected);
-    console.log('calculateBucketInterval() selectedJobs:', selectedJobs);
 
     const intervalSeconds = buckets.getInterval().asSeconds();
 
@@ -273,6 +310,7 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
       buckets.setInterval((intervalSeconds * 2) + 's');
     }
 
+    const selectedJobs = _.filter($scope.jobs, job => job.selected);
     const maxBucketSpan = _.reduce(selectedJobs, (memo, job) => Math.max(memo, job.bucketSpan) , 0);
     if (maxBucketSpan > intervalSeconds) {
       buckets.setInterval(maxBucketSpan + 's');
@@ -288,10 +326,13 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
   }
 
   function processJobResults(dataByJob) {
-    const dataset = {'laneLabels':[], 'points':[]};
+    const dataset = {'laneLabels':[], 'points':[], 'interval': $scope.bucketInterval.asSeconds()};
     const timeObjs = {};
 
-    mlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
+    // Store the earliest and latest times of the data returned by the ES aggregations,
+    // These will be used for calculating the earliest and latest times for the swimlane charts.
+    dataset.earliest = Number.MAX_VALUE;
+    dataset.latest = 0;
 
     // Use job ids as lane labels.
     _.each(dataByJob, (jobData, jobId) => {
@@ -301,9 +342,8 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
         const time = timeMs / 1000;
         dataset.points.push({'laneLabel':jobId, 'time': time, 'value': normProb});
 
-        if (time < dataset.earliest) {
-          dataset.earliest = time;
-        }
+        dataset.earliest = Math.min(time, dataset.earliest);
+        dataset.latest = Math.max((time + dataset.interval), dataset.latest);
 
         if (timeObjs[time] === undefined) {
           timeObjs[time] = {};
@@ -322,10 +362,8 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
   }
 
   function processDetectorResults(dataByJob) {
-    const dataset = {'laneLabels':[], 'points':[]};
+    const dataset = {'laneLabels':[], 'points':[], 'interval': $scope.bucketInterval.asSeconds()};
     const datasetPerJob = {};
-
-    mlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
 
     // clone the basic dataset for each job
     _.each(dataByJob, (jobData, jobId) => {
@@ -394,9 +432,7 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
 
 
   function processInfluencerResults(dataByInfluencer) {
-    const dataset = {'laneLabels':[], 'points':[]};
-
-    mlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
+    const dataset = {'laneLabels':[], 'points':[], 'interval': $scope.bucketInterval.asSeconds()};
 
     _.each(dataByInfluencer, (influencerData, influencerFieldValue) => {
       dataset.laneLabels.push(influencerFieldValue);
@@ -404,10 +440,6 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
       _.each(influencerData, (anomalyScore, timeMs) => {
         const time = timeMs / 1000;
         dataset.points.push({'laneLabel':influencerFieldValue, 'time': time, 'value': anomalyScore});
-
-        if (time < dataset.earliest) {
-          dataset.earliest = time;
-        }
       });
     });
     console.log('SummaryView influencer swimlane dataset:', dataset);
@@ -415,9 +447,7 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
   }
 
   function processInfluencerTypeResults(dataByInfluencerType) {
-    const dataset = {'laneLabels':[], 'points':[]};
-
-    mlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
+    const dataset = {'laneLabels':[], 'points':[], 'interval': $scope.bucketInterval.asSeconds()};
 
     _.each(dataByInfluencerType, (influencerData, influencerFieldType) => {
       dataset.laneLabels.push(influencerFieldType);
@@ -425,10 +455,6 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
       _.each(influencerData, (anomalyScore, timeMs) => {
         const time = timeMs / 1000;
         dataset.points.push({'laneLabel':influencerFieldType, 'time': time, 'value': anomalyScore});
-
-        if (time < dataset.earliest) {
-          dataset.earliest = time;
-        }
       });
     });
 
@@ -437,9 +463,7 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
   }
 
   function processEventRateResults(data) {
-    const dataset = {'laneLabels':[], 'points':[]};
-
-    mlSwimlaneSearchService.calculateBounds(dataset, $scope.bucketInterval.asSeconds());
+    const dataset = {'laneLabels':[], 'points':[], 'earliest': $scope.jobChartData.earliest, 'latest': $scope.jobChartData.latest};
 
     const maximums = {};
     $scope.eventRateChartData = {};
@@ -462,24 +486,7 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
 
     $scope.eventRateChartData.earliest = dataset.earliest;
     $scope.eventRateChartData.latest = dataset.latest;
-    $scope.eventRateChartData.interval = dataset.interval;
-
-    const evTimes = $scope.eventRateChartData.times;
-    // pad out times either side of the earliest and latest
-    if ((dataset.latest - dataset.earliest) / dataset.interval !== evTimes.length) {
-      const evInterval = evTimes[1] - evTimes[0];
-      if (dataset.earliest < evTimes[0]) {
-        while (dataset.earliest < evTimes[0]) {
-          evTimes.splice(0, 0, (evTimes[0] - evInterval));
-        }
-      }
-
-      if ((dataset.latest - dataset.interval) > evTimes[evTimes.length - 1]) {
-        while ((dataset.latest - dataset.interval) > evTimes[evTimes.length - 1]) {
-          evTimes.push((evTimes[evTimes.length - 1] + evInterval));
-        }
-      }
-    }
+    $scope.eventRateChartData.interval = $scope.bucketInterval.asSeconds();
   }
 
 

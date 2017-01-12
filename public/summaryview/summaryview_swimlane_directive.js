@@ -20,23 +20,23 @@
 
 import _ from 'lodash';
 import $ from 'jquery';
-import d3 from 'd3';
 import moment from 'moment';
 import 'ui/timefilter';
 
 import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
-module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilter, mlJobService, mlAnomalyRecordDetailsService, mlSwimlaneInspectorService, mlSwimlaneSelectionService) {
+module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilter, mlJobService,
+  mlAnomalyRecordDetailsService, mlSwimlaneInspectorService, mlSwimlaneSelectionService) {
 
   const SWIMLANE_TYPES = mlAnomalyRecordDetailsService.type;
 
   function link(scope, element, attrs) {
     let rendered = false;
 
-    scope.$on('render',function (event, d) {
+    scope.$on('render',function (event) {
       if (!rendered) {
         rendered = true;
         render();
@@ -61,14 +61,12 @@ module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilt
       }
 
       const INSPECTOR_MODE = (SWIMLANE_TYPES[scope.swimlaneType] === SWIMLANE_TYPES.INSPECTOR);
-      // console.log("render() called")
+
       let lanes = scope.chartData.laneLabels;
       const startTime = scope.chartData.earliest;
       const endTime = scope.chartData.latest;
       const stepSecs = scope.chartData.interval;
       const points = scope.chartData.points;
-
-      const margin = { top: 0, right: 0, bottom: 0, left: 0 };
 
       function colorScore(d) {
         return anomalyUtils.getSeverityColor(d.value);
@@ -128,7 +126,6 @@ module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilt
           const isInspector = SWIMLANE_TYPES[scope.swimlaneType] === SWIMLANE_TYPES.INSPECTOR;
           if ((!mlSwimlaneInspectorService.controls.visible || (mlSwimlaneInspectorService.controls.visible && isInspector))
             && !mlSwimlaneSelectionService.selection.active) {
-            // console.log(laneLabel,index,time)
             _.each(scope.lanes, function (l) {
               for (let j = 0; j < l.length; j++) {
                 l[j].removeClass('sl-cell-hover');
@@ -291,6 +288,7 @@ module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilt
           let color = 'none';
           let bucketScore = 0;
           for (let j = 0; j < points.length; j++) {
+
             if (points[j].value > 0 && points[j].laneLabel === lane && points[j].time === time) { // this may break if detectors have the duplicate descriptions
               bucketScore = points[j];
               color = colorScore(bucketScore);
@@ -443,7 +441,6 @@ module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilt
   }
 
   function stopDrag($event) {
-    // console.log($event);
     // placed in a timeout to allow mouse click events to finish first
     $timeout(function () {
       mlSwimlaneInspectorService.hide();
@@ -451,7 +448,7 @@ module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilt
         selection.endCell = selection.startCell;
 
         if (selection.isBackwards) {
-          let numberOfCells = Math.floor((selection.width +
+          const numberOfCells = Math.floor((selection.width +
             (cellWidth - (selection.firstX -  selection.startCell.offsetLeft))) / cellWidth);
           for (let i = 0; i < numberOfCells; i++) {
             if (selection.startCell.previousSibling) {
@@ -459,7 +456,7 @@ module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilt
             }
           }
         } else {
-          let numberOfCells = Math.floor((selection.width + (selection.firstX -  selection.startCell.offsetLeft)) / cellWidth);
+          const numberOfCells = Math.floor((selection.width + (selection.firstX -  selection.startCell.offsetLeft)) / cellWidth);
           for (let i = 0; i < numberOfCells; i++) {
             if (selection.endCell.nextSibling) {
               selection.endCell = selection.endCell.nextSibling;

@@ -121,7 +121,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es, timefilter
       }
     })
     .then((resp) => {
-      console.log('Circle swimlane getScoresByBucket() resp:', resp);
+      console.log('getScoresByBucket() resp:', resp);
 
       const dataByJobId = _.get(resp, ['aggregations', 'jobId', 'buckets'], []);
       _.each(dataByJobId, (dataForJob) => {
@@ -264,7 +264,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es, timefilter
       }
     })
     .then((resp) => {
-      console.log('Detector swimlane getScoresByDetector() resp:', resp);
+      console.log('getScoresByDetector() resp:', resp);
       // Process the three levels for aggregation for jobId, detectorId, time.
       const dataByJobId = _.get(resp, ['aggregations', 'jobId', 'buckets'], []);
       _.each(dataByJobId, (dataForJob) => {
@@ -399,7 +399,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es, timefilter
       }
     })
     .then((resp) => {
-      console.log('Detector swimlane getScoresByInfluencer() resp:', resp);
+      console.log('getScoresByInfluencer() resp:', resp);
       obj.results.influencerTypes = {};
 
       const influencerTypeResults = {};
@@ -525,7 +525,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es, timefilter
       }
     })
     .then((resp) => {
-      console.log('Detector swimlane getScoresByInfluencer() resp:', resp);
+      console.log('getScoresByInfluencer() resp:', resp);
       obj.results.influencerValues = {};
 
       const influencerValueResults = {};
@@ -915,7 +915,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es, timefilter
       }
     })
     .then((resp) => {
-      console.log('Circle swimlane getEventRate() resp:', resp);
+      console.log('getEventRate() resp:', resp);
 
       // Process the two levels for aggregation for influencerFieldValue and time.
       const dataByTimeBucket = _.get(resp, ['aggregations', 'times', 'buckets'], []);
@@ -933,7 +933,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es, timefilter
           jobResults[time] = _.get(dataForJob, ['sumEventCount', 'value'], []);
         });
       });
-      console.log('Circle swimlane getEventRate() obj.results:', obj.results);
+
       deferred.resolve(obj);
     })
     .catch((resp) => {
@@ -942,24 +942,5 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es, timefilter
     return deferred.promise;
   };
 
-
-  this.calculateBounds = function (dataset, bucketIntervalSeconds, boundsIn) {
-    // Extract the bounds of the time filter so we can set the x-axis min and max.
-    const bounds = (boundsIn !== undefined) ? boundsIn : timefilter.getActiveBounds();
-    if (bounds) {
-      // TODO - get aggregation determine the aggregation interval out of the visualization.
-      // For now using a fixed interval of 3h.
-      const aggInterval = moment.duration(bucketIntervalSeconds, 'seconds');
-
-      // Elasticsearch aggregation returns points at start of bucket,
-      // so set the x-axis min/max to the start/end of the aggregation interval.
-      const earliest = Math.floor(bounds.min.valueOf() / aggInterval.asMilliseconds()) * (aggInterval.asMilliseconds());
-      const latest = Math.ceil(bounds.max.valueOf() / aggInterval.asMilliseconds()) * (aggInterval.asMilliseconds());
-
-      dataset.earliest = earliest / 1000;
-      dataset.interval = aggInterval.asSeconds();
-      dataset.latest = latest / 1000;
-    }
-  };
 
 });

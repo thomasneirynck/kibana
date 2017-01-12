@@ -21,13 +21,14 @@ import _ from 'lodash';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlaneInspectorService, mlSwimlaneSelectionService, mlSwimlaneService) {
+module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlaneInspectorService,
+  mlSwimlaneSelectionService, mlSwimlaneService) {
   return {
     restrict: 'AE',
     replace: false,
     scope: {},
     template: require('plugins/ml/summaryview/swimlane_inspector/swimlane_inspector.html'),
-    link: function ($scope, $element, $attrs) {
+    link: function ($scope) {
       $scope.controls = mlSwimlaneInspectorService.controls;
       $scope.controls.scope = $scope;
 
@@ -57,8 +58,9 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
     },
   };
 })
-.service('mlSwimlaneInspectorService', function ($q, $timeout, $rootScope, $compile, es, Private, timefilter, mlJobService, mlAnomalyRecordDetailsService, mlSwimlaneSearchService) {
-  const TimeBuckets = Private(require('ui/time_buckets'));
+.service('mlSwimlaneInspectorService', function ($q, $timeout, $rootScope, $compile, es,
+  Private, timefilter, mlJobService, mlAnomalyRecordDetailsService, mlSwimlaneSearchService) {
+  const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
 
   const swimlanesHTML = require('plugins/ml/summaryview/swimlane_inspector/swimlanes.html');
 
@@ -172,7 +174,6 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
     const type = mlAnomalyRecordDetailsService.type[swimlaneType];
     const types = mlAnomalyRecordDetailsService.type;
     let interval = calculateBucketInterval();
-
     let recordJobIds;
 
     function fin() {
@@ -254,8 +255,8 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
     const dataset = {
       laneLabels:['Monitor'],
       points:[],
-      earliest: jobChartData.earliest,
-      latest: jobChartData.latest,
+      earliest: Number.MAX_VALUE,
+      latest:  0,
       interval: jobChartData.interval
     };
 
@@ -269,6 +270,10 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
       if (point.value > maxScoresPerBucket[point.time]) {
         maxScoresPerBucket[point.time] = point.value;
       }
+
+      dataset.earliest = Math.min(point.time, dataset.earliest);
+      dataset.latest = Math.max((point.time + dataset.interval), dataset.latest);
+
     });
 
     _.each(maxScoresPerBucket, (bucket, time) => {
@@ -279,19 +284,18 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
       });
     });
 
+    calculateDatasetTimeRange(dataset);
+
     console.log('SummaryView monitor swimlane dataset:', dataset);
     controls.inspectorChartData = dataset;
   }
 
   function processJobResults(dataByJob) {
-    const dataset = {'laneLabels':[], 'points':[]};
+    const dataset = {'laneLabels':[], 'points':[], 'interval': timeRange.interval};
     const timeObjs = {};
 
-    const bounds = {
-      min: moment(timeRange.start * 1000),
-      max: moment(timeRange.end * 1000)
-    };
-    mlSwimlaneSearchService.calculateBounds(dataset, timeRange.interval, bounds);
+    dataset.earliest = Number.MAX_VALUE;
+    dataset.latest = 0;
 
     // Use job ids as lane labels.
     _.each(dataByJob, (jobData, jobId) => {
@@ -301,9 +305,8 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
         const time = timeMs / 1000;
         dataset.points.push({'laneLabel':jobId, 'time': time, 'value': normProb});
 
-        if (time < dataset.earliest) {
-          dataset.earliest = time;
-        }
+        dataset.earliest = Math.min(time, dataset.earliest);
+        dataset.latest = Math.max((time + dataset.interval), dataset.latest);
 
         if (timeObjs[time] === undefined) {
           timeObjs[time] = {};
@@ -313,21 +316,19 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
     times = Object.keys(timeObjs);
     times = times.sort();
 
+    calculateDatasetTimeRange(dataset);
+
     console.log('SummaryView jobs swimlane dataset:', dataset);
     controls.inspectorChartData = dataset;
   }
 
 
   function processDetectorResults(dataByJob, laneLabel) {
-    const dataset = {'laneLabels':[], 'points':[]};
+    const dataset = {'laneLabels':[], 'points':[], 'interval': timeRange.interval};
     const timeObjs = {};
 
-    const bounds = {
-      min: moment(timeRange.start * 1000),
-      max: moment(timeRange.end * 1000)
-    };
-
-    mlSwimlaneSearchService.calculateBounds(dataset, timeRange.interval, bounds);
+    dataset.earliest = Number.MAX_VALUE;
+    dataset.latest = 0;
 
     // Get the descriptions of the detectors to use as lane labels.
     _.each(dataByJob, (jobData, jobId) => {
@@ -343,9 +344,9 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
             const time = timeMs / 1000;
             dataset.points.push({'laneLabel':laneLabel, 'time': time, 'value': normProb});
 
-            if (time < dataset.earliest) {
-              dataset.earliest = time;
-            }
+            dataset.earliest = Math.min(time, dataset.earliest);
+            dataset.latest = Math.max((time + dataset.interval), dataset.latest);
+
             if (timeObjs[time] === undefined) {
               timeObjs[time] = {};
             }
@@ -356,19 +357,19 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
 
     times = Object.keys(timeObjs);
     times = times.sort();
+
+    calculateDatasetTimeRange(dataset);
+
     console.log('SummaryView detector swimlane dataset:', dataset);
     controls.inspectorChartData = dataset;
   }
 
   function processInfluencerTypeResults(dataByInfluencerType, laneLabel) {
-    const dataset = {'laneLabels':[], 'points':[]};
+    const dataset = {'laneLabels':[], 'points':[], 'interval': timeRange.interval};
     const timeObjs = {};
 
-    const bounds = {
-      min: moment(timeRange.start * 1000),
-      max: moment(timeRange.end * 1000)
-    };
-    mlSwimlaneSearchService.calculateBounds(dataset, timeRange.interval, bounds);
+    dataset.earliest = Number.MAX_VALUE;
+    dataset.latest = 0;
 
     _.each(dataByInfluencerType, (influencerData, influencerFieldType) => {
       if (influencerFieldType === laneLabel) {
@@ -378,9 +379,9 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
           const time = timeMs / 1000;
           dataset.points.push({'laneLabel':influencerFieldType, 'time': time, 'value': anomalyScore});
 
-          if (time < dataset.earliest) {
-            dataset.earliest = time;
-          }
+          dataset.earliest = Math.min(time, dataset.earliest);
+          dataset.latest = Math.max((time + dataset.interval), dataset.latest);
+
           if (timeObjs[time] === undefined) {
             timeObjs[time] = {};
           }
@@ -390,19 +391,19 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
 
     times = Object.keys(timeObjs);
     times = times.sort();
+
+    calculateDatasetTimeRange(dataset);
+
     console.log('SummaryView influencer swimlane dataset:', dataset);
     controls.inspectorChartData = dataset;
   }
 
   function processInfluencerResults(dataByInfluencer) {
-    const dataset = {'laneLabels':[], 'points':[]};
+    const dataset = {'laneLabels':[], 'points':[], 'interval': timeRange.interval};
     const timeObjs = {};
 
-    const bounds = {
-      min: moment(timeRange.start * 1000),
-      max: moment(timeRange.end * 1000)
-    };
-    mlSwimlaneSearchService.calculateBounds(dataset, timeRange.interval, bounds);
+    dataset.earliest = Number.MAX_VALUE;
+    dataset.latest = 0;
 
     _.each(dataByInfluencer, (influencerData, influencerFieldValue) => {
       if (influencerFieldValue === laneLabel) {
@@ -412,9 +413,9 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
           const time = timeMs / 1000;
           dataset.points.push({'laneLabel':influencerFieldValue, 'time': time, 'value': anomalyScore});
 
-          if (time < dataset.earliest) {
-            dataset.earliest = time;
-          }
+          dataset.earliest = Math.min(time, dataset.earliest);
+          dataset.latest = Math.max((time + dataset.interval), dataset.latest);
+
           if (timeObjs[time] === undefined) {
             timeObjs[time] = {};
           }
@@ -425,6 +426,9 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
 
     times = Object.keys(timeObjs);
     times = times.sort();
+
+    calculateDatasetTimeRange(dataset);
+
     console.log('SummaryView influencer swimlane dataset:', dataset);
     controls.inspectorChartData = dataset;
   }
@@ -446,11 +450,33 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
       timeRange.interval = buckets.getInterval().asSeconds();
     }
     if (bucketSpan > timeRange.interval) {
-      timeRange.interval = bucketSpan;
       buckets.setInterval(timeRange.interval + 's');
     }
 
-    return buckets.getInterval();
+    const interval = buckets.getInterval();
+    timeRange.interval = interval.asSeconds();
+    return interval;
+  }
+
+  function calculateDatasetTimeRange(dataset) {
+    // Adjust the earliest back to the first bucket at or before the range start time,
+    // and the latest forward to the end of the bucket at or after the range end time.
+    // Due to the way the swimlane sections are plotted, the chart buckets
+    // must coincide with the times of the buckets in the data.
+    let earliest = dataset.earliest;
+    let latest = dataset.latest;
+
+    const boundsMin = timeRange.start;
+    const boundsMax = timeRange.end;
+    if (earliest > boundsMin) {
+      earliest = earliest - (Math.ceil((earliest - boundsMin) / timeRange.interval) * timeRange.interval);
+    }
+    if (latest < boundsMax) {
+      latest = latest + (Math.ceil((boundsMax - latest) / timeRange.interval) * timeRange.interval);
+    }
+
+    dataset.earliest = earliest;
+    dataset.latest = latest;
   }
 
   function loadTopInfluencersForRange() {
