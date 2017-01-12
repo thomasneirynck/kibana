@@ -391,16 +391,20 @@ function (
                   // save successful, attempt to open the job
                   mlJobService.openJob($scope.job.job_id)
                   .then((resp) => {
-                    // open job successful, create a new scheduler
-                    mlJobService.saveNewScheduler($scope.job.scheduler_config, $scope.job.job_id)
-                    .then(resp => {
-
+                    if ($scope.job.scheduler_config) {
+                      // open job successful, create a new scheduler
+                      mlJobService.saveNewScheduler($scope.job.scheduler_config, $scope.job.job_id)
+                      .then(resp => {
+                        $scope.saveLock = false;
+                      })
+                      .catch((resp) => {
+                        msgs.error('Could not start scheduler: ', resp);
+                        $scope.saveLock = false;
+                      });
+                    } else {
+                      // no scheduler, so save is complete
                       $scope.saveLock = false;
-                    })
-                    .catch((resp) => {
-                      msgs.error('Could not start scheduler: ', resp);
-                      $scope.saveLock = false;
-                    });
+                    }
                   })
                   .catch((resp) => {
                     msgs.error('Could not open job: ', resp);
