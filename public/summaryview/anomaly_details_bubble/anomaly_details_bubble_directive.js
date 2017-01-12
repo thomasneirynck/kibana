@@ -89,6 +89,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
   this.bubbleHeight = 0;
   this.recordListHeight = 0;
   this.bubbleTop = 0;
+  this.navBarHeight = 0;
   this.laneLabel = '';
   this.$bubble;
   this.$bubbleHeading;
@@ -228,6 +229,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
         that.$bubbleHeading = that.$bubble.find('.heading');
         that.$arrow = that.$bubble.find('.arrow');
         that.$recordList = that.$bubble.find('.record-list');
+        that.navBarHeight = $('kbn-top-nav').height();
       }
       that.position(true);
 
@@ -447,8 +449,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
   this.position = function (scrolling) {
     const doc = document.documentElement;
     const scrollTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
-    this.arrowTop = this.targetTop + 43 - scrollTop;
-
+    this.arrowTop = this.targetTop + this.navBarHeight + 10 - scrollTop;
 
     if (this.$target !== undefined) {
       if (this.$target.parent().hasClass('cells-container-inspector')) {
@@ -463,13 +464,15 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
       this.arrowTop = -10000;
     }
 
-    if (scrollTop > 73) {
-      this.bubbleTop = scrollTop - 73;
+    const navBarHeight = this.navBarHeight + 40;
+
+    if (scrollTop > navBarHeight) {
+      this.bubbleTop = scrollTop - navBarHeight;
       this.bubbleHeight = doc.offsetHeight - 10;
 
     } else {
       this.bubbleTop = 0;
-      this.bubbleHeight = doc.offsetHeight - 83  + scrollTop;
+      this.bubbleHeight = doc.offsetHeight - navBarHeight - 10 + scrollTop;
     }
 
     if (scrolling && this.$bubble !== undefined) {
