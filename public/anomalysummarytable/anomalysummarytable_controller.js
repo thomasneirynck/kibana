@@ -122,10 +122,10 @@ module.controller('MlAnomalySummaryTableController', function (
     const searchSource = savedSearch.searchSource;
     $scope.indexPattern = searchSource.get('index');
 
-    // Ask for top 500 sorted by normalizedProbability.
+    // Ask for top 500 sorted by normalized_probability.
     // TODO - allow sample size to be configurable in visualization options.
     searchSource.size(500);
-    searchSource.sort(getSort(['normalizedProbability', 'desc'], $scope.indexPattern));
+    searchSource.sort(getSort(['normalized_probability', 'desc'], $scope.indexPattern));
 
     $scope.searchSource = searchSource;
 
