@@ -416,6 +416,9 @@ const metricInstances = {
   ...(() => {
     // CGroup CPU Utilization Fields
     const quotaMetricConfig = {
+      app: 'elasticsearch',
+      uuidField: 'cluster_uuid',
+      timestampField: 'timestamp',
       fieldSource: 'node_stats.os.cgroup',
       usageField: 'cpuacct.usage_nanos',
       periodsField: 'cpu.stat.number_of_elapsed_periods',
@@ -1060,11 +1063,81 @@ const metricInstances = {
   'logstash_node_cpu_utilization': new LogstashMetric({
     field: 'logstash_stats.process.cpu.percent',
     label: 'CPU Utilization',
-    description: 'Percentage of CPU usage (100% is the max).',
+    description: 'Percentage of CPU usage reported by the OS (100% is the max).',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
     units: '%'
-  })
+  }),
+  'logstash_node_cgroup_periods': new LogstashMetric({
+    field: 'logstash_stats.os.cgroup.cpu.stat.number_of_elapsed_periods',
+    title: 'Cgroup CFS Stats',
+    label: 'Cgroup Elapsed Periods',
+    description: (
+      'The number of sampling periods from the Completely Fair Scheduler (CFS). Compare against the number of times throttled.'
+    ),
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    derivative: true,
+    units: ''
+  }),
+  'logstash_node_cgroup_throttled': new LogstashMetric({
+    field: 'logstash_stats.os.cgroup.cpu.stat.time_throttled_nanos',
+    title: 'Cgroup CPU Performance',
+    label: 'Cgroup Throttling',
+    description: 'The amount of throttled time, reported in nanoseconds, of the Cgroup.',
+    format: LARGE_ABBREVIATED,
+    metricAgg: 'max',
+    derivative: true,
+    units: 'ns'
+  }),
+  'logstash_node_cgroup_throttled_count': new LogstashMetric({
+    field: 'logstash_stats.os.cgroup.cpu.stat.number_of_times_throttled',
+    title: 'Cgroup CFS Stats',
+    label: 'Cgroup Throttled Count',
+    description: 'The number of times that the CPU was throttled by the Cgroup.',
+    format: LARGE_FLOAT,
+    metricAgg: 'max',
+    derivative: true,
+    units: ''
+  }),
+  'logstash_node_cgroup_usage': new LogstashMetric({
+    field: 'logstash_stats.os.cgroup.cpuacct.usage_nanos',
+    title: 'Cgroup CPU Performance',
+    label: 'Cgroup Usage',
+    description: 'The usage, reported in nanoseconds, of the Cgroup. Compare this with the throttling to discover issues.',
+    format: LARGE_ABBREVIATED,
+    metricAgg: 'max',
+    derivative: true,
+    units: 'ns'
+  }),
+  ...(() => {
+    // CGroup CPU Utilization Fields
+    const quotaMetricConfig = {
+      app: 'logstash',
+      uuidField: 'logstash_stats.logstash.uuid',
+      timestampField: 'logstash_stats.timestamp',
+      fieldSource: 'logstash_stats.os.cgroup',
+      usageField: 'cpuacct.usage_nanos',
+      periodsField: 'cpu.stat.number_of_elapsed_periods',
+      quotaField: 'cpu.cfs_quota_micros',
+      field: 'logstash_stats.process.cpu.percent', // backup field if quota is not configured
+      label: 'Cgroup CPU Utilization',
+      description: (
+        'CPU Usage time compared to the CPU quota shown in percentage. If CPU ' +
+        'quotas are not set, then the OS level CPU usage in percentage is shown.'
+      )
+    };
+    return {
+      'logstash_node_cgroup_quota': new QuotaMetric({
+        ...quotaMetricConfig,
+        title: 'CPU Utilization'
+      }),
+      'logstash_node_cgroup_quota_as_cpu_utilization': new QuotaMetric({
+        ...quotaMetricConfig,
+        label: 'CPU Utilization' //  override the "Cgroup CPU..." label
+      })
+    };
+  })()
 };
 
 const metrics = _.reduce(Object.keys(metricInstances), (accumulated, key) => {

@@ -122,7 +122,7 @@ export class LatencyMetric extends ElasticsearchMetric {
 
 }
 
-export class QuotaMetric extends ElasticsearchMetric {
+export class QuotaMetric extends Metric {
 
   constructor(opts) {
     super({

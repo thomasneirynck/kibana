@@ -7,7 +7,10 @@ describe('Quota Metric Calculation', () => {
       field: 'cpu_field',
       label: 'cpu_label',
       description: 'cpu_description',
-      type: 'node'
+      type: 'node',
+      app: 'elasticsearch',
+      uuidField: 'cluster_uuid',
+      timestampField: 'timestamp'
     });
     expect(myQuotaMetric.calculation()).to.be(undefined);
   });
@@ -17,7 +20,10 @@ describe('Quota Metric Calculation', () => {
       field: 'cpu_field',
       label: 'cpu_label',
       description: 'cpu_description',
-      type: 'node'
+      type: 'node',
+      app: 'elasticsearch',
+      uuidField: 'cluster_uuid',
+      timestampField: 'timestamp'
     });
     expect(myQuotaMetric.calculation({
       quota: { value: 10 },
@@ -32,7 +38,10 @@ describe('Quota Metric Calculation', () => {
       field: 'cpu_field',
       label: 'cpu_label',
       description: 'cpu_description',
-      type: 'node'
+      type: 'node',
+      app: 'elasticsearch',
+      uuidField: 'cluster_uuid',
+      timestampField: 'timestamp'
     });
     expect(myQuotaMetric.calculation({
       quota: { value: null },

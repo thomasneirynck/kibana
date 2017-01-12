@@ -48,7 +48,23 @@
         <div ng-if="inLogstash" class="kuiLocalTabs" role="navigation">
             <a ng-if="!instance" kbn-href="#/logstash" class="kuiLocalTab" ng-class="{'kuiLocalTab-isSelected': isActive('overview')}">Overview</a>
             <a ng-if="!instance" kbn-href="#/logstash/nodes" class="kuiLocalTab" ng-class="{'kuiLocalTab-isSelected': isActive('nodes')}">Nodes</a>
-            <a ng-if="instance" class="kuiLocalTab">{{ instance }}</a>
+            <a
+              ng-if="instance"
+              kbn-href="#/logstash/node/{{ resolver }}"
+              class="kuiLocalTab"
+              ng-class="{'kuiLocalTab-isSelected': page === 'overview'}"
+            >
+              <span ng-if="iconClass" class="fa {{ iconClass }}" title="{{ iconLabel }}"></span>
+              Overview
+            </a>
+            <a
+              ng-if="instance"
+              kbn-href="#/logstash/node/{{ resolver }}/advanced"
+              class="kuiLocalTab"
+              ng-class="{'kuiLocalTab-isSelected': page === 'advanced'}"
+            >
+              Advanced
+            </a>
         </div>
 
         <div ng-if="inOverview" class="kuiLocalTabs" role="navigation">

@@ -81,7 +81,10 @@ uiModule.directive('monitoringMain', (license) => {
         if (scope.inLogstash) {
           if (scope.instance) {
             breadcrumbs.push(createCrumb('#/logstash', 'Logstash'));
-            breadcrumbs.push(createCrumb('#/logstash/nodes', 'Nodes'));
+            if (scope.name === 'nodes') {
+              breadcrumbs.push(createCrumb('#/logstash/nodes', 'Nodes'));
+            }
+            breadcrumbs.push(createCrumb(null, scope.instance));
           } else {
             // don't link to Overview when we're possibly on Overview or its sibling tabs
             breadcrumbs.push(createCrumb(null, 'Logstash'));

@@ -1,5 +1,5 @@
 <div ng-controller="logstashNode">
-  <monitoring-main product="logstash" name="node" instance="{{ pageData.nodeSummary.name }}">
+  <monitoring-main product="logstash" name="node" instance="{{ pageData.nodeSummary.name }}" resolver="{{ pageData.nodeSummary.uuid }}" page="overview">
     <div class="monitoring-kibana details monitoring-view">
       <monitoring-logstash-node-summary logstash="pageData.nodeSummary"></monitoring-logstash-node-summary>
       <div class="detail-metrics monitoring-element">
@@ -9,7 +9,7 @@
         </div>
         <div class="row monitoring-element" ng-if="pageData.metrics">
           <div class="col-md-6"><monitoring-chart series="pageData.metrics.logstash_events_output_rate"></monitoring-chart></div>
-          <div class="col-md-6"><monitoring-chart series="pageData.metrics.logstash_node_cpu_utilization"></monitoring-chart></div>
+          <div class="col-md-6"><monitoring-chart series="pageData.metrics.logstash_node_cpu_metric"></monitoring-chart></div>
         </div>
         <div class="row monitoring-element" ng-if="pageData.metrics">
           <div class="col-md-6"><monitoring-chart series="pageData.metrics.logstash_events_latency"></monitoring-chart></div>

@@ -2131,7 +2131,7 @@ export const expected = {
   'logstash_node_cpu_utilization': {
     'field': 'logstash_stats.process.cpu.percent',
     'label': 'CPU Utilization',
-    'description': 'Percentage of CPU usage (100% is the max).',
+    'description': 'Percentage of CPU usage reported by the OS (100% is the max).',
     'format': '0,0.[00]',
     'metricAgg': 'avg',
     'units': '%',
@@ -2139,6 +2139,174 @@ export const expected = {
     'uuidField': 'logstash_stats.logstash.uuid',
     'timestampField': 'logstash_stats.timestamp',
     'derivative': false
+  },
+  'logstash_node_cgroup_periods': {
+    'field': 'logstash_stats.os.cgroup.cpu.stat.number_of_elapsed_periods',
+    'title': 'Cgroup CFS Stats',
+    'label': 'Cgroup Elapsed Periods',
+    'description': (
+      'The number of sampling periods from the Completely Fair Scheduler (CFS). Compare against the number of times throttled.'
+    ),
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'units': '',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': true
+  },
+  'logstash_node_cgroup_periods': {
+    'field': 'logstash_stats.os.cgroup.cpu.stat.number_of_elapsed_periods',
+    'title': 'Cgroup CFS Stats',
+    'label': 'Cgroup Elapsed Periods',
+    'description': (
+      'The number of sampling periods from the Completely Fair Scheduler (CFS). Compare against the number of times throttled.'
+    ),
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'units': '',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': true
+  },
+  'logstash_node_cgroup_throttled': {
+    'field': 'logstash_stats.os.cgroup.cpu.stat.time_throttled_nanos',
+    'title': 'Cgroup CPU Performance',
+    'label': 'Cgroup Throttling',
+    'description': 'The amount of throttled time, reported in nanoseconds, of the Cgroup.',
+    'format': '0,0.[0]a',
+    'metricAgg': 'max',
+    'units': 'ns',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': true
+  },
+  'logstash_node_cgroup_throttled_count': {
+    'field': 'logstash_stats.os.cgroup.cpu.stat.number_of_times_throttled',
+    'title': 'Cgroup CFS Stats',
+    'label': 'Cgroup Throttled Count',
+    'description': 'The number of times that the CPU was throttled by the Cgroup.',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'units': '',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': true
+  },
+  'logstash_node_cgroup_usage': {
+    'field': 'logstash_stats.os.cgroup.cpuacct.usage_nanos',
+    'title': 'Cgroup CPU Performance',
+    'label': 'Cgroup Usage',
+    'description': 'The usage, reported in nanoseconds, of the Cgroup. Compare this with the throttling to discover issues.',
+    'format': '0,0.[0]a',
+    'metricAgg': 'max',
+    'units': 'ns',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': true
+  },
+  'logstash_node_cgroup_quota': {
+    'fieldSource': 'logstash_stats.os.cgroup',
+    'usageField': 'cpuacct.usage_nanos',
+    'periodsField': 'cpu.stat.number_of_elapsed_periods',
+    'quotaField': 'cpu.cfs_quota_micros',
+    'field': 'logstash_stats.process.cpu.percent',
+    'label': 'Cgroup CPU Utilization',
+    'title': 'CPU Utilization',
+    'description': (
+      'CPU Usage time compared to the CPU quota shown in percentage. If CPU ' +
+      'quotas are not set, then the OS level CPU usage in percentage is shown.'
+    ),
+    'app': 'logstash',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'derivative': false,
+    'timestampField': 'logstash_stats.timestamp',
+    'units': '%',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'calculation': quotaMetricCalculation,
+    'aggs': {
+      'periods': {
+        'max': {
+          'field': 'logstash_stats.os.cgroup.cpu.stat.number_of_elapsed_periods'
+        }
+      },
+      'periods_deriv': {
+        'derivative': {
+          'buckets_path': 'periods',
+          'gap_policy': 'skip'
+        }
+      },
+      'quota': {
+        'min': {
+          'field': 'logstash_stats.os.cgroup.cpu.cfs_quota_micros'
+        }
+      },
+      'usage': {
+        'max': {
+          'field': 'logstash_stats.os.cgroup.cpuacct.usage_nanos'
+        }
+      },
+      'usage_deriv': {
+        'derivative': {
+          'buckets_path': 'usage',
+          'gap_policy': 'skip'
+        }
+      }
+    }
+  },
+  'logstash_node_cgroup_quota_as_cpu_utilization': {
+    'fieldSource': 'logstash_stats.os.cgroup',
+    'usageField': 'cpuacct.usage_nanos',
+    'periodsField': 'cpu.stat.number_of_elapsed_periods',
+    'quotaField': 'cpu.cfs_quota_micros',
+    'field': 'logstash_stats.process.cpu.percent',
+    'label': 'CPU Utilization',
+    'description': (
+      'CPU Usage time compared to the CPU quota shown in percentage. If CPU ' +
+      'quotas are not set, then the OS level CPU usage in percentage is shown.'
+    ),
+    'app': 'logstash',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'derivative': false,
+    'timestampField': 'logstash_stats.timestamp',
+    'units': '%',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'calculation': quotaMetricCalculation,
+    'aggs': {
+      'periods': {
+        'max': {
+          'field': 'logstash_stats.os.cgroup.cpu.stat.number_of_elapsed_periods'
+        }
+      },
+      'periods_deriv': {
+        'derivative': {
+          'buckets_path': 'periods',
+          'gap_policy': 'skip'
+        }
+      },
+      'quota': {
+        'min': {
+          'field': 'logstash_stats.os.cgroup.cpu.cfs_quota_micros'
+        }
+      },
+      'usage': {
+        'max': {
+          'field': 'logstash_stats.os.cgroup.cpuacct.usage_nanos'
+        }
+      },
+      'usage_deriv': {
+        'derivative': {
+          'buckets_path': 'usage',
+          'gap_policy': 'skip'
+        }
+      }
+    }
   }
 };
 

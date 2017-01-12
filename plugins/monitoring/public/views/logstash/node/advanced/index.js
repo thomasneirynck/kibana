@@ -1,5 +1,5 @@
 /*
- * Logstash Node
+ * Logstash Node Advanced View
  */
 import _ from 'lodash';
 import uiRoutes from'ui/routes';
@@ -8,7 +8,7 @@ import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
 import template from './index.html';
 
-function getPageData(timefilter, globalState, $http, $route, Private, showCgroupMetricsLogstash) {
+function getPageData(timefilter, globalState, $http, $route, Private) {
   const timeBounds = timefilter.getBounds();
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/logstash/node/${$route.current.params.uuid}`;
   return $http.post(url, {
@@ -18,29 +18,26 @@ function getPageData(timefilter, globalState, $http, $route, Private, showCgroup
     },
     metrics: [
       {
-        name: 'logstash_os_load',
+        name: 'logstash_node_cpu_utilization',
         keys: [
-          'logstash_os_load_1m',
-          'logstash_os_load_5m',
-          'logstash_os_load_15m'
+          'logstash_node_cpu_utilization',
+          'logstash_node_cgroup_quota'
         ]
       },
-      'logstash_events_input_rate',
-      'logstash_events_output_rate',
-      'logstash_events_latency',
       {
-        name: 'logstash_node_cpu_metric',
-        keys: showCgroupMetricsLogstash ?
-          [ 'logstash_node_cgroup_quota_as_cpu_utilization' ] :
-          [ 'logstash_node_cpu_utilization' ]
+        name: 'logstash_node_cgroup_cpu',
+        keys: [
+          'logstash_node_cgroup_usage',
+          'logstash_node_cgroup_throttled'
+        ]
       },
       {
-        name: 'logstash_jvm_usage',
+        name: 'logstash_node_cgroup_stats',
         keys: [
-          'logstash_node_jvm_mem_max_in_bytes',
-          'logstash_node_jvm_mem_used_in_bytes'
+          'logstash_node_cgroup_periods',
+          'logstash_node_cgroup_throttled_count'
         ]
-      }
+      },
     ]
   })
   .then(response => response.data)
@@ -50,7 +47,7 @@ function getPageData(timefilter, globalState, $http, $route, Private, showCgroup
   });
 }
 
-uiRoutes.when('/logstash/node/:uuid', {
+uiRoutes.when('/logstash/node/:uuid/advanced', {
   template,
   resolve: {
     clusters(Private) {
@@ -62,8 +59,7 @@ uiRoutes.when('/logstash/node/:uuid', {
 });
 
 const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-uiModule.controller('logstashNode', ($route, globalState, title, Private, $executor, $http, timefilter, $scope,
-showCgroupMetricsLogstash) => {
+uiModule.controller('logstashNodeAdvanced', ($route, globalState, title, Private, $executor, $http, timefilter, $scope) => {
   timefilter.enabled = true;
 
   function setClusters(clusters) {
@@ -72,10 +68,10 @@ showCgroupMetricsLogstash) => {
   }
   setClusters($route.current.locals.clusters);
   $scope.pageData = $route.current.locals.pageData;
-  title($scope.cluster, `Logstash - ${$scope.pageData.nodeSummary.name}`);
+  title($scope.cluster, `Logstash - ${$scope.pageData.nodeSummary.name} - Advanced`);
 
   $executor.register({
-    execute: () => getPageData(timefilter, globalState, $http, $route, Private, showCgroupMetricsLogstash),
+    execute: () => getPageData(timefilter, globalState, $http, $route, Private),
     handleResponse: (response) => $scope.pageData = response
   });
   $executor.start();
