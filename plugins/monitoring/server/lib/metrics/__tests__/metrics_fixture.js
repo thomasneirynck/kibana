@@ -1025,7 +1025,7 @@ export const expected = {
   'node_segment_count': {
     'field': 'node_stats.indices.segments.count',
     'label': 'Segment Count',
-    'description': 'Average segment count for primary and replica shards on this node.',
+    'description': 'Maximum segment count for primary and replica shards on this node.',
     'type': 'node',
     'format': '0,0.[00]',
     'metricAgg': 'max',

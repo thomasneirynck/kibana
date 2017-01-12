@@ -451,7 +451,7 @@ const metricInstances = {
   'node_segment_count': new ElasticsearchMetric({
     field: 'node_stats.indices.segments.count',
     label: 'Segment Count',
-    description: 'Average segment count for primary and replica shards on this node.',
+    description: 'Maximum segment count for primary and replica shards on this node.',
     type: 'node',
     format: LARGE_FLOAT,
     metricAgg: 'max',
