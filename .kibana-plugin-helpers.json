@@ -1,0 +1,22 @@
+{
+  "kibanaRoot": "../../../kibana",
+  "serverTestPatterns": [
+    "server/**/__tests__/**/*.js",
+    "plugins/**/__tests__/**/*.js",
+    "!plugins/**/server/**/__tests__/**/*"
+  ],
+  "buildSourcePatterns": [
+    "../LICENSE.txt",
+    "NOTICE.txt",
+    "package.json",
+    "index.js",
+    ".node-version",
+    ".phantom/*",
+    "plugins/**/*",
+    "server/**/*",
+    "!__tests__",
+    "!__tests__/**/*",
+    "!**/__tests__",
+    "!**/__tests__/**/*"
+  ]
+}

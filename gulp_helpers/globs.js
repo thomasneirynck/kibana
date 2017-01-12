@@ -5,13 +5,17 @@ function getPluginPaths(plugins, extensions, opts = {}) {
   if (extensions.length === 0) extensions.push('js');
 
   return plugins.reduce((paths, plugin) => {
-    const pluginPath = `${plugin.trim()}/**`;
+    const serverPath = `${plugin.trim()}/server`;
     const publicPath = `${plugin.trim()}/public`;
-    const rootPath = `./plugins/${pluginPath}${testPath}`;
-    const excludePublicPaths = (!opts.browser) ? [`!./plugins/${publicPath}/**`] : [];
-    const extensionPaths = extensions.map(extension => `${rootPath}/*.${extension}`);
 
-    return paths.concat(extensionPaths).concat(excludePublicPaths);
+    const serverPaths = extensions.map(extension => `plugins/${serverPath}/**${testPath}/*.${extension}`);
+
+    if (!opts.browser) {
+      return paths.concat(serverPaths);
+    }
+
+    const publicPaths = extensions.map(extension => `plugins/${publicPath}/**${testPath}/*.${extension}`);
+    return paths.concat(serverPaths).concat(publicPaths);
   }, []);
 }
 

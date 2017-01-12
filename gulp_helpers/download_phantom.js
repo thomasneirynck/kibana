@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const Bluebird = require('bluebird');
+const { fromCallback } = require('bluebird');
 const mkdirp = require('mkdirp');
 const del = require('del');
 const request = require('request');
@@ -8,6 +8,8 @@ const hasha = require('hasha');
 const _ = require('lodash');
 
 const logger = require('./logger');
+
+const CACHE_PATH = path.resolve(__dirname, '..', '.phantom');
 
 function fetchBinaries(dest) {
   const phantomDest = path.resolve(dest);
@@ -36,28 +38,26 @@ function fetchBinaries(dest) {
   }];
 
   // verify the download checksum
-  function verifyChecksum(file, binary) {
+  function verifyChecksum(file, binaryChecksum) {
     return hasha.fromFile(file, { algorithm: 'md5' })
     .then(function (checksum) {
-      if (binary.checksum !== checksum) {
+      if (binaryChecksum !== checksum) {
         logger('Download checksum', checksum);
-        logger('Expected checksum', binary.checksum);
-        throw new Error(binary.description + ' checksum failed');
+        logger('Expected checksum', binaryChecksum);
+        throw new Error('checksum failed');
       }
     });
   }
 
-  return Bluebird.fromCallback(function (cb) {
+  return fromCallback(function (cb) {
     logger('Phantom target:', phantomDest);
     mkdirp(phantomDest, cb);
   })
   .then(function () {
     // clean up non-matching phantom binaries
-    const allowedFiles = phantomBinaries.map(function (binary) {
-      return binary.filename;
-    });
+    const allowedFiles = phantomBinaries.map(binary => binary.filename);
 
-    return Bluebird.fromCallback(function (cb) {
+    return fromCallback(function (cb) {
       fs.readdir(phantomDest, cb);
     })
     .then(function (files) {
@@ -72,32 +72,68 @@ function fetchBinaries(dest) {
     });
   })
   .then(function () {
-    const requiredDownloads = Bluebird.map(phantomBinaries, function (binary) {
+    // use checksum verification to create list of required downloads
+    const requiredBinaries = phantomBinaries.map(binary => {
       const filepath = path.join(phantomDest, binary.filename);
+
       logger('Verifying binary', filepath);
-      return verifyChecksum(filepath, binary).then(() => false, () => binary);
-    }).then(function (downloads) {
-      return downloads.filter(Boolean);
+      return verifyChecksum(filepath, binary.checksum)
+      .then(() => false)
+      .catch(() => {
+        // file isn't in the destination, check the cache path
+        const cachedFilepath = path.join(CACHE_PATH, binary.filename);
+        return verifyChecksum(cachedFilepath, binary.checksum)
+        .then(() => {
+          // cached file matches, copy to destination
+          logger('Copying from cache', cachedFilepath);
+
+          return new Promise((resolve, reject) => {
+            // on failure, fall back to the download
+            function handleFailed() {
+              logger('Copying FAILED', cachedFilepath);
+              reject();
+            }
+
+            const ws = fs.createWriteStream(filepath);
+            fs.createReadStream(cachedFilepath).pipe(ws).on('error', handleFailed);
+            ws.on('error', handleFailed).on('close', resolve);
+          });
+        })
+        .catch(() => binary);
+      });
     });
 
-    return Bluebird.mapSeries(requiredDownloads, function (binary) {
-      const filepath = path.join(phantomDest, binary.filename);
+    return Promise.all(requiredBinaries)
+    .then(downloads => downloads.filter(Boolean))
+    .then(requiredDownloads => {
+      // perform any required downloads
+      function downloadBinary(binary) {
+        const { url, filename, checksum, description } = binary;
+        const filepath = path.join(phantomDest, filename);
 
-      // add delays after the first download
-      logger('Downloading', binary.url);
-      return new Bluebird(function (resolve, reject) {
-        const ws = fs.createWriteStream(filepath)
-        .on('finish', function () {
-          logger('Verifying binary', filepath);
-          verifyChecksum(filepath, binary)
-          .then(resolve, reject);
+        logger('Downloading', url);
+
+        return new Promise(function (resolve, reject) {
+          const ws = fs.createWriteStream(filepath);
+
+          // when stream completes, checksum the result
+          ws.on('finish', function () {
+            logger('Verifying binary', filepath);
+
+            verifyChecksum(filepath, checksum)
+            .then(resolve, () => {
+              reject(new Error(`checksum failed: ${description}`));
+            });
+          });
+
+          // download binary, stream to destination
+          request(url).on('error', reject).pipe(ws);
         });
+      };
 
-        // download binary, stream to destination
-        request(binary.url)
-        .on('error', reject)
-        .pipe(ws);
-      });
+      return requiredDownloads.reduce((chain, binary) => {
+        return chain.then(downloadBinary(binary));
+      }, Promise.resolve());
     });
   });
 }
