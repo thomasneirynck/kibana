@@ -35,8 +35,8 @@ export default function InfluencersListVisType(Private) {
     name: 'mlInfluencersList',
     title: 'Influencers list',
     icon: 'fa-list',
-    description: 'Ml visualization designed to display a list of the top influencers ' +
-      'by maximum and total anomaly score across Ml jobs.',
+    description: 'Machine Learning visualization designed to display a list of the ' +
+      'top influencers by maximum and total anomaly score across Machine Learning jobs.',
     template: require('plugins/ml/influencerslist/influencerslist.html'),
     params: {
       editor: require('plugins/ml/influencerslist/influencerslist_editor.html'),

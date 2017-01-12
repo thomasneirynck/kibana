@@ -36,10 +36,10 @@ export default function InfluencerHeatmapVisType(Private) {
     name: 'mlInfluencerHeatmap',
     title: 'Influencer heatmap',
     icon: 'fa-sitemap',
-    description: 'Ml influencer heatmap visualization displaying the relative sizes ' +
-      'of two metrics over two levels of aggregation buckets. Results can be ' +
+    description: 'Machine Learning influencer heatmap visualization displaying the relative ' +
+      'sizes of two metrics over two levels of aggregation buckets. Results can be ' +
       'displayed in a treemap or a circle packing bubble chart. The visualization ' +
-      'is used in Ml dashboards to display the relative importance of the ' +
+      'is used in Machine Learning dashboards to display the relative importance of the ' +
       'different influencer types that have been configured for a job.',
     template: require('plugins/ml/influencerheatmap/influencerheatmap.html'),
     params: {

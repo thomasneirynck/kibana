@@ -37,10 +37,10 @@ export default function SwimlaneVisType(Private, $templateCache) {
 
   return new TemplateVisType({
     name: 'mlSwimlane',
-    title: 'Ml Swimlane',
+    title: 'Machine Learning swimlane',
     icon: 'fa-bars',
-    description: 'Ml visualization displaying the behavior of a metric ' +
-      'over time across Ml jobs, or fields from influencer or record type results, in a swimlane chart.',
+    description: 'Machine Learning visualization displaying the behavior of a metric over time ' +
+      'across Machine Learning jobs, or fields from influencer or record type results, in a swimlane chart.',
     template: $templateCache.get('plugins/ml/swimlane/swimlane.html'),
     params: {
       editor: $templateCache.get('plugins/ml/swimlane/swimlane_editor.html'),

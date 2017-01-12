@@ -33,7 +33,7 @@ export default function ConnectionsMapVisType(Private) {
     name : 'mlConnectionsMap',
     title : 'Connections map',
     icon : 'fa-link',
-    description : 'Ml visualization for displaying connections between ' +
+    description : 'Machine Learning visualization for displaying connections between ' +
       'the detectors and influencers of anomalies. Influencers and detectors are connected ' +
       'if they occur together in an anomaly record.',
     requiresSearch : false, // Uses searches created in the visualization controller.

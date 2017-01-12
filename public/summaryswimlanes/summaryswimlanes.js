@@ -42,9 +42,9 @@ export default function SummarySwimlanesVisType(Private, $templateCache) {
   // Return a new instance describing this visualization.
   return new TemplateVisType({
     name: 'mlSummarySwimlanes',
-    title: 'Job Swimlanes',
+    title: 'Job swimlanes',
     icon: 'fa-bars',
-    description: 'Ml visualization consisting of two swimlanes, designed to show the ' +
+    description: 'Machine Learning visualization consisting of two swimlanes, designed to show the ' +
       'maximum anomaly score by job, and the maximum anomaly score by influencer type, over time.',
     template: $templateCache.get('plugins/ml/summaryswimlanes/summaryswimlanes.html'),
     params: {

@@ -31,9 +31,9 @@ export default function AnomalySummaryTableVisType(Private) {
   // Return a new instance describing this visualization.
   return new TemplateVisType({
     name: 'mlAnomalySummaryTable',
-    title: 'Anomaly Summary',
+    title: 'Anomaly summary',
     icon: 'fa-table',
-    description: 'Ml anomaly summary visualization displaying ' +
+    description: 'Machine Learning anomaly summary visualization displaying ' +
       'a summary of anomaly records.',
     template: require('plugins/ml/anomalysummarytable/anomalysummarytable.html'),
     params: {

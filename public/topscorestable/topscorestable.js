@@ -33,8 +33,8 @@ export default function TopScoresTableVisType(Private) {
     name: 'mlTopScoresTable',
     title: 'Top scores',
     icon: 'fa-sort-amount-desc',
-    description: 'Ml visualization designed to display a list of the top anomaly ' +
-      'scores by an attribute value, such as influencer, job ID or time, across Ml jobs.',
+    description: 'Machine Learning visualization designed to display a list of the top anomaly ' +
+      'scores by an attribute value, such as influencer, job ID or time, across Machine Learning jobs.',
     template: require('plugins/ml/topscorestable/topscorestable.html'),
     params: {
       editor: require('plugins/ml/topscorestable/topscorestable_editor.html')
