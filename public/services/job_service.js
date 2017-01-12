@@ -414,31 +414,69 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       .then(func).catch(func);
   };
 
-  this.deleteJob = function (job) {
+  this.deleteJob = function (job, statusIn) {
     const deferred = $q.defer();
+    const status = statusIn || {stopScheduler: 0, deleteScheduler: 0, closeJob: 0, deleteJob: 0};
     console.log('deleting job: ' + job.job_id);
 
-    function func() {
-      ml.deleteJob({jobId: job.job_id})
-        .then((resp) => {
-          console.log('delete job', resp);
-          deferred.resolve({success: true});
-        }).catch((err) => {
-            // msgs.error('Could not delete job: '+ job.job_id);
-          msgs.error(err.message);
-          console.log('delete job', err);
-          deferred.reject({success: false});
+    // chain of endpoint calls to delete a job.
+
+    // if job is scheduled, stop and delete scheduler first
+    if (job.scheduler_config) {
+      // stop scheduler
+      ml.stopScheduler({schedulerId: 'scheduler-' + job.job_id})
+      .then(() => {
+        status.stopScheduler = 1;
+      })
+      .catch(() => {
+        status.stopScheduler = -1;
+      })
+      .finally(() => {
+        // delete scheduler
+        ml.deleteScheduler({schedulerId: 'scheduler-' + job.job_id})
+        .then(() => {
+          status.deleteScheduler = 1;
+        })
+        .catch(() => {
+          status.deleteScheduler = -1;
+        })
+        .finally(() => {
+          closeAndDelete();
         });
+      });
+    } else {
+      closeAndDelete();
     }
 
-    ml.stopScheduler({schedulerId: 'scheduler-' + job.job_id})
-    .finally((resp) => {
-      ml.deleteScheduler({schedulerId: 'scheduler-' + job.job_id})
-      .finally((resp) => {
-        ml.closeJob({jobId: job.job_id})
-        .finally(func);
+    // close and delete the job
+    function closeAndDelete() {
+      // close job
+      ml.closeJob({jobId: job.job_id})
+      .then(() => {
+        status.closeJob = 1;
+      })
+      .catch(() => {
+        status.closeJob = -1;
+      })
+      .finally(() => {
+        // delete job
+        ml.deleteJob({jobId: job.job_id})
+        .then((resp) => {
+          console.log('Delete job: delete job', resp);
+          status.deleteJob = 1;
+          deferred.resolve({success: true});
+        })
+        .catch(() => {
+          status.deleteJob = -1;
+        })
+        .catch((err) => {
+            // msgs.error('Could not delete job: '+ job.job_id);
+          msgs.error(err.message);
+          console.log('Delete job: delete job', err);
+          deferred.reject({success: false});
+        });
       });
-    });
+    }
     return deferred.promise;
   };
 

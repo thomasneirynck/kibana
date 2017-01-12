@@ -20,17 +20,9 @@ import chrome from 'ui/chrome';
 import uiRoutes from 'ui/routes';
 import angular from 'angular';
 
-// include the bootstrap patch for better popovers
-import 'plugins/ml/lib/angular_bootstrap_patch';
-
 import jobsListControlsHtml from './jobs_list_controls.html';
 import jobsListArrow from 'ui/doc_table/components/table_row/open.html';
 import stringUtils from 'plugins/ml/util/string_utils';
-import 'ui/directives/confirm_click';
-import 'plugins/ml/components/paginated_table';
-import 'plugins/ml/jobs/components/jobs_list/edit_job_modal';
-import 'plugins/ml/jobs/components/jobs_list/job_timepicker_modal';
-import './expanded_row';
 
 uiRoutes
 .when('/jobs/?', {
@@ -77,14 +69,39 @@ function (
   // functions for job list buttons
   // called from jobs_list_controls.html
   $scope.deleteJob = function (job) {
-    mlJobService.deleteJob(job)
-      .then(function (resp) {
-        if (resp.success) {
-          msgs.clear();
-          msgs.info('Job \'' + job.job_id + '\' deleted');
-          mlJobService.loadJobs();
+    const status = {deleteLock: false, stopScheduler: 0, deleteScheduler: 0, closeJob: 0, deleteJob: 0};
+
+    $modal.open({
+      template: require('plugins/ml/jobs/components/jobs_list/delete_job_modal/delete_job_modal.html'),
+      controller: 'MlDeleteJobModal',
+      backdrop: 'static',
+      keyboard: false,
+      size: 'sm',
+      resolve: {
+        params: function () {
+          return {
+            doDelete:     doDelete,
+            status:       status,
+            jobId:        job.job_id,
+            isScheduled:  job.scheduler_config ? true : false
+          };
         }
-      });
+      }
+    });
+
+    function doDelete() {
+      status.deleteLock = true;
+      mlJobService.deleteJob(job, status)
+        .then(function (resp) {
+          if (resp.success) {
+            status.deleteLock = false;
+            msgs.clear();
+            msgs.info('Job \'' + job.job_id + '\' deleted');
+            status.deleteLock = false;
+            mlJobService.loadJobs();
+          }
+        });
+    }
   };
 
   $scope.editJob = function (job) {

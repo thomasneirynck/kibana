@@ -14,10 +14,4 @@
  */
 
 import './styles/main.less';
-import './jobs_list_controller';
-import './edit_job_modal';
-import './job_timepicker_modal';
-import './delete_job_modal';
-import './expanded_row';
-import 'ui/directives/confirm_click';
-import 'plugins/ml/components/paginated_table';
+import './delete_job_modal_controller';

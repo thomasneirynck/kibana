@@ -62,8 +62,7 @@
 
   <!-- delete job -->
   <button
-    confirm-click="deleteJob({{job}})"
-    confirmation="Are you sure want to delete job '{{job.job_id}}'?"
+    ng-click="deleteJob(job)"
     class="btn btn-xs btn-danger"
     data-toggle="tooltip"
     tooltip="Delete job">
