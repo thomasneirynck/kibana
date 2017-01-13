@@ -90,20 +90,33 @@ module.controller('MlJobTimepickerModal', function ($scope, $modalInstance, para
     $scope.saveLock = true;
 
     extractForm();
+    // Attempt to open the job first.
+    // If it's already open, ignore the 409 error
+    mlJobService.openJob($scope.jobId)
+    .then(() => {
+      doStart();
+    })
+    .catch((resp) => {
+      if (resp.status === 409 || resp.status === 400) { // REMOVE THE 400 CHECK WHEN #716 IS  FIXED!!!
+        doStart();
+      } else {
+        msgs.error('Could not open job: ', resp);
+        msgs.error(resp.message);
+        $scope.saveLock = false;
+      }
+    });
 
-    mlJobService.startScheduler($scope.schedulerId, $scope.jobId, $scope.start, $scope.end)
-      .then((resp) => {
-        mlJobService.refreshJob($scope.jobId)
-          .then((job) => {
-            // no need to do anything. the job service broadcasts a jobs list update event
-          })
-          .catch((job) => {});
+    function doStart() {
+      mlJobService.startScheduler($scope.schedulerId, $scope.jobId, $scope.start, $scope.end)
+      .then(() => {
+        mlJobService.refreshJob($scope.jobId);
         $modalInstance.close();
       })
       .catch((resp) => {
         $scope.saveLock = false;
         msgs.error(resp.message);
       });
+    }
   };
 
   $scope.cancel = function () {
