@@ -423,60 +423,69 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
     // if job is scheduled, stop and delete scheduler first
     if (job.scheduler_config) {
+      const schedulerId = 'scheduler-' + job.job_id;
       // stop scheduler
-      ml.stopScheduler({schedulerId: 'scheduler-' + job.job_id})
+      ml.stopScheduler({schedulerId: schedulerId})
       .then(() => {
         status.stopScheduler = 1;
       })
-      .catch(() => {
-        status.stopScheduler = -1;
+      .catch((resp) => {
+        console.log('Delete job: stop scheduler', resp);
+        status.stopScheduler = checkError(resp);
       })
       .finally(() => {
         // delete scheduler
-        ml.deleteScheduler({schedulerId: 'scheduler-' + job.job_id})
+        ml.deleteScheduler({schedulerId: schedulerId})
         .then(() => {
           status.deleteScheduler = 1;
         })
-        .catch(() => {
-          status.deleteScheduler = -1;
+        .catch((resp) => {
+          console.log('Delete job: delete scheduler', resp);
+          status.deleteScheduler = checkError(resp);
         })
         .finally(() => {
-          closeAndDelete();
+          closeAndDeleteJob();
         });
       });
     } else {
-      closeAndDelete();
+      closeAndDeleteJob();
     }
 
     // close and delete the job
-    function closeAndDelete() {
+    function closeAndDeleteJob() {
       // close job
       ml.closeJob({jobId: job.job_id})
       .then(() => {
         status.closeJob = 1;
       })
-      .catch(() => {
-        status.closeJob = -1;
+      .catch((resp) => {
+        console.log('Delete job: close job', resp);
+        status.closeJob = checkError(resp);
       })
       .finally(() => {
         // delete job
         ml.deleteJob({jobId: job.job_id})
-        .then((resp) => {
-          console.log('Delete job: delete job', resp);
+        .then(() => {
           status.deleteJob = 1;
           deferred.resolve({success: true});
         })
-        .catch(() => {
-          status.deleteJob = -1;
-        })
-        .catch((err) => {
-            // msgs.error('Could not delete job: '+ job.job_id);
-          msgs.error(err.message);
-          console.log('Delete job: delete job', err);
+        .catch((resp) => {
+          console.log('Delete job: delete job', resp);
+          status.deleteJob = checkError(resp);
+
+          msgs.error(resp.message);
           deferred.reject({success: false});
         });
       });
     }
+
+    function checkError(resp) {
+      // when stopping a sheduler or closing a job, they may already
+      // be stopped or closed. This returns an error code of 409.
+      // if this is the case, return a success.
+      return (resp.status === 409) ? 1 : -1;
+    }
+
     return deferred.promise;
   };
 
