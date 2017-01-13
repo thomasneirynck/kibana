@@ -13,10 +13,6 @@
  * strictly prohibited.
  */
 
-import _ from 'lodash';
-import $ from 'jquery';
-import angular from 'angular';
-import chrome from 'ui/chrome';
 import 'ui/courier';
 import 'ui/config';
 import 'ui/notify';
@@ -60,7 +56,7 @@ uiRoutes
   template: require('./results_dashboard.html'),
   resolve: {
     dash: function (savedDashboards, Notifier, $route, $location, courier) {
-      return savedDashboards.get('Explorer')
+      return savedDashboards.get('ml-explorer')
       .catch(courier.redirectWhenMissing({
         'dashboard' : '/dashboard'
       }));
@@ -71,7 +67,7 @@ uiRoutes
   template: require('./results_dashboard.html'),
   resolve: {
     dash: function (savedDashboards, Notifier, $route, $location, courier) {
-      return savedDashboards.get('Connections')
+      return savedDashboards.get('ml-connections')
       .catch(courier.redirectWhenMissing({
         'dashboard' : '/dashboard'
       }));

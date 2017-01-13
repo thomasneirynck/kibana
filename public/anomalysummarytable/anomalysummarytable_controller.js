@@ -113,12 +113,12 @@ module.controller('MlAnomalySummaryTableController', function (
   }());
 
 
-  // Obtain the 'Ml Anomaly Records' saved search to run this visualization off.
+  // Obtain the 'ml-anomaly-records' saved search to run this visualization off.
   // TODO find a way of using the search source used by the visualization
   //      and setting the searchSource size so we can the actual documents hits and
   //      not just the hit count and aggregations object. Without manually setting the
   //      searchSource size here, the standard response mechanism does not return the hits.
-  savedSearches.get('Anomaly-records').then(prereq(function (savedSearch) {
+  savedSearches.get('ml-anomaly-records').then(prereq(function (savedSearch) {
     const searchSource = savedSearch.searchSource;
     $scope.indexPattern = searchSource.get('index');
 
@@ -165,7 +165,7 @@ module.controller('MlAnomalySummaryTableController', function (
     $scope.searchSource.onError(notify.error).catch(notify.fatal);
 
   }, function (err) {
-    console.log('Anomaly Summary table - error loading Anomaly-records saved search',err);
+    console.log('Anomaly Summary table - error loading ml-anomaly-records saved search',err);
   }));
 
   $scope.setThreshold = function (threshold) {

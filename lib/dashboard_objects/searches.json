@@ -1,6 +1,6 @@
 [
   {
-    "_id": "Anomaly-records",
+    "_id": "ml-anomaly-records",
     "_type": "search",
     "_source": {
       "title": "Anomaly records",

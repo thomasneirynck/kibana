@@ -1,6 +1,6 @@
 [
   {
-    "_id": "Average-event-rate-per-minute",
+    "_id": "ml-average-event-rate-per-minute",
     "_type": "visualization",
     "_source": {
       "title": "Average event rate per minute",
@@ -14,7 +14,7 @@
     }
   },
   {
-    "_id": "Anomaly-summary",
+    "_id": "ml-anomaly-summary",
     "_type": "visualization",
     "_source": {
       "title": "Anomaly summary",
@@ -28,7 +28,7 @@
     }
   },
   {
-    "_id": "Top-influencers",
+    "_id": "ml-top-influencers",
     "_type": "visualization",
     "_source": {
       "title": "Top influencers",
@@ -42,7 +42,7 @@
     }
   },
   {
-    "_id": "Anomaly-timeline",
+    "_id": "ml-anomaly-timeline",
     "_type": "visualization",
     "_source": {
       "title": "Anomaly timeline",
@@ -56,7 +56,7 @@
     }
   },
   {
-    "_id": "Influencers",
+    "_id": "ml-influencers",
     "_type": "visualization",
     "_source": {
       "title": "Influencers",
@@ -70,14 +70,14 @@
     }
   },
   {
-    "_id": "Anomalies",
+    "_id": "ml-anomalies",
     "_type": "visualization",
     "_source": {
       "title": "Anomalies",
       "visState": "{\"type\":\"mlAnomalySummaryTable\",\"params\":{},\"aggs\":[],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
-      "savedSearchId": "Anomaly-records",
+      "savedSearchId": "ml-anomaly-records",
       "version": 1,
       "kibanaSavedObjectMeta": {
         "searchSourceJSON": "{\"filter\":[]}"
@@ -85,7 +85,7 @@
     }
   },
   {
-    "_id": "Useful-links",
+    "_id": "ml-useful-links",
     "_type": "visualization",
     "_source": {
       "title": "Useful links",
@@ -99,7 +99,7 @@
     }
   },
   {
-    "_id": "Influencer-connections",
+    "_id": "ml-influencer-connections",
     "_type": "visualization",
     "_source": {
       "title": "Influencer connections",
@@ -113,7 +113,7 @@
     }
   },
   {
-    "_id": "Audited-running-jobs-and-detectors",
+    "_id": "ml-audited-running-jobs-and-detectors",
     "_type": "visualization",
     "_source": {
       "title": "Audited running jobs and detectors",
