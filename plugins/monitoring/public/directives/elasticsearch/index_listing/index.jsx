@@ -2,7 +2,7 @@ import numeral from 'numeral';
 import { capitalize } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Table from 'plugins/monitoring/directives/paginated_table/components/table';
+import Table from 'plugins/monitoring/components/paginated_table';
 import { statusIconClass } from 'plugins/monitoring/lib/map_status_classes';
 import uiModules from 'ui/modules';
 

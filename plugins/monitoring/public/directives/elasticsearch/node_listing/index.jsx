@@ -6,7 +6,7 @@ import OfflineCell from './offline_cell_component';
 import { statusIconClass } from 'plugins/monitoring/lib/map_status_classes';
 import Tooltip from 'plugins/monitoring/lib/tooltip_component';
 import extractIp from 'plugins/monitoring/lib/extract_ip';
-import Table from 'plugins/monitoring/directives/paginated_table/components/table';
+import Table from 'plugins/monitoring/components/paginated_table';
 import uiModules from 'ui/modules';
 
 function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch) {

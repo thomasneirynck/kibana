@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
-import TableHead from './tableHead';
-import TableBody from './tableBody';
+import TableHead from './table_head';
+import TableBody from './table_body';
 import Pagination from './pagination';
 
 const make = React.DOM;
@@ -12,7 +12,8 @@ const Table = React.createClass({
   getInitialState: function () {
     let sortColObj = null;
     if (this.props.options.columns) {
-      const columnWithSort = _.find(this.props.options.columns, (col) => col.sort === 1);
+      // caller sets `sort` field to 1 (asc) or -1 (desc)
+      const columnWithSort = _.find(this.props.options.columns, (col) => Math.abs(col.sort) === 1);
       sortColObj = columnWithSort || _.first(this.props.options.columns);
     }
     return {

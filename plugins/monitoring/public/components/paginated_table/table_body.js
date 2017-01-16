@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import React from 'react';
-import Loading from './loading.jsx';
-import NoData from './no_data.jsx';
+import Loading from './loading';
+import NoData from './no_data';
 
 const make = React.DOM;
 
@@ -20,6 +20,7 @@ export default React.createClass({
     const sortedData = this.props.tableData.sort(function (a, b) {
       const aVal = _.get(a, sortColumn.sortKey || sortColumn.key);
       const bVal = _.get(b, sortColumn.sortKey || sortColumn.key);
+      // caller sets `sort` field to 1 (asc) or -1 (desc)
       const sortDir = sortColumn.sort > 0 ? (aVal < bVal) : (aVal > bVal);
       return sortDir ? -1 : 1;
     });

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import numeral from 'numeral';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Table from 'plugins/monitoring/directives/paginated_table/components/table';
+import Table from 'plugins/monitoring/components/paginated_table';
 import uiModules from 'ui/modules';
 import formatNumber from '../../../lib/format_number';
 

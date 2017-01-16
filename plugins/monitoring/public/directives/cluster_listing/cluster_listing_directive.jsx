@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Table from 'plugins/monitoring/directives/paginated_table/components/table';
+import Table from 'plugins/monitoring/components/paginated_table';
 import ClusterRow from './components/cluster_row.jsx';
 import Notifier from 'ui/notify/notifier';
 import uiModules from 'ui/modules';

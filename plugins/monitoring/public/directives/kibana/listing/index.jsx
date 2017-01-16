@@ -3,7 +3,7 @@ import numeral from 'numeral';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { statusIconClass } from 'plugins/monitoring/lib/map_status_classes';
-import Table from 'plugins/monitoring/directives/paginated_table/components/table';
+import Table from 'plugins/monitoring/components/paginated_table';
 import uiModules from 'ui/modules';
 
 function getStatusAndClasses(value, availability) {
