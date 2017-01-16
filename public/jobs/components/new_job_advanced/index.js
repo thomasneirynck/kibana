@@ -15,4 +15,7 @@
 
 import './styles/main.less';
 import './new_job_controller';
+import './detectors_list_directive';
+import './transforms_list';
+import './save_status_modal';
 import 'plugins/ml/jobs/components/data_description';

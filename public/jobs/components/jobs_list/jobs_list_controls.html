@@ -41,6 +41,15 @@
       <i aria-hidden="true" class="fa fa-table"></i>
   </button>
 
+  <!-- time series explorer -->
+  <button
+    ng-click="viewResults(job, 'timeseriesexplorer')"
+    class="btn btn-xs btn-default"
+    data-toggle="tooltip"
+    tooltip="Open time series explorer for {{job.job_id}}">
+      <i aria-hidden="true" class="fa fa-line-chart"></i>
+  </button>
+
   <!-- edit job -->
   <button
     disabled

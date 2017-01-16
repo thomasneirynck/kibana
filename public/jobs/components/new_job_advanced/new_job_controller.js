@@ -16,12 +16,9 @@
 import _ from 'lodash';
 import angular from 'angular';
 import uiRoutes from 'ui/routes';
-import 'plugins/ml/jobs/components/new_job_advanced/detectors_list_directive';
-import 'plugins/ml/jobs/components/new_job_advanced/transforms_list';
-import 'plugins/ml/jobs/components/new_job_advanced/save_status_modal';
 import 'plugins/ml/lib/bower_components/JSON.minify/minify.json';
+// import 'plugins/ml/services/visualization_job_service';
 import 'ui/courier';
-import 'plugins/ml/services/visualization_job_service';
 
 uiRoutes
 .when('/jobs/new_job_advanced', {
@@ -53,8 +50,8 @@ function (
   mlMessageBarService,
   mlSchedulerService,
   mlConfirmModalService,
-  mlTransformsDefaultOutputs,
-  mlVisualizationJobService) {
+  // mlVisualizationJobService,
+  mlTransformsDefaultOutputs) {
 
 
   timefilter.enabled = false; // remove time picker from top of page
@@ -1040,13 +1037,13 @@ function (
   init();
 
 
-  $scope.getJobFromVisId = function (id) {
-    mlVisualizationJobService.getJobFromVisId($scope.job, id)
-    .then(() => {
-      setSchedulerUIText();
-    });
+  // $scope.getJobFromVisId = function (id) {
+  //   mlVisualizationJobService.getJobFromVisId($scope.job, id)
+  //   .then(() => {
+  //     setSchedulerUIText();
+  //   });
 
-  };
+  // };
 
 })
 // custom filter to filter transforms from the properties datalist
