@@ -15,7 +15,8 @@ export default kibana => {
     publicDir: resolve(__dirname, 'public'),
 
     uiExports: {
-      devTools: ['plugins/searchprofiler/app']
+      devTools: ['plugins/searchprofiler/app'],
+      hacks: ['plugins/searchprofiler/register']
     },
     init: function (server) {
       const thisPlugin = this;

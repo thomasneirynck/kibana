@@ -3,7 +3,6 @@
 import uiModules from 'ui/modules';
 import uiRoutes from 'ui/routes';
 import notify from 'ui/notify';
-import devTools from 'ui/registry/dev_tools';
 
 // License
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
@@ -24,14 +23,6 @@ import './less/main.less';
 import './less/hint.base.min.less';
 import template from './templates/index.html';
 import defaultQuery from './templates/default_query';
-
-
-devTools.register(() => ({
-  order: 5,
-  name: 'searchprofiler',
-  display: 'Search Profiler',
-  url: '#/dev_tools/searchprofiler'
-}));
 
 uiRoutes.when('/dev_tools/searchprofiler', {
   template: template
