@@ -18,6 +18,20 @@
                       </div>
                     </div>
 
+                    <div ng-switch-when="earliest_record_timestamp">
+                      <div class="ml_job_row row">
+                        <div class="col-md-6">{{key1}}</div>
+                        <div class="col-md-6" title="{{value1}} bytes">{{formatDate(value1)}}</div>
+                      </div>
+                    </div>
+
+                    <div ng-switch-when="latest_record_timestamp">
+                      <div class="ml_job_row row">
+                        <div class="col-md-6">{{key1}}</div>
+                        <div class="col-md-6" title="{{value1}} bytes">{{formatDate(value1)}}</div>
+                      </div>
+                    </div>
+
                     <div ng-switch-default>
                       <div class="ml_job_row row">
                         <div class="col-md-6">{{key1}}</div>
@@ -48,6 +62,20 @@
                       <div class="ml_job_row row">
                         <div class="col-md-6">{{key1}}</div>
                         <div class="col-md-6" title="{{value1}} bytes">{{formatData(value1)}}</div>
+                      </div>
+                    </div>
+
+                    <div ng-switch-when="log_time">
+                      <div class="ml_job_row row">
+                        <div class="col-md-6">{{key1}}</div>
+                        <div class="col-md-6" title="{{value1}} bytes">{{formatDate(value1)}}</div>
+                      </div>
+                    </div>
+
+                    <div ng-switch-when="timestamp">
+                      <div class="ml_job_row row">
+                        <div class="col-md-6">{{key1}}</div>
+                        <div class="col-md-6" title="{{value1}} bytes">{{formatDate(value1)}}</div>
                       </div>
                     </div>
 

@@ -31,6 +31,8 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
     template: require('plugins/ml/jobs/components/jobs_list/expanded_row/expanded_row.html'),
     link: function ($scope, $element) {
       const msgs = mlMessageBarService; // set a reference to the message bar service
+      const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+      const DATA_FORMAT = '0.0 b';
 
       $scope.urlBasePath = chrome.getBasePath();
 
@@ -126,7 +128,7 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
 
       // data values should be formatted with KB, MB etc
       $scope.formatData = function (txt) {
-        return numeral(txt).format('0.0 b');
+        return numeral(txt).format(DATA_FORMAT);
       };
 
       // milliseconds should be formatted h m s ms, e.g 3s 44ms
@@ -150,6 +152,12 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
         }
         return str;
       };
+
+      // date values should be formatted with TIME_FORMAT
+      $scope.formatDate = function (txt) {
+        return moment(txt).format(TIME_FORMAT);
+      };
+
 
       function replaceHost(url) {
         if (url.match('localhost')) {

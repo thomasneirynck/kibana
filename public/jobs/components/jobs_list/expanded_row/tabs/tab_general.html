@@ -10,6 +10,7 @@
               <div ng-switch="key">
                 <div ng-switch-when="location" class="col-md-9"><a target="_blank" href='{{value}}'>{{value}}</a></div>
                 <div ng-switch-when="averageBucketProcessingTimeMs" class="col-md-9">{{formatMS(value)}}</div>
+                <div ng-switch-when="create_time" class="col-md-9">{{formatDate(value)}}</div>
                 <div ng-switch-default class="col-md-9">{{value}}</div>
               </div>
             </div>
