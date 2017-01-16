@@ -1,22 +1,32 @@
-/*
- * Logstash Nodes Listing
+/**
+ * Kibana Overview
  */
 import { find } from 'lodash';
 import uiRoutes from'ui/routes';
 import uiModules from 'ui/modules';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
-import template from 'plugins/monitoring/views/logstash/nodes/nodes_template.html';
+import template from './index.html';
 
 function getPageData(timefilter, globalState, $http, Private) {
-  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/logstash/nodes`;
   const timeBounds = timefilter.getBounds();
-
+  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/kibana`;
   return $http.post(url, {
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
-    }
+    },
+    metrics: [
+      'kibana_requests',
+      {
+        name: 'kibana_response_times',
+        keys: [
+          'kibana_max_response_times',
+          'kibana_average_response_times'
+        ]
+      }
+    ],
+    instances: false
   })
   .then(response => response.data)
   .catch((err) => {
@@ -25,10 +35,10 @@ function getPageData(timefilter, globalState, $http, Private) {
   });
 }
 
-uiRoutes.when('/logstash/nodes', {
+uiRoutes.when('/kibana', {
   template,
   resolve: {
-    clusters(Private) {
+    clusters: function (Private) {
       const routeInit = Private(routeInitProvider);
       return routeInit();
     },
@@ -37,7 +47,7 @@ uiRoutes.when('/logstash/nodes', {
 });
 
 const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-uiModule.controller('logstashNodes', ($route, globalState, title, Private, $executor, $http, timefilter, $scope) => {
+uiModule.controller('kibanaOverview', ($route, globalState, title, Private, $executor, $http, timefilter, $scope) => {
   timefilter.enabled = true;
 
   function setClusters(clusters) {
@@ -46,7 +56,7 @@ uiModule.controller('logstashNodes', ($route, globalState, title, Private, $exec
   }
   setClusters($route.current.locals.clusters);
   $scope.pageData = $route.current.locals.pageData;
-  title($scope.cluster, 'Logstash');
+  title($scope.cluster, 'Kibana');
 
   $executor.register({
     execute: () => getPageData(timefilter, globalState, $http, Private),
@@ -55,3 +65,4 @@ uiModule.controller('logstashNodes', ($route, globalState, title, Private, $exec
   $executor.start();
   $scope.$on('$destroy', $executor.destroy);
 });
+

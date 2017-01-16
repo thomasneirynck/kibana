@@ -2,7 +2,7 @@ import _ from 'lodash';
 import uiModules from 'ui/modules';
 import uiRoutes from'ui/routes';
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
-import template from 'plugins/monitoring/views/license/index.html';
+import template from './index.html';
 
 uiRoutes.when('/license', {
   template,

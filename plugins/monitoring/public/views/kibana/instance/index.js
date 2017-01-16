@@ -1,25 +1,47 @@
-/**
- * Logstash Overview
+/*
+ * Kibana Instance
  */
-import { find } from 'lodash';
+import { get, find } from 'lodash';
 import uiRoutes from'ui/routes';
 import uiModules from 'ui/modules';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
-import template from './overview_template.html';
+import template from './index.html';
 
-function getPageData(timefilter, globalState, $http, Private) {
+function getPageData(timefilter, globalState, $http, $route, Private) {
   const timeBounds = timefilter.getBounds();
-  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/logstash`;
+  const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/kibana/${$route.current.params.uuid}`;
   return $http.post(url, {
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
     },
     metrics: [
-      'logstash_events_input_rate',
-      'logstash_events_output_rate',
-      'logstash_events_latency'
+      {
+        name: 'kibana_os_load',
+        keys: [
+          'kibana_os_load_1m',
+          'kibana_os_load_5m',
+          'kibana_os_load_15m'
+        ]
+      },
+      'kibana_average_concurrent_connections',
+      'kibana_process_delay',
+      {
+        name: 'kibana_memory',
+        keys: [
+          'kibana_memory_heap_size_limit',
+          'kibana_memory_size'
+        ]
+      },
+      {
+        name: 'kibana_response_times',
+        keys: [
+          'kibana_max_response_times',
+          'kibana_average_response_times'
+        ]
+      },
+      'kibana_requests'
     ]
   })
   .then(response => response.data)
@@ -29,10 +51,10 @@ function getPageData(timefilter, globalState, $http, Private) {
   });
 }
 
-uiRoutes.when('/logstash', {
+uiRoutes.when('/kibana/instances/:uuid', {
   template,
   resolve: {
-    clusters: function (Private) {
+    clusters(Private) {
       const routeInit = Private(routeInitProvider);
       return routeInit();
     },
@@ -41,7 +63,7 @@ uiRoutes.when('/logstash', {
 });
 
 const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-uiModule.controller('logstashOverview', ($route, globalState, title, Private, $executor, $http, timefilter, $scope) => {
+uiModule.controller('kibana', ($route, globalState, title, Private, $executor, $http, timefilter, $scope) => {
   timefilter.enabled = true;
 
   function setClusters(clusters) {
@@ -50,10 +72,10 @@ uiModule.controller('logstashOverview', ($route, globalState, title, Private, $e
   }
   setClusters($route.current.locals.clusters);
   $scope.pageData = $route.current.locals.pageData;
-  title($scope.cluster, 'Logstash');
+  title($scope.cluster, `Kibana - ${get($scope.pageData, 'kibanaSummary.name')}`);
 
   $executor.register({
-    execute: () => getPageData(timefilter, globalState, $http, Private),
+    execute: () => getPageData(timefilter, globalState, $http, $route, Private),
     handleResponse: (response) => $scope.pageData = response
   });
   $executor.start();

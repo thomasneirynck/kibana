@@ -6,7 +6,7 @@ import uiRoutes from 'ui/routes';
 import uiModules from 'ui/modules';
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
-import template from 'plugins/monitoring/views/elasticsearch/index/index_template.html';
+import template from './index.html';
 
 uiRoutes.when('/elasticsearch/indices/:index', {
   template,

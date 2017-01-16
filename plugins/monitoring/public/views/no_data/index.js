@@ -1,6 +1,6 @@
 import uiRoutes from 'ui/routes';
 import uiModules from 'ui/modules';
-import template from 'plugins/monitoring/views/no_data/no_data_template.html';
+import template from './index.html';
 
 uiRoutes.when('/no-data', {
   template,

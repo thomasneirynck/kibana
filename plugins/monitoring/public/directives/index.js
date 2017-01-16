@@ -1,7 +1,7 @@
 import 'plugins/monitoring/directives/main';
 import 'plugins/monitoring/directives/chart';
-import 'plugins/monitoring/directives/cluster_overview/cluster_overview_directive.jsx';
-import 'plugins/monitoring/directives/cluster_listing/cluster_listing_directive.jsx';
+import 'plugins/monitoring/directives/cluster/overview';
+import 'plugins/monitoring/directives/cluster/listing';
 import 'plugins/monitoring/directives/elasticsearch/cluster_status';
 import 'plugins/monitoring/directives/elasticsearch/index_listing';
 import 'plugins/monitoring/directives/elasticsearch/index_summary';

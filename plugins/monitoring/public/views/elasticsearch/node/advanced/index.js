@@ -6,7 +6,7 @@ import uiRoutes from 'ui/routes';
 import uiModules from 'ui/modules';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
-import template from './node_advanced_template.html';
+import template from './index.html';
 
 function getPageData(timefilter, globalState, $route, $http, Private) {
   const timeBounds = timefilter.getBounds();

@@ -2,7 +2,7 @@ import _ from 'lodash';
 import uiRoutes from 'ui/routes';
 import uiModules from 'ui/modules';
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
-import template from 'plugins/monitoring/views/clusters/overview_template.html';
+import template from './index.html';
 
 uiRoutes.when('/overview', {
   template,

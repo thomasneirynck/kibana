@@ -1,7 +1,7 @@
 import React from 'react';
 import { capitalize, kebabCase } from 'lodash';
-import { statusIconClass } from '../../lib/map_status_classes';
-import { formatBytesUsage, formatPercentageUsage } from '../../lib/format_number';
+import { statusIconClass } from 'plugins/monitoring/lib/map_status_classes';
+import { formatBytesUsage, formatPercentageUsage } from 'plugins/monitoring/lib/format_number';
 
 export function ClusterItemContainer(props) {
   // Note: kebabCase takes something like 'My Name' and makes it 'my-name', which is ideal for CSS names
