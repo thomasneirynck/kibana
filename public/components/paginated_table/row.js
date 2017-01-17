@@ -21,9 +21,9 @@ import _ from 'lodash';
 import AggConfigResult from 'ui/vis/agg_config_result';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
-module.directive('mlRows', function ($compile, $rootScope, getAppState, Private) {
+module.directive('mlRows', function ($compile, getAppState, Private) {
   const filterBarClickHandler = Private(require('ui/filter_bar/filter_bar_click_handler'));
   return {
     restrict: 'A',
@@ -97,8 +97,9 @@ module.directive('mlRows', function ($compile, $rootScope, getAppState, Private)
 
         $el.empty();
 
-        if (!_.isArray(rows)) rows = [];
-        const width = rows.reduce(maxRowSize, 0);
+        if (!_.isArray(rows)) {
+          rows = [];
+        }
 
         if (isFinite(min) && rows.length < min) {
           // clone the rows so that we can add elements to it without upsetting the original
@@ -109,6 +110,15 @@ module.directive('mlRows', function ($compile, $rootScope, getAppState, Private)
           if (row.length) {
             const rowScope = row[0].scope;
             const $tr = $(document.createElement('tr')).appendTo($el);
+
+            if (rowScope &&
+                rowScope.mouseenterRow !== undefined && typeof rowScope.mouseenterRow === 'function') {
+              // Add mousenter and mouseleave events to the row
+              $tr.attr({'ng-mouseenter':'mouseenterRow($event)'});
+              $tr.attr({'ng-mouseleave':'mouseleaveRow($event)'});
+              $compile($tr)(rowScope);
+            }
+
             row.forEach(function (cell) {
               addCell($tr, cell);
             });
@@ -153,6 +163,7 @@ module.directive('mlRows', function ($compile, $rootScope, getAppState, Private)
               $compile($trExpand)(rowScope);
               rowScope.$expandElement = $exp;
             }
+
           }
         });
       });

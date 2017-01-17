@@ -30,7 +30,8 @@ import openRowArrow from 'ui/doc_table/components/table_row/open.html';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlAnomaliesTable', function ($window, mlJobService, mlResultsService, formatValueFilter) {
+module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService, mlResultsService,
+  mlTimeSeriesDashboardService, formatValueFilter) {
   return {
     restrict: 'E',
     scope: {
@@ -39,8 +40,7 @@ module.directive('mlAnomaliesTable', function ($window, mlJobService, mlResultsS
       timeFieldName: '='
     },
     template: require('plugins/ml/timeseriesexplorer/anomalies_table/anomalies_table.html'),
-    link: function (scope, element, $attrs) {
-      console.log('mlAnomaliesTable scope:', scope);
+    link: function (scope, element) {
 
       scope.thresholdOptions = [
         {display:'critical', val:75},
@@ -69,7 +69,7 @@ module.directive('mlAnomaliesTable', function ($window, mlJobService, mlResultsS
       scope.categoryExamplesByJob = {};
       const MAX_NUMBER_CATEGORY_EXAMPLES = 10;  // Max number of examples to show in table cell or expanded row (engine default is to store 4).
 
-      scope.$on('renderTable',function (event, d) {
+      scope.$on('renderTable',function () {
         updateTableData();
       });
 
@@ -498,6 +498,19 @@ module.directive('mlAnomaliesTable', function ($window, mlJobService, mlResultsS
           }
 
           rowScope.$broadcast('initRow', record);
+        };
+
+        rowScope.mouseenterRow = function () {
+          // Publish that a record is being hovered over, so that the corresponding marker
+          // in the model debug chart can be highlighted.
+          mlTimeSeriesDashboardService.fireAnomalyRecordMouseenter(record);
+
+        };
+
+        rowScope.mouseleaveRow = function () {
+          // Publish that a record is no longer being hovered over, so that the corresponding marker in the
+          // model debug chart can be unhighlighted.
+          mlTimeSeriesDashboardService.fireAnomalyRecordMouseleave(record);
         };
 
         // Create a table row with the following columns:

@@ -100,11 +100,6 @@
       stroke: #aaaaaa;
     }
 
-    circle.anomaly-marker:hover {
-      stroke-width: 6px;
-      stroke: #32a7c2;
-    }
-
     circle.metric-value.critical {
       fill: #fe5050;
     }
@@ -125,11 +120,12 @@
       fill: #d2e9f7;
     }
 
-    circle.metric-value:hover {
+    circle.metric-value:hover,
+    circle.anomaly-marker.highlighted {
       stroke-width: 6px;
       stroke-opacity: 0.65;
+      stroke: #32a7c2;
     }
-
 
     .focus-chart {
       .x-axis-background {

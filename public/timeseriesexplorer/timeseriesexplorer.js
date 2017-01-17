@@ -14,6 +14,7 @@
  */
 
 import 'plugins/ml/timeseriesexplorer/timeseriesexplorer_controller.js';
+import 'plugins/ml/timeseriesexplorer/timeseries_dashboard_service.js';
 import 'plugins/ml/timeseriesexplorer/timeseries_search_service.js';
 import 'plugins/ml/timeseriesexplorer/model_debug_chart_directive';
 import 'plugins/ml/timeseriesexplorer/anomalies_table';

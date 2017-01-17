@@ -38,7 +38,8 @@ import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $timeout, $compile, $location,
-  Private, $q, es, timefilter, globalState, mlJobService, mlResultsService, mlDashboardService, mlTimeSeriesSearchService) {
+  Private, $q, es, timefilter, globalState, mlJobService, mlResultsService,
+  mlDashboardService, mlTimeSeriesSearchService, mlTimeSeriesDashboardService) {
 
   // TODO - move the index pattern into a setting?
   $scope.indexPatternId = '.ml-anomalies-*';
@@ -89,6 +90,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       console.log('Time series explorer - error getting job info from elasticsearch:', resp);
     });
 
+    mlTimeSeriesDashboardService.init();
   };
 
   $scope.refresh = function () {
