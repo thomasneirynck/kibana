@@ -73,6 +73,7 @@
           required
           placeholder={{formConfig-bucketSpan}}
           ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+          ng-change="timeFieldChange()"
           ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
           class="form-control lowercase" />
         <button class="btn-success navbar-btn-link btn-load-vis"
@@ -105,7 +106,6 @@
         <label>Description</label><i ml-info-icon="new_job_id" ></i>
         <input
           ng-model="formConfig.description"
-          required
           placeholder="Job description"
           ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
           input-focus

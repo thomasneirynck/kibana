@@ -218,12 +218,12 @@ module.service('mlSimpleJobSearchService', function ($q, es) {
         let debugUpper = _.get(dataForTime, ['debugUpper', 'value']);
         let debugLower = _.get(dataForTime, ['debugLower', 'value']);
 
-        if (debugUpper !== undefined) {
+        if (debugUpper !== undefined && isFinite(debugUpper)) {
           debugUpper = debugUpper.toFixed(4);
         } else {
           debugUpper = 0;
         }
-        if (debugLower !== undefined) {
+        if (debugLower !== undefined && isFinite(debugLower)) {
           debugLower = debugLower.toFixed(4);
         } else {
           debugLower = 0;
