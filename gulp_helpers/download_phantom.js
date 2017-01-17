@@ -132,7 +132,7 @@ function fetchBinaries(dest) {
       };
 
       return requiredDownloads.reduce((chain, binary) => {
-        return chain.then(downloadBinary(binary));
+        return chain.then(() => downloadBinary(binary));
       }, Promise.resolve());
     });
   });
