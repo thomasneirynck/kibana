@@ -218,7 +218,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
       console.log('anomaly bubble refresh data:', resp);
 
       allRecordResults = resp.records;
-      const bucketedResults = bucketResults(allRecordResults, times);
+      const bucketedResults = bucketResults(allRecordResults, times, bucketInterval.asSeconds());
       processRecordResults(bucketedResults, highestRecords);
 
       // init position
@@ -243,56 +243,41 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
     loadTopInfluencersForPage(selectedJobIds, (bounds.min.valueOf() / 1000), (bounds.max.valueOf() / 1000));
   };
 
-  function bucketResults(data, times) {
+  function bucketResults(data, times, interval) {
     const recordsPerTimeInterval = {};
 
-    for (let r in data) {
-      const record = data[r];
+    _.each(data, (record) => {
       if (record.time === undefined) {
-        record.time = moment(record['timestamp']).unix();
+        record.time = moment(record.timestamp).unix();
       }
-    }
+    });
 
     data = _.sortBy(data, 'time');
 
-    let counter = 0;
-    for (let r in data) {
-      const record = data[r];
+    _.each(data, (record) => {
       if (record.detectorText === undefined) {
         record.detector = mlJobService.detectorsByJob[record.job_id][record.detector_index];
         record.detectorText = record.detector.detector_description;
-        // console.log(record.detector)
       }
 
-      let lastT = null;
       for (let i = 0; i < times.length; i++) {
         const t = +times[i];
         let found = false;
 
-        if (lastT === null) {
-          lastT = t;
-        }
         if (recordsPerTimeInterval[t] === undefined) {
           recordsPerTimeInterval[t] = [];
         }
 
-        if (record.time < t) {
-          recordsPerTimeInterval[lastT].push(record);
-          found = true;
-        } else if (counter === data.length - 1 && record.time === t) {
-          // the last result will be missed, so check for that.
+        if (record.time >= t && record.time < (t + interval)) {
           recordsPerTimeInterval[t].push(record);
           found = true;
         }
-
-        lastT = t;
 
         if (found) {
           break;
         }
       }
-      counter++;
-    }
+    });
     return recordsPerTimeInterval;
   }
 
@@ -391,7 +376,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
       }
     });
 
-    const bucketedResults = bucketResults(newResults, times);
+    const bucketedResults = bucketResults(newResults, times, swimlaneTimeRange.interval);
     const tempHighestRecords = {};
     processRecordResults(bucketedResults, tempHighestRecords);
     // the INSPECTOR type can contain data for any other type
