@@ -90,11 +90,11 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
 
     const brush = d3.svg.brush();
 
-    scope.$on('render',function (event, d) {
+    scope.$on('render',function (event) {
       render();
     });
 
-    scope.$on('renderFocusChart',function (event, d) {
+    scope.$on('renderFocusChart',function (event) {
       renderFocusChart();
     });
 
@@ -685,41 +685,6 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
       }
 
       setContextBrushExtent(new Date(from), new Date(to), true);
-    }
-
-    function showFocusChartTooltipOld(d) {
-      // Show the time and metric values in the tooltip.
-      const formattedDate = moment(d.date).format('MMMM Do YYYY, HH:mm');
-      let contents = formattedDate + '<br/><hr/>';
-
-      // TODO - need better formatting for small decimals.
-      contents += ('value: ' + numeral(d.value).format('0,0.[00]'));
-      contents += ('<br/>upper bounds: ' + numeral(d.upper).format('0,0.[00]'));
-      contents += ('<br/>lower bounds: ' + numeral(d.lower).format('0,0.[00]'));
-
-      if (_.has(d, 'anomalyScore')) {
-        const score = parseInt(d.anomalyScore);
-        const displayScore = (score > 0 ? score : '< 1');
-        contents += ('<br/>anomaly score: ' + displayScore);
-      }
-
-      const tooltipDiv = d3.select('.ml-model-debug-point-tooltip');
-      tooltipDiv.transition()
-        .duration(200)
-        .style('opacity', .9);
-      tooltipDiv.html(contents);
-
-      // Position the tooltip.
-      const eventX = +(d3.event.pageX);
-      const parentWidth = d3.select('body').node().getBoundingClientRect().width;
-      const tooltipWidth = tooltipDiv.node().getBoundingClientRect().width;
-      if (eventX + tooltipWidth + FOCUS_CHART_ANOMALY_RADIUS < parentWidth) {
-        tooltipDiv.style('left', (eventX + FOCUS_CHART_ANOMALY_RADIUS) + 'px')
-          .style('top', (d3.event.pageY - 28) + 'px');
-      } else {
-        tooltipDiv.style('left', eventX - (tooltipWidth + FOCUS_CHART_ANOMALY_RADIUS) + 'px')
-          .style('top', (d3.event.pageY - 28) + 'px');
-      }
     }
 
     function showFocusChartTooltip(marker, x, y) {
