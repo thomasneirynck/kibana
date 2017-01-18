@@ -51,7 +51,7 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
     }
   },
   controllerAs: 'editRole',
-  controller($scope, $route, kbnUrl, shieldPrivileges, shieldIndices, Notifier, Private) {
+  controller($scope, $route, kbnUrl, shieldPrivileges, shieldIndices, Notifier, Private, safeConfirm) {
     $scope.role = $route.current.locals.role;
     $scope.users = $route.current.locals.users;
     $scope.indexPatterns = $route.current.locals.indexPatterns;
@@ -63,8 +63,8 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
     const notifier = new Notifier();
 
     $scope.deleteRole = (role) => {
-      if (!confirm('Are you sure you want to delete this role? This action is irreversible!')) return;
-      role.$delete()
+      safeConfirm('Are you sure you want to delete this role? This action is irreversible!')
+      .then(() => role.$delete())
       .then(() => notifier.info('The role has been deleted.'))
       .then($scope.goToRoleList)
       .catch(error => notifier.error(_.get(error, 'data.message')));

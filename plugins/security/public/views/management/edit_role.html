@@ -2,39 +2,43 @@
   <!-- This content gets injected below the localNav. -->
   <div class="kuiViewContent kuiViewContent--constrainedWidth">
     <!-- Subheader -->
-    <div class="kuiSubHeader">
-      <!-- Title -->
-      <h1 class="kuiTitle">
-        <span ng-if="editRole.isNewRole">
-          New Role
-        </span>
-        <span ng-if="!editRole.isNewRole">
-          &ldquo;{{ role.name }}&rdquo; Role
-        </span>
-      </h1>
+    <div class="kuiBar kuiVerticalRhythm">
+      <div class="kuiBarSection">
+        <!-- Title -->
+        <h1 class="kuiTitle">
+          <span ng-if="editRole.isNewRole">
+            New Role
+          </span>
+          <span ng-if="!editRole.isNewRole">
+            &ldquo;{{ role.name }}&rdquo; Role
+          </span>
+        </h1>
+      </div>
 
-      <!-- Delete button -->
-      <button
-        ng-if="!editRole.isNewRole && !role.metadata._reserved"
-        class="kuiButton kuiButton--danger kuiButton--iconText"
-        ng-click="deleteRole(role)"
-        tooltip="Delete Role"
-      >
-        <span class="kuiButton__icon kuiIcon fa-trash"></span>
-        Delete role
-      </button>
-      <div
-        ng-if="role.metadata._reserved"
-        class="kuiBadge kuiBadge--default"
-        tooltip="Reserved roles are built-in and cannot be removed or modified."
-      >
-        <span class="kuiIcon fa-lock"></span>
-        Reserved
+      <div class="kuiBarSection">
+        <!-- Delete button -->
+        <button
+          ng-if="!editRole.isNewRole && !role.metadata._reserved"
+          class="kuiButton kuiButton--danger kuiButton--iconText"
+          ng-click="deleteRole(role)"
+          tooltip="Delete Role"
+        >
+          <span class="kuiButton__icon kuiIcon fa-trash"></span>
+          Delete role
+        </button>
+        <div
+          ng-if="role.metadata._reserved"
+          class="kuiBadge kuiBadge--default"
+          tooltip="Reserved roles are built-in and cannot be removed or modified."
+        >
+          <span class="kuiIcon fa-lock"></span>
+          Reserved
+        </div>
       </div>
     </div>
 
     <!-- Form -->
-    <form name="form" novalidate>
+    <form name="form" novalidate class="kuiVerticalRhythm">
       <!-- Name -->
       <div class="kuiFormSection">
         <label for="name" class="kuiFormLabel">

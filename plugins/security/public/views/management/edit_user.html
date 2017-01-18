@@ -1,40 +1,44 @@
 <kbn-management-app section="elasticsearch">
   <div class="kuiViewContent kuiViewContent--constrainedWidth">
     <!-- Subheader -->
-    <div class="kuiSubHeader">
-      <!-- Title -->
-      <h1 class="kuiTitle">
-        <span ng-if="editUser.isNewUser">
-          New User
-        </span>
-        <span ng-if="!editUser.isNewUser">
-          &ldquo;{{ user.username }}&rdquo; User
-        </span>
-      </h1>
+    <div class="kuiBar kuiVerticalRhythm">
+      <div class="kuiBarSection">
+        <!-- Title -->
+        <h1 class="kuiTitle">
+          <span ng-if="editUser.isNewUser">
+            New User
+          </span>
+          <span ng-if="!editUser.isNewUser">
+            &ldquo;{{ user.username }}&rdquo; User
+          </span>
+        </h1>
+      </div>
 
-      <!-- Delete button -->
-      <button
-        ng-if="!editUser.isNewUser && !user.metadata._reserved"
-        class="kuiButton kuiButton--danger kuiButton--iconText"
-        ng-click="deleteUser(user)"
-        tooltip="Delete User"
-        data-test-subj="userFormDeleteButton"
-      >
-        <span class="kuiButton__icon kuiIcon fa-trash"></span>
-        Delete user
-      </button>
-      <div
-        ng-if="user.metadata._reserved"
-        class="kuiBadge kuiBadge--default"
-        tooltip="Reserved users are built-in and cannot be removed or modified. Only the password may be changed."
-      >
-        <span class="kuiIcon fa-lock"></span>
-        Reserved
+      <div class="kuiBarSection">
+        <!-- Delete button -->
+        <button
+          ng-if="!editUser.isNewUser && !user.metadata._reserved"
+          class="kuiButton kuiButton--danger kuiButton--iconText"
+          ng-click="deleteUser(user)"
+          tooltip="Delete User"
+          data-test-subj="userFormDeleteButton"
+        >
+          <span class="kuiButton__icon kuiIcon fa-trash"></span>
+          Delete user
+        </button>
+        <div
+          ng-if="user.metadata._reserved"
+          class="kuiBadge kuiBadge--default"
+          tooltip="Reserved users are built-in and cannot be removed or modified. Only the password may be changed."
+        >
+          <span class="kuiIcon fa-lock"></span>
+          Reserved
+        </div>
       </div>
     </div>
 
     <!-- Form -->
-    <form name="form" novalidate>
+    <form name="form" novalidate class="kuiVerticalRhythm">
       <!-- Username -->
       <div class="kuiFormSection">
         <label for="username" class="kuiFormLabel">

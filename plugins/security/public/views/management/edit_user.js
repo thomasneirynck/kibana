@@ -43,7 +43,7 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
     }
   },
   controllerAs: 'editUser',
-  controller($scope, $route, kbnUrl, ShieldUser, Notifier) {
+  controller($scope, $route, kbnUrl, ShieldUser, Notifier, safeConfirm) {
     $scope.me = $route.current.locals.me;
     $scope.user = $route.current.locals.user;
     $scope.availableRoles = $route.current.locals.roles;
@@ -53,8 +53,8 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
     const notifier = new Notifier();
 
     $scope.deleteUser = (user) => {
-      if (!confirm('Are you sure you want to delete this user? This action is irreversible!')) return;
-      user.$delete()
+      safeConfirm('Are you sure you want to delete this user? This action is irreversible!')
+      .then(() => user.$delete())
       .then(() => notifier.info('The user has been deleted.'))
       .then($scope.goToUserList)
       .catch(error => notifier.error(_.get(error, 'data.message')));
