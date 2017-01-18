@@ -350,7 +350,7 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
       dots.enter().append('circle')
         .attr('r', FOCUS_CHART_ANOMALY_RADIUS)
         .on('mouseover', function (d) {
-          showFocusChartTooltip(d, d3.event.pageX, d3.event.pageY);
+          showFocusChartTooltip(d, this);
         })
         .on('mouseout', hideFocusChartTooltip);
 
@@ -687,7 +687,7 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
       setContextBrushExtent(new Date(from), new Date(to), true);
     }
 
-    function showFocusChartTooltip(marker, x, y) {
+    function showFocusChartTooltip(marker, circle) {
       // Show the time and metric values in the tooltip.
       // Uses date, value, upper, lower and anomalyScore (optional) marker properties.
       const formattedDate = moment(marker.date).format('MMMM Do YYYY, HH:mm');
@@ -711,10 +711,13 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
       tooltipDiv.html(contents);
 
       // Position the tooltip.
-      const parentWidth = d3.select('body').node().getBoundingClientRect().width;
-      const tooltipWidth = tooltipDiv.node().getBoundingClientRect().width;
-      if (x + tooltipWidth + FOCUS_CHART_ANOMALY_RADIUS < parentWidth) {
-        tooltipDiv.style('left', (x + FOCUS_CHART_ANOMALY_RADIUS) + 'px')
+      const pos = $(circle).position();
+      const x = pos.left;
+      const y = pos.top;
+      const parentWidth = $('body').width();
+      const tooltipWidth = tooltipDiv.node().offsetWidth;
+      if (x + tooltipWidth + FOCUS_CHART_ANOMALY_RADIUS + 10 < parentWidth) {
+        tooltipDiv.style('left', (x + (FOCUS_CHART_ANOMALY_RADIUS * 2) + 4) + 'px')
           .style('top', (y - 28) + 'px');
       } else {
         tooltipDiv.style('left', x - (tooltipWidth + FOCUS_CHART_ANOMALY_RADIUS) + 'px')
@@ -775,14 +778,7 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
 
       // Display the chart tooltip for this marker.
       // Note the values of the record and marker may differ depending on the levels of aggregation.
-      // Calculate coordinates for the tooltip.
-      const boundingRect = d3.select('.focus-chart-markers').select('.anomaly-marker.highlighted').node().getBoundingClientRect();
-      const scrollTop  = window.pageYOffset || document.documentElement.scrollTop;
-      const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
-      const xPos = boundingRect.left + FOCUS_CHART_ANOMALY_RADIUS + scrollLeft;
-      const yPos = boundingRect.top + scrollTop;
-
-      showFocusChartTooltip(markerToSelect, xPos, yPos);
+      showFocusChartTooltip(markerToSelect, $('.focus-chart-markers .anomaly-marker.highlighted'));
     }
 
     function unhighlightFocusChartAnomaly() {
