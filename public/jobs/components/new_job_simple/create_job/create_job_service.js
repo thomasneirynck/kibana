@@ -243,7 +243,6 @@ module.service('mlSimpleJobService', function (
 
     const job = mlJobService.getBlankJob();
     job.data_description.time_field = formConfig.timeField.name;
-    job.data_description.time_format = formConfig.format;
 
     // job.analysis_config.influencers.push(obj.params.field);
 
@@ -257,9 +256,10 @@ module.service('mlSimpleJobService', function (
     job.analysis_config.detectors.push(dtr);
     job.analysis_config.bucket_span = bucketSpan;
 
-    job.data_description.format = 'ELASTICSEARCH';
     delete job.data_description.field_delimiter;
     delete job.data_description.quote_character;
+    delete job.data_description.time_format;
+    delete job.data_description.format;
 
     job.datafeed_config = {
       query: {
@@ -299,27 +299,16 @@ module.service('mlSimpleJobService', function (
     const index = formConfig.indexPattern.id;
     const types = formConfig.mappingTypes.join(',');
 
-    mlJobService.searchTimeFields(index, types, job.data_description.time_field)
+    // DO THE SAVE
+    mlJobService.saveNewJob(job, true)
     .then((resp) => {
-      job.data_description.time_format = stringUtils.guessTimeFormat(resp.time);
-
-      // DO THE SAVE
-      mlJobService.saveNewJob(job, true)
-      .then((resp) => {
-        // console.log('createJob: ', resp);
-        if (resp.success) {
-          deferred.resolve(this.job);
-        } else {
-          deferred.reject(resp);
-        }
-      });
-    })
-    .catch((resp) => {
-      // msgs.error('Error, time format could not be guessed.');
-      // msgs.error(resp.message);
-      deferred.reject(resp);
-      console.log('guessTimeFormat: times could not be loaded ', resp.message);
+      if (resp.success) {
+        deferred.resolve(this.job);
+      } else {
+        deferred.reject(resp);
+      }
     });
+
     return deferred.promise;
   };
 

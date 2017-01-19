@@ -86,8 +86,6 @@ module.directive('mlElasticDataDescription', function ($http) {
             setUpClonedJob();
           }
         });
-
-        $scope.getExampleTime();
       }
 
       function setUpClonedJob() {
@@ -250,7 +248,6 @@ module.directive('mlElasticDataDescription', function ($http) {
       function getMappings() {
         const deferred = $q.defer();
 
-        $scope.ui.validation.serverAuthenticationError = '';
         $scope.ui.validation.setTabValid(4, true);
         mlJobService.getESMappings().then((indexes) => {
           $scope.ui.indexes = indexes;
@@ -267,11 +264,8 @@ module.directive('mlElasticDataDescription', function ($http) {
           console.log('getMappings:', err);
           if (err.status) {
             if (err.status === 401) {
-              $scope.ui.wizard.serverAuthenticated = true;
-              $scope.ui.validation.serverAuthenticationError = 'Username or password incorrect';
               $scope.ui.validation.setTabValid(4, false);
             } else if (err.status === 403) {
-              $scope.ui.validation.serverAuthenticationError = err.reason;
               $scope.ui.validation.setTabValid(4, false);
             } else {
               clearMappings();
@@ -416,51 +410,9 @@ module.directive('mlElasticDataDescription', function ($http) {
         });
         if (match !== '') {
           $scope.data_description.time_field = match;
-          $scope.guessTimeFormat();
           console.log('guessTimeField: guessed time fields: ', match);
         }
       }
-
-      $scope.guessTimeFormat = function () {
-        let index;
-        if ($scope.dateProperties[$scope.data_description.time_field] === undefined) {
-          // if the selected time_field no longer exists in the dropdown
-          // have a go at guessing it.
-          guessTimeField();
-          return;
-        }
-
-        // ensure we search for the correct type
-        const type = $scope.dateProperties[$scope.data_description.time_field].__type;
-        // ensure we search under the correct index
-        _.each($scope.indexes, (ind, key) => {
-          if (ind) {
-            _.each(ind.types, (t, i) => {
-              if (i === type) {
-                index = key;
-              }
-            });
-          }
-        });
-
-        if (index && type) {
-          // search for some times fields
-          mlJobService.searchTimeFields(index, type, $scope.data_description.time_field)
-          .then((resp) => {
-            $scope.data_description.time_format = stringUtils.guessTimeFormat(resp.time);
-            $scope.getExampleTime();
-          })
-          .catch((resp) => {
-            msgs.error('Error, time format could not be guessed.');
-            msgs.error(resp.message);
-            console.log('guessTimeFormat: times could not be loaded ', resp.message);
-          });
-        }
-      };
-
-      $scope.getExampleTime = function () {
-        $scope.exampleTime = stringUtils.generateExampleTime($scope.data_description.time_format);
-      };
 
       init();
     }

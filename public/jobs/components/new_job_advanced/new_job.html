@@ -346,7 +346,6 @@
               ng-model="job.data_description.time_format"
               required
               placeholder=""
-              ng-change="getExampleTime()"
               class="form-control" />
             <div ng-hide="ui.validation.tabs[3].checks.timeFormat.valid" class="validation-error">
               {{ ( ui.validation.tabs[3].checks.timeFormat.message || "Time format should be specified" ) }}
@@ -363,14 +362,16 @@
               <input
                 ng-model="ui.isDatafeed"
                 ng-change="datafeedChange()"
-                ng-disabled="job.data_description.format!=='ELASTICSEARCH'"
+                ng-disabled="job.data_description.format!=='JSON'"
                 type="checkbox" />
               Datafeed job
             </label><i ml-info-icon="new_job_enable_datafeed_job" />
             <div ng-hide="ui.validation.tabs[4].checks.isDatafeed.valid" class="validation-error">
               {{ ( ui.validation.tabs[4].checks.isDatafeed.message ) }}
             </div>
-            <div class="form-group help-pane" ng-show="job.data_description.format!=='ELASTICSEARCH'"><small class="info">Data format must be set to 'Elasticsearch' to enable the datafeed.</small></div>
+            <div class="form-group help-pane" ng-show="job.data_description.format!=='JSON' && job.data_description.format!==undefined">
+              <small class="info">Data format must be set to 'JSON' to enable the datafeed.</small>
+            </div>
             <div class="form-group" ng-if="ui.isDatafeed">
 
               <label>Query</label><i ml-info-icon="new_job_datafeed_query" />

@@ -17,9 +17,9 @@ import _ from 'lodash';
 import './styles/main.less';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
-module.service('mlMessageBarService', function ($http, $q) {
+module.service('mlMessageBarService', function () {
   const MSG_STYLE = {INFO: 'ml-message-info', WARNING: 'ml-message-warning', ERROR: 'ml-message-error'};
 
   this.messages = [];
@@ -54,9 +54,13 @@ module.service('mlMessageBarService', function ($http, $q) {
   function expandErrorMessageObj(resp) {
     let txt = '';
     if (resp !== undefined && typeof resp === 'object') {
-      const respObj = JSON.parse(resp.response);
-      if (typeof respObj === 'object' && respObj.error !== undefined) {
-        txt = respObj.error.reason;
+      try {
+        const respObj = JSON.parse(resp.response);
+        if (typeof respObj === 'object' && respObj.error !== undefined) {
+          txt = respObj.error.reason;
+        }
+      } catch(e) {
+        txt = resp.response;
       }
     }
     return txt;
@@ -68,7 +72,7 @@ module.service('mlMessageBarService', function ($http, $q) {
   $scope.removeMessage = mlMessageBarService.removeMessage;
 })
 
-.directive('mlMessageBar', function (mlMessageBarService) {
+.directive('mlMessageBar', function () {
   return {
     restrict: 'AE',
     template: require('plugins/ml/messagebar/messagebar.html')

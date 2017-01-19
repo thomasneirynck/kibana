@@ -379,7 +379,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
   this.updateSingleJobDatafeedStatus = function (jobId) {
     const deferred = $q.defer();
-    ml.getShedulerStats({datafeedId: 'datafeed-' + jobId})
+    ml.getDatafeedStats({datafeedId: 'datafeed-' + jobId})
     .then((resp) => {
       // console.log('updateSingleJobCounts controller query response:', resp);
       const datafeeds = resp.datafeeds;
@@ -480,7 +480,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     }
 
     function checkError(resp) {
-      // when stopping a sheduler or closing a job, they may already
+      // when stopping a datafeed or closing a job, they may already
       // be stopped or closed. This returns an error code of 409.
       // if this is the case, return a success.
       return (resp.status === 409) ? 1 : -1;

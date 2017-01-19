@@ -25432,15 +25432,15 @@
     method: 'PUT'
   });
 
-  api.schedulers = ca({
+  api.datafeeds = ca({
     urls: [
       {
-        fmt: '/_xpack/ml/schedulers/_all',
+        fmt: '/_xpack/ml/datafeeds/_all',
       },
       {
-        fmt: '/_xpack/ml/schedulers/<%=schedulerId%>',
+        fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>',
         req: {
-          schedulerId: {
+          datafeedId: {
             type: 'list'
           }
         }
@@ -25449,29 +25449,29 @@
     method: 'GET'
   });
 
-  api.schedulerStats = ca({
+  api.datafeedStats = ca({
     urls: [
       {
-        fmt: '/_xpack/ml/schedulers/<%=schedulerId%>/_stats',
+        fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>/_stats',
         req: {
-          schedulerId: {
+          datafeedId: {
             type: 'list'
           }
         }
       },
       {
-        fmt: '/_xpack/ml/schedulers/_all/_stats',
+        fmt: '/_xpack/ml/datafeeds/_all/_stats',
       }
     ],
     method: 'GET'
   });
 
-  api.addScheduler = ca({
+  api.addDatafeed = ca({
     urls: [
       {
-        fmt: '/_xpack/ml/schedulers/<%=schedulerId%>',
+        fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>',
         req: {
-          schedulerId: {
+          datafeedId: {
             type: 'string'
           }
         }
@@ -25481,11 +25481,11 @@
     method: 'PUT'
   });
 
-  api.deleteScheduler = ca({
+  api.deleteDatafeed = ca({
     url: {
-      fmt: '/_xpack/ml/schedulers/<%=schedulerId%>',
+      fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>',
       req: {
-        schedulerId: {
+        datafeedId: {
           type: 'string'
         }
       }
@@ -25493,12 +25493,12 @@
     method: 'DELETE'
   });
 
-  api.startScheduler = ca({
+  api.startDatafeed = ca({
     urls: [
       {
-        fmt: '/_xpack/ml/schedulers/<%=schedulerId%>/_start?&start=<%=start%>&end=<%=end%>',
+        fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>/_start?&start=<%=start%>&end=<%=end%>',
         req: {
-          schedulerId: {
+          datafeedId: {
             type: 'string'
           },
           start: {
@@ -25513,12 +25513,12 @@
     method: 'POST'
   });
 
-  api.stopScheduler = ca({
+  api.stopDatafeed = ca({
     urls: [
       {
-        fmt: '/_xpack/ml/schedulers/<%=schedulerId%>/_stop',
+        fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>/_stop',
         req: {
-          schedulerId: {
+          datafeedId: {
             type: 'string'
           }
         }
@@ -25527,18 +25527,18 @@
     method: 'POST'
   });
 
-  api.getShedulerStats = ca({
+  api.getDatafeedStats = ca({
     urls: [
       {
-        fmt: '/_xpack/ml/schedulers/<%=schedulerId%>/_stats',
+        fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>/_stats',
         req: {
-          schedulerId: {
+          datafeedId: {
             type: 'list'
           }
         }
       },
       {
-        fmt: '/_xpack/ml/schedulers/_all/_stats',
+        fmt: '/_xpack/ml/datafeeds/_all/_stats',
       }
     ],
     method: 'GET'

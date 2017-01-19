@@ -84,7 +84,6 @@ function (
       CHAR_LIMIT:           500,
       dataLocation:         'ES',
       indexInputType:       'LIST',
-      serverAuthenticated:  false,
       dataPreview:          '',
       dataReady:            false,
       setDataLocation: function (loc) {
@@ -118,7 +117,6 @@ function (
         {index: 5, valid: true, checks: {}},
         {index: 6, valid: true, checks: {}},
       ],
-      serverAuthenticationError: '',
       setTabValid: function (tab, valid) {
         $scope.ui.validation.tabs[tab].valid = valid;
       }
@@ -148,7 +146,6 @@ function (
       { value: 'DELIMITED',     title: 'Delimited' },
       { value: 'JSON',          title: 'JSON' },
       { value: 'SINGLE_LINE',   title: 'Single Line' },
-      { value: 'ELASTICSEARCH', title: 'Elasticsearch' },
     ],
     fieldDelimiterOptions:[
       { value: '\t',      title: 'tab'},
@@ -211,7 +208,6 @@ function (
         setTransformsUIText();
         setBucketSpanUIText();
         setFieldDelimiterControlsFromText();
-        $scope.getExampleTime();
 
         // if the datafeedConfig doesn't exist, assume we're cloning from a job with no datafeed
         if (!$scope.job.datafeed_config) {
@@ -231,6 +227,9 @@ function (
           delete $scope.job.datafeed_config.datafeed_id;
           delete $scope.job.datafeed_config.job_id;
           delete $scope.job.datafeed_config.status;
+
+          delete $scope.job.data_description.time_format;
+          delete $scope.job.data_description.format;
         }
       }
 
@@ -244,7 +243,7 @@ function (
 
       calculateDatafeedFrequencyDefault();
     }
-    showDataPreviewTab();
+    // showDataPreviewTab();
   }
 
   function changeTab(tab) {
@@ -269,8 +268,12 @@ function (
     } else if ($scope.ui.wizard.step === 2) {
       if ($scope.ui.wizard.dataLocation === 'ES') {
         $scope.ui.isDatafeed = true;
+        $scope.ui.tabs[3].hidden = true;
 
-        $scope.job.data_description.format = 'ELASTICSEARCH';
+        $scope.job.data_description.format = 'JSON';
+
+        delete $scope.job.data_description.time_format;
+        delete $scope.job.data_description.format;
 
         if ($scope.timeFieldSelected()) {
           const time = $scope.job.data_description.time_field;
@@ -279,10 +282,9 @@ function (
           }
         }
       }
-      $scope.getExampleTime();
     }
 
-    showDataPreviewTab();
+    // showDataPreviewTab();
   }
 
   $scope.save = function () {
@@ -495,13 +497,15 @@ function (
   $scope.datafeedChange = function () {
     if ($scope.ui.isDatafeed) {
       $scope.job.datafeed_config = {};
+      $scope.ui.tabs[3].hidden = true;
       calculateDatafeedFrequencyDefault();
     } else {
       delete $scope.job.datafeed_config;
-      $scope.job.data_description.format = 'DELIMITED';
+      $scope.ui.tabs[3].hidden = false;
+      $scope.job.data_description.format = 'JSON';
     }
 
-    showDataPreviewTab();
+    // showDataPreviewTab();
   };
 
   // called when the transforms tickbox is toggled.
@@ -535,8 +539,9 @@ function (
       const datafeedConfig = $scope.job.datafeed_config;
 
       $scope.ui.isDatafeed = true;
+      $scope.ui.tabs[3].hidden = true;
       $scope.ui.wizard.dataLocation = 'ES';
-      showDataPreviewTab();
+      // showDataPreviewTab();
 
       const frequencyDefault = $scope.ui.datafeed.frequencyDefault;
       let freq = datafeedConfig.frequency;
@@ -562,14 +567,14 @@ function (
       });
 
       $scope.ui.datafeed = {
-        queryText:             angular.toJson(datafeedConfig.query, true),
-        queryDelayText:        +datafeedConfig.query_delay,
-        frequencyText:         freq,
-        frequencyDefault:      frequencyDefault,
-        scrollSizeText:        scrollSize,
-        scrollSizeDefault:     scrollSizeDefault,
-        indexesText:           datafeedConfig.indexes.join(','),
-        typesText:             datafeedConfig.types.join(','),
+        queryText:         angular.toJson(datafeedConfig.query, true),
+        queryDelayText:    +datafeedConfig.query_delay,
+        frequencyText:     freq,
+        frequencyDefault:  frequencyDefault,
+        scrollSizeText:    scrollSize,
+        scrollSizeDefault: scrollSizeDefault,
+        indexesText:       datafeedConfig.indexes.join(','),
+        typesText:         datafeedConfig.types.join(','),
       };
 
       // load the mappings from the configured server
@@ -582,6 +587,7 @@ function (
 
     } else {
       $scope.ui.isDatafeed = false;
+      $scope.ui.tabs[3].hidden = false;
     }
   }
 
@@ -669,16 +675,16 @@ function (
   // create the datafeedConfig section of the job config
   function getDatafeedSelection() {
     if ($scope.ui.isDatafeed) {
-      const sch = $scope.ui.datafeed;
+      const df = $scope.ui.datafeed;
 
-      if (sch.queryDelayText === '') {
-        sch.queryDelayText = 60;
+      if (df.queryDelayText === '') {
+        df.queryDelayText = 60;
       }
 
-      if (sch.queryText === '') {
-        sch.queryText = '{"match_all":{}}';
+      if (df.queryText === '') {
+        df.queryText = '{"match_all":{}}';
       }
-      let query = sch.queryText;
+      let query = df.queryText;
       try {
         query = JSON.parse(query);
       } catch (e) {
@@ -686,16 +692,16 @@ function (
       }
 
       let indexes = [];
-      if (sch.indexesText) {
-        indexes = sch.indexesText.split(',');
+      if (df.indexesText) {
+        indexes = df.indexesText.split(',');
         for (let i = 0; i < indexes.length; i++) {
           indexes[i] = indexes[i].trim();
         }
       }
 
       let types = [];
-      if (sch.typesText) {
-        types = sch.typesText.split(',');
+      if (df.typesText) {
+        types = df.typesText.split(',');
         for (let i = 0; i < types.length; i++) {
           types[i] = types[i].trim();
         }
@@ -708,12 +714,12 @@ function (
 
       const config = $scope.job.datafeed_config;
 
-      config.query =                    query;
-      config.query_delay =               sch.queryDelayText;
-      config.frequency =                ((sch.frequencyText === '' || sch.frequencyText === null || sch.frequencyText === undefined) ? sch.frequencyDefault : sch.frequencyText);
-      config.scroll_size =               ((sch.scrollSizeText === '' || sch.scrollSizeText === null || sch.scrollSizeText === undefined) ? sch.scrollSizeDefault : sch.scrollSizeText);
-      config.indexes =                  indexes;
-      config.types =                    types;
+      config.query =       query;
+      config.query_delay = df.queryDelayText;
+      config.frequency =   ((df.frequencyText === '' || df.frequencyText === null || df.frequencyText === undefined) ? df.frequencyDefault : df.frequencyText);
+      config.scroll_size = ((df.scrollSizeText === '' || df.scrollSizeText === null || df.scrollSizeText === undefined) ? df.scrollSizeDefault : df.scrollSizeText);
+      config.indexes =     indexes;
+      config.types =       types;
     }
   }
 
@@ -931,21 +937,6 @@ function (
         tabs[3].checks.timeField.valid = false;
       }
 
-      if (_.isEmpty(job.data_description.time_format)) {
-        tabs[3].checks.timeFormat.valid = false;
-      }
-
-      // datafeed
-      if (job.data_description.format === 'ELASTICSEARCH') {
-        if ((!job.datafeed_config || $scope.ui.isDatafeed === false)) {
-          // tabs[4].checks.isDatafeed.valid = false;
-          // tabs[4].checks.jobId.message = 'Elasticsearch has been specified as the data format, but no datafeed settings have been added.';
-        }
-        if ($scope.ui.validation.serverAuthenticationError !== '') {
-          tabs[4].checks.isDatafeed.valid = false;
-        }
-      }
-
     } else {
       valid = false;
     }
@@ -1020,10 +1011,6 @@ function (
     $scope.ui.tabs[6].hidden = hidden;
     $scope.$applyAsync();
   }
-
-  $scope.getExampleTime = function () {
-    $scope.exampleTime = stringUtils.generateExampleTime($scope.job.data_description.time_format);
-  };
 
   // combine all influencers into a sorted array
   function allInfluencers() {
