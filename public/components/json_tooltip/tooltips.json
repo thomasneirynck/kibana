@@ -62,22 +62,22 @@
    "new_job_quote_character": {
       "text": "Character used to encapsulate values containing reserved characters."
    },
-   "new_job_enable_scheduled_job": {
+   "new_job_enable_datafeed_job": {
       "text": "Required for jobs that analyze data from Elasticsearch.\nRequires data format to be set to Elasticsearch"
    },
    "new_job_data_source": {
       "text": "Elasticsearch versions 1.7.x and 2+ supported."
    },
-   "new_job_scheduler_query": {
+   "new_job_datafeed_query": {
       "text": "Elasticsearch Query DSL for filtering input data."
    },
-   "new_job_scheduler_query_delay": {
+   "new_job_datafeed_query_delay": {
       "text": "Advanced option. Time delay in seconds, between current time and latest input data time."
    },
-   "new_job_scheduler_frequency": {
+   "new_job_datafeed_frequency": {
       "text": "Advanced option. The interval between searches."
    },
-   "new_job_scheduler_scrollsize": {
+   "new_job_datafeed_scrollsize": {
       "text": "Advanced option. The maximum number of documents requested for a search.   "
    },
    "new_job_elasticsearch_server": {
@@ -86,7 +86,7 @@
    "new_job_enable_authenticated": {
       "text": "Select to specify username and password for secure access."
    },
-   "new_job_scheduler_retrieve_source": {
+   "new_job_datafeed_retrieve_source": {
       "text": "Advanced option. Select to retrieve unfiltered _source document, instead of specified fields."
    },
    "new_job_enable_transforms": {

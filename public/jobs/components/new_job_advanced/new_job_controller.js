@@ -48,7 +48,7 @@ function (
   esServerUrl,
   mlJobService,
   mlMessageBarService,
-  mlSchedulerService,
+  mlDatafeedService,
   mlConfirmModalService,
   // mlVisualizationJobService,
   mlTransformsDefaultOutputs) {
@@ -104,7 +104,7 @@ function (
       { index: 1, title: 'Transforms' },
       { index: 2, title: 'Analysis Configuration' },
       { index: 3, title: 'Data Description' },
-      { index: 4, title: 'Scheduler' },
+      { index: 4, title: 'Datafeed' },
       { index: 5, title: 'Edit JSON' },
       { index: 6, title: 'Data Preview', hidden: true },
     ],
@@ -114,7 +114,7 @@ function (
         {index: 1, valid: true, checks: {}},
         {index: 2, valid: true, checks: { detectors: {valid: true}, influencers: {valid: true}, categorizationFilters: {valid: true} }},
         {index: 3, valid: true, checks: { timeField: {valid: true}, timeFormat: {valid:true} }},
-        {index: 4, valid: true, checks: { isScheduled:{valid: true}}},
+        {index: 4, valid: true, checks: { isDatafeed:{valid: true}}},
         {index: 5, valid: true, checks: {}},
         {index: 6, valid: true, checks: {}},
       ],
@@ -163,9 +163,9 @@ function (
     indexTextOk: false,
     indexes: {},
     types: {},
-    isScheduled: false,
+    isDatafeed: false,
 
-    scheduler: {
+    datafeed: {
       queryText:             '{"match_all":{}}',
       queryDelayText:        60,
       frequencyText:         '',
@@ -207,14 +207,14 @@ function (
         console.log('Cloning job', mlJobService.currentJob);
         $scope.ui.pageTitle = 'Clone Job from ' + $scope.job.job_id;
         $scope.job.job_id = '';
-        setSchedulerUIText();
+        setDatafeedUIText();
         setTransformsUIText();
         setBucketSpanUIText();
         setFieldDelimiterControlsFromText();
         $scope.getExampleTime();
 
-        // if the schedulerConfig doesn't exist, assume we're cloning from a job with no scheduler
-        if (!$scope.job.scheduler_config) {
+        // if the datafeedConfig doesn't exist, assume we're cloning from a job with no datafeed
+        if (!$scope.job.datafeed_config) {
           $scope.ui.wizard.dataLocation = 'NONE';
 
           // make a list of influencers comprising of the influencers in the job minus
@@ -228,9 +228,9 @@ function (
           // ES data directive has loaded the server details.
           // cloneJobDataDescriptionCallback() is called once the server details have loaded
         } else {
-          delete $scope.job.scheduler_config.scheduler_id;
-          delete $scope.job.scheduler_config.job_id;
-          delete $scope.job.scheduler_config.status;
+          delete $scope.job.datafeed_config.datafeed_id;
+          delete $scope.job.datafeed_config.job_id;
+          delete $scope.job.datafeed_config.status;
         }
       }
 
@@ -242,7 +242,7 @@ function (
       console.log('Creating new job');
       $scope.job = mlJobService.getBlankJob();
 
-      calculateSchedulerFrequencyDefault();
+      calculateDatafeedFrequencyDefault();
     }
     showDataPreviewTab();
   }
@@ -268,7 +268,7 @@ function (
       }
     } else if ($scope.ui.wizard.step === 2) {
       if ($scope.ui.wizard.dataLocation === 'ES') {
-        $scope.ui.isScheduled = true;
+        $scope.ui.isDatafeed = true;
 
         $scope.job.data_description.format = 'ELASTICSEARCH';
 
@@ -289,7 +289,7 @@ function (
     console.log('save() job: ', $scope.job);
     msgs.clear();
     getDelimiterSelection();
-    getSchedulerSelection();
+    getDatafeedSelection();
 
     if (validateJob()) {
       let overwrite = false;
@@ -357,7 +357,7 @@ function (
 
       function createJobForSaving(job) {
         const newJob = angular.copy(job);
-        delete newJob.scheduler_config;
+        delete newJob.datafeed_config;
         return newJob;
       }
 
@@ -388,24 +388,24 @@ function (
                   // save successful, attempt to open the job
                   mlJobService.openJob($scope.job.job_id)
                   .then((resp) => {
-                    if ($scope.job.scheduler_config) {
-                      // open job successful, create a new scheduler
-                      mlJobService.saveNewScheduler($scope.job.scheduler_config, $scope.job.job_id)
+                    if ($scope.job.datafeed_config) {
+                      // open job successful, create a new datafeed
+                      mlJobService.saveNewDatafeed($scope.job.datafeed_config, $scope.job.job_id)
                       .then(resp => {
                         $scope.saveLock = false;
                       })
                       .catch((resp) => {
-                        msgs.error('Could not start scheduler: ', resp);
+                        msgs.error('Could not start datafeed: ', resp);
                         $scope.saveLock = false;
                       });
                     } else {
-                      // no scheduler, so save is complete
+                      // no datafeed, so save is complete
                       $scope.saveLock = false;
                     }
                   })
                   .catch((resp) => {
                     msgs.error('Could not open job: ', resp);
-                    msgs.error('Job created, creating scheduler anyway');
+                    msgs.error('Job created, creating datafeed anyway');
                     $scope.saveLock = false;
                   });
                 });
@@ -451,7 +451,7 @@ function (
     if ($scope.ui.wizard.indexInputType === 'TEXT') {
       // if the user is entering index text manually, check that the text isn't blank
       // and a match to an index has been made resulting in some fields.
-      return ($scope.ui.scheduler.indexesText.length && Object.keys($scope.properties).length) ? true : false;
+      return ($scope.ui.datafeed.indexesText.length && Object.keys($scope.properties).length) ? true : false;
     } else {
       return Object.keys($scope.indexes).length ? true : false;
     }
@@ -474,7 +474,7 @@ function (
       extractCustomInfluencers();
 
       setFieldDelimiterControlsFromText();
-      setSchedulerUIText();
+      setDatafeedUIText();
       setBucketSpanUIText();
     } catch (e) {
       console.log('JSON could not be parsed');
@@ -490,14 +490,14 @@ function (
     }
   };
 
-  // called when the scheduler tickbox is toggled.
-  // creates or destroys the scheduler section in the config
-  $scope.schedulerChange = function () {
-    if ($scope.ui.isScheduled) {
-      $scope.job.scheduler_config = {};
-      calculateSchedulerFrequencyDefault();
+  // called when the datafeed tickbox is toggled.
+  // creates or destroys the datafeed section in the config
+  $scope.datafeedChange = function () {
+    if ($scope.ui.isDatafeed) {
+      $scope.job.datafeed_config = {};
+      calculateDatafeedFrequencyDefault();
     } else {
-      delete $scope.job.scheduler_config;
+      delete $scope.job.datafeed_config;
       $scope.job.data_description.format = 'DELIMITED';
     }
 
@@ -530,46 +530,46 @@ function (
 
   // triggered when the user changes the JSON text
   // reflect the changes in the UI
-  function setSchedulerUIText() {
-    if ($scope.job.scheduler_config) {
-      const schedulerConfig = $scope.job.scheduler_config;
+  function setDatafeedUIText() {
+    if ($scope.job.datafeed_config) {
+      const datafeedConfig = $scope.job.datafeed_config;
 
-      $scope.ui.isScheduled = true;
+      $scope.ui.isDatafeed = true;
       $scope.ui.wizard.dataLocation = 'ES';
       showDataPreviewTab();
 
-      const frequencyDefault = $scope.ui.scheduler.frequencyDefault;
-      let freq = schedulerConfig.frequency;
-      if ($scope.ui.scheduler.frequencyDefault === schedulerConfig.frequency) {
+      const frequencyDefault = $scope.ui.datafeed.frequencyDefault;
+      let freq = datafeedConfig.frequency;
+      if ($scope.ui.datafeed.frequencyDefault === datafeedConfig.frequency) {
         freq = '';
       }
 
-      const scrollSizeDefault = $scope.ui.scheduler.scrollSizeDefault;
-      let scrollSize = schedulerConfig.scroll_size;
-      if ($scope.ui.scheduler.scrollSizeDefault === schedulerConfig.scroll_size) {
+      const scrollSizeDefault = $scope.ui.datafeed.scrollSizeDefault;
+      let scrollSize = datafeedConfig.scroll_size;
+      if ($scope.ui.datafeed.scrollSizeDefault === datafeedConfig.scroll_size) {
         scrollSize = '';
       }
 
 
       clear($scope.types);
-      _.each(schedulerConfig.types, function (type) {
+      _.each(datafeedConfig.types, function (type) {
         $scope.types[type] = $scope.ui.types[type];
       });
 
       clear($scope.indexes);
-      _.each(schedulerConfig.indexes, function (index) {
+      _.each(datafeedConfig.indexes, function (index) {
         $scope.indexes[index] = $scope.ui.indexes[index];
       });
 
-      $scope.ui.scheduler = {
-        queryText:             angular.toJson(schedulerConfig.query, true),
-        queryDelayText:        +schedulerConfig.query_delay,
+      $scope.ui.datafeed = {
+        queryText:             angular.toJson(datafeedConfig.query, true),
+        queryDelayText:        +datafeedConfig.query_delay,
         frequencyText:         freq,
         frequencyDefault:      frequencyDefault,
         scrollSizeText:        scrollSize,
         scrollSizeDefault:     scrollSizeDefault,
-        indexesText:           schedulerConfig.indexes.join(','),
-        typesText:             schedulerConfig.types.join(','),
+        indexesText:           datafeedConfig.indexes.join(','),
+        typesText:             datafeedConfig.types.join(','),
       };
 
       // load the mappings from the configured server
@@ -581,7 +581,7 @@ function (
       }
 
     } else {
-      $scope.ui.isScheduled = false;
+      $scope.ui.isDatafeed = false;
     }
   }
 
@@ -618,12 +618,12 @@ function (
   }
 
   // work out the default frequency based on the bucket_span
-  function calculateSchedulerFrequencyDefault() {
-    $scope.ui.scheduler.frequencyDefault = jobUtils.calculateSchedulerFrequencyDefault($scope.job.analysis_config.bucket_span);
+  function calculateDatafeedFrequencyDefault() {
+    $scope.ui.datafeed.frequencyDefault = jobUtils.calculateDatafeedFrequencyDefault($scope.job.analysis_config.bucket_span);
   }
 
   // scope version of the above function
-  $scope.calculateSchedulerFrequencyDefault = calculateSchedulerFrequencyDefault;
+  $scope.calculateDatafeedFrequencyDefault = calculateDatafeedFrequencyDefault;
 
 
   function setFieldDelimiterControlsFromText() {
@@ -666,10 +666,10 @@ function (
     }
   }
 
-  // create the schedulerConfig section of the job config
-  function getSchedulerSelection() {
-    if ($scope.ui.isScheduled) {
-      const sch = $scope.ui.scheduler;
+  // create the datafeedConfig section of the job config
+  function getDatafeedSelection() {
+    if ($scope.ui.isDatafeed) {
+      const sch = $scope.ui.datafeed;
 
       if (sch.queryDelayText === '') {
         sch.queryDelayText = 60;
@@ -682,7 +682,7 @@ function (
       try {
         query = JSON.parse(query);
       } catch (e) {
-        console.log('getSchedulerSelection(): could not parse query JSON');
+        console.log('getDatafeedSelection(): could not parse query JSON');
       }
 
       let indexes = [];
@@ -701,12 +701,12 @@ function (
         }
       }
 
-      // create schedulerConfig if it doesn't already exist
-      if (!$scope.job.scheduler_config) {
-        $scope.job.scheduler_config = {};
+      // create datafeedConfig if it doesn't already exist
+      if (!$scope.job.datafeed_config) {
+        $scope.job.datafeed_config = {};
       }
 
-      const config = $scope.job.scheduler_config;
+      const config = $scope.job.datafeed_config;
 
       config.query =                    query;
       config.query_delay =               sch.queryDelayText;
@@ -737,7 +737,7 @@ function (
 
   function createJSONText() {
     getDelimiterSelection();
-    getSchedulerSelection();
+    getDatafeedSelection();
     getCustomUrlSelection();
     getCategorizationFilterSelection();
     $scope.ui.jsonText = angular.toJson($scope.job, true);
@@ -935,14 +935,14 @@ function (
         tabs[3].checks.timeFormat.valid = false;
       }
 
-      // scheduler
+      // datafeed
       if (job.data_description.format === 'ELASTICSEARCH') {
-        if ((!job.scheduler_config || $scope.ui.isScheduled === false)) {
-          // tabs[4].checks.isScheduled.valid = false;
-          // tabs[4].checks.jobId.message = 'Elasticsearch has been specified as the data format, but no scheduler settings have been added.';
+        if ((!job.datafeed_config || $scope.ui.isDatafeed === false)) {
+          // tabs[4].checks.isDatafeed.valid = false;
+          // tabs[4].checks.jobId.message = 'Elasticsearch has been specified as the data format, but no datafeed settings have been added.';
         }
         if ($scope.ui.validation.serverAuthenticationError !== '') {
-          tabs[4].checks.isScheduled.valid = false;
+          tabs[4].checks.isDatafeed.valid = false;
         }
       }
 
@@ -976,8 +976,8 @@ function (
         params: function () {
           return {
             pscope:           $scope,
-            openScheduler:    function () {
-              mlSchedulerService.openJobTimepickerWindow($scope.job);
+            openDatafeed:    function () {
+              mlDatafeedService.openJobTimepickerWindow($scope.job);
             }
           };
         }
@@ -1007,12 +1007,12 @@ function (
 
   function showDataPreviewTab() {
     let hidden = true;
-    // if this is a scheduled job, make the Data Preview tab available
-    if ($scope.ui.isScheduled) {
+    // if this is a datafeed job, make the Data Preview tab available
+    if ($scope.ui.isDatafeed) {
       hidden = false;
     }
 
-    // however, if cloning a schedulerless, don't display the preview tab
+    // however, if cloning a datafeedless, don't display the preview tab
     if ($scope.ui.wizard.dataLocation === 'NONE' && $scope.mode === MODE.CLONE) {
       hidden = true;
     }
@@ -1040,7 +1040,7 @@ function (
   // $scope.getJobFromVisId = function (id) {
   //   mlVisualizationJobService.getJobFromVisId($scope.job, id)
   //   .then(() => {
-  //     setSchedulerUIText();
+  //     setDatafeedUIText();
   //   });
 
   // };

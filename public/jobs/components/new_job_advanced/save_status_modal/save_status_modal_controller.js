@@ -23,11 +23,11 @@ module.controller('MlSaveStatusModal', function ($scope, $location, $modalInstan
     showTimepicker: false,
   };
 
-  // return to jobs list page and open the scheduler modal for the new job
-  $scope.openScheduler = function () {
+  // return to jobs list page and open the datafeed modal for the new job
+  $scope.openDatafeed = function () {
     $location.path('jobs');
     $modalInstance.close();
-    params.openScheduler();
+    params.openDatafeed();
   };
 
   // once the job is saved close modal and return to jobs list

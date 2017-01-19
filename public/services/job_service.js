@@ -104,12 +104,12 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                 }
               }
             }
-            this.loadSchedulers()
-            .then((schedulers) => {
+            this.loadDatafeeds()
+            .then((datafeeds) => {
               for (let i = 0; i < jobs.length; i++) {
-                for (let j = 0; j < schedulers.length; j++) {
-                  if (jobs[i].job_id === schedulers[j].job_id) {
-                    jobs[i].scheduler_config = schedulers[j];
+                for (let j = 0; j < datafeeds.length; j++) {
+                  if (jobs[i].job_id === datafeeds[j].job_id) {
+                    jobs[i].datafeed_config = datafeeds[j];
                   }
                 }
               }
@@ -161,13 +161,13 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                 }
               }
 
-              const schedulerId = 'scheduler-' + jobId;
-              this.loadSchedulers(schedulerId)
-              .then((schedulers) => {
+              const datafeedId = 'datafeed-' + jobId;
+              this.loadDatafeeds(datafeedId)
+              .then((datafeeds) => {
                 for (let i = 0; i < jobs.length; i++) {
-                  for (let j = 0; j < schedulers.length; j++) {
-                    if (jobs[i].job_id === schedulers[j].job_id) {
-                      jobs[i].scheduler_config = schedulers[j];
+                  for (let j = 0; j < datafeeds.length; j++) {
+                    if (jobs[i].job_id === datafeeds[j].job_id) {
+                      jobs[i].datafeed_config = datafeeds[j];
                     }
                   }
                 }
@@ -192,32 +192,32 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     }
   };
 
-  this.loadSchedulers = function (schedulerId) {
+  this.loadDatafeeds = function (datafeedId) {
     const deferred = $q.defer();
-    const schedulers = [];
-    const sId = (schedulerId !== undefined) ? {scheduler_id: schedulerId} : undefined;
+    const datafeeds = [];
+    const sId = (datafeedId !== undefined) ? {datafeed_id: datafeedId} : undefined;
 
-    ml.schedulers(sId)
+    ml.datafeeds(sId)
       .then((resp) => {
-        // console.log('loadSchedulers query response:', resp);
+        // console.log('loadDatafeeds query response:', resp);
 
-        // make deep copy of schedulers
-        angular.copy(resp.schedulers, schedulers);
+        // make deep copy of datafeeds
+        angular.copy(resp.datafeeds, datafeeds);
 
-        // load schedulers stats
-        ml.schedulerStats()
+        // load datafeeds stats
+        ml.datafeedStats()
           .then((statsResp) => {
-            // console.log('loadSchedulerStats query response:', statsResp);
-            // merge schedulers stats into schedulers
-            for (let i = 0; i < schedulers.length; i++) {
-              const scheduler = schedulers[i];
-              for (let j = 0; j < statsResp.schedulers.length; j++) {
-                if (scheduler.scheduler_id === statsResp.schedulers[j].scheduler_id) {
-                  scheduler.status = statsResp.schedulers[j].status;
+            // console.log('loadDatafeedStats query response:', statsResp);
+            // merge datafeeds stats into datafeeds
+            for (let i = 0; i < datafeeds.length; i++) {
+              const datafeed = datafeeds[i];
+              for (let j = 0; j < statsResp.datafeeds.length; j++) {
+                if (datafeed.datafeed_id === statsResp.datafeeds[j].datafeed_id) {
+                  datafeed.status = statsResp.datafeeds[j].status;
                 }
               }
             }
-            deferred.resolve(schedulers);
+            deferred.resolve(datafeeds);
             // this.jobs = jobs;
             // broadcast that the jobs list has been updated
             // $rootScope.$broadcast('jobsUpdated', jobs);
@@ -232,8 +232,8 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       });
 
     function error(err) {
-      console.log('loadSchedulers error getting list of schedulers:', err);
-      msgs.error('schedulers list could not be retrieved');
+      console.log('loadDatafeeds error getting list of datafeeds:', err);
+      msgs.error('datafeeds list could not be retrieved');
       msgs.error('', err);
     }
     return deferred.promise;
@@ -264,20 +264,20 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
             }
           }
 
-          const schedulerId = 'scheduler-' + jobId;
-          this.loadSchedulers(schedulerId)
-          .then((schedulers) => {
+          const datafeedId = 'datafeed-' + jobId;
+          this.loadDatafeeds(datafeedId)
+          .then((datafeeds) => {
             for (let i = 0; i < jobs.length; i++) {
-              for (let j = 0; j < schedulers.length; j++) {
-                if (jobs[i].job_id === schedulers[j].job_id) {
-                  jobs[i].scheduler_config = schedulers[j];
+              for (let j = 0; j < datafeeds.length; j++) {
+                if (jobs[i].job_id === datafeeds[j].job_id) {
+                  jobs[i].datafeed_config = datafeeds[j];
                 }
               }
             }
             deferred.resolve(this.jobs);
           })
           .catch((err) => {
-            console.log('updateSingleJobCounts error getting scheduler details:', err);
+            console.log('updateSingleJobCounts error getting datafeed details:', err);
             if (err.message) {
               msgs.error(err.message);
             }
@@ -321,7 +321,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               // job.last_data_time = newJob.last_data_time;
               job.create_time = newJob.create_time;
               job.status = newJob.status;
-              // job.scheduler_status = newJob.scheduler_status;
+              // job.datafeed_status = newJob.datafeed_status;
             }
           }
 
@@ -333,12 +333,12 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           }
         }
 
-        this.loadSchedulers()
-          .then((schedulers) => {
+        this.loadDatafeeds()
+          .then((datafeeds) => {
             for (let i = 0; i < jobs.length; i++) {
-              for (let j = 0; j < schedulers.length; j++) {
-                if (jobs[i].job_id === schedulers[j].job_id) {
-                  jobs[i].scheduler_config = schedulers[j];
+              for (let j = 0; j < datafeeds.length; j++) {
+                if (jobs[i].job_id === datafeeds[j].job_id) {
+                  jobs[i].datafeed_config = datafeeds[j];
                 }
               }
             }
@@ -366,7 +366,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   this.checkStatus = function () {
     const runningJobs = [];
     _.each(jobs, (job) => {
-      if (job.scheduler_config && job.scheduler_config.status === 'STARTED') {
+      if (job.datafeed_config && job.datafeed_config.status === 'STARTED') {
         runningJobs.push(job);
       }
     });
@@ -377,15 +377,15 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     });
   };
 
-  this.updateSingleJobSchedulerStatus = function (jobId) {
+  this.updateSingleJobDatafeedStatus = function (jobId) {
     const deferred = $q.defer();
-    ml.getShedulerStats({schedulerId: 'scheduler-' + jobId})
+    ml.getShedulerStats({datafeedId: 'datafeed-' + jobId})
     .then((resp) => {
       // console.log('updateSingleJobCounts controller query response:', resp);
-      const schedulers = resp.schedulers;
+      const datafeeds = resp.datafeeds;
       let status = 'UNKNOWN';
-      if (schedulers && schedulers.length) {
-        status = schedulers[0].status;
+      if (datafeeds && datafeeds.length) {
+        status = datafeeds[0].status;
       }
       deferred.resolve(status);
     })
@@ -416,32 +416,32 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
   this.deleteJob = function (job, statusIn) {
     const deferred = $q.defer();
-    const status = statusIn || {stopScheduler: 0, deleteScheduler: 0, closeJob: 0, deleteJob: 0};
+    const status = statusIn || {stopDatafeed: 0, deleteDatafeed: 0, closeJob: 0, deleteJob: 0};
     console.log('deleting job: ' + job.job_id);
 
     // chain of endpoint calls to delete a job.
 
-    // if job is scheduled, stop and delete scheduler first
-    if (job.scheduler_config) {
-      const schedulerId = 'scheduler-' + job.job_id;
-      // stop scheduler
-      ml.stopScheduler({schedulerId: schedulerId})
+    // if job is datafeed, stop and delete datafeed first
+    if (job.datafeed_config) {
+      const datafeedId = 'datafeed-' + job.job_id;
+      // stop datafeed
+      ml.stopDatafeed({datafeedId: datafeedId})
       .then(() => {
-        status.stopScheduler = 1;
+        status.stopDatafeed = 1;
       })
       .catch((resp) => {
-        console.log('Delete job: stop scheduler', resp);
-        status.stopScheduler = checkError(resp);
+        console.log('Delete job: stop datafeed', resp);
+        status.stopDatafeed = checkError(resp);
       })
       .finally(() => {
-        // delete scheduler
-        ml.deleteScheduler({schedulerId: schedulerId})
+        // delete datafeed
+        ml.deleteDatafeed({datafeedId: datafeedId})
         .then(() => {
-          status.deleteScheduler = 1;
+          status.deleteDatafeed = 1;
         })
         .catch((resp) => {
-          console.log('Delete job: delete scheduler', resp);
-          status.deleteScheduler = checkError(resp);
+          console.log('Delete job: delete datafeed', resp);
+          status.deleteDatafeed = checkError(resp);
         })
         .finally(() => {
           closeAndDeleteJob();
@@ -532,7 +532,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     delete job.finished_time;
     delete job.last_data_time;
     delete job.model_size_stats;
-    delete job.scheduler_status;
+    delete job.datafeed_status;
     delete job.average_bucket_processing_time_ms;
     delete job.index_name;
 
@@ -783,10 +783,10 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     return deferred.promise;
   };
 
-  // use elastic search to load the scheduler state data
-  // endTimeMillis is used to prepopulate the scheduler start modal
+  // use elastic search to load the datafeed state data
+  // endTimeMillis is used to prepopulate the datafeed start modal
   // when a job has previously been set up with an end time
-  this.jobSchedulerState = function (jobId) {
+  this.jobDatafeedState = function (jobId) {
     const deferred = $q.defer();
     const obj = {startTimeMillis:null, endTimeMillis:null };
 
@@ -799,7 +799,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
             'filter': [
               {
                 'type': {
-                  'value': 'schedulerState'
+                  'value': 'datafeedState'
                 }
               }
             ]
@@ -1013,7 +1013,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   this.searchPreview = function (indexes, types, job) {
     const deferred = $q.defer();
 
-    if (job.scheduler_config) {
+    if (job.datafeed_config) {
       const data = {
         index:indexes,
         // removed for now because it looks like kibana are now escaping the & and it breaks
@@ -1025,19 +1025,19 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
       let query = { 'match_all': {} };
       // if query is set, add it to the search, otherwise use match_all
-      if (job.scheduler_config.query) {
-        query = job.scheduler_config.query;
+      if (job.datafeed_config.query) {
+        query = job.datafeed_config.query;
       }
       body.query = query;
 
       // if aggs or aggregations is set, add it to the search
-      const aggregations = job.scheduler_config.aggs || job.scheduler_config.aggregations;
+      const aggregations = job.datafeed_config.aggs || job.datafeed_config.aggregations;
       if (aggregations && Object.keys(aggregations).length) {
         body.size = 0;
         body.aggregations = aggregations;
 
         // add script_fields if present
-        const scriptFields = job.scheduler_config.script_fields;
+        const scriptFields = job.datafeed_config.script_fields;
         if (scriptFields && Object.keys(scriptFields).length) {
           body.script_fields = scriptFields;
         }
@@ -1047,7 +1047,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         body.size = 10;
 
         // add script_fields if present
-        const scriptFields = job.scheduler_config.script_fields;
+        const scriptFields = job.datafeed_config.script_fields;
         if (scriptFields && Object.keys(scriptFields).length) {
           body.script_fields = scriptFields;
         }
@@ -1134,26 +1134,26 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   };
 
 
-  this.saveNewScheduler = function (schedulerConfig, jobId) {
-    const schedulerId = 'scheduler-' + jobId;
-    schedulerConfig.job_id = jobId;
+  this.saveNewDatafeed = function (datafeedConfig, jobId) {
+    const datafeedId = 'datafeed-' + jobId;
+    datafeedConfig.job_id = jobId;
 
-    return ml.addScheduler({
-      schedulerId: schedulerId,
-      body: schedulerConfig
+    return ml.addDatafeed({
+      datafeedId: datafeedId,
+      body: datafeedConfig
     });
   };
 
-  this.deleteScheduler = function () {
+  this.deleteDatafeed = function () {
 
   };
 
-  // start the scheduler for a given job
+  // start the datafeed for a given job
   // refresh the job status on start success
-  this.startScheduler = function (schedulerId, jobId, start, end) {
+  this.startDatafeed = function (datafeedId, jobId, start, end) {
     const deferred = $q.defer();
-    ml.startScheduler({
-      schedulerId: schedulerId,
+    ml.startDatafeed({
+      datafeedId: datafeedId,
       start: start,
       end: end
     })
@@ -1165,19 +1165,19 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         deferred.resolve(resp);
 
       }).catch((err) => {
-        console.log('MlJobsList error starting scheduler:', err);
-        msgs.error('Could not start scheduler for ' + jobId, err);
+        console.log('MlJobsList error starting datafeed:', err);
+        msgs.error('Could not start datafeed for ' + jobId, err);
         deferred.reject(err);
       });
     return deferred.promise;
   };
 
-  // stop the scheduler for a given job
+  // stop the datafeed for a given job
   // refresh the job status on stop success
-  this.stopScheduler = function (schedulerId, jobId) {
+  this.stopDatafeed = function (datafeedId, jobId) {
     const deferred = $q.defer();
-    ml.stopScheduler({
-      schedulerId: schedulerId
+    ml.stopDatafeed({
+      datafeedId: datafeedId
     })
       .then((resp) => {
         // console.log(resp);
@@ -1187,8 +1187,8 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         deferred.resolve(resp);
 
       }).catch((err) => {
-        console.log('MlJobsList error stoping scheduler:', err);
-        msgs.error('Could not stop scheduler for ' + jobId, err);
+        console.log('MlJobsList error stoping datafeed:', err);
+        msgs.error('Could not stop datafeed for ' + jobId, err);
         deferred.reject(err);
       });
     return deferred.promise;

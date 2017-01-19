@@ -34,18 +34,18 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
     currentTab: 0,
     tabs: [
       { index: 0, title: 'Job Details', hidden: false },
-      { index: 1, title: 'Scheduler', hidden: true },
+      { index: 1, title: 'Datafeed', hidden: true },
       { index: 2, title: 'Detectors', hidden: false },
     ],
     changeTab: function (tab) {
       $scope.ui.currentTab = tab.index;
     },
-    isScheduled: false,
-    schedulerStopped: false,
-    scheduler: {
+    isDatafeed: false,
+    datafeedStopped: false,
+    datafeed: {
       scrollSizeDefault: 1000,
     },
-    stoppingScheduler: false,
+    stoppingDatafeed: false,
     validation: {
       tabs:[
         {index: 0, valid: true, checks: { categorizationFilters: {valid: true} }}
@@ -53,15 +53,15 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
     }
   };
 
-  // extract scheduler settings
-  if ($scope.job.scheduler_config) {
-    const schedulerConfig = $scope.job.scheduler_config;
-    $scope.ui.isScheduled = true;
+  // extract datafeed settings
+  if ($scope.job.datafeed_config) {
+    const datafeedConfig = $scope.job.datafeed_config;
+    $scope.ui.isDatafeed = true;
     $scope.ui.tabs[1].hidden = false;
-    $scope.ui.schedulerStopped = (!$scope.job.scheduler_status || $scope.job.scheduler_status === 'STOPPED');
+    $scope.ui.datafeedStopped = (!$scope.job.datafeed_status || $scope.job.datafeed_status === 'STOPPED');
 
-    $scope.ui.scheduler.queryText = angular.toJson(schedulerConfig.query, true);
-    $scope.ui.scheduler.scrollSizeText = schedulerConfig.scroll_size;
+    $scope.ui.datafeed.queryText = angular.toJson(datafeedConfig.query, true);
+    $scope.ui.datafeed.scrollSizeText = datafeedConfig.scroll_size;
   }
 
   $scope.addCustomUrl = function () {
@@ -97,13 +97,13 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
     }
   };
 
-  // convenient function to stop the scheduler from inside the edit dialog
-  $scope.stopScheduler = function () {
-    $scope.ui.stoppingScheduler = true;
-    mlJobService.stopScheduler($scope.job.job_id)
+  // convenient function to stop the datafeed from inside the edit dialog
+  $scope.stopDatafeed = function () {
+    $scope.ui.stoppingDatafeed = true;
+    mlJobService.stopDatafeed($scope.job.job_id)
       .then((resp) => {
         if (resp.acknowledged && resp.acknowledged === true) {
-          $scope.ui.schedulerStopped = true;
+          $scope.ui.datafeedStopped = true;
         }
       });
   };
@@ -243,12 +243,12 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
       }
     }
 
-    // check scheduler
-    if ($scope.job.scheduler_config && $scope.ui.schedulerStopped) {
+    // check datafeed
+    if ($scope.job.datafeed_config && $scope.ui.datafeedStopped) {
       let doUpdate = false;
 
-      const schedulerConfig = $scope.job.scheduler_config;
-      const sch = $scope.ui.scheduler;
+      const datafeedConfig = $scope.job.datafeed_config;
+      const sch = $scope.ui.datafeed;
 
       // set query text
       if (sch.queryText === '') {
@@ -261,23 +261,23 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
         console.log('save(): could not parse query JSON');
       }
 
-      const orginalQueryText = angular.toJson(schedulerConfig.query, true);
+      const orginalQueryText = angular.toJson(datafeedConfig.query, true);
       // only update if it has changed from the original
       if (orginalQueryText !== sch.queryText) {
-        schedulerConfig.query = query;
+        datafeedConfig.query = query;
         doUpdate = true;
       }
 
       // only update if it has changed from the original
-      if (sch.scrollSizeText !== schedulerConfig.scroll_size) {
-        schedulerConfig.scroll_size = ((sch.scrollSizeText === '' || sch.scrollSizeText === null || sch.scrollSizeText === undefined)
+      if (sch.scrollSizeText !== datafeedConfig.scroll_size) {
+        datafeedConfig.scroll_size = ((sch.scrollSizeText === '' || sch.scrollSizeText === null || sch.scrollSizeText === undefined)
           ? sch.scrollSizeDefault : sch.scrollSizeText);
         doUpdate = true;
       }
 
-      // if changes have happened, add the whole schedulerConfig to the payload
+      // if changes have happened, add the whole datafeedConfig to the payload
       if (doUpdate) {
-        data.schedulerConfig = schedulerConfig;
+        data.datafeedConfig = datafeedConfig;
       }
     }
 

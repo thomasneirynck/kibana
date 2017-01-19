@@ -32,7 +32,7 @@ module.directive('mlElasticDataDescription', function ($http) {
       types:              '=mlTypes',
       simpleMode:         '=mlSimpleMode',
       mode:               '=mlMode',
-      scheduler_config:    '=mlSchedulerConfig',
+      datafeed_config:    '=mlDatafeedConfig',
       data_description:    '=mlDataDescription',
       dataLoadedCallback: '=mlDataLoadedCallback',
       exposedFunctions:   '=mlExposedFunctions',
@@ -78,10 +78,10 @@ module.directive('mlElasticDataDescription', function ($http) {
           $scope.exposedFunctions.extractFields = $scope.extractFields;
           $scope.exposedFunctions.getMappings = getMappings;
         }
-        // if this is a scheduled job being cloned
+        // if this is a datafeed job being cloned
         // load the indexes and types
         getMappings().then(() => {
-          if ($scope.mode === MODE.CLONE && $scope.ui.isScheduled) {
+          if ($scope.mode === MODE.CLONE && $scope.ui.isDatafeed) {
            // first load mappings, then extract types and fields.
             setUpClonedJob();
           }
@@ -98,7 +98,7 @@ module.directive('mlElasticDataDescription', function ($http) {
 
         // create $scope.types by looping through the type names
         // in the cloning job object,
-        _.each($scope.scheduler_config.types, (t) => {
+        _.each($scope.datafeed_config.types, (t) => {
           t = t.trim();
           $scope.types[t] = $scope.ui.types[t];
         });
@@ -174,7 +174,7 @@ module.directive('mlElasticDataDescription', function ($http) {
         });
 
         const keys = Object.keys($scope.types);
-        $scope.ui.scheduler.typesText  = keys.join(', ');
+        $scope.ui.datafeed.typesText  = keys.join(', ');
         // $scope.ui.influencers = Object.keys($scope.properties);
 
         // influencers is an array of property names.
@@ -185,8 +185,8 @@ module.directive('mlElasticDataDescription', function ($http) {
           }
         });
 
-        if ($scope.mode === MODE.CLONE && $scope.ui.isScheduled) {
-          // when cloning a scheduled job, don't initially detect the time_field or format
+        if ($scope.mode === MODE.CLONE && $scope.ui.isDatafeed) {
+          // when cloning a datafeed job, don't initially detect the time_field or format
           // just rely on the incoming settings
         } else {
           guessTimeField();
@@ -200,7 +200,7 @@ module.directive('mlElasticDataDescription', function ($http) {
         if ($scope.ui.wizard.indexInputType === 'TEXT') {
           clear($scope.indexes);
           // parse comma separated list of indexes
-          const indexes = $scope.ui.scheduler.indexesText.split(',');
+          const indexes = $scope.ui.datafeed.indexesText.split(',');
           _.each(indexes, (ind) => {
             ind = ind.trim();
             // catch wildcard text entry
@@ -224,7 +224,7 @@ module.directive('mlElasticDataDescription', function ($http) {
         } else { // choose indexes from tickbox list
 
           const keys = Object.keys($scope.indexes);
-          $scope.ui.scheduler.indexesText  = keys.join(', ');
+          $scope.ui.datafeed.indexesText  = keys.join(', ');
 
           _.each($scope.indexes, (index) => {
             _.each(index.types, (type, i) => {
@@ -287,8 +287,8 @@ module.directive('mlElasticDataDescription', function ($http) {
         function clearMappings() {
           $scope.ui.indexes = [];
           $scope.ui.esServerOk = -1;
-          $scope.ui.scheduler.typesText = '';
-          $scope.ui.scheduler.indexesText = '';
+          $scope.ui.datafeed.typesText = '';
+          $scope.ui.datafeed.indexesText = '';
         }
 
         return deferred.promise;

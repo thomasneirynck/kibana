@@ -28,7 +28,7 @@ module.controller('MlJobTimepickerModal', function ($scope, $modalInstance, para
 
   const job = angular.copy(params.job);
   $scope.jobId = job.job_id;
-  $scope.schedulerId = 'scheduler-' + job.job_id;
+  $scope.datafeedId = 'datafeed-' + job.job_id;
 
   $scope.start = '';
   $scope.end = '';
@@ -107,7 +107,7 @@ module.controller('MlJobTimepickerModal', function ($scope, $modalInstance, para
     });
 
     function doStart() {
-      mlJobService.startScheduler($scope.schedulerId, $scope.jobId, $scope.start, $scope.end)
+      mlJobService.startDatafeed($scope.datafeedId, $scope.jobId, $scope.start, $scope.end)
       .then(() => {
         mlJobService.refreshJob($scope.jobId);
         $modalInstance.close();

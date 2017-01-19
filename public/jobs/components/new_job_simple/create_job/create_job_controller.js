@@ -376,8 +376,8 @@ module
   let ignoreModel = false;
   let refreshInterval = REFRESH_INTERVAL_MS;
   // function for creating a new job.
-  // creates the job, opens it, creates the scheduler and starts it.
-  // the job may fail to open, but the scheduler should still be created
+  // creates the job, opens it, creates the datafeed and starts it.
+  // the job may fail to open, but the datafeed should still be created
   // if the job save was successful.
   $scope.createJob = function () {
     if ($scope.formConfig.jobId !== '') {
@@ -389,15 +389,15 @@ module
         // if save was successful, open the job
         mlJobService.openJob(job.job_id)
         .then((resp) => {
-          // if open was successful create a new scheduler
-          saveNewScheduler(job, true);
+          // if open was successful create a new datafeed
+          saveNewDatafeed(job, true);
         })
         .catch((resp) => {
           msgs.error('Could not open job: ', resp);
-          msgs.error('Job created, creating scheduler anyway');
-          // if open failed, still attempt to create the scheduler
+          msgs.error('Job created, creating datafeed anyway');
+          // if open failed, still attempt to create the datafeed
           // as it may have failed because we've hit the limit of open jobs
-          saveNewScheduler(job, false);
+          saveNewDatafeed(job, false);
         });
 
       })
@@ -407,15 +407,15 @@ module
       });
     }
 
-    // save new scheduler internal function
-    // creates a new scheduler and attempts to start it depending
-    // on startSchedulerAfterSave flag
-    function saveNewScheduler(job, startSchedulerAfterSave) {
-      mlJobService.saveNewScheduler(job.scheduler_config, job.job_id)
+    // save new datafeed internal function
+    // creates a new datafeed and attempts to start it depending
+    // on startDatafeedAfterSave flag
+    function saveNewDatafeed(job, startDatafeedAfterSave) {
+      mlJobService.saveNewDatafeed(job.datafeed_config, job.job_id)
       .then((resp) => {
 
-        if (startSchedulerAfterSave) {
-          mlSimpleJobService.startScheduler($scope.formConfig)
+        if (startDatafeedAfterSave) {
+          mlSimpleJobService.startDatafeed($scope.formConfig)
           .then((resp) => {
             $scope.jobState = JOB_STATE.RUNNING;
             refreshCounter = 0;
@@ -424,28 +424,28 @@ module
             loadCharts();
           })
           .catch((resp) => {
-            // scheduler failed
-            msgs.error('Could not start scheduler: ', resp);
+            // datafeed failed
+            msgs.error('Could not start datafeed: ', resp);
           });
         }
       })
       .catch((resp) => {
-        msgs.error('Save scheduler failed: ', resp)
+        msgs.error('Save datafeed failed: ', resp)
       });
     }
   };
 
   function loadCharts() {
     let forceStop = false;
-    // the percentage doesn't always reach 100, so periodically check the scheduler status
-    // to see if the scheduler has stopped
+    // the percentage doesn't always reach 100, so periodically check the datafeed status
+    // to see if the datafeed has stopped
     const counterLimit = 20 - (refreshInterval / REFRESH_INTERVAL_MS);
     if (refreshCounter >=  counterLimit) {
       refreshCounter = 0;
-      mlSimpleJobService.checkSchedulerStatus($scope.formConfig)
+      mlSimpleJobService.checkDatafeedStatus($scope.formConfig)
       .then((status) => {
         if (status === 'STOPPED') {
-          console.log('Stopping poll because scheduler status is: ' + status);
+          console.log('Stopping poll because datafeed status is: ' + status);
           $scope.$broadcast('render-results');
           forceStop = true;
         }
@@ -544,9 +544,9 @@ module
 
   $scope.stopJob = function () {
     // setting the status to STOPPING disables the stop button
-    // job.scheduler_status = 'STOPPING';
+    // job.datafeed_status = 'STOPPING';
     $scope.jobState = JOB_STATE.STOPPING;
-    mlSimpleJobService.stopScheduler($scope.formConfig);
+    mlSimpleJobService.stopDatafeed($scope.formConfig);
   };
 
   $scope.viewResults = function (page) {

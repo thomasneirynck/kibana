@@ -189,7 +189,7 @@
               <select
                 ng-model="job.analysis_config.bucket_span"
                 ng-options="bs.value as bs.title for bs in ui.bucketSpanValues"
-                ng-change="calculateSchedulerFrequencyDefault()"
+                ng-change="calculateDatafeedFrequencyDefault()"
                 class="form-control">
               </select>
             </div>
@@ -306,7 +306,7 @@
             <label>Data format</label><i ml-info-icon="new_job_data_format" />
             <select
               ng-model="job.data_description.format"
-              ng-disabled="ui.isScheduled"
+              ng-disabled="ui.isDatafeed"
               ng-options="item.value as item.title for item in ui.inputDataFormat"
               class="form-control">
             </select>
@@ -356,49 +356,49 @@
           </div>
         </ml-job-tab-3>
 
-        <!-- tab 4 Scheduler -->
+        <!-- tab 4 Datafeed -->
         <ml-job-tab-4 ng-show="ui.currentTab === 4">
           <div class="tab_contents">
             <label>
               <input
-                ng-model="ui.isScheduled"
-                ng-change="schedulerChange()"
+                ng-model="ui.isDatafeed"
+                ng-change="datafeedChange()"
                 ng-disabled="job.data_description.format!=='ELASTICSEARCH'"
                 type="checkbox" />
-              Scheduled job
-            </label><i ml-info-icon="new_job_enable_scheduled_job" />
-            <div ng-hide="ui.validation.tabs[4].checks.isScheduled.valid" class="validation-error">
-              {{ ( ui.validation.tabs[4].checks.isScheduled.message ) }}
+              Datafeed job
+            </label><i ml-info-icon="new_job_enable_datafeed_job" />
+            <div ng-hide="ui.validation.tabs[4].checks.isDatafeed.valid" class="validation-error">
+              {{ ( ui.validation.tabs[4].checks.isDatafeed.message ) }}
             </div>
-            <div class="form-group help-pane" ng-show="job.data_description.format!=='ELASTICSEARCH'"><small class="info">Data format must be set to 'Elasticsearch' to enable the scheduler.</small></div>
-            <div class="form-group" ng-if="ui.isScheduled">
+            <div class="form-group help-pane" ng-show="job.data_description.format!=='ELASTICSEARCH'"><small class="info">Data format must be set to 'Elasticsearch' to enable the datafeed.</small></div>
+            <div class="form-group" ng-if="ui.isDatafeed">
 
-              <label>Query</label><i ml-info-icon="new_job_scheduler_query" />
+              <label>Query</label><i ml-info-icon="new_job_datafeed_query" />
               <input
-                ng-model="ui.scheduler.queryText"
+                ng-model="ui.datafeed.queryText"
                 placeholder='{ "match_all": {}}'
                 class="form-control" />
 
-              <label>Query delay (seconds)</label><i ml-info-icon="new_job_scheduler_query_delay" />
+              <label>Query delay (seconds)</label><i ml-info-icon="new_job_datafeed_query_delay" />
               <input
-                ng-model="ui.scheduler.queryDelayText"
+                ng-model="ui.datafeed.queryDelayText"
                 placeholder="60"
                 type="number"
                 min="0"
                 class="form-control" />
 
-              <label>Frequency (seconds)</label><i ml-info-icon="new_job_scheduler_frequency" />
+              <label>Frequency (seconds)</label><i ml-info-icon="new_job_datafeed_frequency" />
               <input
-                ng-model="ui.scheduler.frequencyText"
-                placeholder="{{ui.scheduler.frequencyDefault}}"
+                ng-model="ui.datafeed.frequencyText"
+                placeholder="{{ui.datafeed.frequencyDefault}}"
                 type="number"
                 min="0"
                 class="form-control" />
 
-              <label>scroll_size</label><i ml-info-icon="new_job_scheduler_scrollsize" />
+              <label>scroll_size</label><i ml-info-icon="new_job_datafeed_scrollsize" />
               <input
-                ng-model="ui.scheduler.scrollSizeText"
-                placeholder="{{ui.scheduler.scrollSizeDefault}}"
+                ng-model="ui.datafeed.scrollSizeText"
+                placeholder="{{ui.datafeed.scrollSizeDefault}}"
                 type="number"
                 min="0"
                 class="form-control" />
@@ -412,7 +412,7 @@
                 ml-data-description="job.data_description"
                 ml-simple-mode="(true)"
                 ml-mode= "mode"
-                ml-scheduler-config="job.scheduler_config"
+                ml-datafeed-config="job.datafeed_config"
                 ml-data-loaded-callback="cloneJobDataDescriptionCallback"
                 ml-exposed-functions="mlElasticDataDescriptionExposedFunctions"
                 ml-elastic-server-info="elasticServerInfo"

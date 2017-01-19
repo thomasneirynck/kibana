@@ -80,8 +80,8 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
           }
         };
 
-        if (typeof $scope.job.scheduler_config !== 'undefined') {
-          $scope.ui.tabs.splice(2, 0, { index: 2, title: 'Scheduler' });
+        if (typeof $scope.job.datafeed_config !== 'undefined') {
+          $scope.ui.tabs.splice(2, 0, { index: 2, title: 'Datafeed' });
         }
 
         // replace localhost in any of the job's urls with the host in the browser's address bar

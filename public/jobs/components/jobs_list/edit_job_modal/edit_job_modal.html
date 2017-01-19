@@ -116,27 +116,27 @@
 
   <div class="tab_contents" ng-show="ui.currentTab === 1">
 
-    <div ng-show="ui.schedulerStopped" >
+    <div ng-show="ui.datafeedStopped" >
       <div class="form-group" >
         <label>Query</label>
         <input
-          ng-model="ui.scheduler.queryText"
+          ng-model="ui.datafeed.queryText"
           placeholder='{ "match_all": {}}'
           class="form-control" />
 
         <label>scroll_size</label>
         <input
-          ng-model="ui.scheduler.scrollSizeText"
-          placeholder="{{ui.scheduler.scrollSizeDefault}}"
+          ng-model="ui.datafeed.scrollSizeText"
+          placeholder="{{ui.datafeed.scrollSizeDefault}}"
           type="number"
           min="0"
           class="form-control" />
       </div>
     </div>
-    <div ng-hide="ui.schedulerStopped" >
-      <div>Scheduler settings cannot be edited while the scheduler is running.</div>
-      <div ng-show="ui.stoppingScheduler===false"><a ng-click="stopScheduler()">Stop scheduler now</a></div>
-      <div ng-show="ui.stoppingScheduler===true">Stopping...</div>
+    <div ng-hide="ui.datafeedStopped" >
+      <div>Datafeed settings cannot be edited while the datafeed is running.</div>
+      <div ng-show="ui.stoppingDatafeed===false"><a ng-click="stopDatafeed()">Stop datafeed now</a></div>
+      <div ng-show="ui.stoppingDatafeed===true">Stopping...</div>
     </div>
   </div>
 

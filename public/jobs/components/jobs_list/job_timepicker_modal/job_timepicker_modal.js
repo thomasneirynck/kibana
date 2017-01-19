@@ -13,6 +13,6 @@
  * strictly prohibited.
  */
 
-import './scheduler_service';
+import './datafeed_service';
 import './job_timepicker_modal_controller';
 import './styles/main.less';

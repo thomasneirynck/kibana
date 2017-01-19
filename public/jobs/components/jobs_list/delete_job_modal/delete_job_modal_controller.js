@@ -22,7 +22,7 @@ module.controller('MlDeleteJobModal', function ($scope, $modalInstance, params) 
     stage:        0,
     status:       params.status,
     jobId:        params.jobId,
-    isScheduled:  params.isScheduled
+    isDatafeed:  params.isDatafeed
   };
 
   $scope.delete = function () {

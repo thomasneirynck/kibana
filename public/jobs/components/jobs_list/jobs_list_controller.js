@@ -48,7 +48,7 @@ function (
   mlMessageBarService,
   mlClipboardService,
   mlJobService,
-  mlSchedulerService,
+  mlDatafeedService,
   mlBrowserDetectService) {
 
   timefilter.enabled = false; // remove time picker from top of page
@@ -69,7 +69,7 @@ function (
   // functions for job list buttons
   // called from jobs_list_controls.html
   $scope.deleteJob = function (job) {
-    const status = {deleteLock: false, stopScheduler: 0, deleteScheduler: 0, closeJob: 0, deleteJob: 0};
+    const status = {deleteLock: false, stopDatafeed: 0, deleteDatafeed: 0, closeJob: 0, deleteJob: 0};
 
     $modal.open({
       template: require('plugins/ml/jobs/components/jobs_list/delete_job_modal/delete_job_modal.html'),
@@ -83,7 +83,7 @@ function (
             doDelete:     doDelete,
             status:       status,
             jobId:        job.job_id,
-            isScheduled:  job.scheduler_config ? true : false
+            isDatafeed:  job.datafeed_config ? true : false
           };
         }
       }
@@ -123,16 +123,16 @@ function (
     }
   };
 
-  $scope.startScheduler = function (job) {
-    mlSchedulerService.openJobTimepickerWindow(job, $scope);
+  $scope.startDatafeed = function (job) {
+    mlDatafeedService.openJobTimepickerWindow(job, $scope);
   };
 
-  $scope.stopScheduler = function (job) {
+  $scope.stopDatafeed = function (job) {
     // setting the status to STOPPING disables the stop button
 
-    job.scheduler_status = 'STOPPING';
-    const schedulerId = 'scheduler-' + job.job_id;
-    mlJobService.stopScheduler(schedulerId, job.job_id);
+    job.datafeed_status = 'STOPPING';
+    const datafeedId = 'datafeed-' + job.job_id;
+    mlJobService.stopDatafeed(datafeedId, job.job_id);
   };
 
 
@@ -211,7 +211,7 @@ function (
       { title: 'Processed records', class: 'col-align-right' },
       { title: 'Memory status'},
       { title: 'Job status' },
-      { title: 'Scheduler status' },
+      { title: 'Datafeed status' },
       { title: 'Latest timestamp' },
       { title: 'Actions', sortable: false, class: 'col-action' }
     ];
@@ -266,8 +266,8 @@ function (
           value:  job.status,
           scope:  rowScope
         }, {
-          markup: '{{job.scheduler_config.status}}',
-          value:  (() => { return (job.scheduler_config.status) ? job.scheduler_config.status : ''; }),
+          markup: '{{job.datafeed_config.status}}',
+          value:  (() => { return (job.datafeed_config.status) ? job.datafeed_config.status : ''; }),
           scope:  rowScope
         }, {
           markup: '{{ time(job.data_counts).string }}',

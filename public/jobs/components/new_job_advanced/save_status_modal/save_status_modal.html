@@ -10,12 +10,12 @@
   <hr />
 
   <button
-    ng-show="(pscope.ui.saveStatus.job === 2 && pscope.ui.isScheduled)"
+    ng-show="(pscope.ui.saveStatus.job === 2 && pscope.ui.isDatafeed)"
     ng-disabled="pscope.saveLock"
-    ng-click="openScheduler();"
+    ng-click="openDatafeed();"
     class="btn btn-info"
     aria-label="Back">
-      Start scheduler
+      Start datafeed
   </button>
 
   <button

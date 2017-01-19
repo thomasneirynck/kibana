@@ -261,13 +261,13 @@ module.service('mlSimpleJobService', function (
     delete job.data_description.field_delimiter;
     delete job.data_description.quote_character;
 
-    job.scheduler_config = {
+    job.datafeed_config = {
       query: {
         match_all: {}
       },
       types: mappingTypes,
       query_delay: 60,
-      frequency: jobUtils.calculateSchedulerFrequencyDefault(bucketSpan),
+      frequency: jobUtils.calculateDatafeedFrequencyDefault(bucketSpan),
       indexes: [formConfig.indexPattern.id],
       scroll_size: 1000
     };
@@ -286,7 +286,7 @@ module.service('mlSimpleJobService', function (
 
   function createJobForSaving(job) {
     const newJob = angular.copy(job);
-    delete newJob.scheduler_config;
+    delete newJob.datafeed_config;
     return newJob;
   }
 
@@ -323,18 +323,18 @@ module.service('mlSimpleJobService', function (
     return deferred.promise;
   };
 
-  this.startScheduler = function (formConfig) {
-    const schedulerId = 'scheduler-' + formConfig.jobId;
-    return mlJobService.startScheduler(schedulerId, formConfig.jobId, formConfig.start, formConfig.end);
+  this.startDatafeed = function (formConfig) {
+    const datafeedId = 'datafeed-' + formConfig.jobId;
+    return mlJobService.startDatafeed(datafeedId, formConfig.jobId, formConfig.start, formConfig.end);
   };
 
-  this.stopScheduler = function (formConfig) {
-    const schedulerId = 'scheduler-' + formConfig.jobId;
-    return mlJobService.stopScheduler(schedulerId, formConfig.jobId);
+  this.stopDatafeed = function (formConfig) {
+    const datafeedId = 'datafeed-' + formConfig.jobId;
+    return mlJobService.stopDatafeed(datafeedId, formConfig.jobId);
   };
 
-  this.checkSchedulerStatus = function (formConfig) {
-    return mlJobService.updateSingleJobSchedulerStatus(formConfig.jobId);
+  this.checkDatafeedStatus = function (formConfig) {
+    return mlJobService.updateSingleJobDatafeedStatus(formConfig.jobId);
   };
 
   this.loadModelData = function (formConfig) {

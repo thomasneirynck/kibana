@@ -18,10 +18,10 @@ import _ from 'lodash';
 import uiModules from 'ui/modules';
 let module = uiModules.get('apps/ml');
 
-module.service('mlSchedulerService', function ($modal, mlJobService) {
+module.service('mlDatafeedService', function ($modal, mlJobService) {
 
   function loadStartEnd(jobId) {
-    return mlJobService.jobSchedulerState(jobId);
+    return mlJobService.jobDatafeedState(jobId);
   }
 
   this.openJobTimepickerWindow = function (job) {
@@ -42,7 +42,7 @@ module.service('mlSchedulerService', function ($modal, mlJobService) {
         }
       });
     }
-    // before we display the modal, load the scheduler state to see
+    // before we display the modal, load the datafeed state to see
     // if an end time was previously set
     loadStartEnd(job.job_id).then(func).catch(func);
   };

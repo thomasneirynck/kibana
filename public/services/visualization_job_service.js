@@ -106,7 +106,7 @@ module.service('mlVisualizationJobService', function (
       this.job.analysis_config.detectors.push(dtr);
       this.job.data_description.format = 'ELASTICSEARCH';
 
-      this.job.scheduler_config = {
+      this.job.datafeed_config = {
         query: {
           match_all: {}
         },

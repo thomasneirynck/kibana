@@ -14,7 +14,7 @@
  */
 
 // work out the default frequency based on the bucketSpan
-function calculateSchedulerFrequencyDefault(bucketSpan) {
+function calculateDatafeedFrequencyDefault(bucketSpan) {
 
   let freq = 3600;
   if (bucketSpan <= 120) {
@@ -29,5 +29,5 @@ function calculateSchedulerFrequencyDefault(bucketSpan) {
 }
 
 export default {
-  calculateSchedulerFrequencyDefault: calculateSchedulerFrequencyDefault
+  calculateDatafeedFrequencyDefault: calculateDatafeedFrequencyDefault
 };
