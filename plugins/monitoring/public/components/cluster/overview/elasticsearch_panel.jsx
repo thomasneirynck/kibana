@@ -1,7 +1,7 @@
 import React from 'react';
 import formatNumber from 'plugins/monitoring/lib/format_number';
 import { get } from 'lodash';
-import { ClusterItemContainer, StatusContainer, BytesUsage, BytesPercentageUsage } from '../helper_components';
+import { ClusterItemContainer, StatusContainer, BytesUsage, BytesPercentageUsage } from './helpers';
 
 export default class ElasticsearchPanel extends React.Component {
   constructor(props) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import ChartTarget from './chart_target_component';
+import ChartTarget from './chart_target';
 
 export default function TimeseriesContainer(props) {
   const container = {

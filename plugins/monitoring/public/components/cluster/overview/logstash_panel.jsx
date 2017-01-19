@@ -1,6 +1,6 @@
 import React from 'react';
 import formatNumber from 'plugins/monitoring/lib/format_number';
-import { ClusterItemContainer, BytesPercentageUsage } from '../helper_components';
+import { ClusterItemContainer, BytesPercentageUsage } from './helpers';
 
 export default class LogstashPanel extends React.Component {
   render() {

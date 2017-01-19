@@ -5,8 +5,8 @@ import uiModules from 'ui/modules';
 import { set } from 'lodash';
 import getTitle from './get_title';
 import getUnits from './get_units';
-import MonitoringTimeseriesComponent from './monitoring_timeseries_component';
-import ChartTooltip from './chart_tooltip_component';
+import MonitoringTimeseries from 'plugins/monitoring/components/chart';
+import InfoTooltip from 'plugins/monitoring/components/chart/info_tooltip';
 import { Tooltip } from 'pui-react-tooltip';
 import { OverlayTrigger } from 'pui-react-overlay-trigger';
 
@@ -47,7 +47,7 @@ uiModule.directive('monitoringChart', (timefilter) => {
             <OverlayTrigger
               placement='left'
               trigger='click'
-              overlay={<Tooltip><ChartTooltip series={series}/></Tooltip>}
+              overlay={<Tooltip><InfoTooltip series={series}/></Tooltip>}
             >
               <i
                 className='overlay-trigger monitoring-chart-tooltip__trigger fa fa-info-circle'
@@ -55,7 +55,7 @@ uiModule.directive('monitoringChart', (timefilter) => {
               ></i>
             </OverlayTrigger>
           </h2>
-          <MonitoringTimeseriesComponent scope={scope} options={options} onBrush={onBrush}/>
+          <MonitoringTimeseries scope={scope} options={options} onBrush={onBrush}/>
         </div>,
         $elem[0]
       );

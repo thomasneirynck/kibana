@@ -1,8 +1,8 @@
 import React from 'react';
-import ElasticsearchPanel from './elasticsearch/panel_component';
-import LicenseText from './elasticsearch/license_text_component';
-import KibanaPanel from './kibana/panel_component';
-import LogstashPanel from './logstash/panel_component';
+import ElasticsearchPanel from './elasticsearch_panel';
+import LicenseText from './license_text';
+import KibanaPanel from './kibana_panel';
+import LogstashPanel from './logstash_panel';
 import { get } from 'lodash';
 
 export default class Overview extends React.Component {

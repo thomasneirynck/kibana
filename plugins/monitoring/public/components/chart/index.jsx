@@ -2,9 +2,9 @@ import React from 'react';
 import { first, get } from 'lodash';
 import numeral from 'numeral';
 import getColor from './get_color';
-import TimeseriesVisualization from 'plugins/monitoring/lib/react-flot/timeseries_visualization_component';
+import TimeseriesVisualization from './timeseries_visualization';
 
-export default class MonitoringTimeseriesComponent extends React.Component {
+export default class MonitoringTimeseries extends React.Component {
   constructor() {
     super();
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import formatNumber from 'plugins/monitoring/lib/format_number';
-import { ClusterItemContainer, StatusContainer, BytesPercentageUsage } from '../helper_components';
+import { ClusterItemContainer, StatusContainer, BytesPercentageUsage } from './helpers';
 import { translateKibanaStatus } from 'plugins/monitoring/lib/map_status_classes';
 
 export default class KibanaPanel extends React.Component {

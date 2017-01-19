@@ -3,7 +3,7 @@ import numeral from 'numeral';
 import moment from 'moment';
 import _ from 'lodash';
 import { statusIconClass } from 'plugins/monitoring/lib/map_status_classes';
-import Tooltip from 'plugins/monitoring/lib/tooltip_component';
+import Tooltip from 'plugins/monitoring/components/tooltip';
 
 function isClusterSupportedFactory(isSupported) {
   return class IsClusterSupported extends React.Component {

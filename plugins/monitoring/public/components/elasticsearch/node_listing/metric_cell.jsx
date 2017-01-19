@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import React from 'react';
 import numeral from 'numeral';
-import OfflineCell from './offline_cell_component';
+import OfflineCell from './offline_cell';
 
 function formatMetric(metric, key) {
   const meta = metric.metric;
