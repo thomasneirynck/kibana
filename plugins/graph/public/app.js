@@ -102,7 +102,7 @@ uiRoutes
 
 
 //========  Controller for basic UI ==================
-app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnUrl, Private, Promise, safeConfirm, kbnBaseUrl) {
+app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnUrl, Private, Promise, confirmModal, kbnBaseUrl) {
 
   function handleSuccess(data) {
     return checkLicense(Private, Promise, kbnBaseUrl)
@@ -258,7 +258,12 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       yesFn();
       return;
     }
-    safeConfirm('This will clear the workspace - are you sure?').then(yesFn, noFn);
+    const confirmModalOptions = {
+      onConfirm: yesFn,
+      conCancel: noFn,
+      confirmButtonText: 'Clear workspace'
+    };
+    confirmModal('This will clear the workspace - are you sure?', confirmModalOptions);
   }
 
   $scope.uiSelectIndex = function () {
@@ -519,8 +524,9 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   $scope.removeUrlTemplate = function (urlTemplate) {
     const i = $scope.urlTemplates.indexOf(urlTemplate);
     if (i != -1) {
-      safeConfirm('Remove "' + urlTemplate.description + '" drill-down?').then(function () {
-        $scope.urlTemplates.splice(i, 1);
+      confirmModal('Remove "' + urlTemplate.description + '" drill-down?', {
+        onConfirm: () => $scope.urlTemplates.splice(i, 1),
+        confirmButtonText: 'Remove drill-down'
       });
     }
   };
@@ -704,11 +710,16 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       tooltip: 'Delete this workspace',
       run: function () {
         const title = $route.current.locals.savedWorkspace.title;
-        safeConfirm('Are you sure you want to delete the workspace ' + title + ' ?').then(function () {
+        function doDelete() {
           $route.current.locals.SavedWorkspacesProvider.delete($route.current.locals.savedWorkspace.id);
           kbnUrl.change('/home', {});
           require('ui/notify').info('Deleted ' + title);
-        });
+        }
+        const confirmModalOptions = {
+          onConfirm: doDelete,
+          confirmButtonText: 'Delete workspace'
+        };
+        confirmModal('Are you sure you want to delete the workspace ' + title + ' ?', confirmModalOptions);
       }
     });
   }else {
