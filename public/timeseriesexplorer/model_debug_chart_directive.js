@@ -448,8 +448,11 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
         .attr('y2', contextChartHeight + swimlaneHeight);
 
       // Add x axis.
-      const xAxis = d3.svg.axis().scale(contextXScale).orient('bottom')
-        .innerTickSize(0).outerTickSize(0).tickPadding(10);
+      const xAxis = d3.svg.axis().scale(contextXScale)
+        .orient('top')
+        .innerTickSize(-contextChartHeight)
+        .outerTickSize(0)
+        .tickPadding(0);
 
       contextGroup.datum(data);
 
@@ -472,32 +475,38 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
         .attr('class', 'values-line')
         .attr('d', contextValuesLine);
 
-      contextGroup.append('g')
-        .attr('class', 'x axis')
-        .attr('transform', 'translate(0,' + (contextChartHeight - 25) + ')')
-        .call(xAxis);
-
       // Create and draw the anomaly swimlane.
       const swimlane = contextGroup.append('g')
         .attr('class', 'swimlane')
         .attr('transform', 'translate(0,' + contextChartHeight + ')');
 
       drawSwimlane(swimlane, contextWidth, swimlaneHeight);
-      drawContextBrush(contextGroup);
 
-    }
-
-    function drawContextBrush(contextGroup) {
+      // Draw a mask over the sections of the context chart and swimlane
+      // which fall outside of the zoom brush selection area.
       const mask = new ContextChartMask(contextGroup, scope.contextChartData, swimlaneHeight)
         .x(contextXScale)
         .y(contextYScale);
 
+      // Draw the x axis on top of the mask so that the labels are visible.
+      contextGroup.append('g')
+        .attr('class', 'x axis context-chart-axis')
+        .call(xAxis);
+
+      // Move the x axis labels up so that they are inside the contact chart area.
+      contextGroup.selectAll('.x.context-chart-axis text')
+        .attr('dy', (contextChartHeight - 5));
+
+      drawContextBrush(contextGroup, mask);
+    }
+
+    function drawContextBrush(contextGroup, mask) {
       // Create the brush for zooming in to the focus area of interest.
       brush.x(contextXScale)
         .on('brush', brushing)
         .on('brushend', brushed);
 
-      const brushGroup = contextGroup.append('g')
+      contextGroup.append('g')
         .attr('class', 'x brush')
         .call(brush)
       .selectAll('rect')
@@ -564,7 +573,7 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
         const selectionMax = selectedBounds[1].getTime();
 
         // Set the color of the swimlane cells according to whether they are inside the selection.
-        const swimlaneCells = contextGroup.selectAll('.swimlane-cell')
+        contextGroup.selectAll('.swimlane-cell')
           .style('fill', function (d) {
             const cellMs = d.date.getTime();
             if (cellMs < selectionMin || cellMs > selectionMax) {
