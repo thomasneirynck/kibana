@@ -379,7 +379,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
   this.updateSingleJobDatafeedStatus = function (jobId) {
     const deferred = $q.defer();
-    ml.getDatafeedStats({datafeedId: 'datafeed-' + jobId})
+    ml.datafeedStats({datafeedId: 'datafeed-' + jobId})
     .then((resp) => {
       // console.log('updateSingleJobCounts controller query response:', resp);
       const datafeeds = resp.datafeeds;

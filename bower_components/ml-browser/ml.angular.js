@@ -25331,7 +25331,7 @@
   api.jobs = ca({
     urls: [
       {
-        fmt: '/_xpack/ml/anomaly_detectors/_all',
+        fmt: '/_xpack/ml/anomaly_detectors/',
       },
       {
         fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>',
@@ -25356,7 +25356,7 @@
         }
       },
       {
-        fmt: '/_xpack/ml/anomaly_detectors/_all/_stats',
+        fmt: '/_xpack/ml/anomaly_detectors/_stats',
       }
     ],
     method: 'GET'
@@ -25435,7 +25435,7 @@
   api.datafeeds = ca({
     urls: [
       {
-        fmt: '/_xpack/ml/datafeeds/_all',
+        fmt: '/_xpack/ml/datafeeds/',
       },
       {
         fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>',
@@ -25460,7 +25460,7 @@
         }
       },
       {
-        fmt: '/_xpack/ml/datafeeds/_all/_stats',
+        fmt: '/_xpack/ml/datafeeds/_stats',
       }
     ],
     method: 'GET'
@@ -25525,23 +25525,6 @@
       }
     ],
     method: 'POST'
-  });
-
-  api.getDatafeedStats = ca({
-    urls: [
-      {
-        fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>/_stats',
-        req: {
-          datafeedId: {
-            type: 'list'
-          }
-        }
-      },
-      {
-        fmt: '/_xpack/ml/datafeeds/_all/_stats',
-      }
-    ],
-    method: 'GET'
   });
 
   api.validateDetector = ca({
