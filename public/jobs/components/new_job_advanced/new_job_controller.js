@@ -875,7 +875,7 @@ function (
     _.each(tabs, function (tab) {
       tab.valid = true;
       for (const check in tab.checks) {
-        if (Object.prototype.hasOwnProperty(tab.checks, check)) {
+        if (tab.checks.hasOwnProperty(check)) {
           tab.checks[check].valid = true;
           tab.checks[check].message = '';
         }
