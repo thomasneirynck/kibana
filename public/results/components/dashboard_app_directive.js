@@ -20,7 +20,6 @@
  */
 
 import _ from 'lodash';
-import $ from 'jquery';
 import angular from 'angular';
 import chrome from 'ui/chrome';
 
@@ -37,18 +36,18 @@ import FilterBarQueryFilterProvider from 'ui/filter_bar/query_filter';
 
 import stateMonitorFactory  from 'ui/state_management/state_monitor_factory';
 
-import 'plugins/kibana/dashboard/directives/grid';
-import 'plugins/kibana/dashboard/directives/dashboard_panel';
+import 'plugins/kibana/dashboard/grid';
+import 'plugins/kibana/dashboard/panel/panel';
 
-import 'plugins/kibana/dashboard/services/saved_dashboards';
+import 'plugins/kibana/dashboard/saved_dashboard/saved_dashboard';
 import 'plugins/kibana/discover/styles/main.less';
-import 'plugins/kibana/dashboard/styles/main.less';
+import 'plugins/kibana/dashboard/styles/index.less';
 import '../styles/main.less';
 
 import 'plugins/ml/components/job_select_list';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.directive('dashboardApp', function (Notifier, courier, AppState, timefilter, kbnUrl) {
   return {

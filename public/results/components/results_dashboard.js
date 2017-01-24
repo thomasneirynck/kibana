@@ -18,23 +18,20 @@ import 'ui/config';
 import 'ui/notify';
 import 'ui/typeahead';
 import 'ui/share';
-import 'plugins/kibana/dashboard/directives/grid';
-import 'plugins/kibana/dashboard/directives/dashboard_panel';
 
-import 'plugins/kibana/dashboard/services/saved_dashboards';
-import 'plugins/kibana/dashboard/styles/main.less';
-import FilterBarQueryFilterProvider from 'ui/filter_bar/query_filter';
-import DocTitleProvider from 'ui/doc_title';
-import stateMonitorFactory  from 'ui/state_management/state_monitor_factory';
+import 'plugins/kibana/dashboard/grid';
+import 'plugins/kibana/dashboard/panel/panel';
+import 'plugins/kibana/dashboard/saved_dashboard/saved_dashboards';
+import 'plugins/kibana/dashboard/styles/index.less';
+import { savedDashboardRegister } from 'plugins/kibana/dashboard/saved_dashboard/saved_dashboard_register';
+require('ui/saved_objects/saved_object_registry').register(savedDashboardRegister);
+
 import uiRoutes from 'ui/routes';
 import uiModules from 'ui/modules';
 
 import './dashboard_app_directive';
 
 import '../styles/main.less';
-
-import savedObjectRegistry from 'ui/saved_objects/saved_object_registry';
-savedObjectRegistry.register(require('plugins/kibana/dashboard/services/saved_dashboard_register'));
 
 import 'plugins/kibana/visualize/saved_visualizations/saved_visualizations';
 import 'plugins/kibana/discover/saved_searches/saved_searches';
