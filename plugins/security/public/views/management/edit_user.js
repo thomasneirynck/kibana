@@ -43,7 +43,7 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
     }
   },
   controllerAs: 'editUser',
-  controller($scope, $route, kbnUrl, ShieldUser, Notifier, safeConfirm) {
+  controller($scope, $route, kbnUrl, ShieldUser, Notifier, confirmModal) {
     $scope.me = $route.current.locals.me;
     $scope.user = $route.current.locals.user;
     $scope.availableRoles = $route.current.locals.roles;
@@ -53,12 +53,18 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
     const notifier = new Notifier();
 
     $scope.deleteUser = (user) => {
-      safeConfirm('Are you sure you want to delete this user? This action is irreversible!')
-      .then(() => user.$delete())
-      .then(() => notifier.info('The user has been deleted.'))
-      .then($scope.goToUserList)
-      .catch(error => notifier.error(_.get(error, 'data.message')));
-    };
+      const doDelete = () => {
+        user.$delete()
+          .then(() => notifier.info('The user has been deleted.'))
+          .then($scope.goToUserList)
+          .catch(error => notifier.error(_.get(error, 'data.message')));
+      };
+      const confirmModalOptions = {
+        confirmButtonText: 'Delete user',
+        onConfirm: doDelete
+      };
+      confirmModal('Are you sure you want to delete this user? This action is irreversible!', confirmModalOptions);
+    }
 
     $scope.saveUser = (user) => {
       // newPassword is unexepcted by the API.
