@@ -22,7 +22,7 @@ routes.when('/management/elasticsearch/users', {
     }
   },
 
-  controller($scope, $route, $q, Notifier) {
+  controller($scope, $route, $q, Notifier, confirmModal) {
     $scope.users = $route.current.locals.users;
     $scope.forbidden = !_.isArray($scope.users);
     $scope.selectedUsers = [];
@@ -31,16 +31,25 @@ routes.when('/management/elasticsearch/users', {
     const notifier = new Notifier();
 
     $scope.deleteUsers = () => {
-      if (!confirm('Are you sure you want to delete the selected user(s)? This action is irreversible!')) return;
-      $q.all($scope.selectedUsers.map((user) => user.$delete()))
-      .then(() => notifier.info('The user(s) have been deleted.'))
-      .then(() => {
-        $scope.selectedUsers.map((user) => {
-          const i = $scope.users.indexOf(user);
-          $scope.users.splice(i, 1);
-        });
-        $scope.selectedUsers.length = 0;
-      });
+      const doDelete = () => {
+        $q.all($scope.selectedUsers.map((user) => user.$delete()))
+          .then(() => notifier.info('The user(s) have been deleted.'))
+          .then(() => {
+            $scope.selectedUsers.map((user) => {
+              const i = $scope.users.indexOf(user);
+              $scope.users.splice(i, 1);
+            });
+            $scope.selectedUsers.length = 0;
+          });
+      };
+      const confirmModalOptions = {
+        onConfirm: doDelete,
+        confirmButtonText: 'Delete user(s)'
+      };
+      confirmModal(
+        'Are you sure you want to delete the selected user(s)? This action is irreversible!',
+        confirmModalOptions
+      );
     };
 
     $scope.toggleAll = () => {

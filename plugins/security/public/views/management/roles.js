@@ -22,7 +22,7 @@ routes.when('/management/elasticsearch/roles', {
       .catch(_.identity); // Return the error if there is one
     }
   },
-  controller($scope, $route, $q, Notifier) {
+  controller($scope, $route, $q, Notifier, confirmModal) {
     $scope.roles = $route.current.locals.roles;
     $scope.forbidden = !_.isArray($scope.roles);
     $scope.selectedRoles = [];
@@ -31,16 +31,25 @@ routes.when('/management/elasticsearch/roles', {
     const notifier = new Notifier();
 
     $scope.deleteRoles = () => {
-      if (!confirm(`Are you sure you want to delete the selected role(s)? This action is irreversible!`)) return;
-      $q.all($scope.selectedRoles.map((role) => role.$delete()))
-      .then(() => notifier.info('The role(s) have been deleted.'))
-      .then(() => {
-        $scope.selectedRoles.map((role) => {
-          const i = $scope.roles.indexOf(role);
-          $scope.roles.splice(i, 1);
-        });
-        $scope.selectedRoles.length = 0;
-      });
+      const doDelete = () => {
+        $q.all($scope.selectedRoles.map((role) => role.$delete()))
+          .then(() => notifier.info('The role(s) have been deleted.'))
+          .then(() => {
+            $scope.selectedRoles.map((role) => {
+              const i = $scope.roles.indexOf(role);
+              $scope.roles.splice(i, 1);
+            });
+            $scope.selectedRoles.length = 0;
+          });
+      };
+      const confirmModalOptions = {
+        confirmButtonText: 'Delete role(s)',
+        onConfirm: doDelete
+      };
+      confirmModal(`
+        Are you sure you want to delete the selected role(s)? This action is irreversible!`,
+        confirmModalOptions
+      );
     };
 
     $scope.toggleAll = () => {
