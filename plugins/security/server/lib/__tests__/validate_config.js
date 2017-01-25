@@ -17,7 +17,7 @@ describe('Validate config', function () {
 
   it('should log a warning and set xpack.security.encryptionKey if not set', function () {
     config.get.withArgs('server.ssl.key').returns('foo');
-    config.get.withArgs('server.ssl.cert').returns('bar');
+    config.get.withArgs('server.ssl.certificate').returns('bar');
     config.get.withArgs('xpack.security.secureCookies').returns(false);
 
     expect(() => validateConfig(config, log)).not.to.throwError();
@@ -59,7 +59,7 @@ describe('Validate config', function () {
 
   it('should set xpack.security.secureCookies if SSL is configured', function () {
     config.get.withArgs('server.ssl.key').returns('foo');
-    config.get.withArgs('server.ssl.cert').returns('bar');
+    config.get.withArgs('server.ssl.certificate').returns('bar');
     config.get.withArgs('xpack.security.encryptionKey').returns(validKey);
 
     expect(() => validateConfig(config, log)).not.to.throwError();

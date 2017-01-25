@@ -1,3 +1,4 @@
+import { get, has, set } from 'lodash';
 import { join, resolve } from 'path';
 import Promise from 'bluebird';
 import elasticsearch from 'elasticsearch';
@@ -140,15 +141,34 @@ export default function monitoringIndex(kibana) {
           requestTimeout: number().default(30000),
           pingTimeout: number().default(30000),
           ssl: object({
-            verify: boolean().default(true),
-            ca: array().single().items(string()),
-            cert: string(),
-            key: string()
+            verificationMode: string().valid('none', 'certificate', 'full').default('full'),
+            certificateAuthorities: array().single().items(string()),
+            certificate: string(),
+            key: string(),
+            keyPassphrase: string()
           }).default(),
           apiVersion: string().default('master'),
           engineVersion: string().valid('^6.0.0').default('^6.0.0')
         }).default()
       }).default();
+    },
+
+    deprecations: function ({ rename }) {
+      return [
+        rename('elasticsearch.ssl.ca', 'elasticsearch.ssl.certificateAuthorities'),
+        rename('elasticsearch.ssl.cert', 'elasticsearch.ssl.certificate'),
+        (settings, log) => {
+          if (!has(settings, 'elasticsearch.ssl.verify')) {
+            return;
+          }
+
+          const verificationMode = get(settings, 'elasticsearch.ssl.verify') ? 'full' : 'none';
+          set(settings, 'elasticsearch.ssl.verificationMode', verificationMode);
+          delete settings.elasticsearch.ssl.verify;
+
+          log(`Config key "elasticsearch.ssl.verify" is deprecated. It has been replaced with "elasticsearch.ssl.verificationMode"`);
+        }
+      ];
     },
 
     init: function (server, _options) {

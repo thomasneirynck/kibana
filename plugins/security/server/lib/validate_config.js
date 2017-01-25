@@ -10,7 +10,7 @@ export default (config, log) => {
     throw new Error('xpack.security.encryptionKey must be at least 32 characters. Please update the key in kibana.yml.');
   }
 
-  const isSslConfigured = config.get('server.ssl.key') != null && config.get('server.ssl.cert') != null;
+  const isSslConfigured = config.get('server.ssl.key') != null && config.get('server.ssl.certificate') != null;
   if (!isSslConfigured) {
     if (config.get('xpack.security.secureCookies')) {
       log('Using secure cookies, but SSL is not enabled inside Kibana. SSL must be configured outside of Kibana to ' +

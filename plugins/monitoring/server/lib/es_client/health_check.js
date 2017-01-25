@@ -39,7 +39,9 @@ export default function esHealthCheck(plugin, server) {
     return callWithInternalUser('ping')
     .catch(err => {
       if (!(err instanceof NoConnections)) throw err;
-      plugin.status.red(`Unable to connect to Elasticsearch at ${config.get('xpack.monitoring.elasticsearch.url')}.`);
+
+      const elasticsearchUrl = config.get('xpack.monitoring.elasticsearch.url') || config.get('elasticsearch.url');
+      plugin.status.red(`Unable to connect to Elasticsearch at ${elasticsearchUrl}.`);
       return Promise.delay(REQUEST_DELAY).then(waitForPong);
     });
   }
