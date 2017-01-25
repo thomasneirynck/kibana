@@ -64,7 +64,7 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
         onConfirm: doDelete
       };
       confirmModal('Are you sure you want to delete this user? This action is irreversible!', confirmModalOptions);
-    }
+    };
 
     $scope.saveUser = (user) => {
       // newPassword is unexepcted by the API.
