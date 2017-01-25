@@ -20,7 +20,6 @@
  */
 
 import _ from 'lodash';
-import $ from 'jquery';
 import angular from 'angular';
 import chrome from 'ui/chrome';
 
@@ -37,20 +36,27 @@ import FilterBarQueryFilterProvider from 'ui/filter_bar/query_filter';
 
 import stateMonitorFactory  from 'ui/state_management/state_monitor_factory';
 
-import 'plugins/kibana/dashboard/directives/grid';
-import 'plugins/kibana/dashboard/directives/dashboard_panel';
+import 'plugins/kibana/dashboard/grid';
+import 'plugins/kibana/dashboard/panel/panel';
 
-import 'plugins/kibana/dashboard/services/saved_dashboards';
+import 'plugins/kibana/dashboard/saved_dashboard/saved_dashboard';
 import 'plugins/kibana/discover/styles/main.less';
-import 'plugins/kibana/dashboard/styles/main.less';
+import 'plugins/kibana/dashboard/styles/index.less';
 import '../styles/main.less';
+
+import UtilsBrushEventProvider from 'ui/utils/brush_event';
+import FilterBarFilterBarClickHandlerProvider from 'ui/filter_bar/filter_bar_click_handler';
 
 import 'plugins/ml/components/job_select_list';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
-module.directive('dashboardApp', function (Notifier, courier, AppState, timefilter, kbnUrl) {
+module.directive('dashboardApp', function (Notifier, courier, AppState, timefilter, kbnUrl, Private) {
+  const brushEvent = Private(UtilsBrushEventProvider);
+  const filterBarClickHandler = Private(FilterBarFilterBarClickHandlerProvider);
+
+
   return {
     restrict: 'E',
     template: require('plugins/ml/results/components/dashboard_app.html'),
@@ -227,6 +233,20 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
         chrome.removeApplicationClass(['theme-dark', 'theme-light']);
         chrome.addApplicationClass(theme);
       }
+
+      /**
+       * Provide createChildUIState function to be used by Kibana child dashboard-grid directive.
+       * It's passed the ui state to use, but needs to be generated from the parent.
+       * @param path {String} - the unique path for this ui state.
+       * @param uiState {Object} - the uiState for the child.
+       * @returns {Object}
+       */
+      $scope.createChildUiState = function createChildUiState(path, uiState) {
+        return $scope.uiState.createChild(path, uiState, true);
+      };
+
+      $scope.brushEvent = brushEvent;
+      $scope.filterBarClickHandler = filterBarClickHandler;
 
       // update root source when filters update
       $scope.$listen(queryFilter, 'update', function () {
