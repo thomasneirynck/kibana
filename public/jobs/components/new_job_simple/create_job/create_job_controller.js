@@ -14,17 +14,8 @@
  */
 
 import _ from 'lodash';
-// import moment from 'moment-timezone';
-// import stringUtils from 'plugins/ml/util/string_utils';
-// import 'plugins/ml/lib/minify.json';
 import 'ui/courier';
 
-// import 'plugins/kibana/visualize/saved_visualizations/saved_visualizations';
-// import 'ui/directives/saved_object_finder';
-// import 'ui/directives/paginated_selectable_list';
-// import 'plugins/kibana/discover/saved_searches/saved_searches';
-
-// import 'plugins/ml/services/visualization_job_service';
 import 'plugins/kibana/visualize/styles/main.less';
 import AggTypesIndexProvider from 'ui/agg_types/index';
 
@@ -32,7 +23,6 @@ import dateMath from '@elastic/datemath';
 import moment from 'moment-timezone';
 import chrome from 'ui/chrome';
 import angular from 'angular';
-// /Users/james/dev/kibana-5.0/src/core_plugins/kibana/public/visualize/styles/main.less
 
 import uiRoutes from 'ui/routes';
 uiRoutes
@@ -163,7 +153,6 @@ module
 
   $scope.aggChange = function () {
     loadFields();
-    loadTimeFields();
     $scope.ui.isFormValid();
     $scope.ui.dirty = true;
     mlESMappingService.getMappings()
@@ -172,15 +161,6 @@ module
   };
 
   $scope.fieldChange = function () {
-    let fieldName = '';
-
-    if ($scope.formConfig.field === null) {
-      // if the field name is blank, e.g. using count, use the time field to guess the mapping type
-      fieldName = $scope.indexPattern.timeFieldName;
-    } else {
-      fieldName = $scope.formConfig.field.displayName;
-    }
-
     $scope.ui.isFormValid();
     $scope.ui.dirty = true;
   };
@@ -219,7 +199,7 @@ module
   // this only really affects small jobs when using sum
   function adjustIntervalDisplayed(interval) {
     let makeTheSame = false;
-    let secs = interval.getInterval().asSeconds();
+    const secs = interval.getInterval().asSeconds();
     const bucketSpan = $scope.formConfig.jobInterval.getInterval().asSeconds();
 
     if (bucketSpan > secs) {
@@ -244,7 +224,7 @@ module
   function loadFields() {
     const type = $scope.formConfig.agg.type;
     let fields = [];
-    type.params.forEach((param, i) => {
+    type.params.forEach((param) => {
       if (param.name === 'field') {
         fields = getIndexedFields(param);
       }
@@ -253,13 +233,6 @@ module
 
     if ($scope.ui.fields.length === 1) {
       $scope.formConfig.field = $scope.ui.fields[0];
-    }
-  }
-
-  function loadTimeFields() {
-    $scope.ui.timeFields = mlSimpleJobService.getTimeFields($scope.indexPattern);
-    if ($scope.ui.timeFields.length === 1) {
-      $scope.formConfig.timeField = $scope.ui.timeFields[0];
     }
   }
 
@@ -504,12 +477,12 @@ module
 
   function reloadModelChart() {
     return mlSimpleJobService.loadModelData($scope.formConfig);
-  };
+  }
 
 
   function reloadSwimlane() {
     return mlSimpleJobService.loadSwimlaneData($scope.formConfig);
-  };
+  }
 
   function adjustRefreshInterval(loadingDifference, currentInterval) {
     const INTERVAL_INCREASE_MS = 100;
@@ -544,7 +517,6 @@ module
 
   $scope.stopJob = function () {
     // setting the status to STOPPING disables the stop button
-    // job.datafeed_status = 'STOPPING';
     $scope.jobState = JOB_STATE.STOPPING;
     mlSimpleJobService.stopDatafeed($scope.formConfig);
   };
@@ -582,10 +554,11 @@ module
           // msgs.error("Job results for "+job.job_id+" could not be opened");
         });
     }
-  };
+  }
 
   courier.indexPatterns.get($scope.index).then((resp) => {
     $scope.indexPattern = resp;
+    $scope.formConfig.timeField = resp.timeFieldName;
   });
 
   $scope.$listen(timefilter, 'fetch', $scope.loadVis);

@@ -13,16 +13,13 @@
  * strictly prohibited.
  */
 
-import moment from 'moment';
 import _ from 'lodash';
 import 'ui/timefilter';
 
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
-import stringUtils from 'plugins/ml/util/string_utils';
 import jobUtils from 'plugins/ml/util/job_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.service('mlSimpleJobService', function (
   $q,
@@ -30,9 +27,7 @@ module.service('mlSimpleJobService', function (
   timefilter,
   Private,
   mlJobService,
-  mlSimpleJobSearchService,
-  mlESMappingService) {
-  const TimeBuckets = Private(require('ui/time_buckets'));
+  mlSimpleJobSearchService) {
 
   this.chartData = {
     line: [],
@@ -191,7 +186,6 @@ module.service('mlSimpleJobService', function (
       'body': {
         'query': {
           'bool': {
-            // 'must': [
             'filter': [
               {
                 'query_string': {
@@ -201,7 +195,7 @@ module.service('mlSimpleJobService', function (
               },
               {
                 'range': {
-                  [formConfig.timeField.name]: {
+                  [formConfig.timeField]: {
                     'gte': formConfig.start,
                     'lte': formConfig.end,
                     'format': formConfig.format
@@ -214,10 +208,8 @@ module.service('mlSimpleJobService', function (
         'aggs': {
           'times': {
             'date_histogram': {
-              'field': formConfig.timeField.displayName,
+              'field': formConfig.timeField,
               'interval': interval,
-              // 'interval': '3h',
-              // 'interval': '300s',
               'min_doc_count': 1
             }
           }
@@ -234,7 +226,7 @@ module.service('mlSimpleJobService', function (
     }
 
     return json;
-  };
+  }
 
   function getJobFromConfig(formConfig) {
     const bucketSpan = formConfig.jobInterval.getInterval().asSeconds();
@@ -242,7 +234,7 @@ module.service('mlSimpleJobService', function (
     const mappingTypes = formConfig.mappingTypes;
 
     const job = mlJobService.getBlankJob();
-    job.data_description.time_field = formConfig.timeField.name;
+    job.data_description.time_field = formConfig.timeField;
 
     // job.analysis_config.influencers.push(obj.params.field);
 
@@ -295,9 +287,6 @@ module.service('mlSimpleJobService', function (
 
     this.job = getJobFromConfig(formConfig);
     const job = createJobForSaving(this.job);
-
-    const index = formConfig.indexPattern.id;
-    const types = formConfig.mappingTypes.join(',');
 
     // DO THE SAVE
     mlJobService.saveNewJob(job, true)
@@ -408,13 +397,6 @@ module.service('mlSimpleJobService', function (
     return deferred.promise;
   };
 
-  this.getTimeFields = function (indexPattern) {
-    // const fields = _.filter(indexPattern.fields.raw, 'aggregatable');
-    const fields = indexPattern.fields;
-    const timeFields = _.filter(fields, (f) => {return f.type === 'date';});
-    return timeFields;
-  };
-
   this.indexTimeRange = function (indexPattern) {
     const deferred = $q.defer();
     const obj = {success: true, start: {epoch:0, string:''}, end: {epoch:0, string:''}};
@@ -453,6 +435,4 @@ module.service('mlSimpleJobService', function (
 
     return deferred.promise;
   };
-
-
 });

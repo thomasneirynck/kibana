@@ -27,7 +27,7 @@
 
     <div class="row form-controls">
 
-      <div class="form-group col-md-3">
+      <div class="form-group col-md-4">
         <label>Aggregation</label><i ml-info-icon="new_job_bucketspan"></i>
         <select
           ng-model="formConfig.agg.type"
@@ -38,7 +38,7 @@
         </select>
       </div>
 
-      <div class="form-group col-md-3">
+      <div class="form-group col-md-4">
         <label>Field</label><i ml-info-icon="new_job_bucketspan" ></i>
         <select
           ng-model="formConfig.field"
@@ -49,18 +49,7 @@
         </select>
       </div>
 
-      <div class="form-group col-md-3">
-        <label>Time field</label><i ml-info-icon="new_job_bucketspan" ></i>
-        <select
-          ng-model="formConfig.timeField"
-          ng-change="timeFieldChange()"
-          ng-options="field as field.displayName for field in ui.timeFields"
-          ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-          class="form-control">
-        </select>
-      </div>
-
-      <div class="form-group col-md-3">
+      <div class="form-group col-md-4">
         <label>Bucket span</label><i ml-info-icon="new_job_bucketspan" ></i>
         <!-- <select
           ng-model="formConfig.interval"

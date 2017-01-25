@@ -20,17 +20,15 @@
 import _ from 'lodash';
 import $ from 'jquery';
 import d3 from 'd3';
-import moment from 'moment';
-import numeral from 'numeral';
 import angular from 'angular';
 import 'ui/timefilter';
 
 import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
-module.directive('mlNewJobChart', function (timefilter, mlSimpleJobService) {
+module.directive('mlNewJobChart', function () {
 
   function link(scope, element, attrs) {
 
@@ -46,9 +44,9 @@ module.directive('mlNewJobChart', function (timefilter, mlSimpleJobService) {
     let lineChartXScale = d3.time.scale().range([0, vizWidth]);
     let lineChartYScale = d3.scale.linear().range([lineChartHeight, 0]);
 
-    const lineChartXAxis = d3.svg.axis().scale(lineChartXScale).orient('bottom')
+    d3.svg.axis().scale(lineChartXScale).orient('bottom')
       .innerTickSize(-lineChartHeight).outerTickSize(0).tickPadding(10);
-    const lineChartYAxis = d3.svg.axis().scale(lineChartYScale).orient('left')
+    d3.svg.axis().scale(lineChartYScale).orient('left')
       .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
 
     // TODO - do we want to use interpolate('basis') to smooth the connecting lines?
@@ -65,12 +63,12 @@ module.directive('mlNewJobChart', function (timefilter, mlSimpleJobService) {
     let swimlaneGroup;
     let dotChartGroup;
 
-    scope.$on('render', (event, d) => {
+    scope.$on('render', () => {
       createSVGGroups();
       drawLineChart();
     });
 
-    scope.$on('render-results', (event, d) => {
+    scope.$on('render-results', () => {
       drawResults();
     });
 
@@ -92,7 +90,7 @@ module.directive('mlNewJobChart', function (timefilter, mlSimpleJobService) {
       chartElement.select('svg').remove();
 
       if (chartElement.select('.progress-bar')[0][0] === null) {
-        const progress = chartElement.append('div')
+        chartElement.append('div')
           .attr('class', 'progress')
           .attr('style','width:' + (+vizWidth + 2) + 'px; margin-bottom: -' + (+lineChartHeight + 8) + 'px')
           .append('div')
@@ -146,7 +144,7 @@ module.directive('mlNewJobChart', function (timefilter, mlSimpleJobService) {
         .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
 
       // Add border round plot area.
-      const borderPath = lineChartGroup.append('rect')
+      lineChartGroup.append('rect')
         .attr('x', 0)
         .attr('y', 0)
         .attr('height', lineChartHeight)
@@ -174,7 +172,7 @@ module.directive('mlNewJobChart', function (timefilter, mlSimpleJobService) {
         .call(yAxis);
     }
 
-    function drawLineChartPaths(data, model) {
+    function drawLineChartPaths(data) {
       lineChartGroup.append('path')
         .attr('class', 'values-line')
         .attr('d', lineChartValuesLine(data));
@@ -236,10 +234,10 @@ module.directive('mlNewJobChart', function (timefilter, mlSimpleJobService) {
         cellWidth = 1;
       }
 
-      const x = d3.time.scale().range([0, swimlaneWidth])
+      d3.time.scale().range([0, swimlaneWidth])
         .domain(d3.extent(data, (d) => d.date));
 
-      const y = d3.scale.linear().range([swimlaneHeight, 0])
+      d3.scale.linear().range([swimlaneHeight, 0])
         .domain([0, swimlaneHeight]);
 
       // Set up the color scale to use for indicating score.
