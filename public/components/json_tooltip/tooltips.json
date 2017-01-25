@@ -89,24 +89,6 @@
    "new_job_datafeed_retrieve_source": {
       "text": "Advanced option. Select to retrieve unfiltered _source document, instead of specified fields."
    },
-   "new_job_enable_transforms": {
-      "text": "Pre-process each data input record prior to analysis. None, one or more transforms may be configured."
-   },
-   "new_job_transform_name": {
-      "text": "Select the type of transform."
-   },
-   "new_job_transform_inputs": {
-      "text": "Defines the field(s) to be transformed."
-   },
-   "new_job_transform_outputs": {
-      "text": "Defines the field(s) which have been transformed and will be analyzed."
-   },
-   "new_job_transform_arguments": {
-      "text": "Configuration options for the transform actions."
-   },
-   "new_job_transform_condition": {
-      "text": "The transform will only be performed if this condition (applied to the inputs) is true."
-   },
    "new_filter_ruleaction": {
       "text": "A string specifying the rule action. Initially, the only valid option is 'filter_results' but it provisions for expansion to actions like 'disable_modeling'."
    },

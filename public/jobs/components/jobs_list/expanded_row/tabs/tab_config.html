@@ -74,24 +74,6 @@
         </div>
       </div>
 
-      <div ng-repeat="(key, value) in job">
-        <div ng-switch="key">
-          <div ng-switch-when="transforms" ng-show="transforms.length > 0">
-            <div class="ml_sub_heading">Transforms</div>
-            <div class='ml_job_section_container'>
-              <div>
-                <ml-job-item ng-repeat="value1 in value">
-                  <div class="ml_job_row row">
-                    <div class="col-md-12">{{value1}}</div>
-                  </div>
-                </ml-job-item>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-
     </div>
 
     <div class="col-md-6">

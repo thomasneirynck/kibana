@@ -1095,15 +1095,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           fields[job.data_description.time_field] = {};
         }
 
-        // get fields from transform inputs
-        if (job.transforms) {
-          _.each(job.transforms, (trfm) => {
-            _.each(trfm.inputs, (inp) => {
-              fields[inp] = {};
-            });
-          });
-        }
-
         // console.log('fields: ', fields);
         const fieldsList = Object.keys(fields);
         if (fieldsList.length) {
@@ -1234,22 +1225,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     const deferred = $q.defer();
     if (dtr) {
       ml.validateDetector({body:dtr})
-        .then((resp) => {
-          deferred.resolve(resp);
-        })
-        .catch((resp) => {
-          deferred.reject(resp);
-        });
-    } else {
-      deferred.reject({});
-    }
-    return deferred.promise;
-  };
-
-  this.validateTransforms = function (trfm) {
-    const deferred = $q.defer();
-    if (trfm) {
-      ml.validateTransforms({body:trfm})
         .then((resp) => {
           deferred.resolve(resp);
         })

@@ -25537,26 +25537,6 @@
     method: 'POST'
   });
 
-  api.validateTransform = ca({
-    urls: [
-      {
-        fmt: '/_xpack/ml/_validate/transform'
-      }
-    ],
-    needBody: true,
-    method: 'POST'
-  });
-
-  api.validateTransforms = ca({
-    urls: [
-      {
-        fmt: '/_xpack/ml/_validate/transforms'
-      }
-    ],
-    needBody: true,
-    method: 'POST'
-  });
-
 /***/ }
 
 /******/ ]);

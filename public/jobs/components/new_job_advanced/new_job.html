@@ -150,38 +150,11 @@
           </div>
         </ml-job-tab-0>
 
-        <!-- tab 1 Transforms -->
+        <!-- tab2 1 Analysis Configuration -->
         <ml-job-tab-1 ng-show="ui.currentTab === 1">
-          <div class="tab_contents">
-            <label>
-              <input
-                ng-model="ui.hasTransforms"
-                ng-change="hasTransformChange()"
-                type="checkbox" />
-              Enable transforms
-            </label><i ml-info-icon="new_job_enable_transforms" />
-            <div class="form-group" ng-if="ui.hasTransforms">
-              <div ml-job-transforms-list
-                ml-transforms="job.transforms"
-                ml-detectors="job.analysis_config.detectors"
-                ml-indexes="indexes"
-                ml-properties="properties"
-                ml-influencers="ui.influencers"
-                ml-add-transforms-to-properties="addTransformsToProperties"
-                ml-data-format="job.data_description.format"
-                ></div>
-            </div>
-          </div>
-        </ml-job-tab-1>
-
-        <!-- tab2 2 Analysis Configuration -->
-        <ml-job-tab-2 ng-show="ui.currentTab === 2">
           <div class="tab_contents">
             <datalist id="properties_datalist">
               <option ng-repeat="(key, prop) in properties" >{{key}}</option>
-            </datalist>
-            <datalist id="properties_datalist_no_transforms">
-              <option ng-repeat="(key, prop) in properties | filterTransforms">{{key}}</option>
             </datalist>
 
             <div class="form-group">
@@ -200,7 +173,7 @@
                 ng-model="job.analysis_config.summary_count_field_name"
                 placeholder=""
                 ng-change="generalAnalysisConfigFieldNameChange('summary_count_field_name')"
-                list='properties_datalist_no_transforms'
+                list='properties_datalist'
                 class="form-control"  />
             </div>
             <div class="form-group">
@@ -253,8 +226,8 @@
                 </button>
               </div>
             </div>
-            <div ng-hide="ui.validation.tabs[2].checks.categorizationFilters.valid" class="validation-error">
-              {{ ( ui.validation.tabs[2].checks.categorizationFilters.message || "Categorization filters must all be valid regular expressions" ) }}
+            <div ng-hide="ui.validation.tabs[1].checks.categorizationFilters.valid" class="validation-error">
+              {{ ( ui.validation.tabs[1].checks.categorizationFilters.message || "Categorization filters must all be valid regular expressions" ) }}
             </div>
 
             <hr />
@@ -266,8 +239,8 @@
               ml-cat-field-name-selected="(job.analysis_config.categorization_field_name?true:false)"
               ml-edit-mode="'NEW'"
               ></div>
-            <div ng-hide="ui.validation.tabs[2].checks.detectors.valid" class="validation-error">
-              {{ ( ui.validation.tabs[2].checks.detectors.message || "At least one detector should be configured" ) }}
+            <div ng-hide="ui.validation.tabs[1].checks.detectors.valid" class="validation-error">
+              {{ ( ui.validation.tabs[1].checks.detectors.message || "At least one detector should be configured" ) }}
             </div>
             <hr />
             <label>Influencers</label><i ml-info-icon="new_job_influencers" />
@@ -293,15 +266,15 @@
                 </button>
               </div>
             </div>
-            <div ng-hide="ui.validation.tabs[2].checks.influencers.valid" class="validation-error">
-              {{ ( ui.validation.tabs[2].checks.influencers.message || "At least one influencer should be selected" ) }}
+            <div ng-hide="ui.validation.tabs[1].checks.influencers.valid" class="validation-error">
+              {{ ( ui.validation.tabs[1].checks.influencers.message || "At least one influencer should be selected" ) }}
             </div>
           </div>
-        </ml-job-tab-2>
+        </ml-job-tab-1>
 
 
-        <!-- tab 3 Data Description -->
-        <ml-job-tab-3 ng-show="ui.currentTab === 3">
+        <!-- tab 2 Data Description -->
+        <ml-job-tab-2 ng-show="ui.currentTab === 2">
           <div class="tab_contents">
             <label>Data format</label><i ml-info-icon="new_job_data_format" />
             <select
@@ -337,8 +310,8 @@
               required
               placeholder=""
               class="form-control" />
-            <div ng-hide="ui.validation.tabs[3].checks.timeField.valid" class="validation-error">
-              {{ ( ui.validation.tabs[3].checks.timeField.message || "Time field should be specified" ) }}
+            <div ng-hide="ui.validation.tabs[2].checks.timeField.valid" class="validation-error">
+              {{ ( ui.validation.tabs[2].checks.timeField.message || "Time field should be specified" ) }}
             </div>
 
             <label>Time format</label><i ml-info-icon="new_job_time_format" />
@@ -347,16 +320,16 @@
               required
               placeholder=""
               class="form-control" />
-            <div ng-hide="ui.validation.tabs[3].checks.timeFormat.valid" class="validation-error">
-              {{ ( ui.validation.tabs[3].checks.timeFormat.message || "Time format should be specified" ) }}
+            <div ng-hide="ui.validation.tabs[2].checks.timeFormat.valid" class="validation-error">
+              {{ ( ui.validation.tabs[2].checks.timeFormat.message || "Time format should be specified" ) }}
             </div>
             <div class="time-example">{{ ((exampleTime)?"e.g. "+ exampleTime:"") }}</div>
 
           </div>
-        </ml-job-tab-3>
+        </ml-job-tab-2>
 
-        <!-- tab 4 Datafeed -->
-        <ml-job-tab-4 ng-show="ui.currentTab === 4">
+        <!-- tab 3 Datafeed -->
+        <ml-job-tab-3 ng-show="ui.currentTab === 3">
           <div class="tab_contents">
             <label>
               <input
@@ -366,8 +339,8 @@
                 type="checkbox" />
               Datafeed job
             </label><i ml-info-icon="new_job_enable_datafeed_job" />
-            <div ng-hide="ui.validation.tabs[4].checks.isDatafeed.valid" class="validation-error">
-              {{ ( ui.validation.tabs[4].checks.isDatafeed.message ) }}
+            <div ng-hide="ui.validation.tabs[3].checks.isDatafeed.valid" class="validation-error">
+              {{ ( ui.validation.tabs[3].checks.isDatafeed.message ) }}
             </div>
             <div class="form-group help-pane" ng-show="job.data_description.format!=='JSON' && job.data_description.format!==undefined">
               <small class="info">Data format must be set to 'JSON' to enable the datafeed.</small>
@@ -424,10 +397,10 @@
 
             </div>
           </div>
-        </ml-job-tab-4>
+        </ml-job-tab-3>
 
-        <!-- tab 5 Edit JSON -->
-        <ml-job-tab-5 ng-show="ui.currentTab === 5" class="ml_json_tab">
+        <!-- tab 4 Edit JSON -->
+        <ml-job-tab-4 ng-show="ui.currentTab === 4" class="ml_json_tab">
           <div class="tab_contents">
             <label>JSON</label>
             <textarea
@@ -436,7 +409,7 @@
               ng-change="jsonTextChange()" >
             </textarea>
           </div>
-        </ml-job-tab-5>
+        </ml-job-tab-4>
 
         <hr />
 
