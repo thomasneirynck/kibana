@@ -14,6 +14,7 @@
  */
 
 import _ from 'lodash';
+import angular from 'angular';
 
 function filterAggTypes(aggTypes) {
   const filteredAggTypes = [];
@@ -32,13 +33,13 @@ function filterAggTypes(aggTypes) {
       type.mlDebugAgg = {max: 'max', min: 'min'};
       filteredAggTypes.push(type);
 
-      typeCopy = _.clone(type);
+      typeCopy = angular.copy(type);
       typeCopy.mlName = 'high_count';
       typeCopy.title   = 'High count';
       typeCopy.mlDebugAgg = {max: 'max', min: 'min'};
       filteredAggTypes.push(typeCopy);
 
-      typeCopy = _.clone(type);
+      typeCopy = angular.copy(type);
       typeCopy.mlName = 'low_count';
       typeCopy.title   = 'Low count';
       typeCopy.mlDebugAgg = {max: 'max', min: 'min'};
@@ -47,12 +48,12 @@ function filterAggTypes(aggTypes) {
     } else if (type.name === 'sum') {
       filteredAggTypes.push(type);
 
-      typeCopy = _.clone(type);
+      typeCopy = angular.copy(type);
       typeCopy.mlName = 'high_sum';
       typeCopy.title   = 'High sum';
       filteredAggTypes.push(typeCopy);
 
-      typeCopy = _.clone(type);
+      typeCopy = angular.copy(type);
       typeCopy.mlName = 'low_sum';
       typeCopy.title   = 'Low sum';
       filteredAggTypes.push(typeCopy);
@@ -61,12 +62,12 @@ function filterAggTypes(aggTypes) {
       type.mlName = 'mean';
       filteredAggTypes.push(type);
 
-      typeCopy = _.clone(type);
+      typeCopy = angular.copy(type);
       typeCopy.mlName = 'high_mean';
       typeCopy.title   = 'High average';
       filteredAggTypes.push(typeCopy);
 
-      typeCopy = _.clone(type);
+      typeCopy = angular.copy(type);
       typeCopy.mlName = 'low_mean';
       typeCopy.title   = 'Low average';
       filteredAggTypes.push(typeCopy);
