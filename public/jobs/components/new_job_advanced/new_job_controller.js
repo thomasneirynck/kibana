@@ -206,7 +206,7 @@ function (
         if (!$scope.job.datafeed_config) {
           $scope.ui.wizard.dataLocation = 'NONE';
 
-          $scope.ui.influencers = $scope.job.analysis_config.influencers;
+          $scope.ui.influencers = angular.copy($scope.job.analysis_config.influencers);
         } else {
           delete $scope.job.datafeed_config.datafeed_id;
           delete $scope.job.datafeed_config.job_id;
@@ -935,7 +935,7 @@ function (
     // deduplicate to play well with ng-repeat
     influencers = _.uniq(influencers);
 
-    return _.sortBy(influencers, function (inf) {return inf;});
+    return _.sortBy(influencers, (inf) => inf);
   }
 
   init();
