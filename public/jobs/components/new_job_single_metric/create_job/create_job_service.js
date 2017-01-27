@@ -21,13 +21,13 @@ import jobUtils from 'plugins/ml/util/job_utils';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('mlSimpleJobService', function (
+module.service('mlSingleMetricJobService', function (
   $q,
   es,
   timefilter,
   Private,
   mlJobService,
-  mlSimpleJobSearchService) {
+  mlSingleMetricJobSearchService) {
 
   this.chartData = {
     line: [],
@@ -329,7 +329,7 @@ module.service('mlSimpleJobService', function (
       }
     }
 
-    mlSimpleJobSearchService.getModelDebugOutput(
+    mlSingleMetricJobSearchService.getModelDebugOutput(
       formConfig.indexPattern.id,
       [formConfig.jobId],
       start,
@@ -351,7 +351,7 @@ module.service('mlSimpleJobService', function (
   this.loadSwimlaneData = function (formConfig) {
     const deferred = $q.defer();
 
-    mlSimpleJobSearchService.getScoresByBucket(
+    mlSingleMetricJobSearchService.getScoresByBucket(
       formConfig.indexPattern.id,
       [formConfig.jobId],
       formConfig.start,

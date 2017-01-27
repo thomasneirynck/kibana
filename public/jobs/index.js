@@ -16,5 +16,5 @@
 import 'plugins/ml/jobs/styles/main.less';
 import './components/jobs_list';
 import './components/new_job_advanced';
-import './components/new_job_simple';
+import './components/new_job_single_metric';
 import './components/new_job_wizard';

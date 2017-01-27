@@ -18,9 +18,9 @@ import './wizard/wizard';
 import './create_job';
 import uiRoutes from 'ui/routes';
 uiRoutes
-.defaults(/new_job_simple/, {
+.defaults(/new_job_single_metric/, {
   requireDefaultIndex: true
 })
-.when('/jobs/new_job_simple', {
-  redirectTo: '/jobs/new_job_simple/step/1'
+.when('/jobs/new_job_single_metric', {
+  redirectTo: '/jobs/new_job_single_metric/step/1'
 });

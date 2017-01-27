@@ -12,13 +12,13 @@
     <div ng-show="ui.wizard.step === 0" class="wizard-step-0">
       <div>
 
-        <div ng-mouseenter="ui.wizard.stepHovering=1" ng-mouseleave="ui.wizard.stepHovering=0" ng-click="ui.wizard.setJobMode('jobs/new_job_simple')" >
+        <div ng-mouseenter="ui.wizard.stepHovering=1" ng-mouseleave="ui.wizard.stepHovering=0" ng-click="ui.wizard.setJobMode('jobs/new_job_single_metric')" >
           <label class="data-location">
             <div class="ml-round-number" ng-class="{'ml-round-number-pop':ui.wizard.stepHovering===1}">
               <i aria-hidden="true" class="fa fa-area-chart"></i>
             </div>
             <div>
-              <div>Create a simple job</div>
+              <div>Create a single metric job</div>
               <div>Based on a kibana index pattern or saved search</div>
             </div>
           </label>

@@ -26,7 +26,7 @@ import angular from 'angular';
 
 import uiRoutes from 'ui/routes';
 uiRoutes
-.when('/jobs/new_job_simple/create', {
+.when('/jobs/new_job_single_metric/create', {
   template: require('./create_job.html'),
   resolve: {
     indexPatternIds: (courier) => courier.indexPatterns.getIds()
@@ -37,7 +37,7 @@ import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module
-.controller('MlCreateSimpleJob', function (
+.controller('MlCreateSingleMetricJob', function (
   $scope,
   $route,
   $location,
@@ -48,7 +48,7 @@ module
   timefilter,
   Private,
   mlJobService,
-  mlSimpleJobService,
+  mlSingleMetricJobService,
   mlMessageBarService,
   mlESMappingService,
   mlBrowserDetectService) {
@@ -56,14 +56,14 @@ module
   timefilter.enabled = true;
   const msgs = mlMessageBarService;
   const MlTimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
-  const filterAggTypes = require('plugins/ml/jobs/components/new_job_simple/create_job/filter_agg_types');
+  const filterAggTypes = require('plugins/ml/jobs/components/new_job_single_metric/create_job/filter_agg_types');
 
   const aggTypes = Private(AggTypesIndexProvider);
   $scope.groupName = 'metrics';
   $scope.courier = courier;
 
   $scope.index = $route.current.params.index;
-  $scope.chartData = mlSimpleJobService.chartData;
+  $scope.chartData = mlSingleMetricJobService.chartData;
 
   const PAGE_WIDTH = angular.element('.jobs-container').width();
   const BAR_TARGET = PAGE_WIDTH / 2;
@@ -129,10 +129,6 @@ module
       value: 'custom'
     }]
   };
-
-  $scope.img1 = chrome.getBasePath() + '/plugins/ml/jobs/components/new_job_simple/img/results_1.png';
-  $scope.img2 = chrome.getBasePath() + '/plugins/ml/jobs/components/new_job_simple/img/results_2.png';
-  $scope.img3 = chrome.getBasePath() + '/plugins/ml/jobs/components/new_job_simple/img/results_3.png';
 
   $scope.formConfig = {
     agg: {
@@ -275,7 +271,7 @@ module
       // $scope.formConfig.jobId = '';
       $scope.ui.dirty = false;
 
-      mlSimpleJobService.getLineChartResults($scope.formConfig)
+      mlSingleMetricJobService.getLineChartResults($scope.formConfig)
       .then((results) => {
         // console.log('chart results', results);
         $scope.hasResults = true;
@@ -357,7 +353,7 @@ module
       msgs.clear();
       $scope.formConfig.mappingTypes = mlESMappingService.getTypesFromMapping($scope.formConfig.indexPattern.id);
       // create the new job
-      mlSimpleJobService.createJob($scope.formConfig)
+      mlSingleMetricJobService.createJob($scope.formConfig)
       .then((job) => {
         // if save was successful, open the job
         mlJobService.openJob(job.job_id)
@@ -388,7 +384,7 @@ module
       .then((resp) => {
 
         if (startDatafeedAfterSave) {
-          mlSimpleJobService.startDatafeed($scope.formConfig)
+          mlSingleMetricJobService.startDatafeed($scope.formConfig)
           .then((resp) => {
             $scope.jobState = JOB_STATE.RUNNING;
             refreshCounter = 0;
@@ -415,7 +411,7 @@ module
     const counterLimit = 20 - (refreshInterval / REFRESH_INTERVAL_MS);
     if (refreshCounter >=  counterLimit) {
       refreshCounter = 0;
-      mlSimpleJobService.checkDatafeedStatus($scope.formConfig)
+      mlSingleMetricJobService.checkDatafeedStatus($scope.formConfig)
       .then((status) => {
         if (status === 'STOPPED') {
           console.log('Stopping poll because datafeed status is: ' + status);
@@ -476,12 +472,12 @@ module
   }
 
   function reloadModelChart() {
-    return mlSimpleJobService.loadModelData($scope.formConfig);
+    return mlSingleMetricJobService.loadModelData($scope.formConfig);
   }
 
 
   function reloadSwimlane() {
-    return mlSimpleJobService.loadSwimlaneData($scope.formConfig);
+    return mlSingleMetricJobService.loadSwimlaneData($scope.formConfig);
   }
 
   function adjustRefreshInterval(loadingDifference, currentInterval) {
@@ -502,7 +498,7 @@ module
   }
 
   $scope.setFullTimeRange = function () {
-    mlSimpleJobService.indexTimeRange($scope.indexPattern)
+    mlSingleMetricJobService.indexTimeRange($scope.indexPattern)
     .then((resp) => {
       timefilter.time.from = moment(resp.start.epoch).toISOString();
       timefilter.time.to = moment(resp.end.epoch).toISOString();
@@ -518,7 +514,7 @@ module
   $scope.stopJob = function () {
     // setting the status to STOPPING disables the stop button
     $scope.jobState = JOB_STATE.STOPPING;
-    mlSimpleJobService.stopDatafeed($scope.formConfig);
+    mlSingleMetricJobService.stopDatafeed($scope.formConfig);
   };
 
   $scope.viewResults = function (page) {
@@ -559,6 +555,7 @@ module
   courier.indexPatterns.get($scope.index).then((resp) => {
     $scope.indexPattern = resp;
     $scope.formConfig.timeField = resp.timeFieldName;
+    courier;
   });
 
   $scope.$listen(timefilter, 'fetch', $scope.loadVis);

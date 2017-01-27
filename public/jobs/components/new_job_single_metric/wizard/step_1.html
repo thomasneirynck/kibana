@@ -5,7 +5,7 @@
     </span>
   </div>
 </kbn-top-nav>
-<ml-new-job-simple>
+<ml-new-job-single_metric>
   <ml-message-bar></ml-message-bar>
   <div ng-controller="MlNewJobStep1" class="wizard">
     <div class="wizard-column wizard-column--small">
@@ -18,10 +18,10 @@
       ></paginated-selectable-list>
     </div>
     <div class="wizard-column wizard-column--large">
+    <!--
       <h3 class="wizard-sub-title">Or, From a Saved Search</h3>
-      <!-- Saved searches -->
       Broken for now
-<!--      <saved-object-finder
+     <saved-object-finder
           title="Saved Searches"
           type="searches"
           class="wizard-row"
@@ -29,4 +29,4 @@
       ></saved-object-finder>
  -->    </div>
   </div>
-</ml-new-job-simple>
+</ml-new-job-single_metric>

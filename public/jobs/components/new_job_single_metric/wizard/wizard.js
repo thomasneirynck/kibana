@@ -30,7 +30,7 @@ import 'plugins/kibana/visualize/styles/main.less';
 
 import uiRoutes from 'ui/routes';
 uiRoutes
-.when('/jobs/new_job_simple/step/1', {
+.when('/jobs/new_job_single_metric/step/1', {
   template: require('./step_1.html'),
   resolve: {
     indexPatternIds: courier => courier.indexPatterns.getIds()
@@ -43,12 +43,13 @@ uiRoutes
 // .register(require('plugins/kibana/visualize/saved_visualizations/saved_visualization_register'));
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.controller('MlNewJobStep1', (
   $scope,
   $route,
-  timefilter) => {
+  timefilter,
+  kbnUrl) => {
 
   timefilter.enabled = false; // remove time picker from top of page
 
@@ -58,11 +59,11 @@ module.controller('MlNewJobStep1', (
   };
 
   $scope.step2WithSearchUrl = (hit) => {
-    // return kbnUrl.eval('#/visualize/create?&type={{type}}&savedSearchId={{id}}', {type: type, id: hit.id});
-    return '';
+    return kbnUrl.eval('#/visualize/create?&type={{type}}&savedSearchId={{id}}', {type: type, id: hit.id});
+    // return '';
   };
   $scope.makeUrl = (pattern) => {
     if (!pattern) return;
-    return '#/jobs/new_job_simple/create?index=' + encodeURIComponent(pattern);
+    return '#/jobs/new_job_single_metric/create?index=' + encodeURIComponent(pattern);
   };
 });

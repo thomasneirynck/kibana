@@ -30,7 +30,6 @@ module.directive('mlElasticDataDescription', function ($http) {
       dateProperties:     '=mlDateProperties',
       indexes:            '=mlIndexes',
       types:              '=mlTypes',
-      simpleMode:         '=mlSimpleMode',
       mode:               '=mlMode',
       datafeed_config:    '=mlDatafeedConfig',
       data_description:    '=mlDataDescription',
@@ -47,10 +46,6 @@ module.directive('mlElasticDataDescription', function ($http) {
 
       $scope.timeFormatGuessed = false;
       $scope.exampleTime = '';
-
-      if ($scope.simpleMode) {
-        $scope.ui.wizard.indexInputType = 'TEXT';
-      }
 
       const nonInfluencerTypes = [
         'numeric',
