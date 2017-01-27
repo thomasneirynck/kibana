@@ -15,15 +15,17 @@
 
 import createProxy from '../../src/core_plugins/elasticsearch/lib/create_proxy';
 import initializationChecks from './lib/initialization_checks';
+import { resolve } from 'path';
 
 module.exports = function (kibana) {
 
   return new kibana.Plugin({
     require: ['kibana', 'elasticsearch'],
+    id: 'ml',
+    publicDir: resolve(__dirname, 'public'),
 
     uiExports: {
       app: {
-        id: 'ml',
         title: 'Machine Learning',
         description: 'Elastic behavioral analytics for machine data',
         icon: 'plugins/ml/ml-white.png',
@@ -32,7 +34,7 @@ module.exports = function (kibana) {
           'visTypes',
           'spyModes'
         ],
-        injectVars: function (server, options) {
+        injectVars: function (server) {
           const config = server.config();
 
           // tilemapsConfig settings are still needed even though the plugin
@@ -62,7 +64,7 @@ module.exports = function (kibana) {
     },
 
 
-    init: function (server, options) {
+    init: function (server) {
       createProxy(server, 'PUT', '/_xpack/ml/{paths*}');
       createProxy(server, 'POST', '/_xpack/ml/{paths*}');
       createProxy(server, 'DELETE', '/_xpack/ml/{paths*}');

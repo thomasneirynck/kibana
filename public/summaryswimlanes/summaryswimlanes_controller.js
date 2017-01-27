@@ -23,10 +23,10 @@ import $ from 'jquery';
 import angular from 'angular';
 import moment from 'moment';
 
-const flot = require('imports?$=jquery!../lib/bower_components/flot/jquery.flot');
-require('imports?$=jquery!../lib/bower_components/flot/jquery.flot.selection');
-require('imports?$=jquery!../lib/bower_components/flot/jquery.flot.time');
-require('imports?$=jquery,this=>window!../lib/bower_components/flot/jquery.flot.resize');
+require('../lib/bower_components/flot/jquery.flot');
+require('../lib/bower_components/flot/jquery.flot.selection');
+require('../lib/bower_components/flot/jquery.flot.time');
+require('../lib/bower_components/flot/jquery.flot.resize');
 
 import chrome from 'ui/chrome';
 import 'ui/courier';
