@@ -158,6 +158,11 @@ to enjoy multi-cluster monitoring.`
             {numeral(this.path('elasticsearch.stats.indices.store.size_in_bytes')).format('0,0[.]0 b')}
           </IsClusterSupported>
         </td>
+        <td key="Logstash">
+          <IsClusterSupported>
+            {numeral(this.path('logstash.count')).format('0,0')}
+          </IsClusterSupported>
+        </td>
         <td key="Kibana">
           <IsClusterSupported>
             {numeral(this.path('kibana.count')).format('0,0')}

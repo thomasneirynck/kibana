@@ -25,32 +25,30 @@ uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl, sh
           },
           {
             key: 'status',
-            sort: 0,
             title: 'Status'
           },
           {
             key: 'elasticsearch.stats.nodes.count.total',
-            sort: 0,
             title: 'Nodes'
           },
           {
             key: 'elasticsearch.stats.indices.count',
-            sort: 0,
             title: 'Indices'
           },
           {
             key: 'elasticsearch.stats.indices.store.size_in_bytes',
-            sort: 0,
             title: 'Data'
           },
           {
+            key: 'logstash.count',
+            title: 'Logstash'
+          },
+          {
             key: 'kibana.count',
-            sort: 0,
             title: 'Kibana'
           },
           {
             key: 'license.type',
-            sort: 0,
             title: 'License'
           }
         ]
