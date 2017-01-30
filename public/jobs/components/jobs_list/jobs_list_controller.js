@@ -56,7 +56,7 @@ function (
   const msgs = mlMessageBarService; // set a reference to the message bar service
   const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
   let refreshCounter = 0;
-  const auditMessages = {};
+  // const auditMessages = {};
   $scope.noJobsCreated;
   $scope.toLocaleString = stringUtils.toLocaleString; // add toLocaleString to the scope to display nicer numbers
   $scope.filterText = '';
@@ -161,7 +161,7 @@ function (
           } else {
             $window.open(path, '_blank');
           }
-        }).catch((resp) => {
+        }).catch(() => {
           msgs.error('Job results for ' + job.job_id + ' could not be opened');
         });
     }
@@ -237,10 +237,17 @@ function (
       rowScope.time = latestTimeStamp;
 
       rowScopes.push(rowScope);
-      const analysisConfig = job.analysis_config;
       const jobDescription = job.description || '';
       // col array
-      if ($scope.filterText === undefined || $scope.filterText === '' || job.job_id.match(filterRegexp) || jobDescription.match(filterRegexp)) {
+      if ($scope.filterText === undefined ||
+          $scope.filterText === '' ||
+          job.job_id.match(filterRegexp) ||
+          jobDescription.match(filterRegexp)) {
+
+        // long string moved to separate variable to allow it to be broken in two
+        let iconTxt = '<i ng-show="tab.jobWarningClass !== \'\'" ';
+        iconTxt += 'tooltip="{{jobAudit.jobWarningText}}" class="{{jobAudit.jobWarningClass}}"></i>';
+
         const tableRow = [{
           markup: jobsListArrow,
           scope:  rowScope
@@ -248,7 +255,7 @@ function (
           markup: filterHighlight(job.job_id),
           value:  job.job_id
         }, {
-          markup: '<i ng-show="tab.jobWarningClass !== \'\'" tooltip="{{jobAudit.jobWarningText}}" class="{{jobAudit.jobWarningClass}}"></i>',
+          markup: iconTxt,
           scope:  rowScope
         }, {
           markup: filterHighlight(stringUtils.escape(jobDescription)),
@@ -345,6 +352,7 @@ function (
 
   // load and create audit log for the current job
   // log also includes system messages
+  /*
   function loadAuditMessages(jobs, rowScopes, jobId) {
     const createTimes = {};
     const fromRange = '1M';
@@ -407,8 +415,10 @@ function (
         }
       });
   }
+  */
 
   // function for loading audit messages for all jobs for displaying icons
+  /*
   function loadAuditSummary(jobs, rowScopes) {
     const levels = {SYSTEM_INFO: -1, INFO:0, WARNING:1, ERROR:2};
     const jobMessages = {};
@@ -493,10 +503,11 @@ function (
       }
     });
   }
+  */
 
   // create modal dialog for editing job descriptions
   function openEditJobWindow(job) {
-    const modalInstance = $modal.open({
+    $modal.open({
       template: require('plugins/ml/jobs/components/jobs_list/edit_job_modal/edit_job_modal.html'),
       controller: 'MlEditJobModal',
       backdrop: 'static',

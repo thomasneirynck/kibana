@@ -13,13 +13,11 @@
  * strictly prohibited.
  */
 
-import _ from 'lodash';
 import moment from 'moment-timezone';
-import stringUtils from 'plugins/ml/util/string_utils';
 import angular from 'angular';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.controller('MlJobTimepickerModal', function ($scope, $modalInstance, params, mlJobService, mlMessageBarService) {
   const msgs = mlMessageBarService;

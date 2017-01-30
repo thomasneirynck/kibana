@@ -19,7 +19,7 @@
 // e.g. mlClipboardService.copy("this could be abused!");
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.service('mlClipboardService', function () {
 

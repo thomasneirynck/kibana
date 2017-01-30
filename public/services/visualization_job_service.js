@@ -23,10 +23,7 @@ module.service('mlVisualizationJobService', function (
   $rootScope,
   $http,
   $q,
-  es,
-  mlInfoService,
-  mlJobService
-) {
+  es) {
   this.job = {};
 
   function getVisJsonFromId(id) {
@@ -80,10 +77,6 @@ module.service('mlVisualizationJobService', function (
       _.each(visState.aggs, (obj) => {
         if (obj.type === 'date_histogram') {
           this.job.data_description.time_field = obj.params.field;
-          if (obj.params.customInterval !== undefined) {
-            const ci = obj.params.customInterval;
-
-          }
         }
         if (obj.schema === 'metric') {
           dtr.function = obj.type;
@@ -130,8 +123,7 @@ module.service('mlVisualizationJobService', function (
     let json = {};
     visJson = visJson._source;
     if (visJson.visState !== undefined) {
-      const visState = (typeof visJson.visState === 'string') ? JSON.parse(visJson.visState) : visJson.visState;
-      // const kibanaSavedObjectMeta = JSON.parse(visJson.kibanaSavedObjectMeta.searchSourceJSON);
+      // const visState = (typeof visJson.visState === 'string') ? JSON.parse(visJson.visState) : visJson.visState;
 
       const agg = {};
       agg[config.agg.type.name] = {field: config.field.displayName};

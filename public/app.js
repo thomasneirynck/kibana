@@ -36,14 +36,8 @@ import 'plugins/ml/components/confirm_modal';
 import 'plugins/ml/app.less';
 import 'plugins/ml/components/pretty_duration';
 
-const _ = require('lodash');
-import moment from 'moment-timezone';
-
 import chrome from 'ui/chrome';
 import routes from 'ui/routes';
-
-import logo from 'plugins/ml/header.png';
-import favicon from 'plugins/ml/favicon.png';
 
 // switch the kibana favicon to the ml icon
 // $("head link[rel='shortcut icon']").attr("href", favicon);

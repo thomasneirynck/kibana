@@ -22,7 +22,7 @@ import 'plugins/ml/jobs/components/new_job_advanced/detector_filter_modal';
 import stringUtils from 'plugins/ml/util/string_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
   return {
@@ -56,7 +56,7 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
         $scope.openNewWindow(index);
       };
 
-      $scope.info = function (dtr) {
+      $scope.info = function () {
 
       };
 
@@ -124,7 +124,7 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
         if (index >= 0) {
           dtr = angular.copy($scope.detectors[index]);
         }
-        const modalInstance = $modal.open({
+        $modal.open({
           template: require('plugins/ml/jobs/components/new_job_advanced/detector_modal/detector_modal.html'),
           controller: 'MlDetectorModal',
           backdrop: 'static',
@@ -151,7 +151,7 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
         if (filterIndex >= 0) {
           filter = angular.copy(dtr.detector_rules[filterIndex]);
         }
-        const modalInstance = $modal.open({
+        $modal.open({
           template: require('plugins/ml/jobs/components/new_job_advanced/detector_filter_modal/detector_filter_modal.html'),
           controller: 'MlDetectorFilterModal',
           backdrop: 'static',

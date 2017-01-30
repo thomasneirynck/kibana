@@ -13,10 +13,8 @@
  * strictly prohibited.
  */
 
-import _ from 'lodash';
-
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.service('mlDatafeedService', function ($modal, mlJobService) {
 
@@ -26,7 +24,7 @@ module.service('mlDatafeedService', function ($modal, mlJobService) {
 
   this.openJobTimepickerWindow = function (job) {
     function func(obj) {
-      const modalInstance = $modal.open({
+      $modal.open({
         template: require('plugins/ml/jobs/components/jobs_list/job_timepicker_modal/job_timepicker_modal.html'),
         controller: 'MlJobTimepickerModal',
         backdrop: 'static',

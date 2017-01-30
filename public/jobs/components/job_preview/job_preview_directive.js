@@ -16,7 +16,7 @@
 import chrome from 'ui/chrome';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.directive('mlJobPreview', function (mlMessageBarService, mlJobService) {
   return {

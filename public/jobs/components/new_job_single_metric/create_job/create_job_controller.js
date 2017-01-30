@@ -151,9 +151,7 @@ module
     loadFields();
     $scope.ui.isFormValid();
     $scope.ui.dirty = true;
-    mlESMappingService.getMappings()
-    .then((r) => {
-    });
+    mlESMappingService.getMappings();
   };
 
   $scope.fieldChange = function () {
@@ -272,7 +270,7 @@ module
       $scope.ui.dirty = false;
 
       mlSingleMetricJobService.getLineChartResults($scope.formConfig)
-      .then((results) => {
+      .then(() => {
         // console.log('chart results', results);
         $scope.hasResults = true;
         $scope.$broadcast('render');
@@ -357,7 +355,7 @@ module
       .then((job) => {
         // if save was successful, open the job
         mlJobService.openJob(job.job_id)
-        .then((resp) => {
+        .then(() => {
           // if open was successful create a new datafeed
           saveNewDatafeed(job, true);
         })
@@ -381,11 +379,11 @@ module
     // on startDatafeedAfterSave flag
     function saveNewDatafeed(job, startDatafeedAfterSave) {
       mlJobService.saveNewDatafeed(job.datafeed_config, job.job_id)
-      .then((resp) => {
+      .then(() => {
 
         if (startDatafeedAfterSave) {
           mlSingleMetricJobService.startDatafeed($scope.formConfig)
-          .then((resp) => {
+          .then(() => {
             $scope.jobState = JOB_STATE.RUNNING;
             refreshCounter = 0;
             ignoreModel = false;
@@ -399,7 +397,7 @@ module
         }
       })
       .catch((resp) => {
-        msgs.error('Save datafeed failed: ', resp)
+        msgs.error('Save datafeed failed: ', resp);
       });
     }
   };
@@ -427,7 +425,7 @@ module
     function run() {
       refreshCounter++;
       reloadSwimlane()
-      .then((resp) => {
+      .then(() => {
         if (forceStop === false && $scope.chartData.percentComplete < 100) {
           // if state has been set to stopping (from the stop button), leave state as it is
           if ($scope.jobState === JOB_STATE.STOPPING) {
@@ -546,8 +544,6 @@ module
           } else {
             $window.open(path, '_blank');
           }
-        }).catch(function (resp) {
-          // msgs.error("Job results for "+job.job_id+" could not be opened");
         });
     }
   }

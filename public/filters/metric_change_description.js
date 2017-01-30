@@ -17,10 +17,9 @@
  * AngularJS filter for producing a concise textual description of how the
  * actual value compares to the typical value for a time series anomaly.
  */
-import moment from 'moment';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.filter('metricChangeDescription', function () {
   return function (actual, typical) {

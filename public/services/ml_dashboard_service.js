@@ -16,7 +16,7 @@
 // Service with functions used across Ml dashboards, such as broadcasting
 // and listening for events.
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.service('mlDashboardService', function ($rootScope) {
 

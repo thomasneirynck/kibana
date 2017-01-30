@@ -84,10 +84,6 @@ module.directive('mlRows', function ($compile, getAppState, Private) {
         $tr.append($cell);
       }
 
-      function maxRowSize(max, row) {
-        return Math.max(max, row.length);
-      }
-
       $scope.$watchMulti([
         attr.mlRows,
         attr.mlRowsMin

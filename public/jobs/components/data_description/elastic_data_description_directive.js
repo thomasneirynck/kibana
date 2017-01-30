@@ -14,13 +14,11 @@
  */
 
 import _ from 'lodash';
-import moment from 'moment-timezone';
-import stringUtils from 'plugins/ml/util/string_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
-module.directive('mlElasticDataDescription', function ($http) {
+module.directive('mlElasticDataDescription', function () {
   return {
     restrict: 'AE',
     replace: true,
@@ -38,8 +36,7 @@ module.directive('mlElasticDataDescription', function ($http) {
       serverInfo:         '=mlElasticServerInfo'
     },
     template: require('plugins/ml/jobs/components/data_description/elastic_data_description.html'),
-    controller: function ($scope, $q, $location, mlJobService, mlMessageBarService) {
-      const msgs = mlMessageBarService; // set a reference to the message bar service
+    controller: function ($scope, $q, $location, mlJobService) {
       const MODE = {NEW: 0, EDIT: 1, CLONE: 2};
       $scope.saveLock = false;
       let keyPressTimeout = null;
@@ -334,15 +331,19 @@ module.directive('mlElasticDataDescription', function ($http) {
         function recurse(node, name) {
           if (name === 'copy_to') {
             if (Array.isArray(node)) {
-              for (let p in node) {
-                result[node[p]] = true;
+              for (const p in node) {
+                if (node.hasOwnProperty(p)) {
+                  result[node[p]] = true;
+                }
               }
             } else {
               result[node] = true;
             }
           } else if (Object(node) === node || Array.isArray(node)) {
-            for (let child in node) {
-              recurse(node[child], child);
+            for (const child in node) {
+              if (node.hasOwnProperty(child)) {
+                recurse(node[child], child);
+              }
             }
           }
         }
@@ -370,18 +371,20 @@ module.directive('mlElasticDataDescription', function ($http) {
             return;
           } else {
             let isEmpty = true;
-            for (let field in node) {
-              isEmpty = false;
-              if (field === 'properties') {
-                // enter properties object, but don't add 'properties' to the dot notation chain
-                recurse(node[field], name, parentNode, parentName);
-              } else {
-                // enter object, building up a dot notation chain of names
-                recurse(node[field], name ? name + '.' + field : field, node, name);
+            for (const field in node) {
+              if (node.hasOwnProperty(field)) {
+                isEmpty = false;
+                if (field === 'properties') {
+                  // enter properties object, but don't add 'properties' to the dot notation chain
+                  recurse(node[field], name, parentNode, parentName);
+                } else {
+                  // enter object, building up a dot notation chain of names
+                  recurse(node[field], name ? name + '.' + field : field, node, name);
+                }
               }
-            }
-            if (isEmpty && name) {
-              result[name] = node;
+              if (isEmpty && name) {
+                result[name] = node;
+              }
             }
           }
         }

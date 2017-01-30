@@ -26,9 +26,8 @@ import TimeBucketsCalcEsIntervalProvider from 'ui/time_buckets/calc_es_interval'
 import TimeBucketProvider from 'ui/time_buckets';
 export default function IntervalHelperProvider(Private, timefilter, config) {
 
-  let calcAuto = Private(TimeBucketsCalcAutoIntervalProvider);
-  let calcEsInterval = Private(TimeBucketsCalcEsIntervalProvider);
-  let tzOffset = moment().format('Z');
+  const calcAuto = Private(TimeBucketsCalcAutoIntervalProvider);
+  const calcEsInterval = Private(TimeBucketsCalcEsIntervalProvider);
 
   _.class(TimeBuckets).inherits(Private(TimeBucketProvider));
 
@@ -48,13 +47,13 @@ export default function IntervalHelperProvider(Private, timefilter, config) {
   };
 
   TimeBuckets.prototype.getInterval = function () {
-    let self = this;
-    let duration = self.getDuration();
+    const self = this;
+    const duration = self.getDuration();
     return decorateInterval(maybeScaleInterval(readInterval()));
 
     // either pull the interval from state or calculate the auto-interval
     function readInterval() {
-      let interval = self._i;
+      const interval = self._i;
       if (moment.isDuration(interval)) return interval;
       return calcAuto.near(self.barTarget, duration);
     }
@@ -63,8 +62,8 @@ export default function IntervalHelperProvider(Private, timefilter, config) {
     function maybeScaleInterval(interval) {
       if (!self.hasBounds()) return interval;
 
-      let maxLength = self.maxBars;
-      let approxLen = duration / interval;
+      const maxLength = self.maxBars;
+      const approxLen = duration / interval;
       let scaled;
 
       // If the number of buckets we got back from using the barTarget is less than
@@ -87,13 +86,13 @@ export default function IntervalHelperProvider(Private, timefilter, config) {
 
     // append some TimeBuckets specific props to the interval
     function decorateInterval(interval) {
-      let esInterval = calcEsInterval(interval);
+      const esInterval = calcEsInterval(interval);
       interval.esValue = esInterval.value;
       interval.esUnit = esInterval.unit;
       interval.expression = esInterval.expression;
       interval.overflow = duration > interval ? moment.duration(interval - duration) : false;
 
-      let prettyUnits = moment.normalizeUnits(esInterval.unit);
+      const prettyUnits = moment.normalizeUnits(esInterval.unit);
       if (esInterval.value === 1) {
         interval.description = prettyUnits;
       } else {
@@ -105,4 +104,4 @@ export default function IntervalHelperProvider(Private, timefilter, config) {
   };
 
   return TimeBuckets;
-};
+}

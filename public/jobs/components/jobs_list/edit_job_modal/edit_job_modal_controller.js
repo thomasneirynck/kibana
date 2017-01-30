@@ -14,13 +14,12 @@
  */
 
 import _ from 'lodash';
-import stringUtils from 'plugins/ml/util/string_utils';
 import 'plugins/ml/jobs/components/new_job_advanced/detectors_list_directive';
 import './styles/main.less';
 import angular from 'angular';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, params, mlJobService, mlMessageBarService) {
   const msgs = mlMessageBarService;
@@ -289,11 +288,7 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
         if (resp.success) {
           console.log(resp);
           msgs.clear();
-          mlJobService.refreshJob(jobId)
-            .then((job) => {
-              // no need to do anything. the job service broadcasts a jobs list update event
-            })
-            .catch((job) => {});
+          mlJobService.refreshJob(jobId);
           $modalInstance.close();
 
         } else {

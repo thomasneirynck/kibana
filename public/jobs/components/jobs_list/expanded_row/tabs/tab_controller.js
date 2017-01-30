@@ -13,9 +13,10 @@
  * strictly prohibited.
  */
 
-const module = require('ui/modules').get('apps/ml')
+import uiModules from 'ui/modules';
+const module = uiModules.get('apps/ml');
 
-.controller('TabController', function ($scope) {
+module.controller('TabController', function ($scope) {
   // space and tab characters don't display nicely in html
   // so show the words 'space' and 'tab' instead
   $scope.formatDelimiter = function (del) {

@@ -286,8 +286,12 @@ function (
       if (tempJob) {
         // if the job id exists and that job is currently CLOSED, display a warning
         if (tempJob.status === 'CLOSED') {
+          let message = 'Job \'' + $scope.job.job_id + '\' already exists. <br />';
+          message += 'Overwriting it will remove all previous results which cannot be undone.<br />';
+          message += 'Do you wish to continue?';
+
           mlConfirm.open({
-            message: 'Job \'' + $scope.job.job_id + '\' already exists. <br />Overwriting it will remove all previous results which cannot be undone.<br />Do you wish to continue?',
+            message: message,
             title: $scope.job.job_id + ' already exists',
             okLabel: 'Overwrite',
             size: '',
@@ -373,11 +377,11 @@ function (
 
                   // save successful, attempt to open the job
                   mlJobService.openJob($scope.job.job_id)
-                  .then((resp) => {
+                  .then(() => {
                     if ($scope.job.datafeed_config) {
                       // open job successful, create a new datafeed
                       mlJobService.saveNewDatafeed($scope.job.datafeed_config, $scope.job.job_id)
-                      .then(resp => {
+                      .then(() => {
                         $scope.saveLock = false;
                       })
                       .catch((resp) => {
@@ -682,8 +686,10 @@ function (
 
       config.query =       query;
       config.query_delay = df.queryDelayText;
-      config.frequency =   ((df.frequencyText === '' || df.frequencyText === null || df.frequencyText === undefined) ? df.frequencyDefault : df.frequencyText);
-      config.scroll_size = ((df.scrollSizeText === '' || df.scrollSizeText === null || df.scrollSizeText === undefined) ? df.scrollSizeDefault : df.scrollSizeText);
+      config.frequency =   ((df.frequencyText === '' || df.frequencyText === null || df.frequencyText === undefined) ?
+        df.frequencyDefault : df.frequencyText);
+      config.scroll_size = ((df.scrollSizeText === '' || df.scrollSizeText === null || df.scrollSizeText === undefined) ?
+        df.scrollSizeDefault : df.scrollSizeText);
       config.indexes =     indexes;
       config.types =       types;
     }
@@ -808,7 +814,9 @@ function (
         tabs[0].checks.jobId.valid = false;
       } else if (!job.job_id.match(/^[a-z0-9\-\_]{1,64}$/g)) {
         tabs[0].checks.jobId.valid = false;
-        tabs[0].checks.jobId.message = 'Job name must be a lowercase alphanumeric word no greater than 64 characters long. It may contain hyphens or underscores.';
+        let message = 'Job name must be a lowercase alphanumeric word no greater than 64 characters long. ';
+        message += 'It may contain hyphens or underscores.';
+        tabs[0].checks.jobId.message = message;
       }
 
       // tab 1 - Analysis Configuration
@@ -913,6 +921,7 @@ function (
     }
   }
 
+  /*
   function showDataPreviewTab() {
     let hidden = true;
     // if this is a datafeed job, make the Data Preview tab available
@@ -928,6 +937,7 @@ function (
     $scope.ui.tabs[5].hidden = hidden;
     $scope.$applyAsync();
   }
+  */
 
   // combine all influencers into a sorted array
   function allInfluencers() {

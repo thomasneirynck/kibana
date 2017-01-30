@@ -18,7 +18,7 @@ import stringUtils from 'plugins/ml/util/string_utils';
 import angular from 'angular';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.controller('MlDetectorModal', function ($scope, $modalInstance, params, mlJobService, mlMessageBarService) {
   const msgs = mlMessageBarService;

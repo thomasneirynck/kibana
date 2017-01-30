@@ -13,8 +13,6 @@
  * strictly prohibited.
  */
 
-import _ from 'lodash';
-import angular from 'angular';
 import uiRoutes from 'ui/routes';
 
 uiRoutes
@@ -23,7 +21,7 @@ uiRoutes
 });
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.controller('MlNewJobWizard',
 function (
@@ -57,11 +55,11 @@ function (
 
   function wizardStep(step) {
     $scope.ui.wizard.step += step;
-    if ($scope.ui.wizard.step === 1) {
+    // if ($scope.ui.wizard.step === 1) {
 
-    } else if ($scope.ui.wizard.step === 2) {
+    // } else if ($scope.ui.wizard.step === 2) {
 
-    }
+    // }
   }
 
 });

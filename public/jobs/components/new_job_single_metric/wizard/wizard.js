@@ -13,10 +13,6 @@
  * strictly prohibited.
  */
 
-import _ from 'lodash';
-// import moment from 'moment-timezone';
-// import stringUtils from 'plugins/ml/util/string_utils';
-// import 'plugins/ml/lib/minify.json';
 import 'ui/courier';
 
 // import 'plugins/kibana/visualize/saved_visualizations/saved_visualizations';
@@ -48,8 +44,8 @@ const module = uiModules.get('apps/ml');
 module.controller('MlNewJobStep1', (
   $scope,
   $route,
-  timefilter,
-  kbnUrl) => {
+  // kbnUrl,
+  timefilter) => {
 
   timefilter.enabled = false; // remove time picker from top of page
 
@@ -58,10 +54,9 @@ module.controller('MlNewJobStep1', (
     list: $route.current.locals.indexPatternIds
   };
 
-  $scope.step2WithSearchUrl = (hit) => {
-    return kbnUrl.eval('#/visualize/create?&type={{type}}&savedSearchId={{id}}', {type: type, id: hit.id});
-    // return '';
-  };
+  // $scope.step2WithSearchUrl = (hit) => {
+  //   return kbnUrl.eval('#/visualize/create?&type={{type}}&savedSearchId={{id}}', {type: type, id: hit.id});
+  // };
   $scope.makeUrl = (pattern) => {
     if (!pattern) return;
     return '#/jobs/new_job_single_metric/create?index=' + encodeURIComponent(pattern);

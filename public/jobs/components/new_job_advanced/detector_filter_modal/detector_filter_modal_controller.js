@@ -14,11 +14,10 @@
  */
 
 import _ from 'lodash';
-import stringUtils from 'plugins/ml/util/string_utils';
 import angular from 'angular';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.controller('MlDetectorFilterModal', function ($scope, $modalInstance, params, mlJobService, mlMessageBarService) {
   const msgs = mlMessageBarService;
@@ -30,7 +29,6 @@ module.controller('MlDetectorFilterModal', function ($scope, $modalInstance, par
   let index = -1;
   const add = params.add;
   const validate = params.validate;
-  const dtrIndex = params.index;
 
   /*
   $scope.functions = [
@@ -199,7 +197,7 @@ module.controller('MlDetectorFilterModal', function ($scope, $modalInstance, par
       delete cond.$$hashKey;
       if (cond.field_name === '') {
         delete cond.field_vname;
-   _v  }
+      }
       if (cond.fieldValue === '') {
         delete cond.fieldValue;
       }

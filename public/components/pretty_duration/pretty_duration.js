@@ -21,13 +21,14 @@ import _ from 'lodash';
 import dateMath from '@elastic/datemath';
 import moment from 'moment';
 import angular from 'angular';
+import $ from 'jquery';
 
 import 'ui/timepicker/quick_ranges';
 import 'ui/timepicker/time_units';
 import './styles/main.less';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.directive('prettyDuration', function (config, quickRanges, timeUnits, $compile, timefilter) {
   return {
@@ -70,7 +71,7 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
         } else {
           cantLookup();
         }
-      };
+      }
 
       function cantLookup() {
         const display = {};
@@ -87,7 +88,7 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
           }
         });
         $elem.text(display.from + ' to ' + display.to);
-      };
+      }
 
       // add the arrow elements to the page outside the <pretty_duration>'s parent anchor element
       // however, they are given <pretty_duration>'s scope to allow access to the back and forward functions

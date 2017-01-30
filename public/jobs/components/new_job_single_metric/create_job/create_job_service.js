@@ -14,6 +14,7 @@
  */
 
 import _ from 'lodash';
+import angular from 'angular';
 import 'ui/timefilter';
 
 import jobUtils from 'plugins/ml/util/job_utils';

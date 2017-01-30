@@ -16,7 +16,7 @@
 // simple check for browser name
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.service('mlBrowserDetectService', function ($window) {
 
@@ -31,9 +31,11 @@ module.service('mlBrowserDetectService', function ($window) {
       ie: /internet explorer/i
     };
 
-    for (let key in browsers) {
-      if (browsers[key].test(userAgent)) {
-        return key;
+    for (const key in browsers) {
+      if (browsers.hasOwnProperty(key)) {
+        if (browsers[key].test(userAgent)) {
+          return key;
+        }
       }
     }
 

@@ -25,18 +25,19 @@ import moment from 'moment';
 import angular from 'angular';
 import 'ui/timefilter';
 
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
-
-
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
-module.directive('mlSummaryViewEventRate', function ($compile, $timeout, timefilter, mlJobService, mlAnomalyRecordDetailsService, mlSwimlaneInspectorService, mlSwimlaneSelectionService) {
+module.directive('mlSummaryViewEventRate', function (
+  $compile,
+  $timeout,
+  timefilter,
+  mlJobService) {
 
-  function link(scope, element, attrs) {
+  function link(scope, element) {
     let rendered = false;
 
-    scope.$on('render',(event, d) => {
+    scope.$on('render',() => {
       if (!rendered) {
         rendered = true;
         render();
@@ -73,7 +74,6 @@ module.directive('mlSummaryViewEventRate', function ($compile, $timeout, timefil
           }
         });
       });
-      const margin = { top: 0, right: 0, bottom: 0, left: 0 };
 
       scope.chartWidth = scope.$parent.chartWidth;
       const numBuckets = parseInt((endTime - startTime) / stepSecs);
@@ -107,7 +107,7 @@ module.directive('mlSummaryViewEventRate', function ($compile, $timeout, timefil
 
       let monitorCellsContainer;
 
-      function cellHover($event, index, time) {
+      function cellHover($event, index) {
         if (monitorCellsContainer === undefined) {
           monitorCellsContainer = angular.element('ml-summary-view-swimlane[swimlane-type="MONITOR"] .cells-container');
         }
@@ -133,7 +133,7 @@ module.directive('mlSummaryViewEventRate', function ($compile, $timeout, timefil
         return mlJobService.jobDescriptions[a] > mlJobService.jobDescriptions[b];
       });
 
-      _.each(lanes, (job, id) => {
+      _.each(lanes, (job) => {
         // jobColors[job] = color(id);
         const desc = mlJobService.jobDescriptions[job];
         const $job = $('<div>', {

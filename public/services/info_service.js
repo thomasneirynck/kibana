@@ -15,14 +15,12 @@
 
 // Service for obtaining information on the installed version of the Ml API engine,
 
-import chrome from 'ui/chrome';
 import _ from 'lodash';
-import $ from 'jquery';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
-module.service('mlInfoService', ['$q', 'es', '$http', function ($q, es, $http) {
+module.service('mlInfoService', ['$q', 'es', '$http', function ($q, es) {
 
   // Returns information on the installed version of Ml API engine,
   // specifically the API product and version numbers, server operating
@@ -46,7 +44,7 @@ module.service('mlInfoService', ['$q', 'es', '$http', function ($q, es, $http) {
     })
     .then((resp) => {
       if (resp.hits.total !== 0) {
-        var source = _.first(resp.hits.hits)._source;
+        const source = _.first(resp.hits.hits)._source;
         obj.info.ver = source.ver;
         obj.info.appVer = source.appVer;
         obj.info.mlPlatform = source.mlPlatform;

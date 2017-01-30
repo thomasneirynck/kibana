@@ -21,8 +21,12 @@ import _ from 'lodash';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlaneInspectorService,
-  mlSwimlaneSelectionService, mlSwimlaneService) {
+module.directive('mlSwimlaneInspector', function (
+  $location,
+  $window,
+  mlSwimlaneInspectorService,
+  mlSwimlaneSelectionService,
+  mlSwimlaneService) {
   return {
     restrict: 'AE',
     replace: false,
@@ -66,7 +70,6 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
 
   const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
 
-  let id = '';
   const controls = {
     visible: false,
     top: 0,
@@ -88,7 +91,6 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
   let swimlaneType = '';
   let timeRange = {};
   let $swimlanes;
-  let $lane;
   let selectedJobIds;
   let times = [];
 
@@ -109,7 +111,6 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
     laneLabel = laneLabelIn;
     swimlaneType = swimlaneTypeIn;
     timeRange = timeRangeIn;
-    $lane = $laneIn;
     selectedJobIds = selectedJobIdsIn;
 
     controls.labels.laneLabel = mlJobService.jobDescriptions[laneLabel];
@@ -129,7 +130,6 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
       mlAnomalyRecordDetailsService.toggleLock(false);
     }
     controls.visible = false;
-    id = '';
   };
 
   this.applyZoom = function () {
@@ -364,40 +364,6 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
     controls.inspectorChartData = dataset;
   }
 
-  function processInfluencerTypeResults(dataByInfluencerType, laneLabel) {
-    const dataset = {'laneLabels':[], 'points':[], 'interval': timeRange.interval};
-    const timeObjs = {};
-
-    dataset.earliest = Number.MAX_VALUE;
-    dataset.latest = 0;
-
-    _.each(dataByInfluencerType, (influencerData, influencerFieldType) => {
-      if (influencerFieldType === laneLabel) {
-        dataset.laneLabels.push(influencerFieldType);
-
-        _.each(influencerData, (anomalyScore, timeMs) => {
-          const time = timeMs / 1000;
-          dataset.points.push({'laneLabel':influencerFieldType, 'time': time, 'value': anomalyScore});
-
-          dataset.earliest = Math.min(time, dataset.earliest);
-          dataset.latest = Math.max((time + dataset.interval), dataset.latest);
-
-          if (timeObjs[time] === undefined) {
-            timeObjs[time] = {};
-          }
-        });
-      }
-    });
-
-    times = Object.keys(timeObjs);
-    times = times.sort();
-
-    calculateDatasetTimeRange(dataset);
-
-    console.log('SummaryView influencer swimlane dataset:', dataset);
-    controls.inspectorChartData = dataset;
-  }
-
   function processInfluencerResults(dataByInfluencer) {
     const dataset = {'laneLabels':[], 'points':[], 'interval': timeRange.interval};
     const timeObjs = {};
@@ -487,7 +453,7 @@ module.directive('mlSwimlaneInspector', function ($location, $window, mlSwimlane
         timeRange.start, timeRange.end, 0, mlAnomalyRecordDetailsService.type)
     .then((resp) => {
 
-      const list = _.uniq(_.union(resp.results.topMax, resp.results.topSum), false, (item, key, id) => { return item.id; });
+      const list = _.uniq(_.union(resp.results.topMax, resp.results.topSum), false, (item) => { return item.id; });
       controls.topInfluencerList = list;
       controls.showTopInfluencerList = Object.keys(list).length ? true : false;
 

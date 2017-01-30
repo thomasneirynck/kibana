@@ -18,7 +18,7 @@
 import './styles/main.less';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.directive('mlEngineApiHelpLink', function () {
   return {

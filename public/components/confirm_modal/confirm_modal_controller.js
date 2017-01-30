@@ -14,7 +14,7 @@
  */
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.controller('MlConfirmModal', function ($scope, $modalInstance, params) {
 

@@ -26,7 +26,7 @@ import 'ui/styles/pagination.less';
 import _ from 'lodash';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.directive('mlPaginatedTable', function ($filter) {
   const orderBy = $filter('orderBy');

@@ -30,7 +30,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
     replace: false,
     // scope: {},
     template: require('plugins/ml/summaryview/anomaly_details_bubble/anomaly_details_bubble.html'),
-    link: function ($scope, $element, $attrs) {
+    link: function ($scope) {
       $scope.title = 'Highest anomaly per detector';
       $scope.service = mlAnomalyRecordDetailsService;
 
@@ -49,7 +49,6 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
   };
 })
 .service('mlAnomalyRecordDetailsService', function ($q, $timeout, es, timefilter, mlJobService, mlSwimlaneSearchService) {
-  const TimeBuckets = require('ui/time_buckets');
 
   const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
   // number of records loaded once when the page opens
@@ -59,7 +58,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
   let bucketInterval = null;
   let bounds = timefilter.getActiveBounds();
   let times = [];
-  let timesFormated = {};
+  const timesFormated = {};
   let allRecordResults;
 
   const highestRecords = {
@@ -608,23 +607,16 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
 
   function processTopInfluencersResults(topInfluencers, results, time, laneLabel, swimlaneType) {
     // console.log('processTopInfluencersResults():', results);
-    const list = _.uniq(_.union(results.topMax, results.topSum), false, (item, key, id) => { return item.id; });
+    const list = _.uniq(_.union(results.topMax, results.topSum), false, (item) => { return item.id; });
     topInfluencers[swimlaneType][laneLabel][time] = list;
   }
 
   function drawTopInfluencers(inf) {
     that.topInfluencerList = inf;
-    if (that.topInfluencerTab === 0) {
-      // drawList();
-    } else {
+    if (that.topInfluencerTab !== 0) {
       drawBubbleChart();
     }
   }
-
-  function drawList(inf) {
-    that.topInfluencerList = _.clone(inf).splice(0,10);
-  }
-
 
   function loadTopInfluencersForPage(jobIds, earliestMs, latestMs) {
 
@@ -633,7 +625,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
         earliestMs, latestMs, 0, that.type)
     .then((resp) => {
 
-      const list = _.uniq(_.union(resp.results.topMax, resp.results.topSum), false, (item, key, id) => { return item.id; });
+      const list = _.uniq(_.union(resp.results.topMax, resp.results.topSum), false, (item) => { return item.id; });
       that.topInfluencerForPage = list;
     }).catch((resp) => {
       console.log('loadTopInfluencersForPage - error getting scores by influencer data from elasticsearch:', resp);
@@ -663,8 +655,6 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
       left:   0
     };
 
-    const format = d3.format(',d');
-
     const $topInfluencersContainer = $('#top-influencers-bubble-chart');
     $topInfluencersContainer.empty();
 
@@ -678,7 +668,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
       const circleG = svg
         .append('g')
         .attr('class', 'circles')
-        .attr('transform', (d) => {
+        .attr('transform', () => {
           return 'translate(' + (margin.left) + ',' + (margin.top) + ')';
         });
 
@@ -725,7 +715,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
   }
 
   const colors = ['#FFFFFF', '#d2e9f7', '#8bc8fb', '#ffdd00', '#ff7e00', '#ff5300', '#fe1d1d'];
-  const colorScale = d3.scale.linear()
+  d3.scale.linear()
     .domain([0, 1, 3, 25, 50, 75, 100])
     .range(colors);
 

@@ -22,7 +22,7 @@ import _ from 'lodash';
 import $ from 'jquery';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.directive('mlJobSelectList', ['mlJobService', 'mlDashboardService', function (mlJobService, mlDashboardService) {
   return {
@@ -92,11 +92,11 @@ module.directive('mlJobSelectList', ['mlJobService', 'mlDashboardService', funct
       $('.ml-select-list', element).focus();
     }
   };
-}])
+}]);
 
 // Add the job select template to the template cache so there's no delay in displaying it
 // which can cause positioning mistakes.
-.run(function ($templateRequest) {
+// .run(function ($templateRequest) {
   // $templateRequest('/plugins/ml/components/job_select_list/job_select_list.html', true);
-});
+// });
 

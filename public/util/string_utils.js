@@ -407,7 +407,7 @@ function escapeFunc(str) {
     '<': '&lt;',
     '>': '&gt;',
     '"': '&quot;',
-    "'": '&#39;',
+    '\'': '&#39;',
     '/': '&#x2F;'
   };
   return String(str).replace(/[&<>"'\/]/g, function (s) {

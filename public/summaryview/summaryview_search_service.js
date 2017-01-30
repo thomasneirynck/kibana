@@ -14,7 +14,6 @@
  */
 
 
-import moment from 'moment';
 import _ from 'lodash';
 import 'ui/timefilter';
 
@@ -23,7 +22,7 @@ import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('mlSwimlaneSearchService', function ($q, $timeout, es, timefilter) {
+module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
 
   this.getScoresByBucket = function (index, jobIds, earliestMs, latestMs, interval, maxResults) {
     // TODO - move into results_service.js.

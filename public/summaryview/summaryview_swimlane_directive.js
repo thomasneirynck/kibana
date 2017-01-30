@@ -28,15 +28,21 @@ import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilter, mlJobService,
-  mlAnomalyRecordDetailsService, mlSwimlaneInspectorService, mlSwimlaneSelectionService) {
+module.directive('mlSummaryViewSwimlane', function (
+  $compile,
+  $timeout,
+  timefilter,
+  mlJobService,
+  mlAnomalyRecordDetailsService,
+  mlSwimlaneInspectorService,
+  mlSwimlaneSelectionService) {
 
   const SWIMLANE_TYPES = mlAnomalyRecordDetailsService.type;
 
-  function link(scope, element, attrs) {
+  function link(scope, element) {
     let rendered = false;
 
-    scope.$on('render',function (event) {
+    scope.$on('render',function () {
       if (!rendered) {
         rendered = true;
         render();
@@ -105,12 +111,16 @@ module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilt
       const cells = [];
       let time = startTime;
       for (let i = 0; i < numBuckets; i++) {
+        let html = '<div class=\'floating-time-label\'>';
+        html += (moment.unix(time).format('MMM DD HH:mm'));
+        html += '</div><i class=\'fa fa-caret-down\'></i>';
+
         const $cell = $('<div>', {
           'class': 'sl-cell',
           css: {
             'width': cellWidth + 'px'
           },
-          html: '<div class=\'floating-time-label\'>' + (moment.unix(time).format('MMM DD HH:mm')) + '</div><i class=\'fa fa-caret-down\'></i>'
+          html: html
         });
         $cellsMarkerContainer.append($cell);
         cells.push($cell);
@@ -217,8 +227,6 @@ module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilt
         rowScope.startDrag = mlSwimlaneSelectionService.startDrag;
 
         rowScope.detectorPerJobChartData = scope.$parent.detectorPerJobChartData;
-        const orginalSelectedJobIds = rowScope.selectedJobIds;
-
         rowScope.selectedJobIds = [lane];
 
         const $lane = $('<div>', {
@@ -253,13 +261,20 @@ module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilt
         }
 
         if (!INSPECTOR_MODE) {
+          let html = '';
+          if (rowScope.expansionDirective) {
+            html = '<span ng-click="expandRow()">';
+            html += '<i class=\'fa discover-table-open-icon\' ';
+            html += 'ng-class=\'{ "fa-caret-down": showExpansion, "fa-caret-right": !showExpansion }\'>';
+            html += '</i></span> ';
+          }
           $lane.append($('<div>', {
             'class': 'lane-label',
             'css': {
               'width': laneLabelWidth + 'px'
             },
             'ng-class': '{ \'lane-label-expanded\': showExpansion }',
-            html: ((rowScope.expansionDirective) ? '<span ng-click="expandRow()"><i class=\'fa discover-table-open-icon\' ng-class=\'{ "fa-caret-down": showExpansion, "fa-caret-right": !showExpansion }\'></i></span> ' : '') + label
+            html: html + label
           }));
         }
 
@@ -301,10 +316,17 @@ module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilt
             }
           }
 
+          let cellHoverTxt = 'cellHover($event, \'' + lane + '\', ';
+          cellHoverTxt += bucketScore.value + ', ' + i + ', ' + time + ', \'' + rowScope.swimlaneType + '\')';
+          let cellClickTxt = 'cellClick($event, \'' + lane + '\', ';
+          cellClickTxt += bucketScore.value + ', ' + i + ', ' + time + ', \'' + rowScope.swimlaneType + '\')';
+          let startDragTxt = 'startDrag($event, \'' + lane + '\', ';
+          startDragTxt += i + ', ' + time + ', \'' + rowScope.swimlaneType + '\')';
+
           $cell.attr({
-            'ng-mouseover': 'cellHover($event, \'' + lane + '\', ' + bucketScore.value + ', ' + i + ', ' + time + ', \'' + rowScope.swimlaneType + '\')',
-            'ng-click': 'cellClick($event, \'' + lane + '\', ' + bucketScore.value + ', ' + i + ', ' + time + ', \'' + rowScope.swimlaneType + '\')',
-            'ng-mousedown': 'startDrag($event, \'' + lane + '\', ' + i + ', ' + time + ', \'' + rowScope.swimlaneType + '\')',
+            'ng-mouseover': cellHoverTxt,
+            'ng-click': cellClickTxt,
+            'ng-mousedown': startDragTxt,
           });
           $cellsContainer.append($cell);
 
@@ -332,7 +354,10 @@ module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilt
 
           $laneExp.append($('<div>', {'class': 'title', 'text':'Detectors for ' + label}));
 
-          $laneExp.append($('<ml-summary-view-swimlane chart-data=\'detectorPerJobChartData["' + lane + '"]\' swimlane-type="DETECTOR" selected-job-ids="selectedJobIds"  chart-width="chartWidth" container-id="swimlanes" expanded="true" style="width: 100%; height: 250px;"></ml-summary-view-swimlane>'));
+          let html = '<ml-summary-view-swimlane chart-data=\'detectorPerJobChartData["' + lane + '"]\' ';
+          html += 'swimlane-type="DETECTOR" selected-job-ids="selectedJobIds"  chart-width="chartWidth" ';
+          html += 'container-id="swimlanes" expanded="true" style="width: 100%; height: 250px;"></ml-summary-view-swimlane>';
+          $laneExp.append($(html));
 
           $swimlanes.append($laneExp);
 
@@ -359,6 +384,9 @@ module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilt
     }
   }
 
+  let template = '<div ng-show=\'chartTitle!==undefined\' class=\'title\'><i ng-click=\'toggleRow()\' ';
+  template += 'class=\'fa expand-arrow\' ng-class=\"{ \'fa-caret-down\': expanded, \'fa-caret-right\': !expanded }\">';
+  template += ' </i>{{chartTitle}}</div><div><div id=\'swimlanes\' ng-show=\'expanded\'></div></div>';
   return {
     scope: {
       chartTitle: '@',
@@ -372,8 +400,7 @@ module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilt
       chartWidth: '@',
     },
     link: link,
-    // templateUrl: '/plugins/ml/summaryview/detector_swimlane.html',
-    template: '<div ng-show=\'chartTitle!==undefined\' class=\'title\'><i ng-click=\'toggleRow()\' class=\'fa expand-arrow\' ng-class=\"{ \'fa-caret-down\': expanded, \'fa-caret-right\': !expanded }\"> </i>{{chartTitle}}</div><div><div id=\'swimlanes\' ng-show=\'expanded\'></div></div>'
+    template: template
   };
 })
 .service('mlSwimlaneSelectionService', function ($timeout, mlSwimlaneInspectorService, mlAnomalyRecordDetailsService) {
@@ -440,7 +467,7 @@ module.directive('mlSummaryViewSwimlane', function ($compile, $timeout, timefilt
 
   }
 
-  function stopDrag($event) {
+  function stopDrag() {
     // placed in a timeout to allow mouse click events to finish first
     $timeout(function () {
       mlSwimlaneInspectorService.hide();

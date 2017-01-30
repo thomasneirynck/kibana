@@ -30,7 +30,7 @@ const module = uiModules.get('apps/ml');
 
 module.directive('mlNewJobChart', function () {
 
-  function link(scope, element, attrs) {
+  function link(scope, element) {
 
     const svgWidth  = angular.element('.jobs-container').width();
     const lineChartHeight = 310;
@@ -61,7 +61,7 @@ module.directive('mlNewJobChart', function () {
     let lineChartGroup;
     let modelChartGroup;
     let swimlaneGroup;
-    let dotChartGroup;
+    // let dotChartGroup;
 
     scope.$on('render', () => {
       createSVGGroups();
@@ -113,9 +113,9 @@ module.directive('mlNewJobChart', function () {
         .attr('class', 'line-chart')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-      dotChartGroup = svg.append('g')
-        .attr('class', 'line-chart-markers')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+      // dotChartGroup = svg.append('g')
+      //   .attr('class', 'line-chart-markers')
+      //   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
     }
 
     function drawLineChart() {
