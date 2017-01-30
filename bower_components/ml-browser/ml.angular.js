@@ -25530,7 +25530,7 @@
   api.validateDetector = ca({
     urls: [
       {
-        fmt: '/_xpack/ml/_validate/detector'
+        fmt: '/_xpack/ml/anomaly_detectors/_validate/detector'
       }
     ],
     needBody: true,
