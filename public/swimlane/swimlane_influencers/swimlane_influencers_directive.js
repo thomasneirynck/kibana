@@ -27,7 +27,7 @@ const module = uiModules.get('apps/ml');
 
 module.directive('mlSwimlaneInfluencers', function ($timeout, mlResultsService) {
 
-  function link(scope, $element) {
+  function link(scope) {
     scope.indexPattern = scope.$parent.indexPattern;
     scope.influencerFieldName = scope.$parent.influencerFieldName;
     scope.selectedJobIds = scope.$parent.selectedJobIds;

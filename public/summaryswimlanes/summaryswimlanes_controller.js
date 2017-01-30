@@ -32,14 +32,13 @@ import chrome from 'ui/chrome';
 import 'ui/courier';
 import 'ui/timefilter';
 
-import stringUtils from 'plugins/ml/util/string_utils';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/ml_dashboard_service';
 import 'plugins/ml/services/results_service';
 import 'plugins/ml/swimlane/swimlane_influencers/swimlane_influencers_directive';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
 module.controller('MlSummarySwimlanesController', function (
   $scope,
@@ -47,9 +46,7 @@ module.controller('MlSummarySwimlanesController', function (
   $window,
   $location,
   courier,
-  mlJobService,
-  mlDashboardService,
-  mlResultsService) {
+  mlJobService) {
 
   $scope.jobData = {};
   $scope.influencerTypeData = {};
@@ -61,7 +58,6 @@ module.controller('MlSummarySwimlanesController', function (
   .then(function (resp) {
     if (resp.jobs.length > 0) {
       const descriptions = {};
-      const detectorsByJob = {};
       _.each(resp.jobs, function (job) {
         descriptions[job.id] = job.description;
       });
@@ -344,7 +340,7 @@ module.controller('MlSummarySwimlanesController', function (
     scope._influencerHoverScope = null;
     scope.mode = attrs.mode;         // jobs or influencerTypes
 
-    scope.$on('render',function (event, d) {
+    scope.$on('render',function () {
       renderSwimlane();
     });
 
@@ -539,11 +535,11 @@ module.controller('MlSummarySwimlanesController', function (
             const dataModel = item.series.data[item.dataIndex][2];
 
             const clickData = {'time':item.datapoint[0],
-                'durationMs':bucketInterval.asMilliseconds(),
-                'mode': scope.mode,
-                'value': fieldValue,
-                'severity': item.series.label,
-                'score': dataModel.score};
+              'durationMs':bucketInterval.asMilliseconds(),
+              'mode': scope.mode,
+              'value': fieldValue,
+              'severity': item.series.label,
+              'score': dataModel.score};
 
             plot.highlight(item.series, item.datapoint);
             scope.$emit('swimlaneClick', clickData);
@@ -618,7 +614,7 @@ module.controller('MlSummarySwimlanesController', function (
       }));
     }
 
-    function drawChartSymbol(ctx, x, y, radius, shadow) {
+    function drawChartSymbol(ctx, x, y, radius) {
       const size = radius * Math.sqrt(Math.PI) / 2;
       ctx.rect(x - size, y - 14, size + size, 28);
     }

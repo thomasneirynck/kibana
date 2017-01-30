@@ -20,7 +20,6 @@
  */
 
 import _ from 'lodash';
-import $ from 'jquery';
 import moment from 'moment';
 import uiRoutes from 'ui/routes';
 import 'ui/timefilter';
@@ -282,7 +281,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
   $scope.$on('contextChartSelected', function (event, selection) {
     // Save state of zoom (adds to URL).
-    let zoomState = { from: selection.from.toISOString(), to: selection.to.toISOString()};
+    const zoomState = { from: selection.from.toISOString(), to: selection.to.toISOString()};
     globalState.zoom = zoomState;
     globalState.save();
 
@@ -305,8 +304,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
     // Check for a zoom parameter in the globalState (URL).
     if (globalState.zoom !== undefined) {
-      let zoomFrom = moment(globalState.zoom.from, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
-      let zoomTo = moment(globalState.zoom.to, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
+      const zoomFrom = moment(globalState.zoom.from, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
+      const zoomTo = moment(globalState.zoom.to, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
       if (zoomFrom.isValid() && zoomTo.isValid &&
         zoomFrom.isBetween(earliestDataDate, latestDataDate) && zoomTo.isBetween(earliestDataDate, latestDataDate)) {
         return [zoomFrom.toDate(), zoomTo.toDate()];
@@ -320,30 +319,13 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
   }
 
-  function calculateSwimlaneAggregationInterval(bounds, bucketsTarget, minCellWidth) {
-    // TODO - this can go, assuming low granularity swimlane doesn't reappear.
-
-    // If the swimlane cell widths are too small they will not be fully visible.
-    // Calculate how many buckets will be drawn before the swimlanes are actually
-    // rendered and increase the interval to widen the cells if they're going to
-    // be smaller than the supplied minimum.
-
-    // Use width of top level container as the swimlane div will not initially be rendered.
-    // Remove 50px for padding.
-    // Max bars for the aggregation is 10% greater than the bar target
-    const swimlaneWidth = $('.ml-time-series-explorer').width() - 50;
-    const cellWidthForMaxBars = Math.floor(swimlaneWidth / (bucketsTarget * 1.1));
-    const target = (cellWidthForMaxBars >= minCellWidth ? (bucketsTarget * 1.1) : (Math.ceil(swimlaneWidth / minCellWidth)));
-    return calculateAggregationInterval(bounds, target);
-  }
-
   function calculateAggregationInterval(bounds, bucketsTarget) {
     // Aggregation interval used in queries should be a function of the time span of the chart
     // and the bucket span of the selected job(s).
     const barTarget = (bucketsTarget !== undefined ? bucketsTarget : 100);
     // Use a maxBars of 10% greater than the target.
     const maxBars = Math.floor(1.1 * barTarget);
-    let buckets = new TimeBuckets();
+    const buckets = new TimeBuckets();
     buckets.setInterval('auto');
     buckets.setBounds(bounds);
     buckets.setBarTarget(Math.floor(barTarget));
@@ -367,7 +349,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
   function processModelDebugResults(modelDebugData) {
     // Return dataset in format used by the model debug chart.
     // i.e. array of Objects with keys date (JavaScript date), value, lower and upper.
-    let modelDebugChartData = [];
+    const modelDebugChartData = [];
     _.each(modelDebugData, function (dataForTime, time) {
       modelDebugChartData.push(
         {
@@ -384,7 +366,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
   function processBucketScoreResults(scoreData) {
     // Return dataset in format used by the swimlane.
     // i.e. array of Objects with keys date (JavaScript date) and score.
-    let bucketScoreData = [];
+    const bucketScoreData = [];
     _.each(scoreData, function (dataForTime, time) {
       bucketScoreData.push(
         {

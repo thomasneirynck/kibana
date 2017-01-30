@@ -79,12 +79,12 @@ ContextChartMask.prototype.redraw = function () {
 
   const that = this;
 
-  let boundedArea = d3.svg.area()
+  const boundedArea = d3.svg.area()
     .x(function (d) { return that._x(d.date) || 1; })
     .y0(function (d) { return that._y(Math.min(maxY, Math.max(d.lower, minY))); })
     .y1(function (d) { return that._y(Math.max(minY, Math.min(d.upper, maxY))); });
 
-  let valuesLine = d3.svg.line()
+  const valuesLine = d3.svg.line()
     .x(function (d) { return that._x(d.date); })
     .y(function (d) { return that._y(d.value); });
 

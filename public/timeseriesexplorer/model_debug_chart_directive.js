@@ -90,11 +90,11 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
 
     const brush = d3.svg.brush();
 
-    scope.$on('render',function (event) {
+    scope.$on('render',function () {
       render();
     });
 
-    scope.$on('renderFocusChart',function (event) {
+    scope.$on('renderFocusChart',function () {
       renderFocusChart();
     });
 
@@ -156,7 +156,7 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
         .text(function (d) {
           return focusYScale.tickFormat()(d);
         })
-        .each(function (d) {
+        .each(function () {
           maxYAxisLabelWidth = Math.max(this.getBBox().width + focusYAxis.tickPadding(), maxYAxisLabelWidth);
         })
       .remove();
@@ -227,7 +227,7 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
       updateZoomInfoElements(zoomGroup, focusWidth);
 
       // Add border round plot area.
-      const chartBorder = focusGroup.append('rect')
+      focusGroup.append('rect')
         .attr('x', 0)
         .attr('y', focusZoomPanelHeight)
         .attr('width', focusWidth)
@@ -272,13 +272,13 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
       focusGroup.append('path')
         .attr('class', 'values-line');
 
-      let focusMarkers = focusGroup.append('g')
+      focusGroup.append('g')
         .attr('class', 'focus-chart-markers');
 
       // Define the div for the tooltip.
       // TODO - append to the chartElement rather than the body.
       d3.select('body').selectAll('div.ml-model-debug-point-tooltip').remove();
-      const tooltipDiv = d3.select('body').append('div')
+      d3.select('body').append('div')
         .attr('class', 'ml-model-debug-point-tooltip')
         .style('opacity', 0);
 
@@ -386,7 +386,7 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
       }
 
       const zoomInfoGroup = d3.select('.focus-zoom');
-      const links = zoomInfoGroup.append('foreignObject')
+      zoomInfoGroup.append('foreignObject')
         .attr('width', 400)
         .attr('height', 25)
         .html('<div class="zoom-links">Zoom: ' + zoomLinks +

@@ -32,7 +32,7 @@ const module = uiModules.get('apps/ml');
 
 module.directive('mlAnomaliesTableExpandedRow', function () {
 
-  function link(scope, element, $attrs) {
+  function link(scope) {
     scope.record = scope.$parent.record;
     scope.filter = scope.$parent.filter;
     scope.isShowingAggregatedData = scope.$parent.isShowingAggregatedData;
@@ -44,7 +44,7 @@ module.directive('mlAnomaliesTableExpandedRow', function () {
       scope.anomalyEndTime = momentTime.add(scope.record.source.bucket_span, 's').format('MMMM Do YYYY, HH:mm:ss');
     }
 
-    scope.$on('initRow', function (event) {
+    scope.$on('initRow', function () {
       // Only build the description and details on metric values,
       // causes and influencers when the row is first expanded.
       buildContent();

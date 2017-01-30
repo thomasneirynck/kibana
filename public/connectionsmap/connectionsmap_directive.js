@@ -19,19 +19,18 @@
  */
 
 import _ from 'lodash';
-import $ from 'jquery';
 import d3 from 'd3';
 
 import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
-let module = uiModules.get('apps/ml');
+const module = uiModules.get('apps/ml');
 
-module.directive('mlConnectionsMap', function ($compile) {
+module.directive('mlConnectionsMap', function () {
 
-  function link(scope, element, attrs) {
+  function link(scope, element) {
 
-    scope.$on('render',function (event, d) {
+    scope.$on('render',function () {
       renderMap();
     });
 
@@ -161,7 +160,7 @@ module.directive('mlConnectionsMap', function ($compile) {
       fieldNames = _.sortBy(fieldNames, function (fieldName) {
         return fieldName.toLowerCase();
       });
-      data.fields = _.map(fieldNames, function (fieldName, i) {
+      data.fields = _.map(fieldNames, function (fieldName) {
         return {
           fieldName:fieldName,
           fieldLabel:fieldName !== 'ml-detector' ? fieldName : 'detector',
@@ -170,7 +169,6 @@ module.directive('mlConnectionsMap', function ($compile) {
       });
 
       const il = data.inner.length;
-      const ol = data.outer.length;
 
       const innerY = d3.scale.linear().domain([ 0, il ]).range([ -(il * innerNodeHeight) / 2, (il * innerNodeHeight) / 2 ]);
 
@@ -273,17 +271,17 @@ module.directive('mlConnectionsMap', function ($compile) {
         .data(data.fields)
         .enter().append('g')
         .attr('class', 'group_node');
-      group.append('title').text(function (d, i) {
+      group.append('title').text(function (d) {
         return d.fieldLabel + ': ' + d.nodes.length + (d.nodes.length === 1 ? ' value' : ' values');
       });
 
       // Add the group arcs.
-      const groupPath = group.append('path')
+      group.append('path')
           .attr('id', function (d, i) { return 'group' + i; })
           .attr('d', arc)
           .style('fill', function (d, i) { return colorscale(i); });
 
-      const groupIndicatorPath = group.append('path')
+      group.append('path')
         .attr('d', indicatorArc)
         .attr('class', 'group_indicator');
 
@@ -295,7 +293,7 @@ module.directive('mlConnectionsMap', function ($compile) {
         .attr('text-anchor', 'start');
       groupText.append('textPath')
         .attr('xlink:href', function (d, i) { return '#group' + i; })
-        .text(function (d, i) {
+        .text(function (d) {
           return d.fieldLabel.length < ((180 / Math.PI) * (d.endAngle - d.startAngle)) ? d.fieldLabel : '';
         });
 
@@ -306,7 +304,7 @@ module.directive('mlConnectionsMap', function ($compile) {
         .domain([0, 1])
         .range([2, 6]);
 
-      const link = svg.append('g')
+      svg.append('g')
         .attr('class', 'links')
         .selectAll('.link')
         .data(data.links)
@@ -360,11 +358,11 @@ module.directive('mlConnectionsMap', function ($compile) {
       }).text(function (d) {
         return d.fieldValue;
       })
-      .each(function (d, i) {
+      .each(function (d) {
         // Crop long labels, and show the full field name and value in a tooltip.
         cropLabels(this, d, outerLabelWidth);
       })
-      .append('title').text(function (d, i) {
+      .append('title').text(function (d) {
         return (d.fieldName !== 'ml-detector' ? d.fieldName : 'detector') + ':' + d.fieldValue;
       });
 
@@ -374,7 +372,7 @@ module.directive('mlConnectionsMap', function ($compile) {
         .enter()
         .append('g')
         .attr('class', 'inner_node')
-        .attr('transform', function (d, i) {
+        .attr('transform', function (d) {
           return 'translate(' + d.x + ',' + d.y + ')';
         })
         .on('mouseover', mouseover)
@@ -405,11 +403,11 @@ module.directive('mlConnectionsMap', function ($compile) {
       .text(function (d) {
         return d.fieldValue;
       })
-      .each(function (d, i) {
+      .each(function (d) {
         // Crop long labels, and show the full field name and value in a tooltip.
         cropLabels(this, d, innerNodeWidth);
       })
-      .append('title').text(function (d, i) {
+      .append('title').text(function (d) {
         return (scope.vis.params.viewBy.label + ':' + d.fieldValue);
       });
 
@@ -429,7 +427,7 @@ module.directive('mlConnectionsMap', function ($compile) {
 
       function mouseover(d) {
         // Bring related links to front.
-        d3.selectAll('.links .link').sort(function (a, b) {
+        d3.selectAll('.links .link').sort(function (a) {
           return d.relatedLinks.indexOf(a.id);
         });
 
@@ -454,13 +452,13 @@ module.directive('mlConnectionsMap', function ($compile) {
         }
 
         if (scope.selectedNode !== null) {
-          d3.selectAll('.links .link').sort(function (a, b) {
+          d3.selectAll('.links .link').sort(function (a) {
             return scope.selectedNode.relatedLinks.indexOf(a.id);
           });
         }
 
         if (scope.selectedLink !== null) {
-          d3.selectAll('.links .link').sort(function (a, b) {
+          d3.selectAll('.links .link').sort(function (a) {
             return (scope.selectedLink.id === a.id ? 1 : 0);
           });
         }
@@ -468,7 +466,7 @@ module.directive('mlConnectionsMap', function ($compile) {
 
       function mouseoverLink(d) {
         // Bring link to front.
-        d3.selectAll('.links .link').sort(function (a, b) {
+        d3.selectAll('.links .link').sort(function (a) {
           return (d.id === a.id ? 1 : 0);
         });
 
@@ -479,13 +477,13 @@ module.directive('mlConnectionsMap', function ($compile) {
         setLinkClass(d, 'highlight', false);
 
         if (scope.selectedNode !== null) {
-          d3.selectAll('.links .link').sort(function (a, b) {
+          d3.selectAll('.links .link').sort(function (a) {
             return scope.selectedNode.relatedLinks.indexOf(a.id);
           });
         }
 
         if (scope.selectedLink !== null) {
-          d3.selectAll('.links .link').sort(function (a, b) {
+          d3.selectAll('.links .link').sort(function (a) {
             return (scope.selectedLink.id === a.id ? 1 : 0);
           });
         }
