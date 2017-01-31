@@ -264,7 +264,7 @@ function runBrowserTests(type) {
 }
 
 // norelease add lint back to the dependencies of this task
-gulp.task('test', [ 'clean-test', 'pre-test'], function () {
+gulp.task('test', [ 'clean-test', 'pre-test', 'lint'], function () {
   // generates a coverage directory with reports for finding coverage gaps
   return runMocha().pipe(istanbul.writeReports());
 });
