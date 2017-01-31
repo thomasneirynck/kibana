@@ -111,19 +111,5 @@
         "searchSourceJSON": "{\"index\": \".ml-anomalies-*\",\"query\": {\"query_string\": {\"query\": \"*\",\"analyze_wildcard\": true}},\"filter\": []}"
       }
     }
-  },
-  {
-    "_id": "ml-audited-running-jobs-and-detectors",
-    "_type": "visualization",
-    "_source": {
-      "title": "Audited running jobs and detectors",
-      "visState": "{\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"showCircles\":true,\"smoothLines\":false,\"interpolate\":\"linear\",\"scale\":\"linear\",\"drawLinesBetweenPoints\":true,\"radiusRatio\":9,\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"max\",\"schema\":\"metric\",\"params\":{\"field\":\"running_jobs\"}},{\"id\":\"2\",\"type\":\"max\",\"schema\":\"metric\",\"params\":{\"field\":\"running_detectors\"}},{\"id\":\"3\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"timestamp\",\"interval\":\"M\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
-      "uiStateJSON": "{}",
-      "description": "",
-      "version": 1,
-      "kibanaSavedObjectMeta": {
-        "searchSourceJSON": "{\"index\":\".ml-anomalies-*\",\"query\":{\"query_string\":{\"query\":\"_type:audit_activity\",\"analyze_wildcard\":true}},\"filter\":[]}"
-      }
-    }
   }
 ]
