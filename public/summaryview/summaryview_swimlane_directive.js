@@ -109,10 +109,10 @@ module.directive('mlSummaryViewSwimlane', function (
       });
 
       const cells = [];
-      let time = startTime;
+      let timeStepped = startTime;
       for (let i = 0; i < numBuckets; i++) {
         let html = '<div class=\'floating-time-label\'>';
-        html += (moment.unix(time).format('MMM DD HH:mm'));
+        html += (moment.unix(timeStepped).format('MMM DD HH:mm'));
         html += '</div><i class=\'fa fa-caret-down\'></i>';
 
         const $cell = $('<div>', {
@@ -124,13 +124,13 @@ module.directive('mlSummaryViewSwimlane', function (
         });
         $cellsMarkerContainer.append($cell);
         cells.push($cell);
-        time += stepSecs;
+        timeStepped += stepSecs;
       }
       scope.laneMarkers = scope.$parent.laneMarkers;
       scope.laneMarkers.push({swimlaneType: scope.swimlaneType, lane: cells});
       $swimlanes.append($cellsMarkerContainer);
 
-      function cellHover($event, laneLabel, bucketScore, index, time, swimlaneType) {
+      function cellHover($event, laneLabel, bucketScore, index, t, swimlaneType) {
 
         if (!mlAnomalyRecordDetailsService.isLocked()) {
           const isInspector = SWIMLANE_TYPES[scope.swimlaneType] === SWIMLANE_TYPES.INSPECTOR;
@@ -174,13 +174,13 @@ module.directive('mlSummaryViewSwimlane', function (
                 swimlaneType = 'MONITOR';
               }
 
-              mlAnomalyRecordDetailsService.hover(time, laneLabel, bucketScore, top, target, swimlaneType, inspector);
+              mlAnomalyRecordDetailsService.hover(t, laneLabel, bucketScore, top, target, swimlaneType, inspector);
             }
           }
         }
       }
 
-      function cellClick($event, laneLabel, bucketScore, index, time, swimlaneType) {
+      function cellClick($event, laneLabel, bucketScore, index, t, swimlaneType) {
 
         let $target = $($event.target);
         // if the edge of the outer cell has been clicked by accident, find the inner cell.
@@ -200,7 +200,7 @@ module.directive('mlSummaryViewSwimlane', function (
           // placed in a 1ms timeout because the inspector's mouse up event must must happen first
           // and that is in a 0ms timeout.
           $timeout(function () {
-            cellHover($event, laneLabel, bucketScore, index, time, swimlaneType);
+            cellHover($event, laneLabel, bucketScore, index, t, swimlaneType);
           }, 1);
         }
       }
@@ -333,9 +333,9 @@ module.directive('mlSummaryViewSwimlane', function (
           // for monitor swimlane, create a closure to lock in the hover settings for each cell.
           // triggered when hovering over the same timestamp in the eventrate chart
           if (SWIMLANE_TYPES[rowScope.swimlaneType] === SWIMLANE_TYPES.MONITOR) {
-            rowScope.hoverFuncs[i] = (function ($event, lane, bucketScoreValue, i, time, swimlaneType) {
+            rowScope.hoverFuncs[i] = (function ($eventIn, laneIn, bucketScoreValueIn, iIn, timeIn, swimlaneTypeIn) {
               return function (swimlaneTypeOverride) {
-                cellHover($event, lane, bucketScoreValue, i, time, (swimlaneTypeOverride || swimlaneType));
+                cellHover($eventIn, laneIn, bucketScoreValueIn, iIn, timeIn, (swimlaneTypeOverride || swimlaneTypeIn));
               };
             }({currentTarget: $cell[0]}, lane, bucketScore.value, i, time, rowScope.swimlaneType));
           }
