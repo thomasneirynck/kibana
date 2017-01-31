@@ -225,20 +225,20 @@ module.directive('mlNewJobChart', function () {
     }
 
 
-    function drawSwimlane(swimlaneWidth, swimlaneHeight) {
+    function drawSwimlane(swlWidth, swlHeight) {
       const data = scope.chartData.swimlane;
 
       // TODO - need to get bucket length from dataset.
-      let cellWidth = swimlaneWidth / scope.chartData.line.length;
+      let cellWidth = swlWidth / scope.chartData.line.length;
       if (cellWidth < 1) {
         cellWidth = 1;
       }
 
-      d3.time.scale().range([0, swimlaneWidth])
+      d3.time.scale().range([0, swlWidth])
         .domain(d3.extent(data, (d) => d.date));
 
-      d3.scale.linear().range([swimlaneHeight, 0])
-        .domain([0, swimlaneHeight]);
+      d3.scale.linear().range([swlHeight, 0])
+        .domain([0, swlHeight]);
 
       // Set up the color scale to use for indicating score.
       const color = d3.scale.threshold()
@@ -257,7 +257,7 @@ module.directive('mlNewJobChart', function () {
         .attr('ry', 0)
         .attr('class', (d) => d.value > 0 ? 'swimlane-cell' : 'swimlane-cell-hidden')
         .attr('width', cellWidth - 0)
-        .attr('height', swimlaneHeight - 0)
+        .attr('height', swlHeight - 0)
         .style('fill', (d) => color(d.value));
 
     }

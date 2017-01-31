@@ -682,8 +682,8 @@ module.controller('MlSwimlaneController', function ($scope,
               scope._influencerHoverScope.$destroy();
             }
 
-            const laneIndex = item.series.data[item.dataIndex][1] - 0.5;
-            const laneLabel = laneIds[laneIndex];
+            const lIndex = item.series.data[item.dataIndex][1] - 0.5;
+            const laneLabel = laneIds[lIndex];
             showTooltip(item, laneLabel);
           }
         } else {
@@ -730,8 +730,8 @@ module.controller('MlSwimlaneController', function ($scope,
             if (!plot.getSelection()) {
               const timeAgg = scope.vis.aggs.bySchemaName.timeSplit[0];
               const bucketInterval = timeAgg.buckets.getInterval();  // A moment duration.
-              const laneIndex = item.datapoint[1] - 0.5;
-              const fieldValue = laneIds[laneIndex];
+              const lIndex = item.datapoint[1] - 0.5;
+              const fieldValue = laneIds[lIndex];
               const dataModel = item.series.data[item.dataIndex][2];
 
               const clickData = {'time':item.datapoint[0],

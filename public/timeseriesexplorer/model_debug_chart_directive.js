@@ -17,6 +17,8 @@
  * Chart showing model debug data, annotated with anomalies.
  */
 
+
+
 import _ from 'lodash';
 import $ from 'jquery';
 import angular from 'angular';
@@ -210,69 +212,69 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
       }
     }
 
-    function createFocusChart(focusGroup, focusWidth, focusHeight) {
+    function createFocusChart(fcsGroup, fcsWidth, fcsHeight) {
       // Split out creation of the focus chart from the rendering,
       // as we want to re-render the paths and points when the zoom area changes.
 
       // Add a group at the top to display info on the chart aggregation interval
       // and links to set the brush span to 1h, 1d, 1w etc.
-      const zoomGroup = focusGroup.append('g')
+      const zoomGroup = fcsGroup.append('g')
         .attr('class', 'focus-zoom');
       zoomGroup.append('rect')
         .attr('x', 0)
         .attr('y', 0)
-        .attr('width', focusWidth)
+        .attr('width', fcsWidth)
         .attr('height', focusZoomPanelHeight)
         .attr('class', 'chart-border');
-      updateZoomInfoElements(zoomGroup, focusWidth);
+      updateZoomInfoElements(zoomGroup, fcsWidth);
 
       // Add border round plot area.
-      focusGroup.append('rect')
+      fcsGroup.append('rect')
         .attr('x', 0)
         .attr('y', focusZoomPanelHeight)
-        .attr('width', focusWidth)
+        .attr('width', fcsWidth)
         .attr('height', focusChartHeight)
         .attr('class', 'chart-border');
 
       // Add background for x axis.
-      const xAxisBg = focusGroup.append('g')
+      const xAxisBg = fcsGroup.append('g')
         .attr('class', 'x-axis-background');
       xAxisBg.append('rect')
         .attr('x', 0)
-        .attr('y', focusHeight)
-        .attr('width', focusWidth)
+        .attr('y', fcsHeight)
+        .attr('width', fcsWidth)
         .attr('height', chartSpacing);
       xAxisBg.append('line')
         .attr('x1', 0)
-        .attr('y1', focusHeight)
+        .attr('y1', fcsHeight)
         .attr('x2', 0)
-        .attr('y2', focusHeight + chartSpacing);
+        .attr('y2', fcsHeight + chartSpacing);
       xAxisBg.append('line')
-        .attr('x1', focusWidth)
-        .attr('y1', focusHeight)
-        .attr('x2', focusWidth)
-        .attr('y2', focusHeight + chartSpacing);
+        .attr('x1', fcsWidth)
+        .attr('y1', fcsHeight)
+        .attr('x2', fcsWidth)
+        .attr('y2', fcsHeight + chartSpacing);
       xAxisBg.append('line')
         .attr('x1', 0)
-        .attr('y1', focusHeight + chartSpacing)
-        .attr('x2', focusWidth)
-        .attr('y2', focusHeight + chartSpacing);
+        .attr('y1', fcsHeight + chartSpacing)
+        .attr('x2', fcsWidth)
+        .attr('y2', fcsHeight + chartSpacing);
 
 
-      const axes = focusGroup.append('g');
+      const axes = fcsGroup.append('g');
       axes.append('g')
         .attr('class', 'x axis')
-        .attr('transform', 'translate(0,' + focusHeight + ')');
+        .attr('transform', 'translate(0,' + fcsHeight + ')');
       axes.append('g')
         .attr('class', 'y axis');
 
       // Create the path elements for the bounded area and values line.
-      focusGroup.append('path')
+      fcsGroup.append('path')
         .attr('class', 'area bounds');
-      focusGroup.append('path')
+      fcsGroup.append('path')
         .attr('class', 'values-line');
 
-      focusGroup.append('g')
+      fcsGroup.append('g')
         .attr('class', 'focus-chart-markers');
 
       // Define the div for the tooltip.
@@ -282,11 +284,11 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
         .attr('class', 'ml-model-debug-point-tooltip')
         .style('opacity', 0);
 
-      focusGroup.append('rect')
+      fcsGroup.append('rect')
         .attr('x', 0)
         .attr('y', 0)
-        .attr('width', focusWidth)
-        .attr('height', focusHeight + 24)
+        .attr('width', fcsWidth)
+        .attr('height', fcsHeight + 24)
         .attr('class', 'chart-border chart-border-highlight');
     }
 
@@ -400,10 +402,10 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
       });
     }
 
-    function drawContextElements(contextGroup, contextWidth, contextChartHeight, swimlaneHeight) {
+    function drawContextElements(cxtGroup, cxtWidth, cxtChartHeight, swlHeight) {
       const data = scope.contextChartData;
 
-      contextXScale = d3.time.scale().range([0, contextWidth])
+      contextXScale = d3.time.scale().range([0, cxtWidth])
         .domain(calculateContextXAxisDomain());
 
       // Set the y axis domain so that the range of actual values takes up at least 50% of the full range.
@@ -429,10 +431,10 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
         }
       }
 
-      contextYScale = d3.scale.linear().range([contextChartHeight, 0])
+      contextYScale = d3.scale.linear().range([cxtChartHeight, 0])
         .domain([chartLimits.min, chartLimits.max]);
 
-      const borders = contextGroup.append('g')
+      const borders = cxtGroup.append('g')
         .attr('class', 'axis');
 
       // Add borders left and right.
@@ -440,21 +442,21 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
         .attr('x1', 0)
         .attr('y1', 0)
         .attr('x2', 0)
-        .attr('y2', contextChartHeight + swimlaneHeight);
+        .attr('y2', cxtChartHeight + swlHeight);
       borders.append('line')
-        .attr('x1', contextWidth)
+        .attr('x1', cxtWidth)
         .attr('y1', 0)
-        .attr('x2', contextWidth)
-        .attr('y2', contextChartHeight + swimlaneHeight);
+        .attr('x2', cxtWidth)
+        .attr('y2', cxtChartHeight + swlHeight);
 
       // Add x axis.
       const xAxis = d3.svg.axis().scale(contextXScale)
         .orient('top')
-        .innerTickSize(-contextChartHeight)
+        .innerTickSize(-cxtChartHeight)
         .outerTickSize(0)
         .tickPadding(0);
 
-      contextGroup.datum(data);
+      cxtGroup.datum(data);
 
       const area = d3.svg.area()
         .x(function (d) { return contextXScale(d.date); })
@@ -465,39 +467,39 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
        .x(function (d) { return contextXScale(d.date); })
        .y(function (d) { return contextYScale(d.value); });
 
-      contextGroup.append('path')
+      cxtGroup.append('path')
         .datum(data)
         .attr('class', 'area context')
         .attr('d', area);
 
-      contextGroup.append('path')
+      cxtGroup.append('path')
         .datum(data)
         .attr('class', 'values-line')
         .attr('d', contextValuesLine);
 
       // Create and draw the anomaly swimlane.
-      const swimlane = contextGroup.append('g')
+      const swimlane = cxtGroup.append('g')
         .attr('class', 'swimlane')
-        .attr('transform', 'translate(0,' + contextChartHeight + ')');
+        .attr('transform', 'translate(0,' + cxtChartHeight + ')');
 
-      drawSwimlane(swimlane, contextWidth, swimlaneHeight);
+      drawSwimlane(swimlane, cxtWidth, swlHeight);
 
       // Draw a mask over the sections of the context chart and swimlane
       // which fall outside of the zoom brush selection area.
-      const mask = new ContextChartMask(contextGroup, scope.contextChartData, swimlaneHeight)
+      const mask = new ContextChartMask(cxtGroup, scope.contextChartData, swlHeight)
         .x(contextXScale)
         .y(contextYScale);
 
       // Draw the x axis on top of the mask so that the labels are visible.
-      contextGroup.append('g')
+      cxtGroup.append('g')
         .attr('class', 'x axis context-chart-axis')
         .call(xAxis);
 
       // Move the x axis labels up so that they are inside the contact chart area.
-      contextGroup.selectAll('.x.context-chart-axis text')
-        .attr('dy', (contextChartHeight - 5));
+      cxtGroup.selectAll('.x.context-chart-axis text')
+        .attr('dy', (cxtChartHeight - 5));
 
-      drawContextBrush(contextGroup, mask);
+      drawContextBrush(cxtGroup, mask);
     }
 
     function drawContextBrush(contextGroup, mask) {
@@ -588,7 +590,7 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
       }
     }
 
-    function drawSwimlane(swimlaneGroup, swimlaneWidth, swimlaneHeight) {
+    function drawSwimlane(swlGroup, swlWidth, swlHeight) {
       const data = scope.swimlaneData;
 
       // Calculate the x axis domain.
@@ -597,30 +599,30 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
       // Need to use the min(earliest) and max(earliest) of the context chart
       // aggregation to align the axes of the chart and swimlane elements.
       const xAxisDomain = calculateContextXAxisDomain();
-      const x = d3.time.scale().range([0, swimlaneWidth])
+      const x = d3.time.scale().range([0, swlWidth])
         .domain(xAxisDomain);
 
-      const y = d3.scale.linear().range([swimlaneHeight, 0])
-        .domain([0, swimlaneHeight]);
+      const y = d3.scale.linear().range([swlHeight, 0])
+        .domain([0, swlHeight]);
 
       const xAxis = d3.svg.axis()
         .scale(x)
         .orient('bottom')
-        .innerTickSize(-swimlaneHeight)
+        .innerTickSize(-swlHeight)
         .outerTickSize(0);
 
       const yAxis = d3.svg.axis()
         .scale(y)
         .orient('left')
         .tickValues(y.domain())
-        .innerTickSize(-swimlaneWidth)
+        .innerTickSize(-swlWidth)
         .outerTickSize(0);
 
-      const axes = swimlaneGroup.append('g');
+      const axes = swlGroup.append('g');
 
       axes.append('g')
         .attr('class', 'x axis')
-        .attr('transform', 'translate(0,' + (swimlaneHeight) + ')')
+        .attr('transform', 'translate(0,' + (swlHeight) + ')')
         .call(xAxis);
 
       axes.append('g')
@@ -630,12 +632,12 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
       const earliest = xAxisDomain[0].getTime();
       const latest = xAxisDomain[1].getTime();
       const swimlaneAggMs = scope.contextAggregationInterval.asMilliseconds();
-      let cellWidth = swimlaneWidth / ((latest - earliest) / swimlaneAggMs);
+      let cellWidth = swlWidth / ((latest - earliest) / swimlaneAggMs);
       if (cellWidth < 1) {
         cellWidth = 1;
       }
 
-      const cells = swimlaneGroup.append('g')
+      const cells = swlGroup.append('g')
         .attr('class', 'swimlane-cells')
         .selectAll('cells')
         .data(data);
@@ -647,7 +649,7 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
         .attr('ry', 0)
         .attr('class', function (d) { return d.score > 0 ? 'swimlane-cell' : 'swimlane-cell-hidden';})
         .attr('width', cellWidth)
-        .attr('height', swimlaneHeight)
+        .attr('height', swlHeight)
         .style('fill', function (d) { return anomalyColorScale(d.score);});
 
     }

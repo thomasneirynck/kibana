@@ -25,8 +25,8 @@ uiModules
         // mlFactory automatically injects the AngularConnector to the config
         // https://github.com/elastic/elasticsearch-js/blob/master/src/lib/connectors/angular.js
         _.class(CustomAngularConnector).inherits(config.connectionClass);
-        function CustomAngularConnector(host, config) {
-          CustomAngularConnector.Super.call(this, host, config);
+        function CustomAngularConnector(host, conf) {
+          CustomAngularConnector.Super.call(this, host, conf);
 
           this.request = _.wrap(this.request, function (request, params, cb) {
             if (String(params.method).toUpperCase() === 'GET') {

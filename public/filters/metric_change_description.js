@@ -52,8 +52,8 @@ module.filter('metricChangeDescription', function () {
       if (factor >= 1.05) {
         return '<i class="fa ' + iconClass + '"></i> ' + factor.toPrecision(2) + 'x ' + direction;
       } else {
-        const direction = isHigher ? 'high' : 'low';
-        return '<i class="fa ' + iconClass + '"></i> Unusually ' + direction;
+        const dir = isHigher ? 'high' : 'low';
+        return '<i class="fa ' + iconClass + '"></i> Unusually ' + dir;
       }
 
     } else {

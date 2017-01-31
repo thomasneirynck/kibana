@@ -36,7 +36,7 @@ import '../styles/main.less';
 import 'plugins/kibana/visualize/saved_visualizations/saved_visualizations';
 import 'plugins/kibana/discover/saved_searches/saved_searches';
 
-const module = uiModules.get('apps/ml', [
+uiModules.get('apps/ml', [
   'elasticsearch',
   'ngRoute',
   'kibana/courier',

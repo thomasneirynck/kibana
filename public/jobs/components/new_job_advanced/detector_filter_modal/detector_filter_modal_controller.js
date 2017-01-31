@@ -152,8 +152,8 @@ module.controller('MlDetectorFilterModal', function ($scope, $modalInstance, par
     });
   };
 
-  $scope.removeCondition = function (index) {
-    $scope.filter.rule_conditions.splice(index, 1);
+  $scope.removeCondition = function (idx) {
+    $scope.filter.rule_conditions.splice(idx, 1);
   };
 
 

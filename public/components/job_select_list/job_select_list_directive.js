@@ -30,7 +30,7 @@ module.directive('mlJobSelectList', ['mlJobService', 'mlDashboardService', funct
     replace: true,
     transclude: true,
     template: require('plugins/ml/components/job_select_list/job_select_list.html'),
-    controller: function ($scope, mlJobService) {
+    controller: function ($scope) {
 
       mlJobService.getBasicJobInfo('.ml-anomalies-*')
         .then(function (resp) {

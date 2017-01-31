@@ -47,9 +47,9 @@ module.service('mlESMappingService', function ($q, mlJobService) {
       const reg = new RegExp('^' + ind + '$');
       const tempTypes = {};
 
-      _.each(this.indexes, (index, key) => {
+      _.each(this.indexes, (idx, key) => {
         if (key.match(reg)) {
-          _.each(index.types, (t, tName) => {
+          _.each(idx.types, (t, tName) => {
             tempTypes[tName] = {};
           });
         }
@@ -73,9 +73,9 @@ module.service('mlESMappingService', function ($q, mlJobService) {
       ind = ind.replace(/\*/g, '.+');
       const reg = new RegExp('^' + ind + '$');
 
-      _.each(this.indexes, (index, key) => {
+      _.each(this.indexes, (idx, key) => {
         if (key.match(reg)) {
-          _.each(index.types, (t, tName) => {
+          _.each(idx.types, (t, tName) => {
             if (!found && t && _.has(t.properties, fieldName)) {
               found = true;
               type = tName;

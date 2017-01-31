@@ -207,7 +207,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         // load datafeeds stats
         ml.datafeedStats()
           .then((statsResp) => {
-            // console.log('loadDatafeedStats query response:', statsResp);
             // merge datafeeds stats into datafeeds
             for (let i = 0; i < datafeeds.length; i++) {
               const datafeed = datafeeds[i];
@@ -218,9 +217,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               }
             }
             deferred.resolve(datafeeds);
-            // this.jobs = jobs;
-            // broadcast that the jobs list has been updated
-            // $rootScope.$broadcast('jobsUpdated', jobs);
           })
           .catch((err) => {
             error(err);
@@ -541,8 +537,8 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
   // find a job based on the id
   this.getJob = function (jobId) {
-    const job = _.find(jobs, (job) => {
-      return job.job_id === jobId;
+    const job = _.find(jobs, (j) => {
+      return j.job_id === jobId;
     });
 
     return job;

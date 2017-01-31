@@ -323,7 +323,7 @@ module.directive('mlSwimlaneInspector', function (
   }
 
 
-  function processDetectorResults(dataByJob, laneLabel) {
+  function processDetectorResults(dataByJob, lLabel) {
     const dataset = {'laneLabels':[], 'points':[], 'interval': timeRange.interval};
     const timeObjs = {};
 
@@ -337,12 +337,12 @@ module.directive('mlSwimlaneInspector', function (
         // If a duplicate detector description has been used across jobs append job ID.
         const ll = _.indexOf(dataset.laneLabels, detectorDesc) === -1 ?
             detectorDesc : detectorDesc + ' (' + jobId + ')';
-        if (ll === laneLabel) {
-          dataset.laneLabels.push(laneLabel);
+        if (ll === lLabel) {
+          dataset.laneLabels.push(lLabel);
 
           _.each(detectorData, (normProb, timeMs) => {
             const time = timeMs / 1000;
-            dataset.points.push({'laneLabel':laneLabel, 'time': time, 'value': normProb});
+            dataset.points.push({'laneLabel':lLabel, 'time': time, 'value': normProb});
 
             dataset.earliest = Math.min(time, dataset.earliest);
             dataset.latest = Math.max((time + dataset.interval), dataset.latest);

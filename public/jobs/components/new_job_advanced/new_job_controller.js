@@ -794,8 +794,8 @@ function (
   // look at the difference between loaded ES influencers and the ones in the current job.
   // unrecognised influencers must have been added by the user.
   function extractCustomInfluencers() {
-    const allInfluencers = $scope.ui.influencers;
-    $scope.ui.customInfluencers = _.difference($scope.job.analysis_config.influencers, allInfluencers);
+    const allInfluencersList = $scope.ui.influencers;
+    $scope.ui.customInfluencers = _.difference($scope.job.analysis_config.influencers, allInfluencersList);
     console.log('extractCustomInfluencers: ', $scope.ui.customInfluencers);
   }
 

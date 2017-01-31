@@ -242,7 +242,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
     loadTopInfluencersForPage(selectedJobIds, (bounds.min.valueOf() / 1000), (bounds.max.valueOf() / 1000));
   };
 
-  function bucketResults(data, times, interval) {
+  function bucketResults(data, rTimes, interval) {
     const recordsPerTimeInterval = {};
 
     _.each(data, (record) => {
@@ -259,8 +259,8 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
         record.detectorText = record.detector.detector_description;
       }
 
-      for (let i = 0; i < times.length; i++) {
-        const t = +times[i];
+      for (let i = 0; i < rTimes.length; i++) {
+        const t = +rTimes[i];
         let found = false;
 
         if (recordsPerTimeInterval[t] === undefined) {
@@ -363,7 +363,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
     // console.log(highestRecordsIn);
   }
 
-  this.createInspectorRecords = function (swimlaneSubType, recordJobIds, swimlaneTimeRange, times) {
+  this.createInspectorRecords = function (swimlaneSubType, recordJobIds, swimlaneTimeRange, rTimes) {
     const newResults = [];
     _.each(allRecordResults, (res) => {
       if (res.time >= swimlaneTimeRange.start && res.time < (swimlaneTimeRange.end + swimlaneTimeRange.interval)) {
@@ -375,7 +375,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
       }
     });
 
-    const bucketedResults = bucketResults(newResults, times, swimlaneTimeRange.interval);
+    const bucketedResults = bucketResults(newResults, rTimes, swimlaneTimeRange.interval);
     const tempHighestRecords = {};
     processRecordResults(bucketedResults, tempHighestRecords);
     // the INSPECTOR type can contain data for any other type

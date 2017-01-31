@@ -61,7 +61,7 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
     restrict: 'E',
     template: require('plugins/ml/results/components/dashboard_app.html'),
     controllerAs: 'dashboardApp',
-    controller: function ($scope, $rootScope, $route, $routeParams, $location, Private, getAppState, mlDashboardService) {
+    controller: function ($scope, $rootScope, $route, $routeParams, $location, getAppState, mlDashboardService) {
 
       const queryFilter = Private(FilterBarQueryFilterProvider);
 

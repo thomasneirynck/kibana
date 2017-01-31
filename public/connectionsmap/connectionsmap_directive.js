@@ -412,10 +412,10 @@ module.directive('mlConnectionsMap', function () {
       });
 
 
-      function cropLabels(element, d, length) {
+      function cropLabels(el, d, length) {
         // Note getComputedTextLength() relies on the node being visible,
         // so set container visibility:hidden when no data, rather than display:none.
-        const self = d3.select(element);
+        const self = d3.select(el);
         let textLength = self.node().getComputedTextLength();
         let text = self.text();
         while (textLength > length) {

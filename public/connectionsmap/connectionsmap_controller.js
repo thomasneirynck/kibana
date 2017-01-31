@@ -429,7 +429,7 @@ module.controller('MlConnectionsMapController', function (
 
       _.each(connections, function (connection) {
         const detectorFieldNameList = _.where(connections, {field: connection.field});
-        connection.scoreForAllValues = _.reduce(detectorFieldNameList, function (memo, connection) { return memo + connection.score; }, 0);
+        connection.scoreForAllValues = _.reduce(detectorFieldNameList, function (memo, conn) { return memo + conn.score; }, 0);
       });
     });
 
@@ -484,22 +484,22 @@ module.controller('MlConnectionsMapController', function (
           $scope.maxNormProbByField[influencerFieldName] = maxNormProbByFieldName;
 
           _.each(dataForOtherFieldNames, function (influencer) {
-            _.each(influencer.influencer_field_values, function (fieldValue) {
-              const fieldName = influencer.influencer_field_name;
-              const connection = _.findWhere(connections, {field: fieldName, value:fieldValue});
+            _.each(influencer.influencer_field_values, function (fValue) {
+              const fName = influencer.influencer_field_name;
+              const connection = _.findWhere(connections, {field: fName, value:fValue});
               if (connection === undefined) {
                 connections.push({
-                  field: fieldName,
-                  value: fieldValue,
+                  field: fName,
+                  value: fValue,
                   score: record.normalized_probability
                 });
               } else {
                 connection.score = connection.score + record.normalized_probability;
               }
 
-              maxNormProbByFieldName = ($scope.maxNormProbByField[fieldName] || {});
+              maxNormProbByFieldName = ($scope.maxNormProbByField[fName] || {});
               maxNormProbByFieldName[fieldValue] = Math.max(_.get(maxNormProbByFieldName, fieldValue, 0), record.normalized_probability);
-              $scope.maxNormProbByField[fieldName] = maxNormProbByFieldName;
+              $scope.maxNormProbByField[fName] = maxNormProbByFieldName;
             });
           });
 
@@ -527,7 +527,7 @@ module.controller('MlConnectionsMapController', function (
 
       _.each(connections, function (connection) {
         const forFieldNameList = _.where(connections, {field: connection.field});
-        connection.scoreForAllValues = _.reduce(forFieldNameList, function (memo, connection) { return memo + connection.score; }, 0);
+        connection.scoreForAllValues = _.reduce(forFieldNameList, function (memo, conn) { return memo + conn.score; }, 0);
       });
     });
 

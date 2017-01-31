@@ -39,17 +39,17 @@ module.directive('mlRows', function ($compile, getAppState, Private) {
         }
 
         const createAggConfigResultCell = function (aggConfigResult) {
-          const $cell = $(document.createElement('td'));
+          const $resultCell = $(document.createElement('td'));
           const $state = getAppState();
           const clickHandler = filterBarClickHandler($state);
-          $cell.scope = $scope.$new();
-          $cell.addClass('cell-hover');
-          $cell.attr('ng-click', 'clickHandler($event)');
-          $cell.scope.clickHandler = function (event) {
+          $resultCell.scope = $scope.$new();
+          $resultCell.addClass('cell-hover');
+          $resultCell.attr('ng-click', 'clickHandler($event)');
+          $resultCell.scope.clickHandler = function (event) {
             if ($(event.target).is('a')) return; // Don't add filter if a link was clicked
             clickHandler({ point: { aggConfigResult: aggConfigResult } });
           };
-          return $compile($cell)($cell.scope);
+          return $compile($resultCell)($cell.scope);
         };
 
         if (contents instanceof AggConfigResult) {
