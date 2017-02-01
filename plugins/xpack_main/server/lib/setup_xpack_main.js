@@ -16,8 +16,7 @@ const registerPreResponseHandlerSingleton = once((server, info) => {
  * @return {Promise} Never {@code null}.
  */
 export function setupXPackMain(server, xpackMainPlugin, xpackInfo) {
-  const client = server.plugins.elasticsearch.client; // NOTE: authenticated client using server config auth
-  return xpackInfo(server, client)
+  return xpackInfo(server)
   .then(info => {
     server.expose('info', info);
     registerPreResponseHandlerSingleton(server, info);
