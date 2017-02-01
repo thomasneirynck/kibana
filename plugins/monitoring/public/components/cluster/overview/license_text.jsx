@@ -7,11 +7,7 @@ export default function LicenseText(props) {
     return moment.tz(input, moment.tz.guess()).format('LL');
   };
 
-  const goToLicense = () => {
-    props.scope.$evalAsync(() => {
-      props.kbnChangePath('/license');
-    });
-  };
+  const goToLicense = () => props.angularChangeUrl('/license');
 
   if (props.license) {
     return (
