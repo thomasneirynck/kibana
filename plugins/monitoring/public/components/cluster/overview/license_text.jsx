@@ -9,7 +9,7 @@ export default function LicenseText(props) {
 
   const goToLicense = () => props.angularChangeUrl('/license');
 
-  if (props.license) {
+  if (props.license && props.showLicenseExpiration) {
     return (
       <div className='page-row'>
         <div className='page-row-text'>

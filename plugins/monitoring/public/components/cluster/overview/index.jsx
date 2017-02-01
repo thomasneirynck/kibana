@@ -40,7 +40,11 @@ export default class Overview extends React.Component {
 
     return (
       <div className='monitoring-view'>
-        <LicenseText license={this.state.license} angularChangeUrl={angularChangeUrl} />
+        <LicenseText
+          license={this.state.license}
+          showLicenseExpiration={this.props.showLicenseExpiration}
+          angularChangeUrl={angularChangeUrl}
+        />
 
         {/* Elasticsearch info */}
         <div className='page-row'>
