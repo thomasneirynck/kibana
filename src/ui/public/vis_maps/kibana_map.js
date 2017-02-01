@@ -83,6 +83,11 @@ class ScaledCircleOverlay extends GeohashGridOverlay {
     return Math.pow(pct, 0.5) * zoomRadius * precisionScale;
   }
 
+  getBounds() {
+    return this._leafletLayer.getBounds();
+    // return;
+  }
+
 
 }
 
@@ -265,7 +270,8 @@ class KibanaMap extends EventEmitter {
     super();
 
     this._leafletMap = L.map(domNode, {});
-    this._leafletMap.setView([0, 0], 0);//todo: pass in from UI-state (if any)
+    // this._leafletMap.setView([0, 0], 0);//todo: pass in from UI-state (if any)
+    this._leafletMap.fitWorld();//todo: pass in from UI-state (if any)
     this._leafletMap.on('zoomend', e => this.emit('zoomend'));
     this._leafletMap.on('moveend', e => this.emit('moveend'));
 
@@ -441,8 +447,22 @@ class KibanaMap extends EventEmitter {
         throw new Error(`${this._geohashOptions.mapType} mapType not recognized`);
 
     }
+
     this._geohashGridOverlay.addToLeafletMap(this._leafletMap);
+    this.fitIfNotVisible(this._featureCollection);
+
   }
+
+  fitIfNotVisible(featureCollection) {
+    const bounds = _.pluck(featureCollection.features, 'properties.rectangle');
+    const mapBounds = this._leafletMap.getBounds();
+    const layerbounds = this._geohashGridOverlay.getBounds();
+    if (!mapBounds.intersects(layerbounds)) {
+      //todo; shouldn't do this under zooming, only when play button is pressed.
+      this._leafletMap.fitBounds(bounds);
+    }
+  }
+
 
   setGeohashFeatureCollection(featureCollection) {
     if (this._geohashGridOverlay && _.isEqual(this._geohashGridOverlay.getFeatureCollection(), featureCollection)) {
