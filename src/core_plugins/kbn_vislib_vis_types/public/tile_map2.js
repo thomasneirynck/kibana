@@ -10,9 +10,7 @@ export default function TileMapVisType(Private, getAppState, courier, config) {
   const MapsVisType = Private(MapsVisTypeVislibVisTypeProvider);
   const Schemas = Private(VisSchemasProvider);
   const geoJsonConverter = Private(AggResponseGeoJsonGeoJsonProvider);
-
-
-  console.log('uiState', arguments);
+  
   return new MapsVisType({
     name: 'tile_map',
     title: 'Tile map',
@@ -24,7 +22,8 @@ export default function TileMapVisType(Private, getAppState, courier, config) {
         mapType: 'Scaled Circle Markers',
 
         isDesaturated: true,
-        isFilterWithBounds: true,
+        // isFilterWithBounds: true,
+        isFilterWithBounds: false,
 
         addTooltip: true,
         heatMaxZoom: 16,
@@ -50,7 +49,10 @@ export default function TileMapVisType(Private, getAppState, courier, config) {
         value: 'topright',
         text: 'top right',
       }],
-      mapTypes: ['Scaled Circle Markers', 'Shaded Circle Markers', 'Shaded Geohash Grid', 'Heatmap'],
+      mapTypes: ['Scaled Circle Markers',
+        // 'Shaded Circle Markers',
+        // 'Shaded Geohash Grid',
+        'Heatmap'],
       canDesaturate: !!supports.cssFilters,
       editor: tileMapTemplate
     },
@@ -68,14 +70,12 @@ export default function TileMapVisType(Private, getAppState, courier, config) {
         pushFilter(filter, false, indexPatternName);
       },
       mapMoveEnd: function (event) {
-        console.log('modify the cenetr', event);
         const vis = _.get(event, 'chart.geohashGridAgg.vis');
         if (vis && vis.hasUiState()) {
           vis.getUiState().set('mapCenter', event.center);
         }
       },
       mapZoomEnd: function (event) {
-        console.log('modify the zoom');
         const vis = _.get(event, 'chart.geohashGridAgg.vis');
         if (vis && vis.hasUiState()) {
           vis.getUiState().set('mapZoom', event.zoom);

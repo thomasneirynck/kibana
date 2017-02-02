@@ -260,8 +260,10 @@ class HeatmapOverlay extends GeohashGridOverlay {
 }
 
 
-
-
+/**
+ * Collects map functionality required for Kibana.
+ * Serves as simple abstraction for leaflet as well.
+ */
 class KibanaMap extends EventEmitter {
 
   constructor(domNode) {
@@ -333,7 +335,7 @@ class KibanaMap extends EventEmitter {
     this._leafletDrawControl = null;
     this._geohashOptions = {};
 
-    this._addDrawControl();
+    this._choroplethLeafletLayer = null;
 
   }
 
@@ -346,6 +348,50 @@ class KibanaMap extends EventEmitter {
   getCenter() {
     const center = this._leafletMap.getCenter();
     return {lon: center.lng, lat: center.lat};
+  }
+
+
+  setChoroplethLayer(themeLayer) {
+
+    this._choroplethLeafletLayer = L.geoJson(null, {
+      onEachFeature: (feature, layer) => {
+        layer.on('click', () => {
+          this.emit('choropleth:select', feature.properties.iso);
+        });
+      }
+    });
+    this._choroplethLeafletLayer.addTo(this._leafletMap);
+    this._choroplethLeafletLayer.setStyle(emptyColor);
+
+
+    this._loaded = false;
+    $.ajax({
+      dataType: 'json',
+      url: '../plugins/choropleth/data/world_countries.geojson',
+      success: (data) => {
+        this._choroplethLeafletLayer.addData(data);
+        this._loaded = true;
+        if (this._choroplethMetrics) {
+          this._setChoroplethStyle();
+        }
+      }
+    }).error(function (e) {
+      notifier.fatal(e);
+    });
+  }
+
+  _setChoroplethStyle() {
+    const styleFunction = makeChoroplethStyleFunction(this._choroplethMetrics);
+    this._choroplethLeafletLayer.setStyle(styleFunction);
+
+  }
+
+  setChoroplethMetrics(metrics) {
+    this._choroplethMetrics = metrics;
+    if (!this._choroplethLeafletLayer) {
+      return;
+    }
+    this._setChoroplethStyle();
   }
 
   setCenter(latitude, longitude) {
@@ -416,19 +462,13 @@ class KibanaMap extends EventEmitter {
     }
 
     //todo: make changes if settings change
-    console.log('todo: make changes if settings change');
-    console.log('todo: make changes if settings change');
-
-
   }
 
   setWMSBaseLayer(options){
     console.log('todo: setWMSBaseLayer', arguments);
-
   }
 
-  _addDrawControl() {
-
+  addDrawControl() {
     const drawOptions = {
       draw: {
         polyline: false,
@@ -448,8 +488,6 @@ class KibanaMap extends EventEmitter {
         }
       }
     };
-
-
     this._leafletDrawControl = new L.Control.Draw(drawOptions);
     this._leafletMap.addControl(this._leafletDrawControl)
   };
@@ -523,13 +561,13 @@ class KibanaMap extends EventEmitter {
     this._geohashOptions = options;
 
     //do smart refresh. only required changes.
-    if (previousOptions)
+    if (previousOptions) {
       if (this._geohashOptions.mapType !== previousOptions.mapType) {
         this._recreateOverlay();
       } else if (this._geohashOptions.mapType === 'Heatmap' && !_.isEqual(this._geohashOptions.heatmap, previousOptions)) {
         this._recreateOverlay();//todo: can be optimized. does not require full refresh
       }
-
+    }
     //todo: when other configurations change (tooltip, etc... do NOT recreate the layer
 
   }
@@ -601,10 +639,7 @@ function dataToHeatArray(max, heatNormalizeData, featureCollection) {
     // const lng = feature.properties.center[1];
     const lat = feature.geometry.coordinates[1];
     const lng = feature.geometry.coordinates[0];
-
-
     let heatIntensity;
-
     if (!heatNormalizeData) {
       // show bucket value on heatmap
       heatIntensity = feature.properties.value;
@@ -615,6 +650,66 @@ function dataToHeatArray(max, heatNormalizeData, featureCollection) {
 
     return [lat, lng, heatIntensity];
   });
+}
+
+function makeChoroplethStyleFunction(data) {
+
+  let min = data[0].value;
+  let max = data[0].value;
+  for (let i = 1; i < data.length; i += 1) {
+    min = Math.min(data[i].value, min);
+    max = Math.max(data[i].value, max);
+  }
+
+  return function (geojsonFeature) {
+
+    const match = data.find(function (bucket) {
+      return bucket.term === geojsonFeature.properties.iso;
+    });
+
+    if (!match) {
+      return {
+        fillColor: 'rgb(255,255,255)',
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0
+      }
+    }
+
+    return {
+      fillColor: getChoroplethColor(match.value, min, max),
+      weight: 2,
+      opacity: 1,
+      color: 'white',
+      dashArray: '3',
+      fillOpacity: 0.7
+    };
+  }
+
+}
+
+const ramp = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026'];
+function getChoroplethColor(value, min, max) {
+  if (min === max) {
+    return ramp[ramp.length - 1];
+  }
+  const fraction = (value - min) / (max - min);
+  const index = Math.round(ramp.length * fraction) - 1;
+  let i = Math.max(Math.min(ramp.length - 1, index), 0);
+  return ramp[i];
+}
+
+function emptyColor() {
+  return {
+    fillColor: 'rgba(255,255,255,0)',
+    weight: 2,
+    opacity: 1,
+    color: 'white',
+    dashArray: '3',
+    fillOpacity: 0
+  };
 }
 
 export default KibanaMap;

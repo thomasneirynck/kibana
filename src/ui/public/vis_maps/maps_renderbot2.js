@@ -32,6 +32,7 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
       const containerElement = $($el)[0];
 
       this._kibanaMap = new KibanaMap(containerElement);
+      this._kibanaMap.addDrawControl();
       this._kibanaMap.on('moveend', ignore => {
         this._persistUIStateFromMap();
         if (vis.params.isFilterWithBounds) {
