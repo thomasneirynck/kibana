@@ -85,7 +85,6 @@ class ScaledCircleOverlay extends GeohashGridOverlay {
 
   getBounds() {
     return this._leafletLayer.getBounds();
-    // return;
   }
 
 
@@ -338,6 +337,7 @@ class KibanaMap extends EventEmitter {
 
   }
 
+
   destroy() {
     //todo
   }
@@ -366,6 +366,45 @@ class KibanaMap extends EventEmitter {
     return this._leafletMap.getZoom();
   }
 
+
+  getBounds() {
+
+    const bounds = this._leafletMap.getBounds();
+    if (!bounds) {
+      return null;
+    }
+
+    const southEast = bounds.getSouthEast();
+    const northWest = bounds.getNorthWest();
+    let southEastLng = southEast.lng;
+    if (southEastLng > 180) {
+      southEastLng -= 360;
+    }
+    let northWestLng = northWest.lng;
+    if (northWestLng < -180) {
+      northWestLng += 360;
+    }
+
+    const southEastLat = southEast.lat;
+    const northWestLat = northWest.lat;
+
+    //Bounds cannot be created unless they form a box with larger than 0 dimensions
+    //Invalid areas are rejected by ES.
+    if (southEastLat === northWestLat || southEastLng === northWestLng) {
+      return;
+    }
+
+    return {
+      bottom_right: {
+        lat: southEastLat,
+        lon: southEastLng
+      },
+      top_left: {
+        lat: northWestLat,
+        lon: northWestLng
+      }
+    };
+  }
 
   setTMSBaseLayer(options) {
     if (!this._leafletBaseLayer) {
@@ -452,16 +491,15 @@ class KibanaMap extends EventEmitter {
   fitIfNotVisible(featureCollection) {
     const bounds = _.pluck(featureCollection.features, 'properties.rectangle');
     const mapBounds = this._leafletMap.getBounds();
-    const layerbounds = this._geohashGridOverlay.getBounds();
+
     //layerbounds is sometimes empty:
     try {
+      const layerbounds = this._geohashGridOverlay.getBounds();
       if (mapBounds && layerbounds && !mapBounds.intersects(layerbounds)) {
-        //todo; shouldn't do this under zooming, only when play button is pressed.
-
         this._leafletMap.fitBounds(bounds);
       }
     } catch (e) {
-
+      //todo; shouldn't do this under zooming, only when play button is pressed.
     }
   }
 

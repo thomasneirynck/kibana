@@ -3,17 +3,16 @@ import MapsProvider from 'ui/vis_maps/maps';//todo: remove include
 import VisRenderbotProvider from 'ui/vis/renderbot';
 import MapsVisTypeBuildChartDataProvider from 'ui/vislib_vis_type/build_chart_data';
 // import FilterBarPushFilterProvider from 'ui/filter_bar/push_filter';
-import FilterBarPushFilterProvider from 'ui/filter_bar/put_filter';
+import FilterBarPutFilterProvider from 'ui/filter_bar/put_filter';
 import KibanaMap from './kibana_map';
 import $ from 'jquery';
 
 module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettings, Notifier, courier, getAppState) {
 
+
   const Renderbot = Private(VisRenderbotProvider);
   const buildChartData = Private(MapsVisTypeBuildChartDataProvider);
-  const notify = new Notifier({
-    location: 'Tilemap'
-  });
+  const notify = new Notifier({location: 'Tilemap'});
 
 
   let filterID = 0;
@@ -33,22 +32,53 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
       const containerElement = $($el)[0];
 
       this._kibanaMap = new KibanaMap(containerElement);
-      this._kibanaMap.on('moveend', _ => this._persistUIStateFromMap());
-      this._kibanaMap.on('zoomend', _ => {
+      this._kibanaMap.on('moveend', ignore => {
+        this._persistUIStateFromMap();
+        if (vis.params.isFilterWithBounds) {
+          try {
+            const bounds = this._kibanaMap.getBounds();
+            if (!bounds) {
+              return;
+            }
+            putSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', bounds, this._zoomFilterId);
+            courier.fetch();
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      });
+
+
+      this._zoomFilterId = 'zoomFilterID' + (filterID++);
+      this._kibanaMap.on('zoomend', ignore => {
           this._persistUIStateFromMap();
-          console.log('todo! this needs to be toggleable with autoPrecision params');
+        if (vis.params.isFilterWithBounds) {
+          try {
+            const bounds = this._kibanaMap.getBounds();
+            if (!bounds) {
+              return;
+            }
+            putSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', bounds, this._zoomFilterId);
+            courier.fetch();
+          } catch (e) {
+            console.error(e);
+          }
+        } else {
+          //todo: this needs to be toggleable with autoPrecision params
+          //todo: only do if there is a change in precision
           courier.fetch();
+        }
         }
       );
 
 
       this._drawFilterId = 'drawFilterId' + (filterID++);
       this._kibanaMap.on('drawCreated:rectangle', event => {
-        addSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', event.bounds, this._drawFilterId);
+        putSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', event.bounds, this._drawFilterId);
       });
 
       this._kibanaMap.on('drawCreated:polygon', event => {
-        addSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_polygon', {points: event.points}, this._drawFilterId);
+        putSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_polygon', {points: event.points}, this._drawFilterId);
       });
 
 
@@ -57,6 +87,7 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
     }
 
     render(esResponse) {
+      //todo: if empty response, should get it!
       console.log('render, esResponse', esResponse);
       this.mapsData = this._buildChartData(esResponse);
       const params = this._getMapsParams();
@@ -156,19 +187,20 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
   }
 
 
-  function addSpatialFilter(agg, filterName, filterData, filterId) {
+  function putSpatialFilter(agg, filterName, filterData, filterId) {
     if (!agg) {
       return;
     }
-    const pushFilter = Private(FilterBarPushFilterProvider)(getAppState());
+
+
     const indexPatternName = agg.vis.indexPattern.id;
     const field = agg.fieldName();
     const filter = {};
     filter[filterName] = {};
     filter[filterName][field] = filterData;
-    const id = pushFilter(filter, false, indexPatternName, filterId);
-    console.log('what did I get(?)');
-    return id;
+
+    const putFilter = Private(FilterBarPutFilterProvider)(getAppState());
+    putFilter(filter, false, indexPatternName, filterId);
   }
 
 

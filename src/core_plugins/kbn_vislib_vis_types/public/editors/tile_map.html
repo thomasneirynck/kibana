@@ -103,6 +103,17 @@
 <div class="vis-option-item form-group">
   <label>
     <input type="checkbox"
+           name="isFilterWithBounds"
+           ng-model="vis.params.isFilterWithBounds">
+    Query in bounds
+    <kbn-info info="only query for data in bounds"></kbn-info>
+  </label>
+</div>
+
+
+<div class="vis-option-item form-group">
+  <label>
+    <input type="checkbox"
     name="isDesaturated"
     ng-disabled="!vis.type.params.canDesaturate"
     ng-model="vis.params.isDesaturated">
