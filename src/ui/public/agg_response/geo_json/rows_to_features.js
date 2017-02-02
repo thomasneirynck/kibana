@@ -32,8 +32,7 @@ function convertRowsToFeatures(table, geoI, metricI, centroidI) {
         centroid.lon
       ];
     }
-
-
+    
     // order is nw, ne, se, sw
     const rectangle = [
       [location.latitude[0], location.longitude[0]],

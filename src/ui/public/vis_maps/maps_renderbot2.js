@@ -2,7 +2,8 @@ import _ from 'lodash';
 import MapsProvider from 'ui/vis_maps/maps';//todo: remove include
 import VisRenderbotProvider from 'ui/vis/renderbot';
 import MapsVisTypeBuildChartDataProvider from 'ui/vislib_vis_type/build_chart_data';
-import FilterBarPushFilterProvider from 'ui/filter_bar/push_filter';
+// import FilterBarPushFilterProvider from 'ui/filter_bar/push_filter';
+import FilterBarPushFilterProvider from 'ui/filter_bar/put_filter';
 import KibanaMap from './kibana_map';
 import $ from 'jquery';
 
@@ -40,15 +41,16 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
       );
 
 
+      this._drawFilterId = null;
       this._kibanaMap.on('drawCreated:rectangle', event => {
-        addSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', event.bounds);
+        this._drawFilterId = addSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', event.bounds, this._drawFilterId);
       });
 
       this._kibanaMap.on('drawCreated:polygon', event => {
-        addSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_polygon', {points: event.points});
+        this._drawFilterId = addSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_polygon', {points: event.points}, this._drawFilterId);
       });
 
-      
+
       this._configureGeoHashLayer();
       this._useUIState();
     }
@@ -153,7 +155,7 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
   }
 
 
-  function addSpatialFilter(agg, filterName, filterData) {
+  function addSpatialFilter(agg, filterName, filterData, filterId) {
     if (!agg) {
       return;
     }
@@ -163,7 +165,9 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
     const filter = {};
     filter[filterName] = {};
     filter[filterName][field] = filterData;
-    pushFilter(filter, false, indexPatternName);
+    const id = pushFilter(filter, false, indexPatternName, filterId);
+    console.log('what did I get(?)');
+    return id;
   }
 
 

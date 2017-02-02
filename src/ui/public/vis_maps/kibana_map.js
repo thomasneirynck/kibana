@@ -453,9 +453,15 @@ class KibanaMap extends EventEmitter {
     const bounds = _.pluck(featureCollection.features, 'properties.rectangle');
     const mapBounds = this._leafletMap.getBounds();
     const layerbounds = this._geohashGridOverlay.getBounds();
-    if (!mapBounds.intersects(layerbounds)) {
-      //todo; shouldn't do this under zooming, only when play button is pressed.
-      this._leafletMap.fitBounds(bounds);
+    //layerbounds is sometimes empty:
+    try {
+      if (mapBounds && layerbounds && !mapBounds.intersects(layerbounds)) {
+        //todo; shouldn't do this under zooming, only when play button is pressed.
+
+        this._leafletMap.fitBounds(bounds);
+      }
+    } catch (e) {
+
     }
   }
 
