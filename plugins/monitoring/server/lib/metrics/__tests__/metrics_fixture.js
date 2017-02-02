@@ -2026,7 +2026,7 @@ export const expected = {
   'logstash_events_latency': {
     'calculation': logstashEventsLatencyCalculation,
     'field': 'logstash_stats.events.out',
-    'label': 'Events Latency Rate',
+    'label': 'Event Latency',
     'description': (
       'Average time spent by events in the filter and output stages, which is the total ' +
       'time it takes to process events divided by number of events emitted.'
