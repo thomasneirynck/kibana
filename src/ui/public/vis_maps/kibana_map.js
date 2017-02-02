@@ -522,10 +522,9 @@ class KibanaMap extends EventEmitter {
     }
 
     this._geohashGridOverlay.addToLeafletMap(this._leafletMap);
-    this.fitIfNotVisible(this._featureCollection);
+    // this.fitIfNotVisible(this._featureCollection);
 
   }
-
   fitIfNotVisible(featureCollection) {
     const bounds = _.pluck(featureCollection.features, 'properties.rectangle');
     const mapBounds = this._leafletMap.getBounds();
