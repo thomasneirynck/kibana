@@ -2,7 +2,6 @@ import _ from 'lodash';
 
 export default function () {
 
-  let i = 0;
   return function ($state) {
     if (!_.isObject($state)) throw new Error('pushFilters requires a state object');
     return function (filter, negate, index, filterId) {
@@ -12,7 +11,6 @@ export default function () {
       const filters = _.clone($state.filters || []);
       let position = -1;
       if (filterId) {
-        console.log('find identifier', filterId);
         filters.forEach((filter, ind) => {
           if (filterId === filter.meta._id) {
             position = ind;
@@ -24,20 +22,14 @@ export default function () {
           _.extend(pendingFilter, filter);
           filters[position] = pendingFilter;
           $state.filters = filters;
-          return filterId;
-        } else {
-          console.log('couldnt find anything');
+          return;
         }
       }
 
-      console.log('add new filter...');
-      i++;
-      const pendingFilter = {meta: {negate: negate, index: index, _id: i}};
+      const pendingFilter = {meta: {negate: negate, index: index, _id: filterId}};
       _.extend(pendingFilter, filter);
       filters.push(pendingFilter);
       $state.filters = filters;
-      return i;
-
     };
   };
 }

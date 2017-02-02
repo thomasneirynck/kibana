@@ -16,6 +16,7 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
   });
 
 
+  let filterID = 0;
   class MapsRenderbot extends Renderbot {
 
     constructor(vis, $el, uiState) {
@@ -41,13 +42,13 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
       );
 
 
-      this._drawFilterId = null;
+      this._drawFilterId = 'drawFilterId' + (filterID++);
       this._kibanaMap.on('drawCreated:rectangle', event => {
-        this._drawFilterId = addSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', event.bounds, this._drawFilterId);
+        addSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', event.bounds, this._drawFilterId);
       });
 
       this._kibanaMap.on('drawCreated:polygon', event => {
-        this._drawFilterId = addSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_polygon', {points: event.points}, this._drawFilterId);
+        addSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_polygon', {points: event.points}, this._drawFilterId);
       });
 
 
