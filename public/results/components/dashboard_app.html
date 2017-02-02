@@ -77,4 +77,12 @@
   <p>Click the <a class="btn btn-xs navbtn-inverse" ng-click="configTemplate.open('pickVis'); toggleAddVisualization = !toggleAddVisualization" aria-label="Add visualization"><i aria-hidden="true" class="fa fa-plus-circle"></i></a> button in the menu bar above to add a visualization to the dashboard. <br/>If you haven't setup a visualization yet visit the <a href="#/visualize" title="Visualize">"Visualize"</a> tab to create your first visualization.</p>
 </div>
 
-<dashboard-grid></dashboard-grid>
+<dashboard-grid
+  panels="state.panels"
+  get-vis-click-handler="filterBarClickHandler(state)"
+  get-vis-brush-handler="brushEvent(state)"
+  save-state="saveState"
+  toggle-expand="toggleExpandPanel"
+  create-child-ui-state="createChildUiState"
+  toggle-expand="toggleExpandPanel"
+></dashboard-grid>

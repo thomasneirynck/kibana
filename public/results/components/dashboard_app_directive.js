@@ -46,6 +46,7 @@ import '../styles/main.less';
 
 import UtilsBrushEventProvider from 'ui/utils/brush_event';
 import FilterBarFilterBarClickHandlerProvider from 'ui/filter_bar/filter_bar_click_handler';
+import { FilterUtils } from 'plugins/kibana/dashboard/filter_utils';
 
 import 'plugins/ml/components/job_select_list';
 
@@ -95,22 +96,13 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
 
       $scope.$on('$destroy', dash.destroy);
 
-      const matchQueryFilter = function (filter) {
-        return filter.query && filter.query.query_string && !filter.meta;
-      };
-
-      const extractQueryFromFilters = function (filters) {
-        const filter = _.find(filters, matchQueryFilter);
-        if (filter) return filter.query;
-      };
-
       const stateDefaults = {
         title: dash.title,
         panels: dash.panelsJSON ? JSON.parse(dash.panelsJSON) : [],
         options: dash.optionsJSON ? JSON.parse(dash.optionsJSON) : {},
         uiState: dash.uiStateJSON ? JSON.parse(dash.uiStateJSON) : {},
-        query: extractQueryFromFilters(dash.searchSource.getOwn('filter')) || {query_string: {query: '*'}},
-        filters: _.reject(dash.searchSource.getOwn('filter'), matchQueryFilter),
+        query: FilterUtils.getQueryFilterForDashboard(dash),
+        filters: FilterUtils.getFilterBarsForDashboard(dash)
       };
 
       let stateMonitor;
@@ -245,6 +237,10 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
         return $scope.uiState.createChild(path, uiState, true);
       };
 
+      $scope.saveState = function saveState() {
+        $state.save();
+      };
+
       $scope.brushEvent = brushEvent;
       $scope.filterBarClickHandler = filterBarClickHandler;
 
@@ -300,12 +296,6 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
           $state.save();
           $scope.refresh();
         }
-      });
-
-      // listen for notifications from the grid component that changes have
-      // been made, rather than watching the panels deeply
-      $scope.$on('change:vis', function () {
-        $state.save();
       });
 
       // called by the saved-object-finder when a user clicks a vis
