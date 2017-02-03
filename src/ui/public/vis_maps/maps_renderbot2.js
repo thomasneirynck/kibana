@@ -34,17 +34,24 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
 
       this._kibanaMap = new KibanaMap(containerElement);
       this._kibanaMap.addDrawControl();
+
+
+      let previousPrecision = this._kibanaMap.getAutoPrecision();
       this._kibanaMap.on('moveend', ignore => {
-        console.log('move end');
+        console.log('move end', previousPrecision, this._kibanaMap.getAutoPrecision());
+        const precisionChange = (previousPrecision !== this._kibanaMap.getAutoPrecision());
+        previousPrecision = this._kibanaMap.getAutoPrecision();
         this._persistUIStateFromMap();
+
         if (vis.params.isFilterWithBounds) {
           try {
             const bounds = this._kibanaMap.getBounds();
             if (!bounds) {
               return;
             }
+            console.log('put!');
             putSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', bounds, this._zoomFilterId);
-            courier.fetch();
+            // courier.fetch();
           } catch (e) {
             console.error(e);
           }
@@ -53,34 +60,22 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
 
 
       this._zoomFilterId = 'zoomFilterID' + (filterID++);
-
-      let previousPrecision = this._kibanaMap.getAutoPrecision();
       this._kibanaMap.on('zoomend', ignore => {
-
         console.log('zoom end', previousPrecision, this._kibanaMap.getAutoPrecision());
         const precisionChange = (previousPrecision !== this._kibanaMap.getAutoPrecision());
         previousPrecision = this._kibanaMap.getAutoPrecision();
 
-        this._persistUIStateFromMap();
-          if (vis.params.isFilterWithBounds) {
-            //   try {
-            //     const bounds = this._kibanaMap.getBounds();
-            //     if (!bounds) {
-            //       return;
-            //     }
-            //     putSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', bounds, this._zoomFilterId);
-            //     courier.fetch();
-            //   } catch (e) {
-            //     console.error(e);
-            //   }
-          } else {
+        if (!vis.params.isFilterWithBounds) {
+          // this._persistUIStateFromMap();
             //todo: this needs to be toggleable with autoPrecision params
             //todo: only do if there is a change in precision
-            if (precisionChange) {
-              console.log('i guess refresh');
+
+          if (precisionChange) {
+            console.log('refresh data');
               courier.fetch();
             } else {
-              console.log('no need to refresh');
+            console.log('only apply new zoom level....');
+            this._kibanaMap.recreateGeohashOverlay();
             }
           }
         }
@@ -106,6 +101,7 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
       this.mapsData = this._buildChartData(esResponse);
       const params = this._getMapsParams();
       this.mapsParams = params;
+
 
       this._kibanaMap.setGeohashFeatureCollection(this.mapsData.geoJson);
       this._useUIState();

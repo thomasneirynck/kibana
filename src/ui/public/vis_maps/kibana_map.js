@@ -9,18 +9,16 @@ import zoomToPrecision from 'ui/utils/zoom_to_precision';
 
 class GeohashGridOverlay {
 
-  constructor(featureCollection, layerOptions) {
+  constructor(featureCollection, layerOptions, targetZoom) {
     this._featureCollection = featureCollection;
+    this._zoom = targetZoom;
     this.createLeafletLayer(layerOptions);
   }
 
   createLeafletLayer(ignoreLayerOptions) {
-    const min = _.get(this._featureCollection, 'properties.min', 0);
-    const max = _.get(this._featureCollection, 'properties.max', 1);
-    this._legendColors = makeCircleMarkerLegendColors(min, max);
     this._leafletLayer = new L.geoJson(null, {
       pointToLayer: this.getMarkerFunction(),
-      style: makeStyleFunction(min, max, this._legendColors)
+      style: this.getStyleFunction()
     });
     this._leafletLayer.addData(this._featureCollection);
   }
@@ -41,6 +39,20 @@ class GeohashGridOverlay {
   getMarkerFunction() {
     throw new Error('should implement getMarkerFunction');
   }
+
+  getStyleFunction() {
+    const min = _.get(this._featureCollection, 'properties.min', 0);
+    const max = _.get(this._featureCollection, 'properties.max', 1);
+    this._legendColors = makeCircleMarkerLegendColors(min, max);
+    const styleFunction = makeStyleFunction(min, max, this._legendColors);
+    return styleFunction;
+  }
+
+  _setStyle() {
+    const style = this.getStyleFunction();
+    this._leafletLayer.setStyle(style);
+  }
+
 
 }
 
@@ -70,7 +82,9 @@ class ScaledCircleOverlay extends GeohashGridOverlay {
   _radiusScale(value) {
     const precisionBiasBase = 5;
     const precisionBiasNumerator = 200;
-    const zoom = this._featureCollection.properties.zoom;
+    // const zoom = this._featureCollection.properties.zoom;
+
+    const zoom = this._zoom;
     const maxValue = this._featureCollection.properties.max;
     const precision = _.max(this._featureCollection.features.map((feature) => {
       return String(feature.properties.geohash).length;
@@ -274,7 +288,7 @@ class KibanaMap extends EventEmitter {
     this._leafletMap = L.map(domNode, {});
     // this._leafletMap.setView([0, 0], 0);//todo: pass in from UI-state (if any)
     this._leafletMap.fitWorld();//todo: pass in from UI-state (if any)
-    this._leafletMap.on('zoomend', e => this.emit('zoomend'));
+    this._leafletMap.on('zoomend', e => {this.emit('zoomend');});
     this._leafletMap.on('moveend', e => this.emit('moveend'));
 
     this._leafletMap.on('draw:created', event => {
@@ -535,7 +549,7 @@ class KibanaMap extends EventEmitter {
 
     switch (this._geohashOptions.mapType) {
       case 'Scaled Circle Markers':
-        this._geohashGridOverlay = new ScaledCircleOverlay(this._featureCollection);
+        this._geohashGridOverlay = new ScaledCircleOverlay(this._featureCollection, {}, this._leafletMap.getZoom());
         break;
       case 'Heatmap':
         this._geohashGridOverlay = new HeatmapOverlay(this._featureCollection, {
@@ -570,6 +584,9 @@ class KibanaMap extends EventEmitter {
     }
   }
 
+  recreateGeohashOverlay() {
+    this._recreateOverlay();
+  }
 
   setGeohashFeatureCollection(featureCollection) {
     if (this._geohashGridOverlay && _.isEqual(this._geohashGridOverlay.getFeatureCollection(), featureCollection)) {
