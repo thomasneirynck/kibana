@@ -7,6 +7,7 @@ import FilterBarPutFilterProvider from 'ui/filter_bar/put_filter';
 import KibanaMap from './kibana_map';
 import $ from 'jquery';
 
+
 module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettings, Notifier, courier, getAppState) {
 
 
@@ -34,6 +35,7 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
       this._kibanaMap = new KibanaMap(containerElement);
       this._kibanaMap.addDrawControl();
       this._kibanaMap.on('moveend', ignore => {
+        console.log('move end');
         this._persistUIStateFromMap();
         if (vis.params.isFilterWithBounds) {
           try {
@@ -51,27 +53,38 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
 
 
       this._zoomFilterId = 'zoomFilterID' + (filterID++);
+
+      let previousPrecision = this._kibanaMap.getAutoPrecision();
       this._kibanaMap.on('zoomend', ignore => {
-          this._persistUIStateFromMap();
-        if (vis.params.isFilterWithBounds) {
-          try {
-            const bounds = this._kibanaMap.getBounds();
-            if (!bounds) {
-              return;
+
+        console.log('zoom end', previousPrecision, this._kibanaMap.getAutoPrecision());
+        const precisionChange = (previousPrecision !== this._kibanaMap.getAutoPrecision());
+        previousPrecision = this._kibanaMap.getAutoPrecision();
+
+        this._persistUIStateFromMap();
+          if (vis.params.isFilterWithBounds) {
+            //   try {
+            //     const bounds = this._kibanaMap.getBounds();
+            //     if (!bounds) {
+            //       return;
+            //     }
+            //     putSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', bounds, this._zoomFilterId);
+            //     courier.fetch();
+            //   } catch (e) {
+            //     console.error(e);
+            //   }
+          } else {
+            //todo: this needs to be toggleable with autoPrecision params
+            //todo: only do if there is a change in precision
+            if (precisionChange) {
+              console.log('i guess refresh');
+              courier.fetch();
+            } else {
+              console.log('no need to refresh');
             }
-            putSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', bounds, this._zoomFilterId);
-            courier.fetch();
-          } catch (e) {
-            console.error(e);
           }
-        } else {
-          //todo: this needs to be toggleable with autoPrecision params
-          //todo: only do if there is a change in precision
-          courier.fetch();
-        }
         }
       );
-
 
       this._drawFilterId = 'drawFilterId' + (filterID++);
       this._kibanaMap.on('drawCreated:rectangle', event => {

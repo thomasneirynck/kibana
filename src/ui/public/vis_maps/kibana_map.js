@@ -3,6 +3,7 @@ import L from 'leaflet';
 import _ from 'lodash';
 import d3 from 'd3';
 import colorramps from 'ui/vislib/components/color/colormaps';
+import zoomToPrecision from 'ui/utils/zoom_to_precision';
 // import Notifier from 'ui/notify/notifier';
 
 
@@ -437,6 +438,10 @@ class KibanaMap extends EventEmitter {
     return this._leafletMap.getZoom();
   }
 
+  getAutoPrecision() {
+    //todo: not correct, should take into account settigns...
+    return zoomToPrecision(this._leafletMap.getZoom(), 12);
+  }
 
   getBounds() {
 
