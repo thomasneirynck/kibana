@@ -392,12 +392,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     return deferred.promise;
   };
 
-  this.saveNewJob = function (job, overwrite) {
-    const params = {};
-    if (overwrite) {
-      params.overwrite = true;
-    }
-
+  this.saveNewJob = function (job) {
     // run then and catch through the same check
     const func = function (resp) {
       console.log('Response for job query:', resp);

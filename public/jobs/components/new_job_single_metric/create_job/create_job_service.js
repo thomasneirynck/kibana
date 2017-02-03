@@ -290,7 +290,7 @@ module.service('mlSingleMetricJobService', function (
     const job = createJobForSaving(this.job);
 
     // DO THE SAVE
-    mlJobService.saveNewJob(job, true)
+    mlJobService.saveNewJob(job)
     .then((resp) => {
       if (resp.success) {
         deferred.resolve(this.job);

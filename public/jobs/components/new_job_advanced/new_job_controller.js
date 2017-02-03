@@ -352,13 +352,16 @@ function (
       }
 
       function saveFunc() {
+        if (overwrite) {
+          // place holder for a delete job call first.
+        }
         $scope.saveLock = true;
         $scope.ui.saveStatus.job = 1;
         openSaveStatusWindow();
 
         const job = createJobForSaving($scope.job);
 
-        mlJobService.saveNewJob(job, overwrite)
+        mlJobService.saveNewJob(job)
           .then((result) => {
             if (result.success) {
               // TODO - re-enable the refreshing of the index pattern fields once there is a
