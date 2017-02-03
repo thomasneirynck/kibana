@@ -2,8 +2,8 @@ import { EventEmitter } from 'events';
 import L from 'leaflet';
 import _ from 'lodash';
 import d3 from 'd3';
-
-import Notifier from 'ui/notify/notifier';
+import colorramps from 'ui/vislib/components/color/colormaps';
+// import Notifier from 'ui/notify/notifier';
 
 
 class GeohashGridOverlay {
@@ -16,7 +16,7 @@ class GeohashGridOverlay {
   createLeafletLayer(ignoreLayerOptions) {
     const min = _.get(this._featureCollection, 'properties.min', 0);
     const max = _.get(this._featureCollection, 'properties.max', 1);
-    this._legendColors = makeLegendColors(min, max);
+    this._legendColors = makeCircleMarkerLegendColors(min, max);
     this._leafletLayer = new L.geoJson(null, {
       pointToLayer: this.getMarkerFunction(),
       style: makeStyleFunction(min, max, this._legendColors)
@@ -336,6 +336,8 @@ class KibanaMap extends EventEmitter {
     this._geohashOptions = {};
 
     this._choroplethLeafletLayer = null;
+    this._choroplethMetrics = null;
+    this._choroplethColorRamp = colorramps['Yellow to Red'];
 
   }
 
@@ -374,9 +376,9 @@ class KibanaMap extends EventEmitter {
       success: (data) => {
         this._choroplethLeafletLayer.addData(data);
         this._loaded = true;
-        if (this._choroplethMetrics) {
+        // if (this._choroplethMetrics) {
           this._setChoroplethStyle();
-        }
+        // }
       }
     }).error(function (e) {
       notifier.fatal(e);
@@ -384,16 +386,28 @@ class KibanaMap extends EventEmitter {
   }
 
   _setChoroplethStyle() {
-    const styleFunction = makeChoroplethStyleFunction(this._choroplethMetrics);
-    this._choroplethLeafletLayer.setStyle(styleFunction);
-
+    if (!this._choroplethMetrics) {
+      return;
+    }
+    const styleFunction = makeChoroplethStyleFunction(this._choroplethMetrics, this._choroplethColorRamp);
+    if (this._choroplethLeafletLayer) {
+      this._choroplethLeafletLayer.setStyle(styleFunction);
+    }
   }
 
   setChoroplethMetrics(metrics) {
     this._choroplethMetrics = metrics;
-    if (!this._choroplethLeafletLayer) {
+    // if (!this._choroplethLeafletLayer) {
+    //   return;
+    // }
+    this._setChoroplethStyle();
+  }
+
+  setChoroplethColorRamp(colorRamp) {
+    if (_.isEqual(colorRamp, this._choroplethColorRamp)) {
       return;
     }
+    this._choroplethColorRamp = colorRamp;
     this._setChoroplethStyle();
   }
 
@@ -587,7 +601,7 @@ class KibanaMap extends EventEmitter {
  * @method quantizeLegendColors
  * return {undefined}
  */
-function makeLegendColors(min, max) {
+function makeCircleMarkerLegendColors(min, max) {
   const reds1 = ['#ff6128'];
   const reds3 = ['#fecc5c', '#fd8d3c', '#e31a1c'];
   const reds5 = ['#fed976', '#feb24c', '#fd8d3c', '#f03b20', '#bd0026'];
@@ -654,7 +668,7 @@ function dataToHeatArray(max, heatNormalizeData, featureCollection) {
   });
 }
 
-function makeChoroplethStyleFunction(data) {
+function makeChoroplethStyleFunction(data, colorramp) {
 
   let min = data[0].value;
   let max = data[0].value;
@@ -681,7 +695,7 @@ function makeChoroplethStyleFunction(data) {
     }
 
     return {
-      fillColor: getChoroplethColor(match.value, min, max),
+      fillColor: getChoroplethColor(match.value, min, max, colorramp),
       weight: 2,
       opacity: 1,
       color: 'white',
@@ -692,20 +706,28 @@ function makeChoroplethStyleFunction(data) {
 
 }
 
-const ramp = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026'];
-function getChoroplethColor(value, min, max) {
+// const colorRamp = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026'];
+function getChoroplethColor(value, min, max, colorRamp) {
   if (min === max) {
-    return ramp[ramp.length - 1];
+    return colorRamp[colorRamp.length - 1];
   }
   const fraction = (value - min) / (max - min);
-  const index = Math.round(ramp.length * fraction) - 1;
-  let i = Math.max(Math.min(ramp.length - 1, index), 0);
-  return ramp[i];
+  const index = Math.round(colorRamp.length * fraction) - 1;
+  let i = Math.max(Math.min(colorRamp.length - 1, index), 0);
+
+  // console.log('must make rgb color', colorRamp[i]);
+  // return colorRamp[i];
+  const color = colorRamp[i][1];
+  const red = Math.floor(color[0] * 255);
+  const green = Math.floor(color[1] * 255);
+  const blue = Math.floor(color[2] * 255);
+  const rgb = `rgb(${red},${green},${blue})`;
+  return rgb;
 }
 
 function emptyColor() {
   return {
-    fillColor: 'rgba(255,255,255,0)',
+    fillColor: 'rgb(255,255,255)',
     weight: 2,
     opacity: 1,
     color: 'white',

@@ -5,6 +5,7 @@ import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/templat
 import VisSchemasProvider from 'ui/vis/schemas';
 import choroplethTemplate from 'plugins/choropleth/choropleth_controller.html';
 import visTypes from 'ui/registry/vis_types';
+import colorramps from 'ui/vislib/components/color/colormaps';
 
 visTypes.register(function ChoroplethProvider(Private) {
   const TemplateVisType = Private(TemplateVisTypeTemplateVisTypeProvider);
@@ -18,6 +19,10 @@ visTypes.register(function ChoroplethProvider(Private) {
     icon: 'fa-globe',
     template: choroplethTemplate,
     params: {
+      defaults: {
+        colorSchema: 'Yellow to Red'
+      },
+      colorSchemas: Object.keys(colorramps),
       editor: '<choropleth-vis-params></choropleth-vis-params>'
     },
     schemas: new Schemas([

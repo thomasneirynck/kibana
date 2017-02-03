@@ -3,6 +3,7 @@ import _ from 'lodash';
 import AggConfigResult from 'ui/vis/agg_config_result';
 import KibanaMap from 'ui/vis_maps/kibana_map.js';
 import FilterBarFilterBarClickHandlerProvider from 'ui/filter_bar/filter_bar_click_handler';
+import colorramps from 'ui/vislib/components/color/colormaps';
 
 const module = uiModules.get('kibana/choropleth', ['kibana']);
 module.controller('KbnChoroplethController', function ($scope, $element, Private, getAppState, tilemapSettings) {
@@ -41,6 +42,7 @@ module.controller('KbnChoroplethController', function ($scope, $element, Private
       };
     });
 
+    kibanaMap.setChoroplethLayer();
     kibanaMap.setChoroplethMetrics(results);
     kibanaMap.resize();
 
@@ -48,7 +50,12 @@ module.controller('KbnChoroplethController', function ($scope, $element, Private
 
   $scope.$watch('vis.params', (options) => {
     //when there is a change in the configuration.
-    kibanaMap.setChoroplethLayer();
+    console.log('changed....');
+    // kibanaMap.setChoroplethLayer();
+
+
+    kibanaMap.setChoroplethColorRamp(colorramps[options.colorSchema]);
+
     kibanaMap.resize();
   });
 

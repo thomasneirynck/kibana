@@ -1,3 +1,15 @@
 <div class="form-group">
-  here be options
+  <div class="kuiSideBarFormRow">
+    <label class="kuiSideBarFormRow__label" for="colorSchema">
+      Color Schema
+    </label>
+    <div class="kuiSideBarFormRow__control">
+      <select
+        id="colorSchema"
+        class="kuiSelect kuiSideBarSelect"
+        ng-model="vis.params.colorSchema"
+        ng-options="mode for mode in vis.type.params.colorSchemas"
+      ></select>
+    </div>
+  </div>
 </div>
