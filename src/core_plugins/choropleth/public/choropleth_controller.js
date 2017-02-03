@@ -1,5 +1,4 @@
 import uiModules from 'ui/modules';
-import ChoroplethMap from './choropleth_map';
 import _ from 'lodash';
 import AggConfigResult from 'ui/vis/agg_config_result';
 import KibanaMap from 'ui/vis_maps/kibana_map.js';
@@ -9,7 +8,6 @@ const module = uiModules.get('kibana/choropleth', ['kibana']);
 module.controller('KbnChoroplethController', function ($scope, $element, Private, getAppState, tilemapSettings) {
 
   const containerNode = $element[0];
-  // const choroplethMap = new ChoroplethMap(containerNode);
   const kibanaMap = new KibanaMap(containerNode);
   const url = tilemapSettings.getUrl();
   const options = tilemapSettings.getTMSOptions();

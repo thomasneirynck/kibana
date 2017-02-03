@@ -353,16 +353,19 @@ class KibanaMap extends EventEmitter {
 
   setChoroplethLayer(themeLayer) {
 
+    if (this._choroplethLeafletLayer) {
+      return;
+    }
+
     this._choroplethLeafletLayer = L.geoJson(null, {
       onEachFeature: (feature, layer) => {
         layer.on('click', () => {
           this.emit('choropleth:select', feature.properties.iso);
         });
-      }
+      },
+      style: emptyColor
     });
     this._choroplethLeafletLayer.addTo(this._leafletMap);
-    this._choroplethLeafletLayer.setStyle(emptyColor);
-
 
     this._loaded = false;
     $.ajax({

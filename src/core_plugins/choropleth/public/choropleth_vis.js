@@ -1,6 +1,6 @@
 import 'plugins/choropleth/choropleth.less';
 import 'plugins/choropleth/choropleth_controller';
-// import 'plugins/tagcloud/tag_cloud_vis_params';
+import 'plugins/tagcloud/tag_cloud_vis_params';
 import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
 import choroplethTemplate from 'plugins/choropleth/choropleth_controller.html';
@@ -12,12 +12,13 @@ visTypes.register(function ChoroplethProvider(Private) {
 
   return new TemplateVisType({
     name: 'choropleth',
-    title: 'Choropleth Maps',
+    title: 'Vector Maps',
     implementsRenderComplete: true,
-    description: 'vector maps',
+    description: 'Show thematic data on a map',
     icon: 'fa-globe',
     template: choroplethTemplate,
     params: {
+      editor: '<choropleth-vis-params></choropleth-vis-params>'
     },
     schemas: new Schemas([
       {
