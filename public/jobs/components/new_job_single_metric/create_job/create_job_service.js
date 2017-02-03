@@ -312,8 +312,8 @@ module.service('mlSingleMetricJobService', function (
     return mlJobService.stopDatafeed(datafeedId, formConfig.jobId);
   };
 
-  this.checkDatafeedStatus = function (formConfig) {
-    return mlJobService.updateSingleJobDatafeedStatus(formConfig.jobId);
+  this.checkDatafeedState = function (formConfig) {
+    return mlJobService.updateSingleJobDatafeedState(formConfig.jobId);
   };
 
   this.loadModelData = function (formConfig) {

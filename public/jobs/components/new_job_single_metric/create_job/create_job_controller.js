@@ -404,15 +404,15 @@ module
 
   function loadCharts() {
     let forceStop = false;
-    // the percentage doesn't always reach 100, so periodically check the datafeed status
+    // the percentage doesn't always reach 100, so periodically check the datafeed state
     // to see if the datafeed has stopped
     const counterLimit = 20 - (refreshInterval / REFRESH_INTERVAL_MS);
     if (refreshCounter >=  counterLimit) {
       refreshCounter = 0;
-      mlSingleMetricJobService.checkDatafeedStatus($scope.formConfig)
-      .then((status) => {
-        if (status === 'STOPPED') {
-          console.log('Stopping poll because datafeed status is: ' + status);
+      mlSingleMetricJobService.checkDatafeedState($scope.formConfig)
+      .then((state) => {
+        if (state === 'STOPPED') {
+          console.log('Stopping poll because datafeed state is: ' + state);
           $scope.$broadcast('render-results');
           forceStop = true;
         }
@@ -510,7 +510,7 @@ module
   };
 
   $scope.stopJob = function () {
-    // setting the status to STOPPING disables the stop button
+    // setting the state to STOPPING disables the stop button
     $scope.jobState = JOB_STATE.STOPPING;
     mlSingleMetricJobService.stopDatafeed($scope.formConfig);
   };

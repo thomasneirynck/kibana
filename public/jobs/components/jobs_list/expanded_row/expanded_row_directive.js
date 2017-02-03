@@ -170,7 +170,7 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
   };
 })
 // custom filter to filter out objects from a collection
-// used when listing job settings, as id and status are siblings to objects like counts and data_description
+// used when listing job settings, as id and state are siblings to objects like counts and data_description
 .filter('filterObjects', function () {
   return function (input) {
     const tempObj = {};

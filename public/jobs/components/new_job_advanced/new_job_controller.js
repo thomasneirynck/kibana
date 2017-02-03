@@ -210,7 +210,7 @@ function (
         } else {
           delete $scope.job.datafeed_config.datafeed_id;
           delete $scope.job.datafeed_config.job_id;
-          delete $scope.job.datafeed_config.status;
+          delete $scope.job.datafeed_config.state;
 
           delete $scope.job.data_description.time_format;
           delete $scope.job.data_description.format;
@@ -285,7 +285,7 @@ function (
       const tempJob = mlJobService.getJob($scope.job.job_id);
       if (tempJob) {
         // if the job id exists and that job is currently CLOSED, display a warning
-        if (tempJob.status === 'CLOSED') {
+        if (tempJob.state === 'CLOSED') {
           let message = 'Job \'' + $scope.job.job_id + '\' already exists. <br />';
           message += 'Overwriting it will remove all previous results which cannot be undone.<br />';
           message += 'Do you wish to continue?';
@@ -307,7 +307,7 @@ function (
           // if the job is not CLOSED, stop the save altogether and display a message
           mlConfirm.open({
             message: 'Only jobs which are CLOSED can be overwritten.<br />Please choose a different name or close the job',
-            title: 'Job \'' + $scope.job.job_id +  '\' already exists and is ' + tempJob.status,
+            title: 'Job \'' + $scope.job.job_id +  '\' already exists and is ' + tempJob.state,
             okLabel: 'OK',
             hideCancel: true,
             size: '',

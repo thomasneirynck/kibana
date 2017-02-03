@@ -98,7 +98,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                   job.data_counts = {};
                   job.model_size_stats = {};
 
-                  job.status = jobStats.status;
+                  job.state = jobStats.state;
                   job.data_counts = jobStats.data_counts;
                   job.model_size_stats = jobStats.model_size_stats;
                 }
@@ -148,7 +148,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               for (let j = 0; j < statsResp.jobs.length; j++) {
                 if (newJob.job_id === statsResp.jobs[j].job_id) {
                   const statsJob = statsResp.jobs[j];
-                  newJob.status = statsJob.status;
+                  newJob.state = statsJob.state;
                   angular.copy(statsJob.data_counts, newJob.data_counts);
                   angular.copy(statsJob.model_size_stats, newJob.model_size_stats);
                 }
@@ -212,7 +212,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               const datafeed = datafeeds[i];
               for (let j = 0; j < statsResp.datafeeds.length; j++) {
                 if (datafeed.datafeed_id === statsResp.datafeeds[j].datafeed_id) {
-                  datafeed.status = statsResp.datafeeds[j].status;
+                  datafeed.state = statsResp.datafeeds[j].state;
                 }
               }
             }
@@ -239,7 +239,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
   this.updateSingleJobCounts = function (jobId) {
     const deferred = $q.defer();
-    console.log('mlJobService: update job counts and status for ' + jobId);
+    console.log('mlJobService: update job counts and state for ' + jobId);
     ml.jobStats({jobId: jobId})
       .then((resp) => {
         console.log('updateSingleJobCounts controller query response:', resp);
@@ -256,7 +256,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                 job.model_size_stats = newJob.model_size_stats;
               }
               job.create_time = newJob.create_time;
-              job.status = newJob.status;
+              job.state = newJob.state;
             }
           }
 
@@ -295,7 +295,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   };
 
   this.updateAllJobCounts = function () {
-    console.log('mlJobService: update all jobs counts and status');
+    console.log('mlJobService: update all jobs counts and state');
     return ml.jobStats()
       .then((resp) => {
         console.log('updateAllJobCounts controller query response:', resp);
@@ -316,8 +316,8 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               }
               // job.last_data_time = newJob.last_data_time;
               job.create_time = newJob.create_time;
-              job.status = newJob.status;
-              // job.datafeed_status = newJob.datafeed_status;
+              job.state = newJob.state;
+              // job.datafeed_state = newJob.datafeed_state;
             }
           }
 
@@ -359,31 +359,31 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       });
   };
 
-  this.checkStatus = function () {
+  this.checkState = function () {
     const runningJobs = [];
     _.each(jobs, (job) => {
-      if (job.datafeed_config && job.datafeed_config.status === 'STARTED') {
+      if (job.datafeed_config && job.datafeed_config.state === 'STARTED') {
         runningJobs.push(job);
       }
     });
 
-    console.log('mlJobService: check status for ' + runningJobs.length + ' running jobs');
+    console.log('mlJobService: check state for ' + runningJobs.length + ' running jobs');
     _.each(runningJobs, (job) => {
       this.updateSingleJobCounts(job.job_id);
     });
   };
 
-  this.updateSingleJobDatafeedStatus = function (jobId) {
+  this.updateSingleJobDatafeedState = function (jobId) {
     const deferred = $q.defer();
     ml.datafeedStats({datafeedId: 'datafeed-' + jobId})
     .then((resp) => {
       // console.log('updateSingleJobCounts controller query response:', resp);
       const datafeeds = resp.datafeeds;
-      let status = 'UNKNOWN';
+      let state = 'UNKNOWN';
       if (datafeeds && datafeeds.length) {
-        status = datafeeds[0].status;
+        state = datafeeds[0].state;
       }
-      deferred.resolve(status);
+      deferred.resolve(state);
     })
     .catch((resp) => {
       deferred.reject(resp);
@@ -515,15 +515,15 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     return job;
   };
 
-  // remove counts, times and status for cloning a job
+  // remove counts, times and state for cloning a job
   this.removeJobCounts = function (job) {
-    delete job.status;
+    delete job.state;
     delete job.data_counts;
     delete job.create_time;
     delete job.finished_time;
     delete job.last_data_time;
     delete job.model_size_stats;
-    delete job.datafeed_status;
+    delete job.datafeed_state;
     delete job.average_bucket_processing_time_ms;
     delete job.index_name;
 
@@ -1131,7 +1131,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   };
 
   // start the datafeed for a given job
-  // refresh the job status on start success
+  // refresh the job state on start success
   this.startDatafeed = function (datafeedId, jobId, start, end) {
     const deferred = $q.defer();
     ml.startDatafeed({
@@ -1141,7 +1141,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     })
       .then((resp) => {
         // console.log(resp);
-        // refresh the status for the job as it's now changed
+        // refresh the state for the job as it's now changed
         // this.updateSingleJobCounts(jobId);
         this.refreshJob(jobId);
         deferred.resolve(resp);
@@ -1155,7 +1155,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   };
 
   // stop the datafeed for a given job
-  // refresh the job status on stop success
+  // refresh the job state on stop success
   this.stopDatafeed = function (datafeedId, jobId) {
     const deferred = $q.defer();
     ml.stopDatafeed({
@@ -1163,7 +1163,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     })
       .then((resp) => {
         // console.log(resp);
-        // refresh the status for the job as it's now changed
+        // refresh the state for the job as it's now changed
         // this.updateSingleJobCounts(jobId);
         this.refreshJob(jobId);
         deferred.resolve(resp);

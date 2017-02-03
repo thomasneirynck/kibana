@@ -128,9 +128,9 @@ function (
   };
 
   $scope.stopDatafeed = function (job) {
-    // setting the status to STOPPING disables the stop button
+    // setting the state to STOPPING disables the stop button
 
-    job.datafeed_status = 'STOPPING';
+    job.datafeed_state = 'STOPPING';
     const datafeedId = 'datafeed-' + job.job_id;
     mlJobService.stopDatafeed(datafeedId, job.job_id);
   };
@@ -210,8 +210,8 @@ function (
       { title: 'Description' },
       { title: 'Processed records', class: 'col-align-right' },
       { title: 'Memory status'},
-      { title: 'Job status' },
-      { title: 'Datafeed status' },
+      { title: 'Job state' },
+      { title: 'Datafeed state' },
       { title: 'Latest timestamp' },
       { title: 'Actions', sortable: false, class: 'col-action' }
     ];
@@ -269,12 +269,12 @@ function (
           value:  (() => { return (job.model_size_stats) ? job.model_size_stats.memory_status : ''; }),
           scope:  rowScope
         }, {
-          markup: '{{job.status}}',
-          value:  job.status,
+          markup: '{{job.state}}',
+          value:  job.state,
           scope:  rowScope
         }, {
-          markup: '{{job.datafeed_config.status}}',
-          value:  (() => { return (job.datafeed_config.status) ? job.datafeed_config.status : ''; }),
+          markup: '{{job.datafeed_config.state}}',
+          value:  (() => { return (job.datafeed_config.state) ? job.datafeed_config.state : ''; }),
           scope:  rowScope
         }, {
           markup: '{{ time(job.data_counts).string }}',
@@ -318,12 +318,12 @@ function (
     $scope.filterIcon = 0;
   }
 
-  // start a recursive timeout check to check the statuses
+  // start a recursive timeout check to check the states
   function refreshCounts() {
     const timeout = 5000; // 5 seconds
 
     window.singleJobTimeout = window.setTimeout(() => {
-      // every 5th time, reload the counts and statuses of all the jobs
+      // every 5th time, reload the counts and states of all the jobs
       if (refreshCounter % 5 === 0) {
 
         mlJobService.updateAllJobCounts();
@@ -332,7 +332,7 @@ function (
         // loadAuditSummary($scope.jobs, rowScopes);
       } else {
         // check to see if any jobs are 'running' if so, reload their counts
-        mlJobService.checkStatus();
+        mlJobService.checkState();
       }
 
 
