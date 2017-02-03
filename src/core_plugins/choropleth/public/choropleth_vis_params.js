@@ -1,7 +1,7 @@
 import uiModules from 'ui/modules';
-import choroplethVisParamsTemplate from 'plugins/tagcloud/choropleth_vis_params.html';
+import choroplethVisParamsTemplate from 'plugins/choropleth/choropleth_vis_params.html';
 
-uiModules.get('kibana/table_vis')
+uiModules.get('kibana/choropleth')
   .directive('choroplethVisParams', function () {
     return {
       restrict: 'E',

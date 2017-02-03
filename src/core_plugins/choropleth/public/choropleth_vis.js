@@ -1,6 +1,6 @@
 import 'plugins/choropleth/choropleth.less';
 import 'plugins/choropleth/choropleth_controller';
-import 'plugins/tagcloud/tag_cloud_vis_params';
+import 'plugins/choropleth/choropleth_vis_params';
 import TemplateVisTypeTemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
 import choroplethTemplate from 'plugins/choropleth/choropleth_controller.html';
