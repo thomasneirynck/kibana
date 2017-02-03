@@ -12,4 +12,35 @@
       ></select>
     </div>
   </div>
+  <div class="kuiSideBarFormRow">
+    <label class="kuiSideBarFormRow__label" for="vectorMap">
+      Vector map
+    </label>
+    <div class="kuiSideBarFormRow__control">
+      <select
+        id="vectorMap"
+        class="kuiSelect kuiSideBarSelect"
+        ng-model="vis.params.selectedLayer"
+        ng-options="layer for (layer, meta) in vis.type.params.vectorMaps"
+      ></select>
+    </div>
+  </div>
+
+  <div class="kuiSideBarFormRow">
+    <label class="kuiSideBarFormRow__label" for="joinField">
+      Join on field
+    </label>
+    <div class="kuiSideBarFormRow__control">
+      <select id="joinField"
+              ng-model="vis.params.selectedJoinField"
+              ng-options="field for field in vis.params.selectedLayer.fields"
+              ng-init="vis.params.selectedJoinField=vis.params.selectedLayer.fields[0]"
+      >
+        <option value=''>Select</option></select>
+    </div>
+  </div>
+
+
+
+
 </div>

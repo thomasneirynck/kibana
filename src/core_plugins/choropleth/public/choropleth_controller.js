@@ -31,10 +31,8 @@ module.controller('KbnChoroplethController', function ($scope, $element, Private
       return;
     }
 
-
     const metricsAgg = _.first($scope.vis.aggs.bySchemaName.metric);
     const buckets = response.aggregations[termAggId].buckets;
-
     const results = buckets.map((bucket) => {
       return {
         term: bucket.key,
@@ -42,20 +40,28 @@ module.controller('KbnChoroplethController', function ($scope, $element, Private
       };
     });
 
-    kibanaMap.setChoroplethLayer();
+    const options = $scope.vis.params;
+    // if (!options.selectedLayer.url || !options.selectedJoinField) {
+    //   console.log('invalid selection');//todo: fix this
+    //   return;
+    // }
+
+    if (!options.selectedJoinField){
+      options.selectedJoinField = options.selectedLayer.fields[0];
+    }
+
+    kibanaMap.setChoroplethLayer(options.selectedLayer.url, options.selectedJoinField);
     kibanaMap.setChoroplethMetrics(results);
     kibanaMap.resize();
 
   });
 
   $scope.$watch('vis.params', (options) => {
-    //when there is a change in the configuration.
-    console.log('changed....');
-    // kibanaMap.setChoroplethLayer();
-
-
+    if (!options.selectedJoinField){
+      options.selectedJoinField = options.selectedLayer.fields[0];
+    }
+    kibanaMap.setChoroplethLayer(options.selectedLayer.url, options.selectedJoinField);
     kibanaMap.setChoroplethColorRamp(colorramps[options.colorSchema]);
-
     kibanaMap.resize();
   });
 
@@ -66,7 +72,6 @@ module.controller('KbnChoroplethController', function ($scope, $element, Private
   function getContainerSize() {
     return {width: $element.width(), height: $element.height()};
   }
-
 
 });
 

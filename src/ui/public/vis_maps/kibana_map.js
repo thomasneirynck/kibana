@@ -353,16 +353,28 @@ class KibanaMap extends EventEmitter {
   }
 
 
-  setChoroplethLayer(themeLayer) {
+  setChoroplethLayer(url, joinfield) {
+
+    if (this._choroplethUrl === url) {
+      if (this._joinField !== joinfield) {
+        this._joinField = joinfield;
+        this._setChoroplethStyle();
+      }
+      console.log('skip requesting data, is the same');
+      return;
+    }
+
+    this._joinField = joinfield;
+    this._choroplethUrl = url;
 
     if (this._choroplethLeafletLayer) {
-      return;
+      this._leafletMap.removeLayer(this._choroplethLeafletLayer);
     }
 
     this._choroplethLeafletLayer = L.geoJson(null, {
       onEachFeature: (feature, layer) => {
         layer.on('click', () => {
-          this.emit('choropleth:select', feature.properties.iso);
+          this.emit('choropleth:select', feature.properties[this._joinField]);
         });
       },
       style: emptyColor
@@ -372,16 +384,15 @@ class KibanaMap extends EventEmitter {
     this._loaded = false;
     $.ajax({
       dataType: 'json',
-      url: '../plugins/choropleth/data/world_countries.geojson',
+      url: url,
       success: (data) => {
         this._choroplethLeafletLayer.addData(data);
         this._loaded = true;
-        // if (this._choroplethMetrics) {
-          this._setChoroplethStyle();
-        // }
+        this._setChoroplethStyle();
       }
     }).error(function (e) {
-      notifier.fatal(e);
+      // notifier.fatal(e);
+      console.error(e);
     });
   }
 
@@ -389,7 +400,7 @@ class KibanaMap extends EventEmitter {
     if (!this._choroplethMetrics) {
       return;
     }
-    const styleFunction = makeChoroplethStyleFunction(this._choroplethMetrics, this._choroplethColorRamp);
+    const styleFunction = makeChoroplethStyleFunction(this._choroplethMetrics, this._choroplethColorRamp, this._joinField);
     if (this._choroplethLeafletLayer) {
       this._choroplethLeafletLayer.setStyle(styleFunction);
     }
@@ -397,9 +408,6 @@ class KibanaMap extends EventEmitter {
 
   setChoroplethMetrics(metrics) {
     this._choroplethMetrics = metrics;
-    // if (!this._choroplethLeafletLayer) {
-    //   return;
-    // }
     this._setChoroplethStyle();
   }
 
@@ -668,8 +676,7 @@ function dataToHeatArray(max, heatNormalizeData, featureCollection) {
   });
 }
 
-function makeChoroplethStyleFunction(data, colorramp) {
-
+function makeChoroplethStyleFunction(data, colorramp, joinField) {
   let min = data[0].value;
   let max = data[0].value;
   for (let i = 1; i < data.length; i += 1) {
@@ -679,19 +686,12 @@ function makeChoroplethStyleFunction(data, colorramp) {
 
   return function (geojsonFeature) {
 
-    const match = data.find(function (bucket) {
-      return bucket.term === geojsonFeature.properties.iso;
+    const match = data.find((bucket) => {
+      return bucket.term === geojsonFeature.properties[joinField];
     });
 
     if (!match) {
-      return {
-        fillColor: 'rgb(255,255,255)',
-        weight: 2,
-        opacity: 1,
-        color: 'white',
-        dashArray: '3',
-        fillOpacity: 0
-      }
+      return emptyColor();
     }
 
     return {
@@ -699,14 +699,12 @@ function makeChoroplethStyleFunction(data, colorramp) {
       weight: 2,
       opacity: 1,
       color: 'white',
-      dashArray: '3',
       fillOpacity: 0.7
     };
   }
 
 }
 
-// const colorRamp = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026'];
 function getChoroplethColor(value, min, max, colorRamp) {
   if (min === max) {
     return colorRamp[colorRamp.length - 1];
@@ -715,23 +713,18 @@ function getChoroplethColor(value, min, max, colorRamp) {
   const index = Math.round(colorRamp.length * fraction) - 1;
   let i = Math.max(Math.min(colorRamp.length - 1, index), 0);
 
-  // console.log('must make rgb color', colorRamp[i]);
-  // return colorRamp[i];
   const color = colorRamp[i][1];
   const red = Math.floor(color[0] * 255);
   const green = Math.floor(color[1] * 255);
   const blue = Math.floor(color[2] * 255);
-  const rgb = `rgb(${red},${green},${blue})`;
-  return rgb;
+  return `rgb(${red},${green},${blue})`;
 }
 
 function emptyColor() {
   return {
-    fillColor: 'rgb(255,255,255)',
-    weight: 2,
-    opacity: 1,
-    color: 'white',
-    dashArray: '3',
+    weight: 1,
+    opacity: 0.6,
+    color: 'rgb(200,200,200)',
     fillOpacity: 0
   };
 }
