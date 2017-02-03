@@ -284,7 +284,7 @@
               class="form-control">
             </select>
 
-            <ml-job-delimited-options ng-show="job.data_description.format==='DELIMITED'">
+            <ml-job-delimited-options ng-show="job.data_description.format==='delimited'">
               <label>Delimiter</label><i ml-info-icon="new_job_delimiter" />
               <select
                 ng-model="ui.selectedFieldDelimiter"
@@ -293,13 +293,13 @@
               <input
                 ng-model="ui.customFieldDelimiter"
                 ng-show="ui.selectedFieldDelimiter==='custom'"
-                ng-required="job.data_description.format==='DELIMITED' && ui.selectedFieldDelimiter==='custom'"
+                ng-required="job.data_description.format==='delimited' && ui.selectedFieldDelimiter==='custom'"
                 class="form-control" />
 
               <label>Quote character</label><i ml-info-icon="new_job_quote_character" />
               <input
                 ng-model="job.data_description.quote_character"
-                ng-required="job.data_description.format==='DELIMITED'"
+                ng-required="job.data_description.format==='delimited'"
                 placeholder=""
                 class="form-control" />
             </ml-job-delimited-options>
@@ -335,14 +335,14 @@
               <input
                 ng-model="ui.isDatafeed"
                 ng-change="datafeedChange()"
-                ng-disabled="job.data_description.format!=='JSON'"
+                ng-disabled="job.data_description.format!=='json'"
                 type="checkbox" />
               Datafeed job
             </label><i ml-info-icon="new_job_enable_datafeed_job" />
             <div ng-hide="ui.validation.tabs[3].checks.isDatafeed.valid" class="validation-error">
               {{ ( ui.validation.tabs[3].checks.isDatafeed.message ) }}
             </div>
-            <div class="form-group help-pane" ng-show="job.data_description.format!=='JSON' && job.data_description.format!==undefined">
+            <div class="form-group help-pane" ng-show="job.data_description.format!=='json' && job.data_description.format!==undefined">
               <small class="info">Data format must be set to 'JSON' to enable the datafeed.</small>
             </div>
             <div class="form-group" ng-if="ui.isDatafeed">

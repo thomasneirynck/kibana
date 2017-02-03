@@ -61,10 +61,10 @@
           <tbody >
             <tr ng-repeat="msg in jobAudit.messages">
               <td>
-                <i ng-show="msg.level === 'SYSTEM_INFO'" tooltip='System Info' class="job-system-info fa fa-cogs"></i>
-                <i ng-show="msg.level === 'INFO'" tooltip='Info' class="job-info fa fa-info-circle"></i>
-                <i ng-show="msg.level === 'WARNING'" tooltip='Warning' class="job-warning fa fa-exclamation-circle"></i>
-                <i ng-show="msg.level === 'ERROR'" tooltip='Error' class="job-error fa fa-exclamation-triangle"></i>
+                <i ng-show="msg.level === 'system_info'" tooltip='System Info' class="job-system-info fa fa-cogs"></i>
+                <i ng-show="msg.level === 'info'" tooltip='Info' class="job-info fa fa-info-circle"></i>
+                <i ng-show="msg.level === 'warning'" tooltip='Warning' class="job-warning fa fa-exclamation-circle"></i>
+                <i ng-show="msg.level === 'error'" tooltip='Error' class="job-error fa fa-exclamation-triangle"></i>
               </td>
               <td>{{msg.time}}</td>
               <td>{{msg.message}}</td>

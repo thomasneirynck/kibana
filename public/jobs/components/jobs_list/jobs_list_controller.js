@@ -128,9 +128,9 @@ function (
   };
 
   $scope.stopDatafeed = function (job) {
-    // setting the state to STOPPING disables the stop button
+    // setting the state to 'stopping' disables the stop button
 
-    job.datafeed_state = 'STOPPING';
+    job.datafeed_state = 'stopping';
     const datafeedId = 'datafeed-' + job.job_id;
     mlJobService.stopDatafeed(datafeedId, job.job_id);
   };

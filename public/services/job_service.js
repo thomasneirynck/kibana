@@ -68,7 +68,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         time_format:     '', // 'epoch',
         field_delimiter: '',
         quote_character: '"',
-        format:         'DELIMITED'
+        format:         'delimited'
       }
     };
   };
@@ -362,7 +362,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   this.checkState = function () {
     const runningJobs = [];
     _.each(jobs, (job) => {
-      if (job.datafeed_config && job.datafeed_config.state === 'STARTED') {
+      if (job.datafeed_config && job.datafeed_config.state === 'started') {
         runningJobs.push(job);
       }
     });

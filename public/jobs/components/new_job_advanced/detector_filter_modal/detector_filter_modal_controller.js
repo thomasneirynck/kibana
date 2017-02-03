@@ -84,10 +84,10 @@ module.controller('MlDetectorFilterModal', function ($scope, $modalInstance, par
   // creating a new filter
   if (params.filter === undefined) {
     $scope.filter = {
-      ruleAction: 'FILTER_RESULTS',
+      ruleAction: 'filter_results',
       target_field_name: '',
       target_field_value: '',
-      conditions_connective: 'OR',
+      conditions_connective: 'or',
       rule_conditions: [],
       value_list: []
     };
@@ -100,23 +100,23 @@ module.controller('MlDetectorFilterModal', function ($scope, $modalInstance, par
   }
 
   $scope.ui = {
-    ruleAction:['FILTER_RESULTS'],
+    ruleAction:['filter_results'],
     target_field_name: '',
     target_field_value: '',
-    conditions_connective: ['OR', 'AND'],
+    conditions_connective: ['or', 'and'],
     ruleCondition: {
       condition_type: [{
         label: 'actual',
-        value: 'NUMERICAL_ACTUAL'
+        value: 'numerical_actual'
       },{
         label: 'typical',
-        value: 'NUMERICAL_TYPICAL'
+        value: 'numerical_typical'
       }, {
         label: '|actual - typical|',
-        value: 'NUMERICAL_DIFF_ABS'
+        value: 'numerical_diff_abs'
       }/*, {
         label: 'Categorical',
-        value: 'CATEGORICAL'
+        value: 'categorical'
       }*/
       ],
       field_name: '',
@@ -124,16 +124,16 @@ module.controller('MlDetectorFilterModal', function ($scope, $modalInstance, par
       condition: {
         operator: [{
           label:'<',
-          value: 'LT'
+          value: 'lt'
         }, {
           label: '>',
-          value: 'GT'
+          value: 'gt'
         }, {
           label: '<=',
-          value: 'LTE'
+          value: 'lte'
         }, {
           label: '>=',
-          value: 'GTE'
+          value: 'gte'
         }]
       },
       value_list: []
@@ -142,11 +142,11 @@ module.controller('MlDetectorFilterModal', function ($scope, $modalInstance, par
 
   $scope.addNewCondition = function () {
     $scope.filter.rule_conditions.push({
-      condition_type: 'NUMERICAL_ACTUAL',
+      condition_type: 'numerical_actual',
       field_name: '',
       field_value: '',
       condition: {
-        operator: 'LT',
+        operator: 'lt',
         value: ''
       }
     });

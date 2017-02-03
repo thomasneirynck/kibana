@@ -139,8 +139,8 @@ function (
       { value: 86400, title: '1 day' }
     ],
     inputDataFormat:[
-      { value: 'DELIMITED',     title: 'Delimited' },
-      { value: 'JSON',          title: 'JSON' },
+      { value: 'delimited',     title: 'Delimited' },
+      { value: 'json',          title: 'JSON' },
     ],
     fieldDelimiterOptions:[
       { value: '\t',      title: 'tab'},
@@ -254,7 +254,7 @@ function (
         $scope.ui.isDatafeed = true;
         $scope.ui.tabs[2].hidden = true;
 
-        $scope.job.data_description.format = 'JSON';
+        $scope.job.data_description.format = 'json';
 
         delete $scope.job.data_description.time_format;
         delete $scope.job.data_description.format;
@@ -284,8 +284,8 @@ function (
       // if they want to replace or the job id is fine, move the next step, checkInfluencers.
       const tempJob = mlJobService.getJob($scope.job.job_id);
       if (tempJob) {
-        // if the job id exists and that job is currently CLOSED, display a warning
-        if (tempJob.state === 'CLOSED') {
+        // if the job id exists and that job is currently closed, display a warning
+        if (tempJob.state === 'closed') {
           let message = 'Job \'' + $scope.job.job_id + '\' already exists. <br />';
           message += 'Overwriting it will remove all previous results which cannot be undone.<br />';
           message += 'Do you wish to continue?';
@@ -304,9 +304,9 @@ function (
             displayJobIdError();
           });
         } else {
-          // if the job is not CLOSED, stop the save altogether and display a message
+          // if the job is not closed, stop the save altogether and display a message
           mlConfirm.open({
-            message: 'Only jobs which are CLOSED can be overwritten.<br />Please choose a different name or close the job',
+            message: 'Only jobs which are closed can be overwritten.<br />Please choose a different name or close the job',
             title: 'Job \'' + $scope.job.job_id +  '\' already exists and is ' + tempJob.state,
             okLabel: 'OK',
             hideCancel: true,
@@ -502,7 +502,7 @@ function (
     } else {
       delete $scope.job.datafeed_config;
       $scope.ui.tabs[2].hidden = false;
-      $scope.job.data_description.format = 'JSON';
+      $scope.job.data_description.format = 'json';
     }
 
     // showDataPreviewTab();
@@ -619,9 +619,9 @@ function (
     if ($scope.job.data_description && $scope.job.data_description.field_delimiter) {
 
       // if the data format has not been set and fieldDelimiter exists,
-      // assume the format is DELIMITED
+      // assume the format is delimited
       if ($scope.job.data_description.format === undefined) {
-        $scope.job.data_description.format = 'DELIMITED';
+        $scope.job.data_description.format = 'delimited';
       }
 
       const fieldDelimiter = $scope.job.data_description.field_delimiter;
@@ -641,7 +641,7 @@ function (
   }
 
   function getDelimiterSelection() {
-    if ($scope.job.data_description.format === 'DELIMITED') {
+    if ($scope.job.data_description.format === 'delimited') {
       const selectedFieldDelimiter = $scope.ui.selectedFieldDelimiter;
       if (selectedFieldDelimiter === 'custom') {
         $scope.job.data_description.field_delimiter = $scope.ui.customFieldDelimiter;

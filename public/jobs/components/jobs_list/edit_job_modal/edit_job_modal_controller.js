@@ -57,7 +57,7 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
     const datafeedConfig = $scope.job.datafeed_config;
     $scope.ui.isDatafeed = true;
     $scope.ui.tabs[1].hidden = false;
-    $scope.ui.datafeedStopped = (!$scope.job.datafeed_state || $scope.job.datafeed_state === 'STOPPED');
+    $scope.ui.datafeedStopped = (!$scope.job.datafeed_state || $scope.job.datafeed_state === 'stopped');
 
     $scope.ui.datafeed.queryText = angular.toJson(datafeedConfig.query, true);
     $scope.ui.datafeed.scrollSizeText = datafeedConfig.scroll_size;

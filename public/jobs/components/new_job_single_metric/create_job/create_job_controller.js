@@ -411,7 +411,7 @@ module
       refreshCounter = 0;
       mlSingleMetricJobService.checkDatafeedState($scope.formConfig)
       .then((state) => {
-        if (state === 'STOPPED') {
+        if (state === 'stopped') {
           console.log('Stopping poll because datafeed state is: ' + state);
           $scope.$broadcast('render-results');
           forceStop = true;
