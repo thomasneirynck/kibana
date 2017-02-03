@@ -285,9 +285,20 @@ class KibanaMap extends EventEmitter {
 
     super();
 
-    this._leafletMap = L.map(domNode, {});
+    this._leafletMap = L.map(domNode, {
+      minZoom: 2
+    });
     // this._leafletMap.setView([0, 0], 0);//todo: pass in from UI-state (if any)
     this._leafletMap.fitWorld();//todo: pass in from UI-state (if any)
+
+    let previousZoom = this._leafletMap.getZoom();
+    this._leafletMap.on('zoomend', e=> {
+      if (previousZoom !== this._leafletMap.getZoom()) {
+        previousZoom = this._leafletMap.getZoom();
+        this.emit('zoomchange');
+      }
+    });
+
     this._leafletMap.on('zoomend', e => {this.emit('zoomend');});
     this._leafletMap.on('moveend', e => this.emit('moveend'));
 
@@ -455,6 +466,10 @@ class KibanaMap extends EventEmitter {
   getAutoPrecision() {
     //todo: not correct, should take into account settigns...
     return zoomToPrecision(this._leafletMap.getZoom(), 12);
+  }
+
+  getLeafletBounds() {
+    return this._leafletMap.getBounds();
   }
 
   getBounds() {
