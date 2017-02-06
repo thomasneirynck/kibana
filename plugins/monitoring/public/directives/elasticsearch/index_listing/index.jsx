@@ -1,9 +1,8 @@
 import numeral from 'numeral';
-import { capitalize } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Table from 'plugins/monitoring/components/paginated_table';
-import { statusIconClass } from 'plugins/monitoring/lib/map_status_classes';
+import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
 import uiModules from 'ui/modules';
 
 function showSystemIndicesComponentFactory(scope) {
@@ -74,9 +73,9 @@ function indexRowFactory(scope, kbnUrl) {
             <a className='link' onClick={this.changePath}>{name}</a>
           </td>
           <td>
-            <span className={`status status-${status}`}>
-              <span className={statusIconClass(status)} title={capitalize(status)}></span>
-            </span>
+            <div title={`Index status: ${status}`}>
+              <ElasticsearchStatusIcon status={status} />
+            </div>
           </td>
           <td>
             <div className='big inline'>

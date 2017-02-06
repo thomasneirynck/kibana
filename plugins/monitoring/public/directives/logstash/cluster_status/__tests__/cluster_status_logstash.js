@@ -57,7 +57,5 @@ describe('monitoringClusterStatusLogstash', function () {
     expect($element.findTestSubject('avg_memory_used').html()).to.be('200');
     expect($element.findTestSubject('max_uptime').html()).to.be('5600');
     expect($element.findTestSubject('avg_cpu_usage').html()).to.be('14%');
-
-    expect($element.scope().statusIconClass).to.be('fa fa-check');
   });
 });

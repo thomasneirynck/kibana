@@ -3,7 +3,7 @@ import uiModules from 'ui/modules';
 import uiRoutes from 'ui/routes';
 import uiChrome from 'ui/chrome';
 import 'ui/autoload/all';
-import 'plugins/monitoring/less/main.less';
+import 'plugins/monitoring/less/main';
 import 'plugins/monitoring/filters';
 import 'plugins/monitoring/services/clusters';
 import 'plugins/monitoring/services/features';

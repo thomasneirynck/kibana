@@ -1,6 +1,7 @@
 import React from 'react';
 import formatNumber from 'plugins/monitoring/lib/format_number';
 import { get } from 'lodash';
+import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
 import { ClusterItemContainer, StatusContainer, BytesUsage, BytesPercentageUsage } from './helpers';
 
 export default class ElasticsearchPanel extends React.Component {
@@ -38,22 +39,22 @@ export default class ElasticsearchPanel extends React.Component {
 
     return (
       <ClusterItemContainer {...this.props} url='elasticsearch' title='Elasticsearch'>
-        <StatusContainer statusPrefix='Cluster' status={this.props.status}/>
-
+        <StatusContainer>
+          <ElasticsearchStatusIcon status={this.props.status} />
+        </StatusContainer>
         <div className='row'>
           <div className='col-md-4'>
             <dl data-test-subj='elasticsearch_overview' data-overview-status={this.props.status}>
-              <dt className='info-title'>
+              <dt className='cluster-panel__inner-title'>
                 <a className='link' onClick={() => this.props.angularChangeUrl('elasticsearch')}>Overview</a>
               </dt>
               <dd>Version: {get(nodes, 'versions[0]') || 'N/A'}</dd>
               <dd>Uptime: {formatNumber(get(nodes, 'jvm.max_uptime_in_millis'), 'time_since')}</dd>
             </dl>
           </div>
-
           <div className='col-md-4'>
             <dl>
-              <dt className='info-title'>
+              <dt className='cluster-panel__inner-title'>
                 <a className='link' onClick={() => this.props.angularChangeUrl('elasticsearch/nodes')}>
                   Nodes: <span data-test-subj='number_of_elasticsearch_nodes'>
                     {formatNumber(get(nodes, 'count.total'), 'int_commas')}
@@ -74,10 +75,9 @@ export default class ElasticsearchPanel extends React.Component {
               </dd>
             </dl>
           </div>
-
           <div className='col-md-4'>
             <dl>
-              <dt className='info-title'>
+              <dt className='cluster-panel__inner-title'>
                 <a className='link' onClick={() => this.props.angularChangeUrl('elasticsearch/indices')}>
                   Indices: {formatNumber(get(indices, 'count'), 'int_commas')}
                 </a>

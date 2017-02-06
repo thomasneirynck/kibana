@@ -1,19 +1,15 @@
 import React from 'react';
-import { capitalize, kebabCase } from 'lodash';
-import { statusIconClass } from 'plugins/monitoring/lib/map_status_classes';
+import { kebabCase } from 'lodash';
 import { formatBytesUsage, formatPercentageUsage } from 'plugins/monitoring/lib/format_number';
 
 export function ClusterItemContainer(props) {
   // Note: kebabCase takes something like 'My Name' and makes it 'my-name', which is ideal for CSS names
   return (
-    <div className="panel panel-product">
-      <div
-        className={`panel-heading panel-heading--clickable panel-heading-${kebabCase(props.title)}`}
-        onClick={() => props.angularChangeUrl(props.url)}
-      >
+    <div className='cluster-panel panel panel-product'>
+      <div className={`panel-heading panel-heading-${kebabCase(props.title)}`}>
         {props.title}
       </div>
-      <div className="panel-body">
+      <div className='cluster-panel__body panel-body'>
         {props.children}
       </div>
     </div>
@@ -21,14 +17,9 @@ export function ClusterItemContainer(props) {
 }
 
 export function StatusContainer(props) {
-  const iconClass = statusIconClass(props.status);
-  const status = props.status || 'offline';
-
   return (
-    <div className='status-container'>
-      <span className={`status status-${status}`}>
-        <span className={iconClass} title={`${props.statusPrefix}: ${capitalize(status)}`}></span>
-      </span> Status
+    <div className='cluster-panel__status-icon'>
+      {props.children} Status
     </div>
   );
 }

@@ -54,8 +54,6 @@ describe('monitoringClusterStatusElasticsearch', function () {
     compile($element)(scope);
     $element.scope().$digest();
 
-    expect($element.find('.status.status-green')).to.have.length(1);
-
     expect($element.findTestSubject('nodesCount').html()).to.be('2');
     expect($element.findTestSubject('indicesCount').html()).to.be('6');
     expect($element.findTestSubject('memory').html()).to.be('2KB / 9KB');
@@ -65,7 +63,5 @@ describe('monitoringClusterStatusElasticsearch', function () {
     expect($element.findTestSubject('dataSize').html()).to.be('35KB');
     expect($element.findTestSubject('uptime').html()).to.be('113255 years');
     expect($element.findTestSubject('version').html()).to.be('0.10');
-
-    expect($element.scope().statusIconClass).to.be('fa fa-check');
   });
 });

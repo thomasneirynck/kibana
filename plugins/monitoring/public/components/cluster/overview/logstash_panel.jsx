@@ -11,7 +11,7 @@ export default class LogstashPanel extends React.Component {
         <div className='row'>
           <div className='col-md-4'>
             <dl data-test-subj='logstash_overview'>
-              <dt className='info-title'>
+              <dt className='cluster-panel__inner-title'>
                 <a className='link' onClick={() => this.props.angularChangeUrl('logstash')}>Overview</a>
               </dt>
               <dd>Events Received: {formatNumber(this.props.events_in_total, '0.[0]a')}</dd>
@@ -20,7 +20,7 @@ export default class LogstashPanel extends React.Component {
           </div>
           <div className='col-md-4'>
             <dl>
-              <dt className='info-title'>
+              <dt className='cluster-panel__inner-title'>
                 <a className='link' onClick={() => this.props.angularChangeUrl('logstash/nodes')}>
                   Nodes: <span data-test-subj='number_of_logstash_instances'>{this.props.count}</span>
                 </a>

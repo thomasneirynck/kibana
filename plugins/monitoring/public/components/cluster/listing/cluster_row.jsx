@@ -2,7 +2,7 @@ import React from 'react';
 import numeral from 'numeral';
 import moment from 'moment';
 import _ from 'lodash';
-import { statusIconClass } from 'plugins/monitoring/lib/map_status_classes';
+import { ClusterStatusIcon } from 'plugins/monitoring/components/cluster/status_icon';
 import Tooltip from 'plugins/monitoring/components/tooltip';
 
 function isClusterSupportedFactory(isSupported) {
@@ -123,7 +123,6 @@ to enjoy multi-cluster monitoring.`
   render() {
 
     const classes = ['big'];
-    const iconClass = statusIconClass(this.props.status);
     const isSupported = this.checkSupported();
     const IsClusterSupported = isClusterSupportedFactory(isSupported);
 
@@ -138,9 +137,9 @@ to enjoy multi-cluster monitoring.`
         </td>
         <td key="Status">
           <IsClusterSupported>
-            <span className={`status status-${this.props.status}`}>
-              <span className={iconClass} title={_.capitalize(this.props.status)}></span>
-            </span>
+            <div title={`Cluster status: ${this.props.status}`}>
+              <ClusterStatusIcon status={this.props.status} />
+            </div>
           </IsClusterSupported>
         </td>
         <td key="Nodes">

@@ -2,24 +2,9 @@ import _ from 'lodash';
 import numeral from 'numeral';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { statusIconClass } from 'plugins/monitoring/lib/map_status_classes';
+import { KibanaStatusIcon } from 'plugins/monitoring/components/kibana/status_icon';
 import Table from 'plugins/monitoring/components/paginated_table';
 import uiModules from 'ui/modules';
-
-function getStatusAndClasses(value, availability) {
-  if (availability === false) {
-    return {
-      status: 'Offline',
-      statusClass: 'status-offline',
-      iconClass: statusIconClass('offline')
-    };
-  }
-  return {
-    status: _.capitalize(value),
-    statusClass: `status-${value}`,
-    iconClass: statusIconClass(value)
-  };
-}
 
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
@@ -74,7 +59,6 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
           this.setState(newProps);
         },
         render: function () {
-          const { status, statusClass, iconClass } = getStatusAndClasses(this.props.kibana.status, this.props.availability);
           return (
             <tr key={`row-${this.props.resolver}`} className='big'>
               <td>
@@ -85,12 +69,12 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
                 }}>
                   <div>{this.props.kibana.name}</div>
                 </a>
-                <div className="small">{_.get(this.props, 'kibana.transport_address')}</div>
+                <div className='small'>{_.get(this.props, 'kibana.transport_address')}</div>
               </td>
               <td>
-                <span className={`status ${statusClass}`}>
-                  <span className={iconClass} title={_.capitalize(status)}></span>
-                </span>
+                <div title={`Instance status: ${this.props.kibana.status}`}>
+                  <KibanaStatusIcon status={this.props.kibana.status} availability={this.props.availability} />
+                </div>
               </td>
               <td>
                 <div className='big'>

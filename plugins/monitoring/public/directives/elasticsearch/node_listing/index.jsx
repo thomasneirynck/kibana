@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import MetricCell from 'plugins/monitoring/components/elasticsearch/node_listing/metric_cell';
 import OfflineCell from 'plugins/monitoring/components/elasticsearch/node_listing/offline_cell';
-import { statusIconClass } from 'plugins/monitoring/lib/map_status_classes';
+import { NodeStatusIcon } from 'plugins/monitoring/components/elasticsearch/node/status_icon';
 import Tooltip from 'plugins/monitoring/components/tooltip';
 import extractIp from 'plugins/monitoring/lib/extract_ip';
 import Table from 'plugins/monitoring/components/paginated_table';
@@ -11,14 +11,7 @@ import uiModules from 'ui/modules';
 
 function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch) {
   function checkOnline(status) {
-    return status === 'green';
-  }
-
-  function getStatus(val) {
-    if (val === 'Online') {
-      return 'green';
-    }
-    return 'offline';
+    return status === 'Online';
   }
 
   return class NodeRow extends React.Component {
@@ -44,8 +37,7 @@ function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch
     }
 
     render() {
-      const status = getStatus(this.state.status);
-      const isOnline = checkOnline(status);
+      const isOnline = checkOnline(this.state.status);
 
       const cpuComponents = (() => {
         if (showCgroupMetricsElasticsearch) {
@@ -73,9 +65,9 @@ function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch
             <div className='small'>{extractIp(this.state.node.transport_address)}</div>
           </td>
           <td>
-            <span className={`status status-${status}`}>
-              <span className={statusIconClass(status)} title={_.capitalize(status)}></span>
-            </span>
+            <div title={`Node status: ${this.state.status}`}>
+              <NodeStatusIcon status={this.state.status} />
+            </div>
           </td>
           {cpuComponents}
           <MetricCell isOnline={isOnline} metric={this.state.metrics.node_jvm_mem_percent}></MetricCell>

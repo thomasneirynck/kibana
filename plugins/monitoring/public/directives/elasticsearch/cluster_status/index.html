@@ -1,9 +1,10 @@
-<div class="monitoring-element monitoring-cluster-status">
-  <div ng-if="cluster" class="stats">
-    <div>
-      <span class="status status-{{ pageData.clusterStatus.status|lowercase }}">
-        <span class="{{ getStatusIconClass() }}" title="{{ getStatusText() }}"></span>
-      </span>
+<div class="monitoring-summary-status">
+  <div class="monitoring-summary-status__content">
+    <div class="monitoring-summary-status__status-indicator">
+      <monitoring-elasticsearch-status-icon
+        status="pageData.clusterStatus.status"
+        title="Status of the Elasticsearch cluster: {{ pageData.clusterStatus.status }}"
+      ></monitoring-elasticsearch-status-icon>
     </div>
     <div>Nodes:
       <strong data-test-subj="nodesCount">{{ pageData.clusterStatus.nodesCount }}</strong>
@@ -31,11 +32,6 @@
     </div>
     <div>Version:
       <strong data-test-subj="version">{{ cluster.version }}</strong>
-    </div>
-  </div>
-  <div ng-if="!cluster" class="stats">
-    <div class="loading">
-      <span class="fa fa-spinner fa-pulse"></span> Loading Data...
     </div>
   </div>
 </div>

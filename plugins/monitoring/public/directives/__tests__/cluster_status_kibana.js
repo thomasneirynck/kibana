@@ -50,14 +50,10 @@ describe('monitoringClusterStatusKibana', function () {
     compile($element)(scope);
     $element.scope().$digest();
 
-    expect($element.find('.status.status-green')).to.have.length(1);
-
     expect($element.findTestSubject('count').html()).to.be('2');
     expect($element.findTestSubject('requests_total').html()).to.be('6');
     expect($element.findTestSubject('concurrent_connections').html()).to.be('1');
     expect($element.findTestSubject('response_time_max').html()).to.be('12000 ms');
     expect($element.findTestSubject('memory_usage').html()).to.be('25.00%');
-
-    expect($element.scope().statusIconClass).to.be('fa fa-check');
   });
 });

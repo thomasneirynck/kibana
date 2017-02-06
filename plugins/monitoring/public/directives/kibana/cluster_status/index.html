@@ -1,9 +1,10 @@
-<div class="monitoring-element monitoring-cluster-status">
-  <div ng-if="cluster" class="stats">
-    <div>
-      <span class="status status-{{ getStatusClass() }}">
-        <span class="{{ getStatusIconClass() }}" title="{{ getStatusText() }}"></span>
-      </span>
+<div class="monitoring-summary-status">
+  <div class="monitoring-summary-status__content">
+    <div class="monitoring-summary-status__status-indicator">
+      <monitoring-kibana-status-icon
+        status="pageData.clusterStatus.status"
+        title="Overall status of Kibana instances in the cluster: {{ pageData.clusterStatus.status }}"
+      ></monitoring-kibana-status-icon>
     </div>
     <div>Instances:
       <strong data-test-subj="count">{{ pageData.clusterStatus.count }}</strong>
@@ -19,11 +20,6 @@
     </div>
     <div>Memory Usage:
       <strong data-test-subj="memory_usage">{{ pageData.clusterStatus.memory_size / pageData.clusterStatus.memory_limit|formatNumber:'0.00%' }}</strong>
-    </div>
-  </div>
-  <div ng-if="!cluster" class="stats">
-    <div class="loading">
-      <span class="fa fa-spinner fa-pulse"></span> Loading Data...
     </div>
   </div>
 </div>

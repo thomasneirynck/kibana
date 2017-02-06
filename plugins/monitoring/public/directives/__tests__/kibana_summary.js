@@ -39,14 +39,11 @@ describe('monitoringKibanaSummary', function () {
     $element.scope().$digest();
     isolatedScope = $element.isolateScope();
 
-    expect($element.find('.status.status-green')).to.have.length(1);
-
     expect($element.findTestSubject('transportAddress').html()).to.be('192.168.1.100:5601');
     expect($element.findTestSubject('osFreeMemory').html()).to.be('3984588'); // why isn't this formatted?
     expect($element.findTestSubject('version').html()).to.be('42');
 
     expect(isolatedScope.kibanaStatus).to.be('green');
-    expect(isolatedScope.statusIconClass).to.be('fa fa-check');
   });
 
   it('offline status', () => {
@@ -55,8 +52,6 @@ describe('monitoringKibanaSummary', function () {
     $element.scope().$digest();
     isolatedScope = $element.isolateScope();
 
-    expect($element.find('.status.status-offline')).to.have.length(1);
     expect(isolatedScope.kibanaStatus).to.be('offline');
-    expect(isolatedScope.statusIconClass).to.be('fa fa-bolt');
   });
 });
