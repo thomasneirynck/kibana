@@ -38,6 +38,7 @@ function getPageData(timefilter, globalState, $http, $route, Private) {
           'logstash_node_cgroup_throttled_count'
         ]
       },
+      'logstash_queue_events_count'
     ]
   })
   .then(response => response.data)

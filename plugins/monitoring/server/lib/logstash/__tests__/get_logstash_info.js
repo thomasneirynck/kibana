@@ -24,6 +24,10 @@ describe('get_logstash_info', () => {
           reloads: {
             successes: 5,
             failures: 2
+          },
+          queue: {
+            type: "persisted",
+            events: 100
           }
         }
       }
@@ -39,7 +43,8 @@ describe('get_logstash_info', () => {
       reloads: {
         successes: 5,
         failures: 2
-      }
+      },
+      queue_type: "persisted"
     });
   });
 
@@ -59,6 +64,10 @@ describe('get_logstash_info', () => {
           reloads: {
             successes: 5,
             failures: 2
+          },
+          queue: {
+            type: "persisted",
+            events: 100
           }
         }
       }
@@ -74,7 +83,8 @@ describe('get_logstash_info', () => {
       reloads: {
         successes: 5,
         failures: 2
-      }
+      },
+      queue_type: "persisted"
     });
   });
 });

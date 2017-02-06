@@ -2307,6 +2307,18 @@ export const expected = {
         }
       }
     }
+  },
+  'logstash_queue_events_count': {
+    'field': 'logstash_stats.queue.events_count',
+    'label': 'Events Queued',
+    'description': 'Number of events in the persisted queue waiting to be processed by the filter and output stages.',
+    'format': '0,0.[00]',
+    'metricAgg': 'avg',
+    'units': '',
+    'app': 'logstash',
+    'uuidField': 'logstash_stats.logstash.uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': false
   }
 };
 

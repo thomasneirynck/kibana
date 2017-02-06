@@ -69,7 +69,7 @@ export default function getLogstashForClusters(req, indices) {
                   max: {
                     field: 'logstash_stats.events.out'
                   }
-                }
+                },
               }
             },
             events_in_total: {

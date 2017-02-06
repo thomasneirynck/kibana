@@ -8,7 +8,8 @@ export function handleResponse(resp) {
   const availability = { availability: calculateAvailability(timestamp) };
   const events = { events: getSource('events')};
   const reloads = { reloads: getSource('reloads') };
-  return _.merge(logstash, availability, events, reloads);
+  const queueType = { queue_type: getSource('queue.type') };
+  return _.merge(logstash, availability, events, reloads, queueType);
 }
 
 export default function getNodeInfo(req, uuid) {

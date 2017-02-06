@@ -1137,7 +1137,15 @@ const metricInstances = {
         label: 'CPU Utilization' //  override the "Cgroup CPU..." label
       })
     };
-  })()
+  })(),
+  'logstash_queue_events_count': new LogstashMetric({
+    field: 'logstash_stats.queue.events_count',
+    label: 'Events Queued',
+    description: 'Number of events in the persisted queue waiting to be processed by the filter and output stages.',
+    format: LARGE_FLOAT,
+    metricAgg: 'avg',
+    units: ''
+  })
 };
 
 const metrics = _.reduce(Object.keys(metricInstances), (accumulated, key) => {
