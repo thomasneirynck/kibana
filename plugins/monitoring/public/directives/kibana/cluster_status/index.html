@@ -18,8 +18,8 @@
     <div>Max. Response Time:
       <strong data-test-subj="response_time_max">{{ pageData.clusterStatus.response_time_max }} ms</strong>
     </div>
-    <div>Memory Usage:
-      <strong data-test-subj="memory_usage">{{ pageData.clusterStatus.memory_size / pageData.clusterStatus.memory_limit|formatNumber:'0.00%' }}</strong>
+    <div>Memory:
+      <strong data-test-subj="memory_usage">{{ pageData.clusterStatus.memory_size|formatNumber:'bytes' }} / {{ pageData.clusterStatus.memory_limit|formatNumber:'bytes' }}</strong>
     </div>
   </div>
 </div>

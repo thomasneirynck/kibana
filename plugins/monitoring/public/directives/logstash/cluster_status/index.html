@@ -12,9 +12,6 @@
     <div>Memory:
       <strong data-test-subj="memory_used">{{ pageData.clusterStatus.avg_memory_used|formatNumber:'bytes' }} / {{ pageData.clusterStatus.avg_memory|formatNumber:'bytes' }}</strong>
     </div>
-    <div>CPU Usage:
-      <strong data-test-subj="cpu_usage">{{ pageData.clusterStatus.avg_cpu_usage|formatNumber:'0,00' }}%</strong>
-    </div>
     <div>Uptime:
       <strong data-test-subj="max_uptime">{{ pageData.clusterStatus.max_uptime|formatNumber:'time_since' }}</strong>
     </div>

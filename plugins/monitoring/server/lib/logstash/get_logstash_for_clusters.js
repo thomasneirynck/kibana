@@ -40,36 +40,63 @@ export default function getLogstashForClusters(req, indices) {
             metric
           }),
           aggs: {
-            avg_memory_used: {
-              avg: {
-                field: 'logstash_stats.jvm.mem.heap_used_in_bytes'
-              }
-            },
-            avg_memory: {
-              avg: {
-                field: 'logstash_stats.jvm.mem.heap_max_in_bytes'
-              }
-            },
-            avg_cpu_usage: {
-              avg: {
-                field: 'logstash_stats.process.cpu.percent'
-              }
-            },
             logstash_uuids: {
               terms: {
-                field: 'logstash_stats.logstash.uuid'
+                field: 'logstash_stats.logstash.uuid',
+                size: 1000
               },
               aggs: {
+                latest_report: {
+                  terms: {
+                    field: 'logstash_stats.timestamp',
+                    size: 1,
+                    order: {
+                      '_term' : 'desc'
+                    }
+                  },
+                  aggs: {
+                    memory_used: {
+                      max: {
+                        field: 'logstash_stats.jvm.mem.heap_used_in_bytes'
+                      }
+                    },
+                    memory: {
+                      max: {
+                        field: 'logstash_stats.jvm.mem.heap_max_in_bytes'
+                      }
+                    },
+                    events_in_total: {
+                      max: {
+                        field: 'logstash_stats.events.in'
+                      }
+                    },
+                    events_out_total: {
+                      max: {
+                        field: 'logstash_stats.events.out'
+                      }
+                    }
+                  }
+                },
+                memory_used_per_node: {
+                  max_bucket: {
+                    buckets_path: 'latest_report>memory_used'
+                  }
+                },
+                memory_per_node: {
+                  max_bucket: {
+                    buckets_path: 'latest_report>memory'
+                  }
+                },
                 events_in_total_per_node: {
-                  max: {
-                    field: 'logstash_stats.events.in'
+                  max_bucket: {
+                    buckets_path: 'latest_report>events_in_total'
                   }
                 },
                 events_out_total_per_node: {
-                  max: {
-                    field: 'logstash_stats.events.out'
+                  max_bucket: {
+                    buckets_path: 'latest_report>events_out_total'
                   }
-                },
+                }
               }
             },
             events_in_total: {
@@ -80,6 +107,16 @@ export default function getLogstashForClusters(req, indices) {
             events_out_total: {
               sum_bucket: {
                 buckets_path: 'logstash_uuids>events_out_total_per_node'
+              }
+            },
+            memory_used: {
+              sum_bucket: {
+                buckets_path: 'logstash_uuids>memory_used_per_node'
+              }
+            },
+            memory: {
+              sum_bucket: {
+                buckets_path: 'logstash_uuids>memory_per_node'
               }
             },
             max_uptime: {
@@ -98,19 +135,17 @@ export default function getLogstashForClusters(req, indices) {
         // everything is initialized such that it won't impact any rollup
         let eventsInTotal = 0;
         let eventsOutTotal = 0;
-        let avgMemory = 0;
-        let avgMemoryUsed = 0;
+        let memory = 0;
+        let memoryUsed = 0;
         let maxUptime = 0;
-        let avgCpuUsage = 0;
 
         // if the cluster has logstash instances at all
         if (logstashUuids.length) {
           eventsInTotal = getResultAgg('events_in_total.value');
           eventsOutTotal = getResultAgg('events_out_total.value');
-          avgMemory = getResultAgg('avg_memory.value');
-          avgMemoryUsed = getResultAgg('avg_memory_used.value');
+          memory = getResultAgg('memory.value');
+          memoryUsed = getResultAgg('memory_used.value');
           maxUptime = getResultAgg('max_uptime.value');
-          avgCpuUsage = getResultAgg('avg_cpu_usage.value');
         }
 
         return {
@@ -119,10 +154,9 @@ export default function getLogstashForClusters(req, indices) {
             count: logstashUuids.length,
             events_in_total: eventsInTotal,
             events_out_total: eventsOutTotal,
-            avg_memory: avgMemory,
-            avg_memory_used: avgMemoryUsed,
-            max_uptime: maxUptime,
-            avg_cpu_usage: avgCpuUsage
+            avg_memory: memory,
+            avg_memory_used: memoryUsed,
+            max_uptime: maxUptime
           }
         };
       });
