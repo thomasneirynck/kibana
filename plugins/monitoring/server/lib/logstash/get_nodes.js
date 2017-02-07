@@ -36,7 +36,8 @@ export default function getNodes(req, indices) {
       aggs: {
         logstash_uuids: {
           terms: {
-            field: 'logstash_stats.logstash.uuid'
+            field: 'logstash_stats.logstash.uuid',
+            size: 1000
           }
         }
       }

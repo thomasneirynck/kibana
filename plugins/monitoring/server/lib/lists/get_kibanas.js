@@ -35,7 +35,8 @@ export default function getKibanas(req, indices) {
       aggs: {
         kibana_uuids: {
           terms: {
-            field: 'kibana_stats.kibana.uuid'
+            field: 'kibana_stats.kibana.uuid',
+            size: 1000
           }
         }
       }
