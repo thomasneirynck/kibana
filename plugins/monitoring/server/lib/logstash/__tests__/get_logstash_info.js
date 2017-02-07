@@ -87,4 +87,39 @@ describe('get_logstash_info', () => {
       queue_type: "persisted"
     });
   });
+
+  it('default to no queue type if none specified', () => {
+    const result = handleResponse({
+      _source: {
+        logstash: {
+          timestamp: moment().subtract(11, 'minutes').format(),
+          logstash: {
+            host: 'myhost'
+          },
+          events: {
+            in: 300,
+            filtered: 300,
+            out: 300
+          },
+          reloads: {
+            successes: 5,
+            failures: 2
+          }
+        }
+      }
+    });
+    expect(result).to.be.eql({
+      host: 'myhost',
+      availability: false,
+      events: {
+        filtered: 300,
+        in: 300,
+        out: 300,
+      },
+      reloads: {
+        successes: 5,
+        failures: 2
+      }
+    });
+  });
 });

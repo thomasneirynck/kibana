@@ -18,7 +18,7 @@
     <div>Batch Size:
       <strong data-test-subj="pipelineBatchSize">{{ logstash.pipeline.batch_size }}</strong>
     </div>
-    <div>Queue Type:
+    <div ng-show="logstash.queue_type">Queue Type:
       <strong data-test-subj="queueType">{{ logstash.queue_type }}</strong>
     </div>
     <div>Version:

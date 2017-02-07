@@ -2,7 +2,7 @@ import _ from 'lodash';
 import calculateAvailability from './../calculate_availability';
 
 export function handleResponse(resp) {
-  const getSource = key => _.get(resp, `_source.logstash.${key}`);
+  const getSource = (key, defaultValue) => _.get(resp, `_source.logstash.${key}`, defaultValue);
   const timestamp = getSource('timestamp');
   const logstash = getSource('logstash');
   const availability = { availability: calculateAvailability(timestamp) };
