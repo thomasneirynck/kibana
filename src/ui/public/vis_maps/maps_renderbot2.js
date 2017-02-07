@@ -4,6 +4,7 @@ import VisRenderbotProvider from 'ui/vis/renderbot';
 import MapsVisTypeBuildChartDataProvider from 'ui/vislib_vis_type/build_chart_data';
 // import FilterBarPushFilterProvider from 'ui/filter_bar/push_filter';
 import FilterBarPutFilterProvider from 'ui/filter_bar/put_filter';
+import FilterBarRemoveFilterProvider from 'ui/filter_bar/remove_filter';
 import KibanaMap from './kibana_map';
 import $ from 'jquery';
 
@@ -45,6 +46,8 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
         previousPrecision = this._kibanaMap.getAutoPrecision();
       });
 
+      // this._zoomFilterId = 'zoomFilterID' + (filterID++);//todo: store  ID in metadata per visualization
+      this._zoomFilterId = 'zoomFilterID';
       this._kibanaMap.on('moveend', ignore => {
         const currentLeafletBounds = this._kibanaMap.getLeafletBounds();
         const isContained = previousLeafletBounds && previousLeafletBounds.contains(currentLeafletBounds);
@@ -54,30 +57,20 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
         if (vis.params.isFilterWithBounds) {
           try {
             if (isContained && !precisionChange) {
-              console.log('fully contained no need to refresh!');
               return;
             }
-
-            const bounds = this._kibanaMap.getBounds();
-            if (!bounds) {
-              return;
-            }
-            putSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', bounds, this._zoomFilterId);
+            this._putSpatialFilter();
           } catch (e) {
             console.error(e);
           }
         }
       });
 
-
-      this._zoomFilterId = 'zoomFilterID' + (filterID++);
       this._kibanaMap.on('zoomend', ignore => {
         if (!vis.params.isFilterWithBounds) {
           if (precisionChange) {
-            console.log('refresh data');
             courier.fetch();
           } else {
-            console.log('only apply new zoom level....');
             this._kibanaMap.recreateGeohashOverlay();
           }
         }else{
@@ -100,14 +93,24 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
       this._useUIState();
     }
 
+    _removeSpatialFilter() {
+      const removeFilter = Private(FilterBarRemoveFilterProvider)(getAppState());
+      return removeFilter(this._zoomFilterId);
+    }
+
+
+    _putSpatialFilter() {
+      const bounds = this._kibanaMap.getBounds();
+      if (!bounds) {
+        return;
+      }
+      return putSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', bounds, this._zoomFilterId)
+    }
+
     render(esResponse) {
-      console.trace();
-      //todo: if empty response, should get it!
-      console.log('render, esResponse', esResponse);
       this.mapsData = this._buildChartData(esResponse);
       const params = this._getMapsParams();
       this.mapsParams = params;
-
 
       this._kibanaMap.setGeohashFeatureCollection(this.mapsData.geoJson);
       this._useUIState();
@@ -140,6 +143,20 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
 
       this._useUIState();
 
+      // if (this.vis.params.isFilterWithBounds) {
+      //   // console.log('should add')
+      //   const added = this._putSpatialFilter();
+      //   if (added) {
+      //
+      //   }
+      // } else {
+      //   const removed = this._removeSpatialFilter();
+      //   if (removed) {
+      //
+      //   }
+      // }
+
+
     }
 
 
@@ -151,7 +168,7 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
       const centerFromUIState = uiState.get('mapCenter');
       if (!isNaN(zoomFromUiState)) {
         this._kibanaMap.setZoomLevel(zoomFromUiState);
-      } else {// this._kibanaMap.setCenter(newParams.mapCenter[0], newParams.mapCenter[1]);
+      } else {
         this._kibanaMap.setZoomLevel(newParams.mapZoom);
       }
       if (centerFromUIState) {
@@ -216,7 +233,7 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
     filter[filterName][field] = filterData;
 
     const putFilter = Private(FilterBarPutFilterProvider)(getAppState());
-    putFilter(filter, false, indexPatternName, filterId);
+    return putFilter(filter, false, indexPatternName, filterId);
   }
 
 

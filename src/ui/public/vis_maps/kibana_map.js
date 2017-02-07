@@ -285,8 +285,9 @@ class KibanaMap extends EventEmitter {
 
     super();
 
-    this._leafletMap = L.map(domNode, {
-      minZoom: 2
+    this._leafletMap = L.map(domNode, {//todo: read this from meta
+      minZoom: 2,
+      maxZoom: 10
     });
     // this._leafletMap.setView([0, 0], 0);//todo: pass in from UI-state (if any)
     this._leafletMap.fitWorld();//todo: pass in from UI-state (if any)
@@ -372,6 +373,10 @@ class KibanaMap extends EventEmitter {
     //todo
   }
 
+
+  triggerMove(){
+    this.emit('moveend');
+  }
 
   getCenter() {
     const center = this._leafletMap.getCenter();
@@ -604,10 +609,10 @@ class KibanaMap extends EventEmitter {
   }
 
   setGeohashFeatureCollection(featureCollection) {
-    if (this._geohashGridOverlay && _.isEqual(this._geohashGridOverlay.getFeatureCollection(), featureCollection)) {
-      //no need to recreate layer.
-      return;
-    }
+    // if (this._geohashGridOverlay && _.isEqual(this._geohashGridOverlay.getFeatureCollection(), featureCollection)) {
+    //   no need to recreate layer.
+      // return;
+    // }
     this._featureCollection = featureCollection;
     this._recreateOverlay();
   }

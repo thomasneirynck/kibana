@@ -10,7 +10,7 @@ export default function TileMapVisType(Private, getAppState, courier, config) {
   const MapsVisType = Private(MapsVisTypeVislibVisTypeProvider);
   const Schemas = Private(VisSchemasProvider);
   const geoJsonConverter = Private(AggResponseGeoJsonGeoJsonProvider);
-  
+
   return new MapsVisType({
     name: 'tile_map',
     title: 'Tile map',
@@ -19,6 +19,7 @@ export default function TileMapVisType(Private, getAppState, courier, config) {
      'that is mapped as type:geo_point with latitude and longitude coordinates.',
     params: {
       defaults: {
+        handleNoResults: true,
         mapType: 'Scaled Circle Markers',
 
         isDesaturated: true,
