@@ -310,6 +310,19 @@ export class LogstashMetric extends Metric {
 
 }
 
+export class LogstashClusterMetric extends Metric {
+
+  constructor(opts) {
+    super({
+      ...opts,
+      app: 'logstash',
+      uuidField: 'cluster_uuid',
+      timestampField: 'logstash_stats.timestamp'
+    });
+  }
+
+}
+
 export class EventsLatencyMetric extends LogstashMetric {
 
   constructor(opts) {
@@ -351,6 +364,71 @@ export class EventsLatencyMetric extends LogstashMetric {
 
 }
 
+export class EventsLatencyClusterMetric extends LogstashClusterMetric {
+
+  constructor(opts) {
+    super({
+      ...opts,
+      format: LARGE_FLOAT,
+      metricAgg: 'max',
+      units: 'ms'
+    });
+
+    this.aggs = {
+      logstash_uuids: {
+        terms: {
+          field: 'logstash_stats.logstash.uuid',
+          size: 1000
+        },
+        aggs: {
+          events_time_in_millis_per_node: {
+            max: {
+              field: 'logstash_stats.events.duration_in_millis'
+            }
+          },
+          events_total_per_node: {
+            max: {
+              field: 'logstash_stats.events.out'
+            }
+          }
+        }
+      },
+      events_time_in_millis: {
+        sum_bucket: {
+          buckets_path: 'logstash_uuids>events_time_in_millis_per_node',
+          gap_policy: 'skip'
+        }
+      },
+      events_total: {
+        sum_bucket: {
+          buckets_path: 'logstash_uuids>events_total_per_node',
+          gap_policy: 'skip'
+        }
+      },
+      events_time_in_millis_deriv: {
+        derivative: { buckets_path: 'events_time_in_millis', gap_policy: 'skip' }
+      },
+      events_total_deriv: {
+        derivative: { buckets_path: 'events_total', gap_policy: 'skip' }
+      }
+    };
+
+    this.calculation = (last) => {
+      const timeInMillis = _.get(last, 'events_time_in_millis_deriv.value');
+      const timeTotal = _.get(last, 'events_total_deriv.value');
+      if (timeInMillis && timeTotal) {
+        // Negative values indicate blips in the data (e.g., restarting a node) that we do not want to misrepresent
+        if (timeInMillis < 0 || timeTotal < 0) {
+          return null;
+        }
+        return timeInMillis / timeTotal;
+      }
+      return 0;
+    };
+  }
+
+}
+
 export class LogstashEventsRateMetric extends LogstashMetric {
 
   constructor(opts) {
@@ -361,6 +439,45 @@ export class LogstashEventsRateMetric extends LogstashMetric {
       metricAgg: 'max',
       units: '/s'
     });
+  }
+
+}
+
+export class LogstashEventsRateClusterMetric extends LogstashClusterMetric {
+
+  constructor(opts) {
+    super({
+      ...opts,
+      derivative: true,
+      format: LARGE_FLOAT,
+      metricAgg: 'max',
+      units: '/s'
+    });
+
+    this.aggs = {
+      logstash_uuids: {
+        terms: {
+          field: 'logstash_stats.logstash.uuid',
+          size: 1000
+        },
+        aggs: {
+          event_rate_per_node: {
+            max: {
+              field: this.field
+            }
+          }
+        }
+      },
+      event_rate: {
+        sum_bucket: {
+          buckets_path: 'logstash_uuids>event_rate_per_node',
+          gap_policy: 'skip'
+        }
+      },
+      metric_deriv: {
+        derivative: { buckets_path: 'event_rate', gap_policy: 'skip' }
+      }
+    };
   }
 
 }

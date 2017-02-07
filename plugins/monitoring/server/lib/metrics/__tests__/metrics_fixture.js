@@ -1999,10 +1999,148 @@ export const expected = {
     'timestampField': 'kibana_stats.timestamp',
     'derivative': false
   },
+  'logstash_cluster_events_input_rate': {
+    'field': 'logstash_stats.events.in',
+    'label': 'Events Received Rate',
+    'description': 'Number of events received per second by all Logstash nodes at the inputs stage.',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'units': '/s',
+    'app': 'logstash',
+    'uuidField': 'cluster_uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': true,
+    'aggs': {
+      'logstash_uuids': {
+        'terms': {
+          'field': 'logstash_stats.logstash.uuid',
+          'size': 1000
+        },
+        'aggs': {
+          'event_rate_per_node': {
+            'max': {
+              'field': 'logstash_stats.events.in'
+            }
+          }
+        }
+      },
+      'event_rate': {
+        'sum_bucket': {
+          'buckets_path': 'logstash_uuids>event_rate_per_node',
+          'gap_policy': 'skip'
+        }
+      },
+      'metric_deriv': {
+        'derivative': {
+          'buckets_path': 'event_rate',
+          'gap_policy': 'skip'
+        }
+      }
+    }
+  },
+  'logstash_cluster_events_output_rate': {
+    'field': 'logstash_stats.events.out',
+    'label': 'Events Emitted Rate',
+    'description': 'Number of events emitted per second by all Logstash nodes at the outputs stage.',
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'units': '/s',
+    'app': 'logstash',
+    'uuidField': 'cluster_uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': true,
+    'aggs': {
+      'logstash_uuids': {
+        'terms': {
+          'field': 'logstash_stats.logstash.uuid',
+          'size': 1000
+        },
+        'aggs': {
+          'event_rate_per_node': {
+            'max': {
+              'field': 'logstash_stats.events.out'
+            }
+          }
+        }
+      },
+      'event_rate': {
+        'sum_bucket': {
+          'buckets_path': 'logstash_uuids>event_rate_per_node',
+          'gap_policy': 'skip'
+        }
+      },
+      'metric_deriv': {
+        'derivative': {
+          'buckets_path': 'event_rate',
+          'gap_policy': 'skip'
+        }
+      }
+    }
+  },
+  'logstash_cluster_events_latency': {
+    'calculation': logstashEventsLatencyCalculation,
+    'field': 'logstash_stats.events.out',
+    'label': 'Event Latency',
+    'description': (
+      'Average time spent by events in the filter and output stages, which is the total ' +
+      'time it takes to process events divided by number of events emitted.'
+    ),
+    'format': '0,0.[00]',
+    'metricAgg': 'max',
+    'units': 'ms',
+    'app': 'logstash',
+    'uuidField': 'cluster_uuid',
+    'timestampField': 'logstash_stats.timestamp',
+    'derivative': false,
+    'aggs': {
+      'logstash_uuids': {
+        'terms': {
+          'field': 'logstash_stats.logstash.uuid',
+          'size': 1000
+        },
+        'aggs': {
+          'events_time_in_millis_per_node': {
+            'max': {
+              'field': 'logstash_stats.events.duration_in_millis'
+            }
+          },
+          'events_total_per_node': {
+            'max': {
+              'field': 'logstash_stats.events.out'
+            }
+          }
+        }
+      },
+      'events_time_in_millis': {
+        'sum_bucket': {
+          'buckets_path': 'logstash_uuids>events_time_in_millis_per_node',
+          'gap_policy': 'skip'
+        }
+      },
+      'events_total': {
+        'sum_bucket': {
+          'buckets_path': 'logstash_uuids>events_total_per_node',
+          'gap_policy': 'skip'
+        }
+      },
+      'events_time_in_millis_deriv': {
+        'derivative': {
+          'buckets_path': 'events_time_in_millis',
+          'gap_policy': 'skip'
+        }
+      },
+      'events_total_deriv': {
+        'derivative': {
+          'buckets_path': 'events_total',
+          'gap_policy': 'skip'
+        }
+      }
+    }
+  },
   'logstash_events_input_rate': {
     'field': 'logstash_stats.events.in',
     'label': 'Events Received Rate',
-    'description': 'Total number of events received by the Logstash node at the inputs stage.',
+    'description': 'Number of events received per second by the Logstash node at the inputs stage.',
     'format': '0,0.[00]',
     'metricAgg': 'max',
     'units': '/s',
@@ -2014,7 +2152,7 @@ export const expected = {
   'logstash_events_output_rate': {
     'field': 'logstash_stats.events.out',
     'label': 'Events Emitted Rate',
-    'description': 'Total number of events emitted by the Logstash node at the outputs stage.',
+    'description': 'Number of events emitted per second by the Logstash node at the outputs stage.',
     'format': '0,0.[00]',
     'metricAgg': 'max',
     'units': '/s',

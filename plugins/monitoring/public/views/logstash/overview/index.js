@@ -17,9 +17,9 @@ function getPageData(timefilter, globalState, $http, Private) {
       max: timeBounds.max.toISOString()
     },
     metrics: [
-      'logstash_events_input_rate',
-      'logstash_events_output_rate',
-      'logstash_events_latency'
+      'logstash_cluster_events_input_rate',
+      'logstash_cluster_events_output_rate',
+      'logstash_cluster_events_latency'
     ]
   })
   .then(response => response.data)

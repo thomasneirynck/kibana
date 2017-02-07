@@ -4,7 +4,8 @@ import {
   ElasticsearchMetric, RequestRateMetric, KibanaMetric, LatencyMetric,
   QuotaMetric, NodeIndexMemoryMetric, ThreadPoolQueueMetric,
   ThreadPoolRejectedMetric, IndexAverageStatMetric, SingleIndexMemoryMetric,
-  IndexMemoryMetric, LogstashMetric, EventsLatencyMetric, LogstashEventsRateMetric
+  IndexMemoryMetric, LogstashMetric, EventsLatencyMetric, LogstashEventsRateMetric,
+  EventsLatencyClusterMetric, LogstashEventsRateClusterMetric
 } from './metric_classes';
 
 import {
@@ -997,15 +998,33 @@ const metricInstances = {
     metricAgg: 'sum',
     units: ''
   }),
+  'logstash_cluster_events_input_rate': new LogstashEventsRateClusterMetric({
+    field: 'logstash_stats.events.in',
+    label: 'Events Received Rate',
+    description: 'Number of events received per second by all Logstash nodes at the inputs stage.',
+  }),
+  'logstash_cluster_events_output_rate': new LogstashEventsRateClusterMetric({
+    field: 'logstash_stats.events.out',
+    label: 'Events Emitted Rate',
+    description: 'Number of events emitted per second by all Logstash nodes at the outputs stage.',
+  }),
+  'logstash_cluster_events_latency': new EventsLatencyClusterMetric({
+    field: 'logstash_stats.events.out',
+    label: 'Event Latency',
+    description: (
+      'Average time spent by events in the filter and output stages, which is the total ' +
+      'time it takes to process events divided by number of events emitted.'
+    ),
+  }),
   'logstash_events_input_rate': new LogstashEventsRateMetric({
     field: 'logstash_stats.events.in',
     label: 'Events Received Rate',
-    description: 'Total number of events received by the Logstash node at the inputs stage.',
+    description: 'Number of events received per second by the Logstash node at the inputs stage.',
   }),
   'logstash_events_output_rate': new LogstashEventsRateMetric({
     field: 'logstash_stats.events.out',
     label: 'Events Emitted Rate',
-    description: 'Total number of events emitted by the Logstash node at the outputs stage.',
+    description: 'Number of events emitted per second by the Logstash node at the outputs stage.',
   }),
   'logstash_events_latency': new EventsLatencyMetric({
     field: 'logstash_stats.events.out',
