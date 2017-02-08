@@ -11,6 +11,7 @@ export default function phoneHomeRoutes(server) {
     method: 'POST',
     handler: (req, reply) => {
       // Change to true to test indexing the data. Note, user must have privileges
+      // NOTE: IF YOU DISABLED THE UI, YOU MUST RE-ENABLE IT OR THE ABOVE CLIENT IS NOT CONFIGURED
       if (false) {
         const body = req.payload;
         const options = {

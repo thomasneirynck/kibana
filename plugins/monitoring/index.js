@@ -17,7 +17,7 @@ export default function monitoringIndex(kibana) {
       app: {
         title: 'Monitoring',
         order: 9002,
-        description: 'Monitoring for Elasticsearch',
+        description: 'Monitoring for Elastic Stack',
         icon: 'plugins/monitoring/monitoring.svg',
         main: 'plugins/monitoring/monitoring',
         injectVars(server) {
@@ -178,12 +178,34 @@ export default function monitoringIndex(kibana) {
     init: function (server, _options) {
       const xpackMainPlugin = server.plugins.xpack_main;
       return xpackMainPlugin.status.once('green', () => {
-        return Promise.all([
-          instantiateClient(server, elasticsearch), // Instantiate the dedicated ES client. Dependency injection for ES for test mocking
-          requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server), // Require all the routes
-          initKibanaMonitoring(this.kbnServer, server), // send kibana server ops to the monitoring bulk api
-          esHealthCheck(this, server).start() // Make sure the Monitoring index is created and ready
-        ]);
+        const config = server.config();
+        const uiEnabled = config.get('xpack.monitoring.ui.enabled');
+        const reportStats = config.get('xpack.monitoring.report_stats');
+        const features = [];
+
+        if (uiEnabled || reportStats) {
+          // Instantiate the dedicated ES client
+          features.push(instantiateClient(server, elasticsearch));
+
+          if (uiEnabled) {
+            // Require all routes
+            features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server));
+          } else {
+            // Require only routes needed for stats reporting
+            features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', 'clusters.js'), server));
+            features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', 'phone_home.js'), server));
+          }
+
+          // Make sure the Monitoring index is created and ready
+          features.push(esHealthCheck(this, server).start());
+        }
+
+        // Send Kibana server ops to the monitoring bulk api
+        if (config.get('xpack.monitoring.kibana.collection.enabled')) {
+          features.push(initKibanaMonitoring(this.kbnServer, server));
+        }
+
+        return Promise.all(features);
       });
     }
   });

@@ -9,7 +9,7 @@ export default function (serverInfo, server) {
     path: '/_xpack'
   }).then((res) => {
     const isEnabledInAdminCluster = !!get(res, 'features.monitoring.enabled');
-    if (isEnabledInAdminCluster && config.get('xpack.monitoring.kibana.collection.enabled')) {
+    if (isEnabledInAdminCluster) {
       const buffer = opsBuffer(serverInfo, server);
       const monitor = server.plugins['even-better'].monitor;
       let opsHandler;
