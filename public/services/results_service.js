@@ -22,8 +22,134 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlResultsService', function ($q, es) {
 
+  // Obtains the top influencers, by maximum anomaly score, for the specified index, time range and job ID(s).
+  // Pass an empty array or ['*'] to search over all job IDs.
+  // Returned response contains an influencers property, with a key for each of the influencer field names,
+  // whose value is an array of objects containing influencerFieldValue, maxAnomalyScore and sumAnomalyScore keys.
+  this.getTopInfluencers = function (index, jobIds, earliestMs, latestMs, maxFieldNames, maxFieldValues) {
+    const deferred = $q.defer();
+    const obj = {success: true, influencers: {}};
+
+    // Build the criteria to use in the bool filter part of the request.
+    // Adds criteria for the time range plus any specified job IDs.
+    const boolCriteria = [];
+    boolCriteria.push({
+      'range': {
+        'timestamp': {
+          'gte': earliestMs,
+          'lte': latestMs,
+          'format': 'epoch_millis'
+        }
+      }
+    });
+    if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
+      let jobIdFilterStr = '';
+      _.each(jobIds, (jobId, i) => {
+        if (i > 0) {
+          jobIdFilterStr += ' OR ';
+        }
+        jobIdFilterStr += 'job_id:';
+        jobIdFilterStr += jobId;
+      });
+      boolCriteria.push({
+        'query_string': {
+          'analyze_wildcard':true,
+          'query':jobIdFilterStr
+        }
+      });
+    }
+
+    es.search({
+      index: index,
+      size: 0,
+      body: {
+        'query': {
+          'bool': {
+            'filter': [
+              {
+                'query_string': {
+                  'query': '_type:result AND result_type:influencer',
+                  'analyze_wildcard': true
+                }
+              },
+              {
+                'bool': {
+                  'must': boolCriteria
+                }
+              }
+            ]
+          }
+        },
+        'aggs': {
+          'influencerFieldNames': {
+            'terms': {
+              'field': 'influencer_field_name',
+              'size': 5,
+              'order': {
+                'maxAnomalyScore': 'desc'
+              }
+            },
+            'aggs': {
+              'maxAnomalyScore': {
+                'max': {
+                  'field': 'anomaly_score'
+                }
+              },
+              'influencerFieldValues': {
+                'terms': {
+                  'field': 'influencer_field_value',
+                  'size': maxFieldValues !== undefined ? maxFieldValues : 10,
+                  'order': {
+                    'maxAnomalyScore': 'desc'
+                  }
+                },
+                'aggs': {
+                  'maxAnomalyScore': {
+                    'max': {
+                      'field': 'anomaly_score'
+                    }
+                  },
+                  'sumAnomalyScore': {
+                    'sum': {
+                      'field': 'anomaly_score'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+    .then((resp) => {
+      const fieldNameBuckets = _.get(resp, ['aggregations', 'influencerFieldNames', 'buckets'], []);
+      _.each(fieldNameBuckets, (nameBucket) => {
+        const fieldName = nameBucket.key;
+        const fieldValues = [];
+
+        const fieldValueBuckets = _.get(nameBucket, ['influencerFieldValues', 'buckets'], []);
+        _.each(fieldValueBuckets, (valueBucket) => {
+          const fieldValueResult = {
+            'influencerFieldValue': valueBucket.key,
+            'maxAnomalyScore': valueBucket.maxAnomalyScore.value,
+            'sumAnomalyScore': valueBucket.sumAnomalyScore.value
+          };
+          fieldValues.push(fieldValueResult);
+        });
+
+        obj.influencers[fieldName] = fieldValues;
+      });
+
+      deferred.resolve(obj);
+    })
+    .catch((resp) => {
+      deferred.reject(resp);
+    });
+    return deferred.promise;
+  };
+
   // Obtains the top influencer field values, by maximum anomaly score, for a
-  // particular influencer index, field name and job ID(s).
+  // particular index, field name and job ID(s).
   // Pass an empty array or ['*'] to search over all job IDs.
   // Returned response contains a results property, which is an array of objects
   // containing influencerFieldValue, maxAnomalyScore and sumAnomalyScore keys.
@@ -114,6 +240,214 @@ module.service('mlResultsService', function ($q, es) {
           'maxAnomalyScore': bucket.maxAnomalyScore.value,
           'sumAnomalyScore': bucket.sumAnomalyScore.value};
         obj.results.push(result);
+      });
+
+      deferred.resolve(obj);
+    })
+    .catch((resp) => {
+      deferred.reject(resp);
+    });
+    return deferred.promise;
+  };
+
+  // Obtains the maximum bucket influencer score by time for the specified job ID(s).
+  // Pass an empty array or ['*'] to search over all job IDs.
+  // Returned response contains a results property as an object of max score by time.
+  this.getBucketInfluencerMaxScoreByTime = function (index, jobIds, earliestMs, latestMs, interval) {
+    const deferred = $q.defer();
+    const obj = {success: true, results: {}};
+
+    // Build the criteria to use in the bool filter part of the request.
+    // Adds criteria for the time range plus any specified job IDs.
+    const boolCriteria = [];
+    boolCriteria.push({
+      'range': {
+        'timestamp': {
+          'gte': earliestMs,
+          'lte': latestMs,
+          'format': 'epoch_millis'
+        }
+      }
+    });
+    if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
+      let jobIdFilterStr = '';
+      _.each(jobIds, (jobId, i) => {
+        if (i > 0) {
+          jobIdFilterStr += ' OR ';
+        }
+        jobIdFilterStr += 'job_id:';
+        jobIdFilterStr += jobId;
+      });
+      boolCriteria.push({
+        'query_string': {
+          'analyze_wildcard':true,
+          'query':jobIdFilterStr
+        }
+      });
+    }
+
+    es.search({
+      index: index,
+      size: 0,
+      body: {
+        'query': {
+          'bool': {
+            'filter': [
+              {
+                'query_string': {
+                  'query': '_type:result AND result_type:bucket_influencer',
+                  'analyze_wildcard': true
+                }
+              },
+              {
+                'bool': {
+                  'must': boolCriteria
+                }
+              }
+            ]
+          }
+        },
+        'aggs': {
+          'byTime': {
+            'date_histogram': {
+              'field': 'timestamp',
+              'interval': interval,
+              'min_doc_count': 1
+            },
+            'aggs': {
+              'maxAnomalyScore': {
+                'max': {
+                  'field': 'anomaly_score'
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+    .then((resp) => {
+      const dataByTime = _.get(resp, ['aggregations', 'byTime', 'buckets'], []);
+      _.each(dataByTime, (dataForTime) => {
+        const value = _.get(dataForTime, ['maxAnomalyScore', 'value']);
+        if (value !== undefined) {
+          obj.results[dataForTime.key] = value;
+        }
+      });
+
+      deferred.resolve(obj);
+    })
+    .catch((resp) => {
+      deferred.reject(resp);
+    });
+    return deferred.promise;
+  };
+
+  // Obtains the maximum score by influencer_field_value and by time for the specified job ID(s).
+  // Pass an empty array or ['*'] to search over all job IDs.
+  // Returned response contains a results property with influencer field values keyed
+  // against max score by time.
+  this.getInfluencerValueMaxScoreByTime = function (index, jobIds, influencerFieldName, earliestMs, latestMs, interval, maxResults) {
+    const deferred = $q.defer();
+    const obj = {success: true, results: {}};
+
+    // Build the criteria to use in the bool filter part of the request.
+    // Adds criteria for the time range plus any specified job IDs.
+    const boolCriteria = [];
+    boolCriteria.push({
+      'range': {
+        'timestamp': {
+          'gte': earliestMs,
+          'lte': latestMs,
+          'format': 'epoch_millis'
+        }
+      }
+    });
+    if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
+      let jobIdFilterStr = '';
+      _.each(jobIds, (jobId, i) => {
+        if (i > 0) {
+          jobIdFilterStr += ' OR ';
+        }
+        jobIdFilterStr += 'job_id:';
+        jobIdFilterStr += jobId;
+      });
+      boolCriteria.push({
+        'query_string': {
+          'analyze_wildcard':true,
+          'query':jobIdFilterStr
+        }
+      });
+    }
+
+    es.search({
+      index: index,
+      size: 0,
+      body: {
+        'query': {
+          'bool': {
+            'filter': [
+              {
+                'query_string': {
+                  'query': '_type:result AND result_type:influencer AND influencer_field_name:' + influencerFieldName,
+                  'analyze_wildcard': true
+                }
+              },
+              {
+                'bool': {
+                  'must': boolCriteria
+                }
+              }
+            ]
+          }
+        },
+        'aggs': {
+          'influencerFieldValues': {
+            'terms': {
+              'field': 'influencer_field_value',
+              'size': maxResults !== undefined ? maxResults : 10,
+              'order': {
+                'maxAnomalyScore': 'desc'
+              }
+            },
+            'aggs': {
+              'maxAnomalyScore': {
+                'max': {
+                  'field': 'anomaly_score'
+                }
+              },
+              'byTime': {
+                'date_histogram': {
+                  'field': 'timestamp',
+                  'interval': interval,
+                  'min_doc_count': 1
+                },
+                'aggs': {
+                  'maxAnomalyScore': {
+                    'max': {
+                      'field': 'anomaly_score'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+    .then((resp) => {
+      const fieldValueBuckets = _.get(resp, ['aggregations', 'influencerFieldValues', 'buckets'], []);
+      _.each(fieldValueBuckets, (valueBucket) => {
+        const fieldValue = valueBucket.key;
+        const fieldValues = {};
+
+        const timeBuckets = _.get(valueBucket, ['byTime', 'buckets'], []);
+        _.each(timeBuckets, (timeBucket) => {
+          const time = timeBucket.key;
+          const score = timeBucket.maxAnomalyScore.value;
+          fieldValues[time] = score;
+        });
+
+        obj.results[fieldValue] = fieldValues;
       });
 
       deferred.resolve(obj);

@@ -29,6 +29,7 @@ import 'plugins/ml/services/ml_dashboard_service';
 import 'plugins/ml/services/results_service';
 import 'plugins/ml/messagebar';
 import 'plugins/ml/summaryview';
+import 'plugins/ml/explorer';
 import 'plugins/ml/timeseriesexplorer';
 import 'plugins/ml/components/json_tooltip';
 import 'plugins/ml/components/engine_api_help_link';
@@ -73,6 +74,11 @@ chrome
     description: 'Explorer',
     label: 'Explorer',
     run: function () { kbnUrl.change('/anomalyexplorer', {});}
+  }, {
+    key: 'explorer',
+    description: 'Explorer2',
+    label: 'Explorer2',
+    run: function () { kbnUrl.change('/explorer', {});}
   }, {
     key: 'timeseriesexplorer',
     description: 'Time series',
