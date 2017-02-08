@@ -22,38 +22,41 @@ import jobUtils from 'plugins/ml/util/job_utils';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('mlSingleMetricJobService', function (
+module.service('mlMultiMetricJobService', function (
   $q,
   es,
   timefilter,
   Private,
   mlJobService,
-  mlSingleMetricJobSearchService) {
+  mlMultiMetricJobSearchService) {
 
   this.chartData = {
-    line: [],
-    model: [],
-    swimlane: [],
-    hasBounds: false,
+    job: {
+      swimlane: [],
+      line: [],
+    },
+    detectors: {},
     percentComplete: 0,
-    loadingDiffernce: 0
+    loadingDifference: 0
   };
   this.job = {};
 
   this.getLineChartResults = function (formConfig) {
     const deferred = $q.defer();
 
-    this.chartData.line = [];
-    this.chartData.model = [];
-    this.chartData.swimlane = [];
-    this.chartData.hasBounds = false;
+    const fields = Object.keys(formConfig.fields).sort();
+    this.chartData.job.swimlane = [];
+    this.chartData.job.line = [];
+    this.chartData.detectors = {};
     this.chartData.percentComplete = 0;
     this.chartData.loadingDifference = 0;
 
-    const obj = {
-      success: true,
-      results: {}
-    };
+    _.each(fields, (field) => {
+      this.chartData.detectors[field] = {
+        line: [],
+        swimlane:[]
+      };
+    });
 
     const searchJson = getSearchJsonFromConfig(formConfig);
 
@@ -63,19 +66,43 @@ module.service('mlSingleMetricJobService', function (
 
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
       _.each(aggregationsByTime, (dataForTime) => {
-        const time = dataForTime.key;
-        let value = _.get(dataForTime, ['field_value', 'value']);
-        if (value === undefined && formConfig.field === null) {
-          value = dataForTime.doc_count;
-        }
-        obj.results[time] = {
-          actual: (isFinite(value)) ? value : 0,
-        };
-      });
+        const time = +dataForTime.key;
+        const date = new Date(time);
 
-      this.chartData.line = processLineChartResults(obj.results);
-      this.chartData.swimlane = processSwimlaneResults(obj.results, true);
-      deferred.resolve(this.chartData.line);
+        this.chartData.job.swimlane.push({
+          date: date,
+          time: time,
+          value: 0,
+          color: '',
+          percentComplete: 0
+        });
+
+        this.chartData.job.line.push({
+          date: date,
+          time: time,
+          value: null,
+        });
+
+        _.each(fields, (field) => {
+          const value = dataForTime[field].value;
+
+          this.chartData.detectors[field].line.push({
+            date: date,
+            time: time,
+            value: (isFinite(value)) ? value : 0,
+          });
+
+          // init swimlane
+          this.chartData.detectors[field].swimlane.push({
+            date: date,
+            time: time,
+            value: 0,
+            color: '',
+            percentComplete: 0
+          });
+        });
+      });
+      deferred.resolve(this.chartData);
     })
     .catch(function (resp) {
       deferred.reject(resp);
@@ -83,44 +110,6 @@ module.service('mlSingleMetricJobService', function (
 
     return deferred.promise;
   };
-
-  function processLineChartResults(data) {
-    // create a dataset in format used by the model debug chart.
-    // create empty swimlane dataset
-    // i.e. array of Objects with keys date (JavaScript date), value, lower and upper.
-    const lineData = [];
-    _.each(data, (dataForTime, t) => {
-      const time = +t;
-      const date = new Date(time);
-      lineData.push({
-        date: date,
-        time: time,
-        lower: dataForTime.debugLower,
-        value: dataForTime.actual,
-        upper: dataForTime.debugUpper
-      });
-    });
-
-    return lineData;
-  }
-
-  function processSwimlaneResults(bucketScoreData, init) {
-    // create a dataset in format used by the model debug chart.
-    // create empty swimlane dataset
-    // i.e. array of Objects with keys date (JavaScript date), value, lower and upper.
-    const swimlaneData = [];
-    _.each(bucketScoreData, (dataForTime, t) => {
-      const time = +t;
-      const date = new Date(time);
-      swimlaneData.push({
-        date: date,
-        time: time,
-        value: init ? 0 : dataForTime.anomalyScore,
-        color: ''
-      });
-    });
-    return swimlaneData;
-  }
 
   function getSearchJsonFromConfig(formConfig) {
     const interval = formConfig.chartInterval.getInterval().asSeconds() + 's';
@@ -161,12 +150,13 @@ module.service('mlSingleMetricJobService', function (
       }
     };
 
-    if (formConfig.field !== null) {
-      json.body.aggs.times.aggs = {
-        'field_value':{
-          [formConfig.agg.type.name]: {field: formConfig.field.displayName}
-        }
-      };
+    if (Object.keys(formConfig.fields).length) {
+      json.body.aggs.times.aggs = {};
+      _.each(formConfig.fields, (field) => {
+        json.body.aggs.times.aggs[field.id] = {
+          [field.agg.type.name]: {field: field.id}
+        };
+      });
     }
 
     return json;
@@ -180,14 +170,25 @@ module.service('mlSingleMetricJobService', function (
     const job = mlJobService.getBlankJob();
     job.data_description.time_field = formConfig.timeField;
 
-    const dtr = {
-      function: formConfig.agg.type.mlName
-    };
+    // job.analysis_config.influencers.push(obj.params.field);
 
-    if (formConfig.field && formConfig.field.displayName) {
-      dtr.field_name = formConfig.field.displayName;
+    _.each(formConfig.fields, (field, key) => {
+      const func = field.agg.type.mlName;
+      const dtr = {
+        function: func,
+        field_name: key,
+      };
+      if (formConfig.splitField !== '--No split--') {
+        dtr.partition_field_name =  formConfig.splitField;
+      }
+      job.analysis_config.detectors.push(dtr);
+    });
+
+    const keyFields = Object.keys(formConfig.keyFields);
+    if (keyFields && keyFields.length) {
+      job.analysis_config.influencers = keyFields;
     }
-    job.analysis_config.detectors.push(dtr);
+
     job.analysis_config.bucket_span = bucketSpan;
 
     delete job.data_description.field_delimiter;
@@ -205,57 +206,8 @@ module.service('mlSingleMetricJobService', function (
       indexes: [formConfig.indexPattern.id],
       scroll_size: 1000
     };
-
     job.job_id = formConfig.jobId;
     job.description = formConfig.description;
-
-    job.model_debug_config =  {
-      bounds_percentile: 95.0,
-      write_to : 'data_store'
-    };
-
-    if (dtr.function === 'count') {
-      job.analysis_config.summary_count_field_name = 'doc_count';
-
-      job.datafeed_config.aggregations = {
-        [formConfig.timeField]: {
-          histogram: {
-            field: formConfig.timeField,
-            interval: bucketSpan * 1000,
-            offset: 0,
-            order: {
-              _key: 'asc'
-            },
-            keyed: false,
-            min_doc_count: 0
-          }
-        }
-      };
-    } else if(dtr.function === 'mean') {
-      job.analysis_config.summary_count_field_name = 'doc_count';
-
-      job.datafeed_config.aggregations = {
-        [formConfig.timeField]: {
-          histogram: {
-            field: formConfig.timeField,
-            interval: bucketSpan * 1000,
-            offset: 0,
-            order: {
-              _key: 'asc'
-            },
-            keyed: false,
-            min_doc_count: 0
-          },
-          aggregations: {
-            [dtr.field_name]: {
-              avg: {
-                field: dtr.field_name
-              }
-            }
-          }
-        }
-      };
-    }
 
     console.log('auto created job: ', job);
 
@@ -297,47 +249,15 @@ module.service('mlSingleMetricJobService', function (
     return mlJobService.stopDatafeed(datafeedId, formConfig.jobId);
   };
 
-  this.checkDatafeedState = function (formConfig) {
+  this.checkDatafeedStatus = function (formConfig) {
     return mlJobService.updateSingleJobDatafeedState(formConfig.jobId);
   };
 
-  this.loadModelData = function (formConfig) {
+
+  this.loadJobSwimlaneData = function (formConfig) {
     const deferred = $q.defer();
 
-    let start = formConfig.start;
-
-    if (this.chartData.model.length > 5) {
-      // only load the model since the end of the last time we checked
-      // but discard the last 5 buckets in case the model has changed
-      start = this.chartData.model[this.chartData.model.length - 5].time;
-      for (let i = 0; i < 5; i++) {
-        this.chartData.model.pop();
-      }
-    }
-
-    mlSingleMetricJobSearchService.getModelDebugOutput(
-      formConfig.indexPattern.id,
-      [formConfig.jobId],
-      start,
-      formConfig.end,
-      formConfig.chartInterval.getInterval().asSeconds() + 's',
-      formConfig.agg.type.mlDebugAgg
-    )
-    .then(data => {
-      this.chartData.model = this.chartData.model.concat(processLineChartResults(data.results));
-      deferred.resolve(this.chartData);
-    })
-    .catch(() => {
-      deferred.reject(this.chartData);
-    });
-
-    return deferred.promise;
-  };
-
-  this.loadSwimlaneData = function (formConfig) {
-    const deferred = $q.defer();
-
-    mlSingleMetricJobSearchService.getScoresByBucket(
+    mlMultiMetricJobSearchService.getScoresByBucket(
       formConfig.indexPattern.id,
       [formConfig.jobId],
       formConfig.start,
@@ -345,29 +265,117 @@ module.service('mlSingleMetricJobService', function (
       formConfig.chartInterval.getInterval().asSeconds() + 's'
     )
     .then(data => {
-      const oldSwimlaneLength = this.chartData.swimlane.length;
-      this.chartData.swimlane = processSwimlaneResults(data.results);
+      const oldSwimlaneLength = this.chartData.job.swimlane.length;
+      // this.chartData.job.swimlane = processSwimlaneResults(data.results);
+
+      // const swimlaneData = [];
+      _.each(data.results, (dataForTime, t) => {
+        const time = +t;
+        const date = new Date(time);
+        this.chartData.job.swimlane.push({
+          date: date,
+          time: time,
+          value: dataForTime.anomalyScore,
+          color: ''
+        });
+      });
 
       // store the number of results buckets that have just been loaded
       // this is used to vary the results request interval.
       // i.e. if no buckets or only a coulple were loaded, wait a bit longer before
       // loading the results next time
-      this.chartData.loadingDifference = this.chartData.swimlane.length - oldSwimlaneLength;
+      this.chartData.job.loadingDifference = this.chartData.job.swimlane.length - oldSwimlaneLength;
 
-      if (this.chartData.line.length) {
-        this.chartData.hasBounds = true;
+      if (false && this.chartData.job.line.length) {
+        this.chartData.job.hasBounds = true;
 
         // work out the percent complete of the running job
         // based on the total length of time of the orgininal search
         // and the length of time of the results loaded so far
-        const min = this.chartData.line[0].time;
-        const max = this.chartData.line[this.chartData.line.length - 1].time;
+        const min = this.chartData.job.line[0].time;
+        const max = this.chartData.job.line[this.chartData.job.line.length - 1].time;
         const diff = max - min;
 
-        if (this.chartData.swimlane.length) {
-          const diff2 = this.chartData.swimlane[this.chartData.swimlane.length - 1].time - min;
+        if (this.chartData.job.swimlane.length) {
+          const diff2 = this.chartData.job.swimlane[this.chartData.job.swimlane.length - 1].time - min;
           const pcnt = ((diff2 / diff) * 100);
-          this.chartData.percentComplete = pcnt;
+          this.chartData.job.percentComplete = pcnt;
+        }
+      }
+
+      deferred.resolve(this.chartData);
+    })
+    .catch(() => {
+      deferred.resolve(this.chartData);
+    });
+
+    return deferred.promise;
+  };
+
+  this.loadDetectorSwimlaneData = function (formConfig) {
+    const deferred = $q.defer();
+
+    mlMultiMetricJobSearchService.getScoresByRecord(
+      formConfig.indexPattern.id,
+      [formConfig.jobId],
+      formConfig.start,
+      formConfig.end,
+      formConfig.chartInterval.getInterval().asSeconds() + 's'
+    )
+    .then((data) => {
+      let firstChart;
+      let oldSwimlaneLength = 0;
+
+      let i = 0;
+      _.each(formConfig.fields, (field, key) => {
+        if (i === 0) {
+          oldSwimlaneLength = this.chartData.detectors[key].swimlane.length;
+        }
+        // const func = field.agg.type.mlName;
+        const times = data.results[i];
+
+        // console.log(key + ' - ' + this.chartData.detectors[key].swimlane.length);
+
+        this.chartData.detectors[key].swimlane = [];
+        _.each(times, (timeObj, t) => {
+          const time = +t;
+          const date = new Date(time);
+          this.chartData.detectors[key].swimlane.push({
+            date: date,
+            time: time,
+            value: timeObj.normalizedProbability,
+            color: ''
+          });
+        });
+
+        if (i === 0) {
+          firstChart = this.chartData.detectors[key];
+        }
+
+        i++;
+      });
+
+      // store the number of results buckets that have just been loaded
+      // this is used to vary the results request interval.
+      // i.e. if no buckets or only a coulple were loaded, wait a bit longer before
+      // loading the results next time
+
+      if (firstChart.line && firstChart.line.length) {
+        this.chartData.loadingDifference = firstChart.swimlane.length - oldSwimlaneLength;
+        // work out the percent complete of the running job
+        // based on the total length of time of the orgininal search
+        // and the length of time of the results loaded so far
+        const min = firstChart.line[0].time;
+        const max = firstChart.line[firstChart.line.length - 1].time;
+        const diff = max - min;
+
+        if (firstChart.swimlane.length) {
+          const diff2 = firstChart.swimlane[firstChart.swimlane.length - 1].time - min;
+          const pcnt = ((diff2 / diff) * 100);
+
+          _.each(this.chartData.detectors, (chart) => {
+            chart.percentComplete = pcnt;
+          });
         }
       }
 
@@ -418,4 +426,10 @@ module.service('mlSingleMetricJobService', function (
 
     return deferred.promise;
   };
+
+  this.getSplitFields = function (formConfig, size) {
+    return mlMultiMetricJobSearchService.getCategoryFields(formConfig.indexPattern.id, formConfig.splitField, size);
+  };
+
+
 });

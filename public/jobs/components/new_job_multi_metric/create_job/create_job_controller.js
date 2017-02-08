@@ -26,7 +26,7 @@ import angular from 'angular';
 
 import uiRoutes from 'ui/routes';
 uiRoutes
-.when('/jobs/new_job_single_metric/create', {
+.when('/jobs/new_job_multi_metric/create', {
   template: require('./create_job.html'),
   resolve: {
     indexPatternIds: (courier) => courier.indexPatterns.getIds()
@@ -37,7 +37,7 @@ import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module
-.controller('MlCreateSingleMetricJob', function (
+.controller('MlCreateMultiMetricJob', function (
   $scope,
   $route,
   $location,
@@ -48,7 +48,7 @@ module
   timefilter,
   Private,
   mlJobService,
-  mlSingleMetricJobService,
+  mlMultiMetricJobService,
   mlMessageBarService,
   mlESMappingService,
   mlBrowserDetectService) {
@@ -63,9 +63,9 @@ module
   $scope.courier = courier;
 
   $scope.index = $route.current.params.index;
-  $scope.chartData = mlSingleMetricJobService.chartData;
+  $scope.chartData = mlMultiMetricJobService.chartData;
 
-  const PAGE_WIDTH = angular.element('.single-metric-job-container').width();
+  const PAGE_WIDTH = angular.element('.multi-metric-job-container').width();
   const BAR_TARGET = PAGE_WIDTH / 2;
   const MAX_BARS = BAR_TARGET + (BAR_TARGET / 100) * 100; // 100% larger that bar target
   const REFRESH_INTERVAL_MS = 100;
@@ -84,14 +84,26 @@ module
   $scope.jobState = $scope.JOB_STATE.NOT_STARTED;
 
   $scope.ui = {
-    showJobInput: false,
+    showJobInput: true,
     showJobFinished: false,
-    dirty: true,
-    formValid: false,
+    dirty: false,
+    formValid: true,
     bucketSpanValid: true,
     aggTypeOptions: filterAggTypes(aggTypes.byType[$scope.groupName]),
     fields: [],
+    splitFields: [],
     timeFields: [],
+    splitText: '',
+    tickedFieldsCount:0,
+    wizard: {
+      step: 0,
+      forward: function () {
+        wizardStep(1);
+      },
+      back: function () {
+        wizardStep(-1);
+      },
+    },
     intervals: [{
       title: 'Auto',
       value: 'auto',
@@ -135,34 +147,49 @@ module
       type: undefined
     },
     field: null,
+    fields: {},
     bucketSpan: '5m',
     jobInterval: new MlTimeBuckets(),
     chartInterval: undefined,
     start: 0,
     end: 0,
     timeField: undefined,
+    splitField: '--No split--',
+    keyFields: {},
     indexPattern: undefined,
     jobId: undefined,
     description: undefined,
     mappingTypes: []
   };
 
-  $scope.aggChange = function () {
-    loadFields();
+  $scope.formChange = function () {
     $scope.ui.isFormValid();
     $scope.ui.dirty = true;
-    mlESMappingService.getMappings();
+
+    $scope.loadVis();
   };
 
-  $scope.fieldChange = function () {
-    $scope.ui.isFormValid();
-    $scope.ui.dirty = true;
+  $scope.splitChange = function () {
+    const splitField = $scope.formConfig.splitField;
+    if (splitField !== '--No split--') {
+      $scope.formConfig.keyFields[splitField] = splitField;
+      $scope.ui.splitText = 'Data split by ' + splitField;
+
+      mlMultiMetricJobService.getSplitFields($scope.formConfig, 10)
+      .then((resp) => {
+        drawCards(resp.results.values);
+        // $scope.$broadcast('render');
+        $scope.formChange();
+      });
+    } else {
+      $scope.ui.splitText = '';
+      destroyCards();
+    }
   };
 
-  $scope.timeFieldChange = function () {
-    $scope.ui.isFormValid();
-    $scope.ui.dirty = true;
-  };
+  function wizardStep(step) {
+    $scope.ui.wizard.step += step;
+  }
 
   function setTime() {
     $scope.ui.bucketSpanValid = true;
@@ -215,24 +242,85 @@ module
     }
   }
 
+  function initAgg() {
+    mlESMappingService.getMappings();
+    _.each($scope.ui.aggTypeOptions, (agg) => {
+      if (agg.title === 'Average') {
+        $scope.formConfig.agg.type = agg;
+      }
+    });
+    // $scope.formConfig.agg.type
+  }
+
   function loadFields() {
     const type = $scope.formConfig.agg.type;
     let fields = [];
+    let categoryFields = [];
+    $scope.ui.fields = [];
     type.params.forEach((param) => {
       if (param.name === 'field') {
-        fields = getIndexedFields(param);
+        fields = getIndexedFields(param, 'number');
+      }
+      if (param.name === 'customLabel') {
+        categoryFields = getIndexedFields(param, 'string');
+      }
+
+    });
+
+    _.each(fields, (field) => {
+      $scope.ui.fields.push({id: field.displayName, agg: {type: $scope.formConfig.agg.type}});
+    });
+
+    _.each(categoryFields, (field) => {
+      if (field.displayName !== 'type' && !field.displayName.match('.keyword')) {
+        $scope.ui.splitFields.push(field.displayName);
       }
     });
-    $scope.ui.fields = fields;
+
+    // $scope.ui.fields = fields;
+    console.log($scope.ui.fields);
 
     if ($scope.ui.fields.length === 1) {
       $scope.formConfig.field = $scope.ui.fields[0];
     }
   }
 
-  function getIndexedFields(param) {
+  $scope.toggleFields = function (key, field) {
+    const f = $scope.formConfig.fields[key];
+    if (f === undefined) {
+      $scope.formConfig.fields[key] = field;
+    } else {
+      delete $scope.formConfig.fields[key];
+    }
+
+    $scope.ui.tickedFieldsCount = Object.keys($scope.formConfig.fields).length;
+
+    // $scope.formChange();
+    // console.log($scope.formConfig.fields);
+
+    // $scope.extractFields();
+    // console.log($scope.indexes);
+    // guessTimeField();
+  };
+
+  $scope.toggleKeyFields = function (key) {
+    const f = $scope.formConfig.keyFields[key];
+    if (f === undefined) {
+      $scope.formConfig.keyFields[key] = key;
+    } else {
+      delete $scope.formConfig.keyFields[key];
+    }
+
+    console.log($scope.formConfig.keyFields);
+
+    // $scope.extractFields();
+    // console.log($scope.indexes);
+    // guessTimeField();
+  };
+
+  function getIndexedFields(param, fieldTypes) {
     let fields = _.filter($scope.indexPattern.fields.raw, 'aggregatable');
-    const fieldTypes = param.filterFieldTypes;
+    // const fieldTypes = param.filterFieldTypes;
 
     if (fieldTypes) {
       fields = $filter('fieldType')(fields, fieldTypes);
@@ -266,72 +354,74 @@ module
       $scope.ui.showJobFinished = false;
 
       $scope.formConfig.indexPattern = $scope.indexPattern;
-      // $scope.formConfig.jobId = '';
       $scope.ui.dirty = false;
 
-      mlSingleMetricJobService.getLineChartResults($scope.formConfig)
+      mlMultiMetricJobService.getLineChartResults($scope.formConfig)
       .then(() => {
-        // console.log('chart results', results);
         $scope.hasResults = true;
         $scope.$broadcast('render');
       });
     }
+
   };
-/*
-  function createVisJson() {
-    let visJson = {
-      '_source': {
-        'visState': {
-          'title': 'New Visualization',
-          'type': 'line',
-          'params': {
-            'shareYAxis': true,
-            'addTooltip': true,
-            'addLegend': true,
-            'legendPosition': 'right',
-            'showCircles': true,
-            'smoothLines': false,
-            'interpolate': 'linear',
-            'scale': 'linear',
-            'drawLinesBetweenPoints': true,
-            'radiusRatio': 9,
-            'times': [],
-            'addTimeMarker': false,
-            'defaultYExtents': false,
-            'setYExtents': false,
-            'yAxis': {}
-          },
-          'aggs': [
-            {
-              'id': '1',
-              'enabled': true,
-              'type': $scope.formConfig.agg.type,
-              'schema': 'metric',
-              'params': {
-                'field': $scope.formConfig.field
-              }
-            },
-            {
-              'id': '2',
-              'enabled': true,
-              'type': 'date_histogram',
-              'schema': 'segment',
-              'params': {
-                'field': $scope.formConfig.timeField,
-                'interval': 'auto',
-                'customInterval': $scope.formConfig.interval,
-                'min_doc_count': 1,
-                'extended_bounds': {}
-              }
-            }
-          ],
-          'listeners': {}
-        }
+
+  function drawCards(labels) {
+    const splitField = $scope.formConfig.splitField;
+
+    // const $container = angular.element('.detector-container');
+    const $frontCard = angular.element('.multi-metric-job-container .detector-container .card-front');
+    $frontCard.addClass('card');
+    $frontCard.find('.card-title').text(splitField + ': ' + labels[0]);
+    const w = $frontCard.width();
+    const h = $frontCard.height();
+
+    angular.element('.card-behind').remove();
+
+    for (let i = 0; i < labels.length; i++) {
+      const $backCard = angular.element('<div class="card card-behind"><div class="card-title">' + splitField + ': ' + labels[i] + '</div></div>');
+      $backCard.css('width', w);
+      $backCard.css('height', h);
+      $backCard.css('display', 'auto');
+      $backCard.css('z-index', (9 - i));
+
+      // $container.append($backCard);
+      $backCard.insertBefore($frontCard);
+    }
+
+    const cardsBehind = angular.element('.card-behind');
+    let marginTop = 54;
+    let marginLeft = 0;
+    let backWidth = w;
+    // let rot = 2 //cardsBehind.length;
+    // let rotDiff = 0;
+
+    for (let i = 0; i < cardsBehind.length; i++) {
+      cardsBehind[i].style.marginTop = marginTop + 'px';
+      cardsBehind[i].style.marginLeft = marginLeft + 'px';
+      cardsBehind[i].style.width = backWidth + 'px';
+
+      marginTop -= (10 - i);
+      marginLeft += (5 - (i / 2));
+      backWidth -= (5 - (i / 2)) * 2;
+    }
+    let i = 0;
+    function tt() {
+      if (i < cardsBehind.length) {
+        cardsBehind[i].style.opacity = 1;
+        window.setTimeout(tt , 40);
+        i++;
       }
-    };
-    return visJson;
+    }
+    tt();
   }
-  */
+
+  function destroyCards() {
+    angular.element('.card-behind').remove();
+
+    const $frontCard = angular.element('.multi-metric-job-container .detector-container .card-front');
+    $frontCard.removeClass('card');
+    $frontCard.find('.card-title').text('');
+  }
 
   // force job ids to be lowercase
   $scope.changeJobIDCase = function () {
@@ -351,11 +441,11 @@ module
       msgs.clear();
       $scope.formConfig.mappingTypes = mlESMappingService.getTypesFromMapping($scope.formConfig.indexPattern.id);
       // create the new job
-      mlSingleMetricJobService.createJob($scope.formConfig)
+      mlMultiMetricJobService.createJob($scope.formConfig)
       .then((job) => {
         // if save was successful, open the job
         mlJobService.openJob(job.job_id)
-        .then(() => {
+        .then((resp) => {
           // if open was successful create a new datafeed
           saveNewDatafeed(job, true);
         })
@@ -379,11 +469,11 @@ module
     // on startDatafeedAfterSave flag
     function saveNewDatafeed(job, startDatafeedAfterSave) {
       mlJobService.saveNewDatafeed(job.datafeed_config, job.job_id)
-      .then(() => {
+      .then((resp) => {
 
         if (startDatafeedAfterSave) {
-          mlSingleMetricJobService.startDatafeed($scope.formConfig)
-          .then(() => {
+          mlMultiMetricJobService.startDatafeed($scope.formConfig)
+          .then((resp) => {
             $scope.jobState = JOB_STATE.RUNNING;
             refreshCounter = 0;
             ignoreModel = false;
@@ -404,15 +494,15 @@ module
 
   function loadCharts() {
     let forceStop = false;
-    // the percentage doesn't always reach 100, so periodically check the datafeed state
+    // the percentage doesn't always reach 100, so periodically check the datafeed status
     // to see if the datafeed has stopped
     const counterLimit = 20 - (refreshInterval / REFRESH_INTERVAL_MS);
     if (refreshCounter >=  counterLimit) {
       refreshCounter = 0;
-      mlSingleMetricJobService.checkDatafeedState($scope.formConfig)
-      .then((state) => {
-        if (state === 'stopped') {
-          console.log('Stopping poll because datafeed state is: ' + state);
+      mlMultiMetricJobService.checkDatafeedStatus($scope.formConfig)
+      .then((status) => {
+        if (status === 'stopped') {
+          console.log('Stopping poll because datafeed status is: ' + status);
           $scope.$broadcast('render-results');
           forceStop = true;
         }
@@ -424,8 +514,8 @@ module
 
     function run() {
       refreshCounter++;
-      reloadSwimlane()
-      .then(() => {
+      reloadDetectorSwimlane()
+      .then((resp) => {
         if (forceStop === false && $scope.chartData.percentComplete < 100) {
           // if state has been set to stopping (from the stop button), leave state as it is
           if ($scope.jobState === JOB_STATE.STOPPING) {
@@ -441,7 +531,7 @@ module
         if (ignoreModel) {
           jobCheck();
         } else {
-          reloadModelChart()
+          reloadJobSwimlaneData()
           .catch(() => {
             // on the 10th model load failure, set ignoreNodel to true to stop trying to load it.
             if (refreshCounter % 10 === 0) {
@@ -464,18 +554,21 @@ module
       // console.log('refreshInterval', refreshInterval);
       _.delay(loadCharts, refreshInterval);
     } else {
-      $scope.chartData.percentComplete = 100;
+      // $scope.chartData.percentComplete = 100;
+      _.each($scope.chartData.detectors, (chart) => {
+        chart.percentComplete = 100;
+      });
     }
     $scope.$broadcast('render-results');
   }
 
-  function reloadModelChart() {
-    return mlSingleMetricJobService.loadModelData($scope.formConfig);
+  function reloadJobSwimlaneData() {
+    return mlMultiMetricJobService.loadJobSwimlaneData($scope.formConfig);
   }
 
 
-  function reloadSwimlane() {
-    return mlSingleMetricJobService.loadSwimlaneData($scope.formConfig);
+  function reloadDetectorSwimlane() {
+    return mlMultiMetricJobService.loadDetectorSwimlaneData($scope.formConfig);
   }
 
   function adjustRefreshInterval(loadingDifference, currentInterval) {
@@ -496,7 +589,7 @@ module
   }
 
   $scope.setFullTimeRange = function () {
-    mlSingleMetricJobService.indexTimeRange($scope.indexPattern)
+    mlMultiMetricJobService.indexTimeRange($scope.indexPattern)
     .then((resp) => {
       timefilter.time.from = moment(resp.start.epoch).toISOString();
       timefilter.time.to = moment(resp.end.epoch).toISOString();
@@ -510,9 +603,9 @@ module
   };
 
   $scope.stopJob = function () {
-    // setting the state to STOPPING disables the stop button
+    // setting the status to STOPPING disables the stop button
     $scope.jobState = JOB_STATE.STOPPING;
-    mlSingleMetricJobService.stopDatafeed($scope.formConfig);
+    mlMultiMetricJobService.stopDatafeed($scope.formConfig);
   };
 
   $scope.viewResults = function (page) {
@@ -544,6 +637,8 @@ module
           } else {
             $window.open(path, '_blank');
           }
+        }).catch(function (resp) {
+          // msgs.error("Job results for "+job.job_id+" could not be opened");
         });
     }
   }
@@ -551,7 +646,9 @@ module
   courier.indexPatterns.get($scope.index).then((resp) => {
     $scope.indexPattern = resp;
     $scope.formConfig.timeField = resp.timeFieldName;
-    courier;
+    $scope.formConfig.indexPattern = $scope.indexPattern;
+    initAgg();
+    loadFields();
   });
 
   $scope.$listen(timefilter, 'fetch', $scope.loadVis);

@@ -13,9 +13,14 @@
  * strictly prohibited.
  */
 
-import 'plugins/ml/jobs/styles/main.less';
-import './components/jobs_list';
-import './components/new_job_advanced';
-import './components/new_job_single_metric';
-import './components/new_job_multi_metric';
-import './components/new_job_wizard';
+import './styles/main.less';
+import './wizard/wizard';
+import './create_job';
+import uiRoutes from 'ui/routes';
+uiRoutes
+.defaults(/new_job_multi_metric/, {
+  requireDefaultIndex: true
+})
+.when('/jobs/new_job_multi_metric', {
+  redirectTo: '/jobs/new_job_multi_metric/step/1'
+});

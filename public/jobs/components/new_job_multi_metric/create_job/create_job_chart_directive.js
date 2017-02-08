@@ -17,53 +17,36 @@
  * Chart showing model debug data, annotated with anomalies.
  */
 
-import _ from 'lodash';
 import $ from 'jquery';
 import d3 from 'd3';
 import angular from 'angular';
 import 'ui/timefilter';
 
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
-
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlSingleMetricJobChart', function () {
+module.directive('mlMultiMetricJobChart', function () {
 
   function link(scope, element) {
 
-    const svgWidth  = angular.element('.single-metric-job-container').width();
-    const lineChartHeight = 310;
-    const contextHeight = 0;
-    const swimlaneHeight = 30;
-    const margin = { top: 0, right: 0, bottom: 40, left: 50 };
-    const svgHeight = lineChartHeight + contextHeight + swimlaneHeight + margin.top + margin.bottom;
-    const vizWidth  = svgWidth  - margin.left - margin.right;
-    const chartLimits = {max: 0, min: 0};
+    let svgWidth = 0;
+    const lineChartHeight = (scope.isJob) ? 30 : 150;
+    const margin = { top: 0, right: 0, bottom: 30, left: 50 };
+    const svgHeight = lineChartHeight + margin.top + margin.bottom;
+    let vizWidth  = svgWidth  - margin.left - margin.right;
+    const chartLimits = { max: 0, min: 0 };
 
-    let lineChartXScale = d3.time.scale().range([0, vizWidth]);
-    let lineChartYScale = d3.scale.linear().range([lineChartHeight, 0]);
 
-    d3.svg.axis().scale(lineChartXScale).orient('bottom')
-      .innerTickSize(-lineChartHeight).outerTickSize(0).tickPadding(10);
-    d3.svg.axis().scale(lineChartYScale).orient('left')
-      .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
-
-    // TODO - do we want to use interpolate('basis') to smooth the connecting lines?
-    const lineChartValuesLine = d3.svg.line()
-      .x(d => lineChartXScale(d.date))
-      .y(d => lineChartYScale(d.value));
-    const lineChartBoundedArea = d3.svg.area()
-      .x (d => lineChartXScale(d.date) || 0)
-      .y0(d => lineChartYScale(Math.max(chartLimits.min, Math.min(chartLimits.max, d.upper))))
-      .y1(d => lineChartYScale(Math.min(chartLimits.max, Math.max(chartLimits.min, d.lower))));
+    let lineChartXScale = null;
+    let lineChartYScale = null;
 
     let lineChartGroup;
-    let modelChartGroup;
     let swimlaneGroup;
-    // let dotChartGroup;
+
+    let lineChartValuesLine = null;
 
     scope.$on('render', () => {
+      init();
       createSVGGroups();
       drawLineChart();
     });
@@ -75,6 +58,28 @@ module.directive('mlSingleMetricJobChart', function () {
     element.on('$destroy', () => {
       scope.$destroy();
     });
+
+    function init() {
+      const $el = angular.element('.multi-metric-job-container .card-front');
+      const offset = $el.hasClass('card') ? 50 : 0;
+      // const offset =
+      svgWidth = $el.width() - offset;
+      vizWidth  = svgWidth  - margin.left - margin.right;
+
+      lineChartXScale = d3.time.scale().range([0, vizWidth]);
+      lineChartYScale = d3.scale.linear().range([lineChartHeight, 0]);
+
+      d3.svg.axis().scale(lineChartXScale).orient('bottom')
+        .innerTickSize(-lineChartHeight).outerTickSize(0).tickPadding(10);
+      d3.svg.axis().scale(lineChartYScale).orient('left')
+        .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
+
+
+      lineChartValuesLine = d3.svg.line()
+      .x(d => lineChartXScale(d.date))
+      .y(d => lineChartYScale(d.value))
+      .defined(d => d.value !== null);
+    }
 
 
     function createSVGGroups() {
@@ -92,7 +97,7 @@ module.directive('mlSingleMetricJobChart', function () {
       if (chartElement.select('.progress-bar')[0][0] === null) {
         chartElement.append('div')
           .attr('class', 'progress')
-          .attr('style','width:' + (+vizWidth + 2) + 'px; margin-bottom: -' + (+lineChartHeight + 8) + 'px')
+          .attr('style','width:' + (+vizWidth + 2) + 'px; margin-bottom: -' + (+lineChartHeight - 12) + 'px')
           .append('div')
           .attr('class', 'progress-bar');
       }
@@ -105,22 +110,13 @@ module.directive('mlSingleMetricJobChart', function () {
         .attr('class', 'swimlane')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-      modelChartGroup = svg.append('g')
-        .attr('class', 'model-chart')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
       lineChartGroup = svg.append('g')
         .attr('class', 'line-chart')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-      // dotChartGroup = svg.append('g')
-      //   .attr('class', 'line-chart-markers')
-      //   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
     }
 
     function drawLineChart() {
       const data = scope.chartData.line;
-      const model = scope.chartData.model;
 
       lineChartXScale = lineChartXScale.domain(d3.extent(data, d => d.date));
 
@@ -154,8 +150,10 @@ module.directive('mlSingleMetricJobChart', function () {
         .style('stroke-width', 1);
 
 
-      drawLineChartAxes(xAxis, yAxis);
-      drawLineChartPaths(data, model);
+      if (!scope.isJob) {
+        drawLineChartAxes(xAxis, yAxis);
+        drawLineChartPaths(data);
+      }
     }
 
     function drawLineChartAxes(xAxis, yAxis) {
@@ -179,19 +177,8 @@ module.directive('mlSingleMetricJobChart', function () {
     }
 
     function drawResults() {
-      const model = scope.chartData.model;
-
-
-      drawModelPaths(model);
       drawSwimlane(vizWidth, lineChartHeight);
       updateProgressBar();
-    }
-
-    function drawModelPaths(model) {
-      modelChartGroup.selectAll('*').remove();
-      modelChartGroup.append('path')
-        .attr('class', 'area bounds')
-        .attr('d', lineChartBoundedArea(model));
     }
 
     function drawSwimlane(swlWidth, swlHeight) {
@@ -241,8 +228,7 @@ module.directive('mlSingleMetricJobChart', function () {
   return {
     scope: {
       chartData: '=',
-      swimlaneData: '=',
-      selectedJobIds: '='
+      isJob: '=',
     },
     link: link
   };

@@ -26,7 +26,7 @@ import 'plugins/kibana/visualize/styles/main.less';
 
 import uiRoutes from 'ui/routes';
 uiRoutes
-.when('/jobs/new_job_single_metric/step/1', {
+.when('/jobs/new_job_multi_metric/step/1', {
   template: require('./step_1.html'),
   resolve: {
     indexPatternIds: courier => courier.indexPatterns.getIds()
@@ -41,7 +41,7 @@ uiRoutes
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('MlNewJobSingleStep1', (
+module.controller('MlNewJobMultiStep1', (
   $scope,
   $route,
   // kbnUrl,
@@ -59,6 +59,6 @@ module.controller('MlNewJobSingleStep1', (
   // };
   $scope.makeUrl = (pattern) => {
     if (!pattern) return;
-    return '#/jobs/new_job_single_metric/create?index=' + encodeURIComponent(pattern);
+    return '#/jobs/new_job_multi_metric/create?index=' + encodeURIComponent(pattern);
   };
 });
