@@ -27,8 +27,6 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
       results: {}
     };
 
-    const test = {a:2, b:3};
-
     // Build the criteria to use in the bool filter part of the request.
     // Adds criteria for the time range plus any specified job IDs.
     const boolCriteria = [];

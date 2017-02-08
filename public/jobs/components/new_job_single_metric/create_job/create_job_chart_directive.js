@@ -17,13 +17,10 @@
  * Chart showing model debug data, annotated with anomalies.
  */
 
-import _ from 'lodash';
 import $ from 'jquery';
 import d3 from 'd3';
 import angular from 'angular';
 import 'ui/timefilter';
-
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');

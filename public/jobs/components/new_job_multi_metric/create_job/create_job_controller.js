@@ -378,7 +378,10 @@ module
     angular.element('.card-behind').remove();
 
     for (let i = 0; i < labels.length; i++) {
-      const $backCard = angular.element('<div class="card card-behind"><div class="card-title">' + splitField + ': ' + labels[i] + '</div></div>');
+      let el = '<div class="card card-behind"><div class="card-title">';
+      el += splitField + ': ' + labels[i] + '</div></div>';
+
+      const $backCard = angular.element(el);
       $backCard.css('width', w);
       $backCard.css('height', h);
       $backCard.css('display', 'auto');
@@ -445,7 +448,7 @@ module
       .then((job) => {
         // if save was successful, open the job
         mlJobService.openJob(job.job_id)
-        .then((resp) => {
+        .then(() => {
           // if open was successful create a new datafeed
           saveNewDatafeed(job, true);
         })
@@ -469,11 +472,11 @@ module
     // on startDatafeedAfterSave flag
     function saveNewDatafeed(job, startDatafeedAfterSave) {
       mlJobService.saveNewDatafeed(job.datafeed_config, job.job_id)
-      .then((resp) => {
+      .then(() => {
 
         if (startDatafeedAfterSave) {
           mlMultiMetricJobService.startDatafeed($scope.formConfig)
-          .then((resp) => {
+          .then(() => {
             $scope.jobState = JOB_STATE.RUNNING;
             refreshCounter = 0;
             ignoreModel = false;
@@ -515,7 +518,7 @@ module
     function run() {
       refreshCounter++;
       reloadDetectorSwimlane()
-      .then((resp) => {
+      .then(() => {
         if (forceStop === false && $scope.chartData.percentComplete < 100) {
           // if state has been set to stopping (from the stop button), leave state as it is
           if ($scope.jobState === JOB_STATE.STOPPING) {
@@ -637,7 +640,7 @@ module
           } else {
             $window.open(path, '_blank');
           }
-        }).catch(function (resp) {
+        }).catch(function () {
           // msgs.error("Job results for "+job.job_id+" could not be opened");
         });
     }
