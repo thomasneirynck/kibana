@@ -1,0 +1,25 @@
+<div class="ml-summary-swimlanes" ng-controller="MlSummarySwimlanesController">
+    
+  <div class="swimlane-controls" ng-show="hasSwimlaneData">
+    <label class="small">Interval:</label>
+    <select class="form-control" ng-model='vis.params.interval' ng-options='interval as interval.display for interval in vis.type.params.intervalOptions track by interval.display' ng-change='updateViewState()' class='ml-swimlane-select'>
+    </select>
+    <kbn-info
+      ng-show="vis.params.interval.scaled"
+      placement="right"
+      class="text-warning"
+      info="This interval creates {{ vis.params.interval.scale > 1 ? 'buckets that are too large' : 'too many buckets' }} to show in the selected time range, so it has been scaled to {{ vis.params.interval.description }}">
+    </kbn-info>
+  </div>
+    
+  <div class="swimlane-label" ng-show="hasSwimlaneData">Score by job</div>
+  <div style="display:flex;">
+    <ml-summary-swimlane mode="jobs" style="width: 100%; height: 200px;"></ml-summary-swimlane>
+  </div>
+   
+  <div class="swimlane-label" ng-show="hasSwimlaneData">Score by influencer type</div>
+  <div style="display:flex;">
+    <ml-summary-swimlane mode="influencerTypes" style="width: 100%; height: 200px;"></ml-summary-swimlane>
+  </div>
+    
+</div>

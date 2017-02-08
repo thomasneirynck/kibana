@@ -1,0 +1,21 @@
+<div class="ml-top-scores-table" ng-controller="MlTopScoresTableController" >
+    
+  
+  <div ng-repeat="item in metricsData" class="button-visual">
+    <div class="field-label">
+      <div class="field-value">{{item.fieldValue}}</div>
+    </div>
+    
+    <div class="btn btn-primary btn-xs score-label {{item.severity}}" tooltip-placement="left" tooltip-html-unsafe="{{item.tooltip}}" tooltip-append-to-body="true">
+      {{item.scoreText}}
+    </div>
+    
+    <button aria-label="Explore" ng-click="openExplorer(item)" type="button" class="btn btn-primary btn-xs">
+      <span class="sr-only">Explore</span>
+      <i aria-hidden="true"></i> Explore
+    </button> 
+
+  </div>
+  
+  
+</div>

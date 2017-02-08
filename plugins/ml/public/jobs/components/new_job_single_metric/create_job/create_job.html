@@ -1,0 +1,190 @@
+<kbn-top-nav name="dashboard" config="topNavMenu">
+  <div class="kibana-nav-info">
+    <span class="kibana-nav-info-title">
+      <span >Create a new job</span>
+    </span>
+  </div>
+</kbn-top-nav>
+<ml-new-job-single-metric>
+  <ml-message-bar></ml-message-bar>
+  <div ng-controller="MlCreateSingleMetricJob" class="single-metric-job-container">
+    <div class="row">
+      <div class="col-md-6"><h3>New job from {{index}}</h3></div>
+      <div class="col-md-6">
+        <div class="pull-right">
+          <span style="font-size:10px;" ng-show="formConfig.chartInterval !== undefined">Chart interval: {{formConfig.chartInterval.getInterval().expression}}</span>
+          <button
+            aria-label="Create Job"
+            ng-click="setFullTimeRange()"
+            type="button"
+            ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+            class="btn btn-xs">
+              Use full {{index}} data
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row form-controls">
+
+      <div class="form-group col-md-4">
+        <label>Aggregation</label><i ml-info-icon="new_job_bucketspan"></i>
+        <select
+          ng-model="formConfig.agg.type"
+          ng-options="agg as agg.title for agg in ui.aggTypeOptions"
+          ng-change="aggChange()"
+          ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+          class="form-control">
+        </select>
+      </div>
+
+      <div class="form-group col-md-4">
+        <label>Field</label><i ml-info-icon="new_job_bucketspan" ></i>
+        <select
+          ng-model="formConfig.field"
+          ng-options="field as field.displayName for field in ui.fields"
+          ng-change="fieldChange()"
+          ng-disabled="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+          class="form-control">
+        </select>
+      </div>
+
+      <div class="form-group col-md-4">
+        <label>Bucket span</label><i ml-info-icon="new_job_bucketspan" ></i>
+        <!-- <select
+          ng-model="formConfig.interval"
+          ng-options="interval as interval.title for interval in ui.intervals"
+          ng-change="intervalChange()"
+          class="form-control">
+        </select> -->
+        <input
+          ng-model="formConfig.bucketSpan"
+          required
+          placeholder={{formConfig-bucketSpan}}
+          ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+          ng-change="timeFieldChange()"
+          ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
+          class="form-control lowercase" />
+        <button class="btn-success navbar-btn-link btn-load-vis"
+          ng-click="loadVis()"
+          ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED" >
+          <i class="fa fa-play" ></i>
+        </button>
+        <div ng-hide="ui.bucketSpanValid" class="validation-error">Invalid interval format</div>
+      </div>
+    </div>
+
+    <div>
+      <ml-single-metric-job-chart chart-data="chartData"></ml-single-metric-job-chart>
+    </div>
+
+    <div ng-show="ui.showJobInput && (jobState === JOB_STATE.NOT_STARTED || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING)">
+      <div class="form-group">
+        <label>Name</label><i ml-info-icon="new_job_id" ></i>
+        <input
+          ng-model="formConfig.jobId"
+          required
+          placeholder="Job ID"
+          ng-change="changeJobIDCase()"
+          ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+          input-focus
+          class="form-control lowercase" />
+      </div>
+
+      <div class="form-group">
+        <label>Description</label><i ml-info-icon="new_job_id" ></i>
+        <input
+          ng-model="formConfig.description"
+          placeholder="Job description"
+          ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+          input-focus
+          class="form-control" />
+      </div>
+
+      <button
+        aria-label="Create Job"
+        ng-click="createJob()"
+        type="button"
+        ng-show="jobState === JOB_STATE.NOT_STARTED"
+        ng-disabled='ui.formValid === false || ui.dirty === true || formConfig.jobId === undefined || ui.bucketSpanValid === false'
+        class="btn btn-primary">
+          Create Job
+      </button>
+
+      <div class='job-state-info' ng-show="jobState === JOB_STATE.RUNNING">Analysis running <i class='fa fa-spinner fa-spin'></i></div>
+      <div class='job-state-info' ng-show="jobState === JOB_STATE.STOPPING">Analysis stopping <i class='fa fa-spinner fa-spin'></i></div>
+
+      <button
+        aria-label="Stop Job"
+        ng-click="stopJob()"
+        type="button"
+        ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
+        ng-disabled="jobState === JOB_STATE.STOPPING"
+        class="btn btn-primary btn-danger">
+          {{(jobState === JOB_STATE.STOPPING) ? 'Analysis stopping' : 'Stop analysis' }}
+      </button>
+
+      <button
+        aria-label="Reset"
+        ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
+        ng-click="viewResults('timeseriesexplorer')"
+        type="button"
+        class="btn btn-primary">
+          View Results
+      </button>
+
+    </div>
+    <div ng-show="jobState === JOB_STATE.FINISHED">
+      <h3>Job {{formConfig.jobId }} created</h3>
+
+      <button
+        aria-label="Reset"
+        ng-click="resetJob()"
+        type="button"
+        class="btn btn-primary">
+          Reset
+      </button>
+      <button
+        aria-label="Reset"
+        ng-click="viewResults('timeseriesexplorer')"
+        type="button"
+        class="btn btn-primary">
+          View Results
+      </button>
+
+      <!--
+      <div>Explore results:</div>
+      <div class="row resuts-buttons">
+        <div class="col-md-4">
+          <div class='results-button' ng-click="viewResults('timeseriesexplorer')">
+            <div>Time series view</div>
+            <img src="{{img1}}" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class='results-button' ng-click="viewResults('summaryview')">
+            <div>Summary View</div>
+            <img src="{{img2}}" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class='results-button' ng-click="viewResults('anomalyexplorer')">
+            <div>Explorer view</div>
+            <img src="{{img3}}" />
+          </div>
+        </div>
+      </div>
+      <button
+        aria-label="Reset"
+        ng-click="resetJob()"
+        type="button"
+        class="btn btn-primary">
+          Reset settings
+      </button>
+  -->
+
+
+
+    </div>
+  </div>
+</ml-new-job-single-metric>

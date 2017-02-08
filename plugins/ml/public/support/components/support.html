@@ -1,0 +1,35 @@
+<kbn-top-nav name="dashboard" config="topNavMenu">
+  <div class="kibana-nav-info">
+    <span ng-show="dash.id" class="kibana-nav-info-title">
+      <span ng-bind="::dash.title"></span>
+    </span>
+  </div>
+</kbn-top-nav>
+<ml-support>
+  <ml-message-bar ></ml-message-bar>
+  <div ng-controller="MlSupport" class="container">
+  	<h2>Support for Behavioral Analytics for the Elastic Stack</h2>
+  	<div class="support-section">
+	  	<div ng-show="(apiVersion!==undefined)">Ml Engine API version: {{apiVersion}}</div>
+	  	<div ng-show="(analyticsVersion!==undefined)">Ml analytics version: {{analyticsVersion}}</div>
+	  	<div ng-show="(kbnVersion!==undefined)">Kibana version: {{kbnVersion}}</div>
+	  	<div ng-show="(esVersion!==undefined)">Elasticsearch version: {{esVersion}}</div>
+  	</div>
+
+
+  	<div class="support-section">
+	  	<h4>Support Links</h4>
+  		<div><a href="http://www.prelert.com/docs/engine_api/2.0/" target="_blank">Online help <i class="fa fa-external-link"></i></a></div>
+  		<div><a href="mailto:support@prelert.com">Email Ml support <i class="fa fa-external-link"></i></a></div>
+  		<div><a href="https://ml.zendesk.com/hc/en-us/requests/new" target="_blank">Raise support ticket <i class="fa fa-external-link"></i></a></div>
+		</div>
+
+  	<div class="support-section">
+	  	<h4>Support Files</h4>
+			<p>If directed by a Ml Support Engineer to gather debug information for this product, click the button below to gather the system information and log files into a single archive and download to your local system.</p>
+			<p ng-show="supportBundleEnabled">Note this process may take up to a couple of minutes to complete.</p>
+	  	<div ng-show="supportBundleEnabled"><a ng-click="getSupportBundle()">Download support bundle <i class="fa fa-download"></i></a></div>
+	  	<div ng-hide="supportBundleEnabled">Downloading of the support bundle is not supported in Safari. Please use a different browser.</div>
+		</div>
+ 	</div>
+</ml-support>

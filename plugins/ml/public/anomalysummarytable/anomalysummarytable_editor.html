@@ -1,0 +1,14 @@
+<div class="form-group">
+  <label>
+    Severity threshold:
+  </label>
+  <select class="form-control" 
+          ng-model="vis.params.threshold" 
+          ng-options="threshold as threshold.display for threshold in vis.type.params.thresholdOptions track by threshold.display"></select>
+  <label>
+    Aggregation interval:
+  </label>
+  <select class="form-control" 
+          ng-model="vis.params.interval" 
+          ng-options="interval as interval.display for interval in vis.type.params.intervalOptions track by interval.display"></select>
+</div>
