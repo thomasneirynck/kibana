@@ -1,1 +1,2 @@
 plugins/**/__tests__/fixtures/**
+plugins/ml/**/bower_components/**

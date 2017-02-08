@@ -13,7 +13,7 @@
  * strictly prohibited.
  */
 
-import createProxy from '../../src/core_plugins/elasticsearch/lib/create_proxy';
+import createProxy from '../../../../../kibana/src/core_plugins/elasticsearch/lib/create_proxy';
 import initializationChecks from './lib/initialization_checks';
 import { resolve } from 'path';
 
