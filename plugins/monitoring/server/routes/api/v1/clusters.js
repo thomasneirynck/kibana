@@ -99,13 +99,43 @@ export default function clustersRoutes(server) {
   }
 
   /*
-   * Monitoring Home, Route Init
+   * Monitoring Home
+   * Route Init (for checking license and compatibility for multi-cluster monitoring
    */
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters',
     config: {
       validate: {
+        params: Joi.object({
+          clusterUuid: Joi.string() // optional
+        }),
+        payload: Joi.object({
+          timeRange: Joi.object({
+            min: Joi.date().required(),
+            max: Joi.date().required()
+          }).required()
+        })
+      }
+    },
+    handler: (req, reply) => {
+      return getClustersFromRequest(req)
+      .then(reply)
+      .catch(err => reply(handleError(err, req)));
+    }
+  });
+
+  /*
+   * Cluster Overview
+   */
+  server.route({
+    method: 'POST',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}',
+    config: {
+      validate: {
+        params: Joi.object({
+          clusterUuid: Joi.string().required()
+        }),
         payload: Joi.object({
           timeRange: Joi.object({
             min: Joi.date().required(),

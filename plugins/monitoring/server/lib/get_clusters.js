@@ -11,6 +11,10 @@ export default function getClusters(req, indices) {
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const metric = ElasticsearchMetric.getMetricFields();
+  const filters = [];
+  if (req.params.clusterUuid) {
+    filters.push({ term: { 'cluster_uuid': req.params.clusterUuid } });
+  }
   const params = {
     index: indices,
     type: 'cluster_stats',
@@ -22,7 +26,8 @@ export default function getClusters(req, indices) {
         start,
         end,
         uuid: null,
-        metric
+        metric,
+        filters
       }),
       aggs: {
         cluster_uuids: {

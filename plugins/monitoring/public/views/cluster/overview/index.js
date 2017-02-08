@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { find } from 'lodash';
 import uiRoutes from 'ui/routes';
 import uiModules from 'ui/modules';
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
@@ -7,10 +7,8 @@ import template from './index.html';
 uiRoutes.when('/overview', {
   template,
   resolve: {
-    // Data for overview for single cluster simply uses the set of clusters
-    // returned from routeInit, and finds the cluster with the current UUID in
-    // globalState.
     clusters: function (Private) {
+      // checks license info of all monitored clusters for multi-cluster monitoring usage and capability
       const routeInit = Private(routeInitProvider);
       return routeInit();
     }
@@ -22,14 +20,13 @@ uiModule.controller('overview', ($scope, $route, monitoringClusters, timefilter,
   // This will show the timefilter
   timefilter.enabled = true;
 
-  $scope.clusters = $route.current.locals.clusters;
-  $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
+  $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
   title($scope.cluster, 'Overview');
 
   $executor.register({
-    execute: () => monitoringClusters(),
-    handleResponse(clusters) {
-      $scope.cluster = _.find(clusters, { cluster_uuid: globalState.cluster_uuid });
+    execute: () => monitoringClusters(globalState.cluster_uuid),
+    handleResponse(cluster) {
+      $scope.cluster = cluster;
     }
   });
 
