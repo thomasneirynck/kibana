@@ -1,7 +1,7 @@
 /*
  * Logstash Node
  */
-import _ from 'lodash';
+import { find } from 'lodash';
 import uiRoutes from'ui/routes';
 import uiModules from 'ui/modules';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
@@ -62,22 +62,22 @@ uiRoutes.when('/logstash/node/:uuid', {
 });
 
 const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-uiModule.controller('logstashNode', ($route, globalState, title, Private, $executor, $http, timefilter, $scope,
-showCgroupMetricsLogstash) => {
+uiModule.controller('logstashNode', (
+  $route, globalState, title, Private, $executor, $http, timefilter, $scope, showCgroupMetricsLogstash
+) => {
   timefilter.enabled = true;
 
-  function setClusters(clusters) {
-    $scope.clusters = clusters;
-    $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
-  }
-  setClusters($route.current.locals.clusters);
+  $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
   $scope.pageData = $route.current.locals.pageData;
+
   title($scope.cluster, `Logstash - ${$scope.pageData.nodeSummary.name}`);
 
   $executor.register({
     execute: () => getPageData(timefilter, globalState, $http, $route, Private, showCgroupMetricsLogstash),
     handleResponse: (response) => $scope.pageData = response
   });
+
   $executor.start();
+
   $scope.$on('$destroy', $executor.destroy);
 });

@@ -1,7 +1,7 @@
 /*
  * Logstash Node Advanced View
  */
-import _ from 'lodash';
+import { find } from 'lodash';
 import uiRoutes from'ui/routes';
 import uiModules from 'ui/modules';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
@@ -63,18 +63,17 @@ const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
 uiModule.controller('logstashNodeAdvanced', ($route, globalState, title, Private, $executor, $http, timefilter, $scope) => {
   timefilter.enabled = true;
 
-  function setClusters(clusters) {
-    $scope.clusters = clusters;
-    $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
-  }
-  setClusters($route.current.locals.clusters);
+  $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
   $scope.pageData = $route.current.locals.pageData;
+
   title($scope.cluster, `Logstash - ${$scope.pageData.nodeSummary.name} - Advanced`);
 
   $executor.register({
     execute: () => getPageData(timefilter, globalState, $http, $route, Private),
     handleResponse: (response) => $scope.pageData = response
   });
+
   $executor.start();
+
   $scope.$on('$destroy', $executor.destroy);
 });

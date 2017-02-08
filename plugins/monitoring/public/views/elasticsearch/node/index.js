@@ -1,7 +1,7 @@
 /**
  * Controller for Node Detail
  */
-import _ from 'lodash';
+import { find, partial } from 'lodash';
 import uiRoutes from 'ui/routes';
 import uiModules from 'ui/modules';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
@@ -66,31 +66,24 @@ uiRoutes.when('/elasticsearch/nodes/:node', {
 
 const uiModule = uiModules.get('monitoring', [ 'plugins/monitoring/directives' ]);
 uiModule.controller('esNode', (
-  timefilter, $route, globalState, title, Private, $executor, $http, monitoringClusters, $scope, features, showCgroupMetricsElasticsearch
+  timefilter, $route, globalState, title, Private, $executor, $http, $scope, features, showCgroupMetricsElasticsearch
 ) => {
-
   timefilter.enabled = true;
 
-  function setClusters(clusters) {
-    $scope.clusters = clusters;
-    $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
-  }
+  $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
+  $scope.pageData = $route.current.locals.pageData;
+
+  title($scope.cluster, `Elasticsearch - Nodes - ${$scope.pageData.nodeSummary.name} - Overview`);
 
   function setPageIconLabel(pageData) {
     $scope.iconClass = pageData.nodeSummary.nodeTypeClass;
     $scope.iconLabel = pageData.nodeSummary.nodeTypeLabel;
   }
-
-  setClusters($route.current.locals.clusters);
-  $scope.pageData = $route.current.locals.pageData;
-
-  title($scope.cluster, `Elasticsearch - Nodes - ${$scope.pageData.nodeSummary.name} - Overview`);
   setPageIconLabel($scope.pageData);
 
-  const callPageData = _.partial(
+  const callPageData = partial(
     getPageData, timefilter, globalState, $route, $http, Private, features, showCgroupMetricsElasticsearch
   );
-
   // show/hide system indices in shard allocation view
   $scope.showSystemIndices = features.isEnabled('showSystemIndices', false);
   $scope.toggleShowSystemIndices = (isChecked) => {
@@ -109,14 +102,7 @@ uiModule.controller('esNode', (
     }
   });
 
-  $executor.register({
-    execute: () => monitoringClusters(),
-    handleResponse: setClusters
-  });
-
-  // Start the executor
   $executor.start();
 
-  // Destory the executor
   $scope.$on('$destroy', $executor.destroy);
 });

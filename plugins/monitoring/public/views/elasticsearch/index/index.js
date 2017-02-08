@@ -1,7 +1,7 @@
 /**
  * Controller for single index detail
  */
-import _ from 'lodash';
+import { find } from 'lodash';
 import uiRoutes from 'ui/routes';
 import uiModules from 'ui/modules';
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
@@ -60,19 +60,13 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
 }
 
 const uiModule = uiModules.get('monitoring', []);
-uiModule.controller('esIndex', (
-  timefilter, $route, title, Private, globalState, $executor, $http, monitoringClusters, $scope
-) => {
+uiModule.controller('esIndex', (timefilter, $route, title, Private, globalState, $executor, $http, $scope) => {
   timefilter.enabled = true;
 
-  function setClusters(clusters) {
-    $scope.clusters = clusters;
-    $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
-  }
-  setClusters($route.current.locals.clusters);
-
+  $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
   $scope.pageData = $route.current.locals.pageData;
   $scope.indexName = $route.current.params.index;
+
   title($scope.cluster, `Elasticsearch - Indices - ${$scope.indexName} - Overview`);
 
   $executor.register({
@@ -80,15 +74,7 @@ uiModule.controller('esIndex', (
     handleResponse: (response) => $scope.pageData = response
   });
 
-  $executor.register({
-    execute: () => monitoringClusters(),
-    handleResponse: setClusters
-  });
-
-  // Start the executor
   $executor.start();
 
-  // Destory the executor
   $scope.$on('$destroy', $executor.destroy);
-
 });

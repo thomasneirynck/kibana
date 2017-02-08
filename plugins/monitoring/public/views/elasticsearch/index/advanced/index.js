@@ -1,7 +1,7 @@
 /**
  * Controller for Advanced Index Detail
  */
-import _ from 'lodash';
+import { find } from 'lodash';
 import uiRoutes from 'ui/routes';
 import uiModules from 'ui/modules';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
@@ -119,19 +119,13 @@ uiRoutes.when('/elasticsearch/indices/:index/advanced', {
 });
 
 const uiModule = uiModules.get('monitoring', []);
-uiModule.controller('esIndexAdvanced', (
-  timefilter, $route, title, Private, globalState, $executor, $http, monitoringClusters, $scope
-) => {
+uiModule.controller('esIndexAdvanced', (timefilter, $route, title, Private, globalState, $executor, $http, $scope) => {
   timefilter.enabled = true;
 
-  function setClusters(clusters) {
-    $scope.clusters = clusters;
-    $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
-  }
-  setClusters($route.current.locals.clusters);
-
-  $scope.pageData = $route.current.locals.pageData;
+  $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
   $scope.indexName = $route.current.params.index;
+  $scope.pageData = $route.current.locals.pageData;
+
   title($scope.cluster, `Elasticsearch - Indices - ${$scope.indexName} - Advanced`);
 
   $executor.register({
@@ -139,15 +133,7 @@ uiModule.controller('esIndexAdvanced', (
     handleResponse: (response) => $scope.pageData = response
   });
 
-  $executor.register({
-    execute: () => monitoringClusters(),
-    handleResponse: setClusters
-  });
-
-  // Start the executor
   $executor.start();
 
-  // Destory the executor
   $scope.$on('$destroy', $executor.destroy);
-
 });

@@ -1,7 +1,7 @@
 /**
  * Controller for Index Listing
  */
-import _ from 'lodash';
+import { find, partial } from 'lodash';
 import uiRoutes from 'ui/routes';
 import uiModules from 'ui/modules';
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
@@ -45,21 +45,13 @@ uiRoutes.when('/elasticsearch/indices', {
 });
 
 const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-uiModule.controller('indices',
-($route, globalState, timefilter, $http, title, Private, $executor, features, monitoringClusters, $scope) => {
-
+uiModule.controller('indices', ($route, globalState, timefilter, $http, title, Private, $executor, features, $scope) => {
   timefilter.enabled = true;
 
-  function setClusters(clusters) {
-    $scope.clusters = clusters;
-    $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
-  }
-  setClusters($route.current.locals.clusters);
-  title($scope.cluster, 'Elasticsearch - Indices');
+  $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
   $scope.pageData = $route.current.locals.pageData;
 
-  const callPageData = _.partial(getPageData, timefilter, globalState, $http, Private, features);
-
+  const callPageData = partial(getPageData, timefilter, globalState, $http, Private, features);
   // Control whether system indices shown in the index listing
   // shown by default, and setting is stored in localStorage
   $scope.showSystemIndices = features.isEnabled('showSystemIndices', false);
@@ -72,20 +64,14 @@ uiModule.controller('indices',
     callPageData().then((pageData) => $scope.pageData = pageData);
   };
 
+  title($scope.cluster, 'Elasticsearch - Indices');
+
   $executor.register({
     execute: () => callPageData(),
     handleResponse: (pageData) => $scope.pageData = pageData
   });
 
-  $executor.register({
-    execute: () => monitoringClusters(),
-    handleResponse: setClusters
-  });
-
-  // Start the executor
   $executor.start();
 
-  // Destory the executor
   $scope.$on('$destroy', $executor.destroy);
-
 });

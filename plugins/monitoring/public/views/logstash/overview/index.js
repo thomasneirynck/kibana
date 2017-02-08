@@ -44,12 +44,9 @@ const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
 uiModule.controller('logstashOverview', ($route, globalState, title, Private, $executor, $http, timefilter, $scope) => {
   timefilter.enabled = true;
 
-  function setClusters(clusters) {
-    $scope.clusters = clusters;
-    $scope.cluster = find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
-  }
-  setClusters($route.current.locals.clusters);
+  $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
   $scope.pageData = $route.current.locals.pageData;
+
   title($scope.cluster, 'Logstash');
 
   $executor.register({

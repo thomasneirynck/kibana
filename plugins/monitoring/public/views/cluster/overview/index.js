@@ -17,10 +17,10 @@ uiRoutes.when('/overview', {
 
 const uiModule = uiModules.get('monitoring', ['monitoring/directives']);
 uiModule.controller('overview', ($scope, $route, monitoringClusters, timefilter, title, globalState, $executor) => {
-  // This will show the timefilter
   timefilter.enabled = true;
 
   $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
+
   title($scope.cluster, 'Overview');
 
   $executor.register({
@@ -30,9 +30,7 @@ uiModule.controller('overview', ($scope, $route, monitoringClusters, timefilter,
     }
   });
 
-  // Start the executor
   $executor.start();
 
-  // Destory the executor
   $scope.$on('$destroy', $executor.destroy);
 });

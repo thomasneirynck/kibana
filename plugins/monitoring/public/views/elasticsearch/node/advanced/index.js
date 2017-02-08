@@ -1,7 +1,7 @@
 /**
  * Controller for Advanced Node Detail
  */
-import _ from 'lodash';
+import { find } from 'lodash';
 import uiRoutes from 'ui/routes';
 import uiModules from 'ui/modules';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
@@ -145,23 +145,18 @@ uiRoutes.when('/elasticsearch/nodes/:node/advanced', {
 });
 
 const uiModule = uiModules.get('monitoring', [ 'plugins/monitoring/directives' ]);
-uiModule.controller('esNodeAdvanced', (timefilter, $route, globalState, title, Private, $executor, $http, monitoringClusters, $scope) => {
+uiModule.controller('esNodeAdvanced', (timefilter, $route, globalState, title, Private, $executor, $http, $scope) => {
   timefilter.enabled = true;
 
-  function setClusters(clusters) {
-    $scope.clusters = clusters;
-    $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
-  }
+  $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
+  $scope.pageData = $route.current.locals.pageData;
+
+  title($scope.cluster, `Elasticsearch - Nodes - ${$scope.pageData.nodeSummary.name} - Advanced`);
 
   function setPageIconLabel(pageData) {
     $scope.iconClass = pageData.nodeSummary.nodeTypeClass;
     $scope.iconLabel = pageData.nodeSummary.nodeTypeLabel;
   }
-
-  setClusters($route.current.locals.clusters);
-  $scope.pageData = $route.current.locals.pageData;
-
-  title($scope.cluster, `Elasticsearch - Nodes - ${$scope.pageData.nodeSummary.name} - Advanced`);
   setPageIconLabel($scope.pageData);
 
   $executor.register({
@@ -172,14 +167,7 @@ uiModule.controller('esNodeAdvanced', (timefilter, $route, globalState, title, P
     }
   });
 
-  $executor.register({
-    execute: () => monitoringClusters(),
-    handleResponse: setClusters
-  });
-
-  // Start the executor
   $executor.start();
 
-  // Destory the executor
   $scope.$on('$destroy', $executor.destroy);
 });
