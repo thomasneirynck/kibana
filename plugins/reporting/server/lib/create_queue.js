@@ -7,6 +7,7 @@ const dateSeparator = '.';
 
 function createQueueFn(server) {
   const queueConfig = server.config().get('xpack.reporting.queue');
+  const index = server.config().get('xpack.reporting.index');
   const createWorkers = createWorkersFactory(server);
   const { getClient } = server.plugins.elasticsearch.getCluster('admin');
 
@@ -18,7 +19,7 @@ function createQueueFn(server) {
     client: getClient()
   };
 
-  const queue = new Esqueue(constants.QUEUE_INDEX, queueOptions);
+  const queue = new Esqueue(index, queueOptions);
 
   createWorkers(queue);
 

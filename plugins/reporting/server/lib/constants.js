@@ -1,5 +1,4 @@
 export const constants = {
-  QUEUE_INDEX: '.reporting',
   QUEUE_DOCTYPE: 'esqueue',
 
   JOBTYPES: {

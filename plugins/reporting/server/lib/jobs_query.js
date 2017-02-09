@@ -8,6 +8,7 @@ const defaultSize = 10;
 
 function jobsQueryFn(server) {
   const getUser = getUserFactory(server);
+  const index = server.config().get('xpack.reporting.index');
   const { callWithRequest, errors:esErrors } = server.plugins.elasticsearch.getCluster('admin');
 
   function execQuery(type, body, request) {
@@ -24,7 +25,7 @@ function jobsQueryFn(server) {
     };
 
     const query = {
-      index: `${constants.QUEUE_INDEX}-*`,
+      index: `${index}-*`,
       type: constants.QUEUE_DOCTYPE,
       body: Object.assign(defaultBody[type] || {}, body)
     };

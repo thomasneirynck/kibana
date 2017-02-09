@@ -52,7 +52,8 @@ export function reporting(kibana) {
           settleTime: Joi.number().integer().default(1000),
           concurrency: Joi.number().integer().default(appConfig.concurrency),
         }).default(),
-        encryptionKey: Joi.string()
+        encryptionKey: Joi.string(),
+        index: Joi.string().default('.reporting')
       }).default();
     },
 
