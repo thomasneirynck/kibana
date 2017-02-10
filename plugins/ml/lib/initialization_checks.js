@@ -333,7 +333,7 @@ module.exports = function (plugin, server) {
     }).then((response) => {
       if (response === true) {
         // Ml dashboard Objects are created and ready.
-        plugin.status.green('Ml dashboard objects exist');
+        plugin.status.green('Ready');
         stopChecking();
       } else {
         try {
