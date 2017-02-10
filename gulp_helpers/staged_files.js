@@ -2,7 +2,7 @@ const path = require('path');
 const simpleGit = require('simple-git');
 
 exports.getFiles = function filesToCommit(filePath) {
-  const gitPath = path.resolve(__dirname, '..', '..');
+  const gitPath = path.resolve(__dirname, '..');
   const relativePath = path.relative(gitPath, filePath);
   const fileMatch = new RegExp(`^${relativePath}`);
 
