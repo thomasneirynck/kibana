@@ -1,12 +1,4 @@
 import org.apache.tools.ant.taskdefs.condition.Os
-import org.elasticsearch.gradle.LoggedExec
-import org.elasticsearch.gradle.VersionProperties
-
-String enabledStr = properties.get('xpack.kibana.build', 'true')
-if (['true', 'false'].contains(enabledStr) == false) {
-  throw new GradleException("xpack.kibana.build must be true or false, got ${enabledStr}")
-}
-boolean kibanaEnabled = enabledStr == 'true'
 
 task clean(type: Delete) {
   group = 'Build'
@@ -15,8 +7,7 @@ task clean(type: Delete) {
   delete 'node_modules'
 }
 
-task npmInstall(type: LoggedExec) {
-  enabled = kibanaEnabled
+task npmInstall(type: Exec) {
   if (Os.isFamily(Os.FAMILY_WINDOWS)) {
     commandLine 'cmd', '/C', 'npm', 'install'
   } else {
@@ -24,8 +15,7 @@ task npmInstall(type: LoggedExec) {
   }
 }
 
-task test(type: LoggedExec, dependsOn: npmInstall) {
-  enabled = kibanaEnabled
+task test(type: Exec, dependsOn: npmInstall) {
   group = 'Verification'
   description = 'Run npm tests'
   if (Os.isFamily(Os.FAMILY_WINDOWS)) {
@@ -40,8 +30,7 @@ task check(dependsOn: test) {
   description = 'Run all verification tasks'
 }
 
-task npmBuild(type: LoggedExec, dependsOn: npmInstall) {
-  enabled = kibanaEnabled
+task npmBuild(type: Exec, dependsOn: npmInstall) {
   if (Os.isFamily(Os.FAMILY_WINDOWS)) {
     commandLine 'cmd', '/C', 'npm', 'run', 'build'
   } else {
@@ -53,7 +42,6 @@ task npmBuild(type: LoggedExec, dependsOn: npmInstall) {
 }
 
 task bundlePlugin(type: Zip, dependsOn: npmBuild) {
-  enabled = kibanaEnabled
   from 'build/plugin'
   destinationDir file('build/distributions')
   baseName = 'x-pack'
