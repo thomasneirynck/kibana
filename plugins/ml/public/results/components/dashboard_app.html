@@ -54,7 +54,7 @@
           placeholder="Filter..."
           aria-label="Filter input"
           class="form-control"
-          ng-model="state.query"
+          ng-model="model.query"
           input-focus
           kbn-typeahead-input
           parse-query>
@@ -72,15 +72,10 @@
 
 <filter-bar state="state"></filter-bar>
 
-<div ng-show="!state.panels.length" class="text-center start-screen">
-  <h2>Ready to get started?</h2>
-  <p>Click the <a class="btn btn-xs navbtn-inverse" ng-click="configTemplate.open('pickVis'); toggleAddVisualization = !toggleAddVisualization" aria-label="Add visualization"><i aria-hidden="true" class="fa fa-plus-circle"></i></a> button in the menu bar above to add a visualization to the dashboard. <br/>If you haven't setup a visualization yet visit the <a href="#/visualize" title="Visualize">"Visualize"</a> tab to create your first visualization.</p>
-</div>
-
 <dashboard-grid
-  panels="state.panels"
-  get-vis-click-handler="filterBarClickHandler(state)"
-  get-vis-brush-handler="brushEvent(state)"
+  panels="panels"
+  get-vis-click-handler="getFilterBarClickHandler"
+  get-vis-brush-handler="getBrushEvent"
   save-state="saveState"
   toggle-expand="toggleExpandPanel"
   create-child-ui-state="createChildUiState"
