@@ -210,8 +210,7 @@ module.service('mlSingleMetricJobService', function (
     job.description = formConfig.description;
 
     job.model_debug_config =  {
-      bounds_percentile: 95.0,
-      write_to : 'data_store'
+      bounds_percentile: 95.0
     };
 
     if (dtr.function === 'count') {
