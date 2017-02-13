@@ -1,1 +1,5 @@
-{    "author": {      "name": "Elasticsearch",      "company": "Elasticsearch BV"    },    "scripts": {      "test": "gulp test"    },    "name": "ml",    "version": "6.0.0-alpha1",    "repository": {      "type": "git",      "url": "http://github.com/elastic/x-pack.git"    }  }
+{
+  "name": "ml",
+  "version": "6.0.0-alpha1",
+  "description": "Machine Learning"
+}
