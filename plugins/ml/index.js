@@ -32,7 +32,7 @@ module.exports = function (kibana) {
       app: {
         title: 'Machine Learning',
         description: 'Elastic behavioral analytics for machine data',
-        icon: 'plugins/ml/ml-white.png',
+        icon: 'plugins/ml/ml.svg',
         main: 'plugins/ml/app',
         uses: [
           'visTypes',
