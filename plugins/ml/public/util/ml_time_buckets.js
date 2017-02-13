@@ -20,6 +20,8 @@
 
 import _ from 'lodash';
 import moment from 'moment';
+import parseInterval from 'plugins/ml/util/parse_interval';
+
 import TimeBucketsCalcAutoIntervalProvider from 'plugins/ml/util/ml_calc_auto_interval';
 import TimeBucketsCalcEsIntervalProvider from 'ui/time_buckets/calc_es_interval';
 
@@ -44,6 +46,36 @@ export default function IntervalHelperProvider(Private, timefilter, config) {
 
   TimeBuckets.prototype.setMaxBars = function (mb) {
     this.maxBars = mb;
+  };
+
+  TimeBuckets.prototype.setInterval = function (input) {
+    let interval = input;
+
+    // selection object -> val
+    if (_.isObject(input)) {
+      interval = input.val;
+    }
+
+    if (!interval || interval === 'auto') {
+      this._i = 'auto';
+      return;
+    }
+
+    if (_.isString(interval)) {
+      input = interval;
+      interval = parseInterval(interval);
+      if (+interval === 0) {
+        interval = null;
+      }
+    }
+
+    // if the value wasn't converted to a duration, and isn't
+    // already a duration, we have a problem
+    if (!moment.isDuration(interval)) {
+      throw new TypeError('"' + input + '" is not a valid interval.');
+    }
+
+    this._i = interval;
   };
 
   TimeBuckets.prototype.getInterval = function () {
