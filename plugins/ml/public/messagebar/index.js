@@ -60,7 +60,7 @@ module.service('mlMessageBarService', function () {
           txt = respObj.error.reason;
         }
       } catch(e) {
-        txt = resp.response;
+        txt = resp.message;
       }
     }
     return txt;

@@ -13,9 +13,13 @@
  * strictly prohibited.
  */
 
-import createProxy from '../../../kibana/src/core_plugins/elasticsearch/lib/create_proxy';
 import initializationChecks from './lib/initialization_checks';
 import { resolve } from 'path';
+import Boom from 'boom';
+import checkLicense from './server/lib/check_license';
+import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
+const jobRoutes = require('./server/routes/anomaly_detectors');
+const dataFeedRoutes = require('./server/routes/datafeeds');
 
 module.exports = function (kibana) {
 
@@ -65,9 +69,31 @@ module.exports = function (kibana) {
 
 
     init: function (server) {
-      createProxy(server, 'PUT', '/_xpack/ml/{paths*}');
-      createProxy(server, 'POST', '/_xpack/ml/{paths*}');
-      createProxy(server, 'DELETE', '/_xpack/ml/{paths*}');
+      const thisPlugin = this;
+      const xpackMainPlugin = server.plugins.xpack_main;
+      mirrorPluginStatus(xpackMainPlugin, thisPlugin);
+      xpackMainPlugin.status.once('green', () => {
+        // Register a function that is called whenever the xpack info changes,
+        // to re-compute the license check results for this plugin
+        xpackMainPlugin.info.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
+      });
+
+      // Add server routes and initalize the plugin here
+      const commonRouteConfig = {
+        pre: [
+          function forbidApiAccess(request, reply) {
+            const licenseCheckResults = xpackMainPlugin.info.feature(thisPlugin.id).getLicenseCheckResults();
+            if (licenseCheckResults.showAppLink && licenseCheckResults.enableAppLink) {
+              reply();
+            } else {
+              reply(Boom.forbidden(licenseCheckResults.message));
+            }
+          }
+        ]
+      };
+
+      jobRoutes(server, commonRouteConfig);
+      dataFeedRoutes(server, commonRouteConfig);
 
       initializationChecks(this, server).start();
     }
