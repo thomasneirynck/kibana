@@ -147,6 +147,7 @@ describe('tilemaptest - Marker Tests', function () {
         const sample = _.sample(mapData.features);
 
         markerLayer = createMarker(MarkerClass, null, Function.prototype);//create marker with tooltip
+        markerLayer._attr.addTooltip = true;
         const stub = sinon.stub(markerLayer, '_tooltipFormatter', function (val) {
           return;
         });
