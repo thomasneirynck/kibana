@@ -218,10 +218,9 @@ export default function MarkerFactory() {
      * @return undefined
      */
     _showTooltip(feature, latLng) {
-      if (!this.map) {
-        return;
-      }
-      if (!this._tooltipFormatter) {
+      const hasMap = !!this.map;
+      const hasTooltip = !!this._attr.addTooltip;
+      if (!hasMap || !hasTooltip) {
         return;
       }
       const lat = _.get(feature, 'geometry.coordinates.1');
