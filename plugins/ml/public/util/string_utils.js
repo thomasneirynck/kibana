@@ -20,7 +20,7 @@ import 'plugins/ml/lib/bower_components/moment-jdateformatparser/moment-jdatefor
 
 
 const _ = require('lodash');
-const moment = require('moment-timezone');
+const moment = require('moment');
 
 // Replaces all instances of dollar delimited tokens in the specified String
 // with corresponding values from the supplied object, optionally

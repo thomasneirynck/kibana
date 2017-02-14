@@ -20,7 +20,7 @@ import 'plugins/kibana/visualize/styles/main.less';
 import AggTypesIndexProvider from 'ui/agg_types/index';
 
 import dateMath from '@elastic/datemath';
-import moment from 'moment-timezone';
+import moment from 'moment';
 import chrome from 'ui/chrome';
 import angular from 'angular';
 

@@ -15,7 +15,7 @@
 
 import _ from 'lodash';
 import $ from 'jquery';
-import moment from 'moment-timezone';
+import moment from 'moment';
 import chrome from 'ui/chrome';
 import uiRoutes from 'ui/routes';
 import angular from 'angular';

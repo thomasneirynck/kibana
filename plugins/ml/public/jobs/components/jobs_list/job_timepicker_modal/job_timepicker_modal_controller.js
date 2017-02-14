@@ -13,7 +13,7 @@
  * strictly prohibited.
  */
 
-import moment from 'moment-timezone';
+import moment from 'moment';
 import angular from 'angular';
 
 import uiModules from 'ui/modules';
