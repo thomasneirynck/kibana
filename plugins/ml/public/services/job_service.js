@@ -73,11 +73,10 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   };
 
   this.loadJobs = function () {
+    const deferred = $q.defer();
     jobs = [];
 
-    // listJobs returns the $http request promise chain which we pass straight through
-    // adding our own .then function to create the jobs list and broadcast the fact we've done so
-    return ml.jobs()
+    ml.jobs()
       .then((resp) => {
         console.log('loadJobs query response:', resp);
 
@@ -113,8 +112,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                 }
               }
               this.jobs = jobs;
-              // broadcast that the jobs list has been updated
-              $rootScope.$broadcast('jobsUpdated', this.jobs);
+              deferred.resolve(this.jobs);
             });
           })
           .catch((err) => {
@@ -128,12 +126,14 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('MlJobsList error getting list of jobs:', err);
       msgs.error('Jobs list could not be retrieved');
       msgs.error('', err);
-      return jobs;
+      deferred.reject(this.jobs);
     }
+    return deferred.promise;
   };
 
   this.refreshJob = function (jobId) {
-    return ml.jobs({jobId})
+    const deferred = $q.defer();
+    ml.jobs({jobId})
       .then((resp) => {
         console.log('refreshJob query response:', resp);
         const newJob = {};
@@ -171,8 +171,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                   }
                 }
                 this.jobs = jobs;
-                // broadcast that the jobs list has been updated
-                $rootScope.$broadcast('jobsUpdated', this.jobs);
+                deferred.resolve(this.jobs);
               });
             })
             .catch((err) => {
@@ -187,8 +186,9 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('MlJobsList error getting list of jobs:', err);
       msgs.error('Jobs list could not be retrieved');
       msgs.error('', err);
-      return jobs;
+      deferred.reject(this.jobs);
     }
+    return deferred.promise;
   };
 
   this.loadDatafeeds = function (datafeedId) {
@@ -219,17 +219,16 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           })
           .catch((err) => {
             error(err);
-            deferred.reject(err);
           });
       }).catch((err) => {
         error(err);
-        deferred.reject(err);
       });
 
     function error(err) {
       console.log('loadDatafeeds error getting list of datafeeds:', err);
       msgs.error('datafeeds list could not be retrieved');
       msgs.error('', err);
+      deferred.reject(err);
     }
     return deferred.promise;
   };
@@ -272,90 +271,103 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
             deferred.resolve(this.jobs);
           })
           .catch((err) => {
-            console.log('updateSingleJobCounts error getting datafeed details:', err);
-            if (err.message) {
-              msgs.error(err.message);
-            }
-            deferred.reject(err);
+            error(err);
           });
         } else {
           deferred.resolve(this.jobs);
         }
 
       }).catch((err) => {
-        console.log('updateSingleJobCounts error getting job details:', err);
-        msgs.error('Job details could not be retrieved for ' + jobId);
-        if (err.message) {
-          msgs.error(err.message);
-        }
-        deferred.reject(err);
+        error(err);
       });
+
+    function error(err) {
+      console.log('updateSingleJobCounts error getting job details:', err);
+      msgs.error('Job details could not be retrieved for ' + jobId);
+      msgs.error('', err);
+      deferred.reject(this.jobs);
+    }
+
     return deferred.promise;
   };
 
   this.updateAllJobCounts = function () {
+    const deferred = $q.defer();
     console.log('mlJobService: update all jobs counts and state');
-    return ml.jobStats()
-      .then((resp) => {
-        console.log('updateAllJobCounts controller query response:', resp);
-        let newJobsAdded = false;
-        for (let d = 0; d < resp.jobs.length; d++) {
-          const newJob = {};
-          let jobExists = false;
-          angular.copy(resp.jobs[d], newJob);
+    ml.jobStats().then((resp) => {
+      console.log('updateAllJobCounts controller query response:', resp);
+      let newJobsAdded = false;
+      for (let d = 0; d < resp.jobs.length; d++) {
+        const newJob = {};
+        let jobExists = false;
+        angular.copy(resp.jobs[d], newJob);
 
-          // update parts of the job
+        // update parts of the job
+        for (let i = 0; i < jobs.length; i++) {
+          const job = jobs[i];
+          if (job.job_id === resp.jobs[d].job_id) {
+            jobExists = true;
+            job.data_counts = newJob.data_counts;
+            if (newJob.model_size_stats) {
+              job.model_size_stats = newJob.model_size_stats;
+            }
+            // job.last_data_time = newJob.last_data_time;
+            job.create_time = newJob.create_time;
+            job.state = newJob.state;
+            // job.datafeed_state = newJob.datafeed_state;
+          }
+        }
+
+        // a new job has been added, add it to the list
+        if (!jobExists) {
+          // add it to the same index position as it's found in jobs.
+          jobs.splice(d, 0, newJob);
+          newJobsAdded = true;
+        }
+      }
+
+      this.loadDatafeeds()
+        .then((datafeeds) => {
           for (let i = 0; i < jobs.length; i++) {
-            const job = jobs[i];
-            if (job.job_id === resp.jobs[d].job_id) {
-              jobExists = true;
-              job.data_counts = newJob.data_counts;
-              if (newJob.model_size_stats) {
-                job.model_size_stats = newJob.model_size_stats;
-              }
-              // job.last_data_time = newJob.last_data_time;
-              job.create_time = newJob.create_time;
-              job.state = newJob.state;
-              // job.datafeed_state = newJob.datafeed_state;
-            }
-          }
-
-          // a new job has been added, add it to the list and broadcast an update
-          if (!jobExists) {
-            // add it to the same index position as it's found in jobs.
-            jobs.splice(d, 0, newJob);
-            newJobsAdded = true;
-          }
-        }
-
-        this.loadDatafeeds()
-          .then((datafeeds) => {
-            for (let i = 0; i < jobs.length; i++) {
-              for (let j = 0; j < datafeeds.length; j++) {
-                if (jobs[i].job_id === datafeeds[j].job_id) {
-                  jobs[i].datafeed_config = datafeeds[j];
-                }
+            for (let j = 0; j < datafeeds.length; j++) {
+              if (jobs[i].job_id === datafeeds[j].job_id) {
+                jobs[i].datafeed_config = datafeeds[j];
               }
             }
-            this.jobs = jobs;
+          }
+          this.jobs = jobs;
 
-            // if after adding missing jobs, the retrieved number of jobs still differs from
-            // the local copy, reload the whole list from scratch. some non-running jobs may have
-            // been deleted by a different user.
-            if (newJobsAdded || resp.jobs.length !== jobs.length) {
-              console.log('updateAllJobCounts: number of jobs differs. reloading all jobs');
-              this.loadJobs();
-            }
+          // if after adding missing jobs, the retrieved number of jobs still differs from
+          // the local copy, reload the whole list from scratch. some non-running jobs may have
+          // been deleted by a different user.
+          if (newJobsAdded || resp.jobs.length !== jobs.length) {
+            console.log('updateAllJobCounts: number of jobs differs. reloading all jobs');
+            this.loadJobs().then(() => {
+              deferred.resolve(this.jobs);
+            })
+            .catch((err) => {
+              error(err);
+            });
+          } else {
+            deferred.resolve(this.jobs);
+          }
+        })
+        .catch((err) => {
+          error(err);
+        });
+    })
+    .catch((err) => {
+      error(err);
+    });
 
-          });
-      })
-      .catch((err) => {
-        console.log('updateAllJobCounts error getting job details:', err);
-        msgs.error('Job details could not be retrieved');
-        if (err.message) {
-          msgs.error(err.message);
-        }
-      });
+    function error(err) {
+      console.log('updateAllJobCounts error getting list job details:', err);
+      msgs.error('Job details could not be retrieved');
+      msgs.error('', err);
+      deferred.reject(this.jobs);
+    }
+
+    return deferred.promise;
   };
 
   this.checkState = function () {

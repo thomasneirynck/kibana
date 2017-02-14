@@ -98,7 +98,10 @@ function (
             msgs.clear();
             msgs.info('Job \'' + job.job_id + '\' deleted');
             status.deleteLock = false;
-            mlJobService.loadJobs();
+            mlJobService.loadJobs()
+              .then((jobs) => {
+                jobsUpdated(jobs);
+              });
           }
         });
     }
@@ -180,8 +183,6 @@ function (
   }
 
   // function for displaying jobs list
-  // this is never called directly. below it a listener is set for a jobsUpdated event
-  // this is triggered (broadcasted) in mlJobService.loadJobs()
   // anytime the jobs list is reloaded, the display will be freshed.
   function displayJobs(jobs) {
 
@@ -310,7 +311,6 @@ function (
       }
     });
 
-    refreshCounter = 0;
     clearTimeout(window.singleJobTimeout);
     refreshCounts();
 
@@ -326,7 +326,10 @@ function (
       // every 5th time, reload the counts and states of all the jobs
       if (refreshCounter % 5 === 0) {
 
-        mlJobService.updateAllJobCounts();
+        mlJobService.updateAllJobCounts()
+          .then((jobs) => {
+            jobsUpdated(jobs);
+          });
 
         // also reload all of the jobs messages
         // loadAuditSummary($scope.jobs, rowScopes);
@@ -571,15 +574,15 @@ function (
     return txt;
   }
 
-  // set up event listener
-  $scope.$on('jobsUpdated', function (event, jobs) {
-    // jobs = [];
+  function jobsUpdated(jobs) {
     $scope.noJobsCreated = (jobs.length === 0);
     // jobs have been updated, redraw the list
     displayJobs(jobs);
-  });
+  }
 
-  mlJobService.loadJobs();
+  mlJobService.loadJobs().then((jobs) => {
+    jobsUpdated(jobs);
+  });
 
   $scope.$emit('application.load');
 });
