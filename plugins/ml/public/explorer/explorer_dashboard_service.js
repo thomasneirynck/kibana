@@ -24,12 +24,14 @@ const module = uiModules.get('apps/ml');
 module.service('mlExplorerDashboardService', function () {
 
   const listeners = {
-    'swimlaneCellClick': []
+    'swimlaneCellClick': [],
+    'swimlaneDataChanged': []
   };
 
   this.init = function () {
     // Clear out any old listeners.
     listeners.swimlaneCellClick.splice(0);
+    listeners.swimlaneDataChanged.splice(0);
   };
 
   this.fireSwimlaneCellClick = function (cellData) {
@@ -40,6 +42,16 @@ module.service('mlExplorerDashboardService', function () {
 
   this.onSwimlaneCellClick = function (listener) {
     listeners.swimlaneCellClick.push(listener);
+  };
+
+  this.fireSwimlaneDataChanged = function (swimlaneType) {
+    listeners.swimlaneDataChanged.forEach(function (listener) {
+      listener(swimlaneType);
+    });
+  };
+
+  this.onSwimlaneDataChanged = function (listener) {
+    listeners.swimlaneDataChanged.push(listener);
   };
 
 });

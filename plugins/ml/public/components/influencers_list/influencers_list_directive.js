@@ -40,6 +40,7 @@ module.directive('mlInfluencersList', function (Private) {
       scope.$destroy();
     });
 
+    scope.tooltipPlacement = scope.tooltipPlacement === undefined ? 'top' : scope.tooltipPlacement;
 
     function render() {
       if (scope.influencersData === undefined) {
@@ -100,12 +101,17 @@ module.directive('mlInfluencersList', function (Private) {
       filterManager.add(field, value, operator, scope.indexPatternId);
     };
 
+    scope.showNoResultsMessage = function () {
+      return (scope.influencersData === undefined) || (_.keys(scope.influencersData).length === 0);
+    };
+
   }
 
   return {
     scope: {
       influencersData: '=',
-      indexPatternId: '='
+      indexPatternId: '=',
+      tooltipPlacement: '@'
     },
     template: require('plugins/ml/components/influencers_list/influencers_list.html'),
     link: link

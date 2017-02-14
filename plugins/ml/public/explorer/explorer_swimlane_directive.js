@@ -30,23 +30,21 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
 
   function link(scope, element) {
 
-    scope.$on('render',function () {
-      render();
+    // Re-render the swimlane whenever the underlying data changes.
+    mlExplorerDashboardService.onSwimlaneDataChanged(function (swimlaneType) {
+      if (swimlaneType === scope.swimlaneType) {
+        render();
+      }
     });
 
     element.on('$destroy', function () {
       scope.$destroy();
     });
 
-    if (scope.swimlaneData !== undefined) {
-      // render();
-    }
-
     function render() {
       if (scope.swimlaneData === undefined) {
         return;
       }
-      console.log('swimlane_directive swimlaneData:', scope.swimlaneData);
 
       const lanes = scope.swimlaneData.laneLabels;
       const startTime = scope.swimlaneData.earliest;
@@ -54,8 +52,8 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
       const stepSecs = scope.swimlaneData.interval;
       const points = scope.swimlaneData.points;
 
-      function colorScore(d) {
-        return anomalyUtils.getSeverityColor(d.value);
+      function colorScore(value) {
+        return anomalyUtils.getSeverityColor(value);
       }
 
       const numBuckets = parseInt((endTime - startTime) / stepSecs);
@@ -79,6 +77,15 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
         timeTickLabels.push(moment.unix(startTime + (i * stepSecs)).format('MMM DD HH:mm'));
       }
 
+      // Clear selection if clicking away from a cell.
+      $swimlanes.click(function ($event) {
+        const $target = $($event.target);
+        if (!$target.hasClass('sl-cell') && !$target.hasClass('sl-cell-inner') &&
+            $('.sl-cell-inner.sl-cell-inner-selected', '.ml-explorer-swimlane').length > 0) {
+          clearSelection();
+        }
+      });
+
       function cellClick($event, laneLabel, bucketScore, index, time) {
 
         let $target = $($event.target);
@@ -86,17 +93,18 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
         if ($target.hasClass('sl-cell')) {
           $target = $target.find('.sl-cell-inner');
         }
-        if ($target) {
+        if ($target && bucketScore > 0) {
           $('.lane-label', '.ml-explorer-swimlane').addClass('lane-label-masked');
           $('.sl-cell-inner', '.ml-explorer-swimlane').addClass('sl-cell-inner-masked');
+          $('.sl-cell-inner.sl-cell-inner-selected', '.ml-explorer-swimlane').removeClass('sl-cell-inner-selected');
 
           $target.removeClass('sl-cell-inner-masked');
+          $target.addClass('sl-cell-inner-selected');
 
           $('.lane-label').filter(function () {
             return $(this).text() === laneLabel;
           }).removeClass('lane-label-masked');
 
-          console.log('swimlane cellClick t:', time);
           mlExplorerDashboardService.fireSwimlaneCellClick({
             fieldName: scope.swimlaneData.fieldName,
             laneLabel: laneLabel,
@@ -104,23 +112,72 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
             interval: scope.swimlaneData.interval,
             score: bucketScore
           });
+        } else {
+          clearSelection();
         }
       }
 
-      scope.lanes = scope.$parent.lanes;
+      function cellMouseover($event, laneLabel, bucketScore, index, time) {
+        if (bucketScore === undefined) {
+          return;
+        }
+
+        const displayScore = (bucketScore > 1 ? parseInt(bucketScore) : '< 1');
+
+        // Display date using same format as Kibana visualizations.
+        const formattedDate = moment(time * 1000).format('MMMM Do YYYY, HH:mm');
+        let contents = formattedDate + '<br/><hr/>';
+        if (scope.swimlaneData.fieldName !== undefined) {
+          contents += scope.swimlaneData.fieldName + ': ' + laneLabel + '<br/><hr/>';
+        }
+        contents += ('Max anomaly score: ' + displayScore);
+
+        const x = $event.pageX;
+        const y = $event.pageY;
+        const offset = 5;
+        $('<div class="ml-explorer-swimlane-tooltip">' + contents + '</div>').css({
+          'position': 'absolute',
+          'display': 'none',
+          'z-index': 1,
+          'top': y + offset,
+          'left': x + offset
+        }).appendTo('body').fadeIn(200);
+
+        // Position the tooltip.
+        const $win = $(window);
+        const winHeight = $win.height();
+        const yOffset = window.pageYOffset;
+        const tooltipWidth = $('.ml-explorer-swimlane-tooltip').outerWidth(true);
+        const tooltipHeight = $('.ml-explorer-swimlane-tooltip').outerHeight(true);
+
+        $('.ml-explorer-swimlane-tooltip').css('left', x + offset + tooltipWidth > $win.width() ? x - offset - tooltipWidth : x + offset);
+        $('.ml-explorer-swimlane-tooltip').css('top', y + tooltipHeight < winHeight + yOffset ? y : y - tooltipHeight);
+      }
+
+      function cellMouseleave() {
+        $('.ml-explorer-swimlane-tooltip').remove();
+      }
+
+      function clearSelection() {
+        $('.lane-label', '.ml-explorer-swimlane').removeClass('lane-label-masked');
+        $('.sl-cell-inner', '.ml-explorer-swimlane').removeClass('sl-cell-inner-masked');
+        $('.sl-cell-inner.sl-cell-inner-selected', '.ml-explorer-swimlane').removeClass('sl-cell-inner-selected');
+        mlExplorerDashboardService.fireSwimlaneCellClick({});
+      }
+
+      //scope.lanes = scope.$parent.lanes;
 
       _.each(lanes, function (lane) {
         const rowScope = scope.$new();
-        scope.$parent.lanes[lane] = [];
+        //scope.$parent.lanes[lane] = [];
 
         rowScope.cellClick = cellClick;
-
-        rowScope.selectedJobIds = [lane];
+        rowScope.cellMouseover = cellMouseover;
+        rowScope.cellMouseleave = cellMouseleave;
 
         const $lane = $('<div>', {
           'class': 'lane',
-        })
-        .data('jobIds', scope.selectedJobIds);
+        });
 
         const label = lane;
         $lane.append($('<div>', {
@@ -148,14 +205,14 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
             'data-time': time,
 
           });
-          rowScope.lanes[lane].push($cell);
+          //rowScope.lanes[lane].push($cell);
 
           let color = 'none';
           let bucketScore = 0;
           for (let j = 0; j < points.length; j++) {
 
             if (points[j].value > 0 && points[j].laneLabel === lane && points[j].time === time) { // this may break if detectors have the duplicate descriptions
-              bucketScore = points[j];
+              bucketScore = points[j].value;
               color = colorScore(bucketScore);
               $cell.append($('<div>', {
                 'class': 'sl-cell-inner',
@@ -166,18 +223,18 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
             }
           }
 
-          let cellHoverTxt = 'cellHover($event, \'' + lane + '\', ';
-          cellHoverTxt += bucketScore.value + ', ' + i + ', ' + time + ', \'' + rowScope.swimlaneType + '\')';
-          let cellClickTxt = 'cellClick($event, \'' + lane + '\', ';
-          cellClickTxt += bucketScore.value + ', ' + i + ', ' + time + ', \'' + rowScope.swimlaneType + '\')';
-          let startDragTxt = 'startDrag($event, \'' + lane + '\', ';
-          startDragTxt += i + ', ' + time + ', \'' + rowScope.swimlaneType + '\')';
+          const cellClickTxt = 'cellClick($event, \'' + lane + '\', ' + bucketScore + ', ' + i + ', ' + time + ')';
+          $cell.attr({ 'ng-click': cellClickTxt });
 
-          $cell.attr({
-            'ng-mouseover': cellHoverTxt,
-            'ng-click': cellClickTxt,
-            'ng-mousedown': startDragTxt,
-          });
+          if (bucketScore > 0) {
+            const cellMouseoverTxt = 'cellMouseover($event, \'' + lane + '\', ' + bucketScore + ', ' + i + ', ' + time + ')';
+            const cellMouseleaveTxt = 'cellMouseleave()';
+            $cell.attr({
+              'ng-mouseover': cellMouseoverTxt,
+              'ng-mouseleave': cellMouseleaveTxt
+            });
+          }
+
           $cellsContainer.append($cell);
 
           time += stepSecs;
@@ -208,8 +265,8 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
   const template = '<div id=\'swimlanes\'></div>';
   return {
     scope: {
+      swimlaneType: '@',
       swimlaneData: '=',
-      containerId: '@',
       selectedJobIds: '=',
       chartWidth: '='
     },

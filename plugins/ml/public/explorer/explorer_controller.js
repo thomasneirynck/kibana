@@ -29,6 +29,8 @@ import 'plugins/ml/services/ml_dashboard_service';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/results_service';
 
+import FilterBarQueryFilterProvider from 'ui/filter_bar/query_filter';
+
 uiRoutes
 .when('/explorer/?', {
   template: require('./explorer.html')
@@ -47,6 +49,8 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
 
   const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
 
+  const queryFilter = Private(FilterBarQueryFilterProvider);
+
   const MAX_INFLUENCER_FIELD_NAMES = 10;
   const MAX_INFLUENCER_FIELD_VALUES = 10;
 
@@ -54,6 +58,9 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     const selectedJobs = _.filter($scope.jobs, (job) => { return job.selected; });
     return _.map(selectedJobs, function (job) {return job.id;});
   };
+
+  $scope.viewBySwimlaneData = { 'fieldName': '', 'laneLabels':[],
+    'points':[], 'interval': 3600 };
 
   $scope.initializeVis = function () {
     // Initialize the AppState in which to store filters.
@@ -95,10 +102,11 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     mlExplorerDashboardService.init();
   };
 
+
   $scope.loadViewBySwimlaneOptions = function () {
     // Obtain the list of 'View by' fields per job.
     // TODO - for phase 2, enhance / replace getJobViewByFields with a function
-    // which returns list influencer, by, over and partition fields and by default
+    // which returns a list of influencer, by, over and partition fields and by default
     // set the 'view by' field to the partition field influencer.
     mlJobService.getJobViewByFields()
     .then(function (resp) {
@@ -112,14 +120,15 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
         const fieldsForFirstSelected = $scope.fieldsByJob[selectedJobIds[0]];
         $scope.swimlaneViewByFieldName = fieldsForFirstSelected.length > 0 ? fieldsForFirstSelected[0] : null;
         console.log('Explorer default swimlane view by to:', $scope.swimlaneViewByFieldName);
-        $scope.refreshViewBySwimlane();
+        $scope.loadViewBySwimlane();
       }
     }).catch(function (resp) {
       console.log('Swimlane - error getting job viewBy fields:', resp);
     });
   };
 
-  $scope.refresh = function () {
+  $scope.loadOverallData = function () {
+    // Loads the overall data components i.e. the overall swimlane, influencers list, and anomalies table.
 
     if ($scope.selectedJobs === undefined) {
       return;
@@ -138,21 +147,18 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
       if (awaitingCount === 0) {
 
         // TODO: Check against bucket results as jobs may not include influencers.
-        if ($scope.influencersData && _.keys($scope.influencersData).length > 0) {
+        if ($scope.overallSwimlaneData.points && $scope.overallSwimlaneData.points.length) {
           $scope.hasResults = true;
         } else {
           $scope.hasResults = false;
         }
         $scope.loading = false;
 
-        // Tell the results container directives to render.
+        // Tell the result components directives to render.
         // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
         $timeout(function () {
-          // TODO - do we need these?
-          $scope.lanes = {};
-
-          // TODO - find an alternative to broadcast render as using multiple directives.
           $scope.$broadcast('render');
+          mlExplorerDashboardService.fireSwimlaneDataChanged('overall');
         }, 0);
       }
     }
@@ -183,38 +189,39 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
       finish();
     });
 
+    $scope.loadAnomaliesTable([], bounds.min.valueOf(), bounds.max.valueOf());
+
   };
 
-  $scope.refreshViewBySwimlane = function () {
-    if ($scope.selectedJobs === undefined ||
-      $scope.swimlaneViewByFieldName === undefined  || $scope.swimlaneViewByFieldName === null) {
-      return;
-    }
-
+  $scope.loadViewBySwimlane = function () {
     // finish() function, called after each data set has been loaded and processed.
     // The last one to call it will trigger the page render.
     function finish() {
-      // Tell the results container directives to render.
-      // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
+      console.log('Explorer view by swimlane data set:', $scope.viewBySwimlaneData);
+      // Fire event to indicate swimlane data has changed.
+      // Need to use $timeout to ensure this happens after the child scope is updated with the new data.
       $timeout(function () {
-        // TODO - find an alternative to broadcast render as using multiple directives.
-        $scope.$broadcast('render');
+        mlExplorerDashboardService.fireSwimlaneDataChanged('viewBy');
       }, 0);
     }
 
-    const bounds = timefilter.getActiveBounds();
-    const selectedJobIds = $scope.getSelectedJobIds();
-
-    // load scores by influencer value and time.
-    mlResultsService.getInfluencerValueMaxScoreByTime($scope.indexPatternId, selectedJobIds, $scope.swimlaneViewByFieldName,
-      bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression, MAX_INFLUENCER_FIELD_VALUES)
-    .then(function (resp) {
-      // TODO - sort the influencers keys so that the partition field(s) are first.
-      processViewByResults(resp.results);
-      console.log('Explorer view by swimlane data set:', $scope.viewBySwimlaneData);
+    if ($scope.selectedJobs === undefined ||
+        $scope.swimlaneViewByFieldName === undefined  || $scope.swimlaneViewByFieldName === null) {
+      $scope.viewBySwimlaneData = { 'fieldName': '', 'laneLabels':[], 'points':[], 'interval': 3600 };
       finish();
-    });
+    } else {
+      const bounds = timefilter.getActiveBounds();
+      const selectedJobIds = $scope.getSelectedJobIds();
 
+      // load scores by influencer value and time.
+      mlResultsService.getInfluencerValueMaxScoreByTime($scope.indexPatternId, selectedJobIds, $scope.swimlaneViewByFieldName,
+        bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression, MAX_INFLUENCER_FIELD_VALUES)
+      .then(function (resp) {
+        // TODO - sort the influencers keys so that the partition field(s) are first.
+        processViewByResults(resp.results);
+        finish();
+      });
+    }
   };
 
   $scope.loadAnomaliesTable = function (influencers, earliestMs, latestMs) {
@@ -229,8 +236,24 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
 
       // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
       $timeout(function () {
-        // TODO - find an alternative to broadcast render as using multiple directives.
         $scope.$broadcast('renderTable');
+      }, 0);
+    });
+  };
+
+  $scope.loadAnomalyCharts = function (influencers, earliestMs, latestMs) {
+    const selectedJobIds = $scope.getSelectedJobIds();
+
+    // Load the top anomalies (by normalized_probability) which will be diplayed in the charts.
+    mlResultsService.getRecordsForInfluencer($scope.indexPatternId, selectedJobIds, influencers,
+      0, earliestMs, latestMs, 50)
+    .then(function (resp) {
+      $scope.anomalyChartRecords = resp.records;
+      console.log('Explorer anomaly charts data set:', $scope.anomalyChartRecords);
+
+      // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
+      $timeout(function () {
+        $scope.$broadcast('renderCharts');
       }, 0);
     });
   };
@@ -262,36 +285,50 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
       $location.search('jobId', selectedJobIds);
     }
 
-    const bounds = timefilter.getActiveBounds();
-    $scope.refresh();
+    $scope.loadOverallData();
     $scope.loadViewBySwimlaneOptions();
-    $scope.loadAnomaliesTable([], bounds.min.valueOf(), bounds.max.valueOf());
 
   };
 
-  // Refresh the data when the time range is altered.
+  // Refresh all the data when the time range is altered.
   $scope.$listen(timefilter, 'fetch', function () {
     const bounds = timefilter.getActiveBounds();
-    $scope.refresh();
-    $scope.refreshViewBySwimlane();
+    $scope.loadOverallData();
+    $scope.loadViewBySwimlane();
     $scope.loadAnomaliesTable([], bounds.min.valueOf(), bounds.max.valueOf());
   });
 
-  // When inside a dashboard in the Ml plugin, listen for changes to job selection.
+  // Listen for changes to job selection.
   mlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
     $scope.setSelectedJobs(selections);
   });
 
+  // Refresh the data when the dashboard filters are updated.
+  $scope.$listen(queryFilter, 'update', function () {
+    // TODO - add in filtering functionality.
+    console.log('explorer_controller queryFilter update, filters:', queryFilter.getFilters());
+  });
+
   $scope.initializeVis();
 
+  $scope.showViewBySwimlane = function () {
+    return $scope.viewBySwimlaneData !== null && $scope.viewBySwimlaneData.laneLabels && $scope.viewBySwimlaneData.laneLabels.length > 0;
+  };
+
   // Listener for click events in the swimlane and load corresponding anomaly data.
-  // TODO - find some way of deselecting to show top anomalies over all values and times?
+  // Empty cellData is passed on clicking outside a cell with score > 0.
   mlExplorerDashboardService.onSwimlaneCellClick(function (cellData) {
     const influencers = [];
     if (cellData.fieldName !== undefined) {
       influencers.push({ fieldName: $scope.swimlaneViewByFieldName, fieldValue: cellData.laneLabel });
     }
-    $scope.loadAnomaliesTable(influencers, cellData.time * 1000, ((cellData.time  + cellData.interval) * 1000) - 1);
+
+    const bounds = timefilter.getActiveBounds();
+    const earliestMs = cellData.time !== undefined ? cellData.time * 1000 : bounds.min.valueOf();
+    const latestMs = cellData.time !== undefined ? ((cellData.time  + cellData.interval) * 1000) - 1 : bounds.max.valueOf();
+
+    $scope.loadAnomaliesTable(influencers, earliestMs, latestMs);
+    $scope.loadAnomalyCharts(influencers, earliestMs, latestMs);
   });
 
 
@@ -339,7 +376,6 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
 
     // Store the earliest and latest times of the data returned by the ES aggregations,
     // These will be used for calculating the earliest and latest times for the swimlane charts.
-    // TODO - extend to start and end part of dashboard time range.
     dataset.earliest = Number.MAX_VALUE;
     dataset.latest = 0;
 
@@ -351,6 +387,21 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
       dataset.latest = Math.max((time + dataset.interval), dataset.latest);
     });
 
+    // Adjust the earliest back to the first bucket at or before the start time in the time picker,
+    // and the latest forward to the end of the bucket at or after the end time in the time picker.
+    // Due to the way the swimlane sections are plotted, the chart buckets
+    // must coincide with the times of the buckets in the data.
+    const bounds = timefilter.getActiveBounds();
+    const boundsMin = bounds.min.valueOf() / 1000;
+    const boundsMax = bounds.max.valueOf() / 1000;
+    const bucketIntervalSecs = $scope.swimlaneBucketInterval.asSeconds();
+    if (dataset.earliest > boundsMin) {
+      dataset.earliest = dataset.earliest - (Math.ceil((dataset.earliest - boundsMin) / bucketIntervalSecs) * bucketIntervalSecs);
+    }
+    if (dataset.latest < boundsMax) {
+      dataset.latest = dataset.latest + (Math.ceil((boundsMax - dataset.latest) / bucketIntervalSecs) * bucketIntervalSecs);
+    }
+
     $scope.overallSwimlaneData = dataset;
   }
 
@@ -358,7 +409,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     const dataset = { 'fieldName': $scope.swimlaneViewByFieldName, 'laneLabels':[],
       'points':[], 'interval': $scope.swimlaneBucketInterval.asSeconds() };
 
-    // Set the earliest and latest
+    // Set the earliest and latest to be the same as the overall swimlane.
     dataset.earliest = $scope.overallSwimlaneData.earliest;
     dataset.latest = $scope.overallSwimlaneData.latest;
 

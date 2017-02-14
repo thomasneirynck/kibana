@@ -1,5 +1,13 @@
 <div class="ml-influencers-list">
 
+  <div ng-if="showNoResultsMessage()" class="text-center visualize-error">
+    <div class="item top"></div>
+    <div class="item">
+      <h4>No influencers found</h4>
+    </div>
+    <div class="item bottom"></div>
+  </div>
+
   <div ng-repeat="(influencerfieldname, groupData) in influencers">
 
     <div class="section-label">{{influencerfieldname}}</div>
@@ -20,14 +28,14 @@
       <div>
         <div class="progress" value="{{influencer.barScore}}" max="100">
           <div class="progress-bar {{influencer.severity}}" style="width: {{influencer.barScore}}%;"
-               tooltip-placement="left" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
+            tooltip-placement="{{tooltipPlacement}}" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
             <span class="score-label">{{influencer.maxScoreLabel}}</span>
           </div>
         </div>
-        <div ng-if="influencer.totalScore > 0" class="score-label total-score-label" tooltip-placement="left" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
+        <div ng-if="influencer.totalScore > 0" class="score-label total-score-label" tooltip-placement="{{tooltipPlacement}}" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
           {{influencer.totalScore | abbreviateWholeNumber:4}}
         </div>
-        <div ng-if="influencer.totalScore === 0" class="score-label total-score-label" tooltip-placement="left" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
+        <div ng-if="influencer.totalScore === 0" class="score-label total-score-label" tooltip-placement="{{tooltipPlacement}}" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
           &lt;&nbsp;1
         </div>
 

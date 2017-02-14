@@ -64,7 +64,8 @@
         </span>
         <ml-influencers-list
           influencers-data="influencersData"
-          index-pattern-id="indexPatternId">
+          index-pattern-id="indexPatternId"
+          tooltip-placement="right">
         </ml-influencers-list>
       </div>
 
@@ -73,9 +74,16 @@
           Anomaly timeline
         </span>
         <div class="ml-explorer-swimlane" >
-          <ml-explorer-swimlane swimlane-data="overallSwimlaneData" selected-job-ids="selectedJobIds" chart-width="swimlaneWidth" style="width: 100%; height: 250px;"></ml-explorer-swimlane>
+          <ml-explorer-swimlane
+            swimlane-type="overall"
+            swimlane-data="overallSwimlaneData"
+            selected-job-ids="selectedJobIds"
+            chart-width="swimlaneWidth"
+            style="width: 100%; height: 250px;">
+          </ml-explorer-swimlane>
         </div>
 
+        <div ng-if="showViewBySwimlane()">
         <span class="panel-title">
           View by: {{swimlaneViewByFieldName}}
         </span>
@@ -83,7 +91,14 @@
           (Top 10 by max anomaly score)
         </span>
         <div class="ml-explorer-swimlane" >
-          <ml-explorer-swimlane swimlane-data="viewBySwimlaneData" selected-job-ids="selectedJobIds" chart-width="swimlaneWidth" style="width: 100%; height: 250px;"></ml-explorer-swimlane>
+          <ml-explorer-swimlane
+            swimlane-type="viewBy"
+            swimlane-data="viewBySwimlaneData"
+            selected-job-ids="selectedJobIds"
+            chart-width="swimlaneWidth"
+            style="width: 100%; height: 250px;">
+          </ml-explorer-swimlane>
+        </div>
         </div>
 
         <span class="panel-title">
@@ -94,6 +109,13 @@
           index-pattern-id="indexPatternId"
           time-field-name="timeFieldName">
         </ml-anomalies-table>
+
+<!--         <span class="panel-title">
+          Anomaly charts
+        </span>
+        <ml-explorer-charts
+          anomaly-records="anomalyChartRecords">
+        </ml-explorer-charts> -->
 
       </div>
 
