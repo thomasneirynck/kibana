@@ -13,7 +13,9 @@ function visualizeReportProvider(Private, $location) {
     template: '<export-config object-type="Visualization"></export-config>',
     description: 'Visualization Report',
     hideButton: () => (
-      $location.path() === VisualizeConstants.LANDING_PAGE_URL
+      $location.path() === VisualizeConstants.LANDING_PAGE_PATH
+      || $location.path() === VisualizeConstants.WIZARD_STEP_1_PAGE_PATH
+      || $location.path() === VisualizeConstants.WIZARD_STEP_2_PAGE_PATH
       || !xpackInfo.get('features.reporting.showLinks', false)
     ),
     disableButton: () => !xpackInfo.get('features.reporting.enableLinks', false),

@@ -12,7 +12,7 @@ function dashboardReportProvider(Private, $location) {
     label: 'Reporting',
     template: '<export-config object-type="Dashboard"></export-config>',
     description: 'Dashboard Report',
-    hideButton: () => $location.path() === DashboardConstants.LANDING_PAGE_URL || !xpackInfo.get('features.reporting.showLinks', false),
+    hideButton: () => $location.path() === DashboardConstants.LANDING_PAGE_PATH || !xpackInfo.get('features.reporting.showLinks', false),
     disableButton: () => !xpackInfo.get('features.reporting.enableLinks', false),
     tooltip: () => xpackInfo.get('features.reporting.message')
   };
