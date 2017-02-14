@@ -254,10 +254,10 @@ module.directive('mlElasticDataDescription', function () {
 
         }).catch((err) => {
           console.log('getMappings:', err);
-          if (err.status) {
-            if (err.status === 401) {
+          if (err.statusCode) {
+            if (err.statusCode === 401) {
               $scope.ui.validation.setTabValid(4, false);
-            } else if (err.status === 403) {
+            } else if (err.statusCode === 403) {
               $scope.ui.validation.setTabValid(4, false);
             } else {
               clearMappings();

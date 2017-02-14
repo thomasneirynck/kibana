@@ -95,7 +95,7 @@ module.controller('MlJobTimepickerModal', function ($scope, $modalInstance, para
       doStart();
     })
     .catch((resp) => {
-      if (resp.status === 409 || resp.status === 400) { // REMOVE THE 400 CHECK WHEN #716 IS  FIXED!!!
+      if (resp.statusCode === 409) {
         doStart();
       } else {
         msgs.error('Could not open job: ', resp);

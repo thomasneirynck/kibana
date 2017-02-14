@@ -201,6 +201,7 @@ function (
         setDatafeedUIText();
         setBucketSpanUIText();
         setFieldDelimiterControlsFromText();
+        $scope.ui.wizard.indexInputType = 'TEXT';
 
         // if the datafeedConfig doesn't exist, assume we're cloning from a job with no datafeed
         if (!$scope.job.datafeed_config) {
