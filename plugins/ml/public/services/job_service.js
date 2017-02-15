@@ -536,7 +536,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     delete job.model_size_stats;
     delete job.datafeed_state;
     delete job.average_bucket_processing_time_ms;
-    delete job.index_name;
+    delete job.results_index_name;
 
     return job;
   };
