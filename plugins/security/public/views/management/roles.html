@@ -108,13 +108,15 @@
             class="kuiTableRow"
           >
             <td class="kuiTableRowCell kuiTableRowCell--checkBox">
-              <input
-                type="checkbox"
-                class="kuiCheckBox"
-                ng-click="toggle(selectedRoles, role)"
-                ng-checked="includes(selectedRoles, role)"
-                ng-disabled="role.metadata._reserved"
-              >
+              <div class="kuiTableRowCell__liner">
+                <input
+                  type="checkbox"
+                  class="kuiCheckBox"
+                  ng-click="toggle(selectedRoles, role)"
+                  ng-checked="includes(selectedRoles, role)"
+                  ng-disabled="role.metadata._reserved"
+                >
+              </div>
             </td>
 
             <td class="kuiTableRowCell">
