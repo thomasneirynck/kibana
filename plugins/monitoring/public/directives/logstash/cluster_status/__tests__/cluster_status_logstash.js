@@ -3,7 +3,7 @@ import expect from 'expect.js';
 import ngMock from 'ng_mock';
 import $ from 'jquery';
 import findTestSubject from 'ui/jquery/find_test_subject';
-import './fixtures/providers';
+import 'plugins/monitoring/directives/__tests__/fixtures/providers';
 
 findTestSubject($);
 
