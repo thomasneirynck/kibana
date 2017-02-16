@@ -79,9 +79,10 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
-  this.datafeedStats = function () {
+  this.datafeedStats = function (obj) {
+    const datafeedId = (obj && obj.datafeedId) ? obj.datafeedId + '/' : '';
     return http.request({
-      url: '../api/ml/datafeeds/_stats',
+      url: `../api/ml/datafeeds/${datafeedId}_stats`,
     });
   };
 

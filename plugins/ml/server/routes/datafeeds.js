@@ -45,6 +45,20 @@ export default (server, commonRouteConfig) => {
   });
 
   server.route({
+    method: 'GET',
+    path: '/api/ml/datafeeds/{datafeedId}/_stats',
+    handler(request, reply) {
+      const datafeedId = request.params.datafeedId;
+      return callWithRequest(request, 'ml.datafeedStats', {datafeedId})
+      .then(resp => reply(resp))
+      .catch(resp => reply(wrapError(resp)));
+    },
+    config: {
+      ...commonRouteConfig
+    }
+  });
+
+  server.route({
     method: 'PUT',
     path: '/api/ml/datafeeds/{datafeedId}',
     handler(request, reply) {
