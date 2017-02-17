@@ -6,7 +6,8 @@ import { cryptoFactory } from './crypto';
 const KBN_SCREENSHOT_HEADER_BLACKLIST = [
   'accept-encoding',
   'content-length',
-  'content-type'
+  'content-type',
+  'host'
 ];
 
 function docJobProcessFn(server) {
