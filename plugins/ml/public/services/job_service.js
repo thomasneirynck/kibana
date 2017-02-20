@@ -25,6 +25,7 @@ const module = uiModules.get('apps/ml');
 module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessageBarService) {
   const msgs = mlMessageBarService;
   let jobs = [];
+  let datafeedIds = {};
   this.currentJob = undefined;
   this.jobs = [];
   this.basicJobs = {};
@@ -75,6 +76,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   this.loadJobs = function () {
     const deferred = $q.defer();
     jobs = [];
+    datafeedIds = {};
 
     ml.jobs()
       .then((resp) => {
@@ -103,16 +105,18 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               }
             }
             this.loadDatafeeds()
-            .then((datafeeds) => {
+            .then((datafeedsResp) => {
               for (let i = 0; i < jobs.length; i++) {
-                for (let j = 0; j < datafeeds.length; j++) {
-                  if (jobs[i].job_id === datafeeds[j].job_id) {
-                    jobs[i].datafeed_config = datafeeds[j];
+                for (let j = 0; j < datafeedsResp.datafeeds.length; j++) {
+                  if (jobs[i].job_id === datafeedsResp.datafeeds[j].job_id) {
+                    jobs[i].datafeed_config = datafeedsResp.datafeeds[j];
+
+                    datafeedIds[jobs[i].job_id] = datafeedsResp.datafeeds[j].datafeed_id;
                   }
                 }
               }
               this.jobs = jobs;
-              deferred.resolve(this.jobs);
+              deferred.resolve({jobs: this.jobs});
             });
           })
           .catch((err) => {
@@ -126,7 +130,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('MlJobsList error getting list of jobs:', err);
       msgs.error('Jobs list could not be retrieved');
       msgs.error('', err);
-      deferred.reject(this.jobs);
+      deferred.reject({jobs});
     }
     return deferred.promise;
   };
@@ -160,18 +164,21 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                 }
               }
 
-              const datafeedId = 'datafeed-' + jobId;
+              const datafeedId = this.getDatafeedId(jobId);
+
               this.loadDatafeeds(datafeedId)
-              .then((datafeeds) => {
+              .then((datafeedsResp) => {
                 for (let i = 0; i < jobs.length; i++) {
-                  for (let j = 0; j < datafeeds.length; j++) {
-                    if (jobs[i].job_id === datafeeds[j].job_id) {
-                      jobs[i].datafeed_config = datafeeds[j];
+                  for (let j = 0; j < datafeedsResp.datafeeds.length; j++) {
+                    if (jobs[i].job_id === datafeedsResp.datafeeds[j].job_id) {
+                      jobs[i].datafeed_config = datafeedsResp.datafeeds[j];
+
+                      datafeedIds[jobs[i].job_id] = datafeedsResp.datafeeds[j].datafeed_id;
                     }
                   }
                 }
                 this.jobs = jobs;
-                deferred.resolve(this.jobs);
+                deferred.resolve({jobs: this.jobs});
               });
             })
             .catch((err) => {
@@ -186,7 +193,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('MlJobsList error getting list of jobs:', err);
       msgs.error('Jobs list could not be retrieved');
       msgs.error('', err);
-      deferred.reject(this.jobs);
+      deferred.reject({jobs});
     }
     return deferred.promise;
   };
@@ -215,7 +222,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                 }
               }
             }
-            deferred.resolve(datafeeds);
+            deferred.resolve({datafeeds});
           })
           .catch((err) => {
             error(err);
@@ -253,28 +260,30 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               if (newJob.model_size_stats) {
                 job.model_size_stats = newJob.model_size_stats;
               }
-              job.create_time = newJob.create_time;
               job.state = newJob.state;
             }
           }
 
-          const datafeedId = 'datafeed-' + jobId;
+          const datafeedId = this.getDatafeedId(jobId);
+
           this.loadDatafeeds(datafeedId)
-          .then((datafeeds) => {
+          .then((datafeedsResp) => {
             for (let i = 0; i < jobs.length; i++) {
-              for (let j = 0; j < datafeeds.length; j++) {
-                if (jobs[i].job_id === datafeeds[j].job_id) {
-                  jobs[i].datafeed_config = datafeeds[j];
+              for (let j = 0; j < datafeedsResp.datafeeds.length; j++) {
+                if (jobs[i].job_id === datafeedsResp.datafeeds[j].job_id) {
+                  jobs[i].datafeed_config = datafeedsResp.datafeeds[j];
+
+                  datafeedIds[jobs[i].job_id] = datafeedsResp.datafeeds[j].datafeed_id;
                 }
               }
             }
-            deferred.resolve(this.jobs);
+            deferred.resolve({jobs: this.jobs});
           })
           .catch((err) => {
             error(err);
           });
         } else {
-          deferred.resolve(this.jobs);
+          deferred.resolve({jobs: this.jobs});
         }
 
       }).catch((err) => {
@@ -285,7 +294,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('updateSingleJobCounts error getting job details:', err);
       msgs.error('Job details could not be retrieved for ' + jobId);
       msgs.error('', err);
-      deferred.reject(this.jobs);
+      deferred.reject({jobs});
     }
 
     return deferred.promise;
@@ -311,10 +320,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
             if (newJob.model_size_stats) {
               job.model_size_stats = newJob.model_size_stats;
             }
-            // job.last_data_time = newJob.last_data_time;
-            job.create_time = newJob.create_time;
             job.state = newJob.state;
-            // job.datafeed_state = newJob.datafeed_state;
           }
         }
 
@@ -327,11 +333,13 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       }
 
       this.loadDatafeeds()
-        .then((datafeeds) => {
+        .then((datafeedsResp) => {
           for (let i = 0; i < jobs.length; i++) {
-            for (let j = 0; j < datafeeds.length; j++) {
-              if (jobs[i].job_id === datafeeds[j].job_id) {
-                jobs[i].datafeed_config = datafeeds[j];
+            for (let j = 0; j < datafeedsResp.datafeeds.length; j++) {
+              if (jobs[i].job_id === datafeedsResp.datafeeds[j].job_id) {
+                jobs[i].datafeed_config = datafeedsResp.datafeeds[j];
+
+                datafeedIds[jobs[i].job_id] = datafeedsResp.datafeeds[j].datafeed_id;
               }
             }
           }
@@ -343,13 +351,13 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           if (newJobsAdded || resp.jobs.length !== jobs.length) {
             console.log('updateAllJobCounts: number of jobs differs. reloading all jobs');
             this.loadJobs().then(() => {
-              deferred.resolve(this.jobs);
+              deferred.resolve({jobs: this.jobs, listChanged: true});
             })
             .catch((err) => {
               error(err);
             });
           } else {
-            deferred.resolve(this.jobs);
+            deferred.resolve({jobs: this.jobs, listChanged: false});
           }
         })
         .catch((err) => {
@@ -364,7 +372,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('updateAllJobCounts error getting list job details:', err);
       msgs.error('Job details could not be retrieved');
       msgs.error('', err);
-      deferred.reject(this.jobs);
+      deferred.reject({jobs});
     }
 
     return deferred.promise;
@@ -386,7 +394,10 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
   this.updateSingleJobDatafeedState = function (jobId) {
     const deferred = $q.defer();
-    ml.datafeedStats({datafeedId: 'datafeed-' + jobId})
+
+    const datafeedId = this.getDatafeedId(jobId);
+
+    ml.datafeedStats({datafeedId})
     .then((resp) => {
       // console.log('updateSingleJobCounts controller query response:', resp);
       const datafeeds = resp.datafeeds;
@@ -425,7 +436,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
     // if job is datafeed, stop and delete datafeed first
     if (job.datafeed_config) {
-      const datafeedId = 'datafeed-' + job.job_id;
+      const datafeedId = this.getDatafeedId(job.job_id);
       // stop datafeed
       ml.stopDatafeed({datafeedId: datafeedId})
       .then(() => {
@@ -847,12 +858,12 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           'should': [
             {
               'term': {
-                'jobId': '' // catch system messages
+                'job_id': '' // catch system messages
               }
             },
             {
               'term': {
-                'jobId': jobId // messages for specified jobId
+                'job_id': jobId // messages for specified jobId
               }
             }
           ]
@@ -864,7 +875,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     if (fromRange !== undefined && fromRange !== '') {
       timeFilter = {
         'range': {
-          '@timestamp': {
+          'timestamp': {
             'gte': 'now-' + fromRange,
             'lte': 'now'
           }
@@ -873,28 +884,29 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     }
 
     es.search({
-      index: 'ml-int',
+      index: '.ml-notifications',
       size: 1000,
       body:
       {
         sort : [
-          { '@timestamp' : {'order' : 'asc'}},
-          { 'jobId' : {'order' : 'asc'}}
+          { 'timestamp' : {'order' : 'asc'}},
+          { 'job_id' : {'order' : 'asc'}}
         ],
         'query': {
           'bool': {
             'filter': [
-              {'term': {'_type': 'auditMessage'}},
+              {'term': {'_type': 'audit_message'}},
               {
                 'bool': {
                   'must_not': {
                     'term': {
-                      'level': 'ACTIVITY'
+                      'level': 'activity'
                     }
                   }
                 }
               },
-              jobFilter, timeFilter
+              jobFilter,
+              timeFilter
             ]
           }
         }
@@ -906,7 +918,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           messages.push(hit._source);
         });
       }
-      deferred.resolve(messages);
+      deferred.resolve({messages});
     })
     .catch((resp) => {
       deferred.reject(resp);
@@ -920,13 +932,14 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     const aggs = [];
 
     es.search({
-      index: 'ml-int',
+      index: '.ml-notifications',
+      size: 0,
       body: {
         'query': {
           'bool': {
             'filter': {
               'range': {
-                '@timestamp': {
+                'timestamp': {
                   'gte': 'now-1d'
                 }
               }
@@ -936,7 +949,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         'aggs': {
           'levelsPerJob': {
             'terms': {
-              'field': 'jobId',
+              'field': 'job_id',
             },
             'aggs': {
               'levels': {
@@ -955,7 +968,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                     'aggs': {
                       'latestMessage': {
                         'max': {
-                          'field': '@timestamp'
+                          'field': 'timestamp'
                         }
                       }
                     }
@@ -977,7 +990,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           aggs.push(agg);
         });
       }
-      deferred.resolve(aggs);
+      deferred.resolve({messagesPerJob: aggs});
     })
     .catch((resp) => {
       deferred.reject(resp);
@@ -1237,6 +1250,14 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       deferred.reject({});
     }
     return deferred.promise;
+  };
+
+  this.getDatafeedId = function (jobId) {
+    let datafeedId = datafeedIds[jobId];
+    if (datafeedId === undefined) {
+      datafeedId = 'datafeed-' + jobId;
+    }
+    return datafeedId;
   };
 
 });

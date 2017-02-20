@@ -26,7 +26,8 @@ module.controller('MlJobTimepickerModal', function ($scope, $modalInstance, para
 
   const job = angular.copy(params.job);
   $scope.jobId = job.job_id;
-  $scope.datafeedId = 'datafeed-' + job.job_id;
+
+  $scope.datafeedId = mlJobService.getDatafeedId(job.job_id);
 
   $scope.start = '';
   $scope.end = '';

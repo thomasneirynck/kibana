@@ -240,12 +240,12 @@ module.service('mlMultiMetricJobService', function (
   };
 
   this.startDatafeed = function (formConfig) {
-    const datafeedId = 'datafeed-' + formConfig.jobId;
+    const datafeedId = mlJobService.getDatafeedId(formConfig.jobId);
     return mlJobService.startDatafeed(datafeedId, formConfig.jobId, formConfig.start, formConfig.end);
   };
 
   this.stopDatafeed = function (formConfig) {
-    const datafeedId = 'datafeed-' + formConfig.jobId;
+    const datafeedId = mlJobService.getDatafeedId(formConfig.jobId);
     return mlJobService.stopDatafeed(datafeedId, formConfig.jobId);
   };
 

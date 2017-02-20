@@ -134,7 +134,7 @@ function (
     // setting the state to 'stopping' disables the stop button
 
     job.datafeed_state = 'stopping';
-    const datafeedId = 'datafeed-' + job.job_id;
+    const datafeedId = mlJobService.getDatafeedId(job.job_id);
     mlJobService.stopDatafeed(datafeedId, job.job_id);
   };
 
