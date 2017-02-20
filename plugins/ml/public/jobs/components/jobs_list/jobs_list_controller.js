@@ -56,7 +56,7 @@ function (
   const msgs = mlMessageBarService; // set a reference to the message bar service
   const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
   let refreshCounter = 0;
-  // const auditMessages = {};
+  const auditMessages = {};
   $scope.noJobsCreated;
   $scope.toLocaleString = stringUtils.toLocaleString; // add toLocaleString to the scope to display nicer numbers
   $scope.filterText = '';
@@ -92,15 +92,15 @@ function (
     function doDelete() {
       status.deleteLock = true;
       mlJobService.deleteJob(job, status)
-        .then(function (resp) {
-          if (resp.success) {
+        .then(function (deleteResp) {
+          if (deleteResp.success) {
             status.deleteLock = false;
             msgs.clear();
             msgs.info('Job \'' + job.job_id + '\' deleted');
             status.deleteLock = false;
             mlJobService.loadJobs()
-              .then((jobs) => {
-                jobsUpdated(jobs);
+              .then((resp) => {
+                jobsUpdated(resp.jobs);
               });
           }
         });
@@ -301,7 +301,7 @@ function (
     });
     $scope.table.rows = rows;
 
-    // loadAuditSummary(jobs, rowScopes);
+    loadAuditSummary(jobs, rowScopes);
 
     // reapply the open flag for all rows.
     _.each(rowScopes, (rs) => {
@@ -327,12 +327,14 @@ function (
       if (refreshCounter % 5 === 0) {
 
         mlJobService.updateAllJobCounts()
-          .then((jobs) => {
-            jobsUpdated(jobs);
+          .then((resp) => {
+            if (resp.listChanged) {
+              jobsUpdated(resp.jobs);
+            }
           });
 
         // also reload all of the jobs messages
-        // loadAuditSummary($scope.jobs, rowScopes);
+        loadAuditSummary($scope.jobs, rowScopes);
       } else {
         // check to see if any jobs are 'running' if so, reload their counts
         mlJobService.checkState();
@@ -355,8 +357,8 @@ function (
 
   // load and create audit log for the current job
   // log also includes system messages
-  /*
-  function loadAuditMessages(jobs, rowScopes, jobId) {
+
+  function loadAuditMessages(jobs, rowScopesIn, jobId) {
     const createTimes = {};
     const fromRange = '1M';
     const aDayAgo = moment().subtract(1, 'days');
@@ -367,7 +369,7 @@ function (
       }
       // keep track of the job create times
       // only messages newer than the job's create time should be displayed.
-      createTimes[job.job_id] = moment(job.createTime).unix();
+      createTimes[job.job_id] = moment(job.create_time).unix();
     });
 
     // function for adding messages to job
@@ -383,19 +385,20 @@ function (
 
     return mlJobService.getJobAuditMessages(fromRange, jobId)
       .then((resp) => {
-        _.each(resp, (msg) => {
-          const time = moment(msg['@timestamp']);
+        const messages = resp.messages;
+        _.each(messages, (msg) => {
+          const time = moment(msg.timestamp);
           msg.time = time.format(TIME_FORMAT);
           msg.unixTime = time.unix();
           msg.isRecent = (time > aDayAgo);
 
-          if (msg.jobId === '') {
+          if (msg.job_id === '') {
             // system message
-            msg.level = 'SYSTEM_INFO';
+            msg.level = 'system_info';
             addMessage(jobId, msg);
           } else {
             // job specific message
-            addMessage(msg.jobId, msg);
+            addMessage(msg.job_id, msg);
           }
         });
 
@@ -403,9 +406,9 @@ function (
         // so sorting is needed.
         auditMessages[jobId] = _.sortBy(auditMessages[jobId], 'unixTime');
 
-        _.each(rowScopes, (rs) => {
+        _.each(rowScopesIn, (rs) => {
           if (rs.job.job_id === jobId) {
-            rs.jobAudit.messages = auditMessages[rs.job.job_id];
+            rs.jobAudit.messages = auditMessages[jobId];
           }
         });
 
@@ -418,24 +421,25 @@ function (
         }
       });
   }
-  */
+
 
   // function for loading audit messages for all jobs for displaying icons
-  /*
-  function loadAuditSummary(jobs, rowScopes) {
-    const levels = {SYSTEM_INFO: -1, INFO:0, WARNING:1, ERROR:2};
+
+  function loadAuditSummary(jobs, rowScopesIn) {
+    const levels = { system_info: -1, info:0, warning:1, error:2 };
     const jobMessages = {};
     const createTimes = {};
 
     _.each(jobs, (job) => {
       // keep track of the job create times
       // only messages newer than the job's create time should be displayed.
-      createTimes[job.job_id] = moment(job.createTime).unix();
+      createTimes[job.job_id] = moment(job.create_time).unix();
     });
 
     mlJobService.getAuditMessagesSummary()
     .then((resp) => {
-      _.each(resp, (job) => {
+      const messagesPerJob = resp.messagesPerJob;
+      _.each(messagesPerJob, (job) => {
         // ignore system messages (id==='')
         if (job.key !== '') {
           if (job.levels && job.levels.buckets && job.levels.buckets.length) {
@@ -444,7 +448,7 @@ function (
             let msgTime = 0;
 
             _.each(job.levels.buckets, (level) => {
-              const label = level.key.toUpperCase();
+              const label = level.key;
                 // note the highest message level
               if (levels[label] > highestLevel) {
                 highestLevel = levels[label];
@@ -467,7 +471,7 @@ function (
             });
 
             jobMessages[job.key] = {
-              id:               job.key,
+              job_id:           job.key,
               highestLevelText: highestLevelText,
               highestLevel:     highestLevel,
               msgTime:          msgTime
@@ -476,8 +480,8 @@ function (
         }
       });
 
-      // loop over the rowScopes and add icons if applicable
-      _.each(rowScopes, (rs) => {
+      // loop over the rowScopesIn and add icons if applicable
+      _.each(rowScopesIn, (rs) => {
         // create the update function,
         // this is called when the messages tab is clicked for this row
         rs.jobAudit.update = function () {
@@ -506,7 +510,7 @@ function (
       }
     });
   }
-  */
+
 
   // create modal dialog for editing job descriptions
   function openEditJobWindow(job) {
@@ -580,8 +584,8 @@ function (
     displayJobs(jobs);
   }
 
-  mlJobService.loadJobs().then((jobs) => {
-    jobsUpdated(jobs);
+  mlJobService.loadJobs().then((resp) => {
+    jobsUpdated(resp.jobs);
   });
 
   $scope.$emit('application.load');

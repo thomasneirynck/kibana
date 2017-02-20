@@ -54,16 +54,17 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
             { index: 1, title: 'Job config' },
             { index: 3, title: 'Counts' },
             { index: 4, title: 'JSON' },
-            // { index: 5, title: 'Job Messages' , showIcon: true }, // temporarily removed
+            { index: 5, title: 'Job Messages' , showIcon: true },
           ],
           changeTab: function (tab) {
             this.currentTab = tab.index;
 
-            if (tab.index === 6) {
+            if (tab.index === 5) {
               // when Job Message tab is clicked, load all the job messages for the last month
               // use the promise chain returned from update to scroll to the bottom of the
               // list once it's loaded
-              $scope.jobAudit.update().then(() => {
+              $scope.jobAudit.update()
+              .then(() => {
                 // auto scroll to the bottom of the message list.
                 const div = angular.element('#ml-job-audit-list-' + $scope.job.job_id);
                 if (div && div.length) {
