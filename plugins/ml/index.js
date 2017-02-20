@@ -24,8 +24,9 @@ const dataFeedRoutes = require('./server/routes/datafeeds');
 module.exports = function (kibana) {
 
   return new kibana.Plugin({
-    require: ['kibana', 'elasticsearch'],
+    require: ['kibana', 'elasticsearch', 'xpack_main'],
     id: 'ml',
+    configPrefix: 'xpack.ml',
     publicDir: resolve(__dirname, 'public'),
 
     uiExports: {
@@ -64,7 +65,8 @@ module.exports = function (kibana) {
       },
       visTypes: [
         'plugins/ml/ml_vis_types'
-      ]
+      ],
+      hacks: ['plugins/ml/hacks/toggle_app_link_in_nav'],
     },
 
 

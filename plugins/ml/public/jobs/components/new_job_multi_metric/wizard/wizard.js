@@ -25,10 +25,13 @@ import 'plugins/kibana/visualize/styles/main.less';
 // /Users/james/dev/kibana-5.0/src/core_plugins/kibana/public/visualize/styles/main.less
 
 import uiRoutes from 'ui/routes';
+import checkLicense from 'plugins/ml/license/check_license';
+
 uiRoutes
 .when('/jobs/new_job_multi_metric/step/1', {
   template: require('./step_1.html'),
   resolve: {
+    CheckLicense: checkLicense,
     indexPatternIds: courier => courier.indexPatterns.getIds()
   }
 });

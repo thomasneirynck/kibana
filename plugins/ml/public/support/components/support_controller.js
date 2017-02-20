@@ -13,14 +13,19 @@
  * strictly prohibited.
  */
 
-import uiRoutes from 'ui/routes';
 import chrome from 'ui/chrome';
 import filesaver from '@spalger/filesaver';
 const saveAs = filesaver.saveAs;
 
+import uiRoutes from 'ui/routes';
+import checkLicense from 'plugins/ml/license/check_license';
+
 uiRoutes
 .when('/support/?', {
-  template: require('./support.html')
+  template: require('./support.html'),
+  resolve : {
+    CheckLicense: checkLicense
+  }
 });
 
 import uiModules from 'ui/modules';

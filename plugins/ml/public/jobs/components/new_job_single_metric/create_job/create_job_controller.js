@@ -25,11 +25,17 @@ import chrome from 'ui/chrome';
 import angular from 'angular';
 
 import uiRoutes from 'ui/routes';
+import checkLicense from 'plugins/ml/license/check_license';
+
 uiRoutes
+.defaults(/dashboard/, {
+  requireDefaultIndex: true
+})
 .when('/jobs/new_job_single_metric/create', {
   template: require('./create_job.html'),
   resolve: {
-    indexPatternIds: (courier) => courier.indexPatterns.getIds()
+    CheckLicense: checkLicense,
+    indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
   }
 });
 
@@ -82,6 +88,8 @@ module
 
   $scope.JOB_STATE = JOB_STATE;
   $scope.jobState = $scope.JOB_STATE.NOT_STARTED;
+
+  $scope.indexPattern = $route.current.locals.indexPattern;
 
   $scope.ui = {
     showJobInput: false,
@@ -140,7 +148,7 @@ module
     chartInterval: undefined,
     start: 0,
     end: 0,
-    timeField: undefined,
+    timeField: $scope.indexPattern.timeFieldName,
     indexPattern: undefined,
     jobId: undefined,
     description: undefined,
@@ -547,13 +555,6 @@ module
         });
     }
   }
-
-  courier.indexPatterns.get($scope.index).then((resp) => {
-    $scope.indexPattern = resp;
-    $scope.formConfig.timeField = resp.timeFieldName;
-    courier;
-  });
-
   $scope.$listen(timefilter, 'fetch', $scope.loadVis);
 
 });

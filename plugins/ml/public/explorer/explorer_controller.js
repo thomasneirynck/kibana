@@ -21,7 +21,6 @@
 
 import _ from 'lodash';
 import $ from 'jquery';
-import uiRoutes from 'ui/routes';
 
 import 'plugins/ml/components/influencers_list';
 import 'plugins/ml/components/job_select_list';
@@ -31,9 +30,15 @@ import 'plugins/ml/services/results_service';
 
 import FilterBarQueryFilterProvider from 'ui/filter_bar/query_filter';
 
+import uiRoutes from 'ui/routes';
+import checkLicense from 'plugins/ml/license/check_license';
+
 uiRoutes
 .when('/explorer/?', {
-  template: require('./explorer.html')
+  template: require('./explorer.html'),
+  resolve : {
+    CheckLicense: checkLicense
+  }
 });
 
 import uiModules from 'ui/modules';

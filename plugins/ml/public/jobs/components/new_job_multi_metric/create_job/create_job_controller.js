@@ -25,11 +25,17 @@ import chrome from 'ui/chrome';
 import angular from 'angular';
 
 import uiRoutes from 'ui/routes';
+import checkLicense from 'plugins/ml/license/check_license';
+
 uiRoutes
+.defaults(/dashboard/, {
+  requireDefaultIndex: true
+})
 .when('/jobs/new_job_multi_metric/create', {
   template: require('./create_job.html'),
   resolve: {
-    indexPatternIds: (courier) => courier.indexPatterns.getIds()
+    CheckLicense: checkLicense,
+    indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
   }
 });
 
@@ -82,6 +88,8 @@ module
 
   $scope.JOB_STATE = JOB_STATE;
   $scope.jobState = $scope.JOB_STATE.NOT_STARTED;
+
+  $scope.indexPattern = $route.current.locals.indexPattern;
 
   $scope.ui = {
     showJobInput: true,
@@ -153,10 +161,10 @@ module
     chartInterval: undefined,
     start: 0,
     end: 0,
-    timeField: undefined,
+    timeField: $scope.indexPattern.timeFieldName,
     splitField: '--No split--',
     keyFields: {},
-    indexPattern: undefined,
+    indexPattern: $scope.indexPattern,
     jobId: undefined,
     description: undefined,
     mappingTypes: []
@@ -243,13 +251,11 @@ module
   }
 
   function initAgg() {
-    mlESMappingService.getMappings();
     _.each($scope.ui.aggTypeOptions, (agg) => {
       if (agg.title === 'Average') {
         $scope.formConfig.agg.type = agg;
       }
     });
-    // $scope.formConfig.agg.type
   }
 
   function loadFields() {
@@ -264,7 +270,6 @@ module
       if (param.name === 'customLabel') {
         categoryFields = getIndexedFields(param, 'string');
       }
-
     });
 
     _.each(fields, (field) => {
@@ -646,10 +651,7 @@ module
     }
   }
 
-  courier.indexPatterns.get($scope.index).then((resp) => {
-    $scope.indexPattern = resp;
-    $scope.formConfig.timeField = resp.timeFieldName;
-    $scope.formConfig.indexPattern = $scope.indexPattern;
+  mlESMappingService.getMappings().then(() => {
     initAgg();
     loadFields();
   });

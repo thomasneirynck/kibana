@@ -24,7 +24,6 @@ import _ from 'lodash';
 import $ from 'jquery';
 import moment from 'moment';
 import angular from 'angular';
-import uiRoutes from 'ui/routes';
 import 'ui/timefilter';
 
 import 'plugins/ml/services/job_service';
@@ -34,9 +33,15 @@ import 'plugins/ml/services/results_service';
 import swimlanes from 'plugins/ml/summaryview/swimlanes.html';
 import chrome from 'ui/chrome';
 
+import uiRoutes from 'ui/routes';
+import checkLicense from 'plugins/ml/license/check_license';
+
 uiRoutes
 .when('/summaryview/?', {
-  template: require('./summaryview.html')
+  template: require('./summaryview.html'),
+  resolve : {
+    CheckLicense: checkLicense
+  }
 });
 
 import uiModules from 'ui/modules';

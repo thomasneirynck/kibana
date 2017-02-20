@@ -15,17 +15,24 @@
 
 import _ from 'lodash';
 import angular from 'angular';
-import uiRoutes from 'ui/routes';
 import 'plugins/ml/lib/bower_components/JSON.minify/minify.json';
-// import 'plugins/ml/services/visualization_job_service';
 import 'ui/courier';
+
+import uiRoutes from 'ui/routes';
+import checkLicense from 'plugins/ml/license/check_license';
 
 uiRoutes
 .when('/jobs/new_job_advanced', {
-  template: require('./new_job.html')
+  template: require('./new_job.html'),
+  resolve : {
+    CheckLicense: checkLicense
+  }
 })
 .when('/jobs/new_job_advanced/:jobId', {
-  template: require('./new_job.html')
+  template: require('./new_job.html'),
+  resolve : {
+    CheckLicense: checkLicense
+  }
 });
 
 import stringUtils from 'plugins/ml/util/string_utils';

@@ -21,16 +21,21 @@
 
 import _ from 'lodash';
 import moment from 'moment';
-import uiRoutes from 'ui/routes';
 import 'ui/timefilter';
 
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/ml_dashboard_service';
 import 'plugins/ml/services/results_service';
 
+import uiRoutes from 'ui/routes';
+import checkLicense from 'plugins/ml/license/check_license';
+
 uiRoutes
 .when('/timeseriesexplorer/?', {
-  template: require('./timeseriesexplorer.html')
+  template: require('./timeseriesexplorer.html'),
+  resolve : {
+    CheckLicense: checkLicense
+  }
 });
 
 import uiModules from 'ui/modules';

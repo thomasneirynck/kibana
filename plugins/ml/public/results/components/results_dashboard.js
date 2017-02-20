@@ -26,7 +26,6 @@ import 'plugins/kibana/dashboard/styles/index.less';
 import { savedDashboardRegister } from 'plugins/kibana/dashboard/saved_dashboard/saved_dashboard_register';
 require('ui/saved_objects/saved_object_registry').register(savedDashboardRegister);
 
-import uiRoutes from 'ui/routes';
 import uiModules from 'ui/modules';
 
 import './dashboard_app_directive';
@@ -45,6 +44,9 @@ uiModules.get('apps/ml', [
   'kibana/typeahead'
 ]);
 
+import uiRoutes from 'ui/routes';
+import checkLicense from 'plugins/ml/license/check_license';
+
 uiRoutes
 .defaults(/dashboard/, {
   requireDefaultIndex: true
@@ -52,6 +54,7 @@ uiRoutes
 .when('/anomalyexplorer', {
   template: require('./results_dashboard.html'),
   resolve: {
+    CheckLicense: checkLicense,
     dash: function (savedDashboards, Notifier, $route, $location, courier) {
       return savedDashboards.get('ml-explorer')
       .catch(courier.redirectWhenMissing({
@@ -63,6 +66,7 @@ uiRoutes
 .when('/connections', {
   template: require('./results_dashboard.html'),
   resolve: {
+    CheckLicense: checkLicense,
     dash: function (savedDashboards, Notifier, $route, $location, courier) {
       return savedDashboards.get('ml-connections')
       .catch(courier.redirectWhenMissing({

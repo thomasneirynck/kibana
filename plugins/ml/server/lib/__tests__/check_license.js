@@ -44,9 +44,9 @@ describe('check_license: ', function () {
     });
   });
 
-  context('graph is disabled in Elasticsearch', () => {
+  context('ml is disabled in Elasticsearch', () => {
     beforeEach(() => {
-      set(mockLicenseInfo, 'feature', sinon.stub().withArgs('graph').returns({ isEnabled: () => false }));
+      set(mockLicenseInfo, 'feature', sinon.stub().withArgs('ml').returns({ isEnabled: () => false }));
       licenseCheckResult = checkLicense(mockLicenseInfo);
     });
 
@@ -55,9 +55,9 @@ describe('check_license: ', function () {
     });
   });
 
-  context('graph is enabled in Elasticsearch', () => {
+  context('ml is enabled in Elasticsearch', () => {
     beforeEach(() => {
-      set(mockLicenseInfo, 'feature', sinon.stub().withArgs('graph').returns({ isEnabled: () => true }));
+      set(mockLicenseInfo, 'feature', sinon.stub().withArgs('ml').returns({ isEnabled: () => true }));
     });
 
     context('& license is trial or platinum', () => {

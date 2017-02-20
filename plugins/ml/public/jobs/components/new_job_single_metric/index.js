@@ -16,11 +16,10 @@
 import './styles/main.less';
 import './wizard/wizard';
 import './create_job';
+
 import uiRoutes from 'ui/routes';
+
 uiRoutes
-.defaults(/new_job_single_metric/, {
-  requireDefaultIndex: true
-})
 .when('/jobs/new_job_single_metric', {
   redirectTo: '/jobs/new_job_single_metric/step/1'
 });

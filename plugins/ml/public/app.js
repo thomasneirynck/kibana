@@ -39,20 +39,13 @@ import 'plugins/ml/app.less';
 import 'plugins/ml/components/pretty_duration';
 
 import chrome from 'ui/chrome';
-import routes from 'ui/routes';
+import uiRoutes from 'ui/routes';
 
-// switch the kibana favicon to the ml icon
-// $("head link[rel='shortcut icon']").attr("href", favicon);
-
-// From Kibana 4.4+, plugins are required to explicitly enable AngularJS routing,
-// via the enable() function added to ui/public/routes/routes.js
-// See https://github.com/elastic/kibana/issues/5226
-// and https://github.com/elastic/kibana/pull/5271
-if (typeof routes.enable === 'function') {
-  routes.enable();
+if (typeof uiRoutes.enable === 'function') {
+  uiRoutes.enable();
 }
 
-routes
+uiRoutes
 .otherwise({
   redirectTo: `/${chrome.getInjected('kbnDefaultAppId', 'jobs')}`
 });

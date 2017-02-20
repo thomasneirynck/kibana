@@ -14,10 +14,14 @@
  */
 
 import uiRoutes from 'ui/routes';
+import checkLicense from 'plugins/ml/license/check_license';
 
 uiRoutes
 .when('/jobs/new_job', {
-  template: require('./wizard.html')
+  template: require('./wizard.html'),
+  resolve : {
+    CheckLicense: checkLicense
+  }
 });
 
 import uiModules from 'ui/modules';

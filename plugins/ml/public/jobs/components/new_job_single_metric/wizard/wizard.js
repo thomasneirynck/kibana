@@ -14,29 +14,19 @@
  */
 
 import 'ui/courier';
-
-// import 'plugins/kibana/visualize/saved_visualizations/saved_visualizations';
-// import 'ui/directives/saved_object_finder';
-// import 'ui/directives/paginated_selectable_list';
-// import 'plugins/kibana/discover/saved_searches/saved_searches';
-
-// import 'plugins/ml/services/visualization_job_service';
 import 'plugins/kibana/visualize/styles/main.less';
-// /Users/james/dev/kibana-5.0/src/core_plugins/kibana/public/visualize/styles/main.less
 
 import uiRoutes from 'ui/routes';
+import checkLicense from 'plugins/ml/license/check_license';
+
 uiRoutes
 .when('/jobs/new_job_single_metric/step/1', {
   template: require('./step_1.html'),
   resolve: {
+    CheckLicense: checkLicense,
     indexPatternIds: courier => courier.indexPatterns.getIds()
   }
 });
-
-// preloading
-
-// require('ui/saved_objects/saved_object_registry')
-// .register(require('plugins/kibana/visualize/saved_visualizations/saved_visualization_register'));
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');

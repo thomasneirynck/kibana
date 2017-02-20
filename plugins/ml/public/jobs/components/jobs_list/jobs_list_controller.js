@@ -17,16 +17,21 @@ import _ from 'lodash';
 import $ from 'jquery';
 import moment from 'moment';
 import chrome from 'ui/chrome';
-import uiRoutes from 'ui/routes';
 import angular from 'angular';
 
 import jobsListControlsHtml from './jobs_list_controls.html';
 import jobsListArrow from 'ui/doc_table/components/table_row/open.html';
 import stringUtils from 'plugins/ml/util/string_utils';
 
+import uiRoutes from 'ui/routes';
+import checkLicense from 'plugins/ml/license/check_license';
+
 uiRoutes
 .when('/jobs/?', {
-  template: require('./jobs_list.html')
+  template: require('./jobs_list.html'),
+  resolve : {
+    CheckLicense: checkLicense
+  }
 });
 
 import uiModules from 'ui/modules';
