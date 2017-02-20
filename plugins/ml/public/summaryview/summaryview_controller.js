@@ -106,6 +106,7 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
     if ($scope.selectedJobs === undefined) {
       return;
     }
+    const selectedJobIds = $scope.getSelectedJobIds();
 
     // counter to keep track of what data sets have been loaded.
     let readyCount = 5;
@@ -114,6 +115,7 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
     function finish() {
       readyCount--;
       if (readyCount === 0) {
+        $scope.selectedJobIds = selectedJobIds;
 
         // elasticsearch may return results earlier than requested.
         // e.g. when it has decided to use 1w as the interval, it will round to the nearest week start
@@ -197,7 +199,6 @@ module.controller('MlSummaryViewController', function ($scope, $route, $timeout,
 
     const bounds = timefilter.getActiveBounds();
     mlAnomalyRecordDetailsService.setBounds(bounds);
-    const selectedJobIds = $scope.getSelectedJobIds();
 
     mlSwimlaneService.setTimeRange({start: (bounds.min.valueOf() / 1000), end: (bounds.max.valueOf() / 1000)});
     mlSwimlaneService.setSelectedJobIds(selectedJobIds);
