@@ -79,7 +79,7 @@ module.controller('MlJobTimepickerModal', function ($scope, $modalInstance, para
     }
 
     if ($scope.ui.endRadio === '0') {
-      $scope.end = '';
+      $scope.end = undefined;
     } else if ($scope.ui.endRadio === '1') {
       $scope.end = moment($scope.ui.timepicker.to).unix() * 1000;
     }

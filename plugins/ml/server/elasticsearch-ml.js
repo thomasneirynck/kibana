@@ -198,6 +198,17 @@
               type: 'string'
             }
           }
+        },
+        {
+          fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>/_start?&start=<%=start%>',
+          req: {
+            datafeedId: {
+              type: 'string'
+            },
+            start: {
+              type: 'string'
+            }
+          }
         }
       ],
       method: 'POST'

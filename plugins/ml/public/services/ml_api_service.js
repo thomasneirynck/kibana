@@ -102,13 +102,17 @@ module.service('ml', function (prlHttpService) {
   };
 
   this.startDatafeed = function (obj) {
+    const data = {};
+    if(obj.start !== undefined) {
+      data.start = obj.start;
+    }
+    if(obj.end !== undefined) {
+      data.end = obj.end;
+    }
     return http.request({
       url: `../api/ml/datafeeds/${obj.datafeedId}/_start`,
       method: 'POST',
-      data: {
-        start: obj.start,
-        end: obj.end
-      }
+      data
     });
   };
 
