@@ -451,7 +451,7 @@ module.service('mlMultiMetricJobService', function (
     return mlMultiMetricJobSearchService.getCategoryFields(formConfig.indexPattern.id, formConfig.splitField, size);
   };
 
-  this.loadEventRateData = function (formConfig, gridWidth) {
+  this.loadEventRateData = function (formConfig) {
     const deferred = $q.defer();
     const end = formConfig.end;
     const start = formConfig.start;
