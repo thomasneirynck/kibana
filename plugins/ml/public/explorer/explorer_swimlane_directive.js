@@ -31,7 +31,7 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
   function link(scope, element) {
 
     // Re-render the swimlane whenever the underlying data changes.
-    mlExplorerDashboardService.onSwimlaneDataChanged(function (swimlaneType) {
+    mlExplorerDashboardService.addSwimlaneDataChangeListener((swimlaneType) => {
       if (swimlaneType === scope.swimlaneType) {
         render();
       }
@@ -135,7 +135,7 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
         const x = $event.pageX;
         const y = $event.pageY;
         const offset = 5;
-        $('<div class="ml-explorer-swimlane-tooltip">' + contents + '</div>').css({
+        $('<div class="ml-explorer-swimlane-tooltip ml-explorer-tooltip">' + contents + '</div>').css({
           'position': 'absolute',
           'display': 'none',
           'z-index': 1,

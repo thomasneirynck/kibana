@@ -101,21 +101,36 @@
         </div>
         </div>
 
-        <span class="panel-title">
-          Anomalies
-        </span>
-        <ml-anomalies-table
-          anomaly-records="anomalyRecords"
-          index-pattern-id="indexPatternId"
-          time-field-name="timeFieldName">
-        </ml-anomalies-table>
+        <div ng-if="showNoSelectionMessage" class="text-center visualize-error">
+          <div class="item top"></div>
+          <div class="item">
+            <h4>Click on a section in the timeline to view the anomalies</h4>
+          </div>
+          <div class="item bottom"></div>
+        </div>
 
-<!--         <span class="panel-title">
-          Anomaly charts
-        </span>
-        <ml-explorer-charts
-          anomaly-records="anomalyChartRecords">
-        </ml-explorer-charts> -->
+        <div ng-if="!showNoSelectionMessage">
+          <span class="panel-title">
+            Anomalies
+          </span>
+
+          <div ng-controller="MlExplorerChartsContainerController">
+            <ml-explorer-charts-container
+              series-to-plot="seriesToPlot"
+              plot-earliest="plotEarliest"
+              plot-latest="plotLatest">
+            </ml-explorer-charts-container>
+          </div>
+
+          <div>
+            <ml-anomalies-table
+              anomaly-records="anomalyRecords"
+              index-pattern-id="indexPatternId"
+              time-field-name="timeFieldName">
+            </ml-anomalies-table>
+        </div>
+
+        </div>
 
       </div>
 

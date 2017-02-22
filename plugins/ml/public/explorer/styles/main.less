@@ -4,6 +4,12 @@
   color: #555;
   font-size: 10px;
 
+  .visualize-error {
+    h4 {
+      margin-top: 50px;
+    }
+  }
+
   .loading-container, .no-results-container {
     text-align: center;
     font-size: 17px;
@@ -235,9 +241,8 @@
 
 }
 
-.ml-explorer-swimlane-tooltip {
+.ml-explorer-tooltip {
   position: absolute;
-  display: none;
   border: 2px solid #303030;
   border-radius: 5px;
   padding: 7px 5px;
@@ -246,6 +251,8 @@
   font-family: Roboto, Droid, Helvetica Neue, Helvetica, Arial, sans-serif;
   font-size: 12px;
   opacity: 0.9;
+  white-space: nowrap;
+  z-index: 1;
 
   hr {
     margin-top: 3px;

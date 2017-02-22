@@ -835,12 +835,196 @@ module.service('mlResultsService', function ($q, es) {
     return deferred.promise;
   };
 
-  // Queries Elasticsearch to obtain the record level results for the specified job(s), time range,
+  // Queries Elasticsearch to obtain all the record level results for the specified job(s), time range,
   // and normalized probability threshold.
   // Pass an empty array or ['*'] to search over all job IDs.
   // Returned response contains a records property, which is an array of the matching results.
   this.getRecords = function (index, jobIds, threshold, earliestMs, latestMs, maxResults) {
     return this.getRecordsForInfluencer(index, jobIds, [], threshold, earliestMs, latestMs, maxResults);
+  };
+
+  // Queries Elasticsearch to obtain the record level results matching the given criteria,
+  // for the specified job(s), time range, and normalized probability threshold.
+  // criteriaFields parameter must be an array, with each object in the array having 'fieldName'
+  // 'fieldValue' properties.
+  // Pass an empty array or ['*'] to search over all job IDs.
+  this.getRecordsForCriteria = function (index, jobIds, criteriaFields, threshold, earliestMs, latestMs, maxResults) {
+    const deferred = $q.defer();
+    const obj = {success: true, records: []};
+
+    // Build the criteria to use in the bool filter part of the request.
+    // Add criteria for the time range, normalized probability, plus any specified job IDs.
+    const boolCriteria = [];
+    boolCriteria.push({
+      'range': {
+        'timestamp': {
+          'gte': earliestMs,
+          'lte': latestMs,
+          'format': 'epoch_millis'
+        }
+      }
+    });
+
+    boolCriteria.push({
+      'range': {
+        'normalized_probability': {
+          'gte': threshold,
+        }
+      }
+    });
+
+    if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
+      let jobIdFilterStr = '';
+      _.each(jobIds, (jobId, i) => {
+        if (i > 0) {
+          jobIdFilterStr += ' OR ';
+        }
+        jobIdFilterStr += 'job_id:';
+        jobIdFilterStr += jobId;
+      });
+      boolCriteria.push({
+        'query_string': {
+          'analyze_wildcard':true,
+          'query':jobIdFilterStr
+        }
+      });
+    }
+
+    // Add in each of the specified criteria.
+    _.each(criteriaFields, (criteria) => {
+      const condition = {'match': {}};
+      condition.match[criteria.fieldName] = {
+        'query': criteria.fieldValue,
+        'type': 'phrase'
+      };
+
+      boolCriteria.push(condition);
+    });
+
+    es.search({
+      index: index,
+      size: maxResults !== undefined ? maxResults : 100,
+      body: {
+        'query': {
+          'bool': {
+            'filter': [
+              {
+                'query_string': {
+                  'query': '_type:result AND result_type:record',
+                  'analyze_wildcard': true
+                }
+              },
+              {
+                'bool': {
+                  'must': boolCriteria
+                }
+              }
+            ]
+          }
+        },
+        'sort' : [
+          { 'normalized_probability' : {'order' : 'desc'}}
+        ],
+      }
+    })
+    .then((resp) => {
+      if (resp.hits.total !== 0) {
+        _.each(resp.hits.hits, (hit) => {
+          obj.records.push(hit._source);
+        });
+      }
+      deferred.resolve(obj);
+    })
+    .catch((resp) => {
+      deferred.reject(resp);
+    });
+    return deferred.promise;
+  };
+
+
+  // Queries Elasticsearch to obtain metric aggregation results.
+  // index can be a String, or String[], of index names to search.
+  // entityFields parameter must be an array, with each object in the array having 'fieldName'
+  //  and 'fieldValue' properties.
+  // Extra query object can be supplied, or pass null if no additional query
+  // to that built from the supplied entity fields.
+  // Returned response contains a results property containing the requested aggregation.
+  this.getMetricData = function (index, entityFields, query, metricFunction, metricFieldName,
+    earliestMs, latestMs, interval) {
+    const deferred = $q.defer();
+    const obj = {success: true, results: {}};
+
+    // Build the criteria to use in the bool filter part of the request.
+    // Add criteria for the time range, normalized probability, plus any specified job IDs.
+    const boolCriteria = [];
+    boolCriteria.push({
+      'range': {
+        '@timestamp': {
+          'gte': earliestMs,
+          'lte': latestMs,
+          'format': 'epoch_millis'
+        }
+      }
+    });
+
+    if (query) {
+      boolCriteria.push(query);
+    }
+
+    _.each(entityFields, (entity) => {
+      boolCriteria.push({
+        'query_string': {
+          'query': entity.fieldName + ':' + entity.fieldValue,
+          'analyze_wildcard': true
+        }
+      });
+    });
+
+    const searchBody = {
+      'query': {
+        'bool': {
+          'must': boolCriteria
+        }
+      },
+      'size': 0,
+      '_source': {
+        'excludes': []
+      },
+      'aggs': {
+        'byTime': {
+          'date_histogram': {
+            'field': '@timestamp',
+            'interval': interval,
+            'min_doc_count': 1
+          },
+          'aggs': {}
+        }
+      }
+    };
+
+    const metricAgg = {};
+    metricAgg[metricFunction] = {'field': metricFieldName};
+    searchBody.aggs.byTime.aggs.metric = metricAgg;
+
+    es.search({
+      index: index,
+      body: searchBody
+    })
+    .then((resp) => {
+      const dataByTime = _.get(resp, ['aggregations', 'byTime', 'buckets'], []);
+      _.each(dataByTime, (dataForTime) => {
+        const value = _.get(dataForTime, ['metric', 'value']);
+        if (value !== undefined) {
+          obj.results[dataForTime.key] = value;
+        }
+      });
+
+      deferred.resolve(obj);
+    })
+    .catch((resp) => {
+      deferred.reject(resp);
+    });
+    return deferred.promise;
   };
 
 });

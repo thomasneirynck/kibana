@@ -1,0 +1,389 @@
+/*
+ * ELASTICSEARCH CONFIDENTIAL
+ *
+ * Copyright (c) 2017 Elasticsearch BV. All Rights Reserved.
+ *
+ * Notice: this software, and all information contained
+ * therein, is the exclusive property of Elasticsearch BV
+ * and its licensors, if any, and is protected under applicable
+ * domestic and foreign law, and international treaties.
+ *
+ * Reproduction, republication or distribution without the
+ * express written consent of Elasticsearch BV is
+ * strictly prohibited.
+ */
+
+/*
+ * AngularJS directive for rendering a chart of anomalies in the raw data in
+ * the Machine Learning Explorer dashboard.
+ */
+
+import _ from 'lodash';
+import $ from 'jquery';
+import d3 from 'd3';
+import angular from 'angular';
+import moment from 'moment';
+import numeral from 'numeral';
+
+import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import 'plugins/ml/filters/format_value';
+import 'plugins/ml/services/results_service';
+
+import uiModules from 'ui/modules';
+const module = uiModules.get('apps/ml');
+
+module.directive('mlExplorerChart', function (mlResultsService, formatValueFilter) {
+
+  function link(scope, element) {
+    console.log('ml-explorer-chart directive link series config:', scope.seriesConfig);
+    const config = scope.seriesConfig;
+
+    const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
+    const ML_TIME_FIELD_NAME = 'timestamp';
+    const ANOMALIES_MAX_RESULTS = 500;
+
+    let svgWidth = 0;
+    let vizWidth = 0;
+    const chartHeight = 170;
+    const LINE_CHART_ANOMALY_RADIUS = 7;
+
+    // TODO - adjust margin for longest y-axis label.
+    const margin = { top: 30, right: 0, bottom: 30, left: 60 };
+    const svgHeight = chartHeight + margin.top + margin.bottom;
+    const chartLimits = { max: 0, min: 0 };
+
+    let lineChartXScale = null;
+    let lineChartYScale = null;
+    let lineChartGroup;
+    let lineChartValuesLine = null;
+
+    // Counter to keep track of what data sets have been loaded.
+    let awaitingCount = 2;
+
+    // finish() function, called after each data set has been loaded and processed.
+    // The last one to call it will trigger the page render.
+    function finish() {
+      awaitingCount--;
+      if (awaitingCount === 0) {
+        scope.chartData = processChartData();
+        init();
+        createSVGGroups();
+        drawLineChart();
+      }
+    }
+
+    // Query 1 - load the raw metric data.
+    // TODO - get entity fields out of chart config i.e. use by and over fields too.
+    //  - use some mapping function to get the ES function name, like in
+    //    jobs/components/new_job_multi_metric/create_job/filter_agg_types.js
+    const entityFields = [{fieldName: config.partition_field_name, fieldValue: config.partition_field_value}];
+    const datafeedQuery = _.get(config, 'datafeed_config.query', null);
+    mlResultsService.getMetricData(config.datafeed_config.indexes, entityFields, datafeedQuery, config.function, config.field_name,
+      scope.plotEarliest, scope.plotLatest, config.interval
+      )
+    .then(function (resp) {
+      scope.metricData = resp.results;
+      finish();
+    });
+
+    // Query 2 - load the anomalies.
+    // TODO - may need to change this to use more generic filter criteria i.e. not
+    // relying on the partition/by/over fields being influencers.
+    const criteria = [];
+    criteria.push({ fieldName: config.partition_field_name, fieldValue: config.partition_field_value });
+    criteria.push({ fieldName: 'field_name', fieldValue: config.field_name });
+
+    mlResultsService.getRecordsForCriteria(ML_RESULTS_INDEX_ID, [config.job_id], criteria,
+      0, scope.plotEarliest, scope.plotLatest, ANOMALIES_MAX_RESULTS)
+    .then(function (resp) {
+      scope.anomalyRecords = resp.records;
+      finish();
+    });
+
+    // TODO - do we need this listener?
+    scope.$on('renderExplorerChart',function () {
+      render();
+    });
+
+    element.on('$destroy', function () {
+      scope.$destroy();
+    });
+
+    function render() {
+      if (scope.metricData === undefined) {
+        return;
+      }
+    }
+
+    function init() {
+      const $el = angular.element('.explorer-charts');
+
+      // TODO - read in parameter which says how many charts per row.
+      svgWidth = $el.width();
+      vizWidth  = svgWidth  - margin.left - margin.right;
+
+      lineChartXScale = d3.time.scale().range([0, vizWidth]);
+      lineChartYScale = d3.scale.linear().range([chartHeight, 0]);
+
+      d3.svg.axis().scale(lineChartXScale).orient('bottom')
+        .innerTickSize(-chartHeight).outerTickSize(0).tickPadding(10);
+      d3.svg.axis().scale(lineChartYScale).orient('left')
+        .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
+
+      lineChartValuesLine = d3.svg.line()
+      .x(d => lineChartXScale(d.date))
+      .y(d => lineChartYScale(d.value))
+      .defined(d => d.value !== null);
+    }
+
+    function createSVGGroups() {
+      if (scope.chartData === undefined) {
+        return;
+      }
+
+      // Clear any existing elements from the visualization,
+      // then build the svg elements for the chart.
+      const chartElement = d3.select(element.get(0));
+      chartElement.select('svg').remove();
+
+      const svg = chartElement.append('svg')
+        .attr('width',  svgWidth)
+        .attr('height', svgHeight);
+
+      lineChartGroup = svg.append('g')
+        .attr('class', 'line-chart')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+    }
+
+    function drawLineChart() {
+      const data = scope.chartData;
+
+      // TODO - add in some indicator marker to highlight the time of the selected swimlane cell.
+      lineChartXScale = lineChartXScale.domain(d3.extent(data, d => d.date));
+
+      chartLimits.max = d3.max(data, (d) => d.value);
+      chartLimits.min = d3.min(data, (d) => d.value);
+
+      // add padding of 10% of the difference between max and min
+      // to the upper and lower ends of the y-axis
+      const padding = (chartLimits.max - chartLimits.min) * 0.1;
+      chartLimits.max += padding;
+      chartLimits.min -= padding;
+
+      lineChartYScale = lineChartYScale.domain([
+        chartLimits.min,
+        chartLimits.max
+      ]);
+
+      const xAxis = d3.svg.axis().scale(lineChartXScale).orient('bottom')
+        .innerTickSize(-chartHeight).outerTickSize(0).tickPadding(10);
+      const yAxis = d3.svg.axis().scale(lineChartYScale).orient('left')
+        .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
+
+      // Add border round plot area.
+      lineChartGroup.append('rect')
+        .attr('x', 0)
+        .attr('y', 0)
+        .attr('height', chartHeight)
+        .attr('width', vizWidth)
+        .style('stroke', '#cccccc')
+        .style('fill', 'none')
+        .style('stroke-width', 1);
+
+      drawLineChartAxes(xAxis, yAxis);
+      drawLineChartPaths(data);
+      drawLineChartMarkers(data);
+    }
+
+    function drawLineChartAxes(xAxis, yAxis) {
+
+      const axes = lineChartGroup.append('g');
+
+      axes.append('g')
+        .attr('class', 'x axis')
+        .attr('transform', 'translate(0,' + chartHeight + ')')
+        .call(xAxis);
+
+      axes.append('g')
+        .attr('class', 'y axis')
+        .call(yAxis);
+    }
+
+    function drawLineChartPaths(data) {
+      lineChartGroup.append('path')
+        .attr('class', 'values-line')
+        .attr('d', lineChartValuesLine(data));
+    }
+
+    function drawLineChartMarkers(data) {
+      // Render circle markers for the points.
+      // These are used for displaying tooltips on mouseover.
+      const dots = lineChartGroup.append('g')
+        .attr('class', 'chart-markers')
+        .selectAll('.metric-value')
+        .data(data);
+
+      // Remove dots that are no longer needed i.e. if number of chart points has decreased.
+      dots.exit().remove();
+      // Create any new dots that are needed i.e. if number of chart points has increased.
+      dots.enter().append('circle')
+        .attr('r', LINE_CHART_ANOMALY_RADIUS)
+        .on('mouseover', function (d) {
+          showLineChartTooltip(d, this);
+        })
+        .on('mouseout', hideLineChartTooltip);
+
+      // Update all dots to new positions.
+      dots.attr('cx', function (d) { return lineChartXScale(d.date); })
+        .attr('cy', function (d) { return lineChartYScale(d.value); })
+        .attr('class', function (d) {
+          let markerClass = 'metric-value';
+          if (_.has(d, 'anomalyScore')) {
+            markerClass += ' anomaly-marker ';
+            markerClass += anomalyUtils.getSeverityWithLow(d.anomalyScore);
+          }
+          return markerClass;
+        });
+
+    }
+
+    function showLineChartTooltip(marker, circle) {
+      // Show the time and metric values in the tooltip.
+      // Uses date, value, upper, lower and anomalyScore (optional) marker properties.
+      const formattedDate = moment(marker.date).format('MMMM Do YYYY, HH:mm');
+      let contents = formattedDate + '<br/><hr/>';
+
+      // TODO - need better formatting for small decimals.
+      if (_.has(marker, 'anomalyScore')) {
+        const score = parseInt(marker.anomalyScore);
+        const displayScore = (score > 0 ? score : '< 1');
+        contents += ('anomaly score: ' + displayScore);
+        // Display the record actual in preference to the chart value, which may be
+        // different depending on the aggregation interval of the chart.
+        contents += ('<br/>actual: ' + formatValueFilter(marker.actual, config.function));
+        contents += ('<br/>typical: ' + formatValueFilter(marker.typical, config.function));
+      } else {
+        contents += ('value: ' + numeral(marker.value).format('0,0.[00]'));
+      }
+
+      const tooltipDiv = d3.select('.ml-explorer-charts-tooltip');
+      tooltipDiv.transition()
+        .duration(200)
+        .style('opacity', .9);
+      tooltipDiv.html(contents);
+
+      // Position the tooltip.
+      const pos = $(circle).position();
+      const x = pos.left;
+      const y = pos.top;
+      const parentWidth = $('.ml-explorer').width();
+      const tooltipWidth = tooltipDiv.node().offsetWidth;
+      if (x + tooltipWidth + LINE_CHART_ANOMALY_RADIUS + 10 < parentWidth) {
+        tooltipDiv.style('left', (x + (LINE_CHART_ANOMALY_RADIUS * 2) + 4) + 'px')
+          .style('top', (y - 0) + 'px');
+      } else {
+        tooltipDiv.style('left', x - (tooltipWidth + LINE_CHART_ANOMALY_RADIUS) + 'px')
+          .style('top', (y - 0) + 'px');
+      }
+    }
+
+    function hideLineChartTooltip() {
+      const tooltipDiv = d3.select('.ml-explorer-charts-tooltip');
+      tooltipDiv.transition()
+        .duration(500)
+        .style('opacity', 0);
+    }
+
+    function processChartData() {
+      // Return dataset in format used by the chart.
+      // i.e. array of Objects with keys date (JavaScript date), value,
+      //    plus anomalyScore for points with anomaly markers.
+      const chartData = [];
+      if (scope.metricData === undefined || _.keys(scope.metricData).length === 0) {
+        return chartData;
+      }
+
+      _.each(scope.metricData, function (value, time) {
+        chartData.push(
+          {
+            date: new Date(+time),
+            value: value
+          });
+      });
+
+      // Iterate through the anomaly records, adding anomalyScore properties
+      // to the chartData entries for anomalous buckets.
+      _.each(scope.anomalyRecords, function (record) {
+
+        // Look for a chart point with the same time as the record.
+        // If none found, find closest time in chartData set.
+        const recordTime = record[ML_TIME_FIELD_NAME];
+        let chartPoint;
+        for (let i = 0; i < chartData.length; i++) {
+          if (chartData[i].date.getTime() === recordTime) {
+            chartPoint = chartData[i];
+            break;
+          }
+        }
+
+        if (chartPoint === undefined) {
+          // Find nearest point in time.
+          // loop through line items until the date is greater than bucketTime
+          // grab the current and prevous items in the and compare the time differences
+          let foundItem;
+          for (let i = 0; i < chartData.length; i++) {
+            const itemTime = chartData[i].date.getTime();
+            if (itemTime > recordTime) {
+              const item = chartData[i];
+              const prevousItem = chartData[i - 1];
+
+              const diff1 = Math.abs(recordTime - prevousItem.date.getTime());
+              const diff2 = Math.abs(recordTime - itemTime);
+
+              // foundItem should be the item with a date closest to bucketTime
+              if (prevousItem === undefined || diff1 > diff2) {
+                foundItem = item;
+              } else {
+                foundItem = prevousItem;
+              }
+              break;
+            }
+          }
+
+          chartPoint = foundItem;
+        }
+
+        if (chartPoint === undefined) {
+          // In case there is a record with a time after that of the last chart point, set the score
+          // for the last chart point to that of the last record, if that record has a higher score.
+          const lastChartPoint = chartData[chartData.length - 1];
+          const lastChartPointScore = lastChartPoint.anomalyScore || 0;
+          if (record.normalized_probability > lastChartPointScore) {
+            chartPoint = lastChartPoint;
+          }
+        }
+
+        if (chartPoint !== undefined) {
+          chartPoint.anomalyScore = record.normalized_probability;
+          chartPoint.actual = record.actual;
+          chartPoint.typical = record.typical;
+        }
+
+
+      });
+
+      return chartData;
+    }
+
+  }
+
+  return {
+  	restrict: 'E',
+    scope: {
+      seriesConfig: '=',
+      plotEarliest: '=',
+      plotLatest: '='
+    },
+    link: link
+  };
+});

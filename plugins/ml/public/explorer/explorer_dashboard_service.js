@@ -25,13 +25,14 @@ module.service('mlExplorerDashboardService', function () {
 
   const listeners = {
     'swimlaneCellClick': [],
-    'swimlaneDataChanged': []
+    'swimlaneDataChange': [],
+    'anomalyDataChange': []
   };
 
   this.init = function () {
     // Clear out any old listeners.
     listeners.swimlaneCellClick.splice(0);
-    listeners.swimlaneDataChanged.splice(0);
+    listeners.swimlaneDataChange.splice(0);
   };
 
   this.fireSwimlaneCellClick = function (cellData) {
@@ -40,18 +41,28 @@ module.service('mlExplorerDashboardService', function () {
     });
   };
 
-  this.onSwimlaneCellClick = function (listener) {
+  this.addSwimlaneCellClickListener = function (listener) {
     listeners.swimlaneCellClick.push(listener);
   };
 
-  this.fireSwimlaneDataChanged = function (swimlaneType) {
-    listeners.swimlaneDataChanged.forEach(function (listener) {
+  this.fireSwimlaneDataChange = function (swimlaneType) {
+    listeners.swimlaneDataChange.forEach(function (listener) {
       listener(swimlaneType);
     });
   };
 
-  this.onSwimlaneDataChanged = function (listener) {
-    listeners.swimlaneDataChanged.push(listener);
+  this.addSwimlaneDataChangeListener = function (listener) {
+    listeners.swimlaneDataChange.push(listener);
+  };
+
+  this.fireAnomalyDataChange = function (anomalyRecords, earliestMs, latestMs) {
+    listeners.anomalyDataChange.forEach(function (listener) {
+      listener(anomalyRecords, earliestMs, latestMs);
+    });
+  };
+
+  this.addAnomalyDataChangeListener = function (listener) {
+    listeners.anomalyDataChange.push(listener);
   };
 
 });

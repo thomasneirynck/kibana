@@ -50,6 +50,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
   // TODO - move the index pattern into a setting?
   $scope.indexPatternId = '.ml-anomalies-*';
   $scope.timeFieldName = 'timestamp';
+  $scope.showNoSelectionMessage = true;     // User must select a swimlane cell to view anomalies.
   timefilter.enabled = true;
 
   const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
@@ -75,8 +76,8 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     $scope.state = new AppState(stateDefaults);
 
     // Load the job info needed by the dashboard, then do the first load.
-    mlJobService.getBasicJobInfo($scope.indexPatternId)
-    .then(function (resp) {
+    // Calling loadJobs() ensures the full datafeed config is available for building the charts.
+    mlJobService.loadJobs().then((resp) => {
       if (resp.jobs.length > 0) {
         // Set any jobs passed in the URL as selected, otherwise check any saved in the Vis.
         let selectedJobIds = [];
@@ -93,20 +94,19 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
         }
 
         $scope.jobs = [];
-        _.each(resp.jobs, function (job) {
-          $scope.jobs.push({ id:job.id, selected: false, bucketSpan: job.bucketSpan });
+        _.each(resp.jobs, (job) => {
+          $scope.jobs.push({ id:job.job_id, selected: false, bucketSpan: +job.analysis_config.bucket_span });
         });
 
         $scope.setSelectedJobs(selectedJobIds);
       }
 
-    }).catch(function (resp) {
+    }).catch((resp) => {
       console.log('Explorer - error getting job info from elasticsearch:', resp);
     });
 
     mlExplorerDashboardService.init();
   };
-
 
   $scope.loadViewBySwimlaneOptions = function () {
     // Obtain the list of 'View by' fields per job.
@@ -114,7 +114,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     // which returns a list of influencer, by, over and partition fields and by default
     // set the 'view by' field to the partition field influencer.
     mlJobService.getJobViewByFields()
-    .then(function (resp) {
+    .then((resp) => {
       if (resp.fieldsByJob) {
         $scope.fieldsByJob = resp.fieldsByJob;
         console.log('Explorer job view by fields:', $scope.fieldsByJob);
@@ -127,13 +127,13 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
         console.log('Explorer default swimlane view by to:', $scope.swimlaneViewByFieldName);
         $scope.loadViewBySwimlane();
       }
-    }).catch(function (resp) {
+    }).catch((resp) => {
       console.log('Swimlane - error getting job viewBy fields:', resp);
     });
   };
 
   $scope.loadOverallData = function () {
-    // Loads the overall data components i.e. the overall swimlane, influencers list, and anomalies table.
+    // Loads the overall data components i.e. the overall swimlane and influencers list.
 
     if ($scope.selectedJobs === undefined) {
       return;
@@ -163,7 +163,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
         // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
         $timeout(function () {
           $scope.$broadcast('render');
-          mlExplorerDashboardService.fireSwimlaneDataChanged('overall');
+          mlExplorerDashboardService.fireSwimlaneDataChange('overall');
         }, 0);
       }
     }
@@ -177,7 +177,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     // Query 1 - load list of top influencers.
     mlResultsService.getTopInfluencers($scope.indexPatternId, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), MAX_INFLUENCER_FIELD_NAMES, MAX_INFLUENCER_FIELD_VALUES)
-    .then(function (resp) {
+    .then((resp) => {
       // TODO - sort the influencers keys so that the partition field(s) are first.
       $scope.influencersData = resp.influencers;
       console.log('Explorer top influencers data set:', $scope.influencersData);
@@ -188,13 +188,11 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     // TODO - is this giving us the results we want?
     mlResultsService.getBucketInfluencerMaxScoreByTime($scope.indexPatternId, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression)
-    .then(function (resp) {
+    .then((resp) => {
       processOverallResults(resp.results);
       console.log('Explorer overall swimlane data set:', $scope.overallSwimlaneData);
       finish();
     });
-
-    $scope.loadAnomaliesTable([], bounds.min.valueOf(), bounds.max.valueOf());
 
   };
 
@@ -206,7 +204,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
       // Fire event to indicate swimlane data has changed.
       // Need to use $timeout to ensure this happens after the child scope is updated with the new data.
       $timeout(function () {
-        mlExplorerDashboardService.fireSwimlaneDataChanged('viewBy');
+        mlExplorerDashboardService.fireSwimlaneDataChange('viewBy');
       }, 0);
     }
 
@@ -221,7 +219,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
       // load scores by influencer value and time.
       mlResultsService.getInfluencerValueMaxScoreByTime($scope.indexPatternId, selectedJobIds, $scope.swimlaneViewByFieldName,
         bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression, MAX_INFLUENCER_FIELD_VALUES)
-      .then(function (resp) {
+      .then((resp) => {
         // TODO - sort the influencers keys so that the partition field(s) are first.
         processViewByResults(resp.results);
         finish();
@@ -234,7 +232,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
 
     mlResultsService.getRecordsForInfluencer($scope.indexPatternId, selectedJobIds, influencers,
       0, earliestMs, latestMs, 500)
-    .then(function (resp) {
+    .then((resp) => {
       // Sort in descending time order before storing in scope.
       $scope.anomalyRecords = _.chain(resp.records).sortBy(function (record) { return record[$scope.timeFieldName]; }).reverse().value();
       console.log('Explorer anomalies table data set:', $scope.anomalyRecords);
@@ -246,17 +244,21 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     });
   };
 
-  $scope.loadAnomalyCharts = function (influencers, earliestMs, latestMs) {
+  $scope.loadAnomaliesForCharts = function (influencers, earliestMs, latestMs) {
     const selectedJobIds = $scope.getSelectedJobIds();
 
     // Load the top anomalies (by normalized_probability) which will be diplayed in the charts.
+    // TODO - combine this with loadAnomaliesTable() if the table is being retained.
     mlResultsService.getRecordsForInfluencer($scope.indexPatternId, selectedJobIds, influencers,
-      0, earliestMs, latestMs, 50)
-    .then(function (resp) {
+      0, earliestMs, latestMs, 500)
+    .then((resp) => {
       $scope.anomalyChartRecords = resp.records;
       console.log('Explorer anomaly charts data set:', $scope.anomalyChartRecords);
 
+      mlExplorerDashboardService.fireAnomalyDataChange($scope.anomalyChartRecords, earliestMs, latestMs);
+
       // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
+      // TODO - do we need this as the way to re-render the charts?
       $timeout(function () {
         $scope.$broadcast('renderCharts');
       }, 0);
@@ -267,7 +269,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     $scope.selectedJobs = [];
     const selectedJobIds = [];
     const selectAll = ((selections.length === 1 && selections[0] === '*') || selections.length === 0);
-    _.each($scope.jobs, function (job) {
+    _.each($scope.jobs, (job) => {
       job.selected = (selectAll || _.indexOf(selections, job.id) !== -1);
       if (job.selected) {
         $scope.selectedJobs.push(job);
@@ -297,10 +299,11 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
 
   // Refresh all the data when the time range is altered.
   $scope.$listen(timefilter, 'fetch', function () {
-    const bounds = timefilter.getActiveBounds();
     $scope.loadOverallData();
     $scope.loadViewBySwimlane();
-    $scope.loadAnomaliesTable([], bounds.min.valueOf(), bounds.max.valueOf());
+    $scope.anomalyChartRecords = {};
+    $scope.anomalyRecords = [];
+    $scope.showNoSelectionMessage = true;
   });
 
   // Listen for changes to job selection.
@@ -322,18 +325,29 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
 
   // Listener for click events in the swimlane and load corresponding anomaly data.
   // Empty cellData is passed on clicking outside a cell with score > 0.
-  mlExplorerDashboardService.onSwimlaneCellClick(function (cellData) {
-    const influencers = [];
-    if (cellData.fieldName !== undefined) {
-      influencers.push({ fieldName: $scope.swimlaneViewByFieldName, fieldValue: cellData.laneLabel });
+  mlExplorerDashboardService.addSwimlaneCellClickListener((cellData) => {
+    if (_.keys(cellData).length === 0) {
+      // Swimlane deselection - clear anomalies section.
+      $scope.anomalyChartRecords = {};
+      $scope.anomalyRecords = [];
+      $scope.showNoSelectionMessage = true;
+    } else {
+      const influencers = [];
+      if (cellData.fieldName !== undefined) {
+        influencers.push({ fieldName: $scope.swimlaneViewByFieldName, fieldValue: cellData.laneLabel });
+      }
+
+      // Time range for charts should be maximum time span at job bucket span, centred on the selected cell.
+      const bounds = timefilter.getActiveBounds();
+
+      const earliestMs = cellData.time !== undefined ? cellData.time * 1000 : bounds.min.valueOf();
+      const latestMs = cellData.time !== undefined ? ((cellData.time  + cellData.interval) * 1000) - 1 : bounds.max.valueOf();
+
+      $scope.loadAnomaliesTable(influencers, earliestMs, latestMs);
+      $scope.loadAnomaliesForCharts(influencers, earliestMs, latestMs);
+      $scope.showNoSelectionMessage = false;
     }
 
-    const bounds = timefilter.getActiveBounds();
-    const earliestMs = cellData.time !== undefined ? cellData.time * 1000 : bounds.min.valueOf();
-    const latestMs = cellData.time !== undefined ? ((cellData.time  + cellData.interval) * 1000) - 1 : bounds.max.valueOf();
-
-    $scope.loadAnomaliesTable(influencers, earliestMs, latestMs);
-    $scope.loadAnomalyCharts(influencers, earliestMs, latestMs);
   });
 
 
