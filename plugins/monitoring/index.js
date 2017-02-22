@@ -1,7 +1,6 @@
 import { get, has, set } from 'lodash';
 import { join, resolve } from 'path';
 import Promise from 'bluebird';
-import elasticsearch from 'elasticsearch';
 import requireAllAndApply from '../../server/lib/require_all_and_apply';
 import esHealthCheck from './server/lib/es_client/health_check';
 import instantiateClient from './server/lib/es_client/instantiate_client';
@@ -185,7 +184,7 @@ export default function monitoringIndex(kibana) {
 
         if (uiEnabled || reportStats) {
           // Instantiate the dedicated ES client
-          features.push(instantiateClient(server, elasticsearch));
+          features.push(instantiateClient(server));
 
           if (uiEnabled) {
             // Require all routes
