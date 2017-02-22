@@ -44,7 +44,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
 
     if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
       let jobIdFilterStr = '';
-      _.each(jobIds, function (jobId, i) {
+      _.each(jobIds, (jobId, i) => {
         if (i > 0) {
           jobIdFilterStr += ' OR ';
           indexString += ',';
@@ -117,7 +117,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
         }
       }
     })
-    .then(function (resp) {
+    .then((resp) => {
       // console.log('Time series search service getScoresByBucket() resp:', resp);
 
       const detectorsByIndex = _.get(resp, ['aggregations', 'detector_index', 'buckets'], []);
@@ -135,7 +135,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
 
       deferred.resolve(obj);
     })
-    .catch(function (resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
     return deferred.promise;
@@ -165,7 +165,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
 
     if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
       let jobIdFilterStr = '';
-      _.each(jobIds, function (jobId, i) {
+      _.each(jobIds, (jobId, i) => {
         if (i > 0) {
           jobIdFilterStr += ' OR ';
           indexString += ',';
@@ -219,11 +219,11 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
         }
       }
     })
-    .then(function (resp) {
+    .then((resp) => {
       // console.log('Time series search service getScoresByBucket() resp:', resp);
 
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
-      _.each(aggregationsByTime, function (dataForTime) {
+      _.each(aggregationsByTime, (dataForTime) => {
         const time = dataForTime.key;
         obj.results[time] = {
           'anomalyScore': _.get(dataForTime, ['anomalyScore', 'value']),
@@ -232,135 +232,9 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
 
       deferred.resolve(obj);
     })
-    .catch(function (resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
-    return deferred.promise;
-  };
-
-  this.getModelDebugOutput = function (index, jobIds, earliestMs, latestMs, interval, aggType) {
-    const deferred = $q.defer();
-    const obj = {
-      success: true,
-      results: {}
-    };
-
-    // Build the criteria to use in the bool filter part of the request.
-    // Adds criteria for the time range plus any specified job IDs.
-    const boolCriteria = [];
-    boolCriteria.push({
-      'range': {
-        'timestamp': {
-          'gte': earliestMs,
-          'lte': latestMs,
-          'format': 'epoch_millis'
-        }
-      }
-    });
-
-    let indexString = '';
-
-    if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
-      let jobIdFilterStr = '';
-      _.each(jobIds, function (jobId, i) {
-        if (i > 0) {
-          jobIdFilterStr += ' OR ';
-          indexString += ',';
-        }
-        jobIdFilterStr += 'job_id:';
-        jobIdFilterStr += jobId;
-
-        indexString += '.ml-anomalies-' + jobId;
-      });
-      boolCriteria.push({
-        'query_string': {
-          'analyze_wildcard': true,
-          'query': jobIdFilterStr
-        }
-      });
-    }
-
-    es.search({
-      index: indexString,
-      size: 0,
-      body: {
-        'query': {
-          'bool': {
-            'filter': [{
-              'query_string': {
-                'query': '_type:result AND result_type:model_debug_output',
-                'analyze_wildcard': true
-              }
-            }, {
-              'bool': {
-                'must': boolCriteria
-              }
-            }]
-          }
-        },
-        'aggs': {
-          'times': {
-            'date_histogram': {
-              'field': 'timestamp',
-              'interval': interval,
-              'min_doc_count': 1
-            },
-            'aggs': {
-              'actual': {
-                'avg': {
-                  'field': 'actual'
-                }
-              },
-              'debugUpper': {
-                // 'max': {
-                [aggType.max]: {
-                  'field': 'debug_upper'
-                }
-              },
-              'debugLower': {
-                // 'min': {
-                [aggType.min]: {
-                  'field': 'debug_lower'
-                }
-              }
-            }
-          }
-        }
-      }
-    })
-    .then(function (resp) {
-      // console.log('Time series search service getModelDebugOutput() resp:', resp);
-
-      const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
-      _.each(aggregationsByTime, function (dataForTime) {
-        const time = dataForTime.key;
-        let debugUpper = _.get(dataForTime, ['debugUpper', 'value']);
-        let debugLower = _.get(dataForTime, ['debugLower', 'value']);
-
-        if (debugUpper !== undefined && isFinite(debugUpper)) {
-          debugUpper = debugUpper.toFixed(4);
-        } else {
-          debugUpper = 0;
-        }
-        if (debugLower !== undefined && isFinite(debugLower)) {
-          debugLower = debugLower.toFixed(4);
-        } else {
-          debugLower = 0;
-        }
-
-        obj.results[time] = {
-          actual: _.get(dataForTime, ['actual', 'value']),
-          debugUpper: debugUpper,
-          debugLower: debugLower
-        };
-      });
-
-      deferred.resolve(obj);
-    })
-    .catch(function (resp) {
-      deferred.reject(resp);
-    });
-
     return deferred.promise;
   };
 
@@ -385,7 +259,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
         }
       }
     })
-    .then(function (resp) {
+    .then((resp) => {
       obj.results.values  = [];
       const catFields = _.get(resp, ['aggregations', 'catFields', 'buckets'], []);
       _.each(catFields, (f) => {
@@ -394,10 +268,72 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
 
       deferred.resolve(obj);
     })
-    .catch(function (resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
 
+    return deferred.promise;
+  };
+
+  this.getEventRate = function (index, earliestMs, latestMs, timeField, interval) {
+    const deferred = $q.defer();
+    const obj = {success: true, results: {}};
+
+    es.search({
+      index,
+      size: 0,
+      body: {
+        'query': {
+          'bool': {
+            'must': [
+              {
+                'query_string': {
+                  'query': '*',
+                  'analyze_wildcard': true
+                }
+              },
+              {
+                'range': {
+                  [timeField]: {
+                    'gte': earliestMs,
+                    'lte': latestMs,
+                    'format': 'epoch_millis'
+                  }
+                }
+              }
+            ],
+            'must_not': []
+          }
+        },
+        '_source': {
+          'excludes': []
+        },
+        'aggs': {
+          'eventRate': {
+            'date_histogram': {
+              'field': timeField,
+              'interval': interval,
+              'min_doc_count': 1
+            }
+          }
+        }
+      }
+    })
+    .then((resp) => {
+      // console.log('getEventRate() resp:', resp);
+
+      // Process the two levels for aggregation for influencerFieldValue and time.
+      const dataByTimeBucket = _.get(resp, ['aggregations', 'eventRate', 'buckets'], []);
+      _.each(dataByTimeBucket, (dataForTime) => {
+        const time = dataForTime.key;
+        obj.results[time] = dataForTime.doc_count;
+      });
+
+      deferred.resolve(obj);
+    })
+    .catch((resp) => {
+      deferred.reject(resp);
+    });
     return deferred.promise;
   };
 

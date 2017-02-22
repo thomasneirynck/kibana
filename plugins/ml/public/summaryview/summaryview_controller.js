@@ -47,8 +47,18 @@ uiRoutes
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('MlSummaryViewController', function ($scope, $route, $timeout, $compile, $location, Private, $q, es, globalState,
-  mlJobService, timefilter, mlAnomalyRecordDetailsService, mlDashboardService, mlSwimlaneSearchService, mlSwimlaneService) {
+module.controller('MlSummaryViewController', function (
+  $scope,
+  $timeout,
+  $compile,
+  $location,
+  Private,
+  mlJobService,
+  timefilter,
+  mlAnomalyRecordDetailsService,
+  mlDashboardService,
+  mlSwimlaneSearchService,
+  mlSwimlaneService) {
 
   // TODO - move the index pattern into an editor setting,
   //        or configure the visualization to use a search?

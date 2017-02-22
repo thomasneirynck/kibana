@@ -28,7 +28,7 @@
     <div class="row">
       <div class="col-md-6">
         <div class="row form-controls">
-          <div class='form-section' ng-class="{'form-section-collapsed': (ui.wizard.step !== 0)}">
+          <div class='form-section'>
             <h4 >Fields</h4>
             <div class="row">
               <div class="col-md-6">
@@ -91,15 +91,9 @@
               <div class="col-md-6">
               </div>
             </div>
-            <div class='wizard-nav'>
-              <div>
-                <!-- <button aria-label="Previous" ng-click="ui.wizard.back()" type="button" >Previous</button> -->
-                <button aria-label="Previous" ng-click="ui.wizard.forward()" type="button" ng-disabled='ui.tickedFieldsCount===0'>Next</button>
-              </div>
-            </div>
           </div>
 
-          <div class='form-section'  ng-class="{'form-section-collapsed': (ui.wizard.step !== 1)}">
+          <div class='form-section' >
             <h4 >Split Data</h4>
             <div class="row">
               <div class="col-md-6">
@@ -123,15 +117,9 @@
                 </div>
               </div>
             </div>
-            <div class='wizard-nav'>
-              <div>
-                <button aria-label="Previous" ng-click="ui.wizard.back()" type="button" >Previous</button>
-                <button aria-label="Previous" ng-click="ui.wizard.forward()" type="button" >Next</button>
-              </div>
-            </div>
           </div>
 
-          <div class='form-section'  ng-class="{'form-section-collapsed': (ui.wizard.step !== 2)}">
+          <div class='form-section' >
             <h4 >Key Fields</h4>
             <div class="row">
               <div class="col-md-6">
@@ -168,15 +156,9 @@
 
               </div>
             </div>
-            <div class='wizard-nav'>
-              <div>
-                <button aria-label="Previous" ng-click="ui.wizard.back()" type="button" >Previous</button>
-                <button aria-label="Previous" ng-click="ui.wizard.forward()" type="button" >Next</button>
-              </div>
-            </div>
           </div>
 
-          <div class='form-section'  ng-class="{'form-section-collapsed': (ui.wizard.step !== 3)}">
+          <div class='form-section' >
             <h4 >Job Details</h4>
             <div ng-show="ui.showJobInput && (jobState === JOB_STATE.NOT_STARTED || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING)">
               <div class="form-group">
@@ -224,7 +206,7 @@
               <button
                 aria-label="Reset"
                 ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
-                ng-click="viewResults('timeseriesexplorer')"
+                ng-click="viewResults('explorer')"
                 type="button"
                 class="btn btn-primary">
                   View Results
@@ -242,33 +224,27 @@
               </button>
               <button
                 aria-label="Reset"
-                ng-click="viewResults('timeseriesexplorer')"
+                ng-click="viewResults('explorer')"
                 type="button"
                 class="btn btn-primary">
                   View Results
               </button>
             </div>
-            <div class='wizard-nav'>
-              <div>
-                <button aria-label="Previous" ng-click="ui.wizard.back()" type="button" >Previous</button>
-                <!-- <button aria-label="Previous" ng-click="ui.wizard.forward()" type="button" >Next</button> -->
-              </div>
-            </div>
           </div>
         </div>
       </div>
       <div class="col-md-6 charts-container">
-        <div class='chart-list-panel'>
-          <label>Job</label>
-          <ml-multi-metric-job-chart chart-data="chartData.job" is-job='true' ></ml-multi-metric-job-chart>
+        <div class='chart-list-panel event-rate-container'>
+          <label>Job document count</label>
+          <ml-multi-metric-job-event-rate-chart chart-data="chartData.job" ></ml-multi-metric-job-event-rate-chart>
         </div>
         <div class='chart-list-panel detector-container'>
           <label>{{ui.splitText}}</label>
           <div class='card-front'>
             <div class="card-title"></div>
             <div ng-repeat='(name, chart) in chartData.detectors' class='chart'>
-              <label>{{name}}</label>
-              <ml-multi-metric-job-chart chart-data="chart" is-job='false'></ml-multi-metric-job-chart>
+              <label>{{formConfig.fields[name].agg.type.title}} {{name}}</label>
+              <ml-multi-metric-job-chart chart-data="chart"></ml-multi-metric-job-chart>
             </div>
           </div>
         </div>

@@ -34,6 +34,7 @@ module.service('mlMultiMetricJobService', function (
     job: {
       swimlane: [],
       line: [],
+      bars: [],
     },
     detectors: {},
     percentComplete: 0,
@@ -41,15 +42,22 @@ module.service('mlMultiMetricJobService', function (
   };
   this.job = {};
 
+  this.clearChartData = function () {
+    this.chartData.job.swimlane = [];
+    this.chartData.job.line = [];
+    this.chartData.job.bars = [];
+    this.chartData.detectors = {};
+    this.chartData.percentComplete = 0;
+    this.chartData.loadingDifference = 0;
+
+    this.job = {};
+  };
+
   this.getLineChartResults = function (formConfig) {
     const deferred = $q.defer();
 
     const fields = Object.keys(formConfig.fields).sort();
-    this.chartData.job.swimlane = [];
-    this.chartData.job.line = [];
-    this.chartData.detectors = {};
-    this.chartData.percentComplete = 0;
-    this.chartData.loadingDifference = 0;
+    this.clearChartData();
 
     _.each(fields, (field) => {
       this.chartData.detectors[field] = {
@@ -62,7 +70,7 @@ module.service('mlMultiMetricJobService', function (
 
     es.search(searchJson)
     .then((resp) => {
-      console.log('Time series search service getLineChartResults() resp:', resp);
+      // console.log('Time series search service getLineChartResults() resp:', resp);
 
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
       _.each(aggregationsByTime, (dataForTime) => {
@@ -82,6 +90,12 @@ module.service('mlMultiMetricJobService', function (
           time: time,
           value: null,
         });
+
+        // this.chartData.job.bars.push({
+        //   date: date,
+        //   time: time,
+        //   value: null,
+        // });
 
         _.each(fields, (field) => {
           const value = dataForTime[field].value;
@@ -104,7 +118,7 @@ module.service('mlMultiMetricJobService', function (
       });
       deferred.resolve(this.chartData);
     })
-    .catch(function (resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
 
@@ -112,6 +126,12 @@ module.service('mlMultiMetricJobService', function (
   };
 
   function getSearchJsonFromConfig(formConfig) {
+
+    let queryStr = '*';
+    if (formConfig.firstSplitFieldValue !== undefined) {
+      queryStr = formConfig.splitField + ':' + formConfig.firstSplitFieldValue;
+    }
+
     const interval = formConfig.chartInterval.getInterval().asSeconds() + 's';
     const json = {
       'index': formConfig.indexPattern.id,
@@ -123,7 +143,7 @@ module.service('mlMultiMetricJobService', function (
               {
                 'query_string': {
                   'analyze_wildcard': true,
-                  'query': '*' // CHANGEME
+                  'query': queryStr // CHANGEME
                 }
               },
               {
@@ -430,6 +450,44 @@ module.service('mlMultiMetricJobService', function (
   this.getSplitFields = function (formConfig, size) {
     return mlMultiMetricJobSearchService.getCategoryFields(formConfig.indexPattern.id, formConfig.splitField, size);
   };
+
+  this.loadEventRateData = function (formConfig, gridWidth) {
+    const deferred = $q.defer();
+    const end = formConfig.end;
+    const start = formConfig.start;
+    const interval = formConfig.chartInterval.getInterval().asSeconds() * 1000;
+
+    // const numBuckets = parseInt((end - start) / interval);
+    // const cellWidth = Math.floor(gridWidth / numBuckets);
+
+    // const chartWidth = cellWidth * numBuckets;
+    // const timeRange = bounds.max.valueOf() - bounds.min.valueOf();
+    // const interval = Math.floor((timeRange / chartWidth) * 3);
+
+    // $scope.chartWidth = chartWidth;
+
+    mlMultiMetricJobSearchService.getEventRate(formConfig.indexPattern.id, start, end, formConfig.timeField, (interval + 'ms'))
+    .then((resp) => {
+      // console.log('getEventRate event rate refresh data:', resp);
+      this.chartData.job.bars = [];
+
+      _.each(resp.results, (value, t) => {
+        const time = +t;
+        const date = new Date(time);
+        this.chartData.job.bars.push({
+          date,
+          time,
+          value: (isFinite(value)) ? value : 0,
+        });
+        deferred.resolve(this.chartData);
+      });
+    }).catch((resp) => {
+      console.log('getEventRate visualization - error getting event rate data from elasticsearch:', resp);
+      deferred.resolve(this.chartData);
+    });
+    return deferred.promise;
+  };
+
 
 
 });

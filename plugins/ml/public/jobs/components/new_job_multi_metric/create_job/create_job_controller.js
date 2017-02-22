@@ -14,6 +14,7 @@
  */
 
 import _ from 'lodash';
+import $ from 'jquery';
 import 'ui/courier';
 
 import 'plugins/kibana/visualize/styles/main.less';
@@ -48,7 +49,6 @@ module
   $route,
   $location,
   $filter,
-  $q,
   $window,
   courier,
   timefilter,
@@ -69,6 +69,7 @@ module
   $scope.courier = courier;
 
   $scope.index = $route.current.params.index;
+  mlMultiMetricJobService.clearChartData();
   $scope.chartData = mlMultiMetricJobService.chartData;
 
   const PAGE_WIDTH = angular.element('.multi-metric-job-container').width();
@@ -164,6 +165,7 @@ module
     timeField: $scope.indexPattern.timeFieldName,
     splitField: '--No split--',
     keyFields: {},
+    firstSplitFieldValue: undefined,
     indexPattern: $scope.indexPattern,
     jobId: undefined,
     description: undefined,
@@ -179,19 +181,26 @@ module
 
   $scope.splitChange = function () {
     const splitField = $scope.formConfig.splitField;
+    $scope.formConfig.firstSplitFieldValue = undefined;
+
     if (splitField !== '--No split--') {
       $scope.formConfig.keyFields[splitField] = splitField;
+
       $scope.ui.splitText = 'Data split by ' + splitField;
 
       mlMultiMetricJobService.getSplitFields($scope.formConfig, 10)
       .then((resp) => {
+        if (resp.results.values && resp.results.values.length) {
+          $scope.formConfig.firstSplitFieldValue = resp.results.values[0];
+        }
+
         drawCards(resp.results.values);
-        // $scope.$broadcast('render');
         $scope.formChange();
       });
     } else {
       $scope.ui.splitText = '';
       destroyCards();
+      $scope.formChange();
     }
   };
 
@@ -268,7 +277,7 @@ module
         fields = getIndexedFields(param, 'number');
       }
       if (param.name === 'customLabel') {
-        categoryFields = getIndexedFields(param, 'string');
+        categoryFields = getIndexedFields(param, ['string', 'ip']);
       }
     });
 
@@ -277,13 +286,13 @@ module
     });
 
     _.each(categoryFields, (field) => {
-      if (field.displayName !== 'type' && !field.displayName.match('.keyword')) {
+      if (field.displayName !== 'type') {
         $scope.ui.splitFields.push(field.displayName);
       }
     });
 
     // $scope.ui.fields = fields;
-    console.log($scope.ui.fields);
+    // console.log($scope.ui.fields);
 
     if ($scope.ui.fields.length === 1) {
       $scope.formConfig.field = $scope.ui.fields[0];
@@ -363,8 +372,13 @@ module
 
       mlMultiMetricJobService.getLineChartResults($scope.formConfig)
       .then(() => {
-        $scope.hasResults = true;
-        $scope.$broadcast('render');
+        const gridWidth = $('.charts-container').width();
+        mlMultiMetricJobService.loadEventRateData($scope.formConfig, gridWidth)
+        .then(() => {
+          $scope.hasResults = true;
+          $scope.$broadcast('render');
+        });
+
       });
     }
 
@@ -373,26 +387,25 @@ module
   function drawCards(labels) {
     const splitField = $scope.formConfig.splitField;
 
-    // const $container = angular.element('.detector-container');
     const $frontCard = angular.element('.multi-metric-job-container .detector-container .card-front');
     $frontCard.addClass('card');
     $frontCard.find('.card-title').text(splitField + ': ' + labels[0]);
     const w = $frontCard.width();
-    const h = $frontCard.height();
+    // const h = $frontCard.height();
 
     angular.element('.card-behind').remove();
 
     for (let i = 0; i < labels.length; i++) {
       let el = '<div class="card card-behind"><div class="card-title">';
-      el += splitField + ': ' + labels[i] + '</div></div>';
+      el += splitField + ': ' + labels[i];
+      el += '</div></div>';
 
       const $backCard = angular.element(el);
       $backCard.css('width', w);
-      $backCard.css('height', h);
+      $backCard.css('height', 100);
       $backCard.css('display', 'auto');
       $backCard.css('z-index', (9 - i));
 
-      // $container.append($backCard);
       $backCard.insertBefore($frontCard);
     }
 
@@ -400,27 +413,25 @@ module
     let marginTop = 54;
     let marginLeft = 0;
     let backWidth = w;
-    // let rot = 2 //cardsBehind.length;
-    // let rotDiff = 0;
 
     for (let i = 0; i < cardsBehind.length; i++) {
       cardsBehind[i].style.marginTop = marginTop + 'px';
       cardsBehind[i].style.marginLeft = marginLeft + 'px';
       cardsBehind[i].style.width = backWidth + 'px';
 
-      marginTop -= (10 - i);
+      marginTop -= (10 - (i * (10 / labels.length))) * (10 / labels.length);
       marginLeft += (5 - (i / 2));
       backWidth -= (5 - (i / 2)) * 2;
     }
     let i = 0;
-    function tt() {
+    function fadeCard() {
       if (i < cardsBehind.length) {
         cardsBehind[i].style.opacity = 1;
-        window.setTimeout(tt , 40);
+        window.setTimeout(fadeCard , 40);
         i++;
       }
     }
-    tt();
+    fadeCard();
   }
 
   function destroyCards() {
@@ -445,7 +456,7 @@ module
   // the job may fail to open, but the datafeed should still be created
   // if the job save was successful.
   $scope.createJob = function () {
-    if ($scope.formConfig.jobId !== '') {
+    if ($scope.formConfig.jobId !== ''  && $scope.formConfig.jobId !== undefined) {
       msgs.clear();
       $scope.formConfig.mappingTypes = mlESMappingService.getTypesFromMapping($scope.formConfig.indexPattern.id);
       // create the new job
