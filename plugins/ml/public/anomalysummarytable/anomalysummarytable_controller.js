@@ -437,7 +437,7 @@ module.controller('MlAnomalySummaryTableController', function (
           }
 
 
-          // TODO - do we always want the links column visible even when no customUrls have been defined?
+          // TODO - do we always want the links column visible even when no custom_urls have been defined?
           if (_.has($scope.customUrlsByJob, source.job_id)) {
             record.links = $scope.customUrlsByJob[source.job_id];
           }
@@ -465,7 +465,7 @@ module.controller('MlAnomalySummaryTableController', function (
   $scope.openLink = function (link, source) {
     console.log('Anomaly Summary Table - open link for source:', link, source);
 
-    // If urlValue contains $earliest$ and $latest$ tokens, add in times to the source record.
+    // If url_value contains $earliest$ and $latest$ tokens, add in times to the source record.
     const timeFieldName = $scope.indexPattern.timeFieldName;
     const timestamp = source[timeFieldName];
     const configuredUrlValue = link.url_value;
@@ -493,7 +493,7 @@ module.controller('MlAnomalySummaryTableController', function (
       }
     }
 
-    // If urlValue contains $mlcategoryterms$ or $mlcategoryregex$, add in the
+    // If url_value contains $mlcategoryterms$ or $mlcategoryregex$, add in the
     // terms and regex for the selected categoryId to the source record.
     if ((configuredUrlValue.includes('$mlcategoryterms$') || configuredUrlValue.includes('$mlcategoryregex$'))
           && _.has(source, 'mlcategory')) {

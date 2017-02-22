@@ -106,14 +106,14 @@
 
             <div class="form-group">
               <label>Custom URLs</label> <i ml-info-icon="new_job_custom_urls" />
-              <div ng-if="job.customSettings && job.customSettings.customUrls">
-                <div ng-repeat="item in job.customSettings.customUrls track by $index" class="custom-url">
+              <div ng-if="job.custom_settings && job.custom_settings.custom_urls">
+                <div ng-repeat="item in job.custom_settings.custom_urls track by $index" class="custom-url">
                   <div class="field-cols">
 
                     <div class="form-group">
                       <label>Label</label>
                       <input
-                        ng-model="item.urlName"
+                        ng-model="item.url_name"
                         type="text"
                         class="form-control" />
                     </div>
@@ -123,7 +123,7 @@
                     <div class="form-group">
                       <label>URL</label>
                       <textarea
-                        ng-model="item.urlValue"
+                        ng-model="item.url_value"
                         type="text"
                         class="form-control" />
                     </div>

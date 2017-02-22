@@ -40,17 +40,17 @@
 
       <div ng-repeat="(key, value) in job">
         <div ng-switch="key">
-          <div ng-switch-when="customSettings">
+          <div ng-switch-when="custom_settings">
             <div ng-repeat="(key1, value1) in value">
               <div ng-switch="key1">
-                <div ng-switch-when="customUrls">
+                <div ng-switch-when="custom_urls">
                   <div class="ml_sub_heading">Custom URLs</div>
                   <div class='ml_job_section_container'>
                     <div>
                       <ml-job-item ng-repeat="(key2, value2) in value1">
                         <div class="ml_job_row row">
-                          <div class="col-md-3">{{value2.urlName}}</div>
-                          <div class="col-md-9">{{value2.urlValue}}</div>
+                          <div class="col-md-3">{{value2.url_name}}</div>
+                          <div class="col-md-9">{{value2.url_value}}</div>
                         </div>
                       </ml-job-item>
                     </div>

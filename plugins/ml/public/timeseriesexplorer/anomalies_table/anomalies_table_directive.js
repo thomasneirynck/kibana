@@ -125,7 +125,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
           }
         }
 
-        // If urlValue contains $mlcategoryterms$ or $mlcategoryregex$, add in the
+        // If url_value contains $mlcategoryterms$ or $mlcategoryregex$, add in the
         // terms and regex for the selected categoryId to the source record.
         if ((configuredUrlValue.includes('$mlcategoryterms$') || configuredUrlValue.includes('$mlcategoryregex$'))
                 && _.has(record, 'mlcategory')) {
@@ -140,9 +140,9 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
             record.mlcategoryterms = termsArray.join(' ');
             record.mlcategoryregex = resp.regex;
 
-            // Replace any tokens in the configured urlValue with values from the source record,
+            // Replace any tokens in the configured url_value with values from the source record,
             // and then open link in a new tab/window.
-            const urlPath = stringUtils.replaceStringTokens(link.urlValue, record, true);
+            const urlPath = stringUtils.replaceStringTokens(link.url_value, record, true);
             $window.open(urlPath, '_blank');
 
           }).catch(function (resp) {
@@ -150,7 +150,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
           });
 
         } else {
-          // Replace any tokens in the configured urlValue with values from the source record,
+          // Replace any tokens in the configured url_value with values from the source record,
           // and then open link in a new tab/window.
           const urlPath = stringUtils.replaceStringTokens(link.url_value, record, true);
           $window.open(urlPath, '_blank');

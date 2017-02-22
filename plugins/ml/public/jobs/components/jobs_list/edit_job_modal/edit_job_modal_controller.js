@@ -64,18 +64,18 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
   }
 
   $scope.addCustomUrl = function () {
-    if (!$scope.job.customSettings) {
-      $scope.job.customSettings = {};
+    if (!$scope.job.custom_settings) {
+      $scope.job.custom_settings = {};
     }
-    if (!$scope.job.customSettings.customUrls) {
-      $scope.job.customSettings.customUrls = [];
+    if (!$scope.job.custom_settings.custom_urls) {
+      $scope.job.custom_settings.custom_urls = [];
     }
 
-    $scope.job.customSettings.customUrls.push({ urlName: '', urlValue: '' });
+    $scope.job.custom_settings.custom_urls.push({ url_name: '', url_value: '' });
   };
 
   $scope.removeCustomUrl = function (index) {
-    $scope.job.customSettings.customUrls.splice(index, 1);
+    $scope.job.custom_settings.custom_urls.splice(index, 1);
   };
 
   // add new categorization filter
@@ -202,26 +202,26 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
     }
 
     // check custom settings
-    if ($scope.job.customSettings) {
-      if ($scope.job.customSettings.customUrls &&
-         $scope.job.customSettings.customUrls.length) {
+    if ($scope.job.custom_settings) {
+      if ($scope.job.custom_settings.custom_urls &&
+         $scope.job.custom_settings.custom_urls.length) {
 
         let doUpdate = false;
 
-        if (!params.job.customSettings ||
-           !params.job.customSettings.customUrls ||
-           !params.job.customSettings.customUrls.length) {
+        if (!params.job.custom_settings ||
+           !params.job.custom_settings.custom_urls ||
+           !params.job.custom_settings.custom_urls.length) {
           // custom urls did not originally exist
           doUpdate = true;
         }
-        else if ($scope.job.customSettings.customUrls.length !== params.job.customSettings.customUrls.length) {
+        else if ($scope.job.custom_settings.custom_urls.length !== params.job.custom_settings.custom_urls.length) {
           // if both existed but now have different lengths
           doUpdate = true;
         } else {
           // if lengths are the same, check the contents match.
-          _.each($scope.job.customSettings.customUrls, (url, i) => {
-            if (url.urlName !== params.job.customSettings.customUrls[i].urlName ||
-               url.urlValue !== params.job.customSettings.customUrls[i].urlValue) {
+          _.each($scope.job.custom_settings.custom_urls, (url, i) => {
+            if (url.url_name !== params.job.custom_settings.custom_urls[i].url_name ||
+               url.url_value !== params.job.custom_settings.custom_urls[i].url_value) {
               doUpdate = true;
             }
           });
@@ -229,15 +229,15 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
 
 
         if (doUpdate) {
-          data.customSettings = $scope.job.customSettings;
+          data.custom_settings = $scope.job.custom_settings;
         }
       } else {
-        if (params.job.customSettings ||
-           params.job.customSettings.customUrls ||
-           params.job.customSettings.customUrls.length) {
+        if (params.job.custom_settings ||
+           params.job.custom_settings.custom_urls ||
+           params.job.custom_settings.custom_urls.length) {
           // if urls orginally existed, but now don't
           // clear the custom settings completely
-          data.customSettings = null;
+          data.custom_settings = null;
         }
       }
     }

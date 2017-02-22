@@ -751,7 +751,7 @@ function (
       $scope.job.custom_settings.custom_urls = [];
     }
 
-    $scope.job.custom_settings.custom_urls.push({ urlName: '', urlValue: '' });
+    $scope.job.custom_settings.custom_urls.push({ url_name: '', url_value: '' });
   };
 
   // remove selected custom URL
