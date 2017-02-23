@@ -4,15 +4,11 @@ This folder has the Kibana X-Pack plugin code
 
 ### UI Development
 
-First, you will need the plugin dependencies. If you are planning to contribute code, you should also set up automated code linting. This will save you a ton of headache down the road! Fortunately, doing so is very easy, adding just 1 command.
+First, you will need the plugin dependencies:
 
 ```
 npm install
-# adding the git commit hooks
-npm install husky
 ```
-
-If the UI isn't your primary focus, and those hooks start to get in your way, you can remove them with a simple `npm uninstall husky`.
 
 #### Running in development
 
