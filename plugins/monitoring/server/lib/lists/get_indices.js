@@ -21,15 +21,10 @@ export default function getListingIndices(req, indices, showSystemIndices = fals
   const config = req.server.config();
   const listingMetrics = req.payload.listingMetrics || [];
 
-  let start = moment.utc(req.payload.timeRange.min).valueOf();
-  const orgStart = start;
-  const end = moment.utc(req.payload.timeRange.max).valueOf();
-  // performance optimization to avoid overwhelming amount of results
-  start = moment.utc(end).subtract(2, 'minutes').valueOf();
+  const min = moment.utc(req.payload.timeRange.min).valueOf();
+  const max = moment.utc(req.payload.timeRange.max).valueOf();
+  const duration = moment.duration(max - min, 'ms');
 
-  const max = end;
-  const duration = moment.duration(max - orgStart, 'ms');
-  const min = start;
   const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
   const bucketSize = Math.max(minIntervalSeconds, calcAuto.near(100, duration).asSeconds());
   const aggItems = getAggItems({ listingMetrics, bucketSize, min, max });
@@ -52,7 +47,7 @@ export default function getListingIndices(req, indices, showSystemIndices = fals
     size: 0,
     ignoreUnavailable: true,
     body: {
-      query: createQuery({ start, end, uuid, metric: metricFields, filters }),
+      query: createQuery({ start: min, end: max, uuid, metric: metricFields, filters }),
       aggs: {
         items: {
           terms: { field: 'index_stats.index', size: maxBucketSize },
