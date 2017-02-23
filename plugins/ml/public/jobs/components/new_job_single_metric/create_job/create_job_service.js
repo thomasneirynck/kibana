@@ -59,7 +59,6 @@ module.service('mlSingleMetricJobService', function (
 
     es.search(searchJson)
     .then((resp) => {
-      console.log('Time series search service getLineChartResults() resp:', resp);
 
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
       _.each(aggregationsByTime, (dataForTime) => {
@@ -77,17 +76,24 @@ module.service('mlSingleMetricJobService', function (
       this.chartData.swimlane = processSwimlaneResults(obj.results, true);
       deferred.resolve(this.chartData.line);
     })
-    .catch(function (resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
 
     return deferred.promise;
   };
 
-  function processLineChartResults(data) {
-    // create a dataset in format used by the model debug chart.
-    // create empty swimlane dataset
-    // i.e. array of Objects with keys date (JavaScript date), value, lower and upper.
+  function processLineChartResults(data, formConfig) {
+    // for count, scale the debug upper and lower by the
+    // ratio of chart interval to bucketspan.
+    // this will force the model bounds to be drawn in the correct location
+    let scale = 1;
+    if (formConfig && formConfig.agg.type.mlName === 'count') {
+      const chartInterval = formConfig.chartInterval.getInterval().asSeconds();
+      const jobInterval = formConfig.jobInterval.getInterval().asSeconds();
+      scale =  chartInterval / jobInterval;
+    }
+
     const lineData = [];
     _.each(data, (dataForTime, t) => {
       const time = +t;
@@ -95,9 +101,9 @@ module.service('mlSingleMetricJobService', function (
       lineData.push({
         date: date,
         time: time,
-        lower: dataForTime.debugLower,
+        lower: (dataForTime.debugLower * scale),
         value: dataForTime.actual,
-        upper: dataForTime.debugUpper
+        upper: (dataForTime.debugUpper * scale)
       });
     });
 
@@ -323,7 +329,7 @@ module.service('mlSingleMetricJobService', function (
       formConfig.agg.type.mlDebugAgg
     )
     .then(data => {
-      this.chartData.model = this.chartData.model.concat(processLineChartResults(data.results));
+      this.chartData.model = this.chartData.model.concat(processLineChartResults(data.results, formConfig));
       deferred.resolve(this.chartData);
     })
     .catch(() => {
