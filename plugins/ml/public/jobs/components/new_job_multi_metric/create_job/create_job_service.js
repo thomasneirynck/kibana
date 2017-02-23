@@ -285,12 +285,10 @@ module.service('mlMultiMetricJobService', function (
       formConfig.chartInterval.getInterval().asSeconds() + 's'
     )
     .then(data => {
-      const oldSwimlaneLength = this.chartData.job.swimlane.length;
-      // this.chartData.job.swimlane = processSwimlaneResults(data.results);
+      let time = formConfig.start;
 
-      // const swimlaneData = [];
       _.each(data.results, (dataForTime, t) => {
-        const time = +t;
+        time = +t;
         const date = new Date(time);
         this.chartData.job.swimlane.push({
           date: date,
@@ -300,28 +298,11 @@ module.service('mlMultiMetricJobService', function (
         });
       });
 
-      // store the number of results buckets that have just been loaded
-      // this is used to vary the results request interval.
-      // i.e. if no buckets or only a coulple were loaded, wait a bit longer before
-      // loading the results next time
-      this.chartData.job.loadingDifference = this.chartData.job.swimlane.length - oldSwimlaneLength;
+      const bs = formConfig.chartInterval.getInterval().asSeconds();
+      const pcnt = ((time -  formConfig.start + bs) / (formConfig.end - formConfig.start) * 100);
 
-      if (false && this.chartData.job.line.length) {
-        this.chartData.job.hasBounds = true;
-
-        // work out the percent complete of the running job
-        // based on the total length of time of the orgininal search
-        // and the length of time of the results loaded so far
-        const min = this.chartData.job.line[0].time;
-        const max = this.chartData.job.line[this.chartData.job.line.length - 1].time;
-        const diff = max - min;
-
-        if (this.chartData.job.swimlane.length) {
-          const diff2 = this.chartData.job.swimlane[this.chartData.job.swimlane.length - 1].time - min;
-          const pcnt = ((diff2 / diff) * 100);
-          this.chartData.job.percentComplete = pcnt;
-        }
-      }
+      this.chartData.percentComplete = Math.round(pcnt);
+      this.chartData.job.percentComplete = this.chartData.percentComplete;
 
       deferred.resolve(this.chartData);
     })
@@ -340,27 +321,24 @@ module.service('mlMultiMetricJobService', function (
       [formConfig.jobId],
       formConfig.start,
       formConfig.end,
-      formConfig.chartInterval.getInterval().asSeconds() + 's'
+      formConfig.chartInterval.getInterval().asSeconds() + 's',
+      {
+        name: formConfig.splitField,
+        value: formConfig.firstSplitFieldValue
+      }
     )
     .then((data) => {
-      let firstChart;
-      let oldSwimlaneLength = 0;
-
       let i = 0;
       _.each(formConfig.fields, (field, key) => {
-        if (i === 0) {
-          oldSwimlaneLength = this.chartData.detectors[key].swimlane.length;
-        }
-        // const func = field.agg.type.mlName;
+
+        const dtr = this.chartData.detectors[key];
         const times = data.results[i];
 
-        // console.log(key + ' - ' + this.chartData.detectors[key].swimlane.length);
-
-        this.chartData.detectors[key].swimlane = [];
+        dtr.swimlane = [];
         _.each(times, (timeObj, t) => {
           const time = +t;
           const date = new Date(time);
-          this.chartData.detectors[key].swimlane.push({
+          dtr.swimlane.push({
             date: date,
             time: time,
             value: timeObj.normalizedProbability,
@@ -368,36 +346,10 @@ module.service('mlMultiMetricJobService', function (
           });
         });
 
-        if (i === 0) {
-          firstChart = this.chartData.detectors[key];
-        }
+        dtr.percentComplete = this.chartData.percentComplete;
 
         i++;
       });
-
-      // store the number of results buckets that have just been loaded
-      // this is used to vary the results request interval.
-      // i.e. if no buckets or only a coulple were loaded, wait a bit longer before
-      // loading the results next time
-
-      if (firstChart.line && firstChart.line.length) {
-        this.chartData.loadingDifference = firstChart.swimlane.length - oldSwimlaneLength;
-        // work out the percent complete of the running job
-        // based on the total length of time of the orgininal search
-        // and the length of time of the results loaded so far
-        const min = firstChart.line[0].time;
-        const max = firstChart.line[firstChart.line.length - 1].time;
-        const diff = max - min;
-
-        if (firstChart.swimlane.length) {
-          const diff2 = firstChart.swimlane[firstChart.swimlane.length - 1].time - min;
-          const pcnt = ((diff2 / diff) * 100);
-
-          _.each(this.chartData.detectors, (chart) => {
-            chart.percentComplete = pcnt;
-          });
-        }
-      }
 
       deferred.resolve(this.chartData);
     })

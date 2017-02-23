@@ -20,7 +20,7 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlMultiMetricJobSearchService', function ($q, es) {
 
-  this.getScoresByRecord = function (index, jobIds, earliestMs, latestMs, interval) {
+  this.getScoresByRecord = function (index, jobIds, earliestMs, latestMs, interval, firstSplitField) {
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -54,6 +54,11 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
 
         indexString += '.ml-anomalies-' + jobId;
       });
+
+      if (firstSplitField && firstSplitField.value !== undefined) {
+        jobIdFilterStr += ` AND ${firstSplitField.name}: ${firstSplitField.value}`;
+      }
+
       boolCriteria.push({
         'query_string': {
           'analyze_wildcard': true,

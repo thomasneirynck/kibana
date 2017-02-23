@@ -45,6 +45,8 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
 
     let barChartValuesBars = null;
 
+    let $progressBar;
+
     scope.$on('render', () => {
       init();
       createSVGGroups();
@@ -101,6 +103,7 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
           .append('div')
           .attr('class', 'progress-bar');
       }
+      $progressBar = $('.progress-bar');
 
       const svg = chartElement.append('svg')
         .attr('width',  svgWidth)
@@ -184,8 +187,8 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
     }
 
     function drawResults() {
-      drawSwimlane(vizWidth, barChartHeight);
       updateProgressBar();
+      drawSwimlane(vizWidth, barChartHeight);
     }
 
     function drawSwimlane(swlWidth, swlHeight) {
@@ -208,6 +211,8 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
         .domain([3, 25, 50, 75, 100])
         .range(['#d2e9f7', '#8bc8fb', '#ffdd00', '#ff7e00', '#fe5050']);
 
+      swimlaneGroup.select('.swimlane-cells').remove();
+
       const cells = swimlaneGroup.append('g')
         .attr('class', 'swimlane-cells')
         .selectAll('cells')
@@ -226,9 +231,9 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
     }
 
     function updateProgressBar() {
-      const progressBar = $('.progress-bar');
-      const pcnt = (scope.chartData.percentComplete < 100) ? scope.chartData.percentComplete : 0;
-      progressBar.css('width', pcnt + '%');
+      const pcnt = scope.chartData.percentComplete;
+      // const pcnt = (scope.chartData.percentComplete < 100) ? scope.chartData.percentComplete : 0;
+      $progressBar.css('width', pcnt + '%');
     }
   }
 

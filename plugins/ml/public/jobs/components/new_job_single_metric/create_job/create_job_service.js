@@ -73,7 +73,6 @@ module.service('mlSingleMetricJobService', function (
       });
 
       this.chartData.line = processLineChartResults(obj.results);
-      this.chartData.swimlane = processSwimlaneResults(obj.results, true);
       deferred.resolve(this.chartData.line);
     })
     .catch((resp) => {
@@ -330,6 +329,14 @@ module.service('mlSingleMetricJobService', function (
     )
     .then(data => {
       this.chartData.model = this.chartData.model.concat(processLineChartResults(data.results, formConfig));
+
+      const lastBucket = this.chartData.model[this.chartData.model.length - 1];
+      const time = (lastBucket !== undefined) ? lastBucket.time : formConfig.start;
+
+      const bs = formConfig.chartInterval.getInterval().asSeconds();
+      const pcnt = ((time -  formConfig.start + bs) / (formConfig.end - formConfig.start) * 100);
+      this.chartData.percentComplete = Math.round(pcnt);
+
       deferred.resolve(this.chartData);
     })
     .catch(() => {
@@ -350,32 +357,7 @@ module.service('mlSingleMetricJobService', function (
       formConfig.chartInterval.getInterval().asSeconds() + 's'
     )
     .then(data => {
-      const oldSwimlaneLength = this.chartData.swimlane.length;
       this.chartData.swimlane = processSwimlaneResults(data.results);
-
-      // store the number of results buckets that have just been loaded
-      // this is used to vary the results request interval.
-      // i.e. if no buckets or only a coulple were loaded, wait a bit longer before
-      // loading the results next time
-      this.chartData.loadingDifference = this.chartData.swimlane.length - oldSwimlaneLength;
-
-      if (this.chartData.line.length) {
-        this.chartData.hasBounds = true;
-
-        // work out the percent complete of the running job
-        // based on the total length of time of the orgininal search
-        // and the length of time of the results loaded so far
-        const min = this.chartData.line[0].time;
-        const max = this.chartData.line[this.chartData.line.length - 1].time;
-        const diff = max - min;
-
-        if (this.chartData.swimlane.length) {
-          const diff2 = this.chartData.swimlane[this.chartData.swimlane.length - 1].time - min;
-          const pcnt = ((diff2 / diff) * 100);
-          this.chartData.percentComplete = pcnt;
-        }
-      }
-
       deferred.resolve(this.chartData);
     })
     .catch(() => {

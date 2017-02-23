@@ -291,9 +291,6 @@ module
       }
     });
 
-    // $scope.ui.fields = fields;
-    // console.log($scope.ui.fields);
-
     if ($scope.ui.fields.length === 1) {
       $scope.formConfig.field = $scope.ui.fields[0];
     }
@@ -308,13 +305,6 @@ module
     }
 
     $scope.ui.tickedFieldsCount = Object.keys($scope.formConfig.fields).length;
-
-    // $scope.formChange();
-    // console.log($scope.formConfig.fields);
-
-    // $scope.extractFields();
-    // console.log($scope.indexes);
-    // guessTimeField();
   };
 
   $scope.toggleKeyFields = function (key) {
@@ -324,12 +314,6 @@ module
     } else {
       delete $scope.formConfig.keyFields[key];
     }
-
-    console.log($scope.formConfig.keyFields);
-
-    // $scope.extractFields();
-    // console.log($scope.indexes);
-    // guessTimeField();
   };
 
   function getIndexedFields(param, fieldTypes) {
@@ -533,35 +517,23 @@ module
 
     function run() {
       refreshCounter++;
-      reloadDetectorSwimlane()
+      reloadJobSwimlaneData()
       .then(() => {
-        if (forceStop === false && $scope.chartData.percentComplete < 100) {
-          // if state has been set to stopping (from the stop button), leave state as it is
-          if ($scope.jobState === JOB_STATE.STOPPING) {
-            $scope.jobState = JOB_STATE.STOPPING;
-          } else {
-            // otherwise assume the job is running
-            $scope.jobState = JOB_STATE.RUNNING;
-          }
-        } else {
-          $scope.jobState = JOB_STATE.FINISHED;
-        }
-
-        if (ignoreModel) {
-          jobCheck();
-        } else {
-          reloadJobSwimlaneData()
-          .catch(() => {
-            // on the 10th model load failure, set ignoreNodel to true to stop trying to load it.
-            if (refreshCounter % 10 === 0) {
-              console.log('Model has failed to load 10 times. Stop trying to load it.');
-              ignoreModel = true;
+        reloadDetectorSwimlane()
+        .then(() => {
+          if (forceStop === false && $scope.chartData.percentComplete < 100) {
+            // if state has been set to stopping (from the stop button), leave state as it is
+            if ($scope.jobState === JOB_STATE.STOPPING) {
+              $scope.jobState = JOB_STATE.STOPPING;
+            } else {
+              // otherwise assume the job is running
+              $scope.jobState = JOB_STATE.RUNNING;
             }
-          })
-          .finally(() => {
-            jobCheck();
-          });
-        }
+          } else {
+            $scope.jobState = JOB_STATE.FINISHED;
+          }
+          jobCheck();
+        });
       });
     }
   }
@@ -569,11 +541,8 @@ module
   function jobCheck() {
     if ($scope.jobState === JOB_STATE.RUNNING || $scope.jobState === JOB_STATE.STOPPING) {
       refreshInterval = adjustRefreshInterval($scope.chartData.loadingDifference, refreshInterval);
-      // console.log('loading difference', $scope.chartData.loadingDifference);
-      // console.log('refreshInterval', refreshInterval);
       _.delay(loadCharts, refreshInterval);
     } else {
-      // $scope.chartData.percentComplete = 100;
       _.each($scope.chartData.detectors, (chart) => {
         chart.percentComplete = 100;
       });
