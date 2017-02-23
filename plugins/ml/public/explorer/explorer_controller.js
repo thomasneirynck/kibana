@@ -108,125 +108,6 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     mlExplorerDashboardService.init();
   };
 
-  $scope.loadViewBySwimlaneOptions = function () {
-    // Obtain the list of 'View by' fields per job.
-    // TODO - for phase 2, enhance / replace getJobViewByFields with a function
-    // which returns a list of influencer, by, over and partition fields and by default
-    // set the 'view by' field to the partition field influencer.
-    mlJobService.getJobViewByFields()
-    .then((resp) => {
-      if (resp.fieldsByJob) {
-        $scope.fieldsByJob = resp.fieldsByJob;
-        console.log('Explorer job view by fields:', $scope.fieldsByJob);
-
-        // TODO - what default to set when multiple jobs with multiple detectors are selected?
-        // For now just pick the first field of the first selected job.
-        const selectedJobIds = $scope.getSelectedJobIds();
-        const fieldsForFirstSelected = $scope.fieldsByJob[selectedJobIds[0]];
-        $scope.swimlaneViewByFieldName = fieldsForFirstSelected.length > 0 ? fieldsForFirstSelected[0] : null;
-        console.log('Explorer default swimlane view by to:', $scope.swimlaneViewByFieldName);
-        $scope.loadViewBySwimlane();
-      }
-    }).catch((resp) => {
-      console.log('Swimlane - error getting job viewBy fields:', resp);
-    });
-  };
-
-  $scope.loadOverallData = function () {
-    // Loads the overall data components i.e. the overall swimlane and influencers list.
-
-    if ($scope.selectedJobs === undefined) {
-      return;
-    }
-
-    $scope.loading = true;
-    $scope.hasResults = false;
-
-    // Counter to keep track of what data sets have been loaded.
-    let awaitingCount = 2;
-
-    // finish() function, called after each data set has been loaded and processed.
-    // The last one to call it will trigger the page render.
-    function finish() {
-      awaitingCount--;
-      if (awaitingCount === 0) {
-
-        // TODO: Check against bucket results as jobs may not include influencers.
-        if ($scope.overallSwimlaneData.points && $scope.overallSwimlaneData.points.length) {
-          $scope.hasResults = true;
-        } else {
-          $scope.hasResults = false;
-        }
-        $scope.loading = false;
-
-        // Tell the result components directives to render.
-        // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
-        $timeout(function () {
-          $scope.$broadcast('render');
-          mlExplorerDashboardService.fireSwimlaneDataChange('overall');
-        }, 0);
-      }
-    }
-
-    $scope.swimlaneBucketInterval = calculateSwimlaneBucketInterval();
-    console.log('Explorer swimlane bucketInterval:', $scope.swimlaneBucketInterval);
-
-    const bounds = timefilter.getActiveBounds();
-    const selectedJobIds = $scope.getSelectedJobIds();
-
-    // Query 1 - load list of top influencers.
-    mlResultsService.getTopInfluencers($scope.indexPatternId, selectedJobIds,
-      bounds.min.valueOf(), bounds.max.valueOf(), MAX_INFLUENCER_FIELD_NAMES, MAX_INFLUENCER_FIELD_VALUES)
-    .then((resp) => {
-      // TODO - sort the influencers keys so that the partition field(s) are first.
-      $scope.influencersData = resp.influencers;
-      console.log('Explorer top influencers data set:', $scope.influencersData);
-      finish();
-    });
-
-    // Query 2 - load 'overall' scores by time - using max of bucket_influencer anomaly_score.
-    // TODO - is this giving us the results we want?
-    mlResultsService.getBucketInfluencerMaxScoreByTime($scope.indexPatternId, selectedJobIds,
-      bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression)
-    .then((resp) => {
-      processOverallResults(resp.results);
-      console.log('Explorer overall swimlane data set:', $scope.overallSwimlaneData);
-      finish();
-    });
-
-  };
-
-  $scope.loadViewBySwimlane = function () {
-    // finish() function, called after each data set has been loaded and processed.
-    // The last one to call it will trigger the page render.
-    function finish() {
-      console.log('Explorer view by swimlane data set:', $scope.viewBySwimlaneData);
-      // Fire event to indicate swimlane data has changed.
-      // Need to use $timeout to ensure this happens after the child scope is updated with the new data.
-      $timeout(function () {
-        mlExplorerDashboardService.fireSwimlaneDataChange('viewBy');
-      }, 0);
-    }
-
-    if ($scope.selectedJobs === undefined ||
-        $scope.swimlaneViewByFieldName === undefined  || $scope.swimlaneViewByFieldName === null) {
-      $scope.viewBySwimlaneData = { 'fieldName': '', 'laneLabels':[], 'points':[], 'interval': 3600 };
-      finish();
-    } else {
-      const bounds = timefilter.getActiveBounds();
-      const selectedJobIds = $scope.getSelectedJobIds();
-
-      // load scores by influencer value and time.
-      mlResultsService.getInfluencerValueMaxScoreByTime($scope.indexPatternId, selectedJobIds, $scope.swimlaneViewByFieldName,
-        bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression, MAX_INFLUENCER_FIELD_VALUES)
-      .then((resp) => {
-        // TODO - sort the influencers keys so that the partition field(s) are first.
-        processViewByResults(resp.results);
-        finish();
-      });
-    }
-  };
-
   $scope.loadAnomaliesTable = function (influencers, earliestMs, latestMs) {
     const selectedJobIds = $scope.getSelectedJobIds();
 
@@ -292,15 +173,19 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
       $location.search('jobId', selectedJobIds);
     }
 
-    $scope.loadOverallData();
-    $scope.loadViewBySwimlaneOptions();
+    $scope.anomalyChartRecords = {};
+    $scope.anomalyRecords = [];
+    $scope.showNoSelectionMessage = true;
+
+    loadOverallData();
+    loadViewBySwimlaneOptions();
 
   };
 
   // Refresh all the data when the time range is altered.
   $scope.$listen(timefilter, 'fetch', function () {
-    $scope.loadOverallData();
-    $scope.loadViewBySwimlane();
+    loadOverallData();
+    loadViewBySwimlane();
     $scope.anomalyChartRecords = {};
     $scope.anomalyRecords = [];
     $scope.showNoSelectionMessage = true;
@@ -350,6 +235,174 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
 
   });
 
+  function loadViewBySwimlaneOptions() {
+    // Obtain the list of 'View by' fields per job.
+    $scope.swimlaneViewByFieldName = null;
+    const fieldsByJob = {'*':[]};
+    _.each(mlJobService.jobs, (job) => {
+      // Add the list of distinct by, over, partition and influencer fields for each job.
+      let fieldsForJob = [];
+
+      const analysisConfig = job.analysis_config;
+      const detectors = analysisConfig.detectors || [];
+      _.each(detectors, (detector) => {
+        if (_.has(detector, 'partition_field_name')) {
+          fieldsForJob.push(detector.partition_field_name);
+        }
+        if (_.has(detector, 'over_field_name')) {
+          fieldsForJob.push(detector.over_field_name);
+        }
+        // For jobs with by and over fields, don't add the 'by' field as this
+        // field will only be added to the top-level fields for record type results
+        // if it also an influencer over the bucket.
+        if (_.has(detector, 'by_field_name') && !(_.has(detector, 'over_field_name'))) {
+          fieldsForJob.push(detector.by_field_name);
+        }
+      });
+
+      const influencers = analysisConfig.influencers || [];
+      fieldsForJob = fieldsForJob.concat(influencers);
+
+      fieldsByJob[job.job_id] = _.uniq(fieldsForJob);
+      fieldsByJob['*'] = _.union(fieldsByJob['*'], fieldsByJob[job.job_id]);
+    });
+
+    $scope.fieldsByJob = fieldsByJob;
+    console.log('Explorer job view by fields:', $scope.fieldsByJob);
+
+    // Set the default to the first partition, over, by or influencer field of the first selected job.
+    // TODO - when a 'view by' dropdown is added, populate it with the fields for the selected job(s).
+    const firstSelectedJob = _.find(mlJobService.jobs, (job) => {
+      return job.job_id === $scope.getSelectedJobIds()[0];
+    });
+
+    const firstJobInfluencers = firstSelectedJob.analysis_config.influencers || [];
+    _.each(firstSelectedJob.analysis_config.detectors,(detector) => {
+
+      if (_.has(detector, 'partition_field_name') &&
+          firstJobInfluencers.indexOf(detector.partition_field_name) !== -1) {
+        $scope.swimlaneViewByFieldName = detector.partition_field_name;
+        return false;
+      }
+
+      if (_.has(detector, 'over_field_name') &&
+          firstJobInfluencers.indexOf(detector.over_field_name) !== -1) {
+        $scope.swimlaneViewByFieldName = detector.over_field_name;
+        return false;
+      }
+
+      // For jobs with by and over fields, don't add the 'by' field as this
+      // field will only be added to the top-level fields for record type results
+      // if it also an influencer over the bucket.
+      if (_.has(detector, 'by_field_name') && !(_.has(detector, 'over_field_name')) &&
+          firstJobInfluencers.indexOf(detector.by_field_name) !== -1) {
+        $scope.swimlaneViewByFieldName = detector.by_field_name;
+        return false;
+      }
+    });
+
+    if ($scope.swimlaneViewByFieldName === null) {
+      // TODO - when a 'view by' dropdown is added, set the default to the first available option.
+      $scope.swimlaneViewByFieldName = firstJobInfluencers.length > 0 ? firstJobInfluencers[0] : null;
+    }
+    loadViewBySwimlane();
+
+  }
+
+  function loadOverallData() {
+    // Loads the overall data components i.e. the overall swimlane and influencers list.
+
+    if ($scope.selectedJobs === undefined) {
+      return;
+    }
+
+    $scope.loading = true;
+    $scope.hasResults = false;
+
+    // Counter to keep track of what data sets have been loaded.
+    let awaitingCount = 2;
+
+    // finish() function, called after each data set has been loaded and processed.
+    // The last one to call it will trigger the page render.
+    function finish() {
+      awaitingCount--;
+      if (awaitingCount === 0) {
+
+        // TODO: Check against bucket results as jobs may not include influencers.
+        if ($scope.overallSwimlaneData.points && $scope.overallSwimlaneData.points.length) {
+          $scope.hasResults = true;
+        } else {
+          $scope.hasResults = false;
+        }
+        $scope.loading = false;
+
+        // Tell the result components directives to render.
+        // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
+        $timeout(function () {
+          $scope.$broadcast('render');
+          mlExplorerDashboardService.fireSwimlaneDataChange('overall');
+        }, 0);
+      }
+    }
+
+    $scope.swimlaneBucketInterval = calculateSwimlaneBucketInterval();
+    console.log('Explorer swimlane bucketInterval:', $scope.swimlaneBucketInterval);
+
+    const bounds = timefilter.getActiveBounds();
+    const selectedJobIds = $scope.getSelectedJobIds();
+
+    // Query 1 - load list of top influencers.
+    mlResultsService.getTopInfluencers($scope.indexPatternId, selectedJobIds,
+      bounds.min.valueOf(), bounds.max.valueOf(), MAX_INFLUENCER_FIELD_NAMES, MAX_INFLUENCER_FIELD_VALUES)
+    .then((resp) => {
+      // TODO - sort the influencers keys so that the partition field(s) are first.
+      $scope.influencersData = resp.influencers;
+      console.log('Explorer top influencers data set:', $scope.influencersData);
+      finish();
+    });
+
+    // Query 2 - load 'overall' scores by time - using max of bucket_influencer anomaly_score.
+    // TODO - is this giving us the results we want?
+    mlResultsService.getBucketInfluencerMaxScoreByTime($scope.indexPatternId, selectedJobIds,
+      bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression)
+    .then((resp) => {
+      processOverallResults(resp.results);
+      console.log('Explorer overall swimlane data set:', $scope.overallSwimlaneData);
+      finish();
+    });
+
+  }
+
+  function loadViewBySwimlane() {
+    // finish() function, called after each data set has been loaded and processed.
+    // The last one to call it will trigger the page render.
+    function finish() {
+      console.log('Explorer view by swimlane data set:', $scope.viewBySwimlaneData);
+      // Fire event to indicate swimlane data has changed.
+      // Need to use $timeout to ensure this happens after the child scope is updated with the new data.
+      $timeout(function () {
+        mlExplorerDashboardService.fireSwimlaneDataChange('viewBy');
+      }, 0);
+    }
+
+    if ($scope.selectedJobs === undefined ||
+        $scope.swimlaneViewByFieldName === undefined  || $scope.swimlaneViewByFieldName === null) {
+      $scope.viewBySwimlaneData = { 'fieldName': '', 'laneLabels':[], 'points':[], 'interval': 3600 };
+      finish();
+    } else {
+      const bounds = timefilter.getActiveBounds();
+      const selectedJobIds = $scope.getSelectedJobIds();
+
+      // load scores by influencer value and time.
+      mlResultsService.getInfluencerValueMaxScoreByTime($scope.indexPatternId, selectedJobIds, $scope.swimlaneViewByFieldName,
+        bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression, MAX_INFLUENCER_FIELD_VALUES)
+      .then((resp) => {
+        // TODO - sort the influencers keys so that the partition field(s) are first.
+        processViewByResults(resp.results);
+        finish();
+      });
+    }
+  }
 
   function calculateSwimlaneBucketInterval() {
     // Bucketing interval should be the maximum of the chart related interval (i.e. time range related)

@@ -996,15 +996,19 @@ module.service('mlResultsService', function ($q, es) {
             'field': '@timestamp',
             'interval': interval,
             'min_doc_count': 1
-          },
-          'aggs': {}
+          }
+
         }
       }
     };
 
-    const metricAgg = {};
-    metricAgg[metricFunction] = {'field': metricFieldName};
-    searchBody.aggs.byTime.aggs.metric = metricAgg;
+    if (metricFieldName !== undefined) {
+      searchBody.aggs.byTime.aggs = {};
+
+      const metricAgg = {};
+      metricAgg[metricFunction] = {'field': metricFieldName};
+      searchBody.aggs.byTime.aggs.metric = metricAgg;
+    }
 
     es.search({
       index: index,
@@ -1013,9 +1017,13 @@ module.service('mlResultsService', function ($q, es) {
     .then((resp) => {
       const dataByTime = _.get(resp, ['aggregations', 'byTime', 'buckets'], []);
       _.each(dataByTime, (dataForTime) => {
-        const value = _.get(dataForTime, ['metric', 'value']);
-        if (value !== undefined) {
-          obj.results[dataForTime.key] = value;
+        if (metricFunction === 'count') {
+          obj.results[dataForTime.key] = dataForTime.doc_count;
+        } else {
+          const value = _.get(dataForTime, ['metric', 'value']);
+          if (value !== undefined) {
+            obj.results[dataForTime.key] = value;
+          }
         }
       });
 

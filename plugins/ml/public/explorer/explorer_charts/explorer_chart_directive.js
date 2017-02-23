@@ -73,12 +73,9 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
     }
 
     // Query 1 - load the raw metric data.
-    // TODO - get entity fields out of chart config i.e. use by and over fields too.
-    //  - use some mapping function to get the ES function name, like in
-    //    jobs/components/new_job_multi_metric/create_job/filter_agg_types.js
-    const entityFields = [{fieldName: config.partition_field_name, fieldValue: config.partition_field_value}];
-    const datafeedQuery = _.get(config, 'datafeed_config.query', null);
-    mlResultsService.getMetricData(config.datafeed_config.indexes, entityFields, datafeedQuery, config.function, config.field_name,
+    const datafeedQuery = _.get(config, 'datafeedConfig.query', null);
+    mlResultsService.getMetricData(config.datafeedConfig.indexes, config.entityFields, datafeedQuery,
+      config.metricFunction, config.metricFieldName,
       scope.plotEarliest, scope.plotLatest, config.interval
       )
     .then(function (resp) {
@@ -87,13 +84,13 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
     });
 
     // Query 2 - load the anomalies.
-    // TODO - may need to change this to use more generic filter criteria i.e. not
-    // relying on the partition/by/over fields being influencers.
-    const criteria = [];
-    criteria.push({ fieldName: config.partition_field_name, fieldValue: config.partition_field_value });
-    criteria.push({ fieldName: 'field_name', fieldValue: config.field_name });
+    let criteria = [];
+    if (config.fieldName !== undefined) {
+      criteria.push({ fieldName: 'field_name', fieldValue: config.fieldName });
+    }
+    criteria = criteria.concat(config.entityFields);
 
-    mlResultsService.getRecordsForCriteria(ML_RESULTS_INDEX_ID, [config.job_id], criteria,
+    mlResultsService.getRecordsForCriteria(ML_RESULTS_INDEX_ID, [config.jobId], criteria,
       0, scope.plotEarliest, scope.plotLatest, ANOMALIES_MAX_RESULTS)
     .then(function (resp) {
       scope.anomalyRecords = resp.records;

@@ -6,7 +6,9 @@
 
   <div ng-hide="seriesToPlot.length === 0">
     <div ng-repeat='series in seriesToPlot' class='ml-explorer-chart-container'>
-      <label class="explorer-chart-label">{{series.function}} {{series.field_name}} {{series.partition_field_name}} {{series.partition_field_value}}</label>
+      <div class="explorer-chart-label">{{series.detectorLabel}}
+        <span ng-repeat='entity in series.entityFields'>{{entity.fieldName}} {{entity.fieldValue}} </span>
+      </div>
       <ml-explorer-chart
         series-config="series"
         plot-earliest="plotEarliest"

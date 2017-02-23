@@ -31,6 +31,8 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
   $scope.allSeriesRecords = [];   // Complete list of series.
   $scope.recordsForSeries = [];   // Series for plotting.
 
+  const FUNCTION_DESCRIPTIONS_TO_PLOT = ['mean', 'min', 'max', 'sum', 'count', 'distinct_count'];
+
   mlExplorerDashboardService.addAnomalyDataChangeListener(function (anomalyRecords, earliestMs, latestMs) {
     $scope.allSeriesRecords = processRecordsForDisplay(anomalyRecords);
 
@@ -54,9 +56,13 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     }
 
     // Aggregate by job, detector, and analysis fields (partition, by, over).
-    // TODO - initially just look at partition field, then add in by and over fields.
     const aggregatedData = {};
-    _.each(anomalyRecords, function (record) {
+    _.each(anomalyRecords, (record) => {
+      console.log('record:', record);
+      if (_.indexOf(FUNCTION_DESCRIPTIONS_TO_PLOT, record.function_description) === -1 ||
+        record.by_field_name === 'mlcategory') {
+        return;
+      }
       const jobId = record.job_id;
       if (!_.has(aggregatedData, jobId)) {
         aggregatedData[jobId] = {};
@@ -68,29 +74,65 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
         detectorsForJob[detectorIndex] = {};
       }
 
-      const partitionFieldName = record.partition_field_name;
-      if (partitionFieldName !== undefined) {
-        const partitionsForDetector = detectorsForJob[detectorIndex];
+      const firstFieldName = record.partition_field_name || record.by_field_name;
+      const firstFieldValue = record.partition_field_value || record.by_field_value;
+      if (firstFieldName !== undefined) {
+        const groupsForDetector = detectorsForJob[detectorIndex];
 
-        if (!_.has(partitionsForDetector, partitionFieldName)) {
-          partitionsForDetector[partitionFieldName] = {};
+        if (!_.has(groupsForDetector, firstFieldName)) {
+          groupsForDetector[firstFieldName] = {};
         }
-        const valuesForPartition = partitionsForDetector[partitionFieldName];
-        const partitionFieldValue = record.partition_field_value;
-        if (!_.has(valuesForPartition, partitionFieldValue)) {
-          valuesForPartition[partitionFieldValue] = {};
+        const valuesForGroup = groupsForDetector[firstFieldName];
+        if (!_.has(valuesForGroup, firstFieldValue)) {
+          valuesForGroup[firstFieldValue] = {};
         }
 
-        const dataForPartitionValue = valuesForPartition[partitionFieldValue];
-        if (!_.has(dataForPartitionValue, 'anomaly_score')) {
-          dataForPartitionValue.maxScore = record.normalized_probability;
-          dataForPartitionValue.maxScoreRecord = record;
-        } else {
-          if (record.normalized_probability > dataForPartitionValue.maxScore) {
-            dataForPartitionValue.maxScore = record.normalized_probability;
-            dataForPartitionValue.maxScoreRecord = record;
+        const dataForGroupValue = valuesForGroup[firstFieldValue];
+
+        let isSecondSplit = false;
+        if (record.partition_field_name !== undefined) {
+          const splitFieldName = record.over_field_name || record.by_field_name;
+          if (splitFieldName !== undefined) {
+            isSecondSplit = true;
           }
         }
+
+        if (isSecondSplit === false) {
+          if (!_.has(dataForGroupValue, 'anomaly_score')) {
+            dataForGroupValue.maxScore = record.normalized_probability;
+            dataForGroupValue.maxScoreRecord = record;
+          } else {
+            if (record.normalized_probability > dataForGroupValue.maxScore) {
+              dataForGroupValue.maxScore = record.normalized_probability;
+              dataForGroupValue.maxScoreRecord = record;
+            }
+          }
+        } else {
+          // Aggregate another level for the over or by field.
+          const secondFieldName = record.over_field_name || record.by_field_name;
+          const secondFieldValue = record.over_field_value || record.by_field_value;
+
+          if (!_.has(dataForGroupValue, secondFieldName)) {
+            dataForGroupValue[secondFieldName] = {};
+          }
+
+          const splitsForGroup = dataForGroupValue[secondFieldName];
+          if (!_.has(splitsForGroup, secondFieldValue)) {
+            splitsForGroup[secondFieldValue] = {};
+          }
+
+          const dataForSplitValue = splitsForGroup[secondFieldValue];
+          if (!_.has(dataForSplitValue, 'anomaly_score')) {
+            dataForSplitValue.maxScore = record.normalized_probability;
+            dataForSplitValue.maxScoreRecord = record;
+          } else {
+            if (record.normalized_probability > dataForSplitValue.maxScore) {
+              dataForSplitValue.maxScore = record.normalized_probability;
+              dataForSplitValue.maxScoreRecord = record;
+            }
+          }
+        }
+
       }
 
     });
@@ -98,12 +140,21 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     console.log('explorer charts aggregatedData is:', aggregatedData);
     let recordsForSeries = [];
     // Convert to an array of the records with the highesy normalized_probability per unique series.
-    // TODO - will need a different algorithm depending on whether there are partition, by, and / or over fields.
     _.each(aggregatedData, (detectorsForJob) => {
-      _.each(detectorsForJob, (partitionsForDetector) => {
-        _.each(partitionsForDetector, (valuesForPartition) => {
-          _.each(valuesForPartition, (dataForPartitionValue) => {
-            recordsForSeries.push(dataForPartitionValue.maxScoreRecord);
+      _.each(detectorsForJob, (groupsForDetector) => {
+        _.each(groupsForDetector, (valuesForGroup) => {
+          _.each(valuesForGroup, (dataForGroupValue) => {
+            if (_.has(dataForGroupValue, 'maxScoreRecord')) {
+              recordsForSeries.push(dataForGroupValue.maxScoreRecord);
+            } else {
+              // Second level of aggregation for partition and by/over.
+              _.each(dataForGroupValue, (splitsForGroup) => {
+                _.each(splitsForGroup, (dataForSplitValue) => {
+                  recordsForSeries.push(dataForSplitValue.maxScoreRecord);
+                });
+              });
+            }
+
           });
         });
       });
@@ -118,33 +169,61 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     const seriesConfigs = [];
 
     _.each(anomalyRecords, (record) => {
-      // TODO - add in full entity fields (by, over, partition).
-      // TODO - get right ES metric function from record function_description.
       const job = _.find(mlJobService.jobs, { 'job_id': record.job_id });
       const config = {
-        job_id: record.job_id,
-        partition_field_name: record.partition_field_name,
-        partition_field_value: record.partition_field_value,
-        function: 'avg',
-        field_name: record.field_name,
-        job_bucket_span: job.analysis_config.bucket_span,
+        jobId: record.job_id,
+        function: record.function_description,
+        metricFunction: getESAggregationForFunction(record.function_description),
+        jobBucketSpan: job.analysis_config.bucket_span,
         interval: job.analysis_config.bucket_span + 's'
       };
 
+      config.detectorLabel = record.function;
+      if (record.field_name !== undefined) {
+        config.fieldName = record.field_name;
+        config.metricFieldName = record.field_name;
+        config.detectorLabel += ' ';
+        config.detectorLabel += config.fieldName;
+      }
+
+      if (record.function_description === 'count' && job.analysis_config.summary_count_field_name !== undefined) {
+        config.metricFunction = 'sum';
+        config.metricFieldName = job.analysis_config.summary_count_field_name;
+      }
+
+      // Add the 'entity_fields' i.e. the partition, by, over fields which
+      // define the metric series to be plotted.
+      config.entityFields = [];
+      if (_.has(record, 'partition_field_name')) {
+        config.entityFields.push({fieldName: record.partition_field_name, fieldValue: record.partition_field_value});
+      }
+
+      if (_.has(record, 'over_field_name')) {
+        config.entityFields.push({fieldName: record.over_field_name, fieldValue: record.over_field_value});
+      }
+
+      // For jobs with by and over fields, don't add the 'by' field as this
+      // field will only be added to the top-level fields for record type results
+      // if it also an influencer over the bucket.
+      if (_.has(record, 'by_field_name') && !(_.has(record, 'over_field_name'))) {
+        config.entityFields.push({fieldName: record.by_field_name, fieldValue: record.by_field_value});
+      }
+
       // Obtain the raw data index(es) from the job datafeed_config.
       if (job.datafeed_config) {
-        config.datafeed_config = job.datafeed_config;
+        config.datafeedConfig = job.datafeed_config;
       }
 
       seriesConfigs.push(config);
     });
+
     return seriesConfigs;
   }
 
   function calculateChartRange(midpointMs) {
     // Calculate the time range for the charts.
     // Fit in as many points in the available container width plotted at the job bucket span.
-    const maxBucketSpan = Math.max.apply(null, _.pluck($scope.seriesToPlot, 'job_bucket_span'));
+    const maxBucketSpan = Math.max.apply(null, _.pluck($scope.seriesToPlot, 'jobBucketSpan'));
 
     const chartWidth = getChartContainerWidth();
     const pointSpacing = 10;
@@ -157,6 +236,34 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     // chart width is 5 sixths of the window, minus 100 for the axis labels, minus 50 padding.
     // TODO - alter depending on number of charts plotted per row.
     return (($('.ml-explorer').width() / 6) * 5) - 100 - 50;
+  }
+
+  // Returns the name of the Elasticsearch aggregation to use when plotting metric data
+  // for an anomaly record with the specified function description.
+  // Note that the 'function' field in a record contains what the user entered e.g. 'high_count',
+  // whereas the 'function_description' field holds a ml-built display hint for function e.g. 'count'.
+  function getESAggregationForFunction(functionDescription) {
+    // Possible values for functionDescription are (defined in ModelTypes.cc):
+    //    count
+    //    distinct_count
+    //    rare
+    //    info_content
+    //    mean
+    //    median
+    //    min
+    //    max
+    //    varp
+    //    sum
+    //    lat_long
+    // TODO - when function_description for detectors is altered to return the ES aggregation
+    //        this function will no longer be needed.
+    if (functionDescription === 'mean') {
+      return 'avg';
+    } else if (functionDescription === 'distinct_count') {
+      return 'cardinality';
+    } else {
+      return functionDescription;
+    }
   }
 
 });
