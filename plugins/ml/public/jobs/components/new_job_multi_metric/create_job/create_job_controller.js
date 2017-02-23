@@ -433,7 +433,6 @@ module
     }
   };
 
-  let ignoreModel = false;
   let refreshInterval = REFRESH_INTERVAL_MS;
   // function for creating a new job.
   // creates the job, opens it, creates the datafeed and starts it.
@@ -479,7 +478,6 @@ module
           .then(() => {
             $scope.jobState = JOB_STATE.RUNNING;
             refreshCounter = 0;
-            ignoreModel = false;
             refreshInterval = REFRESH_INTERVAL_MS;
             loadCharts();
           })
