@@ -328,11 +328,11 @@ module.service('mlMultiMetricJobService', function (
       }
     )
     .then((data) => {
-      let i = 0;
+      let dtrIndex = 0;
       _.each(formConfig.fields, (field, key) => {
 
         const dtr = this.chartData.detectors[key];
-        const times = data.results[i];
+        const times = data.results[dtrIndex];
 
         dtr.swimlane = [];
         _.each(times, (timeObj, t) => {
@@ -348,7 +348,7 @@ module.service('mlMultiMetricJobService', function (
 
         dtr.percentComplete = this.chartData.percentComplete;
 
-        i++;
+        dtrIndex++;
       });
 
       deferred.resolve(this.chartData);

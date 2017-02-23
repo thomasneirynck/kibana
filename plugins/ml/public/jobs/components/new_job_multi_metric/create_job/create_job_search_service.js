@@ -123,20 +123,21 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
       }
     })
     .then((resp) => {
-      // console.log('Time series search service getScoresByBucket() resp:', resp);
-
       const detectorsByIndex = _.get(resp, ['aggregations', 'detector_index', 'buckets'], []);
-      for (let i = 0; i < detectorsByIndex.length; i++) {
-        obj.results[i] = {};
-        const buckets = _.get(detectorsByIndex[i], ['byTime', 'buckets'], []);
+      _.each(detectorsByIndex, (dtr) => {
+        const dtrResults = {};
+        const dtrIndex = +dtr.key;
+
+        const buckets = _.get(dtr, ['byTime', 'buckets'], []);
         for (let j = 0; j < buckets.length; j++) {
           const bkt = buckets[j];
           const time = bkt.key;
-          obj.results[i][time] = {
+          dtrResults[time] = {
             'normalizedProbability': _.get(bkt, ['normalizedProbability', 'value']),
           };
         }
-      }
+        obj.results[dtrIndex] = dtrResults;
+      });
 
       deferred.resolve(obj);
     })
