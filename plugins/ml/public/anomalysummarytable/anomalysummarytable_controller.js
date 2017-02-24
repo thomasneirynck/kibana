@@ -497,8 +497,11 @@ module.controller('MlAnomalySummaryTableController', function (
     // terms and regex for the selected categoryId to the source record.
     if ((configuredUrlValue.includes('$mlcategoryterms$') || configuredUrlValue.includes('$mlcategoryregex$'))
           && _.has(source, 'mlcategory')) {
-      const jobId = source.jobId;
-      const categoryId = source.mlcategory;
+      const jobId = source.job_id;
+
+      // mlcategory in the source record will be an array
+      // - use first value (will only ever be more than one if influenced by category other than by/partition/over).
+      const categoryId = source.mlcategory[0];
 
       mlJobService.getCategoryDefinition($scope.indexPattern.id, jobId, categoryId)
       .then(function (resp) {

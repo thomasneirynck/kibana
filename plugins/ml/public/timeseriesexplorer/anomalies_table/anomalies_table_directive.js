@@ -130,9 +130,12 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         if ((configuredUrlValue.includes('$mlcategoryterms$') || configuredUrlValue.includes('$mlcategoryregex$'))
                 && _.has(record, 'mlcategory')) {
           const jobId = record.job_id;
-          const categoryId = record.mlcategory;
 
-          mlJobService.getCategoryDefinition(scope.indexPattern.id, jobId, categoryId)
+          // mlcategory in the source record will be an array
+          // - use first value (will only ever be more than one if influenced by category other than by/partition/over).
+          const categoryId = record.mlcategory[0];
+
+          mlJobService.getCategoryDefinition(scope.indexPatternId, jobId, categoryId)
           .then(function (resp) {
             // Prefix each of the terms with '+' so that the Elasticsearch Query String query
             // run in a drilldown Kibana dashboard has to match on all terms.
@@ -255,10 +258,10 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
           const categoryRecords = _.where(summaryRecords, {entityName: 'mlcategory'});
           const categoryIdsByJobId = {};
           _.each(categoryRecords, function (record) {
-            if (!_.has(categoryIdsByJobId, record.job_id)) {
-              categoryIdsByJobId[record.job_id] = [];
+            if (!_.has(categoryIdsByJobId, record.jobId)) {
+              categoryIdsByJobId[record.jobId] = [];
             }
-            categoryIdsByJobId[record.job_id].push(record.entityValue);
+            categoryIdsByJobId[record.jobId].push(record.entityValue);
           });
           loadCategoryExamples(categoryIdsByJobId);
         } else {
@@ -488,7 +491,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         rowScope.initRow = function () {
           if (_.has(record, 'entityValue') && record.entityName === 'mlcategory') {
             // Obtain the category definition and display the examples in the expanded row.
-            mlJobService.getCategoryDefinition(scope.indexPatternId, record.job_id, record.entityValue)
+            mlJobService.getCategoryDefinition(scope.indexPatternId, record.jobId, record.entityValue)
             .then(function (resp) {
               rowScope.categoryDefinition = {
                 'examples':_.slice(resp.examples, 0, Math.min(resp.examples.length, MAX_NUMBER_CATEGORY_EXAMPLES))};

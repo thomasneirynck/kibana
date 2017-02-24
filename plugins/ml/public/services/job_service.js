@@ -765,6 +765,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     const deferred = $q.defer();
     const obj = {success: true, categoryId: categoryId, terms: null, regex: null, examples: []};
 
+
     es.search({
       index: index,
       size: 1,
@@ -772,9 +773,9 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         'query': {
           'bool': {
             'filter': [
-              {'term': {'_type': 'categoryDefinition'}},
-              {'term': {'jobId': jobId}},
-              {'term': {'categoryId': categoryId}}
+              {'term': {'_type': 'category_definition'}},
+              {'term': {'job_id': jobId}},
+              {'term': {'category_id': categoryId}}
             ]
           }
         }
@@ -783,7 +784,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     .then((resp) => {
       if (resp.hits.total !== 0) {
         const source = _.first(resp.hits.hits)._source;
-        obj.categoryId = source.categoryId;
+        obj.categoryId = source.category_id;
         obj.regex = source.regex;
         obj.terms = source.terms;
         obj.examples = source.examples;
