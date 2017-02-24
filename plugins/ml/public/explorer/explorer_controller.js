@@ -65,6 +65,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     return _.map(selectedJobs, function (job) {return job.id;});
   };
 
+  $scope.viewBySwimlaneOptions = [];
   $scope.viewBySwimlaneData = { 'fieldName': '', 'laneLabels':[],
     'points':[], 'interval': 3600 };
 
@@ -173,22 +174,23 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
       $location.search('jobId', selectedJobIds);
     }
 
-    $scope.anomalyChartRecords = {};
-    $scope.anomalyRecords = [];
-    $scope.showNoSelectionMessage = true;
-
+    clearSelectedAnomalies();
     loadOverallData();
     loadViewBySwimlaneOptions();
 
+  };
+
+  $scope.setSwimlaneViewBy = function (viewByFieldName) {
+    $scope.swimlaneViewByFieldName = viewByFieldName;
+    loadViewBySwimlane();
+    clearSelectedAnomalies();
   };
 
   // Refresh all the data when the time range is altered.
   $scope.$listen(timefilter, 'fetch', function () {
     loadOverallData();
     loadViewBySwimlane();
-    $scope.anomalyChartRecords = {};
-    $scope.anomalyRecords = [];
-    $scope.showNoSelectionMessage = true;
+    clearSelectedAnomalies();
   });
 
   // Listen for changes to job selection.
@@ -213,9 +215,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
   mlExplorerDashboardService.addSwimlaneCellClickListener((cellData) => {
     if (_.keys(cellData).length === 0) {
       // Swimlane deselection - clear anomalies section.
-      $scope.anomalyChartRecords = {};
-      $scope.anomalyRecords = [];
-      $scope.showNoSelectionMessage = true;
+      clearSelectedAnomalies();
     } else {
       const influencers = [];
       if (cellData.fieldName !== undefined) {
@@ -238,6 +238,9 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
   function loadViewBySwimlaneOptions() {
     // Obtain the list of 'View by' fields per job.
     $scope.swimlaneViewByFieldName = null;
+    let viewByOptions = [];   // Unique influencers for the selected job(s).
+
+    const selectedJobIds = $scope.getSelectedJobIds();
     const fieldsByJob = {'*':[]};
     _.each(mlJobService.jobs, (job) => {
       // Add the list of distinct by, over, partition and influencer fields for each job.
@@ -262,18 +265,22 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
 
       const influencers = analysisConfig.influencers || [];
       fieldsForJob = fieldsForJob.concat(influencers);
+      if (selectedJobIds.indexOf(job.job_id) !== -1) {
+        viewByOptions = viewByOptions.concat(influencers);
+      }
 
       fieldsByJob[job.job_id] = _.uniq(fieldsForJob);
       fieldsByJob['*'] = _.union(fieldsByJob['*'], fieldsByJob[job.job_id]);
     });
 
-    $scope.fieldsByJob = fieldsByJob;
-    console.log('Explorer job view by fields:', $scope.fieldsByJob);
+    $scope.fieldsByJob = fieldsByJob;   // Currently unused but may be used if add in view by detector.
+    viewByOptions = _.uniq(viewByOptions);
+    $scope.viewBySwimlaneOptions =
+      _.chain(viewByOptions).uniq().sortBy((fieldname) => { return fieldname.toLowerCase(); }).value();
 
     // Set the default to the first partition, over, by or influencer field of the first selected job.
-    // TODO - when a 'view by' dropdown is added, populate it with the fields for the selected job(s).
     const firstSelectedJob = _.find(mlJobService.jobs, (job) => {
-      return job.job_id === $scope.getSelectedJobIds()[0];
+      return job.job_id === selectedJobIds[0];
     });
 
     const firstJobInfluencers = firstSelectedJob.analysis_config.influencers || [];
@@ -302,9 +309,14 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     });
 
     if ($scope.swimlaneViewByFieldName === null) {
-      // TODO - when a 'view by' dropdown is added, set the default to the first available option.
-      $scope.swimlaneViewByFieldName = firstJobInfluencers.length > 0 ? firstJobInfluencers[0] : null;
+      if (firstJobInfluencers.length > 0) {
+        $scope.swimlaneViewByFieldName = firstJobInfluencers[0];
+      } else {
+        // No influencers for first selected job - set to first available option.
+        $scope.swimlaneViewByFieldName = $scope.viewBySwimlaneOptions.length > 0 ? $scope.viewBySwimlaneOptions[0] : null;
+      }
     }
+
     loadViewBySwimlane();
 
   }
@@ -402,6 +414,12 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
         finish();
       });
     }
+  }
+
+  function clearSelectedAnomalies() {
+    $scope.anomalyChartRecords = {};
+    $scope.anomalyRecords = [];
+    $scope.showNoSelectionMessage = true;
   }
 
   function calculateSwimlaneBucketInterval() {

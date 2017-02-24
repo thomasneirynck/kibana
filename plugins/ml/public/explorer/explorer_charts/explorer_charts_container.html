@@ -1,20 +1,12 @@
-<div class="explorer-charts">
-
-  <div class="no-results-item" ng-if="seriesToPlot.length === 0">
-    <h4>No matching results found</h4>
-  </div>
-
-  <div ng-hide="seriesToPlot.length === 0">
-    <div ng-repeat='series in seriesToPlot' class='ml-explorer-chart-container'>
-      <div class="explorer-chart-label">{{series.detectorLabel}}
-        <span ng-repeat='entity in series.entityFields'>{{entity.fieldName}} {{entity.fieldValue}} </span>
-      </div>
-      <ml-explorer-chart
-        series-config="series"
-        plot-earliest="plotEarliest"
-        plot-latest="plotLatest">
-      </ml-explorer-chart>
+<div class="explorer-charts" ng-hide="seriesToPlot.length === 0">
+  <div ng-repeat='series in seriesToPlot' class='ml-explorer-chart-container'>
+    <div class="explorer-chart-label">{{series.detectorLabel}}
+      <span ng-repeat='entity in series.entityFields'>{{entity.fieldName}} {{entity.fieldValue}} </span>
     </div>
+    <ml-explorer-chart
+      series-config="series"
+      plot-earliest="plotEarliest"
+      plot-latest="plotLatest">
+    </ml-explorer-chart>
   </div>
-
 </div>
