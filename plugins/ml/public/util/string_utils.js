@@ -425,14 +425,14 @@ function escapeForElasticsearchQuery(str) {
 }
 
 export default {
-  replaceStringTokens:          replaceStringTokens,
-  detectorToString:             detectorToString,
-  sortByKey:                    sortByKey,
-  guessDelimiters:              guessDelimiters,
-  processLargeArrayAsync:       processLargeArrayAsync,
-  guessTimeFormat:              guessTimeFormat,
-  generateExampleTime:          generateExampleTime,
-  toLocaleString:               toLocaleString,
-  escape:                       escapeFunc,
-  escapeForElasticsearchQuery:  escapeForElasticsearchQuery
+  replaceStringTokens,
+  detectorToString,
+  sortByKey,
+  guessDelimiters,
+  processLargeArrayAsync,
+  guessTimeFormat,
+  generateExampleTime,
+  toLocaleString,
+  escape: escapeFunc,
+  escapeForElasticsearchQuery
 };

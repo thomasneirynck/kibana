@@ -25,6 +25,7 @@ import $ from 'jquery';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
+import {aggregationTypeTransform} from 'plugins/ml/util/anomaly_utils';
 
 module.controller('MlExplorerChartsContainerController', function ($scope, timefilter, mlJobService, mlExplorerDashboardService) {
 
@@ -173,7 +174,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
       const config = {
         jobId: record.job_id,
         function: record.function_description,
-        metricFunction: getESAggregationForFunction(record.function_description),
+        metricFunction: aggregationTypeTransform.toES(record.function_description),
         jobBucketSpan: job.analysis_config.bucket_span,
         interval: job.analysis_config.bucket_span + 's'
       };
@@ -237,33 +238,4 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     // TODO - alter depending on number of charts plotted per row.
     return (($('.ml-explorer').width() / 6) * 5) - 100 - 50;
   }
-
-  // Returns the name of the Elasticsearch aggregation to use when plotting metric data
-  // for an anomaly record with the specified function description.
-  // Note that the 'function' field in a record contains what the user entered e.g. 'high_count',
-  // whereas the 'function_description' field holds a ml-built display hint for function e.g. 'count'.
-  function getESAggregationForFunction(functionDescription) {
-    // Possible values for functionDescription are (defined in ModelTypes.cc):
-    //    count
-    //    distinct_count
-    //    rare
-    //    info_content
-    //    mean
-    //    median
-    //    min
-    //    max
-    //    varp
-    //    sum
-    //    lat_long
-    // TODO - when function_description for detectors is altered to return the ES aggregation
-    //        this function will no longer be needed.
-    if (functionDescription === 'mean') {
-      return 'avg';
-    } else if (functionDescription === 'distinct_count') {
-      return 'cardinality';
-    } else {
-      return functionDescription;
-    }
-  }
-
 });

@@ -157,13 +157,55 @@ function showTypicalForFunction(functionDescription) {
   return _.indexOf(DISPLAY_TYPICAL_FUNCTIONS, functionDescription) > -1;
 }
 
+// Two functions for converting aggregation type names.
+// ML and ES use differnt names for the same function.
+// Possible values for ML aggregation type are (defined in ModelTypes.cc):
+//    count
+//    distinct_count
+//    rare
+//    info_content
+//    mean
+//    median
+//    min
+//    max
+//    varp
+//    sum
+//    lat_long
+// TODO - when function_description for detectors is altered to return the ES aggregation
+//        this function will no longer be needed.
+const aggregationTypeTransform = {
+  toES: function (oldAggType) {
+    let newAggType = oldAggType;
+
+    if (newAggType === 'mean') {
+      newAggType = 'avg';
+    } else if (newAggType === 'distinct_count') {
+      newAggType = 'cardinality';
+    }
+
+    return newAggType;
+  },
+  toML: function (oldAggType) {
+    let newAggType = oldAggType;
+
+    if (newAggType === 'avg') {
+      newAggType = 'mean';
+    } else if (newAggType === 'cardinality') {
+      newAggType = 'distinct_count';
+    }
+
+    return newAggType;
+  }
+};
+
 export default {
-  getSeverity:  getSeverity,
-  getSeverityWithLow:  getSeverityWithLow,
-  getSeverityColor: getSeverityColor,
-  labelDuplicateDetectorDescriptions: labelDuplicateDetectorDescriptions,
-  getEntityFieldName: getEntityFieldName,
-  getEntityFieldValue: getEntityFieldValue,
-  showActualForFunction: showActualForFunction,
-  showTypicalForFunction: showTypicalForFunction
+  getSeverity,
+  getSeverityWithLow,
+  getSeverityColor,
+  labelDuplicateDetectorDescriptions,
+  getEntityFieldName,
+  getEntityFieldValue,
+  showActualForFunction,
+  showTypicalForFunction,
+  aggregationTypeTransform
 };
