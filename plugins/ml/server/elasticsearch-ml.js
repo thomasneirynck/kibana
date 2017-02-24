@@ -229,16 +229,24 @@
     });
 
     ml.validateDetector = ca({
-      urls: [
-        {
-          fmt: '/_xpack/ml/anomaly_detectors/_validate/detector'
-        }
-      ],
+      url: {
+        fmt: '/_xpack/ml/anomaly_detectors/_validate/detector'
+      },
       needBody: true,
       method: 'POST'
     });
 
-
+    ml.datafeedPreview = ca({
+      url: {
+        fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>/_preview',
+        req: {
+          datafeedId: {
+            type: 'string'
+          }
+        }
+      },
+      method: 'GET'
+    });
 
   };
 }));

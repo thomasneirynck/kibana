@@ -123,6 +123,13 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.datafeedPreview = function (obj) {
+    return http.request({
+      url: `../api/ml/datafeeds/${obj.datafeedId}/_preview`,
+      method: 'GET'
+    });
+  };
+
   this.validateDetector = function (obj) {
     return http.request({
       url: '../api/ml/anomaly_detectors/_validate/detector',
@@ -130,7 +137,5 @@ module.service('ml', function (prlHttpService) {
       data: obj.detector
     });
   };
-
-
 
 });

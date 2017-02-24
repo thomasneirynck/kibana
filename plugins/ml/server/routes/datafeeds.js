@@ -117,4 +117,18 @@ export default (server, commonRouteConfig) => {
     }
   });
 
+  server.route({
+    method: 'GET',
+    path: '/api/ml/datafeeds/{datafeedId}/_preview',
+    handler(request, reply) {
+      const datafeedId = request.params.datafeedId;
+      return callWithRequest(request, 'ml.datafeedPreview', {datafeedId})
+      .then(resp => reply(resp))
+      .catch(resp => reply(wrapError(resp)));
+    },
+    config: {
+      ...commonRouteConfig
+    }
+  });
+
 };
