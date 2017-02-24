@@ -233,7 +233,8 @@ module
     });
     $scope.ui.fields = fields;
 
-    if ($scope.ui.fields.length === 1) {
+    if ($scope.ui.fields.length === 1 ||
+      ($scope.formConfig.field === null && type.name === 'cardinality')) {
       $scope.formConfig.field = $scope.ui.fields[0];
     }
   }

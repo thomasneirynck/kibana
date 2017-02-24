@@ -90,7 +90,8 @@ module.service('mlSingleMetricJobService', function (
     if (formConfig &&
       (formConfig.agg.type.mlName === 'count' ||
       formConfig.agg.type.mlName === 'high_count' ||
-      formConfig.agg.type.mlName === 'low_count')) {
+      formConfig.agg.type.mlName === 'low_count' ||
+      formConfig.agg.type.mlName === 'distinct_count')) {
       const chartInterval = formConfig.chartInterval.getInterval().asSeconds();
       const jobInterval = formConfig.jobInterval.getInterval().asSeconds();
       scale =  chartInterval / jobInterval;
@@ -273,6 +274,7 @@ module.service('mlSingleMetricJobService', function (
         };
         break;
       case 'cardinality':
+        break; // removed until distinct_count is fixed on the backend
         job.datafeed_config.aggregations = {
           [formConfig.timeField]: {
             histogram: {
