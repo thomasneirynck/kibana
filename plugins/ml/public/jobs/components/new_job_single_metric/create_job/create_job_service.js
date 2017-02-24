@@ -87,7 +87,10 @@ module.service('mlSingleMetricJobService', function (
     // ratio of chart interval to bucketspan.
     // this will force the model bounds to be drawn in the correct location
     let scale = 1;
-    if (formConfig && formConfig.agg.type.mlName === 'count') {
+    if (formConfig &&
+      (formConfig.agg.type.mlName === 'count' ||
+      formConfig.agg.type.mlName === 'high_count' ||
+      formConfig.agg.type.mlName === 'low_count')) {
       const chartInterval = formConfig.chartInterval.getInterval().asSeconds();
       const jobInterval = formConfig.jobInterval.getInterval().asSeconds();
       scale =  chartInterval / jobInterval;
@@ -218,47 +221,76 @@ module.service('mlSingleMetricJobService', function (
       enabled: true
     };
 
-    if (dtr.function === 'count') {
-      job.analysis_config.summary_count_field_name = 'doc_count';
+    // Use the original es agg type rather than the ML version
+    // e.g. count rather than high_count
+    const aggType = formConfig.agg.type.name;
+    console.log(aggType);
+    switch (aggType) {
+      case 'count':
+        job.analysis_config.summary_count_field_name = 'doc_count';
 
-      job.datafeed_config.aggregations = {
-        [formConfig.timeField]: {
-          histogram: {
-            field: formConfig.timeField,
-            interval: bucketSpan * 1000,
-            offset: 0,
-            order: {
-              _key: 'asc'
-            },
-            keyed: false,
-            min_doc_count: 0
+        job.datafeed_config.aggregations = {
+          [formConfig.timeField]: {
+            histogram: {
+              field: formConfig.timeField,
+              interval: bucketSpan * 1000,
+              offset: 0,
+              order: {
+                _key: 'asc'
+              },
+              keyed: false,
+              min_doc_count: 0
+            }
           }
-        }
-      };
-    } else if(dtr.function === 'mean') {
-      job.analysis_config.summary_count_field_name = 'doc_count';
+        };
+        break;
+      case 'avg':
+      case 'sum':
+      case 'min':
+      case 'max':
+        job.analysis_config.summary_count_field_name = 'doc_count';
 
-      job.datafeed_config.aggregations = {
-        [formConfig.timeField]: {
-          histogram: {
-            field: formConfig.timeField,
-            interval: bucketSpan * 1000,
-            offset: 0,
-            order: {
-              _key: 'asc'
+        job.datafeed_config.aggregations = {
+          [formConfig.timeField]: {
+            histogram: {
+              field: formConfig.timeField,
+              interval: bucketSpan * 1000,
+              offset: 0,
+              order: {
+                _key: 'asc'
+              },
+              keyed: false,
+              min_doc_count: 0
             },
-            keyed: false,
-            min_doc_count: 0
-          },
-          aggregations: {
-            [dtr.field_name]: {
-              avg: {
-                field: dtr.field_name
+            aggregations: {
+              [dtr.field_name]: {
+                [aggType]: {
+                  field: dtr.field_name
+                }
               }
             }
           }
-        }
-      };
+        };
+        break;
+      case 'cardinality':
+        job.datafeed_config.aggregations = {
+          [formConfig.timeField]: {
+            histogram: {
+              field: formConfig.timeField,
+              interval: bucketSpan * 1000
+            },
+            aggregations: {
+              [job.analysis_config.summary_count_field_name]: {
+                [aggType]: {
+                  field: dtr.field_name
+                }
+              }
+            }
+          }
+        };
+        break;
+      default:
+        break;
     }
 
     console.log('auto created job: ', job);
