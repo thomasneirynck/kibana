@@ -34,19 +34,20 @@ const module = uiModules.get('apps/ml');
 module.controller('MlNewJobSingleStep1', (
   $scope,
   $route,
-  // kbnUrl,
   timefilter) => {
 
-  timefilter.enabled = false; // remove time picker from top of page
+  timefilter.enabled = false; // remove time picker from top of page.
 
   $scope.indexPattern = {
     selection: null,
     list: $route.current.locals.indexPatternIds
   };
 
-  // $scope.step2WithSearchUrl = (hit) => {
-  //   return kbnUrl.eval('#/visualize/create?&type={{type}}&savedSearchId={{id}}', {type: type, id: hit.id});
-  // };
+  $scope.step2WithSearchUrl = (hit) => {
+    // const type = 'line';
+    // return kbnUrl.eval('#/visualize/create?&type={{type}}&savedSearchId={{id}}', {type: type, id: hit.id});
+    return '#/jobs/new_job_single_metric/create?savedSearchId=' + encodeURIComponent(hit.id);
+  };
   $scope.makeUrl = (pattern) => {
     if (!pattern) return;
     return '#/jobs/new_job_single_metric/create?index=' + encodeURIComponent(pattern);

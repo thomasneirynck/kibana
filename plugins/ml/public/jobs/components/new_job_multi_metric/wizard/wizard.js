@@ -14,15 +14,7 @@
  */
 
 import 'ui/courier';
-
-// import 'plugins/kibana/visualize/saved_visualizations/saved_visualizations';
-// import 'ui/directives/saved_object_finder';
-// import 'ui/directives/paginated_selectable_list';
-// import 'plugins/kibana/discover/saved_searches/saved_searches';
-
-// import 'plugins/ml/services/visualization_job_service';
 import 'plugins/kibana/visualize/styles/main.less';
-// /Users/james/dev/kibana-5.0/src/core_plugins/kibana/public/visualize/styles/main.less
 
 import uiRoutes from 'ui/routes';
 import checkLicense from 'plugins/ml/license/check_license';
@@ -36,18 +28,12 @@ uiRoutes
   }
 });
 
-// preloading
-
-// require('ui/saved_objects/saved_object_registry')
-// .register(require('plugins/kibana/visualize/saved_visualizations/saved_visualization_register'));
-
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.controller('MlNewJobMultiStep1', (
   $scope,
   $route,
-  // kbnUrl,
   timefilter) => {
 
   timefilter.enabled = false; // remove time picker from top of page
@@ -57,9 +43,11 @@ module.controller('MlNewJobMultiStep1', (
     list: $route.current.locals.indexPatternIds
   };
 
-  // $scope.step2WithSearchUrl = (hit) => {
-  //   return kbnUrl.eval('#/visualize/create?&type={{type}}&savedSearchId={{id}}', {type: type, id: hit.id});
-  // };
+  $scope.step2WithSearchUrl = (hit) => {
+    // const type = 'line';
+    // return kbnUrl.eval('#/visualize/create?&type={{type}}&savedSearchId={{id}}', {type: type, id: hit.id});
+    return '#/jobs/new_job_multi_metric/create?savedSearchId=' + encodeURIComponent(hit.id);
+  };
   $scope.makeUrl = (pattern) => {
     if (!pattern) return;
     return '#/jobs/new_job_multi_metric/create?index=' + encodeURIComponent(pattern);

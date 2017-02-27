@@ -127,9 +127,13 @@ module.service('mlMultiMetricJobService', function (
 
   function getSearchJsonFromConfig(formConfig) {
 
-    let queryStr = '*';
+    let term = {};
     if (formConfig.firstSplitFieldValue !== undefined) {
-      queryStr = formConfig.splitField + ':' + formConfig.firstSplitFieldValue;
+      term = {
+        term: {
+          [formConfig.splitField] : formConfig.firstSplitFieldValue
+        }
+      };
     }
 
     const interval = formConfig.chartInterval.getInterval().asSeconds() + 's';
@@ -140,12 +144,7 @@ module.service('mlMultiMetricJobService', function (
         'query': {
           'bool': {
             'filter': [
-              {
-                'query_string': {
-                  'analyze_wildcard': true,
-                  'query': queryStr // CHANGEME
-                }
-              },
+              formConfig.query,
               {
                 'range': {
                   [formConfig.timeField]: {
@@ -154,7 +153,8 @@ module.service('mlMultiMetricJobService', function (
                     'format': formConfig.format
                   }
                 }
-              }
+              },
+              term
             ]
           }
         },
@@ -209,6 +209,13 @@ module.service('mlMultiMetricJobService', function (
       job.analysis_config.influencers = keyFields;
     }
 
+    let query = {
+      match_all: {}
+    };
+    if (formConfig.query.query_string.query !== '*') {
+      query = formConfig.query;
+    }
+
     job.analysis_config.bucket_span = bucketSpan;
 
     delete job.data_description.field_delimiter;
@@ -217,9 +224,7 @@ module.service('mlMultiMetricJobService', function (
     delete job.data_description.format;
 
     job.datafeed_config = {
-      query: {
-        match_all: {}
-      },
+      query: query,
       types: mappingTypes,
       query_delay: 60,
       frequency: jobUtils.calculateDatafeedFrequencyDefault(bucketSpan),
@@ -403,7 +408,7 @@ module.service('mlMultiMetricJobService', function (
     return mlMultiMetricJobSearchService.getCategoryFields(formConfig.indexPattern.id, formConfig.splitField, size);
   };
 
-  this.loadEventRateData = function (formConfig) {
+  this.loadDocCountData = function (formConfig) {
     const deferred = $q.defer();
     const end = formConfig.end;
     const start = formConfig.start;

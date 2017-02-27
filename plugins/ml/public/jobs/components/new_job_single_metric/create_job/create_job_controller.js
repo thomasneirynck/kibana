@@ -36,6 +36,7 @@ uiRoutes
   resolve: {
     CheckLicense: checkLicense,
     indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
+    savedSearch: (courier, $route, savedSearches) => savedSearches.get($route.current.params.savedSearchId)
   }
 });
 
@@ -89,9 +90,29 @@ module
   $scope.JOB_STATE = JOB_STATE;
   $scope.jobState = $scope.JOB_STATE.NOT_STARTED;
 
-  $scope.indexPattern = $route.current.locals.indexPattern;
+  let indexPattern = $route.current.locals.indexPattern;
+  let query = {
+    query_string: {
+      analyze_wildcard: true,
+      query: '*'
+    }
+  };
+  const savedSearch = $route.current.locals.savedSearch;
+  const searchSource = savedSearch.searchSource;
+
+  let pageTitle = `index pattern ${indexPattern.id}`;
+
+  if (indexPattern.id === undefined &&
+    savedSearch.id !== undefined) {
+    indexPattern = searchSource.get('index');
+    query = searchSource.get('query');
+
+    pageTitle = `saved search ${savedSearch.title}`;
+  }
 
   $scope.ui = {
+    indexPatternId: indexPattern.id,
+    pageTitle: pageTitle,
     showJobInput: false,
     showJobFinished: false,
     dirty: true,
@@ -148,8 +169,9 @@ module
     chartInterval: undefined,
     start: 0,
     end: 0,
-    timeField: $scope.indexPattern.timeFieldName,
+    timeField: indexPattern.timeFieldName,
     indexPattern: undefined,
+    query: query,
     jobId: undefined,
     description: undefined,
     mappingTypes: []
@@ -240,7 +262,7 @@ module
   }
 
   function getIndexedFields(param) {
-    let fields = _.filter($scope.indexPattern.fields.raw, 'aggregatable');
+    let fields = _.filter(indexPattern.fields.raw, 'aggregatable');
     const fieldTypes = param.filterFieldTypes;
 
     if (fieldTypes) {
@@ -274,7 +296,7 @@ module
       $scope.ui.showJobInput = true;
       $scope.ui.showJobFinished = false;
 
-      $scope.formConfig.indexPattern = $scope.indexPattern;
+      $scope.formConfig.indexPattern = indexPattern;
       // $scope.formConfig.jobId = '';
       $scope.ui.dirty = false;
 
@@ -505,7 +527,7 @@ module
   }
 
   $scope.setFullTimeRange = function () {
-    mlSingleMetricJobService.indexTimeRange($scope.indexPattern)
+    mlSingleMetricJobService.indexTimeRange(indexPattern)
     .then((resp) => {
       timefilter.time.from = moment(resp.start.epoch).toISOString();
       timefilter.time.to = moment(resp.end.epoch).toISOString();

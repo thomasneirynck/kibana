@@ -140,12 +140,7 @@ module.service('mlSingleMetricJobService', function (
         'query': {
           'bool': {
             'filter': [
-              {
-                'query_string': {
-                  'analyze_wildcard': true,
-                  'query': '*' // CHANGEME
-                }
-              },
+              formConfig.query,
               {
                 'range': {
                   [formConfig.timeField]: {
@@ -193,6 +188,13 @@ module.service('mlSingleMetricJobService', function (
       function: formConfig.agg.type.mlName
     };
 
+    let query = {
+      match_all: {}
+    };
+    if (formConfig.query.query_string.query !== '*') {
+      query = formConfig.query;
+    }
+
     if (formConfig.field && formConfig.field.displayName) {
       dtr.field_name = formConfig.field.displayName;
     }
@@ -205,9 +207,7 @@ module.service('mlSingleMetricJobService', function (
     delete job.data_description.format;
 
     job.datafeed_config = {
-      query: {
-        match_all: {}
-      },
+      query: query,
       types: mappingTypes,
       query_delay: 60,
       frequency: jobUtils.calculateDatafeedFrequencyDefault(bucketSpan),

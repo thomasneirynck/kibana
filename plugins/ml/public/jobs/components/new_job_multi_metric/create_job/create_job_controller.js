@@ -37,6 +37,7 @@ uiRoutes
   resolve: {
     CheckLicense: checkLicense,
     indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
+    savedSearch: (courier, $route, savedSearches) => savedSearches.get($route.current.params.savedSearchId)
   }
 });
 
@@ -68,7 +69,6 @@ module
   $scope.groupName = 'metrics';
   $scope.courier = courier;
 
-  $scope.index = $route.current.params.index;
   mlMultiMetricJobService.clearChartData();
   $scope.chartData = mlMultiMetricJobService.chartData;
 
@@ -90,13 +90,33 @@ module
   $scope.JOB_STATE = JOB_STATE;
   $scope.jobState = $scope.JOB_STATE.NOT_STARTED;
 
-  $scope.indexPattern = $route.current.locals.indexPattern;
+  let indexPattern = $route.current.locals.indexPattern;
+  let query = {
+    query_string: {
+      analyze_wildcard: true,
+      query: '*'
+    }
+  };
+  const savedSearch = $route.current.locals.savedSearch;
+  const searchSource = savedSearch.searchSource;
+
+  let pageTitle = `index pattern ${indexPattern.id}`;
+
+  if (indexPattern.id === undefined &&
+    savedSearch.id !== undefined) {
+    indexPattern = searchSource.get('index');
+    query = searchSource.get('query');
+
+    pageTitle = `saved search ${savedSearch.title}`;
+  }
 
   $scope.ui = {
+    indexPatternId: indexPattern.id,
+    pageTitle: pageTitle,
     showJobInput: true,
     showJobFinished: false,
     dirty: false,
-    formValid: true,
+    formValid: false,
     bucketSpanValid: true,
     aggTypeOptions: filterAggTypes(aggTypes.byType[$scope.groupName]),
     fields: [],
@@ -162,11 +182,12 @@ module
     chartInterval: undefined,
     start: 0,
     end: 0,
-    timeField: $scope.indexPattern.timeFieldName,
+    timeField: indexPattern.timeFieldName,
     splitField: '--No split--',
     keyFields: {},
     firstSplitFieldValue: undefined,
-    indexPattern: $scope.indexPattern,
+    indexPattern: indexPattern,
+    query: query,
     jobId: undefined,
     description: undefined,
     mappingTypes: []
@@ -317,7 +338,7 @@ module
   };
 
   function getIndexedFields(param, fieldTypes) {
-    let fields = _.filter($scope.indexPattern.fields.raw, 'aggregatable');
+    let fields = _.filter(indexPattern.fields.raw, 'aggregatable');
     // const fieldTypes = param.filterFieldTypes;
 
     if (fieldTypes) {
@@ -332,8 +353,9 @@ module
     if ($scope.formConfig.agg.type === undefined ||
         // $scope.formConfig.field === undefined ||
         $scope.formConfig.timeField === undefined ||
-        $scope.formConfig.jobInterval === undefined /*||
-        $scope.ui.bucketSpanValid === false*/) {
+        $scope.formConfig.jobInterval === undefined ||
+        /*$scope.ui.bucketSpanValid === false*/
+        Object.keys($scope.formConfig.fields).length === 0) {
 
       $scope.ui.formValid = false;
     } else {
@@ -346,26 +368,28 @@ module
     setTime();
     $scope.ui.isFormValid();
 
-    if ($scope.ui.formValid) {
+    $scope.ui.showJobInput = true;
+    $scope.ui.showJobFinished = false;
 
-      $scope.ui.showJobInput = true;
-      $scope.ui.showJobFinished = false;
+    $scope.ui.dirty = false;
 
-      $scope.formConfig.indexPattern = $scope.indexPattern;
-      $scope.ui.dirty = false;
-
+    if (Object.keys($scope.formConfig.fields).length) {
       mlMultiMetricJobService.getLineChartResults($scope.formConfig)
       .then(() => {
-        const gridWidth = $('.charts-container').width();
-        mlMultiMetricJobService.loadEventRateData($scope.formConfig, gridWidth)
-        .then(() => {
-          $scope.hasResults = true;
-          $scope.$broadcast('render');
-        });
-
+        loadDocCountData();
       });
+    } else {
+      loadDocCountData();
     }
 
+    function loadDocCountData() {
+      const gridWidth = $('.charts-container').width();
+      mlMultiMetricJobService.loadDocCountData($scope.formConfig, gridWidth)
+      .then(() => {
+        $scope.hasResults = true;
+        $scope.$broadcast('render');
+      });
+    }
   };
 
   function drawCards(labels) {
@@ -575,7 +599,7 @@ module
   }
 
   $scope.setFullTimeRange = function () {
-    mlMultiMetricJobService.indexTimeRange($scope.indexPattern)
+    mlMultiMetricJobService.indexTimeRange(indexPattern)
     .then((resp) => {
       timefilter.time.from = moment(resp.start.epoch).toISOString();
       timefilter.time.to = moment(resp.end.epoch).toISOString();
@@ -632,6 +656,8 @@ module
   mlESMappingService.getMappings().then(() => {
     initAgg();
     loadFields();
+
+    $scope.loadVis();
   });
 
   $scope.$listen(timefilter, 'fetch', $scope.loadVis);
