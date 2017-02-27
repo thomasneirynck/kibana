@@ -57,6 +57,9 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
 
     $scope.plotEarliest = chartRange.min;
     $scope.plotLatest = chartRange.max;
+
+    $scope.selectedEarliest = earliestMs;
+    $scope.selectedLatest = latestMs;
   });
 
   function processRecordsForDisplay(anomalyRecords) {

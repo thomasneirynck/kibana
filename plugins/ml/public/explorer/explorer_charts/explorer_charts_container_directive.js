@@ -37,6 +37,8 @@ module.directive('mlExplorerChartsContainer', function () {
       seriesToPlot: '=',
       plotEarliest: '=',
       plotLatest: '=',
+      selectedEarliest: '=',
+      selectedLatest: '=',
       chartsPerRow: '=',
       layoutCellsPerChart: '='
     },

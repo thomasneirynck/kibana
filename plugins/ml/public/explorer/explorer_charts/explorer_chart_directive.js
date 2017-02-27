@@ -186,12 +186,12 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
         .style('stroke-width', 1);
 
       drawLineChartAxes(xAxis, yAxis);
+      drawLineChartHighlightedSpan();
       drawLineChartPaths(data);
       drawLineChartMarkers(data);
     }
 
     function drawLineChartAxes(xAxis, yAxis) {
-
       const axes = lineChartGroup.append('g');
 
       axes.append('g')
@@ -202,6 +202,19 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
       axes.append('g')
         .attr('class', 'y axis')
         .call(yAxis);
+    }
+
+    function drawLineChartHighlightedSpan() {
+      // Draws a rectangle which highlights the time span that has been selected for view.
+      const rectWidth = lineChartXScale(new Date(scope.selectedLatest)) -
+        lineChartXScale(new Date(scope.selectedEarliest));
+
+      lineChartGroup.append('rect')
+        .attr('class', 'selected-interval')
+        .attr('x', lineChartXScale(new Date(scope.selectedEarliest)))
+        .attr('y', 1)
+        .attr('width', rectWidth)
+        .attr('height', chartHeight - 1);
     }
 
     function drawLineChartPaths(data) {
@@ -377,7 +390,9 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
     scope: {
       seriesConfig: '=',
       plotEarliest: '=',
-      plotLatest: '='
+      plotLatest: '=',
+      selectedEarliest: '=',
+      selectedLatest: '='
     },
     link: link
   };
