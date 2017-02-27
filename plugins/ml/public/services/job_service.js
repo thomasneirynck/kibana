@@ -886,6 +886,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
     es.search({
       index: '.ml-notifications',
+      ignore_unavailable: true,
       size: 1000,
       body:
       {
@@ -934,6 +935,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
     es.search({
       index: '.ml-notifications',
+      ignore_unavailable: true,
       size: 0,
       body: {
         'query': {
