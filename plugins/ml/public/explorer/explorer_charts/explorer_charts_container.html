@@ -1,12 +1,20 @@
 <div class="explorer-charts" ng-hide="seriesToPlot.length === 0">
-  <div ng-repeat='series in seriesToPlot' class='ml-explorer-chart-container'>
-    <div class="explorer-chart-label">{{series.detectorLabel}}
-      <span ng-repeat='entity in series.entityFields'>{{entity.fieldName}} {{entity.fieldValue}} </span>
+  <div class="row">
+
+    <div ng-repeat="series in seriesToPlot">
+      <div class="clearfix" ng-if="$index % chartsPerRow == 0"></div>
+      <div class="ml-explorer-chart-container col-md-{{layoutCellsPerChart}}">
+        <div class="explorer-chart-label">{{series.detectorLabel}}
+          <span ng-repeat='entity in series.entityFields'>{{entity.fieldName}} {{entity.fieldValue}} </span>
+        </div>
+        <ml-explorer-chart
+          series-config="series"
+          plot-earliest="plotEarliest"
+          plot-latest="plotLatest">
+        </ml-explorer-chart>
+      </div>
     </div>
-    <ml-explorer-chart
-      series-config="series"
-      plot-earliest="plotEarliest"
-      plot-latest="plotLatest">
-    </ml-explorer-chart>
+
   </div>
+
 </div>

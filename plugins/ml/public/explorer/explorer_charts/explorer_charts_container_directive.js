@@ -29,7 +29,6 @@ module.directive('mlExplorerChartsContainer', function () {
     // Create a div for the tooltip.
     $('.ml-explorer-charts-tooltip').remove();
     $('body').append('<div class="ml-explorer-tooltip ml-explorer-charts-tooltip" style="opacity:0">');
-
   }
 
   return {
@@ -37,7 +36,9 @@ module.directive('mlExplorerChartsContainer', function () {
     scope: {
       seriesToPlot: '=',
       plotEarliest: '=',
-      plotLatest: '='
+      plotLatest: '=',
+      chartsPerRow: '=',
+      layoutCellsPerChart: '='
     },
     link: link,
     template: require('plugins/ml/explorer/explorer_charts/explorer_charts_container.html')

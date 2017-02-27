@@ -37,14 +37,23 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
   mlExplorerDashboardService.addAnomalyDataChangeListener(function (anomalyRecords, earliestMs, latestMs) {
     $scope.allSeriesRecords = processRecordsForDisplay(anomalyRecords);
 
+    // Calculate the number of charts per row, depending on the width available, to a max of 4.
+    const chartsContainerWidth = $('.explorer-charts').width();
+    const chartsPerRow = Math.min(Math.max(Math.floor(chartsContainerWidth / 600), 1), 4);
+
+    $scope.chartsPerRow = chartsPerRow;
+    $scope.layoutCellsPerChart = 12 / $scope.chartsPerRow;
+
     // Build the data configs of the anomalies to be displayed.
     // TODO - implement paging?
-    // For now just take first 6.
-    const recordsToPlot = $scope.allSeriesRecords.slice(0, 6);
+    // For now just take first 6 (or 8 if 4 charts per row).
+    const maxSeriesToPlot = Math.max(chartsPerRow * 2, 6);
+    const recordsToPlot = $scope.allSeriesRecords.slice(0, maxSeriesToPlot);
     $scope.seriesToPlot = buildDataConfigs(recordsToPlot);
 
+    // Calculate the time range of the charts, which is a function of the chart width and max job bucket span.
     const midpointMs = Math.ceil((earliestMs + latestMs) / 2);
-    const chartRange = calculateChartRange(midpointMs);
+    const chartRange = calculateChartRange(midpointMs, Math.floor(chartsContainerWidth / chartsPerRow));
 
     $scope.plotEarliest = chartRange.min;
     $scope.plotLatest = chartRange.max;
@@ -59,7 +68,6 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     // Aggregate by job, detector, and analysis fields (partition, by, over).
     const aggregatedData = {};
     _.each(anomalyRecords, (record) => {
-      console.log('record:', record);
       if (_.indexOf(FUNCTION_DESCRIPTIONS_TO_PLOT, record.function_description) === -1 ||
         record.by_field_name === 'mlcategory') {
         return;
@@ -221,21 +229,16 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     return seriesConfigs;
   }
 
-  function calculateChartRange(midpointMs) {
+  function calculateChartRange(midpointMs, chartWidth) {
     // Calculate the time range for the charts.
     // Fit in as many points in the available container width plotted at the job bucket span.
     const maxBucketSpan = Math.max.apply(null, _.pluck($scope.seriesToPlot, 'jobBucketSpan'));
 
-    const chartWidth = getChartContainerWidth();
+    //const chartWidth = getChartContainerWidth();
     const pointSpacing = 10;
     const numPoints = chartWidth / pointSpacing;
 
     return {min: midpointMs - (numPoints * maxBucketSpan * 1000), max: midpointMs + (numPoints * maxBucketSpan * 1000)};
   }
 
-  function getChartContainerWidth() {
-    // chart width is 5 sixths of the window, minus 100 for the axis labels, minus 50 padding.
-    // TODO - alter depending on number of charts plotted per row.
-    return (($('.ml-explorer').width() / 6) * 5) - 100 - 50;
-  }
 });

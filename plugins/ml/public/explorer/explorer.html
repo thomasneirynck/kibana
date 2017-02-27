@@ -132,13 +132,13 @@
             Anomalies
           </span>
 
-
-
           <div ng-controller="MlExplorerChartsContainerController">
             <ml-explorer-charts-container
               series-to-plot="seriesToPlot"
               plot-earliest="plotEarliest"
-              plot-latest="plotLatest">
+              plot-latest="plotLatest"
+              charts-per-row="chartsPerRow"
+              layout-cells-per-chart="layoutCellsPerChart">
             </ml-explorer-charts-container>
           </div>
 

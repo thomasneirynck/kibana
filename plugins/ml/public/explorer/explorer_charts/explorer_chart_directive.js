@@ -113,9 +113,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
     }
 
     function init() {
-      const $el = angular.element('.explorer-charts');
-
-      // TODO - read in parameter which says how many charts per row.
+      const $el = angular.element('.ml-explorer-chart-container');
       svgWidth = $el.width();
       vizWidth  = svgWidth  - margin.left - margin.right;
 
