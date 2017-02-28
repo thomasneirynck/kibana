@@ -99,6 +99,8 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
      */
     updateParams() {
       const newParams = this._getMapsParams();
+
+
       if (newParams.wms.enabled) {
         const { minZoom, maxZoom } = tilemapSettings.getMinMaxZoom(true);
         this._kibanaMap.setBaseLayer({
@@ -118,14 +120,13 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
           options: { url, ...options }
         });
       }
-
-
       const geohashOptions = this._getGeohashOptions();
       if (!this._geohashLayer || !this._geohashLayer.isReusable(geohashOptions)) {
         this._recreateGeohashLayer();
       }
-      this._kibanaMap.setDesaturateBaseLayer(newParams.isDesaturated);
 
+      this._kibanaMap.setDesaturateBaseLayer(newParams.isDesaturated);
+      this._kibanaMap.setShowTooltip(newParams.addTooltip);
       this._useUIState();
       this._kibanaMap.resize();
     }

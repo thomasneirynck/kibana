@@ -316,6 +316,9 @@ class Heatmap extends EventEmitter {
     this._addTooltips();
   }
 
+  getBounds() {
+    return this._leafletLayer.getBounds();
+  }
 
   getLeafletLayer() {
     return this._leafletLayer;

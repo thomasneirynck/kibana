@@ -33,7 +33,7 @@ const FitControl = L.Control.extend({
 
 const LegendControl = L.Control.extend({
 
-  options: {},
+  options: {},//todo: add position
 
   _updateContents() {
     this._legendContainer.empty();
@@ -54,7 +54,9 @@ const LegendControl = L.Control.extend({
     return this._legendContainer.get(0);
   },
   onRemove: function () {
-    this._layerUpdateHandle.remove();
+    if (this._layerUpdateHandle) {
+      this._layerUpdateHandle.remove();
+    }
   }
 
 });
@@ -81,6 +83,8 @@ class KibanaMap extends EventEmitter {
 
     this._layers = [];
     this._listeners = [];
+    this._showTooltip = false;
+
     this._leafletMap = L.map(containerNode, {//todo: read this from meta
       minZoom: 0,
       maxZoom: 10
@@ -103,7 +107,6 @@ class KibanaMap extends EventEmitter {
     this._leafletMap.on('mouseout', e => this._layers.forEach(layer => layer.movePointer('mouseout', e)));
     this._leafletMap.on('mousedown', e => this._layers.forEach(layer => layer.movePointer('mousedown', e)));
     this._leafletMap.on('mouseup', e => this._layers.forEach(layer => layer.movePointer('mouseup', e)));
-
     this._leafletMap.on('draw:created', event => {
       const drawType = event.layerType;
       if (drawType === 'rectangle') {
@@ -158,6 +161,10 @@ class KibanaMap extends EventEmitter {
 
   }
 
+  setShowTooltip(showTooltip) {
+    this._showTooltip = showTooltip;
+  }
+
   getLayers() {
     return this._layers.slice();
   }
@@ -165,6 +172,11 @@ class KibanaMap extends EventEmitter {
   addLayer(layer) {
 
     const onTooltip = layer.on('showTooltip', (event) => {
+
+      if (!this._showTooltip) {
+        return;
+      }
+
       const popup = L.popup({ autoPan: false });
       popup.setLatLng(event.position);
       popup.setContent(event.content);
@@ -274,8 +286,12 @@ class KibanaMap extends EventEmitter {
 
 
   setDesaturateBaseLayer(isDesaturated) {
+    if (isDesaturated === this._baseLayerIsDesaturated) {
+      return;
+    }
     this._baseLayerIsDesaturated = isDesaturated;
-
+    this._updateDesaturation();
+    this._leafletBaseLayer.redraw();
   }
 
   addDrawControl() {
@@ -328,8 +344,6 @@ class KibanaMap extends EventEmitter {
   setBaseLayer(settings) {
 
     if (_.isEqual(settings, this._baseLayerSettings)) {
-      this._updateDesaturation();
-      this._leafletBaseLayer.redraw();
       return;
     }
 
@@ -371,8 +385,8 @@ class KibanaMap extends EventEmitter {
 
     let bounds = null;
     this._layers.forEach(layer => {
-      const l = layer.getLeafletLayer();
-      const b = l.getBounds();
+      const leafletLayer = layer.getLeafletLayer();
+      const b = leafletLayer.getBounds();
       if (bounds) {
         bounds.extend(b);
       } else {

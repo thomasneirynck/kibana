@@ -24,6 +24,10 @@ export default class KibanaMapLayer extends EventEmitter {
 
   movePointer(event) {
   }
+
+  getBounds() {
+
+  }
 }
 
 
