@@ -232,9 +232,9 @@ function (
       $scope.mode = MODE.NEW;
       console.log('Creating new job');
       $scope.job = mlJobService.getBlankJob();
-
-      calculateDatafeedFrequencyDefault();
     }
+
+    calculateDatafeedFrequencyDefault();
     // showDataPreviewTab();
   }
 
