@@ -56,6 +56,7 @@
           <thead>
             <th></th>
             <th>Time</th>
+            <th>Node</th>
             <th>Message</th>
           </thead>
           <tbody >
@@ -67,6 +68,7 @@
                 <i ng-show="msg.level === 'error'" tooltip='Error' class="job-error fa fa-exclamation-triangle"></i>
               </td>
               <td>{{msg.time}}</td>
+              <td>{{msg.node_name}}</td>
               <td>{{msg.message}}</td>
             </tr>
           </tbody>

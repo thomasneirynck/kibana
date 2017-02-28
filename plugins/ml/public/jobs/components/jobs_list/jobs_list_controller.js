@@ -382,7 +382,7 @@ function (
     function addMessage(id, msg) {
       if (auditMessages[id] !== undefined &&
          msg.unixTime >= createTimes[id]) {
-        if (!_.findWhere(auditMessages[id], {time: msg.time, message: msg.message})) {
+        if (!_.findWhere(auditMessages[id], {time: msg.time, message: msg.message, node_name: msg.node_name})) {
           auditMessages[id].push(msg);
         }
       }
