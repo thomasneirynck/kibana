@@ -20,8 +20,7 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
     constructor(vis, $el, uiState) {
       super(vis, $el, uiState);
 
-      this._buildChartData = buildChartData.bind(this);//todo: buildChartData shouldn't be a mixin. too confusing.
-
+      this._buildChartData = buildChartData.bind(this);
 
       if (tilemapSettings.getError()) {
         //Still allow the visualization to be build, but show a toast that there was a problem retrieving map settings
@@ -37,6 +36,9 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
 
       this._useUIState();
 
+
+      const autoPrecision = _.get(event, 'chart.geohashGridAgg.params.autoPrecision');
+
       let previousPrecision = this._kibanaMap.getAutoPrecision();
       let precisionChange = false;
       this._kibanaMap.on('zoomchange', e => {
@@ -47,6 +49,12 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
         this._persistUIStateFromMap();
       });
       this._kibanaMap.on('zoomend', ignore => {
+
+        const isAutoPrecision = _.get(this._chartData, 'geohashGridAgg.params.autoPrecision', true);
+        if (!isAutoPrecision) {
+          return;
+        }
+
         if (precisionChange) {
           courier.fetch();
         } else {
@@ -54,7 +62,7 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
         }
       });
       this._kibanaMap.on('drawCreated:rectangle', event => {
-        addSpatialFilter(_.get(this.mapsData, 'geohashGridAgg'), 'geo_bounding_box', event.bounds);
+        addSpatialFilter(_.get(this._chartData, 'geohashGridAgg'), 'geo_bounding_box', event.bounds);
       });
 
       this._geohashLayer = null;
@@ -69,7 +77,7 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
         return;
       }
       const geohashOptions = this._getGeohashOptions();
-      this._geohashLayer = new GeohashLayer(this.mapsData.geoJson, geohashOptions, this._kibanaMap.getZoomLevel());
+      this._geohashLayer = new GeohashLayer(this._chartData.geoJson, geohashOptions, this._kibanaMap.getZoomLevel());
       this._kibanaMap.addLayer(this._geohashLayer);
 
     }
@@ -80,8 +88,11 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
      * @param esResponse
      */
     render(esResponse) {
-      this.mapsData = this._buildChartData(esResponse);
-      this._geohashGeoJson = this.mapsData.geoJson;
+
+      // console.log('render', esResponse);
+
+      this._chartData = this._buildChartData(esResponse);
+      this._geohashGeoJson = this._chartData.geoJson;
       this._recreateGeohashLayer();
       this._useUIState();
 
@@ -98,18 +109,20 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
      * called on options change (vis.params change)
      */
     updateParams() {
-      const newParams = this._getMapsParams();
+      const mapParams = this._getMapsParams();
+
+      // console.log('updateParams', mapParams);
 
 
-      if (newParams.wms.enabled) {
+      if (mapParams.wms.enabled) {
         const { minZoom, maxZoom } = tilemapSettings.getMinMaxZoom(true);
         this._kibanaMap.setBaseLayer({
           baseLayerType: 'wms',
           options: {
             minZoom: minZoom,
             maxZoom: maxZoom,
-            url: newParams.wms.url,
-            ...newParams.wms.options
+            url: mapParams.wms.url,
+            ...mapParams.wms.options
           }
         });
       } else {
@@ -125,9 +138,9 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
         this._recreateGeohashLayer();
       }
 
-      this._kibanaMap.setDesaturateBaseLayer(newParams.isDesaturated);
-      this._kibanaMap.setShowTooltip(newParams.addTooltip);
-      this._kibanaMap.setLegendPosition(newParams.legendPosition);
+      this._kibanaMap.setDesaturateBaseLayer(mapParams.isDesaturated);
+      this._kibanaMap.setShowTooltip(mapParams.addTooltip);
+      this._kibanaMap.setLegendPosition(mapParams.legendPosition);
 
       this._useUIState();
       this._kibanaMap.resize();
