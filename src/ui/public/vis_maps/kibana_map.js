@@ -33,7 +33,9 @@ const FitControl = L.Control.extend({
 
 const LegendControl = L.Control.extend({
 
-  options: {},//todo: add position
+  options: {
+    position: 'topright'
+  },//todo: add position
 
   _updateContents() {
     this._legendContainer.empty();
@@ -43,20 +45,20 @@ const LegendControl = L.Control.extend({
     layers.forEach((layer) =>layer.appendLegendContents($div));
   },
 
-  initialize: function (container, kibanaMap) {
+  initialize: function (container, kibanaMap, position) {
     this._legendContainer = container;
     this._kibanaMap = kibanaMap;
+    this.options.position = position;
 
   },
   onAdd: function () {
-    this._layerUpdateHandle = this._kibanaMap.on('layers:update', () => this._updateContents());
+    this._layerUpdateHandle = () => this._updateContents();
+    this._kibanaMap.on('layers:update', this._layerUpdateHandle);
     this._updateContents();
     return this._legendContainer.get(0);
   },
   onRemove: function () {
-    if (this._layerUpdateHandle) {
-      this._layerUpdateHandle.remove();
-    }
+    this._kibanaMap.removeListener('layers:update', this._layerUpdateHandle);
   }
 
 });
@@ -80,6 +82,7 @@ class KibanaMap extends EventEmitter {
     this._leafletDrawControl = null;
     this._leafletFitControl = null;
     this._leafletLegendControl = null;
+    this._legendPosition = 'topright';
 
     this._layers = [];
     this._listeners = [];
@@ -89,10 +92,7 @@ class KibanaMap extends EventEmitter {
       minZoom: 0,
       maxZoom: 10
     });
-
-
-    // this._leafletMap.setView([0, 0], 0);//todo: pass in from UI-state (if any)
-    this._leafletMap.fitWorld();//todo: pass in from UI-state (if any)
+    this._leafletMap.fitWorld();
 
     let previousZoom = this._leafletMap.getZoom();
     this._leafletMap.on('zoomend', () => {
@@ -324,15 +324,24 @@ class KibanaMap extends EventEmitter {
     this._leafletMap.addControl(this._leafletFitControl);
   }
 
-
   addLegendControl() {
-
     if (this._leafletLegendControl || !this._leafletMap) {
       return;
     }
+    this._updateLegend();
+  }
 
+  setLegendPosition(position) {
+    this._legendPosition = position;
+    if (this._leafletLegendControl) {
+      this._leafletMap.removeControl(this._leafletLegendControl);
+      this._updateLegend();
+    }
+  }
+
+  _updateLegend() {
     const $wrapper = $('<div>').addClass('tilemap-legend-wrapper');
-    this._leafletLegendControl = new LegendControl($wrapper, this);
+    this._leafletLegendControl = new LegendControl($wrapper, this, this._legendPosition);
     this._leafletMap.addControl(this._leafletLegendControl);
   }
 

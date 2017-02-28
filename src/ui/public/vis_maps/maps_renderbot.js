@@ -127,6 +127,8 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
 
       this._kibanaMap.setDesaturateBaseLayer(newParams.isDesaturated);
       this._kibanaMap.setShowTooltip(newParams.addTooltip);
+      this._kibanaMap.setLegendPosition(newParams.legendPosition);
+
       this._useUIState();
       this._kibanaMap.resize();
     }
