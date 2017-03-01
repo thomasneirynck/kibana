@@ -225,7 +225,8 @@ module.service('mlSingleMetricJobService', function (
     // Use the original es agg type rather than the ML version
     // e.g. count rather than high_count
     const aggType = formConfig.agg.type.name;
-    console.log(aggType);
+    const interval = bucketSpan * 1000;
+
     switch (aggType) {
       case 'count':
         job.analysis_config.summary_count_field_name = 'doc_count';
@@ -234,7 +235,7 @@ module.service('mlSingleMetricJobService', function (
           [formConfig.timeField]: {
             histogram: {
               field: formConfig.timeField,
-              interval: bucketSpan * 1000,
+              interval: interval,
               offset: 0,
               order: {
                 _key: 'asc'
@@ -255,7 +256,7 @@ module.service('mlSingleMetricJobService', function (
           [formConfig.timeField]: {
             histogram: {
               field: formConfig.timeField,
-              interval: bucketSpan * 1000,
+              interval: ((interval / 100) * 10), // use 10% of bucketSpan to allow for better sampling
               offset: 0,
               order: {
                 _key: 'asc'
@@ -279,7 +280,7 @@ module.service('mlSingleMetricJobService', function (
           [formConfig.timeField]: {
             histogram: {
               field: formConfig.timeField,
-              interval: bucketSpan * 1000
+              interval: interval
             },
             aggregations: {
               [job.analysis_config.summary_count_field_name]: {
