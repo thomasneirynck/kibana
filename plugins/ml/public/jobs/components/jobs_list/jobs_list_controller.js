@@ -211,7 +211,7 @@ function (
     $scope.table.perPage = 10;
     $scope.table.columns = [
       { title: '', sortable: false, class: 'col-expand-arrow' },
-      { title: 'Search name' },
+      { title: 'Job ID' },
       { title: '', sortable: false},
       { title: 'Description' },
       { title: 'Processed records', class: 'col-align-right' },
