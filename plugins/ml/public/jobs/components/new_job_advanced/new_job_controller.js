@@ -235,7 +235,7 @@ function (
     }
 
     calculateDatafeedFrequencyDefault();
-    // showDataPreviewTab();
+    showDataPreviewTab();
   }
 
   function changeTab(tab) {
@@ -276,7 +276,7 @@ function (
       }
     }
 
-    // showDataPreviewTab();
+    showDataPreviewTab();
   }
 
   $scope.save = function () {
@@ -513,7 +513,7 @@ function (
       $scope.job.data_description.format = 'json';
     }
 
-    // showDataPreviewTab();
+    showDataPreviewTab();
   };
 
   // general function to remove an analysisConfig property from the config if it's an empty string
@@ -539,7 +539,7 @@ function (
       $scope.ui.isDatafeed = true;
       $scope.ui.tabs[2].hidden = true;
       $scope.ui.wizard.dataLocation = 'ES';
-      // showDataPreviewTab();
+      showDataPreviewTab();
 
       const frequencyDefault = $scope.ui.datafeed.frequencyDefault;
       let freq = datafeedConfig.frequency;
@@ -942,7 +942,6 @@ function (
     }
   }
 
-  /*
   function showDataPreviewTab() {
     let hidden = true;
     // if this is a datafeed job, make the Data Preview tab available
@@ -958,7 +957,6 @@ function (
     $scope.ui.tabs[5].hidden = hidden;
     $scope.$applyAsync();
   }
-  */
 
   // combine all influencers into a sorted array
   function allInfluencers() {
