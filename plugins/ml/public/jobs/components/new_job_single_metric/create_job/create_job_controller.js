@@ -536,8 +536,13 @@ module
 
   $scope.resetJob = function () {
     $scope.jobState = JOB_STATE.NOT_STARTED;
-    $scope.ui.showJobInput = true;
-    $scope.loadVis();
+    angular.element('.model-chart, .swimlane').css('opacity', 0);
+
+    window.setTimeout(() => {
+      $scope.ui.showJobInput = true;
+      $scope.loadVis();
+    }, 500);
+
   };
 
   $scope.stopJob = function () {

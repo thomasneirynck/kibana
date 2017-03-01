@@ -30,6 +30,8 @@ module.service('mlMultiMetricJobService', function (
   mlJobService,
   mlMultiMetricJobSearchService) {
 
+  const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
+
   this.chartData = {
     job: {
       swimlane: [],
@@ -57,7 +59,6 @@ module.service('mlMultiMetricJobService', function (
     const deferred = $q.defer();
 
     const fields = Object.keys(formConfig.fields).sort();
-    this.clearChartData();
 
     _.each(fields, (field) => {
       this.chartData.detectors[field] = {
@@ -410,22 +411,18 @@ module.service('mlMultiMetricJobService', function (
 
   this.loadDocCountData = function (formConfig) {
     const deferred = $q.defer();
+    const bounds = timefilter.getActiveBounds();
+    const buckets = new TimeBuckets();
+    buckets.setInterval('auto');
+    buckets.setBounds(bounds);
+
+    const interval = buckets.getInterval().asSeconds() * 1000;
+
     const end = formConfig.end;
     const start = formConfig.start;
-    const interval = formConfig.chartInterval.getInterval().asSeconds() * 1000;
-
-    // const numBuckets = parseInt((end - start) / interval);
-    // const cellWidth = Math.floor(gridWidth / numBuckets);
-
-    // const chartWidth = cellWidth * numBuckets;
-    // const timeRange = bounds.max.valueOf() - bounds.min.valueOf();
-    // const interval = Math.floor((timeRange / chartWidth) * 3);
-
-    // $scope.chartWidth = chartWidth;
 
     mlMultiMetricJobSearchService.getEventRate(formConfig.indexPattern.id, start, end, formConfig.timeField, (interval + 'ms'))
     .then((resp) => {
-      // console.log('getEventRate event rate refresh data:', resp);
       this.chartData.job.bars = [];
 
       _.each(resp.results, (value, t) => {

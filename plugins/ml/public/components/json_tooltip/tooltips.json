@@ -12,7 +12,7 @@
       "text": "Interval for time series analysis."
    },
    "new_job_summarycountfieldname": {
-      "text": "Optional, for use if input data has been pre-summarized e.g. count_per_min."
+      "text": "Optional, for use if input data has been pre-summarized e.g. doc_count."
    },
    "new_job_categorizationfieldname": {
       "text": "Optional, for use if analyzing unstructured log data."

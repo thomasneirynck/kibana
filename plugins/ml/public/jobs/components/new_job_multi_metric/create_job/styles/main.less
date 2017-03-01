@@ -82,10 +82,10 @@
       background-color: #FFFFFF;
       border-radius: 3px;
       border: 1px solid #CCCCCC;
-      margin: 54px 0px 40px 0px;
+      margin: 54px 0px 0px 0px;
       z-index: 10;
       // padding: 0px 5px;
-      box-shadow: 0px 4px 10px #dad7d7;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 
       .card-title {
         color: steelblue;
@@ -135,6 +135,14 @@ ml-multi-metric-job-chart, ml-multi-metric-job-event-rate-chart {
     font-size: 12px;
     font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial;
     margin-top: -20px;
+  }
+
+  .bar {
+    transition: opacity 0.5s ;
+    stroke: #FFFFFF;
+  }
+  .bar:hover {
+    opacity: 1;
   }
 
   .axis path, .axis line {
@@ -190,6 +198,10 @@ ml-multi-metric-job-chart, ml-multi-metric-job-event-rate-chart {
 
   .bottom-swimlane .axis .tick line {
     stroke-width: 1px;
+  }
+
+  .swimlane-cells {
+    transition: opacity 0.5s;
   }
 
   .swimlane-cell:hover {

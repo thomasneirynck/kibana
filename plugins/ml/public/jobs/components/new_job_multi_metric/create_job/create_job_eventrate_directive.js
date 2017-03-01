@@ -30,7 +30,7 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
   function link(scope, element) {
 
     let svgWidth = 0;
-    const barChartHeight = 150;
+    const barChartHeight = 100;
     const margin = { top: 0, right: 0, bottom: 30, left: 50 };
     const svgHeight = barChartHeight + margin.top + margin.bottom;
     let vizWidth  = svgWidth  - margin.left - margin.right;
@@ -38,12 +38,11 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
 
 
     let barChartXScale = null;
+    let swimlaneXScale = null;
     let barChartYScale = null;
 
     let barChartGroup;
     let swimlaneGroup;
-
-    let barChartValuesBars = null;
 
     let $progressBar;
 
@@ -67,19 +66,9 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
       svgWidth = $el.width();
       vizWidth = svgWidth  - margin.left - margin.right;
 
-      barChartXScale = d3.time.scale().range([0, vizWidth]);
+      barChartXScale = d3.scale.ordinal().rangeRoundBands([0, vizWidth], .05);
+      swimlaneXScale = d3.time.scale().range([0, vizWidth]);
       barChartYScale = d3.scale.linear().range([barChartHeight, 0]);
-
-      d3.svg.axis().scale(barChartXScale).orient('bottom')
-        .innerTickSize(-barChartHeight).outerTickSize(0).tickPadding(10);
-      d3.svg.axis().scale(barChartYScale).orient('left')
-        .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
-
-
-      barChartValuesBars = d3.svg.line()
-      .x(d => barChartXScale(d.date))
-      .y(d => barChartYScale(d.value))
-      .defined(d => d.value !== null);
     }
 
 
@@ -87,8 +76,6 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
       if (scope.chartData.bars === undefined) {
         return;
       }
-
-      // console.log(' ', scope.chartData.bars);
 
       // Clear any existing elements from the visualization,
       // then build the svg elements for the bubble chart.
@@ -109,42 +96,52 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
         .attr('width',  svgWidth)
         .attr('height', svgHeight);
 
-      swimlaneGroup = svg.append('g')
-        .attr('class', 'swimlane')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
       barChartGroup = svg.append('g')
         .attr('class', 'bar-chart')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+      swimlaneGroup = svg.append('g')
+        .attr('class', 'swimlane')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
     }
 
     function drawBarChart() {
       const data = scope.chartData.bars;
 
-      barChartXScale = barChartXScale.domain(d3.extent(data, d => d.date));
+      // The swimlane and x-axis lables should be aligned with the other line charts
+      // however, when this chart is first drawn, this data is not available.
+      // on first display use the bar data for the scale
+      let finerData = scope.chartData.bars;
+      if (scope.chartData.line.length > 0) {
+        finerData = scope.chartData.line;
+      }
+      swimlaneXScale.domain(d3.extent(finerData, d => d.date));
+
+      barChartXScale = d3.time.scale()
+        .range([0, vizWidth])
+        .domain(d3.extent(data, d => d.date));
 
       chartLimits.max = d3.max(data, (d) => d.value);
       chartLimits.min = d3.min(data, (d) => d.value);
 
       // add padding of 10% of the difference between max and min
       // to the upper and lower ends of the y-axis
-      const padding = (chartLimits.max - chartLimits.min) * 0.1;
+      const padding = (chartLimits.max - chartLimits.min) * 0.05;
       chartLimits.max += padding;
-      chartLimits.min -= padding;
 
       barChartYScale = barChartYScale.domain([
         chartLimits.min,
         chartLimits.max
       ]);
 
-      const xAxis = d3.svg.axis().scale(barChartXScale).orient('bottom')
+
+      const xAxis = d3.svg.axis().scale(swimlaneXScale).orient('bottom')
         .innerTickSize(-barChartHeight).outerTickSize(0).tickPadding(10);
       const yAxis = d3.svg.axis().scale(barChartYScale).orient('left')
         .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
 
-
       // add a white background to the chart
-      swimlaneGroup.append('rect')
+      barChartGroup.append('rect')
         .attr('x', 0)
         .attr('y', 0)
         .attr('height', barChartHeight)
@@ -160,7 +157,6 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
         .style('stroke', '#cccccc')
         .style('fill', 'none')
         .style('stroke-width', 1);
-
 
       drawBarChartAxes(xAxis, yAxis);
       drawBarChartPaths(data);
@@ -181,9 +177,20 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
     }
 
     function drawBarChartPaths(data) {
-      barChartGroup.append('path')
-        .attr('class', 'values-line')
-        .attr('d', barChartValuesBars(data));
+      let cellWidth = vizWidth / data.length;
+      if (cellWidth < 1) {
+        cellWidth = 1;
+      }
+
+      barChartGroup.selectAll('bar')
+      .data(data)
+      .enter().append('rect')
+      .style('fill', '#32a7c2')
+      .attr('class', 'bar')
+      .attr('x', (d) => { return barChartXScale(d.date); })
+      .attr('width', cellWidth)
+      .attr('y', (d) => { return barChartYScale(d.value); })
+      .attr('height', (d) => { return barChartHeight - barChartYScale(d.value); });
     }
 
     function drawResults() {
@@ -192,16 +199,17 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
     }
 
     function drawSwimlane(swlWidth, swlHeight) {
+      const lineData = scope.chartData.line;
       const data = scope.chartData.swimlane;
 
       // TODO - need to get bucket length from dataset.
-      let cellWidth = swlWidth / scope.chartData.bars.length;
+      let cellWidth = swlWidth / lineData.length;
       if (cellWidth < 1) {
         cellWidth = 1;
       }
 
       d3.time.scale().range([0, swlWidth])
-        .domain(d3.extent(data, (d) => d.date));
+        .domain(d3.extent(lineData, (d) => d.date));
 
       d3.scale.linear().range([swlHeight, 0])
         .domain([0, swlHeight]);
@@ -219,7 +227,7 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
         .data(data);
 
       cells.enter().append('rect')
-        .attr('x', (d) => barChartXScale(d.date))
+        .attr('x', (d) => swimlaneXScale(d.date))
         .attr('y', 0)
         .attr('rx', 0)
         .attr('ry', 0)
@@ -232,7 +240,6 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
 
     function updateProgressBar() {
       const pcnt = scope.chartData.percentComplete;
-      // const pcnt = (scope.chartData.percentComplete < 100) ? scope.chartData.percentComplete : 0;
       $progressBar.css('width', pcnt + '%');
     }
   }

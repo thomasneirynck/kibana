@@ -130,7 +130,7 @@ module.directive('mlMultiMetricJobChart', function () {
 
       // add padding of 10% of the difference between max and min
       // to the upper and lower ends of the y-axis
-      const padding = (chartLimits.max - chartLimits.min) * 0.1;
+      const padding = (chartLimits.max - chartLimits.min) * 0.05;
       chartLimits.max += padding;
       chartLimits.min -= padding;
 

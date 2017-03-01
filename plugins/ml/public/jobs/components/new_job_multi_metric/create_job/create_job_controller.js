@@ -14,7 +14,6 @@
  */
 
 import _ from 'lodash';
-import $ from 'jquery';
 import 'ui/courier';
 
 import 'plugins/kibana/visualize/styles/main.less';
@@ -373,6 +372,8 @@ module
 
     $scope.ui.dirty = false;
 
+    mlMultiMetricJobService.clearChartData();
+
     if (Object.keys($scope.formConfig.fields).length) {
       mlMultiMetricJobService.getLineChartResults($scope.formConfig)
       .then(() => {
@@ -383,7 +384,7 @@ module
     }
 
     function loadDocCountData() {
-      const gridWidth = $('.charts-container').width();
+      const gridWidth = angular.element('.charts-container').width();
       mlMultiMetricJobService.loadDocCountData($scope.formConfig, gridWidth)
       .then(() => {
         $scope.hasResults = true;
@@ -569,6 +570,10 @@ module
         chart.percentComplete = 100;
       });
     }
+    if ($scope.chartData.percentComplete > 0) {
+      // fade the bar chart once we have results
+      toggleSwimlaneVisibility();
+    }
     $scope.$broadcast('render-results');
   }
 
@@ -608,9 +613,22 @@ module
 
   $scope.resetJob = function () {
     $scope.jobState = JOB_STATE.NOT_STARTED;
-    $scope.ui.showJobInput = true;
-    $scope.loadVis();
+    toggleSwimlaneVisibility();
+
+    window.setTimeout(() => {
+      $scope.ui.showJobInput = true;
+      $scope.loadVis();
+    }, 500);
   };
+
+  function toggleSwimlaneVisibility() {
+    if ($scope.jobState === JOB_STATE.NOT_STARTED) {
+      angular.element('.swimlane-cells').css('opacity', 0);
+      angular.element('.bar').css('opacity', 1);
+    } else {
+      angular.element('.bar').css('opacity', 0.1);
+    }
+  }
 
   $scope.stopJob = function () {
     // setting the status to STOPPING disables the stop button
