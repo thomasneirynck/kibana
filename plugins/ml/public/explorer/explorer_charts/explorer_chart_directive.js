@@ -47,7 +47,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
     const chartHeight = 170;
     const LINE_CHART_ANOMALY_RADIUS = 7;
 
-    // TODO - adjust margin for longest y-axis label.
+    // Left margin is adjusted later for longest y-axis label.
     const margin = { top: 30, right: 0, bottom: 30, left: 60 };
     const svgHeight = chartHeight + margin.top + margin.bottom;
     const chartLimits = { max: 0, min: 0 };
@@ -67,7 +67,6 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
       if (awaitingCount === 0) {
         scope.chartData = processChartData();
         init();
-        createSVGGroups();
         drawLineChart();
       }
     }
@@ -78,7 +77,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
       config.metricFunction, config.metricFieldName,
       scope.plotEarliest, scope.plotLatest, config.interval
       )
-    .then(function (resp) {
+    .then((resp) => {
       scope.metricData = resp.results;
       finish();
     });
@@ -92,7 +91,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
 
     mlResultsService.getRecordsForCriteria(ML_RESULTS_INDEX_ID, [config.jobId], criteria,
       0, scope.plotEarliest, scope.plotLatest, ANOMALIES_MAX_RESULTS)
-    .then(function (resp) {
+    .then((resp) => {
       scope.anomalyRecords = resp.records;
       finish();
     });
@@ -114,54 +113,30 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
 
     function init() {
       const $el = angular.element('.ml-explorer-chart-container');
-      svgWidth = $el.width();
-      vizWidth  = svgWidth  - margin.left - margin.right;
-
-      lineChartXScale = d3.time.scale().range([0, vizWidth]);
-      lineChartYScale = d3.scale.linear().range([chartHeight, 0]);
-
-      d3.svg.axis().scale(lineChartXScale).orient('bottom')
-        .innerTickSize(-chartHeight).outerTickSize(0).tickPadding(10);
-      d3.svg.axis().scale(lineChartYScale).orient('left')
-        .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
-
-      lineChartValuesLine = d3.svg.line()
-      .x(d => lineChartXScale(d.date))
-      .y(d => lineChartYScale(d.value))
-      .defined(d => d.value !== null);
-    }
-
-    function createSVGGroups() {
-      if (scope.chartData === undefined) {
-        return;
-      }
+      const data = scope.chartData;
 
       // Clear any existing elements from the visualization,
       // then build the svg elements for the chart.
       const chartElement = d3.select(element.get(0));
       chartElement.select('svg').remove();
 
+      svgWidth = $el.width();
+
       const svg = chartElement.append('svg')
         .attr('width',  svgWidth)
         .attr('height', svgHeight);
 
-      lineChartGroup = svg.append('g')
-        .attr('class', 'line-chart')
-        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-    }
-
-    function drawLineChart() {
-      const data = scope.chartData;
-
-      // TODO - add in some indicator marker to highlight the time of the selected swimlane cell.
-      lineChartXScale = lineChartXScale.domain(d3.extent(data, d => d.date));
+      // Set the size of the left margin according to the width of the largest y axis tick label.
+      lineChartYScale = d3.scale.linear().range([chartHeight, 0]);
+      const yAxis = d3.svg.axis().scale(lineChartYScale).orient('left')
+        .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
 
       chartLimits.max = d3.max(data, (d) => d.value);
       chartLimits.min = d3.min(data, (d) => d.value);
 
-      // add padding of 10% of the difference between max and min
+      // add padding of 5% of the difference between max and min
       // to the upper and lower ends of the y-axis
-      const padding = (chartLimits.max - chartLimits.min) * 0.1;
+      const padding = (chartLimits.max - chartLimits.min) * 0.05;
       chartLimits.max += padding;
       chartLimits.min -= padding;
 
@@ -170,10 +145,42 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
         chartLimits.max
       ]);
 
-      const xAxis = d3.svg.axis().scale(lineChartXScale).orient('bottom')
+      let maxYAxisLabelWidth = 0;
+      const tempLabelText = svg.append('g')
+        .attr('class', 'temp-axis-label tick');
+      tempLabelText.selectAll('text.temp.axis').data(lineChartYScale.ticks())
+        .enter()
+        .append('text')
+        .text(d => lineChartYScale.tickFormat()(d))
+        .each(function () {
+          maxYAxisLabelWidth = Math.max(this.getBBox().width + yAxis.tickPadding(), maxYAxisLabelWidth);
+        })
+      .remove();
+      d3.select('.temp-axis-label').remove();
+
+      margin.left = (Math.max(maxYAxisLabelWidth, 40));
+      vizWidth  = svgWidth  - margin.left - margin.right;
+
+      lineChartXScale = d3.time.scale()
+        .range([0, vizWidth])
+        .domain(d3.extent(data, d => d.date));
+
+      d3.svg.axis().scale(lineChartXScale).orient('bottom')
         .innerTickSize(-chartHeight).outerTickSize(0).tickPadding(10);
-      const yAxis = d3.svg.axis().scale(lineChartYScale).orient('left')
-        .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
+
+      lineChartValuesLine = d3.svg.line()
+        .x(d => lineChartXScale(d.date))
+        .y(d => lineChartYScale(d.value))
+        .defined(d => d.value !== null);
+
+      lineChartGroup = svg.append('g')
+        .attr('class', 'line-chart')
+        .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
+
+    }
+
+    function drawLineChart() {
+      const data = scope.chartData;
 
       // Add border round plot area.
       lineChartGroup.append('rect')
@@ -185,13 +192,17 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
         .style('fill', 'none')
         .style('stroke-width', 1);
 
-      drawLineChartAxes(xAxis, yAxis);
+      drawLineChartAxes();
       drawLineChartHighlightedSpan();
       drawLineChartPaths(data);
       drawLineChartMarkers(data);
     }
 
-    function drawLineChartAxes(xAxis, yAxis) {
+    function drawLineChartAxes() {
+      const xAxis = d3.svg.axis().scale(lineChartXScale).orient('bottom')
+        .innerTickSize(-chartHeight).outerTickSize(0).tickPadding(10);
+      const yAxis = d3.svg.axis().scale(lineChartYScale).orient('left')
+        .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
       const axes = lineChartGroup.append('g');
 
       axes.append('g')
@@ -311,7 +322,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
         return chartData;
       }
 
-      _.each(scope.metricData, function (value, time) {
+      _.each(scope.metricData, (value, time) => {
         chartData.push(
           {
             date: new Date(+time),
@@ -321,7 +332,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
 
       // Iterate through the anomaly records, adding anomalyScore properties
       // to the chartData entries for anomalous buckets.
-      _.each(scope.anomalyRecords, function (record) {
+      _.each(scope.anomalyRecords, (record) => {
 
         // Look for a chart point with the same time as the record.
         // If none found, find closest time in chartData set.
