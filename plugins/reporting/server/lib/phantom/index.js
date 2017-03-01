@@ -3,8 +3,9 @@ import fs from 'fs';
 import { randomBytes } from 'crypto';
 import { fromCallback } from 'bluebird';
 import driver from '@elastic/node-phantom-simple';
-import { unzip, bunzip2 } from './extract';
-import { PHANTOM_MAX_LOAD_TIMEOUT } from './constants';
+import { unzip, bunzip2 } from '../extract';
+import { PHANTOM_MAX_LOAD_TIMEOUT } from '../constants';
+import { transformFn } from './transform_fn';
 
 const version = '2.1.1';
 const basename = 'phantomjs-' + version;
@@ -151,7 +152,7 @@ function _createPhantomInstance(ready, ph, phantomOptions) {
         return _injectPromise(ph.page)
         .then(() => {
           return fromCallback(cb => {
-            ph.page.evaluate(evaluateWrapper, fn.toString(), uniqId, args, cb);
+            ph.page.evaluate(transformFn(evaluateWrapper), transformFn(fn).toString(), uniqId, args, cb);
 
             // The original function is passed here as a string, and eval'd in phantom's context.
             // It's then executed in phantom's context and the result is attached to a __reporting
@@ -396,7 +397,7 @@ function _injectPromise(page) {
   .then(hasPromise => {
     if (hasPromise) return;
 
-    const nodeModules = path.resolve(__dirname, '..', '..', '..', '..', 'node_modules');
+    const nodeModules = path.resolve(__dirname, '..', '..', '..', '..', '..', 'node_modules');
     const promisePath = path.join(nodeModules, 'bluebird', 'js', 'browser', 'bluebird.js');
     return fromCallback(cb => page.injectJs(promisePath, cb))
     .then(status => {

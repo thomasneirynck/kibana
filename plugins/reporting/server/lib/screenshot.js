@@ -29,7 +29,7 @@ class Screenshot {
         return ph.destroy().then(() => filepath);
       })
       .catch(err => {
-        this.logger(`Screenshot failed ${err.message}`);
+        this.logger(`Screenshot failed ${err.message} ${err.stack}`);
         return ph.destroy().then(() => { throw err; });
       });
     });
