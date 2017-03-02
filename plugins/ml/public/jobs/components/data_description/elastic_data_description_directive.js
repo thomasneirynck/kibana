@@ -30,7 +30,7 @@ module.directive('mlElasticDataDescription', function () {
       types:              '=mlTypes',
       mode:               '=mlMode',
       datafeed_config:    '=mlDatafeedConfig',
-      data_description:    '=mlDataDescription',
+      data_description:   '=mlDataDescription',
       dataLoadedCallback: '=mlDataLoadedCallback',
       exposedFunctions:   '=mlExposedFunctions',
       serverInfo:         '=mlElasticServerInfo'
@@ -241,8 +241,9 @@ module.directive('mlElasticDataDescription', function () {
         const deferred = $q.defer();
 
         $scope.ui.validation.setTabValid(4, true);
-        mlJobService.getESMappings().then((indexes) => {
-          $scope.ui.indexes = indexes;
+        mlJobService.getESMappings()
+        .then((indexes) => {
+          $scope.ui.indexes  = filterIndexes(indexes);
           $scope.ui.esServerOk = 1;
           console.log('getMappings():', $scope.ui.indexes);
 
@@ -252,7 +253,8 @@ module.directive('mlElasticDataDescription', function () {
 
           deferred.resolve();
 
-        }).catch((err) => {
+        })
+        .catch((err) => {
           console.log('getMappings:', err);
           if (err.statusCode) {
             if (err.statusCode === 401) {
@@ -278,6 +280,20 @@ module.directive('mlElasticDataDescription', function () {
         }
 
         return deferred.promise;
+      }
+
+      function filterIndexes(idxs) {
+        const indexes = {};
+        const monitoringName = new RegExp('^\\.monitoring-.+');
+        const dotName = new RegExp('^\\..+');
+        _.each(idxs, (idx, key) => {
+          // create a new collection only containing indexes
+          // which don't start with a dot, except monitoring ones
+          if (key.match(monitoringName) || !key.match(dotName)) {
+            indexes[key] = idx;
+          }
+        });
+        return indexes;
       }
 
       $scope.toggleIndex = function (key, index) {
