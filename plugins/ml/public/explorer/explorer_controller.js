@@ -58,7 +58,8 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
   const queryFilter = Private(FilterBarQueryFilterProvider);
 
   const MAX_INFLUENCER_FIELD_NAMES = 10;
-  const MAX_INFLUENCER_FIELD_VALUES = 10;
+  const MAX_DISPLAY_FIELD_VALUES = 10;
+  const VIEW_BY_JOB_LABEL = 'job ID';
 
   $scope.getSelectedJobIds = function () {
     const selectedJobs = _.filter($scope.jobs, (job) => { return job.selected; });
@@ -109,10 +110,8 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     mlExplorerDashboardService.init();
   };
 
-  $scope.loadAnomaliesTable = function (influencers, earliestMs, latestMs) {
-    const selectedJobIds = $scope.getSelectedJobIds();
-
-    mlResultsService.getRecordsForInfluencer($scope.indexPatternId, selectedJobIds, influencers,
+  $scope.loadAnomaliesTable = function (jobIds, influencers, earliestMs, latestMs) {
+    mlResultsService.getRecordsForInfluencer($scope.indexPatternId, jobIds, influencers,
       0, earliestMs, latestMs, 500)
     .then((resp) => {
       // Sort in descending time order before storing in scope.
@@ -126,12 +125,10 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     });
   };
 
-  $scope.loadAnomaliesForCharts = function (influencers, earliestMs, latestMs) {
-    const selectedJobIds = $scope.getSelectedJobIds();
-
+  $scope.loadAnomaliesForCharts = function (jobIds, influencers, earliestMs, latestMs) {
     // Load the top anomalies (by normalized_probability) which will be diplayed in the charts.
     // TODO - combine this with loadAnomaliesTable() if the table is being retained.
-    mlResultsService.getRecordsForInfluencer($scope.indexPatternId, selectedJobIds, influencers,
+    mlResultsService.getRecordsForInfluencer($scope.indexPatternId, jobIds, influencers,
       0, earliestMs, latestMs, 500)
     .then((resp) => {
       $scope.anomalyChartRecords = resp.records;
@@ -217,9 +214,17 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
       // Swimlane deselection - clear anomalies section.
       clearSelectedAnomalies();
     } else {
+      let jobIds = [];
       const influencers = [];
-      if (cellData.fieldName !== undefined) {
-        influencers.push({ fieldName: $scope.swimlaneViewByFieldName, fieldValue: cellData.laneLabel });
+
+      if (cellData.fieldName === VIEW_BY_JOB_LABEL) {
+        jobIds.push(cellData.laneLabel);
+      } else {
+        jobIds = $scope.getSelectedJobIds();
+
+        if (cellData.fieldName !== undefined) {
+          influencers.push({ fieldName: $scope.swimlaneViewByFieldName, fieldValue: cellData.laneLabel });
+        }
       }
 
       // Time range for charts should be maximum time span at job bucket span, centred on the selected cell.
@@ -228,8 +233,8 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
       const earliestMs = cellData.time !== undefined ? cellData.time * 1000 : bounds.min.valueOf();
       const latestMs = cellData.time !== undefined ? ((cellData.time  + cellData.interval) * 1000) - 1 : bounds.max.valueOf();
 
-      $scope.loadAnomaliesTable(influencers, earliestMs, latestMs);
-      $scope.loadAnomaliesForCharts(influencers, earliestMs, latestMs);
+      $scope.loadAnomaliesTable(jobIds, influencers, earliestMs, latestMs);
+      $scope.loadAnomaliesForCharts(jobIds, influencers, earliestMs, latestMs);
       $scope.showNoSelectionMessage = false;
     }
 
@@ -274,9 +279,9 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     });
 
     $scope.fieldsByJob = fieldsByJob;   // Currently unused but may be used if add in view by detector.
-    viewByOptions = _.uniq(viewByOptions);
-    $scope.viewBySwimlaneOptions =
-      _.chain(viewByOptions).uniq().sortBy((fieldname) => { return fieldname.toLowerCase(); }).value();
+    viewByOptions = _.chain(viewByOptions).uniq().sortBy((fieldname) => { return fieldname.toLowerCase(); }).value();
+    viewByOptions.push(VIEW_BY_JOB_LABEL);
+    $scope.viewBySwimlaneOptions = viewByOptions;
 
     // Set the default to the first partition, over, by or influencer field of the first selected job.
     const firstSelectedJob = _.find(mlJobService.jobs, (job) => {
@@ -365,7 +370,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
 
     // Query 1 - load list of top influencers.
     mlResultsService.getTopInfluencers($scope.indexPatternId, selectedJobIds,
-      bounds.min.valueOf(), bounds.max.valueOf(), MAX_INFLUENCER_FIELD_NAMES, MAX_INFLUENCER_FIELD_VALUES)
+      bounds.min.valueOf(), bounds.max.valueOf(), MAX_INFLUENCER_FIELD_NAMES, MAX_DISPLAY_FIELD_VALUES)
     .then((resp) => {
       // TODO - sort the influencers keys so that the partition field(s) are first.
       $scope.influencersData = resp.influencers;
@@ -405,14 +410,23 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
       const bounds = timefilter.getActiveBounds();
       const selectedJobIds = $scope.getSelectedJobIds();
 
-      // load scores by influencer value and time.
-      mlResultsService.getInfluencerValueMaxScoreByTime($scope.indexPatternId, selectedJobIds, $scope.swimlaneViewByFieldName,
-        bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression, MAX_INFLUENCER_FIELD_VALUES)
-      .then((resp) => {
-        // TODO - sort the influencers keys so that the partition field(s) are first.
-        processViewByResults(resp.results);
-        finish();
-      });
+      // load scores by influencer/jobId value and time.
+      if ($scope.swimlaneViewByFieldName !== VIEW_BY_JOB_LABEL) {
+        mlResultsService.getInfluencerValueMaxScoreByTime($scope.indexPatternId, selectedJobIds, $scope.swimlaneViewByFieldName,
+          bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression, MAX_DISPLAY_FIELD_VALUES)
+        .then((resp) => {
+          processViewByResults(resp.results);
+          finish();
+        });
+      } else {
+        mlResultsService.getScoresByBucket($scope.indexPatternId, selectedJobIds,
+          bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression, MAX_DISPLAY_FIELD_VALUES)
+        .then((resp) => {
+          processViewByResults(resp.results);
+          finish();
+        });
+
+      }
     }
   }
 

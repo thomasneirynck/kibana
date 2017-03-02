@@ -57,6 +57,7 @@ module.controller('MlSummaryViewController', function (
   timefilter,
   mlAnomalyRecordDetailsService,
   mlDashboardService,
+  mlResultsService,
   mlSwimlaneSearchService,
   mlSwimlaneService) {
 
@@ -219,7 +220,7 @@ module.controller('MlSummaryViewController', function (
     mlAnomalyRecordDetailsService.setBucketInterval($scope.bucketInterval);
 
     // 1 - load job results
-    mlSwimlaneSearchService.getScoresByBucket(ML_RESULTS_INDEX_ID, selectedJobIds,
+    mlResultsService.getScoresByBucket(ML_RESULTS_INDEX_ID, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.bucketInterval.expression, 10)
     .then((resp) => {
       console.log('SummaryView bucket swimlane refresh data:', resp);

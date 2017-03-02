@@ -62,8 +62,8 @@ module.directive('mlSwimlaneInspector', function (
     },
   };
 })
-.service('mlSwimlaneInspectorService', function ($q, $timeout, $rootScope, $compile, es,
-  Private, timefilter, mlJobService, mlAnomalyRecordDetailsService, mlSwimlaneSearchService) {
+.service('mlSwimlaneInspectorService', function ($q, $timeout, $rootScope, $compile, es, Private,
+  timefilter, mlJobService, mlResultsService, mlAnomalyRecordDetailsService, mlSwimlaneSearchService) {
   const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
 
   const swimlanesHTML = require('plugins/ml/summaryview/swimlane_inspector/swimlanes.html');
@@ -184,7 +184,7 @@ module.directive('mlSwimlaneInspector', function (
     if (type === types.MONITOR) {
       // MONITOR
       recordJobIds = selectedJobIds;
-      loadResults(mlSwimlaneSearchService.getScoresByBucket, recordJobIds, interval, (results) => {
+      loadResults(mlResultsService.getScoresByBucket, recordJobIds, interval, (results) => {
         processJobResults(results, laneLabel);
         processMonitorResults(controls.inspectorChartData);
         fin();
@@ -195,7 +195,7 @@ module.directive('mlSwimlaneInspector', function (
       interval = calculateBucketInterval(job.bucketSpan);
 
       recordJobIds = [laneLabel];
-      loadResults(mlSwimlaneSearchService.getScoresByBucket, recordJobIds, interval, (results) => {
+      loadResults(mlResultsService.getScoresByBucket, recordJobIds, interval, (results) => {
         processJobResults(results, laneLabel);
         fin();
       });

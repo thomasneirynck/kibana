@@ -22,6 +22,133 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlResultsService', function ($q, es) {
 
+  // Obtains the maximum bucket anomaly scores by job ID and time.
+  // Pass an empty array or ['*'] to search over all job IDs.
+  // Returned response contains a results property, with a key for job
+  // which has results for the specified time range.
+  this.getScoresByBucket = function (index, jobIds, earliestMs, latestMs, interval, maxResults) {
+    const deferred = $q.defer();
+    const obj = {
+      success: true,
+      results: {}
+    };
+
+    // Build the criteria to use in the bool filter part of the request.
+    // Adds criteria for the time range plus any specified job IDs.
+    const boolCriteria = [];
+    boolCriteria.push({
+      'range': {
+        'timestamp': {
+          'gte': earliestMs,
+          'lte': latestMs,
+          'format': 'epoch_millis'
+        }
+      }
+    });
+
+    if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
+      let jobIdFilterStr = '';
+      _.each(jobIds, (jobId, i) => {
+        if (i > 0) {
+          jobIdFilterStr += ' OR ';
+        }
+        jobIdFilterStr += 'job_id:';
+        jobIdFilterStr += jobId;
+      });
+      boolCriteria.push({
+        'query_string': {
+          'analyze_wildcard': true,
+          'query': jobIdFilterStr
+        }
+      });
+    }
+
+    // TODO - remove hardcoded aggregation interval.
+    es.search({
+      index: index,
+      size: 0,
+      body: {
+        'query': {
+          'bool': {
+            'filter': [{
+              'query_string': {
+                'query': '_type:result AND result_type:bucket',
+                'analyze_wildcard': true
+              }
+            }, {
+              'bool': {
+                'must': boolCriteria
+              }
+            }]
+          }
+        },
+        'aggs': {
+          'jobId': {
+            'terms': {
+              'field': 'job_id',
+              'size': maxResults !== undefined ? maxResults : 5,
+              'order': {
+                'anomalyScore': 'desc'
+              }
+            },
+            'aggs': {
+              'anomalyScore': {
+                'max': {
+                  'field': 'anomaly_score'
+                }
+              },
+              'byTime': {
+                'date_histogram': {
+                  'field': 'timestamp',
+                  'interval': interval,
+                  'min_doc_count': 1,
+                  'extended_bounds': {
+                    'min': earliestMs,
+                    'max': latestMs
+                  }
+                },
+                'aggs': {
+                  'anomalyScore': {
+                    'max': {
+                      'field': 'anomaly_score'
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+    .then((resp) => {
+      console.log('getScoresByBucket() resp:', resp);
+
+      const dataByJobId = _.get(resp, ['aggregations', 'jobId', 'buckets'], []);
+      _.each(dataByJobId, (dataForJob) => {
+        const jobId = dataForJob.key;
+
+        const resultsForTime = {};
+
+        const dataByTime = _.get(dataForJob, ['byTime', 'buckets'], []);
+        _.each(dataByTime, (dataForTime) => {
+          const value = _.get(dataForTime, ['anomalyScore', 'value']);
+          if (value !== undefined) {
+            const time = dataForTime.key;
+            resultsForTime[time] = _.get(dataForTime, ['anomalyScore', 'value']);
+          }
+        });
+        obj.results[jobId] = resultsForTime;
+      });
+
+      deferred.resolve(obj);
+    })
+    .catch((resp) => {
+      deferred.reject(resp);
+    });
+    return deferred.promise;
+  };
+
+
   // Obtains the top influencers, by maximum anomaly score, for the specified index, time range and job ID(s).
   // Pass an empty array or ['*'] to search over all job IDs.
   // Returned response contains an influencers property, with a key for each of the influencer field names,
