@@ -560,7 +560,7 @@ module.controller('MlSummaryViewController', function (
   };
 
   this.openExplorer = function (tr) {
-    openPage('anomalyexplorer', tr);
+    openPage('explorer', tr);
   };
 
   this.openConnections = function (tr) {

@@ -64,14 +64,9 @@ chrome
     label: 'Summary view',
     run: function () { kbnUrl.change('/summaryview', {});}
   }, {
-    key: 'anomalyexplorer',
+    key: 'explorer',
     description: 'Explorer',
     label: 'Explorer',
-    run: function () { kbnUrl.change('/anomalyexplorer', {});}
-  }, {
-    key: 'explorer',
-    description: 'Explorer2',
-    label: 'Explorer2',
     run: function () { kbnUrl.change('/explorer', {});}
   }, {
     key: 'timeseriesexplorer',

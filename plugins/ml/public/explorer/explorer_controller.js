@@ -173,8 +173,6 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
 
     clearSelectedAnomalies();
     loadOverallData();
-    loadViewBySwimlaneOptions();
-
   };
 
   $scope.setSwimlaneViewBy = function (viewByFieldName) {
@@ -186,7 +184,6 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
   // Refresh all the data when the time range is altered.
   $scope.$listen(timefilter, 'fetch', function () {
     loadOverallData();
-    loadViewBySwimlane();
     clearSelectedAnomalies();
   });
 
@@ -284,6 +281,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     $scope.viewBySwimlaneOptions = viewByOptions;
 
     // Set the default to the first partition, over, by or influencer field of the first selected job.
+    // TODO - try to reset back to the previous selection if still available.
     const firstSelectedJob = _.find(mlJobService.jobs, (job) => {
       return job.job_id === selectedJobIds[0];
     });
@@ -348,6 +346,10 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
         // TODO: Check against bucket results as jobs may not include influencers.
         if ($scope.overallSwimlaneData.points && $scope.overallSwimlaneData.points.length) {
           $scope.hasResults = true;
+
+          // Trigger loading of the 'view by' swimlane -
+          // only load once the overall swimlane so that we can match the time span.
+          loadViewBySwimlaneOptions();
         } else {
           $scope.hasResults = false;
         }
