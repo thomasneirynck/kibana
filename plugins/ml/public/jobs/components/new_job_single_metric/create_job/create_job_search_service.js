@@ -44,7 +44,7 @@ module.service('mlSingleMetricJobSearchService', function ($q, es) {
 
     if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
       let jobIdFilterStr = '';
-      _.each(jobIds, function (jobId, i) {
+      _.each(jobIds, (jobId, i) => {
         if (i > 0) {
           jobIdFilterStr += ' OR ';
           indexString += ',';
@@ -98,11 +98,11 @@ module.service('mlSingleMetricJobSearchService', function ($q, es) {
         }
       }
     })
-    .then(function (resp) {
+    .then((resp) => {
       // console.log('Time series search service getScoresByBucket() resp:', resp);
 
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
-      _.each(aggregationsByTime, function (dataForTime) {
+      _.each(aggregationsByTime, (dataForTime) => {
         const time = dataForTime.key;
         obj.results[time] = {
           'anomalyScore': _.get(dataForTime, ['anomalyScore', 'value']),
@@ -111,7 +111,7 @@ module.service('mlSingleMetricJobSearchService', function ($q, es) {
 
       deferred.resolve(obj);
     })
-    .catch(function (resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
     return deferred.promise;
@@ -143,7 +143,7 @@ module.service('mlSingleMetricJobSearchService', function ($q, es) {
 
     if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
       let jobIdFilterStr = '';
-      _.each(jobIds, function (jobId, i) {
+      _.each(jobIds, (jobId, i) => {
         if (i > 0) {
           jobIdFilterStr += ' OR ';
           indexString += ',';
@@ -209,11 +209,11 @@ module.service('mlSingleMetricJobSearchService', function ($q, es) {
         }
       }
     })
-    .then(function (resp) {
+    .then((resp) => {
       // console.log('Time series search service getModelDebugOutput() resp:', resp);
 
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
-      _.each(aggregationsByTime, function (dataForTime) {
+      _.each(aggregationsByTime, (dataForTime) => {
         const time = dataForTime.key;
         let debugUpper = _.get(dataForTime, ['debugUpper', 'value']);
         let debugLower = _.get(dataForTime, ['debugLower', 'value']);
@@ -238,7 +238,7 @@ module.service('mlSingleMetricJobSearchService', function ($q, es) {
 
       deferred.resolve(obj);
     })
-    .catch(function (resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
 

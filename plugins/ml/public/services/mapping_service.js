@@ -43,7 +43,7 @@ module.service('mlESMappingService', function ($q, mlJobService) {
 
     if (ind.match(/\*/g)) {
       // use a regex to find all the indexes that match the name
-      ind = ind.replace(/\*/g, '.+');
+      ind = ind.replace(/\*/g, '.*');
       const reg = new RegExp('^' + ind + '$');
       const tempTypes = {};
 

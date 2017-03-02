@@ -234,7 +234,7 @@
           <ml-multi-metric-job-event-rate-chart chart-data="chartData.job" ></ml-multi-metric-job-event-rate-chart>
         </div>
         <div class='chart-list-panel detector-container'>
-          <label>{{ui.splitText}}</label>
+          <label ng-hide="ui.splitText === ''">{{ui.splitText}}</label>
           <div class='card-front'>
             <div class="card-title"></div>
             <div ng-repeat='(name, chart) in chartData.detectors' class='chart'>

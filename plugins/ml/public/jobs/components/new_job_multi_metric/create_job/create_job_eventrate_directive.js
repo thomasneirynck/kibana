@@ -31,7 +31,7 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
 
     let svgWidth = 0;
     const barChartHeight = 100;
-    const margin = { top: 0, right: 0, bottom: 30, left: 50 };
+    const margin = { top: 0, right: 0, bottom: 20, left: 50 };
     const svgHeight = barChartHeight + margin.top + margin.bottom;
     let vizWidth  = svgWidth  - margin.left - margin.right;
     const chartLimits = { max: 0, min: 0 };
