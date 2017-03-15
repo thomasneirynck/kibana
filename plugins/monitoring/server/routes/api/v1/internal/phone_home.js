@@ -1,7 +1,7 @@
 /*
  * This endpoint is ONLY for development and internal testing.
  */
-import handleError from '../../../lib/handle_error';
+import handleError from '../../../../lib/handle_error';
 
 export default function phoneHomeRoutes(server) {
   const { callWithRequest } = server.plugins.elasticsearch.getCluster('monitoring');
