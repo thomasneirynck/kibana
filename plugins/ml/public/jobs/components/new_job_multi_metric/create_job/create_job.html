@@ -28,218 +28,226 @@
     <div class="row">
       <div class="col-md-4">
         <div class="row form-controls">
-          <div class='form-section'>
-            <h4 >Fields</h4>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <!-- <label>Aggregation</label><i ml-info-icon="new_job_bucketspan"></i> -->
+          <h4 >Job settings</h4>
+          <div>
+            <div class='form-section'>
+              <h4 >Fields</h4>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <!-- <label>Aggregation</label><i ml-info-icon="new_job_bucketspan"></i> -->
 
-                  <div class='selection-list-container'>
-                    <div class="checkbox field-row" ng-repeat="field in ui.fields" >
-                      <label>
-                        <input type="checkbox"
-                          ng-checked="formConfig.fields[field.id] !== undefined"
-                          ng-click="toggleFields(field.id, field); formChange()"
-                          ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                          />{{field.id}}
-                      </label>
-                      <select
-                        ng-model="field.agg.type"
-                        ng-options="agg as agg.title for agg in ui.aggTypeOptions"
-                        ng-change="formChange()"
-                        ng-disabled="formConfig.fields[field.id] === undefined || jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                        class="form-control agg-type">
-                      </select>
+                    <div class='selection-list-container'>
+                      <div class="checkbox field-row" ng-repeat="field in ui.fields" >
+                        <label>
+                          <input type="checkbox"
+                            ng-checked="formConfig.fields[field.id] !== undefined"
+                            ng-click="toggleFields(field.id, field); formChange()"
+                            ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+                            />{{field.id}}
+                        </label>
+                        <select
+                          ng-model="field.agg.type"
+                          ng-options="agg as agg.title for agg in ui.aggTypeOptions"
+                          ng-change="formChange()"
+                          ng-disabled="formConfig.fields[field.id] === undefined || jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+                          class="form-control agg-type">
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-<!--               <div class="col-md-6">
-                <div class='help-text'>
-                  Select the metric fields and functions to be modelled for analysis.
+  <!--               <div class="col-md-6">
+                  <div class='help-text'>
+                    Select the metric fields and functions to be modelled for analysis.
+                  </div>
+
+                </div>
+   -->            </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label>Bucket span</label><i ml-info-icon="new_job_bucketspan" ></i>
+                    <!-- <select
+                      ng-model="formConfig.interval"
+                      ng-options="interval as interval.title for interval in ui.intervals"
+                      ng-change="intervalChange()"
+                      class="form-control">
+                    </select> -->
+                    <input
+                      ng-model="formConfig.bucketSpan"
+                      required
+                      placeholder={{formConfig-bucketSpan}}
+                      ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+                      ng-change="formChange()"
+                      ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
+                      class="form-control lowercase" />
+                    <div ng-hide="ui.bucketSpanValid" class="validation-error">Invalid interval format</div>
+                  </div>
                 </div>
 
+                <div class="col-md-6">
+                </div>
               </div>
- -->            </div>
-            <div class="row">
-              <div class="col-md-6">
+            </div>
+
+            <div class='form-section' >
+              <h4 >Split Data</h4>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <select
+                      ng-model="formConfig.splitField"
+                      ng-change="splitChange()"
+                      ng-disabled="!ui.formValid || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+                      class="form-control">
+                        <option value='--No split--'>--No split--</option>
+                        <option ng-repeat="field in ui.splitFields" value='{{field}}'>{{field}}</option>
+                    </select>
+                  </div>
+                </div>
+  <!--               <div class="col-md-6">
+                  <div class='help-text'>
+                    Select the field that will be used to partition the models for analysis.
+                    <br />For example, if analysing server performance metrics, you may wish to select your server_name as the split field.
+                    <br />The higher the unique count for this field, the more system resources will be required. Typical, the unique count for this field should be < 100,000.
+                  </div>
+                </div> -->
+              </div>
+            </div>
+
+            <div class='form-section' >
+              <h4 >Key Fields</h4>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <div class='selection-list-container'>
+                      <div class="checkbox field-row" ng-repeat="field in ui.splitFields" >
+                        <label>
+                          <input type="checkbox"
+                            ng-checked="formConfig.keyFields[field] !== undefined"
+                            ng-click="toggleKeyFields(field)"
+                            ng-disabled='formConfig.splitField===field || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED'
+                          />
+                          {{field}}
+                        </label>
+                      </div>
+                    </div>
+
+                  </div>
+                  <!--
+                  <button class="btn-success navbar-btn-link btn-load-vis"
+                    ng-click="loadVis()"
+                    ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED" >
+                    <i class="fa fa-play" ></i>
+                  </button>
+                  -->
+                </div>
+  <!--               <div class="col-md-6">
+                  <div class='help-text'>
+                    Select additional key fields that can be used to identify what has influenced the anomalous behavior.
+                    <br />For example, if analysing server performance metrics, you may wish to select region or server_role as key fields.
+                    <br />Results will be presented by key influencer fields.
+                  </div>
+                </div> -->
+              </div>
+            </div>
+
+            <div class='form-section' >
+              <h4 >Job Details</h4>
+              <div ng-show="ui.showJobInput && (jobState === JOB_STATE.NOT_STARTED || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING)">
                 <div class="form-group">
-                  <label>Bucket span</label><i ml-info-icon="new_job_bucketspan" ></i>
-                  <!-- <select
-                    ng-model="formConfig.interval"
-                    ng-options="interval as interval.title for interval in ui.intervals"
-                    ng-change="intervalChange()"
-                    class="form-control">
-                  </select> -->
+                  <label>Name</label><i ml-info-icon="new_job_id" ></i>
                   <input
-                    ng-model="formConfig.bucketSpan"
+                    ng-model="formConfig.jobId"
                     required
-                    placeholder={{formConfig-bucketSpan}}
+                    placeholder="Job ID"
+                    ng-change="changeJobIDCase()"
                     ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                    ng-change="formChange()"
-                    ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
                     class="form-control lowercase" />
-                  <div ng-hide="ui.bucketSpanValid" class="validation-error">Invalid interval format</div>
                 </div>
-              </div>
 
-              <div class="col-md-6">
-              </div>
-            </div>
-          </div>
-
-          <div class='form-section' >
-            <h4 >Split Data</h4>
-            <div class="row">
-              <div class="col-md-12">
                 <div class="form-group">
-                  <select
-                    ng-model="formConfig.splitField"
-                    ng-change="splitChange()"
-                    ng-disabled="!ui.formValid || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                    class="form-control">
-                      <option value='--No split--'>--No split--</option>
-                      <option ng-repeat="field in ui.splitFields" value='{{field}}'>{{field}}</option>
-                  </select>
+                  <label>Description</label><i ml-info-icon="new_job_id" ></i>
+                  <input
+                    ng-model="formConfig.description"
+                    placeholder="Job description"
+                    ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+                    class="form-control" />
                 </div>
-              </div>
-<!--               <div class="col-md-6">
-                <div class='help-text'>
-                  Select the field that will be used to partition the models for analysis.
-                  <br />For example, if analysing server performance metrics, you may wish to select your server_name as the split field.
-                  <br />The higher the unique count for this field, the more system resources will be required. Typical, the unique count for this field should be < 100,000.
-                </div>
-              </div> -->
-            </div>
-          </div>
 
-          <div class='form-section' >
-            <h4 >Key Fields</h4>
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <div class='selection-list-container'>
-                    <div class="checkbox field-row" ng-repeat="field in ui.splitFields" >
-                      <label>
-                        <input type="checkbox"
-                          ng-checked="formConfig.keyFields[field] !== undefined"
-                          ng-click="toggleKeyFields(field)"
-                          ng-disabled='formConfig.splitField===field || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED'
-                        />
-                        {{field}}
-                      </label>
-                    </div>
-                  </div>
-
-                </div>
-                <!--
-                <button class="btn-success navbar-btn-link btn-load-vis"
-                  ng-click="loadVis()"
-                  ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED" >
-                  <i class="fa fa-play" ></i>
+                <button
+                  aria-label="Create Job"
+                  ng-click="createJob()"
+                  type="button"
+                  ng-show="jobState === JOB_STATE.NOT_STARTED"
+                  ng-disabled="!ui.formValid"
+                  class="btn btn-primary">
+                    Create Job
                 </button>
-                -->
+
+                <div class='job-state-info' ng-show="jobState === JOB_STATE.RUNNING">Analysis running <i class='fa fa-spinner fa-spin'></i></div>
+                <div class='job-state-info' ng-show="jobState === JOB_STATE.STOPPING">Analysis stopping <i class='fa fa-spinner fa-spin'></i></div>
+
+                <button
+                  aria-label="Stop Job"
+                  ng-click="stopJob()"
+                  type="button"
+                  ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
+                  ng-disabled="jobState === JOB_STATE.STOPPING"
+                  class="btn btn-primary btn-danger">
+                    {{(jobState === JOB_STATE.STOPPING) ? 'Analysis stopping' : 'Stop analysis' }}
+                </button>
+
+                <button
+                  aria-label="Reset"
+                  ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
+                  ng-click="viewResults('explorer')"
+                  type="button"
+                  class="btn btn-primary">
+                    View Results
+                </button>
               </div>
-<!--               <div class="col-md-6">
-                <div class='help-text'>
-                  Select additional key fields that can be used to identify what has influenced the anomalous behavior.
-                  <br />For example, if analysing server performance metrics, you may wish to select region or server_role as key fields.
-                  <br />Results will be presented by key influencer fields.
-                </div>
-              </div> -->
-            </div>
-          </div>
+              <div ng-show="jobState === JOB_STATE.FINISHED">
+                <h3>Job {{formConfig.jobId }} created</h3>
 
-          <div class='form-section' >
-            <h4 >Job Details</h4>
-            <div ng-show="ui.showJobInput && (jobState === JOB_STATE.NOT_STARTED || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING)">
-              <div class="form-group">
-                <label>Name</label><i ml-info-icon="new_job_id" ></i>
-                <input
-                  ng-model="formConfig.jobId"
-                  required
-                  placeholder="Job ID"
-                  ng-change="changeJobIDCase()"
-                  ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                  class="form-control lowercase" />
+                <button
+                  aria-label="Reset"
+                  ng-click="resetJob()"
+                  type="button"
+                  class="btn btn-primary">
+                    Reset
+                </button>
+                <button
+                  aria-label="Reset"
+                  ng-click="viewResults('explorer')"
+                  type="button"
+                  class="btn btn-primary">
+                    View Results
+                </button>
               </div>
-
-              <div class="form-group">
-                <label>Description</label><i ml-info-icon="new_job_id" ></i>
-                <input
-                  ng-model="formConfig.description"
-                  placeholder="Job description"
-                  ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                  class="form-control" />
-              </div>
-
-              <button
-                aria-label="Create Job"
-                ng-click="createJob()"
-                type="button"
-                ng-show="jobState === JOB_STATE.NOT_STARTED"
-                ng-disabled="!ui.formValid"
-                class="btn btn-primary">
-                  Create Job
-              </button>
-
-              <div class='job-state-info' ng-show="jobState === JOB_STATE.RUNNING">Analysis running <i class='fa fa-spinner fa-spin'></i></div>
-              <div class='job-state-info' ng-show="jobState === JOB_STATE.STOPPING">Analysis stopping <i class='fa fa-spinner fa-spin'></i></div>
-
-              <button
-                aria-label="Stop Job"
-                ng-click="stopJob()"
-                type="button"
-                ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
-                ng-disabled="jobState === JOB_STATE.STOPPING"
-                class="btn btn-primary btn-danger">
-                  {{(jobState === JOB_STATE.STOPPING) ? 'Analysis stopping' : 'Stop analysis' }}
-              </button>
-
-              <button
-                aria-label="Reset"
-                ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
-                ng-click="viewResults('explorer')"
-                type="button"
-                class="btn btn-primary">
-                  View Results
-              </button>
-            </div>
-            <div ng-show="jobState === JOB_STATE.FINISHED">
-              <h3>Job {{formConfig.jobId }} created</h3>
-
-              <button
-                aria-label="Reset"
-                ng-click="resetJob()"
-                type="button"
-                class="btn btn-primary">
-                  Reset
-              </button>
-              <button
-                aria-label="Reset"
-                ng-click="viewResults('explorer')"
-                type="button"
-                class="btn btn-primary">
-                  View Results
-              </button>
             </div>
           </div>
         </div>
       </div>
-      <div class="col-md-8 charts-container">
-        <div class='chart-list-panel event-rate-container'>
-          <label>Document count</label>
-          <ml-multi-metric-job-event-rate-chart chart-data="chartData.job" ></ml-multi-metric-job-event-rate-chart>
-        </div>
-        <div class='chart-list-panel detector-container'>
-          <label ng-hide="ui.splitText === ''">{{ui.splitText}}</label>
-          <div class='card-front'>
-            <div class="card-title"></div>
-            <div ng-repeat='(name, chart) in chartData.detectors' class='chart'>
-              <label>{{formConfig.fields[name].agg.type.title}} {{name}}</label>
-              <ml-multi-metric-job-chart chart-data="chart"></ml-multi-metric-job-chart>
+      <div class="col-md-8">
+        <div class="row charts-container">
+          <h4>Results</h4>
+          <div>
+            <div class='chart-list-panel event-rate-container'>
+              <label>Document count</label>
+              <ml-multi-metric-job-event-rate-chart chart-data="chartData.job" ></ml-multi-metric-job-event-rate-chart>
+            </div>
+            <div class='chart-list-panel detector-container'>
+              <label ng-hide="ui.splitText === ''">{{ui.splitText}}</label>
+              <div class='card-front'>
+                <div class="card-title"></div>
+                <div ng-repeat='(name, chart) in chartData.detectors' class='chart'>
+                  <label>{{formConfig.fields[name].agg.type.title}} {{name}}</label>
+                  <ml-multi-metric-job-chart chart-data="chart"></ml-multi-metric-job-chart>
+                </div>
+              </div>
             </div>
           </div>
         </div>

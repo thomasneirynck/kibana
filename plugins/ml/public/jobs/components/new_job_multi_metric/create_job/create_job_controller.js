@@ -394,19 +394,16 @@ module
   };
 
   function drawCards(labels) {
-    const splitField = $scope.formConfig.splitField;
-
     const $frontCard = angular.element('.multi-metric-job-container .detector-container .card-front');
     $frontCard.addClass('card');
-    $frontCard.find('.card-title').text(splitField + ': ' + labels[0]);
+    $frontCard.find('.card-title').text(labels[0]);
     const w = $frontCard.width();
-    // const h = $frontCard.height();
 
     angular.element('.card-behind').remove();
 
     for (let i = 0; i < labels.length; i++) {
       let el = '<div class="card card-behind"><div class="card-title">';
-      el += splitField + ': ' + labels[i];
+      el += labels[i];
       el += '</div></div>';
 
       const $backCard = angular.element(el);
@@ -436,7 +433,7 @@ module
     function fadeCard() {
       if (i < cardsBehind.length) {
         cardsBehind[i].style.opacity = 1;
-        window.setTimeout(fadeCard , 40);
+        window.setTimeout(fadeCard , 60);
         i++;
       }
     }
@@ -671,6 +668,21 @@ module
     }
   }
 
+  // resize the spilt cards on page resize.
+  // when the job starts the 'Analysis running' label appearing can cause a scroll bar to appear
+  // which will cause the split cards to look odd
+  // TODO - all charts should resize correctly on page resize
+  function resize() {
+    if ($scope.formConfig.splitField !== '--No split--') {
+      let width = angular.element('.card-front').width();
+      const cardsBehind = angular.element('.card-behind');
+      for (let i = 0; i < cardsBehind.length; i++) {
+        cardsBehind[i].style.width = width + 'px';
+        width -= (5 - (i / 2)) * 2;
+      }
+    }
+  }
+
   mlESMappingService.getMappings().then(() => {
     initAgg();
     loadFields();
@@ -679,5 +691,13 @@ module
   });
 
   $scope.$listen(timefilter, 'fetch', $scope.loadVis);
+
+  angular.element(window).resize(() => {
+    resize();
+  });
+
+  $scope.$on('$destroy', () => {
+    angular.element(window).off('resize');
+  });
 
 });

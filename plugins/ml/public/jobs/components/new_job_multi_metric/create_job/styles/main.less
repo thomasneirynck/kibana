@@ -1,3 +1,5 @@
+@import (reference) "~ui/styles/variables";
+
 .multi-metric-job-container {
   width: 100%;
   margin-right: auto;
@@ -10,7 +12,39 @@
     margin-bottom: 10px;
   }
 
+  .form-controls, .charts-container {
+    margin: 0px;
+    margin-right: -10px;
+
+    & > div {
+      border: 1px solid #E4E4E3;
+      border-top: 0px;
+    }
+
+    & > h4 {
+      margin-top: 0px;
+      margin-bottom: 0px;
+      padding: 10px;
+      background-color: @kibanaBlue3;
+      color: #FFFFFF;
+    }
+
+    .btn-load-vis {
+      border-radius: 4px !important;
+      margin-top: -2px;
+    }
+  }
+   .charts-container {
+      margin-left: -10px;
+   }
+
   .form-section {
+    margin: 0px 0px 10px 0px;
+    border-bottom: 1px solid #E4E4E3;
+    padding: 10px;
+    border-radius: 3px;
+    overflow: hidden;
+
     & > h4 {
       margin-top: 0px;
     }
@@ -21,15 +55,6 @@
       border-radius: 3px;
       font-size: 12px;
     }
-
-    margin: 10px;
-    margin-right: 0px;
-    border: 2px solid #ecf0f1;
-    padding: 10px;
-    background-color: #FBFBFB;
-    border-radius: 3px;
-    overflow: hidden;
-
     .selection-list-container {
       max-height: 250px;
       overflow: auto;
@@ -59,6 +84,11 @@
     }
   }
 
+  .form-section:last-of-type {
+      margin: 0px;
+      border-bottom: 0px solid #E4E4E3;
+    }
+
   .form-section-collapsed {
     height: 46px;
   }
@@ -67,24 +97,19 @@
   .charts-container {
     transition: transform 0.2s ;
     .chart-list-panel {
-      // padding: 5px;
-
-
-      margin: 10px 0px;
-      border: 2px solid #ecf0f1;
+      margin: 0px;
       padding: 10px;
-      background-color: #FBFBFB;
-      border-radius: 3px;
+      // border-bottom: 1px solid #E4E4E3;
       overflow: hidden;
 
     }
+
     .card {
       background-color: #FFFFFF;
       border-radius: 3px;
       border: 1px solid #CCCCCC;
       margin: 54px 0px 0px 0px;
       z-index: 10;
-      // padding: 0px 5px;
       box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 
       .card-title {
@@ -114,21 +139,10 @@
     }
   }
 
-
-
-  .form-controls {
-    .btn-load-vis {
-      border-radius: 4px !important;
-      margin-top: -2px;
-    }
-  }
-
   div.validation-error {
     color: #fe5050;
   }
-
 }
-
 
 ml-multi-metric-job-chart, ml-multi-metric-job-event-rate-chart {
   svg {
@@ -230,4 +244,10 @@ ml-multi-metric-job-chart, ml-multi-metric-job-event-rate-chart {
     transition: none;
     background-color: #32a7c2;
   }
+}
+
+// hide the default es loading indicator bar as it can't be switched off
+// for standard es searches using the http header.
+.loadingIndicator__bar {
+  display: none;
 }

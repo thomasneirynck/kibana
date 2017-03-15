@@ -142,3 +142,9 @@ ml-single-metric-job-chart {
     background-color: #32a7c2;
   }
 }
+
+// hide the default es loading indicator bar as it can't be switched off
+// for standard es searches using the http header.
+.loadingIndicator__bar {
+  display: none;
+}
