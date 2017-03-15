@@ -176,7 +176,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
           _.each(filteredRecords, function (record) {
             const detectorIndex = record.detector_index;
             const jobId = record.job_id;
-            let detector = record.functionDescription;
+            let detector = record.function_description;
             if ((_.has(mlJobService.detectorsByJob, jobId)) && (detectorIndex < mlJobService.detectorsByJob[jobId].length)) {
               detector = mlJobService.detectorsByJob[jobId][detectorIndex].detector_description;
             }

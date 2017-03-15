@@ -28,9 +28,11 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   let datafeedIds = {};
   this.currentJob = undefined;
   this.jobs = [];
+
+  // Provide ready access to widely used basic job properties.
+  // Note these get populated on a call to either loadJobs or getBasicJobInfo.
   this.basicJobs = {};
   this.jobDescriptions = {};
-  this.detectorDescriptions = {};
   this.detectorsByJob = {};
   this.customUrlsByJob = {};
 
@@ -115,6 +117,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                   }
                 }
               }
+              processBasicJobInfo(this, jobs);
               this.jobs = jobs;
               deferred.resolve({jobs: this.jobs});
             });
@@ -615,78 +618,19 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
   // use elasticsearch to load basic information on jobs, as used by various result
   // dashboards in the Ml plugin. Returned response contains a jobs property,
-  // which is an array of objects containing id, description, bucketSpan and detectorDescriptions,
-  // plus a customUrls key if custom URLs have been configured for the job.
+  // which is an array of objects containing id, description, bucketSpan, detectors
+  // and detectorDescriptions properties, plus a customUrls key if custom URLs
+  // have been configured for the job.
   this.getBasicJobInfo = function () {
-    const that = this;
     const deferred = $q.defer();
     const obj = {success: true, jobs: []};
 
     ml.jobs()
-      .then(function (resp) {
-
+      .then((resp) => {
         if (resp.jobs && resp.jobs.length > 0) {
-          let detectorDescriptionsByJob = {};
-          const detectorsByJob = {};
-          const customUrlsByJob = {};
-
-          _.each(resp.jobs, (jobObj) => {
-            const analysisConfig = jobObj.analysis_config;
-            const job = {
-              id:jobObj.job_id,
-              bucketSpan: +analysisConfig.bucket_span
-            };
-
-            if (_.has(jobObj, 'description') && /^\s*$/.test(jobObj.description) === false) {
-              job.description = jobObj.description;
-            } else {
-              // Just use the id as the description.
-              job.description = jobObj.job_id;
-            }
-
-            job.detectorDescriptions = [];
-            job.detectors = [];
-            const detectors = _.get(analysisConfig, 'detectors', []);
-            _.each(detectors, (detector)=> {
-              if (_.has(detector, 'detector_description')) {
-                job.detectorDescriptions.push(detector.detector_description);
-                job.detectors.push(detector);
-              }
-            });
-
-
-            if (_.has(jobObj, 'custom_settings.custom_urls')) {
-              job.customUrls = [];
-              _.each(jobObj.custom_settings.custom_urls, (url) => {
-                if (_.has(url, 'url_name') && _.has(url, 'url_value')) {
-                  job.customUrls.push(url);
-                }
-              });
-              // Only add an entry for a job if customUrls have been defined.
-              if (job.customUrls.length > 0) {
-                customUrlsByJob[job.id] = job.customUrls;
-              }
-            }
-
-            that.jobDescriptions[job.id] = job.description;
-            detectorDescriptionsByJob[job.id] = job.detectorDescriptions;
-            detectorsByJob[job.id] = job.detectors;
-            that.basicJobs[job.id] = job;
-            obj.jobs.push(job);
-          });
-
-          detectorDescriptionsByJob = anomalyUtils.labelDuplicateDetectorDescriptions(detectorDescriptionsByJob);
-          _.each(detectorsByJob, (dtrs, jobId) => {
-            _.each(dtrs, (dtr, i) => {
-              dtr.detector_description = detectorDescriptionsByJob[jobId][i];
-            });
-          });
-          that.detectorsByJob = detectorsByJob;
-          that.customUrlsByJob = customUrlsByJob;
+          obj.jobs = processBasicJobInfo(this, resp.jobs);
         }
-
         deferred.resolve(obj);
-
       })
       .catch((resp) => {
         console.log('getBasicJobInfo error getting list of jobs:', resp);
@@ -1262,5 +1206,73 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     }
     return datafeedId;
   };
+
+  function processBasicJobInfo(mlJobService, jobsList) {
+    // Process the list of job data obtained from the jobs endpoint to return
+    // an array of objects containing the basic information (id, description, bucketSpan, detectors
+    // and detectorDescriptions properties, plus a customUrls key if custom URLs
+    // have been configured for the job) used by various result dashboards in the ml plugin.
+    // The key information is stored in the mlJobService object for quick access.
+    const processedJobsList = [];
+    let detectorDescriptionsByJob = {};
+    const detectorsByJob = {};
+    const customUrlsByJob = {};
+
+    _.each(jobsList, (jobObj) => {
+      const analysisConfig = jobObj.analysis_config;
+      const job = {
+        id:jobObj.job_id,
+        bucketSpan: +analysisConfig.bucket_span
+      };
+
+      if (_.has(jobObj, 'description') && /^\s*$/.test(jobObj.description) === false) {
+        job.description = jobObj.description;
+      } else {
+        // Just use the id as the description.
+        job.description = jobObj.job_id;
+      }
+
+      job.detectorDescriptions = [];
+      job.detectors = [];
+      const detectors = _.get(analysisConfig, 'detectors', []);
+      _.each(detectors, (detector)=> {
+        if (_.has(detector, 'detector_description')) {
+          job.detectorDescriptions.push(detector.detector_description);
+          job.detectors.push(detector);
+        }
+      });
+
+
+      if (_.has(jobObj, 'custom_settings.custom_urls')) {
+        job.customUrls = [];
+        _.each(jobObj.custom_settings.custom_urls, (url) => {
+          if (_.has(url, 'url_name') && _.has(url, 'url_value')) {
+            job.customUrls.push(url);
+          }
+        });
+        // Only add an entry for a job if customUrls have been defined.
+        if (job.customUrls.length > 0) {
+          customUrlsByJob[job.id] = job.customUrls;
+        }
+      }
+
+      mlJobService.jobDescriptions[job.id] = job.description;
+      detectorDescriptionsByJob[job.id] = job.detectorDescriptions;
+      detectorsByJob[job.id] = job.detectors;
+      mlJobService.basicJobs[job.id] = job;
+      processedJobsList.push(job);
+    });
+
+    detectorDescriptionsByJob = anomalyUtils.labelDuplicateDetectorDescriptions(detectorDescriptionsByJob);
+    _.each(detectorsByJob, (dtrs, jobId) => {
+      _.each(dtrs, (dtr, i) => {
+        dtr.detector_description = detectorDescriptionsByJob[jobId][i];
+      });
+    });
+    mlJobService.detectorsByJob = detectorsByJob;
+    mlJobService.customUrlsByJob = customUrlsByJob;
+
+    return processedJobsList;
+  }
 
 });
