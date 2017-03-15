@@ -18,6 +18,8 @@
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
+import { addSystemApiHeader } from 'ui/system_api';
+
 module.service('prlHttpService', function ($http, $q) {
 
   // request function returns a promise
@@ -26,13 +28,18 @@ module.service('prlHttpService', function ($http, $q) {
     if(options && options.url) {
       let url = '';
       url = url + (options.url || '');
+      const headers = addSystemApiHeader({});
+      const allHeaders = (options.headers === undefined) ?
+        headers :
+        Object.assign(options.headers, headers);
+
 
       const deferred = $q.defer();
 
       $http({
         url: url,
         method: (options.method || 'GET'),
-        headers: (options.headers || {}),
+        headers: (allHeaders),
         params: (options.params || {}),
         data: (options.data || null)
       })
