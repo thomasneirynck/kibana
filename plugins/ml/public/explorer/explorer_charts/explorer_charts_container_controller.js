@@ -86,8 +86,9 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
         detectorsForJob[detectorIndex] = {};
       }
 
-      const firstFieldName = record.partition_field_name || record.by_field_name;
-      const firstFieldValue = record.partition_field_value || record.by_field_value;
+      // TODO - work out how best to display results from detectors with just an over field.
+      const firstFieldName = record.partition_field_name || record.by_field_name || record.over_field_name;
+      const firstFieldValue = record.partition_field_value || record.by_field_value || record.over_field_value;
       if (firstFieldName !== undefined) {
         const groupsForDetector = detectorsForJob[detectorIndex];
 
@@ -144,7 +145,18 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
             }
           }
         }
-
+      } else {
+        // Detector with no partition or by field.
+        const dataForDetector = detectorsForJob[detectorIndex];
+        if (!_.has(dataForDetector, 'maxScore')) {
+          dataForDetector.maxScore = record.normalized_probability;
+          dataForDetector.maxScoreRecord = record;
+        } else {
+          if (record.normalized_probability > dataForDetector.maxScore) {
+            dataForDetector.maxScore = record.normalized_probability;
+            dataForDetector.maxScoreRecord = record;
+          }
+        }
       }
 
     });
@@ -154,21 +166,25 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     // Convert to an array of the records with the highesy normalized_probability per unique series.
     _.each(aggregatedData, (detectorsForJob) => {
       _.each(detectorsForJob, (groupsForDetector) => {
-        _.each(groupsForDetector, (valuesForGroup) => {
-          _.each(valuesForGroup, (dataForGroupValue) => {
-            if (_.has(dataForGroupValue, 'maxScoreRecord')) {
-              recordsForSeries.push(dataForGroupValue.maxScoreRecord);
-            } else {
-              // Second level of aggregation for partition and by/over.
-              _.each(dataForGroupValue, (splitsForGroup) => {
-                _.each(splitsForGroup, (dataForSplitValue) => {
-                  recordsForSeries.push(dataForSplitValue.maxScoreRecord);
+        if (_.has(groupsForDetector, 'maxScoreRecord')) {
+          // Detector with no partition / by field.
+          recordsForSeries.push(groupsForDetector.maxScoreRecord);
+        } else {
+          _.each(groupsForDetector, (valuesForGroup) => {
+            _.each(valuesForGroup, (dataForGroupValue) => {
+              if (_.has(dataForGroupValue, 'maxScoreRecord')) {
+                recordsForSeries.push(dataForGroupValue.maxScoreRecord);
+              } else {
+                // Second level of aggregation for partition and by/over.
+                _.each(dataForGroupValue, (splitsForGroup) => {
+                  _.each(splitsForGroup, (dataForSplitValue) => {
+                    recordsForSeries.push(dataForSplitValue.maxScoreRecord);
+                  });
                 });
-              });
-            }
-
+              }
+            });
           });
-        });
+        }
       });
     });
     recordsForSeries = (_.sortBy(recordsForSeries, 'normalized_probability')).reverse();
@@ -198,7 +214,9 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
         config.detectorLabel += config.fieldName;
       }
 
-      if (record.function_description === 'count' && job.analysis_config.summary_count_field_name !== undefined) {
+      // For count detectors using summary_count_field, plot sum(summary_count_field_name)
+      if (record.function_description === 'count' && job.analysis_config.summary_count_field_name !== undefined
+        && job.analysis_config.summary_count_field_name !== 'doc_count') {
         config.metricFunction = 'sum';
         config.metricFieldName = job.analysis_config.summary_count_field_name;
       }
