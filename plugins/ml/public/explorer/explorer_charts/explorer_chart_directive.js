@@ -384,8 +384,18 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
 
         if (chartPoint !== undefined) {
           chartPoint.anomalyScore = record.normalized_probability;
-          chartPoint.actual = record.actual;
-          chartPoint.typical = record.typical;
+
+          if (_.has(record, 'actual')) {
+            chartPoint.actual = record.actual;
+            chartPoint.typical = record.typical;
+          } else {
+            // If only a single cause, copy value to the top level.
+            if (_.get(record, 'causes', []).length === 1) {
+              const cause = _.first(record.causes);
+              chartPoint.actual = cause.actual;
+              chartPoint.typical = cause.typical;
+            }
+          }
         }
 
 
