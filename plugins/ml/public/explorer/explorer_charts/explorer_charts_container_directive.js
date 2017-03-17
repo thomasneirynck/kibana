@@ -25,10 +25,14 @@ const module = uiModules.get('apps/ml');
 
 module.directive('mlExplorerChartsContainer', function () {
 
-  function link() {
+  function link(scope, element) {
     // Create a div for the tooltip.
     $('.ml-explorer-charts-tooltip').remove();
     $('body').append('<div class="ml-explorer-tooltip ml-explorer-charts-tooltip" style="opacity:0">');
+
+    element.on('$destroy', function () {
+      scope.$destroy();
+    });
   }
 
   return {
