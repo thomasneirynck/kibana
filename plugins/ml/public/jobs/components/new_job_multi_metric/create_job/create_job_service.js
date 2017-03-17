@@ -17,6 +17,8 @@ import _ from 'lodash';
 import angular from 'angular';
 import 'ui/timefilter';
 
+import parseInterval from 'ui/utils/parse_interval';
+
 import jobUtils from 'plugins/ml/util/job_utils';
 
 import uiModules from 'ui/modules';
@@ -184,8 +186,6 @@ module.service('mlMultiMetricJobService', function (
   }
 
   function getJobFromConfig(formConfig) {
-    const bucketSpan = formConfig.jobInterval.getInterval().asSeconds();
-
     const mappingTypes = formConfig.mappingTypes;
 
     const job = mlJobService.getBlankJob();
@@ -217,18 +217,21 @@ module.service('mlMultiMetricJobService', function (
       query = formConfig.query;
     }
 
-    job.analysis_config.bucket_span = bucketSpan;
+
+    job.analysis_config.bucket_span = formConfig.bucketSpan;
 
     delete job.data_description.field_delimiter;
     delete job.data_description.quote_character;
     delete job.data_description.time_format;
     delete job.data_description.format;
 
+    const bucketSpanSeconds = parseInterval(formConfig.bucketSpan).asSeconds();
+
     job.datafeed_config = {
       query: query,
       types: mappingTypes,
-      query_delay: 60,
-      frequency: jobUtils.calculateDatafeedFrequencyDefault(bucketSpan),
+      query_delay: '60s',
+      frequency: jobUtils.calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
       indexes: [formConfig.indexPattern.id],
       scroll_size: 1000
     };
@@ -288,7 +291,7 @@ module.service('mlMultiMetricJobService', function (
       [formConfig.jobId],
       formConfig.start,
       formConfig.end,
-      formConfig.chartInterval.getInterval().asSeconds() + 's'
+      formConfig.resultsIntervalSeconds + 's'
     )
     .then(data => {
       let time = formConfig.start;
@@ -304,8 +307,7 @@ module.service('mlMultiMetricJobService', function (
         });
       });
 
-      const bs = formConfig.chartInterval.getInterval().asSeconds();
-      const pcnt = ((time -  formConfig.start + bs) / (formConfig.end - formConfig.start) * 100);
+      const pcnt = ((time -  formConfig.start + formConfig.resultsIntervalSeconds) / (formConfig.end - formConfig.start) * 100);
 
       this.chartData.percentComplete = Math.round(pcnt);
       this.chartData.job.percentComplete = this.chartData.percentComplete;
@@ -327,7 +329,7 @@ module.service('mlMultiMetricJobService', function (
       [formConfig.jobId],
       formConfig.start,
       formConfig.end,
-      formConfig.chartInterval.getInterval().asSeconds() + 's',
+      formConfig.resultsIntervalSeconds + 's',
       {
         name: formConfig.splitField,
         value: formConfig.firstSplitFieldValue

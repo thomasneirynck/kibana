@@ -15,6 +15,9 @@
 
 import _ from 'lodash';
 import angular from 'angular';
+
+import parseInterval from 'ui/utils/parse_interval';
+
 import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 import 'plugins/ml/services/info_service';
 import 'plugins/ml/messagebar';
@@ -61,7 +64,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       job_id: '',
       description: '',
       analysis_config: {
-        bucket_span: 300,
+        bucket_span: '5m',
         influencers:[],
         detectors :[]
       },
@@ -618,7 +621,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
   // use elasticsearch to load basic information on jobs, as used by various result
   // dashboards in the Ml plugin. Returned response contains a jobs property,
-  // which is an array of objects containing id, description, bucketSpan, detectors
+  // which is an array of objects containing id, description, bucketSpanSeconds, detectors
   // and detectorDescriptions properties, plus a customUrls key if custom URLs
   // have been configured for the job.
   this.getBasicJobInfo = function () {
@@ -1220,9 +1223,11 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
     _.each(jobsList, (jobObj) => {
       const analysisConfig = jobObj.analysis_config;
+      const bucketSpan = parseInterval(analysisConfig.bucket_span);
+
       const job = {
         id:jobObj.job_id,
-        bucketSpan: +analysisConfig.bucket_span
+        bucketSpanSeconds: bucketSpan.asSeconds()
       };
 
       if (_.has(jobObj, 'description') && /^\s*$/.test(jobObj.description) === false) {

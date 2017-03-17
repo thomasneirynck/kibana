@@ -18,6 +18,7 @@ import 'ui/courier';
 
 import 'plugins/kibana/visualize/styles/main.less';
 import AggTypesIndexProvider from 'ui/agg_types/index';
+import parseInterval from 'ui/utils/parse_interval';
 
 import dateMath from '@elastic/datemath';
 import moment from 'moment';
@@ -177,8 +178,8 @@ module
     field: null,
     fields: {},
     bucketSpan: '5m',
-    jobInterval: new MlTimeBuckets(),
     chartInterval: undefined,
+    resultsIntervalSeconds: undefined,
     start: 0,
     end: 0,
     timeField: indexPattern.timeFieldName,
@@ -233,9 +234,8 @@ module
     $scope.formConfig.start = dateMath.parse(timefilter.time.from).unix() * 1000;
     $scope.formConfig.end = dateMath.parse(timefilter.time.to).unix() * 1000;
     $scope.formConfig.format = 'epoch_millis';
-    try {
-      $scope.formConfig.jobInterval.setInterval($scope.formConfig.bucketSpan);
-    } catch (e) {
+
+    if(parseInterval($scope.formConfig.bucketSpan) === null) {
       $scope.ui.bucketSpanValid = false;
     }
 
@@ -257,10 +257,10 @@ module
   // this only really affects small jobs when using sum
   function adjustIntervalDisplayed(interval) {
     let makeTheSame = false;
-    const secs = interval.getInterval().asSeconds();
-    const bucketSpan = $scope.formConfig.jobInterval.getInterval().asSeconds();
+    const intervalSeconds = interval.getInterval().asSeconds();
+    const bucketSpan = parseInterval($scope.formConfig.bucketSpan);
 
-    if (bucketSpan > secs) {
+    if (bucketSpan.asSeconds() > intervalSeconds) {
       makeTheSame = true;
     }
 
@@ -275,7 +275,7 @@ module
     }
 
     if (makeTheSame) {
-      interval.setInterval(bucketSpan + 's');
+      interval.setInterval(bucketSpan);
     }
   }
 
@@ -350,10 +350,7 @@ module
 
   $scope.ui.isFormValid = function () {
     if ($scope.formConfig.agg.type === undefined ||
-        // $scope.formConfig.field === undefined ||
         $scope.formConfig.timeField === undefined ||
-        $scope.formConfig.jobInterval === undefined ||
-        /*$scope.ui.bucketSpanValid === false*/
         Object.keys($scope.formConfig.fields).length === 0) {
 
       $scope.ui.formValid = false;
@@ -399,12 +396,25 @@ module
     $frontCard.find('.card-title').text(labels[0]);
     const w = $frontCard.width();
 
+    let marginTop = (labels.length > 1) ? 54 : 0;
+    $frontCard.css('margin-top', marginTop);
+
+    let backCardTitle = '';
+    if (labels.length === 2) {
+      // create a dummy label if there are only 2 cards, as the space will be visible
+      backCardTitle = $scope.formConfig.fields[Object.keys($scope.formConfig.fields)[0]].agg.type.title;
+      backCardTitle += ' ';
+      backCardTitle += Object.keys($scope.formConfig.fields)[0];
+    }
+
     angular.element('.card-behind').remove();
 
     for (let i = 0; i < labels.length; i++) {
       let el = '<div class="card card-behind"><div class="card-title">';
       el += labels[i];
-      el += '</div></div>';
+      el += '</div><label>';
+      el += backCardTitle;
+      el += '</label></div>';
 
       const $backCard = angular.element(el);
       $backCard.css('width', w);
@@ -416,7 +426,6 @@ module
     }
 
     const cardsBehind = angular.element('.card-behind');
-    let marginTop = 54;
     let marginLeft = 0;
     let backWidth = w;
 
@@ -501,6 +510,15 @@ module
             $scope.jobState = JOB_STATE.RUNNING;
             refreshCounter = 0;
             refreshInterval = REFRESH_INTERVAL_MS;
+
+            // create the interval size for querying results.
+            // it should not be smaller than the bucket_span
+            $scope.formConfig.resultsIntervalSeconds = $scope.formConfig.chartInterval.getInterval().asSeconds();
+            const bucketSpanSeconds = parseInterval($scope.formConfig.bucketSpan).asSeconds();
+            if ($scope.formConfig.resultsIntervalSeconds < bucketSpanSeconds) {
+              $scope.formConfig.resultsIntervalSeconds = bucketSpanSeconds;
+            }
+
             loadCharts();
           })
           .catch((resp) => {

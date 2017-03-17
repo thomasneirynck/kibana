@@ -29,6 +29,7 @@ import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/results_service';
 
 import FilterBarQueryFilterProvider from 'ui/filter_bar/query_filter';
+import parseInterval from 'ui/utils/parse_interval';
 
 import uiRoutes from 'ui/routes';
 import checkLicense from 'plugins/ml/license/check_license';
@@ -97,7 +98,8 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
 
         $scope.jobs = [];
         _.each(resp.jobs, (job) => {
-          $scope.jobs.push({ id:job.job_id, selected: false, bucketSpan: +job.analysis_config.bucket_span });
+          const bucketSpan = parseInterval(job.analysis_config.bucket_span);
+          $scope.jobs.push({ id:job.job_id, selected: false, bucketSpanSeconds: bucketSpan.asSeconds() });
         });
 
         $scope.setSelectedJobs(selectedJobIds);
@@ -463,9 +465,9 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     }
 
     const selectedJobs = _.filter($scope.jobs, job => job.selected);
-    const maxBucketSpan = _.reduce(selectedJobs, (memo, job) => Math.max(memo, job.bucketSpan) , 0);
-    if (maxBucketSpan > intervalSeconds) {
-      buckets.setInterval(maxBucketSpan + 's');
+    const maxBucketSpanSeconds = _.reduce(selectedJobs, (memo, job) => Math.max(memo, job.bucketSpanSeconds) , 0);
+    if (maxBucketSpanSeconds > intervalSeconds) {
+      buckets.setInterval(maxBucketSpanSeconds + 's');
       buckets.setBounds(bounds);
     }
 

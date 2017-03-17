@@ -13,15 +13,15 @@
  * strictly prohibited.
  */
 
-// work out the default frequency based on the bucketSpan
-function calculateDatafeedFrequencyDefault(bucketSpan) {
+// work out the default frequency based on the bucket_span in seconds
+function calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) {
 
   let freq = 3600;
-  if (bucketSpan <= 120) {
+  if (bucketSpanSeconds <= 120) {
     freq = 60;
-  } else if (bucketSpan <= 1200) {
-    freq = Math.floor(bucketSpan / 2);
-  } else if (bucketSpan <= 43200) {
+  } else if (bucketSpanSeconds <= 1200) {
+    freq = Math.floor(bucketSpanSeconds / 2);
+  } else if (bucketSpanSeconds <= 43200) {
     freq = 600;
   }
 
@@ -29,5 +29,5 @@ function calculateDatafeedFrequencyDefault(bucketSpan) {
 }
 
 export default {
-  calculateDatafeedFrequencyDefault: calculateDatafeedFrequencyDefault
+  calculateDatafeedFrequencyDefaultSeconds: calculateDatafeedFrequencyDefaultSeconds
 };

@@ -23,6 +23,8 @@
 import _ from 'lodash';
 import $ from 'jquery';
 
+import parseInterval from 'ui/utils/parse_interval';
+
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 import {aggregationTypeTransform} from 'plugins/ml/util/anomaly_utils';
@@ -198,12 +200,13 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
 
     _.each(anomalyRecords, (record) => {
       const job = _.find(mlJobService.jobs, { 'job_id': record.job_id });
+      const bucketSpan = parseInterval(job.analysis_config.bucket_span);
       const config = {
         jobId: record.job_id,
         function: record.function_description,
         metricFunction: aggregationTypeTransform.toES(record.function_description),
-        jobBucketSpan: job.analysis_config.bucket_span,
-        interval: job.analysis_config.bucket_span + 's'
+        bucketSpanSeconds: bucketSpan.asSeconds(),
+        interval: job.analysis_config.bucket_span
       };
 
       config.detectorLabel = record.function;
@@ -253,13 +256,13 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
   function calculateChartRange(midpointMs, chartWidth) {
     // Calculate the time range for the charts.
     // Fit in as many points in the available container width plotted at the job bucket span.
-    const maxBucketSpan = Math.max.apply(null, _.pluck($scope.seriesToPlot, 'jobBucketSpan'));
+    const maxBucketSpanSeconds = Math.max.apply(null, _.pluck($scope.seriesToPlot, 'bucketSpanSeconds'));
 
     //const chartWidth = getChartContainerWidth();
     const pointSpacing = 10;
     const numPoints = chartWidth / pointSpacing;
 
-    return {min: midpointMs - (numPoints * maxBucketSpan * 1000), max: midpointMs + (numPoints * maxBucketSpan * 1000)};
+    return {min: midpointMs - (numPoints * maxBucketSpanSeconds * 1000), max: midpointMs + (numPoints * maxBucketSpanSeconds * 1000)};
   }
 
 });

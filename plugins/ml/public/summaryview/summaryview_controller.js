@@ -97,7 +97,7 @@ module.controller('MlSummaryViewController', function (
 
         $scope.jobs = [];
         _.each(resp.jobs, (job) => {
-          $scope.jobs.push({id:job.id, selected: false, bucketSpan: job.bucketSpan});
+          $scope.jobs.push({id:job.id, selected: false, bucketSpanSeconds: job.bucketSpanSeconds});
         });
 
         $scope.setSelectedJobs(selectedJobIds);
@@ -328,9 +328,9 @@ module.controller('MlSummaryViewController', function (
     }
 
     const selectedJobs = _.filter($scope.jobs, job => job.selected);
-    const maxBucketSpan = _.reduce(selectedJobs, (memo, job) => Math.max(memo, job.bucketSpan) , 0);
-    if (maxBucketSpan > intervalSeconds) {
-      buckets.setInterval(maxBucketSpan + 's');
+    const maxBucketSpanSeconds = _.reduce(selectedJobs, (memo, job) => Math.max(memo, job.bucketSpanSeconds) , 0);
+    if (maxBucketSpanSeconds > intervalSeconds) {
+      buckets.setInterval(maxBucketSpanSeconds + 's');
       buckets.setBounds(bounds);
     }
 

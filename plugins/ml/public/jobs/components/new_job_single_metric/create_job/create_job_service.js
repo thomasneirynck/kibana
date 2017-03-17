@@ -17,6 +17,8 @@ import _ from 'lodash';
 import angular from 'angular';
 import 'ui/timefilter';
 
+import parseInterval from 'ui/utils/parse_interval';
+
 import jobUtils from 'plugins/ml/util/job_utils';
 
 import uiModules from 'ui/modules';
@@ -92,9 +94,11 @@ module.service('mlSingleMetricJobService', function (
       formConfig.agg.type.mlName === 'high_count' ||
       formConfig.agg.type.mlName === 'low_count' ||
       formConfig.agg.type.mlName === 'distinct_count')) {
-      const chartInterval = formConfig.chartInterval.getInterval().asSeconds();
-      const jobInterval = formConfig.jobInterval.getInterval().asSeconds();
-      scale =  chartInterval / jobInterval;
+      const chartIntervalSeconds = formConfig.chartInterval.getInterval().asSeconds();
+      const bucketSpan = parseInterval(formConfig.bucketSpan);
+      if (bucketSpan !== null) {
+        scale =  chartIntervalSeconds / bucketSpan.asSeconds();
+      }
     }
 
     const lineData = [];
@@ -177,8 +181,6 @@ module.service('mlSingleMetricJobService', function (
   }
 
   function getJobFromConfig(formConfig) {
-    const bucketSpan = formConfig.jobInterval.getInterval().asSeconds();
-
     const mappingTypes = formConfig.mappingTypes;
 
     const job = mlJobService.getBlankJob();
@@ -199,18 +201,20 @@ module.service('mlSingleMetricJobService', function (
       dtr.field_name = formConfig.field.displayName;
     }
     job.analysis_config.detectors.push(dtr);
-    job.analysis_config.bucket_span = bucketSpan;
+    job.analysis_config.bucket_span = formConfig.bucketSpan;
 
     delete job.data_description.field_delimiter;
     delete job.data_description.quote_character;
     delete job.data_description.time_format;
     delete job.data_description.format;
 
+    const bucketSpanSeconds = parseInterval(formConfig.bucketSpan).asSeconds();
+
     job.datafeed_config = {
       query: query,
       types: mappingTypes,
-      query_delay: 60,
-      frequency: jobUtils.calculateDatafeedFrequencyDefault(bucketSpan),
+      query_delay: '60s',
+      frequency: jobUtils.calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
       indexes: [formConfig.indexPattern.id],
       scroll_size: 1000
     };
@@ -225,7 +229,7 @@ module.service('mlSingleMetricJobService', function (
     // Use the original es agg type rather than the ML version
     // e.g. count rather than high_count
     const aggType = formConfig.agg.type.name;
-    const interval = bucketSpan * 1000;
+    const interval = bucketSpanSeconds * 1000;
 
     switch (aggType) {
       case 'count':
@@ -359,7 +363,7 @@ module.service('mlSingleMetricJobService', function (
       [formConfig.jobId],
       start,
       formConfig.end,
-      formConfig.chartInterval.getInterval().asSeconds() + 's',
+      formConfig.resultsIntervalSeconds + 's',
       formConfig.agg.type.mlDebugAgg
     )
     .then(data => {
@@ -368,8 +372,7 @@ module.service('mlSingleMetricJobService', function (
       const lastBucket = this.chartData.model[this.chartData.model.length - 1];
       const time = (lastBucket !== undefined) ? lastBucket.time : formConfig.start;
 
-      const bs = formConfig.chartInterval.getInterval().asSeconds();
-      const pcnt = ((time -  formConfig.start + bs) / (formConfig.end - formConfig.start) * 100);
+      const pcnt = ((time -  formConfig.start + formConfig.resultsIntervalSeconds) / (formConfig.end - formConfig.start) * 100);
       this.chartData.percentComplete = Math.round(pcnt);
 
       deferred.resolve(this.chartData);
@@ -389,7 +392,7 @@ module.service('mlSingleMetricJobService', function (
       [formConfig.jobId],
       formConfig.start,
       formConfig.end,
-      formConfig.chartInterval.getInterval().asSeconds() + 's'
+      formConfig.resultsIntervalSeconds + 's'
     )
     .then(data => {
       this.chartData.swimlane = processSwimlaneResults(data.results);

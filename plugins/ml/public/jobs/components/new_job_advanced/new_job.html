@@ -159,12 +159,15 @@
 
             <div class="form-group">
               <label>bucket_span</label><i ml-info-icon="new_job_bucketspan" />
-              <select
+              <input
+                type="text"
                 ng-model="job.analysis_config.bucket_span"
-                ng-options="bs.value as bs.title for bs in ui.bucketSpanValues"
-                ng-change="calculateDatafeedFrequencyDefault()"
-                class="form-control">
-              </select>
+                placeholder=""
+                ng-change="calculateDatafeedFrequencyDefaultSeconds()"
+                class="form-control" />
+              <div ng-hide="ui.validation.tabs[1].checks.bucketSpan.valid" class="validation-error">
+                {{ ( ui.validation.tabs[1].checks.bucketSpan.message || "bucket_span is not a valid time interval format" ) }}
+              </div>
             </div>
             <div class="form-group">
               <label>summary_count_field_name</label><i ml-info-icon="new_job_summarycountfieldname" />
@@ -174,7 +177,7 @@
                 placeholder=""
                 ng-change="generalAnalysisConfigFieldNameChange('summary_count_field_name')"
                 list='properties_datalist'
-                class="form-control"  />
+                class="form-control" />
             </div>
             <div class="form-group">
               <label>categorization_field_name</label><i ml-info-icon="new_job_categorizationfieldname" />
@@ -185,7 +188,7 @@
                 ng-change="generalAnalysisConfigFieldNameChange('categorization_field_name')"
                 ng-change="categorizationFieldNameChange()"
                 list='properties_datalist'
-                class="form-control"  />
+                class="form-control" />
             </div>
 
             <div class="form-group"
@@ -353,19 +356,17 @@
                 placeholder='{ "match_all": {}}'
                 class="form-control" />
 
-              <label>Query delay (seconds)</label><i ml-info-icon="new_job_datafeed_query_delay" />
+              <label>Query delay</label><i ml-info-icon="new_job_datafeed_query_delay" />
               <input
                 ng-model="ui.datafeed.queryDelayText"
-                placeholder="60"
-                type="number"
+                placeholder="{{ui.datafeed.queryDelayDefault}}"
                 min="0"
                 class="form-control" />
 
-              <label>Frequency (seconds)</label><i ml-info-icon="new_job_datafeed_frequency" />
+              <label>Frequency</label><i ml-info-icon="new_job_datafeed_frequency" />
               <input
                 ng-model="ui.datafeed.frequencyText"
                 placeholder="{{ui.datafeed.frequencyDefault}}"
-                type="number"
                 min="0"
                 class="form-control" />
 

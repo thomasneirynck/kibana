@@ -15,6 +15,9 @@
 
 import _ from 'lodash';
 import angular from 'angular';
+
+import parseInterval from 'ui/utils/parse_interval';
+
 import 'plugins/ml/lib/bower_components/JSON.minify/minify.json';
 import 'ui/courier';
 
@@ -115,7 +118,9 @@ function (
     validation: {
       tabs: [
         {index: 0, valid: true, checks: { jobId: {valid: true}}},
-        {index: 1, valid: true, checks: { detectors: {valid: true}, influencers: {valid: true}, categorizationFilters: {valid: true} }},
+        {index: 1, valid: true, checks: {
+          detectors: {valid: true}, influencers: {valid: true}, categorizationFilters: {valid: true}, bucketSpan: {valid: true}
+        }},
         {index: 2, valid: true, checks: { timeField: {valid: true}, timeFormat: {valid:true} }},
         {index: 3, valid: true, checks: { isDatafeed:{valid: true}}},
         {index: 4, valid: true, checks: {}},
@@ -131,20 +136,6 @@ function (
     allInfluencers: allInfluencers,
     customInfluencers: [],
     tempCustomInfluencer: '',
-    bucketSpanValues: [
-      { value: 5,     title: '5 seconds' },
-      { value: 10,    title: '10 seconds' },
-      { value: 30,    title: '30 seconds' },
-      { value: 60,    title: '1 minute' },
-      { value: 300,   title: '5 minutes' },
-      { value: 600 ,  title: '10 minutes' },
-      { value: 1800,  title: '30 minutes' },
-      { value: 3600,  title: '1 hour' },
-      { value: 14400, title: '4 hours' },
-      { value: 28800, title: '8 hours' },
-      { value: 43200, title: '12 hours' },
-      { value: 86400, title: '1 day' }
-    ],
     inputDataFormat:[
       { value: 'delimited',     title: 'Delimited' },
       { value: 'json',          title: 'JSON' },
@@ -166,7 +157,8 @@ function (
 
     datafeed: {
       queryText:             '{"match_all":{}}',
-      queryDelayText:        60,
+      queryDelayText:        '',
+      queryDelayDefault:     '60s',
       frequencyText:         '',
       frequencyDefault:      '',
       scrollSizeText:        '',
@@ -206,7 +198,6 @@ function (
         $scope.ui.pageTitle = 'Clone Job from ' + $scope.job.job_id;
         $scope.job.job_id = '';
         setDatafeedUIText();
-        setBucketSpanUIText();
         setFieldDelimiterControlsFromText();
         $scope.ui.wizard.indexInputType = 'TEXT';
 
@@ -234,7 +225,7 @@ function (
       $scope.job = mlJobService.getBlankJob();
     }
 
-    calculateDatafeedFrequencyDefault();
+    calculateDatafeedFrequencyDefaultSeconds();
     showDataPreviewTab();
   }
 
@@ -485,7 +476,6 @@ function (
 
       setFieldDelimiterControlsFromText();
       setDatafeedUIText();
-      setBucketSpanUIText();
     } catch (e) {
       console.log('JSON could not be parsed');
       // a better warning should be used.
@@ -506,7 +496,7 @@ function (
     if ($scope.ui.isDatafeed) {
       $scope.job.datafeed_config = {};
       $scope.ui.tabs[2].hidden = true;
-      calculateDatafeedFrequencyDefault();
+      calculateDatafeedFrequencyDefaultSeconds();
     } else {
       delete $scope.job.datafeed_config;
       $scope.ui.tabs[2].hidden = false;
@@ -541,6 +531,12 @@ function (
       $scope.ui.wizard.dataLocation = 'ES';
       showDataPreviewTab();
 
+      const queryDelayDefault = $scope.ui.datafeed.queryDelayDefault;
+      let queryDelay = datafeedConfig.query_delay;
+      if ($scope.ui.datafeed.queryDelayDefault === datafeedConfig.query_delay) {
+        queryDelay = '';
+      }
+
       const frequencyDefault = $scope.ui.datafeed.frequencyDefault;
       let freq = datafeedConfig.frequency;
       if ($scope.ui.datafeed.frequencyDefault === datafeedConfig.frequency) {
@@ -566,7 +562,8 @@ function (
 
       $scope.ui.datafeed = {
         queryText:         angular.toJson(datafeedConfig.query, true),
-        queryDelayText:    +datafeedConfig.query_delay,
+        queryDelayText:    queryDelay,
+        queryDelayDefault: queryDelayDefault,
         frequencyText:     freq,
         frequencyDefault:  frequencyDefault,
         scrollSizeText:    scrollSize,
@@ -589,38 +586,16 @@ function (
     }
   }
 
-  // function to manage the rare situation that a user
-  // enters their own bucket_span value in the JSON.
-  // i.e, one that's not in the select's list ($scope.ui.bucketSpanValues)
-  function setBucketSpanUIText() {
-    const bs = $scope.job.analysis_config.bucket_span;
-    const bvs = $scope.ui.bucketSpanValues;
-
-    // remove any previosuly added custom entries first
-    for (let i = bvs.length - 1; i >= 0; i--) {
-      if (bvs[i].custom) {
-        bvs.splice(i, 1);
-      }
-    }
-
-    const found = _.findWhere(bvs, {value: bs});
-    // if the bucket_span isn't in the list, add it to the end
-    if (!found) {
-      bvs.push({
-        value:  bs,
-        title:  bs + ' seconds',
-        custom: true
-      });
-    }
-  }
-
   // work out the default frequency based on the bucket_span
-  function calculateDatafeedFrequencyDefault() {
-    $scope.ui.datafeed.frequencyDefault = jobUtils.calculateDatafeedFrequencyDefault($scope.job.analysis_config.bucket_span);
+  function calculateDatafeedFrequencyDefaultSeconds() {
+    const bucketSpan = parseInterval($scope.job.analysis_config.bucket_span);
+    if (bucketSpan !== null) {
+      $scope.ui.datafeed.frequencyDefault = jobUtils.calculateDatafeedFrequencyDefaultSeconds(bucketSpan.asSeconds()) + 's';
+    }
   }
 
   // scope version of the above function
-  $scope.calculateDatafeedFrequencyDefault = calculateDatafeedFrequencyDefault;
+  $scope.calculateDatafeedFrequencyDefaultSeconds = calculateDatafeedFrequencyDefaultSeconds;
 
 
   function setFieldDelimiterControlsFromText() {
@@ -668,10 +643,6 @@ function (
     if ($scope.ui.isDatafeed) {
       const df = $scope.ui.datafeed;
 
-      if (df.queryDelayText === '') {
-        df.queryDelayText = 60;
-      }
-
       if (df.queryText === '') {
         df.queryText = '{"match_all":{}}';
       }
@@ -706,7 +677,8 @@ function (
       const config = $scope.job.datafeed_config;
 
       config.query =       query;
-      config.query_delay = df.queryDelayText;
+      config.query_delay = ((df.queryDelayText === '' || df.queryDelayText === null || df.queryDelayText === undefined) ?
+        df.queryDelayDefault : df.queryDelayText);
       config.frequency =   ((df.frequencyText === '' || df.frequencyText === null || df.frequencyText === undefined) ?
         df.frequencyDefault : df.frequencyText);
       config.scroll_size = ((df.scrollSizeText === '' || df.scrollSizeText === null || df.scrollSizeText === undefined) ?
@@ -851,12 +823,12 @@ function (
           }
 
           if (job.analysis_config.categorization_field_name === undefined || job.analysis_config.categorization_field_name === '') {
-            tabs[1].checks.categorization_filters.message = 'categorizationFieldName must be set to allow filters';
+            tabs[1].checks.categorizationFilters.message = 'categorizationFieldName must be set to allow filters';
             v = false;
           }
 
           if (d === '' || v === false) {
-            tabs[1].checks.categorization_filters.valid = false;
+            tabs[1].checks.categorizationFilters.valid = false;
             valid = false;
           }
         });
@@ -876,6 +848,18 @@ function (
       if (job.analysis_config.influencers &&
          job.analysis_config.influencers.length === 0) {
         // tabs[1].checks.influencers.valid = false;
+      }
+
+      if (job.analysis_config.bucket_span === '' ||
+         job.analysis_config.bucket_span === undefined) {
+        tabs[1].checks.bucketSpan.message = 'bucket_span must be set';
+        tabs[1].checks.bucketSpan.valid = false;
+      } else {
+        const bucketSpan = parseInterval(job.analysis_config.bucket_span);
+        if (bucketSpan === null) {
+          tabs[1].checks.bucketSpan.message = job.analysis_config.bucket_span + ' is not a valid time interval format. e.g. 10m, 1h';
+          tabs[1].checks.bucketSpan.valid = false;
+        }
       }
 
       // tab 3 - Data Description

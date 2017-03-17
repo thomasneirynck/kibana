@@ -84,7 +84,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
         $scope.jobs = [];
         _.each(resp.jobs, function (job) {
-          $scope.jobs.push({id:job.id, selected: false, bucketSpan: job.bucketSpan});
+          $scope.jobs.push({id:job.id, selected: false, bucketSpanSeconds: job.bucketSpanSeconds});
         });
 
         $scope.setSelectedJobs(selectedJobIds);
@@ -304,8 +304,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     // Calculate the 'auto' zoom duration which shows data at bucket span granularity.
     // Get the minimum bucket span of selected jobs.
     // TODO - only look at jobs for which data has been returned?
-    const minBucketSpan = _.reduce($scope.selectedJobs, (memo, job) => Math.min(memo, job.bucketSpan) , 86400);
-    $scope.autoZoomDuration = (minBucketSpan * 1000) * (CHARTS_POINT_TARGET - 1);
+    const minBucketSpanSeconds = _.reduce($scope.selectedJobs, (memo, job) => Math.min(memo, job.bucketSpanSeconds) , 86400);
+    $scope.autoZoomDuration = (minBucketSpanSeconds * 1000) * (CHARTS_POINT_TARGET - 1);
 
     // Check for a zoom parameter in the globalState (URL).
     if (globalState.zoom !== undefined) {
@@ -338,10 +338,10 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     let aggInterval = buckets.getInterval();
 
     // Set the interval back to the job bucket span if the auto interval is smaller.
-    const minJobBucketSpan = _.reduce($scope.selectedJobs, (memo, job) => Math.min(memo, job.bucketSpan) , 86400);
+    const minJobBucketSpanSeconds = _.reduce($scope.selectedJobs, (memo, job) => Math.min(memo, job.bucketSpanSeconds) , 86400);
     const secs = aggInterval.asSeconds();
-    if (secs < minJobBucketSpan) {
-      buckets.setInterval(minJobBucketSpan + 's');
+    if (secs < minJobBucketSpanSeconds) {
+      buckets.setInterval(minJobBucketSpanSeconds + 's');
       aggInterval = buckets.getInterval();
     }
 

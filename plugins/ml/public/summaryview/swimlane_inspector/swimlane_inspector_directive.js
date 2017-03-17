@@ -192,7 +192,7 @@ module.directive('mlSwimlaneInspector', function (
     } else if (type === types.JOB) {
       // JOB
       const job = mlJobService.basicJobs[laneLabel];
-      interval = calculateBucketInterval(job.bucketSpan);
+      interval = calculateBucketInterval(job.bucketSpanSeconds);
 
       recordJobIds = [laneLabel];
       loadResults(mlResultsService.getScoresByBucket, recordJobIds, interval, (results) => {
@@ -203,7 +203,7 @@ module.directive('mlSwimlaneInspector', function (
       // DETECTOR
       recordJobIds = selectedJobIds;
       const job = mlJobService.basicJobs[recordJobIds[0]];
-      interval = calculateBucketInterval(job.bucketSpan);
+      interval = calculateBucketInterval(job.bucketSpanSeconds);
 
       loadResults(mlSwimlaneSearchService.getScoresByDetector, recordJobIds, interval, (results) => {
         processDetectorResults(results, laneLabel);
@@ -399,7 +399,7 @@ module.directive('mlSwimlaneInspector', function (
     controls.inspectorChartData = dataset;
   }
 
-  function calculateBucketInterval(bucketSpan) {
+  function calculateBucketInterval(bucketSpanSeconds) {
     // Bucketing interval should be the maximum of the chart related interval (i.e. time range related)
     // and the max bucket span for the jobs shown in the chart.
     // const bounds = timefilter.getActiveBounds();
@@ -415,7 +415,7 @@ module.directive('mlSwimlaneInspector', function (
     if (timeRange.interval > buckets.getInterval().asSeconds()) {
       timeRange.interval = buckets.getInterval().asSeconds();
     }
-    if (bucketSpan > timeRange.interval) {
+    if (bucketSpanSeconds > timeRange.interval) {
       buckets.setInterval(timeRange.interval + 's');
     }
 

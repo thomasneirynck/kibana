@@ -236,13 +236,13 @@ module.directive('mlSummaryViewSwimlane', function (
 
         let label = lane;
         let isBucketWidth = false;
-        // for job types and inpector for job types, mark whether the cell width is the same as the bucketSpan
+        // for job types and inpector for job types, mark whether the cell width is the same as the bucketSpanSeconds
         // ie, the lowest level we can zoom to
         if (SWIMLANE_TYPES[rowScope.swimlaneType] === SWIMLANE_TYPES.JOB ||
           (SWIMLANE_TYPES[rowScope.swimlaneType] === SWIMLANE_TYPES.INSPECTOR &&
             SWIMLANE_TYPES[mlSwimlaneInspectorService.getSwimlaneType()] === SWIMLANE_TYPES.JOB)) {
           label = mlJobService.jobDescriptions[lane];
-          isBucketWidth = (mlJobService.basicJobs[lane].bucketSpan === stepSecs);
+          isBucketWidth = (mlJobService.basicJobs[lane].bucketSpanSeconds === stepSecs);
         } else if (SWIMLANE_TYPES[rowScope.swimlaneType] === SWIMLANE_TYPES.DETECTOR ||
           (SWIMLANE_TYPES[rowScope.swimlaneType] === SWIMLANE_TYPES.INSPECTOR &&
             SWIMLANE_TYPES[mlSwimlaneInspectorService.getSwimlaneType()] === SWIMLANE_TYPES.DETECTOR)) {
@@ -256,7 +256,7 @@ module.directive('mlSummaryViewSwimlane', function (
           });
 
           if (parentJobId !== undefined) {
-            isBucketWidth = (mlJobService.basicJobs[parentJobId].bucketSpan === stepSecs);
+            isBucketWidth = (mlJobService.basicJobs[parentJobId].bucketSpanSeconds === stepSecs);
           }
         }
 
