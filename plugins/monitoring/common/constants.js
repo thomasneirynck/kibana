@@ -15,13 +15,10 @@ export const KIBANA_SYSTEM_ID = 'kibana';
 export const KIBANA_STATS_TYPE = 'kibana_stats';
 
 /*
- * name of the boolean feature flag for phone home in local storage
+ * config options for welcome banner / allow phone home
  */
-export const PHONE_HOME_FEATURE = 'report';
-/*
- * name of the boolean for phone home if the notification has been dismissed
- */
-export const PHONE_HOME_NOTIFICATION_SEEN = 'report_notification_seen';
+export const CONFIG_SHOW_BANNER = 'xPackMonitoring:showBanner';
+export const CONFIG_ALLOW_REPORT = 'xPackMonitoring:allowReport';
 
 /*
  * Chart colors

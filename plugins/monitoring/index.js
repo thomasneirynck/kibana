@@ -42,7 +42,7 @@ export default function monitoringIndex(kibana) {
         };
       },
       hacks: [
-        'plugins/monitoring/hacks/phone_home_notifications',
+        'plugins/monitoring/hacks/welcome_banner',
         'plugins/monitoring/hacks/phone_home_trigger',
         'plugins/monitoring/hacks/toggle_app_link_in_nav'
       ]
