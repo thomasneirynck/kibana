@@ -20,7 +20,7 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
 
-  this.getModelDebugOutput = function (index, jobIds, earliestMs, latestMs, interval) {
+  this.getModelPlotOutput = function (index, jobIds, earliestMs, latestMs, interval) {
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -65,7 +65,7 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:result AND result_type:model_debug_output',
+                'query': '_type:result AND result_type:model_plot_output',
                 'analyze_wildcard': true
               }
             }, {
@@ -88,14 +88,14 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
                   'field': 'actual'
                 }
               },
-              'debugUpper': {
+              'modelUpper': {
                 'max': {
-                  'field': 'debug_upper'
+                  'field': 'model_upper'
                 }
               },
-              'debugLower': {
+              'modelLower': {
                 'min': {
-                  'field': 'debug_lower'
+                  'field': 'model_lower'
                 }
               }
             }
@@ -104,15 +104,15 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
       }
     })
     .then(function (resp) {
-      console.log('Time series search service getModelDebugOutput() resp:', resp);
+      console.log('Time series search service getModelPlotOutput() resp:', resp);
 
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
       _.each(aggregationsByTime, function (dataForTime) {
         const time = dataForTime.key;
         obj.results[time] = {
           'actual': _.get(dataForTime, ['actual', 'value']),
-          'debugUpper': _.get(dataForTime, ['debugUpper', 'value']),
-          'debugLower': _.get(dataForTime, ['debugLower', 'value'])
+          'modelUpper': _.get(dataForTime, ['modelUpper', 'value']),
+          'modelLower': _.get(dataForTime, ['modelLower', 'value'])
         };
       });
 

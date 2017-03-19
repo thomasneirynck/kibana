@@ -253,7 +253,7 @@ module
   }
 
   // ensure the displayed interval is never smaller than the bucketSpan
-  // otherwise the model debug bounds can be drawn in the wrong place.
+  // otherwise the model plot bounds can be drawn in the wrong place.
   // this only really affects small jobs when using sum
   function adjustIntervalDisplayed(interval) {
     let makeTheSame = false;

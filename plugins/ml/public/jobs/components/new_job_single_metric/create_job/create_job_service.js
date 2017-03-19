@@ -85,7 +85,7 @@ module.service('mlSingleMetricJobService', function (
   };
 
   function processLineChartResults(data, formConfig) {
-    // for count, scale the debug upper and lower by the
+    // for count, scale the model upper and lower by the
     // ratio of chart interval to bucketspan.
     // this will force the model bounds to be drawn in the correct location
     let scale = 1;
@@ -108,9 +108,9 @@ module.service('mlSingleMetricJobService', function (
       lineData.push({
         date: date,
         time: time,
-        lower: (dataForTime.debugLower * scale),
+        lower: (dataForTime.modelLower * scale),
         value: dataForTime.actual,
-        upper: (dataForTime.debugUpper * scale)
+        upper: (dataForTime.modelUpper * scale)
       });
     });
 
@@ -118,7 +118,7 @@ module.service('mlSingleMetricJobService', function (
   }
 
   function processSwimlaneResults(bucketScoreData, init) {
-    // create a dataset in format used by the model debug chart.
+    // create a dataset in format used by the model plot chart.
     // create empty swimlane dataset
     // i.e. array of Objects with keys date (JavaScript date), value, lower and upper.
     const swimlaneData = [];
@@ -222,7 +222,7 @@ module.service('mlSingleMetricJobService', function (
     job.job_id = formConfig.jobId;
     job.description = formConfig.description;
 
-    job.model_debug_config =  {
+    job.model_plot_config =  {
       enabled: true
     };
 
@@ -358,13 +358,13 @@ module.service('mlSingleMetricJobService', function (
       }
     }
 
-    mlSingleMetricJobSearchService.getModelDebugOutput(
+    mlSingleMetricJobSearchService.getModelPlotOutput(
       formConfig.indexPattern.id,
       [formConfig.jobId],
       start,
       formConfig.end,
       formConfig.resultsIntervalSeconds + 's',
-      formConfig.agg.type.mlDebugAgg
+      formConfig.agg.type.mlModelPlotAgg
     )
     .then(data => {
       this.chartData.model = this.chartData.model.concat(processLineChartResults(data.results, formConfig));

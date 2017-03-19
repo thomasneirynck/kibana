@@ -119,7 +119,7 @@ module.service('mlSingleMetricJobSearchService', function ($q, es) {
 
 
 
-  this.getModelDebugOutput = function (index, jobIds, earliestMs, latestMs, interval, aggType) {
+  this.getModelPlotOutput = function (index, jobIds, earliestMs, latestMs, interval, aggType) {
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -169,7 +169,7 @@ module.service('mlSingleMetricJobSearchService', function ($q, es) {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:result AND result_type:model_debug_output',
+                'query': '_type:result AND result_type:model_plot_output',
                 'analyze_wildcard': true
               }
             }, {
@@ -192,16 +192,16 @@ module.service('mlSingleMetricJobSearchService', function ($q, es) {
                   'field': 'actual'
                 }
               },
-              'debugUpper': {
+              'modelUpper': {
                 // 'max': {
                 [aggType.max]: {
-                  'field': 'debug_upper'
+                  'field': 'model_upper'
                 }
               },
-              'debugLower': {
+              'modelLower': {
                 // 'min': {
                 [aggType.min]: {
-                  'field': 'debug_lower'
+                  'field': 'model_lower'
                 }
               }
             }
@@ -210,29 +210,29 @@ module.service('mlSingleMetricJobSearchService', function ($q, es) {
       }
     })
     .then((resp) => {
-      // console.log('Time series search service getModelDebugOutput() resp:', resp);
+      // console.log('Time series search service getModelPlotOutput() resp:', resp);
 
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
       _.each(aggregationsByTime, (dataForTime) => {
         const time = dataForTime.key;
-        let debugUpper = _.get(dataForTime, ['debugUpper', 'value']);
-        let debugLower = _.get(dataForTime, ['debugLower', 'value']);
+        let modelUpper = _.get(dataForTime, ['modelUpper', 'value']);
+        let modelLower = _.get(dataForTime, ['modelLower', 'value']);
 
-        if (debugUpper !== undefined && isFinite(debugUpper)) {
-          debugUpper = debugUpper.toFixed(4);
+        if (modelUpper !== undefined && isFinite(modelUpper)) {
+          modelUpper = modelUpper.toFixed(4);
         } else {
-          debugUpper = 0;
+          modelUpper = 0;
         }
-        if (debugLower !== undefined && isFinite(debugLower)) {
-          debugLower = debugLower.toFixed(4);
+        if (modelLower !== undefined && isFinite(modelLower)) {
+          modelLower = modelLower.toFixed(4);
         } else {
-          debugLower = 0;
+          modelLower = 0;
         }
 
         obj.results[time] = {
           actual: _.get(dataForTime, ['actual', 'value']),
-          debugUpper: debugUpper,
-          debugLower: debugLower
+          modelUpper: modelUpper,
+          modelLower: modelLower
         };
       });
 

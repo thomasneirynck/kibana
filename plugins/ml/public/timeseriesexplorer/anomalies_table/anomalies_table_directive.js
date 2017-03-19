@@ -505,14 +505,14 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
 
         rowScope.mouseenterRow = function () {
           // Publish that a record is being hovered over, so that the corresponding marker
-          // in the model debug chart can be highlighted.
+          // in the model plot chart can be highlighted.
           mlTimeSeriesDashboardService.fireAnomalyRecordMouseenter(record);
 
         };
 
         rowScope.mouseleaveRow = function () {
           // Publish that a record is no longer being hovered over, so that the corresponding marker in the
-          // model debug chart can be unhighlighted.
+          // model plot chart can be unhighlighted.
           mlTimeSeriesDashboardService.fireAnomalyRecordMouseleave(record);
         };
 

@@ -14,7 +14,7 @@
  */
 
 /*
- * Chart showing model debug data, annotated with anomalies.
+ * Chart showing model plot data, annotated with anomalies.
  */
 
 
@@ -33,7 +33,7 @@ import ContextChartMask from 'plugins/ml/timeseriesexplorer/context_chart_mask';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, mlTimeSeriesDashboardService) {
+module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, mlTimeSeriesDashboardService) {
 
   function link(scope, element) {
 
@@ -279,9 +279,9 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
 
       // Define the div for the tooltip.
       // TODO - append to the chartElement rather than the body.
-      d3.select('body').selectAll('div.ml-model-debug-point-tooltip').remove();
+      d3.select('body').selectAll('div.ml-model-plot-point-tooltip').remove();
       d3.select('body').append('div')
-        .attr('class', 'ml-model-debug-point-tooltip')
+        .attr('class', 'ml-model-plot-point-tooltip')
         .style('opacity', 0);
 
       fcsGroup.append('rect')
@@ -715,7 +715,7 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
         contents += ('<br/>anomaly score: ' + displayScore);
       }
 
-      const tooltipDiv = d3.select('.ml-model-debug-point-tooltip');
+      const tooltipDiv = d3.select('.ml-model-plot-point-tooltip');
       tooltipDiv.transition()
         .duration(200)
         .style('opacity', .9);
@@ -737,7 +737,7 @@ module.directive('mlModelDebugChart', function ($compile, $timeout, timefilter, 
     }
 
     function hideFocusChartTooltip() {
-      const tooltipDiv = d3.select('.ml-model-debug-point-tooltip');
+      const tooltipDiv = d3.select('.ml-model-plot-point-tooltip');
       tooltipDiv.transition()
         .duration(500)
         .style('opacity', 0);

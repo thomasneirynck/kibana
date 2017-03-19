@@ -21,7 +21,7 @@ function filterAggTypes(aggTypes) {
   let typeCopy;
   _.each(aggTypes, (type) => {
     type.mlName = type.name;
-    type.mlDebugAgg = {max:type.name, min: type.name};
+    type.mlModelPlotAgg = {max:type.name, min: type.name};
 
     _.each(type.params, (p) => {
       if (p.filterFieldTypes && typeof p.filterFieldTypes === 'string') {
@@ -30,19 +30,19 @@ function filterAggTypes(aggTypes) {
     });
 
     if (type.name === 'count') {
-      type.mlDebugAgg = {max: 'max', min: 'min'};
+      type.mlModelPlotAgg = {max: 'max', min: 'min'};
       filteredAggTypes.push(type);
 
       typeCopy = angular.copy(type);
       typeCopy.mlName = 'high_count';
       typeCopy.title   = 'High count';
-      typeCopy.mlDebugAgg = {max: 'max', min: 'min'};
+      typeCopy.mlModelPlotAgg = {max: 'max', min: 'min'};
       filteredAggTypes.push(typeCopy);
 
       typeCopy = angular.copy(type);
       typeCopy.mlName = 'low_count';
       typeCopy.title   = 'Low count';
-      typeCopy.mlDebugAgg = {max: 'max', min: 'min'};
+      typeCopy.mlModelPlotAgg = {max: 'max', min: 'min'};
       filteredAggTypes.push(typeCopy);
 
     } else if (type.name === 'sum') {
@@ -77,7 +77,7 @@ function filterAggTypes(aggTypes) {
     } else if (type.name === 'max') {
       filteredAggTypes.push(type);
     } else if (type.name === 'cardinality') {
-      type.mlDebugAgg = {max: 'max', min: 'min'};
+      type.mlModelPlotAgg = {max: 'max', min: 'min'};
       type.mlName = 'distinct_count';
 
       _.each(type.params, (p) => {

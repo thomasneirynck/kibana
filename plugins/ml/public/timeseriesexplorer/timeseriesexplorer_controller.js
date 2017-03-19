@@ -141,16 +141,16 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     $scope.contextAggregationInterval = calculateAggregationInterval(bounds, CHARTS_POINT_TARGET, CHARTS_POINT_TARGET);
     console.log('aggregationInterval for context data (s):', $scope.contextAggregationInterval.asSeconds());
 
-    // Query 1 - load model debug data at low granularity across full time range.
-    mlTimeSeriesSearchService.getModelDebugOutput($scope.indexPatternId, selectedJobIds,
+    // Query 1 - load model plot data at low granularity across full time range.
+    mlTimeSeriesSearchService.getModelPlotOutput($scope.indexPatternId, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.contextAggregationInterval.expression)
     .then(function (resp) {
-      const fullRangeChartData = processModelDebugResults(resp.results);
+      const fullRangeChartData = processModelPlotResults(resp.results);
       $scope.contextChartData = fullRangeChartData;
 
-      console.log('Time series explorer model debug context chart data set:', $scope.contextChartData);
+      console.log('Time series explorer model plot context chart data set:', $scope.contextChartData);
 
-      // Set zoomFrom/zoomTo attributes in scope which will result in the model debug chart automatically
+      // Set zoomFrom/zoomTo attributes in scope which will result in the model plot chart automatically
       // selecting the specified range in the context chart, and so loading that date range in the focus chart.
       if ($scope.contextChartData.length) {
         const focusRange = calculateInitialFocusRange();
@@ -160,7 +160,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
       finish();
     }).catch(function (resp) {
-      console.log('Time series explorer - error getting model debug data from elasticsearch:', resp);
+      console.log('Time series explorer - error getting model plot data from elasticsearch:', resp);
     });
 
     // Query 2 - load max anomalyScore by bucket at same granularity as context chart
@@ -216,14 +216,14 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     $scope.focusAggregationInterval = calculateAggregationInterval(bounds, CHARTS_POINT_TARGET, CHARTS_POINT_TARGET);
     console.log('aggregationInterval for focus data (s):', $scope.focusAggregationInterval.asSeconds());
 
-    // Query 1 - load model debug data across selected time range.
-    mlTimeSeriesSearchService.getModelDebugOutput($scope.indexPatternId, selectedJobIds,
+    // Query 1 - load model plot data across selected time range.
+    mlTimeSeriesSearchService.getModelPlotOutput($scope.indexPatternId, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.focusAggregationInterval.expression)
     .then(function (resp) {
-      $scope.focusChartData = processModelDebugResults(resp.results);
+      $scope.focusChartData = processModelPlotResults(resp.results);
       finish();
     }).catch(function (resp) {
-      console.log('Time series explorer - error getting model debug data from elasticsearch:', resp);
+      console.log('Time series explorer - error getting model plot data from elasticsearch:', resp);
     });
 
     // Query 2 - load max anomalyScore by bucket across selected time range.
@@ -351,21 +351,21 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     return aggInterval;
   }
 
-  function processModelDebugResults(modelDebugData) {
-    // Return dataset in format used by the model debug chart.
+  function processModelPlotResults(modelPlotData) {
+    // Return dataset in format used by the model plot chart.
     // i.e. array of Objects with keys date (JavaScript date), value, lower and upper.
-    const modelDebugChartData = [];
-    _.each(modelDebugData, function (dataForTime, time) {
-      modelDebugChartData.push(
+    const modelPlotChartData = [];
+    _.each(modelPlotData, function (dataForTime, time) {
+      modelPlotChartData.push(
         {
           date: new Date(+time),
-          lower: dataForTime.debugLower,
+          lower: dataForTime.modelLower,
           value: dataForTime.actual,
-          upper: dataForTime.debugUpper
+          upper: dataForTime.modelUpper
         });
     });
 
-    return modelDebugChartData;
+    return modelPlotChartData;
   }
 
   function processBucketScoreResults(scoreData) {
@@ -429,7 +429,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
         if (chartPoint !== undefined) {
           chartPoint.anomalyScore = bucket.score;
         } else {
-          // Bucket data (anomalyScoreData) may have an extra point than model debug data (chartData),
+          // Bucket data (anomalyScoreData) may have an extra point than model plot data (chartData),
           // e.g. right at the end of a job. In this case set the score for the last chart point to
           // that of the last bucket, if that bucket has a higher score.
           const lastChartPoint = chartData[chartData.length - 1];

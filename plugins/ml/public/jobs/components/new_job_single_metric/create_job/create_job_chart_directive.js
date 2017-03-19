@@ -14,7 +14,7 @@
  */
 
 /*
- * Chart showing model debug data, annotated with anomalies.
+ * Chart showing model plot data, annotated with anomalies.
  */
 
 import $ from 'jquery';
