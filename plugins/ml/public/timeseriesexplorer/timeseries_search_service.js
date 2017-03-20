@@ -65,7 +65,7 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:result AND result_type:model_plot_output',
+                'query': '_type:result AND result_type:model_plot',
                 'analyze_wildcard': true
               }
             }, {
