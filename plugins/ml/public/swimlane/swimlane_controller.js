@@ -32,6 +32,7 @@ import 'ui/timefilter';
 
 import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 import stringUtils from 'plugins/ml/util/string_utils';
+import 'plugins/ml/services/ml_api_service';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/ml_dashboard_service';
 import './swimlane_influencers/swimlane_influencers_directive';

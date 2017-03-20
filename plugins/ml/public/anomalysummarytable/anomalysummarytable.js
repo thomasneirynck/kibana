@@ -20,6 +20,7 @@
 import 'plugins/ml/anomalysummarytable/anomalysummarytable_controller.js';
 import 'plugins/ml/anomalysummarytable/anomalysummarytable.less';
 
+import 'plugins/ml/services/ml_api_service';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/results_service';
 
