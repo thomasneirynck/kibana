@@ -302,6 +302,14 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
 
       _.each(bucket, (record) => {
         buildDescription(record);
+
+        // If only a single cause, copy values to the top level for display.
+        if (_.get(record, 'causes', []).length === 1) {
+          const cause = _.first(record.causes);
+          record.actual = cause.actual;
+          record.typical = cause.typical;
+        }
+
         const jobId = record.job_id;
         if (highestJobCounts[jobId] === undefined) {
           highestJobCounts[jobId] = {};

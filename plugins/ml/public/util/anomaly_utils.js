@@ -21,10 +21,10 @@
 const _ = require('lodash');
 
 // List of function descriptions for which actual values from record level results should be displayed.
-const DISPLAY_ACTUAL_FUNCTIONS = ['count', 'distinct_count', 'lat_long', 'mean', 'max', 'min', 'sum', 'median', 'varp'];
+const DISPLAY_ACTUAL_FUNCTIONS = ['count', 'distinct_count', 'lat_long', 'mean', 'max', 'min', 'sum', 'median', 'varp', 'info_content'];
 
 // List of function descriptions for which typical values from record level results should be displayed.
-const DISPLAY_TYPICAL_FUNCTIONS = ['count', 'distinct_count', 'mean', 'max', 'min', 'sum', 'median', 'varp'];
+const DISPLAY_TYPICAL_FUNCTIONS = ['count', 'distinct_count', 'mean', 'max', 'min', 'sum', 'median', 'varp', 'info_content'];
 
 // Returns a severity label (one of critical, major, minor, warning or unknown)
 // for the supplied normalized anomaly score (a value between 0 and 100).
