@@ -128,7 +128,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
   };
 
   $scope.loadAnomaliesForCharts = function (jobIds, influencers, earliestMs, latestMs) {
-    // Load the top anomalies (by normalized_probability) which will be diplayed in the charts.
+    // Load the top anomalies (by record_score) which will be diplayed in the charts.
     // TODO - combine this with loadAnomaliesTable() if the table is being retained.
     mlResultsService.getRecordsForInfluencer($scope.indexPatternId, jobIds, influencers,
       0, earliestMs, latestMs, 500)

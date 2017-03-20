@@ -114,11 +114,11 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
 
         if (isSecondSplit === false) {
           if (!_.has(dataForGroupValue, 'anomaly_score')) {
-            dataForGroupValue.maxScore = record.normalized_probability;
+            dataForGroupValue.maxScore = record.record_score;
             dataForGroupValue.maxScoreRecord = record;
           } else {
-            if (record.normalized_probability > dataForGroupValue.maxScore) {
-              dataForGroupValue.maxScore = record.normalized_probability;
+            if (record.record_score > dataForGroupValue.maxScore) {
+              dataForGroupValue.maxScore = record.record_score;
               dataForGroupValue.maxScoreRecord = record;
             }
           }
@@ -138,11 +138,11 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
 
           const dataForSplitValue = splitsForGroup[secondFieldValue];
           if (!_.has(dataForSplitValue, 'anomaly_score')) {
-            dataForSplitValue.maxScore = record.normalized_probability;
+            dataForSplitValue.maxScore = record.record_score;
             dataForSplitValue.maxScoreRecord = record;
           } else {
-            if (record.normalized_probability > dataForSplitValue.maxScore) {
-              dataForSplitValue.maxScore = record.normalized_probability;
+            if (record.record_score > dataForSplitValue.maxScore) {
+              dataForSplitValue.maxScore = record.record_score;
               dataForSplitValue.maxScoreRecord = record;
             }
           }
@@ -151,11 +151,11 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
         // Detector with no partition or by field.
         const dataForDetector = detectorsForJob[detectorIndex];
         if (!_.has(dataForDetector, 'maxScore')) {
-          dataForDetector.maxScore = record.normalized_probability;
+          dataForDetector.maxScore = record.record_score;
           dataForDetector.maxScoreRecord = record;
         } else {
-          if (record.normalized_probability > dataForDetector.maxScore) {
-            dataForDetector.maxScore = record.normalized_probability;
+          if (record.record_score > dataForDetector.maxScore) {
+            dataForDetector.maxScore = record.record_score;
             dataForDetector.maxScoreRecord = record;
           }
         }
@@ -165,7 +165,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
 
     console.log('explorer charts aggregatedData is:', aggregatedData);
     let recordsForSeries = [];
-    // Convert to an array of the records with the highesy normalized_probability per unique series.
+    // Convert to an array of the records with the highesy record_score per unique series.
     _.each(aggregatedData, (detectorsForJob) => {
       _.each(detectorsForJob, (groupsForDetector) => {
         if (_.has(groupsForDetector, 'maxScoreRecord')) {
@@ -189,7 +189,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
         }
       });
     });
-    recordsForSeries = (_.sortBy(recordsForSeries, 'normalized_probability')).reverse();
+    recordsForSeries = (_.sortBy(recordsForSeries, 'record_score')).reverse();
 
     return recordsForSeries;
   }

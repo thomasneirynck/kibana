@@ -24,7 +24,7 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
 
-  // Obtains the record level normalized_probability values by detector ID
+  // Obtains the record level record_score values by detector ID
   // for a particular job ID(s).
   // Pass an empty array or ['*'] to search over all job IDs.
   // Returned response contains a results property, which contains a
@@ -91,13 +91,13 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
               'field': 'job_id',
               'size': maxResults !== undefined ? maxResults : 5,
               'order': {
-                'normalizedProbability': 'desc'
+                'recordScore': 'desc'
               }
             },
             'aggs': {
-              'normalizedProbability': {
+              'recordScore': {
                 'max': {
-                  'field': 'normalized_probability'
+                  'field': 'record_score'
                 }
               },
               'detector_index': {
@@ -105,13 +105,13 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
                   'field': 'detector_index',
                   'size': maxResults !== undefined ? maxResults : 5,
                   'order': {
-                    'normalizedProbability': 'desc'
+                    'recordScore': 'desc'
                   }
                 },
                 'aggs': {
-                  'normalizedProbability': {
+                  'recordScore': {
                     'max': {
-                      'field': 'normalized_probability'
+                      'field': 'record_score'
                     }
                   },
                   'byTime': {
@@ -125,9 +125,9 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
                       }
                     },
                     'aggs': {
-                      'normalizedProbability': {
+                      'recordScore': {
                         'max': {
-                          'field': 'normalized_probability'
+                          'field': 'record_score'
                         }
                       }
                     }
@@ -154,7 +154,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
 
           const dataByTime = _.get(dataForDetector, ['byTime', 'buckets'], []);
           _.each(dataByTime, (dataForTime) => {
-            const value = _.get(dataForTime, ['normalizedProbability', 'value']);
+            const value = _.get(dataForTime, ['recordScore', 'value']);
             if (value !== undefined) {
               resultsForDetectorId[dataForTime.key] = value;
             }
@@ -175,7 +175,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
   };
 
 
-  // Obtains the record level normalized_probability values by detector ID
+  // Obtains the record level record_score values by detector ID
   // for a particular job ID(s).
   // Pass an empty array or ['*'] to search over all job IDs.
   // Returned response contains a results property, which contains a
@@ -374,7 +374,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
             'aggs': {
               'anomalyScore': {
                 'max': {
-                  'field': 'anomaly_score'
+                  'field': 'influencer_score'
                 }
               },
               'byTime': {
@@ -390,7 +390,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
                 'aggs': {
                   'anomalyScore': {
                     'max': {
-                      'field': 'anomaly_score'
+                      'field': 'influencer_score'
                     }
                   }
                 }
@@ -441,7 +441,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
     const obj = {success: true, records: []};
 
     // Build the criteria to use in the bool filter part of the request.
-    // Adds criteria for the time range, normalized probability,  plus any specified job IDs.
+    // Adds criteria for the time range, record score,  plus any specified job IDs.
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
@@ -455,7 +455,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
 
     boolCriteria.push({
       'range': {
-        'normalized_probability': {
+        'record_score': {
           'gte': 0//($scope.vis.params.threshold || 0),
         }
       }
@@ -487,7 +487,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
           'timestamp',
           'detector_index',
           'influencers',
-          'normalized_probability',
+          'record_score',
           'actual',
           'typical',
           'by_field_name',
@@ -523,7 +523,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
           }
         },
         'sort' : [
-          { 'normalized_probability' : {'order' : 'desc'}}
+          { 'record_score' : {'order' : 'desc'}}
         ],
       }
     })
@@ -547,7 +547,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
     const obj = {success: true, results: []};
 
     // Build the criteria to use in the bool filter part of the request.
-    // Adds criteria for the time range, normalized probability,  plus any specified job IDs.
+    // Adds criteria for the time range, record score,  plus any specified job IDs.
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
@@ -623,12 +623,12 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
             'aggs': {
               'maxAnomalyScore': {
                 'max': {
-                  'field': 'anomaly_score'
+                  'field': 'influencer_score'
                 }
               },
               'sumAnomalyScore': {
                 'sum': {
-                  'field': 'anomaly_score'
+                  'field': 'influencer_score'
                 }
               }
             }
@@ -644,12 +644,12 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
             'aggs': {
               'sumAnomalyScore': {
                 'sum': {
-                  'field': 'anomaly_score'
+                  'field': 'influencer_score'
                 }
               },
               'maxAnomalyScore': {
                 'max': {
-                  'field': 'anomaly_score'
+                  'field': 'influencer_score'
                 }
               }
             }

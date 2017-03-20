@@ -377,13 +377,13 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
           // for the last chart point to that of the last record, if that record has a higher score.
           const lastChartPoint = chartData[chartData.length - 1];
           const lastChartPointScore = lastChartPoint.anomalyScore || 0;
-          if (record.normalized_probability > lastChartPointScore) {
+          if (record.record_score > lastChartPointScore) {
             chartPoint = lastChartPoint;
           }
         }
 
         if (chartPoint !== undefined) {
-          chartPoint.anomalyScore = record.normalized_probability;
+          chartPoint.anomalyScore = record.record_score;
 
           if (_.has(record, 'actual')) {
             chartPoint.actual = record.actual;

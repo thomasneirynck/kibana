@@ -7,7 +7,7 @@
       "description": "",
       "hits": 0,
       "columns": [
-        "normalized_probability",
+        "record_score",
         "job_id",
         "partition_field_name",
         "partition_field_value",
@@ -21,7 +21,7 @@
         "typical"
       ],
       "sort": [
-        "normalized_probability",
+        "record_score",
         "desc"
       ],
       "version": 1,

@@ -349,7 +349,7 @@ module.service('mlMultiMetricJobService', function (
           dtr.swimlane.push({
             date: date,
             time: time,
-            value: timeObj.normalizedProbability,
+            value: timeObj.recordScore,
             color: ''
           });
         });

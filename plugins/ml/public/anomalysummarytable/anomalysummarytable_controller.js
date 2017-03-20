@@ -122,10 +122,10 @@ module.controller('MlAnomalySummaryTableController', function (
     const searchSource = savedSearch.searchSource;
     $scope.indexPattern = searchSource.get('index');
 
-    // Ask for top 500 sorted by normalized_probability.
+    // Ask for top 500 sorted by record_score.
     // TODO - allow sample size to be configurable in visualization options.
     searchSource.size(500);
-    searchSource.sort(getSort(['normalized_probability', 'desc'], $scope.indexPattern));
+    searchSource.sort(getSort(['record_score', 'desc'], $scope.indexPattern));
 
     $scope.searchSource = searchSource;
 
@@ -191,7 +191,7 @@ module.controller('MlAnomalySummaryTableController', function (
       // Show every record.
       momentInterval = $scope.vis.params.interval.val;
       const filteredHits = _.filter($scope.hits, function (hit) {
-        return Number(hit._source.normalized_probability) >= $scope.vis.params.threshold.val;
+        return Number(hit._source.record_score) >= $scope.vis.params.threshold.val;
       });
       const timeFieldName = $scope.indexPattern.timeFieldName;
       _.each(filteredHits, function (hit) {
@@ -205,7 +205,7 @@ module.controller('MlAnomalySummaryTableController', function (
 
         const record = {
           'time': source[timeFieldName],
-          'max severity': source.normalized_probability,
+          'max severity': source.record_score,
           'detector': detector,
           'jobId': source.job_id,
           'source': source
@@ -323,7 +323,7 @@ module.controller('MlAnomalySummaryTableController', function (
 
     // Only show records passing the severity threshold.
     const filteredHits = _.filter($scope.hits, function (hit) {
-      return Number(hit._source.normalized_probability) >= $scope.vis.params.threshold.val;
+      return Number(hit._source.record_score) >= $scope.vis.params.threshold.val;
     });
 
     const aggregatedData = {};
@@ -364,8 +364,8 @@ module.controller('MlAnomalySummaryTableController', function (
       if (!_.has(entitiesForDetector, entity)) {
         entitiesForDetector[entity] = source;
       } else {
-        const score = source.normalized_probability;
-        if (score > entitiesForDetector[entity].normalized_probability) {
+        const score = source.record_score;
+        if (score > entitiesForDetector[entity].record_score) {
           entitiesForDetector[entity] = source;
         }
       }
@@ -380,7 +380,7 @@ module.controller('MlAnomalySummaryTableController', function (
         _.each(entityDetectors, function (source, entity) {
           const record = {
             'time': +roundedTime,
-            'max severity': source.normalized_probability,
+            'max severity': source.record_score,
             'detector': detector,
             'jobId': source.job_id,
             'source': source

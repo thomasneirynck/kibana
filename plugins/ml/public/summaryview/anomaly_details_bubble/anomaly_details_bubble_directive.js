@@ -289,7 +289,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
     const tempDetectorHighestRecordPerBucket = {};
 
     _.each(recordsPerTimeInterval, (bucket, t) => {
-      bucket = _.sortBy(bucket, 'normalized_probability').reverse();
+      bucket = _.sortBy(bucket, 'record_score').reverse();
 
       tempHighestRecordPerBucket[t] = {};
       tempMonitorHighestRecordPerBucket[t] = {'All jobs': []};
@@ -391,7 +391,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
   };
 
   function buildDescription(record) {
-    const description = anomalyUtils.getSeverity(record.normalized_probability) + ' anomaly in ';//+ record.detectorText;
+    const description = anomalyUtils.getSeverity(record.record_score) + ' anomaly in ';//+ record.detectorText;
     let descriptionExtra = '';
 
     if (_.has(record, 'partition_field_name') && (record.partition_field_name !== record.entity_name)) {
@@ -419,9 +419,9 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
 
     record.description = description;
     record.descriptionExtra = descriptionExtra;
-    record.score = (record.normalized_probability < 1) ? '<1' : Math.floor(record.normalized_probability);
-    // record.severityLabel = anomalyUtils.getSeverity(record.normalized_probability);
-    record.cardColor = anomalyUtils.getSeverityColor(record.normalized_probability);
+    record.score = (record.record_score < 1) ? '<1' : Math.floor(record.record_score);
+    // record.severityLabel = anomalyUtils.getSeverity(record.record_score);
+    record.cardColor = anomalyUtils.getSeverityColor(record.record_score);
     // $scope.description = description;
 
     // Check for a correlated_by_field_value in the source which will be present for multivariate analyses

@@ -379,9 +379,9 @@ module.controller('MlConnectionsMapController', function (
     //        'Freq rare URI': [ {field: 'status', value: 404, score: 95, scoreForAllValues: 95}, {..} ],
     //        'High count URI': [ {field: 'uri', value: 'login.php', score: 75, scoreForAllValues: 174}, {..}]
     //    };
-    // where score = sum(normalized_probability) of records with
+    // where score = sum(record_score) of records with
     //    (influencer/detector name, influencer/detector value, influencer) triple
-    // and scoreForAllValues = sum(normalized_probability) of records with (influencer/detector name, influencer) pair
+    // and scoreForAllValues = sum(record_score) of records with (influencer/detector name, influencer) pair
     // These are used to calculate the 'strength' of the connection.
 
     console.log('Connections map processForDetectors() passed:', records);
@@ -393,7 +393,7 @@ module.controller('MlConnectionsMapController', function (
       const detectorDesc = $scope.detectorsByJob[record.job_id][record.detector_index];
       const maxNormProbByDetector = $scope.maxNormProbByField['ml-detector'];
       maxNormProbByDetector[detectorDesc] =
-        Math.max(_.get(maxNormProbByDetector, detectorDesc, 0), record.normalized_probability);
+        Math.max(_.get(maxNormProbByDetector, detectorDesc, 0), record.record_score);
       const key = detectorDesc;
       let connections = [];
       if (_.has(dataset, key)) {
@@ -412,14 +412,14 @@ module.controller('MlConnectionsMapController', function (
             connections.push({
               field: fieldName,
               value: fieldValue,
-              score: record.normalized_probability
+              score: record.record_score
             });
           } else {
-            connection.score = connection.score + record.normalized_probability;
+            connection.score = connection.score + record.record_score;
           }
 
           const maxNormProbByFieldName = ($scope.maxNormProbByField[fieldName] || {});
-          maxNormProbByFieldName[fieldValue] = Math.max(_.get(maxNormProbByFieldName, fieldValue, 0), record.normalized_probability);
+          maxNormProbByFieldName[fieldValue] = Math.max(_.get(maxNormProbByFieldName, fieldValue, 0), record.record_score);
           $scope.maxNormProbByField[fieldName] = maxNormProbByFieldName;
         });
       });
@@ -446,9 +446,9 @@ module.controller('MlConnectionsMapController', function (
     //        301: [ {field: 'ml-detector', value: 'Freq rare URI', score: 95, scoreForAllValues: 95}, {..} ],
     //        404: [ {field: 'uri', value: 'login.php', score: 75, scoreForAllValues: 174}, {..}]
     //    };
-    // where score = sum(normalized_probability) of records with
+    // where score = sum(record_score) of records with
     //    (influencer/detector name, influencer/detector value, influencer) triple
-    // and scoreForAllValues = sum(normalized_probability) of records with (influencer/detector name, influencer) pair
+    // and scoreForAllValues = sum(record_score) of records with (influencer/detector name, influencer) pair
     // These are used to calculate the 'strength' of the connection.
 
     console.log('Connections map processForInfluencers() passed:', records);
@@ -480,7 +480,7 @@ module.controller('MlConnectionsMapController', function (
           }
 
           let maxNormProbByFieldName = ($scope.maxNormProbByField[influencerFieldName] || {});
-          maxNormProbByFieldName[fieldValue] = Math.max(_.get(maxNormProbByFieldName, fieldValue, 0), record.normalized_probability);
+          maxNormProbByFieldName[fieldValue] = Math.max(_.get(maxNormProbByFieldName, fieldValue, 0), record.record_score);
           $scope.maxNormProbByField[influencerFieldName] = maxNormProbByFieldName;
 
           _.each(dataForOtherFieldNames, function (influencer) {
@@ -491,14 +491,14 @@ module.controller('MlConnectionsMapController', function (
                 connections.push({
                   field: fName,
                   value: fValue,
-                  score: record.normalized_probability
+                  score: record.record_score
                 });
               } else {
-                connection.score = connection.score + record.normalized_probability;
+                connection.score = connection.score + record.record_score;
               }
 
               maxNormProbByFieldName = ($scope.maxNormProbByField[fName] || {});
-              maxNormProbByFieldName[fieldValue] = Math.max(_.get(maxNormProbByFieldName, fieldValue, 0), record.normalized_probability);
+              maxNormProbByFieldName[fieldValue] = Math.max(_.get(maxNormProbByFieldName, fieldValue, 0), record.record_score);
               $scope.maxNormProbByField[fName] = maxNormProbByFieldName;
             });
           });
@@ -510,15 +510,15 @@ module.controller('MlConnectionsMapController', function (
             connections.push({
               field: 'ml-detector',
               value: detectorDesc,
-              score: record.normalized_probability
+              score: record.record_score
             });
           } else {
-            detectorConnection.score = detectorConnection.score + record.normalized_probability;
+            detectorConnection.score = detectorConnection.score + record.record_score;
           }
 
           const maxNormProbByDetector = $scope.maxNormProbByField['ml-detector'];
           maxNormProbByDetector[detectorDesc] =
-            Math.max(_.get(maxNormProbByDetector, detectorDesc, 0), record.normalized_probability);
+            Math.max(_.get(maxNormProbByDetector, detectorDesc, 0), record.record_score);
         });
       }
     });
@@ -537,7 +537,7 @@ module.controller('MlConnectionsMapController', function (
   }
 
   // Aggregates by 'entity' or 'detector', to show a summary of anomalies for the selected
-  // node or link, including details of the record with the maximum normalized probability.
+  // node or link, including details of the record with the maximum record score.
   function setSummaryTableRecords(records, aggregateBy) {
 
     let summaryRecords = [];
@@ -557,14 +557,14 @@ module.controller('MlConnectionsMapController', function (
           'entityFieldName': entityFieldName,
           'entityFieldValue':entityFieldValue,
           'count': 1,
-          'sumScore': record.normalized_probability,
+          'sumScore': record.record_score,
           'maxScoreRecord': record
         };
         summaryRecords.push(summary);
       } else {
         summary.count = summary.count + 1;
-        summary.sumScore = summary.sumScore + record.normalized_probability;
-        if (record.normalized_probability > summary.maxScoreRecord.normalized_probability) {
+        summary.sumScore = summary.sumScore + record.record_score;
+        if (record.record_score > summary.maxScoreRecord.record_score) {
           summary.maxScoreRecord = record;
           summary.entityFieldName = anomalyUtils.getEntityFieldName(record);
           summary.entityFieldValue = anomalyUtils.getEntityFieldValue(record);
@@ -572,7 +572,7 @@ module.controller('MlConnectionsMapController', function (
       }
     });
 
-    // Only show top 5 by max normalized probability.
+    // Only show top 5 by max record score.
     summaryRecords = _.take(summaryRecords, 5);
 
     const compiledTooltip = _.template('<div class="ml-connections-map-score-tooltip">maximum score: <%= maxScoreValue %>' +
@@ -580,7 +580,7 @@ module.controller('MlConnectionsMapController', function (
     _.each(summaryRecords, function (summary) {
       // Calculate scores used in the summary visual.
       const maxScoreRecord = summary.maxScoreRecord;
-      const maxScore = parseInt(maxScoreRecord.normalized_probability);
+      const maxScore = parseInt(maxScoreRecord.record_score);
       const totalScore = parseInt(summary.sumScore);
       const barScore = maxScore !== 0 ? maxScore : 1;
       const maxScoreLabel = maxScore !== 0 ? maxScore : '< 1';
@@ -589,7 +589,7 @@ module.controller('MlConnectionsMapController', function (
       summary.barScore = barScore;
       summary.maxScoreLabel = maxScoreLabel;
       summary.totalScore = totalScore;
-      summary.severity = anomalyUtils.getSeverity(maxScoreRecord.normalized_probability);
+      summary.severity = anomalyUtils.getSeverity(maxScoreRecord.record_score);
       summary.tooltip = compiledTooltip({
         'maxScoreValue':maxScoreLabel,
         'totalScoreValue':totalScoreLabel

@@ -75,7 +75,7 @@ module.directive('mlAnomaliesTableExpandedRow', function () {
 
     function buildDescription() {
       const record = scope.record;
-      let rowDescription = anomalyUtils.getSeverity(record.source.normalizedProbability) + ' anomaly in ' + record.detector;
+      let rowDescription = anomalyUtils.getSeverity(record.source.recordScore) + ' anomaly in ' + record.detector;
 
       if (_.has(record, 'entityName')) {
         rowDescription += ' found for ' + record.entityName;

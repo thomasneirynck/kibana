@@ -170,7 +170,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
           // Show all anomaly records.
           scope.momentInterval = scope.interval.val;
           const filteredRecords = _.filter(scope.anomalyRecords, function (record) {
-            return Number(record.normalized_probability) >= scope.threshold.val;
+            return Number(record.record_score) >= scope.threshold.val;
           });
 
           _.each(filteredRecords, function (record) {
@@ -183,7 +183,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
 
             const displayRecord = {
               'time': record[scope.timeFieldName],
-              'max severity': record.normalized_probability,
+              'max severity': record.record_score,
               'detector': detector,
               'jobId': jobId,
               'source': record
@@ -300,7 +300,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         // Only show records passing the severity threshold.
         const filteredRecords = _.filter(scope.anomalyRecords, function (record) {
 
-          return Number(record.normalized_probability) >= scope.threshold.val;
+          return Number(record.record_score) >= scope.threshold.val;
         });
 
         const aggregatedData = {};
@@ -339,8 +339,8 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
           if (!_.has(entitiesForDetector, entity)) {
             entitiesForDetector[entity] = record;
           } else {
-            const score = record.normalized_probability;
-            if (score > entitiesForDetector[entity].normalized_probability) {
+            const score = record.record_score;
+            if (score > entitiesForDetector[entity].record_score) {
               entitiesForDetector[entity] = record;
             }
           }
@@ -355,7 +355,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
             _.each(entityDetectors, function (record, entity) {
               const displayRecord = {
                 'time': +roundedTime,
-                'max severity': record.normalized_probability,
+                'max severity': record.record_score,
                 'detector': detector,
                 'jobId': record.job_id,
                 'source': record

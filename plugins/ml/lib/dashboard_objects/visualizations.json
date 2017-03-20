@@ -32,7 +32,7 @@
     "_type": "visualization",
     "_source": {
       "title": "Top influencers",
-      "visState": "{\"type\":\"mlTopScoresTable\",\"params\":{},\"aggs\":[{\"id\":\"1\",\"type\":\"max\",\"schema\":\"value\",\"params\":{\"field\":\"anomaly_score\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"viewBy\",\"params\":{\"field\":\"influencer_field_value\",\"size\":15,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
+      "visState": "{\"type\":\"mlTopScoresTable\",\"params\":{},\"aggs\":[{\"id\":\"1\",\"type\":\"max\",\"schema\":\"value\",\"params\":{\"field\":\"influencer_score\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"viewBy\",\"params\":{\"field\":\"influencer_field_value\",\"size\":15,\"order\":\"desc\",\"orderBy\":\"1\"}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,
@@ -46,7 +46,7 @@
     "_type": "visualization",
     "_source": {
       "title": "Anomaly timeline",
-      "visState": "{\"type\":\"mlSwimlane\",\"params\":{\"interval\":{\"display\":\"Auto\",\"val\":\"auto\",\"description\":\"hour\"},\"mode\":\"records\",\"viewBy\":{\"field\":\"detector_index\",\"label\":\"detector\"},\"showViewByControl\":true},\"aggs\":[{\"id\":\"1\",\"type\":\"max\",\"schema\":\"metric\",\"params\":{\"field\":\"normalized_probability\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"viewBy\",\"params\":{\"field\":\"detector_index\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"4\",\"type\":\"terms\",\"schema\":\"secondaryViewBy\",\"params\":{\"field\":\"job_id\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"3\",\"type\":\"date_histogram\",\"schema\":\"timeSplit\",\"params\":{\"field\":\"timestamp\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
+      "visState": "{\"type\":\"mlSwimlane\",\"params\":{\"interval\":{\"display\":\"Auto\",\"val\":\"auto\",\"description\":\"hour\"},\"mode\":\"records\",\"viewBy\":{\"field\":\"detector_index\",\"label\":\"detector\"},\"showViewByControl\":true},\"aggs\":[{\"id\":\"1\",\"type\":\"max\",\"schema\":\"metric\",\"params\":{\"field\":\"record_score\"}},{\"id\":\"2\",\"type\":\"terms\",\"schema\":\"viewBy\",\"params\":{\"field\":\"detector_index\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"4\",\"type\":\"terms\",\"schema\":\"secondaryViewBy\",\"params\":{\"field\":\"job_id\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"1\"}},{\"id\":\"3\",\"type\":\"date_histogram\",\"schema\":\"timeSplit\",\"params\":{\"field\":\"timestamp\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,
@@ -60,7 +60,7 @@
     "_type": "visualization",
     "_source": {
       "title": "Influencers",
-      "visState": "{\"type\":\"mlInfluencersList\",\"params\":{},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"totalScore\",\"params\":{\"field\":\"anomaly_score\"}},{\"id\":\"2\",\"type\":\"max\",\"schema\":\"maxScore\",\"params\":{\"field\":\"anomaly_score\"}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"viewBy1\",\"params\":{\"field\":\"influencer_field_name\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"2\"}},{\"id\":\"4\",\"type\":\"terms\",\"schema\":\"viewBy2\",\"params\":{\"field\":\"influencer_field_value\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"2\"}}],\"listeners\":{}}",
+      "visState": "{\"type\":\"mlInfluencersList\",\"params\":{},\"aggs\":[{\"id\":\"1\",\"type\":\"sum\",\"schema\":\"totalScore\",\"params\":{\"field\":\"influencer_score\"}},{\"id\":\"2\",\"type\":\"max\",\"schema\":\"maxScore\",\"params\":{\"field\":\"influencer_score\"}},{\"id\":\"3\",\"type\":\"terms\",\"schema\":\"viewBy1\",\"params\":{\"field\":\"influencer_field_name\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"2\"}},{\"id\":\"4\",\"type\":\"terms\",\"schema\":\"viewBy2\",\"params\":{\"field\":\"influencer_field_value\",\"size\":10,\"order\":\"desc\",\"orderBy\":\"2\"}}],\"listeners\":{}}",
       "uiStateJSON": "{}",
       "description": "",
       "version": 1,

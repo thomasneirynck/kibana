@@ -219,7 +219,7 @@ module.service('mlResultsService', function ($q, es) {
             'aggs': {
               'maxAnomalyScore': {
                 'max': {
-                  'field': 'anomaly_score'
+                  'field': 'influencer_score'
                 }
               },
               'influencerFieldValues': {
@@ -233,12 +233,12 @@ module.service('mlResultsService', function ($q, es) {
                 'aggs': {
                   'maxAnomalyScore': {
                     'max': {
-                      'field': 'anomaly_score'
+                      'field': 'influencer_score'
                     }
                   },
                   'sumAnomalyScore': {
                     'sum': {
-                      'field': 'anomaly_score'
+                      'field': 'influencer_score'
                     }
                   }
                 }
@@ -346,12 +346,12 @@ module.service('mlResultsService', function ($q, es) {
             'aggs': {
               'maxAnomalyScore': {
                 'max': {
-                  'field': 'anomaly_score'
+                  'field': 'influencer_score'
                 }
               },
               'sumAnomalyScore': {
                 'sum': {
-                  'field': 'anomaly_score'
+                  'field': 'influencer_score'
                 }
               }
             }
@@ -539,7 +539,7 @@ module.service('mlResultsService', function ($q, es) {
             'aggs': {
               'maxAnomalyScore': {
                 'max': {
-                  'field': 'anomaly_score'
+                  'field': 'influencer_score'
                 }
               },
               'byTime': {
@@ -551,7 +551,7 @@ module.service('mlResultsService', function ($q, es) {
                 'aggs': {
                   'maxAnomalyScore': {
                     'max': {
-                      'field': 'anomaly_score'
+                      'field': 'influencer_score'
                     }
                   }
                 }
@@ -631,17 +631,17 @@ module.service('mlResultsService', function ($q, es) {
 
 
   // Queries Elasticsearch to obtain record level results containing the influencers
-  // for the specified job(s), normalized probability threshold, and time range.
+  // for the specified job(s), record score threshold, and time range.
   // Pass an empty array or ['*'] to search over all job IDs.
   // Returned response contains a records property, with each record containing
-  // only the fields job_id, detector_index, normalized_probability and influencers.
+  // only the fields job_id, detector_index, record_score and influencers.
   this.getRecordInfluencers = function (index, jobIds, threshold, earliestMs, latestMs, maxResults) {
     const deferred = $q.defer();
     const obj = {success: true, records: []};
 
     // Build the criteria to use in the bool filter part of the request.
     // Adds criteria for the existence of the nested influencers field, time range,
-    // normalized probability, plus any specified job IDs.
+    // record score, plus any specified job IDs.
     const boolCriteria = [];
     boolCriteria.push({
       'nested': {
@@ -670,7 +670,7 @@ module.service('mlResultsService', function ($q, es) {
 
     boolCriteria.push({
       'range': {
-        'normalized_probability': {
+        'record_score': {
           'gte': threshold,
         }
       }
@@ -697,7 +697,7 @@ module.service('mlResultsService', function ($q, es) {
       index: index,
       size: maxResults !== undefined ? maxResults : 100,
       body: {
-        '_source': ['job_id', 'detector_index', 'influencers', 'normalized_probability'],
+        '_source': ['job_id', 'detector_index', 'influencers', 'record_score'],
         'query': {
           'bool': {
             'filter': [
@@ -716,7 +716,7 @@ module.service('mlResultsService', function ($q, es) {
           }
         },
         'sort' : [
-          { 'normalized_probability' : {'order' : 'desc'}}
+          { 'record_score' : {'order' : 'desc'}}
         ],
       }
     })
@@ -736,7 +736,7 @@ module.service('mlResultsService', function ($q, es) {
 
 
   // Queries Elasticsearch to obtain the record level results containing the specified influencer(s),
-  // for the specified job(s), time range, and normalized probability threshold.
+  // for the specified job(s), time range, and record score threshold.
   // influencers parameter must be an array, with each object in the array having 'fieldName'
   // 'fieldValue' properties.
   // Pass an empty array or ['*'] to search over all job IDs.
@@ -745,7 +745,7 @@ module.service('mlResultsService', function ($q, es) {
     const obj = {success: true, records: []};
 
     // Build the criteria to use in the bool filter part of the request.
-    // Add criteria for the time range, normalized probability, plus any specified job IDs.
+    // Add criteria for the time range, record score, plus any specified job IDs.
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
@@ -759,7 +759,7 @@ module.service('mlResultsService', function ($q, es) {
 
     boolCriteria.push({
       'range': {
-        'normalized_probability': {
+        'record_score': {
           'gte': threshold,
         }
       }
@@ -829,7 +829,7 @@ module.service('mlResultsService', function ($q, es) {
           }
         },
         'sort' : [
-          { 'normalized_probability' : {'order' : 'desc'}}
+          { 'record_score' : {'order' : 'desc'}}
         ],
       }
     })
@@ -849,7 +849,7 @@ module.service('mlResultsService', function ($q, es) {
 
 
   // Queries Elasticsearch to obtain the record level results for the specified job and detector,
-  // time range, normalized probability threshold, and whether to only return results containing influencers.
+  // time range, record score threshold, and whether to only return results containing influencers.
   // An additional, optional influencer field name and value may also be provided.
   this.getRecordsForDetector = function (index, jobId, detectorIndex, checkForInfluencers,
     influencerFieldName, influencerFieldValue, threshold, earliestMs, latestMs, maxResults) {
@@ -857,7 +857,7 @@ module.service('mlResultsService', function ($q, es) {
     const obj = {success: true, records: []};
 
     // Build the criteria to use in the bool filter part of the request.
-    // Add criteria for the time range, normalized probability, plus any specified job IDs.
+    // Add criteria for the time range, record score, plus any specified job IDs.
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
@@ -874,7 +874,7 @@ module.service('mlResultsService', function ($q, es) {
 
     boolCriteria.push({
       'range': {
-        'normalized_probability': {
+        'record_score': {
           'gte': threshold,
         }
       }
@@ -944,7 +944,7 @@ module.service('mlResultsService', function ($q, es) {
           }
         },
         'sort' : [
-          { 'normalized_probability' : {'order' : 'desc'}}
+          { 'record_score' : {'order' : 'desc'}}
         ],
       }
     })
@@ -963,7 +963,7 @@ module.service('mlResultsService', function ($q, es) {
   };
 
   // Queries Elasticsearch to obtain all the record level results for the specified job(s), time range,
-  // and normalized probability threshold.
+  // and record score threshold.
   // Pass an empty array or ['*'] to search over all job IDs.
   // Returned response contains a records property, which is an array of the matching results.
   this.getRecords = function (index, jobIds, threshold, earliestMs, latestMs, maxResults) {
@@ -971,7 +971,7 @@ module.service('mlResultsService', function ($q, es) {
   };
 
   // Queries Elasticsearch to obtain the record level results matching the given criteria,
-  // for the specified job(s), time range, and normalized probability threshold.
+  // for the specified job(s), time range, and record score threshold.
   // criteriaFields parameter must be an array, with each object in the array having 'fieldName'
   // 'fieldValue' properties.
   // Pass an empty array or ['*'] to search over all job IDs.
@@ -980,7 +980,7 @@ module.service('mlResultsService', function ($q, es) {
     const obj = {success: true, records: []};
 
     // Build the criteria to use in the bool filter part of the request.
-    // Add criteria for the time range, normalized probability, plus any specified job IDs.
+    // Add criteria for the time range, record score, plus any specified job IDs.
     const boolCriteria = [];
     boolCriteria.push({
       'range': {
@@ -994,7 +994,7 @@ module.service('mlResultsService', function ($q, es) {
 
     boolCriteria.push({
       'range': {
-        'normalized_probability': {
+        'record_score': {
           'gte': threshold,
         }
       }
@@ -1050,7 +1050,7 @@ module.service('mlResultsService', function ($q, es) {
           }
         },
         'sort' : [
-          { 'normalized_probability' : {'order' : 'desc'}}
+          { 'record_score' : {'order' : 'desc'}}
         ],
       }
     })
@@ -1082,7 +1082,7 @@ module.service('mlResultsService', function ($q, es) {
     const obj = {success: true, results: {}};
 
     // Build the criteria to use in the bool filter part of the request.
-    // Add criteria for the time range, normalized probability, plus any specified job IDs.
+    // Add criteria for the time range, record score, plus any specified job IDs.
     const boolCriteria = [];
     boolCriteria.push({
       'range': {

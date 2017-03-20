@@ -15,7 +15,7 @@
 
 
 /*
- * Swimlane showing record level normalized probability by detector.
+ * Swimlane showing record score by detector.
  */
 
 import _ from 'lodash';

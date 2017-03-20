@@ -77,7 +77,7 @@ module.directive('mlConnectionsMap', function () {
       const outerId = [ 0 ];
 
       // Cut the chart data down to only show the top n inner nodes by
-      // normalized probability according to the diameter of the chart.
+      // record score according to the diameter of the chart.
       // Sort items so as not to rely on Object keys iterator order.
       const numberInnerNodes = Math.floor((diameter - (2 * groupArcWidth)) / innerNodeHeight);
       const chartKeys = _.keys(scope.chartData);

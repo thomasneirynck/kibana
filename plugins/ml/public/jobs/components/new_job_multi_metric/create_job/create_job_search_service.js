@@ -90,13 +90,13 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
             'terms': {
               'field': 'detector_index',
               'order': {
-                'normalizedProbability': 'desc'
+                'recordScore': 'desc'
               }
             },
             'aggs': {
-              'normalizedProbability': {
+              'recordScore': {
                 'max': {
-                  'field': 'normalized_probability'
+                  'field': 'record_score'
                 }
               },
               'byTime': {
@@ -110,9 +110,9 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
                   }
                 },
                 'aggs': {
-                  'normalizedProbability': {
+                  'recordScore': {
                     'max': {
-                      'field': 'normalized_probability'
+                      'field': 'record_score'
                     }
                   }
                 }
@@ -133,7 +133,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
           const bkt = buckets[j];
           const time = bkt.key;
           dtrResults[time] = {
-            'normalizedProbability': _.get(bkt, ['normalizedProbability', 'value']),
+            'recordScore': _.get(bkt, ['recordScore', 'value']),
           };
         }
         obj.results[dtrIndex] = dtrResults;
