@@ -799,6 +799,14 @@ module.exports = (function () {
       return field + '..' + term;
     };
 
+    this.makeEdgeId = function (srcId, targetId) {
+      let id = srcId + '->' + targetId;
+      if (srcId > targetId) {
+        id = targetId + '->' + srcId;
+      }
+      return id;
+    };
+
     //=======  Adds new nodes retrieved from an elasticsearch search ========
     this.mergeGraph = function (newData) {
       this.stopLayout();
@@ -867,17 +875,13 @@ module.exports = (function () {
         const edge = newData.edges[o];
         const src = newData.nodes[edge.source];
         const target = newData.nodes[edge.target];
-        let id = src.id + '->' + target.id;
-        if (src.id > target.id) {
-          id = target.id + '->' + src.id;
-        }
-        edge.id = id;
+        edge.id = this.makeEdgeId(src.id, target.id);
 
         //Lookup the wrappers object that will hold display Info like x/y coordinates
         const srcWrapperObj = this.nodesMap[src.id];
         const targetWrapperObj = this.nodesMap[target.id];
 
-        const existingEdge = this.edgesMap[id];
+        const existingEdge = this.edgesMap[edge.id];
         if (existingEdge) {
           existingEdge.weight = Math.max(existingEdge.weight, edge.weight);
           //TODO update width too?
@@ -893,7 +897,7 @@ module.exports = (function () {
           'target': targetWrapperObj,
           'weight': edge.weight,
           'width': edge.width,
-          'id': id,
+          'id': edge.id,
           'doc_count': edge.doc_count,
           'inferred': inferred
         };
@@ -937,45 +941,29 @@ module.exports = (function () {
 
     //======= Expand functions to request new additions to the graph
 
-    this.expandSelecteds = function (clearExisting, targetOptions) {
+    this.expandSelecteds = function (targetOptions = {}) {
       let startNodes = self.getAllSelectedNodes();
       if (startNodes.length == 0) {
         startNodes = self.nodes;
       }
       const clone = startNodes.slice();
-      self.expand(clone, clearExisting, targetOptions);
+      self.expand(clone, targetOptions);
     };
 
     this.expandGraph = function () {
-      self.expandSelecteds(false, {
-        valueTypes: 'new'
-      });
-    };
-
-
-    //Add missing links between existing nodes
-    this.fillInGraph = function () {
-      self.expandSelecteds(false, {
-        valueTypes: 'old'
-      });
+      self.expandSelecteds();
     };
 
     //Find new nodes to link to existing selected nodes
     this.expandNode = function (node) {
-      self.expand(self.returnUnpackedGroupeds([node]), false, {
-        valueTypes: 'new'
-      });
+      self.expand(self.returnUnpackedGroupeds([node]), {});
     };
 
     // A manual expand function where the client provides the list
     // of existing nodes that are the start points and some options
     // about what targets are of interest.
-    // Target choices are "new", "old" or "both"
-    this.expand = function (startNodes, clearExisting, targetOptions) {
+    this.expand = function (startNodes, targetOptions) {
       //=============================
-      if (clearExisting) {
-        this.clearGraph();
-      }
       const nodesByField = {};
       const excludeNodesByField = {};
 
@@ -993,49 +981,16 @@ module.exports = (function () {
         }
       }
 
-      if (targetOptions.valueTypes == 'new') {
-        const allExistingNodes = this.nodes;
-        for (let i = 0; i < allExistingNodes.length; i++) {
-          const n = allExistingNodes[i];
-          let arr = excludeNodesByField[n.data.field];
-          if (!arr) {
-            arr = [];
-            excludeNodesByField[n.data.field] = arr;
-          }
-          arr.push(n.data.term);
+      const allExistingNodes = this.nodes;
+      for (let i = 0; i < allExistingNodes.length; i++) {
+        const n = allExistingNodes[i];
+        let arr = excludeNodesByField[n.data.field];
+        if (!arr) {
+          arr = [];
+          excludeNodesByField[n.data.field] = arr;
         }
-      } else if (targetOptions.valueTypes == 'both') {
-
-        //Avoid all nodes already connected to start nodes
-        // Issue: if start nodes are A and B and A is already linked to C
-        // we will not find a B->C connection because C is excluded globally
-
-        //Note: for the entity-building use case need to remove excludes caused by above...
-        // (this comment likely means something profound but until I immerse myself in
-        // entity-building logic again the significance is lost on me.... :-(   )
-        const allExistingEdges = this.edges;
-        for (let i = 0; i < allExistingEdges.length; i++) {
-          const e = allExistingEdges[i];
-          let n = null;
-          if (startNodes.indexOf(e.source) >= 0) {
-            n = e.target;
-          }
-          if (startNodes.indexOf(e.target) >= 0) {
-            n = e.source;
-          }
-          if (n != null) {
-            let arr = excludeNodesByField[n.data.field];
-            if (!arr) {
-              arr = [];
-              excludeNodesByField[n.data.field] = arr;
-            }
-            if (arr.indexOf(n.data.term) < 0) {
-              arr.push(n.data.term);
-            }
-          }
-        }
+        arr.push(n.data.term);
       }
-
 
       //Organize nodes by field
       for (let i = 0; i < startNodes.length; i++) {
@@ -1058,10 +1013,8 @@ module.exports = (function () {
         }
         //NOTE for the entity-building use case need to remove excludes that otherwise
         // prevent bridge-building.
-        if (targetOptions.valueTypes == 'new') {
-          if (arr.indexOf(n.data.term) < 0) {
-            arr.push(n.data.term);
-          }
+        if (arr.indexOf(n.data.term) < 0) {
+          arr.push(n.data.term);
         }
       }
 
@@ -1092,20 +1045,7 @@ module.exports = (function () {
           'size': hopSize,
           'min_doc_count': parseInt(self.options.exploreControls.minDocCount)
         };
-        if (targetOptions.valueTypes == 'old') {
-          //Look to reinforce internal links for ANY of the existing terms
-          fieldHop.include = self.nodes.filter(function (n) {
-            return n.data.field == fieldName;
-          }).map(function (n) {
-            return n.data.term;
-          });
-          if (fieldHop.include.length == 0) {
-            //There are no old nodes to connect to - remove this from the graph request
-            continue;
-          }
-        } else {
-          fieldHop.exclude = excludeNodesByField[fieldName];
-        }
+        fieldHop.exclude = excludeNodesByField[fieldName];
         secondaryVertices.push(fieldHop);
 
       }
@@ -1117,33 +1057,11 @@ module.exports = (function () {
           'vertices': secondaryVertices
         }
       };
-
-      if (targetOptions.valueTypes == 'old') {
-        // Looking for connections between the provided nodes.
-        // We need to ensure we select in the sample docs that contain pairings of nodes
-        // - add a query that enforces this.
-        const shoulds = [];
-        for (const bs in startNodes) {
-          const node = startNodes[bs];
-          if (node.parent == undefined) {
-            shoulds.push(self.buildNodeQuery(node));
-          }
-        }
-        request.query = {
-          'bool': {
-            'minimum_should_match': 2,
-            'should': shoulds
-          }
-        };
-      }
-
-
-
       self.lastRequest = JSON.stringify(request, null, '\t');
       graphExplorer(self.options.indexName, request, function (data) {
         self.lastResponse = JSON.stringify(data, null, '\t');
         const nodes = [];
-        let edges = [];
+        const edges = [];
 
         //Label fields with a field number for CSS styling
         for (const n in data.vertices) {
@@ -1178,18 +1096,6 @@ module.exports = (function () {
           });
         }
 
-        //TODO Deal with deficiency of back-end API here - currently no
-        // way to ask for more connections but exclude edges we already have
-        // in the client workspace - (we can only include/exclude individual nodes).
-        // Consequently when adding edges to existing nodes ("old" expand mode) we
-        // ask for all edges with 2 pairs of include statements and return ALL edges.
-        // This function trims the excess of edges.
-        if (targetOptions.valueTypes == 'old') {
-          edges = self.trimExcessNewEdges(data.vertices, edges);
-        }
-
-
-
         // Add the new nodes and edges into the existing workspace's graph
         self.mergeGraph({
           'nodes': data.vertices,
@@ -1211,10 +1117,7 @@ module.exports = (function () {
         const target = newNodes[edge.target];
         const srcId = src.field + '..' + src.term;
         const targetId = target.field + '..' + target.term;
-        const id = srcId + '->' + targetId;
-        if (srcId > targetId) {
-          const id = targetId + '->' + srcId;
-        }
+        const id = this.makeEdgeId(srcId,targetId);
         const existingSrcNode = self.nodesMap[srcId];
         const existingTargetNode = self.nodesMap[targetId];
         if (existingSrcNode != null && existingTargetNode != null) {
@@ -1275,6 +1178,12 @@ module.exports = (function () {
       return startNodes;
     };
 
+    this.getSelectedOrAllTopNodes = function () {
+      return self.getSelectedOrAllNodes().filter(function (node) {
+        return node.parent === undefined;
+      });
+    };
+
     function addTermToFieldList(map, field, term) {
       let arr = map[field];
       if (!arr) {
@@ -1283,6 +1192,152 @@ module.exports = (function () {
       }
       arr.push(term);
     }
+
+
+   //Add missing links between existing nodes
+    this.fillInGraph = function () {
+      let nodesForLinking = self.getSelectedOrAllTopNodes();
+
+      const maxNewEdges = 10; // Avoid adding too many new edges at once into the graph otherwise disorientating
+      const maxNumVerticesSearchable = 100;
+
+
+      // Server limitation - we can only search for connections between max 100 vertices at a time.
+      if(nodesForLinking.length > maxNumVerticesSearchable) {
+        //Make a selection of random nodes from the array. Shift the random choices
+        // to the front of the array.
+        for(let i = 0; i < maxNumVerticesSearchable; i++) {
+          const oldNode = nodesForLinking[i];
+          const randomIndex = Math.floor(Math.random() * (nodesForLinking.length - i)) + i;
+          //Swap the node positions of the randomly selected node and i
+          nodesForLinking[i] = nodesForLinking[randomIndex];
+          nodesForLinking[randomIndex] = oldNode;
+        }
+        // Trim to our random selection
+        nodesForLinking = nodesForLinking.slice(0,maxNumVerticesSearchable - 1);
+      }
+
+
+      // Create our query/aggregation request using the selected nodes.
+      // Filters are named after the index of the node in the nodesForLinking
+      // array. The result bucket describing the relationship between
+      // the first 2 nodes in the array will therefore be labelled "0|1"
+      const shoulds = [];
+      const filterMap = {};
+      nodesForLinking.forEach(function (node, nodeNum) {
+        const nodeQuery = self.buildNodeQuery(node);
+        shoulds.push(nodeQuery);
+        filterMap[nodeNum] = nodeQuery;
+      });
+      const searchReq = {
+        "size":0,
+        "query":{
+          "bool":{
+            // Only match docs that share 2 nodes so can help describe their relationship
+            'minimum_should_match': 2,
+            'should': shoulds
+          }
+        },
+        "aggs":{
+          "matrix":{
+            "adjacency_matrix":{
+              "separator":"|",
+              "filters": filterMap
+            }
+          }
+        }
+      };
+
+      // Search for connections between the selected nodes.
+      searcher(self.options.indexName, searchReq, function (data) {
+
+        const numDocsMatched = data.hits.total;
+        const buckets = data.aggregations.matrix.buckets;
+        const vertices = nodesForLinking.map(function (existingNode) {
+          return {
+            "field": existingNode.data.field,
+            "term": existingNode.data.term,
+            "weight": 1,
+            "depth": 0
+          };
+        });
+
+        let connections = [];
+        let maxEdgeWeight = 0;
+        // Turn matrix array of results into a map
+        const keyedBuckets = {};
+        buckets.forEach(function (bucket) {
+          keyedBuckets[bucket.key] = bucket;
+        });
+
+        buckets.forEach(function (bucket) {
+          // We callibrate line thickness based on % of max weight of
+          // all edges (including the edges we may already have in the workspace)
+          const ids = bucket.key.split("|");
+          if(ids.length === 2) {
+            // bucket represents an edge
+            if (self.options.exploreControls.useSignificance) {
+              const t1 = keyedBuckets[ids[0]].doc_count;
+              const t2 = keyedBuckets[ids[1]].doc_count;
+              const t1AndT2 = bucket.doc_count;
+              // Calc the significant_terms score to prioritize selection of interesting links
+              bucket.weight = self.JLHScore(t1AndT2, Math.max(t1, t2), Math.min(t1, t2), numDocsMatched);
+            } else {
+              // prioritize links purely on volume of intersecting docs
+              bucket.weight = bucket.doc_count;
+            }
+            maxEdgeWeight = Math.max(maxEdgeWeight, bucket.weight);
+          }
+        });
+        const backFilledMinLineSize = 2;
+        const backFilledMaxLineSize = 5;
+        buckets.forEach(function (bucket) {
+          if(bucket.doc_count < parseInt(self.options.exploreControls.minDocCount)) {
+            return;
+          }
+          const ids = bucket.key.split("|");
+          if(ids.length == 2) {
+            // Bucket represents an edge
+            const srcNode = nodesForLinking[ids[0]];
+            const targetNode = nodesForLinking[ids[1]];
+            const edgeId = self.makeEdgeId(srcNode.id,targetNode.id);
+            const existingEdge = self.edgesMap[edgeId];
+            if (existingEdge) {
+              // Tweak the doc_count score having just looked it up.
+              existingEdge.doc_count = Math.max(existingEdge.doc_count, bucket.doc_count);
+            } else  {
+              connections.push({
+                // source and target values are indexes into the vertices array
+                "source": parseInt(ids[0]),
+                "target": parseInt(ids[1]),
+                "weight": bucket.weight,
+                "width":  Math.max(backFilledMinLineSize, ((bucket.weight / maxEdgeWeight) * backFilledMaxLineSize)),
+                "doc_count": bucket.doc_count
+              });
+            }
+          }
+        });
+        // Trim the array of connections so that we don't add too many at once - disorientating for users otherwise
+        if(connections.length > maxNewEdges) {
+          connections = connections.sort(function (a, b) {
+            return b.weight - a.weight;
+          });
+          connections = connections.slice(0, maxNewEdges);
+        }
+
+        // Merge the new edges into the existing workspace's graph.
+        // We reuse the mergeGraph function used to handle the
+        // results of other calls to the server-side Graph API
+        // so must package the results here with that same format
+        // even though we know all the vertices we provide will
+        // be duplicates and ignored.
+        self.mergeGraph({
+          'nodes': vertices,
+          'edges': connections
+        });
+
+      });
+    };
 
     // Provide a "fuzzy find similar" query that can find similar docs but preferably
     // not re-iterating the exact terms we already have in the workspace.

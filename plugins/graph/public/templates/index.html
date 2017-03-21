@@ -281,10 +281,10 @@
             <i class="fa  fa-repeat"></i>
           </button>
 
-          <button class="btn btn-xs btn-default" ng-disabled="workspace === null ||liveResponseFields.length === 0||workspace.nodes.length === 0" tooltip="Expand selection" ng-click="setDetail(null);workspace.expandSelecteds(false,{valueTypes: 'new',toFields:liveResponseFields});"><i class="fa  fa-plus"></i>
+          <button class="btn btn-xs btn-default" ng-disabled="workspace === null ||liveResponseFields.length === 0||workspace.nodes.length === 0" tooltip="Expand selection" ng-click="setDetail(null);workspace.expandSelecteds({toFields:liveResponseFields});"><i class="fa  fa-plus"></i>
           </button>
 
-          <button class="btn btn-xs btn-default" ng-disabled="workspace === null ||workspace.nodes.length === 0" tooltip="Add links between existing terms" ng-click="workspace.expandSelecteds(false,{valueTypes: 'old'});">
+          <button class="btn btn-xs btn-default" ng-disabled="workspace === null ||workspace.nodes.length === 0" tooltip="Add links between existing terms" ng-click="workspace.fillInGraph();">
             </i><i class="fa  fa-link"></i>
           </button>
 
