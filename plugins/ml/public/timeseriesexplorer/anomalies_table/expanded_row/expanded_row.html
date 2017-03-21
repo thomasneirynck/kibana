@@ -49,7 +49,11 @@
       <td ng-if="$index === 0">category examples:</td><td ng-if="$index > 0">&nbsp;</td>
       <td>{{example}}</td>
     </tr>
-    <tr><td>function:</td><td>{{record.source.function}}</td></tr>
+    <tr>
+      <td>function:</td>
+      <td ng-if="record.source.function !== 'metric'">{{record.source.function}}</td>
+      <td ng-if="record.source.function === 'metric'">{{record.source.function_description}}</td>
+    </tr>
     <tr ng-if="record.source.field_name"><td>fieldName:</td><td>{{record.source.field_name}}</td></tr>
     <tr ng-if="actual !== undefined"><td>actual:</td><td>{{actual | formatValue:record.source.function}}</td></tr>
     <tr ng-if="typical !== undefined"><td>typical:</td><td>{{typical | formatValue:record.source.function}}</td></tr>

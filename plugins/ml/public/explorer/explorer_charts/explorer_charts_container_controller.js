@@ -113,7 +113,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
         }
 
         if (isSecondSplit === false) {
-          if (!_.has(dataForGroupValue, 'anomaly_score')) {
+          if (!_.has(dataForGroupValue, 'maxScoreRecord')) {
             dataForGroupValue.maxScore = record.record_score;
             dataForGroupValue.maxScoreRecord = record;
           } else {
@@ -137,7 +137,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
           }
 
           const dataForSplitValue = splitsForGroup[secondFieldValue];
-          if (!_.has(dataForSplitValue, 'anomaly_score')) {
+          if (!_.has(dataForSplitValue, 'maxScoreRecord')) {
             dataForSplitValue.maxScore = record.record_score;
             dataForSplitValue.maxScoreRecord = record;
           } else {
@@ -150,7 +150,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
       } else {
         // Detector with no partition or by field.
         const dataForDetector = detectorsForJob[detectorIndex];
-        if (!_.has(dataForDetector, 'maxScore')) {
+        if (!_.has(dataForDetector, 'maxScoreRecord')) {
           dataForDetector.maxScore = record.record_score;
           dataForDetector.maxScoreRecord = record;
         } else {
@@ -165,7 +165,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
 
     console.log('explorer charts aggregatedData is:', aggregatedData);
     let recordsForSeries = [];
-    // Convert to an array of the records with the highesy record_score per unique series.
+    // Convert to an array of the records with the highest record_score per unique series.
     _.each(aggregatedData, (detectorsForJob) => {
       _.each(detectorsForJob, (groupsForDetector) => {
         if (_.has(groupsForDetector, 'maxScoreRecord')) {
