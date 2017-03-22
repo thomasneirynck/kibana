@@ -24,6 +24,7 @@ export function checkLicense(xpackLicenseInfo) {
     return {
       isAvailable: false,
       showLinks: false,
+      enableLinks: false,
       message: `Your ${licenseType} license does not support Machine Learning. Please upgrade your license.`
     };
   }

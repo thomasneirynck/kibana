@@ -9,10 +9,9 @@ uiModules.get('xpack/ml').run((Private) => {
 
   // hide by default, only show once the xpackInfo is initialized
   navLink.hidden = true;
-  const showAppLink = xpackInfo.get('features.ml.showAppLink', false);
+  const showAppLink = xpackInfo.get('features.ml.showLinks', false);
   navLink.hidden = !showAppLink;
   if (showAppLink) {
-    navLink.disabled = !xpackInfo.get('features.ml.enableAppLink', false);
-    navLink.tooltip = xpackInfo.get('features.ml.message');
+    navLink.disabled = !xpackInfo.get('features.ml.isAvailable', false);
   }
 });
