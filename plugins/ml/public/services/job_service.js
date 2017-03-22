@@ -106,6 +106,9 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                   job.state = jobStats.state;
                   job.data_counts = jobStats.data_counts;
                   job.model_size_stats = jobStats.model_size_stats;
+                  if (jobStats.open_time) {
+                    job.open_time = jobStats.open_time;
+                  }
                 }
               }
             }
@@ -160,6 +163,10 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                   newJob.state = statsJob.state;
                   angular.copy(statsJob.data_counts, newJob.data_counts);
                   angular.copy(statsJob.model_size_stats, newJob.model_size_stats);
+
+                  if (statsJob.open_time) {
+                    newJob.open_time = statsJob.open_time;
+                  }
                 }
               }
 
@@ -262,11 +269,14 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           for (let i = 0; i < jobs.length; i++) {
             if (jobs[i].job_id === jobId) {
               const job = jobs[i];
+              job.state = newJob.state;
               job.data_counts = newJob.data_counts;
               if (newJob.model_size_stats) {
                 job.model_size_stats = newJob.model_size_stats;
               }
-              job.state = newJob.state;
+              if (newJob.open_time) {
+                job.open_time = newJob.open_time;
+              }
             }
           }
 
@@ -322,11 +332,14 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           const job = jobs[i];
           if (job.job_id === resp.jobs[d].job_id) {
             jobExists = true;
+            job.state = newJob.state;
             job.data_counts = newJob.data_counts;
             if (newJob.model_size_stats) {
               job.model_size_stats = newJob.model_size_stats;
             }
-            job.state = newJob.state;
+            if (newJob.open_time) {
+              job.open_time = newJob.open_time;
+            }
           }
         }
 
