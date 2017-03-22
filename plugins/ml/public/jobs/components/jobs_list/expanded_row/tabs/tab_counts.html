@@ -32,6 +32,20 @@
                       </div>
                     </div>
 
+                    <div ng-switch-when="last_data_time">
+                      <div class="ml_job_row row">
+                        <div class="col-md-6">{{key1}}</div>
+                        <div class="col-md-6" title="{{value1}} bytes">{{formatDate(value1)}}</div>
+                      </div>
+                    </div>
+
+                    <div ng-switch-when="latest_empty_bucket_timestamp">
+                      <div class="ml_job_row row">
+                        <div class="col-md-6">{{key1}}</div>
+                        <div class="col-md-6" title="{{value1}} bytes">{{formatDate(value1)}}</div>
+                      </div>
+                    </div>
+
                     <div ng-switch-default>
                       <div class="ml_job_row row">
                         <div class="col-md-6">{{key1}}</div>
