@@ -5,7 +5,6 @@ import validateMonitoringLicense from './validate_monitoring_license';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
 export default function getClusters(req, indices) {
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const config = req.server.config();
   // Get the params from the POST body for the request
   const start = req.payload.timeRange.min;
@@ -32,12 +31,15 @@ export default function getClusters(req, indices) {
       aggs: {
         cluster_uuids: {
           terms: {
-            field: 'cluster_uuid'
+            field: 'cluster_uuid',
+            size: config.get('xpack.monitoring.max_bucket_size')
           }
         }
       }
     }
   };
+
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
   .then(statsResp => {
     const statsBuckets = _.get(statsResp, 'aggregations.cluster_uuids.buckets');

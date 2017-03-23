@@ -7,10 +7,10 @@ import { ElasticsearchMetric } from './metrics/metric_classes';
 export default function getShardStats(req, indices, lastState) {
   const config = req.server.config();
   const nodeResolver = config.get('xpack.monitoring.node_resolver');
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const uuid = req.params.clusterUuid;
   const aggSize = 10;
   const metric = ElasticsearchMetric.getMetricFields();
+  const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
   const params = {
     index: indices,
     type: 'shards',
@@ -27,7 +27,7 @@ export default function getShardStats(req, indices, lastState) {
         indices: {
           terms: {
             field: 'shard.index',
-            size: config.get('xpack.monitoring.max_bucket_size')
+            size: maxBucketSize
           },
           aggs: {
             states: {
@@ -39,7 +39,7 @@ export default function getShardStats(req, indices, lastState) {
         nodes: {
           terms: {
             field: `source_node.${nodeResolver}`,
-            size: config.get('xpack.monitoring.max_bucket_size')
+            size: maxBucketSize
           },
           aggs: {
             index_count: { cardinality: { field: 'shard.index' } },
@@ -61,6 +61,7 @@ export default function getShardStats(req, indices, lastState) {
     }
   };
 
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
   .then((resp) => {
     const data = getDefaultDataObject();

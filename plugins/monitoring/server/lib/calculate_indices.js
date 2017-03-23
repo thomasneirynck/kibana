@@ -6,11 +6,11 @@ import checkMonitoringAuth from './check_monitoring_auth';
 
 export default async function calculateIndices(req, start, end, indexPattern) {
   const config = req.server.config();
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
 
   // Tests access to the monitoring data index. Throws if there is a 401
   await checkMonitoringAuth(req, indexPattern);
 
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const countResults = await callWithRequest(req, 'count', {
     index: indexPattern,
     ignore: [404]

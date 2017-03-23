@@ -48,7 +48,6 @@ export default function getListingNodes(req, indices) {
   const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
   const bucketSize = Math.max(minIntervalSeconds, calcAuto.near(100, duration).asSeconds());
   const aggItems = getAggItems({ listingMetrics, bucketSize, min, max });
-  const aggSize = 10000;
 
   const params = {
     index: indices,
@@ -65,17 +64,17 @@ export default function getListingNodes(req, indices) {
           },
           aggs: {
             node_name: {
-              terms: { field: 'source_node.name', size: aggSize },
+              terms: { field: 'source_node.name', size: maxBucketSize },
               aggs: { max_timestamp: { max: { field: 'timestamp' } } }
             },
             node_transport_address: {
-              terms: { field: 'source_node.transport_address', size: aggSize },
+              terms: { field: 'source_node.transport_address', size: maxBucketSize },
               aggs: { max_timestamp: { max: { field: 'timestamp' } } }
             },
-            node_data_attributes: { terms: { field: 'source_node.attributes.data', size: aggSize } },
-            node_master_attributes: { terms: { field: 'source_node.attributes.master', size: aggSize } },
+            node_data_attributes: { terms: { field: 'source_node.attributes.data', size: maxBucketSize } },
+            node_master_attributes: { terms: { field: 'source_node.attributes.master', size: maxBucketSize } },
             // for doing a join on the cluster state to determine if node is current master
-            node_ids: { terms: { field: 'source_node.uuid', size: aggSize } },
+            node_ids: { terms: { field: 'source_node.uuid', size: maxBucketSize } },
             ...aggItems
           }
         }

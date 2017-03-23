@@ -20,6 +20,7 @@ export default function getKibanasForClusters(req, indices) {
   if (indices.length < 1) return () => Promise.resolve([]);
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
+  const config = req.server.config();
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
 
@@ -44,7 +45,7 @@ export default function getKibanasForClusters(req, indices) {
             kibana_uuids: {
               terms: {
                 field: 'kibana_stats.kibana.uuid',
-                size: 1000
+                size: config.get('xpack.monitoring.max_bucket_size')
               },
               aggs: {
                 latest_report: {
@@ -153,6 +154,7 @@ export default function getKibanasForClusters(req, indices) {
           }
         }
       };
+
       return callWithRequest(req, 'search', params)
       .then(result => {
         const getResultAgg = key => _.get(result, `aggregations.${key}`);

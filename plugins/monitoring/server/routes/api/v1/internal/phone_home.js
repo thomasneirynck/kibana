@@ -19,6 +19,7 @@ export default function phoneHomeRoutes(server) {
           type: 'phone_home',
           body: body
         };
+
         callWithRequest(req, 'index', options)
         .then(reply)
         .catch(err => reply(handleError(err, req)));

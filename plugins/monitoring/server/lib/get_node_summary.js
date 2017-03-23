@@ -3,8 +3,6 @@ import createQuery from './create_query.js';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
 export default function getNodeSummary(req, indices) {
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
-
   // Get the params from the POST body for the request
   const config = req.server.config();
   const end = req.payload.timeRange.max;
@@ -30,6 +28,7 @@ export default function getNodeSummary(req, indices) {
     }
   };
 
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
   .then((resp) => {
     const summary = { documents: 0, dataSize: 0, freeSpace: 0, node: { attributes: {} } };

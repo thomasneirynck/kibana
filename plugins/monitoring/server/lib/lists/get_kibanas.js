@@ -19,12 +19,10 @@ import { ElasticsearchMetric } from '../metrics/metric_classes';
 export default function getKibanas(req, indices) {
   if (indices.length < 1) return Promise.resolve([]);
 
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const config = req.server.config();
   const start = moment.utc(req.payload.timeRange.min).valueOf();
   const end = moment.utc(req.payload.timeRange.max).valueOf();
   const uuid = req.params.clusterUuid;
-
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
@@ -36,12 +34,14 @@ export default function getKibanas(req, indices) {
         kibana_uuids: {
           terms: {
             field: 'kibana_stats.kibana.uuid',
-            size: 1000
+            size: config.get('xpack.monitoring.max_bucket_size')
           }
         }
       }
     }
   };
+
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
   .then(statsResp => {
     const statsBuckets = get(statsResp, 'aggregations.kibana_uuids.buckets');

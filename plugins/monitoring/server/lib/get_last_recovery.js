@@ -39,7 +39,6 @@ export function handleLastRecoveries(resp, start) {
 }
 
 export default function getLastRecovery(req, indices) {
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const uuid = req.params.clusterUuid;
@@ -57,6 +56,7 @@ export default function getLastRecovery(req, indices) {
     }
   };
 
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
   .then((resp) => {
     return handleLastRecoveries(resp, start);

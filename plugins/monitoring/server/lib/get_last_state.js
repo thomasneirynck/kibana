@@ -3,7 +3,6 @@ import createQuery from './create_query.js';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
 export default function getLastState(req, indices) {
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const end = req.payload.timeRange.max;
   const uuid = req.params.clusterUuid;
   const config = req.server.config();
@@ -21,6 +20,7 @@ export default function getLastState(req, indices) {
     }
   };
 
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
   .then(resp => {
     const total = _.get(resp, 'hits.total', 0);

@@ -1,6 +1,7 @@
 import { get, set, find } from 'lodash';
 export default function getPrimaryClusterUuid(req) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('admin');
+
   return async function (clusters) {
     const queryParams = {
       filter_path: 'metadata.cluster_uuid'

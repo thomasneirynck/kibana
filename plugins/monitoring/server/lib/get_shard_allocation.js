@@ -17,7 +17,6 @@ export default function getShardAllocation(req, indices, filters, lastState, sho
 
 
   const config = req.server.config();
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const uuid = req.params.clusterUuid;
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
@@ -29,6 +28,7 @@ export default function getShardAllocation(req, indices, filters, lastState, sho
     }
   };
 
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
   .then((resp) => {
     const hits = _.get(resp, 'hits.hits');

@@ -22,6 +22,7 @@ export default function getLogstashForClusters(req, indices) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
+  const config = req.server.config();
 
   return function (clusters) {
     return Promise.map(clusters, cluster => {
@@ -43,7 +44,7 @@ export default function getLogstashForClusters(req, indices) {
             logstash_uuids: {
               terms: {
                 field: 'logstash_stats.logstash.uuid',
-                size: 1000
+                size: config.get('xpack.monitoring.max_bucket_size')
               },
               aggs: {
                 latest_report: {
@@ -127,6 +128,7 @@ export default function getLogstashForClusters(req, indices) {
           }
         }
       };
+
       return callWithRequest(req, 'search', params)
       .then(result => {
         const getResultAgg = key => _.get(result, `aggregations.${key}`);

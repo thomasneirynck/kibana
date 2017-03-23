@@ -11,7 +11,6 @@ export function handleResponse(resp) {
 }
 
 export default function getKibanaInfo(req, uuid) {
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const config = req.server.config();
   const params = {
     index: config.get('xpack.monitoring.index'),
@@ -20,6 +19,7 @@ export default function getKibanaInfo(req, uuid) {
     id: uuid
   };
 
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'get', params)
   .then(handleResponse);
 }

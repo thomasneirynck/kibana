@@ -39,8 +39,6 @@ export function handleResponse(lastState) {
 }
 
 export default function getClusterStatus(req, indices, lastState) {
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
-
   // Get the params from the POST body for the request
   const end = req.payload.timeRange.max;
   const uuid = req.params.clusterUuid;
@@ -60,5 +58,6 @@ export default function getClusterStatus(req, indices, lastState) {
 
   // Send the request to Elasticsearch with authentication headers. This will handle
   // 401 from the Sheild plugin and send them back to the browser
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params).then(handleResponse(lastState));
 };

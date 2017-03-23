@@ -8,9 +8,11 @@ import Promise from 'bluebird';
 export default function getClustersStats(req) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const config = req.server.config();
+
   return (clusters) => {
     // in case getClusters had no hits and returned undefined
     if (!clusters) return [];
+
     return Promise.map(clusters, (cluster) => {
       const body = {
         size: 1,
@@ -25,6 +27,7 @@ export default function getClustersStats(req) {
         type: 'cluster_stats',
         body: body
       };
+
       return callWithRequest(req, 'search', params)
         .then((resp) => {
           if (resp.hits.total) {

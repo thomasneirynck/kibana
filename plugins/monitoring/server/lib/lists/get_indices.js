@@ -40,7 +40,6 @@ export default function getListingIndices(req, indices, showSystemIndices = fals
 
   const uuid = req.params.clusterUuid;
   const metricFields = ElasticsearchMetric.getMetricFields();
-  const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
   const params = {
     index: indices,
     type: 'index_stats',
@@ -50,7 +49,7 @@ export default function getListingIndices(req, indices, showSystemIndices = fals
       query: createQuery({ start: min, end: max, uuid, metric: metricFields, filters }),
       aggs: {
         items: {
-          terms: { field: 'index_stats.index', size: maxBucketSize },
+          terms: { field: 'index_stats.index', size: config.get('xpack.monitoring.max_bucket_size') },
           aggs: aggItems
         }
       }
