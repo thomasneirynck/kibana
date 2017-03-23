@@ -47,7 +47,7 @@ module.service('mlMessageBarService', function () {
   };
 
   this.error = function (text, resp) {
-    const txt = text + expandErrorMessageObj(resp);
+    const txt = text + ' ' + expandErrorMessageObj(resp);
     this.addMessage({text: txt, style: MSG_STYLE.ERROR});
   };
 

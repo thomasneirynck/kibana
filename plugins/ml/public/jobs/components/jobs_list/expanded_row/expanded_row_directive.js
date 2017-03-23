@@ -100,15 +100,9 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
       $scope.init();
 
       $scope.copyToClipboard = function (job) {
-        let newJob = angular.copy(job);
-        newJob = mlJobService.removeJobEndpoints(newJob);
-        newJob = mlJobService.removeJobCounts(newJob);
-
+        const newJob = angular.copy(job);
         const success = mlClipboardService.copy(angular.toJson(newJob));
         if (success) {
-          // msgs.clear();
-          // msgs.info(job.job_id+' JSON copied to clipboard');
-
           // flash the background color of the json box
           // to show the contents has been copied.
           const el = $element.find('.ml-pre');
@@ -116,7 +110,6 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
           el.css('background-color', 'aliceblue');
           el.css('color', 'white');
           window.setTimeout(() => {
-            // el.css('transition', 'background 0.3s linear');
             el.css('transition', 'background 0.3s linear, color 0.3s linear');
             el.css('background-color', 'white');
             el.css('color', 'inherit');

@@ -183,9 +183,8 @@ function (
       // if it's set, this is a job edit
       const jobId = $route.current.params.jobId;
 
-      // make a copy of the currentJob object. so we don't corrupt the real jobs
+      // make a copy of the currentJob object. so we don't corrupt the real job
       $scope.job = mlJobService.cloneJob(mlJobService.currentJob);
-      $scope.job = mlJobService.removeJobCounts($scope.job);
 
       if (jobId) {
         $scope.mode = MODE.EDIT;
@@ -206,13 +205,6 @@ function (
           $scope.ui.wizard.dataLocation = 'NONE';
 
           $scope.ui.influencers = angular.copy($scope.job.analysis_config.influencers);
-        } else {
-          delete $scope.job.datafeed_config.datafeed_id;
-          delete $scope.job.datafeed_config.job_id;
-          delete $scope.job.datafeed_config.state;
-
-          delete $scope.job.data_description.time_format;
-          delete $scope.job.data_description.format;
         }
       }
 

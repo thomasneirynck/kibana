@@ -526,7 +526,33 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     // also remove items from the job which are set by the server and not needed
     // in the future this formatting could be optional
     const tempJob = angular.copy(job);
-    return this.removeJobEndpoints(tempJob);
+
+    // remove all of the items which should not be copied
+    // such as counts, state and times
+    delete tempJob.state;
+    delete tempJob.data_counts;
+    delete tempJob.create_time;
+    delete tempJob.finished_time;
+    delete tempJob.last_data_time;
+    delete tempJob.model_size_stats;
+    delete tempJob.average_bucket_processing_time_ms;
+    delete tempJob.results_index_name;
+    delete tempJob.model_snapshot_id;
+    delete tempJob.open_time;
+
+    delete tempJob.data_description.time_format;
+    delete tempJob.data_description.format;
+
+    delete tempJob.analysis_config.use_per_partition_normalization;
+
+    // remove parts of the datafeed config which should not be copied
+    if (tempJob.datafeed_config) {
+      delete tempJob.datafeed_config.datafeed_id;
+      delete tempJob.datafeed_config.job_id;
+      delete tempJob.datafeed_config.state;
+    }
+
+    return tempJob;
   };
 
   this.updateJob = function (jobId, job) {
@@ -540,35 +566,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         console.log('update job', err);
         return {success: false, message: err.message};
       });
-  };
-
-  // remove end point paths from job JSON
-  this.removeJobEndpoints = function (job) {
-    delete job.location;
-    delete job.dataEndpoint;
-    delete job.endpoints;
-    delete job.bucketsEndpoint;
-    delete job.categoryDefinitionsEndpoint;
-    delete job.recordsEndpoint;
-    delete job.logsEndpoint;
-    delete job.alertsLongPollEndpoint;
-
-    return job;
-  };
-
-  // remove counts, times and state for cloning a job
-  this.removeJobCounts = function (job) {
-    delete job.state;
-    delete job.data_counts;
-    delete job.create_time;
-    delete job.finished_time;
-    delete job.last_data_time;
-    delete job.model_size_stats;
-    delete job.datafeed_state;
-    delete job.average_bucket_processing_time_ms;
-    delete job.results_index_name;
-
-    return job;
   };
 
   // find a job based on the id

@@ -25,7 +25,7 @@ module.directive('mlJobPreview', function (mlMessageBarService, mlJobService) {
     transclude: true,
     template: require('plugins/ml/jobs/components/job_preview/job_preview.html'),
     link: function (scope, element, attrs) {
-      scope.job = mlJobService.removeJobEndpoints(mlJobService.getJob(attrs.mlJobId));
+      scope.job = mlJobService.getJob(attrs.mlJobId);
       // make the delimiter user readable
       if (scope.job.data_description && scope.job.data_description.format === 'delimited') {
         scope.job.data_description.field_delimiter = scope.formatDelimiter(scope.job.data_description.field_delimiter);
