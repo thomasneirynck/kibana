@@ -31,7 +31,7 @@ import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService, mlResultsService,
-  mlTimeSeriesDashboardService, formatValueFilter) {
+  mlTimeSeriesDashboardService, formatValueFilter, AppState) {
   return {
     restrict: 'E',
     scope: {
@@ -41,6 +41,8 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
     },
     template: require('plugins/ml/timeseriesexplorer/anomalies_table/anomalies_table.html'),
     link: function (scope, element) {
+      const appState = new AppState();
+      appState.fetch();
 
       scope.thresholdOptions = [
         {display:'critical', val:75},
@@ -54,11 +56,34 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         {display:'1 day', val:'day'},
         {display:'Show all', val:'second'}];
 
-      scope.threshold = _.findWhere(scope.thresholdOptions, {val:0});
+      // Store the threshold and aggregation interval in the AppState so that they
+      // are restored on page refresh.
+      if (appState.mlAnomaliesTable === undefined) {
+        appState.mlAnomaliesTable = {};
+      }
 
-      // TODO - use a default of auto?
-      scope.interval = _.findWhere(scope.intervalOptions, {val:'auto'});
+      let thresholdValue = _.get(appState, 'mlAnomaliesTable.thresholdValue', 0);
+      let thresholdOption = _.findWhere(scope.thresholdOptions, {val:thresholdValue});
+      if (thresholdOption === undefined) {
+        // Attempt to set value in URL which doesn't map to one of the options.
+        thresholdOption = _.findWhere(scope.thresholdOptions, {val:0});
+        thresholdValue = 0;
+      }
+      scope.threshold = thresholdOption;
+
+      let intervalValue = _.get(appState, 'mlAnomaliesTable.intervalValue', 'auto');
+      let intervalOption = _.findWhere(scope.intervalOptions, {val:intervalValue});
+      if (intervalOption === undefined) {
+        // Attempt to set value in URL which doesn't map to one of the options.
+        intervalOption = _.findWhere(scope.intervalOptions, {val:'auto'});
+        intervalValue = 'auto';
+      }
+      scope.interval = intervalOption;
       scope.momentInterval = 'second';
+
+      appState.mlAnomaliesTable.thresholdValue = thresholdValue;
+      appState.mlAnomaliesTable.intervalValue = intervalValue;
+      appState.save();
 
       scope.table = {};
       scope.table.perPage = 25;
@@ -83,11 +108,15 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
 
       scope.setThreshold = function (threshold) {
         scope.threshold = threshold;
+        appState.mlAnomaliesTable.thresholdValue = threshold.val;
+        appState.save();
         updateTableData();
       };
 
       scope.setInterval = function (interval) {
         scope.interval = interval;
+        appState.mlAnomaliesTable.intervalValue = interval.val;
+        appState.save();
         updateTableData();
       };
 
