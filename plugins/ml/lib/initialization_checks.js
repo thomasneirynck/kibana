@@ -19,7 +19,6 @@
  * and dashboards exist in the Elasticsearch kibana index.
  */
 
-import _ from 'lodash';
 import Promise from 'bluebird';
 import elasticsearch from 'elasticsearch';
 import createDashboardObjects from './create_dashboard_objects';
@@ -289,41 +288,6 @@ module.exports = function (plugin, server) {
     });
   }
 
-  function checkForDefaultIndexConfig() {
-    // Checks that a default index pattern has been set for the Kibana config,
-    // and if not sets it to .ml-anomalies-*.
-    return callWithInternalUser('get', {
-      index: config.get('kibana.index'),
-      type: 'config',
-      id: config.get('pkg.version')
-    }).then((response) => {
-      if (response) {
-        const defaultIndex = _.get(response, '_source.defaultIndex', null);
-        if (defaultIndex === null) {
-          setDefaultIndexConfig();
-        }
-      }
-    });
-  }
-
-  function setDefaultIndexConfig() {
-    callWithInternalUser('update', {
-      index: config.get('kibana.index'),
-      type: 'config',
-      id: config.get('pkg.version'),
-      body: {
-        doc: {
-          defaultIndex: ML_RESULTS_INDEX_ID
-        }
-      }
-    }, (error) => {
-      if (error) {
-        // Display message, but leave status as green as Prelrt plugin can still function.
-        plugin.status.green('Unable to set default Kibana index pattern to ' + ML_RESULTS_INDEX_ID);
-      }
-    });
-  }
-
   function checkForDashboardObjects() {
     // Just check if the Explorer dashboard exists,
     // and if it does assume all the objects for the ml dashboards exist.
@@ -356,7 +320,6 @@ module.exports = function (plugin, server) {
       .then(waitForKibanaBuildNumDoc)
       .then(checkForMlAnomaliesResultsIndexPattern)
       .then(checkForMlNotificationsIndexPattern)
-      .then(checkForDefaultIndexConfig)
       .then(checkForDashboardObjects);
 
     return healthCheck
