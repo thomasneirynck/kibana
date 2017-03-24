@@ -242,6 +242,19 @@ function (
 
       rowScope.time = latestTimeStamp;
 
+      rowScope.enableTimeSeries = false;
+      // only enable the time series button for single metric jobs with model plot data.
+      // and with only one detector with no by/over/partition fields
+      const dtrs = job.analysis_config.detectors;
+      if (job.model_plot_config !== undefined && dtrs.length === 1) {
+        const firstDtr = dtrs[0];
+        if (firstDtr.partition_field_name === undefined &&
+            firstDtr.by_field_name === undefined &&
+            firstDtr.over_field_name === undefined) {
+          rowScope.enableTimeSeries = true;
+        }
+      }
+
       rowScopes.push(rowScope);
       const jobDescription = job.description || '';
       // col array
