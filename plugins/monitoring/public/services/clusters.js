@@ -2,8 +2,9 @@ import uiModules from 'ui/modules';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
 
 const uiModule = uiModules.get('monitoring/clusters');
-uiModule.service('monitoringClusters', (timefilter, $http, Private) => {
+uiModule.service('monitoringClusters', ($injector) => {
   return (clusterUuid) => {
+    const timefilter = $injector.get('timefilter');
     const { min, max } = timefilter.getBounds();
 
     // append clusterUuid if the parameter is given
@@ -12,6 +13,7 @@ uiModule.service('monitoringClusters', (timefilter, $http, Private) => {
       url += `/${clusterUuid}`;
     }
 
+    const $http = $injector.get('$http');
     return $http.post(url, {
       timeRange: {
         min: min.toISOString(),
@@ -26,6 +28,7 @@ uiModule.service('monitoringClusters', (timefilter, $http, Private) => {
       return data; // return set of clusters
     })
     .catch(err => {
+      const Private = $injector.get('Private');
       const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
       return ajaxErrorHandlers(err);
     });

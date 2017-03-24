@@ -93,7 +93,8 @@ function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch
 
 // change the node to actually display the name
 const uiModule = uiModules.get('monitoring/directives', []);
-uiModule.directive('monitoringNodesListing', function (kbnUrl, showCgroupMetricsElasticsearch) {
+uiModule.directive('monitoringNodesListing', ($injector) => {
+  const showCgroupMetricsElasticsearch = $injector.get('showCgroupMetricsElasticsearch');
   const cpuColumns = (() => {
     if (showCgroupMetricsElasticsearch) {
       return [
@@ -175,6 +176,7 @@ uiModule.directive('monitoringNodesListing', function (kbnUrl, showCgroupMetrics
         };
       }
 
+      const kbnUrl = $injector.get('kbnUrl');
       const NodeRow = nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch);
       const $table = React.createElement(Table, {
         scope,

@@ -19,9 +19,14 @@ uiRoutes.when('/elasticsearch/indices/:index', {
   }
 });
 
-function getPageData(timefilter, globalState, $route, $http, Private) {
-  const timeBounds = timefilter.getBounds();
+function getPageData($injector) {
+  const $http = $injector.get('$http');
+  const $route = $injector.get('$route');
+  const globalState = $injector.get('globalState');
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/indices/${$route.current.params.index}`;
+  const timefilter = $injector.get('timefilter');
+  const timeBounds = timefilter.getBounds();
+
   return $http.post(url, {
     timeRange: {
       min: timeBounds.min.toISOString(),
@@ -54,23 +59,29 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
   })
   .then(response => response.data)
   .catch((err) => {
+    const Private = $injector.get('Private');
     const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
     return ajaxErrorHandlers(err);
   });
 }
 
 const uiModule = uiModules.get('monitoring', []);
-uiModule.controller('esIndex', (timefilter, $route, title, Private, globalState, $executor, $http, $scope) => {
+uiModule.controller('esIndex', ($injector, $scope) => {
+  const timefilter = $injector.get('timefilter');
   timefilter.enabled = true;
 
+  const $route = $injector.get('$route');
+  const globalState = $injector.get('globalState');
   $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
   $scope.pageData = $route.current.locals.pageData;
   $scope.indexName = $route.current.params.index;
 
+  const title = $injector.get('title');
   title($scope.cluster, `Elasticsearch - Indices - ${$scope.indexName} - Overview`);
 
+  const $executor = $injector.get('$executor');
   $executor.register({
-    execute: () => getPageData(timefilter, globalState, $route, $http, Private),
+    execute: () => getPageData($injector),
     handleResponse: (response) => $scope.pageData = response
   });
 

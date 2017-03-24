@@ -28,7 +28,9 @@ uiRoutes.when('/home', {
 .otherwise({ redirectTo: '/no-data' });
 
 const uiModule = uiModules.get('monitoring', ['monitoring/directives']);
-uiModule.controller('home', ($route, $scope, globalState, monitoringClusters, timefilter, title, $executor) => {
+uiModule.controller('home', ($injector, $scope) => {
+
+  const timefilter = $injector.get('timefilter');
   timefilter.enabled = true;
 
   // Set the key for the cluster_uuid. This is mainly for
@@ -38,11 +40,16 @@ uiModule.controller('home', ($route, $scope, globalState, monitoringClusters, ti
     return cluster;
   }
 
+  const $route = $injector.get('$route');
   $scope.clusters = $route.current.locals.clusters.map(setKeyForClusters);
+  const globalState = $injector.get('globalState');
   $scope.cluster = _.find($scope.clusters, { cluster_uuid: globalState.cluster_uuid });
 
+  const title = $injector.get('title');
   title();
 
+  const $executor = $injector.get('$executor');
+  const monitoringClusters = $injector.get('monitoringClusters');
   $executor.register({
     execute: () => monitoringClusters(),
     handleResponse(clusters) {

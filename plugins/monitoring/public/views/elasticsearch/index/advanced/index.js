@@ -8,9 +8,14 @@ import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
 import template from './index.html';
 
-function getPageData(timefilter, globalState, $route, $http, Private) {
-  const timeBounds = timefilter.getBounds();
+function getPageData($injector) {
+  const globalState = $injector.get('globalState');
+  const $route = $injector.get('$route');
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/indices/${$route.current.params.index}`;
+  const $http = $injector.get('$http');
+  const timefilter = $injector.get('timefilter');
+  const timeBounds = timefilter.getBounds();
+
   return $http.post(url, {
     timeRange: {
       min: timeBounds.min.toISOString(),
@@ -102,6 +107,7 @@ function getPageData(timefilter, globalState, $route, $http, Private) {
   })
   .then(response => response.data)
   .catch((err) => {
+    const Private = $injector.get('Private');
     const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
     return ajaxErrorHandlers(err);
   });
@@ -119,17 +125,22 @@ uiRoutes.when('/elasticsearch/indices/:index/advanced', {
 });
 
 const uiModule = uiModules.get('monitoring', []);
-uiModule.controller('esIndexAdvanced', (timefilter, $route, title, Private, globalState, $executor, $http, $scope) => {
+uiModule.controller('esIndexAdvanced', ($injector, $scope) => {
+  const timefilter = $injector.get('timefilter');
   timefilter.enabled = true;
 
+  const $route = $injector.get('$route');
+  const globalState = $injector.get('globalState');
   $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
   $scope.indexName = $route.current.params.index;
   $scope.pageData = $route.current.locals.pageData;
 
+  const title = $injector.get('title');
   title($scope.cluster, `Elasticsearch - Indices - ${$scope.indexName} - Advanced`);
 
+  const $executor = $injector.get('$executor');
   $executor.register({
-    execute: () => getPageData(timefilter, globalState, $route, $http, Private),
+    execute: () => getPageData($injector),
     handleResponse: (response) => $scope.pageData = response
   });
 
