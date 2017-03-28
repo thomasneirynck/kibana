@@ -39,6 +39,7 @@ module.controller('MlConnectionsMapController', function (
   $route,
   $location,
   $window,
+  globalState,
   timefilter,
   courier,
   mlJobService,
@@ -49,6 +50,11 @@ module.controller('MlConnectionsMapController', function (
 
   $scope.selectedNode = null;
   $scope.selectedLink = null;
+
+  if (globalState.ml === undefined) {
+    globalState.ml = {};
+    globalState.save();
+  }
 
   $scope.getSelectedJobIds = function () {
     const selectedJobs = _.filter($scope.vis.params.jobs, function (job) { return job.selected; });
@@ -92,14 +98,8 @@ module.controller('MlConnectionsMapController', function (
       if (resp.jobs.length > 0) {
         // Set any jobs passed in the URL as selected, otherwise check any saved in the Vis.
         let selectedJobIds = [];
-        const urlSearch = $location.search();
-        if (_.has(urlSearch, 'jobId')) {
-          const jobIdParam = urlSearch.jobId;
-          if (_.isArray(jobIdParam) === true) {
-            selectedJobIds = jobIdParam;
-          } else {
-            selectedJobIds = [jobIdParam];
-          }
+        if (globalState.ml.jobId !== undefined) {
+          selectedJobIds = _.get(globalState.ml, 'jobIds');
         } else {
           selectedJobIds = $scope.getSelectedJobIds();
         }
@@ -313,20 +313,22 @@ module.controller('MlConnectionsMapController', function (
       query = rison.encode_uri(query);
     }
 
-    let path = chrome.getBasePath() + '/app/ml#/explorer?_g=(refreshInterval:(display:Off,pause:!f,value:0),' +
-      'time:(from:\'' + from + '\',mode:absolute,to:\'' + to + '\'))' +
+    const selectedJobIds = $scope.getSelectedJobIds();
+    let jobIdParam = '*';
+    const allSelected = ((selectedJobIds.length === 1 && selectedJobIds[0] === '*') || selectedJobIds.length === 0);
+    if (!allSelected) {
+      jobIdParam = selectedJobIds.join();
+    }
+
+    let path = chrome.getBasePath() + '/app/ml#/explorer?_g=(' +
+      'ml:(jobIds:!(' + jobIdParam + '))' +
+      ',refreshInterval:(display:Off,pause:!f,value:0)' +
+      ',time:(from:\'' + from + '\',mode:absolute,to:\'' + to + '\'))' +
       '&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:' + query + ')))';
+
 
     // Pass the selected job(s) and threshold as search parameters in the URL.
     path += '&minSeverity=' + $scope.vis.params.threshold.display;
-    const selectedJobIds = $scope.getSelectedJobIds();
-    const allSelected = ((selectedJobIds.length === 1 && selectedJobIds[0] === '*') || selectedJobIds.length === 0);
-    if (!allSelected) {
-      _.each(selectedJobIds, function (jobId) {
-        path += '&jobId=';
-        path += jobId;
-      });
-    }
 
     $window.open(path, '_blank');
   };

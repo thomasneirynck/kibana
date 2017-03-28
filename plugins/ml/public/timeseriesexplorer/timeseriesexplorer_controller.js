@@ -14,9 +14,9 @@
  */
 
 /*
- * Angular controller for the Ml summary view visualization. The controller makes
- * multiple queries to Elasticsearch to obtain the data to populate all the components
- * in the view.
+ * Angular controller for the Machine Learning Time Series Explorer dashboard, which
+ * displays the anomalies in a single time series. The controller makes multiple queries
+ * to Elasticsearch to obtain the data to populate all the components in the view.
  */
 
 import _ from 'lodash';
@@ -41,8 +41,8 @@ uiRoutes
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $timeout, $compile, $location,
-  Private, $q, es, timefilter, globalState, mlJobService, mlResultsService,
+module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $timeout, $compile,
+  Private, $q, es, timefilter, globalState, AppState, mlJobService, mlResultsService,
   mlDashboardService, mlTimeSeriesSearchService, mlTimeSeriesDashboardService) {
 
   // TODO - move the index pattern into a setting?
@@ -58,35 +58,34 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
   $scope.loading = true;
   $scope.hasResults = false;
 
+  if (globalState.ml === undefined) {
+    globalState.ml = {};
+    globalState.save();
+  }
+
   $scope.getSelectedJobIds = function () {
     const selectedJobs = _.filter($scope.jobs, function (job) { return job.selected; });
     return _.map(selectedJobs, function (job) {return job.id;});
   };
 
   $scope.initializeVis = function () {
+    // Initialize the AppState in which to store the zoom range.
+    const stateDefaults = {
+      mlTimeSeriesExplorer: {}
+    };
+    $scope.appState = new AppState(stateDefaults);
+
     // Load the job info needed by the visualization, then do the first load.
     mlJobService.getBasicJobInfo($scope.indexPatternId)
     .then(function (resp) {
       if (resp.jobs.length > 0) {
-        // Set any jobs passed in the URL as selected, otherwise check any saved in the Vis.
-        let selectedJobIds = [];
-        const urlSearch = $location.search();
-        if (_.has(urlSearch, 'jobId')) {
-          const jobIdParam = urlSearch.jobId;
-          if (_.isArray(jobIdParam) === true) {
-            selectedJobIds = jobIdParam;
-          } else {
-            selectedJobIds = [jobIdParam];
-          }
-        } else {
-          selectedJobIds = $scope.getSelectedJobIds();
-        }
-
         $scope.jobs = [];
         _.each(resp.jobs, function (job) {
           $scope.jobs.push({id:job.id, selected: false, bucketSpanSeconds: job.bucketSpanSeconds});
         });
 
+        // Select any jobs set in the global state (i.e. passed in the URL).
+        const selectedJobIds = _.get(globalState.ml, 'jobIds', []);
         $scope.setSelectedJobs(selectedJobIds);
       }
 
@@ -270,9 +269,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     }
     $scope.selectJobBtnJobIdLabel = firstJobId;
 
-    if (selectedJobIds.length > 0) {
-      $location.search('jobId', selectedJobIds);
-    }
+    globalState.ml.jobIds = selections;
+    globalState.save();
     $scope.refresh();
   };
 
@@ -287,8 +285,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
   $scope.$on('contextChartSelected', function (event, selection) {
     // Save state of zoom (adds to URL).
     const zoomState = { from: selection.from.toISOString(), to: selection.to.toISOString()};
-    globalState.zoom = zoomState;
-    globalState.save();
+    $scope.appState.mlTimeSeriesExplorer.zoom = zoomState;
+    $scope.appState.save();
 
     $scope.zoomFrom = selection.from;
     $scope.zoomTo = selection.to;
@@ -308,9 +306,10 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     $scope.autoZoomDuration = (minBucketSpanSeconds * 1000) * (CHARTS_POINT_TARGET - 1);
 
     // Check for a zoom parameter in the globalState (URL).
-    if (globalState.zoom !== undefined) {
-      const zoomFrom = moment(globalState.zoom.from, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
-      const zoomTo = moment(globalState.zoom.to, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
+    const zoomState = $scope.appState.mlTimeSeriesExplorer.zoom;
+    if (zoomState !== undefined) {
+      const zoomFrom = moment(zoomState.from, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
+      const zoomTo = moment(zoomState.to, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
       if (zoomFrom.isValid() && zoomTo.isValid &&
         zoomFrom.isBetween(earliestDataDate, latestDataDate) && zoomTo.isBetween(earliestDataDate, latestDataDate)) {
         return [zoomFrom.toDate(), zoomTo.toDate()];

@@ -45,14 +45,19 @@ uiRoutes
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('MlExplorerController', function ($scope, $timeout, $location, AppState, Private, timefilter,
-  mlJobService, mlResultsService, mlDashboardService, mlExplorerDashboardService) {
+module.controller('MlExplorerController', function ($scope, $timeout, AppState, Private, timefilter,
+  globalState, mlJobService, mlResultsService, mlDashboardService, mlExplorerDashboardService) {
 
   // TODO - move the index pattern into a setting?
   $scope.indexPatternId = '.ml-anomalies-*';
   $scope.timeFieldName = 'timestamp';
   $scope.showNoSelectionMessage = true;     // User must select a swimlane cell to view anomalies.
   timefilter.enabled = true;
+
+  if (globalState.ml === undefined) {
+    globalState.ml = {};
+    globalState.save();
+  }
 
   const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
 
@@ -83,26 +88,14 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     // Calling loadJobs() ensures the full datafeed config is available for building the charts.
     mlJobService.loadJobs().then((resp) => {
       if (resp.jobs.length > 0) {
-        // Set any jobs passed in the URL as selected, otherwise check any saved in the Vis.
-        let selectedJobIds = [];
-        const urlSearch = $location.search();
-        if (_.has(urlSearch, 'jobId')) {
-          const jobIdParam = urlSearch.jobId;
-          if (_.isArray(jobIdParam) === true) {
-            selectedJobIds = jobIdParam;
-          } else {
-            selectedJobIds = [jobIdParam];
-          }
-        } else {
-          selectedJobIds = $scope.getSelectedJobIds();
-        }
-
         $scope.jobs = [];
         _.each(resp.jobs, (job) => {
           const bucketSpan = parseInterval(job.analysis_config.bucket_span);
           $scope.jobs.push({ id:job.job_id, selected: false, bucketSpanSeconds: bucketSpan.asSeconds() });
         });
 
+        // Select any jobs set in the global state (i.e. passed in the URL).
+        const selectedJobIds = _.get(globalState.ml, 'jobIds', []);
         $scope.setSelectedJobs(selectedJobIds);
       }
 
@@ -170,9 +163,8 @@ module.controller('MlExplorerController', function ($scope, $timeout, $location,
     }
     $scope.selectJobBtnJobIdLabel = firstJobId;
 
-    if (selectedJobIds.length > 0) {
-      $location.search('jobId', selectedJobIds);
-    }
+    globalState.ml.jobIds = selections;
+    globalState.save();
 
     clearSelectedAnomalies();
     loadOverallData();

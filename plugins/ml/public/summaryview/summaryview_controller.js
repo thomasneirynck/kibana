@@ -54,6 +54,7 @@ module.controller('MlSummaryViewController', function (
   $location,
   Private,
   mlJobService,
+  globalState,
   timefilter,
   mlAnomalyRecordDetailsService,
   mlDashboardService,
@@ -71,6 +72,11 @@ module.controller('MlSummaryViewController', function (
   $scope.loading = true;
   $scope.hasResults = false;
 
+  if (globalState.ml === undefined) {
+    globalState.ml = {};
+    globalState.save();
+  }
+
   $scope.getSelectedJobIds = function () {
     const selectedJobs = _.filter($scope.jobs, (job) => { return job.selected; });
     return _.map(selectedJobs, (job) => {return job.id;});
@@ -81,25 +87,13 @@ module.controller('MlSummaryViewController', function (
     mlJobService.getBasicJobInfo(ML_RESULTS_INDEX_ID)
     .then((resp) => {
       if (resp.jobs.length > 0) {
-        // Set any jobs passed in the URL as selected, otherwise check any saved in the Vis.
-        let selectedJobIds = [];
-        const urlSearch = $location.search();
-        if (_.has(urlSearch, 'jobId')) {
-          const jobIdParam = urlSearch.jobId;
-          if (_.isArray(jobIdParam) === true) {
-            selectedJobIds = jobIdParam;
-          } else {
-            selectedJobIds = [jobIdParam];
-          }
-        } else {
-          selectedJobIds = $scope.getSelectedJobIds();
-        }
-
         $scope.jobs = [];
         _.each(resp.jobs, (job) => {
           $scope.jobs.push({id:job.id, selected: false, bucketSpanSeconds: job.bucketSpanSeconds});
         });
 
+        // Select any jobs set in the global state (i.e. passed in the URL).
+        const selectedJobIds = _.get(globalState.ml, 'jobIds', []);
         $scope.setSelectedJobs(selectedJobIds);
       }
 
@@ -495,10 +489,14 @@ module.controller('MlSummaryViewController', function (
       });
       maximums[jobId] = max;
     });
+
     $scope.eventRateChartData.max = maximums;
     $scope.eventRateChartData.data = data;
     $scope.eventRateChartData.times = Object.keys(times).sort();
     $scope.eventRateChartData.times = $scope.eventRateChartData.times.map((i) => {return +i;});
+
+    // TODO - Why is the last element being removed - it causes the chart to be
+    // empty if 'times' has a length of 1.
     $scope.eventRateChartData.times.pop();
 
     $scope.eventRateChartData.earliest = dataset.earliest;
@@ -538,9 +536,9 @@ module.controller('MlSummaryViewController', function (
     }
     $scope.selectJobBtnJobIdLabel = firstJobId;
 
-    if (selectedJobIds.length > 0) {
-      $location.search('jobId', selectedJobIds);
-    }
+    globalState.ml.jobIds = selections;
+    globalState.save();
+
     $scope.refresh();
   };
 
@@ -572,12 +570,14 @@ module.controller('MlSummaryViewController', function (
     const from = moment(tr.start * 1000).toISOString();
     const to = moment(tr.end * 1000).toISOString();
 
-    const jobString = selectedJobIds.join('&jobId=');
+    const jobIdParam = selectedJobIds.join();
 
     let path = chrome.getBasePath() + '/app/ml#/' + page;
-    path += '?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:\'' + from;
+    path += '?_g=(ml:(jobIds:!(';
+    path += jobIdParam;
+    path += ')),refreshInterval:(display:Off,pause:!f,value:0),time:(from:\'' + from;
     path += '\',mode:absolute,to:\'' + to;
-    path += '\'))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))&jobId=' + jobString;
+    path += '\'))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
 
     if (mlBrowserDetectService() === 'safari') {
       location.href = path;

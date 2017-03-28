@@ -45,7 +45,8 @@ import 'plugins/ml/components/job_select_list';
 
 const module = uiModules.get('apps/ml');
 
-module.directive('dashboardApp', function (Notifier, courier, AppState, timefilter, quickRanges, kbnUrl, Private) {
+module.directive('dashboardApp', function (Notifier, courier, globalState, AppState,
+  timefilter, quickRanges, kbnUrl, Private) {
   const brushEvent = Private(UtilsBrushEventProvider);
   const filterBarClickHandler = Private(FilterBarFilterBarClickHandlerProvider);
 
@@ -57,6 +58,11 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
       const queryFilter = Private(FilterBarQueryFilterProvider);
       const docTitle = Private(DocTitleProvider);
       const notify = new Notifier({ location: 'Dashboard' });
+
+      if (globalState.ml === undefined) {
+        globalState.ml = {};
+        globalState.save();
+      }
 
       const dash = $scope.dash = $route.current.locals.dash;
       if (dash.id) {
@@ -70,9 +76,8 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
         });
         buildSelectedJobObjects(selectedJobIds);
 
-        if (selections.length > 0) {
-          $location.search('jobId', selections);
-        }
+        globalState.ml.jobIds = selections;
+        globalState.save();
 
         $scope.filterResults();
       });
@@ -84,18 +89,8 @@ module.directive('dashboardApp', function (Notifier, courier, AppState, timefilt
         quickRanges,
         AppState);
 
-      //  Populate the Job picker, looking to see if a jobId(s) has been passed in the URL.
-      let selectedJobIds = ['*'];
-      const urlSearch = $location.search();
-      if (_.has(urlSearch, 'jobId')) {
-        const jobIdParam = urlSearch.jobId;
-        if (_.isArray(jobIdParam) === true) {
-          selectedJobIds = jobIdParam;
-        } else {
-          selectedJobIds = [jobIdParam];
-        }
-      }
-
+      //  Populate the Job picker, looking to see if a jobId(s) has been passed in the globalState (URL).
+      const selectedJobIds = _.get(globalState.ml, 'jobIds', []);
       $scope.selectedJobs = _.map(selectedJobIds, function (jobId) {
         return { id:jobId };
       });
