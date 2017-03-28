@@ -7,7 +7,9 @@ module.constant('shieldPrivileges', {
     'monitor',
     'manage',
     'manage_security',
-    'manage_index_templates'
+    'manage_index_templates',
+    'manage_ml',
+    'monitor_ml'
   ],
   indices: [
     'all',
