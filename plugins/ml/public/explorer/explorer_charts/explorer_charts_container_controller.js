@@ -198,23 +198,41 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     // For each series, store the record and properties of the data feed (ES index, metric function etc).
     const seriesConfigs = [];
 
+    const compiledTooltip = _.template(
+      '<div class="explorer-chart-info-tooltip">job ID: <%= jobId %><br/>' +
+      'aggregation interval: <%= aggregationInterval %></div>');
+
     _.each(anomalyRecords, (record) => {
       const job = _.find(mlJobService.jobs, { 'job_id': record.job_id });
       const bucketSpan = parseInterval(job.analysis_config.bucket_span);
+
       const config = {
         jobId: record.job_id,
         function: record.function_description,
         metricFunction: aggregationTypeTransform.toES(record.function_description),
         bucketSpanSeconds: bucketSpan.asSeconds(),
-        interval: job.analysis_config.bucket_span
+        interval: job.analysis_config.bucket_span,
+        infoTooltip: compiledTooltip({
+          'jobId':record.job_id,
+          'aggregationInterval': job.analysis_config.bucket_span
+        })
       };
 
       config.detectorLabel = record.function;
+      const detectorIndex = record.detector_index;
+      if ((_.has(mlJobService.detectorsByJob, record.job_id)) &&
+        (detectorIndex < mlJobService.detectorsByJob[record.job_id].length)) {
+        config.detectorLabel = mlJobService.detectorsByJob[record.job_id][detectorIndex].detector_description;
+      } else {
+        if (record.field_name !== undefined) {
+          config.detectorLabel += ' ';
+          config.detectorLabel += config.fieldName;
+        }
+      }
+
       if (record.field_name !== undefined) {
         config.fieldName = record.field_name;
         config.metricFieldName = record.field_name;
-        config.detectorLabel += ' ';
-        config.detectorLabel += config.fieldName;
       }
 
       // For count detectors using summary_count_field, plot sum(summary_count_field_name)

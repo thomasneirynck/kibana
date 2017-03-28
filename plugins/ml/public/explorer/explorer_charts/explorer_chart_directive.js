@@ -48,7 +48,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
     const LINE_CHART_ANOMALY_RADIUS = 7;
 
     // Left margin is adjusted later for longest y-axis label.
-    const margin = { top: 30, right: 0, bottom: 30, left: 60 };
+    const margin = { top: 10, right: 0, bottom: 30, left: 60 };
     const svgHeight = chartHeight + margin.top + margin.bottom;
     const chartLimits = { max: 0, min: 0 };
 

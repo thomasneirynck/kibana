@@ -4,8 +4,10 @@
     <div ng-repeat="series in seriesToPlot">
       <div class="clearfix" ng-if="$index % chartsPerRow == 0"></div>
       <div class="ml-explorer-chart-container col-md-{{layoutCellsPerChart}}">
-        <div class="explorer-chart-label">{{series.detectorLabel}}
-          <span ng-repeat='entity in series.entityFields'>{{entity.fieldName}} {{entity.fieldValue}} </span>
+        <div class="explorer-chart-label">{{series.detectorLabel}} -
+          <span ng-repeat='entity in series.entityFields'>{{entity.fieldName}} {{entity.fieldValue}}
+          </span>
+          <i aria-hidden="true" class="fa fa-info-circle" tooltip-placement="bottom" tooltip-html-unsafe="{{series.infoTooltip}}" tooltip-append-to-body="true"></i>
         </div>
         <ml-explorer-chart
           series-config="series"
