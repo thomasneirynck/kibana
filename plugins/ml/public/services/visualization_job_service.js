@@ -14,7 +14,6 @@
  */
 
 import _ from 'lodash';
-import 'plugins/ml/services/info_service';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');

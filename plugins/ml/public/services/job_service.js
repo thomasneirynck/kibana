@@ -19,7 +19,6 @@ import angular from 'angular';
 import parseInterval from 'ui/utils/parse_interval';
 
 import anomalyUtils from 'plugins/ml/util/anomaly_utils';
-import 'plugins/ml/services/info_service';
 import 'plugins/ml/messagebar';
 
 import uiModules from 'ui/modules';
