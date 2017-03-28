@@ -8,10 +8,14 @@ import routeInitProvider from 'plugins/monitoring/lib/route_init';
 import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
 import template from './index.html';
 
-function getPageData(timefilter, globalState, $http, Private, features) {
-  const timeBounds = timefilter.getBounds();
+function getPageData($injector) {
+  const $http = $injector.get('$http');
+  const globalState = $injector.get('globalState');
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/indices`;
+  const features = $injector.get('features');
   const showSystemIndices = features.isEnabled('showSystemIndices', false);
+  const timefilter = $injector.get('timefilter');
+  const timeBounds = timefilter.getBounds();
 
   return $http.post(url, {
     showSystemIndices,
@@ -28,6 +32,7 @@ function getPageData(timefilter, globalState, $http, Private, features) {
   })
   .then(response => response.data)
   .catch((err) => {
+    const Private = $injector.get('Private');
     const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
     return ajaxErrorHandlers(err);
   });
@@ -45,15 +50,20 @@ uiRoutes.when('/elasticsearch/indices', {
 });
 
 const uiModule = uiModules.get('monitoring', [ 'monitoring/directives' ]);
-uiModule.controller('indices', ($route, globalState, timefilter, $http, title, Private, $executor, features, $scope) => {
+uiModule.controller('indices', ($injector, $scope) => {
+  const timefilter = $injector.get('timefilter');
   timefilter.enabled = true;
 
+  const $route = $injector.get('$route');
+  const globalState = $injector.get('globalState');
   $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
   $scope.pageData = $route.current.locals.pageData;
 
-  const callPageData = partial(getPageData, timefilter, globalState, $http, Private, features);
+  const callPageData = partial(getPageData, $injector);
+
   // Control whether system indices shown in the index listing
   // shown by default, and setting is stored in localStorage
+  const features = $injector.get('features');
   $scope.showSystemIndices = features.isEnabled('showSystemIndices', false);
   $scope.toggleShowSystemIndices = (isChecked) => {
     // flip the boolean
@@ -64,8 +74,10 @@ uiModule.controller('indices', ($route, globalState, timefilter, $http, title, P
     callPageData().then((pageData) => $scope.pageData = pageData);
   };
 
+  const title = $injector.get('title');
   title($scope.cluster, 'Elasticsearch - Indices');
 
+  const $executor = $injector.get('$executor');
   $executor.register({
     execute: () => callPageData(),
     handleResponse: (pageData) => $scope.pageData = pageData

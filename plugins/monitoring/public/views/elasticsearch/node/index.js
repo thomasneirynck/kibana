@@ -8,10 +8,16 @@ import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler
 import routeInitProvider from 'plugins/monitoring/lib/route_init';
 import template from './index.html';
 
-function getPageData(timefilter, globalState, $route, $http, Private, features, showCgroupMetricsElasticsearch) {
-  const timeBounds = timefilter.getBounds();
+function getPageData($injector) {
+  const $http = $injector.get('$http');
+  const globalState = $injector.get('globalState');
+  const $route = $injector.get('$route');
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/nodes/${$route.current.params.node}`;
+  const features = $injector.get('features');
   const showSystemIndices = features.isEnabled('showSystemIndices', false);
+  const timefilter = $injector.get('timefilter');
+  const timeBounds = timefilter.getBounds();
+  const showCgroupMetricsElasticsearch = $injector.get('showCgroupMetricsElasticsearch');
 
   return $http.post(url, {
     showSystemIndices,
@@ -48,6 +54,7 @@ function getPageData(timefilter, globalState, $route, $http, Private, features, 
   })
   .then(response => response.data)
   .catch((err) => {
+    const Private = $injector.get('Private');
     const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);
     return ajaxErrorHandlers(err);
   });
@@ -65,14 +72,16 @@ uiRoutes.when('/elasticsearch/nodes/:node', {
 });
 
 const uiModule = uiModules.get('monitoring', [ 'plugins/monitoring/directives' ]);
-uiModule.controller('esNode', (
-  timefilter, $route, globalState, title, Private, $executor, $http, $scope, features, showCgroupMetricsElasticsearch
-) => {
+uiModule.controller('esNode', ($injector, $scope) => {
+  const timefilter = $injector.get('timefilter');
   timefilter.enabled = true;
 
+  const $route = $injector.get('$route');
+  const globalState = $injector.get('globalState');
   $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
   $scope.pageData = $route.current.locals.pageData;
 
+  const title = $injector.get('title');
   title($scope.cluster, `Elasticsearch - Nodes - ${$scope.pageData.nodeSummary.name} - Overview`);
 
   function setPageIconLabel(pageData) {
@@ -81,9 +90,8 @@ uiModule.controller('esNode', (
   }
   setPageIconLabel($scope.pageData);
 
-  const callPageData = partial(
-    getPageData, timefilter, globalState, $route, $http, Private, features, showCgroupMetricsElasticsearch
-  );
+  const features = $injector.get('features');
+  const callPageData = partial(getPageData, $injector);
   // show/hide system indices in shard allocation view
   $scope.showSystemIndices = features.isEnabled('showSystemIndices', false);
   $scope.toggleShowSystemIndices = (isChecked) => {
@@ -94,6 +102,7 @@ uiModule.controller('esNode', (
     callPageData().then((pageData) => $scope.pageData = pageData);
   };
 
+  const $executor = $injector.get('$executor');
   $executor.register({
     execute: () => callPageData(),
     handleResponse: (response) => {

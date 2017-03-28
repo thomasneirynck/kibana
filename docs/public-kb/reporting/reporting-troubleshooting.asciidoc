@@ -1,0 +1,13 @@
+[[reporting-troubleshooting]]
+== Reporting Troubleshooting
+
+[float]
+=== Phantom Error when Generating Reports
+If report generation fails with the error "Phantom immediately exited with: 127",
+install the required `libfontconfig` and `libfreetype6` packages.
+
+[float]
+=== Text is Not Rendered Correctly in Generated Reports
+
+If report labels are rendered as empty rectangles, there are no system fonts
+available. Install at least one font package on the system.

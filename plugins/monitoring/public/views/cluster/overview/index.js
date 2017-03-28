@@ -18,13 +18,19 @@ uiRoutes.when('/overview', {
 });
 
 const uiModule = uiModules.get('monitoring', ['monitoring/directives']);
-uiModule.controller('overview', ($scope, $route, monitoringClusters, timefilter, title, globalState, $executor) => {
+uiModule.controller('overview', ($injector, $scope) => {
+  const timefilter = $injector.get('timefilter');
   timefilter.enabled = true;
 
+  const $route = $injector.get('$route');
   $scope.cluster = $route.current.locals.cluster;
 
+  const title = $injector.get('title');
   title($scope.cluster, 'Overview');
 
+  const $executor = $injector.get('$executor');
+  const monitoringClusters = $injector.get('monitoringClusters');
+  const globalState = $injector.get('globalState');
   $executor.register({
     execute: () => monitoringClusters(globalState.cluster_uuid),
     handleResponse(cluster) {

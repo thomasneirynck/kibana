@@ -6,7 +6,7 @@ import Notifier from 'ui/notify/notifier';
 import uiModules from 'ui/modules';
 
 const uiModule = uiModules.get('monitoring/directives', []);
-uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl, showLicenseExpiration) {
+uiModule.directive('monitoringClusterListing', ($injector) => {
   return {
     restrict: 'E',
     scope: { clusters: '=' },
@@ -68,6 +68,8 @@ uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl, sh
         });
       }
 
+      const globalState = $injector.get('globalState');
+      const kbnUrl = $injector.get('kbnUrl');
       function changeCluster(uuid) {
         $scope.$evalAsync(function () {
           globalState.cluster_uuid = uuid;
@@ -76,6 +78,7 @@ uiModule.directive('monitoringClusterListing', function (globalState, kbnUrl, sh
         });
       }
 
+      const showLicenseExpiration = $injector.get('showLicenseExpiration');
       $scope.$watch('clusters', (data) => {
         if (data) {
           data.forEach((cluster) => {
