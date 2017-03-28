@@ -561,10 +561,6 @@ module.controller('MlSummaryViewController', function (
     openPage('explorer', tr);
   };
 
-  this.openConnections = function (tr) {
-    openPage('connections', tr);
-  };
-
   function openPage(page, tr) {
     tr = tr || timeRange;
     const from = moment(tr.start * 1000).toISOString();

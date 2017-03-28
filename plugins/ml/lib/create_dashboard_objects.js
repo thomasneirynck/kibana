@@ -22,7 +22,6 @@
 import _ from 'lodash';
 import searches from './dashboard_objects/searches.json';
 import visualizations from './dashboard_objects/visualizations.json';
-import dashboards from './dashboard_objects/dashboards.json';
 
 module.exports = function (server, plugin) {
   const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('admin');
@@ -49,11 +48,6 @@ module.exports = function (server, plugin) {
 
   _.each(visualizations, (obj) => {
     plugin.status.yellow('Creating Ml visualizations');
-    createObject(obj._id, obj._type, obj._source);
-  });
-
-  _.each(dashboards, (obj) => {
-    plugin.status.yellow('Creating Ml dashboards');
     createObject(obj._id, obj._type, obj._source);
   });
 };

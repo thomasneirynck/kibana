@@ -289,13 +289,13 @@ module.exports = function (plugin, server) {
   }
 
   function checkForDashboardObjects() {
-    // Just check if the Explorer dashboard exists,
+    // Just check if the Anomaly Timeline visualizaiton exists,
     // and if it does assume all the objects for the ml dashboards exist.
-    // Otherwise create all the required searches, visualizations, and dashboards.
+    // Otherwise create all the required searches and visualizations.
     return callWithInternalUser('exists', {
       index: config.get('kibana.index'),
-      type: 'dashboard',
-      id: 'ml-explorer'
+      type: 'visualization',
+      id: 'ml-anomaly-timeline'
     }).then((response) => {
       if (response === true) {
         // Ml dashboard Objects are created and ready.
@@ -303,7 +303,7 @@ module.exports = function (plugin, server) {
         stopChecking();
       } else {
         try {
-          plugin.status.yellow('No ml-explorer dashboard found - creating dashboard objects');
+          plugin.status.yellow('No ml-anomaly-timeline visualization found - creating dashboard objects');
           createDashboardObjects(server, plugin);
         } catch (err) {
           plugin.status.red('Error creating dashboard objects');

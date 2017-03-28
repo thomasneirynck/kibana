@@ -50,10 +50,6 @@ module.directive('mlSwimlaneInspector', function (
         mlSwimlaneService.openExplorer(mlSwimlaneInspectorService.getTimeRange());
       };
 
-      $scope.openConnections = function () {
-        mlSwimlaneService.openConnections(mlSwimlaneInspectorService.getTimeRange());
-      };
-
       $scope.close = function () {
         mlSwimlaneInspectorService.hide();
         mlSwimlaneSelectionService.hide();

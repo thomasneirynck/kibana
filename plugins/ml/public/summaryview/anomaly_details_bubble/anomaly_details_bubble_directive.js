@@ -38,10 +38,6 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
         mlSwimlaneService.openExplorer();
       };
 
-      $scope.openConnections = function () {
-        mlSwimlaneService.openConnections();
-      };
-
       $scope.expandInfluencers = function () {
         $scope.service.expandInfluencers();
       };
