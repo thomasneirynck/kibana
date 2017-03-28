@@ -6,6 +6,7 @@
     ng-click="((job.datafeed_config && job.datafeed_config.state==='started')?stopDatafeed(job):startDatafeed(job))"
     class="btn btn-xs btn-default"
     data-toggle="tooltip"
+    ng-disabled='!privileges.canStartStopDatafeed'
     tooltip="{{((job.datafeed_config && job.datafeed_config.state==='started')?'Stop':'Start')}} datafeed for {{job.job_id}}">
       <i ng-show="job.datafeed_config && job.datafeed_config.state==='started'" aria-hidden="true" class="fa fa-stop"></i>
       <i ng-show="job.datafeed_config && job.datafeed_config.state==='stopped'" aria-hidden="true" class="fa fa-play"></i>
@@ -66,6 +67,7 @@
     ng-click="cloneJob(job)"
     class="btn btn-xs btn-default"
     data-toggle="tooltip"
+    ng-disabled='!privileges.canCreateJob'
     tooltip="Clone job" >
       <i aria-hidden="true" class="fa fa-clone"></i>
   </button>
@@ -75,6 +77,7 @@
     ng-click="deleteJob(job)"
     class="btn btn-xs btn-danger"
     data-toggle="tooltip"
+    ng-disabled='!privileges.canDeleteJob'
     tooltip="Delete job">
       <i aria-hidden="true" class="fa fa-trash"></i>
   </button>

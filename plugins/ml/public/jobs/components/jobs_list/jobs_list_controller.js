@@ -54,6 +54,7 @@ function (
   mlClipboardService,
   mlJobService,
   mlDatafeedService,
+  mlPrivilegeService,
   mlBrowserDetectService) {
 
   timefilter.enabled = false; // remove time picker from top of page
@@ -70,6 +71,11 @@ function (
   let jobFilterTimeout;
 
   $scope.kbnUrl = kbnUrl;
+  $scope.privileges = {
+    canCreateJob: false,
+    canDeleteJob: false,
+    canStartStopDatafeed: false,
+  };
 
   // functions for job list buttons
   // called from jobs_list_controls.html
@@ -110,6 +116,10 @@ function (
           }
         });
     }
+  };
+
+  $scope.newJob = function () {
+    $location.path('jobs/new_job');
   };
 
   $scope.editJob = function (job) {
@@ -190,7 +200,6 @@ function (
   // function for displaying jobs list
   // anytime the jobs list is reloaded, the display will be freshed.
   function displayJobs(jobs) {
-
     // keep track of whether the row has already been expanded
     // if this table is has been refreshed, it is helpful to reopen
     // any rows the user had open.
@@ -604,6 +613,11 @@ function (
 
   mlJobService.loadJobs().then((resp) => {
     jobsUpdated(resp.jobs);
+  });
+
+  mlPrivilegeService.getJobManagementPrivileges()
+  .then((privileges) => {
+    $scope.privileges = privileges;
   });
 
   $scope.$emit('application.load');

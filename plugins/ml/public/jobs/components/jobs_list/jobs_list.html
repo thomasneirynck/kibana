@@ -13,13 +13,14 @@
       <header>
         <div class="row" >
         <div class="col-xs-10" >
-          <a
-            ng-href="#/jobs/new_job"
+          <button
+            ng-click='newJob()'
             class="btn btn-info"
+            ng-disabled='!privileges.canCreateJob'
             aria-label="Create new job">
             <i aria-hidden="true" class="fa fa-plus"></i>
             Create new job
-          </a>
+          </button>
         </div>
 
 

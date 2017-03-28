@@ -23,6 +23,7 @@ import 'plugins/ml/results/index';
 import 'plugins/ml/support/index';
 import 'plugins/ml/services/ml_clipboard_service';
 import 'plugins/ml/services/info_service';
+import 'plugins/ml/services/privilege_service';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/ml_api_service';
 import 'plugins/ml/services/browser_detect_service';

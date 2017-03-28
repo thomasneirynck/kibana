@@ -138,4 +138,12 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.checkPrivilege = function (obj) {
+    return http.request({
+      url: '../api/ml/_has_privileges',
+      method: 'POST',
+      data: obj
+    });
+  };
+
 });
