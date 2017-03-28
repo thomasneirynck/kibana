@@ -10,6 +10,16 @@ export function checkLicense(xpackLicenseInfo) {
     };
   }
 
+  const featureEnabled = xpackLicenseInfo.feature('ml').isEnabled();
+  if (!featureEnabled) {
+    return {
+      isAvailable: false,
+      showLinks: false,
+      enableLinks: false,
+      message: 'Machine Learning is unavailable'
+    };
+  }
+
   const VALID_LICENSE_MODES = [
     'trial',
     'platinum'
