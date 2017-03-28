@@ -13,6 +13,7 @@
  * strictly prohibited.
  */
 
+import _ from 'lodash';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
@@ -39,20 +40,30 @@ module.service('mlPrivilegeService', function (Promise, ml) {
 
       ml.checkPrivilege(priv)
       .then((resp) => {
-        if (resp.cluster['cluster:admin/ml/job/put'] &&
-            resp.cluster['cluster:admin/ml/datafeeds/put']) {
-          privileges.canCreateJob = true;
+
+        // if security has been disabled, securityDisabled is returned from the endpoint
+        // therefore set all privileges to true
+        if (resp.securityDisabled) {
+          _.each(privileges, (p, k) => {
+            privileges[k] = true;
+          });
+        } else {
+          if (resp.cluster['cluster:admin/ml/job/put'] &&
+              resp.cluster['cluster:admin/ml/datafeeds/put']) {
+            privileges.canCreateJob = true;
+          }
+
+          if (resp.cluster['cluster:admin/ml/job/delete'] &&
+              resp.cluster['cluster:admin/ml/datafeeds/delete']) {
+            privileges.canDeleteJob = true;
+          }
+
+          if (resp.cluster['cluster:admin/ml/datafeeds/start'] &&
+              resp.cluster['cluster:admin/ml/datafeeds/stop']) {
+            privileges.canStartStopDatafeed = true;
+          }
         }
 
-        if (resp.cluster['cluster:admin/ml/job/delete'] &&
-            resp.cluster['cluster:admin/ml/datafeeds/delete']) {
-          privileges.canDeleteJob = true;
-        }
-
-        if (resp.cluster['cluster:admin/ml/datafeeds/start'] &&
-            resp.cluster['cluster:admin/ml/datafeeds/stop']) {
-          privileges.canStartStopDatafeed = true;
-        }
         return resolve(privileges);
       })
       .catch(() => {
