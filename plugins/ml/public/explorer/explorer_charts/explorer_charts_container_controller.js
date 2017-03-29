@@ -203,13 +203,14 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
       'aggregation interval: <%= aggregationInterval %></div>');
 
     _.each(anomalyRecords, (record) => {
-      const job = _.find(mlJobService.jobs, { 'job_id': record.job_id });
+      const job = mlJobService.getJob(record.job_id);
       const bucketSpan = parseInterval(job.analysis_config.bucket_span);
 
       const config = {
         jobId: record.job_id,
         function: record.function_description,
         metricFunction: aggregationTypeTransform.toES(record.function_description),
+        timeField: job.data_description.time_field,
         bucketSpanSeconds: bucketSpan.asSeconds(),
         interval: job.analysis_config.bucket_span,
         infoTooltip: compiledTooltip({

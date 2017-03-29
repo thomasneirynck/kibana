@@ -74,10 +74,12 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
     // Query 1 - load the raw metric data.
     const datafeedQuery = _.get(config, 'datafeedConfig.query', null);
     mlResultsService.getMetricData(config.datafeedConfig.indexes, config.entityFields, datafeedQuery,
-      config.metricFunction, config.metricFieldName,
+      config.metricFunction, config.metricFieldName, config.timeField,
       scope.plotEarliest, scope.plotLatest, config.interval
       )
     .then((resp) => {
+      // TODO - if query returns no results e.g. source data has been deleted,
+      // display a message saying 'No data between earliest/latest'.
       scope.metricData = resp.results;
       finish();
     });
@@ -161,9 +163,14 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
       margin.left = (Math.max(maxYAxisLabelWidth, 40));
       vizWidth  = svgWidth  - margin.left - margin.right;
 
-      lineChartXScale = d3.time.scale()
-        .range([0, vizWidth])
-        .domain(d3.extent(data, d => d.date));
+      // Set the x axis domain to match the data,
+      // or if only 1 point use the range passed in the scope.
+      lineChartXScale = d3.time.scale().range([0, vizWidth]);
+      if (data.length > 1) {
+        lineChartXScale = lineChartXScale.domain(d3.extent(data, d => d.date));
+      } else {
+        lineChartXScale = lineChartXScale.domain([scope.plotEarliest, scope.plotLatest]);
+      }
 
       d3.svg.axis().scale(lineChartXScale).orient('bottom')
         .innerTickSize(-chartHeight).outerTickSize(0).tickPadding(10);

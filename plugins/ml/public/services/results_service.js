@@ -1077,22 +1077,20 @@ module.service('mlResultsService', function ($q, es) {
   // to that built from the supplied entity fields.
   // Returned response contains a results property containing the requested aggregation.
   this.getMetricData = function (index, entityFields, query, metricFunction, metricFieldName,
-    earliestMs, latestMs, interval) {
+    timeFieldName, earliestMs, latestMs, interval) {
     const deferred = $q.defer();
     const obj = {success: true, results: {}};
 
     // Build the criteria to use in the bool filter part of the request.
-    // Add criteria for the time range, record score, plus any specified job IDs.
+    // Add criteria for the time range, entity fields, plus any additional supplied query.
     const boolCriteria = [];
-    boolCriteria.push({
-      'range': {
-        '@timestamp': {
-          'gte': earliestMs,
-          'lte': latestMs,
-          'format': 'epoch_millis'
-        }
-      }
-    });
+    const timeRangeCriteria = {'range':{}};
+    timeRangeCriteria.range[timeFieldName] = {
+      'gte': earliestMs,
+      'lte': latestMs,
+      'format': 'epoch_millis'
+    };
+    boolCriteria.push(timeRangeCriteria);
 
     if (query) {
       boolCriteria.push(query);
@@ -1120,7 +1118,7 @@ module.service('mlResultsService', function ($q, es) {
       'aggs': {
         'byTime': {
           'date_histogram': {
-            'field': '@timestamp',
+            'field': timeFieldName,
             'interval': interval,
             'min_doc_count': 1
           }
