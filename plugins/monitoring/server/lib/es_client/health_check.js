@@ -5,7 +5,6 @@ import { ensureNotTribe } from './ensure_not_tribe';
 import { ensureEsVersion } from './ensure_es_version';
 
 const NoConnections = elasticsearch.errors.NoConnections;
-const REQUEST_DELAY = 2500;
 const NO_INDEX = 'no_index';
 const INITIALIZING = 'initializing';
 const READY = 'ready';
@@ -13,6 +12,7 @@ const READY = 'ready';
 export default function esHealthCheck(plugin, server) {
   const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('monitoring');
   const config = server.config();
+  const REQUEST_DELAY = config.get('elasticsearch.healthCheck.delay');
   function getHealth() {
     return callWithInternalUser('cluster.health', {
       timeout: '5s',

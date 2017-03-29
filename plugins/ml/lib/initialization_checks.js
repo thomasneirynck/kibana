@@ -57,8 +57,11 @@ module.exports = function (plugin, server) {
       // matching our filter within 5 seconds.  If status === "red" that
       // means the index was found but the shards are not ready for queries.
       if (!resp || resp.timed_out || resp.status === 'red') {
-        plugin.status.red('Kibana index not available... Trying again in 2.5 seconds.');
-        return Promise.delay(2500).then(waitForKibanaIndex);
+        const interval = REQUEST_DELAY / 1000;
+        const intervalFormatted = interval.toFixed(1);
+        const secondsFormatted = interval === 1 ? 'second' : 'seconds';
+        plugin.status.red(`Kibana index not available... Trying again in ${intervalFormatted} ${secondsFormatted}.`);
+        return Promise.delay(REQUEST_DELAY).then(waitForKibanaIndex);
       }
     });
   }
@@ -72,7 +75,7 @@ module.exports = function (plugin, server) {
       id: config.get('pkg.version')
     }).then((resp) => {
       if (resp !== true) {
-        return Promise.delay(1000).then(waitForKibanaBuildNumDoc);
+        return Promise.delay(REQUEST_DELAY).then(waitForKibanaBuildNumDoc);
       }
     });
   }
@@ -321,7 +324,7 @@ module.exports = function (plugin, server) {
   }
 
   function startorRestartChecking() {
-    scheduleCheck(stopChecking() ? 5000 : 1);
+    scheduleCheck(stopChecking() ? REQUEST_DELAY : 1);
   }
 
   function stopChecking() {
