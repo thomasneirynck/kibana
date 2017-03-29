@@ -40,8 +40,10 @@
               class="kuiButton kuiButton--danger kuiButton--iconText"
               ng-if="selectedRoles.length"
             >
-              <span class="kuiButton__icon kuiIcon fa-trash"></span>
-              Delete
+              <span class="kuiButton__inner">
+                <span class="kuiButton__icon kuiIcon fa-trash"></span>
+                <span>Delete</span>
+              </span>
             </button>
 
             <!-- Create role button -->
@@ -52,8 +54,7 @@
               ng-if="!selectedRoles.length"
               data-test-subj="createRoleButton"
             >
-              <span class="kuiButton__icon kuiIcon fa-plus"></span>
-              Create role
+              <span class="kuiButton__icon kuiIcon fa-plus"></span><span>Create role</span>
             </a>
           </div>
 

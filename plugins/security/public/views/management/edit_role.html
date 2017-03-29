@@ -23,8 +23,10 @@
           ng-click="deleteRole(role)"
           tooltip="Delete Role"
         >
-          <span class="kuiButton__icon kuiIcon fa-trash"></span>
-          Delete role
+          <span class="kuiButton__inner">
+            <span class="kuiButton__icon kuiIcon fa-trash"></span>
+            <span>Delete role</span>
+          </span>
         </button>
         <div
           ng-if="role.metadata._reserved"

@@ -23,8 +23,10 @@
           tooltip="Delete User"
           data-test-subj="userFormDeleteButton"
         >
-          <span class="kuiButton__icon kuiIcon fa-trash"></span>
-          Delete user
+          <span class="kuiButton__inner">
+            <span class="kuiButton__icon kuiIcon fa-trash"></span>
+            <span>Delete user</span>
+          </span>
         </button>
         <div
           ng-if="user.metadata._reserved"
