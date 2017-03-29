@@ -17,6 +17,7 @@ import './styles/main.less';
 import './wizard/wizard';
 import './create_job';
 
+import 'plugins/kibana/discover/saved_searches/saved_searches';
 import savedObjectRegistry from 'ui/saved_objects/saved_object_registry';
 import savedSearchProvider from 'plugins/kibana/discover/saved_searches/saved_search_register';
 

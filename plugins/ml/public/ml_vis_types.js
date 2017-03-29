@@ -14,16 +14,10 @@
  */
 
 import visTypes from 'ui/registry/vis_types';
-import AnomalySummaryTableProvider from './anomalysummarytable/anomalysummarytable';
 import ConnectionsMapProvider from './connectionsmap/connectionsmap';
 import InfluencersListProvider from './influencerslist/influencerslist';
-import SummarySwimlanesProvider from './summaryswimlanes/summaryswimlanes';
 import SwimlaneProvider from './swimlane/swimlane';
-import TopScoresTableProvider from './topscorestable/topscorestable';
 
-visTypes.register(AnomalySummaryTableProvider);
 visTypes.register(ConnectionsMapProvider);
 visTypes.register(InfluencersListProvider);
-visTypes.register(SummarySwimlanesProvider);
 visTypes.register(SwimlaneProvider);
-visTypes.register(TopScoresTableProvider);

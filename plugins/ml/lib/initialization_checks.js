@@ -21,7 +21,6 @@
 
 import Promise from 'bluebird';
 import elasticsearch from 'elasticsearch';
-import createDashboardObjects from './create_dashboard_objects';
 import util from 'util';
 
 const NoConnections = elasticsearch.errors.NoConnections;
@@ -244,7 +243,11 @@ module.exports = function (plugin, server) {
       type: 'index-pattern',
       id: ML_NOTIFICATIONS_INDEX_ID
     }).then((resp) => {
-      if (resp !== true) {
+      if (resp === true) {
+        // ML plugin is good to go.
+        plugin.status.green('Ready');
+        stopChecking();
+      } else {
         plugin.status.yellow('No ' + ML_NOTIFICATIONS_INDEX_ID + ' index pattern found - creating index pattern');
         createMlNotificationsIndexPattern();
       }
@@ -288,39 +291,13 @@ module.exports = function (plugin, server) {
     });
   }
 
-  function checkForDashboardObjects() {
-    // Just check if the Anomaly Timeline visualizaiton exists,
-    // and if it does assume all the objects for the ml dashboards exist.
-    // Otherwise create all the required searches and visualizations.
-    return callWithInternalUser('exists', {
-      index: config.get('kibana.index'),
-      type: 'visualization',
-      id: 'ml-anomaly-timeline'
-    }).then((response) => {
-      if (response === true) {
-        // Ml dashboard Objects are created and ready.
-        plugin.status.green('Ready');
-        stopChecking();
-      } else {
-        try {
-          plugin.status.yellow('No ml-anomaly-timeline visualization found - creating dashboard objects');
-          createDashboardObjects(server, plugin);
-        } catch (err) {
-          plugin.status.red('Error creating dashboard objects');
-          console.log('Error creating Ml dashboard objects:', err);
-        }
-      }
-    });
-  }
-
   function check() {
     const healthCheck =
       waitForPong(callWithInternalUser, config.get('elasticsearch.url'))
       .then(waitForKibanaIndex)
       .then(waitForKibanaBuildNumDoc)
       .then(checkForMlAnomaliesResultsIndexPattern)
-      .then(checkForMlNotificationsIndexPattern)
-      .then(checkForDashboardObjects);
+      .then(checkForMlNotificationsIndexPattern);
 
     return healthCheck
     .catch(err => plugin.status.red(err));

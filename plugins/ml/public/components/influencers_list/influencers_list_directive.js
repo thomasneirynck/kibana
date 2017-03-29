@@ -19,6 +19,9 @@
 
 import _ from 'lodash';
 
+import 'plugins/ml/lib/angular_bootstrap_patch';
+import 'plugins/ml/filters/abbreviate_whole_number';
+
 import anomalyUtils from 'plugins/ml/util/anomaly_utils';
 
 import FilterManagerProvider from 'ui/filter_manager';

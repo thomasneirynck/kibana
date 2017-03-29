@@ -1,7 +1,7 @@
 /*
  * ELASTICSEARCH CONFIDENTIAL
  *
- * Copyright (c) 2016 Elasticsearch BV. All Rights Reserved.
+ * Copyright (c) 2017 Elasticsearch BV. All Rights Reserved.
  *
  * Notice: this software, and all information contained
  * therein, is the exclusive property of Elasticsearch BV
@@ -33,41 +33,20 @@ module.exports = function (kibana) {
     uiExports: {
       app: {
         title: 'Machine Learning',
-        description: 'Elastic behavioral analytics for machine data',
+        description: 'Machine Learning for the Elastic Stack',
         icon: 'plugins/ml/ml.svg',
         main: 'plugins/ml/app',
-        uses: [
-          'visTypes',
-          'spyModes'
-        ],
         injectVars: function (server) {
           const config = server.config();
 
-          // tilemapsConfig settings are still needed even though the plugin
-          // doesn't use Tilemap directly.
-          // DEPRECATED SETTINGS
-          // if the url is set, the old settings must be used.
-          // keeping this logic for backward compatibilty.
-          const configuredUrl = server.config().get('tilemap.url');
-          const isOverridden = typeof configuredUrl === 'string' && configuredUrl !== '';
-          const tilemapConfig = config.get('tilemap');
           return {
             kbnIndex: config.get('kibana.index'),
-            tilemapsConfig: {
-              deprecated: {
-                isOverridden: isOverridden,
-                config: tilemapConfig,
-              },
-              manifestServiceUrl: config.get('tilemap.manifestServiceUrl')
-            },
-            esServerUrl: config.get('elasticsearch.url'),
+            esServerUrl: config.get('elasticsearch.url')
           };
         }
       },
-      visTypes: [
-        'plugins/ml/ml_vis_types'
-      ],
-      hacks: ['plugins/ml/hacks/toggle_app_link_in_nav'],
+      hacks: ['plugins/ml/hacks/toggle_app_link_in_nav']
+
     },
 
 
