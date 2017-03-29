@@ -141,6 +141,11 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
   };
 
   $scope.setSelectedJobs = function (selections) {
+    let previousSelected = 0;
+    if ($scope.selectedJobs !== undefined) {
+      previousSelected = $scope.selectedJobs.length;
+    }
+
     $scope.selectedJobs = [];
     const selectedJobIds = [];
     const selectAll = ((selections.length === 1 && selections[0] === '*') || selections.length === 0);
@@ -151,6 +156,14 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
         selectedJobIds.push(job.id);
       }
     });
+
+    // Clear viewBy from the state if we are moving from single
+    // to multi selection, or vice-versa.
+    if ((previousSelected <= 1 && selectedJobIds.length > 1) ||
+      (selectedJobIds.length === 1 && previousSelected > 1)) {
+      delete $scope.appState.mlExplorerSwimlane.viewBy;
+      $scope.appState.save();
+    }
 
     // Build scope objects used in the HTML template.
     $scope.unsafeHtml = '<ml-job-select-list selected="' + selectedJobIds.join(' ') + '"></ml-job-select-list>';
@@ -280,48 +293,55 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     viewByOptions.push(VIEW_BY_JOB_LABEL);
     $scope.viewBySwimlaneOptions = viewByOptions;
 
-    // Set the swimlane viewBy to that stored in the state (URL) if set.
-    // Otherwise default to the first partition, over, by or influencer field of the first selected job.
     if ($scope.appState.mlExplorerSwimlane.viewBy !== undefined &&
       $scope.viewBySwimlaneOptions.indexOf($scope.appState.mlExplorerSwimlane.viewBy) !== -1) {
+      // Set the swimlane viewBy to that stored in the state (URL) if set.
       $scope.swimlaneViewByFieldName = $scope.appState.mlExplorerSwimlane.viewBy;
     } else {
-      const firstSelectedJob = _.find(mlJobService.jobs, (job) => {
-        return job.job_id === selectedJobIds[0];
-      });
+      if (selectedJobIds.length > 1) {
+        // If more than one job selected, default to job ID.
+        $scope.swimlaneViewByFieldName = VIEW_BY_JOB_LABEL;
+      } else {
+        // For a single job, default to the first partition, over,
+        // by or influencer field of the first selected job.
+        const firstSelectedJob = _.find(mlJobService.jobs, (job) => {
+          return job.job_id === selectedJobIds[0];
+        });
 
-      const firstJobInfluencers = firstSelectedJob.analysis_config.influencers || [];
-      _.each(firstSelectedJob.analysis_config.detectors,(detector) => {
+        const firstJobInfluencers = firstSelectedJob.analysis_config.influencers || [];
+        _.each(firstSelectedJob.analysis_config.detectors,(detector) => {
 
-        if (_.has(detector, 'partition_field_name') &&
-            firstJobInfluencers.indexOf(detector.partition_field_name) !== -1) {
-          $scope.swimlaneViewByFieldName = detector.partition_field_name;
-          return false;
+          if (_.has(detector, 'partition_field_name') &&
+              firstJobInfluencers.indexOf(detector.partition_field_name) !== -1) {
+            $scope.swimlaneViewByFieldName = detector.partition_field_name;
+            return false;
+          }
+
+          if (_.has(detector, 'over_field_name') &&
+              firstJobInfluencers.indexOf(detector.over_field_name) !== -1) {
+            $scope.swimlaneViewByFieldName = detector.over_field_name;
+            return false;
+          }
+
+          // For jobs with by and over fields, don't add the 'by' field as this
+          // field will only be added to the top-level fields for record type results
+          // if it also an influencer over the bucket.
+          if (_.has(detector, 'by_field_name') && !(_.has(detector, 'over_field_name')) &&
+              firstJobInfluencers.indexOf(detector.by_field_name) !== -1) {
+            $scope.swimlaneViewByFieldName = detector.by_field_name;
+            return false;
+          }
+        });
+
+        if ($scope.swimlaneViewByFieldName === null) {
+          if (firstJobInfluencers.length > 0) {
+            $scope.swimlaneViewByFieldName = firstJobInfluencers[0];
+          } else {
+            // No influencers for first selected job - set to first available option.
+            $scope.swimlaneViewByFieldName = $scope.viewBySwimlaneOptions.length > 0 ? $scope.viewBySwimlaneOptions[0] : null;
+          }
         }
 
-        if (_.has(detector, 'over_field_name') &&
-            firstJobInfluencers.indexOf(detector.over_field_name) !== -1) {
-          $scope.swimlaneViewByFieldName = detector.over_field_name;
-          return false;
-        }
-
-        // For jobs with by and over fields, don't add the 'by' field as this
-        // field will only be added to the top-level fields for record type results
-        // if it also an influencer over the bucket.
-        if (_.has(detector, 'by_field_name') && !(_.has(detector, 'over_field_name')) &&
-            firstJobInfluencers.indexOf(detector.by_field_name) !== -1) {
-          $scope.swimlaneViewByFieldName = detector.by_field_name;
-          return false;
-        }
-      });
-
-      if ($scope.swimlaneViewByFieldName === null) {
-        if (firstJobInfluencers.length > 0) {
-          $scope.swimlaneViewByFieldName = firstJobInfluencers[0];
-        } else {
-          // No influencers for first selected job - set to first available option.
-          $scope.swimlaneViewByFieldName = $scope.viewBySwimlaneOptions.length > 0 ? $scope.viewBySwimlaneOptions[0] : null;
-        }
       }
 
       $scope.appState.mlExplorerSwimlane.viewBy = $scope.swimlaneViewByFieldName;
