@@ -44,8 +44,6 @@ module.controller('MlNewJobMultiStep1', (
   };
 
   $scope.step2WithSearchUrl = (hit) => {
-    // const type = 'line';
-    // return kbnUrl.eval('#/visualize/create?&type={{type}}&savedSearchId={{id}}', {type: type, id: hit.id});
     return '#/jobs/new_job_multi_metric/create?savedSearchId=' + encodeURIComponent(hit.id);
   };
   $scope.makeUrl = (pattern) => {

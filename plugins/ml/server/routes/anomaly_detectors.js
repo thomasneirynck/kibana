@@ -75,6 +75,21 @@ export default (server, commonRouteConfig) => {
 
   server.route({
     method: 'POST',
+    path: '/api/ml/anomaly_detectors/{jobId}/_update',
+    handler(request, reply) {
+      const jobId = request.params.jobId;
+      const body = request.payload;
+      return callWithRequest(request, 'ml.updateJob', {jobId, body})
+      .then(resp => reply(resp))
+      .catch(resp => reply(wrapError(resp)));
+    },
+    config: {
+      ...commonRouteConfig
+    }
+  });
+
+  server.route({
+    method: 'POST',
     path: '/api/ml/anomaly_detectors/{jobId}/_open',
     handler(request, reply) {
       const jobId = request.params.jobId;

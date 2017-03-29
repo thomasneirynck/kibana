@@ -15,6 +15,7 @@
     </li>
   </ul>
 
+  <!-- Job Details -->
   <div class="tab_contents" ng-show="ui.currentTab === 0">
     <div class="form-group">
       <label>Job description</label>
@@ -47,7 +48,7 @@
               <textarea
                 ng-model="item.url_value"
                 type="text"
-                class="form-control" />
+                class="form-control" ></textarea>
             </div>
           </div>
 
@@ -108,12 +109,13 @@
     </div>
   </div>
 
-  <div ng-hide="ui.validation.tabs[0].checks.categorization_filters.valid" class="validation-error">
-    {{ ( ui.validation.tabs[2].checks.categorization_filters.message || "Categorization filters must all be valid regular expressions" ) }}
+  <div ng-hide="ui.validation.tabs[0].checks.categorizationFilters.valid" class="validation-error">
+    {{ ( ui.validation.tabs[2].checks.categorizationFilters.message || "Categorization filters must all be valid regular expressions" ) }}
   </div>
 
   </div>
 
+  <!-- Datafeed -->
   <div class="tab_contents" ng-show="ui.currentTab === 1">
 
     <div ng-show="ui.datafeedStopped" >
@@ -140,6 +142,7 @@
     </div>
   </div>
 
+  <!-- Detectors -->
   <div class="tab_contents" ng-show="ui.currentTab === 2">
     <div ml-job-detectors-list
       ml-detectors="job.analysis_config.detectors"

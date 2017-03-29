@@ -59,7 +59,6 @@ function (
   mlJobService,
   mlMessageBarService,
   mlDatafeedService,
-  // mlVisualizationJobService,
   mlConfirmModalService) {
 
 
@@ -944,14 +943,5 @@ function (
   }
 
   init();
-
-
-  // $scope.getJobFromVisId = function (id) {
-  //   mlVisualizationJobService.getJobFromVisId($scope.job, id)
-  //   .then(() => {
-  //     setDatafeedUIText();
-  //   });
-
-  // };
 
 });

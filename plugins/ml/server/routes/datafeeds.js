@@ -74,6 +74,21 @@ export default (server, commonRouteConfig) => {
   });
 
   server.route({
+    method: 'POST',
+    path: '/api/ml/datafeeds/{datafeedId}/_update',
+    handler(request, reply) {
+      const datafeedId = request.params.datafeedId;
+      const body = request.payload;
+      return callWithRequest(request, 'ml.updateDatafeed', {datafeedId, body})
+      .then(resp => reply(resp))
+      .catch(resp => reply(wrapError(resp)));
+    },
+    config: {
+      ...commonRouteConfig
+    }
+  });
+
+  server.route({
     method: 'DELETE',
     path: '/api/ml/datafeeds/{datafeedId}',
     handler(request, reply) {

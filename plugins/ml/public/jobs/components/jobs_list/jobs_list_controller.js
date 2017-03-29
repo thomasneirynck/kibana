@@ -150,7 +150,9 @@ function (
 
     job.datafeed_state = 'stopping';
     const datafeedId = mlJobService.getDatafeedId(job.job_id);
-    mlJobService.stopDatafeed(datafeedId, job.job_id);
+    mlJobService.stopDatafeed(datafeedId, job.job_id).then(() => {
+      $scope.refreshJob(job.job_id);
+    });
   };
 
 
@@ -612,14 +614,28 @@ function (
     displayJobs(jobs);
   }
 
-  mlJobService.loadJobs().then((resp) => {
-    jobsUpdated(resp.jobs);
-  });
+  $scope.refreshJob = function (jobId) {
+    mlJobService.refreshJob(jobId).then((resp) => {
+      jobsUpdated(resp.jobs);
+    });
+  };
+
+  function refreshJobs() {
+    mlJobService.loadJobs().then((resp) => {
+      jobsUpdated(resp.jobs);
+    });
+  }
 
   mlPrivilegeService.getJobManagementPrivileges()
   .then((privileges) => {
     $scope.privileges = privileges;
   });
+
+  $scope.$on('jobsUpdated', () => {
+    refreshJobs();
+  });
+
+  refreshJobs();
 
   $scope.$emit('application.load');
 });

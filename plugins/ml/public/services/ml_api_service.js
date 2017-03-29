@@ -67,7 +67,7 @@ module.service('ml', function (prlHttpService) {
   this.updateJob = function (obj) {
     return http.request({
       url: `../api/ml/anomaly_detectors/${obj.jobId}/_update`,
-      method: 'PUT',
+      method: 'POST',
       data: obj.job
     });
   };
@@ -90,6 +90,14 @@ module.service('ml', function (prlHttpService) {
     return http.request({
       url: `../api/ml/datafeeds/${obj.datafeedId}`,
       method: 'PUT',
+      data: obj.datafeedConfig
+    });
+  };
+
+  this.updateDatafeed = function (obj) {
+    return http.request({
+      url: `../api/ml/datafeeds/${obj.datafeedId}/_update`,
+      method: 'POST',
       data: obj.datafeedConfig
     });
   };

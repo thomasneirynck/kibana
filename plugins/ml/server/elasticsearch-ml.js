@@ -119,7 +119,7 @@
         }
       ],
       needBody: true,
-      method: 'PUT'
+      method: 'POST'
     });
 
     ml.datafeeds = ca({
@@ -169,6 +169,21 @@
       ],
       needBody: true,
       method: 'PUT'
+    });
+
+    ml.updateDatafeed = ca({
+      urls: [
+        {
+          fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>/_update',
+          req: {
+            datafeedId: {
+              type: 'string'
+            }
+          }
+        }
+      ],
+      needBody: true,
+      method: 'POST'
     });
 
     ml.deleteDatafeed = ca({

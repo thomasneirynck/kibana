@@ -25,7 +25,8 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
   const msgs = mlMessageBarService;
   msgs.clear();
   $scope.saveLock = false;
-  $scope.pscope = params.pscope;
+  const refreshJob = params.pscope.refreshJob;
+
   $scope.job = angular.copy(params.job);
 
   $scope.ui = {
@@ -57,7 +58,7 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
     const datafeedConfig = $scope.job.datafeed_config;
     $scope.ui.isDatafeed = true;
     $scope.ui.tabs[1].hidden = false;
-    $scope.ui.datafeedStopped = (!$scope.job.datafeed_state || $scope.job.datafeed_state === 'stopped');
+    $scope.ui.datafeedStopped = (!$scope.job.datafeed_config || $scope.job.datafeed_config.state === 'stopped');
 
     $scope.ui.datafeed.queryText = angular.toJson(datafeedConfig.query, true);
     $scope.ui.datafeed.scrollSizeText = datafeedConfig.scroll_size;
@@ -98,10 +99,12 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
 
   // convenient function to stop the datafeed from inside the edit dialog
   $scope.stopDatafeed = function () {
+    const datafeedId = $scope.job.datafeed_config.datafeed_id;
+    const jobId = $scope.job.job_id;
     $scope.ui.stoppingDatafeed = true;
-    mlJobService.stopDatafeed($scope.job.job_id)
+    mlJobService.stopDatafeed(datafeedId, jobId)
       .then((resp) => {
-        if (resp.acknowledged && resp.acknowledged === true) {
+        if (resp.stopped === true) {
           $scope.ui.datafeedStopped = true;
         }
       });
@@ -113,7 +116,6 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
     // reset validations
     _.each(tabs,  (tab) => {
       tab.valid = true;
-      // for (let check in tab.checks) {
       _.each(tab.checks, (check, c) => {
         tab.checks[c].valid = true;
         tab.checks[c].message = '';
@@ -148,14 +150,15 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
     $scope.saveLock = true;
 
     const jobId = $scope.job.job_id;
-    const data = {};
+    const jobData = {};
+    const datafeedData = {};
 
-    // if the job description has changed, add it to the data json
+    // if the job description has changed, add it to the jobData json
     if ($scope.job.description !== params.job.description) {
-      data.description = $scope.job.description;
+      jobData.description = $scope.job.description;
     }
 
-    // check each detector. if the description or filters have changed, add it to the data json
+    // check each detector. if the description or filters have changed, add it to the jobData json
     _.each($scope.job.analysis_config.detectors, (d, i) => {
       let changes = 0;
 
@@ -168,20 +171,15 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
         changes++;
       }
 
-      if (d.detector_rules !== params.job.analysis_config.detectors[i].detectorRules) {
-        obj.detector_rules = d.detector_rules;
-        changes++;
-      }
-
       if (changes > 0) {
-        if (data.detectors === undefined) {
-          data.detectors = [];
+        if (jobData.detectors === undefined) {
+          jobData.detectors = [];
         }
-        data.detectors.push(obj);
+        jobData.detectors.push(obj);
       }
     });
 
-    // check each categorization filter. if any have changed, add all to the data json
+    // check each categorization filter. if any have changed, add all to the jobData json
     if ($scope.job.analysis_config.categorization_filters) {
       let doUpdate = false;
 
@@ -197,7 +195,7 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
       });
 
       if (doUpdate) {
-        data.categorization_filters = $scope.job.analysis_config.categorization_filters;
+        jobData.categorization_filters = $scope.job.analysis_config.categorization_filters;
       }
     }
 
@@ -229,7 +227,7 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
 
 
         if (doUpdate) {
-          data.custom_settings = $scope.job.custom_settings;
+          jobData.custom_settings = $scope.job.custom_settings;
         }
       } else {
         if (params.job.custom_settings ||
@@ -237,16 +235,13 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
            params.job.custom_settings.custom_urls.length) {
           // if urls orginally existed, but now don't
           // clear the custom settings completely
-          data.custom_settings = null;
+          jobData.custom_settings = null;
         }
       }
     }
 
     // check datafeed
     if ($scope.job.datafeed_config && $scope.ui.datafeedStopped) {
-      let doUpdate = false;
-
-      const datafeedConfig = $scope.job.datafeed_config;
       const sch = $scope.ui.datafeed;
 
       // set query text
@@ -260,45 +255,62 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
         console.log('save(): could not parse query JSON');
       }
 
-      const orginalQueryText = angular.toJson(datafeedConfig.query, true);
+      const orginalQueryText = angular.toJson($scope.job.datafeed_config.query, true);
       // only update if it has changed from the original
       if (orginalQueryText !== sch.queryText) {
-        datafeedConfig.query = query;
-        doUpdate = true;
+        datafeedData.query = query;
       }
 
       // only update if it has changed from the original
-      if (sch.scrollSizeText !== datafeedConfig.scroll_size) {
-        datafeedConfig.scroll_size = ((sch.scrollSizeText === '' || sch.scrollSizeText === null || sch.scrollSizeText === undefined)
+      if (sch.scrollSizeText !== $scope.job.datafeed_config.scroll_size) {
+        datafeedData.scroll_size = ((sch.scrollSizeText === '' || sch.scrollSizeText === null || sch.scrollSizeText === undefined)
           ? sch.scrollSizeDefault : sch.scrollSizeText);
-        doUpdate = true;
-      }
-
-      // if changes have happened, add the whole datafeedConfig to the payload
-      if (doUpdate) {
-        data.datafeedConfig = datafeedConfig;
       }
     }
 
     // if anything has changed, post the changes
-    if (Object.keys(data).length) {
-      mlJobService.updateJob(jobId, data)
+    if (Object.keys(jobData).length) {
+      mlJobService.updateJob(jobId, jobData)
       .then((resp) => {
-        $scope.saveLock = false;
         if (resp.success) {
-          console.log(resp);
-          msgs.clear();
-          mlJobService.refreshJob(jobId);
-          $modalInstance.close();
-
+          saveDatafeed();
         } else {
-          msgs.error(resp.message);
+          saveFail(resp);
         }
       });
     } else {
-      // otherwise, close the window
+      saveDatafeed();
+    }
+
+    function saveDatafeed() {
+      if (Object.keys(datafeedData).length) {
+        const datafeedId = $scope.job.datafeed_config.datafeed_id;
+        mlJobService.updateDatafeed(datafeedId, datafeedData)
+        .then((resp) => {
+          if (resp.success) {
+            saveComplete();
+          } else {
+            saveFail(resp);
+          }
+        });
+      } else {
+        saveComplete();
+      }
+    }
+
+    function saveComplete() {
+      $scope.saveLock = false;
+      msgs.clear();
+      refreshJob(jobId);
+
       $modalInstance.close();
     }
+
+    function saveFail(resp) {
+      $scope.saveLock = false;
+      msgs.error(resp.message);
+    }
+
   };
 
   $scope.cancel = function () {

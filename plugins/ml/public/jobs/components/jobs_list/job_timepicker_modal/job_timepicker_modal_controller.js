@@ -19,7 +19,7 @@ import angular from 'angular';
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('MlJobTimepickerModal', function ($scope, $modalInstance, params, mlJobService, mlMessageBarService) {
+module.controller('MlJobTimepickerModal', function ($scope, $rootScope, $modalInstance, params, mlJobService, mlMessageBarService) {
   const msgs = mlMessageBarService;
   // msgs.clear();
   $scope.saveLock = false;
@@ -108,7 +108,7 @@ module.controller('MlJobTimepickerModal', function ($scope, $modalInstance, para
     function doStart() {
       mlJobService.startDatafeed($scope.datafeedId, $scope.jobId, $scope.start, $scope.end)
       .then(() => {
-        mlJobService.refreshJob($scope.jobId);
+        $rootScope.$broadcast('jobsUpdated');
         $modalInstance.close();
       })
       .catch((resp) => {

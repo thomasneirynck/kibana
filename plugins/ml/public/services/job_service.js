@@ -160,6 +160,8 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                 if (newJob.job_id === statsResp.jobs[j].job_id) {
                   const statsJob = statsResp.jobs[j];
                   newJob.state = statsJob.state;
+                  newJob.data_counts = {};
+                  newJob.model_size_stats = {};
                   angular.copy(statsJob.data_counts, newJob.data_counts);
                   angular.copy(statsJob.model_size_stats, newJob.model_size_stats);
 
@@ -171,7 +173,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
               // replace the job in the jobs array
               for (let i = 0; i < jobs.length; i++) {
-                if (jobs[i].id === newJob.job_id) {
+                if (jobs[i].job_id === newJob.job_id) {
                   jobs[i] = newJob;
                 }
               }
@@ -1109,6 +1111,18 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     });
   };
 
+  this.updateDatafeed = function (datafeedId, datafeedConfig) {
+    return ml.updateDatafeed({datafeedId, datafeedConfig})
+    .then((resp) => {
+      console.log('update datafeed', resp);
+      return {success: true};
+    }).catch((err) => {
+      msgs.error('Could not update datafeed: ' + datafeedId);
+      console.log('update datafeed', err);
+      return {success: false, message: err.message};
+    });
+  };
+
   this.deleteDatafeed = function () {
 
   };
@@ -1123,10 +1137,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       end
     })
       .then((resp) => {
-        // console.log(resp);
-        // refresh the state for the job as it's now changed
-        // this.updateSingleJobCounts(jobId);
-        this.refreshJob(jobId);
         deferred.resolve(resp);
 
       }).catch((err) => {
@@ -1145,10 +1155,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       datafeedId
     })
       .then((resp) => {
-        // console.log(resp);
-        // refresh the state for the job as it's now changed
-        // this.updateSingleJobCounts(jobId);
-        this.refreshJob(jobId);
         deferred.resolve(resp);
 
       }).catch((err) => {

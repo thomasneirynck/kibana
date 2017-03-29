@@ -59,14 +59,16 @@
           </div>
         </div>
 
-        <button
-          aria-label="Add Filter"
-          ng-click="openFilterWindow(detector)"
-          type="button"
-          class="btn btn-primary btn-xs">
-            <span class="sr-only">Add Filter</span>
-            <i aria-hidden="true" class="fa fa-plus"></i> Add Filter
-        </button>
+        <div ng-show="editMode==='NEW'">
+          <button
+            aria-label="Add Filter"
+            ng-click="openFilterWindow(detector)"
+            type="button"
+            class="btn btn-primary btn-xs">
+              <span class="sr-only">Add Filter</span>
+              <i aria-hidden="true" class="fa fa-plus"></i> Add Filter
+          </button>
+        </div>
       </div>
 
     </div>
