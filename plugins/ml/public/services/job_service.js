@@ -1131,6 +1131,13 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   // refresh the job state on start success
   this.startDatafeed = function (datafeedId, jobId, start, end) {
     const deferred = $q.defer();
+
+    // if the end timestamp is a number, add one ms to it to make it
+    // inclusive of the end of the data
+    if (_.isNumeric(end)) {
+      end++;
+    }
+
     ml.startDatafeed({
       datafeedId,
       start,
