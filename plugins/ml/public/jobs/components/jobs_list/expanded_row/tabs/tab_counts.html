@@ -46,6 +46,13 @@
                       </div>
                     </div>
 
+                    <div ng-switch-when="latest_sparse_bucket_timestamp">
+                      <div class="ml_job_row row">
+                        <div class="col-md-6">{{key1}}</div>
+                        <div class="col-md-6" title="{{value1}} bytes">{{formatDate(value1)}}</div>
+                      </div>
+                    </div>
+
                     <div ng-switch-default>
                       <div class="ml_job_row row">
                         <div class="col-md-6">{{key1}}</div>
