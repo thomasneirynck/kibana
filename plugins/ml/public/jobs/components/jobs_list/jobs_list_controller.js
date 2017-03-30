@@ -75,6 +75,8 @@ function (
     canCreateJob: false,
     canDeleteJob: false,
     canStartStopDatafeed: false,
+    canUpdateJob: false,
+    canUpdateDatafeed: false
   };
 
   // functions for job list buttons

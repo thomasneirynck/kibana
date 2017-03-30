@@ -24,6 +24,8 @@ module.service('mlPrivilegeService', function (Promise, ml) {
       canCreateJob: false,
       canDeleteJob: false,
       canStartStopDatafeed: false,
+      canUpdateJob: false,
+      canUpdateDatafeed: false
     };
 
     return new Promise((resolve, reject) => {
@@ -31,10 +33,12 @@ module.service('mlPrivilegeService', function (Promise, ml) {
         cluster: [
           'cluster:admin/ml/job/put',
           'cluster:admin/ml/job/delete',
+          'cluster:admin/ml/job/update',
           'cluster:admin/ml/datafeeds/put',
           'cluster:admin/ml/datafeeds/delete',
           'cluster:admin/ml/datafeeds/start',
-          'cluster:admin/ml/datafeeds/stop'
+          'cluster:admin/ml/datafeeds/stop',
+          'cluster:admin/ml/datafeeds/update'
         ]
       };
 
@@ -53,6 +57,10 @@ module.service('mlPrivilegeService', function (Promise, ml) {
             privileges.canCreateJob = true;
           }
 
+          if (resp.cluster['cluster:admin/ml/job/update']) {
+            privileges.canUpdateJob = true;
+          }
+
           if (resp.cluster['cluster:admin/ml/job/delete'] &&
               resp.cluster['cluster:admin/ml/datafeeds/delete']) {
             privileges.canDeleteJob = true;
@@ -62,6 +70,11 @@ module.service('mlPrivilegeService', function (Promise, ml) {
               resp.cluster['cluster:admin/ml/datafeeds/stop']) {
             privileges.canStartStopDatafeed = true;
           }
+
+          if (resp.cluster['cluster:admin/ml/datafeeds/update']) {
+            privileges.canUpdateDatafeed = true;
+          }
+
         }
 
         return resolve(privileges);

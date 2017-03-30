@@ -46,6 +46,7 @@
   <!-- edit job -->
   <button
     ng-click="editJob(job)"
+    ng-disabled="!privileges.canUpdateJob || !privileges.canUpdateDatafeed"
     class="btn btn-xs btn-default"
     data-toggle="tooltip"
     tooltip="Edit job" >
