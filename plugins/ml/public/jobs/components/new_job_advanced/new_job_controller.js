@@ -268,54 +268,17 @@ function (
     getDatafeedSelection();
 
     if (validateJob()) {
-      let overwrite = false;
       // if basic validation passes
       // check that the job id doesn't already exist
-      // if they want to replace or the job id is fine, move the next step, checkInfluencers.
       const tempJob = mlJobService.getJob($scope.job.job_id);
       if (tempJob) {
-        // if the job id exists and that job is currently closed, display a warning
-        if (tempJob.state === 'closed') {
-          let message = 'Job \'' + $scope.job.job_id + '\' already exists. <br />';
-          message += 'Overwriting it will remove all previous results which cannot be undone.<br />';
-          message += 'Do you wish to continue?';
-
-          mlConfirm.open({
-            message: message,
-            title: $scope.job.job_id + ' already exists',
-            okLabel: 'Overwrite',
-            size: '',
-          })
-          .then(function () {
-            overwrite = true;
-            checkInfluencers();
-          })
-          .catch(function () {
-            displayJobIdError();
-          });
-        } else {
-          // if the job is not closed, stop the save altogether and display a message
-          mlConfirm.open({
-            message: 'Only jobs which are closed can be overwritten.<br />Please choose a different name or close the job',
-            title: 'Job \'' + $scope.job.job_id +  '\' already exists and is ' + tempJob.state,
-            okLabel: 'OK',
-            hideCancel: true,
-            size: '',
-          }).then(function () {
-            displayJobIdError();
-          });
-        }
-      } else {
-        checkInfluencers();
-      }
-
-      // flag up the error on the first tab about the job id already existing
-      function displayJobIdError() {
         const tab = $scope.ui.validation.tabs[0];
         tab.valid = false;
         tab.checks.jobId.valid = false;
         tab.checks.jobId.message = '\'' + $scope.job.job_id + '\' already exists, please choose a different name';
         changeTab({index:0});
+      } else {
+        checkInfluencers();
       }
 
       function checkInfluencers() {
@@ -330,7 +293,7 @@ function (
             title: 'No Influencers'
           }).then(saveFunc)
             .catch(function () {
-              changeTab({index:2});
+              changeTab({index:1});
             });
         }
       }
@@ -342,9 +305,6 @@ function (
       }
 
       function saveFunc() {
-        if (overwrite) {
-          // place holder for a delete job call first.
-        }
         $scope.saveLock = true;
         $scope.ui.saveStatus.job = 1;
         openSaveStatusWindow();
