@@ -17,6 +17,8 @@ import _ from 'lodash';
 import 'plugins/ml/jobs/components/new_job_advanced/detectors_list_directive';
 import './styles/main.less';
 import angular from 'angular';
+import jobUtils from 'plugins/ml/util/job_utils';
+import parseInterval from 'ui/utils/parse_interval';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -29,13 +31,15 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
 
   $scope.job = angular.copy(params.job);
 
+  const bucketSpan = parseInterval($scope.job.analysis_config.bucket_span);
+
   $scope.ui = {
     title: 'Edit ' + $scope.job.job_id,
     currentTab: 0,
     tabs: [
       { index: 0, title: 'Job Details', hidden: false },
-      { index: 1, title: 'Datafeed', hidden: true },
-      { index: 2, title: 'Detectors', hidden: false },
+      { index: 1, title: 'Detectors', hidden: false },
+      { index: 2, title: 'Datafeed', hidden: true },
     ],
     changeTab: function (tab) {
       $scope.ui.currentTab = tab.index;
@@ -44,6 +48,8 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
     datafeedStopped: false,
     datafeed: {
       scrollSizeDefault: 1000,
+      queryDelayDefault: '60s',
+      frequencyDefault: jobUtils.calculateDatafeedFrequencyDefaultSeconds(bucketSpan.asSeconds()) + 's',
     },
     stoppingDatafeed: false,
     validation: {
@@ -57,10 +63,12 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
   if ($scope.job.datafeed_config) {
     const datafeedConfig = $scope.job.datafeed_config;
     $scope.ui.isDatafeed = true;
-    $scope.ui.tabs[1].hidden = false;
+    $scope.ui.tabs[2].hidden = false;
     $scope.ui.datafeedStopped = (!$scope.job.datafeed_config || $scope.job.datafeed_config.state === 'stopped');
 
     $scope.ui.datafeed.queryText = angular.toJson(datafeedConfig.query, true);
+    $scope.ui.datafeed.queryDelayText = datafeedConfig.query_delay;
+    $scope.ui.datafeed.frequencyText = datafeedConfig.frequency;
     $scope.ui.datafeed.scrollSizeText = datafeedConfig.scroll_size;
   }
 
@@ -261,7 +269,17 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
         datafeedData.query = query;
       }
 
-      // only update if it has changed from the original
+      // only update fields if they have changed from the original
+      if (sch.queryDelayText !== $scope.job.datafeed_config.query_delay) {
+        datafeedData.query_delay = ((sch.queryDelayText === '' || sch.queryDelayText === null || sch.queryDelayText === undefined)
+          ? sch.queryDelayDefault : sch.queryDelayText);
+      }
+
+      if (sch.frequencyText !== $scope.job.datafeed_config.frequency) {
+        datafeedData.frequency = ((sch.frequencyText === '' || sch.frequencyText === null || sch.frequencyText === undefined)
+          ? sch.frequencyDefault : sch.frequencyText);
+      }
+
       if (sch.scrollSizeText !== $scope.job.datafeed_config.scroll_size) {
         datafeedData.scroll_size = ((sch.scrollSizeText === '' || sch.scrollSizeText === null || sch.scrollSizeText === undefined)
           ? sch.scrollSizeDefault : sch.scrollSizeText);

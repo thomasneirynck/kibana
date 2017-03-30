@@ -71,52 +71,63 @@
 
 
     <div class="form-group"
-    ng-show="(job.analysis_config.categorization_field_name !== undefined && job.analysis_config.categorization_field_name !== '') ||
-             (job.analysis_config.categorization_filters && job.analysis_config.categorization_filters.length)">
-    <hr />
+      ng-show="(job.analysis_config.categorization_field_name !== undefined && job.analysis_config.categorization_field_name !== '') ||
+               (job.analysis_config.categorization_filters && job.analysis_config.categorization_filters.length)">
+      <hr />
 
-    <label>Categorization Filters</label>
-    <div ng-if="job.analysis_config && job.analysis_config.categorization_filters">
-      <div ng-repeat="item in job.analysis_config.categorization_filters track by $index" class="categorization-filter">
-        <div class="field-cols">
-          <div class="form-group">
-            <input
-              ng-model="job.analysis_config.categorization_filters[$index]"
-              type="text"
-              class="form-control" />
+      <label>Categorization Filters</label>
+      <div ng-if="job.analysis_config && job.analysis_config.categorization_filters">
+        <div ng-repeat="item in job.analysis_config.categorization_filters track by $index" class="categorization-filter">
+          <div class="field-cols">
+            <div class="form-group">
+              <input
+                ng-model="job.analysis_config.categorization_filters[$index]"
+                type="text"
+                class="form-control" />
+            </div>
           </div>
-        </div>
 
+          <button
+            ng-click="removeCategorizationFilter($index)"
+            tooltip-append-to-body="true"
+            type="button"
+            class="btn btn-xs btn-danger remove-button">
+              <i aria-hidden="true" class="fa fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <div>
         <button
-          ng-click="removeCategorizationFilter($index)"
-          tooltip-append-to-body="true"
+          aria-label="Add Categorization Filter"
+          ng-click="addCategorizationFilter()"
           type="button"
-          class="btn btn-xs btn-danger remove-button">
-            <i aria-hidden="true" class="fa fa-times"></i>
+          ng-disabled="job.analysis_config.categorization_field_name === undefined || job.analysis_config.categorization_field_name === ''"
+          class="btn btn-primary btn-xs">
+          <span class="sr-only">Add Categorization Filter</span>
+          <i aria-hidden="true" class="fa fa-plus"></i> Add Categorization Filter
         </button>
       </div>
     </div>
-    <div>
-      <button
-        aria-label="Add Categorization Filter"
-        ng-click="addCategorizationFilter()"
-        type="button"
-        ng-disabled="job.analysis_config.categorization_field_name === undefined || job.analysis_config.categorization_field_name === ''"
-        class="btn btn-primary btn-xs">
-        <span class="sr-only">Add Categorization Filter</span>
-        <i aria-hidden="true" class="fa fa-plus"></i> Add Categorization Filter
-      </button>
+
+    <div ng-hide="ui.validation.tabs[0].checks.categorizationFilters.valid" class="validation-error">
+      {{ ( ui.validation.tabs[2].checks.categorizationFilters.message || "Categorization filters must all be valid regular expressions" ) }}
     </div>
+
   </div>
 
-  <div ng-hide="ui.validation.tabs[0].checks.categorizationFilters.valid" class="validation-error">
-    {{ ( ui.validation.tabs[2].checks.categorizationFilters.message || "Categorization filters must all be valid regular expressions" ) }}
-  </div>
-
+  <!-- Detectors -->
+  <div class="tab_contents" ng-show="ui.currentTab === 1">
+    <label>Detector descriptions</label>
+    <div ml-job-detectors-list
+      ml-detectors="job.analysis_config.detectors"
+      ml-indexes="indexes"
+      ml-properties="properties"
+      ml-edit-mode="'EDIT'"
+      ></div>
   </div>
 
   <!-- Datafeed -->
-  <div class="tab_contents" ng-show="ui.currentTab === 1">
+  <div class="tab_contents" ng-show="ui.currentTab === 2">
 
     <div ng-show="ui.datafeedStopped" >
       <div class="form-group" >
@@ -124,6 +135,20 @@
         <input
           ng-model="ui.datafeed.queryText"
           placeholder='{ "match_all": {}}'
+          class="form-control" />
+
+        <label>Query delay</label>
+        <input
+          ng-model="ui.datafeed.queryDelayText"
+          placeholder="{{ui.datafeed.queryDelayDefault}}"
+          min="0"
+          class="form-control" />
+
+        <label>Frequency</label>
+        <input
+          ng-model="ui.datafeed.frequencyText"
+          placeholder="{{ui.datafeed.frequencyDefault}}"
+          min="0"
           class="form-control" />
 
         <label>scroll_size</label>
@@ -140,16 +165,6 @@
       <div ng-show="ui.stoppingDatafeed===false"><a ng-click="stopDatafeed()">Stop datafeed now</a></div>
       <div ng-show="ui.stoppingDatafeed===true">Stopping...</div>
     </div>
-  </div>
-
-  <!-- Detectors -->
-  <div class="tab_contents" ng-show="ui.currentTab === 2">
-    <div ml-job-detectors-list
-      ml-detectors="job.analysis_config.detectors"
-      ml-indexes="indexes"
-      ml-properties="properties"
-      ml-edit-mode="'EDIT'"
-      ></div>
   </div>
 
   <hr />
