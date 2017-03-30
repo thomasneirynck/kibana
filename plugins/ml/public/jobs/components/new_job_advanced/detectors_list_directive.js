@@ -87,16 +87,16 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
 
       function validateDetector(dtr) {
 
-        // locally check excludeFrequent as it can only be 'true', 'false', 'by' or 'over'
-        if (dtr.excludeFrequent !== undefined && dtr.excludeFrequent !== '') {
-          const exFrqs = ['true', 'false', 'by', 'over'];
-          if (_.indexOf(exFrqs, dtr.excludeFrequent.trim()) === -1) {
+        // locally check exclude_frequent as it can only be 'true', 'false', 'by' or 'over'
+        if (dtr.exclude_frequent !== undefined && dtr.exclude_frequent !== '') {
+          const exFrqs = ['all', 'none', 'by', 'over'];
+          if (_.indexOf(exFrqs, dtr.exclude_frequent.trim()) === -1) {
             // return a pretend promise
             return {
               then: function (callback) {
                 callback({
                   success: false,
-                  message: 'excludeFrequent value must be: "true", "false", "by" or "over"'
+                  message: 'exclude_frequent value must be: "all", "none", "by" or "over"'
                 });
               }
             };
