@@ -23,7 +23,7 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
     user($route, ShieldUser, kbnUrl, Promise, Notifier) {
       const username = $route.current.params.username;
       if (username != null) {
-        return ShieldUser.get({username}).$promise
+        return ShieldUser.get({ username }).$promise
         .catch((response) => {
           const notifier = new Notifier();
           if (response.status !== 404) return notifier.fatal(response);
@@ -32,7 +32,7 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
           return Promise.halt();
         });
       }
-      return new ShieldUser({roles: []});
+      return new ShieldUser({ roles: [] });
     },
 
     roles(ShieldRole, kbnUrl, Promise, Private) {

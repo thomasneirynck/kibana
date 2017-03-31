@@ -557,7 +557,7 @@ module
   };
 
   $scope.viewResults = function (page) {
-    viewResults({id: $scope.formConfig.jobId}, page);
+    viewResults({ id: $scope.formConfig.jobId }, page);
   };
 
   function viewResults(job, page) {

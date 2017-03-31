@@ -18,17 +18,17 @@ export function checkForParseErrors(json, markers, ace) {
 
     // At the end, hard to see error, pad with some newlines
     if (lines === err.line) {
-      ace.session.doc.insertNewLine({row: lines, column: 0});
-      ace.session.doc.insertNewLine({row: lines, column: 0});
-      ace.session.doc.insertNewLine({row: lines, column: 0});
+      ace.session.doc.insertNewLine({ row: lines, column: 0 });
+      ace.session.doc.insertNewLine({ row: lines, column: 0 });
+      ace.session.doc.insertNewLine({ row: lines, column: 0 });
     }
     ace.gotoLine(err.line);
 
     markers.push(ace.session.addMarker(new Range(err.line - 1, 0, err.line - 1, err.col), 'errorMarker', 'fullLine'));
-    return {status: false, error: err.message + ' [' + e + ']'};
+    return { status: false, error: err.message + ' [' + e + ']' };
   }
 
-  return {status: true, parsed: json};
+  return { status: true, parsed: json };
 }
 
 /**

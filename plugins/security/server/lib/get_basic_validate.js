@@ -5,7 +5,7 @@ export default (server) => {
 
   return function validate(request, username, password, callback) {
     return isValidUser(request, username, password).then(
-      () => callback(null, true, {username, password}),
+      () => callback(null, true, { username, password }),
       (error) => callback(error, false)
     );
   };

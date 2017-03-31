@@ -1,17 +1,17 @@
 import expect from 'expect.js';
-import {hasSessionExpired} from '../get_cookie_validate';
+import { hasSessionExpired } from '../get_cookie_validate';
 
 describe('Cookie validate', function () {
   describe('hasSessionExpired', () => {
     it('should return true if the expiry is before now', function () {
       const expires = new Date(Date.now() - 1000);
-      const session = {expires};
+      const session = { expires };
       expect(hasSessionExpired(session)).to.equal(true);
     });
 
     it('should return false if the expiry is after now', function () {
       const expires = new Date(Date.now() + 1000);
-      const session = {expires};
+      const session = { expires };
       expect(hasSessionExpired(session)).to.equal(false);
     });
 

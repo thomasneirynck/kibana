@@ -31,10 +31,10 @@ export default function opsBuffer(serverInfo, server) {
       const payload = mapEvent(lastOp, config, serverInfo);
       const body = [
         // Push the time-based information to .monitoring-kibana-*
-        { index: { _type: KIBANA_STATS_TYPE }},
+        { index: { _type: KIBANA_STATS_TYPE } },
         payload,
         // Push the latest ops data to .monitoring-data index
-        {index: { _index: '_data', _type: KIBANA_SYSTEM_ID, _id: _.get(payload, 'kibana.uuid') }},
+        { index: { _index: '_data', _type: KIBANA_SYSTEM_ID, _id: _.get(payload, 'kibana.uuid') } },
         payload
       ];
 

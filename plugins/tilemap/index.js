@@ -1,6 +1,6 @@
 import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
 import inspectSettings from './server/lib/inspect_settings';
-import {resolve} from 'path';
+import { resolve } from 'path';
 
 module.exports = function (kibana) {
 

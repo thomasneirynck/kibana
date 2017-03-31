@@ -32,7 +32,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
   this.getScoresByDetector = function (index, jobIds, earliestMs, latestMs, interval, maxResults) {
     // TODO - move into results_service.js.
     const deferred = $q.defer();
-    const obj = {success: true, results: {}};
+    const obj = { success: true, results: {} };
 
     // Build the criteria to use in the bool filter part of the request.
     // Adds criteria for the time range plus any specified job IDs.
@@ -183,7 +183,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
   this.getScoresByInfluencerType = function (index, jobIds, earliestMs, latestMs, interval, maxResults) {
     // TODO - move into results_service.js.
     const deferred = $q.defer();
-    const obj = {success: true, results: {}};
+    const obj = { success: true, results: {} };
 
     // Build the criteria to use in the bool filter part of the request.
     // Adds criteria for the time range plus any specified job IDs.
@@ -309,7 +309,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
   this.getScoresByInfluencerValue = function (index, jobIds, earliestMs, latestMs, interval, maxResults) {
     // TODO - move into results_service.js.
     const deferred = $q.defer();
-    const obj = {success: true, results: {}};
+    const obj = { success: true, results: {} };
 
     // Build the criteria to use in the bool filter part of the request.
     // Adds criteria for the time range plus any specified job IDs.
@@ -438,7 +438,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
   // Pass an empty array or ['*'] to search over all job IDs.
   this.getRecords = function (index, jobIds, earliestMs, latestMs, maxResults) {
     const deferred = $q.defer();
-    const obj = {success: true, records: []};
+    const obj = { success: true, records: [] };
 
     // Build the criteria to use in the bool filter part of the request.
     // Adds criteria for the time range, record score,  plus any specified job IDs.
@@ -523,7 +523,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
           }
         },
         'sort' : [
-          { 'record_score' : {'order' : 'desc'}}
+          { 'record_score' : { 'order' : 'desc' } }
         ],
       }
     })
@@ -544,7 +544,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
 
   this.getTopInfluencers = function (index, laneLabel, jobIds, swimlaneType, earliestMs, latestMs, maxResults, type) {
     const deferred = $q.defer();
-    const obj = {success: true, results: []};
+    const obj = { success: true, results: [] };
 
     // Build the criteria to use in the bool filter part of the request.
     // Adds criteria for the time range, record score,  plus any specified job IDs.
@@ -703,7 +703,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
   this.getEventRate = function (index, jobIds, earliestMs, latestMs, interval, maxResults) {
     // TODO - move into results_service.js.
     const deferred = $q.defer();
-    const obj = {success: true, results: {}};
+    const obj = { success: true, results: {} };
 
     // Build the criteria to use in the bool filter part of the request.
     // Adds criteria for the time range plus any specified job IDs.

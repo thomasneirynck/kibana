@@ -10,9 +10,9 @@ import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
 import 'ui/autoload/all';
 import 'ui/directives/saved_object_finder';
 import SavedWorkspacesProvider from 'plugins/graph/services/saved_workspaces';
-import {iconChoices, colorChoices, iconChoicesByClass, drillDownIconChoices,
-  drillDownIconChoicesByClass} from 'plugins/graph/style_choices';
-import {outlinkEncoders} from 'plugins/graph/services/outlink_encoders';
+import { iconChoices, colorChoices, iconChoicesByClass, drillDownIconChoices,
+  drillDownIconChoicesByClass } from 'plugins/graph/style_choices';
+import { outlinkEncoders } from 'plugins/graph/services/outlink_encoders';
 
 import KbnUrlProvider from 'ui/url';
 import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
@@ -164,7 +164,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   };
 
   $scope.openSavedWorkspace = function (savedWorkspace) {
-    kbnUrl.change('/workspace/{{id}}', {id: savedWorkspace.id});
+    kbnUrl.change('/workspace/{{id}}', { id: savedWorkspace.id });
   };
 
 
@@ -342,7 +342,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
 
   $scope.clickEdge = function (edge) {
     if (edge.inferred) {
-      $scope.setDetail ({'inferredEdge':edge});
+      $scope.setDetail ({ 'inferredEdge':edge });
     }else {
       $scope.workspace.getAllIntersections($scope.handleMergeCandidatesCallback, [edge.topSrc,edge.topTarget]);
     }
@@ -500,7 +500,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   };
 
   $scope.editUrlTemplate = function (urlTemplate) {
-    Object.assign($scope.newUrlTemplate, urlTemplate, {templateBeingEdited:urlTemplate});
+    Object.assign($scope.newUrlTemplate, urlTemplate, { templateBeingEdited:urlTemplate });
   };
 
   $scope.saveUrlTemplate = function () {

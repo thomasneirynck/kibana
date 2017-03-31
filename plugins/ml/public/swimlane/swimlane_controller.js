@@ -93,7 +93,7 @@ module.controller('MlSwimlaneController', function ($scope,
         fields = _.union(fields, $scope.fieldsByJob[job]);
       });
       _.each(fields, function (field) {
-        $scope.vis.type.params.recordViewByOptions.push({field:field, label:field});
+        $scope.vis.type.params.recordViewByOptions.push({ field:field, label:field });
       });
     }
   }).catch(function (resp) {
@@ -142,7 +142,7 @@ module.controller('MlSwimlaneController', function ($scope,
 
     const recordViewByOptions = _.slice($scope.vis.type.params.recordViewByOptions, 0, 1); // Retain the detector value.
     _.each(sortedFields, function (field) {
-      recordViewByOptions.push({'field':field, 'label':field});
+      recordViewByOptions.push({ 'field':field, 'label':field });
     });
     $scope.vis.type.params.recordViewByOptions = recordViewByOptions;
 
@@ -335,11 +335,11 @@ module.controller('MlSwimlaneController', function ($scope,
         // Leave selection as Job Description, as otherwise would switch back to jobID.
       } else {
         if ($scope.vis.params.mode === 'jobs') {
-          $scope.vis.params.viewBy = _.findWhere($scope.vis.type.params.jobViewByOptions, {field: aggViewByField});
+          $scope.vis.params.viewBy = _.findWhere($scope.vis.type.params.jobViewByOptions, { field: aggViewByField });
         } else if ($scope.vis.params.mode === 'influencers') {
-          $scope.vis.params.viewBy = _.findWhere($scope.vis.type.params.influencerViewByOptions, {field: aggViewByField});
+          $scope.vis.params.viewBy = _.findWhere($scope.vis.type.params.influencerViewByOptions, { field: aggViewByField });
         } else {
-          $scope.vis.params.viewBy = _.findWhere($scope.vis.type.params.recordViewByOptions, {field: aggViewByField});
+          $scope.vis.params.viewBy = _.findWhere($scope.vis.type.params.recordViewByOptions, { field: aggViewByField });
         }
       }
     }
@@ -358,9 +358,9 @@ module.controller('MlSwimlaneController', function ($scope,
         scopeInterval = $scope.vis.params.interval.customInterval;
       }
 
-      let setToInterval = _.findWhere($scope.vis.type.params.intervalOptions, {val: aggInterval});
+      let setToInterval = _.findWhere($scope.vis.type.params.intervalOptions, { val: aggInterval });
       if (!setToInterval) {
-        setToInterval = _.findWhere($scope.vis.type.params.intervalOptions, {customInterval: aggInterval});
+        setToInterval = _.findWhere($scope.vis.type.params.intervalOptions, { customInterval: aggInterval });
       }
       if (!setToInterval) {
         // e.g. if running inside the Kibana Visualization tab will need to add an extra option in.
@@ -544,7 +544,7 @@ module.controller('MlSwimlaneController', function ($scope,
           pointData[0] = moment(Number(time));
           pointData[1] = laneIndex + 0.5;
           // Store the score in an additional object property for each point.
-          pointData[2] = {score: value};
+          pointData[2] = { score: value };
 
           allSeries[seriesIndex].data.push(pointData);
 
@@ -634,7 +634,7 @@ module.controller('MlSwimlaneController', function ($scope,
           yaxisMarking = {};
           yaxisMarking.from = i;
           yaxisMarking.to = i + 0.03;
-          const marking = {yaxis: yaxisMarking, color: '#d5d5d5'};
+          const marking = { yaxis: yaxisMarking, color: '#d5d5d5' };
           options.grid.markings.push(marking);
         }
 
@@ -642,7 +642,7 @@ module.controller('MlSwimlaneController', function ($scope,
           yaxisMarking = {};
           yaxisMarking.from = i + 0.03;
           yaxisMarking.to = i + 1;
-          const marking = {yaxis: yaxisMarking, color: alternateLaneColor};
+          const marking = { yaxis: yaxisMarking, color: alternateLaneColor };
           options.grid.markings.push(marking);
         }
       });
@@ -735,12 +735,12 @@ module.controller('MlSwimlaneController', function ($scope,
               const fieldValue = laneIds[lIndex];
               const dataModel = item.series.data[item.dataIndex][2];
 
-              const clickData = {'time':item.datapoint[0],
+              const clickData = { 'time':item.datapoint[0],
                 'durationMs':bucketInterval.asMilliseconds(),
                 'field': scope.vis.params.viewBy.field,
                 'value': fieldValue,
                 'severity': item.series.label,
-                'score': dataModel.score};
+                'score': dataModel.score };
 
               plot.highlight(item.series, item.datapoint);
               scope.$emit('swimlaneClick', clickData);

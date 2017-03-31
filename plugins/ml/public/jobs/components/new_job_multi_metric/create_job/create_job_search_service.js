@@ -283,7 +283,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
 
   this.getEventRate = function (index, earliestMs, latestMs, timeField, interval) {
     const deferred = $q.defer();
-    const obj = {success: true, results: {}};
+    const obj = { success: true, results: {} };
 
     es.search({
       index,

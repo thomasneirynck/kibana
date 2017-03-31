@@ -82,7 +82,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       if (resp.jobs.length > 0) {
         $scope.jobs = [];
         _.each(resp.jobs, function (job) {
-          $scope.jobs.push({id:job.id, selected: false, bucketSpanSeconds: job.bucketSpanSeconds});
+          $scope.jobs.push({ id:job.id, selected: false, bucketSpanSeconds: job.bucketSpanSeconds });
         });
 
         // Select any jobs set in the global state (i.e. passed in the URL).
@@ -212,7 +212,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     const selectedJobIds = $scope.getSelectedJobIds();
 
     // Calculate the aggregation interval for the focus chart.
-    const bounds = {min: moment(fromDate), max: moment(toDate)};
+    const bounds = { min: moment(fromDate), max: moment(toDate) };
     $scope.focusAggregationInterval = calculateAggregationInterval(bounds, CHARTS_POINT_TARGET, CHARTS_POINT_TARGET);
     console.log('aggregationInterval for focus data (s):', $scope.focusAggregationInterval.asSeconds());
 
@@ -297,7 +297,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     // Save state of zoom (adds to URL) if it is different to the default.
     const defaultRange = calculateDefaultFocusRange();
     if (selection.from.getTime() !== defaultRange[0].getTime() || selection.to.getTime() !== defaultRange[1].getTime()) {
-      const zoomState = { from: selection.from.toISOString(), to: selection.to.toISOString()};
+      const zoomState = { from: selection.from.toISOString(), to: selection.to.toISOString() };
       $scope.appState.mlTimeSeriesExplorer.zoom = zoomState;
     } else {
       delete $scope.appState.mlTimeSeriesExplorer.zoom;

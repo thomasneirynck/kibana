@@ -116,14 +116,14 @@ function (
     ],
     validation: {
       tabs: [
-        {index: 0, valid: true, checks: { jobId: {valid: true}}},
-        {index: 1, valid: true, checks: {
-          detectors: {valid: true}, influencers: {valid: true}, categorizationFilters: {valid: true}, bucketSpan: {valid: true}
-        }},
-        {index: 2, valid: true, checks: { timeField: {valid: true}, timeFormat: {valid:true} }},
-        {index: 3, valid: true, checks: { isDatafeed:{valid: true}}},
-        {index: 4, valid: true, checks: {}},
-        {index: 5, valid: true, checks: {}},
+        { index: 0, valid: true, checks: { jobId: { valid: true } } },
+        { index: 1, valid: true, checks: {
+          detectors: { valid: true }, influencers: { valid: true }, categorizationFilters: { valid: true }, bucketSpan: { valid: true }
+        } },
+        { index: 2, valid: true, checks: { timeField: { valid: true }, timeFormat: { valid:true } } },
+        { index: 3, valid: true, checks: { isDatafeed:{ valid: true } } },
+        { index: 4, valid: true, checks: {} },
+        { index: 5, valid: true, checks: {} },
       ],
       setTabValid: function (tab, valid) {
         $scope.ui.validation.tabs[tab].valid = valid;
@@ -140,11 +140,11 @@ function (
       { value: 'json',          title: 'JSON' },
     ],
     fieldDelimiterOptions:[
-      { value: '\t',      title: 'tab'},
-      { value: ' ',       title: 'space'},
-      { value: ',',       title: ','},
-      { value: ';',       title: ';'},
-      { value: 'custom',  title: 'custom'}
+      { value: '\t',      title: 'tab' },
+      { value: ' ',       title: 'space' },
+      { value: ',',       title: ',' },
+      { value: ';',       title: ';' },
+      { value: 'custom',  title: 'custom' }
     ],
     selectedFieldDelimiter: ',',
     customFieldDelimiter: '',
@@ -276,7 +276,7 @@ function (
         tab.valid = false;
         tab.checks.jobId.valid = false;
         tab.checks.jobId.message = '\'' + $scope.job.job_id + '\' already exists, please choose a different name';
-        changeTab({index:0});
+        changeTab({ index:0 });
       } else {
         checkInfluencers();
       }
@@ -293,7 +293,7 @@ function (
             title: 'No Influencers'
           }).then(saveFunc)
             .catch(function () {
-              changeTab({index:1});
+              changeTab({ index:1 });
             });
         }
       }
@@ -527,7 +527,7 @@ function (
       // via the functions exposed in the elastic data controller
       if (typeof $scope.mlElasticDataDescriptionExposedFunctions.extractFields === 'function') {
         $scope.mlElasticDataDescriptionExposedFunctions.getMappings().then(() => {
-          $scope.mlElasticDataDescriptionExposedFunctions.extractFields({types: $scope.types});
+          $scope.mlElasticDataDescriptionExposedFunctions.extractFields({ types: $scope.types });
         });
       }
 

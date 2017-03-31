@@ -45,16 +45,16 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
       appState.fetch();
 
       scope.thresholdOptions = [
-        {display:'critical', val:75},
-        {display:'major', val:50},
-        {display:'minor', val:25},
-        {display:'warning', val:0}];
+        { display:'critical', val:75 },
+        { display:'major', val:50 },
+        { display:'minor', val:25 },
+        { display:'warning', val:0 }];
 
       scope.intervalOptions = [
-        {display:'Auto', val:'auto'},
-        {display:'1 hour', val:'hour'},
-        {display:'1 day', val:'day'},
-        {display:'Show all', val:'second'}];
+        { display:'Auto', val:'auto' },
+        { display:'1 hour', val:'hour' },
+        { display:'1 day', val:'day' },
+        { display:'Show all', val:'second' }];
 
       // Store the threshold and aggregation interval in the AppState so that they
       // are restored on page refresh.
@@ -63,19 +63,19 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
       }
 
       let thresholdValue = _.get(appState, 'mlAnomaliesTable.thresholdValue', 0);
-      let thresholdOption = _.findWhere(scope.thresholdOptions, {val:thresholdValue});
+      let thresholdOption = _.findWhere(scope.thresholdOptions, { val:thresholdValue });
       if (thresholdOption === undefined) {
         // Attempt to set value in URL which doesn't map to one of the options.
-        thresholdOption = _.findWhere(scope.thresholdOptions, {val:0});
+        thresholdOption = _.findWhere(scope.thresholdOptions, { val:0 });
         thresholdValue = 0;
       }
       scope.threshold = thresholdOption;
 
       let intervalValue = _.get(appState, 'mlAnomaliesTable.intervalValue', 'auto');
-      let intervalOption = _.findWhere(scope.intervalOptions, {val:intervalValue});
+      let intervalOption = _.findWhere(scope.intervalOptions, { val:intervalValue });
       if (intervalOption === undefined) {
         // Attempt to set value in URL which doesn't map to one of the options.
-        intervalOption = _.findWhere(scope.intervalOptions, {val:'auto'});
+        intervalOption = _.findWhere(scope.intervalOptions, { val:'auto' });
         intervalValue = 'auto';
       }
       scope.interval = intervalOption;
@@ -279,12 +279,12 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         _.invoke(scope.rowScopes, '$destroy');
         scope.rowScopes.length = 0;
 
-        const showExamples = _.some(summaryRecords, {'entityName': 'mlcategory'});
+        const showExamples = _.some(summaryRecords, { 'entityName': 'mlcategory' });
         if (showExamples) {
           // Obtain the list of categoryIds by jobId for which we need to obtain the examples.
           // Note category examples will not be displayed if mlcategory is used just an
           // influencer or as a partition field in a config with other by/over fields.
-          const categoryRecords = _.where(summaryRecords, {entityName: 'mlcategory'});
+          const categoryRecords = _.where(summaryRecords, { entityName: 'mlcategory' });
           const categoryIdsByJobId = {};
           _.each(categoryRecords, function (record) {
             if (!_.has(categoryIdsByJobId, record.jobId)) {
@@ -480,7 +480,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         const showInfluencers = _.some(summaryRecords, 'influencers');
         const showActual = _.some(summaryRecords, 'actual');
         const showTypical = _.some(summaryRecords, 'typical');
-        const showExamples = _.some(summaryRecords, {'entityName': 'mlcategory'});
+        const showExamples = _.some(summaryRecords, { 'entityName': 'mlcategory' });
         const showLinks = _.some(summaryRecords, 'links');
 
         if (showEntity === true) {
@@ -523,7 +523,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
             mlJobService.getCategoryDefinition(scope.indexPatternId, record.jobId, record.entityValue)
             .then(function (resp) {
               rowScope.categoryDefinition = {
-                'examples':_.slice(resp.examples, 0, Math.min(resp.examples.length, MAX_NUMBER_CATEGORY_EXAMPLES))};
+                'examples':_.slice(resp.examples, 0, Math.min(resp.examples.length, MAX_NUMBER_CATEGORY_EXAMPLES)) };
             }).catch(function (resp) {
               console.log('Anomalies table createTableRow(): error loading categoryDefinition:', resp);
             });
@@ -558,15 +558,15 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         //   job_id
         //   links (if links configured)
         //   category examples (if by mlcategory)
-        const addEntity = _.findWhere(scope.table.columns, {'title':'found for'});
-        const addInfluencers = _.findWhere(scope.table.columns, {'title':'influenced by'});
+        const addEntity = _.findWhere(scope.table.columns, { 'title':'found for' });
+        const addInfluencers = _.findWhere(scope.table.columns, { 'title':'influenced by' });
 
         // Assume that if we are showing typical, there will be an actual too,
         // so we can add a column to describe how actual compares to typical.
-        const addActual = _.findWhere(scope.table.columns, {'title':'actual'});
-        const addTypical = _.findWhere(scope.table.columns, {'title':'typical'});
-        const addExamples = _.findWhere(scope.table.columns, {'title':'category examples'});
-        const addLinks = _.findWhere(scope.table.columns, {'title':'links'});
+        const addActual = _.findWhere(scope.table.columns, { 'title':'actual' });
+        const addTypical = _.findWhere(scope.table.columns, { 'title':'typical' });
+        const addExamples = _.findWhere(scope.table.columns, { 'title':'category examples' });
+        const addLinks = _.findWhere(scope.table.columns, { 'title':'links' });
 
         const tableRow = [
           {
@@ -634,28 +634,28 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         if (addActual !== undefined) {
           if (_.has(record, 'actual')) {
             const actualVal = formatValueFilter(record.actual, record.source.function);
-            tableRow.push({markup: actualVal, value: actualVal, scope: rowScope });
+            tableRow.push({ markup: actualVal, value: actualVal, scope: rowScope });
           } else {
-            tableRow.push({markup: '', value: '' });
+            tableRow.push({ markup: '', value: '' });
           }
         }
         if (addTypical !== undefined) {
           if (_.has(record, 'typical')) {
             const typicalVal = formatValueFilter(record.typical, record.source.function);
-            tableRow.push({markup: typicalVal, value: typicalVal, scope: rowScope });
+            tableRow.push({ markup: typicalVal, value: typicalVal, scope: rowScope });
 
             // Use the metricChangeDescription filter to format a textual description of actual vs typical.
             const actualVal = formatValueFilter(record.actual, record.source.function);
             const factor = (actualVal > typicalVal) ? actualVal / typicalVal : typicalVal / actualVal;
-            tableRow.push({markup: '<span ng-bind-html="' + actualVal + ' | metricChangeDescription:' + typicalVal + '"></span>',
+            tableRow.push({ markup: '<span ng-bind-html="' + actualVal + ' | metricChangeDescription:' + typicalVal + '"></span>',
               value: Math.abs(factor), scope: rowScope });
           } else {
-            tableRow.push({markup: '', value: '' });
-            tableRow.push({markup: '', value: '' });
+            tableRow.push({ markup: '', value: '' });
+            tableRow.push({ markup: '', value: '' });
           }
         }
 
-        tableRow.push({markup: record.jobId, value: record.jobId});
+        tableRow.push({ markup: record.jobId, value: record.jobId });
 
         // TODO - add in links
         if (addLinks !== undefined) {

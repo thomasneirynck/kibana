@@ -288,7 +288,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
       bucket = _.sortBy(bucket, 'record_score').reverse();
 
       tempHighestRecordPerBucket[t] = {};
-      tempMonitorHighestRecordPerBucket[t] = {'All jobs': []};
+      tempMonitorHighestRecordPerBucket[t] = { 'All jobs': [] };
 
       const highestJobCounts = {};
       const highestMonitorCounts = {};
@@ -642,10 +642,10 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
   };
 
   function drawBubbleChart() {
-    const influencers = {'children':[]};
+    const influencers = { 'children':[] };
 
     _.each(that.topInfluencerList, (point) => {
-      influencers.children.push({'label':point.id, 'value': point.sum, 'color': point.max});
+      influencers.children.push({ 'label':point.id, 'value': point.sum, 'color': point.max });
     });
 
     const width = $('.ml-anomaly-details-margin').width() - 20;

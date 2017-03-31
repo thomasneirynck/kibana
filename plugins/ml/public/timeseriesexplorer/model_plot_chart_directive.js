@@ -53,12 +53,12 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
     const FOCUS_CHART_ANOMALY_RADIUS = 7;
 
     const ZOOM_INTERVAL_OPTIONS = [
-      { duration: moment.duration(1, 'h'), label: '1h'},
-      { duration: moment.duration(12, 'h'), label: '12h'},
-      { duration: moment.duration(1, 'd'), label: '1d'},
-      { duration: moment.duration(1, 'w'), label: '1w'},
-      { duration: moment.duration(2, 'w'), label: '2w'},
-      { duration: moment.duration(1, 'M'), label: '1M'}];
+      { duration: moment.duration(1, 'h'), label: '1h' },
+      { duration: moment.duration(12, 'h'), label: '12h' },
+      { duration: moment.duration(1, 'd'), label: '1d' },
+      { duration: moment.duration(1, 'w'), label: '1w' },
+      { duration: moment.duration(2, 'w'), label: '2w' },
+      { duration: moment.duration(1, 'M'), label: '1M' }];
 
     // Set up the color scale to use for indicating score.
     const anomalyColorScale = d3.scale.threshold()
@@ -207,7 +207,7 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
       } else {
         // Don't set the brush if the selection is the full context chart domain.
         const selectedBounds = contextXScale.domain();
-        scope.selectedBounds = { min: moment(new Date(selectedBounds[0])), max: moment(selectedBounds[1])};
+        scope.selectedBounds = { min: moment(new Date(selectedBounds[0])), max: moment(selectedBounds[1]) };
         scope.$root.$broadcast('contextChartSelected', { from: selectedBounds[0], to: selectedBounds[1] });
       }
     }
@@ -409,8 +409,8 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
         .domain(calculateContextXAxisDomain());
 
       // Set the y axis domain so that the range of actual values takes up at least 50% of the full range.
-      const valuesRange = {min: Number.MAX_VALUE, max: Number.MIN_VALUE};
-      const boundsRange = {min: Number.MAX_VALUE, max: Number.MIN_VALUE};
+      const valuesRange = { min: Number.MAX_VALUE, max: Number.MIN_VALUE };
+      const boundsRange = { min: Number.MAX_VALUE, max: Number.MIN_VALUE };
       _.each(data, function (item) {
         valuesRange.min = Math.min(item.value, valuesRange.min);
         valuesRange.max = Math.max(item.value, valuesRange.max);
@@ -420,7 +420,7 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
       const dataMin = Math.min(valuesRange.min, boundsRange.min);
       const dataMax = Math.max(valuesRange.max, boundsRange.max);
 
-      const chartLimits = {min: dataMin, max: dataMax};
+      const chartLimits = { min: dataMin, max: dataMax };
       if ((valuesRange.max - valuesRange.min) < 0.5 * (dataMax - dataMin)) {
         if (valuesRange.min > dataMin) {
           chartLimits.min = valuesRange.min - (0.5 * (valuesRange.max - valuesRange.min));
@@ -585,7 +585,7 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
             }
           });
 
-        scope.selectedBounds = { min: moment(selectionMin), max: moment(selectionMax)};
+        scope.selectedBounds = { min: moment(selectionMin), max: moment(selectionMax) };
         scope.$root.$broadcast('contextChartSelected', { from: selectedBounds[0], to: selectedBounds[1] });
       }
     }

@@ -13,8 +13,8 @@ export default React.createClass({
       if (isSortCol) {
         const iconClassName = 'fa fa-sort-amount-' + (isSortAsc ? 'asc' : 'desc');
         $icon = make.span(null, [
-          make.span({key: 'iconspace'}, ' '),
-          make.span({key: 'icon', className: iconClassName})
+          make.span({ key: 'iconspace' }, ' '),
+          make.span({ key: 'icon', className: iconClassName })
         ]);
       }
 

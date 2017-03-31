@@ -59,7 +59,7 @@ describe('key_case_converter', () => {
       ];
       const expectedResultObject = [
         { foo_bar: 17 },
-        [ 19, { bar_baz: 'qux'} ]
+        [ 19, { bar_baz: 'qux' } ]
       ];
       const result = convertKeysToSnakeCaseDeep(testObject);
       expect(testObject).to.be.an(Array);
@@ -113,7 +113,7 @@ describe('key_case_converter', () => {
       ];
       const expectedResultObject = [
         { fooBar: 17 },
-        [ 19, { barBaz: 'qux'} ]
+        [ 19, { barBaz: 'qux' } ]
       ];
       const result = convertKeysToCamelCaseDeep(testObject);
       expect(testObject).to.be.an(Array);

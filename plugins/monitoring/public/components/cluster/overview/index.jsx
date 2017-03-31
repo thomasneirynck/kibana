@@ -23,7 +23,7 @@ export default class Overview extends React.Component {
       cluster = cluster || {};
 
       this.setState({
-        elasticsearch: { ...cluster.elasticsearch},
+        elasticsearch: { ...cluster.elasticsearch },
         kibana: cluster.kibana,
         logstash: cluster.logstash,
         license: cluster.license

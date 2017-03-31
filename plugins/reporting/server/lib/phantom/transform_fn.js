@@ -1,4 +1,4 @@
-import { transform as babelTransform} from 'babel-core';
+import { transform as babelTransform } from 'babel-core';
 import { memoize } from 'lodash';
 
 const safeWrap = (obj) => {

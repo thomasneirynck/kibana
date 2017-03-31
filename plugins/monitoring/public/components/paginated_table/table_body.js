@@ -38,6 +38,6 @@ export default React.createClass({
     };
 
     // Draw the data
-    return make.tbody({className: 'tbody'}, paginatedData.map(createRow));
+    return make.tbody({ className: 'tbody' }, paginatedData.map(createRow));
   }
 });

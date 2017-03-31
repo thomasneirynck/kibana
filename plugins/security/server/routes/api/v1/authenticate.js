@@ -13,7 +13,7 @@ export default (server) => {
     method: 'POST',
     path: '/api/security/v1/login',
     handler(request, reply) {
-      const {username, password} = request.payload;
+      const { username, password } = request.payload;
       return isValidUser(request, username, password).then((response) => {
         // Initialize the session
         request.cookieAuth.set({

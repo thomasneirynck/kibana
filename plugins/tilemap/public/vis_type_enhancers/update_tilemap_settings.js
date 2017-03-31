@@ -14,6 +14,6 @@ uiRoutes.addSetupWork(function (Private, tilemapSettings) {
   if (!tileMapPluginInfo.license.active || !tileMapPluginInfo.license.valid) {
     return;
   }
-  tilemapSettings.addQueryParams({license: tileMapPluginInfo.license.uid});
+  tilemapSettings.addQueryParams({ license: tileMapPluginInfo.license.uid });
 
 });

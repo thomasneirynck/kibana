@@ -162,7 +162,7 @@ module.directive('mlSummaryViewEventRate', function (
         cells.push($cell);
         time += stepSecs;
       }
-      scope.laneMarkers.push({swimlaneType: scope.swimlaneType, lane: cells});
+      scope.laneMarkers.push({ swimlaneType: scope.swimlaneType, lane: cells });
       $eventrate.append($cellsMarkerContainer);
 
       const $cellsContainer = $('<div>', {

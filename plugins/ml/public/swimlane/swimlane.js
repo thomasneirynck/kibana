@@ -45,23 +45,23 @@ export default function SwimlaneVisType(Private, $templateCache) {
     params: {
       editor: $templateCache.get('plugins/ml/swimlane/swimlane_editor.html'),
       defaults: {
-        interval: {display:'Auto', val:'auto'},
+        interval: { display:'Auto', val:'auto' },
         mode: 'jobs',   // jobs, influencers or records
-        viewBy: {field:'job_id', label:'Job ID'},
+        viewBy: { field:'job_id', label:'Job ID' },
         showViewByControl: true
       },
-      jobViewByOptions: [{field:'job_id', label:'Job ID'},
-                 {field:'job_id', label:'Job description'}],
-      influencerViewByOptions: [{field:'influencer_field_name', label:'Influencer type'}],
-      recordViewByOptions: [{field:'detector_index', label:'detector'}],
-      intervalOptions: [{display:'Auto', val:'auto'},
-                {display:'5 minutes', val:'custom', customInterval:'5m'},
-                {display:'10 minutes', val:'custom', customInterval:'10m'},
-                {display:'30 minutes', val:'custom', customInterval:'30m'},
-                {display:'1 hour', val:'h'},
-                {display:'3 hours', val:'custom', customInterval:'3h'},
-                {display:'12 hours', val:'custom', customInterval:'12h'},
-                {display:'1 day', val:'d'}]
+      jobViewByOptions: [{ field:'job_id', label:'Job ID' },
+                 { field:'job_id', label:'Job description' }],
+      influencerViewByOptions: [{ field:'influencer_field_name', label:'Influencer type' }],
+      recordViewByOptions: [{ field:'detector_index', label:'detector' }],
+      intervalOptions: [{ display:'Auto', val:'auto' },
+                { display:'5 minutes', val:'custom', customInterval:'5m' },
+                { display:'10 minutes', val:'custom', customInterval:'10m' },
+                { display:'30 minutes', val:'custom', customInterval:'30m' },
+                { display:'1 hour', val:'h' },
+                { display:'3 hours', val:'custom', customInterval:'3h' },
+                { display:'12 hours', val:'custom', customInterval:'12h' },
+                { display:'1 day', val:'d' }]
     },
     schemas: new Schemas([
       {

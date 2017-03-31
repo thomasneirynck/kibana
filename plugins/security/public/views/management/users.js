@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import routes from 'ui/routes';
-import {toggle, toggleSort} from 'plugins/security/lib/util';
+import { toggle, toggleSort } from 'plugins/security/lib/util';
 import template from 'plugins/security/views/management/users.html';
 import 'plugins/security/services/shield_user';
 import checkLicenseError from 'plugins/security/lib/check_license_error';
@@ -26,7 +26,7 @@ routes.when('/management/elasticsearch/users', {
     $scope.users = $route.current.locals.users;
     $scope.forbidden = !_.isArray($scope.users);
     $scope.selectedUsers = [];
-    $scope.sort = {orderBy: 'full_name', reverse: false};
+    $scope.sort = { orderBy: 'full_name', reverse: false };
 
     const notifier = new Notifier();
 

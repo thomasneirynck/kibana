@@ -18,7 +18,7 @@ describe('util', () => {
 
   describe('toggleSort', () => {
     it('should toggle reverse if called with the same orderBy', () => {
-      const sort = {orderBy: 'foo', reverse: false};
+      const sort = { orderBy: 'foo', reverse: false };
 
       util.toggleSort(sort, 'foo');
       expect(sort.reverse).to.be.true;
@@ -28,7 +28,7 @@ describe('util', () => {
     });
 
     it('should change orderBy and set reverse to false when called with a different orderBy', () => {
-      const sort = {orderBy: 'foo', reverse: false};
+      const sort = { orderBy: 'foo', reverse: false };
 
       util.toggleSort(sort, 'bar');
       expect(sort.orderBy).to.equal('bar');

@@ -172,7 +172,7 @@ module.service('mlSingleMetricJobService', function (
     if (formConfig.field !== null) {
       json.body.aggs.times.aggs = {
         'field_value':{
-          [formConfig.agg.type.name]: {field: formConfig.field.displayName}
+          [formConfig.agg.type.name]: { field: formConfig.field.displayName }
         }
       };
     }
@@ -407,7 +407,7 @@ module.service('mlSingleMetricJobService', function (
 
   this.indexTimeRange = function (indexPattern) {
     const deferred = $q.defer();
-    const obj = {success: true, start: {epoch:0, string:''}, end: {epoch:0, string:''}};
+    const obj = { success: true, start: { epoch:0, string:'' }, end: { epoch:0, string:'' } };
 
     es.search({
       index: indexPattern.id,

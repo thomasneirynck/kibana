@@ -6,7 +6,7 @@ export function handleResponse(resp) {
   const timestamp = getSource('timestamp');
   const logstash = getSource('logstash');
   const availability = { availability: calculateAvailability(timestamp) };
-  const events = { events: getSource('events')};
+  const events = { events: getSource('events') };
   const reloads = { reloads: getSource('reloads') };
   const queueType = { queue_type: getSource('queue.type') };
   return _.merge(logstash, availability, events, reloads, queueType);

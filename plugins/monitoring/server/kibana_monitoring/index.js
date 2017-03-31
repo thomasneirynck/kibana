@@ -3,7 +3,7 @@ import { get } from 'lodash';
 
 export default function (serverInfo, server) {
   const config = server.config();
-  const { callWithInternalUser} = server.plugins.elasticsearch.getCluster('admin');
+  const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('admin');
   callWithInternalUser('transport.request', {
     method: 'GET',
     path: '/_xpack'

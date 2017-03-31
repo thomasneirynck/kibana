@@ -3,7 +3,7 @@ import expect from 'expect.js';
 
 describe('Map concurrent connections', () => {
   it('flatten ports', () => {
-    expect(mapConcurrentConnections({'5600': 5})).to.be(5);
+    expect(mapConcurrentConnections({ '5600': 5 })).to.be(5);
   });
 
   it('combine results', () => {

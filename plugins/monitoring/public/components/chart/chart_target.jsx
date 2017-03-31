@@ -120,7 +120,7 @@ export default class ChartTarget extends React.Component {
     this.handleThorPlotHover = (_event, pos, item, originalPlot) => {
       if (this.plot !== originalPlot) {
         // the crosshair is set for the original chart already
-        this.plot.setCrosshair({ x: _.get(pos, 'x')});
+        this.plot.setCrosshair({ x: _.get(pos, 'x') });
       }
       this.props.updateLegend(pos, item);
     };

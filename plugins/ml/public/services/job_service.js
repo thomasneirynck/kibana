@@ -126,7 +126,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               }
               processBasicJobInfo(this, jobs);
               this.jobs = jobs;
-              deferred.resolve({jobs: this.jobs});
+              deferred.resolve({ jobs: this.jobs });
             });
           })
           .catch((err) => {
@@ -140,14 +140,14 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('MlJobsList error getting list of jobs:', err);
       msgs.error('Jobs list could not be retrieved');
       msgs.error('', err);
-      deferred.reject({jobs});
+      deferred.reject({ jobs });
     }
     return deferred.promise;
   };
 
   this.refreshJob = function (jobId) {
     const deferred = $q.defer();
-    ml.jobs({jobId})
+    ml.jobs({ jobId })
       .then((resp) => {
         console.log('refreshJob query response:', resp);
         const newJob = {};
@@ -155,7 +155,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           angular.copy(resp.jobs[0], newJob);
 
           // load jobs stats
-          ml.jobStats({jobId})
+          ml.jobStats({ jobId })
             .then((statsResp) => {
               // merge jobs stats into jobs
               for (let j = 0; j < statsResp.jobs.length; j++) {
@@ -194,7 +194,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                   }
                 }
                 this.jobs = jobs;
-                deferred.resolve({jobs: this.jobs});
+                deferred.resolve({ jobs: this.jobs });
               });
             })
             .catch((err) => {
@@ -209,7 +209,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('MlJobsList error getting list of jobs:', err);
       msgs.error('Jobs list could not be retrieved');
       msgs.error('', err);
-      deferred.reject({jobs});
+      deferred.reject({ jobs });
     }
     return deferred.promise;
   };
@@ -217,7 +217,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   this.loadDatafeeds = function (datafeedId) {
     const deferred = $q.defer();
     const datafeeds = [];
-    const sId = (datafeedId !== undefined) ? {datafeed_id: datafeedId} : undefined;
+    const sId = (datafeedId !== undefined) ? { datafeed_id: datafeedId } : undefined;
 
     ml.datafeeds(sId)
       .then((resp) => {
@@ -238,7 +238,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                 }
               }
             }
-            deferred.resolve({datafeeds});
+            deferred.resolve({ datafeeds });
           })
           .catch((err) => {
             error(err);
@@ -261,7 +261,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   this.updateSingleJobCounts = function (jobId) {
     const deferred = $q.defer();
     console.log('mlJobService: update job counts and state for ' + jobId);
-    ml.jobStats({jobId})
+    ml.jobStats({ jobId })
       .then((resp) => {
         console.log('updateSingleJobCounts controller query response:', resp);
         if (resp.jobs && resp.jobs.length) {
@@ -296,13 +296,13 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                 }
               }
             }
-            deferred.resolve({jobs: this.jobs});
+            deferred.resolve({ jobs: this.jobs });
           })
           .catch((err) => {
             error(err);
           });
         } else {
-          deferred.resolve({jobs: this.jobs});
+          deferred.resolve({ jobs: this.jobs });
         }
 
       }).catch((err) => {
@@ -313,7 +313,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('updateSingleJobCounts error getting job details:', err);
       msgs.error('Job details could not be retrieved for ' + jobId);
       msgs.error('', err);
-      deferred.reject({jobs});
+      deferred.reject({ jobs });
     }
 
     return deferred.promise;
@@ -373,13 +373,13 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           if (newJobsAdded || resp.jobs.length !== jobs.length) {
             console.log('updateAllJobCounts: number of jobs differs. reloading all jobs');
             this.loadJobs().then(() => {
-              deferred.resolve({jobs: this.jobs, listChanged: true});
+              deferred.resolve({ jobs: this.jobs, listChanged: true });
             })
             .catch((err) => {
               error(err);
             });
           } else {
-            deferred.resolve({jobs: this.jobs, listChanged: false});
+            deferred.resolve({ jobs: this.jobs, listChanged: false });
           }
         })
         .catch((err) => {
@@ -394,7 +394,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('updateAllJobCounts error getting list job details:', err);
       msgs.error('Job details could not be retrieved');
       msgs.error('', err);
-      deferred.reject({jobs});
+      deferred.reject({ jobs });
     }
 
     return deferred.promise;
@@ -419,7 +419,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
     const datafeedId = this.getDatafeedId(jobId);
 
-    ml.datafeedStats({datafeedId})
+    ml.datafeedStats({ datafeedId })
     .then((resp) => {
       // console.log('updateSingleJobCounts controller query response:', resp);
       const datafeeds = resp.datafeeds;
@@ -441,17 +441,17 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     const func = function (resp) {
       console.log('Response for job query:', resp);
       const success = checkSaveResponse(resp, job);
-      return {success, job, resp};
+      return { success, job, resp };
     };
 
     // return the promise chain
-    return ml.addJob({jobId: job.job_id, job})
+    return ml.addJob({ jobId: job.job_id, job })
       .then(func).catch(func);
   };
 
   this.deleteJob = function (job, statusIn) {
     const deferred = $q.defer();
-    const status = statusIn || {stopDatafeed: 0, deleteDatafeed: 0, closeJob: 0, deleteJob: 0};
+    const status = statusIn || { stopDatafeed: 0, deleteDatafeed: 0, closeJob: 0, deleteJob: 0 };
     console.log('deleting job: ' + job.job_id);
 
     // chain of endpoint calls to delete a job.
@@ -460,7 +460,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     if (job.datafeed_config) {
       const datafeedId = this.getDatafeedId(job.job_id);
       // stop datafeed
-      ml.stopDatafeed({datafeedId: datafeedId})
+      ml.stopDatafeed({ datafeedId: datafeedId })
       .then(() => {
         status.stopDatafeed = 1;
       })
@@ -470,7 +470,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       })
       .finally(() => {
         // delete datafeed
-        ml.deleteDatafeed({datafeedId: datafeedId})
+        ml.deleteDatafeed({ datafeedId: datafeedId })
         .then(() => {
           status.deleteDatafeed = 1;
         })
@@ -489,7 +489,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     // close and delete the job
     function closeAndDeleteJob() {
       // close job
-      ml.closeJob({jobId: job.job_id})
+      ml.closeJob({ jobId: job.job_id })
       .then(() => {
         status.closeJob = 1;
       })
@@ -499,17 +499,17 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       })
       .finally(() => {
         // delete job
-        ml.deleteJob({jobId: job.job_id})
+        ml.deleteJob({ jobId: job.job_id })
         .then(() => {
           status.deleteJob = 1;
-          deferred.resolve({success: true});
+          deferred.resolve({ success: true });
         })
         .catch((resp) => {
           console.log('Delete job: delete job', resp);
           status.deleteJob = checkError(resp);
 
           msgs.error(resp.message);
-          deferred.reject({success: false});
+          deferred.reject({ success: false });
         });
       });
     }
@@ -560,14 +560,14 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
   this.updateJob = function (jobId, job) {
     // return the promise chain
-    return ml.updateJob({jobId, job})
+    return ml.updateJob({ jobId, job })
       .then((resp) => {
         console.log('update job', resp);
-        return {success: true};
+        return { success: true };
       }).catch((err) => {
         msgs.error('Could not update job: ' + jobId);
         console.log('update job', err);
-        return {success: false, message: err.message};
+        return { success: false, message: err.message };
       });
   };
 
@@ -584,7 +584,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   // add them to our own promise object and return that rather than the search results object
   this.jobTimeRange = function (jobId) {
     const deferred = $q.defer();
-    const obj = {success: true, start: {epoch:0, string:''}, end: {epoch:0, string:''}};
+    const obj = { success: true, start: { epoch:0, string:'' }, end: { epoch:0, string:'' } };
 
     es.search({
       index: '.ml-anomalies-' + jobId,
@@ -639,7 +639,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   // have been configured for the job.
   this.getBasicJobInfo = function () {
     const deferred = $q.defer();
-    const obj = {success: true, jobs: []};
+    const obj = { success: true, jobs: [] };
 
     ml.jobs()
       .then((resp) => {
@@ -668,7 +668,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   // unique fields across all jobs.
   this.getJobViewByFields = function () {
     const deferred = $q.defer();
-    const obj = {success: true, fieldsByJob: {'*':[]}};
+    const obj = { success: true, fieldsByJob: { '*':[] } };
 
     ml.jobs()
       .then(function (resp) {
@@ -723,7 +723,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   // and terms (space delimited String of the common tokens matched in values of the category).
   this.getCategoryDefinition = function (index, jobId, categoryId) {
     const deferred = $q.defer();
-    const obj = {success: true, categoryId: categoryId, terms: null, regex: null, examples: []};
+    const obj = { success: true, categoryId: categoryId, terms: null, regex: null, examples: [] };
 
 
     es.search({
@@ -733,9 +733,9 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         'query': {
           'bool': {
             'filter': [
-              {'term': {'_type': 'category_definition'}},
-              {'term': {'job_id': jobId}},
-              {'term': {'category_id': categoryId}}
+              { 'term': { '_type': 'category_definition' } },
+              { 'term': { 'job_id': jobId } },
+              { 'term': { 'category_id': categoryId } }
             ]
           }
         }
@@ -762,7 +762,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   // when a job has previously been set up with an end time
   this.jobDatafeedState = function (jobId) {
     const deferred = $q.defer();
-    const obj = {startTimeMillis:null, endTimeMillis:null };
+    const obj = { startTimeMillis:null, endTimeMillis:null };
 
     es.search({
       index: '.ml-anomalies-' + jobId,
@@ -851,13 +851,13 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       body:
       {
         sort : [
-          { 'timestamp' : {'order' : 'asc'}},
-          { 'job_id' : {'order' : 'asc'}}
+          { 'timestamp' : { 'order' : 'asc' } },
+          { 'job_id' : { 'order' : 'asc' } }
         ],
         'query': {
           'bool': {
             'filter': [
-              {'term': {'_type': 'audit_message'}},
+              { 'term': { '_type': 'audit_message' } },
               {
                 'bool': {
                   'must_not': {
@@ -880,7 +880,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           messages.push(hit._source);
         });
       }
-      deferred.resolve({messages});
+      deferred.resolve({ messages });
     })
     .catch((resp) => {
       deferred.reject(resp);
@@ -953,7 +953,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
           aggs.push(agg);
         });
       }
-      deferred.resolve({messagesPerJob: aggs});
+      deferred.resolve({ messagesPerJob: aggs });
     })
     .catch((resp) => {
       deferred.reject(resp);
@@ -964,7 +964,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   // search to load a few records to extract the time field
   this.searchTimeFields = function (index, type, field) {
     const deferred = $q.defer();
-    const obj = {time: ''};
+    const obj = { time: '' };
 
     es.search({
       method: 'GET',
@@ -1095,11 +1095,11 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   };
 
   this.openJob = function (jobId) {
-    return ml.openJob({jobId});
+    return ml.openJob({ jobId });
   };
 
   this.closeJob = function (jobId) {
-    return ml.closeJob({jobId});
+    return ml.closeJob({ jobId });
   };
 
 
@@ -1114,14 +1114,14 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   };
 
   this.updateDatafeed = function (datafeedId, datafeedConfig) {
-    return ml.updateDatafeed({datafeedId, datafeedConfig})
+    return ml.updateDatafeed({ datafeedId, datafeedConfig })
     .then((resp) => {
       console.log('update datafeed', resp);
-      return {success: true};
+      return { success: true };
     }).catch((err) => {
       msgs.error('Could not update datafeed: ' + datafeedId);
       console.log('update datafeed', err);
-      return {success: false, message: err.message};
+      return { success: false, message: err.message };
     });
   };
 
@@ -1213,7 +1213,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   this.validateDetector = function (detector) {
     const deferred = $q.defer();
     if (detector) {
-      ml.validateDetector({detector})
+      ml.validateDetector({ detector })
         .then((resp) => {
           deferred.resolve(resp);
         })

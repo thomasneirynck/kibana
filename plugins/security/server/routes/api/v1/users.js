@@ -34,7 +34,7 @@ export default (server) => {
     path: '/api/security/v1/users/{username}',
     handler(request, reply) {
       const username = request.params.username;
-      return callWithRequest(request, 'shield.getUser', {username}).then(
+      return callWithRequest(request, 'shield.getUser', { username }).then(
         (response) => {
           if (response[username]) return reply(response[username]);
           return reply(Boom.notFound());
@@ -52,7 +52,7 @@ export default (server) => {
     handler(request, reply) {
       const username = request.params.username;
       const body = _(request.payload).omit(['username', 'enabled']).omit(_.isNull);
-      return callWithRequest(request, 'shield.putUser', {username, body}).then(
+      return callWithRequest(request, 'shield.putUser', { username, body }).then(
         () => reply(request.payload),
         _.flow(wrapError, reply));
     },
@@ -69,7 +69,7 @@ export default (server) => {
     path: '/api/security/v1/users/{username}',
     handler(request, reply) {
       const username = request.params.username;
-      return callWithRequest(request, 'shield.deleteUser', {username}).then(
+      return callWithRequest(request, 'shield.deleteUser', { username }).then(
         () => reply().code(204),
         _.flow(wrapError, reply));
     },
@@ -83,14 +83,14 @@ export default (server) => {
     path: '/api/security/v1/users/{username}/password',
     handler(request, reply) {
       const username = request.params.username;
-      const {password, newPassword} = request.payload;
+      const { password, newPassword } = request.payload;
 
       let promise = Promise.resolve();
       if (username === request.auth.credentials.username) promise = isValidUser(request, username, password);
 
       return promise.then(() => {
-        const body = {password: newPassword};
-        return callWithRequest(request, 'shield.changePassword', {username, body})
+        const body = { password: newPassword };
+        return callWithRequest(request, 'shield.changePassword', { username, body })
         .then(onChangePassword(request, username, newPassword, calculateExpires, reply))
         .catch(_.flow(wrapError, reply));
       })

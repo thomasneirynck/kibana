@@ -9,5 +9,5 @@ export default function mapRequests(requests) {
     result.total += value.total;
     result.disconnects += value.disconnects;
     return result;
-  }, {total: 0, disconnects: 0, status_codes: {}});
+  }, { total: 0, disconnects: 0, status_codes: {} });
 }

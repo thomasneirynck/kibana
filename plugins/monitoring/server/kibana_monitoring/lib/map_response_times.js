@@ -7,7 +7,7 @@ export default function mapResponseTimes(times) {
     }
     result.max = Math.max(result.max, value.max);
     return result;
-  }, {avg: 0, max: 0});
+  }, { avg: 0, max: 0 });
   return {
     average: responseTimes.avg,
     max: responseTimes.max

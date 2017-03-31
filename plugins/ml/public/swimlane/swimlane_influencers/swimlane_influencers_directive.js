@@ -70,7 +70,7 @@ module.directive('mlSwimlaneInfluencers', function ($timeout, mlResultsService) 
         scope.influencers = _.map(resp.results, function (result) {
           const score = parseInt(result.maxAnomalyScore);
           const severity = anomalyUtils.getSeverity(score);
-          const influencer = {'influencerFieldValue': result.influencerFieldValue,
+          const influencer = { 'influencerFieldValue': result.influencerFieldValue,
             'bandScore': score > 3 ? score : 3,  // Gives the band some visible width for low scores.
             'score': score,
             'severity': severity

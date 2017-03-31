@@ -15,10 +15,10 @@ export default (server, commonRouteConfig) => {
       if (securityInfo && securityInfo.isEnabled() === false) {
         // if xpack.security.enabled has been explicitly set to false
         // return that security is disabled and don't call the privilegeCheck endpoint
-        reply({securityDisabled: true});
+        reply({ securityDisabled: true });
       } else {
         const body = request.payload;
-        return callWithRequest(request, 'ml.privilegeCheck', {body})
+        return callWithRequest(request, 'ml.privilegeCheck', { body })
         .then(resp => reply(resp))
         .catch(resp => reply(wrapError(resp)));
       }

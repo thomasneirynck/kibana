@@ -94,7 +94,7 @@ export default (kibana) => new kibana.Plugin({
 
     const cookieName = config.get('xpack.security.cookieName');
 
-    const register = Promise.promisify(server.register, {context: server});
+    const register = Promise.promisify(server.register, { context: server });
     Promise.all([
       register(hapiAuthBasic),
       register(hapiAuthCookie)

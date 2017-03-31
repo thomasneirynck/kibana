@@ -27,7 +27,7 @@ import parseInterval from 'ui/utils/parse_interval';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
-import {aggregationTypeTransform} from 'plugins/ml/util/anomaly_utils';
+import { aggregationTypeTransform } from 'plugins/ml/util/anomaly_utils';
 
 module.controller('MlExplorerChartsContainerController', function ($scope, timefilter, mlJobService, mlExplorerDashboardService) {
 
@@ -247,18 +247,18 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
       // define the metric series to be plotted.
       config.entityFields = [];
       if (_.has(record, 'partition_field_name')) {
-        config.entityFields.push({fieldName: record.partition_field_name, fieldValue: record.partition_field_value});
+        config.entityFields.push({ fieldName: record.partition_field_name, fieldValue: record.partition_field_value });
       }
 
       if (_.has(record, 'over_field_name')) {
-        config.entityFields.push({fieldName: record.over_field_name, fieldValue: record.over_field_value});
+        config.entityFields.push({ fieldName: record.over_field_name, fieldValue: record.over_field_value });
       }
 
       // For jobs with by and over fields, don't add the 'by' field as this
       // field will only be added to the top-level fields for record type results
       // if it also an influencer over the bucket.
       if (_.has(record, 'by_field_name') && !(_.has(record, 'over_field_name'))) {
-        config.entityFields.push({fieldName: record.by_field_name, fieldValue: record.by_field_value});
+        config.entityFields.push({ fieldName: record.by_field_name, fieldValue: record.by_field_value });
       }
 
       // Obtain the raw data index(es) from the job datafeed_config.
@@ -281,7 +281,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     const pointSpacing = 10;
     const numPoints = chartWidth / pointSpacing;
 
-    return {min: midpointMs - (numPoints * maxBucketSpanSeconds * 1000), max: midpointMs + (numPoints * maxBucketSpanSeconds * 1000)};
+    return { min: midpointMs - (numPoints * maxBucketSpanSeconds * 1000), max: midpointMs + (numPoints * maxBucketSpanSeconds * 1000) };
   }
 
 });

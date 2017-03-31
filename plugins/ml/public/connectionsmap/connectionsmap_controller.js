@@ -108,7 +108,7 @@ module.controller('MlConnectionsMapController', function (
         const jobs = [];
         const detectorsByJob = {};
         _.each(resp.jobs, function (job) {
-          jobs.push({id:job.id, selected: selectAll || (_.indexOf(selectedJobIds, job.id) > -1)});
+          jobs.push({ id:job.id, selected: selectAll || (_.indexOf(selectedJobIds, job.id) > -1) });
           detectorsByJob[job.id] = job.detectorDescriptions;
         });
 
@@ -157,9 +157,9 @@ module.controller('MlConnectionsMapController', function (
         });
       });
 
-      const viewByOptions = [{field:'ml-detector', label:'detector'}];
+      const viewByOptions = [{ field:'ml-detector', label:'detector' }];
       _.each(influencerFieldNames, function (influencerFieldName) {
-        viewByOptions.push({field:influencerFieldName, label:influencerFieldName});
+        viewByOptions.push({ field:influencerFieldName, label:influencerFieldName });
       });
       $scope.vis.type.params.viewByOptions = viewByOptions;
 
@@ -389,7 +389,7 @@ module.controller('MlConnectionsMapController', function (
     console.log('Connections map processForDetectors() passed:', records);
 
     const dataset = {};
-    $scope.maxNormProbByField = {'ml-detector':{}};
+    $scope.maxNormProbByField = { 'ml-detector':{} };
 
     _.each(records, function (record) {
       const detectorDesc = $scope.detectorsByJob[record.job_id][record.detector_index];
@@ -409,7 +409,7 @@ module.controller('MlConnectionsMapController', function (
         const fieldName = influencer.influencer_field_name;
         _.each(influencer.influencer_field_values, function (fieldValue) {
 
-          const connection = _.findWhere(connections, {field: fieldName, value:fieldValue});
+          const connection = _.findWhere(connections, { field: fieldName, value:fieldValue });
           if (connection === undefined) {
             connections.push({
               field: fieldName,
@@ -430,7 +430,7 @@ module.controller('MlConnectionsMapController', function (
     _.each(dataset, function (connections) {
 
       _.each(connections, function (connection) {
-        const detectorFieldNameList = _.where(connections, {field: connection.field});
+        const detectorFieldNameList = _.where(connections, { field: connection.field });
         connection.scoreForAllValues = _.reduce(detectorFieldNameList, function (memo, conn) { return memo + conn.score; }, 0);
       });
     });
@@ -456,7 +456,7 @@ module.controller('MlConnectionsMapController', function (
     console.log('Connections map processForInfluencers() passed:', records);
 
     const dataset = {};
-    $scope.maxNormProbByField = {'ml-detector':{}};
+    $scope.maxNormProbByField = { 'ml-detector':{} };
 
     _.each(records, function (record) {
       const influencers = record.influencers;
@@ -488,7 +488,7 @@ module.controller('MlConnectionsMapController', function (
           _.each(dataForOtherFieldNames, function (influencer) {
             _.each(influencer.influencer_field_values, function (fValue) {
               const fName = influencer.influencer_field_name;
-              const connection = _.findWhere(connections, {field: fName, value:fValue});
+              const connection = _.findWhere(connections, { field: fName, value:fValue });
               if (connection === undefined) {
                 connections.push({
                   field: fName,
@@ -507,7 +507,7 @@ module.controller('MlConnectionsMapController', function (
 
           // Add connection for the detector.
           const detectorDesc = $scope.detectorsByJob[record.job_id][record.detector_index];
-          const detectorConnection = _.findWhere(connections, {field: 'ml-detector', value:detectorDesc});
+          const detectorConnection = _.findWhere(connections, { field: 'ml-detector', value:detectorDesc });
           if (detectorConnection === undefined) {
             connections.push({
               field: 'ml-detector',
@@ -528,7 +528,7 @@ module.controller('MlConnectionsMapController', function (
     _.each(dataset, function (connections) {
 
       _.each(connections, function (connection) {
-        const forFieldNameList = _.where(connections, {field: connection.field});
+        const forFieldNameList = _.where(connections, { field: connection.field });
         connection.scoreForAllValues = _.reduce(forFieldNameList, function (memo, conn) { return memo + conn.score; }, 0);
       });
     });
@@ -551,8 +551,8 @@ module.controller('MlConnectionsMapController', function (
       const entityFieldValue = anomalyUtils.getEntityFieldValue(record);
 
       let summary = (aggregateBy === 'entity' && entityFieldName !== undefined) ?
-          _.findWhere(summaryRecords, {'entityFieldName':entityFieldName, 'entityFieldValue':entityFieldValue}) :
-            _.findWhere(summaryRecords, {'detectorDescription':detectorDesc});
+          _.findWhere(summaryRecords, { 'entityFieldName':entityFieldName, 'entityFieldValue':entityFieldValue }) :
+            _.findWhere(summaryRecords, { 'detectorDescription':detectorDesc });
       if (summary === undefined) {
         summary = {
           'detectorDescription':detectorDesc,

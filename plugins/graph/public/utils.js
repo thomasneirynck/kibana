@@ -53,7 +53,7 @@ module.exports = (function () {
         'v2':ti.v2,
         'overlap':ti.overlap,
         width:100,
-        height:60});
+        height:60 });
 
     }
     return mergeCandidates;

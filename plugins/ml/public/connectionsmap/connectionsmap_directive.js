@@ -201,7 +201,7 @@ module.directive('mlConnectionsMap', function () {
       // first nodes in each group.
       // The outerNode 'x' attribute holds the angle of rotation (in degrees).
       _.each(data.outer, function (outerNode) {
-        const group = _.findWhere(data.fields, {fieldName: outerNode.fieldName});
+        const group = _.findWhere(data.fields, { fieldName: outerNode.fieldName });
         group.nodes.push(outerNode);
       });
 

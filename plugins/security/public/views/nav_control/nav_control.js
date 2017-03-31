@@ -1,4 +1,4 @@
-import {constant} from 'lodash';
+import { constant } from 'lodash';
 import registry from 'ui/registry/chrome_nav_controls';
 import uiModules from 'ui/modules';
 import template from 'plugins/security/views/nav_control/nav_control.html';

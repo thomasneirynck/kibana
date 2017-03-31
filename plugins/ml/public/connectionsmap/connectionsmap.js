@@ -42,15 +42,15 @@ export default function ConnectionsMapVisType(Private) {
     params : {
       editor : require('plugins/ml/connectionsmap/connectionsmap_editor.html'),
       defaults: {
-        viewBy: {field:'ml-detector', label:'detector'},
+        viewBy: { field:'ml-detector', label:'detector' },
         jobs: [],
-        threshold: {display:'minor', val:25},
+        threshold: { display:'minor', val:25 },
       },
-      viewByOptions: [{field:'ml-detector', label:'detector'}],
-      thresholdOptions: [{display:'critical', val:75},
-                         {display:'major', val:50},
-                         {display:'minor', val:25},
-                         {display:'warning', val:0}]
+      viewByOptions: [{ field:'ml-detector', label:'detector' }],
+      thresholdOptions: [{ display:'critical', val:75 },
+                         { display:'major', val:50 },
+                         { display:'minor', val:25 },
+                         { display:'warning', val:0 }]
     }
   });
 }

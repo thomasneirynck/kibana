@@ -180,15 +180,15 @@ const Range = function (startRow, startColumn, endRow, endColumn) {
     let end;
     let start;
     if (this.end.row > lastRow) {
-      end = {row: lastRow + 1, column: 0};
+      end = { row: lastRow + 1, column: 0 };
     } else if (this.end.row < firstRow) {
-      end = {row: firstRow, column: 0};
+      end = { row: firstRow, column: 0 };
     }
 
     if (this.start.row > lastRow) {
-      start = {row: lastRow + 1, column: 0};
+      start = { row: lastRow + 1, column: 0 };
     } else if (this.start.row < firstRow) {
-      start = {row: firstRow, column: 0};
+      start = { row: firstRow, column: 0 };
     }
     return Range.fromPoints(start || this.start, end || this.end);
   };
@@ -201,9 +201,9 @@ const Range = function (startRow, startColumn, endRow, endColumn) {
     let start;
     let end;
     if (cmp === -1) {
-      start = {row: row, column: column};
+      start = { row: row, column: column };
     } else {
-      end = {row: row, column: column};
+      end = { row: row, column: column };
     }
     return Range.fromPoints(start || this.start, end || this.end);
   };

@@ -89,7 +89,7 @@ module.controller('MlSummaryViewController', function (
       if (resp.jobs.length > 0) {
         $scope.jobs = [];
         _.each(resp.jobs, (job) => {
-          $scope.jobs.push({id:job.id, selected: false, bucketSpanSeconds: job.bucketSpanSeconds});
+          $scope.jobs.push({ id:job.id, selected: false, bucketSpanSeconds: job.bucketSpanSeconds });
         });
 
         // Select any jobs set in the global state (i.e. passed in the URL).
@@ -205,7 +205,7 @@ module.controller('MlSummaryViewController', function (
     const bounds = timefilter.getActiveBounds();
     mlAnomalyRecordDetailsService.setBounds(bounds);
 
-    mlSwimlaneService.setTimeRange({start: (bounds.min.valueOf() / 1000), end: (bounds.max.valueOf() / 1000)});
+    mlSwimlaneService.setTimeRange({ start: (bounds.min.valueOf() / 1000), end: (bounds.max.valueOf() / 1000) });
     mlSwimlaneService.setSelectedJobIds(selectedJobIds);
     mlAnomalyRecordDetailsService.setSelectedJobIds(selectedJobIds);
 
@@ -337,7 +337,7 @@ module.controller('MlSummaryViewController', function (
   }
 
   function processJobResults(dataByJob) {
-    const dataset = {'laneLabels':[], 'points':[], 'interval': $scope.bucketInterval.asSeconds()};
+    const dataset = { 'laneLabels':[], 'points':[], 'interval': $scope.bucketInterval.asSeconds() };
     const timeObjs = {};
 
     // Store the earliest and latest times of the data returned by the ES aggregations,
@@ -351,7 +351,7 @@ module.controller('MlSummaryViewController', function (
 
       _.each(jobData, (normProb, timeMs) => {
         const time = timeMs / 1000;
-        dataset.points.push({'laneLabel':jobId, 'time': time, 'value': normProb});
+        dataset.points.push({ 'laneLabel':jobId, 'time': time, 'value': normProb });
 
         dataset.earliest = Math.min(time, dataset.earliest);
         dataset.latest = Math.max((time + dataset.interval), dataset.latest);
@@ -373,7 +373,7 @@ module.controller('MlSummaryViewController', function (
   }
 
   function processDetectorResults(dataByJob) {
-    const dataset = {'laneLabels':[], 'points':[], 'interval': $scope.bucketInterval.asSeconds()};
+    const dataset = { 'laneLabels':[], 'points':[], 'interval': $scope.bucketInterval.asSeconds() };
     const datasetPerJob = {};
 
     // clone the basic dataset for each job
@@ -393,8 +393,8 @@ module.controller('MlSummaryViewController', function (
 
         _.each(detectorData, (normProb, timeMs) => {
           const time = timeMs / 1000;
-          dataset.points.push({'laneLabel':laneLabel, 'time': time, 'value': normProb});
-          datasetPerJob[jobId].points.push({'laneLabel':laneLabel, 'time': time, 'value': normProb});
+          dataset.points.push({ 'laneLabel':laneLabel, 'time': time, 'value': normProb });
+          datasetPerJob[jobId].points.push({ 'laneLabel':laneLabel, 'time': time, 'value': normProb });
 
           if (time < dataset.earliest) {
             dataset.earliest = time;
@@ -443,14 +443,14 @@ module.controller('MlSummaryViewController', function (
 
 
   function processInfluencerResults(dataByInfluencer) {
-    const dataset = {'laneLabels':[], 'points':[], 'interval': $scope.bucketInterval.asSeconds()};
+    const dataset = { 'laneLabels':[], 'points':[], 'interval': $scope.bucketInterval.asSeconds() };
 
     _.each(dataByInfluencer, (influencerData, influencerFieldValue) => {
       dataset.laneLabels.push(influencerFieldValue);
 
       _.each(influencerData, (anomalyScore, timeMs) => {
         const time = timeMs / 1000;
-        dataset.points.push({'laneLabel':influencerFieldValue, 'time': time, 'value': anomalyScore});
+        dataset.points.push({ 'laneLabel':influencerFieldValue, 'time': time, 'value': anomalyScore });
       });
     });
     console.log('SummaryView influencer swimlane dataset:', dataset);
@@ -458,14 +458,14 @@ module.controller('MlSummaryViewController', function (
   }
 
   function processInfluencerTypeResults(dataByInfluencerType) {
-    const dataset = {'laneLabels':[], 'points':[], 'interval': $scope.bucketInterval.asSeconds()};
+    const dataset = { 'laneLabels':[], 'points':[], 'interval': $scope.bucketInterval.asSeconds() };
 
     _.each(dataByInfluencerType, (influencerData, influencerFieldType) => {
       dataset.laneLabels.push(influencerFieldType);
 
       _.each(influencerData, (anomalyScore, timeMs) => {
         const time = timeMs / 1000;
-        dataset.points.push({'laneLabel':influencerFieldType, 'time': time, 'value': anomalyScore});
+        dataset.points.push({ 'laneLabel':influencerFieldType, 'time': time, 'value': anomalyScore });
       });
     });
 
@@ -474,7 +474,7 @@ module.controller('MlSummaryViewController', function (
   }
 
   function processEventRateResults(data) {
-    const dataset = {'laneLabels':[], 'points':[], 'earliest': $scope.jobChartData.earliest, 'latest': $scope.jobChartData.latest};
+    const dataset = { 'laneLabels':[], 'points':[], 'earliest': $scope.jobChartData.earliest, 'latest': $scope.jobChartData.latest };
 
     const maximums = {};
     $scope.eventRateChartData = {};
@@ -547,7 +547,7 @@ module.controller('MlSummaryViewController', function (
 })
 .service('mlSwimlaneService', function ($window, mlJobService, mlBrowserDetectService) {
   let selectedJobIds = [];
-  let timeRange = {start:0, end:0};
+  let timeRange = { start:0, end:0 };
 
   this.setSelectedJobIds = function (ids) {
     selectedJobIds = ids;

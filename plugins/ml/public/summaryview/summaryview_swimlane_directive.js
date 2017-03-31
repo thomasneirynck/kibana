@@ -127,7 +127,7 @@ module.directive('mlSummaryViewSwimlane', function (
         timeStepped += stepSecs;
       }
       scope.laneMarkers = scope.$parent.laneMarkers;
-      scope.laneMarkers.push({swimlaneType: scope.swimlaneType, lane: cells});
+      scope.laneMarkers.push({ swimlaneType: scope.swimlaneType, lane: cells });
       $swimlanes.append($cellsMarkerContainer);
 
       function cellHover($event, laneLabel, bucketScore, index, t, swimlaneType) {
@@ -337,7 +337,7 @@ module.directive('mlSummaryViewSwimlane', function (
               return function (swimlaneTypeOverride) {
                 cellHover($eventIn, laneIn, bucketScoreValueIn, iIn, timeIn, (swimlaneTypeOverride || swimlaneTypeIn));
               };
-            }({currentTarget: $cell[0]}, lane, bucketScore.value, i, time, rowScope.swimlaneType));
+            }({ currentTarget: $cell[0] }, lane, bucketScore.value, i, time, rowScope.swimlaneType));
           }
 
           time += stepSecs;
@@ -352,7 +352,7 @@ module.directive('mlSummaryViewSwimlane', function (
             'ng-show': 'showExpansion'
           });
 
-          $laneExp.append($('<div>', {'class': 'title', 'text':'Detectors for ' + label}));
+          $laneExp.append($('<div>', { 'class': 'title', 'text':'Detectors for ' + label }));
 
           let html = '<ml-summary-view-swimlane chart-data=\'detectorPerJobChartData["' + lane + '"]\' ';
           html += 'swimlane-type="DETECTOR" selected-job-ids="selectedJobIds"  chart-width="chartWidth" ';
@@ -493,7 +493,7 @@ module.directive('mlSummaryViewSwimlane', function (
         calculateTimeRange();
 
         if (!isNaN(selection.startTime) && !isNaN(selection.endTime) && !isNaN(selection.interval)) {
-          const timeRange = {start: selection.startTime, end: selection.endTime, interval: selection.interval};
+          const timeRange = { start: selection.startTime, end: selection.endTime, interval: selection.interval };
 
           mlSwimlaneInspectorService.show(timeRange, selection.laneLabel, $lane, $highlight, selection.swimlaneType, $lane.data('jobIds'));
           mlAnomalyRecordDetailsService.toggleLock();

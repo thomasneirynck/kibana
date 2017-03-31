@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import routes from 'ui/routes';
-import {toggle, toggleSort} from 'plugins/security/lib/util';
-import {isRoleEnabled} from 'plugins/security/lib/role';
+import { toggle, toggleSort } from 'plugins/security/lib/util';
+import { isRoleEnabled } from 'plugins/security/lib/role';
 import template from 'plugins/security/views/management/roles.html';
 import 'plugins/security/services/shield_role';
 import checkLicenseError from 'plugins/security/lib/check_license_error';
@@ -26,7 +26,7 @@ routes.when('/management/elasticsearch/roles', {
     $scope.roles = $route.current.locals.roles;
     $scope.forbidden = !_.isArray($scope.roles);
     $scope.selectedRoles = [];
-    $scope.sort = {orderBy: 'name', reverse: false};
+    $scope.sort = { orderBy: 'name', reverse: false };
 
     const notifier = new Notifier();
 

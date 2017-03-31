@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
-import {USERNAME, PASSWORD} from '../../../server/lib/default_auth';
+import { USERNAME, PASSWORD } from '../../../server/lib/default_auth';
 import setElasticsearchAuth from '../../../server/lib/set_elasticsearch_auth';
 
 describe('setElasticsearchAuth', function () {
@@ -28,7 +28,7 @@ describe('setElasticsearchAuth', function () {
 
   it('should use kibana/elasticsearch.password if set', function () {
     const password = 'password';
-    config.get.withArgs('elasticsearch').returns({password});
+    config.get.withArgs('elasticsearch').returns({ password });
     setElasticsearchAuth(config);
 
     sinon.assert.calledWith(config.set, 'elasticsearch.username', USERNAME);

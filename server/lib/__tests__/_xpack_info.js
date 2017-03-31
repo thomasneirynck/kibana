@@ -42,11 +42,11 @@ describe('xpack_info', function () {
   describe('license', function () {
     describe('isActive()', function () {
       it('returns true if the license is active', async () => {
-        const info = await xpackInfoTest({ license: { status: 'active' }});
+        const info = await xpackInfoTest({ license: { status: 'active' } });
         expect(info.license.isActive()).to.be(true);
       });
       it('returns false if the license has expired', async () => {
-        const info = await xpackInfoTest({ license: { status: 'expired' }});
+        const info = await xpackInfoTest({ license: { status: 'expired' } });
         expect(info.license.isActive()).to.be(false);
       });
     });
@@ -54,13 +54,13 @@ describe('xpack_info', function () {
     describe('expiresSoon()', function () {
       it ('returns true if the license will expire within 30 days', async () => {
         const licenseExpirationDate = moment.utc().add('20', 'days');
-        const info = await xpackInfoTest({ license: { expiry_date_in_millis: licenseExpirationDate.valueOf() }});
+        const info = await xpackInfoTest({ license: { expiry_date_in_millis: licenseExpirationDate.valueOf() } });
 
         expect(info.license.expiresSoon()).to.be(true);
       });
       it ('returns false if the license will expire after 30 days', async () => {
         const licenseExpirationDate = moment.utc().add('40', 'days');
-        const info = await xpackInfoTest({ license: { expiry_date_in_millis: licenseExpirationDate.valueOf() }});
+        const info = await xpackInfoTest({ license: { expiry_date_in_millis: licenseExpirationDate.valueOf() } });
 
 
         expect(info.license.expiresSoon()).to.be(false);
@@ -70,7 +70,7 @@ describe('xpack_info', function () {
     describe('getExpiryDateInMillis()', function () {
       it ('returns the expiration date in milliseconds', async () => {
         const licenseExpirationDateInMillis = 1465527717231; // 2016-06-10T03:01:57.231Z
-        const info = await xpackInfoTest({ license: { expiry_date_in_millis: licenseExpirationDateInMillis }});
+        const info = await xpackInfoTest({ license: { expiry_date_in_millis: licenseExpirationDateInMillis } });
 
         expect(info.license.getExpiryDateInMillis()).to.be(licenseExpirationDateInMillis);
       });
@@ -78,17 +78,17 @@ describe('xpack_info', function () {
 
     describe('isOneOf()', function () {
       it ('returns true if the license is the single given mode', async () => {
-        const info = await xpackInfoTest({ license: { mode: 'gold' }});
+        const info = await xpackInfoTest({ license: { mode: 'gold' } });
         expect(info.license.isOneOf('gold')).to.be(true);
       });
 
       it ('returns true if the license is one of multiple given modes', async () => {
-        const info = await xpackInfoTest({ license: { mode: 'gold' }});
+        const info = await xpackInfoTest({ license: { mode: 'gold' } });
         expect(info.license.isOneOf([ 'trial', 'gold' ])).to.be(true);
       });
 
       it ('returns false if the license is not one of the multiple given modes', async () => {
-        const info = await xpackInfoTest({ license: { mode: 'basic' }});
+        const info = await xpackInfoTest({ license: { mode: 'basic' } });
         expect(info.license.isOneOf([ 'trial', 'gold' ])).to.be(false);
       });
     });
@@ -138,7 +138,7 @@ describe('xpack_info', function () {
 
         const info = await xpackInfoTest();
         info.feature('reporting').registerLicenseCheckResultsGenerator(reportingLicenseCheckResultsGenerator);
-        expect(info.toJSON().features).to.eql({reporting: reportingUIVars});
+        expect(info.toJSON().features).to.eql({ reporting: reportingUIVars });
       });
     });
   });
@@ -159,7 +159,7 @@ describe('xpack_info', function () {
 
   describe('getSignature()', function () {
     it ('returns the correct signature', async () => {
-      const info = await xpackInfoTest({ license: { status: 'active', type: 'basic', expiry_date_in_millis: 1464315131123 }});
+      const info = await xpackInfoTest({ license: { status: 'active', type: 'basic', expiry_date_in_millis: 1464315131123 } });
       const expectedSignature = createHash('md5')
         .update(JSON.stringify(info.toJSON()))
         .digest('hex');
@@ -171,13 +171,13 @@ describe('xpack_info', function () {
   describe('an updated response from the _xpack API', function () {
     it('causes the info object and signature to be updated', () => {
       let previousSignature;
-      stubResponse({ license: { status: 'active' }});
+      stubResponse({ license: { status: 'active' } });
 
       return _xpackInfo(mockServer, pollFrequencyInMillis).then(info => {
         expect(info.license.isActive()).to.be(true);
         previousSignature = info.getSignature();
 
-        stubResponse({ license: { status: 'expired' }});
+        stubResponse({ license: { status: 'expired' } });
         return Bluebird.delay(pollFrequencyInMillis * 2, info);
       }).then((info) => {
         info.stopPolling();
@@ -191,10 +191,10 @@ describe('xpack_info', function () {
   describe('refreshNow()', () => {
     it('calls the Elasticsearch GET _xpack API immediately', () => {
       let previousSignature;
-      return xpackInfoTest({ license: { status: 'active' }})
+      return xpackInfoTest({ license: { status: 'active' } })
       .then(info => {
         previousSignature = info.getSignature();
-        stubResponse({ license: { status: 'expired' }});
+        stubResponse({ license: { status: 'expired' } });
         return info.refreshNow();
       })
       .then(newInfo => {

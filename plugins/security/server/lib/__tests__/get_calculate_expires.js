@@ -7,8 +7,8 @@ describe('Calculate expires', function () {
 
   describe('with ttl', () => {
     const ttl = 1000;
-    const config = {get: sinon.stub().returns(ttl)};
-    const server = {config: sinon.stub().returns(config)};
+    const config = { get: sinon.stub().returns(ttl) };
+    const server = { config: sinon.stub().returns(config) };
     let clock;
 
     beforeEach(() => {
@@ -30,8 +30,8 @@ describe('Calculate expires', function () {
   });
 
   describe('without ttl', () => {
-    const config = {get: sinon.stub().returns(null)};
-    const server = {config: sinon.stub().returns(config)};
+    const config = { get: sinon.stub().returns(null) };
+    const server = { config: sinon.stub().returns(config) };
 
     before(() => {
       calculateExpires = getCalculateExpires(server);

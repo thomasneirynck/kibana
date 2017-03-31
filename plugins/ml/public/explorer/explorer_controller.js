@@ -277,7 +277,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     let viewByOptions = [];   // Unique influencers for the selected job(s).
 
     const selectedJobIds = $scope.getSelectedJobIds();
-    const fieldsByJob = {'*':[]};
+    const fieldsByJob = { '*':[] };
     _.each(mlJobService.jobs, (job) => {
       // Add the list of distinct by, over, partition and influencer fields for each job.
       let fieldsForJob = [];

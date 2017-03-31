@@ -33,7 +33,7 @@ export default function SavedWorkspacesProvider(es, kbnUrl, Private, Promise, kb
   };
 
   this.urlFor = function (id) {
-    return chrome.addBasePath(kbnUrl.eval('/app/graph#/workspace/{{id}}', {id}));
+    return chrome.addBasePath(kbnUrl.eval('/app/graph#/workspace/{{id}}', { id }));
   };
 
   this.delete = function (ids) {
@@ -71,7 +71,7 @@ export default function SavedWorkspacesProvider(es, kbnUrl, Private, Promise, kb
         }
       };
     } else {
-      body = { query: {match_all: {}}};
+      body = { query: { match_all: {} } };
     }
 
     return es.search({

@@ -53,7 +53,7 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
     link: function (scope, $el) {
       const tableRowTemplate = React.createClass({
         getInitialState: function () {
-          return _.find(scope.rows, {resolver: this.props.resolver}) || null;
+          return _.find(scope.rows, { resolver: this.props.resolver }) || null;
         },
         componentWillReceiveProps: function (newProps) {
           this.setState(newProps);

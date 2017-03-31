@@ -177,7 +177,7 @@ module.service('mlMultiMetricJobService', function (
       json.body.aggs.times.aggs = {};
       _.each(formConfig.fields, (field) => {
         json.body.aggs.times.aggs[field.id] = {
-          [field.agg.type.name]: {field: field.id}
+          [field.agg.type.name]: { field: field.id }
         };
       });
     }
@@ -370,7 +370,7 @@ module.service('mlMultiMetricJobService', function (
 
   this.indexTimeRange = function (indexPattern) {
     const deferred = $q.defer();
-    const obj = {success: true, start: {epoch:0, string:''}, end: {epoch:0, string:''}};
+    const obj = { success: true, start: { epoch:0, string:'' }, end: { epoch:0, string:'' } };
 
     es.search({
       index: indexPattern.id,

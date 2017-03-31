@@ -24,45 +24,45 @@ module.controller('MlDetectorModal', function ($scope, $modalInstance, params, m
   const msgs = mlMessageBarService;
   msgs.clear();
   $scope.title = 'Add new detector';
-  $scope.detector = {'function': ''};
+  $scope.detector = { 'function': '' };
   $scope.saveLock = false;
   $scope.editMode = false;
   let index = -1;
 
   $scope.functions = [
-    {id: 'count',                 uri: 'count.html#count'},
-    {id: 'low_count',             uri: 'count.html#count'},
-    {id: 'high_count',            uri: 'count.html#count'},
-    {id: 'non_zero_count',        uri: 'count.html#non-zero-count'},
-    {id: 'low_non_zero_count',    uri: 'count.html#non-zero-count'},
-    {id: 'high_non_zero_count',   uri: 'count.html#non-zero-count'},
-    {id: 'distinct_count',        uri: 'count.html#distinct-count'},
-    {id: 'low_distinct_count',    uri: 'count.html#distinct-count'},
-    {id: 'high_distinct_count',   uri: 'count.html#distinct-count'},
-    {id: 'rare',                  uri: 'rare.html#rare'},
-    {id: 'freq_rare',             uri: 'rare.html#freq-rare'},
-    {id: 'info_content',          uri: 'info_content.html#info-content'},
-    {id: 'low_info_content',      uri: 'info_content.html#info-content'},
-    {id: 'high_info_content',     uri: 'info_content.html#info-content'},
-    {id: 'metric',                uri: 'metric.html#metric'},
-    {id: 'median',                uri: 'metric.html#median'},
-    {id: 'mean',                  uri: 'metric.html#mean'},
-    {id: 'low_mean',              uri: 'metric.html#mean'},
-    {id: 'high_mean',             uri: 'metric.html#mean'},
-    {id: 'min',                   uri: 'metric.html#min'},
-    {id: 'max',                   uri: 'metric.html#max'},
-    {id: 'varp',                  uri: 'metric.html#varp'},
-    {id: 'low_varp',              uri: 'metric.html#varp'},
-    {id: 'high_varp',             uri: 'metric.html#varp'},
-    {id: 'sum',                   uri: 'sum.html#sum'},
-    {id: 'low_sum',               uri: 'sum.html#sum'},
-    {id: 'high_sum',              uri: 'sum.html#sum'},
-    {id: 'non_null_sum',          uri: 'sum.html#non-null-sum'},
-    {id: 'low_non_null_sum',      uri: 'sum.html#non-null-sum'},
-    {id: 'high_non_null_sum',     uri: 'sum.html#non-null-sum'},
-    {id: 'time_of_day',           uri: 'time.html#time-of-day'},
-    {id: 'time_of_week',          uri: 'time.html#time-of-week'},
-    {id: 'lat_long',              uri: 'geographic.html'},
+    { id: 'count',                 uri: 'count.html#count' },
+    { id: 'low_count',             uri: 'count.html#count' },
+    { id: 'high_count',            uri: 'count.html#count' },
+    { id: 'non_zero_count',        uri: 'count.html#non-zero-count' },
+    { id: 'low_non_zero_count',    uri: 'count.html#non-zero-count' },
+    { id: 'high_non_zero_count',   uri: 'count.html#non-zero-count' },
+    { id: 'distinct_count',        uri: 'count.html#distinct-count' },
+    { id: 'low_distinct_count',    uri: 'count.html#distinct-count' },
+    { id: 'high_distinct_count',   uri: 'count.html#distinct-count' },
+    { id: 'rare',                  uri: 'rare.html#rare' },
+    { id: 'freq_rare',             uri: 'rare.html#freq-rare' },
+    { id: 'info_content',          uri: 'info_content.html#info-content' },
+    { id: 'low_info_content',      uri: 'info_content.html#info-content' },
+    { id: 'high_info_content',     uri: 'info_content.html#info-content' },
+    { id: 'metric',                uri: 'metric.html#metric' },
+    { id: 'median',                uri: 'metric.html#median' },
+    { id: 'mean',                  uri: 'metric.html#mean' },
+    { id: 'low_mean',              uri: 'metric.html#mean' },
+    { id: 'high_mean',             uri: 'metric.html#mean' },
+    { id: 'min',                   uri: 'metric.html#min' },
+    { id: 'max',                   uri: 'metric.html#max' },
+    { id: 'varp',                  uri: 'metric.html#varp' },
+    { id: 'low_varp',              uri: 'metric.html#varp' },
+    { id: 'high_varp',             uri: 'metric.html#varp' },
+    { id: 'sum',                   uri: 'sum.html#sum' },
+    { id: 'low_sum',               uri: 'sum.html#sum' },
+    { id: 'high_sum',              uri: 'sum.html#sum' },
+    { id: 'non_null_sum',          uri: 'sum.html#non-null-sum' },
+    { id: 'low_non_null_sum',      uri: 'sum.html#non-null-sum' },
+    { id: 'high_non_null_sum',     uri: 'sum.html#non-null-sum' },
+    { id: 'time_of_day',           uri: 'time.html#time-of-day' },
+    { id: 'time_of_week',          uri: 'time.html#time-of-week' },
+    { id: 'lat_long',              uri: 'geographic.html' },
   ];
 
   $scope.properties = params.properties;
@@ -89,7 +89,7 @@ module.controller('MlDetectorModal', function ($scope, $modalInstance, params, m
   $scope.helpLink = {};
 
   $scope.functionChange = function () {
-    const func = _.findWhere($scope.functions, {id: $scope.detector.function});
+    const func = _.findWhere($scope.functions, { id: $scope.detector.function });
     $scope.helpLink.uri = 'functions/';
     $scope.helpLink.label = 'Help for ';
 

@@ -155,7 +155,7 @@ module.service('mlResultsService', function ($q, es) {
   // whose value is an array of objects containing influencerFieldValue, maxAnomalyScore and sumAnomalyScore keys.
   this.getTopInfluencers = function (index, jobIds, earliestMs, latestMs, maxFieldNames, maxFieldValues) {
     const deferred = $q.defer();
-    const obj = {success: true, influencers: {}};
+    const obj = { success: true, influencers: {} };
 
     // Build the criteria to use in the bool filter part of the request.
     // Adds criteria for the time range plus any specified job IDs.
@@ -282,7 +282,7 @@ module.service('mlResultsService', function ($q, es) {
   // containing influencerFieldValue, maxAnomalyScore and sumAnomalyScore keys.
   this.getTopInfluencerValues = function (index, jobIds, influencerFieldName, earliestMs, latestMs, maxResults) {
     const deferred = $q.defer();
-    const obj = {success: true, results: []};
+    const obj = { success: true, results: [] };
 
     // Build the criteria to use in the bool filter part of the request.
     // Adds criteria for the time range plus any specified job IDs.
@@ -365,7 +365,7 @@ module.service('mlResultsService', function ($q, es) {
         const result = {
           'influencerFieldValue': bucket.key,
           'maxAnomalyScore': bucket.maxAnomalyScore.value,
-          'sumAnomalyScore': bucket.sumAnomalyScore.value};
+          'sumAnomalyScore': bucket.sumAnomalyScore.value };
         obj.results.push(result);
       });
 
@@ -382,7 +382,7 @@ module.service('mlResultsService', function ($q, es) {
   // Returned response contains a results property as an object of max score by time.
   this.getBucketInfluencerMaxScoreByTime = function (index, jobIds, earliestMs, latestMs, interval) {
     const deferred = $q.defer();
-    const obj = {success: true, results: {}};
+    const obj = { success: true, results: {} };
 
     // Build the criteria to use in the bool filter part of the request.
     // Adds criteria for the time range plus any specified job IDs.
@@ -475,7 +475,7 @@ module.service('mlResultsService', function ($q, es) {
   // against max score by time.
   this.getInfluencerValueMaxScoreByTime = function (index, jobIds, influencerFieldName, earliestMs, latestMs, interval, maxResults) {
     const deferred = $q.defer();
-    const obj = {success: true, results: {}};
+    const obj = { success: true, results: {} };
 
     // Build the criteria to use in the bool filter part of the request.
     // Adds criteria for the time range plus any specified job IDs.
@@ -592,7 +592,7 @@ module.service('mlResultsService', function ($q, es) {
   // examplesByCategoryId (list of examples against categoryId).
   this.getCategoryExamples = function (index, jobId, categoryIds, maxExamples) {
     const deferred = $q.defer();
-    const obj = {success: true, jobId: jobId, examplesByCategoryId:{}};
+    const obj = { success: true, jobId: jobId, examplesByCategoryId:{} };
 
     es.search({
       index: index,
@@ -601,9 +601,9 @@ module.service('mlResultsService', function ($q, es) {
         'query': {
           'bool': {
             'filter': [
-              {'term': {'_type': 'category_definition'}},
-              {'term': {'job_id': jobId}},
-              {'terms': {'category_id': categoryIds}}
+              { 'term': { '_type': 'category_definition' } },
+              { 'term': { 'job_id': jobId } },
+              { 'terms': { 'category_id': categoryIds } }
             ]
           }
         }
@@ -637,7 +637,7 @@ module.service('mlResultsService', function ($q, es) {
   // only the fields job_id, detector_index, record_score and influencers.
   this.getRecordInfluencers = function (index, jobIds, threshold, earliestMs, latestMs, maxResults) {
     const deferred = $q.defer();
-    const obj = {success: true, records: []};
+    const obj = { success: true, records: [] };
 
     // Build the criteria to use in the bool filter part of the request.
     // Adds criteria for the existence of the nested influencers field, time range,
@@ -716,7 +716,7 @@ module.service('mlResultsService', function ($q, es) {
           }
         },
         'sort' : [
-          { 'record_score' : {'order' : 'desc'}}
+          { 'record_score' : { 'order' : 'desc' } }
         ],
       }
     })
@@ -742,7 +742,7 @@ module.service('mlResultsService', function ($q, es) {
   // Pass an empty array or ['*'] to search over all job IDs.
   this.getRecordsForInfluencer = function (index, jobIds, influencers, threshold, earliestMs, latestMs, maxResults) {
     const deferred = $q.defer();
-    const obj = {success: true, records: []};
+    const obj = { success: true, records: [] };
 
     // Build the criteria to use in the bool filter part of the request.
     // Add criteria for the time range, record score, plus any specified job IDs.
@@ -829,7 +829,7 @@ module.service('mlResultsService', function ($q, es) {
           }
         },
         'sort' : [
-          { 'record_score' : {'order' : 'desc'}}
+          { 'record_score' : { 'order' : 'desc' } }
         ],
       }
     })
@@ -854,7 +854,7 @@ module.service('mlResultsService', function ($q, es) {
   this.getRecordsForDetector = function (index, jobId, detectorIndex, checkForInfluencers,
     influencerFieldName, influencerFieldValue, threshold, earliestMs, latestMs, maxResults) {
     const deferred = $q.defer();
-    const obj = {success: true, records: []};
+    const obj = { success: true, records: [] };
 
     // Build the criteria to use in the bool filter part of the request.
     // Add criteria for the time range, record score, plus any specified job IDs.
@@ -869,8 +869,8 @@ module.service('mlResultsService', function ($q, es) {
       }
     });
 
-    boolCriteria.push({ 'term': { 'job_id': jobId} });
-    boolCriteria.push({ 'term': { 'detector_index': detectorIndex} });
+    boolCriteria.push({ 'term': { 'job_id': jobId } });
+    boolCriteria.push({ 'term': { 'detector_index': detectorIndex } });
 
     boolCriteria.push({
       'range': {
@@ -944,7 +944,7 @@ module.service('mlResultsService', function ($q, es) {
           }
         },
         'sort' : [
-          { 'record_score' : {'order' : 'desc'}}
+          { 'record_score' : { 'order' : 'desc' } }
         ],
       }
     })
@@ -977,7 +977,7 @@ module.service('mlResultsService', function ($q, es) {
   // Pass an empty array or ['*'] to search over all job IDs.
   this.getRecordsForCriteria = function (index, jobIds, criteriaFields, threshold, earliestMs, latestMs, maxResults) {
     const deferred = $q.defer();
-    const obj = {success: true, records: []};
+    const obj = { success: true, records: [] };
 
     // Build the criteria to use in the bool filter part of the request.
     // Add criteria for the time range, record score, plus any specified job IDs.
@@ -1019,7 +1019,7 @@ module.service('mlResultsService', function ($q, es) {
 
     // Add in each of the specified criteria.
     _.each(criteriaFields, (criteria) => {
-      const condition = {'match': {}};
+      const condition = { 'match': {} };
       condition.match[criteria.fieldName] = {
         'query': criteria.fieldValue,
         'type': 'phrase'
@@ -1050,7 +1050,7 @@ module.service('mlResultsService', function ($q, es) {
           }
         },
         'sort' : [
-          { 'record_score' : {'order' : 'desc'}}
+          { 'record_score' : { 'order' : 'desc' } }
         ],
       }
     })
@@ -1079,12 +1079,12 @@ module.service('mlResultsService', function ($q, es) {
   this.getMetricData = function (index, entityFields, query, metricFunction, metricFieldName,
     timeFieldName, earliestMs, latestMs, interval) {
     const deferred = $q.defer();
-    const obj = {success: true, results: {}};
+    const obj = { success: true, results: {} };
 
     // Build the criteria to use in the bool filter part of the request.
     // Add criteria for the time range, entity fields, plus any additional supplied query.
     const boolCriteria = [];
-    const timeRangeCriteria = {'range':{}};
+    const timeRangeCriteria = { 'range':{} };
     timeRangeCriteria.range[timeFieldName] = {
       'gte': earliestMs,
       'lte': latestMs,
@@ -1131,7 +1131,7 @@ module.service('mlResultsService', function ($q, es) {
       searchBody.aggs.byTime.aggs = {};
 
       const metricAgg = {};
-      metricAgg[metricFunction] = {'field': metricFieldName};
+      metricAgg[metricFunction] = { 'field': metricFieldName };
       searchBody.aggs.byTime.aggs.metric = metricAgg;
     }
 

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import routes from 'ui/routes';
-import {toggle} from 'plugins/security/lib/util';
-import {isRoleEnabled} from 'plugins/security/lib/role';
+import { toggle } from 'plugins/security/lib/util';
+import { isRoleEnabled } from 'plugins/security/lib/role';
 import template from 'plugins/security/views/management/edit_role.html';
 import 'angular-ui-select';
 import 'plugins/security/services/shield_user';
@@ -24,7 +24,7 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
     role($route, ShieldRole, kbnUrl, Promise, Notifier) {
       const name = $route.current.params.name;
       if (name != null) {
-        return ShieldRole.get({name}).$promise
+        return ShieldRole.get({ name }).$promise
         .catch((response) => {
           const notifier = new Notifier();
           if (response.status !== 404) return notifier.fatal(response);
@@ -90,7 +90,7 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
     };
 
     $scope.addIndex = indices => {
-      indices.push({names: [], privileges: [], field_security: { grant: ['*']}});
+      indices.push({ names: [], privileges: [], field_security: { grant: ['*'] } });
     };
 
     $scope.areIndicesValid = (indices) => {

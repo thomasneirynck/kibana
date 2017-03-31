@@ -37,7 +37,7 @@ module.directive('mlJobSelectList', ['mlJobService', 'mlDashboardService', funct
           if (resp.jobs.length > 0) {
             const jobs = [];
             _.each(resp.jobs, function (job) {
-              jobs.push({id:job.id});
+              jobs.push({ id:job.id });
             });
             $scope.jobs = jobs;
 

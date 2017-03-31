@@ -34,7 +34,7 @@ export default class HorizontalLegend extends React.Component {
     }
     if (!row.label || row.legend === false) {
       return (
-        <div key={key} style={{display: 'none'}}/>
+        <div key={key} style={{ display: 'none' }}/>
       );
     }
 
@@ -45,7 +45,7 @@ export default class HorizontalLegend extends React.Component {
         key={key}
       >
         <span className='rhythm_chart__legend-label'>
-          <span className='fa fa-circle rhythm_chart__legend-indicator' style={{color: row.color}}/>
+          <span className='fa fa-circle rhythm_chart__legend-indicator' style={{ color: row.color }}/>
           {row.label}
         </span>
         <span className='rhythm_chart__legend-value'>{value}</span>

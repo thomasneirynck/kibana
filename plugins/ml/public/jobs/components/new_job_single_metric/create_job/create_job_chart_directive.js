@@ -36,7 +36,7 @@ module.directive('mlSingleMetricJobChart', function () {
     const margin = { top: 0, right: 0, bottom: 40, left: 50 };
     const svgHeight = lineChartHeight + contextHeight + swimlaneHeight + margin.top + margin.bottom;
     const vizWidth  = svgWidth  - margin.left - margin.right;
-    const chartLimits = {max: 0, min: 0};
+    const chartLimits = { max: 0, min: 0 };
 
     let lineChartXScale = d3.time.scale().range([0, vizWidth]);
     let lineChartYScale = d3.scale.linear().range([lineChartHeight, 0]);

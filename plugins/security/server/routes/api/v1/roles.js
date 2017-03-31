@@ -15,7 +15,7 @@ export default (server) => {
     handler(request, reply) {
       return callWithRequest(request, 'shield.getRole').then(
         (response) => {
-          const roles = _.map(response, (role, name) => _.assign(role, {name}));
+          const roles = _.map(response, (role, name) => _.assign(role, { name }));
           return reply(roles);
         },
         _.flow(wrapError, reply)
@@ -31,9 +31,9 @@ export default (server) => {
     path: '/api/security/v1/roles/{name}',
     handler(request, reply) {
       const name = request.params.name;
-      return callWithRequest(request, 'shield.getRole', {name}).then(
+      return callWithRequest(request, 'shield.getRole', { name }).then(
         (response) => {
-          if (response[name]) return reply(_.assign(response[name], {name}));
+          if (response[name]) return reply(_.assign(response[name], { name }));
           return reply(Boom.notFound());
         },
         _.flow(wrapError, reply));
@@ -49,7 +49,7 @@ export default (server) => {
     handler(request, reply) {
       const name = request.params.name;
       const body = _.omit(request.payload, 'name');
-      return callWithRequest(request, 'shield.putRole', {name, body}).then(
+      return callWithRequest(request, 'shield.putRole', { name, body }).then(
         () => reply(request.payload),
         _.flow(wrapError, reply));
     },
@@ -66,7 +66,7 @@ export default (server) => {
     path: '/api/security/v1/roles/{name}',
     handler(request, reply) {
       const name = request.params.name;
-      return callWithRequest(request, 'shield.deleteRole', {name}).then(
+      return callWithRequest(request, 'shield.deleteRole', { name }).then(
         () => reply().code(204),
         _.flow(wrapError, reply));
     },

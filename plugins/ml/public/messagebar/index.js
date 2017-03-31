@@ -20,7 +20,7 @@ import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.service('mlMessageBarService', function () {
-  const MSG_STYLE = {INFO: 'ml-message-info', WARNING: 'ml-message-warning', ERROR: 'ml-message-error'};
+  const MSG_STYLE = { INFO: 'ml-message-info', WARNING: 'ml-message-warning', ERROR: 'ml-message-error' };
 
   this.messages = [];
 
@@ -39,16 +39,16 @@ module.service('mlMessageBarService', function () {
   };
 
   this.info = function (text) {
-    this.addMessage({text: text, style: MSG_STYLE.INFO});
+    this.addMessage({ text: text, style: MSG_STYLE.INFO });
   };
 
   this.warning = function (text) {
-    this.addMessage({text: text, style: MSG_STYLE.WARNING});
+    this.addMessage({ text: text, style: MSG_STYLE.WARNING });
   };
 
   this.error = function (text, resp) {
     const txt = text + ' ' + expandErrorMessageObj(resp);
-    this.addMessage({text: txt, style: MSG_STYLE.ERROR});
+    this.addMessage({ text: txt, style: MSG_STYLE.ERROR });
   };
 
   function expandErrorMessageObj(resp) {

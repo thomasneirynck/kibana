@@ -37,7 +37,7 @@ module.directive('mlElasticDataDescription', function () {
     },
     template: require('plugins/ml/jobs/components/data_description/elastic_data_description.html'),
     controller: function ($scope, $q, $location, mlJobService) {
-      const MODE = {NEW: 0, EDIT: 1, CLONE: 2};
+      const MODE = { NEW: 0, EDIT: 1, CLONE: 2 };
       $scope.saveLock = false;
       let keyPressTimeout = null;
 
@@ -93,7 +93,7 @@ module.directive('mlElasticDataDescription', function () {
           $scope.types[t] = $scope.ui.types[t];
         });
 
-        $scope.extractFields({types: $scope.types});
+        $scope.extractFields({ types: $scope.types });
 
         // callback once fields have been loaded
         // when cloning an elastic search based job, the callback is to a function to detect custom influencers
@@ -317,7 +317,7 @@ module.directive('mlElasticDataDescription', function () {
           delete $scope.types[key];
         }
 
-        $scope.extractFields({types: $scope.types});
+        $scope.extractFields({ types: $scope.types });
         // console.log($scope.types);
         guessTimeField();
       };
@@ -334,7 +334,7 @@ module.directive('mlElasticDataDescription', function () {
         }
 
         // trigger field extraction and timeformat guessing
-        $scope.extractFields({types: $scope.types});
+        $scope.extractFields({ types: $scope.types });
         guessTimeField();
       };
 

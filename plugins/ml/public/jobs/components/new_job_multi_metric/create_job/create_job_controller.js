@@ -302,7 +302,7 @@ module
     });
 
     _.each(fields, (field) => {
-      $scope.ui.fields.push({id: field.displayName, agg: {type: $scope.formConfig.agg.type}});
+      $scope.ui.fields.push({ id: field.displayName, agg: { type: $scope.formConfig.agg.type } });
     });
 
     _.each(categoryFields, (field) => {
@@ -652,7 +652,7 @@ module
   };
 
   $scope.viewResults = function (page) {
-    viewResults({id: $scope.formConfig.jobId}, page);
+    viewResults({ id: $scope.formConfig.jobId }, page);
   };
 
   function viewResults(job, page) {

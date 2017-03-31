@@ -1,9 +1,9 @@
 import expect from 'expect.js';
 import *  as util from '../util.js';
-import {normalized, breakdown} from './fixtures/breakdown.js';
-import {inputTimes, normalizedTimes} from './fixtures/normalize_times.js';
-import {inputIndices, normalizedIndices} from './fixtures/normalize_indices.js';
-import {flatTimes} from './fixtures/flatten_times.js';
+import { normalized, breakdown } from './fixtures/breakdown.js';
+import { inputTimes, normalizedTimes } from './fixtures/normalize_times.js';
+import { inputIndices, normalizedIndices } from './fixtures/normalize_indices.js';
+import { flatTimes } from './fixtures/flatten_times.js';
 
 describe('normalizeBreakdown', function () {
   it('returns correct breakdown', function () {

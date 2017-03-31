@@ -82,7 +82,7 @@ function (
   // functions for job list buttons
   // called from jobs_list_controls.html
   $scope.deleteJob = function (job) {
-    const status = {deleteLock: false, stopDatafeed: 0, deleteDatafeed: 0, closeJob: 0, deleteJob: 0};
+    const status = { deleteLock: false, stopDatafeed: 0, deleteDatafeed: 0, closeJob: 0, deleteJob: 0 };
 
     $modal.open({
       template: require('plugins/ml/jobs/components/jobs_list/delete_job_modal/delete_job_modal.html'),
@@ -193,7 +193,7 @@ function (
   // function for displaying the time for a job based on latest_record_timestamp
   // added to rowScope so it can be updated live when data changes
   function latestTimeStamp(dataCounts) {
-    const obj = {string:'', unix: 0};
+    const obj = { string:'', unix: 0 };
     if (dataCounts.latest_record_timestamp) {
       const ts = moment(dataCounts.latest_record_timestamp);
       obj.string = ts.format(TIME_FORMAT);
@@ -226,10 +226,10 @@ function (
     $scope.table.columns = [
       { title: '', sortable: false, class: 'col-expand-arrow' },
       { title: 'Job ID' },
-      { title: '', sortable: false},
+      { title: '', sortable: false },
       { title: 'Description' },
       { title: 'Processed records', class: 'col-align-right' },
-      { title: 'Memory status'},
+      { title: 'Memory status' },
       { title: 'Job state' },
       { title: 'Datafeed state' },
       { title: 'Latest timestamp' },
@@ -239,7 +239,7 @@ function (
     let rows = jobs.map((job) => {
       const rowScope = $scope.$new();
       rowScope.job = job;
-      rowScope.jobAudit = {messages:'', update: () => {}, jobWarningClass: '', jobWarningText: ''};
+      rowScope.jobAudit = { messages:'', update: () => {}, jobWarningClass: '', jobWarningText: '' };
 
       // rowScope.unsafeHtml = '<ml-job-preview ml-job-id=''+job.job_id+''></ml-job-preview>';
 
@@ -409,7 +409,7 @@ function (
     function addMessage(id, msg) {
       if (auditMessages[id] !== undefined &&
          msg.unixTime >= createTimes[id]) {
-        if (!_.findWhere(auditMessages[id], {time: msg.time, message: msg.message, node_name: msg.node_name})) {
+        if (!_.findWhere(auditMessages[id], { time: msg.time, message: msg.message, node_name: msg.node_name })) {
           auditMessages[id].push(msg);
         }
       }

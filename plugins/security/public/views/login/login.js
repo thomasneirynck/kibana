@@ -30,7 +30,7 @@ chrome
     self.submit = (username, password) => {
       self.isLoading = true;
       self.error = false;
-      $http.post('./api/security/v1/login', {username, password}).then(
+      $http.post('./api/security/v1/login', { username, password }).then(
         () => $window.location.href = `.${next}`,
         () => {
           setupScope();

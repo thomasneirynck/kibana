@@ -54,7 +54,7 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
     stoppingDatafeed: false,
     validation: {
       tabs:[
-        {index: 0, valid: true, checks: { categorizationFilters: {valid: true} }}
+        { index: 0, valid: true, checks: { categorizationFilters: { valid: true } } }
       ]
     }
   };

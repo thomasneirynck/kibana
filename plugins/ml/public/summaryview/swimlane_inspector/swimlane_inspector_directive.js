@@ -287,7 +287,7 @@ module.directive('mlSwimlaneInspector', function (
   }
 
   function processJobResults(dataByJob) {
-    const dataset = {'laneLabels':[], 'points':[], 'interval': timeRange.interval};
+    const dataset = { 'laneLabels':[], 'points':[], 'interval': timeRange.interval };
     const timeObjs = {};
 
     dataset.earliest = Number.MAX_VALUE;
@@ -299,7 +299,7 @@ module.directive('mlSwimlaneInspector', function (
 
       _.each(jobData, (normProb, timeMs) => {
         const time = timeMs / 1000;
-        dataset.points.push({'laneLabel':jobId, 'time': time, 'value': normProb});
+        dataset.points.push({ 'laneLabel':jobId, 'time': time, 'value': normProb });
 
         dataset.earliest = Math.min(time, dataset.earliest);
         dataset.latest = Math.max((time + dataset.interval), dataset.latest);
@@ -320,7 +320,7 @@ module.directive('mlSwimlaneInspector', function (
 
 
   function processDetectorResults(dataByJob, lLabel) {
-    const dataset = {'laneLabels':[], 'points':[], 'interval': timeRange.interval};
+    const dataset = { 'laneLabels':[], 'points':[], 'interval': timeRange.interval };
     const timeObjs = {};
 
     dataset.earliest = Number.MAX_VALUE;
@@ -338,7 +338,7 @@ module.directive('mlSwimlaneInspector', function (
 
           _.each(detectorData, (normProb, timeMs) => {
             const time = timeMs / 1000;
-            dataset.points.push({'laneLabel':lLabel, 'time': time, 'value': normProb});
+            dataset.points.push({ 'laneLabel':lLabel, 'time': time, 'value': normProb });
 
             dataset.earliest = Math.min(time, dataset.earliest);
             dataset.latest = Math.max((time + dataset.interval), dataset.latest);
@@ -361,7 +361,7 @@ module.directive('mlSwimlaneInspector', function (
   }
 
   function processInfluencerResults(dataByInfluencer) {
-    const dataset = {'laneLabels':[], 'points':[], 'interval': timeRange.interval};
+    const dataset = { 'laneLabels':[], 'points':[], 'interval': timeRange.interval };
     const timeObjs = {};
 
     dataset.earliest = Number.MAX_VALUE;
@@ -373,7 +373,7 @@ module.directive('mlSwimlaneInspector', function (
 
         _.each(influencerData, (anomalyScore, timeMs) => {
           const time = timeMs / 1000;
-          dataset.points.push({'laneLabel':influencerFieldValue, 'time': time, 'value': anomalyScore});
+          dataset.points.push({ 'laneLabel':influencerFieldValue, 'time': time, 'value': anomalyScore });
 
           dataset.earliest = Math.min(time, dataset.earliest);
           dataset.latest = Math.max((time + dataset.interval), dataset.latest);

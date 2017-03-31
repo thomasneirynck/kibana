@@ -18,7 +18,7 @@ function jobsQueryFn(server) {
           excludes: [ 'output.content' ]
         },
         sort: [
-          { created_at: { order: 'desc' }}
+          { created_at: { order: 'desc' } }
         ],
         size: defaultSize,
       }
