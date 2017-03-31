@@ -8,7 +8,15 @@ export default class HorizontalLegend extends React.Component {
     this.createSeries = this.createSeries.bind(this);
   }
 
+  /**
+   * @param {Number} value The value to format and show in the horizontal
+   * legend. A null means no data for the time bucket and will be formatted as
+  * 'N/A'
+   */
   formatter(value) {
+    if (value === null) {
+      return 'N/A';
+    }
     if (isFunction(this.props.tickFormatter)) {
       return this.props.tickFormatter(value);
     }

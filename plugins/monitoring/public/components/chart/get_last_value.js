@@ -1,12 +1,23 @@
 import { isNumber, get, last } from 'lodash';
 
-export default function getLastValue(data, ...rest) {
-  if (rest.length !== 0) {
-    throw new Error('getLastValue only supports single parameter');
+/*
+ * @param {Array/Number} data Data containing values to show in the horizontal legend
+ * @return {Number/Null} Value to use from the given data
+ */
+export function getLastValue(data) {
+  if (isNumber(data)) {
+    return data;
+  }
+  if (!Array.isArray(data)) {
+    return null;
   }
 
-  if (isNumber(data)) return data;
-  if (!Array.isArray(data)) return 0;
+  const lastValue = get(last(data), '[1]');
+  // check numeric to make sure 0 doesn't convert to null
+  if (isNumber(lastValue)) {
+    return lastValue;
+  }
 
-  return get(last(data), '[1]') || 0;
+  // undefined/null return as null to show as N/A
+  return null;
 };

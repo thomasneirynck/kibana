@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
-import getLastValue from './get_last_value';
+import { getLastValue } from './get_last_value';
 import TimeseriesContainer from './timeseries_container';
 import HorizontalLegend from './horizontal_legend';
 import { getValuesForSeriesIndex, getValuesByX } from './get_values_for_legend';
