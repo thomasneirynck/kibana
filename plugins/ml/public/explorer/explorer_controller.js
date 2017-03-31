@@ -33,6 +33,7 @@ import parseInterval from 'ui/utils/parse_interval';
 
 import uiRoutes from 'ui/routes';
 import checkLicense from 'plugins/ml/license/check_license';
+import refreshIntervalWatcher from 'plugins/ml/util/refresh_interval_watcher';
 
 uiRoutes
 .when('/explorer/?', {
@@ -157,14 +158,6 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
       }
     });
 
-    // Clear viewBy from the state if we are moving from single
-    // to multi selection, or vice-versa.
-    if ((previousSelected <= 1 && selectedJobIds.length > 1) ||
-      (selectedJobIds.length === 1 && previousSelected > 1)) {
-      delete $scope.appState.mlExplorerSwimlane.viewBy;
-      $scope.appState.save();
-    }
-
     // Build scope objects used in the HTML template.
     $scope.unsafeHtml = '<ml-job-select-list selected="' + selectedJobIds.join(' ') + '"></ml-job-select-list>';
 
@@ -178,6 +171,14 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
 
     globalState.ml.jobIds = selections;
     globalState.save();
+
+    // Clear viewBy from the state if we are moving from single
+    // to multi selection, or vice-versa.
+    if ((previousSelected <= 1 && selectedJobIds.length > 1) ||
+      (selectedJobIds.length === 1 && previousSelected > 1)) {
+      delete $scope.appState.mlExplorerSwimlane.viewBy;
+    }
+    $scope.appState.save();
 
     clearSelectedAnomalies();
     loadOverallData();
@@ -195,13 +196,33 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
   };
 
   // Refresh all the data when the time range is altered.
-  $scope.$listen(timefilter, 'fetch', function () {
+  $scope.$listen(timefilter, 'fetch', () => {
     loadOverallData();
     clearSelectedAnomalies();
   });
 
+  // Add a watcher for auto-refresh of the time filter to refresh all the data.
+  const refreshWatcher = Private(refreshIntervalWatcher);
+  refreshWatcher.init(() => {
+    loadOverallData();
+    // TODO - would be better to only clear and reload the selected anomalies
+    // if the previous selection was no longer applicable.
+    clearSelectedAnomalies();
+  });
+
+  $scope.$on('$destroy', () => {
+    refreshWatcher.cancel();
+  });
+
+
   // Listen for changes to job selection.
   mlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
+    // Clear swimlane selection from state.
+    delete $scope.appState.mlExplorerSwimlane.selectedType;
+    delete $scope.appState.mlExplorerSwimlane.selectedLane;
+    delete $scope.appState.mlExplorerSwimlane.selectedTime;
+    delete $scope.appState.mlExplorerSwimlane.selectedInterval;
+
     $scope.setSelectedJobs(selections);
   });
 
