@@ -31,14 +31,14 @@ module.service('mlPrivilegeService', function (Promise, ml) {
     return new Promise((resolve, reject) => {
       const priv = {
         cluster: [
-          'cluster:admin/ml/job/put',
-          'cluster:admin/ml/job/delete',
-          'cluster:admin/ml/job/update',
-          'cluster:admin/ml/datafeeds/put',
-          'cluster:admin/ml/datafeeds/delete',
-          'cluster:admin/ml/datafeeds/start',
-          'cluster:admin/ml/datafeeds/stop',
-          'cluster:admin/ml/datafeeds/update'
+          'cluster:admin/xpack/ml/job/put',
+          'cluster:admin/xpack/ml/job/delete',
+          'cluster:admin/xpack/ml/job/update',
+          'cluster:admin/xpack/ml/datafeeds/put',
+          'cluster:admin/xpack/ml/datafeeds/delete',
+          'cluster:admin/xpack/ml/datafeeds/start',
+          'cluster:admin/xpack/ml/datafeeds/stop',
+          'cluster:admin/xpack/ml/datafeeds/update'
         ]
       };
 
@@ -52,26 +52,26 @@ module.service('mlPrivilegeService', function (Promise, ml) {
             privileges[k] = true;
           });
         } else {
-          if (resp.cluster['cluster:admin/ml/job/put'] &&
-              resp.cluster['cluster:admin/ml/datafeeds/put']) {
+          if (resp.cluster['cluster:admin/xpack/ml/job/put'] &&
+              resp.cluster['cluster:admin/xpack/ml/datafeeds/put']) {
             privileges.canCreateJob = true;
           }
 
-          if (resp.cluster['cluster:admin/ml/job/update']) {
+          if (resp.cluster['cluster:admin/xpack/ml/job/update']) {
             privileges.canUpdateJob = true;
           }
 
-          if (resp.cluster['cluster:admin/ml/job/delete'] &&
-              resp.cluster['cluster:admin/ml/datafeeds/delete']) {
+          if (resp.cluster['cluster:admin/xpack/ml/job/delete'] &&
+              resp.cluster['cluster:admin/xpack/ml/datafeeds/delete']) {
             privileges.canDeleteJob = true;
           }
 
-          if (resp.cluster['cluster:admin/ml/datafeeds/start'] &&
-              resp.cluster['cluster:admin/ml/datafeeds/stop']) {
+          if (resp.cluster['cluster:admin/xpack/ml/datafeeds/start'] &&
+              resp.cluster['cluster:admin/xpack/ml/datafeeds/stop']) {
             privileges.canStartStopDatafeed = true;
           }
 
-          if (resp.cluster['cluster:admin/ml/datafeeds/update']) {
+          if (resp.cluster['cluster:admin/xpack/ml/datafeeds/update']) {
             privileges.canUpdateDatafeed = true;
           }
 
