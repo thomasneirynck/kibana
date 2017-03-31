@@ -61,58 +61,40 @@ export class PhoneHome {
   }
 
   /*
-   * Call the API to get the basic cluster info from the non-timebased index
-   */
-  _getClusterInfo(clusterUUID) {
-    const url = `${this._basePath}/api/monitoring/v1/clusters/${clusterUUID}/info`;
-    return this._$http.get(url)
-    .then((clusterInfoResp) => {
-      return clusterInfoResp.data;
-    })
-    .catch(() => { return {}; });
-  }
-
-  /*
    * Check report permission and if passes, send the report
    */
   _sendIfDue() {
-    if (!this._checkReportStatus()) return Promise.resolve(null);
+    if (!this._checkReportStatus()) return Promise.resolve();
 
     // call to get the latest cluster uuids with a time range to go back 20 minutes up to now
-    const currentClustersUrl = `${this._basePath}/api/monitoring/v1/clusters_stats`;
-    const currentClustersTimeRange = {
-      min: moment().subtract(20, 'minutes').toISOString(),
-      max: (new Date()).toISOString()
-    };
+    const currentClustersUrl = `${this._basePath}/api/monitoring/v1/clusters/_stats`;
     return this._$http.post(currentClustersUrl, {
-      timeRange: currentClustersTimeRange
+      timeRange: {
+        min: moment().subtract(20, 'minutes').toISOString(),
+        max: (new Date()).toISOString()
+      }
     })
-    .then((clustersData) => clustersData.data)
-    .then((clusters) => {
-      return Promise.map(clusters, (cluster) => {
-        // get the data per cluster uuid
-        return this._getClusterInfo(cluster.cluster_uuid)
-        .then((info) => {
-          const req = {
-            method: 'POST',
-            url: this._statsReportUrl,
-            data: info
-          };
-          // if passing data externally to Infra, suppress kbnXsrfToken
-          if (this._statsReportUrl.match(/^https/)) req.kbnXsrfToken = false;
-          return this._$http(req);
-        });
-      })
-      .then((mapResult) => {
-        // we sent a report, so we need to record and store the current time stamp
-        this._set('lastReport', Date.now());
-        this._saveToBrowser();
-        return mapResult;
-      })
-      .catch(() => {
-        // no ajaxErrorHandlers for phone home
-        return Promise.resolve();
+    .then(response => {
+      // TODO: create infra issue to allow bulk reporting to avoid firing multiple requests
+      return response.data.map(cluster => {
+        const req = {
+          method: 'POST',
+          url: this._statsReportUrl,
+          data: cluster
+        };
+        // if passing data externally to Infra, suppress kbnXsrfToken
+        if (this._statsReportUrl.match(/^https/)) req.kbnXsrfToken = false;
+        return this._$http(req);
       });
+    })
+    .then(() => {
+      // we sent a report, so we need to record and store the current time stamp
+      this._set('lastReport', Date.now());
+      this._saveToBrowser();
+    })
+    .catch(() => {
+      // no ajaxErrorHandlers for phone home
+      return Promise.resolve();
     });
   }
 

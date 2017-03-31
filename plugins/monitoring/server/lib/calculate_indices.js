@@ -1,12 +1,11 @@
-/* Calls the _fieldStats API on a given index pattern
- */
-import _ from 'lodash';
+import { map } from 'lodash';
 import moment from 'moment';
 import checkMonitoringAuth from './check_monitoring_auth';
 
+/**
+ * Calls the _fieldStats API on a given index pattern.
+ */
 export default async function calculateIndices(req, start, end, indexPattern) {
-  const config = req.server.config();
-
   // Tests access to the monitoring data index. Throws if there is a 401
   await checkMonitoringAuth(req, indexPattern);
 
@@ -37,10 +36,7 @@ export default async function calculateIndices(req, start, end, indexPattern) {
     }
   };
   const resp = await callWithRequest(req, 'fieldStats', options);
-  const indices = _.map(resp.indices, (_info, index) => index);
-  if (indices.length === 0) {
-    // there are no relevant indices for the given timeframe in the data
-    return [];
-  }
-  return indices.filter(index => index !== config.get('xpack.monitoring.index'));
+
+  // note: the index patterns are setup so that there is no overlap (`.monitoring-data-N` versus `.monitoring-{product}-N-*`)
+  return map(resp.indices, (_info, index) => index);
 };
