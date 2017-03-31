@@ -1,7 +1,7 @@
 /*
  * ELASTICSEARCH CONFIDENTIAL
  *
- * Copyright (c) 2016 Elasticsearch BV. All Rights Reserved.
+ * Copyright (c) 2017 Elasticsearch BV. All Rights Reserved.
  *
  * Notice: this software, and all information contained
  * therein, is the exclusive property of Elasticsearch BV
@@ -29,6 +29,7 @@ import 'plugins/ml/services/results_service';
 
 import uiRoutes from 'ui/routes';
 import checkLicense from 'plugins/ml/license/check_license';
+import refreshIntervalWatcher from 'plugins/ml/util/refresh_interval_watcher';
 
 uiRoutes
 .when('/timeseriesexplorer/?', {
@@ -277,15 +278,30 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
   // Refresh the data when the time range is altered.
   $scope.$listen(timefilter, 'fetch', $scope.refresh);
 
+  // Add a watcher for auto-refresh of the time filter to refresh all the data.
+  const refreshWatcher = Private(refreshIntervalWatcher);
+  refreshWatcher.init(() => {
+    $scope.refresh();
+  });
+
+  $scope.$on('$destroy', () => {
+    refreshWatcher.cancel();
+  });
+
   // When inside a dashboard in the Ml plugin, listen for changes to job selection.
   mlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
     $scope.setSelectedJobs(selections);
   });
 
   $scope.$on('contextChartSelected', function (event, selection) {
-    // Save state of zoom (adds to URL).
-    const zoomState = { from: selection.from.toISOString(), to: selection.to.toISOString()};
-    $scope.appState.mlTimeSeriesExplorer.zoom = zoomState;
+    // Save state of zoom (adds to URL) if it is different to the default.
+    const defaultRange = calculateDefaultFocusRange();
+    if (selection.from.getTime() !== defaultRange[0].getTime() || selection.to.getTime() !== defaultRange[1].getTime()) {
+      const zoomState = { from: selection.from.toISOString(), to: selection.to.toISOString()};
+      $scope.appState.mlTimeSeriesExplorer.zoom = zoomState;
+    } else {
+      delete $scope.appState.mlTimeSeriesExplorer.zoom;
+    }
     $scope.appState.save();
 
     $scope.zoomFrom = selection.from;
@@ -316,11 +332,23 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       }
     }
 
-    // Set the range of the focus chart to show the most recent data at bucket span granularity.
+    return calculateDefaultFocusRange();
+  }
+
+  function calculateDefaultFocusRange() {
+    // Returns the range that shows the most recent data at bucket span granularity.
+
+    // Calculate the 'auto' zoom duration which shows data at bucket span granularity.
+    // Get the minimum bucket span of selected jobs.
+    // TODO - only look at jobs for which data has been returned?
+    const minBucketSpanSeconds = _.reduce($scope.selectedJobs, (memo, job) => Math.min(memo, job.bucketSpanSeconds) , 86400);
+    $scope.autoZoomDuration = (minBucketSpanSeconds * 1000) * (CHARTS_POINT_TARGET - 1);
+
+    const earliestDataDate = _.first($scope.contextChartData).date;
+    const latestDataDate = _.last($scope.contextChartData).date;
     const latestMsToLoad = latestDataDate.getTime() + $scope.contextAggregationInterval.asMilliseconds();
     const earliestMsToLoad = Math.max(earliestDataDate.getTime(), latestMsToLoad - $scope.autoZoomDuration);
     return [new Date(earliestMsToLoad), new Date(latestMsToLoad)];
-
   }
 
   function calculateAggregationInterval(bounds, bucketsTarget) {
