@@ -95,12 +95,14 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
             // merge jobs stats into jobs
             for (let i = 0; i < jobs.length; i++) {
               const job = jobs[i];
+              // create empty placeholders for stats and datafeed objects
+              job.data_counts = {};
+              job.model_size_stats = {};
+              job.datafeed_config = {};
+
               for (let j = 0; j < statsResp.jobs.length; j++) {
                 if (job.job_id === statsResp.jobs[j].job_id) {
                   const jobStats = angular.copy(statsResp.jobs[j]);
-                  // create empty placeholders for stats objects
-                  job.data_counts = {};
-                  job.model_size_stats = {};
 
                   job.state = jobStats.state;
                   job.data_counts = jobStats.data_counts;

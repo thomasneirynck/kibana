@@ -209,7 +209,7 @@ function (
     // if this table is has been refreshed, it is helpful to reopen
     // any rows the user had open.
     const rowStates = {};
-    _.each(rowScopes, function (rs) {
+    _.each(rowScopes, (rs) => {
       rowStates[rs.job.job_id] = {
         open: rs.open,
         $expandElement: rs.$expandElement
@@ -236,10 +236,10 @@ function (
       { title: 'Actions', sortable: false, class: 'col-action' }
     ];
 
-    let rows = jobs.map(function (job) {
+    let rows = jobs.map((job) => {
       const rowScope = $scope.$new();
       rowScope.job = job;
-      rowScope.jobAudit = {messages:'', update: function () {}, jobWarningClass: '', jobWarningText: ''};
+      rowScope.jobAudit = {messages:'', update: () => {}, jobWarningClass: '', jobWarningText: ''};
 
       // rowScope.unsafeHtml = '<ml-job-preview ml-job-id=''+job.job_id+''></ml-job-preview>';
 
