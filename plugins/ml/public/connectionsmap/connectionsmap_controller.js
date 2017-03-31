@@ -321,7 +321,7 @@ module.controller('MlConnectionsMapController', function (
     }
 
     let path = chrome.getBasePath() + '/app/ml#/explorer?_g=(' +
-      'ml:(jobIds:!(' + jobIdParam + '))' +
+      'ml:(jobIds:!(\'' + jobIdParam + '\'))' +
       ',refreshInterval:(display:Off,pause:!f,value:0)' +
       ',time:(from:\'' + from + '\',mode:absolute,to:\'' + to + '\'))' +
       '&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:' + query + ')))';

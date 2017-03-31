@@ -169,7 +169,7 @@ function (
 
           let path = chrome.getBasePath();
           path += '/app/ml#/' + page;
-          path += '?_g=(ml:(jobIds:!(' + job.job_id + '))';
+          path += '?_g=(ml:(jobIds:!(\'' + job.job_id + '\'))';
           path += ',refreshInterval:(display:Off,pause:!f,value:0),time:(from:' + from;
           path += ',mode:absolute,to:' + to;
           path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
