@@ -114,6 +114,12 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
   const initialTableOptions = {
     title: 'Indices',
     searchPlaceholder: 'Filter Indices',
+    noDataMessage: (
+      <div>
+        <p>There are no indices that match your selections. Try changing the time range selection.</p>
+        <p>If you are looking for system indices (e.g., .kibana), try unchecking 'Show system indices'.</p>
+      </div>
+    ),
     filterFields: ['name', 'status'],
     /* "key" should be an object
      *   - unless it's the "name" key

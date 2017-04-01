@@ -12,7 +12,10 @@ export default React.createClass({
       return React.createFactory(Loading)({ columns: this.props.columns });
     }
     if (!this.props.tableData.length) {
-      return React.createFactory(NoData)({ columns: this.props.columns });
+      return React.createFactory(NoData)({
+        columns: this.props.columns,
+        message: this.props.noDataMessage
+      });
     }
 
     // Sort the Data

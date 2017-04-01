@@ -126,6 +126,7 @@ const Table = React.createClass({
         key: 'table.body',
         tableData: filteredTableData,
         columns: this.props.options.columns,
+        noDataMessage: this.props.options.noDataMessage,
         sortColObj: this.state.sortColObj,
         pageIdx: this.state.pageIdx,
         itemsPerPage: this.state.itemsPerPage,
