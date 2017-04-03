@@ -6,10 +6,11 @@ import driver from '@elastic/node-phantom-simple';
 import { unzip, bunzip2 } from '../extract';
 import { PHANTOM_MAX_LOAD_TIMEOUT } from '../constants';
 import { transformFn } from './transform_fn';
+import { getPhantomBinaryPath } from './get_phantom_binary_path';
 
 const version = '2.1.1';
 const basename = 'phantomjs-' + version;
-const sourcePath = path.resolve(__dirname, '..', '..', '..', '..', '.phantom');
+const sourcePath = getPhantomBinaryPath();
 const noop = function () {};
 
 export const phantom = {

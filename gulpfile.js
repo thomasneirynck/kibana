@@ -17,6 +17,7 @@ const stagedFiles = require('./gulp_helpers/staged_files.js');
 const fileGlobs = require('./gulp_helpers/globs');
 const getPlugins = require('./gulp_helpers/get_plugins');
 const getFlags = require('./gulp_helpers/get_flags');
+const { getPhantomBinaryPath } = require('./plugins/reporting/server/lib/phantom/get_phantom_binary_path');
 
 const pkg = require('./package.json');
 
@@ -38,7 +39,7 @@ function lintFiles(filePaths) {
   .pipe(g.eslint.failAfterError());
 }
 
-gulp.task('prepare', () => downloadPhantom(path.join(__dirname, '.phantom')));
+gulp.task('prepare', () => downloadPhantom(getPhantomBinaryPath()));
 
 gulp.task('dev', ['prepare'], () => pluginHelpers('start', { flags: getFlags() }));
 
