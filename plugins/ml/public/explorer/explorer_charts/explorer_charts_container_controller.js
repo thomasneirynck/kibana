@@ -23,13 +23,11 @@
 import _ from 'lodash';
 import $ from 'jquery';
 
-import parseInterval from 'ui/utils/parse_interval';
-
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
-import { aggregationTypeTransform } from 'plugins/ml/util/anomaly_utils';
+import explorerChartConfigBuilder from './explorer_chart_config_builder';
 
-module.controller('MlExplorerChartsContainerController', function ($scope, timefilter, mlJobService, mlExplorerDashboardService) {
+module.controller('MlExplorerChartsContainerController', function ($scope, timefilter, Private, mlExplorerDashboardService) {
 
   $scope.allSeriesRecords = [];   // Complete list of series.
   $scope.recordsForSeries = [];   // Series for plotting.
@@ -195,77 +193,12 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
   }
 
   function buildDataConfigs(anomalyRecords) {
-    // For each series, store the record and properties of the data feed (ES index, metric function etc).
+    // Build the chart configuration for each anomaly record.
     const seriesConfigs = [];
-
-    const compiledTooltip = _.template(
-      '<div class="explorer-chart-info-tooltip">job ID: <%= jobId %><br/>' +
-      'aggregation interval: <%= aggregationInterval %></div>');
+    const configBuilder = Private(explorerChartConfigBuilder);
 
     _.each(anomalyRecords, (record) => {
-      const job = mlJobService.getJob(record.job_id);
-      const bucketSpan = parseInterval(job.analysis_config.bucket_span);
-
-      const config = {
-        jobId: record.job_id,
-        function: record.function_description,
-        metricFunction: aggregationTypeTransform.toES(record.function_description),
-        timeField: job.data_description.time_field,
-        bucketSpanSeconds: bucketSpan.asSeconds(),
-        interval: job.analysis_config.bucket_span,
-        infoTooltip: compiledTooltip({
-          'jobId':record.job_id,
-          'aggregationInterval': job.analysis_config.bucket_span
-        })
-      };
-
-      config.detectorLabel = record.function;
-      const detectorIndex = record.detector_index;
-      if ((_.has(mlJobService.detectorsByJob, record.job_id)) &&
-        (detectorIndex < mlJobService.detectorsByJob[record.job_id].length)) {
-        config.detectorLabel = mlJobService.detectorsByJob[record.job_id][detectorIndex].detector_description;
-      } else {
-        if (record.field_name !== undefined) {
-          config.detectorLabel += ' ';
-          config.detectorLabel += config.fieldName;
-        }
-      }
-
-      if (record.field_name !== undefined) {
-        config.fieldName = record.field_name;
-        config.metricFieldName = record.field_name;
-      }
-
-      // For count detectors using summary_count_field, plot sum(summary_count_field_name)
-      if (record.function_description === 'count' && job.analysis_config.summary_count_field_name !== undefined
-        && job.analysis_config.summary_count_field_name !== 'doc_count') {
-        config.metricFunction = 'sum';
-        config.metricFieldName = job.analysis_config.summary_count_field_name;
-      }
-
-      // Add the 'entity_fields' i.e. the partition, by, over fields which
-      // define the metric series to be plotted.
-      config.entityFields = [];
-      if (_.has(record, 'partition_field_name')) {
-        config.entityFields.push({ fieldName: record.partition_field_name, fieldValue: record.partition_field_value });
-      }
-
-      if (_.has(record, 'over_field_name')) {
-        config.entityFields.push({ fieldName: record.over_field_name, fieldValue: record.over_field_value });
-      }
-
-      // For jobs with by and over fields, don't add the 'by' field as this
-      // field will only be added to the top-level fields for record type results
-      // if it also an influencer over the bucket.
-      if (_.has(record, 'by_field_name') && !(_.has(record, 'over_field_name'))) {
-        config.entityFields.push({ fieldName: record.by_field_name, fieldValue: record.by_field_value });
-      }
-
-      // Obtain the raw data index(es) from the job datafeed_config.
-      if (job.datafeed_config) {
-        config.datafeedConfig = job.datafeed_config;
-      }
-
+      const config = configBuilder.buildConfig(record);
       seriesConfigs.push(config);
     });
 
