@@ -109,7 +109,7 @@ function getNodeShardBucket() {
 }
 
 describe('Normalizing Shard Data', () => {
-  context('Index Shards', () => {
+  describe('Index Shards', () => {
     it('Calculates the Index Shard data for a result bucket', () => {
       const data = getDefaultDataObject();
       const resultFn = normalizeIndexShards(data);
@@ -130,7 +130,7 @@ describe('Normalizing Shard Data', () => {
     });
   });
 
-  context('Node Shards', () => {
+  describe('Node Shards', () => {
     it('Calculates the Node Shard data for a result bucket', () => {
       const data = getDefaultDataObject();
       const resultFn = normalizeNodeShards(data, 'transport_address');

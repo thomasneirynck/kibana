@@ -4,7 +4,7 @@ import monitoringPlugin from '../index';
 import sinon from 'sinon';
 
 describe('monitoring', function () {
-  context('deprecations', function () {
+  describe('deprecations', function () {
     let transformDeprecations;
 
     before(function () {

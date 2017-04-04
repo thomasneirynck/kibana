@@ -17,7 +17,7 @@ describe('Calculating Time Intervals Based on Size of Buckets', () => {
 
   const duration = moment.duration(1456964549657 - 1456964538365, 'ms'); // about 11 seconds
 
-  context('Calculating Near Intervals with Ranging bucket sizes', () => {
+  describe('Calculating Near Intervals with Ranging bucket sizes', () => {
     const tuples = [
       [10, 0],
       [24, 470],
@@ -35,7 +35,7 @@ describe('Calculating Time Intervals Based on Size of Buckets', () => {
     });
   });
 
-  context('Calculating LessThan Intervals with Ranging bucket sizes', () => {
+  describe('Calculating LessThan Intervals with Ranging bucket sizes', () => {
     const tuples = [
       [10, 0],
       [24, 100],
@@ -53,7 +53,7 @@ describe('Calculating Time Intervals Based on Size of Buckets', () => {
     });
   });
 
-  context('Calculating AtLeast Intervals with Ranging bucket sizes', () => {
+  describe('Calculating AtLeast Intervals with Ranging bucket sizes', () => {
     const tuples = [
       [10, 0],
       [24, 100],

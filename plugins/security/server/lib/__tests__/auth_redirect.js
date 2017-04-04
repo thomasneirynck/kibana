@@ -53,7 +53,7 @@ describe('lib/auth_redirect', function () {
         });
       });
 
-      context('when testRequest fails', () => {
+      describe('when testRequest fails', () => {
         beforeEach(() => params.testRequest.yields(err));
 
         it('replies with redirect to redirectUrl() for non-xhr requests', () => {
@@ -74,7 +74,7 @@ describe('lib/auth_redirect', function () {
         });
       });
 
-      context('when security is disabled in elasticsearch', () => {
+      describe('when security is disabled in elasticsearch', () => {
         beforeEach(() => {
           params.xpackMainPlugin.info.feature = () => {
             return {
@@ -89,7 +89,7 @@ describe('lib/auth_redirect', function () {
         });
       });
 
-      context('when license is basic', () => {
+      describe('when license is basic', () => {
         beforeEach(() => {
           params.xpackMainPlugin.info.license.isOneOf = sinon.stub().returns(true);
         });
