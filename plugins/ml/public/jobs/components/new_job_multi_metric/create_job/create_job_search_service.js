@@ -244,7 +244,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
     return deferred.promise;
   };
 
-  this.getCategoryFields = function (index, field, size) {
+  this.getCategoryFields = function (index, field, size, query) {
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -255,6 +255,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
       index: index,
       size: 0,
       body: {
+        'query': query,
         'aggs' : {
           'catFields' : {
             'terms': {
@@ -281,7 +282,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
     return deferred.promise;
   };
 
-  this.getEventRate = function (index, earliestMs, latestMs, timeField, interval) {
+  this.getEventRate = function (index, earliestMs, latestMs, timeField, interval, query) {
     const deferred = $q.defer();
     const obj = { success: true, results: {} };
 
@@ -292,12 +293,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
         'query': {
           'bool': {
             'must': [
-              {
-                'query_string': {
-                  'query': '*',
-                  'analyze_wildcard': true
-                }
-              },
+              query,
               {
                 'range': {
                   [timeField]: {
@@ -307,8 +303,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
                   }
                 }
               }
-            ],
-            'must_not': []
+            ]
           }
         },
         '_source': {

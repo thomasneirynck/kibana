@@ -415,7 +415,11 @@ module.service('mlMultiMetricJobService', function (
   };
 
   this.getSplitFields = function (formConfig, size) {
-    return mlMultiMetricJobSearchService.getCategoryFields(formConfig.indexPattern.id, formConfig.splitField, size);
+    return mlMultiMetricJobSearchService.getCategoryFields(
+      formConfig.indexPattern.id,
+      formConfig.splitField,
+      size,
+      formConfig.query);
   };
 
   this.loadDocCountData = function (formConfig) {
@@ -430,7 +434,13 @@ module.service('mlMultiMetricJobService', function (
     const end = formConfig.end;
     const start = formConfig.start;
 
-    mlMultiMetricJobSearchService.getEventRate(formConfig.indexPattern.id, start, end, formConfig.timeField, (interval + 'ms'))
+    mlMultiMetricJobSearchService.getEventRate(
+      formConfig.indexPattern.id,
+      start,
+      end,
+      formConfig.timeField,
+      (interval + 'ms'),
+      formConfig.query)
     .then((resp) => {
       this.chartData.job.bars = [];
 
