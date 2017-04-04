@@ -226,8 +226,8 @@ module
 
   function setTime() {
     $scope.ui.bucketSpanValid = true;
-    $scope.formConfig.start = dateMath.parse(timefilter.time.from).unix() * 1000;
-    $scope.formConfig.end = dateMath.parse(timefilter.time.to).unix() * 1000;
+    $scope.formConfig.start = dateMath.parse(timefilter.time.from).valueOf();
+    $scope.formConfig.end = dateMath.parse(timefilter.time.to).valueOf();
     $scope.formConfig.format = 'epoch_millis';
 
     if(parseInterval($scope.formConfig.bucketSpan) === null) {
