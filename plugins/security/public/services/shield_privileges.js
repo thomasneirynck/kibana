@@ -8,8 +8,11 @@ module.constant('shieldPrivileges', {
     'manage',
     'manage_security',
     'manage_index_templates',
+    'manage_pipeline',
+    'manage_ingest_pipelines',
+    'transport_client',
     'manage_ml',
-    'monitor_ml'
+    'monitor_ml',
   ],
   indices: [
     'all',
@@ -22,6 +25,6 @@ module.constant('shieldPrivileges', {
     'write',
     'delete_index',
     'create_index',
-    'view_index_metadata'
+    'view_index_metadata',
   ]
 });
