@@ -236,16 +236,17 @@ module.service('mlSingleMetricJobService', function (
         job.analysis_config.summary_count_field_name = 'doc_count';
 
         job.datafeed_config.aggregations = {
-          [formConfig.timeField]: {
-            histogram: {
+          buckets: {
+            date_histogram: {
               field: formConfig.timeField,
-              interval: interval,
-              offset: 0,
-              order: {
-                _key: 'asc'
-              },
-              keyed: false,
-              min_doc_count: 0
+              interval: interval
+            },
+            aggregations: {
+              [formConfig.timeField]: {
+                max: {
+                  field: formConfig.timeField
+                }
+              }
             }
           }
         };
@@ -257,21 +258,20 @@ module.service('mlSingleMetricJobService', function (
         job.analysis_config.summary_count_field_name = 'doc_count';
 
         job.datafeed_config.aggregations = {
-          [formConfig.timeField]: {
-            histogram: {
+          buckets: {
+            date_histogram: {
               field: formConfig.timeField,
-              interval: ((interval / 100) * 10), // use 10% of bucketSpan to allow for better sampling
-              offset: 0,
-              order: {
-                _key: 'asc'
-              },
-              keyed: false,
-              min_doc_count: 0
+              interval: ((interval / 100) * 10) // use 10% of bucketSpan to allow for better sampling
             },
             aggregations: {
               [dtr.field_name]: {
                 [aggType]: {
                   field: dtr.field_name
+                }
+              },
+              [formConfig.timeField]: {
+                max: {
+                  field: formConfig.timeField
                 }
               }
             }
@@ -281,8 +281,8 @@ module.service('mlSingleMetricJobService', function (
       case 'cardinality':
         break; // removed until distinct_count is fixed on the backend
         job.datafeed_config.aggregations = {
-          [formConfig.timeField]: {
-            histogram: {
+          buckets: {
+            date_histogram: {
               field: formConfig.timeField,
               interval: interval
             },
@@ -290,6 +290,11 @@ module.service('mlSingleMetricJobService', function (
               [job.analysis_config.summary_count_field_name]: {
                 [aggType]: {
                   field: dtr.field_name
+                }
+              },
+              [formConfig.timeField]: {
+                max: {
+                  field: formConfig.timeField
                 }
               }
             }
