@@ -1,5 +1,7 @@
 import { get } from 'lodash';
 
+import parseNext from '../../lib/parse_next';
+
 export default (server, uiExports, xpackMainPlugin) => {
   const config = server.config();
   const cookieName = config.get('xpack.security.cookieName');
@@ -16,8 +18,10 @@ export default (server, uiExports, xpackMainPlugin) => {
 
       const isUserAlreadyLoggedIn = !!request.state[cookieName];
       if (isUserAlreadyLoggedIn || !showLogin) {
-        const next = get(request, 'query.next', '/');
-        return reply.redirect(`${config.get('server.basePath')}${next}`);
+        const basePath = config.get('server.basePath');
+        const url = get(request, 'raw.req.url');
+        const next = parseNext(url, basePath);
+        return reply.redirect(next);
       }
       return reply.renderAppWithDefaultConfig(login);
     },

@@ -134,7 +134,8 @@ export default (kibana) => new kibana.Plugin({
   }
 });
 
-function loginUrl(baseUrl, requestedPath) {
-  const next = encodeURIComponent(requestedPath);
-  return `${baseUrl}/login?next=${next}`;
+function loginUrl(basePath, requestedPath) {
+  // next must include basePath otherwise it'll be ignored
+  const next = encodeURIComponent(`${basePath}${requestedPath}`);
+  return `${basePath}/login?next=${next}`;
 }

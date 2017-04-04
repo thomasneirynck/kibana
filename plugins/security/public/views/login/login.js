@@ -14,7 +14,8 @@ chrome
 .setVisible(false)
 .setRootTemplate(template)
 .setRootController('login', function ($http, $window, secureCookies, loginState) {
-  const next = parseNext($window.location);
+  const basePath = chrome.getBasePath();
+  const next = parseNext($window.location.href, basePath);
   const isSecure = !!$window.location.protocol.match(/^https/);
   const self = this;
 
@@ -31,7 +32,7 @@ chrome
       self.isLoading = true;
       self.error = false;
       $http.post('./api/security/v1/login', { username, password }).then(
-        () => $window.location.href = `.${next}`,
+        () => $window.location.href = next,
         () => {
           setupScope();
           self.error = true;
