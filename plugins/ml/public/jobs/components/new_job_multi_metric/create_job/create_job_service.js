@@ -33,6 +33,7 @@ module.service('mlMultiMetricJobService', function (
   mlMultiMetricJobSearchService) {
 
   const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
+  const EVENT_RATE_COUNT_FIELD = '__ml_event_rate_count__';
 
   this.chartData = {
     job: {
@@ -60,9 +61,16 @@ module.service('mlMultiMetricJobService', function (
   this.getLineChartResults = function (formConfig) {
     const deferred = $q.defer();
 
-    const fields = Object.keys(formConfig.fields).sort();
+    const fieldIds = Object.keys(formConfig.fields).sort();
 
-    _.each(fields, (field) => {
+    // move event rate field to the front of the list
+    const idx = _.findIndex(fieldIds,(id) => id === EVENT_RATE_COUNT_FIELD);
+    if(idx !== -1) {
+      fieldIds.splice(idx, 1);
+      fieldIds.splice(0, 0, EVENT_RATE_COUNT_FIELD);
+    }
+
+    _.each(fieldIds, (field) => {
       this.chartData.detectors[field] = {
         line: [],
         swimlane:[]
@@ -73,12 +81,11 @@ module.service('mlMultiMetricJobService', function (
 
     es.search(searchJson)
     .then((resp) => {
-      // console.log('Time series search service getLineChartResults() resp:', resp);
-
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
       _.each(aggregationsByTime, (dataForTime) => {
         const time = +dataForTime.key;
         const date = new Date(time);
+        const docCount = +dataForTime.doc_count;
 
         this.chartData.job.swimlane.push({
           date: date,
@@ -94,23 +101,17 @@ module.service('mlMultiMetricJobService', function (
           value: null,
         });
 
-        // this.chartData.job.bars.push({
-        //   date: date,
-        //   time: time,
-        //   value: null,
-        // });
+        _.each(fieldIds, (fieldId) => {
+          const value = (fieldId === EVENT_RATE_COUNT_FIELD) ? docCount : dataForTime[fieldId].value;
 
-        _.each(fields, (field) => {
-          const value = dataForTime[field].value;
-
-          this.chartData.detectors[field].line.push({
+          this.chartData.detectors[fieldId].line.push({
             date: date,
             time: time,
             value: (isFinite(value)) ? value : 0,
           });
 
           // init swimlane
-          this.chartData.detectors[field].swimlane.push({
+          this.chartData.detectors[fieldId].swimlane.push({
             date: date,
             time: time,
             value: 0,
@@ -176,9 +177,11 @@ module.service('mlMultiMetricJobService', function (
     if (Object.keys(formConfig.fields).length) {
       json.body.aggs.times.aggs = {};
       _.each(formConfig.fields, (field) => {
-        json.body.aggs.times.aggs[field.id] = {
-          [field.agg.type.name]: { field: field.id }
-        };
+        if (field.id !== EVENT_RATE_COUNT_FIELD) {
+          json.body.aggs.times.aggs[field.id] = {
+            [field.agg.type.name]: { field: field.id }
+          };
+        }
       });
     }
 
@@ -196,9 +199,13 @@ module.service('mlMultiMetricJobService', function (
     _.each(formConfig.fields, (field, key) => {
       const func = field.agg.type.mlName;
       const dtr = {
-        function: func,
-        field_name: key,
+        function: func
       };
+
+      if (key !== EVENT_RATE_COUNT_FIELD) {
+        dtr.field_name = key;
+      }
+
       if (formConfig.splitField !== '--No split--') {
         dtr.partition_field_name =  formConfig.splitField;
       }

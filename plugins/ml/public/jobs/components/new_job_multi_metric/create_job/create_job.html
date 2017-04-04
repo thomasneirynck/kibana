@@ -35,46 +35,35 @@
               <div class="row">
                 <div class="col-md-12">
                   <div class="form-group">
-                    <!-- <label>Aggregation</label><i ml-info-icon="new_job_bucketspan"></i> -->
 
                     <div class='selection-list-container'>
                       <div class="checkbox field-row" ng-repeat="field in ui.fields" >
                         <label>
                           <input type="checkbox"
                             ng-checked="formConfig.fields[field.id] !== undefined"
-                            ng-click="toggleFields(field.id, field); formChange()"
+                            ng-click="toggleFields(field); formChange()"
                             ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                            />{{field.id}}
+                            />
+                          <span tooltip='{{field.tooltip}}' tooltip-append-to-body="true">{{field.name}}</span>
                         </label>
-                        <select
-                          ng-model="field.agg.type"
-                          ng-options="agg as agg.title for agg in ui.aggTypeOptions"
-                          ng-change="formChange()"
-                          ng-disabled="formConfig.fields[field.id] === undefined || jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                          class="form-control agg-type">
-                        </select>
+                        <div>
+                          <select
+                            ng-model="field.agg.type"
+                            ng-options="agg as agg.title for agg in ui.aggTypeOptions | filterAggTypes:field"
+                            ng-change="formChange()"
+                            ng-disabled="formConfig.fields[field.id] === undefined || jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+                            class="form-control agg-type">
+                          </select>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-
-  <!--               <div class="col-md-6">
-                  <div class='help-text'>
-                    Select the metric fields and functions to be modelled for analysis.
-                  </div>
-
-                </div>
-   -->            </div>
+              </div>
               <div class="row">
                 <div class="col-md-6">
                   <div class="form-group">
                     <label>Bucket span</label><i ml-info-icon="new_job_bucketspan" ></i>
-                    <!-- <select
-                      ng-model="formConfig.interval"
-                      ng-options="interval as interval.title for interval in ui.intervals"
-                      ng-change="intervalChange()"
-                      class="form-control">
-                    </select> -->
                     <input
                       ng-model="formConfig.bucketSpan"
                       required
@@ -107,13 +96,6 @@
                     </select>
                   </div>
                 </div>
-  <!--               <div class="col-md-6">
-                  <div class='help-text'>
-                    Select the field that will be used to partition the models for analysis.
-                    <br />For example, if analysing server performance metrics, you may wish to select your server_name as the split field.
-                    <br />The higher the unique count for this field, the more system resources will be required. Typical, the unique count for this field should be < 100,000.
-                  </div>
-                </div> -->
               </div>
             </div>
 
@@ -136,21 +118,7 @@
                     </div>
 
                   </div>
-                  <!--
-                  <button class="btn-success navbar-btn-link btn-load-vis"
-                    ng-click="loadVis()"
-                    ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED" >
-                    <i class="fa fa-play" ></i>
-                  </button>
-                  -->
                 </div>
-  <!--               <div class="col-md-6">
-                  <div class='help-text'>
-                    Select additional key fields that can be used to identify what has influenced the anomalous behavior.
-                    <br />For example, if analysing server performance metrics, you may wish to select region or server_role as key fields.
-                    <br />Results will be presented by key influencer fields.
-                  </div>
-                </div> -->
               </div>
             </div>
 
@@ -243,8 +211,8 @@
               <label ng-hide="ui.splitText === ''">{{ui.splitText}}</label>
               <div class='card-front'>
                 <div class="card-title"></div>
-                <div ng-repeat='(name, chart) in chartData.detectors' class='chart'>
-                  <label>{{formConfig.fields[name].agg.type.title}} {{name}}</label>
+                <div ng-repeat='(id, chart) in chartData.detectors' class='chart'>
+                  <label>{{formConfig.fields[id].agg.type.title}} {{formConfig.fields[id].name}}</label>
                   <ml-multi-metric-job-chart chart-data="chart"></ml-multi-metric-job-chart>
                 </div>
               </div>

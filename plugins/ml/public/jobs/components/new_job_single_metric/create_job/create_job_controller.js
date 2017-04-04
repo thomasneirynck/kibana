@@ -67,7 +67,6 @@ module
   const filterAggTypes = require('plugins/ml/jobs/components/new_job_single_metric/create_job/filter_agg_types');
 
   const aggTypes = Private(AggTypesIndexProvider);
-  $scope.groupName = 'metrics';
   $scope.courier = courier;
 
   $scope.index = $route.current.params.index;
@@ -78,6 +77,7 @@ module
   const MAX_BARS = BAR_TARGET + (BAR_TARGET / 100) * 100; // 100% larger that bar target
   const REFRESH_INTERVAL_MS = 100;
   const MAX_BUCKET_DIFF = 3;
+  const METRIC_AGG_TYPE = 'metrics';
 
   const JOB_STATE = {
     NOT_STARTED: 0,
@@ -119,7 +119,7 @@ module
     dirty: true,
     formValid: false,
     bucketSpanValid: true,
-    aggTypeOptions: filterAggTypes(aggTypes.byType[$scope.groupName]),
+    aggTypeOptions: filterAggTypes(aggTypes.byType[METRIC_AGG_TYPE]),
     fields: [],
     timeFields: [],
     intervals: [{

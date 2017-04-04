@@ -66,7 +66,6 @@ module
   const filterAggTypes = require('plugins/ml/jobs/components/new_job_single_metric/create_job/filter_agg_types');
 
   const aggTypes = Private(AggTypesIndexProvider);
-  $scope.groupName = 'metrics';
   $scope.courier = courier;
 
   mlMultiMetricJobService.clearChartData();
@@ -77,6 +76,8 @@ module
   const MAX_BARS = BAR_TARGET + (BAR_TARGET / 100) * 100; // 100% larger that bar target
   const REFRESH_INTERVAL_MS = 100;
   const MAX_BUCKET_DIFF = 3;
+  const METRIC_AGG_TYPE = 'metrics';
+  const EVENT_RATE_COUNT_FIELD = '__ml_event_rate_count__';
 
   const JOB_STATE = {
     NOT_STARTED: 0,
@@ -118,12 +119,11 @@ module
     dirty: false,
     formValid: false,
     bucketSpanValid: true,
-    aggTypeOptions: filterAggTypes(aggTypes.byType[$scope.groupName]),
+    aggTypeOptions: filterAggTypes(aggTypes.byType[METRIC_AGG_TYPE]),
     fields: [],
     splitFields: [],
     timeFields: [],
     splitText: '',
-    tickedFieldsCount:0,
     wizard: {
       step: 0,
       forward: function () {
@@ -136,11 +136,6 @@ module
     intervals: [{
       title: 'Auto',
       value: 'auto',
-      /*enabled: function (agg) {
-        // not only do we need a time field, but the selected field needs
-        // to be the time field. (see #3028)
-        return agg.fieldIsTimeField();
-      }*/
     }, {
       title: 'Millisecond',
       value: 'ms'
@@ -301,8 +296,21 @@ module
       }
     });
 
+    $scope.ui.fields.push({
+      id: EVENT_RATE_COUNT_FIELD,
+      name: 'event rate',
+      tooltip: 'System defined field',
+      isCountField: true,
+      agg: { type: _.findWhere($scope.ui.aggTypeOptions, { title: 'Count' }) }
+    });
+
     _.each(fields, (field) => {
-      $scope.ui.fields.push({ id: field.displayName, agg: { type: $scope.formConfig.agg.type } });
+      $scope.ui.fields.push({
+        id: field.displayName,
+        name: field.displayName,
+        tooltip: field.displayName,
+        agg: { type }
+      });
     });
 
     _.each(categoryFields, (field) => {
@@ -316,15 +324,15 @@ module
     }
   }
 
-  $scope.toggleFields = function (key, field) {
+  $scope.toggleFields = function (field) {
+    const key = field.id;
+
     const f = $scope.formConfig.fields[key];
     if (f === undefined) {
       $scope.formConfig.fields[key] = field;
     } else {
       delete $scope.formConfig.fields[key];
     }
-
-    $scope.ui.tickedFieldsCount = Object.keys($scope.formConfig.fields).length;
   };
 
   $scope.toggleKeyFields = function (key) {
@@ -338,7 +346,6 @@ module
 
   function getIndexedFields(param, fieldTypes) {
     let fields = _.filter(indexPattern.fields.raw, 'aggregatable');
-    // const fieldTypes = param.filterFieldTypes;
 
     if (fieldTypes) {
       fields = $filter('fieldType')(fields, fieldTypes);
@@ -719,4 +726,20 @@ module
     angular.element(window).off('resize');
   });
 
+}).filter('filterAggTypes', function () {
+  return (aggTypes, field) => {
+    const output = [];
+    _.each(aggTypes, (i) => {
+      if (field.id === '__ml_event_rate_count__') {
+        if(i.isCountType) {
+          output.push(i);
+        }
+      } else {
+        if(!i.isCountType) {
+          output.push(i);
+        }
+      }
+    });
+    return output;
+  };
 });

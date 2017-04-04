@@ -31,18 +31,21 @@ function filterAggTypes(aggTypes) {
 
     if (type.name === 'count') {
       type.mlModelPlotAgg = { max: 'max', min: 'min' };
+      type.isCountType = true;
       filteredAggTypes.push(type);
 
       typeCopy = angular.copy(type);
       typeCopy.mlName = 'high_count';
       typeCopy.title   = 'High count';
       typeCopy.mlModelPlotAgg = { max: 'max', min: 'min' };
+      type.isCountType = true;
       filteredAggTypes.push(typeCopy);
 
       typeCopy = angular.copy(type);
       typeCopy.mlName = 'low_count';
       typeCopy.title   = 'Low count';
-      typeCopy.mlModelPlotAgg = { max: 'max', min: 'min' };
+      typeCopy.mlModelPlotAgg = { ax: 'max', min: 'min' };
+      type.isCountType = true;
       filteredAggTypes.push(typeCopy);
 
     } else if (type.name === 'sum') {
@@ -51,30 +54,37 @@ function filterAggTypes(aggTypes) {
       typeCopy = angular.copy(type);
       typeCopy.mlName = 'high_sum';
       typeCopy.title   = 'High sum';
+      type.isCountType = false;
       filteredAggTypes.push(typeCopy);
 
       typeCopy = angular.copy(type);
       typeCopy.mlName = 'low_sum';
       typeCopy.title   = 'Low sum';
+      type.isCountType = false;
       filteredAggTypes.push(typeCopy);
 
     } else if (type.name === 'avg') {
       type.mlName = 'mean';
+      type.isCountType = false;
       filteredAggTypes.push(type);
 
       typeCopy = angular.copy(type);
       typeCopy.mlName = 'high_mean';
       typeCopy.title   = 'High average';
+      type.isCountType = false;
       filteredAggTypes.push(typeCopy);
 
       typeCopy = angular.copy(type);
       typeCopy.mlName = 'low_mean';
       typeCopy.title   = 'Low average';
+      type.isCountType = false;
       filteredAggTypes.push(typeCopy);
 
     } else if (type.name === 'min') {
+      type.isCountType = false;
       filteredAggTypes.push(type);
     } else if (type.name === 'max') {
+      type.isCountType = false;
       filteredAggTypes.push(type);
     } else if (type.name === 'cardinality') {
       type.mlModelPlotAgg = { max: 'max', min: 'min' };
@@ -86,6 +96,7 @@ function filterAggTypes(aggTypes) {
         }
       });
 
+      type.isCountType = false;
       filteredAggTypes.push(type);
     }
   });
