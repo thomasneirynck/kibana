@@ -1180,14 +1180,25 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     const deferred = $q.defer();
     let mappings = {};
 
-    es.indices.getMapping()
+    // load mappings and aliases
+    es.indices.get({ index: '*', feature:['_mappings','_aliases'] })
       .then((resp) => {
-        _.each(resp, (index) => {
+        _.each(resp, (index, indexName) => {
           // switch the 'mappings' for 'types' for consistency.
           if (index.mappings !== index.types) {
             Object.defineProperty(index, 'types',
-                Object.getOwnPropertyDescriptor(index, 'mappings'));
+              Object.getOwnPropertyDescriptor(index, 'mappings'));
             delete index.mappings;
+          }
+          // if an index has any aliases, create a copy of the index and give it the name
+          // of the alias
+          if (index.aliases && Object.keys(index.aliases).length) {
+            _.each(index.aliases, (alias, aliasName) => {
+              const indexCopy = angular.copy(resp[indexName]);
+              indexCopy.isAlias = true;
+              indexCopy.aliases = {};
+              resp[aliasName] = indexCopy;
+            });
           }
         });
         mappings = resp;
