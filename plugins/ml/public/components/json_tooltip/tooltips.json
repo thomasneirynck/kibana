@@ -3,7 +3,7 @@
       "text": "Unique identifier for job, can use lowercase alphanumeric and underscores."
    },
    "new_job_description": {
-      "text": "Optional descriptive text used in reporting."
+      "text": "Optional descriptive text."
    },
    "new_job_custom_urls": {
       "text": "Optional drill-through links to source data. Supports string substitution for analyzed fields e.g. $hostname$."
