@@ -26,5 +26,6 @@ module.constant('shieldPrivileges', {
     'delete_index',
     'create_index',
     'view_index_metadata',
+    'read_cross_cluster',
   ]
 });
