@@ -21,6 +21,7 @@
 
 import _ from 'lodash';
 import $ from 'jquery';
+import moment from 'moment';
 
 import 'plugins/ml/components/influencers_list';
 import 'plugins/ml/components/job_select_list';
@@ -191,7 +192,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     $scope.appState.mlExplorerSwimlane.viewBy = viewByFieldName;
     $scope.appState.save();
 
-    loadViewBySwimlane();
+    loadViewBySwimlane([]);
     clearSelectedAnomalies();
   };
 
@@ -243,10 +244,26 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
   mlExplorerDashboardService.addSwimlaneCellClickListener((cellData) => {
     if (_.keys(cellData).length === 0) {
       // Swimlane deselection - clear anomalies section.
+      if ($scope.viewByLoadedForTimeFormatted) {
+        // Reload 'view by' swimlane over full time range.
+        loadViewBySwimlane([]);
+      }
       clearSelectedAnomalies();
     } else {
       let jobIds = [];
       const influencers = [];
+
+      // Time range for charts should be maximum time span at job bucket span, centred on the selected cell.
+      const bounds = timefilter.getActiveBounds();
+      const earliestMs = cellData.time !== undefined ? cellData.time * 1000 : bounds.min.valueOf();
+      const latestMs = cellData.time !== undefined ? ((cellData.time  + cellData.interval) * 1000) - 1 : bounds.max.valueOf();
+
+      if (cellData.fieldName === undefined) {
+        // Click is in one of the cells in the Overall swimlane - reload the 'view by' swimlane
+        // to show the top 'view by' values for the selected time.
+        loadViewBySwimlaneForSelectedTime(earliestMs, latestMs);
+        $scope.viewByLoadedForTimeFormatted = moment(earliestMs).format('MMMM Do YYYY, HH:mm');
+      }
 
       if (cellData.fieldName === VIEW_BY_JOB_LABEL) {
         jobIds.push(cellData.laneLabel);
@@ -257,12 +274,6 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
           influencers.push({ fieldName: $scope.swimlaneViewByFieldName, fieldValue: cellData.laneLabel });
         }
       }
-
-      // Time range for charts should be maximum time span at job bucket span, centred on the selected cell.
-      const bounds = timefilter.getActiveBounds();
-
-      const earliestMs = cellData.time !== undefined ? cellData.time * 1000 : bounds.min.valueOf();
-      const latestMs = cellData.time !== undefined ? ((cellData.time  + cellData.interval) * 1000) - 1 : bounds.max.valueOf();
 
       $scope.loadAnomaliesTable(jobIds, influencers, earliestMs, latestMs);
       $scope.loadAnomaliesForCharts(jobIds, influencers, earliestMs, latestMs);
@@ -369,7 +380,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
       $scope.appState.save();
     }
 
-    loadViewBySwimlane();
+    loadViewBySwimlane([]);
 
   }
 
@@ -441,7 +452,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
 
   }
 
-  function loadViewBySwimlane() {
+  function loadViewBySwimlane(fieldValues) {
     // finish() function, called after each data set has been loaded and processed.
     // The last one to call it will trigger the page render.
     function finish() {
@@ -464,13 +475,14 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
       // load scores by influencer/jobId value and time.
       if ($scope.swimlaneViewByFieldName !== VIEW_BY_JOB_LABEL) {
         mlResultsService.getInfluencerValueMaxScoreByTime($scope.indexPatternId, selectedJobIds, $scope.swimlaneViewByFieldName,
-          bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression, MAX_DISPLAY_FIELD_VALUES)
+          fieldValues, bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression, MAX_DISPLAY_FIELD_VALUES)
         .then((resp) => {
           processViewByResults(resp.results);
           finish();
         });
       } else {
-        mlResultsService.getScoresByBucket($scope.indexPatternId, selectedJobIds,
+        const jobIds = (fieldValues !== undefined && fieldValues.length > 0) ? fieldValues : selectedJobIds;
+        mlResultsService.getScoresByBucket($scope.indexPatternId, jobIds,
           bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression, MAX_DISPLAY_FIELD_VALUES)
         .then((resp) => {
           processViewByResults(resp.results);
@@ -481,10 +493,38 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     }
   }
 
+  function loadViewBySwimlaneForSelectedTime(earliestMs, latestMs) {
+    const selectedJobIds = $scope.getSelectedJobIds();
+
+    // Find the top field values for the selected time, and then load the 'view by'
+    // swimlane over the full time range for those specific field values.
+    if ($scope.swimlaneViewByFieldName !== VIEW_BY_JOB_LABEL) {
+      mlResultsService.getTopInfluencers($scope.indexPatternId, selectedJobIds,
+        earliestMs, latestMs, MAX_INFLUENCER_FIELD_NAMES, MAX_DISPLAY_FIELD_VALUES)
+      .then((resp) => {
+        const topFieldValues = [];
+        const topInfluencers = resp.influencers[$scope.swimlaneViewByFieldName];
+        _.each(topInfluencers, (influencerData) => {
+          if (influencerData.maxAnomalyScore > 0) {
+            topFieldValues.push(influencerData.influencerFieldValue);
+          }
+        });
+        loadViewBySwimlane(topFieldValues);
+      });
+    } else {
+      mlResultsService.getScoresByBucket($scope.indexPatternId, selectedJobIds,
+        earliestMs, latestMs, $scope.swimlaneBucketInterval.expression, MAX_DISPLAY_FIELD_VALUES)
+      .then((resp) => {
+        loadViewBySwimlane(_.keys(resp.results));
+      });
+    }
+  }
+
   function clearSelectedAnomalies() {
     $scope.anomalyChartRecords = {};
     $scope.anomalyRecords = [];
     $scope.showNoSelectionMessage = true;
+    $scope.viewByLoadedForTimeFormatted = null;
   }
 
   function calculateSwimlaneBucketInterval() {

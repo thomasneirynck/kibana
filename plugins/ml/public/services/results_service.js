@@ -57,7 +57,7 @@ module.service('mlResultsService', function ($q, es) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard': true,
+          'analyze_wildcard': false,
           'query': jobIdFilterStr
         }
       });
@@ -73,7 +73,7 @@ module.service('mlResultsService', function ($q, es) {
             'filter': [{
               'query_string': {
                 'query': '_type:result AND result_type:bucket',
-                'analyze_wildcard': true
+                'analyze_wildcard': false
               }
             }, {
               'bool': {
@@ -149,7 +149,7 @@ module.service('mlResultsService', function ($q, es) {
   };
 
 
-  // Obtains the top influencers, by maximum anomaly score, for the specified index, time range and job ID(s).
+  // Obtains the top influencers, by maximum influencer score, for the specified index, time range and job ID(s).
   // Pass an empty array or ['*'] to search over all job IDs.
   // Returned response contains an influencers property, with a key for each of the influencer field names,
   // whose value is an array of objects containing influencerFieldValue, maxAnomalyScore and sumAnomalyScore keys.
@@ -180,7 +180,7 @@ module.service('mlResultsService', function ($q, es) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard':true,
+          'analyze_wildcard':false,
           'query':jobIdFilterStr
         }
       });
@@ -196,7 +196,7 @@ module.service('mlResultsService', function ($q, es) {
               {
                 'query_string': {
                   'query': '_type:result AND result_type:influencer',
-                  'analyze_wildcard': true
+                  'analyze_wildcard': false
                 }
               },
               {
@@ -307,7 +307,7 @@ module.service('mlResultsService', function ($q, es) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard':true,
+          'analyze_wildcard':false,
           'query':jobIdFilterStr
         }
       });
@@ -323,7 +323,7 @@ module.service('mlResultsService', function ($q, es) {
               {
                 'query_string': {
                   'query': '_type:result AND result_type:influencer AND influencer_field_name:' + influencerFieldName,
-                  'analyze_wildcard': true
+                  'analyze_wildcard': false
                 }
               },
               {
@@ -407,7 +407,7 @@ module.service('mlResultsService', function ($q, es) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard':true,
+          'analyze_wildcard':false,
           'query':jobIdFilterStr
         }
       });
@@ -423,7 +423,7 @@ module.service('mlResultsService', function ($q, es) {
               {
                 'query_string': {
                   'query': '_type:result AND result_type:bucket_influencer',
-                  'analyze_wildcard': true
+                  'analyze_wildcard': false
                 }
               },
               {
@@ -469,11 +469,13 @@ module.service('mlResultsService', function ($q, es) {
     return deferred.promise;
   };
 
-  // Obtains the maximum score by influencer_field_value and by time for the specified job ID(s).
-  // Pass an empty array or ['*'] to search over all job IDs.
+  // Obtains the maximum score by influencer_field_value and by time for the specified job ID(s)
+  // (pass an empty array or ['*'] to search over all job IDs), and specified influencer field
+  // values (pass an empty array to search over all field values).
   // Returned response contains a results property with influencer field values keyed
   // against max score by time.
-  this.getInfluencerValueMaxScoreByTime = function (index, jobIds, influencerFieldName, earliestMs, latestMs, interval, maxResults) {
+  this.getInfluencerValueMaxScoreByTime = function (index, jobIds, influencerFieldName, influencerFieldValues,
+    earliestMs, latestMs, interval, maxResults) {
     const deferred = $q.defer();
     const obj = { success: true, results: {} };
 
@@ -500,8 +502,25 @@ module.service('mlResultsService', function ($q, es) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard':true,
+          'analyze_wildcard':false,
           'query':jobIdFilterStr
+        }
+      });
+    }
+
+    if (influencerFieldValues && influencerFieldValues.length > 0) {
+      let influencerFilterStr = '';
+      _.each(influencerFieldValues, (value, i) => {
+        if (i > 0) {
+          influencerFilterStr += ' OR ';
+        }
+        influencerFilterStr += 'influencer_field_value:';
+        influencerFilterStr += value;
+      });
+      boolCriteria.push({
+        'query_string': {
+          'analyze_wildcard':false,
+          'query':influencerFilterStr
         }
       });
     }
@@ -516,7 +535,7 @@ module.service('mlResultsService', function ($q, es) {
               {
                 'query_string': {
                   'query': '_type:result AND result_type:influencer AND influencer_field_name:' + influencerFieldName,
-                  'analyze_wildcard': true
+                  'analyze_wildcard': false
                 }
               },
               {
@@ -687,7 +706,7 @@ module.service('mlResultsService', function ($q, es) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard':true,
+          'analyze_wildcard':false,
           'query':jobIdFilterStr
         }
       });
@@ -704,7 +723,7 @@ module.service('mlResultsService', function ($q, es) {
               {
                 'query_string': {
                   'query': '_type:result AND result_type:record',
-                  'analyze_wildcard': true
+                  'analyze_wildcard': false
                 }
               },
               {
@@ -776,7 +795,7 @@ module.service('mlResultsService', function ($q, es) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard':true,
+          'analyze_wildcard':false,
           'query':jobIdFilterStr
         }
       });
@@ -817,7 +836,7 @@ module.service('mlResultsService', function ($q, es) {
               {
                 'query_string': {
                   'query': '_type:result AND result_type:record',
-                  'analyze_wildcard': true
+                  'analyze_wildcard': false
                 }
               },
               {
@@ -932,7 +951,7 @@ module.service('mlResultsService', function ($q, es) {
               {
                 'query_string': {
                   'query': '_type:result AND result_type:record',
-                  'analyze_wildcard': true
+                  'analyze_wildcard': false
                 }
               },
               {
@@ -1011,7 +1030,7 @@ module.service('mlResultsService', function ($q, es) {
       });
       boolCriteria.push({
         'query_string': {
-          'analyze_wildcard':true,
+          'analyze_wildcard':false,
           'query':jobIdFilterStr
         }
       });
@@ -1038,7 +1057,7 @@ module.service('mlResultsService', function ($q, es) {
               {
                 'query_string': {
                   'query': '_type:result AND result_type:record',
-                  'analyze_wildcard': true
+                  'analyze_wildcard': false
                 }
               },
               {

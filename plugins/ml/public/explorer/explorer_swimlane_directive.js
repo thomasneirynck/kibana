@@ -313,6 +313,13 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
         return $(this).text() === laneLabel;
       }).removeClass('lane-label-masked');
 
+      if (scope.swimlaneType === 'viewBy') {
+        // If selecting a cell in the 'view by' swimlane, indicate the corresponding time in the Overall swimlane.
+        const overallSwimlane = $('ml-explorer-swimlane[swimlane-type="overall"]');
+        const overallCell = $('div[data-time="' + time + '"]', overallSwimlane).find('.sl-cell-inner');
+        overallCell.addClass('sl-cell-inner-selected');
+      }
+
       scope.appState.mlExplorerSwimlane.selectedType = scope.swimlaneType;
       scope.appState.mlExplorerSwimlane.selectedLane = laneLabel;
       scope.appState.mlExplorerSwimlane.selectedTime = time;

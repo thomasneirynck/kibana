@@ -95,7 +95,10 @@
                 <li ng-repeat="swimlaneOption in viewBySwimlaneOptions"><a ng-click="setSwimlaneViewBy(swimlaneOption)">{{swimlaneOption}}</a></li>
               </ul>
             </div>
-            <span class="panel-sub-title">
+            <span ng-if="viewByLoadedForTimeFormatted" class="panel-sub-title">
+              (Top 10 by max anomaly score for {{viewByLoadedForTimeFormatted}})
+            </span>
+            <span ng-if="!viewByLoadedForTimeFormatted" class="panel-sub-title">
               (Top 10 by max anomaly score)
             </span>
           </div>
