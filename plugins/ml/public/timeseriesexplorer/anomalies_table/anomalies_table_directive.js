@@ -300,6 +300,8 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         // Only show columns in the table which exist in the results.
         scope.table.columns = getPaginatedTableColumns(summaryRecords);
 
+        // Sort by severity by default.
+        summaryRecords = (_.sortBy(summaryRecords, 'max severity')).reverse();
         scope.table.rows = summaryRecords.map(function (record) {
           return createTableRow(record);
         });
@@ -378,7 +380,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         console.log('aggregateAnomalies() aggregatedData is:', aggregatedData);
 
         // Flatten the aggregatedData to give a list of records with the highest score per bucketed time / detector.
-        let summaryRecords = [];
+        const summaryRecords = [];
         _.each(aggregatedData, function (timeDetectors, roundedTime) {
           _.each(timeDetectors, function (entityDetectors, detector) {
             _.each(entityDetectors, function (record, entity) {
@@ -450,8 +452,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
             });
           });
         });
-        summaryRecords = (_.sortBy(summaryRecords, 'time')).reverse();
-        console.log('aggregateAnomalies() returning list of summary records:', summaryRecords.length);
+
         return summaryRecords;
 
       }
@@ -472,9 +473,15 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         // category examples (if by mlcategory)
         const paginatedTableColumns = [
           { title: '', sortable: false, class: 'col-expand-arrow' },
-          { title: 'time', sortable: true },
-          { title: 'max severity', sortable: true },
-          { title: 'detector', sortable: true }];
+          { title: 'time', sortable: true }];
+
+        if (scope.isShowingAggregatedData()) {
+          paginatedTableColumns.push({ title: 'max severity', sortable: true });
+        } else {
+          paginatedTableColumns.push({ title: 'severity', sortable: true });
+        }
+
+        paginatedTableColumns.push({ title: 'detector', sortable: true });
 
         const showEntity = _.some(summaryRecords, 'entityValue');
         const showInfluencers = _.some(summaryRecords, 'influencers');
