@@ -8,7 +8,7 @@ import 'plugins/security/services/shield_role';
 import checkLicenseError from 'plugins/security/lib/check_license_error';
 import GateKeeperProvider from 'plugins/xpack_main/services/gate_keeper';
 
-routes.when('/management/elasticsearch/users/edit/:username?', {
+routes.when('/management/elasticsearch/security/users/edit/:username?', {
   template,
   resolve: {
     tribeRedirect(Private) {
@@ -28,7 +28,7 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
           const notifier = new Notifier();
           if (response.status !== 404) return notifier.fatal(response);
           notifier.error(`No "${username}" user found.`);
-          kbnUrl.redirect('/management/elasticsearch/users');
+          kbnUrl.redirect('/management/elasticsearch/security/users');
           return Promise.halt();
         });
       }
@@ -76,7 +76,7 @@ routes.when('/management/elasticsearch/users/edit/:username?', {
     };
 
     $scope.goToUserList = () => {
-      kbnUrl.redirect('/management/elasticsearch/users');
+      kbnUrl.redirect('/management/elasticsearch/security/users');
     };
 
     $scope.saveNewPassword = (newPassword, currentPassword, onSuccess, onIncorrectPassword) => {

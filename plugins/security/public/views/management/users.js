@@ -6,7 +6,11 @@ import 'plugins/security/services/shield_user';
 import checkLicenseError from 'plugins/security/lib/check_license_error';
 import GateKeeperProvider from 'plugins/xpack_main/services/gate_keeper';
 
-routes.when('/management/elasticsearch/users', {
+routes.when('/management/elasticsearch/security', {
+  redirectTo: '/management/elasticsearch/security/users'
+});
+
+routes.when('/management/elasticsearch/security/users', {
   template,
   resolve: {
     tribeRedirect(Private) {

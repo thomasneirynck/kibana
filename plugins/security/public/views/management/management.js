@@ -21,35 +21,33 @@ routes.defaults(/\/management/, {
       const tribeTooltip = 'Not available when using a tribe node.';
 
       function deregisterSecurity() {
-        elasticsearch.deregister('users');
-        elasticsearch.deregister('roles');
+        elasticsearch.deregister('security');
       }
 
       function registerSecurity() {
-        if (!elasticsearch.hasItem('users')) {
+        if (!elasticsearch.hasItem('security')) {
           const options = {
             order: 10,
-            display: 'Users'
+            display: 'Security'
           };
           if (esDataIsTribe) {
             options.tooltip = tribeTooltip;
           } else {
-            options.url = '#/management/elasticsearch/users';
+            options.url = '#/management/elasticsearch/security';
           }
-          elasticsearch.register('users', options);
-        }
+          const security = elasticsearch.register('security', options);
 
-        if (!elasticsearch.hasItem('roles')) {
-          const options = {
+          security.register('users', {
+            order: 10,
+            display: 'Users',
+            url: '#/management/elasticsearch/security/users'
+          });
+
+          security.register('roles', {
             order: 20,
-            display: 'Roles'
-          };
-          if (esDataIsTribe) {
-            options.tooltip = tribeTooltip;
-          } else {
-            options. url = '#/management/elasticsearch/roles';
-          }
-          elasticsearch.register('roles', options);
+            display: 'Roles',
+            url: '#/management/elasticsearch/security/roles'
+          });
         }
       }
 

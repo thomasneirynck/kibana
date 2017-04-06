@@ -7,7 +7,7 @@ import 'plugins/security/services/shield_role';
 import checkLicenseError from 'plugins/security/lib/check_license_error';
 import GateKeeperProvider from 'plugins/xpack_main/services/gate_keeper';
 
-routes.when('/management/elasticsearch/roles', {
+routes.when('/management/elasticsearch/security/roles', {
   template,
   resolve: {
     tribeRedirect(Private) {

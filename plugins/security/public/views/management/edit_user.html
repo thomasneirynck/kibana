@@ -1,4 +1,4 @@
-<kbn-management-app section="elasticsearch" omit-breadcrumb-pages="['edit']">
+<kbn-management-app section="elasticsearch/security" omit-breadcrumb-pages="['edit']">
   <div class="kuiViewContent kuiViewContent--constrainedWidth kuiViewContentItem">
     <!-- Subheader -->
     <div class="kuiBar kuiVerticalRhythm">
@@ -164,7 +164,7 @@
       <a
         class="kuiButton kuiButton--basic"
         ng-if="!user.metadata._reserved"
-        href="#/management/elasticsearch/users"
+        href="#/management/elasticsearch/security/users"
         data-test-subj="userFormCancelButton"
       >
         Cancel

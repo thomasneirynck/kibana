@@ -4,8 +4,9 @@ import monitoring from './plugins/monitoring';
 import { reporting } from './plugins/reporting';
 import security from './plugins/security';
 import searchprofiler from './plugins/searchprofiler';
-import tilemap from './plugins/tilemap';
 import ml from './plugins/ml';
+import tilemap from './plugins/tilemap';
+import watcher from './plugins/watcher';
 
 module.exports = function (kibana) {
   return [
@@ -16,6 +17,7 @@ module.exports = function (kibana) {
     security(kibana),
     searchprofiler(kibana),
     ml(kibana),
-    tilemap(kibana)
+    tilemap(kibana),
+    watcher(kibana)
   ];
 };

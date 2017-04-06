@@ -13,7 +13,7 @@ import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
 import checkLicenseError from 'plugins/security/lib/check_license_error';
 import GateKeeperProvider from 'plugins/xpack_main/services/gate_keeper';
 
-routes.when('/management/elasticsearch/roles/edit/:name?', {
+routes.when('/management/elasticsearch/security/roles/edit/:name?', {
   template,
   resolve: {
     tribeRedirect(Private) {
@@ -29,7 +29,7 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
           const notifier = new Notifier();
           if (response.status !== 404) return notifier.fatal(response);
           notifier.error(`No "${name}" role found.`);
-          kbnUrl.redirect('/management/elasticsearch/roles');
+          kbnUrl.redirect('/management/elasticsearch/security/roles');
           return Promise.halt();
         });
       }
@@ -86,7 +86,7 @@ routes.when('/management/elasticsearch/roles/edit/:name?', {
     };
 
     $scope.goToRoleList = () => {
-      kbnUrl.redirect('/management/elasticsearch/roles');
+      kbnUrl.redirect('/management/elasticsearch/security/roles');
     };
 
     $scope.addIndex = indices => {
