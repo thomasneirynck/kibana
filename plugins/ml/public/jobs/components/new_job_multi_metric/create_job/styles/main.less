@@ -94,7 +94,7 @@
       }
       .field-row:first-child {
         border-bottom: 1px dashed #CCCCCC;
-        padding-bottom: 4px;
+        padding-bottom: 5px;
         span {
           font-style: italic;
           padding-right: 5px;
@@ -162,6 +162,42 @@
 
   div.validation-error {
     color: #fe5050;
+  }
+}
+
+.chart-contrainer {
+  .chart-loader {
+    border: 1px solid #e5e5e5;
+    margin-left: 49px;
+    display: flex;
+    margin-bottom: 25px;
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.75);
+    transition: opacity 0.5s ;
+
+    .status-label {
+      width: 50%;
+      text-align: center;
+      margin: auto;
+
+      i {
+        color: #5a9bd6
+      }
+
+      .no-results {
+        color: #555;
+
+        h2, h4 {
+          margin-top: 0px;
+        }
+      }
+    }
+  }
+
+  .event-rate-chart-loader {
+    h2, h4 {
+      // margin: 0px;
+    }
   }
 }
 

@@ -25,97 +25,133 @@
     color: #fe5050;
   }
 
- }
-ml-single-metric-job-chart {
-  svg {
-    font-size: 12px;
-    font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial;
-  }
+  .chart-contrainer {
+    margin-bottom: 20px;
 
-  .axis path, .axis line {
-    fill: none;
-    stroke: #cccccc;
-    shape-rendering: crispEdges;
-  }
+    .chart-loader {
+      border: 1px solid #e5e5e5;
+      margin-left: 49px;
+      display: flex;
+      margin-bottom: 55px;
+      position: relative;
+      background-color: rgba(255, 255, 255, 0.75);
 
-  .axis text {
-    fill: #000;
-  }
+      .status-label {
+        width: 50%;
+        text-align: center;
+        margin: auto;
 
-  .axis .tick line {
-    stroke: rgba(0, 0, 0, 0.1);
-    stroke-width: 0px;
-  }
+        i {
+          color: #5a9bd6
+        }
 
-  .area {
-    stroke-width: 1;
-  }
+        .no-results {
+          color: #555;
+          background-color: aliceblue;
+          border: 1px solid #DDEFFF;
+          padding: 25px;
+          border-radius: 4px;
+          display: inline-block;
 
-  .area.bounds {
-    fill: rgba(50, 167, 194, 0.25);
-  }
+          h2, h4 {
+            margin-top: 0px;
+          }
+        }
+      }
+    }
 
-  .values-line {
-    fill: none;
-    stroke: #32a7c2;
-    stroke-width: 2;
-  }
+    ml-single-metric-job-chart {
+      svg {
+        font-size: 12px;
+        font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial;
+      }
 
-  .metric-value {
-    opacity: 1;
-    fill: #32a7c2;
-  }
+      .axis path, .axis line {
+        fill: none;
+        stroke: #cccccc;
+        shape-rendering: crispEdges;
+      }
 
-  .context-chart .axis text {
-    font-size: 10px;
-    fill: #333333;
-  }
+      .axis text {
+        fill: #000;
+      }
 
-  .area.context {
-    fill: #e4e4e4;
-  }
+      .axis .tick line {
+        stroke: rgba(0, 0, 0, 0.1);
+        stroke-width: 0px;
+      }
 
-  .swimlane .axis text {
-    display: none;
-  }
+      .area {
+        stroke-width: 1;
+      }
 
-  .swimlane rect.swimlane-cell-hidden {
-    display: none;
-  }
+      .area.bounds {
+        fill: rgba(50, 167, 194, 0.25);
+      }
 
-  .model-chart, .swimlane {
-    transition: opacity 0.5s ;
-  }
+      .values-line {
+        fill: none;
+        stroke: #32a7c2;
+        stroke-width: 2;
+      }
 
-  .bottom-swimlane .axis .tick line {
-    stroke-width: 1px;
-  }
+      .metric-value {
+        opacity: 1;
+        fill: #32a7c2;
+      }
 
-  .swimlane-cell:hover {
-    opacity: 1;
-  }
+      .context-chart .axis text {
+        font-size: 10px;
+        fill: #333333;
+      }
 
-  .brush .extent {
-    stroke: #fff;
-    fill-opacity: .125;
-    shape-rendering: crispEdges;
-  }
+      .area.context {
+        fill: #e4e4e4;
+      }
 
-  .progress {
-    display: inline-block;
-    min-width: 70px;
-    margin-bottom: -5px;
-    margin-left: 49px;
-    background-color: #FFFFFF;
-    height: 2px;
-    border-radius: 0px;
-  }
+      .swimlane .axis text {
+        display: none;
+      }
 
-  .progress-bar {
-    text-align: right;
-    line-height: 18px;
-    transition: none;
-    background-color: #32a7c2;
+      .swimlane rect.swimlane-cell-hidden {
+        display: none;
+      }
+
+      .model-chart, .swimlane {
+        transition: opacity 0.5s ;
+      }
+
+      .bottom-swimlane .axis .tick line {
+        stroke-width: 1px;
+      }
+
+      .swimlane-cell:hover {
+        opacity: 1;
+      }
+
+      .brush .extent {
+        stroke: #fff;
+        fill-opacity: .125;
+        shape-rendering: crispEdges;
+      }
+
+      .progress {
+        display: inline-block;
+        min-width: 70px;
+        margin-bottom: -5px;
+        margin-left: 49px;
+        background-color: #FFFFFF;
+        height: 2px;
+        border-radius: 0px;
+      }
+
+      .progress-bar {
+        text-align: right;
+        line-height: 18px;
+        transition: none;
+        background-color: #32a7c2;
+      }
+    }
   }
 }
 

@@ -30,8 +30,8 @@ module.directive('mlMultiMetricJobChart', function () {
   function link(scope, element) {
 
     let svgWidth = 0;
-    const lineChartHeight = 150;
-    const margin = { top: 0, right: 0, bottom: 30, left: 50 };
+    const lineChartHeight = scope.chartHeight;
+    const margin = { top: 0, right: 0, bottom: 20, left: 50 };
     const svgHeight = lineChartHeight + margin.top + margin.bottom;
     let vizWidth  = svgWidth  - margin.left - margin.right;
     const chartLimits = { max: 0, min: 0 };
@@ -241,6 +241,7 @@ module.directive('mlMultiMetricJobChart', function () {
   return {
     scope: {
       chartData: '=',
+      chartHeight: '='
     },
     link: link
   };

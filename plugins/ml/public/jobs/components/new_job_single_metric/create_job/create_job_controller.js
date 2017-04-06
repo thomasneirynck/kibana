@@ -79,6 +79,13 @@ module
   const MAX_BUCKET_DIFF = 3;
   const METRIC_AGG_TYPE = 'metrics';
 
+  const CHART_STATE = {
+    NOT_STARTED: 0,
+    LOADING: 1,
+    LOADED: 2,
+    NO_RESULTS: 3
+  };
+
   const JOB_STATE = {
     NOT_STARTED: 0,
     RUNNING: 1,
@@ -90,6 +97,9 @@ module
 
   $scope.JOB_STATE = JOB_STATE;
   $scope.jobState = $scope.JOB_STATE.NOT_STARTED;
+
+  $scope.CHART_STATE = CHART_STATE;
+  $scope.chartState = CHART_STATE.NOT_STARTED;
 
   let indexPattern = $route.current.locals.indexPattern;
   let query = {
@@ -157,7 +167,8 @@ module
     }, {
       title: 'Custom',
       value: 'custom'
-    }]
+    }],
+    chartHeight: 310
   };
 
   $scope.formConfig = {
@@ -294,72 +305,17 @@ module
       $scope.ui.showJobFinished = false;
 
       $scope.formConfig.indexPattern = indexPattern;
-      // $scope.formConfig.jobId = '';
       $scope.ui.dirty = false;
 
+      $scope.chartState = CHART_STATE.LOADING;
+
       mlSingleMetricJobService.getLineChartResults($scope.formConfig)
-      .then(() => {
-        // console.log('chart results', results);
-        $scope.hasResults = true;
+      .then((resp) => {
         $scope.$broadcast('render');
+        $scope.chartState = (resp.length) ? CHART_STATE.LOADED : CHART_STATE.NO_RESULTS;
       });
     }
   };
-/*
-  function createVisJson() {
-    let visJson = {
-      '_source': {
-        'visState': {
-          'title': 'New Visualization',
-          'type': 'line',
-          'params': {
-            'shareYAxis': true,
-            'addTooltip': true,
-            'addLegend': true,
-            'legendPosition': 'right',
-            'showCircles': true,
-            'smoothLines': false,
-            'interpolate': 'linear',
-            'scale': 'linear',
-            'drawLinesBetweenPoints': true,
-            'radiusRatio': 9,
-            'times': [],
-            'addTimeMarker': false,
-            'defaultYExtents': false,
-            'setYExtents': false,
-            'yAxis': {}
-          },
-          'aggs': [
-            {
-              'id': '1',
-              'enabled': true,
-              'type': $scope.formConfig.agg.type,
-              'schema': 'metric',
-              'params': {
-                'field': $scope.formConfig.field
-              }
-            },
-            {
-              'id': '2',
-              'enabled': true,
-              'type': 'date_histogram',
-              'schema': 'segment',
-              'params': {
-                'field': $scope.formConfig.timeField,
-                'interval': 'auto',
-                'customInterval': $scope.formConfig.interval,
-                'min_doc_count': 1,
-                'extended_bounds': {}
-              }
-            }
-          ],
-          'listeners': {}
-        }
-      }
-    };
-    return visJson;
-  }
-  */
 
   // force job ids to be lowercase
   $scope.changeJobIDCase = function () {

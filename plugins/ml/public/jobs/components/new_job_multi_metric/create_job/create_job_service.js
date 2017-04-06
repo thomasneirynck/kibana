@@ -43,7 +43,8 @@ module.service('mlMultiMetricJobService', function (
     },
     detectors: {},
     percentComplete: 0,
-    loadingDifference: 0
+    loadingDifference: 0,
+    lastLoadTimestamp: null
   };
   this.job = {};
 
@@ -58,7 +59,7 @@ module.service('mlMultiMetricJobService', function (
     this.job = {};
   };
 
-  this.getLineChartResults = function (formConfig) {
+  this.getLineChartResults = function (formConfig, thisLoadTimestamp) {
     const deferred = $q.defer();
 
     const fieldIds = Object.keys(formConfig.fields).sort();
@@ -81,6 +82,17 @@ module.service('mlMultiMetricJobService', function (
 
     es.search(searchJson)
     .then((resp) => {
+      // if this is the last chart load, wipe all previous chart data
+      if (thisLoadTimestamp === this.chartData.lastLoadTimestamp) {
+        _.each(fieldIds, (field) => {
+          this.chartData.detectors[field] = {
+            line: [],
+            swimlane:[]
+          };
+        });
+      } else {
+        deferred.reject(this.chartData);
+      }
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
       _.each(aggregationsByTime, (dataForTime) => {
         const time = +dataForTime.key;
@@ -104,20 +116,22 @@ module.service('mlMultiMetricJobService', function (
         _.each(fieldIds, (fieldId) => {
           const value = (fieldId === EVENT_RATE_COUNT_FIELD) ? docCount : dataForTime[fieldId].value;
 
-          this.chartData.detectors[fieldId].line.push({
-            date: date,
-            time: time,
-            value: (isFinite(value)) ? value : 0,
-          });
+          if (this.chartData.detectors[fieldId]) {
+            this.chartData.detectors[fieldId].line.push({
+              date: date,
+              time: time,
+              value: (isFinite(value)) ? value : 0,
+            });
 
-          // init swimlane
-          this.chartData.detectors[fieldId].swimlane.push({
-            date: date,
-            time: time,
-            value: 0,
-            color: '',
-            percentComplete: 0
-          });
+            // init swimlane
+            this.chartData.detectors[fieldId].swimlane.push({
+              date: date,
+              time: time,
+              value: 0,
+              color: '',
+              percentComplete: 0
+            });
+          }
         });
       });
       deferred.resolve(this.chartData);
@@ -452,8 +466,8 @@ module.service('mlMultiMetricJobService', function (
           time,
           value: (isFinite(value)) ? value : 0,
         });
-        deferred.resolve(this.chartData);
       });
+      deferred.resolve(this.chartData);
     }).catch((resp) => {
       console.log('getEventRate visualization - error getting event rate data from elasticsearch:', resp);
       deferred.resolve(this.chartData);

@@ -30,7 +30,7 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
   function link(scope, element) {
 
     let svgWidth = 0;
-    const barChartHeight = 100;
+    const barChartHeight = scope.eventRateChartHeight;
     const margin = { top: 0, right: 0, bottom: 20, left: 50 };
     const svgHeight = barChartHeight + margin.top + margin.bottom;
     let vizWidth  = svgWidth  - margin.left - margin.right;
@@ -247,6 +247,7 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
   return {
     scope: {
       chartData: '=',
+      eventRateChartHeight: '='
     },
     link: link
   };

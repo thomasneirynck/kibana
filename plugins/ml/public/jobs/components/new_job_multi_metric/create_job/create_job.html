@@ -203,17 +203,58 @@
         <div class="row charts-container">
           <h4>Results</h4>
           <div>
-            <div class='chart-list-panel event-rate-container'>
+            <div class='chart-list-panel event-rate-container' style='height: {{ui.eventRateChartHeight + 70}}px;'>
               <label>Document count</label>
-              <ml-multi-metric-job-event-rate-chart chart-data="chartData.job" ></ml-multi-metric-job-event-rate-chart>
+
+              <div class='chart-contrainer'>
+                <div style='height: {{ui.eventRateChartHeight + 25}}px;'>
+                  <ml-multi-metric-job-event-rate-chart chart-data="chartData.job" event-rate-chart-height='ui.eventRateChartHeight'></ml-multi-metric-job-event-rate-chart>
+                </div>
+
+                <div ng-show="chartStates.eventRate === CHART_STATE.NOT_STARTED || chartStates.eventRate === CHART_STATE.LOADING || chartStates.eventRate === CHART_STATE.NO_RESULTS"
+                  class='chart-loader event-rate-chart-loader'
+                  style='height: {{ui.eventRateChartHeight}}px; margin-top: -{{ui.eventRateChartHeight + 25}}px;'>
+                    <div class='status-label' ng-if="chartStates.eventRate === CHART_STATE.NOT_STARTED"></div>
+                    <div class='status-label' ng-if="chartStates.eventRate === CHART_STATE.LOADING">
+                      <h2><i class='fa fa-spinner fa-spin'></i></h2>
+                    </div>
+                    <div class='status-label' ng-if="chartStates.eventRate === CHART_STATE.NO_RESULTS">
+                      <div class='no-results'>
+                        <h4><i class="fa fa-info-circle"></i> No results found</h4>
+                        <span>Consider using the <a ng-click="setFullTimeRange()">full {{ui.indexPatternId}} data</a></span>
+                      </div>
+                    </div>
+                </div>
+
+              </div>
+
             </div>
-            <div class='chart-list-panel detector-container'>
+            <div class='chart-list-panel detector-container' ng-show='ui.showFieldCharts'>
               <label ng-hide="ui.splitText === ''">{{ui.splitText}}</label>
               <div class='card-front'>
                 <div class="card-title"></div>
-                <div ng-repeat='(id, chart) in chartData.detectors' class='chart'>
+                <div ng-repeat='(id, chart) in chartData.detectors' class='chart' style='height: {{ui.chartHeight + 50}}px;'>
                   <label>{{formConfig.fields[id].agg.type.title}} {{formConfig.fields[id].name}}</label>
-                  <ml-multi-metric-job-chart chart-data="chart"></ml-multi-metric-job-chart>
+                  <div class='chart-contrainer'>
+                    <div style='height: {{ui.chartHeight + 25}}px;'>
+                      <ml-multi-metric-job-chart chart-data="chart" chart-height='ui.chartHeight'></ml-multi-metric-job-chart>
+                    </div>
+
+                    <div ng-show="chartStates.fields[id] === CHART_STATE.NOT_STARTED || chartStates.fields[id] === CHART_STATE.LOADING || chartStates.fields[id] === CHART_STATE.NO_RESULTS"
+                      class='chart-loader fields-chart-loader'
+                      style='height: {{ui.chartHeight}}px; margin-top: -{{ui.chartHeight + 25}}px;'>
+                        <div class='status-label' ng-show="chartStates.fields[id] === CHART_STATE.NOT_STARTED"></div>
+                        <div class='status-label' ng-show="chartStates.fields[id] === CHART_STATE.LOADING">
+                          <h2><i class='fa fa-spinner fa-spin'></i></h2>
+                        </div>
+                        <div class='status-label' ng-show="chartStates.fields[id] === CHART_STATE.NO_RESULTS">
+                          <div class='no-results'>
+                            <h4><i class="fa fa-info-circle"></i> No results found</h4>
+                          </div>
+                        </div>
+                    </div>
+
+                  </div>
                 </div>
               </div>
             </div>

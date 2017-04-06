@@ -79,6 +79,13 @@ module
   const METRIC_AGG_TYPE = 'metrics';
   const EVENT_RATE_COUNT_FIELD = '__ml_event_rate_count__';
 
+  const CHART_STATE = {
+    NOT_STARTED: 0,
+    LOADING: 1,
+    LOADED: 2,
+    NO_RESULTS: 3
+  };
+
   const JOB_STATE = {
     NOT_STARTED: 0,
     RUNNING: 1,
@@ -90,6 +97,12 @@ module
 
   $scope.JOB_STATE = JOB_STATE;
   $scope.jobState = $scope.JOB_STATE.NOT_STARTED;
+
+  $scope.CHART_STATE = CHART_STATE;
+  $scope.chartStates = {
+    eventRate: CHART_STATE.LOADING,
+    fields: {}
+  };
 
   let indexPattern = $route.current.locals.indexPattern;
   let query = {
@@ -163,7 +176,10 @@ module
     }, {
       title: 'Custom',
       value: 'custom'
-    }]
+    }],
+    eventRateChartHeight: 100,
+    chartHeight: 150,
+    showFieldCharts: false
   };
 
   $scope.formConfig = {
@@ -210,10 +226,12 @@ module
           $scope.formConfig.firstSplitFieldValue = resp.results.values[0];
         }
 
+        setFieldsChartStates(CHART_STATE.LOADING);
         drawCards(resp.results.values);
         $scope.formChange();
       });
     } else {
+      setFieldsChartStates(CHART_STATE.LOADING);
       $scope.ui.splitText = '';
       destroyCards();
       $scope.formChange();
@@ -330,8 +348,10 @@ module
     const f = $scope.formConfig.fields[key];
     if (f === undefined) {
       $scope.formConfig.fields[key] = field;
+      $scope.chartStates.fields[key] = CHART_STATE.LOADING;
     } else {
       delete $scope.formConfig.fields[key];
+      delete $scope.chartStates.fields[key];
     }
   };
 
@@ -368,6 +388,9 @@ module
   };
 
   $scope.loadVis = function () {
+    const thisLoadTimestamp = Date.now();
+    $scope.chartData.lastLoadTimestamp = thisLoadTimestamp;
+
     setTime();
     $scope.ui.isFormValid();
 
@@ -378,24 +401,42 @@ module
 
     mlMultiMetricJobService.clearChartData();
 
+    // $scope.chartStates.eventRate = CHART_STATE.LOADING;
+    setFieldsChartStates(CHART_STATE.LOADING);
+
     if (Object.keys($scope.formConfig.fields).length) {
-      mlMultiMetricJobService.getLineChartResults($scope.formConfig)
-      .then(() => {
-        loadDocCountData();
+      $scope.ui.showFieldCharts = true;
+      mlMultiMetricJobService.getLineChartResults($scope.formConfig, thisLoadTimestamp)
+      .then((resp) => {
+        loadDocCountData(resp.detectors);
       });
     } else {
-      loadDocCountData();
+      loadDocCountData([]);
     }
 
-    function loadDocCountData() {
+    function loadDocCountData(dtrs) {
       const gridWidth = angular.element('.charts-container').width();
       mlMultiMetricJobService.loadDocCountData($scope.formConfig, gridWidth)
-      .then(() => {
-        $scope.hasResults = true;
-        $scope.$broadcast('render');
+      .then((resp) => {
+        if (thisLoadTimestamp === $scope.chartData.lastLoadTimestamp) {
+          _.each(dtrs, (dtr, id) => {
+            const state = (dtr.line.length) ? CHART_STATE.LOADED : CHART_STATE.NO_RESULTS;
+            $scope.chartStates.fields[id] = state;
+          });
+
+          $scope.chartData.lastLoadTimestamp = null;
+          $scope.$broadcast('render');
+          $scope.chartStates.eventRate = (resp.job.bars.length) ? CHART_STATE.LOADED : CHART_STATE.NO_RESULTS;
+        }
       });
     }
   };
+
+  function setFieldsChartStates(state) {
+    _.each($scope.chartStates.fields, (chart, key) => {
+      $scope.chartStates.fields[key] = state;
+    });
+  }
 
   function drawCards(labels) {
     const $frontCard = angular.element('.multi-metric-job-container .detector-container .card-front');
@@ -462,6 +503,7 @@ module
     const $frontCard = angular.element('.multi-metric-job-container .detector-container .card-front');
     $frontCard.removeClass('card');
     $frontCard.find('.card-title').text('');
+    $frontCard.css('margin-top', 0);
   }
 
   // force job ids to be lowercase

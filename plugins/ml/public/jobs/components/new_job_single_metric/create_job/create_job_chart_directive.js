@@ -30,11 +30,10 @@ module.directive('mlSingleMetricJobChart', function () {
   function link(scope, element) {
 
     const svgWidth  = angular.element('.single-metric-job-container').width();
-    const lineChartHeight = 310;
-    const contextHeight = 0;
+    const lineChartHeight = scope.chartHeight;
     const swimlaneHeight = 30;
-    const margin = { top: 0, right: 0, bottom: 40, left: 50 };
-    const svgHeight = lineChartHeight + contextHeight + swimlaneHeight + margin.top + margin.bottom;
+    const margin = { top: 0, right: 0, bottom: 0, left: 50 };
+    const svgHeight = lineChartHeight + swimlaneHeight + margin.top + margin.bottom;
     const vizWidth  = svgWidth  - margin.left - margin.right;
     const chartLimits = { max: 0, min: 0 };
 
@@ -243,8 +242,7 @@ module.directive('mlSingleMetricJobChart', function () {
   return {
     scope: {
       chartData: '=',
-      swimlaneData: '=',
-      selectedJobIds: '='
+      chartHeight:'='
     },
     link: link
   };
