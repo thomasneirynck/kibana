@@ -6,7 +6,7 @@
   </div>
 </kbn-top-nav>
 <div class="ml-explorer" ng-controller="MlExplorerController">
-  <navbar ng-show="chrome.getVisible()">
+  <navbar ng-show="jobs.length > 0 && chrome.getVisible()">
     <div class="ml-job-select-btn-label">Job</div>
     <div style="flex:0 0 auto;">
       <button ng-if="selectedJobs.length == 1 && selectedJobs[0].id === '*'"
@@ -43,12 +43,19 @@
 
   <filter-bar state="appState"></filter-bar>
 
+  <div class="no-results-container" ng-if="jobs.length === 0">
+    <div class="no-results">
+      <div><i class="fa fa-exclamation-triangle" ></i>No jobs found</div>
+      <div><a href="ml#/jobs">Create new job</a></div>
+    </div>
+  </div>
+
   <div class="loading-container" ng-show="loading === true">
     <div class="loading-spinner"><i class='fa fa-spinner fa-spin'></i></div>
     <div>Loading</div>
   </div>
 
-  <div class="no-results-container" ng-show="loading === false && hasResults === false">
+  <div class="no-results-container" ng-show="jobs.length > 0 && loading === false && hasResults === false">
     <div class="no-results">
       <div><i class="fa fa-info-circle" ></i>No results found</div>
       <div>Try widening the time selection or moving further back in time</div>

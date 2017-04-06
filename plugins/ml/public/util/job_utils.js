@@ -28,6 +28,25 @@ function calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) {
   return freq;
 }
 
+// Returns a flag to indicate whether the job is suitable for viewing
+// in the Time Series dashboard.
+function isTimeSeriesViewJob(job) {
+  // only single metric jobs with model plot data and with only one detector with
+  // no by/over/partition fields can currently be viewed in the Time Series dashboard
+  let isViewable = false;
+  const dtrs = job.analysis_config.detectors;
+  if (job.model_plot_config !== undefined && dtrs.length === 1) {
+    const firstDtr = dtrs[0];
+    if (firstDtr.partition_field_name === undefined &&
+        firstDtr.by_field_name === undefined &&
+        firstDtr.over_field_name === undefined) {
+      isViewable = true;
+    }
+  }
+  return isViewable;
+}
+
 export default {
-  calculateDatafeedFrequencyDefaultSeconds: calculateDatafeedFrequencyDefaultSeconds
+  calculateDatafeedFrequencyDefaultSeconds: calculateDatafeedFrequencyDefaultSeconds,
+  isTimeSeriesViewJob: isTimeSeriesViewJob
 };

@@ -21,6 +21,8 @@
 import _ from 'lodash';
 import $ from 'jquery';
 
+import jobUtils from 'plugins/ml/util/job_utils';
+
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
@@ -31,13 +33,14 @@ module.directive('mlJobSelectList', ['mlJobService', 'mlDashboardService', funct
     transclude: true,
     template: require('plugins/ml/components/job_select_list/job_select_list.html'),
     controller: function ($scope) {
-
-      mlJobService.getBasicJobInfo('.ml-anomalies-*')
+      mlJobService.loadJobs()
         .then(function (resp) {
           if (resp.jobs.length > 0) {
             const jobs = [];
             _.each(resp.jobs, function (job) {
-              jobs.push({ id:job.id });
+              if ($scope.timeSeriesOnly === false || jobUtils.isTimeSeriesViewJob(job) === true) {
+                jobs.push({ id:job.job_id });
+              }
             });
             $scope.jobs = jobs;
 
@@ -74,6 +77,11 @@ module.directive('mlJobSelectList', ['mlJobService', 'mlDashboardService', funct
 
     },
     link: function (scope, element, attrs) {
+      scope.timeSeriesOnly = false;
+      if (attrs.timeseriesonly !== undefined && /true/i.test(attrs.timeseriesonly)) {
+        scope.timeSeriesOnly = true;
+      }
+
       // List of jobs to select is passed to the directive in the 'selected' attribute.
       // '*' is passed to indicate 'All jobs'.
       scope.selections = (attrs.selected ? attrs.selected.split(' ') : []);

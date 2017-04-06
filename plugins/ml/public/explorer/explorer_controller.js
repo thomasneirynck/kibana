@@ -85,12 +85,12 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
       mlExplorerSwimlane: {}
     };
     $scope.appState = new AppState(stateDefaults);
+    $scope.jobs = [];
 
     // Load the job info needed by the dashboard, then do the first load.
     // Calling loadJobs() ensures the full datafeed config is available for building the charts.
     mlJobService.loadJobs().then((resp) => {
       if (resp.jobs.length > 0) {
-        $scope.jobs = [];
         _.each(resp.jobs, (job) => {
           const bucketSpan = parseInterval(job.analysis_config.bucket_span);
           $scope.jobs.push({ id:job.job_id, selected: false, bucketSpanSeconds: bucketSpan.asSeconds() });

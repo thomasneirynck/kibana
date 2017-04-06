@@ -23,12 +23,15 @@ import _ from 'lodash';
 import moment from 'moment';
 import 'ui/timefilter';
 
+import 'plugins/ml/components/job_select_list';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/ml_dashboard_service';
 import 'plugins/ml/services/results_service';
 
 import uiRoutes from 'ui/routes';
+import parseInterval from 'ui/utils/parse_interval';
 import checkLicense from 'plugins/ml/license/check_license';
+import jobUtils from 'plugins/ml/util/job_utils';
 import refreshIntervalWatcher from 'plugins/ml/util/refresh_interval_watcher';
 
 uiRoutes
@@ -56,7 +59,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
   const ANOMALIES_MAX_RESULTS = 500;
   const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
 
-  $scope.loading = true;
+  $scope.loading = false;
   $scope.hasResults = false;
 
   if (globalState.ml === undefined) {
@@ -75,18 +78,29 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       mlTimeSeriesExplorer: {}
     };
     $scope.appState = new AppState(stateDefaults);
+    $scope.jobs = [];
 
     // Load the job info needed by the visualization, then do the first load.
-    mlJobService.getBasicJobInfo($scope.indexPatternId)
+    mlJobService.loadJobs()
     .then(function (resp) {
       if (resp.jobs.length > 0) {
-        $scope.jobs = [];
+        const timeSeriesJobIds = [];
         _.each(resp.jobs, function (job) {
-          $scope.jobs.push({ id:job.id, selected: false, bucketSpanSeconds: job.bucketSpanSeconds });
+          if (jobUtils.isTimeSeriesViewJob(job) === true) {
+            timeSeriesJobIds.push(job.job_id);
+            const bucketSpan = parseInterval(job.analysis_config.bucket_span);
+            $scope.jobs.push({
+              id:job.job_id, selected: false,
+              bucketSpanSeconds: bucketSpan.asSeconds()
+            });
+          }
         });
 
         // Select any jobs set in the global state (i.e. passed in the URL).
-        const selectedJobIds = _.get(globalState.ml, 'jobIds', []);
+        let selectedJobIds = _.get(globalState.ml, 'jobIds', []);
+        selectedJobIds = _.filter(selectedJobIds, (jobId) => {
+          return timeSeriesJobIds.indexOf(jobId) > -1;
+        });
         $scope.setSelectedJobs(selectedJobIds);
       }
 
@@ -99,12 +113,12 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
   $scope.refresh = function () {
 
-    $scope.loading = true;
-    $scope.hasResults = false;
-
     if ($scope.selectedJobs === undefined) {
       return;
     }
+
+    $scope.loading = true;
+    $scope.hasResults = false;
 
     // Counter to keep track of what data sets have been loaded.
     let awaitingCount = 2;
@@ -260,7 +274,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     });
 
     // Build scope objects used in the HTML template.
-    $scope.unsafeHtml = '<ml-job-select-list selected="' + selectedJobIds.join(' ') + '"></ml-job-select-list>';
+    $scope.unsafeHtml = '<ml-job-select-list timeseriesonly="true" ' +
+        'selected="' + selectedJobIds.join(' ') + '"></ml-job-select-list>';
 
     // Crop long job IDs for display in the button text.
     // The first full job ID is displayed in the tooltip.
