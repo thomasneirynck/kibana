@@ -404,7 +404,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
       if (awaitingCount === 0) {
 
         // TODO: Check against bucket results as jobs may not include influencers.
-        if ($scope.overallSwimlaneData.points && $scope.overallSwimlaneData.points.length) {
+        if ($scope.overallSwimlaneData.points && $scope.overallSwimlaneData.points.length > 0) {
           $scope.hasResults = true;
 
           // Trigger loading of the 'view by' swimlane -
@@ -567,34 +567,37 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
   }
 
   function processOverallResults(scoresByTime) {
-    const dataset = { 'laneLabels':['Overall'], 'points':[], 'interval': $scope.swimlaneBucketInterval.asSeconds() };
-
-    // Store the earliest and latest times of the data returned by the ES aggregations,
-    // These will be used for calculating the earliest and latest times for the swimlane charts.
-    dataset.earliest = Number.MAX_VALUE;
-    dataset.latest = 0;
-
-    _.each(scoresByTime, (score, timeMs) => {
-      const time = timeMs / 1000;
-      dataset.points.push({ 'laneLabel':'Overall', 'time': time, 'value': score });
-
-      dataset.earliest = Math.min(time, dataset.earliest);
-      dataset.latest = Math.max((time + dataset.interval), dataset.latest);
-    });
-
-    // Adjust the earliest back to the first bucket at or before the start time in the time picker,
-    // and the latest forward to the end of the bucket at or after the end time in the time picker.
-    // Due to the way the swimlane sections are plotted, the chart buckets
-    // must coincide with the times of the buckets in the data.
     const bounds = timefilter.getActiveBounds();
-    const boundsMin = bounds.min.valueOf() / 1000;
-    const boundsMax = bounds.max.valueOf() / 1000;
-    const bucketIntervalSecs = $scope.swimlaneBucketInterval.asSeconds();
-    if (dataset.earliest > boundsMin) {
-      dataset.earliest = dataset.earliest - (Math.ceil((dataset.earliest - boundsMin) / bucketIntervalSecs) * bucketIntervalSecs);
-    }
-    if (dataset.latest < boundsMax) {
-      dataset.latest = dataset.latest + (Math.ceil((boundsMax - dataset.latest) / bucketIntervalSecs) * bucketIntervalSecs);
+    const boundsMin = Math.floor(bounds.min.valueOf() / 1000);
+    const boundsMax = Math.floor(bounds.max.valueOf() / 1000);
+    const dataset = { 'laneLabels':['Overall'], 'points':[],
+      'interval': $scope.swimlaneBucketInterval.asSeconds(), earliest: boundsMin, latest: boundsMax };
+
+    if (_.keys(scoresByTime).length > 0) {
+      // Store the earliest and latest times of the data returned by the ES aggregations,
+      // These will be used for calculating the earliest and latest times for the swimlane charts.
+      dataset.earliest = Number.MAX_VALUE;
+      dataset.latest = 0;
+
+      _.each(scoresByTime, (score, timeMs) => {
+        const time = timeMs / 1000;
+        dataset.points.push({ 'laneLabel':'Overall', 'time': time, 'value': score });
+
+        dataset.earliest = Math.min(time, dataset.earliest);
+        dataset.latest = Math.max((time + dataset.interval), dataset.latest);
+      });
+
+      // Adjust the earliest back to the first bucket at or before the start time in the time picker,
+      // and the latest forward to the end of the bucket at or after the end time in the time picker.
+      // Due to the way the swimlane sections are plotted, the chart buckets
+      // must coincide with the times of the buckets in the data.
+      const bucketIntervalSecs = $scope.swimlaneBucketInterval.asSeconds();
+      if (dataset.earliest > boundsMin) {
+        dataset.earliest = dataset.earliest - (Math.ceil((dataset.earliest - boundsMin) / bucketIntervalSecs) * bucketIntervalSecs);
+      }
+      if (dataset.latest < boundsMax) {
+        dataset.latest = dataset.latest + (Math.ceil((boundsMax - dataset.latest) / bucketIntervalSecs) * bucketIntervalSecs);
+      }
     }
 
     $scope.overallSwimlaneData = dataset;

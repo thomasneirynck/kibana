@@ -62,7 +62,7 @@
     </div>
   </div>
 
-  <div ng-show="loading === false && hasResults === true">
+  <div ng-if="loading === false && hasResults === true">
     <div class="results-container">
 
       <div class="influencers-list-container column col-xs-2">
@@ -80,7 +80,7 @@
         <span class="panel-title">
           Anomaly timeline
         </span>
-        <div class="ml-explorer-swimlane" >
+        <div class="ml-explorer-swimlane">
           <ml-explorer-swimlane
             swimlane-type="overall"
             swimlane-data="overallSwimlaneData"
