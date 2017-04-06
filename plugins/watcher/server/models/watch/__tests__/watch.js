@@ -32,7 +32,7 @@ describe('watch', () => {
 
         expect(watchModel.id).to.be(upstreamWatch.id);
         expect(watchModel.name).to.be(upstreamWatch.watchJson.metadata.name);
-        expect(watchModel.watch).to.eql({ condition: { never: {}}});
+        expect(watchModel.watch).to.eql({ condition: { never: {} } });
         expect(watchModel.watchStatus.isActive).to.eql(true);
       });
 
@@ -42,7 +42,7 @@ describe('watch', () => {
 
         expect(watchModel.id).to.be(upstreamWatch.id);
         expect(watchModel.name).to.be(undefined);
-        expect(watchModel.watch).to.eql({ condition: { never: {}}});
+        expect(watchModel.watch).to.eql({ condition: { never: {} } });
         expect(watchModel.watchStatus.isActive).to.eql(true);
       });
 

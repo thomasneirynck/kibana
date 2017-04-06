@@ -38,7 +38,7 @@ export class WatchHistoryItem {
       throw new Error('json argument must contain a watchHistoryItemJson property');
     }
 
-    const props = {...json, ...opts};
+    const props = { ...json, ...opts };
     return new WatchHistoryItem(props);
   }
 }

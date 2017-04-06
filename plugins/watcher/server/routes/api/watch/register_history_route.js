@@ -28,7 +28,7 @@ function fetchHistoryItems(callWithRequest, watchId, startTime) {
 
   // Add time range clause to query if startTime is specified
   if (startTime !== 'all') {
-    const timeRangeQuery = { range: { 'result.execution_time': { gte: startTime }}};
+    const timeRangeQuery = { range: { 'result.execution_time': { gte: startTime } } };
     params.body.query.bool.must.push(timeRangeQuery);
   }
 

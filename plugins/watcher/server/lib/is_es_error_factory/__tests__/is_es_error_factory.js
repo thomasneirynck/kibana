@@ -14,7 +14,7 @@ describe('is_es_error_factory', () => {
       _Abstract: MockAbstractEsError
     };
     mockServer = {};
-    set(mockServer, 'plugins.elasticsearch.getCluster', () => ({errors: mockEsErrors}));
+    set(mockServer, 'plugins.elasticsearch.getCluster', () => ({ errors: mockEsErrors }));
 
     isEsError = isEsErrorFactory(mockServer);
   });
