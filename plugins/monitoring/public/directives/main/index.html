@@ -9,8 +9,17 @@
       structure and styles manually -->
       <div data-transclude-slot="topLeftCorner" class="kuiLocalBreadcrumbs">
         <div ng-repeat="crumb in breadcrumbs" class="kuiLocalBreadcrumb">
-          <a ng-if="crumb.url" kbn-href="{{ crumb.url }}" class="kuiLocalBreadcrumb__link">{{ crumb.label }}</a>
-          <span ng-if="!crumb.url" class="kuiLocalBreadcrumb__link">{{ crumb.label }}</span>
+          <a
+            ng-if="crumb.url"
+            kbn-href="{{ crumb.url }}"
+            class="kuiLocalBreadcrumb__link"
+          >
+            {{ crumb.label }}
+          </a>
+
+          <span ng-if="!crumb.url">
+            {{ crumb.label }}
+          </span>
         </div>
       </div>
 
