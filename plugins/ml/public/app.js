@@ -27,13 +27,14 @@ import 'plugins/ml/services/ml_api_service';
 import 'plugins/ml/services/browser_detect_service';
 import 'plugins/ml/services/ml_dashboard_service';
 import 'plugins/ml/services/results_service';
-import 'plugins/ml/messagebar';
+import 'plugins/ml/components/messagebar';
 import 'plugins/ml/explorer';
 import 'plugins/ml/timeseriesexplorer';
 import 'plugins/ml/components/json_tooltip';
 import 'plugins/ml/components/engine_api_help_link';
 import 'plugins/ml/components/confirm_modal';
 import 'plugins/ml/components/pretty_duration';
+import 'plugins/ml/components/nav_menu';
 
 import chrome from 'ui/chrome';
 import uiRoutes from 'ui/routes';
@@ -47,24 +48,3 @@ uiRoutes
   redirectTo: `/${chrome.getInjected('kbnDefaultAppId', 'jobs')}`
 });
 
-chrome
-.setRootController('ml', function ($scope, $rootScope, kbnUrl) {
-
-  $scope.topNavMenu = [{
-    key: 'jobs',
-    description: 'Jobs',
-    label: 'Jobs',
-    run: function () { kbnUrl.change('/jobs', {});}
-  }, {
-    key: 'explorer',
-    description: 'Explorer',
-    label: 'Explorer',
-    run: function () { kbnUrl.change('/explorer', {});}
-  }, {
-    key: 'timeseriesexplorer',
-    description: 'Time series',
-    label: 'Time series',
-    run: function () { kbnUrl.change('/timeseriesexplorer', {});}
-  }];
-
-});

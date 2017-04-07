@@ -75,7 +75,7 @@ module.service('mlMessageBarService', function () {
 .directive('mlMessageBar', function () {
   return {
     restrict: 'AE',
-    template: require('plugins/ml/messagebar/messagebar.html')
+    template: require('plugins/ml/components/messagebar/messagebar.html')
   };
 
 });
