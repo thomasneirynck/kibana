@@ -163,17 +163,12 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
       margin.left = (Math.max(maxYAxisLabelWidth, 40));
       vizWidth  = svgWidth  - margin.left - margin.right;
 
-      // Set the x axis domain to match the data,
-      // or if only 1 point use the range passed in the scope.
-      lineChartXScale = d3.time.scale().range([0, vizWidth]);
-      if (data.length > 1) {
-        lineChartXScale = lineChartXScale.domain(d3.extent(data, d => d.date));
-      } else {
-        lineChartXScale = lineChartXScale.domain([scope.plotEarliest, scope.plotLatest]);
-      }
-
-      d3.svg.axis().scale(lineChartXScale).orient('bottom')
-        .innerTickSize(-chartHeight).outerTickSize(0).tickPadding(10);
+      // Set the x axis domain to match the request plot range.
+      // This ensures ranges on different charts will match, even when there aren't
+      // data points across the full range, and the selected anomalous region is centred.
+      lineChartXScale = d3.time.scale()
+        .range([0, vizWidth])
+        .domain([scope.plotEarliest, scope.plotLatest]);
 
       lineChartValuesLine = d3.svg.line()
         .x(d => lineChartXScale(d.date))
