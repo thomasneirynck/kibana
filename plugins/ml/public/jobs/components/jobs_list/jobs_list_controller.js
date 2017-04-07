@@ -455,7 +455,7 @@ function (
     _.each(jobs, (job) => {
       // keep track of the job create times
       // only messages newer than the job's create time should be displayed.
-      createTimes[job.job_id] = moment(job.create_time).unix();
+      createTimes[job.job_id] = moment(job.create_time).valueOf();
     });
 
     mlJobService.getAuditMessagesSummary()
@@ -479,12 +479,12 @@ function (
                     // there should only be one result here.
                     highestLevelText = msg.key;
 
-                    // note the unix time for the highest level
+                    // note the time in ms for the highest level
                     // so we can filter them out later if they're earlier than the
                     // job's create time.
                     if (msg.latestMessage && msg.latestMessage.value_as_string) {
                       const time = moment(msg.latestMessage.value_as_string);
-                      msgTime = time.unix();
+                      msgTime = time.valueOf();
                     }
 
                   });
@@ -513,7 +513,7 @@ function (
         };
 
         const job = jobMessages[rs.job.job_id];
-        if (job && job.msgTime > createTimes[job.job_id]) {
+        if (job && job.msgTime >= createTimes[job.job_id]) {
           rs.jobAudit.jobWarningClass = '';
           rs.jobAudit.jobWarningText = job.highestLevelText;
           if (job.highestLevel === 1) {
