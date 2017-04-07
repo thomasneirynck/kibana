@@ -472,7 +472,7 @@ module.service('mlMultiMetricJobService', function (
       deferred.resolve(this.chartData);
     }).catch((resp) => {
       console.log('getEventRate visualization - error getting event rate data from elasticsearch:', resp);
-      deferred.resolve(this.chartData);
+      deferred.reject(resp);
     });
     return deferred.promise;
   };

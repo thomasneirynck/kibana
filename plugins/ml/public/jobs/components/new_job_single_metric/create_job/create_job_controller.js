@@ -313,8 +313,14 @@ module
 
       mlSingleMetricJobService.getLineChartResults($scope.formConfig)
       .then((resp) => {
-        $scope.$broadcast('render');
         $scope.chartState = (resp.length) ? CHART_STATE.LOADED : CHART_STATE.NO_RESULTS;
+      })
+      .catch((resp) => {
+        msgs.error(resp.message);
+        $scope.chartState = CHART_STATE.NO_RESULTS;
+      })
+      .finally(() => {
+        $scope.$broadcast('render');
       });
     }
   };
@@ -494,6 +500,9 @@ module
     .then((resp) => {
       timefilter.time.from = moment(resp.start.epoch).toISOString();
       timefilter.time.to = moment(resp.end.epoch).toISOString();
+    })
+    .catch((resp) => {
+      msgs.error(resp.message);
     });
   };
 

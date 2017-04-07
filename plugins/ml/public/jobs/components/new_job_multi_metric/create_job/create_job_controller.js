@@ -411,6 +411,12 @@ module
       mlMultiMetricJobService.getLineChartResults($scope.formConfig, thisLoadTimestamp)
       .then((resp) => {
         loadDocCountData(resp.detectors);
+      })
+      .catch((resp) => {
+        msgs.error(resp.message);
+        _.each($scope.formConfig.fields, (field, id) => {
+          $scope.chartStates.fields[id] = CHART_STATE.NO_RESULTS;
+        });
       });
     } else {
       loadDocCountData([]);
@@ -430,6 +436,10 @@ module
           $scope.$broadcast('render');
           $scope.chartStates.eventRate = (resp.job.bars.length) ? CHART_STATE.LOADED : CHART_STATE.NO_RESULTS;
         }
+      })
+      .catch((resp) => {
+        $scope.chartStates.eventRate = CHART_STATE.NO_RESULTS;
+        msgs.error(resp.message);
       });
     }
   };
@@ -674,6 +684,9 @@ module
     .then((resp) => {
       timefilter.time.from = moment(resp.start.epoch).toISOString();
       timefilter.time.to = moment(resp.end.epoch).toISOString();
+    })
+    .catch((resp) => {
+      msgs.error(resp.message);
     });
   };
 
