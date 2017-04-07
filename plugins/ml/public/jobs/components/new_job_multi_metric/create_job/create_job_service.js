@@ -259,7 +259,9 @@ module.service('mlMultiMetricJobService', function (
     job.job_id = formConfig.jobId;
     job.description = formConfig.description;
 
-    console.log('auto created job: ', job);
+    if (formConfig.useDedicatedIndex) {
+      job.results_index_name = job.job_id;
+    }
 
     return job;
   }

@@ -120,7 +120,7 @@
                       <textarea
                         ng-model="item.url_value"
                         type="text"
-                        class="form-control" />
+                        class="form-control" ></textarea>
                     </div>
                   </div>
 
@@ -140,6 +140,15 @@
                 </button>
               </div>
 
+            </div>
+
+            <div class="form-group">
+              <label>
+                <input type="checkbox"
+                  ng-change="setDedicatedIndex()"
+                  ng-model  ="ui.useDedicatedIndex" />
+                  Use dedicated index <i ml-info-icon="new_job_dedicated_index" ></i>
+              </label>
             </div>
 
           </div>

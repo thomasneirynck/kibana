@@ -179,7 +179,8 @@ module
     }],
     eventRateChartHeight: 100,
     chartHeight: 150,
-    showFieldCharts: false
+    showFieldCharts: false,
+    showAdvanced: false
   };
 
   $scope.formConfig = {
@@ -201,7 +202,8 @@ module
     query: query,
     jobId: undefined,
     description: undefined,
-    mappingTypes: []
+    mappingTypes: [],
+    useDedicatedIndex: false
   };
 
   $scope.formChange = function () {

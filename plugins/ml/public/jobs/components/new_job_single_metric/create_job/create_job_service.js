@@ -226,6 +226,10 @@ module.service('mlSingleMetricJobService', function (
       enabled: true
     };
 
+    if (formConfig.useDedicatedIndex) {
+      job.results_index_name = job.job_id;
+    }
+
     // Use the original es agg type rather than the ML version
     // e.g. count rather than high_count
     const aggType = formConfig.agg.type.name;

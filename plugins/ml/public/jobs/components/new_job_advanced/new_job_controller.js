@@ -153,6 +153,7 @@ function (
     indexes: {},
     types: {},
     isDatafeed: false,
+    useDedicatedIndex: false,
 
     datafeed: {
       queryText:             '{"match_all":{}}',
@@ -204,6 +205,13 @@ function (
           $scope.ui.wizard.dataLocation = 'NONE';
 
           $scope.ui.influencers = angular.copy($scope.job.analysis_config.influencers);
+        }
+
+        if ($scope.job.results_index_name === 'shared') {
+          delete $scope.job.results_index_name;
+        } else {
+          $scope.ui.useDedicatedIndex = true;
+          $scope.job.results_index_name = '';
         }
       }
 
@@ -305,6 +313,19 @@ function (
       }
 
       function saveFunc() {
+
+        if ($scope.ui.useDedicatedIndex) {
+          // if the dedicated index checkbox has been ticked
+          // and the user hasn't added a custom value for it
+          // in the JSON, use the job id.
+          if ($scope.job.results_index_name === '') {
+            $scope.job.results_index_name = $scope.job.job_id;
+          }
+        } else {
+          // otherwise delete it, just to be sure.
+          delete $scope.job.results_index_name;
+        }
+
         $scope.saveLock = true;
         $scope.ui.saveStatus.job = 1;
         openSaveStatusWindow();
@@ -427,6 +448,13 @@ function (
 
       setFieldDelimiterControlsFromText();
       setDatafeedUIText();
+
+      // if results_index_name exists, tick the dedicated index checkbox
+      if ($scope.job.results_index_name !== undefined) {
+        $scope.ui.useDedicatedIndex = true;
+      } else {
+        $scope.ui.useDedicatedIndex = false;
+      }
     } catch (e) {
       console.log('JSON could not be parsed');
       // a better warning should be used.
@@ -455,6 +483,14 @@ function (
     }
 
     showDataPreviewTab();
+  };
+
+  $scope.setDedicatedIndex = function () {
+    if ($scope.ui.useDedicatedIndex) {
+      $scope.job.results_index_name = '';
+    } else {
+      delete $scope.job.results_index_name;
+    }
   };
 
   // general function to remove an analysisConfig property from the config if it's an empty string

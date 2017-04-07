@@ -89,6 +89,12 @@
    "new_job_datafeed_retrieve_source": {
       "text": "Advanced option. Select to retrieve unfiltered _source document, instead of specified fields."
    },
+   "new_job_advanced_settings": {
+      "text": "Advanced options"
+   },
+   "new_job_dedicated_index": {
+      "text": "Select to store results in a separate index for this job"
+   },
    "new_filter_ruleaction": {
       "text": "A string specifying the rule action. Initially, the only valid option is 'filter_results' but it provisions for expansion to actions like 'disable_modeling'."
    },

@@ -168,7 +168,8 @@ module
       title: 'Custom',
       value: 'custom'
     }],
-    chartHeight: 310
+    chartHeight: 310,
+    showAdvanced: false
   };
 
   $scope.formConfig = {
@@ -186,7 +187,8 @@ module
     query: query,
     jobId: undefined,
     description: undefined,
-    mappingTypes: []
+    mappingTypes: [],
+    useDedicatedIndex: false
   };
 
   $scope.aggChange = function () {
