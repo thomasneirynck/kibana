@@ -550,7 +550,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     if (tempJob.datafeed_config) {
       delete tempJob.datafeed_config.datafeed_id;
       delete tempJob.datafeed_config.job_id;
-      delete tempJob.datafeed_config.state;
+      delete tempJob.datafeed_config.datafeed_state;
     }
 
     return tempJob;
