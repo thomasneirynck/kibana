@@ -1102,32 +1102,61 @@ module.service('mlResultsService', function ($q, es) {
 
     // Build the criteria to use in the bool filter part of the request.
     // Add criteria for the time range, entity fields, plus any additional supplied query.
-    const boolCriteria = [];
+    const mustCriteria = [];
+    const shouldCriteria = [];
+
     const timeRangeCriteria = { 'range':{} };
     timeRangeCriteria.range[timeFieldName] = {
       'gte': earliestMs,
       'lte': latestMs,
       'format': 'epoch_millis'
     };
-    boolCriteria.push(timeRangeCriteria);
+    mustCriteria.push(timeRangeCriteria);
 
     if (query) {
-      boolCriteria.push(query);
+      mustCriteria.push(query);
     }
 
     _.each(entityFields, (entity) => {
-      boolCriteria.push({
-        'query_string': {
-          'query': entity.fieldName + ':' + entity.fieldValue,
-          'analyze_wildcard': true
-        }
-      });
+      if (entity.fieldValue.length !== 0) {
+        mustCriteria.push({
+          'query_string': {
+            'query': entity.fieldName + ':' + entity.fieldValue,
+            'analyze_wildcard': false
+          }
+        });
+      } else {
+        // Add special handling for blank entity field values, checking for either
+        // an empty string or the field not existing.
+        const emptyFieldCondition = {
+          'bool':{
+            'must':[
+              {
+                'term':{
+                }
+              }
+            ]
+          }
+        };
+        emptyFieldCondition.bool.must[0].term[entity.fieldName] = '';
+        shouldCriteria.push(emptyFieldCondition);
+        shouldCriteria.push({
+          'bool':{
+            'must_not': [
+              {
+                'exists' : { 'field' : entity.fieldName }
+              }
+            ]
+          }
+        });
+      }
+
     });
 
     const searchBody = {
       'query': {
         'bool': {
-          'must': boolCriteria
+          'must': mustCriteria
         }
       },
       'size': 0,
@@ -1145,6 +1174,11 @@ module.service('mlResultsService', function ($q, es) {
         }
       }
     };
+
+    if (shouldCriteria.length > 0) {
+      searchBody.query.bool.should = shouldCriteria;
+      searchBody.query.bool.minimum_should_match = shouldCriteria.length / 2;
+    }
 
     if (metricFieldName !== undefined) {
       searchBody.aggs.byTime.aggs = {};
