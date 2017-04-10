@@ -32,8 +32,8 @@ module.directive('mlNavMenu', () => {
         new_job_single_metric: { label: 'Single Metric Job', url: '#/jobs/new_job_single_metric' },
         new_job_multi_metric: { label: 'Multi Metric job', url: '#/jobs/new_job_multi_metric' },
         new_job_advanced: { label: 'Advanced Job Configuration', url: '#/jobs/new_job_advanced' },
-        explorer: { label: 'Multi Metric Explorer', url: '#/explorer' },
-        timeseriesexplorer: { label: 'Single Metric Explorer', url: '#/timeseriesexplorer' },
+        explorer: { label: 'Anomaly Explorer', url: '#/explorer' },
+        timeseriesexplorer: { label: 'Single Metric Viewer', url: '#/timeseriesexplorer' },
       };
 
       const breadcrumbs = [{ label: 'Machine Learning (Beta)', url: '#/' }];

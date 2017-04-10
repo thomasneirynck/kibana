@@ -29,7 +29,7 @@
     ng-click="viewResults(job, 'explorer')"
     class="btn btn-xs btn-default"
     data-toggle="tooltip"
-    tooltip="Open explorer for {{job.job_id}}">
+    tooltip="Open {{job.job_id}} in Anomaly Explorer">
       <i aria-hidden="true" class="fa fa-table"></i>
   </button>
 
@@ -39,7 +39,7 @@
     class="btn btn-xs btn-default"
     data-toggle="tooltip"
     ng-disabled="!enableTimeSeries"
-    tooltip="Open time series explorer for {{job.job_id}}">
+    tooltip="Open {{job.job_id}} in Single Metric Viewer">
       <i aria-hidden="true" class="fa fa-line-chart"></i>
   </button>
 
