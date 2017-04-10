@@ -154,7 +154,7 @@ module.service('mlMultiMetricJobService', function (
       };
     }
 
-    const interval = formConfig.chartInterval.getInterval().asSeconds() + 's';
+    const interval = formConfig.chartInterval.getInterval().asMilliseconds() + 'ms';
     const json = {
       'index': formConfig.indexPattern.id,
       'size': 0,
