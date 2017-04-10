@@ -196,10 +196,9 @@ module.directive('mlMultiMetricJobChart', function () {
     function drawSwimlane(swlWidth, swlHeight) {
       const data = scope.chartData.swimlane;
 
-      // TODO - need to get bucket length from dataset.
-      let cellWidth = swlWidth / scope.chartData.line.length;
-      if (cellWidth < 1) {
-        cellWidth = 1;
+      let cellWidth = 0;
+      if (data.length > 0) {
+        cellWidth = lineChartXScale(data[0].time + scope.chartData.swimlaneInterval) - lineChartXScale(data[0].time);
       }
 
       d3.time.scale().range([0, swlWidth])

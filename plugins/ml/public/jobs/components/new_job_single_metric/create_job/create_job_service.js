@@ -405,6 +405,7 @@ module.service('mlSingleMetricJobService', function (
     )
     .then(data => {
       this.chartData.swimlane = processSwimlaneResults(data.results);
+      this.chartData.swimlaneInterval = formConfig.resultsIntervalSeconds * 1000;
       deferred.resolve(this.chartData);
     })
     .catch(() => {

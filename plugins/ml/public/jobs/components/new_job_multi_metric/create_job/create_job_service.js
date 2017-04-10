@@ -334,6 +334,7 @@ module.service('mlMultiMetricJobService', function (
 
       this.chartData.percentComplete = Math.round(pcnt);
       this.chartData.job.percentComplete = this.chartData.percentComplete;
+      this.chartData.job.swimlaneInterval = formConfig.resultsIntervalSeconds * 1000;
 
       deferred.resolve(this.chartData);
     })
@@ -378,6 +379,7 @@ module.service('mlMultiMetricJobService', function (
         });
 
         dtr.percentComplete = this.chartData.percentComplete;
+        dtr.swimlaneInterval = formConfig.resultsIntervalSeconds * 1000;
 
         dtrIndex++;
       });
@@ -445,7 +447,7 @@ module.service('mlMultiMetricJobService', function (
     buckets.setInterval('auto');
     buckets.setBounds(bounds);
 
-    const interval = buckets.getInterval().asSeconds() * 1000;
+    const interval = buckets.getInterval().asMilliseconds();
 
     const end = formConfig.end;
     const start = formConfig.start;
@@ -463,6 +465,7 @@ module.service('mlMultiMetricJobService', function (
       _.each(resp.results, (value, t) => {
         const time = +t;
         const date = new Date(time);
+        this.chartData.job.barsInterval = interval;
         this.chartData.job.bars.push({
           date,
           time,

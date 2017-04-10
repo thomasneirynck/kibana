@@ -197,10 +197,9 @@ module.directive('mlSingleMetricJobChart', function () {
     function drawSwimlane(swlWidth, swlHeight) {
       const data = scope.chartData.swimlane;
 
-      // TODO - need to get bucket length from dataset.
-      let cellWidth = swlWidth / scope.chartData.line.length;
-      if (cellWidth < 1) {
-        cellWidth = 1;
+      let cellWidth = 0;
+      if (data.length > 0) {
+        cellWidth = lineChartXScale(data[0].time + scope.chartData.swimlaneInterval) - lineChartXScale(data[0].time);
       }
 
       d3.time.scale().range([0, swlWidth])
@@ -227,8 +226,8 @@ module.directive('mlSingleMetricJobChart', function () {
         .attr('rx', 0)
         .attr('ry', 0)
         .attr('class', (d) => d.value > 0 ? 'swimlane-cell' : 'swimlane-cell-hidden')
-        .attr('width', cellWidth - 0)
-        .attr('height', swlHeight - 0)
+        .attr('width', cellWidth)
+        .attr('height', swlHeight)
         .style('fill', (d) => color(d.value));
 
     }

@@ -66,7 +66,7 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
       svgWidth = $el.width();
       vizWidth = svgWidth  - margin.left - margin.right;
 
-      barChartXScale = d3.scale.ordinal().rangeRoundBands([0, vizWidth], .05);
+      barChartXScale = d3.scale.linear().rangeRound([0, vizWidth], .05);
       swimlaneXScale = d3.time.scale().range([0, vizWidth]);
       barChartYScale = d3.scale.linear().range([barChartHeight, 0]);
     }
@@ -177,9 +177,9 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
     }
 
     function drawBarChartPaths(data) {
-      let cellWidth = vizWidth / data.length;
-      if (cellWidth < 1) {
-        cellWidth = 1;
+      let cellWidth = 0;
+      if (data.length > 0) {
+        cellWidth = barChartXScale(data[0].time + scope.chartData.barsInterval) - barChartXScale(data[0].time);
       }
 
       barChartGroup.selectAll('bar')
@@ -187,7 +187,7 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
       .enter().append('rect')
       .style('fill', '#32a7c2')
       .attr('class', 'bar')
-      .attr('x', (d) => { return barChartXScale(d.date); })
+      .attr('x', (d) => { return barChartXScale(d.time); })
       .attr('width', cellWidth)
       .attr('y', (d) => { return barChartYScale(d.value); })
       .attr('height', (d) => { return barChartHeight - barChartYScale(d.value); });
@@ -202,10 +202,9 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
       const lineData = scope.chartData.line;
       const data = scope.chartData.swimlane;
 
-      // TODO - need to get bucket length from dataset.
-      let cellWidth = swlWidth / lineData.length;
-      if (cellWidth < 1) {
-        cellWidth = 1;
+      let cellWidth = 0;
+      if (data.length > 0) {
+        cellWidth = barChartXScale(data[0].time + scope.chartData.swimlaneInterval) - barChartXScale(data[0].time);
       }
 
       d3.time.scale().range([0, swlWidth])

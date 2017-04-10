@@ -20,6 +20,7 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlMultiMetricJobSearchService', function ($q, es) {
 
+  // detector swimlane search
   this.getScoresByRecord = function (index, jobIds, earliestMs, latestMs, interval, firstSplitField) {
     const deferred = $q.defer();
     const obj = {
@@ -147,6 +148,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
     return deferred.promise;
   };
 
+  // event rate swimlane search
   this.getScoresByBucket = function (index, jobIds, earliestMs, latestMs, interval) {
     const deferred = $q.defer();
     const obj = {
