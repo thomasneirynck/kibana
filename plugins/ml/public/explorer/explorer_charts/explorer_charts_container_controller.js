@@ -33,6 +33,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
   $scope.recordsForSeries = [];   // Series for plotting.
 
   const FUNCTION_DESCRIPTIONS_TO_PLOT = ['mean', 'min', 'max', 'sum', 'count', 'distinct_count'];
+  const CHART_MAX_POINTS = 500;
 
   mlExplorerDashboardService.addAnomalyDataChangeListener(function (anomalyRecords, earliestMs, latestMs) {
     $scope.allSeriesRecords = processRecordsForDisplay(anomalyRecords);
@@ -52,8 +53,9 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     $scope.seriesToPlot = buildDataConfigs(recordsToPlot);
 
     // Calculate the time range of the charts, which is a function of the chart width and max job bucket span.
-    const midpointMs = Math.ceil((earliestMs + latestMs) / 2);
-    const chartRange = calculateChartRange(midpointMs, Math.floor(chartsContainerWidth / chartsPerRow));
+    $scope.tooManyBuckets = false;
+    const chartRange = calculateChartRange(earliestMs, latestMs,
+      Math.floor(chartsContainerWidth / chartsPerRow), recordsToPlot);
 
     $scope.plotEarliest = chartRange.min;
     $scope.plotLatest = chartRange.max;
@@ -205,16 +207,60 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     return seriesConfigs;
   }
 
-  function calculateChartRange(midpointMs, chartWidth) {
+  function calculateChartRange(earliestMs, latestMs, chartWidth, recordsToPlot) {
     // Calculate the time range for the charts.
     // Fit in as many points in the available container width plotted at the job bucket span.
-    const maxBucketSpanSeconds = Math.max.apply(null, _.pluck($scope.seriesToPlot, 'bucketSpanSeconds'));
+    const midpointMs = Math.ceil((earliestMs + latestMs) / 2);
+    const maxBucketSpanMs = Math.max.apply(null, _.pluck($scope.seriesToPlot, 'bucketSpanSeconds')) * 1000;
 
-    //const chartWidth = getChartContainerWidth();
-    const pointSpacing = 10;
-    const numPoints = chartWidth / pointSpacing;
+    const pointsToPlotFullSelection = Math.ceil((latestMs - earliestMs) / maxBucketSpanMs);
 
-    return { min: midpointMs - (numPoints * maxBucketSpanSeconds * 1000), max: midpointMs + (numPoints * maxBucketSpanSeconds * 1000) };
+    // Optimally space points 5px apart.
+    const optimumPointSpacing = 5;
+    const optimumNumPoints = chartWidth / optimumPointSpacing;
+
+    // Increase actual number of points if we can't plot the selected range
+    // at optimal point spacing.
+    const plotPoints = Math.max(optimumNumPoints, pointsToPlotFullSelection);
+    const halfPoints = Math.ceil(plotPoints / 2);
+    let chartRange =  { min: midpointMs - (halfPoints * maxBucketSpanMs),
+      max: midpointMs + (halfPoints * maxBucketSpanMs) };
+
+    if (plotPoints > CHART_MAX_POINTS) {
+      $scope.tooManyBuckets = true;
+      // For each series being plotted, display the record with the highest score if possible.
+      const maxTimeSpan = maxBucketSpanMs * CHART_MAX_POINTS;
+      let minMs = recordsToPlot[0][$scope.timeFieldName];
+      let maxMs = recordsToPlot[0][$scope.timeFieldName];
+
+      _.each(recordsToPlot, (record) => {
+        const diffMs = maxMs - minMs;
+        if (diffMs < maxTimeSpan) {
+          const recordTime = record[$scope.timeFieldName];
+          if (recordTime < minMs) {
+            if (maxMs - recordTime <= maxTimeSpan) {
+              minMs = recordTime;
+            }
+          }
+
+          if (recordTime > maxMs) {
+            if (recordTime - minMs <= maxTimeSpan) {
+              maxMs = recordTime;
+            }
+          }
+        }
+      });
+
+      if ((maxMs - minMs) < maxTimeSpan) {
+        // Expand out to cover as much as the requested time span as possible.
+        minMs = Math.max(earliestMs, maxMs - maxTimeSpan);
+        maxMs = Math.min(latestMs, minMs + maxTimeSpan);
+      }
+
+      chartRange = { min: minMs, max: maxMs };
+    }
+
+    return chartRange;
   }
 
 });

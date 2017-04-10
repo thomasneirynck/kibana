@@ -44,7 +44,8 @@ module.directive('mlExplorerChartsContainer', function () {
       selectedEarliest: '=',
       selectedLatest: '=',
       chartsPerRow: '=',
-      layoutCellsPerChart: '='
+      layoutCellsPerChart: '=',
+      tooManyBuckets: '='
     },
     link: link,
     template: require('plugins/ml/explorer/explorer_charts/explorer_charts_container.html')

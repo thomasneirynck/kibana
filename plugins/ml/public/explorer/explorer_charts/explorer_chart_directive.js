@@ -219,12 +219,15 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
 
     function drawLineChartHighlightedSpan() {
       // Draws a rectangle which highlights the time span that has been selected for view.
-      const rectWidth = lineChartXScale(new Date(scope.selectedLatest)) -
-        lineChartXScale(new Date(scope.selectedEarliest));
+      // Note depending on the overall time range and the bucket span, the selected time
+      // span may be longer than the range actually being plotted.
+      const rectStart = Math.max(scope.selectedEarliest, scope.plotEarliest);
+      const rectEnd = Math.min(scope.selectedLatest, scope.plotLatest);
+      const rectWidth = lineChartXScale(rectEnd) - lineChartXScale(rectStart);
 
       lineChartGroup.append('rect')
         .attr('class', 'selected-interval')
-        .attr('x', lineChartXScale(new Date(scope.selectedEarliest)))
+        .attr('x', lineChartXScale(new Date(rectStart)))
         .attr('y', 1)
         .attr('width', rectWidth)
         .attr('height', chartHeight - 1);
