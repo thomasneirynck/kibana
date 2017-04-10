@@ -85,10 +85,10 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
     });
 
     // Query 2 - load the anomalies.
+    // Criteria to return the records for this series are the detector_index plus
+    // the specific combination of 'entity' fields i.e. the partition / by / over fields.
     let criteria = [];
-    if (config.fieldName !== undefined) {
-      criteria.push({ fieldName: 'field_name', fieldValue: config.fieldName });
-    }
+    criteria.push({ fieldName: 'detector_index', fieldValue: config.detectorIndex });
     criteria = criteria.concat(config.entityFields);
 
     mlResultsService.getRecordsForCriteria(ML_RESULTS_INDEX_ID, [config.jobId], criteria,

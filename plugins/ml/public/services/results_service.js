@@ -1036,14 +1036,10 @@ module.service('mlResultsService', function ($q, es) {
       });
     }
 
-    // Add in each of the specified criteria.
+    // Add in term queries for each of the specified criteria.
     _.each(criteriaFields, (criteria) => {
-      const condition = { 'match': {} };
-      condition.match[criteria.fieldName] = {
-        'query': criteria.fieldValue,
-        'type': 'phrase'
-      };
-
+      const condition = { 'term': {} };
+      condition.term[criteria.fieldName] = criteria.fieldValue;
       boolCriteria.push(condition);
     });
 

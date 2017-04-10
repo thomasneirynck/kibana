@@ -39,6 +39,7 @@ export default function explorerChartConfigBuilder(mlJobService) {
 
     const config = {
       jobId: record.job_id,
+      detectorIndex: record.detector_index,
       function: record.function_description,
       metricFunction: aggregationTypeTransform.toES(record.function_description),
       timeField: job.data_description.time_field,
