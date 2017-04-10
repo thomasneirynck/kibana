@@ -73,8 +73,8 @@ module
   $scope.chartData = mlSingleMetricJobService.chartData;
 
   const PAGE_WIDTH = angular.element('.single-metric-job-container').width();
-  const BAR_TARGET = PAGE_WIDTH / 2;
-  const MAX_BARS = BAR_TARGET + (BAR_TARGET / 100) * 100; // 100% larger that bar target
+  const BAR_TARGET = (PAGE_WIDTH > 2000) ? 1000 : (PAGE_WIDTH / 2);
+  const MAX_BARS = BAR_TARGET + (BAR_TARGET / 100) * 100; // 100% larger than bar target
   const REFRESH_INTERVAL_MS = 100;
   const MAX_BUCKET_DIFF = 3;
   const METRIC_AGG_TYPE = 'metrics';

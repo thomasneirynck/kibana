@@ -91,7 +91,7 @@ module.service('mlMultiMetricJobService', function (
           };
         });
       } else {
-        deferred.reject(this.chartData);
+        deferred.resolve(this.chartData);
       }
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
       _.each(aggregationsByTime, (dataForTime) => {

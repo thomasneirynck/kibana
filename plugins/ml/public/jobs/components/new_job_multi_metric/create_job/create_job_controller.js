@@ -72,7 +72,7 @@ module
   $scope.chartData = mlMultiMetricJobService.chartData;
 
   const PAGE_WIDTH = angular.element('.multi-metric-job-container').width();
-  const BAR_TARGET = PAGE_WIDTH / 2;
+  const BAR_TARGET = (PAGE_WIDTH > 1600) ? 800 : (PAGE_WIDTH / 2);
   const MAX_BARS = BAR_TARGET + (BAR_TARGET / 100) * 100; // 100% larger that bar target
   const REFRESH_INTERVAL_MS = 100;
   const MAX_BUCKET_DIFF = 3;
