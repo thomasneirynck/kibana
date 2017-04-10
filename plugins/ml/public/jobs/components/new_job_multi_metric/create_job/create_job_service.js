@@ -216,8 +216,11 @@ module.service('mlMultiMetricJobService', function (
         function: func
       };
 
+      dtr.detector_description = func;
+
       if (key !== EVENT_RATE_COUNT_FIELD) {
         dtr.field_name = key;
+        dtr.detector_description += `(${key})`;
       }
 
       if (formConfig.splitField !== '--No split--') {
