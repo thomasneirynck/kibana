@@ -33,7 +33,10 @@
       "text": "Analysis functions to be performed e.g. sum, count."
    },
    "new_job_detector_fieldname": {
-      "text": "Required for functions: sum, mean, max, min, info_content, distinct_count."
+      "text": "Required for functions: sum, mean, median, max, min, info_content, distinct_count."
+   },
+   "new_job_detector_fieldname_subset": {
+      "text": "Required for functions: sum, mean, max, min, distinct_count."
    },
    "new_job_detector_byfieldname": {
       "text": "Required for individual analysis where anomalies are detected compared to an entity's own past behavior."

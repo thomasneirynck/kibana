@@ -22,7 +22,7 @@
     <div class="row form-controls">
 
       <div class="form-group col-md-4">
-        <label>Aggregation</label><i ml-info-icon="new_job_bucketspan"></i>
+        <label>Aggregation</label><i ml-info-icon="new_job_detector_function"></i>
         <select
           ng-model="formConfig.agg.type"
           ng-options="agg as agg.title for agg in ui.aggTypeOptions"
@@ -33,7 +33,7 @@
       </div>
 
       <div class="form-group col-md-4">
-        <label>Field</label><i ml-info-icon="new_job_bucketspan" ></i>
+        <label>Field</label><i ml-info-icon="new_job_detector_fieldname_subset" ></i>
         <select
           ng-model="formConfig.field"
           ng-options="field as field.displayName for field in ui.fields"
