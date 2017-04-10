@@ -296,7 +296,7 @@ module
 
   function initAgg() {
     _.each($scope.ui.aggTypeOptions, (agg) => {
-      if (agg.title === 'Average') {
+      if (agg.title === 'Mean') {
         $scope.formConfig.agg.type = agg;
       }
     });

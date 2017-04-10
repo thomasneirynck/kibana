@@ -35,15 +35,15 @@ function filterAggTypes(aggTypes) {
       filteredAggTypes.push(type);
 
       typeCopy = angular.copy(type);
-      typeCopy.mlName = 'high_count';
       typeCopy.title   = 'High count';
+      typeCopy.mlName = 'high_count';
       typeCopy.mlModelPlotAgg = { max: 'max', min: 'min' };
       type.isCountType = true;
       filteredAggTypes.push(typeCopy);
 
       typeCopy = angular.copy(type);
-      typeCopy.mlName = 'low_count';
       typeCopy.title   = 'Low count';
+      typeCopy.mlName = 'low_count';
       typeCopy.mlModelPlotAgg = { ax: 'max', min: 'min' };
       type.isCountType = true;
       filteredAggTypes.push(typeCopy);
@@ -52,31 +52,32 @@ function filterAggTypes(aggTypes) {
       filteredAggTypes.push(type);
 
       typeCopy = angular.copy(type);
-      typeCopy.mlName = 'high_sum';
       typeCopy.title   = 'High sum';
+      typeCopy.mlName = 'high_sum';
       type.isCountType = false;
       filteredAggTypes.push(typeCopy);
 
       typeCopy = angular.copy(type);
-      typeCopy.mlName = 'low_sum';
       typeCopy.title   = 'Low sum';
+      typeCopy.mlName = 'low_sum';
       type.isCountType = false;
       filteredAggTypes.push(typeCopy);
 
     } else if (type.name === 'avg') {
+      type.title   = 'Mean';
       type.mlName = 'mean';
       type.isCountType = false;
       filteredAggTypes.push(type);
 
       typeCopy = angular.copy(type);
+      typeCopy.title   = 'High mean';
       typeCopy.mlName = 'high_mean';
-      typeCopy.title   = 'High average';
       type.isCountType = false;
       filteredAggTypes.push(typeCopy);
 
       typeCopy = angular.copy(type);
+      typeCopy.title   = 'Low mean';
       typeCopy.mlName = 'low_mean';
-      typeCopy.title   = 'Low average';
       type.isCountType = false;
       filteredAggTypes.push(typeCopy);
 
@@ -87,8 +88,9 @@ function filterAggTypes(aggTypes) {
       type.isCountType = false;
       filteredAggTypes.push(type);
     } else if (type.name === 'cardinality') {
-      type.mlModelPlotAgg = { max: 'max', min: 'min' };
+      type.title = 'Distinct count';
       type.mlName = 'distinct_count';
+      type.mlModelPlotAgg = { max: 'max', min: 'min' };
 
       _.each(type.params, (p) => {
         if (p.filterFieldTypes) {
