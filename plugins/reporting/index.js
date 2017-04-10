@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import { has } from 'lodash';
 import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
 import { main as mainRoutes } from './server/routes/main';
 import { jobs as jobRoutes } from './server/routes/jobs';
@@ -47,7 +48,7 @@ export function reporting(kibana) {
             width: Joi.number().integer().default(1950),
             height: Joi.number().integer().default(1200)
           }).default(),
-          timeout: Joi.number().integer().default(6000),
+          timeout: Joi.number().integer().default(20000),
           loadDelay: Joi.number().integer().default(3000),
           settleTime: Joi.number().integer().default(1000),
           concurrency: Joi.number().integer().default(appConfig.concurrency),
@@ -106,6 +107,16 @@ export function reporting(kibana) {
       }
 
       return setup();
-    }
+    },
+
+    deprecations: function () {
+      return [
+        (settings, log) => {
+          if (has(settings, 'capture.concurrency')) {
+            log('Config key "capture.concurrency" is no longer used and is now deprecated. It can be removed entirely.');
+          }
+        }
+      ];
+    },
   });
 };

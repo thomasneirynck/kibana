@@ -104,9 +104,6 @@ function _createPhantomInstance(ready, ph, phantomOptions) {
     return ready.then(() => {
       return fromCallback(cb => ph.page.set('resourceTimeout', RESOURCE_TIMEOUT, cb))
       .then(() => {
-        if (pageOptions.viewport) return fromCallback(cb => ph.page.set('viewportSize', pageOptions.viewport, cb));
-      })
-      .then(() => {
         if (pageOptions.zoom) return fromCallback(cb => ph.page.set('zoomFactor', pageOptions.zoom, cb));
       })
       .then(() => {
@@ -138,6 +135,14 @@ function _createPhantomInstance(ready, ph, phantomOptions) {
           }
         });
       });
+    },
+
+    setScrollPosition(position) {
+      return fromCallback(cb => ph.page.set('scrollPosition', position, cb));
+    },
+
+    setViewport(size) {
+      return fromCallback(cb => ph.page.set('viewportSize', size, cb));
     },
 
     evaluate(fn, ...args) {
@@ -321,42 +326,26 @@ function _createPhantomInstance(ready, ph, phantomOptions) {
       });
     },
 
-    screenshot(screenshotPath, screenshotOptions) {
+    async screenshot(screenshotPath, position) {
+      const { boundingClientRect, scroll = { x: 0, y: 0 } } = position;
 
-      return ready.then(() => {
-        validateInstance();
-        function saveScreenshot() {
-          return fromCallback(cb => ph.page.render(screenshotPath, cb));
-        }
+      await ready;
+      validateInstance();
 
-        if (!screenshotOptions.bounding) {
-          return saveScreenshot();
-        }
+      const zoomFactor = await fromCallback(cb => ph.page.get('zoomFactor', cb));
+      const previousClipRect = await fromCallback(cb => ph.page.get('clipRect', cb));
 
-        return fromCallback(cb => ph.page.get('viewportSize', cb))
-        .then(viewportSize => {
-          const contentOffset = Object.assign({
-            top: 90, // top chrome
-            left: 0,
-            right: 0,
-            bottom: 0,
-          }, screenshotOptions.bounding);
+      const clipRect = {
+        top: (boundingClientRect.top * zoomFactor) + scroll.y,
+        left: (boundingClientRect.left * zoomFactor) + scroll.x,
+        height: boundingClientRect.height * zoomFactor,
+        width: boundingClientRect.width * zoomFactor
+      };
 
-          const boundingArea = {
-            top: contentOffset.top,
-            left: contentOffset.left,
-            width: viewportSize.width - contentOffset.left - contentOffset.right,
-            height: viewportSize.height - contentOffset.top - contentOffset.bottom,
-          };
+      await fromCallback(cb => ph.page.set('clipRect', clipRect, cb));
+      await fromCallback(cb => ph.page.render(screenshotPath, cb));
 
-          return fromCallback(cb => ph.page.get('clipRect', cb))
-          .then(prevClipRect => {
-            return fromCallback(cb => ph.page.set('clipRect', boundingArea, cb))
-            .then(saveScreenshot)
-            .then(() => fromCallback(cb => ph.page.set('clipRect', prevClipRect, cb)));
-          });
-        });
-      });
+      await fromCallback(cb => ph.page.set('clipRect', previousClipRect, cb));
     },
 
     destroy() {

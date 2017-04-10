@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import esqueueEvents from './esqueue/constants/events';
 import { constants } from './constants';
 import { getUserFactory } from './get_user';
-import { getObjectQueueFactory } from './get_object_queue';
+import { getSavedObjectFactory } from './get_saved_object';
 import { cryptoFactory } from './crypto';
 import { oncePerServer } from './once_per_server';
 
@@ -13,7 +13,7 @@ function createDocumentJobFn(server) {
   const queueConfig = server.config().get('xpack.reporting.queue');
   const whitelistHeaders = server.config().get('elasticsearch.requestHeadersWhitelist');
 
-  const getObjectQueue = getObjectQueueFactory(server);
+  const getSavedObject = getSavedObjectFactory(server);
   const getUser = getUserFactory(server);
   const crypto = cryptoFactory(server);
 
@@ -31,25 +31,27 @@ function createDocumentJobFn(server) {
     return getUser(request)
     .then((user) => {
       // get resulting kibana saved object documents
-      return getObjectQueue(request, objectType, objId)
-      .then(function (objectQueue) {
-        server.log(['reporting', 'debug'], `${objectQueue.objects.length} saved object(s) to process`);
-
-        const savedObjects = objectQueue.objects.map((savedObj) => savedObj.toJSON(query));
+      return getSavedObject(request, objectType, objId, query)
+      .then(function (savedObject) {
+        server.log(['reporting', 'debug'], `Saved object to process`);
 
         const payload = {
-          id: objectQueue.id,
-          title: objectQueue.title,
-          description: objectQueue.description,
-          type: objectQueue.type,
-          objects: savedObjects,
+          id: savedObject.id,
+          title: savedObject.title,
+          description: savedObject.description,
+          type: savedObject.type,
+          // previously, we were saving an array of objects because the dashboard would return
+          // an object per visualization/search, but now that we're using the dashboard to take screenshots
+          // this is no longer required. However, I don't want to break previous versions of Kibana, so
+          // we will continue to use the old schema
+          objects: [ savedObject ],
           date,
           query,
           headers: serializedEncryptedHeaders,
         };
 
         const options = {
-          timeout: queueConfig.timeout * objectQueue.objects.length,
+          timeout: queueConfig.timeout,
           created_by: get(user, 'username', false),
           headers: filterHeaders(headers, whitelistHeaders),
         };

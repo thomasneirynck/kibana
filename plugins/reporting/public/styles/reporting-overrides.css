@@ -24,7 +24,6 @@ filter-bar,
   left: 0px !important;
 }
 
-
 /**
  *  Discover Tweaks
  */
@@ -33,15 +32,10 @@ filter-bar,
 discover-app .discover-timechart,
 discover-app .sidebar-container,
 discover-app .sidebar-collapser,
-discover-app navbar[name=discover-search]  {
+discover-app navbar[name=discover-search],
+discover-app .discover-table-footer {
   display: none;
 }
-
-/* make the doctable full width */
-.discover-wrapper.col-md-10 {
-  width: 100%;
-}
-
 
 /**
  *  Visualize Editor Tweaks
@@ -53,11 +47,9 @@ visualize-app .vis-editor-content > :not(.vis-editor-canvas)/* all non-canvas co
   display: none;
 }
 
-/* remove left padding from visualizations so that map lines up with container and so
- * visualizations render just like they do in dashboard panels.
- * setting the position to be fixed and to take up the entire screen, because some zoom levels/viewports
- * are triggering the media breakpoints that cause the .vis-editor-canvas to take up more room than the viewport
-*/
+/* remove left padding from visualizations so that map lines up with .leaflet-container and
+*  setting the position to be fixed and to take up the entire screen, because some zoom levels/viewports
+*  are triggering the media breakpoints that cause the .vis-editor-canvas to take up more room than the viewport */
 visualize-app .vis-editor-canvas {
   padding-left: 0px;
   position: fixed;
@@ -65,7 +57,6 @@ visualize-app .vis-editor-canvas {
   height: 100%;
   top: 0; left: 0;
 }
-
 
 /**
  *  Visualization tweaks
@@ -97,4 +88,12 @@ visualize visualize-legend .legend-value-title {
 /* https://github.com/ariya/phantomjs/issues/14365 */
 visualize .metric-vis {
   display: block;
+}
+
+/**
+*  Dashboard tweaks
+*/
+
+dashboard-app .gridster .gs-w {
+  z-index: auto;
 }

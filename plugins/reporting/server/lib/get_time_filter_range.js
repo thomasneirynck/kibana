@@ -1,15 +1,9 @@
-import { some } from 'lodash';
 import moment from 'moment';
 import datemath from '@elastic/datemath';
 import { parseKibanaState } from '../../../../server/lib/parse_kibana_state';
 
 export function getTimeFilterRange(savedObjects, query = {}) {
   if (!query._g) {
-    return;
-  }
-
-  const hasTimeBasedIndexPattern = some(savedObjects, { isUsingTimeBasedIndexPattern: true });
-  if (!hasTimeBasedIndexPattern) {
     return;
   }
 

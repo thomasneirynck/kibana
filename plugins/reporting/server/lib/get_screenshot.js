@@ -3,21 +3,6 @@ import { oncePerServer } from './once_per_server';
 import { screenshot } from './screenshot';
 import { createTaggedLogger } from './create_tagged_logger';
 
-// bounding boxes for various saved object types
-const boundingBoxes = {
-  visualization: {
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 0,
-  },
-  search: {
-    top: 0,
-    left: 0,
-    bottom: 0,
-    right: 16, // scrollbar in discover refuses to hide with ::-webkit-scrollbar css rule
-  },
-};
 
 function getScreenshotFn(server) {
   const config = server.config();
@@ -40,11 +25,10 @@ function getScreenshotFn(server) {
     return new Promise(function (resolve, reject) {
       screenshotQueue.push(function (cb) {
         return ss.capture(objUrl, {
-          headers,
-          bounding: boundingBoxes[type],
+          headers
         })
-        .then((filename) => {
-          resolve(filename);
+        .then((result) => {
+          resolve(result);
           cb();
         }, (err) => {
           screenshotQueue.end(err);

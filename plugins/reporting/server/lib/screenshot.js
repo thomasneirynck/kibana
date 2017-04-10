@@ -14,25 +14,41 @@ class Screenshot {
     this.logger = logger || noop;
   }
 
-  capture(url, opts) {
+  async capture(url, opts) {
     this.logger(`fetching screenshot of ${url}`);
     opts = Object.assign({ basePath: this.screenshotSettings.basePath }, opts);
 
-    return createPhantom(this.phantomPath, this.captureSettings, this.logger)
-    .then(ph => {
-      const filepath = getTargetFile(this.screenshotSettings.imagePath);
+    const phantomInstance = await createPhantom(this.phantomPath, this.captureSettings, this.logger);
 
-      return loadUrl(ph, url, this.captureSettings, opts)
-      .then(() => ph.screenshot(filepath, { bounding: opts.bounding }))
-      .then(() => {
-        this.logger(`Screenshot saved to ${filepath}`);
-        return ph.destroy().then(() => filepath);
-      })
-      .catch(err => {
-        this.logger(`Screenshot failed ${err.message} ${err.stack}`);
-        return ph.destroy().then(() => { throw err; });
-      });
-    });
+    try {
+      const itemSelector = '[data-shared-item]';
+      const itemsCountAttribute = 'data-shared-items-count';
+
+      await loadUrl(phantomInstance, url, itemSelector, itemsCountAttribute, this.captureSettings, opts);
+
+      const isTimepickerEnabled = await getElementDoesExist(phantomInstance, '[data-shared-timefilter=true]');
+
+      const attributes = { title: 'data-title', description: 'data-description' };
+      const elementsPositionAndAttributes = await getElementsPositionAndAttributes(phantomInstance, itemSelector, attributes);
+
+      const screenshots = [];
+      for (const item of elementsPositionAndAttributes) {
+        const filepath = getTargetFile(this.screenshotSettings.imagePath);
+        await phantomInstance.screenshot(filepath, item.position);
+        screenshots.push({
+          filepath: filepath,
+          title: item.attributes.title,
+          description: item.attributes.description
+        });
+      }
+      this.logger(`Screenshots saved to ${screenshots.map(s => s.filepath)}`);
+      return { isTimepickerEnabled, screenshots };
+    } catch (err) {
+      this.logger(err);
+      throw err;
+    } finally {
+      phantomInstance.destroy();
+    }
   }
 }
 
@@ -51,19 +67,18 @@ function createPhantom(phantomPath, captureSettings, logger) {
   });
 }
 
-function loadUrl(ph, url, captureSettings, opts) {
+function loadUrl(phantomInstance, url, elementSelector, itemsCountAttribute, captureSettings, opts) {
   const { timeout, viewport, zoom, loadDelay, settleTime } = captureSettings;
   const waitForSelector = '.application';
 
-  return ph.open(url, {
+  return phantomInstance.open(url, {
     headers: opts.headers,
     waitForSelector,
     timeout,
     zoom,
-    viewport,
   })
   .then(() => {
-    return ph.evaluate(function (basePath) {
+    return phantomInstance.evaluate(function (basePath) {
       // inject custom CSS rules
       function injectCSS(cssPath) {
         const node = document.createElement('link');
@@ -76,13 +91,69 @@ function loadUrl(ph, url, captureSettings, opts) {
     }, opts.basePath);
   })
   .then(() => {
-    return ph.waitForSelector('[render-counter]');
+    // the dashboard is using the `itemsCountAttribute` attribute to let us
+    // know how many items to expect since gridster incrementally adds panels
+    // we have to use this hint to wait for all of them
+    return phantomInstance.waitForSelector(`${elementSelector},[${itemsCountAttribute}]`);
+  })
+  .then(() => {
+    // returns the value of the `itemsCountAttribute` if it's there, otherwise
+    // we just count the number of `elementSelector`
+    return phantomInstance.evaluate(function (selector, countAttribute) {
+      const elementWithCount = document.querySelector(`[${countAttribute}]`);
+      if (elementWithCount) {
+        return parseInt(elementWithCount.getAttribute(countAttribute));
+      }
+
+      return document.querySelectorAll(selector).length;
+    }, elementSelector, itemsCountAttribute);
+  })
+  .then(async (visCount) => {
+    // waiting for all of the visualizations to be in the DOM
+    await phantomInstance.waitFor(function (selector) {
+      return document.querySelectorAll(selector).length;
+    }, visCount, elementSelector);
+    return visCount;
+  })
+  .then((visCount) => {
+    // we set the viewport of PhantomJS based on the number of visualizations
+    // so that when we position them with fixed-positioning below, they're all visible
+    return phantomInstance.setViewport({
+      width: viewport.width,
+      height: viewport.height * visCount
+    });
+  })
+  .then(() => {
+    function positionElements(selector, height, width) {
+      const visualizations = document.querySelectorAll(selector);
+      const visCount = visualizations.length;
+
+      for (let i = 0; i < visCount; i++) {
+        const visualization = visualizations[i];
+        const style = visualization.style;
+        style.position = 'fixed';
+        style.top = `${height * i}px`;
+        style.left = 0;
+        style.width = `${width}px`;
+        style.height = `${height}px`;
+        style.zIndex = 1;
+        style.backgroundColor = 'inherit';
+      }
+    }
+
+    return phantomInstance.evaluate(positionElements, elementSelector, viewport.height / zoom, viewport.width / zoom);
+  })
+  .then(() => {
+    // since we're currently using fixed positioning, we set the scroll position
+    // to make sure that when we grab the element positioning information that
+    // it's now skewed by a scroll that we aren't using
+    return phantomInstance.setScrollPosition({ top: 0, left: 0 });
   })
   .then(() => {
     // this is run in phantom
-    function listenForComplete(visLoadDelay, visLoadTimeout, visSettleTime) {
+    function listenForComplete(selector, visLoadDelay, visLoadTimeout, visSettleTime) {
       // wait for visualizations to finish loading
-      const visualizations = document.querySelectorAll('[render-counter]');
+      const visualizations = document.querySelectorAll(selector);
       const visCount = visualizations.length;
       const renderedTasks = [];
 
@@ -139,14 +210,47 @@ function loadUrl(ph, url, captureSettings, opts) {
       return Promise.all(renderedTasks);
     }
 
-    return ph.evaluate(listenForComplete, loadDelay, timeout, settleTime);
+    return phantomInstance.evaluate(listenForComplete, elementSelector, loadDelay, timeout, settleTime);
   });
 };
 
-function getTargetFile(imagePath) {
-  return path.join(imagePath, `screenshot-${puid.generate()}.png`);
+function getElementDoesExist(phantomInstance, timefilterSelector) {
+  return phantomInstance.evaluate(function (selector) {
+    return document.querySelector(selector) !== null;
+  }, timefilterSelector);
+}
+
+function getElementsPositionAndAttributes(phantomInstance, elementsSelector, elementAttributes) {
+  return phantomInstance.evaluate(function (selector, attributes) {
+    const elements = document.querySelectorAll(selector);
+
+    // NodeList isn't an array, just an iterator, unable to use .map/.forEach
+    const results = [];
+    for (const element of elements) {
+      results.push({
+        position: {
+          boundingClientRect: element.getBoundingClientRect(),
+          scroll: {
+            x: window.scrollX,
+            y: window.scrollY
+          }
+        },
+        attributes: Object.keys(attributes).reduce((result, key) => {
+          const attribute = attributes[key];
+          result[key] = element.getAttribute(attribute);
+          return result;
+        }, {})
+      });
+    }
+    return results;
+
+  }, elementsSelector, elementAttributes);
 }
 
 export function screenshot(phantomPath, captureSettings, screenshotSettings, logger) {
   return new Screenshot(phantomPath, captureSettings, screenshotSettings, logger);
 };
+
+function getTargetFile(imagePath) {
+  return path.join(imagePath, `screenshot-${puid.generate()}.png`);
+}

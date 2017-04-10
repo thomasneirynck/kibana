@@ -1,5 +1,5 @@
 import { unlink } from 'fs';
-import { capitalize } from 'lodash';
+import { capitalize, some } from 'lodash';
 import { getTimeFilterRange } from './get_time_filter_range';
 import { pdf } from './pdf';
 import { oncePerServer } from './once_per_server';
@@ -31,38 +31,40 @@ function generateDocumentFn(server) {
   function printablePdf(title, savedObjects, query, headers) {
     const pdfOutput = pdf.create();
 
-    if (title) {
-      const timeRange = getTimeFilterRange(savedObjects, query);
-      title += (timeRange) ? ` — ${timeRange.from} to ${timeRange.to}` : '';
-      pdfOutput.setTitle(title);
-    }
-
     return Promise.all(savedObjects.map((savedObj) => {
       if (savedObj.isMissing) {
         return  { savedObj };
       } else {
         return getScreenshot(savedObj.url, savedObj.type, headers)
-        .then((imagePath) => {
-          server.log(['reporting', 'debug'], `${savedObj.id} -> ${imagePath}`);
-          return { imagePath, savedObj };
+        .then(({ isTimepickerEnabled, screenshots }) => {
+          server.log(['reporting', 'debug'], `${savedObj.id} -> ${JSON.stringify(screenshots)}`);
+          return { isTimepickerEnabled, screenshots, savedObj };
         });
       }
     }))
     .then(objects => {
       const cleanupPaths = [];
 
+      if (title) {
+        const timeRange = some(objects, { isTimepickerEnabled: true }) ? getTimeFilterRange(savedObjects, query) : null;
+        title += (timeRange) ? ` — ${timeRange.from} to ${timeRange.to}` : '';
+        pdfOutput.setTitle(title);
+      }
+
       objects.forEach(object => {
-        const { imagePath, savedObj } = object;
-        if (imagePath) cleanupPaths.push(imagePath);
+        const { screenshots, savedObj } = object;
+        if (screenshots) cleanupPaths.push.apply(cleanupPaths, screenshots.map(s => s.filepath));
 
         if (savedObj.isMissing) {
           pdfOutput.addHeading(`${capitalize(savedObj.type)} with id '${savedObj.id}' not found`, {
             styles: 'warning'
           });
         } else {
-          pdfOutput.addImage(imagePath, {
-            title: savedObj.title,
-            description: savedObj.description,
+          screenshots.forEach(screenshot => {
+            pdfOutput.addImage(screenshot.filepath, {
+              title: screenshot.title,
+              description: screenshot.description,
+            });
           });
         }
       });
