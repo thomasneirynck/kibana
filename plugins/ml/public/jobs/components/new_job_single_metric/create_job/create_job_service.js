@@ -283,7 +283,8 @@ module.service('mlSingleMetricJobService', function (
         };
         break;
       case 'cardinality':
-        break; // removed until distinct_count is fixed on the backend
+        job.analysis_config.summary_count_field_name = 'dc_' + dtr.field_name;
+
         job.datafeed_config.aggregations = {
           buckets: {
             date_histogram: {
@@ -291,19 +292,24 @@ module.service('mlSingleMetricJobService', function (
               interval: interval
             },
             aggregations: {
-              [job.analysis_config.summary_count_field_name]: {
-                [aggType]: {
-                  field: dtr.field_name
-                }
-              },
               [formConfig.timeField]: {
                 max: {
                   field: formConfig.timeField
+                }
+              },
+              [job.analysis_config.summary_count_field_name]: {
+                [aggType]: {
+                  field: dtr.field_name
                 }
               }
             }
           }
         };
+
+        // finally, modify the detector before saving
+        dtr.function = 'non_zero_count';
+        delete dtr.field_name;
+
         break;
       default:
         break;
