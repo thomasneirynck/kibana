@@ -52,7 +52,6 @@
         per-page="table.perPage">
       </ml-paginated-table>
 
-      <div class="jobs-count" ng-show="jobsCount > 0">Total number of jobs: {{jobsCount}}</div>
       <div class="no-jobs-warning" ng-show="filterText && table.rows.length===0">No jobs found</div>
       <div class="no-jobs-warning" ng-show="noJobsCreated===true">No jobs configured</div>
       <div class="no-jobs-warning" ng-show="noJobsCreated===undefined">
