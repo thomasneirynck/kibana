@@ -441,9 +441,10 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     });
 
     // Query 2 - load 'overall' scores by time - using max of bucket_influencer anomaly_score.
-    // TODO - is this giving us the results we want?
+    // Pass the interval in seconds as the swimlane relies on a fixed number of seconds between buckets
+    // which wouldn't be the case if e.g. '1M' was used.
     mlResultsService.getBucketInfluencerMaxScoreByTime($scope.indexPatternId, selectedJobIds,
-      bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression)
+      bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.asSeconds() + 's')
     .then((resp) => {
       processOverallResults(resp.results);
       console.log('Explorer overall swimlane data set:', $scope.overallSwimlaneData);
@@ -473,9 +474,12 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
       const selectedJobIds = $scope.getSelectedJobIds();
 
       // load scores by influencer/jobId value and time.
+      // Pass the interval in seconds as the swimlane relies on a fixed number of seconds between buckets
+      // which wouldn't be the case if e.g. '1M' was used.
+      const interval = $scope.swimlaneBucketInterval.asSeconds() + 's';
       if ($scope.swimlaneViewByFieldName !== VIEW_BY_JOB_LABEL) {
         mlResultsService.getInfluencerValueMaxScoreByTime($scope.indexPatternId, selectedJobIds, $scope.swimlaneViewByFieldName,
-          fieldValues, bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression, MAX_DISPLAY_FIELD_VALUES)
+          fieldValues, bounds.min.valueOf(), bounds.max.valueOf(), interval, MAX_DISPLAY_FIELD_VALUES)
         .then((resp) => {
           processViewByResults(resp.results);
           finish();
@@ -483,7 +487,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
       } else {
         const jobIds = (fieldValues !== undefined && fieldValues.length > 0) ? fieldValues : selectedJobIds;
         mlResultsService.getScoresByBucket($scope.indexPatternId, jobIds,
-          bounds.min.valueOf(), bounds.max.valueOf(), $scope.swimlaneBucketInterval.expression, MAX_DISPLAY_FIELD_VALUES)
+          bounds.min.valueOf(), bounds.max.valueOf(), interval, MAX_DISPLAY_FIELD_VALUES)
         .then((resp) => {
           processViewByResults(resp.results);
           finish();
@@ -513,7 +517,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
       });
     } else {
       mlResultsService.getScoresByBucket($scope.indexPatternId, selectedJobIds,
-        earliestMs, latestMs, $scope.swimlaneBucketInterval.expression, MAX_DISPLAY_FIELD_VALUES)
+        earliestMs, latestMs, $scope.swimlaneBucketInterval.asSeconds() + 's', MAX_DISPLAY_FIELD_VALUES)
       .then((resp) => {
         loadViewBySwimlane(_.keys(resp.results));
       });
