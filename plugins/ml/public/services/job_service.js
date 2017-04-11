@@ -96,7 +96,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               const job = jobs[i];
               // create empty placeholders for stats and datafeed objects
               job.data_counts = {};
-              job.node = {};
               job.model_size_stats = {};
               job.datafeed_config = {};
 
@@ -106,8 +105,10 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
                   job.state = jobStats.state;
                   job.data_counts = jobStats.data_counts;
-                  job.node = jobStats.node;
                   job.model_size_stats = jobStats.model_size_stats;
+                  if (jobStats.node) {
+                    job.node = jobStats.node;
+                  }
                   if (jobStats.open_time) {
                     job.open_time = jobStats.open_time;
                   }
@@ -165,10 +166,11 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                   newJob.state = statsJob.state;
                   newJob.data_counts = {};
                   newJob.model_size_stats = {};
-                  newJob.node = {};
                   angular.copy(statsJob.data_counts, newJob.data_counts);
                   angular.copy(statsJob.model_size_stats, newJob.model_size_stats);
-                  angular.copy(statsJob.node, newJob.node);
+                  if (newJob.node) {
+                    angular.copy(statsJob.node, newJob.node);
+                  }
 
                   if (statsJob.open_time) {
                     newJob.open_time = statsJob.open_time;
