@@ -34,7 +34,6 @@ export default function explorerChartConfigBuilder(mlJobService) {
   // an object with properties used for the display (series function and field, aggregation interval etc),
   // and properties for the data feed used for the job (index pattern, time field etc).
   function buildConfig(record) {
-
     const job = mlJobService.getJob(record.job_id);
 
     const config = {
@@ -69,8 +68,15 @@ export default function explorerChartConfigBuilder(mlJobService) {
     if (record.function_description === 'count' && summaryCountFieldName !== undefined
       && summaryCountFieldName !== 'doc_count') {
       // Check for a detector looking at cardinality (distinct count) using an aggregation.
-      const cardinalityField = _.get(job.datafeed_config,
-          ['aggregations', job.data_description.time_field, 'aggregations', summaryCountFieldName, 'cardinality', 'field']);
+      // The cardinality field will be in:
+      // aggregations/<agg_name>/aggregations/<summaryCountFieldName>/cardinality/field
+      // or aggs/<agg_name>/aggs/<summaryCountFieldName>/cardinality/field
+      let cardinalityField = undefined;
+      const topAgg = _.get(job.datafeed_config, 'aggregations') || _.get(job.datafeed_config, 'aggs');
+      if (topAgg !== undefined && _.values(topAgg).length > 0) {
+        cardinalityField = _.get(_.values(topAgg)[0], ['aggregations', summaryCountFieldName, 'cardinality', 'field']) ||
+          _.get(_.values(topAgg)[0], ['aggs', summaryCountFieldName, 'cardinality', 'field']);
+      }
 
       if (record.function === 'non_zero_count' && cardinalityField !== undefined) {
         config.metricFunction = 'cardinality';
