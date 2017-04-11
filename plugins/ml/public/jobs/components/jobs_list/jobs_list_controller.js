@@ -80,6 +80,8 @@ function (
     canUpdateDatafeed: false
   };
 
+  $scope.jobStats = {};
+
   // functions for job list buttons
   // called from jobs_list_controls.html
   $scope.deleteJob = function (job) {
@@ -222,6 +224,15 @@ function (
     $scope.jobs = jobs;
     $scope.jobsCount = jobs.length;
 
+    $scope.jobStats = {
+      'Jobs': $scope.jobs.length,
+      'Open jobs': 0,
+      'Closed jobs': 0,
+      'Failed jobs': 0,
+      'Active datafeeds': 0,
+      'ML Nodes': 0
+    };
+
     $scope.table = {};
     $scope.table.perPage = 10;
     $scope.table.columns = [
@@ -236,6 +247,9 @@ function (
       { title: 'Latest timestamp' },
       { title: 'Actions', sortable: false, class: 'col-action' }
     ];
+
+    // object to keep track of nodes being used by jobs
+    const mlNodes = {};
 
     let rows = jobs.map((job) => {
       const rowScope = $scope.$new();
@@ -258,6 +272,7 @@ function (
       rowScope.time = latestTimeStamp;
 
       rowScope.enableTimeSeries = jobUtils.isTimeSeriesViewJob(job);
+
 
       rowScopes.push(rowScope);
       const jobDescription = job.description || '';
@@ -310,9 +325,27 @@ function (
           scope:  rowScope
         }];
 
+        if (job.state === 'opened') {
+          $scope.jobStats['Open jobs']++;
+        } else if (job.state === 'closed') {
+          $scope.jobStats['Closed jobs']++;
+        } else if (job.state === 'failed') {
+          $scope.jobStats['Failed jobs']++;
+        }
+
+        if (job.datafeed_config.state === 'started') {
+          $scope.jobStats['Active datafeeds']++;
+        }
+
+        if (job.node && job.node.name) {
+          mlNodes[job.node.name] = {};
+        }
+
         return tableRow;
       }
     });
+
+    $scope.jobStats['ML Nodes'] = Object.keys(mlNodes).length;
 
     // filter out the rows that are undefined because they didn't match
     // the filter in the previous map
