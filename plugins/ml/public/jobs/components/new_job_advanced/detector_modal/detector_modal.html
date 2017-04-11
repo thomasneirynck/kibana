@@ -13,10 +13,6 @@
 
   <div class="editor-color detector_field_form">
 
-    <datalist id="functions_datalist">
-      <option ng-repeat="func in functions" >{{func.id}}</option>
-    </datalist>
-
     <datalist id="properties_datalist">
       <option ng-repeat="(key, prop) in properties" >{{key}}</option>
     </datalist>
@@ -34,13 +30,13 @@
       <div class="form-group">
         <label>function</label><i ml-info-icon="new_job_detector_function" />
 
-        <input
+        <select
           ng-model="detector.function"
-          required
-          tabindex="2"
           ng-change="functionChange()"
-          list='functions_datalist'
-          class="form-control" />
+          class="form-control">
+          <option ng-repeat="func in functions" >{{func.id}}</option>
+        </select>
+
       </div>
       <div class="form-group">
         <label>over_field_name</label><i ml-info-icon="new_job_detector_overfieldname" />
