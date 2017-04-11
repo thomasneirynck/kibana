@@ -419,6 +419,7 @@ module
         });
       });
     } else {
+      $scope.ui.showFieldCharts = false;
       loadDocCountData([]);
     }
 

@@ -32,27 +32,18 @@ module.directive('mlSingleMetricJobChart', function () {
     const svgWidth  = angular.element('.single-metric-job-container').width();
     const lineChartHeight = scope.chartHeight;
     const swimlaneHeight = 30;
-    const margin = { top: 0, right: 0, bottom: 0, left: 50 };
+    const margin = { top: 0, right: 0, bottom: 0, left: scope.chartTicksMargin.width };
     const svgHeight = lineChartHeight + swimlaneHeight + margin.top + margin.bottom;
-    const vizWidth  = svgWidth  - margin.left - margin.right;
+    let vizWidth  = svgWidth  - margin.left - margin.right;
     const chartLimits = { max: 0, min: 0 };
 
-    let lineChartXScale = d3.time.scale().range([0, vizWidth]);
-    let lineChartYScale = d3.scale.linear().range([lineChartHeight, 0]);
+    let lineChartXScale = null;
+    let lineChartYScale = null;
 
-    d3.svg.axis().scale(lineChartXScale).orient('bottom')
-      .innerTickSize(-lineChartHeight).outerTickSize(0).tickPadding(10);
-    d3.svg.axis().scale(lineChartYScale).orient('left')
-      .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
 
     // TODO - do we want to use interpolate('basis') to smooth the connecting lines?
-    const lineChartValuesLine = d3.svg.line()
-      .x(d => lineChartXScale(d.date))
-      .y(d => lineChartYScale(d.value));
-    const lineChartBoundedArea = d3.svg.area()
-      .x (d => lineChartXScale(d.date) || 0)
-      .y0(d => lineChartYScale(Math.max(chartLimits.min, Math.min(chartLimits.max, d.upper))))
-      .y1(d => lineChartYScale(Math.min(chartLimits.max, Math.max(chartLimits.min, d.lower))));
+    let lineChartValuesLine = null;
+    let lineChartBoundedArea = null;
 
     let lineChartGroup;
     let modelChartGroup;
@@ -62,6 +53,7 @@ module.directive('mlSingleMetricJobChart', function () {
     let $progressBar;
 
     scope.$on('render', () => {
+      init();
       createSVGGroups();
       drawLineChart();
     });
@@ -74,23 +66,47 @@ module.directive('mlSingleMetricJobChart', function () {
       scope.$destroy();
     });
 
+    function init() {
+      margin.left = scope.chartTicksMargin.width;
+      vizWidth = svgWidth  - margin.left - margin.right;
+
+      lineChartXScale = d3.time.scale().range([0, vizWidth]);
+      lineChartYScale = d3.scale.linear().range([lineChartHeight, 0]);
+
+      d3.svg.axis().scale(lineChartXScale).orient('bottom')
+        .innerTickSize(-lineChartHeight).outerTickSize(0).tickPadding(10);
+      d3.svg.axis().scale(lineChartYScale).orient('left')
+        .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
+
+      // TODO - do we want to use interpolate('basis') to smooth the connecting lines?
+      lineChartValuesLine = d3.svg.line()
+        .x(d => lineChartXScale(d.date))
+        .y(d => lineChartYScale(d.value));
+      lineChartBoundedArea = d3.svg.area()
+        .x (d => lineChartXScale(d.date) || 0)
+        .y0(d => lineChartYScale(Math.max(chartLimits.min, Math.min(chartLimits.max, d.upper))))
+        .y1(d => lineChartYScale(Math.min(chartLimits.max, Math.max(chartLimits.min, d.lower))));
+    }
+
 
     function createSVGGroups() {
       if (scope.chartData.line === undefined) {
         return;
       }
 
-      // console.log(' ', scope.chartData.line);
-
       // Clear any existing elements from the visualization,
       // then build the svg elements for the bubble chart.
       const chartElement = d3.select(element.get(0));
       chartElement.select('svg').remove();
+      chartElement.select('.progress').remove();
 
       if (chartElement.select('.progress-bar')[0][0] === null) {
+        let style = 'width:' + (+vizWidth + 2) + 'px; margin-bottom: -' + (+lineChartHeight + 8) + 'px; ';
+        style += 'margin-left: ' + (+margin.left - 1) + 'px;';
+
         chartElement.append('div')
           .attr('class', 'progress')
-          .attr('style','width:' + (+vizWidth + 2) + 'px; margin-bottom: -' + (+lineChartHeight + 8) + 'px')
+          .attr('style', style)
           .append('div')
           .attr('class', 'progress-bar');
       }
@@ -112,10 +128,6 @@ module.directive('mlSingleMetricJobChart', function () {
       lineChartGroup = svg.append('g')
         .attr('class', 'line-chart')
         .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
-
-      // dotChartGroup = svg.append('g')
-      //   .attr('class', 'line-chart-markers')
-      //   .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
     }
 
     function drawLineChart() {
@@ -241,7 +253,8 @@ module.directive('mlSingleMetricJobChart', function () {
   return {
     scope: {
       chartData: '=',
-      chartHeight:'='
+      chartHeight:'=',
+      chartTicksMargin: '='
     },
     link: link
   };

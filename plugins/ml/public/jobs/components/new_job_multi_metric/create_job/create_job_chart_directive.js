@@ -31,7 +31,7 @@ module.directive('mlMultiMetricJobChart', function () {
 
     let svgWidth = 0;
     const lineChartHeight = scope.chartHeight;
-    const margin = { top: 0, right: 0, bottom: 20, left: 50 };
+    const margin = { top: 0, right: 0, bottom: 20, left: scope.chartTicksMargin.width };
     const svgHeight = lineChartHeight + margin.top + margin.bottom;
     let vizWidth  = svgWidth  - margin.left - margin.right;
     const chartLimits = { max: 0, min: 0 };
@@ -63,8 +63,10 @@ module.directive('mlMultiMetricJobChart', function () {
 
     function init() {
       const $el = angular.element('.multi-metric-job-container .card-front');
-      const offset = $el.hasClass('card') ? 50 : 0;
-      // const offset =
+      const offset = $el.hasClass('card') ? 30 : 0;
+
+      margin.left = scope.chartTicksMargin.width;
+
       svgWidth = $el.width() - offset;
       vizWidth = svgWidth  - margin.left - margin.right;
 
@@ -89,8 +91,6 @@ module.directive('mlMultiMetricJobChart', function () {
         return;
       }
 
-      // console.log(' ', scope.chartData.line);
-
       // Clear any existing elements from the visualization,
       // then build the svg elements for the bubble chart.
       const chartElement = d3.select(element.get(0));
@@ -98,9 +98,12 @@ module.directive('mlMultiMetricJobChart', function () {
       chartElement.select('.progress').remove();
 
       if (chartElement.select('.progress-bar')[0][0] === null) {
+        let style = 'width:' + (+vizWidth + 2) + 'px; margin-bottom: -' + (+lineChartHeight - 12) + 'px; ';
+        style += 'margin-left: ' + (+margin.left - 1) + 'px;';
+
         chartElement.append('div')
           .attr('class', 'progress')
-          .attr('style','width:' + (+vizWidth + 2) + 'px; margin-bottom: -' + (+lineChartHeight - 12) + 'px')
+          .attr('style', style)
           .append('div')
           .attr('class', 'progress-bar');
       }
@@ -240,7 +243,8 @@ module.directive('mlMultiMetricJobChart', function () {
   return {
     scope: {
       chartData: '=',
-      chartHeight: '='
+      chartHeight: '=',
+      chartTicksMargin: '='
     },
     link: link
   };

@@ -64,11 +64,15 @@
 
     <div ng-show="ui.showJobInput">
       <div class='chart-contrainer'>
-        <ml-single-metric-job-chart chart-data="chartData" chart-height='ui.chartHeight'></ml-single-metric-job-chart>
+        <ml-single-metric-job-chart
+          chart-data="chartData"
+          chart-height='ui.chartHeight'
+          chart-ticks-margin="chartData.chartTicksMargin">
+        </ml-single-metric-job-chart>
 
         <div ng-show="chartState === CHART_STATE.NOT_STARTED || chartState === CHART_STATE.LOADING || chartState === CHART_STATE.NO_RESULTS"
           class='chart-loader'
-          style='height: {{ui.chartHeight}}px; margin-top: -{{ui.chartHeight + 35}}px;'>
+          style='height: {{ui.chartHeight}}px; margin-top: -{{ui.chartHeight + 35}}px; margin-left: {{chartData.chartTicksMargin.width - 1}}px;'>
             <div class='status-label' ng-show="chartState === CHART_STATE.NOT_STARTED"></div>
             <div class='status-label' ng-show="chartState === CHART_STATE.LOADING">
               <h2><i class='fa fa-spinner fa-spin'></i></h2>

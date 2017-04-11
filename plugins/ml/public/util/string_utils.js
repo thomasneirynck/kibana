@@ -18,9 +18,9 @@
 */
 import 'plugins/ml/lib/bower_components/moment-jdateformatparser/moment-jdateformatparser';
 
-
 const _ = require('lodash');
 const moment = require('moment');
+import d3 from 'd3';
 
 // Replaces all instances of dollar delimited tokens in the specified String
 // with corresponding values from the supplied object, optionally
@@ -424,6 +424,23 @@ function escapeForElasticsearchQuery(str) {
   return str.replace(/[-[\]{}()+!<>=?:\/\\^"~*&|\s]/g, '\\$&');
 }
 
+function calculateTextWidth(txt, isNumber) {
+  txt = (isNumber) ? d3.format(',')(txt) : txt;
+  const $body = d3.select('body');
+  const $el = $body.append('div');
+  const svg = $el.append('svg');
+  const tempLabelText = svg.append('g')
+      .attr('class', 'temp-axis-label tick')
+      .selectAll('text.temp.axis').data('a')
+      .enter()
+      .append('text')
+      .text(txt);
+  const width = tempLabelText[0][0].getBBox().width + 10;
+  $el.remove();
+  d3.select('.temp-axis-label').remove();
+  return Math.ceil(width);
+}
+
 export default {
   replaceStringTokens,
   detectorToString,
@@ -434,5 +451,6 @@ export default {
   generateExampleTime,
   toLocaleString,
   escape: escapeFunc,
-  escapeForElasticsearchQuery
+  escapeForElasticsearchQuery,
+  calculateTextWidth
 };

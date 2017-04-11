@@ -31,7 +31,7 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
 
     let svgWidth = 0;
     const barChartHeight = scope.eventRateChartHeight;
-    const margin = { top: 0, right: 0, bottom: 20, left: 50 };
+    const margin = { top: 0, right: 0, bottom: 20, left: scope.chartTicksMargin.width };
     const svgHeight = barChartHeight + margin.top + margin.bottom;
     let vizWidth  = svgWidth  - margin.left - margin.right;
     const chartLimits = { max: 0, min: 0 };
@@ -63,6 +63,8 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
     function init() {
       const $el = angular.element('.event-rate-container');
 
+      margin.left = scope.chartTicksMargin.width;
+
       svgWidth = $el.width();
       vizWidth = svgWidth  - margin.left - margin.right;
 
@@ -84,9 +86,12 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
       chartElement.select('.progress').remove();
 
       if (chartElement.select('.progress-bar')[0][0] === null) {
+        let style = 'width:' + (+vizWidth + 2) + 'px; margin-bottom: -' + (+barChartHeight - 12) + 'px; ';
+        style += 'margin-left: ' + (+margin.left - 1) + 'px;';
+
         chartElement.append('div')
           .attr('class', 'progress')
-          .attr('style','width:' + (+vizWidth + 2) + 'px; margin-bottom: -' + (+barChartHeight - 12) + 'px')
+          .attr('style', style)
           .append('div')
           .attr('class', 'progress-bar');
       }
@@ -246,7 +251,8 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
   return {
     scope: {
       chartData: '=',
-      eventRateChartHeight: '='
+      eventRateChartHeight: '=',
+      chartTicksMargin: '='
     },
     link: link
   };

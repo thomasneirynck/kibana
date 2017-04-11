@@ -221,7 +221,11 @@
 
               <div class='chart-contrainer'>
                 <div style='height: {{ui.eventRateChartHeight + 25}}px;'>
-                  <ml-multi-metric-job-event-rate-chart chart-data="chartData.job" event-rate-chart-height='ui.eventRateChartHeight'></ml-multi-metric-job-event-rate-chart>
+                  <ml-multi-metric-job-event-rate-chart
+                    chart-data="chartData.job"
+                    event-rate-chart-height='ui.eventRateChartHeight'
+                    chart-ticks-margin="chartData.chartTicksMargin">
+                  </ml-multi-metric-job-event-rate-chart>
                 </div>
 
                 <div ng-show="chartStates.eventRate === CHART_STATE.NOT_STARTED || chartStates.eventRate === CHART_STATE.LOADING || chartStates.eventRate === CHART_STATE.NO_RESULTS"
@@ -250,12 +254,16 @@
                   <label>{{formConfig.fields[id].agg.type.title}} {{formConfig.fields[id].name}}</label>
                   <div class='chart-contrainer'>
                     <div style='height: {{ui.chartHeight + 25}}px;'>
-                      <ml-multi-metric-job-chart chart-data="chart" chart-height='ui.chartHeight'></ml-multi-metric-job-chart>
+                      <ml-multi-metric-job-chart
+                        chart-data="chart"
+                        chart-height='ui.chartHeight'
+                        chart-ticks-margin="chartData.chartTicksMargin">
+                      </ml-multi-metric-job-chart>
                     </div>
 
                     <div ng-show="chartStates.fields[id] === CHART_STATE.NOT_STARTED || chartStates.fields[id] === CHART_STATE.LOADING || chartStates.fields[id] === CHART_STATE.NO_RESULTS"
                       class='chart-loader fields-chart-loader'
-                      style='height: {{ui.chartHeight}}px; margin-top: -{{ui.chartHeight + 25}}px;'>
+                      style='height: {{ui.chartHeight}}px; margin-top: -{{ui.chartHeight + 25}}px; margin-left: {{chartData.chartTicksMargin.width - 1}}px;'>
                         <div class='status-label' ng-show="chartStates.fields[id] === CHART_STATE.NOT_STARTED"></div>
                         <div class='status-label' ng-show="chartStates.fields[id] === CHART_STATE.LOADING">
                           <h2><i class='fa fa-spinner fa-spin'></i></h2>

@@ -20,6 +20,7 @@ import 'ui/timefilter';
 import parseInterval from 'ui/utils/parse_interval';
 
 import jobUtils from 'plugins/ml/util/job_utils';
+import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -38,7 +39,9 @@ module.service('mlSingleMetricJobService', function (
     swimlane: [],
     hasBounds: false,
     percentComplete: 0,
-    loadingDiffernce: 0
+    loadingDiffernce: 0,
+    highestValue: 0,
+    chartTicksMargin: { width: 30 }
   };
   this.job = {};
 
@@ -51,6 +54,7 @@ module.service('mlSingleMetricJobService', function (
     this.chartData.hasBounds = false;
     this.chartData.percentComplete = 0;
     this.chartData.loadingDifference = 0;
+    this.chartData.eventRateHighestValue = 0;
 
     const obj = {
       success: true,
@@ -63,18 +67,31 @@ module.service('mlSingleMetricJobService', function (
     .then((resp) => {
 
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
+      let highestValue = 0;
+
       _.each(aggregationsByTime, (dataForTime) => {
         const time = dataForTime.key;
         let value = _.get(dataForTime, ['field_value', 'value']);
         if (value === undefined && formConfig.field === null) {
           value = dataForTime.doc_count;
         }
+        if (!isFinite(value)) {
+          value = 0;
+        }
+        if (value > highestValue) {
+          highestValue = value;
+        }
+
         obj.results[time] = {
-          actual: (isFinite(value)) ? value : 0,
+          actual: value,
         };
       });
 
       this.chartData.line = processLineChartResults(obj.results);
+
+      this.chartData.highestValue = Math.ceil(highestValue);
+      this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.highestValue, true);
+
       deferred.resolve(this.chartData.line);
     })
     .catch((resp) => {

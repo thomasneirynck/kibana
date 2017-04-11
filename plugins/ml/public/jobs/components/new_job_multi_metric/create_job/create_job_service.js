@@ -20,6 +20,7 @@ import 'ui/timefilter';
 import parseInterval from 'ui/utils/parse_interval';
 
 import jobUtils from 'plugins/ml/util/job_utils';
+import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -44,7 +45,10 @@ module.service('mlMultiMetricJobService', function (
     detectors: {},
     percentComplete: 0,
     loadingDifference: 0,
-    lastLoadTimestamp: null
+    lastLoadTimestamp: null,
+    highestValue: 0,
+    eventRateHighestValue: 0,
+    chartTicksMargin: { width: 30 }
   };
   this.job = {};
 
@@ -55,6 +59,8 @@ module.service('mlMultiMetricJobService', function (
     this.chartData.detectors = {};
     this.chartData.percentComplete = 0;
     this.chartData.loadingDifference = 0;
+    this.chartData.highestValue = 0;
+    this.chartData.eventRateHighestValue = 0;
 
     this.job = {};
   };
@@ -94,6 +100,8 @@ module.service('mlMultiMetricJobService', function (
         deferred.resolve(this.chartData);
       }
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
+      let highestValue = Math.max(this.chartData.eventRateHighestValue, this.chartData.highestValue);
+
       _.each(aggregationsByTime, (dataForTime) => {
         const time = +dataForTime.key;
         const date = new Date(time);
@@ -114,19 +122,26 @@ module.service('mlMultiMetricJobService', function (
         });
 
         _.each(fieldIds, (fieldId) => {
-          const value = (fieldId === EVENT_RATE_COUNT_FIELD) ? docCount : dataForTime[fieldId].value;
+          let value = (fieldId === EVENT_RATE_COUNT_FIELD) ? docCount : dataForTime[fieldId].value;
+          if (!isFinite(value)) {
+            value = 0;
+          }
+
+          if (value > highestValue) {
+            highestValue = value;
+          }
 
           if (this.chartData.detectors[fieldId]) {
             this.chartData.detectors[fieldId].line.push({
-              date: date,
-              time: time,
-              value: (isFinite(value)) ? value : 0,
+              date,
+              time,
+              value,
             });
 
             // init swimlane
             this.chartData.detectors[fieldId].swimlane.push({
-              date: date,
-              time: time,
+              date,
+              time,
               value: 0,
               color: '',
               percentComplete: 0
@@ -134,6 +149,10 @@ module.service('mlMultiMetricJobService', function (
           }
         });
       });
+
+      this.chartData.highestValue = Math.ceil(highestValue);
+      this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.highestValue, true);
+
       deferred.resolve(this.chartData);
     })
     .catch((resp) => {
@@ -463,18 +482,31 @@ module.service('mlMultiMetricJobService', function (
       (interval + 'ms'),
       formConfig.query)
     .then((resp) => {
+      let highestValue = Math.max(this.chartData.eventRateHighestValue, this.chartData.highestValue);
       this.chartData.job.bars = [];
 
       _.each(resp.results, (value, t) => {
+        if (!isFinite(value)) {
+          value = 0;
+        }
+
+        if (value > highestValue) {
+          highestValue = value;
+        }
+
         const time = +t;
         const date = new Date(time);
         this.chartData.job.barsInterval = interval;
         this.chartData.job.bars.push({
           date,
           time,
-          value: (isFinite(value)) ? value : 0,
+          value,
         });
       });
+
+      this.chartData.eventRateHighestValue = Math.ceil(highestValue);
+      this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.eventRateHighestValue, true);
+
       deferred.resolve(this.chartData);
     }).catch((resp) => {
       console.log('getEventRate visualization - error getting event rate data from elasticsearch:', resp);
