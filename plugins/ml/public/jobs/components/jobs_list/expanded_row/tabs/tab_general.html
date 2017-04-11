@@ -23,24 +23,6 @@
     <div class="col-md-6">
       <div ng-repeat="(key, value) in job">
         <div ng-switch="key">
-          <div ng-switch-when="endpoints">
-            <div class="ml_sub_heading">Endpoint links</div>
-            <div class='ml_job_section_container'>
-              <div>
-                <ml-job-item ng-repeat="(key1, value1) in value">
-                  <div class="ml_job_row row">
-                    <div class="col-md-3">{{key1}}</div>
-                    <div class="col-md-9"><a target="_blank" href='{{value1}}'>{{value1}}</a></div>
-                  </div>
-                </ml-job-item>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div ng-repeat="(key, value) in job">
-        <div ng-switch="key">
           <div ng-switch-when="custom_settings">
             <div ng-repeat="(key1, value1) in value">
               <div ng-switch="key1">
@@ -57,6 +39,28 @@
                     </div>
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div ng-repeat="(key, value) in job">
+        <div ng-switch="key">
+          <div ng-switch-when="node">
+            <div class="ml_sub_heading">Node</div>
+            <div class='ml_job_section_container'>
+              <div>
+                <ml-job-item ng-repeat="(key1, value1) in value">
+                  <div ng-switch="key1">
+                    <div ng-switch-when="name">
+                      <div class="row">
+                        <div class="col-md-3">{{key1}}</div>
+                        <div class="col-md-9">{{value1}}</div>
+                      </div>
+                    </div>
+                  </div>
+                </ml-job-item>
               </div>
             </div>
           </div>

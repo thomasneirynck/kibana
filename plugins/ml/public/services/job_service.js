@@ -96,6 +96,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               const job = jobs[i];
               // create empty placeholders for stats and datafeed objects
               job.data_counts = {};
+              job.node = {};
               job.model_size_stats = {};
               job.datafeed_config = {};
 
@@ -105,6 +106,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
                   job.state = jobStats.state;
                   job.data_counts = jobStats.data_counts;
+                  job.node = jobStats.node;
                   job.model_size_stats = jobStats.model_size_stats;
                   if (jobStats.open_time) {
                     job.open_time = jobStats.open_time;
@@ -163,8 +165,10 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                   newJob.state = statsJob.state;
                   newJob.data_counts = {};
                   newJob.model_size_stats = {};
+                  newJob.node = {};
                   angular.copy(statsJob.data_counts, newJob.data_counts);
                   angular.copy(statsJob.model_size_stats, newJob.model_size_stats);
+                  angular.copy(statsJob.node, newJob.node);
 
                   if (statsJob.open_time) {
                     newJob.open_time = statsJob.open_time;
@@ -276,6 +280,9 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               if (newJob.model_size_stats) {
                 job.model_size_stats = newJob.model_size_stats;
               }
+              if (newJob.node) {
+                job.node = newJob.node;
+              }
               if (newJob.open_time) {
                 job.open_time = newJob.open_time;
               }
@@ -338,6 +345,9 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
             job.data_counts = newJob.data_counts;
             if (newJob.model_size_stats) {
               job.model_size_stats = newJob.model_size_stats;
+            }
+            if (newJob.node) {
+              job.node = newJob.node;
             }
             if (newJob.open_time) {
               job.open_time = newJob.open_time;
@@ -537,6 +547,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     delete tempJob.finished_time;
     delete tempJob.last_data_time;
     delete tempJob.model_size_stats;
+    delete tempJob.node;
     delete tempJob.average_bucket_processing_time_ms;
     delete tempJob.model_snapshot_id;
     delete tempJob.open_time;
@@ -550,7 +561,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     if (tempJob.datafeed_config) {
       delete tempJob.datafeed_config.datafeed_id;
       delete tempJob.datafeed_config.job_id;
-      delete tempJob.datafeed_config.datafeed_state;
+      delete tempJob.datafeed_config.state;
     }
 
     return tempJob;
