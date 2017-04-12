@@ -1,8 +1,8 @@
 import React from 'react';
 import formatNumber from 'plugins/monitoring/lib/format_number';
-import { get } from 'lodash';
+import { get, capitalize } from 'lodash';
 import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
-import { ClusterItemContainer, StatusContainer, BytesUsage, BytesPercentageUsage } from './helpers';
+import { ClusterItemContainer, HealthStatusIndicator, BytesUsage, BytesPercentageUsage } from './helpers';
 
 export default class ElasticsearchPanel extends React.Component {
   constructor(props) {
@@ -37,11 +37,15 @@ export default class ElasticsearchPanel extends React.Component {
     const nodes = stats.nodes;
     const indices = stats.indices;
 
+    const statusIndicator = (
+      <HealthStatusIndicator>
+        <ElasticsearchStatusIcon status={this.props.status} />&nbsp;
+        {capitalize(this.props.status)}
+      </HealthStatusIndicator>
+    );
+
     return (
-      <ClusterItemContainer {...this.props} url='elasticsearch' title='Elasticsearch'>
-        <StatusContainer>
-          <ElasticsearchStatusIcon status={this.props.status} />
-        </StatusContainer>
+      <ClusterItemContainer {...this.props} statusIndicator={statusIndicator} url='elasticsearch' title='Elasticsearch'>
         <div className='row'>
           <div className='col-md-4'>
             <dl data-test-subj='elasticsearch_overview' data-overview-status={this.props.status}>

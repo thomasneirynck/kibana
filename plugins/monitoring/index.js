@@ -5,6 +5,7 @@ import requireAllAndApply from '../../server/lib/require_all_and_apply';
 import esHealthCheck from './server/lib/es_client/health_check';
 import instantiateClient from './server/lib/es_client/instantiate_client';
 import initKibanaMonitoring from './server/kibana_monitoring';
+import initClusterAlerts from './server/cluster_alerts';
 
 export default function monitoringIndex(kibana) {
   return new kibana.Plugin({
@@ -17,7 +18,7 @@ export default function monitoringIndex(kibana) {
         title: 'Monitoring',
         order: 9002,
         description: 'Monitoring for Elastic Stack',
-        icon: 'plugins/monitoring/monitoring.svg',
+        icon: 'plugins/monitoring/icons/monitoring.svg',
         main: 'plugins/monitoring/monitoring',
         injectVars(server) {
           const config = server.config();
@@ -119,6 +120,14 @@ export default function monitoringIndex(kibana) {
         logstash: object({
           index_pattern: string().default('.monitoring-logstash-2-*')
         }).default(),
+        cluster_alerts: object({
+          enabled: boolean().default(true),
+          index: string().default('.monitoring-alerts-2'),
+          management: object({
+            enabled: boolean().default(true),
+            interval: number().default(5 * 60 * 1000) // 5 minutes
+          }).default()
+        }).default(),
         missing_intervals: number().default(12),
         max_bucket_size: number().default(10000),
         min_interval_seconds: number().default(10),
@@ -202,6 +211,11 @@ export default function monitoringIndex(kibana) {
         // Send Kibana server ops to the monitoring bulk api
         if (config.get('xpack.monitoring.kibana.collection.enabled')) {
           features.push(initKibanaMonitoring(this.kbnServer, server));
+        }
+
+        // Manage Cluster Alerts (e.g., create/delete Watches)
+        if (config.get('xpack.monitoring.cluster_alerts.enabled')) {
+          features.push(initClusterAlerts(this.kbnServer, server));
         }
 
         return Promise.all(features);

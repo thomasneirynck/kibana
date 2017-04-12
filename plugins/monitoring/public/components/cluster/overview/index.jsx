@@ -3,6 +3,7 @@ import ElasticsearchPanel from './elasticsearch_panel';
 import LicenseText from './license_text';
 import KibanaPanel from './kibana_panel';
 import LogstashPanel from './logstash_panel';
+import AlertsPanel from './alerts_panel';
 import { get } from 'lodash';
 
 export default class Overview extends React.Component {
@@ -11,9 +12,10 @@ export default class Overview extends React.Component {
     const cluster = get(props, 'scope.cluster', {});
 
     this.state = {
+      license: cluster.license,
+      alerts: cluster.alerts,
       elasticsearch: { ...cluster.elasticsearch },
       kibana: cluster.kibana,
-      license: cluster.license,
       logstash: cluster.logstash
     };
   }
@@ -23,10 +25,11 @@ export default class Overview extends React.Component {
       cluster = cluster || {};
 
       this.setState({
+        license: cluster.license,
+        alerts: cluster.alerts,
         elasticsearch: { ...cluster.elasticsearch },
         kibana: cluster.kibana,
         logstash: cluster.logstash,
-        license: cluster.license
       });
     });
   }
@@ -46,17 +49,18 @@ export default class Overview extends React.Component {
           angularChangeUrl={angularChangeUrl}
         />
 
-        {/* Elasticsearch info */}
+        <div className='page-row'>
+          <AlertsPanel alerts={this.state.alerts} angularChangeUrl={angularChangeUrl} />
+        </div>
+
         <div className='page-row'>
           <ElasticsearchPanel {...this.state.elasticsearch} angularChangeUrl={angularChangeUrl} />
         </div>
 
-        {/* Kibana info */}
         <div className='page-row'>
           <KibanaPanel {...this.state.kibana} angularChangeUrl={angularChangeUrl} />
         </div>
 
-        {/* Logstash info */}
         <div className='page-row'>
           <LogstashPanel {...this.state.logstash} angularChangeUrl={angularChangeUrl} />
         </div>

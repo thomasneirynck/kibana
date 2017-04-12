@@ -1,9 +1,9 @@
 import React from 'react';
 import numeral from 'numeral';
 import moment from 'moment';
-import _ from 'lodash';
-import { ClusterStatusIcon } from 'plugins/monitoring/components/cluster/status_icon';
+import { capitalize, get } from 'lodash';
 import Tooltip from 'plugins/monitoring/components/tooltip';
+import { AlertsIndicator } from './alerts_indicator';
 
 function isClusterSupportedFactory(isSupported) {
   return class IsClusterSupported extends React.Component {
@@ -15,6 +15,17 @@ function isClusterSupportedFactory(isSupported) {
       }
     }
   };
+}
+
+function PrimaryClusterTooltip({ isPrimary }) {
+  if (isPrimary) {
+    return (
+      <Tooltip text='Kibana uses this cluster as the primary connection' placement='bottom' trigger='hover'>
+        <span className='kuiIcon fa-asterisk primary-cluster-indicator'></span>
+      </Tooltip>
+    );
+  }
+  return null;
 }
 
 export default class ClusterRow extends React.Component {
@@ -55,14 +66,12 @@ to enjoy multi-cluster monitoring.`
   getClusterAction() {
     if (this.checkSupported()) {
       return (
-        <a className='clusterName link' onClick={this.changeCluster()}>
-          { this.props.cluster_name } &nbsp;
-          { this.props.isPrimary ?
-            <Tooltip text='Kibana uses this cluster as the primary connection' placement='right' trigger='hover'>
-              <span className='fa fa-asterisk primary-cluster-indicator'></span>
-            </Tooltip> :
-            '' }
-        </a>
+        <span>
+          <a className='clusterName link' onClick={this.changeCluster()}>
+            { this.props.cluster_name } &nbsp;
+            <PrimaryClusterTooltip isPrimary={this.props.isPrimary} />
+          </a>
+        </span>
       );
     }
 
@@ -98,9 +107,9 @@ to enjoy multi-cluster monitoring.`
       return (
         <div>
           <div className="license">
-            { _.capitalize(this.props.license.type) }
+            { capitalize(this.props.license.type) }
           </div>
-          { this.props.showLicenseExpiration ? licenseExpiry() : '' }
+          { this.props.showLicenseExpiration ? licenseExpiry() : null }
         </div>
       );
     }
@@ -117,7 +126,7 @@ to enjoy multi-cluster monitoring.`
    * helper for avoiding TypeError for nested properties
    */
   path(path) {
-    return _.get(this.props, path);
+    return get(this.props, path);
   }
 
   render() {
@@ -132,37 +141,35 @@ to enjoy multi-cluster monitoring.`
 
     return (
       <tr className={ classes.join(' ') }>
-        <td key="Name">
+        <td>
           { this.getClusterAction() }
         </td>
-        <td key="Status">
+        <td>
           <IsClusterSupported>
-            <div title={`Cluster status: ${this.props.status}`}>
-              <ClusterStatusIcon status={this.props.status} />
-            </div>
+            <AlertsIndicator alerts={this.props.alerts} />
           </IsClusterSupported>
         </td>
-        <td key="Nodes">
+        <td>
           <IsClusterSupported>
             {numeral(this.path('elasticsearch.stats.nodes.count.total')).format('0,0')}
           </IsClusterSupported>
         </td>
-        <td key="Indices">
+        <td>
           <IsClusterSupported>
             {numeral(this.path('elasticsearch.stats.indices.count')).format('0,0')}
           </IsClusterSupported>
         </td>
-        <td key="Data">
+        <td>
           <IsClusterSupported>
             {numeral(this.path('elasticsearch.stats.indices.store.size_in_bytes')).format('0,0[.]0 b')}
           </IsClusterSupported>
         </td>
-        <td key="Logstash">
+        <td>
           <IsClusterSupported>
             {numeral(this.path('logstash.count')).format('0,0')}
           </IsClusterSupported>
         </td>
-        <td key="Kibana">
+        <td>
           <IsClusterSupported>
             {numeral(this.path('kibana.count')).format('0,0')}
           </IsClusterSupported>

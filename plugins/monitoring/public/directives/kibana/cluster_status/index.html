@@ -1,11 +1,5 @@
 <div class="monitoring-summary-status">
   <div class="monitoring-summary-status__content">
-    <div class="monitoring-summary-status__status-indicator">
-      <monitoring-kibana-status-icon
-        status="pageData.clusterStatus.status"
-        title="Overall status of Kibana instances in the cluster: {{ pageData.clusterStatus.status }}"
-      ></monitoring-kibana-status-icon>
-    </div>
     <div>Instances:
       <strong data-test-subj="count">{{ pageData.clusterStatus.count }}</strong>
     </div>
@@ -20,6 +14,14 @@
     </div>
     <div>Memory:
       <strong data-test-subj="memory_usage">{{ pageData.clusterStatus.memory_size|formatNumber:'bytes' }} / {{ pageData.clusterStatus.memory_limit|formatNumber:'bytes' }}</strong>
+    </div>
+    <div class="monitoring-summary-status__status-indicator">
+      Health:
+      <monitoring-kibana-status-icon
+        status="pageData.clusterStatus.status"
+        title="Overall status of Kibana instances in the cluster: {{ pageData.clusterStatus.status }}"
+      ></monitoring-kibana-status-icon>
+      {{ pageData.clusterStatus.status|capitalize }}
     </div>
   </div>
 </div>

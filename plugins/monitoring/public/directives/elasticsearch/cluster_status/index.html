@@ -1,11 +1,5 @@
 <div class="monitoring-summary-status">
   <div class="monitoring-summary-status__content">
-    <div class="monitoring-summary-status__status-indicator">
-      <monitoring-elasticsearch-status-icon
-        status="pageData.clusterStatus.status"
-        title="Status of the Elasticsearch cluster: {{ pageData.clusterStatus.status }}"
-      ></monitoring-elasticsearch-status-icon>
-    </div>
     <div>Nodes:
       <strong data-test-subj="nodesCount">{{ pageData.clusterStatus.nodesCount }}</strong>
     </div>
@@ -32,6 +26,14 @@
     </div>
     <div>Version:
       <strong data-test-subj="version">{{ cluster.version }}</strong>
+    </div>
+    <div class="monitoring-summary-status__status-indicator">
+      Health:
+      <monitoring-elasticsearch-status-icon
+        status="pageData.clusterStatus.status"
+        title="Status of the Elasticsearch cluster: {{ pageData.clusterStatus.status }}"
+      ></monitoring-elasticsearch-status-icon>
+      {{ pageData.clusterStatus.status|capitalize }}
     </div>
   </div>
 </div>

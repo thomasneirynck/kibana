@@ -1,44 +1,15 @@
 import React from 'react';
-import { includes } from 'lodash';
+import { StatusIcon } from 'plugins/monitoring/components/status_icon';
 
 export function KibanaStatusIcon({ status, availability = true }) {
-  const mappedStatus = (() => {
-    const expectedStatuses = ['red', 'yellow', 'green'];
-    return includes(expectedStatuses, status) ? status : 'yellow';
+  const type = (() => {
+    if (!availability) return StatusIcon.TYPES.GRAY;
+
+    const statusKey = status.toUpperCase();
+    return StatusIcon.TYPES[statusKey] || StatusIcon.TYPES.YELLOW;
   })();
-
-  const { icon, color } = (() => {
-    if (!availability) {
-      return {
-        color: 'gray',
-        icon: 'fa-bolt'
-      };
-    }
-
-    if (mappedStatus === 'green') {
-      return {
-        color: mappedStatus,
-        icon: 'fa-check'
-      };
-    }
-
-    if (mappedStatus === 'yellow') {
-      return {
-        color: mappedStatus,
-        icon: 'fa-warning'
-      };
-    }
-
-    return {
-      color: 'red',
-      icon: 'fa-bolt'
-    };
-  })();
-
 
   return (
-    <div className={`monitoring-status-icon monitoring-status-icon--${color}`}>
-      <span className={`kuiIcon ${icon}`}></span>
-    </div>
+    <StatusIcon type={type} label={`Health: ${status}`} />
   );
 }

@@ -1,9 +1,10 @@
-import _ from 'lodash';
+import { capitalize, get, find } from 'lodash';
 import numeral from 'numeral';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { KibanaStatusIcon } from 'plugins/monitoring/components/kibana/status_icon';
 import Table from 'plugins/monitoring/components/paginated_table';
+import { SORT_ASCENDING } from 'monitoring-constants';
 import uiModules from 'ui/modules';
 
 const uiModule = uiModules.get('monitoring/directives', []);
@@ -16,7 +17,7 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
       {
         key: 'kibana.name',
         sortKey: 'kibana.name',
-        sort: 1,
+        sort: SORT_ASCENDING,
         title: 'Name'
       },
       {
@@ -53,7 +54,7 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
     link: function (scope, $el) {
       const tableRowTemplate = React.createClass({
         getInitialState: function () {
-          return _.find(scope.rows, { resolver: this.props.resolver }) || null;
+          return find(scope.rows, { resolver: this.props.resolver }) || null;
         },
         componentWillReceiveProps: function (newProps) {
           this.setState(newProps);
@@ -64,16 +65,17 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
               <td>
                 <a className='link' onClick={() => {
                   scope.$evalAsync(() => {
-                    kbnUrl.changePath('/kibana/instances/' + _.get(this.props, 'kibana.uuid'));
+                    kbnUrl.changePath('/kibana/instances/' + get(this.props, 'kibana.uuid'));
                   });
                 }}>
                   <div>{this.props.kibana.name}</div>
                 </a>
-                <div className='small'>{_.get(this.props, 'kibana.transport_address')}</div>
+                <div className='small'>{get(this.props, 'kibana.transport_address')}</div>
               </td>
               <td>
                 <div title={`Instance status: ${this.props.kibana.status}`}>
-                  <KibanaStatusIcon status={this.props.kibana.status} availability={this.props.availability} />
+                  <KibanaStatusIcon status={this.props.kibana.status} availability={this.props.availability} />&nbsp;
+                  {!this.props.availability ? 'Offline' : capitalize(this.props.kibana.status)}
                 </div>
               </td>
               <td>

@@ -20,13 +20,28 @@ export const LOGSTASH_SYSTEM_ID = 'logstash';
 export const KIBANA_STATS_TYPE = 'kibana_stats';
 
 /*
+ * Values for column sorting in table options
+ * @type {number} 1 or -1
+ */
+export const SORT_ASCENDING = 1;
+export const SORT_DESCENDING = -1;
+
+/*
  * config options for welcome banner / allow phone home
+ * @type {string}
  */
 export const CONFIG_SHOW_BANNER = 'xPackMonitoring:showBanner';
 export const CONFIG_ALLOW_REPORT = 'xPackMonitoring:allowReport';
 
 /*
  * Chart colors
+ * @type {string}
  */
 export const CHART_LINE_COLOR = '#d2d2d2';
 export const CHART_TEXT_COLOR = '#9c9c9c';
+
+/*
+ * Number of cluster alerts to show on overview page
+ * @type {number}
+ */
+export const CLUSTER_ALERTS_SEARCH_SIZE = 3;

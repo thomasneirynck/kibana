@@ -28,7 +28,7 @@ describe('xpack_info', function () {
 
   beforeEach(function () {
     mockServer = {
-      log: () => {},
+      log: sinon.stub(),
       plugins: {
         elasticsearch: {
           getCluster: sinon.stub().withArgs('data').returns({
@@ -48,6 +48,29 @@ describe('xpack_info', function () {
       it('returns false if the license has expired', async () => {
         const info = await xpackInfoTest({ license: { status: 'expired' } });
         expect(info.license.isActive()).to.be(false);
+      });
+    });
+
+    describe('logging for imported license', function () {
+      it('logs clusterSource and status:active if the license is active', async () => {
+        const info = await xpackInfoTest({ license: { status: 'active' } });
+        expect(info.license.isActive()).to.be(true);
+        expect(mockServer.log.getCall(0).args).to.eql([ ['license', 'debug', 'xpack'], 'Calling Elasticsearch _xpack API' ]);
+        expect(mockServer.log.getCall(1).args).to.eql([ ['license', 'info', 'xpack'], (
+          'Imported license information from Elasticsearch for [data] cluster: mode: undefined ' +
+          '| status: active ' +
+          '| expiry date: Invalid date'
+        ) ]);
+      });
+      it('logs clusterSource and status:expired if the license has expired', async () => {
+        const info = await xpackInfoTest({ license: { status: 'expired' } });
+        expect(info.license.isActive()).to.be(false);
+        expect(mockServer.log.getCall(0).args).to.eql([ ['license', 'debug', 'xpack'], 'Calling Elasticsearch _xpack API' ]);
+        expect(mockServer.log.getCall(1).args).to.eql([ ['license', 'info', 'xpack'], (
+          'Imported license information from Elasticsearch for [data] cluster: mode: undefined ' +
+          '| status: expired ' +
+          '| expiry date: Invalid date'
+        ) ]);
       });
     });
 

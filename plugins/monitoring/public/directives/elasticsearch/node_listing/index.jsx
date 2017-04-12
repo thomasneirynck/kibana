@@ -7,6 +7,7 @@ import { NodeStatusIcon } from 'plugins/monitoring/components/elasticsearch/node
 import Tooltip from 'plugins/monitoring/components/tooltip';
 import extractIp from 'plugins/monitoring/lib/extract_ip';
 import Table from 'plugins/monitoring/components/paginated_table';
+import { SORT_ASCENDING } from 'monitoring-constants';
 import uiModules from 'ui/modules';
 
 function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch) {
@@ -66,7 +67,8 @@ function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch
           </td>
           <td>
             <div title={`Node status: ${this.state.status}`}>
-              <NodeStatusIcon status={this.state.status} />
+              <NodeStatusIcon status={this.state.status} />&nbsp;
+              {this.state.status}
             </div>
           </td>
           {cpuComponents}
@@ -132,7 +134,7 @@ uiModule.directive('monitoringNodesListing', ($injector) => {
       {
         key: 'nodeName',
         sortKey: 'nodeName',
-        sort: 1,
+        sort: SORT_ASCENDING,
         title: 'Name'
       },
       {

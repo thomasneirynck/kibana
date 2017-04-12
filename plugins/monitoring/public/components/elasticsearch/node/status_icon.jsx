@@ -1,22 +1,10 @@
 import React from 'react';
+import { StatusIcon } from 'plugins/monitoring/components/status_icon';
 
 export function NodeStatusIcon({ status }) {
-  const { icon, color } = (() => {
-    if (status === 'Online') {
-      return {
-        color: 'green',
-        icon: 'fa-check'
-      };
-    }
-    return {
-      color: 'gray',
-      icon: 'fa-bolt'
-    };
-  })();
+  const type = (status === 'Online') ? StatusIcon.TYPES.GREEN : StatusIcon.TYPES.GRAY;
 
   return (
-    <div className={`monitoring-status-icon monitoring-status-icon--${color}`}>
-      <span className={`kuiIcon ${icon}`}></span>
-    </div>
+    <StatusIcon type={type} label={`Health: ${status}`} />
   );
 }

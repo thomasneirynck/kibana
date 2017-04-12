@@ -1,5 +1,6 @@
 import 'plugins/monitoring/views/no_data';
 import 'plugins/monitoring/views/access_denied';
+import 'plugins/monitoring/views/alerts';
 import 'plugins/monitoring/views/license';
 import 'plugins/monitoring/views/cluster/listing';
 import 'plugins/monitoring/views/cluster/overview';

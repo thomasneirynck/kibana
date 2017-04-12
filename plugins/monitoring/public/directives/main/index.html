@@ -80,6 +80,10 @@
           <a class="kuiLocalTab">{{ cluster.cluster_name }}</a>
         </div>
 
+        <div ng-if="inAlerts" class="kuiLocalTabs" role="navigation">
+          <a class="kuiLocalTab">Cluster Alerts</a>
+        </div>
+
         <div ng-if="inListing" class="kuiLocalTabs" role="navigation">
          <a class="kuiLocalTab">Clusters</a>
        </div>

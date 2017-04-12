@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Table from 'plugins/monitoring/components/paginated_table';
+import { SORT_ASCENDING } from 'monitoring-constants';
 import ClusterRow from 'plugins/monitoring/components/cluster/listing/cluster_row';
 import Notifier from 'ui/notify/notifier';
 import uiModules from 'ui/modules';
@@ -20,7 +21,7 @@ uiModule.directive('monitoringClusterListing', ($injector) => {
         columns: [
           {
             key: 'cluster_name',
-            sort: 1,
+            sort: SORT_ASCENDING,
             title: 'Name'
           },
           {

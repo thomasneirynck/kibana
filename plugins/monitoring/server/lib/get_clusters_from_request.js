@@ -5,8 +5,13 @@ import getClustersStats from './get_clusters_stats';
 import getClustersHealth from './get_clusters_health';
 import getPrimaryClusterUuid from './get_primary_cluster_uuid';
 import calculateOverallStatus from './calculate_overall_status';
+import alertsClustersAggregation from '../cluster_alerts/alerts_clusters_aggregation';
+import alertsClusterSearch from '../cluster_alerts/alerts_cluster_search';
+import { checkLicense as checkLicenseForAlerts } from '../cluster_alerts/check_license';
+import getClusterLicense from './get_cluster_license';
 import getKibanasForClusters from './get_kibanas_for_clusters';
 import getLogstashForClusters from './logstash/get_logstash_for_clusters';
+import { CLUSTER_ALERTS_SEARCH_SIZE } from '../../common/constants';
 
 // manipulate cluster status and license meta data
 export function normalizeClustersData(clusters) {
@@ -58,6 +63,25 @@ export function getClustersFromRequest(req) {
     .then(getClustersStats(req))
     .then(getClustersHealth(req))
     .then(getPrimaryClusterUuid(req))
+    .then((clusters) => {
+      if (req.params.clusterUuid) {
+        return alertsClusterSearch(req, req.params.clusterUuid, getClusterLicense, checkLicenseForAlerts, {
+          size: CLUSTER_ALERTS_SEARCH_SIZE
+        })
+        .then((alerts) => {
+          _.set(clusters, '[0].alerts', alerts);
+          return clusters;
+        });
+      } else {
+        return alertsClustersAggregation(req, clusters, checkLicenseForAlerts)
+        .then((alerts) => {
+          clusters.forEach((cluster) => {
+            cluster.alerts = alerts[cluster.cluster_uuid];
+          });
+          return clusters;
+        });
+      }
+    })
     .then(clusters => {
       const mapClusters = getKibanasForClusters(req, kibanaIndices);
       return mapClusters(clusters)

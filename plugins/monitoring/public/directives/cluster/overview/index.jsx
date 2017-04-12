@@ -8,15 +8,14 @@ uiModule.directive('monitoringClusterOverview', function (kbnUrl, showLicenseExp
   return {
     restrict: 'E',
     scope: { cluster: '=' },
-    link: function (scope, element) {
-      ReactDOM.render(
+    link(scope, $el) {
+      ReactDOM.render((
         <Overview
           scope={scope}
           kbnUrl={kbnUrl}
           showLicenseExpiration={showLicenseExpiration}
-        ></Overview>,
-        element[0]
-      );
+        ></Overview>
+      ), $el[0]);
     }
   };
 });

@@ -1,25 +1,44 @@
 import React from 'react';
-import { kebabCase } from 'lodash';
 import { formatBytesUsage, formatPercentageUsage } from 'plugins/monitoring/lib/format_number';
 
-export function ClusterItemContainer(props) {
-  // Note: kebabCase takes something like 'My Name' and makes it 'my-name', which is ideal for CSS names
+export function HealthStatusIndicator(props) {
   return (
-    <div className='cluster-panel panel panel-product'>
-      <div className={`panel-heading panel-heading-${kebabCase(props.title)}`}>
-        {props.title}
-      </div>
-      <div className='cluster-panel__body panel-body'>
-        {props.children}
-      </div>
-    </div>
+    <span>
+      Health: {props.children}
+    </span>
   );
 }
 
-export function StatusContainer(props) {
+export function ClusterItemContainer(props) {
+  const urlIconMap = {
+    elasticsearch: 'cluster-overview-icon__elasticsearch',
+    kibana: 'cluster-overview-icon__kibana',
+    logstash: 'cluster-overview-icon__logstash'
+  };
+  const iconClassNames = [ 'cluster-overview-icon', urlIconMap[props.url] ];
+
   return (
-    <div className='cluster-panel__status-icon'>
-      {props.children} Status
+    <div className='kuiPanel kuiPanel--withHeader kuiVerticalRhythm'>
+      <div className='kuiPanelHeader'>
+        <div className="kuiPanelHeaderSection">
+          <div className={iconClassNames.join(' ')}></div>
+          <div className="kuiPanelHeader__title">
+            <h2 className='kuiSubTitle'>
+              {props.title}
+            </h2>
+          </div>
+        </div>
+
+        <div className="kuiPanelHeaderSection">
+          <div className="kuiText">
+            {props.statusIndicator}
+          </div>
+        </div>
+      </div>
+
+      <div className='kuiPanelBody'>
+        {props.children}
+      </div>
     </div>
   );
 }

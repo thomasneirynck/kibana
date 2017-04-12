@@ -1,11 +1,5 @@
 <div class="monitoring-summary-status">
   <div class="monitoring-summary-status__content">
-    <div class="monitoring-summary-status__status-indicator">
-      <monitoring-elasticsearch-node-status-icon
-        status="node.status"
-        title="Status of this Elasticsearch node: {{ node.status }}"
-      ></monitoring-elasticsearch-node-status-icon>
-    </div>
     <div>
       <strong>{{ node.transport_address|extractIp }}</strong>
     </div>
@@ -16,6 +10,13 @@
     <div>Indices: <strong>{{ node.indexCount|formatNumber:'0,0' }}</strong></div>
     <div>Shards: <strong>{{ node.totalShards|formatNumber:'0,0' }}</strong></div>
     <div>Type: <strong>{{ node.nodeTypeLabel }}</strong></div>
+    <div class="monitoring-summary-status__status-indicator">
+      Health:
+      <monitoring-elasticsearch-node-status-icon
+        status="node.status"
+        title="Status of this Elasticsearch node: {{ node.status }}"
+      ></monitoring-elasticsearch-node-status-icon>
+      {{ node.status|capitalize }}
+    </div>
   </div>
 </div>
-

@@ -27,6 +27,7 @@ uiModule.directive('monitoringMain', (license) => {
       } else {
         scope.product = false;
         scope.inOverview = scope.name === 'overview';
+        scope.inAlerts = scope.name === 'alerts';
         scope.inListing = scope.name === 'listing' || scope.name === 'no-data';
       }
 

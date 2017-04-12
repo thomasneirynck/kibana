@@ -1,7 +1,9 @@
 import numeral from 'numeral';
+import { capitalize } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Table from 'plugins/monitoring/components/paginated_table';
+import { SORT_ASCENDING } from 'monitoring-constants';
 import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
 import uiModules from 'ui/modules';
 
@@ -15,7 +17,7 @@ function showSystemIndicesComponentFactory(scope) {
       this.toggleShowSystemIndices = this.toggleShowSystemIndices.bind(this);
     }
 
-  // See also directives/shard_allocation/components/tableHead.jsx
+    // See also directives/shard_allocation/components/tableHead.jsx
     toggleShowSystemIndices(e) {
       const isChecked = e.target.checked;
       this.setState({ showSystemIndices: !this.state.showSystemIndices });
@@ -74,7 +76,8 @@ function indexRowFactory(scope, kbnUrl) {
           </td>
           <td>
             <div title={`Index status: ${status}`}>
-              <ElasticsearchStatusIcon status={status} />
+              <ElasticsearchStatusIcon status={status} />&nbsp;
+              {capitalize(status)}
             </div>
           </td>
           <td>
@@ -134,7 +137,7 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
       },
       {
         key: 'status',
-        sort: 1,
+        sort: SORT_ASCENDING,
         title: 'Status'
       },
       {
