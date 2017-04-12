@@ -77,7 +77,16 @@ export class Watch {
     }
 
     const id = json.id;
-    const watchJson = pick(json.watchJson, [ 'trigger', 'input', 'condition', 'actions', 'metadata' ]);
+    const watchJson = pick(json.watchJson, [
+      'trigger',
+      'input',
+      'condition',
+      'actions',
+      'metadata',
+      'transform',
+      'throttle_period',
+      'throttle_period_in_millis'
+    ]);
     const watchStatusJson = json.watchStatusJson;
 
     const watch = cloneDeep(watchJson);
