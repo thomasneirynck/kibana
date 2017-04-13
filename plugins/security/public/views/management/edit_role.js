@@ -9,9 +9,9 @@ import 'plugins/security/services/shield_role';
 import 'plugins/security/services/shield_privileges';
 import 'plugins/security/services/shield_indices';
 import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import checkLicenseError from 'plugins/security/lib/check_license_error';
-import GateKeeperProvider from 'plugins/xpack_main/services/gate_keeper';
+import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
 
 routes.when('/management/elasticsearch/security/roles/edit/:name?', {
   template,

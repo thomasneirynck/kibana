@@ -15,7 +15,7 @@ import { iconChoices, colorChoices, iconChoicesByClass, drillDownIconChoices,
 import { outlinkEncoders } from 'plugins/graph/services/outlink_encoders';
 
 import KbnUrlProvider from 'ui/url';
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import chrome from 'ui/chrome';
 import 'plugins/graph/less/main.less';
 import uiModules from 'ui/modules';

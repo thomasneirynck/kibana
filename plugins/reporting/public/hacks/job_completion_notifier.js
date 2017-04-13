@@ -6,8 +6,8 @@ import { get, last } from 'lodash';
 import moment from 'moment';
 import { constants } from '../../server/lib/constants.js';
 import 'plugins/reporting/services/job_queue';
-import PathProvider from 'plugins/xpack_main/services/path';
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import { PathProvider } from 'plugins/xpack_main/services/path';
+import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 
 uiModules.get('kibana')
 .config(() => {

@@ -5,7 +5,7 @@ import uiRoutes from 'ui/routes';
 import notify from 'ui/notify';
 
 // License
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 
 // Our imports
 import _ from 'lodash';

@@ -1,4 +1,4 @@
-export default function MockWindowProvider() {
+export function MockWindowProvider() {
   const items = {};
   return {
     sessionStorage: {

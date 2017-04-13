@@ -13,7 +13,7 @@
  * strictly prohibited.
  */
 
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import chrome from 'ui/chrome';
 import uiModules from 'ui/modules';
 

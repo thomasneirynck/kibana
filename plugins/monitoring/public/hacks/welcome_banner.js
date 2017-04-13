@@ -1,6 +1,6 @@
 import Notifier from 'ui/notify/notifier';
 import uiModules from 'ui/modules';
-import PathProvider from 'plugins/xpack_main/services/path';
+import { PathProvider } from 'plugins/xpack_main/services/path';
 import { CONFIG_SHOW_BANNER, CONFIG_ALLOW_REPORT } from 'monitoring-constants';
 
 function renderBanner($injector) {

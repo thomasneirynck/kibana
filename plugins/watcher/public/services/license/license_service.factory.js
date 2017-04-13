@@ -1,5 +1,5 @@
 import uiModules from 'ui/modules';
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import 'ui/url';
 import { LicenseService } from './license_service';
 

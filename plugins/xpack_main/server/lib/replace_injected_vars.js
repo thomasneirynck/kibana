@@ -1,4 +1,4 @@
-export default async function replaceInjectedVars(originalInjectedVars, request, server) {
+export async function replaceInjectedVars(originalInjectedVars, request, server) {
   const xpackInfo = server.plugins.xpack_main.info;
   const withXpackInfo = () => ({
     ...originalInjectedVars,

@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import ngMock from 'ng_mock';
-import XPackInfoSignatureProvider from 'plugins/xpack_main/services/xpack_info_signature';
-import MockWindowProvider from './_mock_window';
+import { XPackInfoSignatureProvider } from 'plugins/xpack_main/services/xpack_info_signature';
+import { MockWindowProvider } from './_mock_window';
 
 const XPACK_INFO_SIG_KEY = 'xpackMain.infoSignature';
 

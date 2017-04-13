@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import ngMock from 'ng_mock';
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
-import MockWindowProvider from './_mock_window';
+import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
+import { MockWindowProvider } from './_mock_window';
 
 const XPACK_INFO_KEY = 'xpackMain.info';
 

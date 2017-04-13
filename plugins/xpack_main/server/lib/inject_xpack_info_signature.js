@@ -1,4 +1,4 @@
-export default function injectXPackInfoSignature(info, request, reply) {
+export function injectXPackInfoSignature(info, request, reply) {
 
   function addSignatureHeader(response, signature) {
     if (signature) {

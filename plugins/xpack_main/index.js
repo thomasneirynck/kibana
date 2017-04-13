@@ -1,7 +1,7 @@
 import { join, resolve } from 'path';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 import { requireAllAndApply } from '../../server/lib/require_all_and_apply';
-import replaceInjectedVars from './server/lib/replace_injected_vars';
+import { replaceInjectedVars } from './server/lib/replace_injected_vars';
 import { setupXPackMain } from './server/lib/setup_xpack_main';
 import { xpackInfo } from '../../server/lib/xpack_info';
 

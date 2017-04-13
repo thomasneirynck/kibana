@@ -7,7 +7,7 @@ import 'plugins/security/views/management/edit_user';
 import 'plugins/security/views/management/edit_role';
 import 'plugins/security/views/management/management.less';
 import routes from 'ui/routes';
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import '../../services/shield_user';
 
 import management from 'ui/management';

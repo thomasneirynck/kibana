@@ -1,6 +1,6 @@
 import management from 'ui/management';
 import routes from 'ui/routes';
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 
 import 'plugins/reporting/views/management/jobs';
 

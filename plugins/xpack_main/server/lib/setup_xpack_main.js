@@ -1,5 +1,5 @@
 import { once, partial } from 'lodash';
-import injectXPackInfoSignature from './inject_xpack_info_signature';
+import { injectXPackInfoSignature } from './inject_xpack_info_signature';
 
 const registerPreResponseHandlerSingleton = once((server, info) => {
   server.ext('onPreResponse', partial(injectXPackInfoSignature, info));

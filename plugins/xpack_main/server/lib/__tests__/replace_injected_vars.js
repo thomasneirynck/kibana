@@ -1,7 +1,7 @@
 import sinon from 'sinon';
 import expect from 'expect.js';
 
-import replaceInjectedVars from '../replace_injected_vars';
+import { replaceInjectedVars } from '../replace_injected_vars';
 
 describe('replaceInjectedVars uiExport', () => {
   it('sends xpack info if request is authenticated and license is not basic', async () => {

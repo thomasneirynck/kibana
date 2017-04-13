@@ -3,7 +3,7 @@ import routes from 'ui/routes';
 import template from './account.html';
 import './account.less';
 import '../../services/shield_user';
-import GateKeeperProvider from 'plugins/xpack_main/services/gate_keeper';
+import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
 
 routes.when('/account', {
   template,

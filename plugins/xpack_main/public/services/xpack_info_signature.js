@@ -1,6 +1,6 @@
 const XPACK_INFO_SIG_KEY = 'xpackMain.infoSignature';
 
-export default function XPackInfoSignatureProvider($window) {
+export function XPackInfoSignatureProvider($window) {
   return {
     get() {
       return $window.sessionStorage.getItem(XPACK_INFO_SIG_KEY);

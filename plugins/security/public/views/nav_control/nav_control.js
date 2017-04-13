@@ -4,8 +4,8 @@ import uiModules from 'ui/modules';
 import template from 'plugins/security/views/nav_control/nav_control.html';
 import 'plugins/security/services/shield_user';
 import '../account/account';
-import PathProvider from 'plugins/xpack_main/services/path';
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import { PathProvider } from 'plugins/xpack_main/services/path';
+import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 
 registry.register(constant({
   name: 'security',

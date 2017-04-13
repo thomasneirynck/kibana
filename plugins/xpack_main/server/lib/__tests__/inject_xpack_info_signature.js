@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import injectXPackInfoSignature from '../inject_xpack_info_signature';
+import { injectXPackInfoSignature } from '../inject_xpack_info_signature';
 
 describe('injectXPackInfoSignature()', () => {
 

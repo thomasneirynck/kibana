@@ -1,6 +1,6 @@
 import { identity } from 'lodash';
 import uiModules from 'ui/modules';
-import PathProvider from 'plugins/xpack_main/services/path';
+import { PathProvider } from 'plugins/xpack_main/services/path';
 import 'plugins/security/services/auto_logout';
 
 function isUnauthorizedResponseAllowed(response) {

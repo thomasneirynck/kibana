@@ -1,5 +1,5 @@
 import uiRoutes from 'ui/routes';
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
+import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import 'ui/vis_maps/lib/tilemap_settings';
 
 uiRoutes.addSetupWork(function (Private, tilemapSettings) {

@@ -6,7 +6,7 @@ import 'angular-ui-select';
 import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
 import checkLicenseError from 'plugins/security/lib/check_license_error';
-import GateKeeperProvider from 'plugins/xpack_main/services/gate_keeper';
+import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
 
 routes.when('/management/elasticsearch/security/users/edit/:username?', {
   template,

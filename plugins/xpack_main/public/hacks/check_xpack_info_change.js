@@ -1,7 +1,7 @@
 import { identity } from 'lodash';
 import uiModules from 'ui/modules';
-import XPackInfoProvider from 'plugins/xpack_main/services/xpack_info';
-import XPackInfoSignatureProvider from 'plugins/xpack_main/services/xpack_info_signature';
+import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
+import { XPackInfoSignatureProvider } from 'plugins/xpack_main/services/xpack_info_signature';
 
 const module = uiModules.get('xpack_main', []);
 

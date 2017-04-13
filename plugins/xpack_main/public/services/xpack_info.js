@@ -1,11 +1,11 @@
 import { get } from 'lodash';
 import chrome from 'ui/chrome';
-import XPackInfoSignatureProvider from 'plugins/xpack_main/services/xpack_info_signature';
+import { XPackInfoSignatureProvider } from 'plugins/xpack_main/services/xpack_info_signature';
 import { convertKeysToCamelCaseDeep } from '../../../../server/lib/key_case_converter';
 
 const XPACK_INFO_KEY = 'xpackMain.info';
 
-export default function XPackInfoProvider($window, $injector, Private) {
+export function XPackInfoProvider($window, $injector, Private) {
   const xpackInfoSignature = Private(XPackInfoSignatureProvider);
 
   let inProgressRefreshPromise = null;
