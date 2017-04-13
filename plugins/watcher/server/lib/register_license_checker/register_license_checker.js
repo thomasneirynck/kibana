@@ -1,4 +1,4 @@
-import mirrorPluginStatus from '../../../../../server/lib/mirror_plugin_status';
+import { mirrorPluginStatus } from '../../../../../server/lib/mirror_plugin_status';
 import { checkLicense } from '../check_license';
 import { PLUGIN } from '../../../common/constants';
 

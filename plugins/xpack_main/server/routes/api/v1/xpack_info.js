@@ -4,7 +4,7 @@ import { convertKeysToSnakeCaseDeep } from '../../../../../../server/lib/key_cas
 /*
  * A route to provide the basic XPack info for the production cluster
  */
-export default function xpackInfoRoute(server) {
+export function xpackInfoRoute(server) {
   server.route({
     method: 'GET',
     path: '/api/xpack/v1/info',

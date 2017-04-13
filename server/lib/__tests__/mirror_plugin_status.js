@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import expect from 'expect.js';
-import mirrorPluginStatus from '../mirror_plugin_status';
+import { mirrorPluginStatus } from '../mirror_plugin_status';
 
 describe('mirror_plugin_status', () => {
 

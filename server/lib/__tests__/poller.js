@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import Bluebird from 'bluebird';
 import sinon from 'sinon';
-import Poller from '../poller';
+import { Poller } from '../poller';
 
 describe('Poller', () => {
 

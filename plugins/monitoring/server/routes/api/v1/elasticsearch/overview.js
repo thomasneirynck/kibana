@@ -9,7 +9,7 @@ import getShardStats from '../../../../lib/get_shard_stats';
 import calculateClusterShards from '../../../../lib/elasticsearch/calculate_cluster_shards';
 
 // manipulate cluster status and license meta data
-export default function clustersRoutes(server) {
+export function clustersRoutes(server) {
   const config = server.config();
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 

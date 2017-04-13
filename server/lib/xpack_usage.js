@@ -1,4 +1,4 @@
-export default function xpackUsage(client) {
+export function xpackUsage(client) {
   /*
    * Get an object over the Usage API that as available/enabled data and some
    * select metadata for each of the X-Pack UI plugins

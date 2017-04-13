@@ -1,4 +1,4 @@
-export default function mirrorPluginStatus(upstreamPlugin, downstreamPlugin, ...statesToMirror) {
+export function mirrorPluginStatus(upstreamPlugin, downstreamPlugin, ...statesToMirror) {
 
   function mirror(previousState, previousMsg, newState, newMsg) {
     if (newState) {

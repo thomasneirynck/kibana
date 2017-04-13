@@ -10,7 +10,7 @@ import getUnassignedShards from '../../../../lib/get_unassigned_shards';
 import calculateClusterShards from '../../../../lib/elasticsearch/calculate_cluster_shards';
 import handleError from '../../../../lib/handle_error';
 
-export default function indicesRoutes(server) {
+export function indicesRoutes(server) {
   const config = server.config();
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
   server.route({

@@ -11,7 +11,7 @@ import getShardAllocation from '../../../../lib/get_shard_allocation';
 import calculateClusterShards from '../../../../lib/elasticsearch/calculate_cluster_shards';
 import handleError from '../../../../lib/handle_error';
 
-export default function indexRoutes(server) {
+export function indexRoutes(server) {
   const config = server.config();
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 

@@ -8,7 +8,7 @@ import calculateIndices from '../../../../lib/calculate_indices';
 /*
  * Logstash Node route.
  */
-export default function logstashNodeRoute(server) {
+export function logstashNodeRoute(server) {
   const config = server.config();
   const logstashIndexPattern = config.get('xpack.monitoring.logstash.index_pattern');
 

@@ -1,7 +1,7 @@
 import { get, has, set } from 'lodash';
 import { join, resolve } from 'path';
 import Promise from 'bluebird';
-import requireAllAndApply from '../../server/lib/require_all_and_apply';
+import { requireAllAndApply } from '../../server/lib/require_all_and_apply';
 import esHealthCheck from './server/lib/es_client/health_check';
 import instantiateClient from './server/lib/es_client/instantiate_client';
 import initKibanaMonitoring from './server/kibana_monitoring';

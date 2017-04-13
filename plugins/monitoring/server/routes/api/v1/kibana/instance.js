@@ -8,7 +8,7 @@ import calculateIndices from '../../../../lib/calculate_indices';
 /*
  * Kibana Instance route.
  */
-export default function kibanaInstanceRoutes(server) {
+export function kibanaInstanceRoutes(server) {
   const config = server.config();
   const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');
 

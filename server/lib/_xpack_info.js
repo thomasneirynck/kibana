@@ -1,10 +1,10 @@
 import { createHash } from 'crypto';
 import moment from 'moment';
 import { get, set, includes, forIn } from 'lodash';
-import Poller from './poller';
+import { Poller } from './poller';
 import { LICENSE_EXPIRY_SOON_DURATION, XPACK_INFO_API_DEFAULT_POLL_FREQUENCY } from './constants';
 
-export default function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 'data') {
+export function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 'data') {
   pollFrequencyInMillis = pollFrequencyInMillis || XPACK_INFO_API_DEFAULT_POLL_FREQUENCY.asMilliseconds();
 
   let _cachedResponseFromElasticsearch;

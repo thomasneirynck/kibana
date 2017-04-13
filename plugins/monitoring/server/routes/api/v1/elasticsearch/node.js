@@ -14,7 +14,7 @@ import getDefaultNodeFromId from '../../../../lib/get_default_node_from_id';
 import lookups from '../../../../lib/lookups';
 import handleError from '../../../../lib/handle_error';
 
-export default function nodeRoutes(server) {
+export function nodeRoutes(server) {
   const config = server.config();
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 

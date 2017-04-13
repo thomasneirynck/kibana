@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 const expect = require('expect.js');
 const Bluebird = require('bluebird');
 import moment from 'moment';
-const _xpackInfo = require('../_xpack_info');
+const { _xpackInfo } = require('../_xpack_info');
 import sinon from 'sinon';
 
 describe('xpack_info', function () {

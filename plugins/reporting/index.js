@@ -1,6 +1,6 @@
 import { resolve } from 'path';
 import { has } from 'lodash';
-import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
+import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 import { main as mainRoutes } from './server/routes/main';
 import { jobs as jobRoutes } from './server/routes/jobs';
 

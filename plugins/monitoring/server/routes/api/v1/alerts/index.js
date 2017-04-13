@@ -6,7 +6,7 @@ import getClusterLicense from '../../../../lib/get_cluster_license';
 /*
  * Cluster Alerts route.
  */
-export default function clusterAlertsRoute(server) {
+export function clusterAlertsRoute(server) {
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/alerts',

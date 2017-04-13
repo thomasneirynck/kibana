@@ -17,7 +17,7 @@ import initializationChecks from './lib/initialization_checks';
 import { resolve } from 'path';
 import Boom from 'boom';
 import { checkLicense } from './server/lib/check_license';
-import mirrorPluginStatus from '../../server/lib/mirror_plugin_status';
+import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 const jobRoutes = require('./server/routes/anomaly_detectors');
 const dataFeedRoutes = require('./server/routes/datafeeds');
 const systemRoutes = require('./server/routes/system');

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export default class Poller {
+export class Poller {
 
   constructor(options) {
     this.functionToPoll = options.functionToPoll; // Must return a Promise

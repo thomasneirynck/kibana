@@ -2,7 +2,7 @@ import Joi from 'joi';
 import { getClustersFromRequest } from '../../../../lib/get_clusters_from_request';
 import handleError from '../../../../lib/handle_error';
 
-export default function clustersRoutes(server) {
+export function clustersRoutes(server) {
   /*
    * Monitoring Home
    * Route Init (for checking license and compatibility for multi-cluster monitoring

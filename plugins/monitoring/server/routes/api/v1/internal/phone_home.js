@@ -2,7 +2,7 @@ import Joi from 'joi';
 import { getAllStats } from '../../../../lib/phone_home/get_all_stats';
 import handleError from '../../../../lib/handle_error';
 
-export default function phoneHomeRoutes(server) {
+export function phoneHomeRoutes(server) {
   const { callWithRequest } = server.plugins.elasticsearch.getCluster('monitoring');
 
   /**
