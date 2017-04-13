@@ -60,7 +60,7 @@ export function fetchHighLevelStats(req, indices, clusterUuids, start, end, prod
         field: `${product}_stats.${product}.uuid`
       },
       sort: [
-        'timestamp'
+        { 'timestamp': 'desc' }
       ]
     }
   };
