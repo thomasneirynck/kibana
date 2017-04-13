@@ -200,7 +200,6 @@ export default function monitoringIndex(kibana) {
             features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server));
           } else {
             // Require only routes needed for stats reporting
-            features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', 'clusters.js'), server));
             features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', 'phone_home.js'), server));
           }
 
