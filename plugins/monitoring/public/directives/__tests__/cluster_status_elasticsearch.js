@@ -7,7 +7,7 @@ import './fixtures/providers';
 
 findTestSubject($);
 
-describe('monitoringClusterStatusElasticsearch', function () {
+describe.skip('monitoringClusterStatusElasticsearch', function () {
   let $element;
   let compile;
   let scope;

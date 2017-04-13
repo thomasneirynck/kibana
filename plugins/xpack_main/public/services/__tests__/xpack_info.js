@@ -5,7 +5,7 @@ import MockWindowProvider from './_mock_window';
 
 const XPACK_INFO_KEY = 'xpackMain.info';
 
-describe('xpack_info service', () => {
+describe.skip('xpack_info service', () => {
   let mockWindow;
   let xpackInfo;
 

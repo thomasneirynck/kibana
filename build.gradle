@@ -28,7 +28,7 @@ task test(type: Exec, dependsOn: npmInstall) {
   if (Os.isFamily(Os.FAMILY_WINDOWS)) {
     commandLine 'cmd', '/C', 'npm', 'run', 'test'
   } else {
-    commandLine 'npm', 'run', 'test'
+    commandLine 'xvfb-run', 'npm', 'run', 'test'
   }
 }
 

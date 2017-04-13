@@ -7,7 +7,7 @@ import 'plugins/monitoring/directives/__tests__/fixtures/providers';
 
 findTestSubject($);
 
-describe('monitoringClusterStatusLogstash', function () {
+describe.skip('monitoringClusterStatusLogstash', function () {
   let $element;
   let compile;
   let scope;

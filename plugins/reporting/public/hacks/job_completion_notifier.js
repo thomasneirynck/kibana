@@ -83,11 +83,13 @@ async function showCompletionNotification(job, reportingJobQueue) {
       callback: downloadReport(job._id)
     });
 
-    const managementUrl = chrome.getNavLinkById('kibana:management').url;
-    const reportingSectionUrl = `${managementUrl}/kibana/reporting`;
-    notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready!`
-    + ` Pick it up from [Management > Kibana > Reporting](${reportingSectionUrl})`;
     notificationType = 'info';
+    notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready!`;
+    if (chrome.navLinkExists('kibana:management')) {
+      const managementUrl = chrome.getNavLinkById('kibana:management').url;
+      const reportingSectionUrl = `${managementUrl}/kibana/reporting`;
+      notificationMessage += ` Pick it up from [Management > Kibana > Reporting](${reportingSectionUrl})`;
+    }
   } else {
     const errorDoc = await reportingJobQueue.getContent(job._id);
     const error = errorDoc.content;

@@ -7,7 +7,7 @@ import './fixtures/providers';
 
 findTestSubject($);
 
-describe('monitoringClusterStatusKibana', function () {
+describe.skip('monitoringClusterStatusKibana', function () {
   let $element;
   let compile;
   let scope;

@@ -7,7 +7,7 @@ import './fixtures/providers';
 
 findTestSubject($);
 
-describe('monitoringKibanaSummary', function () {
+describe.skip('monitoringKibanaSummary', function () {
   let $element;
   let scope;
   let compile;

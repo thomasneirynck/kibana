@@ -19,9 +19,9 @@ import uiModules from 'ui/modules';
 
 uiModules.get('xpack/ml').run((Private) => {
   const xpackInfo = Private(XPackInfoProvider);
-  const navLink = chrome.getNavLinkById('ml');
-  if (!navLink) return;
+  if (!chrome.navLinkExists('ml')) return;
 
+  const navLink = chrome.getNavLinkById('ml');
   // hide by default, only show once the xpackInfo is initialized
   navLink.hidden = true;
   const showAppLink = xpackInfo.get('features.ml.showLinks', false);

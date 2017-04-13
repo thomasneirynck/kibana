@@ -1,6 +1,13 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
 import { PhoneHome } from '../phone_home';
+import uiModules from 'ui/modules';
+
+uiModules.get('kibana')
+  // disable stat reporting while running tests,
+  // MockInjector used in these tests is not impacted
+  .constant('reportStats', false)
+  .constant('statsReportUrl', 'not.a.valid.url.0');
 
 const getMockInjector = ({ allowReport, lastReport }) => {
   const get = sinon.stub();
@@ -42,7 +49,7 @@ describe('phone home class', () => {
   });
 
   // call the private method
-  describe('should send a report', () => {
+  describe.skip('should send a report', () => {
     it('never reported before', () => {
       const sender = new PhoneHome(
         getMockInjector({ allowReport: true }),
@@ -92,7 +99,7 @@ describe('phone home class', () => {
       ]));
     });
   });
-  describe('should not send the report', () => {
+  describe.skip('should not send the report', () => {
     it('config does not allow report', () => {
       const sender = new PhoneHome(getMockInjector({ allowReport: false }), mockBasePath);
       return sender._sendIfDue()

@@ -35,57 +35,40 @@ PARENT_DIR=$(cd "$BASE_DIR"/..; pwd)
 # go to the parent directory
 cd $PARENT_DIR
 
-if [ -z ${USE_EXISTING_ES:+x} ]; then
-    if [ -d "./elasticsearch" ]; then
-        echo "I expected a clean workspace but an 'elasticsearch' sibling directory already exists in [$PARENT_DIR]!"
-        echo
-        echo "Either define 'USE_EXISTING_ES' or remove the existing 'elasticsearch' sibling."
-        exit 1
-    fi
-    BRANCH=${PR_SOURCE_BRANCH:-${GIT_BRANCH#*/}} # GIT_BRANCH starts with the repo, i.e., origin/master
-    BRANCH=${BRANCH:-master} # fall back to CI branch if not testing a PR
-    echo "Checking if branch '$BRANCH' has elasticsearch sibling..."
-    if [[ -z "$(git ls-remote --heads https://github.com/elastic/elasticsearch.git $BRANCH)" ]]; then
-      echo "No sibling branch, using PR target branch"
-      BRANCH=$PR_TARGET_BRANCH
-    fi
-    echo "Checking out Elasticsearch '$BRANCH' branch..."
-    git clone -b $BRANCH https://github.com/elastic/elasticsearch.git --depth=1
-    printf "Checked out Elasticsearch revision: %s\n" "$(git -C elasticsearch rev-parse HEAD)"
-else
-    if [ -d "./elasticsearch" ]; then
-        echo "Using existing 'elasticsearch' checkout"
-    else
-        echo "You have defined 'USE_EXISTING_ES' but no existing Elasticsearch directory exists!"
-        exit 2
-    fi
-fi
+function checkout_sibling {
+  name=$1
+  useExistingParamName=$2
+  useExisting="$(eval "echo "\$$useExistingParamName"")"
 
-if [ -z ${USE_EXISTING_KIBANA:+x} ]; then
-    if [ -d "./kibana" ]; then
-        echo "I expected a clean workspace but an 'kibana' sibling directory already exists in [$PARENT_DIR]!"
-        echo
-        echo "Either define 'USE_EXISTING_KIBANA' or remove the existing 'kibana' sibling."
-        exit 1
-    fi
-    BRANCH=${PR_SOURCE_BRANCH:-${GIT_BRANCH#*/}} # GIT_BRANCH starts with the repo, i.e., origin/master
-    BRANCH=${BRANCH:-master} # fall back to CI branch if not testing a PR
-    echo "Checking if branch '$BRANCH' has kibana sibling..."
-    if [[ -z "$(git ls-remote --heads https://github.com/elastic/kibana.git $BRANCH)" ]]; then
-      echo "No sibling branch, using PR target branch"
-      BRANCH=$PR_TARGET_BRANCH
-    fi
-    echo "Checking out Kibana '$BRANCH' branch..."
-    git clone -b $BRANCH https://github.com/elastic/kibana.git --depth=1
-    printf "Checked out Kibana revision: %s\n" "$(git -C kibana rev-parse HEAD)"
-else
-    if [ -d "./kibana" ]; then
-        echo "Using existing 'kibana' checkout"
-    else
-        echo "You have defined 'USE_EXISTING_KIBANA' but no existing Kibana directory exists!"
-        exit 2
-    fi
-fi
+  if [ -z ${useExisting:+x} ]; then
+      if [ -d "./${name}" ]; then
+          echo "I expected a clean workspace but an '${name}' sibling directory already exists in [$PARENT_DIR]!"
+          echo
+          echo "Either define '${useExistingParamName}' or remove the existing '${name}' sibling."
+          exit 1
+      fi
+      BRANCH=${PR_SOURCE_BRANCH:-${GIT_BRANCH#*/}} # GIT_BRANCH starts with the repo, i.e., origin/master
+      BRANCH=${BRANCH:-master} # fall back to CI branch if not testing a PR
+      echo "Checking if branch '$BRANCH' has ${name} sibling..."
+      if [[ -z "$(git ls-remote --heads https://github.com/elastic/${name}.git $BRANCH)" ]]; then
+        echo "No sibling branch, using PR target branch"
+        BRANCH=$PR_TARGET_BRANCH
+      fi
+      echo "Checking out ${name} '$BRANCH' branch..."
+      git clone -b $BRANCH https://github.com/elastic/${name}.git --depth=1
+      printf "Checked out ${name} revision: %s\n" "$(git -C ${name} rev-parse HEAD)"
+  else
+      if [ -d "./${name}" ]; then
+          echo "Using existing '${name}' checkout"
+      else
+          echo "You have defined '${useExistingParamName}' but no existing ${name} directory exists!"
+          exit 2
+      fi
+  fi
+}
+
+checkout_sibling "elasticsearch" "USE_EXISTING_ES"
+checkout_sibling "kibana" "USE_EXISTING_KIBANA"
 
 # back to base directory
 cd "$BASE_DIR"
@@ -105,6 +88,12 @@ fi
 
 echo "Installing node.js version $(cat .node-version)..."
 nvm install "$(cat .node-version)"
+
+echo "Installing kibana dependencies"
+cd "../kibana"
+npm prune
+npm install
+cd -
 
 echo "Running x-pack-kibana tests..."
 echo "Running in $PWD"

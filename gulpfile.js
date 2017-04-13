@@ -119,8 +119,7 @@ gulp.task('pre-test', () => {
 
 gulp.task('test', (cb) => {
   const preTasks = ['lint', 'clean-test'];
-  // TODO: enable testbrowser, pening https://github.com/elastic/x-pack/issues/4321
-  runSequence(preTasks, 'testserver', /*'testbrowser',*/ cb);
+  runSequence(preTasks, 'testserver', 'testbrowser', cb);
 });
 
 gulp.task('testonly', ['testserver', 'testbrowser']);
