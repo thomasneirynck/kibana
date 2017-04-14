@@ -1,6 +1,6 @@
-import metrics from '../metrics';
+import { metrics } from '../metrics';
 
-export default function getAggItems(options) {
+export function getAggItems(options) {
   const { listingMetrics, bucketSize, min, max } = options;
   const aggItems = {};
 

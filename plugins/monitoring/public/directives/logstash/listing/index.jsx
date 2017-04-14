@@ -2,10 +2,10 @@ import _ from 'lodash';
 import numeral from 'numeral';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Table from 'plugins/monitoring/components/paginated_table';
+import { Table } from 'plugins/monitoring/components/paginated_table';
 import { SORT_ASCENDING } from 'monitoring-constants';
 import uiModules from 'ui/modules';
-import formatNumber from '../../../lib/format_number';
+import { formatNumber } from '../../../lib/format_number';
 
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringLogstashNodeListing', function (kbnUrl) {

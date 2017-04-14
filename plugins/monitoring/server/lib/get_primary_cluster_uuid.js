@@ -1,5 +1,5 @@
 import { get, set, find } from 'lodash';
-export default function getPrimaryClusterUuid(req) {
+export function getPrimaryClusterUuid(req) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('admin');
 
   return async function (clusters) {

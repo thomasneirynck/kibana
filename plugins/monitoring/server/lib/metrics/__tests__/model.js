@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-function Model(data, options) {
+export function Model(data, options) {
   this.options = options || {};
   this.data = Model.explode(data);
 }
@@ -62,5 +62,3 @@ Model.explode = function explode(obj) {
   });
   return newObj;
 };
-
-export default Model;

@@ -17,9 +17,9 @@
 
 import _ from 'lodash';
 import React from 'react';
-import Shard from './shard.jsx';
+import { Shard } from './shard.jsx';
 
-export default React.createClass({
+export const Unassigned = React.createClass({
   displayName: 'Unassigned',
   createShard: function (shard) {
     const type = shard.primary ? 'primary' : 'replica';

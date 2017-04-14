@@ -1,8 +1,8 @@
 import { get, merge, set } from 'lodash';
-import elasticsearchVersionMismatch from './watches/elasticsearch_version_mismatch';
-import elasticsearchClusterStatus from './watches/elasticsearch_cluster_status';
-import kibanaVersionMismatch from './watches/kibana_version_mismatch';
-import logstashVersionMismatch from './watches/logstash_version_mismatch';
+import { elasticsearchVersionMismatch } from './watches/elasticsearch_version_mismatch';
+import { elasticsearchClusterStatus } from './watches/elasticsearch_cluster_status';
+import { kibanaVersionMismatch } from './watches/kibana_version_mismatch';
+import { logstashVersionMismatch } from './watches/logstash_version_mismatch';
 
 export const alertIndexFields = [
   'metadata.xpack.alert_index',

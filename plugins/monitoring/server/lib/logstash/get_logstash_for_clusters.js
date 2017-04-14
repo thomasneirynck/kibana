@@ -13,10 +13,10 @@
  */
 import Promise from 'bluebird';
 import _ from 'lodash';
-import createQuery from './../create_query.js';
+import { createQuery } from './../create_query.js';
 import { ElasticsearchMetric } from './../metrics/metric_classes';
 
-export default function getLogstashForClusters(req, indices) {
+export function getLogstashForClusters(req, indices) {
   if (indices.length < 1) return () => Promise.resolve([]);
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');

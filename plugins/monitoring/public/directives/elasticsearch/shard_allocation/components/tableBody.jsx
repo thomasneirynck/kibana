@@ -16,8 +16,8 @@
  */
 
 import React from 'react';
-import Unassigned from './unassigned.jsx';
-import Assigned from './assigned.jsx';
+import { Unassigned } from './unassigned.jsx';
+import { Assigned } from './assigned.jsx';
 
 class ShardRow extends React.Component {
   render() {
@@ -44,7 +44,7 @@ class ShardRow extends React.Component {
   }
 }
 
-export default React.createClass({
+export const TableBody = React.createClass({
   displayName: 'TableBody',
   createRow: function (data) {
     return (

@@ -1,4 +1,4 @@
-import getMetrics from '../get_metrics';
+import { getMetrics } from '../get_metrics';
 import sinon from 'sinon';
 import expect from 'expect.js';
 import nonDerivMetricsBuckets from './fixtures/non_deriv_metrics_buckets';

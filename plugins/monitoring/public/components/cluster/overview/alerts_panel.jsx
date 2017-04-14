@@ -1,12 +1,12 @@
 import { capitalize } from 'lodash';
 import React from 'react';
-import Tooltip from 'plugins/monitoring/components/tooltip';
-import FormattedMessage from 'plugins/monitoring/components/alerts/formatted_message';
+import { Tooltip } from 'plugins/monitoring/components/tooltip';
+import { FormattedMessage } from 'plugins/monitoring/components/alerts/formatted_message';
 import { SeverityIcon } from 'plugins/monitoring/components/alerts/severity_icon';
 import { mapSeverity } from 'plugins/monitoring/components/alerts/map_severity';
 import { formatDateTimeLocal } from 'monitoring-formatting';
 
-export default function AlertsPanel({ alerts, angularChangeUrl }) {
+export function AlertsPanel({ alerts, angularChangeUrl }) {
   const goToAlerts = () => {
     angularChangeUrl('/alerts');
   };

@@ -1,4 +1,4 @@
-export default function ajaxErrorHandlersProvider(Notifier, kbnUrl, Promise) {
+export function ajaxErrorHandlersProvider(Notifier, kbnUrl, Promise) {
   return (err) => {
     if (err.status === 403) {
       /* redirect to error message view */

@@ -1,11 +1,11 @@
 import { map } from 'lodash';
 import moment from 'moment';
-import checkMonitoringAuth from './check_monitoring_auth';
+import { checkMonitoringAuth } from './check_monitoring_auth';
 
 /**
  * Calls the _fieldStats API on a given index pattern.
  */
-export default async function calculateIndices(req, start, end, indexPattern) {
+export async function calculateIndices(req, start, end, indexPattern) {
   // Tests access to the monitoring data index. Throws if there is a 401
   await checkMonitoringAuth(req, indexPattern);
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function OfflineCell(props) {
+export function OfflineCell(props) {
   return (
     <td key={props.key}>
       <div className='big offline'>

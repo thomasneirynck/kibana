@@ -7,7 +7,7 @@
  */
 import { includes, isUndefined } from 'lodash';
 
-export default function calculateNodeType(node, state) {
+export function calculateNodeType(node, state) {
   const attrs = node.attributes || {};
 
   function mightBe(attr) {

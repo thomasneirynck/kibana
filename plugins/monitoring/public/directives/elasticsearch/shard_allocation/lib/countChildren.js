@@ -15,7 +15,7 @@
  * from Elasticsearch Incorporated.
  */
 
-export default function countChildren(memo, child) {
+export function countChildren(memo, child) {
   if (child.name !== 'Unassigned') {
     memo++;
   }

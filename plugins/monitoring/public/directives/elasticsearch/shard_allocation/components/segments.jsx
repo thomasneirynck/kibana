@@ -18,7 +18,7 @@
 import _ from 'lodash';
 import React from 'react';
 
-export default React.createClass({
+export const Segments = React.createClass({
   displayName: 'Segments',
   getInitialState: function () {
     return { colors: this.props.scope.colors || [], total: this.props.scope.total };

@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import createQuery from './create_query.js';
+import { createQuery } from './create_query.js';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
-export default function getLastState(req, indices) {
+export function getLastState(req, indices) {
   const end = req.payload.timeRange.max;
   const uuid = req.params.clusterUuid;
   const config = req.server.config();

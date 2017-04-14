@@ -25,13 +25,13 @@
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 import moment from 'moment';
-import createQuery from '../create_query.js';
-import calcAuto from '../calculate_auto';
+import { createQuery } from '../create_query.js';
+import { near } from '../calculate_auto';
 import { getLatestAggKey, getNodeAttribute } from '../node_agg_vals';
-import getAggItems from './get_agg_items';
-import mapListingResponse from './map_response';
+import { getAggItems } from './get_agg_items';
+import { mapResponse } from './map_response';
 
-export default function getListingNodes(req, indices) {
+export function getNodes(req, indices) {
   const start = moment.utc(req.payload.timeRange.min).valueOf();
   const orgStart = start;
   const end = moment.utc(req.payload.timeRange.max).valueOf();
@@ -46,7 +46,7 @@ export default function getListingNodes(req, indices) {
 
   const listingMetrics = req.payload.listingMetrics || [];
   const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
-  const bucketSize = Math.max(minIntervalSeconds, calcAuto.near(100, duration).asSeconds());
+  const bucketSize = Math.max(minIntervalSeconds, near(100, duration).asSeconds());
   const aggItems = getAggItems({ listingMetrics, bucketSize, min, max });
 
   const params = {
@@ -109,7 +109,7 @@ export default function getListingNodes(req, indices) {
         return prev;
       }, {}),
       // for listing metrics
-      rows: mapListingResponse({
+      rows: mapResponse({
         type: 'nodes',
         items: buckets,
         listingMetrics,

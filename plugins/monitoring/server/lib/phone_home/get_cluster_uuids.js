@@ -1,6 +1,6 @@
 import { get } from 'lodash';
-import calculateIndices from '../calculate_indices';
-import createQuery from '../create_query';
+import { calculateIndices } from '../calculate_indices';
+import { createQuery } from '../create_query';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 /**

@@ -1,4 +1,4 @@
-import calculateClusterShards from '../calculate_cluster_shards';
+import { calculateClusterShards } from '../calculate_cluster_shards';
 import expect from 'expect.js';
 import _ from 'lodash';
 

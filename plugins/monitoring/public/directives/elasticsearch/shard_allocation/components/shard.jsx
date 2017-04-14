@@ -16,10 +16,10 @@
  */
 
 import React from 'react';
-import calculateClass from '../lib/calculateClass';
-import vents from '../lib/vents';
+import { calculateClass } from '../lib/calculateClass';
+import { vents } from '../lib/vents';
 
-export default React.createClass({
+export const Shard = React.createClass({
   displayName: 'Shard',
 
   getInitialState: function () {

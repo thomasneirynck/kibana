@@ -15,7 +15,7 @@
  * from Elasticsearch Incorporated.
  */
 
-export default function extractIp(node) {
+export function extractIp(node) {
   if (!node) {
     return null;
   }

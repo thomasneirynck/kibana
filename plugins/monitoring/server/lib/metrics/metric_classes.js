@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import MissingRequiredError from '../error_missing_required';
+import { MissingRequiredError } from '../error_missing_required';
 import {
   LARGE_FLOAT, SMALL_FLOAT, LARGE_BYTES, SMALL_BYTES
 } from '../../../common/formatting';

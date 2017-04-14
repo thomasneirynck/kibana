@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
-import createQuery from './create_query.js';
-import validateMonitoringLicense from './validate_monitoring_license';
+import { createQuery } from './create_query.js';
+import { validateMonitoringLicense } from './validate_monitoring_license';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
-export default function getClusters(req, indices) {
+export function getClusters(req, indices) {
   const config = req.server.config();
   // Get the params from the POST body for the request
   const start = req.payload.timeRange.min;

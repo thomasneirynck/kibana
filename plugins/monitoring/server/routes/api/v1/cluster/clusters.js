@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { getClustersFromRequest } from '../../../../lib/get_clusters_from_request';
-import handleError from '../../../../lib/handle_error';
+import { handleError } from '../../../../lib/handle_error';
 
 export function clustersRoutes(server) {
   /*

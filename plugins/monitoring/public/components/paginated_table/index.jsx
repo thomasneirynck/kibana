@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import React from 'react';
-import TableHead from './table_head';
-import TableBody from './table_body';
-import Pagination from './pagination';
+import { TableHead } from './table_head';
+import { TableBody } from './table_body';
+import { Pagination } from './pagination';
 
 const make = React.DOM;
 
-const Table = React.createClass({
+export const Table = React.createClass({
   displayName: 'Table',
 
   getInitialState: function () {
@@ -150,5 +150,3 @@ const Table = React.createClass({
       $pagination);
   }
 });
-
-export default Table;

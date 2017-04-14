@@ -1,7 +1,7 @@
 import { get, find } from 'lodash';
 import { verifyMonitoringLicense } from './verify_monitoring_license';
 
-export default function alertsClustersAggregation(req, clusters, checkLicense) {
+export function alertsClustersAggregation(req, clusters, checkLicense) {
   const verification = verifyMonitoringLicense(req.server);
 
   if (!verification.enabled) {

@@ -1,14 +1,14 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import Joi from 'joi';
-import calculateIndices from '../../../../lib/calculate_indices';
-import getLastState from '../../../../lib/get_last_state';
-import getClusterStatus from '../../../../lib/get_cluster_status';
-import getListing from '../../../../lib/lists/get_indices';
-import getShardStats from '../../../../lib/get_shard_stats';
-import getUnassignedShards from '../../../../lib/get_unassigned_shards';
-import calculateClusterShards from '../../../../lib/elasticsearch/calculate_cluster_shards';
-import handleError from '../../../../lib/handle_error';
+import { calculateIndices } from '../../../../lib/calculate_indices';
+import { getLastState } from '../../../../lib/get_last_state';
+import { getClusterStatus } from '../../../../lib/get_cluster_status';
+import { getIndices } from '../../../../lib/lists/get_indices';
+import { getShardStats } from '../../../../lib/get_shard_stats';
+import { getUnassignedShards } from '../../../../lib/get_unassigned_shards';
+import { calculateClusterShards } from '../../../../lib/elasticsearch/calculate_cluster_shards';
+import { handleError } from '../../../../lib/handle_error';
 
 export function indicesRoutes(server) {
   const config = server.config();
@@ -42,7 +42,7 @@ export function indicesRoutes(server) {
         .then(lastState => {
           return Promise.props({
             clusterStatus: getClusterStatus(req, indices, lastState),
-            rows: getListing(req, indices, showSystemIndices),
+            rows: getIndices(req, indices, showSystemIndices),
             shardStats: getShardStats(req, indices, lastState)
           });
         });

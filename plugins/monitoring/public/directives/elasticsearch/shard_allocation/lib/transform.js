@@ -15,11 +15,11 @@
  * from Elasticsearch Incorporated.
  */
 
-import indicesByNodes from '../transformers/indicesByNodes';
-import nodesByIndices from '../transformers/nodesByIndices';
+import { indicesByNodes } from '../transformers/indicesByNodes';
+import { nodesByIndices } from '../transformers/nodesByIndices';
 
 // This will curry a transform function based on the view.
-export default function transform(view, $scope) {
+export function transform(view, $scope) {
   const func = (view === 'index') ? indicesByNodes : nodesByIndices;
   // we need to pass the scope to filter the data in the transformer functions
   // for the auto-complete filter.

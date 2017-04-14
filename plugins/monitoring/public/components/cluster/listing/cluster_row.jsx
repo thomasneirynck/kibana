@@ -2,7 +2,7 @@ import React from 'react';
 import numeral from 'numeral';
 import moment from 'moment';
 import { capitalize, get } from 'lodash';
-import Tooltip from 'plugins/monitoring/components/tooltip';
+import { Tooltip } from 'plugins/monitoring/components/tooltip';
 import { AlertsIndicator } from './alerts_indicator';
 
 function isClusterSupportedFactory(isSupported) {
@@ -28,7 +28,7 @@ function PrimaryClusterTooltip({ isPrimary }) {
   return null;
 }
 
-export default class ClusterRow extends React.Component {
+export class ClusterRow extends React.Component {
 
   checkSupported() {
     return this.props.license && (this.props.license.type !== 'basic' || (this.props.isPrimary && this.props.allBasicClusters));

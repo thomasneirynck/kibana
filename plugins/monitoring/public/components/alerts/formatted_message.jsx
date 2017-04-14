@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function FormattedMessage({ prefix, suffix, message, metadata, angularChangeUrl }) {
+export function FormattedMessage({ prefix, suffix, message, metadata, angularChangeUrl }) {
   const goToLink = () => {
     if (metadata && metadata.link) {
       angularChangeUrl(`/${metadata.link}`);

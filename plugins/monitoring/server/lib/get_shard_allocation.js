@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import createQuery from './create_query';
+import { createQuery } from './create_query';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
-export default function getShardAllocation(req, indices, filters, lastState, showSystemIndices = false) {
+export function getShardAllocation(req, indices, filters, lastState, showSystemIndices = false) {
   filters.push({
     term: { state_uuid: _.get(lastState, 'cluster_state.state_uuid') }
   });

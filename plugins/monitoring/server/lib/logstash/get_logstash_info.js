@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import calculateAvailability from './../calculate_availability';
+import { calculateAvailability } from './../calculate_availability';
 
 export function handleResponse(resp) {
   const getSource = (key, defaultValue) => _.get(resp, `_source.logstash.${key}`, defaultValue);
@@ -12,7 +12,7 @@ export function handleResponse(resp) {
   return _.merge(logstash, availability, events, reloads, queueType);
 }
 
-export default function getNodeInfo(req, uuid) {
+export function getNodeInfo(req, uuid) {
   const config = req.server.config();
   const params = {
     index: config.get('xpack.monitoring.index'),

@@ -1,6 +1,6 @@
 import Boom from 'boom';
 
-export default function handleError(err, req) {
+export function handleError(err, req) {
   const config = req.server.config();
   const loggingTag = config.get('xpack.monitoring.loggingTag');
   const statusCode = err.isBoom ? err.output.statusCode : err.statusCode;

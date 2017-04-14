@@ -5,7 +5,7 @@ import Promise from 'bluebird';
  * @param req: server's request object
  * @return array of cluster objects with .stats field added
  */
-export default function getClustersStats(req) {
+export function getClustersStats(req) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const config = req.server.config();
 

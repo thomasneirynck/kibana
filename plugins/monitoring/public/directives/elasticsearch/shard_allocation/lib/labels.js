@@ -17,7 +17,7 @@
 
 // The ui had different columns in different order depending on the
 // $scope.view variable. This provides a lookup for the column headers
-export default {
+export const labels = {
   // "index detail" page shows nodes on which index shards are allocated
   index: [
     { content: 'Nodes' }

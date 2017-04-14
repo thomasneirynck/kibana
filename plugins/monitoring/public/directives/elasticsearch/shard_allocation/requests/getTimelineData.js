@@ -17,9 +17,9 @@
 
 import _ from 'lodash';
 import moment from 'moment';
-import getValueFromArrayOrString from '../lib/getValueFromArrayOrString';
+import { getValueFromArrayOrString } from '../lib/getValueFromArrayOrString';
 
-export default function getTimelineDataFn($rootScope, timefilter, es) {
+export function getTimelineDataFn($rootScope, timefilter, es) {
   const getTimelineData = function (direction, indexPattern, cluster, size, timeRange, data, position, indices) {
     let newPosition = false;
     size = _.isUndefined(size) ? 300 : size;

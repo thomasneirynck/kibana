@@ -1,7 +1,7 @@
 import { get } from 'lodash';
 import React from 'react';
 import numeral from 'numeral';
-import OfflineCell from './offline_cell';
+import { OfflineCell } from './offline_cell';
 
 function formatMetric(metric, key) {
   const meta = metric.metric;
@@ -17,7 +17,7 @@ function slopeArrow(metric) {
   return 'down';
 }
 
-export default function MetricCell(props) {
+export function MetricCell(props) {
   if (props.isOnline) {
     return (
       <td>

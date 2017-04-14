@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import validateMonitoringLicense from '../validate_monitoring_license';
+import { validateMonitoringLicense } from '../validate_monitoring_license';
 
 // valid license
 const validLicense = {

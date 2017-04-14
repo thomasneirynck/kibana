@@ -1,4 +1,4 @@
-import calculateNodeType from '../calculate_node_type.js';
+import { calculateNodeType } from '../calculate_node_type.js';
 import expect from 'expect.js';
 import _ from 'lodash';
 

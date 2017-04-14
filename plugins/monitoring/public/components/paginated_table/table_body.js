@@ -1,11 +1,11 @@
 import _ from 'lodash';
 import React from 'react';
-import Loading from './loading';
-import NoData from './no_data';
+import { Loading } from './loading';
+import { NoData } from './no_data';
 
 const make = React.DOM;
 
-export default React.createClass({
+export const TableBody = React.createClass({
   displayName: 'TableBody',
   render: function () {
     if (!this.props.tableData) {

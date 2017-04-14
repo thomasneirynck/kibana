@@ -1,7 +1,7 @@
 import uiModules from 'ui/modules';
-import labels from './lib/labels';
-import indicesByNodes from './transformers/indicesByNodes';
-import nodesByIndices from './transformers/nodesByIndices';
+import { labels } from './lib/labels';
+import { indicesByNodes } from './transformers/indicesByNodes';
+import { nodesByIndices } from './transformers/nodesByIndices';
 import template from './index.html';
 
 const uiModule = uiModules.get('monitoring/directives', []);

@@ -1,9 +1,9 @@
 import Joi from 'joi';
 import Promise from 'bluebird';
-import getNodeInfo from '../../../../lib/logstash/get_logstash_info';
-import handleError from '../../../../lib/handle_error';
-import getMetrics from '../../../../lib/details/get_metrics';
-import calculateIndices from '../../../../lib/calculate_indices';
+import { getNodeInfo } from '../../../../lib/logstash/get_logstash_info';
+import { handleError } from '../../../../lib/handle_error';
+import { getMetrics } from '../../../../lib/details/get_metrics';
+import { calculateIndices } from '../../../../lib/calculate_indices';
 
 /*
  * Logstash Node route.

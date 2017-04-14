@@ -16,10 +16,10 @@
  */
 
 import React from 'react';
-import TableHead from './tableHead.jsx';
-import TableBody from './tableBody.jsx';
+import { TableHead } from './tableHead.jsx';
+import { TableBody } from './tableBody.jsx';
 
-export default React.createClass({
+export const ClusterView = React.createClass({
   displayName: 'ClusterView',
   getInitialState: function () {
     const scope = this.props.scope;

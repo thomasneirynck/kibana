@@ -1,10 +1,8 @@
-import {
-  version as kibanaVersion,
-} from '../../../../../package.json';
+import { version } from '../../../../../package.json';
 
-export default {
+export const kibanaVersion = {
   // Make the version stubbable to improve testability.
   get() {
-    return kibanaVersion;
+    return version;
   },
 };

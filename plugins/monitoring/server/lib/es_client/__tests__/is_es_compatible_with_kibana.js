@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import isEsCompatibleWithKibana from '../is_es_compatible_with_kibana';
+import { isEsCompatibleWithKibana } from '../is_es_compatible_with_kibana';
 
 describe('plugins/elasticsearch', () => {
   describe('lib/is_es_compatible_with_kibana', () => {

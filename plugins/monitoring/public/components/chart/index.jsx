@@ -1,10 +1,10 @@
 import React from 'react';
 import { first, get } from 'lodash';
 import numeral from 'numeral';
-import getColor from './get_color';
-import TimeseriesVisualization from './timeseries_visualization';
+import { getColor } from './get_color';
+import { TimeseriesVisualization } from './timeseries_visualization';
 
-export default class MonitoringTimeseries extends React.Component {
+export class MonitoringTimeseries extends React.Component {
   constructor() {
     super();
 

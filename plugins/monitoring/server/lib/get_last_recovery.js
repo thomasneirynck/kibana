@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import createQuery from './create_query.js';
+import { createQuery } from './create_query.js';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
 /**
@@ -38,7 +38,7 @@ export function handleLastRecoveries(resp, start) {
   return [];
 }
 
-export default function getLastRecovery(req, indices) {
+export function getLastRecovery(req, indices) {
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const uuid = req.params.clusterUuid;

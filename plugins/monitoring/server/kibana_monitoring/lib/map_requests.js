@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export default function mapRequests(requests) {
+export function mapRequests(requests) {
   return _.reduce(_.values(requests), (result, value) => {
     _.each(value.statusCodes, (count, code) => {
       if (_.isUndefined(_.get(result, `status_codes.${code}`))) _.set(result, `status_codes.${code}`, 0);

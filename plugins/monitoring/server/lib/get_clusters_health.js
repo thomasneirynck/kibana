@@ -18,7 +18,7 @@ export function handleResponse(config, clusters) {
   };
 }
 
-export default function getClustersHealth(req) {
+export function getClustersHealth(req) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const config = req.server.config();
 

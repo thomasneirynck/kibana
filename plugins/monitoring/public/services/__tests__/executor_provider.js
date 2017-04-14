@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
-import executorProvider from '../executor_provider';
+import { executorProvider } from '../executor_provider';
 import EventEmitter from 'events';
 import Promise from 'bluebird';
 

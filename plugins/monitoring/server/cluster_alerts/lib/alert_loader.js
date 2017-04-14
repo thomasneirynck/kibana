@@ -1,9 +1,9 @@
 import { get, includes } from 'lodash';
-import watcherApi from './watcher_api';
+import { watcherApi } from './watcher_api';
 import { findClustersForClusterAlerts } from './index_management';
 import { WatchManager } from './alerts/watch_manager';
 
-export default function alertLoader(serverInfo, server) {
+export function alertLoader(serverInfo, server) {
   const config = server.config();
   const monitoringTag = config.get('xpack.monitoring.loggingTag');
   const client = server.plugins.elasticsearch.getCluster('monitoring').createClient({

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import MissingRequiredError from './error_missing_required';
+import { MissingRequiredError } from './error_missing_required';
 import moment from 'moment';
 
 /*
@@ -10,7 +10,7 @@ import moment from 'moment';
  * @param {Date} options.end - numeric timestamp (optional)
  * @param {Metric} options.metric - Metric instance or metric fields object @see ElasticsearchMetric.getMetricFields
  */
-export default function createQuery(options) {
+export function createQuery(options) {
   options = _.defaults(options, { filters: [] });
   let uuidFilter;
   // options.uuid can be null, for example getting all the clusters

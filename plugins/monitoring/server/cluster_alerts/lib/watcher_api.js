@@ -1,4 +1,4 @@
-export default function watcherApi(Client, _config, components) {
+export function watcherApi(Client, _config, components) {
   const ca = components.clientAction.factory;
   Client.prototype.watcher = components.clientAction.namespaceFactory();
   const watcher = Client.prototype.watcher.prototype;

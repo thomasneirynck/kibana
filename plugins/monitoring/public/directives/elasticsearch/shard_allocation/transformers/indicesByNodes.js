@@ -16,10 +16,10 @@
  */
 
 import _ from 'lodash';
-import decorateShards from '../lib/decorateShards';
+import { decorateShards } from '../lib/decorateShards';
 
-export default function indicesByNodesFn() {
-  return function indicesByNodes(shards, nodes) {
+export function indicesByNodes() {
+  return function indicesByNodesFn(shards, nodes) {
 
     function createIndex(obj, shard) {
       const id = shard.index;

@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { getAllStats } from '../../../../lib/phone_home/get_all_stats';
-import handleError from '../../../../lib/handle_error';
+import { handleError } from '../../../../lib/handle_error';
 
 export function phoneHomeRoutes(server) {
   const { callWithRequest } = server.plugins.elasticsearch.getCluster('monitoring');

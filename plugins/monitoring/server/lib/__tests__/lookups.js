@@ -1,11 +1,11 @@
-import lookups from '../lookups';
+import { nodeTypeClass, nodeTypeLabel } from '../lookups';
 import expect from 'expect.js';
 import _ from 'lodash';
 
 describe('Node Types Lookups', () => {
   it('Has matching classes and labels', () => {
-    const classKeys = Object.keys(lookups.nodeTypeClass);
-    const labelKeys = Object.keys(lookups.nodeTypeLabel);
+    const classKeys = Object.keys(nodeTypeClass);
+    const labelKeys = Object.keys(nodeTypeLabel);
     const typeKeys = [ 'client', 'data', 'invalid', 'master', 'master_only', 'node' ];
     classKeys.sort();
     labelKeys.sort();
@@ -14,10 +14,10 @@ describe('Node Types Lookups', () => {
   });
 
   it('Has usable values', () => {
-    _.each(lookups.nodeTypeClass, (value) => {
+    _.each(nodeTypeClass, (value) => {
       expect(value).to.be.a('string');
     });
-    _.each(lookups.nodeTypeLabel, (value) => {
+    _.each(nodeTypeLabel, (value) => {
       expect(value).to.be.a('string');
     });
   });

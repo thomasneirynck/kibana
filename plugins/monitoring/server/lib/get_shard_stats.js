@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from './normalize_shard_objects';
-import createQuery from './create_query';
-import calculateNodeType from './calculate_node_type';
+import { createQuery } from './create_query';
+import { calculateNodeType } from './calculate_node_type';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
-export default function getShardStats(req, indices, lastState) {
+export function getShardStats(req, indices, lastState) {
   const config = req.server.config();
   const nodeResolver = config.get('xpack.monitoring.node_resolver');
   const uuid = req.params.clusterUuid;

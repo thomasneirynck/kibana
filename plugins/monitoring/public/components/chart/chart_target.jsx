@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import React from 'react';
 import $ from 'jquery-flot'; // webpackShim
-import eventBus from './event_bus';
-import getChartOptions from './get_chart_options';
+import { eventBus } from './event_bus';
+import { getChartOptions } from './get_chart_options';
 
 const RESIZE_TIMEOUT = 250; // resize handler to execute at a rate of 4fps
 
-export default class ChartTarget extends React.Component {
+export class ChartTarget extends React.Component {
   shouldComponentUpdate() {
     return !this.plot;
   }

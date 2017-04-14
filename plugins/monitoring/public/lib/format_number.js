@@ -9,7 +9,7 @@ export function formatPercentageUsage(used, max) {
   return formatNumber(used / max, '0.00%');
 }
 
-export default function formatNumber(num, which) {
+export function formatNumber(num, which) {
   if (typeof num === 'undefined' || isNaN(num)) { return 0; }
   if (typeof num !== 'number') { return num; }
   let format = '0,0.0';

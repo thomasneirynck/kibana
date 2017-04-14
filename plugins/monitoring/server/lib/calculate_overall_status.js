@@ -2,7 +2,7 @@
  * A reduce that takes statuses from different products in a cluster and boil
  * it down into a single status
  */
-export default function calculateOverallStatus(set) {
+export function calculateOverallStatus(set) {
   return set.reduce((result, current) => {
     if (!current) return result;
     if (current === 'red') return current; // change to red

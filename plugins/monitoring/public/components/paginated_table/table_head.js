@@ -2,7 +2,7 @@ import React from 'react';
 
 const make = React.DOM;
 
-export default React.createClass({
+export const TableHead = React.createClass({
   displayName: 'TableHead',
   render: function () {
     const that = this;

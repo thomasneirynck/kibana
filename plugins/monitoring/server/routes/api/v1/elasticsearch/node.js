@@ -1,18 +1,18 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import Joi from 'joi';
-import getClusterStatus from '../../../../lib/get_cluster_status';
-import getNodeSummary from '../../../../lib/get_node_summary';
-import getMetrics from '../../../../lib/details/get_metrics';
-import getShardStats from '../../../../lib/get_shard_stats';
-import getShardAllocation from '../../../../lib/get_shard_allocation';
-import calculateIndices from '../../../../lib/calculate_indices';
-import calculateClusterShards from '../../../../lib/elasticsearch/calculate_cluster_shards';
-import calculateNodeType from '../../../../lib/calculate_node_type';
-import getLastState from '../../../../lib/get_last_state';
-import getDefaultNodeFromId from '../../../../lib/get_default_node_from_id';
-import lookups from '../../../../lib/lookups';
-import handleError from '../../../../lib/handle_error';
+import { getClusterStatus } from '../../../../lib/get_cluster_status';
+import { getNodeSummary } from '../../../../lib/get_node_summary';
+import { getMetrics } from '../../../../lib/details/get_metrics';
+import { getShardStats } from '../../../../lib/get_shard_stats';
+import { getShardAllocation } from '../../../../lib/get_shard_allocation';
+import { calculateIndices } from '../../../../lib/calculate_indices';
+import { calculateClusterShards } from '../../../../lib/elasticsearch/calculate_cluster_shards';
+import { calculateNodeType } from '../../../../lib/calculate_node_type';
+import { getLastState } from '../../../../lib/get_last_state';
+import { getDefaultNodeFromId } from '../../../../lib/get_default_node_from_id';
+import { nodeTypeLabel, nodeTypeClass } from '../../../../lib/lookups';
+import { handleError } from '../../../../lib/handle_error';
 
 export function nodeRoutes(server) {
   const config = server.config();
@@ -22,8 +22,8 @@ export function nodeRoutes(server) {
     const nodeType = (node.master && 'master') || node.type;
     const typeClassLabel = {
       nodeType,
-      nodeTypeLabel: _.get(lookups, `nodeTypeLabel['${nodeType}']`),
-      nodeTypeClass: _.get(lookups, `nodeTypeClass['${nodeType}']`)
+      nodeTypeLabel: _.get(nodeTypeLabel, nodeType),
+      nodeTypeClass: _.get(nodeTypeClass, nodeType)
     };
     return typeClassLabel;
   }
@@ -86,10 +86,10 @@ export function nodeRoutes(server) {
         body.nodes[resolver] = nodeDetail;
 
         // set type for labeling / iconography
-        const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(nodeDetail);
-        nodeDetail.type = nodeType;
-        nodeDetail.nodeTypeLabel = nodeTypeLabel;
-        nodeDetail.nodeTypeClass = nodeTypeClass;
+        const { type, typeLabel, typeClass } = getNodeTypeClassLabel(nodeDetail);
+        nodeDetail.type = type;
+        nodeDetail.nodeTypeLabel = typeLabel;
+        nodeDetail.nodeTypeClass = typeClass;
 
         body.nodeSummary.totalShards = _.get(body, `shardStats.nodes['${resolver}'].shardCount`);
         body.nodeSummary.indexCount = _.get(body, `shardStats.nodes['${resolver}'].indexCount`);

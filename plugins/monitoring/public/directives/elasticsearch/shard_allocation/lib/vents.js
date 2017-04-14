@@ -17,23 +17,23 @@
 
 import _ from 'lodash';
 
-const vents = {};
-export default {
-  vents: vents,
+export const _vents = {};
+export const vents = {
+  vents: _vents,
   on: function (id, cb) {
-    if (!_.isArray(vents[id])) {
-      vents[id] = [];
+    if (!_.isArray(_vents[id])) {
+      _vents[id] = [];
     }
-    vents[id].push(cb);
+    _vents[id].push(cb);
   },
   clear: function (id) {
-    delete vents[id];
+    delete _vents[id];
   },
   trigger: function () {
     const args = Array.prototype.slice.call(arguments);
     const id = args.shift();
-    if (vents[id]) {
-      _.each(vents[id], function (cb) {
+    if (_vents[id]) {
+      _.each(_vents[id], function (cb) {
         cb.apply(null, args);
       });
     }

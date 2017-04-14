@@ -1,12 +1,12 @@
 import _ from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import MetricCell from 'plugins/monitoring/components/elasticsearch/node_listing/metric_cell';
-import OfflineCell from 'plugins/monitoring/components/elasticsearch/node_listing/offline_cell';
+import { MetricCell } from 'plugins/monitoring/components/elasticsearch/node_listing/metric_cell';
+import { OfflineCell } from 'plugins/monitoring/components/elasticsearch/node_listing/offline_cell';
 import { NodeStatusIcon } from 'plugins/monitoring/components/elasticsearch/node/status_icon';
-import Tooltip from 'plugins/monitoring/components/tooltip';
-import extractIp from 'plugins/monitoring/lib/extract_ip';
-import Table from 'plugins/monitoring/components/paginated_table';
+import { Tooltip } from 'plugins/monitoring/components/tooltip';
+import { extractIp } from 'plugins/monitoring/lib/extract_ip';
+import { Table } from 'plugins/monitoring/components/paginated_table';
 import { SORT_ASCENDING } from 'monitoring-constants';
 import uiModules from 'ui/modules';
 

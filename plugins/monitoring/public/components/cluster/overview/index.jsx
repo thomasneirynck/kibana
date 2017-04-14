@@ -1,12 +1,12 @@
 import React from 'react';
-import ElasticsearchPanel from './elasticsearch_panel';
-import LicenseText from './license_text';
-import KibanaPanel from './kibana_panel';
-import LogstashPanel from './logstash_panel';
-import AlertsPanel from './alerts_panel';
+import { ElasticsearchPanel } from './elasticsearch_panel';
+import { LicenseText } from './license_text';
+import { KibanaPanel } from './kibana_panel';
+import { LogstashPanel } from './logstash_panel';
+import { AlertsPanel } from './alerts_panel';
 import { get } from 'lodash';
 
-export default class Overview extends React.Component {
+export class Overview extends React.Component {
   constructor(props) {
     super(props);
     const cluster = get(props, 'scope.cluster', {});

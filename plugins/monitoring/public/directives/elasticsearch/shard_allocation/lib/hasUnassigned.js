@@ -15,6 +15,6 @@
  * from Elasticsearch Incorporated.
  */
 
-export default function hasUnassigned(item) {
+export function hasUnassigned(item) {
   return item.unassigned && item.unassigned.length > 0 || false;
 };

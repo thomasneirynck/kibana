@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export default function mapResponseTimes(times) {
+export function mapResponseTimes(times) {
   const responseTimes = _.reduce(_.values(times), (result, value) => {
     if (value.avg) {
       result.avg = Math.max(result.avg, value.avg);

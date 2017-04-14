@@ -1,6 +1,6 @@
 import { get } from 'lodash';
 
-export default function getClusterLicense(req, clusterUuid) {
+export function getClusterLicense(req, clusterUuid) {
   const config = req.server.config();
   const clusterCheckParams = {
     index: config.get('xpack.monitoring.index'),

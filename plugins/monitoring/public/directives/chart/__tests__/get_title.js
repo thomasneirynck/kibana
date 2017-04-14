@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import getTitle from '../get_title';
+import { getTitle } from '../get_title';
 
 describe('getTitle', function () {
   it('with metric.title', () => {

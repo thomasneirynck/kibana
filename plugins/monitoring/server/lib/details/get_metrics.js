@@ -1,8 +1,8 @@
 import { isPlainObject } from 'lodash';
 import Promise from 'bluebird';
-import getSeries from './get_series';
+import { getSeries } from './get_series';
 
-export default function getMetrics(req, indices, filters = []) {
+export function getMetrics(req, indices, filters = []) {
   const config = req.server.config();
   const metrics = req.payload.metrics || [];
   return Promise.map(metrics, metric => {

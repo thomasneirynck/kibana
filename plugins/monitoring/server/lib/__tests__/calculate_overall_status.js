@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import calculateKibanaStatus from '../calculate_overall_status';
+import { calculateOverallStatus } from '../calculate_overall_status';
 
 describe('Calculate Kibana Cluster Helath', () => {
   it('health status combined from multiple instances', () => {
@@ -23,13 +23,13 @@ describe('Calculate Kibana Cluster Helath', () => {
     ];
 
     greens.forEach(set => {
-      expect(calculateKibanaStatus(set)).to.be('green');
+      expect(calculateOverallStatus(set)).to.be('green');
     });
     yellows.forEach(set => {
-      expect(calculateKibanaStatus(set)).to.be('yellow');
+      expect(calculateOverallStatus(set)).to.be('yellow');
     });
     reds.forEach(set => {
-      expect(calculateKibanaStatus(set)).to.be('red');
+      expect(calculateOverallStatus(set)).to.be('red');
     });
   });
 });

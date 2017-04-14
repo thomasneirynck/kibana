@@ -1,10 +1,10 @@
 import React from 'react';
 import { capitalize } from 'lodash';
-import formatNumber from 'plugins/monitoring/lib/format_number';
+import { formatNumber } from 'plugins/monitoring/lib/format_number';
 import { ClusterItemContainer, HealthStatusIndicator, BytesPercentageUsage } from './helpers';
 import { KibanaStatusIcon } from 'plugins/monitoring/components/kibana/status_icon';
 
-export default function KibanaPanel(props) {
+export function KibanaPanel(props) {
   if (!props.count) return null;
 
   const statusIndicator = (

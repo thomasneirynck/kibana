@@ -1,4 +1,4 @@
-import mapConcurrentConnections from '../map_concurrent_connections';
+import { mapConcurrentConnections } from '../map_concurrent_connections';
 import expect from 'expect.js';
 
 describe('Map concurrent connections', () => {

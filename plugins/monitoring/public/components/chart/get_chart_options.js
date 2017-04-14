@@ -1,6 +1,6 @@
 import { CHART_LINE_COLOR, CHART_TEXT_COLOR } from 'monitoring-constants';
 
-export default function getChartOptions(options) {
+export function getChartOptions(options) {
   const opts = {
     legend: {
       show: false

@@ -1,16 +1,16 @@
 import _ from 'lodash';
-import calculateIndices from './calculate_indices';
-import getClusters from './get_clusters';
-import getClustersStats from './get_clusters_stats';
-import getClustersHealth from './get_clusters_health';
-import getPrimaryClusterUuid from './get_primary_cluster_uuid';
-import calculateOverallStatus from './calculate_overall_status';
-import alertsClustersAggregation from '../cluster_alerts/alerts_clusters_aggregation';
-import alertsClusterSearch from '../cluster_alerts/alerts_cluster_search';
+import { calculateIndices } from './calculate_indices';
+import { getClusters } from './get_clusters';
+import { getClustersStats } from './get_clusters_stats';
+import { getClustersHealth } from './get_clusters_health';
+import { getPrimaryClusterUuid } from './get_primary_cluster_uuid';
+import { calculateOverallStatus } from './calculate_overall_status';
+import { alertsClustersAggregation } from '../cluster_alerts/alerts_clusters_aggregation';
+import { alertsClusterSearch } from '../cluster_alerts/alerts_cluster_search';
 import { checkLicense as checkLicenseForAlerts } from '../cluster_alerts/check_license';
-import getClusterLicense from './get_cluster_license';
-import getKibanasForClusters from './get_kibanas_for_clusters';
-import getLogstashForClusters from './logstash/get_logstash_for_clusters';
+import { getClusterLicense } from './get_cluster_license';
+import { getKibanasForClusters } from './get_kibanas_for_clusters';
+import { getLogstashForClusters } from './logstash/get_logstash_for_clusters';
 import { CLUSTER_ALERTS_SEARCH_SIZE } from '../../common/constants';
 
 // manipulate cluster status and license meta data

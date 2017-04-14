@@ -6,7 +6,7 @@
 
 import semver from 'semver';
 
-export default function isEsCompatibleWithKibana(esVersion, kibanaVersion) {
+export function isEsCompatibleWithKibana(esVersion, kibanaVersion) {
   const esVersionNumbers = {
     major: semver.major(esVersion),
     minor: semver.minor(esVersion),

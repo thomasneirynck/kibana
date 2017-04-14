@@ -16,12 +16,12 @@
  */
 
 import _ from 'lodash';
-import hasPrimaryChildren from '../lib/hasPrimaryChildren';
-import decorateShards from '../lib/decorateShards';
-import extractIp from '../lib/extractIp';
+import { hasPrimaryChildren } from '../lib/hasPrimaryChildren';
+import { decorateShards } from '../lib/decorateShards';
+import { extractIp } from '../lib/extractIp';
 
-export default function nodesByIndicesFn() {
-  return function nodesByIndices(shards, nodes) {
+export function nodesByIndices() {
+  return function nodesByIndicesFn(shards, nodes) {
 
     const getNodeType = function (node) {
       if (node.attributes.client === 'true') {

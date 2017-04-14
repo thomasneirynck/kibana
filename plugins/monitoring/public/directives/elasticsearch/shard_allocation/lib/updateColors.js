@@ -16,15 +16,15 @@
  */
 
 import _ from 'lodash';
-import getValue from './getValueFromArrayOrString';
+import { getValueFromArrayOrString } from './getValueFromArrayOrString';
 
-export default function updateColors($scope) {
+export function updateColors($scope) {
   let colors = [];
   let previous = {};
   let runningTotal = 0;
   const grandTotal = $scope.timelineData.length;
   _.each($scope.timelineData, function (row) {
-    const status = getValue(row.fields['cluster_state.status']) || 'green';
+    const status = getValueFromArrayOrString(row.fields['cluster_state.status']) || 'green';
     let last = _.last(colors);
     if (!last) {
       last = { status: status , count: 0 };

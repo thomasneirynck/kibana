@@ -17,7 +17,7 @@
 
 import _ from 'lodash';
 
-export default function filterByName(name) {
+export function filterByName(name) {
   return function (row) {
     if (!_.isEmpty(name)) {
       const regex = new RegExp(name, 'i');

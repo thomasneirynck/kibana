@@ -1,5 +1,5 @@
 import React from 'react';
-import Tooltip from 'plugins/monitoring/components/tooltip';
+import { Tooltip } from 'plugins/monitoring/components/tooltip';
 import { SeverityIcon }  from 'plugins/monitoring/components/alerts/severity_icon';
 
 const HIGH_SEVERITY = 1999;

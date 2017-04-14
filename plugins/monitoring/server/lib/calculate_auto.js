@@ -52,16 +52,14 @@ function find(rules, check, last) {
   };
 }
 
-export default {
-  near: find(revRoundingRules, function near(bound, interval, target) {
-    if (bound > target) return interval;
-  }, true),
+export const near = find(revRoundingRules, function near(bound, interval, target) {
+  if (bound > target) return interval;
+}, true);
 
-  lessThan: find(revRoundingRules, function lessThan(_bound, interval, target) {
-    if (interval < target) return interval;
-  }),
+export const lessThan = find(revRoundingRules, function lessThan(_bound, interval, target) {
+  if (interval < target) return interval;
+});
 
-  atLeast: find(revRoundingRules, function atLeast(_bound, interval, target) {
-    if (interval <= target) return interval;
-  }),
-};
+export const atLeast = find(revRoundingRules, function atLeast(_bound, interval, target) {
+  if (interval <= target) return interval;
+});

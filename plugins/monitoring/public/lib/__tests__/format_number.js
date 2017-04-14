@@ -1,4 +1,4 @@
-import formatNumber from '../format_number';
+import { formatNumber } from '../format_number';
 import expect from 'expect.js';
 
 describe('format_number', () => {

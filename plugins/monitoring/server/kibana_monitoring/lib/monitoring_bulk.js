@@ -1,4 +1,4 @@
-export default function addMonitoringApi(Client, _config, components) {
+export function monitoringBulk(Client, _config, components) {
   const ca = components.clientAction.factory;
   Client.prototype.monitoring = components.clientAction.namespaceFactory();
   const monitoring = Client.prototype.monitoring.prototype;

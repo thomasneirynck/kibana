@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import normalizeVersionString from '../normalize_version_string';
+import { normalizeVersionString } from '../normalize_version_string';
 
 describe('Normalizing Version String', () => {
   it('Returns version string when valid', () => {

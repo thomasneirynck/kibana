@@ -1,10 +1,10 @@
 import _ from 'lodash';
 import moment from 'moment';
-import metrics from '../metrics';
-import createQuery from '../create_query.js';
-import calcAuto from '../calculate_auto';
-import filterPartialBuckets from '../filter_partial_buckets';
-import pickMetricFields from '../pick_metric_fields';
+import { metrics } from '../metrics';
+import { createQuery } from '../create_query.js';
+import { near } from '../calculate_auto';
+import { filterPartialBuckets } from '../filter_partial_buckets';
+import { pickMetricFields } from '../pick_metric_fields';
 
 // Use the metric object as the source of truth on where to find the UUID
 function getUuid(req, metric) {
@@ -16,7 +16,7 @@ function getUuid(req, metric) {
   return req.params.clusterUuid;
 }
 
-export default function getSeries(req, indices, metricName, filters) {
+export function getSeries(req, indices, metricName, filters) {
   const metric = metrics[metricName];
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
@@ -41,7 +41,7 @@ export default function getSeries(req, indices, metricName, filters) {
   const duration = moment.duration(max - min, 'ms');
   const config = req.server.config();
   const minIntervalSeconds = config.get('xpack.monitoring.min_interval_seconds');
-  const bucketSize = Math.max(minIntervalSeconds, calcAuto.near(100, duration).asSeconds());
+  const bucketSize = Math.max(minIntervalSeconds, near(100, duration).asSeconds());
   const aggs = {
     check: {
       date_histogram: {

@@ -1,4 +1,4 @@
-const elasticsearchClusterStatus = {
+export const elasticsearchClusterStatus = {
   cluster_uuid_fields: [
     'metadata.name',
     'metadata.xpack.cluster_uuid',
@@ -143,5 +143,3 @@ return ctx.payload;`
     }
   }
 };
-
-export default elasticsearchClusterStatus;

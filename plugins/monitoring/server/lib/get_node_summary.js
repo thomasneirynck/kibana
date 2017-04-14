@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import createQuery from './create_query.js';
+import { createQuery } from './create_query.js';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
-export default function getNodeSummary(req, indices) {
+export function getNodeSummary(req, indices) {
   // Get the params from the POST body for the request
   const config = req.server.config();
   const end = req.payload.timeRange.max;

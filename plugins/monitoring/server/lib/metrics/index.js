@@ -1167,9 +1167,7 @@ const metricInstances = {
   })
 };
 
-const metrics = _.reduce(Object.keys(metricInstances), (accumulated, key) => {
+export const metrics = _.reduce(Object.keys(metricInstances), (accumulated, key) => {
   accumulated[key] = metricInstances[key].toPlainObject();
   return accumulated;
 }, {});
-
-export default metrics;

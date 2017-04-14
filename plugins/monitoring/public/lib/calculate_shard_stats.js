@@ -5,7 +5,7 @@ function addOne(obj, key) {
   _.set(obj, key, ++value);
 }
 
-export default function calculateShardStats(state) {
+export function calculateShardStats(state) {
   const data = { totals: { primary: 0, replica: 0, unassigned: { replica: 0, primary: 0 } } };
   const processShards = function (shard) {
     const metrics = data[shard.index] || { status: 'green', primary: 0, replica: 0, unassigned: { replica: 0, primary: 0 } };

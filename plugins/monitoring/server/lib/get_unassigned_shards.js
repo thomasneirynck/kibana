@@ -5,7 +5,7 @@ import { get, set } from 'lodash';
 // - Number of Replica Shards
 // - Unassigned Primary Shards
 // - Unassigned Replica Shards
-export default function getUnassignedShards(indexShardStats) {
+export function getUnassignedShards(indexShardStats) {
   const returned = {};
   let unassignedShards = 0;
 

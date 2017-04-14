@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
-import createStubs from './fixtures/create_stubs';
-import alertsClusterSearch from '../alerts_cluster_search';
+import { createStubs } from './fixtures/create_stubs';
+import { alertsClusterSearch } from '../alerts_cluster_search';
 
 const getClusterLicense = () => Promise.resolve({});
 const mockQueryResult = {

@@ -4,7 +4,7 @@
  */
 
 import _ from 'lodash';
-import isEsCompatibleWithKibana from './is_es_compatible_with_kibana';
+import { isEsCompatibleWithKibana } from './is_es_compatible_with_kibana';
 
 /**
  *  tracks the node descriptions that get logged in warnings so

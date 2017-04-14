@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import filterPartialBuckets from '../filter_partial_buckets';
-import pickMetricFields from '../pick_metric_fields';
-import metrics from '../metrics';
+import { filterPartialBuckets } from '../filter_partial_buckets';
+import { pickMetricFields } from '../pick_metric_fields';
+import { metrics } from '../metrics';
 
 function createDataObject(x, y) {
   return { x, y };
@@ -141,7 +141,7 @@ function getMappedMetrics(options) {
   }, {});
 }
 
-export default function mapResponse(options) {
+export function mapResponse(options) {
   return options.items.map((item) => {
     return {
       name: item.key,

@@ -1,17 +1,17 @@
-import calculateAuto from '../calculate_auto.js';
+import { near, lessThan, atLeast } from '../calculate_auto.js';
 import expect from 'expect.js';
 import _ from 'lodash';
 import moment from 'moment';
 
 describe('Calculating Time Intervals Based on Size of Buckets', () => {
   it('Empty Arguments', () => {
-    const nearDuration = calculateAuto.near();
+    const nearDuration = near();
     expect(nearDuration.milliseconds()).to.be.eql(0);
 
-    const lessThanDuration = calculateAuto.lessThan();
+    const lessThanDuration = lessThan();
     expect(lessThanDuration.milliseconds()).to.be.eql(0);
 
-    const atLeastDuration = calculateAuto.atLeast();
+    const atLeastDuration = atLeast();
     expect(atLeastDuration.milliseconds()).to.be.eql(0);
   });
 
@@ -29,7 +29,7 @@ describe('Calculating Time Intervals Based on Size of Buckets', () => {
 
     _.each(tuples, (t) => {
       it(`Bucket Size: ${t[0]} - Time Interval: ${t[1]}`, () => {
-        const result = calculateAuto.near(t[0], duration);
+        const result = near(t[0], duration);
         expect(result.milliseconds()).to.be.eql(t[1]);
       });
     });
@@ -47,7 +47,7 @@ describe('Calculating Time Intervals Based on Size of Buckets', () => {
 
     _.each(tuples, (t) => {
       it(`Bucket Size: ${t[0]} - Time Interval: ${t[1]}`, () => {
-        const result = calculateAuto.lessThan(t[0], duration);
+        const result = lessThan(t[0], duration);
         expect(result.milliseconds()).to.be.eql(t[1]);
       });
     });
@@ -65,7 +65,7 @@ describe('Calculating Time Intervals Based on Size of Buckets', () => {
 
     _.each(tuples, (t) => {
       it(`Bucket Size: ${t[0]} - Time Interval: ${t[1]}`, () => {
-        const result = calculateAuto.atLeast(t[0], duration);
+        const result = atLeast(t[0], duration);
         expect(result.milliseconds()).to.be.eql(t[1]);
       });
     });

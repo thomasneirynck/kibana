@@ -17,7 +17,7 @@
 
 
 
-export default function extractIp(transport) {
+export function extractIp(transport) {
   if (typeof transport !== 'string') {
     return null;
   }

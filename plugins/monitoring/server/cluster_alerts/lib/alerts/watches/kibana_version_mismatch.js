@@ -1,4 +1,4 @@
-const kibanaVersionMismatch = {
+export const kibanaVersionMismatch = {
   cluster_uuid_fields: [
     'metadata.name',
     'metadata.xpack.cluster_uuid',
@@ -175,5 +175,3 @@ return ctx.payload;`
     }
   }
 };
-
-export default kibanaVersionMismatch;

@@ -1,6 +1,6 @@
 import sinon from 'sinon';
 
-export default function createStubs(mockQueryResult, featureStub) {
+export function createStubs(mockQueryResult, featureStub) {
   const callWithRequestStub = sinon.stub().returns(Promise.resolve(mockQueryResult));
   const getClusterStub = sinon.stub().returns({ callWithRequest: callWithRequestStub });
   const configStub = sinon.stub().returns({

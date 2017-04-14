@@ -1,7 +1,7 @@
-import opsBuffer from './lib/ops_buffer';
+import { opsBuffer } from './lib/ops_buffer';
 import { get } from 'lodash';
 
-export default function (serverInfo, server) {
+export function initKibanaMonitoring(serverInfo, server) {
   const config = server.config();
   const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('admin');
   callWithInternalUser('transport.request', {

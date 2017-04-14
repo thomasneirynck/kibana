@@ -1,15 +1,15 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import Joi from 'joi';
-import calculateIndices from '../../../../lib/calculate_indices';
-import getLastState from '../../../../lib/get_last_state';
-import getClusterStatus from '../../../../lib/get_cluster_status';
-import getIndexSummary from '../../../../lib/get_index_summary';
-import getMetrics from '../../../../lib/details/get_metrics';
-import getShardStats from '../../../../lib/get_shard_stats';
-import getShardAllocation from '../../../../lib/get_shard_allocation';
-import calculateClusterShards from '../../../../lib/elasticsearch/calculate_cluster_shards';
-import handleError from '../../../../lib/handle_error';
+import { calculateIndices } from '../../../../lib/calculate_indices';
+import { getLastState } from '../../../../lib/get_last_state';
+import { getClusterStatus } from '../../../../lib/get_cluster_status';
+import { getIndexSummary } from '../../../../lib/get_index_summary';
+import { getMetrics } from '../../../../lib/details/get_metrics';
+import { getShardStats } from '../../../../lib/get_shard_stats';
+import { getShardAllocation } from '../../../../lib/get_shard_allocation';
+import { calculateClusterShards } from '../../../../lib/elasticsearch/calculate_cluster_shards';
+import { handleError } from '../../../../lib/handle_error';
 
 export function indexRoutes(server) {
   const config = server.config();

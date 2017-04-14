@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import uiModules from 'ui/modules';
-import formatNumber from 'plugins/monitoring/lib/format_number';
-import extractIp from 'plugins/monitoring/lib/extract_ip';
+import { formatNumber } from 'plugins/monitoring/lib/format_number';
+import { extractIp } from 'plugins/monitoring/lib/extract_ip';
 
 const uiModule = uiModules.get('monitoring/filters', []);
 uiModule.filter('localizedDate', function () {

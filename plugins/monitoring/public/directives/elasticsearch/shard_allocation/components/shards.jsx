@@ -17,7 +17,7 @@
 
 import { sortBy } from 'lodash';
 import React from 'react';
-import calculateClass from '../lib/calculateClass';
+import { calculateClass } from '../lib/calculateClass';
 
 function sortByShard(shard) {
   if (shard.node) {
@@ -34,7 +34,7 @@ const Shard = React.createClass({
   }
 });
 
-export default React.createClass({
+export const Shards = React.createClass({
   createShard: function (shard) {
     const type = shard.primary ? 'primary' : 'replica';
     const additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';

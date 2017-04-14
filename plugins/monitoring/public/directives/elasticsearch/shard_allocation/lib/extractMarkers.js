@@ -17,7 +17,7 @@
 
 import _ from 'lodash';
 import moment from 'moment';
-import getValue from './getValueFromArrayOrString';
+import { getValueFromArrayOrString } from './getValueFromArrayOrString';
 
 function markerMaker(count, time, timestamp) {
   return {
@@ -27,12 +27,12 @@ function markerMaker(count, time, timestamp) {
   };
 }
 
-export default function extractMarkers(data) {
+export function extractMarkers(data) {
   // data has to be sorted by time and may contain duplicates
   let total = 0;
   let currentMarker = null;
   const markers = _.reduce(data, function (memo, item) {
-    const timestamp = getValue(item.fields.timestamp);
+    const timestamp = getValueFromArrayOrString(item.fields.timestamp);
     const time = moment.utc(timestamp).startOf('day').format('YYYY-MM-DD');
     if (!currentMarker) {
       // first marker

@@ -16,15 +16,15 @@
  */
 
 import _ from 'lodash';
-import transform from './transform';
-import filterByName from './filterByName';
-import countChildren from './countChildren';
-import hasUnassigned from './hasUnassigned';
-import labels from './labels';
+import { transform } from './transform';
+import { filterByName } from './filterByName';
+import { countChildren } from './countChildren';
+import { hasUnassigned } from './hasUnassigned';
+import { labels } from './labels';
 
 // This function will update the state of the ui. It requires the $scope
 // to be passed in as the first argument.
-export default function changeData($scope) {
+export function changeData($scope) {
   if ($scope.currentState && $scope.panel) {
     let data = _.cloneDeep($scope.currentState);
     $scope.current = data.timestamp;

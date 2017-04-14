@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import moment from 'moment';
-import calculateAvailability from '../calculate_availability';
+import { calculateAvailability } from '../calculate_availability';
 
 describe('Calculate Availability', () => {
   it('is available', () => {

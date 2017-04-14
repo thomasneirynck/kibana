@@ -1,5 +1,5 @@
 import { defaults } from 'lodash';
-export default function executorProvider(Promise, $timeout, timefilter) {
+export function executorProvider(Promise, $timeout, timefilter) {
 
   const queue = [];
   let executionTimer;

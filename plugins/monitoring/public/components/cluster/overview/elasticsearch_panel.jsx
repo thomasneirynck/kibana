@@ -1,10 +1,10 @@
 import React from 'react';
-import formatNumber from 'plugins/monitoring/lib/format_number';
+import { formatNumber } from 'plugins/monitoring/lib/format_number';
 import { get, capitalize } from 'lodash';
 import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
 import { ClusterItemContainer, HealthStatusIndicator, BytesUsage, BytesPercentageUsage } from './helpers';
 
-export default class ElasticsearchPanel extends React.Component {
+export class ElasticsearchPanel extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

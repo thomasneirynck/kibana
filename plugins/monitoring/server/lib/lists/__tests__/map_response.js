@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import mapResponse from '../map_response';
+import { mapResponse } from '../map_response';
 import responseOptionsIndices from './fixtures/map_response_indices_options';
 import responseMapResultIndices from './fixtures/map_response_indices_result';
 import responseOptionsNodes from './fixtures/map_response_nodes_options';

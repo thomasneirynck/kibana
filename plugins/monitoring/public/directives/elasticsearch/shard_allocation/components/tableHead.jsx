@@ -53,7 +53,7 @@ class IndexLabel extends React.Component {
 
 }
 
-export default class TableHead extends React.Component {
+export class TableHead extends React.Component {
 
   constructor(props) {
     super(props);

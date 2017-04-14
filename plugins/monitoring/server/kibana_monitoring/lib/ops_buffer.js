@@ -3,9 +3,9 @@ import {
 } from '../../../common/constants';
 import _ from 'lodash';
 import { mapEvent, rollupEvent } from './map_event';
-import monitoringBulk from './monitoring_bulk';
+import { monitoringBulk } from './monitoring_bulk';
 
-export default function opsBuffer(serverInfo, server) {
+export function opsBuffer(serverInfo, server) {
   const config = server.config();
   const interval = config.get('xpack.monitoring.kibana.collection.interval') + 'ms';
   const monitoringTag = config.get('xpack.monitoring.loggingTag');

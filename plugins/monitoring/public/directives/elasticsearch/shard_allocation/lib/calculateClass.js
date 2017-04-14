@@ -15,7 +15,7 @@
  * from Elasticsearch Incorporated.
  */
 
-export default function calculateClass(item, initial) {
+export function calculateClass(item, initial) {
   const classes = [item.type];
   if (initial) {
     classes.push(initial);

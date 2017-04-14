@@ -1,7 +1,7 @@
 import React from 'react';
 import { includes, isFunction } from 'lodash';
 
-export default class HorizontalLegend extends React.Component {
+export class HorizontalLegend extends React.Component {
   constructor() {
     super();
     this.formatter = this.formatter.bind(this);

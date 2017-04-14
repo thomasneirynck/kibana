@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import calculateAvailability from './calculate_availability';
+import { calculateAvailability } from './calculate_availability';
 
 export function handleResponse(resp) {
   const getSource = key => _.get(resp, `_source.kibana.${key}`);
@@ -10,7 +10,7 @@ export function handleResponse(resp) {
   return _.merge(kibana, availability, freeMemory);
 }
 
-export default function getKibanaInfo(req, uuid) {
+export function getKibanaInfo(req, uuid) {
   const config = req.server.config();
   const params = {
     index: config.get('xpack.monitoring.index'),

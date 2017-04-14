@@ -1,16 +1,16 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
 import Joi from 'joi';
-import getClusterStatus from '../../../../lib/get_cluster_status';
-import getListing from '../../../../lib/lists/get_nodes';
-import getShardStats from '../../../../lib/get_shard_stats';
-import calculateIndices from '../../../../lib/calculate_indices';
-import calculateClusterShards from '../../../../lib/elasticsearch/calculate_cluster_shards';
-import calculateNodeType from '../../../../lib/calculate_node_type';
-import getLastState from '../../../../lib/get_last_state';
-import getDefaultNodeFromId from '../../../../lib/get_default_node_from_id';
-import lookups from '../../../../lib/lookups';
-import handleError from '../../../../lib/handle_error';
+import { getClusterStatus } from '../../../../lib/get_cluster_status';
+import { getNodes } from '../../../../lib/lists/get_nodes';
+import { getShardStats } from '../../../../lib/get_shard_stats';
+import { calculateIndices } from '../../../../lib/calculate_indices';
+import { calculateClusterShards } from '../../../../lib/elasticsearch/calculate_cluster_shards';
+import { calculateNodeType } from '../../../../lib/calculate_node_type';
+import { getLastState } from '../../../../lib/get_last_state';
+import { getDefaultNodeFromId } from '../../../../lib/get_default_node_from_id';
+import { nodeTypeLabel, nodeTypeClass } from '../../../../lib/lookups';
+import { handleError } from '../../../../lib/handle_error';
 
 export function nodesRoutes(server) {
   const config = server.config();
@@ -20,8 +20,8 @@ export function nodesRoutes(server) {
     const nodeType = (node.master && 'master') || node.type;
     const typeClassLabel = {
       nodeType,
-      nodeTypeLabel: _.get(lookups, `nodeTypeLabel['${nodeType}']`),
-      nodeTypeClass: _.get(lookups, `nodeTypeClass['${nodeType}']`)
+      nodeTypeLabel: _.get(nodeTypeLabel, nodeType),
+      nodeTypeClass: _.get(nodeTypeClass, nodeType)
     };
     return typeClassLabel;
   }
@@ -53,7 +53,7 @@ export function nodesRoutes(server) {
         .then(lastState => {
           return Promise.props({
             clusterStatus: getClusterStatus(req, indices, lastState),
-            listing: getListing(req, indices),
+            listing: getNodes(req, indices),
             shardStats: getShardStats(req, indices, lastState),
             clusterState: lastState
           });
@@ -85,10 +85,10 @@ export function nodesRoutes(server) {
           delete row.name;
 
           // set type for labeling / iconography
-          const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(row.node);
-          row.node.type = nodeType;
-          row.node.nodeTypeLabel = nodeTypeLabel;
-          row.node.nodeTypeClass = nodeTypeClass;
+          const { type, typeLabel, typeClass } = getNodeTypeClassLabel(row.node);
+          row.node.type = type;
+          row.node.nodeTypeLabel = typeLabel;
+          row.node.nodeTypeClass = typeClass;
         });
         delete body.listing;
         delete body.clusterState;

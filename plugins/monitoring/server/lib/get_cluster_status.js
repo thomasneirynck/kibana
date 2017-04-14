@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import createQuery from './create_query.js';
+import { createQuery } from './create_query.js';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
 export function handleResponse(lastState) {
@@ -38,7 +38,7 @@ export function handleResponse(lastState) {
   };
 }
 
-export default function getClusterStatus(req, indices, lastState) {
+export function getClusterStatus(req, indices, lastState) {
   // Get the params from the POST body for the request
   const end = req.payload.timeRange.max;
   const uuid = req.params.clusterUuid;

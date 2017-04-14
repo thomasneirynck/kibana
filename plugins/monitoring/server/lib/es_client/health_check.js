@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import elasticsearch from 'elasticsearch';
-import kibanaVersion from './kibana_version';
+import { kibanaVersion } from './kibana_version';
 import { ensureNotTribe } from './ensure_not_tribe';
 import { ensureEsVersion } from './ensure_es_version';
 
@@ -9,7 +9,7 @@ const NO_INDEX = 'no_index';
 const INITIALIZING = 'initializing';
 const READY = 'ready';
 
-export default function esHealthCheck(plugin, server) {
+export function esHealthCheck(plugin, server) {
   const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('monitoring');
   const config = server.config();
   const REQUEST_DELAY = config.get('elasticsearch.healthCheck.delay');

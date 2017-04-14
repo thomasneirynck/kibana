@@ -5,7 +5,7 @@ import { verifyMonitoringLicense } from './verify_monitoring_license';
  * @param {Object} req Request object from the API route
  * @param {String} clusterUuid The cluster's UUID
  */
-export default function alertsClusterSearch(req, clusterUuid, getClusterLicense, checkLicense, options = {}) {
+export function alertsClusterSearch(req, clusterUuid, getClusterLicense, checkLicense, options = {}) {
   const verification = verifyMonitoringLicense(req.server);
 
   if (!verification.enabled) {

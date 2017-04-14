@@ -17,9 +17,9 @@
 
 import _ from 'lodash';
 import React from 'react';
-import Shard from './shard.jsx';
-import calculateClass from '../lib/calculateClass';
-import generateQueryAndLink from '../lib/generateQueryAndLink';
+import { Shard } from './shard.jsx';
+import { calculateClass } from '../lib/calculateClass';
+import { generateQueryAndLink } from '../lib/generateQueryAndLink';
 
 function sortByName(item) {
   if (item.type === 'node') {
@@ -28,7 +28,7 @@ function sortByName(item) {
   return [ item.name ];
 }
 
-export default React.createClass({
+export const Assigned = React.createClass({
   createShard: function (shard, index) {
     const type = shard.primary ? 'primary' : 'replica';
     const additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';

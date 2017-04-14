@@ -1,5 +1,5 @@
 import { bindKey, once } from 'lodash';
-import monitoringBulk from '../../kibana_monitoring/lib/monitoring_bulk';
+import { monitoringBulk } from '../../kibana_monitoring/lib/monitoring_bulk';
 
 /* Provide a dedicated Elasticsearch client for Monitoring
  * The connection options can be customized for the Monitoring application
@@ -40,6 +40,4 @@ export function exposeClient(server) {
 }
 
 
-const instantiateClient = once(exposeClient);
-
-export default instantiateClient;
+export const instantiateClient = once(exposeClient);

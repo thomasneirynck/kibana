@@ -1,6 +1,6 @@
-import mapRequests from './map_requests';
-import mapResponseTimes from './map_response_times';
-import mapConcurrents from './map_concurrent_connections';
+import { mapRequests } from './map_requests';
+import { mapResponseTimes } from './map_response_times';
+import { mapConcurrentConnections } from './map_concurrent_connections';
 import moment from 'moment';
 import v8 from 'v8';
 
@@ -27,7 +27,7 @@ export function rollupEvent(event, lastOp) {
   const requests = mapRequests(event.requests);
   const rollup = _.get(lastOp, 'rollup');
   return {
-    concurrent_connections: _.sum([ mapConcurrents(event.concurrents), _.get(rollup, 'concurrent_connections') ]),
+    concurrent_connections: _.sum([ mapConcurrentConnections(event.concurrents), _.get(rollup, 'concurrent_connections') ]),
     // memory/os stats use the latest event's details
     os: {
       load: {

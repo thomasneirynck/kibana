@@ -1,7 +1,7 @@
 import { get, forEach, last } from 'lodash';
 import numeral from 'numeral';
 
-export default function getUnits(series) {
+export function getUnits(series) {
   let units = get(series, '[0].metric.units');
 
   // For Bytes, find the largest unit from any data set's _last_ item

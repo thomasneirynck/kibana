@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import watcherApi from '../watcher_api';
+import { watcherApi } from '../watcher_api';
 
 describe('watcher API methods exist', () => {
   const Client = function () { };

@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function ChartTooltip({ series }) {
+export function InfoTooltip({ series }) {
   const tableRows = series.map((item, index) => {
     // 2+ dataseries in the chart
     if (series.length > 1) {

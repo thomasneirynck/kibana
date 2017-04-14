@@ -1,8 +1,8 @@
-import metrics from '../../metrics';
+import { metrics } from '../../metrics';
 import { LatencyMetric } from '../metric_classes';
 import expect from 'expect.js';
 import _ from 'lodash';
-import Model from './model';
+import { Model } from './model';
 import { expected } from './metrics_fixture';
 
 describe('Metrics', () => {

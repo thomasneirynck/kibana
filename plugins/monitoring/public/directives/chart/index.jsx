@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom';
 import moment from 'moment';
 import uiModules from 'ui/modules';
 import { set } from 'lodash';
-import getTitle from './get_title';
-import getUnits from './get_units';
-import MonitoringTimeseries from 'plugins/monitoring/components/chart';
-import InfoTooltip from 'plugins/monitoring/components/chart/info_tooltip';
+import { getTitle } from './get_title';
+import { getUnits } from './get_units';
+import { MonitoringTimeseries } from 'plugins/monitoring/components/chart';
+import { InfoTooltip } from 'plugins/monitoring/components/chart/info_tooltip';
 import { Tooltip } from 'pui-react-tooltip';
 import { OverlayTrigger } from 'pui-react-overlay-trigger';
 

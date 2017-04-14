@@ -4,8 +4,8 @@
 import { find, partial } from 'lodash';
 import uiRoutes from 'ui/routes';
 import uiModules from 'ui/modules';
-import routeInitProvider from 'plugins/monitoring/lib/route_init';
-import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
+import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
+import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
 import template from './index.html';
 
 function getPageData($injector) {

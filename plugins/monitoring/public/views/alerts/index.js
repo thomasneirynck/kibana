@@ -1,8 +1,8 @@
 import { find, get } from 'lodash';
 import uiRoutes from 'ui/routes';
 import template from './index.html';
-import routeInitProvider from 'plugins/monitoring/lib/route_init';
-import ajaxErrorHandlersProvider from 'plugins/monitoring/lib/ajax_error_handler';
+import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
+import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
 
 function getAlertData($injector) {
   const globalState = $injector.get('globalState');

@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import decorateShards from '../decorateShards';
+import { decorateShards } from '../decorateShards';
 
 const nodes = {
   '127.0.0.1:9300': {

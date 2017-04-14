@@ -1,10 +1,10 @@
 import { once } from 'lodash';
-import alertLoader from './lib/alert_loader';
+import { alertLoader } from './lib/alert_loader';
 // In the future, it may become desirable to initialize this separatey from cluster alerts, but currently nothing else needs it
-import initMonitoringXpackInfo from '../lib/init_monitoring_xpack_info';
+import { initMonitoringXpackInfo } from '../lib/init_monitoring_xpack_info';
 import { checkLicenseGenerator } from './check_license';
 
-export default function initClusterAlerts(serverInfo, server) {
+export function initClusterAlerts(serverInfo, server) {
   const config = server.config();
   const pollFrequencyInMillis = config.get('xpack.monitoring.cluster_alerts.management.interval');
 

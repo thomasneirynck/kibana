@@ -3,10 +3,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { formatDateTimeLocal } from 'monitoring-formatting';
 import uiModules from 'ui/modules';
-import Table from 'plugins/monitoring/components/paginated_table';
+import { Table } from 'plugins/monitoring/components/paginated_table';
 import { SORT_DESCENDING } from 'monitoring-constants';
-import Tooltip from 'plugins/monitoring/components/tooltip';
-import FormattedMessage from 'plugins/monitoring/components/alerts/formatted_message';
+import { Tooltip } from 'plugins/monitoring/components/tooltip';
+import { FormattedMessage } from 'plugins/monitoring/components/alerts/formatted_message';
 import { SeverityIcon } from 'plugins/monitoring/components/alerts/severity_icon';
 import { mapSeverity } from 'plugins/monitoring/components/alerts/map_severity';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Overview from 'plugins/monitoring/components/cluster/overview';
+import { Overview } from 'plugins/monitoring/components/cluster/overview';
 import uiModules from 'ui/modules';
 
 const uiModule = uiModules.get('monitoring/directives', []);

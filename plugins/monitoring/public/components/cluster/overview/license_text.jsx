@@ -2,7 +2,7 @@ import React from 'react';
 import moment from 'moment-timezone';
 import { capitalize } from 'lodash';
 
-export default function LicenseText(props) {
+export function LicenseText(props) {
   const formatDateLocal = (input) => {
     return moment.tz(input, moment.tz.guess()).format('LL');
   };

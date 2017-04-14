@@ -1,9 +1,9 @@
 import Joi from 'joi';
 import Promise from 'bluebird';
-import handleError from '../../../../lib/handle_error';
-import getClusterStatus from '../../../../lib/logstash/get_cluster_status';
-import getMetrics from '../../../../lib/details/get_metrics';
-import calculateIndices from '../../../../lib/calculate_indices';
+import { handleError } from '../../../../lib/handle_error';
+import { getClusterStatus } from '../../../../lib/logstash/get_cluster_status';
+import { getMetrics } from '../../../../lib/details/get_metrics';
+import { calculateIndices } from '../../../../lib/calculate_indices';
 
 /*
  * Logstash Overview route.

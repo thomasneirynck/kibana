@@ -7,7 +7,7 @@
  * @param {Integer} index: index of the chart series, 0-3
  * @returns {String} Hex color to use for chart series at the given index
  */
-export default function getColor(app, index) {
+export function getColor(app, index) {
   let seriesColors;
   if (app === 'elasticsearch') {
     seriesColors = ['#3ebeb0', '#3b73ac', '#f08656', '#6c478f'];
