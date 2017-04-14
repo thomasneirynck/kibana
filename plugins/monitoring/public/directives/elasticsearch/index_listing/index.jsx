@@ -120,7 +120,7 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
     noDataMessage: (
       <div>
         <p>There are no indices that match your selections. Try changing the time range selection.</p>
-        <p>If you are looking for system indices (e.g., .kibana), try unchecking 'Show system indices'.</p>
+        <p>If you are looking for system indices (e.g., .kibana), try checking 'Show system indices'.</p>
       </div>
     ),
     filterFields: ['name', 'status'],
