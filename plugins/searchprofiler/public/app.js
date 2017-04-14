@@ -13,16 +13,16 @@ import 'ace';
 import 'angular-ui-ace';
 import 'plugins/searchprofiler/directives';
 import Range from './range';
-import nsToPretty from 'plugins/searchprofiler/filters/ns_to_pretty';
-import msToPretty from 'plugins/searchprofiler/filters/ms_to_pretty';
-import checkForParseErrors from 'plugins/searchprofiler/app_util.js';
+import { nsToPretty } from 'plugins/searchprofiler/filters/ns_to_pretty';
+import { msToPretty } from 'plugins/searchprofiler/filters/ms_to_pretty';
+import { checkForParseErrors } from 'plugins/searchprofiler/app_util.js';
 
 // Styles and templates
 import 'ui/autoload/all';
 import './less/main.less';
 import './less/hint.base.min.less';
 import template from './templates/index.html';
-import defaultQuery from './templates/default_query';
+import { defaultQuery } from './templates/default_query';
 
 uiRoutes.when('/dev_tools/searchprofiler', {
   template: template

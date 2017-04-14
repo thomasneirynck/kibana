@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
-import checkForParseErrors from '../app_util.js';
+import { checkForParseErrors } from '../app_util.js';
 
 describe('checkForParseErrors', function () {
   it.skip('returns false from bad JSON', function () {

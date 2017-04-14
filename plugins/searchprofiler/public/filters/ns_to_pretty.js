@@ -1,4 +1,4 @@
-import msToPretty from './ms_to_pretty';
+import { msToPretty } from './ms_to_pretty';
 
 export function nsToPretty(ns, precision) {
   if (!precision) {
@@ -13,5 +13,3 @@ export function nsToPretty(ns, precision) {
   }
   return msToPretty(ns, precision);
 };
-
-export default nsToPretty;

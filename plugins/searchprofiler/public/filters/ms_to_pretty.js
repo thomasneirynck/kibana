@@ -25,5 +25,3 @@ export function msToPretty(ms, precision) {
   ms /= 24;
   return ms.toFixed(precision) + 'd';
 };
-
-export default msToPretty;

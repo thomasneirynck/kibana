@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import nsToPretty from '../ns_to_pretty.js';
+import { nsToPretty } from '../ns_to_pretty.js';
 
 describe('nsToPretty', function () {
   it('returns correct time for ns', function () {

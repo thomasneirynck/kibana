@@ -1,5 +1,11 @@
 import template from 'plugins/searchprofiler/directives/profile_tree/index.html';
-import *  as util from 'plugins/searchprofiler/directives/profile_tree/util';
+import {
+  closeNode,
+  normalizeIndices,
+  calcTimes,
+  normalizeTimes,
+  flattenResults
+ } from 'plugins/searchprofiler/directives/profile_tree/util';
 import uiModules from 'ui/modules';
 
 const uiModule = uiModules.get('app/searchprofiler/directives', []);
@@ -37,7 +43,7 @@ uiModule.directive('profiletree',  HighlightService => {
         // If the branch is open and toggled close, we need to
         // also close the children
         if ($scope.visible[id].visible === true) {
-          util.closeNode($scope.visible, id);
+          closeNode($scope.visible, id);
         } else {
           // Otherwise just toggle on
           $scope.visible[id].visible = true;
@@ -74,7 +80,7 @@ uiModule.directive('profiletree',  HighlightService => {
           indices[shard.id[1]].time[$scope.target] += shard.time[$scope.target];
         }
         data = null;
-        const finalIndices = util.normalizeIndices(indices, $scope.indexVisibility, $scope.target);
+        const finalIndices = normalizeIndices(indices, $scope.indexVisibility, $scope.target);
         indices = null;
 
         $scope.profileResponse = finalIndices;
@@ -89,12 +95,12 @@ uiModule.directive('profiletree',  HighlightService => {
         let shardTime = 0;
         for (const search of shard.searches) {
           shard.rewrite_time += search.rewrite_time;
-          const totalTime = util.calcTimes(search.query);
+          const totalTime = calcTimes(search.query);
           shardTime += totalTime;
-          util.normalizeTimes(search.query, totalTime, 0);
+          normalizeTimes(search.query, totalTime, 0);
 
           const flat = [];
-          util.flattenResults(search.query, flat, 0, $scope.visible);
+          flattenResults(search.query, flat, 0, $scope.visible);
           search.flat = flat;
           search.query = null;
         }
@@ -107,14 +113,14 @@ uiModule.directive('profiletree',  HighlightService => {
         }
         let shardTime = 0;
         for (const agg of shard.aggregations) {
-          const totalTime = util.calcTimes([agg]);
+          const totalTime = calcTimes([agg]);
           shardTime += totalTime;
         }
         for (const agg of shard.aggregations) {
-          util.normalizeTimes([agg], shardTime, 0);
+          normalizeTimes([agg], shardTime, 0);
 
           const flat = [];
-          util.flattenResults([agg], flat, 0, $scope.visible);
+          flattenResults([agg], flat, 0, $scope.visible);
           agg.flat = flat;
         }
         return shardTime;

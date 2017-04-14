@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export default (server, commonRouteConfig) => {
+export function profileRoute(server, commonRouteConfig) {
 
   server.route({
     path: '/api/searchprofiler/profile',
@@ -42,4 +42,4 @@ export default (server, commonRouteConfig) => {
     }
   });
 
-};
+}

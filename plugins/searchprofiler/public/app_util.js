@@ -79,5 +79,3 @@ function getJSONParseError(json) {
 
   return firstError;
 }
-
-export default checkForParseErrors;

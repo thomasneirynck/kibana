@@ -1,7 +1,5 @@
-const query = `{
+export const defaultQuery = `{
   "query":{
     "match_all" : {}
   }
 }`;
-
-export default query;
