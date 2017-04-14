@@ -1,4 +1,4 @@
-export default (request, username, password, calculateExpires, reply) => {
+export function onChangePassword(request, username, password, calculateExpires, reply) {
   return () => {
     const currentUser = request.auth.credentials.username;
     if (username === currentUser) {
@@ -11,4 +11,4 @@ export default (request, username, password, calculateExpires, reply) => {
 
     return reply().code(204);
   };
-};
+}

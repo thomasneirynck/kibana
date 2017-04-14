@@ -1,16 +1,11 @@
-export default {
-  getHeader: getAuthHeader,
-  parseHeader: parseAuthHeader
-};
-
-function getAuthHeader(username, password) {
+export function getAuthHeader(username, password) {
   const auth = new Buffer(`${username}:${password}`).toString('base64');
   return {
     authorization: `Basic ${auth}`
   };
 }
 
-function parseAuthHeader(authorization) {
+export function parseAuthHeader(authorization) {
   if (typeof authorization !== 'string') {
     throw new Error('Authorization should be a string');
   }

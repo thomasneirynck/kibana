@@ -1,11 +1,11 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
 
-import replyFixture from './__fixtures__/reply';
-import requestFixture from './__fixtures__/request';
-import serverFixture from './__fixtures__/server';
+import { replyFixture } from './__fixtures__/reply';
+import { requestFixture } from './__fixtures__/request';
+import { serverFixture } from './__fixtures__/server';
 
-import * as loginScheme from '../login_scheme';
+import { createScheme } from '../login_scheme';
 
 describe('lib/login_scheme', function () {
   describe('#default()', () => {
@@ -25,7 +25,7 @@ describe('lib/login_scheme', function () {
         request = requestFixture();
         reply = replyFixture();
 
-        scheme = loginScheme.default(params);
+        scheme = createScheme(params);
       });
 
       it('returns object with authentication function', () => {

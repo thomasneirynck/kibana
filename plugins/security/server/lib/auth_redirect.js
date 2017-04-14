@@ -23,7 +23,7 @@ const KIBANA_VERSION_HEADER = 'kbn-version';
  *    testRequest: Function to test authentication for a request
  * @return {Function}
  */
-export default function factory({ redirectUrl, strategies, testRequest, xpackMainPlugin }) {
+export function authenticateFactory({ redirectUrl, strategies, testRequest, xpackMainPlugin }) {
   const testRequestAsync = Promise.promisify(testRequest);
   return function authenticate(request, reply) {
     // If security is disabled or license is basic, continue with no user credentials and delete the client cookie as well

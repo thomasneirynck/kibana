@@ -1,4 +1,4 @@
-export default function isAuthenticatedProvider(server) {
+export function isAuthenticatedProvider(server) {
   server.expose('isAuthenticated', async (request) => {
     try {
       // ensure that the user is authenticated

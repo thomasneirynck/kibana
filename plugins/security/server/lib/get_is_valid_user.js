@@ -1,9 +1,9 @@
 import { assign } from 'lodash';
-import basicAuth from './basic_auth';
+import { getAuthHeader } from './basic_auth';
 
-export default (server) => {
+export function getIsValidUser(server) {
   return function isValidUser(request, username, password) {
-    assign(request.headers, basicAuth.getHeader(username, password));
+    assign(request.headers, getAuthHeader(username, password));
     return server.plugins.security.getUser(request);
   };
-};
+}

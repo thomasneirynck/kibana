@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
 import { USERNAME, PASSWORD } from '../../../server/lib/default_auth';
-import setElasticsearchAuth from '../../../server/lib/set_elasticsearch_auth';
+import { setElasticsearchAuth } from '../../../server/lib/set_elasticsearch_auth';
 
 describe('setElasticsearchAuth', function () {
   const config = {

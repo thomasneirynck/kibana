@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
-import validateConfig from '../validate_config';
+import { validateConfig } from '../validate_config';
 
 describe('Validate config', function () {
   let config;

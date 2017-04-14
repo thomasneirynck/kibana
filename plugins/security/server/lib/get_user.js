@@ -1,6 +1,6 @@
-import getClient from './get_client_shield';
+import { getClient } from './get_client_shield';
 
-export default function getUserProvider(server) {
+export function getUserProvider(server) {
   const callWithRequest = getClient(server).callWithRequest;
 
   server.expose('getUser', (request) => {

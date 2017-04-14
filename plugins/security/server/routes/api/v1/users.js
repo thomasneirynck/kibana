@@ -1,15 +1,15 @@
 import _ from 'lodash';
 import Boom from 'boom';
 import Joi from 'joi';
-import getClient from '../../../lib/get_client_shield';
-import userSchema from '../../../lib/user_schema';
+import { getClient } from '../../../lib/get_client_shield';
+import { userSchema } from '../../../lib/user_schema';
 import { wrapError } from '../../../lib/errors';
-import getCalculateExpires from '../../../lib/get_calculate_expires';
-import onChangePassword from '../../../lib/on_change_password';
-import getIsValidUser from '../../../lib/get_is_valid_user';
-import routePreCheckLicense from '../../../lib/route_pre_check_license';
+import { getCalculateExpires } from '../../../lib/get_calculate_expires';
+import { onChangePassword } from '../../../lib/on_change_password';
+import { getIsValidUser } from '../../../lib/get_is_valid_user';
+import { routePreCheckLicense } from '../../../lib/route_pre_check_license';
 
-export default (server) => {
+export function initUsersApi(server) {
   const callWithRequest = getClient(server).callWithRequest;
   const calculateExpires = getCalculateExpires(server);
   const isValidUser = getIsValidUser(server);
@@ -106,4 +106,4 @@ export default (server) => {
       pre: [routePreCheckLicenseFn]
     }
   });
-};
+}

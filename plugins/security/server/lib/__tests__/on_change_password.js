@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
-import onChangePassword from '../../../server/lib/on_change_password';
+import { onChangePassword } from '../../../server/lib/on_change_password';
 
 describe('On change password', () => {
   const username = 'elastic';

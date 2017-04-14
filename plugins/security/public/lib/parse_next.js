@@ -1,6 +1,6 @@
 import { parse } from 'url';
 
-export default (href, basePath = '') => {
+export function parseNext(href, basePath = '') {
   const { query, hash } = parse(href, true);
   if (!query.next) {
     return `${basePath}/`;
@@ -17,4 +17,4 @@ export default (href, basePath = '') => {
   }
 
   return query.next + (hash || '');
-};
+}

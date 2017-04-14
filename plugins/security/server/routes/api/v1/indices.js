@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import getClient from '../../../lib/get_client_shield';
+import { getClient } from '../../../lib/get_client_shield';
 import { wrapError } from '../../../lib/errors';
 
-export default (server) => {
+export function initIndicesApi(server) {
   const callWithRequest = getClient(server).callWithRequest;
 
   server.route({
@@ -28,4 +28,4 @@ export default (server) => {
       .catch(_.flow(wrapError, reply));
     }
   });
-};
+}

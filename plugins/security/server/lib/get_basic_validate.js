@@ -1,6 +1,6 @@
-import getIsValidUser from './get_is_valid_user';
+import { getIsValidUser } from './get_is_valid_user';
 
-export default (server) => {
+export function getBasicValidate(server) {
   const isValidUser = getIsValidUser(server);
 
   return function validate(request, username, password, callback) {
@@ -9,4 +9,4 @@ export default (server) => {
       (error) => callback(error, false)
     );
   };
-};
+}

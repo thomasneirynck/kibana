@@ -1,7 +1,7 @@
-import getIsValidUser from './get_is_valid_user';
-import getCalculateExpires from './get_calculate_expires';
+import { getIsValidUser } from './get_is_valid_user';
+import { getCalculateExpires } from './get_calculate_expires';
 
-export default (server) => {
+export function getCookieValidate(server) {
   const isValidUser = getIsValidUser(server);
   const calculateExpires = getCalculateExpires(server);
   const { isSystemApiRequest } = server.plugins.kibana.systemApi;
@@ -31,4 +31,4 @@ export default (server) => {
 export function hasSessionExpired(session) {
   const { expires } = session;
   return !!(expires && expires < Date.now());
-};
+}

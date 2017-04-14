@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export default {
+export const roleSchema = {
   name: Joi.string().required(),
   cluster: Joi.array().items(Joi.string()),
   indices: Joi.array().items({

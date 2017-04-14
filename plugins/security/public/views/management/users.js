@@ -3,7 +3,7 @@ import routes from 'ui/routes';
 import { toggle, toggleSort } from 'plugins/security/lib/util';
 import template from 'plugins/security/views/management/users.html';
 import 'plugins/security/services/shield_user';
-import checkLicenseError from 'plugins/security/lib/check_license_error';
+import { checkLicenseError } from 'plugins/security/lib/check_license_error';
 import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
 
 routes.when('/management/elasticsearch/security', {

@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-export default {
+export const userSchema = {
   username: Joi.string().required(),
   password: Joi.string(),
   roles: Joi.array().items(Joi.string()),

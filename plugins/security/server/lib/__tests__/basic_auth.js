@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import basicAuth from '../basic_auth';
+import { getAuthHeader, parseAuthHeader } from '../basic_auth';
 
 const authChecks = [
   ['user', 'notsecure', 'dXNlcjpub3RzZWN1cmU='],
@@ -12,7 +12,7 @@ describe('Basic auth', function () {
       const [ username, password, base64 ] = check;
 
       it(`should return an authorization object for '${username}'`, function () {
-        const header = basicAuth.getHeader(username, password);
+        const header = getAuthHeader(username, password);
 
         expect(header).to.be.an('object');
         expect(header).to.have.property('authorization');
@@ -28,7 +28,7 @@ describe('Basic auth', function () {
 
       it(`should return username and password for '${user}'`, function () {
         const header = `Basic ${base64}`;
-        const { username, password } = basicAuth.parseHeader(header);
+        const { username, password } = parseAuthHeader(header);
 
         expect(username).to.equal(user);
         expect(password).to.equal(pass);
@@ -36,21 +36,21 @@ describe('Basic auth', function () {
     });
 
     it('should throw on non-string', function () {
-      let check = () => basicAuth.parseHeader();
+      let check = () => parseAuthHeader();
       expect(check).to.throwError(/should be a string/);
 
-      check = () => basicAuth.parseHeader({});
+      check = () => parseAuthHeader({});
       expect(check).to.throwError(/should be a string/);
 
-      check = () => basicAuth.parseHeader([]);
+      check = () => parseAuthHeader([]);
       expect(check).to.throwError(/should be a string/);
     });
 
     it('should throw if not Basic auth', function () {
-      let check = () => basicAuth.parseHeader('Bearer xxxx');
+      let check = () => parseAuthHeader('Bearer xxxx');
       expect(check).to.throwError(/not basic/i);
 
-      check = () => basicAuth.parseHeader('blahblahblah');
+      check = () => parseAuthHeader('blahblahblah');
       expect(check).to.throwError(/not basic/i);
     });
   });

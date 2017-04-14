@@ -1,4 +1,4 @@
-export default (server, uiExports) => {
+export function initLogoutView(server, uiExports) {
   const logout = uiExports.apps.byId.logout;
 
   server.route({
@@ -11,4 +11,4 @@ export default (server, uiExports) => {
       auth: false
     }
   });
-};
+}

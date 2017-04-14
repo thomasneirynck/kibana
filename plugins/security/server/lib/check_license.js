@@ -1,4 +1,4 @@
-export default function checkLicense(xpackLicenseInfo) {
+export function checkLicense(xpackLicenseInfo) {
 
   let showLogin; // show login page or skip it?
   let allowLogin; // allow login or disable it on the login page?

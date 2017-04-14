@@ -1,8 +1,8 @@
 import { get } from 'lodash';
 
-import parseNext from '../../lib/parse_next';
+import { parseNext } from '../../lib/parse_next';
 
-export default (server, uiExports, xpackMainPlugin) => {
+export function initLoginView(server, uiExports, xpackMainPlugin) {
   const config = server.config();
   const cookieName = config.get('xpack.security.cookieName');
   const login = uiExports.apps.byId.login;
@@ -29,4 +29,4 @@ export default (server, uiExports, xpackMainPlugin) => {
       auth: false
     }
   });
-};
+}

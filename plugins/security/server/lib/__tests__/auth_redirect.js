@@ -1,10 +1,10 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
 
-import replyFixture from './__fixtures__/reply';
-import requestFixture from './__fixtures__/request';
+import { replyFixture } from './__fixtures__/reply';
+import { requestFixture } from './__fixtures__/request';
 
-import * as authRedirect from '../auth_redirect';
+import { authenticateFactory, shouldRedirect } from '../auth_redirect';
 
 describe('lib/auth_redirect', function () {
   describe('#default()', () => {
@@ -35,7 +35,7 @@ describe('lib/auth_redirect', function () {
         reply = replyFixture();
         err = new Error();
         credentials = {};
-        authenticate = authRedirect.default(params);
+        authenticate = authenticateFactory(params);
       });
 
       it('invokes testRequest with strategy and request', () => {
@@ -105,19 +105,19 @@ describe('lib/auth_redirect', function () {
   describe('#shouldRedirect()', () => {
     it('returns true if request does not have either a kbn-version or kbn-xsrf header', () => {
       const request = requestFixture();
-      const result = authRedirect.shouldRedirect(request);
+      const result = shouldRedirect(request);
       expect(result).to.equal(true);
     });
     it('returns false if request has a kbn-version header', () => {
       const request = requestFixture();
       request.raw.req.headers['kbn-version'] = 'something';
-      const result = authRedirect.shouldRedirect(request);
+      const result = shouldRedirect(request);
       expect(result).to.equal(false);
     });
     it('returns false if request has a kbn-xsrf header', () => {
       const request = requestFixture();
       request.raw.req.headers['kbn-xsrf'] = 'something';
-      const result = authRedirect.shouldRedirect(request);
+      const result = shouldRedirect(request);
       expect(result).to.equal(false);
     });
   });

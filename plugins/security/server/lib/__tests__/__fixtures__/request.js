@@ -1,4 +1,4 @@
-export default () => {
+export function requestFixture() {
   return {
     raw: {
       req: {
@@ -14,4 +14,4 @@ export default () => {
       user: 'these are the contents of the user client cookie'
     }
   };
-};
+}

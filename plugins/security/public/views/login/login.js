@@ -3,7 +3,7 @@ import { get } from 'lodash';
 import 'ui/autoload/styles';
 import 'plugins/security/views/login/login.less';
 import chrome from 'ui/chrome';
-import parseNext from 'plugins/security/lib/parse_next';
+import { parseNext } from 'plugins/security/lib/parse_next';
 import template from 'plugins/security/views/login/login.html';
 
 const messageMap = {

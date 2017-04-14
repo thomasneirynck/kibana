@@ -1,6 +1,6 @@
 import { stub } from 'sinon';
 
-export default () => {
+export function serverFixture() {
   return {
     auth: {
       test: stub()
@@ -18,4 +18,4 @@ export default () => {
       };
     }
   };
-};
+}

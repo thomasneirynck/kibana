@@ -2,7 +2,7 @@ import sinon from 'sinon';
 import expect from 'expect.js';
 import Boom from 'boom';
 
-import isAuthenticatedProvider from '../is_authenticated';
+import { isAuthenticatedProvider } from '../is_authenticated';
 
 const createStubServer = () => ({
   expose: sinon.stub(),
