@@ -19,7 +19,7 @@ import angular from 'angular';
 import _ from 'lodash';
 import 'plugins/ml/jobs/components/new_job_advanced/detector_modal';
 import 'plugins/ml/jobs/components/new_job_advanced/detector_filter_modal';
-import stringUtils from 'plugins/ml/util/string_utils';
+import { detectorToString } from 'plugins/ml/util/string_utils';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -83,7 +83,7 @@ module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {
       };
 
 
-      $scope.detectorToString = stringUtils.detectorToString;
+      $scope.detectorToString = detectorToString;
 
       function validateDetector(dtr) {
 

@@ -15,7 +15,7 @@
 
 import _ from 'lodash';
 import moment from 'moment';
-import stringUtils from 'plugins/ml/util/string_utils';
+import { toLocaleString, detectorToString } from 'plugins/ml/util/string_utils';
 import numeral from 'numeral';
 import chrome from 'ui/chrome';
 import angular from 'angular';
@@ -36,7 +36,7 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
 
       $scope.urlBasePath = chrome.getBasePath();
 
-      $scope.toLocaleString = stringUtils.toLocaleString; // add toLocaleString to the scope to display nicer numbers
+      $scope.toLocaleString = toLocaleString; // add toLocaleString to the scope to display nicer numbers
 
       // scope population is inside a function so it can be called later from somewhere else
       $scope.init = function () {
@@ -45,7 +45,7 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
         $scope.jobJson = angular.toJson($scope.job, true);
         $scope.jobAuditText = '';
 
-        $scope.detectorToString = stringUtils.detectorToString;
+        $scope.detectorToString = detectorToString;
 
         $scope.ui = {
           currentTab: 0,

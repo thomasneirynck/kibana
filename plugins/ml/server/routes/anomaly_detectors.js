@@ -13,10 +13,10 @@
  * strictly prohibited.
  */
 
-import getClient from '../get_client_ml';
+import { getClient } from '../get_client_ml';
 import { wrapError } from '../errors';
 
-export default (server, commonRouteConfig) => {
+export function jobRoutes(server, commonRouteConfig) {
   const callWithRequest = getClient(server).callWithRequest;
 
   server.route({

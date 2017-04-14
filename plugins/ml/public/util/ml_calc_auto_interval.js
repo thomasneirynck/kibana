@@ -25,7 +25,7 @@
 
 import { duration as d } from 'moment';
 import moment from 'moment';
-export default function DateIntervalRoundingRulesProvider() {
+export function TimeBucketsCalcAutoIntervalProvider() {
 
   // Note there is a current issue with Kibana (Kibana issue #9184)
   // which means we can't round to, for example, 2 week or 3 week buckets,

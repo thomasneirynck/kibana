@@ -14,7 +14,7 @@
  */
 
 import _ from 'lodash';
-import stringUtils from 'plugins/ml/util/string_utils';
+import { detectorToString } from 'plugins/ml/util/string_utils';
 import angular from 'angular';
 
 import uiModules from 'ui/modules';
@@ -84,7 +84,7 @@ module.controller('MlDetectorModal', function ($scope, $modalInstance, params, m
     $scope.editMode = true;
   }
 
-  $scope.detectorToString = stringUtils.detectorToString;
+  $scope.detectorToString = detectorToString;
 
   $scope.helpLink = {};
 

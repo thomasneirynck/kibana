@@ -19,8 +19,9 @@ import 'ui/timefilter';
 
 import parseInterval from 'ui/utils/parse_interval';
 
-import jobUtils from 'plugins/ml/util/job_utils';
+import { calculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/util/job_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
+import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -33,7 +34,7 @@ module.service('mlMultiMetricJobService', function (
   mlJobService,
   mlMultiMetricJobSearchService) {
 
-  const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
+  const TimeBuckets = Private(IntervalHelperProvider);
   const EVENT_RATE_COUNT_FIELD = '__ml_event_rate_count__';
 
   this.chartData = {
@@ -274,7 +275,7 @@ module.service('mlMultiMetricJobService', function (
       query: query,
       types: mappingTypes,
       query_delay: '60s',
-      frequency: jobUtils.calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
+      frequency: calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
       indexes: [formConfig.indexPattern.id],
       scroll_size: 1000
     };

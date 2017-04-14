@@ -18,9 +18,9 @@ import { resolve } from 'path';
 import Boom from 'boom';
 import { checkLicense } from './server/lib/check_license';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
-const jobRoutes = require('./server/routes/anomaly_detectors');
-const dataFeedRoutes = require('./server/routes/datafeeds');
-const systemRoutes = require('./server/routes/system');
+import { jobRoutes } from './server/routes/anomaly_detectors';
+import { dataFeedRoutes } from './server/routes/datafeeds';
+import { systemRoutes } from './server/routes/system';
 
 module.exports = function (kibana) {
 

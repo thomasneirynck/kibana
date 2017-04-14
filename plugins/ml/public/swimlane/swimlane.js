@@ -31,7 +31,7 @@ module.run(function ($templateCache) {
   $templateCache.put('plugins/ml/swimlane/swimlane_editor.html', require('plugins/ml/swimlane/swimlane_editor.html'));
 });
 
-export default function SwimlaneVisType(Private, $templateCache) {
+export function SwimlaneVisType(Private, $templateCache) {
   const TemplateVisType = Private(TemplateVisTypeProvider);
   const Schemas = Private(VisSchemasProvider);
 

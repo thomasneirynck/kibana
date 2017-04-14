@@ -18,7 +18,7 @@
  * so that listeners can be notified when the auto-refresh interval has elapsed.
  */
 
-export default function refreshIntervalWatcher($rootScope, $timeout) {
+export function refreshIntervalWatcher($rootScope, $timeout) {
 
   let refresher;
 

@@ -21,11 +21,11 @@ import angular from 'angular';
 
 import jobsListControlsHtml from './jobs_list_controls.html';
 import jobsListArrow from 'ui/doc_table/components/table_row/open.html';
-import jobUtils from 'plugins/ml/util/job_utils';
-import stringUtils from 'plugins/ml/util/string_utils';
+import { isTimeSeriesViewJob } from 'plugins/ml/util/job_utils';
+import { toLocaleString, mlEscape } from 'plugins/ml/util/string_utils';
 
 import uiRoutes from 'ui/routes';
-import checkLicense from 'plugins/ml/license/check_license';
+import { checkLicense } from 'plugins/ml/license/check_license';
 
 uiRoutes
 .when('/jobs/?', {
@@ -65,7 +65,7 @@ function (
   let refreshCounter = 0;
   const auditMessages = {};
   $scope.noJobsCreated;
-  $scope.toLocaleString = stringUtils.toLocaleString; // add toLocaleString to the scope to display nicer numbers
+  $scope.toLocaleString = toLocaleString; // add toLocaleString to the scope to display nicer numbers
   $scope.filterText = '';
   $scope.filterIcon = 0;
   let filterRegexp;
@@ -299,7 +299,7 @@ function (
 
       rowScope.time = latestTimeStamp;
 
-      rowScope.enableTimeSeries = jobUtils.isTimeSeriesViewJob(job);
+      rowScope.enableTimeSeries = isTimeSeriesViewJob(job);
 
 
       rowScopes.push(rowScope);
@@ -324,7 +324,7 @@ function (
           markup: iconTxt,
           scope:  rowScope
         }, {
-          markup: filterHighlight(stringUtils.escape(jobDescription)),
+          markup: filterHighlight(mlEscape(jobDescription)),
           value:  jobDescription
         }, {
           markup: '<div class="col-align-right">{{toLocaleString(job.data_counts.processed_record_count)}}</div>',

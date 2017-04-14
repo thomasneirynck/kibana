@@ -23,7 +23,7 @@ import $ from 'jquery';
 import moment from 'moment';
 import 'ui/timefilter';
 
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import { getSeverityColor } from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -75,7 +75,7 @@ module.directive('mlSummaryViewSwimlane', function (
       const points = scope.chartData.points;
 
       function colorScore(d) {
-        return anomalyUtils.getSeverityColor(d.value);
+        return getSeverityColor(d.value);
       }
 
       scope.chartWidth = scope.$parent.chartWidth;

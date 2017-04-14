@@ -30,9 +30,10 @@ import 'plugins/ml/services/results_service';
 
 import uiRoutes from 'ui/routes';
 import parseInterval from 'ui/utils/parse_interval';
-import checkLicense from 'plugins/ml/license/check_license';
-import jobUtils from 'plugins/ml/util/job_utils';
-import refreshIntervalWatcher from 'plugins/ml/util/refresh_interval_watcher';
+import { checkLicense } from 'plugins/ml/license/check_license';
+import { isTimeSeriesViewJob } from 'plugins/ml/util/job_utils';
+import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher';
+import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
 uiRoutes
 .when('/timeseriesexplorer/?', {
@@ -57,7 +58,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
   const CHARTS_POINT_TARGET = 500;
   const ANOMALIES_MAX_RESULTS = 500;
-  const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
+  const TimeBuckets = Private(IntervalHelperProvider);
 
   $scope.loading = false;
   $scope.hasResults = false;
@@ -86,7 +87,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       if (resp.jobs.length > 0) {
         const timeSeriesJobIds = [];
         _.each(resp.jobs, function (job) {
-          if (jobUtils.isTimeSeriesViewJob(job) === true) {
+          if (isTimeSeriesViewJob(job) === true) {
             timeSeriesJobIds.push(job.job_id);
             const bucketSpan = parseInterval(job.analysis_config.bucket_span);
             $scope.jobs.push({

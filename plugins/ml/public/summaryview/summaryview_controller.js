@@ -34,7 +34,8 @@ import swimlanes from 'plugins/ml/summaryview/swimlanes.html';
 import chrome from 'ui/chrome';
 
 import uiRoutes from 'ui/routes';
-import checkLicense from 'plugins/ml/license/check_license';
+import { checkLicense } from 'plugins/ml/license/check_license';
+import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
 uiRoutes
 .when('/summaryview/?', {
@@ -67,7 +68,7 @@ module.controller('MlSummaryViewController', function (
   const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
   timefilter.enabled = true;
 
-  const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
+  const TimeBuckets = Private(IntervalHelperProvider);
 
   $scope.loading = true;
   $scope.hasResults = false;

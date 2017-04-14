@@ -18,7 +18,7 @@ import 'plugins/kibana/visualize/styles/main.less';
 import 'plugins/kibana/visualize/wizard/wizard.less';
 
 import uiRoutes from 'ui/routes';
-import checkLicense from 'plugins/ml/license/check_license';
+import { checkLicense } from 'plugins/ml/license/check_license';
 
 uiRoutes
 .when('/jobs/new_job_single_metric/step/1', {

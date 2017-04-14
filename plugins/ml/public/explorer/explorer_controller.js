@@ -33,8 +33,9 @@ import FilterBarQueryFilterProvider from 'ui/filter_bar/query_filter';
 import parseInterval from 'ui/utils/parse_interval';
 
 import uiRoutes from 'ui/routes';
-import checkLicense from 'plugins/ml/license/check_license';
-import refreshIntervalWatcher from 'plugins/ml/util/refresh_interval_watcher';
+import { checkLicense } from 'plugins/ml/license/check_license';
+import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher';
+import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
 uiRoutes
 .when('/explorer/?', {
@@ -61,7 +62,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     globalState.save();
   }
 
-  const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
+  const TimeBuckets = Private(IntervalHelperProvider);
 
   const queryFilter = Private(FilterBarQueryFilterProvider);
 

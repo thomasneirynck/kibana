@@ -19,7 +19,7 @@ import 'ui/timefilter';
 
 import parseInterval from 'ui/utils/parse_interval';
 
-import jobUtils from 'plugins/ml/util/job_utils';
+import { calculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/util/job_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 
 import uiModules from 'ui/modules';
@@ -231,7 +231,7 @@ module.service('mlSingleMetricJobService', function (
       query: query,
       types: mappingTypes,
       query_delay: '60s',
-      frequency: jobUtils.calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
+      frequency: calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
       indexes: [formConfig.indexPattern.id],
       scroll_size: 1000
     };

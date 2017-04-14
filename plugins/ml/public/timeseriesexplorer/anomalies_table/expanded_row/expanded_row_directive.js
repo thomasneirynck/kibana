@@ -24,7 +24,11 @@
 import _ from 'lodash';
 import moment from 'moment';
 
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import {
+  getSeverity,
+  showActualForFunction,
+  showTypicalForFunction
+} from 'plugins/ml/util/anomaly_utils';
 import 'plugins/ml/filters/format_value';
 
 import uiModules from 'ui/modules';
@@ -75,7 +79,7 @@ module.directive('mlAnomaliesTableExpandedRow', function () {
 
     function buildDescription() {
       const record = scope.record;
-      let rowDescription = anomalyUtils.getSeverity(record.source.record_score) + ' anomaly in ' + record.detector;
+      let rowDescription = getSeverity(record.source.record_score) + ' anomaly in ' + record.detector;
 
       if (_.has(record, 'entityName')) {
         rowDescription += ' found for ' + record.entityName;
@@ -111,7 +115,7 @@ module.directive('mlAnomaliesTableExpandedRow', function () {
     function buildMetrics() {
       const record = scope.record;
       const functionDescription = _.get(record, 'source.function_description', '');
-      if (anomalyUtils.showActualForFunction(functionDescription) === true) {
+      if (showActualForFunction(functionDescription) === true) {
         if (!_.has(scope.record.source, 'causes')) {
           scope.actual = record.source.actual;
         } else {
@@ -123,7 +127,7 @@ module.directive('mlAnomaliesTableExpandedRow', function () {
           }
         }
       }
-      if (anomalyUtils.showTypicalForFunction(functionDescription) === true) {
+      if (showTypicalForFunction(functionDescription) === true) {
         if (!_.has(scope.record.source, 'causes')) {
           scope.typical = record.source.typical;
         } else {

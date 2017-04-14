@@ -21,7 +21,7 @@
 import _ from 'lodash';
 import d3 from 'd3';
 
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import { getSeverity } from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -343,7 +343,7 @@ module.directive('mlConnectionsMap', function () {
         if (maxNormProb < 3 && maxNormProb >= 0) {
           return 'low';
         } else {
-          return anomalyUtils.getSeverity(maxNormProb);
+          return getSeverity(maxNormProb);
         }
       });
 
@@ -388,7 +388,7 @@ module.directive('mlConnectionsMap', function () {
         if (maxNormProb < 3 && maxNormProb >= 0) {
           return 'low';
         } else {
-          return anomalyUtils.getSeverity(maxNormProb);
+          return getSeverity(maxNormProb);
         }
       })
       .attr('rx', 4)

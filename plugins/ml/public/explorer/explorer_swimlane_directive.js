@@ -21,7 +21,7 @@ import _ from 'lodash';
 import $ from 'jquery';
 import moment from 'moment';
 
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import { getSeverityColor } from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -54,7 +54,7 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
       const points = scope.swimlaneData.points;
 
       function colorScore(value) {
-        return anomalyUtils.getSeverityColor(value);
+        return getSeverityColor(value);
       }
 
       const numBuckets = parseInt((endTime - startTime) / stepSecs);

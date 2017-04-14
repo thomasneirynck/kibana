@@ -25,7 +25,7 @@ import angular from 'angular';
 import moment from 'moment';
 import numeral from 'numeral';
 
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
 import 'plugins/ml/filters/format_value';
 import 'plugins/ml/services/results_service';
 
@@ -264,7 +264,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
           let markerClass = 'metric-value';
           if (_.has(d, 'anomalyScore')) {
             markerClass += ' anomaly-marker ';
-            markerClass += anomalyUtils.getSeverityWithLow(d.anomalyScore);
+            markerClass += getSeverityWithLow(d.anomalyScore);
           }
           return markerClass;
         });

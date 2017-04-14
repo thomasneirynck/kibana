@@ -27,7 +27,7 @@ import moment from 'moment';
 import numeral from 'numeral';
 import 'ui/timefilter';
 
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
 import ContextChartMask from 'plugins/ml/timeseriesexplorer/context_chart_mask';
 
 import uiModules from 'ui/modules';
@@ -363,7 +363,7 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
           let markerClass = 'metric-value';
           if (_.has(d, 'anomalyScore')) {
             markerClass += ' anomaly-marker ';
-            markerClass += anomalyUtils.getSeverityWithLow(d.anomalyScore);
+            markerClass += getSeverityWithLow(d.anomalyScore);
           }
           return markerClass;
         });
@@ -783,7 +783,7 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
         .attr('cy', function (d) { return focusYScale(d.value); })
         .attr('class', function (d) {
           let markerClass = 'metric-value anomaly-marker highlighted ';
-          markerClass += anomalyUtils.getSeverityWithLow(d.anomalyScore);
+          markerClass += getSeverityWithLow(d.anomalyScore);
           return markerClass;
         });
 

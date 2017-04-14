@@ -17,6 +17,7 @@
 import moment from 'moment';
 import $ from 'jquery';
 import _ from 'lodash';
+import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -60,7 +61,7 @@ module.directive('mlSwimlaneInspector', function (
 })
 .service('mlSwimlaneInspectorService', function ($q, $timeout, $rootScope, $compile, es, Private,
   timefilter, mlJobService, mlResultsService, mlAnomalyRecordDetailsService, mlSwimlaneSearchService) {
-  const TimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
+  const TimeBuckets = Private(IntervalHelperProvider);
 
   const swimlanesHTML = require('plugins/ml/summaryview/swimlane_inspector/swimlanes.html');
 

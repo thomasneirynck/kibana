@@ -25,7 +25,7 @@ import 'plugins/ml/connectionsmap/connectionsmap.less';
 
 import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 
-export default function ConnectionsMapVisType(Private) {
+export function ConnectionsMapVisType(Private) {
   const TemplateVisType = Private(TemplateVisTypeProvider);
 
   // Return a new instance describing this visualization.

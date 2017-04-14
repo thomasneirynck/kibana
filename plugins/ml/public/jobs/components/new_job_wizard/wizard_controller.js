@@ -14,7 +14,7 @@
  */
 
 import uiRoutes from 'ui/routes';
-import checkLicense from 'plugins/ml/license/check_license';
+import { checkLicense } from 'plugins/ml/license/check_license';
 
 uiRoutes
 .when('/jobs/new_job', {

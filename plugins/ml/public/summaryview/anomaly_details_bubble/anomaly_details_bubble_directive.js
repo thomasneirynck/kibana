@@ -17,7 +17,7 @@ import moment from 'moment';
 import _ from 'lodash';
 import $ from 'jquery';
 import d3 from 'd3';
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import { getSeverity, getSeverityColor } from 'plugins/ml/util/anomaly_utils';
 import 'plugins/ml/filters/abbreviate_whole_number';
 import 'plugins/ml/filters/format_value';
 
@@ -387,7 +387,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
   };
 
   function buildDescription(record) {
-    const description = anomalyUtils.getSeverity(record.record_score) + ' anomaly in ';//+ record.detectorText;
+    const description = getSeverity(record.record_score) + ' anomaly in ';//+ record.detectorText;
     let descriptionExtra = '';
 
     if (_.has(record, 'partition_field_name') && (record.partition_field_name !== record.entity_name)) {
@@ -416,8 +416,8 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
     record.description = description;
     record.descriptionExtra = descriptionExtra;
     record.score = (record.record_score < 1) ? '<1' : Math.floor(record.record_score);
-    // record.severityLabel = anomalyUtils.getSeverity(record.record_score);
-    record.cardColor = anomalyUtils.getSeverityColor(record.record_score);
+    // record.severityLabel = getSeverity(record.record_score);
+    record.cardColor = getSeverityColor(record.record_score);
     // $scope.description = description;
 
     // Check for a correlated_by_field_value in the source which will be present for multivariate analyses
@@ -725,7 +725,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
 
 
   function colorScore(d) {
-    return anomalyUtils.getSeverityColor(d.color);
+    return getSeverityColor(d.color);
   }
 
 

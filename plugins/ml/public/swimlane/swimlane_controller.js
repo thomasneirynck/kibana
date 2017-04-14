@@ -30,8 +30,8 @@ import chrome from 'ui/chrome';
 import 'ui/courier';
 import 'ui/timefilter';
 
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
-import stringUtils from 'plugins/ml/util/string_utils';
+import { labelDuplicateDetectorDescriptions } from 'plugins/ml/util/anomaly_utils';
+import { sortByKey } from 'plugins/ml/util/string_utils';
 import 'plugins/ml/services/ml_api_service';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/ml_dashboard_service';
@@ -63,7 +63,7 @@ module.controller('MlSwimlaneController', function ($scope,
       });
 
       $scope.jobDescriptions = descriptions;
-      $scope.detectorsByJob = anomalyUtils.labelDuplicateDetectorDescriptions(detectorsByJob);
+      $scope.detectorsByJob = labelDuplicateDetectorDescriptions(detectorsByJob);
       console.log('Swimlane detectorsByJob:', detectorsByJob);
     }
   }).catch(function (resp) {
@@ -523,7 +523,7 @@ module.controller('MlSwimlaneController', function ($scope,
       });
 
       // Sort the lane labels in reverse so that the order is a-z from the top.
-      chartData = stringUtils.sortByKey(chartData, true);
+      chartData = sortByKey(chartData, true);
       const laneIds = _.keys(chartData);
 
       let laneIndex = 0;

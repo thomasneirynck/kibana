@@ -16,7 +16,7 @@
 import _ from 'lodash';
 import angular from 'angular';
 
-function filterAggTypes(aggTypes) {
+export function filterAggTypes(aggTypes) {
   const filteredAggTypes = [];
   let typeCopy;
   _.each(aggTypes, (type) => {
@@ -104,5 +104,3 @@ function filterAggTypes(aggTypes) {
   });
   return filteredAggTypes;
 }
-
-module.exports = filterAggTypes;

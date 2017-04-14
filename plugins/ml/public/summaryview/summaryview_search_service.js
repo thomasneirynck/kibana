@@ -17,7 +17,7 @@
 import _ from 'lodash';
 import 'ui/timefilter';
 
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import { getSeverity } from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -674,7 +674,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
           id: key,
           max: Math.floor(max),
           sum: Math.floor(sum),
-          severity: anomalyUtils.getSeverity(max)
+          severity: getSeverity(max)
         });
       });
 
@@ -687,7 +687,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
           id: key,
           max: Math.floor(max),
           sum: Math.floor(sum),
-          severity: anomalyUtils.getSeverity(max)
+          severity: getSeverity(max)
         });
       });
 

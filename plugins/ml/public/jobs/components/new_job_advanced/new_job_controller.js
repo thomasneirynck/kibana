@@ -22,7 +22,7 @@ import 'plugins/ml/lib/bower_components/JSON.minify/minify.json';
 import 'ui/courier';
 
 import uiRoutes from 'ui/routes';
-import checkLicense from 'plugins/ml/license/check_license';
+import { checkLicense } from 'plugins/ml/license/check_license';
 
 uiRoutes
 .when('/jobs/new_job_advanced', {
@@ -38,8 +38,8 @@ uiRoutes
   }
 });
 
-import stringUtils from 'plugins/ml/util/string_utils';
-import jobUtils from 'plugins/ml/util/job_utils';
+import { sortByKey } from 'plugins/ml/util/string_utils';
+import { calculateDatafeedFrequencyDefaultSeconds as juCalculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/util/job_utils';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -169,7 +169,7 @@ function (
     saveStatus: {
       job:     0,
     },
-    sortByKey: stringUtils.sortByKey,
+    sortByKey: sortByKey,
   };
 
   function init() {
@@ -577,7 +577,7 @@ function (
   function calculateDatafeedFrequencyDefaultSeconds() {
     const bucketSpan = parseInterval($scope.job.analysis_config.bucket_span);
     if (bucketSpan !== null) {
-      $scope.ui.datafeed.frequencyDefault = jobUtils.calculateDatafeedFrequencyDefaultSeconds(bucketSpan.asSeconds()) + 's';
+      $scope.ui.datafeed.frequencyDefault = juCalculateDatafeedFrequencyDefaultSeconds(bucketSpan.asSeconds()) + 's';
     }
   }
 

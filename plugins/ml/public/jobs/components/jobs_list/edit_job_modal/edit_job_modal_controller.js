@@ -17,7 +17,7 @@ import _ from 'lodash';
 import 'plugins/ml/jobs/components/new_job_advanced/detectors_list_directive';
 import './styles/main.less';
 import angular from 'angular';
-import jobUtils from 'plugins/ml/util/job_utils';
+import { calculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/util/job_utils';
 import parseInterval from 'ui/utils/parse_interval';
 
 import uiModules from 'ui/modules';
@@ -49,7 +49,7 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
     datafeed: {
       scrollSizeDefault: 1000,
       queryDelayDefault: '60s',
-      frequencyDefault: jobUtils.calculateDatafeedFrequencyDefaultSeconds(bucketSpan.asSeconds()) + 's',
+      frequencyDefault: calculateDatafeedFrequencyDefaultSeconds(bucketSpan.asSeconds()) + 's',
     },
     stoppingDatafeed: false,
     validation: {

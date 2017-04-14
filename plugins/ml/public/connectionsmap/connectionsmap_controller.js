@@ -28,8 +28,15 @@ import 'plugins/ml/filters/format_value';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/results_service';
 import 'plugins/ml/services/ml_dashboard_service';
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
-import stringUtils from 'plugins/ml/util/string_utils';
+import {
+  labelDuplicateDetectorDescriptions,
+  getEntityFieldName,
+  getEntityFieldValue,
+  showActualForFunction,
+  showTypicalForFunction,
+  getSeverity
+} from 'plugins/ml/util/anomaly_utils';
+import { escapeForElasticsearchQuery } from 'plugins/ml/util/string_utils';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -122,7 +129,7 @@ module.controller('MlConnectionsMapController', function (
           editableVis.setState(editableVisState);
         }
 
-        $scope.detectorsByJob = anomalyUtils.labelDuplicateDetectorDescriptions(detectorsByJob);
+        $scope.detectorsByJob = labelDuplicateDetectorDescriptions(detectorsByJob);
 
         $scope.refresh();
       }
@@ -303,8 +310,8 @@ module.controller('MlConnectionsMapController', function (
             query += ' AND ';
           }
 
-          const escapedFieldName = stringUtils.escapeForElasticsearchQuery(node.fieldName);
-          const escapedFieldValue = stringUtils.escapeForElasticsearchQuery(node.fieldValue);
+          const escapedFieldName = escapeForElasticsearchQuery(node.fieldName);
+          const escapedFieldValue = escapeForElasticsearchQuery(node.fieldValue);
           query += escapedFieldName + ':' + escapedFieldValue;
         }
       });
@@ -547,8 +554,8 @@ module.controller('MlConnectionsMapController', function (
 
     _.each(records, function (record) {
       const detectorDesc = $scope.detectorsByJob[record.job_id][record.detector_index];
-      const entityFieldName = anomalyUtils.getEntityFieldName(record);
-      const entityFieldValue = anomalyUtils.getEntityFieldValue(record);
+      const entityFieldName = getEntityFieldName(record);
+      const entityFieldValue = getEntityFieldValue(record);
 
       let summary = (aggregateBy === 'entity' && entityFieldName !== undefined) ?
           _.findWhere(summaryRecords, { 'entityFieldName':entityFieldName, 'entityFieldValue':entityFieldValue }) :
@@ -568,8 +575,8 @@ module.controller('MlConnectionsMapController', function (
         summary.sumScore = summary.sumScore + record.record_score;
         if (record.record_score > summary.maxScoreRecord.record_score) {
           summary.maxScoreRecord = record;
-          summary.entityFieldName = anomalyUtils.getEntityFieldName(record);
-          summary.entityFieldValue = anomalyUtils.getEntityFieldValue(record);
+          summary.entityFieldName = getEntityFieldName(record);
+          summary.entityFieldValue = getEntityFieldValue(record);
         }
       }
     });
@@ -591,7 +598,7 @@ module.controller('MlConnectionsMapController', function (
       summary.barScore = barScore;
       summary.maxScoreLabel = maxScoreLabel;
       summary.totalScore = totalScore;
-      summary.severity = anomalyUtils.getSeverity(maxScoreRecord.record_score);
+      summary.severity = getSeverity(maxScoreRecord.record_score);
       summary.tooltip = compiledTooltip({
         'maxScoreValue':maxScoreLabel,
         'totalScoreValue':totalScoreLabel
@@ -602,7 +609,7 @@ module.controller('MlConnectionsMapController', function (
 
       // Store metric information.
       const functionDescription = _.get(maxScoreRecord, 'function_description', '');
-      if (anomalyUtils.showActualForFunction (functionDescription) === true) {
+      if (showActualForFunction (functionDescription) === true) {
         if (!_.has(maxScoreRecord, 'causes')) {
           summary.actual = maxScoreRecord.actual;
         } else {
@@ -614,7 +621,7 @@ module.controller('MlConnectionsMapController', function (
           }
         }
       }
-      if (anomalyUtils.showTypicalForFunction (functionDescription) === true) {
+      if (showTypicalForFunction (functionDescription) === true) {
         if (!_.has(maxScoreRecord, 'causes')) {
           summary.typical = maxScoreRecord.typical;
         } else {
@@ -656,10 +663,10 @@ module.controller('MlConnectionsMapController', function (
               entityName: (_.has(cause, 'by_field_name') ? cause.by_field_name : cause.over_field_name),
               entityValue: (_.has(cause, 'by_field_value') ? cause.by_field_value : cause.over_field_value)
             };
-            if (anomalyUtils.showActualForFunction (functionDescription) === true) {
+            if (showActualForFunction (functionDescription) === true) {
               simplified.actual = cause.actual;
             }
-            if (anomalyUtils.showTypicalForFunction (functionDescription) === true) {
+            if (showTypicalForFunction (functionDescription) === true) {
               simplified.typical = cause.typical;
             }
             return simplified;

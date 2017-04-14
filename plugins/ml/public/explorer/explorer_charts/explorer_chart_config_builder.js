@@ -23,7 +23,7 @@ const _ = require('lodash');
 import parseInterval from 'ui/utils/parse_interval';
 import { aggregationTypeTransform } from 'plugins/ml/util/anomaly_utils';
 
-export default function explorerChartConfigBuilder(mlJobService) {
+export function explorerChartConfigBuilder(mlJobService) {
 
   const compiledTooltip = _.template(
     '<div class="explorer-chart-info-tooltip">job ID: <%= jobId %><br/>' +

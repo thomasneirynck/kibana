@@ -21,11 +21,11 @@
 import _ from 'lodash';
 import moment from 'moment';
 
-import TimeBucketsCalcAutoIntervalProvider from 'plugins/ml/util/ml_calc_auto_interval';
+import { TimeBucketsCalcAutoIntervalProvider } from 'plugins/ml/util/ml_calc_auto_interval';
 import TimeBucketsCalcEsIntervalProvider from 'ui/time_buckets/calc_es_interval';
 
 import TimeBucketProvider from 'ui/time_buckets';
-export default function IntervalHelperProvider(Private, timefilter, config) {
+export function IntervalHelperProvider(Private, timefilter, config) {
 
   const calcAuto = Private(TimeBucketsCalcAutoIntervalProvider);
   const calcEsInterval = Private(TimeBucketsCalcEsIntervalProvider);

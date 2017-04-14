@@ -28,7 +28,7 @@ const DISPLAY_TYPICAL_FUNCTIONS = ['count', 'distinct_count', 'mean', 'max', 'mi
 
 // Returns a severity label (one of critical, major, minor, warning or unknown)
 // for the supplied normalized anomaly score (a value between 0 and 100).
-function getSeverity(normalizedScore) {
+export function getSeverity(normalizedScore) {
   if (normalizedScore >= 75) {
     return 'critical';
   } else if (normalizedScore >= 50) {
@@ -45,7 +45,7 @@ function getSeverity(normalizedScore) {
 // Returns a severity label (one of critical, major, minor, warning, low or unknown)
 // for the supplied normalized anomaly score (a value between 0 and 100), where scores
 // less than 3 are assigned a severity of 'low'.
-function getSeverityWithLow(normalizedScore) {
+export function getSeverityWithLow(normalizedScore) {
   if (normalizedScore >= 75) {
     return 'critical';
   } else if (normalizedScore >= 50) {
@@ -63,7 +63,7 @@ function getSeverityWithLow(normalizedScore) {
 
 //Returns a severity RGB color (one of critical, major, minor, warning, low_warning or unknown)
 // for the supplied normalized anomaly score (a value between 0 and 100).
-function getSeverityColor(normalizedScore) {
+export function getSeverityColor(normalizedScore) {
   if (normalizedScore >= 75) {
     return '#fe5050';
   } else if (normalizedScore >= 50) {
@@ -83,7 +83,7 @@ function getSeverityColor(normalizedScore) {
 // checking for duplicate descriptions. For any detectors with duplicate descriptions, the
 // description is modified by appending the job ID in parentheses.
 // Only checks for duplicates across jobs; any duplicates within a job are left as-is.
-function labelDuplicateDetectorDescriptions(detectorsByJob) {
+export function labelDuplicateDetectorDescriptions(detectorsByJob) {
   const checkedJobIds = [];
   _.each(detectorsByJob, function (detectors, jobId) {
     checkedJobIds.push(jobId);
@@ -106,7 +106,7 @@ function labelDuplicateDetectorDescriptions(detectorsByJob) {
 // Returns the name of the field to use as the entity name from the source record
 // obtained from Elasticsearch. The function looks first for a by_field, then over_field,
 // then partition_field, returning undefined if none of these fields are present.
-function getEntityFieldName(record) {
+export function getEntityFieldName(record) {
   // Analyses with by and over fields, will have a top-level by_field_name, but
   // the by_field_value(s) will be in the nested causes array.
   if (_.has(record, 'by_field_name') && _.has(record, 'by_field_value')) {
@@ -127,7 +127,7 @@ function getEntityFieldName(record) {
 // Returns the value of the field to use as the entity value from the source record
 // obtained from Elasticsearch. The function looks first for a by_field, then over_field,
 // then partition_field, returning undefined if none of these fields are present.
-function getEntityFieldValue(record) {
+export function getEntityFieldValue(record) {
   if (_.has(record, 'by_field_value')) {
     return record.by_field_value;
   }
@@ -146,14 +146,14 @@ function getEntityFieldValue(record) {
 // Returns whether actual values should be displayed for a record with the specified function description.
 // Note that the 'function' field in a record contains what the user entered e.g. 'high_count',
 // whereas the 'function_description' field holds a Ml-built display hint for function e.g. 'count'.
-function showActualForFunction(functionDescription) {
+export function showActualForFunction(functionDescription) {
   return _.indexOf(DISPLAY_ACTUAL_FUNCTIONS, functionDescription) > -1;
 }
 
 // Returns whether typical values should be displayed for a record with the specified function description.
 // Note that the 'function' field in a record contains what the user entered e.g. 'high_count',
 // whereas the 'function_description' field holds a Ml-built display hint for function e.g. 'count'.
-function showTypicalForFunction(functionDescription) {
+export function showTypicalForFunction(functionDescription) {
   return _.indexOf(DISPLAY_TYPICAL_FUNCTIONS, functionDescription) > -1;
 }
 
@@ -173,7 +173,7 @@ function showTypicalForFunction(functionDescription) {
 //    lat_long
 // TODO - when function_description for detectors is altered to return the ES aggregation
 //        this function will no longer be needed.
-const aggregationTypeTransform = {
+export const aggregationTypeTransform = {
   toES: function (oldAggType) {
     let newAggType = oldAggType;
 
@@ -196,16 +196,4 @@ const aggregationTypeTransform = {
 
     return newAggType;
   }
-};
-
-export default {
-  getSeverity,
-  getSeverityWithLow,
-  getSeverityColor,
-  labelDuplicateDetectorDescriptions,
-  getEntityFieldName,
-  getEntityFieldValue,
-  showActualForFunction,
-  showTypicalForFunction,
-  aggregationTypeTransform
 };

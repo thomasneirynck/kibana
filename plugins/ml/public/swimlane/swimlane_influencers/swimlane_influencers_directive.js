@@ -20,7 +20,7 @@
  */
 import _ from 'lodash';
 import $ from 'jquery';
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import { getSeverity } from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -69,7 +69,7 @@ module.directive('mlSwimlaneInfluencers', function ($timeout, mlResultsService) 
 
         scope.influencers = _.map(resp.results, function (result) {
           const score = parseInt(result.maxAnomalyScore);
-          const severity = anomalyUtils.getSeverity(score);
+          const severity = getSeverity(score);
           const influencer = { 'influencerFieldValue': result.influencerFieldValue,
             'bandScore': score > 3 ? score : 3,  // Gives the band some visible width for low scores.
             'score': score,

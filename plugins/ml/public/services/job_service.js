@@ -18,7 +18,7 @@ import angular from 'angular';
 
 import parseInterval from 'ui/utils/parse_interval';
 
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import { labelDuplicateDetectorDescriptions } from 'plugins/ml/util/anomaly_utils';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -1314,7 +1314,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       processedJobsList.push(job);
     });
 
-    detectorDescriptionsByJob = anomalyUtils.labelDuplicateDetectorDescriptions(detectorDescriptionsByJob);
+    detectorDescriptionsByJob = labelDuplicateDetectorDescriptions(detectorDescriptionsByJob);
     _.each(detectorsByJob, (dtrs, jobId) => {
       _.each(dtrs, (dtr, i) => {
         dtr.detector_description = detectorDescriptionsByJob[jobId][i];

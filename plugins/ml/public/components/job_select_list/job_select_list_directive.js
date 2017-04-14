@@ -21,7 +21,7 @@
 import _ from 'lodash';
 import $ from 'jquery';
 
-import jobUtils from 'plugins/ml/util/job_utils';
+import { isTimeSeriesViewJob } from 'plugins/ml/util/job_utils';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -38,7 +38,7 @@ module.directive('mlJobSelectList', ['mlJobService', 'mlDashboardService', funct
           if (resp.jobs.length > 0) {
             const jobs = [];
             _.each(resp.jobs, function (job) {
-              if ($scope.timeSeriesOnly === false || jobUtils.isTimeSeriesViewJob(job) === true) {
+              if ($scope.timeSeriesOnly === false || isTimeSeriesViewJob(job) === true) {
                 jobs.push({ id:job.job_id });
               }
             });

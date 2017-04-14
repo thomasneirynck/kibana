@@ -16,8 +16,14 @@
 import moment from 'moment';
 import _ from 'lodash';
 
-import stringUtils from 'plugins/ml/util/string_utils';
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import { replaceStringTokens } from 'plugins/ml/util/string_utils';
+import {
+  getEntityFieldName,
+  getEntityFieldValue,
+  showActualForFunction,
+  showTypicalForFunction,
+  getSeverity
+} from 'plugins/ml/util/anomaly_utils';
 
 import 'plugins/ml/components/paginated_table';
 import 'plugins/ml/filters/format_value';
@@ -174,7 +180,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
 
             // Replace any tokens in the configured url_value with values from the source record,
             // and then open link in a new tab/window.
-            const urlPath = stringUtils.replaceStringTokens(link.url_value, record, true);
+            const urlPath = replaceStringTokens(link.url_value, record, true);
             $window.open(urlPath, '_blank');
 
           }).catch(function (resp) {
@@ -184,7 +190,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         } else {
           // Replace any tokens in the configured url_value with values from the source record,
           // and then open link in a new tab/window.
-          const urlPath = stringUtils.replaceStringTokens(link.url_value, record, true);
+          const urlPath = replaceStringTokens(link.url_value, record, true);
           $window.open(urlPath, '_blank');
         }
 
@@ -218,10 +224,10 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
               'source': record
             };
 
-            const entityName = anomalyUtils.getEntityFieldName(record);
+            const entityName = getEntityFieldName(record);
             if (entityName !== undefined) {
               displayRecord.entityName = entityName;
-              displayRecord.entityValue = anomalyUtils.getEntityFieldValue(record);
+              displayRecord.entityValue = getEntityFieldValue(record);
             }
 
             if (_.has(record, 'partition_field_name')) {
@@ -244,7 +250,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
             }
 
             const functionDescription = _.get(record, 'function_description', '');
-            if (anomalyUtils.showActualForFunction(functionDescription) === true) {
+            if (showActualForFunction(functionDescription) === true) {
               if (_.has(record, 'actual')) {
                 displayRecord.actual = record.actual;
               } else {
@@ -255,7 +261,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
                 }
               }
             }
-            if (anomalyUtils.showTypicalForFunction(functionDescription) === true) {
+            if (showTypicalForFunction(functionDescription) === true) {
               if (_.has(record, 'typical')) {
                 displayRecord.typical = record.typical;
               } else {
@@ -363,7 +369,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
 
           // TODO - are we worried about different byFields having the same
           // value e.g. host=server1 and machine=server1?
-          let entity = anomalyUtils.getEntityFieldValue(record);
+          let entity = getEntityFieldValue(record);
           if (entity === undefined) {
             entity = '';
           }
@@ -392,7 +398,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
                 'source': record
               };
 
-              const entityName = anomalyUtils.getEntityFieldName(record);
+              const entityName = getEntityFieldName(record);
               if (entityName !== undefined) {
                 displayRecord.entityName = entityName;
                 displayRecord.entityValue = entity;
@@ -419,7 +425,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
 
               // Copy actual and typical values to the top level for display.
               const functionDescription = _.get(record, 'function_description', '');
-              if (anomalyUtils.showActualForFunction(functionDescription) === true) {
+              if (showActualForFunction(functionDescription) === true) {
                 if (_.has(record, 'actual')) {
                   displayRecord.actual = record.actual;
                 } else {
@@ -430,7 +436,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
                   }
                 }
               }
-              if (anomalyUtils.showTypicalForFunction(functionDescription) === true) {
+              if (showTypicalForFunction(functionDescription) === true) {
                 if (_.has(record, 'typical')) {
                   displayRecord.typical = record.typical;
                 } else {
@@ -586,9 +592,9 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
           },
           {
             markup: parseInt(record['max severity']) >= 1 ?
-            '<i class="fa fa-exclamation-triangle icon-severity-' + anomalyUtils.getSeverity(record['max severity']) + '"></i> '
+            '<i class="fa fa-exclamation-triangle icon-severity-' + getSeverity(record['max severity']) + '"></i> '
               + Math.floor(record['max severity']) :
-            '<i class="fa fa-exclamation-triangle icon-severity-' + anomalyUtils.getSeverity(record['max severity']) + '"></i> &lt; 1',
+            '<i class="fa fa-exclamation-triangle icon-severity-' + getSeverity(record['max severity']) + '"></i> &lt; 1',
             value:  record['max severity']
           },
           {

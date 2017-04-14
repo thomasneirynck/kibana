@@ -26,7 +26,9 @@ import chrome from 'ui/chrome';
 import angular from 'angular';
 
 import uiRoutes from 'ui/routes';
-import checkLicense from 'plugins/ml/license/check_license';
+import { checkLicense } from 'plugins/ml/license/check_license';
+import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
+import { filterAggTypes } from 'plugins/ml/jobs/components/new_job_single_metric/create_job/filter_agg_types';
 
 uiRoutes
 .defaults(/dashboard/, {
@@ -62,8 +64,7 @@ module
 
   timefilter.enabled = true;
   const msgs = mlMessageBarService;
-  const MlTimeBuckets = Private(require('plugins/ml/util/ml_time_buckets'));
-  const filterAggTypes = require('plugins/ml/jobs/components/new_job_single_metric/create_job/filter_agg_types');
+  const MlTimeBuckets = Private(IntervalHelperProvider);
 
   const aggTypes = Private(AggTypesIndexProvider);
   $scope.courier = courier;

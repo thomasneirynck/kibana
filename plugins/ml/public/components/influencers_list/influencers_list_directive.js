@@ -22,7 +22,7 @@ import _ from 'lodash';
 import 'plugins/ml/lib/angular_bootstrap_patch';
 import 'plugins/ml/filters/abbreviate_whole_number';
 
-import anomalyUtils from 'plugins/ml/util/anomaly_utils';
+import { getSeverity } from 'plugins/ml/util/anomaly_utils';
 
 import FilterManagerProvider from 'ui/filter_manager';
 
@@ -68,7 +68,7 @@ module.directive('mlInfluencersList', function (Private) {
           const barScore = maxScore !== 0 ? maxScore : 1;
           const maxScoreLabel = maxScore !== 0 ? maxScore : '< 1';
           const totalScoreLabel = totalScore !== 0 ? totalScore : '< 1';
-          const severity = anomalyUtils.getSeverity(maxScore);
+          const severity = getSeverity(maxScore);
 
           // Store the data for each influencerfieldname in an array to ensure
           // reliable sorting by max score.

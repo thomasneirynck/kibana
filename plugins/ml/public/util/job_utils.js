@@ -14,7 +14,7 @@
  */
 
 // work out the default frequency based on the bucket_span in seconds
-function calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) {
+export function calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) {
 
   let freq = 3600;
   if (bucketSpanSeconds <= 120) {
@@ -30,7 +30,7 @@ function calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) {
 
 // Returns a flag to indicate whether the job is suitable for viewing
 // in the Time Series dashboard.
-function isTimeSeriesViewJob(job) {
+export function isTimeSeriesViewJob(job) {
   // only single metric jobs with model plot data and with only one detector with
   // no by/over/partition fields can currently be viewed in the Time Series dashboard
   let isViewable = false;
@@ -45,8 +45,3 @@ function isTimeSeriesViewJob(job) {
   }
   return isViewable;
 }
-
-export default {
-  calculateDatafeedFrequencyDefaultSeconds: calculateDatafeedFrequencyDefaultSeconds,
-  isTimeSeriesViewJob: isTimeSeriesViewJob
-};

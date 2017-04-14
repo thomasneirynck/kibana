@@ -16,7 +16,7 @@
 import { once } from 'lodash';
 import esMl from './elasticsearch-ml';
 
-export default once((server) => {
+export const getClient = once((server) => {
   const config = Object.assign({ plugins: [esMl] }, server.config().get('elasticsearch'));
   const cluster = server.plugins.elasticsearch.createCluster('ml', config);
 

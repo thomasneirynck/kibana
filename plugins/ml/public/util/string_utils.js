@@ -29,7 +29,7 @@ import d3 from 'd3';
 // and valuesByTokenName of {"airline":"AAL"}, will return
 // 'http://www.google.co.uk/#q=airline+code+AAL'.
 // If a corresponding key is not found in valuesByTokenName, then the String is not replaced.
-function replaceStringTokens(str, valuesByTokenName, encodeForURI) {
+export function replaceStringTokens(str, valuesByTokenName, encodeForURI) {
   return String(str).replace((/\$([^?&$\'"]{1,40})\$/g), (match, name) => {
     // Use lodash get to allow nested JSON fields to be retrieved.
     let tokenValue = _.get(valuesByTokenName, name, null);
@@ -43,7 +43,7 @@ function replaceStringTokens(str, valuesByTokenName, encodeForURI) {
 }
 
 // creates the default description for a given detector
-function detectorToString(dtr) {
+export function detectorToString(dtr) {
   const BY_TOKEN = ' by ';
   const OVER_TOKEN = ' over ';
   const USE_NULL_OPTION = ' use_null=';
@@ -94,7 +94,7 @@ function quoteField(field) {
 }
 
 // re-order an object based on the value of the keys
-function sortByKey(list, reverse, comparator) {
+export function sortByKey(list, reverse, comparator) {
   let keys = _.sortBy(_.keys(list), function (key) {
     return comparator ? comparator(list[key], key) : key;
   });
@@ -114,7 +114,7 @@ function sortByKey(list, reverse, comparator) {
 // last two args are optional
 // eg, split array into quarters:
 // processLargeArrayAsync(largeArray, callback, (largeArray/4) )
-function processLargeArrayAsync(array, fn, chunk, context) {
+export function processLargeArrayAsync(array, fn, chunk, context) {
   context = context || window;
   chunk = chunk || 100;
   let index = 0;
@@ -134,7 +134,7 @@ function processLargeArrayAsync(array, fn, chunk, context) {
 }
 
 // reutrns an array of possible delimiters found in a string
-function guessDelimiters(text, possibleDelimiters) {
+export function guessDelimiters(text, possibleDelimiters) {
   if (text !== '' &&
      possibleDelimiters !== undefined &&
      possibleDelimiters.length) {
@@ -163,7 +163,7 @@ function guessDelimiters(text, possibleDelimiters) {
 }
 
 // guess the time format for a given time string
-function guessTimeFormat(time) {
+export function guessTimeFormat(time) {
   let format = '';
   let matched = false;
   if (isNaN(time)) {
@@ -367,7 +367,7 @@ function guessTimeFormat(time) {
 }
 
 // generate an example time string based on a given format
-function generateExampleTime(timeFormat) {
+export function generateExampleTime(timeFormat) {
   let exampleTime = '';
 
   if (timeFormat !== undefined && timeFormat !== '') {
@@ -390,7 +390,7 @@ function generateExampleTime(timeFormat) {
 
 // add commas to large numbers
 // Number.toLocaleString is not supported on safari
-function toLocaleString(x) {
+export function toLocaleString(x) {
   let result = x;
   if (x && typeof x === 'number') {
     const parts = x.toString().split('.');
@@ -401,7 +401,7 @@ function toLocaleString(x) {
 }
 
 // escape html characters
-function escapeFunc(str) {
+export function mlEscape(str) {
   const entityMap = {
     '&': '&amp;',
     '<': '&lt;',
@@ -416,7 +416,7 @@ function escapeFunc(str) {
 }
 
 // Escapes reserved characters for use in Elasticsearch query terms.
-function escapeForElasticsearchQuery(str) {
+export function escapeForElasticsearchQuery(str) {
   // Escape with a leading backslash any of the characters that
   // Elastic document may cause a syntax error when used in queries:
   // + - = && || > < ! ( ) { } [ ] ^ " ~ * ? : \ /
@@ -424,7 +424,7 @@ function escapeForElasticsearchQuery(str) {
   return str.replace(/[-[\]{}()+!<>=?:\/\\^"~*&|\s]/g, '\\$&');
 }
 
-function calculateTextWidth(txt, isNumber) {
+export function calculateTextWidth(txt, isNumber) {
   txt = (isNumber) ? d3.format(',')(txt) : txt;
   const $body = d3.select('body');
   const $el = $body.append('div');
@@ -440,17 +440,3 @@ function calculateTextWidth(txt, isNumber) {
   d3.select('.temp-axis-label').remove();
   return Math.ceil(width);
 }
-
-export default {
-  replaceStringTokens,
-  detectorToString,
-  sortByKey,
-  guessDelimiters,
-  processLargeArrayAsync,
-  guessTimeFormat,
-  generateExampleTime,
-  toLocaleString,
-  escape: escapeFunc,
-  escapeForElasticsearchQuery,
-  calculateTextWidth
-};

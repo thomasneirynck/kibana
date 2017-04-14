@@ -20,7 +20,7 @@ import _ from 'lodash';
 
 import chrome from 'ui/chrome';
 
-export default function checkLicense(Private, Promise, kbnBaseUrl) {
+export function checkLicense(Private, Promise, kbnBaseUrl) {
   const xpackInfo = Private(XPackInfoProvider);
   const licenseAllowsToShowThisPage = xpackInfo.get('features.ml.isAvailable');
   if (!licenseAllowsToShowThisPage) {

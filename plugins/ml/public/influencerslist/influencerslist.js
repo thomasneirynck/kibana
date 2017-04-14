@@ -26,7 +26,7 @@ import 'plugins/ml/influencerslist/influencerslist.less';
 import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
 import VisSchemasProvider from 'ui/vis/schemas';
 
-export default function InfluencersListVisType(Private) {
+export function InfluencersListVisType(Private) {
   const TemplateVisType = Private(TemplateVisTypeProvider);
   const Schemas = Private(VisSchemasProvider);
 
