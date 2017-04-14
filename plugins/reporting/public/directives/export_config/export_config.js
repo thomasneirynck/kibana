@@ -18,7 +18,7 @@ module.directive('exportConfig', (reportingDocumentControl) => {
     template,
     link($scope, $el, $attr, controllers) {
       const isDirty = () => controllers.some(ctrl => get(ctrl, 'appStatus.dirty', false));
-      $scope.exportConfig.isExportable = () => !isDirty() && reportingDocumentControl.isExportable();
+      $scope.exportConfig.isExportable = () => !isDirty();
       $scope.exportConfig.selectedType = 'printablePdf';
       $scope.exportConfig.name = $attr.name;
       $scope.exportConfig.objectType = $attr.objectType;

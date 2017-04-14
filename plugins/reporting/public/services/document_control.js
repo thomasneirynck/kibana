@@ -51,30 +51,23 @@ UiModules.get('xpack/reporting')
     const reportUrl = (exportable) ? url.resolve($location.absUrl(), reportPath) : null;
 
     return {
-      pathname,
-      query,
       reportPath,
       reportUrl,
-      objectId,
       exportable,
     };
   }
 
-  this.getInfo = () => {
+  function getInfo() {
     return parseFromUrl();
   };
 
-  this.isExportable = () => {
-    return Boolean(this.getInfo().exportable);
-  };
-
   this.getUrl = () => {
-    const { reportUrl } = this.getInfo();
+    const { reportUrl } = getInfo();
     return reportUrl;
   };
 
   this.create = () => {
-    const info = this.getInfo();
+    const info = getInfo();
     if (!info.exportable) return Promise.reject(new Error('not exportable'));
     return $http.post(info.reportPath, {});
   };
