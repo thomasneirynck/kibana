@@ -1,4 +1,4 @@
-module.exports = function (xpackInfo) {
+export function inspectSettings(xpackInfo) {
 
   if (!xpackInfo || !xpackInfo.isAvailable()) {
     return {

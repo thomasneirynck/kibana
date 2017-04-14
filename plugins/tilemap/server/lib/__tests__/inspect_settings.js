@@ -1,5 +1,5 @@
 import expect from 'expect.js';
-import inspectSettings from '../../../server/lib/inspect_settings';
+import { inspectSettings } from '../../../server/lib/inspect_settings';
 
 describe('inspectSettings', function () {
 
