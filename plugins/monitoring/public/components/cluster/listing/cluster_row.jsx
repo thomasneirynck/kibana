@@ -2,37 +2,9 @@ import React from 'react';
 import numeral from 'numeral';
 import moment from 'moment';
 import { capitalize, get } from 'lodash';
-import { Tooltip } from 'plugins/monitoring/components/tooltip';
 import { AlertsIndicator } from './alerts_indicator';
 
-function isClusterSupportedFactory(isSupported) {
-  return class IsClusterSupported extends React.Component {
-    render() {
-      if (isSupported) {
-        return <span>{this.props.children}</span>;
-      } else {
-        return <span>-</span>;
-      }
-    }
-  };
-}
-
-function PrimaryClusterTooltip({ isPrimary }) {
-  if (isPrimary) {
-    return (
-      <Tooltip text='Kibana uses this cluster as the primary connection' placement='bottom' trigger='hover'>
-        <span className='kuiIcon fa-asterisk primary-cluster-indicator'></span>
-      </Tooltip>
-    );
-  }
-  return null;
-}
-
 export class ClusterRow extends React.Component {
-
-  checkSupported() {
-    return this.props.license && (this.props.license.type !== 'basic' || (this.props.isPrimary && this.props.allBasicClusters));
-  }
 
   changeCluster() {
     return () => this.props.changeCluster(this.props.cluster_uuid);
@@ -64,12 +36,11 @@ to enjoy multi-cluster monitoring.`
   }
 
   getClusterAction() {
-    if (this.checkSupported()) {
+    if (this.props.isSupported) {
       return (
         <span>
           <a className='clusterName link' onClick={this.changeCluster()}>
-            { this.props.cluster_name } &nbsp;
-            <PrimaryClusterTooltip isPrimary={this.props.isPrimary} />
+            { this.props.cluster_name }
           </a>
         </span>
       );
@@ -130,9 +101,16 @@ to enjoy multi-cluster monitoring.`
   }
 
   render() {
-
     const classes = ['big'];
-    const isSupported = this.checkSupported();
+    const isSupported = this.props.isSupported;
+    const isClusterSupportedFactory = () => {
+      return (props) => {
+        if (isSupported) {
+          return <span>{props.children}</span>;
+        }
+        return <span>-</span>;
+      };
+    };
     const IsClusterSupported = isClusterSupportedFactory(isSupported);
 
     if (!isSupported) {
@@ -179,7 +157,6 @@ to enjoy multi-cluster monitoring.`
         </td>
       </tr>
     );
-
   }
 
 }

@@ -19,10 +19,6 @@ export function routeInitProvider(Private, monitoringClusters, globalState, lice
    * the data just has a single cluster or
    * all the clusters are basic and this is the primary cluster
    */
-  function isClusterSupported(isBasic, cluster, clusters) {
-    return (!isBasic || clusters.length === 1 || (cluster.isPrimary && cluster.allBasicClusters));
-  }
-
   return function routeInit() {
     return monitoringClusters()
     // Set the clusters collection and current cluster in globalState
@@ -52,8 +48,8 @@ export function routeInitProvider(Private, monitoringClusters, globalState, lice
         return kbnUrl.redirect('/license');
       }
 
-      // check if we need to redirect because of check if multi-cluster monitoring, and if its allowed
-      if (!isOnPage('home') && !isClusterSupported(license.isBasic(), cluster, clusters)) {
+      // check if we need to redirect because of license limitations to multi-cluster monitoring
+      if (!isOnPage('home') && !cluster.isSupported) {
         return kbnUrl.redirect('/home');
       }
 

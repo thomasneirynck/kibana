@@ -3,7 +3,7 @@ import { calculateIndices } from './calculate_indices';
 import { getClusters } from './get_clusters';
 import { getClustersStats } from './get_clusters_stats';
 import { getClustersHealth } from './get_clusters_health';
-import { getPrimaryClusterUuid } from './get_primary_cluster_uuid';
+import { flagSupportedClusters } from './flag_supported_clusters';
 import { calculateOverallStatus } from './calculate_overall_status';
 import { alertsClustersAggregation } from '../cluster_alerts/alerts_clusters_aggregation';
 import { alertsClusterSearch } from '../cluster_alerts/alerts_cluster_search';
@@ -31,16 +31,6 @@ export function normalizeClustersData(clusters) {
     delete cluster.indices;
   });
 
-  // if all clusters are basic, UI will allow the user to get into the primary cluster
-  const basicClusters = clusters.filter((cluster) => {
-    return cluster.license && cluster.license.type === 'basic';
-  });
-  if (basicClusters.length === clusters.length) {
-    clusters.forEach((cluster) => {
-      _.set(cluster, 'allBasicClusters', true);
-    });
-  }
-
   return clusters;
 }
 
@@ -62,7 +52,7 @@ export function getClustersFromRequest(req) {
     return getClusters(req, esIndices)
     .then(getClustersStats(req))
     .then(getClustersHealth(req))
-    .then(getPrimaryClusterUuid(req))
+    .then(flagSupportedClusters(req, kibanaIndices))
     .then((clusters) => {
       if (req.params.clusterUuid) {
         return alertsClusterSearch(req, req.params.clusterUuid, getClusterLicense, checkLicenseForAlerts, {
