@@ -5,7 +5,7 @@ import { MockWindowProvider } from './_mock_window';
 
 const XPACK_INFO_SIG_KEY = 'xpackMain.infoSignature';
 
-describe.skip('xpack_info_signature service', () => {
+describe('xpack_info_signature service', () => {
   let mockWindow;
   let xpackInfoSignature;
 

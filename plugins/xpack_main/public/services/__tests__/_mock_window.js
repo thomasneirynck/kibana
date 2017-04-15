@@ -11,6 +11,9 @@ export function MockWindowProvider() {
       removeItem(key) {
         delete items[key];
       }
+    },
+    location: {
+      pathname: ''
     }
   };
 }
