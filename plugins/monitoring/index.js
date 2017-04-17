@@ -5,6 +5,8 @@ import { requireAllAndApply } from '../../server/lib/require_all_and_apply';
 import { esHealthCheck } from './server/lib/es_client/health_check';
 import { instantiateClient } from './server/lib/es_client/instantiate_client';
 import { initKibanaMonitoring } from './server/kibana_monitoring';
+import { initMonitoringXpackInfo } from './server/lib/init_monitoring_xpack_info';
+import { checkLicenseGenerator } from './server/cluster_alerts/check_license';
 import { initClusterAlerts } from './server/cluster_alerts';
 
 export default function monitoringIndex(kibana) {
@@ -185,7 +187,7 @@ export default function monitoringIndex(kibana) {
 
     init: function (server, _options) {
       const xpackMainPlugin = server.plugins.xpack_main;
-      return xpackMainPlugin.status.once('green', () => {
+      return xpackMainPlugin.status.once('green', async () => {
         const config = server.config();
         const uiEnabled = config.get('xpack.monitoring.ui.enabled');
         const reportStats = config.get('xpack.monitoring.report_stats');
@@ -196,8 +198,20 @@ export default function monitoringIndex(kibana) {
           features.push(instantiateClient(server));
 
           if (uiEnabled) {
-            // Require all routes
+            // TODO: https://github.com/elastic/x-pack-kibana/issues/974
+            const pollFrequencyInMillis = config.get('xpack.monitoring.cluster_alerts.management.interval');
+            const xpackInfo = await initMonitoringXpackInfo(server, pollFrequencyInMillis, 'monitoring');
+            // route handlers depend on xpackInfo (exposed as server.plugins.monitoring.info)
+            server.expose('info', xpackInfo);
+            server.plugins.monitoring.info.feature('monitoring').registerLicenseCheckResultsGenerator(checkLicenseGenerator);
+
+            // Require all routes needed for UI
             features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server));
+
+            // Manage Cluster Alerts (e.g., create/delete Watches)
+            if (config.get('xpack.monitoring.cluster_alerts.enabled')) {
+              features.push(initClusterAlerts(this.kbnServer, server));
+            }
           } else {
             // Require only routes needed for stats reporting
             features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', 'phone_home.js'), server));
@@ -210,11 +224,6 @@ export default function monitoringIndex(kibana) {
         // Send Kibana server ops to the monitoring bulk api
         if (config.get('xpack.monitoring.kibana.collection.enabled')) {
           features.push(initKibanaMonitoring(this.kbnServer, server));
-        }
-
-        // Manage Cluster Alerts (e.g., create/delete Watches)
-        if (config.get('xpack.monitoring.cluster_alerts.enabled')) {
-          features.push(initClusterAlerts(this.kbnServer, server));
         }
 
         return Promise.all(features);

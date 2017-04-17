@@ -11,7 +11,7 @@ describe('Monitoring Verify License', () => {
       const verification = verifyMonitoringLicense(server);
 
       expect(verification.enabled).to.be(false);
-      expect(verification.message).to.be('Cluster Alerts is disabled.');
+      expect(verification.message).to.be('Cluster Alerts feature is disabled.');
 
       expect(get.withArgs('xpack.monitoring.cluster_alerts.enabled').calledOnce).to.be(true);
     });
@@ -59,5 +59,20 @@ describe('Monitoring Verify License', () => {
       expect(feature.withArgs('monitoring').calledOnce).to.be(true);
       expect(getLicenseCheckResults.calledOnce).to.be(true);
     });
+  });
+
+  it('Monitoring feature info cannot be determined', () => {
+    const get = sinon.stub().withArgs('xpack.monitoring.cluster_alerts.enabled').returns(true);
+    const server = {
+      config: sinon.stub().returns({ get }),
+      plugins: { monitoring: undefined } // simulate race condition
+    };
+
+    const verification = verifyMonitoringLicense(server);
+
+    expect(verification.enabled).to.be(false);
+    expect(verification.message).to.be('Status of Cluster Alerts feature could not be determined.');
+
+    expect(get.withArgs('xpack.monitoring.cluster_alerts.enabled').calledOnce).to.be(true);
   });
 });
