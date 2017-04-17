@@ -66,7 +66,9 @@ app.directive('watchTable', function () {
         const selectedItems = _.filter(this.items, item => item.selected);
         const selectedWatches = _.map(selectedItems, item => item.watch);
 
-        this.allSelected = selectedWatches.length === this.editableItems.length;
+        const areAllEditableItemsSelected = selectedWatches.length === this.editableItems.length;
+        this.allSelected = areAllEditableItemsSelected && this.editableItems.length > 0;
+
         this.onSelectChange(selectedWatches);
       };
 
