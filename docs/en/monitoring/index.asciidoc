@@ -1,6 +1,5 @@
 [[xpack-monitoring]]
 = Monitoring the Elastic Stack
-:imagesdir:         images/monitoring
 
 [partintro]
 --
@@ -25,7 +24,7 @@ the monitoring cluster.
 
 // &nbsp;
 
-// image:monitoring-architecture.png["Monitoring Architecture",link="images/monitoring-architecture.png"]
+// image:images/monitoring-architecture.png["Monitoring Architecture",link="images/monitoring-architecture.png"]
 
 --
 

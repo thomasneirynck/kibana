@@ -1,6 +1,5 @@
 [[xpack-reporting]]
 = Reporting from Kibana
-:imagesdir:         images/reporting
 
 [partintro]
 --
@@ -15,7 +14,7 @@ labels are not rendered correctly in the reports.
 When you install {xpack} into Kibana, a Reporting button is added to the
 toolbar:
 
-image:reporting.jpg["Reporting",link="reporting.jpg"]
+image:images/reporting.jpg["Reporting",link="reporting.jpg"]
 
 You can also <<automating-report-generation, generate reports automatically>>.
 

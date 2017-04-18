@@ -155,4 +155,4 @@ query editor and click *Profile*:
 --------------------------------------------------
 // NOTCONSOLE
 
-image::pasting.png["Visualizing pre-collected responses"]
+image::images/pasting.png["Visualizing pre-collected responses"]

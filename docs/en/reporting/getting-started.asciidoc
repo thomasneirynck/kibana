@@ -16,7 +16,7 @@ in the report.
 
 . Click *Reporting* in the Kibana toolbar:
 +
-image:reporting.jpg["Reporting",link="reporting.jpg"]
+image:images/reporting.jpg["Reporting",link="reporting.jpg"]
 
 . Click *Printable PDF*.
 
