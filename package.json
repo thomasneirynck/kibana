@@ -5,6 +5,7 @@
   "scripts": {
     "start": "gulp dev",
     "build": "gulp build",
+    "lint": "gulp lint",
     "testonly": "gulp testonly",
     "test": "gulp test",
     "test:browser:dev": "gulp testbrowser-dev",
