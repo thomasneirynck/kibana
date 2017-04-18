@@ -32,6 +32,7 @@ import 'plugins/ml/services/results_service';
 import FilterBarQueryFilterProvider from 'ui/filter_bar/query_filter';
 import parseInterval from 'ui/utils/parse_interval';
 
+import notify from 'ui/notify';
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher';
@@ -149,11 +150,41 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
       previousSelected = $scope.selectedJobs.length;
     }
 
+    // Validate selections.
+    // Check for any new jobs created since the page was first loaded.
+    for (let i = 0; i < selections.length; i++) {
+      if (_.find($scope.jobs, { 'id': selections[i] }) === undefined) {
+        const newJobs = [];
+        _.each(mlJobService.jobs, (job) => {
+          const bucketSpan = parseInterval(job.analysis_config.bucket_span);
+          newJobs.push({ id:job.job_id, selected: false, bucketSpanSeconds: bucketSpan.asSeconds() });
+        });
+        $scope.jobs = newJobs;
+        break;
+      }
+    }
+
+    // Check and warn for any jobs that do not exist.
+    let validSelections = selections.slice(0);
+    let selectAll = ((selections.length === 1 && selections[0] === '*') || selections.length === 0);
+    if (selectAll === false) {
+      const invalidIds = _.filter(selections, (id) => {
+        return _.find($scope.jobs, { 'id': id }) === undefined;
+      });
+      if (invalidIds.length > 0) {
+        const warningText = invalidIds.length === 1 ? `Requested job ${invalidIds} does not exist` :
+            `Requested jobs ${invalidIds} do not exist`;
+        notify.warning(warningText, { lifetime: 30000 });
+      }
+      validSelections = _.difference(selections, invalidIds);
+    }
+
+    selectAll = ((validSelections.length === 1 && validSelections[0] === '*') || validSelections.length === 0);
+
     $scope.selectedJobs = [];
     const selectedJobIds = [];
-    const selectAll = ((selections.length === 1 && selections[0] === '*') || selections.length === 0);
     _.each($scope.jobs, (job) => {
-      job.selected = (selectAll || _.indexOf(selections, job.id) !== -1);
+      job.selected = (selectAll || _.indexOf(validSelections, job.id) !== -1);
       if (job.selected) {
         $scope.selectedJobs.push(job);
         selectedJobIds.push(job.id);
@@ -171,7 +202,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     }
     $scope.selectJobBtnJobIdLabel = firstJobId;
 
-    globalState.ml.jobIds = selections;
+    globalState.ml.jobIds = validSelections;
     globalState.save();
 
     // Clear viewBy from the state if we are moving from single

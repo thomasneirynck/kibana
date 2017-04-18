@@ -21,14 +21,15 @@
 
 import _ from 'lodash';
 import moment from 'moment';
-import 'ui/timefilter';
 
 import 'plugins/ml/components/job_select_list';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/ml_dashboard_service';
 import 'plugins/ml/services/results_service';
 
+import notify from 'ui/notify';
 import uiRoutes from 'ui/routes';
+import 'ui/timefilter';
 import parseInterval from 'ui/utils/parse_interval';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { isTimeSeriesViewJob } from 'plugins/ml/util/job_utils';
@@ -98,10 +99,17 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
         });
 
         // Select any jobs set in the global state (i.e. passed in the URL).
-        let selectedJobIds = _.get(globalState.ml, 'jobIds', []);
-        selectedJobIds = _.filter(selectedJobIds, (jobId) => {
-          return timeSeriesJobIds.indexOf(jobId) > -1;
+        const stateJobIds = _.get(globalState.ml, 'jobIds', []);
+        const selectedJobIds = _.filter(stateJobIds, (jobId) => {
+          return jobId === '*' || (timeSeriesJobIds.indexOf(jobId) > -1);
         });
+        const invalidIds = _.difference(stateJobIds, selectedJobIds);
+        if (invalidIds.length > 0) {
+          const warningText = invalidIds.length === 1 ? `Requested job ${invalidIds} cannot be viewed in this dashboard` :
+             `Requested jobs ${invalidIds} cannot be viewed in this dashboard`;
+          notify.warning(warningText, { lifetime: 30000 });
+        }
+
         $scope.setSelectedJobs(selectedJobIds);
       }
 
@@ -263,6 +271,22 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
   };
 
   $scope.setSelectedJobs = function (selections) {
+    // Validate selections.
+    // Check for any new jobs created since the page was first loaded.
+    for (let i = 0; i < selections.length; i++) {
+      if (_.find($scope.jobs, { 'id': selections[i] }) === undefined) {
+        const newJobs = [];
+        _.each(mlJobService.jobs, (job) => {
+          if (isTimeSeriesViewJob(job) === true) {
+            const bucketSpan = parseInterval(job.analysis_config.bucket_span);
+            newJobs.push({ id:job.job_id, selected: false, bucketSpanSeconds: bucketSpan.asSeconds() });
+          }
+        });
+        $scope.jobs = newJobs;
+        break;
+      }
+    }
+
     $scope.selectedJobs = [];
     const selectedJobIds = [];
     const selectAll = ((selections.length === 1 && selections[0] === '*') || selections.length === 0);
