@@ -31,6 +31,7 @@ import notify from 'ui/notify';
 import uiRoutes from 'ui/routes';
 import 'ui/timefilter';
 import parseInterval from 'ui/utils/parse_interval';
+
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { isTimeSeriesViewJob } from 'plugins/ml/util/job_utils';
 import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher';
@@ -128,6 +129,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
     $scope.loading = true;
     $scope.hasResults = false;
+    $scope.contextChartData;
+    delete $scope.focusChartData;
 
     // Counter to keep track of what data sets have been loaded.
     let awaitingCount = 2;
@@ -344,10 +347,15 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     }
     $scope.appState.save();
 
+    if ($scope.focusChartData === undefined ||
+      ($scope.zoomFrom.getTime() !== selection.from.getTime()) ||
+      ($scope.zoomTo.getTime() !== selection.to.getTime())) {
+      $scope.refreshFocusData(selection.from, selection.to);
+    }
+
     $scope.zoomFrom = selection.from;
     $scope.zoomTo = selection.to;
 
-    $scope.refreshFocusData(selection.from, selection.to);
   });
 
   function calculateInitialFocusRange() {
@@ -367,7 +375,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       const zoomFrom = moment(zoomState.from, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
       const zoomTo = moment(zoomState.to, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
       if (zoomFrom.isValid() && zoomTo.isValid &&
-        zoomFrom.isBetween(earliestDataDate, latestDataDate) && zoomTo.isBetween(earliestDataDate, latestDataDate)) {
+        zoomFrom.isBetween(earliestDataDate, latestDataDate, null, '[]') &&
+        zoomTo.isBetween(earliestDataDate, latestDataDate, null, '[]')) {
         return [zoomFrom.toDate(), zoomTo.toDate()];
       }
     }

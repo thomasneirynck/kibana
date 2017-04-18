@@ -18,7 +18,6 @@
  */
 
 
-
 import _ from 'lodash';
 import $ from 'jquery';
 import angular from 'angular';
@@ -27,18 +26,19 @@ import moment from 'moment';
 import numeral from 'numeral';
 import 'ui/timefilter';
 
+import { ResizeCheckerProvider } from 'ui/resize_checker';
+
 import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
 import ContextChartMask from 'plugins/ml/timeseriesexplorer/context_chart_mask';
 
 import uiModules from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, mlTimeSeriesDashboardService) {
+module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, mlTimeSeriesDashboardService, Private) {
 
   function link(scope, element) {
 
     // Key dimensions for the viz and constituent charts.
-    // TODO - implement resizing on window resize.
     let svgWidth = angular.element('.results-container').width();
     const focusZoomPanelHeight = 25;
     const focusChartHeight = 310;
@@ -94,13 +94,24 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
 
     scope.$on('render',function () {
       render();
+      drawContextChartSelection();
     });
 
     scope.$on('renderFocusChart',function () {
       renderFocusChart();
     });
 
+    // Redraw the charts when the container is resize.
+    const ResizeChecker = Private(ResizeCheckerProvider);
+    const resizeChecker = new ResizeChecker(angular.element('.ml-model-plot-chart'));
+    resizeChecker.on('resize', () => {
+      render();
+      drawContextChartSelection();
+      renderFocusChart();
+    });
+
     element.on('$destroy', function () {
+      resizeChecker.destroy();
       scope.$destroy();
     });
 
@@ -114,17 +125,12 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
       unhighlightFocusChartAnomaly();
     });
 
-    // TODO - add in resize of chart when container is resized.
-    //d3.select(window).on('resize', render);
-
     function render() {
       if (scope.contextChartData === undefined) {
         return;
       }
 
       // Set the size of the components according to the width of the parent container at render time.
-      // TODO - re-render when size of container changes
-      // e.g. on window resize, or if the Kibana navbar expands/collapses.
       svgWidth = angular.element('.results-container').width();
 
       // Clear any existing elements from the visualization,
@@ -180,7 +186,9 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
       // Draw each of the component elements.
       createFocusChart(focus, vizWidth, focusHeight);
       drawContextElements(context, vizWidth, contextChartHeight, swimlaneHeight);
+    }
 
+    function drawContextChartSelection() {
       // Make appropriate selection in the context chart to trigger loading of the focus chart.
       let focusLoadFrom;
       let focusLoadTo;
@@ -293,8 +301,6 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
     }
 
     function renderFocusChart() {
-      console.log('renderFocusChart scope.focusChartData:', scope.focusChartData);
-
       if (scope.focusChartData === undefined) {
         return;
       }
@@ -544,21 +550,20 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
 
       const border = d3.selectAll('.chart-border-highlight');
 
+      setBrushVisibility(!brush.empty());
+
       function showBrush(show) {
-        const brushExtent = brush.extent();
-        mask.reveal(brushExtent);
-        leftHandle.attr('x',contextXScale(brushExtent[0]) - 10);
-        rightHandle.attr('x',contextXScale(brushExtent[1]) + 0);
+        if (show === true) {
+          const brushExtent = brush.extent();
+          mask.reveal(brushExtent);
+          leftHandle.attr('x',contextXScale(brushExtent[0]) - 10);
+          rightHandle.attr('x',contextXScale(brushExtent[1]) + 0);
 
-        topBorder.attr('x', contextXScale(brushExtent[0]) + 1);
-        topBorder.attr('width', contextXScale(brushExtent[1]) - contextXScale(brushExtent[0]) - 2);
+          topBorder.attr('x', contextXScale(brushExtent[0]) + 1);
+          topBorder.attr('width', contextXScale(brushExtent[1]) - contextXScale(brushExtent[0]) - 2);
+        }
 
-        const visibility = show ? 'visible' : 'hidden';
-        mask.style('visibility', visibility);
-        leftHandle.style('visibility', visibility);
-        rightHandle.style('visibility', visibility);
-        topBorder.style('visibility', visibility);
-        border.style('visibility', visibility);
+        setBrushVisibility(show);
       }
 
       function brushing() {
@@ -587,6 +592,15 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
 
         scope.selectedBounds = { min: moment(selectionMin), max: moment(selectionMax) };
         scope.$root.$broadcast('contextChartSelected', { from: selectedBounds[0], to: selectedBounds[1] });
+      }
+
+      function setBrushVisibility(show) {
+        const visibility = show ? 'visible' : 'hidden';
+        mask.style('visibility', visibility);
+        leftHandle.style('visibility', visibility);
+        rightHandle.style('visibility', visibility);
+        topBorder.style('visibility', visibility);
+        border.style('visibility', visibility);
       }
     }
 
