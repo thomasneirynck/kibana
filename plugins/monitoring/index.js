@@ -7,7 +7,6 @@ import { instantiateClient } from './server/lib/es_client/instantiate_client';
 import { initKibanaMonitoring } from './server/kibana_monitoring';
 import { initMonitoringXpackInfo } from './server/lib/init_monitoring_xpack_info';
 import { checkLicenseGenerator } from './server/cluster_alerts/check_license';
-import { initClusterAlerts } from './server/cluster_alerts';
 
 export default function monitoringIndex(kibana) {
   return new kibana.Plugin({
@@ -124,11 +123,7 @@ export default function monitoringIndex(kibana) {
         }).default(),
         cluster_alerts: object({
           enabled: boolean().default(true),
-          index: string().default('.monitoring-alerts-2'),
-          management: object({
-            enabled: boolean().default(true),
-            interval: number().default(5 * 60 * 1000) // 5 minutes
-          }).default()
+          index: string().default('.monitoring-alerts-2')
         }).default(),
         missing_intervals: number().default(12),
         max_bucket_size: number().default(10000),
@@ -199,7 +194,7 @@ export default function monitoringIndex(kibana) {
 
           if (uiEnabled) {
             // TODO: https://github.com/elastic/x-pack-kibana/issues/974
-            const pollFrequencyInMillis = config.get('xpack.monitoring.cluster_alerts.management.interval');
+            const pollFrequencyInMillis = 5 * 60 * 1000; // 5 minutes
             const xpackInfo = await initMonitoringXpackInfo(server, pollFrequencyInMillis, 'monitoring');
             // route handlers depend on xpackInfo (exposed as server.plugins.monitoring.info)
             server.expose('info', xpackInfo);
@@ -207,11 +202,6 @@ export default function monitoringIndex(kibana) {
 
             // Require all routes needed for UI
             features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server));
-
-            // Manage Cluster Alerts (e.g., create/delete Watches)
-            if (config.get('xpack.monitoring.cluster_alerts.enabled')) {
-              features.push(initClusterAlerts(this.kbnServer, server));
-            }
           } else {
             // Require only routes needed for stats reporting
             features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', 'phone_home.js'), server));
