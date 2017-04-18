@@ -1,8 +1,8 @@
 import { uniqueId, times, random } from 'lodash';
 import elasticsearch from 'elasticsearch';
-import constants from '../../constants';
+import { constants } from '../../constants';
 
-function Client() {
+export function ClientMock() {
   this.indices = {
     create: () => Promise.resolve({ acknowledged: true }),
     exists: () => Promise.resolve(false),
@@ -12,7 +12,7 @@ function Client() {
   this.transport = {};
 }
 
-Client.prototype.index = function (params = {}) {
+ClientMock.prototype.index = function (params = {}) {
   const shardCount = 2;
   return Promise.resolve({
     _index: params.index || 'index',
@@ -24,11 +24,11 @@ Client.prototype.index = function (params = {}) {
   });
 };
 
-Client.prototype.ping = function () {
+ClientMock.prototype.ping = function () {
   return Promise.resolve();
 };
 
-Client.prototype.get = function (params = {}, source = {}) {
+ClientMock.prototype.get = function (params = {}, source = {}) {
   if (params === elasticsearch.errors.NotFound) return elasticsearch.errors.NotFound;
 
   const _source = Object.assign({
@@ -56,7 +56,7 @@ Client.prototype.get = function (params = {}, source = {}) {
   });
 };
 
-Client.prototype.search = function (params = {}, count = 5, source = {}) {
+ClientMock.prototype.search = function (params = {}, count = 5, source = {}) {
   const hits = times(count, () => {
     return {
       _index: params.index || 'index',
@@ -86,7 +86,7 @@ Client.prototype.search = function (params = {}, count = 5, source = {}) {
   });
 };
 
-Client.prototype.update = function (params = {}) {
+ClientMock.prototype.update = function (params = {}) {
   const shardCount = 2;
   return Promise.resolve({
     _index: params.index || 'index',
@@ -96,9 +96,4 @@ Client.prototype.update = function (params = {}) {
     _shards: { total: shardCount, successful: shardCount, failed: 0 },
     created: true
   });
-};
-
-export default {
-  Client: Client,
-  errors: elasticsearch.errors
 };

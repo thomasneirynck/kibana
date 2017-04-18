@@ -2,16 +2,15 @@ import events from 'events';
 import expect from 'expect.js';
 import sinon from 'sinon';
 import proxyquire from 'proxyquire';
-import QueueMock from './fixtures/queue';
-import elasticsearchMock from './fixtures/elasticsearch';
-import contstants from '../constants';
+import { QueueMock } from './fixtures/queue';
+import { ClientMock } from './fixtures/elasticsearch';
+import { constants } from '../constants';
 
 const createIndexMock = sinon.stub();
-const module = proxyquire.noPreserveCache()('../job', {
-  './helpers/create_index': createIndexMock
+const { Job } = proxyquire.noPreserveCache()('../job', {
+  './helpers/create_index': { createIndex: createIndexMock }
 });
 
-const Job = module;
 const maxPriority = 20;
 const minPriority = -20;
 const defaultPriority = 10;
@@ -37,7 +36,7 @@ describe('Job Class', function () {
     createIndexMock.returns(Promise.resolve('mock'));
     index = 'test';
 
-    client = new elasticsearchMock.Client();
+    client = new ClientMock();
     mockQueue = new QueueMock();
     mockQueue.setClient(client);
   });
@@ -78,7 +77,7 @@ describe('Job Class', function () {
         const args = createIndexMock.getCall(0).args;
         expect(args[0]).to.equal(client);
         expect(args[1]).to.equal(index);
-        expect(args[2]).to.equal(contstants.DEFAULT_SETTING_DOCTYPE);
+        expect(args[2]).to.equal(constants.DEFAULT_SETTING_DOCTYPE);
       });
     });
 
@@ -87,7 +86,7 @@ describe('Job Class', function () {
       return job.ready.then(() => {
         const indexArgs = validateDoc(client.index);
         expect(indexArgs).to.have.property('index', index);
-        expect(indexArgs).to.have.property('type', contstants.DEFAULT_SETTING_DOCTYPE);
+        expect(indexArgs).to.have.property('type', constants.DEFAULT_SETTING_DOCTYPE);
         expect(indexArgs).to.have.property('body');
         expect(indexArgs.body).to.have.property('payload', payload);
       });
@@ -98,7 +97,7 @@ describe('Job Class', function () {
       return job.ready.then(() => {
         const indexArgs = validateDoc(client.index);
         expect(indexArgs).to.have.property('index', index);
-        expect(indexArgs).to.have.property('type', contstants.DEFAULT_SETTING_DOCTYPE);
+        expect(indexArgs).to.have.property('type', constants.DEFAULT_SETTING_DOCTYPE);
         expect(indexArgs).to.have.property('body');
         expect(indexArgs.body).to.have.property('jobtype', type);
       });
@@ -125,7 +124,7 @@ describe('Job Class', function () {
 
     it('should emit the job information on success', function (done) {
       const job = new Job(mockQueue, index, type, payload);
-      job.once(contstants.EVENT_JOB_CREATED, (jobDoc) => {
+      job.once(constants.EVENT_JOB_CREATED, (jobDoc) => {
         try {
           expect(jobDoc).to.have.property('id');
           expect(jobDoc).to.have.property('index');
@@ -144,7 +143,7 @@ describe('Job Class', function () {
       createIndexMock.returns(Promise.reject(new Error(errMsg)));
       const job = new Job(mockQueue, index, type, payload);
 
-      job.once(contstants.EVENT_JOB_CREATE_ERROR, (err) => {
+      job.once(constants.EVENT_JOB_CREATE_ERROR, (err) => {
         try {
           expect(err.message).to.equal(errMsg);
           done();
@@ -161,7 +160,7 @@ describe('Job Class', function () {
       sinon.stub(client, 'index', () => Promise.reject(new Error(errMsg)));
       const job = new Job(mockQueue, index, type, payload);
 
-      job.once(contstants.EVENT_JOB_CREATE_ERROR, (err) => {
+      job.once(constants.EVENT_JOB_CREATE_ERROR, (err) => {
         try {
           expect(err.message).to.equal(errMsg);
           done();
@@ -236,7 +235,7 @@ describe('Job Class', function () {
       const job = new Job(mockQueue, index, type, payload);
       return job.ready.then(() => {
         const indexArgs = validateDoc(client.index);
-        expect(indexArgs.body).to.have.property('status', contstants.JOB_STATUS_PENDING);
+        expect(indexArgs.body).to.have.property('status', constants.JOB_STATUS_PENDING);
       });
     });
 
@@ -320,7 +319,7 @@ describe('Job Class', function () {
     beforeEach(function () {
       sinon.spy(client, 'index');
 
-      newClient = new elasticsearchMock.Client();
+      newClient = new ClientMock();
       sinon.spy(newClient, 'index');
       job = new Job(mockQueue, index, type, payload, Object.assign({ client: newClient }, options));
     });
@@ -331,7 +330,7 @@ describe('Job Class', function () {
         const args = createIndexMock.getCall(0).args;
         expect(args[0]).to.equal(newClient);
         expect(args[1]).to.equal(index);
-        expect(args[2]).to.equal(contstants.DEFAULT_SETTING_DOCTYPE);
+        expect(args[2]).to.equal(constants.DEFAULT_SETTING_DOCTYPE);
       });
     });
 
@@ -342,7 +341,7 @@ describe('Job Class', function () {
 
         const newDoc = newClient.index.getCall(0).args[0];
         expect(newDoc).to.have.property('index', index);
-        expect(newDoc).to.have.property('type', contstants.DEFAULT_SETTING_DOCTYPE);
+        expect(newDoc).to.have.property('type', constants.DEFAULT_SETTING_DOCTYPE);
         expect(newDoc).to.have.property('body');
         expect(newDoc.body).to.have.property('payload', payload);
       });
@@ -412,7 +411,7 @@ describe('Job Class', function () {
 
       const doc = job.toJSON();
       expect(doc).to.have.property('index', index);
-      expect(doc).to.have.property('type', contstants.DEFAULT_SETTING_DOCTYPE);
+      expect(doc).to.have.property('type', constants.DEFAULT_SETTING_DOCTYPE);
       expect(doc).to.have.property('jobtype', type);
       expect(doc).to.have.property('created_by', defaultCreatedBy);
       expect(doc).to.have.property('timeout', options.timeout);

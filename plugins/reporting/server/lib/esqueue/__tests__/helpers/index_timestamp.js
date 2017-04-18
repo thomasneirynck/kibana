@@ -1,8 +1,8 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
 import moment from 'moment';
-import constants from '../../constants';
-import indexTimestamp from '../../helpers/index_timestamp';
+import { constants } from '../../constants';
+import { indexTimestamp } from '../../helpers/index_timestamp';
 
 const anchor = '2016-04-02T01:02:03.456'; // saturday
 

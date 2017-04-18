@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { get } from 'lodash';
-import esqueueEvents from './esqueue/constants/events';
+import { events as esqueueEvents } from './esqueue';
 import { constants } from './constants';
 import { getUserFactory } from './get_user';
 import { getSavedObjectFactory } from './get_saved_object';

@@ -1,4 +1,4 @@
-import esqueueEvents from './esqueue/constants/events';
+import { events as esqueueEvents } from './esqueue';
 import { constants } from './constants';
 import { workersFactory } from './workers';
 import { oncePerServer } from './once_per_server';

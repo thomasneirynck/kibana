@@ -1,8 +1,8 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
-import createIndex from '../../helpers/create_index';
-import elasticsearchMock from '../fixtures/elasticsearch';
-import { DEFAULT_SETTING_DOCTYPE } from '../../constants';
+import { createIndex } from '../../helpers/create_index';
+import { ClientMock } from '../fixtures/elasticsearch';
+import { constants } from '../../constants';
 
 describe('Create Index', function () {
 
@@ -11,7 +11,7 @@ describe('Create Index', function () {
     let createSpy;
 
     beforeEach(function () {
-      client = new elasticsearchMock.Client();
+      client = new ClientMock();
       createSpy = sinon.spy(client.indices, 'create');
     });
 
@@ -36,7 +36,7 @@ describe('Create Index', function () {
 
     it('should create the type mappings', function () {
       const indexName = 'test-index';
-      const docType = DEFAULT_SETTING_DOCTYPE;
+      const docType = constants.DEFAULT_SETTING_DOCTYPE;
       const result = createIndex(client, indexName);
 
       return result
@@ -72,7 +72,7 @@ describe('Create Index', function () {
     let createSpy;
 
     beforeEach(function () {
-      client = new elasticsearchMock.Client();
+      client = new ClientMock();
       sinon.stub(client.indices, 'exists', () => Promise.resolve(true));
       createSpy = sinon.spy(client.indices, 'create');
     });

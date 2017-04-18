@@ -2,10 +2,10 @@ import expect from 'expect.js';
 import sinon from 'sinon';
 import moment from 'moment';
 import { noop, random, get, find } from 'lodash';
-import elasticsearchMock from './fixtures/elasticsearch';
-import QueueMock from './fixtures/queue';
-import Worker from '../worker';
-import constants from '../constants';
+import { ClientMock } from './fixtures/elasticsearch';
+import { QueueMock } from './fixtures/queue';
+import { Worker } from '../worker';
+import { constants } from '../constants';
 
 const anchor = '2016-04-02T01:02:03.456'; // saturday
 const defaults = {
@@ -25,7 +25,7 @@ describe('Worker class', function () {
   let worker2;
 
   beforeEach(function () {
-    client = new elasticsearchMock.Client();
+    client = new ClientMock();
     mockQueue = new QueueMock();
     mockQueue.setClient(client);
   });
@@ -86,7 +86,7 @@ describe('Worker class', function () {
     });
 
     it('should use custom client', function () {
-      const newClient = new elasticsearchMock.Client();
+      const newClient = new ClientMock();
       worker = new Worker(mockQueue, 'test', noop, { client: newClient });
       expect(worker).to.have.property('queue', mockQueue);
       expect(worker).to.have.property('client', newClient);

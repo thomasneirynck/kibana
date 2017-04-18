@@ -1,4 +1,4 @@
-import { DEFAULT_SETTING_DOCTYPE } from '../constants';
+import { constants } from '../constants';
 
 const schema = {
   jobtype: { type: 'keyword' },
@@ -22,7 +22,7 @@ const schema = {
   }
 };
 
-export default function createIndex(client, indexName, doctype = DEFAULT_SETTING_DOCTYPE, settings = {}) {
+export function createIndex(client, indexName, doctype = constants.DEFAULT_SETTING_DOCTYPE, settings = {}) {
   const indexBody = { mappings : {} };
   indexBody.mappings[doctype] = { properties: schema };
 

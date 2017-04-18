@@ -1,7 +1,7 @@
 import events from 'events';
 import Puid from 'puid';
 import moment from 'moment';
-import constants from './constants';
+import { constants } from './constants';
 import { WorkerTimeoutError, UnspecifiedWorkerError } from './helpers/errors';
 
 const puid = new Puid();
@@ -14,7 +14,7 @@ function formatJobObject(job) {
   };
 }
 
-export default class Worker extends events.EventEmitter {
+export class Worker extends events.EventEmitter {
   constructor(queue, type, workerFn, opts = {}) {
     if (typeof type !== 'string') throw new Error('Type must be a string');
     if (typeof workerFn !== 'function') throw new Error('Worker must be a function');

@@ -1,4 +1,4 @@
-export default {
+export const events = {
   EVENT_QUEUE_ERROR: 'queue:error',
   EVENT_JOB_ERROR: 'job:error',
   EVENT_JOB_CREATED: 'job:created',

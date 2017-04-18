@@ -1,6 +1,6 @@
 import elasticsearch from 'elasticsearch';
 
-export default function createClient(options) {
+export function createClient(options) {
   let client;
 
   if (isClient(options)) {

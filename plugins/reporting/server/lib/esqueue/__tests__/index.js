@@ -3,21 +3,21 @@ import expect from 'expect.js';
 import sinon from 'sinon';
 import proxyquire from 'proxyquire';
 import { noop, times } from 'lodash';
-import constants from '../constants';
-import elasticsearchMock from './fixtures/elasticsearch';
-import jobMock from './fixtures/job';
-import workerMock from './fixtures/worker';
+import { constants } from '../constants';
+import { ClientMock } from './fixtures/elasticsearch';
+import { JobMock } from './fixtures/job';
+import { WorkerMock } from './fixtures/worker';
 
-const Esqueue = proxyquire.noPreserveCache()('../index', {
-  './job.js': jobMock,
-  './worker.js': workerMock,
+const { Esqueue } = proxyquire.noPreserveCache()('../index', {
+  './job': { Job: JobMock },
+  './worker': { Worker: WorkerMock },
 });
 
 describe('Esqueue class', function () {
   let client;
 
   beforeEach(function () {
-    client = new elasticsearchMock.Client();
+    client = new ClientMock();
   });
 
   it('should be an event emitter', function () {

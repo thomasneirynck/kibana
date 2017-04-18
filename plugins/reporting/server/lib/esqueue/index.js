@@ -1,12 +1,14 @@
-import events from 'events';
-import Job from './job.js';
-import Worker from './worker.js';
-import constants from './constants';
-import createClient from './helpers/create_client';
-import indexTimestamp from './helpers/index_timestamp';
+import { EventEmitter } from 'events';
+import { Job } from './job';
+import { Worker } from './worker';
+import { constants } from './constants';
+import { createClient } from './helpers/create_client';
+import { indexTimestamp } from './helpers/index_timestamp';
 import { omit } from 'lodash';
 
-export default class Esqueue extends events.EventEmitter {
+export { events } from './constants/events';
+
+export class Esqueue extends EventEmitter {
   constructor(index, options = {}) {
     if (!index) throw new Error('Must specify an index to write to');
 

@@ -1,12 +1,12 @@
 import events from 'events';
 import Puid from 'puid';
-import contstants from './constants';
-import createIndex from './helpers/create_index';
+import { constants } from './constants';
+import { createIndex } from './helpers/create_index';
 import { isPlainObject } from 'lodash';
 
 const puid = new Puid();
 
-export default class Job extends events.EventEmitter {
+export class Job extends events.EventEmitter {
   constructor(queue, index, type, payload, options = {}) {
     if (typeof type !== 'string') throw new Error('Type must be a string');
     if (!isPlainObject(payload)) throw new Error('Payload must be a plain object');
@@ -23,7 +23,7 @@ export default class Job extends events.EventEmitter {
     this.timeout = options.timeout || 10000;
     this.maxAttempts = options.max_attempts || 3;
     this.priority = Math.max(Math.min(options.priority || 10, 20), -20);
-    this.doctype = options.doctype || contstants.DEFAULT_SETTING_DOCTYPE;
+    this.doctype = options.doctype || constants.DEFAULT_SETTING_DOCTYPE;
     this.indexSettings = options.indexSettings || {};
 
     this.debug = (msg, err) => {
@@ -53,7 +53,7 @@ export default class Job extends events.EventEmitter {
         created_at: new Date(),
         attempts: 0,
         max_attempts: this.maxAttempts,
-        status: contstants.JOB_STATUS_PENDING,
+        status: constants.JOB_STATUS_PENDING,
       }
     };
 
@@ -76,12 +76,12 @@ export default class Job extends events.EventEmitter {
         index: this.index
       }).then(() => {
         this.debug(`Job index refreshed ${this.index}`);
-        this.emit(contstants.EVENT_JOB_CREATED, this.document);
+        this.emit(constants.EVENT_JOB_CREATED, this.document);
       });
     })
     .catch((err) => {
       this.debug('Job creation failed', err);
-      this.emit(contstants.EVENT_JOB_CREATE_ERROR, err);
+      this.emit(constants.EVENT_JOB_CREATE_ERROR, err);
     });
   }
 

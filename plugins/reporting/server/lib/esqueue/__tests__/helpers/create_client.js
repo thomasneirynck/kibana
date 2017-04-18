@@ -1,13 +1,10 @@
 import expect from 'expect.js';
 import proxyquire from 'proxyquire';
-import elasticsearchMock from '../fixtures/elasticsearch';
+import { ClientMock } from '../fixtures/elasticsearch';
 
-const module = proxyquire.noPreserveCache()('../../helpers/create_client', {
-  elasticsearch: elasticsearchMock
+const { createClient, isClient } = proxyquire.noPreserveCache()('../../helpers/create_client', {
+  'elasticsearch': { Client: ClientMock }
 });
-
-const createClient = module.default;
-const { isClient } = module;
 
 describe('Create client helper', function () {
   it('should have a client', function () {
@@ -19,7 +16,7 @@ describe('Create client helper', function () {
   });
 
   it('should use passed in instance', function () {
-    const clientInstance = new elasticsearchMock.Client();
+    const clientInstance = new ClientMock();
     const client = createClient(clientInstance);
     expect(client).to.equal(clientInstance);
   });

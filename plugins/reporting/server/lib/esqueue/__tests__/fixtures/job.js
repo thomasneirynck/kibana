@@ -1,6 +1,6 @@
 import events from 'events';
 
-export default class Job extends events.EventEmitter {
+export class JobMock extends events.EventEmitter {
   constructor(queue, index, type, payload, options = {}) {
     super();
 

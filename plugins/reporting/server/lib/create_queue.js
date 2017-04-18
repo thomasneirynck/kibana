@@ -1,4 +1,4 @@
-import Esqueue from './esqueue';
+import { Esqueue } from './esqueue';
 import { createWorkersFactory } from './create_workers';
 import { constants } from './constants';
 import { oncePerServer } from './once_per_server';

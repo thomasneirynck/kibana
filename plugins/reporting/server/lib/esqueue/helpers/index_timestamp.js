@@ -9,7 +9,7 @@ export const intervals = [
   'minute'
 ];
 
-export default function indexTimestamp(intervalStr, separator = '-') {
+export function indexTimestamp(intervalStr, separator = '-') {
   if (separator.match(/[a-z]/i)) throw new Error('Interval separator can not be a letter');
 
   const index = intervals.indexOf(intervalStr);
