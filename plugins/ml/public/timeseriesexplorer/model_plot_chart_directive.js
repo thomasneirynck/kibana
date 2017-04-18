@@ -92,12 +92,12 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
 
     const brush = d3.svg.brush();
 
-    scope.$on('render',function () {
+    scope.$on('render', () => {
       render();
       drawContextChartSelection();
     });
 
-    scope.$on('renderFocusChart',function () {
+    scope.$on('renderFocusChart', () => {
       renderFocusChart();
     });
 
@@ -110,19 +110,24 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
       renderFocusChart();
     });
 
-    element.on('$destroy', function () {
+    // Listeners for mouseenter/leave events for rows in the table
+    // to highlight the corresponding anomaly mark in the focus chart.
+    const tableRecordMousenterListener = function (record) {
+      highlightFocusChartAnomaly(record);
+    };
+
+    const tableRecordMouseleaveListener = function (record) {
+      unhighlightFocusChartAnomaly(record);
+    };
+
+    mlTimeSeriesDashboardService.addAnomalyRecordMouseenterListener(tableRecordMousenterListener);
+    mlTimeSeriesDashboardService.addAnomalyRecordMouseleaveListener(tableRecordMouseleaveListener);
+
+    element.on('$destroy', () => {
+      mlTimeSeriesDashboardService.removeAnomalyRecordMouseenterListener(tableRecordMousenterListener);
+      mlTimeSeriesDashboardService.removeAnomalyRecordMouseleaveListener(tableRecordMouseleaveListener);
       resizeChecker.destroy();
       scope.$destroy();
-    });
-
-    // Listener for mouseenter/leave events for rows in the table
-    // and highlight the corresponding anomaly mark in the focus chart.
-    mlTimeSeriesDashboardService.onAnomalyRecordMouseenter(function (record) {
-      highlightFocusChartAnomaly(record);
-    });
-
-    mlTimeSeriesDashboardService.onAnomalyRecordMouseleave(function () {
-      unhighlightFocusChartAnomaly();
     });
 
     function render() {

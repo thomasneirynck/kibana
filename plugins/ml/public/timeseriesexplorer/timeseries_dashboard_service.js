@@ -40,8 +40,15 @@ module.service('mlTimeSeriesDashboardService', function () {
     });
   };
 
-  this.onAnomalyRecordMouseenter = function (listener) {
+  this.addAnomalyRecordMouseenterListener = function (listener) {
     listeners.anomalyRecordMouseenter.push(listener);
+  };
+
+  this.removeAnomalyRecordMouseenterListener = function (listener) {
+    const index = listeners.anomalyRecordMouseenter.indexOf(listener);
+    if (index > -1) {
+      listeners.anomalyRecordMouseenter.splice(index, 1);
+    }
   };
 
   this.fireAnomalyRecordMouseleave = function (record) {
@@ -50,8 +57,15 @@ module.service('mlTimeSeriesDashboardService', function () {
     });
   };
 
-  this.onAnomalyRecordMouseleave = function (listener) {
+  this.addAnomalyRecordMouseleaveListener = function (listener) {
     listeners.anomalyRecordMouseleave.push(listener);
+  };
+
+  this.removeAnomalyRecordMouseleaveListener = function (listener) {
+    const index = listeners.anomalyRecordMouseleave.indexOf(listener);
+    if (index > -1) {
+      listeners.anomalyRecordMouseleave.splice(index, 1);
+    }
   };
 
 });

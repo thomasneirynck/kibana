@@ -31,14 +31,17 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
   function link(scope, element) {
 
     // Re-render the swimlane whenever the underlying data changes.
-    mlExplorerDashboardService.addSwimlaneDataChangeListener((swimlaneType) => {
+    const swimlaneDataChangeListener = function (swimlaneType) {
       if (swimlaneType === scope.swimlaneType) {
         render();
         checkForSelection();
       }
-    });
+    };
+
+    mlExplorerDashboardService.addSwimlaneDataChangeListener(swimlaneDataChangeListener);
 
     element.on('$destroy', function () {
+      mlExplorerDashboardService.removeSwimlaneDataChangeListener(swimlaneDataChangeListener);
       scope.$destroy();
     });
 

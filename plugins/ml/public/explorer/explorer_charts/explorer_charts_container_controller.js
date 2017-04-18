@@ -35,7 +35,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
   const FUNCTION_DESCRIPTIONS_TO_PLOT = ['mean', 'min', 'max', 'sum', 'count', 'distinct_count'];
   const CHART_MAX_POINTS = 500;
 
-  mlExplorerDashboardService.addAnomalyDataChangeListener(function (anomalyRecords, earliestMs, latestMs) {
+  const anomalyDataChangeListener = function (anomalyRecords, earliestMs, latestMs) {
     $scope.allSeriesRecords = processRecordsForDisplay(anomalyRecords);
 
     // Calculate the number of charts per row, depending on the width available, to a max of 4.
@@ -62,6 +62,12 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
 
     $scope.selectedEarliest = earliestMs;
     $scope.selectedLatest = latestMs;
+  };
+
+  mlExplorerDashboardService.addAnomalyDataChangeListener(anomalyDataChangeListener);
+
+  $scope.$on('$destroy', () => {
+    mlExplorerDashboardService.removeAnomalyDataChangeListener(anomalyDataChangeListener);
   });
 
   function processRecordsForDisplay(anomalyRecords) {

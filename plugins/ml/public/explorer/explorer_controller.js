@@ -243,11 +243,6 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     clearSelectedAnomalies();
   });
 
-  $scope.$on('$destroy', () => {
-    refreshWatcher.cancel();
-  });
-
-
   // Listen for changes to job selection.
   mlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
     // Clear swimlane selection from state.
@@ -273,7 +268,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
 
   // Listener for click events in the swimlane and load corresponding anomaly data.
   // Empty cellData is passed on clicking outside a cell with score > 0.
-  mlExplorerDashboardService.addSwimlaneCellClickListener((cellData) => {
+  const swimlaneCellClickListener = function (cellData) {
     if (_.keys(cellData).length === 0) {
       // Swimlane deselection - clear anomalies section.
       if ($scope.viewByLoadedForTimeFormatted) {
@@ -311,7 +306,13 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
       $scope.loadAnomaliesForCharts(jobIds, influencers, earliestMs, latestMs);
       $scope.showNoSelectionMessage = false;
     }
+  };
 
+  mlExplorerDashboardService.addSwimlaneCellClickListener(swimlaneCellClickListener);
+
+  $scope.$on('$destroy', () => {
+    mlExplorerDashboardService.removeSwimlaneCellClickListener(swimlaneCellClickListener);
+    refreshWatcher.cancel();
   });
 
   function loadViewBySwimlaneOptions() {
