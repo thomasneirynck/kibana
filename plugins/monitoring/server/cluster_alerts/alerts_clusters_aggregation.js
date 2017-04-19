@@ -5,7 +5,8 @@ export function alertsClustersAggregation(req, clusters, checkLicense) {
   const verification = verifyMonitoringLicense(req.server);
 
   if (!verification.enabled) {
-    return Promise.resolve(clusters);
+    // return metadata detailing that alerts is disabled because of the monitoring cluster license
+    return Promise.resolve({ alertsMeta: verification });
   }
 
   const config = req.server.config();
@@ -61,6 +62,8 @@ export function alertsClustersAggregation(req, clusters, checkLicense) {
   return callWithRequest(req, 'search', params)
   .then((result) => {
     const buckets = get(result.aggregations, 'group_by_cluster.buckets');
+    const meta = { alertsMeta: { enabled: true } };
+
     return clusters.reduce((reClusters, cluster) => {
       let alerts;
 
@@ -84,8 +87,16 @@ export function alertsClustersAggregation(req, clusters, checkLicense) {
 
           alerts = Object.assign({}, { count: bucket.doc_count }, severities);
         }
+      } else {
+        // add metadata to the cluster's alerts object detailing that alerts are disabled because of the prod cluster license
+        alerts = {
+          clusterMeta: {
+            enabled: false,
+            message: `Cluster [${cluster.cluster_name}] license type [${cluster.license.type}] does not support Cluster Alerts` }
+        };
       }
+
       return Object.assign(reClusters, { [cluster.cluster_uuid]: alerts });
-    }, {});
+    }, meta);
   });
 }

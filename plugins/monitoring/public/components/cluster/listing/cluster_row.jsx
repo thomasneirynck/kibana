@@ -2,6 +2,7 @@ import React from 'react';
 import numeral from 'numeral';
 import moment from 'moment';
 import { capitalize, get } from 'lodash';
+import { Tooltip } from 'plugins/monitoring/components/tooltip';
 import { AlertsIndicator } from './alerts_indicator';
 
 export class ClusterRow extends React.Component {
@@ -117,6 +118,27 @@ to enjoy multi-cluster monitoring.`
       classes.push('basic');
     }
 
+    /*
+     * This checks if alerts feature is supported via monitoring cluster
+     * license. If the alerts feature is not supported because the prod cluster
+     * license is basic, IsClusterSupported makes the status col hidden
+     * completely
+     */
+    const IsAlertsSupported = (props) => {
+      if (props.cluster.alerts.alertsMeta.enabled) {
+        return <span>{props.children}</span>;
+      }
+      return (
+        <Tooltip
+          text={props.cluster.alerts.alertsMeta.message}
+          placement='bottom'
+          trigger='hover'
+        >
+          <span>N/A</span>
+        </Tooltip>
+      );
+    };
+
     return (
       <tr className={ classes.join(' ') }>
         <td>
@@ -124,7 +146,9 @@ to enjoy multi-cluster monitoring.`
         </td>
         <td>
           <IsClusterSupported>
-            <AlertsIndicator alerts={this.props.alerts} />
+            <IsAlertsSupported cluster={this.props}>
+              <AlertsIndicator alerts={this.props.alerts} />
+            </IsAlertsSupported>
           </IsClusterSupported>
         </td>
         <td>

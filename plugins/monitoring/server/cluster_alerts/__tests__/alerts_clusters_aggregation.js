@@ -4,10 +4,10 @@ import { createStubs } from './fixtures/create_stubs';
 import { alertsClustersAggregation } from '../alerts_clusters_aggregation';
 
 const clusters = [
-  { cluster_uuid: 'cluster-abc0' },
-  { cluster_uuid: 'cluster-abc1' },
-  { cluster_uuid: 'cluster-abc2' },
-  { cluster_uuid: 'cluster-abc3' }
+  { cluster_uuid: 'cluster-abc0',  cluster_name: 'cluster-abc0-name', license: { type: 'test_license' } },
+  { cluster_uuid: 'cluster-abc1',  cluster_name: 'cluster-abc1-name', license: { type: 'test_license' } },
+  { cluster_uuid: 'cluster-abc2',  cluster_name: 'cluster-abc2-name', license: { type: 'test_license' } },
+  { cluster_uuid: 'cluster-abc3',  cluster_name: 'cluster-abc3-name', license: { type: 'test_license' } }
 ];
 const mockQueryResult = {
   aggregations: {
@@ -52,6 +52,7 @@ describe('Alerts Clusters Aggregation', () => {
       .then(result => {
         expect(result).to.eql(
           {
+            alertsMeta: { enabled: true },
             'cluster-abc0': undefined,
             'cluster-abc1': {
               count: 1,
@@ -79,39 +80,59 @@ describe('Alerts Clusters Aggregation', () => {
 
   describe('with alerts disabled due to license', () => {
     it('returns the input set if disabled because monitoring cluster checks', () => {
+      // monitoring clusters' license check to fail
       const featureStub = sinon.stub().returns({
-        getLicenseCheckResults: () => ({ clusterAlerts: { enabled: false } })
+        getLicenseCheckResults: () => ({ clusterAlerts: { enabled: false }, message: 'monitoring cluster license is fail' })
       });
+      // prod clusters' license check to pass
       const checkLicense = () => ({ clusterAlerts: { enabled: true } });
       const { mockReq } = createStubs(mockQueryResult, featureStub);
+
       return alertsClustersAggregation(mockReq, clusters, checkLicense)
       .then(result => {
-        expect(result).to.eql([
-          { cluster_uuid: 'cluster-abc0' },
-          { cluster_uuid: 'cluster-abc1' },
-          { cluster_uuid: 'cluster-abc2' },
-          { cluster_uuid: 'cluster-abc3' }
-        ]);
+        expect(result).to.eql({ alertsMeta: { enabled: false, message: 'monitoring cluster license is fail' } });
       });
     });
 
     it('returns the input set if disabled because production cluster checks', () => {
+      // monitoring clusters' license check to pass
       const featureStub = sinon.stub().returns({
         getLicenseCheckResults: () => ({ clusterAlerts: { enabled: true } })
       });
+      // prod clusters license check to fail
       const checkLicense = () => ({ clusterAlerts: { enabled: false } });
       const { mockReq } = createStubs(mockQueryResult, featureStub);
+
       return alertsClustersAggregation(mockReq, clusters, checkLicense)
       .then(result => {
-        // TODO: prefer to have the result in the previous test align with this same data format
         expect(result).to.eql({
-          'cluster-abc0': undefined,
-          'cluster-abc1': undefined,
-          'cluster-abc2': undefined,
-          'cluster-abc3': undefined
+          alertsMeta: { enabled: true },
+          'cluster-abc0': {
+            clusterMeta: {
+              enabled: false,
+              message: 'Cluster [cluster-abc0-name] license type [test_license] does not support Cluster Alerts'
+            }
+          },
+          'cluster-abc1': {
+            clusterMeta: {
+              enabled: false,
+              message: 'Cluster [cluster-abc1-name] license type [test_license] does not support Cluster Alerts'
+            }
+          },
+          'cluster-abc2': {
+            clusterMeta: {
+              enabled: false,
+              message: 'Cluster [cluster-abc2-name] license type [test_license] does not support Cluster Alerts'
+            }
+          },
+          'cluster-abc3': {
+            clusterMeta: {
+              enabled: false,
+              message: 'Cluster [cluster-abc3-name] license type [test_license] does not support Cluster Alerts'
+            }
+          },
         });
       });
     });
   });
 });
-

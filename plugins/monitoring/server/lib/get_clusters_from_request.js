@@ -64,9 +64,15 @@ export function getClustersFromRequest(req) {
         });
       } else {
         return alertsClustersAggregation(req, clusters, checkLicenseForAlerts)
-        .then((alerts) => {
+        .then((clustersAlerts) => {
           clusters.forEach((cluster) => {
-            cluster.alerts = alerts[cluster.cluster_uuid];
+            cluster.alerts = {
+              alertsMeta: {
+                enabled: clustersAlerts.alertsMeta.enabled,
+                message: clustersAlerts.alertsMeta.message // NOTE: this is only defined when the alert feature is disabled
+              },
+              ...clustersAlerts[cluster.cluster_uuid]
+            };
           });
           return clusters;
         });
