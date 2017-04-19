@@ -105,6 +105,9 @@ module
     fields: {}
   };
 
+  // flag to stop all results polling if the user navigates away from this page
+  let globalForceStop = false;
+
   let indexPattern = $route.current.locals.indexPattern;
   let query = {
     query_string: {
@@ -597,7 +600,7 @@ module
   };
 
   function loadCharts() {
-    let forceStop = false;
+    let forceStop = globalForceStop;
     // the percentage doesn't always reach 100, so periodically check the datafeed status
     // to see if the datafeed has stopped
     const counterLimit = 20 - (refreshInterval / REFRESH_INTERVAL_MS);
@@ -782,6 +785,7 @@ module
   });
 
   $scope.$on('$destroy', () => {
+    globalForceStop = true;
     angular.element(window).off('resize');
   });
 

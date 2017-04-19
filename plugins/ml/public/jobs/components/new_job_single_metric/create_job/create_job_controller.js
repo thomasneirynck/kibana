@@ -108,6 +108,9 @@ module
   $scope.CHART_STATE = CHART_STATE;
   $scope.chartState = CHART_STATE.NOT_STARTED;
 
+  // flag to stop all results polling if the user navigates away from this page
+  let globalForceStop = false;
+
   let indexPattern = $route.current.locals.indexPattern;
   let query = {
     query_string: {
@@ -410,7 +413,7 @@ module
   };
 
   function loadCharts() {
-    let forceStop = false;
+    let forceStop = globalForceStop;
     // the percentage doesn't always reach 100, so periodically check the datafeed state
     // to see if the datafeed has stopped
     const counterLimit = 20 - (refreshInterval / REFRESH_INTERVAL_MS);
@@ -592,5 +595,9 @@ module
     }
   }
   $scope.$listen(timefilter, 'fetch', $scope.loadVis);
+
+  $scope.$on('$destroy', () => {
+    globalForceStop = true;
+  });
 
 });
