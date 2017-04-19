@@ -5,6 +5,7 @@ extends: '@elastic/kibana'
 
 plugins:
   - react
+  - '@elastic/kibana-custom'
 
 ecmaFeatures:
   jsx: true
@@ -17,3 +18,5 @@ rules:
   no-unused-vars: [error, {args: 'after-used', argsIgnorePattern: '^_'}]
   react/jsx-uses-react: error
   react/jsx-uses-vars: error
+
+  kibana-custom/no-default-export: error
