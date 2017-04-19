@@ -1,8 +1,8 @@
 <ml-nav-menu name="jobs"></ml-nav-menu>
 <ml-config-jobs ng-controller="MlJobsList">
   <div class='jobs-stats-bar'>
-    <span class='stat' ng-repeat='(label, value) in jobStats'>
-      <span class='stat-label'>{{label}}</span>: <span class='stat-value'>{{value}}</span>
+    <span ng-if='js.show' class='stat' ng-repeat='js in jobStats'>
+      <span class='stat-label'>{{js.label}}</span>: <span class='stat-value'>{{js.value}}</span>
     </span>
   </div>
   <ml-message-bar ></ml-message-bar>

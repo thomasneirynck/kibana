@@ -80,7 +80,7 @@ function (
     canUpdateDatafeed: false
   };
 
-  $scope.jobStats = {};
+  $scope.jobStats = mlJobService.jobStats;
 
   // functions for job list buttons
   // called from jobs_list_controls.html
@@ -222,45 +222,6 @@ function (
     _.invoke(rowScopes, '$destroy');
     rowScopes.length = 0;
     $scope.jobs = jobs;
-
-    // Create jobs stats
-    $scope.jobStats = {
-      'Active ML Nodes': 0,
-      'Total jobs': $scope.jobs.length,
-      'Open jobs': 0,
-      'Closed jobs': 0,
-      'Active datafeeds': 0,
-    };
-
-    // object to keep track of nodes being used by jobs
-    const mlNodes = {};
-    let failedJobs = 0;
-
-    _.each(jobs, (job) => {
-      if (job.state === 'opened') {
-        $scope.jobStats['Open jobs']++;
-      } else if (job.state === 'closed') {
-        $scope.jobStats['Closed jobs']++;
-      } else if (job.state === 'failed') {
-        failedJobs++;
-      }
-
-      if (job.datafeed_config.state === 'started') {
-        $scope.jobStats['Active datafeeds']++;
-      }
-
-      if (job.node && job.node.name) {
-        mlNodes[job.node.name] = {};
-      }
-    });
-
-    // Only show failed jobs if it is non-zero
-    if (failedJobs) {
-      $scope.jobStats['Failed jobs'] = failedJobs;
-    }
-
-    $scope.jobStats['Active ML Nodes'] = Object.keys(mlNodes).length;
-
 
     // Create table
     $scope.table = {};

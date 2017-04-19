@@ -36,6 +36,14 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
   this.jobDescriptions = {};
   this.detectorsByJob = {};
   this.customUrlsByJob = {};
+  this.jobStats = {
+    activeNodes: { label: 'Active ML Nodes', value: 0, show: true },
+    total: { label: 'Total jobs', value: 0, show: true },
+    open: { label: 'Open jobs', value: 0, show: true },
+    closed: { label: 'Closed jobs', value: 0, show: true },
+    failed: { label: 'Failed jobs', value: 0, show: false },
+    activeDatafeeds: { label: 'Active datafeeds', value: 0, show: true }
+  };
 
   // private function used to check the job saving response
   function checkSaveResponse(resp, origJob) {
@@ -128,6 +136,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               }
               processBasicJobInfo(this, jobs);
               this.jobs = jobs;
+              createJobStats(this.jobs, this.jobStats);
               deferred.resolve({ jobs: this.jobs });
             });
           })
@@ -199,6 +208,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                   }
                 }
                 this.jobs = jobs;
+                createJobStats(this.jobs, this.jobStats);
                 deferred.resolve({ jobs: this.jobs });
               });
             })
@@ -304,6 +314,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                 }
               }
             }
+            createJobStats(this.jobs, this.jobStats);
             deferred.resolve({ jobs: this.jobs });
           })
           .catch((err) => {
@@ -390,6 +401,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               error(err);
             });
           } else {
+            createJobStats(this.jobs, this.jobStats);
             deferred.resolve({ jobs: this.jobs, listChanged: false });
           }
         })
@@ -1324,6 +1336,52 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     mlJobService.customUrlsByJob = customUrlsByJob;
 
     return processedJobsList;
+  }
+
+  // Loop through the jobs list and create basic stats
+  // stats are displayed along the top of the Jobs Management page
+  function createJobStats(jobsList, jobStats) {
+
+    jobStats.activeNodes.value = 0;
+    jobStats.total.value = 0;
+    jobStats.open.value = 0;
+    jobStats.closed.value = 0;
+    jobStats.failed.value = 0;
+    jobStats.activeDatafeeds.value = 0;
+
+    // object to keep track of nodes being used by jobs
+    const mlNodes = {};
+    let failedJobs = 0;
+
+    _.each(jobsList, (job) => {
+      if (job.state === 'opened') {
+        jobStats.open.value++;
+      } else if (job.state === 'closed') {
+        jobStats.closed.value++;
+      } else if (job.state === 'failed') {
+        failedJobs++;
+      }
+
+      if (job.datafeed_config.state === 'started') {
+        jobStats.activeDatafeeds.value++;
+      }
+
+      if (job.node && job.node.name) {
+        mlNodes[job.node.name] = {};
+      }
+    });
+
+    jobStats.total.value = jobsList.length;
+
+    // // Only show failed jobs if it is non-zero
+    if (failedJobs) {
+      jobStats.failed.value = failedJobs;
+      jobStats.failed.show = true;
+    } else {
+      jobStats.failed.show = false;
+    }
+
+    jobStats.activeNodes.value = Object.keys(mlNodes).length;
   }
 
 });
