@@ -26,6 +26,7 @@ describe('setupXPackMain()', () => {
         }
       },
       log() {},
+      config: () => ({ get: sinon.stub() }),
       expose(key, value) {
         set(this, [ 'pluginProperties', key ], value);
       },

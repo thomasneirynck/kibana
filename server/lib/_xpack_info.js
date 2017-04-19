@@ -2,10 +2,13 @@ import { createHash } from 'crypto';
 import moment from 'moment';
 import { get, set, includes, forIn } from 'lodash';
 import { Poller } from './poller';
-import { LICENSE_EXPIRY_SOON_DURATION, XPACK_INFO_API_DEFAULT_POLL_FREQUENCY } from './constants';
+import { LICENSE_EXPIRY_SOON_DURATION_IN_DAYS } from './constants';
 
 export function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 'data') {
-  pollFrequencyInMillis = pollFrequencyInMillis || XPACK_INFO_API_DEFAULT_POLL_FREQUENCY.asMilliseconds();
+  if(!pollFrequencyInMillis) {
+    const config = server.config();
+    pollFrequencyInMillis = config.get('xpack.xpack_main.xpack_api_polling_frequency_millis');
+  }
 
   let _cachedResponseFromElasticsearch;
 
@@ -32,7 +35,7 @@ export function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 'data'
       },
       expiresSoon: function () {
         const expiryDateMillis = get(_cachedResponseFromElasticsearch, 'license.expiry_date_in_millis');
-        const expirySoonDate = moment.utc(expiryDateMillis).subtract(LICENSE_EXPIRY_SOON_DURATION);
+        const expirySoonDate = moment.utc(expiryDateMillis).subtract(moment.duration(LICENSE_EXPIRY_SOON_DURATION_IN_DAYS, 'days'));
         return moment.utc().isAfter(expirySoonDate);
       },
       getExpiryDateInMillis: function () {

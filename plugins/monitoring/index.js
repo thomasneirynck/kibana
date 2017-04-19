@@ -1,5 +1,6 @@
 import { get, has, set } from 'lodash';
 import { join, resolve } from 'path';
+import { XPACK_INFO_API_DEFAULT_POLL_FREQUENCY_IN_MILLIS } from '../../server/lib/constants';
 import Promise from 'bluebird';
 import { requireAllAndApply } from '../../server/lib/require_all_and_apply';
 import { esHealthCheck } from './server/lib/es_client/health_check';
@@ -125,6 +126,7 @@ export default function monitoringIndex(kibana) {
           enabled: boolean().default(true),
           index: string().default('.monitoring-alerts-2')
         }).default(),
+        xpack_api_polling_frequency_millis: number().default(XPACK_INFO_API_DEFAULT_POLL_FREQUENCY_IN_MILLIS),
         missing_intervals: number().default(12),
         max_bucket_size: number().default(10000),
         min_interval_seconds: number().default(10),
@@ -193,9 +195,8 @@ export default function monitoringIndex(kibana) {
           features.push(instantiateClient(server));
 
           if (uiEnabled) {
-            // TODO: https://github.com/elastic/x-pack-kibana/issues/974
-            const pollFrequencyInMillis = 5 * 60 * 1000; // 5 minutes
-            const xpackInfo = await initMonitoringXpackInfo(server, pollFrequencyInMillis, 'monitoring');
+            const xpackApiPollingFrequency = config.get('xpack.monitoring.xpack_api_polling_frequency_millis');
+            const xpackInfo = await initMonitoringXpackInfo(server, xpackApiPollingFrequency, 'monitoring');
             // route handlers depend on xpackInfo (exposed as server.plugins.monitoring.info)
             server.expose('info', xpackInfo);
             server.plugins.monitoring.info.feature('monitoring').registerLicenseCheckResultsGenerator(checkLicenseGenerator);
