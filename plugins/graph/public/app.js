@@ -9,7 +9,7 @@ import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
 
 import 'ui/autoload/all';
 import 'ui/directives/saved_object_finder';
-import SavedWorkspacesProvider from 'plugins/graph/services/saved_workspaces';
+import { SavedWorkspacesProvider } from 'plugins/graph/services/saved_workspaces';
 import { iconChoices, colorChoices, iconChoicesByClass, drillDownIconChoices,
   drillDownIconChoicesByClass } from 'plugins/graph/style_choices';
 import { outlinkEncoders } from 'plugins/graph/services/outlink_encoders';

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import Scanner from 'ui/utils/scanner';
-import SavedWorkspaceProvider from './saved_workspace';
+import { SavedWorkspaceProvider } from './saved_workspace';
 import uiModules from 'ui/modules';
 import chrome from 'ui/chrome';
 
@@ -8,7 +8,7 @@ import chrome from 'ui/chrome';
 import SavedObjectRegistry from 'ui/saved_objects/saved_object_registry';
 
 
-export default function SavedWorkspacesProvider(es, kbnUrl, Private, Promise, kbnIndex) {
+export function SavedWorkspacesProvider(es, kbnUrl, Private, Promise, kbnIndex) {
 
   const SavedWorkspace = Private(SavedWorkspaceProvider);
   const scanner = new Scanner(es, {

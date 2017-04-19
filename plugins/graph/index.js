@@ -2,7 +2,7 @@ import { resolve } from 'path';
 import Boom from 'boom';
 const graphExploreRoute = require('./server/routes/graphExplore');
 const searchProxyRoute = require('./server/routes/searchProxy');
-import checkLicense from './server/lib/check_license';
+import { checkLicense } from './server/lib/check_license';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 
 const APP_TITLE = 'Graph';

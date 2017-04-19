@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import { set } from 'lodash';
 import sinon from 'sinon';
-import checkLicense from '../check_license';
+import { checkLicense } from '../check_license';
 
 describe('check_license: ', function () {
 

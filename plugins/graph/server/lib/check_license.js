@@ -1,4 +1,4 @@
-export default function checkLicense(xpackLicenseInfo) {
+export function checkLicense(xpackLicenseInfo) {
 
   if (!xpackLicenseInfo || !xpackLicenseInfo.isAvailable()) {
     return {
