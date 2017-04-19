@@ -23,7 +23,7 @@ import moment from 'moment';
 
 import { getSeverityColor } from 'plugins/ml/util/anomaly_utils';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardService) {

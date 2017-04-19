@@ -18,7 +18,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { ClusterView } from '../components/clusterView';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('clusterView', function (kbnUrl) {

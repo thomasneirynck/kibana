@@ -1,5 +1,5 @@
 import { map, get, values, set } from 'lodash';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './watch_action_mode_table.html';
 import { getActionType } from 'plugins/watcher/../common/lib/get_action_type';
 import { ACTION_MODES } from 'plugins/watcher/../common/constants';

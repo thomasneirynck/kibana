@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './no_items.html';
 
 const app = uiModules.get('xpack/watcher');

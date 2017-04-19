@@ -18,9 +18,9 @@ import 'plugins/ml/jobs/components/new_job_advanced/detectors_list_directive';
 import './styles/main.less';
 import angular from 'angular';
 import { calculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/util/job_utils';
-import parseInterval from 'ui/utils/parse_interval';
+import { parseInterval } from 'ui/utils/parse_interval';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, params, mlJobService, mlMessageBarService) {

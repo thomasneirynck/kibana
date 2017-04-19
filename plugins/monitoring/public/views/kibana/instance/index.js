@@ -3,7 +3,7 @@
  */
 import { get, find } from 'lodash';
 import uiRoutes from'ui/routes';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
 import template from './index.html';

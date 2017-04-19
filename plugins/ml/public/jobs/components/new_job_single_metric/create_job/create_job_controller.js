@@ -17,8 +17,8 @@ import _ from 'lodash';
 import 'ui/courier';
 
 import 'plugins/kibana/visualize/styles/main.less';
-import AggTypesIndexProvider from 'ui/agg_types/index';
-import parseInterval from 'ui/utils/parse_interval';
+import { AggTypesIndexProvider } from 'ui/agg_types/index';
+import { parseInterval } from 'ui/utils/parse_interval';
 
 import dateMath from '@elastic/datemath';
 import moment from 'moment';
@@ -43,7 +43,7 @@ uiRoutes
   }
 });
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module

@@ -15,7 +15,7 @@
 
 // service for displaying a modal confirmation dialog with OK and Cancel buttons.
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.service('mlConfirmModalService', ['$modal', '$q',  function ($modal, $q) {

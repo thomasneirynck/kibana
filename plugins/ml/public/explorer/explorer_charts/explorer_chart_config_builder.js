@@ -20,7 +20,7 @@
 
 const _ = require('lodash');
 
-import parseInterval from 'ui/utils/parse_interval';
+import { parseInterval } from 'ui/utils/parse_interval';
 import { aggregationTypeTransform } from 'plugins/ml/util/anomaly_utils';
 
 export function explorerChartConfigBuilder(mlJobService) {

@@ -23,8 +23,8 @@
 import 'plugins/ml/influencerslist/influencerslist_controller.js';
 import 'plugins/ml/influencerslist/influencerslist.less';
 
-import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
-import VisSchemasProvider from 'ui/vis/schemas';
+import { TemplateVisTypeProvider } from 'ui/template_vis_type/template_vis_type';
+import { VisSchemasProvider } from 'ui/vis/schemas';
 
 export function InfluencersListVisType(Private) {
   const TemplateVisType = Private(TemplateVisTypeProvider);

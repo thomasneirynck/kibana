@@ -18,7 +18,7 @@
  * components in the Time Series explorer dashboard.
  */
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.service('mlTimeSeriesDashboardService', function () {

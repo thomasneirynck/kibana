@@ -2,7 +2,7 @@ import { capitalize } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { formatDateTimeLocal } from 'monitoring-formatting';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import { Table } from 'plugins/monitoring/components/paginated_table';
 import { SORT_DESCENDING } from 'monitoring-constants';
 import { Tooltip } from 'plugins/monitoring/components/tooltip';

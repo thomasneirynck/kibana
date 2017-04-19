@@ -14,7 +14,7 @@
  */
 
 import _ from 'lodash';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.service('mlPrivilegeService', function (Promise, ml) {

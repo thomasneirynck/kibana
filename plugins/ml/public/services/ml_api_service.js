@@ -15,7 +15,7 @@
 
 import './http_service';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.service('ml', function (prlHttpService) {

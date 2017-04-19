@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './watch_edit_title_bar.html';
 
 const app = uiModules.get('xpack/watcher');

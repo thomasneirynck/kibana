@@ -31,7 +31,7 @@ import { ResizeCheckerProvider } from 'ui/resize_checker';
 import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
 import ContextChartMask from 'plugins/ml/timeseriesexplorer/context_chart_mask';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, mlTimeSeriesDashboardService, Private) {

@@ -27,7 +27,7 @@ import 'ui/timepicker/quick_ranges';
 import 'ui/timepicker/time_units';
 import './styles/main.less';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('prettyDuration', function (config, quickRanges, timeUnits, $compile, timefilter) {

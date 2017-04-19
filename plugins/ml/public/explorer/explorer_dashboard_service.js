@@ -18,7 +18,7 @@
  * components in the Explorer dashboard.
  */
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.service('mlExplorerDashboardService', function () {

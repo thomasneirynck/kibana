@@ -37,7 +37,7 @@ import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/ml_dashboard_service';
 import './swimlane_influencers/swimlane_influencers_directive';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.controller('MlSwimlaneController', function ($scope,

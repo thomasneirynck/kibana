@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './forbidden_message.html';
 
 const app = uiModules.get('xpack/watcher');

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import template from 'plugins/searchprofiler/directives/highlight_details/index.html';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 
 const uiModule = uiModules.get('app/searchprofiler/directives', []);
 uiModule.directive('highlightdetails', HighlightService => {

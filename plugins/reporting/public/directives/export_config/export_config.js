@@ -2,10 +2,10 @@ import { get } from 'lodash';
 import 'plugins/reporting/services/document_control';
 import './export_config.less';
 import template from 'plugins/reporting/directives/export_config/export_config.html';
-import Notifier from 'ui/notify/notifier';
-import modules from 'ui/modules';
+import { Notifier } from 'ui/notify/notifier';
+import { uiModules } from 'ui/modules';
 
-const module = modules.get('xpack/reporting');
+const module = uiModules.get('xpack/reporting');
 
 module.directive('exportConfig', (reportingDocumentControl) => {
   const reportingNotifier = new Notifier({ location: 'Reporting' });

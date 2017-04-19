@@ -1,13 +1,13 @@
 import { constant } from 'lodash';
-import registry from 'ui/registry/chrome_nav_controls';
-import uiModules from 'ui/modules';
+import { chromeNavControlsRegistry } from 'ui/registry/chrome_nav_controls';
+import { uiModules } from 'ui/modules';
 import template from 'plugins/security/views/nav_control/nav_control.html';
 import 'plugins/security/services/shield_user';
 import '../account/account';
 import { PathProvider } from 'plugins/xpack_main/services/path';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 
-registry.register(constant({
+chromeNavControlsRegistry.register(constant({
   name: 'security',
   order: 1000,
   template

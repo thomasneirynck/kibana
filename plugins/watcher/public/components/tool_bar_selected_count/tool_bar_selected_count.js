@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './tool_bar_selected_count.html';
 
 const app = uiModules.get('xpack/watcher');

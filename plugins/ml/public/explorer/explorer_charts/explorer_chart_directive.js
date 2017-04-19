@@ -29,7 +29,7 @@ import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
 import 'plugins/ml/filters/format_value';
 import 'plugins/ml/services/results_service';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlExplorerChart', function (mlResultsService, formatValueFilter) {

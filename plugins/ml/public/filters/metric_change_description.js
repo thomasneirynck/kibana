@@ -18,7 +18,7 @@
  * actual value compares to the typical value for a time series anomaly.
  */
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.filter('metricChangeDescription', function () {

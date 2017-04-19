@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import { WatchesService } from './watches_service';
 
 uiModules.get('xpack/watcher')

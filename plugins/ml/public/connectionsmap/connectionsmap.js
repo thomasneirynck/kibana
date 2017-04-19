@@ -23,7 +23,7 @@ import 'plugins/ml/connectionsmap/connectionsmap_controller.js';
 import 'plugins/ml/connectionsmap/connectionsmap_directive.js';
 import 'plugins/ml/connectionsmap/connectionsmap.less';
 
-import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
+import { TemplateVisTypeProvider } from 'ui/template_vis_type/template_vis_type';
 
 export function ConnectionsMapVisType(Private) {
   const TemplateVisType = Private(TemplateVisTypeProvider);

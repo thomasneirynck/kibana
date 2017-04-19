@@ -13,7 +13,7 @@
  * strictly prohibited.
  */
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/prelert');
 
 module.controller('MlDeleteJobModal', function ($scope, $modalInstance, params) {

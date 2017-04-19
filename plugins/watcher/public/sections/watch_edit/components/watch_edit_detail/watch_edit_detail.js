@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './watch_edit_detail.html';
 import './watch_edit_detail.less';
 import 'plugins/watcher/components/json_editor';

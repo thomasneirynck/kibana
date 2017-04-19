@@ -15,7 +15,7 @@
 
 // service for interacting with the server
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 import { addSystemApiHeader } from 'ui/system_api';

@@ -19,7 +19,7 @@ import 'ui/timefilter';
 
 import { getSeverity } from 'plugins/ml/util/anomaly_utils';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {

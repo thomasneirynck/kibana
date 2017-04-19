@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './password_form.html';
 
 const module = uiModules.get('security', ['kibana']);

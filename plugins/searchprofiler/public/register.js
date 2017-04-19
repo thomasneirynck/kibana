@@ -1,6 +1,6 @@
-import devTools from 'ui/registry/dev_tools';
+import { DevToolsRegistryProvider } from 'ui/registry/dev_tools';
 
-devTools.register(() => ({
+DevToolsRegistryProvider.register(() => ({
   order: 5,
   name: 'searchprofiler',
   display: 'Search Profiler',

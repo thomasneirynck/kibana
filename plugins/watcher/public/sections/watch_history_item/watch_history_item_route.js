@@ -1,6 +1,6 @@
 import routes from 'ui/routes';
 import 'ui/url';
-import Notifier from 'ui/notify/notifier';
+import { Notifier } from 'ui/notify/notifier';
 import template from './watch_history_item_route.html';
 import 'plugins/watcher/services/watch';
 import 'plugins/watcher/services/watch_history';

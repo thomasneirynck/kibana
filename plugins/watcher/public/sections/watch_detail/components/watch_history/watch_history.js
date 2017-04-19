@@ -1,6 +1,6 @@
 import 'ui/filters/moment';
-import uiModules from 'ui/modules';
-import Notifier from 'ui/notify/notifier';
+import { uiModules } from 'ui/modules';
+import { Notifier } from 'ui/notify/notifier';
 import 'ui/pager_control';
 import 'ui/pager';
 

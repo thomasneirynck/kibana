@@ -18,7 +18,7 @@
 // returns success
 // e.g. mlClipboardService.copy("this could be abused!");
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.service('mlClipboardService', function () {

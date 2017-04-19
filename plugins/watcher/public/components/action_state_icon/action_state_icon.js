@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './action_state_icon.html';
 import { ACTION_STATES } from 'plugins/watcher/../common/constants';
 

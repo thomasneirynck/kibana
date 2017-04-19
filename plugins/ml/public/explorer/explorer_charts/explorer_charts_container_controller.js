@@ -23,7 +23,7 @@
 import _ from 'lodash';
 import $ from 'jquery';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 import { explorerChartConfigBuilder } from './explorer_chart_config_builder';
 

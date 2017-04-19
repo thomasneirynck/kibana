@@ -1,6 +1,6 @@
-import notify from 'ui/notify';
+import { notify } from 'ui/notify';
 import chrome from 'ui/chrome';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import { addSystemApiHeader } from 'ui/system_api';
 import { get, last } from 'lodash';
 import moment from 'moment';

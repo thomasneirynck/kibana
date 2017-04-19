@@ -1,6 +1,6 @@
 import 'angular-resource';
 import angular from 'angular';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 
 const module = uiModules.get('security', ['ngResource']);
 module.service('ShieldUser', ($resource, chrome) => {

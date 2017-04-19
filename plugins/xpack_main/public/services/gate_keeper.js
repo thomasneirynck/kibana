@@ -1,4 +1,4 @@
-import Notifier from 'ui/notify/notifier';
+import { Notifier } from 'ui/notify/notifier';
 
 export function GateKeeperProvider(kbnUrl, esDataIsTribe) {
   const notifier = new Notifier();

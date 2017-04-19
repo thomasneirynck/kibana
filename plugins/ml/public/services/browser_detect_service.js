@@ -15,7 +15,7 @@
 
 // simple check for browser name
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.service('mlBrowserDetectService', function ($window) {

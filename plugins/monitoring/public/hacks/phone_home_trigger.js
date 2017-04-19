@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import uiChrome from 'ui/chrome';
 import { PathProvider } from 'plugins/xpack_main/services/path';
 import 'plugins/monitoring/services/clusters';

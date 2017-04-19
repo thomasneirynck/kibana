@@ -20,7 +20,7 @@ import numeral from 'numeral';
 import chrome from 'ui/chrome';
 import angular from 'angular';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlJobListExpandedRow', function ($location, mlMessageBarService, mlJobService, mlClipboardService) {

@@ -18,7 +18,7 @@
 import tooltips from './tooltips.json';
 import './styles/main.less';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 // service for retrieving text from the tooltip.json file
 // to add a tooltip to any element:

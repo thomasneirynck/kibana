@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import { WatchHistoryService } from './watch_history_service';
 
 uiModules.get('xpack/watcher')

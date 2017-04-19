@@ -1,5 +1,5 @@
-import uiModules from 'ui/modules';
-import Notifier from 'ui/notify/notifier';
+import { uiModules } from 'ui/modules';
+import { Notifier } from 'ui/notify/notifier';
 import template from './watch_edit.html';
 import 'plugins/watcher/components/kbn_tabs';
 import 'plugins/watcher/components/watch_history_item_detail';

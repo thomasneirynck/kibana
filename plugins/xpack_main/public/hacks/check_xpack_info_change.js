@@ -1,5 +1,5 @@
 import { identity } from 'lodash';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import { XPackInfoSignatureProvider } from 'plugins/xpack_main/services/xpack_info_signature';
 

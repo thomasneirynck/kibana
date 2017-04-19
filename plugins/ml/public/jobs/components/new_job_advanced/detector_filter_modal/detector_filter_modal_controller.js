@@ -16,7 +16,7 @@
 import _ from 'lodash';
 import angular from 'angular';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.controller('MlDetectorFilterModal', function ($scope, $modalInstance, params, mlJobService, mlMessageBarService) {

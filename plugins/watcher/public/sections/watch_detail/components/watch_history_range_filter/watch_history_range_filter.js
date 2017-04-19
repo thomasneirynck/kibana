@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './watch_history_range_filter.html';
 
 const app = uiModules.get('xpack/watcher');

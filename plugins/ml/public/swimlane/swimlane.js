@@ -21,10 +21,11 @@
 import 'plugins/ml/swimlane/swimlane_controller.js';
 import 'plugins/ml/swimlane/swimlane.less';
 
-import TemplateVisTypeProvider from 'ui/template_vis_type/template_vis_type';
-import VisSchemasProvider from 'ui/vis/schemas';
+import { TemplateVisTypeProvider } from 'ui/template_vis_type/template_vis_type';
+import { VisSchemasProvider } from 'ui/vis/schemas';
+import { uiModules } from 'ui/modules';
 
-const module = require('ui/modules').get('ml/swimlane');
+const module = uiModules.get('ml/swimlane');
 module.run(function ($templateCache) {
   // Load the templates into the cache for quick retrieval.
   $templateCache.put('plugins/ml/swimlane/swimlane.html', require('plugins/ml/swimlane/swimlane.html'));

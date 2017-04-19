@@ -1,6 +1,6 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import moment from 'moment-timezone';
-import Notifier from 'ui/notify/notifier';
+import { Notifier } from 'ui/notify/notifier';
 import 'ui/config';
 import 'ui/url';
 import 'plugins/watcher/components/tool_bar_search_box';

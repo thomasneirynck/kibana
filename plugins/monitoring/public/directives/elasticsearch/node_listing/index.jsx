@@ -8,7 +8,7 @@ import { Tooltip } from 'plugins/monitoring/components/tooltip';
 import { extractIp } from 'plugins/monitoring/lib/extract_ip';
 import { Table } from 'plugins/monitoring/components/paginated_table';
 import { SORT_ASCENDING } from 'monitoring-constants';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 
 function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch) {
   function checkOnline(status) {

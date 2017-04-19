@@ -1,5 +1,5 @@
 import { find } from 'lodash';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './watch_edit_actions_execute_summary.html';
 import 'plugins/watcher/components/action_state_icon';
 

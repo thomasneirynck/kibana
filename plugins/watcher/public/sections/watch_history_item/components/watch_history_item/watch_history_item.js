@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './watch_history_item.html';
 
 import 'plugins/watcher/components/watch_history_item_detail';

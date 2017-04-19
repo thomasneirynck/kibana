@@ -16,7 +16,7 @@
 import moment from 'moment';
 import angular from 'angular';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.controller('MlJobTimepickerModal', function ($scope, $rootScope, $modalInstance, params, mlJobService, mlMessageBarService) {

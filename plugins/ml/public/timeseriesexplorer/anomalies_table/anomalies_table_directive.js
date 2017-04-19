@@ -33,7 +33,7 @@ import './expanded_row/expanded_row_directive';
 
 import linkControlsHtml from './anomalies_table_links.html';
 import openRowArrow from 'ui/doc_table/components/table_row/open.html';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService, mlResultsService,

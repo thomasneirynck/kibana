@@ -22,7 +22,7 @@ import _ from 'lodash';
 import $ from 'jquery';
 import { getSeverity } from 'plugins/ml/util/anomaly_utils';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlSwimlaneInfluencers', function ($timeout, mlResultsService) {

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 
 const uiModule = uiModules.get('monitoring/features', []);
 uiModule.service('features', function ($window) {

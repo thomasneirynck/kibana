@@ -1,11 +1,11 @@
 import _ from 'lodash';
-import Scanner from 'ui/utils/scanner';
 import { SavedWorkspaceProvider } from './saved_workspace';
-import uiModules from 'ui/modules';
+import { Scanner } from 'ui/utils/scanner';
+import { uiModules } from 'ui/modules';
 import chrome from 'ui/chrome';
 
 // bring in the factory
-import SavedObjectRegistry from 'ui/saved_objects/saved_object_registry';
+import { SavedObjectRegistryProvider } from 'ui/saved_objects/saved_object_registry';
 
 
 export function SavedWorkspacesProvider(es, kbnUrl, Private, Promise, kbnIndex) {
@@ -93,4 +93,4 @@ uiModules.get('app/graph').service('savedGraphWorkspaces',  function (Private) {
   return Private(SavedWorkspacesProvider);
 });
 
-SavedObjectRegistry.register(SavedWorkspacesProvider);
+SavedObjectRegistryProvider.register(SavedWorkspacesProvider);

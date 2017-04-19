@@ -1,6 +1,6 @@
 import 'plugins/reporting/directives/export_config';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
-import navbarExtensions from 'ui/registry/navbar_extensions';
+import { NavBarExtensionsRegistryProvider } from 'ui/registry/navbar_extensions';
 import { DashboardConstants } from 'plugins/kibana/dashboard/dashboard_constants';
 
 function dashboardReportProvider(Private, $location) {
@@ -18,4 +18,4 @@ function dashboardReportProvider(Private, $location) {
   };
 }
 
-navbarExtensions.register(dashboardReportProvider);
+NavBarExtensionsRegistryProvider.register(dashboardReportProvider);

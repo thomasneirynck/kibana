@@ -29,10 +29,10 @@ import 'plugins/ml/services/ml_dashboard_service';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/results_service';
 
-import FilterBarQueryFilterProvider from 'ui/filter_bar/query_filter';
-import parseInterval from 'ui/utils/parse_interval';
+import { FilterBarQueryFilterProvider } from 'ui/filter_bar/query_filter';
+import { parseInterval } from 'ui/utils/parse_interval';
 
-import notify from 'ui/notify';
+import { notify } from 'ui/notify';
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher';
@@ -46,7 +46,7 @@ uiRoutes
   }
 });
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.controller('MlExplorerController', function ($scope, $timeout, AppState, Private, timefilter,

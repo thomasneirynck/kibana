@@ -21,7 +21,7 @@ import { getSeverity, getSeverityColor } from 'plugins/ml/util/anomaly_utils';
 import 'plugins/ml/filters/abbreviate_whole_number';
 import 'plugins/ml/filters/format_value';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, mlAnomalyRecordDetailsService, mlSwimlaneService) {

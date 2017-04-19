@@ -1,6 +1,6 @@
 import pluralize from 'pluralize';
-import uiModules from 'ui/modules';
-import Notifier from 'ui/notify/notifier';
+import { uiModules } from 'ui/modules';
+import { Notifier } from 'ui/notify/notifier';
 import template from './watch_list.html';
 import '../watch_table';
 import { PAGINATION, REFRESH_INTERVALS } from 'plugins/watcher/../common/constants';

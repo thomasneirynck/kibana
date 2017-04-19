@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import { labels } from './lib/labels';
 import { indicesByNodes } from './transformers/indicesByNodes';
 import { nodesByIndices } from './transformers/nodesByIndices';

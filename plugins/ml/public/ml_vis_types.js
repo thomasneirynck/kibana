@@ -13,11 +13,11 @@
  * strictly prohibited.
  */
 
-import visTypes from 'ui/registry/vis_types';
+import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
 import { ConnectionsMapProvider } from './connectionsmap/connectionsmap';
 import { InfluencersListProvider } from './influencerslist/influencerslist';
 import { SwimlaneProvider } from './swimlane/swimlane';
 
-visTypes.register(ConnectionsMapProvider);
-visTypes.register(InfluencersListProvider);
-visTypes.register(SwimlaneProvider);
+VisTypesRegistryProvider.register(ConnectionsMapProvider);
+VisTypesRegistryProvider.register(InfluencersListProvider);
+VisTypesRegistryProvider.register(SwimlaneProvider);

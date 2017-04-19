@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import { KibanaStatusIcon } from 'plugins/monitoring/components/kibana/status_icon';
 import { Table } from 'plugins/monitoring/components/paginated_table';
 import { SORT_ASCENDING } from 'monitoring-constants';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringKibanaListing', function (kbnUrl) {

@@ -17,12 +17,12 @@ import _ from 'lodash';
 import angular from 'angular';
 import 'ui/timefilter';
 
-import parseInterval from 'ui/utils/parse_interval';
+import { parseInterval } from 'ui/utils/parse_interval';
 
 import { calculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/util/job_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.service('mlSingleMetricJobService', function (

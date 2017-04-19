@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './selectable_row.html';
 
 const app = uiModules.get('xpack/watcher');

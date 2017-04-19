@@ -16,7 +16,7 @@
 import _ from 'lodash';
 import angular from 'angular';
 
-import parseInterval from 'ui/utils/parse_interval';
+import { parseInterval } from 'ui/utils/parse_interval';
 
 import 'plugins/ml/lib/bower_components/JSON.minify/minify.json';
 import 'ui/courier';
@@ -41,7 +41,7 @@ uiRoutes
 import { sortByKey } from 'plugins/ml/util/string_utils';
 import { calculateDatafeedFrequencyDefaultSeconds as juCalculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/util/job_utils';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.controller('MlNewJob',

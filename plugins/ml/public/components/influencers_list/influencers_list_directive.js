@@ -24,9 +24,9 @@ import 'plugins/ml/filters/abbreviate_whole_number';
 
 import { getSeverity } from 'plugins/ml/util/anomaly_utils';
 
-import FilterManagerProvider from 'ui/filter_manager';
+import { FilterManagerProvider } from 'ui/filter_manager';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlInfluencersList', function (Private) {

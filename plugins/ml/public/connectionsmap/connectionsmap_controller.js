@@ -38,7 +38,7 @@ import {
 } from 'plugins/ml/util/anomaly_utils';
 import { escapeForElasticsearchQuery } from 'plugins/ml/util/string_utils';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.controller('MlConnectionsMapController', function (

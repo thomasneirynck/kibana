@@ -1,4 +1,4 @@
-import management from 'ui/management';
+import { management } from 'ui/management';
 
 export function updateWatchSections(watchId) {
   const statusSection = management.getSection('elasticsearch/watcher/watch/status');

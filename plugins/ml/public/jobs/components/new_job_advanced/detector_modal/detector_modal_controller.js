@@ -17,7 +17,7 @@ import _ from 'lodash';
 import { detectorToString } from 'plugins/ml/util/string_utils';
 import angular from 'angular';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.controller('MlDetectorModal', function ($scope, $modalInstance, params, mlJobService, mlMessageBarService) {

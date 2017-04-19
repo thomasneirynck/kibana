@@ -2,7 +2,7 @@ import _ from 'lodash';
 import template from './nav_menu.html';
 import chrome from 'ui/chrome';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlNavMenu', () => {

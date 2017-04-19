@@ -1,7 +1,7 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
 import { PhoneHome } from '../phone_home';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 
 uiModules.get('kibana')
   // disable stat reporting while running tests,

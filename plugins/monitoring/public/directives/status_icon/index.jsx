@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
 import { NodeStatusIcon } from 'plugins/monitoring/components/elasticsearch/node/status_icon';
 import { KibanaStatusIcon } from 'plugins/monitoring/components/kibana/status_icon';

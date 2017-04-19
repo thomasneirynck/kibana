@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import moment from 'moment';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import { set } from 'lodash';
 import { getTitle } from './get_title';
 import { getUnits } from './get_units';

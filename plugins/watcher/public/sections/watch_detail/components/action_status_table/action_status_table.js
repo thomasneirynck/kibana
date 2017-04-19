@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './action_status_table.html';
 
 const app = uiModules.get('xpack/watcher');

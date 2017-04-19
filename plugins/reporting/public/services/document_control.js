@@ -5,9 +5,9 @@ import {
 } from 'ui/state_management/state_hashing';
 
 import chrome from 'ui/chrome';
-import UiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 
-UiModules.get('xpack/reporting')
+uiModules.get('xpack/reporting')
 .service('reportingDocumentControl', function ($http, Promise, Private, $location) {
   const getUnhashableStates = Private(getUnhashableStatesProvider);
   const mainEntry = '/api/reporting/generate';

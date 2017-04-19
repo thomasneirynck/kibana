@@ -21,7 +21,7 @@ import 'plugins/ml/jobs/components/new_job_advanced/detector_modal';
 import 'plugins/ml/jobs/components/new_job_advanced/detector_filter_modal';
 import { detectorToString } from 'plugins/ml/util/string_utils';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlJobDetectorsList', function ($modal, $q, mlJobService) {

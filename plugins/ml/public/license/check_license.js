@@ -14,8 +14,8 @@
  */
 
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
-import Notifier from 'ui/notify/notifier';
-import notify from 'ui/notify';
+import { Notifier } from 'ui/notify/notifier';
+import { notify } from 'ui/notify';
 import _ from 'lodash';
 
 import chrome from 'ui/chrome';

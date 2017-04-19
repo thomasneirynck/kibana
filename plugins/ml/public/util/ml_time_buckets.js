@@ -22,15 +22,15 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import { TimeBucketsCalcAutoIntervalProvider } from 'plugins/ml/util/ml_calc_auto_interval';
-import TimeBucketsCalcEsIntervalProvider from 'ui/time_buckets/calc_es_interval';
+import { TimeBucketsCalcEsIntervalProvider } from 'ui/time_buckets/calc_es_interval';
 
-import TimeBucketProvider from 'ui/time_buckets';
+import { TimeBucketsProvider } from 'ui/time_buckets';
 export function IntervalHelperProvider(Private, timefilter, config) {
 
   const calcAuto = Private(TimeBucketsCalcAutoIntervalProvider);
   const calcEsInterval = Private(TimeBucketsCalcEsIntervalProvider);
 
-  _.class(TimeBuckets).inherits(Private(TimeBucketProvider));
+  _.class(TimeBuckets).inherits(Private(TimeBucketsProvider));
 
   function TimeBuckets() {
     this.barTarget = config.get('histogram:barTarget');

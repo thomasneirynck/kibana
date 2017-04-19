@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import { Table } from 'plugins/monitoring/components/paginated_table';
 import { SORT_ASCENDING } from 'monitoring-constants';
 import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 
 function showSystemIndicesComponentFactory(scope) {
   return class ShowSystemIndicesComponent extends React.Component {

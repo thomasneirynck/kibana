@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './index_privileges_form.html';
 
 const module = uiModules.get('security', ['kibana']);

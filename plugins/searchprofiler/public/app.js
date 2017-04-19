@@ -1,8 +1,8 @@
 
 // K5 imports
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import uiRoutes from 'ui/routes';
-import notify from 'ui/notify';
+import { notify } from 'ui/notify';
 
 // License
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';

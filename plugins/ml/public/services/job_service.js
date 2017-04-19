@@ -16,11 +16,11 @@
 import _ from 'lodash';
 import angular from 'angular';
 
-import parseInterval from 'ui/utils/parse_interval';
+import { parseInterval } from 'ui/utils/parse_interval';
 
 import { labelDuplicateDetectorDescriptions } from 'plugins/ml/util/anomaly_utils';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessageBarService) {

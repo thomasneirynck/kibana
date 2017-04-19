@@ -23,7 +23,7 @@ import $ from 'jquery';
 
 import { isTimeSeriesViewJob } from 'plugins/ml/util/job_utils';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlJobSelectList', ['mlJobService', 'mlDashboardService', function (mlJobService, mlDashboardService) {

@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './json_editor.html';
 import './json_editor.less';
 import 'ace';

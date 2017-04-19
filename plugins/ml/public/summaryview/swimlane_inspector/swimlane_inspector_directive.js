@@ -19,7 +19,7 @@ import $ from 'jquery';
 import _ from 'lodash';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlSwimlaneInspector', function (

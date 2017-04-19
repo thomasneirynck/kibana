@@ -1,4 +1,4 @@
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 
 const uiModule = uiModules.get('monitoring/license', []);
 uiModule.service('license', () => {

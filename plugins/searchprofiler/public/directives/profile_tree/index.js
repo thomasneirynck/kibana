@@ -6,7 +6,7 @@ import {
   normalizeTimes,
   flattenResults
  } from 'plugins/searchprofiler/directives/profile_tree/util';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 
 const uiModule = uiModules.get('app/searchprofiler/directives', []);
 uiModule.directive('profiletree',  HighlightService => {

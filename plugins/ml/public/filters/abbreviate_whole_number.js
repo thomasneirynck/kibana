@@ -19,7 +19,7 @@
 */
 import numeral from 'numeral';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.filter('abbreviateWholeNumber', function () {

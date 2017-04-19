@@ -1,5 +1,5 @@
 import { isEmpty, get } from 'lodash';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './watch_edit_execute_detail.html';
 import './watch_edit_execute_detail.less';
 import '../watch_action_mode_table';

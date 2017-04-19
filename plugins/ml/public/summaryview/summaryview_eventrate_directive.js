@@ -25,7 +25,7 @@ import moment from 'moment';
 import angular from 'angular';
 import 'ui/timefilter';
 
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlSummaryViewEventRate', function (

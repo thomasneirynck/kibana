@@ -1,5 +1,5 @@
 import uiRoutes from 'ui/routes';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './index.html';
 
 uiRoutes.when('/no-data', {

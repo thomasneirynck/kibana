@@ -1,11 +1,9 @@
 import d3 from 'd3';
-import { venn } from 'venn.js';
 import 'ace';
 import './angular-venn-simple.js';
 import gws from './graphClientWorkspace.js';
 import utils from './utils.js';
-import { capitalize, partial } from 'lodash';
-import IndexPatternsProvider from 'ui/index_patterns/index_patterns';
+import { IndexPatternsProvider } from 'ui/index_patterns/index_patterns';
 
 import 'ui/autoload/all';
 import 'ui/directives/saved_object_finder';
@@ -14,14 +12,13 @@ import { iconChoices, colorChoices, iconChoicesByClass, drillDownIconChoices,
   drillDownIconChoicesByClass } from 'plugins/graph/style_choices';
 import { outlinkEncoders } from 'plugins/graph/services/outlink_encoders';
 
-import KbnUrlProvider from 'ui/url';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import chrome from 'ui/chrome';
 import 'plugins/graph/less/main.less';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import uiRoutes from 'ui/routes';
-import uiNotify from 'ui/notify';
-import Notifier from 'ui/notify/notifier';
+import { notify } from 'ui/notify';
+import { Notifier } from 'ui/notify/notifier';
 import appTemplate from 'plugins/graph/templates/index.html';
 
 const app = uiModules.get('app/graph', ['angular-venn-simple']);
@@ -78,7 +75,7 @@ uiRoutes
         return savedGraphWorkspaces.get($route.current.params.id)
         .catch(
           function () {
-            require('ui/notify').error('Missing workspace');
+            notify.error('Missing workspace');
           }
       );
 
@@ -111,7 +108,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
 
   function handleError(err) {
     return checkLicense(Private, Promise, kbnBaseUrl)
-    .then(() => uiNotify.error(err));
+    .then(() => notify.error(err));
   }
 
   $scope.title = 'Graph';
@@ -358,7 +355,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     return $http.post('../api/graph/graphExplore', request)
       .then(function (resp) {
         if (resp.data.resp.timed_out) {
-          uiNotify.warning('Exploration timed out');
+          notify.warning('Exploration timed out');
         }
         responseHandler(resp.data.resp);
       })
@@ -506,7 +503,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   $scope.saveUrlTemplate = function () {
     const found = $scope.newUrlTemplate.url.search(drillDownRegex) > -1;
     if (!found) {
-      uiNotify.warning('Invalid URL - the url must contain a {{gquery}} string');
+      notify.warning('Invalid URL - the url must contain a {{gquery}} string');
       return;
     }
     if ($scope.newUrlTemplate.templateBeingEdited) {
@@ -666,7 +663,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
 
 
   if ($scope.indices.length === 0) {
-    uiNotify.warning('Oops, no data sources. First head over to Kibana settings and define a choice of index pattern');
+    notify.warning('Oops, no data sources. First head over to Kibana settings and define a choice of index pattern');
   }
 
 
@@ -713,7 +710,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
         function doDelete() {
           $route.current.locals.SavedWorkspacesProvider.delete($route.current.locals.savedWorkspace.id);
           kbnUrl.change('/home', {});
-          require('ui/notify').info('Deleted ' + title);
+          notify.info('Deleted ' + title);
         }
         const confirmModalOptions = {
           onConfirm: doDelete,
@@ -874,7 +871,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     if ($scope.allSavingDisabled) {
       // It should not be possible to navigate to this function if allSavingDisabled is set
       // but adding check here as a safeguard.
-      require('ui/notify').warning('Saving is disabled');
+      notify.warning('Saving is disabled');
       return;
     }
     initWorkspaceIfRequired();
@@ -966,11 +963,11 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
         if (!canSaveData && $scope.workspace.nodes.length > 0) {
           message += ' (the workspace configuration but not the data was saved)';
         }
-        require('ui/notify').info(message);
+        notify.info(message);
         if ($scope.savedWorkspace.id === $route.current.params.id) return;
         $scope.openSavedWorkspace($scope.savedWorkspace);
       }
-    }, require('ui/notify').fatal);
+    }, notify.fatal);
 
   };
 

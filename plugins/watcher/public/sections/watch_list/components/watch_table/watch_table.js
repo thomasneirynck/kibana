@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import uiModules from 'ui/modules';
+import { uiModules } from 'ui/modules';
 import template from './watch_table.html';
 import 'plugins/watcher/components/sortable_column';
 import 'plugins/watcher/components/selectable_column';
