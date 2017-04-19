@@ -64,9 +64,11 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
   }
 
   const TimeBuckets = Private(IntervalHelperProvider);
-
   const queryFilter = Private(FilterBarQueryFilterProvider);
 
+  let resizeTimeout = null;
+
+  const $mlExplorer = $('.ml-explorer');
   const MAX_INFLUENCER_FIELD_NAMES = 10;
   const MAX_DISPLAY_FIELD_VALUES = 10;
   const VIEW_BY_JOB_LABEL = 'job ID';
@@ -254,6 +256,30 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     $scope.setSelectedJobs(selections);
   });
 
+  // Redraw the swimlane when the window resizes or the global nav is toggled.
+  $(window).resize(() => {
+    if (resizeTimeout !== null) {
+      $timeout.cancel(resizeTimeout);
+    }
+    // Only redraw 500ms after last resize event.
+    resizeTimeout = $timeout(redrawOnResize, 500);
+  });
+
+  const navListener = $scope.$on('globalNav:update', () => {
+    // Run in timeout so that content pane has resized after global nav has updated.
+    $timeout(function () {
+      redrawOnResize();
+    }, 300);
+  });
+
+  function redrawOnResize() {
+    $scope.swimlaneWidth = getSwimlaneContainerWidth();
+    $scope.$apply();
+
+    mlExplorerDashboardService.fireSwimlaneDataChange('overall');
+    mlExplorerDashboardService.fireSwimlaneDataChange('viewBy');
+  }
+
   // Refresh the data when the dashboard filters are updated.
   $scope.$listen(queryFilter, 'update', function () {
     // TODO - add in filtering functionality.
@@ -313,6 +339,8 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
   $scope.$on('$destroy', () => {
     mlExplorerDashboardService.removeSwimlaneCellClickListener(swimlaneCellClickListener);
     refreshWatcher.cancel();
+    // Cancel listening for updates to the global nav state.
+    navListener();
   });
 
   function loadViewBySwimlaneOptions() {
@@ -600,7 +628,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
 
   function getSwimlaneContainerWidth() {
     // swimlane width is 5 sixths of the window, minus 170 for the lane labels, minus 50 padding
-    return (($('.ml-explorer').width() / 6) * 5) - 170 - 50;
+    return(($mlExplorer.width() / 6) * 5) - 170 - 50;
   }
 
   function processOverallResults(scoresByTime) {
