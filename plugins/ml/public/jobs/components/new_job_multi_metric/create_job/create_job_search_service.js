@@ -21,67 +21,43 @@ const module = uiModules.get('apps/ml');
 module.service('mlMultiMetricJobSearchService', function ($q, es) {
 
   // detector swimlane search
-  this.getScoresByRecord = function (index, jobIds, earliestMs, latestMs, interval, firstSplitField) {
+  this.getScoresByRecord = function (index, jobId, earliestMs, latestMs, interval, firstSplitField) {
     const deferred = $q.defer();
     const obj = {
       success: true,
       results: {}
     };
 
-    // Build the criteria to use in the bool filter part of the request.
-    // Adds criteria for the time range plus any specified job IDs.
-    const boolCriteria = [];
-    boolCriteria.push({
-      'range': {
-        'timestamp': {
-          'gte': earliestMs,
-          'lte': latestMs,
-          'format': 'epoch_millis'
-        }
-      }
-    });
-
-    let indexString = '';
-
-    if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
-      let jobIdFilterStr = '';
-      _.each(jobIds, (jobId, i) => {
-        if (i > 0) {
-          jobIdFilterStr += ' OR ';
-          indexString += ',';
-        }
-        jobIdFilterStr += 'job_id:';
-        jobIdFilterStr += jobId;
-
-        indexString += '.ml-anomalies-' + jobId;
-      });
-
-      if (firstSplitField && firstSplitField.value !== undefined) {
-        jobIdFilterStr += ` AND ${firstSplitField.name}: ${firstSplitField.value}`;
-      }
-
-      boolCriteria.push({
-        'query_string': {
-          'analyze_wildcard': true,
-          'query': jobIdFilterStr
-        }
-      });
+    let jobIdFilterStr = 'job_id: ' + jobId;
+    if (firstSplitField && firstSplitField.value !== undefined) {
+      jobIdFilterStr += ` AND ${firstSplitField.name}: ${firstSplitField.value}`;
     }
 
     es.search({
-      index: indexString,
+      index: '.ml-anomalies-*',
       size: 0,
       body: {
         'query': {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:result AND result_type:record',
-                'analyze_wildcard': true
+                'query': '_type:result AND result_type:record'
               }
             }, {
               'bool': {
-                'must': boolCriteria
+                'must': [{
+                  'range': {
+                    'timestamp': {
+                      'gte': earliestMs,
+                      'lte': latestMs,
+                      'format': 'epoch_millis'
+                    }
+                  }
+                }, {
+                  'query_string': {
+                    'query': jobIdFilterStr
+                  }
+                }]
               }
             }]
           }
@@ -149,62 +125,38 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
   };
 
   // event rate swimlane search
-  this.getScoresByBucket = function (index, jobIds, earliestMs, latestMs, interval) {
+  this.getScoresByBucket = function (index, jobId, earliestMs, latestMs, interval) {
     const deferred = $q.defer();
     const obj = {
       success: true,
       results: {}
     };
 
-    // Build the criteria to use in the bool filter part of the request.
-    // Adds criteria for the time range plus any specified job IDs.
-    const boolCriteria = [];
-    boolCriteria.push({
-      'range': {
-        'timestamp': {
-          'gte': earliestMs,
-          'lte': latestMs,
-          'format': 'epoch_millis'
-        }
-      }
-    });
-
-    let indexString = '';
-
-    if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
-      let jobIdFilterStr = '';
-      _.each(jobIds, (jobId, i) => {
-        if (i > 0) {
-          jobIdFilterStr += ' OR ';
-          indexString += ',';
-        }
-        jobIdFilterStr += 'job_id:';
-        jobIdFilterStr += jobId;
-
-        indexString += '.ml-anomalies-' + jobId;
-      });
-      boolCriteria.push({
-        'query_string': {
-          'analyze_wildcard': true,
-          'query': jobIdFilterStr
-        }
-      });
-    }
-
     es.search({
-      index: indexString,
+      index: '.ml-anomalies-*',
       size: 0,
       body: {
         'query': {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:result AND result_type:bucket',
-                'analyze_wildcard': true
+                'query': '_type:result AND result_type:bucket'
               }
             }, {
               'bool': {
-                'must': boolCriteria
+                'must': [{
+                  'range': {
+                    'timestamp': {
+                      'gte': earliestMs,
+                      'lte': latestMs,
+                      'format': 'epoch_millis'
+                    }
+                  }
+                }, {
+                  'query_string': {
+                    'query': 'job_id:' + jobId
+                  }
+                }]
               }
             }]
           }
@@ -228,8 +180,6 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
       }
     })
     .then((resp) => {
-      // console.log('Time series search service getScoresByBucket() resp:', resp);
-
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
       _.each(aggregationsByTime, (dataForTime) => {
         const time = dataForTime.key;
@@ -323,8 +273,6 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
       }
     })
     .then((resp) => {
-      // console.log('getEventRate() resp:', resp);
-
       // Process the two levels for aggregation for influencerFieldValue and time.
       const dataByTimeBucket = _.get(resp, ['aggregations', 'eventRate', 'buckets'], []);
       _.each(dataByTimeBucket, (dataForTime) => {

@@ -392,7 +392,7 @@ module.service('mlSingleMetricJobService', function (
 
     mlSingleMetricJobSearchService.getModelPlotOutput(
       formConfig.indexPattern.id,
-      [formConfig.jobId],
+      formConfig.jobId,
       start,
       formConfig.end,
       formConfig.resultsIntervalSeconds + 's',
@@ -421,7 +421,7 @@ module.service('mlSingleMetricJobService', function (
 
     mlSingleMetricJobSearchService.getScoresByBucket(
       formConfig.indexPattern.id,
-      [formConfig.jobId],
+      formConfig.jobId,
       formConfig.start,
       formConfig.end,
       formConfig.resultsIntervalSeconds + 's'

@@ -80,6 +80,12 @@ module
   const MAX_BUCKET_DIFF = 3;
   const METRIC_AGG_TYPE = 'metrics';
 
+  const jobProgressChecks = {
+    25: false,
+    50: false,
+    75: false,
+  };
+
   const CHART_STATE = {
     NOT_STARTED: 0,
     LOADING: 1,
@@ -442,6 +448,20 @@ module
         if (ignoreModel) {
           jobCheck();
         } else {
+
+          // check to see if the percentage is past a threshold for reloading the full model
+          let fullModelRefresh = false;
+          _.each(jobProgressChecks, (c, i) => {
+            if (jobProgressChecks[i] === false && $scope.chartData.percentComplete >= i) {
+              jobProgressChecks[i] = true;
+              fullModelRefresh = true;
+            }
+          });
+          // the full model needs to be refreshed
+          if (fullModelRefresh) {
+            $scope.chartData.model = [];
+          }
+
           reloadModelChart()
           .catch(() => {
             // on the 10th model load failure, set ignoreNodel to true to stop trying to load it.
@@ -459,15 +479,25 @@ module
   }
 
   function jobCheck() {
+    let isLastRun = false;
     if ($scope.jobState === JOB_STATE.RUNNING || $scope.jobState === JOB_STATE.STOPPING) {
       refreshInterval = adjustRefreshInterval($scope.chartData.loadingDifference, refreshInterval);
-      // console.log('loading difference', $scope.chartData.loadingDifference);
-      // console.log('refreshInterval', refreshInterval);
       _.delay(loadCharts, refreshInterval);
     } else {
       $scope.chartData.percentComplete = 100;
+      isLastRun = true;
     }
-    $scope.$broadcast('render-results');
+
+    if (isLastRun && !ignoreModel) {
+      // at the very end of the job, reload the full model just in case there are
+      // any jitters in the chart caused by previously loading the model mid job.
+      $scope.chartData.model = [];
+      reloadModelChart().finally(() => {
+        $scope.$broadcast('render-results');
+      });
+    } else {
+      $scope.$broadcast('render-results');
+    }
   }
 
   function reloadModelChart() {
@@ -510,6 +540,10 @@ module
   $scope.resetJob = function () {
     $scope.jobState = JOB_STATE.NOT_STARTED;
     angular.element('.model-chart, .swimlane').css('opacity', 0);
+
+    _.each(jobProgressChecks, (c, i) => {
+      jobProgressChecks[i] = false;
+    });
 
     window.setTimeout(() => {
       $scope.ui.showJobInput = true;

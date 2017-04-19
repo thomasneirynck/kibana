@@ -334,7 +334,7 @@ module.service('mlMultiMetricJobService', function (
 
     mlMultiMetricJobSearchService.getScoresByBucket(
       formConfig.indexPattern.id,
-      [formConfig.jobId],
+      formConfig.jobId,
       formConfig.start,
       formConfig.end,
       formConfig.resultsIntervalSeconds + 's'
@@ -373,7 +373,7 @@ module.service('mlMultiMetricJobService', function (
 
     mlMultiMetricJobSearchService.getScoresByRecord(
       formConfig.indexPattern.id,
-      [formConfig.jobId],
+      formConfig.jobId,
       formConfig.start,
       formConfig.end,
       formConfig.resultsIntervalSeconds + 's',

@@ -20,62 +20,38 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlSingleMetricJobSearchService', function ($q, es) {
 
-  this.getScoresByBucket = function (index, jobIds, earliestMs, latestMs, interval) {
+  this.getScoresByBucket = function (index, jobId, earliestMs, latestMs, interval) {
     const deferred = $q.defer();
     const obj = {
       success: true,
       results: {}
     };
 
-    // Build the criteria to use in the bool filter part of the request.
-    // Adds criteria for the time range plus any specified job IDs.
-    const boolCriteria = [];
-    boolCriteria.push({
-      'range': {
-        'timestamp': {
-          'gte': earliestMs,
-          'lte': latestMs,
-          'format': 'epoch_millis'
-        }
-      }
-    });
-
-    let indexString = '';
-
-    if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
-      let jobIdFilterStr = '';
-      _.each(jobIds, (jobId, i) => {
-        if (i > 0) {
-          jobIdFilterStr += ' OR ';
-          indexString += ',';
-        }
-        jobIdFilterStr += 'job_id:';
-        jobIdFilterStr += jobId;
-
-        indexString += '.ml-anomalies-' + jobId;
-      });
-      boolCriteria.push({
-        'query_string': {
-          'analyze_wildcard': true,
-          'query': jobIdFilterStr
-        }
-      });
-    }
-
     es.search({
-      index: indexString,
+      index: '.ml-anomalies-*',
       size: 0,
       body: {
         'query': {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:result AND result_type:bucket',
-                'analyze_wildcard': true
+                'query': '_type:result AND result_type:bucket'
               }
             }, {
               'bool': {
-                'must': boolCriteria
+                'must': [{
+                  'range': {
+                    'timestamp': {
+                      'gte': earliestMs,
+                      'lte': latestMs,
+                      'format': 'epoch_millis'
+                    }
+                  }
+                }, {
+                  'query_string': {
+                    'query': 'job_id:' + jobId
+                  }
+                }]
               }
             }]
           }
@@ -99,8 +75,6 @@ module.service('mlSingleMetricJobSearchService', function ($q, es) {
       }
     })
     .then((resp) => {
-      // console.log('Time series search service getScoresByBucket() resp:', resp);
-
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
       _.each(aggregationsByTime, (dataForTime) => {
         const time = dataForTime.key;
@@ -119,62 +93,38 @@ module.service('mlSingleMetricJobSearchService', function ($q, es) {
 
 
 
-  this.getModelPlotOutput = function (index, jobIds, earliestMs, latestMs, interval, aggType) {
+  this.getModelPlotOutput = function (index, jobId, earliestMs, latestMs, interval, aggType) {
     const deferred = $q.defer();
     const obj = {
       success: true,
       results: {}
     };
 
-    // Build the criteria to use in the bool filter part of the request.
-    // Adds criteria for the time range plus any specified job IDs.
-    const boolCriteria = [];
-    boolCriteria.push({
-      'range': {
-        'timestamp': {
-          'gte': earliestMs,
-          'lte': latestMs,
-          'format': 'epoch_millis'
-        }
-      }
-    });
-
-    let indexString = '';
-
-    if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
-      let jobIdFilterStr = '';
-      _.each(jobIds, (jobId, i) => {
-        if (i > 0) {
-          jobIdFilterStr += ' OR ';
-          indexString += ',';
-        }
-        jobIdFilterStr += 'job_id:';
-        jobIdFilterStr += jobId;
-
-        indexString += '.ml-anomalies-' + jobId;
-      });
-      boolCriteria.push({
-        'query_string': {
-          'analyze_wildcard': true,
-          'query': jobIdFilterStr
-        }
-      });
-    }
-
     es.search({
-      index: indexString,
+      index: '.ml-anomalies-*',
       size: 0,
       body: {
         'query': {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:result AND result_type:model_plot',
-                'analyze_wildcard': true
+                'query': '_type:result AND result_type:model_plot'
               }
             }, {
               'bool': {
-                'must': boolCriteria
+                'must': [{
+                  'range': {
+                    'timestamp': {
+                      'gte': earliestMs,
+                      'lte': latestMs,
+                      'format': 'epoch_millis'
+                    }
+                  }
+                }, {
+                  'query_string': {
+                    'query': 'job_id:' + jobId
+                  }
+                }]
               }
             }]
           }
@@ -193,13 +143,11 @@ module.service('mlSingleMetricJobSearchService', function ($q, es) {
                 }
               },
               'modelUpper': {
-                // 'max': {
                 [aggType.max]: {
                   'field': 'model_upper'
                 }
               },
               'modelLower': {
-                // 'min': {
                 [aggType.min]: {
                   'field': 'model_lower'
                 }
@@ -210,8 +158,6 @@ module.service('mlSingleMetricJobSearchService', function ($q, es) {
       }
     })
     .then((resp) => {
-      // console.log('Time series search service getModelPlotOutput() resp:', resp);
-
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
       _.each(aggregationsByTime, (dataForTime) => {
         const time = dataForTime.key;
