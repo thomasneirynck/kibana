@@ -18,7 +18,7 @@
           <button
             ng-click="editDetector($index)"
             aria-label="Edit"
-            class="btn btn-xs btn-default"
+            class="kuiButton kuiButton--basic ml-btn-small"
             data-toggle="tooltip"
             tooltip="Edit Detector">
               <i aria-hidden="true" class="fa fa-pencil"></i>
@@ -29,49 +29,11 @@
             ng-click="removeDetector($index)"
             tooltip-append-to-body="true"
             type="button"
-            class="btn btn-xs btn-danger remove-button">
+            class="kuiButton kuiButton--danger ml-btn-small remove-button">
               <i aria-hidden="true" class="fa fa-trash"></i>
           </button>
         </div>
 
-
-<!--
-        <div ng-show="detector.detector_rules.length > 0" class="filter-list">
-          <div>Filters:</div>
-          <div ng-repeat="filter in detector.detector_rules track by $index" class="filter">
-            {{ filter.ruleAction }} ({{filter.ruleConditions.length}} condition{{(filter.ruleConditions.length>1)?"s":""}})
-            <div class="button-container">
-              <button
-                ng-click="editFilter(detector, $index)"
-                aria-label="Edit"
-                class="btn btn-xs btn-default"
-                data-toggle="tooltip"
-                tooltip="Edit Filter">
-                  <i aria-hidden="true" class="fa fa-pencil"></i>
-              </button>
-              <button
-                aria-label="Remove Filter"
-                ng-click="removeFilter(detector, $index)"
-                tooltip-append-to-body="true"
-                type="button"
-                class="btn btn-xs btn-danger remove-button">
-                  <i aria-hidden="true" class="fa fa-trash"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div ng-show="editMode==='NEW'">
-          <button
-            aria-label="Add Filter"
-            ng-click="openFilterWindow(detector)"
-            type="button"
-            class="btn btn-primary btn-xs">
-              <span class="sr-only">Add Filter</span>
-              <i aria-hidden="true" class="fa fa-plus"></i> Add Filter
-          </button>
-        </div>
--->
       </div>
 
     </div>
@@ -81,7 +43,7 @@
         aria-label="Add Detector"
         ng-click="openNewWindow()"
         type="button"
-        class="btn btn-primary btn-xs">
+        class="kuiButton kuiButton--primary ml-btn-small">
           <span class="sr-only">Add Detector</span>
           <i aria-hidden="true" class="fa fa-plus"></i> Add Detector
       </button>

@@ -101,7 +101,7 @@
           ng-click="removeCondition($index)"
           tooltip-append-to-body="true"
           type="button"
-          class="btn btn-xs btn-danger remove-button">
+          class="kuiButton kuiButton--danger ml-btn-small remove-button">
             <i aria-hidden="true" class="fa fa-trash"></i>
         </button>
       </div>
@@ -111,7 +111,7 @@
     aria-label="Add new condition"
     ng-click="addNewCondition()"
     type="button"
-    class="btn btn-primary btn-xs add-new">
+    class="kuiButton kuiButton--primary ml-btn-small add-new">
       <span class="sr-only">Add new condition</span>
       <i aria-hidden="true" class="fa fa-plus"></i> Add new condition
   </button>
@@ -121,14 +121,14 @@
   <button
     ng-click="save()"
     ng-disabled="(saveLock === true || filter.ruleConditions.length === 0)"
-    class="btn btn-info"
+    class="kuiButton kuiButton--primary"
     aria-label="Save">
     {{ (editMode? "Update" : "Add") }}
   </button>
   <button
     ng-click="cancel()"
     ng-disabled="(saveLock === true)"
-    class="btn btn-info"
+    class="kuiButton kuiButton--primary"
     aria-label="Cancel">
     Cancel
   </button>

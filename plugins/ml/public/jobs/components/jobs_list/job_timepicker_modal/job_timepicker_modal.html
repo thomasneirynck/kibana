@@ -5,12 +5,12 @@
   <div class="ml-timepicker-contents" >
     <form name="mlAbsoluteTime">
       <div class="row">
-        <div 
-          class="ml-timepicker-section" 
-          ng-class="{ 
-            'ml-timepicker-right-border': 
-              (+ui.startRadio <= 1 && ui.endRadio === '0') || 
-              (ui.startRadio === '2' && +ui.endRadio <= 1) 
+        <div
+          class="ml-timepicker-section"
+          ng-class="{
+            'ml-timepicker-right-border':
+              (+ui.startRadio <= 1 && ui.endRadio === '0') ||
+              (ui.startRadio === '2' && +ui.endRadio <= 1)
           }">
           <label>Search start time</label>
 
@@ -42,9 +42,9 @@
         </div>
 
         <div class="ml-timepicker-section"
-          ng-class="{ 
-            'ml-timepicker-left-border': 
-              (+ui.startRadio <= 1 && ui.endRadio === '1') 
+          ng-class="{
+            'ml-timepicker-left-border':
+              (+ui.startRadio <= 1 && ui.endRadio === '1')
           }">
           <label>Search end time</label>
           <div class="ml-timepicker-radios" >
@@ -78,20 +78,20 @@
 
   <hr />
 
-  <button 
-    ng-click="save()" 
+  <button
+    ng-click="save()"
     ng-disabled="(
-      saveLock === true || 
-      ( ui.startRadio==='2' && ui.timepicker.from==='' ) || 
-      ( ui.endRadio==='1' && ui.timepicker.to==='' ) 
+      saveLock === true ||
+      ( ui.startRadio==='2' && ui.timepicker.from==='' ) ||
+      ( ui.endRadio==='1' && ui.timepicker.to==='' )
     )"
-    class="btn btn-info" >
+    class="kuiButton kuiButton--primary" >
     Start
   </button>
-  <button 
-    ng-click="cancel()" 
+  <button
+    ng-click="cancel()"
     ng-disabled="(saveLock === true)"
-    class="btn btn-info" 
+    class="kuiButton kuiButton--primary"
     aria-label="Cancel">
     Cancel
   </button>

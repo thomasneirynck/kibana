@@ -12,7 +12,7 @@
             ng-click="setFullTimeRange()"
             type="button"
             ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-            class="btn btn-sm btn-success">
+            class="kuiButton kuiButton--primary">
               Use full {{ui.indexPatternId}} data
           </button>
         </div>
@@ -53,7 +53,7 @@
           ng-change="timeFieldChange()"
           ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
           class="form-control lowercase" />
-        <button class="btn-success navbar-btn-link btn-load-vis"
+        <button class="kuiButton kuiButton--primary navbar-btn-link btn-load-vis"
           ng-click="loadVis()"
           ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED" >
           <i class="fa fa-play" ></i>
@@ -116,7 +116,7 @@
           ng-click="ui.showAdvanced = !ui.showAdvanced"
           type="button"
           ng-disabled="formConfig.useDedicatedIndex"
-          class="btn btn-primary btn-xs advanced-button">
+          class="kuiButton kuiButton--primary ml-btn-small advanced-button">
           <i aria-hidden="true" ng-class="{ 'fa-caret-down': ui.showAdvanced, 'fa-caret-right': !ui.showAdvanced }" class="fa"></i>
         </button>
         <label>Advanced</label><i ml-info-icon="new_job_advanced_settings" ></i>
@@ -135,7 +135,7 @@
         type="button"
         ng-show="jobState === JOB_STATE.NOT_STARTED"
         ng-disabled='ui.formValid === false || ui.dirty === true || formConfig.jobId === undefined || ui.bucketSpanValid === false'
-        class="btn btn-primary">
+        class="kuiButton kuiButton--primary">
           Create Job
       </button>
 
@@ -148,7 +148,7 @@
         type="button"
         ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
         ng-disabled="jobState === JOB_STATE.STOPPING"
-        class="btn btn-primary btn-danger">
+        class="kuiButton kuiButton--danger">
           {{(jobState === JOB_STATE.STOPPING) ? 'Analysis stopping' : 'Stop analysis' }}
       </button>
 
@@ -157,7 +157,7 @@
         ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
         ng-click="viewResults('timeseriesexplorer')"
         type="button"
-        class="btn btn-primary">
+        class="kuiButton kuiButton--primary">
           View Results
       </button>
 
@@ -169,14 +169,14 @@
         aria-label="Reset"
         ng-click="resetJob()"
         type="button"
-        class="btn btn-primary">
+        class="kuiButton kuiButton--primary">
           Reset
       </button>
       <button
         aria-label="Reset"
         ng-click="viewResults('timeseriesexplorer')"
         type="button"
-        class="btn btn-primary">
+        class="kuiButton kuiButton--primary">
           View Results
       </button>
 

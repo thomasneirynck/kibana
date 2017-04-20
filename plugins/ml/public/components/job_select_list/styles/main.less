@@ -54,13 +54,13 @@ navbar {
   line-height:33px;
 }
 
-.btn.ml-job-select-btn {
+.kuiButton.ml-job-select-btn {
   width: 260px;
   height: 34px;
   text-align: left;
   color: #444444;
   background-color: white;
-  border: 2px solid #ecf0f1;
+  border: 2px solid white;
   border-left-width: 0px;
   border-radius: 0px 4px 4px 0px;
   padding-left: 10px;
@@ -79,12 +79,14 @@ navbar {
   }
 }
 
-.btn-default.ml-job-select-btn:hover, .btn-default.ml-job-select-btn:focus, .btn-default.ml-job-select-btn:active {
-  color: #444444;
-  background-color: white;
-  border-color: #9c9c9c;
+.kuiButton--basic.ml-job-select-btn:hover, .kuiButton--basic.ml-job-select-btn:focus, .kuiButton--basic.ml-job-select-btn:active {
+  color: #444444 !important;
+  background-color: white !important;
+  border-color: #9c9c9c !important;
+  transform: none;
 }
 
-.btn-default.ml-job-select-btn:focus {
+.kuiButton--basic.ml-job-select-btn:focus {
   outline: none;
+  box-shadow: none !important;
 }

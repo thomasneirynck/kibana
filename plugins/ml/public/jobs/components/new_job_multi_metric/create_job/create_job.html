@@ -12,7 +12,7 @@
             ng-click="setFullTimeRange()"
             type="button"
             ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-            class="btn btn-sm btn-success">
+            class="kuiButton--primary">
               Use full {{ui.indexPatternId}} data
           </button>
         </div>
@@ -145,7 +145,7 @@
                     ng-click="ui.showAdvanced = !ui.showAdvanced"
                     ng-disabled="formConfig.useDedicatedIndex"
                     type="button"
-                    class="btn btn-primary btn-xs advanced-button">
+                    class="kuiButton kuiButton--primary ml-btn-small advanced-button">
                     <i aria-hidden="true" ng-class="{ 'fa-caret-down': ui.showAdvanced, 'fa-caret-right': !ui.showAdvanced }" class="fa"></i>
                   </button>
                   <label>Advanced</label><i ml-info-icon="new_job_advanced_settings" ></i>
@@ -164,7 +164,7 @@
                   type="button"
                   ng-show="jobState === JOB_STATE.NOT_STARTED"
                   ng-disabled="!ui.formValid"
-                  class="btn btn-primary">
+                  class="kuiButton kuiButton--primary">
                     Create Job
                 </button>
 
@@ -177,7 +177,7 @@
                   type="button"
                   ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
                   ng-disabled="jobState === JOB_STATE.STOPPING"
-                  class="btn btn-primary btn-danger">
+                  class="kuiButton kuiButton--danger">
                     {{(jobState === JOB_STATE.STOPPING) ? 'Analysis stopping' : 'Stop analysis' }}
                 </button>
 
@@ -186,7 +186,7 @@
                   ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
                   ng-click="viewResults('explorer')"
                   type="button"
-                  class="btn btn-primary">
+                  class="kuiButton kuiButton--primary">
                     View Results
                 </button>
               </div>
@@ -197,14 +197,14 @@
                   aria-label="Reset"
                   ng-click="resetJob()"
                   type="button"
-                  class="btn btn-primary">
+                  class="kuiButton kuiButton--primary">
                     Reset
                 </button>
                 <button
                   aria-label="Reset"
                   ng-click="viewResults('explorer')"
                   type="button"
-                  class="btn btn-primary">
+                  class="kuiButton kuiButton--primary">
                     View Results
                 </button>
               </div>

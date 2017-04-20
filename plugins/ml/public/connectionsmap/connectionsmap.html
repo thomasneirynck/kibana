@@ -4,7 +4,7 @@
 
     <div style="display:block;">
       <label class="small">View by:</label>
-      <div class="btn-group" dropdown>
+      <div class="kuiButtonGroup" dropdown>
         <button type="button" class="form-control ml-connections-map-dropdown viewby-dropdown dropdown-toggle" dropdown-toggle ng-disabled="disabled">
           <span>{{vis.params.viewBy.label}}</span> <span class="caret"></span>
         </button>
@@ -14,7 +14,7 @@
       </div>
 
       <label class="small" style="padding-left: 15px;">Severity threshold:</label>
-      <div class="btn-group" dropdown>
+      <div class="kuiButtonGroup" dropdown>
         <button type="button" class="form-control ml-connections-map-dropdown threshold-dropdown dropdown-toggle" dropdown-toggle ng-disabled="disabled">
           <span><i class="fa fa-exclamation-triangle icon-severity-{{vis.params.threshold.display}}"></i> {{vis.params.threshold.display}}</span> <span class="caret"></span>
         </button>
