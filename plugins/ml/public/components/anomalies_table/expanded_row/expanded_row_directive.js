@@ -15,9 +15,9 @@
 
 /*
  * Angular directive for rendering the expanded row content in the
- * Ml Anomaly Summary table Kibana visualization. It displays
- * more details on the anomaly summarized in the row, including
- * field names, actual and typical values for the analyzed metric,
+ * Machine Learning anomalies table. It displays more details on the
+ * anomaly summarized in the row, including field names,
+ * actual and typical values for the analyzed metric,
  * plus causes and examples events according to the detector configuration.
  */
 
@@ -190,7 +190,7 @@ module.directive('mlAnomaliesTableExpandedRow', function () {
     restrict: 'AE',
     replace: false,
     scope: {},
-    template: require('plugins/ml/timeseriesexplorer/anomalies_table/expanded_row/expanded_row.html'),
+    template: require('plugins/ml/components/anomalies_table/expanded_row/expanded_row.html'),
     link: link
   };
 });

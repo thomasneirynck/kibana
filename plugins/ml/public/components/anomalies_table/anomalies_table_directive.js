@@ -13,6 +13,10 @@
  * strictly prohibited.
  */
 
+ /*
+ * AngularJS directive for rendering a table of Machine Learning anomalies.
+ */
+
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -37,7 +41,7 @@ import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService, mlResultsService,
-  mlTimeSeriesDashboardService, formatValueFilter, AppState) {
+  mlAnomaliesTableService, formatValueFilter, AppState) {
   return {
     restrict: 'E',
     scope: {
@@ -45,7 +49,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
       indexPatternId: '=',
       timeFieldName: '='
     },
-    template: require('plugins/ml/timeseriesexplorer/anomalies_table/anomalies_table.html'),
+    template: require('plugins/ml/components/anomalies_table/anomalies_table.html'),
     link: function (scope, element) {
       const appState = new AppState();
       appState.fetch();
@@ -548,14 +552,13 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         rowScope.mouseenterRow = function () {
           // Publish that a record is being hovered over, so that the corresponding marker
           // in the model plot chart can be highlighted.
-          mlTimeSeriesDashboardService.fireAnomalyRecordMouseenter(record);
-
+          mlAnomaliesTableService.fireAnomalyRecordMouseenter(record);
         };
 
         rowScope.mouseleaveRow = function () {
           // Publish that a record is no longer being hovered over, so that the corresponding marker in the
           // model plot chart can be unhighlighted.
-          mlTimeSeriesDashboardService.fireAnomalyRecordMouseleave(record);
+          mlAnomaliesTableService.fireAnomalyRecordMouseleave(record);
         };
 
         // Create a table row with the following columns:

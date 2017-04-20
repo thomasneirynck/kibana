@@ -14,24 +14,18 @@
  */
 
 /*
- * Service for firing and registering for events across the different
- * components in the Time Series explorer dashboard.
+ * Service for firing and registering for events in the
+ * anomalies table component.
  */
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('mlTimeSeriesDashboardService', function () {
+module.service('mlAnomaliesTableService', function () {
 
   const listeners = {
     'anomalyRecordMouseenter': [],
     'anomalyRecordMouseleave': []
-  };
-
-  this.init = function () {
-    // Clear out any old listeners.
-    listeners.anomalyRecordMouseenter.splice(0);
-    listeners.anomalyRecordMouseleave.splice(0);
   };
 
   this.fireAnomalyRecordMouseenter = function (record) {

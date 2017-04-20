@@ -23,6 +23,7 @@ import _ from 'lodash';
 import $ from 'jquery';
 import moment from 'moment';
 
+import 'plugins/ml/components/anomalies_table';
 import 'plugins/ml/components/influencers_list';
 import 'plugins/ml/components/job_select_list';
 import 'plugins/ml/services/ml_dashboard_service';

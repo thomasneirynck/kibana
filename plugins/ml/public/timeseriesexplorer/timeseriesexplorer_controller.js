@@ -22,6 +22,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 
+import 'plugins/ml/components/anomalies_table';
 import 'plugins/ml/components/job_select_list';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/ml_dashboard_service';
@@ -49,7 +50,7 @@ const module = uiModules.get('apps/ml');
 
 module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $timeout, $compile,
   Private, $q, es, timefilter, globalState, AppState, mlJobService, mlResultsService,
-  mlDashboardService, mlTimeSeriesSearchService, mlTimeSeriesDashboardService) {
+  mlDashboardService, mlTimeSeriesSearchService) {
 
   // TODO - move the index pattern into a setting?
   $scope.indexPatternId = '.ml-anomalies-*';
@@ -116,8 +117,6 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     }).catch(function (resp) {
       console.log('Time series explorer - error getting job info from elasticsearch:', resp);
     });
-
-    mlTimeSeriesDashboardService.init();
   };
 
   $scope.refresh = function () {

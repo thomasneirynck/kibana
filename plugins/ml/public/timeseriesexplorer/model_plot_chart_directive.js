@@ -34,7 +34,7 @@ import ContextChartMask from 'plugins/ml/timeseriesexplorer/context_chart_mask';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, mlTimeSeriesDashboardService, Private) {
+module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, mlAnomaliesTableService, Private) {
 
   function link(scope, element) {
 
@@ -120,12 +120,12 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
       unhighlightFocusChartAnomaly(record);
     };
 
-    mlTimeSeriesDashboardService.addAnomalyRecordMouseenterListener(tableRecordMousenterListener);
-    mlTimeSeriesDashboardService.addAnomalyRecordMouseleaveListener(tableRecordMouseleaveListener);
+    mlAnomaliesTableService.addAnomalyRecordMouseenterListener(tableRecordMousenterListener);
+    mlAnomaliesTableService.addAnomalyRecordMouseleaveListener(tableRecordMouseleaveListener);
 
     element.on('$destroy', () => {
-      mlTimeSeriesDashboardService.removeAnomalyRecordMouseenterListener(tableRecordMousenterListener);
-      mlTimeSeriesDashboardService.removeAnomalyRecordMouseleaveListener(tableRecordMouseleaveListener);
+      mlAnomaliesTableService.removeAnomalyRecordMouseenterListener(tableRecordMousenterListener);
+      mlAnomaliesTableService.removeAnomalyRecordMouseleaveListener(tableRecordMouseleaveListener);
       resizeChecker.destroy();
       scope.$destroy();
     });
