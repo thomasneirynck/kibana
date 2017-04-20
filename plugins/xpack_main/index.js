@@ -6,7 +6,7 @@ import { replaceInjectedVars } from './server/lib/replace_injected_vars';
 import { setupXPackMain } from './server/lib/setup_xpack_main';
 import { xpackInfo } from '../../server/lib/xpack_info';
 
-export default function (kibana) {
+export const xpackMain = (kibana) => {
   return new kibana.Plugin({
     id: 'xpack_main',
     configPrefix: 'xpack.xpack_main',
@@ -35,4 +35,4 @@ export default function (kibana) {
       return requireAllAndApply(join(__dirname, 'server', 'routes', '**', '*.js'), server);
     }
   });
-}
+};

@@ -7,8 +7,7 @@ import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 
 const APP_TITLE = 'Graph';
 
-module.exports = function (kibana) {
-
+export const graph = (kibana) => {
     //2.x bootstrap code copied from https://github.com/elastic/timelion/pull/57/files
   let mainFile = 'plugins/graph/app';
   const ownDescriptor = Object.getOwnPropertyDescriptor(kibana, 'autoload');

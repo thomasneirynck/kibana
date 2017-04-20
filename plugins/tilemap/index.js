@@ -2,8 +2,7 @@ import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 import { inspectSettings } from './server/lib/inspect_settings';
 import { resolve } from 'path';
 
-module.exports = function (kibana) {
-
+export const tilemap = (kibana) => {
   return new kibana.Plugin({
     id: 'tilemap',
     configPrefix: 'xpack.tilemap',

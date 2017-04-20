@@ -9,7 +9,7 @@ import { initKibanaMonitoring } from './server/kibana_monitoring';
 import { initMonitoringXpackInfo } from './server/lib/init_monitoring_xpack_info';
 import { checkLicenseGenerator } from './server/cluster_alerts/check_license';
 
-export default function monitoringIndex(kibana) {
+export const monitoring = (kibana) => {
   return new kibana.Plugin({
     require: ['kibana', 'elasticsearch', 'xpack_main'],
     id: 'monitoring',

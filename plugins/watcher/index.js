@@ -5,7 +5,7 @@ import { registerWatchRoutes } from './server/routes/api/watch';
 import { registerLicenseChecker } from './server/lib/register_license_checker';
 import { PLUGIN } from './common/constants';
 
-export default (kibana) => new kibana.Plugin({
+export const watcher = (kibana) => new kibana.Plugin({
   id: PLUGIN.ID,
   publicDir: resolve(__dirname, 'public'),
   require: ['kibana', 'elasticsearch', 'xpack_main'],

@@ -22,8 +22,7 @@ import { jobRoutes } from './server/routes/anomaly_detectors';
 import { dataFeedRoutes } from './server/routes/datafeeds';
 import { systemRoutes } from './server/routes/system';
 
-module.exports = function (kibana) {
-
+export const ml = (kibana) => {
   return new kibana.Plugin({
     require: ['kibana', 'elasticsearch', 'xpack_main'],
     id: 'ml',

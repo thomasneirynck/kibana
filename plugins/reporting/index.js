@@ -11,7 +11,7 @@ import { checkLicense } from './server/lib/check_license';
 import { validateConfig } from './server/lib/validate_config';
 import { ExtractError } from './server/lib/extract';
 
-export function reporting(kibana) {
+export const reporting = (kibana) => {
   return new kibana.Plugin({
     id: 'reporting',
     configPrefix: 'xpack.reporting',
