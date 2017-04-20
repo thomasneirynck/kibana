@@ -243,7 +243,7 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
            params.job.custom_settings.custom_urls.length) {
           // if urls orginally existed, but now don't
           // clear the custom settings completely
-          jobData.custom_settings = null;
+          jobData.custom_settings = {};
         }
       }
     }
