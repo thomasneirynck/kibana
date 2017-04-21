@@ -775,22 +775,20 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
       let markerToSelect = chartData[0];
       for (let i = 0; i < chartData.length; i++) {
         const chartItem = chartData[i];
-        if (_.has(chartItem, 'anomalyScore')) {
-          const markerTime = chartItem.date.getTime();
-          if (markerTime === anomalyTime) {
-            markerToSelect = chartItem;
+        const markerTime = chartItem.date.getTime();
+        // Check against all chart points i.e. including those which don't have an anomaly marker, as
+        // there can be records with very low scores where the corresponding bucket anomaly score is 0.
+        if (markerTime === anomalyTime) {
+          markerToSelect = chartItem;
+          break;
+        } else {
+          if (markerTime > anomalyTime) {
+            markerToSelect = previousMarker;
             break;
-          } else {
-            if (markerTime > anomalyTime) {
-              markerToSelect = previousMarker;
-              break;
-            }
-
           }
-          markerToSelect = chartItem;   // Ensures last marker is selected if record is most recent in list.
-          previousMarker = chartItem;
         }
-
+        markerToSelect = chartItem;   // Ensures last marker is selected if record is most recent in list.
+        previousMarker = chartItem;
       }
 
       // Render an additional highlighted anomaly marker on the focus chart.
