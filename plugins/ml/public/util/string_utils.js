@@ -16,10 +16,7 @@
 /*
 * Contains utility functions for performing operations on Strings.
 */
-import 'plugins/ml/lib/bower_components/moment-jdateformatparser/moment-jdateformatparser';
-
 const _ = require('lodash');
-const moment = require('moment');
 import d3 from 'd3';
 
 // Replaces all instances of dollar delimited tokens in the specified String
@@ -95,7 +92,7 @@ function quoteField(field) {
 
 // re-order an object based on the value of the keys
 export function sortByKey(list, reverse, comparator) {
-  let keys = _.sortBy(_.keys(list), function (key) {
+  let keys = _.sortBy(_.keys(list), (key) => {
     return comparator ? comparator(list[key], key) : key;
   });
 
@@ -103,63 +100,9 @@ export function sortByKey(list, reverse, comparator) {
     keys = keys.reverse();
   }
 
-  return _.object(keys, _.map(keys, function (key) {
+  return _.object(keys, _.map(keys, (key) => {
     return list[key];
   }));
-}
-
-// non-blocking way of looping over large arrays.
-// each element is passed into fn.
-// 1 millisec wait between batches to allow the browser to keep moving
-// last two args are optional
-// eg, split array into quarters:
-// processLargeArrayAsync(largeArray, callback, (largeArray/4) )
-export function processLargeArrayAsync(array, fn, chunk, context) {
-  context = context || window;
-  chunk = chunk || 100;
-  let index = 0;
-
-  function doChunk() {
-    let cnt = chunk;
-    while (cnt-- && index < array.length) {
-      // callback called with args (value, index, array)
-      fn.call(context, array[index], index, array);
-      ++index;
-    }
-    if (index < array.length) {
-      setTimeout(doChunk, 1);
-    }
-  }
-  doChunk();
-}
-
-// reutrns an array of possible delimiters found in a string
-export function guessDelimiters(text, possibleDelimiters) {
-  if (text !== '' &&
-     possibleDelimiters !== undefined &&
-     possibleDelimiters.length) {
-
-    return possibleDelimiters.filter(weedOut);
-
-    function weedOut(delimiter) {
-      let cache = -1;
-      return text.split('\n').every(checkLength);
-
-      function checkLength(line) {
-        if (!line) {
-          return true;
-        }
-
-        const length = line.split(delimiter).length;
-        if (cache < 0) {
-          cache = length;
-        }
-        return cache === length && length > 1;
-      }
-    }
-  } else {
-    return [];
-  }
 }
 
 // guess the time format for a given time string
@@ -366,28 +309,6 @@ export function guessTimeFormat(time) {
   return format;
 }
 
-// generate an example time string based on a given format
-export function generateExampleTime(timeFormat) {
-  let exampleTime = '';
-
-  if (timeFormat !== undefined && timeFormat !== '') {
-    const now = moment();
-    now.month(2);
-    now.date(24);
-
-    if (timeFormat === 'epoch') {
-      exampleTime = now.unix();
-    } else if (timeFormat === 'epoch_ms') {
-      exampleTime = now.unix() * 1000;
-    } else {
-      // Y is allowed by moment, but not for the server's time formater
-      const tf = timeFormat.replace(/Y/g, '');
-      exampleTime = now.formatWithJDF(tf);
-    }
-  }
-  return exampleTime;
-}
-
 // add commas to large numbers
 // Number.toLocaleString is not supported on safari
 export function toLocaleString(x) {
@@ -410,9 +331,7 @@ export function mlEscape(str) {
     '\'': '&#39;',
     '/': '&#x2F;'
   };
-  return String(str).replace(/[&<>"'\/]/g, function (s) {
-    return entityMap[s];
-  });
+  return String(str).replace(/[&<>"'\/]/g, (s) => entityMap[s]);
 }
 
 // Escapes reserved characters for use in Elasticsearch query terms.

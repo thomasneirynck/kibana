@@ -21,10 +21,9 @@ import $ from 'jquery';
 import angular from 'angular';
 import moment from 'moment';
 
-require('../lib/bower_components/flot/jquery.flot');
-require('../lib/bower_components/flot/jquery.flot.selection');
-require('../lib/bower_components/flot/jquery.flot.time');
-require('../lib/bower_components/flot/jquery.flot.resize');
+// Flot includes removed from here.
+// If this viz is resurrected, the swimlane will need to be rewritten
+// with a new library. Probably D3.
 
 import chrome from 'ui/chrome';
 import 'ui/courier';
