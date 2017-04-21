@@ -1,3 +1,7 @@
+/*
+ * Note: currently only `node` and `master` are supported due to
+ * https://github.com/elastic/x-pack-kibana/issues/608
+ */
 export const nodeTypeClass = {
   invalid: 'fa-exclamation-triangle',
   node: 'fa-server',

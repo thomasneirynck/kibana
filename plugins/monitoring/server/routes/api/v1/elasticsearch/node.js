@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { get, merge } from 'lodash';
 import Promise from 'bluebird';
 import Joi from 'joi';
 import { getClusterStatus } from '../../../../lib/get_cluster_status';
@@ -7,26 +7,16 @@ import { getMetrics } from '../../../../lib/details/get_metrics';
 import { getShardStats } from '../../../../lib/get_shard_stats';
 import { getShardAllocation } from '../../../../lib/get_shard_allocation';
 import { calculateIndices } from '../../../../lib/calculate_indices';
-import { calculateClusterShards } from '../../../../lib/elasticsearch/calculate_cluster_shards';
-import { calculateNodeType } from '../../../../lib/calculate_node_type';
 import { getLastState } from '../../../../lib/get_last_state';
+import { calculateClusterShards } from '../../../../lib/elasticsearch/calculate_cluster_shards';
 import { getDefaultNodeFromId } from '../../../../lib/get_default_node_from_id';
-import { nodeTypeLabel, nodeTypeClass } from '../../../../lib/lookups';
+import { calculateNodeType } from '../../../../lib/calculate_node_type';
+import { getNodeTypeClassLabel } from '../../../../lib/elasticsearch/get_node_type_class_label';
 import { handleError } from '../../../../lib/handle_error';
 
 export function nodeRoutes(server) {
   const config = server.config();
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
-
-  function getNodeTypeClassLabel(node) {
-    const nodeType = (node.master && 'master') || node.type;
-    const typeClassLabel = {
-      nodeType,
-      nodeTypeLabel: _.get(nodeTypeLabel, nodeType),
-      nodeTypeClass: _.get(nodeTypeClass, nodeType)
-    };
-    return typeClassLabel;
-  }
 
   server.route({
     method: 'POST',
@@ -86,16 +76,16 @@ export function nodeRoutes(server) {
         body.nodes[resolver] = nodeDetail;
 
         // set type for labeling / iconography
-        const { type, typeLabel, typeClass } = getNodeTypeClassLabel(nodeDetail);
-        nodeDetail.type = type;
-        nodeDetail.nodeTypeLabel = typeLabel;
-        nodeDetail.nodeTypeClass = typeClass;
+        const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(nodeDetail);
+        nodeDetail.type = nodeType;
+        nodeDetail.nodeTypeLabel = nodeTypeLabel;
+        nodeDetail.nodeTypeClass = nodeTypeClass;
 
-        body.nodeSummary.totalShards = _.get(body, `shardStats.nodes['${resolver}'].shardCount`);
-        body.nodeSummary.indexCount = _.get(body, `shardStats.nodes['${resolver}'].indexCount`);
+        body.nodeSummary.totalShards = get(body, `shardStats.nodes['${resolver}'].shardCount`);
+        body.nodeSummary.indexCount = get(body, `shardStats.nodes['${resolver}'].indexCount`);
 
         // combine data from different sources into 1 object
-        body.nodeSummary = _.merge(body.nodeSummary, nodeDetail);
+        body.nodeSummary = merge(body.nodeSummary, nodeDetail);
 
         body.nodeSummary.status = 'Online';
         // If this node is down
