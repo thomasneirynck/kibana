@@ -1,8 +1,7 @@
 const getPlugins = require('./get_plugins');
 
-function getPluginPaths(plugins, extensions, opts = {}) {
+function getPluginPaths(plugins, opts = {}) {
   const testPath = opts.tests ? '/__tests__/**' : '';
-  if (extensions.length === 0) extensions.push('js');
 
   return plugins.reduce((paths, pluginName) => {
     const plugin = pluginName.trim();
@@ -10,13 +9,12 @@ function getPluginPaths(plugins, extensions, opts = {}) {
     const serverPath = `${plugin}/server`;
     const publicPath = `${plugin}/public`;
 
-    const commonPaths = extensions.map(extension => `plugins/${commonPath}/**${testPath}/*.${extension}`);
-    const publicPaths = extensions.map(extension => `plugins/${publicPath}/**${testPath}/*.${extension}`);
-    const serverPaths = extensions.map(extension => `plugins/${serverPath}/**${testPath}/*.${extension}`);
+    const indexPaths = `plugins/${plugin}/*.js`; // index and helpers
+    const commonPaths = `plugins/${commonPath}/**${testPath}/*.js`;
+    const serverPaths = `plugins/${serverPath}/**${testPath}/*.js`;
+    const publicPaths = `plugins/${publicPath}/**${testPath}/*.js`;
 
-    paths = paths.concat([`plugins/${plugin}/*.js`]); // index and helpers
-    paths = paths.concat(commonPaths);
-    paths = paths.concat(serverPaths);
+    paths = paths.concat([indexPaths, commonPaths, serverPaths]);
 
     if (opts.browser) {
       paths = paths.concat(publicPaths);
@@ -26,12 +24,12 @@ function getPluginPaths(plugins, extensions, opts = {}) {
   }, []);
 }
 
-exports.forPlugins = function (...extensions) {
+exports.forPlugins = function () {
   const plugins = getPlugins();
-  return getPluginPaths(plugins, extensions, { browser: true });
+  return getPluginPaths(plugins, { browser: true });
 };
 
-exports.forPluginServerTests = function (...extensions) {
+exports.forPluginServerTests = function () {
   const plugins = getPlugins();
-  return getPluginPaths(plugins, extensions, { tests: true });
+  return getPluginPaths(plugins, { tests: true });
 };

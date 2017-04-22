@@ -27,7 +27,7 @@ class IndexLabel extends React.Component {
     this.toggleShowSystemIndicesState = this.toggleShowSystemIndicesState.bind(this);
   }
 
-  // See also public/directives/index_listing/index.jsx
+  // See also public/directives/index_listing/index
   toggleShowSystemIndicesState(e) {
     const isChecked = e.target.checked;
     this.setState({ showSystemIndices: isChecked });

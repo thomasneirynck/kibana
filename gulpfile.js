@@ -50,7 +50,7 @@ gulp.task('lint-staged', () => {
   return stagedFiles.getFiles(__dirname)
   .then((files) => {
     const filePaths = files
-    .filter((file) => stagedFiles.getFilename(file).match(/\.jsx?$/))
+    .filter((file) => stagedFiles.getFilename(file).match(/\.js$/))
     .map((file) => stagedFiles.getFilename(file).replace(kibanaPath, ''));
 
     return lintFiles(filePaths);
@@ -62,7 +62,7 @@ gulp.task('lint', () => {
     './*.js',
     './{server,gulp_helpers}/**/*.js',
   ]
-  .concat(fileGlobs.forPlugins('js', 'jsx'));
+  .concat(fileGlobs.forPlugins());
 
   return lintFiles(filePaths);
 });

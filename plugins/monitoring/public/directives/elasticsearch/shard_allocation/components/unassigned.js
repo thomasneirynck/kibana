@@ -17,7 +17,7 @@
 
 import _ from 'lodash';
 import React from 'react';
-import { Shard } from './shard.jsx';
+import { Shard } from './shard';
 
 export const Unassigned = React.createClass({
   displayName: 'Unassigned',

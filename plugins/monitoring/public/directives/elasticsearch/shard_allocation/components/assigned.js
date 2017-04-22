@@ -17,7 +17,7 @@
 
 import _ from 'lodash';
 import React from 'react';
-import { Shard } from './shard.jsx';
+import { Shard } from './shard';
 import { calculateClass } from '../lib/calculateClass';
 import { generateQueryAndLink } from '../lib/generateQueryAndLink';
 

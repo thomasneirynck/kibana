@@ -17,7 +17,7 @@ function showSystemIndicesComponentFactory(scope) {
       this.toggleShowSystemIndices = this.toggleShowSystemIndices.bind(this);
     }
 
-    // See also directives/shard_allocation/components/tableHead.jsx
+    // See also directives/shard_allocation/components/tableHead
     toggleShowSystemIndices(e) {
       const isChecked = e.target.checked;
       this.setState({ showSystemIndices: !this.state.showSystemIndices });

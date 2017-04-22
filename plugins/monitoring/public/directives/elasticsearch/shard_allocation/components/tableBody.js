@@ -16,8 +16,8 @@
  */
 
 import React from 'react';
-import { Unassigned } from './unassigned.jsx';
-import { Assigned } from './assigned.jsx';
+import { Unassigned } from './unassigned';
+import { Assigned } from './assigned';
 
 class ShardRow extends React.Component {
   render() {
