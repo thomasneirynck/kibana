@@ -62,6 +62,7 @@ gulp.task('lint', () => {
     './*.js',
     './{server,gulp_helpers}/**/*.js',
   ]
+  .concat(fileGlobs.forPluginServerTests())
   .concat(fileGlobs.forPlugins());
 
   return lintFiles(filePaths);

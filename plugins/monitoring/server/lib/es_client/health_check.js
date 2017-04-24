@@ -9,7 +9,7 @@ const NO_INDEX = 'no_index';
 const INITIALIZING = 'initializing';
 const READY = 'ready';
 
-export function esHealthCheck(plugin, server) {
+export function esHealthCheck(monitoringPlugin, server) {
   const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('monitoring');
   const config = server.config();
   const REQUEST_DELAY = config.get('elasticsearch.healthCheck.delay');
@@ -41,7 +41,7 @@ export function esHealthCheck(plugin, server) {
       if (!(err instanceof NoConnections)) throw err;
 
       const elasticsearchUrl = config.get('xpack.monitoring.elasticsearch.url') || config.get('elasticsearch.url');
-      plugin.status.red(`Unable to connect to Elasticsearch at ${elasticsearchUrl}.`);
+      monitoringPlugin.status.red(`Unable to connect to Elasticsearch at ${elasticsearchUrl}.`);
       return Promise.delay(REQUEST_DELAY).then(waitForPong);
     });
   }
@@ -53,12 +53,12 @@ export function esHealthCheck(plugin, server) {
         // UI will show a "waiting for data" screen
       }
       if (health === INITIALIZING) {
-        plugin.status.red('Elasticsearch is still initializing the Monitoring indices');
+        monitoringPlugin.status.red('Elasticsearch is still initializing the Monitoring indices');
         return Promise.delay(REQUEST_DELAY)
         .then(waitForShards);
       }
       // otherwise we are g2g
-      plugin.status.green('Ready');
+      monitoringPlugin.status.green('Ready');
     });
   }
 
@@ -74,7 +74,7 @@ export function esHealthCheck(plugin, server) {
       return versionPromise.then(() => tribePromise);
     })
     .then(waitForShards)
-    .catch(err => plugin.status.red(err));
+    .catch(err => monitoringPlugin.status.red(err));
   }
 
   function scheduleCheck(ms) {
@@ -101,7 +101,7 @@ export function esHealthCheck(plugin, server) {
 
   return {
     start() {
-      plugin.status.yellow('Waiting for Monitoring Health Check');
+      monitoringPlugin.status.yellow('Waiting for Monitoring Health Check');
       startOrRestartChecking();
     }
   };

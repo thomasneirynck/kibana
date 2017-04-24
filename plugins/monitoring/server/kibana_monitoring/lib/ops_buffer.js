@@ -5,7 +5,15 @@ import _ from 'lodash';
 import { mapEvent, rollupEvent } from './map_event';
 import { monitoringBulk } from './monitoring_bulk';
 
-export function opsBuffer(serverInfo, server) {
+/**
+ * Manage the buffer of Kibana Ops events
+ * Does the bulk upload to the `admin` cluster, which tags it and forwards it
+ * to the monitoring cluster
+ * @param kbnServer {Object} manager of Kibana services - see `src/server/kbn_server` in Kibana core
+ * @param server {Object} HapiJS server instance
+ * @return {Object} the revealed `push` and `flush` modules
+ */
+export function opsBuffer(kbnServer, server) {
   const config = server.config();
   const interval = config.get('xpack.monitoring.kibana.collection.interval') + 'ms';
   const monitoringTag = config.get('xpack.monitoring.loggingTag');
@@ -28,7 +36,7 @@ export function opsBuffer(serverInfo, server) {
       if (!lastOp) return;
 
       // grab the last operation
-      const payload = mapEvent(lastOp, config, serverInfo);
+      const payload = mapEvent(lastOp, config, kbnServer);
       const body = [
         // Push the time-based information to .monitoring-kibana-*
         { index: { _type: KIBANA_STATS_TYPE } },

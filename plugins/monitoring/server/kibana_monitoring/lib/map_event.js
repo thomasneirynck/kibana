@@ -16,11 +16,13 @@ const maxRollup = _.partialRight(_.assign, (latest, prev) => _.max([latest, prev
 const sumRollup = _.partialRight(_.assign, (latest, prev) => _.sum([latest, prev]));
 
 /**
- * Some components of the {@code event} need to be combined with any previous events that haven't been sent in order to not lose information
- * if the collection interval is faster than the flushing interval.
+ * Some components of the {@code event} need to be combined with any previous
+ * events that haven't been sent in order to not lose information if the
+ * collection interval is faster than the flushing interval.
  *
  * @param event {Object} The current event
  * @param lastOp {Object} The previous event details
+ * @return {Object} data combined from `event` and `lastOp`
  */
 export function rollupEvent(event, lastOp) {
   const heapStats = v8.getHeapStatistics();
@@ -64,8 +66,18 @@ export function rollupEvent(event, lastOp) {
   };
 }
 
-export function mapEvent(lastOp, config, serverInfo) {
-  const status = serverInfo.status.toJSON();
+/**
+ * Some components of the {@code event} need to be combined with any previous
+ * events that haven't been sent in order to not lose information if the
+ * collection interval is faster than the flushing interval.
+ *
+ * @param lastOp {Object} The current, rolled-up event details
+ * @param config {Object} HapiJS server.config
+ * @param kbnServer {Object} manager of Kibana services - see `src/server/kbn_server` in Kibana core
+ * @return {Object} mapped event data
+ */
+export function mapEvent(lastOp, config, kbnServer) {
+  const status = kbnServer.status.toJSON();
   const { host, rollup } = lastOp;
   return {
     kibana: {
@@ -73,8 +85,8 @@ export function mapEvent(lastOp, config, serverInfo) {
       name: config.get('server.name'),
       host: host,
       transport_address: `${config.get('server.host')}:${config.get('server.port')}`,
-      version: serverInfo.version.replace(snapshotRegex, ''),
-      snapshot: snapshotRegex.test(serverInfo.version),
+      version: kbnServer.version.replace(snapshotRegex, ''),
+      snapshot: snapshotRegex.test(kbnServer.version),
       status: _.get(status, 'overall.state')
     },
     ...rollup

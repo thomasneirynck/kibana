@@ -1,7 +1,13 @@
 import { opsBuffer } from './lib/ops_buffer';
 import { get } from 'lodash';
 
-export function initKibanaMonitoring(serverInfo, server) {
+/**
+ * Establish a handler of Ops events (from `even-better`)
+ * Puts the event data into a buffer
+ * @param kbnServer {Object} manager of Kibana services - see `src/server/kbn_server` in Kibana core
+ * @param server {Object} HapiJS server instance
+ */
+export function initKibanaMonitoring(kbnServer, server) {
   const config = server.config();
   const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('admin');
   callWithInternalUser('transport.request', {
@@ -10,7 +16,7 @@ export function initKibanaMonitoring(serverInfo, server) {
   }).then((res) => {
     const isEnabledInAdminCluster = !!get(res, 'features.monitoring.enabled');
     if (isEnabledInAdminCluster) {
-      const buffer = opsBuffer(serverInfo, server);
+      const buffer = opsBuffer(kbnServer, server);
       const monitor = server.plugins['even-better'].monitor;
       let opsHandler;
 
