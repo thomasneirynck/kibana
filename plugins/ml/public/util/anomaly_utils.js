@@ -61,7 +61,7 @@ export function getSeverityWithLow(normalizedScore) {
   }
 }
 
-//Returns a severity RGB color (one of critical, major, minor, warning, low_warning or unknown)
+// Returns a severity RGB color (one of critical, major, minor, warning, low_warning or unknown)
 // for the supplied normalized anomaly score (a value between 0 and 100).
 export function getSeverityColor(normalizedScore) {
   if (normalizedScore >= 75) {
@@ -72,10 +72,10 @@ export function getSeverityColor(normalizedScore) {
     return '#fbfb49';
   } else if (normalizedScore >= 3) {
     return '#8bc8fb';
-  } else if (normalizedScore < 3) {
+  } else if (normalizedScore >= 0) {
     return '#d2e9f7';
   } else {
-    return '#FFFFFF';
+    return '#ffffff';
   }
 }
 
@@ -159,7 +159,7 @@ export function showTypicalForFunction(functionDescription) {
 
 // Two functions for converting aggregation type names.
 // ML and ES use differnt names for the same function.
-// Possible values for ML aggregation type are (defined in ModelTypes.cc):
+// Possible values for ML aggregation type are (defined in lib/model/CAnomalyDetector.cc):
 //    count
 //    distinct_count
 //    rare
@@ -171,8 +171,6 @@ export function showTypicalForFunction(functionDescription) {
 //    varp
 //    sum
 //    lat_long
-// TODO - when function_description for detectors is altered to return the ES aggregation
-//        this function will no longer be needed.
 export const aggregationTypeTransform = {
   toES: function (oldAggType) {
     let newAggType = oldAggType;
