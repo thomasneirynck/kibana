@@ -23,18 +23,21 @@ import 'ui/courier';
 
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
+import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 
 uiRoutes
 .when('/jobs/new_job_advanced', {
   template: require('./new_job.html'),
   resolve : {
-    CheckLicense: checkLicense
+    CheckLicense: checkLicense,
+    privileges: checkCreateJobsPrivilege
   }
 })
 .when('/jobs/new_job_advanced/:jobId', {
   template: require('./new_job.html'),
   resolve : {
-    CheckLicense: checkLicense
+    CheckLicense: checkLicense,
+    privileges: checkCreateJobsPrivilege
   }
 });
 

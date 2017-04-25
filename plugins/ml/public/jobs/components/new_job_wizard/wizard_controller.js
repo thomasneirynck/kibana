@@ -15,12 +15,14 @@
 
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
+import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 
 uiRoutes
 .when('/jobs/new_job', {
   template: require('./wizard.html'),
   resolve : {
-    CheckLicense: checkLicense
+    CheckLicense: checkLicense,
+    privileges: checkCreateJobsPrivilege
   }
 });
 

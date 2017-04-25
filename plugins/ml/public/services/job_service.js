@@ -151,7 +151,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('MlJobsList error getting list of jobs:', err);
       msgs.error('Jobs list could not be retrieved');
       msgs.error('', err);
-      deferred.reject({ jobs });
+      deferred.reject({ jobs, err });
     }
     return deferred.promise;
   };
@@ -224,7 +224,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('MlJobsList error getting list of jobs:', err);
       msgs.error('Jobs list could not be retrieved');
       msgs.error('', err);
-      deferred.reject({ jobs });
+      deferred.reject({ jobs, err });
     }
     return deferred.promise;
   };
@@ -266,7 +266,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('loadDatafeeds error getting list of datafeeds:', err);
       msgs.error('datafeeds list could not be retrieved');
       msgs.error('', err);
-      deferred.reject(err);
+      deferred.reject({ jobs, err });
     }
     return deferred.promise;
   };
@@ -332,7 +332,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('updateSingleJobCounts error getting job details:', err);
       msgs.error('Job details could not be retrieved for ' + jobId);
       msgs.error('', err);
-      deferred.reject({ jobs });
+      deferred.reject({ jobs, err });
     }
 
     return deferred.promise;
@@ -417,7 +417,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       console.log('updateAllJobCounts error getting list job details:', err);
       msgs.error('Job details could not be retrieved');
       msgs.error('', err);
-      deferred.reject({ jobs });
+      deferred.reject({ jobs, err });
     }
 
     return deferred.promise;

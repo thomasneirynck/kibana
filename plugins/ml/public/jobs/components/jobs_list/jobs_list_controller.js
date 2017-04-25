@@ -26,12 +26,14 @@ import { toLocaleString, mlEscape } from 'plugins/ml/util/string_utils';
 
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
+import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 
 uiRoutes
 .when('/jobs/?', {
   template: require('./jobs_list.html'),
   resolve : {
-    CheckLicense: checkLicense
+    CheckLicense: checkLicense,
+    privileges: checkGetJobsPrivilege
   }
 });
 
@@ -55,7 +57,6 @@ function (
   mlClipboardService,
   mlJobService,
   mlDatafeedService,
-  mlPrivilegeService,
   mlBrowserDetectService) {
 
   timefilter.enabled = false; // remove time picker from top of page
@@ -72,14 +73,7 @@ function (
   let jobFilterTimeout;
 
   $scope.kbnUrl = kbnUrl;
-  $scope.privileges = {
-    canCreateJob: false,
-    canDeleteJob: false,
-    canStartStopDatafeed: false,
-    canUpdateJob: false,
-    canUpdateDatafeed: false
-  };
-
+  $scope.privileges = $route.current.locals.privileges;
   $scope.jobStats = mlJobService.jobStats;
 
   // functions for job list buttons
@@ -114,10 +108,7 @@ function (
             msgs.clear();
             msgs.info('Job \'' + job.job_id + '\' deleted');
             status.deleteLock = false;
-            mlJobService.loadJobs()
-              .then((resp) => {
-                jobsUpdated(resp.jobs);
-              });
+            refreshJobs();
           }
         });
     }
@@ -611,27 +602,29 @@ function (
   }
 
   $scope.refreshJob = function (jobId) {
-    mlJobService.refreshJob(jobId).then((resp) => {
+    mlJobService.refreshJob(jobId)
+    .then((resp) => {
+      jobsUpdated(resp.jobs);
+    }).catch((resp) => {
       jobsUpdated(resp.jobs);
     });
   };
 
   function refreshJobs() {
-    mlJobService.loadJobs().then((resp) => {
+    mlJobService.loadJobs()
+    .then((resp) => {
+      jobsUpdated(resp.jobs);
+    })
+    .catch((resp) => {
       jobsUpdated(resp.jobs);
     });
   }
 
-  mlPrivilegeService.getJobManagementPrivileges()
-  .then((privileges) => {
-    $scope.privileges = privileges;
-  });
+  refreshJobs();
 
   $scope.$on('jobsUpdated', () => {
     refreshJobs();
   });
-
-  refreshJobs();
 
   $scope.$emit('application.load');
 });

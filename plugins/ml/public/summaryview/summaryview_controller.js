@@ -35,13 +35,15 @@ import chrome from 'ui/chrome';
 
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
+import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
 uiRoutes
 .when('/summaryview/?', {
   template: require('./summaryview.html'),
   resolve : {
-    CheckLicense: checkLicense
+    CheckLicense: checkLicense,
+    privileges: checkGetJobsPrivilege
   }
 });
 

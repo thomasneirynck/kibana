@@ -14,15 +14,14 @@
  */
 
 import _ from 'lodash';
-import { uiModules } from 'ui/modules';
-const module = uiModules.get('apps/ml');
+export function privilegesProvider(Promise, ml) {
 
-module.service('mlPrivilegeService', function (Promise, ml) {
-
-  this.getJobManagementPrivileges = function () {
+  function getPrivileges() {
     const privileges = {
+      canGetJobs: false,
       canCreateJob: false,
       canDeleteJob: false,
+      canGetDatafeeds: false,
       canStartStopDatafeed: false,
       canUpdateJob: false,
       canUpdateDatafeed: false
@@ -31,6 +30,10 @@ module.service('mlPrivilegeService', function (Promise, ml) {
     return new Promise((resolve, reject) => {
       const priv = {
         cluster: [
+          'cluster:monitor/xpack/ml/job/get',
+          'cluster:monitor/xpack/ml/job/stats/get',
+          'cluster:monitor/xpack/ml/datafeeds/get',
+          'cluster:monitor/xpack/ml/datafeeds/stats/get',
           'cluster:admin/xpack/ml/job/put',
           'cluster:admin/xpack/ml/job/delete',
           'cluster:admin/xpack/ml/job/update',
@@ -52,6 +55,16 @@ module.service('mlPrivilegeService', function (Promise, ml) {
             privileges[k] = true;
           });
         } else {
+          if (resp.cluster['cluster:monitor/xpack/ml/job/get'] &&
+              resp.cluster['cluster:monitor/xpack/ml/job/stats/get']) {
+            privileges.canGetJobs = true;
+          }
+
+          if (resp.cluster['cluster:monitor/xpack/ml/datafeeds/get'] &&
+              resp.cluster['cluster:monitor/xpack/ml/datafeeds/stats/get']) {
+            privileges.canGetDatafeeds = true;
+          }
+
           if (resp.cluster['cluster:admin/xpack/ml/job/put'] &&
               resp.cluster['cluster:admin/xpack/ml/datafeeds/put']) {
             privileges.canCreateJob = true;
@@ -83,5 +96,9 @@ module.service('mlPrivilegeService', function (Promise, ml) {
         return reject(privileges);
       });
     });
+  }
+
+  return {
+    getPrivileges
   };
-});
+}

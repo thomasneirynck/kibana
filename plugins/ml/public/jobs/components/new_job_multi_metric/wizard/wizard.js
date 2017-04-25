@@ -19,12 +19,14 @@ import 'plugins/kibana/visualize/wizard/wizard.less';
 
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
+import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 
 uiRoutes
 .when('/jobs/new_job_multi_metric/step/1', {
   template: require('./step_1.html'),
   resolve: {
     CheckLicense: checkLicense,
+    privileges: checkCreateJobsPrivilege,
     indexPatternIds: courier => courier.indexPatterns.getIds()
   }
 });

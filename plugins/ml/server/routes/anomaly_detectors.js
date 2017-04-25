@@ -173,4 +173,4 @@ export function jobRoutes(server, commonRouteConfig) {
     }
   });
 
-};
+}

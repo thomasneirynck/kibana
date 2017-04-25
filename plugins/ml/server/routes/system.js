@@ -43,4 +43,4 @@ export function systemRoutes(server, commonRouteConfig) {
     }
   });
 
-};
+}

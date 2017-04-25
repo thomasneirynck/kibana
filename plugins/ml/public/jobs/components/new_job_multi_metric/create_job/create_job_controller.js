@@ -27,6 +27,7 @@ import angular from 'angular';
 
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
+import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/components/new_job_single_metric/create_job/filter_agg_types';
 
@@ -38,6 +39,7 @@ uiRoutes
   template: require('./create_job.html'),
   resolve: {
     CheckLicense: checkLicense,
+    privileges: checkCreateJobsPrivilege,
     indexPattern: (courier, $route) => courier.indexPatterns.get($route.current.params.index),
     savedSearch: (courier, $route, savedSearches) => savedSearches.get($route.current.params.savedSearchId)
   }

@@ -18,10 +18,10 @@ import 'ui-bootstrap';
 import 'ui/persisted_log';
 import 'ui/autoload/all';
 
+import 'plugins/ml/access_denied';
 import 'plugins/ml/lib/angular_bootstrap_patch';
 import 'plugins/ml/jobs/index';
 import 'plugins/ml/services/ml_clipboard_service';
-import 'plugins/ml/services/privilege_service';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/ml_api_service';
 import 'plugins/ml/services/browser_detect_service';
@@ -36,7 +36,6 @@ import 'plugins/ml/components/confirm_modal';
 import 'plugins/ml/components/pretty_duration';
 import 'plugins/ml/components/nav_menu';
 
-import chrome from 'ui/chrome';
 import uiRoutes from 'ui/routes';
 
 if (typeof uiRoutes.enable === 'function') {
@@ -45,6 +44,6 @@ if (typeof uiRoutes.enable === 'function') {
 
 uiRoutes
 .otherwise({
-  redirectTo: `/${chrome.getInjected('kbnDefaultAppId', 'jobs')}`
+  redirectTo: '/jobs'
 });
 
