@@ -17,6 +17,8 @@
 // Ml Results dashboards.
 import _ from 'lodash';
 
+import { escapeForElasticsearchQuery } from 'plugins/ml/util/string_utils';
+
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
@@ -322,7 +324,8 @@ module.service('mlResultsService', function ($q, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:influencer AND influencer_field_name:' + influencerFieldName,
+                  'query': '_type:result AND result_type:influencer AND influencer_field_name:' +
+                    escapeForElasticsearchQuery(influencerFieldName),
                   'analyze_wildcard': false
                 }
               },
@@ -515,7 +518,7 @@ module.service('mlResultsService', function ($q, es) {
           influencerFilterStr += ' OR ';
         }
         influencerFilterStr += 'influencer_field_value:';
-        influencerFilterStr += value;
+        influencerFilterStr += escapeForElasticsearchQuery(value);
       });
       boolCriteria.push({
         'query_string': {
@@ -534,7 +537,8 @@ module.service('mlResultsService', function ($q, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:influencer AND influencer_field_name:' + influencerFieldName,
+                  'query': '_type:result AND result_type:influencer AND influencer_field_name:' +
+                    escapeForElasticsearchQuery(influencerFieldName),
                   'analyze_wildcard': false
                 }
               },
@@ -1117,7 +1121,7 @@ module.service('mlResultsService', function ($q, es) {
       if (entity.fieldValue.length !== 0) {
         mustCriteria.push({
           'query_string': {
-            'query': entity.fieldName + ':' + entity.fieldValue,
+            'query': escapeForElasticsearchQuery(entity.fieldName) + ':' + escapeForElasticsearchQuery(entity.fieldValue),
             'analyze_wildcard': false
           }
         });
