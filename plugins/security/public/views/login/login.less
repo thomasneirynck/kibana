@@ -80,14 +80,30 @@
   }
 }
 
-button.login {
-  background-color: @gray2;
+.loginButton {
+  display: block;
+  width: 100%;
   color: white;
   font-size: 1.25em;
   border: none;
+  margin-bottom: 0;
+  padding: 5px 15px;
+  font-weight: normal;
+  text-align: center;
+  line-height: 1.42857143;
+  border-radius: 4px;
+  vertical-align: middle;
+  text-transform: uppercase;
+  background-color: #006E8A;
 
-  &:focus, &:hover {
-    background-color: @black;
+  &:focus:not(:disabled),
+  &:hover:not(:disabled) {
+    background-color: darken(#006E8A, 10%);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 

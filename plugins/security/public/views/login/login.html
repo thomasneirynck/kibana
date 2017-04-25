@@ -14,13 +14,19 @@
         <input type="text" ng-disabled="login.isDisabled || !login.allowLogin" ng-model="username" class="form-control" id="username" name="username" placeholder="Username" autofocus />
       </div>
 
-      <div class="form-group  inner-addon left-addon">
+      <div class="form-group inner-addon left-addon">
         <i class="fa fa-lock fa-lg fa-fw"></i>
         <input type="password" ng-disabled="login.isDisabled|| !login.allowLogin" ng-model="password" class="form-control" id="password" name="password" placeholder="Password" />
       </div>
 
       <div class="form-group">
-        <button type="submit" ng-disabled="login.isDisabled || !login.allowLogin || !username || !password || login.isLoading" class="btn btn-block btn-default login">LOG IN</button>
+        <button
+          type="submit"
+          ng-disabled="login.isDisabled || !login.allowLogin || !username || !password || login.isLoading"
+          class="loginButton"
+        >
+          Log in
+        </button>
       </div>
     </form>
   </div>

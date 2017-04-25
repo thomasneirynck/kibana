@@ -41,25 +41,28 @@
           </td>
           <td class="actions">
             <button
-              class="btn btn-danger"
+              class="kuiButton kuiButton--danger"
               ng-if="job.status === 'failed' && jobsCtrl.errorMessage.job_id !== job.id"
               ng-click=jobsCtrl.showError(job.id)
-              >
-              <i class="fa fa-question-circle"></i>
+              aria-label="Show report-generation error"
+            >
+              <span class="kuiIcon fa-question-circle"></span>
             </button>
+
             <div
               class="error-message"
               ng-if="jobsCtrl.errorMessage.job_id === job.id"
-              >
+            >
               {{ jobsCtrl.errorMessage.message }}
             </div>
+
             <button
               ng-if="job.status === 'completed'"
               ng-click=jobsCtrl.download(job.id)
-              class="btn btn-default"
-              title="Download"
-              >
-              <i class="fa fa-download"></i>
+              class="kuiButton kuiButton--basic"
+              aria-label="Download report"
+            >
+              <span class="kuiIcon fa-download"></span>
             </button>
           </td>
         </tr>

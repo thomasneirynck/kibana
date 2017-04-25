@@ -49,8 +49,15 @@
         <div style="height:85%;margin-bottom:5px;padding-top:20px">
           <div ui-ace="{ onLoad : aceLoaded }" ng-model="query" class="ace_editor"></div>
         </div>
-        <button class="btn btn-success" style="float:right;margin-right:20px;"
-          ng-click="profile()" ng-disabled="!licenseEnabled || !query">Profile</button>
+
+        <button
+          class="kuiButton kuiButton--primary"
+          style="float:right;"
+          ng-click="profile()"
+          ng-disabled="!licenseEnabled || !query"
+        >
+          Profile
+        </button>
       </div>
       <aside class="aside details">
         <highlightdetails ng-show="highlight.details && licenseEnabled"></highlightdetails>
