@@ -40,13 +40,36 @@
       <div class="list-group-item list-group-item--noBorder" ng-if="(workspace!==null)&&(configPanel==='blacklist')">
         <p class="help-block">These terms are currently blacklisted from re-appearing in the workspace</p>
 
-        <div class="selectionList">
-          <div ng-repeat="n in workspace.blacklistedNodes">
-            <i class="btn btn-xs fa  fa-times colored-text" ng-click="workspace.unblacklist(n)" ></i>              {{n.label}}
+        <div class="selectionList kuiVerticalRhythm">
+          <div
+            ng-repeat="n in workspace.blacklistedNodes"
+            class="kuiFieldGroup"
+          >
+            <div class="kuiFieldGroupSection">
+              <button
+                class="kuiButton kuiButton--hollow"
+                ng-click="workspace.unblacklist(n)"
+              >
+                <span class="kuiIcon fa-times"></span>
+              </button>
+            </div>
+
+            <div class="kuiFieldGroupSection kuiFieldGroupSection--wide">
+              <p class="kuiText">
+                {{n.label}}
+              </p>
+            </div>
           </div>
         </div>
-        <button tooltip="Clear blacklist" type="button" class="btn btn-default btn-xs " ng-click="workspace.blacklistedNodes=[]" ng-disabled="workspace.blacklistedNodes.length === 0">
-          <i class="fa  fa-trash"></i> Clear
+
+        <button
+          type="button"
+          class="kuiButton kuiButton--danger kuiButton--iconText kuiVerticalRhythm"
+          ng-click="workspace.blacklistedNodes=[]"
+          ng-disabled="workspace.blacklistedNodes.length === 0"
+        >
+          <span class="kuiButton__icon kuiIcon fa-trash"></span>
+          <span>Clear</span>
         </button>
       </div>
       <!-- ====== end blacklist ======== -->
@@ -97,10 +120,25 @@
             </div>
 
             <div class="col-sm-2">
-              <span class="pull-right">
-                <button type="Reset" ng-disabled="!newUrlTemplate.url&&!newUrlTemplate.description&&!newUrlTemplate.icon" class="btn btn-xs btn-primary" ng-click="resetNewUrlTemplate()" aria-label="Rest">Reset</button>
-                <button type="submit" ng-disabled="!newUrlTemplate.url||!newUrlTemplate.description" class="btn btn-xs btn-primary" aria-label="Save drill-down">Save</button>
-              </span>
+              <div class="pull-right kuiButtonGroup">
+                <button
+                  type="reset"
+                  ng-disabled="!newUrlTemplate.url&&!newUrlTemplate.description&&!newUrlTemplate.icon"
+                  class="kuiButton kuiButton--basic"
+                  ng-click="resetNewUrlTemplate()"
+                >
+                  Reset
+                </button>
+
+                <button
+                  type="submit"
+                  ng-disabled="!newUrlTemplate.url||!newUrlTemplate.description"
+                  class="kuiButton kuiButton--primary"
+                  aria-label="Save drill-down"
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </div>
         </form>
@@ -116,17 +154,18 @@
               <span class="pull-right">
                 <button
                   ng-click="editUrlTemplate(urlTemplate)"
-                  class="btn btn-xs btn-default"
-                  aria-label="Edit">
-                  <span class="sr-only">Edit</span>
-                  <i aria-hidden="true" class="fa fa-pencil"></i>
+                  class="kuiButton kuiButton--basic kuiButton--iconText kuiButton--small"
+                  aria-label="Edit"
+                >
+                  <span aria-hidden="true" class="kuiIcon fa-pencil"></span>
                 </button>
+
                 <button
                   ng-click="removeUrlTemplate(urlTemplate)"
-                  class="btn btn-xs btn-default"
-                  aria-label="Remove">
-                  <span class="sr-only">Remove</span>
-                  <i aria-hidden="true" class="fa fa-trash"></i>
+                  class="kuiButton kuiButton--danger kuiButton--iconText kuiButton--small"
+                  aria-label="Remove"
+                >
+                  <span aria-hidden="true" class="kuiIcon fa-trash"></span>
                 </button>
               </span>
             </li>

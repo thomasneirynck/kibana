@@ -18,7 +18,15 @@
     </label>
   </div>
 
-  <button type="submit" ng-disabled="!savedWorkspace.title" class="btn btn-primary" aria-label="Save workspace">Save</button>
+  <button
+    type="submit"
+    ng-disabled="!savedWorkspace.title"
+    class="kuiButton kuiButton--primary"
+    aria-label="Save workspace"
+  >
+    Save
+  </button>
+
   <div class="dialogFooterText" ng-if="workspace.nodes.length>0 && graphSavePolicy=='config'">
     <span class="text-info" >
       <i class="fa fa-info"></i> The data in this workspace will be cleared and only the configuration will be saved
