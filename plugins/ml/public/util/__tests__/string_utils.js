@@ -17,7 +17,11 @@ import expect from 'expect.js';
 import {
   replaceStringTokens,
   detectorToString,
-  sortByKey
+  sortByKey,
+  guessTimeFormat,
+  toLocaleString,
+  mlEscape,
+  escapeForElasticsearchQuery
 } from '../string_utils';
 
 describe('ML - string utils', () => {
@@ -151,5 +155,86 @@ describe('ML - string utils', () => {
 
   });
 
+  describe('guessTimeFormat', () => {
+    it('returns correct format for various dates', () => {
+      expect(guessTimeFormat('2017-03-24T00:00')).to.be('yyyy-MM-dd\'T\'HH:mm');
+      expect(guessTimeFormat('2017-03-24 00:00')).to.be('yyyy-MM-dd HH:mm');
+      expect(guessTimeFormat('2017-03-24 00:00:00')).to.be('yyyy-MM-dd HH:mm:ss');
+      expect(guessTimeFormat('2017-03-24 00:00:00Z')).to.be('yyyy-MM-dd HH:mm:ssX');
+      expect(guessTimeFormat('2017-03-24 00:00:00.000')).to.be('yyyy-MM-dd HH:mm:ss.SSS');
+      expect(guessTimeFormat('2017-03-24 00:00:00:000')).to.be('yyyy-MM-dd HH:mm:ss:SSS');
+      expect(guessTimeFormat('2017-03-24 00:00:00.000+00:00:00')).to.be('yyyy-MM-dd HH:mm:ss.SSSXXXXX');
+      expect(guessTimeFormat('2017-03-24 00:00:00.000+00:00')).to.be('yyyy-MM-dd HH:mm:ss.SSSXXX');
+      expect(guessTimeFormat('2017-03-24 00:00:00.000+000000')).to.be('yyyy-MM-dd HH:mm:ss.SSSXXXX');
+      expect(guessTimeFormat('2017-03-24 00:00:00.000+0000')).to.be('yyyy-MM-dd HH:mm:ss.SSSZ');
+      expect(guessTimeFormat('2017-03-24 00:00:00.000+00')).to.be('yyyy-MM-dd HH:mm:ss.SSSX');
+      expect(guessTimeFormat('2017-03-24 00:00:00.000Z')).to.be('yyyy-MM-dd HH:mm:ss.SSSX');
+      expect(guessTimeFormat('2017-03-24 00:00:00.000 GMT')).to.be('yyyy-MM-dd HH:mm:ss.SSS zzz');
+      expect(guessTimeFormat('2017-03-24 00:00:00 GMT')).to.be('yyyy-MM-dd HH:mm:ss zzz');
+      expect(guessTimeFormat('2017 03 24 00:00:00.000')).to.be('yyyy MM dd HH:mm:ss.SSS');
+      expect(guessTimeFormat('2017.03.24 00:00:00.000')).to.be('yyyy.MM.dd HH:mm:ss.SSS');
+      expect(guessTimeFormat('2017/03/24 00:00:00.000')).to.be('yyyy/MM/dd HH:mm:ss.SSS');
+      expect(guessTimeFormat('24/03/2017 00:00:00.000')).to.be('dd/MM/yyyy HH:mm:ss.SSS');
+      expect(guessTimeFormat('03 24 2017 00:00:00.000')).to.be('MM dd yyyy HH:mm:ss.SSS');
+      expect(guessTimeFormat('03/24/2017 00:00:00.000')).to.be('MM/dd/yyyy HH:mm:ss.SSS');
+      expect(guessTimeFormat('2017 Mar 24 00:00:00.000')).to.be('yyyy MMM dd HH:mm:ss.SSS');
+      expect(guessTimeFormat('Mar 24 2017 00:00:00.000')).to.be('MMM dd yyyy HH:mm:ss.SSS');
+      expect(guessTimeFormat('24 Mar 2017 00:00:00.000')).to.be('dd MMM yyyy HH:mm:ss.SSS');
+      expect(guessTimeFormat('1490313600')).to.be('epoch');
+      expect(guessTimeFormat('1490313600000')).to.be('epoch_ms');
+    });
+  });
+
+  describe('toLocaleString', () => {
+    it('returns correct comma placement for large numbers', () => {
+      expect(toLocaleString(1)).to.be('1');
+      expect(toLocaleString(10)).to.be('10');
+      expect(toLocaleString(100)).to.be('100');
+      expect(toLocaleString(1000)).to.be('1,000');
+      expect(toLocaleString(10000)).to.be('10,000');
+      expect(toLocaleString(100000)).to.be('100,000');
+      expect(toLocaleString(1000000)).to.be('1,000,000');
+      expect(toLocaleString(10000000)).to.be('10,000,000');
+      expect(toLocaleString(100000000)).to.be('100,000,000');
+      expect(toLocaleString(1000000000)).to.be('1,000,000,000');
+    });
+  });
+
+  describe('mlEscape', () => {
+    it('returns correct escaping of characters', () => {
+      expect(mlEscape('foo&bar')).to.be('foo&amp;bar');
+      expect(mlEscape('foo<bar')).to.be('foo&lt;bar');
+      expect(mlEscape('foo>bar')).to.be('foo&gt;bar');
+      expect(mlEscape('foo"bar')).to.be('foo&quot;bar');
+      expect(mlEscape('foo\'bar')).to.be('foo&#39;bar');
+      expect(mlEscape('foo/bar')).to.be('foo&#x2F;bar');
+    });
+  });
+
+  describe('escapeForElasticsearchQuery', () => {
+    it('returns correct escaping of reserved elasticsearch characters', () => {
+      expect(escapeForElasticsearchQuery('foo+bar')).to.be('foo\\+bar');
+      expect(escapeForElasticsearchQuery('foo-bar')).to.be('foo\\-bar');
+      expect(escapeForElasticsearchQuery('foo=bar')).to.be('foo\\=bar');
+      expect(escapeForElasticsearchQuery('foo&&bar')).to.be('foo\\&\\&bar');
+      expect(escapeForElasticsearchQuery('foo||bar')).to.be('foo\\|\\|bar');
+      expect(escapeForElasticsearchQuery('foo>bar')).to.be('foo\\>bar');
+      expect(escapeForElasticsearchQuery('foo<bar')).to.be('foo\\<bar');
+      expect(escapeForElasticsearchQuery('foo!bar')).to.be('foo\\!bar');
+      expect(escapeForElasticsearchQuery('foo(bar')).to.be('foo\\(bar');
+      expect(escapeForElasticsearchQuery('foo)bar')).to.be('foo\\)bar');
+      expect(escapeForElasticsearchQuery('foo{bar')).to.be('foo\\{bar');
+      expect(escapeForElasticsearchQuery('foo[bar')).to.be('foo\\[bar');
+      expect(escapeForElasticsearchQuery('foo]bar')).to.be('foo\\]bar');
+      expect(escapeForElasticsearchQuery('foo^bar')).to.be('foo\\^bar');
+      expect(escapeForElasticsearchQuery('foo"bar')).to.be('foo\\"bar');
+      expect(escapeForElasticsearchQuery('foo~bar')).to.be('foo\\~bar');
+      expect(escapeForElasticsearchQuery('foo*bar')).to.be('foo\\*bar');
+      expect(escapeForElasticsearchQuery('foo?bar')).to.be('foo\\?bar');
+      expect(escapeForElasticsearchQuery('foo:bar')).to.be('foo\\:bar');
+      expect(escapeForElasticsearchQuery('foo\\bar')).to.be('foo\\\\bar');
+      expect(escapeForElasticsearchQuery('foo/bar')).to.be('foo\\/bar');
+    });
+  });
 
 });
