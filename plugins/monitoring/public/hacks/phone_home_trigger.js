@@ -7,7 +7,7 @@ import { PhoneHome } from './phone_home';
 function phoneHomeStart($injector) {
   const Private = $injector.get('Private');
   // no phone home for non-logged in users
-  if (Private(PathProvider).isLoginOrLogout()) return;
+  if (Private(PathProvider).isLoginOrLogout()) { return; }
 
   const sender = new PhoneHome($injector, uiChrome.getBasePath());
   sender.start();

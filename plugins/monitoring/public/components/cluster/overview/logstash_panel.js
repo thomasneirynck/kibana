@@ -4,7 +4,9 @@ import { ClusterItemContainer, BytesPercentageUsage } from './helpers';
 
 export class LogstashPanel extends React.Component {
   render() {
-    if (!this.props.count) return null;
+    if (!this.props.count) {
+      return null;
+    }
 
     return (
       <ClusterItemContainer {...this.props} url='logstash' title='Logstash'>

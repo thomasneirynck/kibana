@@ -17,7 +17,7 @@ export function getLatestAggKey(buckets) {
  */
 export function getNodeAttribute(buckets) {
   // nothing in the bucket, set to undefined
-  if (buckets.length === 0) return;
+  if (buckets.length === 0) { return; }
   // boolean-ish string
   return last(buckets).key_as_string;
 }

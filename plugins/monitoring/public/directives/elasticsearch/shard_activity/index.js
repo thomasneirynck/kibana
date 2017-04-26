@@ -48,7 +48,7 @@ uiModule.directive('monitoringShardActivity', function () {
 
       $scope.getIpAndPort = function (transport) {
         const matches = transport.match(/([\d\.:]+)\]$/);
-        if (matches) return matches[1];
+        if (matches) { return matches[1]; }
         return transport;
       };
     }

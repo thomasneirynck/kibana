@@ -74,7 +74,7 @@ describe('$executor service', () => {
     let calls = 0;
     timefilter.refreshInterval.value = 10;
     executor.register({ execute: () => {
-      if (calls++ > 1) done();
+      if (calls++ > 1) { done(); }
       return Promise.resolve();
     } });
     executor.start();

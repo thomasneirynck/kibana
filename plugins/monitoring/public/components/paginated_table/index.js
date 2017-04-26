@@ -68,7 +68,9 @@ export const Table = React.createClass({
     const data = this.state.tableData;
     const filter = this.state.filter;
 
-    if (!filter) return data;
+    if (!filter) {
+      return data;
+    }
 
     const getFilterValueString = (obj) => {
       const filterFields = this.props.options.filterFields || [];

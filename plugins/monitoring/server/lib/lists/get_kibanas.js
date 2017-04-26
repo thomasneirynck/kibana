@@ -17,7 +17,7 @@ import { calculateAvailability } from '../calculate_availability';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 export function getKibanas(req, indices) {
-  if (indices.length < 1) return Promise.resolve([]);
+  if (indices.length < 1) { return Promise.resolve([]); }
 
   const config = req.server.config();
   const start = moment.utc(req.payload.timeRange.min).valueOf();

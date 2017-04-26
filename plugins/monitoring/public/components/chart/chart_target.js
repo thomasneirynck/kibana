@@ -12,7 +12,8 @@ export class ChartTarget extends React.Component {
   }
 
   shutdownChart() {
-    if (!this.plot) return;
+    if (!this.plot) { return; }
+
     const { target } = this.refs;
     $(target).off('plothover');
     $(target).off('mouseleave');
@@ -85,7 +86,8 @@ export class ChartTarget extends React.Component {
     this.plot = $.plot(target, data, this.getOptions());
 
     this._handleResize = () => {
-      if (!this.plot) return;
+      if (!this.plot) { return; }
+
       try {
         this.plot.resize();
         this.plot.setupGrid();

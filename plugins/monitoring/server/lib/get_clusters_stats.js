@@ -11,7 +11,7 @@ export function getClustersStats(req) {
 
   return (clusters) => {
     // in case getClusters had no hits and returned undefined
-    if (!clusters) return [];
+    if (!clusters) { return []; }
 
     return Promise.map(clusters, (cluster) => {
       const body = {

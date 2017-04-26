@@ -64,7 +64,7 @@ export class PhoneHome {
    * Check report permission and if passes, send the report
    */
   _sendIfDue() {
-    if (!this._checkReportStatus()) return Promise.resolve();
+    if (!this._checkReportStatus()) { return Promise.resolve(); }
 
     // call to get the latest cluster uuids with a time range to go back 20 minutes up to now
     const currentClustersUrl = `${this._basePath}/api/monitoring/v1/clusters/_stats`;
@@ -83,7 +83,7 @@ export class PhoneHome {
           data: cluster
         };
         // if passing data externally to Infra, suppress kbnXsrfToken
-        if (this._statsReportUrl.match(/^https/)) req.kbnXsrfToken = false;
+        if (this._statsReportUrl.match(/^https/)) { req.kbnXsrfToken = false; }
         return this._$http(req);
       });
     })

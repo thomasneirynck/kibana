@@ -32,7 +32,7 @@ function getMockServerFromConnectionUrl(monitoringClusterUrl) {
 
   const config = () => {
     return {
-      get: (path) => { return get(server, path);},
+      get: (path) => { return get(server, path); },
       set: noop
     };
   };

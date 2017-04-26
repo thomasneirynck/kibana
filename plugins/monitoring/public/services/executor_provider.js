@@ -15,7 +15,7 @@ export function executorProvider(Promise, $timeout, timefilter) {
   }
 
   function killTimer() {
-    if (executionTimer) $timeout.cancel(executionTimer);
+    if (executionTimer) { $timeout.cancel(executionTimer); }
   }
 
     /**

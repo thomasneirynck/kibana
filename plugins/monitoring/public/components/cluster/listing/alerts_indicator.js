@@ -10,8 +10,8 @@ const STATUS_OK = -2;
 export function AlertsIndicator({ alerts }) {
   if (alerts && alerts.count > 0) {
     const severity = (() => {
-      if (alerts.high > 0) return HIGH_SEVERITY;
-      if (alerts.medium > 0) return MEDIUM_SEVERITY;
+      if (alerts.high > 0) { return HIGH_SEVERITY; }
+      if (alerts.medium > 0) { return MEDIUM_SEVERITY; }
       return LOW_SEVERITY;
     })();
     const icon = <SeverityIcon severity={severity} />;

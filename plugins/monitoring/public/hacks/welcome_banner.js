@@ -53,7 +53,7 @@ function customBanner($injector, _renderBanner = renderBanner) {
 
   // no banner for non-logged in users
   const Private = $injector.get('Private');
-  if (Private(PathProvider).isLoginOrLogout()) return;
+  if (Private(PathProvider).isLoginOrLogout()) { return; }
 
   const config = $injector.get('config');
   if (config.get(CONFIG_SHOW_BANNER, true)) {

@@ -29,7 +29,7 @@ export function formatNumber(num, which) {
       postfix = 'ms';
       break;
     default:
-      if (which) format = which;
+      if (which) { format = which; }
   }
   return numeral(num).format(format) + postfix;
 };

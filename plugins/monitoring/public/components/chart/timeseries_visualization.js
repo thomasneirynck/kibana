@@ -25,7 +25,9 @@ export class TimeseriesVisualization extends React.Component {
   }
 
   filterLegend(id) {
-    if (!_.has(this.state.values, id)) return [];
+    if (!_.has(this.state.values, id)) {
+      return [];
+    }
 
     const notAllShown = _.keys(this.state.values).length !== this.state.seriesToShow.length;
     const isCurrentlyShown = _.includes(this.state.seriesToShow, id);
@@ -61,7 +63,9 @@ export class TimeseriesVisualization extends React.Component {
 
     props.series.forEach((row) => {
       // we need a valid identifier
-      if (!row.id) row.id = row.label;
+      if (!row.id) {
+        row.id = row.label;
+      }
       values[row.id] = getLastValue(row.data);
     });
 

@@ -32,7 +32,7 @@ export function getShardAllocation(req, indices, filters, lastState, showSystemI
   return callWithRequest(req, 'search', params)
   .then((resp) => {
     const hits = _.get(resp, 'hits.hits');
-    if (!hits) return [];
+    if (!hits) { return []; }
     // map into object with shard and source properties
     return hits.map(doc => _.merge(doc._source.shard, {
       resolver: _.get(doc, `_source.source_node[${config.get('xpack.monitoring.node_resolver')}]`)

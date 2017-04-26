@@ -23,7 +23,7 @@ Model.prototype.set = function (key, val) {
 Model.prototype.toObject = function (options) {
   options = _.defaults({}, options, this.options);
   let data = this.data;
-  if (options.flatten) data = Model.flatten(data);
+  if (options.flatten) { data = Model.flatten(data); }
   return data;
 };
 

@@ -33,7 +33,7 @@ export function opsBuffer(kbnServer, server) {
       server.log(['debug', monitoringTag], 'Received Monitoring event data');
     },
     flush() {
-      if (!lastOp) return;
+      if (!lastOp) { return; }
 
       // grab the last operation
       const payload = mapEvent(lastOp, config, kbnServer);

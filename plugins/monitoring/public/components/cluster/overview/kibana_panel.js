@@ -5,7 +5,9 @@ import { ClusterItemContainer, HealthStatusIndicator, BytesPercentageUsage } fro
 import { KibanaStatusIcon } from 'plugins/monitoring/components/kibana/status_icon';
 
 export function KibanaPanel(props) {
-  if (!props.count) return null;
+  if (!props.count) {
+    return null;
+  }
 
   const statusIndicator = (
     <HealthStatusIndicator>

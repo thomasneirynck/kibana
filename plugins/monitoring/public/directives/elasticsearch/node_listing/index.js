@@ -169,7 +169,9 @@ uiModule.directive('monitoringNodesListing', ($injector) => {
     link(scope, $el) {
 
       function createRow(rowData) {
-        if (!rowData) return null;
+        if (!rowData) {
+          return null;
+        }
 
         return {
           nodeName: _.get(rowData, 'node.name'),

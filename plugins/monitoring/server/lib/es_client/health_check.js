@@ -38,7 +38,7 @@ export function esHealthCheck(monitoringPlugin, server) {
   function waitForPong() {
     return callWithInternalUser('ping')
     .catch(err => {
-      if (!(err instanceof NoConnections)) throw err;
+      if (!(err instanceof NoConnections)) { throw err; }
 
       const elasticsearchUrl = config.get('xpack.monitoring.elasticsearch.url') || config.get('elasticsearch.url');
       monitoringPlugin.status.red(`Unable to connect to Elasticsearch at ${elasticsearchUrl}.`);
@@ -78,17 +78,17 @@ export function esHealthCheck(monitoringPlugin, server) {
   }
 
   function scheduleCheck(ms) {
-    if (timeoutId) return;
+    if (timeoutId) { return; }
     const myId = setTimeout(() => {
       check().finally(() => {
-        if (timeoutId === myId) startOrRestartChecking();
+        if (timeoutId === myId) { startOrRestartChecking(); }
       });
     }, ms);
     timeoutId = myId;
   }
 
   function stopChecking() {
-    if (!timeoutId) return false;
+    if (!timeoutId) { return false; }
     clearTimeout(timeoutId);
     timeoutId = null;
     return true;

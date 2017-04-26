@@ -17,7 +17,7 @@ import { createQuery } from './../create_query.js';
 import { ElasticsearchMetric } from './../metrics/metric_classes';
 
 export function getLogstashForClusters(req, indices) {
-  if (indices.length < 1) return () => Promise.resolve([]);
+  if (indices.length < 1) { return () => Promise.resolve([]); }
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const start = req.payload.timeRange.min;

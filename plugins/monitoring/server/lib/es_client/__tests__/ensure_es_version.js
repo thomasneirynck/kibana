@@ -43,7 +43,7 @@ describe('plugins/elasticsearch', () => {
           ip: 'ip'
         };
 
-        if (!_.isString(version)) _.assign(node, version);
+        if (!_.isString(version)) { _.assign(node, version); }
         nodes[name] = node;
       }
 

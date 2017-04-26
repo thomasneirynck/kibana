@@ -19,10 +19,10 @@ export function calculateNodeType(node, state) {
   }
 
   // NOTE: calculating if node is master node is the only thing node ID should be used for
-  if (includes(node.node_ids, state.master_node)) return 'master';
+  if (includes(node.node_ids, state.master_node)) { return 'master'; }
 
-  if (isNot(attrs.data) && isNot(attrs.master)) return 'client';
-  if (mightBe(attrs.master) && isNot(attrs.data)) return 'master_only';
-  if (mightBe(attrs.data) && isNot(attrs.master)) return 'data';
+  if (isNot(attrs.data) && isNot(attrs.master)) { return 'client'; }
+  if (mightBe(attrs.master) && isNot(attrs.data)) { return 'master_only'; }
+  if (mightBe(attrs.data) && isNot(attrs.master)) { return 'data'; }
   return 'node';
 };

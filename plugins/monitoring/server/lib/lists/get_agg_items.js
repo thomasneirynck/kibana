@@ -9,7 +9,7 @@ export function getAggItems(options) {
     const metric = metrics[metricName];
     let metricAgg = null;
 
-    if (!metric) return;
+    if (!metric) { return; }
     if (!metric.aggs) {
       metricAgg = {
         metric: {},

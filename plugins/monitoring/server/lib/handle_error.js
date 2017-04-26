@@ -22,8 +22,8 @@ export function handleError(err, req) {
     return Boom.forbidden(message);
   }
 
-  if (err.isBoom) return err;
+  if (err.isBoom) { return err; }
   const msg = err.msg || err.message;
-  if (msg === 'Not Found') return Boom.notFound();
+  if (msg === 'Not Found') { return Boom.notFound(); }
   return Boom.badRequest(msg);
 }

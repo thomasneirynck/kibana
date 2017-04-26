@@ -1,5 +1,5 @@
 const $ = require('jquery');
-if (window) window.jQuery = $;
+if (window) { window.jQuery = $; }
 require('flot-charts/jquery.flot');
 
 // load flot plugins

@@ -32,12 +32,12 @@ function find(rules, check, last) {
       const resp = check(rule[0], rule[1], target);
 
       if (resp == null) {
-        if (!last) continue;
-        if (lastResp) return lastResp;
+        if (!last) { continue; }
+        if (lastResp) { return lastResp; }
         break;
       }
 
-      if (!last) return resp;
+      if (!last) { return resp; }
       lastResp = resp;
     }
 
@@ -48,18 +48,18 @@ function find(rules, check, last) {
 
   return function (buckets, duration) {
     const interval = pick(buckets, duration);
-    if (interval) return moment.duration(interval._data);
+    if (interval) { return moment.duration(interval._data); }
   };
 }
 
 export const near = find(revRoundingRules, function near(bound, interval, target) {
-  if (bound > target) return interval;
+  if (bound > target) { return interval; }
 }, true);
 
 export const lessThan = find(revRoundingRules, function lessThan(_bound, interval, target) {
-  if (interval < target) return interval;
+  if (interval < target) { return interval; }
 });
 
 export const atLeast = find(revRoundingRules, function atLeast(_bound, interval, target) {
-  if (interval <= target) return interval;
+  if (interval <= target) { return interval; }
 });

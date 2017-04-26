@@ -23,11 +23,11 @@ function setStats(bucket, metric, ident) {
   const states = filter(bucket.states.buckets, ident);
   states.forEach((state) => {
     metric.primary = state.primary.buckets.reduce((prev, curr) => {
-      if (curr.key) prev += curr.doc_count;
+      if (curr.key) { prev += curr.doc_count; }
       return prev;
     }, metric.primary);
     metric.replica = state.primary.buckets.reduce((prev, curr) => {
-      if (!curr.key) prev += curr.doc_count;
+      if (!curr.key) { prev += curr.doc_count; }
       return prev;
     }, metric.replica);
   });
@@ -76,8 +76,8 @@ export function normalizeIndexShards(data) {
     data.totals.replica += metric.replica;
     data.totals.unassigned.primary += metric.unassigned.primary;
     data.totals.unassigned.replica += metric.unassigned.replica;
-    if (metric.unassigned.replica) metric.status = 'yellow';
-    if (metric.unassigned.primary) metric.status = 'red';
+    if (metric.unassigned.replica) { metric.status = 'yellow'; }
+    if (metric.unassigned.primary) { metric.status = 'red'; }
     data[bucket.key] = metric;
   };
 };

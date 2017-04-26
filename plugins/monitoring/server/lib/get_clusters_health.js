@@ -37,7 +37,7 @@ export function getClustersHealth(req) {
         } } }
       });
     });
-    if (!bodies.length) return Promise.resolve([]);
+    if (!bodies.length) { return Promise.resolve([]); }
     const params = {
       index: config.get('xpack.monitoring.elasticsearch.index_pattern'),
       type: 'cluster_state',
