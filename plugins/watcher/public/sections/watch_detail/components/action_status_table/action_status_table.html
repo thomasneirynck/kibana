@@ -47,6 +47,7 @@
               ng-click="actionStatusTable.onActionAcknowledge(actionStatus)"
               title="Acknowledge"
               ng-if="actionStatus.isAckable"
+              data-test-subj="btnActionAcknowledge-{{ actionStatus.id }}"
             >
               <span class="kuiMenuButton__icon kuiIcon fa-thumbs-up"></span>
               <span>Acknowledge</span>

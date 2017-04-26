@@ -20,6 +20,7 @@
           <a
             class="kuiButton kuiButton--primary"
             href="#/management/elasticsearch/watcher/watches/new-watch"
+            data-test-subj="lnkAddWatch"
           >
             Add
           </a>
@@ -27,6 +28,7 @@
             class="kuiButton kuiButton--danger"
             ng-disabled="!watchList.hasSelectedWatches"
             ng-click="watchList.onSelectedWatchesDelete()"
+            data-test-subj="btnDeleteWatches"
           >
             Delete
           </button>

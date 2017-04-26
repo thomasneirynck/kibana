@@ -20,6 +20,7 @@
               ng-if="watchDetail.watch.watchStatus.isActive"
               ng-click="watchDetail.onWatchDeactivate()"
               class="kuiButton kuiButton--basic"
+              data-test-subj="btnDeactivateWatch"
             >
               Deactivate
             </button>
@@ -27,12 +28,14 @@
               ng-if="!watchDetail.watch.watchStatus.isActive"
               ng-click="watchDetail.onWatchActivate()"
               class="kuiButton kuiButton--basic"
+              data-test-subj="btnActivateWatch"
             >
               Activate
             </button>
             <button
               ng-click="watchDetail.onWatchDelete()"
               class="kuiButton kuiButton--danger"
+              data-test-subj="btnDeleteWatch"
             >
               Delete
             </button>

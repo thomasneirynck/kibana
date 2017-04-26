@@ -7,12 +7,14 @@
     <button
       class="kuiButton kuiButton--hollow"
       ng-if="!sectionCollapser.isCollapsed"
+      data-test-subj="btnSectionCollapse"
     >
       <span class="kuiButton__icon kuiIcon fa-caret-down"></span>
     </button>
     <button
       class="kuiButton kuiButton--hollow"
       ng-if="sectionCollapser.isCollapsed"
+      data-test-subj="btnSectionExpand"
     >
       <span class="kuiButton__icon kuiIcon fa-caret-right"></span>
     </button>

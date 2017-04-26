@@ -5,12 +5,14 @@
         class="kuiButton kuiButton--primary"
         ng-disabled="!watchEditTitleBar.isWatchValid"
         ng-click="watchEditTitleBar.onWatchSave()"
+        data-test-subj="btnSaveWatch"
       >
         Save
       </button>
       <button
         class="kuiButton kuiButton--basic"
         ng-click="watchEditTitleBar.onClose()"
+        data-test-subj="btnCancel"
       >
         Cancel
       </button>
@@ -19,6 +21,7 @@
         class="kuiButton kuiButton--danger kuiButton--iconText"
         ng-click="watchEditTitleBar.onWatchDelete()"
         tooltip="Delete Watch"
+        data-test-subj="btnDeleteWatch"
       >
         Delete
       </button>

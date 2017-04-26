@@ -94,6 +94,7 @@
             ng-href="#/management/elasticsearch/watcher/watches/watch/{{item.watch.id}}/status"
             title="{{item.watch.id}}"
             ng-if="watchTable.isEditable(item)"
+            data-test-subj="lnkWatchStatus-{{ item.watch.id }}"
           >
             {{item.watch.id}}
           </a>
@@ -149,6 +150,7 @@
               title="Edit"
               ng-href="#/management/elasticsearch/watcher/watches/watch/{{item.watch.id}}/edit"
               ng-if="watchTable.isEditable(item)"
+              data-test-subj="lnkWatchEdit-{{ item.watch.id }}"
             >
               <span class="kuiMenuButton__icon kuiIcon fa-pencil"></span>
               <span>Edit</span>

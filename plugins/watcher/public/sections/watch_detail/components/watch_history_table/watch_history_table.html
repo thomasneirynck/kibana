@@ -45,6 +45,7 @@
           <a
             title="View"
             ng-href="#/management/elasticsearch/watcher/watches/watch/{{watchHistoryTable.watch.id}}/history-item/{{item.historyItem.id}}"
+            data-test-subj="lnkWatchHistoryItem"
           >
             {{ item.historyItem.startTime | moment }}
           </a>
