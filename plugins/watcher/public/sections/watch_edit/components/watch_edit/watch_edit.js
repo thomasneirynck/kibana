@@ -80,6 +80,45 @@ app.directive('watchEdit', function ($injector) {
       }
 
       onWatchSave = () => {
+        if (!this.watch.isNew) {
+          return this.saveWatch();
+        }
+
+        return this.isExistingWatch()
+        .then(existingWatch => {
+          if (!existingWatch) {
+            return this.saveWatch();
+          }
+
+          const confirmModalOptions = {
+            onConfirm: this.saveWatch,
+            confirmButtonText: 'Overwrite Watch'
+          };
+
+          const watchNameMessageFragment = existingWatch.name ? ` (name: "${existingWatch.name}")` : '';
+          const message = `Watch with ID "${this.watch.id}"${watchNameMessageFragment} already exists. Do you want to overwrite it?`;
+          return confirmModal(message, confirmModalOptions);
+        })
+        .catch(err => this.notifier.error(err));
+      }
+
+      isExistingWatch = () => {
+        return watchService.loadWatch(this.watch.id)
+        .then(existingWatch => {
+          return existingWatch;
+        })
+        .catch(err => {
+          return licenseService.checkValidity()
+          .then(() => {
+            if (err.status === 404) {
+              return false;
+            }
+            throw err;
+          });
+        });
+      }
+
+      saveWatch = () => {
         return watchService.saveWatch(this.watch)
         .then(() => {
           this.notifier.info(`Saved Watch "${this.watch.id}"`);
