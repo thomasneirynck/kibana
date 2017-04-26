@@ -129,19 +129,6 @@ onDeleted
 onWatchDeleted
 ```
 
-In the case the handler is handling a binary state change, prefer two explicitly-named handlers instead.
-
-GOOD
-```
-onCollapse
-onExpand
-```
-
-BAD
-```
-onCollapseChange
-```
-
 ## Data Flow
 
 We have a layered architecture in the Watcher UI codebase, with each layer performing a specific function to the data as it flows through it.

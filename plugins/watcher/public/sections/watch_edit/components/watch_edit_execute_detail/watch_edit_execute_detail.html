@@ -1,13 +1,10 @@
 <form name="watchEditExecuteDetail.triggerForm" novalidate>
-  <section-collapser
-    section-id="trigger"
+  <toggle-panel
+    toggle-panel-id="trigger"
+    text="Trigger Overrides"
     is-collapsed="watchEditExecuteDetail.isSectionCollapsed('trigger')"
-    on-collapse="watchEditExecuteDetail.onSectionCollapse"
-    on-expand="watchEditExecuteDetail.onSectionExpand"
+    on-toggle="watchEditExecuteDetail.onSectionToggle"
   >
-    <label class="collapserLabel">Trigger Overrides</label>
-  </section-collapser>
-  <div ng-hide="watchEditExecuteDetail.isSectionCollapsed('trigger')">
     <div class="kuiFormSection">
       <label
         for="triggeredTime"
@@ -40,18 +37,15 @@
         placeholder="now"
       >
     </div>
-  </div>
+  </toggle-panel>
 </form>
 
-<section-collapser
-  section-id="input"
+<toggle-panel
+  toggle-panel-id="input"
+  text="Input Overrides"
   is-collapsed="watchEditExecuteDetail.isSectionCollapsed('input')"
-  on-collapse="watchEditExecuteDetail.onSectionCollapse"
-  on-expand="watchEditExecuteDetail.onSectionExpand"
+  on-toggle="watchEditExecuteDetail.onSectionToggle"
 >
-  <label class="collapserLabel">Input Overrides</label>
-</section-collapser>
-<div ng-hide="watchEditExecuteDetail.isSectionCollapsed('input')">
   <div class="kuiFormSection">
     <label
       for="recordExecution"
@@ -81,18 +75,15 @@
       Invalid JSON
     </div>
   </div>
-</div>
+</toggle-panel>
 
 <form name="watchEditExecuteDetail.conditionForm" novalidate>
-  <section-collapser
-    section-id="condition"
+  <toggle-panel
+    toggle-panel-id="condition"
+    text="Condition Overrides"
     is-collapsed="watchEditExecuteDetail.isSectionCollapsed('condition')"
-    on-collapse="watchEditExecuteDetail.onSectionCollapse"
-    on-expand="watchEditExecuteDetail.onSectionExpand"
+    on-toggle="watchEditExecuteDetail.onSectionToggle"
   >
-    <label class="collapserLabel">Condition Overrides</label>
-  </section-collapser>
-  <div ng-hide="watchEditExecuteDetail.isSectionCollapsed('condition')">
     <div class="kuiFormSection">
       <label
         for="ignoreCondition"
@@ -105,22 +96,19 @@
           ng-model="watchEditExecuteDetail.executeDetails.ignoreCondition"
           class="kuiCheckBox"
         >
-          Ignore Condition (Condition is always true)
-        </label>
+        Ignore Condition (Condition is always true)
+      </label>
     </div>
-  </div>
+  </toggle-panel>
 </form>
 
 <form name="watchEditExecuteDetail.actionForm" novalidate>
-  <section-collapser
-    section-id="action"
+  <toggle-panel
+    toggle-panel-id="action"
+    text="Action Overrides"
     is-collapsed="watchEditExecuteDetail.isSectionCollapsed('action')"
-    on-collapse="watchEditExecuteDetail.onSectionCollapse"
-    on-expand="watchEditExecuteDetail.onSectionExpand"
+    on-toggle="watchEditExecuteDetail.onSectionToggle"
   >
-    <label class="collapserLabel">Action Overrides</label>
-  </section-collapser>
-  <div ng-hide="watchEditExecuteDetail.isSectionCollapsed('action')">
     <div class="kuiFormSection">
       <label class="kuiFormLabel">
         Action Modes
@@ -130,5 +118,5 @@
         on-change="watchEditExecuteDetail.onActionModesChanged"
       ></watch-action-mode-table>
     </div>
-  </div>
+  </toggle-panel>
 </form>

@@ -3,8 +3,8 @@ import { uiModules } from 'ui/modules';
 import template from './watch_edit_execute_detail.html';
 import './watch_edit_execute_detail.less';
 import '../watch_action_mode_table';
-import 'plugins/watcher/components/section_collapser';
 import 'ace';
+import 'ui/toggle_panel';
 import { ExecuteDetails } from 'plugins/watcher/models/execute_details';
 
 const app = uiModules.get('xpack/watcher');
@@ -47,12 +47,8 @@ app.directive('watchEditExecuteDetail', function () {
         ], this.reportChanges);
       }
 
-      onSectionCollapse = (sectionId) => {
-        this.isCollapsed[sectionId] = true;
-      }
-
-      onSectionExpand = (sectionId) => {
-        this.isCollapsed[sectionId] = false;
+      onSectionToggle = (sectionId) => {
+        this.isCollapsed[sectionId] = !this.isCollapsed[sectionId];
       }
 
       isSectionCollapsed = (sectionId) => {
