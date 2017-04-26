@@ -80,8 +80,12 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     // Aggregate by job, detector, and analysis fields (partition, by, over).
     const aggregatedData = {};
     _.each(anomalyRecords, (record) => {
+      // TODO - currently time_of_day/week have function_description as 'count'.
+      // If they are given their own unique description remove the extra check on function.
+      // See https://github.com/elastic/machine-learning-cpp/issues/122
       if (_.indexOf(FUNCTION_DESCRIPTIONS_TO_PLOT, record.function_description) === -1 ||
-        record.by_field_name === 'mlcategory') {
+        record.by_field_name === 'mlcategory' ||
+        record.function === 'time_of_day' || record.function === 'time_of_week') {
         return;
       }
       const jobId = record.job_id;

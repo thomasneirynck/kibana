@@ -510,10 +510,17 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
           paginatedTableColumns.push({ title: 'actual', sortable: true });
         }
         if (showTypical === true) {
+          paginatedTableColumns.push({ title: 'typical', sortable: true });
+
           // Assume that if we are showing typical, there will be an actual too,
           // so we can add a column to describe how actual compares to typical.
-          paginatedTableColumns.push({ title: 'typical', sortable: true });
-          paginatedTableColumns.push({ title: 'description', sortable: true });
+          const nonTimeOfDayOrWeek = _.some(summaryRecords, (record) => {
+            const summaryRecFunc = record.source.function;
+            return summaryRecFunc !== 'time_of_day' && summaryRecFunc !== 'time_of_week';
+          });
+          if (nonTimeOfDayOrWeek === true) {
+            paginatedTableColumns.push({ title: 'description', sortable: true });
+          }
         }
         paginatedTableColumns.push({ title: 'job ID', sortable: true });
         if (showLinks === true) {
@@ -577,10 +584,9 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         const addEntity = _.findWhere(scope.table.columns, { 'title':'found for' });
         const addInfluencers = _.findWhere(scope.table.columns, { 'title':'influenced by' });
 
-        // Assume that if we are showing typical, there will be an actual too,
-        // so we can add a column to describe how actual compares to typical.
         const addActual = _.findWhere(scope.table.columns, { 'title':'actual' });
         const addTypical = _.findWhere(scope.table.columns, { 'title':'typical' });
+        const addDescription = _.findWhere(scope.table.columns, { 'title':'description' });
         const addExamples = _.findWhere(scope.table.columns, { 'title':'category examples' });
         const addLinks = _.findWhere(scope.table.columns, { 'title':'links' });
 
@@ -659,21 +665,29 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
           if (_.has(record, 'typical')) {
             const typicalVal = formatValueFilter(record.typical, record.source.function);
             tableRow.push({ markup: typicalVal, value: typicalVal, scope: rowScope });
-
-            // Use the metricChangeDescription filter to format a textual description of actual vs typical.
-            const actualVal = formatValueFilter(record.actual, record.source.function);
-            const factor = (actualVal > typicalVal) ? actualVal / typicalVal : typicalVal / actualVal;
-            tableRow.push({ markup: '<span ng-bind-html="' + actualVal + ' | metricChangeDescription:' + typicalVal + '"></span>',
-              value: Math.abs(factor), scope: rowScope });
+            if (addDescription !== undefined) {
+              // Assume there is an actual value if there is a typical,
+              // and add a description cell if not time_of_week/day.
+              const detectorFunc = record.source.function;
+              if (detectorFunc !== 'time_of_week' && detectorFunc !== 'time_of_day') {
+                const actualVal = formatValueFilter(record.actual, record.source.function);
+                const factor = (actualVal > typicalVal) ? actualVal / typicalVal : typicalVal / actualVal;
+                tableRow.push({ markup: '<span ng-bind-html="' + actualVal + ' | metricChangeDescription:' + typicalVal + '"></span>',
+                  value: Math.abs(factor), scope: rowScope });
+              } else {
+                tableRow.push({ markup: '', value: '' });
+              }
+            }
           } else {
             tableRow.push({ markup: '', value: '' });
-            tableRow.push({ markup: '', value: '' });
+            if (addDescription !== undefined) {
+              tableRow.push({ markup: '', value: '' });
+            }
           }
         }
 
         tableRow.push({ markup: record.jobId, value: record.jobId });
 
-        // TODO - add in links
         if (addLinks !== undefined) {
           if (_.has(record, 'links')) {
             rowScope.links = record.links;
