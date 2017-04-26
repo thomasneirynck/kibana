@@ -128,13 +128,13 @@
                     ng-click="removeCustomUrl($index)"
                     tooltip-append-to-body="true"
                     type="button"
-                    class="kuiButton kuiButton--danger ml-btn-small remove-button">
+                    class="kuiButton kuiButton--danger kuiButton--small remove-button">
                       <i aria-hidden="true" class="fa fa-times"></i>
                   </button>
                 </div>
               </div>
               <div>
-                <button aria-label="Add Custom URL" ng-click="addCustomUrl()" type="button" class="kuiButton kuiButton--primary ml-btn-small">
+                <button aria-label="Add Custom URL" ng-click="addCustomUrl()" type="button" class="kuiButton kuiButton--primary kuiButton--small">
                   <span class="sr-only">Add Custom URL</span>
                   <i aria-hidden="true" class="fa fa-plus"></i> Add Custom URL
                 </button>
@@ -216,7 +216,7 @@
                     ng-click="removeCategorizationFilter($index)"
                     tooltip-append-to-body="true"
                     type="button"
-                    class="kuiButton kuiButton--danger ml-btn-small remove-button">
+                    class="kuiButton kuiButton--danger kuiButton--small remove-button">
                       <i aria-hidden="true" class="fa fa-times"></i>
                   </button>
                 </div>
@@ -227,7 +227,7 @@
                   ng-click="addCategorizationFilter()"
                   type="button"
                   ng-disabled="job.analysis_config.categorization_field_name === undefined || job.analysis_config.categorization_field_name === ''"
-                  class="kuiButton kuiButton--primary ml-btn-small">
+                  class="kuiButton kuiButton--primary kuiButton--small">
                   <span class="sr-only">Add Categorization Filter</span>
                   <i aria-hidden="true" class="fa fa-plus"></i> Add Categorization Filter
                 </button>
@@ -267,7 +267,7 @@
                   ng-click="addCustomInfluencer()"
                   ng-disabled="ui.tempCustomInfluencer===''"
                   type="button"
-                  class="kuiButton kuiButton--primary ml-btn-small" >
+                  class="kuiButton kuiButton--primary kuiButton--small" >
                   <span class="sr-only">Add Custom Influencer</span>
                   <i aria-hidden="true" class="fa fa-plus"></i> Add
                 </button>

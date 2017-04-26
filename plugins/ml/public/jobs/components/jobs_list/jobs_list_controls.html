@@ -4,7 +4,7 @@
   <button
     ng-show="job.datafeed_config && job.datafeed_config.state!=='stopping' && job.datafeed_config.state!=='starting'"
     ng-click="((job.datafeed_config && job.datafeed_config.state==='started')?stopDatafeed(job):startDatafeed(job))"
-    class="kuiButton kuiButton--basic ml-btn-small"
+    class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
     ng-disabled='!privileges.canStartStopDatafeed'
     tooltip="{{((job.datafeed_config && job.datafeed_config.state==='started')?'Stop':'Start')}} datafeed for {{job.job_id}}">
@@ -17,7 +17,7 @@
   <button
     disabled
     ng-show="(!job.datafeed_config) || (job.datafeed_config.state==='stopping' || job.datafeed_config.state==='starting')"
-    class="kuiButton kuiButton--basic ml-btn-small"
+    class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
     aria-label="Preview Job"
     tooltip="No datafeed settings for {{job.job_id}}">
@@ -27,7 +27,7 @@
   <!-- anomaly explorer -->
   <button
     ng-click="viewResults(job, 'explorer')"
-    class="kuiButton kuiButton--basic ml-btn-small"
+    class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
     tooltip="Open {{job.job_id}} in Anomaly Explorer">
       <i aria-hidden="true" class="fa fa-table"></i>
@@ -36,7 +36,7 @@
   <!-- time series explorer -->
   <button
     ng-click="viewResults(job, 'timeseriesexplorer')"
-    class="kuiButton kuiButton--basic ml-btn-small"
+    class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
     ng-disabled="!enableTimeSeries"
     tooltip="Open {{job.job_id}} in Single Metric Viewer">
@@ -47,7 +47,7 @@
   <button
     ng-click="editJob(job)"
     ng-disabled="!privileges.canUpdateJob || !privileges.canUpdateDatafeed"
-    class="kuiButton kuiButton--basic ml-btn-small"
+    class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
     tooltip="Edit job" >
       <i aria-hidden="true" class="fa fa-pencil-square-o"></i>
@@ -56,7 +56,7 @@
   <!-- clone job -->
   <button
     ng-click="cloneJob(job)"
-    class="kuiButton kuiButton--basic ml-btn-small"
+    class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
     ng-disabled='!privileges.canCreateJob'
     tooltip="Clone job" >
@@ -66,7 +66,7 @@
   <!-- delete job -->
   <button
     ng-click="deleteJob(job)"
-    class="kuiButton kuiButton--danger ml-btn-small"
+    class="kuiButton kuiButton--danger kuiButton--small"
     data-toggle="tooltip"
     ng-disabled='!privileges.canDeleteJob'
     tooltip="Delete job">
