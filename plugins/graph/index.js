@@ -4,6 +4,7 @@ const graphExploreRoute = require('./server/routes/graphExplore');
 const searchProxyRoute = require('./server/routes/searchProxy');
 import { checkLicense } from './server/lib/check_license';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
+import mappings from './mappings.json';
 
 const APP_TITLE = 'Graph';
 
@@ -46,6 +47,7 @@ export const graph = (kibana) => {
         }
       },
       hacks: ['plugins/graph/hacks/toggle_app_link_in_nav'],
+      mappings
     },
 
     config: function (Joi) {
