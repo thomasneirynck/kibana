@@ -77,9 +77,8 @@ export function findIndexByX(data, x) {
           // see if the previous point was actually closer to the X position
           if (prev !== null && currentDistance > Math.abs(x - data[prev][0])) {
             return prev;
-          } else {
-            return j;
           }
+          return j;
         }
 
         prev = j;

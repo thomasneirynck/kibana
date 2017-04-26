@@ -18,6 +18,7 @@ export function alertsClusterSearch(req, clusterUuid, getClusterLicense, checkLi
   return getClusterLicense(req, clusterUuid)
   .then(license => {
     const prodLicenseInfo = checkLicense(license.type, license.active, 'production');
+
     if (prodLicenseInfo.clusterAlerts.enabled) {
       const params = {
         index: config.get('xpack.monitoring.cluster_alerts.index'),
@@ -53,10 +54,10 @@ export function alertsClusterSearch(req, clusterUuid, getClusterLicense, checkLi
         const alerts = hits.map((alert) => alert._source);
         return alerts;
       });
-    } else {
-      return {
-        message: prodLicenseInfo.message
-      };
     }
+
+    return {
+      message: prodLicenseInfo.message
+    };
   });
 }

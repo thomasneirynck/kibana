@@ -54,6 +54,8 @@ export function getClustersFromRequest(req) {
     .then(getClustersHealth(req))
     .then(flagSupportedClusters(req, kibanaIndices))
     .then((clusters) => {
+
+      // get specific cluster
       if (req.params.clusterUuid) {
         return alertsClusterSearch(req, req.params.clusterUuid, getClusterLicense, checkLicenseForAlerts, {
           size: CLUSTER_ALERTS_SEARCH_SIZE
@@ -62,21 +64,23 @@ export function getClustersFromRequest(req) {
           _.set(clusters, '[0].alerts', alerts);
           return clusters;
         });
-      } else {
-        return alertsClustersAggregation(req, clusters, checkLicenseForAlerts)
-        .then((clustersAlerts) => {
-          clusters.forEach((cluster) => {
-            cluster.alerts = {
-              alertsMeta: {
-                enabled: clustersAlerts.alertsMeta.enabled,
-                message: clustersAlerts.alertsMeta.message // NOTE: this is only defined when the alert feature is disabled
-              },
-              ...clustersAlerts[cluster.cluster_uuid]
-            };
-          });
-          return clusters;
-        });
       }
+
+      // get all clusters
+      return alertsClustersAggregation(req, clusters, checkLicenseForAlerts)
+      .then((clustersAlerts) => {
+        clusters.forEach((cluster) => {
+          cluster.alerts = {
+            alertsMeta: {
+              enabled: clustersAlerts.alertsMeta.enabled,
+              message: clustersAlerts.alertsMeta.message // NOTE: this is only defined when the alert feature is disabled
+            },
+            ...clustersAlerts[cluster.cluster_uuid]
+          };
+        });
+        return clusters;
+      });
+
     })
     .then(clusters => {
       const mapClusters = getKibanasForClusters(req, kibanaIndices);
