@@ -22,6 +22,7 @@ export const config = (Joi) => {
         }).default()
       }).default()
     }).default(),
+    // deprecated; will be removed in 6.0
     chart: object({
       elasticsearch: object({
         index: object({

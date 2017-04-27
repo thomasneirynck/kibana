@@ -105,4 +105,51 @@ describe('monitoring plugin deprecations', function () {
     transformDeprecations(settings, log);
     expect(log.called).to.be(false);
   });
+
+  it(`shouldn't log when chart.elasticsearch.*.index_memory isn't present`, function () {
+    const settings = {
+      chart: {
+        elasticsearch: {
+          index: { },
+          node: { }
+        }
+      }
+    };
+
+    const log = sinon.spy();
+    transformDeprecations(settings, log);
+    expect(log.called).to.be(false);
+  });
+
+  it('should log when deprecating chart.elasticsearch.index.index_memory', function () {
+    const settings = {
+      chart: {
+        elasticsearch: {
+          index: {
+            index_memory: [ 'index_mem_norms' ]
+          }
+        }
+      }
+    };
+
+    const log = sinon.spy();
+    transformDeprecations(settings, log);
+    expect(log.calledOnce).to.be(true);
+  });
+
+  it('should log when deprecating chart.elasticsearch.node.index_memory', function () {
+    const settings = {
+      chart: {
+        elasticsearch: {
+          node: {
+            index_memory: [ 'node_index_mem_norms' ]
+          }
+        }
+      }
+    };
+
+    const log = sinon.spy();
+    transformDeprecations(settings, log);
+    expect(log.calledOnce).to.be(true);
+  });
 });
