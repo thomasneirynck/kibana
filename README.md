@@ -51,6 +51,32 @@ If you want to run tests only for a specific plugin (to save some time), you can
 npm run test -- --plugins <plugin>[,<plugin>]*    # where <plugin> is "reporting", etc.
 ```
 
+#### Running functional tests
+
+The functional tests are run against a live browser, Kibana, and Elasticsearch install. They build their own version of elasticsearch and x-pack-elasticsearch, run the builds automatically, startup the kibana server, and run the tests against them.
+
+To do all of this in a single command run:
+
+```sh
+node scripts/functional_tests
+```
+
+If you are **developing functional tests** then you probably don't want to rebuild elasticsearch and wait for all that setup on every test run, so instead use this command to get started:
+
+```sh
+node scripts/functional_tests_server
+```
+
+After all of the setup is running open a new terminal and run this command to just run the tests (without tearing down Elasticsearch, Kibana, etc.)
+
+```sh
+# make sure you are in the x-pack-kibana project
+cd x-pack-kibana
+
+# this command accepts a bunch of arguments to tweak the run, try sending --help to learn more
+node ../kibana/scripts/functional_test_runner
+```
+
 ### Issues starting dev more of creating builds
 
 You may see an error like this when you are getting started:

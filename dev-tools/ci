@@ -37,11 +37,12 @@ cd $PARENT_DIR
 
 function checkout_sibling {
   project=$1
-  useExistingParamName=$2
+  targetDir=$2
+  useExistingParamName=$3
   useExisting="$(eval "echo "\$$useExistingParamName"")"
 
   if [ -z ${useExisting:+x} ]; then
-    if [ -d "./${project}" ]; then
+    if [ -d "$targetDir" ]; then
       echo "I expected a clean workspace but an '${project}' sibling directory already exists in [$PARENT_DIR]!"
       echo
       echo "Either define '${useExistingParamName}' or remove the existing '${project}' sibling."
@@ -54,7 +55,7 @@ function checkout_sibling {
 
     function clone_target_is_valid {
       echo " -> checking for '${cloneBranch}' branch at ${cloneAuthor}/${project}"
-      if [[ -n "$(git ls-remote --heads https://github.com/${cloneAuthor}/${project}.git ${cloneBranch} 2>/dev/null)" ]]; then
+      if [[ -n "$(git ls-remote --heads git@github.com:${cloneAuthor}/${project}.git ${cloneBranch} 2>/dev/null)" ]]; then
         return 0
       else
         return 1
@@ -62,7 +63,7 @@ function checkout_sibling {
     }
 
     function pick_clone_target {
-      echo "picking which branch of ${project} to clone"
+      echo "picking which branch of ${project} to clone:"
 
       if [[ -n "$PR_AUTHOR" && -n "$PR_SOURCE_BRANCH" ]]; then
         cloneAuthor="$PR_AUTHOR"
@@ -86,24 +87,25 @@ function checkout_sibling {
     function checkout_clone_target {
       pick_clone_target
       echo " -> checking out '${cloneBranch}' branch from ${cloneAuthor}/${project}..."
-      git clone -b ${cloneBranch} "https://github.com/${cloneAuthor}/${project}.git" --depth=1
-      echo " -> checked out ${project} revision: $(git -C ${project} rev-parse HEAD)"
+      git clone -b "$cloneBranch" "git@github.com:${cloneAuthor}/${project}.git" "$targetDir" --depth=1
+      echo " -> checked out ${project} revision: $(git -C ${targetDir} rev-parse HEAD)"
       echo
     }
 
     checkout_clone_target
   else
-    if [ -d "./${project}" ]; then
+    if [ -d "$targetDir" ]; then
       echo "Using existing '${project}' checkout"
     else
-      echo "You have defined '${useExistingParamName}' but no existing ${project} directory exists!"
+      echo "You have defined '${useExistingParamName}' but no existing ${targetDir} directory exists!"
       exit 2
     fi
   fi
 }
 
-checkout_sibling "elasticsearch" "USE_EXISTING_ES"
-checkout_sibling "kibana" "USE_EXISTING_KIBANA"
+checkout_sibling "elasticsearch" "${PARENT_DIR}/elasticsearch" "USE_EXISTING_ES"
+checkout_sibling "kibana" "${PARENT_DIR}/kibana" "USE_EXISTING_KIBANA"
+checkout_sibling "x-pack-elasticsearch" "${PARENT_DIR}/elasticsearch-extra/x-pack-elasticsearch" "USE_EXISTING_XPACK"
 
 # back to base directory
 cd "$BASE_DIR"

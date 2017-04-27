@@ -30,6 +30,8 @@ task test(type: Exec, dependsOn: npmInstall) {
   } else {
     commandLine 'xvfb-run', 'npm', 'run', 'test'
   }
+
+  commandLine 'xvfb-run', 'node', 'scripts/functional_tests'
 }
 
 task check(dependsOn: test) {

@@ -11,12 +11,12 @@
 
       <div class="form-group inner-addon left-addon">
         <i class="fa fa-user fa-lg fa-fw"></i>
-        <input type="text" ng-disabled="login.isDisabled || !login.allowLogin" ng-model="username" class="form-control" id="username" name="username" placeholder="Username" autofocus />
+        <input type="text" ng-disabled="login.isDisabled || !login.allowLogin" ng-model="username" class="form-control" id="username" name="username" placeholder="Username" autofocus data-test-subj="loginUsername" />
       </div>
 
       <div class="form-group inner-addon left-addon">
         <i class="fa fa-lock fa-lg fa-fw"></i>
-        <input type="password" ng-disabled="login.isDisabled|| !login.allowLogin" ng-model="password" class="form-control" id="password" name="password" placeholder="Password" />
+        <input type="password" ng-disabled="login.isDisabled|| !login.allowLogin" ng-model="password" class="form-control" id="password" name="password" placeholder="Password" data-test-subj="loginPassword"/>
       </div>
 
       <div class="form-group">
@@ -24,6 +24,7 @@
           type="submit"
           ng-disabled="login.isDisabled || !login.allowLogin || !username || !password || login.isLoading"
           class="loginButton"
+          data-test-subj="loginSubmit"
         >
           Log in
         </button>

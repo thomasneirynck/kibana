@@ -1,0 +1,4 @@
+extends: "../../../.eslintrc.yaml"
+
+rules:
+  kibana-custom/no-default-export: off

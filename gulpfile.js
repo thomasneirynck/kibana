@@ -1,4 +1,4 @@
-require('babel/register')();
+require('@elastic/plugin-helpers').babelRegister();
 require('dotenv').config({ silent: true });
 
 const gulp = require('gulp');
@@ -41,7 +41,7 @@ function lintFiles(filePaths) {
 
 gulp.task('prepare', () => downloadPhantom(getPhantomBinaryPath()));
 
-gulp.task('dev', ['prepare'], () => pluginHelpers('start', { flags: getFlags() }));
+gulp.task('dev', ['prepare'], () => pluginHelpers.run('start', { flags: getFlags() }));
 
 
 gulp.task('lint-staged', () => {
@@ -93,7 +93,7 @@ gulp.task('report', () => {
 });
 
 gulp.task('build', ['lint', 'clean', 'report', 'prepare'], () => {
-  return pluginHelpers('build', {
+  return pluginHelpers.run('build', {
     skipArchive: true,
     buildDestination: buildTarget,
   });
@@ -137,14 +137,14 @@ gulp.task('testserver', ['pre-test'], () => {
 
 gulp.task('testbrowser', () => {
   const plugins = getPlugins();
-  return pluginHelpers('testBrowser', {
+  return pluginHelpers.run('testBrowser', {
     plugins: plugins.join(','),
   });
 });
 
 gulp.task('testbrowser-dev', () => {
   const plugins = getPlugins();
-  return pluginHelpers('testBrowser', {
+  return pluginHelpers.run('testBrowser', {
     dev: true,
     plugins: plugins.join(','),
   });
