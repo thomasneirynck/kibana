@@ -14,7 +14,7 @@ export function LicenseText(props) {
       <div className='page-row'>
         <div className='page-row-text'>
           Your { capitalize(props.license.type)
-          } license will expire on <a className='link' onClick={goToLicense}> {
+          } license will expire on <a className='link' onClick={ goToLicense }> {
           formatDateLocal(props.license.expiry_date) }.</a>
         </div>
       </div>

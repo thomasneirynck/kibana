@@ -19,27 +19,27 @@ export function AlertsPanel({ alerts, angularChangeUrl }) {
   // enclosed component for accessing angularChangeUrl
   function TopAlertItem({ item, index }) {
     return (
-      <div key={`alert-item-${index}`} className='kuiMenuItem'>
+      <div key={ `alert-item-${index}` } className='kuiMenuItem'>
         <div className='kuiEvent'>
           <div className='kuiEventSymbol'>
-            <Tooltip text={`${capitalize(mapSeverity(item.metadata.severity))} severity alert`} placement='bottom' trigger='hover'>
-              <SeverityIcon severity={item.metadata.severity} />
+            <Tooltip text={ `${capitalize(mapSeverity(item.metadata.severity))} severity alert` } placement='bottom' trigger='hover'>
+              <SeverityIcon severity={ item.metadata.severity } />
             </Tooltip>
           </div>
 
           <div className='kuiEventBody'>
             <div className='kuiEventBody__message'>
               <FormattedMessage
-                prefix={item.prefix}
-                suffix={item.suffix}
-                message={item.message}
-                metadata={item.metadata}
-                angularChangeUrl={angularChangeUrl}
+                prefix={ item.prefix }
+                suffix={ item.suffix }
+                message={ item.message }
+                metadata={ item.metadata }
+                angularChangeUrl={ angularChangeUrl }
               />
             </div>
 
             <div className='kuiEventBody__metadata'>
-              {formatDateTimeLocal(item.update_timestamp)}
+              { formatDateTimeLocal(item.update_timestamp) }
             </div>
           </div>
         </div>
@@ -47,7 +47,7 @@ export function AlertsPanel({ alerts, angularChangeUrl }) {
     );
   }
 
-  const topAlertItems = alerts.map((item, index) => <TopAlertItem item={item} key={`top-alert-item-${index}`} index={index} />);
+  const topAlertItems = alerts.map((item, index) => <TopAlertItem item={ item } key={ `top-alert-item-${index}` } index={ index } />);
 
   return (
     <div>
@@ -55,14 +55,14 @@ export function AlertsPanel({ alerts, angularChangeUrl }) {
         Top Cluster Alerts
       </h2>
       <div className='kuiMenu kuiMenu--contained kuiVerticalRhythm'>
-        {topAlertItems}
+        { topAlertItems }
       </div>
       <p className='kuiText kuiVerticalRhythm'>
         <a
           className='kuiLink'
-          onClick={goToAlerts}
+          onClick={ goToAlerts }
         >
-          View all {alerts.total} alerts
+          View all { alerts.total } alerts
         </a>
       </p>
     </div>

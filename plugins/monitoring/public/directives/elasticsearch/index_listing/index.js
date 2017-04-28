@@ -31,8 +31,8 @@ function showSystemIndicesComponentFactory(scope) {
       return (
         <div className='pull-left filter-member'>
           <input type='checkbox'
-            onChange={this.toggleShowSystemIndices}
-            checked={this.state.showSystemIndices}/>
+            onChange={ this.toggleShowSystemIndices }
+            checked={ this.state.showSystemIndices }/>
           &nbsp;
           Show system indices
         </div>
@@ -72,37 +72,37 @@ function indexRowFactory(scope, kbnUrl) {
       return (
         <tr className='big'>
           <td>
-            <a className='link' onClick={this.changePath}>{name}</a>
+            <a className='link' onClick={ this.changePath }>{ name }</a>
           </td>
           <td>
-            <div title={`Index status: ${status}`}>
-              <ElasticsearchStatusIcon status={status} />&nbsp;
-              {capitalize(status)}
+            <div title={ `Index status: ${status}` }>
+              <ElasticsearchStatusIcon status={ status } />&nbsp;
+              { capitalize(status) }
             </div>
           </td>
           <td>
             <div className='big inline'>
-              {docCount}
+              { docCount }
             </div>
           </td>
           <td>
             <div className='big inline'>
-              {indexSize}
+              { indexSize }
             </div>
           </td>
           <td>
             <div className='big inline'>
-              {requestRate}
+              { requestRate }
             </div>
           </td>
           <td>
             <div className='big inline'>
-              {searchRate}
+              { searchRate }
             </div>
           </td>
           <td>
             <div className='big inline'>
-              {unassignedShards}
+              { unassignedShards }
             </div>
           </td>
         </tr>
@@ -182,7 +182,7 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
       const $table = React.createElement(Table, {
         scope,
         options: initialTableOptions,
-        filterMembers: [<ShowSystemIndicesComponent showSystemIndices={scope.showSystemIndices}/>],
+        filterMembers: [<ShowSystemIndicesComponent showSystemIndices={ scope.showSystemIndices }/>],
         template: IndexRow
       });
       const tableInstance = ReactDOM.render($table, $el[0]);

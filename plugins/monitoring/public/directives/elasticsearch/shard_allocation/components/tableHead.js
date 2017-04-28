@@ -42,8 +42,8 @@ class IndexLabel extends React.Component {
         Indices
         &nbsp;
         <input type='checkbox'
-          onChange={this.toggleShowSystemIndicesState}
-          checked={this.state.showSystemIndices}
+          onChange={ this.toggleShowSystemIndicesState }
+          checked={ this.state.showSystemIndices }
         />
         &nbsp;
         Show system indices

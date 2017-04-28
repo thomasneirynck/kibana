@@ -43,11 +43,11 @@ uiModule.directive('monitoringChart', (timefilter) => {
       ReactDOM.render(
         <div className='monitoring-chart__container'>
           <h2 className='monitoring-chart__title'>
-            {getTitle(series)}{units ? ` (${units})` : ''}
+            { getTitle(series) }{ units ? ` (${units})` : '' }
             <OverlayTrigger
               placement='left'
               trigger='click'
-              overlay={<Tooltip><InfoTooltip series={series}/></Tooltip>}
+              overlay={ <Tooltip><InfoTooltip series={ series }/></Tooltip> }
             >
               <i
                 className='overlay-trigger monitoring-chart-tooltip__trigger fa fa-info-circle'
@@ -55,7 +55,7 @@ uiModule.directive('monitoringChart', (timefilter) => {
               ></i>
             </OverlayTrigger>
           </h2>
-          <MonitoringTimeseries scope={scope} options={options} onBrush={onBrush}/>
+          <MonitoringTimeseries scope={ scope } options={ options } onBrush={ onBrush }/>
         </div>,
         $elem[0]
       );

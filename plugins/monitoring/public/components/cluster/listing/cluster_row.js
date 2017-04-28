@@ -40,7 +40,7 @@ to enjoy multi-cluster monitoring.`
     if (this.props.isSupported) {
       return (
         <span>
-          <a className='clusterName link' onClick={this.changeCluster()}>
+          <a className='clusterName link' onClick={ this.changeCluster() }>
             { this.props.cluster_name }
           </a>
         </span>
@@ -50,13 +50,13 @@ to enjoy multi-cluster monitoring.`
     // not supported because license is basic/not compatible with multi-cluster
     if (this.props.license) {
       return (
-        <a className='clusterName link' onClick={this.handleClickIncompatibleLicense()}>{ this.props.cluster_name }</a>
+        <a className='clusterName link' onClick={ this.handleClickIncompatibleLicense() }>{ this.props.cluster_name }</a>
       );
     }
 
     // not supported because license is invalid
     return (
-      <a className='clusterName link' onClick={this.handleClickInvalidLicense()}>{ this.props.cluster_name }</a>
+      <a className='clusterName link' onClick={ this.handleClickInvalidLicense() }>{ this.props.cluster_name }</a>
     );
   }
 
@@ -88,7 +88,7 @@ to enjoy multi-cluster monitoring.`
 
     // there is no license!
     return (
-      <div className='license link' onClick={this.handleClickInvalidLicense()}>
+      <div className='license link' onClick={ this.handleClickInvalidLicense() }>
         N/A
       </div>
     );
@@ -107,7 +107,7 @@ to enjoy multi-cluster monitoring.`
     const isClusterSupportedFactory = () => {
       return (props) => {
         if (isSupported) {
-          return <span>{props.children}</span>;
+          return <span>{ props.children }</span>;
         }
         return <span>-</span>;
       };
@@ -126,11 +126,11 @@ to enjoy multi-cluster monitoring.`
      */
     const IsAlertsSupported = (props) => {
       if (props.cluster.alerts.alertsMeta.enabled) {
-        return <span>{props.children}</span>;
+        return <span>{ props.children }</span>;
       }
       return (
         <Tooltip
-          text={props.cluster.alerts.alertsMeta.message}
+          text={ props.cluster.alerts.alertsMeta.message }
           placement='bottom'
           trigger='hover'
         >
@@ -146,34 +146,34 @@ to enjoy multi-cluster monitoring.`
         </td>
         <td>
           <IsClusterSupported>
-            <IsAlertsSupported cluster={this.props}>
-              <AlertsIndicator alerts={this.props.alerts} />
+            <IsAlertsSupported cluster={ this.props }>
+              <AlertsIndicator alerts={ this.props.alerts } />
             </IsAlertsSupported>
           </IsClusterSupported>
         </td>
         <td>
           <IsClusterSupported>
-            {numeral(this.path('elasticsearch.stats.nodes.count.total')).format('0,0')}
+            { numeral(this.path('elasticsearch.stats.nodes.count.total')).format('0,0') }
           </IsClusterSupported>
         </td>
         <td>
           <IsClusterSupported>
-            {numeral(this.path('elasticsearch.stats.indices.count')).format('0,0')}
+            { numeral(this.path('elasticsearch.stats.indices.count')).format('0,0') }
           </IsClusterSupported>
         </td>
         <td>
           <IsClusterSupported>
-            {numeral(this.path('elasticsearch.stats.indices.store.size_in_bytes')).format('0,0[.]0 b')}
+            { numeral(this.path('elasticsearch.stats.indices.store.size_in_bytes')).format('0,0[.]0 b') }
           </IsClusterSupported>
         </td>
         <td>
           <IsClusterSupported>
-            {numeral(this.path('logstash.count')).format('0,0')}
+            { numeral(this.path('logstash.count')).format('0,0') }
           </IsClusterSupported>
         </td>
         <td>
           <IsClusterSupported>
-            {numeral(this.path('kibana.count')).format('0,0')}
+            { numeral(this.path('kibana.count')).format('0,0') }
           </IsClusterSupported>
         </td>
         <td key="License" className="license">

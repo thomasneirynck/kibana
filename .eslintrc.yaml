@@ -18,5 +18,6 @@ rules:
   no-unused-vars: [error, {args: 'after-used', argsIgnorePattern: '^_'}]
   react/jsx-uses-react: error
   react/jsx-uses-vars: error
+  react/jsx-curly-spacing: [error, always]
 
   kibana-custom/no-default-export: error

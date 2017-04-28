@@ -64,43 +64,43 @@ uiModule.directive('monitoringLogstashNodeListing', function (kbnUrl) {
         },
         render: function () {
           return (
-            <tr key={`row-${this.props.resolver}`} className='big'>
+            <tr key={ `row-${this.props.resolver}` } className='big'>
               <td>
-                <a className='link' onClick={() => {
+                <a className='link' onClick={ () => {
                   scope.$evalAsync(() => {
                     kbnUrl.changePath('/logstash/node/' + _.get(this.props, 'logstash.uuid'));
                   });
-                }}>
-                  <div>{this.props.logstash.name}</div>
+                } }>
+                  <div>{ this.props.logstash.name }</div>
                 </a>
-                <div className="small">{_.get(this.props, 'logstash.http_address')}</div>
+                <div className="small">{ _.get(this.props, 'logstash.http_address') }</div>
               </td>
               <td>
                 <div className='big'>
-                  {`${numeral(this.props.jvm.mem.heap_used_percent)}%`}
+                  { `${numeral(this.props.jvm.mem.heap_used_percent)}%` }
                 </div>
               </td>
               <td>
                 <div className='big'>
-                  {`${numeral(this.props.process.cpu.percent)}%`}
+                  { `${numeral(this.props.process.cpu.percent)}%` }
                 </div>
               </td>
               <td>
-                <div className='big'>{formatNumber(this.props.events.out, '0.[0]a')}</div>
+                <div className='big'>{ formatNumber(this.props.events.out, '0.[0]a') }</div>
               </td>
               <td>
                 <div className='big'>
-                  {this.props.logstash.version}
+                  { this.props.logstash.version }
                 </div>
               </td>
               <td>
                 <div className='big'>
-                  {formatNumber(this.props.jvm.uptime_in_millis, 'time_since')}
+                  { formatNumber(this.props.jvm.uptime_in_millis, 'time_since') }
                 </div>
               </td>
               <td>
-                <div>{this.props.reloads.successes} successes</div>
-                <div>{this.props.reloads.failures} failures</div>
+                <div>{ this.props.reloads.successes } successes</div>
+                <div>{ this.props.reloads.failures } failures</div>
               </td>
             </tr>
           );

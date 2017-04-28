@@ -38,7 +38,7 @@ export const Segments = React.createClass({
     return (
       <div
         className={ className }
-        style={{ width: width }}></div>
+        style={ { width: width } }></div>
     );
   },
   render: function () {

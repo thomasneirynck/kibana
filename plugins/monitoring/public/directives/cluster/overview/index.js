@@ -11,9 +11,9 @@ uiModule.directive('monitoringClusterOverview', function (kbnUrl, showLicenseExp
     link(scope, $el) {
       ReactDOM.render((
         <Overview
-          scope={scope}
-          kbnUrl={kbnUrl}
-          showLicenseExpiration={showLicenseExpiration}
+          scope={ scope }
+          kbnUrl={ kbnUrl }
+          showLicenseExpiration={ showLicenseExpiration }
         ></Overview>
       ), $el[0]);
     }

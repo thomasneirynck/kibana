@@ -61,40 +61,40 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
         },
         render: function () {
           return (
-            <tr key={`row-${this.props.resolver}`} className='big'>
+            <tr key={ `row-${this.props.resolver}` } className='big'>
               <td>
-                <a className='link' onClick={() => {
+                <a className='link' onClick={ () => {
                   scope.$evalAsync(() => {
                     kbnUrl.changePath('/kibana/instances/' + get(this.props, 'kibana.uuid'));
                   });
-                }}>
-                  <div>{this.props.kibana.name}</div>
+                } }>
+                  <div>{ this.props.kibana.name }</div>
                 </a>
-                <div className='small'>{get(this.props, 'kibana.transport_address')}</div>
+                <div className='small'>{ get(this.props, 'kibana.transport_address') }</div>
               </td>
               <td>
-                <div title={`Instance status: ${this.props.kibana.status}`}>
-                  <KibanaStatusIcon status={this.props.kibana.status} availability={this.props.availability} />&nbsp;
-                  {!this.props.availability ? 'Offline' : capitalize(this.props.kibana.status)}
+                <div title={ `Instance status: ${this.props.kibana.status}` }>
+                  <KibanaStatusIcon status={ this.props.kibana.status } availability={ this.props.availability } />&nbsp;
+                  { !this.props.availability ? 'Offline' : capitalize(this.props.kibana.status) }
                 </div>
               </td>
               <td>
                 <div className='big'>
-                    {`${numeral(this.props.process.memory.resident_set_size_in_bytes).format('0.00 b')}`}
+                    { `${numeral(this.props.process.memory.resident_set_size_in_bytes).format('0.00 b')}` }
                 </div>
               </td>
               <td>
                 <div className='big'>
-                  {`${numeral(this.props.os.load['1m']).format('0.00')}`}
+                  { `${numeral(this.props.os.load['1m']).format('0.00')}` }
                 </div>
               </td>
               <td>
-                <div className='big'>{this.props.requests.total}</div>
+                <div className='big'>{ this.props.requests.total }</div>
               </td>
               <td>
                 <div>
-                  <div>{this.props.response_times.average && (numeral(this.props.response_times.average).format('0') + ' ms avg')}</div>
-                  <div>{numeral(this.props.response_times.max).format('0')} ms max</div>
+                  <div>{ this.props.response_times.average && (numeral(this.props.response_times.average).format('0') + ' ms avg') }</div>
+                  <div>{ numeral(this.props.response_times.max).format('0') } ms max</div>
                 </div>
               </td>
             </tr>

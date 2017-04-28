@@ -8,7 +8,7 @@ export class NoData extends React.Component {
       <tbody>
         <tr>
           <td colSpan={ colSpan } className="loading">
-            <span>{message}</span>
+            <span>{ message }</span>
           </td>
         </tr>
       </tbody>

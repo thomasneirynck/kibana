@@ -8,7 +8,7 @@ const ItemsPerPageLink = React.createClass({
     this.props.setItemsPerPage(this.props.choice);
   },
   render() {
-    return <span className='link' onClick={this.handleClick}>{this.props.choice}</span>;
+    return <span className='link' onClick={ this.handleClick }>{ this.props.choice }</span>;
   }
 });
 
@@ -34,16 +34,16 @@ const ItemsPerPageSet = React.createClass({
     itemsPerPageChoices.forEach((choice, idx) => {
       if (idx !== 0) {
         // add a vertical line separator before every non-first choice
-        itemsPerPageLinks.push(<span key={`table-page-link-item-${idx}`}> | </span>);
+        itemsPerPageLinks.push(<span key={ `table-page-link-item-${idx}` }> | </span>);
       }
       itemsPerPageLinks.push(
-        <ItemsPerPageLink setItemsPerPage={this.props.setItemsPerPage} choice={choice} key={`table-page-items-per-${idx}`}/>
+        <ItemsPerPageLink setItemsPerPage={ this.props.setItemsPerPage } choice={ choice } key={ `table-page-items-per-${idx}` }/>
       );
     });
 
     return (
       <div className='pull-right items-per-page'>
-        {itemsPerPageLinks}
+        { itemsPerPageLinks }
       </div>
     );
   }
@@ -59,8 +59,8 @@ const Chevron = React.createClass({
   },
   render() {
     return (
-      <a onClick={this.scrollRightOrLeft} className='link'>
-        <span className={`fa fa-chevron-${this.props.direction}`}></span>
+      <a onClick={ this.scrollRightOrLeft } className='link'>
+        <span className={ `fa fa-chevron-${this.props.direction}` }></span>
       </a>
     );
   }
@@ -74,8 +74,8 @@ const PageLink = React.createClass({
   render() {
     const currentClass = this.props.isCurrent ? 'current' : '';
     return (
-      <a onClick={this.goToPage} className={`${currentClass} link`}>
-        {this.props.pageIdx}
+      <a onClick={ this.goToPage } className={ `${currentClass} link` }>
+        { this.props.pageIdx }
       </a>
     );
   }
@@ -92,7 +92,7 @@ const Ellipsis = React.createClass({
   },
   render() {
     // HTML entity for ellipsis
-    return <a onClick={this.scrollList} className='link'>&hellip;</a>;
+    return <a onClick={ this.scrollList } className='link'>&hellip;</a>;
   }
 });
 
@@ -122,10 +122,10 @@ export const Pagination = React.createClass({
     for (let i = listBeginning; i <= listEnd; i++) {
       pageLinks.push(
           <PageLink
-            key={`pageLink-${i}`}
-            isCurrent={this.props.pageIdx === i - 1}
-            pageIdx={i}
-            setCurrPage={this.props.setCurrPage} />
+            key={ `pageLink-${i}` }
+            isCurrent={ this.props.pageIdx === i - 1 }
+            pageIdx={ i }
+            setCurrPage={ this.props.setCurrPage } />
         );
     }
 
@@ -134,15 +134,15 @@ export const Pagination = React.createClass({
     if (this.props.pageIdx > 0) {
       chevronLeft = <Chevron
         direction='left'
-        pageIdx={this.props.pageIdx}
-        setCurrPage={this.props.setCurrPage} />;
+        pageIdx={ this.props.pageIdx }
+        setCurrPage={ this.props.setCurrPage } />;
     }
 
     if (this.props.pageIdx < numPages - 1) {
       chevronRight = <Chevron
         direction='right'
-        pageIdx={this.props.pageIdx}
-        setCurrPage={this.props.setCurrPage} />;
+        pageIdx={ this.props.pageIdx }
+        setCurrPage={ this.props.setCurrPage } />;
     }
 
     let ellipsisLeft;
@@ -154,22 +154,22 @@ export const Pagination = React.createClass({
     if (numPages > maxListSize) {
       if (listBeginning > 1) {
         jumpStart = <PageLink
-          pageIdx={1}
-          setCurrPage={this.props.setCurrPage} />;
+          pageIdx={ 1 }
+          setCurrPage={ this.props.setCurrPage } />;
         ellipsisLeft = <Ellipsis
           direction='left'
-          pageIdx={this.props.pageIdx}
-          setCurrPage={this.props.setCurrPage} />;
+          pageIdx={ this.props.pageIdx }
+          setCurrPage={ this.props.setCurrPage } />;
       }
       if (numPages - listEnd > 0) {
         jumpEnd = <PageLink
-          pageIdx={numPages}
-          setCurrPage={this.props.setCurrPage} />;
+          pageIdx={ numPages }
+          setCurrPage={ this.props.setCurrPage } />;
         ellipsisRight = <Ellipsis
           direction='right'
-          pageIdx={this.props.pageIdx}
-          numPages={numPages}
-          setCurrPage={this.props.setCurrPage} />;
+          pageIdx={ this.props.pageIdx }
+          numPages={ numPages }
+          setCurrPage={ this.props.setCurrPage } />;
       }
     }
 
@@ -177,22 +177,22 @@ export const Pagination = React.createClass({
     if (numPages > 1) {
       pagination = (
         <div className='pagination'>
-          {chevronLeft}
-          {jumpStart}
-          {ellipsisLeft}
-          {pageLinks}
-          {ellipsisRight}
-          {jumpEnd}
-          {chevronRight}
+          { chevronLeft }
+          { jumpStart }
+          { ellipsisLeft }
+          { pageLinks }
+          { ellipsisRight }
+          { jumpEnd }
+          { chevronRight }
         </div>
       );
     }
     // markup that ties sub-components together
     return <div className='footer'>
         <ItemsPerPageSet
-          dataLength={this.props.dataLength}
-          setItemsPerPage={this.props.setItemsPerPage}/>
-        {pagination}
+          dataLength={ this.props.dataLength }
+          setItemsPerPage={ this.props.setItemsPerPage }/>
+        { pagination }
       </div>;
   }
 });

@@ -40,28 +40,28 @@ uiModule.directive('monitoringClusterAlertsListing', function (kbnUrl) {
         return (
           <tr className='big'>
             <td>
-              <Tooltip text={`${capitalize(props.severity_group)} severity alert`} placement='bottom' trigger='hover'>
-                <SeverityIcon severity={props.metadata.severity} />
+              <Tooltip text={ `${capitalize(props.severity_group)} severity alert` } placement='bottom' trigger='hover'>
+                <SeverityIcon severity={ props.metadata.severity } />
               </Tooltip>
             </td>
             <td>
               <FormattedMessage
-                prefix={props.prefix}
-                suffix={props.suffix}
-                message={props.message}
-                metadata={props.metadata}
-                angularChangeUrl={angularChangeUrl}
+                prefix={ props.prefix }
+                suffix={ props.suffix }
+                message={ props.message }
+                metadata={ props.metadata }
+                angularChangeUrl={ angularChangeUrl }
               />
             </td>
             <td>
-              {localizeDate(props.update_timestamp)}
+              { localizeDate(props.update_timestamp) }
             </td>
           </tr>
         );
       }
 
       const tableInstance = ReactDOM.render(
-        <Table options={tableOptions} template={AlertRow}/>,
+        <Table options={ tableOptions } template={ AlertRow }/>,
         $el[0]
       );
       const alertMapper = (alert) => {

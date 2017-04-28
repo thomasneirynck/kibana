@@ -9,8 +9,8 @@ export function FormattedMessage({ prefix, suffix, message, metadata, angularCha
   const formattedMessage = (() => {
     if (metadata.link) {
       return (
-        <a onClick={goToLink} className='alert-message__clickable'>
-          {message}
+        <a onClick={ goToLink } className='alert-message__clickable'>
+          { message }
         </a>
       );
     }
@@ -22,9 +22,9 @@ export function FormattedMessage({ prefix, suffix, message, metadata, angularCha
   const formattedSuffix = suffix ? ` ${suffix}` : null;
   return (
     <span>
-      {formattedPrefix}
-      {formattedMessage}
-      {formattedSuffix}
+      { formattedPrefix }
+      { formattedMessage }
+      { formattedSuffix }
     </span>
   );
 }

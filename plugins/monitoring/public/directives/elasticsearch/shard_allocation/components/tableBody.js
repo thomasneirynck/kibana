@@ -51,7 +51,7 @@ export const TableBody = React.createClass({
       <ShardRow
         key={ data.name }
         data={ data }
-        {...this.props}
+        { ...this.props }
         changeUrl={ this.props.changeUrl }
       />
     );
@@ -63,7 +63,7 @@ export const TableBody = React.createClass({
           <tr>
             <td colSpan={ this.props.cols }>
               <div>
-                <p style={{ margin: '10px 0' }} className='text-center lead'>
+                <p style={ { margin: '10px 0' } } className='text-center lead'>
                   There are no shards allocated.
                 </p>
               </div>

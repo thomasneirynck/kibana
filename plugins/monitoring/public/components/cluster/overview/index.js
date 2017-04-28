@@ -44,25 +44,25 @@ export class Overview extends React.Component {
     return (
       <div className='monitoring-view'>
         <LicenseText
-          license={this.state.license}
-          showLicenseExpiration={this.props.showLicenseExpiration}
-          angularChangeUrl={angularChangeUrl}
+          license={ this.state.license }
+          showLicenseExpiration={ this.props.showLicenseExpiration }
+          angularChangeUrl={ angularChangeUrl }
         />
 
         <div className='page-row'>
-          <AlertsPanel alerts={this.state.alerts} angularChangeUrl={angularChangeUrl} />
+          <AlertsPanel alerts={ this.state.alerts } angularChangeUrl={ angularChangeUrl } />
         </div>
 
         <div className='page-row'>
-          <ElasticsearchPanel {...this.state.elasticsearch} angularChangeUrl={angularChangeUrl} />
+          <ElasticsearchPanel { ...this.state.elasticsearch } angularChangeUrl={ angularChangeUrl } />
         </div>
 
         <div className='page-row'>
-          <KibanaPanel {...this.state.kibana} angularChangeUrl={angularChangeUrl} />
+          <KibanaPanel { ...this.state.kibana } angularChangeUrl={ angularChangeUrl } />
         </div>
 
         <div className='page-row'>
-          <LogstashPanel {...this.state.logstash} angularChangeUrl={angularChangeUrl} />
+          <LogstashPanel { ...this.state.logstash } angularChangeUrl={ angularChangeUrl } />
         </div>
 
       </div>

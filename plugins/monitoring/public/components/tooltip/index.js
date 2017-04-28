@@ -10,9 +10,9 @@ export class Tooltip extends React.Component {
 
     return (
       <PuiOverlayTrigger
-        placement={this.props.placement}
-        trigger={this.props.trigger}
-        overlay={tooltip}
+        placement={ this.props.placement }
+        trigger={ this.props.trigger }
+        overlay={ tooltip }
       >
         <span className='overlay-trigger'>
           { this.props.children}

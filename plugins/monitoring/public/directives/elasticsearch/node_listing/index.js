@@ -43,49 +43,49 @@ function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch
       const cpuComponents = (() => {
         if (showCgroupMetricsElasticsearch) {
           return [
-            <MetricCell key="cpuCol1" isOnline={isOnline} metric={this.state.metrics.node_cgroup_quota}></MetricCell>,
-            <MetricCell key="cpuCol2" isOnline={isOnline} metric={this.state.metrics.node_cgroup_throttled}></MetricCell>
+            <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ this.state.metrics.node_cgroup_quota }></MetricCell>,
+            <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ this.state.metrics.node_cgroup_throttled }></MetricCell>
           ];
         }
         return [
-          <MetricCell key="cpuCol1" isOnline={isOnline} metric={this.state.metrics.node_cpu_utilization}></MetricCell>,
-          <MetricCell key="cpuCol2" isOnline={isOnline} metric={this.state.metrics.node_load_average}></MetricCell>
+          <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ this.state.metrics.node_cpu_utilization }></MetricCell>,
+          <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ this.state.metrics.node_load_average }></MetricCell>
         ];
       })();
 
       return (
         <tr className='big'>
           <td>
-            <Tooltip text={this.state.node.nodeTypeLabel} trigger='hover' placement='bottom'>
-              <span className={`fa ${this.state.node.nodeTypeClass}`}></span>
+            <Tooltip text={ this.state.node.nodeTypeLabel } trigger='hover' placement='bottom'>
+              <span className={ `fa ${this.state.node.nodeTypeClass}` }></span>
             </Tooltip>
             &nbsp;
-            <a className='link' onClick={this.goToNode}>
-              {this.state.node.name}
+            <a className='link' onClick={ this.goToNode }>
+              { this.state.node.name }
             </a>
-            <div className='small'>{extractIp(this.state.node.transport_address)}</div>
+            <div className='small'>{ extractIp(this.state.node.transport_address) }</div>
           </td>
           <td>
-            <div title={`Node status: ${this.state.status}`}>
-              <NodeStatusIcon status={this.state.status} />&nbsp;
-              {this.state.status}
+            <div title={ `Node status: ${this.state.status}` }>
+              <NodeStatusIcon status={ this.state.status } />&nbsp;
+              { this.state.status }
             </div>
           </td>
-          {cpuComponents}
-          <MetricCell isOnline={isOnline} metric={this.state.metrics.node_jvm_mem_percent}></MetricCell>
-          <MetricCell isOnline={isOnline} metric={this.state.metrics.node_free_space}></MetricCell>
-          {(() => {
+          { cpuComponents }
+          <MetricCell isOnline={ isOnline } metric={ this.state.metrics.node_jvm_mem_percent }></MetricCell>
+          <MetricCell isOnline={ isOnline } metric={ this.state.metrics.node_free_space }></MetricCell>
+          { (() => {
             if (isOnline) {
               return (
                 <td>
                   <div className='big inline'>
-                    {this.state.metrics.shard_count}
+                    { this.state.metrics.shard_count }
                   </div>
                 </td>
               );
             }
             return <OfflineCell/>;
-          })()}
+          })() }
         </tr>
       );
     }
