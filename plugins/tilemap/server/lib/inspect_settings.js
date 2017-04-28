@@ -13,7 +13,7 @@ export function inspectSettings(xpackInfo) {
     license: {
       uid: xpackInfo.license.getUid(),
       active: xpackInfo.license.isActive(),
-      valid: xpackInfo.license.isOneOf(['trial', 'standard', 'gold', 'platinum'])
+      valid: xpackInfo.license.isOneOf(['trial', 'standard', 'basic', 'gold', 'platinum'])
     }
   };
 
