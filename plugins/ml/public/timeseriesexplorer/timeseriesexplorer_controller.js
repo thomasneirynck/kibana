@@ -23,9 +23,7 @@ import _ from 'lodash';
 import moment from 'moment';
 
 import 'plugins/ml/components/anomalies_table';
-import 'plugins/ml/components/job_select_list';
 import 'plugins/ml/services/job_service';
-import 'plugins/ml/services/ml_dashboard_service';
 import 'plugins/ml/services/results_service';
 
 import { notify } from 'ui/notify';
@@ -52,7 +50,7 @@ const module = uiModules.get('apps/ml');
 
 module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $timeout, $compile,
   Private, $q, es, timefilter, globalState, AppState, mlJobService, mlResultsService,
-  mlDashboardService, mlTimeSeriesSearchService) {
+  mlJobSelectService, mlTimeSeriesSearchService) {
 
   // TODO - move the index pattern into a setting?
   $scope.indexPatternId = '.ml-anomalies-*';
@@ -301,18 +299,6 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       }
     });
 
-    // Build scope objects used in the HTML template.
-    $scope.unsafeHtml = '<ml-job-select-list timeseriesonly="true" ' +
-        'selected="' + selectedJobIds.join(' ') + '"></ml-job-select-list>';
-
-    // Crop long job IDs for display in the button text.
-    // The first full job ID is displayed in the tooltip.
-    let firstJobId = selectedJobIds[0];
-    if (selectedJobIds.length > 1 && firstJobId.length > 22) {
-      firstJobId = firstJobId.substring(0, 19) + '...';
-    }
-    $scope.selectJobBtnJobIdLabel = firstJobId;
-
     globalState.ml.jobIds = selections;
     globalState.save();
     $scope.refresh();
@@ -332,7 +318,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
   });
 
   // When inside a dashboard in the Ml plugin, listen for changes to job selection.
-  mlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
+  mlJobSelectService.listenJobSelectionChange($scope, function (event, selections) {
     $scope.setSelectedJobs(selections);
   });
 

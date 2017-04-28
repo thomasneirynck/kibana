@@ -27,7 +27,6 @@ import angular from 'angular';
 import 'ui/timefilter';
 
 import 'plugins/ml/services/job_service';
-import 'plugins/ml/services/ml_dashboard_service';
 import 'plugins/ml/services/results_service';
 
 import swimlanes from 'plugins/ml/summaryview/swimlanes.html';
@@ -527,17 +526,6 @@ module.controller('MlSummaryViewController', function (
         selectedJobIds.push(job.id);
       }
     });
-
-    // Build scope objects used in the HTML template.
-    $scope.unsafeHtml = '<ml-job-select-list selected="' + selectedJobIds.join(' ') + '"></ml-job-select-list>';
-
-    // Crop long job IDs for display in the button text.
-    // The first full job ID is displayed in the tooltip.
-    let firstJobId = selectedJobIds[0];
-    if (selectedJobIds.length > 1 && firstJobId.length > 22) {
-      firstJobId = firstJobId.substring(0, 19) + '...';
-    }
-    $scope.selectJobBtnJobIdLabel = firstJobId;
 
     globalState.ml.jobIds = selections;
     globalState.save();

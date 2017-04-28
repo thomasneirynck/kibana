@@ -17,3 +17,4 @@ import 'plugins/ml/timeseriesexplorer/timeseriesexplorer_controller.js';
 import 'plugins/ml/timeseriesexplorer/timeseries_search_service.js';
 import 'plugins/ml/timeseriesexplorer/model_plot_chart_directive';
 import 'plugins/ml/timeseriesexplorer/styles/main.less';
+import 'plugins/ml/components/job_select_list';

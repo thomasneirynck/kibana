@@ -33,7 +33,7 @@ import { labelDuplicateDetectorDescriptions } from 'plugins/ml/util/anomaly_util
 import { sortByKey } from 'plugins/ml/util/string_utils';
 import 'plugins/ml/services/ml_api_service';
 import 'plugins/ml/services/job_service';
-import 'plugins/ml/services/ml_dashboard_service';
+import 'plugins/ml/components/job_select_list';
 import './swimlane_influencers/swimlane_influencers_directive';
 
 import { uiModules } from 'ui/modules';
@@ -45,7 +45,7 @@ module.controller('MlSwimlaneController', function ($scope,
  $location,
  courier,
  mlJobService,
- mlDashboardService) {
+ mlJobSelectService) {
 
   // Obtain the descriptions for each job and detector.
   $scope.jobDescriptions = {};
@@ -125,7 +125,7 @@ module.controller('MlSwimlaneController', function ($scope,
 
   });
 
-  mlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
+  mlJobSelectService.listenJobSelectionChange($scope, function (event, selections) {
     const selectedJobIds = selections.length > 0 ? selections : ['*'];
 
     // Update the record 'View by' options with the fields for the currently selected job(s).

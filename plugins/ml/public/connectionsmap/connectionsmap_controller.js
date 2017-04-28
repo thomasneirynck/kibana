@@ -26,8 +26,8 @@ import 'plugins/ml/components/paginated_table';
 import 'plugins/ml/filters/abbreviate_whole_number';
 import 'plugins/ml/filters/format_value';
 import 'plugins/ml/services/job_service';
+import 'plugins/ml/components/job_select_list';
 import 'plugins/ml/services/results_service';
-import 'plugins/ml/services/ml_dashboard_service';
 import {
   labelDuplicateDetectorDescriptions,
   getEntityFieldName,
@@ -51,7 +51,7 @@ module.controller('MlConnectionsMapController', function (
   courier,
   mlJobService,
   mlResultsService,
-  mlDashboardService) {
+  mlJobSelectService) {
   $scope.detectorsByJob = {};
   $scope.numberHits = -1;
 
@@ -344,7 +344,7 @@ module.controller('MlConnectionsMapController', function (
   $scope.$listen(timefilter, 'fetch', $scope.refresh);
 
   // When inside a dashboard in the Ml plugin, listen for changes to job selection.
-  mlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
+  mlJobSelectService.listenJobSelectionChange($scope, function (event, selections) {
     const selectAll = ((selections.length === 1 && selections[0] === '*') || selections.length === 0);
     _.each($scope.vis.params.jobs, function (job) {
       job.selected = (selectAll || _.indexOf(selections, job.id) !== -1);

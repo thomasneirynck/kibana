@@ -24,4 +24,5 @@ import 'plugins/ml/summaryview/summaryview_swimlane_directive';
 import 'plugins/ml/summaryview/summaryview_eventrate_directive';
 import 'plugins/ml/summaryview/anomaly_details_bubble';
 import 'plugins/ml/summaryview/swimlane_inspector';
+import 'plugins/ml/components/job_select_list';
 

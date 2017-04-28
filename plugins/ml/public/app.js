@@ -25,7 +25,6 @@ import 'plugins/ml/services/ml_clipboard_service';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/ml_api_service';
 import 'plugins/ml/services/browser_detect_service';
-import 'plugins/ml/services/ml_dashboard_service';
 import 'plugins/ml/services/results_service';
 import 'plugins/ml/components/messagebar';
 import 'plugins/ml/explorer';

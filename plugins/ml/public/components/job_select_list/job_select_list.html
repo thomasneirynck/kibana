@@ -1,16 +1,72 @@
-<div>
-  <div class="ml-select-list">
-    <div class="ml-select-all-controls">
-      <a ng-click="selectAll()"><i class="fa fa-check"></i> Select all</a>
-      <a ng-click="unselectAll()"><i class="fa fa-times"></i> Unselect all</a>
+<div class='ml-job-selector'>
+  <div class="ml-select-all-controls">
+    <div>
+      <input type="checkbox"
+        value="{{job.id}}"
+        ng-checked="selections.length === selectableJobs.length"
+        ng-click="toggleAllSelection()" />
+        Job Id
     </div>
-    <hr />
-    <label ng-repeat="job in jobs"><input type="checkbox" value="{{job.id}}" ng-checked="isSelected(job.id)" ng-click="toggleSelection(job.id)" />{{job.id}}</label>
+    <div>
+      Time Range
+    </div>
   </div>
 
-  <hr />
+  <div ng-show='noJobsCreated===undefined' style='text-align: center;'>
+    <div class="loading-jobs"><i class='fa fa-spinner fa-spin'></i></div>
+    <div>Loading Jobs</div>
+  </div>
+  <div class="ml-select-list">
+    <div class='job-row' ng-repeat="job in jobs">
+      <div class='job-row-inner'>
+      <label>
+        <div>
+          <span>
+            <input type="checkbox"
+              value="{{job.id}}"
+              ng-checked="isSelected(job.id)"
+              ng-disabled='job.disabled'
+              ng-click="toggleSelection(job.id)" />
+            <span ng-class="{'disabled-job': job.disabled}">{{job.id}}</span>
+          </span>
+        </div>
+        <div>
+          <div class='gant-back-edge' >
+            <div ></div>
+          </div>
+          <div
+            class='gant-bar'
+            ng-class="{'disabled-job': job.disabled}"
+            tooltip='{{job.timeRange.label}}'
+            tooltip-placement="bottom"
+            tooltip-append-to-body="true"
+            style='margin-left:{{job.timeRange.fromPx}}px; width: {{job.timeRange.widthPx}}px;'>
 
-  <div style="text-align: center;">
+          </div>
+        </div>
+        </label>
+      </div>
+<!--       <div class='button-container'>
+        <button ng-click="useTimeRange(job)"
+          class="kuiButton kuiButton--basic kuiButton--small use-time-range"
+          tooltip='Set time picker range from {{job.timeRange.label}}'
+          tooltip-placement="bottom"
+          tooltip-append-to-body="true"
+          aria-label="useTimeRange">
+          <i aria-hidden="true" class="fa fa-clock-o"></i>
+        </button>
+      </div>
+ -->    </div>
+  </div>
+
+  <div class='apply-time-range'>
+    <label>
+      <input type="checkbox"
+        ng-model="applyTimeRange"/>
+        Also apply time range
+    </label>
+  </div>
+  <div class='buttons-container'>
     <button ng-click="apply()"  class="kuiButton kuiButton--primary" aria-label="Apply">Apply</button>
     <button ng-click="closePopover()" class="kuiButton kuiButton--primary" aria-label="Cancel">Cancel</button>
   </div>

@@ -26,7 +26,6 @@ import moment from 'moment';
 import 'plugins/ml/components/anomalies_table';
 import 'plugins/ml/components/influencers_list';
 import 'plugins/ml/components/job_select_list';
-import 'plugins/ml/services/ml_dashboard_service';
 import 'plugins/ml/services/job_service';
 import 'plugins/ml/services/results_service';
 
@@ -53,7 +52,7 @@ import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.controller('MlExplorerController', function ($scope, $timeout, AppState, Private, timefilter,
-  globalState, mlJobService, mlResultsService, mlDashboardService, mlExplorerDashboardService) {
+  globalState, mlJobService, mlResultsService, mlJobSelectService, mlExplorerDashboardService) {
 
   // TODO - move the index pattern into a setting?
   $scope.indexPatternId = '.ml-anomalies-*';
@@ -196,17 +195,6 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
       }
     });
 
-    // Build scope objects used in the HTML template.
-    $scope.unsafeHtml = '<ml-job-select-list selected="' + selectedJobIds.join(' ') + '"></ml-job-select-list>';
-
-    // Crop long job IDs for display in the button text.
-    // The first full job ID is displayed in the tooltip.
-    let firstJobId = selectedJobIds[0];
-    if (selectedJobIds.length > 1 && firstJobId.length > 22) {
-      firstJobId = firstJobId.substring(0, 19) + '...';
-    }
-    $scope.selectJobBtnJobIdLabel = firstJobId;
-
     globalState.ml.jobIds = validSelections;
     globalState.save();
 
@@ -249,7 +237,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
   });
 
   // Listen for changes to job selection.
-  mlDashboardService.listenJobSelectionChange($scope, function (event, selections) {
+  mlJobSelectService.listenJobSelectionChange($scope, function (event, selections) {
     // Clear swimlane selection from state.
     delete $scope.appState.mlExplorerSwimlane.selectedType;
     delete $scope.appState.mlExplorerSwimlane.selectedLane;

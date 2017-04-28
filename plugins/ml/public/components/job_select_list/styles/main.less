@@ -3,16 +3,15 @@ navbar {
   background-color: #EFF0F1;
 }
 
-.ml-select-list {
-  width: 250px;
-  max-height: 300px;
-  overflow: auto;
-
+.ml-job-selector {
   .ml-select-all-controls {
-    a {
+    margin-bottom: 0px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #eee;
+    & > div {
+      width: 230px;
       display: inline-block;
-      padding-right: 10px;
-      padding-bottom: 3px;
+      font-weight: bold;
     }
   }
 
@@ -21,16 +20,144 @@ navbar {
   }
 
   label {
-    display: block;
-    font-size: 13px;
+    margin-bottom: 0px;
     font-weight: normal;
-    color: #444444;
-    white-space: nowrap;
   }
 
   input {
-    margin-right: 5px;
+    margin-right: 4px;
+    margin-left: 4px;
   }
+
+  .buttons-container {
+    text-align: center;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+  }
+
+  .apply-time-range {
+    margin-top: 16px;
+    position: absolute;
+    right: 16px;
+    input {
+      margin-right: 0px;
+    }
+  }
+
+  .ml-select-list {
+    max-height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+
+    .job-row {
+      white-space: nowrap;
+      vertical-align: top;
+
+      .use-time-range {
+        margin-top: 4px;
+      }
+
+      .job-row-inner {
+        display: inline-block;
+        font-size: 13px;
+        font-weight: normal;
+        color: #444444;
+        white-space: nowrap;
+
+        margin: 0px;
+        padding: 0px;
+        line-height: 20px;
+
+        & > label > div {
+          width: 230px;
+          display: inline-block;
+          vertical-align: top;
+          height: 30px;
+          padding-top: 6px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          padding-right: 4px;
+
+          .disabled-job {
+            color: #cccccc;
+          }
+        }
+        & > label > div:nth-child(2) {
+          width: 310px;
+          border-left: 1px solid #eee;
+          border-right: 1px solid #eee;
+          padding-left: 4px;
+          background-color: #f9f9f9;
+          padding-top: 6px;
+          margin-left: -3px;
+
+          .disabled-job {
+            background-color: #cccccc;
+          }
+        }
+      }
+
+      .button-container {
+        display: inline-block;
+        vertical-align: top;
+        padding-right: 2px;
+      }
+
+      .gant-bar {
+        background-color: #79adda;
+        height: 14px;
+        border-radius: 2px;
+      }
+
+      .gant-back-edge {
+        height: 18px;
+        border-left: 1px solid #d6d6d6;
+        border-right: 1px solid #d6d6d6;
+        margin-bottom: -16px;
+        padding-top: 9px;
+
+        div {
+          height: 1px;
+          border-top: 1px dashed #d6d6d6;
+        }
+      }
+    }
+
+    .job-row:nth-child(1) {
+      .job-row-inner {
+        & > label > div {
+          // border-top: 1px solid #eee;
+        }
+      }
+    }
+
+    .job-row:last-child {
+      .job-row-inner {
+        & > label > div {
+          // border-bottom: 1px solid #eee;
+        }
+      }
+    }
+
+    .job-row:hover {
+      .job-row-inner {
+        & > label > div {
+          background-color: #f2f2f2;
+        }
+      }
+    }
+  }
+
+ .loading-jobs {
+   font-size: 24px;
+ }
+
+}
+
+.ml-select-list-on {
+    color: #ffffff;
+    background-color: #000099;
 }
 
 .ml-select-list-on {
@@ -39,6 +166,7 @@ navbar {
 }
 
 .ml-job-select-btn-label {
+  // margin-left: 10px;
   background-color:#9c9c9c;
   color: #ffffff;
   display:inline-block;
@@ -54,22 +182,34 @@ navbar {
   line-height:33px;
 }
 
-.kuiButton.ml-job-select-btn {
-  width: 260px;
+.ml-job-select-btn {
+  width: 300px;
   height: 34px;
   text-align: left;
   color: #444444;
   background-color: white;
-  border: 2px solid white;
+  border: 2px solid #ffffff;
   border-left-width: 0px;
   border-radius: 0px 4px 4px 0px;
+  padding: 5px 15px;
   padding-left: 10px;
   transition: border-color ease-in-out .15s;
+  font-size: 14px;
+  line-height: 20px;
+  cursor: pointer;
 
   .ml-job-select-btn-text {
     float: left;
-    width: 220px;
+    width: 260px;
     overflow-x: hidden;
+    display: inline-flex;
+    white-space: nowrap;
+
+    span {
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      padding-right: 5px;
+    }
   }
 
   .caret {
@@ -79,14 +219,15 @@ navbar {
   }
 }
 
-.kuiButton--basic.ml-job-select-btn:hover, .kuiButton--basic.ml-job-select-btn:focus, .kuiButton--basic.ml-job-select-btn:active {
-  color: #444444 !important;
-  background-color: white !important;
-  border-color: #9c9c9c !important;
+.ml-job-select-btn:hover, .ml-job-select-btn:focus, .ml-job-select-btn:active {
+  color: #444444;
+  background-color: #ffffff;
+  border-color: #9c9c9c;
   transform: none;
 }
 
-.kuiButton--basic.ml-job-select-btn:focus {
+.ml-job-select-btn:focus {
   outline: none;
-  box-shadow: none !important;
+  box-shadow: none;
 }
+

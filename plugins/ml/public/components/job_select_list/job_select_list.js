@@ -15,4 +15,6 @@
 
 
 import './job_select_list_directive';
+import './job_select_button_directive.js';
+import './job_select_service.js';
 import './styles/main.less';

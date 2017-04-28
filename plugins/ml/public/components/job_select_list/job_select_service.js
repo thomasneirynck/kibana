@@ -13,12 +13,11 @@
  * strictly prohibited.
  */
 
-// Service with functions used across Ml dashboards, such as broadcasting
-// and listening for events.
+// Service with functions used for broadcasting job picker changes
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('mlDashboardService', function ($rootScope) {
+module.service('mlJobSelectService', function ($rootScope) {
 
   // Broadcasts that a change has been made to the selected jobs.
   this.broadcastJobSelectionChange = function (selectedJobIds) {
