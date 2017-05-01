@@ -1,5 +1,5 @@
 import { getSearchValue } from 'plugins/watcher/lib/get_search_value';
-import { get, pick, isEmpty } from 'lodash';
+import { get, pick, isEmpty, isEqual } from 'lodash';
 import { Action } from '../action';
 import { WatchStatus } from '../watch_status';
 
@@ -18,8 +18,8 @@ export class Watch {
     this.id = get(props, 'id');
     this.isNew = isEmpty(this.id);
 
-    this.name = get(props, 'name');
-    this.watch = get(props, 'watch');
+    this.name = get(props, 'name', '');
+    this.watch = get(props, 'watch', {});
     this.isSystemWatch = Boolean(get(props, 'isSystemWatch'));
     this.watchStatus = WatchStatus.fromUpstreamJSON(get(props, 'watchStatus'));
 
@@ -45,5 +45,17 @@ export class Watch {
 
   static fromUpstreamJSON(upstreamWatch) {
     return new Watch(upstreamWatch);
+  }
+
+  isEqualTo = (otherWatch) => {
+    // Used to do any cleanup to the watch objects in order to properly
+    // compare them in isEqual call below
+    function simplify(watch) {
+      // We need to create a POJO copy because isEqual would return false
+      // because of property getters
+      return Object.assign({}, watch);
+    }
+
+    return isEqual(simplify(this), simplify(otherWatch));
   }
 };

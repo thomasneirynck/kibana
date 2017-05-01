@@ -1,5 +1,6 @@
 import { uiModules } from 'ui/modules';
 import { Notifier } from 'ui/notify/notifier';
+import 'plugins/watcher/services/dirty_prompt';
 import template from './watch_edit.html';
 import 'plugins/watcher/components/kbn_tabs';
 import 'plugins/watcher/components/watch_history_item_detail';
@@ -18,6 +19,7 @@ app.directive('watchEdit', function ($injector) {
   const licenseService = $injector.get('licenseService');
   const kbnUrl = $injector.get('kbnUrl');
   const confirmModal = $injector.get('confirmModal');
+  const dirtyPrompt = $injector.get('dirtyPrompt');
 
   return {
     restrict: 'E',
@@ -28,10 +30,14 @@ app.directive('watchEdit', function ($injector) {
     bindToController: true,
     controllerAs: 'watchEdit',
     controller: class WatchEditController {
-      constructor() {
+      constructor($scope) {
         this.notifier = new Notifier({ location: 'Watcher' });
         this.selectedTabId = 'edit-watch';
         this.simulateResults = null;
+        this.originalWatch = Object.assign({}, this.watch);
+
+        dirtyPrompt.register(() => !this.watch.isEqualTo(this.originalWatch));
+        $scope.$on('$destroy', dirtyPrompt.deregister);
 
         this.onExecuteDetailsValid();
       }
@@ -152,6 +158,7 @@ app.directive('watchEdit', function ($injector) {
       }
 
       onClose = () => {
+        dirtyPrompt.deregister();
         kbnUrl.change('/management/elasticsearch/watcher/watches', {});
       }
     }
