@@ -48,6 +48,7 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
               jobs.push({
                 id:job.job_id,
                 disabled: !($scope.timeSeriesOnly === false || isTimeSeriesViewJob(job) === true),
+                running: (job.datafeed_config && job.datafeed_config.state === 'started'),
                 timeRange: {
                   to: job.data_counts.latest_record_timestamp,
                   from: job.data_counts.earliest_record_timestamp,

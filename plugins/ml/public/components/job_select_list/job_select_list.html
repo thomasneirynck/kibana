@@ -36,7 +36,7 @@
           </div>
           <div
             class='gant-bar'
-            ng-class="{'disabled-job': job.disabled}"
+            ng-class="{'disabled-job': job.disabled, 'gant-bar-running': job.running}"
             tooltip='{{job.timeRange.label}}'
             tooltip-placement="bottom"
             tooltip-append-to-body="true"
@@ -46,17 +46,7 @@
         </div>
         </label>
       </div>
-<!--       <div class='button-container'>
-        <button ng-click="useTimeRange(job)"
-          class="kuiButton kuiButton--basic kuiButton--small use-time-range"
-          tooltip='Set time picker range from {{job.timeRange.label}}'
-          tooltip-placement="bottom"
-          tooltip-append-to-body="true"
-          aria-label="useTimeRange">
-          <i aria-hidden="true" class="fa fa-clock-o"></i>
-        </button>
-      </div>
- -->    </div>
+    </div>
   </div>
 
   <div class='apply-time-range'>
