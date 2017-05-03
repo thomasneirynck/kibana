@@ -52,7 +52,7 @@ function getPageData($injector) {
       {
         name: 'index_4',
         keys: [
-          'index_mem_query_cache_4',
+          'index_mem_query_cache',
           'index_mem_request_cache',
           'index_mem_fielddata',
           'index_mem_writer'

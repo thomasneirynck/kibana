@@ -70,7 +70,7 @@ function getPageData($injector) {
       {
         name: 'node_index_4',
         keys: [
-          'node_index_mem_query_cache_4',
+          'node_index_mem_query_cache',
           'node_index_mem_request_cache',
           'node_index_mem_fielddata',
           'node_index_mem_writer'

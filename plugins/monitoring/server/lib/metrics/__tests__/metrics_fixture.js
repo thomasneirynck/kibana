@@ -513,20 +513,6 @@ export const expected = {
     'label': 'Query Cache',
     'description': 'Heap memory used by Query Cache (e.g., cached filters). This is for the same shards, but not a part of Lucene Total.',
     'type': 'index',
-    'title': 'Index Memory',
-    'format': '0.0 b',
-    'metricAgg': 'max',
-    'units': 'B',
-    'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
-    'timestampField': 'timestamp',
-    'derivative': false
-  },
-  'index_mem_query_cache_4': {
-    'field': 'index_stats.total.query_cache.memory_size_in_bytes',
-    'label': 'Query Cache',
-    'description': 'Heap memory used by Query Cache (e.g., cached filters). This is for the same shards, but not a part of Lucene Total.',
-    'type': 'index',
     'title': 'Index Memory - Elasticsearch',
     'format': '0.0 b',
     'metricAgg': 'max',
@@ -1284,20 +1270,6 @@ export const expected = {
     'derivative': false
   },
   'node_index_mem_query_cache': {
-    'field': 'node_stats.indices.query_cache.memory_size_in_bytes',
-    'label': 'Query Cache',
-    'description': 'Heap memory used by Query Cache (e.g., cached filters). This is for the same shards, but not a part of Lucene Total.',
-    'type': 'node',
-    'title': 'Index Memory',
-    'format': '0.0 b',
-    'metricAgg': 'max',
-    'units': 'B',
-    'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
-    'timestampField': 'timestamp',
-    'derivative': false
-  },
-  'node_index_mem_query_cache_4': {
     'field': 'node_stats.indices.query_cache.memory_size_in_bytes',
     'label': 'Query Cache',
     'description': 'Heap memory used by Query Cache (e.g., cached filters). This is for the same shards, but not a part of Lucene Total.',
@@ -2459,4 +2431,3 @@ export const expected = {
     'derivative': false
   }
 };
-

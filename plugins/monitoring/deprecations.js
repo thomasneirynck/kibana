@@ -24,14 +24,6 @@ export const deprecations = ({ rename }) => {
 
       log('Config key "xpack.monitoring.elasticsearch.ssl.verify" is deprecated. ' +
           'It has been replaced with "xpack.monitoring.elasticsearch.ssl.verificationMode"');
-    },
-    (settings, log) => {
-      if (has(settings, 'chart.elasticsearch.index.index_memory')) {
-        log('Config key "xpack.monitoring.chart.elasticsearch.index.index_memory" is deprecated. Use the Advanced index view instead.');
-      }
-      if (has(settings, 'chart.elasticsearch.node.index_memory')) {
-        log('Config key "xpack.monitoring.chart.elasticsearch.node.index_memory" is deprecated. Use the Advanced node view instead.');
-      }
     }
   ];
 };

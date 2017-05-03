@@ -39,8 +39,11 @@ function getPageData($injector) {
       },
       {
         name: 'node_mem',
-        keys: [ 'node_index_mem_overall' ],
-        config: 'xpack.monitoring.chart.elasticsearch.node.index_memory'
+        keys: [
+          'node_index_mem_overall',
+          'node_index_mem_terms',
+          'node_index_mem_points'
+        ]
       },
       {
         name: 'node_cpu_metric',

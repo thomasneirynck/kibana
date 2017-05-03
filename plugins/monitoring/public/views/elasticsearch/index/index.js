@@ -44,8 +44,11 @@ function getPageData($injector) {
       'index_size',
       {
         name: 'index_mem',
-        keys: [ 'index_mem_overall' ],
-        config: 'xpack.monitoring.chart.elasticsearch.index.index_memory'
+        keys: [
+          'index_mem_overall',
+          'index_mem_terms',
+          'index_mem_points'
+        ]
       },
       'index_document_count',
       {

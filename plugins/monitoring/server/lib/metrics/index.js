@@ -170,12 +170,6 @@ const metricInstances = {
   // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
   'index_mem_query_cache': new IndexMemoryMetric({
     field: 'index_stats.total.query_cache.memory_size_in_bytes',
-    label: 'Query Cache',
-    description: 'Heap memory used by Query Cache (e.g., cached filters). This is for the same shards, but not a part of Lucene Total.',
-    type: 'index'
-  }),
-  'index_mem_query_cache_4': new IndexMemoryMetric({
-    field: 'index_stats.total.query_cache.memory_size_in_bytes',
     title: 'Index Memory - Elasticsearch',
     label: 'Query Cache',
     description: 'Heap memory used by Query Cache (e.g., cached filters). This is for the same shards, but not a part of Lucene Total.',
@@ -597,12 +591,6 @@ const metricInstances = {
   }),
   // Note: This is not segment memory, unlike SingleIndexMemoryMetrics
   'node_index_mem_query_cache': new IndexMemoryMetric({
-    field: 'node_stats.indices.query_cache.memory_size_in_bytes',
-    label: 'Query Cache',
-    description: 'Heap memory used by Query Cache (e.g., cached filters). This is for the same shards, but not a part of Lucene Total.',
-    type: 'node'
-  }),
-  'node_index_mem_query_cache_4': new IndexMemoryMetric({
     field: 'node_stats.indices.query_cache.memory_size_in_bytes',
     label: 'Query Cache',
     title: 'Index Memory - Elasticsearch',
