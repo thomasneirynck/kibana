@@ -18,10 +18,13 @@ Assuming that you have the `x-pack-kibana` repo as a sibling to your `kibana` di
 $ ls $PATH_TO_REPOS
  ├── kibana
  └── elasticsearch (optional)
+ └── elasticsearch-extra/x-pack-elasticsearch (optional)
  └── x-pack-kibana
 ```
 
-Simply run `npm start` from within `x-pack-kibana`, and it will bring up Kibana with X-Pack.
+Start elasticsearch with x-pack plugins. Follow x-pack-elasticsearch [Setup Instructions](https://github.com/elastic/x-pack-elasticsearch#setup). Execute `gradle run` from within `elasticsearch-extra/x-pack-elasticsearch`. Seed elasticsearch with some log data by running `npm run makelogs -- --auth elastic:changeme` from within `kibana`.
+
+Simply run `npm start` from within `x-pack-kibana`, and it will bring up Kibana with X-Pack. Default username `elastic` and password `changeme`.
 
 #### Alternate: Run the build
 
