@@ -1,36 +1,38 @@
 <div ng-controller="licenseView" class="kuiViewContent kuiViewContent--constrainedWidth">
   <div class="kuiNotice">
     <!-- Back button -->
-    <div ng-if="!isExpired">
-      <p>
+    <div ng-if="!isExpired" class="kuiVerticalRhythm">
+      <p class="kuiText">
         <a kbn-href="#/overview">« Cluster Overview</a>
       </p>
     </div>
 
     <!-- Title (expired license) -->
-    <div ng-if="isExpired" class="kuiNotice__header">
-      <h1 class="kuiNoticeTitle">
+    <div ng-if="isExpired" class="kuiVerticalRhythm">
+      <h1 class="kuiTitle kuiVerticalRhythmSmall">
         <span class="kuiIcon fa-warning kuiIcon--error"></span>
         Your {{cluster.license.type|capitalize}} license has expired
       </h1>
-      <div class="kuiNoticeText">
+
+      <p class="kuiText kuiVerticalRhythmSmall">
         Your license expired on {{cluster.license.expiry_date|localizedDate}}.
-      </div>
+      </p>
     </div>
 
     <!-- Title (active license) -->
-    <div ng-if="!isExpired" class="kuiNotice__header">
-      <h1 class="kuiNoticeTitle">
+    <div ng-if="!isExpired" class="kuiVerticalRhythm">
+      <h1 class="kuiTitle kuiVerticalRhythmSmall">
         <span class="kuiIcon fa-check kuiIcon--success"></span>
         Your {{cluster.license.type|capitalize}} license is active
       </h1>
-      <div class="kuiNoticeText">
+
+      <p class="kuiText kuiVerticalRhythmSmall">
         Your license will expire on {{cluster.license.expiry_date|localizedDate}}.
-      </div>
+      </p>
     </div>
 
     <!-- Options -->
-    <div class="kuiCardGroup">
+    <div class="kuiCardGroup kuiCardGroup--united kuiVerticalRhythm">
       <!-- Basic license -->
       <div class="kuiCard kuiCardGroup__card">
         <div class="kuiCard__description kuiCardGroup__cardDescription">
@@ -75,7 +77,7 @@
     </div>
 
     <!-- Install existing license -->
-    <p>
+    <p class="kuiText kuiVerticalRhythm">
       <span ng-if="isExpired">
         Already have your license?
       </span>
