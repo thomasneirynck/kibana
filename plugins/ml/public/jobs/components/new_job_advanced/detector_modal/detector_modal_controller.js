@@ -46,6 +46,8 @@ module.controller('MlDetectorModal', function ($scope, $modalInstance, params, m
     { id: 'high_info_content',     uri: 'info_content.html#info-content' },
     { id: 'metric',                uri: 'metric.html#metric' },
     { id: 'median',                uri: 'metric.html#median' },
+    { id: 'low_median',            uri: 'metric.html#median' },
+    { id: 'high_median',           uri: 'metric.html#median' },
     { id: 'mean',                  uri: 'metric.html#mean' },
     { id: 'low_mean',              uri: 'metric.html#mean' },
     { id: 'high_mean',             uri: 'metric.html#mean' },
