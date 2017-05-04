@@ -74,6 +74,14 @@ xpack.monitoring.elasticsearch.ssl.keystore.path: /path/to/file
 xpack.monitoring.elasticsearch.ssl.keystore.password: password
 --------------------------------------------------
 
+Set sniffing to `true` to enable discovery of other nodes of the
+elasticsearch cluster. Defaults to `false`.
+
+[source,yaml]
+--------------------------------------------------
+xpack.monitoring.elasticsearch.sniffing: false
+--------------------------------------------------
+
 --
 
 . Restart your Logstash nodes.
