@@ -5,6 +5,7 @@
         <selectable-column
           selected="watchTable.allSelected"
           on-select-all-change="watchTable.onAllSelectedChange"
+          ng-if="watchTable.areAnyEditable()"
         ></selectable-column>
       </th>
       <th class="kuiTableHeaderCell kuiTableHeaderCell--sortable">

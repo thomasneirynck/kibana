@@ -75,6 +75,10 @@ app.directive('watchTable', function () {
       isEditable = (item) => {
         return !item.watch.isSystemWatch && !item.isBeingDeleted;
       }
+
+      areAnyEditable = () => {
+        return this.editableItems.length !== 0;
+      }
     }
   };
 });
