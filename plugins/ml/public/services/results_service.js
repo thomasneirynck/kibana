@@ -1119,9 +1119,13 @@ module.service('mlResultsService', function ($q, es) {
 
     _.each(entityFields, (entity) => {
       if (entity.fieldValue.length !== 0) {
+        // Add a query string query for each entity field, wrapping the value
+        // in quotes to do a phrase match. This is the best approach when the
+        // field in the source data could be mapped as text or keyword.
+        // a term query could only be used if we knew it was mapped as keyword.
         mustCriteria.push({
           'query_string': {
-            'query': escapeForElasticsearchQuery(entity.fieldName) + ':' + escapeForElasticsearchQuery(entity.fieldValue),
+            'query': escapeForElasticsearchQuery(entity.fieldName) + ':\"' + entity.fieldValue + '\"',
             'analyze_wildcard': false
           }
         });
