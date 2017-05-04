@@ -1,7 +1,6 @@
 import {
   MONITORING_SYSTEM_API_VERSION, KIBANA_SYSTEM_ID, KIBANA_STATS_TYPE
 } from '../../../common/constants';
-import _ from 'lodash';
 import { mapEvent, rollupEvent } from './map_event';
 import { monitoringBulk } from './monitoring_bulk';
 
@@ -40,9 +39,6 @@ export function opsBuffer(kbnServer, server) {
       const body = [
         // Push the time-based information to .monitoring-kibana-*
         { index: { _type: KIBANA_STATS_TYPE } },
-        payload,
-        // Push the latest ops data to .monitoring-data index
-        { index: { _index: '_data', _type: KIBANA_SYSTEM_ID, _id: _.get(payload, 'kibana.uuid') } },
         payload
       ];
 
