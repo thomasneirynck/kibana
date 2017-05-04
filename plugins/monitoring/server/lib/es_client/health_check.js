@@ -16,7 +16,7 @@ export function esHealthCheck(monitoringPlugin, server) {
   function getHealth() {
     return callWithInternalUser('cluster.health', {
       timeout: '5s',
-      index: config.get('xpack.monitoring.index'),
+      index: config.get('xpack.monitoring.index_pattern'),
       ignore: [408]
     })
     .then(resp => {

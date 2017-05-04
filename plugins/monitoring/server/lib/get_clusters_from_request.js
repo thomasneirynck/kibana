@@ -9,7 +9,7 @@ import { alertsClustersAggregation } from '../cluster_alerts/alerts_clusters_agg
 import { alertsClusterSearch } from '../cluster_alerts/alerts_cluster_search';
 import { checkLicense as checkLicenseForAlerts } from '../cluster_alerts/check_license';
 import { getClusterLicense } from './get_cluster_license';
-import { getKibanasForClusters } from './get_kibanas_for_clusters';
+import { getKibanasForClusters } from './kibana/get_kibanas_for_clusters';
 import { getLogstashForClusters } from './logstash/get_logstash_for_clusters';
 import { CLUSTER_ALERTS_SEARCH_SIZE } from '../../common/constants';
 

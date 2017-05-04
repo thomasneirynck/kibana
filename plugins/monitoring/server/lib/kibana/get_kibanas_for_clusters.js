@@ -13,8 +13,8 @@
  */
 import Promise from 'bluebird';
 import _ from 'lodash';
-import { createQuery } from './create_query.js';
-import { ElasticsearchMetric } from './metrics/metric_classes';
+import { createQuery } from '../create_query.js';
+import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 export function getKibanasForClusters(req, indices) {
   if (indices.length < 1) { return () => Promise.resolve([]); }

@@ -1,8 +1,8 @@
 import Joi from 'joi';
 import Promise from 'bluebird';
 import { get } from 'lodash';
-import { getKibanas } from '../../../../lib/lists/get_kibanas';
-import { getKibanasForClusters } from '../../../../lib/get_kibanas_for_clusters';
+import { getKibanas } from '../../../../lib/kibana/get_kibanas';
+import { getKibanasForClusters } from '../../../../lib/kibana/get_kibanas_for_clusters';
 import { handleError } from '../../../../lib/handle_error';
 import { getMetrics } from '../../../../lib/details/get_metrics';
 import { calculateIndices } from '../../../../lib/calculate_indices';

@@ -10,18 +10,24 @@ describe('get_kibana_info', () => {
 
   it('return mapped data for result with hits, availability = true', () => {
     const result = handleResponse({
-      _source: {
-        kibana: {
-          timestamp: moment().format(),
-          kibana: {
-            data: 123
-          },
-          os: {
-            memory: {
-              free_in_bytes: 123000
+      hits: {
+        hits: [
+          {
+            _source: {
+              kibana_stats: {
+                timestamp: moment().format(),
+                kibana: {
+                  data: 123
+                },
+                os: {
+                  memory: {
+                    free_in_bytes: 123000
+                  }
+                }
+              }
             }
           }
-        }
+        ]
       }
     });
     expect(result).to.be.eql({
@@ -33,18 +39,24 @@ describe('get_kibana_info', () => {
 
   it('return mapped data for result with hits, availability = false', () => {
     const result = handleResponse({
-      _source: {
-        kibana: {
-          timestamp: moment().subtract(11, 'minutes').format(),
-          kibana: {
-            data: 123
-          },
-          os: {
-            memory: {
-              free_in_bytes: 123000
+      hits: {
+        hits: [
+          {
+            _source: {
+              kibana_stats: {
+                timestamp: moment().subtract(11, 'minutes').format(),
+                kibana: {
+                  data: 123
+                },
+                os: {
+                  memory: {
+                    free_in_bytes: 123000
+                  }
+                }
+              }
             }
           }
-        }
+        ]
       }
     });
     expect(result).to.be.eql({

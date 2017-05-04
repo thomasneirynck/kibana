@@ -9,7 +9,7 @@
  *  - events
  *  - config reloads
  */
-import { get, isArray } from 'lodash';
+import { get } from 'lodash';
 import moment from 'moment';
 import Promise from 'bluebird';
 import { createQuery } from './../create_query';
@@ -26,57 +26,48 @@ export function getNodes(req, indices) {
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: indices,
+    // Note: We need to include the _type when we go through and change types,
+    // unlike with Kibana because Logstash will be adding a secondary document
+    // type that will "interfere" with the field collapsing
     type: 'logstash_stats',
     ignoreUnavailable: true,
     body: {
-      size: 0,
+      size: config.get('xpack.monitoring.max_bucket_size'),
       query: createQuery({ start, end, uuid, metric }),
-      aggs: {
-        logstash_uuids: {
-          terms: {
-            field: 'logstash_stats.logstash.uuid',
-            size: config.get('xpack.monitoring.max_bucket_size')
-          }
-        }
-      }
+      collapse: {
+        field: 'logstash_stats.logstash.uuid'
+      },
+      sort: [
+        { timestamp: { order: 'desc' } }
+      ],
+      _source: [
+        'timestamp',
+        'logstash_stats.process.cpu.percent',
+        'logstash_stats.jvm.mem.heap_used_percent',
+        'logstash_stats.jvm.uptime_in_millis',
+        'logstash_stats.events.out',
+        'logstash_stats.logstash.http_address',
+        'logstash_stats.logstash.name',
+        'logstash_stats.logstash.host',
+        'logstash_stats.logstash.uuid',
+        'logstash_stats.logstash.status',
+        'logstash_stats.logstash.version',
+        'logstash_stats.logstash.pipeline',
+        'logstash_stats.reloads'
+      ]
     }
   };
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
-  .then(statsResp => {
-    const statsBuckets = get(statsResp, 'aggregations.logstash_uuids.buckets');
-    if (isArray(statsBuckets)) {
-      return Promise.map(statsBuckets, (uuidBucket) => {
-        const infoParams = {
-          index: config.get('xpack.monitoring.index'),
-          type: 'logstash',
-          id: uuidBucket.key,
-          _source: [
-            'timestamp',
-            'logstash.process.cpu.percent',
-            'logstash.jvm.mem.heap_used_percent',
-            'logstash.jvm.uptime_in_millis',
-            'logstash.events.out',
-            'logstash.logstash.http_address',
-            'logstash.logstash.name',
-            'logstash.logstash.host',
-            'logstash.logstash.uuid',
-            'logstash.logstash.status',
-            'logstash.logstash.version',
-            'logstash.logstash.pipeline',
-            'logstash.reloads'
-          ]
-        };
+  .then(resp => {
+    const instances = get(resp, 'hits.hits', []);
 
-        return callWithRequest(req, 'get', infoParams)
-        .then(infoResp => {
-          return {
-            ...get(infoResp, '_source.logstash'),
-            availability: calculateAvailability(get(infoResp, '_source.timestamp'))
-          };
-        });
-      });
-    }
+    return instances.map(hit => {
+      return {
+        ...get(hit, '_source.logstash_stats'),
+        availability: calculateAvailability(get(hit, '_source.timestamp'))
+      };
+    });
   });
 };

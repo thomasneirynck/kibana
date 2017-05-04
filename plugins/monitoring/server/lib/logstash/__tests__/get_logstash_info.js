@@ -10,26 +10,32 @@ describe('get_logstash_info', () => {
 
   it('return mapped data for result with hits, availability = true', () => {
     const result = handleResponse({
-      _source: {
-        logstash: {
-          timestamp: moment().format(),
-          logstash: {
-            host: 'myhost'
-          },
-          events: {
-            in: 300,
-            filtered: 300,
-            out: 300
-          },
-          reloads: {
-            successes: 5,
-            failures: 2
-          },
-          queue: {
-            type: "persisted",
-            events: 100
+      hits: {
+        hits: [
+          {
+            _source: {
+              logstash_stats: {
+                timestamp: moment().format(),
+                logstash: {
+                  host: 'myhost'
+                },
+                events: {
+                  in: 300,
+                  filtered: 300,
+                  out: 300
+                },
+                reloads: {
+                  successes: 5,
+                  failures: 2
+                },
+                queue: {
+                  type: "persisted",
+                  events: 100
+                }
+              }
+            }
           }
-        }
+        ]
       }
     });
     expect(result).to.be.eql({
@@ -50,26 +56,32 @@ describe('get_logstash_info', () => {
 
   it('return mapped data for result with hits, availability = false', () => {
     const result = handleResponse({
-      _source: {
-        logstash: {
-          timestamp: moment().subtract(11, 'minutes').format(),
-          logstash: {
-            host: 'myhost'
-          },
-          events: {
-            in: 300,
-            filtered: 300,
-            out: 300
-          },
-          reloads: {
-            successes: 5,
-            failures: 2
-          },
-          queue: {
-            type: "persisted",
-            events: 100
+      hits: {
+        hits: [
+          {
+            _source: {
+              logstash_stats: {
+                timestamp: moment().subtract(11, 'minutes').format(),
+                logstash: {
+                  host: 'myhost'
+                },
+                events: {
+                  in: 300,
+                  filtered: 300,
+                  out: 300
+                },
+                reloads: {
+                  successes: 5,
+                  failures: 2
+                },
+                queue: {
+                  type: "persisted",
+                  events: 100
+                }
+              }
+            }
           }
-        }
+        ]
       }
     });
     expect(result).to.be.eql({
@@ -90,22 +102,28 @@ describe('get_logstash_info', () => {
 
   it('default to no queue type if none specified', () => {
     const result = handleResponse({
-      _source: {
-        logstash: {
-          timestamp: moment().subtract(11, 'minutes').format(),
-          logstash: {
-            host: 'myhost'
-          },
-          events: {
-            in: 300,
-            filtered: 300,
-            out: 300
-          },
-          reloads: {
-            successes: 5,
-            failures: 2
+      hits: {
+        hits: [
+          {
+            _source: {
+              logstash_stats: {
+                timestamp: moment().subtract(11, 'minutes').format(),
+                logstash: {
+                  host: 'myhost'
+                },
+                events: {
+                  in: 300,
+                  filtered: 300,
+                  out: 300
+                },
+                reloads: {
+                  successes: 5,
+                  failures: 2
+                }
+              }
+            }
           }
-        }
+        ]
       }
     });
     expect(result).to.be.eql({

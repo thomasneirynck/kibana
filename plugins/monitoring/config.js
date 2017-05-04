@@ -24,6 +24,7 @@ export const config = (Joi) => {
     }).default(),
     loggingTag: string().default('monitoring-ui'),
     index: string().default('.monitoring-data-2'),
+    index_pattern: string().default('.monitoring-*-2-*'),
     kibana: object({
       index_pattern: string().default('.monitoring-kibana-2-*'),
       collection: object({

@@ -1,26 +1,37 @@
-import _ from 'lodash';
+import { get, merge } from 'lodash';
 import { calculateAvailability } from './../calculate_availability';
 
 export function handleResponse(resp) {
-  const getSource = (key, defaultValue) => _.get(resp, `_source.logstash.${key}`, defaultValue);
-  const timestamp = getSource('timestamp');
-  const logstash = getSource('logstash');
+  const source = get(resp, 'hits.hits[0]._source.logstash_stats');
+  const timestamp = get(source, 'timestamp');
+  const logstash = get(source, 'logstash');
   const availability = { availability: calculateAvailability(timestamp) };
-  const events = { events: getSource('events') };
-  const reloads = { reloads: getSource('reloads') };
-  const queueType = { queue_type: getSource('queue.type') };
-  return _.merge(logstash, availability, events, reloads, queueType);
+  const events = { events: get(source, 'events') };
+  const reloads = { reloads: get(source, 'reloads') };
+  const queueType = { queue_type: get(source, 'queue.type') };
+  return merge(logstash, availability, events, reloads, queueType);
 }
 
 export function getNodeInfo(req, uuid) {
   const config = req.server.config();
   const params = {
-    index: config.get('xpack.monitoring.index'),
-    type: 'logstash',
-    id: uuid
+    index: config.get('xpack.monitoring.logstash.index_pattern'),
+    type: 'logstash_stats',
+    ignore: [404],
+    body: {
+      size: 1,
+      query: {
+        term: {
+          'logstash_stats.logstash.uuid': uuid
+        }
+      },
+      sort: [
+        { timestamp: { order: 'desc' } }
+      ]
+    }
   };
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
-  return callWithRequest(req, 'get', params)
+  return callWithRequest(req, 'search', params)
   .then(handleResponse);
 }
