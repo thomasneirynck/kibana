@@ -46,6 +46,7 @@
     "simple-git": "1.32.1",
     "sinon": "1.17.3",
     "tmp": "0.0.31",
+    "tree-kill": "^1.1.0",
     "yargs": "4.7.1"
   },
   "dependencies": {

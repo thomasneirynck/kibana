@@ -3,6 +3,8 @@ import { statSync } from 'fs';
 
 import Rx from 'rxjs/Rx';
 import { brightBlack } from 'ansicolors';
+import treeKill from 'tree-kill';
+import { fromNode as fcb } from 'bluebird';
 
 import { log } from '../log';
 import { observeLines } from './observe_lines';
@@ -52,7 +54,7 @@ export function createProc(name, { cmd, args, cwd, env }) {
       .then(() => {}, () => {})
 
     async stop(signal) {
-      childProcess.kill(signal);
+      await fcb(cb => treeKill(childProcess.pid, signal, cb));
       await this.closedPromise;
     }
   };
