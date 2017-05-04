@@ -36,10 +36,10 @@ describe('get_cluster_uuids', () => {
 
   describe('getClusterUuids', () => {
     it('returns cluster UUIDs', async () => {
-      callWithRequest.withArgs(req, 'count').returns({ hits: { total: 5 } })
-                     .withArgs(req, 'count').returns({ hits: { total: 3456 } })
-                     .withArgs(req, 'fieldStats').returns({ indices })
-                     .withArgs(req, 'search').returns(response);
+      callWithRequest.withArgs(req, 'count').returns(Promise.resolve({ hits: { total: 5 } }))
+                     .withArgs(req, 'count').returns(Promise.resolve({ hits: { total: 3456 } }))
+                     .withArgs(req, 'fieldStats').returns(Promise.resolve({ indices }))
+                     .withArgs(req, 'search').returns(Promise.resolve(response));
 
       expect(await getClusterUuids(req, start, end)).to.eql(expectedUuids);
     });
@@ -50,10 +50,10 @@ describe('get_cluster_uuids', () => {
       expect(fetchClusterUuids(req, [], start, end, size)).to.eql({});
     });
 
-    it('searches for clusters', () => {
-      callWithRequest.returns(response);
+    it('searches for clusters', async () => {
+      callWithRequest.returns(Promise.resolve(response));
 
-      expect(fetchClusterUuids(req, indices, start, end, size)).to.be(response);
+      expect(await fetchClusterUuids(req, indices, start, end, size)).to.be(response);
     });
   });
 

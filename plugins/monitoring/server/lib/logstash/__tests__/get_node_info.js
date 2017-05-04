@@ -1,6 +1,6 @@
 import expect from 'expect.js';
 import moment from 'moment';
-import { handleResponse } from '../get_logstash_info';
+import { handleResponse } from '../get_node_info';
 
 describe('get_logstash_info', () => {
   it('return undefined for empty response', () => {

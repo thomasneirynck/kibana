@@ -112,12 +112,8 @@ describe('get_high_level_stats', () => {
   });
 
   describe('fetchHighLevelStats', () => {
-    it('does not search if indices is empty', async () => {
-      expect(await fetchHighLevelStats(req, [], clusterUuids, start, end, product)).to.eql({});
-    });
-
     it('searches for clusters', async () => {
-      callWithRequest.returns(response);
+      callWithRequest.returns(Promise.resolve(response));
 
       expect(await fetchHighLevelStats(req, indices, clusterUuids, start, end, product)).to.be(response);
     });
