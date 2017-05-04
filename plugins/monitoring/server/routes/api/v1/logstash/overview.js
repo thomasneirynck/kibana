@@ -3,15 +3,11 @@ import Promise from 'bluebird';
 import { handleError } from '../../../../lib/handle_error';
 import { getClusterStatus } from '../../../../lib/logstash/get_cluster_status';
 import { getMetrics } from '../../../../lib/details/get_metrics';
-import { calculateIndices } from '../../../../lib/calculate_indices';
 
 /*
  * Logstash Overview route.
  */
 export function logstashOverviewRoute(server) {
-  const config = server.config();
-  const logstashIndexPattern = config.get('xpack.monitoring.logstash.index_pattern');
-
   /**
    * Logstash Overview request.
    *
@@ -40,14 +36,12 @@ export function logstashOverviewRoute(server) {
       }
     },
     handler: (req, reply) => {
-      const start = req.payload.timeRange.min;
-      const end = req.payload.timeRange.max;
-      return calculateIndices(req, start, end, logstashIndexPattern)
-      .then(logstashIndices => {
-        return Promise.props({
-          metrics: getMetrics(req, logstashIndices),
-          clusterStatus: getClusterStatus(req, logstashIndices, 'route-logstash-overview')
-        });
+      const config = server.config();
+      const logstashIndexPattern = config.get('xpack.monitoring.logstash.index_pattern');
+
+      return Promise.props({
+        metrics: getMetrics(req, logstashIndexPattern),
+        clusterStatus: getClusterStatus(req, logstashIndexPattern, 'route-logstash-overview')
       })
       .then (reply)
       .catch(err => reply(handleError(err, req)));

@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import { getClustersFromRequest } from '../../../../lib/get_clusters_from_request';
+import { checkMonitoringAuth } from '../../../../lib/check_monitoring_auth';
 import { handleError } from '../../../../lib/handle_error';
 
 export function clustersRoutes(server) {
@@ -20,10 +21,20 @@ export function clustersRoutes(server) {
         })
       }
     },
-    handler: (req, reply) => {
-      return getClustersFromRequest(req)
-      .then(reply)
-      .catch(err => reply(handleError(err, req)));
+    handler: async (req, reply) => {
+      let clusters = [];
+
+      // NOTE using try/catch because checkMonitoringAuth is expected to throw
+      // an error when current logged-in user doesn't have permission to read
+      // the monitoring data. `try/catch` makes it a little more explicit.
+      try {
+        await checkMonitoringAuth(req);
+        clusters = await getClustersFromRequest(req);
+      } catch (err) {
+        return reply(handleError(err, req));
+      }
+
+      return reply(clusters);
     }
   });
 };

@@ -5,10 +5,9 @@ import { getKibanas } from '../../../../lib/kibana/get_kibanas';
 import { getKibanasForClusters } from '../../../../lib/kibana/get_kibanas_for_clusters';
 import { handleError } from '../../../../lib/handle_error';
 import { getMetrics } from '../../../../lib/details/get_metrics';
-import { calculateIndices } from '../../../../lib/calculate_indices';
 
-const getClusterStatus = function (req, kibanaIndices) {
-  const getKibanaForCluster = getKibanasForClusters(req, kibanaIndices);
+const getKibanaClusterStatus = function (req, kbnIndexPattern) {
+  const getKibanaForCluster = getKibanasForClusters(req, kbnIndexPattern);
   return getKibanaForCluster([{ cluster_uuid: req.params.clusterUuid }])
   .then(clusterStatus => get(clusterStatus, '[0].stats'));
 };
@@ -17,9 +16,6 @@ const getClusterStatus = function (req, kibanaIndices) {
  * Kibana routes
  */
 export function kibanaInstancesRoutes(server) {
-  const config = server.config();
-  const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');
-
   /**
    * Kibana overview and listing
    */
@@ -42,15 +38,13 @@ export function kibanaInstancesRoutes(server) {
       }
     },
     handler: (req, reply) => {
-      const start = req.payload.timeRange.min;
-      const end = req.payload.timeRange.max;
-      return calculateIndices(req, start, end, kbnIndexPattern)
-      .then(kibanaIndices => {
-        return Promise.props({
-          metrics: req.payload.metrics ? getMetrics(req, kibanaIndices) : {},
-          kibanas: req.payload.instances ? getKibanas(req, kibanaIndices) : [],
-          clusterStatus: getClusterStatus(req, kibanaIndices)
-        });
+      const config = server.config();
+      const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');
+
+      return Promise.props({
+        metrics: req.payload.metrics ? getMetrics(req, kbnIndexPattern) : {},
+        kibanas: req.payload.instances ? getKibanas(req, kbnIndexPattern) : [],
+        clusterStatus: getKibanaClusterStatus(req, kbnIndexPattern)
       })
       .then (reply)
       .catch(err => reply(handleError(err, req)));

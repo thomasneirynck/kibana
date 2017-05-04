@@ -4,7 +4,6 @@ import Joi from 'joi';
 import { getClusterStatus } from '../../../../lib/get_cluster_status';
 import { getNodes } from '../../../../lib/lists/get_nodes';
 import { getShardStats } from '../../../../lib/get_shard_stats';
-import { calculateIndices } from '../../../../lib/calculate_indices';
 import { calculateClusterShards } from '../../../../lib/elasticsearch/calculate_cluster_shards';
 import { calculateNodeType } from '../../../../lib/calculate_node_type';
 import { getLastState } from '../../../../lib/get_last_state';
@@ -13,9 +12,6 @@ import { nodeTypeLabel, nodeTypeClass } from '../../../../lib/lookups';
 import { handleError } from '../../../../lib/handle_error';
 
 export function nodesRoutes(server) {
-  const config = server.config();
-  const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
-
   function getNodeTypeClassLabel(node) {
     const nodeType = (node.master && 'master') || node.type;
     const typeClassLabel = {
@@ -44,19 +40,16 @@ export function nodesRoutes(server) {
       }
     },
     handler: (req, reply) => {
-      const start = req.payload.timeRange.min;
-      const end = req.payload.timeRange.max;
+      const config = server.config();
+      const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 
-      calculateIndices(req, start, end, esIndexPattern)
-      .then(indices => {
-        return getLastState(req, indices)
-        .then(lastState => {
-          return Promise.props({
-            clusterStatus: getClusterStatus(req, indices, lastState),
-            listing: getNodes(req, indices),
-            shardStats: getShardStats(req, indices, lastState),
-            clusterState: lastState
-          });
+      return getLastState(req, esIndexPattern)
+      .then(lastState => {
+        return Promise.props({
+          clusterStatus: getClusterStatus(req, esIndexPattern, lastState),
+          listing: getNodes(req, esIndexPattern),
+          shardStats: getShardStats(req, esIndexPattern, lastState),
+          clusterState: lastState
         });
       })
       // Add the index status to each index from the shardStats

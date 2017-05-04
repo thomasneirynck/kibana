@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { createQuery } from './create_query.js';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
-export function getNodeSummary(req, indices) {
+export function getNodeSummary(req, esIndexPattern) {
   // Get the params from the POST body for the request
   const config = req.server.config();
   const end = req.payload.timeRange.max;
@@ -11,14 +11,14 @@ export function getNodeSummary(req, indices) {
   // Build up the Elasticsearch request
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
-    index: indices,
+    index: esIndexPattern,
     type: 'node_stats',
     ignore: [404],
     body: {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
       query: createQuery({
-        end: end,
+        end,
         uuid,
         metric,
         filters: [{

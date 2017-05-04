@@ -6,7 +6,6 @@ import { getNodeSummary } from '../../../../lib/get_node_summary';
 import { getMetrics } from '../../../../lib/details/get_metrics';
 import { getShardStats } from '../../../../lib/get_shard_stats';
 import { getShardAllocation } from '../../../../lib/get_shard_allocation';
-import { calculateIndices } from '../../../../lib/calculate_indices';
 import { getLastState } from '../../../../lib/get_last_state';
 import { calculateClusterShards } from '../../../../lib/elasticsearch/calculate_cluster_shards';
 import { getDefaultNodeFromId } from '../../../../lib/get_default_node_from_id';
@@ -15,9 +14,6 @@ import { getNodeTypeClassLabel } from '../../../../lib/elasticsearch/get_node_ty
 import { handleError } from '../../../../lib/handle_error';
 
 export function nodeRoutes(server) {
-  const config = server.config();
-  const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
-
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/elasticsearch/nodes/{resolver}',
@@ -40,28 +36,26 @@ export function nodeRoutes(server) {
     },
     handler: (req, reply) => {
       const resolver = req.params.resolver;
-      const start = req.payload.timeRange.min;
-      const end = req.payload.timeRange.max;
       const showSystemIndices = req.payload.showSystemIndices;
       const collectShards = req.payload.shards;
-      calculateIndices(req, start, end, esIndexPattern)
-      .then(indices => {
-        return getLastState(req, indices)
-        .then(lastState => {
-          const configResolver = `source_node.${config.get('xpack.monitoring.node_resolver')}`;
-          let shards;
-          if (collectShards) {
-            shards = getShardAllocation(req, indices, [{ term: { [configResolver]: resolver } }], lastState, showSystemIndices);
-          }
-          return Promise.props({
-            clusterStatus: getClusterStatus(req, indices, lastState),
-            nodeSummary: getNodeSummary(req, indices),
-            metrics: getMetrics(req, indices, [{ term: { [configResolver]: resolver } }]),
-            shards,
-            shardStats: getShardStats(req, indices, lastState),
-            nodes: {},
-            clusterState: lastState
-          });
+      const config = server.config();
+      const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
+
+      return getLastState(req, esIndexPattern)
+      .then(lastState => {
+        const configResolver = `source_node.${config.get('xpack.monitoring.node_resolver')}`;
+        let shards;
+        if (collectShards) {
+          shards = getShardAllocation(req, esIndexPattern, [{ term: { [configResolver]: resolver } }], lastState, showSystemIndices);
+        }
+        return Promise.props({
+          clusterStatus: getClusterStatus(req, esIndexPattern, lastState),
+          nodeSummary: getNodeSummary(req, esIndexPattern),
+          metrics: getMetrics(req, esIndexPattern, [{ term: { [configResolver]: resolver } }]),
+          shards,
+          shardStats: getShardStats(req, esIndexPattern, lastState),
+          nodes: {},
+          clusterState: lastState
         });
       })
       .then(calculateClusterShards)

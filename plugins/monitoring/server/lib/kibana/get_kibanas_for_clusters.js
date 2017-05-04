@@ -1,3 +1,8 @@
+import Promise from 'bluebird';
+import _ from 'lodash';
+import { createQuery } from '../create_query.js';
+import { ElasticsearchMetric } from '../metrics/metric_classes';
+
 /*
  * Get high-level info for Kibanas in a set of clusters
  * The set contains multiple clusters for cluster listing page
@@ -11,15 +16,7 @@
  *  - number of instances
  *  - combined health
  */
-import Promise from 'bluebird';
-import _ from 'lodash';
-import { createQuery } from '../create_query.js';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
-
-export function getKibanasForClusters(req, indices) {
-  if (indices.length < 1) { return () => Promise.resolve([]); }
-
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
+export function getKibanasForClusters(req, kbnIndexPattern) {
   const config = req.server.config();
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
@@ -30,7 +27,7 @@ export function getKibanasForClusters(req, indices) {
       const metric = ElasticsearchMetric.getMetricFields();
       const params = {
         size: 0,
-        index: indices,
+        index: kbnIndexPattern,
         ignoreUnavailable: true,
         type: 'kibana_stats',
         ignore: [404],
@@ -155,6 +152,7 @@ export function getKibanasForClusters(req, indices) {
         }
       };
 
+      const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
       return callWithRequest(req, 'search', params)
       .then(result => {
         const getResultAgg = key => _.get(result, `aggregations.${key}`);

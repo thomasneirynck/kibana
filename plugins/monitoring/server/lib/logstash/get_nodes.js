@@ -11,21 +11,18 @@
  */
 import { get } from 'lodash';
 import moment from 'moment';
-import Promise from 'bluebird';
 import { createQuery } from './../create_query';
 import { calculateAvailability } from './../calculate_availability';
 import { ElasticsearchMetric } from './../metrics/metric_classes';
 
-export function getNodes(req, indices) {
-  if (indices.length < 1) { return Promise.resolve([]); }
-
+export function getNodes(req, logstashIndexPattern) {
   const config = req.server.config();
   const start = moment.utc(req.payload.timeRange.min).valueOf();
   const end = moment.utc(req.payload.timeRange.max).valueOf();
   const uuid = req.params.clusterUuid;
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
-    index: indices,
+    index: logstashIndexPattern,
     // Note: We need to include the _type when we go through and change types,
     // unlike with Kibana because Logstash will be adding a secondary document
     // type that will "interfere" with the field collapsing

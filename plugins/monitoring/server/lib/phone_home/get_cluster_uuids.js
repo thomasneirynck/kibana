@@ -1,5 +1,4 @@
 import { get } from 'lodash';
-import { calculateIndices } from '../calculate_indices';
 import { createQuery } from '../create_query';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 
@@ -12,32 +11,22 @@ import { ElasticsearchMetric } from '../metrics/metric_classes';
  * @return {Array} Array of strings; one per Cluster UUID.
  */
 export function getClusterUuids(req, start, end) {
-  const config = req.server.config();
-  const indexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
-  const size = config.get('xpack.monitoring.max_bucket_size');
-
-  return calculateIndices(req, start, end, indexPattern)
-  .then(indices => fetchClusterUuids(req, indices, start, end, size))
+  return fetchClusterUuids(req, start, end)
   .then(handleClusterUuidsResponse);
 }
 
 /**
- * Fetch the clusters from Elasticsearch using the specified indices, time range, and size limit.
  *
  * @param {Object} req The incoming request
- * @param {Array} indices The ES data indices to use for the lookup
  * @param {Date} start The start date to look for clusters
  * @param {Date} end The end date to look for clusters
  * @return {Promise} Object response from the aggregation.
  */
-export function fetchClusterUuids(req, indices, start, end, size) {
-  if (indices.length === 0) {
-    return Promise.resolve({});
-  }
-
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
+export function fetchClusterUuids(req, start, end) {
+  const config = req.server.config();
+  const size = config.get('xpack.monitoring.max_bucket_size');
   const params = {
-    index: indices,
+    index: config.get('xpack.monitoring.elasticsearch.index_pattern'),
     type: 'cluster_stats',
     ignoreUnavailable: true,
     filterPath: 'aggregations.cluster_uuids.buckets.key',
@@ -55,6 +44,7 @@ export function fetchClusterUuids(req, indices, start, end, size) {
     }
   };
 
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params);
 }
 

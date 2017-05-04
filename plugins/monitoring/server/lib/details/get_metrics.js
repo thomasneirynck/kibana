@@ -2,7 +2,7 @@ import { isPlainObject } from 'lodash';
 import Promise from 'bluebird';
 import { getSeries } from './get_series';
 
-export function getMetrics(req, indices, filters = []) {
+export function getMetrics(req, indexPattern, filters = []) {
   const metrics = req.payload.metrics || [];
   return Promise.map(metrics, metric => {
     // metric names match the literal metric name, but they can be supplied in groups or individually
@@ -15,7 +15,7 @@ export function getMetrics(req, indices, filters = []) {
     }
 
     return Promise.map(metricNames, metricName => {
-      return getSeries(req, indices, metricName, filters);
+      return getSeries(req, indexPattern, metricName, filters);
     });
   })
   .then(rows => {

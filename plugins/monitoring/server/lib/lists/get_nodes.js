@@ -31,7 +31,7 @@ import { getLatestAggKey, getNodeAttribute } from '../node_agg_vals';
 import { getAggItems } from './get_agg_items';
 import { mapResponse } from './map_response';
 
-export function getNodes(req, indices) {
+export function getNodes(req, esIndexPattern) {
   const start = moment.utc(req.payload.timeRange.min).valueOf();
   const orgStart = start;
   const end = moment.utc(req.payload.timeRange.max).valueOf();
@@ -50,7 +50,7 @@ export function getNodes(req, indices) {
   const aggItems = getAggItems({ listingMetrics, bucketSize, min, max });
 
   const params = {
-    index: indices,
+    index: esIndexPattern,
     type: 'node_stats',
     size: 0,
     ignoreUnavailable: true,

@@ -1,5 +1,5 @@
 /* Run an aggregation on index_stats to get stat data for the selected time
- * range for all the active indices. The stat data is built up with passed-in
+ * range for esIndexPattern. The stat data is built up with passed-in
  * options that are given by the UI client as an array
  * (req.payload.listingMetrics). Every option is a key to a configuration value
  * in server/lib/metrics. Those options are used to build up a query with a
@@ -17,7 +17,7 @@ import { near } from '../calculate_auto';
 import { getAggItems } from './get_agg_items';
 import { mapResponse } from './map_response';
 
-export function getIndices(req, indices, showSystemIndices = false) {
+export function getIndices(req, esIndexPattern, showSystemIndices = false) {
   const config = req.server.config();
   const listingMetrics = req.payload.listingMetrics || [];
 
@@ -41,7 +41,7 @@ export function getIndices(req, indices, showSystemIndices = false) {
   const uuid = req.params.clusterUuid;
   const metricFields = ElasticsearchMetric.getMetricFields();
   const params = {
-    index: indices,
+    index: esIndexPattern,
     type: 'index_stats',
     size: 0,
     ignoreUnavailable: true,
@@ -73,5 +73,4 @@ export function getIndices(req, indices, showSystemIndices = false) {
       bucketSize
     });
   });
-
 };

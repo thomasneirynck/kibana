@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { createQuery } from './create_query';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
-export function getShardAllocation(req, indices, filters, lastState, showSystemIndices = false) {
+export function getShardAllocation(req, esIndexPattern, filters, lastState, showSystemIndices = false) {
   filters.push({
     term: { state_uuid: _.get(lastState, 'cluster_state.state_uuid') }
   });
@@ -20,7 +20,7 @@ export function getShardAllocation(req, indices, filters, lastState, showSystemI
   const uuid = req.params.clusterUuid;
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
-    index: indices,
+    index: esIndexPattern,
     type: 'shards',
     body: {
       size: config.get('xpack.monitoring.max_bucket_size'),

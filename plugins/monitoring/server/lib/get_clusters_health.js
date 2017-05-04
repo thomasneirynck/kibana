@@ -18,7 +18,7 @@ export function handleResponse(config, clusters) {
   };
 }
 
-export function getClustersHealth(req) {
+export function getClustersHealth(req, esIndexPattern) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const config = req.server.config();
 
@@ -26,7 +26,7 @@ export function getClustersHealth(req) {
     const bodies = [];
     clusters.forEach((cluster) => {
       bodies.push({
-        index: config.get('xpack.monitoring.elasticsearch.index_pattern'),
+        index: esIndexPattern,
         type: 'cluster_state'
       });
       bodies.push({
@@ -39,7 +39,7 @@ export function getClustersHealth(req) {
     });
     if (!bodies.length) { return Promise.resolve([]); }
     const params = {
-      index: config.get('xpack.monitoring.elasticsearch.index_pattern'),
+      index: esIndexPattern,
       type: 'cluster_state',
       body: bodies
     };

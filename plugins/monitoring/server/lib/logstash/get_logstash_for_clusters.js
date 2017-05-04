@@ -16,10 +16,7 @@ import _ from 'lodash';
 import { createQuery } from './../create_query.js';
 import { ElasticsearchMetric } from './../metrics/metric_classes';
 
-export function getLogstashForClusters(req, indices) {
-  if (indices.length < 1) { return () => Promise.resolve([]); }
-
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
+export function getLogstashForClusters(req, logstashIndexPattern) {
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const config = req.server.config();
@@ -30,7 +27,7 @@ export function getLogstashForClusters(req, indices) {
       const metric = ElasticsearchMetric.getMetricFields();
       const params = {
         size: 0,
-        index: indices,
+        index: logstashIndexPattern,
         ignoreUnavailable: true,
         type: 'logstash_stats',
         body: {
@@ -129,6 +126,7 @@ export function getLogstashForClusters(req, indices) {
         }
       };
 
+      const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
       return callWithRequest(req, 'search', params)
       .then(result => {
         const getResultAgg = key => _.get(result, `aggregations.${key}`);

@@ -4,7 +4,7 @@ import { createQuery } from './create_query.js';
 import { validateMonitoringLicense } from './validate_monitoring_license';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
-export function getClusters(req, indices) {
+export function getClusters(req, esIndexPattern) {
   const config = req.server.config();
   // Get the params from the POST body for the request
   const start = req.payload.timeRange.min;
@@ -15,7 +15,7 @@ export function getClusters(req, indices) {
     filters.push({ term: { 'cluster_uuid': req.params.clusterUuid } });
   }
   const params = {
-    index: indices,
+    index: esIndexPattern,
     type: 'cluster_stats',
     ignore: [404],
     // terms agg for the cluster_uuids

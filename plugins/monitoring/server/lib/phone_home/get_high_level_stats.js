@@ -1,5 +1,4 @@
 import { get } from 'lodash';
-import { calculateIndices } from '../calculate_indices';
 import { createQuery } from '../create_query';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 
@@ -14,11 +13,7 @@ import { ElasticsearchMetric } from '../metrics/metric_classes';
  * @return {Promise} Object keyed by the cluster UUIDs to make grouping easier.
  */
 export function getHighLevelStats(req, clusterUuids, start, end, product) {
-  const config = req.server.config();
-  const indexPattern = config.get(`xpack.monitoring.${product}.index_pattern`);
-
-  return calculateIndices(req, start, end, indexPattern)
-  .then(indices => fetchHighLevelStats(req, indices, clusterUuids, start, end, product))
+  return fetchHighLevelStats(req, clusterUuids, start, end, product)
   .then(response => handleHighLevelStatsResponse(response, product));
 }
 
@@ -33,16 +28,11 @@ export function getHighLevelStats(req, clusterUuids, start, end, product) {
  * @param {String} product The product to limit too ('kibana', 'logstash', 'beats')
  * @return {Promise} Response for the instances to fetch detailed for the product.
  */
-export function fetchHighLevelStats(req, indices, clusterUuids, start, end, product) {
-  if (indices.length === 0) {
-    return Promise.resolve({});
-  }
-
+export function fetchHighLevelStats(req, clusterUuids, start, end, product) {
   const config = req.server.config();
   const size = config.get('xpack.monitoring.max_bucket_size');
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const params = {
-    index: indices,
+    index: config.get(`xpack.monitoring.${product}.index_pattern`),
     filterPath: [
       'hits.hits._source.cluster_uuid',
       `hits.hits._source.${product}_stats.${product}.version`
@@ -65,6 +55,7 @@ export function fetchHighLevelStats(req, indices, clusterUuids, start, end, prod
     }
   };
 
+  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params);
 }
 

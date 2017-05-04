@@ -16,13 +16,13 @@ function getUuid(req, metric) {
   return req.params.clusterUuid;
 }
 
-export function getSeries(req, indices, metricName, filters) {
+export function getSeries(req, indexPattern, metricName, filters) {
   const metric = metrics[metricName];
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
 
   const params = {
-    index: indices,
+    index: indexPattern,
     size: 0,
     ignoreUnavailable: true,
     body: {

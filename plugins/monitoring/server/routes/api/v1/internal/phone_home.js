@@ -3,8 +3,6 @@ import { getAllStats } from '../../../../lib/phone_home/get_all_stats';
 import { handleError } from '../../../../lib/handle_error';
 
 export function phoneHomeRoutes(server) {
-  const { callWithRequest } = server.plugins.elasticsearch.getCluster('monitoring');
-
   /**
    * This endpoint is ONLY for development and internal testing.
    */
@@ -22,6 +20,7 @@ export function phoneHomeRoutes(server) {
           body: body
         };
 
+        const { callWithRequest } = server.plugins.elasticsearch.getCluster('monitoring');
         callWithRequest(req, 'index', options)
         .then(reply)
         .catch(err => reply(handleError(err, req)));

@@ -38,14 +38,14 @@ export function handleLastRecoveries(resp, start) {
   return [];
 }
 
-export function getLastRecovery(req, indices) {
+export function getLastRecovery(req, esIndexPattern) {
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const uuid = req.params.clusterUuid;
 
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
-    index: indices,
+    index: esIndexPattern,
     ignore: [404],
     type: 'index_recovery',
     body: {
@@ -63,4 +63,3 @@ export function getLastRecovery(req, indices) {
   });
 
 };
-

@@ -10,7 +10,7 @@ export function handleResponse(resp) {
   };
 }
 
-export function getIndexSummary(req, indices) {
+export function getIndexSummary(req, esIndexPattern) {
   // Get the params from the POST body for the request
   const end = req.payload.timeRange.max;
   const uuid = req.params.clusterUuid;
@@ -18,7 +18,7 @@ export function getIndexSummary(req, indices) {
   // Build up the Elasticsearch request
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
-    index: indices,
+    index: esIndexPattern,
     ignore: [404],
     type: 'index_stats',
     body: {

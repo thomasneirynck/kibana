@@ -1,6 +1,6 @@
 import { get, set, find } from 'lodash';
 
-async function findSupportedBasicLicenseCluster(req, clusters, kbnIndices, kibanaUuid, serverLog) {
+async function findSupportedBasicLicenseCluster(req, clusters, kbnIndexPattern, kibanaUuid, serverLog) {
   serverLog(
     `Detected all clusters in monitoring data have basic license. Checking for supported admin cluster UUID for Kibana ${kibanaUuid}.`
   );
@@ -9,7 +9,7 @@ async function findSupportedBasicLicenseCluster(req, clusters, kbnIndices, kiban
   const gte = req.payload.timeRange.min;
   const lte = req.payload.timeRange.max;
   const kibanaDataResult = await callWithRequest(req, 'search', {
-    index: kbnIndices,
+    index: kbnIndexPattern,
     ignoreUnavailable: true,
     filterPath: 'hits.hits._source.cluster_uuid',
     body: {
@@ -48,7 +48,7 @@ async function findSupportedBasicLicenseCluster(req, clusters, kbnIndices, kiban
  * Non-Basic license clusters and any cluster in a single-cluster environment
  * are also flagged as supported in this method.
  */
-export function flagSupportedClusters(req, kbnIndices) {
+export function flagSupportedClusters(req) {
   const config = req.server.config();
   const monitoringTag = config.get('xpack.monitoring.loggingTag');
   const serverLog = (msg) => req.server.log(['debug', monitoringTag, 'supported-clusters'], msg);
@@ -80,7 +80,8 @@ export function flagSupportedClusters(req, kbnIndices) {
       // if all basic licenses
       if (clusters.length === basicLicenseCount) {
         const kibanaUuid = config.get('server.uuid');
-        return await findSupportedBasicLicenseCluster(req, clusters, kbnIndices, kibanaUuid, serverLog);
+        const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');
+        return await findSupportedBasicLicenseCluster(req, clusters, kbnIndexPattern, kibanaUuid, serverLog);
       }
 
       // if some non-basic licenses

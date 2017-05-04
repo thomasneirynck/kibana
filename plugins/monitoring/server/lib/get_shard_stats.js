@@ -4,7 +4,7 @@ import { createQuery } from './create_query';
 import { calculateNodeType } from './calculate_node_type';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
-export function getShardStats(req, indices, lastState) {
+export function getShardStats(req, esIndexPattern, lastState) {
   const config = req.server.config();
   const nodeResolver = config.get('xpack.monitoring.node_resolver');
   const uuid = req.params.clusterUuid;
@@ -12,7 +12,7 @@ export function getShardStats(req, indices, lastState) {
   const metric = ElasticsearchMetric.getMetricFields();
   const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
   const params = {
-    index: indices,
+    index: esIndexPattern,
     type: 'shards',
     ignore: [404],
     size: 0,

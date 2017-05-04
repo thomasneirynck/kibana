@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { createQuery } from './create_query.js';
 import { ElasticsearchMetric } from './metrics/metric_classes';
 
-export function getLastState(req, indices) {
+export function getLastState(req, esIndexPattern) {
   const end = req.payload.timeRange.max;
   const uuid = req.params.clusterUuid;
   const config = req.server.config();
@@ -10,7 +10,7 @@ export function getLastState(req, indices) {
 
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
-    index: indices,
+    index: esIndexPattern,
     type: 'cluster_state',
     ignore: [404],
     body: {

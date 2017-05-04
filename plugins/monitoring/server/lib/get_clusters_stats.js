@@ -5,10 +5,7 @@ import Promise from 'bluebird';
  * @param req: server's request object
  * @return array of cluster objects with .stats field added
  */
-export function getClustersStats(req) {
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
-  const config = req.server.config();
-
+export function getClustersStats(req, esIndexPattern) {
   return (clusters) => {
     // in case getClusters had no hits and returned undefined
     if (!clusters) { return []; }
@@ -22,12 +19,13 @@ export function getClustersStats(req) {
         } } }
       };
       const params = {
-        index: config.get('xpack.monitoring.elasticsearch.index_pattern'),
+        index: esIndexPattern,
         ignore: [404],
         type: 'cluster_stats',
         body: body
       };
 
+      const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
       return callWithRequest(req, 'search', params)
         .then((resp) => {
           if (resp.hits.total) {

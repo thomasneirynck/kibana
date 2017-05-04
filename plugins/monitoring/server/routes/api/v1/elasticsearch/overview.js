@@ -1,7 +1,6 @@
 import Promise from 'bluebird';
 import Joi from 'joi';
 import { getLastRecovery } from '../../../../lib/get_last_recovery';
-import { calculateIndices } from '../../../../lib/calculate_indices';
 import { getLastState } from '../../../../lib/get_last_state';
 import { getClusterStatus } from '../../../../lib/get_cluster_status';
 import { getMetrics } from '../../../../lib/details/get_metrics';
@@ -10,9 +9,6 @@ import { calculateClusterShards } from '../../../../lib/elasticsearch/calculate_
 
 // manipulate cluster status and license meta data
 export function clustersRoutes(server) {
-  const config = server.config();
-  const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
-
   /**
    * Elasticsearch Overview
    */
@@ -34,18 +30,16 @@ export function clustersRoutes(server) {
       }
     },
     handler: (req, reply) => {
-      const start = req.payload.timeRange.min;
-      const end = req.payload.timeRange.max;
-      calculateIndices(req, start, end, esIndexPattern)
-      .then(indices => {
-        return getLastState(req, indices)
-        .then(lastState => {
-          return Promise.props({
-            clusterStatus: getClusterStatus(req, indices, lastState),
-            metrics: getMetrics(req, indices),
-            shardStats: getShardStats(req, indices, lastState),
-            shardActivity: getLastRecovery(req, indices)
-          });
+      const config = server.config();
+      const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
+
+      return getLastState(req, esIndexPattern)
+      .then(lastState => {
+        return Promise.props({
+          clusterStatus: getClusterStatus(req, esIndexPattern, lastState),
+          metrics: getMetrics(req, esIndexPattern),
+          shardStats: getShardStats(req, esIndexPattern, lastState),
+          shardActivity: getLastRecovery(req, esIndexPattern)
         });
       })
       .then(calculateClusterShards)

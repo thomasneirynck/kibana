@@ -10,11 +10,11 @@ import { getLogstashForClusters } from './get_logstash_for_clusters';
  * The cluster status should only be displayed on cluster-wide pages. Individual Logstash nodes should show the node's status only.
  *
  * @param req {Object} The incoming request.
- * @param logstashIndices {Array} The Logstash indices to query for the current time range.
+ * @param logstashIndexPattern {String} The Logstash pattern to query for the current time range.
  * @returns The cluster status object.
  */
-export function getClusterStatus(req, logstashIndices) {
-  const getLogstashForCluster = getLogstashForClusters(req, logstashIndices);
+export function getClusterStatus(req, logstashIndexPattern) {
+  const getLogstashForCluster = getLogstashForClusters(req, logstashIndexPattern);
   return getLogstashForCluster([{ cluster_uuid: req.params.clusterUuid }])
   .then(clusterStatus => get(clusterStatus, '[0].stats'));
 }

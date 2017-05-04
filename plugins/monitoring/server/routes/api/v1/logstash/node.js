@@ -1,17 +1,13 @@
 import Joi from 'joi';
 import Promise from 'bluebird';
-import { getNodeInfo } from '../../../../lib/logstash/get_logstash_info';
+import { getNodeInfo } from '../../../../lib/logstash/get_node_info';
 import { handleError } from '../../../../lib/handle_error';
 import { getMetrics } from '../../../../lib/details/get_metrics';
-import { calculateIndices } from '../../../../lib/calculate_indices';
 
 /*
  * Logstash Node route.
  */
 export function logstashNodeRoute(server) {
-  const config = server.config();
-  const logstashIndexPattern = config.get('xpack.monitoring.logstash.index_pattern');
-
   /**
    * Logtash Node request.
    *
@@ -41,14 +37,12 @@ export function logstashNodeRoute(server) {
       }
     },
     handler: (req, reply) => {
-      const start = req.payload.timeRange.min;
-      const end = req.payload.timeRange.max;
-      return calculateIndices(req, start, end, logstashIndexPattern)
-      .then(logstashIndices => {
-        return Promise.props({
-          metrics: getMetrics(req, logstashIndices),
-          nodeSummary: getNodeInfo(req, req.params.logstashUuid)
-        });
+      const config = server.config();
+      const logstashIndexPattern = config.get('xpack.monitoring.logstash.index_pattern');
+
+      return Promise.props({
+        metrics: getMetrics(req, logstashIndexPattern),
+        nodeSummary: getNodeInfo(req, req.params.logstashUuid)
       })
       .then(reply)
       .catch(err => reply(handleError(err, req)));
