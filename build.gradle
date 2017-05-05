@@ -22,19 +22,23 @@ task npmInstall(type: Exec) {
   }
 }
 
-task test(type: Exec, dependsOn: npmInstall) {
+task mochaTests(type: Exec, dependsOn: npmInstall) {
   group = 'Verification'
-  description = 'Run npm tests'
+  description = 'Run mocha tests with npm'
   if (Os.isFamily(Os.FAMILY_WINDOWS)) {
     commandLine 'cmd', '/C', 'npm', 'run', 'test'
   } else {
     commandLine 'xvfb-run', 'npm', 'run', 'test'
   }
+}
 
+task functionalTests(type: Exec, dependsOn: npmInstall) {
+  group = 'Verification'
+  description = 'Run functional tests'
   commandLine 'xvfb-run', 'node', 'scripts/functional_tests'
 }
 
-task check(dependsOn: test) {
+task check(dependsOn: [mochaTests, functionalTests]) {
   group = 'Verification'
   description = 'Run all verification tasks'
 }
