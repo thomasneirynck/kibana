@@ -6,7 +6,7 @@
     ng-click="((job.datafeed_config && job.datafeed_config.state==='started')?stopDatafeed(job):startDatafeed(job))"
     class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
-    ng-disabled='!privileges.canStartStopDatafeed'
+    ng-disabled="!privileges.canStartStopDatafeed || job.state==='closing'"
     tooltip="{{((job.datafeed_config && job.datafeed_config.state==='started')?'Stop':'Start')}} datafeed for {{job.job_id}}">
       <i ng-show="job.datafeed_config && job.datafeed_config.state==='started'" aria-hidden="true" class="fa fa-stop"></i>
       <i ng-show="job.datafeed_config && job.datafeed_config.state==='stopped'" aria-hidden="true" class="fa fa-play"></i>
