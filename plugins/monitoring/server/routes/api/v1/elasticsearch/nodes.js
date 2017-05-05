@@ -1,14 +1,14 @@
-import _ from 'lodash';
+import { get, isUndefined } from 'lodash';
 import Promise from 'bluebird';
 import Joi from 'joi';
-import { getClusterStatus } from '../../../../lib/get_cluster_status';
-import { getNodes } from '../../../../lib/lists/get_nodes';
-import { getShardStats } from '../../../../lib/get_shard_stats';
-import { calculateClusterShards } from '../../../../lib/elasticsearch/calculate_cluster_shards';
-import { calculateNodeType } from '../../../../lib/calculate_node_type';
-import { getLastState } from '../../../../lib/get_last_state';
-import { getDefaultNodeFromId } from '../../../../lib/get_default_node_from_id';
-import { nodeTypeLabel, nodeTypeClass } from '../../../../lib/lookups';
+import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
+import { calculateClusterShards } from '../../../../lib/cluster/calculate_cluster_shards';
+import { getNodes } from '../../../../lib/elasticsearch/get_nodes';
+import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
+import { calculateNodeType } from '../../../../lib/elasticsearch/calculate_node_type';
+import { getLastState } from '../../../../lib/elasticsearch/get_last_state';
+import { getDefaultNodeFromId } from '../../../../lib/elasticsearch/get_default_node_from_id';
+import { nodeTypeLabel, nodeTypeClass } from '../../../../lib/elasticsearch/lookups';
 import { handleError } from '../../../../lib/handle_error';
 
 export function nodesRoutes(server) {
@@ -16,8 +16,8 @@ export function nodesRoutes(server) {
     const nodeType = (node.master && 'master') || node.type;
     const typeClassLabel = {
       nodeType,
-      nodeTypeLabel: _.get(nodeTypeLabel, nodeType),
-      nodeTypeClass: _.get(nodeTypeClass, nodeType)
+      nodeTypeLabel: get(nodeTypeLabel, nodeType),
+      nodeTypeClass: get(nodeTypeClass, nodeType)
     };
     return typeClassLabel;
   }
@@ -68,7 +68,7 @@ export function nodesRoutes(server) {
 
           // copy some things over from nodes to row
           row.resolver = resolver;
-          row.online = !_.isUndefined(clusterState.nodes[row.resolver]);
+          row.online = !isUndefined(clusterState.nodes[row.resolver]);
           if (!node) {
             // workaround for node indexed with legacy agent
             node = getDefaultNodeFromId(resolver);

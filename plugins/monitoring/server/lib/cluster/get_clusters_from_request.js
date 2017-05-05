@@ -3,14 +3,14 @@ import { getClusters } from './get_clusters';
 import { getClustersStats } from './get_clusters_stats';
 import { getClustersHealth } from './get_clusters_health';
 import { flagSupportedClusters } from './flag_supported_clusters';
-import { calculateOverallStatus } from './calculate_overall_status';
-import { alertsClustersAggregation } from '../cluster_alerts/alerts_clusters_aggregation';
-import { alertsClusterSearch } from '../cluster_alerts/alerts_cluster_search';
-import { checkLicense as checkLicenseForAlerts } from '../cluster_alerts/check_license';
 import { getClusterLicense } from './get_cluster_license';
-import { getKibanasForClusters } from './kibana/get_kibanas_for_clusters';
-import { getLogstashForClusters } from './logstash/get_logstash_for_clusters';
-import { CLUSTER_ALERTS_SEARCH_SIZE } from '../../common/constants';
+import { getKibanasForClusters } from '../kibana/get_kibanas_for_clusters';
+import { getLogstashForClusters } from '../logstash/get_logstash_for_clusters';
+import { calculateOverallStatus } from '../calculate_overall_status';
+import { alertsClustersAggregation } from '../../cluster_alerts/alerts_clusters_aggregation';
+import { alertsClusterSearch } from '../../cluster_alerts/alerts_cluster_search';
+import { checkLicense as checkLicenseForAlerts } from '../../cluster_alerts/check_license';
+import { CLUSTER_ALERTS_SEARCH_SIZE } from '../../../common/constants';
 
 // manipulate cluster status and license meta data
 export function normalizeClustersData(clusters) {

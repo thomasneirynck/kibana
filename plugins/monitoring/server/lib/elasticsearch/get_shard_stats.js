@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from './normalize_shard_objects';
-import { createQuery } from './create_query';
+import { createQuery } from '../create_query';
 import { calculateNodeType } from './calculate_node_type';
-import { ElasticsearchMetric } from './metrics/metric_classes';
+import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 export function getShardStats(req, esIndexPattern, lastState) {
   const config = req.server.config();

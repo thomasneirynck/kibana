@@ -1,10 +1,10 @@
 import Promise from 'bluebird';
 import { join } from 'path';
 import { requireAllAndApply } from '../../server/lib/require_all_and_apply';
-import { esHealthCheck } from './server/lib/es_client/health_check';
-import { instantiateClient } from './server/lib/es_client/instantiate_client';
+import { esHealthCheck } from './server/es_client/health_check';
+import { instantiateClient } from './server/es_client/instantiate_client';
 import { initKibanaMonitoring } from './server/kibana_monitoring';
-import { initMonitoringXpackInfo } from './server/lib/init_monitoring_xpack_info';
+import { initMonitoringXpackInfo } from './server/init_monitoring_xpack_info';
 import { checkLicenseGenerator } from './server/cluster_alerts/check_license';
 
 /**

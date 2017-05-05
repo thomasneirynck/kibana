@@ -1,6 +1,6 @@
 import Joi from 'joi';
-import { getClustersFromRequest } from '../../../../lib/get_clusters_from_request';
-import { checkMonitoringAuth } from '../../../../lib/check_monitoring_auth';
+import { getClustersFromRequest } from '../../../../lib/cluster/get_clusters_from_request';
+import { checkMonitoringAuth } from '../../../../lib/elasticsearch/check_monitoring_auth';
 import { handleError } from '../../../../lib/handle_error';
 
 export function clustersRoutes(server) {

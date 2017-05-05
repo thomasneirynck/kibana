@@ -25,11 +25,11 @@
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 import moment from 'moment';
+import { getLatestAggKey, getNodeAttribute } from './node_agg_vals';
 import { createQuery } from '../create_query.js';
 import { near } from '../calculate_auto';
-import { getLatestAggKey, getNodeAttribute } from '../node_agg_vals';
-import { getAggItems } from './get_agg_items';
-import { mapResponse } from './map_response';
+import { getAggItems } from '../lists/get_agg_items';
+import { mapResponse } from '../lists/map_response';
 
 export function getNodes(req, esIndexPattern) {
   const start = moment.utc(req.payload.timeRange.min).valueOf();

@@ -1,11 +1,11 @@
 import Promise from 'bluebird';
 import Joi from 'joi';
-import { getLastRecovery } from '../../../../lib/get_last_recovery';
-import { getLastState } from '../../../../lib/get_last_state';
-import { getClusterStatus } from '../../../../lib/get_cluster_status';
+import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
+import { calculateClusterShards } from '../../../../lib/cluster/calculate_cluster_shards';
+import { getLastRecovery } from '../../../../lib/elasticsearch/get_last_recovery';
+import { getLastState } from '../../../../lib/elasticsearch/get_last_state';
+import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
 import { getMetrics } from '../../../../lib/details/get_metrics';
-import { getShardStats } from '../../../../lib/get_shard_stats';
-import { calculateClusterShards } from '../../../../lib/elasticsearch/calculate_cluster_shards';
 
 // manipulate cluster status and license meta data
 export function clustersRoutes(server) {

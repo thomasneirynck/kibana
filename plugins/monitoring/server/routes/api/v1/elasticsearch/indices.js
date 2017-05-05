@@ -1,12 +1,12 @@
-import _ from 'lodash';
+import { merge, set } from 'lodash';
 import Promise from 'bluebird';
 import Joi from 'joi';
-import { getLastState } from '../../../../lib/get_last_state';
-import { getClusterStatus } from '../../../../lib/get_cluster_status';
-import { getIndices } from '../../../../lib/lists/get_indices';
-import { getShardStats } from '../../../../lib/get_shard_stats';
-import { getUnassignedShards } from '../../../../lib/get_unassigned_shards';
-import { calculateClusterShards } from '../../../../lib/elasticsearch/calculate_cluster_shards';
+import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
+import { calculateClusterShards } from '../../../../lib/cluster/calculate_cluster_shards';
+import { getLastState } from '../../../../lib/elasticsearch/get_last_state';
+import { getIndices } from '../../../../lib/elasticsearch/get_indices';
+import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
+import { getUnassignedShards } from '../../../../lib/elasticsearch/get_unassigned_shards';
 import { handleError } from '../../../../lib/handle_error';
 
 export function indicesRoutes(server) {
@@ -48,14 +48,14 @@ export function indicesRoutes(server) {
             row.status = body.shardStats[row.name].status;
             // column for a metric that is calculated in code vs. calculated in a query
             // it's not given in req.payload.listingMetrics
-            _.merge(row, getUnassignedShards(body.shardStats[row.name]));
+            merge(row, getUnassignedShards(body.shardStats[row.name]));
           } else {
             row.status = 'Unknown';
-            _.set(row, 'metrics.index_document_count.inapplicable', true);
-            _.set(row, 'metrics.index_size.inapplicable', true);
-            _.set(row, 'metrics.index_search_request_rate.inapplicable', true);
-            _.set(row, 'metrics.index_request_rate.inapplicable', true);
-            _.set(row, 'metrics.index_unassigned_shards.inapplicable', true);
+            set(row, 'metrics.index_document_count.inapplicable', true);
+            set(row, 'metrics.index_size.inapplicable', true);
+            set(row, 'metrics.index_search_request_rate.inapplicable', true);
+            set(row, 'metrics.index_request_rate.inapplicable', true);
+            set(row, 'metrics.index_unassigned_shards.inapplicable', true);
           }
         });
         return body;

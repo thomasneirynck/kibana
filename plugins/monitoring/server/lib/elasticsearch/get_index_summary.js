@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { createQuery } from './create_query.js';
-import { ElasticsearchMetric } from './metrics/metric_classes';
+import { createQuery } from '../create_query.js';
+import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 export function handleResponse(resp) {
   const sourceIndexStats = _.get(resp, 'hits.hits[0]._source.index_stats');

@@ -1,4 +1,4 @@
-import { nodeTypeLabel, nodeTypeClass } from '../lookups';
+import { nodeTypeLabel, nodeTypeClass } from './lookups';
 
 /*
  * Note: currently only `node` and `master` are supported due to

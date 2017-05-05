@@ -1,8 +1,8 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
-import { createQuery } from './create_query.js';
+import { createQuery } from '../create_query.js';
 import { validateMonitoringLicense } from './validate_monitoring_license';
-import { ElasticsearchMetric } from './metrics/metric_classes';
+import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 export function getClusters(req, esIndexPattern) {
   const config = req.server.config();

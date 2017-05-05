@@ -1,13 +1,13 @@
-import _ from 'lodash';
+import { get, forEach } from 'lodash';
 import Promise from 'bluebird';
 import Joi from 'joi';
-import { getLastState } from '../../../../lib/get_last_state';
-import { getClusterStatus } from '../../../../lib/get_cluster_status';
-import { getIndexSummary } from '../../../../lib/get_index_summary';
+import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
+import { calculateClusterShards } from '../../../../lib/cluster/calculate_cluster_shards';
+import { getLastState } from '../../../../lib/elasticsearch/get_last_state';
+import { getIndexSummary } from '../../../../lib/elasticsearch/get_index_summary';
+import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
+import { getShardAllocation } from '../../../../lib/elasticsearch/get_shard_allocation';
 import { getMetrics } from '../../../../lib/details/get_metrics';
-import { getShardStats } from '../../../../lib/get_shard_stats';
-import { getShardAllocation } from '../../../../lib/get_shard_allocation';
-import { calculateClusterShards } from '../../../../lib/elasticsearch/calculate_cluster_shards';
 import { handleError } from '../../../../lib/handle_error';
 
 export function indexRoutes(server) {
@@ -69,9 +69,9 @@ export function indexRoutes(server) {
           body.indexSummary.documents = 'N/A';
           body.indexSummary.dataSize = 'N/A';
         }
-        const shardNodes = _.get(body, 'shardStats.nodes');
+        const shardNodes = get(body, 'shardStats.nodes');
         body.nodes = {};
-        _.forEach(shardNodes, (shardNode, resolver) => {
+        forEach(shardNodes, (shardNode, resolver) => {
           body.nodes[resolver] = shardNode;
         });
         delete body.lastState;

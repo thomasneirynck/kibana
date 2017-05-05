@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import { createQuery } from './create_query';
-import { ElasticsearchMetric } from './metrics/metric_classes';
+import { createQuery } from '../create_query';
+import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 export function getShardAllocation(req, esIndexPattern, filters, lastState, showSystemIndices = false) {
   filters.push({

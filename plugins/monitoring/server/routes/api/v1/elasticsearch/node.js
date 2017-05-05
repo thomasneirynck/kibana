@@ -1,16 +1,16 @@
 import { get, merge } from 'lodash';
 import Promise from 'bluebird';
 import Joi from 'joi';
-import { getClusterStatus } from '../../../../lib/get_cluster_status';
-import { getNodeSummary } from '../../../../lib/get_node_summary';
-import { getMetrics } from '../../../../lib/details/get_metrics';
-import { getShardStats } from '../../../../lib/get_shard_stats';
-import { getShardAllocation } from '../../../../lib/get_shard_allocation';
-import { getLastState } from '../../../../lib/get_last_state';
-import { calculateClusterShards } from '../../../../lib/elasticsearch/calculate_cluster_shards';
-import { getDefaultNodeFromId } from '../../../../lib/get_default_node_from_id';
-import { calculateNodeType } from '../../../../lib/calculate_node_type';
+import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
+import { calculateClusterShards } from '../../../../lib/cluster/calculate_cluster_shards';
+import { getNodeSummary } from '../../../../lib/elasticsearch/get_node_summary';
+import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
+import { getShardAllocation } from '../../../../lib/elasticsearch/get_shard_allocation';
+import { getLastState } from '../../../../lib/elasticsearch/get_last_state';
+import { getDefaultNodeFromId } from '../../../../lib/elasticsearch/get_default_node_from_id';
+import { calculateNodeType } from '../../../../lib/elasticsearch/calculate_node_type';
 import { getNodeTypeClassLabel } from '../../../../lib/elasticsearch/get_node_type_class_label';
+import { getMetrics } from '../../../../lib/details/get_metrics';
 import { handleError } from '../../../../lib/handle_error';
 
 export function nodeRoutes(server) {
