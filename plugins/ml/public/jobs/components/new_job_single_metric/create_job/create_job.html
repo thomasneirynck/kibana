@@ -152,14 +152,13 @@
           {{(jobState === JOB_STATE.STOPPING) ? 'Analysis stopping' : 'Stop analysis' }}
       </button>
 
-      <button
-        aria-label="Reset"
+      <a
+        href='{{resultsUrl}}'
+        aria-label="View Results"
         ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
-        ng-click="viewResults('timeseriesexplorer')"
-        type="button"
         class="kuiButton kuiButton--primary">
           View Results
-      </button>
+      </a>
 
     </div>
     <div ng-show="jobState === JOB_STATE.FINISHED">
@@ -172,13 +171,12 @@
         class="kuiButton kuiButton--primary">
           Reset
       </button>
-      <button
-        aria-label="Reset"
-        ng-click="viewResults('timeseriesexplorer')"
-        type="button"
+      <a
+        href='{{resultsUrl}}'
+        aria-label="View Results"
         class="kuiButton kuiButton--primary">
           View Results
-      </button>
+      </a>
 
     </div>
   </div>

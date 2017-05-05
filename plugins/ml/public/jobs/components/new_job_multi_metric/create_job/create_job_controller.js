@@ -22,7 +22,6 @@ import { parseInterval } from 'ui/utils/parse_interval';
 
 import dateMath from '@elastic/datemath';
 import moment from 'moment';
-import chrome from 'ui/chrome';
 import angular from 'angular';
 
 import uiRoutes from 'ui/routes';
@@ -61,8 +60,7 @@ module
   mlJobService,
   mlMultiMetricJobService,
   mlMessageBarService,
-  mlESMappingService,
-  mlBrowserDetectService) {
+  mlESMappingService) {
 
   timefilter.enabled = true;
   const msgs = mlMessageBarService;
@@ -587,6 +585,8 @@ module
               $scope.formConfig.resultsIntervalSeconds = bucketSpanSeconds;
             }
 
+            createResultsUrl();
+
             loadCharts();
           })
           .catch((resp) => {
@@ -722,40 +722,17 @@ module
     mlMultiMetricJobService.stopDatafeed($scope.formConfig);
   };
 
-  $scope.viewResults = function (page) {
-    viewResults({ id: $scope.formConfig.jobId }, page);
-  };
+  function createResultsUrl() {
+    const from = moment($scope.formConfig.start).toISOString();
+    const to = moment($scope.formConfig.end).toISOString();
+    let path = '';
+    path += 'ml#/explorer';
+    path += `?_g=(ml:(jobIds:!('${$scope.formConfig.jobId}'))`;
+    path += `,refreshInterval:(display:Off,pause:!f,value:0),time:(from:'${from}'`;
+    path += `,mode:absolute,to:'${to}'`;
+    path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
 
-  function viewResults(job, page) {
-    if (job && page) {
-      // get the time range first
-      mlJobService.jobTimeRange(job.id)
-        .then((resp) => {
-          // if no times are found, use last 24hrs to now
-          const from = (resp.start.string) ? '\'' + resp.start.string + '\'' : 'now-24h';
-          const to = (resp.end.string) ?  '\'' + resp.end.string + '\'' : 'now';
-
-          let path = chrome.getBasePath();
-          path += '/app/ml#/' + page;
-          path += '?_g=(ml:(jobIds:!(\'' + job.id + '\'))';
-          path += ',refreshInterval:(display:Off,pause:!f,value:0),time:(from:' + from;
-          path += ',mode:absolute,to:' + to;
-          path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
-
-          // in safari, window.open does not work unless it has
-          // been fired from an onclick event.
-          // we can't used onclick for these buttons as they need
-          // to contain angular expressions
-          // therefore in safari we just redirect the page using location.href
-          if (mlBrowserDetectService() === 'safari') {
-            location.href = path;
-          } else {
-            $window.open(path, '_blank');
-          }
-        }).catch(function () {
-          // msgs.error("Job results for "+job.job_id+" could not be opened");
-        });
-    }
+    $scope.resultsUrl = path;
   }
 
   // resize the spilt cards on page resize.

@@ -15,6 +15,7 @@
 
 import _ from 'lodash';
 import angular from 'angular';
+import moment from 'moment';
 
 import { parseInterval } from 'ui/utils/parse_interval';
 
@@ -44,6 +45,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     failed: { label: 'Failed jobs', value: 0, show: false },
     activeDatafeeds: { label: 'Active datafeeds', value: 0, show: true }
   };
+  this.jobUrls = {};
 
   // private function used to check the job saving response
   function checkSaveResponse(resp, origJob) {
@@ -137,6 +139,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               processBasicJobInfo(this, jobs);
               this.jobs = jobs;
               createJobStats(this.jobs, this.jobStats);
+              createJobUrls(this.jobs, this.jobUrls);
               deferred.resolve({ jobs: this.jobs });
             });
           })
@@ -209,6 +212,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
                 }
                 this.jobs = jobs;
                 createJobStats(this.jobs, this.jobStats);
+                createJobUrls(this.jobs, this.jobUrls);
                 deferred.resolve({ jobs: this.jobs });
               });
             })
@@ -315,6 +319,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
               }
             }
             createJobStats(this.jobs, this.jobStats);
+            createJobUrls(this.jobs, this.jobUrls);
             deferred.resolve({ jobs: this.jobs });
           })
           .catch((err) => {
@@ -402,6 +407,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
             });
           } else {
             createJobStats(this.jobs, this.jobStats);
+            createJobUrls(this.jobs, this.jobUrls);
             deferred.resolve({ jobs: this.jobs, listChanged: false });
           }
         })
@@ -1382,6 +1388,25 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     }
 
     jobStats.activeNodes.value = Object.keys(mlNodes).length;
+  }
+
+  function createJobUrls(jobsList, jobUrls) {
+    _.each(jobsList, (job) => {
+      if (job.data_counts) {
+        const from = moment(job.data_counts.earliest_record_timestamp).toISOString();
+        const to = moment(job.data_counts.latest_record_timestamp).toISOString();
+        let path = `?_g=(ml:(jobIds:!('${job.job_id}'))`;
+        path += `,refreshInterval:(display:Off,pause:!f,value:0),time:(from:'${from}'`;
+        path += `,mode:absolute,to:'${to}'`;
+        path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
+
+        if (jobUrls[job.job_id]) {
+          jobUrls[job.job_id].url = path;
+        } else {
+          jobUrls[job.job_id] = { url: path };
+        }
+      }
+    });
   }
 
 });

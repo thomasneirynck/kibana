@@ -25,21 +25,29 @@
   </button>
 
   <!-- anomaly explorer -->
-  <button
-    ng-click="viewResults(job, 'explorer')"
+  <a
+    href='ml#/explorer/{{jobUrl.url}}'
     class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
     tooltip="Open {{job.job_id}} in Anomaly Explorer">
       <i aria-hidden="true" class="fa fa-table"></i>
-  </button>
+  </a>
 
   <!-- time series explorer -->
-  <button
-    ng-click="viewResults(job, 'timeseriesexplorer')"
+  <!-- if time series job, show the link. otherwise show a disabled button -->
+  <a
+    ng-if='enableTimeSeries'
+    href='ml#/explorer/{{jobUrl.url}}'
     class="kuiButton kuiButton--basic kuiButton--small"
     data-toggle="tooltip"
-    ng-disabled="!enableTimeSeries"
     tooltip="Open {{job.job_id}} in Single Metric Viewer">
+      <i aria-hidden="true" class="fa fa-line-chart"></i>
+  </a>
+  <button
+    ng-if='!enableTimeSeries'
+    disabled
+    class="kuiButton kuiButton--basic kuiButton--small"
+    data-toggle="tooltip">
       <i aria-hidden="true" class="fa fa-line-chart"></i>
   </button>
 

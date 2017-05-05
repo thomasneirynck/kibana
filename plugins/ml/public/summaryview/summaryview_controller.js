@@ -536,7 +536,7 @@ module.controller('MlSummaryViewController', function (
   $scope.initializeVis();
   $scope.$emit('application.load');
 })
-.service('mlSwimlaneService', function ($window, mlJobService, mlBrowserDetectService) {
+.service('mlSwimlaneService', function ($window) {
   let selectedJobIds = [];
   let timeRange = { start:0, end:0 };
 
@@ -565,11 +565,7 @@ module.controller('MlSummaryViewController', function (
     path += '\',mode:absolute,to:\'' + to;
     path += '\'))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
 
-    if (mlBrowserDetectService() === 'safari') {
-      location.href = path;
-    } else {
-      $window.open(path, '_blank');
-    }
+    $window.open(path, '_blank');
   }
 });
 

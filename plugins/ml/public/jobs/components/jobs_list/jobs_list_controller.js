@@ -16,7 +16,6 @@
 import _ from 'lodash';
 import $ from 'jquery';
 import moment from 'moment';
-import chrome from 'ui/chrome';
 import angular from 'angular';
 
 import jobsListControlsHtml from './jobs_list_controls.html';
@@ -56,8 +55,7 @@ function (
   mlMessageBarService,
   mlClipboardService,
   mlJobService,
-  mlDatafeedService,
-  mlBrowserDetectService) {
+  mlDatafeedService) {
 
   timefilter.enabled = false; // remove time picker from top of page
   const rowScopes = []; // track row scopes, so they can be destroyed as needed
@@ -151,39 +149,6 @@ function (
     });
   };
 
-
-  $scope.viewResults = function (job, page) {
-    if (job && page) {
-      // get the time range first
-      mlJobService.jobTimeRange(job.job_id)
-        .then((resp) => {
-          // if no times are found, use last 24hrs to now
-          const from = (resp.start.string) ? '\'' + resp.start.string + '\'' : 'now-24h';
-          const to = (resp.end.string) ? '\'' + resp.end.string + '\'' : 'now';
-
-          let path = chrome.getBasePath();
-          path += '/app/ml#/' + page;
-          path += '?_g=(ml:(jobIds:!(\'' + job.job_id + '\'))';
-          path += ',refreshInterval:(display:Off,pause:!f,value:0),time:(from:' + from;
-          path += ',mode:absolute,to:' + to;
-          path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
-
-          // in safari, window.open does not work unless it has
-          // been fired from an onclick event.
-          // we can't used onclick for these buttons as they need
-          // to contain angular expressions
-          // therefore in safari we just redirect the page using location.href
-          if (mlBrowserDetectService() === 'safari') {
-            location.href = path;
-          } else {
-            $window.open(path, '_blank');
-          }
-        }).catch(() => {
-          msgs.error('Job results for ' + job.job_id + ' could not be opened');
-        });
-    }
-  };
-
   // function for displaying the time for a job based on latest_record_timestamp
   // added to rowScope so it can be updated live when data changes
   function latestTimeStamp(dataCounts) {
@@ -250,7 +215,7 @@ function (
       };
 
       rowScope.time = latestTimeStamp;
-
+      rowScope.jobUrl = mlJobService.jobUrls[job.job_id];
       rowScope.enableTimeSeries = isTimeSeriesViewJob(job);
 
 
