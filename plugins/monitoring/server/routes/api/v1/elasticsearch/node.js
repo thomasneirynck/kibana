@@ -60,13 +60,13 @@ export function nodeRoutes(server) {
       })
       .then(calculateClusterShards)
       .then(body => {
-        const clusterState = body.clusterState && body.clusterState.cluster_state || { nodes: {} };
+        const clusterState = get(body, 'clusterState.cluster_state', { nodes: {} });
         let nodeDetail = body.nodeSummary.node;
         if (!nodeDetail) {
           // workaround for node indexed with legacy agent
           nodeDetail = getDefaultNodeFromId(resolver);
         }
-        nodeDetail.type = calculateNodeType(nodeDetail, clusterState);
+        nodeDetail.type = calculateNodeType(nodeDetail, get(clusterState, 'master_node'));
         body.nodes[resolver] = nodeDetail;
 
         // set type for labeling / iconography

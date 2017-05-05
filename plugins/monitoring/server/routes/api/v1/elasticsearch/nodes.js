@@ -6,22 +6,12 @@ import { calculateClusterShards } from '../../../../lib/cluster/calculate_cluste
 import { getNodes } from '../../../../lib/elasticsearch/get_nodes';
 import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
 import { calculateNodeType } from '../../../../lib/elasticsearch/calculate_node_type';
+import { getNodeTypeClassLabel } from '../../../../lib/elasticsearch/get_node_type_class_label';
 import { getLastState } from '../../../../lib/elasticsearch/get_last_state';
 import { getDefaultNodeFromId } from '../../../../lib/elasticsearch/get_default_node_from_id';
-import { nodeTypeLabel, nodeTypeClass } from '../../../../lib/elasticsearch/lookups';
 import { handleError } from '../../../../lib/handle_error';
 
 export function nodesRoutes(server) {
-  function getNodeTypeClassLabel(node) {
-    const nodeType = (node.master && 'master') || node.type;
-    const typeClassLabel = {
-      nodeType,
-      nodeTypeLabel: get(nodeTypeLabel, nodeType),
-      nodeTypeClass: get(nodeTypeClass, nodeType)
-    };
-    return typeClassLabel;
-  }
-
   server.route({
     method: 'POST',
     path: '/api/monitoring/v1/clusters/{clusterUuid}/elasticsearch/nodes',
@@ -56,7 +46,7 @@ export function nodesRoutes(server) {
       .then((body) => {
         body.nodes = body.listing.nodes;
         body.rows = body.listing.rows;
-        const clusterState = body.clusterState && body.clusterState.cluster_state || { nodes: {} };
+        const clusterState = get(body, 'clusterState.cluster_state', { nodes: {} });
         body.rows.forEach((row) => {
           const resolver = row.name;
           const shardStats = body.shardStats.nodes[resolver];
@@ -73,18 +63,20 @@ export function nodesRoutes(server) {
             // workaround for node indexed with legacy agent
             node = getDefaultNodeFromId(resolver);
           }
-          node.type = calculateNodeType(node, clusterState);
+          node.type = calculateNodeType(node, get(clusterState, 'master_node'));
           row.node = node;
           delete row.name;
 
           // set type for labeling / iconography
-          const { type, typeLabel, typeClass } = getNodeTypeClassLabel(row.node);
-          row.node.type = type;
-          row.node.nodeTypeLabel = typeLabel;
-          row.node.nodeTypeClass = typeClass;
+          const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(row.node);
+          row.node.type = nodeType;
+          row.node.nodeTypeLabel = nodeTypeLabel;
+          row.node.nodeTypeClass = nodeTypeClass;
         });
+
         delete body.listing;
         delete body.clusterState;
+
         return body;
       })
       // Send the response

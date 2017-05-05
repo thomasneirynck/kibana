@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { get, forEach } from 'lodash';
 import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from './normalize_shard_objects';
 import { createQuery } from '../create_query';
 import { calculateNodeType } from './calculate_node_type';
@@ -21,7 +21,7 @@ export function getShardStats(req, esIndexPattern, lastState) {
       query: createQuery({
         uuid,
         metric,
-        filters: [ { term: { state_uuid: _.get(lastState, 'cluster_state.state_uuid') } } ]
+        filters: [ { term: { state_uuid: get(lastState, 'cluster_state.state_uuid') } } ]
       }),
       aggs: {
         indices: {
@@ -71,8 +71,8 @@ export function getShardStats(req, esIndexPattern, lastState) {
       resp.aggregations.nodes.buckets.forEach(normalizeNodeShards(data, nodeResolver));
     }
 
-    _.forEach(data.nodes, node => {
-      node.type = calculateNodeType(node, lastState.cluster_state);
+    forEach(data.nodes, node => {
+      node.type = calculateNodeType(node, get(lastState, 'cluster_state.master_node'));
     });
 
     return data;
