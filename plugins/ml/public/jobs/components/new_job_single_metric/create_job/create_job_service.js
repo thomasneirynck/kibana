@@ -232,7 +232,7 @@ module.service('mlSingleMetricJobService', function (
       types: mappingTypes,
       query_delay: '60s',
       frequency: calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
-      indexes: [formConfig.indexPattern.id],
+      indices: [formConfig.indexPattern.id],
       scroll_size: 1000
     };
 

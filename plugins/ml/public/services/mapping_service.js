@@ -20,15 +20,15 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlESMappingService', function ($q, mlJobService) {
 
-  this.indexes = {};
+  this.indices = {};
 
   this.getMappings = function () {
     const deferred = $q.defer();
 
     mlJobService.getESMappings()
-    .then(indexes => {
-      this.indexes = indexes;
-      deferred.resolve(indexes);
+    .then(indices => {
+      this.indices = indices;
+      deferred.resolve(indices);
 
     }).catch(err => {
       console.log('getMappings:', err);
@@ -42,12 +42,12 @@ module.service('mlESMappingService', function ($q, mlJobService) {
     let ind = index.trim();
 
     if (ind.match(/\*/g)) {
-      // use a regex to find all the indexes that match the name
+      // use a regex to find all the indices that match the name
       ind = ind.replace(/\*/g, '.*');
       const reg = new RegExp('^' + ind + '$');
       const tempTypes = {};
 
-      _.each(this.indexes, (idx, key) => {
+      _.each(this.indices, (idx, key) => {
         if (key.match(reg)) {
           _.each(idx.types, (t, tName) => {
             tempTypes[tName] = {};
@@ -56,7 +56,7 @@ module.service('mlESMappingService', function ($q, mlJobService) {
       });
       types = Object.keys(tempTypes);
     } else {
-      types = Object.keys(this.indexes[index].types);
+      types = Object.keys(this.indices[index].types);
     }
 
     return types;
@@ -69,11 +69,11 @@ module.service('mlESMappingService', function ($q, mlJobService) {
     let ind = index.trim();
 
     if (ind.match(/\*/g)) {
-      // use a regex to find all the indexes that match the name
+      // use a regex to find all the indices that match the name
       ind = ind.replace(/\*/g, '.+');
       const reg = new RegExp('^' + ind + '$');
 
-      _.each(this.indexes, (idx, key) => {
+      _.each(this.indices, (idx, key) => {
         if (key.match(reg)) {
           _.each(idx.types, (t, tName) => {
             if (!found && t && _.has(t.properties, fieldName)) {
@@ -84,7 +84,7 @@ module.service('mlESMappingService', function ($q, mlJobService) {
         }
       });
     } else {
-      _.each(this.indexes[index].types, (t, tName) => {
+      _.each(this.indices[index].types, (t, tName) => {
         if (!found && t && _.has(t.properties, fieldName)) {
           found = true;
           type = tName;

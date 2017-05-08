@@ -73,7 +73,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
 
     // Query 1 - load the raw metric data.
     const datafeedQuery = _.get(config, 'datafeedConfig.query', null);
-    mlResultsService.getMetricData(config.datafeedConfig.indexes, config.entityFields, datafeedQuery,
+    mlResultsService.getMetricData(config.datafeedConfig.indices, config.entityFields, datafeedQuery,
       config.metricFunction, config.metricFieldName, config.timeField,
       scope.plotEarliest, scope.plotLatest, config.interval
       )

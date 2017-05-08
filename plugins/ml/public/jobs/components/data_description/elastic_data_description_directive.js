@@ -26,7 +26,7 @@ module.directive('mlElasticDataDescription', function () {
       ui:                 '=mlUi',
       properties:         '=mlProperties',
       dateProperties:     '=mlDateProperties',
-      indexes:            '=mlIndexes',
+      indices:            '=mlIndices',
       types:              '=mlTypes',
       mode:               '=mlMode',
       datafeed_config:    '=mlDatafeedConfig',
@@ -71,7 +71,7 @@ module.directive('mlElasticDataDescription', function () {
           $scope.exposedFunctions.getMappings = getMappings;
         }
         // if this is a datafeed job being cloned
-        // load the indexes and types
+        // load the indices and types
         getMappings().then(() => {
           if ($scope.mode === MODE.CLONE && $scope.ui.isDatafeed) {
            // first load mappings, then extract types and fields.
@@ -81,10 +81,10 @@ module.directive('mlElasticDataDescription', function () {
       }
 
       function setUpClonedJob() {
-        // when cloning a job the types from the selected indexes haven't
+        // when cloning a job the types from the selected indices haven't
         // been loaded. load these first and pass in fromClone=true so
         // the new types aren't ticked by default
-        extractTypesFromIndexes(true);
+        extractTypesFromIndices(true);
 
         // create $scope.types by looping through the type names
         // in the cloning job object,
@@ -139,10 +139,10 @@ module.directive('mlElasticDataDescription', function () {
         clear($scope.ui.influencers);
         $scope.ui.indexTextOk = false;
 
-        extractTypesFromIndexes();
+        extractTypesFromIndices();
 
         if ($scope.uiTypeKeys().length) {
-          // diplay a green tick for indexes
+          // diplay a green tick for indices
           // diplay types selection
           $scope.ui.indexTextOk = true;
         }
@@ -184,22 +184,22 @@ module.directive('mlElasticDataDescription', function () {
       };
 
 
-      // create $scope.ui.types based on the indexes selected
+      // create $scope.ui.types based on the indices selected
       // called when extracting fields and when cloning a job
-      function extractTypesFromIndexes(fromClone) {
+      function extractTypesFromIndices(fromClone) {
         if ($scope.ui.wizard.indexInputType === 'TEXT') {
-          clear($scope.indexes);
-          // parse comma separated list of indexes
-          const indexes = $scope.ui.datafeed.indexesText.split(',');
-          _.each(indexes, (ind) => {
+          clear($scope.indices);
+          // parse comma separated list of indices
+          const indices = $scope.ui.datafeed.indicesText.split(',');
+          _.each(indices, (ind) => {
             ind = ind.trim();
             // catch wildcard text entry
             ind = ind.replace(/\*/g, '.+');
             const reg = new RegExp('^' + ind + '$');
 
-            _.each($scope.ui.indexes, (index, key) => {
+            _.each($scope.ui.indices, (index, key) => {
               if (key.match(reg)) {
-                $scope.indexes[key] = index;
+                $scope.indices[key] = index;
                 _.each(index.types, (type, i) => {
                   if (!fromClone && $scope.ui.types[i] === undefined) {
                     // if we've never seen this type before add it to the ticked list
@@ -211,12 +211,12 @@ module.directive('mlElasticDataDescription', function () {
             });
           });
 
-        } else { // choose indexes from tickbox list
+        } else { // choose indices from tickbox list
 
-          const keys = Object.keys($scope.indexes);
-          $scope.ui.datafeed.indexesText  = keys.join(', ');
+          const keys = Object.keys($scope.indices);
+          $scope.ui.datafeed.indicesText  = keys.join(', ');
 
-          _.each($scope.indexes, (index) => {
+          _.each($scope.indices, (index) => {
             _.each(index.types, (type, i) => {
               if (!fromClone && $scope.ui.types[i] === undefined) {
                 // if we've never seen this type before add it to the ticked list
@@ -228,7 +228,7 @@ module.directive('mlElasticDataDescription', function () {
         }
       }
 
-      $scope.getIndexesWithDelay = function () {
+      $scope.getIndicesWithDelay = function () {
         $scope.ui.esServerOk = 2;
         window.clearTimeout(keyPressTimeout);
         keyPressTimeout = null;
@@ -242,10 +242,10 @@ module.directive('mlElasticDataDescription', function () {
 
         $scope.ui.validation.setTabValid(4, true);
         mlJobService.getESMappings()
-        .then((indexes) => {
-          $scope.ui.indexes  = filterIndexes(indexes);
+        .then((indices) => {
+          $scope.ui.indices  = filterIndices(indices);
           $scope.ui.esServerOk = 1;
-          console.log('getMappings():', $scope.ui.indexes);
+          console.log('getMappings():', $scope.ui.indices);
 
           if ($scope.mode === MODE.CLONE) {
             setUpClonedJob();
@@ -273,39 +273,39 @@ module.directive('mlElasticDataDescription', function () {
         });
 
         function clearMappings() {
-          $scope.ui.indexes = [];
+          $scope.ui.indices = [];
           $scope.ui.esServerOk = -1;
           $scope.ui.datafeed.typesText = '';
-          $scope.ui.datafeed.indexesText = '';
+          $scope.ui.datafeed.indicesText = '';
         }
 
         return deferred.promise;
       }
 
-      function filterIndexes(idxs) {
-        const indexes = {};
+      function filterIndices(idxs) {
+        const indices = {};
         const monitoringName = new RegExp('^\\.monitoring-.+');
         const dotName = new RegExp('^\\..+');
         _.each(idxs, (idx, key) => {
-          // create a new collection only containing indexes
+          // create a new collection only containing indices
           // which don't start with a dot, except monitoring ones
           if (key.match(monitoringName) || !key.match(dotName)) {
-            indexes[key] = idx;
+            indices[key] = idx;
           }
         });
-        return indexes;
+        return indices;
       }
 
       $scope.toggleIndex = function (key, index) {
-        const idx = $scope.indexes[key];
+        const idx = $scope.indices[key];
         if (idx === undefined) {
-          $scope.indexes[key] = index;
+          $scope.indices[key] = index;
         } else {
-          delete $scope.indexes[key];
+          delete $scope.indices[key];
         }
 
         $scope.extractFields();
-        // console.log($scope.indexes);
+        // console.log($scope.indices);
         guessTimeField();
       };
 

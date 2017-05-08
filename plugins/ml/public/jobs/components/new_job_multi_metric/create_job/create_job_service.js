@@ -276,7 +276,7 @@ module.service('mlMultiMetricJobService', function (
       types: mappingTypes,
       query_delay: '60s',
       frequency: calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
-      indexes: [formConfig.indexPattern.id],
+      indices: [formConfig.indexPattern.id],
       scroll_size: 1000
     };
     job.job_id = formConfig.jobId;

@@ -79,7 +79,7 @@ function (
   $scope.job = {};
   $scope.mode = MODE.NEW;
   $scope.saveLock = false;
-  $scope.indexes = {};
+  $scope.indices = {};
   $scope.types = {};
   $scope.properties = {};
   $scope.dateProperties = {};
@@ -153,7 +153,7 @@ function (
     customFieldDelimiter: '',
     esServerOk: 0,
     indexTextOk: false,
-    indexes: {},
+    indices: {},
     types: {},
     isDatafeed: false,
     useDedicatedIndex: false,
@@ -166,7 +166,7 @@ function (
       frequencyDefault:      '',
       scrollSizeText:        '',
       scrollSizeDefault:     1000,
-      indexesText:           '',
+      indicesText:           '',
       typesText:             '',
     },
     saveStatus: {
@@ -427,9 +427,9 @@ function (
     if ($scope.ui.wizard.indexInputType === 'TEXT') {
       // if the user is entering index text manually, check that the text isn't blank
       // and a match to an index has been made resulting in some fields.
-      return ($scope.ui.datafeed.indexesText.length && Object.keys($scope.properties).length) ? true : false;
+      return ($scope.ui.datafeed.indicesText.length && Object.keys($scope.properties).length) ? true : false;
     } else {
-      return Object.keys($scope.indexes).length ? true : false;
+      return Object.keys($scope.indices).length ? true : false;
     }
   };
 
@@ -545,9 +545,9 @@ function (
         $scope.types[type] = $scope.ui.types[type];
       });
 
-      clear($scope.indexes);
-      _.each(datafeedConfig.indexes, function (index) {
-        $scope.indexes[index] = $scope.ui.indexes[index];
+      clear($scope.indices);
+      _.each(datafeedConfig.indices, function (index) {
+        $scope.indices[index] = $scope.ui.indices[index];
       });
 
       $scope.ui.datafeed = {
@@ -558,7 +558,7 @@ function (
         frequencyDefault:  frequencyDefault,
         scrollSizeText:    scrollSize,
         scrollSizeDefault: scrollSizeDefault,
-        indexesText:       datafeedConfig.indexes.join(','),
+        indicesText:       datafeedConfig.indices.join(','),
         typesText:         datafeedConfig.types.join(','),
       };
 
@@ -643,11 +643,11 @@ function (
         console.log('getDatafeedSelection(): could not parse query JSON');
       }
 
-      let indexes = [];
-      if (df.indexesText) {
-        indexes = df.indexesText.split(',');
-        for (let i = 0; i < indexes.length; i++) {
-          indexes[i] = indexes[i].trim();
+      let indices = [];
+      if (df.indicesText) {
+        indices = df.indicesText.split(',');
+        for (let i = 0; i < indices.length; i++) {
+          indices[i] = indices[i].trim();
         }
       }
 
@@ -673,7 +673,7 @@ function (
         df.frequencyDefault : df.frequencyText);
       config.scroll_size = ((df.scrollSizeText === '' || df.scrollSizeText === null || df.scrollSizeText === undefined) ?
         df.scrollSizeDefault : df.scrollSizeText);
-      config.indexes =     indexes;
+      config.indices =     indices;
       config.types =       types;
     }
   }
@@ -896,17 +896,17 @@ function (
     });
   }
 
-  // using the selected indexes and types, perform a search
+  // using the selected indices and types, perform a search
   // on the ES server and display the results in the Data preview tab
   function loadDataPreview() {
     createJSONText();
     $scope.ui.wizard.dataPreview = '';
 
-    const indexes = Object.keys($scope.indexes);
+    const indices = Object.keys($scope.indices);
     const types = Object.keys($scope.types);
     const job = $scope.job;
-    if (indexes.length) {
-      mlJobService.searchPreview(indexes, types, job)
+    if (indices.length) {
+      mlJobService.searchPreview(indices, types, job)
       .then(function (resp) {
         $scope.ui.wizard.dataPreview = angular.toJson(resp, true);
       })

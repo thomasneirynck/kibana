@@ -1015,12 +1015,12 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     return deferred.promise;
   };
 
-  this.searchPreview = function (indexes, types, job) {
+  this.searchPreview = function (indices, types, job) {
     const deferred = $q.defer();
 
     if (job.datafeed_config) {
       const data = {
-        index:indexes,
+        index:indices,
         // removed for now because it looks like kibana are now escaping the & and it breaks
         // it was done this way in the first place because you can't sent <index>/<type>/_search through
         // kibana's proxy. it doesn't like type
