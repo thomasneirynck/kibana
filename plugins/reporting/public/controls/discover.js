@@ -13,7 +13,8 @@ function discoverReportProvider(Private) {
     description: 'Search Report',
     hideButton: () => !xpackInfo.get('features.reporting.showLinks', false),
     disableButton: () => !xpackInfo.get('features.reporting.enableLinks', false),
-    tooltip: () => xpackInfo.get('features.reporting.message')
+    tooltip: () => xpackInfo.get('features.reporting.message'),
+    testId: 'topNavReportingLink',
   };
 }
 

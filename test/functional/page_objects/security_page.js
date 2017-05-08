@@ -66,6 +66,10 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
       await retry.try(() => testSubjects.click('roleFormSaveButton'));
       await PageObjects.header.waitUntilLoadingHasFinished();
     }
+
+    getLoginButtonExists() {
+      return retry.try(() => testSubjects.exists('loginSubmit'));
+    }
   }
 
   return new SecurityPage();

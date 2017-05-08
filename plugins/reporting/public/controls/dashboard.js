@@ -14,7 +14,8 @@ function dashboardReportProvider(Private, $location) {
     description: 'Dashboard Report',
     hideButton: () => $location.path() === DashboardConstants.LANDING_PAGE_PATH || !xpackInfo.get('features.reporting.showLinks', false),
     disableButton: () => !xpackInfo.get('features.reporting.enableLinks', false),
-    tooltip: () => xpackInfo.get('features.reporting.message')
+    tooltip: () => xpackInfo.get('features.reporting.message'),
+    testId: 'topNavReportingLink',
   };
 }
 

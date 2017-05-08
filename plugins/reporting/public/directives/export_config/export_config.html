@@ -4,6 +4,7 @@
     <div class="input-group generate-controls">
       <button
         class="kuiButton kuiButton--primary"
+        data-test-subj="printPdfButton"
         ng-click="exportConfig.export(exportConfig.selectedType)"
         >
         Generate Printable {{ exportConfig.exportTypes[exportConfig.selectedType].name }}
@@ -39,6 +40,6 @@
   </div>
 </div>
 
-<div ng-show="!exportConfig.isExportable()">
+<div ng-show="!exportConfig.isExportable()" data-test-subj="unsavedChangesReportingWarning">
   Please save your work before generating a report.
 </div>

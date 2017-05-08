@@ -3,6 +3,7 @@ import {
   withProcRunner,
   getFtrConfig,
   runKibanaServer,
+  runXpackKibanaGulpPrepare,
   runEsWithXpack,
   runFtr,
   log,
@@ -22,6 +23,7 @@ export function runFunctionTests() {
       const ftrConfig = await getFtrConfig();
 
       await runEsWithXpack({ tmpDir, procs, ftrConfig });
+      await runXpackKibanaGulpPrepare({ procs });
       await runKibanaServer({ procs, ftrConfig });
       await runFtr({ procs });
 
@@ -38,6 +40,7 @@ export function runFunctionalTestsServer() {
     await withProcRunner(async procs => {
       const ftrConfig = await getFtrConfig();
       await runEsWithXpack({ tmpDir, procs, ftrConfig });
+      await runXpackKibanaGulpPrepare({ procs });
       await runKibanaServer({ devMode: true, procs, ftrConfig });
 
       log.info(`

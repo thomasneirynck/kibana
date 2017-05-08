@@ -43,7 +43,6 @@ gulp.task('prepare', () => downloadPhantom(getPhantomBinaryPath()));
 
 gulp.task('dev', ['prepare'], () => pluginHelpers.run('start', { flags: getFlags() }));
 
-
 gulp.task('lint-staged', () => {
   const kibanaPath = new RegExp('^kibana/');
 

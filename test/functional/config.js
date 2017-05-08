@@ -5,6 +5,7 @@ import { resolveKibanaPath } from '@elastic/plugin-helpers';
 
 import {
   SecurityPageProvider,
+  ReportingPageProvider
 } from './page_objects';
 
 // the default export of config files must be a config provider
@@ -19,6 +20,7 @@ export default async function ({ readConfigFile }) {
     // list paths to the files that contain your plugins tests
     testFiles: [
       resolve(__dirname, './apps/security'),
+      resolve(__dirname, './apps/reporting.js'),
     ],
 
     // define the name and providers for services that should be
@@ -32,7 +34,8 @@ export default async function ({ readConfigFile }) {
     // names to Providers. Merge in Kibana's or pick specific ones
     pageObjects: {
       ...kibanaConfig.get('pageObjects'),
-      security: SecurityPageProvider
+      security: SecurityPageProvider,
+      reporting: ReportingPageProvider,
     },
 
     servers: {

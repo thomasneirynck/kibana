@@ -72,7 +72,8 @@ async function showCompletionNotification(job, reportingJobQueue) {
   // Define actions for notification
   const actions = [
     {
-      text: 'OK'
+      text: 'OK',
+      dataTestSubj: 'reportCompleteOkToastButton'
     }
   ];
 

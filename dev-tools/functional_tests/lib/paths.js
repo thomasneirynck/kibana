@@ -15,8 +15,9 @@ function useBat(bin) {
 
 export const KIBANA_EXEC = useBat(resolveKibanaPath('bin/kibana'));
 export const KIBANA_ROOT = resolveKibanaPath('');
+export const XPACK_KIBANA_ROOT = resolve(KIBANA_ROOT, '../x-pack-kibana');
+export const GULP_COMMAND_PATH = resolve(XPACK_KIBANA_ROOT, 'node_modules/.bin/gulp');
 export const KIBANA_FTR_SCRIPT = resolve(KIBANA_ROOT, 'scripts/functional_test_runner');
-export const RELATIVE_KIBANA_FTR_SCRIPT = relative(process.cwd(), KIBANA_FTR_SCRIPT);
 export const PROJECT_ROOT = resolve(__dirname, '../../../');
 export const FTR_CONFIG_PATH = resolve(PROJECT_ROOT, 'test/functional/config');
 export const OPTIMIZE_BUNDLE_DIR = resolve(KIBANA_ROOT, 'optimize/xpackTestUiServer');
