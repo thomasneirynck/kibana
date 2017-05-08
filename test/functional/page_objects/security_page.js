@@ -4,10 +4,21 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
   const remote = getService('remote');
   const config = getService('config');
   const retry = getService('retry');
+  const log = getService('log');
+  const kibanaServer = getService('kibanaServer');
   const testSubjects = getService('testSubjects');
-  const PageObjects = getPageObjects(['common']);
+  const esArchiver = getService('esArchiver');
+  const PageObjects = getPageObjects(['common', 'header']);
 
   class SecurityPage {
+    async initTests() {
+      await kibanaServer.uiSettings.disableToastAutohide();
+      log.debug('SecurityPage:initTests');
+      await esArchiver.load('empty_kibana');
+      await esArchiver.loadIfNeeded('logstash_functional');
+      remote.setWindowSize(1600,1000);
+    }
+
     async login() {
       const [username, password] = config.get('servers.elasticsearch.auth').split(':');
 
@@ -24,6 +35,36 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
         auth: null,
         pathname: resolveUrl(config.get('servers.kibana.pathname') || '/', 'logout')
       }));
+    }
+
+    async clickCreateNewUser() {
+      await retry.try(() => testSubjects.click('createUserButton'));
+    }
+
+    async clickCreateNewRole() {
+      await retry.try(() => testSubjects.click('createRoleButton'));
+    }
+
+    async getCreateIndexPatternInputFieldExists() {
+      return await testSubjects.exists('createIndexPatternNameInput');
+    }
+
+    async clickCancelEditUser() {
+      await retry.try(() => testSubjects.click('userFormCancelButton'));
+    }
+
+    async clickCancelEditRole() {
+      await retry.try(() => testSubjects.click('roleFormCancelButton'));
+    }
+
+    async clickSaveEditUser() {
+      await retry.try(() => testSubjects.click('userFormSaveButton'));
+      await PageObjects.header.waitUntilLoadingHasFinished();
+    }
+
+    async clickSaveEditRole() {
+      await retry.try(() => testSubjects.click('roleFormSaveButton'));
+      await PageObjects.header.waitUntilLoadingHasFinished();
     }
   }
 

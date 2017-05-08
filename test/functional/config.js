@@ -4,7 +4,7 @@ import { resolve } from 'path';
 import { resolveKibanaPath } from '@elastic/plugin-helpers';
 
 import {
-  SecurityPageProvider
+  SecurityPageProvider,
 } from './page_objects';
 
 // the default export of config files must be a config provider
@@ -18,7 +18,7 @@ export default async function ({ readConfigFile }) {
   return {
     // list paths to the files that contain your plugins tests
     testFiles: [
-      resolve(__dirname, './apps/security.js'),
+      resolve(__dirname, './apps/security'),
     ],
 
     // define the name and providers for services that should be
@@ -39,10 +39,14 @@ export default async function ({ readConfigFile }) {
       elasticsearch: {
         port: 9240,
         auth: 'elastic:changeme',
+        username: 'elastic',
+        password: 'changeme',
       },
       kibana: {
         port: 5640,
-        auth: 'elastic:changeme'
+        auth: 'elastic:changeme',
+        username: 'elastic',
+        password: 'changeme',
       },
     },
 

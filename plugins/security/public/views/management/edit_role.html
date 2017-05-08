@@ -147,7 +147,8 @@
       <a
         class="kuiButton kuiButton--basic"
         ng-if="!role.metadata._reserved"
-        href="#/management/elasticsearch/security/roles"
+        ng-href="{{rolesHref}}"
+        data-test-subj="roleFormCancelButton"
       >
         Cancel
       </a>

@@ -12,8 +12,9 @@ import { IndexPatternsProvider } from 'ui/index_patterns/index_patterns';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import { checkLicenseError } from 'plugins/security/lib/check_license_error';
 import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
+import { EDIT_ROLES_PATH, ROLES_PATH } from './management_urls';
 
-routes.when('/management/elasticsearch/security/roles/edit/:name?', {
+routes.when(`${EDIT_ROLES_PATH}/:name?`, {
   template,
   resolve: {
     tribeRedirect(Private) {
@@ -29,7 +30,7 @@ routes.when('/management/elasticsearch/security/roles/edit/:name?', {
           const notifier = new Notifier();
           if (response.status !== 404) return notifier.fatal(response);
           notifier.error(`No "${name}" role found.`);
-          kbnUrl.redirect('/management/elasticsearch/security/roles');
+          kbnUrl.redirect(ROLES_PATH);
           return Promise.halt();
         });
       }
@@ -56,6 +57,7 @@ routes.when('/management/elasticsearch/security/roles/edit/:name?', {
     $scope.users = $route.current.locals.users;
     $scope.indexPatterns = $route.current.locals.indexPatterns;
     $scope.privileges = shieldPrivileges;
+    $scope.rolesHref = `#${ROLES_PATH}`;
 
     this.isNewRole = $route.current.params.name == null;
     this.fieldOptions = {};
@@ -86,7 +88,7 @@ routes.when('/management/elasticsearch/security/roles/edit/:name?', {
     };
 
     $scope.goToRoleList = () => {
-      kbnUrl.redirect('/management/elasticsearch/security/roles');
+      kbnUrl.redirect(ROLES_PATH);
     };
 
     $scope.addIndex = indices => {

@@ -48,7 +48,7 @@
 
             <!-- Create role button -->
             <a
-              href="#/management/elasticsearch/security/roles/edit"
+              ng-href="{{editRolesHref}}"
               ng-click="newRole()"
               class="kuiButton kuiButton--primary kuiButton--iconText"
               ng-if="!selectedRoles.length"
@@ -128,7 +128,7 @@
                 <div class="kuiTableRowCell__liner">
                   <a
                     class="kuiLink"
-                    ng-href="#/management/elasticsearch/security/roles/edit/{{role.name}}"
+                    ng-href="{{getEditRoleHref(role.name)}}"
                     data-test-subj="roleRowName"
                   >
                     {{ role.name }}

@@ -9,6 +9,7 @@ import 'plugins/security/views/management/management.less';
 import routes from 'ui/routes';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import '../../services/shield_user';
+import { ROLES_PATH, USERS_PATH, SECURITY_PATH } from './management_urls';
 
 import { management } from 'ui/management';
 
@@ -33,20 +34,20 @@ routes.defaults(/\/management/, {
           if (esDataIsTribe) {
             options.tooltip = tribeTooltip;
           } else {
-            options.url = '#/management/elasticsearch/security';
+            options.url = `#${SECURITY_PATH}`;
           }
           const security = elasticsearch.register('security', options);
 
           security.register('users', {
             order: 10,
             display: 'Users',
-            url: '#/management/elasticsearch/security/users'
+            url: `#${USERS_PATH}`
           });
 
           security.register('roles', {
             order: 20,
             display: 'Roles',
-            url: '#/management/elasticsearch/security/roles'
+            url: `#${ROLES_PATH}`
           });
         }
       }

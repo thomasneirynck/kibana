@@ -6,8 +6,9 @@ import template from 'plugins/security/views/management/roles.html';
 import 'plugins/security/services/shield_role';
 import { checkLicenseError } from 'plugins/security/lib/check_license_error';
 import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
+import { ROLES_PATH, EDIT_ROLES_PATH } from './management_urls';
 
-routes.when('/management/elasticsearch/security/roles', {
+routes.when(ROLES_PATH, {
   template,
   resolve: {
     tribeRedirect(Private) {
@@ -27,6 +28,8 @@ routes.when('/management/elasticsearch/security/roles', {
     $scope.forbidden = !_.isArray($scope.roles);
     $scope.selectedRoles = [];
     $scope.sort = { orderBy: 'name', reverse: false };
+    $scope.editRolesHref = `#${EDIT_ROLES_PATH}`;
+    $scope.getEditRoleHref = (role) => `#${EDIT_ROLES_PATH}/${role}`;
 
     const notifier = new Notifier();
 
