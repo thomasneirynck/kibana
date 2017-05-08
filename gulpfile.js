@@ -8,6 +8,7 @@ const del = require('del');
 const isparta = require('isparta');
 const runSequence = require('run-sequence');
 const pluginHelpers = require('@elastic/plugin-helpers');
+const argv = require('yargs').argv;
 
 const logger = require('./gulp_helpers/logger');
 const buildVersion = require('./gulp_helpers/build_version')();
@@ -25,6 +26,8 @@ const buildDir = path.resolve(__dirname, 'build');
 const buildTarget = path.resolve(buildDir, 'plugin');
 const packageDir = path.resolve(buildDir, 'distributions');
 const coverageDir = path.resolve(__dirname, 'coverage');
+
+const skipTestCoverage = argv['test-coverage'] && argv['test-coverage'] === 'skip';
 
 function lintFiles(filePaths) {
   return gulp.src(filePaths)
@@ -104,6 +107,10 @@ gulp.task('pre-test', () => {
     '!./**/__tests__/**',
   ].concat(fileGlobs.forPlugins());
 
+  if (skipTestCoverage) {
+    return gulp.src(globs);
+  }
+
   return gulp.src(globs)
     // instruments code for measuring test coverage
     .pipe(g.istanbul({
@@ -128,6 +135,11 @@ gulp.task('testserver', ['pre-test'], () => {
   const globs = [
     'server/**/__tests__/**/*.js',
   ].concat(fileGlobs.forPluginServerTests());
+
+  if (skipTestCoverage) {
+    return gulp.src(globs, { read: false })
+    .pipe(g.mocha({ ui: 'bdd' }));
+  }
 
   return gulp.src(globs, { read: false })
   .pipe(g.mocha({ ui: 'bdd' }))

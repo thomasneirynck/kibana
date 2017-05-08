@@ -42,7 +42,7 @@ This is also a useful way to test the build. The downside is that **changes are 
 
 #### Running unit tests_bundle
 
-You can run server-side unit tests by running:
+You can run unit tests by running:
 
 ```
 npm run test
@@ -52,6 +52,24 @@ If you want to run tests only for a specific plugin (to save some time), you can
 
 ```
 npm run test -- --plugins <plugin>[,<plugin>]*    # where <plugin> is "reporting", etc.
+```
+
+#### Running tests with flags
+```
+npm run test -- <flag args>
+```
+
+Flags
+* `--test-coverage=skip`
+
+#### Running single test file
+Edit test file, changing top level `describe` to `describe.only`. Run tests with normal commands.
+
+#### Running server unit tests
+You can run server-side unit tests by running:
+
+```
+npm run test:server
 ```
 
 #### Running functional tests
