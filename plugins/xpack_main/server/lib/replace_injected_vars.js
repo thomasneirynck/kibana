@@ -1,11 +1,10 @@
 export async function replaceInjectedVars(originalInjectedVars, request, server) {
   const xpackInfo = server.plugins.xpack_main.info;
-  const withXpackInfo = () => ({
-    ...originalInjectedVars,
-    xpackInitialInfo: xpackInfo.toJSON(),
+  const withXpackInfo = () => Object.assign({}, originalInjectedVars, {
+    xpackInitialInfo: xpackInfo ? xpackInfo.toJSON() : undefined,
   });
 
-  // kibana plugin is disabled
+  // security feature is disabled
   if (!server.plugins.security) {
     return withXpackInfo();
   }

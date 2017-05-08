@@ -21,7 +21,7 @@ describe('replaceInjectedVars uiExport', () => {
     expect(server.plugins.security.isAuthenticated.firstCall.args[0]).to.be(request);
   });
 
-  it('sends the xpack info if plugin is disabled', async () => {
+  it('sends the xpack info if security plugin is disabled', async () => {
     const originalInjectedVars = { a: 1 };
     const request = {};
     const server = mockServer();
@@ -36,7 +36,7 @@ describe('replaceInjectedVars uiExport', () => {
     });
   });
 
-  it('sends the xpack info xpack license is basic', async () => {
+  it('sends the xpack info if xpack license is basic', async () => {
     const originalInjectedVars = { a: 1 };
     const request = {};
     const server = mockServer();
@@ -69,6 +69,20 @@ describe('replaceInjectedVars uiExport', () => {
 
     const newVars = await replaceInjectedVars(originalInjectedVars, request, server);
     expect(newVars).to.be(originalInjectedVars);
+  });
+
+  it('sends the originalInjectedVars (with xpackInitialInfo = undefined) if security is disabled, xpack info is unavailable', async () => {
+    const originalInjectedVars = { a: 1 };
+    const request = {};
+    const server = mockServer();
+    delete server.plugins.security;
+    delete server.plugins.xpack_main.info;
+
+    const newVars = await replaceInjectedVars(originalInjectedVars, request, server);
+    expect(newVars).to.eql({
+      a: 1,
+      xpackInitialInfo: undefined
+    });
   });
 
   it('sends the originalInjectedVars if the license check result is not available', async () => {
