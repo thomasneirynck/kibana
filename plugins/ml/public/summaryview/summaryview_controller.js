@@ -59,7 +59,7 @@ module.controller('MlSummaryViewController', function (
   globalState,
   timefilter,
   mlAnomalyRecordDetailsService,
-  mlDashboardService,
+  mlJobSelectService,
   mlResultsService,
   mlSwimlaneSearchService,
   mlSwimlaneService) {
@@ -511,7 +511,7 @@ module.controller('MlSummaryViewController', function (
   $scope.$listen(timefilter, 'fetch', $scope.refresh);
 
   // When inside a dashboard in the Ml plugin, listen for changes to job selection.
-  mlDashboardService.listenJobSelectionChange($scope, (event, selections) => {
+  mlJobSelectService.listenJobSelectionChange($scope, (event, selections) => {
     $scope.setSelectedJobs(selections);
   });
 

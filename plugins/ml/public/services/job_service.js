@@ -624,7 +624,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:bucket',
+                  'query': 'result_type:bucket',
                   'analyze_wildcard': true
                 }
               }
@@ -762,7 +762,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         'query': {
           'bool': {
             'filter': [
-              { 'term': { '_type': 'category_definition' } },
               { 'term': { 'job_id': jobId } },
               { 'term': { 'category_id': categoryId } }
             ]
@@ -886,7 +885,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         'query': {
           'bool': {
             'filter': [
-              { 'term': { '_type': 'audit_message' } },
               {
                 'bool': {
                   'must_not': {

@@ -74,7 +74,7 @@ module.service('mlResultsService', function ($q, es) {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:result AND result_type:bucket',
+                'query': 'result_type:bucket',
                 'analyze_wildcard': false
               }
             }, {
@@ -197,7 +197,7 @@ module.service('mlResultsService', function ($q, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:influencer',
+                  'query': 'result_type:influencer',
                   'analyze_wildcard': false
                 }
               },
@@ -324,7 +324,7 @@ module.service('mlResultsService', function ($q, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:influencer AND influencer_field_name:' +
+                  'query': 'result_type:influencer AND influencer_field_name:' +
                     escapeForElasticsearchQuery(influencerFieldName),
                   'analyze_wildcard': false
                 }
@@ -425,7 +425,7 @@ module.service('mlResultsService', function ($q, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:bucket_influencer',
+                  'query': 'result_type:bucket_influencer',
                   'analyze_wildcard': false
                 }
               },
@@ -537,7 +537,7 @@ module.service('mlResultsService', function ($q, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:influencer AND influencer_field_name:' +
+                  'query': 'result_type:influencer AND influencer_field_name:' +
                     escapeForElasticsearchQuery(influencerFieldName),
                   'analyze_wildcard': false
                 }
@@ -624,7 +624,6 @@ module.service('mlResultsService', function ($q, es) {
         'query': {
           'bool': {
             'filter': [
-              { 'term': { '_type': 'category_definition' } },
               { 'term': { 'job_id': jobId } },
               { 'terms': { 'category_id': categoryIds } }
             ]
@@ -726,7 +725,7 @@ module.service('mlResultsService', function ($q, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:record',
+                  'query': 'result_type:record',
                   'analyze_wildcard': false
                 }
               },
@@ -839,7 +838,7 @@ module.service('mlResultsService', function ($q, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:record',
+                  'query': 'result_type:record',
                   'analyze_wildcard': false
                 }
               },
@@ -954,7 +953,7 @@ module.service('mlResultsService', function ($q, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:record',
+                  'query': 'result_type:record',
                   'analyze_wildcard': false
                 }
               },
@@ -1056,7 +1055,7 @@ module.service('mlResultsService', function ($q, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:record',
+                  'query': 'result_type:record',
                   'analyze_wildcard': false
                 }
               },

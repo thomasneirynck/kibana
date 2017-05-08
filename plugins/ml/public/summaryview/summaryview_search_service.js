@@ -73,7 +73,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:record',
+                  'query': 'result_type:record',
                   'analyze_wildcard': true
                 }
               },
@@ -224,7 +224,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:bucket_influencer',
+                  'query': 'result_type:bucket_influencer',
                   'analyze_wildcard': true
                 }
               },
@@ -350,7 +350,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:influencer',
+                  'query': 'result_type:influencer',
                   'analyze_wildcard': true
                 }
               },
@@ -510,7 +510,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:record',
+                  'query': 'result_type:record',
                   'analyze_wildcard': true
                 }
               },
@@ -585,7 +585,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
     }
 
     const resutsSize = 20;
-    let query = '_type:result AND result_type:influencer';
+    let query = 'result_type:influencer';
     if (type[swimlaneType] === type.INF_TYPE) {
       query +=  ' AND influencer_field_name:' + laneLabel;
     }
@@ -744,7 +744,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
             'filter': [
               {
                 'query_string': {
-                  'query': '_type:result AND result_type:bucket',
+                  'query': 'result_type:bucket',
                   'analyze_wildcard': true
                 }
               },

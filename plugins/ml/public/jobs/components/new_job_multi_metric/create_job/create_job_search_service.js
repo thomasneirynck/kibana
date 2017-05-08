@@ -41,7 +41,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:result AND result_type:record'
+                'query': 'result_type:record'
               }
             }, {
               'bool': {
@@ -140,7 +140,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:result AND result_type:bucket'
+                'query': 'result_type:bucket'
               }
             }, {
               'bool': {

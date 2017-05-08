@@ -65,7 +65,7 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:result AND result_type:model_plot',
+                'query': 'result_type:model_plot',
                 'analyze_wildcard': true
               }
             }, {
@@ -162,7 +162,6 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
       });
     }
 
-    // TODO - remove hardcoded aggregation interval.
     es.search({
       index: index,
       size: 0,
@@ -171,7 +170,7 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': '_type:result AND result_type:bucket',
+                'query': 'result_type:bucket',
                 'analyze_wildcard': true
               }
             }, {
