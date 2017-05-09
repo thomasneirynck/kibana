@@ -117,8 +117,10 @@ gulp.task('pre-test', () => {
       instrumenter: isparta.Instrumenter,
       includeUntested: true,
       babel: {
-        stage: 1 // should match https://github.com/elastic/kibana/blob/master/src/optimize/babel_options.js#L12
-      }
+        presets: [
+          require(pluginHelpers.resolveKibanaPath('src/optimize/babel/helpers')).nodePreset
+        ]
+      },
     }))
     // force `require` to return covered files
     .pipe(g.istanbul.hookRequire());
