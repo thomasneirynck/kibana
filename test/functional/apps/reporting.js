@@ -2,6 +2,8 @@ import expect from 'expect.js';
 
 export default function ({ getService, getPageObjects }) {
   const kibanaServer = getService('kibanaServer');
+  const testSubjects = getService('testSubjects');
+  const log = getService('log');
   const PageObjects = getPageObjects(['reporting', 'common', 'dashboard', 'header', 'discover', 'visualize']);
 
   describe('Reporting', () => {
@@ -12,7 +14,7 @@ export default function ({ getService, getPageObjects }) {
     });
 
     const expectUnsavedChangesWarning = async () => {
-      await PageObjects.reporting.clickTopNavReportingLink();
+      await PageObjects.reporting.openReportingPanel();
       const warningExists = await PageObjects.reporting.getUnsavedChangesWarningExists();
       expect(warningExists).to.be(true);
       const buttonExists = await PageObjects.reporting.getPrintPdfButtonExists();
@@ -20,7 +22,7 @@ export default function ({ getService, getPageObjects }) {
     };
 
     const expectEnabledPrintPdfButton = async () => {
-      await PageObjects.reporting.clickTopNavReportingLink();
+      await PageObjects.reporting.openReportingPanel();
       const printPdfButton = await PageObjects.reporting.getPrintPdfButton();
       const isDisabled = await printPdfButton.getProperty('disabled');
       expect(isDisabled).to.be(false);

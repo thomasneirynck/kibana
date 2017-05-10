@@ -25,6 +25,30 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
       await retry.try(() => testSubjects.click('topNavReportingLink'));
     }
 
+    async isReportingPanelOpen() {
+      const pdfButtonExists = await this.getPrintPdfButtonExists();
+      const unsavedChangesWarningExists = await this.getUnsavedChangesWarningExists();
+      const isOpen = pdfButtonExists || unsavedChangesWarningExists;
+      log.debug('isReportingPanelOpen: ' + isOpen);
+      return isOpen;
+    }
+
+    async openReportingPanel() {
+      log.debug('openReportingPanel');
+      await retry.try(async () => {
+        const isOpen = await this.isReportingPanelOpen();
+
+        if (!isOpen) {
+          await this.clickTopNavReportingLink();
+        }
+
+        const wasOpened = await this.isReportingPanelOpen();
+        if (!wasOpened) {
+          throw new Error('Reporting panel was not opened successfully');
+        }
+      });
+    }
+
     async getUnsavedChangesWarningExists() {
       return await testSubjects.exists('unsavedChangesReportingWarning');
     }
@@ -34,15 +58,15 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
     }
 
     async getPrintPdfButton() {
-      return await testSubjects.find('printPdfButton');
+      return await retry.try(() => testSubjects.find('printPdfButton'));
     }
 
     async clickPrintPdfButton() {
-      await testSubjects.click('printPdfButton');
+      await retry.try(() => testSubjects.click('printPdfButton'));
     }
 
     async clickReportCompleteOkToastButton() {
-      await testSubjects.click('reportCompleteOkToastButton');
+      await retry.try(() => testSubjects.click('reportCompleteOkToastButton'));
     }
 
     async checkForReportingToasts() {
