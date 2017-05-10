@@ -1,16 +1,15 @@
 import { oncePerServer } from './once_per_server';
-import { workersFactory } from './workers';
 
 function getDocumentPayloadFn(server) {
-  const workers = workersFactory(server);
+  const exportTypesRegistry = server.plugins.reporting.exportTypesRegistry;
 
   function encodeContent(content, jobType) {
     if (!jobType) {
       return content;
     }
 
-    const worker = workers[jobType];
-    switch (worker.encoding) {
+    const exportType = exportTypesRegistry.get(item => item.jobType === jobType);
+    switch (exportType.jobContentEncoding) {
       case 'base64':
         return new Buffer(content, 'base64');
       default:
@@ -42,8 +41,8 @@ function getDocumentPayloadFn(server) {
     return { content, statusCode, contentType };
   }
 
-  function getDocumentPayload(doc, jobType) {
-    const { status, output } = doc._source;
+  return function getDocumentPayload(doc) {
+    const { status, output, jobtype: jobType } = doc._source;
 
     return new Promise((resolve, reject) => {
       if (status === 'completed') {
@@ -57,9 +56,8 @@ function getDocumentPayloadFn(server) {
       // send a 503 indicating that the report isn't completed yet
       return reject(sendIncomplete(status));
     });
-  }
-
-  return getDocumentPayload;
+  };
 }
 
 export const getDocumentPayloadFactory = oncePerServer(getDocumentPayloadFn);
+

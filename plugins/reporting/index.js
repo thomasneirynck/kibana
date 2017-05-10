@@ -7,9 +7,10 @@ import { jobs as jobRoutes } from './server/routes/jobs';
 import { phantom } from './server/lib/phantom';
 import { createQueueFactory } from './server/lib/create_queue';
 import { config as appConfig } from './server/config/config';
-import { checkLicense } from './server/lib/check_license';
+import { checkLicenseFactory } from './server/lib/check_license';
 import { validateConfig } from './server/lib/validate_config';
 import { ExtractError } from './server/lib/extract';
+import { createExportTypesRegistryFactory } from './server/lib/create_export_types_registry';
 
 export const reporting = (kibana) => {
   return new kibana.Plugin({
@@ -58,52 +59,56 @@ export const reporting = (kibana) => {
       }).default();
     },
 
-    init: function (server) {
-      const thisPlugin = this;
+    init: async function (server) {
+      const createExportTypesRegistry = createExportTypesRegistryFactory(server);
+      const exportTypesRegistry = await createExportTypesRegistry(resolve(__dirname, './export_types/*/server/index.js'));
+      server.expose('exportTypesRegistry', exportTypesRegistry);
+
       const config = server.config();
       validateConfig(config, message => server.log(['reporting', 'warning'], message));
 
       const xpackMainPlugin = server.plugins.xpack_main;
-      mirrorPluginStatus(xpackMainPlugin, thisPlugin);
+      mirrorPluginStatus(xpackMainPlugin, this);
+      const checkLicense = checkLicenseFactory(exportTypesRegistry);
       xpackMainPlugin.status.once('green', () => {
         // Register a function that is called whenever the xpack info changes,
         // to re-compute the license check results for this plugin
-        xpackMainPlugin.info.feature(thisPlugin.id).registerLicenseCheckResultsGenerator(checkLicense);
+        xpackMainPlugin.info.feature(this.id).registerLicenseCheckResultsGenerator(checkLicense);
       });
 
       function setup() {
         // prepare phantom binary
         return phantom.install(config.get('path.data'))
-        .then(function (phantomPackage) {
-          server.log(['reporting', 'debug'], `Phantom installed at ${phantomPackage.binary}`);
+          .then((phantomPackage) => {
+            server.log(['reporting', 'debug'], `Phantom installed at ${phantomPackage.binary}`);
 
-          // intialize and register application components
-          server.expose('phantom', phantomPackage);
-          server.expose('queue', createQueueFactory(server));
+            // intialize and register application components
+            server.expose('phantom', phantomPackage);
+            server.expose('queue', createQueueFactory(server));
 
-          // Reporting routes
-          mainRoutes(server);
-          jobRoutes(server);
-        })
-        .catch(function (err) {
-          server.log(['reporting', 'error'], err);
+            // Reporting routes
+            mainRoutes(server);
+            jobRoutes(server);
+          })
+          .catch((err) => {
+            server.log(['reporting', 'error'], err);
 
-          if (!err instanceof ExtractError) {
-            thisPlugin.status.red('Failed to install phantom.js. See kibana logs for more details.');
-            return;
-          }
+            if (!err instanceof ExtractError) {
+              this.status.red('Failed to install phantom.js. See kibana logs for more details.');
+              return;
+            }
 
-          server.log(['reporting', 'error'], err.cause);
+            server.log(['reporting', 'error'], err.cause);
 
-          if (['EACCES', 'EEXIST'].includes(err.cause.code)) {
-            thisPlugin.status.red(
-              'Insufficient permissions for extracting the phantom.js archive. ' +
-              'Make sure the Kibana data directory (path.data) is owned by the same user that is running Kibana.'
-            );
-          } else {
-            thisPlugin.status.red('Failed to extract the phantom.js archive. See kibana logs for more details.');
-          }
-        });
+            if (['EACCES', 'EEXIST'].includes(err.cause.code)) {
+              this.status.red(
+                'Insufficient permissions for extracting the phantom.js archive. ' +
+                'Make sure the Kibana data directory (path.data) is owned by the same user that is running Kibana.'
+              );
+            } else {
+              this.status.red('Failed to extract the phantom.js archive. See kibana logs for more details.');
+            }
+          });
       }
 
       return setup();

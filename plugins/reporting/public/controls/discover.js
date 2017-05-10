@@ -9,11 +9,11 @@ function discoverReportProvider(Private) {
 
     key: 'reporting-discover',
     label: 'Reporting',
-    template: '<export-config object-type="Search"></export-config>',
+    template: '<export-config object-type="Search" enabled-export-type="printablePdf"></export-config>',
     description: 'Search Report',
-    hideButton: () => !xpackInfo.get('features.reporting.showLinks', false),
-    disableButton: () => !xpackInfo.get('features.reporting.enableLinks', false),
-    tooltip: () => xpackInfo.get('features.reporting.message'),
+    hideButton: () => !xpackInfo.get('features.reporting.printablePdf.showLinks', false),
+    disableButton: () => !xpackInfo.get('features.reporting.printablePdf.enableLinks', false),
+    tooltip: () => xpackInfo.get('features.reporting.printablePdf.message'),
     testId: 'topNavReportingLink',
   };
 }

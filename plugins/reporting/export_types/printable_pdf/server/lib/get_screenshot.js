@@ -1,7 +1,7 @@
 import queue from 'queue';
-import { oncePerServer } from './once_per_server';
+import { oncePerServer } from '../../../../server/lib/once_per_server';
 import { screenshot } from './screenshot';
-import { createTaggedLogger } from './create_tagged_logger';
+import { createTaggedLogger } from '../../../../server/lib/create_tagged_logger';
 
 
 function getScreenshotFn(server) {
@@ -40,6 +40,6 @@ function getScreenshotFn(server) {
       if (!screenshotQueue.running) screenshotQueue.start();
     });
   };
-};
+}
 
 export const getScreenshotFactory = oncePerServer(getScreenshotFn);

@@ -7,13 +7,18 @@ function jobResponseHandlerFn(server) {
   const jobsQuery = jobsQueryFactory(server);
   const getDocumentPayload = getDocumentPayloadFactory(server);
 
-  return function jobResponseHandler(request, reply, params, opts = {}) {
-    const { docId, jobType } = params;
+  return function jobResponseHandler(validJobTypes, request, reply, params, opts = {}) {
+    const { docId } = params;
     jobsQuery.get(request, docId, { includeContent: !opts.excludeContent })
     .then((doc) => {
       if (!doc) return reply(boom.notFound());
 
-      return getDocumentPayload(doc, jobType)
+      const { jobtype: jobType } = doc._source;
+      if (!validJobTypes.includes(jobType)) {
+        return reply(boom.unauthorized(`Sorry, you are not authorized to download ${jobType} reports`));
+      }
+
+      return getDocumentPayload(doc)
       .then((output) => {
         const response = reply(output.content);
         response.type(output.contentType);

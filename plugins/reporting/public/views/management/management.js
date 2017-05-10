@@ -9,12 +9,12 @@ routes.defaults(/\/management/, {
     reportingManagementSection: function (Private) {
       const xpackInfo = Private(XPackInfoProvider);
       const kibanaManagementSection = management.getSection('kibana');
-      const showReportingLinks = xpackInfo.get('features.reporting.showLinks');
+      const showReportingLinks = xpackInfo.get('features.reporting.management.showLinks');
 
       kibanaManagementSection.deregister('reporting');
       if (showReportingLinks) {
-        const enableReportingLinks = xpackInfo.get('features.reporting.enableLinks');
-        const tooltipMessage = xpackInfo.get('features.reporting.message');
+        const enableReportingLinks = xpackInfo.get('features.reporting.management.enableLinks');
+        const tooltipMessage = xpackInfo.get('features.reporting.management.message');
 
         let url;
         let tooltip;

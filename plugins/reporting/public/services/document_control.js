@@ -1,74 +1,24 @@
-import url from 'url';
-import {
-  getUnhashableStatesProvider,
-  unhashUrl,
-} from 'ui/state_management/state_hashing';
-
 import chrome from 'ui/chrome';
+import rison from 'rison-node';
 import { uiModules } from 'ui/modules';
 
 uiModules.get('xpack/reporting')
-.service('reportingDocumentControl', function ($http, Promise, Private, $location) {
-  const getUnhashableStates = Private(getUnhashableStatesProvider);
+.service('reportingDocumentControl', function (Private, $http) {
   const mainEntry = '/api/reporting/generate';
   const reportPrefix = chrome.addBasePath(mainEntry);
 
-  const docTypes = {
-    discover: {
-      getParams: (path) => path.match(/\/discover\/(.+)/),
-      getReportUrl: (name, query) => `${reportPrefix}/search/${name}?${query}`,
-    },
-    visualize: {
-      getParams: (path) => path.match(/\/visualize\/edit\/(.+)/),
-      getReportUrl: (name, query) => `${reportPrefix}/visualization/${name}?${query}`,
-    },
-    dashboard: {
-      getParams: (path) => path.match(/\/dashboard\/(.+)/),
-      getReportUrl: (name, query) => `${reportPrefix}/dashboard/${name}?${query}`,
-    },
+  const getJobParams = (exportType) => {
+    const jobParamsProvider = Private(exportType.JobParamsProvider);
+    return jobParamsProvider();
   };
 
-  function parseFromUrl() {
-    // We need to convert the hashed states in the URL back into their original RISON values,
-    // because this URL will be sent to the API.
-    const urlWithHashes = window.location.href;
-    const urlWithStates = unhashUrl(urlWithHashes, getUnhashableStates());
-    const appUrlWithStates = urlWithStates.split('#')[1];
-
-    const { pathname, query } = url.parse(appUrlWithStates, false);
-    const pathParams = pathname.match(/\/([a-z]+)?(\/?.*)/);
-
-    const type = pathParams[1];
-    const docType = docTypes[type];
-
-    // if the doc type is unknown, return an empty object, causing other checks to be falsy
-    if (!docType) return {};
-
-    const params = docType.getParams(pathname);
-    const exportable = (!!params);
-    const objectId = (exportable) ? params[1] : null;
-    const reportPath = (exportable) ? docType.getReportUrl(objectId, query) : null;
-    const reportUrl = (exportable) ? url.resolve($location.absUrl(), reportPath) : null;
-
-    return {
-      reportPath,
-      reportUrl,
-      exportable,
-    };
-  }
-
-  function getInfo() {
-    return parseFromUrl();
+  this.getPath = (exportType) => {
+    const jobParams = getJobParams(exportType);
+    return `${reportPrefix}/${exportType.id}?jobParams=${rison.encode(jobParams)}`;
   };
 
-  this.getUrl = () => {
-    const { reportUrl } = getInfo();
-    return reportUrl;
-  };
-
-  this.create = () => {
-    const info = getInfo();
-    if (!info.exportable) return Promise.reject(new Error('not exportable'));
-    return $http.post(info.reportPath, {});
+  this.create = (exportType) => {
+    const path = this.getPath(exportType);
+    return $http.post(path, {});
   };
 });

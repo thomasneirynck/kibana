@@ -3,8 +3,8 @@ import fs from 'fs';
 import { randomBytes } from 'crypto';
 import { fromCallback } from 'bluebird';
 import driver from '@elastic/node-phantom-simple';
-import { unzip, bunzip2 } from '../extract';
-import { PHANTOM_MAX_LOAD_TIMEOUT } from '../constants';
+import { unzip, bunzip2 } from '../extract/index';
+import { PHANTOM_MAX_LOAD_TIMEOUT } from '../../../common/constants';
 import { transformFn } from './transform_fn';
 import { getPhantomBinaryPath } from './get_phantom_binary_path';
 

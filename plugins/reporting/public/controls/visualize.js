@@ -10,16 +10,16 @@ function visualizeReportProvider(Private, $location) {
 
     key: 'reporting-visualize',
     label: 'Reporting',
-    template: '<export-config object-type="Visualization"></export-config>',
+    template: '<export-config object-type="Visualization" enabled-export-type="printablePdf"></export-config>',
     description: 'Visualization Report',
     hideButton: () => (
       $location.path() === VisualizeConstants.LANDING_PAGE_PATH
       || $location.path() === VisualizeConstants.WIZARD_STEP_1_PAGE_PATH
       || $location.path() === VisualizeConstants.WIZARD_STEP_2_PAGE_PATH
-      || !xpackInfo.get('features.reporting.showLinks', false)
+      || !xpackInfo.get('features.reporting.printablePdf.showLinks', false)
     ),
-    disableButton: () => !xpackInfo.get('features.reporting.enableLinks', false),
-    tooltip: () => xpackInfo.get('features.reporting.message'),
+    disableButton: () => !xpackInfo.get('features.reporting.printablePdf.enableLinks', false),
+    tooltip: () => xpackInfo.get('features.reporting.printablePdf.message'),
     testId: 'topNavReportingLink',
   };
 }

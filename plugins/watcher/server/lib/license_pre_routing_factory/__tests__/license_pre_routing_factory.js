@@ -2,7 +2,7 @@ import expect from 'expect.js';
 import { licensePreRoutingFactory } from '../license_pre_routing_factory';
 
 describe('license_pre_routing_factory', () => {
-  describe('#licensePreRoutingFactory', () => {
+  describe('#reportingFeaturePreRoutingFactory', () => {
     let mockServer;
     let mockLicenseCheckResults;
 

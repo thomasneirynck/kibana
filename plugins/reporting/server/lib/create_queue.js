@@ -1,6 +1,6 @@
 import { Esqueue } from './esqueue';
 import { createWorkersFactory } from './create_workers';
-import { constants } from './constants';
+import { constants } from '../../common/constants';
 import { oncePerServer } from './once_per_server';
 import { createTaggedLogger } from './create_tagged_logger';
 

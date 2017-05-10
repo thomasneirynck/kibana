@@ -1,7 +1,7 @@
 import path from 'path';
 import getPort from 'get-port';
 import Puid from 'puid';
-import { phantom } from './phantom';
+import { phantom } from '../../../../server/lib/phantom/index';
 
 const puid = new Puid();
 const noop = function () {};
@@ -249,7 +249,7 @@ function getElementsPositionAndAttributes(phantomInstance, elementsSelector, ele
 
 export function screenshot(phantomPath, captureSettings, screenshotSettings, logger) {
   return new Screenshot(phantomPath, captureSettings, screenshotSettings, logger);
-};
+}
 
 function getTargetFile(imagePath) {
   return path.join(imagePath, `screenshot-${puid.generate()}.png`);

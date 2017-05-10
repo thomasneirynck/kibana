@@ -1,11 +1,11 @@
 import url from 'url';
 import { get, pick } from 'lodash';
-import { parseKibanaState } from '../../../../server/lib/parse_kibana_state';
+import { parseKibanaState } from '../../../../../../server/lib/parse_kibana_state';
 import { uriEncode } from './uri_encode';
 import { getAbsoluteTime } from './get_absolute_time';
-import { oncePerServer } from './once_per_server';
+import { oncePerServer } from '../../../../server/lib/once_per_server';
 
-function getSavedObjectFactoryImpl(server) {
+function getSavedObjectFn(server) {
 
   const { callWithRequest } = server.plugins.elasticsearch.getCluster('admin');
   const config = server.config();
@@ -79,7 +79,12 @@ function getSavedObjectFactoryImpl(server) {
     return url.format(urlParams);
   }
 
-  function getSavedObject(request, type, id, query) {
+  function validateType(type) {
+    const app = appTypes[type];
+    if (!app) throw new Error('Invalid object type: ' + type);
+  }
+
+  return function getSavedObject(request, type, id, query) {
     const fields = ['title', 'description'];
     validateType(type);
     const body = {
@@ -110,35 +115,28 @@ function getSavedObjectFactoryImpl(server) {
     }
 
     return callWithRequest(request, 'get', body)
-    .then(function _getRecord(response) {
-      return response._source;
-    })
-    .then(async function _buildObject(source) {
-      const { searchSource, uiState } = parseJsonObjects(source);
+      .then(function _getRecord(response) {
+        return response._source;
+      })
+      .then(async function _buildObject(source) {
+        const { searchSource, uiState } = parseJsonObjects(source);
 
-      return Object.assign(pick(source, fields), {
-        id: body.id,
-        type,
-        searchSource,
-        uiState,
-        url: getUrl(type, id, query)
+        return Object.assign(pick(source, fields), {
+          id: body.id,
+          type,
+          searchSource,
+          uiState,
+          url: getUrl(type, id, query)
+        });
+      })
+      .catch(() => {
+        return {
+          id,
+          type,
+          isMissing: true
+        };
       });
-    })
-    .catch(() => {
-      return {
-        id,
-        type,
-        isMissing: true
-      };
-    });
-  }
-
-  function validateType(type) {
-    const app = appTypes[type];
-    if (!app) throw new Error('Invalid object type: ' + type);
-  }
-
-  return getSavedObject;
+  };
 }
 
-export const getSavedObjectFactory = oncePerServer(getSavedObjectFactoryImpl);
+export const getSavedObjectFactory = oncePerServer(getSavedObjectFn);

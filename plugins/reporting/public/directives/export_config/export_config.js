@@ -1,13 +1,15 @@
 import { get } from 'lodash';
 import 'plugins/reporting/services/document_control';
+import 'plugins/reporting/services/export_types';
 import './export_config.less';
 import template from 'plugins/reporting/directives/export_config/export_config.html';
 import { Notifier } from 'ui/notify/notifier';
 import { uiModules } from 'ui/modules';
+import url from 'url';
 
 const module = uiModules.get('xpack/reporting');
 
-module.directive('exportConfig', (reportingDocumentControl) => {
+module.directive('exportConfig', (reportingDocumentControl, reportingExportTypes, $location) => {
   const reportingNotifier = new Notifier({ location: 'Reporting' });
 
   return {
@@ -17,38 +19,25 @@ module.directive('exportConfig', (reportingDocumentControl) => {
     controllerAs: 'exportConfig',
     template,
     link($scope, $el, $attr, controllers) {
-      const isDirty = () => controllers.some(ctrl => get(ctrl, 'appStatus.dirty', false));
-      $scope.exportConfig.isExportable = () => !isDirty();
-      $scope.exportConfig.selectedType = 'printablePdf';
-      $scope.exportConfig.name = $attr.name;
+      const exportTypeId = $attr.enabledExportType;
+      $scope.exportConfig.exportType = reportingExportTypes.getById(exportTypeId);
+      $scope.exportConfig.isDirty = () => controllers.some(ctrl => get(ctrl, 'appStatus.dirty', false));
       $scope.exportConfig.objectType = $attr.objectType;
-
-      $scope.exportConfig.exportTypes = {
-        printablePdf: {
-          name: 'PDF',
-          link: reportingDocumentControl.getUrl(),
-        }
-      };
+      $scope.exportConfig.link = url.resolve($location.absUrl(), reportingDocumentControl.getPath($scope.exportConfig.exportType));
     },
     controller($document) {
       this.export = (type) => {
-        switch (type) {
-          case 'printablePdf':
-            return reportingDocumentControl.create()
-            .then(() => {
-              reportingNotifier.info(`${this.objectType} generation has been queued. You can track its progress under Management.`);
-            })
-            .catch((err) => {
-              if (err.message === 'not exportable') {
-                return reportingNotifier.warning('Only saved dashboards can be exported. Please save your work first.');
-              }
+        reportingDocumentControl.create(type)
+        .then(() => {
+          reportingNotifier.info(`${this.objectType} generation has been queued. You can track its progress under Management.`);
+        })
+        .catch((err) => {
+          if (err.message === 'not exportable') {
+            return reportingNotifier.warning('Only saved dashboards can be exported. Please save your work first.');
+          }
 
-              reportingNotifier.error(err);
-            });
-          default:
-            reportingNotifier.error(`Invalid export type specified: ${type}`);
-
-        }
+          reportingNotifier.error(err);
+        });
       };
 
       this.copyToClipboard = selector => {

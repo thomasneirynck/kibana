@@ -1,13 +1,13 @@
-<div ng-show="exportConfig.isExportable()">
+<div ng-show="!exportConfig.isDirty()">
   <div class="kuiLocalDropdownSection">
     <div class="kuiLocalDropdownTitle">Reporting</div>
     <div class="input-group generate-controls">
       <button
         class="kuiButton kuiButton--primary"
         data-test-subj="printPdfButton"
-        ng-click="exportConfig.export(exportConfig.selectedType)"
+        ng-click="exportConfig.export(exportConfig.exportType)"
         >
-        Generate Printable {{ exportConfig.exportTypes[exportConfig.selectedType].name }}
+        Generate {{ exportConfig.exportType.name }}
       </button>
     </div>
   </div>
@@ -36,11 +36,11 @@
       type="text"
       readonly
       data-test-subj="reportGenerationUrl"
-      value="{{ exportConfig.exportTypes[exportConfig.selectedType].link }}"
+      value="{{ exportConfig.link }}"
     />
   </div>
 </div>
 
-<div ng-show="!exportConfig.isExportable()" data-test-subj="unsavedChangesReportingWarning">
+<div ng-show="exportConfig.isDirty()" data-test-subj="unsavedChangesReportingWarning">
   Please save your work before generating a report.
 </div>

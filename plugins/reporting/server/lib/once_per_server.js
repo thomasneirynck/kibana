@@ -30,4 +30,4 @@ export function oncePerServer(fn) {
   memoized.cache = new WeakMap;
 
   return memoized;
-};
+}

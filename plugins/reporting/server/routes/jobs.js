@@ -1,7 +1,7 @@
 import boom from 'boom';
-import { constants } from '../lib/constants';
+import { constants } from '../../common/constants';
 import { jobsQueryFactory } from '../lib/jobs_query';
-import { licensePreRoutingFactory } from'../lib/license_pre_routing';
+import { reportingFeaturePreRoutingFactory } from'../lib/reporting_feature_pre_routing';
 import { userPreRoutingFactory } from '../lib/user_pre_routing';
 import { jobResponseHandlerFactory } from '../lib/job_response_handler';
 
@@ -10,9 +10,11 @@ const API_TAG = 'api';
 
 export function jobs(server) {
   const jobsQuery = jobsQueryFactory(server);
-  const licensePreRouting = licensePreRoutingFactory(server);
+  const reportingFeaturePreRouting = reportingFeaturePreRoutingFactory(server);
   const userPreRouting = userPreRoutingFactory(server);
   const jobResponseHandler = jobResponseHandlerFactory(server);
+
+  const managementPreRouting = reportingFeaturePreRouting(() => 'management');
 
   // list jobs in the queue, paginated
   server.route({
@@ -22,11 +24,13 @@ export function jobs(server) {
       const page = parseInt(request.query.page) || 0;
       const size = Math.min(100, parseInt(request.query.size) || 10);
 
-      const results = jobsQuery.list(request, page, size);
+      const results = jobsQuery.list(request.pre.management.jobTypes, request, page, size);
       reply(results);
     },
     config: {
-      pre: [ licensePreRouting ],
+      pre: [
+        { method: managementPreRouting, assign: 'management' }
+      ],
     }
   });
 
@@ -38,11 +42,13 @@ export function jobs(server) {
       const size = Math.min(100, parseInt(request.query.size) || 10);
       const sinceInMs = Date.parse(request.query.since) || null;
 
-      const results = jobsQuery.listCompletedSince(request, size, sinceInMs);
+      const results = jobsQuery.listCompletedSince(request.pre.management.jobTypes, request, size, sinceInMs);
       reply(results);
     },
     config: {
-      pre: [ licensePreRouting ],
+      pre: [
+        { method: managementPreRouting, assign: 'management' }
+      ],
     }
   });
 
@@ -51,11 +57,13 @@ export function jobs(server) {
     path: `${mainEntry}/count`,
     method: 'GET',
     handler: (request, reply) => {
-      const results = jobsQuery.count(request);
+      const results = jobsQuery.count(request.pre.management.jobTypes, request);
       reply(results);
     },
     config: {
-      pre: [ licensePreRouting ],
+      pre: [
+        { method: managementPreRouting, assign: 'management' }
+      ],
     }
   });
 
@@ -68,12 +76,22 @@ export function jobs(server) {
 
       jobsQuery.get(request, docId, { includeContent: true })
       .then((doc) => {
-        if (!doc) return reply(boom.notFound());
+        if (!doc) {
+          return reply(boom.notFound());
+        }
+
+        const { jobtype: jobType } = doc._source;
+        if (!request.pre.management.jobTypes.includes(jobType)) {
+          return reply(boom.unauthorized(`Sorry, you are not authorized to download ${jobType} reports`));
+        }
+
         reply(doc._source.output);
       });
     },
     config: {
-      pre: [ licensePreRouting ],
+      pre: [
+        { method: managementPreRouting, assign: 'management' }
+      ],
     }
   });
 
@@ -83,12 +101,14 @@ export function jobs(server) {
     method: 'GET',
     handler: (request, reply) => {
       const { docId } = request.params;
-      const jobType = constants.JOBTYPES.PRINTABLE_PDF;
 
-      jobResponseHandler(request, reply, { docId, jobType });
+      jobResponseHandler(request.pre.management.jobTypes, request, reply, { docId });
     },
     config: {
-      pre: [ licensePreRouting, userPreRouting ],
+      pre: [
+        userPreRouting,
+        { method: managementPreRouting, assign: 'management' },
+      ],
       tags: [API_TAG],
     },
   });

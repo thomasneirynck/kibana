@@ -4,7 +4,7 @@ import { uiModules } from 'ui/modules';
 import { addSystemApiHeader } from 'ui/system_api';
 import { get, last } from 'lodash';
 import moment from 'moment';
-import { constants } from '../../server/lib/constants.js';
+import { constants } from '../../common/constants.js';
 import 'plugins/reporting/services/job_queue';
 import { PathProvider } from 'plugins/xpack_main/services/path';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
@@ -20,7 +20,7 @@ uiModules.get('kibana')
 uiModules.get('kibana')
 .run(($http, $interval, reportingJobQueue, Private) => {
   const xpackInfo = Private(XPackInfoProvider);
-  const showLinks = xpackInfo.get('features.reporting.showLinks');
+  const showLinks = xpackInfo.get('features.reporting.management.showLinks');
   if (Private(PathProvider).isLoginOrLogout() || !showLinks) return;
 
   $interval(function startChecking() {

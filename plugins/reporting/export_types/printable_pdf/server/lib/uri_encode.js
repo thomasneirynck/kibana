@@ -9,7 +9,7 @@ function encodeUriQuery(val, pctEncodeSpaces) {
   .replace(/%2C/gi, ',')
   .replace(/%3B/gi, ';')
   .replace(/%20/g, (pctEncodeSpaces ? '%20' : '+'));
-};
+}
 
 function toKeyValue(obj) {
   const parts = [];
@@ -27,7 +27,7 @@ function toKeyValue(obj) {
     }
   });
   return parts.length ? parts.join('&') : '';
-};
+}
 
 export const uriEncode = {
   stringify: toKeyValue,

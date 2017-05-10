@@ -1,6 +1,6 @@
 import { get, set } from 'lodash';
 import { badRequest } from 'boom';
-import { constants } from './constants';
+import { constants } from '../../common/constants';
 import { oncePerServer } from './once_per_server';
 import { getUserFactory } from './get_user';
 
@@ -44,8 +44,11 @@ function jobsQueryFn(server) {
   }
 
   return {
-    list(request, page = 0, size = defaultSize) {
+    list(jobTypes, request, page = 0, size = defaultSize) {
       const showAll = get(request, 'query.all', false);
+      const filters = [
+        { terms: { jobtype: jobTypes } },
+      ];
 
       return getUser(request)
       .then((user) => {
@@ -62,29 +65,29 @@ function jobsQueryFn(server) {
 
         if (!showAll) {
           const username = get(user, 'username');
+          filters.push({ term: { created_by: username } });
+        }
 
-          set(body, 'query', {
-            constant_score: {
-              filter: {
-                bool: {
-                  must: [
-                    { term: { created_by: username } },
-                  ]
-                }
+        set(body, 'query', {
+          constant_score: {
+            filter: {
+              bool: {
+                must: filters
               }
             }
-          });
-        }
+          }
+        });
 
         return getHits(execQuery('search', body, request));
       });
     },
 
-    listCompletedSince(request, size = defaultSize, sinceInMs) {
+    listCompletedSince(jobTypes, request, size = defaultSize, sinceInMs) {
       return getUser(request)
       .then((user) => {
         const filters = [
-          { range: { completed_at: { gt: sinceInMs, format: 'epoch_millis' } } }
+          { range: { completed_at: { gt: sinceInMs, format: 'epoch_millis' } } },
+          { terms: { jobtype: jobTypes } },
         ];
         if (user) {
           const username = get(user, 'username');
@@ -109,8 +112,11 @@ function jobsQueryFn(server) {
       });
     },
 
-    count(request) {
+    count(jobTypes, request) {
       const showAll = get(request, 'query.all', false);
+      const filters = [
+        { terms: { jobtype: jobTypes } },
+      ];
 
       return getUser(request)
       .then((user) => {
@@ -118,18 +124,18 @@ function jobsQueryFn(server) {
 
         if (!showAll) {
           const username = get(user, 'username');
-          body.query = {
-            constant_score: {
-              filter: {
-                bool: {
-                  must: [
-                    { term: { created_by: username } },
-                  ]
-                }
+          filters.push({ term: { created_by: username } });
+        }
+
+        set(body, 'query', {
+          constant_score: {
+            filter: {
+              bool: {
+                must: filters
               }
             }
-          };
-        };
+          }
+        });
 
         return execQuery('count', body, request)
         .then((doc) => {

@@ -2,16 +2,12 @@ import { unlink } from 'fs';
 import { capitalize, some } from 'lodash';
 import { getTimeFilterRange } from './get_time_filter_range';
 import { pdf } from './pdf';
-import { oncePerServer } from './once_per_server';
+import { oncePerServer } from '../../../../server/lib/once_per_server';
 import { getScreenshotFactory } from './get_screenshot';
 
-function generateDocumentFn(server) {
+function generatePdfFn(server) {
   const getScreenshot = getScreenshotFactory(server);
   const warningLog = (msg) => server.log(['reporting', 'warning'], msg);
-
-  return {
-    printablePdf: printablePdf,
-  };
 
   function cleanImages(cleanupPaths) {
     return Promise.all(cleanupPaths.map(imagePath => {
@@ -28,7 +24,7 @@ function generateDocumentFn(server) {
     });
   }
 
-  function printablePdf(title, savedObjects, query, headers) {
+  return function generatePdf(title, savedObjects, query, headers) {
     const pdfOutput = pdf.create();
 
     return Promise.all(savedObjects.map((savedObj) => {
@@ -46,7 +42,7 @@ function generateDocumentFn(server) {
       const cleanupPaths = [];
 
       if (title) {
-        const timeRange = some(objects, { isTimepickerEnabled: true }) ? getTimeFilterRange(savedObjects, query) : null;
+        const timeRange = some(objects, { isTimepickerEnabled: true }) ? getTimeFilterRange(query) : null;
         title += (timeRange) ? ` — ${timeRange.from} to ${timeRange.to}` : '';
         pdfOutput.setTitle(title);
       }
@@ -82,4 +78,4 @@ function generateDocumentFn(server) {
   };
 }
 
-export const generateDocumentFactory = oncePerServer(generateDocumentFn);
+export const generatePdfFactory = oncePerServer(generatePdfFn);

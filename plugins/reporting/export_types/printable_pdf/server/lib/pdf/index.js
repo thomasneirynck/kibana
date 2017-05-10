@@ -3,7 +3,7 @@ import _ from 'lodash';
 import concat from 'concat-stream';
 import Printer from 'pdfmake';
 
-const assetPath = path.resolve(__dirname, '..', '..', 'server', 'assets');
+const assetPath = path.resolve(__dirname, 'assets');
 
 class PdfMaker {
   constructor() {

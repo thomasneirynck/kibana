@@ -3,22 +3,24 @@ import sinon from 'sinon';
 import { validateConfig } from '../validate_config';
 
 describe('Reporting: Validate config', function () {
-  let config;
   const log = sinon.spy();
 
   beforeEach(() => {
-    config = {
-      get: sinon.stub(),
-      set: sinon.stub()
-    };
     log.reset();
   });
 
-  it('should log a warning and set xpack.reporting.encryptionKey if not set', function () {
-    expect(() => validateConfig(config, log)).not.to.throwError();
+  [undefined, null].forEach(value => {
+    it(`should log a warning and set xpack.reporting.encryptionKey if encryptionKey is ${value}`, function () {
+      const config = {
+        get: sinon.stub().returns(value),
+        set: sinon.stub()
+      };
 
-    sinon.assert.calledWith(config.set, 'xpack.reporting.encryptionKey');
-    sinon.assert.calledWithMatch(log, /Generating a random key/);
-    sinon.assert.calledWithMatch(log, /please set xpack.reporting.encryptionKey/);
+      expect(() => validateConfig(config, log)).not.to.throwError();
+
+      sinon.assert.calledWith(config.set, 'xpack.reporting.encryptionKey');
+      sinon.assert.calledWithMatch(log, /Generating a random key/);
+      sinon.assert.calledWithMatch(log, /please set xpack.reporting.encryptionKey/);
+    });
   });
 });

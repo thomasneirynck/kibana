@@ -1,8 +1,8 @@
 import moment from 'moment';
 import datemath from '@elastic/datemath';
-import { parseKibanaState } from '../../../../server/lib/parse_kibana_state';
+import { parseKibanaState } from '../../../../../../server/lib/parse_kibana_state';
 
-export function getTimeFilterRange(savedObjects, query = {}) {
+export function getTimeFilterRange(query = {}) {
   if (!query._g) {
     return;
   }

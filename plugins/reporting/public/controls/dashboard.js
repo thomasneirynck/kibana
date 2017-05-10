@@ -10,11 +10,14 @@ function dashboardReportProvider(Private, $location) {
 
     key: 'reporting-dashboard',
     label: 'Reporting',
-    template: '<export-config object-type="Dashboard"></export-config>',
+    template: '<export-config object-type="Dashboard" enabled-export-type="printablePdf"></export-config>',
     description: 'Dashboard Report',
-    hideButton: () => $location.path() === DashboardConstants.LANDING_PAGE_PATH || !xpackInfo.get('features.reporting.showLinks', false),
-    disableButton: () => !xpackInfo.get('features.reporting.enableLinks', false),
-    tooltip: () => xpackInfo.get('features.reporting.message'),
+    hideButton: () => (
+      $location.path() === DashboardConstants.LANDING_PAGE_PATH
+      || !xpackInfo.get('features.reporting.printablePdf.showLinks', false)
+    ),
+    disableButton: () => !xpackInfo.get('features.reporting.printablePdf.enableLinks', false),
+    tooltip: () => xpackInfo.get('features.reporting.printablePdf.message'),
     testId: 'topNavReportingLink',
   };
 }
