@@ -11,8 +11,8 @@ function getPluginPaths(plugins, opts = {}) {
   return plugins.reduce((paths, pluginName) => {
     const plugin = pluginName.trim();
     const commonPath = `${plugin}/common`;
-    const serverPath = `${plugin}/server`;
-    const publicPath = `${plugin}/public`;
+    const serverPath = `${plugin}/**/server`;
+    const publicPath = `${plugin}/**/public`;
 
     const indexPaths = `plugins/${plugin}/${testPath}/*.js`; // index and helpers
     const commonPaths = `plugins/${commonPath}/**/${testPath}/*.js`;
