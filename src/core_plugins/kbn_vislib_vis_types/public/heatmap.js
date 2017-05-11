@@ -1,5 +1,5 @@
 import { VisVisTypeProvider } from 'ui/vis/vis_type';
-import { VislibVisTypeVislibVisTypeProvider } from 'ui/vislib_vis_type/vislib_vis_type';
+import { VislibVisTypeProvider } from 'ui/vis/vis_types/vislib_vis_type';
 import { VisSchemasProvider } from 'ui/vis/schemas';
 import heatmapTemplate from 'plugins/kbn_vislib_vis_types/editors/heatmap.html';
 import { vislibColorMaps } from 'ui/vislib/components/color/colormaps';
@@ -7,7 +7,7 @@ import image from './images/icon-heatmap.svg';
 
 export default function HeatmapVisType(Private) {
   const VisType = Private(VisVisTypeProvider);
-  const VislibVisType = Private(VislibVisTypeVislibVisTypeProvider);
+  const VislibVisType = Private(VislibVisTypeProvider);
   const Schemas = Private(VisSchemasProvider);
 
   return new VislibVisType({
@@ -16,8 +16,9 @@ export default function HeatmapVisType(Private) {
     image,
     description: 'Shade cells within a matrix',
     category: VisType.CATEGORY.BASIC,
-    params: {
+    visConfig: {
       defaults: {
+        type: 'heatmap',
         addTooltip: true,
         addLegend: true,
         enableHover: false,
@@ -44,22 +45,26 @@ export default function HeatmapVisType(Private) {
           }
         }]
       },
-      legendPositions: [{
-        value: 'left',
-        text: 'left',
-      }, {
-        value: 'right',
-        text: 'right',
-      }, {
-        value: 'top',
-        text: 'top',
-      }, {
-        value: 'bottom',
-        text: 'bottom',
-      }],
-      scales: ['linear', 'log', 'square root'],
-      colorSchemas: Object.keys(vislibColorMaps),
-      editor: heatmapTemplate
+    },
+    editorConfig: {
+      collectons: {
+        legendPositions: [{
+          value: 'left',
+          text: 'left',
+        }, {
+          value: 'right',
+          text: 'right',
+        }, {
+          value: 'top',
+          text: 'top',
+        }, {
+          value: 'bottom',
+          text: 'bottom',
+        }],
+        scales: ['linear', 'log', 'square root'],
+        colorSchemas: Object.keys(vislibColorMaps),
+      },
+      editorTemplate: heatmapTemplate
     },
     schemas: new Schemas([
       {

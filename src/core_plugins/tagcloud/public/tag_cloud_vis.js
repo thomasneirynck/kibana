@@ -2,7 +2,7 @@ import 'plugins/tagcloud/tag_cloud.less';
 import 'plugins/tagcloud/tag_cloud_controller';
 import 'plugins/tagcloud/tag_cloud_vis_params';
 import { VisVisTypeProvider } from 'ui/vis/vis_type';
-import { TemplateVisTypeProvider } from 'ui/template_vis_type/template_vis_type';
+import { TemplateVisTypeProvider } from 'ui/vis/vis_types/template_vis_type';
 import { VisSchemasProvider } from 'ui/vis/schemas';
 import tagCloudTemplate from 'plugins/tagcloud/tag_cloud_controller.html';
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
@@ -20,17 +20,22 @@ VisTypesRegistryProvider.register(function TagCloudProvider(Private) {
     implementsRenderComplete: true,
     description: 'A group of words, sized according to their importance',
     category: VisType.CATEGORY.OTHER,
-    template: tagCloudTemplate,
-    params: {
+    visConfig: {
       defaults: {
         scale: 'linear',
         orientation: 'single',
         minFontSize: 18,
         maxFontSize: 72
       },
-      scales: ['linear', 'log', 'square root'],
-      orientations: ['single', 'right angled', 'multiple'],
-      editor: '<tagcloud-vis-params></tagcloud-vis-params>'
+      template: tagCloudTemplate,
+    },
+    editorConfig: {
+      collections: {
+        scales: ['linear', 'log', 'square root'],
+        orientations: ['single', 'right angled', 'multiple'],
+      },
+      optionsTemplate: '<tagcloud-vis-params></tagcloud-vis-params>',
+
     },
     schemas: new Schemas([
       {

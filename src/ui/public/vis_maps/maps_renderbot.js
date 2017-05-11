@@ -1,7 +1,5 @@
 import $ from 'jquery';
 import _ from 'lodash';
-import { VisRenderbotProvider } from 'ui/vis/renderbot';
-import { VislibVisTypeBuildChartDataProvider } from 'ui/vislib_vis_type/build_chart_data';
 import { FilterBarPushFilterProvider } from 'ui/filter_bar/push_filter';
 import { KibanaMap } from './kibana_map';
 import { GeohashLayer } from './geohash_layer';
@@ -13,15 +11,14 @@ import { ResizeCheckerProvider } from 'ui/resize_checker';
 module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettings, Notifier, courier, getAppState) {
 
   const ResizeChecker = Private(ResizeCheckerProvider);
-  const Renderbot = Private(VisRenderbotProvider);
-  const buildChartData = Private(VislibVisTypeBuildChartDataProvider);
   const notify = new Notifier({ location: 'Tilemap' });
 
-  class MapsRenderbot extends Renderbot {
+  class MapsRenderbot {
 
     constructor(vis, $el, uiState) {
-      super(vis, $el, uiState);
-      this._buildChartData = buildChartData.bind(this);
+      this.vis = vis;
+      this.$el = $el;
+      this.uiState = uiState;
       this._geohashLayer = null;
       this._kibanaMap = null;
       this._$container = $el;
@@ -133,7 +130,7 @@ module.exports = function MapsRenderbotFactory(Private, $injector, tilemapSettin
     render(esResponse) {
       this._dataDirty = true;
       this._kibanaMapReady.then(() => {
-        this._chartData = this._buildChartData(esResponse);
+        this._chartData = esResponse;
         this._geohashGeoJson = this._chartData.geoJson;
         this._recreateGeohashLayer();
         this._kibanaMap.useUiStateFromVisualization(this.vis);
