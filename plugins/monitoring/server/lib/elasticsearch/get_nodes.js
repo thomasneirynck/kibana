@@ -51,11 +51,10 @@ export function getNodes(req, esIndexPattern) {
 
   const params = {
     index: esIndexPattern,
-    type: 'node_stats',
     size: 0,
     ignoreUnavailable: true,
     body: {
-      query: createQuery({ start, end, uuid, metric: metricFields }),
+      query: createQuery({ type: 'node_stats', start, end, uuid, metric: metricFields }),
       aggs: {
         items: {
           terms: {

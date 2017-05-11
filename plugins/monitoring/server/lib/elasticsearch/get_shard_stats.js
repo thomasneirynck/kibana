@@ -13,12 +13,12 @@ export function getShardStats(req, esIndexPattern, lastState) {
   const maxBucketSize = config.get('xpack.monitoring.max_bucket_size');
   const params = {
     index: esIndexPattern,
-    type: 'shards',
     ignore: [404],
     size: 0,
     body: {
       sort: { timestamp: { order: 'desc' } },
       query: createQuery({
+        type: 'shards',
         uuid,
         metric,
         filters: [ { term: { state_uuid: get(lastState, 'cluster_state.state_uuid') } } ]

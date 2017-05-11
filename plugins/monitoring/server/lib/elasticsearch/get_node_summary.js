@@ -10,21 +10,16 @@ export function getNodeSummary(req, esIndexPattern) {
 
   // Build up the Elasticsearch request
   const metric = ElasticsearchMetric.getMetricFields();
+  const filters = [{
+    term: { [`source_node.${config.get('xpack.monitoring.node_resolver')}`]: req.params.resolver }
+  }];
   const params = {
     index: esIndexPattern,
-    type: 'node_stats',
     ignore: [404],
     body: {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({
-        end,
-        uuid,
-        metric,
-        filters: [{
-          term: { [`source_node.${config.get('xpack.monitoring.node_resolver')}`]: req.params.resolver }
-        }]
-      })
+      query: createQuery({ type: 'node_stats', end, uuid, metric, filters })
     }
   };
 

@@ -1,4 +1,5 @@
 import { get, find, indexBy } from 'lodash';
+import { createTypeFilter } from '../create_query';
 
 export function handleResponse(config, clusters) {
   return (res) => {
@@ -18,6 +19,10 @@ export function handleResponse(config, clusters) {
   };
 }
 
+/*
+ * Get the cluster status, state_uuid, state_timestamp, and nodes for
+ * downstream depenencies
+ */
 export function getClustersHealth(req, esIndexPattern) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const config = req.server.config();
@@ -26,23 +31,27 @@ export function getClustersHealth(req, esIndexPattern) {
     const bodies = [];
     clusters.forEach((cluster) => {
       bodies.push({
-        index: esIndexPattern,
-        type: 'cluster_state'
+        index: esIndexPattern
       });
       bodies.push({
         size: 1,
         sort: { 'timestamp': { order: 'desc' } },
-        query: { bool: { filter: {
-          term: { 'cluster_uuid': cluster.cluster_uuid }
-        } } }
+        query: {
+          bool: {
+            filter: [
+              { ...createTypeFilter('cluster_state') },
+              { term: { 'cluster_uuid': cluster.cluster_uuid } }
+            ]
+          }
+        }
       });
     });
     if (!bodies.length) { return Promise.resolve([]); }
     const params = {
       index: esIndexPattern,
-      type: 'cluster_state',
       body: bodies
     };
+
     return callWithRequest(req, 'msearch', params)
     .then(handleResponse(config, clusters));
   };

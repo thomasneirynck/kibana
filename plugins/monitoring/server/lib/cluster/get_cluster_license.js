@@ -4,7 +4,7 @@ export function getClusterLicense(req, clusterUuid) {
   const config = req.server.config();
   const clusterCheckParams = {
     index: config.get('xpack.monitoring.index'),
-    type: 'cluster_info',
+    type: 'cluster_info', // FIXME move license info to timebased data!
     id: clusterUuid,
     _source: ['license']
   };

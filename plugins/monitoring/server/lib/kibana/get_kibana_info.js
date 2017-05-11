@@ -14,7 +14,6 @@ export function getKibanaInfo(req, uuid) {
   const config = req.server.config();
   const params = {
     index: config.get('xpack.monitoring.kibana.index_pattern'),
-    type: 'kibana_stats',
     ignore: [404],
     body: {
       size: 1,

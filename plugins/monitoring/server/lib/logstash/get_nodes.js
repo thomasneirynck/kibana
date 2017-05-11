@@ -11,9 +11,9 @@
  */
 import { get } from 'lodash';
 import moment from 'moment';
-import { createQuery } from './../create_query';
-import { calculateAvailability } from './../calculate_availability';
-import { ElasticsearchMetric } from './../metrics/metric_classes';
+import { createQuery } from '../create_query';
+import { calculateAvailability } from '../calculate_availability';
+import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 export function getNodes(req, logstashIndexPattern) {
   const config = req.server.config();
@@ -23,10 +23,6 @@ export function getNodes(req, logstashIndexPattern) {
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: logstashIndexPattern,
-    // Note: We need to include the _type when we go through and change types,
-    // unlike with Kibana because Logstash will be adding a secondary document
-    // type that will "interfere" with the field collapsing
-    type: 'logstash_stats',
     ignoreUnavailable: true,
     body: {
       size: config.get('xpack.monitoring.max_bucket_size'),

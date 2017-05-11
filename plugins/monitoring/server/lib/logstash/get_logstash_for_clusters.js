@@ -29,7 +29,6 @@ export function getLogstashForClusters(req, logstashIndexPattern) {
         size: 0,
         index: logstashIndexPattern,
         ignoreUnavailable: true,
-        type: 'logstash_stats',
         body: {
           query: createQuery({
             start,

@@ -24,7 +24,7 @@ export function fetchElasticsearchStats(req, clusterUuids) {
   const config = req.server.config();
   const params = {
     index: config.get('xpack.monitoring.index'),
-    type: 'cluster_info',
+    type: 'cluster_info', // FIXME move license info to timebased data!
     filterPath: [
       'hits.hits._source.cluster_uuid',
       'hits.hits._source.timestamp',

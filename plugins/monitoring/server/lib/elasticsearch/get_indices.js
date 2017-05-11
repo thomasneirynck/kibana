@@ -42,11 +42,17 @@ export function getIndices(req, esIndexPattern, showSystemIndices = false) {
   const metricFields = ElasticsearchMetric.getMetricFields();
   const params = {
     index: esIndexPattern,
-    type: 'index_stats',
     size: 0,
     ignoreUnavailable: true,
     body: {
-      query: createQuery({ start: min, end: max, uuid, metric: metricFields, filters }),
+      query: createQuery({
+        type: 'index_stats',
+        start: min,
+        end: max,
+        uuid,
+        metric: metricFields,
+        filters
+      }),
       aggs: {
         items: {
           terms: { field: 'index_stats.index', size: config.get('xpack.monitoring.max_bucket_size') },

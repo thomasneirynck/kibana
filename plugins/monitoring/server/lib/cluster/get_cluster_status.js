@@ -48,11 +48,10 @@ export function getClusterStatus(req, esIndexPattern, lastState) {
   const params = {
     index: esIndexPattern,
     ignore: [404],
-    type: 'cluster_stats',
     body: {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({ end, uuid, metric })
+      query: createQuery({ type: 'cluster_stats', end, uuid, metric })
     }
   };
 

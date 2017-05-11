@@ -1,24 +1,43 @@
 import expect from 'expect.js';
 import { set } from 'lodash';
 import { MissingRequiredError } from '../error_missing_required';
-import { createQuery } from '../create_query.js';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { createTypeFilter, createQuery } from '../create_query.js';
 
-const metric = ElasticsearchMetric.getMetricFields();
+let metric;
+
+
+describe('Create Type Filter', () => {
+  it('Builds a type filter syntax', () => {
+    const typeFilter = createTypeFilter('my_type');
+    expect(typeFilter).to.eql({
+      bool: { should: [
+        { term: { _type: 'my_type' } },
+        { term: { type: 'my_type' } }
+      ] }
+    });
+  });
+});
 
 describe('Create Query', () => {
+  beforeEach(() => {
+    metric = ElasticsearchMetric.getMetricFields();
+  });
+
   it('Allows UUID to not be passed', () => {
     const options = { metric };
     const result = createQuery(options);
     const expected = set({}, 'bool.filter', []);
     expect(result).to.be.eql(expected);
   });
+
   it('Injects cluster_uuid by default', () => {
     const options = { uuid: 'abc123', metric };
     const result = createQuery(options);
     const expected = set({}, 'bool.filter[0].term.cluster_uuid', 'abc123');
     expect(result).to.be.eql(expected);
   });
+
   it('Uses Elasticsearch timestamp field for start and end time range by default', () => {
     const options = { uuid: 'abc123', start: '2016-03-01 10:00:00', end: '2016-03-01 10:00:01', metric };
     const result = createQuery(options);
@@ -31,6 +50,7 @@ describe('Create Query', () => {
     });
     expect(result).to.be.eql(expected);
   });
+
   it('Injects uuid and timestamp fields dynamically, based on metric', () => {
     const options = {
       uuid: 'abc123',
@@ -50,6 +70,7 @@ describe('Create Query', () => {
     });
     expect(result).to.be.eql(expected);
   });
+
   it('Throws if missing metric.timestampField', () => {
     function callCreateQuery() {
       const options = {}; // missing metric object
@@ -59,6 +80,7 @@ describe('Create Query', () => {
       expect(e).to.be.a(MissingRequiredError);
     });
   });
+
   it('Throws if given uuid but missing metric.uuidField', () => {
     function callCreateQuery() {
       const options = { uuid: 'abc123', metric };
@@ -68,5 +90,33 @@ describe('Create Query', () => {
     expect(callCreateQuery).to.throwException((e) => {
       expect(e).to.be.a(MissingRequiredError);
     });
+  });
+
+  it('Uses `type` option to add type filter with minimal fields', () => {
+    const options = { type: 'test-type-yay', metric };
+    const result = createQuery(options);
+    let expected = {};
+    expected = set(expected, 'bool.filter[0].bool.should', [ { term: { _type: 'test-type-yay' } }, { term: { type: 'test-type-yay' } } ]);
+    expect(result).to.be.eql(expected);
+  });
+
+  it('Uses `type` option to add type filter with all other option fields', () => {
+    const options = {
+      type: 'test-type-yay',
+      uuid: 'abc123',
+      start: '2016-03-01 10:00:00',
+      end: '2016-03-01 10:00:01' ,
+      metric
+    };
+    const result = createQuery(options);
+    let expected = {};
+    expected = set(expected, 'bool.filter[0].bool.should', [ { term: { _type: 'test-type-yay' } }, { term: { type: 'test-type-yay' } } ]);
+    expected = set(expected, 'bool.filter[1].term.cluster_uuid', 'abc123');
+    expected = set(expected, 'bool.filter[2].range.timestamp', {
+      format: 'epoch_millis',
+      gte: 1456826400000,
+      lte: 1456826401000
+    });
+    expect(result).to.be.eql(expected);
   });
 });

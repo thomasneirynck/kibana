@@ -11,22 +11,21 @@ export function phoneHomeRoutes(server) {
     method: 'POST',
     handler: (req, reply) => {
       // Change to true to test indexing the data. Note, user must have privileges
-      // NOTE: IF YOU DISABLED THE UI, YOU MUST RE-ENABLE IT OR THE ABOVE CLIENT IS NOT CONFIGURED
       if (false) {
         const body = req.payload;
         const options = {
           index: '.monitoring',
-          type: 'phone_home',
-          body: body
+          type: 'doc',
+          body
         };
-
         const { callWithRequest } = server.plugins.elasticsearch.getCluster('monitoring');
-        callWithRequest(req, 'index', options)
+
+        return callWithRequest(req, 'index', options)
         .then(reply)
         .catch(err => reply(handleError(err, req)));
-      } else {
-        reply({});
       }
+
+      return reply({});
     }
   });
 

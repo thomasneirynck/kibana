@@ -11,12 +11,11 @@ export function getLastState(req, esIndexPattern) {
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: esIndexPattern,
-    type: 'cluster_state',
     ignore: [404],
     body: {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({ end, uuid, metric })
+      query: createQuery({ type: 'cluster_state', end, uuid, metric })
     }
   };
 

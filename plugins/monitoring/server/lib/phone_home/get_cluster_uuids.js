@@ -27,12 +27,11 @@ export function fetchClusterUuids(req, start, end) {
   const size = config.get('xpack.monitoring.max_bucket_size');
   const params = {
     index: config.get('xpack.monitoring.elasticsearch.index_pattern'),
-    type: 'cluster_stats',
     ignoreUnavailable: true,
     filterPath: 'aggregations.cluster_uuids.buckets.key',
     body: {
       size: 0, // return no hits, just aggregation buckets
-      query: createQuery({ start, end, metric: ElasticsearchMetric.getMetricFields() }),
+      query: createQuery({ type: 'cluster_stats', start, end, metric: ElasticsearchMetric.getMetricFields() }),
       aggs: {
         cluster_uuids: {
           terms: {

@@ -17,21 +17,16 @@ export function getIndexSummary(req, esIndexPattern) {
 
   // Build up the Elasticsearch request
   const metric = ElasticsearchMetric.getMetricFields();
+  const filters = [{
+    term: { 'index_stats.index': req.params.id }
+  }];
   const params = {
     index: esIndexPattern,
     ignore: [404],
-    type: 'index_stats',
     body: {
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({
-        end,
-        uuid,
-        metric,
-        filters: [{
-          term: { 'index_stats.index': req.params.id }
-        }]
-      })
+      query: createQuery({ type: 'index_stats', end, uuid, metric, filters })
     }
   };
 

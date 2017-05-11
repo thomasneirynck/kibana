@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
-import { createQuery } from '../create_query.js';
+import { createQuery } from '../create_query';
 import { validateMonitoringLicense } from './validate_monitoring_license';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 
@@ -12,22 +12,15 @@ export function getClusters(req, esIndexPattern) {
   const metric = ElasticsearchMetric.getMetricFields();
   const filters = [];
   if (req.params.clusterUuid) {
-    filters.push({ term: { 'cluster_uuid': req.params.clusterUuid } });
+    filters.push({ term: { cluster_uuid: req.params.clusterUuid } });
   }
   const params = {
     index: esIndexPattern,
-    type: 'cluster_stats',
     ignore: [404],
     // terms agg for the cluster_uuids
     body: {
       size: 0, // return no hits, just aggregation buckets
-      query: createQuery({
-        start,
-        end,
-        uuid: null,
-        metric,
-        filters
-      }),
+      query: createQuery({ type: 'cluster_stats', start, end, metric, filters }),
       aggs: {
         cluster_uuids: {
           terms: {
@@ -52,7 +45,7 @@ export function getClusters(req, esIndexPattern) {
 
         const infoParams = {
           index: config.get('xpack.monitoring.index'),
-          type: 'cluster_info',
+          type: 'cluster_info', // FIXME must move license info to timebased indices!
           id: cluster.cluster_uuid
         };
 

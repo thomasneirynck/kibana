@@ -16,7 +16,6 @@ export function getNodeInfo(req, uuid) {
   const config = req.server.config();
   const params = {
     index: config.get('xpack.monitoring.logstash.index_pattern'),
-    type: 'logstash_stats',
     ignore: [404],
     body: {
       size: 1,

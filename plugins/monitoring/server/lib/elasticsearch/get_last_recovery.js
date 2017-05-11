@@ -47,12 +47,11 @@ export function getLastRecovery(req, esIndexPattern) {
   const params = {
     index: esIndexPattern,
     ignore: [404],
-    type: 'index_recovery',
     body: {
       _source: [ 'index_recovery.shards' ],
       size: 1,
       sort: { timestamp: { order: 'desc' } },
-      query: createQuery({ start, end, uuid, metric })
+      query: createQuery({ type: 'index_recovery', start, end, uuid, metric })
     }
   };
 
