@@ -153,7 +153,7 @@ module.directive('mlAnomaliesTableExpandedRow', function () {
           // Metrics and probability will already have been placed at the top level.
           // If cause has byFieldValue, move it to a top level fields for display.
           const cause = _.first(causes);
-          if (_.has(cause, 'byFieldName')) {
+          if (_.has(cause, 'by_field_name')) {
             scope.singleCauseByFieldName = cause.by_field_name;
             scope.singleCauseByFieldValue = cause.by_field_value;
           }
