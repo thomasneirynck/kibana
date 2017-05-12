@@ -186,8 +186,8 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
           let color = 'none';
           let bucketScore = 0;
           for (let j = 0; j < points.length; j++) {
-
-            if (points[j].value > 0 && points[j].laneLabel === lane && points[j].time === time) { // this may break if detectors have the duplicate descriptions
+            // this may break if detectors have the duplicate descriptions
+            if (points[j].value > 0 && points[j].laneLabel === lane && points[j].time === time) {
               bucketScore = points[j].value;
               color = colorScore(bucketScore);
               $cell.append($('<div>', {
@@ -200,11 +200,14 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
             }
           }
 
-          const cellClickTxt = 'cellClick($event, \'' + lane + '\', ' + bucketScore + ', ' + i + ', ' + time + ')';
+          const safeLaneTxt = lane.replace(/(['])/g, '\\$1');
+          const cellClickTxt = 'cellClick($event, \'' + safeLaneTxt + '\', ' +
+            bucketScore + ', ' + i + ', ' + time + ')';
           $cell.attr({ 'ng-click': cellClickTxt });
 
           if (bucketScore > 0) {
-            const cellMouseoverTxt = 'cellMouseover($event, \'' + lane + '\', ' + bucketScore + ', ' + i + ', ' + time + ')';
+            const cellMouseoverTxt = 'cellMouseover($event, \'' + safeLaneTxt + '\', ' +
+              bucketScore + ', ' + i + ', ' + time + ')';
             const cellMouseleaveTxt = 'cellMouseleave()';
             $cell.attr({
               'ng-mouseover': cellMouseoverTxt,
