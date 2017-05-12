@@ -21,7 +21,7 @@
 const _ = require('lodash');
 
 import { parseInterval } from 'ui/utils/parse_interval';
-import { aggregationTypeTransform } from 'plugins/ml/util/anomaly_utils';
+import { buildConfigFromDetector } from 'plugins/ml/util/chart_config_builder';
 
 export function explorerChartConfigBuilder(mlJobService) {
 
@@ -35,19 +35,14 @@ export function explorerChartConfigBuilder(mlJobService) {
   // and properties for the data feed used for the job (index pattern, time field etc).
   function buildConfig(record) {
     const job = mlJobService.getJob(record.job_id);
+    const detectorIndex = record.detector_index;
+    const config = buildConfigFromDetector(job, detectorIndex);
 
-    const config = {
-      jobId: record.job_id,
-      detectorIndex: record.detector_index,
-      function: record.function_description,
-      metricFunction: aggregationTypeTransform.toES(record.function_description),
-      timeField: job.data_description.time_field,
-      bucketSpanSeconds: parseInterval(job.analysis_config.bucket_span).asSeconds(),
-      interval: job.analysis_config.bucket_span
-    };
+    // Add extra properties used by the explorer dashboard charts.
+    config.functionDescription = record.function_description;
+    config.bucketSpanSeconds = parseInterval(job.analysis_config.bucket_span).asSeconds();
 
     config.detectorLabel = record.function;
-    const detectorIndex = record.detector_index;
     if ((_.has(mlJobService.detectorsByJob, record.job_id)) &&
       (detectorIndex < mlJobService.detectorsByJob[record.job_id].length)) {
       config.detectorLabel = mlJobService.detectorsByJob[record.job_id][detectorIndex].detector_description;
@@ -61,31 +56,6 @@ export function explorerChartConfigBuilder(mlJobService) {
     if (record.field_name !== undefined) {
       config.fieldName = record.field_name;
       config.metricFieldName = record.field_name;
-    }
-
-    // Extra checks if the job config uses a summary count field.
-    const summaryCountFieldName = job.analysis_config.summary_count_field_name;
-    if (record.function_description === 'count' && summaryCountFieldName !== undefined
-      && summaryCountFieldName !== 'doc_count') {
-      // Check for a detector looking at cardinality (distinct count) using an aggregation.
-      // The cardinality field will be in:
-      // aggregations/<agg_name>/aggregations/<summaryCountFieldName>/cardinality/field
-      // or aggs/<agg_name>/aggs/<summaryCountFieldName>/cardinality/field
-      let cardinalityField = undefined;
-      const topAgg = _.get(job.datafeed_config, 'aggregations') || _.get(job.datafeed_config, 'aggs');
-      if (topAgg !== undefined && _.values(topAgg).length > 0) {
-        cardinalityField = _.get(_.values(topAgg)[0], ['aggregations', summaryCountFieldName, 'cardinality', 'field']) ||
-          _.get(_.values(topAgg)[0], ['aggs', summaryCountFieldName, 'cardinality', 'field']);
-      }
-
-      if (record.function === 'non_zero_count' && cardinalityField !== undefined) {
-        config.metricFunction = 'cardinality';
-        config.metricFieldName = cardinalityField;
-      } else {
-        // For count detectors using summary_count_field, plot sum(summary_count_field_name)
-        config.metricFunction = 'sum';
-        config.metricFieldName = summaryCountFieldName;
-      }
     }
 
     // Add the 'entity_fields' i.e. the partition, by, over fields which
@@ -106,11 +76,6 @@ export function explorerChartConfigBuilder(mlJobService) {
       config.entityFields.push({ fieldName: record.by_field_name, fieldValue: record.by_field_value });
     }
 
-    // Obtain the raw data index(es) from the job datafeed_config.
-    if (job.datafeed_config) {
-      config.datafeedConfig = job.datafeed_config;
-    }
-
     // Build the tooltip for the chart info icon, showing further details on what is being plotted.
     let functionLabel = config.metricFunction;
     if (config.metricFieldName !== undefined) {
@@ -120,13 +85,12 @@ export function explorerChartConfigBuilder(mlJobService) {
 
     config.infoTooltip = compiledTooltip({
       'jobId':record.job_id,
-      'aggregationInterval': job.analysis_config.bucket_span,
+      'aggregationInterval': config.interval,
       'chartFunction': functionLabel
     });
 
     return config;
   }
-
 
   return {
     buildConfig

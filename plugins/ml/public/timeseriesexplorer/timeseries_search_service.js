@@ -15,12 +15,86 @@
 
 import _ from 'lodash';
 
+import { isModelPlotEnabled } from 'plugins/ml/util/job_utils';
+import { buildConfigFromDetector } from 'plugins/ml/util/chart_config_builder';
+import { escapeForElasticsearchQuery } from 'plugins/ml/util/string_utils';
+
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
+module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResultsService) {
 
-  this.getModelPlotOutput = function (index, jobIds, earliestMs, latestMs, interval) {
+  this.getMetricData = function (job, detectorIndex, entityFields, earliestMs, latestMs, interval) {
+    // For now only use model plot data if there is only one detector.
+    // TODO - expand to multiple detectors by mapping detectorIndex to model_plot model_feature field.
+    if (isModelPlotEnabled(job) && job.analysis_config.detectors.length === 1) {
+      // Extract the partition, by, over fields on which to filter.
+      const criteriaFields = [];
+      const detector = job.analysis_config.detectors[detectorIndex];
+      if (_.has(detector, 'partition_field_name')) {
+        const partitionEntity = _.find(entityFields, { 'fieldName': detector.partition_field_name });
+        if (partitionEntity !== undefined) {
+          criteriaFields.push(
+            { fieldName: 'partition_field_name', fieldValue: partitionEntity.fieldName },
+            { fieldName: 'partition_field_value', fieldValue: partitionEntity.fieldValue });
+        }
+      }
+
+      if (_.has(detector, 'over_field_name')) {
+        const overEntity = _.find(entityFields, { 'fieldName': detector.over_field_name });
+        if (overEntity !== undefined) {
+          criteriaFields.push(
+            { fieldName: 'over_field_name', fieldValue: overEntity.fieldName },
+            { fieldName: 'over_field_value', fieldValue: overEntity.fieldValue });
+        }
+      }
+
+      if (_.has(detector, 'by_field_name')) {
+        const byEntity = _.find(entityFields, { 'fieldName': detector.by_field_name });
+        if (byEntity !== undefined) {
+          criteriaFields.push(
+            { fieldName: 'by_field_name', fieldValue: byEntity.fieldName },
+            { fieldName: 'by_field_value', fieldValue: byEntity.fieldValue });
+        }
+      }
+
+      return this.getModelPlotOutput(job.job_id, criteriaFields, earliestMs, latestMs, interval);
+    } else {
+      const deferred = $q.defer();
+      const obj = {
+        success: true,
+        results: {}
+      };
+
+      const chartConfig = buildConfigFromDetector(job, detectorIndex);
+
+      mlResultsService.getMetricData(chartConfig.datafeedConfig.indices, entityFields, chartConfig.datafeedConfig.query,
+        chartConfig.metricFunction, chartConfig.metricFieldName, chartConfig.timeField,
+        earliestMs, latestMs, interval
+        )
+      .then((resp) => {
+        console.log('Time series search service getMetricData() resp:', resp);
+
+        _.each(resp.results, (value, time) => {
+          obj.results[time] = {
+            'actual': value
+          };
+        });
+
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
+
+      return deferred.promise;
+    }
+
+  };
+
+  this.getModelPlotOutput = function (jobId, criteriaFields, earliestMs, latestMs, interval) {
+    const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
+
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -28,8 +102,12 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
     };
 
     // Build the criteria to use in the bool filter part of the request.
-    // Adds criteria for the time range plus any specified job IDs.
+    // Add criteria for the job ID and time range.
     const boolCriteria = [];
+    boolCriteria.push({
+      'term' : { 'job_id' : jobId }
+    });
+
     boolCriteria.push({
       'range': {
         'timestamp': {
@@ -40,25 +118,15 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
       }
     });
 
-    if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
-      let jobIdFilterStr = '';
-      _.each(jobIds, function (jobId, i) {
-        if (i > 0) {
-          jobIdFilterStr += ' OR ';
-        }
-        jobIdFilterStr += 'job_id:';
-        jobIdFilterStr += jobId;
-      });
-      boolCriteria.push({
-        'query_string': {
-          'analyze_wildcard': true,
-          'query': jobIdFilterStr
-        }
-      });
-    }
+    // Add in term queries for each of the specified criteria.
+    _.each(criteriaFields, (criteria) => {
+      const condition = { 'term': {} };
+      condition.term[criteria.fieldName] = criteria.fieldValue;
+      boolCriteria.push(condition);
+    });
 
     es.search({
-      index: index,
+      index: ML_RESULTS_INDEX_ID,
       size: 0,
       body: {
         'query': {
@@ -103,11 +171,11 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
         }
       }
     })
-    .then(function (resp) {
+    .then((resp) => {
       console.log('Time series search service getModelPlotOutput() resp:', resp);
 
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
-      _.each(aggregationsByTime, function (dataForTime) {
+      _.each(aggregationsByTime, (dataForTime) => {
         const time = dataForTime.key;
         obj.results[time] = {
           'actual': _.get(dataForTime, ['actual', 'value']),
@@ -118,14 +186,18 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
 
       deferred.resolve(obj);
     })
-    .catch(function (resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
 
     return deferred.promise;
   };
 
-  this.getScoresByBucket = function (index, jobIds, earliestMs, latestMs, interval) {
+  // Queries Elasticsearch to obtain the max record score over time for the specified job,
+  // criteria, time range, and aggregation interval.
+  // criteriaFields parameter must be an array, with each object in the array having 'fieldName'
+  // 'fieldValue' properties.
+  this.getRecordMaxScoreByTime = function (index, jobId, criteriaFields, earliestMs, latestMs, interval) {
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -133,9 +205,9 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
     };
 
     // Build the criteria to use in the bool filter part of the request.
-    // Adds criteria for the time range plus any specified job IDs.
-    const boolCriteria = [];
-    boolCriteria.push({
+    const mustCriteria = [];
+    const shouldCriteria = [];
+    mustCriteria.push({
       'range': {
         'timestamp': {
           'gte': earliestMs,
@@ -145,22 +217,47 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
       }
     });
 
-    if (jobIds && jobIds.length > 0 && !(jobIds.length === 1 && jobIds[0] === '*')) {
-      let jobIdFilterStr = '';
-      _.each(jobIds, function (jobId, i) {
-        if (i > 0) {
-          jobIdFilterStr += ' OR ';
-        }
-        jobIdFilterStr += 'job_id:';
-        jobIdFilterStr += jobId;
-      });
-      boolCriteria.push({
-        'query_string': {
-          'analyze_wildcard': true,
-          'query': jobIdFilterStr
-        }
-      });
-    }
+    mustCriteria.push({ 'term': { 'job_id': jobId } });
+
+    _.each(criteriaFields, (criteria) => {
+      if (criteria.fieldValue.length !== 0) {
+        // Add a query string query for each entity field, wrapping the value
+        // in quotes to do a phrase match. This is the best approach when the
+        // field in the source data could be mapped as text or keyword.
+        // a term query could only be used if we knew it was mapped as keyword.
+        mustCriteria.push({
+          'query_string': {
+            'query': escapeForElasticsearchQuery(criteria.fieldName) + ':\"' + criteria.fieldValue + '\"',
+            'analyze_wildcard': false
+          }
+        });
+      } else {
+        // Add special handling for blank entity field values, checking for either
+        // an empty string or the field not existing.
+        const emptyFieldCondition = {
+          'bool':{
+            'must':[
+              {
+                'term':{
+                }
+              }
+            ]
+          }
+        };
+        emptyFieldCondition.bool.must[0].term[criteria.fieldName] = '';
+        shouldCriteria.push(emptyFieldCondition);
+        shouldCriteria.push({
+          'bool':{
+            'must_not': [
+              {
+                'exists' : { 'field' : criteria.fieldName }
+              }
+            ]
+          }
+        });
+      }
+
+    });
 
     es.search({
       index: index,
@@ -170,12 +267,12 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
           'bool': {
             'filter': [{
               'query_string': {
-                'query': 'result_type:bucket',
+                'query': 'result_type:record',
                 'analyze_wildcard': true
               }
             }, {
               'bool': {
-                'must': boolCriteria
+                'must': mustCriteria
               }
             }]
           }
@@ -188,9 +285,9 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
               'min_doc_count': 1
             },
             'aggs': {
-              'anomalyScore': {
+              'recordScore': {
                 'max': {
-                  'field': 'anomaly_score'
+                  'field': 'record_score'
                 }
               }
             }
@@ -198,20 +295,20 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es) {
         }
       }
     })
-    .then(function (resp) {
-      console.log('Time series search service getScoresByBucket() resp:', resp);
+    .then((resp) => {
+      console.log('Time series search service getRecordMaxScoreByTime() resp:', resp);
 
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
-      _.each(aggregationsByTime, function (dataForTime) {
+      _.each(aggregationsByTime, (dataForTime) => {
         const time = dataForTime.key;
         obj.results[time] = {
-          'anomalyScore': _.get(dataForTime, ['anomalyScore', 'value']),
+          'score': _.get(dataForTime, ['recordScore', 'value']),
         };
       });
 
       deferred.resolve(obj);
     })
-    .catch(function (resp) {
+    .catch((resp) => {
       deferred.reject(resp);
     });
     return deferred.promise;

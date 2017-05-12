@@ -19,9 +19,10 @@ import d3 from 'd3';
  * Creates a mask over sections of the context chart and swimlane
  * which fall outside the extent of the selection brush used for zooming.
  */
-function ContextChartMask(contextGroup, data, swimlaneHeight) {
+function ContextChartMask(contextGroup, data, drawBounds, swimlaneHeight) {
   this.contextGroup = contextGroup;
   this.data = data;
+  this.drawBounds = drawBounds;
   this.swimlaneHeight = swimlaneHeight;
   this.mask  = this.contextGroup.append('g').attr('class','mask');
 
@@ -34,12 +35,14 @@ function ContextChartMask(contextGroup, data, swimlaneHeight) {
   this.rightPolygon = this.leftGroup.append('polygon');
 
   // Create the path elements for the bounded area and values line.
-  this.leftGroup.append('path')
-    .attr('class', 'left area bounds');
+  if (this.drawBounds === true) {
+    this.leftGroup.append('path')
+      .attr('class', 'left area bounds');
+    this.rightGroup.append('path')
+      .attr('class', 'right area bounds');
+  }
   this.leftGroup.append('path')
     .attr('class', 'left values-line');
-  this.rightGroup.append('path')
-    .attr('class', 'right area bounds');
   this.rightGroup.append('path')
     .attr('class', 'right values-line');
 
@@ -79,17 +82,6 @@ ContextChartMask.prototype.redraw = function () {
 
   const that = this;
 
-  const boundedArea = d3.svg.area()
-    .x(function (d) { return that._x(d.date) || 1; })
-    .y0(function (d) { return that._y(Math.min(maxY, Math.max(d.lower, minY))); })
-    .y1(function (d) { return that._y(Math.max(minY, Math.min(d.upper, maxY))); });
-
-  const valuesLine = d3.svg.line()
-    .x(function (d) { return that._x(d.date); })
-    .y(function (d) { return that._y(d.value); });
-
-
-  // Render the bounds area and values line.
   const leftData = this.data.filter(function (d) {
     return d.date < that.from;
   });
@@ -98,13 +90,25 @@ ContextChartMask.prototype.redraw = function () {
     return d.date > that.to;
   });
 
-  this.leftGroup.select('.left.area.bounds')
-    .attr('d', boundedArea(leftData));
+  // Render the bounds area and values line.
+  if (this.drawBounds === true) {
+    const boundedArea = d3.svg.area()
+      .x(function (d) { return that._x(d.date) || 1; })
+      .y0(function (d) { return that._y(Math.min(maxY, Math.max(d.lower, minY))); })
+      .y1(function (d) { return that._y(Math.max(minY, Math.min(d.upper, maxY))); });
+    this.leftGroup.select('.left.area.bounds')
+      .attr('d', boundedArea(leftData));
+    this.rightGroup.select('.right.area.bounds')
+      .attr('d', boundedArea(rightData));
+  }
+
+  const valuesLine = d3.svg.line()
+    .x(function (d) { return that._x(d.date); })
+    .y(function (d) { return that._y(d.value); });
+
   this.leftGroup.select('.left.values-line')
         .attr('d', valuesLine(leftData));
 
-  this.rightGroup.select('.right.area.bounds')
-    .attr('d', boundedArea(rightData));
   this.rightGroup.select('.right.values-line')
     .attr('d', valuesLine(rightData));
 

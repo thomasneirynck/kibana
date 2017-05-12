@@ -14,9 +14,9 @@
  */
 
 /*
- * Chart showing model plot data, annotated with anomalies.
+ * Chart showing plot time series data, with or without model plot enabled,
+ * annotated with anomalies.
  */
-
 
 import _ from 'lodash';
 import $ from 'jquery';
@@ -30,11 +30,13 @@ import { ResizeCheckerProvider } from 'ui/resize_checker';
 
 import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
 import ContextChartMask from 'plugins/ml/timeseriesexplorer/context_chart_mask';
+import 'plugins/ml/filters/format_value';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, mlAnomaliesTableService, Private) {
+module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, timefilter,
+  mlAnomaliesTableService, formatValueFilter) {
 
   function link(scope, element) {
 
@@ -78,7 +80,6 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
     const focusYAxis = d3.svg.axis().scale(focusYScale).orient('left')
       .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
 
-    // TODO - do we want to use interpolate('basis') to smooth the connecting lines?
     const focusValuesLine = d3.svg.line()
        .x(function (d) { return focusXScale(d.date); })
        .y(function (d) { return focusYScale(d.value); });
@@ -103,7 +104,7 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
 
     // Redraw the charts when the container is resize.
     const ResizeChecker = Private(ResizeCheckerProvider);
-    const resizeChecker = new ResizeChecker(angular.element('.ml-model-plot-chart'));
+    const resizeChecker = new ResizeChecker(angular.element('.ml-timeseries-chart'));
     resizeChecker.on('resize', () => {
       render();
       drawContextChartSelection();
@@ -151,14 +152,21 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
       // Set the size of the left margin according to the width of the largest y axis tick label.
       // Temporarily set the domain of the focus y axis to the full data range so that we can
       // measure the maximum tick label width on temporary text elements.
-      focusYScale = focusYScale.domain([
-        d3.min(scope.contextChartData, function (d) {
-          return Math.min(d.value, d.lower);
-        }),
-        d3.max(scope.contextChartData, function (d) {
-          return Math.max(d.value, d.upper);
-        })
-      ]);
+      if (scope.modelPlotEnabled === true) {
+        focusYScale = focusYScale.domain([
+          d3.min(scope.contextChartData, (d) => {
+            return Math.min(d.value, d.lower);
+          }),
+          d3.max(scope.contextChartData, (d) => {
+            return Math.max(d.value, d.upper);
+          })
+        ]);
+      } else {
+        focusYScale = focusYScale.domain([
+          d3.min(scope.contextChartData, (d) => d.value),
+          d3.max(scope.contextChartData, (d) => d.value)
+        ]);
+      }
 
       let maxYAxisLabelWidth = 0;
       const tempLabelText = svg.append('g')
@@ -292,9 +300,9 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
 
       // Define the div for the tooltip.
       // TODO - append to the chartElement rather than the body.
-      d3.select('body').selectAll('div.ml-model-plot-point-tooltip').remove();
+      d3.select('body').selectAll('div.ml-timeseries-point-tooltip').remove();
       d3.select('body').append('div')
-        .attr('class', 'ml-model-plot-point-tooltip')
+        .attr('class', 'ml-timeseries-point-tooltip')
         .style('opacity', 0);
 
       fcsGroup.append('rect')
@@ -332,10 +340,20 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
 
       focusXScale.domain([earliest.toDate(), latest.toDate()]);
       if (scope.focusChartData.length > 0) {
-        // Set domain to min/max of bounds and value, and use default tick formatter.
-        focusYScale = focusYScale.domain([d3.min(data, function (d) { return Math.min(d.value, d.lower); }),
-          d3.max(data, function (d) { return Math.max(d.value, d.upper); })]);
+        // Use default tick formatter.
         focusYAxis.tickFormat(null);
+        if (scope.modelPlotEnabled === true) {
+          //  Set domain to min/max of bounds and value.
+          focusYScale = focusYScale.domain([
+            d3.min(data, (d) => { return Math.min(d.value, d.lower); }),
+            d3.max(data, (d) => { return Math.max(d.value, d.upper); })
+          ]);
+        } else {
+          focusYScale = focusYScale.domain([
+            d3.min(data, (d) => d.value),
+            d3.max(data, (d) => d.value)
+          ]);
+        }
       } else {
         // Display 10 unlabelled ticks.
         focusYScale = focusYScale.domain([0, 10]);
@@ -347,8 +365,10 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
         .call(focusYAxis);
 
       // Render the bounds area and values line.
-      focusChart.select('.area.bounds')
-        .attr('d', focusBoundedArea(data));
+      if (scope.modelPlotEnabled === true) {
+        focusChart.select('.area.bounds')
+          .attr('d', focusBoundedArea(data));
+      }
       focusChart.select('.values-line')
         .attr('d', focusValuesLine(data));
 
@@ -419,26 +439,33 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
       contextXScale = d3.time.scale().range([0, cxtWidth])
         .domain(calculateContextXAxisDomain());
 
-      // Set the y axis domain so that the range of actual values takes up at least 50% of the full range.
       const valuesRange = { min: Number.MAX_VALUE, max: Number.MIN_VALUE };
-      const boundsRange = { min: Number.MAX_VALUE, max: Number.MIN_VALUE };
       _.each(data, function (item) {
         valuesRange.min = Math.min(item.value, valuesRange.min);
         valuesRange.max = Math.max(item.value, valuesRange.max);
-        boundsRange.min = Math.min(item.lower, boundsRange.min);
-        boundsRange.max = Math.max(item.upper, boundsRange.max);
       });
-      const dataMin = Math.min(valuesRange.min, boundsRange.min);
-      const dataMax = Math.max(valuesRange.max, boundsRange.max);
-
+      let dataMin = valuesRange.min;
+      let dataMax = valuesRange.max;
       const chartLimits = { min: dataMin, max: dataMax };
-      if ((valuesRange.max - valuesRange.min) < 0.5 * (dataMax - dataMin)) {
-        if (valuesRange.min > dataMin) {
-          chartLimits.min = valuesRange.min - (0.5 * (valuesRange.max - valuesRange.min));
-        }
 
-        if (valuesRange.max < dataMax) {
-          chartLimits.max = valuesRange.max + (0.5 * (valuesRange.max - valuesRange.min));
+      if (scope.modelPlotEnabled === true) {
+        const boundsRange = { min: Number.MAX_VALUE, max: Number.MIN_VALUE };
+        _.each(data, function (item) {
+          boundsRange.min = Math.min(item.lower, boundsRange.min);
+          boundsRange.max = Math.max(item.upper, boundsRange.max);
+        });
+        dataMin = Math.min(dataMin, boundsRange.min);
+        dataMax = Math.max(dataMax, boundsRange.max);
+
+        // Set the y axis domain so that the range of actual values takes up at least 50% of the full range.
+        if ((valuesRange.max - valuesRange.min) < 0.5 * (dataMax - dataMin)) {
+          if (valuesRange.min > dataMin) {
+            chartLimits.min = valuesRange.min - (0.5 * (valuesRange.max - valuesRange.min));
+          }
+
+          if (valuesRange.max < dataMax) {
+            chartLimits.max = valuesRange.max + (0.5 * (valuesRange.max - valuesRange.min));
+          }
         }
       }
 
@@ -469,19 +496,21 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
 
       cxtGroup.datum(data);
 
-      const area = d3.svg.area()
-        .x(function (d) { return contextXScale(d.date); })
-        .y0(function (d) { return contextYScale(Math.min(chartLimits.max, Math.max(d.lower, chartLimits.min))); })
-        .y1(function (d) { return contextYScale(Math.max(chartLimits.min, Math.min(d.upper, chartLimits.max))); });
+      if (scope.modelPlotEnabled === true) {
+        const area = d3.svg.area()
+          .x(function (d) { return contextXScale(d.date); })
+          .y0(function (d) { return contextYScale(Math.min(chartLimits.max, Math.max(d.lower, chartLimits.min))); })
+          .y1(function (d) { return contextYScale(Math.max(chartLimits.min, Math.min(d.upper, chartLimits.max))); });
+
+        cxtGroup.append('path')
+          .datum(data)
+          .attr('class', 'area context')
+          .attr('d', area);
+      }
 
       const contextValuesLine = d3.svg.line()
        .x(function (d) { return contextXScale(d.date); })
        .y(function (d) { return contextYScale(d.value); });
-
-      cxtGroup.append('path')
-        .datum(data)
-        .attr('class', 'area context')
-        .attr('d', area);
 
       cxtGroup.append('path')
         .datum(data)
@@ -497,7 +526,7 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
 
       // Draw a mask over the sections of the context chart and swimlane
       // which fall outside of the zoom brush selection area.
-      const mask = new ContextChartMask(cxtGroup, scope.contextChartData, swlHeight)
+      const mask = new ContextChartMask(cxtGroup, scope.contextChartData, scope.modelPlotEnabled, swlHeight)
         .x(contextXScale)
         .y(contextYScale);
 
@@ -723,18 +752,29 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
       const formattedDate = moment(marker.date).format('MMMM Do YYYY, HH:mm');
       let contents = formattedDate + '<br/><hr/>';
 
-      // TODO - need better formatting for small decimals.
-      contents += ('value: ' + numeral(marker.value).format('0,0.[00]'));
-      contents += ('<br/>upper bounds: ' + numeral(marker.upper).format('0,0.[00]'));
-      contents += ('<br/>lower bounds: ' + numeral(marker.lower).format('0,0.[00]'));
-
       if (_.has(marker, 'anomalyScore')) {
         const score = parseInt(marker.anomalyScore);
         const displayScore = (score > 0 ? score : '< 1');
-        contents += ('<br/>anomaly score: ' + displayScore);
+        contents += ('anomaly score: ' + displayScore + '<br/>');
+
+        if (scope.modelPlotEnabled === false) {
+          contents += ('actual: ' + formatValueFilter(marker.actual, marker.function));
+          contents += ('<br/>typical: ' + formatValueFilter(marker.typical, marker.function));
+        } else {
+          contents += ('value: ' + numeral(marker.value).format('0,0.[00]'));
+          contents += ('<br/>upper bounds: ' + numeral(marker.upper).format('0,0.[00]'));
+          contents += ('<br/>lower bounds: ' + numeral(marker.lower).format('0,0.[00]'));
+        }
+      } else {
+        // TODO - need better formatting for small decimals.
+        contents += ('value: ' + numeral(marker.value).format('0,0.[00]'));
+        if (scope.modelPlotEnabled === true) {
+          contents += ('<br/>upper bounds: ' + numeral(marker.upper).format('0,0.[00]'));
+          contents += ('<br/>lower bounds: ' + numeral(marker.lower).format('0,0.[00]'));
+        }
       }
 
-      const tooltipDiv = d3.select('.ml-model-plot-point-tooltip');
+      const tooltipDiv = d3.select('.ml-timeseries-point-tooltip');
       tooltipDiv.transition()
         .duration(200)
         .style('opacity', .9);
@@ -756,7 +796,7 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
     }
 
     function hideFocusChartTooltip() {
-      const tooltipDiv = d3.select('.ml-model-plot-point-tooltip');
+      const tooltipDiv = d3.select('.ml-timeseries-point-tooltip');
       tooltipDiv.transition()
         .duration(500)
         .style('opacity', 0);
@@ -819,6 +859,7 @@ module.directive('mlModelPlotChart', function ($compile, $timeout, timefilter, m
 
   return {
     scope: {
+      modelPlotEnabled: '=',
       contextChartData: '=',
       contextChartAnomalyData: '=',
       focusChartData: '=',

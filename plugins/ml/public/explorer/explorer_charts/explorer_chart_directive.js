@@ -284,8 +284,8 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
         contents += ('anomaly score: ' + displayScore);
         // Display the record actual in preference to the chart value, which may be
         // different depending on the aggregation interval of the chart.
-        contents += ('<br/>actual: ' + formatValueFilter(marker.actual, config.function));
-        contents += ('<br/>typical: ' + formatValueFilter(marker.typical, config.function));
+        contents += ('<br/>actual: ' + formatValueFilter(marker.actual, config.functionDescription));
+        contents += ('<br/>typical: ' + formatValueFilter(marker.typical, config.functionDescription));
       } else {
         contents += ('value: ' + numeral(marker.value).format('0,0.[00]'));
       }
@@ -357,15 +357,15 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
           let foundItem;
           for (let i = 0; i < chartData.length; i++) {
             const itemTime = chartData[i].date.getTime();
-            if (itemTime > recordTime) {
+            if ((itemTime > recordTime) && (i > 0)) {
               const item = chartData[i];
-              const prevousItem = chartData[i - 1];
+              const prevousItem = (i > 0 ? chartData[i - 1] : null);
 
               const diff1 = Math.abs(recordTime - prevousItem.date.getTime());
               const diff2 = Math.abs(recordTime - itemTime);
 
               // foundItem should be the item with a date closest to bucketTime
-              if (prevousItem === undefined || diff1 > diff2) {
+              if (prevousItem === null || diff1 > diff2) {
                 foundItem = item;
               } else {
                 foundItem = prevousItem;

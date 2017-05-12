@@ -19,8 +19,10 @@
 
 import moment from 'moment';
 import _ from 'lodash';
+import rison from 'rison-node';
 
 import { replaceStringTokens } from 'plugins/ml/util/string_utils';
+import { isTimeSeriesViewFunction } from 'plugins/ml/util/job_utils';
 import {
   getEntityFieldName,
   getEntityFieldValue,
@@ -36,18 +38,20 @@ import 'plugins/ml/services/job_service';
 import './expanded_row/expanded_row_directive';
 
 import linkControlsHtml from './anomalies_table_links.html';
+import chrome from 'ui/chrome';
 import openRowArrow from 'ui/doc_table/components/table_row/open.html';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService, mlResultsService,
-  mlAnomaliesTableService, formatValueFilter, AppState) {
+module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, timefilter,
+  mlJobService, mlResultsService, mlAnomaliesTableService, formatValueFilter, AppState) {
   return {
     restrict: 'E',
     scope: {
       anomalyRecords: '=',
       indexPatternId: '=',
-      timeFieldName: '='
+      timeFieldName: '=',
+      showExploreSeriesLink: '='
     },
     template: require('plugins/ml/components/anomalies_table/anomalies_table.html'),
     link: function (scope, element) {
@@ -132,6 +136,76 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
 
       scope.getExamplesForCategory = function (jobId, categoryId) {
         return _.get(scope.categoryExamplesByJob, [jobId, categoryId], []);
+      };
+
+      scope.exploreSeries = function (record) {
+        const bounds = timefilter.getActiveBounds();
+        const from = bounds.min.toISOString();    // e.g. 2016-02-08T16:00:00.000Z
+        const to = bounds.max.toISOString();
+
+        // Zoom to show 50 buckets either side of the record.
+        const recordTime = moment(record[scope.timeFieldName]);
+        const zoomFrom = recordTime.subtract(50 * record.bucket_span, 's').toISOString();
+        const zoomTo = recordTime.add(100 * record.bucket_span, 's').toISOString();
+
+        // Extract the by, over and partition fields for the record.
+        const entityCondition = {};
+
+        if (_.has(record, 'partition_field_value')) {
+          entityCondition[record.partition_field_name] = record.partition_field_value;
+        }
+
+        if (_.has(record, 'over_field_value')) {
+          entityCondition[record.over_field_name] = record.over_field_value;
+        }
+
+        if (_.has(record, 'by_field_value')) {
+          // Note that analyses with by and over fields, will have a top-level by_field_name,
+          // but the by_field_value(s) will be in the nested causes array.
+          // TODO - drilldown from cause in expanded row only?
+          entityCondition[record.by_field_name] = record.by_field_value;
+        }
+
+        // Use rison to build the URL .
+        const _g = rison.encode({
+          ml: {
+            jobIds: [record.job_id]
+          },
+          refreshInterval: {
+            display: 'Off',
+            pause: false,
+            value: 0
+          },
+          time: {
+            from: from,
+            to: to,
+            mode: 'absolute'
+          }
+        });
+
+        const _a = rison.encode({
+          mlTimeSeriesExplorer: {
+            zoom: {
+              from: zoomFrom,
+              to: zoomTo
+            },
+            detectorIndex: record.detector_index,
+            entities: entityCondition,
+          },
+          filters: [],
+          query: {
+            query_string: {
+              analyze_wildcard: true,
+              query: '*'
+            }
+          }
+        });
+
+        let path = chrome.getBasePath();
+        path += '/app/ml#/timeseriesexplorer';
+        path += '?_g=' + _g;
+        path += '&_a=' + _a;
+        $window.open(path, '_blank');
       };
 
       scope.openLink = function (link, record) {
@@ -479,7 +553,7 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         // typical
         // description (how actual compares to typical)
         // job_id
-        // links (if links configured)
+        // links (if enabling drilldown to Single Metric dashboard or custom URLs configured)
         // category examples (if by mlcategory)
         const paginatedTableColumns = [
           { title: '', sortable: false, class: 'col-expand-arrow' },
@@ -498,7 +572,11 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         const showActual = _.some(summaryRecords, 'actual');
         const showTypical = _.some(summaryRecords, 'typical');
         const showExamples = _.some(summaryRecords, { 'entityName': 'mlcategory' });
-        const showLinks = _.some(summaryRecords, 'links');
+        const showLinks = ((scope.showExploreSeriesLink === true) &&
+          _.some(summaryRecords, (record) => {
+            return ((isTimeSeriesViewFunction(record.source.function)) &&
+              (_.get(record, 'entityName') !== 'mlcategory'));
+          })) || _.some(summaryRecords, 'links');
 
         if (showEntity === true) {
           paginatedTableColumns.push({ title: 'found for', sortable: true });
@@ -689,7 +767,8 @@ module.directive('mlAnomaliesTable', function ($window, $rootScope, mlJobService
         tableRow.push({ markup: record.jobId, value: record.jobId });
 
         if (addLinks !== undefined) {
-          if (_.has(record, 'links')) {
+          if (_.has(record, 'links') ||
+            (isTimeSeriesViewFunction(record.source.function) && (_.get(record, 'entityName') !== 'mlcategory'))) {
             rowScope.links = record.links;
             rowScope.source = record.source;
 

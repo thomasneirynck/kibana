@@ -32,7 +32,7 @@ import 'ui/timefilter';
 import { parseInterval } from 'ui/utils/parse_interval';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
-import { isTimeSeriesViewJob } from 'plugins/ml/util/job_utils';
+import { isTimeSeriesViewJob, isModelPlotEnabled } from 'plugins/ml/util/job_utils';
 import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
@@ -64,6 +64,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
   $scope.loading = false;
   $scope.hasResults = false;
+  $scope.modelPlotEnabled = false;
 
   if (globalState.ml === undefined) {
     globalState.ml = {};
@@ -71,8 +72,9 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
   }
 
   $scope.getSelectedJobIds = function () {
-    const selectedJobs = _.filter($scope.jobs, function (job) { return job.selected; });
-    return _.map(selectedJobs, function (job) {return job.id;});
+    // TODO - replace with getSelectedJobId() if enforcing single job selection.
+    const selectedJobs = _.filter($scope.jobs, (job) => { return job.selected; });
+    return _.map(selectedJobs, (job) => {return job.id;});
   };
 
   $scope.initializeVis = function () {
@@ -81,14 +83,26 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       mlTimeSeriesExplorer: {}
     };
     $scope.appState = new AppState(stateDefaults);
+
+    // Read the detector index and entities out of the AppState.
+    $scope.detectorIndex = $scope.appState.mlTimeSeriesExplorer.detectorIndex || 0;
+    const entities = [];
+    const entitiesState = $scope.appState.mlTimeSeriesExplorer.entities;
+    if (entitiesState !== undefined) {
+      _.each(entitiesState, (fieldValue, fieldName) => {
+        entities.push({ fieldName: fieldName, fieldValue: fieldValue });
+      });
+    }
+    $scope.entities = entities;
+
     $scope.jobs = [];
 
     // Load the job info needed by the visualization, then do the first load.
     mlJobService.loadJobs()
-    .then(function (resp) {
+    .then((resp) => {
       if (resp.jobs.length > 0) {
         const timeSeriesJobIds = [];
-        _.each(resp.jobs, function (job) {
+        _.each(resp.jobs, (job) => {
           if (isTimeSeriesViewJob(job) === true) {
             timeSeriesJobIds.push(job.job_id);
             const bucketSpan = parseInterval(job.analysis_config.bucket_span);
@@ -111,10 +125,11 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
           notify.warning(warningText, { lifetime: 30000 });
         }
 
+        // TODO - enforce single job selection.
         $scope.setSelectedJobs(selectedJobIds);
       }
 
-    }).catch(function (resp) {
+    }).catch((resp) => {
       console.log('Time series explorer - error getting job info from elasticsearch:', resp);
     });
   };
@@ -149,7 +164,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
         // Tell the results container directives to render.
         // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
         if ($scope.contextChartData && $scope.contextChartData.length) {
-          $timeout(function () {
+          $timeout(() => {
             $scope.$broadcast('render');
           }, 0);
         }
@@ -158,18 +173,26 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     }
 
     const bounds = timefilter.getActiveBounds();
-    const selectedJobIds = $scope.getSelectedJobIds();
+
+    // TODO - enforce single job selection in the job picker, or remove job picker?
+    const selectedJob = getSelectedJob();
+    $scope.modelPlotEnabled = isModelPlotEnabled(selectedJob);
+    $scope.detectorDescription = selectedJob.analysis_config.detectors[$scope.detectorIndex].detector_description;
+    $scope.criteriaFields = [{
+      'fieldName':'detector_index',
+      'fieldValue':$scope.detectorIndex }
+    ].concat($scope.entities);
 
     // Calculate the aggregation interval for the context chart.
     // Context chart swimlane will display bucket anomaly score at the same interval.
     $scope.contextAggregationInterval = calculateAggregationInterval(bounds, CHARTS_POINT_TARGET, CHARTS_POINT_TARGET);
     console.log('aggregationInterval for context data (s):', $scope.contextAggregationInterval.asSeconds());
 
-    // Query 1 - load model plot data at low granularity across full time range.
-    mlTimeSeriesSearchService.getModelPlotOutput($scope.indexPatternId, selectedJobIds,
+    // Query 1 - load metric data at low granularity across full time range.
+    mlTimeSeriesSearchService.getMetricData(selectedJob, $scope.detectorIndex, $scope.entities,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.contextAggregationInterval.expression)
-    .then(function (resp) {
-      const fullRangeChartData = processModelPlotResults(resp.results);
+    .then((resp) => {
+      const fullRangeChartData = processMetricPlotResults(resp.results);
       $scope.contextChartData = fullRangeChartData;
 
       console.log('Time series explorer model plot context chart data set:', $scope.contextChartData);
@@ -183,21 +206,22 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       }
 
       finish();
-    }).catch(function (resp) {
+    }).catch((resp) => {
       console.log('Time series explorer - error getting model plot data from elasticsearch:', resp);
     });
 
-    // Query 2 - load max anomalyScore by bucket at same granularity as context chart
+    // Query 2 - load max record score at same granularity as context chart
     // across full time range for use in the swimlane.
-    mlTimeSeriesSearchService.getScoresByBucket($scope.indexPatternId, selectedJobIds,
-      bounds.min.valueOf(), bounds.max.valueOf(), $scope.contextAggregationInterval.expression)
-    .then(function (resp) {
-      const fullRangeBucketScoreData = processBucketScoreResults(resp.results);
-      $scope.swimlaneData = fullRangeBucketScoreData;
+    mlTimeSeriesSearchService.getRecordMaxScoreByTime($scope.indexPatternId, selectedJob.job_id,
+      $scope.criteriaFields, bounds.min.valueOf(), bounds.max.valueOf(),
+      $scope.contextAggregationInterval.expression)
+    .then((resp) => {
+      const fullRangeRecordScoreData = processRecordScoreResults(resp.results);
+      $scope.swimlaneData = fullRangeRecordScoreData;
       console.log('Time series explorer swimlane anomalies data set:', $scope.swimlaneData);
 
       finish();
-    }).catch(function (resp) {
+    }).catch((resp) => {
       console.log('Time series explorer - error getting bucket anomaly scores from elasticsearch:', resp);
     });
   };
@@ -205,20 +229,19 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
   $scope.refreshFocusData = function (fromDate, toDate) {
 
     // Counter to keep track of what data sets have been loaded.
-    let awaitingCount = 3;
+    let awaitingCount = 2;
 
     // finish() function, called after each data set has been loaded and processed.
     // The last one to call it will trigger the page render.
     function finish() {
       awaitingCount--;
       if (awaitingCount === 0) {
-
-        processDataForFocusAnomalies($scope.focusChartData, $scope.focusChartBucketScoreData);
+        processDataForFocusAnomalies($scope.focusChartData, $scope.anomalyRecords);
         console.log('Time series explorer focus chart data set:', $scope.focusChartData);
 
         // Tell the results container directives to render the focus chart.
         // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
-        $timeout(function () {
+        $timeout(() => {
           if ($scope.focusChartData && $scope.focusChartData.length) {
             $scope.$broadcast('renderFocusChart');
             $scope.$broadcast('renderTable');
@@ -234,38 +257,31 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     }
 
     const selectedJobIds = $scope.getSelectedJobIds();
+    const selectedJob = getSelectedJob();
 
     // Calculate the aggregation interval for the focus chart.
     const bounds = { min: moment(fromDate), max: moment(toDate) };
     $scope.focusAggregationInterval = calculateAggregationInterval(bounds, CHARTS_POINT_TARGET, CHARTS_POINT_TARGET);
     console.log('aggregationInterval for focus data (s):', $scope.focusAggregationInterval.asSeconds());
 
-    // Query 1 - load model plot data across selected time range.
-    mlTimeSeriesSearchService.getModelPlotOutput($scope.indexPatternId, selectedJobIds,
+    // Query 1 - load metric data across selected time range.
+    mlTimeSeriesSearchService.getMetricData(selectedJob, $scope.detectorIndex, $scope.entities,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.focusAggregationInterval.expression)
-    .then(function (resp) {
-      $scope.focusChartData = processModelPlotResults(resp.results);
+    .then((resp) => {
+      $scope.focusChartData = processMetricPlotResults(resp.results);
       finish();
-    }).catch(function (resp) {
+    }).catch((resp) => {
       console.log('Time series explorer - error getting model plot data from elasticsearch:', resp);
     });
 
-    // Query 2 - load max anomalyScore by bucket across selected time range.
-    mlTimeSeriesSearchService.getScoresByBucket($scope.indexPatternId, selectedJobIds,
-      bounds.min.valueOf(), bounds.max.valueOf(), $scope.focusAggregationInterval.expression)
-    .then(function (resp) {
-      $scope.focusChartBucketScoreData = processBucketScoreResults(resp.results);
-      finish();
-    }).catch(function (resp) {
-      console.log('Time series explorer - error getting bucket anomaly scores from elasticsearch:', resp);
-    });
-
-    // Query 3 - load records across full time range.
-    mlResultsService.getRecords($scope.indexPatternId, selectedJobIds,
+    // Query 2 - load records across full time range.
+    mlResultsService.getRecordsForCriteria($scope.indexPatternId, selectedJobIds, $scope.criteriaFields,
       0, bounds.min.valueOf(), bounds.max.valueOf(), ANOMALIES_MAX_RESULTS)
-    .then(function (resp) {
+    .then((resp) => {
       // Sort in descending time order before storing in scope.
-      $scope.anomalyRecords = _.chain(resp.records).sortBy(function (record) { return record[$scope.timeFieldName]; }).reverse().value();
+      $scope.anomalyRecords = _.chain(resp.records).sortBy((record) => {
+        return record[$scope.timeFieldName];
+      }).reverse().value();
       console.log('Time series explorer anomalies:', $scope.anomalyRecords);
       finish();
     });
@@ -291,7 +307,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     $scope.selectedJobs = [];
     const selectedJobIds = [];
     const selectAll = ((selections.length === 1 && selections[0] === '*') || selections.length === 0);
-    _.each($scope.jobs, function (job) {
+    _.each($scope.jobs, (job) => {
       job.selected = (selectAll || _.indexOf(selections, job.id) !== -1);
       if (job.selected) {
         $scope.selectedJobs.push(job);
@@ -317,8 +333,16 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     refreshWatcher.cancel();
   });
 
-  // When inside a dashboard in the Ml plugin, listen for changes to job selection.
-  mlJobSelectService.listenJobSelectionChange($scope, function (event, selections) {
+  // When inside a dashboard in the ML plugin, listen for changes to job selection.
+  mlJobSelectService.listenJobSelectionChange($scope, (event, selections) => {
+    // Reset the detector and clear the entities.
+    // TODO - implement a 'select entity' popup when changing jobs.
+    $scope.detectorIndex = 0;
+    $scope.entities = [];
+    $scope.appState.mlTimeSeriesExplorer.detectorIndex = 0;
+    delete $scope.appState.mlTimeSeriesExplorer.entities;
+    $scope.appState.save();
+
     $scope.setSelectedJobs(selections);
   });
 
@@ -343,6 +367,15 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     $scope.zoomTo = selection.to;
 
   });
+
+  function getSelectedJob() {
+    const selectedJobIds = $scope.getSelectedJobIds();
+    let selectedJob = null;
+    if (selectedJobIds && selectedJobIds.length > 0) {
+      selectedJob = mlJobService.getJob(selectedJobIds[0]);
+    }
+    return selectedJob;
+  }
 
   function calculateInitialFocusRange() {
     // Get the time span of data in the context chart.
@@ -413,93 +446,123 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     return aggInterval;
   }
 
-  function processModelPlotResults(modelPlotData) {
-    // Return dataset in format used by the model plot chart.
-    // i.e. array of Objects with keys date (JavaScript date), value, lower and upper.
-    const modelPlotChartData = [];
-    _.each(modelPlotData, function (dataForTime, time) {
-      modelPlotChartData.push(
-        {
+  function processMetricPlotResults(metricPlotData) {
+    // Return dataset in format used by the single metric chart.
+    // i.e. array of Objects with keys date (JavaScript date) and value,
+    // plus lower and upper keys if model plot is enabled for the series.
+    const metricPlotChartData = [];
+    if ($scope.modelPlotEnabled === true) {
+      _.each(metricPlotData, (dataForTime, time) => {
+        metricPlotChartData.push({
           date: new Date(+time),
           lower: dataForTime.modelLower,
           value: dataForTime.actual,
           upper: dataForTime.modelUpper
         });
-    });
+      });
+    } else {
+      _.each(metricPlotData, (dataForTime, time) => {
+        metricPlotChartData.push({
+          date: new Date(+time),
+          value: dataForTime.actual
+        });
+      });
+    }
 
-    return modelPlotChartData;
+    return metricPlotChartData;
   }
 
-  function processBucketScoreResults(scoreData) {
+  function processRecordScoreResults(scoreData) {
     // Return dataset in format used by the swimlane.
     // i.e. array of Objects with keys date (JavaScript date) and score.
     const bucketScoreData = [];
-    _.each(scoreData, function (dataForTime, time) {
+    _.each(scoreData, (dataForTime, time) => {
       bucketScoreData.push(
         {
           date: new Date(+time),
-          score: dataForTime.anomalyScore,
+          score: dataForTime.score,
         });
     });
 
     return bucketScoreData;
   }
 
-  function processDataForFocusAnomalies(chartData, anomalyScoreData) {
+  function processDataForFocusAnomalies(chartData, anomalyRecords) {
     // Combine the data from the two sets to add anomalyScore properties
     // to the chartData entries for anomalous buckets.
-    _.each(anomalyScoreData, function (bucket) {
-      if (bucket.score > 0) {
-        // Assume bucket times match in each data set for the majority of cases.
-        // If not (e.g. interim results?) need to find closest time in chartData set.
-        const bucketTime = bucket.date.getTime();
-        let chartPoint;
+
+    // Iterate through the anomaly records, adding anomalyScore properties
+    // to the chartData entries for anomalous buckets.
+    _.each(anomalyRecords, (record) => {
+
+      // Look for a chart point with the same time as the record.
+      // If none found, find closest time in chartData set.
+      const recordTime = record[$scope.timeFieldName];
+      let chartPoint;
+      for (let i = 0; i < chartData.length; i++) {
+        if (chartData[i].date.getTime() === recordTime) {
+          chartPoint = chartData[i];
+          break;
+        }
+      }
+
+      if (chartPoint === undefined) {
+        // Find nearest point in time.
+        // loop through line items until the date is greater than bucketTime
+        // grab the current and prevous items in the and compare the time differences
+        let foundItem;
         for (let i = 0; i < chartData.length; i++) {
-          if (chartData[i].date.getTime() === bucketTime) {
-            chartPoint = chartData[i];
+          const itemTime = chartData[i].date.getTime();
+          if (itemTime > recordTime) {
+            const item = chartData[i];
+            const prevousItem = chartData[i - 1];
+
+            const diff1 = Math.abs(recordTime - prevousItem.date.getTime());
+            const diff2 = Math.abs(recordTime - itemTime);
+
+            // foundItem should be the item with a date closest to bucketTime
+            if (prevousItem === undefined || diff1 > diff2) {
+              foundItem = item;
+            } else {
+              foundItem = prevousItem;
+            }
             break;
           }
         }
 
-        if (chartPoint === undefined) {
-          // Find nearest point in time.
-          // loop through line items until the date is greater than bucketTime
-          // grab the current and prevous items in the and compare the time differences
-          let foundItem;
-          for (let i = 0; i < chartData.length; i++) {
-            const itemTime = chartData[i].date.getTime();
-            if (itemTime > bucketTime) {
-              const item = chartData[i];
-              const prevousItem = chartData[i - 1];
+        chartPoint = foundItem;
+      }
 
-              const diff1 = Math.abs(bucketTime - prevousItem.date.getTime());
-              const diff2 = Math.abs(bucketTime - itemTime);
-
-              // foundItem should be the item with a date closest to bucketTime
-              if (prevousItem === undefined || diff1 > diff2) {
-                foundItem = item;
-              } else {
-                foundItem = prevousItem;
-              }
-              break;
-            }
-          }
-
-          chartPoint = foundItem;
-        }
-
-        if (chartPoint !== undefined) {
-          chartPoint.anomalyScore = bucket.score;
-        } else {
-          // Bucket data (anomalyScoreData) may have an extra point than model plot data (chartData),
-          // e.g. right at the end of a job. In this case set the score for the last chart point to
-          // that of the last bucket, if that bucket has a higher score.
-          const lastChartPoint = chartData[chartData.length - 1];
-          const lastChartPointScore = lastChartPoint.anomalyScore || 0;
-          lastChartPoint.anomalyScore = Math.max(lastChartPointScore, bucket.score);
+      if (chartPoint === undefined) {
+        // In case there is a record with a time after that of the last chart point, set the score
+        // for the last chart point to that of the last record, if that record has a higher score.
+        const lastChartPoint = chartData[chartData.length - 1];
+        const lastChartPointScore = lastChartPoint.anomalyScore || 0;
+        if (record.record_score > lastChartPointScore) {
+          chartPoint = lastChartPoint;
         }
       }
+
+      if (chartPoint !== undefined) {
+        chartPoint.anomalyScore = record.record_score;
+        chartPoint.function = record.function;
+
+        if (_.has(record, 'actual')) {
+          chartPoint.actual = record.actual;
+          chartPoint.typical = record.typical;
+        } else {
+          // If only a single cause, copy value to the top level.
+          if (_.get(record, 'causes', []).length === 1) {
+            const cause = _.first(record.causes);
+            chartPoint.actual = cause.actual;
+            chartPoint.typical = cause.typical;
+          }
+        }
+      }
+
     });
+
+    return chartData;
   }
 
   $scope.initializeVis();

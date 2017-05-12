@@ -14,6 +14,23 @@
     </div>
   </div>
 
+  <div class="series-controls" ng-show="jobs.length > 0">
+    <label class="kuiLabel">Detector:</label>
+    <label class="kuiLabel">{{detectorDescription}}</label>
+<!--     <input
+      ng-model="detectorDescription"
+      class="kuiTextInput kuiTextInput--large" /> -->
+
+    <div class="entity-controls" ng-repeat="entity in entities">
+      <label class="kuiLabel">{{entity.fieldName}}:</label>
+      <label class="kuiLabel">{{entity.fieldValue}}</label>
+<!--       <input
+        ng-model="entity.fieldValue"
+        class="kuiTextInput"/> -->
+    </div>
+
+  </div>
+
   <div class="loading-container" ng-show="loading === true">
     <div class="loading-spinner"><i class='fa fa-spinner fa-spin'></i></div>
     <div>Loading</div>
@@ -30,10 +47,13 @@
     <div class="results-container">
 
       <span class="panel-title">
-        Time series analysis
+        Single time series analysis
+        <span ng-if="entities.length > 0"> for </span>
+        <span ng-repeat="entity in entities">{{entity.fieldName}} {{entity.fieldValue}}</span>
       </span>
-      <div class="ml-model-plot-chart">
-        <ml-model-plot-chart  style="width: 1200px; height: 400px;"
+      <div class="ml-timeseries-chart">
+        <ml-timeseries-chart  style="width: 1200px; height: 400px;"
+          model-plot-enabled="modelPlotEnabled"
           context-chart-data="contextChartData"
           context-aggregation-interval="contextAggregationInterval"
           focus-aggregation-interval="focusAggregationInterval"
@@ -42,7 +62,7 @@
           zoom-from="zoomFrom"
           zoom-to="zoomTo"
           auto-zoom-duration="autoZoomDuration">
-        </ml-model-plot-chart>
+        </ml-timeseries-chart>
       </div>
 
       <span class="panel-title">
