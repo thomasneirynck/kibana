@@ -1,5 +1,5 @@
 <div ng-controller="logstashNodeAdvanced">
-  <monitoring-main product="logstash" name="node" instance="{{ pageData.nodeSummary.name }}" resolver="{{ pageData.nodeSummary.uuid }}" page="advanced">
+  <monitoring-main product="logstash" name="nodes" instance="{{ pageData.nodeSummary.name }}" resolver="{{ pageData.nodeSummary.uuid }}" page="advanced">
     <div class="monitoring-kibana details monitoring-view">
       <monitoring-logstash-node-summary logstash="pageData.nodeSummary"></monitoring-logstash-node-summary>
       <div class="detail-metrics monitoring-element">
