@@ -27,10 +27,9 @@ export const SORT_ASCENDING = 1;
 export const SORT_DESCENDING = -1;
 
 /*
- * config options for welcome banner / allow phone home
+ * config option for allow phone home
  * @type {string}
  */
-export const CONFIG_SHOW_BANNER = 'xPackMonitoring:showBanner';
 export const CONFIG_ALLOW_REPORT = 'xPackMonitoring:allowReport';
 
 /*
