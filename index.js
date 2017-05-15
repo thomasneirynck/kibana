@@ -7,6 +7,7 @@ import { searchprofiler } from './plugins/searchprofiler';
 import { ml } from './plugins/ml';
 import { tilemap } from './plugins/tilemap';
 import { watcher } from './plugins/watcher';
+import { grokdebugger } from './plugins/grokdebugger';
 
 module.exports = function (kibana) {
   return [
@@ -18,6 +19,7 @@ module.exports = function (kibana) {
     searchprofiler(kibana),
     ml(kibana),
     tilemap(kibana),
-    watcher(kibana)
+    watcher(kibana),
+    grokdebugger(kibana)
   ];
 };
