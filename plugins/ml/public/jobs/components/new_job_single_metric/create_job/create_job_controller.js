@@ -277,7 +277,23 @@ module
         fields = getIndexedFields(param);
       }
     });
-    $scope.ui.fields = fields;
+
+    _.each(fields, (field, i) => {
+      // if the field name contains bad characters which break elasticsearch aggregations
+      // use a dummy name.
+      // e.g. field_0, field_1
+      const id = field.displayName.match(/^[a-zA-Z0-9-_]+$/) ?
+        field.displayName :
+        `field_${i}`;
+
+      const f = {
+        id,
+        name: field.displayName,
+        tooltip: field.displayName,
+        agg: { type }
+      };
+      $scope.ui.fields.push(f);
+    });
 
     if ($scope.ui.fields.length === 1 ||
       ($scope.formConfig.field === null && type.name === 'cardinality')) {

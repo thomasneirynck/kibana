@@ -36,7 +36,7 @@
         <label>Field</label><i ml-info-icon="new_job_detector_fieldname_subset" ></i>
         <select
           ng-model="formConfig.field"
-          ng-options="field as field.displayName for field in ui.fields"
+          ng-options="field as field.name for field in ui.fields"
           ng-change="fieldChange()"
           ng-disabled="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
           class="form-control">

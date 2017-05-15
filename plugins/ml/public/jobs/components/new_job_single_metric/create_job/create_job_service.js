@@ -189,7 +189,7 @@ module.service('mlSingleMetricJobService', function (
     if (formConfig.field !== null) {
       json.body.aggs.times.aggs = {
         'field_value':{
-          [formConfig.agg.type.name]: { field: formConfig.field.displayName }
+          [formConfig.agg.type.name]: { field: formConfig.field.name }
         }
       };
     }
@@ -214,8 +214,8 @@ module.service('mlSingleMetricJobService', function (
       query = formConfig.query;
     }
 
-    if (formConfig.field && formConfig.field.displayName) {
-      dtr.field_name = formConfig.field.displayName;
+    if (formConfig.field && formConfig.field.id) {
+      dtr.field_name = formConfig.field.id;
     }
     job.analysis_config.detectors.push(dtr);
     job.analysis_config.bucket_span = formConfig.bucketSpan;
@@ -287,7 +287,7 @@ module.service('mlSingleMetricJobService', function (
             aggregations: {
               [dtr.field_name]: {
                 [aggType]: {
-                  field: dtr.field_name
+                  field: formConfig.field.name
                 }
               },
               [formConfig.timeField]: {
@@ -316,7 +316,7 @@ module.service('mlSingleMetricJobService', function (
               },
               [job.analysis_config.summary_count_field_name]: {
                 [aggType]: {
-                  field: dtr.field_name
+                  field: formConfig.field.name
                 }
               }
             }

@@ -78,8 +78,8 @@ module.service('mlMultiMetricJobService', function (
       fieldIds.splice(0, 0, EVENT_RATE_COUNT_FIELD);
     }
 
-    _.each(fieldIds, (field) => {
-      this.chartData.detectors[field] = {
+    _.each(fieldIds, (fieldId) => {
+      this.chartData.detectors[fieldId] = {
         line: [],
         swimlane:[]
       };
@@ -91,8 +91,8 @@ module.service('mlMultiMetricJobService', function (
     .then((resp) => {
       // if this is the last chart load, wipe all previous chart data
       if (thisLoadTimestamp === this.chartData.lastLoadTimestamp) {
-        _.each(fieldIds, (field) => {
-          this.chartData.detectors[field] = {
+        _.each(fieldIds, (fieldId) => {
+          this.chartData.detectors[fieldId] = {
             line: [],
             swimlane:[]
           };
@@ -213,7 +213,7 @@ module.service('mlMultiMetricJobService', function (
       _.each(formConfig.fields, (field) => {
         if (field.id !== EVENT_RATE_COUNT_FIELD) {
           json.body.aggs.times.aggs[field.id] = {
-            [field.agg.type.name]: { field: field.id }
+            [field.agg.type.name]: { field: field.name }
           };
         }
       });
@@ -239,8 +239,8 @@ module.service('mlMultiMetricJobService', function (
       dtr.detector_description = func;
 
       if (key !== EVENT_RATE_COUNT_FIELD) {
-        dtr.field_name = key;
-        dtr.detector_description += `(${key})`;
+        dtr.field_name = field.name;
+        dtr.detector_description += `(${field.name})`;
       }
 
       if (formConfig.splitField !== '--No split--') {

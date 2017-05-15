@@ -328,13 +328,21 @@ module
       agg: { type: _.findWhere($scope.ui.aggTypeOptions, { title: 'Count' }) }
     });
 
-    _.each(fields, (field) => {
-      $scope.ui.fields.push({
-        id: field.displayName,
+    _.each(fields, (field, i) => {
+      // if the field name contains bad characters which break elasticsearch aggregations
+      // use a dummy name.
+      // e.g. field_0, field_1
+      const id = field.displayName.match(/^[a-zA-Z0-9-_]+$/) ?
+        field.displayName :
+        `field_${i}`;
+
+      const f = {
+        id,
         name: field.displayName,
         tooltip: field.displayName,
         agg: { type }
-      });
+      };
+      $scope.ui.fields.push(f);
     });
 
     _.each(categoryFields, (field) => {
