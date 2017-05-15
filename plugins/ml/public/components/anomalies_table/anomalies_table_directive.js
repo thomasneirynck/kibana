@@ -39,7 +39,7 @@ import './expanded_row/expanded_row_directive';
 
 import linkControlsHtml from './anomalies_table_links.html';
 import chrome from 'ui/chrome';
-import openRowArrow from 'ui/doc_table/components/table_row/open.html';
+import openRowArrow from 'plugins/ml/components/paginated_table/open.html';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
