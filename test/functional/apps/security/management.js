@@ -11,7 +11,7 @@ export default function ({ getService, getPageObjects }) {
   const kibanaServer = getService('kibanaServer');
   const testSubjects = getService('testSubjects');
   const remote = getService('remote');
-  const PageObjects = getPageObjects(['security', 'settings', 'common', 'header', 'gettingStarted']);
+  const PageObjects = getPageObjects(['security', 'settings', 'common', 'header']);
 
   describe('Management', () => {
     before(async () => {
@@ -20,7 +20,6 @@ export default function ({ getService, getPageObjects }) {
         'dateFormat:tz':'UTC',
         'defaultIndex':'logstash-*'
       });
-      await PageObjects.gettingStarted.clickOptOutLink();
       await PageObjects.settings.navigateTo();
     });
 

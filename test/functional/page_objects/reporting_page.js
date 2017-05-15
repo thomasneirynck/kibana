@@ -6,7 +6,7 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
   const esArchiver = getService('esArchiver');
   const remote = getService('remote');
   const kibanaServer = getService('kibanaServer');
-  const PageObjects = getPageObjects(['common', 'security', 'header', 'settings', 'gettingStarted']);
+  const PageObjects = getPageObjects(['common', 'security', 'header', 'settings']);
 
   class ReportingPage {
     async initTests() {
