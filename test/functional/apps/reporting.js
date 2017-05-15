@@ -2,8 +2,6 @@ import expect from 'expect.js';
 
 export default function ({ getService, getPageObjects }) {
   const kibanaServer = getService('kibanaServer');
-  const testSubjects = getService('testSubjects');
-  const log = getService('log');
   const PageObjects = getPageObjects(['reporting', 'common', 'dashboard', 'header', 'discover', 'visualize']);
 
   describe('Reporting', () => {
