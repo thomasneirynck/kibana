@@ -39,6 +39,7 @@ task functionalTests(type: Exec, dependsOn: npmInstall) {
 }
 
 task check(dependsOn: [mochaTests, functionalTests]) {
+  functionalTests.mustRunAfter mochaTests
   group = 'Verification'
   description = 'Run all verification tasks'
 }
