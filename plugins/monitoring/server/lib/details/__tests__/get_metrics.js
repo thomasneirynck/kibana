@@ -52,11 +52,13 @@ function getMockReq(metricsBuckets = [], payloadMetrics = []) {
   };
 }
 
+const indexPattern = [];
+
 describe('getMetrics and getSeries', () => {
 
   it('with non-derivative metric', () => {
     const req = getMockReq(nonDerivMetricsBuckets, [ 'node_cpu_utilization' ]);
-    return getMetrics(req)
+    return getMetrics(req, indexPattern)
     .then(result => {
       expect(result).to.eql({
         node_cpu_utilization: [
@@ -78,7 +80,7 @@ describe('getMetrics and getSeries', () => {
 
   it('with derivative metric', () => {
     const req = getMockReq(derivMetricsBuckets, [ 'cluster_search_request_rate' ]);
-    return getMetrics(req)
+    return getMetrics(req, indexPattern)
     .then(result => {
       expect(result).to.eql({
         cluster_search_request_rate: [
@@ -105,7 +107,7 @@ describe('getMetrics and getSeries', () => {
 
   it('with metric containing custom aggs', () => {
     const req = getMockReq(aggMetricsBuckets, [ 'cluster_index_latency' ]);
-    return getMetrics(req)
+    return getMetrics(req, indexPattern)
     .then(result => {
       expect(result).to.eql({
         cluster_index_latency: [
@@ -141,7 +143,7 @@ describe('getMetrics and getSeries', () => {
         ]
       }
     ]);
-    return getMetrics(req)
+    return getMetrics(req, indexPattern)
     .then(result => {
       expect(result).to.eql({
         index_1: [
@@ -208,7 +210,7 @@ describe('getMetrics and getSeries', () => {
 
   it('with metric that uses default calculation', () => {
     const req = getMockReq(nonDerivMetricsBuckets, [ 'kibana_max_response_times' ]);
-    return getMetrics(req)
+    return getMetrics(req, indexPattern)
     .then(result => {
       expect(result).to.eql({
         kibana_max_response_times: [

@@ -1,3 +1,9 @@
+import Promise from 'bluebird';
+import _ from 'lodash';
+import { checkParam } from '../error_missing_required';
+import { createQuery } from '../create_query.js';
+import { ElasticsearchMetric } from '../metrics/metric_classes';
+
 /*
  * Get high-level info for Logstashs in a set of clusters
  * The set contains multiple clusters for cluster listing page
@@ -11,12 +17,9 @@
  *  - number of instances
  *  - combined health
  */
-import Promise from 'bluebird';
-import _ from 'lodash';
-import { createQuery } from './../create_query.js';
-import { ElasticsearchMetric } from './../metrics/metric_classes';
-
 export function getLogstashForClusters(req, logstashIndexPattern) {
+  checkParam(logstashIndexPattern, 'logstashIndexPattern in logstash/getLogstashForClusters');
+
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const config = req.server.config();

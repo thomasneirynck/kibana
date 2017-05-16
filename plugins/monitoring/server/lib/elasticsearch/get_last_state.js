@@ -1,8 +1,11 @@
 import _ from 'lodash';
+import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query.js';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 export function getLastState(req, esIndexPattern) {
+  checkParam(esIndexPattern, 'esIndexPattern in elasticsearch/getLastState');
+
   const end = req.payload.timeRange.max;
   const uuid = req.params.clusterUuid;
   const config = req.server.config();

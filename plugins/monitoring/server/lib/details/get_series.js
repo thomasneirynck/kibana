@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import moment from 'moment';
+import { checkParam } from '../error_missing_required';
 import { metrics } from '../metrics';
 import { createQuery } from '../create_query.js';
 import { near } from '../calculate_auto';
@@ -17,6 +18,8 @@ function getUuid(req, metric) {
 }
 
 export function getSeries(req, indexPattern, metricName, filters) {
+  checkParam(indexPattern, 'indexPattern in details/getSeries');
+
   const metric = metrics[metricName];
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;

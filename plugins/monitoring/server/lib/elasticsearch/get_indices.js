@@ -1,3 +1,11 @@
+import moment from 'moment';
+import { checkParam } from '../error_missing_required';
+import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { createQuery } from '../create_query.js';
+import { near } from '../calculate_auto';
+import { getAggItems } from '../lists/get_agg_items';
+import { mapResponse } from '../lists/map_response';
+
 /* Run an aggregation on index_stats to get stat data for the selected time
  * range for esIndexPattern. The stat data is built up with passed-in
  * options that are given by the UI client as an array
@@ -9,15 +17,9 @@
  * histogram data with mapResponse to transform it into X/Y coordinates
  * for charting. This method is shared by the get_listing_nodes lib.
  */
-import { ElasticsearchMetric } from '../metrics/metric_classes';
-
-import moment from 'moment';
-import { createQuery } from '../create_query.js';
-import { near } from '../calculate_auto';
-import { getAggItems } from '../lists/get_agg_items';
-import { mapResponse } from '../lists/map_response';
-
 export function getIndices(req, esIndexPattern, showSystemIndices = false) {
+  checkParam(esIndexPattern, 'esIndexPattern in elasticsearch/getIndices');
+
   const config = req.server.config();
   const listingMetrics = req.payload.listingMetrics || [];
 

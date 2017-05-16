@@ -1,8 +1,11 @@
 import { isPlainObject } from 'lodash';
 import Promise from 'bluebird';
+import { checkParam } from '../error_missing_required';
 import { getSeries } from './get_series';
 
 export function getMetrics(req, indexPattern, filters = []) {
+  checkParam(indexPattern, 'indexPattern in details/getMetrics');
+
   const metrics = req.payload.metrics || [];
   return Promise.map(metrics, metric => {
     // metric names match the literal metric name, but they can be supplied in groups or individually

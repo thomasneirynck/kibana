@@ -1,3 +1,12 @@
+import moment from 'moment';
+import { checkParam } from '../error_missing_required';
+import { createQuery } from '../create_query.js';
+import { near } from '../calculate_auto';
+import { getAggItems } from '../lists/get_agg_items';
+import { mapResponse } from '../lists/map_response';
+import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { getLatestAggKey, getNodeAttribute } from './node_agg_vals';
+
 /* Run an aggregation on node_stats to get stat data for the selected time
  * range for all the active nodes. The stat data is built up with passed-in
  * options that are given by the UI client as an array
@@ -22,16 +31,9 @@
  * If we calculate the slope is going up, we just have an up arrow to say it's
  * going up, and likewise if the metric is going down, we have a down arrow
  */
-import { ElasticsearchMetric } from '../metrics/metric_classes';
-
-import moment from 'moment';
-import { getLatestAggKey, getNodeAttribute } from './node_agg_vals';
-import { createQuery } from '../create_query.js';
-import { near } from '../calculate_auto';
-import { getAggItems } from '../lists/get_agg_items';
-import { mapResponse } from '../lists/map_response';
-
 export function getNodes(req, esIndexPattern) {
+  checkParam(esIndexPattern, 'esIndexPattern in getNodes');
+
   const start = moment.utc(req.payload.timeRange.min).valueOf();
   const orgStart = start;
   const end = moment.utc(req.payload.timeRange.max).valueOf();
@@ -118,5 +120,4 @@ export function getNodes(req, esIndexPattern) {
       })
     };
   });
-
 };

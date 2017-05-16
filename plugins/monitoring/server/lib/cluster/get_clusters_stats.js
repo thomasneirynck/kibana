@@ -1,5 +1,6 @@
 import { get } from 'lodash';
 import Promise from 'bluebird';
+import { checkParam } from '../error_missing_required';
 import { createTypeFilter } from '../create_query';
 
 /*
@@ -7,6 +8,8 @@ import { createTypeFilter } from '../create_query';
  * @return array of cluster objects with .stats field added
  */
 export function getClustersStats(req, esIndexPattern) {
+  checkParam(esIndexPattern, 'esIndexPattern in cluster/getClustersStats');
+
   return (clusters) => {
     // in case getClusters had no hits and returned undefined
     if (!clusters) { return []; }

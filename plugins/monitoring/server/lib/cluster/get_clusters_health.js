@@ -1,4 +1,5 @@
 import { get, find, indexBy } from 'lodash';
+import { checkParam } from '../error_missing_required';
 import { createTypeFilter } from '../create_query';
 
 export function handleResponse(config, clusters) {
@@ -24,6 +25,8 @@ export function handleResponse(config, clusters) {
  * downstream depenencies
  */
 export function getClustersHealth(req, esIndexPattern) {
+  checkParam(esIndexPattern, 'esIndexPattern in cluster/getClustersHealth');
+
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const config = req.server.config();
 

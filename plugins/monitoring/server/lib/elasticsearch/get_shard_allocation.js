@@ -1,8 +1,11 @@
 import _ from 'lodash';
+import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 export function getShardAllocation(req, esIndexPattern, filters, lastState, showSystemIndices = false) {
+  checkParam(esIndexPattern, 'esIndexPattern in elasticsearch/getShardAllocation');
+
   filters.push({
     term: { state_uuid: _.get(lastState, 'cluster_state.state_uuid') }
   });

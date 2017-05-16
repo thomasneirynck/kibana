@@ -1,10 +1,13 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
+import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query';
-import { validateMonitoringLicense } from './validate_monitoring_license';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { validateMonitoringLicense } from './validate_monitoring_license';
 
 export function getClusters(req, esIndexPattern) {
+  checkParam(esIndexPattern, 'esIndexPattern in getClusters');
+
   const config = req.server.config();
   // Get the params from the POST body for the request
   const start = req.payload.timeRange.min;

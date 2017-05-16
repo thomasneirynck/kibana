@@ -1,10 +1,13 @@
 import { get, forEach } from 'lodash';
-import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from './normalize_shard_objects';
+import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query';
 import { calculateNodeType } from './calculate_node_type';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from './normalize_shard_objects';
 
 export function getShardStats(req, esIndexPattern, lastState) {
+  checkParam(esIndexPattern, 'esIndexPattern in elasticsearch/getShardStats');
+
   const config = req.server.config();
   const nodeResolver = config.get('xpack.monitoring.node_resolver');
   const uuid = req.params.clusterUuid;

@@ -37,7 +37,7 @@ export function getClustersFromRequest(req) {
   const config = req.server.config();
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 
-  return getClusters(req)
+  return getClusters(req, esIndexPattern)
   .then(getClustersStats(req, esIndexPattern))
   .then(getClustersHealth(req, esIndexPattern))
   .then(flagSupportedClusters(req))
@@ -69,7 +69,7 @@ export function getClustersFromRequest(req) {
     });
   })
   .then(clusters => {
-    const mapClusters = getKibanasForClusters(req);
+    const mapClusters = getKibanasForClusters(req, config.get('xpack.monitoring.kibana.index_pattern'));
     return mapClusters(clusters)
     .then(kibanas => {
       // add the kibana data to each cluster
@@ -81,7 +81,7 @@ export function getClustersFromRequest(req) {
     });
   })
   .then(clusters => {
-    const mapClusters = getLogstashForClusters(req);
+    const mapClusters = getLogstashForClusters(req, config.get('xpack.monitoring.logstash.index_pattern'));
     return mapClusters(clusters)
     .then(logstashes => {
       // add the logstash data to each cluster

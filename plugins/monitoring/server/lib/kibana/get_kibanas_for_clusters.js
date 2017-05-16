@@ -1,5 +1,6 @@
 import Promise from 'bluebird';
 import _ from 'lodash';
+import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query.js';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 
@@ -17,6 +18,8 @@ import { ElasticsearchMetric } from '../metrics/metric_classes';
  *  - combined health
  */
 export function getKibanasForClusters(req, kbnIndexPattern) {
+  checkParam(kbnIndexPattern, 'kbnIndexPattern in kibana/getKibanasForClusters');
+
   const config = req.server.config();
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;

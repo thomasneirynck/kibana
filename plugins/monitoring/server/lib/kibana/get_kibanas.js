@@ -1,3 +1,10 @@
+import { get } from 'lodash';
+import moment from 'moment';
+import { checkParam } from '../error_missing_required';
+import { createQuery } from '../create_query';
+import { calculateAvailability } from '../calculate_availability';
+import { ElasticsearchMetric } from '../metrics/metric_classes';
+
 /*
  * Get detailed info for Kibanas in the cluster
  * for Kibana listing page
@@ -9,13 +16,9 @@
  *  - requests
  *  - response times
  */
-import { get } from 'lodash';
-import moment from 'moment';
-import { createQuery } from '../create_query';
-import { calculateAvailability } from '../calculate_availability';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
-
 export function getKibanas(req, kbnIndexPattern) {
+  checkParam(kbnIndexPattern, 'kbnIndexPattern in getKibanas');
+
   const config = req.server.config();
   const start = moment.utc(req.payload.timeRange.min).valueOf();
   const end = moment.utc(req.payload.timeRange.max).valueOf();

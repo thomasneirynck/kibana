@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query.js';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 
@@ -39,6 +40,8 @@ export function handleLastRecoveries(resp, start) {
 }
 
 export function getLastRecovery(req, esIndexPattern) {
+  checkParam(esIndexPattern, 'esIndexPattern in elasticsearch/getLastRecovery');
+
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
   const uuid = req.params.clusterUuid;

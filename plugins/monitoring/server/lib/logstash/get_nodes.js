@@ -1,3 +1,10 @@
+import { get } from 'lodash';
+import moment from 'moment';
+import { checkParam } from '../error_missing_required';
+import { createQuery } from '../create_query';
+import { calculateAvailability } from '../calculate_availability';
+import { ElasticsearchMetric } from '../metrics/metric_classes';
+
 /*
  * Get detailed info for Logstash's in the cluster
  * for Logstash nodes listing page
@@ -9,13 +16,9 @@
  *  - events
  *  - config reloads
  */
-import { get } from 'lodash';
-import moment from 'moment';
-import { createQuery } from '../create_query';
-import { calculateAvailability } from '../calculate_availability';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
-
 export function getNodes(req, logstashIndexPattern) {
+  checkParam(logstashIndexPattern, 'logstashIndexPattern in getNodes');
+
   const config = req.server.config();
   const start = moment.utc(req.payload.timeRange.min).valueOf();
   const end = moment.utc(req.payload.timeRange.max).valueOf();
