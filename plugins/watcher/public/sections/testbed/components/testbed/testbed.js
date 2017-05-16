@@ -2,6 +2,8 @@ import { uiModules } from 'ui/modules';
 import template from './testbed.html';
 import './testbed.less';
 
+import 'ui/react_components';
+
 const app = uiModules.get('xpack/watcher');
 
 app.directive('testbed', function () {
@@ -16,6 +18,10 @@ app.directive('testbed', function () {
     controllerAs: 'testbed',
     controller: class TestbedController {
       constructor() {
+      }
+
+      onFilter = (newFilter) => {
+        this.filter = newFilter;
       }
     }
   };

@@ -6,7 +6,7 @@ import '../watch_table';
 import { PAGINATION, REFRESH_INTERVALS } from 'plugins/watcher/../common/constants';
 import 'ui/pager_control';
 import 'ui/pager';
-import 'plugins/watcher/components/tool_bar_search_box';
+import 'ui/react_components';
 import 'plugins/watcher/components/tool_bar_selected_count';
 import 'plugins/watcher/components/loading_results';
 import 'plugins/watcher/components/forbidden_message';

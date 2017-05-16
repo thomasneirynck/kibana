@@ -5,6 +5,14 @@
 
     <!-- All markup within the CONTENT section below can be deleted and replaced with whatever markup you need to   demonstate your functionality. Nothing need be preserved. -->
     <!-- CONTENT START -->
+    <div class="kuiVerticalRhythm">
+      <tool-bar-search-box on-filter="testbed.onFilter"></tool-bar-search-box>
+    </div>
+
+    <div class="kuiVerticalRhythm">
+      <span class="kuiText kuiSubduedText">Filtering on:</span>
+      <span class="kuiText">{{ testbed.filter }}</span>
+    </div>
 
     <!-- CONTENT END -->
 

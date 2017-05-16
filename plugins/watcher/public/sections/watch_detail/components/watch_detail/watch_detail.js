@@ -3,7 +3,6 @@ import moment from 'moment-timezone';
 import { Notifier } from 'ui/notify/notifier';
 import 'ui/config';
 import 'ui/url';
-import 'plugins/watcher/components/tool_bar_search_box';
 import 'plugins/watcher/components/tool_bar_selected_count';
 import 'plugins/watcher/components/loading_results';
 import 'plugins/watcher/components/no_items';
