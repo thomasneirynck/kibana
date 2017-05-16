@@ -32,7 +32,7 @@
       <label>Indices</label>
       <div>
         <div class="index-list-container">
-          <div class="checkbox" ng-repeat="(key, value) in ui.sortByKey(ui.indices)" >
+          <div class="checkbox" ng-repeat="(key, value) in ui.sortByKey(ui.indices) | filterIndices" >
             <label><input type="checkbox" ng-checked="indices[key] !== undefined" ng-click="toggleIndex(key, value)" >{{key}}</label>
           </div>
         </div>

@@ -243,7 +243,7 @@ module.directive('mlElasticDataDescription', function () {
         $scope.ui.validation.setTabValid(4, true);
         mlJobService.getESMappings()
         .then((indices) => {
-          $scope.ui.indices  = filterIndices(indices);
+          $scope.ui.indices  = indices;
           $scope.ui.esServerOk = 1;
           console.log('getMappings():', $scope.ui.indices);
 
@@ -282,20 +282,6 @@ module.directive('mlElasticDataDescription', function () {
         return deferred.promise;
       }
 
-      function filterIndices(idxs) {
-        const indices = {};
-        const monitoringName = new RegExp('^\\.monitoring-.+');
-        const dotName = new RegExp('^\\..+');
-        _.each(idxs, (idx, key) => {
-          // create a new collection only containing indices
-          // which don't start with a dot, except monitoring ones
-          if (key.match(monitoringName) || !key.match(dotName)) {
-            indices[key] = idx;
-          }
-        });
-        return indices;
-      }
-
       $scope.toggleIndex = function (key, index) {
         const idx = $scope.indices[key];
         if (idx === undefined) {
@@ -305,7 +291,6 @@ module.directive('mlElasticDataDescription', function () {
         }
 
         $scope.extractFields();
-        // console.log($scope.indices);
         guessTimeField();
       };
 
@@ -318,7 +303,6 @@ module.directive('mlElasticDataDescription', function () {
         }
 
         $scope.extractFields({ types: $scope.types });
-        // console.log($scope.types);
         guessTimeField();
       };
 
@@ -430,5 +414,19 @@ module.directive('mlElasticDataDescription', function () {
 
       init();
     }
+  };
+}).filter('filterIndices', function () {
+  return (idxs) => {
+    const indices = {};
+    const monitoringName = new RegExp('^\\.monitoring-.+');
+    const dotName = new RegExp('^\\..+');
+    _.each(idxs, (idx, key) => {
+      // create a new collection only containing indices
+      // which don't start with a dot, except monitoring ones
+      if (key.match(monitoringName) || !key.match(dotName)) {
+        indices[key] = idx;
+      }
+    });
+    return indices;
   };
 });
