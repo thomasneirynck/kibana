@@ -3,6 +3,7 @@ import uiRoutes from 'ui/routes';
 import template from './index.html';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
 import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
+import { formatTimestampToDuration } from 'plugins/monitoring/lib/format_number';
 
 function getAlertData($injector) {
   const globalState = $injector.get('globalState');
@@ -36,7 +37,12 @@ uiRoutes.when('/alerts', {
     $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
 
     const setData = (alerts) => {
-      this.data = alerts;
+      this.data = alerts.map(alert => {
+        return {
+          ...alert,
+          since: formatTimestampToDuration(alert.timestamp)
+        };
+      });
     };
     setData($route.current.locals.alerts);
 

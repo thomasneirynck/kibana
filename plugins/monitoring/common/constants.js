@@ -44,3 +44,15 @@ export const CHART_TEXT_COLOR = '#9c9c9c';
  * @type {number}
  */
 export const CLUSTER_ALERTS_SEARCH_SIZE = 3;
+
+/*
+ * Format for moment-duration-format timestamp-to-duration template if the time diffs are gte 1 month
+ * @type {string}
+ */
+export const FORMAT_DURATION_TEMPLATE_LONG = 'M [months] d [days]';
+
+/*
+ * Format for moment-duration-format timestamp-to-duration template if the time diffs are lt 1 month
+ * @type {string}
+ */
+export const FORMAT_DURATION_TEMPLATE_SHORT = ' d [days] h [hrs] m [min]';

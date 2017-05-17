@@ -1,7 +1,6 @@
 import { capitalize } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { formatDateTimeLocal } from 'monitoring-formatting';
 import { uiModules } from 'ui/modules';
 import { Table } from 'plugins/monitoring/components/paginated_table';
 import { SORT_DESCENDING } from 'monitoring-constants';
@@ -9,21 +8,20 @@ import { Tooltip } from 'plugins/monitoring/components/tooltip';
 import { FormattedMessage } from 'plugins/monitoring/components/alerts/formatted_message';
 import { SeverityIcon } from 'plugins/monitoring/components/alerts/severity_icon';
 import { mapSeverity } from 'plugins/monitoring/components/alerts/map_severity';
+import { formatDateTimeLocal } from 'monitoring-formatting';
 
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringClusterAlertsListing', function (kbnUrl) {
   const tableOptions = {
     searchPlaceholder: 'Filter Alerts',
-    filterFields: ['message', 'prefix', 'suffix', 'update_timestamp', 'severity_group'],
+    filterFields: ['message', 'severity_group', 'prefix', 'suffix', 'since', 'timestamp', 'update_timestamp'],
     noDataMessage: 'There are currently no active cluster alerts.',
     columns: [
       { key: 'metadata.severity', title: 'Status', sort: SORT_DESCENDING }, // desc. order for worst on top
       { key: 'message', title: 'Message' },
-      { key: 'update_timestamp', title: 'Time' }
+      { key: 'update_timestamp', title: 'Last Checked' },
+      { key: 'timestamp', title: 'Since' }
     ]
-  };
-  const localizeDate = (date) => {
-    return formatDateTimeLocal(date);
   };
 
   return {
@@ -54,7 +52,10 @@ uiModule.directive('monitoringClusterAlertsListing', function (kbnUrl) {
               />
             </td>
             <td>
-              { localizeDate(props.update_timestamp) }
+              { formatDateTimeLocal(props.update_timestamp) }
+            </td>
+            <td>
+              { props.since } ago
             </td>
           </tr>
         );
