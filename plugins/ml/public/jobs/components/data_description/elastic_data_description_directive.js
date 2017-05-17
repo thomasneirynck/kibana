@@ -148,7 +148,9 @@ module.directive('mlElasticDataDescription', function () {
         }
 
         const ignoreFields = collectCopyToFields($scope.types);
-        const flatFields = extractFlatFields($scope.types);
+        let flatFields = extractFlatFields($scope.types);
+        flatFields = renameMultiFields(flatFields);
+
         _.each(flatFields, (prop, key) => {
 
           if (ignoreFields[key]) {
@@ -410,6 +412,25 @@ module.directive('mlElasticDataDescription', function () {
           $scope.data_description.time_field = match;
           console.log('guessTimeField: guessed time fields: ', match);
         }
+      }
+
+      // modify the names of text fields which contain keyword subfields
+      function renameMultiFields(fields) {
+        const renamedFields = {};
+        _.each(fields, (field, k) => {
+          let name = k;
+          if (field.type === 'text') {
+            if(field.fields) {
+              _.each(field.fields, (subField, sfk) => {
+                if (subField.type === 'keyword') {
+                  name = `${name}.${sfk}`;
+                }
+              });
+            }
+          }
+          renamedFields[name] = field;
+        });
+        return renamedFields;
       }
 
       init();
