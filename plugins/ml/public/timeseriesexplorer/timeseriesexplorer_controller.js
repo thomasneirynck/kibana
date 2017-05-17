@@ -32,7 +32,10 @@ import 'ui/timefilter';
 import { parseInterval } from 'ui/utils/parse_interval';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
-import { isTimeSeriesViewJob, isModelPlotEnabled } from 'plugins/ml/util/job_utils';
+import {
+  isTimeSeriesViewJob,
+  isTimeSeriesViewFunction,
+  isModelPlotEnabled } from 'plugins/ml/util/job_utils';
 import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
@@ -57,11 +60,12 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
   $scope.timeFieldName = 'timestamp';
   timefilter.enabled = true;
 
-
   const CHARTS_POINT_TARGET = 500;
   const ANOMALIES_MAX_RESULTS = 500;
   const TimeBuckets = Private(IntervalHelperProvider);
 
+  $scope.selectedJob = null;
+  $scope.detectors = [];
   $scope.loading = false;
   $scope.hasResults = false;
   $scope.modelPlotEnabled = false;
@@ -83,17 +87,6 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       mlTimeSeriesExplorer: {}
     };
     $scope.appState = new AppState(stateDefaults);
-
-    // Read the detector index and entities out of the AppState.
-    $scope.detectorIndex = $scope.appState.mlTimeSeriesExplorer.detectorIndex || 0;
-    const entities = [];
-    const entitiesState = $scope.appState.mlTimeSeriesExplorer.entities;
-    if (entitiesState !== undefined) {
-      _.each(entitiesState, (fieldValue, fieldName) => {
-        entities.push({ fieldName: fieldName, fieldValue: fieldValue });
-      });
-    }
-    $scope.entities = entities;
 
     $scope.jobs = [];
 
@@ -142,7 +135,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
     $scope.loading = true;
     $scope.hasResults = false;
-    $scope.contextChartData;
+    delete $scope.contextChartData;
     delete $scope.focusChartData;
 
     // Counter to keep track of what data sets have been loaded.
@@ -176,12 +169,15 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
     // TODO - enforce single job selection in the job picker, or remove job picker?
     const selectedJob = getSelectedJob();
+    const detectorIndex = +$scope.detectorId;
     $scope.modelPlotEnabled = isModelPlotEnabled(selectedJob);
-    $scope.detectorDescription = selectedJob.analysis_config.detectors[$scope.detectorIndex].detector_description;
+
+    // Only filter on the entity if the field has a value.
+    const nonBlankEntities = _.filter($scope.entities, (entity) => { return entity.fieldValue.length > 0; });
     $scope.criteriaFields = [{
       'fieldName':'detector_index',
-      'fieldValue':$scope.detectorIndex }
-    ].concat($scope.entities);
+      'fieldValue':detectorIndex }
+    ].concat(nonBlankEntities);
 
     // Calculate the aggregation interval for the context chart.
     // Context chart swimlane will display bucket anomaly score at the same interval.
@@ -189,15 +185,15 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     console.log('aggregationInterval for context data (s):', $scope.contextAggregationInterval.asSeconds());
 
     // Query 1 - load metric data at low granularity across full time range.
-    mlTimeSeriesSearchService.getMetricData(selectedJob, $scope.detectorIndex, $scope.entities,
+    mlTimeSeriesSearchService.getMetricData(selectedJob, detectorIndex, nonBlankEntities,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.contextAggregationInterval.expression)
     .then((resp) => {
       const fullRangeChartData = processMetricPlotResults(resp.results);
       $scope.contextChartData = fullRangeChartData;
 
-      console.log('Time series explorer model plot context chart data set:', $scope.contextChartData);
+      console.log('Time series explorer context chart data set:', $scope.contextChartData);
 
-      // Set zoomFrom/zoomTo attributes in scope which will result in the model plot chart automatically
+      // Set zoomFrom/zoomTo attributes in scope which will result in the metric chart automatically
       // selecting the specified range in the context chart, and so loading that date range in the focus chart.
       if ($scope.contextChartData.length) {
         const focusRange = calculateInitialFocusRange();
@@ -207,7 +203,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
       finish();
     }).catch((resp) => {
-      console.log('Time series explorer - error getting model plot data from elasticsearch:', resp);
+      console.log('Time series explorer - error getting metric data from elasticsearch:', resp);
     });
 
     // Query 2 - load max record score at same granularity as context chart
@@ -258,6 +254,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
     const selectedJobIds = $scope.getSelectedJobIds();
     const selectedJob = getSelectedJob();
+    const detectorIndex = +$scope.detectorId;
+    const nonBlankEntities = _.filter($scope.entities, (entity) => { return entity.fieldValue.length > 0; });
 
     // Calculate the aggregation interval for the focus chart.
     const bounds = { min: moment(fromDate), max: moment(toDate) };
@@ -265,13 +263,13 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     console.log('aggregationInterval for focus data (s):', $scope.focusAggregationInterval.asSeconds());
 
     // Query 1 - load metric data across selected time range.
-    mlTimeSeriesSearchService.getMetricData(selectedJob, $scope.detectorIndex, $scope.entities,
+    mlTimeSeriesSearchService.getMetricData(selectedJob, detectorIndex, nonBlankEntities,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.focusAggregationInterval.expression)
     .then((resp) => {
       $scope.focusChartData = processMetricPlotResults(resp.results);
       finish();
     }).catch((resp) => {
-      console.log('Time series explorer - error getting model plot data from elasticsearch:', resp);
+      console.log('Time series explorer - error getting metric data from elasticsearch:', resp);
     });
 
     // Query 2 - load records across full time range.
@@ -285,6 +283,17 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       console.log('Time series explorer anomalies:', $scope.anomalyRecords);
       finish();
     });
+  };
+
+  $scope.saveSeriesPropertiesAndRefresh = function () {
+    $scope.appState.mlTimeSeriesExplorer.detectorIndex = +$scope.detectorId;
+    $scope.appState.mlTimeSeriesExplorer.entities = {};
+    _.each($scope.entities, (entity) => {
+      $scope.appState.mlTimeSeriesExplorer.entities[entity.fieldName] = entity.fieldValue;
+    });
+    $scope.appState.save();
+
+    $scope.refresh();
   };
 
   $scope.setSelectedJobs = function (selections) {
@@ -304,6 +313,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       }
     }
 
+    // TODO - move to single job selection, and $scope.selectedJob
     $scope.selectedJobs = [];
     const selectedJobIds = [];
     const selectAll = ((selections.length === 1 && selections[0] === '*') || selections.length === 0);
@@ -315,8 +325,62 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       }
     });
 
+    $scope.selectedJob = getSelectedJob();
+
+    // Read the detector index and entities out of the AppState.
+    let detectorIndex = $scope.appState.mlTimeSeriesExplorer.detectorIndex || 0;
+    const jobDetectors = $scope.selectedJob.analysis_config.detectors;
+    const viewableDetectors = [];
+    _.each(jobDetectors, (dtr, index) => {
+      if ((isTimeSeriesViewFunction(dtr.function) === true) && (dtr.by_field_name !== 'mlcategory')) {
+        viewableDetectors.push({ index: '' + index, detector_description: dtr.detector_description });
+      }
+    });
+    $scope.detectors = viewableDetectors;
+
+    // Check the supplied index is valid.
+    if (_.find(viewableDetectors, { 'index': '' + detectorIndex }) === undefined) {
+      const warningText = `Requested detector index ${detectorIndex} is not valid for job ${$scope.selectedJob.job_id}`;
+      notify.warning(warningText, { lifetime: 30000 });
+      detectorIndex = +(viewableDetectors[0].index);
+      $scope.appState.mlTimeSeriesExplorer.detectorIndex = detectorIndex;
+      $scope.appState.save();
+    }
+
+    // Store the detector index as a string so it can be used as ng-model in a select control.
+    $scope.detectorId = '' + detectorIndex;
+
+    const detector = jobDetectors[detectorIndex];
+    const entities = [];
+    const entitiesState = $scope.appState.mlTimeSeriesExplorer.entities || {};
+    const partitionFieldName = _.get(detector, 'partition_field_name');
+    const overFieldName = _.get(detector, 'over_field_name');
+    const byFieldName = _.get(detector, 'by_field_name');
+    if (partitionFieldName !== undefined) {
+      const partitionFieldValue = _.get(entitiesState, partitionFieldName, '');
+      entities.push({ fieldName: partitionFieldName, fieldValue: partitionFieldValue });
+    }
+    if (overFieldName !== undefined) {
+      const overFieldValue = _.get(entitiesState, overFieldName, '');
+      entities.push({ fieldName: overFieldName, fieldValue: overFieldValue });
+    }
+
+
+    // For jobs with by and over fields, don't add the 'by' field as this
+    // field will only be added to the top-level fields for record type results
+    // if it also an influencer over the bucket.
+    // TODO - metric data can be filtered by this field, so should only exclude
+    // from filter for the anomaly records.
+    if (byFieldName !== undefined && overFieldName === undefined) {
+      const byFieldValue = _.get(entitiesState, byFieldName, '');
+      entities.push({ fieldName: byFieldName, fieldValue: byFieldValue });
+    }
+
+    $scope.entities = entities;
+
     globalState.ml.jobIds = selections;
     globalState.save();
+
     $scope.refresh();
   };
 
@@ -336,9 +400,6 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
   // When inside a dashboard in the ML plugin, listen for changes to job selection.
   mlJobSelectService.listenJobSelectionChange($scope, (event, selections) => {
     // Reset the detector and clear the entities.
-    // TODO - implement a 'select entity' popup when changing jobs.
-    $scope.detectorIndex = 0;
-    $scope.entities = [];
     $scope.appState.mlTimeSeriesExplorer.detectorIndex = 0;
     delete $scope.appState.mlTimeSeriesExplorer.entities;
     $scope.appState.save();
@@ -348,6 +409,10 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
   $scope.$on('contextChartSelected', function (event, selection) {
     // Save state of zoom (adds to URL) if it is different to the default.
+    if ($scope.contextChartData === undefined || $scope.contextChartData.length === 0) {
+      return;
+    }
+
     const defaultRange = calculateDefaultFocusRange();
     if (selection.from.getTime() !== defaultRange[0].getTime() || selection.to.getTime() !== defaultRange[1].getTime()) {
       const zoomState = { from: selection.from.toISOString(), to: selection.to.toISOString() };
@@ -416,6 +481,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     const latestDataDate = _.last($scope.contextChartData).date;
     const latestMsToLoad = latestDataDate.getTime() + $scope.contextAggregationInterval.asMilliseconds();
     const earliestMsToLoad = Math.max(earliestDataDate.getTime(), latestMsToLoad - $scope.autoZoomDuration);
+
     return [new Date(earliestMsToLoad), new Date(latestMsToLoad)];
   }
 

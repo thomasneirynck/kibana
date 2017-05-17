@@ -16,18 +16,18 @@
 
   <div class="series-controls" ng-show="jobs.length > 0">
     <label class="kuiLabel">Detector:</label>
-    <label class="kuiLabel">{{detectorDescription}}</label>
-<!--     <input
-      ng-model="detectorDescription"
-      class="kuiTextInput kuiTextInput--large" /> -->
+    <select class="kuiSelect kuiSelect--large" ng-model="detectorId">
+      <option ng-repeat="detector in detectors track by detector.index" value="{{detector.index}}">{{detector.detector_description}}</option>
+    </select>
 
     <div class="entity-controls" ng-repeat="entity in entities">
       <label class="kuiLabel">{{entity.fieldName}}:</label>
-      <label class="kuiLabel">{{entity.fieldValue}}</label>
-<!--       <input
-        ng-model="entity.fieldValue"
-        class="kuiTextInput"/> -->
+      <input class="kuiTextInput" ng-model="entity.fieldValue" ng-model-options="{ updateOn: 'blur' }" placeholder="Enter value" />
     </div>
+
+    <button class="kuiButton kuiButton--primary" ng-click="saveSeriesPropertiesAndRefresh()" >
+      <i class="fa fa-play" ></i>
+    </button>
 
   </div>
 
@@ -48,8 +48,6 @@
 
       <span class="panel-title">
         Single time series analysis
-        <span ng-if="entities.length > 0"> for </span>
-        <span ng-repeat="entity in entities">{{entity.fieldName}} {{entity.fieldValue}}</span>
       </span>
       <div class="ml-timeseries-chart">
         <ml-timeseries-chart  style="width: 1200px; height: 400px;"

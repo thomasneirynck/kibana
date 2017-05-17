@@ -92,6 +92,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
     let contextYScale = d3.scale.linear().range([contextChartHeight, 0]);
 
     const brush = d3.svg.brush();
+    let mask;
 
     scope.$on('render', () => {
       render();
@@ -132,22 +133,21 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
     });
 
     function render() {
-      if (scope.contextChartData === undefined) {
-        return;
-      }
-
-      // Set the size of the components according to the width of the parent container at render time.
-      svgWidth = angular.element('.results-container').width();
-
       // Clear any existing elements from the visualization,
       // then build the svg elements for the bubble chart.
       const chartElement = d3.select(element.get(0));
       chartElement.selectAll('*').remove();
 
+      if (scope.contextChartData === undefined) {
+        return;
+      }
+
+      // Set the size of the components according to the width of the parent container at render time.
+      svgWidth = Math.max(angular.element('.results-container').width(), 0);
+
       const svg = chartElement.append('svg')
         .attr('width',  svgWidth)
         .attr('height', svgHeight);
-
 
       // Set the size of the left margin according to the width of the largest y axis tick label.
       // Temporarily set the domain of the focus y axis to the full data range so that we can
@@ -184,7 +184,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       d3.select('.temp-axis-label').remove();
 
       margin.left = (Math.max(maxYAxisLabelWidth, 40));
-      vizWidth  = svgWidth  - margin.left - margin.right;
+      vizWidth  = Math.max(svgWidth  - margin.left - margin.right, 0);
       focusXScale.range([0, vizWidth]);
       focusYAxis.innerTickSize(-vizWidth);
 
@@ -202,6 +202,10 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
     }
 
     function drawContextChartSelection() {
+      if (scope.contextChartData === undefined) {
+        return;
+      }
+
       // Make appropriate selection in the context chart to trigger loading of the focus chart.
       let focusLoadFrom;
       let focusLoadTo;
@@ -227,6 +231,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         setContextBrushExtent(new Date(focusLoadFrom), new Date(focusLoadTo), true);
       } else {
         // Don't set the brush if the selection is the full context chart domain.
+        setBrushVisibility(false);
         const selectedBounds = contextXScale.domain();
         scope.selectedBounds = { min: moment(new Date(selectedBounds[0])), max: moment(selectedBounds[1]) };
         scope.$root.$broadcast('contextChartSelected', { from: selectedBounds[0], to: selectedBounds[1] });
@@ -526,7 +531,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
 
       // Draw a mask over the sections of the context chart and swimlane
       // which fall outside of the zoom brush selection area.
-      const mask = new ContextChartMask(cxtGroup, scope.contextChartData, scope.modelPlotEnabled, swlHeight)
+      mask = new ContextChartMask(cxtGroup, scope.contextChartData, scope.modelPlotEnabled, swlHeight)
         .x(contextXScale)
         .y(contextYScale);
 
@@ -539,10 +544,10 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       cxtGroup.selectAll('.x.context-chart-axis text')
         .attr('dy', (cxtChartHeight - 5));
 
-      drawContextBrush(cxtGroup, mask);
+      drawContextBrush(cxtGroup);
     }
 
-    function drawContextBrush(contextGroup, mask) {
+    function drawContextBrush(contextGroup) {
       // Create the brush for zooming in to the focus area of interest.
       brush.x(contextXScale)
         .on('brush', brushing)
@@ -554,7 +559,6 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       .selectAll('rect')
         .attr('y', -1)
         .attr('height', contextChartHeight + swimlaneHeight + 1);
-
 
       // move the left and right resize areas over to
       // be under the handles
@@ -581,8 +585,6 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         .attr('height', 90)
         .attr('class', 'brush-handle')
         .html('<div class="brush-handle-inner brush-handle-inner-right"><i class="fa fa-caret-right"></i></div>');
-
-      const border = d3.selectAll('.chart-border-highlight');
 
       setBrushVisibility(!brush.empty());
 
@@ -627,13 +629,22 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         scope.selectedBounds = { min: moment(selectionMin), max: moment(selectionMax) };
         scope.$root.$broadcast('contextChartSelected', { from: selectedBounds[0], to: selectedBounds[1] });
       }
+    }
 
-      function setBrushVisibility(show) {
+    function setBrushVisibility(show) {
+      if (mask !== undefined) {
         const visibility = show ? 'visible' : 'hidden';
         mask.style('visibility', visibility);
-        leftHandle.style('visibility', visibility);
-        rightHandle.style('visibility', visibility);
+
+        d3.selectAll('.brush').style('visibility', visibility);
+
+        const brushHandles = d3.selectAll('.brush-handle');
+        brushHandles.style('visibility', visibility);
+
+        const topBorder = d3.selectAll('.top-border');
         topBorder.style('visibility', visibility);
+
+        const border = d3.selectAll('.chart-border-highlight');
         border.style('visibility', visibility);
       }
     }
