@@ -13,6 +13,8 @@ module.constant('shieldPrivileges', {
     'transport_client',
     'manage_ml',
     'monitor_ml',
+    'manage_watcher',
+    'monitor_watcher',
   ],
   indices: [
     'all',
