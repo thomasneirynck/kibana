@@ -401,6 +401,7 @@ module.directive('mlElasticDataDescription', function () {
         let match = $scope.data_description.time_field;
         if ($scope.dateProperties[match] === undefined) {
           match = '';
+          $scope.data_description.time_field = '';
         }
         _.each($scope.dateProperties, (prop, i) => {
           // loop through dateProperties and find the first item that matches 'time'
