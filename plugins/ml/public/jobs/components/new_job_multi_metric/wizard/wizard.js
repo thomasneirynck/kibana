@@ -34,10 +34,10 @@ uiRoutes
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('MlNewJobMultiStep1', (
+module.controller('MlNewJobMultiStep1', function (
   $scope,
   $route,
-  timefilter) => {
+  timefilter) {
 
   timefilter.enabled = false; // remove time picker from top of page
 

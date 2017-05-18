@@ -13,6 +13,8 @@
  * strictly prohibited.
  */
 
+import chrome from 'ui/chrome';
+
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
@@ -22,7 +24,8 @@ uiRoutes
   template: require('./wizard.html'),
   resolve : {
     CheckLicense: checkLicense,
-    privileges: checkCreateJobsPrivilege
+    privileges: checkCreateJobsPrivilege,
+    indexPatternIds: courier => courier.indexPatterns.getIds()
   }
 });
 
@@ -34,11 +37,11 @@ function (
   $scope,
   $route,
   $location,
-  Private,
   timefilter) {
 
 
   timefilter.enabled = false; // remove time picker from top of page
+  const indexPatternsExist = ($route.current.locals.indexPatternIds.length > 0);
 
   $scope.ui = {
     pageTitle: 'Create a new job',
@@ -56,16 +59,16 @@ function (
   };
 
   function setJobMode(mode) {
-    $location.path(mode);
+    if (mode === 'jobs/new_job_advanced' || indexPatternsExist) {
+      $location.path(mode);
+    } else {
+      const url = `${chrome.getBasePath()}/app/kibana#/management/kibana/index?_g=()`;
+      window.location.href = url;
+    }
   }
 
   function wizardStep(step) {
     $scope.ui.wizard.step += step;
-    // if ($scope.ui.wizard.step === 1) {
-
-    // } else if ($scope.ui.wizard.step === 2) {
-
-    // }
   }
 
 });
