@@ -396,6 +396,7 @@
                 ml-elastic-server-info="elasticServerInfo"
 
               ></ml-elastic-data-description >
+              <div ng-hide="ui.validation.tabs[3].checks.hasAccessToIndex.valid" class="validation-error">{{ ( ui.validation.tabs[3].checks.hasAccessToIndex.message) }}</div>
 
               <div class="clearfix"></div>
 

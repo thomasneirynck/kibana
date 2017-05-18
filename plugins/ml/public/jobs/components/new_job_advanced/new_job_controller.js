@@ -124,7 +124,7 @@ function (
           detectors: { valid: true }, influencers: { valid: true }, categorizationFilters: { valid: true }, bucketSpan: { valid: true }
         } },
         { index: 2, valid: true, checks: { timeField: { valid: true }, timeFormat: { valid:true } } },
-        { index: 3, valid: true, checks: { isDatafeed:{ valid: true } } },
+        { index: 3, valid: true, checks: { isDatafeed:{ valid: true }, hasAccessToIndex: { valid: true } } },
         { index: 4, valid: true, checks: {} },
         { index: 5, valid: true, checks: {} },
       ],
@@ -278,7 +278,9 @@ function (
     getDelimiterSelection();
     getDatafeedSelection();
 
-    if (validateJob()) {
+    const jobValid = validateJob();
+
+    if (jobValid.valid) {
       // if basic validation passes
       // check that the job id doesn't already exist
       const tempJob = mlJobService.getJob($scope.job.job_id);
@@ -402,7 +404,7 @@ function (
 
     }
     else {
-      msgs.error('Fill in all required fields');
+      msgs.error(jobValid.message);
       console.log('save(): job validation failed');
     }
   };
@@ -775,6 +777,7 @@ function (
   // function used to check that all required fields are filled in
   function validateJob() {
     let valid = true;
+    let message = 'Fill in all required fields';
 
     const tabs = $scope.ui.validation.tabs;
     // reset validations
@@ -797,9 +800,9 @@ function (
         tabs[0].checks.jobId.valid = false;
       } else if (!job.job_id.match(/^[a-z0-9\-\_]{1,64}$/g)) {
         tabs[0].checks.jobId.valid = false;
-        let message = 'Job name must be a lowercase alphanumeric word no greater than 64 characters long. ';
-        message += 'It may contain hyphens or underscores.';
-        tabs[0].checks.jobId.message = message;
+        let msg = 'Job name must be a lowercase alphanumeric word no greater than 64 characters long. ';
+        msg += 'It may contain hyphens or underscores.';
+        tabs[0].checks.jobId.message = msg;
       }
 
       // tab 1 - Analysis Configuration
@@ -852,9 +855,14 @@ function (
         }
       }
 
-      // tab 3 - Data Description
-      if (_.isEmpty(job.data_description.time_field)) {
-        tabs[2].checks.timeField.valid = false;
+      // tab 3 - Datafeed
+      if (job.datafeed_config.types.length > 0) {
+        const loadedTypes = Object.keys($scope.ui.types);
+        if (loadedTypes.length === 0) {
+          message = 'Could not find index. You may not have the correct permissions';
+          tabs[3].checks.hasAccessToIndex.valid = false;
+          tabs[3].checks.hasAccessToIndex.message = message;
+        }
       }
 
     } else {
@@ -873,7 +881,10 @@ function (
       });
     });
 
-    return valid;
+    return {
+      valid,
+      message
+    };
   }
 
   function openSaveStatusWindow() {
