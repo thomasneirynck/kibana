@@ -1,5 +1,5 @@
 import Promise from 'bluebird';
-import _ from 'lodash';
+import { chain, find, get } from 'lodash';
 import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query.js';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
@@ -157,9 +157,9 @@ export function getKibanasForClusters(req, kbnIndexPattern) {
       const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
       return callWithRequest(req, 'search', params)
       .then(result => {
-        const getResultAgg = key => _.get(result, `aggregations.${key}`);
-        const kibanaUuids =  getResultAgg('kibana_uuids.buckets');
-        const statusBuckets = getResultAgg('status.buckets');
+        const aggregations = get(result, 'aggregations', {});
+        const kibanaUuids =  get(aggregations, 'kibana_uuids.buckets', []);
+        const statusBuckets = get(aggregations, 'status.buckets', []);
 
         // everything is initialized such that it won't impact any rollup
         let status = null;
@@ -172,15 +172,15 @@ export function getKibanasForClusters(req, kbnIndexPattern) {
         // if the cluster has kibana instances at all
         if (kibanaUuids.length) {
           // get instance status by finding the latest status bucket
-          const latestTimestamp = _.chain(statusBuckets).map(bucket => bucket.max_timestamp.value).max().value();
-          const latestBucket = _.find(statusBuckets, (bucket) => bucket.max_timestamp.value === latestTimestamp);
-          status = _.get(latestBucket, 'key');
+          const latestTimestamp = chain(statusBuckets).map(bucket => bucket.max_timestamp.value).max().value();
+          const latestBucket = find(statusBuckets, (bucket) => bucket.max_timestamp.value === latestTimestamp);
+          status = get(latestBucket, 'key');
 
-          requestsTotal = getResultAgg('requests_total.value');
-          connections = getResultAgg('concurrent_connections.value');
-          responseTime = getResultAgg('response_time_max.value');
-          memorySize = getResultAgg('memory_rss.value'); // resident set size
-          memoryLimit = getResultAgg('memory_heap_size_limit.value'); // max old space
+          requestsTotal = get(aggregations, 'requests_total.value');
+          connections = get(aggregations, 'concurrent_connections.value');
+          responseTime = get(aggregations, 'response_time_max.value');
+          memorySize = get(aggregations, 'memory_rss.value'); // resident set size
+          memoryLimit = get(aggregations, 'memory_heap_size_limit.value'); // max old space
         }
 
         return {

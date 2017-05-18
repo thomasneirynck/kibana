@@ -1,5 +1,5 @@
 import Promise from 'bluebird';
-import _ from 'lodash';
+import { get } from 'lodash';
 import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query.js';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
@@ -131,8 +131,8 @@ export function getLogstashForClusters(req, logstashIndexPattern) {
       const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
       return callWithRequest(req, 'search', params)
       .then(result => {
-        const getResultAgg = key => _.get(result, `aggregations.${key}`);
-        const logstashUuids =  getResultAgg('logstash_uuids.buckets');
+        const aggregations = get(result, 'aggregations', {});
+        const logstashUuids =  get(aggregations, 'logstash_uuids.buckets', []);
 
         // everything is initialized such that it won't impact any rollup
         let eventsInTotal = 0;
@@ -143,11 +143,11 @@ export function getLogstashForClusters(req, logstashIndexPattern) {
 
         // if the cluster has logstash instances at all
         if (logstashUuids.length) {
-          eventsInTotal = getResultAgg('events_in_total.value');
-          eventsOutTotal = getResultAgg('events_out_total.value');
-          memory = getResultAgg('memory.value');
-          memoryUsed = getResultAgg('memory_used.value');
-          maxUptime = getResultAgg('max_uptime.value');
+          eventsInTotal = get(aggregations, 'events_in_total.value');
+          eventsOutTotal = get(aggregations, 'events_out_total.value');
+          memory = get(aggregations, 'memory.value');
+          memoryUsed = get(aggregations, 'memory_used.value');
+          maxUptime = get(aggregations, 'max_uptime.value');
         }
 
         return {
