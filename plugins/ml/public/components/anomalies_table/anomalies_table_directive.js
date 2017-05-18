@@ -51,7 +51,8 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
       anomalyRecords: '=',
       indexPatternId: '=',
       timeFieldName: '=',
-      showExploreSeriesLink: '='
+      showExploreSeriesLink: '=',
+      filteringEnabled: '='
     },
     template: require('plugins/ml/components/anomalies_table/anomalies_table.html'),
     link: function (scope, element) {
@@ -272,6 +273,10 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
           $window.open(urlPath, '_blank');
         }
 
+      };
+
+      scope.filter = function (field, value, operator) {
+        mlAnomaliesTableService.fireFilterChange(field, value, operator);
       };
 
       function updateTableData() {
@@ -694,8 +699,15 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
           if (_.has(record, 'entityValue')) {
             if (record.entityName !== 'mlcategory') {
               tableRow.push({
-                markup: record.entityValue,
-                value:  record.entityValue
+                markup: record.entityValue +
+                  '<button ng-if="filteringEnabled"' +
+                  `ng-click="filter('${record.entityName}', '${record.entityValue}', '+')">` +
+                  '<i tooltip="Add filter" tooltip-append-to-body="1" class="fa fa-search-plus"></i></button>' +
+                  '<button ng-if="filteringEnabled"' +
+                  `ng-click="filter('${record.entityName}', '${record.entityValue}', '-')">` +
+                  '<i tooltip="Remove filter" tooltip-append-to-body="1" class="fa fa-search-minus"></i></button>',
+                value:  record.entityValue,
+                scope:  rowScope
               });
             } else {
               tableRow.push({

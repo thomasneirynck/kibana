@@ -53,7 +53,7 @@ const module = uiModules.get('apps/ml');
 
 module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $timeout, $compile,
   Private, $q, es, timefilter, globalState, AppState, mlJobService, mlResultsService,
-  mlJobSelectService, mlTimeSeriesSearchService) {
+  mlJobSelectService, mlTimeSeriesSearchService, mlAnomaliesTableService) {
 
   // TODO - move the index pattern into a setting?
   $scope.indexPatternId = '.ml-anomalies-*';
@@ -393,8 +393,25 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     $scope.refresh();
   });
 
+  // Add a listener for filter changes triggered from the anomalies table.
+  const filterChangeListener = function (field, value, operator) {
+    const entity = _.find($scope.entities, { fieldName:field });
+    if (entity !== undefined) {
+      if (operator === '+' && entity.fieldValue !== value) {
+        entity.fieldValue = value;
+        $scope.saveSeriesPropertiesAndRefresh();
+      } else if (operator === '-' && entity.fieldValue === value) {
+        entity.fieldValue = '';
+        $scope.saveSeriesPropertiesAndRefresh();
+      }
+    }
+  };
+
+  mlAnomaliesTableService.addFilterChangeListener(filterChangeListener);
+
   $scope.$on('$destroy', () => {
     refreshWatcher.cancel();
+    mlAnomaliesTableService.removeFilterChangeListener(filterChangeListener);
   });
 
   // When inside a dashboard in the ML plugin, listen for changes to job selection.

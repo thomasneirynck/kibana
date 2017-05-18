@@ -25,7 +25,8 @@ module.service('mlAnomaliesTableService', function () {
 
   const listeners = {
     'anomalyRecordMouseenter': [],
-    'anomalyRecordMouseleave': []
+    'anomalyRecordMouseleave': [],
+    'filterChange': []
   };
 
   this.fireAnomalyRecordMouseenter = function (record) {
@@ -59,6 +60,23 @@ module.service('mlAnomaliesTableService', function () {
     const index = listeners.anomalyRecordMouseleave.indexOf(listener);
     if (index > -1) {
       listeners.anomalyRecordMouseleave.splice(index, 1);
+    }
+  };
+
+  this.fireFilterChange = function (field, value, operator) {
+    listeners.filterChange.forEach(function (listener) {
+      listener(field, value, operator);
+    });
+  };
+
+  this.addFilterChangeListener = function (listener) {
+    listeners.filterChange.push(listener);
+  };
+
+  this.removeFilterChangeListener = function (listener) {
+    const index = listeners.filterChange.indexOf(listener);
+    if (index > -1) {
+      listeners.filterChange.splice(index, 1);
     }
   };
 

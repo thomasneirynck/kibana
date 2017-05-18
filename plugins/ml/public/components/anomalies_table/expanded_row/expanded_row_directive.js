@@ -39,6 +39,7 @@ module.directive('mlAnomaliesTableExpandedRow', function () {
   function link(scope) {
     scope.record = scope.$parent.record;
     scope.filter = scope.$parent.filter;
+    scope.filteringEnabled = scope.$parent.filteringEnabled;
     scope.isShowingAggregatedData = scope.$parent.isShowingAggregatedData;
 
     const timeFieldName = 'timestamp';

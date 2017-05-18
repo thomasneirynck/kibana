@@ -10,37 +10,47 @@
     <tr ng-if="record.source.partition_field_value">
       <td>{{record.source.partition_field_name}}:</td>
       <td>{{record.source.partition_field_value}}
-        <i ng-click="filter(record.source.partition_field_name, record.source.partition_field_value, '+')"
-            tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
-        <i ng-click="filter(record.source.partition_field_name, record.source.partition_field_value, '-')"
-            tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+        <button ng-if="filteringEnabled" ng-click="filter(record.source.partition_field_name, record.source.partition_field_value, '+')">
+          <i tooltip="Add filter" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        </button>
+        <button ng-if="filteringEnabled" ng-click="filter(record.source.partition_field_name, record.source.partition_field_value, '-')">
+          <i tooltip="Remove filter" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+        </button>
       </td>
     </tr>
     <tr ng-if="record.source.by_field_value">
       <td>{{record.source.by_field_name}}:</td>
       <td>{{record.source.by_field_value}}
-        <i ng-click="filter(record.source.by_field_name, record.source.by_field_value, '+')"
-            tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
-        <i ng-click="filter(record.source.by_field_name, record.source.by_field_value, '-')"
-            tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+        <button ng-if="filteringEnabled"
+          ng-click="filter(record.source.by_field_name, record.source.by_field_value, '+')">
+          <i tooltip="Add filter" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        </button>
+        <button ng-if="filteringEnabled"
+          ng-click="filter(record.source.by_field_name, record.source.by_field_value, '-')">
+          <i tooltip="Remove filter" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+        </button>
       </td>
     </tr>
     <tr ng-if="singleCauseByFieldValue">
       <td>{{singleCauseByFieldName}}:</td>
       <td>{{singleCauseByFieldValue}}
-        <i ng-click="filter(singleCauseByFieldName, singleCauseByFieldValue, '+')"
-            tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
-        <i ng-click="filter(singleCauseByFieldName, singleCauseByFieldValue, '-')"
-            tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+        <button ng-if="filteringEnabled" ng-click="filter(singleCauseByFieldName, singleCauseByFieldValue, '+')">
+          <i tooltip="Add filter" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        </button>
+        <button ng-if="filteringEnabled" ng-click="filter(singleCauseByFieldName, singleCauseByFieldValue, '-')">
+          <i tooltip="Remove filter" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+        </button>
       </td>
     </tr>
     <tr ng-if="record.source.over_field_value">
       <td>{{record.source.over_field_name}}:</td>
       <td>{{record.source.over_field_value}}
-        <i ng-click="filter(record.source.over_field_name, record.source.over_field_value, '+')"
-            tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
-        <i ng-click="filter(record.source.over_field_name, record.source.over_field_value, '-')"
-            tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+        <button ng-if="filteringEnabled" ng-click="filter(record.source.over_field_name, record.source.over_field_value, '+')">
+          <i tooltip="Add filter" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        </button>
+        <button ng-if="filteringEnabled" ng-click="filter(record.source.over_field_name, record.source.over_field_value, '-')">
+          <i tooltip="Remove filter" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+        </button>
       </td>
     </tr>
     <tr ng-if="anomalyEndTime"><td>time:</td><td>{{anomalyTime}} to {{anomalyEndTime}}</td></tr>
@@ -60,10 +70,6 @@
     <tr>
       <td>job ID:</td>
       <td>{{record.jobId}}
-        <i ng-click="filter('jobId', record.jobId, '+')"
-            tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
-        <i ng-click="filter('jobId', record.jobId, '-')"
-            tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
       </td>
 
     </tr>
@@ -84,13 +90,7 @@
   <table ng-if="influencers">
     <tr ng-repeat="influencer in influencers">
       <td>{{influencer.name}}</td>
-      <td>{{influencer.value}}
-        <i ng-click="filter(influencer.name, influencer.value, '+')"
-            tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
-        <i ng-click="filter(influencer.name, influencer.value, '-')"
-            tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
-      </td>
-
+      <td>{{influencer.value}}</td>
     </tr>
   </table>
 
