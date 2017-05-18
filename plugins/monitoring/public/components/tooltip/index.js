@@ -15,7 +15,9 @@ export class Tooltip extends React.Component {
         overlay={ tooltip }
       >
         <span className='overlay-trigger'>
-          { this.props.children}
+          <span className='monitoring-tooltip__trigger'>
+            { this.props.children}
+          </span>
         </span>
       </PuiOverlayTrigger>
     );

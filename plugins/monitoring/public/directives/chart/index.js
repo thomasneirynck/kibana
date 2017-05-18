@@ -9,6 +9,7 @@ import { MonitoringTimeseries } from 'plugins/monitoring/components/chart';
 import { InfoTooltip } from 'plugins/monitoring/components/chart/info_tooltip';
 import { Tooltip } from 'pui-react-tooltip';
 import { OverlayTrigger } from 'pui-react-overlay-trigger';
+import { KuiInfoButton } from 'ui_framework/components';
 
 const uiModule = uiModules.get('plugins/monitoring/directives', []);
 uiModule.directive('monitoringChart', (timefilter) => {
@@ -49,10 +50,9 @@ uiModule.directive('monitoringChart', (timefilter) => {
               trigger='click'
               overlay={ <Tooltip><InfoTooltip series={ series }/></Tooltip> }
             >
-              <i
-                className='overlay-trigger monitoring-chart-tooltip__trigger fa fa-info-circle'
-                tabIndex='0'
-              ></i>
+              <span className='monitoring-chart-tooltip__trigger overlay-trigger'>
+                <KuiInfoButton />
+              </span>
             </OverlayTrigger>
           </h2>
           <MonitoringTimeseries scope={ scope } options={ options } onBrush={ onBrush }/>

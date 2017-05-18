@@ -7,7 +7,6 @@ monitoring-main {
 }
 
 .monitoring-view {
-
   &.no-padding {
     padding: 0;
   }
@@ -40,16 +39,13 @@ monitoring-main {
   .offline {
     color: @esDarkGray;
   }
-
-  /**
-   * Override pivotal-ui tooltip styles.
-   */
-  .overlay-trigger,
-  .overlay-trigger:hover {
-    color: @kibanaBlue2;
-  }
-
 }
+
+  .monitoring-tooltip__trigger,
+  .monitoring-tooltip__trigger:hover {
+    // override code in pui-react-tooltip that forces the color to be blue
+    color: @esDarkerGray;
+  }
 
   .monitoring-view-listing-table {
     border-bottom: 1px solid @esLightGray;
