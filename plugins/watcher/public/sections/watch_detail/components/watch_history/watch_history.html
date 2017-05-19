@@ -26,10 +26,9 @@
   </div>
 
   <!-- Watch history table -->
-  <loading-results
-    results-name="watch history"
-    ng-show="watchHistory.isLoading"
-  ></loading-results>
+  <table-info ng-show="watchHistory.isLoading">
+    Loading watch history&hellip;
+  </table-info>
   <no-items
     items-name="watch history"
     ng-show="!watchHistory.isLoading && !watchHistory.hasPageOfHistoryItems"

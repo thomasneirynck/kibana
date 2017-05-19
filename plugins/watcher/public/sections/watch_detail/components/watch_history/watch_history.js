@@ -3,6 +3,7 @@ import { uiModules } from 'ui/modules';
 import { Notifier } from 'ui/notify/notifier';
 import 'ui/pager_control';
 import 'ui/pager';
+import 'ui/table_info';
 
 import { PAGINATION } from 'plugins/watcher/../common/constants';
 

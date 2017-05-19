@@ -8,7 +8,6 @@ import 'ui/pager_control';
 import 'ui/pager';
 import 'ui/react_components';
 import 'plugins/watcher/components/tool_bar_selected_count';
-import 'plugins/watcher/components/loading_results';
 import 'plugins/watcher/components/forbidden_message';
 import 'plugins/watcher/components/no_items';
 import 'plugins/watcher/services/watches';
