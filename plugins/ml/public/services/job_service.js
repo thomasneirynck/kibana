@@ -1272,6 +1272,11 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     return datafeedId;
   };
 
+  this.getDatafeedPreview = function (jobId) {
+    const datafeedId = this.getDatafeedId(jobId);
+    return ml.datafeedPreview({ datafeedId });
+  };
+
   function processBasicJobInfo(mlJobService, jobsList) {
     // Process the list of job data obtained from the jobs endpoint to return
     // an array of objects containing the basic information (id, description, bucketSpan, detectors

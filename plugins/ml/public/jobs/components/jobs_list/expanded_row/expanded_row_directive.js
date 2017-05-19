@@ -44,6 +44,10 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
         $scope.jobAudit = $scope.$parent.jobAudit;
         $scope.jobJson = angular.toJson($scope.job, true);
         $scope.jobAuditText = '';
+        $scope.datafeedPreview = {
+          update: updateDatafeedPreview,
+          json: '',
+        };
 
         $scope.detectorToString = detectorToString;
 
@@ -54,7 +58,8 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
             { index: 1, title: 'Job config' },
             { index: 3, title: 'Counts' },
             { index: 4, title: 'JSON' },
-            { index: 5, title: 'Job Messages' , showIcon: true },
+            { index: 5, title: 'Job messages' , showIcon: true },
+            { index: 6, title: 'Datafeed preview' },
           ],
           changeTab: function (tab) {
             this.currentTab = tab.index;
@@ -77,6 +82,8 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
                   }, 0);
                 }
               });
+            } else if (tab.index === 6) {
+              updateDatafeedPreview();
             }
           }
         };
@@ -95,6 +102,17 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
           });
         }
       };
+
+      function updateDatafeedPreview() {
+        $scope.datafeedPreview.json = '';
+        mlJobService.getDatafeedPreview($scope.job.job_id)
+        .then((resp) => {
+          $scope.datafeedPreview.json = angular.toJson(resp, true);
+        })
+        .catch((resp) => {
+          msgs.error('Datefeed preview could not be loaded', resp);
+        });
+      }
 
       // call function defined above.
       $scope.init();
