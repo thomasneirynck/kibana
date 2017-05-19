@@ -329,9 +329,9 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
   // When inside a dashboard in the ML plugin, listen for changes to job selection.
   mlJobSelectService.listenJobSelectionChange($scope, (event, selections) => {
-    // Reset the detector and clear the entities.
+    // Clear the detectorIndex and entities.
     if (selections.length > 0) {
-      $scope.appState.mlTimeSeriesExplorer.detectorIndex = 0;
+      delete $scope.appState.mlTimeSeriesExplorer.detectorIndex;
       delete $scope.appState.mlTimeSeriesExplorer.entities;
       $scope.appState.save();
 
@@ -385,7 +385,6 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     $scope.jobPickerSelections = [jobPickerSelectedJob];
 
     // Read the detector index and entities out of the AppState.
-    let detectorIndex = $scope.appState.mlTimeSeriesExplorer.detectorIndex || 0;
     const jobDetectors = $scope.selectedJob.analysis_config.detectors;
     const viewableDetectors = [];
     _.each(jobDetectors, (dtr, index) => {
@@ -396,6 +395,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     $scope.detectors = viewableDetectors;
 
     // Check the supplied index is valid.
+    const appStateDtrIdx = $scope.appState.mlTimeSeriesExplorer.detectorIndex;
+    let detectorIndex = appStateDtrIdx !== undefined ? appStateDtrIdx : +(viewableDetectors[0].index);
     if (_.find(viewableDetectors, { 'index': '' + detectorIndex }) === undefined) {
       const warningText = `Requested detector index ${detectorIndex} is not valid for job ${$scope.selectedJob.job_id}`;
       notify.warning(warningText, { lifetime: 30000 });
