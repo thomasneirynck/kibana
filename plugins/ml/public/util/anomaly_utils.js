@@ -21,10 +21,12 @@
 const _ = require('lodash');
 
 // List of function descriptions for which actual values from record level results should be displayed.
-const DISPLAY_ACTUAL_FUNCTIONS = ['count', 'distinct_count', 'lat_long', 'mean', 'max', 'min', 'sum', 'median', 'varp', 'info_content'];
+const DISPLAY_ACTUAL_FUNCTIONS = ['count', 'distinct_count', 'lat_long', 'mean', 'max', 'min', 'sum',
+  'median', 'varp', 'info_content', 'time'];
 
 // List of function descriptions for which typical values from record level results should be displayed.
-const DISPLAY_TYPICAL_FUNCTIONS = ['count', 'distinct_count', 'mean', 'max', 'min', 'sum', 'median', 'varp', 'info_content'];
+const DISPLAY_TYPICAL_FUNCTIONS = ['count', 'distinct_count', 'mean', 'max', 'min', 'sum',
+  'median', 'varp', 'info_content', 'time'];
 
 // Returns a severity label (one of critical, major, minor, warning or unknown)
 // for the supplied normalized anomaly score (a value between 0 and 100).
@@ -145,20 +147,20 @@ export function getEntityFieldValue(record) {
 
 // Returns whether actual values should be displayed for a record with the specified function description.
 // Note that the 'function' field in a record contains what the user entered e.g. 'high_count',
-// whereas the 'function_description' field holds a Ml-built display hint for function e.g. 'count'.
+// whereas the 'function_description' field holds a ML-built display hint for function e.g. 'count'.
 export function showActualForFunction(functionDescription) {
   return _.indexOf(DISPLAY_ACTUAL_FUNCTIONS, functionDescription) > -1;
 }
 
 // Returns whether typical values should be displayed for a record with the specified function description.
 // Note that the 'function' field in a record contains what the user entered e.g. 'high_count',
-// whereas the 'function_description' field holds a Ml-built display hint for function e.g. 'count'.
+// whereas the 'function_description' field holds a ML-built display hint for function e.g. 'count'.
 export function showTypicalForFunction(functionDescription) {
   return _.indexOf(DISPLAY_TYPICAL_FUNCTIONS, functionDescription) > -1;
 }
 
 // Two functions for converting aggregation type names.
-// ML and ES use differnt names for the same function.
+// ML and ES use different names for the same function.
 // Possible values for ML aggregation type are (defined in lib/model/CAnomalyDetector.cc):
 //    count
 //    distinct_count
@@ -171,6 +173,9 @@ export function showTypicalForFunction(functionDescription) {
 //    varp
 //    sum
 //    lat_long
+//    time
+// The input to toES and the output from toML correspond to the value of the
+// function_description field of anomaly records.
 export const aggregationTypeTransform = {
   toES: function (oldAggType) {
     let newAggType = oldAggType;

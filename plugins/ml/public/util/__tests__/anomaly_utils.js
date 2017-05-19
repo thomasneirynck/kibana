@@ -259,6 +259,7 @@ describe('ML - anomaly utils', () => {
       expect(showActualForFunction('median')).to.be(true);
       expect(showActualForFunction('varp')).to.be(true);
       expect(showActualForFunction('info_content')).to.be(true);
+      expect(showActualForFunction('time')).to.be(true);
     });
 
     it('returns false for expected function descriptions', () => {
@@ -278,6 +279,7 @@ describe('ML - anomaly utils', () => {
       expect(showTypicalForFunction('median')).to.be(true);
       expect(showTypicalForFunction('varp')).to.be(true);
       expect(showTypicalForFunction('info_content')).to.be(true);
+      expect(showTypicalForFunction('time')).to.be(true);
     });
 
     it('returns false for expected function descriptions', () => {
@@ -291,27 +293,23 @@ describe('ML - anomaly utils', () => {
     it('returns correct ES aggregation type for ML function description', () => {
       expect(aggregationTypeTransform.toES('count')).to.be('count');
       expect(aggregationTypeTransform.toES('distinct_count')).to.be('cardinality');
-      expect(aggregationTypeTransform.toES('lat_long')).to.be('lat_long');
+      expect(aggregationTypeTransform.toES('distinct_count')).to.not.be('distinct_count');
       expect(aggregationTypeTransform.toES('mean')).to.be('avg');
+      expect(aggregationTypeTransform.toES('mean')).to.not.be('mean');
       expect(aggregationTypeTransform.toES('max')).to.be('max');
       expect(aggregationTypeTransform.toES('min')).to.be('min');
       expect(aggregationTypeTransform.toES('sum')).to.be('sum');
-      expect(aggregationTypeTransform.toES('median')).to.be('median');
-      expect(aggregationTypeTransform.toES('varp')).to.be('varp');
-      expect(aggregationTypeTransform.toES('info_content')).to.be('info_content');
     });
 
     it('returns correct ML function description for ES aggregation type', () => {
       expect(aggregationTypeTransform.toML('count')).to.be('count');
       expect(aggregationTypeTransform.toML('cardinality')).to.be('distinct_count');
-      expect(aggregationTypeTransform.toML('lat_long')).to.be('lat_long');
+      expect(aggregationTypeTransform.toML('cardinality')).to.not.be('cardinality');
       expect(aggregationTypeTransform.toML('avg')).to.be('mean');
+      expect(aggregationTypeTransform.toML('avg')).to.not.be('avg');
       expect(aggregationTypeTransform.toML('max')).to.be('max');
       expect(aggregationTypeTransform.toML('min')).to.be('min');
       expect(aggregationTypeTransform.toML('sum')).to.be('sum');
-      expect(aggregationTypeTransform.toML('median')).to.be('median');
-      expect(aggregationTypeTransform.toML('varp')).to.be('varp');
-      expect(aggregationTypeTransform.toML('info_content')).to.be('info_content');
     });
 
   });
