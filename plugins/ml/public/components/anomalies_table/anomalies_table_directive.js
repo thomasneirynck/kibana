@@ -698,13 +698,16 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         if (addEntity !== undefined) {
           if (_.has(record, 'entityValue')) {
             if (record.entityName !== 'mlcategory') {
+              const safeEntityName = record.entityName.replace(/(['])/g, '\\$1');
+              const safeEntityValue = record.entityValue.replace(/(['])/g, '\\$1');
+
               tableRow.push({
                 markup: record.entityValue +
                   '<button ng-if="filteringEnabled"' +
-                  `ng-click="filter('${record.entityName}', '${record.entityValue}', '+')">` +
+                  `ng-click="filter('${safeEntityName}', '${safeEntityValue}', '+')">` +
                   '<i tooltip="Add filter" tooltip-append-to-body="1" class="fa fa-search-plus"></i></button>' +
                   '<button ng-if="filteringEnabled"' +
-                  `ng-click="filter('${record.entityName}', '${record.entityValue}', '-')">` +
+                  `ng-click="filter('${safeEntityName}', '${safeEntityValue}', '-')">` +
                   '<i tooltip="Remove filter" tooltip-append-to-body="1" class="fa fa-search-minus"></i></button>',
                 value:  record.entityValue,
                 scope:  rowScope
