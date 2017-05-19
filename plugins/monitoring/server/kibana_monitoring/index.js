@@ -9,33 +9,51 @@ import { get } from 'lodash';
  */
 export function initKibanaMonitoring(kbnServer, server) {
   const config = server.config();
+  const monitoringTag = config.get('xpack.monitoring.loggingTag');
+
   const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('admin');
   callWithInternalUser('transport.request', {
     method: 'GET',
     path: '/_xpack'
-  }).then((res) => {
+  })
+  .then((res) => {
     const isEnabledInAdminCluster = !!get(res, 'features.monitoring.enabled');
     if (isEnabledInAdminCluster) {
       const buffer = opsBuffer(kbnServer, server);
-      const monitor = server.plugins['even-better'].monitor;
+      const onOps = event => buffer.push(event);
+      let monitor;
       let opsHandler;
-
-      function onOps(event) {
-        buffer.push(event);
-      }
-
-      server.plugins.elasticsearch.status.on('green', () => {
+      const init = () => {
+        monitor = server.plugins['even-better'].monitor;
         monitor.on('ops', onOps);
         opsHandler = setInterval(() => buffer.flush(), config.get('xpack.monitoring.kibana.collection.interval'));
-      });
+      };
+      const cleanup = () => {
+        if (monitor) {
+          monitor.removeListener('ops', onOps);
+          clearInterval(opsHandler);
+        }
+      };
 
-      server.plugins.elasticsearch.status.on('red', () => {
-        monitor.removeListener('ops', onOps);
-        clearInterval(opsHandler);
+      server.plugins.elasticsearch.status.on('green', init);
+      server.plugins.elasticsearch.status.on('red', cleanup);
+
+      // `process` is a NodeJS global, and is always available without using require/import
+      process.on('SIGHUP', () => {
+        server.log(['info', monitoringTag], 'Re-initializing Kibana Monitoring due to SIGHUP');
+        /* This timeout is a temporary stop-gap until collecting stats is not bound to even-better
+         * and collecting stats is not interfered by logging configuration reloading
+         * Related to https://github.com/elastic/x-pack-kibana/issues/1301
+         */
+        setTimeout(() => {
+          cleanup();
+          init();
+          server.log(['info', monitoringTag], 'Re-initialized Kibana Monitoring due to SIGHUP');
+        }, 5 * 1000); // wait 5 seconds to avoid race condition with reloading logging configuration
       });
     }
-  }).catch(() => {
-    const monitoringTag = config.get('xpack.monitoring.loggingTag');
+  })
+  .catch(() => {
     server.log(['warning', monitoringTag], 'Unable to retrieve X-Pack info. Kibana monitoring will be disabled.');
   });
 }
