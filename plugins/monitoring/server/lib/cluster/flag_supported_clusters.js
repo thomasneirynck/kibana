@@ -68,7 +68,7 @@ export function flagSupportedClusters(req) {
     // if multi cluster
     if (clusters.length > 1) {
       const basicLicenseCount = clusters.reduce((accumCount, cluster) => {
-        if (cluster.license.type === 'basic') {
+        if (cluster.license && cluster.license.type === 'basic') {
           accumCount++;
         }
         return accumCount;

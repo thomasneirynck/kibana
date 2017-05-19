@@ -56,3 +56,9 @@ export const FORMAT_DURATION_TEMPLATE_LONG = 'M [months] d [days]';
  * @type {string}
  */
 export const FORMAT_DURATION_TEMPLATE_SHORT = ' d [days] h [hrs] m [min]';
+
+/**
+ * Representative of an invalid license to be used when a license cannot be trusted.
+ * @type {Object}
+ */
+export const INVALID_LICENSE = { type: 'invalid', status: 'inactive' };

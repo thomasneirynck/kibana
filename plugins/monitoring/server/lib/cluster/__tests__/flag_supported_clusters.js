@@ -39,6 +39,7 @@ describe('Flag Supported Clusters', () => {
       const kbnIndices = [];
       const clusters = [
         goldLicense(),
+        { }, // no license
         goldLicense()
       ];
 
@@ -47,6 +48,7 @@ describe('Flag Supported Clusters', () => {
       .then(resultClusters => {
         expect(resultClusters).to.eql([
           { ...goldLicense(), isSupported: true },
+          { }, // no license
           { ...goldLicense(), isSupported: true }
         ]);
         sinon.assert.calledWith(

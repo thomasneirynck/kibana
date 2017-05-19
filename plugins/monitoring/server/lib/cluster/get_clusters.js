@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import Promise from 'bluebird';
+import { INVALID_LICENSE } from '../../../common/constants';
 import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
@@ -62,8 +63,8 @@ export function getClusters(req, esIndexPattern) {
           if (license && validateMonitoringLicense(cluster.cluster_uuid, license)) {
             cluster.license = license;
           } else {
-            // allow deleted/unknown license clusters to show in UI
-            cluster.license = null;
+            // "invalid" license allow deleted/unknown license clusters to show in UI
+            cluster.license = INVALID_LICENSE;
           }
 
           return cluster;
