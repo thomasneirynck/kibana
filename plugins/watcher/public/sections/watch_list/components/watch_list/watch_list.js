@@ -7,9 +7,9 @@ import { PAGINATION, REFRESH_INTERVALS } from 'plugins/watcher/../common/constan
 import 'ui/pager_control';
 import 'ui/pager';
 import 'ui/react_components';
+import 'ui/table_info';
 import 'plugins/watcher/components/tool_bar_selected_count';
 import 'plugins/watcher/components/forbidden_message';
-import 'plugins/watcher/components/no_items';
 import 'plugins/watcher/services/watches';
 import 'plugins/watcher/services/license';
 

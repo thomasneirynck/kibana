@@ -60,10 +60,9 @@
       >
       </watch-table>
 
-      <no-items
-        items-name="watches"
-        ng-show="!watchList.hasPageOfWatches"
-      ></no-items>
+      <table-info ng-show="!watchList.hasPageOfWatches">
+        No watches found.
+      </table-info>
 
       <div class="kuiToolBarFooter">
         <div class="kuiToolBarFooterSection">

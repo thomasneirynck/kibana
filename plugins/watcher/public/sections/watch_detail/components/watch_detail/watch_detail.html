@@ -55,10 +55,7 @@
         sort-reverse="watchDetail.actionStatusTableSortReverse"
         on-sort-change="watchDetail.onActionSortChange"
       ></action-status-table>
-      <no-items
-        items-name="actions"
-        ng-show="!watchDetail.hasActionStatusTableActions"
-      ></no-items>
+      <table-info ng-show="!watchDetail.hasActionStatusTableActions">No actions found.</table-info>
     </div>
 
     <!-- Watch History -->

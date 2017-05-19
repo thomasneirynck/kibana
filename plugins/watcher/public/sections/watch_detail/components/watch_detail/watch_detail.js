@@ -5,7 +5,6 @@ import 'ui/config';
 import 'ui/url';
 import 'ui/table_info';
 import 'plugins/watcher/components/tool_bar_selected_count';
-import 'plugins/watcher/components/no_items';
 import 'plugins/watcher/services/watch';
 import 'plugins/watcher/services/license';
 
