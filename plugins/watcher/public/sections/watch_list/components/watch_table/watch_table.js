@@ -3,7 +3,6 @@ import { uiModules } from 'ui/modules';
 import 'ui/check_box';
 import template from './watch_table.html';
 import 'plugins/watcher/components/sortable_column';
-import 'plugins/watcher/components/selectable_column';
 import 'plugins/watcher/components/watch_state_icon';
 
 const app = uiModules.get('xpack/watcher');
@@ -50,7 +49,7 @@ app.directive('watchTable', function () {
         });
       }
 
-      onAllSelectedChange = (allSelected) => {
+      onAllSelectedChange = (itemId, allSelected) => {
         _.forEach(this.editableItems, item => {
           item.selected = allSelected;
         });

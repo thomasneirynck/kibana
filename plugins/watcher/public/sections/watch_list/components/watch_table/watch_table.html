@@ -2,11 +2,11 @@
   <thead>
     <tr>
       <th class="kuiTableHeaderCell kuiTableHeaderCell--checkBox">
-        <selectable-column
-          selected="watchTable.allSelected"
-          on-select-all-change="watchTable.onAllSelectedChange"
+        <check-box
+          is-selected="watchTable.allSelected"
+          on-select-change="watchTable.onAllSelectedChange"
           ng-if="watchTable.areAnyEditable()"
-        ></selectable-column>
+        ></check-box>
       </th>
       <th class="kuiTableHeaderCell kuiTableHeaderCell--sortable">
         <sortable-column
