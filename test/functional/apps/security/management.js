@@ -20,7 +20,6 @@ export default function ({ getService, getPageObjects }) {
         'dateFormat:tz':'UTC',
         'defaultIndex':'logstash-*'
       });
-      await PageObjects.gettingStarted.clickOptOutLink();
       await PageObjects.settings.navigateTo();
     });
 
