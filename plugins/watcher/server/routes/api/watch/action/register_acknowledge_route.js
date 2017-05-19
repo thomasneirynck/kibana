@@ -19,7 +19,7 @@ export function registerAcknowledgeRoute(server) {
 
       return acknowledgeAction(callWithRequest, watchId, actionId)
       .then(hit => {
-        const watchStatusJson = get(hit, '_status');
+        const watchStatusJson = get(hit, 'status');
         const json = {
           id: watchId,
           watchStatusJson: watchStatusJson

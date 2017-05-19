@@ -11,7 +11,7 @@ describe('watch_history_item', () => {
         id: 'only-trigger_76220454-7e10-4088-96ca-3d77c49d34bf-2017-01-25T13:30:33.070',
         watchId: 'only-trigger',
         watchHistoryItemJson: {
-          _status: {
+          status: {
             state: {
               active: true
             }
@@ -59,12 +59,12 @@ describe('watch_history_item', () => {
         expect(watchHistoryItem.watchStatus).to.eql({
           id: upstreamJson.watchId,
           actionStatuses: [],
-          isActive: upstreamJson.watchHistoryItemJson._status.state.active,
+          isActive: upstreamJson.watchHistoryItemJson.status.state.active,
           lastChecked: null,
           lastMetCondition: null,
           watchStatusJson: {
             state: {
-              active: upstreamJson.watchHistoryItemJson._status.state.active
+              active: upstreamJson.watchHistoryItemJson.status.state.active
             }
           }
         });
@@ -84,7 +84,7 @@ describe('watch_history_item', () => {
             id: upstreamJson.watchId,
             actionStatuses: [],
             comment: '',
-            isActive: upstreamJson.watchHistoryItemJson._status.state.active,
+            isActive: upstreamJson.watchHistoryItemJson.status.state.active,
             lastChecked: null,
             lastMetCondition: null,
             lastFired: undefined,

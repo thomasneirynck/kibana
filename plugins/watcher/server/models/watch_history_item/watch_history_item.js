@@ -12,7 +12,7 @@ export class WatchHistoryItem {
     this.details = cloneDeep(this.watchHistoryItemJson);
     this.startTime = getMoment(get(this.watchHistoryItemJson, 'result.execution_time'));
 
-    const watchStatusJson = get(this.watchHistoryItemJson, '_status');
+    const watchStatusJson = get(this.watchHistoryItemJson, 'status');
     this.watchStatus = WatchStatus.fromUpstreamJSON({ id: this.watchId, watchStatusJson });
   }
 

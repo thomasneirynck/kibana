@@ -26,7 +26,7 @@ export function registerActivateRoute(server) {
 
       return activateWatch(callWithRequest, watchId)
       .then(hit => {
-        const watchStatusJson = get(hit, '_status');
+        const watchStatusJson = get(hit, 'status');
         const json = {
           id: watchId,
           watchStatusJson: watchStatusJson

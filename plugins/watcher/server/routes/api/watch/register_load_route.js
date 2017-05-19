@@ -26,7 +26,7 @@ export function registerLoadRoute(server) {
       return fetchWatch(callWithRequest, id)
       .then((hit) => {
         const watchJson = get(hit, 'watch');
-        const watchStatusJson = get(hit, '_status');
+        const watchStatusJson = get(hit, 'status');
         const json = {
           id,
           watchJson,
