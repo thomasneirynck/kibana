@@ -24,6 +24,8 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResultsService) {
 
+  const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
+
   this.getMetricData = function (job, detectorIndex, entityFields, earliestMs, latestMs, interval) {
     // For now only use model plot data if there is only one detector.
     // TODO - expand to multiple detectors by mapping detectorIndex to model_plot model_feature field.
@@ -93,8 +95,6 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResult
   };
 
   this.getModelPlotOutput = function (jobId, criteriaFields, earliestMs, latestMs, interval) {
-    const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
-
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -197,7 +197,7 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResult
   // criteria, time range, and aggregation interval.
   // criteriaFields parameter must be an array, with each object in the array having 'fieldName'
   // 'fieldValue' properties.
-  this.getRecordMaxScoreByTime = function (index, jobId, criteriaFields, earliestMs, latestMs, interval) {
+  this.getRecordMaxScoreByTime = function (jobId, criteriaFields, earliestMs, latestMs, interval) {
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -260,7 +260,7 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResult
     });
 
     es.search({
-      index: index,
+      index: ML_RESULTS_INDEX_ID,
       size: 0,
       body: {
         'query': {

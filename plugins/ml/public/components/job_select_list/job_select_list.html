@@ -1,10 +1,10 @@
 <div class='ml-job-selector'>
   <div class="ml-select-all-controls">
     <div>
-      <input type="checkbox"
-        value="{{job.id}}"
+      <input ng-if="singleSelection !== true" type="checkbox"
         ng-checked="selections.length === selectableJobs.length"
         ng-click="toggleAllSelection()" />
+      <input ng-if="singleSelection === true" style="visibility:hidden;" type="checkbox" />
         Job Id
     </div>
     <div>
@@ -22,11 +22,15 @@
       <label>
         <div>
           <span>
-            <input type="checkbox"
+            <input ng-if="singleSelection !== true" type="checkbox"
               value="{{job.id}}"
               ng-checked="isSelected(job.id)"
               ng-disabled='job.disabled'
               ng-click="toggleSelection(job.id)" />
+            <input ng-if="singleSelection === true" type="radio"
+              value="{{job.id}}"
+              ng-model="selections[0]"
+              ng-disabled='job.disabled' />
             <span ng-class="{'disabled-job': job.disabled}">{{job.id}}</span>
           </span>
         </div>

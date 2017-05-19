@@ -64,7 +64,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
   const ANOMALIES_MAX_RESULTS = 500;
   const TimeBuckets = Private(IntervalHelperProvider);
 
-  $scope.selectedJob = null;
+  $scope.jobPickerSelections = [];
+  $scope.selectedJob;
   $scope.detectors = [];
   $scope.loading = false;
   $scope.hasResults = false;
@@ -74,12 +75,6 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     globalState.ml = {};
     globalState.save();
   }
-
-  $scope.getSelectedJobIds = function () {
-    // TODO - replace with getSelectedJobId() if enforcing single job selection.
-    const selectedJobs = _.filter($scope.jobs, (job) => { return job.selected; });
-    return _.map(selectedJobs, (job) => {return job.id;});
-  };
 
   $scope.initializeVis = function () {
     // Initialize the AppState in which to store the zoom range.
@@ -106,20 +101,30 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
           }
         });
 
-        // Select any jobs set in the global state (i.e. passed in the URL).
+        // Select any job set in the global state (i.e. passed in the URL).
         const stateJobIds = _.get(globalState.ml, 'jobIds', []);
         const selectedJobIds = _.filter(stateJobIds, (jobId) => {
-          return jobId === '*' || (timeSeriesJobIds.indexOf(jobId) > -1);
+          return (timeSeriesJobIds.indexOf(jobId) > -1) && jobId !== '*';
         });
+
         const invalidIds = _.difference(stateJobIds, selectedJobIds);
-        if (invalidIds.length > 0) {
+        if (invalidIds.length > 0 && invalidIds.indexOf('*') === -1) {
           const warningText = invalidIds.length === 1 ? `Requested job ${invalidIds} cannot be viewed in this dashboard` :
              `Requested jobs ${invalidIds} cannot be viewed in this dashboard`;
           notify.warning(warningText, { lifetime: 30000 });
         }
 
-        // TODO - enforce single job selection.
-        $scope.setSelectedJobs(selectedJobIds);
+        if (selectedJobIds.length > 1 || invalidIds.indexOf('*') !== -1) {
+          notify.warning('Only one job may be viewed at a time in this dashboard', { lifetime: 30000 });
+        }
+
+        if (selectedJobIds.length === 0 && $scope.jobs.length > 0) {
+          selectedJobIds.push($scope.jobs[0].id);
+        }
+
+        if (selectedJobIds.length > 0) {
+          loadForJobId(selectedJobIds[0]);
+        }
       }
 
     }).catch((resp) => {
@@ -129,7 +134,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
   $scope.refresh = function () {
 
-    if ($scope.selectedJobs === undefined) {
+    if ($scope.selectedJob === undefined) {
       return;
     }
 
@@ -167,10 +172,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
     const bounds = timefilter.getActiveBounds();
 
-    // TODO - enforce single job selection in the job picker, or remove job picker?
-    const selectedJob = getSelectedJob();
     const detectorIndex = +$scope.detectorId;
-    $scope.modelPlotEnabled = isModelPlotEnabled(selectedJob);
+    $scope.modelPlotEnabled = isModelPlotEnabled($scope.selectedJob);
 
     // Only filter on the entity if the field has a value.
     const nonBlankEntities = _.filter($scope.entities, (entity) => { return entity.fieldValue.length > 0; });
@@ -185,7 +188,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     console.log('aggregationInterval for context data (s):', $scope.contextAggregationInterval.asSeconds());
 
     // Query 1 - load metric data at low granularity across full time range.
-    mlTimeSeriesSearchService.getMetricData(selectedJob, detectorIndex, nonBlankEntities,
+    mlTimeSeriesSearchService.getMetricData($scope.selectedJob, detectorIndex, nonBlankEntities,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.contextAggregationInterval.expression)
     .then((resp) => {
       const fullRangeChartData = processMetricPlotResults(resp.results);
@@ -208,7 +211,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
     // Query 2 - load max record score at same granularity as context chart
     // across full time range for use in the swimlane.
-    mlTimeSeriesSearchService.getRecordMaxScoreByTime($scope.indexPatternId, selectedJob.job_id,
+    mlTimeSeriesSearchService.getRecordMaxScoreByTime($scope.selectedJob.job_id,
       $scope.criteriaFields, bounds.min.valueOf(), bounds.max.valueOf(),
       $scope.contextAggregationInterval.expression)
     .then((resp) => {
@@ -252,8 +255,6 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       }
     }
 
-    const selectedJobIds = $scope.getSelectedJobIds();
-    const selectedJob = getSelectedJob();
     const detectorIndex = +$scope.detectorId;
     const nonBlankEntities = _.filter($scope.entities, (entity) => { return entity.fieldValue.length > 0; });
 
@@ -263,7 +264,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     console.log('aggregationInterval for focus data (s):', $scope.focusAggregationInterval.asSeconds());
 
     // Query 1 - load metric data across selected time range.
-    mlTimeSeriesSearchService.getMetricData(selectedJob, detectorIndex, nonBlankEntities,
+    mlTimeSeriesSearchService.getMetricData($scope.selectedJob, detectorIndex, nonBlankEntities,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.focusAggregationInterval.expression)
     .then((resp) => {
       $scope.focusChartData = processMetricPlotResults(resp.results);
@@ -273,8 +274,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     });
 
     // Query 2 - load records across full time range.
-    mlResultsService.getRecordsForCriteria($scope.indexPatternId, selectedJobIds, $scope.criteriaFields,
-      0, bounds.min.valueOf(), bounds.max.valueOf(), ANOMALIES_MAX_RESULTS)
+    mlResultsService.getRecordsForCriteria($scope.indexPatternId, [$scope.selectedJob.job_id],
+      $scope.criteriaFields, 0, bounds.min.valueOf(), bounds.max.valueOf(), ANOMALIES_MAX_RESULTS)
     .then((resp) => {
       // Sort in descending time order before storing in scope.
       $scope.anomalyRecords = _.chain(resp.records).sortBy((record) => {
@@ -296,36 +297,92 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     $scope.refresh();
   };
 
-  $scope.setSelectedJobs = function (selections) {
-    // Validate selections.
-    // Check for any new jobs created since the page was first loaded.
-    for (let i = 0; i < selections.length; i++) {
-      if (_.find($scope.jobs, { 'id': selections[i] }) === undefined) {
-        const newJobs = [];
-        _.each(mlJobService.jobs, (job) => {
-          if (isTimeSeriesViewJob(job) === true) {
-            const bucketSpan = parseInterval(job.analysis_config.bucket_span);
-            newJobs.push({ id:job.job_id, selected: false, bucketSpanSeconds: bucketSpan.asSeconds() });
-          }
-        });
-        $scope.jobs = newJobs;
-        break;
+  // Refresh the data when the time range is altered.
+  $scope.$listen(timefilter, 'fetch', $scope.refresh);
+
+  // Add a watcher for auto-refresh of the time filter to refresh all the data.
+  const refreshWatcher = Private(refreshIntervalWatcher);
+  refreshWatcher.init(() => {
+    $scope.refresh();
+  });
+
+  // Add a listener for filter changes triggered from the anomalies table.
+  const filterChangeListener = function (field, value, operator) {
+    const entity = _.find($scope.entities, { fieldName:field });
+    if (entity !== undefined) {
+      if (operator === '+' && entity.fieldValue !== value) {
+        entity.fieldValue = value;
+        $scope.saveSeriesPropertiesAndRefresh();
+      } else if (operator === '-' && entity.fieldValue === value) {
+        entity.fieldValue = '';
+        $scope.saveSeriesPropertiesAndRefresh();
       }
     }
+  };
 
-    // TODO - move to single job selection, and $scope.selectedJob
-    $scope.selectedJobs = [];
-    const selectedJobIds = [];
-    const selectAll = ((selections.length === 1 && selections[0] === '*') || selections.length === 0);
-    _.each($scope.jobs, (job) => {
-      job.selected = (selectAll || _.indexOf(selections, job.id) !== -1);
-      if (job.selected) {
-        $scope.selectedJobs.push(job);
-        selectedJobIds.push(job.id);
-      }
-    });
+  mlAnomaliesTableService.addFilterChangeListener(filterChangeListener);
 
-    $scope.selectedJob = getSelectedJob();
+  $scope.$on('$destroy', () => {
+    refreshWatcher.cancel();
+    mlAnomaliesTableService.removeFilterChangeListener(filterChangeListener);
+  });
+
+  // When inside a dashboard in the ML plugin, listen for changes to job selection.
+  mlJobSelectService.listenJobSelectionChange($scope, (event, selections) => {
+    // Reset the detector and clear the entities.
+    if (selections.length > 0) {
+      $scope.appState.mlTimeSeriesExplorer.detectorIndex = 0;
+      delete $scope.appState.mlTimeSeriesExplorer.entities;
+      $scope.appState.save();
+
+      loadForJobId(selections[0]);
+    }
+  });
+
+  $scope.$on('contextChartSelected', function (event, selection) {
+    // Save state of zoom (adds to URL) if it is different to the default.
+    if ($scope.contextChartData === undefined || $scope.contextChartData.length === 0) {
+      return;
+    }
+
+    const defaultRange = calculateDefaultFocusRange();
+    if (selection.from.getTime() !== defaultRange[0].getTime() || selection.to.getTime() !== defaultRange[1].getTime()) {
+      const zoomState = { from: selection.from.toISOString(), to: selection.to.toISOString() };
+      $scope.appState.mlTimeSeriesExplorer.zoom = zoomState;
+    } else {
+      delete $scope.appState.mlTimeSeriesExplorer.zoom;
+    }
+    $scope.appState.save();
+
+    if ($scope.focusChartData === undefined ||
+      ($scope.zoomFrom.getTime() !== selection.from.getTime()) ||
+      ($scope.zoomTo.getTime() !== selection.to.getTime())) {
+      $scope.refreshFocusData(selection.from, selection.to);
+    }
+
+    $scope.zoomFrom = selection.from;
+    $scope.zoomTo = selection.to;
+
+  });
+
+  function loadForJobId(jobId) {
+    // Validation that the ID is for a time series job must already have been performed.
+    // Check if the job was created since the page was first loaded.
+    let jobPickerSelectedJob = _.find($scope.jobs, { 'id': jobId });
+    if (jobPickerSelectedJob === undefined) {
+      const newJobs = [];
+      _.each(mlJobService.jobs, (job) => {
+        if (isTimeSeriesViewJob(job) === true) {
+          const bucketSpan = parseInterval(job.analysis_config.bucket_span);
+          newJobs.push({ id:job.job_id, selected: false, bucketSpanSeconds: bucketSpan.asSeconds() });
+        }
+      });
+      $scope.jobs = newJobs;
+      jobPickerSelectedJob = _.find(newJobs, { 'id': jobId });
+    }
+
+    $scope.selectedJob = mlJobService.getJob(jobId);
+    $scope.jobPickerSelections = [jobPickerSelectedJob];
 
     // Read the detector index and entities out of the AppState.
     let detectorIndex = $scope.appState.mlTimeSeriesExplorer.detectorIndex || 0;
@@ -365,7 +422,6 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       entities.push({ fieldName: overFieldName, fieldValue: overFieldValue });
     }
 
-
     // For jobs with by and over fields, don't add the 'by' field as this
     // field will only be added to the top-level fields for record type results
     // if it also an influencer over the bucket.
@@ -378,85 +434,10 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
     $scope.entities = entities;
 
-    globalState.ml.jobIds = selections;
+    globalState.ml.jobIds = [jobId];
     globalState.save();
 
     $scope.refresh();
-  };
-
-  // Refresh the data when the time range is altered.
-  $scope.$listen(timefilter, 'fetch', $scope.refresh);
-
-  // Add a watcher for auto-refresh of the time filter to refresh all the data.
-  const refreshWatcher = Private(refreshIntervalWatcher);
-  refreshWatcher.init(() => {
-    $scope.refresh();
-  });
-
-  // Add a listener for filter changes triggered from the anomalies table.
-  const filterChangeListener = function (field, value, operator) {
-    const entity = _.find($scope.entities, { fieldName:field });
-    if (entity !== undefined) {
-      if (operator === '+' && entity.fieldValue !== value) {
-        entity.fieldValue = value;
-        $scope.saveSeriesPropertiesAndRefresh();
-      } else if (operator === '-' && entity.fieldValue === value) {
-        entity.fieldValue = '';
-        $scope.saveSeriesPropertiesAndRefresh();
-      }
-    }
-  };
-
-  mlAnomaliesTableService.addFilterChangeListener(filterChangeListener);
-
-  $scope.$on('$destroy', () => {
-    refreshWatcher.cancel();
-    mlAnomaliesTableService.removeFilterChangeListener(filterChangeListener);
-  });
-
-  // When inside a dashboard in the ML plugin, listen for changes to job selection.
-  mlJobSelectService.listenJobSelectionChange($scope, (event, selections) => {
-    // Reset the detector and clear the entities.
-    $scope.appState.mlTimeSeriesExplorer.detectorIndex = 0;
-    delete $scope.appState.mlTimeSeriesExplorer.entities;
-    $scope.appState.save();
-
-    $scope.setSelectedJobs(selections);
-  });
-
-  $scope.$on('contextChartSelected', function (event, selection) {
-    // Save state of zoom (adds to URL) if it is different to the default.
-    if ($scope.contextChartData === undefined || $scope.contextChartData.length === 0) {
-      return;
-    }
-
-    const defaultRange = calculateDefaultFocusRange();
-    if (selection.from.getTime() !== defaultRange[0].getTime() || selection.to.getTime() !== defaultRange[1].getTime()) {
-      const zoomState = { from: selection.from.toISOString(), to: selection.to.toISOString() };
-      $scope.appState.mlTimeSeriesExplorer.zoom = zoomState;
-    } else {
-      delete $scope.appState.mlTimeSeriesExplorer.zoom;
-    }
-    $scope.appState.save();
-
-    if ($scope.focusChartData === undefined ||
-      ($scope.zoomFrom.getTime() !== selection.from.getTime()) ||
-      ($scope.zoomTo.getTime() !== selection.to.getTime())) {
-      $scope.refreshFocusData(selection.from, selection.to);
-    }
-
-    $scope.zoomFrom = selection.from;
-    $scope.zoomTo = selection.to;
-
-  });
-
-  function getSelectedJob() {
-    const selectedJobIds = $scope.getSelectedJobIds();
-    let selectedJob = null;
-    if (selectedJobIds && selectedJobIds.length > 0) {
-      selectedJob = mlJobService.getJob(selectedJobIds[0]);
-    }
-    return selectedJob;
   }
 
   function calculateInitialFocusRange() {
@@ -467,8 +448,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     // Calculate the 'auto' zoom duration which shows data at bucket span granularity.
     // Get the minimum bucket span of selected jobs.
     // TODO - only look at jobs for which data has been returned?
-    const minBucketSpanSeconds = _.reduce($scope.selectedJobs, (memo, job) => Math.min(memo, job.bucketSpanSeconds) , 86400);
-    $scope.autoZoomDuration = (minBucketSpanSeconds * 1000) * (CHARTS_POINT_TARGET - 1);
+    const bucketSpanSeconds =  _.find($scope.jobs, { 'id': $scope.selectedJob.job_id }).bucketSpanSeconds;
+    $scope.autoZoomDuration = (bucketSpanSeconds * 1000) * (CHARTS_POINT_TARGET - 1);
 
     // Check for a zoom parameter in the globalState (URL).
     const zoomState = $scope.appState.mlTimeSeriesExplorer.zoom;
@@ -491,8 +472,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     // Calculate the 'auto' zoom duration which shows data at bucket span granularity.
     // Get the minimum bucket span of selected jobs.
     // TODO - only look at jobs for which data has been returned?
-    const minBucketSpanSeconds = _.reduce($scope.selectedJobs, (memo, job) => Math.min(memo, job.bucketSpanSeconds) , 86400);
-    $scope.autoZoomDuration = (minBucketSpanSeconds * 1000) * (CHARTS_POINT_TARGET - 1);
+    const bucketSpanSeconds =  _.find($scope.jobs, { 'id': $scope.selectedJob.job_id }).bucketSpanSeconds;
+    $scope.autoZoomDuration = (bucketSpanSeconds * 1000) * (CHARTS_POINT_TARGET - 1);
 
     const earliestDataDate = _.first($scope.contextChartData).date;
     const latestDataDate = _.last($scope.contextChartData).date;
@@ -516,10 +497,10 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     let aggInterval = buckets.getInterval();
 
     // Set the interval back to the job bucket span if the auto interval is smaller.
-    const minJobBucketSpanSeconds = _.reduce($scope.selectedJobs, (memo, job) => Math.min(memo, job.bucketSpanSeconds) , 86400);
+    const bucketSpanSeconds =  _.find($scope.jobs, { 'id': $scope.selectedJob.job_id }).bucketSpanSeconds;
     const secs = aggInterval.asSeconds();
-    if (secs < minJobBucketSpanSeconds) {
-      buckets.setInterval(minJobBucketSpanSeconds + 's');
+    if (secs < bucketSpanSeconds) {
+      buckets.setInterval(bucketSpanSeconds + 's');
       aggInterval = buckets.getInterval();
     }
 

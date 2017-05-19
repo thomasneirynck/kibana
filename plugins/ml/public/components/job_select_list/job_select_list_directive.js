@@ -63,10 +63,23 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
 
             $scope.selectableJobs = _.filter(jobs, job => !job.disabled);
 
-            if ($scope.selections.length === 1 && $scope.selections[0] === '*') {
-              // Replace the '*' selection with the complete list of job IDs.
-              $scope.selections = _.map($scope.jobs, job => job.id);
+            const selectStar = ($scope.selections.length === 1 && $scope.selections[0] === '*');
+            if ($scope.singleSelection === true) {
+              // Page controller should check for these, rectify and notify, but just in case.
+              if ($scope.selections.length > 1) {
+                $scope.selections.splice(1);
+              }
+              if (selectStar === true && $scope.selections.length === 1) {
+                $scope.selections = [$scope.jobs[0].id];
+              }
+
+            } else {
+              if (selectStar === true) {
+                // Replace the '*' selection with the complete list of job IDs.
+                $scope.selections = _.map($scope.jobs, job => job.id);
+              }
             }
+
             const $popover = $('.popover');
             $popover.css('maxWidth', 610);
             $popover.css('left', 10);
@@ -155,6 +168,10 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
       scope.timeSeriesOnly = false;
       if (attrs.timeseriesonly !== undefined && attrs.timeseriesonly === 'true') {
         scope.timeSeriesOnly = true;
+      }
+
+      if (attrs.singleSelection !== undefined && attrs.singleSelection === 'true') {
+        scope.singleSelection = true;
       }
 
       // List of jobs to select is passed to the directive in the 'selected' attribute.

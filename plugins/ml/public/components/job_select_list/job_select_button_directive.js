@@ -34,6 +34,9 @@ module.directive('jobSelectButton', function () {
         if (scope.timeseriesonly) {
           txt += 'timeseriesonly="true" ';
         }
+        if (scope.singleSelection) {
+          txt += 'single-selection="true" ';
+        }
         txt += 'selected="';
         txt += _.map(scope.selectedJobs, job => job.id).join(' ');
         txt += '"></ml-job-select-list>';
@@ -45,7 +48,8 @@ module.directive('jobSelectButton', function () {
   return {
     scope: {
       selectedJobs: '=',
-      timeseriesonly: '='
+      timeseriesonly: '=',
+      singleSelection: '='
     },
     link: link,
     replace: true,
