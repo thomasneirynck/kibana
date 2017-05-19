@@ -278,6 +278,7 @@ module
       }
     });
 
+    $scope.ui.fields = [];
     _.each(fields, (field, i) => {
       // if the field name contains bad characters which break elasticsearch aggregations
       // use a dummy name.
