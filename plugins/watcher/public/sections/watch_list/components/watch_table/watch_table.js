@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import { uiModules } from 'ui/modules';
+import 'ui/check_box';
 import template from './watch_table.html';
 import 'plugins/watcher/components/sortable_column';
 import 'plugins/watcher/components/selectable_column';
-import 'plugins/watcher/components/selectable_row';
 import 'plugins/watcher/components/watch_state_icon';
 
 const app = uiModules.get('xpack/watcher');
@@ -57,8 +57,8 @@ app.directive('watchTable', function () {
         this.updateSelectedWatches();
       };
 
-      onWatchSelectedChange = (watch, selected) => {
-        _.find(this.items, item => item.watch === watch).selected = selected;
+      onWatchSelectedChange = (watchId, selected) => {
+        _.find(this.items, item => item.watch.id === watchId).selected = selected;
         this.updateSelectedWatches();
       };
 

@@ -80,12 +80,12 @@
     >
       <td class="kuiTableRowCell kuiTableRowCell--checkBox">
         <div class="kuiTableRowCell__liner">
-          <selectable-row
-            item="item.watch"
-            selected="item.selected"
+          <check-box
+            id="item.watch.id"
+            is-selected="item.selected"
             on-select-change="watchTable.onWatchSelectedChange"
             ng-if="watchTable.isEditable(item)"
-          ></selectable-row>
+          ></check-box>
         </div>
       </td>
       <td class="kuiTableRowCell">
