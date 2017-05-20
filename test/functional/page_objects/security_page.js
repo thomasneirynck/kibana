@@ -75,11 +75,7 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
 
 
     navigateTo() {
-      return PageObjects.common.navigateToApp('settings');
-    }
-
-    clickElasticsearchUsers() {
-      return this.navigateTo()
+      return PageObjects.common.navigateToApp('settings')
       .then(() => {
         return remote.setFindTimeout(defaultFindTimeout)
         .findDisplayedByLinkText('Security')
@@ -87,13 +83,17 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
       });
     }
 
-    clickElasticsearchRoles() {
+    clickElasticsearchUsers() {
       return this.navigateTo()
       .then(() => {
         return remote.setFindTimeout(defaultFindTimeout)
-        .findDisplayedByLinkText('Security')
+        .findDisplayedByLinkText('Users')
         .click();
-      })
+      });
+    }
+
+    clickElasticsearchRoles() {
+      return this.navigateTo()
       .then(() => {
         return remote.setFindTimeout(defaultFindTimeout)
         .findDisplayedByLinkText('Roles')
