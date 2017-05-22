@@ -8,16 +8,16 @@
 
   <filter-bar state="appState"></filter-bar>
 
-  <div class="no-results-container" ng-if="jobs.length === 0">
+  <div class="loading-container" ng-show="loading === true">
+    <div class="loading-spinner"><i class='fa fa-spinner fa-spin'></i></div>
+    <div>Loading</div>
+  </div>
+
+  <div class="no-results-container" ng-if="jobs.length === 0 && loading === false">
     <div class="no-results">
       <div><i class="fa fa-exclamation-triangle" ></i>No jobs found</div>
       <div><a href="ml#/jobs">Create new job</a></div>
     </div>
-  </div>
-
-  <div class="loading-container" ng-show="loading === true">
-    <div class="loading-spinner"><i class='fa fa-spinner fa-spin'></i></div>
-    <div>Loading</div>
   </div>
 
   <div class="no-results-container" ng-show="jobs.length > 0 && loading === false && hasResults === false">
@@ -27,7 +27,7 @@
     </div>
   </div>
 
-  <div ng-if="loading === false && hasResults === true">
+  <div ng-if="jobs.length > 0 && loading === false && hasResults === true">
     <div class="results-container">
 
       <div class="influencers-list-container column col-xs-2">

@@ -67,7 +67,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
   $scope.jobPickerSelections = [];
   $scope.selectedJob;
   $scope.detectors = [];
-  $scope.loading = false;
+  $scope.loading = true;
+  $scope.loadCounter = 0;
   $scope.hasResults = false;
   $scope.modelPlotEnabled = false;
 
@@ -125,6 +126,8 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
         if (selectedJobIds.length > 0) {
           loadForJobId(selectedJobIds[0]);
         }
+      } else {
+        $scope.loading = false;
       }
 
     }).catch((resp) => {
@@ -144,13 +147,14 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     delete $scope.focusChartData;
 
     // Counter to keep track of what data sets have been loaded.
+    $scope.loadCounter++;
     let awaitingCount = 2;
 
     // finish() function, called after each data set has been loaded and processed.
     // The last one to call it will trigger the page render.
-    function finish() {
+    function finish(counterVar) {
       awaitingCount--;
-      if (awaitingCount === 0) {
+      if (awaitingCount === 0 && (counterVar === $scope.loadCounter)) {
 
         if ($scope.contextChartData && $scope.contextChartData.length) {
           $scope.hasResults = true;
@@ -188,6 +192,10 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     console.log('aggregationInterval for context data (s):', $scope.contextAggregationInterval.asSeconds());
 
     // Query 1 - load metric data at low granularity across full time range.
+    // Pass a counter flag into the finish() function to make sure we only process the results
+    // for the most recent call to the load the data in cases where the job selection and time filter
+    // have been altered in quick succession (such as from the job picker with 'Apply time range').
+    const counter = $scope.loadCounter;
     mlTimeSeriesSearchService.getMetricData($scope.selectedJob, detectorIndex, nonBlankEntities,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.contextAggregationInterval.expression)
     .then((resp) => {
@@ -204,7 +212,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
         $scope.zoomTo = focusRange[1];
       }
 
-      finish();
+      finish(counter);
     }).catch((resp) => {
       console.log('Time series explorer - error getting metric data from elasticsearch:', resp);
     });
@@ -219,7 +227,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       $scope.swimlaneData = fullRangeRecordScoreData;
       console.log('Time series explorer swimlane anomalies data set:', $scope.swimlaneData);
 
-      finish();
+      finish(counter);
     }).catch((resp) => {
       console.log('Time series explorer - error getting bucket anomaly scores from elasticsearch:', resp);
     });

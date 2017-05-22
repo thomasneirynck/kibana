@@ -57,6 +57,8 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
   // TODO - move the index pattern into a setting?
   $scope.indexPatternId = '.ml-anomalies-*';
   $scope.timeFieldName = 'timestamp';
+  $scope.loading = true;
+  $scope.loadCounter = 0;
   $scope.showNoSelectionMessage = true;     // User must select a swimlane cell to view anomalies.
   timefilter.enabled = true;
 
@@ -105,6 +107,8 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
         // Select any jobs set in the global state (i.e. passed in the URL).
         const selectedJobIds = _.get(globalState.ml, 'jobIds', []);
         $scope.setSelectedJobs(selectedJobIds);
+      } else {
+        $scope.loading = false;
       }
 
     }).catch((resp) => {
@@ -447,15 +451,15 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     $scope.hasResults = false;
 
     // Counter to keep track of what data sets have been loaded.
+    $scope.loadCounter++;
     let awaitingCount = 2;
 
     // finish() function, called after each data set has been loaded and processed.
     // The last one to call it will trigger the page render.
-    function finish() {
+    function finish(counterVar) {
       awaitingCount--;
-      if (awaitingCount === 0) {
+      if (awaitingCount === 0 && (counterVar === $scope.loadCounter)) {
 
-        // TODO: Check against bucket results as jobs may not include influencers.
         if ($scope.overallSwimlaneData.points && $scope.overallSwimlaneData.points.length > 0) {
           $scope.hasResults = true;
 
@@ -483,13 +487,17 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     const selectedJobIds = $scope.getSelectedJobIds();
 
     // Query 1 - load list of top influencers.
+    // Pass a counter flag into the finish() function to make sure we only process the results
+    // for the most recent call to the load the data in cases where the job selection and time filter
+    // have been altered in quick succession (such as from the job picker with 'Apply time range').
+    const counter = $scope.loadCounter;
     mlResultsService.getTopInfluencers($scope.indexPatternId, selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), MAX_INFLUENCER_FIELD_NAMES, MAX_DISPLAY_FIELD_VALUES)
     .then((resp) => {
       // TODO - sort the influencers keys so that the partition field(s) are first.
       $scope.influencersData = resp.influencers;
       console.log('Explorer top influencers data set:', $scope.influencersData);
-      finish();
+      finish(counter);
     });
 
     // Query 2 - load 'overall' scores by time - using max of bucket_influencer anomaly_score.
@@ -500,7 +508,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     .then((resp) => {
       processOverallResults(resp.results);
       console.log('Explorer overall swimlane data set:', $scope.overallSwimlaneData);
-      finish();
+      finish(counter);
     });
 
   }
