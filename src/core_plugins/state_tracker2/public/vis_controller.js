@@ -1,17 +1,37 @@
 
 class VisController {
   constructor(el) {
-    console.log('recreate');
     this.el = el;
     this._previousStates = [];
   }
 
   render(vis, visData) {
-    console.log('rendering');
+
     return new Promise(resolve => {
-      const state = {};
-      this._previousStates.push(state);
-      this.el.innerHTML = `now has ${this._previousStates.length} states`;
+      const id = window.location.href;
+      const visited = this._previousStates.some((state) => {
+        return state.id === id;
+      });
+
+      if (!visited) {
+        const filters = vis.API.queryFilter.getFilters();
+        const display = JSON.stringify(filters);
+        const state = {
+          id: id,
+          display: display
+        };
+        this._previousStates.push(state);
+      }
+
+      const list = document.createElement('ul');
+      this._previousStates.slice().reverse().forEach((state, i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<a href=${state.id}>${this._previousStates.length - i}: ${state.display}</a>`;
+        list.appendChild(li);
+      });
+
+      this.el.innerHTML = '';
+      this.el.appendChild(list);
       resolve('when done rendering');
     });
   }
@@ -23,6 +43,6 @@ class VisController {
   destroy() {
     console.log('destroying vis');
   }
-};
+}
 
 export { VisController };

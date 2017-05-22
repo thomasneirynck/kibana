@@ -22,7 +22,7 @@ function StateTracker2Provider(Private) {
         fontSize: '50'
       },
     },
-    editorController: EditorController,
+    editor: EditorController,
     editorConfig: {},
     requestHandler: (x) => {
       return new Promise(function (resolve) {
