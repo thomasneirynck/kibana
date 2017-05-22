@@ -37,7 +37,7 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
       $scope.jobs = [];
       $scope.selectableJobs = [];
       $scope.noJobsCreated = undefined;
-      $scope.applyTimeRange = false;
+      $scope.applyTimeRange = true;
 
       mlJobService.loadJobs()
         .then((resp) => {
@@ -79,11 +79,6 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
                 $scope.selections = _.map($scope.jobs, job => job.id);
               }
             }
-
-            const $popover = $('.popover');
-            $popover.css('maxWidth', 610);
-            $popover.css('left', 10);
-            $popover.find('.arrow').css('left', '150px');
           } else {
             $scope.noJobsCreated = true;
           }
@@ -105,13 +100,19 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
           const selectedJobs = _.filter($scope.jobs, job => _.includes($scope.selections, job.id));
           const times = [];
           _.each(selectedJobs, (job) => {
-            times.push(job.timeRange.from);
-            times.push(job.timeRange.to);
+            if (job.timeRange.from !== undefined) {
+              times.push(job.timeRange.from);
+            }
+            if (job.timeRange.to !== undefined) {
+              times.push(job.timeRange.to);
+            }
           });
-          const min = _.min(times);
-          const max = _.max(times);
-          timefilter.time.from = moment(min).toISOString();
-          timefilter.time.to = moment(max).toISOString();
+          if (times.length) {
+            const min = _.min(times);
+            const max = _.max(times);
+            timefilter.time.from = moment(min).toISOString();
+            timefilter.time.to = moment(max).toISOString();
+          }
         }
         $scope.closePopover();
       };
@@ -144,17 +145,19 @@ module.directive('mlJobSelectList', function (mlJobService, mlJobSelectService, 
         const gantScale = d3.scale.linear().domain([min.timeRange.from, max.timeRange.to]).range([1, 299]);
 
         _.each(jobs, (job) => {
-          job.timeRange.fromPx = gantScale(job.timeRange.from);
-          job.timeRange.widthPx = gantScale(job.timeRange.to) - job.timeRange.fromPx;
+          if (job.timeRange.to !== undefined && job.timeRange.from !== undefined) {
+            job.timeRange.fromPx = gantScale(job.timeRange.from);
+            job.timeRange.widthPx = gantScale(job.timeRange.to) - job.timeRange.fromPx;
 
-          job.timeRange.toMoment = moment(job.timeRange.to);
-          job.timeRange.fromMoment = moment(job.timeRange.from);
+            job.timeRange.toMoment = moment(job.timeRange.to);
+            job.timeRange.fromMoment = moment(job.timeRange.from);
 
-          let label = job.timeRange.fromMoment.format('MMM Do YYYY, HH:mm');
-          label += ' to ';
-          label += job.timeRange.toMoment.format('MMM Do YYYY, HH:mm');
+            let label = job.timeRange.fromMoment.format('MMM Do YYYY, HH:mm');
+            label += ' to ';
+            label += job.timeRange.toMoment.format('MMM Do YYYY, HH:mm');
 
-          job.timeRange.label = label;
+            job.timeRange.label = label;
+          }
         });
 
       }
