@@ -19,3 +19,4 @@ import './create_job_service';
 import './create_job_chart_directive';
 import './create_job_search_service';
 import 'plugins/ml/services/mapping_service';
+import 'plugins/ml/jobs/new_job/simple/components/post_save_options';

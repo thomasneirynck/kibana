@@ -180,5 +180,9 @@
       </a>
 
     </div>
+    <div ng-if='jobState === JOB_STATE.FINISHED'>
+      <hr />
+      <ml-post-save-options job-id='formConfig.jobId' end-time='formConfig.end'></ml-post-save-options>
+    </div>
   </div>
 </ml-new-job-single-metric>

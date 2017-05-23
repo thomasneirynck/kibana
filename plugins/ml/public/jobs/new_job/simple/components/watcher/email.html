@@ -1,0 +1,8 @@
+<div>
+	Found anomalies:
+	<ul>
+		{{#ctx.payload.aggregations.byTime.buckets}}
+		<li>Time: {{key}}, Score: {{maxAnomalyScore.value}}</li>
+		{{/ctx.payload.aggregations.byTime.buckets}}
+	</ul>
+</div>
