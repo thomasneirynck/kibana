@@ -29,9 +29,9 @@ module.directive('mlNavMenu', () => {
       const crumbNames = {
         jobs: { label: 'Job Management', url: '#/jobs' },
         new_job: { label: 'Create New Job', url: '#/jobs/new_job' },
-        new_job_single_metric: { label: 'Single Metric Job', url: '#/jobs/new_job_single_metric' },
-        new_job_multi_metric: { label: 'Multi Metric job', url: '#/jobs/new_job_multi_metric' },
-        new_job_advanced: { label: 'Advanced Job Configuration', url: '#/jobs/new_job_advanced' },
+        single_metric: { label: 'Single Metric Job', url: '#/jobs/new_job/simple/single_metric' },
+        multi_metric: { label: 'Multi Metric job', url: '#/jobs/new_job/simple/multi_metric' },
+        advanced: { label: 'Advanced Job Configuration', url: '#/jobs/new_job/advanced' },
         explorer: { label: 'Anomaly Explorer', url: '#/explorer' },
         timeseriesexplorer: { label: 'Single Metric Viewer', url: '#/timeseriesexplorer' },
       };
@@ -41,15 +41,7 @@ module.directive('mlNavMenu', () => {
       // get crumbs from url
       const crumbs = chrome.getBreadcrumbs();
       _.each(crumbs, (crumb) => {
-        if (crumb !== 'step' && crumb !== '1' && crumb !== 'create') {
-          if (crumb === 'new_job_single_metric' ||
-              crumb === 'new_job_multi_metric' ||
-              crumb === 'new_job_advanced') {
-            // if creating a new job, push the new_job step into the trail
-            breadcrumbs.push(crumbNames.new_job);
-          }
-          breadcrumbs.push(crumbNames[crumb]);
-        }
+        breadcrumbs.push(crumbNames[crumb]);
       });
       scope.breadcrumbs = breadcrumbs.filter(Boolean);
     }
