@@ -39,7 +39,7 @@ export function getClustersFromRequest(req) {
 
   return getClusters(req, esIndexPattern)
   .then(getClustersStats(req, esIndexPattern))
-  .then(getClustersHealth(req, esIndexPattern))
+  .then(clusters => getClustersHealth(req, esIndexPattern, clusters))
   .then(flagSupportedClusters(req))
   .then((clusters) => {
     // get specific cluster
