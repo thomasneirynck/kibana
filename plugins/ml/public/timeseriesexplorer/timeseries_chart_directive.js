@@ -406,7 +406,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
 
     }
 
-    function updateZoomInfoElements() {
+    function updateZoomInfoElements(zoomGroup, fcsWidth) {
       // Update the zoom duration links to those applicable for the current time span.
       // Don't add links for any durations which would give a brush extent less than 10px.
       const bounds = timefilter.getActiveBounds();
@@ -423,14 +423,18 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         }
       }
 
-      const zoomInfoGroup = d3.select('.focus-zoom');
-      zoomInfoGroup.append('foreignObject')
-        .attr('width', 400)
-        .attr('height', 25)
-        .html('<div class="zoom-links">Zoom: ' + zoomLinks +
+      let zoomInfoText = '<div class="focus-chart-info">Zoom: ' + zoomLinks +
           '<span class="zoom-aggregation-interval-label">(aggregation interval: ' +
-          '<span class="zoom-aggregation-interval"></span>' +
-          ')</span></div>');
+          '<span class="zoom-aggregation-interval"></span>)</span>';
+      if (scope.modelPlotEnabled === false) {
+        zoomInfoText += '<div class="model-plot-label">Model bounds are not available</div>';
+      }
+      zoomInfoText += '</div>';
+
+      zoomGroup.append('foreignObject')
+        .attr('width', fcsWidth)
+        .attr('height', 25)
+        .html(zoomInfoText);
 
       $('.focus-zoom a').click(function (e) {
         e.preventDefault();

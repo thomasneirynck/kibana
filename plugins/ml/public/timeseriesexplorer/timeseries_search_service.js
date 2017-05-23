@@ -75,8 +75,6 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResult
         earliestMs, latestMs, interval
         )
       .then((resp) => {
-        console.log('Time series search service getMetricData() resp:', resp);
-
         _.each(resp.results, (value, time) => {
           obj.results[time] = {
             'actual': value
@@ -172,8 +170,6 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResult
       }
     })
     .then((resp) => {
-      console.log('Time series search service getModelPlotOutput() resp:', resp);
-
       const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
       _.each(aggregationsByTime, (dataForTime) => {
         const time = dataForTime.key;
@@ -311,6 +307,85 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResult
     .catch((resp) => {
       deferred.reject(resp);
     });
+    return deferred.promise;
+  };
+
+  // Builds chart detail information (charting function description and entity counts) used
+  // in the title area of the time series chart.
+  // Queries Elasticsearch if necessary to obtain the distinct count of entities
+  // for which data is being plotted.
+  this.getChartDetails = function (job, detectorIndex, entityFields, earliestMs, latestMs) {
+    const deferred = $q.defer();
+    const obj = { success: true, results:{ functionLabel: '', entityData: { entities: [] } } };
+
+    const chartConfig = buildConfigFromDetector(job, detectorIndex);
+    let functionLabel = chartConfig.metricFunction;
+    if (chartConfig.metricFieldName !== undefined) {
+      functionLabel += ' ';
+      functionLabel += chartConfig.metricFieldName;
+    }
+    obj.results.functionLabel = functionLabel;
+
+    // Build the aggregations for any blank entityField objects with blank values
+    // so we can obtain the number of distinct entity values over the specified time.
+    const aggs = {};
+    _.each(entityFields, (entity) => {
+      if (entity.fieldValue.length === 0) {
+        aggs[entity.fieldName] = { 'cardinality' : { 'field': entity.fieldName } };
+      }
+    });
+
+    if (_.keys(aggs).length === 0) {
+      obj.results.entityData.count = 1;
+      obj.results.entityData.entities = entityFields;
+      deferred.resolve(obj);
+    } else {
+      // Build the criteria to use in the bool filter part of the request.
+      // Add criteria for the time range and the datafeed config query.
+      const mustCriteria = [];
+      mustCriteria.push(chartConfig.datafeedConfig.query);
+
+      const timeRangeCriteria = { 'range':{} };
+      timeRangeCriteria.range[chartConfig.timeField] = {
+        'gte': earliestMs,
+        'lte': latestMs,
+        'format': 'epoch_millis'
+      };
+      mustCriteria.push(timeRangeCriteria);
+
+      mustCriteria.push({ 'terms' : { '_type' : chartConfig.datafeedConfig.types } });
+
+      const searchBody = {
+        'query': {
+          'bool': {
+            'must': mustCriteria
+          }
+        },
+        'size': 0,
+        '_source': {
+          'excludes': []
+        },
+        'aggs': aggs
+      };
+
+      es.search({
+        index: chartConfig.datafeedConfig.indices,
+        body: searchBody
+      })
+      .then((resp) => {
+        const aggregations = resp.aggregations;
+        const entityFieldNames = _.keys(aggs);
+        _.each(entityFieldNames, (fieldName) => {
+          obj.results.entityData.entities.push({ fieldName: fieldName, count: aggregations[fieldName].value });
+        });
+
+        deferred.resolve(obj);
+      })
+      .catch((resp) => {
+        deferred.reject(resp);
+      });
+    }
+
     return deferred.promise;
   };
 

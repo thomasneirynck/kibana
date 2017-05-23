@@ -143,12 +143,13 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
     $scope.loading = true;
     $scope.hasResults = false;
+    delete $scope.chartDetails;
     delete $scope.contextChartData;
     delete $scope.focusChartData;
 
     // Counter to keep track of what data sets have been loaded.
     $scope.loadCounter++;
-    let awaitingCount = 2;
+    let awaitingCount = 3;
 
     // finish() function, called after each data set has been loaded and processed.
     // The last one to call it will trigger the page render.
@@ -230,6 +231,16 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       finish(counter);
     }).catch((resp) => {
       console.log('Time series explorer - error getting bucket anomaly scores from elasticsearch:', resp);
+    });
+
+    // Query 3 - load details on the chart used in the chart title (charting function and entity(s)).
+    mlTimeSeriesSearchService.getChartDetails($scope.selectedJob, detectorIndex, $scope.entities,
+      bounds.min.valueOf(), bounds.max.valueOf())
+    .then((resp) => {
+      $scope.chartDetails = resp.results;
+      finish(counter);
+    }).catch((resp) => {
+      console.log('Time series explorer - error getting entity counts from elasticsearch:', resp);
     });
   };
 

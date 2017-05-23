@@ -48,7 +48,17 @@
     <div class="results-container">
 
       <span class="panel-title">
-        Single time series analysis
+        Single time series analysis of {{chartDetails.functionLabel}}
+      </span>
+      <span ng-if="chartDetails.entityData.count === 1" class="entity-count-text">
+        <span ng-repeat="entity in chartDetails.entityData.entities">
+          {{$first ? '(' : ''}}{{entity.fieldName}}: {{entity.fieldValue}}{{$last ? ')' : ', '}}
+        </span>
+      </span>
+      <span ng-if="chartDetails.entityData.count !== 1" class="entity-count-text">
+        <span ng-repeat="countData in chartDetails.entityData.entities">
+          {{$first ? '(' : ''}}{{countData.count}} distinct {{countData.fieldName}}{{countData.count > 1 ? ' values' : ''}}{{$last ? ')' : ', '}}
+        </span>
       </span>
       <div class="ml-timeseries-chart">
         <ml-timeseries-chart  style="width: 1200px; height: 400px;"
