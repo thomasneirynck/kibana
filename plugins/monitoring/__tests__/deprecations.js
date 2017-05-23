@@ -105,4 +105,22 @@ describe('monitoring plugin deprecations', function () {
     transformDeprecations(settings, log);
     expect(log.called).to.be(false);
   });
+
+  it('should log when deprecating node_resolver', function () {
+    const settings = {
+      node_resolver: 'name'
+    };
+
+    const log = sinon.spy();
+    transformDeprecations(settings, log);
+    expect(log.calledOnce).to.be(true);
+  });
+
+  it(`shouldn't log when node_resolver isn't present`, function () {
+    const settings = { };
+
+    const log = sinon.spy();
+    transformDeprecations(settings, log);
+    expect(log.called).to.be(false);
+  });
 });

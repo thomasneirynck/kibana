@@ -24,6 +24,12 @@ export const deprecations = ({ rename }) => {
 
       log('Config key "xpack.monitoring.elasticsearch.ssl.verify" is deprecated. ' +
           'It has been replaced with "xpack.monitoring.elasticsearch.ssl.verificationMode"');
+    },
+    (settings, log) => {
+      if (has(settings, 'node_resolver')) {
+        log('Config key "xpack.monitoring.node_resolver" is deprecated. ' +
+            'The default value of "uuid" will become the only value starting in 6.0.');
+      }
     }
   ];
 };
