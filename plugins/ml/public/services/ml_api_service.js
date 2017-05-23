@@ -14,30 +14,32 @@
  */
 
 import './http_service';
+import chrome from 'ui/chrome';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.service('ml', function (prlHttpService) {
   const http = prlHttpService;
+  const basePath = chrome.addBasePath('/api/ml');
 
   this.jobs = function (obj) {
     const jobId = (obj && obj.jobId) ? obj.jobId : '';
     return http.request({
-      url: `../api/ml/anomaly_detectors/${jobId}`,
+      url: `${basePath}/anomaly_detectors/${jobId}`,
     });
   };
 
   this.jobStats = function (obj) {
     const jobId = (obj && obj.jobId) ? obj.jobId + '/' : '';
     return http.request({
-      url: `../api/ml/anomaly_detectors/${jobId}_stats`,
+      url: `${basePath}/anomaly_detectors/${jobId}_stats`,
     });
   };
 
   this.addJob = function (obj) {
     return http.request({
-      url: `../api/ml/anomaly_detectors/${obj.jobId}`,
+      url: `${basePath}/anomaly_detectors/${obj.jobId}`,
       method: 'PUT',
       data: obj.job
     });
@@ -45,28 +47,28 @@ module.service('ml', function (prlHttpService) {
 
   this.openJob = function (obj) {
     return http.request({
-      url: `../api/ml/anomaly_detectors/${obj.jobId}/_open`,
+      url: `${basePath}/anomaly_detectors/${obj.jobId}/_open`,
       method: 'POST'
     });
   };
 
   this.closeJob = function (obj) {
     return http.request({
-      url: `../api/ml/anomaly_detectors/${obj.jobId}/_close`,
+      url: `${basePath}/anomaly_detectors/${obj.jobId}/_close`,
       method: 'POST'
     });
   };
 
   this.deleteJob = function (obj) {
     return http.request({
-      url: `../api/ml/anomaly_detectors/${obj.jobId}`,
+      url: `${basePath}/anomaly_detectors/${obj.jobId}`,
       method: 'DELETE'
     });
   };
 
   this.updateJob = function (obj) {
     return http.request({
-      url: `../api/ml/anomaly_detectors/${obj.jobId}/_update`,
+      url: `${basePath}/anomaly_detectors/${obj.jobId}/_update`,
       method: 'POST',
       data: obj.job
     });
@@ -75,20 +77,20 @@ module.service('ml', function (prlHttpService) {
   this.datafeeds = function (obj) {
     const datafeedId = (obj && obj.datafeedId) ? obj.datafeedId : '';
     return http.request({
-      url: `../api/ml/datafeeds/${datafeedId}`,
+      url: `${basePath}/datafeeds/${datafeedId}`,
     });
   };
 
   this.datafeedStats = function (obj) {
     const datafeedId = (obj && obj.datafeedId) ? obj.datafeedId + '/' : '';
     return http.request({
-      url: `../api/ml/datafeeds/${datafeedId}_stats`,
+      url: `${basePath}/datafeeds/${datafeedId}_stats`,
     });
   };
 
   this.addDatafeed = function (obj) {
     return http.request({
-      url: `../api/ml/datafeeds/${obj.datafeedId}`,
+      url: `${basePath}/datafeeds/${obj.datafeedId}`,
       method: 'PUT',
       data: obj.datafeedConfig
     });
@@ -96,7 +98,7 @@ module.service('ml', function (prlHttpService) {
 
   this.updateDatafeed = function (obj) {
     return http.request({
-      url: `../api/ml/datafeeds/${obj.datafeedId}/_update`,
+      url: `${basePath}/datafeeds/${obj.datafeedId}/_update`,
       method: 'POST',
       data: obj.datafeedConfig
     });
@@ -104,7 +106,7 @@ module.service('ml', function (prlHttpService) {
 
   this.deleteDatafeed = function (obj) {
     return http.request({
-      url: `../api/ml/datafeeds/${obj.datafeedId}`,
+      url: `${basePath}/datafeeds/${obj.datafeedId}`,
       method: 'DELETE'
     });
   };
@@ -118,7 +120,7 @@ module.service('ml', function (prlHttpService) {
       data.end = obj.end;
     }
     return http.request({
-      url: `../api/ml/datafeeds/${obj.datafeedId}/_start`,
+      url: `${basePath}/datafeeds/${obj.datafeedId}/_start`,
       method: 'POST',
       data
     });
@@ -126,21 +128,21 @@ module.service('ml', function (prlHttpService) {
 
   this.stopDatafeed = function (obj) {
     return http.request({
-      url: `../api/ml/datafeeds/${obj.datafeedId}/_stop`,
+      url: `${basePath}/datafeeds/${obj.datafeedId}/_stop`,
       method: 'POST'
     });
   };
 
   this.datafeedPreview = function (obj) {
     return http.request({
-      url: `../api/ml/datafeeds/${obj.datafeedId}/_preview`,
+      url: `${basePath}/datafeeds/${obj.datafeedId}/_preview`,
       method: 'GET'
     });
   };
 
   this.validateDetector = function (obj) {
     return http.request({
-      url: '../api/ml/anomaly_detectors/_validate/detector',
+      url: `${basePath}/anomaly_detectors/_validate/detector`,
       method: 'POST',
       data: obj.detector
     });
@@ -148,7 +150,7 @@ module.service('ml', function (prlHttpService) {
 
   this.checkPrivilege = function (obj) {
     return http.request({
-      url: '../api/ml/_has_privileges',
+      url: `${basePath}/_has_privileges`,
       method: 'POST',
       data: obj
     });
