@@ -14,8 +14,7 @@
  */
 
 import './styles/main.less';
-import './jobs_list';
-import './new_job/advanced';
-import './new_job/simple/single_metric';
-import './new_job/simple/multi_metric';
-import './new_job/wizard';
+import './new_job_controller';
+import './detectors_list_directive';
+import './save_status_modal';
+import './data_description';
