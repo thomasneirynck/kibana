@@ -14,10 +14,10 @@
  */
 
 import { VisTypesRegistryProvider } from 'ui/registry/vis_types';
-import { ConnectionsMapProvider } from './connectionsmap/connectionsmap';
-import { InfluencersListProvider } from './influencerslist/influencerslist';
-import { SwimlaneProvider } from './swimlane/swimlane';
+import { ConnectionsMapVisType } from './connectionsmap/connectionsmap';
+import { InfluencersListVisType } from './influencerslist/influencerslist';
+import { SwimlaneVisType } from './swimlane/swimlane';
 
-VisTypesRegistryProvider.register(ConnectionsMapProvider);
-VisTypesRegistryProvider.register(InfluencersListProvider);
-VisTypesRegistryProvider.register(SwimlaneProvider);
+VisTypesRegistryProvider.register(ConnectionsMapVisType);
+VisTypesRegistryProvider.register(InfluencersListVisType);
+VisTypesRegistryProvider.register(SwimlaneVisType);
