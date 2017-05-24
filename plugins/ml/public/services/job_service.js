@@ -555,6 +555,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     // remove all of the items which should not be copied
     // such as counts, state and times
     delete tempJob.state;
+    delete tempJob.job_version;
     delete tempJob.data_counts;
     delete tempJob.create_time;
     delete tempJob.finished_time;
