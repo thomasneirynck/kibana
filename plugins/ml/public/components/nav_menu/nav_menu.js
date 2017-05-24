@@ -36,7 +36,7 @@ module.directive('mlNavMenu', () => {
         timeseriesexplorer: { label: 'Single Metric Viewer', url: '#/timeseriesexplorer' },
       };
 
-      const breadcrumbs = [{ label: 'Machine Learning (Beta)', url: '#/' }];
+      const breadcrumbs = [{ label: 'Machine Learning', url: '#/' }];
 
       // get crumbs from url
       const crumbs = chrome.getBreadcrumbs();

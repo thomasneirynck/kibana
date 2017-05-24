@@ -185,7 +185,7 @@ function (
     $scope.table.columns = [
       { title: '', sortable: false, class: 'col-expand-arrow' },
       { title: 'Job ID' },
-      { title: '', sortable: false },
+      { title: '', sortable: false, class: 'col-info' },
       { title: 'Description' },
       { title: 'Processed records', class: 'col-align-right' },
       { title: 'Memory status' },

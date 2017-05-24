@@ -4,7 +4,7 @@
 		<label class='kuiCheckBoxLabel kuiVerticalRhythm'>
 			<input ng-model='runInRealtime' ng-disabled="status.realtimeJob!==null" type="checkbox" class='kuiCheckBox' ng-click="clickRunInRealtime()"/>
 			<span class="kuiCheckBoxLabel__text">
-				Continue job in realtime
+				Continue job in real-time
 				<span ng-hide="status.realtimeJob===null">
 					<i ng-show="status.realtimeJob === STATUS.SAVE_FAILED" aria-hidden="true" style="color:red;" class="fa fa-remove"></i>
 		      <i ng-show="status.realtimeJob === STATUS.SAVING" aria-hidden="true" class="fa fa-spinner fa-spin"></i>
@@ -17,7 +17,7 @@
 		<label class='kuiCheckBoxLabel kuiVerticalRhythm' ng-class="{'disabled': !runInRealtime}">
 			<input ng-model='createWatch' ng-disabled="!runInRealtime || status.realtimeJob!==null" type="checkbox" class='kuiCheckBox' />
 			<span class="kuiCheckBoxLabel__text">
-				Create watch for realtime job
+				Create watch for real-time job
 				<span ng-hide="status.watch===null">
 					<i ng-show="status.watch === STATUS.SAVE_FAILED" aria-hidden="true" style="color:red;" class="fa fa-remove"></i>
 		      <i ng-show="status.watch === STATUS.SAVING" aria-hidden="true" class="fa fa-spinner fa-spin"></i>
