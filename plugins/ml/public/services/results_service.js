@@ -1089,20 +1089,24 @@ module.service('mlResultsService', function ($q, es) {
 
   // Queries Elasticsearch to obtain metric aggregation results.
   // index can be a String, or String[], of index names to search.
+  // types smust be a String[] of types to search.
   // entityFields parameter must be an array, with each object in the array having 'fieldName'
   //  and 'fieldValue' properties.
   // Extra query object can be supplied, or pass null if no additional query
   // to that built from the supplied entity fields.
   // Returned response contains a results property containing the requested aggregation.
-  this.getMetricData = function (index, entityFields, query, metricFunction, metricFieldName,
-    timeFieldName, earliestMs, latestMs, interval) {
+  this.getMetricData = function (index, types, entityFields, query,
+    metricFunction, metricFieldName, timeFieldName, earliestMs, latestMs, interval) {
     const deferred = $q.defer();
     const obj = { success: true, results: {} };
 
     // Build the criteria to use in the bool filter part of the request.
-    // Add criteria for the time range, entity fields, plus any additional supplied query.
+    // Add criteria for the types, time range, entity fields,
+    // plus any additional supplied query.
     const mustCriteria = [];
     const shouldCriteria = [];
+
+    mustCriteria.push({ 'terms' : { '_type' : types } });
 
     const timeRangeCriteria = { 'range':{} };
     timeRangeCriteria.range[timeFieldName] = {

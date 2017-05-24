@@ -70,7 +70,8 @@ module.service('mlTimeSeriesSearchService', function ($q, $timeout, es, mlResult
 
       const chartConfig = buildConfigFromDetector(job, detectorIndex);
 
-      mlResultsService.getMetricData(chartConfig.datafeedConfig.indices, entityFields, chartConfig.datafeedConfig.query,
+      mlResultsService.getMetricData(chartConfig.datafeedConfig.indices,
+        chartConfig.datafeedConfig.types, entityFields, chartConfig.datafeedConfig.query,
         chartConfig.metricFunction, chartConfig.metricFieldName, chartConfig.timeField,
         earliestMs, latestMs, interval
         )
