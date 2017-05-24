@@ -242,6 +242,30 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     }).catch((resp) => {
       console.log('Time series explorer - error getting entity counts from elasticsearch:', resp);
     });
+
+    // Populate the entity input datalists with the values from the top records by score
+    // for the selected detector across the full time range. No need to pass through finish().
+    mlResultsService.getRecordsForCriteria($scope.indexPatternId, [$scope.selectedJob.job_id],
+       [{ 'fieldName':'detector_index','fieldValue':detectorIndex }], 0,
+       bounds.min.valueOf(), bounds.max.valueOf(), ANOMALIES_MAX_RESULTS)
+    .then((resp) => {
+      if (resp.records && resp.records.length > 0) {
+        const firstRec = resp.records[0];
+
+        _.each($scope.entities, (entity) => {
+          if (firstRec.partition_field_name === entity.fieldName) {
+            entity.fieldValues = _.chain(resp.records).pluck('partition_field_value').uniq().value();
+          }
+          if (firstRec.over_field_name === entity.fieldName) {
+            entity.fieldValues = _.chain(resp.records).pluck('over_field_value').uniq().value();
+          }
+          if (firstRec.by_field_name === entity.fieldName) {
+            entity.fieldValues = _.chain(resp.records).pluck('by_field_value').uniq().value();
+          }
+        });
+      }
+
+    });
   };
 
   $scope.refreshFocusData = function (fromDate, toDate) {
@@ -292,7 +316,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
       console.log('Time series explorer - error getting metric data from elasticsearch:', resp);
     });
 
-    // Query 2 - load records across full time range.
+    // Query 2 - load records across selected time range.
     mlResultsService.getRecordsForCriteria($scope.indexPatternId, [$scope.selectedJob.job_id],
       $scope.criteriaFields, 0, bounds.min.valueOf(), bounds.max.valueOf(), ANOMALIES_MAX_RESULTS)
     .then((resp) => {
