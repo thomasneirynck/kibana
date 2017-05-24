@@ -480,36 +480,34 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
   this.deleteJob = function (job, statusIn) {
     const deferred = $q.defer();
-    const status = statusIn || { stopDatafeed: 0, deleteDatafeed: 0, closeJob: 0, deleteJob: 0 };
-    console.log('deleting job: ' + job.job_id);
+    const status = statusIn || { stopDatafeed: 0, deleteDatafeed: 0, closeJob: 0, deleteJob: 0, errorMessage: '' };
 
     // chain of endpoint calls to delete a job.
-
     // if job is datafeed, stop and delete datafeed first
-    if (job.datafeed_config) {
+    if (job.datafeed_config && Object.keys(job.datafeed_config).length) {
       const datafeedId = this.getDatafeedId(job.job_id);
       // stop datafeed
       ml.stopDatafeed({ datafeedId: datafeedId })
       .then(() => {
         status.stopDatafeed = 1;
-      })
-      .catch((resp) => {
-        console.log('Delete job: stop datafeed', resp);
-        status.stopDatafeed = checkError(resp);
-      })
-      .finally(() => {
-        // delete datafeed
         ml.deleteDatafeed({ datafeedId: datafeedId })
         .then(() => {
           status.deleteDatafeed = 1;
+          closeAndDeleteJob();
         })
         .catch((resp) => {
-          console.log('Delete job: delete datafeed', resp);
-          status.deleteDatafeed = checkError(resp);
-        })
-        .finally(() => {
-          closeAndDeleteJob();
+          status.deleteDatafeed = -1;
+          status.closeJob = -1;
+          status.deleteJob = -1;
+          deleteFailed(resp, 'Delete datafeed');
         });
+      })
+      .catch((resp) => {
+        status.stopDatafeed = -1;
+        status.deleteDatafeed = -1;
+        status.closeJob = -1;
+        status.deleteJob = -1;
+        deleteFailed(resp, 'Stop datafeed');
       });
     } else {
       closeAndDeleteJob();
@@ -521,33 +519,28 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       ml.closeJob({ jobId: job.job_id })
       .then(() => {
         status.closeJob = 1;
-      })
-      .catch((resp) => {
-        console.log('Delete job: close job', resp);
-        status.closeJob = checkError(resp);
-      })
-      .finally(() => {
-        // delete job
         ml.deleteJob({ jobId: job.job_id })
         .then(() => {
           status.deleteJob = 1;
           deferred.resolve({ success: true });
         })
         .catch((resp) => {
-          console.log('Delete job: delete job', resp);
-          status.deleteJob = checkError(resp);
-
-          msgs.error(resp.message);
-          deferred.reject({ success: false });
+          status.deleteJob = -1;
+          deleteFailed(resp, 'Delete job');
         });
+      })
+      .catch((resp) => {
+        status.closeJob = -1;
+        status.deleteJob = -1;
+        deleteFailed(resp, 'Close job');
       });
     }
 
-    function checkError(resp) {
-      // when stopping a datafeed or closing a job, they may already
-      // be stopped or closed. This returns an error code of 409.
-      // if this is the case, return a success.
-      return (resp.statusCode === 409) ? 1 : -1;
+    function deleteFailed(resp, txt) {
+      if (resp.statusCode === 500) {
+        status.errorMessage = txt;
+      }
+      deferred.reject({ success: false });
     }
 
     return deferred.promise;

@@ -515,7 +515,7 @@ function (
   // triggered when the user changes the JSON text
   // reflect the changes in the UI
   function setDatafeedUIText() {
-    if ($scope.job.datafeed_config) {
+    if ($scope.job.datafeed_config && Object.keys($scope.job.datafeed_config).length) {
       const datafeedConfig = $scope.job.datafeed_config;
 
       $scope.ui.isDatafeed = true;
