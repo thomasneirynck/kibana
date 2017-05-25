@@ -409,16 +409,12 @@ function _getPackage(installPath) {
   // https://github.com/Medium/phantomjs/blob/v1.9.19/install.js
 
   const platform = process.env.PHANTOMJS_PLATFORM || process.platform;
-  const arch = process.env.PHANTOMJS_ARCH || process.arch;
   let suffix;
   let binary;
 
-  if (platform === 'linux' && arch === 'x64') {
+  if (platform === 'linux') {
     binary = path.join(basename + '-linux-x86_64', 'bin', 'phantomjs');
     suffix = 'linux-x86_64.tar.bz2';
-  } else if (platform === 'linux' && arch === 'ia32') {
-    binary = path.join(basename + '-linux-i686', 'bin', 'phantomjs');
-    suffix = 'linux-i686.tar.bz2';
   } else if (platform === 'darwin' || platform === 'openbsd' || platform === 'freebsd') {
     binary = path.join(basename + '-macosx', 'bin', 'phantomjs');
     suffix = 'macosx.zip';
@@ -426,7 +422,7 @@ function _getPackage(installPath) {
     binary = path.join(basename + '-windows', 'bin', 'phantomjs.exe');
     suffix = 'windows.zip';
   } else {
-    const msg = 'Unsupported platform: ' + platform + ' ' + arch;
+    const msg = 'Unsupported platform: ' + platform;
     throw new Error(msg);
   }
 

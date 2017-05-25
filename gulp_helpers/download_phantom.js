@@ -26,15 +26,10 @@ function fetchBinaries(dest) {
     filename: 'phantomjs-2.1.1-macosx.zip',
     checksum: 'b0c038bd139b9ecaad8fd321070c1651',
   }, {
-    description: 'Linux x86_64',
+    description: 'Linux',
     url: host + 'phantomjs-2.1.1-linux-x86_64.tar.bz2',
     filename: 'phantomjs-2.1.1-linux-x86_64.tar.bz2',
     checksum: '1c947d57fce2f21ce0b43fe2ed7cd361',
-  }, {
-    description: 'Linux x86',
-    url: host + 'phantomjs-2.1.1-linux-i686.tar.bz2',
-    filename: 'phantomjs-2.1.1-linux-i686.tar.bz2',
-    checksum: '0396e8249e082f72c1e39d33fc9d8de6',
   }];
 
   // verify the download checksum
