@@ -9,7 +9,7 @@ import 'plugins/security/views/management/management.less';
 import routes from 'ui/routes';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import '../../services/shield_user';
-import { ROLES_PATH, USERS_PATH, SECURITY_PATH } from './management_urls';
+import { ROLES_PATH, USERS_PATH } from './management_urls';
 
 import { management } from 'ui/management';
 
@@ -17,37 +17,37 @@ routes.defaults(/\/management/, {
   resolve: {
     securityManagementSection: function (ShieldUser, Private, esDataIsTribe) {
       const xpackInfo = Private(XPackInfoProvider);
-      const elasticsearch = management.getSection('elasticsearch');
       const showSecurityLinks = xpackInfo.get('features.security.showLinks');
       const tribeTooltip = 'Not available when using a tribe node.';
 
       function deregisterSecurity() {
-        elasticsearch.deregister('security');
+        management.deregister('security');
       }
 
-      function registerSecurity() {
-        if (!elasticsearch.hasItem('security')) {
-          const options = {
-            order: 10,
-            display: 'Security'
-          };
-          if (esDataIsTribe) {
-            options.tooltip = tribeTooltip;
-          } else {
-            options.url = `#${SECURITY_PATH}`;
-          }
-          const security = elasticsearch.register('security', options);
+      function ensureSecurityRegistered() {
+        const registerSecurity = () => management.register('security', {
+          display: 'Security',
+          order: 10
+        });
+        const getSecurity = () => management.getSection('security');
 
+        const security = (management.hasItem('security')) ? getSecurity() : registerSecurity();
+
+        if (!security.hasItem('users')) {
           security.register('users', {
             order: 10,
             display: 'Users',
-            url: `#${USERS_PATH}`
+            url: esDataIsTribe ? undefined : `#${USERS_PATH}`,
+            tooltip: esDataIsTribe ? tribeTooltip : undefined
           });
+        }
 
+        if (!security.hasItem('roles')) {
           security.register('roles', {
             order: 20,
             display: 'Roles',
-            url: `#${ROLES_PATH}`
+            url: esDataIsTribe ? undefined : `#${ROLES_PATH}`,
+            tooltip: esDataIsTribe ? tribeTooltip : undefined
           });
         }
       }
@@ -60,7 +60,7 @@ routes.defaults(/\/management/, {
       //
       // $promise is used here because the result is an ngResource, not a promise itself
       return ShieldUser.getCurrent().$promise
-      .then(registerSecurity)
+      .then(ensureSecurityRegistered)
       .catch(deregisterSecurity);
     }
   }

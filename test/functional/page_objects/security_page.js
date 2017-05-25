@@ -73,14 +73,8 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
       return retry.try(() => testSubjects.exists('loginSubmit'));
     }
 
-
-    navigateTo() {
-      return PageObjects.common.navigateToApp('settings')
-      .then(() => {
-        return remote.setFindTimeout(defaultFindTimeout)
-        .findDisplayedByLinkText('Security')
-        .click();
-      });
+    async navigateTo() {
+      await PageObjects.common.navigateToApp('settings');
     }
 
     clickElasticsearchUsers() {

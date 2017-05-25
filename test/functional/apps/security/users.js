@@ -8,10 +8,9 @@ export default function ({ getService, getPageObjects }) {
 
   describe('users', function () {
     before(async () => {
-
       log.debug('users');
       await PageObjects.settings.navigateTo();
-      await PageObjects.settings.clickLinkText('Security');
+      await PageObjects.security.clickElasticsearchUsers();
     });
 
     it('should show the default elastic and kibana users', async function () {

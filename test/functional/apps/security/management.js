@@ -25,18 +25,8 @@ export default function ({ getService, getPageObjects }) {
 
     describe('Security', async () => {
       describe('navigation', async () => {
-        it('can navigate to security section', async () => {
-          await PageObjects.settings.clickLinkText('Security');
-          const currentUrl = await remote.getCurrentUrl();
-          expect(currentUrl).to.contain(SECURITY_PATH);
-        });
-
-        it('Users is the default landing page for security', async () => {
-          const currentUrl = await remote.getCurrentUrl();
-          expect(currentUrl).to.contain(USERS_PATH);
-        });
-
         it('Can navigate to create user section', async () => {
+          await PageObjects.security.clickElasticsearchUsers();
           await PageObjects.security.clickCreateNewUser();
           const currentUrl = await remote.getCurrentUrl();
           expect(currentUrl).to.contain(EDIT_USERS_PATH);
