@@ -3,14 +3,17 @@
     <div ng-repeat="detector in detectors track by $index">
       <div class="detector" ng-class="{'detector-edit-mode':(editMode==='EDIT')}">
         <div class="detector-fields">
+          <label ng-show="editMode==='EDIT'">Detector:</label>
           <div aria-label="Customised description" ng-hide="editMode==='EDIT' || detector.detector_description === '' || detector.detector_description === detectorToString(detector) ">{{ detector.detector_description }}</div>
           <div aria-label="Default description" style="font-style:italic;" >{{ detectorToString(detector) }}</div>
 
-          <input
-            ng-show="editMode==='EDIT'"
-            ng-model="detector.detector_description"
-            tabindex="2"
-            class="form-control" />
+          <div ng-show="editMode==='EDIT'">
+            <label>Description:</label>
+            <input
+              ng-model="detector.detector_description"
+              tabindex="2"
+              class="form-control" />
+          </div>
 
         </div>
 
