@@ -51,7 +51,7 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
       anomalyRecords: '=',
       indexPatternId: '=',
       timeFieldName: '=',
-      showExploreSeriesLink: '=',
+      showViewSeriesLink: '=',
       filteringEnabled: '='
     },
     template: require('plugins/ml/components/anomalies_table/anomalies_table.html'),
@@ -109,11 +109,11 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
       scope.categoryExamplesByJob = {};
       const MAX_NUMBER_CATEGORY_EXAMPLES = 10;  // Max number of examples to show in table cell or expanded row (engine default is to store 4).
 
-      scope.$on('renderTable',function () {
+      scope.$on('renderTable',() => {
         updateTableData();
       });
 
-      element.on('$destroy', function () {
+      element.on('$destroy', () => {
         scope.$destroy();
       });
 
@@ -139,7 +139,7 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         return _.get(scope.categoryExamplesByJob, [jobId, categoryId], []);
       };
 
-      scope.exploreSeries = function (record) {
+      scope.viewSeries = function (record) {
         const bounds = timefilter.getActiveBounds();
         const from = bounds.min.toISOString();    // e.g. 2016-02-08T16:00:00.000Z
         const to = bounds.max.toISOString();
@@ -209,12 +209,12 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         $window.open(path, '_blank');
       };
 
-      scope.openLink = function (link, record) {
-        console.log('Anomalies Table - open link for record:', link, record);
+      scope.openCustomUrl = function (customUrl, record) {
+        console.log('Anomalies Table - open customUrl for record:', customUrl, record);
 
         // If url_value contains $earliest$ and $latest$ tokens, add in times to the source record.
         const timestamp = record[scope.timeFieldName];
-        const configuredUrlValue = link.url_value;
+        const configuredUrlValue = customUrl.url_value;
         if (configuredUrlValue.includes('$earliest$')) {
           const roundedMoment = moment(timestamp).startOf(scope.momentInterval);
           if (scope.momentInterval === 'hour') {
@@ -250,26 +250,26 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
           const categoryId = record.mlcategory[0];
 
           mlJobService.getCategoryDefinition(scope.indexPatternId, jobId, categoryId)
-          .then(function (resp) {
+          .then((resp) => {
             // Prefix each of the terms with '+' so that the Elasticsearch Query String query
             // run in a drilldown Kibana dashboard has to match on all terms.
-            const termsArray = _.map(resp.terms.split(' '), function (term) { return '+' + term; });
+            const termsArray = _.map(resp.terms.split(' '), (term) => { return '+' + term; });
             record.mlcategoryterms = termsArray.join(' ');
             record.mlcategoryregex = resp.regex;
 
             // Replace any tokens in the configured url_value with values from the source record,
             // and then open link in a new tab/window.
-            const urlPath = replaceStringTokens(link.url_value, record, true);
+            const urlPath = replaceStringTokens(customUrl.url_value, record, true);
             $window.open(urlPath, '_blank');
 
-          }).catch(function (resp) {
-            console.log('openLink(): error loading categoryDefinition:', resp);
+          }).catch((resp) => {
+            console.log('openCustomUrl(): error loading categoryDefinition:', resp);
           });
 
         } else {
           // Replace any tokens in the configured url_value with values from the source record,
           // and then open link in a new tab/window.
-          const urlPath = replaceStringTokens(link.url_value, record, true);
+          const urlPath = replaceStringTokens(customUrl.url_value, record, true);
           $window.open(urlPath, '_blank');
         }
 
@@ -287,11 +287,11 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         } else {
           // Show all anomaly records.
           scope.momentInterval = scope.interval.val;
-          const filteredRecords = _.filter(scope.anomalyRecords, function (record) {
+          const filteredRecords = _.filter(scope.anomalyRecords, (record) => {
             return Number(record.record_score) >= scope.threshold.val;
           });
 
-          _.each(filteredRecords, function (record) {
+          _.each(filteredRecords, (record) => {
             const detectorIndex = record.detector_index;
             const jobId = record.job_id;
             let detector = record.function_description;
@@ -321,9 +321,9 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
             if (_.has(record, 'influencers')) {
               const influencers = [];
               const sourceInfluencers = _.sortBy(record.influencers, 'influencer_field_name');
-              _.each(sourceInfluencers, function (influencer) {
+              _.each(sourceInfluencers, (influencer) => {
                 const influencerFieldName = influencer.influencer_field_name;
-                _.each(influencer.influencer_field_values, function (influencerFieldValue) {
+                _.each(influencer.influencer_field_values, (influencerFieldValue) => {
                   const influencerToAdd = {};
                   influencerToAdd[influencerFieldName] = influencerFieldValue;
                   influencers.push(influencerToAdd);
@@ -357,7 +357,7 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
             }
 
             if (_.has(mlJobService.customUrlsByJob, jobId)) {
-              displayRecord.links = mlJobService.customUrlsByJob[jobId];
+              displayRecord.customUrls = mlJobService.customUrlsByJob[jobId];
             }
 
             summaryRecords.push(displayRecord);
@@ -375,7 +375,7 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
           // influencer or as a partition field in a config with other by/over fields.
           const categoryRecords = _.where(summaryRecords, { entityName: 'mlcategory' });
           const categoryIdsByJobId = {};
-          _.each(categoryRecords, function (record) {
+          _.each(categoryRecords, (record) => {
             if (!_.has(categoryIdsByJobId, record.jobId)) {
               categoryIdsByJobId[record.jobId] = [];
             }
@@ -391,7 +391,7 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
 
         // Sort by severity by default.
         summaryRecords = (_.sortBy(summaryRecords, 'max severity')).reverse();
-        scope.table.rows = summaryRecords.map(function (record) {
+        scope.table.rows = summaryRecords.map((record) => {
           return createTableRow(record);
         });
 
@@ -418,13 +418,13 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         }
 
         // Only show records passing the severity threshold.
-        const filteredRecords = _.filter(scope.anomalyRecords, function (record) {
+        const filteredRecords = _.filter(scope.anomalyRecords, (record) => {
 
           return Number(record.record_score) >= scope.threshold.val;
         });
 
         const aggregatedData = {};
-        _.each(filteredRecords, function (record) {
+        _.each(filteredRecords, (record) => {
 
           // Use moment.js to get start of interval. This will use browser timezone.
           // TODO - support choice of browser or UTC timezone once funcitonality is in Kibana.
@@ -470,9 +470,9 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
 
         // Flatten the aggregatedData to give a list of records with the highest score per bucketed time / detector.
         const summaryRecords = [];
-        _.each(aggregatedData, function (timeDetectors, roundedTime) {
-          _.each(timeDetectors, function (entityDetectors, detector) {
-            _.each(entityDetectors, function (record, entity) {
+        _.each(aggregatedData, (timeDetectors, roundedTime) => {
+          _.each(timeDetectors, (entityDetectors, detector) => {
+            _.each(entityDetectors, (record, entity) => {
               const displayRecord = {
                 'time': +roundedTime,
                 'max severity': record.record_score,
@@ -495,9 +495,9 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
               if (_.has(record, 'influencers')) {
                 const influencers = [];
                 const sourceInfluencers = _.sortBy(record.influencers, 'influencer_field_name');
-                _.each(sourceInfluencers, function (influencer) {
+                _.each(sourceInfluencers, (influencer) => {
                   const influencerFieldName = influencer.influencer_field_name;
-                  _.each(influencer.influencer_field_values, function (influencerFieldValue) {
+                  _.each(influencer.influencer_field_values, (influencerFieldValue) => {
                     const influencerToAdd = {};
                     influencerToAdd[influencerFieldName] = influencerFieldValue;
                     influencers.push(influencerToAdd);
@@ -531,9 +531,8 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
                 }
               }
 
-              // TODO - do we always want the links column visible even when no customUrls have been defined?
               if (_.has(mlJobService.customUrlsByJob, record.job_id)) {
-                displayRecord.links = mlJobService.customUrlsByJob[record.job_id];
+                displayRecord.customUrls = mlJobService.customUrlsByJob[record.job_id];
               }
 
               summaryRecords.push(displayRecord);
@@ -577,11 +576,11 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         const showActual = _.some(summaryRecords, 'actual');
         const showTypical = _.some(summaryRecords, 'typical');
         const showExamples = _.some(summaryRecords, { 'entityName': 'mlcategory' });
-        const showLinks = ((scope.showExploreSeriesLink === true) &&
+        const showLinks = ((scope.showViewSeriesLink === true) &&
           _.some(summaryRecords, (record) => {
             return ((isTimeSeriesViewFunction(record.source.function)) &&
               (_.get(record, 'entityName') !== 'mlcategory'));
-          })) || _.some(summaryRecords, 'links');
+          })) || _.some(summaryRecords, 'customUrls');
 
         if (showEntity === true) {
           paginatedTableColumns.push({ title: 'found for', sortable: true });
@@ -628,10 +627,10 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
           if (_.has(record, 'entityValue') && record.entityName === 'mlcategory') {
             // Obtain the category definition and display the examples in the expanded row.
             mlJobService.getCategoryDefinition(scope.indexPatternId, record.jobId, record.entityValue)
-            .then(function (resp) {
+            .then((resp) => {
               rowScope.categoryDefinition = {
                 'examples':_.slice(resp.examples, 0, Math.min(resp.examples.length, MAX_NUMBER_CATEGORY_EXAMPLES)) };
-            }).catch(function (resp) {
+            }).catch((resp) => {
               console.log('Anomalies table createTableRow(): error loading categoryDefinition:', resp);
             });
           }
@@ -662,7 +661,7 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         //   typical
         //   description (how actual compares to typical)
         //   job_id
-        //   links (if links configured)
+        //   links (if customUrls configured or drilldown to Single Metric)
         //   category examples (if by mlcategory)
         const addEntity = _.findWhere(scope.table.columns, { 'title':'found for' });
         const addInfluencers = _.findWhere(scope.table.columns, { 'title':'influenced by' });
@@ -729,8 +728,8 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         if (addInfluencers !== undefined) {
           if (_.has(record, 'influencers')) {
             let cellMarkup = '';
-            _.each(record.influencers, function (influencer) {
-              _.each(influencer, function (influencerFieldValue, influencerFieldName) {
+            _.each(record.influencers, (influencer) => {
+              _.each(influencer, (influencerFieldValue, influencerFieldName) => {
                 cellMarkup += (influencerFieldName + ': ' + influencerFieldValue + '<br>');
               });
             });
@@ -782,9 +781,10 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         tableRow.push({ markup: record.jobId, value: record.jobId });
 
         if (addLinks !== undefined) {
-          if (_.has(record, 'links') ||
-            (isTimeSeriesViewFunction(record.source.function) && (_.get(record, 'entityName') !== 'mlcategory'))) {
-            rowScope.links = record.links;
+          rowScope.showViewSeriesLink = (scope.showViewSeriesLink === true &&
+            isTimeSeriesViewFunction(record.source.function) && (_.get(record, 'entityName') !== 'mlcategory'));
+          if (_.has(record, 'customUrls') || rowScope.showViewSeriesLink === true) {
+            rowScope.customUrls = record.customUrls;
             rowScope.source = record.source;
 
             tableRow.push({
@@ -817,11 +817,11 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
       function loadCategoryExamples(categoryIdsByJobId) {
         // Load the example events for the specified map of job_ids and categoryIds from Elasticsearch.
         scope.categoryExamplesByJob = {};
-        _.each(categoryIdsByJobId, function (categoryIds, jobId) {
+        _.each(categoryIdsByJobId, (categoryIds, jobId) => {
           mlResultsService.getCategoryExamples(scope.indexPatternId, jobId, categoryIds, MAX_NUMBER_CATEGORY_EXAMPLES)
-          .then(function (resp) {
+          .then((resp) => {
             scope.categoryExamplesByJob[jobId] = resp.examplesByCategoryId;
-          }).catch(function (resp) {
+          }).catch((resp) => {
             console.log('Anomalies table - error getting category examples:', resp);
           });
         });
