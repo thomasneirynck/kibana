@@ -8,6 +8,7 @@ import 'plugins/security/services/shield_user';
 import 'plugins/security/services/shield_role';
 import 'plugins/security/services/shield_privileges';
 import 'plugins/security/services/shield_indices';
+
 import { IndexPatternsProvider } from 'ui/index_patterns/index_patterns';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import { checkLicenseError } from 'plugins/security/lib/check_license_error';
@@ -52,12 +53,28 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
     }
   },
   controllerAs: 'editRole',
-  controller($scope, $route, kbnUrl, shieldPrivileges, shieldIndices, Notifier, Private, confirmModal) {
+  controller($injector, $scope) {
+    const $route = $injector.get('$route');
+    const config = $injector.get('config');
+    const kbnUrl = $injector.get('kbnUrl');
+    const shieldPrivileges = $injector.get('shieldPrivileges');
+    const Notifier = $injector.get('Notifier');
+    const Private = $injector.get('Private');
+    const confirmModal = $injector.get('confirmModal');
+    const shieldIndices = $injector.get('shieldIndices');
+
     $scope.role = $route.current.locals.role;
     $scope.users = $route.current.locals.users;
     $scope.indexPatterns = $route.current.locals.indexPatterns;
     $scope.privileges = shieldPrivileges;
     $scope.rolesHref = `#${ROLES_PATH}`;
+
+    const currentDashboardOnlyModeRoles = config.get('dashboardOnlyModeRoles', []);
+    const DASHBOARD_VIEW_MODE = 'dashboardOnlyMode';
+    const ALL_APPS_VIEW_MODE = 'allAppsViewMode';
+    $scope.viewMode = {
+      currentSelection: currentDashboardOnlyModeRoles.includes($scope.role.name) ? DASHBOARD_VIEW_MODE : ALL_APPS_VIEW_MODE
+    };
 
     this.isNewRole = $route.current.params.name == null;
     this.fieldOptions = {};
@@ -79,12 +96,25 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
     };
 
     $scope.saveRole = (role) => {
-      role.indices = role.indices.filter((index) => index.names.length);
-      role.indices.forEach((index) => index.query || delete index.query);
-      role.$save()
-      .then(() => notifier.info('The role has been updated.'))
-      .then($scope.goToRoleList)
-      .catch(error => notifier.error(_.get(error, 'data.message')));
+      let newDashboardOnlyModeRoles = [...currentDashboardOnlyModeRoles];
+      if ($scope.viewMode.currentSelection === DASHBOARD_VIEW_MODE &&
+          !currentDashboardOnlyModeRoles.includes($scope.role.name)) {
+        newDashboardOnlyModeRoles.push($scope.role.name);
+      } else if ($scope.viewMode.currentSelection === ALL_APPS_VIEW_MODE &&
+          currentDashboardOnlyModeRoles.includes($scope.role.name)) {
+        newDashboardOnlyModeRoles =
+          newDashboardOnlyModeRoles.filter(roleInDashboardMode => roleInDashboardMode !== $scope.role.name);
+      }
+
+      config.set('dashboardOnlyModeRoles', newDashboardOnlyModeRoles)
+        .then(() => {
+          role.indices = role.indices.filter((index) => index.names.length);
+          role.indices.forEach((index) => index.query || delete index.query);
+          return role.$save();
+        })
+        .then(() => notifier.info('The role has been updated.'))
+        .then($scope.goToRoleList)
+        .catch(error => notifier.error(_.get(error, 'data.message')));
     };
 
     $scope.goToRoleList = () => {

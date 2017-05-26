@@ -5,7 +5,7 @@ export function getBasicValidate(server) {
 
   return function validate(request, username, password, callback) {
     return isValidUser(request, username, password).then(
-      () => callback(null, true, { username, password }),
+      (user) => callback(null, true, { username, password, isDashboardOnlyMode: user.isDashboardOnlyMode }),
       (error) => callback(error, false)
     );
   };

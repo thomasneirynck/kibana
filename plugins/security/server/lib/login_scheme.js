@@ -10,13 +10,14 @@ import { authenticateFactory } from './auth_redirect';
  *    strategy:    The name of the auth strategy to use for test
  * @return {Function}
  */
-export function createScheme({ redirectUrl, strategies }) {
+export function createScheme({ redirectUrl, strategies, dashboardViewerApp }) {
   return (server) => {
     const authenticate = authenticateFactory({
       redirectUrl,
       strategies,
       testRequest: server.auth.test,
-      xpackMainPlugin: server.plugins.xpack_main
+      xpackMainPlugin: server.plugins.xpack_main,
+      dashboardViewerApp
     });
     return { authenticate };
   };

@@ -5,12 +5,13 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
   const remote = getService('remote');
   const config = getService('config');
   const retry = getService('retry');
+  const find = getService('find');
   const log = getService('log');
   const kibanaServer = getService('kibanaServer');
   const testSubjects = getService('testSubjects');
   const esArchiver = getService('esArchiver');
-  const PageObjects = getPageObjects(['common', 'header']);
   const defaultFindTimeout = config.get('timeouts.find');
+  const PageObjects = getPageObjects(['common', 'header', 'settings']);
 
   class SecurityPage {
     async initTests() {
@@ -21,22 +22,56 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
       remote.setWindowSize(1600,1000);
     }
 
-    async login() {
-      const [username, password] = config.get('servers.elasticsearch.auth').split(':');
+    async login(username, password) {
+      const [superUsername, superPassword] = config.get('servers.elasticsearch.auth').split(':');
+
+      username = username || superUsername;
+      password = password || superPassword;
 
       await PageObjects.common.navigateToApp('login');
       await testSubjects.find('loginUsername').type(username);
       await testSubjects.find('loginPassword').type(password);
       await testSubjects.click('loginSubmit');
-      await retry.try(() => testSubjects.exists('kibanaChrome'));
+      await retry.try(() => find.existsByLinkText('Logout'));
     }
 
     async logout() {
-      await remote.get(formatUrl({
-        ...config.get('servers.kibana'),
-        auth: null,
-        pathname: resolveUrl(config.get('servers.kibana.pathname') || '/', 'logout')
-      }));
+      log.debug('SecurityPage.logout');
+
+      // There is some issue with being automatically logged in after logging out. The retry loop tries to eliminate
+      // the issue. Only seems to happen in the test environment.
+      await retry.try(async () => {
+        const logoutUrl = formatUrl({
+          ...config.get('servers.kibana'),
+          auth: null,
+          pathname: resolveUrl(config.get('servers.kibana.pathname') || '/', 'logout')
+        });
+        await remote.get(logoutUrl);
+
+        // Even this loop itself doesn't seem to be sufficient enough and sometimes the retry timeouts from
+        // being auto logged in so much. This sleep is to try to help avoid that.
+        await PageObjects.common.sleep(1000);
+
+        const loginUrl = formatUrl({
+          ...config.get('servers.kibana'),
+          auth: null,
+          pathname: resolveUrl(config.get('servers.kibana.pathname') || '/', 'login')
+        });
+        await remote.get(loginUrl);
+
+        const currentUrl = await remote.getCurrentUrl();
+        if (!currentUrl.includes('login')) {
+          throw 'User was automatically logged in after logout.';
+        }
+      });
+    }
+
+    async clickRolesSection() {
+      await PageObjects.settings.clickLinkText('Roles');
+    }
+
+    async clickUsersSection() {
+      await PageObjects.settings.clickLinkText('Users');
     }
 
     async clickCreateNewUser() {
@@ -52,25 +87,70 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
     }
 
     async clickCancelEditUser() {
-      await retry.try(() => testSubjects.click('userFormCancelButton'));
+      await testSubjects.click('userFormCancelButton');
     }
 
     async clickCancelEditRole() {
-      await retry.try(() => testSubjects.click('roleFormCancelButton'));
+      await testSubjects.click('roleFormCancelButton');
     }
 
     async clickSaveEditUser() {
-      await retry.try(() => testSubjects.click('userFormSaveButton'));
+      const saveButton = await retry.try(() => testSubjects.find('userFormSaveButton'));
+      await remote.moveMouseTo(saveButton);
+      await saveButton.click();
       await PageObjects.header.waitUntilLoadingHasFinished();
     }
 
     async clickSaveEditRole() {
-      await retry.try(() => testSubjects.click('roleFormSaveButton'));
+      const saveButton = await retry.try(() => testSubjects.find('roleFormSaveButton'));
+      await remote.moveMouseTo(saveButton);
+      await saveButton.click();
       await PageObjects.header.waitUntilLoadingHasFinished();
     }
 
-    getLoginButtonExists() {
-      return retry.try(() => testSubjects.exists('loginSubmit'));
+    async getDashboardOnlyModeOption() {
+      return await retry.try(() => testSubjects.find('dashboardOnlyMode'));
+    }
+
+    async getAllAppsViewModeOption() {
+      return await retry.try(() => testSubjects.find('allAppsViewMode'));
+    }
+
+    async getIsDashboardOnlyMode() {
+      const dashOnlyModeRadio = await this.getDashboardOnlyModeOption();
+      return await dashOnlyModeRadio.getProperty('checked');
+    }
+
+    async selectDashboardOnlyModeRole() {
+      const dashOnlyModeRadio = await this.getDashboardOnlyModeOption();
+      await dashOnlyModeRadio.click();
+    }
+    async selectAllAppsViewModeRole() {
+      const allAppsRadio = await retry.try(() => testSubjects.find('allAppsViewMode'));
+      await allAppsRadio.click();
+    }
+
+    async addIndexToRole(index) {
+      log.debug(`Adding index ${index} to role`);
+      const indexInput = await retry.try(() => find.byCssSelector('[data-test-subj="indicesInput0"] > div > input'));
+      await indexInput.type(index);
+      await indexInput.type('\n');
+    }
+
+    async addPrivilegeToRole(privilege) {
+      log.debug(`Adding privilege ${privilege} to role`);
+      const privilegeInput =
+        await retry.try(() => find.byCssSelector('[data-test-subj="privilegesInput0"] > div > input'));
+      await privilegeInput.type(privilege);
+      await privilegeInput.type('\n');
+    }
+
+    async assignRoleToUser(role) {
+      log.debug(`Adding role ${role} to user`);
+      const privilegeInput =
+        await retry.try(() => find.byCssSelector('[data-test-subj="userFormRolesDropdown"] > div > input'));
+      await privilegeInput.type(role);
+      await privilegeInput.type('\n');
     }
 
     async navigateTo() {
@@ -313,6 +393,6 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
         .findDisplayedByCssSelector('span.kuiInfoPanelHeader__title')
         .getVisibleText();
     }
-}
+  }
   return new SecurityPage();
 }

@@ -11,6 +11,7 @@ export default function ({ getService, getPageObjects }) {
   const kibanaServer = getService('kibanaServer');
   const testSubjects = getService('testSubjects');
   const remote = getService('remote');
+  const find = getService('find');
   const PageObjects = getPageObjects(['security', 'settings', 'common', 'header', 'gettingStarted']);
 
   describe('Management', () => {
@@ -71,7 +72,7 @@ export default function ({ getService, getPageObjects }) {
           expect(currentUrl).to.contain(ROLES_PATH);
         });
 
-        it('Can navigate to create user section', async () => {
+        it('Can navigate to create role section', async () => {
           await PageObjects.security.clickCreateNewRole();
           const currentUrl = await remote.getCurrentUrl();
           expect(currentUrl).to.contain(EDIT_ROLES_PATH);
@@ -111,6 +112,26 @@ export default function ({ getService, getPageObjects }) {
           await PageObjects.settings.clickLinkText('superuser');
           const currentUrl = await remote.getCurrentUrl();
           expect(currentUrl).to.contain(EDIT_ROLES_PATH);
+        });
+
+        it('Reserved roles are not editable', async () => {
+          const dashOnlyModeRadio = await PageObjects.security.getDashboardOnlyModeOption();
+          expect(await dashOnlyModeRadio.getProperty('disabled')).to.be(true);
+
+          const allAppsRadio = await PageObjects.security.getAllAppsViewModeOption();
+          expect(await allAppsRadio.getProperty('disabled')).to.be(true);
+
+          const allInputs = await find.allByCssSelector('input');
+          for (let i = 0; i < allInputs.length; i++) {
+            const input = allInputs[i];
+            expect(await input.getProperty('disabled')).to.be(true);
+          }
+
+          const allCheckboxes = await find.allByCssSelector('checkbox');
+          for (let i = 0; i < allCheckboxes.length; i++) {
+            const checkbox = allCheckboxes[i];
+            expect(await checkbox.getProperty('disabled')).to.be(true);
+          }
         });
       });
     });

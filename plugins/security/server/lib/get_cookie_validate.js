@@ -11,7 +11,7 @@ export function getCookieValidate(server) {
 
     const { username, password } = session;
     return isValidUser(request, username, password).then(
-      () => {
+      (user) => {
         // Extend the session timeout provided this is NOT a system API call
         if (!isSystemApiRequest(request)) {
           // Keep the session alive
@@ -21,7 +21,7 @@ export function getCookieValidate(server) {
             expires: calculateExpires()
           });
         }
-        return callback(null, true);
+        return callback(null, true, { isDashboardOnlyMode: user.isDashboardOnlyMode });
       },
       (error) => callback(error, false)
     );

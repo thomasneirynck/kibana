@@ -101,9 +101,12 @@ export const security = (kibana) => new kibana.Plugin({
       register(hapiAuthCookie)
     ])
     .then(() => {
+      const dashboardViewerApp = kibana.uiExports.getHiddenApp('dashboardViewer');
+
       server.auth.scheme('login', createScheme({
         redirectUrl: (path) => loginUrl(config.get('server.basePath'), path),
-        strategies: ['security-cookie', 'security-basic']
+        strategies: ['security-cookie', 'security-basic'],
+        dashboardViewerApp
       }));
 
       server.auth.strategy('session', 'login', 'required');

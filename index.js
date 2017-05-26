@@ -8,6 +8,7 @@ import { ml } from './plugins/ml';
 import { tilemap } from './plugins/tilemap';
 import { watcher } from './plugins/watcher';
 import { grokdebugger } from './plugins/grokdebugger';
+import { dashboardViewer } from './plugins/dashboard_viewer';
 
 module.exports = function (kibana) {
   return [
@@ -20,6 +21,7 @@ module.exports = function (kibana) {
     ml(kibana),
     tilemap(kibana),
     watcher(kibana),
-    grokdebugger(kibana)
+    grokdebugger(kibana),
+    dashboardViewer(kibana),
   ];
 };

@@ -1,13 +1,16 @@
 import { getClient } from './get_client_shield';
+import { getIsUserInDashboardMode } from './get_is_user_in_dashboard_mode';
 
 export function getUserProvider(server) {
   const callWithRequest = getClient(server).callWithRequest;
 
-  server.expose('getUser', (request) => {
+  server.expose('getUser', async (request) => {
     const xpackInfo = server.plugins.xpack_main.info;
     if (xpackInfo && xpackInfo.isAvailable() && !xpackInfo.feature('security').isEnabled()) {
       return Promise.resolve(null);
     }
-    return callWithRequest(request, 'shield.authenticate');
+    const user = await callWithRequest(request, 'shield.authenticate');
+    user.isDashboardOnlyMode = await getIsUserInDashboardMode(user, request, server.uiSettings());
+    return user;
   });
-};
+}

@@ -23,7 +23,7 @@ const KIBANA_VERSION_HEADER = 'kbn-version';
  *    testRequest: Function to test authentication for a request
  * @return {Function}
  */
-export function authenticateFactory({ redirectUrl, strategies, testRequest, xpackMainPlugin }) {
+export function authenticateFactory({ redirectUrl, strategies, testRequest, xpackMainPlugin, dashboardViewerApp }) {
   const testRequestAsync = Promise.promisify(testRequest);
   return function authenticate(request, reply) {
     // If security is disabled or license is basic, continue with no user credentials and delete the client cookie as well
@@ -37,7 +37,22 @@ export function authenticateFactory({ redirectUrl, strategies, testRequest, xpac
 
     // Test the request against all of the authentication strategies and if any succeed, continue
     return Promise.any(strategies.map((strategy) => testRequestAsync(strategy, request)))
-    .then((credentials) => reply.continue({ credentials }))
+    .then((credentials) => {
+      const appRequest = request.url.path.startsWith('/app/');
+      if (credentials.isDashboardOnlyMode && appRequest) {
+        if (request.url.path.startsWith('/app/kibana')) {
+          // If the user is in "Dashboard only mode" they should only be allowed to see
+          // that app and none others.  Here we are intercepting all other routing and ensuring the viewer
+          // app is the only one ever rendered.
+          // Read more about Dashboard Only Mode here: https://github.com/elastic/x-pack-kibana/issues/180
+          reply.renderApp(dashboardViewerApp);
+        } else {
+          reply(404);
+        }
+      } else {
+        reply.continue({ credentials });
+      }
+    })
     .catch(() => {
       if (shouldRedirect(request)) {
         reply.redirect(redirectUrl(request.url.path));
@@ -46,7 +61,7 @@ export function authenticateFactory({ redirectUrl, strategies, testRequest, xpac
       }
     });
   };
-};
+}
 
 export function shouldRedirect(request) {
   const hasVersionHeader = has(request.raw.req.headers, KIBANA_VERSION_HEADER);
@@ -56,4 +71,4 @@ export function shouldRedirect(request) {
   const isAjaxRequest = hasVersionHeader || hasXsrfHeader;
 
   return !isApiRoute && !isAjaxRequest;
-};
+}
