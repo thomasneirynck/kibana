@@ -252,7 +252,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         .attr('width', fcsWidth)
         .attr('height', focusZoomPanelHeight)
         .attr('class', 'chart-border');
-      updateZoomInfoElements(zoomGroup, fcsWidth);
+      createZoomInfoElements(zoomGroup, fcsWidth);
 
       // Add border round plot area.
       fcsGroup.append('rect')
@@ -330,7 +330,8 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       focusChart.select('.zoom-interval')
         .text(scope.focusAggregationInterval.expression);
 
-      angular.element('.zoom-aggregation-interval').text(scope.focusAggregationInterval.expression);
+      angular.element('.zoom-aggregation-interval').text(
+        `(aggregation interval: ${scope.focusAggregationInterval.expression})`);
 
       // Render the axes.
 
@@ -406,35 +407,56 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
 
     }
 
-    function updateZoomInfoElements(zoomGroup, fcsWidth) {
-      // Update the zoom duration links to those applicable for the current time span.
+    function createZoomInfoElements(zoomGroup, fcsWidth) {
+      // Create zoom duration links applicable for the current time span.
       // Don't add links for any durations which would give a brush extent less than 10px.
       const bounds = timefilter.getActiveBounds();
       const boundsSecs = bounds.max.unix() - bounds.min.unix();
       const minSecs = (10 / vizWidth) * boundsSecs;
 
-      let zoomLinks = '<a data-ms="' + scope.autoZoomDuration + '">auto</a> ';
-      for (let i = 0; i < ZOOM_INTERVAL_OPTIONS.length; i++) {
-        if (ZOOM_INTERVAL_OPTIONS[i].duration.asSeconds() > minSecs &&
-            ZOOM_INTERVAL_OPTIONS[i].duration.asSeconds() < boundsSecs) {
-          zoomLinks += '<a data-ms="' + ZOOM_INTERVAL_OPTIONS[i].duration.asMilliseconds() + '">';
-          zoomLinks += ZOOM_INTERVAL_OPTIONS[i].label;
-          zoomLinks += '</a> ';
+      let xPos = 10;
+      const zoomLabel = zoomGroup.append('text')
+        .attr('x', xPos)
+        .attr('y', 17)
+        .attr('class', 'zoom-info-text')
+        .text('Zoom:');
+
+      const zoomOptions = [{ durationMs: scope.autoZoomDuration, label: 'auto' }];
+      _.each(ZOOM_INTERVAL_OPTIONS, (option) => {
+        if (option.duration.asSeconds() > minSecs &&
+            option.duration.asSeconds() < boundsSecs) {
+          zoomOptions.push({ durationMs: option.duration.asMilliseconds(), label: option.label });
         }
-      }
+      });
+      xPos += (zoomLabel.node().getBBox().width + 4);
 
-      let zoomInfoText = '<div class="focus-chart-info">Zoom: ' + zoomLinks +
-          '<span class="zoom-aggregation-interval-label">(aggregation interval: ' +
-          '<span class="zoom-aggregation-interval"></span>)</span>';
+      _.each(zoomOptions, (option) => {
+        const text = zoomGroup.append('a')
+          .attr('data-ms', option.durationMs)
+          .append('text')
+          .attr('x', xPos)
+          .attr('y', 17)
+          .attr('class', 'zoom-info-text')
+          .text(option.label);
+
+        xPos += (text.node().getBBox().width + 4);
+      });
+
+      zoomGroup.append('text')
+        .attr('x', (xPos + 6))
+        .attr('y', 17)
+        .attr('class', 'zoom-info-text zoom-aggregation-interval')
+        .text('(aggregation interval: )');
+
       if (scope.modelPlotEnabled === false) {
-        zoomInfoText += '<div class="model-plot-label">Model bounds are not available</div>';
-      }
-      zoomInfoText += '</div>';
+        const modelPlotLabel = zoomGroup.append('text')
+          .attr('x', 300)
+          .attr('y', 17)
+          .attr('class', 'zoom-info-text')
+          .text('Model bounds are not available');
 
-      zoomGroup.append('foreignObject')
-        .attr('width', fcsWidth)
-        .attr('height', 25)
-        .html(zoomInfoText);
+        modelPlotLabel.attr('x', (fcsWidth - (modelPlotLabel.node().getBBox().width + 10)));
+      }
 
       $('.focus-zoom a').click(function (e) {
         e.preventDefault();
@@ -579,6 +601,8 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         .attr('y', -2)
         .attr('height', 3);
 
+      // Draw the brush handles using SVG foreignObject elements.
+      // Note these are not supported on IE11 and below, so will not appear in IE.
       const leftHandle = contextGroup.append('foreignObject')
         .attr('width', 10)
         .attr('height', 90)
@@ -642,7 +666,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
 
         d3.selectAll('.brush').style('visibility', visibility);
 
-        const brushHandles = d3.selectAll('.brush-handle');
+        const brushHandles = d3.selectAll('.brush-handle-inner');
         brushHandles.style('visibility', visibility);
 
         const topBorder = d3.selectAll('.top-border');
