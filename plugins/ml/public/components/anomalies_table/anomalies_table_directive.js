@@ -35,6 +35,7 @@ import 'plugins/ml/components/paginated_table';
 import 'plugins/ml/filters/format_value';
 import 'plugins/ml/filters/metric_change_description';
 import 'plugins/ml/services/job_service';
+import 'plugins/ml/services/mapping_service';
 import './expanded_row/expanded_row_directive';
 
 import linkControlsHtml from './anomalies_table_links.html';
@@ -44,7 +45,7 @@ import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
 module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, timefilter,
-  mlJobService, mlResultsService, mlAnomaliesTableService, formatValueFilter, AppState) {
+  mlJobService, mlESMappingService, mlResultsService, mlAnomaliesTableService, formatValueFilter, AppState) {
   return {
     restrict: 'E',
     scope: {
@@ -209,6 +210,88 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         $window.open(path, '_blank');
       };
 
+      scope.viewExamples = function (record) {
+        const categoryId = getEntityFieldValue(record);
+        const job = mlJobService.getJob(record.job_id);
+        const categorizationFieldName = job.analysis_config.categorization_field_name;
+        const datafeedIndices = job.datafeed_config.indices;
+        const datafeedTypes = job.datafeed_config.types;
+
+        // Find the mapping type of the categorization field i.e. text (preferred) or keyword.
+        // Find the first matching field in the datafeed_config indices.
+        const indices = mlESMappingService.indices;
+        let categorizationFieldType;
+        let indexPattern;
+        indexLoop:
+          for (let i = 0; datafeedIndices.length; i++) {
+            const index = indices[datafeedIndices[i]];
+            for (let t = 0; datafeedTypes.length; t++) {
+              categorizationFieldType = _.get(index,
+                ['types', datafeedTypes[t], 'properties', categorizationFieldName, 'type']);
+              if (categorizationFieldType !== undefined) {
+                // Use the first matching datafeed_config index as the Kibana
+                // index pattern of the drilldown Disover tab.
+                // TODO - provide warnings if no index pattern exists.
+                indexPattern = datafeedIndices[i];
+                break indexLoop;
+              }
+            }
+          }
+
+        // Get the definition of the category and use the terms or regex to view the
+        // matching events in the Kibana Discover tab depending on whether the
+        // categorization field is of mapping type text (preferred) or keyword.
+        mlJobService.getCategoryDefinition(scope.indexPatternId, record.job_id, categoryId)
+          .then((resp) => {
+            let query = `${categorizationFieldName}:`;
+            if (categorizationFieldType === 'keyword') {
+              query += `/${resp.regex}/`;
+            } else {
+              query += resp.terms.split(' ').join(` AND ${categorizationFieldName}:`);
+            }
+
+            const recordTime = moment(record[scope.timeFieldName]);
+            const from = recordTime.toISOString();
+            const to = recordTime.add(record.bucket_span, 's').toISOString();
+
+            // Use rison to build the URL .
+            const _g = rison.encode({
+              refreshInterval: {
+                display: 'Off',
+                pause: false,
+                value: 0
+              },
+              time: {
+                from: from,
+                to: to,
+                mode: 'absolute'
+              }
+            });
+
+            const _a = rison.encode({
+              index:indexPattern,
+              filters: [],
+              query: {
+                query_string: {
+                  analyze_wildcard: true,
+                  query: query
+                }
+              }
+            });
+
+            // Need to encode the _a parameter as it will contain characters such as '+' if using the regex.
+            let path = chrome.getBasePath();
+            path += '/app/kibana#/discover';
+            path += '?_g=' + _g;
+            path += '&_a=' + encodeURIComponent(_a);
+            $window.open(path, '_blank');
+
+          }).catch((resp) => {
+            console.log('viewExamples(): error loading categoryDefinition:', resp);
+          });
+
+      };
+
       scope.openCustomUrl = function (customUrl, record) {
         console.log('Anomalies Table - open customUrl for record:', customUrl, record);
 
@@ -370,6 +453,11 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
 
         const showExamples = _.some(summaryRecords, { 'entityName': 'mlcategory' });
         if (showExamples) {
+          // Populate the mappings in the mappings service.
+          if (_.keys(mlESMappingService.indices).length === 0) {
+            mlESMappingService.getMappings();
+          }
+
           // Obtain the list of categoryIds by jobId for which we need to obtain the examples.
           // Note category examples will not be displayed if mlcategory is used just an
           // influencer or as a partition field in a config with other by/over fields.
@@ -557,7 +645,7 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         // typical
         // description (how actual compares to typical)
         // job_id
-        // links (if enabling drilldown to Single Metric dashboard or custom URLs configured)
+        // links (if custom URLs configured or drilldown functionality)
         // category examples (if by mlcategory)
         const paginatedTableColumns = [
           { title: '', sortable: false, class: 'col-expand-arrow' },
@@ -580,7 +668,7 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
           _.some(summaryRecords, (record) => {
             return ((isTimeSeriesViewFunction(record.source.function)) &&
               (_.get(record, 'entityName') !== 'mlcategory'));
-          })) || _.some(summaryRecords, 'customUrls');
+          })) || showExamples === true || _.some(summaryRecords, 'customUrls');
 
         if (showEntity === true) {
           paginatedTableColumns.push({ title: 'found for', sortable: true });
@@ -783,7 +871,9 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         if (addLinks !== undefined) {
           rowScope.showViewSeriesLink = (scope.showViewSeriesLink === true &&
             isTimeSeriesViewFunction(record.source.function) && (_.get(record, 'entityName') !== 'mlcategory'));
-          if (_.has(record, 'customUrls') || rowScope.showViewSeriesLink === true) {
+          rowScope.showViewExamplesLink = (_.get(record, 'entityName') === 'mlcategory');
+          if (_.has(record, 'customUrls') || rowScope.showViewSeriesLink === true
+              || rowScope.showViewExamplesLink) {
             rowScope.customUrls = record.customUrls;
             rowScope.source = record.source;
 
