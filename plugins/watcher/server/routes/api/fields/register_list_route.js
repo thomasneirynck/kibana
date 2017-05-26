@@ -1,0 +1,49 @@
+import { callWithRequestFactory } from '../../../lib/call_with_request_factory';
+import { isEsErrorFactory } from '../../../lib/is_es_error_factory';
+import { wrapEsError, wrapUnknownError } from '../../../lib/error_wrappers';
+import { licensePreRoutingFactory } from'../../../lib/license_pre_routing_factory';
+import { Fields } from '../../../models/fields';
+
+function fetchFields(callWithRequest, indexes) {
+  const params = {
+    index: indexes,
+    fields: ['*'],
+    ignoreUnavailable: false,
+    allowNoIndices: false
+  };
+
+  return callWithRequest('fieldCaps', params);
+}
+
+export function registerListRoute(server) {
+  const isEsError = isEsErrorFactory(server);
+  const licensePreRouting = licensePreRoutingFactory(server);
+
+  server.route({
+    path: '/api/watcher/fields',
+    method: 'POST',
+    handler: (request, reply) => {
+      const callWithRequest = callWithRequestFactory(server, request);
+      const { indexes } = request.payload;
+
+      return fetchFields(callWithRequest, indexes)
+        .then(response => {
+          const fields = Fields.fromUpstreamJSON(response);
+
+          reply(fields.downstreamJSON);
+        })
+        .catch(err => {
+          // Case: Error from Elasticsearch JS client
+          if (isEsError(err)) {
+            return reply(wrapEsError(err));
+          }
+
+          // Case: default
+          reply(wrapUnknownError(err));
+        });
+    },
+    config: {
+      pre: [ licensePreRouting ]
+    }
+  });
+}

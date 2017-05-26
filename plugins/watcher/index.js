@@ -1,4 +1,5 @@
 import { resolve } from 'path';
+import { registerFieldsRoutes } from './server/routes/api/fields';
 import { registerHistoryRoutes } from './server/routes/api/history';
 import { registerWatchesRoutes } from './server/routes/api/watches';
 import { registerWatchRoutes } from './server/routes/api/watch';
@@ -24,6 +25,7 @@ export const watcher = (kibana) => new kibana.Plugin({
   init: function (server) {
     registerLicenseChecker(server);
 
+    registerFieldsRoutes(server);
     registerHistoryRoutes(server);
     registerWatchesRoutes(server);
     registerWatchRoutes(server);
