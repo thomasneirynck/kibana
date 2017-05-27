@@ -14,15 +14,15 @@ task clean(type: Delete) {
   delete 'node_modules'
 }
 
-task depInstall(type: Exec) {
+task npmInstall(type: Exec) {
   if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-    commandLine 'cmd', '/C', 'yarn'
+    commandLine 'cmd', '/C', 'npm', 'install'
   } else {
-    commandLine 'yarn'
+    commandLine 'npm', 'install'
   }
 }
 
-task mochaTests(type: Exec, dependsOn: depInstall) {
+task mochaTests(type: Exec, dependsOn: npmInstall) {
   group = 'Verification'
   description = 'Run mocha tests with npm'
   if (Os.isFamily(Os.FAMILY_WINDOWS)) {
@@ -32,7 +32,7 @@ task mochaTests(type: Exec, dependsOn: depInstall) {
   }
 }
 
-task functionalTests(type: Exec, dependsOn: depInstall) {
+task functionalTests(type: Exec, dependsOn: npmInstall) {
   group = 'Verification'
   description = 'Run functional tests'
   commandLine 'xvfb-run', 'node', 'scripts/functional_tests'
@@ -44,7 +44,7 @@ task check(dependsOn: [mochaTests, functionalTests]) {
   description = 'Run all verification tasks'
 }
 
-task npmBuild(type: Exec, dependsOn: depInstall) {
+task npmBuild(type: Exec, dependsOn: npmInstall) {
   if (Os.isFamily(Os.FAMILY_WINDOWS)) {
     commandLine 'cmd', '/C', 'npm', 'run', 'build'
   } else {

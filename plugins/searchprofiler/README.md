@@ -6,8 +6,7 @@ A UI for the query and aggregation profiler in Elasticsearch
 
 Assuming you've checked out x-plugins next to kibana...
 
-- Install the latest version of yarn, See https://yarnpkg.com/en/docs/install
-- Run `yarn`
+- Run `npm install`
 - Run `npm start` to watch for and sync files on change
 - Open a new terminal to run Kibana - use `npm start` to launch it in dev mode
   - Kibana will automatically restart as files are synced
