@@ -4,10 +4,17 @@ This folder has the Kibana X-Pack plugin code
 
 ### UI Development
 
-First, you will need the plugin dependencies:
+Install the latest version of [yarn](https://yarnpkg.com/en/docs/install)
 
+```sh
+# See https://yarnpkg.com/en/docs/install for non-MacOS install
+brew install yarn
 ```
-npm install
+
+Install dependencies
+
+```sh
+yarn
 ```
 
 #### Running in development
@@ -115,7 +122,7 @@ That's thanks to the binary Phantom downloads that have to happen, and Bitbucket
 
 ## Building and Packaging
 
-Make sure you have the dependencies installed by running `npm install`.
+Make sure you have the dependencies installed by running `yarn`.
 
 Once complete, use `npm run build`. Output will be placed in the `build` path (it will be created).
 
@@ -125,7 +132,7 @@ If you'd like to get a zip package and a sha1 checksum file, use `npm run packag
 
 ## Releasing
 
-Make sure you have the dependencies installed by running `npm install`.
+Make sure you have the dependencies installed by running `yarn`.
 
 Once complete, use `npm run release`. Build and package output will be placed in the `build` and `target` paths respectively (they will be created).
 

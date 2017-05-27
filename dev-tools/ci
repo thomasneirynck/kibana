@@ -126,10 +126,15 @@ fi
 echo "Installing node.js version $(cat .node-version)..."
 nvm install "$(cat .node-version)"
 
+echo "Installing yarn"
+mkdir .bin
+curl -L https://github.com/yarnpkg/yarn/releases/download/v0.24.6/yarn-0.24.6.js > .bin/yarn
+chmod +x .bin/yarn
+PATH="$(pwd)/.bin:$PATH"
+
 echo "Installing kibana dependencies"
 cd "../kibana"
-npm prune
-npm install
+yarn
 cd -
 
 echo "Running x-pack-kibana tests..."
