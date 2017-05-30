@@ -743,10 +743,14 @@ describe('Worker class', function () {
     describe('timeout', function () {
       let failStub;
       let job;
+      let cancellationCallback;
 
       beforeEach(function () {
         const timeout = 20;
-        const workerFn = function () {
+        cancellationCallback = function () {};
+
+        const workerFn = function (payload, cancellationToken) {
+          cancellationToken.on(cancellationCallback);
           return new Promise(function (resolve) {
             setTimeout(() => {
               resolve();
@@ -783,6 +787,26 @@ describe('Worker class', function () {
             done();
           } catch (e) {
             done(e);
+          }
+        });
+
+        // fire of the job worker
+        worker._performJob(job);
+      });
+
+      it('should call cancellation token callback if not completed in time', function (done) {
+        let called = false;
+
+        cancellationCallback = () => {
+          called = true;
+        };
+
+        worker.once(constants.EVENT_WORKER_JOB_TIMEOUT, () => {
+          try {
+            expect(called).to.be(true);
+            done();
+          } catch(err) {
+            done(err);
           }
         });
 

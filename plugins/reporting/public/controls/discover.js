@@ -9,7 +9,7 @@ function discoverReportProvider(Private) {
 
     key: 'reporting-discover',
     label: 'Reporting',
-    template: '<export-config object-type="Search" enabled-export-type="printablePdf"></export-config>',
+    template: '<export-config object-type="Search" enabled-export-type="csv"></export-config>',
     description: 'Search Report',
     hideButton: () => !xpackInfo.get('features.reporting.printablePdf.showLinks', false),
     disableButton: () => !xpackInfo.get('features.reporting.printablePdf.enableLinks', false),

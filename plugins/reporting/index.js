@@ -54,6 +54,13 @@ export const reporting = (kibana) => {
           settleTime: Joi.number().integer().default(1000),
           concurrency: Joi.number().integer().default(appConfig.concurrency),
         }).default(),
+        csv: Joi.object({
+          maxSizeBytes: Joi.number().integer().default(1024 * 1024 * 10), // bytes in a kB * kB in a mB * 10
+          scroll: Joi.object({
+            duration: Joi.string().regex(/^[0-9]+(d|h|m|s|ms|micros|nanos)$/, { name: 'DurationString' }).default('30s'),
+            size: Joi.number().integer().default(500)
+          }).default(),
+        }).default(),
         encryptionKey: Joi.string(),
         index: Joi.string().default('.reporting')
       }).default();

@@ -1,7 +1,7 @@
 import { omit } from 'lodash';
 import { oncePerServer } from '../../../server/lib/once_per_server';
 import { generatePdfFactory } from './lib/generate_pdf';
-import { cryptoFactory } from './lib/crypto';
+import { cryptoFactory } from '../../../server/lib/crypto';
 
 const KBN_SCREENSHOT_HEADER_BLACKLIST = [
   'accept-encoding',

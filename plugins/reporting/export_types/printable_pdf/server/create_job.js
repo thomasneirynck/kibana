@@ -1,6 +1,6 @@
 import moment from 'moment';
 import querystring from 'querystring';
-import { cryptoFactory } from './lib/crypto';
+import { cryptoFactory } from '../../../server/lib/crypto';
 import { getSavedObjectFactory } from './lib/get_saved_object';
 import { oncePerServer } from '../../../server/lib/once_per_server';
 

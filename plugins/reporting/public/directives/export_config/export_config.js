@@ -1,4 +1,3 @@
-import { get } from 'lodash';
 import 'plugins/reporting/services/document_control';
 import 'plugins/reporting/services/export_types';
 import './export_config.less';
@@ -18,16 +17,24 @@ module.directive('exportConfig', (reportingDocumentControl, reportingExportTypes
     require: ['?^dashboardApp', '?^visualizeApp', '?^discoverApp'],
     controllerAs: 'exportConfig',
     template,
-    link($scope, $el, $attr, controllers) {
+    async link($scope, $el, $attr, controllers) {
+      const actualControllers = controllers.filter(c => c !== null);
+      if (actualControllers.length !== 1) {
+        throw new Error(`Expected there to be 1 controller, but there are ${actualControllers.length}`);
+      }
+      const controller = actualControllers[0];
+
       const exportTypeId = $attr.enabledExportType;
       $scope.exportConfig.exportType = reportingExportTypes.getById(exportTypeId);
-      $scope.exportConfig.isDirty = () => controllers.some(ctrl => get(ctrl, 'appStatus.dirty', false));
+      $scope.exportConfig.isDirty = () => controller.appStatus.dirty;
       $scope.exportConfig.objectType = $attr.objectType;
-      $scope.exportConfig.link = url.resolve($location.absUrl(), reportingDocumentControl.getPath($scope.exportConfig.exportType));
+      const path = await reportingDocumentControl.getPath($scope.exportConfig.exportType, controller);
+      $scope.exportConfig.relativePath = path;
+      $scope.exportConfig.absoluteUrl = url.resolve($location.absUrl(), path);
     },
     controller($document) {
-      this.export = (type) => {
-        reportingDocumentControl.create(type)
+      this.export = (relativePath) => {
+        reportingDocumentControl.create(relativePath)
         .then(() => {
           reportingNotifier.info(`${this.objectType} generation has been queued. You can track its progress under Management.`);
         })

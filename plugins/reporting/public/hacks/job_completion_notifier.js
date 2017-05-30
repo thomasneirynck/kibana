@@ -78,14 +78,21 @@ async function showCompletionNotification(job, reportingJobQueue) {
   ];
 
   const isJobSuccessful = get(job, '_source.status') === 'completed';
+  const maxSizeReached = get(job, '_source.output.max_size_reached');
   if (isJobSuccessful) {
     actions.push({
       text: 'Download',
       callback: downloadReport(job._id)
     });
 
-    notificationType = 'info';
-    notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready!`;
+    if (maxSizeReached) {
+      notificationType = 'warning';
+      notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready;` +
+        `however, it reached the max size and contains partial data.`;
+    } else {
+      notificationType = 'info';
+      notificationMessage = `Your report for the "${reportObjectTitle}" ${reportObjectType} is ready!`;
+    }
     if (chrome.navLinkExists('kibana:management')) {
       const managementUrl = chrome.getNavLinkById('kibana:management').url;
       const reportingSectionUrl = `${managementUrl}/kibana/reporting`;

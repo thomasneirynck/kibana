@@ -4,8 +4,9 @@
     <div class="input-group generate-controls">
       <button
         class="kuiButton kuiButton--primary"
-        data-test-subj="printPdfButton"
-        ng-click="exportConfig.export(exportConfig.exportType)"
+        data-test-subj="generateReportButton"
+        ng-disabled="!exportConfig.relativePath"
+        ng-click="exportConfig.export(exportConfig.relativePath)"
         >
         Generate {{ exportConfig.exportType.name }}
       </button>
@@ -23,6 +24,7 @@
         <a
           class="kuiLocalDropdownHeader__action"
           ng-click="exportConfig.copyToClipboard('#reportGenerationUrl')"
+          ng-disabled="{{!exportConfig.absoluteUrl}}"
         >
           Copy
         </a>
@@ -36,7 +38,7 @@
       type="text"
       readonly
       data-test-subj="reportGenerationUrl"
-      value="{{ exportConfig.link }}"
+      value="{{ exportConfig.absoluteUrl || 'Loading...' }}"
     />
   </div>
 </div>

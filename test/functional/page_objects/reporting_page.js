@@ -26,9 +26,9 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
     }
 
     async isReportingPanelOpen() {
-      const pdfButtonExists = await this.getPrintPdfButtonExists();
+      const generateReportButtonExists = await this.getGenerateReportButtonExists();
       const unsavedChangesWarningExists = await this.getUnsavedChangesWarningExists();
-      const isOpen = pdfButtonExists || unsavedChangesWarningExists;
+      const isOpen = generateReportButtonExists || unsavedChangesWarningExists;
       log.debug('isReportingPanelOpen: ' + isOpen);
       return isOpen;
     }
@@ -53,16 +53,16 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
       return await testSubjects.exists('unsavedChangesReportingWarning');
     }
 
-    async getPrintPdfButtonExists() {
-      return await testSubjects.exists('printPdfButton');
+    async getGenerateReportButtonExists() {
+      return await testSubjects.exists('generateReportButton');
     }
 
-    async getPrintPdfButton() {
-      return await retry.try(() => testSubjects.find('printPdfButton'));
+    async getGenerateReportButton() {
+      return await retry.try(() => testSubjects.find('generateReportButton'));
     }
 
-    async clickPrintPdfButton() {
-      await retry.try(() => testSubjects.click('printPdfButton'));
+    async clickGenerateReportButton() {
+      await retry.try(() => testSubjects.click('generateReportButton'));
     }
 
     async clickReportCompleteOkToastButton() {
@@ -100,6 +100,13 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
       log.debug('Reporting:setTimepickerInDataRange');
       const fromTime = '2015-09-19 06:31:44.000';
       const toTime = '2015-09-23 18:31:44.000';
+      await PageObjects.header.setAbsoluteRange(fromTime, toTime);
+    }
+
+    async setTimepickerInNoDataRange() {
+      log.debug('Reporting:setTimepickerInNoDataRange');
+      const fromTime = '1999-09-19 06:31:44.000';
+      const toTime = '1999-09-23 18:31:44.000';
       await PageObjects.header.setAbsoluteRange(fromTime, toTime);
     }
   }

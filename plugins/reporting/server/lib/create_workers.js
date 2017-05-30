@@ -14,9 +14,9 @@ function createWorkersFn(server) {
 
       log(`Registering ${exportType.name} worker`);
       const executeJob = exportType.executeJobFactory(server);
-      const workerFn = (payload) => {
+      const workerFn = (payload, cancellationToken) => {
         log(`Processing ${exportType.name} job`);
-        return executeJob(payload);
+        return executeJob(payload, cancellationToken);
       };
       const workerOptions = {
         interval: queueConfig.pollInterval

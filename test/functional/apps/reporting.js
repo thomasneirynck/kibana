@@ -1,6 +1,7 @@
 import expect from 'expect.js';
 
 export default function ({ getService, getPageObjects }) {
+  const retry = getService('retry');
   const kibanaServer = getService('kibanaServer');
   const PageObjects = getPageObjects(['reporting', 'common', 'dashboard', 'header', 'discover', 'visualize']);
 
@@ -15,19 +16,21 @@ export default function ({ getService, getPageObjects }) {
       await PageObjects.reporting.openReportingPanel();
       const warningExists = await PageObjects.reporting.getUnsavedChangesWarningExists();
       expect(warningExists).to.be(true);
-      const buttonExists = await PageObjects.reporting.getPrintPdfButtonExists();
+      const buttonExists = await PageObjects.reporting.getGenerateReportButtonExists();
       expect(buttonExists).to.be(false);
     };
 
-    const expectEnabledPrintPdfButton = async () => {
+    const expectEnabledGenerateReportButton = async () => {
       await PageObjects.reporting.openReportingPanel();
-      const printPdfButton = await PageObjects.reporting.getPrintPdfButton();
-      const isDisabled = await printPdfButton.getProperty('disabled');
-      expect(isDisabled).to.be(false);
+      const printPdfButton = await PageObjects.reporting.getGenerateReportButton();
+      await retry.try(async () => {
+        const isDisabled = await printPdfButton.getProperty('disabled');
+        expect(isDisabled).to.be(false);
+      });
     };
 
     const expectReportCanBeCreated = async () => {
-      await PageObjects.reporting.clickPrintPdfButton();
+      await PageObjects.reporting.clickGenerateReportButton();
       const success = await PageObjects.reporting.checkForReportingToasts();
       expect(success).to.be(true);
     };
@@ -43,7 +46,7 @@ export default function ({ getService, getPageObjects }) {
         it('becomes available when saved', async () => {
           await PageObjects.dashboard.saveDashboard('mydash');
           await PageObjects.header.clickToastOK();
-          expectEnabledPrintPdfButton();
+          expectEnabledGenerateReportButton();
         });
 
         it('generates a report', async () => expectReportCanBeCreated());
@@ -51,7 +54,7 @@ export default function ({ getService, getPageObjects }) {
     });
 
     describe('Discover', () => {
-      describe('Print PDF button', () => {
+      describe('Generate CSV button', () => {
         it('is not available if new', async () => {
           await PageObjects.common.navigateToApp('discover');
           await expectUnsavedChangesWarning();
@@ -60,7 +63,7 @@ export default function ({ getService, getPageObjects }) {
         it('becomes available when saved', async () => {
           await PageObjects.discover.saveSearch('my search');
           await PageObjects.header.clickToastOK();
-          await expectEnabledPrintPdfButton();
+          await expectEnabledGenerateReportButton();
         });
 
         it('generates a report with data', async () => {
@@ -69,13 +72,11 @@ export default function ({ getService, getPageObjects }) {
           await expectReportCanBeCreated();
         });
 
-        // TODO: uncomment this when https://github.com/elastic/x-pack-kibana/issues/1103 is fixed.
-        // it('generates a report with no data', async () => {
-        //   const fromTime = '1999-09-19 06:31:44.000';
-        //   const toTime = '1999-09-23 18:31:44.000';
-        //   await PageObjects.header.setAbsoluteRange(fromTime, toTime);
-        //   await expectReportCanBeCreated();
-        // });
+        it('generates a report with no data', async () => {
+          await PageObjects.reporting.setTimepickerInNoDataRange();
+          await PageObjects.reporting.clickTopNavReportingLink();
+          await expectReportCanBeCreated();
+        });
       });
     });
 
@@ -91,7 +92,7 @@ export default function ({ getService, getPageObjects }) {
         it('becomes available when saved', async () => {
           await PageObjects.visualize.saveVisualization('my viz');
           await PageObjects.header.clickToastOK();
-          await expectEnabledPrintPdfButton();
+          await expectEnabledGenerateReportButton();
         });
 
         it('generates a report', async () => expectReportCanBeCreated());

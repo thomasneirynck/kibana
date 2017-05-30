@@ -7,18 +7,17 @@ uiModules.get('xpack/reporting')
   const mainEntry = '/api/reporting/generate';
   const reportPrefix = chrome.addBasePath(mainEntry);
 
-  const getJobParams = (exportType) => {
+  const getJobParams = (exportType, controller) => {
     const jobParamsProvider = Private(exportType.JobParamsProvider);
-    return jobParamsProvider();
+    return jobParamsProvider(controller);
   };
 
-  this.getPath = (exportType) => {
-    const jobParams = getJobParams(exportType);
+  this.getPath = async (exportType, controller) => {
+    const jobParams = await getJobParams(exportType, controller);
     return `${reportPrefix}/${exportType.id}?jobParams=${rison.encode(jobParams)}`;
   };
 
-  this.create = (exportType) => {
-    const path = this.getPath(exportType);
-    return $http.post(path, {});
+  this.create = (relativePath) => {
+    return $http.post(relativePath, {});
   };
 });

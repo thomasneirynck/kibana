@@ -43,7 +43,8 @@ function mapJobs(jobs) {
       started_at: job._source.started_at,
       completed_at: job._source.completed_at,
       status: job._source.status,
-      content_type: job._source.output ? job._source.output.content_type : false
+      content_type: job._source.output ? job._source.output.content_type : false,
+      max_size_reached: job._source.output ? job._source.output.max_size_reached : false
     };
   });
 }

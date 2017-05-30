@@ -3,6 +3,7 @@ import Puid from 'puid';
 import moment from 'moment';
 import { constants } from './constants';
 import { WorkerTimeoutError, UnspecifiedWorkerError } from './helpers/errors';
+import { CancellationToken } from './helpers/cancellation_token';
 
 const puid = new Puid();
 
@@ -159,6 +160,7 @@ export class Worker extends events.EventEmitter {
     if (typeof output === 'object' && output.content) {
       docOutput.content = output.content;
       docOutput.content_type = output.content_type || unknownMime;
+      docOutput.max_size_reached = output.max_size_reached;
     } else {
       docOutput.content = output || defaultOutput;
       docOutput.content_type = unknownMime;
@@ -173,7 +175,8 @@ export class Worker extends events.EventEmitter {
     const workerOutput = new Promise((resolve, reject) => {
       // run the worker's workerFn
       let isResolved = false;
-      Promise.resolve(this.workerFn.call(null, job._source.payload))
+      const cancellationToken = new CancellationToken();
+      Promise.resolve(this.workerFn.call(null, job._source.payload, cancellationToken))
       .then((res) => {
         isResolved = true;
         resolve(res);
@@ -187,6 +190,7 @@ export class Worker extends events.EventEmitter {
       setTimeout(() => {
         if (isResolved) return;
 
+        cancellationToken.cancel();
         this.debug(`Timeout processing job ${job._id}`);
         reject(new WorkerTimeoutError(`Worker timed out, timeout = ${job._source.timeout}`, {
           timeout: job._source.timeout,
