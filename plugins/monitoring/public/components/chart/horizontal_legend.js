@@ -1,5 +1,6 @@
 import React from 'react';
 import { includes, isFunction } from 'lodash';
+import { KuiKeyboardAccessible } from 'ui_framework/components';
 
 export class HorizontalLegend extends React.Component {
   constructor() {
@@ -39,17 +40,15 @@ export class HorizontalLegend extends React.Component {
     }
 
     return (
-      <div
-        className={ classes.join(' ') }
-        onClick={ event => this.props.onToggle(event, row.id) }
-        key={ key }
-      >
-        <span className='rhythm_chart__legend-label'>
-          <span className='fa fa-circle rhythm_chart__legend-indicator' style={ { color: row.color } }/>
-          { row.label }
-        </span>
-        <span className='rhythm_chart__legend-value'>{ value }</span>
-      </div>
+      <KuiKeyboardAccessible key={ key } >
+        <div className={ classes.join(' ') } onClick={ event => this.props.onToggle(event, row.id) } >
+          <span className='rhythm_chart__legend-label'>
+            <span className='fa fa-circle rhythm_chart__legend-indicator' style={ { color: row.color } }/>
+            { row.label }
+          </span>
+          <span className='rhythm_chart__legend-value'>{ value }</span>
+        </div>
+      </KuiKeyboardAccessible>
     );
   }
 

@@ -5,6 +5,7 @@ import { MetricCell } from 'plugins/monitoring/components/elasticsearch/node_lis
 import { OfflineCell } from 'plugins/monitoring/components/elasticsearch/node_listing/offline_cell';
 import { NodeStatusIcon } from 'plugins/monitoring/components/elasticsearch/node/status_icon';
 import { Tooltip } from 'plugins/monitoring/components/tooltip';
+import { KuiKeyboardAccessible } from 'ui_framework/components';
 import { extractIp } from 'plugins/monitoring/lib/extract_ip';
 import { Table } from 'plugins/monitoring/components/paginated_table';
 import { SORT_ASCENDING } from 'monitoring-constants';
@@ -60,9 +61,11 @@ function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch
               <span className={ `fa ${this.state.node.nodeTypeClass}` }></span>
             </Tooltip>
             &nbsp;
-            <a className='link' onClick={ this.goToNode }>
-              { this.state.node.name }
-            </a>
+            <KuiKeyboardAccessible>
+              <a className='link' onClick={ this.goToNode }>
+                { this.state.node.name }
+              </a>
+            </KuiKeyboardAccessible>
             <div className='small'>{ extractIp(this.state.node.transport_address) }</div>
           </td>
           <td>

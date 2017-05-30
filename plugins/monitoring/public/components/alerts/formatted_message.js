@@ -1,4 +1,5 @@
 import React from 'react';
+import { KuiKeyboardAccessible } from 'ui_framework/components';
 
 export function FormattedMessage({ prefix, suffix, message, metadata, angularChangeUrl }) {
   const goToLink = () => {
@@ -9,9 +10,11 @@ export function FormattedMessage({ prefix, suffix, message, metadata, angularCha
   const formattedMessage = (() => {
     if (metadata.link) {
       return (
-        <a onClick={ goToLink } className='alert-message__clickable'>
-          { message }
-        </a>
+        <KuiKeyboardAccessible>
+          <a className='alert-message__clickable' onClick={ goToLink } >
+            { message }
+          </a>
+        </KuiKeyboardAccessible>
       );
     }
     return message;

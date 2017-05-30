@@ -1,6 +1,7 @@
 import React from 'react';
-import { formatNumber } from 'plugins/monitoring/lib/format_number';
 import { get, capitalize } from 'lodash';
+import { formatNumber } from 'plugins/monitoring/lib/format_number';
+import { KuiKeyboardAccessible } from 'ui_framework/components';
 import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
 import { ClusterItemContainer, HealthStatusIndicator, BytesUsage, BytesPercentageUsage } from './helpers';
 
@@ -44,13 +45,21 @@ export class ElasticsearchPanel extends React.Component {
       </HealthStatusIndicator>
     );
 
+    const goToElasticsearch = () => this.props.angularChangeUrl('elasticsearch');
+    const goToNodes = () => this.props.angularChangeUrl('elasticsearch/nodes');
+    const goToIndices = () => this.props.angularChangeUrl('elasticsearch/indices');
+
     return (
       <ClusterItemContainer { ...this.props } statusIndicator={ statusIndicator } url='elasticsearch' title='Elasticsearch'>
         <div className='row'>
           <div className='col-md-4'>
             <dl data-test-subj='elasticsearch_overview' data-overview-status={ this.props.status }>
               <dt className='cluster-panel__inner-title'>
-                <a className='link' onClick={ () => this.props.angularChangeUrl('elasticsearch') }>Overview</a>
+                <KuiKeyboardAccessible>
+                  <a className='link' onClick={ goToElasticsearch } >
+                    Overview
+                  </a>
+                </KuiKeyboardAccessible>
               </dt>
               <dd>Version: { get(nodes, 'versions[0]') || 'N/A' }</dd>
               <dd>Uptime: { formatNumber(get(nodes, 'jvm.max_uptime_in_millis'), 'time_since') }</dd>
@@ -59,11 +68,13 @@ export class ElasticsearchPanel extends React.Component {
           <div className='col-md-4'>
             <dl>
               <dt className='cluster-panel__inner-title'>
-                <a className='link' onClick={ () => this.props.angularChangeUrl('elasticsearch/nodes') }>
-                  Nodes: <span data-test-subj='number_of_elasticsearch_nodes'>
-                    { formatNumber(get(nodes, 'count.total'), 'int_commas') }
-                  </span>
-                </a>
+                <KuiKeyboardAccessible>
+                  <a className='link' onClick={ goToNodes } >
+                    Nodes: <span data-test-subj='number_of_elasticsearch_nodes'>
+                      { formatNumber(get(nodes, 'count.total'), 'int_commas') }
+                    </span>
+                  </a>
+                </KuiKeyboardAccessible>
               </dt>
               <dd>
                 Disk Available: <BytesUsage
@@ -82,9 +93,11 @@ export class ElasticsearchPanel extends React.Component {
           <div className='col-md-4'>
             <dl>
               <dt className='cluster-panel__inner-title'>
-                <a className='link' onClick={ () => this.props.angularChangeUrl('elasticsearch/indices') }>
-                  Indices: { formatNumber(get(indices, 'count'), 'int_commas') }
-                </a>
+                <KuiKeyboardAccessible>
+                  <a className='link' onClick={ goToIndices  } >
+                    Indices: { formatNumber(get(indices, 'count'), 'int_commas') }
+                  </a>
+                </KuiKeyboardAccessible>
               </dt>
               <dd>Documents: { formatNumber(get(indices, 'docs.count'), 'int_commas') }</dd>
               <dd>Disk Usage: { formatNumber(get(indices, 'store.size_in_bytes'), 'bytes') }</dd>

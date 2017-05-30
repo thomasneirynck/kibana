@@ -4,13 +4,12 @@ import { Tooltip } from 'plugins/monitoring/components/tooltip';
 import { FormattedMessage } from 'plugins/monitoring/components/alerts/formatted_message';
 import { SeverityIcon } from 'plugins/monitoring/components/alerts/severity_icon';
 import { mapSeverity } from 'plugins/monitoring/components/alerts/map_severity';
+import { KuiKeyboardAccessible } from 'ui_framework/components';
 import { formatTimestampToDuration } from 'plugins/monitoring/lib/format_number';
 import { formatDateTimeLocal } from 'monitoring-formatting';
 
 export function AlertsPanel({ alerts, angularChangeUrl }) {
-  const goToAlerts = () => {
-    angularChangeUrl('/alerts');
-  };
+  const goToAlerts = () => angularChangeUrl('/alerts');
 
   if (!alerts || !alerts.length) {
     // no-op
@@ -59,12 +58,11 @@ export function AlertsPanel({ alerts, angularChangeUrl }) {
         { topAlertItems }
       </div>
       <p className='kuiText kuiVerticalRhythm'>
-        <a
-          className='kuiLink'
-          onClick={ goToAlerts }
-        >
-          View all { alerts.total } alerts
-        </a>
+        <KuiKeyboardAccessible>
+          <a className='kuiLink' onClick={ goToAlerts } >
+            View all { alerts.total } alerts
+          </a>
+        </KuiKeyboardAccessible>
       </p>
     </div>
   );

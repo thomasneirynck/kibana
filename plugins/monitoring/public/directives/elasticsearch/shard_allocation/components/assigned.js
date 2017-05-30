@@ -20,6 +20,7 @@ import React from 'react';
 import { Shard } from './shard';
 import { calculateClass } from '../lib/calculateClass';
 import { generateQueryAndLink } from '../lib/generateQueryAndLink';
+import { KuiKeyboardAccessible } from 'ui_framework/components';
 
 function sortByName(item) {
   if (item.type === 'node') {
@@ -51,9 +52,11 @@ export const Assigned = React.createClass({
     };
 
     const name = (
-      <a onClick={ changeUrl } className='link'>
-        <span>{ data.name }</span>
-      </a>
+      <KuiKeyboardAccessible>
+        <a onClick={ changeUrl } className='link'>
+          <span>{ data.name }</span>
+        </a>
+      </KuiKeyboardAccessible>
     );
     let master;
     if (data.node_type === 'master') {

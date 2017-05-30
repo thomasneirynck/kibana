@@ -2,6 +2,7 @@ import _ from 'lodash';
 import numeral from 'numeral';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { KuiKeyboardAccessible } from 'ui_framework/components';
 import { Table } from 'plugins/monitoring/components/paginated_table';
 import { SORT_ASCENDING } from 'monitoring-constants';
 import { uiModules } from 'ui/modules';
@@ -66,13 +67,15 @@ uiModule.directive('monitoringLogstashNodeListing', function (kbnUrl) {
           return (
             <tr key={ `row-${this.props.resolver}` } className='big'>
               <td>
-                <a className='link' onClick={ () => {
-                  scope.$evalAsync(() => {
-                    kbnUrl.changePath('/logstash/node/' + _.get(this.props, 'logstash.uuid'));
-                  });
-                } }>
-                  <div>{ this.props.logstash.name }</div>
-                </a>
+                <KuiKeyboardAccessible>
+                  <a className='link' onClick={ () => {
+                    scope.$evalAsync(() => {
+                      kbnUrl.changePath('/logstash/node/' + _.get(this.props, 'logstash.uuid'));
+                    });
+                  } }>
+                    <div>{ this.props.logstash.name }</div>
+                  </a>
+                </KuiKeyboardAccessible>
                 <div className="small">{ _.get(this.props, 'logstash.http_address') }</div>
               </td>
               <td>

@@ -4,6 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Table } from 'plugins/monitoring/components/paginated_table';
 import { SORT_ASCENDING } from 'monitoring-constants';
+import { KuiKeyboardAccessible } from 'ui_framework/components';
 import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
 import { uiModules } from 'ui/modules';
 
@@ -72,7 +73,9 @@ function indexRowFactory(scope, kbnUrl) {
       return (
         <tr className='big'>
           <td>
-            <a className='link' onClick={ this.changePath }>{ name }</a>
+            <KuiKeyboardAccessible>
+              <a className='link' onClick={ this.changePath }>{ name }</a>
+            </KuiKeyboardAccessible>
           </td>
           <td>
             <div title={ `Index status: ${status}` }>

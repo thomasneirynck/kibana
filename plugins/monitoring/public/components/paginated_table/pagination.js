@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import React from 'react';
+import { KuiKeyboardAccessible } from 'ui_framework/components';
 
 const maxListSize = 10; // TODO - make this as a config option
 
@@ -8,7 +9,13 @@ const ItemsPerPageLink = React.createClass({
     this.props.setItemsPerPage(this.props.choice);
   },
   render() {
-    return <span className='link' onClick={ this.handleClick }>{ this.props.choice }</span>;
+    return (
+      <KuiKeyboardAccessible>
+        <span className='link' onClick={ this.handleClick }>
+          { this.props.choice }
+        </span>
+      </KuiKeyboardAccessible>
+    );
   }
 });
 
@@ -59,9 +66,11 @@ const Chevron = React.createClass({
   },
   render() {
     return (
-      <a onClick={ this.scrollRightOrLeft } className='link'>
-        <span className={ `fa fa-chevron-${this.props.direction}` }></span>
-      </a>
+      <KuiKeyboardAccessible>
+        <a onClick={ this.scrollRightOrLeft } className='link'>
+          <span className={ `fa fa-chevron-${this.props.direction}` }></span>
+        </a>
+      </KuiKeyboardAccessible>
     );
   }
 });
@@ -74,9 +83,11 @@ const PageLink = React.createClass({
   render() {
     const currentClass = this.props.isCurrent ? 'current' : '';
     return (
-      <a onClick={ this.goToPage } className={ `${currentClass} link` }>
-        { this.props.pageIdx }
-      </a>
+      <KuiKeyboardAccessible>
+        <a onClick={ this.goToPage } className={ `${currentClass} link` }>
+          { this.props.pageIdx }
+        </a>
+      </KuiKeyboardAccessible>
     );
   }
 });
@@ -92,7 +103,13 @@ const Ellipsis = React.createClass({
   },
   render() {
     // HTML entity for ellipsis
-    return <a onClick={ this.scrollList } className='link'>&hellip;</a>;
+    return (
+      <KuiKeyboardAccessible>
+        <a onClick={ this.scrollList } className='link'>
+          &hellip;
+        </a>
+      </KuiKeyboardAccessible>
+    );
   }
 });
 

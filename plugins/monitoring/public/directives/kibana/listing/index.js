@@ -2,6 +2,7 @@ import { capitalize, get, find } from 'lodash';
 import numeral from 'numeral';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { KuiKeyboardAccessible } from 'ui_framework/components';
 import { KibanaStatusIcon } from 'plugins/monitoring/components/kibana/status_icon';
 import { Table } from 'plugins/monitoring/components/paginated_table';
 import { SORT_ASCENDING } from 'monitoring-constants';
@@ -63,13 +64,15 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
           return (
             <tr key={ `row-${this.props.resolver}` } className='big'>
               <td>
-                <a className='link' onClick={ () => {
-                  scope.$evalAsync(() => {
-                    kbnUrl.changePath('/kibana/instances/' + get(this.props, 'kibana.uuid'));
-                  });
-                } }>
-                  <div>{ this.props.kibana.name }</div>
-                </a>
+                <KuiKeyboardAccessible>
+                  <a className='link' onClick={ () => {
+                    scope.$evalAsync(() => {
+                      kbnUrl.changePath('/kibana/instances/' + get(this.props, 'kibana.uuid'));
+                    });
+                  } }>
+                    <div>{ this.props.kibana.name }</div>
+                  </a>
+                </KuiKeyboardAccessible>
                 <div className='small'>{ get(this.props, 'kibana.transport_address') }</div>
               </td>
               <td>

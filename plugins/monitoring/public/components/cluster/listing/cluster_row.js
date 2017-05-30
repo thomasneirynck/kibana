@@ -2,6 +2,7 @@ import React from 'react';
 import numeral from 'numeral';
 import moment from 'moment';
 import { capitalize, get } from 'lodash';
+import { KuiKeyboardAccessible } from 'ui_framework/components';
 import { Tooltip } from 'plugins/monitoring/components/tooltip';
 import { AlertsIndicator } from './alerts_indicator';
 
@@ -40,9 +41,11 @@ to enjoy multi-cluster monitoring.`
     if (this.props.isSupported) {
       return (
         <span>
-          <a className='clusterName link' onClick={ this.changeCluster() }>
-            { this.props.cluster_name }
-          </a>
+          <KuiKeyboardAccessible>
+            <a className='clusterName link' onClick={ this.changeCluster() }>
+              { this.props.cluster_name }
+            </a>
+          </KuiKeyboardAccessible>
         </span>
       );
     }
@@ -50,13 +53,21 @@ to enjoy multi-cluster monitoring.`
     // not supported because license is basic/not compatible with multi-cluster
     if (this.props.license) {
       return (
-        <a className='clusterName link' onClick={ this.handleClickIncompatibleLicense() }>{ this.props.cluster_name }</a>
+        <KuiKeyboardAccessible>
+          <a className='clusterName link' onClick={ this.handleClickIncompatibleLicense() }>
+            { this.props.cluster_name }
+          </a>
+        </KuiKeyboardAccessible>
       );
     }
 
     // not supported because license is invalid
     return (
-      <a className='clusterName link' onClick={ this.handleClickInvalidLicense() }>{ this.props.cluster_name }</a>
+      <KuiKeyboardAccessible>
+        <a className='clusterName link' onClick={ this.handleClickInvalidLicense() }>
+          { this.props.cluster_name }
+        </a>
+      </KuiKeyboardAccessible>
     );
   }
 
@@ -88,9 +99,11 @@ to enjoy multi-cluster monitoring.`
 
     // there is no license!
     return (
-      <div className='license link' onClick={ this.handleClickInvalidLicense() }>
-        N/A
-      </div>
+      <KuiKeyboardAccessible>
+        <div className='license link' onClick={ this.handleClickInvalidLicense() }>
+          N/A
+        </div>
+      </KuiKeyboardAccessible>
     );
   }
 
