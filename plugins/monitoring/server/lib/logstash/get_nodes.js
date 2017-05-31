@@ -26,6 +26,7 @@ export function getNodes(req, logstashIndexPattern) {
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: logstashIndexPattern,
+    type: 'logstash_stats',
     ignoreUnavailable: true,
     body: {
       size: config.get('xpack.monitoring.max_bucket_size'),
