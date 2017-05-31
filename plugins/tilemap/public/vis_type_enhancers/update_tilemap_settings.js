@@ -1,8 +1,8 @@
 import uiRoutes from 'ui/routes';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
-import 'ui/vis_maps/lib/tilemap_settings';
+import 'ui/vis_maps/lib/service_settings';
 
-uiRoutes.addSetupWork(function (Private, tilemapSettings) {
+uiRoutes.addSetupWork(function (Private, serviceSettings) {
 
   const xpackInfo = Private(XPackInfoProvider);
   const tileMapPluginInfo = xpackInfo.get('features.tilemap');
@@ -14,6 +14,6 @@ uiRoutes.addSetupWork(function (Private, tilemapSettings) {
   if (!tileMapPluginInfo.license.active || !tileMapPluginInfo.license.valid) {
     return;
   }
-  tilemapSettings.addQueryParams({ license: tileMapPluginInfo.license.uid });
+  serviceSettings.addQueryParams({ license: tileMapPluginInfo.license.uid });
 
 });
