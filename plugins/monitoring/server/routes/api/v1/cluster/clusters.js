@@ -1,6 +1,6 @@
 import Joi from 'joi';
 import { getClustersFromRequest } from '../../../../lib/cluster/get_clusters_from_request';
-import { checkMonitoringAuth } from '../../../../lib/elasticsearch/check_monitoring_auth';
+import { verifyMonitoringAuth } from '../../../../lib/elasticsearch/verify_monitoring_auth';
 import { handleError } from '../../../../lib/handle_error';
 
 export function clustersRoutes(server) {
@@ -28,7 +28,7 @@ export function clustersRoutes(server) {
       // an error when current logged-in user doesn't have permission to read
       // the monitoring data. `try/catch` makes it a little more explicit.
       try {
-        await checkMonitoringAuth(req);
+        await verifyMonitoringAuth(req);
         clusters = await getClustersFromRequest(req);
       } catch (err) {
         return reply(handleError(err, req));
