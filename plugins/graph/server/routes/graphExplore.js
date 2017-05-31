@@ -8,7 +8,7 @@ module.exports = function (server, commonRouteConfig) {
   function graphExplore(req) {
     const payload = req.payload;
     return callWithRequest(req, 'transport.request', {
-      'path': '/' + encodeURIComponent(payload.index) + '/_xpack/_graph/_explore',
+      'path': '/' + encodeURIComponent(payload.index) + '/_xpack/graph/_explore',
       body: payload.query,
       method: 'POST',
       query: {}
