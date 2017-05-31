@@ -42,6 +42,7 @@ export function fetchHighLevelStats(req, clusterUuids, start, end, product) {
       query: createQuery({
         start,
         end,
+        type: `${product}_stats`,
         metric: ElasticsearchMetric.getMetricFields(),
         filters: [ { terms: { cluster_uuid: clusterUuids } } ]
       }),
