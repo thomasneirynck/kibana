@@ -1,7 +1,7 @@
 /*
  * ELASTICSEARCH CONFIDENTIAL
  *
- * Copyright © 2016 Elasticsearch BV. All Rights Reserved.
+ * Copyright (c) 2017 Elasticsearch BV. All Rights Reserved.
  *
  * Notice: this software, and all information contained
  * therein, is the exclusive property of Elasticsearch BV
@@ -14,10 +14,4 @@
  */
 
 import './styles/main.less';
-import './create_job_controller';
-import './create_job_service';
-import './create_job_chart_directive';
-import './create_job_search_service';
-import 'plugins/ml/services/mapping_service';
-import 'plugins/ml/jobs/new_job/simple/components/post_save_options';
-import 'plugins/ml/jobs/new_job/simple/components/bucket_span_estimator';
+import './bucket_span_estimator_directive.js';

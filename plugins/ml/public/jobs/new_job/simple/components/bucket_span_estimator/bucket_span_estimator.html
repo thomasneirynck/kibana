@@ -1,0 +1,9 @@
+<div class='bucket-span-estimator'>
+  <button
+    ng-click="guessBucketSpan()"
+    ng-disabled="ui.showJobInput===false || formConfig.agg.type===undefined || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+    type="button"
+    class="kuiButton kuiButton--small">
+      Estimate bucket span
+  </button>
+</div>
