@@ -8,6 +8,7 @@ export default function ({ getService, getPageObjects }) {
 
   describe('users', function () {
     before(async () => {
+
       log.debug('users');
       await PageObjects.settings.navigateTo();
       await PageObjects.security.clickElasticsearchUsers();

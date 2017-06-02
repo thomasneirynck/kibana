@@ -5,7 +5,8 @@ import { resolveKibanaPath } from '@elastic/plugin-helpers';
 
 import {
   SecurityPageProvider,
-  ReportingPageProvider
+  ReportingPageProvider,
+  MonitoringPageProvider
 } from './page_objects';
 
 // the default export of config files must be a config provider
@@ -36,6 +37,7 @@ export default async function ({ readConfigFile }) {
       ...kibanaConfig.get('pageObjects'),
       security: SecurityPageProvider,
       reporting: ReportingPageProvider,
+      monitoring: MonitoringPageProvider,
     },
 
     servers: {
@@ -61,6 +63,9 @@ export default async function ({ readConfigFile }) {
       ...kibanaConfig.get('apps'),
       login: {
         pathname: '/login'
+      },
+      monitoring: {
+        pathname: '/app/monitoring'
       },
     },
 

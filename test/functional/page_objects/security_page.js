@@ -13,6 +13,7 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
   const defaultFindTimeout = config.get('timeouts.find');
   const PageObjects = getPageObjects(['common', 'header', 'settings']);
 
+
   class SecurityPage {
     async initTests() {
       await kibanaServer.uiSettings.disableToastAutohide();
@@ -29,8 +30,8 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
       password = password || superPassword;
 
       await PageObjects.common.navigateToApp('login');
-      await testSubjects.find('loginUsername').type(username);
-      await testSubjects.find('loginPassword').type(password);
+      await testSubjects.find('loginUsername').clearValue().type(username);
+      await testSubjects.find('loginPassword').clearValue().type(password);
       await testSubjects.click('loginSubmit');
       await retry.try(() => find.existsByLinkText('Logout'));
     }
@@ -187,7 +188,7 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
         return {
           username: await usernameElement.getVisibleText(),
           fullname: await fullnameElement.getVisibleText(),
-          roles: (await rolesElement.getVisibleText()).split(', '),
+          roles: (await rolesElement.getVisibleText()).split(',').map(role => role.trim()),
           reserved: (await isReservedElementVisible.getProperty('innerHTML')).includes('userRowReserved')
         };
       });
@@ -214,51 +215,37 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
       return testSubjects.find('createRoleButton').click();
     }
 
-    addUser(userObj) {
+    async addUser(userObj) {
       const self = this;
-      return this.clickNewUser()
-      .then(function () {
-        return testSubjects.find('userFormUserNameInput').type(userObj.username);
-      })
-      .then(function () {
-        return testSubjects.find('passwordInput').type(userObj.password);
-      })
-      .then(function () {
-        return testSubjects.find('passwordConfirmationInput')
+      await this.clickNewUser();
+      await testSubjects.find('userFormUserNameInput').type(userObj.username);
+      await testSubjects.find('passwordInput').type(userObj.password);
+      await testSubjects.find('passwordConfirmationInput')
           .type(userObj.confirmPassword);
-      })
-      .then(function () {
-        return testSubjects.find('userFormFullNameInput').type(userObj.fullname);
-      })
-      .then(function () {
-        return testSubjects.find('userFormEmailInput').type(userObj.email);
-      })
-      .then(function () {
-        function addRoles(role) {
-          return role.reduce(function (promise, roleName) {
-            return promise
-            .then(function () {
-              return PageObjects.common.sleep(500);
-            })
-            .then(function () {
-              log.debug('Add role: ' + roleName);
-              return self.selectRole(roleName);
-            })
-            .then(function () {
-              return PageObjects.common.sleep(500);
-            });
+      await testSubjects.find('userFormFullNameInput').type(userObj.fullname);
+      await testSubjects.find('userFormEmailInput').type(userObj.email);
 
-          }, Promise.resolve());
-        }
-        return addRoles(userObj.roles || []);
-      })
-      .then(function () {
-        if (userObj.save === true) {
-          return testSubjects.find('userFormSaveButton').click();
-        } else {
-          return testSubjects.find('userFormCancelButton').click();
-        }
-      });
+      function addRoles(role) {
+        return role.reduce(function (promise, roleName) {
+          return promise
+          .then(function () {
+            log.debug('Add role: ' + roleName);
+            return self.selectRole(roleName);
+          })
+          .then(function () {
+            return PageObjects.common.sleep(1000);
+          });
+
+        }, Promise.resolve());
+      }
+      log.debug('Add roles: ' , userObj.roles);
+      await addRoles(userObj.roles || []);
+      log.debug('After Add role: , userObj.roleName');
+      if (userObj.save === true) {
+        await testSubjects.find('userFormSaveButton').click();
+      } else {
+        await testSubjects.find('userFormCancelButton').click();
+      }
     }
 
     addRole(roleName, userObj) {
@@ -300,7 +287,7 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
                 .click();
               })
               .then(function () {
-                console.log('priv item = ' + privName);
+                log.debug('priv item = ' + privName);
                 remote.setFindTimeout(defaultFindTimeout)
                 .findByCssSelector(`[data-test-subj="privilegeOption-${privName}"]`)
                 .click();
@@ -325,7 +312,7 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
                 .type(fieldName + '\t');
               })
               .then(function () {
-                return PageObjects.common.sleep(500);
+                return PageObjects.common.sleep(1000);
               });
 
             }, Promise.resolve());
@@ -344,20 +331,18 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
         .then(function () {
           log.debug('click save button');
           testSubjects.find('roleFormSaveButton').click();
+        })
+        .then(function () {
+          return PageObjects.common.sleep(5000);
         });
     }
 
-    selectRole(role) {
-      // We have to use non-test-subject selectors because this markup is generated by ui-select.
-      return remote.setFindTimeout(defaultFindTimeout)
-      .findByCssSelector('[data-test-subj="userFormRolesDropdown"] div input[aria-label="Select box"]')
-      .click()
-      .type(role)
-      .then(() => {
-        remote.setFindTimeout(defaultFindTimeout)
-        .findByCssSelector('div[ng-bind-html="role"]')
-        .click();
-      });
+    async selectRole(role) {
+      const dropdown = await testSubjects.find("userFormRolesDropdown");
+      const input = await dropdown.findByCssSelector("input");
+      await input.type(role);
+      await testSubjects.click(`addRoleOption-${role}`);
+      await testSubjects.find(`userRole-${role}`);
     }
 
     deleteUser(username) {
