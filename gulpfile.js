@@ -62,7 +62,7 @@ gulp.task('lint-staged', () => {
 gulp.task('lint', () => {
   const filePaths = [
     './*.js',
-    './{server,gulp_helpers}/**/*.js',
+    './{gulp_helpers,server,test}/**/*.js',
   ]
   .concat(fileGlobs.forPluginServerTests())
   .concat(fileGlobs.forPlugins());

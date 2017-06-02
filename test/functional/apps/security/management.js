@@ -1,6 +1,5 @@
 import expect from 'expect.js';
 import {
-  SECURITY_PATH,
   USERS_PATH,
   EDIT_USERS_PATH,
   ROLES_PATH,
