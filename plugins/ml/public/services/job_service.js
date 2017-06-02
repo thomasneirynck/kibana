@@ -571,6 +571,10 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
     delete tempJob.analysis_config.use_per_partition_normalization;
 
+    _.each(tempJob.analysis_config.detectors, (d) => {
+      delete d.detector_index;
+    });
+
     // remove parts of the datafeed config which should not be copied
     if (tempJob.datafeed_config) {
       delete tempJob.datafeed_config.datafeed_id;
