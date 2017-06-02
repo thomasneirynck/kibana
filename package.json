@@ -16,7 +16,7 @@
   "devDependencies": {
     "@elastic/eslint-config-kibana": "0.6.1",
     "@elastic/eslint-plugin-kibana-custom": "1.0.3",
-    "@elastic/plugin-helpers": "github:spalger/kibana-plugin-helpers#integration/functional-test-runner",
+    "@elastic/plugin-helpers": "7.0.0",
     "ansicolors": "0.3.2",
     "aws-sdk": "2.2.33",
     "babel-eslint": "7.2.3",
