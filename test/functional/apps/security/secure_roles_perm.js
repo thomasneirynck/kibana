@@ -7,9 +7,9 @@ export default function ({ getService, getPageObjects }) {
   const esArchiver = getService('esArchiver');
   const remote = getService('remote');
   const kibanaServer = getService('kibanaServer');
-  
-  
-  
+
+
+
   describe('security', function () {
     before(async () => {
       await remote.setWindowSize(1600,1000);
