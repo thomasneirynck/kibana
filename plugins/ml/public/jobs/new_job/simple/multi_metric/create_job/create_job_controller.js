@@ -146,6 +146,7 @@ module
     dirty: false,
     formValid: false,
     bucketSpanValid: true,
+    bucketSpanEstimator: { status: 0, message: '' },
     aggTypeOptions: filterAggTypes(aggTypes.byType[METRIC_AGG_TYPE]),
     fields: [],
     splitFields: [],
@@ -226,6 +227,12 @@ module
     $scope.ui.dirty = true;
 
     $scope.loadVis();
+  };
+
+  $scope.bucketSpanFieldChange = function () {
+    $scope.ui.bucketSpanEstimator.status = 0;
+    $scope.ui.bucketSpanEstimator.message = '';
+    $scope.formChange();
   };
 
   $scope.splitChange = function () {

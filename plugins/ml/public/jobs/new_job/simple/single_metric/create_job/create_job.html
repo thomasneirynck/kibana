@@ -45,22 +45,27 @@
 
       <div class="form-group col-md-4">
         <label>Bucket span</label><i ml-info-icon="new_job_bucketspan" ></i>
-        <input
-          ng-model="formConfig.bucketSpan"
-          required
-          placeholder={{formConfig-bucketSpan}}
-          ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-          ng-change="timeFieldChange()"
-          ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
-          class="form-control lowercase bucket-span-input" />
+        <div>
+          <input
+            ng-model="formConfig.bucketSpan"
+            required
+            placeholder={{formConfig-bucketSpan}}
+            ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED || ui.bucketSpanEstimator.status===1""
+            ng-change="bucketSpanFieldChange()"
+            ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
+            class="form-control lowercase bucket-span-input" />
 
-        <button class="kuiButton kuiButton--primary navbar-btn-link btn-load-vis"
-          ng-click="loadVis()"
-          ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED" >
-          <i class="fa fa-play" ></i>
-        </button>
-        <ml-bucket-span-estimator form-config='formConfig' job-state-wrapper='{jobState:jobState}' job-state='JOB_STATE' ui='ui'></ml-bucket-span-estimator>
+          <button class="kuiButton kuiButton--primary navbar-btn-link btn-load-vis"
+            ng-click="loadVis()"
+            ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED" >
+            <i class="fa fa-play" ></i>
+          </button>
+          <div class='bucket-span-estimator'>
+            <ml-bucket-span-estimator form-config='formConfig' job-state-wrapper='{jobState:jobState}' job-state='JOB_STATE' ui='ui'></ml-bucket-span-estimator>
+          </div>
+        </div>
         <div ng-hide="ui.bucketSpanValid" class="validation-error">Invalid interval format</div>
+        <div ng-show="ui.bucketSpanEstimator.status===-1" class="validation-error">{{ui.bucketSpanEstimator.message}}</div>
       </div>
     </div>
 

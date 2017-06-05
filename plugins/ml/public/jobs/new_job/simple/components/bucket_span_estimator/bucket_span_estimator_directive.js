@@ -13,6 +13,8 @@
  * strictly prohibited.
  */
 
+import _ from 'lodash';
+
 import template from './bucket_span_estimator.html';
 import { BucketSpanEstimatorProvider } from './bucket_span_estimator';
 
@@ -35,14 +37,32 @@ module.directive('mlBucketSpanEstimator', function ($q, Private) {
       $scope.jobState = $scope.jobStateWrapper.jobState;
 
       $scope.guessBucketSpan = function () {
-        const field = ($scope.formConfig.field === null) ?
-          null : $scope.formConfig.field.id;
+        $scope.ui.bucketSpanEstimator.status = 1;
+        $scope.ui.bucketSpanEstimator.message = '';
+        // debugger
+        const aggTypes = [];
+        const fields = [];
+
+        if ($scope.formConfig.fields === undefined) {
+          // single metric config
+          const fieldName = ($scope.formConfig.field === null) ?
+            null : $scope.formConfig.field.id;
+          fields.push(fieldName);
+          aggTypes.push($scope.formConfig.agg.type);
+        } else {
+          // multi metric config
+          _.each($scope.formConfig.fields, (field, key) => {
+            const fieldName = (key === '__ml_event_rate_count__') ? null : key;
+            fields.push(fieldName);
+            aggTypes.push(field.agg.type);
+          });
+        }
 
         const bss = new BucketSpanEstimator(
           $scope.formConfig.indexPattern.id,
           $scope.formConfig.timeField,
-          $scope.formConfig.agg.type,
-          field,
+          aggTypes,
+          fields,
           {
             start: $scope.formConfig.start,
             end: $scope.formConfig.end
@@ -50,6 +70,13 @@ module.directive('mlBucketSpanEstimator', function ($q, Private) {
         bss.run().then((interval) => {
           // console.log(interval);
           $scope.formConfig.bucketSpan = interval.name;
+          $scope.$applyAsync();
+          $scope.ui.bucketSpanEstimator.status = 2;
+        })
+        .catch((resp) => {
+          console.log('Bucket span could not be estimated', resp);
+          $scope.ui.bucketSpanEstimator.status = -1;
+          $scope.ui.bucketSpanEstimator.message = 'Bucket span could not be estimated';
           $scope.$applyAsync();
         });
       };

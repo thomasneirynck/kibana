@@ -54,25 +54,6 @@
                   </div>
                 </div>
               </div>
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="form-group">
-                    <label>Bucket span</label><i ml-info-icon="new_job_bucketspan" ></i>
-                    <input
-                      ng-model="formConfig.bucketSpan"
-                      required
-                      placeholder={{formConfig-bucketSpan}}
-                      ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                      ng-change="formChange()"
-                      ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
-                      class="form-control lowercase" />
-                    <div ng-hide="ui.bucketSpanValid" class="validation-error">Invalid interval format</div>
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                </div>
-              </div>
             </div>
 
             <div class='form-section' >
@@ -117,100 +98,130 @@
             </div>
 
             <div class='form-section' >
+              <h4>Bucket span</h4><i ml-info-icon="new_job_bucketspan" ></i>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <div>
+                      <input
+                        ng-model="formConfig.bucketSpan"
+                        required
+                        placeholder={{formConfig-bucketSpan}}
+                        ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED || ui.bucketSpanEstimator.status===1"
+                        ng-change="bucketSpanFieldChange()"
+                        ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
+                        class="form-control lowercase" />
+                      <div class='bucket-span-estimator'>
+                        <ml-bucket-span-estimator form-config='formConfig' job-state-wrapper='{jobState:jobState}' job-state='JOB_STATE' ui='ui'></ml-bucket-span-estimator>
+                      </div>
+                    </div>
+                    <div ng-hide="ui.bucketSpanValid" class="validation-error">Invalid interval format</div>
+                    <div ng-show="ui.bucketSpanEstimator.status===-1" class="validation-error">{{ui.bucketSpanEstimator.message}}</div>
+                  </div>
+                </div>
+
+                <div class="col-md-0">
+                </div>
+              </div>
+            </div>
+
+            <div class='form-section' >
               <h4 >Job Details</h4>
-              <div ng-show="ui.showJobInput && (jobState === JOB_STATE.NOT_STARTED || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING)">
-                <div class="form-group">
-                  <label>Name</label><i ml-info-icon="new_job_id" ></i>
-                  <input
-                    ng-model="formConfig.jobId"
-                    required
-                    placeholder="Job ID"
-                    ng-change="changeJobIDCase()"
-                    ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                    class="form-control lowercase" />
-                </div>
-
-                <div class="form-group">
-                  <label>Description</label><i ml-info-icon="new_job_description" ></i>
-                  <input
-                    ng-model="formConfig.description"
-                    placeholder="Job description"
-                    ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                    class="form-control" />
-                </div>
-
-                <div class="form-group">
-                  <div ng-click="ui.showAdvanced = !ui.showAdvanced" class="advanced-button-container">
-                    <button
-                      aria-label="{{ ui.showAdvanced ? 'Hide Advanced' : 'Show Advanced' }}"
-                      ng-disabled="formConfig.useDedicatedIndex"
-                      type="button"
-                      class="kuiButton kuiButton--hollow advanced-button">
-                      <i aria-hidden="true" ng-class="{ 'fa-caret-down': ui.showAdvanced, 'fa-caret-right': !ui.showAdvanced }" class="fa"></i>
-                    </button>
-                    <label>Advanced</label><i ml-info-icon="new_job_advanced_settings" ></i>
+              <div class="form-group">
+                <div ng-show="ui.showJobInput && (jobState === JOB_STATE.NOT_STARTED || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING)">
+                  <div class="form-group">
+                    <label>Name</label><i ml-info-icon="new_job_id" ></i>
+                    <input
+                      ng-model="formConfig.jobId"
+                      required
+                      placeholder="Job ID"
+                      ng-change="changeJobIDCase()"
+                      ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+                      class="form-control lowercase" />
                   </div>
-                  <div class='advanced-group' ng-show="ui.showAdvanced">
-                    <label>
-                      <input type="checkbox"
-                        ng-model  ="formConfig.useDedicatedIndex" />
-                        Use dedicated index <i ml-info-icon="new_job_dedicated_index" ></i>
-                    </label>
+
+                  <div class="form-group">
+                    <label>Description</label><i ml-info-icon="new_job_description" ></i>
+                    <input
+                      ng-model="formConfig.description"
+                      placeholder="Job description"
+                      ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+                      class="form-control" />
                   </div>
+
+                  <div class="form-group">
+                    <div ng-click="ui.showAdvanced = !ui.showAdvanced" class="advanced-button-container">
+                      <button
+                        aria-label="{{ ui.showAdvanced ? 'Hide Advanced' : 'Show Advanced' }}"
+                        ng-disabled="formConfig.useDedicatedIndex"
+                        type="button"
+                        class="kuiButton kuiButton--hollow advanced-button">
+                        <i aria-hidden="true" ng-class="{ 'fa-caret-down': ui.showAdvanced, 'fa-caret-right': !ui.showAdvanced }" class="fa"></i>
+                      </button>
+                      <label>Advanced</label><i ml-info-icon="new_job_advanced_settings" ></i>
+                    </div>
+                    <div class='advanced-group' ng-show="ui.showAdvanced">
+                      <label>
+                        <input type="checkbox"
+                          ng-model  ="formConfig.useDedicatedIndex" />
+                          Use dedicated index <i ml-info-icon="new_job_dedicated_index" ></i>
+                      </label>
+                    </div>
+                  </div>
+
+                  <button
+                    aria-label="Create Job"
+                    ng-click="createJob()"
+                    type="button"
+                    ng-show="jobState === JOB_STATE.NOT_STARTED"
+                    ng-disabled="!ui.formValid"
+                    class="kuiButton kuiButton--primary">
+                      Create Job
+                  </button>
+
+                  <div class='job-state-info' ng-show="jobState === JOB_STATE.RUNNING">Analysis running <i class='fa fa-spinner fa-spin'></i></div>
+                  <div class='job-state-info' ng-show="jobState === JOB_STATE.STOPPING">Analysis stopping <i class='fa fa-spinner fa-spin'></i></div>
+
+                  <button
+                    aria-label="Stop Job"
+                    ng-click="stopJob()"
+                    type="button"
+                    ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
+                    ng-disabled="jobState === JOB_STATE.STOPPING"
+                    class="kuiButton kuiButton--danger">
+                      {{(jobState === JOB_STATE.STOPPING) ? 'Analysis stopping' : 'Stop analysis' }}
+                  </button>
+
+                  <a
+                    href='{{resultsUrl}}'
+                    aria-label="View Results"
+                    ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
+                    class="kuiButton kuiButton--primary">
+                      View Results
+                  </a>
+                </div>
+                <div ng-show="jobState === JOB_STATE.FINISHED">
+                  <h3>Job {{formConfig.jobId }} created</h3>
+
+                  <button
+                    aria-label="Reset"
+                    ng-click="resetJob()"
+                    type="button"
+                    class="kuiButton kuiButton--primary">
+                      Reset
+                  </button>
+                  <a
+                    href='{{resultsUrl}}'
+                    aria-label="View Results"
+                    class="kuiButton kuiButton--primary">
+                      View Results
+                  </a>
                 </div>
 
-                <button
-                  aria-label="Create Job"
-                  ng-click="createJob()"
-                  type="button"
-                  ng-show="jobState === JOB_STATE.NOT_STARTED"
-                  ng-disabled="!ui.formValid"
-                  class="kuiButton kuiButton--primary">
-                    Create Job
-                </button>
-
-                <div class='job-state-info' ng-show="jobState === JOB_STATE.RUNNING">Analysis running <i class='fa fa-spinner fa-spin'></i></div>
-                <div class='job-state-info' ng-show="jobState === JOB_STATE.STOPPING">Analysis stopping <i class='fa fa-spinner fa-spin'></i></div>
-
-                <button
-                  aria-label="Stop Job"
-                  ng-click="stopJob()"
-                  type="button"
-                  ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
-                  ng-disabled="jobState === JOB_STATE.STOPPING"
-                  class="kuiButton kuiButton--danger">
-                    {{(jobState === JOB_STATE.STOPPING) ? 'Analysis stopping' : 'Stop analysis' }}
-                </button>
-
-                <a
-                  href='{{resultsUrl}}'
-                  aria-label="View Results"
-                  ng-show="jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING"
-                  class="kuiButton kuiButton--primary">
-                    View Results
-                </a>
-              </div>
-              <div ng-show="jobState === JOB_STATE.FINISHED">
-                <h3>Job {{formConfig.jobId }} created</h3>
-
-                <button
-                  aria-label="Reset"
-                  ng-click="resetJob()"
-                  type="button"
-                  class="kuiButton kuiButton--primary">
-                    Reset
-                </button>
-                <a
-                  href='{{resultsUrl}}'
-                  aria-label="View Results"
-                  class="kuiButton kuiButton--primary">
-                    View Results
-                </a>
-              </div>
-
-              <div ng-if='jobState === JOB_STATE.FINISHED'>
-                <hr />
-                <ml-post-save-options job-id='formConfig.jobId' end-time='formConfig.end'></ml-post-save-options>
+                <div ng-if='jobState === JOB_STATE.FINISHED'>
+                  <hr />
+                  <ml-post-save-options job-id='formConfig.jobId' end-time='formConfig.end'></ml-post-save-options>
+                </div>
               </div>
             </div>
           </div>

@@ -148,6 +148,7 @@ module
     dirty: true,
     formValid: false,
     bucketSpanValid: true,
+    bucketSpanEstimator: { status: 0, message: '' },
     aggTypeOptions: filterAggTypes(aggTypes.byType[METRIC_AGG_TYPE]),
     fields: [],
     timeFields: [],
@@ -224,9 +225,16 @@ module
     $scope.ui.dirty = true;
   };
 
-  $scope.timeFieldChange = function () {
+  $scope.bucketSpanFieldChange = function () {
     $scope.ui.isFormValid();
+    $scope.ui.bucketSpanEstimator.status = 0;
+    $scope.ui.bucketSpanEstimator.message = '';
     $scope.ui.dirty = true;
+
+    $scope.ui.bucketSpanValid = true;
+    if(parseInterval($scope.formConfig.bucketSpan) === null) {
+      $scope.ui.bucketSpanValid = false;
+    }
   };
 
   function setTime() {

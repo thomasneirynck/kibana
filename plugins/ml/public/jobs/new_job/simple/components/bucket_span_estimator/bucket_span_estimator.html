@@ -1,9 +1,9 @@
 <div class='bucket-span-estimator'>
   <button
     ng-click="guessBucketSpan()"
-    ng-disabled="ui.showJobInput===false || formConfig.agg.type===undefined || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+    ng-disabled="ui.showJobInput===false || ui.formValid === false || formConfig.agg.type===undefined || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED || ui.bucketSpanEstimator.status===1"
     type="button"
     class="kuiButton kuiButton--small">
-      Estimate bucket span
+      {{ui.bucketSpanEstimating ? 'Estimating bucket span...' : 'Estimate bucket span'}}
   </button>
 </div>

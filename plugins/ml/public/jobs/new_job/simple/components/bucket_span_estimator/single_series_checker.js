@@ -13,18 +13,19 @@
  * strictly prohibited.
  */
 
+
+/*
+ * A class for performing a series of tests on an aggregation type and field to determine a suggested bucket span.
+ * Each test is run for a bucket span, if one fails, the bucket span is increased and the tests run again.
+ * Bucket spans: 5m, 10m, 30m, 1h, 3h
+ */
+
+import { INTERVALS } from './intervals';
+
 export function SingleSeriesCheckerProvider($injector) {
   const es = $injector.get('es');
 
-  const intervals = [
-    // { name:'1m',  ms: 60000 },
-    { name:'5m',  ms: 300000 },
-    { name:'10m', ms: 600000 },
-    { name:'30m', ms: 1800000 },
-    { name:'1h',  ms: 3600000 },
-    { name:'3h',  ms: 10800000 }
-  ];
-  const BUCKET_MULTIPLIER = 500;
+  const HOUR_MULTIPLIER = 250;
   const REF_DATA_INTERVAL = { name:'1h',  ms: 3600000 };
 
   class SingleSeriesChecker {
@@ -42,6 +43,14 @@ export function SingleSeriesCheckerProvider($injector) {
       };
 
       this.interval = null;
+
+      const timePickerDurationLength = (this.duration.end - this.duration.start);
+      const multiplierDurationLength = (REF_DATA_INTERVAL.ms * HOUR_MULTIPLIER);
+
+      if (timePickerDurationLength > multiplierDurationLength) {
+        // move time range to the end of the data
+        this.duration.start = this.duration.end - multiplierDurationLength;
+      }
     }
 
     run() {
@@ -67,6 +76,7 @@ export function SingleSeriesCheckerProvider($injector) {
             start();
           })
           .catch((resp) => {
+            console.log('Could not load metric reference data');
             reject(resp);
           });
         }
@@ -77,51 +87,54 @@ export function SingleSeriesCheckerProvider($injector) {
       return new Promise((resolve, reject) => {
         let count = 0;
 
-        // recursive function called with the index of the intervals array
+        // recursive function called with the index of the INTERVALS array
         // each time one of the checks fails, the index is increased and
         // the tests are repeated.
         const runTest = (i) => {
-          const interval = intervals[i];
+          const interval = INTERVALS[i];
           this.performSearch(interval.ms)
           .then((resp) => {
-
             const buckets = resp.aggregations.non_empty_buckets.buckets;
             const fullBuckets = this.getFullBuckets(buckets);
+            if (fullBuckets.length) {
 
-            let pass = true;
-            if (pass && this.testBucketPercentage(fullBuckets, buckets) === false) {
-              pass = false;
-            }
-
-            if (pass && this.testPolledData(fullBuckets, interval.ms) === false) {
-              pass = false;
-            }
-
-            if (this.aggType.mlName === 'sum' || this.aggType.mlName === 'count') {
-              if (pass && this.testSumCountBuckets(fullBuckets) === false) {
+              let pass = true;
+              if (pass && this.testBucketPercentage(fullBuckets, buckets) === false) {
                 pass = false;
               }
-            }
 
-            // only run this test for bucket spans less than 1 hour
-            if (this.field !== null && interval.ms < 3600000) {
-              if (pass && this.testMetricData(fullBuckets) === false) {
+              if (pass && this.testPolledData(fullBuckets, interval.ms) === false) {
                 pass = false;
               }
-            }
 
-            if (pass) {
-              console.log(`Estimate bucket span: ${interval.name} passed`);
-              resolve(interval);
-            } else {
-              count++;
-              if (count === intervals.length) {
-                console.log(`Estimate bucket span: ${interval.name} passed by default`);
+              if (this.aggType.mlName === 'sum' || this.aggType.mlName === 'count') {
+                if (pass && this.testSumCountBuckets(fullBuckets) === false) {
+                  pass = false;
+                }
+              }
+
+              // only run this test for bucket spans less than 1 hour
+              if (this.field !== null && interval.ms < 3600000) {
+                if (pass && this.testMetricData(fullBuckets) === false) {
+                  pass = false;
+                }
+              }
+
+              if (pass) {
+                console.log(`Estimate bucket span: ${interval.name} passed`);
                 resolve(interval);
               } else {
-                console.log(`Estimate bucket span: ${interval.name} failed`);
-                runTest(count);
+                count++;
+                if (count === INTERVALS.length) {
+                  console.log(`Estimate bucket span: ${interval.name} passed by default`);
+                  resolve(interval);
+                } else {
+                  console.log(`Estimate bucket span: ${interval.name} failed`);
+                  runTest(count);
+                }
               }
+            } else {
+              reject();
             }
           })
           .catch((resp) => {
@@ -135,8 +148,6 @@ export function SingleSeriesCheckerProvider($injector) {
     }
 
     createSearch(intervalMs) {
-      this.duration.end = (intervalMs * BUCKET_MULTIPLIER) + this.duration.start;
-
       const search = {
         query: {
           range: {
@@ -281,7 +292,11 @@ export function SingleSeriesCheckerProvider($injector) {
         .then((resp) => {
           const buckets = resp.aggregations.non_empty_buckets.buckets;
           const fullBuckets = this.getFullBuckets(buckets);
-          this.refMetricData = this.createMetricData(fullBuckets);
+          if (fullBuckets.length) {
+            this.refMetricData = this.createMetricData(fullBuckets);
+          } else {
+            reject(resp);
+          }
 
           resolve();
         })
