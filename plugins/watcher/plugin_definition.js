@@ -18,9 +18,6 @@ export const pluginDefinition = {
       'plugins/watcher/sections/watch_edit',
       'plugins/watcher/sections/watch_list',
       'plugins/watcher/sections/watch_history_item',
-    ],
-    hacks: [
-      'plugins/watcher/hacks/getting_started'
     ]
   },
   init: function (server) {

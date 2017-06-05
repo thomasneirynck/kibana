@@ -11,7 +11,7 @@ export default function ({ getService, getPageObjects }) {
   const testSubjects = getService('testSubjects');
   const remote = getService('remote');
   const find = getService('find');
-  const PageObjects = getPageObjects(['security', 'settings', 'common', 'header', 'gettingStarted']);
+  const PageObjects = getPageObjects(['security', 'settings', 'common', 'header']);
 
   describe('Management', () => {
     before(async () => {
