@@ -1,6 +1,6 @@
 import { get, set } from 'lodash';
 import { badRequest } from 'boom';
-import { constants } from '../../common/constants';
+import { QUEUE_DOCTYPE } from '../../common/constants';
 import { oncePerServer } from './once_per_server';
 import { getUserFactory } from './get_user';
 
@@ -26,7 +26,7 @@ function jobsQueryFn(server) {
 
     const query = {
       index: `${index}-*`,
-      type: constants.QUEUE_DOCTYPE,
+      type: QUEUE_DOCTYPE,
       body: Object.assign(defaultBody[type] || {}, body)
     };
 

@@ -1,11 +1,11 @@
 import boom from 'boom';
-import { constants } from '../../common/constants';
+import { API_BASE_URL } from '../../common/constants';
 import { jobsQueryFactory } from '../lib/jobs_query';
 import { reportingFeaturePreRoutingFactory } from'../lib/reporting_feature_pre_routing';
 import { userPreRoutingFactory } from '../lib/user_pre_routing';
 import { jobResponseHandlerFactory } from '../lib/job_response_handler';
 
-const mainEntry = `${constants.API_BASE_URL}/jobs`;
+const mainEntry = `${API_BASE_URL}/jobs`;
 const API_TAG = 'api';
 
 export function jobs(server) {

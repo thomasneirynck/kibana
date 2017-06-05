@@ -1,6 +1,6 @@
 import { Esqueue } from './esqueue';
 import { createWorkersFactory } from './create_workers';
-import { constants } from '../../common/constants';
+import { QUEUE_DOCTYPE } from '../../common/constants';
 import { oncePerServer } from './once_per_server';
 import { createTaggedLogger } from './create_tagged_logger';
 
@@ -13,7 +13,7 @@ function createQueueFn(server) {
   const { getClient } = server.plugins.elasticsearch.getCluster('admin');
 
   const queueOptions = {
-    doctype: constants.QUEUE_DOCTYPE,
+    doctype: QUEUE_DOCTYPE,
     interval: queueConfig.indexInterval,
     timeout: queueConfig.timeout,
     dateSeparator: dateSeparator,

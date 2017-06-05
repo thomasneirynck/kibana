@@ -4,7 +4,11 @@ import { uiModules } from 'ui/modules';
 import { addSystemApiHeader } from 'ui/system_api';
 import { get, last } from 'lodash';
 import moment from 'moment';
-import { constants } from '../../common/constants.js';
+import {
+  JOB_COMPLETION_CHECK_FREQUENCY_IN_MS,
+  JOB_COMPLETION_STORAGE_KEY_LAST_CHECK,
+  API_BASE_URL
+} from '../../common/constants.js';
 import 'plugins/reporting/services/job_queue';
 import { PathProvider } from 'plugins/xpack_main/services/path';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
@@ -13,7 +17,7 @@ uiModules.get('kibana')
 .config(() => {
   // Intialize lastCheckedOn, if necessary
   if (!getLastCheckedOn()) {
-    setLastCheckedOn(moment().subtract(constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS, 'ms').toISOString());
+    setLastCheckedOn(moment().subtract(JOB_COMPLETION_CHECK_FREQUENCY_IN_MS, 'ms').toISOString());
   }
 });
 
@@ -26,22 +30,22 @@ uiModules.get('kibana')
   $interval(function startChecking() {
     getJobsCompletedSinceLastCheck($http)
     .then(jobs => jobs.forEach(job => showCompletionNotification(job, reportingJobQueue)));
-  }, constants.JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
+  }, JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
 });
 
 function getLastCheckedOn() {
-  return window.localStorage.getItem(constants.JOB_COMPLETION_STORAGE_KEY_LAST_CHECK);
+  return window.localStorage.getItem(JOB_COMPLETION_STORAGE_KEY_LAST_CHECK);
 }
 
 function setLastCheckedOn(newValue) {
-  window.localStorage.setItem(constants.JOB_COMPLETION_STORAGE_KEY_LAST_CHECK, newValue);
+  window.localStorage.setItem(JOB_COMPLETION_STORAGE_KEY_LAST_CHECK, newValue);
 }
 
 function getJobsCompletedSinceLastCheck($http) {
   const lastCheckedOn = getLastCheckedOn();
 
   // Get all jobs in "completed" status since last check, sorted by completion time
-  const apiBaseUrl = chrome.addBasePath(constants.API_BASE_URL);
+  const apiBaseUrl = chrome.addBasePath(API_BASE_URL);
   const url = `${apiBaseUrl}/jobs/list_completed_since?since=${lastCheckedOn}`;
   const headers = addSystemApiHeader({});
   return $http.get(url, { headers })
@@ -58,7 +62,7 @@ function getJobsCompletedSinceLastCheck($http) {
 }
 
 function downloadReport(jobId) {
-  const apiBaseUrl = chrome.addBasePath(constants.API_BASE_URL);
+  const apiBaseUrl = chrome.addBasePath(API_BASE_URL);
   const downloadLink = `${apiBaseUrl}/jobs/download/${jobId}`;
   return () => window.open(downloadLink);
 }

@@ -1,5 +1,5 @@
 import boom from 'boom';
-import { constants } from '../../common/constants';
+import { API_BASE_URL } from '../../common/constants';
 import { enqueueJobFactory } from '../lib/enqueue_job';
 import { getUserFactory } from '../lib/get_user';
 import { reportingFeaturePreRoutingFactory } from '../lib/reporting_feature_pre_routing';
@@ -7,12 +7,12 @@ import { userPreRoutingFactory } from '../lib/user_pre_routing';
 import rison from 'rison-node';
 import querystring from 'querystring';
 
-const mainEntry = `${constants.API_BASE_URL}/generate`;
+const mainEntry = `${API_BASE_URL}/generate`;
 const API_TAG = 'api';
 
 export function main(server) {
   const config = server.config();
-  const DOWNLOAD_BASE_URL = config.get('server.basePath') + `${constants.API_BASE_URL}/jobs/download`;
+  const DOWNLOAD_BASE_URL = config.get('server.basePath') + `${API_BASE_URL}/jobs/download`;
   const { errors:esErrors } = server.plugins.elasticsearch.getCluster('admin');
 
   const enqueueJob = enqueueJobFactory(server);
