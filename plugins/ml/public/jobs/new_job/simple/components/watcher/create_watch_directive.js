@@ -17,12 +17,11 @@ import chrome from 'ui/chrome';
 
 import template from './create_watch.html';
 import email from './email.html';
-import 'plugins/watcher/services/watch';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlCreateWatch', function (watchService, mlPostSaveService, $q) {
+module.directive('mlCreateWatch', function (mlPostSaveService, $q, $http) {
   return {
     restrict: 'AE',
     replace: false,
@@ -31,6 +30,7 @@ module.directive('mlCreateWatch', function (watchService, mlPostSaveService, $q)
     },
     template,
     link: function ($scope) {
+
       mlPostSaveService.registerCreateWatch(createWatch);
       $scope.status = mlPostSaveService.status;
       $scope.STATUS = mlPostSaveService.STATUS;
@@ -172,7 +172,7 @@ module.directive('mlCreateWatch', function (watchService, mlPostSaveService, $q)
           };
 
           if (id !== '') {
-            watchService.saveWatch(watchModel)
+            saveWatch(watchModel)
             .then(() => {
               $scope.status.watch = mlPostSaveService.STATUS.SAVED;
               $scope.watcherEditURL = `${chrome.getBasePath()}/app/kibana#/management/elasticsearch/watcher/watches/watch/${id}/edit?_g=()`;
@@ -188,6 +188,16 @@ module.directive('mlCreateWatch', function (watchService, mlPostSaveService, $q)
           deferred.reject();
         }
         return deferred.promise;
+      }
+
+      function saveWatch(watchModel) {
+        const basePath = chrome.addBasePath('/api/watcher');
+        const url = `${basePath}/watch/${watchModel.id}`;
+
+        return $http.put(url, watchModel.upstreamJSON)
+        .catch(e => {
+          throw e.data.message;
+        });
       }
     }
   };
