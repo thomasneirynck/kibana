@@ -21,6 +21,7 @@ import { parseInterval } from 'ui/utils/parse_interval';
 
 import { calculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/util/job_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
+import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -154,26 +155,13 @@ module.service('mlSingleMetricJobService', function (
 
   function getSearchJsonFromConfig(formConfig) {
     const interval = formConfig.chartInterval.getInterval().asMilliseconds() + 'ms';
+    const query = getQueryFromSavedSearch(formConfig);
+
     const json = {
       'index': formConfig.indexPattern.id,
       'size': 0,
       'body': {
-        'query': {
-          'bool': {
-            'filter': [
-              formConfig.query,
-              {
-                'range': {
-                  [formConfig.timeField]: {
-                    'gte': formConfig.start,
-                    'lte': formConfig.end,
-                    'format': formConfig.format
-                  }
-                }
-              }
-            ]
-          }
-        },
+        'query': {},
         'aggs': {
           'times': {
             'date_histogram': {
@@ -185,6 +173,18 @@ module.service('mlSingleMetricJobService', function (
         }
       }
     };
+
+    query.bool.must.push({
+      'range': {
+        [formConfig.timeField]: {
+          'gte': formConfig.start,
+          'lte': formConfig.end,
+          'format': formConfig.format
+        }
+      }
+    });
+
+    json.body.query = query;
 
     if (formConfig.field !== null) {
       json.body.aggs.times.aggs = {
@@ -210,8 +210,8 @@ module.service('mlSingleMetricJobService', function (
     let query = {
       match_all: {}
     };
-    if (formConfig.query.query_string.query !== '*') {
-      query = formConfig.query;
+    if (formConfig.query.query_string.query !== '*' || formConfig.filters.length) {
+      query = getQueryFromSavedSearch(formConfig);
     }
 
     if (formConfig.field && formConfig.field.id) {
