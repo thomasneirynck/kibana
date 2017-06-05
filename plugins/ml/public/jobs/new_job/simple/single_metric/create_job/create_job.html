@@ -45,7 +45,7 @@
 
       <div class="form-group col-md-4">
         <label>Bucket span</label><i ml-info-icon="new_job_bucketspan" ></i>
-        <div>
+        <div class='bucket-span-container'>
           <input
             ng-model="formConfig.bucketSpan"
             required
@@ -70,7 +70,7 @@
     </div>
 
     <div ng-show="ui.showJobInput">
-      <div class='chart-contrainer'>
+      <div class='chart-container'>
         <ml-single-metric-job-chart
           chart-data="chartData"
           chart-height='ui.chartHeight'
@@ -105,6 +105,7 @@
           ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
           input-focus
           class="form-control lowercase" />
+          <div ng-hide="ui.validation.checks.jobId.valid" class="validation-error">{{ ( ui.validation.checks.jobId.message || "Enter a name for the job" ) }}</div>
       </div>
 
       <div class="form-group">

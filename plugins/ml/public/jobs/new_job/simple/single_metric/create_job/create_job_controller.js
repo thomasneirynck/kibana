@@ -29,6 +29,7 @@ import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/single_metric/create_job/filter_agg_types';
+import { isJobIdValid } from 'plugins/ml/util/job_utils';
 
 uiRoutes
 .defaults(/dashboard/, {
@@ -190,7 +191,10 @@ module
     }],
     chartHeight: 310,
     showAdvanced: false,
-    resultsUrl: ''
+    resultsUrl: '',
+    validation: {
+      checks: { jobId: { valid: true } },
+    }
   };
 
   $scope.formConfig = {
@@ -385,7 +389,7 @@ module
   // the job may fail to open, but the datafeed should still be created
   // if the job save was successful.
   $scope.createJob = function () {
-    if ($scope.formConfig.jobId !== '') {
+    if (validateJobId($scope.formConfig.jobId)) {
       msgs.clear();
       $scope.formConfig.mappingTypes = mlESMappingService.getTypesFromMapping($scope.formConfig.indexPattern.id);
       // create the new job
@@ -617,5 +621,31 @@ module
   $scope.$on('$destroy', () => {
     globalForceStop = true;
   });
+
+  function validateJobId(jobId) {
+    let valid = true;
+    const checks = $scope.ui.validation.checks;
+
+    _.each(checks, (item) => {
+      item.valid = true;
+    });
+
+    if (_.isEmpty(jobId)) {
+      checks.jobId.valid = false;
+    } else if (isJobIdValid(jobId) === false) {
+      checks.jobId.valid = false;
+      let msg = 'Job name can contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores; ';
+      msg += 'must start and end with an alphanumeric character';
+      checks.jobId.message = msg;
+    }
+
+    _.each(checks, (item) => {
+      if (item.valid === false) {
+        valid = false;
+      }
+    });
+
+    return valid;
+  }
 
 });

@@ -138,6 +138,7 @@
                       ng-change="changeJobIDCase()"
                       ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
                       class="form-control lowercase" />
+                      <div ng-hide="ui.validation.checks.jobId.valid" class="validation-error">{{ ( ui.validation.checks.jobId.message || "Enter a name for the job" ) }}</div>
                   </div>
 
                   <div class="form-group">
@@ -234,7 +235,7 @@
             <div class='chart-list-panel event-rate-container' style='height: {{ui.eventRateChartHeight + 70}}px;'>
               <label>Document count</label>
 
-              <div class='chart-contrainer'>
+              <div class='chart-container'>
                 <div style='height: {{ui.eventRateChartHeight + 25}}px;'>
                   <ml-multi-metric-job-event-rate-chart
                     chart-data="chartData.job"
@@ -267,7 +268,7 @@
                 <div class="card-title"></div>
                 <div ng-repeat='(id, chart) in chartData.detectors' class='chart' style='height: {{ui.chartHeight + 50}}px;'>
                   <label>{{formConfig.fields[id].agg.type.title}} {{formConfig.fields[id].name}}</label>
-                  <div class='chart-contrainer'>
+                  <div class='chart-container'>
                     <div style='height: {{ui.chartHeight + 25}}px;'>
                       <ml-multi-metric-job-chart
                         chart-data="chart"

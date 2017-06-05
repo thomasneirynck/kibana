@@ -92,3 +92,9 @@ export function mlFunctionToESAggregation(functionName) {
   // info_content, low_info_content, high_info_content
   return null;
 }
+
+// Job name must contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores;
+// it must also start and end with an alphanumeric character'
+export function isJobIdValid(jobId) {
+  return (jobId.match(/^[a-z0-9\-\_]{1,64}$/g) && !jobId.match(/^([_-].*)?(.*[_-])?$/g)) ? true : false;
+}

@@ -10,17 +10,27 @@
     margin-bottom: 10px;
   }
 
+  .validation-error {
+    color: #fe5050;
+  }
+
   .form-controls {
     input {
       width: calc(~"100% - 40px");
       display: inline-block;
     }
-    .bucket-span-input {
-      background-color: transparent;
-      float: left;
-    }
-    .bucket-span-input:disabled {
-      background-color: #ecf0f1;
+    .bucket-span-container {
+      .bucket-span-input {
+        background-color: transparent;
+        float: left;
+      }
+      .bucket-span-input:disabled {
+        background-color: #ecf0f1;
+      }
+
+      .validation-error  {
+        margin-bottom: -25px;
+      }
     }
 
     .btn-load-vis {
@@ -58,12 +68,7 @@
     }
   }
 
-  div.validation-error {
-    color: #fe5050;
-    margin-bottom: -25px;
-  }
-
-  .chart-contrainer {
+  .chart-container {
     margin-bottom: 20px;
 
     .chart-loader {

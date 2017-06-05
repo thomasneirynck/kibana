@@ -24,6 +24,7 @@ import 'ui/courier';
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
+import { isJobIdValid } from 'plugins/ml/util/job_utils';
 
 uiRoutes
 .when('/jobs/new_job/advanced', {
@@ -798,10 +799,10 @@ function (
       // as users may wish to continue and overwrite existing job
       if (_.isEmpty(job.job_id)) {
         tabs[0].checks.jobId.valid = false;
-      } else if (!job.job_id.match(/^[a-z0-9\-\_]{1,64}$/g)) {
+      } else if (isJobIdValid(job.job_id) === false) {
         tabs[0].checks.jobId.valid = false;
-        let msg = 'Job name must be a lowercase alphanumeric word no greater than 64 characters long. ';
-        msg += 'It may contain hyphens or underscores.';
+        let msg = 'Job name can contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores; ';
+        msg += 'must start and end with an alphanumeric character';
         tabs[0].checks.jobId.message = msg;
       }
 

@@ -19,7 +19,8 @@ import {
   isTimeSeriesViewJob,
   isTimeSeriesViewFunction,
   isModelPlotEnabled,
-  mlFunctionToESAggregation
+  mlFunctionToESAggregation,
+  isJobIdValid
 } from '../job_utils';
 
 describe('ML - job utils', () => {
@@ -213,6 +214,28 @@ describe('ML - job utils', () => {
       expect(mlFunctionToESAggregation('time_of_day')).to.be(null);
       expect(mlFunctionToESAggregation('time_of_week')).to.be(null);
       expect(mlFunctionToESAggregation('lat_long')).to.be(null);
+    });
+  });
+
+  describe('isJobIdValid', () => {
+
+    it('returns true for job id: "good_job-name"', () => {
+      expect(isJobIdValid('good_job-name')).to.be(true);
+    });
+    it('returns false for job id: "_bad_job-name"', () => {
+      expect(isJobIdValid('_bad_job-name')).to.be(false);
+    });
+    it('returns false for job id: "bad_job-name_"', () => {
+      expect(isJobIdValid('bad_job-name_')).to.be(false);
+    });
+    it('returns false for job id: "-bad_job-name"', () => {
+      expect(isJobIdValid('-bad_job-name')).to.be(false);
+    });
+    it('returns false for job id: "bad_job-name-"', () => {
+      expect(isJobIdValid('bad_job-name-')).to.be(false);
+    });
+    it('returns false for job id: "bad&job-name"', () => {
+      expect(isJobIdValid('bad&job-name')).to.be(false);
     });
   });
 
