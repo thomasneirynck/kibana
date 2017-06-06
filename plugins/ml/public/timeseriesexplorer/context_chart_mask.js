@@ -19,7 +19,8 @@ import d3 from 'd3';
  * Creates a mask over sections of the context chart and swimlane
  * which fall outside the extent of the selection brush used for zooming.
  */
-function ContextChartMask(contextGroup, data, drawBounds, swimlaneHeight) {
+// eslint-disable-next-line kibana-custom/no-default-export
+export default function ContextChartMask(contextGroup, data, drawBounds, swimlaneHeight) {
   this.contextGroup = contextGroup;
   this.data = data;
   this.drawBounds = drawBounds;
@@ -139,5 +140,3 @@ ContextChartMask.prototype.reveal = function (extent) {
   this.redraw();
   return this;
 };
-
-module.exports = ContextChartMask;

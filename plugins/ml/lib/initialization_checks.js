@@ -24,7 +24,8 @@ import elasticsearch from 'elasticsearch';
 
 const NoConnections = elasticsearch.errors.NoConnections;
 
-module.exports = function (plugin, server) {
+// eslint-disable-next-line kibana-custom/no-default-export
+export default function (plugin, server) {
   const config = server.config();
 
   // Use the admin cluster for managing the .kibana index.
