@@ -22,7 +22,7 @@ import _ from 'lodash';
 import rison from 'rison-node';
 
 import { replaceStringTokens } from 'plugins/ml/util/string_utils';
-import { isTimeSeriesViewFunction } from 'plugins/ml/util/job_utils';
+import { isTimeSeriesViewDetector } from 'plugins/ml/util/job_utils';
 import {
   getEntityFieldName,
   getEntityFieldValue,
@@ -666,8 +666,8 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         const showExamples = _.some(summaryRecords, { 'entityName': 'mlcategory' });
         const showLinks = ((scope.showViewSeriesLink === true) &&
           _.some(summaryRecords, (record) => {
-            return ((isTimeSeriesViewFunction(record.source.function)) &&
-              (_.get(record, 'entityName') !== 'mlcategory'));
+            const job = mlJobService.getJob(record.jobId);
+            return isTimeSeriesViewDetector(job, record.source.detector_index);
           })) || showExamples === true || _.some(summaryRecords, 'customUrls');
 
         if (showEntity === true) {
@@ -869,8 +869,9 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         tableRow.push({ markup: record.jobId, value: record.jobId });
 
         if (addLinks !== undefined) {
-          rowScope.showViewSeriesLink = (scope.showViewSeriesLink === true &&
-            isTimeSeriesViewFunction(record.source.function) && (_.get(record, 'entityName') !== 'mlcategory'));
+          const job = mlJobService.getJob(record.jobId);
+          rowScope.showViewSeriesLink = scope.showViewSeriesLink === true &&
+            isTimeSeriesViewDetector(job, record.source.detector_index);
           rowScope.showViewExamplesLink = (_.get(record, 'entityName') === 'mlcategory');
           if (_.has(record, 'customUrls') || rowScope.showViewSeriesLink === true
               || rowScope.showViewExamplesLink) {

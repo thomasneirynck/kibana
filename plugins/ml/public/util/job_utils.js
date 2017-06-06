@@ -37,15 +37,51 @@ export function isTimeSeriesViewJob(job) {
   // link to the Single Metric dashboard in the Jobs list, only allowing single
   // metric jobs with only one detector with no by/over/partition fields
 
-  // only allow jobs with at least one detectors whose function corresponds to
-  // an ES aggregation which can be viewed in the single metric view
+  // only allow jobs with at least one detector whose function corresponds to
+  // an ES aggregation which can be viewed in the single metric view and which
+  // doesn't use a scripted field which can be very difficult or impossible to
+  // invert to a reverse search.
   let isViewable = false;
   const dtrs = job.analysis_config.detectors;
-  isViewable = _.some(dtrs, (dtr) => {
-    return ((isTimeSeriesViewFunction(dtr.function) === true) && (dtr.by_field_name !== 'mlcategory'));
-  });
+
+  for (let i = 0; i < dtrs.length; i++) {
+    isViewable = isTimeSeriesViewDetector(job, i);
+    if (isViewable === true) {
+      break;
+    }
+  }
 
   return isViewable;
+}
+
+// Returns a flag to indicate whether the detector at the index in the specified job
+// is suitable for viewing in the Time Series dashboard.
+export function isTimeSeriesViewDetector(job, dtrIndex) {
+  // Check that the detector function is suitable for viewing in the Time Series dashboard,
+  // and that the partition, by and over fields are not using mlcategory or a scripted field which
+  // can be very difficult or impossible to invert to a reverse search of the underlying metric data.
+  let isDetectorViewable = false;
+
+  const dtrs = job.analysis_config.detectors;
+  if (dtrIndex >= 0 && dtrIndex < dtrs.length) {
+    const dtr = dtrs[dtrIndex];
+    isDetectorViewable = (isTimeSeriesViewFunction(dtr.function) === true) &&
+      (dtr.by_field_name !== 'mlcategory') &&
+      (dtr.partition_field_name !== 'mlcategory') &&
+      (dtr.over_field_name !== 'mlcategory');
+
+    const usesScriptedFields = _.has(job, 'datafeed_config.script_fields');
+    const scriptedFields = usesScriptedFields ? _.keys(job.datafeed_config.script_fields) : [];
+    if (isDetectorViewable === true && usesScriptedFields === true) {
+      // Perform extra check to see if the detector is using a scripted field.
+      isDetectorViewable = (dtr.partition_field_name === undefined || scriptedFields.indexOf(dtr.partition_field_name) === -1) &&
+          (dtr.by_field_name === undefined || scriptedFields.indexOf(dtr.by_field_name) === -1) &&
+          (dtr.over_field_name === undefined || scriptedFields.indexOf(dtr.over_field_name) === -1);
+    }
+  }
+
+  return isDetectorViewable;
+
 }
 
 // Returns a flag to indicate whether a detector with the specified function is

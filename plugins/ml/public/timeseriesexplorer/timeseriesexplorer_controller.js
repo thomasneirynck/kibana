@@ -34,7 +34,7 @@ import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import {
   isTimeSeriesViewJob,
-  isTimeSeriesViewFunction,
+  isTimeSeriesViewDetector,
   isModelPlotEnabled } from 'plugins/ml/util/job_utils';
 import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
@@ -431,7 +431,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     const jobDetectors = $scope.selectedJob.analysis_config.detectors;
     const viewableDetectors = [];
     _.each(jobDetectors, (dtr, index) => {
-      if ((isTimeSeriesViewFunction(dtr.function) === true) && (dtr.by_field_name !== 'mlcategory')) {
+      if (isTimeSeriesViewDetector($scope.selectedJob, index)) {
         viewableDetectors.push({ index: '' + index, detector_description: dtr.detector_description });
       }
     });

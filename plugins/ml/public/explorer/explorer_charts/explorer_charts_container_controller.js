@@ -26,8 +26,10 @@ import $ from 'jquery';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 import { explorerChartConfigBuilder } from './explorer_chart_config_builder';
+import { isTimeSeriesViewDetector } from 'plugins/ml/util/job_utils';
 
-module.controller('MlExplorerChartsContainerController', function ($scope, timefilter, Private, mlExplorerDashboardService) {
+module.controller('MlExplorerChartsContainerController', function ($scope, timefilter, Private,
+  mlJobService, mlExplorerDashboardService) {
 
   $scope.allSeriesRecords = [];   // Complete list of series.
   $scope.recordsForSeries = [];   // Series for plotting.
@@ -80,12 +82,11 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
     // Aggregate by job, detector, and analysis fields (partition, by, over).
     const aggregatedData = {};
     _.each(anomalyRecords, (record) => {
-      // TODO - currently time_of_day/week have function_description as 'count'.
-      // If they are given their own unique description remove the extra check on function.
-      // See https://github.com/elastic/machine-learning-cpp/issues/122
-      if (_.indexOf(FUNCTION_DESCRIPTIONS_TO_PLOT, record.function_description) === -1 ||
-        record.by_field_name === 'mlcategory' ||
-        record.function === 'time_of_day' || record.function === 'time_of_week') {
+      // Only plot charts for metric functions, and for detectors which don't use categorization
+      // or scripted fields which can be very difficult or impossible to invert to a reverse search.
+      const job = mlJobService.getJob(record.job_id);
+      if (isTimeSeriesViewDetector(job, record.detector_index) === false ||
+        _.indexOf(FUNCTION_DESCRIPTIONS_TO_PLOT, record.function_description) === -1) {
         return;
       }
       const jobId = record.job_id;

@@ -17,6 +17,7 @@ import expect from 'expect.js';
 import {
   calculateDatafeedFrequencyDefaultSeconds,
   isTimeSeriesViewJob,
+  isTimeSeriesViewDetector,
   isTimeSeriesViewFunction,
   isModelPlotEnabled,
   mlFunctionToESAggregation,
@@ -103,6 +104,47 @@ describe('ML - job utils', () => {
       };
 
       expect(isTimeSeriesViewJob(job)).to.be(false);
+    });
+
+  });
+
+  describe('isTimeSeriesViewDetector', () => {
+
+    const job = {
+      analysis_config: {
+        detectors: [
+            { 'function':'sum','field_name':'bytes','partition_field_name':'clientip','detector_description': 'High bytes client IP' },
+            { 'function':'freq_rare','by_field_name':'uri','over_field_name':'clientip','detector_description': 'Freq rare URI' },
+            { 'function':'count','by_field_name':'mlcategory', 'detector_description': 'Count by category' },
+            { 'function':'count','by_field_name':'hrd','detector_description':'count by hrd' }
+        ]
+      },
+      datafeed_config: {
+        script_fields: {
+          'hrd': {
+            'script': {
+              'inline': 'return domainSplit(doc["query"].value, params).get(1);',
+              'lang': 'painless'
+            }
+          }
+        }
+      }
+    };
+
+    it('returns true for a detector with a metric function', () => {
+      expect(isTimeSeriesViewDetector(job, 0)).to.be(true);
+    });
+
+    it('returns false for a detector with a non-metric function', () => {
+      expect(isTimeSeriesViewDetector(job, 1)).to.be(false);
+    });
+
+    it('returns false for a detector using count on an mlcategory field', () => {
+      expect(isTimeSeriesViewDetector(job, 2)).to.be(false);
+    });
+
+    it('returns false for a detector using count on a scripted field', () => {
+      expect(isTimeSeriesViewDetector(job, 3)).to.be(false);
     });
 
   });
