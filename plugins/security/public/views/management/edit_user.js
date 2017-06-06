@@ -44,7 +44,7 @@ routes.when(`${EDIT_USERS_PATH}/:username?`, {
     }
   },
   controllerAs: 'editUser',
-  controller($scope, $route, kbnUrl, ShieldUser, Notifier, confirmModal) {
+  controller($scope, $route, kbnUrl, ShieldUser, Notifier, confirmModal, config) {
     $scope.me = $route.current.locals.me;
     $scope.user = $route.current.locals.user;
     $scope.availableRoles = $route.current.locals.roles;
@@ -98,5 +98,13 @@ routes.when(`${EDIT_USERS_PATH}/:username?`, {
         else notifier.error(_.get(error, 'data.message'));
       });
     };
+
+    const dashboardOnlyModeRoles = config.get('dashboardOnlyModeRoles', []);
+    const userBelongsToMixedViewModeRoles = () => (
+      $scope.user.roles.length &&
+      !$scope.user.roles.every(role => dashboardOnlyModeRoles.includes(role)) &&
+      !$scope.user.roles.every(role => !dashboardOnlyModeRoles.includes(role))
+    );
+    $scope.showMixedViewModeWarning = () => userBelongsToMixedViewModeRoles();
   }
 });
