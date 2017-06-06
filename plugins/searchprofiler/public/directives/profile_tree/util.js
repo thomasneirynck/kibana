@@ -1,4 +1,4 @@
-import UUID from 'node-uuid';
+import uuid from 'uuid';
 import tinycolor from 'tinycolor2';
 import _ from 'lodash';
 
@@ -38,7 +38,7 @@ export function calcTimes(data, parentId) {
   for (const child of data) {
     child.time = parseFloat(child.time.replace('ms',''));
     totalTime += child.time;  //in ms
-    child.id = UUID.v4();
+    child.id = uuid.v4();
     child.parentId = parentId;
     child.childrenIds = [];
     child.breakdown = normalizeBreakdown(child.breakdown);
