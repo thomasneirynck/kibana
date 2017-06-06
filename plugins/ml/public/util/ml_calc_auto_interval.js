@@ -23,8 +23,7 @@
  //   - edits to the list of roundingRules to align better with the
  //    Ml job bucket span options.
 
-import { duration as d } from 'moment';
-import moment from 'moment';
+import moment, { duration as d } from 'moment';
 export function TimeBucketsCalcAutoIntervalProvider() {
 
   // Note there is a current issue with Kibana (Kibana issue #9184)

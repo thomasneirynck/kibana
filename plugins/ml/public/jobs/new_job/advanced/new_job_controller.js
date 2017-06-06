@@ -24,7 +24,6 @@ import 'ui/courier';
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
-import { isJobIdValid } from 'plugins/ml/util/job_utils';
 
 uiRoutes
 .when('/jobs/new_job/advanced', {
@@ -43,7 +42,10 @@ uiRoutes
 });
 
 import { sortByKey } from 'plugins/ml/util/string_utils';
-import { calculateDatafeedFrequencyDefaultSeconds as juCalculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/util/job_utils';
+import {
+  isJobIdValid,
+  calculateDatafeedFrequencyDefaultSeconds as juCalculateDatafeedFrequencyDefaultSeconds
+} from 'plugins/ml/util/job_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
