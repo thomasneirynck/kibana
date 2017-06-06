@@ -68,6 +68,17 @@
         <div ng-show="ui.bucketSpanEstimator.status===-1" class="validation-error">{{ui.bucketSpanEstimator.message}}</div>
       </div>
     </div>
+    <div class="row form-controls" ng-show='formConfig.agg.type.name==="count" || formConfig.agg.type.name==="sum"'>
+      <div class="col-md-12">
+        <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
+          <input type="checkbox"
+            class='kuiCheckBox'
+            ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+            ng-model  ="formConfig.isSparseData" />
+            <span class='kuiCheckBoxLabel__text'>Sparse data</span> <i ml-info-icon="new_job_sparsedata" ></i>
+        </label>
+      </div>
+    </div>
 
     <div ng-show="ui.showJobInput">
       <div class='chart-container'>
@@ -130,10 +141,11 @@
           <label>Advanced</label><i ml-info-icon="new_job_advanced_settings" ></i>
         </div>
         <div class='advanced-group' ng-show="ui.showAdvanced">
-          <label>
+          <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
             <input type="checkbox"
+              class='kuiCheckBox'
               ng-model  ="formConfig.useDedicatedIndex" />
-              Use dedicated index <i ml-info-icon="new_job_dedicated_index" ></i>
+              <span class='kuiCheckBoxLabel__text'>Use dedicated index</span> <i ml-info-icon="new_job_dedicated_index" ></i>
           </label>
         </div>
       </div>

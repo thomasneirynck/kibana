@@ -203,8 +203,16 @@ module.service('mlSingleMetricJobService', function (
     const job = mlJobService.getBlankJob();
     job.data_description.time_field = formConfig.timeField;
 
+    let func = formConfig.agg.type.mlName;
+    if (formConfig.isSparseData) {
+      if (formConfig.agg.type.name === 'count') {
+        func = func.replace(/count/, 'non_zero_count');
+      } else if(formConfig.agg.type.name === 'sum') {
+        func = func.replace(/sum/, 'non_null_sum');
+      }
+    }
     const dtr = {
-      function: formConfig.agg.type.mlName
+      function: func
     };
 
     let query = {

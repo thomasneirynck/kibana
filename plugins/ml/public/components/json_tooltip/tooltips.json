@@ -11,6 +11,9 @@
    "new_job_bucketspan": {
       "text": "Interval for time series analysis."
    },
+   "new_job_sparsedata": {
+      "text": "Check if you wish to ignore empty buckets from being considered anomalous."
+   },
    "new_job_summarycountfieldname": {
       "text": "Optional, for use if input data has been pre-summarized e.g. doc_count."
    },
@@ -81,7 +84,7 @@
       "text": "Advanced option. The interval between searches."
    },
    "new_job_datafeed_scrollsize": {
-      "text": "Advanced option. The maximum number of documents requested for a search.   "
+      "text": "Advanced option. The maximum number of documents requested for a search."
    },
    "new_job_elasticsearch_server": {
       "text": "Server address and port of Elasticsearch source."

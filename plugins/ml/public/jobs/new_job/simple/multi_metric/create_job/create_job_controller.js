@@ -223,7 +223,8 @@ module
     jobId: undefined,
     description: undefined,
     mappingTypes: [],
-    useDedicatedIndex: false
+    useDedicatedIndex: false,
+    isCountOrSum: false
   };
 
   $scope.formChange = function () {
@@ -435,6 +436,8 @@ module
 
     $scope.ui.dirty = false;
 
+    showSparseDataCheckbox();
+
     mlMultiMetricJobService.clearChartData();
 
     // $scope.chartStates.eventRate = CHART_STATE.LOADING;
@@ -482,6 +485,15 @@ module
   function setFieldsChartStates(state) {
     _.each($scope.chartStates.fields, (chart, key) => {
       $scope.chartStates.fields[key] = state;
+    });
+  }
+
+  function showSparseDataCheckbox() {
+    $scope.formConfig.isCountOrSum = false;
+    _.each($scope.formConfig.fields, (fd) => {
+      if (fd.agg.type.name === 'count' || fd.agg.type.name === 'sum') {
+        $scope.formConfig.isCountOrSum = true;
+      }
     });
   }
 

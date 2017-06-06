@@ -54,6 +54,16 @@
                   </div>
                 </div>
               </div>
+              <div class="row form-controls" ng-show='formConfig.isCountOrSum'>
+                <span class="col-md-12">
+                  <label class='sparse-data'>
+                    <input type="checkbox"
+                      ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+                      ng-model  ="formConfig.isSparseData" />
+                      Sparse data <i ml-info-icon="new_job_sparsedata" ></i>
+                  </label>
+                </span>
+              </div>
             </div>
 
             <div class='form-section' >
@@ -64,7 +74,7 @@
                     <select
                       ng-model="formConfig.splitField"
                       ng-change="splitChange()"
-                      ng-disabled="!ui.formValid || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+                      ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
                       class="form-control">
                         <option value='--No split--'>--No split--</option>
                         <option ng-repeat="field in ui.splitFields" value='{{field}}'>{{field}}</option>

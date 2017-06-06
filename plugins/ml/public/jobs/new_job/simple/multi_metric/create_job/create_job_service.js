@@ -229,10 +229,15 @@ module.service('mlMultiMetricJobService', function (
     const job = mlJobService.getBlankJob();
     job.data_description.time_field = formConfig.timeField;
 
-    // job.analysis_config.influencers.push(obj.params.field);
-
     _.each(formConfig.fields, (field, key) => {
-      const func = field.agg.type.mlName;
+      let func = field.agg.type.mlName;
+      if (formConfig.isSparseData) {
+        if (field.agg.type.name === 'count') {
+          func = func.replace(/count/, 'non_zero_count');
+        } else if(field.agg.type.name === 'sum') {
+          func = func.replace(/sum/, 'non_null_sum');
+        }
+      }
       const dtr = {
         function: func
       };
