@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import { getClusters } from './get_clusters';
-import { getClustersStats } from './get_clusters_stats';
 import { getClustersHealth } from './get_clusters_health';
 import { flagSupportedClusters } from './flag_supported_clusters';
 import { getClusterLicense } from './get_cluster_license';
@@ -38,7 +37,6 @@ export function getClustersFromRequest(req) {
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 
   return getClusters(req, esIndexPattern)
-  .then(getClustersStats(req, esIndexPattern))
   .then(clusters => getClustersHealth(req, esIndexPattern, clusters))
   .then(flagSupportedClusters(req))
   .then((clusters) => {

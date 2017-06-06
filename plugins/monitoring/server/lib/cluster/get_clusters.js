@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import Promise from 'bluebird';
+import { get } from 'lodash';
 import { INVALID_LICENSE } from '../../../common/constants';
 import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query';
@@ -21,55 +20,44 @@ export function getClusters(req, esIndexPattern) {
   const params = {
     index: esIndexPattern,
     ignore: [404],
-    // terms agg for the cluster_uuids
+    filterPath: [
+      'hits.hits._source.cluster_uuid',
+      'hits.hits._source.cluster_name',
+      'hits.hits._source.version',
+      'hits.hits._source.license',
+      'hits.hits._source.cluster_stats'
+    ],
     body: {
-      size: 0, // return no hits, just aggregation buckets
+      size: config.get('xpack.monitoring.max_bucket_size'),
       query: createQuery({ type: 'cluster_stats', start, end, metric, filters }),
-      aggs: {
-        cluster_uuids: {
-          terms: {
-            field: 'cluster_uuid',
-            size: config.get('xpack.monitoring.max_bucket_size')
-          }
-        }
-      }
+      collapse: {
+        field: 'cluster_uuid'
+      },
+      sort: { timestamp: { order: 'desc' } }
     }
   };
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
-  .then(statsResp => {
-    const statsBuckets = _.get(statsResp, 'aggregations.cluster_uuids.buckets');
-    if (_.isArray(statsBuckets)) {
+  .then(response => {
+    const hits = get(response, 'hits.hits', []);
 
-      return Promise.map(statsBuckets, (uuidBucket) => {
-        const cluster = {
-          cluster_uuid: uuidBucket.key
-        };
+    return hits
+    .map(hit => {
+      const cluster = get(hit, '_source');
 
-        const infoParams = {
-          index: config.get('xpack.monitoring.index'),
-          type: 'cluster_info', // FIXME must move license info to timebased indices!
-          id: cluster.cluster_uuid
-        };
+      if (cluster) {
+        if (!validateMonitoringLicense(cluster.cluster_uuid, cluster.license)) {
+          // "invalid" license allow deleted/unknown license clusters to show in UI
+          cluster.license = INVALID_LICENSE;
+        }
 
-        return callWithRequest(req, 'get', infoParams)
-        .then(infoResp => {
-          const infoDoc = infoResp._source;
+        // remap the cluster_stats field to the value that the UI expects
+        cluster.stats = cluster.cluster_stats;
+      }
 
-          cluster.cluster_name = infoDoc.cluster_name;
-          cluster.version = infoDoc.version;
-          const license = infoDoc.license;
-          if (license && validateMonitoringLicense(cluster.cluster_uuid, license)) {
-            cluster.license = license;
-          } else {
-            // "invalid" license allow deleted/unknown license clusters to show in UI
-            cluster.license = INVALID_LICENSE;
-          }
-
-          return cluster;
-        });
-      });
-    }
+      return cluster;
+    })
+    .filter(Boolean);
   });
 };

@@ -23,21 +23,20 @@ export const config = (Joi) => {
       }).default()
     }).default(),
     loggingTag: string().default('monitoring-ui'),
-    index: string().default('.monitoring-data-2'),
-    index_pattern: string().default('.monitoring-*-2-*'),
+    index_pattern: string().default('.monitoring-*-2-*,.monitoring-*-6-'),
     kibana: object({
-      index_pattern: string().default('.monitoring-kibana-2-*'),
+      index_pattern: string().default('.monitoring-kibana-2-*,.monitoring-kibana-6-*'),
       collection: object({
         enabled: boolean().default(true),
         interval: number().default(10000)
       }).default()
     }).default(),
     logstash: object({
-      index_pattern: string().default('.monitoring-logstash-2-*')
+      index_pattern: string().default('.monitoring-logstash-2-*,.monitoring-logstash-6-*')
     }).default(),
     cluster_alerts: object({
       enabled: boolean().default(true),
-      index: string().default('.monitoring-alerts-2')
+      index: string().default('.monitoring-alerts-2,.monitoring-alerts-6')
     }).default(),
     xpack_api_polling_frequency_millis: number().default(XPACK_INFO_API_DEFAULT_POLL_FREQUENCY_IN_MILLIS),
     missing_intervals: number().default(12),
@@ -56,7 +55,7 @@ export const config = (Joi) => {
     }).default(),
     elasticsearch: object({
       customHeaders: object().default({}),
-      index_pattern: string().default('.monitoring-es-2-*'),
+      index_pattern: string().default('.monitoring-es-2-*,.monitoring-es-6-*'),
       logQueries: boolean().default(false),
       requestHeadersWhitelist: array().items().single().default(DEFAULT_REQUEST_HEADERS),
       url: string().uri({ scheme: ['http', 'https'] }), // if empty, use Kibana's connection config

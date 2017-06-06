@@ -10,7 +10,7 @@ describe('get_all_stats', () => {
   const req = {
     server: {
       config: sinon.stub().returns({
-        get: sinon.stub().withArgs('xpack.monitoring.index').returns('.monitoring-data-N')
+        get: sinon.stub().withArgs('xpack.monitoring.elasticsearch.index_pattern').returns('.monitoring-es-N-*')
                          .withArgs('xpack.monitoring.kibana.index_pattern').returns('.monitoring-kibana-N-*')
                          .withArgs('xpack.monitoring.logstash.index_pattern').returns('.monitoring-logstash-N-*')
                          .withArgs('xpack.monitoring.max_bucket_size').returns(size)

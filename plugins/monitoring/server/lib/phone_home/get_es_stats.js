@@ -23,8 +23,7 @@ export function fetchElasticsearchStats(req, clusterUuids) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const config = req.server.config();
   const params = {
-    index: config.get('xpack.monitoring.index'),
-    type: 'cluster_info', // FIXME move license info to timebased data!
+    index: config.get('xpack.monitoring.elasticsearch.index_pattern'),
     filterPath: [
       'hits.hits._source.cluster_uuid',
       'hits.hits._source.timestamp',
@@ -39,14 +38,17 @@ export function fetchElasticsearchStats(req, clusterUuids) {
       query: {
         bool: {
           filter: [
-            {
-              terms: {
-                _id: clusterUuids
-              }
-            }
+            /*
+             * Note: Unlike most places, we don't care about the old _type: cluster_stats because it would NOT
+             * have the license in it (that used to be in the .monitoring-data-2 index in cluster_info)
+             */
+            { term: { type: 'cluster_stats' } },
+            { terms: { cluster_uuid: clusterUuids } }
           ]
         }
-      }
+      },
+      collapse: { field: 'cluster_uuid' },
+      sort: { timestamp: { order: 'desc' } }
     }
   };
 

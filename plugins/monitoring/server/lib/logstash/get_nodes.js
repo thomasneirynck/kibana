@@ -26,11 +26,10 @@ export function getNodes(req, logstashIndexPattern) {
   const metric = ElasticsearchMetric.getMetricFields();
   const params = {
     index: logstashIndexPattern,
-    type: 'logstash_stats',
     ignoreUnavailable: true,
     body: {
       size: config.get('xpack.monitoring.max_bucket_size'),
-      query: createQuery({ start, end, uuid, metric }),
+      query: createQuery({ start, end, uuid, metric, type: 'logstash_stats' }),
       collapse: {
         field: 'logstash_stats.logstash.uuid'
       },

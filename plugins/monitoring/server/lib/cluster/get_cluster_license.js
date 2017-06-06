@@ -1,18 +1,27 @@
 import { get } from 'lodash';
+import { createQuery } from '../create_query';
+import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 export function getClusterLicense(req, clusterUuid) {
   const config = req.server.config();
   const clusterCheckParams = {
-    index: config.get('xpack.monitoring.index'),
-    type: 'cluster_info', // FIXME move license info to timebased data!
-    id: clusterUuid,
-    _source: ['license']
+    index: config.get('xpack.monitoring.elasticsearch.index_pattern'),
+    filterPath: 'hits.hits._source.license',
+    body: {
+      size: 1,
+      sort: { timestamp: { order: 'desc' } },
+      query: createQuery({
+        type: 'cluster_stats',
+        uuid: clusterUuid,
+        metric: ElasticsearchMetric.getMetricFields()
+      })
+    }
   };
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
-  return callWithRequest(req, 'get', clusterCheckParams)
+  return callWithRequest(req, 'search', clusterCheckParams)
   .then(response => {
-    const license = response._source.license;
+    const license = get(response, 'hits.hits[0]._source.license', {});
     return Object.assign(
       {},
       license,
