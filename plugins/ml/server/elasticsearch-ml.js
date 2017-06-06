@@ -111,14 +111,24 @@
     });
 
     ml.deleteJob = ca({
-      url: {
+      urls: [{
         fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>',
         req: {
           jobId: {
             type: 'string'
           }
         }
-      },
+      }, {
+        fmt: '/_xpack/ml/anomaly_detectors/<%=jobId%>?force=true',
+        req: {
+          jobId: {
+            type: 'string'
+          },
+          force: {
+            type: 'boolean'
+          }
+        }
+      }],
       method: 'DELETE'
     });
 
@@ -202,14 +212,24 @@
     });
 
     ml.deleteDatafeed = ca({
-      url: {
+      urls: [{
         fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>',
         req: {
           datafeedId: {
             type: 'string'
           }
         }
-      },
+      },{
+        fmt: '/_xpack/ml/datafeeds/<%=datafeedId%>?force=true',
+        req: {
+          datafeedId: {
+            type: 'string'
+          },
+          force: {
+            type: 'boolean'
+          }
+        }
+      }],
       method: 'DELETE'
     });
 

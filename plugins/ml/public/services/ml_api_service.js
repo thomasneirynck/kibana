@@ -66,6 +66,13 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.forceDeleteJob = function (obj) {
+    return http.request({
+      url: `${basePath}/anomaly_detectors/${obj.jobId}?force=true`,
+      method: 'DELETE'
+    });
+  };
+
   this.updateJob = function (obj) {
     return http.request({
       url: `${basePath}/anomaly_detectors/${obj.jobId}/_update`,
@@ -107,6 +114,13 @@ module.service('ml', function (prlHttpService) {
   this.deleteDatafeed = function (obj) {
     return http.request({
       url: `${basePath}/datafeeds/${obj.datafeedId}`,
+      method: 'DELETE'
+    });
+  };
+
+  this.forceDeleteDatafeed = function (obj) {
+    return http.request({
+      url: `${basePath}/datafeeds/${obj.datafeedId}?force=true`,
       method: 'DELETE'
     });
   };

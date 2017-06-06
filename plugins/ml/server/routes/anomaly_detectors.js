@@ -135,8 +135,14 @@ export function jobRoutes(server, commonRouteConfig) {
     method: 'DELETE',
     path: '/api/ml/anomaly_detectors/{jobId}',
     handler(request, reply) {
-      const jobId = request.params.jobId;
-      return callWithRequest(request, 'ml.deleteJob', { jobId })
+      const options = {
+        jobId: request.params.jobId
+      };
+      const force = request.query.force;
+      if (force !== undefined) {
+        options.force = force;
+      }
+      return callWithRequest(request, 'ml.deleteJob', options)
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },

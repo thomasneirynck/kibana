@@ -77,7 +77,7 @@ function (
   // functions for job list buttons
   // called from jobs_list_controls.html
   $scope.deleteJob = function (job) {
-    const status = { deleteLock: false, stopDatafeed: 0, deleteDatafeed: 0, closeJob: 0, deleteJob: 0, errorMessage: '' };
+    const status = { deleteLock: false, deleteDatafeed: 0, deleteJob: 0, errorMessage: '' };
 
     $modal.open({
       template: require('plugins/ml/jobs/jobs_list/delete_job_modal/delete_job_modal.html'),

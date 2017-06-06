@@ -1,22 +1,10 @@
 <div class="delete-job-modal">
   <h3>Delete job {{ui.jobId}}</h3>
   <div ng-show="ui.stage===1" class="status-item-list">
-    <div class="status-item" ng-show="ui.isDatafeed">Stopping datafeed...
-      <i ng-show="ui.status.stopDatafeed === -1" aria-hidden="true" style="color:red;" class="fa fa-remove"></i>
-      <i ng-show="ui.status.stopDatafeed === 0" aria-hidden="true" class="fa fa-spinner fa-spin"></i>
-      <i ng-show="ui.status.stopDatafeed === 1" aria-hidden="true" style="color:green;" class="fa fa-check"></i>
-    </div>
-
     <div class="status-item" ng-show="ui.isDatafeed">Deleting datafeed...
       <i ng-show="ui.status.deleteDatafeed === -1" aria-hidden="true" style="color:red;" class="fa fa-remove"></i>
       <i ng-show="ui.status.deleteDatafeed === 0" aria-hidden="true" class="fa fa-spinner fa-spin"></i>
       <i ng-show="ui.status.deleteDatafeed === 1" aria-hidden="true" style="color:green;" class="fa fa-check"></i>
-    </div>
-
-    <div class="status-item">Closing job...
-      <i ng-show="ui.status.closeJob === -1" aria-hidden="true" style="color:red;" class="fa fa-remove"></i>
-      <i ng-show="ui.status.closeJob === 0" aria-hidden="true" class="fa fa-spinner fa-spin"></i>
-      <i ng-show="ui.status.closeJob === 1" aria-hidden="true" style="color:green;" class="fa fa-check"></i>
     </div>
 
     <div class="status-item">Deleting job...

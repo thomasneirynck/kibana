@@ -107,8 +107,14 @@ export function dataFeedRoutes(server, commonRouteConfig) {
     method: 'DELETE',
     path: '/api/ml/datafeeds/{datafeedId}',
     handler(request, reply) {
-      const datafeedId = request.params.datafeedId;
-      return callWithRequest(request, 'ml.deleteDatafeed', { datafeedId })
+      const options = {
+        datafeedId: request.params.datafeedId
+      };
+      const force = request.query.force;
+      if (force !== undefined) {
+        options.force = force;
+      }
+      return callWithRequest(request, 'ml.deleteDatafeed', options)
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },

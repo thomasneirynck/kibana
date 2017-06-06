@@ -14,7 +14,7 @@
  */
 
 import { uiModules } from 'ui/modules';
-const module = uiModules.get('apps/prelert');
+const module = uiModules.get('apps/ml');
 
 module.controller('MlDeleteJobModal', function ($scope, $modalInstance, params) {
 
