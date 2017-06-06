@@ -194,7 +194,8 @@ module
     resultsUrl: '',
     validation: {
       checks: { jobId: { valid: true } },
-    }
+    },
+    isCountOrSum: false
   };
 
   $scope.formConfig = {
@@ -222,6 +223,8 @@ module
     $scope.ui.isFormValid();
     $scope.ui.dirty = true;
     mlESMappingService.getMappings();
+
+    $scope.ui.isCountOrSum = ($scope.formConfig.agg.type.name === 'count' || $scope.formConfig.agg.type.name === 'sum');
   };
 
   $scope.fieldChange = function () {

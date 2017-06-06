@@ -199,7 +199,8 @@ module
     showAdvanced: false,
     validation: {
       checks: { jobId: { valid: true } },
-    }
+    },
+    isCountOrSum: false
   };
 
   $scope.formConfig = {
@@ -223,8 +224,7 @@ module
     jobId: undefined,
     description: undefined,
     mappingTypes: [],
-    useDedicatedIndex: false,
-    isCountOrSum: false
+    useDedicatedIndex: false
   };
 
   $scope.formChange = function () {
@@ -489,10 +489,10 @@ module
   }
 
   function showSparseDataCheckbox() {
-    $scope.formConfig.isCountOrSum = false;
+    $scope.ui.isCountOrSum = false;
     _.each($scope.formConfig.fields, (fd) => {
       if (fd.agg.type.name === 'count' || fd.agg.type.name === 'sum') {
-        $scope.formConfig.isCountOrSum = true;
+        $scope.ui.isCountOrSum = true;
       }
     });
   }

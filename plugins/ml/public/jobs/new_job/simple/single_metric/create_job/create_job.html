@@ -68,7 +68,7 @@
         <div ng-show="ui.bucketSpanEstimator.status===-1" class="validation-error">{{ui.bucketSpanEstimator.message}}</div>
       </div>
     </div>
-    <div class="row form-controls" ng-show='formConfig.agg.type.name==="count" || formConfig.agg.type.name==="sum"'>
+    <div class="row form-controls" ng-show='ui.isCountOrSum'>
       <div class="col-md-12">
         <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
           <input type="checkbox"
