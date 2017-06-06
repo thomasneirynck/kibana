@@ -1,3 +1,4 @@
+import { get } from 'lodash';
 import Boom from 'boom';
 
 /*
@@ -8,10 +9,30 @@ import Boom from 'boom';
  * @param req {Object} the server route handler request object
  */
 export async function verifyMonitoringAuth(req) {
+  const xpackInfo = get(req.server.plugins.monitoring, 'info');
+
+  if (xpackInfo) {
+    const security = get(xpackInfo, 'features.security', {});
+
+    // we only need to verify permissions if we're using X-Pack Security
+    if (security.available && security.enabled) {
+      await verifyHasPrivileges(req);
+    }
+  }
+}
+
+/**
+ * Reach out to the Monitoring cluster and ensure that it believes the current user has the privileges necessary
+ * to make API calls against .monitoring-* indices.
+ *
+ * @param req {Object} the server route handler request object
+ * @return {Promise} That either resolves with no response (void) or an exception.
+ */
+async function verifyHasPrivileges(req) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const config = req.server.config();
 
-  const privilegesResult = await callWithRequest(req, 'transport.request', {
+  const response = await callWithRequest(req, 'transport.request', {
     method: 'POST',
     path: '_xpack/security/user/_has_privileges',
     body: {
@@ -21,10 +42,15 @@ export async function verifyMonitoringAuth(req) {
           privileges: [ 'read' ]
         }
       ]
-    }
+    },
+    // we allow 404 incase the user shutdown security in-between the check and now
+    ignore: [ 404 ]
   });
 
-  if (!privilegesResult.has_all_requested) {
+  // we assume true because, if the response 404ed, then it will not exist but we should try to continue
+  const hasAllRequestedPrivileges = get(response, 'has_all_requested', true);
+
+  if (!hasAllRequestedPrivileges) {
     throw Boom.forbidden();
   }
-};
+}
