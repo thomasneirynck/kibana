@@ -1,5 +1,5 @@
 import clarinet from 'clarinet';
-import Range from './range';
+import { Range } from './range';
 
 export function checkForParseErrors(json, markers, ace) {
   for (const i in markers) {
