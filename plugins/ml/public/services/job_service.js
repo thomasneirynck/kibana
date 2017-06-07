@@ -490,20 +490,26 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       ml.forceDeleteDatafeed({ datafeedId: datafeedId })
       .then(() => {
         status.deleteDatafeed = 1;
-        ml.forceDeleteJob({ jobId: job.job_id })
-        .then(() => {
-          status.deleteJob = 1;
-          deferred.resolve({ success: true });
-        })
-        .catch((resp) => {
-          status.deleteJob = -1;
-          deleteFailed(resp, 'Delete job');
-        });
+        deleteJob();
       })
       .catch((resp) => {
         status.deleteDatafeed = -1;
         status.deleteJob = -1;
         deleteFailed(resp, 'Delete datafeed');
+      });
+    } else {
+      deleteJob();
+    }
+
+    function deleteJob() {
+      ml.forceDeleteJob({ jobId: job.job_id })
+      .then(() => {
+        status.deleteJob = 1;
+        deferred.resolve({ success: true });
+      })
+      .catch((resp) => {
+        status.deleteJob = -1;
+        deleteFailed(resp, 'Delete job');
       });
     }
 
