@@ -59,6 +59,8 @@ uiModule.directive('monitoringMain', (license) => {
               breadcrumbs.push(createCrumb('#/elasticsearch/indices', 'Indices'));
             } else if (scope.name === 'nodes') {
               breadcrumbs.push(createCrumb('#/elasticsearch/nodes', 'Nodes'));
+            } else if (scope.name === 'ml') {
+              breadcrumbs.push(createCrumb('#/elasticsearch/ml_jobs', 'Jobs'));
             }
             breadcrumbs.push(createCrumb(null, scope.instance));
           } else {
@@ -93,6 +95,11 @@ uiModule.directive('monitoringMain', (license) => {
         }
       }
       scope.breadcrumbs = breadcrumbs.filter(Boolean);
+
+      // Show ML tab?
+      scope.isMlSupported = () => {
+        return license.mlIsSupported();
+      };
     }
   };
 });

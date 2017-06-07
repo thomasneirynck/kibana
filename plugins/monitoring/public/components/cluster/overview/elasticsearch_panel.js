@@ -33,6 +33,14 @@ export class ElasticsearchPanel extends React.Component {
     });
   }
 
+  showMlJobs() {
+    // if license doesn't support ML, then `ml === null`
+    if (this.props.ml) {
+      return <dd>Jobs: { this.props.ml.jobs }</dd>;
+    }
+    return null;
+  }
+
   render() {
     const stats = this.props.stats || {};
     const nodes = stats.nodes;
@@ -63,6 +71,7 @@ export class ElasticsearchPanel extends React.Component {
               </dt>
               <dd>Version: { get(nodes, 'versions[0]') || 'N/A' }</dd>
               <dd>Uptime: { formatNumber(get(nodes, 'jvm.max_uptime_in_millis'), 'time_since') }</dd>
+              { this.showMlJobs() }
             </dl>
           </div>
           <div className='col-md-4'>

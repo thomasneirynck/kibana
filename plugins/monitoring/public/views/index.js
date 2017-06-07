@@ -11,6 +11,7 @@ import 'plugins/monitoring/views/elasticsearch/index/advanced';
 import 'plugins/monitoring/views/elasticsearch/nodes';
 import 'plugins/monitoring/views/elasticsearch/node';
 import 'plugins/monitoring/views/elasticsearch/node/advanced';
+import 'plugins/monitoring/views/elasticsearch/ml_jobs';
 import 'plugins/monitoring/views/kibana/overview';
 import 'plugins/monitoring/views/kibana/instances';
 import 'plugins/monitoring/views/kibana/instance';

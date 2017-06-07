@@ -9,6 +9,7 @@ import 'plugins/monitoring/directives/elasticsearch/index_listing';
 import 'plugins/monitoring/directives/elasticsearch/index_summary';
 import 'plugins/monitoring/directives/elasticsearch/node_listing';
 import 'plugins/monitoring/directives/elasticsearch/node_summary';
+import 'plugins/monitoring/directives/elasticsearch/ml_job_listing';
 import 'plugins/monitoring/directives/elasticsearch/shard_activity';
 import 'plugins/monitoring/directives/elasticsearch/shard_allocation';
 import 'plugins/monitoring/directives/elasticsearch/shard_allocation/directives/clusterView';

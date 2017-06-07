@@ -15,6 +15,7 @@ export class Overview extends React.Component {
       license: cluster.license,
       alerts: cluster.alerts,
       elasticsearch: { ...cluster.elasticsearch },
+      ml: cluster.ml, // ML is separate since it is license-conditional
       kibana: cluster.kibana,
       logstash: cluster.logstash
     };
@@ -28,6 +29,7 @@ export class Overview extends React.Component {
         license: cluster.license,
         alerts: cluster.alerts,
         elasticsearch: { ...cluster.elasticsearch },
+        ml: cluster.ml,
         kibana: cluster.kibana,
         logstash: cluster.logstash,
       });
@@ -54,7 +56,7 @@ export class Overview extends React.Component {
         </div>
 
         <div className='page-row'>
-          <ElasticsearchPanel { ...this.state.elasticsearch } angularChangeUrl={ angularChangeUrl } />
+          <ElasticsearchPanel { ...this.state.elasticsearch } ml={ this.state.ml } angularChangeUrl={ angularChangeUrl } />
         </div>
 
         <div className='page-row'>

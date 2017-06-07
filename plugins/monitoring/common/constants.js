@@ -63,3 +63,8 @@ export const FORMAT_DURATION_TEMPLATE_SHORT = ' d [days] h [hrs] m [min]';
  * @type {Object}
  */
 export const INVALID_LICENSE = { type: 'invalid', status: 'inactive' };
+
+/**
+ * In order to show ML Jobs tab in the Elasticsearch section / tab navigation, license must be supported
+ */
+export const ML_SUPPORTED_LICENSES = [ 'trial', 'platinum' ];

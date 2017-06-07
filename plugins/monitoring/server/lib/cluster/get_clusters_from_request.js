@@ -1,8 +1,9 @@
-import _ from 'lodash';
+import { set, findIndex, first, sortBy } from 'lodash';
 import { getClusters } from './get_clusters';
 import { getClustersHealth } from './get_clusters_health';
 import { flagSupportedClusters } from './flag_supported_clusters';
 import { getClusterLicense } from './get_cluster_license';
+import { getMlJobsForCluster } from '../elasticsearch/get_ml_jobs';
 import { getKibanasForClusters } from '../kibana/get_kibanas_for_clusters';
 import { getLogstashForClusters } from '../logstash/get_logstash_for_clusters';
 import { calculateOverallStatus } from '../calculate_overall_status';
@@ -42,12 +43,21 @@ export function getClustersFromRequest(req) {
   .then((clusters) => {
     // get specific cluster
     if (req.params.clusterUuid) {
-      return alertsClusterSearch(req, req.params.clusterUuid, getClusterLicense, checkLicenseForAlerts, {
-        size: CLUSTER_ALERTS_SEARCH_SIZE
+      return Promise.resolve(first(clusters))
+      .then(cluster => {
+        return getMlJobsForCluster(req, esIndexPattern, getClusterLicense, cluster);
       })
-      .then((alerts) => {
-        _.set(clusters, '[0].alerts', alerts);
-        return clusters;
+      .then(cluster => {
+        return alertsClusterSearch(req, req.params.clusterUuid, getClusterLicense, checkLicenseForAlerts, {
+          size: CLUSTER_ALERTS_SEARCH_SIZE
+        })
+        .then(alerts => {
+          set(cluster, 'alerts', alerts);
+          return cluster;
+        });
+      })
+      .then(cluster => {
+        return [ cluster ]; // array is expected
       });
     }
 
@@ -72,8 +82,8 @@ export function getClustersFromRequest(req) {
     .then(kibanas => {
       // add the kibana data to each cluster
       kibanas.forEach(kibana => {
-        const clusterIndex = _.findIndex(clusters, { cluster_uuid: kibana.clusterUuid });
-        _.set(clusters[clusterIndex], 'kibana', kibana.stats);
+        const clusterIndex = findIndex(clusters, { cluster_uuid: kibana.clusterUuid });
+        set(clusters[clusterIndex], 'kibana', kibana.stats);
       });
       return clusters;
     });
@@ -84,13 +94,13 @@ export function getClustersFromRequest(req) {
     .then(logstashes => {
       // add the logstash data to each cluster
       logstashes.forEach(logstash => {
-        const clusterIndex = _.findIndex(clusters, { cluster_uuid: logstash.clusterUuid });
-        _.set(clusters[clusterIndex], 'logstash', logstash.stats);
+        const clusterIndex = findIndex(clusters, { cluster_uuid: logstash.clusterUuid });
+        set(clusters[clusterIndex], 'logstash', logstash.stats);
       });
       return clusters;
     });
   })
   .then(clusters => normalizeClustersData(clusters))
-  .then(clusters => _.sortBy(clusters, 'cluster_name'));
+  .then(clusters => sortBy(clusters, 'cluster_name'));
   // reply() and catch() is handled by the caller
 }
