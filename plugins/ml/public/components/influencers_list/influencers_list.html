@@ -27,7 +27,7 @@
 
       <div>
         <div class="progress" value="{{influencer.barScore}}" max="100">
-          <div class="progress-bar {{influencer.severity}}" style="width: {{influencer.barScore}}%;"
+          <div class="progress-bar {{influencer.severity}}" ng-attr-style="width: {{influencer.barScore}}%;"
             tooltip-placement="{{tooltipPlacement}}" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
             <span class="score-label">{{influencer.maxScoreLabel}}</span>
           </div>
