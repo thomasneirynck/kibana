@@ -84,7 +84,8 @@ uiModule.directive('monitoringMlListing', $injector => {
         sortKey: 'node.name',
         title: 'Node'
       }
-    ]
+    ],
+    noDataMessage: 'There are no Machine Learning Jobs that match your filter or time range. Try changing the filter or time range.'
   };
 
   return {
