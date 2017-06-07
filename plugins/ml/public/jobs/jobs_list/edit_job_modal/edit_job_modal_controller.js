@@ -171,7 +171,7 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
       let changes = 0;
 
       const obj = {
-        index: i,
+        detector_index: i,
       };
 
       if (d.detector_description !== params.job.analysis_config.detectors[i].detector_description) {
