@@ -12,7 +12,7 @@ import 'ui/vis_maps/lib/service_settings';
 
 const module = uiModules.get('kibana/region_map', ['kibana']);
 module.controller('KbnRegionMapController', function ($scope, $element, Private, Notifier, getAppState,
-                                                       serviceSettings, config) {
+                                                      serviceSettings, config) {
 
   const tooltipFormatter = Private(AggResponsePointSeriesTooltipFormatterProvider);
   const ResizeChecker = Private(ResizeCheckerProvider);
@@ -89,13 +89,46 @@ module.controller('KbnRegionMapController', function ($scope, $element, Private,
 
   async function makeKibanaMap() {
     const tmsSettings = await serviceSettings.getTMSService();
+
+    const uiState = $scope.vis.getUiState();
     const minMaxZoom = tmsSettings.getMinMaxZoom(false);
-    kibanaMap = new KibanaMap($element[0], minMaxZoom);
+    const options = { ...minMaxZoom };
+
+    const zoomFromUiState = parseInt(uiState.get('mapZoom'));
+    const zoomFromSaved = $scope.vis.params.mapZoom;
+    if (!isNaN(zoomFromSaved)) {
+      options.zoom = zoomFromSaved;
+    } else if (!isNaN(zoomFromUiState)) {
+      options.zoom = zoomFromUiState;
+    } else {
+      options.zoom = $scope.vis.type.params.defaults.mapZoom;
+    }
+    const centerFromUIState = uiState.get('mapCenter');
+    const centerFromSaved = $scope.vis.type.params.mapCenter;
+    if (centerFromSaved) {
+      options.center = centerFromSaved;
+    } else if (centerFromUIState) {
+      options.center = centerFromUIState;
+    } else {
+      options.center = $scope.vis.type.params.defaults.mapCenter;
+    }
+    kibanaMap = new KibanaMap($element[0], options);
+
     const url = tmsSettings.getUrl();
-    const options = tmsSettings.getTMSOptions();
-    kibanaMap.setBaseLayer({ baseLayerType: 'tms', options: { url, ...options } });
+    const tmsOptions = tmsSettings.getTMSOptions();
+    kibanaMap.setBaseLayer({ baseLayerType: 'tms', options: { url, ...tmsOptions } });
     kibanaMap.addLegendControl();
     kibanaMap.addFitControl();
+
+    function saveCurrentLocation() {
+      $scope.vis.params.mapZoom = kibanaMap.getZoomLevel();
+      $scope.vis.params.mapCenter = kibanaMap.getCenter();
+      $scope.$apply();
+    }
+
+    kibanaMap.on('dragend', saveCurrentLocation);
+    kibanaMap.on('zoomend', saveCurrentLocation);
+
     kibanaMap.persistUiStateForVisualization($scope.vis);
   }
 
@@ -131,7 +164,7 @@ module.controller('KbnRegionMapController', function ($scope, $element, Private,
       if (event.mismatches.length > 0 && config.get('visualization:regionmap:showWarnings')) {
         notify.warning(
           `Could not show ${event.mismatches.length} ${event.mismatches.length > 1 ? 'results' : 'result'} on the map.`
-            + ` To avoid this, ensure that each term can be joined to a corresponding shape on that shape's join field.`
+          + ` To avoid this, ensure that each term can be joined to a corresponding shape on that shape's join field.`
           + ` Could not join following terms: ${event.mismatches.join(',')}`
         );
       }
