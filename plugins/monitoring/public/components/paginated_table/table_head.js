@@ -1,37 +1,43 @@
 import React from 'react';
+import { KuiKeyboardAccessible } from 'ui_framework/components';
 
-const make = React.DOM;
-
-export const TableHead = React.createClass({
-  displayName: 'TableHead',
-  render: function () {
-    const that = this;
-    function makeTh(config) {
-      const isSortCol = config.sort !== 0 && config.sort;
-      const isSortAsc = config.sort === 1;
-      let $icon = false;
-      if (isSortCol) {
-        const iconClassName = 'fa fa-sort-amount-' + (isSortAsc ? 'asc' : 'desc');
-        $icon = make.span(null, [
-          make.span({ key: 'iconspace' }, ' '),
-          make.span({ key: 'icon', className: iconClassName })
-        ]);
-      }
-
-      return make.th({
-        key: config.title,
-        onClick: function () {
-          if (config.sort !== 0) {
-            config.sort = config.sort === 1 ? -1 : 1;
-          } else {
-            config.sort = 1;
-          }
-          that.props.setSortCol(config);
-        },
-        className: config.className || ''
-      }, config.title, $icon);
+export class TableHead extends React.Component {
+  createColumnIcon(column) {
+    if (column.sort && column.sort !== 0) {
+      const iconClassName = column.sort === 1 ? 'fa-sort-amount-asc' : 'fa-sort-amount-desc';
+      return <span className={ `fa ${iconClassName}` }></span>;
     }
-    const $ths = this.props.columns.map(makeTh);
-    return make.thead(null, make.tr(null, $ths));
+    return null;
   }
-});
+
+  handleColumnClick(column) {
+    if (column.sort !== 0) {
+      column.sort = column.sort === 1 ? -1 : 1;
+    } else {
+      column.sort = 1;
+    }
+    this.props.setSortCol(column);
+  }
+
+  createColumn(column, index) {
+    return (
+      <th key={ `th-${index}` }>
+        <KuiKeyboardAccessible>
+          <span onClick={ this.handleColumnClick.bind(this, column) }>
+            { column.title } { this.createColumnIcon(column) }
+          </span>
+        </KuiKeyboardAccessible>
+      </th>
+    );
+  }
+
+  render() {
+    return (
+      <thead>
+        <tr>
+          { this.props.columns.map(this.createColumn.bind(this)) }
+        </tr>
+      </thead>
+    );
+  }
+}
