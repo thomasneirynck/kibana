@@ -61,12 +61,12 @@ uiModule.directive('monitoringMlListing', $injector => {
       {
         key: 'job_id',
         sortKey: 'job_id',
+        sort: SORT_ASCENDING,
         title: 'Job ID'
       },
       {
         key: 'state',
         sortKey: 'state',
-        sort: SORT_ASCENDING,
         title: 'State'
       },
       {
