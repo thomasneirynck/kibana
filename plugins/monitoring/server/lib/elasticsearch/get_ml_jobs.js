@@ -50,46 +50,41 @@ export function getMlJobs(req, esIndexPattern) {
  * cardinality isn't guaranteed to be accurate is the issue
  * but it will be as long as the precision threshold is >= the actual value
  */
-export function getMlJobsForCluster(req, esIndexPattern, getClusterLicense, cluster) {
-  return getClusterLicense(req, cluster.cluster_uuid)
-  .then(license => {
-    if (license.status === 'active' && contains(ML_SUPPORTED_LICENSES, license.type)) {
-      // ML is supported
-      const start = req.payload.timeRange.min; // no wrapping in moment :)
-      const end = req.payload.timeRange.max;
-      const uuid = req.params.clusterUuid;
-      const metric = ElasticsearchMetric.getMetricFields();
-      const params = {
-        index: esIndexPattern,
-        ignoreUnavailable: true,
-        filterPath: 'aggregations.jobs_count.value',
-        body: {
-          size: 0,
-          query: createQuery({ type: 'job_stats', start, end, uuid, metric }),
-          aggs: {
-            jobs_count: { cardinality: { field: 'job_stats.job_id' } }
-          }
+export function getMlJobsForCluster(req, esIndexPattern, cluster) {
+  const license = get(cluster, 'license', {});
+
+  if (license.status === 'active' && contains(ML_SUPPORTED_LICENSES, license.type)) {
+    // ML is supported
+    const start = req.payload.timeRange.min; // no wrapping in moment :)
+    const end = req.payload.timeRange.max;
+    const uuid = req.params.clusterUuid;
+    const metric = ElasticsearchMetric.getMetricFields();
+    const params = {
+      index: esIndexPattern,
+      ignoreUnavailable: true,
+      filterPath: 'aggregations.jobs_count.value',
+      body: {
+        size: 0,
+        query: createQuery({ type: 'job_stats', start, end, uuid, metric }),
+        aggs: {
+          jobs_count: { cardinality: { field: 'job_stats.job_id' } }
+        }
+      }
+    };
+
+    const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
+
+    return callWithRequest(req, 'search', params)
+    .then(response => {
+      return {
+        ...cluster,
+        ml: {
+          jobs: get(response, 'aggregations.jobs_count.value', 0)
         }
       };
+    });
+  }
 
-      const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
-      const jobs = callWithRequest(req, 'search', params)
-      .then(response => {
-        return {
-          jobs: get(response, 'aggregations.jobs_count.value', 0)
-        };
-      });
-
-      return Promise.props({
-        ...cluster,
-        ml: jobs
-      });
-    }
-
-    // ML is not supported
-    return {
-      ...cluster,
-      ml: null
-    };
-  });
+  // ML is not supported
+  return Promise.resolve(cluster);
 }

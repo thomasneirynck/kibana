@@ -42,7 +42,7 @@ export function getClustersFromRequest(req) {
     if (req.params.clusterUuid) {
       return Promise.resolve(first(clusters))
       .then(cluster => {
-        return getMlJobsForCluster(req, esIndexPattern, getClusterLicense, cluster);
+        return getMlJobsForCluster(req, esIndexPattern, cluster);
       })
       .then(cluster => {
         return alertsClusterSearch(req, req.params.clusterUuid, getClusterLicense, checkLicenseForAlerts, {
