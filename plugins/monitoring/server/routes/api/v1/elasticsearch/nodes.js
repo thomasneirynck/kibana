@@ -1,13 +1,13 @@
 import { get, isUndefined } from 'lodash';
 import Promise from 'bluebird';
 import Joi from 'joi';
+import { getClusterStats } from '../../../../lib/cluster/get_cluster_stats';
 import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
 import { calculateClusterShards } from '../../../../lib/cluster/calculate_cluster_shards';
 import { getNodes } from '../../../../lib/elasticsearch/get_nodes';
 import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
 import { calculateNodeType } from '../../../../lib/elasticsearch/calculate_node_type';
 import { getNodeTypeClassLabel } from '../../../../lib/elasticsearch/get_node_type_class_label';
-import { getLastState } from '../../../../lib/elasticsearch/get_last_state';
 import { getDefaultNodeFromId } from '../../../../lib/elasticsearch/get_default_node_from_id';
 import { handleError } from '../../../../lib/handle_error';
 
@@ -33,20 +33,22 @@ export function nodesRoutes(server) {
       const config = server.config();
       const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 
-      return getLastState(req, esIndexPattern)
-      .then(lastState => {
+      return getClusterStats(req, esIndexPattern)
+      .then(cluster => {
         return Promise.props({
-          clusterStatus: getClusterStatus(req, esIndexPattern, lastState),
+          cluster,
+          clusterStatus: getClusterStatus(cluster),
           listing: getNodes(req, esIndexPattern),
-          shardStats: getShardStats(req, esIndexPattern, lastState),
-          clusterState: lastState
+          shardStats: getShardStats(req, esIndexPattern, cluster)
         });
       })
       // Add the index status to each index from the shardStats
       .then((body) => {
+        const clusterState = get(body, 'cluster.cluster_state', { nodes: {} });
+
         body.nodes = body.listing.nodes;
         body.rows = body.listing.rows;
-        const clusterState = get(body, 'clusterState.cluster_state', { nodes: {} });
+
         body.rows.forEach((row) => {
           const resolver = row.name;
           const shardStats = body.shardStats.nodes[resolver];
@@ -75,7 +77,7 @@ export function nodesRoutes(server) {
         });
 
         delete body.listing;
-        delete body.clusterState;
+        delete body.cluster;
 
         return body;
       })

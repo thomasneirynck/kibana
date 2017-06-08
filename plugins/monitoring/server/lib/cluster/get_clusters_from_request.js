@@ -1,6 +1,5 @@
 import { set, findIndex, first, sortBy } from 'lodash';
-import { getClusters } from './get_clusters';
-import { getClustersHealth } from './get_clusters_health';
+import { getClustersStats } from './get_clusters_stats';
 import { flagSupportedClusters } from './flag_supported_clusters';
 import { getClusterLicense } from './get_cluster_license';
 import { getMlJobsForCluster } from '../elasticsearch/get_ml_jobs';
@@ -16,8 +15,7 @@ import { CLUSTER_ALERTS_SEARCH_SIZE } from '../../../common/constants';
 export function normalizeClustersData(clusters) {
   clusters.forEach(cluster => {
     cluster.elasticsearch = {
-      status: cluster.status,
-      stats: cluster.stats,
+      cluster_stats: cluster.cluster_stats,
       nodes: cluster.nodes,
       indices: cluster.indices
     };
@@ -25,7 +23,7 @@ export function normalizeClustersData(clusters) {
       cluster.elasticsearch.status,
       cluster.kibana && cluster.kibana.status || null
     ]);
-    delete cluster.stats;
+    delete cluster.cluster_stats;
     delete cluster.nodes;
     delete cluster.indices;
   });
@@ -37,8 +35,7 @@ export function getClustersFromRequest(req) {
   const config = req.server.config();
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 
-  return getClusters(req, esIndexPattern)
-  .then(clusters => getClustersHealth(req, esIndexPattern, clusters))
+  return getClustersStats(req, esIndexPattern)
   .then(flagSupportedClusters(req))
   .then((clusters) => {
     // get specific cluster

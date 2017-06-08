@@ -1,9 +1,9 @@
 import { get, forEach } from 'lodash';
 import Promise from 'bluebird';
 import Joi from 'joi';
+import { getClusterStats } from '../../../../lib/cluster/get_cluster_stats';
 import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
 import { calculateClusterShards } from '../../../../lib/cluster/calculate_cluster_shards';
-import { getLastState } from '../../../../lib/elasticsearch/get_last_state';
 import { getIndexSummary } from '../../../../lib/elasticsearch/get_index_summary';
 import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
 import { getShardAllocation } from '../../../../lib/elasticsearch/get_shard_allocation';
@@ -37,24 +37,23 @@ export function indexRoutes(server) {
       const config = req.server.config();
       const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 
-      return getLastState(req, esIndexPattern)
-      .then(lastState => {
+      return getClusterStats(req, esIndexPattern)
+      .then(cluster => {
         const showSystemIndices = true; // hardcode to true, because this could be a system index
         let shards;
         if (collectShards) {
-          shards = getShardAllocation(req, esIndexPattern, [{ term: { 'shard.index': id } }], lastState, showSystemIndices);
+          shards = getShardAllocation(req, esIndexPattern, [{ term: { 'shard.index': id } }], cluster, showSystemIndices);
         }
         return Promise.props({
-          clusterStatus: getClusterStatus(req, esIndexPattern, lastState),
+          clusterStatus: getClusterStatus(cluster),
           indexSummary:  getIndexSummary(req, esIndexPattern),
           metrics: getMetrics(req, esIndexPattern, [{ term: { 'index_stats.index': id } }]),
           shards,
-          shardStats: getShardStats(req, esIndexPattern, lastState),
-          lastState: lastState
+          shardStats: getShardStats(req, esIndexPattern, cluster)
         });
       })
       .then(calculateClusterShards)
-      .then(function (body) {
+      .then(body => {
         const shardStats = body.shardStats[id];
         // check if we need a legacy workaround for Monitoring 2.0 node data
         if (shardStats) {
@@ -74,7 +73,6 @@ export function indexRoutes(server) {
         forEach(shardNodes, (shardNode, resolver) => {
           body.nodes[resolver] = shardNode;
         });
-        delete body.lastState;
         return body;
       })
       .then(reply)

@@ -1,12 +1,12 @@
 import { get, merge } from 'lodash';
 import Promise from 'bluebird';
 import Joi from 'joi';
+import { getClusterStats } from '../../../../lib/cluster/get_cluster_stats';
 import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
 import { calculateClusterShards } from '../../../../lib/cluster/calculate_cluster_shards';
 import { getNodeSummary } from '../../../../lib/elasticsearch/get_node_summary';
 import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
 import { getShardAllocation } from '../../../../lib/elasticsearch/get_shard_allocation';
-import { getLastState } from '../../../../lib/elasticsearch/get_last_state';
 import { getDefaultNodeFromId } from '../../../../lib/elasticsearch/get_default_node_from_id';
 import { calculateNodeType } from '../../../../lib/elasticsearch/calculate_node_type';
 import { getNodeTypeClassLabel } from '../../../../lib/elasticsearch/get_node_type_class_label';
@@ -41,26 +41,26 @@ export function nodeRoutes(server) {
       const config = server.config();
       const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 
-      return getLastState(req, esIndexPattern)
-      .then(lastState => {
+      return getClusterStats(req, esIndexPattern)
+      .then(cluster => {
         const configResolver = `source_node.${config.get('xpack.monitoring.node_resolver')}`;
         let shards;
         if (collectShards) {
-          shards = getShardAllocation(req, esIndexPattern, [{ term: { [configResolver]: resolver } }], lastState, showSystemIndices);
+          shards = getShardAllocation(req, esIndexPattern, [{ term: { [configResolver]: resolver } }], cluster, showSystemIndices);
         }
         return Promise.props({
-          clusterStatus: getClusterStatus(req, esIndexPattern, lastState),
+          clusterStatus: getClusterStatus(cluster),
           nodeSummary: getNodeSummary(req, esIndexPattern),
           metrics: getMetrics(req, esIndexPattern, [{ term: { [configResolver]: resolver } }]),
           shards,
-          shardStats: getShardStats(req, esIndexPattern, lastState),
+          shardStats: getShardStats(req, esIndexPattern, cluster),
           nodes: {},
-          clusterState: lastState
+          cluster
         });
       })
       .then(calculateClusterShards)
       .then(body => {
-        const clusterState = get(body, 'clusterState.cluster_state', { nodes: {} });
+        const clusterState = get(body, 'cluster.cluster_state', { nodes: {} });
         let nodeDetail = body.nodeSummary.node;
         if (!nodeDetail) {
           // workaround for node indexed with legacy agent

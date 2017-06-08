@@ -17,6 +17,7 @@ export function getClusters(req, esIndexPattern) {
   if (req.params.clusterUuid) {
     filters.push({ term: { cluster_uuid: req.params.clusterUuid } });
   }
+
   const params = {
     index: esIndexPattern,
     ignore: [404],
@@ -25,7 +26,8 @@ export function getClusters(req, esIndexPattern) {
       'hits.hits._source.cluster_name',
       'hits.hits._source.version',
       'hits.hits._source.license',
-      'hits.hits._source.cluster_stats'
+      'hits.hits._source.cluster_stats',
+      'hits.hits._source.cluster_state'
     ],
     body: {
       size: config.get('xpack.monitoring.max_bucket_size'),
@@ -51,9 +53,6 @@ export function getClusters(req, esIndexPattern) {
           // "invalid" license allow deleted/unknown license clusters to show in UI
           cluster.license = INVALID_LICENSE;
         }
-
-        // remap the cluster_stats field to the value that the UI expects
-        cluster.stats = cluster.cluster_stats;
       }
 
       return cluster;

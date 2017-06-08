@@ -1,9 +1,9 @@
 import { merge, set } from 'lodash';
 import Promise from 'bluebird';
 import Joi from 'joi';
+import { getClusterStats } from '../../../../lib/cluster/get_cluster_stats';
 import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
 import { calculateClusterShards } from '../../../../lib/cluster/calculate_cluster_shards';
-import { getLastState } from '../../../../lib/elasticsearch/get_last_state';
 import { getIndices } from '../../../../lib/elasticsearch/get_indices';
 import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
 import { getUnassignedShards } from '../../../../lib/elasticsearch/get_unassigned_shards';
@@ -33,12 +33,12 @@ export function indicesRoutes(server) {
       const config = req.server.config();
       const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 
-      return getLastState(req, esIndexPattern)
-      .then(lastState => {
+      return getClusterStats(req, esIndexPattern)
+      .then(cluster => {
         return Promise.props({
-          clusterStatus: getClusterStatus(req, esIndexPattern, lastState),
+          clusterStatus: getClusterStatus(cluster),
           rows: getIndices(req, esIndexPattern, showSystemIndices),
-          shardStats: getShardStats(req, esIndexPattern, lastState)
+          shardStats: getShardStats(req, esIndexPattern, cluster)
         });
       })
       // Add the index status to each index from the shardStats

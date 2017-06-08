@@ -166,17 +166,17 @@ to enjoy multi-cluster monitoring.`
         </td>
         <td>
           <IsClusterSupported>
-            { numeral(this.path('elasticsearch.stats.nodes.count.total')).format('0,0') }
+            { numeral(this.path('elasticsearch.cluster_stats.nodes.count.total')).format('0,0') }
           </IsClusterSupported>
         </td>
         <td>
           <IsClusterSupported>
-            { numeral(this.path('elasticsearch.stats.indices.count')).format('0,0') }
+            { numeral(this.path('elasticsearch.cluster_stats.indices.count')).format('0,0') }
           </IsClusterSupported>
         </td>
         <td>
           <IsClusterSupported>
-            { numeral(this.path('elasticsearch.stats.indices.store.size_in_bytes')).format('0,0[.]0 b') }
+            { numeral(this.path('elasticsearch.cluster_stats.indices.store.size_in_bytes')).format('0,0[.]0 b') }
           </IsClusterSupported>
         </td>
         <td>

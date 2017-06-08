@@ -15,9 +15,9 @@ export class ElasticsearchPanel extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const indices = get(nextProps, 'stats.indices');
-    const total = get(indices, 'shards.total', 0);
-    let primaries = get(indices, 'shards.primaries', 'N/A');
+    const shards = get(nextProps, 'cluster_stats.indices.shards', {});
+    const total = get(shards, 'total', 0);
+    let primaries = get(shards, 'primaries', 'N/A');
     let replicas = 'N/A';
 
     // we subtract primaries from total to get replica count, so if we don't know primaries, then
@@ -42,14 +42,14 @@ export class ElasticsearchPanel extends React.Component {
   }
 
   render() {
-    const stats = this.props.stats || {};
-    const nodes = stats.nodes;
-    const indices = stats.indices;
+    const clusterStats = this.props.cluster_stats || {};
+    const nodes = clusterStats.nodes;
+    const indices = clusterStats.indices;
 
     const statusIndicator = (
       <HealthStatusIndicator>
-        <ElasticsearchStatusIcon status={ this.props.status } />&nbsp;
-        { capitalize(this.props.status) }
+        <ElasticsearchStatusIcon status={ clusterStats.status } />&nbsp;
+        { capitalize(clusterStats.status) }
       </HealthStatusIndicator>
     );
 

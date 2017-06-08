@@ -5,7 +5,7 @@ import { calculateNodeType } from './calculate_node_type';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from './normalize_shard_objects';
 
-export function getShardStats(req, esIndexPattern, lastState) {
+export function getShardStats(req, esIndexPattern, cluster) {
   checkParam(esIndexPattern, 'esIndexPattern in elasticsearch/getShardStats');
 
   const config = req.server.config();
@@ -24,7 +24,7 @@ export function getShardStats(req, esIndexPattern, lastState) {
         type: 'shards',
         uuid,
         metric,
-        filters: [ { term: { state_uuid: get(lastState, 'cluster_state.state_uuid') } } ]
+        filters: [ { term: { state_uuid: get(cluster, 'cluster_state.state_uuid') } } ]
       }),
       aggs: {
         indices: {
@@ -75,7 +75,7 @@ export function getShardStats(req, esIndexPattern, lastState) {
     }
 
     forEach(data.nodes, node => {
-      node.type = calculateNodeType(node, get(lastState, 'cluster_state.master_node'));
+      node.type = calculateNodeType(node, get(cluster, 'cluster_state.master_node'));
     });
 
     return data;

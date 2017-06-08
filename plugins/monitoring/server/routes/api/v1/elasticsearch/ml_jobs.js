@@ -1,6 +1,6 @@
 import Promise from 'bluebird';
 import Joi from 'joi';
-import { getLastState } from '../../../../lib/elasticsearch/get_last_state';
+import { getClusterStats } from '../../../../lib/cluster/get_cluster_stats';
 import { getClusterStatus } from '../../../../lib/cluster/get_cluster_status';
 import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
 import { calculateClusterShards } from '../../../../lib/cluster/calculate_cluster_shards';
@@ -28,11 +28,11 @@ export function mlJobRoutes(server) {
       const config = server.config();
       const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 
-      return getLastState(req, esIndexPattern)
-      .then(lastState => {
+      return getClusterStats(req, esIndexPattern)
+      .then(cluster => {
         return Promise.props({
-          clusterStatus: getClusterStatus(req, esIndexPattern, lastState),
-          shardStats: getShardStats(req, esIndexPattern, lastState), // for unassigned shards count in status bar
+          clusterStatus: getClusterStatus(cluster),
+          shardStats: getShardStats(req, esIndexPattern, cluster), // for unassigned shards count in status bar
           rows: getMlJobs(req, esIndexPattern)
         });
       })

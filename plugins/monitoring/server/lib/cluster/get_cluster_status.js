@@ -1,65 +1,22 @@
-import _ from 'lodash';
-import { checkParam } from '../error_missing_required';
-import { createQuery } from '../create_query.js';
-import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { get } from 'lodash';
 
-export function handleResponse(lastState) {
-  return (resp) => {
-    let clusterStatus = { status: _.get(lastState, 'cluster_state.status') };
-    const total = _.get(resp, 'hits.total', 0);
+export function getClusterStatus(cluster) {
+  const clusterStats = get(cluster, 'cluster_stats', {});
+  const clusterNodes = get(clusterStats, 'nodes', {});
+  const clusterIndices = get(clusterStats, 'indices', {});
 
-    if (total) {
-      const source = _.get(resp, 'hits.hits[0]._source');
-      const get = (path) => _.get(source, path);
-      clusterStatus.nodesCount = get('cluster_stats.nodes.count.total');
-      clusterStatus.indicesCount = get('cluster_stats.indices.count');
-      clusterStatus.totalShards = get('cluster_stats.indices.shards.total');
-      clusterStatus.documentCount = get('cluster_stats.indices.docs.count');
-      clusterStatus.dataSize = get('cluster_stats.indices.store.size_in_bytes');
-      clusterStatus.upTime = get('cluster_stats.nodes.jvm.max_uptime_in_millis');
-      clusterStatus.version = get('cluster_stats.nodes.versions');
-      clusterStatus.memUsed = get('cluster_stats.nodes.jvm.mem.heap_used_in_bytes');
-      clusterStatus.memMax = get('cluster_stats.nodes.jvm.mem.heap_max_in_bytes');
-    }
-
-    clusterStatus = _.defaults(clusterStatus, {
-      status: 'unknown',
-      nodesCount: 0,
-      indicesCount: 0,
-      totalShards: 0,
-      documentCount: 0,
-      dataSize: 0,
-      upTime: 0,
-      version: null,
-      memUsed: 0,
-      memMax: 0
-    });
-
-    return clusterStatus;
+  return {
+    status: get(cluster, 'cluster_state.status', 'unknown'),
+    // index-based stats
+    indicesCount: get(clusterIndices, 'count', 0),
+    totalShards: get(clusterIndices, 'shards.total', 0),
+    documentCount: get(clusterIndices, 'docs.count', 0),
+    dataSize: get(clusterIndices, 'store.size_in_bytes', 0),
+    // node-based stats
+    nodesCount: get(clusterNodes, 'count.total', 0),
+    upTime: get(clusterNodes, 'jvm.max_uptime_in_millis', 0),
+    version: get(clusterNodes, 'versions', null),
+    memUsed: get(clusterNodes, 'jvm.mem.heap_used_in_bytes', 0),
+    memMax: get(clusterNodes, 'jvm.mem.heap_max_in_bytes', 0)
   };
 }
-
-export function getClusterStatus(req, esIndexPattern, lastState) {
-  checkParam(esIndexPattern, 'esIndexPattern in cluster/getClusterStatus');
-
-  // Get the params from the POST body for the request
-  const end = req.payload.timeRange.max;
-  const uuid = req.params.clusterUuid;
-
-  // Build up the Elasticsearch request
-  const metric = ElasticsearchMetric.getMetricFields();
-  const params = {
-    index: esIndexPattern,
-    ignore: [404],
-    body: {
-      size: 1,
-      sort: { timestamp: { order: 'desc' } },
-      query: createQuery({ type: 'cluster_stats', end, uuid, metric })
-    }
-  };
-
-  // Send the request to Elasticsearch with authentication headers. This will handle
-  // 401 from the Security plugin and send them back to the browser
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
-  return callWithRequest(req, 'search', params).then(handleResponse(lastState));
-};

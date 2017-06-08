@@ -1,4 +1,4 @@
-import { get, find, indexBy } from 'lodash';
+import { get, find } from 'lodash';
 import { checkParam } from '../error_missing_required';
 import { createTypeFilter } from '../create_query';
 
@@ -10,23 +10,17 @@ import { createTypeFilter } from '../create_query';
  * @param  {Array} clusters Array of clusters to be augmented
  * @return {Array} Always {@code clusters}.
  */
-export function handleResponse(response, config, clusters) {
+export function handleResponse(response, clusters) {
   const hits = get(response, 'hits.hits', []);
 
   hits.forEach(hit => {
     const currentCluster = get(hit, '_source', {});
 
     if (currentCluster) {
-      const clusterState = currentCluster.cluster_state;
       const cluster = find(clusters, { cluster_uuid: currentCluster.cluster_uuid });
 
       if (cluster) {
-        cluster.status = get(clusterState, 'status');
-        cluster.state_uuid = get(clusterState, 'state_uuid');
-
-        const nodes = get(clusterState, 'nodes', []);
-        // FIXME: https://github.com/elastic/x-pack-kibana/issues/69
-        cluster.nodes = indexBy(nodes, config.get('xpack.monitoring.node_resolver'));
+        cluster.cluster_state = currentCluster.cluster_state;
       }
     }
   });
@@ -40,23 +34,23 @@ export function handleResponse(response, config, clusters) {
  *
  * If there is no cluster state available for any cluster, then it will be returned without any cluster state information.
  */
-export function getClustersHealth(req, esIndexPattern, clusters) {
+export function getClustersState(req, esIndexPattern, clusters) {
   checkParam(esIndexPattern, 'esIndexPattern in cluster/getClustersHealth');
 
-  if (clusters.length === 0) {
-    return Promise.resolve([]);
-  }
+  const clusterUuids = clusters.filter(cluster => !cluster.cluster_state).map(cluster => cluster.cluster_uuid);
 
-  const config = req.server.config();
-  const clusterUuids = clusters.map(cluster => cluster.cluster_uuid);
+  // we only need to fetch the cluster state if we don't already have it
+  //  newer documents (those from the version 6 schema and later already have the cluster state with cluster stats)
+  if (clusterUuids.length === 0) {
+    return Promise.resolve(clusters);
+  }
 
   const params = {
     index: esIndexPattern,
     filterPath: [
       'hits.hits._source.cluster_uuid',
-      'hits.hits._source.cluster_state.nodes',
-      'hits.hits._source.cluster_state.state_uuid',
-      'hits.hits._source.cluster_state.status'
+      'hits.hits._source.cluster_state',
+      'hits.hits._source.cluster_state'
     ],
     body: {
       size: clusterUuids.length,
@@ -78,5 +72,5 @@ export function getClustersHealth(req, esIndexPattern, clusters) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
 
   return callWithRequest(req, 'search', params)
-  .then(response => handleResponse(response, config, clusters));
+  .then(response => handleResponse(response, clusters));
 };
