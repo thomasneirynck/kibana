@@ -1,0 +1,5 @@
+{
+  "name": "xpack_main",
+  "version": "kibana",
+  "description": "Shared helpers for X-Pack plugins"
+}

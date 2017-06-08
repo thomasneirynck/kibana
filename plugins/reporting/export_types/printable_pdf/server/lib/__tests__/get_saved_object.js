@@ -1,7 +1,11 @@
 import url from 'url';
 import expect from 'expect.js';
 import { getSavedObjectFactory } from '../get_saved_object';
-import * as mockSavedObjects from './__fixtures__/mock_saved_objects';
+import {
+  search as mockSearch,
+  visualization as mockVisualization,
+  dashboard as mockDashboard
+} from './__fixtures__/mock_saved_objects';
 
 describe('saved_objects', function () {
   const mockGetSavedObject = (clientResponse) => {
@@ -37,7 +41,16 @@ describe('saved_objects', function () {
       let getSavedObject;
 
       before(function () {
-        mockObject = mockSavedObjects[objectType];
+        switch(objectType) {
+          case 'search':
+            mockObject = mockSearch;
+            break;
+          case 'visualization':
+            mockObject = mockVisualization;
+            break;
+          case 'dashboard':
+            mockObject = mockDashboard;
+        }
         getSavedObject = mockGetSavedObject(mockObject);
       });
 

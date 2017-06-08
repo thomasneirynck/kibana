@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import expect from 'expect.js';
 import sinon from 'sinon';
 import { executorProvider } from '../executor_provider';
 import EventEmitter from 'events';

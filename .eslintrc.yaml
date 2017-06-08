@@ -9,20 +9,16 @@ plugins:
 rules:
   no-extra-semi: off
   quotes: off
-
   no-shadow: error
   no-unused-vars: [error, {args: 'after-used', argsIgnorePattern: '^_'}]
   react/jsx-uses-react: error
   react/jsx-uses-vars: error
   react/jsx-curly-spacing: [error, always]
-
   kibana-custom/no-default-export: error
 
-  import/no-unresolved: off
-  import/named: off
-  import/namespace: off
-  import/default: off
-  import/export: off
-  import/no-named-as-default: off
-  import/no-named-as-default-member: off
-  import/no-duplicates: off
+settings:
+  import/resolver:
+    - '@elastic/eslint-import-resolver-kibana':
+        rootPackageName: x-pack
+        pluginDirs:
+           - ./plugins
