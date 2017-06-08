@@ -12,10 +12,10 @@ export async function verifyMonitoringAuth(req) {
   const xpackInfo = get(req.server.plugins.monitoring, 'info');
 
   if (xpackInfo) {
-    const security = get(xpackInfo, 'features.security', {});
+    const security = xpackInfo.feature('security');
 
     // we only need to verify permissions if we're using X-Pack Security
-    if (security.available && security.enabled) {
+    if (security.isAvailable() && security.isEnabled()) {
       await verifyHasPrivileges(req);
     }
   }
