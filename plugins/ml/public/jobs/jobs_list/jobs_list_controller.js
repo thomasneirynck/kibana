@@ -353,15 +353,15 @@ function (
       }
       // keep track of the job create times
       // only messages newer than the job's create time should be displayed.
-      createTimes[job.job_id] = moment(job.create_time).unix();
+      createTimes[job.job_id] = moment(job.create_time).valueOf();
     });
 
     // function for adding messages to job
     // deduplicated based on time and message
     function addMessage(id, msg) {
       if (auditMessages[id] !== undefined &&
-         msg.unixTime >= createTimes[id]) {
-        if (!_.findWhere(auditMessages[id], { time: msg.time, message: msg.message, node_name: msg.node_name })) {
+         msg.timeMs >= createTimes[id]) {
+        if (!_.findWhere(auditMessages[id], { timeMs: msg.timeMs, message: msg.message, node_name: msg.node_name })) {
           auditMessages[id].push(msg);
         }
       }
@@ -373,7 +373,7 @@ function (
         _.each(messages, (msg) => {
           const time = moment(msg.timestamp);
           msg.time = time.format(TIME_FORMAT);
-          msg.unixTime = time.unix();
+          msg.timeMs = time.valueOf();
           msg.isRecent = (time > aDayAgo);
 
           if (msg.job_id === '') {
@@ -388,7 +388,7 @@ function (
 
         // if we've loaded messages for just one job, they may be out of order
         // so sorting is needed.
-        auditMessages[jobId] = _.sortBy(auditMessages[jobId], 'unixTime');
+        auditMessages[jobId] = _.sortBy(auditMessages[jobId], 'timeMs');
 
         _.each(rowScopesIn, (rs) => {
           if (rs.job.job_id === jobId) {
@@ -399,7 +399,6 @@ function (
       })
       .catch((resp) => {
         console.log('loadAuditMessages: audit messages for ' + jobId + ' could not be loaded');
-        // $scope.jobAuditText = 'Log could not be loaded';
         if (resp.message) {
           msgs.error(resp.message);
         }
