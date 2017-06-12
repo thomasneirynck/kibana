@@ -3,13 +3,18 @@ import { calculateAvailability } from './../calculate_availability';
 
 export function handleResponse(resp) {
   const source = get(resp, 'hits.hits[0]._source.logstash_stats');
-  const timestamp = get(source, 'timestamp');
   const logstash = get(source, 'logstash');
-  const availability = { availability: calculateAvailability(timestamp) };
-  const events = { events: get(source, 'events') };
-  const reloads = { reloads: get(source, 'reloads') };
-  const queueType = { queue_type: get(source, 'queue.type') };
-  return merge(logstash, availability, events, reloads, queueType);
+  const info = merge(
+    logstash,
+    {
+      availability: calculateAvailability(get(source, 'timestamp')),
+      events: get(source, 'events'),
+      reloads: get(source, 'reloads'),
+      queue_type: get(source, 'queue.type'),
+      uptime: get(source, 'jvm.uptime_in_millis')
+    }
+  );
+  return info;
 }
 
 export function getNodeInfo(req, uuid) {
@@ -17,6 +22,14 @@ export function getNodeInfo(req, uuid) {
   const params = {
     index: config.get('xpack.monitoring.logstash.index_pattern'),
     ignore: [404],
+    filterPath: [
+      'hits.hits._source.logstash_stats.events',
+      'hits.hits._source.logstash_stats.jvm.uptime_in_millis',
+      'hits.hits._source.logstash_stats.logstash',
+      'hits.hits._source.logstash_stats.queue.type',
+      'hits.hits._source.logstash_stats.reloads',
+      'hits.hits._source.logstash_stats.timestamp'
+    ],
     body: {
       size: 1,
       query: {
@@ -24,6 +37,7 @@ export function getNodeInfo(req, uuid) {
           'logstash_stats.logstash.uuid': uuid
         }
       },
+      collapse: { field: 'logstash_stats.logstash.uuid' },
       sort: [
         { timestamp: { order: 'desc' } }
       ]

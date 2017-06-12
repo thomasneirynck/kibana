@@ -3,6 +3,9 @@
     <div>Instances:
       <strong data-test-subj="count">{{ pageData.clusterStatus.count }}</strong>
     </div>
+    <div>Memory:
+      <strong data-test-subj="memory_usage">{{ pageData.clusterStatus.memory_size|formatNumber:'bytes' }} / {{ pageData.clusterStatus.memory_limit|formatNumber:'bytes' }}</strong>
+    </div>
     <div>Requests:
       <strong data-test-subj="requests_total">{{ pageData.clusterStatus.requests_total }}</strong>
     </div>
@@ -11,9 +14,6 @@
     </div>
     <div>Max. Response Time:
       <strong data-test-subj="response_time_max">{{ pageData.clusterStatus.response_time_max }} ms</strong>
-    </div>
-    <div>Memory:
-      <strong data-test-subj="memory_usage">{{ pageData.clusterStatus.memory_size|formatNumber:'bytes' }} / {{ pageData.clusterStatus.memory_limit|formatNumber:'bytes' }}</strong>
     </div>
     <div class="monitoring-summary-status__status-indicator">
       Health:

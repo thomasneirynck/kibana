@@ -22,28 +22,24 @@ uiModule.directive('monitoringLogstashNodeListing', function (kbnUrl) {
         title: 'Name'
       },
       {
-        key: 'jvm.mem.heap_used_percent',
-        sortKey: 'jvm.mem.heap_used_percent',
-        title: 'JVM Heap Used'
-      },
-      {
         key: 'process.cpu.percent',
         sortKey: 'process.cpu.percent',
         title: 'CPU Usage'
       },
       {
+        key: 'os.cpu.load_average.1m',
+        sortKey: 'os.cpu.load_average.1m',
+        title: 'Load Average'
+      },
+      {
+        key: 'jvm.mem.heap_used_percent',
+        sortKey: 'jvm.mem.heap_used_percent',
+        title: 'JVM Heap Used'
+      },
+      {
         key: 'events.out',
         sortKey: 'events.out',
         title: 'Events Ingested'
-      },
-      {
-        key: 'logstash.version',
-        title: 'Version'
-      },
-      {
-        key: 'jvm.uptime_in_millis',
-        sortKey: 'jvm.uptime_in_millis',
-        title: 'Uptime'
       },
       {
         key: 'reloads',
@@ -80,26 +76,21 @@ uiModule.directive('monitoringLogstashNodeListing', function (kbnUrl) {
               </td>
               <td>
                 <div className='big'>
-                  { `${numeral(this.props.jvm.mem.heap_used_percent)}%` }
-                </div>
-              </td>
-              <td>
-                <div className='big'>
                   { `${numeral(this.props.process.cpu.percent)}%` }
                 </div>
               </td>
               <td>
+                <div className='big'>
+                  { `${numeral(this.props.os.cpu.load_average['1m']).format('0.00')}` }
+                </div>
+              </td>
+              <td>
+                <div className='big'>
+                  { `${numeral(this.props.jvm.mem.heap_used_percent)}%` }
+                </div>
+              </td>
+              <td>
                 <div className='big'>{ formatNumber(this.props.events.out, '0.[0]a') }</div>
-              </td>
-              <td>
-                <div className='big'>
-                  { this.props.logstash.version }
-                </div>
-              </td>
-              <td>
-                <div className='big'>
-                  { formatNumber(this.props.jvm.uptime_in_millis, 'time_since') }
-                </div>
               </td>
               <td>
                 <div>{ this.props.reloads.successes } successes</div>

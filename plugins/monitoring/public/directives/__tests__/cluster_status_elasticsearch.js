@@ -61,7 +61,5 @@ describe.skip('monitoringClusterStatusElasticsearch', function () {
     expect($element.findTestSubject('unassignedShards').html()).to.be('2');
     expect($element.findTestSubject('documentCount').html()).to.be('35,793');
     expect($element.findTestSubject('dataSize').html()).to.be('35KB');
-    expect($element.findTestSubject('uptime').html()).to.be('113255 years');
-    expect($element.findTestSubject('version').html()).to.be('0.10');
   });
 });

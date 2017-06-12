@@ -27,14 +27,14 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
         title: 'Status'
       },
       {
-        key: 'process.memory',
-        sortKey: 'process.memory.resident_set_size_in_bytes',
-        title: 'Memory Size'
-      },
-      {
         key: 'os.load',
         sortKey: 'os.load.1m',
         title: 'Load Average'
+      },
+      {
+        key: 'process.memory',
+        sortKey: 'process.memory.resident_set_size_in_bytes',
+        title: 'Memory Size'
       },
       {
         key: 'requests.total',
@@ -83,12 +83,12 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
               </td>
               <td>
                 <div className='big'>
-                    { `${numeral(this.props.process.memory.resident_set_size_in_bytes).format('0.00 b')}` }
+                  { `${numeral(this.props.os.load['1m']).format('0.00')}` }
                 </div>
               </td>
               <td>
                 <div className='big'>
-                  { `${numeral(this.props.os.load['1m']).format('0.00')}` }
+                  { `${numeral(this.props.process.memory.resident_set_size_in_bytes).format('0.00 b')}` }
                 </div>
               </td>
               <td>

@@ -40,14 +40,13 @@ export function getNodes(req, logstashIndexPattern) {
         'timestamp',
         'logstash_stats.process.cpu.percent',
         'logstash_stats.jvm.mem.heap_used_percent',
-        'logstash_stats.jvm.uptime_in_millis',
+        'logstash_stats.os.cpu.load_average.1m',
         'logstash_stats.events.out',
         'logstash_stats.logstash.http_address',
         'logstash_stats.logstash.name',
         'logstash_stats.logstash.host',
         'logstash_stats.logstash.uuid',
         'logstash_stats.logstash.status',
-        'logstash_stats.logstash.version',
         'logstash_stats.logstash.pipeline',
         'logstash_stats.reloads'
       ]

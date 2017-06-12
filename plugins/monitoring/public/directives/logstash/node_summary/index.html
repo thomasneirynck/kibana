@@ -24,5 +24,8 @@
     <div>Version:
       <strong data-test-subj="version">{{ logstash.version }}</strong>
     </div>
+    <div>Uptime:
+      <strong data-test-subj="uptime">{{ logstash.uptime|formatNumber:'time_since' }}</strong>
+    </div>
   </div>
 </div>

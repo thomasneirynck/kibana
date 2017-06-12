@@ -9,6 +9,9 @@
     <div>Version:
       <strong data-test-subj="version">{{ kibana.version }}</strong>
     </div>
+    <div>Uptime:
+      <strong data-test-subj="uptime">{{ kibana.uptime|formatNumber:'time_since' }}</strong>
+    </div>
     <div class="monitoring-summary-status__status-indicator">
       Health:
       <monitoring-kibana-status-icon

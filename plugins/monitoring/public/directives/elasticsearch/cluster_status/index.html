@@ -21,12 +21,6 @@
     <div>Data:
       <strong data-test-subj="dataSize">{{ pageData.clusterStatus.dataSize|formatNumber:'bytes' }}</strong>
     </div>
-    <div>Uptime:
-      <strong data-test-subj="uptime">{{ pageData.clusterStatus.upTime|formatNumber:'time_since' }}</strong>
-    </div>
-    <div>Version:
-      <strong data-test-subj="version">{{ cluster.version }}</strong>
-    </div>
     <div class="monitoring-summary-status__status-indicator">
       Health:
       <monitoring-elasticsearch-status-icon
