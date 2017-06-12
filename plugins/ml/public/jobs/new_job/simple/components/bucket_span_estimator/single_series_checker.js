@@ -143,7 +143,7 @@ export function SingleSeriesCheckerProvider($injector) {
                 resolve(interval);
               } else {
                 count++;
-                if (count === INTERVALS.length) {
+                if (count === intervals.length) {
                   console.log(`Estimate bucket span: ${interval.name} passed by default`);
                   resolve(interval);
                 } else {
