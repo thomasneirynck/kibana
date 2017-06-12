@@ -29,12 +29,14 @@ export function SingleSeriesCheckerProvider($injector) {
   const REF_DATA_INTERVAL = { name:'1h',  ms: 3600000 };
 
   class SingleSeriesChecker {
-    constructor(index, timeField, aggType, field, duration) {
+    constructor(index, timeField, aggType, field, duration, query, thresholds) {
       this.index = index;
       this.timeField = timeField;
       this.aggType = aggType;
       this.field = field;
       this.duration = duration;
+      this.query = query;
+      this.thresholds = thresholds;
       this.refMetricData = {
         meanValue: 0,
         meanDiff: 0,
@@ -51,6 +53,17 @@ export function SingleSeriesCheckerProvider($injector) {
         // move time range to the end of the data
         this.duration.start = this.duration.end - multiplierDurationLength;
       }
+
+      // add the time range query
+      this.query.bool.must.push({
+        range: {
+          [this.timeField]: {
+            gte: this.duration.start,
+            lt: this.duration.end,
+            format: 'epoch_millis'
+          }
+        }
+      });
     }
 
     run() {
@@ -87,11 +100,20 @@ export function SingleSeriesCheckerProvider($injector) {
       return new Promise((resolve, reject) => {
         let count = 0;
 
+        // create filtered copy of INTERVALS
+        // not including any buckets spans lower that the min threshold
+        const intervals = [];
+        for (let i = 0; i < INTERVALS.length; i++) {
+          if (INTERVALS[i].ms >= this.thresholds.minimumBucketSpanMS) {
+            intervals.push(INTERVALS[i]);
+          }
+        }
+
         // recursive function called with the index of the INTERVALS array
         // each time one of the checks fails, the index is increased and
         // the tests are repeated.
         const runTest = (i) => {
-          const interval = INTERVALS[i];
+          const interval = intervals[i];
           this.performSearch(interval.ms)
           .then((resp) => {
             const buckets = resp.aggregations.non_empty_buckets.buckets;
@@ -100,10 +122,6 @@ export function SingleSeriesCheckerProvider($injector) {
 
               let pass = true;
               if (pass && this.testBucketPercentage(fullBuckets, buckets) === false) {
-                pass = false;
-              }
-
-              if (pass && this.testPolledData(fullBuckets, interval.ms) === false) {
                 pass = false;
               }
 
@@ -149,15 +167,7 @@ export function SingleSeriesCheckerProvider($injector) {
 
     createSearch(intervalMs) {
       const search = {
-        query: {
-          range: {
-            [this.timeField]: {
-              gte: this.duration.start,
-              lt: this.duration.end,
-              format: 'epoch_millis'
-            }
-          }
-        },
+        query: this.query,
         aggs : {
           non_empty_buckets : {
             date_histogram : {
@@ -204,37 +214,6 @@ export function SingleSeriesCheckerProvider($injector) {
     testBucketPercentage(fullBuckets, buckets) {
       const pcnt = (fullBuckets.length / buckets.length);
       return (pcnt > 0.2);
-    }
-
-    // test that the coefficient of variation of time difference between non-empty buckets is small
-    testPolledData(fullBuckets, intervalMs) {
-      let pass = false;
-
-      const timeDiffs = [];
-      let sumOfTimeDiffs = 0;
-      for (let i = 1; i < fullBuckets.length; i++) {
-        const diff = (fullBuckets[i].key - fullBuckets[i - 1].key);
-        sumOfTimeDiffs += diff;
-        timeDiffs.push(diff);
-      }
-
-      const meanTimeDiff = sumOfTimeDiffs / (fullBuckets.length - 1);
-
-      let sumSquareTimeDiffResiduals = 0;
-      for (let i = 0; i < fullBuckets.length - 1; i++) {
-        sumSquareTimeDiffResiduals += Math.pow(timeDiffs[i] - meanTimeDiff, 2);
-      }
-
-      const vari = sumSquareTimeDiffResiduals / (fullBuckets.length - 1);
-
-      const cov = Math.sqrt(vari) / meanTimeDiff;
-
-      if ((cov < 0.1) && (intervalMs < meanTimeDiff)) {
-        pass = false;
-      } else {
-        pass = true;
-      }
-      return pass;
     }
 
     // test that the full buckets contain at least 5 documents

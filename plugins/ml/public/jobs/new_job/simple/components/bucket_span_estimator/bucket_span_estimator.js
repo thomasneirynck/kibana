@@ -17,31 +17,75 @@ import _ from 'lodash';
 
 import { INTERVALS } from './intervals';
 import { SingleSeriesCheckerProvider } from './single_series_checker';
+import { PolledDataCheckerProvider } from './polled_data_checker';
 
-export function BucketSpanEstimatorProvider($injector, Private) {
+export function BucketSpanEstimatorProvider($injector) {
+  const Private = $injector.get('Private');
 
+  const PolledDataChecker = Private(PolledDataCheckerProvider);
   const SingleSeriesChecker = Private(SingleSeriesCheckerProvider);
 
   class BucketSpanEstimator {
-    constructor(index, timeField, aggTypes, fields, duration) {
+    constructor(index, timeField, aggTypes, fields, duration, query, splitField, splitFieldValues) {
       this.index = index;
       this.timeField = timeField;
       this.aggTypes = aggTypes;
       this.fields = fields;
       this.duration = duration;
+      this.query = query;
+      this.splitField = splitField;
+      this.splitFieldValues = splitFieldValues;
       this.checkers = [];
 
+      this.thresholds = {
+        minimumBucketSpanMS: 0
+      };
+
+      this.polledDataChecker = new PolledDataChecker(
+        this.index,
+        this.timeField,
+        this.duration,
+        this.query);
+
       if(this.aggTypes.length === this.fields.length) {
+        // loop over detectors
         for(let i = 0; i < this.aggTypes.length; i++) {
-          this.checkers.push({
-            check: new SingleSeriesChecker(
-              this.index,
-              this.timeField,
-              this.aggTypes[i],
-              this.fields[i],
-              this.duration),
-            result: null
-          });
+          if (this.splitField === undefined || this.splitField === '--No split--') {
+            // either a single metric job or no data split
+            this.checkers.push({
+              check: new SingleSeriesChecker(
+                this.index,
+                this.timeField,
+                this.aggTypes[i],
+                this.fields[i],
+                this.duration,
+                this.query,
+                this.thresholds),
+              result: null
+            });
+          } else {
+            // loop over partition values
+            for(let j = 0; j < this.splitFieldValues.length; j++) {
+              const queryCopy = _.cloneDeep(this.query);
+              // add a term to the query to filter on the partition value
+              queryCopy.bool.must.push({
+                term: {
+                  [this.splitField]: this.splitFieldValues[j]
+                }
+              });
+              this.checkers.push({
+                check: new SingleSeriesChecker(
+                  this.index,
+                  this.timeField,
+                  this.aggTypes[i],
+                  this.fields[i],
+                  this.duration,
+                  queryCopy,
+                  this.thresholds),
+                result: null
+              });
+            }
+          }
         }
       }
     }
@@ -52,29 +96,56 @@ export function BucketSpanEstimatorProvider($injector, Private) {
           reject();
         }
 
-        let checkCounter = this.checkers.length;
-        _.each(this.checkers, (check) => {
-          check.check.run()
-          .then((interval) => {
-            check.result = interval;
-            checkCounter--;
+        this.polledDataChecker.run()
+        .then((result) => {
+          // if the data is polled, set a minimum threshold
+          // of bucket span
+          if (result.isPolled) {
+            console.log(`data is polled: ${result.minimumBucketSpan}`);
+            this.thresholds.minimumBucketSpanMS = result.minimumBucketSpan;
+          }
+          let checkCounter = this.checkers.length;
+          _.each(this.checkers, (check) => {
+            check.check.run()
+            .then((interval) => {
+              check.result = interval;
+              checkCounter--;
 
-            if (checkCounter === 0) {
-              const results = this.processResults();
-              resolve(results);
-            }
-          })
-          .catch((resp) => {
-            reject(resp);
+              if (checkCounter === 0) {
+                const results = this.processResults();
+                resolve(results);
+              }
+            })
+            .catch((resp) => {
+              reject(resp);
+            });
           });
+        })
+        .catch((resp) => {
+          reject(resp);
         });
       });
     }
 
     processResults() {
-      let results = _.map(this.checkers, 'result');
-      results = _.sortBy(results, r => r.ms);
+      let allResults = _.map(this.checkers, 'result');
+      allResults = _.sortBy(allResults, r => r.ms);
 
+      const reducedResults = [];
+      const numberOfSplitFields = this.splitFieldValues.length || 1;
+      // find the median results per detector
+      // if the data has been split, the may be ten results per detector,
+      // so we need to find the median of those first.
+      for(let i = 0; i < this.aggTypes.length; i++) {
+        const resultsSubset = allResults.slice(i, i + numberOfSplitFields);
+        const tempMedian = this.findMedian(resultsSubset);
+        reducedResults.push(tempMedian);
+      }
+
+      return this.findMedian(reducedResults);
+    }
+
+    findMedian(results) {
       if (results.length % 2 === 0) {
         // even number of results
         const medIndex = (((results.length) / 2) - 1);
@@ -111,10 +182,7 @@ export function BucketSpanEstimatorProvider($injector, Private) {
       } else {
         return results[(results.length - 1) / 2];
       }
-
     }
-
-
   }
   return BucketSpanEstimator;
 }
