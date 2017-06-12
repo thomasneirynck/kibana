@@ -99,20 +99,9 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
       finish();
     });
 
-    // TODO - do we need this listener?
-    scope.$on('renderExplorerChart',function () {
-      render();
-    });
-
     element.on('$destroy', function () {
       scope.$destroy();
     });
-
-    function render() {
-      if (scope.metricData === undefined) {
-        return;
-      }
-    }
 
     function init() {
       const $el = angular.element('.ml-explorer-chart-container');
@@ -136,10 +125,37 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
 
       chartLimits.max = d3.max(data, (d) => d.value);
       chartLimits.min = d3.min(data, (d) => d.value);
+      if (chartLimits.max === chartLimits.min) {
+        chartLimits.max = d3.max(data, (d) => {
+          if (d.typical) {
+            return Math.max(d.value, d.typical);
+          } else {
+            // If analysis with by and over field, and more than one cause,
+            // there will be no actual and typical value.
+            // TODO - produce a better visual for population analyses.
+            return d.value;
+          }
+        });
+        chartLimits.min = d3.min(data, (d) => {
+          if (d.typical) {
+            return Math.min(d.value, d.typical);
+          } else {
+            // If analysis with by and over field, and more than one cause,
+            // there will be no actual and typical value.
+            // TODO - produce a better visual for population analyses.
+            return d.value;
+          }
+        });
+      }
 
       // add padding of 5% of the difference between max and min
       // to the upper and lower ends of the y-axis
-      const padding = (chartLimits.max - chartLimits.min) * 0.05;
+      let padding = 0;
+      if (chartLimits.max !== chartLimits.min) {
+        padding = (chartLimits.max - chartLimits.min) * 0.05;
+      } else {
+        padding = chartLimits.max * 0.05;
+      }
       chartLimits.max += padding;
       chartLimits.min -= padding;
 
@@ -283,10 +299,25 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
         const score = parseInt(marker.anomalyScore);
         const displayScore = (score > 0 ? score : '< 1');
         contents += ('anomaly score: ' + displayScore);
-        // Display the record actual in preference to the chart value, which may be
-        // different depending on the aggregation interval of the chart.
-        contents += ('<br/>actual: ' + formatValueFilter(marker.actual, config.functionDescription));
-        contents += ('<br/>typical: ' + formatValueFilter(marker.typical, config.functionDescription));
+        if (_.has(marker, 'actual')) {
+          // Display the record actual in preference to the chart value, which may be
+          // different depending on the aggregation interval of the chart.
+          contents += ('<br/>actual: ' + formatValueFilter(marker.actual, config.functionDescription));
+          contents += ('<br/>typical: ' + formatValueFilter(marker.typical, config.functionDescription));
+        } else {
+          contents += ('<br/>value: ' + numeral(marker.value).format('0,0.[00]'));
+          if (_.has(marker, 'byFieldName') && _.has(marker, 'numberOfCauses')) {
+            const numberOfCauses = marker.numberOfCauses;
+            const byFieldName = marker.byFieldName;
+            if (numberOfCauses < 10) {
+              // If numberOfCauses === 1, won't go into this block as actual/typical copied to top level fields.
+              contents += `<br/> ${numberOfCauses} unusual ${byFieldName} values`;
+            } else {
+              // Maximum of 10 causes are stored in the record, so '10' may mean more than 10.
+              contents += `<br/> ${numberOfCauses}+ unusual ${byFieldName} values`;
+            }
+          }
+        }
       } else {
         contents += ('value: ' + numeral(marker.value).format('0,0.[00]'));
       }
@@ -395,11 +426,16 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
             chartPoint.actual = record.actual;
             chartPoint.typical = record.typical;
           } else {
-            // If only a single cause, copy value to the top level.
-            if (_.get(record, 'causes', []).length === 1) {
-              const cause = _.first(record.causes);
-              chartPoint.actual = cause.actual;
-              chartPoint.typical = cause.typical;
+            const causes = _.get(record, 'causes', []);
+            if (causes.length > 0) {
+              chartPoint.byFieldName = record.by_field_name;
+              chartPoint.numberOfCauses = causes.length;
+              if (causes.length === 1) {
+                // If only a single cause, copy actual and typical values to the top level.
+                const cause = _.first(record.causes);
+                chartPoint.actual = cause.actual;
+                chartPoint.typical = cause.typical;
+              }
             }
           }
         }
