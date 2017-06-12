@@ -53,17 +53,6 @@ export function SingleSeriesCheckerProvider($injector) {
         // move time range to the end of the data
         this.duration.start = this.duration.end - multiplierDurationLength;
       }
-
-      // add the time range query
-      this.query.bool.must.push({
-        range: {
-          [this.timeField]: {
-            gte: this.duration.start,
-            lt: this.duration.end,
-            format: 'epoch_millis'
-          }
-        }
-      });
     }
 
     run() {

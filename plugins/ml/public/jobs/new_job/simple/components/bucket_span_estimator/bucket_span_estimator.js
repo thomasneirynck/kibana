@@ -41,6 +41,17 @@ export function BucketSpanEstimatorProvider($injector) {
         minimumBucketSpanMS: 0
       };
 
+      // add the time range query
+      this.query.bool.must.push({
+        range: {
+          [this.timeField]: {
+            gte: this.duration.start,
+            lt: this.duration.end,
+            format: 'epoch_millis'
+          }
+        }
+      });
+
       this.polledDataChecker = new PolledDataChecker(
         this.index,
         this.timeField,
