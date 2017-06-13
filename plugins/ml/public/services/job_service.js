@@ -1268,7 +1268,10 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     const detectorsByJob = {};
     const customUrlsByJob = {};
 
-    _.each(jobsList, (jobObj) => {
+    // use cloned copy of jobs list so not to alter the original
+    const jobsListCopy = _.cloneDeep(jobsList);
+
+    _.each(jobsListCopy, (jobObj) => {
       const analysisConfig = jobObj.analysis_config;
       const bucketSpan = parseInterval(analysisConfig.bucket_span);
 
