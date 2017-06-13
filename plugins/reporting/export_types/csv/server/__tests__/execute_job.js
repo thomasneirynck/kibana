@@ -62,8 +62,8 @@ describe('CSV Execute Job', function () {
 
     const configGetStub = sinon.stub();
     uiSettingsGetStub = sinon.stub();
-    uiSettingsGetStub.withArgs(sinon.match.any, 'csv:separator').returns(',');
-    uiSettingsGetStub.withArgs(sinon.match.any, 'csv:quoteValues').returns(true);
+    uiSettingsGetStub.withArgs('csv:separator').returns(',');
+    uiSettingsGetStub.withArgs('csv:quoteValues').returns(true);
 
     mockServer = {
       expose: function () {},
@@ -79,7 +79,7 @@ describe('CSV Execute Job', function () {
           get: configGetStub
         };
       },
-      uiSettings: function () {
+      uiSettingsServiceFactory: () => {
         return {
           get: uiSettingsGetStub
         };
@@ -92,11 +92,11 @@ describe('CSV Execute Job', function () {
   });
 
   describe('uiSettings', function () {
-    it('should decrypt headers, and pass headers and path to uiSettings.get', async function () {
+    it('always calls callWithRequest with decrypted headers', async function () {
       const executeJob = executeJobFactory(mockServer);
       await executeJob({ headers: encryptedHeaders, fields: [], searchRequest: { index: null, body: null } }, cancellationToken);
       const requestMatch = sinon.match.has('headers', headers).and(sinon.match.has('path', sinon.match.string));
-      uiSettingsGetStub.alwaysCalledWith(requestMatch, sinon.match.any);
+      callWithRequestStub.alwaysCalledWith(requestMatch, sinon.match.any, sinon.match.any);
     });
   });
 
@@ -388,7 +388,7 @@ describe('CSV Execute Job', function () {
     });
 
     it('should use custom uiSettings csv:separator for header', async function () {
-      uiSettingsGetStub.withArgs(sinon.match.any, 'csv:separator').returns(';');
+      uiSettingsGetStub.withArgs('csv:separator').returns(';');
       const executeJob = executeJobFactory(mockServer);
       const jobParams = { headers: encryptedHeaders, fields: [ 'one', 'two' ], searchRequest: { index: null, body: null } };
       const { content } = await executeJob(jobParams, cancellationToken);
@@ -396,7 +396,7 @@ describe('CSV Execute Job', function () {
     });
 
     it('should escape column headers if uiSettings csv:quoteValues is true', async function () {
-      uiSettingsGetStub.withArgs(sinon.match.any, 'csv:quoteValues').returns(true);
+      uiSettingsGetStub.withArgs('csv:quoteValues').returns(true);
       const executeJob = executeJobFactory(mockServer);
       const jobParams = {
         headers: encryptedHeaders,
@@ -408,7 +408,7 @@ describe('CSV Execute Job', function () {
     });
 
     it(`shouldn't escape column headers if uiSettings csv:quoteValues is false`, async function () {
-      uiSettingsGetStub.withArgs(sinon.match.any, 'csv:quoteValues').returns(false);
+      uiSettingsGetStub.withArgs('csv:quoteValues').returns(false);
       const executeJob = executeJobFactory(mockServer);
       const jobParams = {
         headers: encryptedHeaders,

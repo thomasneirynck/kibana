@@ -10,7 +10,7 @@ export function getUserProvider(server) {
       return Promise.resolve(null);
     }
     const user = await callWithRequest(request, 'shield.authenticate');
-    user.isDashboardOnlyMode = await getIsUserInDashboardMode(user, request, server.uiSettings());
+    user.isDashboardOnlyMode = await getIsUserInDashboardMode(user, request.getUiSettingsService());
     return user;
   });
 }

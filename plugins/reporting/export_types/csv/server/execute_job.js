@@ -6,7 +6,6 @@ import { createGenerateCsv } from './lib/generate_csv';
 function executeJobFn(server) {
   const { callWithRequest } = server.plugins.elasticsearch.getCluster('data');
   const crypto = cryptoFactory(server);
-  const uiSettings = server.uiSettings();
   const config = server.config();
   const logger = createTaggedLogger(server, ['reporting', 'csv', 'debug']);
   const generateCsv = createGenerateCsv(logger);
@@ -23,15 +22,17 @@ function executeJobFn(server) {
 
     const fakeRequest = {
       headers: decryptedHeaders,
-      path: ''
     };
 
     const callEndpoint = (endpoint, clientParams = {}, options = {}) => {
       return callWithRequest(fakeRequest, endpoint, clientParams, options);
     };
+    const uiSettings = server.uiSettingsServiceFactory({
+      callCluster: callEndpoint
+    });
 
-    const separator = await uiSettings.get(fakeRequest, 'csv:separator');
-    const quoteValues = await uiSettings.get(fakeRequest, 'csv:quoteValues');
+    const separator = await uiSettings.get('csv:separator');
+    const quoteValues = await uiSettings.get('csv:quoteValues');
     const maxSizeBytes = config.get('xpack.reporting.csv.maxSizeBytes');
     const scroll = config.get('xpack.reporting.csv.scroll');
 
