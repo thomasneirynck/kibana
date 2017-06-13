@@ -131,13 +131,21 @@ ml-explorer-charts-container {
       display: block;
       font-size: 13px;
       font-weight: normal;
-      overflow: hidden;
-      text-overflow: ellipsis;
+
+      .explorer-chart-label-fields {
+        vertical-align: top;
+        max-width: calc(~"100% - 15px");
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        display: inline-block;
+      }
 
       a {
         float:right;
         padding-left: 5px;
       }
+
     }
 
     ml-explorer-chart {
@@ -230,7 +238,7 @@ ml-explorer-charts-container {
   }
 
   .tooltip-inner {
-    max-width: inherit;
+    max-width: 500px;
 
     .explorer-chart-info-tooltip {
       color: #ffffff;
@@ -238,7 +246,6 @@ ml-explorer-charts-container {
       font-family: Roboto, Droid, Helvetica Neue, Helvetica, Arial, sans-serif;
       font-size: 12px;
       text-align: left;
-      white-space: nowrap;
     }
   }
 

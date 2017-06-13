@@ -28,7 +28,11 @@ export function explorerChartConfigBuilder(mlJobService) {
   const compiledTooltip = _.template(
     '<div class="explorer-chart-info-tooltip">job ID: <%= jobId %><br/>' +
     'aggregation interval: <%= aggregationInterval %><br/>' +
-    'chart function: <%= chartFunction %></div>');
+    'chart function: <%= chartFunction %>' +
+    '<% for(let i = 0; i < entityFields.length; ++i) { %>' +
+    '<br/><%= entityFields[i].fieldName %>: <%= entityFields[i].fieldValue %>' +
+    '<% } %>' +
+    '</div>');
 
   // Builds the chart configuration for the provided anomaly record, returning
   // an object with properties used for the display (series function and field, aggregation interval etc),
@@ -86,7 +90,8 @@ export function explorerChartConfigBuilder(mlJobService) {
     config.infoTooltip = compiledTooltip({
       'jobId':record.job_id,
       'aggregationInterval': config.interval,
-      'chartFunction': functionLabel
+      'chartFunction': functionLabel,
+      'entityFields': config.entityFields
     });
 
     return config;
