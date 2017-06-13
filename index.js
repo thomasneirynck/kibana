@@ -9,6 +9,7 @@ import { tilemap } from './plugins/tilemap';
 import { watcher } from './plugins/watcher';
 import { grokdebugger } from './plugins/grokdebugger';
 import { dashboardViewer } from './plugins/dashboard_viewer';
+import { logstash } from './plugins/logstash';
 
 module.exports = function (kibana) {
   return [
@@ -23,5 +24,6 @@ module.exports = function (kibana) {
     watcher(kibana),
     grokdebugger(kibana),
     dashboardViewer(kibana),
+    logstash(kibana)
   ];
 };

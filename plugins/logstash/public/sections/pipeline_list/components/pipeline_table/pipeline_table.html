@@ -1,0 +1,103 @@
+<table class="kuiTable">
+  <thead>
+    <tr>
+      <th class="kuiTableHeaderCell kuiTableHeaderCell--checkBox">
+        <check-box
+          is-selected="pipelineTable.allSelected"
+          on-select-change="pipelineTable.onAllSelectedChange"
+        ></check-box>
+      </th>
+      <th class="kuiTableHeaderCell kuiTableHeaderCell--sortable">
+        <sortable-column
+          field="id"
+          on-sort-change="pipelineTable.onSortChange"
+          sort-field="pipelineTable.sortField"
+          sort-reverse="pipelineTable.sortReverse"
+        >
+          ID
+        </sortable-column>
+      </th>
+      <th class="kuiTableHeaderCell kuiTableHeaderCell--sortable">
+        Description
+      </th>
+      <th class="kuiTableHeaderCell kuiTableHeaderCell--sortable">
+        <sortable-column
+          field="lastModified.sortOrder"
+          on-sort-change="pipelineTable.onSortChange"
+          sort-field="pipelineTable.sortField"
+          sort-reverse="pipelineTable.sortReverse"
+        >
+          Last Modified
+        </sortable-column>
+      </th>
+      <th
+       class="kuiTableHeaderCell kuiTableHeaderCell--sortable"
+       ng-show="pipelineTable.isSecurityEnabled"
+      >
+        Last Modified By
+      </th>
+      <th class="kuiTableHeaderCell kuiTableHeaderCell--sortable">
+        <sortable-column
+          field="version.sortOrder"
+          on-sort-change="pipelineTable.onSortChange"
+          sort-field="pipelineTable.sortField"
+          sort-reverse="pipelineTable.sortReverse"
+        >
+          Version
+        </sortable-column>
+      </th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr
+      ng-repeat="item in pipelineTable.items"
+      class="kuiTableRow"
+    >
+      <td class="kuiTableRowCell kuiTableRowCell--checkBox">
+        <div class="kuiTableRowCell__liner">
+          <check-box
+            id="item.pipeline.id"
+            is-selected="item.selected"
+            on-select-change="pipelineTable.onPipelineSelectedChange"
+          ></check-box>
+        </div>
+      </td>
+      <td class="kuiTableRowCell">
+        <div class="kuiTableRowCell__liner">
+          <a
+            class="kuiLink"
+            ng-href="#/management/logstash/pipelines/pipeline/{{item.pipeline.id}}/edit"
+          >
+            {{item.pipeline.id}}
+          </a>
+        </div>
+      </td>
+      <td class="kuiTableRowCell">
+        <div class="kuiTableRowCell__liner">
+          {{item.pipeline.description}}
+        </div>
+      </td>
+      <td class="kuiTableRowCell">
+        <div class="kuiTableRowCell__liner">
+          <span title="{{item.pipeline.lastModified | moment}}">
+            {{ item.pipeline.lastModifiedHumanized }}
+          </span>
+        </div>
+      </td>
+      <td
+       class="kuiTableRowCell"
+       ng-show="pipelineTable.isSecurityEnabled"
+      >
+        <div class="kuiTableRowCell__liner">
+          {{item.pipeline.username}}
+        </div>
+      </td>
+      <td class="kuiTableRowCell">
+        <div class="kuiTableRowCell__liner">
+          {{item.pipeline.version}}
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>
