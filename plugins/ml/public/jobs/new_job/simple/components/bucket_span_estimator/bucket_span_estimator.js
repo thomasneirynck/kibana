@@ -41,7 +41,17 @@ export function BucketSpanEstimatorProvider($injector) {
         minimumBucketSpanMS: 0
       };
 
-      // add the time range query
+      // only run the tests over the last 250 hours of data
+      const ONE_HOUR_MS = 600000;
+      const HOUR_MULTIPLIER = 250;
+      const timePickerDurationLength = (this.duration.end - this.duration.start);
+      const multiplierDurationLength = (ONE_HOUR_MS * HOUR_MULTIPLIER);
+
+      if (timePickerDurationLength > multiplierDurationLength) {
+        // move time range to the end of the data
+        this.duration.start = this.duration.end - multiplierDurationLength;
+      }
+
       this.query.bool.must.push({
         range: {
           [this.timeField]: {

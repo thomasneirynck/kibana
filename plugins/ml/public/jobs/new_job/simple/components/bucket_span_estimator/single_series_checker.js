@@ -25,7 +25,6 @@ import { INTERVALS } from './intervals';
 export function SingleSeriesCheckerProvider($injector) {
   const es = $injector.get('es');
 
-  const HOUR_MULTIPLIER = 250;
   const REF_DATA_INTERVAL = { name:'1h',  ms: 3600000 };
 
   class SingleSeriesChecker {
@@ -45,14 +44,6 @@ export function SingleSeriesCheckerProvider($injector) {
       };
 
       this.interval = null;
-
-      const timePickerDurationLength = (this.duration.end - this.duration.start);
-      const multiplierDurationLength = (REF_DATA_INTERVAL.ms * HOUR_MULTIPLIER);
-
-      if (timePickerDurationLength > multiplierDurationLength) {
-        // move time range to the end of the data
-        this.duration.start = this.duration.end - multiplierDurationLength;
-      }
     }
 
     run() {
