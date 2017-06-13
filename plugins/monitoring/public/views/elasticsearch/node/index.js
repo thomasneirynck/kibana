@@ -87,12 +87,6 @@ uiModule.controller('esNode', ($injector, $scope) => {
   const title = $injector.get('title');
   title($scope.cluster, `Elasticsearch - Nodes - ${$scope.pageData.nodeSummary.name} - Overview`);
 
-  function setPageIconLabel(pageData) {
-    $scope.iconClass = pageData.nodeSummary.nodeTypeClass;
-    $scope.iconLabel = pageData.nodeSummary.nodeTypeLabel;
-  }
-  setPageIconLabel($scope.pageData);
-
   const features = $injector.get('features');
   const callPageData = partial(getPageData, $injector);
   // show/hide system indices in shard allocation view
@@ -110,7 +104,6 @@ uiModule.controller('esNode', ($injector, $scope) => {
     execute: () => callPageData(),
     handleResponse: (response) => {
       $scope.pageData = response;
-      setPageIconLabel(response);
     }
   });
 

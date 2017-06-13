@@ -1,9 +1,12 @@
 <div ng-controller="esNodeAdvanced">
   <monitoring-main
-    product="elasticsearch" name="nodes"
+    product="elasticsearch"
+    name="nodes"
     instance="{{ pageData.nodeSummary.name }}"
     resolver="{{ pageData.nodeSummary.resolver }}"
     page="advanced"
+    tab-icon-class="{{ pageData.nodeSummary.nodeTypeClass }}"
+    tab-icon-class="{{ pageData.nodeSummary.nodeTypeLabel }}"
   >
     <div class="details monitoring-view">
       <monitoring-node-summary node="pageData.nodeSummary"></monitoring-node-summary>

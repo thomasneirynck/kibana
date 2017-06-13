@@ -10,6 +10,7 @@ import 'plugins/monitoring/services/features';
 import 'plugins/monitoring/services/executor';
 import 'plugins/monitoring/services/license';
 import 'plugins/monitoring/services/title';
+import 'plugins/monitoring/services/breadcrumbs';
 import 'plugins/monitoring/directives';
 import 'plugins/monitoring/views';
 

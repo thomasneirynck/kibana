@@ -1,0 +1,100 @@
+import expect from 'expect.js';
+import { breadcrumbsProvider } from '../breadcrumbs_provider';
+import { MonitoringMainController } from 'plugins/monitoring/directives/main';
+
+describe('Monitoring Breadcrumbs Service', () => {
+  it('in Cluster Alerts', () => {
+    const controller = new MonitoringMainController();
+    controller.setup({
+      clusterName: 'test-cluster-foo',
+      licenseService: {},
+      breadcrumbsService: breadcrumbsProvider(),
+      attributes: {
+        name: 'alerts'
+      }
+    });
+    expect(controller.breadcrumbs).to.eql([
+      { url: '#/home', label: 'Clusters' },
+      { url: '#/overview', label: 'test-cluster-foo' }
+    ]);
+  });
+
+  it('in Cluster Overview', () => {
+    const controller = new MonitoringMainController();
+    controller.setup({
+      clusterName: 'test-cluster-foo',
+      licenseService: {},
+      breadcrumbsService: breadcrumbsProvider(),
+      attributes: {
+        name: 'overview'
+      }
+    });
+    expect(controller.breadcrumbs).to.eql([
+      { url: '#/home', label: 'Clusters' }
+    ]);
+  });
+
+  it('in ES Node - Advanced', () => {
+    const controller = new MonitoringMainController();
+    controller.setup({
+      clusterName: 'test-cluster-foo',
+      licenseService: {},
+      breadcrumbsService: breadcrumbsProvider(),
+      attributes: {
+        product: 'elasticsearch',
+        name: 'nodes',
+        instance: 'es-node-name-01',
+        resolver: 'es-node-resolver-01',
+        page: 'advanced',
+        tabIconClass: 'fa star',
+        tabIconLabel: 'Master Node',
+      }
+    });
+    expect(controller.breadcrumbs).to.eql([
+      { url: '#/home', label: 'Clusters' },
+      { url: '#/overview', label: 'test-cluster-foo' },
+      { url: '#/elasticsearch', label: 'Elasticsearch' },
+      { url: '#/elasticsearch/nodes', label: 'Nodes' },
+      { url: null, label: 'es-node-name-01' }
+    ]);
+  });
+
+  it('in Kibana Overview', () => {
+    const controller = new MonitoringMainController();
+    controller.setup({
+      clusterName: 'test-cluster-foo',
+      licenseService: {},
+      breadcrumbsService: breadcrumbsProvider(),
+      attributes: {
+        product: 'kibana',
+        name: 'overview'
+      }
+    });
+    expect(controller.breadcrumbs).to.eql([
+      { url: '#/home', label: 'Clusters' },
+      { url: '#/overview', label: 'test-cluster-foo' },
+      { url: null, label: 'Kibana' }
+    ]);
+  });
+
+  /**
+   * <monitoring-main product="logstash" name="nodes">
+   */
+  it('in Logstash Listing', () => {
+    const controller = new MonitoringMainController();
+    controller.setup({
+      clusterName: 'test-cluster-foo',
+      licenseService: {},
+      breadcrumbsService: breadcrumbsProvider(),
+      attributes: {
+        product: 'logstash',
+        name: 'listing'
+      }
+    });
+    expect(controller.breadcrumbs).to.eql([
+      { url: '#/home', label: 'Clusters' },
+      { url: '#/overview', label: 'test-cluster-foo' },
+      { url: null, label: 'Logstash' }
+    ]);
+  });
+});

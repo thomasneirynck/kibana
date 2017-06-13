@@ -1,105 +1,82 @@
-import _ from 'lodash';
+import { get } from 'lodash';
 import { uiModules } from 'ui/modules';
 import template from './index.html';
 
-function createCrumb(url, label) {
-  return { url, label };
+/*
+ * Manage data and provide helper methods for the "main" directive's template
+ */
+export class MonitoringMainController {
+  // called internally by Angular
+  constructor() {
+    this.inListing = false;
+    this.inAlerts = false;
+    this.inOverview = false;
+    this.inElasticsearch = false;
+    this.inKibana = false;
+    this.inLogstash = false;
+  }
+
+  // kick things off from the directive link function
+  setup(options) {
+    this._licenseService = options.licenseService;
+    this._breadcrumbsService = options.breadcrumbsService;
+
+    Object.assign(this, options.attributes);
+
+    // set the section we're navigated in
+    if (this.product) {
+      this.inElasticsearch = this.product === 'elasticsearch';
+      this.inKibana = this.product === 'kibana';
+      this.inLogstash = this.product === 'logstash';
+    } else {
+      this.inOverview = this.name === 'overview';
+      this.inAlerts = this.name === 'alerts';
+      this.inListing = this.name === 'listing' || this.name === 'no-data';
+    }
+
+    if (!this.inListing) {
+      // no breadcrumbs in cluster listing page
+      this.breadcrumbs = this._breadcrumbsService(options.clusterName, this);
+    }
+  }
+
+  // check whether to "highlight" a tab
+  isActiveTab(testPath) {
+    return this.name === testPath;
+  }
+
+  // check whether to show ML tab
+  isMlSupported()  {
+    return this._licenseService.mlIsSupported();
+  };
 }
 
 const uiModule = uiModules.get('plugins/monitoring/directives', []);
-uiModule.directive('monitoringMain', (license) => {
+uiModule.directive('monitoringMain', (breadcrumbs, license) => {
   return {
     restrict: 'E',
     transclude: true,
     template,
-    link: function (scope, _el, attrs) {
-      scope.name = attrs.name; // name of current page
-      scope.product = attrs.product; // undefined, elasticsearch, or kibana
-      scope.instance = attrs.instance; // undefined or name of index or instance (e.g., node)
-      scope.resolver = attrs.resolver; // undefined or id of index or instance (e.g., node)
-      scope.page = attrs.page; // undefined or the tab for an instance
-      const productIsIn = (checkKey) => scope.product === checkKey;
+    controller: MonitoringMainController,
+    controllerAs: 'monitoringMain',
+    bindToController: true,
+    link(scope, _element, attributes, controller) {
 
-      if (scope.product) {
-        scope.inElasticsearch = productIsIn('elasticsearch');
-        scope.inKibana = productIsIn('kibana');
-        scope.inLogstash = productIsIn('logstash');
-      } else {
-        scope.product = false;
-        scope.inOverview = scope.name === 'overview';
-        scope.inAlerts = scope.name === 'alerts';
-        scope.inListing = scope.name === 'listing' || scope.name === 'no-data';
-      }
+      controller.setup({
+        licenseService: license,
+        breadcrumbsService: breadcrumbs,
+        attributes: {
+          name: attributes.name,
+          product: attributes.product,
+          instance: attributes.instance,
+          resolver: attributes.resolver,
+          page: attributes.page,
+          tabIconClass: attributes.tabIconClass,
+          tabIconLabel: attributes.tabIconLabel
+        },
+        clusterName: get(scope, 'cluster.cluster_name')
+      });
 
-      // hide tabs for some pages (force to select a cluster before drill-in)
-      const noTabs = ['no-data'];
-      scope.allowTabs = !_.contains(noTabs, scope.name);
-
-      // hide clusters tab for basic license
-      scope.allowClusterTab = !license.isBasic();
-
-      scope.isActive = function (testPath) {
-        return scope.name === testPath;
-      };
-
-      let breadcrumbs = [];
-      if (!scope.inListing) {
-        breadcrumbs = [ createCrumb('#/home', 'Clusters') ];
-
-        const clusterName = _.get(scope, 'cluster.cluster_name');
-        if (!scope.inOverview && clusterName) {
-          breadcrumbs.push(createCrumb('#/overview', clusterName));
-        }
-
-        // Elasticsearch crumbs
-        if (scope.inElasticsearch) {
-          if (scope.instance) {
-            breadcrumbs.push(createCrumb('#/elasticsearch', 'Elasticsearch'));
-            if (scope.name === 'indices') {
-              breadcrumbs.push(createCrumb('#/elasticsearch/indices', 'Indices'));
-            } else if (scope.name === 'nodes') {
-              breadcrumbs.push(createCrumb('#/elasticsearch/nodes', 'Nodes'));
-            } else if (scope.name === 'ml') {
-              breadcrumbs.push(createCrumb('#/elasticsearch/ml_jobs', 'Jobs'));
-            }
-            breadcrumbs.push(createCrumb(null, scope.instance));
-          } else {
-            // don't link to Overview when we're possibly on Overview or its sibling tabs
-            breadcrumbs.push(createCrumb(null, 'Elasticsearch'));
-          }
-        }
-
-        // Kibana crumbs
-        if (scope.inKibana) {
-          if (scope.instance) {
-            breadcrumbs.push(createCrumb('#/kibana', 'Kibana'));
-            breadcrumbs.push(createCrumb('#/kibana/instances', 'Instances'));
-          } else {
-            // don't link to Overview when we're possibly on Overview or its sibling tabs
-            breadcrumbs.push(createCrumb(null, 'Kibana'));
-          }
-        }
-
-        // Logstash crumbs
-        if (scope.inLogstash) {
-          if (scope.instance) {
-            breadcrumbs.push(createCrumb('#/logstash', 'Logstash'));
-            if (scope.name === 'nodes') {
-              breadcrumbs.push(createCrumb('#/logstash/nodes', 'Nodes'));
-            }
-            breadcrumbs.push(createCrumb(null, scope.instance));
-          } else {
-            // don't link to Overview when we're possibly on Overview or its sibling tabs
-            breadcrumbs.push(createCrumb(null, 'Logstash'));
-          }
-        }
-      }
-      scope.breadcrumbs = breadcrumbs.filter(Boolean);
-
-      // Show ML tab?
-      scope.isMlSupported = () => {
-        return license.mlIsSupported();
-      };
     }
   };
 });

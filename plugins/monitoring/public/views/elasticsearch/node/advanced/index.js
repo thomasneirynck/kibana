@@ -163,18 +163,11 @@ uiModule.controller('esNodeAdvanced', ($injector, $scope) => {
   const title = $injector.get('title');
   title($scope.cluster, `Elasticsearch - Nodes - ${$scope.pageData.nodeSummary.name} - Advanced`);
 
-  function setPageIconLabel(pageData) {
-    $scope.iconClass = pageData.nodeSummary.nodeTypeClass;
-    $scope.iconLabel = pageData.nodeSummary.nodeTypeLabel;
-  }
-  setPageIconLabel($scope.pageData);
-
   const $executor = $injector.get('$executor');
   $executor.register({
     execute: () => getPageData($injector),
     handleResponse: (response) => {
       $scope.pageData = response;
-      setPageIconLabel(response);
     }
   });
 
