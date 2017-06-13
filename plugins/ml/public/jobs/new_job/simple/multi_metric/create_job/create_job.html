@@ -60,7 +60,7 @@
                     <input type="checkbox"
                       ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
                       ng-model  ="formConfig.isSparseData" />
-                      Sparse data <i ml-info-icon="new_job_sparsedata" ></i>
+                      Sparse data <i ml-info-icon="new_job_sparsedata" tooltip-append-to-body="true"></i>
                   </label>
                 </span>
               </div>
