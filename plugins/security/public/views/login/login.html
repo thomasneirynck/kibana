@@ -9,6 +9,18 @@
         <label class="control-label">Oops! Error. Try again.</label>
       </div>
 
+      <div ng-if="login.infoMessage" class="form-group error-message">
+        <label class="control-label">{{login.infoMessage}}</label>
+      </div>
+
+      <div ng-if="!login.allowLogin" class="form-group error-message">
+        <label class="control-label">{{login.loginMessage}}</label>
+      </div>
+
+      <div ng-if="login.isDisabled" class="form-group error-message">
+        <label class="control-label">Logging in requires a secure connection. Please contact your administrator.</label>
+      </div>
+
       <div class="form-group inner-addon left-addon">
         <i class="fa fa-user fa-lg fa-fw"></i>
         <input type="text" ng-disabled="login.isDisabled || !login.allowLogin" ng-model="username" class="form-control" id="username" name="username" placeholder="Username" autofocus data-test-subj="loginUsername" />
@@ -23,7 +35,7 @@
         <button
           type="submit"
           ng-disabled="login.isDisabled || !login.allowLogin || !username || !password || login.isLoading"
-          class="loginButton"
+          class="kuiButton kuiButton--primary kuiButton--fullWidth"
           data-test-subj="loginSubmit"
         >
           Log in
@@ -32,15 +44,4 @@
     </form>
   </div>
 
-  <div ng-if="login.infoMessage" class="info-container">
-    {{login.infoMessage}}
-  </div>
-
-  <div ng-if="!login.allowLogin" class="warning-container">
-    {{login.loginMessage}}
-  </div>
-
-  <div ng-if="login.isDisabled" class="warning-container">
-    Logging in requires a secure connection. Please contact your administrator.
-  </div>
 </div>

@@ -4,7 +4,7 @@
 @import '~plugins/xpack_main/style/main.less';
 
 .application {
-  background: @kibanaGray2;
+  background: @globalColorTeal;
 }
 
 .inner-addon {
@@ -26,40 +26,46 @@
 }
 
 .container {
-  width: 620px;
-  height: 185px;
-  margin: auto;
+  width: 50%;
+  height: 100vh;
   padding: 0;
   text-align: center;
-  background: @app-links-wrapper-background;
-  box-shadow: 0 0 2em @gray4;
-
-  &.error {
-    box-shadow: 0 0 2em @kibanaRed1;
-  }
+  background: @globalColorLightestGray;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   > div {
     float: left;
   }
 
   .logo-container {
-    width: 150px;
-    height: 100%;
+    width: 120px;
+    height: 120px;
     padding: 20px;
-    background-color: @kibanaPink1;
-    box-shadow: inset -10px 0 20px -10px rgba(0, 0, 0, 0.5);
+    background-color: @globalColorWhite;
+    border-radius: 50%;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 50%;
+    right: -60px;
+    margin-top: -60px;
+    text-align: center;
+
+    .kibanaWelcomeLogo {
+      width: 60px;
+      height: 60px;
+      margin: 10px 0px 10px 20px;
+    }
   }
 
   .login-form {
-    padding: 1.5em 7em;
-    width: 470px;
-    position: relative;
+    width: 300px;
+    margin-top: 20px;
 
     .form-group.error-message {
-      position: absolute;
-      left: 380px;
-      text-align: left;
-      color: white;
+      color: @globalColorRed;
     }
   }
 
@@ -108,8 +114,6 @@
 }
 
 input.form-control {
-  border: none;
   font-size: 1.125em;
   height: auto;
-  padding: 0.5em;
 }

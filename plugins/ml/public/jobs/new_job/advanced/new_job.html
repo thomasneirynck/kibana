@@ -7,29 +7,25 @@
       <div>
         <label>Choose a data source</label>
 
-        <div ng-mouseenter="ui.wizard.stepHovering=1" ng-mouseleave="ui.wizard.stepHovering=0" ng-click="ui.wizard.setDataLocation('ES')" >
-          <label class="data-location">
-            <div class="ml-round-number" ng-class="{'ml-round-number-pop':ui.wizard.stepHovering===1}">
-              <i aria-hidden="true" class="fa fa-database"></i>
-            </div>
-            <div>
-              <div>Elasticsearch server</div>
-              <div>Specify the address of an Elasticsearch server.</div>
-            </div>
-          </label>
-        </div>
+        <label class="data-location" ng-mouseenter="ui.wizard.stepHovering=1" ng-mouseleave="ui.wizard.stepHovering=0" ng-click="ui.wizard.setDataLocation('ES')" >
+          <div class="ml-round-number" ng-class="{'ml-round-number-pop':ui.wizard.stepHovering===1}">
+            <i aria-hidden="true" class="fa fa-database"></i>
+          </div>
+          <div>
+            <div>Elasticsearch server</div>
+            <div>Specify the address of an Elasticsearch server.</div>
+          </div>
+        </label>
 
-        <div ng-mouseenter="ui.wizard.stepHovering=3" ng-mouseleave="ui.wizard.stepHovering=0" ng-click="ui.wizard.setDataLocation('NONE')">
-          <label class="data-location">
-            <div class="ml-round-number" ng-class="{'ml-round-number-pop':ui.wizard.stepHovering===3}">
-              <i aria-hidden="true" class="fa fa-upload"></i>
-            </div>
-            <div>
-              <div>Other data source</div>
-              <div>Create a job without reference to source data. Specify fields manually and upload data later using the API.</div>
-            </div>
-          </label>
-        </div>
+        <label class="data-location" ng-mouseenter="ui.wizard.stepHovering=3" ng-mouseleave="ui.wizard.stepHovering=0" ng-click="ui.wizard.setDataLocation('NONE')">
+          <div class="ml-round-number" ng-class="{'ml-round-number-pop':ui.wizard.stepHovering===3}">
+            <i aria-hidden="true" class="fa fa-upload"></i>
+          </div>
+          <div>
+            <div>Other data source</div>
+            <div>Create a job without reference to source data. Specify fields manually and upload data later using the API.</div>
+          </div>
+        </label>
       </div>
     </div>
 

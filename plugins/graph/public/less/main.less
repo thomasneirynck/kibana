@@ -30,9 +30,7 @@
 }
 
 .pulseControl {
-  -webkit-animation-name: greenPulse;
-  -webkit-animation-duration: 1s;
-  -webkit-animation-iteration-count: infinite;
+  border: solid 1px @globalColorTeal;
 }
 
 
@@ -326,4 +324,14 @@ navbar .input-group{
     background-color: @white;
   }
 
+}
+
+.graphPlusButton {
+  background: @globalColorBlue;
+  border: none;
+  color: white;
+  &:hover {
+    background: darken(@globalColorBlue, 10%);
+    cursor: pointer;
+  }
 }
