@@ -257,7 +257,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     }
     const confirmModalOptions = {
       onConfirm: yesFn,
-      conCancel: noFn,
+      onCancel: noFn,
       confirmButtonText: 'Clear workspace'
     };
     confirmModal('This will clear the workspace - are you sure?', confirmModalOptions);
