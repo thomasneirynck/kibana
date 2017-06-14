@@ -126,19 +126,32 @@ export function BucketSpanEstimatorProvider($injector) {
             this.thresholds.minimumBucketSpanMS = result.minimumBucketSpan;
           }
           let checkCounter = this.checkers.length;
+          const runComplete = () => {
+            checkCounter--;
+
+            if (checkCounter === 0) {
+              const median = this.processResults();
+              if (median !== null) {
+                resolve(median);
+              } else {
+                // no results found
+                reject();
+              }
+            }
+          };
+
           _.each(this.checkers, (check) => {
             check.check.run()
             .then((interval) => {
               check.result = interval;
-              checkCounter--;
-
-              if (checkCounter === 0) {
-                const results = this.processResults();
-                resolve(results);
-              }
+              runComplete();
             })
-            .catch((resp) => {
-              reject(resp);
+            .catch(() => {
+              // run failed. this may be due to a lack of data
+              // mark the result as null so it can be filtered out
+              // later by processResults()
+              check.result = null;
+              runComplete();
             });
           });
         })
@@ -149,60 +162,73 @@ export function BucketSpanEstimatorProvider($injector) {
     }
 
     processResults() {
-      let allResults = _.map(this.checkers, 'result');
-      allResults = _.sortBy(allResults, r => r.ms);
+      const allResults = _.map(this.checkers, 'result');
 
-      const reducedResults = [];
+      let reducedResults = [];
       const numberOfSplitFields = this.splitFieldValues.length || 1;
       // find the median results per detector
       // if the data has been split, the may be ten results per detector,
       // so we need to find the median of those first.
       for(let i = 0; i < this.aggTypes.length; i++) {
-        const resultsSubset = allResults.slice(i, i + numberOfSplitFields);
+        const pos = (i * numberOfSplitFields);
+        let resultsSubset = allResults.slice(pos, pos + numberOfSplitFields);
+        // remove results of tests which have failed
+        resultsSubset = _.remove(resultsSubset, res => res !== null);
+        resultsSubset = _.sortBy(resultsSubset, r => r.ms);
+
         const tempMedian = this.findMedian(resultsSubset);
-        reducedResults.push(tempMedian);
+        if (tempMedian !== null) {
+          reducedResults.push(tempMedian);
+        }
       }
+
+      reducedResults = _.sortBy(reducedResults, r => r.ms);
 
       return this.findMedian(reducedResults);
     }
 
     findMedian(results) {
-      if (results.length % 2 === 0) {
-        // even number of results
-        const medIndex = (((results.length) / 2) - 1);
-        // find the two middle values
-        const med1 = results[medIndex];
-        const med2 = results[medIndex + 1];
+      let median = null;
 
-        let interval = null;
+      if (results.length) {
+        if (results.length % 2 === 0) {
+          // even number of results
+          const medIndex = (((results.length) / 2) - 1);
+          // find the two middle values
+          const med1 = results[medIndex];
+          const med2 = results[medIndex + 1];
 
-        if (med1 === med2) {
-          // if they're the same, use them
-          return med1;
-        } else {
-          // find the average ms value between the two middle intervals
-          const avgMs = ((med2.ms - med1.ms) / 2) + med1.ms;
-          // loop over the allowed bucket spans to find closest one
-          for(let i = 1; i < INTERVALS.length; i++) {
-            if(avgMs < INTERVALS[i].ms) {
-              // see if it's closer to this interval or the one before
-              const int1 = INTERVALS[i - 1];
-              const int2 = INTERVALS[i];
-              const diff = int2.ms - int1.ms;
-              const d = avgMs - int1.ms;
-              if ((d / diff) < 0.5) {
-                interval =  int1;
-              } else {
-                interval =  int2;
+          if (med1 === med2) {
+            // if they're the same, use them
+            median = med1;
+          } else {
+            let interval = null;
+            // find the average ms value between the two middle intervals
+            const avgMs = ((med2.ms - med1.ms) / 2) + med1.ms;
+            // loop over the allowed bucket spans to find closest one
+            for(let i = 1; i < INTERVALS.length; i++) {
+              if(avgMs < INTERVALS[i].ms) {
+                // see if it's closer to this interval or the one before
+                const int1 = INTERVALS[i - 1];
+                const int2 = INTERVALS[i];
+                const diff = int2.ms - int1.ms;
+                const d = avgMs - int1.ms;
+                if ((d / diff) < 0.5) {
+                  interval =  int1;
+                } else {
+                  interval =  int2;
+                }
+                break;
               }
-              break;
             }
+            median = interval;
           }
+        } else {
+          // odd number of results, take the middle one
+          median = results[(results.length - 1) / 2];
         }
-        return interval;
-      } else {
-        return results[(results.length - 1) / 2];
       }
+      return median;
     }
   }
   return BucketSpanEstimator;

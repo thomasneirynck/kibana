@@ -37,10 +37,9 @@ export function SingleSeriesCheckerProvider($injector) {
       this.query = query;
       this.thresholds = thresholds;
       this.refMetricData = {
-        meanValue: 0,
-        meanDiff: 0,
         varValue: 0,
-        varDiff: 0
+        varDiff: 0,
+        created: false
       };
 
       this.interval = null;
@@ -69,7 +68,7 @@ export function SingleSeriesCheckerProvider($injector) {
             start();
           })
           .catch((resp) => {
-            console.log('Could not load metric reference data');
+            console.log('Could not load metric reference data', this);
             reject(resp);
           });
         }
@@ -99,20 +98,23 @@ export function SingleSeriesCheckerProvider($injector) {
             const buckets = resp.aggregations.non_empty_buckets.buckets;
             const fullBuckets = this.getFullBuckets(buckets);
             if (fullBuckets.length) {
-
               let pass = true;
+
+              // test that the more than 20% of the buckets contain data
               if (pass && this.testBucketPercentage(fullBuckets, buckets) === false) {
                 pass = false;
               }
 
+              // test that the full buckets contain at least 5 documents
               if (this.aggType.mlName === 'sum' || this.aggType.mlName === 'count') {
                 if (pass && this.testSumCountBuckets(fullBuckets) === false) {
                   pass = false;
                 }
               }
 
+              // scale variation test
               // only run this test for bucket spans less than 1 hour
-              if (this.field !== null && interval.ms < 3600000) {
+              if (this.refMetricData.created && this.field !== null && interval.ms < 3600000) {
                 if (pass && this.testMetricData(fullBuckets) === false) {
                   pass = false;
                 }
@@ -132,6 +134,7 @@ export function SingleSeriesCheckerProvider($injector) {
                 }
               }
             } else {
+              console.log('runTest stopped because fullBuckets is empty', this);
               reject();
             }
           })
@@ -239,7 +242,7 @@ export function SingleSeriesCheckerProvider($injector) {
       };
     }
 
-    // create reference data for the scale variation check
+    // create reference data for the scale variation test
     createRefMetricData(intervalMs) {
       return new Promise((resolve, reject) => {
         if (this.field === null) {
@@ -253,8 +256,7 @@ export function SingleSeriesCheckerProvider($injector) {
           const fullBuckets = this.getFullBuckets(buckets);
           if (fullBuckets.length) {
             this.refMetricData = this.createMetricData(fullBuckets);
-          } else {
-            reject(resp);
+            this.refMetricData.created = true;
           }
 
           resolve();
@@ -265,7 +267,7 @@ export function SingleSeriesCheckerProvider($injector) {
       });
     }
 
-    // scale variation check
+    // scale variation test
     testMetricData(fullBuckets) {
       const metricData = this.createMetricData(fullBuckets);
       const stat = (metricData.varDiff / metricData.varValue) / (this.refMetricData.varDiff / this.refMetricData.varValue);
