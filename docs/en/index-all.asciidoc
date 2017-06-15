@@ -1,0 +1,19 @@
+[[kibana-guide]]
+= Kibana User Guide
+
+:include-xpack:  true
+:kib-repo-dir:   {docdir}/../../../kibana/docs
+
+:xpack:           X-Pack
+:security:        X-Pack security
+:monitoring:      X-Pack monitoring
+:watcher:         Watcher
+:reporting:       X-Pack reporting
+:graph:           X-Pack graph
+:searchprofiler:  X-Pack search profiler
+:xpackml:         X-Pack machine learning
+:es:              Elasticsearch
+:kib:             Kibana
+
+include::{kib-repo-dir}/Versions.asciidoc[]
+include::index-shared.asciidoc[]

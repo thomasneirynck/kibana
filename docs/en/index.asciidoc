@@ -1,0 +1,7 @@
+[[kibana-guide]]
+= Kibana User Guide
+
+:kib-repo-dir:    {docdir}/../../../kibana/docs
+
+include::{kib-repo-dir}/Versions.asciidoc[]
+include::index-shared.asciidoc[]
