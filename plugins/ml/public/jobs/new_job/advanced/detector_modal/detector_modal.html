@@ -98,7 +98,7 @@
 
   <button
     ng-click="save()"
-    ng-disabled="(saveLock === true)"
+    ng-disabled="(saveLock === true) || (detector.function === '')"
     class="kuiButton kuiButton--primary"
     aria-label="Save">
     {{ (editMode? "Update" : "Add") }}
