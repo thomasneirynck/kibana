@@ -130,7 +130,7 @@ export function SingleSeriesCheckerProvider($injector) {
               }
 
               // test that the full buckets contain at least 5 documents
-              if (this.aggType.mlName === 'sum' || this.aggType.mlName === 'count') {
+              if (this.aggType.name === 'sum' || this.aggType.name === 'count') {
                 if (pass && this.testSumCountBuckets(fullBuckets) === false) {
                   pass = false;
                 }
