@@ -44,7 +44,7 @@ export function filterAggTypes(aggTypes) {
       typeCopy = angular.copy(type);
       typeCopy.title   = 'Low count';
       typeCopy.mlName = 'low_count';
-      typeCopy.mlModelPlotAgg = { ax: 'max', min: 'min' };
+      typeCopy.mlModelPlotAgg = { max: 'max', min: 'min' };
       type.isCountType = true;
       filteredAggTypes.push(typeCopy);
 

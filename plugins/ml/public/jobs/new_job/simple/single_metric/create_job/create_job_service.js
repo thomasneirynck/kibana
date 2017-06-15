@@ -333,6 +333,9 @@ module.service('mlSingleMetricJobService', function (
 
         // finally, modify the detector before saving
         dtr.function = 'non_zero_count';
+        // add a description using the original function name rather 'non_zero_count'
+        // as the user may not be aware it's been changed
+        dtr.detector_description = `${func} (${dtr.field_name})`;
         delete dtr.field_name;
 
         break;
