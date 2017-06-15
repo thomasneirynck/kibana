@@ -114,7 +114,8 @@ export function BucketSpanEstimatorProvider($injector) {
     run() {
       return new Promise((resolve, reject) => {
         if (this.checkers.length === 0) {
-          reject();
+          console.log('Run has stopped because no checks where created');
+          reject('Run has stopped because no checks where created');
         }
 
         this.polledDataChecker.run()
@@ -135,7 +136,8 @@ export function BucketSpanEstimatorProvider($injector) {
                 resolve(median);
               } else {
                 // no results found
-                reject();
+                console.log('Run has stopped because no checks returned a valid interval');
+                reject('Run has stopped because no checks returned a valid interval');
               }
             }
           };
@@ -213,11 +215,7 @@ export function BucketSpanEstimatorProvider($injector) {
                 const int2 = INTERVALS[i];
                 const diff = int2.ms - int1.ms;
                 const d = avgMs - int1.ms;
-                if ((d / diff) < 0.5) {
-                  interval =  int1;
-                } else {
-                  interval =  int2;
-                }
+                interval = ((d / diff) < 0.5) ? int1 : int2;
                 break;
               }
             }

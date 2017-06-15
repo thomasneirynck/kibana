@@ -132,7 +132,8 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
           splitField,
           splitFieldValues);
 
-        bss.run().then((interval) => {
+        bss.run()
+        .then((interval) => {
           $scope.formConfig.bucketSpan = interval.name;
           $scope.$applyAsync();
           $scope.ui.bucketSpanEstimator.status = STATUS.FINISHED;

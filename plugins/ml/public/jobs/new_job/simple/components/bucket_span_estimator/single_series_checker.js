@@ -20,7 +20,7 @@
  * Bucket spans: 5m, 10m, 30m, 1h, 3h
  */
 
-import { INTERVALS } from './intervals';
+import { INTERVALS, LONG_INTERVALS } from './intervals';
 
 export function SingleSeriesCheckerProvider($injector) {
   const es = $injector.get('es');
@@ -81,10 +81,34 @@ export function SingleSeriesCheckerProvider($injector) {
 
         // create filtered copy of INTERVALS
         // not including any buckets spans lower that the min threshold
+        // if the data has been detected as being polled, the min threshold
+        // is set to that poll interval
         const intervals = [];
         for (let i = 0; i < INTERVALS.length; i++) {
           if (INTERVALS[i].ms >= this.thresholds.minimumBucketSpanMS) {
             intervals.push(INTERVALS[i]);
+          }
+        }
+
+        // if none of the normal intervals fit
+        // check the poll interval against longer bucket spans
+        // if any of these match, call resolve and skip all other tests
+        if (intervals.length === 0) {
+          let interval = null;
+          for (let i = 1; i < LONG_INTERVALS.length; i++) {
+            const int1 = LONG_INTERVALS[i - 1];
+            const int2 = LONG_INTERVALS[i];
+            if (this.thresholds.minimumBucketSpanMS >= int1.ms &&
+              this.thresholds.minimumBucketSpanMS < int2.ms) {
+              // value is between two intervals, find out which it's closest to.
+              const diff = int2.ms - int1.ms;
+              const d = this.thresholds.minimumBucketSpanMS - int1.ms;
+              interval = ((d / diff) < 0.5) ? int1 : int2;
+              break;
+            }
+          }
+          if (interval !== null) {
+            resolve(interval);
           }
         }
 
@@ -135,7 +159,7 @@ export function SingleSeriesCheckerProvider($injector) {
               }
             } else {
               console.log('runTest stopped because fullBuckets is empty', this);
-              reject();
+              reject('runTest stopped because fullBuckets is empty');
             }
           })
           .catch((resp) => {
