@@ -17,10 +17,13 @@
 
 import './styles/main.less';
 
+import semver from 'semver';
+import { metadata } from 'ui/metadata';
+
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlEngineApiHelpLink', function () {
+module.directive('mlDocumentationHelpLink', function () {
   return {
     scope: {
       uri: '@mlUri',
@@ -28,12 +31,17 @@ module.directive('mlEngineApiHelpLink', function () {
     },
     restrict: 'AE',
     replace: true,
-    template: '<a href="{{fullUrl()}}" target="_blank" class="ml-engine-api-help-link" tooltip="{{label}}">' +
+    template: '<a href="{{fullUrl()}}" target="_blank" class="documentation-help-link" tooltip="{{label}}">' +
                 '{{label}}<i class="fa fa-external-link"></i></a>',
     controller: function ($scope) {
-      const website = 'http://www.prelert.com/docs/engine_api';
-      const version = '2.0';
-      $scope.fullUrl = function () {return website + '/' + version + '/' + $scope.uri;};
+      const baseUrl = 'https://www.elastic.co';
+      const major = semver.major(metadata.version);
+      const minor = semver.minor(metadata.version);
+      const version = `${major}.${minor}`;
+
+      $scope.fullUrl = function () {
+        return `${baseUrl}/guide/en/x-pack/${version}/${$scope.uri}`;
+      };
     }
   };
 

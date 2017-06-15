@@ -30,41 +30,41 @@ module.controller('MlDetectorModal', function ($scope, $modalInstance, params, m
   let index = -1;
 
   $scope.functions = [
-    { id: 'count',                 uri: 'count.html#count' },
-    { id: 'low_count',             uri: 'count.html#count' },
-    { id: 'high_count',            uri: 'count.html#count' },
-    { id: 'non_zero_count',        uri: 'count.html#non-zero-count' },
-    { id: 'low_non_zero_count',    uri: 'count.html#non-zero-count' },
-    { id: 'high_non_zero_count',   uri: 'count.html#non-zero-count' },
-    { id: 'distinct_count',        uri: 'count.html#distinct-count' },
-    { id: 'low_distinct_count',    uri: 'count.html#distinct-count' },
-    { id: 'high_distinct_count',   uri: 'count.html#distinct-count' },
-    { id: 'rare',                  uri: 'rare.html#rare' },
-    { id: 'freq_rare',             uri: 'rare.html#freq-rare' },
-    { id: 'info_content',          uri: 'info_content.html#info-content' },
-    { id: 'low_info_content',      uri: 'info_content.html#info-content' },
-    { id: 'high_info_content',     uri: 'info_content.html#info-content' },
-    { id: 'metric',                uri: 'metric.html#metric' },
-    { id: 'median',                uri: 'metric.html#median' },
-    { id: 'low_median',            uri: 'metric.html#median' },
-    { id: 'high_median',           uri: 'metric.html#median' },
-    { id: 'mean',                  uri: 'metric.html#mean' },
-    { id: 'low_mean',              uri: 'metric.html#mean' },
-    { id: 'high_mean',             uri: 'metric.html#mean' },
-    { id: 'min',                   uri: 'metric.html#min' },
-    { id: 'max',                   uri: 'metric.html#max' },
-    { id: 'varp',                  uri: 'metric.html#varp' },
-    { id: 'low_varp',              uri: 'metric.html#varp' },
-    { id: 'high_varp',             uri: 'metric.html#varp' },
-    { id: 'sum',                   uri: 'sum.html#sum' },
-    { id: 'low_sum',               uri: 'sum.html#sum' },
-    { id: 'high_sum',              uri: 'sum.html#sum' },
-    { id: 'non_null_sum',          uri: 'sum.html#non-null-sum' },
-    { id: 'low_non_null_sum',      uri: 'sum.html#non-null-sum' },
-    { id: 'high_non_null_sum',     uri: 'sum.html#non-null-sum' },
-    { id: 'time_of_day',           uri: 'time.html#time-of-day' },
-    { id: 'time_of_week',          uri: 'time.html#time-of-week' },
-    { id: 'lat_long',              uri: 'geographic.html' },
+    { id: 'count',                 uri: 'ml-count-functions.html#ml-count' },
+    { id: 'low_count',             uri: 'ml-count-functions.html#ml-count' },
+    { id: 'high_count',            uri: 'ml-count-functions.html#ml-count' },
+    { id: 'non_zero_count',        uri: 'ml-count-functions.html#ml-nonzero-count' },
+    { id: 'low_non_zero_count',    uri: 'ml-count-functions.html#ml-nonzero-count' },
+    { id: 'high_non_zero_count',   uri: 'ml-count-functions.html#ml-nonzero-count' },
+    { id: 'distinct_count',        uri: 'ml-count-functions.html#ml-distinct-count' },
+    { id: 'low_distinct_count',    uri: 'ml-count-functions.html#ml-distinct-count' },
+    { id: 'high_distinct_count',   uri: 'ml-count-functions.html#ml-distinct-count' },
+    { id: 'rare',                  uri: 'ml-rare-functions.html#ml-rare' },
+    { id: 'freq_rare',             uri: 'ml-rare-functions.html#ml-freq-rare' },
+    { id: 'info_content',          uri: 'ml-info-functions.html#ml-info-content' },
+    { id: 'low_info_content',      uri: 'ml-info-functions.html#ml-info-content' },
+    { id: 'high_info_content',     uri: 'ml-info-functions.html#ml-info-content' },
+    { id: 'metric',                uri: 'ml-metric-functions.html#ml-metric-metric' },
+    { id: 'median',                uri: 'ml-metric-functions.html#ml-metric-median' },
+    { id: 'low_median',            uri: 'ml-metric-functions.html#ml-metric-median' },
+    { id: 'high_median',           uri: 'ml-metric-functions.html#ml-metric-median' },
+    { id: 'mean',                  uri: 'ml-metric-functions.html#ml-metric-mean' },
+    { id: 'low_mean',              uri: 'ml-metric-functions.html#ml-metric-mean' },
+    { id: 'high_mean',             uri: 'ml-metric-functions.html#ml-metric-mean' },
+    { id: 'min',                   uri: 'ml-metric-functions.html#ml-metric-min' },
+    { id: 'max',                   uri: 'ml-metric-functions.html#ml-metric-max' },
+    { id: 'varp',                  uri: 'ml-metric-functions.html#ml-metric-varp' },
+    { id: 'low_varp',              uri: 'ml-metric-functions.html#ml-metric-varp' },
+    { id: 'high_varp',             uri: 'ml-metric-functions.html#ml-metric-varp' },
+    { id: 'sum',                   uri: 'ml-sum-functions.html#ml-sum' },
+    { id: 'low_sum',               uri: 'ml-sum-functions.html#ml-sum' },
+    { id: 'high_sum',              uri: 'ml-sum-functions.html#ml-sum' },
+    { id: 'non_null_sum',          uri: 'ml-sum-functions.html#ml-nonnull-sum' },
+    { id: 'low_non_null_sum',      uri: 'ml-sum-functions.html#ml-nonnull-sum' },
+    { id: 'high_non_null_sum',     uri: 'ml-sum-functions.html#ml-nonnull-sum' },
+    { id: 'time_of_day',           uri: 'ml-time-functions.html#ml-time-of-day' },
+    { id: 'time_of_week',          uri: 'ml-time-functions.html#ml-time-of-week' },
+    { id: 'lat_long',              uri: 'ml-geo-functions.html#ml-lat-long' },
   ];
 
   $scope.properties = params.properties;
@@ -92,15 +92,12 @@ module.controller('MlDetectorModal', function ($scope, $modalInstance, params, m
 
   $scope.functionChange = function () {
     const func = _.findWhere($scope.functions, { id: $scope.detector.function });
-    $scope.helpLink.uri = 'functions/';
-    $scope.helpLink.label = 'Help for ';
+    $scope.helpLink.label = 'Help for analytical functions';
+    $scope.helpLink.uri = 'ml-functions.html';
 
     if (func) {
-      $scope.helpLink.uri += func.uri;
-      $scope.helpLink.label += func.id;
-    } else {
-      $scope.helpLink.uri += 'functions.html';
-      $scope.helpLink.label += 'analytical functions';
+      $scope.helpLink.uri = func.uri;
+      $scope.helpLink.label = `Help for ${func.id}`;
     }
   };
 

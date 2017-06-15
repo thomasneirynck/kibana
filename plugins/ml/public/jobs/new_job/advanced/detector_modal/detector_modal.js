@@ -15,3 +15,4 @@
 
 import './styles/main.less';
 import './detector_modal_controller';
+import 'plugins/ml/components/documentation_help_link';
