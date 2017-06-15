@@ -12,7 +12,7 @@ describe('Quota Metric Calculation', () => {
       uuidField: 'cluster_uuid',
       timestampField: 'timestamp'
     });
-    expect(myQuotaMetric.calculation()).to.be(undefined);
+    expect(myQuotaMetric.calculation()).to.be(null);
   });
 
   it('When bucket has valid Δusage, Δperiods, and quota', () => {
@@ -48,6 +48,6 @@ describe('Quota Metric Calculation', () => {
       usage_deriv: { value: null },
       periods_deriv: { value: null },
       metric: { value: Infinity } // is the val for normal CPU usage, will be taken as return value
-    })).to.be(Infinity);
+    })).to.be(null);
   });
 });

@@ -167,8 +167,8 @@ export class QuotaMetric extends Metric {
         return factor * 100; // convert factor to percentage
 
       }
-      // if throttling is NOT configured
-      return _.get(bucket, 'metric.value'); // "metric" is an auto-added aggregation for `this.field`, which is the "actual" cpu
+      // if throttling is NOT configured, show nothing. The user should see that something is not configured correctly
+      return null;
 
     };
   }

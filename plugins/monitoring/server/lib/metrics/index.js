@@ -422,7 +422,7 @@ const metricInstances = {
       label: 'Cgroup CPU Utilization',
       description: (
         'CPU Usage time compared to the CPU quota shown in percentage. If CPU ' +
-        'quotas are not set, then the OS level CPU usage in percentage is shown.'
+        'quotas are not set, then no data will be shown.'
       ),
       type: 'node'
     };
@@ -1131,7 +1131,7 @@ const metricInstances = {
       label: 'Cgroup CPU Utilization',
       description: (
         'CPU Usage time compared to the CPU quota shown in percentage. If CPU ' +
-        'quotas are not set, then the OS level CPU usage in percentage is shown.'
+        'quotas are not set, then no data will be shown.'
       )
     };
     return {

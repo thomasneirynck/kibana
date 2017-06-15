@@ -48,7 +48,7 @@ function quotaMetricCalculation(bucket) {
 
   }
   // if throttling is NOT configured
-  return _.get(bucket, 'metric.value'); // "metric" is an auto-added aggregation for `this.field`, which is the "actual" cpu
+  return null;
 }
 
 
@@ -904,7 +904,7 @@ export const expected = {
     'title': 'CPU Utilization',
     'description': (
       'CPU Usage time compared to the CPU quota shown in percentage. If CPU ' +
-      'quotas are not set, then the OS level CPU usage in percentage is shown.'
+      'quotas are not set, then no data will be shown.'
     ),
     'type': 'node',
     'app': 'elasticsearch',
@@ -954,7 +954,7 @@ export const expected = {
     'label': 'CPU Utilization',
     'description': (
       'CPU Usage time compared to the CPU quota shown in percentage. If CPU ' +
-      'quotas are not set, then the OS level CPU usage in percentage is shown.'
+      'quotas are not set, then no data will be shown.'
     ),
     'type': 'node',
     'app': 'elasticsearch',
@@ -2329,7 +2329,7 @@ export const expected = {
     'title': 'CPU Utilization',
     'description': (
       'CPU Usage time compared to the CPU quota shown in percentage. If CPU ' +
-      'quotas are not set, then the OS level CPU usage in percentage is shown.'
+      'quotas are not set, then no data will be shown.'
     ),
     'app': 'logstash',
     'format': '0,0.[00]',
@@ -2378,7 +2378,7 @@ export const expected = {
     'label': 'CPU Utilization',
     'description': (
       'CPU Usage time compared to the CPU quota shown in percentage. If CPU ' +
-      'quotas are not set, then the OS level CPU usage in percentage is shown.'
+      'quotas are not set, then no data will be shown.'
     ),
     'app': 'logstash',
     'format': '0,0.[00]',
