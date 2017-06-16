@@ -729,7 +729,7 @@ module
   }
 
   $scope.setFullTimeRange = function () {
-    mlMultiMetricJobService.indexTimeRange(indexPattern)
+    mlMultiMetricJobService.indexTimeRange(indexPattern, query)
     .then((resp) => {
       timefilter.time.from = moment(resp.start.epoch).toISOString();
       timefilter.time.to = moment(resp.end.epoch).toISOString();

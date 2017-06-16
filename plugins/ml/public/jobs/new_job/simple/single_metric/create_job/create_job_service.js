@@ -449,7 +449,7 @@ module.service('mlSingleMetricJobService', function (
     return deferred.promise;
   };
 
-  this.indexTimeRange = function (indexPattern) {
+  this.indexTimeRange = function (indexPattern, query) {
     const deferred = $q.defer();
     const obj = { success: true, start: { epoch:0, string:'' }, end: { epoch:0, string:'' } };
 
@@ -457,15 +457,16 @@ module.service('mlSingleMetricJobService', function (
       index: indexPattern.id,
       size: 0,
       body: {
-        'aggs': {
-          'earliest': {
-            'min': {
-              'field': indexPattern.timeFieldName
+        query,
+        aggs: {
+          earliest: {
+            min: {
+              field: indexPattern.timeFieldName
             }
           },
-          'latest': {
-            'max': {
-              'field': indexPattern.timeFieldName
+          latest: {
+            max: {
+              field: indexPattern.timeFieldName
             }
           }
         }
