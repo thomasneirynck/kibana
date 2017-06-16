@@ -1,4 +1,7 @@
-<div class="kuiButton kuiButton--small kuiButton--secondary pull-right" ng-click="toggleActive()" ng-class="{ active: onlyActive }"><span ng-if="onlyActive">Show</span><span ng-if="!onlyActive">Hide</span> History</div>
+<button class="kuiButton kuiButton--small kuiButton--secondary pull-right" ng-click="toggleActive()" ng-class="{ active: onlyActive }">
+  <span ng-if="onlyActive">Show</span>
+  <span ng-if="!onlyActive">Hide</span> History
+</button>
 <h1 class="monitoring-cluster-view-title">Shard Activity</h1>
 <table class="table table-condensed">
   <thead>
