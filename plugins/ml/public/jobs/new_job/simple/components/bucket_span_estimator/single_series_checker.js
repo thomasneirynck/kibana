@@ -100,15 +100,14 @@ export function SingleSeriesCheckerProvider($injector) {
             const int2 = LONG_INTERVALS[i];
             if (this.thresholds.minimumBucketSpanMS >= int1.ms &&
               this.thresholds.minimumBucketSpanMS < int2.ms) {
-              // value is between two intervals, find out which it's closest to.
-              const diff = int2.ms - int1.ms;
-              const d = this.thresholds.minimumBucketSpanMS - int1.ms;
-              interval = ((d / diff) < 0.5) ? int1 : int2;
+              // value is between two intervals, choose the highest
+              interval = int2;
               break;
             }
           }
           if (interval !== null) {
             resolve(interval);
+            return;
           }
         }
 

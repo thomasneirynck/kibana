@@ -42,7 +42,7 @@ export function BucketSpanEstimatorProvider($injector) {
       };
 
       // only run the tests over the last 250 hours of data
-      const ONE_HOUR_MS = 600000;
+      const ONE_HOUR_MS = 3600000;
       const HOUR_MULTIPLIER = 250;
       const timePickerDurationLength = (this.duration.end - this.duration.start);
       const multiplierDurationLength = (ONE_HOUR_MS * HOUR_MULTIPLIER);
@@ -56,7 +56,7 @@ export function BucketSpanEstimatorProvider($injector) {
         range: {
           [this.timeField]: {
             gte: this.duration.start,
-            lt: this.duration.end,
+            lte: this.duration.end,
             format: 'epoch_millis'
           }
         }
