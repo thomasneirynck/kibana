@@ -59,7 +59,12 @@
       </td>
       <td class="snapshot-repo" ng-if="activity">
         <h6 ng-if="activity.type !== 'SNAPSHOT'">n/a</h6>
-        <div ng-if="activity.type === 'SNAPSHOT'"><p>logstash-data</p><p>logstash-s3-backup</p></div>
+        <div ng-if="activity.type === 'SNAPSHOT'">
+          <h6>
+            {{ activity.source.repository }} /
+            {{ activity.source.snapshot }}
+          </h6>
+        </div>
       </td>
       <td class="files">
         <h5>{{ activity.index.files.percent }}</h5>
