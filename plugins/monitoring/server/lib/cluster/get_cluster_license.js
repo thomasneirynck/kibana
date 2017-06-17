@@ -21,11 +21,6 @@ export function getClusterLicense(req, clusterUuid) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', clusterCheckParams)
   .then(response => {
-    const license = get(response, 'hits.hits[0]._source.license', {});
-    return Object.assign(
-      {},
-      license,
-      { active: get(license, 'status') === 'active' }
-    );
+    return get(response, 'hits.hits[0]._source.license', {});
   });
 }

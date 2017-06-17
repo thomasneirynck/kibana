@@ -3,7 +3,6 @@ import sinon from 'sinon';
 import { createStubs } from './fixtures/create_stubs';
 import { alertsClusterSearch } from '../alerts_cluster_search';
 
-const getClusterLicense = () => Promise.resolve({});
 const mockQueryResult = {
   hits: {
     hits: [
@@ -25,7 +24,7 @@ describe('Alerts Cluster Search', () => {
 
     it('max hit count option', () => {
       const { mockReq, callWithRequestStub } = createStubs(mockQueryResult, featureStub);
-      return alertsClusterSearch(mockReq, 'cluster-1234', getClusterLicense, checkLicense)
+      return alertsClusterSearch(mockReq, { cluster_uuid: 'cluster-1234' }, checkLicense)
       .then(alerts => {
         const result = [ { alertsClusterSearchTest: true } ];
         expect(alerts).to.eql(result);
@@ -35,7 +34,7 @@ describe('Alerts Cluster Search', () => {
 
     it('set hit count option', () => {
       const { mockReq, callWithRequestStub } = createStubs(mockQueryResult, featureStub);
-      return alertsClusterSearch(mockReq, 'cluster-1234', getClusterLicense, checkLicense, { size: 3 })
+      return alertsClusterSearch(mockReq, { cluster_uuid: 'cluster-1234' }, checkLicense, { size: 3 })
       .then(alerts => {
         const result = [ { alertsClusterSearchTest: true } ];
         expect(alerts).to.eql(result);
@@ -51,7 +50,7 @@ describe('Alerts Cluster Search', () => {
       });
       const checkLicense = sinon.stub();
       const { mockReq, callWithRequestStub } = createStubs({}, featureStub);
-      return alertsClusterSearch(mockReq, 'cluster-1234', getClusterLicense, checkLicense)
+      return alertsClusterSearch(mockReq, { cluster_uuid: 'cluster-1234' }, checkLicense)
       .then(alerts => {
         const result = { message: 'monitoring cluster license check fail' };
         expect(alerts).to.eql(result);
@@ -67,7 +66,7 @@ describe('Alerts Cluster Search', () => {
       });
       const checkLicense = sinon.stub().returns({ clusterAlerts: { enabled: false }, message: 'prod goes boom' });
       const { mockReq, callWithRequestStub } = createStubs({}, featureStub);
-      return alertsClusterSearch(mockReq, 'cluster-1234', getClusterLicense, checkLicense)
+      return alertsClusterSearch(mockReq, { cluster_uuid: 'cluster-1234' }, checkLicense)
       .then(alerts => {
         const result = { message: 'prod goes boom' };
         expect(alerts).to.eql(result);

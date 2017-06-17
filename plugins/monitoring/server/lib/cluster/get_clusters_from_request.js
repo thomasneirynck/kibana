@@ -1,7 +1,6 @@
 import { set, findIndex, first, sortBy } from 'lodash';
 import { getClustersStats } from './get_clusters_stats';
 import { flagSupportedClusters } from './flag_supported_clusters';
-import { getClusterLicense } from './get_cluster_license';
 import { getMlJobsForCluster } from '../elasticsearch/get_ml_jobs';
 import { getKibanasForClusters } from '../kibana/get_kibanas_for_clusters';
 import { getLogstashForClusters } from '../logstash/get_logstash_for_clusters';
@@ -45,7 +44,7 @@ export function getClustersFromRequest(req) {
         return getMlJobsForCluster(req, esIndexPattern, cluster);
       })
       .then(cluster => {
-        return alertsClusterSearch(req, req.params.clusterUuid, getClusterLicense, checkLicenseForAlerts, {
+        return alertsClusterSearch(req, cluster, checkLicenseForAlerts, {
           size: CLUSTER_ALERTS_SEARCH_SIZE
         })
         .then(alerts => {

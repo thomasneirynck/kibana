@@ -19,7 +19,9 @@ export function clusterAlertsRoute(server) {
     },
     handler(req, reply) {
       const clusterUuid = req.params.clusterUuid;
-      return alertsClusterSearch(req, clusterUuid, getClusterLicense, checkLicense)
+
+      return getClusterLicense(req, clusterUuid)
+      .then(license => alertsClusterSearch(req, { cluster_uuid: clusterUuid, license }, checkLicense))
       .then(reply);
     }
   });
