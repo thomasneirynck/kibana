@@ -16,17 +16,18 @@
     color: #ffffff;
     font-size:13px;
     margin-bottom: 5px;
-    padding-left: 5px;
+    padding: 2px 5px;
   }
 
   .influencer-content {
-    padding-right: 5px;
-    padding-left: 5px;
+    padding-right: 4px;
+    padding-left: 4px;
   }
 
   .field-label {
-    font-size: 11px;
+    font-size: 12px;
     padding-left: 2px;
+    text-align: left;
 
     .influencerfieldvalue {
       max-width: calc(~"100% - 40px");
@@ -47,8 +48,25 @@
   .progress {
     display:inline-block;
     width: calc(~"100% - 40px");
+    height: 20px;
     min-width: 70px;
-    margin-bottom:8px;
+    margin-bottom: 2px;
+    color: #555;
+    background-color : transparent;
+
+    .progress-bar-holder {
+      width: calc(~"100% - 28px");
+    }
+
+    .progress-bar {
+      height: 6px;
+      margin: 6px 0px;
+      text-align: right;
+      line-height: 18px;
+      border-radius: 5px;
+      display: inline-block;
+
+    }
 
     .progress-bar.critical {
       background-color: #fe5050;
@@ -59,7 +77,7 @@
     }
 
     .progress-bar.minor {
-      background-color: #fbfb49;
+      background-color: #ffdd00;
     }
 
     .progress-bar.warning {
@@ -68,34 +86,29 @@
 
   }
 
-  .progress-bar {
-    text-align: right;
-    line-height: 18px;
-    border-radius: 4px 8px 8px 4px;
-  }
-
   .score-label {
     margin-left: 3px;
     text-align: center;
-    background-color: #444444;
-    padding: 3px 3px 3px 3px;
+    color: #444444;
+    padding: 2px 2px 2px 2px;
     border-radius: 4px;
     line-height: 14px;
     white-space: nowrap;
-    color: white;
-    font-size: 10px;
+    font-size: 12px;
     display: inline-block;
   }
 
-  .total-score-label {
+  .score-label.total-score-label {
     width: 32px;
     vertical-align: top;
+    background-color: #444444;
+    color: white;
+    font-size: 11px;
   }
 }
 
 .ml-influencers-list-tooltip {
   color: #ffffff;
-  background-color: #303030;
   font-family: Roboto, Droid, Helvetica Neue, Helvetica, Arial, sans-serif;
   font-size: 12px;
   text-align: left;

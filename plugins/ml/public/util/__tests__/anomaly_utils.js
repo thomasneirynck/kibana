@@ -169,8 +169,8 @@ describe('ML - anomaly utils', () => {
     });
 
     it('returns correct hex code for minor for 25 <= score < 50', () => {
-      expect(getSeverityColor(25)).to.be('#fbfb49');
-      expect(getSeverityColor(49.99)).to.be('#fbfb49');
+      expect(getSeverityColor(25)).to.be('#fdec25');
+      expect(getSeverityColor(49.99)).to.be('#fdec25');
     });
 
     it('returns correct hex code for major for 50 <= score < 75', () => {

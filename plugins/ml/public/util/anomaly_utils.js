@@ -71,7 +71,7 @@ export function getSeverityColor(normalizedScore) {
   } else if (normalizedScore >= 50) {
     return '#fba740';
   } else if (normalizedScore >= 25) {
-    return '#fbfb49';
+    return '#fdec25';
   } else if (normalizedScore >= 3) {
     return '#8bc8fb';
   } else if (normalizedScore >= 0) {
