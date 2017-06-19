@@ -27,6 +27,7 @@ module.directive('mlElasticDataDescription', function () {
       ui:                 '=mlUi',
       properties:         '=mlProperties',
       dateProperties:     '=mlDateProperties',
+      catProperties:      '=mlCatProperties',
       indices:            '=mlIndices',
       types:              '=mlTypes',
       mode:               '=mlMode',
@@ -137,6 +138,7 @@ module.directive('mlElasticDataDescription', function () {
 
         clear($scope.properties);
         clear($scope.dateProperties);
+        clear($scope.catProperties);
         clear($scope.ui.influencers);
         $scope.ui.indexTextOk = false;
 
@@ -150,14 +152,21 @@ module.directive('mlElasticDataDescription', function () {
 
         const ignoreFields = collectCopyToFields($scope.types);
         let flatFields = extractFlatFields($scope.types);
+
+        // add text fields to list of fields used for the categoriztion field name
+        _.each(flatFields, (prop, key) => {
+          if (prop.type === 'text' || prop.type === 'keyword') {
+            $scope.catProperties[key] = prop;
+          }
+        });
+
+        // rename multi-fields
         flatFields = renameMultiFields(flatFields);
 
         _.each(flatFields, (prop, key) => {
-
           if (ignoreFields[key]) {
             return;
           }
-
           // add property (field) to list
           $scope.properties[key] = prop;
           if (prop.type === 'date') {

@@ -18,7 +18,7 @@
       "text": "Optional, for use if input data has been pre-summarized e.g. doc_count."
    },
    "new_job_categorizationfieldname": {
-      "text": "Optional, for use if analyzing unstructured log data."
+      "text": "Optional, for use if analyzing unstructured log data. Using text data types is recommended."
    },
    "new_job_categorizationfilters": {
       "text": "Optional, apply regular expressions to the categorization field"

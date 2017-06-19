@@ -86,6 +86,7 @@ function (
   $scope.types = {};
   $scope.properties = {};
   $scope.dateProperties = {};
+  $scope.catProperties = {};
   $scope.maximumFileSize;
   $scope.mlElasticDataDescriptionExposedFunctions = {};
   $scope.elasticServerInfo = {};

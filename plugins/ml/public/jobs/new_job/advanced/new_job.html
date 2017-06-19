@@ -38,6 +38,7 @@
           ml-ui="ui"
           ml-properties="properties"
           ml-date-properties="dateProperties"
+          ml-cat-properties="catProperties"
           ml-indices="indices"
           ml-types="types"
           ml-data-description="job.data_description"
@@ -157,6 +158,10 @@
               <option ng-repeat="(key, prop) in properties" >{{key}}</option>
             </datalist>
 
+            <datalist id="cat_properties_datalist">
+              <option ng-repeat="(key, prop) in catProperties" >{{key}}</option>
+            </datalist>
+
             <div class="form-group">
               <label>bucket_span</label><i ml-info-icon="new_job_bucketspan" />
               <input
@@ -187,7 +192,7 @@
                 placeholder=""
                 ng-change="generalAnalysisConfigFieldNameChange('categorization_field_name')"
                 ng-change="categorizationFieldNameChange()"
-                list='properties_datalist'
+                list='cat_properties_datalist'
                 class="form-control" />
             </div>
 
