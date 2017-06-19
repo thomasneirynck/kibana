@@ -1,12 +1,9 @@
 <div class='create-watch'>
-
-	<!-- <label>Watch settings</label> -->
-
 	<div ng-show='status.watch===null || status.watch===STATUS.SAVING || status.watch===STATUS.SAVE_FAILED'>
 		<div class='form-group'>
 			<div class='sub-form-group'>
 				<label>Interval</label><br />
-				<input ng-model='interval' type="text" class="kuiTextInput kuiTextInput--small" placeholder="m">
+				<input ng-model='interval' type="text" class="kuiTextInput kuiTextInput--small interval" placeholder="m">
 			</div>
 
 			<div class='sub-form-group'>
@@ -21,7 +18,7 @@
 		    </div>
 	    </div>
 		</div>
-		<div class='form-group'>
+		<div ng-show='ui.emailEnabled' class='form-group'>
 			<label class='kuiCheckBoxLabel kuiVerticalRhythm'>
 				<input ng-model='includeEmail' type="checkbox" class='kuiCheckBox' />
 				<span class="kuiCheckBoxLabel__text">Send email</span>

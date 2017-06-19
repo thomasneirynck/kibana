@@ -14,19 +14,22 @@
  */
 
 import chrome from 'ui/chrome';
+import _ from 'lodash';
+import { parseInterval } from 'ui/utils/parse_interval';
 
 import template from './create_watch.html';
-import email from './email.html';
+import emailBody from './email.html';
+import { watch } from './watch.js';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlCreateWatch', function (mlPostSaveService, $q, $http) {
+module.directive('mlCreateWatch', function (mlPostSaveService, $q, $http, es) {
   return {
     restrict: 'AE',
     replace: false,
     scope: {
-      jobId: '='
+      bucketSpan: '='
     },
     template,
     link: function ($scope) {
@@ -50,98 +53,46 @@ module.directive('mlCreateWatch', function (mlPostSaveService, $q, $http) {
         ],
         setThreshold: (t) => {
           $scope.threshold = t;
-        }
+        },
+        emailEnabled: false
       };
 
+      // make the interval 2 times the bucket span
+      if ($scope.bucketSpan) {
+        const interval = parseInterval($scope.bucketSpan);
+        let bs = interval.asMinutes() * 2;
+        if (bs < 1) {
+          bs = 1;
+        }
+        $scope.interval = `${bs}m`;
+      }
+
+      // load elasticsearch settings to see if email has been configured
+      es.cluster.getSettings({
+        includeDefaults: true,
+        filterPath: '**.xpack.notification'
+      }).then((resp) => {
+        if (_.has(resp, 'defaults.xpack.notification.email')) {
+          $scope.ui.emailEnabled = true;
+        }
+      });
+
+      const compiledEmailBody = _.template(emailBody);
+
       const emailSection = {
-        email_me: {
-          throttle_period_in_millis: 0,
+        send_email: {
+          throttle_period_in_millis: 600000, // 10m
           email: {
             profile: 'standard',
             to: [],
-            subject: 'ML Watcher test',
+            subject: 'ML Watcher Alert',
             body: {
-              html: email
+              html: compiledEmailBody({
+                serverAddress: chrome.getAppUrl()
+              })
             }
           }
         }
-      };
-
-      const watch = {
-        trigger: {
-          schedule: {
-            interval: $scope.interval
-          }
-        },
-        input: {
-          search: {
-            request: {
-              search_type: 'query_then_fetch',
-              indices: ['.ml-anomalies-*'],
-              types: [],
-              body: {
-                size: 0,
-                query: {
-                  bool: {
-                    filter: [{
-                      query_string: {
-                        query: 'result_type:bucket_influencer',
-                        analyze_wildcard: false
-                      }
-                    }, {
-                      bool: {
-                        must: [{
-                          range: {
-                            timestamp: {
-                              gte: `now-${$scope.interval}`
-                            }
-                          }
-                        }, {
-                          query_string: {
-                            analyze_wildcard: false,
-                            query: ''
-                          }
-                        }]
-                      }
-                    }]
-                  }
-                },
-                aggs: {
-                  byTime: {
-                    date_histogram: {
-                      field: 'timestamp',
-                      interval: '300s',
-                      min_doc_count: 1
-                    },
-                    aggs: {
-                      maxAnomalyScore: {
-                        max: {
-                          field: 'anomaly_score'
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        condition: {
-          compare: {
-            'ctx.payload.hits.total': {
-              gt: $scope.threshold.val
-            }
-          }
-        },
-        actions: {
-
-        }
-      };
-
-      $scope.createWatch = function () {
-        console.log($scope.jobId);
-        console.log(watch);
-        createWatch($scope.jobId);
       };
 
       function createWatch(jobId) {
@@ -150,18 +101,19 @@ module.directive('mlCreateWatch', function (mlPostSaveService, $q, $http) {
         if (jobId !== undefined) {
           const id = `ml-${jobId}`;
           $scope.id = id;
-          watch.input.search.request.body.query.bool.filter[1].bool.must[1].query_string.query = `job_id:${jobId}`;
-          watch.condition.compare['ctx.payload.hits.total'].gt = $scope.threshold.val;
+
+          // set specific properties of the the watch
+          // watch.trigger.schedule.interval = $scope.interval;
+          watch.input.search.request.body.query.bool.filter[0].term.job_id = jobId;
+          watch.input.search.request.body.query.bool.filter[1].range.timestamp.gte = `now-${$scope.interval}`;
+          watch.input.search.request.body.aggs.bucket_results.filter.range.anomaly_score.gte = $scope.threshold.val;
 
           if ($scope.includeEmail && $scope.email !== '') {
             const emails = $scope.email.split(',');
-            emailSection.email_me.email.to = emails;
-            watch.actions = {
-              ...emailSection
-            };
+            emailSection.send_email.email.to = emails;
+            // add email section to watch
+            watch.actions.send_email =  emailSection.send_email;
           }
-
-          watch.trigger.schedule.interval = $scope.interval;
 
           const watchModel = {
             id,

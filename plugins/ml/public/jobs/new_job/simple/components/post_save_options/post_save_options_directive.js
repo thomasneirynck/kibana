@@ -25,7 +25,7 @@ module.directive('mlPostSaveOptions', function (mlPostSaveService, Private) {
     replace: false,
     scope: {
       jobId: '=',
-      endTime: '='
+      bucketSpan: '='
     },
     template,
     link: function ($scope) {
@@ -44,7 +44,7 @@ module.directive('mlPostSaveOptions', function (mlPostSaveService, Private) {
       };
 
       $scope.apply = function () {
-        mlPostSaveService.apply($scope.jobId, $scope.endTime, $scope.runInRealtime, $scope.createWatch);
+        mlPostSaveService.apply($scope.jobId, $scope.runInRealtime, $scope.createWatch);
       };
     }
   };
@@ -62,7 +62,7 @@ module.directive('mlPostSaveOptions', function (mlPostSaveService, Private) {
   };
 
   this.externalCreateWatch;
-  this.startRealtimeJob = function (jobId, startTime) {
+  this.startRealtimeJob = function (jobId) {
     const deferred = $q.defer();
     this.status.realtimeJob = this.STATUS.SAVING;
 
@@ -70,7 +70,7 @@ module.directive('mlPostSaveOptions', function (mlPostSaveService, Private) {
 
     mlJobService.openJob(jobId)
     .finally(() => {
-      mlJobService.startDatafeed(datafeedId, jobId, startTime, undefined)
+      mlJobService.startDatafeed(datafeedId, jobId, 0, undefined)
       .then(() => {
         this.status.realtimeJob = this.STATUS.SAVED;
         deferred.resolve();
@@ -99,9 +99,9 @@ module.directive('mlPostSaveOptions', function (mlPostSaveService, Private) {
     this.status.watch = null;
   };
 
-  this.apply = function (jobId, startTime, runInRealtime, createWatch) {
+  this.apply = function (jobId, runInRealtime, createWatch) {
     if (runInRealtime) {
-      this.startRealtimeJob(jobId, startTime)
+      this.startRealtimeJob(jobId)
       .then(() => {
         if (createWatch) {
           this.createWatch(jobId);
