@@ -86,6 +86,9 @@
    "new_job_datafeed_scrollsize": {
       "text": "Advanced option. The maximum number of documents requested for a search."
    },
+   "new_job_data_preview": {
+      "text": "This preview returns the contents of the source field only."
+   },
    "new_job_elasticsearch_server": {
       "text": "Server address and port of Elasticsearch source."
    },
