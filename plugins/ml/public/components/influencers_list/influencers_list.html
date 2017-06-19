@@ -13,6 +13,7 @@
     <div class="section-label">{{influencerfieldname}}</div>
 
     <div ng-repeat="influencer in groupData" class="influencer-content">
+
       <div class="field-label">
         <div ng-if="influencerfieldname !== 'mlcategory'" class="influencerfieldvalue">{{influencer.influencerFieldValue}}</div>
         <div ng-if="influencerfieldname === 'mlcategory'" class="influencerfieldvalue">mlcategory {{influencer.influencerFieldValue}}</div>
@@ -25,20 +26,21 @@
 
       </div>
 
-      <div>
-        <div class="progress" value="{{influencer.barScore}}" max="100">
+      <div class="progress" value="{{influencer.barScore}}" max="100">
+        <div class="progress-bar-holder">
           <div class="progress-bar {{influencer.severity}}" ng-attr-style="width: {{influencer.barScore}}%;"
             tooltip-placement="{{tooltipPlacement}}" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
-            <span class="score-label">{{influencer.maxScoreLabel}}</span>
           </div>
         </div>
-        <div ng-if="influencer.totalScore > 0" class="score-label total-score-label" tooltip-placement="{{tooltipPlacement}}" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
-          {{influencer.totalScore | abbreviateWholeNumber:4}}
-        </div>
-        <div ng-if="influencer.totalScore === 0" class="score-label total-score-label" tooltip-placement="{{tooltipPlacement}}" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
-          &lt;&nbsp;1
-        </div>
+        <span class="score-label">{{influencer.maxScoreLabel}}</span>
 
+      </div>
+
+      <div ng-if="influencer.totalScore > 0" class="score-label total-score-label" tooltip-placement="{{tooltipPlacement}}" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
+        {{influencer.totalScore | abbreviateWholeNumber:4}}
+      </div>
+      <div ng-if="influencer.totalScore === 0" class="score-label total-score-label" tooltip-placement="{{tooltipPlacement}}" tooltip-html-unsafe="{{influencer.tooltip}}" tooltip-append-to-body="true">
+        &lt;&nbsp;1
       </div>
 
     </div>
