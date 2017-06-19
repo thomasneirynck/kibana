@@ -236,7 +236,6 @@ module
     $scope.ui.isFormValid();
     $scope.ui.bucketSpanEstimator.status = 0;
     $scope.ui.bucketSpanEstimator.message = '';
-    $scope.ui.dirty = true;
 
     $scope.ui.bucketSpanValid = true;
     if(parseInterval($scope.formConfig.bucketSpan) === null) {
