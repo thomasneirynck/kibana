@@ -54,7 +54,7 @@ export function indexRoutes(server) {
       })
       .then(calculateClusterShards)
       .then(body => {
-        const shardStats = body.shardStats[id];
+        const shardStats = body.shardStats.indices[id];
         // check if we need a legacy workaround for Monitoring 2.0 node data
         if (shardStats) {
           body.indexSummary.unassignedShards = shardStats.unassigned.primary + shardStats.unassigned.replica;

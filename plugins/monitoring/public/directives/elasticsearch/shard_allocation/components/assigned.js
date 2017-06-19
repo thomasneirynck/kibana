@@ -15,7 +15,7 @@
  * from Elasticsearch Incorporated.
  */
 
-import _ from 'lodash';
+import { get, sortBy } from 'lodash';
 import React from 'react';
 import { Shard } from './shard';
 import { calculateClass } from '../lib/calculateClass';
@@ -41,9 +41,9 @@ export const Assigned = React.createClass({
   createChild: function (data) {
     const key = data.id;
     const classes = ['child'];
-    const shardStats = this.props.shardStats;
-    if (shardStats && shardStats[key]) {
-      classes.push(shardStats[key].status);
+    const shardStats = get(this.props.shardStats.indices, key);
+    if (shardStats) {
+      classes.push(shardStats.status);
     }
 
     const that = this;
@@ -64,7 +64,7 @@ export const Assigned = React.createClass({
         <span className="fa fa-star"></span>
       );
     }
-    const shards = _.sortBy(data.children, 'shard').map(this.createShard);
+    const shards = sortBy(data.children, 'shard').map(this.createShard);
     return (
       <div className={ calculateClass(data, classes.join(' ')) } key={ key }>
         <div className='title'>{ name }{ master }</div>
@@ -73,7 +73,7 @@ export const Assigned = React.createClass({
     );
   },
   render: function () {
-    const data = _.sortBy(this.props.data, sortByName).map(this.createChild);
+    const data = sortBy(this.props.data, sortByName).map(this.createChild);
     return (
       <td>
         <div className='children'>

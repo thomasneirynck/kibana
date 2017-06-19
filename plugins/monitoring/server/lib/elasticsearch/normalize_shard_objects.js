@@ -39,19 +39,21 @@ function setStats(bucket, metric, ident) {
 export function getDefaultDataObject() {
   return {
     nodes: {},
-    totals: {
-      primary: 0,
-      replica: 0,
-      unassigned: { replica: 0, primary: 0 }
+    indices: {
+      totals: {
+        primary: 0,
+        replica: 0,
+        unassigned: { replica: 0, primary: 0 }
+      }
     }
   };
 }
 
 // Mutate "data" with a nodes object having a field for every node
-export function normalizeNodeShards(data, nodeResolver) {
+export function normalizeNodeShards(nodes, nodeResolver) {
   return (bucket) => {
     if (bucket.key && bucket.node_transport_address && bucket.node_ids) {
-      data.nodes[bucket.key] = {
+      nodes[bucket.key] = {
         shardCount: bucket.doc_count,
         indexCount: get(bucket, 'index_count.value'),
         name: getLatestAggKey(get(bucket, 'node_names.buckets')),
@@ -62,22 +64,22 @@ export function normalizeNodeShards(data, nodeResolver) {
           master: getNodeAttribute(bucket.node_master_attributes.buckets)
         }
       };
-      data.nodes[bucket.key].resolver = data.nodes[bucket.key][nodeResolver];
+      nodes[bucket.key].resolver = nodes[bucket.key][nodeResolver];
     }
   };
 }
 
-export function normalizeIndexShards(data) {
+export function normalizeIndexShards(indices) {
   return (bucket) => {
     const metric = createNewMetric();
     setStats(bucket, metric, { key: 'STARTED' });
     setStats(bucket, metric.unassigned, (b) => b.key !== 'STARTED' && b.key !== 'RELOCATING');
-    data.totals.primary += metric.primary;
-    data.totals.replica += metric.replica;
-    data.totals.unassigned.primary += metric.unassigned.primary;
-    data.totals.unassigned.replica += metric.unassigned.replica;
+    indices.totals.primary += metric.primary;
+    indices.totals.replica += metric.replica;
+    indices.totals.unassigned.primary += metric.unassigned.primary;
+    indices.totals.unassigned.replica += metric.unassigned.replica;
     if (metric.unassigned.replica) { metric.status = 'yellow'; }
     if (metric.unassigned.primary) { metric.status = 'red'; }
-    data[bucket.key] = metric;
+    indices[bucket.key] = metric;
   };
 };

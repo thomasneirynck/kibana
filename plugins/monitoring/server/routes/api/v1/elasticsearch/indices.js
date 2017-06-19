@@ -44,11 +44,11 @@ export function indicesRoutes(server) {
       // Add the index status to each index from the shardStats
       .then((body) => {
         body.rows.forEach((row) => {
-          if (body.shardStats[row.name]) {
-            row.status = body.shardStats[row.name].status;
+          if (body.shardStats.indices[row.name]) {
+            row.status = body.shardStats.indices[row.name].status;
             // column for a metric that is calculated in code vs. calculated in a query
             // it's not given in req.payload.listingMetrics
-            merge(row, getUnassignedShards(body.shardStats[row.name]));
+            merge(row, getUnassignedShards(body.shardStats.indices[row.name]));
           } else {
             row.status = 'Unknown';
             set(row, 'metrics.index_document_count.inapplicable', true);

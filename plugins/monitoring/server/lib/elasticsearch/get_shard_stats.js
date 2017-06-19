@@ -70,8 +70,8 @@ export function getShardStats(req, esIndexPattern, cluster) {
     const data = getDefaultDataObject();
 
     if (resp && resp.hits && resp.hits.total !== 0) {
-      resp.aggregations.indices.buckets.forEach(normalizeIndexShards(data));
-      resp.aggregations.nodes.buckets.forEach(normalizeNodeShards(data, nodeResolver));
+      resp.aggregations.indices.buckets.forEach(normalizeIndexShards(data.indices));
+      resp.aggregations.nodes.buckets.forEach(normalizeNodeShards(data.nodes, nodeResolver));
     }
 
     forEach(data.nodes, node => {
@@ -79,6 +79,5 @@ export function getShardStats(req, esIndexPattern, cluster) {
     });
 
     return data;
-
   });
 };

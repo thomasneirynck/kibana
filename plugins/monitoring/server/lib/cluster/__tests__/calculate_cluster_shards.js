@@ -1,15 +1,26 @@
 import { calculateClusterShards } from '../calculate_cluster_shards';
 import expect from 'expect.js';
-import _ from 'lodash';
 
 describe('Calculating Cluster Status', () => {
   it('Calculates object', () => {
-    let body = _.set({}, 'shardStats.totals.unassigned.replica', 5);
-    body = _.set(body, 'shardStats.totals.unassigned.primary', 0);
-    body = _.set(body, 'clusterStatus.totalShards', 5);
+    const body = {
+      clusterStatus: {
+        totalShards: 5
+      },
+      shardStats: {
+        indices: {
+          totals: {
+            unassigned: {
+              primary: 0,
+              replica: 5
+            }
+          }
+        }
+      }
+    };
     const result = calculateClusterShards(body);
-    expect(result.shardStats.totals.unassigned.replica).to.be.eql(5);
-    expect(result.shardStats.totals.unassigned.primary).to.be.eql(0);
+    expect(result.shardStats.indices.totals.unassigned.replica).to.be.eql(5);
+    expect(result.shardStats.indices.totals.unassigned.primary).to.be.eql(0);
     expect(result.clusterStatus.totalShards).to.be.eql(10);
     expect(result.clusterStatus.unassignedShards).to.be.eql(5);
   });

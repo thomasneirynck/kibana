@@ -3,7 +3,8 @@ import { getDefaultDataObject, normalizeIndexShards, normalizeNodeShards } from 
 
 function getIndexShardBucket() {
   return {
-    key: '.kibana',
+    // the index name being something we actually don't expect is intentional to ensure the object is not colliding
+    key: 'nodes',
     doc_count: 5,
     states: {
       doc_count_error_upper_bound: 0,
@@ -112,28 +113,29 @@ describe('Normalizing Shard Data', () => {
   describe('Index Shards', () => {
     it('Calculates the Index Shard data for a result bucket', () => {
       const data = getDefaultDataObject();
-      const resultFn = normalizeIndexShards(data);
+      const resultFn = normalizeIndexShards(data.indices);
       resultFn(getIndexShardBucket());
 
       // Note: the existence of relocating shards is effectively ignored.
       // Relocating shards do not matter until they have STARTED, at which point the relocated shard
       // is deleted, so the count stays the same!
-      expect(data.totals.primary).to.be.eql(1);
-      expect(data.totals.replica).to.be.eql(0);
-      expect(data.totals.unassigned.primary).to.be.eql(1);
-      expect(data.totals.unassigned.replica).to.be.eql(2);
-      expect(data['.kibana'].status).to.be.eql('red');
-      expect(data['.kibana'].primary).to.be.eql(1);
-      expect(data['.kibana'].replica).to.be.eql(0);
-      expect(data['.kibana'].unassigned.primary).to.be.eql(1);
-      expect(data['.kibana'].unassigned.replica).to.be.eql(2);
+      expect(data.indices.totals.primary).to.be.eql(1);
+      expect(data.indices.totals.replica).to.be.eql(0);
+      expect(data.indices.totals.unassigned.primary).to.be.eql(1);
+      expect(data.indices.totals.unassigned.replica).to.be.eql(2);
+      // 'nodes' is the index name!
+      expect(data.indices.nodes.status).to.be.eql('red');
+      expect(data.indices.nodes.primary).to.be.eql(1);
+      expect(data.indices.nodes.replica).to.be.eql(0);
+      expect(data.indices.nodes.unassigned.primary).to.be.eql(1);
+      expect(data.indices.nodes.unassigned.replica).to.be.eql(2);
     });
   });
 
   describe('Node Shards', () => {
     it('Calculates the Node Shard data for a result bucket', () => {
       const data = getDefaultDataObject();
-      const resultFn = normalizeNodeShards(data, 'transport_address');
+      const resultFn = normalizeNodeShards(data.nodes, 'transport_address');
       resultFn(getNodeShardBucket());
 
       expect(data.nodes).to.be.an('object');
