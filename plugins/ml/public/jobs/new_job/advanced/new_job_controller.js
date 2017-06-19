@@ -285,126 +285,133 @@ function (
 
     if (jobValid.valid) {
       // if basic validation passes
-      // check that the job id doesn't already exist
-      const tempJob = mlJobService.getJob($scope.job.job_id);
-      if (tempJob) {
-        const tab = $scope.ui.validation.tabs[0];
-        tab.valid = false;
-        tab.checks.jobId.valid = false;
-        tab.checks.jobId.message = '\'' + $scope.job.job_id + '\' already exists, please choose a different name';
-        changeTab({ index:0 });
-      } else {
-        checkInfluencers();
-      }
-
-      function checkInfluencers() {
-        // check that they have chosen some influencers
-        if ($scope.job.analysis_config.influencers &&
-           $scope.job.analysis_config.influencers.length) {
-          saveFunc();
+      // refresh jobs list to check that the job id doesn't already exist.
+      mlJobService.loadJobs()
+      .then(() => {
+        // check that the job id doesn't already exist
+        const tempJob = mlJobService.getJob($scope.job.job_id);
+        if (tempJob) {
+          const tab = $scope.ui.validation.tabs[0];
+          tab.valid = false;
+          tab.checks.jobId.valid = false;
+          tab.checks.jobId.message = '\'' + $scope.job.job_id + '\' already exists, please choose a different name';
+          changeTab({ index:0 });
         } else {
-          // if there are no influencers set, open a confirmation
-          mlConfirm.open({
-            message: 'You have not chosen any influencers, do you want to continue?',
-            title: 'No Influencers'
-          }).then(saveFunc)
-            .catch(function () {
-              changeTab({ index:1 });
-            });
-        }
-      }
-
-      function createJobForSaving(job) {
-        const newJob = angular.copy(job);
-        delete newJob.datafeed_config;
-        return newJob;
-      }
-
-      function saveFunc() {
-
-        if ($scope.ui.useDedicatedIndex) {
-          // if the dedicated index checkbox has been ticked
-          // and the user hasn't added a custom value for it
-          // in the JSON, use the job id.
-          if ($scope.job.results_index_name === '') {
-            $scope.job.results_index_name = $scope.job.job_id;
-          }
-        } else {
-          // otherwise delete it, just to be sure.
-          delete $scope.job.results_index_name;
+          checkInfluencers();
         }
 
-        $scope.saveLock = true;
-        $scope.ui.saveStatus.job = 1;
-        openSaveStatusWindow();
-
-        const job = createJobForSaving($scope.job);
-
-        mlJobService.saveNewJob(job)
-          .then((result) => {
-            if (result.success) {
-              // TODO - re-enable the refreshing of the index pattern fields once there is a
-              // resolution to https://github.com/elastic/kibana/issues/9466
-              // In the meantime, to prevent the aggregatable and searchable properties of any
-              // fields configured in the job (i.e. influencer, by, over, partition field_name/value)
-              // but not present in any results being set back to false by Kibana's call to the
-              // field stats API, comment out the call to refreshFields().
-              // The user will have to hit the 'Refresh field List' button in Kibana's Index Patterns
-              // management page for the .ml-anomalies-* index pattern for any new fields.
-              //
-              // After the job has been successfully created the Elasticsearch
-              // mappings should be fully set up, but the Kibana mappings then
-              // need to be refreshed to reflect the Elasticsearch mappings for
-              // any new analytical fields that have been configured in the job.
-              //courier.indexPatterns.get('.ml-anomalies-*')
-              //.then((indexPattern) => {
-              //  indexPattern.refreshFields()
-              //  .then(() => {
-              //    console.log('refreshed fields for index pattern .ml-anomalies-*');
-              //    wait for mappings refresh before continuing on with the post save stuff
-              msgs.info('New Job \'' + result.resp.job_id + '\' added');
-              // update status
-              $scope.ui.saveStatus.job = 2;
-
-              // save successful, attempt to open the job
-              mlJobService.openJob($scope.job.job_id)
-              .then(() => {
-                if ($scope.job.datafeed_config) {
-                  // open job successful, create a new datafeed
-                  mlJobService.saveNewDatafeed($scope.job.datafeed_config, $scope.job.job_id)
-                  .then(() => {
-                    $scope.saveLock = false;
-                  })
-                  .catch((resp) => {
-                    msgs.error('Could not start datafeed: ', resp);
-                    $scope.saveLock = false;
-                  });
-                } else {
-                  // no datafeed, so save is complete
-                  $scope.saveLock = false;
-                }
-              })
-              .catch((resp) => {
-                msgs.error('Could not open job: ', resp);
-                msgs.error('Job created, creating datafeed anyway');
-                $scope.saveLock = false;
+        function checkInfluencers() {
+          // check that they have chosen some influencers
+          if ($scope.job.analysis_config.influencers &&
+             $scope.job.analysis_config.influencers.length) {
+            saveFunc();
+          } else {
+            // if there are no influencers set, open a confirmation
+            mlConfirm.open({
+              message: 'You have not chosen any influencers, do you want to continue?',
+              title: 'No Influencers'
+            }).then(saveFunc)
+              .catch(function () {
+                changeTab({ index:1 });
               });
+          }
+        }
 
-               // });
-            //  });
-            } else {
-              // save failed, unlock the buttons and tell the user
+        function createJobForSaving(job) {
+          const newJob = angular.copy(job);
+          delete newJob.datafeed_config;
+          return newJob;
+        }
+
+        function saveFunc() {
+
+          if ($scope.ui.useDedicatedIndex) {
+            // if the dedicated index checkbox has been ticked
+            // and the user hasn't added a custom value for it
+            // in the JSON, use the job id.
+            if ($scope.job.results_index_name === '') {
+              $scope.job.results_index_name = $scope.job.job_id;
+            }
+          } else {
+            // otherwise delete it, just to be sure.
+            delete $scope.job.results_index_name;
+          }
+
+          $scope.saveLock = true;
+          $scope.ui.saveStatus.job = 1;
+          openSaveStatusWindow();
+
+          const job = createJobForSaving($scope.job);
+
+          mlJobService.saveNewJob(job)
+            .then((result) => {
+              if (result.success) {
+                // TODO - re-enable the refreshing of the index pattern fields once there is a
+                // resolution to https://github.com/elastic/kibana/issues/9466
+                // In the meantime, to prevent the aggregatable and searchable properties of any
+                // fields configured in the job (i.e. influencer, by, over, partition field_name/value)
+                // but not present in any results being set back to false by Kibana's call to the
+                // field stats API, comment out the call to refreshFields().
+                // The user will have to hit the 'Refresh field List' button in Kibana's Index Patterns
+                // management page for the .ml-anomalies-* index pattern for any new fields.
+                //
+                // After the job has been successfully created the Elasticsearch
+                // mappings should be fully set up, but the Kibana mappings then
+                // need to be refreshed to reflect the Elasticsearch mappings for
+                // any new analytical fields that have been configured in the job.
+                //courier.indexPatterns.get('.ml-anomalies-*')
+                //.then((indexPattern) => {
+                //  indexPattern.refreshFields()
+                //  .then(() => {
+                //    console.log('refreshed fields for index pattern .ml-anomalies-*');
+                //    wait for mappings refresh before continuing on with the post save stuff
+                msgs.info('New Job \'' + result.resp.job_id + '\' added');
+                // update status
+                $scope.ui.saveStatus.job = 2;
+
+                // save successful, attempt to open the job
+                mlJobService.openJob($scope.job.job_id)
+                .then(() => {
+                  if ($scope.job.datafeed_config) {
+                    // open job successful, create a new datafeed
+                    mlJobService.saveNewDatafeed($scope.job.datafeed_config, $scope.job.job_id)
+                    .then(() => {
+                      $scope.saveLock = false;
+                    })
+                    .catch((resp) => {
+                      msgs.error('Could not start datafeed: ', resp);
+                      $scope.saveLock = false;
+                    });
+                  } else {
+                    // no datafeed, so save is complete
+                    $scope.saveLock = false;
+                  }
+                })
+                .catch((resp) => {
+                  msgs.error('Could not open job: ', resp);
+                  msgs.error('Job created, creating datafeed anyway');
+                  $scope.saveLock = false;
+                });
+
+                 // });
+              //  });
+              } else {
+                // save failed, unlock the buttons and tell the user
+                $scope.ui.saveStatus.job = -1;
+                $scope.saveLock = false;
+                msgs.error('Save failed: ' + result.resp.message);
+              }
+            }).catch((result) => {
               $scope.ui.saveStatus.job = -1;
               $scope.saveLock = false;
               msgs.error('Save failed: ' + result.resp.message);
-            }
-          }).catch((result) => {
-            $scope.ui.saveStatus.job = -1;
-            $scope.saveLock = false;
-            msgs.error('Save failed: ' + result.resp.message);
-          });
-      }
-
+            });
+        }
+      })
+      .catch(() => {
+        msgs.error('Save failed');
+        console.log('save(): job validation failed. Jobs list could not be loaded.');
+      });
     }
     else {
       msgs.error(jobValid.message);
