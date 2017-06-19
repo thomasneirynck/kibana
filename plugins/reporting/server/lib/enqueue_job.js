@@ -14,10 +14,14 @@ function enqueueJobFn(server) {
     const createJob = exportType.createJobFactory(server);
     const payload = await createJob(jobParams, headers, request);
 
+    const defaultHeaders = {
+      Authorization: null
+    };
+
     const options = {
       timeout: queueConfig.timeout,
       created_by: get(user, 'username', false),
-      headers: filterHeaders(headers, whitelistHeaders),
+      headers: Object.assign({}, defaultHeaders, filterHeaders(headers, whitelistHeaders)),
     };
 
     return new Promise((resolve, reject) => {
