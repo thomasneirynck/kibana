@@ -68,7 +68,7 @@ export function SingleSeriesCheckerProvider($injector) {
             start();
           })
           .catch((resp) => {
-            console.log('Could not load metric reference data', this);
+            console.log('SingleSeriesChecker: Could not load metric reference data', this);
             reject(resp);
           });
         }
@@ -98,8 +98,8 @@ export function SingleSeriesCheckerProvider($injector) {
           for (let i = 1; i < LONG_INTERVALS.length; i++) {
             const int1 = LONG_INTERVALS[i - 1];
             const int2 = LONG_INTERVALS[i];
-            if (this.thresholds.minimumBucketSpanMS >= int1.ms &&
-              this.thresholds.minimumBucketSpanMS < int2.ms) {
+            if (this.thresholds.minimumBucketSpanMS > int1.ms &&
+              this.thresholds.minimumBucketSpanMS <= int2.ms) {
               // value is between two intervals, choose the highest
               interval = int2;
               break;
@@ -144,20 +144,17 @@ export function SingleSeriesCheckerProvider($injector) {
               }
 
               if (pass) {
-                console.log(`Estimate bucket span: ${interval.name} passed`);
                 resolve(interval);
               } else {
                 count++;
                 if (count === intervals.length) {
-                  console.log(`Estimate bucket span: ${interval.name} passed by default`);
                   resolve(interval);
                 } else {
-                  console.log(`Estimate bucket span: ${interval.name} failed`);
                   runTest(count);
                 }
               }
             } else {
-              console.log('runTest stopped because fullBuckets is empty', this);
+              console.log('SingleSeriesChecker: runTest stopped because fullBuckets is empty', this);
               reject('runTest stopped because fullBuckets is empty');
             }
           })

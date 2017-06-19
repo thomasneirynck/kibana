@@ -114,8 +114,8 @@ export function BucketSpanEstimatorProvider($injector) {
     run() {
       return new Promise((resolve, reject) => {
         if (this.checkers.length === 0) {
-          console.log('Run has stopped because no checks where created');
-          reject('Run has stopped because no checks where created');
+          console.log('BucketSpanEstimator: run has stopped because no checks where created');
+          reject('BucketSpanEstimator: run has stopped because no checks where created');
         }
 
         this.polledDataChecker.run()
@@ -123,7 +123,6 @@ export function BucketSpanEstimatorProvider($injector) {
           // if the data is polled, set a minimum threshold
           // of bucket span
           if (result.isPolled) {
-            console.log(`data is polled: ${result.minimumBucketSpan}`);
             this.thresholds.minimumBucketSpanMS = result.minimumBucketSpan;
           }
           let checkCounter = this.checkers.length;
@@ -136,8 +135,8 @@ export function BucketSpanEstimatorProvider($injector) {
                 resolve(median);
               } else {
                 // no results found
-                console.log('Run has stopped because no checks returned a valid interval');
-                reject('Run has stopped because no checks returned a valid interval');
+                console.log('BucketSpanEstimator: run has stopped because no checks returned a valid interval');
+                reject('BucketSpanEstimator: run has stopped because no checks returned a valid interval');
               }
             }
           };
