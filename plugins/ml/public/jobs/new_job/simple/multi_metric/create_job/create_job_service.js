@@ -165,16 +165,6 @@ module.service('mlMultiMetricJobService', function (
   };
 
   function getSearchJsonFromConfig(formConfig) {
-
-    let term = {};
-    if (formConfig.firstSplitFieldValue !== undefined) {
-      term = {
-        term: {
-          [formConfig.splitField] : formConfig.firstSplitFieldValue
-        }
-      };
-    }
-
     const interval = formConfig.chartInterval.getInterval().asMilliseconds() + 'ms';
     const query = getQueryFromSavedSearch(formConfig);
 
@@ -205,7 +195,14 @@ module.service('mlMultiMetricJobService', function (
       }
     });
 
-    query.bool.must.push(term);
+    // if the data is partitioned, add an additional search term
+    if (formConfig.firstSplitFieldValue !== undefined) {
+      query.bool.must.push({
+        term: {
+          [formConfig.splitField] : formConfig.firstSplitFieldValue
+        }
+      });
+    }
 
     json.body.query = query;
 
