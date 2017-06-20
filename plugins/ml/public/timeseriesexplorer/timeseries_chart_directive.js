@@ -748,7 +748,13 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       // and the x-axis max to the end of the last aggregation interval.
       // Context chart and swimlane use the same aggregation interval.
       const bounds = timefilter.getActiveBounds();
-      const earliest = Math.min(_.first(scope.swimlaneData).date.getTime(), bounds.min.valueOf());
+      let earliest = bounds.min.valueOf();
+
+      if (scope.swimlaneData !== undefined && scope.swimlaneData.length > 0) {
+        // Adjust the earliest back to the time of the first swimlane point
+        // if this is before the time filter minimum.
+        earliest = Math.min(_.first(scope.swimlaneData).date.getTime(), bounds.min.valueOf());
+      }
 
       const contextAggMs = scope.contextAggregationInterval.asMilliseconds();
       const earliestMs = Math.floor(earliest / contextAggMs) * contextAggMs;
