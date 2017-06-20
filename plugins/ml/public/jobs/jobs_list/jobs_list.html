@@ -11,15 +11,19 @@
     <div>
       <header>
         <div class="row" >
-        <div class="col-xs-10" >
-          <button
-            ng-click='newJob()'
-            class="kuiButton kuiButton--primary"
-            ng-disabled='!privileges.canCreateJob'
-            aria-label="Create new job">
-            <i aria-hidden="true" class="fa fa-plus"></i>
-            Create new job
-          </button>
+        <div class="col-xs-10">
+          <div ng-class="privileges.canCreateJob ? 'button-wrapper' : ['button-wrapper', 'disabled']" data-placement="right" data-toggle="tooltip"
+            ng-attr-tooltip="{{privileges.canCreateJob === false ? 'You do not have permission to create Machine Learning jobs. Please contact your administrator.' : undefined}}">
+            <button
+              ng-click='newJob()'
+              class="kuiButton kuiButton--primary"
+              ng-disabled='!privileges.canCreateJob'
+              aria-label="Create new job">
+              <i aria-hidden="true" class="fa fa-plus"></i>
+              Create new job
+            </button>
+          </div>
+
         </div>
 
 

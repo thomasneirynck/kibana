@@ -165,4 +165,16 @@ ml-config-jobs {
     }
   }
 
+  .button-wrapper {
+    display: inline-block;
+  }
+
+  .button-wrapper.disabled .kuiButton[disabled] {
+    pointer-events: none;
+  }
+
+  .button-wrapper.disabled {
+    cursor: not-allowed;
+  }
+
 }

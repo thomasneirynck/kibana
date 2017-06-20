@@ -1,17 +1,20 @@
 <div class="actions">
 
   <!-- start -->
-  <button
-    ng-show="job.datafeed_config && job.datafeed_config.state!=='stopping' && job.datafeed_config.state!=='starting'"
-    ng-click="((job.datafeed_config && job.datafeed_config.state==='started')?stopDatafeed(job):startDatafeed(job))"
-    class="kuiButton kuiButton--basic kuiButton--small"
-    data-toggle="tooltip"
-    ng-disabled="!privileges.canStartStopDatafeed || job.state==='closing' || job.state==='opening'"
-    tooltip="{{((job.datafeed_config && job.datafeed_config.state==='started')?'Stop':'Start')}} datafeed for {{job.job_id}}">
-      <i ng-show="job.datafeed_config && job.datafeed_config.state==='started'" aria-hidden="true" class="fa fa-stop"></i>
-      <i ng-show="job.datafeed_config && job.datafeed_config.state==='stopped'" aria-hidden="true" class="fa fa-play"></i>
-      <i ng-show="job.datafeed_config && job.datafeed_config.state===undefined" aria-hidden="true" class="fa fa-play"></i>
-  </button>
+  <div ng-class="privileges.canStartStopDatafeed ? 'button-wrapper' : ['button-wrapper', 'disabled']" data-placement="right" data-toggle="tooltip"
+    ng-attr-tooltip="{{privileges.canStartStopDatafeed === false ? 'You do not have permission to start or stop datafeeds. Please contact your administrator.' : undefined}}">
+    <button
+      ng-show="job.datafeed_config && job.datafeed_config.state!=='stopping' && job.datafeed_config.state!=='starting'"
+      ng-click="((job.datafeed_config && job.datafeed_config.state==='started')?stopDatafeed(job):startDatafeed(job))"
+      class="kuiButton kuiButton--basic kuiButton--small"
+      data-toggle="tooltip"
+      ng-disabled="!privileges.canStartStopDatafeed || job.state==='closing' || job.state==='opening'"
+      tooltip="{{((job.datafeed_config && job.datafeed_config.state==='started')?'Stop':'Start')}} datafeed for {{job.job_id}}">
+        <i ng-show="job.datafeed_config && job.datafeed_config.state==='started'" aria-hidden="true" class="fa fa-stop"></i>
+        <i ng-show="job.datafeed_config && job.datafeed_config.state==='stopped'" aria-hidden="true" class="fa fa-play"></i>
+        <i ng-show="job.datafeed_config && job.datafeed_config.state===undefined" aria-hidden="true" class="fa fa-play"></i>
+    </button>
+  </div>
 
   <!-- stop -->
   <button
@@ -52,32 +55,41 @@
   </button>
 
   <!-- edit job -->
-  <button
-    ng-click="editJob(job)"
-    ng-disabled="!privileges.canUpdateJob || !privileges.canUpdateDatafeed"
-    class="kuiButton kuiButton--basic kuiButton--small"
-    data-toggle="tooltip"
-    tooltip="Edit job" >
-      <i aria-hidden="true" class="fa fa-pencil-square-o"></i>
-  </button>
+  <div ng-class="privileges.canUpdateJob ? 'button-wrapper' : ['button-wrapper', 'disabled']" data-placement="right" data-toggle="tooltip"
+    ng-attr-tooltip="{{privileges.canUpdateJob === false ? 'You do not have permission to edit jobs. Please contact your administrator.' : undefined}}">
+    <button
+      ng-click="editJob(job)"
+      ng-disabled="!privileges.canUpdateJob || !privileges.canUpdateDatafeed"
+      class="kuiButton kuiButton--basic kuiButton--small"
+      data-toggle="tooltip"
+      tooltip="Edit job" >
+        <i aria-hidden="true" class="fa fa-pencil-square-o"></i>
+    </button>
+  </div>
 
   <!-- clone job -->
-  <button
-    ng-click="cloneJob(job)"
-    class="kuiButton kuiButton--basic kuiButton--small"
-    data-toggle="tooltip"
-    ng-disabled='!privileges.canCreateJob'
-    tooltip="Clone job" >
-      <i aria-hidden="true" class="fa fa-clone"></i>
-  </button>
+  <div ng-class="privileges.canCreateJob ? 'button-wrapper' : ['button-wrapper', 'disabled']" data-placement="right" data-toggle="tooltip"
+    ng-attr-tooltip="{{privileges.canCreateJob === false ? 'You do not have permission to clone jobs. Please contact your administrator.' : undefined}}">
+    <button
+      ng-click="cloneJob(job)"
+      class="kuiButton kuiButton--basic kuiButton--small"
+      data-toggle="tooltip"
+      ng-disabled='!privileges.canCreateJob'
+      tooltip="Clone job" >
+        <i aria-hidden="true" class="fa fa-clone"></i>
+    </button>
+  </div>
 
   <!-- delete job -->
-  <button
-    ng-click="deleteJob(job)"
-    class="kuiButton kuiButton--danger kuiButton--small"
-    data-toggle="tooltip"
-    ng-disabled='!privileges.canDeleteJob'
-    tooltip="Delete job">
-      <i aria-hidden="true" class="fa fa-trash"></i>
-  </button>
+  <div ng-class="privileges.canDeleteJob ? 'button-wrapper' : ['button-wrapper', 'disabled']" data-placement="right" data-toggle="tooltip"
+    ng-attr-tooltip="{{privileges.canDeleteJob === false ? 'You do not have permission to delete jobs. Please contact your administrator.' : undefined}}">
+    <button
+      ng-click="deleteJob(job)"
+      class="kuiButton kuiButton--danger kuiButton--small"
+      data-toggle="tooltip"
+      ng-disabled='!privileges.canDeleteJob'
+      tooltip="Delete job">
+        <i aria-hidden="true" class="fa fa-trash"></i>
+    </button>
+  </div>
 </div>
