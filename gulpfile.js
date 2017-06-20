@@ -51,11 +51,42 @@ gulp.task('lint-staged', () => {
 
   return stagedFiles.getFiles(__dirname)
   .then((files) => {
+    // including the period in the extension allows whole names (e.g., build.gradle) to be whitelisted
+    const whitelist = [
+      '\.js',
+      '\.html',
+      '\.less',
+      '\.css',
+      '\.json',
+      '\.jpg',
+      '\.png',
+      '\.svg',
+      '\.yml' // rename .yaml to .yml if you run into this; don't add .yaml
+    ];
+
+    // build's a regex like: /(\.js|\.html|\.less|\.css)$/
+    const acceptableFileExtensions = whitelist.join('|');
+    const whitelistRegex = new RegExp(`(${acceptableFileExtensions})$`);
+
     const filePaths = files
-    .filter((file) => stagedFiles.getFilename(file).match(/\.js$/))
     .map((file) => stagedFiles.getFilename(file).replace(kibanaPath, ''));
 
-    return lintFiles(filePaths);
+    // anything NOT whitelisted needs to be blocked
+    const unwhitelistedFilePaths = filePaths.filter((file) => !file.match(whitelistRegex));
+
+    // we need to block the unrecognized files
+    if (unwhitelistedFilePaths.length) {
+      // add each unique extension
+      const extensionsSet = new Set(unwhitelistedFilePaths.map((file) => file.substr(file.lastIndexOf('.') + 1)));
+
+      // log any unique extension
+      g.util.log(`Unrecognized file extensions detected: [ ${Array.from(extensionsSet).join(', ')} ]`);
+      // fail the pre-commit check
+      throw new Error(`Files with unrecognized extensions: [ ${unwhitelistedFilePaths.join(', ')} ]`);
+    }
+
+    // we only lint Javascript files
+    return lintFiles(filePaths.filter((file) => file.match(/\.js$/)));
   });
 });
 
