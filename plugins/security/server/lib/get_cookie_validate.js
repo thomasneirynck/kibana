@@ -21,7 +21,7 @@ export function getCookieValidate(server) {
             expires: calculateExpires()
           });
         }
-        return callback(null, true, { isDashboardOnlyMode: user.isDashboardOnlyMode });
+        return callback(null, true, { username, isDashboardOnlyMode: user.isDashboardOnlyMode });
       },
       (error) => callback(error, false)
     );
