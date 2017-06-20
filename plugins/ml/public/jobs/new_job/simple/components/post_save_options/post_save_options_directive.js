@@ -25,7 +25,8 @@ module.directive('mlPostSaveOptions', function (mlPostSaveService, Private) {
     replace: false,
     scope: {
       jobId: '=',
-      bucketSpan: '='
+      bucketSpan: '=',
+      includeInfluencers: '='
     },
     template,
     link: function ($scope) {

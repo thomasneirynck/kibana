@@ -19,6 +19,7 @@ import { parseInterval } from 'ui/utils/parse_interval';
 
 import template from './create_watch.html';
 import emailBody from './email.html';
+import emailInfluencersBody from './email-influencers.html';
 import { watch } from './watch.js';
 
 import { uiModules } from 'ui/modules';
@@ -29,7 +30,8 @@ module.directive('mlCreateWatch', function (mlPostSaveService, $q, $http, es) {
     restrict: 'AE',
     replace: false,
     scope: {
-      bucketSpan: '='
+      bucketSpan: '=',
+      includeInfluencers: '='
     },
     template,
     link: function ($scope) {
@@ -88,7 +90,8 @@ module.directive('mlCreateWatch', function (mlPostSaveService, $q, $http, es) {
             subject: 'ML Watcher Alert',
             body: {
               html: compiledEmailBody({
-                serverAddress: chrome.getAppUrl()
+                serverAddress: chrome.getAppUrl(),
+                influencersSection: (($scope.includeInfluencers === true) ? emailInfluencersBody : '')
               })
             }
           }

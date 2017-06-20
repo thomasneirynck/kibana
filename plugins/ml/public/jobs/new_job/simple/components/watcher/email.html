@@ -19,13 +19,7 @@
     <br />
     <br />
 
-    <strong>Top influencers:</strong>
-    <br />
-      {{#ctx.payload.aggregations.influencer_results.top_influencer_hits.hits.hits}}
-        {{_source.influencer_field_name}} = {{_source.influencer_field_value}} [{{fields.score.0}}]
-        <br />
-      {{/ctx.payload.aggregations.influencer_results.top_influencer_hits.hits.hits}}
-    <br />
+    <%= influencersSection %>
 
     <strong>Top records:</strong>
     <br />
