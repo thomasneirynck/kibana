@@ -1,0 +1,75 @@
+[role="xpack"]
+[[installing-xpack-kb]]
+== Installing X-Pack
+
+After you install {kib}, you can optionally obtain and install {xpack}.
+For more information about how to obtain {xpack},
+see https://www.elastic.co/products/x-pack.
+
+
+NOTE: You must run the version of {xpack} that matches the version of {kib}
+you are running.
+
+//TBD: Is it a requirement that you install X-Pack on ES before you install it
+//on Kibana? i.e. is the order important?
+
+To install {xpack} in {kib}:
+
+. Optional: If you want to install {kib} on a machine that doesn't have internet
+access:
+
+.. Manually download the {xpack} zip file:
+https://artifacts.elastic.co/downloads/packs/x-pack/x-pack-{version}.zip[
++https://artifacts.elastic.co/downloads/packs/x-pack/x-pack-{version}.zip+]
+(https://artifacts.elastic.co/downloads/packs/x-pack/x-pack-{version}.zip.sha1[sha1])
+
+.. Transfer the zip file to a temporary directory on the offline machine. (Do NOT
+put the file in the {es} plugins directory.)
+
+. Run `bin/kibana-plugin` in your {kib} installation directory.
++
+--
+[source,shell]
+----------------------------------------------------------
+bin/kibana-plugin install x-pack
+----------------------------------------------------------
+//NOTCONSOLE
+
+The plugin install scripts require direct internet access to download and
+install {xpack}. If your server doesn’t have internet access, specify the
+location of the {xpack} zip file that you downloaded to a temporary directory.
+
+["source","sh",subs="attributes"]
+----------------------------------------------------------
+bin/kibana-plugin install file:///path/to/file/x-pack-{version}.zip
+----------------------------------------------------------
+//NOTCONSOLE
+--
+
+. Start {kib}.
++
+[source,shell]
+----------------------------------------------------------
+bin/kibana
+----------------------------------------------------------
+//NOTCONSOLE
+
+To verify {xpack} installation, point your web browser at `http://localhost:5601/`
+to open {kib}. You should be prompted to log in to {kib}. To log in, you can
+use the built-in `elastic` user and the password `changeme`.
+
+[IMPORTANT]
+=============================================================================
+SSL/TLS encryption is disabled by default, which means user credentials are
+passed in the clear. **Do not deploy to production without enabling encryption!**
+For more information, see
+{xpack-ref}/encrypting-communications.html[Encrypting Communications].
+
+You must also change the passwords for the built-in `elastic` user and the
+`kibana` user that enables Kibana to communicate with elasticsearch before
+deploying to production. For  more information, see
+{xpack-ref}/setting-up-authentication.html#built-in-users[Setting Up User Authentication].
+=============================================================================
+
+For more information about installing {xpack} across the Elastic Stack, see
+{xpack-ref}/installing-xpack.html[Installing X-Pack].
