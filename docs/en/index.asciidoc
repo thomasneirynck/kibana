@@ -45,8 +45,9 @@ include::{kib-repo-dir}/index-shared3.asciidoc[]
 //include::    MONITORING
 //endif::include-xpack[]
 
-//ifdef::include-xpack[]
-//include::reporting/index.asciidoc[]
-//endif::include-xpack[]
+ifdef::include-xpack[]
+:edit_url!:
+include::reporting/index.asciidoc[]
+endif::include-xpack[]
 
 include::{kib-repo-dir}/index-shared4.asciidoc[]

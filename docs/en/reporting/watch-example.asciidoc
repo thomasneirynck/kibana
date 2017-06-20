@@ -37,9 +37,14 @@ PUT _xpack/watcher/watch/error_report
 ---------------------------------------------------------
 // CONSOLE
 
-<1> You must <<configuring-email,configure at least one email account>> to enable Watcher to send email.
+<1> You must configure at least one email account to enable Watcher to send email.
+For more information, see
+{xpack-ref}/actions-email.html#configuring-email[Configuring Email Accounts].
 <2> This is an example Generation URL. You can copy and paste the URL for any
 report from the Kibana UI.
 <3> Optional, default is 40
 <4> Optional, default is 15s
-<5> Provide user credentials for a user with permission to access Kibana and {reporting}. For more information, see <<reporting-app-users, Setting up a Reporting Role>>.
+<5> Provide user credentials for a user with permission to access Kibana and
+{reporting}. For more information, see
+{ref}/secure-reporting.html[Security and Reporting].
+//<<reporting-app-users, Setting up a Reporting Role>>.

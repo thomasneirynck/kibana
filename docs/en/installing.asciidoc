@@ -33,7 +33,6 @@ put the file in the {es} plugins directory.)
 ----------------------------------------------------------
 bin/kibana-plugin install x-pack
 ----------------------------------------------------------
-//NOTCONSOLE
 
 The plugin install scripts require direct internet access to download and
 install {xpack}. If your server doesn’t have internet access, specify the
@@ -43,7 +42,7 @@ location of the {xpack} zip file that you downloaded to a temporary directory.
 ----------------------------------------------------------
 bin/kibana-plugin install file:///path/to/file/x-pack-{version}.zip
 ----------------------------------------------------------
-//NOTCONSOLE
+
 --
 
 . Start {kib}.
@@ -52,7 +51,7 @@ bin/kibana-plugin install file:///path/to/file/x-pack-{version}.zip
 ----------------------------------------------------------
 bin/kibana
 ----------------------------------------------------------
-//NOTCONSOLE
+
 
 To verify {xpack} installation, point your web browser at `http://localhost:5601/`
 to open {kib}. You should be prompted to log in to {kib}. To log in, you can

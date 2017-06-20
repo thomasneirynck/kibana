@@ -1,22 +1,26 @@
+[role="xpack"]
 [[reporting-getting-started]]
 == Getting Started
 
-{reporting} is automatically enabled when you <<installing-xpack, install
-{xpack}>> into Kibana. 
+{reporting} is automatically enabled when you install into {kib}. For more
+information, see {kib-ref}/installing-xpack-kb.html[Installing {xpack}].
 
 To manually generate a report:
 
-. Open Kibana in your web browser and log in. If you are running Kibana 
+. Open Kibana in your web browser and log in. If you are running Kibana
 locally, go to `http://localhost:5601`. To access Kibana and generate
-reports, you need the `kibana_user` and <<secure-reporting, `reporting_user`>>
-roles.
+reports, you need the `kibana_user` and `reporting_user` roles. For more
+information, see {xpack-ref}/secure-reporting.html[Reporting and Security].
 
 . Open the dashboard, visualization, or saved search you want to include
 in the report.
 
 . Click *Reporting* in the Kibana toolbar:
 +
-image:images/reporting.jpg["Reporting",link="reporting.jpg"]
+--
+[role="screenshot"]
+image:reporting/images/reporting.jpg["Reporting",link="reporting.jpg"]
+--
 
 . Click *Printable PDF*.
 

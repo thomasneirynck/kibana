@@ -1,3 +1,4 @@
+[role="xpack"]
 [[configuring-reporting]]
 == Configuring Reporting
 
@@ -21,7 +22,7 @@ picks up the job from the report queue.
 
 You can also configure settings in `kibana.yml` to control how {reporting}
 communicates with the Kibana server, manages background jobs, and captures
-screenshots. See <<reporting-settings, Reporting Settings>> for the complete
+screenshots. See <<reporting-settings-kb, Reporting Settings>> for the complete
 list of settings.
 
 [[securing-reporting]]
@@ -30,9 +31,10 @@ list of settings.
 In a production environment, you should restrict access to
 the {reporting} endpoints to authorized users. This requires that you:
 
-. <<security-getting-started, Enable {security}>> on your Elasticsearch
-cluster.
-. <<configure-kibana-cert, Configure an SSL certificate>> for Kibana.
+. Enable {security} on your Elasticsearch cluster. For more information,
+see {xpack-ref}/security-getting-started.html[Getting Started with Security].
+. Configure an SSL certificate for Kibana. For more information, see
+{xpack-ref}/kibana.html[Kibana and Security].
 . Configure {watcher} to trust the Kibana server's certificate by adding it to
 the {watcher} truststore on each node:
 .. Import the Kibana server certificate into the {watcher} truststore using
@@ -48,8 +50,9 @@ NOTE: If the truststore doesn't already exist, it is created.
 .. Make sure the `watcher.http.ssl.truststore.path` setting in
 `elasticsearch.yml` specifies the location of the {watcher}
 truststore.
-. <<secure-reporting, Add one or more users>> who have the permissions
-necessary to use Kibana and {reporting}.
+. Add one or more users who have the permissions
+necessary to use Kibana and {reporting}. For more information, see
+{xpack-ref}/secure-reporting.html
 
 Once you've enabled SSL for Kibana, all requests to the {reporting} endpoints
 must include valid credentials. For example, the following watch submits
@@ -57,5 +60,5 @@ requests as the built-in `elastic` user:
 
 include::watch-example.asciidoc[]
 
-For more information about configuring watches, see <<how-watcher-works, How
-Watches Work>>.
+For more information about configuring watches, see
+{xpack-ref}/how-watcher-works.html[How Watcher Works].
