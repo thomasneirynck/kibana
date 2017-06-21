@@ -140,11 +140,14 @@
             </div>
 
             <div class="form-group">
-              <label>
+              <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
                 <input type="checkbox"
+                  class='kuiCheckBox'
                   ng-change="setDedicatedIndex()"
                   ng-model  ="ui.useDedicatedIndex" />
-                  Use dedicated index <i ml-info-icon="new_job_dedicated_index" ></i>
+                  <span class='kuiCheckBoxLabel__text'>
+                    Use dedicated index <i ml-info-icon="new_job_dedicated_index" ></i>
+                  </span>
               </label>
             </div>
 
@@ -254,8 +257,11 @@
             <label>Influencers</label><i ml-info-icon="new_job_influencers" />
             <div class="influencer-list-container">
 
-              <div class="checkbox" ng-repeat="inf in ui.allInfluencers()" >
-                <label><input type="checkbox" ng-checked="influencerChecked(inf)" ng-click="toggleInfluencer(inf)" >{{inf}}</label>
+              <div ng-repeat="inf in ui.allInfluencers()" >
+                <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
+                  <input class='kuiCheckBox' type="checkbox" ng-checked="influencerChecked(inf)" ng-click="toggleInfluencer(inf)" />
+                  <span class='kuiCheckBoxLabel__text'>{{inf}}</span>
+                </label>
               </div>
 
               <div class="custom-influencer">
@@ -339,14 +345,17 @@
         <!-- tab 3 Datafeed -->
         <ml-job-tab-3 ng-show="ui.currentTab === 3">
           <div class="tab_contents">
-            <label>
+            <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
               <input
+                class='kuiCheckBox'
                 ng-model="ui.isDatafeed"
                 ng-change="datafeedChange()"
                 ng-disabled="job.data_description.format!=='json'"
                 type="checkbox" />
-              Datafeed job
-            </label><i ml-info-icon="new_job_enable_datafeed_job" />
+              <span class='kuiCheckBoxLabel__text'>
+                Datafeed job<i ml-info-icon="new_job_enable_datafeed_job" />
+              </span>
+            </label>
             <div ng-hide="ui.validation.tabs[3].checks.isDatafeed.valid" class="validation-error">
               {{ ( ui.validation.tabs[3].checks.isDatafeed.message ) }}
             </div>

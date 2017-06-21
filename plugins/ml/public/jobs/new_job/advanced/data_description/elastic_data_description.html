@@ -32,8 +32,11 @@
       <label>Indices</label>
       <div>
         <div class="index-list-container">
-          <div class="checkbox" ng-repeat="(key, value) in ui.sortByKey(ui.indices) | filterIndices" >
-            <label><input type="checkbox" ng-checked="indices[key] !== undefined" ng-click="toggleIndex(key, value)" >{{key}}</label>
+          <div ng-repeat="(key, value) in ui.sortByKey(ui.indices) | filterIndices" >
+            <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
+              <input class='kuiCheckBox' type="checkbox" ng-checked="indices[key] !== undefined" ng-click="toggleIndex(key, value)" />
+              <span class='kuiCheckBoxLabel__text'>{{key}}</span>
+            </label>
           </div>
         </div>
       </div>
@@ -45,10 +48,13 @@
       <label>Types</label>
       <div>
         <div class="types-list-container">
-          <div class="checkbox all_types" ng-show="(uiTypeKeys().length > 1)"><label><input type="checkbox" ng-checked="allTypesSelected()" ng-click="toggleAllTypes()" >All types</label></div>
+          <div class="all-types" ng-show="(uiTypeKeys().length > 1)"><label><input type="checkbox" ng-checked="allTypesSelected()" ng-click="toggleAllTypes()" >All types</label></div>
           <div ng-class="{checkbox: (uiTypeKeys().length > 1)}" ></div>
-          <div class="checkbox" ng-repeat="(key, value) in ui.types" >
-            <label><input type="checkbox" ng-checked="types[key] !== undefined" ng-click="toggleTypes(key, value)" >{{key}}</label>
+          <div ng-repeat="(key, value) in ui.types" >
+            <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
+              <input class='kuiCheckBox' type="checkbox" ng-checked="types[key] !== undefined" ng-click="toggleTypes(key, value)" >
+              <span class='kuiCheckBoxLabel__text'>{{key}}</span>
+            </label>
           </div>
         </div>
       </div>

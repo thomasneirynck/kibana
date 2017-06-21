@@ -36,12 +36,7 @@
   }
 
   .advanced-button {
-    width: 15px;
-    padding-left: 5px;
-    padding-right: 0px;
-  }
-  .advanced-button:focus {
-    box-shadow: none !important;
+    min-width: 23px;
   }
   .advanced-button-container {
     label {
@@ -85,7 +80,7 @@
     .selection-list-container {
       max-height: 250px;
       overflow: auto;
-      padding: 5px 10px;
+      padding: 5px 8px;
       font-size: 13px;
       line-height: 1.42857143;
       color: #444444;
@@ -99,7 +94,7 @@
         flex-direction: row;
 
         label {
-          padding-left: 0px;
+          padding-left: 2px;
           flex: auto;
           white-space: nowrap;
           overflow: hidden;
@@ -110,6 +105,7 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
+            margin-left: 4px;
           }
         }
 
@@ -124,6 +120,7 @@
       font-size: 13px;
       font-weight: normal;
       margin-left: -13px;
+      margin-top: 10px;
     }
 
     .selection-list-container.fields-list {
