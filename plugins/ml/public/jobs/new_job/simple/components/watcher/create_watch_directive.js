@@ -83,7 +83,7 @@ module.directive('mlCreateWatch', function (mlPostSaveService, $q, $http, es) {
 
       const emailSection = {
         send_email: {
-          throttle_period_in_millis: 600000, // 10m
+          throttle_period_in_millis: 900000, // 15m
           email: {
             profile: 'standard',
             to: [],
@@ -97,6 +97,11 @@ module.directive('mlCreateWatch', function (mlPostSaveService, $q, $http, es) {
           }
         }
       };
+
+      // generate a random number between min and max
+      function randomNumber(min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+      }
 
       function createWatch(jobId) {
         const deferred = $q.defer();
@@ -117,6 +122,12 @@ module.directive('mlCreateWatch', function (mlPostSaveService, $q, $http, es) {
             // add email section to watch
             watch.actions.send_email =  emailSection.send_email;
           }
+
+          // set the trigger interval to be a random number between 60 and 120 seconds
+          // this is to avoid all watches firing at once if the server restarts
+          // and the watches synchronise
+          const triggerInterval = randomNumber(60, 120);
+          watch.trigger.schedule.interval = `${triggerInterval}s`;
 
           const watchModel = {
             id,
