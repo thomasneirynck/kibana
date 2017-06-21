@@ -348,18 +348,32 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       if (scope.focusChartData.length > 0) {
         // Use default tick formatter.
         focusYAxis.tickFormat(null);
+
+        const chartLimits = {};
         if (scope.modelPlotEnabled === true) {
           //  Set domain to min/max of bounds and value.
-          focusYScale = focusYScale.domain([
-            d3.min(data, (d) => { return Math.min(d.value, d.lower); }),
-            d3.max(data, (d) => { return Math.max(d.value, d.upper); })
-          ]);
+          chartLimits.min = d3.min(data, (d) => { return Math.min(d.value, d.lower); });
+          chartLimits.max = d3.max(data, (d) => { return Math.max(d.value, d.upper); });
         } else {
-          focusYScale = focusYScale.domain([
-            d3.min(data, (d) => d.value),
-            d3.max(data, (d) => d.value)
-          ]);
+          chartLimits.min = d3.min(data, (d) => d.value);
+          chartLimits.max = d3.max(data, (d) => d.value);
         }
+
+        if (chartLimits.max === chartLimits.min) {
+          if (contextYScale.domain()[0] !== contextYScale.domain()[1]) {
+            // Set the focus chart limits to be the same as the context chart.
+            chartLimits.min = contextYScale.domain()[0];
+            chartLimits.max = contextYScale.domain()[1];
+          } else {
+            chartLimits.min -= (chartLimits.max * 0.05);
+            chartLimits.max += (chartLimits.max * 0.05);
+          }
+        }
+
+        focusYScale = focusYScale.domain([
+          chartLimits.min,
+          chartLimits.max
+        ]);
       } else {
         // Display 10 unlabelled ticks.
         focusYScale = focusYScale.domain([0, 10]);
