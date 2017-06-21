@@ -1,5 +1,9 @@
+[role="xpack"]
 [[graph-troubleshooting]]
-== {graph} Troubleshooting
+== {xpack} Graph Troubleshooting
+++++
+<titleabbrev>Troubleshooting</titleabbrev>
+++++
 
 [float]
 === Why are results missing?
@@ -10,7 +14,7 @@ The default settings in Graph API requests are configured to tune out noisy resu
 * Only considering terms that have a significant statistical correlation with the sample
 * Only considering terms to be paired that have at least 3 documents asserting that connection
 
-These are useful defaults for "getting the big picture" signals from noisy data but for detailed forensic type work these 
+These are useful defaults for "getting the big picture" signals from noisy data but for detailed forensic type work these
 default settings could miss details from individual documents. To ensure a graph exploration produces all data consider changing the following settings:
 
 * Increase the `sample_size` to a larger number of documents to analyse more data on each shard.
@@ -23,13 +27,13 @@ default settings could miss details from individual documents. To ensure a graph
 
 With the default setting of `use_significance` set to `true` the Graph API will be performing a background frequency check of the terms
 it discovers as part of exploration. Each unique term has to have its frequency looked up in the index which costs at least one disk seek.
-Disk seeks are expensive so if the noise-filtering aspects of the Graph API are not required then setting the `use_significance` setting 
+Disk seeks are expensive so if the noise-filtering aspects of the Graph API are not required then setting the `use_significance` setting
 to `false` will eliminate all of these expensive checks (but also any quality-filtering of terms).
 
 If the significance noise-filtering features are required there are three ways to reduce the number of checks it performs:
 
 * Consider less documents by decreasing the `sample_size`. Considering less documents can actually be better if the quality of matches is quite variable.
-* Avoid noisy documents that have very many terms. This can be achieved either through allowing ranking to naturally favour shorter documents in our top-results sample (see {ref}/norms.html[enabling norms])
+* Avoid noisy documents that have very many terms. This can be achieved either through allowing ranking to naturally favor shorter documents in our top-results sample (see {es-ref}/norms.html[enabling norms])
 or by explicitly excluding large documents using criteria in the seed and guiding queries passed to the Graph API.
 Many many terms occur very infrequently so even increasing the frequency threshold by one should massively reduce the number of candidate terms whose background frequencies will be checked.
 

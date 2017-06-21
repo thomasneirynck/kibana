@@ -37,6 +37,11 @@ include::{kib-repo-dir}/index-shared2.asciidoc[]
 //include::    DEV TOOLS
 //endif::include-xpack[]
 
+ifdef::include-xpack[]
+:edit_url!:
+include::graph/index.asciidoc[]
+endif::include-xpack[]
+
 
 include::{kib-repo-dir}/index-shared3.asciidoc[]
 

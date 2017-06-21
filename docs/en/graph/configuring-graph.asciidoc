@@ -1,3 +1,4 @@
+[role="xpack"]
 [[graph-configuration]]
 == Configuring Graph
 
@@ -19,13 +20,13 @@ are no longer controlled by security policies. Because the original documents
 might be deleted after a workspace is saved, there's no practical basis for
 checking permissions for the data in a saved workspace.
 
-For this reason, you can configure the save policy for graph workspaces to 
+For this reason, you can configure the save policy for graph workspaces to
 ensure appropriate handling of your data. You can allow users to save
-only the configuration information for a graph, require users to 
+only the configuration information for a graph, require users to
 explicitly include the workspace data, or completely disable the ability
-to save a workspace. 
+to save a workspace.
 
-For example, to disable the save option entirely, set 
+For example, to disable the save option entirely, set
 `xpack.graph.savePolicy` to `none` in `kibana.yml`:
 
 [source,yaml]
@@ -53,10 +54,10 @@ explicitly selects the include data option.
 By default, users can configure _drill down_ URLs to display additional
 information about a selected vertex in a new browser window. For example,
 you could configure a drill down URL to perform a web search for the selected
-vertex term. 
+vertex term.
 
-To prevent users from adding drill down URLs,  set 
-`xpack.graph.canEditDrillDownUrls` to `false` in `kibana.yml`: 
+To prevent users from adding drill down URLs,  set
+`xpack.graph.canEditDrillDownUrls` to `false` in `kibana.yml`:
 
 [source,yaml]
 --------------------------------------------------

@@ -30,3 +30,4 @@ the Reporting endpoints>>.
 include::getting-started.asciidoc[]
 include::automating-report-generation.asciidoc[]
 include::configuring-reporting.asciidoc[]
+include::reporting-troubleshooting.asciidoc[]
