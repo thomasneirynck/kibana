@@ -1,4 +1,6 @@
-== Rendering pre-captured profiler JSON
+[role="xpack"]
+[[profiler-render]]
+=== Rendering pre-captured profiler JSON
 
 The Search Profiler queries the cluster that the Kibana node is attached to.
 It does this by executing the query against the cluster and collecting the results.
@@ -155,4 +157,4 @@ query editor and click *Profile*:
 --------------------------------------------------
 // NOTCONSOLE
 
-image::images/pasting.png["Visualizing pre-collected responses"]
+image::searchprofiler/images/pasting.png["Visualizing pre-collected responses"]
