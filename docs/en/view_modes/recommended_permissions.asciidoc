@@ -1,16 +1,17 @@
+[role="xpack"]
 [[recommended-view-only-mode-permissions]]
-== Recommended permissions for view dashboard only roles
+=== Recommended permissions for view dashboard only roles
 
 When you enable *View dashboard only* mode for a role, you should also restrict the role to read-only access
 to the Kibana index. For Kibana to work properly in read-only mode, the role must have the `read` and
 `view_index_metadata` privileges for the Kibana index.
 
-image:images/read_only_kibana.png["Read only Kibana index permissions"]
+image:view_modes/images/read_only_kibana.png["Read only Kibana index permissions"]
 
 Users must also have read access to the indices that contain the data for your dashboards.
 The `view_index_metadata` permission is not required for data indices.
 
-image:images/read_only_logstash.png["Read only logstash index permissions"]
+image:view_modes/images/read_only_logstash.png["Read only logstash index permissions"]
 
 IMPORTANT: All roles you assign to dashboard-only users must have *View dashboards only* enabled.
 If any role has *All apps* view mode enabled, the users will be able to see all Kibana apps
@@ -18,4 +19,4 @@ If any role has *All apps* view mode enabled, the users will be able to see all 
 When you create or update dashboard-only users from *Management > Users*, assign both the read-only
 data and read-only Kibana index roles.
 
-image:images/assigning_user_roles.png["Assigning roles to your read only user"]
+image:view_modes/images/assigning_user_roles.png["Assigning roles to your read only user"]

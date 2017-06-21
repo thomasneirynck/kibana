@@ -54,6 +54,11 @@ include::{kib-repo-dir}/index-shared4.asciidoc[]
 
 ifdef::include-xpack[]
 :edit_url!:
+include::view_modes/index.asciidoc[]
+endif::include-xpack[]
+
+ifdef::include-xpack[]
+:edit_url!:
 include::reporting/index.asciidoc[]
 endif::include-xpack[]
 

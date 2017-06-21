@@ -1,13 +1,12 @@
+[role="xpack"]
 [[xpack-view-modes]]
-= Kibana View Modes
+== Kibana View Modes
 
-[partintro]
---
 {xpack} supports two view modes that you can assign to roles: *All apps* or *View dashboards only*.
 The *All apps* view mode is enabled for new roles by default, which enables users assigned the role
 to see all Kibana apps.
 
-image:images/all_apps_default_mode.png["All Apps View Mode"]
+image:view_modes/images/all_apps_default_mode.png["All Apps View Mode"]
 
 When you enable the *View dashboards only* mode for a role, users assigned the role can only see and use
 the Dashboard app and all edit controls are hidden.
@@ -18,15 +17,14 @@ see all Kibana apps.
 In *View dashboards only* mode, Dashboard is the only app visible and the Dashboard page shows all
 available dashboards.
 
-image:images/view_only_listing_page.png["View Only Dashboard Listing Page"]
+image:view_modes/images/view_only_listing_page.png["View Only Dashboard Listing Page"]
 
 When you view a dashboard in *View dashboards only mode*, no editing tools are available.
-image:images/view_only_dashboard.png["View Only Dashboard"]
+image:view_modes/images/view_only_dashboard.png["View Only Dashboard"]
 
 This setting is available when editing or creating a role under *Management > Roles*.
 
 IMPORTANT: We recommend that you give roles that enable *View dashboards only* mode
 <<recommended-view-only-mode-permissions, read only>> Elasticsearch permissions.
---
 
 include::recommended_permissions.asciidoc[]
