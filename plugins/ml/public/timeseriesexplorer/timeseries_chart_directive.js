@@ -803,8 +803,25 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         contents += ('anomaly score: ' + displayScore + '<br/>');
 
         if (scope.modelPlotEnabled === false) {
-          contents += ('actual: ' + formatValueFilter(marker.actual, marker.function));
-          contents += ('<br/>typical: ' + formatValueFilter(marker.typical, marker.function));
+          if (_.has(marker, 'actual')) {
+            // Display the record actual in preference to the chart value, which may be
+            // different depending on the aggregation interval of the chart.
+            contents += ('actual: ' + formatValueFilter(marker.actual, marker.function));
+            contents += ('<br/>typical: ' + formatValueFilter(marker.typical, marker.function));
+          } else {
+            contents += ('value: ' + numeral(marker.value).format('0,0.[00]'));
+            if (_.has(marker, 'byFieldName') && _.has(marker, 'numberOfCauses')) {
+              const numberOfCauses = marker.numberOfCauses;
+              const byFieldName = marker.byFieldName;
+              if (numberOfCauses < 10) {
+                // If numberOfCauses === 1, won't go into this block as actual/typical copied to top level fields.
+                contents += `<br/> ${numberOfCauses} unusual ${byFieldName} values`;
+              } else {
+                // Maximum of 10 causes are stored in the record, so '10' may mean more than 10.
+                contents += `<br/> ${numberOfCauses}+ unusual ${byFieldName} values`;
+              }
+            }
+          }
         } else {
           contents += ('value: ' + numeral(marker.value).format('0,0.[00]'));
           contents += ('<br/>upper bounds: ' + numeral(marker.upper).format('0,0.[00]'));

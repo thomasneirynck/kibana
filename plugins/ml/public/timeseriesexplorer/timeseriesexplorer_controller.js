@@ -659,11 +659,16 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
           chartPoint.actual = record.actual;
           chartPoint.typical = record.typical;
         } else {
-          // If only a single cause, copy value to the top level.
-          if (_.get(record, 'causes', []).length === 1) {
-            const cause = _.first(record.causes);
-            chartPoint.actual = cause.actual;
-            chartPoint.typical = cause.typical;
+          const causes = _.get(record, 'causes', []);
+          if (causes.length > 0) {
+            chartPoint.byFieldName = record.by_field_name;
+            chartPoint.numberOfCauses = causes.length;
+            if (causes.length === 1) {
+              // If only a single cause, copy actual and typical values to the top level.
+              const cause = _.first(record.causes);
+              chartPoint.actual = cause.actual;
+              chartPoint.typical = cause.typical;
+            }
           }
         }
       }

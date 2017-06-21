@@ -77,12 +77,7 @@
     <tr><td>probability:</td><td>{{record.source.probability}}</td></tr>
     <tr ng-if="causes" ng-repeat="cause in causes track by $index">
       <td ng-if="$index === 0">{{cause.entityName}} values:</td><td ng-if="$index > 0">&nbsp;</td>
-      <td>{{cause.entityValue}} (actual {{cause.actual | formatValue:record.source.function}}, typical {{cause.typical | formatValue:record.source.function}}, probability {{cause.probability}})
-        <i ng-click="filter(cause.entityName, cause.entityValue, '+')"
-            tooltip="Filter for value" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
-        <i ng-click="filter(cause.entityName, cause.entityValue, '-')"
-            tooltip="Filter out value" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
-      </td>
+      <td>{{cause.entityValue}} (actual {{cause.actual | formatValue:record.source.function}}, typical {{cause.typical | formatValue:record.source.function}}, probability {{cause.probability}})</td>
     </tr>
   </table>
 
