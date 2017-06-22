@@ -1,15 +1,15 @@
+[role="xpack"]
 [[grokdebugger-getting-started]]
-== Getting Started with the Grok Debugger
+=== Getting Started with the Grok Debugger
 
 ++++
 <titleabbrev>Getting Started</titleabbrev>
 ++++
 
 TIP: See the documentation about the ingest node
-{ref}/grok-processor.html[grok processor] and the Logstash
-{logstash-ref}/plugins-filters-grok.html[grok filter] more info about grok.
+{es-ref}/grok-processor.html[grok processor] and the Logstash {logstash-ref}/plugins-filters-grok.html[grok filter] more info about grok.
 
-The Grok Debugger is automatically enabled when you <<installing-xpack,install {xpack}>>
+The Grok Debugger is automatically enabled when you <<installing-xpack-kb,install {xpack}>>
 into Kibana.  It is located under the *DevTools* tab in Kibana
 
 To start debugging grok patterns:
@@ -20,7 +20,7 @@ locally, go to `http://localhost:5601/`.
 . Click **DevTools** in the side navigation and then click **Grok Debugger**
 on the top navigation bar.
 +
-image::images/grok-debugger.png["Grok Debugger UI"]
+image::grokdebugger/images/grok-debugger.png["Grok Debugger UI"]
 
 . Under Input, enter a sample message that is representative of the data you
 want to parse. For example:
@@ -44,13 +44,13 @@ For example, to parse the log line in the example, you use:
 Under Output, you'll see the simulated event that results from applying the grok
 pattern:
 +
-image::images/grok-debugger-output.png["Viewing Grok Debugger Output"]
+image::grokdebugger/images/grok-debugger-output.png["Viewing Grok Debugger Output"]
 +
 Any errors in the pattern will appear at the top of the page. For example,
 here you see a parse exception because the pattern name is misspelled as `WORDD`
 and therefore can't be found in the pattern dictionary:
 +
-image::images/grok-debugger-error.png["Viewing Grok Debugger Errors"]
+image::grokdebugger/images/grok-debugger-error.png["Viewing Grok Debugger Errors"]
 +
 You can click the **More** link to see more detail about the message.
 +
@@ -61,7 +61,7 @@ until there are no errors and the output matches the event that you expect.
 
 [float]
 [[grokdebugger-custom-patterns]]
-=== Testing Custom Patterns
+==== Testing Custom Patterns
 
 If the default grok pattern dictionary doesn't contain the patterns you need,
 you may need to define custom patterns. You can use the Grok Debugger to test
@@ -106,7 +106,7 @@ for `POSTFIX_QUEUEID`:
 Under Output, you'll see the simulated output event that results from applying
 the grok pattern that contains the custom pattern:
 +
-image::images/grok-debugger-custom-pattern.png["Debugging a custom pattern"]
+image::grokdebugger/images/grok-debugger-custom-pattern.png["Debugging a custom pattern"]
 +
 If an error occurs, you can view the error message and continue iterating over
 the custom pattern until there are no errors and the output matches the event

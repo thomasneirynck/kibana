@@ -56,6 +56,11 @@ ifdef::include-xpack[]
 include::searchprofiler/index.asciidoc[]
 endif::include-xpack[]
 
+ifdef::include-xpack[]
+:edit_url!:
+include::grokdebugger/index.asciidoc[]
+endif::include-xpack[]
+
 :edit_url:
 include::{kib-repo-dir}/index-shared4.asciidoc[]
 
