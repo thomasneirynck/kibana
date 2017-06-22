@@ -325,13 +325,17 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
       const tooltipDiv = d3.select('.ml-explorer-charts-tooltip');
       tooltipDiv.transition()
         .duration(200)
-        .style('opacity', .9);
+        .style('opacity', .9)
+        .style('display', 'block');
       tooltipDiv.html(contents);
 
       // Position the tooltip.
-      const pos = $(circle).position();
+      const pos = circle.getBoundingClientRect();
+      const doc = document.documentElement;
+      const scrollTop = (window.pageYOffset || doc.scrollTop)  - (doc.clientTop || 0);
+
+      const y = pos.top + scrollTop;
       const x = pos.left;
-      const y = pos.top;
       const parentWidth = $('.ml-explorer').width();
       const tooltipWidth = tooltipDiv.node().offsetWidth;
       if (x + tooltipWidth + LINE_CHART_ANOMALY_RADIUS + 10 < parentWidth) {
@@ -347,7 +351,8 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
       const tooltipDiv = d3.select('.ml-explorer-charts-tooltip');
       tooltipDiv.transition()
         .duration(500)
-        .style('opacity', 0);
+        .style('opacity', 0)
+        .style('display', 'none');
     }
 
     function processChartData() {

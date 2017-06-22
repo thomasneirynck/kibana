@@ -34,7 +34,7 @@ module.directive('mlExplorerChartsContainer', function ($window, timefilter) {
   function link(scope, element) {
     // Create a div for the tooltip.
     $('.ml-explorer-charts-tooltip').remove();
-    $('body').append('<div class="ml-explorer-tooltip ml-explorer-charts-tooltip" style="opacity:0">');
+    $('body').append('<div class="ml-explorer-tooltip ml-explorer-charts-tooltip" style="opacity:0; display: none;">');
 
     element.on('$destroy', function () {
       scope.$destroy();
