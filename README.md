@@ -154,3 +154,20 @@ The `default` profile is used automatically, but setting the `AWS_PROFILE` envir
 `AWS_PROFILE=another-config npm run release`
 
 See [the AWS docs](http://docs.aws.amazon.com/AWSJavaScriptSDK/guide/node-configuring.html#Creating_the_Shared_Credentials_File) for more information.
+
+# Building documentation
+
+This repo is used to build the Kibana User Guide. In particular, it builds a 
+version of the guide that includes X-Pack-specific information in 5.5 and later. 
+
+To build the Kibana User Guide on your local machine:
+
+- Use the `index.asciidoc` file in the docs/en folder.
+- Specify the location of the `kibana/docs/` directory with the `--resource` option when you run `build_docs.pl`.
+
+For example:
+
+```
+docs/build_docs.pl --doc x-pack-kibana/docs/en/index.asciidoc --resource=kibana/docs/ --chunk 1
+```
+
