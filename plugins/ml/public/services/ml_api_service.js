@@ -24,16 +24,16 @@ module.service('ml', function (prlHttpService) {
   const basePath = chrome.addBasePath('/api/ml');
 
   this.jobs = function (obj) {
-    const jobId = (obj && obj.jobId) ? obj.jobId : '';
+    const jobId = (obj && obj.jobId) ? `/${obj.jobId}` : '';
     return http.request({
-      url: `${basePath}/anomaly_detectors/${jobId}`,
+      url: `${basePath}/anomaly_detectors${jobId}`,
     });
   };
 
   this.jobStats = function (obj) {
-    const jobId = (obj && obj.jobId) ? obj.jobId + '/' : '';
+    const jobId = (obj && obj.jobId) ? `/${obj.jobId}` : '';
     return http.request({
-      url: `${basePath}/anomaly_detectors/${jobId}_stats`,
+      url: `${basePath}/anomaly_detectors${jobId}/_stats`,
     });
   };
 
@@ -82,16 +82,16 @@ module.service('ml', function (prlHttpService) {
   };
 
   this.datafeeds = function (obj) {
-    const datafeedId = (obj && obj.datafeedId) ? obj.datafeedId : '';
+    const datafeedId = (obj && obj.datafeedId) ? `/${obj.datafeedId}` : '';
     return http.request({
-      url: `${basePath}/datafeeds/${datafeedId}`,
+      url: `${basePath}/datafeeds${datafeedId}`,
     });
   };
 
   this.datafeedStats = function (obj) {
-    const datafeedId = (obj && obj.datafeedId) ? obj.datafeedId + '/' : '';
+    const datafeedId = (obj && obj.datafeedId) ? `/${obj.datafeedId}` : '';
     return http.request({
-      url: `${basePath}/datafeeds/${datafeedId}_stats`,
+      url: `${basePath}/datafeeds${datafeedId}/_stats`,
     });
   };
 
