@@ -72,7 +72,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       job_id: '',
       description: '',
       analysis_config: {
-        bucket_span: '5m',
+        bucket_span: '15m',
         influencers:[],
         detectors :[]
       },

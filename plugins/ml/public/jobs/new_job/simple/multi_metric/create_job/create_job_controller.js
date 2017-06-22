@@ -209,7 +209,7 @@ module
     },
     field: null,
     fields: {},
-    bucketSpan: '5m',
+    bucketSpan: '15m',
     chartInterval: undefined,
     resultsIntervalSeconds: undefined,
     start: 0,

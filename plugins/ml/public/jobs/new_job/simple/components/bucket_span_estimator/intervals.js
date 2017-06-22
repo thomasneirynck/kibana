@@ -14,8 +14,7 @@
  */
 
 export const INTERVALS = [
-  { name:'5m',  ms: 300000 },
-  { name:'10m', ms: 600000 },
+  { name:'15m', ms: 900000 },
   { name:'30m', ms: 1800000 },
   { name:'1h',  ms: 3600000 },
   { name:'3h',  ms: 10800000 }
