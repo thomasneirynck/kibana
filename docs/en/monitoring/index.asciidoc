@@ -1,39 +1,25 @@
+[role="xpack"]
 [[xpack-monitoring]]
-= Monitoring the Elastic Stack
+= Monitoring
 
 [partintro]
 --
-The {monitoring} components enable you to easily monitor the Elastic Stack
-from {kibana-ref}/introduction.html[Kibana].
-You can view health and performance data for Elasticsearch, Logstash, and
-Kibana in real time, as well as analyze past performance.
+The {xpack} monitoring components enable you to easily monitor the Elastic Stack
+from {kib}. You can view health and performance data for {es}, Logstash, and
+{kib} in real time, as well as analyze past performance.
 
-When you install {xpack}, a monitoring agent runs on each Elasticsearch,
-Kibana, and Logstash instance to collect and index metrics.
+When you install {xpack}, a monitoring agent runs on each {es}, {kib}, and
+Logstash instance to collect and index metrics.
 
-By default, metrics are indexed within the cluster you are monitoring.
-Setting up a <<monitoring-cluster, dedicated monitoring cluster>> ensures
-you can access historical monitoring data even if the cluster you're
-monitoring goes down. It also enables you to monitor multiple clusters
-from a central location.
-
-When you use a dedicated monitoring cluster, the metrics collected by the
-Logstash and Kibana monitoring agents are shipped to the Elasticsearch
-cluster you're monitoring, which then forwards all of the metrics to
-the monitoring cluster.
-
-// &nbsp;
-
-// image:images/monitoring-architecture.png["Monitoring Architecture",link="images/monitoring-architecture.png"]
-
+For more information, see
+{xpack-ref}/xpack-monitoring.html[Monitoring the Elastic Stack].
 --
 
-include::getting-started.asciidoc[]
+[role="xpack"]
+== Getting Started
 
-include::monitoring-elasticsearch.asciidoc[]
+Monitoring is automatically enabled when you install {xpack} into {kib}. For
+more information, see <<installing-xpack-kb>>.
 
-include::monitoring-logstash.asciidoc[]
-
-include::monitoring-kibana.asciidoc[]
-
-include::configuring-monitoring.asciidoc[]
+For more information, see
+{xpack-ref}/monitoring-getting-started.html[Getting Started with Monitoring].
