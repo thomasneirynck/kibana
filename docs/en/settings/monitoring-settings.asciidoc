@@ -2,25 +2,19 @@
 [[monitoring-settings-kb]]
 === Monitoring Settings
 
-You configure `xpack.monitoring.collection` settings in `elasticsearch.yml` to
-control how data is collected from your Elasticsearch nodes. For more
-information, see {xpack-ref}/monitoring-settings.html[Monitoring Settings].
-//TO-DO: Update URL when content moves to Elasticsearch Reference.
+Monitoring is enabled by default when you install {xpack}. You can adjust
+how monitoring data is displayed in the Monitoring UI by configuring
+{kibana-ref}/monitoring-settings-kb.html[`xpack.monitoring` settings] in
+`kibana.yml`.
 
-You can adjust how monitoring data is displayed in the
-Monitoring UI by configuring <<monitoring-ui-settings, `xpack.monitoring`>>
-settings in `kibana.yml`.
+To control how data is collected from your Elasticsearch nodes, you configure
+{ref}/monitoring-settings.html[`xpack.monitoring.collection`
+settings] in `elasticsearch.yml`. To control how monitoring data is collected
+from Logstash, you configure {logstash-ref}/settings-xpack.html#monitoring-settings[
+`xpack.monitoring` settings]  in `logstash.yml`.
 
 For more information, see
-{xpack-ref}/configuring-monitoring.html[Configuring Monitoring].
-//<<configuring-monitoring, Configuring Monitoring>>.
-
-[float]
-[[general-monitoring-settings]]
-==== General Monitoring Settings
-`xpack.monitoring.enabled`::
-Set to `false` to disable {monitoring}.
-Configure in both `elasticsearch.yml` and `kibana.yml`.
+{xpack-ref}/xpack-monitoring.html[Monitoring the Elastic Stack].
 
 [float]
 [[monitoring-ui-settings]]
@@ -30,6 +24,9 @@ You can set the following `xpack.monitoring` settings in `kibana.yml` to adjust
 how the Monitoring UI displays monitoring data. However, the defaults work best
 in most circumstances. For more information about configuring Kibana, see
 {kibana-ref}/settings.html[Setting Kibana Server Properties].
+
+`xpack.monitoring.enabled`::
+Set to `false` to disable the {monitoring} UI.
 
 `xpack.monitoring.elasticsearch.url`::
 
@@ -235,4 +232,4 @@ to future-proof them.
 :verifies:
 :server!:
 
-include::ssl-settings.asciidoc[]
+include::{xes-ref}/settings/ssl-settings.asciidoc[]
