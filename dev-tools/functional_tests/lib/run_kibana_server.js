@@ -22,6 +22,8 @@ export async function runKibanaServer({ procs, ftrConfig, devMode = false }) {
       `--optimize.lazyPort=${ftrConfig.get('servers.kibana.port') + 1}`,
       '--optimize.lazyPrebuild=true',
       `--optimize.bundleDir=${OPTIMIZE_BUNDLE_DIR}`,
+      '--elasticsearch.username=kibana',
+      `--elasticsearch.password=changeme`
     ],
     cwd: KIBANA_ROOT,
     wait: /Server running/,

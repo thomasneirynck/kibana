@@ -13,7 +13,6 @@ import { initIndicesApi } from './server/routes/api/v1/indices';
 import { initLoginView } from './server/routes/views/login';
 import { initLogoutView } from './server/routes/views/logout';
 import { validateConfig } from './server/lib/validate_config';
-import { setElasticsearchAuth } from './server/lib/set_elasticsearch_auth';
 import { createScheme } from './server/lib/login_scheme';
 import { checkLicense } from './server/lib/check_license';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
@@ -73,10 +72,6 @@ export const security = (kibana) => new kibana.Plugin({
         sessionTimeout: config.get('xpack.security.sessionTimeout')
       };
     }
-  },
-
-  preInit(server) {
-    setElasticsearchAuth(server.config());
   },
 
   init(server) {
