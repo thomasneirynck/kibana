@@ -1,0 +1,25 @@
+[role="xpack"]
+[[xpack-ml]]
+= Machine Learning
+
+[partintro]
+--
+The {xpack} machine learning features automate the analysis of time-series data
+by creating accurate baselines of normal behaviors in the data and identifying
+anomalous patterns in that data.
+
+You can create and view results from machine learning jobs from the
+*Machine Learning* page in {kib}.
+
+For more information, see
+{xpack-ref}xpack-ml.html[Machine Learning in the Elastic Stack].
+--
+
+[role="xpack"]
+== Getting Started
+
+Machine learning is automatically enabled when you
+<<installing-xpack-kb,install {xpack} into {kib}>>.
+
+Ready to get some hands-on experience? See
+{xpack-ref}/ml-getting-started.html[Getting Started with Machine Learning].
