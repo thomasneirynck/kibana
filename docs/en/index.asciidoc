@@ -31,12 +31,10 @@ endif::include-xpack[]
 :edit_url:
 include::{kib-repo-dir}/index-shared2.asciidoc[]
 
-//ifdef::include-xpack[]
-//:edit_url!:
-//include::    MACHINE LEARNING
-//include::    GRAPH
-//include::    DEV TOOLS
-//endif::include-xpack[]
+ifdef::include-xpack[]
+:edit_url!:
+include::ml/index.asciidoc[]
+endif::include-xpack[]
 
 ifdef::include-xpack[]
 :edit_url!:

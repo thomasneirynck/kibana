@@ -2,8 +2,8 @@
 [[reporting-getting-started]]
 == Getting Started
 
-{reporting} is automatically enabled when you install into {kib}. For more
-information, see {kib-ref}/installing-xpack-kb.html[Installing {xpack}].
+{reporting} is automatically enabled when you install {xpack} into {kib}. For
+more information, see <<installing-xpack-kb>>.
 
 To manually generate a report:
 
