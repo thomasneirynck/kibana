@@ -232,4 +232,4 @@ to future-proof them.
 :verifies:
 :server!:
 
-include::{xes-ref}/settings/ssl-settings.asciidoc[]
+include::{xes-repo-dir}/settings/ssl-settings.asciidoc[]

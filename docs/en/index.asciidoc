@@ -3,6 +3,7 @@
 
 :include-xpack:   true
 :kib-repo-dir:    {docdir}/../../../kibana/docs
+:xes-repo-dir:    {docdir}/../../../elasticsearch-extra/x-pack-elasticsearch/docs
 :docversion:      master
 
 :stack-ref:       http://www.elastic.co/guide/en/elastic-stack/{docversion}
