@@ -2,8 +2,9 @@
 = Kibana User Guide
 
 :include-xpack:   true
+:lang:            en
 :kib-repo-dir:    {docdir}/../../../kibana/docs
-:xes-repo-dir:    {docdir}/../../../elasticsearch-extra/x-pack-elasticsearch/docs
+:xes-repo-dir:    {docdir}/../../../elasticsearch-extra/x-pack-elasticsearch/docs/{lang}
 :docversion:      master
 
 :stack-ref:       http://www.elastic.co/guide/en/elastic-stack/{docversion}
