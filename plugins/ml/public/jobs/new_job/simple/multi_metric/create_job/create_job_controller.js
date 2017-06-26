@@ -546,11 +546,20 @@ module
       backWidth -= (5 - (i / 2)) * 2;
     }
     let i = 0;
-    function fadeCard() {
+    let then = window.performance.now();
+    const fps = 20;
+    const fpsInterval = 1000 / fps;
+
+    function fadeCard(callTime) {
       if (i < cardsBehind.length) {
-        cardsBehind[i].style.opacity = 1;
-        window.setTimeout(fadeCard , 60);
-        i++;
+        const now = callTime;
+        const elapsed = now - then;
+        if (elapsed > fpsInterval) {
+          cardsBehind[i].style.opacity = 1;
+          i++;
+          then = now - (elapsed % fpsInterval);
+        }
+        window.requestAnimationFrame(fadeCard);
       }
     }
     fadeCard();
