@@ -178,7 +178,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     const bounds = timefilter.getActiveBounds();
 
     const detectorIndex = +$scope.detectorId;
-    $scope.modelPlotEnabled = isModelPlotEnabled($scope.selectedJob);
+    $scope.modelPlotEnabled = isModelPlotEnabled($scope.selectedJob, detectorIndex, $scope.entities);
 
     // Only filter on the entity if the field has a value.
     const nonBlankEntities = _.filter($scope.entities, (entity) => { return entity.fieldValue.length > 0; });

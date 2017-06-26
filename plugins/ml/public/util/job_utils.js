@@ -90,8 +90,41 @@ export function isTimeSeriesViewFunction(functionName) {
   return mlFunctionToESAggregation(functionName) !== null;
 }
 
-export function isModelPlotEnabled(job) {
-  return _.get(job, ['model_plot_config', 'enabled'], false);
+// Returns a flag to indicate whether model plot has been enabled for a job.
+// If model plot is enabled for a job with a terms filter (comma separated
+// list of partition or by field names), performs additional checks that
+// the supplied entities contains 'by' and 'partition' fields in the detector,
+// if configured, whose values are in the configured model_plot_config terms,
+// where entityFields is in the format [{fieldName:status, fieldValue:404}].
+export function isModelPlotEnabled(job, detectorIndex, entityFields) {
+  // Check if model_plot_config is enabled.
+  let isEnabled = _.get(job, ['model_plot_config', 'enabled'], false);
+
+  if (isEnabled === true) {
+    // If terms filter is configured in model_plot_config, check supplied entities.
+    const termsStr = _.get(job, ['model_plot_config', 'terms'], '');
+    if (termsStr !== '') {
+      // NB. Do not currently support empty string values as being valid 'by' or
+      // 'partition' field values even though this is supported on the back-end.
+      // If supplied, check both the by and partition entities are in the terms.
+      const detector = job.analysis_config.detectors[detectorIndex];
+      const detectorHasPartitionField = _.has(detector, 'partition_field_name');
+      const detectorHasByField = _.has(detector, 'by_field_name');
+      const terms = termsStr.split(',');
+
+      if (detectorHasPartitionField === true) {
+        const partitionEntity = _.find(entityFields, { 'fieldName': detector.partition_field_name });
+        isEnabled = partitionEntity !== undefined && terms.indexOf(partitionEntity.fieldValue) !== -1;
+      }
+
+      if (isEnabled === true && detectorHasByField === true) {
+        const byEntity = _.find(entityFields, { 'fieldName': detector.by_field_name });
+        isEnabled = byEntity !== undefined && terms.indexOf(byEntity.fieldValue) !== -1;
+      }
+    }
+  }
+
+  return isEnabled;
 }
 
 // Takes an ML detector 'function' and returns the corresponding ES aggregation name

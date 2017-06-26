@@ -197,24 +197,67 @@ describe('ML - job utils', () => {
 
     it('returns true for a job in which model plot has been enabled', () => {
       const job = {
+        analysis_config: {
+          detectors: [
+              { 'function':'high_count','partition_field_name':'status','detector_description': 'High count status code' }
+          ]
+        },
         model_plot_config: {
           enabled: true
         }
       };
 
-      expect(isModelPlotEnabled(job)).to.be(true);
+      expect(isModelPlotEnabled(job, 0)).to.be(true);
+    });
+
+    it('returns expected values for a job in which model plot has been enabled with terms', () => {
+      const job = {
+        analysis_config: {
+          detectors: [
+            { 'function':'max',
+              'field_name':'responsetime',
+              'partition_field_name':'country',
+              'by_field_name': 'airline' }
+          ]
+        },
+        model_plot_config: {
+          enabled: true,
+          terms: 'US,AAL'
+        }
+      };
+
+      expect(isModelPlotEnabled(job, 0, [
+        { fieldName: 'country', fieldValue: 'US' },
+        { fieldName: 'airline', fieldValue: 'AAL' }
+      ])).to.be(true);
+      expect(isModelPlotEnabled(job, 0, [
+        { fieldName: 'country', fieldValue: 'US' }
+      ])).to.be(false);
+      expect(isModelPlotEnabled(job, 0, [
+        { fieldName: 'country', fieldValue: 'GB' },
+        { fieldName: 'airline', fieldValue: 'AAL' }
+      ])).to.be(false);
+      expect(isModelPlotEnabled(job, 0, [
+        { fieldName: 'country', fieldValue: 'JP' },
+        { fieldName: 'airline', fieldValue: 'JAL' }
+      ])).to.be(false);
     });
 
     it('returns true for jobs in which model plot has not been enabled', () => {
       const job1 = {
+        analysis_config: {
+          detectors: [
+              { 'function':'high_count','partition_field_name':'status','detector_description': 'High count status code' }
+          ]
+        },
         model_plot_config: {
           enabled: false
         }
       };
       const job2 = {};
 
-      expect(isModelPlotEnabled(job1)).to.be(false);
-      expect(isModelPlotEnabled(job2)).to.be(false);
+      expect(isModelPlotEnabled(job1, 0)).to.be(false);
+      expect(isModelPlotEnabled(job2, 0)).to.be(false);
     });
 
   });
