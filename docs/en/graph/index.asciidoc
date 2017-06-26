@@ -75,3 +75,5 @@ include::configuring-graph.asciidoc[]
 include::explore.asciidoc[]
 
 include::troubleshooting.asciidoc[]
+
+include::limitations.asciidoc[]

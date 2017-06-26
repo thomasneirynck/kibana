@@ -1,6 +1,9 @@
 [role="xpack"]
 [[graph-limitations]]
 == Graph Limitations
+++++
+<titleabbrev>Limitations</titleabbrev>
+++++
 
 [float]
 === Limited Support for Multiple Indices
