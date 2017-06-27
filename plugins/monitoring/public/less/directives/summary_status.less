@@ -1,20 +1,18 @@
 .monitoring-summary-status {
   background-color: tint(@globalColorBlue, 90%);
   border-bottom: solid 1px @globalColorLightGray;
-  padding: 5px;
-  display: flex;
-
-  * + * {
-    margin-left: 10px;
-  }
 }
 
 .monitoring-summary-status__content {
   display: flex;
   flex-grow: 1;
+  flex-wrap: wrap;
+  padding: 8px 0;
+
   > div {
     align-self: center;
-    padding: 5px;
+    margin: 0 5px;
+    padding: 2px 5px;
   }
 }
 
@@ -23,6 +21,6 @@
   text-align: right;
 
   * {
-    display: inline;
+    display: inline; // status icon component is a div
   }
 }
