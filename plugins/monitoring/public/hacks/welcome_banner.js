@@ -23,7 +23,7 @@ function renderBanner($injector) {
     `),
     controllerAs: 'welcome',
     controller() {
-      this.allowReport = config.get(CONFIG_ALLOW_REPORT, true); // initialize
+      this.allowReport = config.get(CONFIG_ALLOW_REPORT);
 
       this.toggleOpt = ({ allowReport }) => {
         this.allowReport = allowReport;

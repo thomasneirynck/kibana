@@ -1,3 +1,8 @@
+import {
+  CONFIG_SHOW_BANNER,
+  CONFIG_ALLOW_REPORT
+} from './common/constants';
+
 /**
  * Configuration of dependency objects for the UI, which are needed for the
  * Monitoring UI app (injectVars) and views and data for outside the monitoring
@@ -24,6 +29,16 @@ export const uiExports = {
         showCgroupMetricsLogstash: config.get('xpack.monitoring.ui.container.logstash.enabled')
       };
     },
+  },
+  uiSettingDefaults: {
+    [CONFIG_SHOW_BANNER]: {
+      description: 'Should we show the "Welcome to X-Pack!" Banner on every page?',
+      value: true
+    },
+    [CONFIG_ALLOW_REPORT]: {
+      description: 'Can we share cluster statistics that help Elastic improve? The data is never shared with anyone.',
+      value: true
+    }
   },
   injectDefaultVars(server) {
     const config = server.config();
