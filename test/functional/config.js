@@ -71,12 +71,12 @@ export default async function ({ readConfigFile }) {
 
     // choose where esArchiver should load archives from
     esArchiver: {
-      directory: resolve(__dirname, '../es_archives')
+      directory: resolve(__dirname, 'es_archives')
     },
 
     // choose where screenshots should be saved
     screenshots: {
-      directory: resolve(__dirname, '../screenshots')
+      directory: resolve(__dirname, 'screenshots')
     }
   };
 }
