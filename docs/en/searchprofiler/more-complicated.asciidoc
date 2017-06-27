@@ -120,4 +120,4 @@ aggregation row to view the timing breakdown.
 
 For more information about how the Search Profiler works, how timings are calculated, and
 how to interpret various results, see the
-{es-ref}/_profiling_queries.html[Profile Reference Documentation]
+{ref}/_profiling_queries.html[Profile Reference Documentation]

@@ -8,7 +8,7 @@ webserver logs, mysql logs, and in general, any log format that is generally
 written for humans and not computer consumption.
 
 Grok patterns are supported in the ingest node
-{es-ref}/grok-processor.html[grok processor] and the Logstash
+{ref}/grok-processor.html[grok processor] and the Logstash
 {logstash-ref}/plugins-filters-grok.html[grok filter]. The Elastic Stack ships
 with over 120 reusable grok patterns. See
 https://github.com/elastic/elasticsearch/tree/master/modules/ingest-common/src/main/resources/patterns[Ingest node grok patterns] and https://github.com/logstash-plugins/logstash-patterns-core/tree/master/patterns[Logstash grok patterns]

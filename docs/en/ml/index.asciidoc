@@ -12,7 +12,7 @@ You can create and view results from machine learning jobs from the
 *Machine Learning* page in {kib}.
 
 For more information, see
-{xpack-ref}xpack-ml.html[Machine Learning in the Elastic Stack].
+{xpack-ref}/xpack-ml.html[Machine Learning in the Elastic Stack].
 --
 
 [role="xpack"]

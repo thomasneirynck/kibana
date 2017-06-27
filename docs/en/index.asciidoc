@@ -1,37 +1,15 @@
 [[kibana-guide]]
 = Kibana User Guide
 
-:include-xpack:   true
-:lang:            en
-:kib-repo-dir:    {docdir}/../../../kibana/docs
-:xes-repo-dir:    {docdir}/../../../elasticsearch-extra/x-pack-elasticsearch/docs/{lang}
-:docversion:      master
-
-:stack-ref:       http://www.elastic.co/guide/en/elastic-stack/{docversion}
-:ref:             http://www.elastic.co/guide/en/elasticsearch/reference/{docversion}
-:logstash-ref:    http://www.elastic.co/guide/en/logstash/{docversion}
-:kibana-ref:      http://www.elastic.co/guide/en/kibana/{docversion}
-:xpack-ref:       http://www.elastic.co/guide/en/x-pack/{docversion}
-:java-client-ref: http://www.elastic.co/guide/en/elasticsearch/client/java-api/{docversion}
-:blog-ref:        https://www.elastic.co/blog/
-:wikipedia:       https://en.wikipedia.org/wiki
-
-:xpack:           X-Pack
-:security:        X-Pack security
-:monitoring:      X-Pack monitoring
-:watcher:         Watcher
-:reporting:       X-Pack reporting
-:graph:           X-Pack graph
-:searchprofiler:  X-Pack search profiler
-:xpackml:         X-Pack machine learning
-:es:              Elasticsearch
-:kib:             Kibana
-
-:ml:              machine learning
-:dfeed:           datafeed
-:dfeeds:          datafeeds
-:dfeed-cap:       Datafeed
-:dfeeds-cap:      Datafeeds
+:include-xpack:  true
+:lang:           en
+:kib-repo-dir:   {docdir}/../../../kibana/docs
+:xes-repo-dir:   {docdir}/../../../elasticsearch-extra/x-pack-elasticsearch/docs/{lang}
+:docversion:     master
+:docs-dir:       {docdir}/../../../docs
+:branch:         master
+:blog-ref:       https://www.elastic.co/blog/
+:wikipedia:      https://en.wikipedia.org/wiki
 
 include::{kib-repo-dir}/index-shared1.asciidoc[]
 

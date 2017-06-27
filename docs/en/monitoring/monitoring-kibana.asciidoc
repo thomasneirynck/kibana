@@ -3,7 +3,7 @@
 
 To monitor {kib}:
 
-. Install {xpack}. See {kib-ref}/installing-xpack-kb.html[Installing {xpack}].
+. Install {xpack}. See {kibana-ref}/installing-xpack-kb.html[Installing {xpack}].
 
 . {kib} automatically sends metrics to the {es} cluster specified in the
 `elasticsearch.url` property in `kibana.yml`, which defaults to
