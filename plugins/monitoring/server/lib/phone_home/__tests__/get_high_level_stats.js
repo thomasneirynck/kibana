@@ -3,24 +3,16 @@ import sinon from 'sinon';
 import { fetchHighLevelStats, getHighLevelStats, handleHighLevelStatsResponse } from '../get_high_level_stats';
 
 describe('get_high_level_stats', () => {
-  const callWithRequest = sinon.stub();
+  const callWith = sinon.stub();
   const size = 123;
   const product = 'xyz';
   const start = 0;
   const end = 1;
-  const indices = `.monitoring-${product}-N-2017`;
-  const req = {
-    server: {
-      config: sinon.stub().returns({
-        get: sinon.stub().withArgs(`xpack.monitoring.${product}.index_pattern`).returns(`.monitoring-${product}-N-*`)
-                         .withArgs('xpack.monitoring.max_bucket_size').returns(size)
-      }),
-      plugins: {
-        elasticsearch: {
-          getCluster: sinon.stub().withArgs('monitoring').returns({ callWithRequest })
-        }
-      }
-    }
+  const server = {
+    config: sinon.stub().returns({
+      get: sinon.stub().withArgs(`xpack.monitoring.${product}.index_pattern`).returns(`.monitoring-${product}-N-*`)
+                       .withArgs('xpack.monitoring.max_bucket_size').returns(size)
+    })
   };
   const response = {
     hits: {
@@ -103,19 +95,17 @@ describe('get_high_level_stats', () => {
 
   describe('getHighLevelStats', () => {
     it('returns clusters', async () => {
-      callWithRequest.withArgs(req, 'count').returns(Promise.resolve({ status: 200 }));
-      callWithRequest.withArgs(req, 'fieldStats').returns(Promise.resolve({ indices }));
-      callWithRequest.withArgs(req, 'search').returns(Promise.resolve(response));
+      callWith.withArgs('search').returns(Promise.resolve(response));
 
-      expect(await getHighLevelStats(req, clusterUuids, start, end, product)).to.eql(expectedClusters);
+      expect(await getHighLevelStats(server, callWith, clusterUuids, start, end, product)).to.eql(expectedClusters);
     });
   });
 
   describe('fetchHighLevelStats', () => {
     it('searches for clusters', async () => {
-      callWithRequest.returns(Promise.resolve(response));
+      callWith.returns(Promise.resolve(response));
 
-      expect(await fetchHighLevelStats(req, indices, clusterUuids, start, end, product)).to.be(response);
+      expect(await fetchHighLevelStats(server, callWith, clusterUuids, start, end, product)).to.be(response);
     });
   });
 

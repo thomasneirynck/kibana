@@ -68,3 +68,11 @@ export const INVALID_LICENSE = { type: 'invalid', status: 'inactive' };
  * In order to show ML Jobs tab in the Elasticsearch section / tab navigation, license must be supported
  */
 export const ML_SUPPORTED_LICENSES = [ 'trial', 'platinum' ];
+
+/**
+ * The amount of time, in milliseconds, to wait between reports when enabled.
+ *
+ * Currently 24 hours.
+ * @type {Number}
+ */
+export const REPORT_INTERVAL_MS = 86400000;

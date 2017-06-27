@@ -3,20 +3,13 @@ import sinon from 'sinon';
 import { getClusterUuids, fetchClusterUuids, handleClusterUuidsResponse } from '../get_cluster_uuids';
 
 describe('get_cluster_uuids', () => {
-  const callWithRequest = sinon.stub();
+  const callWith = sinon.stub();
   const size = 123;
-  const req = {
-    server: {
-      config: sinon.stub().returns({
-        get: sinon.stub().withArgs('xpack.monitoring.elasticsearch.index_pattern').returns('.monitoring-es-N-*')
-                         .withArgs('xpack.monitoring.max_bucket_size').returns(size)
-      }),
-      plugins: {
-        elasticsearch: {
-          getCluster: sinon.stub().withArgs('monitoring').returns({ callWithRequest })
-        }
-      }
-    }
+  const server = {
+    config: sinon.stub().returns({
+      get: sinon.stub().withArgs('xpack.monitoring.elasticsearch.index_pattern').returns('.monitoring-es-N-*')
+                       .withArgs('xpack.monitoring.max_bucket_size').returns(size)
+    })
   };
   const response = {
     aggregations: {
@@ -30,30 +23,26 @@ describe('get_cluster_uuids', () => {
     }
   };
   const expectedUuids = response.aggregations.cluster_uuids.buckets.map(bucket => bucket.key);
-  const indices = ['.monitoring-es-N-today'];
   const start = new Date();
   const end = new Date();
 
   describe('getClusterUuids', () => {
     it('returns cluster UUIDs', async () => {
-      callWithRequest.withArgs(req, 'count').returns(Promise.resolve({ hits: { total: 5 } }))
-                     .withArgs(req, 'count').returns(Promise.resolve({ hits: { total: 3456 } }))
-                     .withArgs(req, 'fieldStats').returns(Promise.resolve({ indices }))
-                     .withArgs(req, 'search').returns(Promise.resolve(response));
+      callWith.withArgs('search').returns(Promise.resolve(response));
 
-      expect(await getClusterUuids(req, start, end)).to.eql(expectedUuids);
+      expect(await getClusterUuids(server, callWith, start, end)).to.eql(expectedUuids);
     });
   });
 
   describe('fetchClusterUuids', () => {
     it('does not search if indices is empty', async () => {
-      expect(fetchClusterUuids(req, [], start, end, size)).to.eql({});
+      expect(fetchClusterUuids(server, callWith, start, end)).to.eql({});
     });
 
     it('searches for clusters', async () => {
-      callWithRequest.returns(Promise.resolve(response));
+      callWith.returns(Promise.resolve(response));
 
-      expect(await fetchClusterUuids(req, indices, start, end, size)).to.be(response);
+      expect(await fetchClusterUuids(server, callWith, start, end)).to.be(response);
     });
   });
 

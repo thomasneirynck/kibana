@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import { getAllStats } from '../../../../lib/phone_home/get_all_stats';
+import { receivePhoneHome } from '../../../../lib/phone_home/receive_phone_home';
 import { handleError } from '../../../../lib/handle_error';
 
 export function phoneHomeRoutes(server) {
@@ -10,22 +11,13 @@ export function phoneHomeRoutes(server) {
     path: '/api/monitoring/v1/phone-home',
     method: 'POST',
     handler: (req, reply) => {
-      // Change to true to test indexing the data. Note, user must have privileges
-      if (false) {
-        const body = req.payload;
-        const options = {
-          index: '.monitoring',
-          type: 'doc',
-          body
-        };
-        const { callWithRequest } = server.plugins.elasticsearch.getCluster('monitoring');
+      const { callWithRequest } = server.plugins.elasticsearch.getCluster('monitoring');
+      const callWith = (...args) => callWithRequest(req, ...args);
 
-        return callWithRequest(req, 'index', options)
-        .then(reply)
-        .catch(err => reply(handleError(err, req)));
-      }
-
-      return reply({});
+      // receivePhoneHome defaults to ignoring the payload
+      return receivePhoneHome(callWith, req.payload.data)
+      .then(reply)
+      .catch (err => reply(handleError(err, req)));
     }
   });
 

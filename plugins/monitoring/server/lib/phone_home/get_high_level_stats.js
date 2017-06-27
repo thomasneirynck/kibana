@@ -5,22 +5,24 @@ import { ElasticsearchMetric } from '../metrics/metric_classes';
 /**
  * Get statistics about selected Elasticsearch clusters, for the selected {@code product}.
  *
- * @param {Object} req The incoming request
+ * @param {Object} server The server instance
+ * @param {function} callCluster The callWithRequest or callWithInternalUser handler
  * @param {Array} clusterUuids The string Cluster UUIDs to fetch details for
  * @param {Date} start Start time to limit the stats
  * @param {Date} end End time to limit the stats
  * @param {String} product The product to limit too ('kibana', 'logstash', 'beats')
  * @return {Promise} Object keyed by the cluster UUIDs to make grouping easier.
  */
-export function getHighLevelStats(req, clusterUuids, start, end, product) {
-  return fetchHighLevelStats(req, clusterUuids, start, end, product)
+export function getHighLevelStats(server, callCluster, clusterUuids, start, end, product) {
+  return fetchHighLevelStats(server, callCluster, clusterUuids, start, end, product)
   .then(response => handleHighLevelStatsResponse(response, product));
 }
 
 /**
  * Fetch the high level stats to report for the {@code product}.
  *
- * @param {Object} req The request object
+ * @param {Object} server The server instance
+ * @param {function} callCluster The callWithRequest or callWithInternalUser handler
  * @param {Array} indices The indices to use for the request
  * @param {Array} clusterUuids Cluster UUIDs to limit the request against
  * @param {Date} start Start time to limit the stats
@@ -28,8 +30,8 @@ export function getHighLevelStats(req, clusterUuids, start, end, product) {
  * @param {String} product The product to limit too ('kibana', 'logstash', 'beats')
  * @return {Promise} Response for the instances to fetch detailed for the product.
  */
-export function fetchHighLevelStats(req, clusterUuids, start, end, product) {
-  const config = req.server.config();
+export function fetchHighLevelStats(server, callCluster, clusterUuids, start, end, product) {
+  const config = server.config();
   const size = config.get('xpack.monitoring.max_bucket_size');
   const params = {
     index: config.get(`xpack.monitoring.${product}.index_pattern`),
@@ -56,8 +58,7 @@ export function fetchHighLevelStats(req, clusterUuids, start, end, product) {
     }
   };
 
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
-  return callWithRequest(req, 'search', params);
+  return callCluster('search', params);
 }
 
 /**

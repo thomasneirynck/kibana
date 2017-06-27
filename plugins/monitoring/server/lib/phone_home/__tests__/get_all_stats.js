@@ -1,30 +1,30 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
-import { addStackStats, getAllStats, handleAllStats } from '../get_all_stats';
+import { addStackStats, getAllStats, getAllStatsForServer, handleAllStats } from '../get_all_stats';
 
 describe('get_all_stats', () => {
   const size = 123;
   const start = 0;
   const end = 1;
   const callWithRequest = sinon.stub();
-  const req = {
-    server: {
-      config: sinon.stub().returns({
-        get: sinon.stub().withArgs('xpack.monitoring.elasticsearch.index_pattern').returns('.monitoring-es-N-*')
-                         .withArgs('xpack.monitoring.kibana.index_pattern').returns('.monitoring-kibana-N-*')
-                         .withArgs('xpack.monitoring.logstash.index_pattern').returns('.monitoring-logstash-N-*')
-                         .withArgs('xpack.monitoring.max_bucket_size').returns(size)
-      }),
-      plugins: {
-        elasticsearch: {
-          getCluster: sinon.stub().withArgs('monitoring').returns({ callWithRequest })
-        }
+  const callWithInternalUser = sinon.stub();
+  const server = {
+    config: sinon.stub().returns({
+      get: sinon.stub().withArgs('xpack.monitoring.elasticsearch.index_pattern').returns('.monitoring-es-N-*')
+                       .withArgs('xpack.monitoring.kibana.index_pattern').returns('.monitoring-kibana-N-*')
+                       .withArgs('xpack.monitoring.logstash.index_pattern').returns('.monitoring-logstash-N-*')
+                       .withArgs('xpack.monitoring.max_bucket_size').returns(size)
+    }),
+    plugins: {
+      elasticsearch: {
+        getCluster: sinon.stub().withArgs('monitoring').returns({
+          callWithInternalUser,
+          callWithRequest
+        })
       }
     }
   };
-  const indices = [ '.monitoring-product_goes_here-N-*' ];
-  callWithRequest.withArgs(req, 'count').returns(Promise.resolve({ status: 200 }));
-  callWithRequest.withArgs(req, 'fieldStats').returns(Promise.resolve({ indices }));
+  const req = { server };
   const esClusters = [
     { cluster_uuid: 'a' },
     { cluster_uuid: 'b', random_setting_not_removed: false },
@@ -82,7 +82,7 @@ describe('get_all_stats', () => {
     }
   ];
 
-  describe('getAllStats', () => {
+  describe('getAllStats / getAllStatsForServer return the same results', () => {
     it('returns clusters', async () => {
       const clusterUuidsResponse = {
         aggregations: { cluster_uuids: { buckets: [ { key: 'a' } ] } }
@@ -152,7 +152,14 @@ describe('get_all_stats', () => {
                      .onCall(2).returns(Promise.resolve(kibanaStatsResponse))
                      .onCall(3).returns(Promise.resolve(logstashStatsResponse));
 
+      callWithInternalUser.withArgs('search')
+                          .onCall(0).returns(Promise.resolve(clusterUuidsResponse))
+                          .onCall(1).returns(Promise.resolve(esStatsResponse))
+                          .onCall(2).returns(Promise.resolve(kibanaStatsResponse))
+                          .onCall(3).returns(Promise.resolve(logstashStatsResponse));
+
       expect(await getAllStats(req, start, end)).to.eql(allClusters);
+      expect(await getAllStatsForServer(server, start, end)).to.eql(allClusters);
     });
 
     it('returns empty clusters', async () => {
@@ -161,8 +168,10 @@ describe('get_all_stats', () => {
       };
 
       callWithRequest.withArgs(req, 'search').returns(Promise.resolve(clusterUuidsResponse));
+      callWithInternalUser.withArgs('search').returns(Promise.resolve(clusterUuidsResponse));
 
       expect(await getAllStats(req, start, end)).to.eql([]);
+      expect(await getAllStatsForServer(server, start, end)).to.eql([]);
     });
   });
 

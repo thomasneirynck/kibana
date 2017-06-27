@@ -5,26 +5,28 @@ import { ElasticsearchMetric } from '../metrics/metric_classes';
 /**
  * Get a list of Cluster UUIDs that exist within the specified timespan.
  *
- * @param {Object} req The incoming request
+ * @param {Object} server The server instance
+ * @param {function} callCluster The callWithRequest or callWithInternalUser handler
  * @param {Date} start The start date to look for clusters
  * @param {Date} end The end date to look for clusters
  * @return {Array} Array of strings; one per Cluster UUID.
  */
-export function getClusterUuids(req, start, end) {
-  return fetchClusterUuids(req, start, end)
+export function getClusterUuids(server, callCluster, start, end) {
+  return fetchClusterUuids(server, callCluster, start, end)
   .then(handleClusterUuidsResponse);
 }
 
 /**
+ * Fetch the aggregated Cluster UUIDs from the monitoring cluster.
  *
- * @param {Object} req The incoming request
+ * @param {Object} server The server instance
+ * @param {function} callCluster The callWithRequest or callWithInternalUser handler
  * @param {Date} start The start date to look for clusters
  * @param {Date} end The end date to look for clusters
  * @return {Promise} Object response from the aggregation.
  */
-export function fetchClusterUuids(req, start, end) {
-  const config = req.server.config();
-  const size = config.get('xpack.monitoring.max_bucket_size');
+export function fetchClusterUuids(server, callCluster, start, end) {
+  const config = server.config();
   const params = {
     index: config.get('xpack.monitoring.elasticsearch.index_pattern'),
     ignoreUnavailable: true,
@@ -36,15 +38,14 @@ export function fetchClusterUuids(req, start, end) {
         cluster_uuids: {
           terms: {
             field: 'cluster_uuid',
-            size
+            size: config.get('xpack.monitoring.max_bucket_size')
           }
         }
       }
     }
   };
 
-  const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
-  return callWithRequest(req, 'search', params);
+  return callCluster('search', params);
 }
 
 /**

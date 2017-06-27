@@ -3,20 +3,13 @@ import sinon from 'sinon';
 import { fetchElasticsearchStats, getElasticsearchStats, handleElasticsearchStats } from '../get_es_stats';
 
 describe('get_es_stats', () => {
-  const callWithRequest = sinon.stub();
+  const callWith = sinon.stub();
   const size = 123;
-  const req = {
-    server: {
-      config: sinon.stub().returns({
-        get: sinon.stub().withArgs('xpack.monitoring.elasticsearch.index_pattern').returns('.monitoring-es-N-*')
-                         .withArgs('xpack.monitoring.max_bucket_size').returns(size)
-      }),
-      plugins: {
-        elasticsearch: {
-          getCluster: sinon.stub().withArgs('monitoring').returns({ callWithRequest })
-        }
-      }
-    }
+  const server = {
+    config: sinon.stub().returns({
+      get: sinon.stub().withArgs('xpack.monitoring.elasticsearch.index_pattern').returns('.monitoring-es-N-*')
+                       .withArgs('xpack.monitoring.max_bucket_size').returns(size)
+    })
   };
   const response = {
     hits: {
@@ -32,17 +25,17 @@ describe('get_es_stats', () => {
 
   describe('getElasticsearchStats', () => {
     it('returns clusters', async () => {
-      callWithRequest.withArgs(req, 'search').returns(Promise.resolve(response));
+      callWith.withArgs('search').returns(Promise.resolve(response));
 
-      expect(await getElasticsearchStats(req, clusterUuids)).to.eql(expectedClusters);
+      expect(await getElasticsearchStats(server, callWith, clusterUuids)).to.eql(expectedClusters);
     });
   });
 
   describe('fetchElasticsearchStats', () => {
     it('searches for clusters', async () => {
-      callWithRequest.returns(response);
+      callWith.returns(response);
 
-      expect(await fetchElasticsearchStats(req, clusterUuids)).to.be(response);
+      expect(await fetchElasticsearchStats(server, callWith, clusterUuids)).to.be(response);
     });
   });
 

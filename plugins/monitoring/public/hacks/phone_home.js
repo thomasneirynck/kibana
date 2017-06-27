@@ -1,13 +1,8 @@
 import moment from 'moment';
 import Promise from 'bluebird';
-/* TODO using a relative path just for local mocha testing.
- * Revert back to webpack aliasing when these are resolved:
- * https://github.com/elastic/x-pack-kibana/issues/154
- * https://github.com/elastic/x-pack-kibana/issues/361 */
-import { CONFIG_ALLOW_REPORT } from '../../common/constants';
+import { CONFIG_ALLOW_REPORT, REPORT_INTERVAL_MS } from 'monitoring-constants';
 
 const STORAGE_KEY = 'xpack.monitoring.data';
-const REPORT_INTERVAL = 86400000; // 1 day
 
 export class PhoneHome {
 
@@ -52,7 +47,7 @@ export class PhoneHome {
         return true;
       }
       // If it's been a day since we last sent an report, send one.
-      if ((new Date()).getTime() - parseInt(this._get('lastReport'), 10) > REPORT_INTERVAL) {
+      if (Date.now() - parseInt(this._get('lastReport'), 10) > REPORT_INTERVAL_MS) {
         return true;
       }
     }
@@ -75,7 +70,7 @@ export class PhoneHome {
       }
     })
     .then(response => {
-      // TODO: create infra issue to allow bulk reporting to avoid firing multiple requests
+      // TODO: support arrays after https://github.com/elastic/infra/issues/2350
       return response.data.map(cluster => {
         const req = {
           method: 'POST',

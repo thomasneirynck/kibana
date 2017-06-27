@@ -13,7 +13,38 @@ import { getHighLevelStats } from './get_high_level_stats';
  * @return {Promise} The array of clusters joined with the Kibana and Logstash instances.
  */
 export function getAllStats(req, start, end) {
-  return getClusterUuids(req, start, end)
+  const server = req.server;
+  const { callWithRequest } = server.plugins.elasticsearch.getCluster('monitoring');
+  const callCluster = (...args) => callWithRequest(req, ...args);
+
+  return getAllStatsWithCaller(server, callCluster, start, end);
+}
+
+/**
+ * Get statistics for all products joined by Elasticsearch cluster.
+ *
+ * @param {Object} server The server instance used to call ES as the internal user
+ * @param {Date} start The starting range to request data
+ * @param {Date} end The ending range to request data
+ * @return {Promise} The array of clusters joined with the Kibana and Logstash instances.
+ */
+export function getAllStatsForServer(server, start, end) {
+  const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('monitoring');
+
+  return getAllStatsWithCaller(server, callWithInternalUser, start, end);
+}
+
+/**
+ * Get statistics for all products joined by Elasticsearch cluster.
+ *
+ * @param {Object} server The Kibana server instance used to call ES as the internal user
+ * @param {function} callCluster The callWithRequest or callWithInternalUser handler
+ * @param {Date} start The starting range to request data
+ * @param {Date} end The ending range to request data
+ * @return {Promise} The array of clusters joined with the Kibana and Logstash instances.
+ */
+function getAllStatsWithCaller(server, callCluster, start, end) {
+  return getClusterUuids(server, callCluster, start, end)
   .then(clusterUuids => {
     // don't bother doing a further lookup
     if (clusterUuids.length === 0) {
@@ -21,9 +52,9 @@ export function getAllStats(req, start, end) {
     }
 
     return Promise.all([
-      getElasticsearchStats(req, clusterUuids),
-      getHighLevelStats(req, clusterUuids, start, end, KIBANA_SYSTEM_ID),
-      getHighLevelStats(req, clusterUuids, start, end, LOGSTASH_SYSTEM_ID)
+      getElasticsearchStats(server, callCluster, clusterUuids),
+      getHighLevelStats(server, callCluster, clusterUuids, start, end, KIBANA_SYSTEM_ID),
+      getHighLevelStats(server, callCluster, clusterUuids, start, end, LOGSTASH_SYSTEM_ID)
     ])
     .then(([esClusters, kibana, logstash]) => handleAllStats(esClusters, { kibana, logstash }));
   });
