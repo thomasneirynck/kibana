@@ -2,8 +2,24 @@ import path from 'path';
 import _ from 'lodash';
 import concat from 'concat-stream';
 import Printer from 'pdfmake';
+import xRegExp from 'xregexp';
 
 const assetPath = path.resolve(__dirname, 'assets');
+
+
+function getFont(text) {
+  // Once unicode regex scripts are fully supported we should be able to get rid of the dependency
+  // on xRegExp library.  See https://github.com/tc39/proposal-regexp-unicode-property-escapes
+  // for more information. We are matching Han characters which is one of the supported unicode scripts
+  // (you can see the full list of supported scripts here: http://www.unicode.org/standard/supported.html).
+  // This will match Chinese, Japanese, Korean and some other Asian languages.
+  const isCKJ = xRegExp('\\p{Han}').test(text, 'g');
+  if(isCKJ) {
+    return 'noto-cjk';
+  } else {
+    return 'Roboto';
+  }
+}
 
 class PdfMaker {
   constructor() {
@@ -14,6 +30,12 @@ class PdfMaker {
         bold: fontPath('Roboto-Medium.ttf'),
         italics: fontPath('Roboto-Italic.ttf'),
         bolditalics: fontPath('Roboto-Italic.ttf'),
+      },
+      'noto-cjk': { // Roboto does not support CJK characters, so we'll fall back on this font if we detect them.
+        normal: fontPath('NotoSansCJKtc-Regular.ttf'),
+        bold: fontPath('NotoSansCJKtc-Medium.ttf'),
+        italics: fontPath('NotoSansCJKtc-Regular.ttf'),
+        bolditalics: fontPath('NotoSansCJKtc-Medium.ttf'),
       }
     };
 
@@ -42,14 +64,16 @@ class PdfMaker {
     if (opts.title && opts.title.length > 0) {
       contents.push({
         text: opts.title,
-        style: 'heading'
+        style: 'heading',
+        font: getFont(opts.title)
       });
     }
 
     if (opts.description && opts.description.length > 0) {
       contents.push({
         text: opts.description,
-        style: 'subheading'
+        style: 'subheading',
+        font: getFont(opts.description)
       });
     }
 
@@ -77,7 +101,8 @@ class PdfMaker {
     const contents = [];
     contents.push({
       text: headingText,
-      style: ['heading'].concat(opts.styles || [])
+      style: ['heading'].concat(opts.styles || []),
+      font: getFont(headingText)
     });
     this._addContents(contents);
   }
@@ -127,6 +152,7 @@ function getTemplate(title) {
       return {
         margin: [ pageMarginWidth, pageMarginTop / 4, pageMarginWidth, 0 ],
         text: title,
+        font: getFont(title),
         style: {
           color: '#aaa',
         },
