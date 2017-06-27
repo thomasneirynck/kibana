@@ -207,7 +207,7 @@ through the network.
 The `http` exporter supports a number of settings that control how it
 communicates over HTTP to remote clusters. In most cases, it is not
 necessary to explicitly configure these settings. For detailed
-descriptions, see {ref}/monitoring-settings#http-exporter-settings[Monitoring Settings].
+descriptions, see {ref}/monitoring-settings.html#http-exporter-settings[Monitoring Settings].
 
 [source,yaml]
 ----------------------------------
