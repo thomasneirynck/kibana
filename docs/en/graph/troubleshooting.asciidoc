@@ -1,12 +1,12 @@
 [role="xpack"]
 [[graph-troubleshooting]]
-=== Graph Troubleshooting
+== Graph Troubleshooting
 ++++
 <titleabbrev>Troubleshooting</titleabbrev>
 ++++
 
 [float]
-==== Why are results missing?
+=== Why are results missing?
 
 The default settings in Graph API requests are configured to tune out noisy
 results by using the following strategies:
