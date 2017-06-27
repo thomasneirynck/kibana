@@ -5,7 +5,7 @@
 You configure `xpack.security` settings to enable anonymous access
 and perform message authentication, set up document and field level security,
 configure realms, and encrypt communications with SSL. See
-{xpack-ref}/security-settings.html[Security Settings].
+{ref}/security-settings.html[Security Settings].
 
 [float]
 [[general-security-settings]]
