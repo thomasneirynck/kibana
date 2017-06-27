@@ -157,14 +157,6 @@
         <!-- tab2 1 Analysis Configuration -->
         <ml-job-tab-1 ng-show="ui.currentTab === 1">
           <div class="tab_contents">
-            <datalist id="properties_datalist">
-              <option ng-repeat="(key, prop) in properties" >{{key}}</option>
-            </datalist>
-
-            <datalist id="cat_properties_datalist">
-              <option ng-repeat="(key, prop) in catProperties" >{{key}}</option>
-            </datalist>
-
             <div class="form-group">
               <label>bucket_span</label><i ml-info-icon="new_job_bucketspan" />
               <input
@@ -179,24 +171,21 @@
             </div>
             <div class="form-group">
               <label>summary_count_field_name</label><i ml-info-icon="new_job_summarycountfieldname" />
-              <input
-                type="text"
-                ng-model="job.analysis_config.summary_count_field_name"
-                placeholder=""
-                ng-change="generalAnalysisConfigFieldNameChange('summary_count_field_name')"
-                list='properties_datalist'
-                class="form-control" />
+              <field-select
+                on-change='setAnalysisConfigProperty'
+                value='job.analysis_config.summary_count_field_name'
+                field='"summary_count_field_name"'
+                options='properties'>
+              </field-select>
             </div>
             <div class="form-group">
               <label>categorization_field_name</label><i ml-info-icon="new_job_categorizationfieldname" />
-              <input
-                type="text"
-                ng-model="job.analysis_config.categorization_field_name"
-                placeholder=""
-                ng-change="generalAnalysisConfigFieldNameChange('categorization_field_name')"
-                ng-change="categorizationFieldNameChange()"
-                list='cat_properties_datalist'
-                class="form-control" />
+              <field-select
+                on-change='setAnalysisConfigProperty'
+                value='job.analysis_config.categorization_field_name'
+                field='"categorization_field_name"'
+                options='catProperties'>
+              </field-select>
             </div>
 
             <div class="form-group"

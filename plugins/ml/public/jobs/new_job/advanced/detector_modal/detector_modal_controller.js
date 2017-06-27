@@ -67,6 +67,11 @@ module.controller('MlDetectorModal', function ($scope, $modalInstance, params, m
     { id: 'lat_long',              uri: 'ml-geo-functions.html#ml-lat-long' },
   ];
 
+  $scope.functionIds = {};
+  _.each($scope.functions, (f) => {
+    $scope.functionIds[f.id] = '';
+  });
+
   $scope.properties = params.properties;
 
   // properties list for by_field_name field only
@@ -102,6 +107,19 @@ module.controller('MlDetectorModal', function ($scope, $modalInstance, params, m
   };
 
   $scope.functionChange();
+
+  $scope.setDetectorProperty = function (value, field) {
+    if (value === '') {
+      // remove the property from the detector JSON
+      delete $scope.detector[field];
+    } else {
+      $scope.detector[field] = value;
+    }
+
+    if (field === 'function') {
+      $scope.functionChange();
+    }
+  };
 
   $scope.save = function () {
     $scope.saveLock = true;

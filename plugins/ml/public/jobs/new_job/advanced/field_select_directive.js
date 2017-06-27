@@ -13,9 +13,12 @@
  * strictly prohibited.
  */
 
-import './styles/main.less';
-import './new_job_controller';
-import './detectors_list_directive';
-import './save_status_modal';
-import './data_description';
-import './field_select_directive';
+
+import 'ngreact';
+import { FieldSelect } from './field_select';
+
+import { uiModules } from 'ui/modules';
+const module = uiModules.get('apps/ml', ['react']);
+module.directive('fieldSelect', function (reactDirective) {
+  return reactDirective(FieldSelect);
+});

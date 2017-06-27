@@ -509,12 +509,17 @@ function (
     }
   };
 
-  // general function to remove an analysisConfig property from the config if it's an empty string
-  $scope.generalAnalysisConfigFieldNameChange = function (name) {
-    if ($scope.job.analysis_config[name].trim() === '') {
-      delete $scope.job.analysis_config[name];
+  // function called by field-select components to set
+  // properties in the analysis_config
+  $scope.setAnalysisConfigProperty = function (value, field) {
+    if (value === '') {
+      // remove the property from the job JSON
+      delete $scope.job.analysis_config[field];
+    } else {
+      $scope.job.analysis_config[field] = value;
     }
   };
+
 
   function clear(obj) {
     Object.keys(obj).forEach(function (key) { delete obj[key]; });
