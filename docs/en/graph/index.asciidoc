@@ -17,7 +17,7 @@ For example, graph exploration could help you uncover website vulnerabilities
 that hackers are targeting so you can harden your website. Or, you might
 provide graph-based personalized recommendations to your e-commerce customers.
 
-{xpack} provides a simple, yet powerful {ref}/explore.html[graph exploration API],
+{xpack} provides a simple, yet powerful {ref}/graph-explore-api.html[graph exploration API],
 and an interactive graph visualization tool for Kibana. Both work out of the
 box with existing Elasticsearch indices--you don't need to store any
 additional data to use the {xpack} graph features.
