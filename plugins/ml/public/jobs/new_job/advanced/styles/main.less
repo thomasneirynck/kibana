@@ -66,9 +66,13 @@
 
 ml-new-job {
 
-  .ml_json_tab {
-    textarea.json-textarea {
+  .ml_json_tab, .ml_data_preview_tab {
+    .json-textarea {
       height: 500px;
+    }
+
+    .json-textarea[readonly] {
+      background-color: #ffffff;
     }
   }
 

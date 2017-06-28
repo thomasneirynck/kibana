@@ -417,11 +417,11 @@
         </ml-job-tab-4>
 
         <!-- tab 5 Data preview -->
-        <ml-job-tab-5 ng-show="ui.currentTab === 5">
+        <ml-job-tab-5 ng-show="ui.currentTab === 5" class="ml_data_preview_tab">
           <div class="tab_contents">
             <label>Data preview</label><i ml-info-icon="new_job_data_preview" />
             <div ng-hide="(dataPreview === '')" >
-              <div class="ml-pre" >{{ui.wizard.dataPreview}}</div>
+              <textarea readonly class="form-control ml-pre json-textarea">{{ui.wizard.dataPreview}}</textarea>
             </div>
           </div>
         </ml-job-tab-5>
