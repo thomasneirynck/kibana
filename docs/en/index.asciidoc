@@ -13,54 +13,38 @@
 
 include::{kib-repo-dir}/index-shared1.asciidoc[]
 
-ifdef::include-xpack[]
 :edit_url!:
 include::setup-xkb.asciidoc[]
-endif::include-xpack[]
 
 :edit_url:
 include::{kib-repo-dir}/index-shared2.asciidoc[]
 
-ifdef::include-xpack[]
 :edit_url!:
 include::ml/index.asciidoc[]
-endif::include-xpack[]
 
-ifdef::include-xpack[]
 :edit_url!:
 include::graph/index.asciidoc[]
-endif::include-xpack[]
 
 :edit_url:
 include::{kib-repo-dir}/index-shared3.asciidoc[]
 
-ifdef::include-xpack[]
 :edit_url!:
 include::searchprofiler/index.asciidoc[]
-endif::include-xpack[]
 
-ifdef::include-xpack[]
 :edit_url!:
 include::grokdebugger/index.asciidoc[]
-endif::include-xpack[]
 
-ifdef::include-xpack[]
 :edit_url!:
 include::monitoring/index.asciidoc[]
-endif::include-xpack[]
 
 :edit_url:
 include::{kib-repo-dir}/index-shared4.asciidoc[]
 
-ifdef::include-xpack[]
 :edit_url!:
 include::view_modes/index.asciidoc[]
-endif::include-xpack[]
 
-ifdef::include-xpack[]
 :edit_url!:
 include::reporting/index.asciidoc[]
-endif::include-xpack[]
 
 :edit_url:
 include::{kib-repo-dir}/index-shared5.asciidoc[]
