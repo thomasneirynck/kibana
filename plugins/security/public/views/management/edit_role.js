@@ -14,6 +14,7 @@ import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import { checkLicenseError } from 'plugins/security/lib/check_license_error';
 import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
 import { EDIT_ROLES_PATH, ROLES_PATH } from './management_urls';
+import { documentationLinks } from '../../documentation_links';
 
 routes.when(`${EDIT_ROLES_PATH}/:name?`, {
   template,
@@ -63,6 +64,7 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
     const confirmModal = $injector.get('confirmModal');
     const shieldIndices = $injector.get('shieldIndices');
 
+    $scope.dashboardViewModeDocLink = documentationLinks.dashboardViewMode;
     $scope.role = $route.current.locals.role;
     $scope.users = $route.current.locals.users;
     $scope.indexPatterns = $route.current.locals.indexPatterns;
