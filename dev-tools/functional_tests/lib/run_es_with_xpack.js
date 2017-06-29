@@ -4,6 +4,7 @@ import { platform as getPlatform } from 'os';
 import { log } from './log';
 import { extractTarball } from './tarball';
 import { findMostRecentlyChanged } from './find_most_recently_changed';
+import { setupUsers } from './auth';
 import {
   RELATIVE_ES_BIN,
   RELATIVE_ES_PLUGIN_BIN,
@@ -49,4 +50,6 @@ export async function runEsWithXpack({ tmpDir, procs, ftrConfig }) {
     cwd: esExtractPath,
     wait: /^\[.+?\]\[.+?\]\[.+?\] \[.+?\] started$/
   });
+
+  await setupUsers(log, ftrConfig);
 }
