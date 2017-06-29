@@ -18,7 +18,6 @@
 import _ from 'lodash';
 import { hasPrimaryChildren } from '../lib/hasPrimaryChildren';
 import { decorateShards } from '../lib/decorateShards';
-import { extractIp } from '../lib/extractIp';
 
 export function nodesByIndices() {
   return function nodesByIndicesFn(shards, nodes) {
@@ -38,8 +37,6 @@ export function nodesByIndices() {
     };
 
     function createNode(obj, node, id) {
-      node.details = extractIp(node);
-      node.ip_port = extractIp(node);
       node.type = 'node';
       node.children = [];
       const nodeType = getNodeType(node);
