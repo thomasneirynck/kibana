@@ -53,16 +53,17 @@
     </div>
   </div>
 
+  <div class='buttons-container'>
+    <button ng-click="apply()"  class="kuiButton kuiButton--primary" aria-label="Apply">Apply</button>
+    <button ng-click="closePopover()" class="kuiButton kuiButton--primary" aria-label="Cancel">Cancel</button>
+  </div>
+
   <div class='apply-time-range'>
     <label>
       <input type="checkbox"
         ng-model="applyTimeRange"/>
         Also apply time range
     </label>
-  </div>
-  <div class='buttons-container'>
-    <button ng-click="apply()"  class="kuiButton kuiButton--primary" aria-label="Apply">Apply</button>
-    <button ng-click="closePopover()" class="kuiButton kuiButton--primary" aria-label="Cancel">Cancel</button>
   </div>
 
 </div>

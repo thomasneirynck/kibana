@@ -19,6 +19,7 @@
  */
 
 import _ from 'lodash';
+import 'ui/accessibility/kbn_accessible_click';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
