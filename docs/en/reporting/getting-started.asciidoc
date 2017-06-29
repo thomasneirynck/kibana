@@ -21,8 +21,11 @@ in the report.
 [role="screenshot"]
 image:reporting/images/reporting.jpg["Reporting",link="reporting.jpg"]
 --
+. Click the appropriate button:
 
-. Click *Printable PDF*.
+  .. If you're on Discover, click *Generate CSV*
+
+  .. If you're on Visualize or Dashboard, click *Generate Printable PDF*.
 
 If you want to automatically generate reports from a script or with
 {watcher}, use the displayed Generation URL. For more information, see

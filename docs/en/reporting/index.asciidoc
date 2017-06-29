@@ -5,11 +5,12 @@
 [partintro]
 --
 {xpack} enables you to generate reports that contain Kibana dashboards,
-visualizations, and saved searches. The reports are exported as
-print-optimized PDF documents.
+visualizations, and saved searches. Dashboards and visualizations are
+exported as print-optimized PDF documents, while saved searches in Discover
+are exported to CSV.
 
 NOTE: On Linux, the `libfontconfig` and `libfreetype6` packages and system
-fonts are required to generate reports. If no system fonts are available,
+fonts are required to generate PDF reports. If no system fonts are available,
 labels are not rendered correctly in the reports.
 
 When you install {xpack} into Kibana, a Reporting button is added to the
