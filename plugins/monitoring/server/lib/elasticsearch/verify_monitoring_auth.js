@@ -34,7 +34,7 @@ async function verifyHasPrivileges(req) {
 
   const response = await callWithRequest(req, 'transport.request', {
     method: 'POST',
-    path: '_xpack/security/user/_has_privileges',
+    path: '/_xpack/security/user/_has_privileges',
     body: {
       index: [
         {
