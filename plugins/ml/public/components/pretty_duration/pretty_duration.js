@@ -47,13 +47,18 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
         lookupByRange[frame.from + ' to ' + frame.to] = frame;
       });
 
+      function setText(text) {
+        $elem.text(text);
+        $elem.attr('aria-label', `Current time range is ${text}`);
+      }
+
       function stringify() {
         let text;
         // If both parts are date math, try to look up a reasonable string
         if ($scope.from && $scope.to && !moment.isMoment($scope.from) && !moment.isMoment($scope.to)) {
           const tryLookup = lookupByRange[$scope.from.toString() + ' to ' + $scope.to.toString()];
           if (tryLookup) {
-            $elem.text(tryLookup.display);
+            setText(tryLookup.display);
           } else {
             const fromParts = $scope.from.toString().split('-');
             if ($scope.to.toString() === 'now' && fromParts[0] === 'now' && fromParts[1]) {
@@ -62,7 +67,7 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
               if (rounded[1]) {
                 text = text + ' rounded to the ' + timeUnits[rounded[1]];
               }
-              $elem.text(text);
+              setText(text);
             } else {
               cantLookup();
             }
@@ -76,8 +81,8 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
       function cantLookup() {
         const display = {};
         _.each(['from', 'to'], function (time) {
-          if (moment.isMoment($scope[time])) {
-            display[time] = $scope[time].format(dateFormat);
+          if (moment($scope[time]).isValid()) {
+            display[time] = moment($scope[time]).format(dateFormat);
           } else {
             if ($scope[time] === 'now') {
               display[time] = 'now';
@@ -87,7 +92,7 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
             }
           }
         });
-        $elem.text(display.from + ' to ' + display.to);
+        setText(`${display.from} to ${display.to}`);
       }
 
       // add the arrow elements to the page outside the <pretty_duration>'s parent anchor element
