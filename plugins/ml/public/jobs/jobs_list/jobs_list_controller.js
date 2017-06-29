@@ -62,6 +62,7 @@ function (
   const msgs = mlMessageBarService; // set a reference to the message bar service
   const TIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
   let refreshCounter = 0;
+  let refreshJobsTimeout = null;
   const auditMessages = {};
   $scope.noJobsCreated;
   $scope.toLocaleString = toLocaleString; // add toLocaleString to the scope to display nicer numbers
@@ -295,7 +296,7 @@ function (
       }
     });
 
-    clearTimeout(window.singleJobTimeout);
+    clearTimeout(refreshJobsTimeout);
     refreshCounts();
 
     // clear the filter spinner if it's running
@@ -306,28 +307,31 @@ function (
   function refreshCounts() {
     const timeout = 5000; // 5 seconds
 
-    window.singleJobTimeout = window.setTimeout(() => {
+    function refresh() {
+      mlJobService.updateAllJobStats()
+      .then((resp) => {
+        // if jobs have been added or removed, redraw the whole list
+        if (resp.listChanged) {
+          jobsUpdated(resp.jobs);
+        }
+      });
+    }
+
+    refreshJobsTimeout = setTimeout(() => {
       // every 5th time, reload the counts and states of all the jobs
       if (refreshCounter % 5 === 0) {
-
-        mlJobService.updateAllJobCounts()
-          .then((resp) => {
-            if (resp.listChanged) {
-              jobsUpdated(resp.jobs);
-            }
-          });
-
-        // also reload all of the jobs messages
+        refresh();
         loadAuditSummary($scope.jobs, rowScopes);
       } else {
-        // check to see if any jobs are 'running' if so, reload their counts
-        mlJobService.checkState();
+        // check to see if any jobs are 'running' if so, reload all the job counts
+        const runningJobs = mlJobService.getRunningJobs();
+        if (runningJobs.length) {
+          refresh();
+        }
       }
 
-
       // clear timeout to stop duplication
-      clearTimeout(window.singleJobTimeout);
-      window.singleJobTimeout = null;
+      clearTimeout(refreshJobsTimeout);
 
       // keep track of number if times the check has been performed
       refreshCounter++;
@@ -593,4 +597,8 @@ function (
   });
 
   $scope.$emit('application.load');
+
+  $scope.$on('$destroy', () => {
+    clearTimeout(refreshJobsTimeout);
+  });
 });
