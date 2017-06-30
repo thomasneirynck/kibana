@@ -16,6 +16,7 @@ import { validateConfig } from './server/lib/validate_config';
 import { createScheme } from './server/lib/login_scheme';
 import { checkLicense } from './server/lib/check_license';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
+import { LOGIN_DISABLED_MESSAGE } from './server/lib/login_disabled_message';
 
 export const security = (kibana) => new kibana.Plugin({
   id: 'security',
@@ -44,6 +45,16 @@ export const security = (kibana) => new kibana.Plugin({
       injectVars(server) {
         const pluginId = 'security';
         const xpackInfo = server.plugins.xpack_main.info;
+        if (!xpackInfo) {
+          return {
+            loginState: {
+              showLogin: true,
+              allowLogin: false,
+              loginMessage: LOGIN_DISABLED_MESSAGE
+            }
+          };
+        }
+
         const { showLogin, loginMessage, allowLogin } = xpackInfo.feature(pluginId).getLicenseCheckResults() || {};
 
         return {

@@ -2,6 +2,7 @@ import expect from 'expect.js';
 import { set } from 'lodash';
 import sinon from 'sinon';
 import { checkLicense } from '../check_license';
+import { LOGIN_DISABLED_MESSAGE } from '../login_disabled_message';
 
 describe('check_license', function () {
 
@@ -59,10 +60,7 @@ describe('check_license', function () {
 
     it ('should tell users if login is disabled because license information could not be determined ', () => {
       mockLicenseInfo = null;
-
-      const expectedMessage = 'Login is currently disabled because the license could not be determined. '
-      + 'Please check that Elasticsearch is running, then refresh this page.';
-      expect(checkLicense(mockLicenseInfo).loginMessage).to.contain(expectedMessage);
+      expect(checkLicense(mockLicenseInfo).loginMessage).to.contain(LOGIN_DISABLED_MESSAGE);
     });
 
     it ('should tell users if login is disabled because license has expired', () => {

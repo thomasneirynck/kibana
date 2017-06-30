@@ -1,3 +1,5 @@
+import { LOGIN_DISABLED_MESSAGE } from './login_disabled_message';
+
 export function checkLicense(xpackLicenseInfo) {
 
   let showLogin; // show login page or skip it?
@@ -13,15 +15,13 @@ export function checkLicense(xpackLicenseInfo) {
   // from Elasticsearch, assume worst-case and lock user
   // at login screen.
   if (!xpackLicenseInfo || !xpackLicenseInfo.isAvailable()) {
-    loginMessage = 'Login is currently disabled because the license could not be determined. '
-    + 'Please check that Elasticsearch is running, then refresh this page.';
     return {
       showLogin: true,
       allowLogin: false,
       showLinks: false,
       allowRoleDocumentLevelSecurity: false,
       allowRoleFieldLevelSecurity: false,
-      loginMessage,
+      loginMessage: LOGIN_DISABLED_MESSAGE,
       linksMessage
     };
   }
