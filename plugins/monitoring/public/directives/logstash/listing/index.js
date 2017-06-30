@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { find, get } from 'lodash';
 import numeral from 'numeral';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -54,7 +54,7 @@ uiModule.directive('monitoringLogstashNodeListing', function (kbnUrl) {
     link: function (scope, $el) {
       const tableRowTemplate = React.createClass({
         getInitialState: function () {
-          return _.find(scope.rows, { resolver: this.props.resolver }) || null;
+          return find(scope.rows, { resolver: this.props.resolver }) || null;
         },
         componentWillReceiveProps: function (newProps) {
           this.setState(newProps);
@@ -66,13 +66,13 @@ uiModule.directive('monitoringLogstashNodeListing', function (kbnUrl) {
                 <KuiKeyboardAccessible>
                   <a className='link' onClick={ () => {
                     scope.$evalAsync(() => {
-                      kbnUrl.changePath('/logstash/node/' + _.get(this.props, 'logstash.uuid'));
+                      kbnUrl.changePath('/logstash/node/' + get(this.props, 'logstash.uuid'));
                     });
                   } }>
                     <div>{ this.props.logstash.name }</div>
                   </a>
                 </KuiKeyboardAccessible>
-                <div className="small">{ _.get(this.props, 'logstash.http_address') }</div>
+                <div className="small">{ get(this.props, 'logstash.http_address') }</div>
               </td>
               <td>
                 <div className='big'>
@@ -81,7 +81,7 @@ uiModule.directive('monitoringLogstashNodeListing', function (kbnUrl) {
               </td>
               <td>
                 <div className='big'>
-                  { `${numeral(this.props.os.cpu.load_average['1m']).format('0.00')}` }
+                  { `${numeral(get(this.props, 'os.cpu.load_average["1m"]', 0)).format('0.00')}` }
                 </div>
               </td>
               <td>
