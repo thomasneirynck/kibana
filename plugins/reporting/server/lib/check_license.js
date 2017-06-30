@@ -27,12 +27,14 @@ const makeManagementFeature = (exportTypes) => {
         };
       }
 
+      const validJobTypes = exportTypes
+        .filter(exportType => license.isOneOf(exportType.validLicenses))
+        .map(exportType => exportType.jobType);
+
       return {
-        showLinks: true,
-        enableLinks: true,
-        jobTypes: exportTypes
-          .filter(exportType => license.isOneOf(exportType.validLicenses))
-          .map(exportType => exportType.jobType)
+        showLinks: validJobTypes.length > 0,
+        enableLinks: validJobTypes.length > 0,
+        jobTypes: validJobTypes
       };
     }
   };

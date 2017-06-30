@@ -107,7 +107,7 @@ describe('check_license', function () {
         beforeEach(() => set(mockLicenseInfo, 'license.isActive', () => true));
 
         it ('should set management.showLinks to true', () => {
-          expect(checkLicense(mockLicenseInfo).management.showLinks).to.be(true);
+          expect(checkLicense(mockLicenseInfo).management.showLinks).to.be(false);
         });
 
         it ('should set test.showLinks to false', () => {
