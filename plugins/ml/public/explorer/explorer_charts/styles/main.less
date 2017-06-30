@@ -127,112 +127,122 @@ ml-explorer-charts-container {
 
     }
 
-    .explorer-chart-label {
-      display: block;
-      font-size: 13px;
-      font-weight: normal;
+    .ml-explorer-chart-container {
+      .explorer-chart-label {
+        display: block;
+        font-size: 13px;
+        font-weight: normal;
 
-      .explorer-chart-label-fields {
-        vertical-align: top;
-        max-width: calc(~"100% - 15px");
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        display: inline-block;
-      }
+        .explorer-chart-label-fields {
+          vertical-align: top;
+          max-width: calc(~"100% - 15px");
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          display: inline-block;
+        }
 
-      a {
-        float:right;
-        padding-left: 5px;
-      }
-
-    }
-
-    ml-explorer-chart {
-      display: block;
-
-      svg {
-        font-size: 12px;
-        font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial;
-
-        .line-chart {
-          rect {
-            fill: #FFFFFF;
-            opacity: 1;
-          }
-
-          rect.selected-interval {
-            fill: rgba(200, 200, 200, 0.25);
-          }
+        a {
+          float:right;
+          padding-left: 5px;
         }
       }
 
-      .axis path, .axis line {
-        fill: none;
-        stroke: #cccccc;
-        shape-rendering: crispEdges;
+      .explorer-chart-loader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 3px;
       }
 
-      .axis text {
-        fill: #000;
-      }
 
-      .axis .tick line {
-        stroke: rgba(0, 0, 0, 0.1);
-        stroke-width: 0px;
-      }
+      ml-explorer-chart {
+        display: block;
 
-      .values-line {
-        fill: none;
-        stroke: #32a7c2;
-        stroke-width: 2;
-      }
+        svg {
+          font-size: 12px;
+          font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial;
 
-      .metric-value {
-        opacity: 1;
-        fill: #32a7c2;
-      }
+          .line-chart {
+            rect {
+              fill: #FFFFFF;
+              opacity: 1;
+            }
 
-      circle.metric-value {
-        opacity: 1;
-        fill: transparent;
-        stroke: #32a7c2;
-        stroke-width: 0px;
-      }
+            rect.selected-interval {
+              fill: rgba(200, 200, 200, 0.25);
+            }
+          }
+        }
 
-      circle.anomaly-marker {
-        stroke-width: 1px;
-        stroke: #aaaaaa;
-      }
+        .axis path, .axis line {
+          fill: none;
+          stroke: #cccccc;
+          shape-rendering: crispEdges;
+        }
 
-      circle.anomaly-marker:hover {
-        stroke-width: 6px;
-        stroke: #32a7c2;
-      }
+        .axis text {
+          fill: #000;
+        }
 
-      circle.metric-value.critical {
-        fill: #fe5050;
-      }
+        .axis .tick line {
+          stroke: rgba(0, 0, 0, 0.1);
+          stroke-width: 0px;
+        }
 
-      circle.metric-value.major {
-        fill: #ff7e00;
-      }
+        .values-line {
+          fill: none;
+          stroke: #32a7c2;
+          stroke-width: 2;
+        }
 
-      circle.metric-value.minor {
-        fill: #ffdd00;
-      }
+        .metric-value {
+          opacity: 1;
+          fill: #32a7c2;
+        }
 
-      circle.metric-value.warning {
-        fill: #8bc8fb;
-      }
+        circle.metric-value {
+          opacity: 1;
+          fill: transparent;
+          stroke: #32a7c2;
+          stroke-width: 0px;
+        }
 
-      circle.metric-value.low {
-        fill: #d2e9f7;
-      }
+        circle.anomaly-marker {
+          stroke-width: 1px;
+          stroke: #aaaaaa;
+        }
 
-      circle.metric-value:hover {
-        stroke-width: 6px;
-        stroke-opacity: 0.65;
+        circle.anomaly-marker:hover {
+          stroke-width: 6px;
+          stroke: #32a7c2;
+        }
+
+        circle.metric-value.critical {
+          fill: #fe5050;
+        }
+
+        circle.metric-value.major {
+          fill: #ff7e00;
+        }
+
+        circle.metric-value.minor {
+          fill: #ffdd00;
+        }
+
+        circle.metric-value.warning {
+          fill: #8bc8fb;
+        }
+
+        circle.metric-value.low {
+          fill: #d2e9f7;
+        }
+
+        circle.metric-value:hover {
+          stroke-width: 6px;
+          stroke-opacity: 0.65;
+        }
       }
     }
   }

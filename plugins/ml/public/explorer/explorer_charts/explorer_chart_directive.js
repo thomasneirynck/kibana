@@ -60,12 +60,17 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
     // Counter to keep track of what data sets have been loaded.
     let awaitingCount = 2;
 
+    // create a chart loading placeholder
+    showChartLoader(true);
+
     // finish() function, called after each data set has been loaded and processed.
     // The last one to call it will trigger the page render.
     function finish() {
       awaitingCount--;
       if (awaitingCount === 0) {
         scope.chartData = processChartData();
+        // charts are ready, hide the chart loading placeholder
+        showChartLoader(false);
         init();
         drawLineChart();
       }
@@ -449,6 +454,16 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
       });
 
       return chartData;
+    }
+
+    function showChartLoader(show) {
+      if(show) {
+        const $loader = $('<div class="explorer-chart-loader"><h2><i class="fa fa-spinner fa-spin"></i></h2></div>');
+        $loader.css('height', svgHeight);
+        angular.element(element).append($loader);
+      } else {
+        angular.element(element).find('.explorer-chart-loader').remove();
+      }
     }
 
   }
