@@ -7,9 +7,9 @@ import { handleError } from '../../../../lib/handle_error';
 import { getMetrics } from '../../../../lib/details/get_metrics';
 
 const getKibanaClusterStatus = function (req, kbnIndexPattern) {
-  const getKibanaForCluster = getKibanasForClusters(req, kbnIndexPattern);
-  return getKibanaForCluster([{ cluster_uuid: req.params.clusterUuid }])
-  .then(clusterStatus => get(clusterStatus, '[0].stats'));
+  const clusters = [{ cluster_uuid: req.params.clusterUuid }];
+  return getKibanasForClusters(req, kbnIndexPattern, clusters)
+  .then(kibanas => get(kibanas, '[0].stats'));
 };
 
 /*

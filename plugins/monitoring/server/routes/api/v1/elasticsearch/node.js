@@ -35,13 +35,14 @@ export function nodeRoutes(server) {
       }
     },
     handler: (req, reply) => {
+      const clusterUuid = req.params.clusterUuid;
       const resolver = req.params.resolver;
       const showSystemIndices = req.payload.showSystemIndices;
       const collectShards = req.payload.shards;
       const config = server.config();
       const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 
-      return getClusterStats(req, esIndexPattern)
+      return getClusterStats(req, esIndexPattern, clusterUuid)
       .then(cluster => {
         const configResolver = `source_node.${config.get('xpack.monitoring.node_resolver')}`;
         let shards;

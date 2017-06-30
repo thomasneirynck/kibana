@@ -32,12 +32,13 @@ export function indexRoutes(server) {
       }
     },
     handler: (req, reply) => {
+      const clusterUuid = req.params.clusterUuid;
       const id = req.params.id;
       const collectShards = req.payload.shards;
       const config = req.server.config();
       const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 
-      return getClusterStats(req, esIndexPattern)
+      return getClusterStats(req, esIndexPattern, clusterUuid)
       .then(cluster => {
         const showSystemIndices = true; // hardcode to true, because this could be a system index
         let shards;

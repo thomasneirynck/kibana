@@ -29,11 +29,12 @@ export function indicesRoutes(server) {
       }
     },
     handler: (req, reply) => {
+      const clusterUuid = req.params.clusterUuid;
       const showSystemIndices = req.payload.showSystemIndices;
       const config = req.server.config();
       const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 
-      return getClusterStats(req, esIndexPattern)
+      return getClusterStats(req, esIndexPattern, clusterUuid)
       .then(cluster => {
         return Promise.props({
           clusterStatus: getClusterStatus(cluster),

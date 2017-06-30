@@ -76,15 +76,10 @@ export function getMlJobsForCluster(req, esIndexPattern, cluster) {
 
     return callWithRequest(req, 'search', params)
     .then(response => {
-      return {
-        ...cluster,
-        ml: {
-          jobs: get(response, 'aggregations.jobs_count.value', 0)
-        }
-      };
+      return get(response, 'aggregations.jobs_count.value', 0);
     });
   }
 
   // ML is not supported
-  return Promise.resolve(cluster);
+  return Promise.resolve();
 }

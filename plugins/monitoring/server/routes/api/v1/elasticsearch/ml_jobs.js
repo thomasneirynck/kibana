@@ -25,10 +25,11 @@ export function mlJobRoutes(server) {
       }
     },
     handler: (req, reply) => {
+      const clusterUuid = req.params.clusterUuid;
       const config = server.config();
       const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
 
-      return getClusterStats(req, esIndexPattern)
+      return getClusterStats(req, esIndexPattern, clusterUuid)
       .then(cluster => {
         return Promise.props({
           clusterStatus: getClusterStatus(cluster),

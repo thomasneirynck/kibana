@@ -1,4 +1,5 @@
-import { set, findIndex, first, sortBy } from 'lodash';
+import { notFound } from 'boom';
+import { get, set, findIndex } from 'lodash';
 import { getClustersStats } from './get_clusters_stats';
 import { flagSupportedClusters } from './flag_supported_clusters';
 import { getMlJobsForCluster } from '../elasticsearch/get_ml_jobs';
@@ -30,73 +31,72 @@ export function normalizeClustersData(clusters) {
   return clusters;
 }
 
-export function getClustersFromRequest(req) {
+/*
+ * Get ojects for a single cluster (if req.params.clusterUuid) is defined or all clusters
+ */
+export async function getClustersFromRequest(req) {
   const config = req.server.config();
   const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
+  const kibanaIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');
+  const logstashIndexPattern = config.get('xpack.monitoring.logstash.index_pattern');
+  const clusterUuid = get(req.params, 'clusterUuid');
 
-  return getClustersStats(req, esIndexPattern)
-  .then(flagSupportedClusters(req))
-  .then((clusters) => {
-    // get specific cluster
-    if (req.params.clusterUuid) {
-      return Promise.resolve(first(clusters))
-      .then(cluster => {
-        return getMlJobsForCluster(req, esIndexPattern, cluster);
-      })
-      .then(cluster => {
-        return alertsClusterSearch(req, cluster, checkLicenseForAlerts, {
-          size: CLUSTER_ALERTS_SEARCH_SIZE
-        })
-        .then(alerts => {
-          set(cluster, 'alerts', alerts);
-          return cluster;
-        });
-      })
-      .then(cluster => {
-        return [ cluster ]; // array is expected
-      });
+  let clusters;
+  // get clusters with stats and cluster state
+  clusters = await getClustersStats(req, esIndexPattern, clusterUuid);
+
+  // TODO: this handling logic should be two different functions
+  if (clusterUuid) { // if not undefined, get specific cluster (no need for license checking)
+    if (!clusters || clusters.length === 0) {
+      throw notFound(`unknown cluster (${clusterUuid}). Check your time range.`);
     }
 
+    const cluster = clusters[0];
+
+    // add ml jobs and alerts data
+    cluster.ml = { jobs: await getMlJobsForCluster(req, esIndexPattern, cluster) };
+    cluster.alerts = await alertsClusterSearch(req, cluster, checkLicenseForAlerts, { size: CLUSTER_ALERTS_SEARCH_SIZE });
+  } else {
     // get all clusters
-    return alertsClustersAggregation(req, clusters, checkLicenseForAlerts)
-    .then((clustersAlerts) => {
-      clusters.forEach((cluster) => {
-        cluster.alerts = {
-          alertsMeta: {
-            enabled: clustersAlerts.alertsMeta.enabled,
-            message: clustersAlerts.alertsMeta.message // NOTE: this is only defined when the alert feature is disabled
-          },
-          ...clustersAlerts[cluster.cluster_uuid]
-        };
-      });
-      return clusters;
+    if (!clusters || clusters.length === 0) {
+      // we do NOT throw 404 here so that the no-data page can use this to check for data
+      // we should look at having a standalone function for that lookup
+      return [];
+    }
+
+    // update clusters with license check results
+    const getSupportedClusters = flagSupportedClusters(req);
+    clusters = await getSupportedClusters(clusters);
+
+    // add alerts data
+    const clustersAlerts = await alertsClustersAggregation(req, clusters, checkLicenseForAlerts);
+    clusters.forEach((cluster) => {
+      const clusterAlerts = {
+        alertsMeta: {
+          enabled: clustersAlerts.alertsMeta.enabled,
+          message: clustersAlerts.alertsMeta.message // NOTE: this is only defined when the alert feature is disabled
+        },
+        ...clustersAlerts[cluster.cluster_uuid]
+      };
+      set(cluster, 'alerts', clusterAlerts);
     });
-  })
-  .then(clusters => {
-    const mapClusters = getKibanasForClusters(req, config.get('xpack.monitoring.kibana.index_pattern'));
-    return mapClusters(clusters)
-    .then(kibanas => {
-      // add the kibana data to each cluster
-      kibanas.forEach(kibana => {
-        const clusterIndex = findIndex(clusters, { cluster_uuid: kibana.clusterUuid });
-        set(clusters[clusterIndex], 'kibana', kibana.stats);
-      });
-      return clusters;
-    });
-  })
-  .then(clusters => {
-    const mapClusters = getLogstashForClusters(req, config.get('xpack.monitoring.logstash.index_pattern'));
-    return mapClusters(clusters)
-    .then(logstashes => {
-      // add the logstash data to each cluster
-      logstashes.forEach(logstash => {
-        const clusterIndex = findIndex(clusters, { cluster_uuid: logstash.clusterUuid });
-        set(clusters[clusterIndex], 'logstash', logstash.stats);
-      });
-      return clusters;
-    });
-  })
-  .then(clusters => normalizeClustersData(clusters))
-  .then(clusters => sortBy(clusters, 'cluster_name'));
-  // reply() and catch() is handled by the caller
+  }
+
+  // add kibana data
+  const kibanas = await getKibanasForClusters(req, kibanaIndexPattern, clusters);
+  // add the kibana data to each cluster
+  kibanas.forEach(kibana => {
+    const clusterIndex = findIndex(clusters, { cluster_uuid: kibana.clusterUuid });
+    set(clusters[clusterIndex], 'kibana', kibana.stats);
+  });
+
+  // add logstash data
+  const logstashes = await getLogstashForClusters(req, logstashIndexPattern, clusters);
+  // add the logstash data to each cluster
+  logstashes.forEach(logstash => {
+    const clusterIndex = findIndex(clusters, { cluster_uuid: logstash.clusterUuid });
+    set(clusters[clusterIndex], 'logstash', logstash.stats);
+  });
+
+  return normalizeClustersData(clusters);
 }

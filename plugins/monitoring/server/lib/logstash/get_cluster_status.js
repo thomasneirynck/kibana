@@ -14,7 +14,7 @@ import { getLogstashForClusters } from './get_logstash_for_clusters';
 export function getClusterStatus(req, logstashIndexPattern) {
   checkParam(logstashIndexPattern, 'logstashIndexPattern in logstash/getClusterStatus');
 
-  const getLogstashForCluster = getLogstashForClusters(req, logstashIndexPattern);
-  return getLogstashForCluster([{ cluster_uuid: req.params.clusterUuid }])
+  const clusters = [{ cluster_uuid: req.params.clusterUuid }];
+  return getLogstashForClusters(req, logstashIndexPattern, clusters)
   .then(clusterStatus => get(clusterStatus, '[0].stats'));
 }

@@ -4,8 +4,10 @@ export function handleError(err, req) {
   const config = req.server.config();
   const loggingTag = config.get('xpack.monitoring.loggingTag');
   const statusCode = err.isBoom ? err.output.statusCode : err.statusCode;
+
   req.log([loggingTag, 'error'], err);
 
+  // rewrite auth exceptions
   if (statusCode === 401 || statusCode === 403) {
     let message;
     /* 401 is changed to 403 because in user perception, they HAVE provided
@@ -19,11 +21,22 @@ export function handleError(err, req) {
     } else {
       message = 'Insufficient user permissions for monitoring data';
     }
+
     return Boom.forbidden(message);
   }
 
-  if (err.isBoom) { return err; }
-  const msg = err.msg || err.message;
-  if (msg === 'Not Found') { return Boom.notFound(); }
-  return Boom.badRequest(msg);
+  // we only needed to rewrite auth exceptions
+  if (err.isBoom) {
+    return err;
+  }
+
+  // boom expects err.message, not err.msg
+  if (err.msg) {
+    err.message = err.msg;
+
+    delete err.msg;
+  }
+
+  // wrap the error; defaults to statusCode = 500 if statusCode is undefined
+  return Boom.wrap(err, statusCode);
 }
