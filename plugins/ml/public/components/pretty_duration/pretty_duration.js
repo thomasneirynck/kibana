@@ -13,8 +13,8 @@
  * strictly prohibited.
  */
 
- // a copy of kibanan's pretty duration directive
- // adding new buttons around the timepicker.
+ // a copy of Kibana's pretty duration directive
+ // adding extra zoom in / zoom out buttons to the left of the timepicker.
 
 
 import _ from 'lodash';
@@ -95,17 +95,19 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
         setText(`${display.from} to ${display.to}`);
       }
 
-      // add the arrow elements to the page outside the <pretty_duration>'s parent anchor element
-      // however, they are given <pretty_duration>'s scope to allow access to the back and forward functions
-      function addArrows() {
-        const zoomOutButton = angular.element('<i ng-click="zoomOut()" class="ml-time-button fa fa-search-minus" ></i>');
-        const zoomInButton = angular.element('<i ng-click="zoomIn()" class="ml-time-button fa fa-search-plus" ></i>');
+      // add the zoom elements to the page outside the <pretty_duration>'s parent anchor element
+      // however, they are given <pretty_duration>'s scope to allow access to the zoom functions
+      function addZoomButtons() {
+        const zoomOutButton = angular.element('<button class="kuiLocalMenuItem" ng-click="zoomOut()" aria-label="Zoom out time">' +
+          '<span class="kuiIcon fa-search-minus" aria-hidden="true" tooltip="Zoom out time"></span></button>');
+        const zoomInButton = angular.element('<button class="kuiLocalMenuItem" ng-click="zoomIn()" aria-label="Zoom in time">' +
+          '<span class="kuiIcon fa-search-plus" aria-hidden="true" tooltip="Zoom in time"></span></button>');
         const separator = angular.element('<div class="ml-time-button-separator" ></div>');
 
         $($elem.parent()[0].previousElementSibling).before(zoomInButton);
         $($elem.parent()[0].previousElementSibling).before(zoomOutButton);
         $($elem.parent()[0].previousElementSibling).before(separator);
-        // compile the new html and attach this scope to allow access to the back and forward functions
+        // compile the new html and attach this scope to allow access to the zoom functions
         $compile(zoomInButton)($scope);
         $compile(zoomOutButton)($scope);
       }
@@ -155,7 +157,7 @@ module.directive('prettyDuration', function (config, quickRanges, timeUnits, $co
       $scope.$watch('from', stringify);
       $scope.$watch('to', stringify);
 
-      addArrows();
+      addZoomButtons();
     }
   };
 });
