@@ -5,7 +5,6 @@
 :lang:           en
 :kib-repo-dir:   {docdir}/../../../kibana/docs
 :xes-repo-dir:   {docdir}/../../../elasticsearch-extra/x-pack-elasticsearch/docs/{lang}
-:docs-dir:       {docdir}/../../../docs
 :blog-ref:       https://www.elastic.co/blog/
 :wikipedia:      https://en.wikipedia.org/wiki
 
