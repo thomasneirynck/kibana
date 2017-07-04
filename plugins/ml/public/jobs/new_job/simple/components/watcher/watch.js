@@ -1,3 +1,5 @@
+import { ML_RESULTS_INDEX_PATTERN } from 'plugins/ml/constants/results_index_pattern';
+
 export const watch = {
   trigger: {
     schedule: {
@@ -9,7 +11,7 @@ export const watch = {
       request: {
         search_type: 'query_then_fetch',
         indices: [
-          '.ml-anomalies-*'
+          ML_RESULTS_INDEX_PATTERN
         ],
         types: [],
         body: {

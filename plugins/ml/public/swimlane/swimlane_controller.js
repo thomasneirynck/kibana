@@ -51,7 +51,7 @@ module.controller('MlSwimlaneController', function ($scope,
   $scope.jobDescriptions = {};
   $scope.detectorsByJob = {};
   $scope.fieldsByJob = {};
-  mlJobService.getBasicJobInfo($scope.vis.indexPattern.id)
+  mlJobService.getBasicJobInfo()
   .then(function (resp) {
     if (resp.jobs.length > 0) {
       const descriptions = {};

@@ -65,8 +65,6 @@ module.directive('mlSwimlaneInspector', function (
 
   const swimlanesHTML = require('plugins/ml/summaryview/swimlane_inspector/swimlanes.html');
 
-  const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
-
   const controls = {
     visible: false,
     top: 0,
@@ -226,7 +224,7 @@ module.directive('mlSwimlaneInspector', function (
 
   function loadResults(func, jobIds, interval, callback) {
 
-    func(ML_RESULTS_INDEX_ID, jobIds,
+    func(jobIds,
       (timeRange.start * 1000), (timeRange.end * 1000), interval.expression, 10)
     .then((resp) => {
       console.log('Swimlane inspector data:', resp);
@@ -446,7 +444,7 @@ module.directive('mlSwimlaneInspector', function (
     controls.topInfluencerList = {};
     controls.showTopInfluencerList = false;
 
-    mlSwimlaneSearchService.getTopInfluencers(ML_RESULTS_INDEX_ID, laneLabel, selectedJobIds, swimlaneType,
+    mlSwimlaneSearchService.getTopInfluencers(laneLabel, selectedJobIds, swimlaneType,
         timeRange.start, timeRange.end, 0, mlAnomalyRecordDetailsService.type)
     .then((resp) => {
 

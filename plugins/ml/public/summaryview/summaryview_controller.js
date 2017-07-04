@@ -64,9 +64,6 @@ module.controller('MlSummaryViewController', function (
   mlSwimlaneSearchService,
   mlSwimlaneService) {
 
-  // TODO - move the index pattern into an editor setting,
-  //        or configure the visualization to use a search?
-  const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
   timefilter.enabled = true;
 
   const TimeBuckets = Private(IntervalHelperProvider);
@@ -86,7 +83,7 @@ module.controller('MlSummaryViewController', function (
 
   $scope.initializeVis = function () {
     // Load the job info needed by the visualization, then do the first load.
-    mlJobService.getBasicJobInfo(ML_RESULTS_INDEX_ID)
+    mlJobService.getBasicJobInfo()
     .then((resp) => {
       if (resp.jobs.length > 0) {
         $scope.jobs = [];
@@ -216,7 +213,7 @@ module.controller('MlSummaryViewController', function (
     mlAnomalyRecordDetailsService.setBucketInterval($scope.bucketInterval);
 
     // 1 - load job results
-    mlResultsService.getScoresByBucket(ML_RESULTS_INDEX_ID, selectedJobIds,
+    mlResultsService.getScoresByBucket(selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.bucketInterval.expression, 10)
     .then((resp) => {
       console.log('SummaryView bucket swimlane refresh data:', resp);
@@ -233,7 +230,7 @@ module.controller('MlSummaryViewController', function (
     });
 
     // 2 - load detector results
-    mlSwimlaneSearchService.getScoresByDetector(ML_RESULTS_INDEX_ID, selectedJobIds,
+    mlSwimlaneSearchService.getScoresByDetector(selectedJobIds,
         bounds.min.valueOf(), bounds.max.valueOf(), $scope.bucketInterval.expression, 10)
     .then((resp)=> {
       console.log('SummaryView detector swimlane refresh data:', resp);
@@ -246,7 +243,7 @@ module.controller('MlSummaryViewController', function (
     });
 
     // 3 - load influencer type results
-    mlSwimlaneSearchService.getScoresByInfluencerType(ML_RESULTS_INDEX_ID, selectedJobIds,
+    mlSwimlaneSearchService.getScoresByInfluencerType(selectedJobIds,
         bounds.min.valueOf(), bounds.max.valueOf(), $scope.bucketInterval.expression, 20)
     .then((resp)=> {
       console.log('SummaryView influencer type swimlane refresh data:', resp);
@@ -259,7 +256,7 @@ module.controller('MlSummaryViewController', function (
     });
 
     // 4 - load influencer value results
-    mlSwimlaneSearchService.getScoresByInfluencerValue(ML_RESULTS_INDEX_ID, selectedJobIds,
+    mlSwimlaneSearchService.getScoresByInfluencerValue(selectedJobIds,
       bounds.min.valueOf(), bounds.max.valueOf(), $scope.bucketInterval.expression, 20)
     .then((resp) => {
       console.log('SummaryView influencer value swimlane refresh data:', resp);
@@ -285,7 +282,7 @@ module.controller('MlSummaryViewController', function (
 
       $scope.chartWidth = chartWidth;
 
-      mlSwimlaneSearchService.getEventRate(ML_RESULTS_INDEX_ID, selectedJobIds,
+      mlSwimlaneSearchService.getEventRate(selectedJobIds,
         bounds.min.valueOf(), bounds.max.valueOf(), (interval + 'ms'), 500)
       .then(function (resp) {
         console.log('SummaryView event rate refresh data:', resp);

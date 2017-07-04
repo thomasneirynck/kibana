@@ -15,13 +15,14 @@
 
 import _ from 'lodash';
 
+import { ML_RESULTS_INDEX_PATTERN } from 'plugins/ml/constants/results_index_pattern';
+
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('mlMultiMetricJobSearchService', function ($q, es) {
-
+module.service('mlSimpleJobSearchService', function ($q, es) {
   // detector swimlane search
-  this.getScoresByRecord = function (index, jobId, earliestMs, latestMs, interval, firstSplitField) {
+  this.getScoresByRecord = function (jobId, earliestMs, latestMs, interval, firstSplitField) {
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -34,7 +35,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
     }
 
     es.search({
-      index: '.ml-anomalies-*',
+      index: ML_RESULTS_INDEX_PATTERN,
       size: 0,
       body: {
         'query': {
@@ -124,78 +125,6 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
     return deferred.promise;
   };
 
-  // event rate swimlane search
-  this.getScoresByBucket = function (index, jobId, earliestMs, latestMs, interval) {
-    const deferred = $q.defer();
-    const obj = {
-      success: true,
-      results: {}
-    };
-
-    es.search({
-      index: '.ml-anomalies-*',
-      size: 0,
-      body: {
-        'query': {
-          'bool': {
-            'filter': [{
-              'query_string': {
-                'query': 'result_type:bucket'
-              }
-            }, {
-              'bool': {
-                'must': [{
-                  'range': {
-                    'timestamp': {
-                      'gte': earliestMs,
-                      'lte': latestMs,
-                      'format': 'epoch_millis'
-                    }
-                  }
-                }, {
-                  'query_string': {
-                    'query': 'job_id:' + jobId
-                  }
-                }]
-              }
-            }]
-          }
-        },
-        'aggs': {
-          'times': {
-            'date_histogram': {
-              'field': 'timestamp',
-              'interval': interval,
-              'min_doc_count': 1
-            },
-            'aggs': {
-              'anomalyScore': {
-                'max': {
-                  'field': 'anomaly_score'
-                }
-              }
-            }
-          }
-        }
-      }
-    })
-    .then((resp) => {
-      const aggregationsByTime = _.get(resp, ['aggregations', 'times', 'buckets'], []);
-      _.each(aggregationsByTime, (dataForTime) => {
-        const time = dataForTime.key;
-        obj.results[time] = {
-          'anomalyScore': _.get(dataForTime, ['anomalyScore', 'value']),
-        };
-      });
-
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
-    return deferred.promise;
-  };
-
   this.getCategoryFields = function (index, field, size, query) {
     const deferred = $q.defer();
     const obj = {
@@ -204,7 +133,7 @@ module.service('mlMultiMetricJobSearchService', function ($q, es) {
     };
 
     es.search({
-      index: index,
+      index,
       size: 0,
       body: {
         'query': query,

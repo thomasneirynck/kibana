@@ -32,7 +32,7 @@ module.service('mlSingleMetricJobService', function (
   timefilter,
   Private,
   mlJobService,
-  mlSingleMetricJobSearchService) {
+  mlResultsService) {
 
   this.chartData = {
     line: [],
@@ -140,13 +140,14 @@ module.service('mlSingleMetricJobService', function (
     // create empty swimlane dataset
     // i.e. array of Objects with keys date (JavaScript date), value, lower and upper.
     const swimlaneData = [];
-    _.each(bucketScoreData, (dataForTime, t) => {
+    _.each(bucketScoreData, (value, t) => {
       const time = +t;
       const date = new Date(time);
+      value = init ? 0 : value;
       swimlaneData.push({
-        date: date,
-        time: time,
-        value: init ? 0 : dataForTime.anomalyScore,
+        date,
+        time,
+        value,
         color: ''
       });
     });
@@ -401,9 +402,9 @@ module.service('mlSingleMetricJobService', function (
       }
     }
 
-    mlSingleMetricJobSearchService.getModelPlotOutput(
-      formConfig.indexPattern.id,
+    mlResultsService.getModelPlotOutput(
       formConfig.jobId,
+      [],
       start,
       formConfig.end,
       formConfig.resultsIntervalSeconds + 's',
@@ -430,15 +431,16 @@ module.service('mlSingleMetricJobService', function (
   this.loadSwimlaneData = function (formConfig) {
     const deferred = $q.defer();
 
-    mlSingleMetricJobSearchService.getScoresByBucket(
-      formConfig.indexPattern.id,
-      formConfig.jobId,
+    mlResultsService.getScoresByBucket(
+      [formConfig.jobId],
       formConfig.start,
       formConfig.end,
-      formConfig.resultsIntervalSeconds + 's'
+      formConfig.resultsIntervalSeconds + 's',
+      1
     )
-    .then(data => {
-      this.chartData.swimlane = processSwimlaneResults(data.results);
+    .then((data) => {
+      const jobResults = data.results[formConfig.jobId];
+      this.chartData.swimlane = processSwimlaneResults(jobResults);
       this.chartData.swimlaneInterval = formConfig.resultsIntervalSeconds * 1000;
       deferred.resolve(this.chartData);
     })

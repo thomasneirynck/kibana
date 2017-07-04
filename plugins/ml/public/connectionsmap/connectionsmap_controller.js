@@ -36,6 +36,7 @@ import {
   showTypicalForFunction,
   getSeverity
 } from 'plugins/ml/util/anomaly_utils';
+import { ML_RESULTS_INDEX_PATTERN } from 'plugins/ml/constants/results_index_pattern';
 import { escapeForElasticsearchQuery } from 'plugins/ml/util/string_utils';
 
 import { uiModules } from 'ui/modules';
@@ -52,6 +53,7 @@ module.controller('MlConnectionsMapController', function (
   mlJobService,
   mlResultsService,
   mlJobSelectService) {
+
   $scope.detectorsByJob = {};
   $scope.numberHits = -1;
 
@@ -100,7 +102,7 @@ module.controller('MlConnectionsMapController', function (
 
   $scope.initializeVis = function () {
     // Load the job info needed by the visualization, then do the first load.
-    mlJobService.getBasicJobInfo($scope.vis.indexPattern.id)
+    mlJobService.getBasicJobInfo()
     .then(function (resp) {
       if (resp.jobs.length > 0) {
         // Set any jobs passed in the URL as selected, otherwise check any saved in the Vis.
@@ -148,7 +150,7 @@ module.controller('MlConnectionsMapController', function (
     $scope.timeRangeLabel = bounds.min.format('MMMM Do YYYY, HH:mm') + ' to ' + bounds.max.format('MMMM Do YYYY, HH:mm');
 
     const selectedJobIds = $scope.getSelectedJobIds();
-    mlResultsService.getRecordInfluencers($scope.vis.indexPattern.id, selectedJobIds,
+    mlResultsService.getRecordInfluencers(selectedJobIds,
         $scope.vis.params.threshold.val, bounds.min.valueOf(), bounds.max.valueOf(), 500)
     .then(function (resp) {
       $scope.numberHits = resp.records.length;
@@ -214,14 +216,14 @@ module.controller('MlConnectionsMapController', function (
         }
       });
 
-      mlResultsService.getRecordsForDetector($scope.vis.indexPattern.id, selectedJobId, selectedDetectorIndex, true, null, null,
+      mlResultsService.getRecordsForDetector(selectedJobId, selectedDetectorIndex, true, null, null,
           $scope.vis.params.threshold.val, bounds.min.valueOf(), bounds.max.valueOf(), 500)
       .then(function (resp) {
         setSummaryTableRecords(resp.records, 'entity');
       });
 
     } else {
-      mlResultsService.getRecordsForInfluencer($scope.vis.indexPattern.id, selectedJobIds, [node],
+      mlResultsService.getRecordsForInfluencer(selectedJobIds, [node],
           $scope.vis.params.threshold.val, bounds.min.valueOf(), bounds.max.valueOf(), 500)
       .then(function (resp) {
         setSummaryTableRecords(resp.records, 'detector');
@@ -269,7 +271,7 @@ module.controller('MlConnectionsMapController', function (
       link.detector = detectorNode.fieldValue;
       link.influencer1FieldName = influencer1.fieldName;
       link.influencer1FieldValue = influencer1.fieldValue;
-      mlResultsService.getRecordsForDetector($scope.vis.indexPattern.id, selectedJobId, selectedDetectorIndex,
+      mlResultsService.getRecordsForDetector(selectedJobId, selectedDetectorIndex,
           true, influencer1.fieldName, influencer1.fieldValue,
           $scope.vis.params.threshold.val, bounds.min.valueOf(), bounds.max.valueOf(), 500)
       .then(function (resp) {
@@ -281,7 +283,7 @@ module.controller('MlConnectionsMapController', function (
       link.influencer2FieldName = link.outer.fieldName;
       link.influencer2FieldValue = link.outer.fieldValue;
 
-      mlResultsService.getRecordsForInfluencer($scope.vis.indexPattern.id, selectedJobIds, [link.inner, link.outer],
+      mlResultsService.getRecordsForInfluencer(selectedJobIds, [link.inner, link.outer],
           $scope.vis.params.threshold.val, bounds.min.valueOf(), bounds.max.valueOf(), 500)
       .then(function (resp) {
         setSummaryTableRecords(resp.records, 'detector');
@@ -370,8 +372,7 @@ module.controller('MlConnectionsMapController', function (
   if ($scope.vis.indexPattern) {
     $scope.initializeVis();
   } else {
-    // TODO - move the default index pattern into an editor setting?
-    courier.indexPatterns.get('.ml-anomalies-*')
+    courier.indexPatterns.get(ML_RESULTS_INDEX_PATTERN)
     .then(function (indexPattern) {
       $scope.vis.indexPattern = indexPattern;
       $scope.initializeVis();
@@ -680,7 +681,7 @@ module.controller('MlConnectionsMapController', function (
       // Load examples for any mlcategory anomalies.
       $scope.categoryExamplesByJob = {};
       _.each(categoryIdsByJobId, function (categoryIds, jobId) {
-        mlResultsService.getCategoryExamples($scope.vis.indexPattern.id, jobId, categoryIds, 10)
+        mlResultsService.getCategoryExamples(jobId, categoryIds, 10)
         .then(function (resp) {
           $scope.categoryExamplesByJob[jobId] = resp.examplesByCategoryId;
         }).catch(function (resp) {

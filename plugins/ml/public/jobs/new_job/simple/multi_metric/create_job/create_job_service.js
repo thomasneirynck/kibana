@@ -33,7 +33,8 @@ module.service('mlMultiMetricJobService', function (
   timefilter,
   Private,
   mlJobService,
-  mlMultiMetricJobSearchService) {
+  mlResultsService,
+  mlSimpleJobSearchService) {
 
   const TimeBuckets = Private(IntervalHelperProvider);
   const EVENT_RATE_COUNT_FIELD = '__ml_event_rate_count__';
@@ -334,23 +335,25 @@ module.service('mlMultiMetricJobService', function (
   this.loadJobSwimlaneData = function (formConfig) {
     const deferred = $q.defer();
 
-    mlMultiMetricJobSearchService.getScoresByBucket(
-      formConfig.indexPattern.id,
-      formConfig.jobId,
+    mlResultsService.getScoresByBucket(
+      [formConfig.jobId],
       formConfig.start,
       formConfig.end,
-      formConfig.resultsIntervalSeconds + 's'
+      formConfig.resultsIntervalSeconds + 's',
+      1
     )
-    .then(data => {
+    .then((data) => {
       let time = formConfig.start;
 
-      _.each(data.results, (dataForTime, t) => {
+      const jobResults = data.results[formConfig.jobId];
+
+      _.each(jobResults, (value, t) => {
         time = +t;
         const date = new Date(time);
         this.chartData.job.swimlane.push({
-          date: date,
-          time: time,
-          value: dataForTime.anomalyScore,
+          date,
+          time,
+          value,
           color: ''
         });
       });
@@ -373,8 +376,7 @@ module.service('mlMultiMetricJobService', function (
   this.loadDetectorSwimlaneData = function (formConfig) {
     const deferred = $q.defer();
 
-    mlMultiMetricJobSearchService.getScoresByRecord(
-      formConfig.indexPattern.id,
+    mlSimpleJobSearchService.getScoresByRecord(
       formConfig.jobId,
       formConfig.start,
       formConfig.end,
@@ -459,7 +461,7 @@ module.service('mlMultiMetricJobService', function (
   };
 
   this.getSplitFields = function (formConfig, size) {
-    return mlMultiMetricJobSearchService.getCategoryFields(
+    return mlSimpleJobSearchService.getCategoryFields(
       formConfig.indexPattern.id,
       formConfig.splitField,
       size,
@@ -478,7 +480,7 @@ module.service('mlMultiMetricJobService', function (
     const end = formConfig.end;
     const start = formConfig.start;
 
-    mlMultiMetricJobSearchService.getEventRate(
+    mlSimpleJobSearchService.getEventRate(
       formConfig.indexPattern.id,
       start,
       end,

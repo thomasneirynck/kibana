@@ -46,7 +46,6 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
 })
 .service('mlAnomalyRecordDetailsService', function ($q, $timeout, es, timefilter, mlJobService, mlSwimlaneSearchService) {
 
-  const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
   // number of records loaded once when the page opens
   const RECORD_COUNT = 1000;
 
@@ -207,7 +206,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
     that.clearTopInfluencers();
 
     // load records for the page
-    mlSwimlaneSearchService.getRecords(ML_RESULTS_INDEX_ID, selectedJobIds,
+    mlSwimlaneSearchService.getRecords(selectedJobIds,
         bounds.min.valueOf(), bounds.max.valueOf(), RECORD_COUNT)
     .then((resp) => {
       console.log('anomaly bubble refresh data:', resp);
@@ -588,7 +587,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
       }
       topInfluencers[swimlaneType][laneLabel][earliestMs] = null;
 
-      mlSwimlaneSearchService.getTopInfluencers(ML_RESULTS_INDEX_ID, laneLabel, jobIds, swimlaneType,
+      mlSwimlaneSearchService.getTopInfluencers(laneLabel, jobIds, swimlaneType,
           earliestMs, latestMs, 0, that.type)
       .then((resp) => {
         processTopInfluencersResults(topInfluencers, resp.results, earliestMs, laneLabel, swimlaneType);
@@ -625,7 +624,7 @@ module.directive('mlAnomalyDetailsBubble', function ($location, mlJobService, ml
   function loadTopInfluencersForPage(jobIds, earliestMs, latestMs) {
 
     const swimlaneType = that.type.JOB;
-    mlSwimlaneSearchService.getTopInfluencers(ML_RESULTS_INDEX_ID, '', jobIds, swimlaneType,
+    mlSwimlaneSearchService.getTopInfluencers('', jobIds, swimlaneType,
         earliestMs, latestMs, 0, that.type)
     .then((resp) => {
 

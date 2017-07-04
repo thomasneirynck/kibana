@@ -13,7 +13,6 @@
  * strictly prohibited.
  */
 
-import './styles/main.less';
 import './wizard/wizard';
 import './create_job';
 

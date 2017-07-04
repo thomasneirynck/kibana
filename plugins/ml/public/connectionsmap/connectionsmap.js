@@ -25,6 +25,8 @@ import 'plugins/ml/connectionsmap/connectionsmap.less';
 
 import { TemplateVisTypeProvider } from 'ui/template_vis_type/template_vis_type';
 
+import { ML_RESULTS_INDEX_PATTERN } from 'plugins/ml/constants/results_index_pattern';
+
 export function ConnectionsMapVisType(Private) {
   const TemplateVisType = Private(TemplateVisTypeProvider);
 
@@ -37,7 +39,7 @@ export function ConnectionsMapVisType(Private) {
       'the detectors and influencers of anomalies. Influencers and detectors are connected ' +
       'if they occur together in an anomaly record.',
     requiresSearch : false, // Uses searches created in the visualization controller.
-    indexPattern: '.ml-anomalies-*',
+    indexPattern: ML_RESULTS_INDEX_PATTERN,
     template : require('plugins/ml/connectionsmap/connectionsmap.html'),
     params : {
       editor : require('plugins/ml/connectionsmap/connectionsmap_editor.html'),

@@ -53,8 +53,12 @@ module.directive('mlSwimlaneInfluencers', function ($timeout, mlResultsService) 
     // Call results service to get top 5 influencer field values.
     function getTopInfluencersData() {
       mlResultsService.getTopInfluencerValues(
-          scope.indexPattern.id, scope.selectedJobIds, scope.influencerFieldName, scope.earliestMs, scope.latestMs, 5)
-      .then(function (resp) {
+        scope.selectedJobIds,
+        scope.influencerFieldName,
+        scope.earliestMs,
+        scope.latestMs,
+        5
+      ).then(function (resp) {
         scope.loadedInfluencers = true;
 
         if (resp.results.length > 0) {

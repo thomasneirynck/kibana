@@ -38,7 +38,6 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
     console.log('ml-explorer-chart directive link series config:', scope.seriesConfig);
     const config = scope.seriesConfig;
 
-    const ML_RESULTS_INDEX_ID = '.ml-anomalies-*';
     const ML_TIME_FIELD_NAME = 'timestamp';
     const ANOMALIES_MAX_RESULTS = 500;
 
@@ -78,10 +77,17 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
 
     // Query 1 - load the raw metric data.
     const datafeedQuery = _.get(config, 'datafeedConfig.query', null);
-    mlResultsService.getMetricData(config.datafeedConfig.indices,
-      config.datafeedConfig.types, config.entityFields, datafeedQuery,
-      config.metricFunction, config.metricFieldName, config.timeField,
-      scope.plotEarliest, scope.plotLatest, config.interval
+    mlResultsService.getMetricData(
+      config.datafeedConfig.indices,
+      config.datafeedConfig.types,
+      config.entityFields,
+      datafeedQuery,
+      config.metricFunction,
+      config.metricFieldName,
+      config.timeField,
+      scope.plotEarliest,
+      scope.plotLatest,
+      config.interval
       )
     .then((resp) => {
       // TODO - if query returns no results e.g. source data has been deleted,
@@ -97,7 +103,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
     criteria.push({ fieldName: 'detector_index', fieldValue: config.detectorIndex });
     criteria = criteria.concat(config.entityFields);
 
-    mlResultsService.getRecordsForCriteria(ML_RESULTS_INDEX_ID, [config.jobId], criteria,
+    mlResultsService.getRecordsForCriteria([config.jobId], criteria,
       0, scope.plotEarliest, scope.plotLatest, ANOMALIES_MAX_RESULTS)
     .then((resp) => {
       scope.anomalyRecords = resp.records;

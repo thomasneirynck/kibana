@@ -32,9 +32,6 @@ import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/single_metric/cre
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
 
 uiRoutes
-.defaults(/dashboard/, {
-  requireDefaultIndex: true
-})
 .when('/jobs/new_job/simple/single_metric/create', {
   template: require('./create_job.html'),
   resolve: {

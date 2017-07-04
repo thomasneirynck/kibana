@@ -18,6 +18,7 @@ import _ from 'lodash';
 import 'ui/timefilter';
 
 import { getSeverity } from 'plugins/ml/util/anomaly_utils';
+import { ML_RESULTS_INDEX_PATTERN } from 'plugins/ml/constants/results_index_pattern';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -28,8 +29,8 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
   // for a particular job ID(s).
   // Pass an empty array or ['*'] to search over all job IDs.
   // Returned response contains a results property, which contains a
-  // three level aggregation of values by job Id, detector index, and time (epoch ms).
-  this.getScoresByDetector = function (index, jobIds, earliestMs, latestMs, interval, maxResults) {
+  // three level aggregation of values by job Id, detector and time (epoch ms).
+  this.getScoresByDetector = function (jobIds, earliestMs, latestMs, interval, maxResults) {
     // TODO - move into results_service.js.
     const deferred = $q.defer();
     const obj = { success: true, results: {} };
@@ -65,7 +66,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
 
     // TODO - remove hardcoded aggregation interval.
     es.search({
-      index: index,
+      index: ML_RESULTS_INDEX_PATTERN,
       size: 0,
       body: {
         'query': {
@@ -179,8 +180,8 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
   // for a particular job ID(s).
   // Pass an empty array or ['*'] to search over all job IDs.
   // Returned response contains a results property, which contains a
-  // three level aggregation of values by job Id, detector index, and time (epoch ms).
-  this.getScoresByInfluencerType = function (index, jobIds, earliestMs, latestMs, interval, maxResults) {
+  // three level aggregation of values by job Id, detector and time (epoch ms).
+  this.getScoresByInfluencerType = function (jobIds, earliestMs, latestMs, interval, maxResults) {
     // TODO - move into results_service.js.
     const deferred = $q.defer();
     const obj = { success: true, results: {} };
@@ -216,7 +217,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
 
     // TODO - remove hardcoded aggregation interval.
     es.search({
-      index: index,
+      index: ML_RESULTS_INDEX_PATTERN,
       size: 0,
       body: {
         'query': {
@@ -306,7 +307,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
     return deferred.promise;
   };
 
-  this.getScoresByInfluencerValue = function (index, jobIds, earliestMs, latestMs, interval, maxResults) {
+  this.getScoresByInfluencerValue = function (jobIds, earliestMs, latestMs, interval, maxResults) {
     // TODO - move into results_service.js.
     const deferred = $q.defer();
     const obj = { success: true, results: {} };
@@ -342,7 +343,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
 
     // TODO - remove hardcoded aggregation interval.
     es.search({
-      index: index,
+      index: ML_RESULTS_INDEX_PATTERN,
       size: 0,
       body: {
         'query': {
@@ -436,7 +437,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
       // Queries Elasticsearch to obtain the record level results for
   // the specified job(s) and time range.
   // Pass an empty array or ['*'] to search over all job IDs.
-  this.getRecords = function (index, jobIds, earliestMs, latestMs, maxResults) {
+  this.getRecords = function (jobIds, earliestMs, latestMs, maxResults) {
     const deferred = $q.defer();
     const obj = { success: true, records: [] };
 
@@ -479,7 +480,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
     }
 
     es.search({
-      index: index,
+      index: ML_RESULTS_INDEX_PATTERN,
       size: maxResults !== undefined ? maxResults : 100,
       body: {
         '_source': [
@@ -542,7 +543,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
     return deferred.promise;
   };
 
-  this.getTopInfluencers = function (index, laneLabel, jobIds, swimlaneType, earliestMs, latestMs, maxResults, type) {
+  this.getTopInfluencers = function (laneLabel, jobIds, swimlaneType, earliestMs, latestMs, maxResults, type) {
     const deferred = $q.defer();
     const obj = { success: true, results: [] };
 
@@ -591,7 +592,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
     }
 
     es.search({
-      index: index,
+      index: ML_RESULTS_INDEX_PATTERN,
       size: maxResults !== undefined ? maxResults : 100,
       body: {
         'query': {
@@ -700,7 +701,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
     return deferred.promise;
   };
 
-  this.getEventRate = function (index, jobIds, earliestMs, latestMs, interval, maxResults) {
+  this.getEventRate = function (jobIds, earliestMs, latestMs, interval, maxResults) {
     // TODO - move into results_service.js.
     const deferred = $q.defer();
     const obj = { success: true, results: {} };
@@ -736,7 +737,7 @@ module.service('mlSwimlaneSearchService', function ($q, $timeout, es) {
 
     // TODO - remove hardcoded aggregation interval.
     es.search({
-      index: index,
+      index: ML_RESULTS_INDEX_PATTERN,
       size: 0,
       body: {
         'query': {

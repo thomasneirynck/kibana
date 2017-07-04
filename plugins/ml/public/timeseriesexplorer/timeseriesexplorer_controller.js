@@ -51,12 +51,23 @@ uiRoutes
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $timeout, $compile,
-  Private, $q, es, timefilter, globalState, AppState, mlJobService, mlResultsService,
-  mlJobSelectService, mlTimeSeriesSearchService, mlAnomaliesTableService) {
+module.controller('MlTimeSeriesExplorerController', function (
+  $scope,
+  $route,
+  $timeout,
+  $compile,
+  Private,
+  $q,
+  es,
+  timefilter,
+  globalState,
+  AppState,
+  mlJobService,
+  mlResultsService,
+  mlJobSelectService,
+  mlTimeSeriesSearchService,
+  mlAnomaliesTableService) {
 
-  // TODO - move the index pattern into a setting?
-  $scope.indexPatternId = '.ml-anomalies-*';
   $scope.timeFieldName = 'timestamp';
   timefilter.enabled = true;
 
@@ -197,9 +208,14 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     // for the most recent call to the load the data in cases where the job selection and time filter
     // have been altered in quick succession (such as from the job picker with 'Apply time range').
     const counter = $scope.loadCounter;
-    mlTimeSeriesSearchService.getMetricData($scope.selectedJob, detectorIndex, nonBlankEntities,
-      bounds.min.valueOf(), bounds.max.valueOf(), $scope.contextAggregationInterval.expression)
-    .then((resp) => {
+    mlTimeSeriesSearchService.getMetricData(
+      $scope.selectedJob,
+      detectorIndex,
+      nonBlankEntities,
+      bounds.min.valueOf(),
+      bounds.max.valueOf(),
+      $scope.contextAggregationInterval.expression
+    ).then((resp) => {
       const fullRangeChartData = processMetricPlotResults(resp.results);
       $scope.contextChartData = fullRangeChartData;
 
@@ -220,10 +236,13 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
     // Query 2 - load max record score at same granularity as context chart
     // across full time range for use in the swimlane.
-    mlTimeSeriesSearchService.getRecordMaxScoreByTime($scope.selectedJob.job_id,
-      $scope.criteriaFields, bounds.min.valueOf(), bounds.max.valueOf(),
-      $scope.contextAggregationInterval.expression)
-    .then((resp) => {
+    mlResultsService.getRecordMaxScoreByTime(
+      $scope.selectedJob.job_id,
+      $scope.criteriaFields,
+      bounds.min.valueOf(),
+      bounds.max.valueOf(),
+      $scope.contextAggregationInterval.expression
+    ).then((resp) => {
       const fullRangeRecordScoreData = processRecordScoreResults(resp.results);
       $scope.swimlaneData = fullRangeRecordScoreData;
       console.log('Time series explorer swimlane anomalies data set:', $scope.swimlaneData);
@@ -234,9 +253,13 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     });
 
     // Query 3 - load details on the chart used in the chart title (charting function and entity(s)).
-    mlTimeSeriesSearchService.getChartDetails($scope.selectedJob, detectorIndex, $scope.entities,
-      bounds.min.valueOf(), bounds.max.valueOf())
-    .then((resp) => {
+    mlTimeSeriesSearchService.getChartDetails(
+      $scope.selectedJob,
+      detectorIndex,
+      $scope.entities,
+      bounds.min.valueOf(),
+      bounds.max.valueOf()
+    ).then((resp) => {
       $scope.chartDetails = resp.results;
       finish(counter);
     }).catch((resp) => {
@@ -245,7 +268,7 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
     // Populate the entity input datalists with the values from the top records by score
     // for the selected detector across the full time range. No need to pass through finish().
-    mlResultsService.getRecordsForCriteria($scope.indexPatternId, [$scope.selectedJob.job_id],
+    mlResultsService.getRecordsForCriteria([$scope.selectedJob.job_id],
        [{ 'fieldName':'detector_index','fieldValue':detectorIndex }], 0,
        bounds.min.valueOf(), bounds.max.valueOf(), ANOMALIES_MAX_RESULTS)
     .then((resp) => {
@@ -294,7 +317,6 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
 
           $scope.loading = false;
         }, 0);
-
       }
     }
 
@@ -307,9 +329,14 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     console.log('aggregationInterval for focus data (s):', $scope.focusAggregationInterval.asSeconds());
 
     // Query 1 - load metric data across selected time range.
-    mlTimeSeriesSearchService.getMetricData($scope.selectedJob, detectorIndex, nonBlankEntities,
-      bounds.min.valueOf(), bounds.max.valueOf(), $scope.focusAggregationInterval.expression)
-    .then((resp) => {
+    mlTimeSeriesSearchService.getMetricData(
+      $scope.selectedJob,
+      detectorIndex,
+      nonBlankEntities,
+      bounds.min.valueOf(),
+      bounds.max.valueOf(),
+      $scope.focusAggregationInterval.expression
+    ).then((resp) => {
       $scope.focusChartData = processMetricPlotResults(resp.results);
       finish();
     }).catch((resp) => {
@@ -317,9 +344,14 @@ module.controller('MlTimeSeriesExplorerController', function ($scope, $route, $t
     });
 
     // Query 2 - load records across selected time range.
-    mlResultsService.getRecordsForCriteria($scope.indexPatternId, [$scope.selectedJob.job_id],
-      $scope.criteriaFields, 0, bounds.min.valueOf(), bounds.max.valueOf(), ANOMALIES_MAX_RESULTS)
-    .then((resp) => {
+    mlResultsService.getRecordsForCriteria(
+      [$scope.selectedJob.job_id],
+      $scope.criteriaFields,
+      0,
+      bounds.min.valueOf(),
+      bounds.max.valueOf(),
+      ANOMALIES_MAX_RESULTS
+    ).then((resp) => {
       // Sort in descending time order before storing in scope.
       $scope.anomalyRecords = _.chain(resp.records).sortBy((record) => {
         return record[$scope.timeFieldName];
