@@ -1,6 +1,7 @@
 import { callWithRequestFactory } from '../../../lib/call_with_request_factory';
 import { wrapEsError } from '../../../lib/error_wrappers';
 import { INDEX_NAMES, TYPE_NAMES } from '../../../../common/constants';
+import { licensePreRoutingFactory } from'../../../lib/license_pre_routing_factory';
 
 function deletePipeline(callWithRequest, pipelineId) {
   return callWithRequest('delete', {
@@ -12,6 +13,8 @@ function deletePipeline(callWithRequest, pipelineId) {
 }
 
 export function registerDeleteRoute(server) {
+  const licensePreRouting = licensePreRoutingFactory(server);
+
   server.route({
     path: '/api/logstash/pipeline/{id}',
     method: 'DELETE',
@@ -22,6 +25,9 @@ export function registerDeleteRoute(server) {
       return deletePipeline(callWithRequest, pipelineId)
       .then(reply)
       .catch(e => reply(wrapEsError(e)));
+    },
+    config: {
+      pre: [ licensePreRouting ]
     }
   });
 }

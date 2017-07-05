@@ -22,16 +22,17 @@
         </div>
 
         <div class="kuiToolBarSection">
-          <a
+          <button
             class="kuiButton kuiButton--primary"
-            href="#/management/logstash/pipelines/new-pipeline"
+            ng-click="pipelineList.onNewPipeline()"
+            ng-disabled="pipelineList.isReadOnly"
           >
             Add
-          </a>
+          </button>
           <button
             class="kuiButton kuiButton--danger"
             ng-click="pipelineList.onSelectedPipelinesDelete()"
-            ng-disabled="!pipelineList.hasSelectedPipelines"
+            ng-disabled="pipelineList.isReadOnly || !pipelineList.hasSelectedPipelines"
           >
             Delete
           </button>

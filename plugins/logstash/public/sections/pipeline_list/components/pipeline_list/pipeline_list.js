@@ -9,13 +9,16 @@ import 'ui/pager';
 import 'ui/react_components';
 import 'ui/table_info';
 import 'plugins/logstash/services/pipelines';
+import 'plugins/logstash/services/license';
 
 const app = uiModules.get('xpack/logstash');
 
 app.directive('pipelineList', function ($injector) {
   const pagerFactory = $injector.get('pagerFactory');
   const pipelinesService = $injector.get('pipelinesService');
+  const licenseService = $injector.get('logstashLicenseService');
   const confirmModal = $injector.get('confirmModal');
+  const kbnUrl = $injector.get('kbnUrl');
 
   const $filter = $injector.get('$filter');
   const filter = $filter('filter');
@@ -41,7 +44,14 @@ app.directive('pipelineList', function ($injector) {
         this.pager = pagerFactory.create(this.pipelines.length, PAGINATION.PAGE_SIZE, 1);
 
         // load pipelines
-        this.loadPipelines();
+        this.loadPipelines()
+        .then(() => {
+          // notify the users if the UI is read-only only after we
+          // successfully loaded pipelines
+          if (this.isReadOnly) {
+            this.notifier.info(licenseService.message);
+          }
+        });
 
         // react to pipeline and ui changes
         $scope.$watchMulti([
@@ -53,26 +63,31 @@ app.directive('pipelineList', function ($injector) {
         ], this.applyFilters);
       }
 
-      handleError(err) {
-        const statusCode = err.data.statusCode;
-        console.log(statusCode);
-        if (statusCode === 403) {
-          this.isLoading = false;
-          this.isForbidden = true;
-          return;
-        }
-        this.isForbidden = false;
-        this.notifier.error(err);
-      }
-
       loadPipelines = () => {
-        pipelinesService.getPipelineList()
+        return pipelinesService.getPipelineList()
         .then(pipelines => {
           this.isLoading = false;
           this.isForbidden = false;
           this.pipelines = pipelines;
         })
-        .catch(err => this.handleError(err));
+        .catch(err => {
+          return licenseService.checkValidity()
+          .then(() => {
+            if (err.status === 403) {
+              this.isLoading = false;
+              // check if the 403 is from license check or a RBAC permission issue with the index
+              if (this.isReadOnly) {
+                // if read only, we show the contents
+                this.isForbidden = false;
+              } else {
+                this.isForbidden = true;
+              }
+            } else {
+              this.isForbidden = false;
+              this.notifier.error(err);
+            }
+          });
+        });
       }
 
       get hasPageOfPipelines() {
@@ -82,6 +97,14 @@ app.directive('pipelineList', function ($injector) {
       get hasSelectedPipelines() {
         return this.selectedPipelines.length > 0;
       }
+
+      get isReadOnly() {
+        return licenseService.isReadOnly;
+      }
+
+      onNewPipeline() {
+        kbnUrl.change('/management/logstash/pipelines/new-pipeline');
+      };
 
       onQueryChange = (query) => {
         this.query = query;
@@ -135,6 +158,10 @@ app.directive('pipelineList', function ($injector) {
           }
 
           this.loadPipelines();
+        })
+        .catch(err => {
+          return licenseService.checkValidity()
+          .then(() => this.notifier.error(err));
         });
       }
 

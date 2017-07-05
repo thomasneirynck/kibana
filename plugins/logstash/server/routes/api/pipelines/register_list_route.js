@@ -3,6 +3,7 @@ import { wrapEsError } from '../../../lib/error_wrappers';
 import { callWithRequestFactory } from '../../../lib/call_with_request_factory';
 import { INDEX_NAMES } from '../../../../common/constants';
 import { PipelineListItem } from '../../../models/pipeline_list_item';
+import { licensePreRoutingFactory } from'../../../lib/license_pre_routing_factory';
 
 function fetchPipelines(callWithRequest) {
   return callWithRequest('search', {
@@ -18,6 +19,8 @@ function fetchPipelines(callWithRequest) {
 }
 
 export function registerListRoute(server) {
+  const licensePreRouting = licensePreRoutingFactory(server);
+
   server.route({
     path: '/api/logstash/pipelines',
     method: 'GET',
@@ -36,6 +39,9 @@ export function registerListRoute(server) {
 
       })
       .catch(e => reply(wrapEsError(e)));
+    },
+    config: {
+      pre: [ licensePreRouting ]
     }
   });
 }

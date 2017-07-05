@@ -1,2 +1,2 @@
 import './register_management_section';
-import './routes';
+import './pipeline_list_route';

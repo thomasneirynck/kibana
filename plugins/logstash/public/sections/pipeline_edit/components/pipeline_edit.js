@@ -2,6 +2,8 @@ import { isEmpty } from 'lodash';
 import { uiModules } from 'ui/modules';
 import { Notifier } from 'ui/notify/notifier';
 import template from './pipeline_edit.html';
+import 'plugins/logstash/services/license';
+import 'plugins/logstash/services/security';
 import './pipeline_edit.less';
 import 'ace';
 
@@ -9,7 +11,8 @@ const app = uiModules.get('xpack/logstash');
 
 app.directive('pipelineEdit', function ($injector) {
   const pipelineService = $injector.get('pipelineService');
-  const shieldUser = $injector.get('ShieldUser');
+  const licenseService = $injector.get('logstashLicenseService');
+  const securityService = $injector.get('logstashSecurityService');
   const kbnUrl = $injector.get('kbnUrl');
   const confirmModal = $injector.get('confirmModal');
 
@@ -25,12 +28,21 @@ app.directive('pipelineEdit', function ($injector) {
       constructor($scope) {
         this.notifier = new Notifier({ location: 'Logstash' });
         this.isNewPipeline = isEmpty(this.pipeline.id);
-        $scope.user = shieldUser.getCurrent();
+        // only if security is enabled and available, we tack on the username.
+        if (securityService.isSecurityEnabled) {
+          $scope.user = $injector.get('ShieldUser').getCurrent();
+        } else {
+          $scope.user = null;
+        }
         $scope.aceLoaded = (editor) => {
           this.editor = editor;
+          editor.setReadOnly(this.isReadOnly);
           editor.getSession().setMode("ace/mode/ruby");
           editor.$blockScrolling = Infinity;
         };
+        if (this.isReadOnly) {
+          this.notifier.info(licenseService.message);
+        }
       }
 
       onPipelineSave = (username) => {
@@ -40,8 +52,9 @@ app.directive('pipelineEdit', function ($injector) {
           this.notifier.info(`Saved pipeline "${this.pipeline.id}"`);
           this.close();
         })
-        .catch(e => {
-          this.notifier.error(e);
+        .catch(err => {
+          return licenseService.checkValidity()
+          .then(() => this.notifier.error(err));
         });
       }
 
@@ -64,8 +77,9 @@ app.directive('pipelineEdit', function ($injector) {
           this.notifier.info(`Deleted pipeline "${this.pipeline.id}"`);
           this.close();
         })
-        .catch(e => {
-          this.notifier.error(e);
+        .catch(err => {
+          return licenseService.checkValidity()
+          .then(() => this.notifier.error(err));
         });
       }
 
@@ -75,6 +89,10 @@ app.directive('pipelineEdit', function ($injector) {
 
       get isSaveEnabled() {
         return !(this.form.$invalid || this.jsonForm.$invalid);
+      }
+
+      get isReadOnly() {
+        return licenseService.isReadOnly;
       }
     }
   };

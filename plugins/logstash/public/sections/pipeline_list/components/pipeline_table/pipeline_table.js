@@ -5,14 +5,14 @@ import 'ui/filters/moment';
 import 'ui/check_box';
 import 'ui/sortable_column';
 import template from './pipeline_table.html';
+import 'plugins/logstash/services/security';
 
 const app = uiModules.get('xpack/logstash');
 
 app.directive('pipelineTable', function ($injector) {
   const config = $injector.get('config');
-  const shieldUser = $injector.get('ShieldUser');
+  const securityService = $injector.get('logstashSecurityService');
   moment.tz.setDefault(config.get('dateFormat:tz'));
-
 
   return {
     restrict: 'E',
@@ -60,7 +60,7 @@ app.directive('pipelineTable', function ($injector) {
       };
 
       get isSecurityEnabled() {
-        return !_.isNull(shieldUser);
+        return securityService.isSecurityEnabled;
       }
     }
   };

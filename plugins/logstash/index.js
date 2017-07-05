@@ -1,11 +1,13 @@
 import { resolve } from 'path';
 import { registerLogstashPipelinesRoutes } from './server/routes/api/pipelines';
 import { registerLogstashPipelineRoutes } from './server/routes/api/pipeline';
+import { registerLicenseChecker } from './server/lib/register_license_checker';
+import { PLUGIN } from './common/constants';
 
 export const logstash = (kibana) => new kibana.Plugin({
-  id: 'logstash',
+  id: PLUGIN.ID,
   publicDir: resolve(__dirname, 'public'),
-  require: ['kibana', 'security', 'elasticsearch', 'xpack_main'],
+  require: ['kibana', 'elasticsearch', 'xpack_main'],
   configPrefix: 'xpack.logstash',
   config(Joi) {
     return Joi.object({
@@ -19,6 +21,7 @@ export const logstash = (kibana) => new kibana.Plugin({
     ]
   },
   init: (server) => {
+    registerLicenseChecker(server);
     registerLogstashPipelinesRoutes(server);
     registerLogstashPipelineRoutes(server);
   }

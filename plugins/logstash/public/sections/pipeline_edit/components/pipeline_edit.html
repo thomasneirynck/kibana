@@ -9,7 +9,7 @@
           <div class="kuiButtonGroup">
             <button
               class="kuiButton kuiButton--primary"
-              ng-disabled="!pipelineEdit.isSaveEnabled"
+              ng-disabled="pipelineEdit.isReadOnly || !pipelineEdit.isSaveEnabled"
               ng-click="pipelineEdit.onPipelineSave(user.username)"
               data-test-subj="btnSavePipeline"
             >
@@ -26,6 +26,7 @@
               ng-if="!pipelineEdit.isNewPipeline"
               class="kuiButton kuiButton--danger kuiButton--iconText"
               ng-click="pipelineEdit.onPipelineDelete()"
+              ng-disabled="pipelineEdit.isReadOnly"
               tooltip="Delete Pipeline"
               data-test-subj="btnDeletePipeline"
             >
@@ -49,7 +50,7 @@
           <input
             type="text"
             ng-class="::pipelineEdit.isNewPipeline ? 'kuiTextInput fullWidth' : 'kuiStaticInput'"
-            ng-disabled="!pipelineEdit.isNewPipeline"
+            ng-disabled="pipelineEdit.isReadOnly || !pipelineEdit.isNewPipeline"
             id="id"
             name="id"
             ng-model="pipelineEdit.pipeline.id"
@@ -81,6 +82,7 @@
             class="kuiTextInput fullWidth"
             id="version"
             name="version"
+            ng-disabled="pipelineEdit.isReadOnly"
             ng-model="pipelineEdit.pipeline.version"
             placeholder="v1.0.0"
             ng-trim="false">
@@ -97,6 +99,7 @@
             class="kuiTextInput fullWidth"
             id="description"
             name="description"
+            ng-disabled="pipelineEdit.isReadOnly"
             ng-model="pipelineEdit.pipeline.description">
         </div>
       </form>
