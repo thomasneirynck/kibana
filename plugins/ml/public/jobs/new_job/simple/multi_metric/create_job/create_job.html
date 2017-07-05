@@ -130,10 +130,10 @@
                         ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED || ui.bucketSpanEstimator.status===1"
                         ng-change="bucketSpanFieldChange()"
                         ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
-                        class="form-control lowercase" />
-                      <div class='bucket-span-estimator'>
-                        <ml-bucket-span-estimator form-config='formConfig' job-state-wrapper='{jobState:jobState}' job-state='JOB_STATE' ui='ui'></ml-bucket-span-estimator>
-                      </div>
+                        class="form-control lowercase bucket-span-input" />
+
+                      <ml-bucket-span-estimator form-config='formConfig' job-state-wrapper='{jobState:jobState}' job-state='JOB_STATE' ui='ui'></ml-bucket-span-estimator>
+
                     </div>
                     <div ng-hide="ui.bucketSpanValid" class="validation-error">Invalid interval format</div>
                     <div ng-show="ui.bucketSpanEstimator.status===-1" class="validation-error">{{ui.bucketSpanEstimator.message}}</div>

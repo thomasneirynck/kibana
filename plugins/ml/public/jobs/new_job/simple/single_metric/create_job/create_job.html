@@ -55,9 +55,7 @@
             ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
             class="form-control lowercase bucket-span-input" />
 
-          <div class='bucket-span-estimator'>
-            <ml-bucket-span-estimator form-config='formConfig' job-state-wrapper='{jobState:jobState}' job-state='JOB_STATE' ui='ui'></ml-bucket-span-estimator>
-          </div>
+          <ml-bucket-span-estimator form-config='formConfig' job-state-wrapper='{jobState:jobState}' job-state='JOB_STATE' ui='ui'></ml-bucket-span-estimator>
 
           <button class="kuiButton kuiButton--primary navbar-btn-link btn-load-vis"
             ng-click="loadVis()"
