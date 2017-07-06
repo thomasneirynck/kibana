@@ -17,11 +17,11 @@ the side navigation:
 * **Monitoring**
 
 
-The **Management** page gains options related to configuring security and the
-**Dev Tools** page gains a Search Profiler, which helps you inspect and
-analyze your search queries. Where these and other {xpack} features are
-mentioned in this documentation, we've added an icon to clearly indicate
-that what you're reading pertains to features available only in {xpack}.
+The **Management** page gains options related to configuring security. The
+**Dev Tools** page gains a Search Profiler and a Grok Debugger. Where these and
+other {xpack} features are mentioned in this documentation, we've added an icon
+to clearly indicate that what you're reading pertains to features available only
+in {xpack}.
 
 For more information about how to obtain {xpack},
 see https://www.elastic.co/products/x-pack.
