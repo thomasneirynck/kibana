@@ -1,7 +1,7 @@
 import { metrics } from '../metrics';
 
 export function getAggItems(options) {
-  const { listingMetrics, bucketSize, min, max } = options;
+  const { listingMetrics, bucketSize } = options;
   const aggItems = {};
 
   listingMetrics.forEach((metricName) => {
@@ -30,8 +30,7 @@ export function getAggItems(options) {
       date_histogram: {
         field: 'timestamp',
         min_doc_count: 0,
-        interval: bucketSize + 's',
-        extended_bounds: { min, max }
+        interval: bucketSize + 's'
       },
       aggs: metric.aggs || metricAgg
     };
