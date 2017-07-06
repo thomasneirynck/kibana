@@ -5,7 +5,6 @@ import { esHealthCheck } from './server/es_client/health_check';
 import { instantiateClient } from './server/es_client/instantiate_client';
 import { initKibanaMonitoring } from './server/kibana_monitoring';
 import { initMonitoringXpackInfo } from './server/init_monitoring_xpack_info';
-import { initPhoneHomeServerSide } from './server/phone_home/server_side';
 import { checkLicenseGenerator } from './server/cluster_alerts/check_license';
 
 /**
@@ -43,10 +42,6 @@ export const init = (monitoringPlugin, server) => {
       } else {
         // Require only routes needed for stats reporting
         features.push(requireAllAndApply(join(__dirname, 'server', 'routes', '**', 'phone_home.js'), server));
-      }
-
-      if (reportStats) {
-        features.push(initPhoneHomeServerSide(server));
       }
 
       // Make sure the Monitoring index is created and ready
