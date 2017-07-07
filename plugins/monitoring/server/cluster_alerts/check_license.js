@@ -18,21 +18,21 @@ export function checkLicense(type, active, clusterSource, watcher = true) {
   // Disabled because there is no license
   if (!type) {
     return Object.assign(licenseInfo, {
-      message: `Cluster Alerts is not enabled because the ${clusterSource} cluster's license could not be determined.`
+      message: `Cluster Alerts are not displayed because the [${clusterSource}] cluster's license could not be determined.`
     });
   }
 
   // Disabled because the license type is not valid (basic)
   if (!includes([ 'trial', 'standard', 'gold', 'platinum' ], type)) {
     return  Object.assign(licenseInfo, {
-      message: `Cluster Alerts is not fully enabled because the ${clusterSource} cluster's current license [${type}] is not supported.`
+      message: `Cluster Alerts are not displayed if Watcher is disabled or the [${clusterSource}] cluster's current license is basic.`
     });
   }
 
   // Disabled because the license is inactive
   if (!active) {
     return Object.assign(licenseInfo, {
-      message: `Cluster Alerts is not enabled because the ${clusterSource} cluster's current license [${type}] is not active.`
+      message: `Cluster Alerts are not displayed because the [${clusterSource}] cluster's current license [${type}] is not active.`
     });
   }
 

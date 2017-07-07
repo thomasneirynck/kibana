@@ -8,7 +8,7 @@ describe('Monitoring Check License', () => {
       const result = checkLicense(null, true, 'test-cluster-abc');
       expect(result).to.eql({
         clusterAlerts: { enabled: false },
-        message: `Cluster Alerts is not enabled because the test-cluster-abc cluster's license could not be determined.`
+        message: `Cluster Alerts are not displayed because the [test-cluster-abc] cluster's license could not be determined.`
       });
     });
   });
@@ -18,7 +18,7 @@ describe('Monitoring Check License', () => {
       const result = checkLicense('platinum', false, 'test-cluster-def');
       expect(result).to.eql({
         clusterAlerts: { enabled: false },
-        message: `Cluster Alerts is not enabled because the test-cluster-def cluster's current license [platinum] is not active.`
+        message: `Cluster Alerts are not displayed because the [test-cluster-def] cluster's current license [platinum] is not active.`
       });
     });
   });
@@ -29,7 +29,7 @@ describe('Monitoring Check License', () => {
         const result = checkLicense('basic', true, 'test-cluster-ghi');
         expect(result).to.eql({
           clusterAlerts: { enabled: false },
-          message: `Cluster Alerts is not fully enabled because the test-cluster-ghi cluster's current license [basic] is not supported.`
+          message: `Cluster Alerts are not displayed if Watcher is disabled or the [test-cluster-ghi] cluster's current license is basic.`
         });
       });
     });
