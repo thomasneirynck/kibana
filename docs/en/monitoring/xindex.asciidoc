@@ -30,6 +30,8 @@ the monitoring cluster.
 
 include::getting-started.asciidoc[]
 
+include::monitoring-details.asciidoc[]
+
 include::monitoring-elasticsearch.asciidoc[]
 
 include::monitoring-logstash.asciidoc[]
