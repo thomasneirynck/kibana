@@ -28,7 +28,7 @@ export function getKibanas(req, kbnIndexPattern) {
     index: kbnIndexPattern,
     body: {
       size: config.get('xpack.monitoring.max_bucket_size'),
-      query: createQuery({ start, end, uuid, metric }),
+      query: createQuery({ type: 'kibana_stats', start, end, uuid, metric }),
       collapse: {
         field: 'kibana_stats.kibana.uuid'
       },

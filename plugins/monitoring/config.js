@@ -36,7 +36,10 @@ export const config = (Joi) => {
     }).default(),
     cluster_alerts: object({
       enabled: boolean().default(true),
-      index: string().default('.monitoring-alerts-2,.monitoring-alerts-6')
+      index: string().default('.monitoring-alerts-2,.monitoring-alerts-6'),
+      email_notifications: object({
+        enabled: boolean().default(true)
+      }).default()
     }).default(),
     xpack_api_polling_frequency_millis: number().default(XPACK_INFO_API_DEFAULT_POLL_FREQUENCY_IN_MILLIS),
     missing_intervals: number().default(12),

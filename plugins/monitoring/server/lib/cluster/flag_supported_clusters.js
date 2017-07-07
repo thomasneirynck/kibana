@@ -1,5 +1,6 @@
 import { get, set, find } from 'lodash';
 import { checkParam } from '../error_missing_required';
+import { createTypeFilter } from '../create_query';
 
 async function findSupportedBasicLicenseCluster(req, clusters, kbnIndexPattern, kibanaUuid, serverLog) {
   checkParam(kbnIndexPattern, 'kbnIndexPattern in cluster/findSupportedBasicLicenseCluster');
@@ -21,6 +22,7 @@ async function findSupportedBasicLicenseCluster(req, clusters, kbnIndexPattern, 
       query: {
         bool: {
           filter: [
+            { ...createTypeFilter('kibana_stats') },
             { term: { 'kibana_stats.kibana.uuid': kibanaUuid } },
             { range: { timestamp: { gte, lte, format: 'strict_date_optional_time' } } }
           ]

@@ -18,6 +18,11 @@ export const LOGSTASH_SYSTEM_ID = 'logstash';
  * @type {string}
  */
 export const KIBANA_STATS_TYPE = 'kibana_stats';
+/**
+ * The type name used within the Monitoring index to publish Kibana stats.
+ * @type {string}
+ */
+export const KIBANA_SETTINGS_TYPE = 'kibana_settings';
 
 /*
  * Values for column sorting in table options

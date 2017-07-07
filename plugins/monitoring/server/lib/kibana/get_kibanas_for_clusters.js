@@ -34,6 +34,7 @@ export function getKibanasForClusters(req, kbnIndexPattern, clusters) {
       ignore: [404],
       body: {
         query: createQuery({
+          type: 'kibana_stats',
           start,
           end,
           uuid: clusterUuid,

@@ -1,5 +1,8 @@
 import { join, resolve } from 'path';
-import { XPACK_INFO_API_DEFAULT_POLL_FREQUENCY_IN_MILLIS } from '../../server/lib/constants';
+import {
+  XPACK_DEFAULT_ADMIN_EMAIL_UI_SETTING,
+  XPACK_INFO_API_DEFAULT_POLL_FREQUENCY_IN_MILLIS
+} from '../../server/lib/constants';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 import { requireAllAndApply } from '../../server/lib/require_all_and_apply';
 import { replaceInjectedVars } from './server/lib/replace_injected_vars';
@@ -21,6 +24,14 @@ export const xpackMain = (kibana) => {
     },
 
     uiExports: {
+      uiSettingDefaults: {
+        [XPACK_DEFAULT_ADMIN_EMAIL_UI_SETTING]: {
+          // TODO: change the description when email address is used for more things?
+          description: 'Recipient email address for X-Pack admin operations, such as Cluster Alert email notifications from Monitoring.',
+          type: 'string', // TODO: Any way of ensuring this is a valid email address?
+          value: null
+        }
+      },
       hacks: [
         'plugins/xpack_main/hacks/check_xpack_info_change',
       ],
