@@ -74,7 +74,7 @@ function indexRowFactory(scope, kbnUrl) {
         <tr className='big'>
           <td>
             <KuiKeyboardAccessible>
-              <a className='link' onClick={ this.changePath }>{ name }</a>
+              <a className='kuiLink' onClick={ this.changePath }>{ name }</a>
             </KuiKeyboardAccessible>
           </td>
           <td>

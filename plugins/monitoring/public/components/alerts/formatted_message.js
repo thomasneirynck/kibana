@@ -11,7 +11,7 @@ export function FormattedMessage({ prefix, suffix, message, metadata, angularCha
     if (metadata.link) {
       return (
         <KuiKeyboardAccessible>
-          <a className='alert-message__clickable' onClick={ goToLink } >
+          <a className='kuiLink' onClick={ goToLink } >
             { message }
           </a>
         </KuiKeyboardAccessible>

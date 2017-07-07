@@ -62,7 +62,7 @@ function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch
             </Tooltip>
             &nbsp;
             <KuiKeyboardAccessible>
-              <a className='link' onClick={ this.goToNode }>
+              <a className='kuiLink' onClick={ this.goToNode }>
                 { this.state.node.name }
               </a>
             </KuiKeyboardAccessible>

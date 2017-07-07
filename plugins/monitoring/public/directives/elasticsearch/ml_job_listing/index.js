@@ -24,7 +24,7 @@ function jobRowFactory(scope, kbnUrl) {
       if (this.props.node) {
         return (
           <KuiKeyboardAccessible>
-            <a className='link' onClick={ this.goToNode }>
+            <a className='kuiLink' onClick={ this.goToNode }>
               { this.props.node.name }
             </a>
           </KuiKeyboardAccessible>

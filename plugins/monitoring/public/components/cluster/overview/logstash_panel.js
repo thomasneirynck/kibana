@@ -18,7 +18,7 @@ export function LogstashPanel(props) {
           <dl data-test-subj='logstash_overview'>
             <dt className='cluster-panel__inner-title'>
               <KuiKeyboardAccessible>
-                <a className='link' onClick={ goToLogstash } >
+                <a className='kuiLink' onClick={ goToLogstash } >
                   Overview
                 </a>
               </KuiKeyboardAccessible>
@@ -31,7 +31,7 @@ export function LogstashPanel(props) {
           <dl>
             <dt className='cluster-panel__inner-title'>
               <KuiKeyboardAccessible>
-                <a className='link' onClick={ goToNodes } >
+                <a className='kuiLink' onClick={ goToNodes } >
                   Nodes: <span data-test-subj='number_of_logstash_instances'>{ props.count }</span>
                 </a>
               </KuiKeyboardAccessible>

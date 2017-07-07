@@ -64,7 +64,7 @@ export class ElasticsearchPanel extends React.Component {
             <dl data-test-subj='elasticsearch_overview' data-overview-status={ this.props.status }>
               <dt className='cluster-panel__inner-title'>
                 <KuiKeyboardAccessible>
-                  <a className='link' onClick={ goToElasticsearch } >
+                  <a className='kuiLink' onClick={ goToElasticsearch } >
                     Overview
                   </a>
                 </KuiKeyboardAccessible>
@@ -78,7 +78,7 @@ export class ElasticsearchPanel extends React.Component {
             <dl>
               <dt className='cluster-panel__inner-title'>
                 <KuiKeyboardAccessible>
-                  <a className='link' onClick={ goToNodes } >
+                  <a className='kuiLink' onClick={ goToNodes } >
                     Nodes: <span data-test-subj='number_of_elasticsearch_nodes'>
                       { formatNumber(get(nodes, 'count.total'), 'int_commas') }
                     </span>
@@ -103,7 +103,7 @@ export class ElasticsearchPanel extends React.Component {
             <dl>
               <dt className='cluster-panel__inner-title'>
                 <KuiKeyboardAccessible>
-                  <a className='link' onClick={ goToIndices  } >
+                  <a className='kuiLink' onClick={ goToIndices  } >
                     Indices: { formatNumber(get(indices, 'count'), 'int_commas') }
                   </a>
                 </KuiKeyboardAccessible>

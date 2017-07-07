@@ -51,6 +51,8 @@ export const Assigned = React.createClass({
       that.props.changeUrl(generateQueryAndLink(data));
     };
 
+    // TODO: redesign for shard allocation, possibly giving shard display the
+    // ability to use the kuiLink CSS class (blue link text instead of white link text)
     const name = (
       <KuiKeyboardAccessible>
         <a onClick={ changeUrl } className='link'>

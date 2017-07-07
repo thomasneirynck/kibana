@@ -27,7 +27,7 @@ export function KibanaPanel(props) {
           <dl data-test-subj='kibana_overview' data-overview-status={ status }>
             <dt className='cluster-panel__inner-title'>
               <KuiKeyboardAccessible>
-                <a className='link' onClick={ goToKibana } >
+                <a className='kuiLink' onClick={ goToKibana } >
                   Overview
                 </a>
               </KuiKeyboardAccessible>
@@ -41,7 +41,7 @@ export function KibanaPanel(props) {
           <dl>
             <dt className='cluster-panel__inner-title'>
               <KuiKeyboardAccessible>
-                <a className='link' onClick={ goToInstances } >
+                <a className='kuiLink' onClick={ goToInstances } >
                   Instances: <span data-test-subj='number_of_kibana_instances'>{ props.count }</span>
                 </a>
               </KuiKeyboardAccessible>

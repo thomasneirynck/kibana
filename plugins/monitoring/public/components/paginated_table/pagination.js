@@ -11,7 +11,7 @@ const ItemsPerPageLink = React.createClass({
   render() {
     return (
       <KuiKeyboardAccessible>
-        <span className='link' onClick={ this.handleClick }>
+        <span className='kuiLink' onClick={ this.handleClick }>
           { this.props.choice }
         </span>
       </KuiKeyboardAccessible>
@@ -67,7 +67,7 @@ const Chevron = React.createClass({
   render() {
     return (
       <KuiKeyboardAccessible>
-        <a onClick={ this.scrollRightOrLeft } className='link'>
+        <a onClick={ this.scrollRightOrLeft } className='kuiLink'>
           <span className={ `fa fa-chevron-${this.props.direction}` }></span>
         </a>
       </KuiKeyboardAccessible>
@@ -84,7 +84,7 @@ const PageLink = React.createClass({
     const currentClass = this.props.isCurrent ? 'current' : '';
     return (
       <KuiKeyboardAccessible>
-        <a onClick={ this.goToPage } className={ `${currentClass} link` }>
+        <a onClick={ this.goToPage } className={ `${currentClass} kuiLink` }>
           { this.props.pageIdx }
         </a>
       </KuiKeyboardAccessible>
@@ -105,7 +105,7 @@ const Ellipsis = React.createClass({
     // HTML entity for ellipsis
     return (
       <KuiKeyboardAccessible>
-        <a onClick={ this.scrollList } className='link'>
+        <a onClick={ this.scrollList } className='kuiLink'>
           &hellip;
         </a>
       </KuiKeyboardAccessible>

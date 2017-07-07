@@ -64,7 +64,7 @@ uiModule.directive('monitoringLogstashNodeListing', function (kbnUrl) {
             <tr key={ `row-${this.props.resolver}` } className='big'>
               <td>
                 <KuiKeyboardAccessible>
-                  <a className='link' onClick={ () => {
+                  <a className='kuiLink' onClick={ () => {
                     scope.$evalAsync(() => {
                       kbnUrl.changePath('/logstash/node/' + get(this.props, 'logstash.uuid'));
                     });

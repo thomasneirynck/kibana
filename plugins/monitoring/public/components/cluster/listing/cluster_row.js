@@ -42,7 +42,7 @@ to enjoy multi-cluster monitoring.`
       return (
         <span>
           <KuiKeyboardAccessible>
-            <a className='clusterName link' onClick={ this.changeCluster() }>
+            <a className='clusterName kuiLink' onClick={ this.changeCluster() }>
               { this.props.cluster_name }
             </a>
           </KuiKeyboardAccessible>
@@ -54,7 +54,7 @@ to enjoy multi-cluster monitoring.`
     if (this.props.license) {
       return (
         <KuiKeyboardAccessible>
-          <a className='clusterName link' onClick={ this.handleClickIncompatibleLicense() }>
+          <a className='clusterName kuiLink' onClick={ this.handleClickIncompatibleLicense() }>
             { this.props.cluster_name }
           </a>
         </KuiKeyboardAccessible>
@@ -64,7 +64,7 @@ to enjoy multi-cluster monitoring.`
     // not supported because license is invalid
     return (
       <KuiKeyboardAccessible>
-        <a className='clusterName link' onClick={ this.handleClickInvalidLicense() }>
+        <a className='clusterName kuiLink' onClick={ this.handleClickInvalidLicense() }>
           { this.props.cluster_name }
         </a>
       </KuiKeyboardAccessible>
@@ -100,7 +100,7 @@ to enjoy multi-cluster monitoring.`
     // there is no license!
     return (
       <KuiKeyboardAccessible>
-        <div className='license link' onClick={ this.handleClickInvalidLicense() }>
+        <div className='license kuiLink' onClick={ this.handleClickInvalidLicense() }>
           N/A
         </div>
       </KuiKeyboardAccessible>

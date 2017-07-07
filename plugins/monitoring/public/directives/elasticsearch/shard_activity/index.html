@@ -89,7 +89,7 @@
       <td colspan="8" class="no-results">
         <span ng-if="onlyActive">
           There are currently no active shard records for this cluster.
-          Try viewing <a ng-click="toggleActive()">shard history</a>.
+          Try viewing <a ng-click="toggleActive()" class="kuiLink" kbn-accessible-click>shard history</a>.
         </span>
         <span ng-if="!onlyActive">
           There are no historical shard activity records for this cluster for the selected time range.

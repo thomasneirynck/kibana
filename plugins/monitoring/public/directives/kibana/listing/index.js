@@ -65,7 +65,7 @@ uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
             <tr key={ `row-${this.props.resolver}` } className='big'>
               <td>
                 <KuiKeyboardAccessible>
-                  <a className='link' onClick={ () => {
+                  <a className='kuiLink' onClick={ () => {
                     scope.$evalAsync(() => {
                       kbnUrl.changePath('/kibana/instances/' + get(this.props, 'kibana.uuid'));
                     });
