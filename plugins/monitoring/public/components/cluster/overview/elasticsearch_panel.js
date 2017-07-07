@@ -23,8 +23,8 @@ export class ElasticsearchPanel extends React.Component {
     // we subtract primaries from total to get replica count, so if we don't know primaries, then
     //  we cannot know replicas (because we'd be showing the wrong number!)
     if (primaries !== 'N/A') {
-      primaries = formatNumber(primaries, 'int_commas');
       replicas = formatNumber(total - primaries, 'int_commas');
+      primaries = formatNumber(primaries, 'int_commas');
     }
 
     this.setState({
