@@ -164,10 +164,13 @@ To build the Kibana User Guide on your local machine:
 
 - Use the `index.asciidoc` file in the docs/en folder.
 - Specify the location of the `kibana/docs/` directory with the `--resource` option when you run `build_docs.pl`.
+- Specify the location of the `elasticsearch-extra/x-pack-elasticsearch/docs/en` directory with the `--resource` option, 
+since some of the monitoring settings re-use SSL information from that repository
 
 For example:
 
 ```
 docs/build_docs.pl --doc x-pack-kibana/docs/en/index.asciidoc --resource=kibana/docs/ --chunk 1
+--resource=elasticsearch-extra/x-pack-elasticsearch/docs/en
 ```
 
