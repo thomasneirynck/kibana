@@ -44,7 +44,12 @@ export class ChartTarget extends React.Component {
 
   componentWillReceiveProps(newProps) {
     if (this.plot && !_.isEqual(newProps, this.props)) {
-      const { series } = newProps;
+      const { series, timeRange } = newProps;
+
+      const xaxisOptions = this.plot.getAxes().xaxis.options;
+      xaxisOptions.min = _.get(timeRange, 'min');
+      xaxisOptions.max = _.get(timeRange, 'max');
+
       this.plot.setData(this.filterData(series, newProps.seriesToShow));
       this.plot.setupGrid();
       this.plot.draw();
@@ -72,7 +77,8 @@ export class ChartTarget extends React.Component {
 
   getOptions() {
     const opts = getChartOptions({
-      tickFormatter: this.props.tickFormatter
+      yaxis: { tickFormatter: this.props.tickFormatter },
+      xaxis: this.props.timeRange
     });
 
     return _.assign(opts, this.props.options);

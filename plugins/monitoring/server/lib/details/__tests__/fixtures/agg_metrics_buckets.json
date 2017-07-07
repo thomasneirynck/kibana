@@ -1,256 +1,1756 @@
 [
   {
-    "key_as_string" : "2016-12-19T22:51:50.000Z",
-    "metric" : {
-      "value" : 0
+    "key_as_string": "2017-07-02T04:00:00.000Z",
+    "key": 1498968000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 37394680
     },
-    "index_time_in_millis" : {
-      "value" : null
+    "index_time_in_millis": {
+      "value": 301870
     },
-    "doc_count" : 0,
-    "key" : 1482187910000,
-    "index_total" : {
-      "value" : null
+    "index_total": {
+      "value": 624604
     }
   },
   {
-    "doc_count" : 25,
-    "index_time_in_millis_deriv" : {
-      "value" : null
+    "key_as_string": "2017-07-02T04:10:00.000Z",
+    "key": 1498968600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 37560883
     },
-    "key_as_string" : "2016-12-19T22:52:00.000Z",
-    "key" : 1482187920000,
-    "index_time_in_millis" : {
-      "value" : 58184
+    "index_time_in_millis": {
+      "value": 304061
     },
-    "index_total" : {
-      "value" : 267373
+    "index_total": {
+      "value": 627375
     },
-    "index_total_deriv" : {
-      "value" : null
+    "index_time_in_millis_deriv": {
+      "value": 2191
     },
-    "metric" : {
-      "value" : 267373
+    "index_total_deriv": {
+      "value": 2771
     }
   },
   {
-    "metric" : {
-      "value" : 267480
+    "key_as_string": "2017-07-02T04:20:00.000Z",
+    "key": 1498969200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 37727050
     },
-    "index_total_deriv" : {
-      "value" : 107
+    "index_time_in_millis": {
+      "value": 307163
     },
-    "index_total" : {
-      "value" : 267480
+    "index_total": {
+      "value": 630145
     },
-    "index_time_in_millis" : {
-      "value" : 58197
+    "index_time_in_millis_deriv": {
+      "value": 3102
     },
-    "key" : 1482187930000,
-    "key_as_string" : "2016-12-19T22:52:10.000Z",
-    "index_time_in_millis_deriv" : {
-      "value" : 13
-    },
-    "doc_count" : 25
-  },
-  {
-    "index_time_in_millis_deriv" : {
-      "value" : 14
-    },
-    "doc_count" : 25,
-    "key_as_string" : "2016-12-19T22:52:20.000Z",
-    "index_time_in_millis" : {
-      "value" : 58211
-    },
-    "key" : 1482187940000,
-    "index_total" : {
-      "value" : 267587
-    },
-    "index_total_deriv" : {
-      "value" : 107
-    },
-    "metric" : {
-      "value" : 267587
+    "index_total_deriv": {
+      "value": 2770
     }
   },
   {
-    "metric" : {
-      "value" : 267694
+    "key_as_string": "2017-07-02T04:30:00.000Z",
+    "key": 1498969800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 37893222
     },
-    "index_total_deriv" : {
-      "value" : 107
+    "index_time_in_millis": {
+      "value": 310760
     },
-    "index_total" : {
-      "value" : 267694
+    "index_total": {
+      "value": 632915
     },
-    "key" : 1482187950000,
-    "index_time_in_millis" : {
-      "value" : 58225
+    "index_time_in_millis_deriv": {
+      "value": 3597
     },
-    "key_as_string" : "2016-12-19T22:52:30.000Z",
-    "index_time_in_millis_deriv" : {
-      "value" : 14
-    },
-    "doc_count" : 25
-  },
-  {
-    "index_time_in_millis_deriv" : {
-      "value" : 14
-    },
-    "doc_count" : 25,
-    "key_as_string" : "2016-12-19T22:52:40.000Z",
-    "index_time_in_millis" : {
-      "value" : 58239
-    },
-    "key" : 1482187960000,
-    "index_total" : {
-      "value" : 267801
-    },
-    "index_total_deriv" : {
-      "value" : 107
-    },
-    "metric" : {
-      "value" : 267801
+    "index_total_deriv": {
+      "value": 2770
     }
   },
   {
-    "index_time_in_millis_deriv" : {
-      "value" : 13
+    "key_as_string": "2017-07-02T04:40:00.000Z",
+    "key": 1498970400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 38059410
     },
-    "doc_count" : 25,
-    "key_as_string" : "2016-12-19T22:52:50.000Z",
-    "key" : 1482187970000,
-    "index_time_in_millis" : {
-      "value" : 58252
+    "index_time_in_millis": {
+      "value": 313305
     },
-    "index_total" : {
-      "value" : 267908
+    "index_total": {
+      "value": 635685
     },
-    "index_total_deriv" : {
-      "value" : 107
+    "index_time_in_millis_deriv": {
+      "value": 2545
     },
-    "metric" : {
-      "value" : 267908
+    "index_total_deriv": {
+      "value": 2770
     }
   },
   {
-    "metric" : {
-      "value" : 268015
+    "key_as_string": "2017-07-02T04:50:00.000Z",
+    "key": 1498971000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 38225608
     },
-    "index_total_deriv" : {
-      "value" : 107
+    "index_time_in_millis": {
+      "value": 316632
     },
-    "index_total" : {
-      "value" : 268015
+    "index_total": {
+      "value": 638455
     },
-    "index_time_in_millis" : {
-      "value" : 58268
+    "index_time_in_millis_deriv": {
+      "value": 3327
     },
-    "key" : 1482187980000,
-    "key_as_string" : "2016-12-19T22:53:00.000Z",
-    "doc_count" : 25,
-    "index_time_in_millis_deriv" : {
-      "value" : 16
+    "index_total_deriv": {
+      "value": 2770
     }
   },
   {
-    "index_total" : {
-      "value" : 268122
+    "key_as_string": "2017-07-02T05:00:00.000Z",
+    "key": 1498971600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 38391683
     },
-    "index_time_in_millis" : {
-      "value" : 58288
+    "index_time_in_millis": {
+      "value": 321137
     },
-    "key" : 1482187990000,
-    "metric" : {
-      "value" : 268122
+    "index_total": {
+      "value": 641225
     },
-    "index_total_deriv" : {
-      "value" : 107
+    "index_time_in_millis_deriv": {
+      "value": 4505
     },
-    "doc_count" : 25,
-    "index_time_in_millis_deriv" : {
-      "value" : 20
-    },
-    "key_as_string" : "2016-12-19T22:53:10.000Z"
-  },
-  {
-    "index_total_deriv" : {
-      "value" : 108
-    },
-    "metric" : {
-      "value" : 268230
-    },
-    "index_time_in_millis" : {
-      "value" : 58310
-    },
-    "key" : 1482188000000,
-    "index_total" : {
-      "value" : 268230
-    },
-    "key_as_string" : "2016-12-19T22:53:20.000Z",
-    "index_time_in_millis_deriv" : {
-      "value" : 22
-    },
-    "doc_count" : 25
-  },
-  {
-    "index_time_in_millis_deriv" : {
-      "value" : 14
-    },
-    "doc_count" : 25,
-    "key_as_string" : "2016-12-19T22:53:30.000Z",
-    "index_total" : {
-      "value" : 268337
-    },
-    "index_time_in_millis" : {
-      "value" : 58324
-    },
-    "key" : 1482188010000,
-    "metric" : {
-      "value" : 268337
-    },
-    "index_total_deriv" : {
-      "value" : 107
+    "index_total_deriv": {
+      "value": 2770
     }
   },
   {
-    "metric" : {
-      "value" : 268444
+    "key_as_string": "2017-07-02T05:10:00.000Z",
+    "key": 1498972200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 38557880
     },
-    "index_total_deriv" : {
-      "value" : 107
+    "index_time_in_millis": {
+      "value": 325669
     },
-    "index_total" : {
-      "value" : 268444
+    "index_total": {
+      "value": 643995
     },
-    "index_time_in_millis" : {
-      "value" : 58339
+    "index_time_in_millis_deriv": {
+      "value": 4532
     },
-    "key" : 1482188020000,
-    "key_as_string" : "2016-12-19T22:53:40.000Z",
-    "index_time_in_millis_deriv" : {
-      "value" : 15
-    },
-    "doc_count" : 25
+    "index_total_deriv": {
+      "value": 2770
+    }
   },
   {
-    "metric" : {
-      "value" : 268551
+    "key_as_string": "2017-07-02T05:20:00.000Z",
+    "key": 1498972800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 38724080
     },
-    "index_total_deriv" : {
-      "value" : 107
+    "index_time_in_millis": {
+      "value": 329228
     },
-    "index_total" : {
-      "value" : 268551
+    "index_total": {
+      "value": 646765
     },
-    "index_time_in_millis" : {
-      "value" : 58365
+    "index_time_in_millis_deriv": {
+      "value": 3559
     },
-    "key" : 1482188030000,
-    "key_as_string" : "2016-12-19T22:53:50.000Z",
-    "index_time_in_millis_deriv" : {
-      "value" : 26
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T05:30:00.000Z",
+    "key": 1498973400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 38890280
     },
-    "doc_count" : 103
+    "index_time_in_millis": {
+      "value": 329916
+    },
+    "index_total": {
+      "value": 649535
+    },
+    "index_time_in_millis_deriv": {
+      "value": 688
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T05:40:00.000Z",
+    "key": 1498974000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 39056462
+    },
+    "index_time_in_millis": {
+      "value": 330615
+    },
+    "index_total": {
+      "value": 652305
+    },
+    "index_time_in_millis_deriv": {
+      "value": 699
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T05:50:00.000Z",
+    "key": 1498974600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 39222640
+    },
+    "index_time_in_millis": {
+      "value": 331335
+    },
+    "index_total": {
+      "value": 655075
+    },
+    "index_time_in_millis_deriv": {
+      "value": 720
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T06:00:00.000Z",
+    "key": 1498975200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 39388840
+    },
+    "index_time_in_millis": {
+      "value": 332142
+    },
+    "index_total": {
+      "value": 657845
+    },
+    "index_time_in_millis_deriv": {
+      "value": 807
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T06:10:00.000Z",
+    "key": 1498975800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 39555040
+    },
+    "index_time_in_millis": {
+      "value": 332974
+    },
+    "index_total": {
+      "value": 660615
+    },
+    "index_time_in_millis_deriv": {
+      "value": 832
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T06:20:00.000Z",
+    "key": 1498976400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 39721162
+    },
+    "index_time_in_millis": {
+      "value": 333771
+    },
+    "index_total": {
+      "value": 663385
+    },
+    "index_time_in_millis_deriv": {
+      "value": 797
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T06:30:00.000Z",
+    "key": 1498977000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 39887350
+    },
+    "index_time_in_millis": {
+      "value": 334605
+    },
+    "index_total": {
+      "value": 666155
+    },
+    "index_time_in_millis_deriv": {
+      "value": 834
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T06:40:00.000Z",
+    "key": 1498977600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 40053550
+    },
+    "index_time_in_millis": {
+      "value": 335466
+    },
+    "index_total": {
+      "value": 668925
+    },
+    "index_time_in_millis_deriv": {
+      "value": 861
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T06:50:00.000Z",
+    "key": 1498978200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 40219750
+    },
+    "index_time_in_millis": {
+      "value": 336496
+    },
+    "index_total": {
+      "value": 671695
+    },
+    "index_time_in_millis_deriv": {
+      "value": 1030
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T07:00:00.000Z",
+    "key": 1498978800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 40385950
+    },
+    "index_time_in_millis": {
+      "value": 337365
+    },
+    "index_total": {
+      "value": 674465
+    },
+    "index_time_in_millis_deriv": {
+      "value": 869
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T07:10:00.000Z",
+    "key": 1498979400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 40552142
+    },
+    "index_time_in_millis": {
+      "value": 338182
+    },
+    "index_total": {
+      "value": 677231
+    },
+    "index_time_in_millis_deriv": {
+      "value": 817
+    },
+    "index_total_deriv": {
+      "value": 2766
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T07:20:00.000Z",
+    "key": 1498980000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 40718310
+    },
+    "index_time_in_millis": {
+      "value": 338960
+    },
+    "index_total": {
+      "value": 680001
+    },
+    "index_time_in_millis_deriv": {
+      "value": 778
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T07:30:00.000Z",
+    "key": 1498980600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 40884510
+    },
+    "index_time_in_millis": {
+      "value": 339764
+    },
+    "index_total": {
+      "value": 682771
+    },
+    "index_time_in_millis_deriv": {
+      "value": 804
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T07:40:00.000Z",
+    "key": 1498981200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 41050710
+    },
+    "index_time_in_millis": {
+      "value": 340570
+    },
+    "index_total": {
+      "value": 685541
+    },
+    "index_time_in_millis_deriv": {
+      "value": 806
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T07:50:00.000Z",
+    "key": 1498981800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 41216910
+    },
+    "index_time_in_millis": {
+      "value": 341458
+    },
+    "index_total": {
+      "value": 688311
+    },
+    "index_time_in_millis_deriv": {
+      "value": 888
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T08:00:00.000Z",
+    "key": 1498982400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 41383110
+    },
+    "index_time_in_millis": {
+      "value": 342255
+    },
+    "index_total": {
+      "value": 691081
+    },
+    "index_time_in_millis_deriv": {
+      "value": 797
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T08:10:00.000Z",
+    "key": 1498983000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 41549242
+    },
+    "index_time_in_millis": {
+      "value": 343096
+    },
+    "index_total": {
+      "value": 693851
+    },
+    "index_time_in_millis_deriv": {
+      "value": 841
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T08:20:00.000Z",
+    "key": 1498983600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 41715420
+    },
+    "index_time_in_millis": {
+      "value": 344378
+    },
+    "index_total": {
+      "value": 696621
+    },
+    "index_time_in_millis_deriv": {
+      "value": 1282
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T08:30:00.000Z",
+    "key": 1498984200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 41881600
+    },
+    "index_time_in_millis": {
+      "value": 345861
+    },
+    "index_total": {
+      "value": 699391
+    },
+    "index_time_in_millis_deriv": {
+      "value": 1483
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T08:40:00.000Z",
+    "key": 1498984800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 42047780
+    },
+    "index_time_in_millis": {
+      "value": 350148
+    },
+    "index_total": {
+      "value": 702161
+    },
+    "index_time_in_millis_deriv": {
+      "value": 4287
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T08:50:00.000Z",
+    "key": 1498985400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 42213971
+    },
+    "index_time_in_millis": {
+      "value": 353168
+    },
+    "index_total": {
+      "value": 704922
+    },
+    "index_time_in_millis_deriv": {
+      "value": 3020
+    },
+    "index_total_deriv": {
+      "value": 2761
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T09:00:00.000Z",
+    "key": 1498986000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 42380090
+    },
+    "index_time_in_millis": {
+      "value": 356237
+    },
+    "index_total": {
+      "value": 707692
+    },
+    "index_time_in_millis_deriv": {
+      "value": 3069
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T09:10:00.000Z",
+    "key": 1498986600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 42546253
+    },
+    "index_time_in_millis": {
+      "value": 360397
+    },
+    "index_total": {
+      "value": 710462
+    },
+    "index_time_in_millis_deriv": {
+      "value": 4160
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T09:20:00.000Z",
+    "key": 1498987200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 42712450
+    },
+    "index_time_in_millis": {
+      "value": 364939
+    },
+    "index_total": {
+      "value": 713232
+    },
+    "index_time_in_millis_deriv": {
+      "value": 4542
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T09:30:00.000Z",
+    "key": 1498987800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 42878614
+    },
+    "index_time_in_millis": {
+      "value": 370316
+    },
+    "index_total": {
+      "value": 716002
+    },
+    "index_time_in_millis_deriv": {
+      "value": 5377
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T09:40:00.000Z",
+    "key": 1498988400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 43044736
+    },
+    "index_time_in_millis": {
+      "value": 375006
+    },
+    "index_total": {
+      "value": 718772
+    },
+    "index_time_in_millis_deriv": {
+      "value": 4690
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T09:50:00.000Z",
+    "key": 1498989000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 43210920
+    },
+    "index_time_in_millis": {
+      "value": 380727
+    },
+    "index_total": {
+      "value": 721542
+    },
+    "index_time_in_millis_deriv": {
+      "value": 5721
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T10:00:00.000Z",
+    "key": 1498989600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 43377120
+    },
+    "index_time_in_millis": {
+      "value": 384111
+    },
+    "index_total": {
+      "value": 724312
+    },
+    "index_time_in_millis_deriv": {
+      "value": 3384
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T10:10:00.000Z",
+    "key": 1498990200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 43543230
+    },
+    "index_time_in_millis": {
+      "value": 388447
+    },
+    "index_total": {
+      "value": 727082
+    },
+    "index_time_in_millis_deriv": {
+      "value": 4336
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T10:20:00.000Z",
+    "key": 1498990800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 43709398
+    },
+    "index_time_in_millis": {
+      "value": 390529
+    },
+    "index_total": {
+      "value": 729852
+    },
+    "index_time_in_millis_deriv": {
+      "value": 2082
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T10:30:00.000Z",
+    "key": 1498991400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 43875590
+    },
+    "index_time_in_millis": {
+      "value": 394826
+    },
+    "index_total": {
+      "value": 732622
+    },
+    "index_time_in_millis_deriv": {
+      "value": 4297
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T10:40:00.000Z",
+    "key": 1498992000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 44041757
+    },
+    "index_time_in_millis": {
+      "value": 401944
+    },
+    "index_total": {
+      "value": 735392
+    },
+    "index_time_in_millis_deriv": {
+      "value": 7118
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T10:50:00.000Z",
+    "key": 1498992600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 44207900
+    },
+    "index_time_in_millis": {
+      "value": 403157
+    },
+    "index_total": {
+      "value": 738162
+    },
+    "index_time_in_millis_deriv": {
+      "value": 1213
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T11:00:00.000Z",
+    "key": 1498993200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 44374084
+    },
+    "index_time_in_millis": {
+      "value": 403997
+    },
+    "index_total": {
+      "value": 740932
+    },
+    "index_time_in_millis_deriv": {
+      "value": 840
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T11:10:00.000Z",
+    "key": 1498993800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 44540260
+    },
+    "index_time_in_millis": {
+      "value": 404805
+    },
+    "index_total": {
+      "value": 743702
+    },
+    "index_time_in_millis_deriv": {
+      "value": 808
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T11:20:00.000Z",
+    "key": 1498994400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 44706460
+    },
+    "index_time_in_millis": {
+      "value": 405642
+    },
+    "index_total": {
+      "value": 746472
+    },
+    "index_time_in_millis_deriv": {
+      "value": 837
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T11:30:00.000Z",
+    "key": 1498995000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 44872660
+    },
+    "index_time_in_millis": {
+      "value": 406430
+    },
+    "index_total": {
+      "value": 749242
+    },
+    "index_time_in_millis_deriv": {
+      "value": 788
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T11:40:00.000Z",
+    "key": 1498995600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 45038860
+    },
+    "index_time_in_millis": {
+      "value": 407234
+    },
+    "index_total": {
+      "value": 752012
+    },
+    "index_time_in_millis_deriv": {
+      "value": 804
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T11:50:00.000Z",
+    "key": 1498996200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 45205060
+    },
+    "index_time_in_millis": {
+      "value": 408066
+    },
+    "index_total": {
+      "value": 754782
+    },
+    "index_time_in_millis_deriv": {
+      "value": 832
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T12:00:00.000Z",
+    "key": 1498996800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 45371260
+    },
+    "index_time_in_millis": {
+      "value": 408939
+    },
+    "index_total": {
+      "value": 757552
+    },
+    "index_time_in_millis_deriv": {
+      "value": 873
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T12:10:00.000Z",
+    "key": 1498997400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 45537460
+    },
+    "index_time_in_millis": {
+      "value": 409801
+    },
+    "index_total": {
+      "value": 760322
+    },
+    "index_time_in_millis_deriv": {
+      "value": 862
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T12:20:00.000Z",
+    "key": 1498998000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 45703660
+    },
+    "index_time_in_millis": {
+      "value": 410652
+    },
+    "index_total": {
+      "value": 763092
+    },
+    "index_time_in_millis_deriv": {
+      "value": 851
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T12:30:00.000Z",
+    "key": 1498998600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 45869770
+    },
+    "index_time_in_millis": {
+      "value": 411471
+    },
+    "index_total": {
+      "value": 765862
+    },
+    "index_time_in_millis_deriv": {
+      "value": 819
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T12:40:00.000Z",
+    "key": 1498999200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 46035970
+    },
+    "index_time_in_millis": {
+      "value": 412433
+    },
+    "index_total": {
+      "value": 768632
+    },
+    "index_time_in_millis_deriv": {
+      "value": 962
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T12:50:00.000Z",
+    "key": 1498999800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 46202170
+    },
+    "index_time_in_millis": {
+      "value": 413245
+    },
+    "index_total": {
+      "value": 771402
+    },
+    "index_time_in_millis_deriv": {
+      "value": 812
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T13:00:00.000Z",
+    "key": 1499000400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 46368370
+    },
+    "index_time_in_millis": {
+      "value": 414062
+    },
+    "index_total": {
+      "value": 774172
+    },
+    "index_time_in_millis_deriv": {
+      "value": 817
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T13:10:00.000Z",
+    "key": 1499001000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 46534531
+    },
+    "index_time_in_millis": {
+      "value": 417052
+    },
+    "index_total": {
+      "value": 776938
+    },
+    "index_time_in_millis_deriv": {
+      "value": 2990
+    },
+    "index_total_deriv": {
+      "value": 2766
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T13:20:00.000Z",
+    "key": 1499001600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 46700730
+    },
+    "index_time_in_millis": {
+      "value": 420732
+    },
+    "index_total": {
+      "value": 779708
+    },
+    "index_time_in_millis_deriv": {
+      "value": 3680
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T13:30:00.000Z",
+    "key": 1499002200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 46866840
+    },
+    "index_time_in_millis": {
+      "value": 422515
+    },
+    "index_total": {
+      "value": 782478
+    },
+    "index_time_in_millis_deriv": {
+      "value": 1783
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T13:40:00.000Z",
+    "key": 1499002800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 47033020
+    },
+    "index_time_in_millis": {
+      "value": 426329
+    },
+    "index_total": {
+      "value": 785248
+    },
+    "index_time_in_millis_deriv": {
+      "value": 3814
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T13:50:00.000Z",
+    "key": 1499003400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 47199200
+    },
+    "index_time_in_millis": {
+      "value": 430715
+    },
+    "index_total": {
+      "value": 788018
+    },
+    "index_time_in_millis_deriv": {
+      "value": 4386
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T14:00:00.000Z",
+    "key": 1499004000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 47365388
+    },
+    "index_time_in_millis": {
+      "value": 435234
+    },
+    "index_total": {
+      "value": 790785
+    },
+    "index_time_in_millis_deriv": {
+      "value": 4519
+    },
+    "index_total_deriv": {
+      "value": 2767
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T14:10:00.000Z",
+    "key": 1499004600000,
+    "doc_count": 1003,
+    "metric": {
+      "value": 46737969
+    },
+    "index_time_in_millis": {
+      "value": 439129
+    },
+    "index_total": {
+      "value": 793505
+    },
+    "index_time_in_millis_deriv": {
+      "value": 3895
+    },
+    "index_total_deriv": {
+      "value": 2720
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T14:20:00.000Z",
+    "key": 1499005200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 47694900
+    },
+    "index_time_in_millis": {
+      "value": 442114
+    },
+    "index_total": {
+      "value": 796275
+    },
+    "index_time_in_millis_deriv": {
+      "value": 2985
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T14:30:00.000Z",
+    "key": 1499005800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 47861100
+    },
+    "index_time_in_millis": {
+      "value": 445837
+    },
+    "index_total": {
+      "value": 799045
+    },
+    "index_time_in_millis_deriv": {
+      "value": 3723
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T14:40:00.000Z",
+    "key": 1499006400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 48027285
+    },
+    "index_time_in_millis": {
+      "value": 448578
+    },
+    "index_total": {
+      "value": 801815
+    },
+    "index_time_in_millis_deriv": {
+      "value": 2741
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T14:50:00.000Z",
+    "key": 1499007000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 48193408
+    },
+    "index_time_in_millis": {
+      "value": 451729
+    },
+    "index_total": {
+      "value": 804585
+    },
+    "index_time_in_millis_deriv": {
+      "value": 3151
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T15:00:00.000Z",
+    "key": 1499007600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 48359570
+    },
+    "index_time_in_millis": {
+      "value": 453184
+    },
+    "index_total": {
+      "value": 807355
+    },
+    "index_time_in_millis_deriv": {
+      "value": 1455
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T15:10:00.000Z",
+    "key": 1499008200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 48525770
+    },
+    "index_time_in_millis": {
+      "value": 455646
+    },
+    "index_total": {
+      "value": 810125
+    },
+    "index_time_in_millis_deriv": {
+      "value": 2462
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T15:20:00.000Z",
+    "key": 1499008800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 48691939
+    },
+    "index_time_in_millis": {
+      "value": 462541
+    },
+    "index_total": {
+      "value": 812895
+    },
+    "index_time_in_millis_deriv": {
+      "value": 6895
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T15:30:00.000Z",
+    "key": 1499009400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 48858048
+    },
+    "index_time_in_millis": {
+      "value": 468410
+    },
+    "index_total": {
+      "value": 815665
+    },
+    "index_time_in_millis_deriv": {
+      "value": 5869
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T15:40:00.000Z",
+    "key": 1499010000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 49024240
+    },
+    "index_time_in_millis": {
+      "value": 472727
+    },
+    "index_total": {
+      "value": 818435
+    },
+    "index_time_in_millis_deriv": {
+      "value": 4317
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T15:50:00.000Z",
+    "key": 1499010600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 49190440
+    },
+    "index_time_in_millis": {
+      "value": 478608
+    },
+    "index_total": {
+      "value": 821205
+    },
+    "index_time_in_millis_deriv": {
+      "value": 5881
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T16:00:00.000Z",
+    "key": 1499011200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 49356590
+    },
+    "index_time_in_millis": {
+      "value": 485222
+    },
+    "index_total": {
+      "value": 823971
+    },
+    "index_time_in_millis_deriv": {
+      "value": 6614
+    },
+    "index_total_deriv": {
+      "value": 2766
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T16:10:00.000Z",
+    "key": 1499011800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 49522728
+    },
+    "index_time_in_millis": {
+      "value": 490222
+    },
+    "index_total": {
+      "value": 826741
+    },
+    "index_time_in_millis_deriv": {
+      "value": 5000
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T16:20:00.000Z",
+    "key": 1499012400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 49688910
+    },
+    "index_time_in_millis": {
+      "value": 490945
+    },
+    "index_total": {
+      "value": 829511
+    },
+    "index_time_in_millis_deriv": {
+      "value": 723
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T16:30:00.000Z",
+    "key": 1499013000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 49855110
+    },
+    "index_time_in_millis": {
+      "value": 491628
+    },
+    "index_total": {
+      "value": 832281
+    },
+    "index_time_in_millis_deriv": {
+      "value": 683
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T16:40:00.000Z",
+    "key": 1499013600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 50021310
+    },
+    "index_time_in_millis": {
+      "value": 492348
+    },
+    "index_total": {
+      "value": 835051
+    },
+    "index_time_in_millis_deriv": {
+      "value": 720
+    },
+    "index_total_deriv": {
+      "value": 2770
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T16:50:00.000Z",
+    "key": 1499014200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 50187507
+    },
+    "index_time_in_millis": {
+      "value": 493122
+    },
+    "index_total": {
+      "value": 837819
+    },
+    "index_time_in_millis_deriv": {
+      "value": 774
+    },
+    "index_total_deriv": {
+      "value": 2768
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T17:00:00.000Z",
+    "key": 1499014800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 50351760
+    },
+    "index_time_in_millis": {
+      "value": 493778
+    },
+    "index_total": {
+      "value": 840529
+    },
+    "index_time_in_millis_deriv": {
+      "value": 656
+    },
+    "index_total_deriv": {
+      "value": 2710
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T17:10:00.000Z",
+    "key": 1499015400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 50515570
+    },
+    "index_time_in_millis": {
+      "value": 494544
+    },
+    "index_total": {
+      "value": 843285
+    },
+    "index_time_in_millis_deriv": {
+      "value": 766
+    },
+    "index_total_deriv": {
+      "value": 2756
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T17:20:00.000Z",
+    "key": 1499016000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 50680019
+    },
+    "index_time_in_millis": {
+      "value": 495228
+    },
+    "index_total": {
+      "value": 846013
+    },
+    "index_time_in_millis_deriv": {
+      "value": 684
+    },
+    "index_total_deriv": {
+      "value": 2728
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T17:30:00.000Z",
+    "key": 1499016600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 50845129
+    },
+    "index_time_in_millis": {
+      "value": 495974
+    },
+    "index_total": {
+      "value": 848781
+    },
+    "index_time_in_millis_deriv": {
+      "value": 746
+    },
+    "index_total_deriv": {
+      "value": 2768
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T17:40:00.000Z",
+    "key": 1499017200000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 51010339
+    },
+    "index_time_in_millis": {
+      "value": 496645
+    },
+    "index_total": {
+      "value": 851509
+    },
+    "index_time_in_millis_deriv": {
+      "value": 671
+    },
+    "index_total_deriv": {
+      "value": 2728
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T17:50:00.000Z",
+    "key": 1499017800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 51173096
+    },
+    "index_time_in_millis": {
+      "value": 497268
+    },
+    "index_total": {
+      "value": 854219
+    },
+    "index_time_in_millis_deriv": {
+      "value": 623
+    },
+    "index_total_deriv": {
+      "value": 2710
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T18:00:00.000Z",
+    "key": 1499018400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 51335656
+    },
+    "index_time_in_millis": {
+      "value": 497951
+    },
+    "index_total": {
+      "value": 856929
+    },
+    "index_time_in_millis_deriv": {
+      "value": 683
+    },
+    "index_total_deriv": {
+      "value": 2710
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T18:10:00.000Z",
+    "key": 1499019000000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 51498431
+    },
+    "index_time_in_millis": {
+      "value": 498695
+    },
+    "index_total": {
+      "value": 859659
+    },
+    "index_time_in_millis_deriv": {
+      "value": 744
+    },
+    "index_total_deriv": {
+      "value": 2730
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T18:20:00.000Z",
+    "key": 1499019600000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 51662925
+    },
+    "index_time_in_millis": {
+      "value": 500521
+    },
+    "index_total": {
+      "value": 862388
+    },
+    "index_time_in_millis_deriv": {
+      "value": 1826
+    },
+    "index_total_deriv": {
+      "value": 2729
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T18:30:00.000Z",
+    "key": 1499020200000,
+    "doc_count": 247,
+    "metric": {
+      "value": 11215147
+    },
+    "index_time_in_millis": {
+      "value": 500985
+    },
+    "index_total": {
+      "value": 862981
+    },
+    "index_time_in_millis_deriv": {
+      "value": 464
+    },
+    "index_total_deriv": {
+      "value": 593
+    }
   }
 ]

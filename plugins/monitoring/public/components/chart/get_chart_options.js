@@ -1,6 +1,7 @@
+import { merge } from 'lodash';
 import { CHART_LINE_COLOR, CHART_TEXT_COLOR } from 'monitoring-constants';
 
-export function getChartOptions(options) {
+export function getChartOptions(axisOptions) {
   const opts = {
     legend: {
       show: false
@@ -17,8 +18,7 @@ export function getChartOptions(options) {
       color: CHART_LINE_COLOR,
       font: {
         color: CHART_TEXT_COLOR
-      },
-      tickFormatter: options.tickFormatter
+      }
     },
     series: {
       points: {
@@ -48,5 +48,5 @@ export function getChartOptions(options) {
     }
   };
 
-  return opts;
+  return merge(opts, axisOptions);
 }

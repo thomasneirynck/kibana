@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import moment from 'moment';
 import { uiModules } from 'ui/modules';
-import { set } from 'lodash';
 import { getTitle } from './get_title';
 import { getUnits } from './get_units';
 import { MonitoringTimeseries } from 'plugins/monitoring/components/chart';
@@ -21,16 +20,6 @@ uiModule.directive('monitoringChart', (timefilter) => {
     link(scope, $elem) {
 
       const series = scope.series;
-      const dataSize = series.reduce((prev, current) => {
-        return prev + current.data.length;
-      }, 0);
-      const options = {};
-      if (dataSize !== 0) {
-        const bounds = timefilter.getBounds();
-        set(options, 'xaxis.min', bounds.min.valueOf());
-        set(options, 'xaxis.max', bounds.max.valueOf());
-      }
-
       const units = getUnits(series);
 
       function onBrush({ xaxis, _yaxis }) {
@@ -55,7 +44,7 @@ uiModule.directive('monitoringChart', (timefilter) => {
               </span>
             </OverlayTrigger>
           </h2>
-          <MonitoringTimeseries scope={ scope } options={ options } onBrush={ onBrush }/>
+          <MonitoringTimeseries scope={ scope } onBrush={ onBrush }/>
         </div>,
         $elem[0]
       );

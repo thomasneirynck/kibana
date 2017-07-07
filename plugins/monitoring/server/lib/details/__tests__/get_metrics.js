@@ -10,10 +10,16 @@ import derivMetricsResults from './fixtures/deriv_metrics_results';
 import aggMetricsBuckets from './fixtures/agg_metrics_buckets';
 import aggMetricsResults from './fixtures/agg_metrics_results';
 
+// max / min window that accepts the above buckets/results
+const min = 1498968000000; // 2017-07-02T04:00:00.000Z
+const max = 1499054399999; // 2017-07-03T03:59:59.999Z
+
 function getMockReq(metricsBuckets = [], payloadMetrics = []) {
   const config = {
     get: sinon.stub()
   };
+
+  config.get.withArgs('xpack.monitoring.min_interval_seconds').returns(10);
 
   return {
     server: {
@@ -26,11 +32,6 @@ function getMockReq(metricsBuckets = [], payloadMetrics = []) {
             callWithRequest: sinon.stub().returns(Promise.resolve({
               aggregations: {
                 check: {
-                  meta: {
-                    bucketSize: 30,
-                    timefilterMin: -Infinity,
-                    timefilterMax: Infinity
-                  },
                   buckets: metricsBuckets
                 }
               }
@@ -41,10 +42,7 @@ function getMockReq(metricsBuckets = [], payloadMetrics = []) {
     },
     payload: {
       metrics: payloadMetrics,
-      timeRange: {
-        min: -Infinity,
-        max: Infinity
-      }
+      timeRange: { min, max }
     },
     params: {
       clusterUuid: '1234xyz'
@@ -63,6 +61,7 @@ describe('getMetrics and getSeries', () => {
       expect(result).to.eql({
         node_cpu_utilization: [
           {
+            timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
               description: 'Percentage of CPU usage reported by the OS (100% is the max).',
@@ -85,6 +84,7 @@ describe('getMetrics and getSeries', () => {
       expect(result).to.eql({
         cluster_search_request_rate: [
           {
+            timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
               description: (
@@ -112,6 +112,7 @@ describe('getMetrics and getSeries', () => {
       expect(result).to.eql({
         cluster_index_latency: [
           {
+            timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
               description: (
@@ -148,6 +149,7 @@ describe('getMetrics and getSeries', () => {
       expect(result).to.eql({
         index_1: [
           {
+            timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
               description: (
@@ -162,6 +164,7 @@ describe('getMetrics and getSeries', () => {
             data: nonDerivMetricsResults
           },
           {
+            timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
               description: (
@@ -176,6 +179,7 @@ describe('getMetrics and getSeries', () => {
             data: nonDerivMetricsResults
           },
           {
+            timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
               description: (
@@ -190,6 +194,7 @@ describe('getMetrics and getSeries', () => {
             data: nonDerivMetricsResults
           },
           {
+            timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
               description: (
@@ -215,6 +220,7 @@ describe('getMetrics and getSeries', () => {
       expect(result).to.eql({
         kibana_max_response_times: [
           {
+            timeRange: { min, max },
             metric: {
               app: 'kibana',
               description: 'Maximum response time for client requests to the Kibana instance.',

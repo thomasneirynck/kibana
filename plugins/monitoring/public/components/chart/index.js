@@ -20,12 +20,12 @@ export class MonitoringTimeseries extends React.Component {
       this.setState({
         dataset: series.map((s, index) => {
           return {
-            ...this.props.options, // xaxis min/max
             color: getColor(s.metric.app, index),
             data: s.data,
             label: s.metric.label
           };
-        })
+        }),
+        timeRange: get(first(series), 'timeRange')
       });
     });
   }
@@ -48,6 +48,7 @@ export class MonitoringTimeseries extends React.Component {
     return (
       <TimeseriesVisualization
         series={ this.state.dataset }
+        timeRange={ this.state.timeRange }
         tickFormatter={ this.formatTicks }
         onBrush={ this.props.onBrush }
       />
