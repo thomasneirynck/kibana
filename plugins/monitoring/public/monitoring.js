@@ -1,7 +1,6 @@
 import _ from 'lodash';
 import { uiModules } from 'ui/modules';
 import uiRoutes from 'ui/routes';
-import uiChrome from 'ui/chrome';
 import 'ui/autoload/all';
 import 'plugins/monitoring/less/main.less';
 import 'plugins/monitoring/filters';
@@ -30,10 +29,3 @@ uiModule.run(function (uiSettings) {
 
 // Enable Angular routing
 uiRoutes.enable();
-
-uiChrome
-  .setRootController('monitoring', function ($scope, courier) {
-    $scope.$on('application.load', function () {
-      courier.start();
-    });
-  });
