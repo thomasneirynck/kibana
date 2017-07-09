@@ -16,7 +16,6 @@ export async function runKibanaServer({ procs, ftrConfig, devMode = false }) {
       `--plugin-path=${PROJECT_ROOT}`,
       '--logging.json=false',
       '--no-base-path',
-      '--no-ssl',
       `--server.port=${ftrConfig.get('servers.kibana.port')}`,
       `--elasticsearch.url=${formatUrl(ftrConfig.get('servers.elasticsearch'))}`,
       `--optimize.lazyPort=${ftrConfig.get('servers.kibana.port') + 1}`,
