@@ -170,17 +170,17 @@ module.controller('MlConnectionsMapController', function (
       _.each(influencerFieldNames, function (influencerFieldName) {
         viewByOptions.push({ field:influencerFieldName, label:influencerFieldName });
       });
-      $scope.vis.type.params.viewByOptions = viewByOptions;
+      $scope.vis.type.editorConfig.collections.viewByOptions = viewByOptions;
 
       // Set the selected 'View by' option back to detector if the old
       // selection is not applicable for the new data.
-      const selectOption = _.find($scope.vis.type.params.viewByOptions, function (option) {
+      const selectOption = _.find($scope.vis.type.editorConfig.collections.viewByOptions, function (option) {
         return option.field === $scope.vis.params.viewBy.field;
       });
       if (selectOption !== undefined) {
         $scope.vis.params.viewBy = selectOption;
       } else {
-        $scope.vis.params.viewBy = $scope.vis.type.params.viewByOptions[0];
+        $scope.vis.params.viewBy = $scope.vis.type.editorConfig.collections.viewByOptions[0];
       }
 
       if ($scope.vis.params.viewBy.field === 'ml-detector') {

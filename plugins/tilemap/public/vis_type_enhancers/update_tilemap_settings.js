@@ -1,6 +1,6 @@
 import uiRoutes from 'ui/routes';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
-import 'ui/vis_maps/lib/service_settings';
+import 'ui/vis/map/service_settings';
 
 uiRoutes.addSetupWork(function (Private, serviceSettings) {
 

@@ -92,7 +92,7 @@ module.controller('MlSwimlaneController', function ($scope,
         fields = _.union(fields, $scope.fieldsByJob[job]);
       });
       _.each(fields, function (field) {
-        $scope.vis.type.params.recordViewByOptions.push({ field:field, label:field });
+        $scope.vis.type.editorConfig.collections.recordViewByOptions.push({ field:field, label:field });
       });
     }
   }).catch(function (resp) {
@@ -139,22 +139,23 @@ module.controller('MlSwimlaneController', function ($scope,
       return field.toLowerCase();
     });
 
-    const recordViewByOptions = _.slice($scope.vis.type.params.recordViewByOptions, 0, 1); // Retain the detector value.
+    // Retain the detector value.
+    const recordViewByOptions = _.slice($scope.vis.type.editorConfig.collections.recordViewByOptions, 0, 1);
     _.each(sortedFields, function (field) {
       recordViewByOptions.push({ 'field':field, 'label':field });
     });
-    $scope.vis.type.params.recordViewByOptions = recordViewByOptions;
+    $scope.vis.type.editorConfig.collections.recordViewByOptions = recordViewByOptions;
 
     if ($scope.vis.params.mode === 'records') {
       // Set the selected 'View by' option back to detector if the old
       // selection is not applicable for the selected job(s).
-      const selectOption = _.find($scope.vis.type.params.recordViewByOptions, function (option) {
+      const selectOption = _.find($scope.vis.type.editorConfig.collections.recordViewByOptions, function (option) {
         return option.field === $scope.vis.params.viewBy.field;
       });
       if (selectOption !== undefined) {
         $scope.vis.params.viewBy = selectOption;
       } else {
-        $scope.vis.params.viewBy = $scope.vis.type.params.recordViewByOptions[0];
+        $scope.vis.params.viewBy = $scope.vis.type.editorConfig.collections.recordViewByOptions[0];
         $scope.updateViewState();
       }
     }
@@ -334,11 +335,20 @@ module.controller('MlSwimlaneController', function ($scope,
         // Leave selection as Job Description, as otherwise would switch back to jobID.
       } else {
         if ($scope.vis.params.mode === 'jobs') {
-          $scope.vis.params.viewBy = _.findWhere($scope.vis.type.params.jobViewByOptions, { field: aggViewByField });
+          $scope.vis.params.viewBy = _.findWhere(
+            $scope.vis.type.editorConfig.collections.jobViewByOptions,
+            { field: aggViewByField }
+          );
         } else if ($scope.vis.params.mode === 'influencers') {
-          $scope.vis.params.viewBy = _.findWhere($scope.vis.type.params.influencerViewByOptions, { field: aggViewByField });
+          $scope.vis.params.viewBy = _.findWhere(
+            $scope.vis.type.editorConfig.collections.influencerViewByOptions,
+            { field: aggViewByField }
+          );
         } else {
-          $scope.vis.params.viewBy = _.findWhere($scope.vis.type.params.recordViewByOptions, { field: aggViewByField });
+          $scope.vis.params.viewBy = _.findWhere(
+            $scope.vis.type.editorConfig.collections.recordViewByOptions,
+            { field: aggViewByField }
+          );
         }
       }
     }
@@ -357,9 +367,15 @@ module.controller('MlSwimlaneController', function ($scope,
         scopeInterval = $scope.vis.params.interval.customInterval;
       }
 
-      let setToInterval = _.findWhere($scope.vis.type.params.intervalOptions, { val: aggInterval });
+      let setToInterval = _.findWhere(
+        $scope.vis.type.editorConfig.collections.intervalOptions,
+        { val: aggInterval }
+      );
       if (!setToInterval) {
-        setToInterval = _.findWhere($scope.vis.type.params.intervalOptions, { customInterval: aggInterval });
+        setToInterval = _.findWhere(
+          $scope.vis.type.editorConfig.collections.intervalOptions,
+          { customInterval: aggInterval }
+        );
       }
       if (!setToInterval) {
         // e.g. if running inside the Kibana Visualization tab will need to add an extra option in.
@@ -374,7 +390,7 @@ module.controller('MlSwimlaneController', function ($scope,
           setToInterval.display = 'Custom: ' + _.get(timeAgg, ['params', 'customInterval']);
         }
 
-        $scope.vis.type.params.intervalOptions.push(setToInterval);
+        $scope.vis.type.editorConfig.collections.intervalOptions.push(setToInterval);
       }
 
 

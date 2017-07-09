@@ -2,15 +2,15 @@
   <label>
     Severity threshold:
   </label>
-  <select class="form-control" 
-          ng-model="vis.params.threshold" 
-          ng-options="threshold as threshold.display for threshold in vis.type.params.thresholdOptions track by threshold.display"></select>
-  
+  <select class="form-control"
+          ng-model="vis.params.threshold"
+          ng-options="threshold as threshold.display for threshold in vis.type.editorConfig.collections.thresholdOptions track by threshold.display"></select>
+
   <h4>Job(s):</h4>
   <div class="ml-connections-map-jobs-list">
     <label ng-repeat="job in vis.params.jobs">
       <input type="checkbox" value="{{job.id}}" ng-model="job.selected"/>{{job.id}}
     </label>
   </div>
-  
+
 </div>

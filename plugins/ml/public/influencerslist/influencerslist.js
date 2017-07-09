@@ -23,61 +23,64 @@
 import 'plugins/ml/influencerslist/influencerslist_controller.js';
 import 'plugins/ml/influencerslist/influencerslist.less';
 
-import { TemplateVisTypeProvider } from 'ui/template_vis_type/template_vis_type';
-import { VisSchemasProvider } from 'ui/vis/schemas';
+import { VisFactoryProvider } from 'ui/vis/vis_factory';
+import { VisSchemasProvider } from 'ui/vis/editors/default/schemas';
 
 export function InfluencersListVisType(Private) {
-  const TemplateVisType = Private(TemplateVisTypeProvider);
+
+  const VisFactory = Private(VisFactoryProvider);
   const Schemas = Private(VisSchemasProvider);
 
   // Return a new instance describing this visualization.
-  return new TemplateVisType({
+  return VisFactory.createAngularVisualization({
     name: 'mlInfluencersList',
     title: 'Influencers list',
     icon: 'fa-list',
     description: 'Machine Learning visualization designed to display a list of the ' +
       'top influencers by maximum and total anomaly score across Machine Learning jobs.',
-    template: require('plugins/ml/influencerslist/influencerslist.html'),
-    params: {
-      editor: require('plugins/ml/influencerslist/influencerslist_editor.html'),
+    visConfig: {
+      template: require('plugins/ml/influencerslist/influencerslist.html'),
     },
-    schemas: new Schemas([
-      {
-        group: 'metrics',
-        name: 'totalScore',
-        title: 'Total score',
-        mustBeFirst: true,
-        min: 1,
-        max: 1,
-        aggFilter: ['count', 'avg', 'sum', 'min', 'max']
-      },
-      {
-        group: 'metrics',
-        name: 'maxScore',
-        title: 'Max score (0 to 100)',
-        min: 1,
-        max: 1,
-        aggFilter: ['count', 'avg', 'sum', 'min', 'max']
-      },
-      {
-        group: 'buckets',
-        name: 'viewBy1',
-        icon: 'fa fa-eye',
-        title: 'First split by',
-        mustBeFirst: true,
-        min: 1,
-        max: 1,
-        aggFilter: 'terms'
-      },
-      {
-        group: 'buckets',
-        name: 'viewBy2',
-        icon: 'fa fa-eye',
-        title: 'Second split by',
-        min: 1,
-        max: 1,
-        aggFilter: 'terms'
-      }
-    ])
+    editorConfig: {
+      optionsTemplate: require('plugins/ml/influencerslist/influencerslist_editor.html'),
+      schemas: new Schemas([
+        {
+          group: 'metrics',
+          name: 'totalScore',
+          title: 'Total score',
+          mustBeFirst: true,
+          min: 1,
+          max: 1,
+          aggFilter: ['count', 'avg', 'sum', 'min', 'max']
+        },
+        {
+          group: 'metrics',
+          name: 'maxScore',
+          title: 'Max score (0 to 100)',
+          min: 1,
+          max: 1,
+          aggFilter: ['count', 'avg', 'sum', 'min', 'max']
+        },
+        {
+          group: 'buckets',
+          name: 'viewBy1',
+          icon: 'fa fa-eye',
+          title: 'First split by',
+          mustBeFirst: true,
+          min: 1,
+          max: 1,
+          aggFilter: 'terms'
+        },
+        {
+          group: 'buckets',
+          name: 'viewBy2',
+          icon: 'fa fa-eye',
+          title: 'Second split by',
+          min: 1,
+          max: 1,
+          aggFilter: 'terms'
+        }
+      ])
+    }
   });
 }
