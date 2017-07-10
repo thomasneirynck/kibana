@@ -15,13 +15,20 @@ you are running.
 
 To install {xpack} in {kib}:
 
-. Optional: If you want to install {kib} on a machine that doesn't have internet
+. Optional: If you want to install {xpack} on a machine that doesn't have internet
 access:
 
 .. Manually download the {xpack} zip file:
 https://artifacts.elastic.co/downloads/packs/x-pack/x-pack-{version}.zip[
 +https://artifacts.elastic.co/downloads/packs/x-pack/x-pack-{version}.zip+]
 (https://artifacts.elastic.co/downloads/packs/x-pack/x-pack-{version}.zip.sha1[sha1])
++
+--
+NOTE: The plugins for {es}, {kib}, and Logstash are included in the same zip
+file. If you have already downloaded this file to install {xpack} on one of
+those other products, you can reuse the same file.
+
+--
 
 .. Transfer the zip file to a temporary directory on the offline machine. (Do NOT
 put the file in the {es} plugins directory.)
