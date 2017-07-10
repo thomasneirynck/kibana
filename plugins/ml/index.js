@@ -42,7 +42,10 @@ export const ml = (kibana) => {
             kbnIndex: config.get('kibana.index'),
             esServerUrl: config.get('elasticsearch.url')
           };
-        }
+        },
+        uses: [
+          'fieldFormats'
+        ]
       },
       hacks: ['plugins/ml/hacks/toggle_app_link_in_nav']
 
