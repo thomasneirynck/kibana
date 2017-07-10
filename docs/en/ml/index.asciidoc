@@ -4,22 +4,39 @@
 
 [partintro]
 --
-The {xpack} machine learning features automate the analysis of time-series data
-by creating accurate baselines of normal behaviors in the data and identifying
-anomalous patterns in that data.
 
-You can create and view results from machine learning jobs from the
-*Machine Learning* page in {kib}.
+As datasets increase in size and complexity, the human effort required to
+inspect dashboards or maintain rules for spotting infrastructure problems,
+cyber attacks, or business issues becomes impractical. The {xpack} {ml} features
+automatically model the normal behavior of your time series data — learning
+trends, periodicity, and more — in real time to identify anomalies, streamline
+root cause analysis, and reduce false positives.
 
-For more information, see
+Installed with {xpack}, {ml} runs in and scales with {es}, and includes an
+intuitive UI on the {kib} *Machine Learning* page for creating anomaly detection
+jobs and understanding results.
+
+You can use the *Job Management* pane to create and manage jobs and their
+associated {dfeeds}.  For example:
+
+[role="screenshot"]
+image::ml/images/ml-job-management.jpg[Job Management]
+
+The *Anomaly Explorer* and *Single Metric Viewer* display the results of your
+{ml} jobs.  For example:
+
+[role="screenshot"]
+image::ml/images/ml-single-metric-viewer.jpg[Single Metric Viewer]
+
+NOTE: The {xpack} {ml} features in {kib} use pop-ups. You must configure your
+web browser so that it does not block pop-up windows or create an exception for
+your Kibana URL.
+
+For more information about {ml}, see
 {xpack-ref}/xpack-ml.html[Machine Learning in the Elastic Stack].
+
 --
 
-[role="xpack"]
-== Getting Started
+include::creating-jobs.asciidoc[]
 
-Machine learning is automatically enabled when you
-<<installing-xpack-kb,install {xpack} into {kib}>>.
-
-Ready to get some hands-on experience? See
-{xpack-ref}/ml-getting-started.html[Getting Started with Machine Learning].
+//TO-DO: Add info about creating watch

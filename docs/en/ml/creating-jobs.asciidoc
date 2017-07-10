@@ -1,0 +1,39 @@
+[role="xpack"]
+== Creating Machine Learning Jobs
+
+Machine learning jobs contain the configuration information and metadata
+necessary to perform an analytics task.
+
+{kib} provides the following wizards to make it easier to create jobs:
+
+[role="screenshot"]
+image::ml/images/ml-create-job.jpg[Create New Job]
+
+A single metric job is a simple job that contains a single _detector_. A
+detector defines the type of analysis that will occur and which fields to
+analyze. In addition to limiting the number of detectors, the single metric job
+creation wizard omits many of the more advanced configuration options.
+
+A multi-metric job can contain more than one detector, which is more efficient
+than running multiple jobs against the same data.
+
+An advanced job can contain multiple detectors and enables you to configure all
+job settings.
+
+NOTE: If your data is located outside of {es}, you cannot use {kib} to create
+your jobs and you cannot use {dfeeds} to retrieve your data in real time.
+Machine learning analysis is still possible, however, by using APIs to
+create and manage jobs and post data to them. For more information, see
+{ref}/ml-apis.html[Machine Learning APIs].
+
+//TO-DO: Add info about bucket estimator
+
+Ready to get some hands-on experience? See
+{xpack-ref}/ml-getting-started.html[Getting Started with Machine Learning].
+
+The following video tutorials also demonstrate single metric, multi-metric, and
+advanced jobs:
+
+* https://www.elastic.co/videos/machine-learning-tutorial-creating-a-single-metric-job[Machine Learning for the Elastic Stack: Creating a single metric job]
+* https://www.elastic.co/videos/machine-learning-tutorial-creating-a-multi-metric-job[Machine Learning for the Elastic Stack: Creating a multi-metric job]
+* https://www.elastic.co/videos/machine-learning-lab-3-detect-outliers-in-a-population[Machine Learning for the Elastic Stack: Detect Outliers in a Population]
