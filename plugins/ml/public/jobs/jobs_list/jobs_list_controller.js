@@ -518,6 +518,23 @@ function (
     });
   }
 
+  // create modal dialog for creating a watch
+  $scope.openCreateWatchWindow = function (job) {
+    $modal.open({
+      template: require('plugins/ml/jobs/jobs_list/create_watch_modal/create_watch_modal.html'),
+      controller: 'MlCreateWatchModal',
+      backdrop: 'static',
+      keyboard: false,
+      resolve: {
+        params: function () {
+          return {
+            job: job,
+          };
+        }
+      }
+    });
+  };
+
   // apply the text entered in the filter field and reload the jobs list
   $scope.applyFilter = function () {
 
@@ -594,6 +611,13 @@ function (
 
   $scope.$on('jobsUpdated', () => {
     refreshJobs();
+  });
+
+
+  // create watch modal is triggered after the start datafeed modal,
+  // and so needs to be called via a broadcast.
+  $scope.$on('openCreateWatchWindow', (e, job) => {
+    $scope.openCreateWatchWindow(job);
   });
 
   $scope.$emit('application.load');

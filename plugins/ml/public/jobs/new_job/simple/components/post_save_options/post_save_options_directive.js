@@ -15,30 +15,31 @@
 
 import template from './post_save_options.html';
 
-import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlPostSaveOptions', function (mlPostSaveService, Private) {
+module.directive('mlPostSaveOptions', function (mlPostSaveService, mlCreateWatchService) {
   return {
     restrict: 'AE',
     replace: false,
     scope: {
       jobId: '=',
       bucketSpan: '=',
-      includeInfluencers: '='
+      includeInfluencers: '=',
     },
     template,
     link: function ($scope) {
 
-      mlPostSaveService.reset();
-      const xpackInfo = Private(XPackInfoProvider);
-      $scope.watcherEnabled = xpackInfo.get('features.watcher.isAvailable', false);
+      $scope.watcherEnabled = mlCreateWatchService.isWatcherEnabled();
       $scope.status = mlPostSaveService.status;
       $scope.STATUS = mlPostSaveService.STATUS;
 
+      mlCreateWatchService.reset();
+
+      mlCreateWatchService.config.includeInfluencers = $scope.includeInfluencers;
       $scope.runInRealtime = false;
       $scope.createWatch = false;
+      $scope.embedded = true;
 
       $scope.clickRunInRealtime = function () {
         $scope.createWatch = (!$scope.runInRealtime) ? false : $scope.createWatch;
@@ -49,7 +50,7 @@ module.directive('mlPostSaveOptions', function (mlPostSaveService, Private) {
       };
     }
   };
-}).service('mlPostSaveService', function (mlJobService, mlMessageBarService, $q) {
+}).service('mlPostSaveService', function (mlJobService, mlMessageBarService, $q, mlCreateWatchService) {
   const msgs = mlMessageBarService;
   this.STATUS = {
     SAVE_FAILED: -1,
@@ -61,6 +62,7 @@ module.directive('mlPostSaveOptions', function (mlPostSaveService, Private) {
     realtimeJob: null,
     watch: null
   };
+  mlCreateWatchService.status = this.status;
 
   this.externalCreateWatch;
   this.startRealtimeJob = function (jobId) {
@@ -85,27 +87,12 @@ module.directive('mlPostSaveOptions', function (mlPostSaveService, Private) {
     return deferred.promise;
   };
 
-  this.registerCreateWatch = function (createWatchFunc) {
-    if (typeof createWatchFunc === 'function') {
-      this.externalCreateWatch = createWatchFunc;
-    }
-  };
-
-  this.createWatch = function (jobId) {
-    return this.externalCreateWatch(jobId);
-  };
-
-  this.reset = function () {
-    this.status.realtimeJob = null;
-    this.status.watch = null;
-  };
-
   this.apply = function (jobId, runInRealtime, createWatch) {
     if (runInRealtime) {
       this.startRealtimeJob(jobId)
       .then(() => {
         if (createWatch) {
-          this.createWatch(jobId);
+          mlCreateWatchService.createNewWatch(jobId);
         }
       });
     }

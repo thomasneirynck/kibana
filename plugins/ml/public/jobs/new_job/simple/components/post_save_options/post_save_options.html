@@ -14,7 +14,9 @@
     </label>
   </div>
   <div ng-show='watcherEnabled' class='form-group'>
-    <label class='kuiCheckBoxLabel kuiVerticalRhythm' ng-class="{'disabled': !runInRealtime}">
+    <label
+      class='kuiCheckBoxLabel kuiVerticalRhythm'
+      ng-class="{'disabled': !runInRealtime}">
       <input ng-model='createWatch' ng-disabled="!runInRealtime || status.realtimeJob!==null" type="checkbox" class='kuiCheckBox' />
       <span class="kuiCheckBoxLabel__text">
         Create watch for real-time job
@@ -27,7 +29,12 @@
     </label>
 
     <div ng-if='runInRealtime && createWatch'>
-      <ml-create-watch bucket-span='bucketSpan' include-influencers='includeInfluencers'></ml-create-watch>
+      <ml-create-watch
+        job-id='jobId'
+        bucket-span='bucketSpan'
+        include-influencers='includeInfluencers'
+        embedded='embedded'
+      ></ml-create-watch>
     </div>
   </div>
 

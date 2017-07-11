@@ -19,10 +19,17 @@ import angular from 'angular';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('MlJobTimepickerModal', function ($scope, $rootScope, $modalInstance, params, mlJobService, mlMessageBarService) {
+module.controller('MlJobTimepickerModal', function (
+  $scope,
+   $rootScope,
+   $modalInstance,
+   params,
+   mlJobService,
+   mlCreateWatchService,
+   mlMessageBarService) {
   const msgs = mlMessageBarService;
-  // msgs.clear();
   $scope.saveLock = false;
+  $scope.watcherEnabled = mlCreateWatchService.isWatcherEnabled();
 
   const job = angular.copy(params.job);
   $scope.jobId = job.job_id;
@@ -65,6 +72,7 @@ module.controller('MlJobTimepickerModal', function ($scope, $rootScope, $modalIn
     setStartRadio: function (i) {
       $scope.ui.startRadio = i;
     },
+    createWatch: false
   };
 
   function extractForm() {
@@ -126,6 +134,10 @@ module.controller('MlJobTimepickerModal', function ($scope, $rootScope, $modalIn
         mlJobService.startDatafeed($scope.datafeedId, $scope.jobId, $scope.start, $scope.end)
         .then(() => {
           $rootScope.$broadcast('jobsUpdated');
+
+          if ($scope.ui.createWatch) {
+            $rootScope.$broadcast('openCreateWatchWindow', job);
+          }
         })
         .catch((resp) => {
           $scope.saveLock = false;

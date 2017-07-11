@@ -29,7 +29,6 @@ module.service('mlDatafeedService', function ($modal, mlJobService) {
         controller: 'MlJobTimepickerModal',
         backdrop: 'static',
         keyboard: false,
-        // size: 'lg',
         resolve: {
           params: function () {
             return {

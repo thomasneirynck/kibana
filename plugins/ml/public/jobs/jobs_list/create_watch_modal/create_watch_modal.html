@@ -1,0 +1,51 @@
+<div class="create-watch-modal">
+  <h3>Create watch for {{jobId}}</h3>
+  <div ng-if='watcherEnabled===true'>
+    <ml-create-watch
+      job-id='jobId'
+      bucket-span='bucketSpan'
+      include-influencers='includeInfluencers'
+    ></ml-create-watch>
+
+
+    <hr />
+
+    <div ng-show= "status.watch===null">
+      <button
+        aria-label="Create watch"
+        ng-click="apply()"
+        type="button"
+        class="kuiButton kuiButton--primary">
+          Apply
+      </button>
+
+      <button
+        ng-disabled="status.deleteLock"
+        ng-click="close();"
+        class="kuiButton kuiButton--primary"
+        aria-label="cancel">
+          Cancel
+      </button>
+    </div>
+    <div ng-show= "status.watch === STATUS.SAVED || status.watch === STATUS.SAVE_FAILED">
+      <button
+        ng-click="close();"
+        class="kuiButton kuiButton--primary"
+        aria-label="close">
+          Close
+      </button>
+    </div>
+  </div>
+
+  <div ng-if='watcherEnabled===false'>
+    Watcher is not enabled.
+    <hr />
+    <button
+      ng-click="close();"
+      class="kuiButton kuiButton--primary"
+      aria-label="close">
+        Close
+    </button>
+  </div>
+
+</div>
