@@ -53,6 +53,7 @@ gulp.task('lint-staged', () => {
   .then((files) => {
     // including the period in the extension allows whole names (e.g., build.gradle) to be whitelisted
     const whitelist = [
+      '\.asciidoc',
       '\.js',
       '\.html',
       '\.less',
