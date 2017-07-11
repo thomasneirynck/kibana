@@ -1,7 +1,6 @@
 import { isAbsolute } from 'path';
 import { statSync } from 'fs';
 
-import { sortBy } from 'lodash';
 import glob from 'glob';
 
 /**
@@ -15,5 +14,9 @@ export function findMostRecentlyChanged(pattern) {
     throw new TypeError(`Pattern must be absolute, got ${pattern}`);
   }
 
-  return sortBy(glob.sync(pattern), path => statSync(path).ctime).shift();
+  const ctime = path => statSync(path).ctime.getTime();
+
+  return glob.sync(pattern)
+    .sort((a, b) => ctime(a) - ctime(b))
+    .pop();
 }
