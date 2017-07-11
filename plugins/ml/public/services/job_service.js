@@ -562,6 +562,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       delete tempJob.datafeed_config.job_id;
       delete tempJob.datafeed_config.state;
       delete tempJob.datafeed_config.frequency;
+      delete tempJob.datafeed_config.node;
     }
 
     return tempJob;
