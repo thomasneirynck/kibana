@@ -274,6 +274,7 @@ app.directive('thresholdWatchEdit', function ($injector) {
       saveWatch = () => {
         return watchService.saveWatch(this.watch)
         .then(() => {
+          this.watch.isNew = false; // without this, the message displays 'New Watch'
           this.notifier.info(`Saved Watch "${this.watch.displayName}"`);
           this.onClose();
         })
