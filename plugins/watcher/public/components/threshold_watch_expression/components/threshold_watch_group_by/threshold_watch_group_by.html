@@ -1,0 +1,62 @@
+<expression-item
+  item-id="{{ thresholdWatchGroupBy.itemId }}"
+  description="thresholdWatchGroupBy.itemDescription"
+  value="thresholdWatchGroupBy.itemValue"
+  is-open="thresholdWatchGroupBy.isOpen"
+  is-visible="thresholdWatchGroupBy.isVisible"
+  on-open="thresholdWatchGroupBy.onOpen"
+  on-close="thresholdWatchGroupBy.onClose"
+  is-valid="thresholdWatchGroupBy.isValid"
+  is-dirty="thresholdWatchGroupBy.isDirty"
+  form="thresholdWatchGroupBy.form"
+>
+  <form name="thresholdWatchGroupBy.form" novalidate>
+    <div
+      class="kuiInputNote kuiInputNote--danger"
+      ng-show="thresholdWatchGroupBy.isValidationMessageVisible('size', 'required')"
+    >
+      A value is required.
+    </div>
+    <div
+      class="kuiInputNote kuiInputNote--danger"
+      ng-show="thresholdWatchGroupBy.isValidationMessageVisible('size', 'number')"
+    >
+      Value must be a valid number.
+    </div>
+    <div
+      class="kuiInputNote kuiInputNote--danger"
+      ng-show="thresholdWatchGroupBy.isValidationMessageVisible('size', 'min')"
+    >
+      Value must be greater than 0.
+    </div>
+    <div
+      class="kuiInputNote kuiInputNote--danger"
+      ng-show="thresholdWatchGroupBy.isValidationMessageVisible('termField', 'required')"
+    >
+      Please select a field.
+    </div>
+    <select
+      class="kuiSelect"
+      ng-model="thresholdWatchGroupBy.groupByType"
+      ng-options="groupByType as groupByType.label for groupByType in thresholdWatchGroupBy.groupByTypes"
+    ></select>
+    <input
+      type="number"
+      name="size"
+      min="1"
+      required
+      class="kuiTextInput watcherNumberInput"
+      ng-model="thresholdWatchGroupBy.termSize"
+      ng-if="thresholdWatchGroupBy.groupByType.sizeRequired">
+    <select
+      class="kuiSelect"
+      name="termField"
+      required
+      ng-model="thresholdWatchGroupBy.termField"
+      ng-options="termField as termField.name group by termField.normalizedType for termField in thresholdWatchGroupBy.termFields"
+      ng-if="thresholdWatchGroupBy.groupByType.sizeRequired"
+    >
+      <option value="">Select a field...</option>
+    </select>
+  </form>
+</expression-item>

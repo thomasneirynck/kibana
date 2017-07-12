@@ -3,19 +3,22 @@ import 'ui/url';
 import { Notifier } from 'ui/notify/notifier';
 import template from './watch_edit_route.html';
 import 'plugins/watcher/services/watch';
-import './components/watch_edit';
+import './components/json_watch_edit';
+import './components/threshold_watch_edit';
+import { WATCH_TYPES } from 'plugins/watcher/../common/constants';
 import { updateWatchSections } from 'plugins/watcher/lib/update_management_sections';
 import 'plugins/watcher/services/license';
 
 routes
 .when('/management/elasticsearch/watcher/watches/watch/:id/edit')
-.when('/management/elasticsearch/watcher/watches/new-watch')
-.defaults(/management\/elasticsearch\/watcher\/watches\/(new-watch|watch\/:id\/edit)/, {
+.when('/management/elasticsearch/watcher/watches/new-watch/:watchType')
+.defaults(/management\/elasticsearch\/watcher\/watches\/(new-watch\/:watchType|watch\/:id\/edit)/, {
   template: template,
   controller: class WatchEditRouteController {
     constructor($injector) {
       const $route = $injector.get('$route');
       this.watch = $route.current.locals.watch;
+      this.WATCH_TYPES = WATCH_TYPES;
     }
   },
   controllerAs: 'watchEditRoute',
@@ -27,16 +30,20 @@ routes
     },
     watch: function ($injector) {
       const $route = $injector.get('$route');
-      const watchService = $injector.get('watchService');
-      const licenseService = $injector.get('licenseService');
+      const watchService = $injector.get('xpackWatcherWatchService');
+      const licenseService = $injector.get('xpackWatcherLicenseService');
       const kbnUrl = $injector.get('kbnUrl');
 
       const notifier = new Notifier({ location: 'Watcher' });
 
       const watchId = $route.current.params.id;
+      const watchType = $route.current.params.watchType;
 
       if (!watchId) {
-        return watchService.newWatch()
+        return licenseService.refreshLicense()
+        .then(() => {
+          return watchService.newWatch(watchType);
+        })
         .catch(err => {
           return licenseService.checkValidity()
           .then(() => {
@@ -64,7 +71,7 @@ routes
       });
     },
     checkLicense: ($injector) => {
-      const licenseService = $injector.get('licenseService');
+      const licenseService = $injector.get('xpackWatcherLicenseService');
       return licenseService.checkValidity();
     }
   }

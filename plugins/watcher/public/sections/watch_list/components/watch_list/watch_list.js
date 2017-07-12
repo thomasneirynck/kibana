@@ -10,6 +10,7 @@ import 'ui/react_components';
 import 'ui/table_info';
 import 'plugins/watcher/components/tool_bar_selected_count';
 import 'plugins/watcher/components/forbidden_message';
+import 'plugins/watcher/components/watch_type_select';
 import 'plugins/watcher/services/watches';
 import 'plugins/watcher/services/license';
 
@@ -17,10 +18,11 @@ const app = uiModules.get('xpack/watcher');
 
 app.directive('watchList', function ($injector) {
   const pagerFactory = $injector.get('pagerFactory');
-  const watchesService = $injector.get('watchesService');
-  const licenseService = $injector.get('licenseService');
+  const watchesService = $injector.get('xpackWatcherWatchesService');
+  const licenseService = $injector.get('xpackWatcherLicenseService');
   const confirmModal = $injector.get('confirmModal');
   const $interval = $injector.get('$interval');
+  const kbnUrl = $injector.get('kbnUrl');
 
   const $filter = $injector.get('$filter');
   const filter = $filter('filter');
@@ -113,6 +115,11 @@ app.directive('watchList', function ($injector) {
       onSelectedChange = (selectedWatches) => {
         this.selectedWatches = selectedWatches;
       };
+
+      onWatchTypeChange = (watchType) => {
+        const url = `management/elasticsearch/watcher/watches/new-watch/${watchType}`;
+        kbnUrl.change(url, {});
+      }
 
       onSelectedWatchesDelete = () => {
         const watchesBeingDeleted = this.selectedWatches;

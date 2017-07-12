@@ -8,8 +8,9 @@ function fetchFields(callWithRequest, indexes) {
   const params = {
     index: indexes,
     fields: ['*'],
-    ignoreUnavailable: false,
-    allowNoIndices: false
+    ignoreUnavailable: true,
+    allowNoIndices: true,
+    ignore: 404
   };
 
   return callWithRequest('fieldCaps', params);
@@ -28,7 +29,11 @@ export function registerListRoute(server) {
 
       return fetchFields(callWithRequest, indexes)
         .then(response => {
-          const fields = Fields.fromUpstreamJSON(response);
+          const json = (response.status === 404)
+             ? { fields: [] }
+             : response;
+
+          const fields = Fields.fromUpstreamJSON(json);
 
           reply(fields.downstreamJSON);
         })

@@ -1,14 +1,18 @@
 import { get } from 'lodash';
 import { callWithRequestFactory } from '../../../lib/call_with_request_factory';
 import { ExecuteDetails } from '../../../models/execute_details';
+import { Watch } from '../../../models/watch';
 import { WatchHistoryItem } from '../../../models/watch_history_item';
 import { isEsErrorFactory } from '../../../lib/is_es_error_factory';
 import { wrapEsError, wrapUnknownError } from '../../../lib/error_wrappers';
 import { licensePreRoutingFactory } from'../../../lib/license_pre_routing_factory';
 
-function executeWatch(callWithRequest, executeDetails) {
+function executeWatch(callWithRequest, executeDetails, watchJSON) {
+  const body = executeDetails;
+  body.watch = watchJSON;
+
   return callWithRequest('watcher.executeWatch', {
-    body: executeDetails
+    body
   });
 }
 
@@ -21,9 +25,10 @@ export function registerExecuteRoute(server) {
     method: 'PUT',
     handler: (request, reply) => {
       const callWithRequest = callWithRequestFactory(server, request);
-      const executeDetails = ExecuteDetails.fromDownstreamJSON(request.payload);
+      const executeDetails = ExecuteDetails.fromDownstreamJSON(request.payload.executeDetails);
+      const watch = Watch.fromDownstreamJSON(request.payload.watch);
 
-      return executeWatch(callWithRequest, executeDetails.upstreamJSON)
+      return executeWatch(callWithRequest, executeDetails.upstreamJSON, watch.watchJSON)
       .then((hit) => {
         const id = get(hit, '_id');
         const watchHistoryItemJson = get(hit, 'watch_record');

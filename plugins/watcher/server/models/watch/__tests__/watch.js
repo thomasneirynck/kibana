@@ -1,5 +1,6 @@
 import expect from 'expect.js';
 import { Watch } from '../watch';
+import { WATCH_TYPES } from '../../../../common/constants';
 
 describe('watch', () => {
 
@@ -11,6 +12,7 @@ describe('watch', () => {
       beforeEach(() => {
         upstreamWatch = {
           id: 'my-watch',
+          type: 'json',
           watchJson: {
             metadata: {
               name: 'foo'
@@ -54,6 +56,7 @@ describe('watch', () => {
       beforeEach(() => {
         downstreamWatch = {
           id: 'watch_id',
+          type: 'json',
           name: 'watch name',
           watch: {
             foo: 'bar'
@@ -74,7 +77,7 @@ describe('watch', () => {
 
       let watchModel;
       beforeEach(() => {
-        watchModel = new Watch({
+        watchModel = new (Watch.getWatchTypes()[WATCH_TYPES.JSON])({
           id: 'watch_id',
           name: 'watch name',
           watchJson: {
@@ -122,7 +125,7 @@ describe('watch', () => {
 
       let watchModel;
       beforeEach(() => {
-        watchModel = new Watch({
+        watchModel = new (Watch.getWatchTypes()[WATCH_TYPES.JSON])({
           id: 'watch_id',
           name: 'watch name',
           watch: {
@@ -137,7 +140,10 @@ describe('watch', () => {
         expect(json.watch).to.eql({
           foo: 'bar',
           metadata: {
-            name: 'watch name'
+            name: 'watch name',
+            xpack: {
+              type: 'json'
+            }
           }
         });
       });
@@ -155,7 +161,10 @@ describe('watch', () => {
           metadata: {
             foo: 'bar',
             bar: 'baz',
-            name: 'watch name'
+            name: 'watch name',
+            xpack: {
+              type: 'json'
+            }
           }
         });
       });
@@ -166,7 +175,12 @@ describe('watch', () => {
         const json = watchModel.upstreamJSON;
         expect(json.id).to.be(watchModel.id);
         expect(json.watch).to.eql({
-          foo: 'bar'
+          foo: 'bar',
+          metadata: {
+            xpack: {
+              type: 'json'
+            }
+          }
         });
       });
 

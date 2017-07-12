@@ -1,12 +1,24 @@
-import { get } from 'lodash';
+import { get, set } from 'lodash';
+import { ACTION_TYPES } from 'plugins/watcher/../common/constants';
+import { EmailAction } from './email_action';
+import { LoggingAction } from './logging_action';
+import { SlackAction } from './slack_action';
+import { UnknownAction } from './unknown_action';
+
+const ActionTypes = {};
+set(ActionTypes, ACTION_TYPES.EMAIL, EmailAction);
+set(ActionTypes, ACTION_TYPES.LOGGING, LoggingAction);
+set(ActionTypes, ACTION_TYPES.SLACK, SlackAction);
 
 export class Action {
-  constructor(props = {}) {
-    this.id = get(props, 'id');
-    this.type = get(props, 'type');
+  static getActionTypes = () => {
+    return ActionTypes;
   }
 
   static fromUpstreamJSON(upstreamAction) {
-    return new Action(upstreamAction);
+    const type = get(upstreamAction, 'type');
+    const ActionType = ActionTypes[type] || UnknownAction;
+
+    return ActionType.fromUpstreamJSON(upstreamAction);
   }
 };

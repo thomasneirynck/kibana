@@ -22,8 +22,8 @@ routes
   controllerAs: 'watchListRoute',
   resolve: {
     watches: ($injector) => {
-      const watchesService = $injector.get('watchesService');
-      const licenseService = $injector.get('licenseService');
+      const watchesService = $injector.get('xpackWatcherWatchesService');
+      const licenseService = $injector.get('xpackWatcherLicenseService');
       const kbnUrl = $injector.get('kbnUrl');
       const notifier = new Notifier({ location: 'Watcher' });
 
@@ -42,7 +42,7 @@ routes
       });
     },
     checkLicense: ($injector) => {
-      const licenseService = $injector.get('licenseService');
+      const licenseService = $injector.get('xpackWatcherLicenseService');
       return licenseService.checkValidity();
     }
   }
@@ -51,7 +51,7 @@ routes
 routes.defaults(/\/management/, {
   resolve: {
     watcherManagementSection: ($injector) => {
-      const licenseService = $injector.get('licenseService');
+      const licenseService = $injector.get('xpackWatcherLicenseService');
       const watchesSection = management.getSection('elasticsearch/watcher');
 
       if (licenseService.showLinks) {

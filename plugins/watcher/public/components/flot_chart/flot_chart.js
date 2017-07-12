@@ -1,7 +1,9 @@
+import { isFunction, debounce } from 'lodash';
 import { uiModules } from 'ui/modules';
 import template from './flot_chart.html';
 import './flot_chart.less';
 import $ from 'jquery-flot'; // webpackShim
+import { FLOT_EVENT_PLOT_HOVER_DEBOUNCE_MS } from './constants';
 
 const app = uiModules.get('xpack/watcher');
 
@@ -16,15 +18,43 @@ app.directive('flotChart', function () {
       data: '=',
 
       // See https://github.com/flot/flot/blob/master/API.md#plot-options
-      options: '='
+      options: '=',
+
+      // Search for "plothover" in https://github.com/flot/flot/blob/master/API.md
+      onPlotHover: '=',
+
     },
     controllerAs: 'flotChart',
     bindToController: true,
     link: ($scope, element) => {
-      $.plot(element, $scope.flotChart.data, $scope.flotChart.options);
+      $scope.flotChart.container = element;
     },
     controller: class FlotChartController {
-      constructor() {}
+      constructor($scope) {
+
+        $scope.$watchMulti([
+          'flotChart.data',
+          'flotChart.options'
+        ], ([data, options]) => {
+          this.plot = $.plot(this.container, data, options);
+        });
+
+        $scope.$watch('flotChart.onPlotHover', (onPlotHover) => {
+          this.container.unbind('plothover');
+
+          if (isFunction(onPlotHover)) {
+            this.container.bind('plothover', debounce((...params) => {
+              // We use $scope.$apply to tell Angular to trigger a digest whenever
+              // the supplied event handler function is called
+              $scope.$apply(() => onPlotHover(...params, this.plot));
+            }, FLOT_EVENT_PLOT_HOVER_DEBOUNCE_MS));
+          }
+        });
+
+        $scope.$on('$destroy', () => {
+          this.container.unbind('plothover');
+        });
+      }
     }
   };
 });

@@ -14,8 +14,7 @@ describe('execute_details', () => {
           ignoreCondition: 'foo2',
           alternativeInput: 'foo3',
           actionModes: 'foo4',
-          recordExecution: 'foo5',
-          watch: {}
+          recordExecution: 'foo5'
         };
       });
 
@@ -27,7 +26,6 @@ describe('execute_details', () => {
         expect(executeDetails.alternativeInput).to.be(props.alternativeInput);
         expect(executeDetails.actionModes).to.be(props.actionModes);
         expect(executeDetails.recordExecution).to.be(props.recordExecution);
-        expect(executeDetails.watch.constructor.name).to.be('Watch');
       });
 
     });
@@ -44,8 +42,7 @@ describe('execute_details', () => {
           ignoreCondition: 'foo3',
           alternativeInput: 'foo4',
           actionModes: 'foo5',
-          recordExecution: 'foo6',
-          watch: {}
+          recordExecution: 'foo6'
         };
       });
 

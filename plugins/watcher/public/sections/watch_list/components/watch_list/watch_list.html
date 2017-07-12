@@ -17,13 +17,10 @@
         </div>
 
         <div class="kuiToolBarSection">
-          <a
-            class="kuiButton kuiButton--primary"
-            href="#/management/elasticsearch/watcher/watches/new-watch"
-            data-test-subj="lnkAddWatch"
-          >
-            Add
-          </a>
+          <watch-type-select
+            class="watchTypeSelect"
+            on-change="watchList.onWatchTypeChange"
+          ></watch-type-select>
           <button
             class="kuiButton kuiButton--danger"
             ng-disabled="!watchList.hasSelectedWatches"

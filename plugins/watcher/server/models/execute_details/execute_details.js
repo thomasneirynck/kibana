@@ -1,4 +1,3 @@
-import { Watch } from '../watch';
 import { omit, isUndefined } from 'lodash';
 
 export class ExecuteDetails {
@@ -8,7 +7,6 @@ export class ExecuteDetails {
     this.alternativeInput = props.alternativeInput;
     this.actionModes = props.actionModes;
     this.recordExecution = props.recordExecution;
-    this.watch = Watch.fromDownstreamJSON(props.watch);
   }
 
   get upstreamJSON() {
@@ -22,16 +20,15 @@ export class ExecuteDetails {
       ignore_condition: this.ignoreCondition,
       alternative_input: this.alternativeInput,
       action_modes: this.actionModes,
-      record_execution: this.recordExecution,
-      watch: this.watch.upstreamJSON.watch
+      record_execution: this.recordExecution
     };
 
     return omit(result, isUndefined);
   }
 
   // generate ExecuteDetails object from kibana response
-  static fromDownstreamJSON(downstreamWatch) {
-    return new ExecuteDetails(downstreamWatch);
+  static fromDownstreamJSON(downstreamJSON) {
+    return new ExecuteDetails(downstreamJSON);
   }
 };
 

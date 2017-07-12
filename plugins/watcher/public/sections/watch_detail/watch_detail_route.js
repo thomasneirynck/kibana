@@ -27,7 +27,7 @@ routes
     },
     watch: function ($injector) {
       const $route = $injector.get('$route');
-      const watchService = $injector.get('watchService');
+      const watchService = $injector.get('xpackWatcherWatchService');
       const kbnUrl = $injector.get('kbnUrl');
 
       const notifier = new Notifier({ location: 'Watcher' });
@@ -46,7 +46,7 @@ routes
     },
     watchHistoryItems: function ($injector) {
       const $route = $injector.get('$route');
-      const watchService = $injector.get('watchService');
+      const watchService = $injector.get('xpackWatcherWatchService');
       const kbnUrl = $injector.get('kbnUrl');
 
       const notifier = new Notifier({ location: 'Watcher' });
@@ -64,7 +64,7 @@ routes
       });
     },
     checkLicense: ($injector) => {
-      const licenseService = $injector.get('licenseService');
+      const licenseService = $injector.get('xpackWatcherLicenseService');
       return licenseService.checkValidity();
     }
   },

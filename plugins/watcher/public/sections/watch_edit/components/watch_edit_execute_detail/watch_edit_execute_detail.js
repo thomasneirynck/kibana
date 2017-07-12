@@ -24,7 +24,7 @@ app.directive('watchEditExecuteDetail', function () {
     controllerAs: 'watchEditExecuteDetail',
     controller: class WatchEditExecuteDetailController {
       constructor($scope) {
-        this.executeDetails = new ExecuteDetails({}, { watch: this.watch });
+        this.executeDetails = new ExecuteDetails();
 
         this.isCollapsed = {
           trigger: true,

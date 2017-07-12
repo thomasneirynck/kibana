@@ -12,6 +12,8 @@ export const ACTION_TYPES = {
 
   SLACK: 'slack',
 
+  JIRA: 'jira',
+
   PAGERDUTY: 'pagerduty',
 
   UNKNOWN: 'unknown/invalid'

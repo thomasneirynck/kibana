@@ -18,6 +18,14 @@ app.directive('watchHistoryItem', function () {
     bindToController: true,
     controllerAs: 'watchHistoryItem',
     controller: class WatchHistoryItemController {
+      constructor() {
+        this.omitBreadcrumbPages = [
+          'watch',
+          'history-item',
+          this.watch.id
+        ];
+        this.breadcrumb = this.watch.displayName;
+      }
     }
   };
 });

@@ -1,0 +1,16 @@
+<div class="durationSelect">
+  <input
+    type="number"
+    name="{{durationSelect.sizeName}}"
+    class="durationSelectSize kuiTextInput watcherNumberInput"
+    min="0"
+    required
+    ng-model="durationSelect.size">
+  <select
+    class="durationSelectUnit kuiSelect"
+    name="{{durationSelect.unitName}}"
+    required
+    ng-model="durationSelect.unit"
+    ng-options="commonTimeUnit as timeUnit.labelPlural for (commonTimeUnit, timeUnit) in durationSelect.timeUnits"
+  ></select>
+<div>

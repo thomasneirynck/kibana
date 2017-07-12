@@ -42,18 +42,32 @@ describe('action', () => {
 
     describe('type getter method', () => {
 
-      it(`returns a value from ACTION_TYPES`, () => {
+      it(`returns a value from ACTION_TYPES when there is a valid model class`, () => {
         const upstreamJson = {
           id: 'my-action',
           actionJson: {
-            email: {
+            logging: {
+              'text': 'foo'
+            }
+          }
+        };
+        const action = Action.fromUpstreamJSON(upstreamJson);
+
+        expect(action.type).to.be(ACTION_TYPES.LOGGING);
+      });
+
+      it(`returns ACTION_TYPES.UNKNOWN when there is no valid model class`, () => {
+        const upstreamJson = {
+          id: 'my-action',
+          actionJson: {
+            unknown_action_type: {
               'foo': 'bar'
             }
           }
         };
         const action = Action.fromUpstreamJSON(upstreamJson);
 
-        expect(action.type).to.be(ACTION_TYPES.EMAIL);
+        expect(action.type).to.be(ACTION_TYPES.UNKNOWN);
       });
 
     });

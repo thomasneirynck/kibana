@@ -13,7 +13,7 @@ routes
   resolve: {
     watch: function ($injector) {
       const $route = $injector.get('$route');
-      const watchService = $injector.get('watchService');
+      const watchService = $injector.get('xpackWatcherWatchService');
       const kbnUrl = $injector.get('kbnUrl');
 
       const notifier = new Notifier({ location: 'Watcher' });
@@ -34,7 +34,7 @@ routes
       const $route = $injector.get('$route');
       const $filter = $injector.get('$filter');
       const moment = $filter('moment');
-      const watchHistoryService = $injector.get('watchHistoryService');
+      const watchHistoryService = $injector.get('xpackWatcherWatchHistoryService');
       const kbnUrl = $injector.get('kbnUrl');
 
       const notifier = new Notifier({ location: 'Watcher' });

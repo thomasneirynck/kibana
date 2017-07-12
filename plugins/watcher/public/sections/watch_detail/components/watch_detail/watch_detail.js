@@ -16,8 +16,8 @@ import { REFRESH_INTERVALS } from 'plugins/watcher/../common/constants';
 const app = uiModules.get('xpack/watcher');
 
 app.directive('watchDetail', function ($injector) {
-  const watchService = $injector.get('watchService');
-  const licenseService = $injector.get('licenseService');
+  const watchService = $injector.get('xpackWatcherWatchService');
+  const licenseService = $injector.get('xpackWatcherLicenseService');
 
   const config = $injector.get('config');
   const kbnUrl = $injector.get('kbnUrl');
@@ -49,6 +49,12 @@ app.directive('watchDetail', function ($injector) {
 
         this.actionStatusTableSortField = 'id';
         this.actionStatusTableSortReverse = false;
+
+        this.omitBreadcrumbPages = [
+          'watch',
+          this.watch.id
+        ];
+        this.breadcrumb = this.watch.displayName;
 
         // Reload watch history periodically
         const refreshInterval = $interval(() => this.loadWatchHistory(), REFRESH_INTERVALS.WATCH_HISTORY);
@@ -151,7 +157,7 @@ app.directive('watchDetail', function ($injector) {
       deleteWatch = () => {
         return watchService.deleteWatch(this.watch.id)
         .then(() => {
-          this.notifier.info(`Deleted Watch "${this.watch.id}"`);
+          this.notifier.info(`Deleted Watch "${this.watch.displayName}"`);
           this.close();
         })
         .catch(err => {

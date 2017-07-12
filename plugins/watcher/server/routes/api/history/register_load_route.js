@@ -3,13 +3,12 @@ import { callWithRequestFactory } from '../../../lib/call_with_request_factory';
 import { WatchHistoryItem } from '../../../models/watch_history_item';
 import { isEsErrorFactory } from '../../../lib/is_es_error_factory';
 import { wrapEsError, wrapUnknownError, wrapCustomError } from '../../../lib/error_wrappers';
-import { INDEX_NAMES, TYPE_NAMES } from '../../../../common/constants';
+import { INDEX_NAMES } from '../../../../common/constants';
 import { licensePreRoutingFactory } from'../../../lib/license_pre_routing_factory';
 
 function fetchHistoryItem(callWithRequest, watchHistoryItemId) {
   return callWithRequest('search', {
     index: INDEX_NAMES.WATCHER_HISTORY,
-    type: TYPE_NAMES.WATCH_HISTORY_ITEM,
     body: {
       query: {
         bool: {

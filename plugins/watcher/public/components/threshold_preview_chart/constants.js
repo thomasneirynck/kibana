@@ -6,7 +6,7 @@ export const COLORS = {
 };
 
 export const LINE_WIDTHS = {
-  THRESHOLD_LINE: 3
+  THRESHOLD_LINE: 2
 };
 
 export const MARGINS = {

@@ -1,0 +1,30 @@
+<expression-item
+  item-id="{{ thresholdWatchAggField.itemId }}"
+  description="thresholdWatchAggField.itemDescription"
+  value="thresholdWatchAggField.itemValue"
+  is-open="thresholdWatchAggField.isOpen"
+  is-visible="thresholdWatchAggField.isVisible"
+  on-open="thresholdWatchAggField.onOpen"
+  on-close="thresholdWatchAggField.onClose"
+  is-valid="thresholdWatchAggField.isValid"
+  is-dirty="thresholdWatchAggField.isDirty"
+  form="thresholdWatchAggField.form"
+>
+  <form name="thresholdWatchAggField.form" novalidate>
+    <div
+      class="kuiInputNote kuiInputNote--danger"
+      ng-show="thresholdWatchAggField.isValidationMessageVisible('aggField', 'required')"
+    >
+      Please select a field.
+    </div>
+    <select
+      class="kuiSelect"
+      name="aggField"
+      required
+      ng-model="thresholdWatchAggField.aggField"
+      ng-options="aggField as aggField.name group by aggField.normalizedType for aggField in thresholdWatchAggField.aggFields"
+    >
+      <option value="">Select a field...</option>
+    </select>
+  </form>
+</expression-item>

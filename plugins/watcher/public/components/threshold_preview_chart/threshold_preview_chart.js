@@ -1,8 +1,10 @@
 import moment from 'moment';
-import { set, first, last, isNumber } from 'lodash';
+import 'ui/filters/moment';
+import { isNumber, forEach, merge } from 'lodash';
 import { uiModules } from 'ui/modules';
 import { TimeBucketsProvider } from 'ui/time_buckets';
 import 'plugins/watcher/components/flot_chart';
+import 'plugins/watcher/components/chart_tooltip';
 import template from './threshold_preview_chart.html';
 import './threshold_preview_chart.less';
 import { COLORS, LINE_WIDTHS, MARGINS } from './constants';
@@ -13,18 +15,6 @@ app.directive('thresholdPreviewChart', function ($injector) {
   const config = $injector.get('config');
   const Private = $injector.get('Private');
   const TimeBuckets = Private(TimeBucketsProvider);
-
-  function getXAxisDateFormatFor(series) {
-    const timeBounds = {
-      min: first(series)[0],
-      max: last(series)[0]
-    };
-
-    const timeBuckets = new TimeBuckets();
-    timeBuckets.setBounds(timeBounds);
-    timeBuckets.setInterval('auto');
-    return timeBuckets.getScaledDateFormat();
-  }
 
   moment.tz.setDefault(config.get('dateFormat:tz'));
 
@@ -40,57 +30,155 @@ app.directive('thresholdPreviewChart', function ($injector) {
       // - Series array must be sorted in ascending order of timestamp values
       series: '=',
 
+      startDate: '=',
+      endDate: '=',
+
       // A single y-axis value
       thresholdValue: '='
     },
     controllerAs: 'thresholdPreviewChart',
     bindToController: true,
     controller: class ThresholdPreviewChartController {
-      constructor() {
-        this.data = [ this.series ];
-        this.options = {};
+      constructor($scope) {
 
-        // Make it an area chart
-        set(this.options, 'series.lines.show', true);
-        set(this.options, 'series.lines.fill', true);
+        this.options = {
+          colors: [ COLORS.SERIES_LINE ],
+          grid: {
+            aboveData: true,
+            borderColor: COLORS.CHART_BORDER,
+            borderWidth: { top: 0, right: 0, bottom: 2, left: 2 },
+            hoverable: true,
+            labelMargin: MARGINS.AXES_LABELS
+          },
+          series: {
+            lines: {
+              show: true,
+              fill: true,
+              fillColor: COLORS.AREA_FILL
+            }
+          },
+          yaxis: {
+            tickLength: 0
+          }
+        };
 
-        // Set series line color
-        set(this.options, 'colors', [ COLORS.SERIES_LINE ]);
+        $scope.$watch('thresholdPreviewChart.series', (series) => {
+          this.data = [ series ];
 
-        // Set area fill color
-        set(this.options, 'series.lines.fillColor', COLORS.AREA_FILL);
-        set(this.options, 'grid.aboveData', true);
+          const timeBuckets = new TimeBuckets();
+          timeBuckets.setBounds({
+            min: this.startDate,
+            max: this.endDate
+          });
+          const momentFormat = timeBuckets.getScaledDateFormat();
 
-        // Draw threshold line, if threshold value is provided
-        if (this.thresholdValue && isNumber(this.thresholdValue)) {
-          const thresholdLine = {
-            yaxis: {
-              from: this.thresholdValue,
-              to: this.thresholdValue
-            },
-            color: COLORS.THRESHOLD_LINE,
-            lineWidth: LINE_WIDTHS.THRESHOLD_LINE
+          const options = {
+            xaxis: {
+              mode: 'time',
+              min: this.startDate,
+              max: this.endDate,
+              tickFormatter: (val) => moment(val).format(momentFormat)
+            }
           };
-          set(this.options, 'grid.markings', [ thresholdLine ]);
+
+          this.updateOptions(options);
+        });
+
+        $scope.$watch('thresholdPreviewChart.thresholdValue', (thresholdValue) => {
+          const parsedThreshold = Number.parseFloat(thresholdValue);
+
+          const options = {
+            grid: {
+              markings: []
+            }
+          };
+
+          if (isNumber(parsedThreshold)) {
+            const thresholdLine = {
+              yaxis: {
+                from: parsedThreshold,
+                to: parsedThreshold
+              },
+              color: COLORS.THRESHOLD_LINE,
+              lineWidth: LINE_WIDTHS.THRESHOLD_LINE
+            };
+
+            options.grid.markings.push(thresholdLine);
+          }
+
+          this.updateOptions(options);
+        });
+      }
+
+      updateOptions = (options) => {
+        const yAxisRange = this.buildYAxisRange();
+        this.options = merge({}, this.options, options, yAxisRange);
+      }
+
+      buildYAxisRange = () => {
+        const parsedThreshold = Number.parseFloat(this.thresholdValue);
+        const series = this.data[0];
+
+        if (!series || !isNumber(parsedThreshold)) {
+          return {
+            yaxis: {
+              min: null,
+              max: null
+            }
+          };
         }
 
-        // Tell flot that x-axis values are timestamps and set the time format
-        set(this.options, 'xaxis.mode', 'time');
-        set(this.options, 'xaxis.tickFormatter', (val) => moment(val).format(getXAxisDateFormatFor(this.series)));
+        const VALUE_INDEX = 1;
+        const options = {
+          yaxis: {
+            min: Number.POSITIVE_INFINITY,
+            max: Number.NEGATIVE_INFINITY
+          }
+        };
 
-        // Hide y-axis ticks (these are the lines in the chart background that go across the chart by default)
-        set(this.options, 'yaxis.tickLength', 0);
+        forEach(series, seriesItem => {
+          const itemValue = seriesItem[VALUE_INDEX];
 
-        // Setup borders
-        set(this.options, 'grid.borderWidth', { top: 0, right: 0, bottom: 2, left: 2 });
-        set(this.options, 'grid.borderColor', COLORS.CHART_BORDER);
+          if (itemValue !== null) {
+            options.yaxis.min = Math.min(options.yaxis.min, itemValue, parsedThreshold);
+            options.yaxis.max = Math.max(options.yaxis.max, itemValue, parsedThreshold);
+          }
+        });
 
-        // Put some distance between axes and their labels
-        set(this.options, 'grid.labelMargin', MARGINS.AXES_LABELS);
+        return options;
+      }
+
+      onPlotHover = (event, pos, item, plot) => {
+        if (!Boolean(item)) {
+          this.dataPointTooltip = undefined;
+          return;
+        }
+
+        const plotLeft = plot.offset().left - window.pageXOffset;
+        const plotTop = plot.offset().top - window.pageYOffset;
+
+        this.dataPointTooltip = {
+          plotPosition: {
+            left: plotLeft,
+            top: plotTop,
+            right: plotLeft + plot.width(),
+            bottom: plotTop + plot.height()
+          },
+          pointPosition: {
+            left: item.pageX - window.pageXOffset,
+            top: item.pageY - window.pageYOffset
+          },
+          xValue: item.datapoint[0],
+          yValue: item.datapoint[1]
+        };
       }
 
       get isDataExists() {
         return Boolean(this.series);
+      }
+
+      formatAsMoment = (msSinceEpoch) => {
+        return moment(msSinceEpoch);
       }
     }
   };

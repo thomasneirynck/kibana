@@ -1,5 +1,7 @@
 import chrome from 'ui/chrome';
-import { ROUTES } from '../../../common/constants';
+import { reduce } from 'lodash';
+import { ROUTES, WATCH_TYPES, ACTION_MODES } from '../../../common/constants';
+import { ExecuteDetails } from 'plugins/watcher/models/execute_details';
 import { Watch } from 'plugins/watcher/models/watch';
 import { WatchStatus } from 'plugins/watcher/models/watch_status';
 import { WatchHistoryItem } from 'plugins/watcher/models/watch_history_item';
@@ -10,11 +12,9 @@ export class WatchService {
     this.basePath = chrome.addBasePath(ROUTES.API_ROOT);
   }
 
-  newWatch() {
-    return this.$http.get(`${this.basePath}/watch`)
-    .then(response => {
-      return Watch.fromUpstreamJSON(response.data.watch);
-    });
+  newWatch(watchType = WATCH_TYPES.JSON) {
+    const WatchType = Watch.getWatchTypes()[watchType];
+    return new WatchType();
   }
 
   loadWatch(id) {
@@ -109,12 +109,53 @@ export class WatchService {
 
   /**
    * @param executeDetailsModel ExecuteDetailsModel instance with options on how to execute the watch
+   * @param watchModel Watch instance
    * @return Promise which returns a populated WatchHistoryItem on success
    */
-  executeWatch(executeDetailsModel) {
-    return this.$http.put(`${this.basePath}/watch/execute`, executeDetailsModel.upstreamJSON)
+  executeWatch(executeDetailsModel, watchModel) {
+    return this.$http.put(`${this.basePath}/watch/execute`, {
+      executeDetails: executeDetailsModel.upstreamJSON,
+      watch: watchModel.upstreamJSON
+    })
     .then(response => {
       return WatchHistoryItem.fromUpstreamJSON(response.data.watchHistoryItem);
+    })
+    .catch(e => {
+      throw e.data.message;
+    });
+  }
+
+  /**
+   * @param watchModel Watch instance
+   * @param actionModel Watch instance
+   * @return Promise which returns a populated WatchHistoryItem on success
+   */
+  simulateWatchAction(watchModel, actionModel) {
+    const actionModes = reduce(watchModel.actions, (acc, action) => {
+      acc[action.id] = (action === actionModel) ?
+        ACTION_MODES.FORCE_EXECUTE :
+        ACTION_MODES.SKIP;
+      return acc;
+    }, {});
+
+    const executeDetails = new ExecuteDetails({
+      triggeredTime: 'now',
+      scheduledTime: 'now',
+      ignoreCondition: true,
+      actionModes,
+      recordExecution: false
+    });
+
+    return this.executeWatch(executeDetails, watchModel);
+  }
+
+  visualizeWatch(watchModel, visualizeOptions) {
+    return this.$http.post(`${this.basePath}/watch/visualize`, {
+      watch: watchModel.upstreamJSON,
+      options: visualizeOptions.upstreamJSON
+    })
+    .then(response => {
+      return response.data;
     })
     .catch(e => {
       throw e.data.message;

@@ -1,11 +1,14 @@
-import { PLUGIN } from '../../../common/constants';
+import chrome from 'ui/chrome';
+import { PLUGIN, ROUTES } from '../../../common/constants';
 import { Notifier } from 'ui/notify/notifier';
 
 export class LicenseService {
-  constructor(xpackInfoService, kbnUrlService, $timeout) {
+  constructor(xpackInfoService, kbnUrlService, $timeout, $http) {
+    this.$http = $http;
     this.xpackInfoService = xpackInfoService;
     this.kbnUrlService = kbnUrlService;
     this.$timeout = $timeout;
+    this.basePath = chrome.addBasePath(ROUTES.API_ROOT);
 
     this.notifier = new Notifier({ location: 'Watcher' });
   }
@@ -46,6 +49,13 @@ export class LicenseService {
         this.notifyAndRedirect();
         return reject();
       }, 10); // To allow latest XHR call to update license info
+    });
+  }
+
+  refreshLicense() {
+    return this.$http.get(`${this.basePath}/license/refresh`)
+    .then(response => {
+      return response.data.success;
     });
   }
 }

@@ -1,0 +1,66 @@
+<div class="kuiFormSection">
+  <label
+    for="to_{{watchEmailAction.action.id}}"
+    class="kuiFormLabel"
+  >
+    To e-mail address
+  </label>
+  <input
+    type="text"
+    id="to_{{watchEmailAction.action.id}}"
+    name="to"
+    class="kuiTextInput fullWidth"
+    ng-model="watchEmailAction.to"
+    required
+    input-focus
+  >
+  <div
+    class="kuiInputNote kuiInputNote--danger"
+    ng-show="watchEmailAction.isValidationMessageVisible('to', 'required')"
+  >
+    To e-mail address is required.
+  </div>
+</div>
+<div class="kuiFormSection">
+  <label
+    for="subject_{{watchEmailAction.action.id}}"
+    class="kuiFormLabel"
+  >
+    Subject
+  </label>
+  <input
+    type="text"
+    id="subject_{{watchEmailAction.action.id}}"
+    name="subject"
+    class="kuiTextInput fullWidth"
+    ng-model="watchEmailAction.action.subject"
+    required
+  >
+  <div
+    class="kuiInputNote kuiInputNote--danger"
+    ng-show="watchEmailAction.isValidationMessageVisible('subject', 'required')"
+  >
+    Subject is required.
+  </div>
+</div>
+<div class="kuiFormSection">
+  <label
+    for="body_{{watchEmailAction.action.id}}"
+    class="kuiFormLabel"
+  >
+    Body
+  </label>
+  <textarea
+    id="body_{{watchEmailAction.action.id}}"
+    name="body"
+    class="kuiTextArea fullWidth"
+    ng-model="watchEmailAction.action.body"
+    required
+  ></textarea>
+  <div
+    class="kuiInputNote kuiInputNote--danger"
+    ng-show="watchEmailAction.isValidationMessageVisible('body', 'required')"
+  >
+    Body is required.
+  </div>
+</div>

@@ -1,0 +1,49 @@
+import { uiModules } from 'ui/modules';
+import template from './threshold_watch_threshold_level.html';
+import { ThresholdWatchBaseController } from '../threshold_watch_base';
+const app = uiModules.get('xpack/watcher');
+
+app.directive('thresholdWatchThresholdLevel', function () {
+  return {
+    restrict: 'E',
+    template: template,
+    scope: {
+      itemId: '@',
+      comparators: '=',
+      thresholdComparator: '=',
+      threshold: '=',
+      isOpen: '=',
+      isVisible: '=',
+      onOpen: '=',
+      onClose: '=',
+      onChange: '=',
+      onValid: '=',
+      onInvalid: '=',
+      onDirty: '=',
+      onPristine: '='
+    },
+    bindToController: true,
+    controllerAs: 'thresholdWatchThresholdLevel',
+    controller: class ThresholdWatchThresholdLevelController extends ThresholdWatchBaseController {
+      constructor($scope) {
+        super($scope);
+
+        $scope.$watchMulti([
+          'thresholdWatchThresholdLevel.thresholdComparator',
+          'thresholdWatchThresholdLevel.threshold'
+        ], this.onChange);
+
+        $scope.$watch('thresholdWatchThresholdLevel.form.$valid', this.checkValidity);
+        $scope.$watch('thresholdWatchThresholdLevel.form.$dirty', this.checkDirty);
+      }
+
+      get itemDescription() {
+        return this.thresholdComparator ? this.thresholdComparator.label : '';
+      }
+
+      get itemValue() {
+        return this.threshold;
+      }
+    }
+  };
+});

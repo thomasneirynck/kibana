@@ -1,6 +1,8 @@
 import { resolve } from 'path';
 import { registerFieldsRoutes } from './server/routes/api/fields';
+import { registerSettingsRoutes } from './server/routes/api/settings';
 import { registerHistoryRoutes } from './server/routes/api/history';
+import { registerLicenseRoutes } from './server/routes/api/license';
 import { registerWatchesRoutes } from './server/routes/api/watches';
 import { registerWatchRoutes } from './server/routes/api/watch';
 import { registerLicenseChecker } from './server/lib/register_license_checker';
@@ -25,6 +27,8 @@ export const pluginDefinition = {
 
     registerFieldsRoutes(server);
     registerHistoryRoutes(server);
+    registerLicenseRoutes(server);
+    registerSettingsRoutes(server);
     registerWatchesRoutes(server);
     registerWatchRoutes(server);
   }
