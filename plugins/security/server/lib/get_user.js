@@ -1,4 +1,4 @@
-import { getClient } from './get_client_shield';
+import { getClient } from '../../../../server/lib/get_client_shield';
 import { getIsUserInDashboardMode } from './get_is_user_in_dashboard_mode';
 
 export function getUserProvider(server) {

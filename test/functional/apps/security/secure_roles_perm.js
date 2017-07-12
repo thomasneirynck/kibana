@@ -68,7 +68,7 @@ export default function ({ getService, getPageObjects }) {
 
     it('Kibana User navigating to Discover and trying to generate CSV gets - Authorization Error ', async function () {
       const expectedMessage =
-        'Reporting: Error 403 Forbidden: Sorry, you are not authorized to create csv reports';
+        `Reporting: Error 403 Forbidden: Sorry, you don't have access to Reporting`;
       await PageObjects.common.navigateToApp('discover');
       await PageObjects.discover.loadSavedSearch('A Saved Search');
       log.debug('click Reporting button');

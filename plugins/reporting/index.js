@@ -62,6 +62,9 @@ export const reporting = (kibana) => {
           }).default(),
         }).default(),
         encryptionKey: Joi.string(),
+        roles: Joi.object({
+          allow: Joi.array().items(Joi.string()).default(['reporting_user']),
+        }).default(),
         index: Joi.string().default('.reporting')
       }).default();
     },

@@ -1,9 +1,8 @@
 import boom from 'boom';
 import { API_BASE_URL } from '../../common/constants';
 import { enqueueJobFactory } from '../lib/enqueue_job';
-import { getUserFactory } from '../lib/get_user';
 import { reportingFeaturePreRoutingFactory } from '../lib/reporting_feature_pre_routing';
-import { userPreRoutingFactory } from '../lib/user_pre_routing';
+import { authorizedUserPreRoutingFactory } from '../lib/authorized_user_pre_routing';
 import rison from 'rison-node';
 import querystring from 'querystring';
 
@@ -17,12 +16,10 @@ export function main(server) {
 
   const enqueueJob = enqueueJobFactory(server);
   const reportingFeaturePreRouting = reportingFeaturePreRoutingFactory(server);
-  const userPreRouting = userPreRoutingFactory(server);
+  const authorizedUserPreRouting = authorizedUserPreRoutingFactory(server);
 
-  const getUser = getUserFactory(server);
-
-  function getConfig(getFeatureId) {
-    const preRouting = [ userPreRouting ];
+  function getRouteConfig(getFeatureId) {
+    const preRouting = [ { method: authorizedUserPreRouting, assign: 'user' } ];
     if (getFeatureId) {
       preRouting.push(reportingFeaturePreRouting(getFeatureId));
     }
@@ -34,7 +31,7 @@ export function main(server) {
   }
 
   function getStaticFeatureConfig(featureId) {
-    return getConfig(() => featureId);
+    return getRouteConfig(() => featureId);
   }
 
   // show error about method to user
@@ -46,7 +43,7 @@ export function main(server) {
       err.output.headers.allow = 'POST';
       reply(err);
     },
-    config: getConfig(),
+    config: getRouteConfig(),
   });
 
   function createLegacyPdfRoute({ path, objectType }) {
@@ -99,11 +96,11 @@ export function main(server) {
         handleError(exportType, reply, err);
       }
     },
-    config: getConfig(request => request.params.exportType),
+    config: getRouteConfig(request => request.params.exportType),
   });
 
   async function handler(exportTypeId, jobParams, request, reply) {
-    const user = await getUser(request);
+    const user = request.pre.user;
     const headers = request.headers;
 
     const job = await enqueueJob(exportTypeId, jobParams, user, headers, request);

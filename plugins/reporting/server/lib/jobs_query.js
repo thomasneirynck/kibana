@@ -1,17 +1,18 @@
-import { get, set } from 'lodash';
-import { badRequest } from 'boom';
+import { get } from 'lodash';
 import { QUEUE_DOCTYPE } from '../../common/constants';
 import { oncePerServer } from './once_per_server';
-import { getUserFactory } from './get_user';
 
 const defaultSize = 10;
 
 function jobsQueryFn(server) {
-  const getUser = getUserFactory(server);
   const index = server.config().get('xpack.reporting.index');
-  const { callWithRequest, errors:esErrors } = server.plugins.elasticsearch.getCluster('admin');
+  const { callWithInternalUser, errors:esErrors } = server.plugins.elasticsearch.getCluster('admin');
 
-  function execQuery(type, body, request) {
+  function getUsername(user) {
+    return get(user, 'username', false);
+  }
+
+  function execQuery(type, body) {
     const defaultBody = {
       search: {
         _source : {
@@ -30,7 +31,7 @@ function jobsQueryFn(server) {
       body: Object.assign(defaultBody[type] || {}, body)
     };
 
-    return callWithRequest(request, type, query)
+    return callWithInternalUser(type, query)
     .catch((err) => {
       if (err instanceof esErrors['401']) return;
       if (err instanceof esErrors['403']) return;
@@ -44,140 +45,109 @@ function jobsQueryFn(server) {
   }
 
   return {
-    list(jobTypes, request, page = 0, size = defaultSize) {
-      const showAll = get(request, 'query.all', false);
-      const filters = [
-        { terms: { jobtype: jobTypes } },
-      ];
+    list(jobTypes, user, page = 0, size = defaultSize) {
+      const username = getUsername(user);
 
-      return getUser(request)
-      .then((user) => {
-        const body = {
-          size,
-          from: size * page,
-        };
-
-        if (!showAll && !user) {
-          throw badRequest(
-            `Failed to get the current user's reports because there is no user associated with this request`
-          );
-        }
-
-        if (!showAll) {
-          const username = get(user, 'username');
-          filters.push({ term: { created_by: username } });
-        }
-
-        set(body, 'query', {
+      const body = {
+        size,
+        from: size * page,
+        query: {
           constant_score: {
             filter: {
               bool: {
-                must: filters
+                must: [
+                   { terms: { jobtype: jobTypes } },
+                   { term: { created_by: username } },
+                ]
               }
             }
           }
-        });
+        },
+      };
 
-        return getHits(execQuery('search', body, request));
-      });
+      return getHits(execQuery('search', body));
     },
 
-    listCompletedSince(jobTypes, request, size = defaultSize, sinceInMs) {
-      return getUser(request)
-      .then((user) => {
-        const filters = [
-          { range: { completed_at: { gt: sinceInMs, format: 'epoch_millis' } } },
-          { terms: { jobtype: jobTypes } },
-        ];
-        if (user) {
-          const username = get(user, 'username');
-          filters.push({ term: { created_by: username } });
-        }
+    listCompletedSince(jobTypes, user, size = defaultSize, sinceInMs) {
+      const username = getUsername(user);
 
-        const body = {
-          size,
-          sort: { completed_at: 'asc' },
-          query: {
-            constant_score: {
-              filter: {
-                bool: {
-                  must: filters
-                }
-              }
-            }
-          },
-        };
-
-        return getHits(execQuery('search', body, request));
-      });
-    },
-
-    count(jobTypes, request) {
-      const showAll = get(request, 'query.all', false);
-      const filters = [
-        { terms: { jobtype: jobTypes } },
-      ];
-
-      return getUser(request)
-      .then((user) => {
-        const body = {};
-
-        if (!showAll) {
-          const username = get(user, 'username');
-          filters.push({ term: { created_by: username } });
-        }
-
-        set(body, 'query', {
+      const body = {
+        size,
+        sort: { completed_at: 'asc' },
+        query: {
           constant_score: {
             filter: {
               bool: {
-                must: filters
+                must:  [
+                  { range: { completed_at: { gt: sinceInMs, format: 'epoch_millis' } } },
+                  { terms: { jobtype: jobTypes } },
+                  { term: { created_by: username } },
+                ]
               }
             }
           }
-        });
+        },
+      };
 
-        return execQuery('count', body, request)
-        .then((doc) => {
-          if (!doc) return 0;
-          return doc.count;
-        });
+      return getHits(execQuery('search', body));
+    },
+
+    count(jobTypes, user) {
+      const username = getUsername(user);
+
+      const body = {
+        query: {
+          constant_score: {
+            filter: {
+              bool: {
+                must: [
+                  { terms: { jobtype: jobTypes } },
+                  { term: { created_by: username } },
+                ]
+              }
+            }
+          }
+        }
+      };
+
+      return execQuery('count', body)
+      .then((doc) => {
+        if (!doc) return 0;
+        return doc.count;
       });
     },
 
-    get(request, id, opts = {}) {
+    get(user, id, opts = {}) {
       if (!id) return Promise.resolve();
 
-      return getUser(request)
-      .then(() => {
-        if (!id) return;
+      const username = getUsername(user);
 
-        const body = {
-          query: {
-            constant_score: {
-              filter: {
-                bool: {
-                  filter: [
-                    { term: { _id: id } },
-                  ],
-                }
+      const body = {
+        query: {
+          constant_score: {
+            filter: {
+              bool: {
+                must: [
+                  { term: { _id: id } },
+                  { term: { created_by: username } }
+                ],
               }
             }
-          },
-          size: 1,
+          }
+        },
+        size: 1,
+      };
+
+      if (opts.includeContent) {
+        body._source = {
+          excludes: []
         };
+      }
 
-        if (opts.includeContent) {
-          body._source = {
-            excludes: []
-          };
-        }
-
-        return getHits(execQuery('search', body, request))
-        .then((hits) => {
-          if (hits.length !== 1) return;
-          return hits[0];
-        });
+      return getHits(execQuery('search', body))
+      .then((hits) => {
+        if (hits.length !== 1) return;
+        return hits[0];
       });
     }
   };

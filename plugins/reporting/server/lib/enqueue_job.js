@@ -4,9 +4,7 @@ import { oncePerServer } from './once_per_server';
 
 function enqueueJobFn(server) {
   const jobQueue = server.plugins.reporting.queue;
-  const filterHeaders = server.plugins.elasticsearch.filterHeaders;
   const queueConfig = server.config().get('xpack.reporting.queue');
-  const whitelistHeaders = server.config().get('elasticsearch.requestHeadersWhitelist');
   const exportTypesRegistry = server.plugins.reporting.exportTypesRegistry;
 
   return async function enqueueJob(exportTypeId, jobParams, user, headers, request) {
@@ -14,14 +12,9 @@ function enqueueJobFn(server) {
     const createJob = exportType.createJobFactory(server);
     const payload = await createJob(jobParams, headers, request);
 
-    const defaultHeaders = {
-      Authorization: null
-    };
-
     const options = {
       timeout: queueConfig.timeout,
       created_by: get(user, 'username', false),
-      headers: Object.assign({}, defaultHeaders, filterHeaders(headers, whitelistHeaders)),
     };
 
     return new Promise((resolve, reject) => {

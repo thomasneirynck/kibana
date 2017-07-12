@@ -7,9 +7,9 @@ function jobResponseHandlerFn(server) {
   const jobsQuery = jobsQueryFactory(server);
   const getDocumentPayload = getDocumentPayloadFactory(server);
 
-  return function jobResponseHandler(validJobTypes, request, reply, params, opts = {}) {
+  return function jobResponseHandler(validJobTypes, user, reply, params, opts = {}) {
     const { docId } = params;
-    jobsQuery.get(request, docId, { includeContent: !opts.excludeContent })
+    jobsQuery.get(user, docId, { includeContent: !opts.excludeContent })
     .then((doc) => {
       if (!doc) return reply(boom.notFound());
 

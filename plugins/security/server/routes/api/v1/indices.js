@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { getClient } from '../../../lib/get_client_shield';
+import { getClient } from '../../../../../../server/lib/get_client_shield';
 import { wrapError } from '../../../lib/errors';
 
 export function initIndicesApi(server) {

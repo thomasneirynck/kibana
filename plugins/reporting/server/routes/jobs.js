@@ -2,7 +2,7 @@ import boom from 'boom';
 import { API_BASE_URL } from '../../common/constants';
 import { jobsQueryFactory } from '../lib/jobs_query';
 import { reportingFeaturePreRoutingFactory } from'../lib/reporting_feature_pre_routing';
-import { userPreRoutingFactory } from '../lib/user_pre_routing';
+import { authorizedUserPreRoutingFactory } from '../lib/authorized_user_pre_routing';
 import { jobResponseHandlerFactory } from '../lib/job_response_handler';
 
 const mainEntry = `${API_BASE_URL}/jobs`;
@@ -11,10 +11,19 @@ const API_TAG = 'api';
 export function jobs(server) {
   const jobsQuery = jobsQueryFactory(server);
   const reportingFeaturePreRouting = reportingFeaturePreRoutingFactory(server);
-  const userPreRouting = userPreRoutingFactory(server);
+  const authorizedUserPreRouting = authorizedUserPreRoutingFactory(server);
   const jobResponseHandler = jobResponseHandlerFactory(server);
 
   const managementPreRouting = reportingFeaturePreRouting(() => 'management');
+
+  function getRouteConfig() {
+    return {
+      pre: [
+        { method: authorizedUserPreRouting, assign: 'user' },
+        { method: managementPreRouting, assign: 'management' },
+      ],
+    };
+  }
 
   // list jobs in the queue, paginated
   server.route({
@@ -24,14 +33,10 @@ export function jobs(server) {
       const page = parseInt(request.query.page) || 0;
       const size = Math.min(100, parseInt(request.query.size) || 10);
 
-      const results = jobsQuery.list(request.pre.management.jobTypes, request, page, size);
+      const results = jobsQuery.list(request.pre.management.jobTypes, request.pre.user, page, size);
       reply(results);
     },
-    config: {
-      pre: [
-        { method: managementPreRouting, assign: 'management' }
-      ],
-    }
+    config: getRouteConfig(),
   });
 
   // list all completed jobs since a specified time
@@ -42,14 +47,10 @@ export function jobs(server) {
       const size = Math.min(100, parseInt(request.query.size) || 10);
       const sinceInMs = Date.parse(request.query.since) || null;
 
-      const results = jobsQuery.listCompletedSince(request.pre.management.jobTypes, request, size, sinceInMs);
+      const results = jobsQuery.listCompletedSince(request.pre.management.jobTypes, request.pre.user, size, sinceInMs);
       reply(results);
     },
-    config: {
-      pre: [
-        { method: managementPreRouting, assign: 'management' }
-      ],
-    }
+    config: getRouteConfig(),
   });
 
   // return the count of all jobs in the queue
@@ -57,14 +58,10 @@ export function jobs(server) {
     path: `${mainEntry}/count`,
     method: 'GET',
     handler: (request, reply) => {
-      const results = jobsQuery.count(request.pre.management.jobTypes, request);
+      const results = jobsQuery.count(request.pre.management.jobTypes, request.pre.user);
       reply(results);
     },
-    config: {
-      pre: [
-        { method: managementPreRouting, assign: 'management' }
-      ],
-    }
+    config: getRouteConfig(),
   });
 
   // return the raw output from a job
@@ -74,7 +71,7 @@ export function jobs(server) {
     handler: (request, reply) => {
       const { docId } = request.params;
 
-      jobsQuery.get(request, docId, { includeContent: true })
+      jobsQuery.get(request.pre.user, docId, { includeContent: true })
       .then((doc) => {
         if (!doc) {
           return reply(boom.notFound());
@@ -88,11 +85,7 @@ export function jobs(server) {
         reply(doc._source.output);
       });
     },
-    config: {
-      pre: [
-        { method: managementPreRouting, assign: 'management' }
-      ],
-    }
+    config: getRouteConfig(),
   });
 
   // trigger a download of the output from a job
@@ -102,13 +95,10 @@ export function jobs(server) {
     handler: (request, reply) => {
       const { docId } = request.params;
 
-      jobResponseHandler(request.pre.management.jobTypes, request, reply, { docId });
+      jobResponseHandler(request.pre.management.jobTypes, request.pre.user, reply, { docId });
     },
     config: {
-      pre: [
-        userPreRouting,
-        { method: managementPreRouting, assign: 'management' },
-      ],
+      ...getRouteConfig(),
       tags: [API_TAG],
     },
   });

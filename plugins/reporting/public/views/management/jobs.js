@@ -1,35 +1,14 @@
 import 'angular-paging';
 import 'plugins/reporting/services/job_queue';
 import 'plugins/reporting/less/main.less';
-import 'plugins/reporting/services/feature_check';
+import { Notifier } from 'ui/notify/notifier';
+import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 
 import routes from 'ui/routes';
 import template from 'plugins/reporting/views/management/jobs.html';
 
 const jobPollingDelay = 5000;
 const pageSize = 10;
-
-function getJobs(reportingJobQueue, showAll, page = 0) {
-  return reportingJobQueue.list(page, showAll)
-  .then((jobs) => {
-    return reportingJobQueue.total(showAll)
-    .then((total) => {
-      const mappedJobs = mapJobs(jobs);
-      return {
-        jobs: mappedJobs,
-        total: total,
-        pages: Math.ceil(total / pageSize),
-      };
-    });
-  })
-  .catch(() => {
-    return {
-      jobs: [],
-      total: 0,
-      pages: 1,
-    };
-  });
-}
 
 function mapJobs(jobs) {
   return jobs.map((job) => {
@@ -52,22 +31,61 @@ function mapJobs(jobs) {
 routes.when('/management/kibana/reporting', {
   template,
   controllerAs: 'jobsCtrl',
-  controller($scope, $route, $window, $interval, reportingJobQueue, reportingFeatureCheck) {
+  controller($scope, $route, $window, $interval, reportingJobQueue, kbnUrl, Private) {
+    const notifier = new Notifier({ location: 'Reporting' });
+    const xpackInfo = Private(XPackInfoProvider);
     this.loading = false;
     this.pageSize = pageSize;
     this.currentPage = 1;
     this.reportingJobs = [];
-    this.shieldEnabled = reportingFeatureCheck.shield();
-    this.showMine = true;
+
+    const licenseAllowsToShowThisPage = () => {
+      return xpackInfo.get('features.reporting.management.showLinks')
+        && xpackInfo.get('features.reporting.management.enableLinks');
+    };
+
+    const notifyAndRedirectToManagementOverviewPage = () => {
+      notifier.error(xpackInfo.get('features.reporting.management.message'));
+      kbnUrl.redirect('/management');
+      return Promise.reject();
+    };
+
+    const getJobs = (page = 0) => {
+      return reportingJobQueue.list(page)
+      .then((jobs) => {
+        return reportingJobQueue.total()
+        .then((total) => {
+          const mappedJobs = mapJobs(jobs);
+          return {
+            jobs: mappedJobs,
+            total: total,
+            pages: Math.ceil(total / pageSize),
+          };
+        });
+      })
+      .catch((err) => {
+        if (!licenseAllowsToShowThisPage()) {
+          return notifyAndRedirectToManagementOverviewPage();
+        }
+
+        if (err.status !== 401 && err.status !== 403) {
+          notifier.error(err.statusText || 'Request failed');
+        }
+
+        return {
+          jobs: [],
+          total: 0,
+          pages: 1,
+        };
+      });
+    };
 
     const toggleLoading = () => {
       this.loading = !this.loading;
     };
 
     const updateJobs = () => {
-      const showAll = !this.shieldEnabled || !this.showMine;
-
-      return getJobs(reportingJobQueue, showAll, this.currentPage - 1)
+      return getJobs(this.currentPage - 1)
       .then((jobs) => {
         this.reportingJobs = jobs;
       });
@@ -103,17 +121,6 @@ routes.when('/management/kibana/reporting', {
     };
 
     $scope.$watch('jobsCtrl.currentPage', updateJobsLoading);
-    $scope.$watch('jobsCtrl.showMine', (newVal, oldVal) => {
-      if (newVal !== oldVal) {
-        if (this.currentPage === 1) {
-          // if already on the first page, update the job list
-          updateJobsLoading();
-        } else {
-          // otherwise let the currentPage watcher update the list
-          this.currentPage = 1;
-        }
-      }
-    });
     $scope.$on('$destroy', () => $interval.cancel(int));
   }
 });
