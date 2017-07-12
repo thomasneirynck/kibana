@@ -23,10 +23,13 @@ module.directive('exportConfig', (reportingDocumentControl, reportingExportTypes
         throw new Error(`Expected there to be 1 controller, but there are ${actualControllers.length}`);
       }
       const controller = actualControllers[0];
+      $scope.exportConfig.isDirty = () => controller.appStatus.dirty;
+      if (controller.appStatus.dirty) {
+        return;
+      }
 
       const exportTypeId = $attr.enabledExportType;
       $scope.exportConfig.exportType = reportingExportTypes.getById(exportTypeId);
-      $scope.exportConfig.isDirty = () => controller.appStatus.dirty;
       $scope.exportConfig.objectType = $attr.objectType;
       const path = await reportingDocumentControl.getPath($scope.exportConfig.exportType, controller);
       $scope.exportConfig.relativePath = path;
