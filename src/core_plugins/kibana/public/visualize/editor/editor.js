@@ -105,9 +105,7 @@ function VisEditor($scope, $route, timefilter, AppState, $window, kbnUrl, courie
   }, {
     key: 'refresh',
     description: 'Refresh',
-    run: function () {
-      vis.forceReload();
-    },
+    run: function () { $scope.fetch(); },
     testId: 'visualizeRefreshButton',
   }];
 
@@ -204,7 +202,7 @@ function VisEditor($scope, $route, timefilter, AppState, $window, kbnUrl, courie
 
     // update the searchSource when query updates
     $scope.fetch = function () {
-      $scope.vis.forceReload();
+      $state.save();
     };
 
     $scope.$on('ready:vis', function () {

@@ -15,7 +15,7 @@ import {
 
 uiModules
 .get('kibana/directive', ['ngSanitize'])
-.directive('visualize', function (Notifier, Private, timefilter, getAppState) {
+.directive('visualize', function (Notifier, Private, timefilter, getAppState, $timeout) {
   const notify = new Notifier({ location: 'Visualize' });
   const requestHandlers = Private(VisRequestHandlersRegistryProvider);
   const responseHandlers = Private(VisResponseHandlersRegistryProvider);
@@ -106,13 +106,11 @@ uiModules
             // current visualizations uiState changed.
             if (!oldUiState || oldUiState !== JSON.stringify($scope.uiState.toJSON())) {
               oldUiState = JSON.stringify($scope.uiState.toJSON());
-              $scope.fetch();
+              $timeout(() => {
+                $scope.$broadcast('render');
+              });
             }
           }
-        });
-
-        $scope.$on('$destroy', () => {
-          stateMonitor.destroy();
         });
       }
 
