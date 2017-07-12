@@ -36,7 +36,7 @@ export const config = (Joi) => {
     }).default(),
     cluster_alerts: object({
       enabled: boolean().default(true),
-      index: string().default('.monitoring-alerts-2,.monitoring-alerts-6'),
+      index: string().default('.monitoring-alerts-6'),
       email_notifications: object({
         enabled: boolean().default(true)
       }).default()
