@@ -34,7 +34,10 @@ export function opsBuffer(kbnServer, server, cloudDetails) {
   const logDebug = message => server.log(['debug', monitoringTag], message);
   const client = server.plugins.elasticsearch.getCluster('admin').createClient({ plugins: [monitoringBulk] });
   const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('admin');
-  const uiSettings = server.uiSettingsServiceFactory({ callCluster: callWithInternalUser });
+  const savedObjectsClient = server.savedObjectsClientFactory({
+    callCluster: callWithInternalUser
+  });
+  const uiSettings = server.uiSettingsServiceFactory({ savedObjectsClient });
 
   /*
    * Helpers for fetching the different types of data

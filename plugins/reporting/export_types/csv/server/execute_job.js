@@ -27,8 +27,11 @@ function executeJobFn(server) {
     const callEndpoint = (endpoint, clientParams = {}, options = {}) => {
       return callWithRequest(fakeRequest, endpoint, clientParams, options);
     };
-    const uiSettings = server.uiSettingsServiceFactory({
+    const savedObjectsClient = server.savedObjectsClientFactory({
       callCluster: callEndpoint
+    });
+    const uiSettings = server.uiSettingsServiceFactory({
+      savedObjectsClient
     });
 
     const separator = await uiSettings.get('csv:separator');

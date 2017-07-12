@@ -2,8 +2,10 @@ import expect from 'expect.js';
 import Puid from 'puid';
 import sinon from 'sinon';
 import nodeCrypto from '@elastic/node-crypto';
+import { resolveKibanaPath } from '@elastic/plugin-helpers';
 import { executeJobFactory } from '../execute_job';
 import { CancellationToken } from '../../../../server/lib/esqueue/helpers/cancellation_token';
+const { SavedObjectsClient } = require(resolveKibanaPath('src/server/saved_objects/client/saved_objects_client.js'));
 
 const delay = (ms) => new Promise(resolve => setTimeout(() => resolve(), ms));
 
@@ -78,6 +80,13 @@ describe('CSV Execute Job', function () {
         return {
           get: configGetStub
         };
+      },
+      savedObjectsClientFactory: (opts) => {
+        return new SavedObjectsClient(
+          '.kibana',
+          {},
+          opts.callCluster
+        );
       },
       uiSettingsServiceFactory: () => {
         return {
