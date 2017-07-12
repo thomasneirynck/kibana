@@ -42,8 +42,8 @@ discover-app .discover-table-footer {
  */
 
 /* hide unusable controls */
-visualize-app > :not(.vis-editor-content):not(.vis-editor-full-options)/* all non-content rows in interface */ ,
-visualize-app .vis-editor-content > :not(.vis-editor-canvas):not(.vis-editor-full-options)/* all non-canvas columns in content row */ {
+visualize-app visualize > :not(.vis-editor-content):not(.vis-editor-full-options)/* all non-content rows in interface */ ,
+visualize-app visualize .vis-editor-content > :not(.vis-editor-canvas):not(.vis-editor-full-options)/* all non-canvas columns in content row */ {
   display: none;
 }
 
