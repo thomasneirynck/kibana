@@ -2,7 +2,8 @@ import { XPACK_DEFAULT_ADMIN_EMAIL_UI_SETTING } from '../../../../../server/lib/
 import {
   MONITORING_SYSTEM_API_VERSION, KIBANA_SYSTEM_ID, KIBANA_STATS_TYPE, KIBANA_SETTINGS_TYPE
 } from '../../../common/constants';
-import { mapEvent, rollupEvent } from './map_event';
+import { rollupEvent } from './map_event';
+import { sourceKibana } from './source_kibana';
 import { monitoringBulk } from './monitoring_bulk';
 
 /*
@@ -21,11 +22,12 @@ async function getDefaultAdminEmail(config, uiSettings) {
  * Manage the buffer of Kibana Ops events
  * Does the bulk upload to the `admin` cluster, which tags it and forwards it
  * to the monitoring cluster
- * @param kbnServer {Object} manager of Kibana services - see `src/server/kbn_server` in Kibana core
- * @param server {Object} HapiJS server instance
+ * @param {Object} kbnServer manager of Kibana services - see `src/server/kbn_server` in Kibana core
+ * @param {Object} server HapiJS server instance
+ * @param {Object} cloudDetails Cloud details that should be published with Kibana data.
  * @return {Object} the revealed `push` and `flush` modules
  */
-export function opsBuffer(kbnServer, server) {
+export function opsBuffer(kbnServer, server, cloudDetails) {
   const config = server.config();
   const interval = config.get('xpack.monitoring.kibana.collection.interval') + 'ms';
   const monitoringTag = config.get('xpack.monitoring.loggingTag');
@@ -51,20 +53,23 @@ export function opsBuffer(kbnServer, server) {
     logDebug(`Invalid default admin email setting found, skipping ${KIBANA_SETTINGS_TYPE} bulk request.`);
     return [];
   };
+
   let lastOp = null;
+
   const getKibanaStatsData = () => {
     if (!lastOp) { return []; }
 
-    // grab the last operation
-    const payload = mapEvent(lastOp, config, kbnServer);
-
-    // reset lastOp
-    lastOp = null;
+    const kibana = sourceKibana(kbnServer, config, lastOp.host);
+    const rollup = lastOp.rollup;
 
     return [
       // Push the time-based information to .monitoring-kibana-*
       { index: { _type: KIBANA_STATS_TYPE } },
-      payload
+      {
+        kibana,
+        cloud: cloudDetails,
+        ...rollup
+      }
     ];
   };
 
@@ -92,6 +97,7 @@ export function opsBuffer(kbnServer, server) {
         if (body.length > 0) {
           // make a single bulk request with kibana_settings and kibana_stats payloads
           logDebug('Sending Kibana Settings and Ops payload to Monitoring Elasticsearch');
+
           return client.monitoring.bulk({
             system_id: KIBANA_SYSTEM_ID,
             system_api_version: MONITORING_SYSTEM_API_VERSION,
