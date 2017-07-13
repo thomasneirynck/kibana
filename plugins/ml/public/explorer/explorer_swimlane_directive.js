@@ -157,13 +157,21 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
         });
 
         const label = lane;
-        $lane.append($('<div>', {
+        const laneDivProps = {
           'class': 'lane-label',
           'css': {
             'width': laneLabelWidth + 'px'
           },
           html: label
-        }));
+        };
+
+        if (scope.swimlaneData.fieldName !== undefined) {
+          laneDivProps['tooltip-html-unsafe'] = `${scope.swimlaneData.fieldName}: ${label}`;
+          laneDivProps['tooltip-placement'] = 'right';
+          laneDivProps['aria-label'] = `${scope.swimlaneData.fieldName}: ${label}`;
+        }
+
+        $lane.append($('<div>', laneDivProps));
 
         const $cellsContainer = $('<div>', {
           'class': 'cells-container'
