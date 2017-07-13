@@ -47,7 +47,7 @@ keytool -importcert -keystore watcher-truststore.jks -file server.crt
 +
 NOTE: If the truststore doesn't already exist, it is created.
 
-.. Make sure the `watcher.http.ssl.truststore.path` setting in
+.. Make sure the `xpack.http.ssl.truststore.path` setting in
 `elasticsearch.yml` specifies the location of the {watcher}
 truststore.
 . Add one or more users who have the permissions
