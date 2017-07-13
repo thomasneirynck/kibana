@@ -1,3 +1,6 @@
+import { relative } from 'path';
+import Rx from 'rxjs/Rx';
+
 import {
   withTmpDir,
   withProcRunner,
@@ -7,9 +10,18 @@ import {
   runEsWithXpack,
   runFtr,
   log,
-  RELATIVE_KBN_FTR_SCRIPT,
+  KIBANA_FTR_SCRIPT,
   isCliError,
 } from './lib';
+
+const SUCCESS_MESSAGE = `
+
+Elasticsearch and Kibana are ready for functional testing. Start the functional tests
+in another terminal session by running this command from this directory:
+
+    node ${relative(process.cwd(), KIBANA_FTR_SCRIPT)}
+
+`;
 
 export function fatalErrorHandler(err) {
   log.error('FATAL ERROR');
@@ -43,13 +55,14 @@ export function runFunctionalTestsServer() {
       await runXpackKibanaGulpPrepare({ procs });
       await runKibanaServer({ devMode: true, procs, ftrConfig });
 
-      log.info(`
+      // wait for 5 seconds of silence before logging the success message
+      // so that it doesn't get burried
+      await Rx.Observable.fromEvent(log, 'data')
+        .switchMap(() => Rx.Observable.timer(5000))
+        .first()
+        .toPromise();
 
-        Elasticsearch and Kibana ready for functional tests. Run the following in another terminal session to run the tests:
-
-          node ${RELATIVE_KBN_FTR_SCRIPT}
-
-      `);
+      log.info(SUCCESS_MESSAGE);
       await procs.waitForAllToStop();
     });
   })
