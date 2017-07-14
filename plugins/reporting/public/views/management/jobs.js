@@ -6,8 +6,8 @@ import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 
 import routes from 'ui/routes';
 import template from 'plugins/reporting/views/management/jobs.html';
+import { Poller } from '../../../../../common/poller';
 
-const jobPollingDelay = 5000;
 const pageSize = 10;
 
 function mapJobs(jobs) {
@@ -31,9 +31,11 @@ function mapJobs(jobs) {
 routes.when('/management/kibana/reporting', {
   template,
   controllerAs: 'jobsCtrl',
-  controller($scope, $route, $window, $interval, reportingJobQueue, kbnUrl, Private) {
+  controller($scope, $route, $window, $interval, reportingJobQueue, kbnUrl, Private, reportingPollConfig) {
+    const { jobsRefresh } = reportingPollConfig;
     const notifier = new Notifier({ location: 'Reporting' });
     const xpackInfo = Private(XPackInfoProvider);
+
     this.loading = false;
     this.pageSize = pageSize;
     this.currentPage = 1;
@@ -102,7 +104,16 @@ routes.when('/management/kibana/reporting', {
     };
 
     // job list updating
-    const int = $interval(() => updateJobs(), jobPollingDelay);
+    const poller = new Poller({
+      functionToPoll: () => {
+        return updateJobs();
+      },
+      pollFrequencyInMillis: jobsRefresh.interval,
+      trailing: true,
+      continuePollingOnError: true,
+      pollFrequencyErrorMultiplier: jobsRefresh.intervalErrorMultiplier
+    });
+    poller.start();
 
     // control handlers
     this.download = (jobId) => {
@@ -121,6 +132,7 @@ routes.when('/management/kibana/reporting', {
     };
 
     $scope.$watch('jobsCtrl.currentPage', updateJobsLoading);
-    $scope.$on('$destroy', () => $interval.cancel(int));
+
+    $scope.$on('$destroy', () => poller.stop());
   }
 });

@@ -5,32 +5,37 @@ import { addSystemApiHeader } from 'ui/system_api';
 import { get, last } from 'lodash';
 import moment from 'moment';
 import {
-  JOB_COMPLETION_CHECK_FREQUENCY_IN_MS,
   JOB_COMPLETION_STORAGE_KEY_LAST_CHECK,
   API_BASE_URL
 } from '../../common/constants.js';
 import 'plugins/reporting/services/job_queue';
 import { PathProvider } from 'plugins/xpack_main/services/path';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
+import { Poller } from '../../../../common/poller';
 
 uiModules.get('kibana')
-.config(() => {
+.run(($http, reportingJobQueue, Private, reportingPollConfig) => {
+  const { jobCompletionNotifier } = reportingPollConfig;
   // Intialize lastCheckedOn, if necessary
   if (!getLastCheckedOn()) {
-    setLastCheckedOn(moment().subtract(JOB_COMPLETION_CHECK_FREQUENCY_IN_MS, 'ms').toISOString());
+    setLastCheckedOn(moment().subtract(jobCompletionNotifier.interval, 'ms').toISOString());
   }
-});
 
-uiModules.get('kibana')
-.run(($http, $interval, reportingJobQueue, Private) => {
   const xpackInfo = Private(XPackInfoProvider);
   const showLinks = xpackInfo.get('features.reporting.management.showLinks');
   if (Private(PathProvider).isLoginOrLogout() || !showLinks) return;
 
-  $interval(function startChecking() {
-    getJobsCompletedSinceLastCheck($http)
-    .then(jobs => jobs.forEach(job => showCompletionNotification(job, reportingJobQueue)));
-  }, JOB_COMPLETION_CHECK_FREQUENCY_IN_MS);
+  const poller = new Poller({
+    functionToPoll: () => {
+      return getJobsCompletedSinceLastCheck($http)
+        .then(jobs => jobs.forEach(job => showCompletionNotification(job, reportingJobQueue)));
+    },
+    pollFrequencyInMillis: jobCompletionNotifier.interval,
+    trailing: true,
+    continuePollingOnError: true,
+    pollFrequencyErrorMultiplier: jobCompletionNotifier.intervalErrorMultiplier
+  });
+  poller.start();
 });
 
 function getLastCheckedOn() {

@@ -27,6 +27,11 @@ export const reporting = (kibana) => {
       ],
       hacks: [ 'plugins/reporting/hacks/job_completion_notifier'],
       managementSections: ['plugins/reporting/views/management'],
+      injectDefaultVars(server, options) {
+        return {
+          reportingPollConfig: options.poll
+        };
+      }
     },
 
     config: function (Joi) {
@@ -41,6 +46,7 @@ export const reporting = (kibana) => {
         queue: Joi.object({
           indexInterval: Joi.string().default('week'),
           pollInterval: Joi.number().integer().default(3000),
+          pollIntervalErrorMultiplier: Joi.number().integer().default(10),
           timeout: Joi.number().integer().default(30000),
         }).default(),
         capture: Joi.object({
@@ -65,7 +71,17 @@ export const reporting = (kibana) => {
         roles: Joi.object({
           allow: Joi.array().items(Joi.string()).default(['reporting_user']),
         }).default(),
-        index: Joi.string().default('.reporting')
+        index: Joi.string().default('.reporting'),
+        poll: Joi.object({
+          jobCompletionNotifier: Joi.object({
+            interval: Joi.number().integer().default(10000),
+            intervalErrorMultiplier: Joi.number().integer().default(5)
+          }).default(),
+          jobsRefresh: Joi.object({
+            interval: Joi.number().integer().default(5000),
+            intervalErrorMultiplier: Joi.number().integer().default(5)
+          }).default(),
+        }).default(),
       }).default();
     },
 

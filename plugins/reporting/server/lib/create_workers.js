@@ -19,7 +19,8 @@ function createWorkersFn(server) {
         return executeJob(payload, cancellationToken);
       };
       const workerOptions = {
-        interval: queueConfig.pollInterval
+        interval: queueConfig.pollInterval,
+        intervalErrorMultiplier: queueConfig.pollIntervalErrorMultiplier,
       };
       const worker = queue.registerWorker(exportType.jobType, workerFn, workerOptions);
 

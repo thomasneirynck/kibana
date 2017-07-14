@@ -4,6 +4,7 @@ import moment from 'moment';
 import { constants } from './constants';
 import { WorkerTimeoutError, UnspecifiedWorkerError } from './helpers/errors';
 import { CancellationToken } from './helpers/cancellation_token';
+import { Poller } from '../../../../../common/poller';
 
 const puid = new Puid();
 
@@ -16,9 +17,12 @@ function formatJobObject(job) {
 }
 
 export class Worker extends events.EventEmitter {
-  constructor(queue, type, workerFn, opts = {}) {
-    if (typeof type !== 'string') throw new Error('Type must be a string');
-    if (typeof workerFn !== 'function') throw new Error('Worker must be a function');
+  constructor(queue, type, workerFn, opts) {
+    if (typeof type !== 'string') throw new Error('type must be a string');
+    if (typeof workerFn !== 'function') throw new Error('workerFn must be a function');
+    if (typeof opts !== 'object') throw new Error('opts must be an object');
+    if (typeof opts.interval !== 'number') throw new Error('opts.interval must be a number');
+    if (typeof opts.intervalErrorMultiplier !== 'number') throw new Error('opts.intervalErrorMultiplier must be a number');
 
     super();
 
@@ -27,7 +31,6 @@ export class Worker extends events.EventEmitter {
     this.client = opts.client || this.queue.client;
     this.jobtype = type;
     this.workerFn = workerFn;
-    this.checkInterval = opts.interval || 1500;
     this.checkSize = opts.size || 10;
     this.doctype = opts.doctype || constants.DEFAULT_SETTING_DOCTYPE;
 
@@ -45,9 +48,18 @@ export class Worker extends events.EventEmitter {
       logger(message, tags);
     };
 
-    this._checker = false;
     this._running = true;
     this.debug(`Created worker for job type ${this.jobtype}`);
+
+    this._poller = new Poller({
+      functionToPoll: () => {
+        return this._processPendingJobs();
+      },
+      pollFrequencyInMillis: opts.interval,
+      trailing: true,
+      continuePollingOnError: true,
+      pollFrequencyErrorMultiplier: opts.intervalErrorMultiplier,
+    });
     this._startJobPolling();
   }
 
@@ -265,20 +277,23 @@ export class Worker extends events.EventEmitter {
       return;
     }
 
-    this._checker = setInterval(() => {
-      this._getPendingJobs()
-      .then((jobs) => this._claimPendingJobs(jobs));
-    } , this.checkInterval);
+    this._poller.start();
   }
 
   _stopJobPolling() {
-    clearInterval(this._checker);
+    this._poller.stop();
+  }
+
+  _processPendingJobs() {
+    return this._getPendingJobs()
+      .then((jobs) => {
+        return this._claimPendingJobs(jobs);
+      });
   }
 
   _claimPendingJobs(jobs) {
     if (!jobs || jobs.length === 0) return;
 
-    this._stopJobPolling();
     let claimed = false;
 
     // claim a single job, stopping after first successful claim
@@ -304,10 +319,8 @@ export class Worker extends events.EventEmitter {
       this.debug(`Claimed job ${claimedJob._id}`);
       return this._performJob(claimedJob);
     })
-    .then(() => this._startJobPolling())
     .catch((err) => {
       this.debug('Error claiming jobs', err);
-      this._startJobPolling();
     });
   }
 
@@ -357,10 +370,11 @@ export class Worker extends events.EventEmitter {
     })
     .catch((err) => {
       // ignore missing indices errors
-      if (err.status === 404) return [];
+      if (err && err.status === 404) return [];
 
       this.debug('job querying failed', err);
       this.emit(constants.EVENT_WORKER_JOB_SEARCH_ERROR, this._formatErrorParams(err));
+      throw err;
     });
   }
 }

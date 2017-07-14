@@ -10,10 +10,14 @@ import { constants } from '../constants';
 const anchor = '2016-04-02T01:02:03.456'; // saturday
 const defaults = {
   timeout: 10000,
-  interval: 1500,
   size: 10,
   unknownMime: false,
   contentBody: null,
+};
+
+const defaultWorkerOptions = {
+  interval: 3000,
+  intervalErrorMultiplier: 10
 };
 
 describe('Worker class', function () {
@@ -23,6 +27,16 @@ describe('Worker class', function () {
   let mockQueue;
   let worker;
   let worker2;
+
+
+  // Allowing the Poller to poll requires intimate knowledge of the inner workings of the Poller.
+  // We have to ensure that the Promises internal to the `_poll` method are resolved to queue up
+  // the next setTimeout before incrementing the clock.
+  const allowPoll = async (interval) => {
+    clock.tick(interval);
+    await Promise.resolve();
+    await Promise.resolve();
+  };
 
   beforeEach(function () {
     client = new ClientMock();
@@ -49,14 +63,29 @@ describe('Worker class', function () {
       expect(init).to.throwException(/type.+string/i);
     });
 
-    it('should throw without a worker', function () {
+    it('should throw without a workerFn', function () {
       const init = () => new Worker(mockQueue, 'test');
-      expect(init).to.throwException(/worker.+function/i);
+      expect(init).to.throwException(/workerFn.+function/i);
     });
 
-    it('should throw with an invalid worker', function () {
+    it('should throw with an invalid workerFn', function () {
       const init = () => new Worker(mockQueue, 'test', { function: false });
-      expect(init).to.throwException(/worker.+function/i);
+      expect(init).to.throwException(/workerFn.+function/i);
+    });
+
+    it('should throw without an opts', function () {
+      const init = () => new Worker(mockQueue, 'test', noop);
+      expect(init).to.throwException(/opts.+object/i);
+    });
+
+    it('should throw with an invalid opts.interval', function () {
+      const init = () => new Worker(mockQueue, 'test', noop, { });
+      expect(init).to.throwException(/opts\.interval.+number/i);
+    });
+
+    it('should throw with an invalid opts.intervalErrorMultipler', function () {
+      const init = () => new Worker(mockQueue, 'test', noop, { interval: 1 });
+      expect(init).to.throwException(/opts\.intervalErrorMultiplier.+number/i);
     });
   });
 
@@ -64,22 +93,21 @@ describe('Worker class', function () {
     it('should assign internal properties', function () {
       const jobtype = 'testjob';
       const workerFn = noop;
-      worker = new Worker(mockQueue, jobtype, workerFn);
+      worker = new Worker(mockQueue, jobtype, workerFn, defaultWorkerOptions);
       expect(worker).to.have.property('id');
       expect(worker).to.have.property('queue', mockQueue);
       expect(worker).to.have.property('client', client);
       expect(worker).to.have.property('jobtype', jobtype);
       expect(worker).to.have.property('workerFn', workerFn);
-      expect(worker).to.have.property('checkInterval');
       expect(worker).to.have.property('checkSize');
       expect(worker).to.have.property('doctype');
     });
 
     it('should have a unique ID', function () {
-      worker = new Worker(mockQueue, 'test', noop);
+      worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
       expect(worker.id).to.be.a('string');
 
-      worker2 = new Worker(mockQueue, 'test', noop);
+      worker2 = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
       expect(worker2.id).to.be.a('string');
 
       expect(worker.id).to.not.equal(worker2.id);
@@ -87,7 +115,7 @@ describe('Worker class', function () {
 
     it('should use custom client', function () {
       const newClient = new ClientMock();
-      worker = new Worker(mockQueue, 'test', noop, { client: newClient });
+      worker = new Worker(mockQueue, 'test', noop, { ...defaultWorkerOptions, client: newClient });
       expect(worker).to.have.property('queue', mockQueue);
       expect(worker).to.have.property('client', newClient);
       expect(worker.client).to.not.equal(client);
@@ -96,7 +124,7 @@ describe('Worker class', function () {
 
   describe('event emitting', function () {
     beforeEach(function () {
-      worker = new Worker(mockQueue, 'test', noop);
+      worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
     });
 
     it('should trigger events on the queue instance', function (done) {
@@ -127,7 +155,7 @@ describe('Worker class', function () {
     let f;
 
     beforeEach(function () {
-      worker = new Worker(mockQueue, 'test', noop);
+      worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
       f = (output) => worker._formatOutput(output);
     });
 
@@ -166,52 +194,78 @@ describe('Worker class', function () {
   });
 
   describe('polling for jobs', function () {
-    let searchSpy;
-
     beforeEach(() => {
       anchorMoment = moment(anchor);
       clock = sinon.useFakeTimers(anchorMoment.valueOf());
-      searchSpy = sinon.spy(mockQueue.client, 'search');
     });
 
     afterEach(() => {
       clock.restore();
     });
 
-    it('should start polling for jobs after interval', function () {
-      worker = new Worker(mockQueue, 'test', noop);
-      sinon.assert.notCalled(searchSpy);
-      clock.tick(defaults.interval);
-      sinon.assert.calledOnce(searchSpy);
+    it('should start polling for jobs after interval', async function () {
+      worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
+      const processPendingJobsStub = sinon.stub(worker, '_processPendingJobs', () => Promise.resolve());
+      sinon.assert.notCalled(processPendingJobsStub);
+      await allowPoll(defaultWorkerOptions.interval);
+      sinon.assert.calledOnce(processPendingJobsStub);
     });
 
-    it('should use interval option to control polling', function () {
+    it('should use interval option to control polling', async function () {
       const interval = 567;
-      worker = new Worker(mockQueue, 'test', noop, { interval });
-      sinon.assert.notCalled(searchSpy);
-      clock.tick(interval);
-      sinon.assert.calledOnce(searchSpy);
+      worker = new Worker(mockQueue, 'test', noop, { ...defaultWorkerOptions, interval });
+      const processPendingJobsStub = sinon.stub(worker, '_processPendingJobs', () => Promise.resolve());
+
+      sinon.assert.notCalled(processPendingJobsStub);
+      await allowPoll(interval);
+      sinon.assert.calledOnce(processPendingJobsStub);
     });
 
-    it('should not poll once destroyed', function () {
-      worker = new Worker(mockQueue, 'test', noop);
+    it('should not poll once destroyed', async function () {
+      worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
+
+      const processPendingJobsStub = sinon.stub(worker, '_processPendingJobs', () => Promise.resolve());
 
       // move the clock a couple times, test for searches each time
-      sinon.assert.notCalled(searchSpy);
-      clock.tick(defaults.interval);
-      sinon.assert.calledOnce(searchSpy);
-      clock.tick(defaults.interval);
-      sinon.assert.calledTwice(searchSpy);
+      sinon.assert.notCalled(processPendingJobsStub);
+      await allowPoll(defaultWorkerOptions.interval);
+      sinon.assert.calledOnce(processPendingJobsStub);
+      await allowPoll(defaultWorkerOptions.interval);
+      sinon.assert.calledTwice(processPendingJobsStub);
 
       // destroy the worker, move the clock, make sure another search doesn't happen
       worker.destroy();
-      clock.tick(defaults.interval);
-      sinon.assert.calledTwice(searchSpy);
+      await allowPoll(defaultWorkerOptions.interval);
+      sinon.assert.calledTwice(processPendingJobsStub);
 
       // manually call job poller, move the clock, make sure another search doesn't happen
       worker._startJobPolling();
-      clock.tick(defaults.interval);
-      sinon.assert.calledTwice(searchSpy);
+      await allowPoll(defaultWorkerOptions.interval);
+      sinon.assert.calledTwice(processPendingJobsStub);
+    });
+
+    it('should use error multiplier when processPendingJobs rejects the Promise', async function () {
+      worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
+
+      const processPendingJobsStub = sinon.stub(worker, "_processPendingJobs").returns(Promise.reject(new Error('test error')));
+
+      await allowPoll(defaultWorkerOptions.interval);
+      expect(processPendingJobsStub.callCount).to.be(1);
+      await allowPoll(defaultWorkerOptions.interval);
+      expect(processPendingJobsStub.callCount).to.be(1);
+      await allowPoll(defaultWorkerOptions.interval * defaultWorkerOptions.intervalErrorMultiplier);
+      expect(processPendingJobsStub.callCount).to.be(2);
+    });
+
+    it('should not use error multiplier when processPendingJobs resolved the Promise', async function () {
+      worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
+
+      const processPendingJobsStub = sinon.stub(worker, "_processPendingJobs", () => Promise.resolve());
+
+      await allowPoll(defaultWorkerOptions.interval);
+      expect(processPendingJobsStub.callCount).to.be(1);
+      await allowPoll(defaultWorkerOptions.interval);
+      expect(processPendingJobsStub.callCount).to.be(2);
     });
   });
 
@@ -219,7 +273,7 @@ describe('Worker class', function () {
     let searchStub;
 
     function getSearchParams(jobtype = 'test', params = {}) {
-      worker = new Worker(mockQueue, jobtype, noop, params);
+      worker = new Worker(mockQueue, jobtype, noop, { ...defaultWorkerOptions, ...params });
       worker._getPendingJobs();
       return searchStub.firstCall.args[0];
     }
@@ -230,44 +284,50 @@ describe('Worker class', function () {
 
       it('should pass search errors', function (done) {
         searchStub = sinon.stub(mockQueue.client, 'search', () => Promise.reject());
-        worker = new Worker(mockQueue, 'test', noop);
+        worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
         worker._getPendingJobs()
         .then(() => done(new Error('should not resolve')))
-        .catch(() => { done(); });
+        .catch(() => {
+          done();
+        });
       });
 
-      it('should swollow index missing errors', function (done) {
-        searchStub = sinon.stub(mockQueue.client, 'search', () => Promise.reject({
-          status: 404
-        }));
-        worker = new Worker(mockQueue, 'test', noop);
-        worker._getPendingJobs()
-        .then(() => { done(); })
-        .catch(() => done(new Error('should not reject')));
-      });
+      describe('missing index', function () {
 
-      it('should return an empty array on missing index', function (done) {
-        searchStub = sinon.stub(mockQueue.client, 'search', () => Promise.reject({
-          status: 404
-        }));
-        worker = new Worker(mockQueue, 'test', noop);
-        worker._getPendingJobs()
-        .then((res) => {
-          try {
-            expect(res).to.be.an(Array);
-            expect(res).to.have.length(0);
-            done();
-          } catch (e) {
-            done(e);
-          }
-        })
-        .catch(() => done(new Error('should not reject')));
+        it('should swallow error', function (done) {
+          searchStub = sinon.stub(mockQueue.client, 'search', () => Promise.reject({
+            status: 404
+          }));
+          worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
+          worker._getPendingJobs()
+            .then(() => { done(); })
+            .catch(() => done(new Error('should not reject')));
+        });
+
+        it('should return an empty array', function (done) {
+          searchStub = sinon.stub(mockQueue.client, 'search', () => Promise.reject({
+            status: 404
+          }));
+          worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
+          worker._getPendingJobs()
+            .then((res) => {
+              try {
+                expect(res).to.be.an(Array);
+                expect(res).to.have.length(0);
+                done();
+              } catch (e) {
+                done(e);
+              }
+            })
+            .catch(() => done(new Error('should not reject')));
+        });
       });
     });
 
+
     describe('query parameters', function () {
       beforeEach(() => {
-        searchStub = sinon.stub(mockQueue.client, 'search', () => Promise.resolve());
+        searchStub = sinon.stub(mockQueue.client, 'search', () => Promise.resolve({ hits: { hits: [] } }));
       });
 
       it('should query with version', function () {
@@ -292,7 +352,7 @@ describe('Worker class', function () {
       const jobtype = 'test_jobtype';
 
       beforeEach(() => {
-        searchStub = sinon.stub(mockQueue.client, 'search', () => Promise.resolve());
+        searchStub = sinon.stub(mockQueue.client, 'search', () => Promise.resolve({ hits: { hits: [] } }));
         anchorMoment = moment(anchor);
         clock = sinon.useFakeTimers(anchorMoment.valueOf());
       });
@@ -365,7 +425,7 @@ describe('Worker class', function () {
       return mockQueue.client.get(params)
       .then((jobDoc) => {
         job = jobDoc;
-        worker = new Worker(mockQueue, 'test', noop);
+        worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
         updateSpy = sinon.spy(mockQueue.client, 'update');
       });
     });
@@ -472,7 +532,7 @@ describe('Worker class', function () {
       return mockQueue.client.get()
       .then((jobDoc) => {
         job = jobDoc;
-        worker = new Worker(mockQueue, 'test', noop);
+        worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
         updateSpy = sinon.spy(mockQueue.client, 'update');
       });
     });
@@ -588,7 +648,7 @@ describe('Worker class', function () {
         const workerFn = function (jobPayload) {
           expect(jobPayload).to.eql(payload);
         };
-        worker = new Worker(mockQueue, 'test', workerFn);
+        worker = new Worker(mockQueue, 'test', workerFn, defaultWorkerOptions);
 
         worker._performJob(job)
         .then(() => done());
@@ -599,7 +659,7 @@ describe('Worker class', function () {
           expect(jobPayload).to.eql(payload);
           return payload;
         };
-        worker = new Worker(mockQueue, 'test', workerFn);
+        worker = new Worker(mockQueue, 'test', workerFn, defaultWorkerOptions);
 
         return worker._performJob(job)
         .then(() => {
@@ -623,9 +683,9 @@ describe('Worker class', function () {
             setTimeout(() => resolve(payload), 10);
           });
         };
-        worker = new Worker(mockQueue, 'test', workerFn);
+        worker = new Worker(mockQueue, 'test', workerFn, defaultWorkerOptions);
 
-        worker._performJob(job)
+        return worker._performJob(job)
         .then(() => {
           sinon.assert.calledOnce(updateSpy);
           const doc = updateSpy.firstCall.args[0].body.doc;
@@ -637,7 +697,7 @@ describe('Worker class', function () {
       });
 
       it('should emit completion event', function (done) {
-        worker = new Worker(mockQueue, 'test', noop);
+        worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
 
         worker.once(constants.EVENT_WORKER_COMPLETE, (workerJob) => {
           try {
@@ -667,7 +727,7 @@ describe('Worker class', function () {
         const workerFn = function () {
           throw new Error('test error');
         };
-        worker = new Worker(mockQueue, 'test', workerFn);
+        worker = new Worker(mockQueue, 'test', workerFn, defaultWorkerOptions);
         const failStub = sinon.stub(worker, '_failJob');
 
         return worker._performJob(job)
@@ -683,7 +743,7 @@ describe('Worker class', function () {
             reject(new Error('test error'));
           });
         };
-        worker = new Worker(mockQueue, 'test', workerFn);
+        worker = new Worker(mockQueue, 'test', workerFn, defaultWorkerOptions);
         const failStub = sinon.stub(worker, '_failJob');
 
         return worker._performJob(job)
@@ -700,7 +760,7 @@ describe('Worker class', function () {
             reject(errorMessage);
           });
         };
-        worker = new Worker(mockQueue, 'test', workerFn);
+        worker = new Worker(mockQueue, 'test', workerFn, defaultWorkerOptions);
         const failStub = sinon.stub(worker, '_failJob');
 
         return worker._performJob(job)
@@ -716,7 +776,7 @@ describe('Worker class', function () {
             reject();
           });
         };
-        worker = new Worker(mockQueue, 'test', workerFn);
+        worker = new Worker(mockQueue, 'test', workerFn, defaultWorkerOptions);
 
         worker.once(constants.EVENT_WORKER_JOB_EXECUTION_ERROR, (err) => {
           try {
@@ -740,6 +800,19 @@ describe('Worker class', function () {
       return sinon.stub(workerWithFailure, '_failJob').returns(Promise.resolve());
     }
 
+    describe('search failure', function () {
+      it('causes _processPendingJobs to reject the Promise', function () {
+        sinon.stub(mockQueue.client, 'search').returns(Promise.reject(new Error('test error')));
+        worker = new Worker(mockQueue, 'test', noop, defaultWorkerOptions);
+        return worker._processPendingJobs()
+          .then(() => {
+            expect().fail('expected rejected Promise');
+          }, (err) => {
+            expect(err).to.be.an(Error);
+          });
+      });
+    });
+
     describe('timeout', function () {
       let failStub;
       let job;
@@ -757,7 +830,7 @@ describe('Worker class', function () {
             }, timeout * 2);
           });
         };
-        worker = new Worker(mockQueue, 'test', workerFn);
+        worker = new Worker(mockQueue, 'test', workerFn, defaultWorkerOptions);
         failStub = getFailStub(worker);
 
         job = {
@@ -827,7 +900,11 @@ describe('Worker class', function () {
         }
       };
 
-      describe('reject', function () {
+      beforeEach(function () {
+        sinon.stub(mockQueue.client, 'search', () => Promise.resolve({ hits: { hits: [] } }));
+      });
+
+      describe('workerFn rejects promise', function () {
         beforeEach(function () {
           const workerFn = function () {
             return new Promise(function (resolve, reject) {
@@ -836,7 +913,7 @@ describe('Worker class', function () {
               }, timeout / 2);
             });
           };
-          worker = new Worker(mockQueue, 'test', workerFn);
+          worker = new Worker(mockQueue, 'test', workerFn, defaultWorkerOptions);
           failStub = getFailStub(worker);
         });
 
@@ -864,12 +941,13 @@ describe('Worker class', function () {
         });
       });
 
-      describe('throw', function () {
+      describe('workerFn throws error', function () {
         beforeEach(function () {
           const workerFn = function () {
             throw new Error('test throw');
           };
-          worker = new Worker(mockQueue, 'test', workerFn);
+          worker = new Worker(mockQueue, 'test', workerFn, defaultWorkerOptions);
+
           failStub = getFailStub(worker);
         });
 

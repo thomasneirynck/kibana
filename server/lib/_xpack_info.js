@@ -1,10 +1,10 @@
 import { createHash } from 'crypto';
 import moment from 'moment';
 import { get, set, includes, forIn } from 'lodash';
-import { Poller } from './poller';
+import { Poller } from '../../common/poller';
 import { LICENSE_EXPIRY_SOON_DURATION_IN_DAYS } from './constants';
 
-export function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 'data') {
+export async function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 'data') {
   if(!pollFrequencyInMillis) {
     const config = server.config();
     pollFrequencyInMillis = config.get('xpack.xpack_main.xpack_api_polling_frequency_millis');
@@ -21,6 +21,7 @@ export function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 'data'
     functionToPoll: _callElasticsearchXPackAPI,
     successFunction: _handleResponseFromElasticsearch,
     errorFunction: _handleErrorFromElasticsearch,
+    trailing: true,
     pollFrequencyInMillis,
     continuePollingOnError: true
   });
@@ -169,7 +170,7 @@ export function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 'data'
     throw error;
   }
 
-  // Start polling for changes
-  return poller.start()
-  .then(() => xpackInfoObject);
+  await xpackInfoObject.refreshNow();
+  poller.start();
+  return xpackInfoObject;
 }

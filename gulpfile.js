@@ -136,7 +136,7 @@ gulp.task('build', ['lint', 'clean', 'report', 'prepare'], () => {
 
 gulp.task('pre-test', () => {
   const globs = [
-    './{server,public}/**/*.js',
+    './{common,server,public}/**/*.js',
     '!./**/__tests__/**',
   ].concat(fileGlobs.forPlugins());
 
@@ -168,6 +168,7 @@ gulp.task('testonly', ['testserver', 'testbrowser']);
 
 gulp.task('testserver', ['pre-test'], () => {
   const globs = [
+    'common/**/__tests__/**/*.js',
     'server/**/__tests__/**/*.js',
   ].concat(fileGlobs.forPluginServerTests());
 
