@@ -48,7 +48,7 @@ export async function getClustersFromRequest(req) {
   // TODO: this handling logic should be two different functions
   if (clusterUuid) { // if not undefined, get specific cluster (no need for license checking)
     if (!clusters || clusters.length === 0) {
-      throw notFound(`unknown cluster (${clusterUuid}). Check your time range.`);
+      throw notFound(`The cluster [${clusterUuid}] was not found within the selected time range.`);
     }
 
     const cluster = clusters[0];
