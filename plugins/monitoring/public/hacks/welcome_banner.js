@@ -1,3 +1,4 @@
+import chrome from 'ui/chrome';
 import { Notifier } from 'ui/notify/notifier';
 import { uiModules } from 'ui/modules';
 import { PathProvider } from 'plugins/xpack_main/services/path';
@@ -46,16 +47,25 @@ function renderBanner($injector) {
 
 function customBanner($injector, _renderBanner = renderBanner) {
   const reportStats = $injector.get('reportStats');
-  // exit if the server config has phone home disabled
+  const Private = $injector.get('Private');
+  const config = $injector.get('config');
+
+  // no banner if the server config has phone home disabled
   if (!reportStats) {
     return;
   }
 
-  // no banner for non-logged in users
-  const Private = $injector.get('Private');
-  if (Private(PathProvider).isLoginOrLogout()) { return; }
+  // and no banner for non-logged in users
+  if (Private(PathProvider).isLoginOrLogout()) {
+    return;
+  }
 
-  const config = $injector.get('config');
+  // and no banner on status page
+  if (chrome.getApp().id === 'status_page') {
+    return;
+  }
+
+  // read advanced settings - if setting has never been set (null), default to true and show it the first time
   if (config.get(CONFIG_SHOW_BANNER, true)) {
     return _renderBanner($injector);
   }
