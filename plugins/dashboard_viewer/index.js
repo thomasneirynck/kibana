@@ -20,6 +20,10 @@ export function dashboardViewer(kibana) {
         main: 'plugins/dashboard_viewer/app',
         uses: [
           'visTypes',
+          'visResponseHandlers',
+          'visRequestHandlers',
+          'visEditorTypes',
+          'savedObjectTypes',
           'spyModes',
           'navbarExtensions',
           'docViews',
@@ -47,4 +51,3 @@ export function dashboardViewer(kibana) {
     },
   });
 }
-
