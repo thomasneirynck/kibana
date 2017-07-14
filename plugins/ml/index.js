@@ -44,7 +44,8 @@ export const ml = (kibana) => {
           };
         },
         uses: [
-          'fieldFormats'
+          'fieldFormats',
+          'savedObjectTypes',
         ]
       },
       hacks: ['plugins/ml/hacks/toggle_app_link_in_nav']

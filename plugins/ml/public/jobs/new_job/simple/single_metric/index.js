@@ -16,10 +16,6 @@
 import './wizard/wizard';
 import './create_job';
 
-import 'plugins/kibana/discover/saved_searches/saved_searches';
-import { SavedObjectRegistryProvider } from 'ui/saved_objects/saved_object_registry';
-import { savedSearchProvider } from 'plugins/kibana/discover/saved_searches/saved_search_register';
-
 import uiRoutes from 'ui/routes';
 
 uiRoutes
@@ -27,4 +23,3 @@ uiRoutes
   redirectTo: '/jobs/new_job/simple/single_metric/step/1'
 });
 
-SavedObjectRegistryProvider.register(savedSearchProvider);
