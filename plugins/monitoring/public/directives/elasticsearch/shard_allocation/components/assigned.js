@@ -55,7 +55,7 @@ export const Assigned = React.createClass({
     // ability to use the kuiLink CSS class (blue link text instead of white link text)
     const name = (
       <KuiKeyboardAccessible>
-        <a onClick={ changeUrl } className='link'>
+        <a onClick={ changeUrl }>
           <span>{ data.name }</span>
         </a>
       </KuiKeyboardAccessible>

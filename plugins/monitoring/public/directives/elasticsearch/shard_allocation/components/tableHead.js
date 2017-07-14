@@ -40,13 +40,18 @@ class IndexLabel extends React.Component {
     return (
       <div className='pull-left filter-member'>
         Indices
-        &nbsp;
-        <input type='checkbox'
-          onChange={ this.toggleShowSystemIndicesState }
-          checked={ this.state.showSystemIndices }
-        />
-        &nbsp;
-        Show system indices
+
+        <label className="kuiCheckBoxLabel">
+          <input
+            onChange={ this.toggleShowSystemIndicesState }
+            checked={ this.state.showSystemIndices }
+            className="kuiCheckBox"
+            type="checkbox"
+          />
+          <span className="kuiCheckBoxLabel__text">
+            Show system indices
+          </span>
+        </label>
       </div>
     );
   }

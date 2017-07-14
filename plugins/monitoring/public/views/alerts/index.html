@@ -1,11 +1,15 @@
 <monitoring-main name="alerts">
-  <div class="monitoring-view monitoring-cluster-alerts">
+  <div class="page-row">
     <p ng-if="alerts.data.message">
       {{ alerts.data.message }}
     </p>
+  </div>
 
+  <div class="page-row">
     <monitoring-cluster-alerts-listing alerts="alerts.data"></monitoring-cluster-alerts-listing>
+  </div>
 
+  <div class="page-row">
     <p>
       <a kbn-href="#/overview">« Cluster Overview</a>
     </p>

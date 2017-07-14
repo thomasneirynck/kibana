@@ -44,7 +44,7 @@ export class Overview extends React.Component {
     };
 
     return (
-      <div className='monitoring-view'>
+      <div>
         <LicenseText
           license={ this.state.license }
           showLicenseExpiration={ this.props.showLicenseExpiration }
@@ -66,7 +66,6 @@ export class Overview extends React.Component {
         <div className='page-row'>
           <LogstashPanel { ...this.state.logstash } angularChangeUrl={ angularChangeUrl } />
         </div>
-
       </div>
     );
   }
