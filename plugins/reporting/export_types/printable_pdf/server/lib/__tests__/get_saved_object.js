@@ -8,7 +8,7 @@ import {
 } from './__fixtures__/mock_saved_objects';
 
 describe('saved_objects', function () {
-  const mockGetSavedObject = (clientResponse) => {
+  const mockGetSavedObject = () => {
     const mockKibanaServer = {
       config: () => {
         return {
@@ -19,18 +19,21 @@ describe('saved_objects', function () {
       info: {
         protocol: 'http'
       },
-      plugins: {
-        elasticsearch: {
-          getCluster: () => {
-            return {
-              callWithRequest: () => Promise.resolve(clientResponse)
-            };
-          }
-        }
-      }
     };
 
     return getSavedObjectFactory(mockKibanaServer);
+  };
+
+  const mockRequest = (clientResponse) => {
+    return {
+      getSavedObjectsClient() {
+        return {
+          get() {
+            return clientResponse;
+          }
+        };
+      }
+    };
   };
 
   // test each of the saved object types
@@ -39,6 +42,7 @@ describe('saved_objects', function () {
     describe(`type ${objectType}`, function () {
       let mockObject;
       let getSavedObject;
+      let request;
 
       before(function () {
         switch(objectType) {
@@ -51,11 +55,12 @@ describe('saved_objects', function () {
           case 'dashboard':
             mockObject = mockDashboard;
         }
-        getSavedObject = mockGetSavedObject(mockObject);
+        request = mockRequest(mockObject);
+        getSavedObject = mockGetSavedObject();
       });
 
       it('should contain specific props', async function () {
-        const savedObject = await getSavedObject({}, objectType, mockObject._id, {});
+        const savedObject = await getSavedObject(request, objectType, mockObject._id, {});
         expect(savedObject).to.have.property('id', mockObject._id);
         expect(savedObject).to.have.property('type', mockObject._type);
         expect(savedObject).to.have.property('title');
@@ -74,19 +79,19 @@ describe('saved_objects', function () {
         };
 
         it('should provide app url', async function () {
-          const savedObject = await getSavedObject({}, objectType, mockObject._id, query);
+          const savedObject = await getSavedObject(request, objectType, mockObject._id, query);
           const params = url.parse(savedObject.url);
           expect(params).to.have.property('hash');
         });
 
         it('should remove the refreshInterval value', async function () {
-          const savedObject = await getSavedObject({}, objectType, mockObject._id, query);
+          const savedObject = await getSavedObject(request, objectType, mockObject._id, query);
           const objectUrl = savedObject.url;
           expect(objectUrl).to.not.contain('refreshInterval');
         });
 
         it('should alwaus convert to absolute time', async function () {
-          const savedObject = await getSavedObject({}, objectType, mockObject._id, query);
+          const savedObject = await getSavedObject(request, objectType, mockObject._id, query);
           const params = url.parse(savedObject.url);
           expect(params.hash).to.not.contain(query._g);
           expect(params.hash).to.match(/time\:.+mode\:absolute/);

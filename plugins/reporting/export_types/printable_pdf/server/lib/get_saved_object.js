@@ -7,7 +7,6 @@ import { oncePerServer } from '../../../../server/lib/once_per_server';
 
 function getSavedObjectFn(server) {
 
-  const { callWithRequest } = server.plugins.elasticsearch.getCluster('admin');
   const config = server.config();
   const requestConfig = Object.assign({
     'kibanaApp': config.get('server.basePath') + config.get('xpack.reporting.kibanaApp'),
@@ -84,14 +83,9 @@ function getSavedObjectFn(server) {
     if (!app) throw new Error('Invalid object type: ' + type);
   }
 
-  return function getSavedObject(request, type, id, query) {
+  return async function getSavedObject(request, type, id, query) {
     const fields = ['title', 'description'];
     validateType(type);
-    const body = {
-      index: requestConfig.kibanaIndex,
-      type: type,
-      id: id
-    };
 
     function parseJsonObjects(source) {
       const searchSourceJson = get(source, appTypes[type].searchSourceIndex, '{}');
@@ -114,28 +108,30 @@ function getSavedObjectFn(server) {
       return { searchSource, uiState };
     }
 
-    return callWithRequest(request, 'get', body)
-      .then(function _getRecord(response) {
-        return response._source;
-      })
-      .then(async function _buildObject(source) {
-        const { searchSource, uiState } = parseJsonObjects(source);
 
-        return Object.assign(pick(source, fields), {
-          id: body.id,
-          type,
-          searchSource,
-          uiState,
-          url: getUrl(type, id, query)
-        });
-      })
-      .catch(() => {
-        return {
-          id,
-          type,
-          isMissing: true
-        };
-      });
+    const savedObjectsClient = request.getSavedObjectsClient();
+
+    let attributes;
+    try {
+      const savedObject = await savedObjectsClient.get(type, id);
+      attributes = savedObject.attributes;
+    } catch (err) {
+      return {
+        id,
+        type,
+        isMissing: true
+      };
+    }
+
+    const { searchSource, uiState } = parseJsonObjects(attributes);
+
+    return Object.assign(pick(attributes, fields), {
+      id,
+      type,
+      searchSource,
+      uiState,
+      url: getUrl(type, id, query)
+    });
   };
 }
 

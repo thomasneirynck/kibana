@@ -1,12 +1,10 @@
 /* eslint max-len: 0, quotes: 0 */
 
 export const search = {
-  "_index": ".kibana",
-  "_type": "search",
-  "_id": "mock-search",
-  "_version": 1,
-  "found": true,
-  "_source": {
+  "type": "search",
+  "id": "mock-search",
+  "version": 1,
+  "attributes": {
     "title": "to IN",
     "description": "",
     "hits": 0,
@@ -25,12 +23,10 @@ export const search = {
 };
 
 export const visualization = {
-  "_index": ".kibana",
-  "_type": "visualization",
-  "_id": "mock-visualization",
-  "_version": 1,
-  "found": true,
-  "_source": {
+  "type": "visualization",
+  "id": "mock-visualization",
+  "version": 1,
+  "attributes": {
     "title": "dem line",
     "visState": "{\"title\":\"New Visualization\",\"type\":\"line\",\"params\":{\"shareYAxis\":true,\"addTooltip\":true,\"addLegend\":true,\"showCircles\":true,\"smoothLines\":false,\"interpolate\":\"linear\",\"scale\":\"linear\",\"drawLinesBetweenPoints\":true,\"radiusRatio\":9,\"times\":[],\"addTimeMarker\":false,\"defaultYExtents\":false,\"setYExtents\":false,\"yAxis\":{}},\"aggs\":[{\"id\":\"1\",\"type\":\"count\",\"schema\":\"metric\",\"params\":{}},{\"id\":\"2\",\"type\":\"date_histogram\",\"schema\":\"segment\",\"params\":{\"field\":\"@timestamp\",\"interval\":\"auto\",\"customInterval\":\"2h\",\"min_doc_count\":1,\"extended_bounds\":{}}}],\"listeners\":{}}",
     "uiStateJSON": "{}",
@@ -43,12 +39,10 @@ export const visualization = {
 };
 
 export const dashboard = {
-  "_index": ".kibana",
-  "_type": "dashboard",
-  "_id": "mock-dashboard",
-  "_version": 1,
-  "found": true,
-  "_source": {
+  "type": "dashboard",
+  "id": "mock-dashboard",
+  "version": 1,
+  "attributes": {
     "title": "example dashboard",
     "hits": 0,
     "description": "",
