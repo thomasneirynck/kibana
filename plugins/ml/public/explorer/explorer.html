@@ -58,13 +58,15 @@
 
         <div ng-if="viewBySwimlaneOptions.length > 0">
           <div class="swimlane-controls">
-            <label>View by:</label>
+            <label for="selectViewBy">View by:</label>
             <div class="kuiButtonGroup" dropdown>
-              <button type="button" class="form-control dropdown-toggle" dropdown-toggle ng-disabled="disabled">
+              <button id="selectViewBy" type="button" class="form-control dropdown-toggle" dropdown-toggle ng-disabled="disabled">
                 <span>{{swimlaneViewByFieldName}}</span> <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" role="menu">
-                <li ng-repeat="swimlaneOption in viewBySwimlaneOptions"><a ng-click="setSwimlaneViewBy(swimlaneOption)">{{swimlaneOption}}</a></li>
+                <li ng-repeat="swimlaneOption in viewBySwimlaneOptions">
+                  <a href="" ng-click="setSwimlaneViewBy(swimlaneOption)">{{swimlaneOption}}</a>
+                </li>
               </ul>
             </div>
             <span ng-if="viewByLoadedForTimeFormatted" class="panel-sub-title">

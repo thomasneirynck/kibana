@@ -447,6 +447,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
       _.each(zoomOptions, (option) => {
         const text = zoomGroup.append('a')
           .attr('data-ms', option.durationMs)
+          .attr('href', '')
           .append('text')
           .attr('x', xPos)
           .attr('y', 17)

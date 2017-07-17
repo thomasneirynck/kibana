@@ -16,8 +16,8 @@
   </div>
 
   <div class="series-controls" ng-show="jobs.length > 0">
-    <label class="kuiLabel">Detector:</label>
-    <select class="kuiSelect kuiSelect--large" ng-model="detectorId">
+    <label for="selectDetector" class="kuiLabel">Detector:</label>
+    <select id="selectDetector" class="kuiSelect kuiSelect--large" ng-model="detectorId">
       <option ng-repeat="detector in detectors track by detector.index" value="{{detector.index}}">{{detector.detector_description}}</option>
     </select>
 
@@ -26,13 +26,14 @@
         <option ng-repeat="value in entity.fieldValues">{{value}}</option>
       </datalist>
 
-      <label class="kuiLabel">{{entity.fieldName}}:</label>
-      <input class="kuiTextInput entity-input" ng-class="{ 'entity-input-blank': entity.fieldValue.length === 0 }"
+      <label for="select{{entity.fieldName}}" class="kuiLabel">{{entity.fieldName}}:</label>
+      <input id="select{{entity.fieldName}}" class="kuiTextInput entity-input"
+        ng-class="{ 'entity-input-blank': entity.fieldValue.length === 0 }"
         ng-model="entity.fieldValue" ng-model-options="{ updateOn: 'blur' }" placeholder="Enter value"
         list='{{entity.fieldName}}_datalist' />
     </div>
 
-    <button class="kuiButton kuiButton--primary" ng-click="saveSeriesPropertiesAndRefresh()" >
+    <button class="kuiButton kuiButton--primary" ng-click="saveSeriesPropertiesAndRefresh()" aria-label="refresh">
       <i class="fa fa-play" ></i>
     </button>
 
