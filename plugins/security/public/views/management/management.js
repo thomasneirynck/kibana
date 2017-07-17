@@ -35,6 +35,7 @@ routes.defaults(/\/management/, {
 
         if (!security.hasItem('users')) {
           security.register('users', {
+            name: 'securityUsersLink',
             order: 10,
             display: 'Users',
             url: esDataIsTribe ? undefined : `#${USERS_PATH}`,
@@ -44,6 +45,7 @@ routes.defaults(/\/management/, {
 
         if (!security.hasItem('roles')) {
           security.register('roles', {
+            name: 'securityRolesLink',
             order: 20,
             display: 'Roles',
             url: esDataIsTribe ? undefined : `#${ROLES_PATH}`,
