@@ -12,6 +12,7 @@
     "index.js",
     ".node-version",
     ".phantom/*",
+    "common/**/*",
     "plugins/**/*",
     "server/**/*",
     "webpackShims/*",
