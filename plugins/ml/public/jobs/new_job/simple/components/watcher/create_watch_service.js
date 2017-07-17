@@ -122,9 +122,9 @@ module.service('mlCreateWatchService', function ($http, $q, Private) {
             `${chrome.getBasePath()}/app/kibana#/management/elasticsearch/watcher/watches/watch/${id}/edit?_g=()`;
           deferred.resolve();
         })
-        .catch(() => {
+        .catch((resp) => {
           this.status.watch = this.STATUS.SAVE_FAILED;
-          deferred.reject();
+          deferred.reject(resp);
         });
       }
     } else {
