@@ -10,6 +10,7 @@ export function createGenerateCsv(logger) {
   return async function generateCsv({
                                       searchRequest,
                                       fields,
+                                      formatsMap,
                                       metaFields,
                                       conflictedTypesFields,
                                       callEndpoint,
@@ -18,7 +19,7 @@ export function createGenerateCsv(logger) {
   }) {
     const escapeValue = createEscapeValue(settings.quoteValues);
     const flattenHit = createFlattenHit(fields, metaFields, conflictedTypesFields);
-    const formatCsvValues = createFormatCsvValues(escapeValue, settings.separator, fields);
+    const formatCsvValues = createFormatCsvValues(escapeValue, settings.separator, fields, formatsMap);
 
     const builder = new MaxSizeStringBuilder(settings.maxSizeBytes);
 

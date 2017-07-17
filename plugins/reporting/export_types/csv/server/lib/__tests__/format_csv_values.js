@@ -5,35 +5,63 @@ describe('formatCsvValues', function () {
   const separator = ',';
   const fields = ['foo', 'bar'];
   const mockEscapeValue = val => val;
-  const formatCsvValues = createFormatCsvValues(mockEscapeValue, separator, fields);
 
-  it('should use the specified separator', function () {
-    expect(formatCsvValues({})).to.be(separator);
+  describe('without field formats', function () {
+    const formatsMap = new Map();
+    const formatCsvValues = createFormatCsvValues(mockEscapeValue, separator, fields, formatsMap);
+
+    it('should use the specified separator', function () {
+      expect(formatCsvValues({})).to.be(separator);
+    });
+
+    it('should replace null and undefined with empty strings', function () {
+      const values = {
+        foo: undefined,
+        bar: null
+      };
+      expect(formatCsvValues(values)).to.be(',');
+    });
+
+    it('should JSON.stringify objects', function () {
+      const values = {
+        foo: {
+          baz: 'qux'
+        },
+      };
+      expect(formatCsvValues(values)).to.be('{"baz":"qux"},');
+    });
+
+    it('should concatenate strings', function () {
+      const values = {
+        foo: 'baz',
+        bar: 'qux'
+      };
+      expect(formatCsvValues(values)).to.be('baz,qux');
+    });
   });
 
-  it('should replace null and undefined with empty strings', function () {
-    const values = {
-      foo: undefined,
-      bar: null
+  describe('with field formats', function () {
+    const mockFieldFormat = {
+      convert: (val) => String(val).toUpperCase()
     };
-    expect(formatCsvValues(values)).to.be(',');
-  });
+    const formatsMap = new Map();
+    formatsMap.set('bar', mockFieldFormat);
+    const formatCsvValues = createFormatCsvValues(mockEscapeValue, separator, fields, formatsMap);
 
-  it('should JSON.stringify objects', function () {
-    const values = {
-      foo: {
-        baz: 'qux'
-      },
-    };
-    expect(formatCsvValues(values)).to.be('{"baz":"qux"},');
-  });
+    it('should replace null and undefined with empty strings', function () {
+      const values = {
+        foo: undefined,
+        bar: null
+      };
+      expect(formatCsvValues(values)).to.be(',');
+    });
 
-  it('should concatenate strings', function () {
-    const values = {
-      foo: 'baz',
-      bar: 'qux'
-    };
-    expect(formatCsvValues(values)).to.be('baz,qux');
+    it('should format value with appropriate FieldFormat', function () {
+      const values = {
+        foo: 'baz',
+        bar: 'qux'
+      };
+      expect(formatCsvValues(values)).to.be('baz,QUX');
+    });
   });
-
 });

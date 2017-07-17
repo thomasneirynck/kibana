@@ -2,6 +2,7 @@ import { cryptoFactory } from '../../../server/lib/crypto';
 import { oncePerServer } from '../../../server/lib/once_per_server';
 import { createTaggedLogger } from '../../../server/lib/create_tagged_logger';
 import { createGenerateCsv } from './lib/generate_csv';
+import { fieldFormatMapFactory } from './lib/field_format_map';
 
 function executeJobFn(server) {
   const { callWithRequest } = server.plugins.elasticsearch.getCluster('data');
@@ -11,7 +12,7 @@ function executeJobFn(server) {
   const generateCsv = createGenerateCsv(logger);
 
   return async function executeJob(job, cancellationToken) {
-    const { searchRequest, fields, metaFields, conflictedTypesFields, headers: serializedEncryptedHeaders } = job;
+    const { searchRequest, fields, indexPatternSavedObject, metaFields, conflictedTypesFields, headers: serializedEncryptedHeaders } = job;
 
     let decryptedHeaders;
     try {
@@ -34,6 +35,9 @@ function executeJobFn(server) {
       savedObjectsClient
     });
 
+    const fieldFormats = await server.fieldFormatServiceFactory(uiSettings);
+    const formatsMap = fieldFormatMapFactory(indexPatternSavedObject, fieldFormats);
+
     const separator = await uiSettings.get('csv:separator');
     const quoteValues = await uiSettings.get('csv:quoteValues');
     const maxSizeBytes = config.get('xpack.reporting.csv.maxSizeBytes');
@@ -42,6 +46,7 @@ function executeJobFn(server) {
     const { content, maxSizeReached } = await generateCsv({
       searchRequest,
       fields,
+      formatsMap,
       metaFields,
       conflictedTypesFields,
       callEndpoint,

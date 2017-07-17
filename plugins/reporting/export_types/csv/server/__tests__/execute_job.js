@@ -6,6 +6,8 @@ import { resolveKibanaPath } from '@elastic/plugin-helpers';
 import { executeJobFactory } from '../execute_job';
 import { CancellationToken } from '../../../../server/lib/esqueue/helpers/cancellation_token';
 const { SavedObjectsClient } = require(resolveKibanaPath('src/server/saved_objects/client/saved_objects_client.js'));
+const { FieldFormatsService } = require(resolveKibanaPath('src/ui/field_formats/field_formats_service.js'));
+const { StringFormat } = require(resolveKibanaPath('src/core_plugins/kibana/common/field_formats/types/string.js'));
 
 const delay = (ms) => new Promise(resolve => setTimeout(() => resolve(), ms));
 
@@ -69,6 +71,14 @@ describe('CSV Execute Job', function () {
 
     mockServer = {
       expose: function () {},
+      fieldFormatServiceFactory: function () {
+        const uiConfigMock = {};
+        uiConfigMock['format:defaultTypeMap'] = {
+          '_default_': { 'id': 'string', 'params': {} }
+        };
+        const getConfig = (key) => uiConfigMock[key];
+        return new FieldFormatsService([StringFormat], getConfig);
+      },
       plugins: {
         elasticsearch: {
           getCluster: function () {
@@ -490,6 +500,36 @@ describe('CSV Execute Job', function () {
 
       expect(lines[1]).to.be('foo,bar');
       expect(lines[2]).to.be('baz,qux');
+    });
+
+    it('should use field formatters to format fields', async function () {
+      const executeJob = executeJobFactory(mockServer);
+      callWithRequestResponses = [{
+        hits: {
+          hits: [{ _source: { 'one': 'foo', 'two': 'bar' } }]
+        },
+        _scroll_id: 'scrollId'
+      }];
+
+      const jobParams = {
+        headers: encryptedHeaders,
+        fields: [ 'one', 'two' ],
+        conflictedTypesFields: [],
+        searchRequest: { index: null, body: null },
+        indexPatternSavedObject: {
+          id: 'logstash-*',
+          type: 'index-pattern',
+          attributes: {
+            title: 'logstash-*',
+            fields: '[{"name":"one","type":"string"}, {"name":"two","type":"string"}]',
+            fieldFormatMap: '{"one":{"id":"string","params":{"transform": "upper"}}}'
+          }
+        }
+      };
+      const { content } = await executeJob(jobParams, cancellationToken);
+      const lines = content.split('\n');
+
+      expect(lines[1]).to.be('FOO,bar');
     });
   });
 
