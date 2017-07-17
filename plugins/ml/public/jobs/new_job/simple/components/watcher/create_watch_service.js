@@ -110,6 +110,7 @@ module.service('mlCreateWatchService', function ($http, $q, Private) {
         id,
         upstreamJSON: {
           id,
+          type: 'json',
           watch
         }
       };
