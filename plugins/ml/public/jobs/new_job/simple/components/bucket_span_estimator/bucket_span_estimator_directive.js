@@ -79,11 +79,11 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
         // a partition has been selected, so we need to load some field values to use in the
         // bucket span tests.
         if (splitField !== undefined && splitField !== '--No split--') {
-          getRandomFieldValues($scope.formConfig.indexPattern.id, splitField, query)
+          getRandomFieldValues($scope.formConfig.indexPattern.title, splitField, query)
           .then((resp) => {
             splitFieldValues = resp;
             createBucketSpanEstimator(
-              $scope.formConfig.indexPattern.id,
+              $scope.formConfig.indexPattern.title,
               $scope.formConfig.timeField,
               aggTypes,
               fields,
@@ -101,7 +101,7 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
         } else {
           // no partition field selected or we're in the single metric config
           createBucketSpanEstimator(
-            $scope.formConfig.indexPattern.id,
+            $scope.formConfig.indexPattern.title,
             $scope.formConfig.timeField,
             aggTypes,
             fields,
@@ -123,7 +123,7 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
         splitField,
         splitFieldValues) {
         const bss = new BucketSpanEstimator(
-          $scope.formConfig.indexPattern.id,
+          $scope.formConfig.indexPattern.title,
           $scope.formConfig.timeField,
           aggTypes,
           fields,

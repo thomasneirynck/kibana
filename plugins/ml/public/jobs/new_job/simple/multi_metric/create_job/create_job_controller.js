@@ -118,7 +118,7 @@ module
   const savedSearch = $route.current.locals.savedSearch;
   const searchSource = savedSearch.searchSource;
 
-  let pageTitle = `index pattern ${indexPattern.id}`;
+  let pageTitle = `index pattern ${indexPattern.title}`;
 
   if (indexPattern.id === undefined &&
     savedSearch.id !== undefined) {
@@ -137,8 +137,8 @@ module
   }
 
   $scope.ui = {
-    indexPatternId: indexPattern.id,
-    pageTitle: pageTitle,
+    indexPattern,
+    pageTitle,
     showJobInput: true,
     showJobFinished: false,
     dirty: false,
@@ -586,7 +586,7 @@ module
   $scope.createJob = function () {
     if (validateJobId($scope.formConfig.jobId)) {
       msgs.clear();
-      $scope.formConfig.mappingTypes = mlESMappingService.getTypesFromMapping($scope.formConfig.indexPattern.id);
+      $scope.formConfig.mappingTypes = mlESMappingService.getTypesFromMapping($scope.formConfig.indexPattern.title);
       // create the new job
       mlMultiMetricJobService.createJob($scope.formConfig)
       .then((job) => {

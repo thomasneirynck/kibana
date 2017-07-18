@@ -159,7 +159,7 @@ module.service('mlSingleMetricJobService', function (
     const query = getQueryFromSavedSearch(formConfig);
 
     const json = {
-      'index': formConfig.indexPattern.id,
+      'index': formConfig.indexPattern.title,
       'size': 0,
       'body': {
         'query': {},
@@ -241,7 +241,7 @@ module.service('mlSingleMetricJobService', function (
       types: mappingTypes,
       query_delay: '60s',
       frequency: calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
-      indices: [formConfig.indexPattern.id],
+      indices: [formConfig.indexPattern.title],
       scroll_size: 1000
     };
 
@@ -456,7 +456,7 @@ module.service('mlSingleMetricJobService', function (
     const obj = { success: true, start: { epoch:0, string:'' }, end: { epoch:0, string:'' } };
 
     es.search({
-      index: indexPattern.id,
+      index: indexPattern.title,
       size: 0,
       body: {
         query,

@@ -20,6 +20,7 @@ import 'plugins/kibana/visualize/wizard/wizard.less';
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
+import { SavedObjectsClientProvider } from 'ui/saved_objects';
 
 uiRoutes
 .when('/jobs/new_job/simple/multi_metric/step/1', {
@@ -27,23 +28,28 @@ uiRoutes
   resolve: {
     CheckLicense: checkLicense,
     privileges: checkCreateJobsPrivilege,
-    indexPatternIds: courier => courier.indexPatterns.getIds()
+    indexPatterns: function (Private) {
+      const savedObjectsClient = Private(SavedObjectsClientProvider);
+
+      return savedObjectsClient.find({
+        type: 'index-pattern',
+        fields: ['title'],
+        perPage: 10000
+      }).then(response => response.savedObjects);
+    }
   }
 });
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('MlNewJobMultiStep1', function (
-  $scope,
-  $route,
-  timefilter) {
+module.controller('MlNewJobMultiStep1', function ($scope, $route, timefilter) {
 
-  timefilter.enabled = false; // remove time picker from top of page
+  timefilter.enabled = false; // remove time picker from top of page.
 
   $scope.indexPattern = {
     selection: null,
-    list: $route.current.locals.indexPatternIds
+    list: $route.current.locals.indexPatterns
   };
 
   $scope.step2WithSearchUrl = (hit) => {
@@ -51,6 +57,6 @@ module.controller('MlNewJobMultiStep1', function (
   };
   $scope.makeUrl = (pattern) => {
     if (!pattern) return;
-    return '#/jobs/new_job/simple/multi_metric/create?index=' + encodeURIComponent(pattern);
+    return '#/jobs/new_job/simple/multi_metric/create?index=' + encodeURIComponent(pattern.id);
   };
 });

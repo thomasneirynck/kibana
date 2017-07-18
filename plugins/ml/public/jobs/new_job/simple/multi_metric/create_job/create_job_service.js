@@ -170,7 +170,7 @@ module.service('mlMultiMetricJobService', function (
     const query = getQueryFromSavedSearch(formConfig);
 
     const json = {
-      'index': formConfig.indexPattern.id,
+      'index': formConfig.indexPattern.title,
       'size': 0,
       'body': {
         'query': {},
@@ -279,7 +279,7 @@ module.service('mlMultiMetricJobService', function (
       types: mappingTypes,
       query_delay: '60s',
       frequency: calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
-      indices: [formConfig.indexPattern.id],
+      indices: [formConfig.indexPattern.title],
       scroll_size: 1000
     };
     job.job_id = formConfig.jobId;
@@ -425,7 +425,7 @@ module.service('mlMultiMetricJobService', function (
     const obj = { success: true, start: { epoch:0, string:'' }, end: { epoch:0, string:'' } };
 
     es.search({
-      index: indexPattern.id,
+      index: indexPattern.title,
       size: 0,
       body: {
         query,
@@ -462,7 +462,7 @@ module.service('mlMultiMetricJobService', function (
 
   this.getSplitFields = function (formConfig, size) {
     return mlSimpleJobSearchService.getCategoryFields(
-      formConfig.indexPattern.id,
+      formConfig.indexPattern.title,
       formConfig.splitField,
       size,
       formConfig.query);
@@ -481,7 +481,7 @@ module.service('mlMultiMetricJobService', function (
     const start = formConfig.start;
 
     mlSimpleJobSearchService.getEventRate(
-      formConfig.indexPattern.id,
+      formConfig.indexPattern.title,
       start,
       end,
       formConfig.timeField,

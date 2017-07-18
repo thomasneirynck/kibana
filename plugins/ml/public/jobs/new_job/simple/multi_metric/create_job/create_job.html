@@ -13,7 +13,7 @@
             type="button"
             ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
             class="kuiButton kuiButton--primary">
-              Use full {{ui.indexPatternId}} data
+              Use full {{ui.indexPattern.title}} data
           </button>
         </div>
       </div>
@@ -281,7 +281,7 @@
                     <div class='status-label' ng-if="chartStates.eventRate === CHART_STATE.NO_RESULTS">
                       <div class='no-results'>
                         <h4><i class="fa fa-info-circle"></i> No results found</h4>
-                        <span>Consider using the <a ng-click="setFullTimeRange()">full {{ui.indexPatternId}} data</a></span>
+                        <span>Consider using the <a ng-click="setFullTimeRange()">full {{ui.indexPattern.title}} data</a></span>
                       </div>
                     </div>
                 </div>
