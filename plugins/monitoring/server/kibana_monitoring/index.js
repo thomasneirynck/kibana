@@ -1,29 +1,5 @@
 import { opsBuffer } from './lib/ops_buffer';
 import { get } from 'lodash';
-import { CLOUD_SERVICES } from '../cloud';
-
-/**
- * Get the cloud service metadata that identifies the cloud service that is used to run the VM, if any.
- *
- * @return {Promise} {@code undefined} if none. Otherwise the object conversion of the {@code CloudServiceResponse}.
- */
-async function getCloudService() {
-  // check each service until we find one that is confirmed to match
-  for (const service of CLOUD_SERVICES) {
-    try {
-      const serviceResponse = await service.checkIfService();
-
-      if (serviceResponse.isConfirmed()) {
-        return serviceResponse.toJSON();
-      }
-    } catch (ignoredError) {
-      // ignored until we make wider use of this in the UI
-    }
-  }
-
-  // explicitly undefined rather than null so that it can be ignored in JSON
-  return undefined;
-}
 
 /**
  * Establish a handler of Ops events (from `even-better`)
@@ -43,7 +19,7 @@ export function initKibanaMonitoring(kbnServer, server) {
   .then(async (res) => {
     const isEnabledInAdminCluster = !!get(res, 'features.monitoring.enabled');
     if (isEnabledInAdminCluster) {
-      const buffer = opsBuffer(kbnServer, server, await getCloudService());
+      const buffer = opsBuffer(kbnServer, server);
       const onOps = event => buffer.push(event);
       let monitor;
       let opsHandler;

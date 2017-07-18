@@ -5,6 +5,7 @@ import {
 import { rollupEvent } from './map_event';
 import { sourceKibana } from './source_kibana';
 import { monitoringBulk } from './monitoring_bulk';
+import { CloudDetector } from '../../cloud';
 
 /*
  * Check if Cluster Alert email notifications is enabled in config
@@ -27,7 +28,7 @@ async function getDefaultAdminEmail(config, uiSettings) {
  * @param {Object} cloudDetails Cloud details that should be published with Kibana data.
  * @return {Object} the revealed `push` and `flush` modules
  */
-export function opsBuffer(kbnServer, server, cloudDetails) {
+export function opsBuffer(kbnServer, server) {
   const config = server.config();
   const interval = config.get('xpack.monitoring.kibana.collection.interval') + 'ms';
   const monitoringTag = config.get('xpack.monitoring.loggingTag');
@@ -38,6 +39,9 @@ export function opsBuffer(kbnServer, server, cloudDetails) {
     callCluster: callWithInternalUser
   });
   const uiSettings = server.uiSettingsServiceFactory({ savedObjectsClient });
+  const cloudDetector = new CloudDetector();
+  // determine the cloud service in the background
+  cloudDetector.detectCloudService();
 
   /*
    * Helpers for fetching the different types of data
@@ -70,7 +74,7 @@ export function opsBuffer(kbnServer, server, cloudDetails) {
       { index: { _type: KIBANA_STATS_TYPE } },
       {
         kibana,
-        cloud: cloudDetails,
+        cloud: cloudDetector.getCloudDetails(),
         ...rollup
       }
     ];
