@@ -19,6 +19,7 @@ export function sourceKibana(kbnServer, config, host) {
   return {
     uuid: config.get('server.uuid'),
     name: config.get('server.name'),
+    index: config.get('kibana.index'),
     host,
     transport_address: `${config.get('server.host')}:${config.get('server.port')}`,
     version: kbnServer.version.replace(snapshotRegex, ''),

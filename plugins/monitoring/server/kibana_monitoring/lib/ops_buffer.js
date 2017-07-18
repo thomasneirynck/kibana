@@ -43,21 +43,36 @@ export function opsBuffer(kbnServer, server) {
   // determine the cloud service in the background
   cloudDetector.detectCloudService();
 
+  // we use shouldUseNull to determine if we need to send nulls; we only send nulls if the last email wasn't null
+  let shouldUseNull = true;
+  let currentEmail = null;
+
   /*
    * Helpers for fetching the different types of data
    */
   const getKibanaSettingsData = async () => {
     const defaultAdminEmail = await getDefaultAdminEmail(config, uiSettings);
-    const isNull = defaultAdminEmail === null; // allow null so clearing the advanced setting will reflect in the data
+    // allow null so clearing the advanced setting will be reflected in the data
+    const isNull = defaultAdminEmail === null && shouldUseNull;
     const isValid = defaultAdminEmail && defaultAdminEmail.indexOf('@') > 0;
+
     if (isNull || isValid) {
-      logDebug(`Null or valid default admin email setting found, sending ${KIBANA_SETTINGS_TYPE} bulk request.`);
+      // remember the current email so that we can mark it as successful if the bulk does not error out
+      currentEmail = defaultAdminEmail;
+
+      logDebug(`[${defaultAdminEmail}] default admin email setting found, sending [${KIBANA_SETTINGS_TYPE}] monitoring document.`);
+
       return [
         { index: { _type: KIBANA_SETTINGS_TYPE } },
-        { xpack: { defaultAdminEmail } }
+        {
+          kibana_uuid: config.get('server.uuid'),
+          xpack: { defaultAdminEmail }
+        }
       ];
     }
-    logDebug(`Invalid default admin email setting found, skipping ${KIBANA_SETTINGS_TYPE} bulk request.`);
+
+    logDebug(`not sending [${KIBANA_SETTINGS_TYPE}] monitoring document because [${defaultAdminEmail}] is null or invalid.`);
+
     return [];
   };
 
@@ -112,6 +127,11 @@ export function opsBuffer(kbnServer, server) {
             body
           });
         }
+
+        return Promise.resolve();
+      })
+      .then(() => {
+        shouldUseNull = currentEmail !== null;
       })
       .catch((err) => {
         server.log(['error', monitoringTag], err);
