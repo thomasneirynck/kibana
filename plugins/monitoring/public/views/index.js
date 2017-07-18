@@ -19,3 +19,4 @@ import 'plugins/monitoring/views/logstash/overview';
 import 'plugins/monitoring/views/logstash/nodes';
 import 'plugins/monitoring/views/logstash/node';
 import 'plugins/monitoring/views/logstash/node/advanced';
+import 'plugins/monitoring/views/logstash/pipeline';

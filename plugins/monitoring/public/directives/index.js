@@ -16,6 +16,7 @@ import 'plugins/monitoring/directives/elasticsearch/shard_allocation/directives/
 import 'plugins/monitoring/directives/logstash/cluster_status';
 import 'plugins/monitoring/directives/logstash/listing';
 import 'plugins/monitoring/directives/logstash/node_summary';
+import 'plugins/monitoring/directives/logstash/pipeline_viewer';
 import 'plugins/monitoring/directives/kibana/cluster_status';
 import 'plugins/monitoring/directives/kibana/listing';
 import 'plugins/monitoring/directives/kibana/summary';

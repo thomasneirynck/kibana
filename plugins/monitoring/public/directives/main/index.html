@@ -60,8 +60,22 @@
         </div>
 
         <div ng-if="monitoringMain.inLogstash" class="kuiLocalTabs" role="navigation">
-          <a ng-if="!monitoringMain.instance" kbn-href="#/logstash" class="kuiLocalTab" ng-class="{'kuiLocalTab-isSelected': monitoringMain.isActiveTab('overview')}">Overview</a>
-          <a ng-if="!monitoringMain.instance" kbn-href="#/logstash/nodes" class="kuiLocalTab" ng-class="{'kuiLocalTab-isSelected': monitoringMain.isActiveTab('nodes')}">Nodes</a>
+          <a
+            ng-if="!monitoringMain.instance"
+            kbn-href="#/logstash"
+            class="kuiLocalTab"
+            ng-class="{'kuiLocalTab-isSelected': monitoringMain.isActiveTab('overview')}"
+          >
+            Overview
+          </a>
+          <a
+            ng-if="!monitoringMain.instance"
+            kbn-href="#/logstash/nodes"
+            class="kuiLocalTab"
+            ng-class="{'kuiLocalTab-isSelected': monitoringMain.isActiveTab('nodes')}"
+          >
+            Nodes
+          </a>
           <a
             ng-if="monitoringMain.instance"
             kbn-href="#/logstash/node/{{ monitoringMain.resolver }}"

@@ -1,5 +1,11 @@
 <div ng-controller="logstashNode">
-  <monitoring-main product="logstash" name="nodes" instance="{{ pageData.nodeSummary.name }}" resolver="{{ pageData.nodeSummary.uuid }}" page="overview">
+  <monitoring-main
+    product="logstash"
+    name="nodes"
+    instance="{{ pageData.nodeSummary.name }}"
+    resolver="{{ pageData.nodeSummary.uuid }}"
+    page="overview"
+  >
     <monitoring-logstash-node-summary logstash="pageData.nodeSummary"></monitoring-logstash-node-summary>
     <div class="page-row">
       <div class="row" ng-if="pageData.metrics">

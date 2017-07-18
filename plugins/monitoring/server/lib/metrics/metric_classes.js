@@ -321,6 +321,13 @@ export class LogstashClusterMetric extends Metric {
     });
   }
 
+  // helper method
+  static getMetricFields() {
+    return {
+      timestampField: 'logstash_stats.timestamp',
+      uuidField: 'cluster_uuid'
+    };
+  }
 }
 
 export class EventsLatencyMetric extends LogstashMetric {

@@ -98,3 +98,32 @@ export const CLOUD_METADATA_SERVICES = {
   // To bypass potential DNS changes, the IP was used because it's shared with other cloud services
   GCP_URL_PREFIX: 'http://169.254.169.254/computeMetadata/v1/instance'
 };
+
+/**
+ * Constants used by Logstash monitoring code
+ */
+export const LOGSTASH = {
+
+  /**
+   * Constants used by Logstash Pipeline Viewer code
+   */
+  PIPELINE_VIEWER: {
+    GRAPH: {
+      EDGES: {
+        SVG_CLASS: 'lspvEdge'
+      },
+      VERTICES: {
+        BORDER_RADIUS_PX: 4,
+        WIDTH_PX: 320,
+        HEIGHT_PX: 80,
+
+        /**
+         * Vertical distance between vertices, as measured from top-border-to-top-border
+         */
+        VERTICAL_DISTANCE_PX: 20,
+
+        DISPLAY_ID_MAX_LENGTH_CHARS: 15
+      }
+    }
+  }
+};

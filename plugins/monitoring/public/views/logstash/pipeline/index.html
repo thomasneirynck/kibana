@@ -1,0 +1,13 @@
+<div ng-controller="logstashPipeline">
+  <monitoring-main
+    product="logstash"
+    name="node"
+    instance="{{ pageData.nodeSummary.name }}"
+    resolver="{{ pageData.nodeSummary.uuid }}"
+    page="pipeline"
+  >
+    <div class="page-row">
+      <monitoring-logstash-pipeline-viewer pipeline="pageData.pipeline"></monitoring-logstash-pipeline-viewer>
+    </div>
+  </monitoring-main>
+</div>
