@@ -63,6 +63,15 @@ export const FORMAT_DURATION_TEMPLATE_LONG = 'M [months] d [days]';
  */
 export const FORMAT_DURATION_TEMPLATE_SHORT = ' d [days] h [hrs] m [min]';
 
+
+/*
+ * Simple unique values for Timestamp to duration flags. These are used for
+ * determining if calculation should be formatted as "time until" (now to
+ * timestamp) or "time since" (timestamp to now)
+ */
+export const CALCULATE_DURATION_SINCE = 'since';
+export const CALCULATE_DURATION_UNTIL = 'until';
+
 /**
  * Representative of an invalid license to be used when a license cannot be trusted.
  * @type {Object}

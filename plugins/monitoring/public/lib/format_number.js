@@ -3,7 +3,9 @@ import 'moment-duration-format';
 import numeral from 'numeral';
 import {
   FORMAT_DURATION_TEMPLATE_SHORT,
-  FORMAT_DURATION_TEMPLATE_LONG
+  FORMAT_DURATION_TEMPLATE_LONG,
+  CALCULATE_DURATION_SINCE,
+  CALCULATE_DURATION_UNTIL
 } from 'monitoring-constants';
 
 export function formatBytesUsage(used, max) {
@@ -16,9 +18,22 @@ export function formatPercentageUsage(used, max) {
 
 /*
  * Formats a timestamp string
+ * @param timestamp: ISO time string
+ * @param calculationFlag: control "since" or "until" logic
+ * @return string
  */
-export function formatTimestampToDuration(timestamp) {
-  const duration = moment.duration(moment.utc() - moment.utc(timestamp));
+export function formatTimestampToDuration(timestamp, calculationFlag) {
+  let duration;
+  if (calculationFlag === CALCULATE_DURATION_SINCE) {
+    duration = moment.duration(moment.utc() - moment.utc(timestamp)); // since: now - timestamp
+  } else if (calculationFlag === CALCULATE_DURATION_UNTIL) {
+    duration = moment.duration(moment.utc(timestamp) - moment.utc()); // until: timestamp - now
+  } else {
+    throw new Error(
+      '[formatTimestampToDuration] requires a [calculationFlag] parameter to specify format as "since" or "until" the given time.'
+    );
+  }
+
   if (moment.utc().diff(timestamp, 'months') >= 1) {
     // time diff is greater than 1 month, show months / days
     return moment.duration(duration).format(FORMAT_DURATION_TEMPLATE_LONG);

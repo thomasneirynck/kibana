@@ -6,6 +6,7 @@ import { SeverityIcon } from 'plugins/monitoring/components/alerts/severity_icon
 import { mapSeverity } from 'plugins/monitoring/components/alerts/map_severity';
 import { KuiKeyboardAccessible } from 'ui_framework/components';
 import { formatTimestampToDuration } from 'plugins/monitoring/lib/format_number';
+import { CALCULATE_DURATION_SINCE } from 'monitoring-constants';
 import { formatDateTimeLocal } from 'monitoring-formatting';
 
 export function AlertsPanel({ alerts, angularChangeUrl }) {
@@ -39,7 +40,11 @@ export function AlertsPanel({ alerts, angularChangeUrl }) {
             </div>
 
             <div className='kuiEventBody__metadata'>
-              Last checked { formatDateTimeLocal(item.update_timestamp) } (since { formatTimestampToDuration(item.timestamp) } ago)
+              Last checked {
+                formatDateTimeLocal(item.update_timestamp)
+              } (since {
+                formatTimestampToDuration(item.timestamp, CALCULATE_DURATION_SINCE)
+              } ago)
             </div>
           </div>
         </div>
