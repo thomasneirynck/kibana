@@ -1,9 +1,16 @@
 [role="xpack"]
 [[profiler-getting-started]]
+
+ifndef::gs-mini[]
 === Getting Started
+endif::gs-mini[]
+
+ifdef::gs-mini[]
+== Getting Started
+endif::gs-mini[]
 
 The Search Profiler is automatically enabled when you
-<<installing-xpack-kb,install {xpack}>> into Kibana.  It is located under the
+{kibana-ref}/installing-xpack-kb.html[install {xpack}] into Kibana.  It is located under the
 *Dev Tools* tab in Kibana
 
 [[first-profile]]

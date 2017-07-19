@@ -3,7 +3,7 @@
 == Getting Started
 
 {reporting} is automatically enabled when you install {xpack} into {kib}. For
-more information, see <<installing-xpack-kb>>.
+more information, see {kibana-ref}/installing-xpack-kb.html[Installing {xpack}].
 
 To manually generate a report:
 

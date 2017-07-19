@@ -1,6 +1,13 @@
 [role="xpack"]
 [[grokdebugger-getting-started]]
+
+ifndef::gs-mini[]
 === Getting Started with the Grok Debugger
+endif::gs-mini[]
+
+ifdef::gs-mini[]
+== Getting Started with the Grok Debugger
+endif::gs-mini[]
 
 ++++
 <titleabbrev>Getting Started</titleabbrev>
@@ -9,7 +16,7 @@
 TIP: See the documentation about the ingest node
 {ref}/grok-processor.html[grok processor] and the Logstash {logstash-ref}/plugins-filters-grok.html[grok filter] more info about grok.
 
-The Grok Debugger is automatically enabled when you <<installing-xpack-kb,install {xpack}>>
+The Grok Debugger is automatically enabled when you {kibana-ref}/installing-xpack-kb.html[install {xpack}]
 into Kibana.  It is located under the *DevTools* tab in Kibana
 
 To start debugging grok patterns:

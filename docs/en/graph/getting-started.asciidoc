@@ -2,7 +2,7 @@
 [[graph-getting-started]]
 == Getting Started
 
-Graph is automatically enabled when you <<installing-xpack-kb,install {xpack}>>
+Graph is automatically enabled when you {kibana-ref}/installing-xpack-kb.html[install {xpack}]
 into Elasticsearch and Kibana.
 
 [[exploring-connections]]
