@@ -1,11 +1,11 @@
 import { format as formatUrl } from 'url';
 
 import request from 'request';
-import { fromNode as fcb } from 'bluebird';
+import { delay, fromNode as fcb } from 'bluebird';
 
 export const DEFAULT_SUPERUSER_PASS = 'iamsuperuser';
 
-async function updateCredentials(port, auth, username, password) {
+async function updateCredentials(port, auth, username, password, retries = 10) {
   const result = await fcb(cb => request({
     method: 'PUT',
     uri: formatUrl({
@@ -23,9 +23,16 @@ async function updateCredentials(port, auth, username, password) {
 
   const { body, httpResponse } = result;
   const { statusCode } = httpResponse;
-  if (statusCode !== 200) {
-    throw new Error(`${statusCode} response, expected 200 -- ${JSON.stringify(body)}`);
+  if (statusCode === 200) {
+    return;
   }
+
+  if (retries > 0) {
+    await delay(2500);
+    return await updateCredentials(port, auth, username, password, retries - 1);
+  }
+
+  throw new Error(`${statusCode} response, expected 200 -- ${JSON.stringify(body)}`);
 }
 
 export async function setupUsers(log, ftrConfig) {
