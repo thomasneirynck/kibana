@@ -94,7 +94,7 @@ describe('CSV Execute Job', function () {
       savedObjectsClientFactory: (opts) => {
         return new SavedObjectsClient(
           '.kibana',
-          {},
+          { rootType: { properties: {} } },
           opts.callCluster
         );
       },
