@@ -47,6 +47,7 @@ export class ProcRunner {
       cmd,
       args = [],
       cwd = process.cwd(),
+      stdin = null,
       wait = false,
       env = process.env
     } = options;
@@ -63,7 +64,7 @@ export class ProcRunner {
       throw new Error(`Process with name "${name}" already running`);
     }
 
-    const proc = this._createProc(name, { cmd, args, cwd, env });
+    const proc = this._createProc(name, { cmd, args, cwd, env, stdin });
 
     try {
       // wait for process to log matching line

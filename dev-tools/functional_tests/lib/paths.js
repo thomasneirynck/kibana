@@ -29,3 +29,4 @@ export const XPACK_ES_ARCHIVE_PATTERN = resolve(XPACK_ES_REPO_ROOT, 'plugin/buil
 export const RELATIVE_GRADLE_BIN = resolveRelative(useBat('gradle'));
 export const RELATIVE_ES_BIN = resolveRelative(useBat('bin/elasticsearch'));
 export const RELATIVE_ES_PLUGIN_BIN = resolveRelative(useBat('bin/elasticsearch-plugin'));
+export const RELATIVE_ES_KEYSTORE_BIN = resolveRelative(useBat('bin/elasticsearch-keystore'));

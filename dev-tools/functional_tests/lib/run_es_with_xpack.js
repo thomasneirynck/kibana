@@ -4,10 +4,11 @@ import { platform as getPlatform } from 'os';
 import { log } from './log';
 import { extractTarball } from './tarball';
 import { findMostRecentlyChanged } from './find_most_recently_changed';
-import { setupUsers } from './auth';
+import { setupUsers, DEFAULT_SUPERUSER_PASS } from './auth';
 import {
   RELATIVE_ES_BIN,
   RELATIVE_ES_PLUGIN_BIN,
+  RELATIVE_ES_KEYSTORE_BIN,
   RELATIVE_GRADLE_BIN,
   XPACK_ES_REPO_ROOT,
   ES_ARCHIVE_PATTERN,
@@ -40,6 +41,21 @@ export async function runEsWithXpack({ tmpDir, procs, ftrConfig }) {
     args: [ 'install', '--silent', xpackZipFileUrl ],
     cwd: esExtractPath,
     wait: true
+  });
+
+  await procs.run('createEsKeystore', {
+    cmd: RELATIVE_ES_KEYSTORE_BIN,
+    args: [ 'create' ],
+    cwd: esExtractPath,
+    wait: true,
+  });
+
+  await procs.run('setDefaultSuperuserPassword', {
+    cmd: RELATIVE_ES_KEYSTORE_BIN,
+    stdin: DEFAULT_SUPERUSER_PASS,
+    args: [ 'add', 'bootstrap.password', '-x' ],
+    cwd: esExtractPath,
+    wait: true,
   });
 
   await procs.run('es', {

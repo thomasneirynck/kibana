@@ -3,6 +3,8 @@ import { format as formatUrl } from 'url';
 import request from 'request';
 import { fromNode as fcb } from 'bluebird';
 
+export const DEFAULT_SUPERUSER_PASS = 'iamsuperuser';
+
 async function updateCredentials(port, auth, username, password) {
   const result = await fcb(cb => request({
     method: 'PUT',
@@ -28,10 +30,6 @@ async function updateCredentials(port, auth, username, password) {
 
 export async function setupUsers(log, ftrConfig) {
   const esPort = ftrConfig.get('servers.elasticsearch.port');
-
-  // initialize the elastic user with a password so it can be
-  // used to set passwords for other users
-  await updateCredentials(esPort, 'elastic:', 'elastic', 'iamsuperuser');
 
   // track the current credentials for the `elastic` user as
   // they will likely change as we apply updates

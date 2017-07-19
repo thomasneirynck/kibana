@@ -10,7 +10,7 @@ import { log } from '../log';
 import { observeLines } from './observe_lines';
 import { observeChildProcess } from './observe_child_process';
 
-export function createProc(name, { cmd, args, cwd, env }) {
+export function createProc(name, { cmd, args, cwd, env, stdin }) {
   log.info('[%s] > %s', name, cmd, args.join(' '));
 
   // spawn fails with ENOENT when either the
@@ -29,8 +29,16 @@ export function createProc(name, { cmd, args, cwd, env }) {
   const childProcess = spawn(cmd, args, {
     cwd,
     env,
-    stdio: ['ignore', 'pipe', 'pipe']
+    stdio: [
+      stdin ? 'pipe' : 'ignore',
+      'pipe',
+      'pipe'
+    ]
   });
+
+  if (stdin) {
+    childProcess.stdin.end(stdin, 'utf8');
+  }
 
   return new class Proc {
     name = name
