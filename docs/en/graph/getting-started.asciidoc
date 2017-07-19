@@ -52,6 +52,7 @@ To see more relationships within your data, you can submit additional queries.
 
 image::graph/images/graph-add-query.jpg["Adding networks"]
 
+
 NOTE: By default, when you submit a search query Graph searches all available
 fields. You can constrain your search to a particular field using the Lucene
 query syntax. For example,  `machine.os: osx`.

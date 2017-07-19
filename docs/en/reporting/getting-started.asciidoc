@@ -29,4 +29,4 @@ image:reporting/images/reporting.jpg["Reporting",link="reporting.jpg"]
 
 If you want to automatically generate reports from a script or with
 {watcher}, use the displayed Generation URL. For more information, see
-<<automating-report-generation, Automating Report Generation>>.
+{kibana-ref}/automating-report-generation.html[Automating Report Generation].
