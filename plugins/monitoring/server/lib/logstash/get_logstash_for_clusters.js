@@ -98,6 +98,18 @@ export function getLogstashForClusters(req, logstashIndexPattern, clusters) {
               }
             }
           },
+          pipelines_nested: {
+            nested: {
+              path: 'logstash_stats.pipelines'
+            },
+            aggs: {
+              pipelines: {
+                cardinality: {
+                  field: 'logstash_stats.pipelines.name'
+                }
+              }
+            }
+          },
           events_in_total: {
             sum_bucket: {
               buckets_path: 'logstash_uuids>events_in_total_per_node'
@@ -152,12 +164,13 @@ export function getLogstashForClusters(req, logstashIndexPattern, clusters) {
       return {
         clusterUuid,
         stats: {
-          count: logstashUuids.length,
+          node_count: logstashUuids.length,
           events_in_total: eventsInTotal,
           events_out_total: eventsOutTotal,
           avg_memory: memory,
           avg_memory_used: memoryUsed,
-          max_uptime: maxUptime
+          max_uptime: maxUptime,
+          pipeline_count: get(aggregations, 'pipelines_nested.pipelines.value', 0)
         }
       };
     });

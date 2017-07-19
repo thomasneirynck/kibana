@@ -1,7 +1,7 @@
 <div class="monitoring-summary-status">
   <div class="monitoring-summary-status__content">
     <div>Nodes:
-      <strong data-test-subj="count">{{ pageData.clusterStatus.count }}</strong>
+      <strong data-test-subj="node_count">{{ pageData.clusterStatus.node_count }}</strong>
     </div>
     <div>Memory:
       <strong data-test-subj="memory_used">{{ pageData.clusterStatus.avg_memory_used|formatNumber:'bytes' }} / {{ pageData.clusterStatus.avg_memory|formatNumber:'bytes' }}</strong>

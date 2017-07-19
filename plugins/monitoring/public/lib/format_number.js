@@ -2,6 +2,7 @@ import moment from 'moment';
 import 'moment-duration-format';
 import numeral from 'numeral';
 import {
+  FORMAT_DURATION_TEMPLATE_TINY,
   FORMAT_DURATION_TEMPLATE_SHORT,
   FORMAT_DURATION_TEMPLATE_LONG,
   CALCULATE_DURATION_SINCE,
@@ -37,9 +38,14 @@ export function formatTimestampToDuration(timestamp, calculationFlag) {
   if (moment.utc().diff(timestamp, 'months') >= 1) {
     // time diff is greater than 1 month, show months / days
     return moment.duration(duration).format(FORMAT_DURATION_TEMPLATE_LONG);
+  } else if (moment.utc().diff(timestamp, 'minutes') >= 1) {
+    // time diff is less than 1 month but greater than a minute, show days / hours / minutes
+    return moment.duration(duration).format(FORMAT_DURATION_TEMPLATE_SHORT);
   }
-  // time diff is less than 1 month, show days / hours / minutes
-  return moment.duration(duration).format(FORMAT_DURATION_TEMPLATE_SHORT);
+
+  // time diff is less than a minute, show seconds
+  return moment.duration(duration).format(FORMAT_DURATION_TEMPLATE_TINY);
+
 }
 
 export function formatNumber(num, which) {

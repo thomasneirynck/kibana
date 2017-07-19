@@ -77,12 +77,28 @@
             Nodes
           </a>
           <a
+            ng-if="!monitoringMain.instance"
+            kbn-href="#/logstash/pipelines"
+            class="kuiLocalTab"
+            ng-class="{'kuiLocalTab-isSelected': monitoringMain.isActiveTab('pipelines')}"
+          >
+            Pipelines
+          </a>
+          <a
             ng-if="monitoringMain.instance"
             kbn-href="#/logstash/node/{{ monitoringMain.resolver }}"
             class="kuiLocalTab"
             ng-class="{'kuiLocalTab-isSelected': monitoringMain.page === 'overview'}"
           >
             Overview
+          </a>
+          <a
+            ng-if="monitoringMain.instance"
+            kbn-href="#/logstash/node/{{ monitoringMain.resolver }}/pipelines"
+            class="kuiLocalTab"
+            ng-class="{'kuiLocalTab-isSelected': monitoringMain.page === 'pipelines'}"
+          >
+            Pipelines
           </a>
           <a
             ng-if="monitoringMain.instance"

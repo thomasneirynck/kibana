@@ -1,0 +1,11 @@
+<div ng-controller="logstashPipelines">
+  <monitoring-main
+    product="logstash"
+    name="pipelines"
+  >
+    <monitoring-cluster-status-logstash></monitoring-cluster-status-logstash>
+    <div class="page-row">
+      <monitoring-logstash-pipeline-listing pipelines="pageData.pipelines"></monitoring-logstash-pipeline-listing>
+    </div>
+  </monitoring-main>
+</div>

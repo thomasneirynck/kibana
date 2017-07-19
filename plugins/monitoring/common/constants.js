@@ -58,11 +58,16 @@ export const CLUSTER_ALERTS_SEARCH_SIZE = 3;
 export const FORMAT_DURATION_TEMPLATE_LONG = 'M [months] d [days]';
 
 /*
- * Format for moment-duration-format timestamp-to-duration template if the time diffs are lt 1 month
+ * Format for moment-duration-format timestamp-to-duration template if the time diffs are lt 1 month but gt 1 minute
  * @type {string}
  */
 export const FORMAT_DURATION_TEMPLATE_SHORT = ' d [days] h [hrs] m [min]';
 
+/*
+ * Format for moment-duration-format timestamp-to-duration template if the time diffs are lt 1 minute
+ * @type {string}
+ */
+export const FORMAT_DURATION_TEMPLATE_TINY = ' s [seconds]';
 
 /*
  * Simple unique values for Timestamp to duration flags. These are used for
