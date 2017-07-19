@@ -88,37 +88,7 @@ function checkout_sibling {
       pick_clone_target
 
       echo " -> checking out '${cloneBranch}' branch from ${cloneAuthor}/${project}..."
-
-      case "${cloneAuthor}/${project}#${cloneBranch}" in
-        "elastic/elasticsearch#master")
-          echo " -> HOTFIX: rewriting checkout to 83522ab4e56a1e46351dff4970f5e08e43ada6f4 because of temporary incompatibility with master"
-          checkout_clone_target_commit 83522ab4e56a1e46351dff4970f5e08e43ada6f4
-          ;;
-
-        "elastic/x-pack-elasticsearch#master")
-          echo " -> HOTFIX: rewriting checkout to 90913f485b070ada9f22ba4ec46c81b20c8ffb7e because of temporary incompatibility with master"
-          checkout_clone_target_commit 90913f485b070ada9f22ba4ec46c81b20c8ffb7e
-          ;;
-
-        *)
-          git clone -b "$cloneBranch" "git@github.com:${cloneAuthor}/${project}.git" "$targetDir" --depth=1
-          echo " -> checked out ${project} revision: $(git -C ${targetDir} rev-parse HEAD)"
-          echo
-          ;;
-      esac
-    }
-
-    function checkout_clone_target_commit {
-      sha="$1"
-
-      mkdir -p "$targetDir"
-      cd "$targetDir"
-      git init
-      git remote add origin "git@github.com:${cloneAuthor}/${project}.git"
-      git fetch origin "${cloneBranch}"
-      git reset --hard "$sha"
-      cd -
-
+      git clone -b "$cloneBranch" "git@github.com:${cloneAuthor}/${project}.git" "$targetDir" --depth=1
       echo " -> checked out ${project} revision: $(git -C ${targetDir} rev-parse HEAD)"
       echo
     }
