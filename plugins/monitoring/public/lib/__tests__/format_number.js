@@ -23,7 +23,7 @@ describe('format timestamp to duration - time since', () => {
 describe('format timestamp to duration - time until', () => {
   it('should format timstamp to human-readable duration', () => {
     // time inputs are a few "moments" extra from the time advertised by name
-    const fiveMinsAgo = moment().add(5, 'minutes').add(30, 'seconds');
+    const fiveMinsAgo = moment().subtract(5, 'minutes').subtract(30, 'seconds');
     expect(formatTimestampToDuration(fiveMinsAgo, CALCULATE_DURATION_UNTIL)).to.be('5 min');
   });
 });
