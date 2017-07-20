@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import template from './nav_menu.html';
-import chrome from 'ui/chrome';
+import uiRouter from 'ui/routes';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -39,9 +39,9 @@ module.directive('mlNavMenu', () => {
       const breadcrumbs = [{ label: 'Machine Learning', url: '#/' }];
 
       // get crumbs from url
-      const crumbs = chrome.getBreadcrumbs();
+      const crumbs = uiRouter.getBreadcrumbs();
       _.each(crumbs, (crumb) => {
-        breadcrumbs.push(crumbNames[crumb]);
+        breadcrumbs.push(crumbNames[crumb.id]);
       });
       scope.breadcrumbs = breadcrumbs.filter(Boolean);
     }
