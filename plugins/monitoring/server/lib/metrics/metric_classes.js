@@ -4,6 +4,26 @@ import {
   LARGE_FLOAT, SMALL_FLOAT, LARGE_BYTES, SMALL_BYTES
 } from '../../../common/formatting';
 
+/**
+ * Calculate the latency, if any, for the {@code timeInMillis} and {@code timeTotal}.
+ *
+ * @param  {Number} timeInMillis {@code null} if unknown.
+ * @param  {Number} timeTotal    {@code null} if unknown.
+ * @return {Number}              {@code null} if unknown.
+ */
+function calculateLatency(timeInMillis, timeTotal) {
+  if (timeInMillis === null || timeTotal === null) {
+    return null;
+  } else if (timeInMillis < 0 || timeTotal < 0) {
+    // Negative values indicate blips in the data (e.g., restarting a node) that we do not want to misrepresent
+    return null;
+  } else if (timeTotal === 0) {
+    return 0;
+  }
+
+  return timeInMillis / timeTotal;
+}
+
 export class Metric {
 
   constructor(opts) {
@@ -107,16 +127,10 @@ export class LatencyMetric extends ElasticsearchMetric {
     };
 
     this.calculation = (last) => {
-      const timeInMillis = _.get(last, `${metric}_time_in_millis_deriv.value`);
-      const timeTotal = _.get(last, `${metric}_total_deriv.value`);
-      if (timeInMillis && timeTotal) {
-        // Negative values indicate blips in the data (e.g., restarting a node) that we do not want to misrepresent
-        if (timeInMillis < 0 || timeTotal < 0) {
-          return null;
-        }
-        return timeInMillis / timeTotal;
-      }
-      return 0;
+      const timeInMillis = _.get(last, `${metric}_time_in_millis_deriv.value`, null);
+      const timeTotal = _.get(last, `${metric}_total_deriv.value`, null);
+
+      return calculateLatency(timeInMillis, timeTotal);
     };
   }
 
@@ -356,16 +370,10 @@ export class EventsLatencyMetric extends LogstashMetric {
     };
 
     this.calculation = (last) => {
-      const timeInMillis = _.get(last, 'events_time_in_millis_deriv.value');
-      const timeTotal = _.get(last, 'events_total_deriv.value');
-      if (timeInMillis && timeTotal) {
-        // Negative values indicate blips in the data (e.g., restarting a node) that we do not want to misrepresent
-        if (timeInMillis < 0 || timeTotal < 0) {
-          return null;
-        }
-        return timeInMillis / timeTotal;
-      }
-      return 0;
+      const timeInMillis = _.get(last, 'events_time_in_millis_deriv.value', null);
+      const timeTotal = _.get(last, 'events_total_deriv.value', null);
+
+      return calculateLatency(timeInMillis, timeTotal);
     };
   }
 
@@ -421,16 +429,10 @@ export class EventsLatencyClusterMetric extends LogstashClusterMetric {
     };
 
     this.calculation = (last) => {
-      const timeInMillis = _.get(last, 'events_time_in_millis_deriv.value');
-      const timeTotal = _.get(last, 'events_total_deriv.value');
-      if (timeInMillis && timeTotal) {
-        // Negative values indicate blips in the data (e.g., restarting a node) that we do not want to misrepresent
-        if (timeInMillis < 0 || timeTotal < 0) {
-          return null;
-        }
-        return timeInMillis / timeTotal;
-      }
-      return 0;
+      const timeInMillis = _.get(last, 'events_time_in_millis_deriv.value', null);
+      const timeTotal = _.get(last, 'events_total_deriv.value', null);
+
+      return calculateLatency(timeInMillis, timeTotal);
     };
   }
 

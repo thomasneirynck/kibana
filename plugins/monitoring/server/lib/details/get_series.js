@@ -18,14 +18,18 @@ function getUuid(req, metric) {
 }
 
 function defaultCalculation(key, metric, bucketSize, bucket) {
-  // TODO: get(bucket, `${key}.value`, null); avoid fake zeroes!
-  let value =  bucket[key] && bucket[key].value || 0;
-  // convert metric_deriv from the bucket size to seconds if units == '/s'
-  if (metric.units === '/s') {
-    value = value / bucketSize;
-  }
+  // [${key}] guarantees that if the key has periods in it, it gets interpreted as a single key value
+  const value =  get(bucket, `[${key}].value`, null);
+
   // negatives suggest derivatives that have been reset (usually due to restarts that reset the count)
-  return Math.max(value, 0);
+  if (value < 0) {
+    return null;
+  } else if (value && metric.units === '/s') {
+    // convert metric_deriv from the bucket size to seconds if units == '/s'
+    return value / bucketSize;
+  }
+
+  return value;
 }
 
 function createMetricAggs(metric) {

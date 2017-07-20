@@ -9,7 +9,7 @@ function indexingLatencyCalculation(last) {
     }
     return indexTimeInMillis / indexTimeTotal;
   }
-  return 0;
+  return null;
 }
 
 function queryLatencyCalculation(last) {
@@ -21,7 +21,7 @@ function queryLatencyCalculation(last) {
     }
     return queryTimeInMillis / queryTimeTotal;
   }
-  return 0;
+  return null;
 }
 
 function logstashEventsLatencyCalculation(last) {
@@ -33,7 +33,7 @@ function logstashEventsLatencyCalculation(last) {
     }
     return eventsTimeInMillis / eventsTotal;
   }
-  return 0;
+  return null;
 }
 
 function quotaMetricCalculation(bucket) {
