@@ -16,7 +16,8 @@ function authorizedUserPreRoutingFn(server) {
       return reply(boom.notFound());
     }
 
-    if (!xpackInfo.feature('security').isEnabled()) {
+    const security = xpackInfo.feature('security');
+    if (!security.isEnabled() || !security.isAvailable()) {
       return reply(null);
     }
 

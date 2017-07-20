@@ -11,9 +11,9 @@ function discoverReportProvider(Private) {
     label: 'Reporting',
     template: '<export-config object-type="Search" enabled-export-type="csv"></export-config>',
     description: 'Search Report',
-    hideButton: () => !xpackInfo.get('features.reporting.printablePdf.showLinks', false),
-    disableButton: () => !xpackInfo.get('features.reporting.printablePdf.enableLinks', false),
-    tooltip: () => xpackInfo.get('features.reporting.printablePdf.message'),
+    hideButton: () => !xpackInfo.get('features.reporting.csv.showLinks', false),
+    disableButton: () => !xpackInfo.get('features.reporting.csv.enableLinks', false),
+    tooltip: () => xpackInfo.get('features.reporting.csv.message'),
     testId: 'topNavReportingLink',
   };
 }
