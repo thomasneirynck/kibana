@@ -16,9 +16,10 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
 
   class SecurityPage {
     async initTests() {
-      await kibanaServer.uiSettings.disableToastAutohide();
       log.debug('SecurityPage:initTests');
       await esArchiver.load('empty_kibana');
+      await kibanaServer.waitForStabilization();
+      await kibanaServer.uiSettings.disableToastAutohide();
       await esArchiver.loadIfNeeded('logstash_functional');
       remote.setWindowSize(1600,1000);
     }

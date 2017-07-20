@@ -20,6 +20,7 @@ export async function runKibanaServer({ procs, ftrConfig, devMode = false }) {
       `--elasticsearch.url=${formatUrl(ftrConfig.get('servers.elasticsearch'))}`,
       `--optimize.lazyPort=${ftrConfig.get('servers.kibana.port') + 1}`,
       '--optimize.lazyPrebuild=true',
+      '--status.allowAnonymous=true',
       `--optimize.bundleDir=${OPTIMIZE_BUNDLE_DIR}`,
       `--elasticsearch.username=${ftrConfig.get('servers.elasticsearch.username')}`,
       `--elasticsearch.password=${ftrConfig.get('servers.elasticsearch.password')}`

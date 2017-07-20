@@ -16,7 +16,7 @@ export default function ({ getService, getPageObjects }) {
   describe('Management', () => {
     before(async () => {
       await PageObjects.security.initTests();
-      await kibanaServer.uiSettings.replace({
+      await kibanaServer.uiSettings.update({
         'dateFormat:tz':'UTC',
         'defaultIndex':'logstash-*'
       });

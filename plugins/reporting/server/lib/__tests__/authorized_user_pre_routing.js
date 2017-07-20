@@ -43,7 +43,8 @@ describe('authorized_user_pre_routing', function () {
           feature: function (featureName) {
             if (featureName === 'security') {
               return {
-                isEnabled: () => securityEnabled
+                isEnabled: () => securityEnabled,
+                isAvailable: () => xpackInfoAvailable
               };
             }
           }
