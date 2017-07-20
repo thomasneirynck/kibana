@@ -69,38 +69,38 @@ function getPageData($injector) {
         name: 'index_time',
         keys: [
           'index_searching_time',
-          'index_indexing_primaries_time',
-          'index_indexing_total_time'
+          'index_indexing_total_time',
+          'index_indexing_primaries_time'
         ]
       },
       {
         name: 'index_throttling',
         keys: [
-          'index_throttling_indexing_primaries_time',
-          'index_throttling_indexing_total_time'
+          'index_throttling_indexing_total_time',
+          'index_throttling_indexing_primaries_time'
         ]
       },
       {
         name: 'index_refresh',
         keys: [
-          'index_segment_refresh_primaries_time',
-          'index_segment_refresh_total_time'
+          'index_segment_refresh_total_time',
+          'index_segment_refresh_primaries_time'
         ]
       },
       {
         name: 'index_disk',
         keys: [
-          'index_store_primaries_size',
           'index_store_total_size',
-          'index_segment_merge_primaries_size',
-          'index_segment_merge_total_size'
+          'index_store_primaries_size',
+          'index_segment_merge_total_size',
+          'index_segment_merge_primaries_size'
         ]
       },
       {
         name: 'index_segment_count',
         keys: [
-          'index_segment_count_primaries',
-          'index_segment_count_total'
+          'index_segment_count_total',
+          'index_segment_count_primaries'
         ]
       }
     ]
