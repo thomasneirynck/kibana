@@ -6,6 +6,7 @@ describe('get_high_level_stats', () => {
   const callWith = sinon.stub();
   const size = 123;
   const product = 'xyz';
+  const cloudName = 'bare-metal';
   const start = 0;
   const end = 1;
   const server = {
@@ -63,6 +64,72 @@ describe('get_high_level_stats', () => {
             cluster_uuid: 'b'
           }
         },
+        // provides cloud data
+        {
+          _source: {
+            cluster_uuid: 'c',
+            [`${product}_stats`]: {
+              [`${product}`]: {
+                version: '5.6.1'
+              },
+              cloud: {
+                name: cloudName,
+                id: '123',
+                vm_type: 'x1',
+                region: 'abc-123'
+              }
+            }
+          }
+        },
+        {
+          _source: {
+            cluster_uuid: 'c',
+            [`${product}_stats`]: {
+              [`${product}`]: {
+                version: '5.6.1'
+              },
+              cloud: {
+                name: cloudName,
+                id: '234',
+                vm_type: 'ps4',
+                region: 'def-123',
+                zone: 'def-123-A'
+              }
+            }
+          }
+        },
+        // same cloud instance as above (based on its ID)
+        {
+          _source: {
+            cluster_uuid: 'c',
+            [`${product}_stats`]: {
+              [`${product}`]: {
+                version: '5.6.1'
+              },
+              cloud: {
+                name: cloudName,
+                id: '234',
+                vm_type: 'ps4',
+                region: 'def-123',
+                zone: 'def-123-A'
+              }
+            }
+          }
+        },
+        // cloud instance without anything other than the name
+        {
+          _source: {
+            cluster_uuid: 'c',
+            [`${product}_stats`]: {
+              [`${product}`]: {
+                version: '5.6.1'
+              },
+              cloud: {
+                name: cloudName
+              }
+            }
+          }
+        },
         // no cluster_uuid (not counted)
         {
           _source: {
@@ -81,13 +148,39 @@ describe('get_high_level_stats', () => {
       count: 2,
       versions: [
         { version: '1.2.3-alpha1', count: 2 }
-      ]
+      ],
+      cloud: undefined
     },
     b: {
       count: 3,
       versions: [
         { version: '2.3.4-rc1', count: 1 },
         { version: '2.3.4', count: 1 }
+      ],
+      cloud: undefined
+    },
+    c: {
+      count: 4,
+      versions: [
+        { version: '5.6.1', count: 4 }
+      ],
+      cloud: [
+        {
+          name: cloudName,
+          count: 4,
+          vms: 2,
+          vm_types: [
+            { vm_type: 'x1', count: 1 },
+            { vm_type: 'ps4', count: 2 }
+          ],
+          regions: [
+            { region: 'abc-123', count: 1 },
+            { region: 'def-123', count: 2 }
+          ],
+          zones: [
+            { zone: 'def-123-A', count: 2 }
+          ]
+        }
       ]
     }
   };

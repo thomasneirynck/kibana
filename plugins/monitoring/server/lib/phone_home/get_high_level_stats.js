@@ -3,6 +3,121 @@ import { createQuery } from '../create_query';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 
 /**
+ * Update a counter associated with the {@code key}.
+ *
+ * @param {Map} map Map to update the counter for the {@code key}.
+ * @param {String} key The key to increment a counter for.
+ */
+function incrementByKey(map, key) {
+  if (!key) {
+    return;
+  }
+
+  let count = map.get(key);
+
+  if (!count) {
+    count = 0;
+  }
+
+  map.set(key, count + 1);
+}
+
+/**
+ * Help to reduce Cloud metrics into unidentifiable metrics (e.g., count IDs so that they can be dropped).
+ *
+ * @param  {Map} clouds Existing cloud data by cloud name.
+ * @param  {Object} cloud Cloud object loaded from Elasticsearch data.
+ */
+function reduceCloudForCluster(cloudMap, cloud) {
+  if (!cloud) {
+    return;
+  }
+
+  let cloudByName = cloudMap.get(cloud.name);
+
+  if (!cloudByName) {
+    cloudByName = {
+      count: 0,
+      unique: new Set(),
+      vm_type: new Map(),
+      region: new Map(),
+      zone: new Map()
+    };
+
+    cloudMap.set(cloud.name, cloudByName);
+  }
+
+  // keep track of how many running instances there are
+  cloudByName.count++;
+
+  if (cloud.id) {
+    cloudByName.unique.add(cloud.id);
+  }
+
+  incrementByKey(cloudByName.vm_type, cloud.vm_type);
+  incrementByKey(cloudByName.region, cloud.region);
+  incrementByKey(cloudByName.zone, cloud.zone);
+}
+
+/**
+ * Group the instances (hits) by clusters.
+ *
+ * @param  {Array} instances Array of hits from the request containing the cluster UUID and version.
+ * @param {String} product The product to limit too ('kibana', 'logstash', 'beats')
+ * @return {Map} A map of the Cluster UUID to an {@link Object} containing the {@code count} and {@code versions} {@link Map}
+ */
+function groupInstancesByCluster(instances, product) {
+  const clusterMap = new Map();
+
+  // hits are sorted arbitrarily by product UUID
+  instances.map(instance => {
+    const clusterUuid = get(instance, '_source.cluster_uuid');
+    const version = get(instance, `_source.${product}_stats.${product}.version`);
+    const cloud = get(instance, `_source.${product}_stats.cloud`);
+
+    // put the instance into the right cluster map
+    if (clusterUuid) {
+      let cluster = clusterMap.get(clusterUuid);
+
+      if (!cluster) {
+        cluster = { count: 0, versions: new Map(), cloudMap: new Map() };
+        clusterMap.set(clusterUuid, cluster);
+      }
+
+      // keep track of how many instances there are
+      cluster.count++;
+
+      incrementByKey(cluster.versions, version);
+      reduceCloudForCluster(cluster.cloudMap, cloud);
+    }
+  });
+
+  return clusterMap;
+}
+
+/**
+ * Convert the {@code map} to an {@code Object} using the {@code keyName} as the key in the object. Per map entry:
+ *
+ * [
+ *   { [keyName]: key1, count: value1 },
+ *   { [keyName]: key2, count: value2 }
+ * ]
+ *
+ * @param  {Map} map     [description]
+ * @param  {String} keyName [description]
+ * @return {Array}         [description]
+ */
+function mapToList(map, keyName) {
+  const list = [];
+
+  for (const [key, count] of map) {
+    list.push({ [keyName]: key, count });
+  }
+
+  return list;
+}
+
+/**
  * Get statistics about selected Elasticsearch clusters, for the selected {@code product}.
  *
  * @param {Object} server The server instance
@@ -37,7 +152,13 @@ export function fetchHighLevelStats(server, callCluster, clusterUuids, start, en
     index: config.get(`xpack.monitoring.${product}.index_pattern`),
     filterPath: [
       'hits.hits._source.cluster_uuid',
-      `hits.hits._source.${product}_stats.${product}.version`
+      `hits.hits._source.${product}_stats.${product}.version`,
+      // we don't want metadata
+      `hits.hits._source.${product}_stats.cloud.name`,
+      `hits.hits._source.${product}_stats.cloud.id`,
+      `hits.hits._source.${product}_stats.cloud.vm_type`,
+      `hits.hits._source.${product}_stats.cloud.region`,
+      `hits.hits._source.${product}_stats.cloud.zone`
     ],
     body: {
       size,
@@ -74,71 +195,30 @@ export function handleHighLevelStatsResponse(response, product) {
 
   const clusters = {};
 
-  for (const [clusterUuid, cluster] of clusterMap.entries()) {
-    const versions = [];
+  for (const [clusterUuid, cluster] of clusterMap) {
+    // it's unlikely this will be an array of more than one, but it is one just incase
+    const clouds = [];
 
-    // remap the versions into something more digestable that won't blowup mappings:
-    // versions: [
-    //   { version: '5.4.0', count: 2 },
-    //   { version: '5.5.0', count: 1 }
-    // ]
-    for (const [version, count] of cluster.versions.entries()) {
-      versions.push({ version, count });
+    // remap the clouds (most likely singular or empty)
+    for (const [name, cloud] of cluster.cloudMap) {
+      clouds.push({
+        name,
+        count: cloud.count,
+        vms: cloud.unique.size,
+        regions: mapToList(cloud.region, 'region'),
+        vm_types: mapToList(cloud.vm_type, 'vm_type'),
+        zones: mapToList(cloud.zone, 'zone')
+      });
     }
 
     // map stats for product by cluster so that it can be joined with ES cluster stats
-    // {
-    //   count: 3,
-    //   versions: [
-    //     { version: '5.4.0', count: 2 },
-    //     { version: '5.5.0', count: 1 }
-    //   ]
-    // }
     clusters[clusterUuid] = {
       count: cluster.count,
-      versions
+      // remap the versions into something more digestable that won't blowup mappings:
+      versions: mapToList(cluster.versions, 'version'),
+      cloud: clouds.length > 0 ? clouds : undefined
     };
   }
 
   return clusters;
-}
-
-/**
- * Group the instances (hits) by clusters.
- *
- * @param  {Array} instances Array of hits from the request containing the cluster UUID and version.
- * @param {String} product The product to limit too ('kibana', 'logstash', 'beats')
- * @return {Map} A map of the Cluster UUID to an {@link Object} containing the {@code count} and {@code versions} {@link Map}
- */
-function groupInstancesByCluster(instances, product) {
-  const clusterMap = new Map();
-
-  // hits are sorted arbitrarily by product UUID
-  instances.map(instance => {
-    const clusterUuid = get(instance, '_source.cluster_uuid');
-    const version = get(instance, `_source.${product}_stats.${product}.version`);
-
-    // put the instance into the right cluster map
-    if (clusterUuid) {
-      let cluster = clusterMap.get(clusterUuid);
-
-      if (!cluster) {
-        cluster = { count: 0, versions: new Map() };
-        clusterMap.set(clusterUuid, cluster);
-      }
-
-      // keep track of how many instances there are
-      cluster.count++;
-
-      if (version) {
-        let versionCount = cluster.versions.get(version);
-        if (!versionCount) {
-          versionCount = 0;
-        }
-        cluster.versions.set(version, versionCount + 1);
-      }
-    }
-  });
-
-  return clusterMap;
 }

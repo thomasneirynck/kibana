@@ -35,6 +35,24 @@ describe('get_all_stats', () => {
       count: 2,
       versions: [
         { version: '1.2.3-alpha1', count: 2 }
+      ],
+      cloud: [
+        {
+          name: 'bare-metal',
+          count: 4,
+          vms: 2,
+          vm_types: [
+            { vm_type: 'x1', count: 2 },
+            { vm_type: 'ps4', count: 2 }
+          ],
+          regions: [
+            { region: 'abc-123', count: 2 },
+            { region: 'def-123', count: 2 }
+          ],
+          zones: [
+            { zone: 'def-123-A', count: 2 }
+          ]
+        }
       ]
     },
     b: {
@@ -134,13 +152,15 @@ describe('get_all_stats', () => {
               count: 1,
               versions: [
                 { version: '1.2.3-alpha1', count: 1 }
-              ]
+              ],
+              cloud: undefined
             },
             logstash: {
               count: 1,
               versions: [
                 { version: '2.3.4-beta2', count: 1 }
-              ]
+              ],
+              cloud: undefined
             }
           }
         }
