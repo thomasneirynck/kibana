@@ -59,7 +59,9 @@
                 'kuiButton--basic': !job.max_size_reached,
                 'kuiButton--warning': job.max_size_reached}"
               aria-label="Download report"
-              tooltip="Max size reached, contains partial data."
+              ng-attr-tooltip="{{
+                job.max_size_reached ? 'Max size reached, contains partial data.' : null
+              }}"
             >
               <span class="kuiIcon fa-download"></span>
             </button>
