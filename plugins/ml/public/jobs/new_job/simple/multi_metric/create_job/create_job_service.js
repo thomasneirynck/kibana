@@ -420,9 +420,10 @@ module.service('mlMultiMetricJobService', function (
     return deferred.promise;
   };
 
-  this.indexTimeRange = function (indexPattern, query) {
+  this.indexTimeRange = function (indexPattern, formConfig) {
     const deferred = $q.defer();
     const obj = { success: true, start: { epoch:0, string:'' }, end: { epoch:0, string:'' } };
+    const query = getQueryFromSavedSearch(formConfig);
 
     es.search({
       index: indexPattern.title,
@@ -461,15 +462,17 @@ module.service('mlMultiMetricJobService', function (
   };
 
   this.getSplitFields = function (formConfig, size) {
+    const query = getQueryFromSavedSearch(formConfig);
     return mlSimpleJobSearchService.getCategoryFields(
       formConfig.indexPattern.title,
       formConfig.splitField,
       size,
-      formConfig.query);
+      query);
   };
 
   this.loadDocCountData = function (formConfig) {
     const deferred = $q.defer();
+    const query = getQueryFromSavedSearch(formConfig);
     const bounds = timefilter.getActiveBounds();
     const buckets = new TimeBuckets();
     buckets.setInterval('auto');
@@ -486,7 +489,7 @@ module.service('mlMultiMetricJobService', function (
       end,
       formConfig.timeField,
       (interval + 'ms'),
-      formConfig.query)
+      query)
     .then((resp) => {
       let highestValue = Math.max(this.chartData.eventRateHighestValue, this.chartData.highestValue);
       this.chartData.job.bars = [];

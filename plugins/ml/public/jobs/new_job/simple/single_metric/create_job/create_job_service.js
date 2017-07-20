@@ -451,9 +451,10 @@ module.service('mlSingleMetricJobService', function (
     return deferred.promise;
   };
 
-  this.indexTimeRange = function (indexPattern, query) {
+  this.indexTimeRange = function (indexPattern, formConfig) {
     const deferred = $q.defer();
     const obj = { success: true, start: { epoch:0, string:'' }, end: { epoch:0, string:'' } };
+    const query = getQueryFromSavedSearch(formConfig);
 
     es.search({
       index: indexPattern.title,
