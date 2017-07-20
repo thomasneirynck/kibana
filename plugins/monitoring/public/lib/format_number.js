@@ -49,9 +49,15 @@ export function formatTimestampToDuration(timestamp, calculationFlag) {
 }
 
 export function formatNumber(num, which) {
-  if (typeof num === 'undefined' || isNaN(num)) { return 0; }
-  if (typeof num !== 'number') { return num; }
+  const isNan = Number.isNaN(num);
   let format = '0,0.0';
+  if (typeof num !== 'number' || isNan) {
+    if (num !== undefined && !isNan) {
+      return num; // strings such as 'N/A' stay untouched
+    }
+    num = 0;
+    format = '0'; // NaN/undefined becomes '0' not '0.0'
+  }
   let postfix = '';
   switch (which) {
     case 'time_since':

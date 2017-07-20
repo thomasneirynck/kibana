@@ -33,7 +33,9 @@ export function indexRoutes(server) {
     },
     handler: (req, reply) => {
       const clusterUuid = req.params.clusterUuid;
-      const id = req.params.id;
+      const indexUuid = req.params.id;
+      const start = req.payload.timeRange.min;
+      const end = req.payload.timeRange.max;
       const collectShards = req.payload.shards;
       const config = req.server.config();
       const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
@@ -43,19 +45,19 @@ export function indexRoutes(server) {
         const showSystemIndices = true; // hardcode to true, because this could be a system index
         let shards;
         if (collectShards) {
-          shards = getShardAllocation(req, esIndexPattern, [{ term: { 'shard.index': id } }], cluster, showSystemIndices);
+          shards = getShardAllocation(req, esIndexPattern, [{ term: { 'shard.index': indexUuid } }], cluster, showSystemIndices);
         }
         return Promise.props({
           clusterStatus: getClusterStatus(cluster),
-          indexSummary:  getIndexSummary(req, esIndexPattern),
-          metrics: getMetrics(req, esIndexPattern, [{ term: { 'index_stats.index': id } }]),
+          indexSummary:  getIndexSummary(req, esIndexPattern, { clusterUuid, indexUuid, start, end }),
+          metrics: getMetrics(req, esIndexPattern, [{ term: { 'index_stats.index': indexUuid } }]),
           shards,
           shardStats: getShardStats(req, esIndexPattern, cluster)
         });
       })
       .then(calculateClusterShards)
       .then(body => {
-        const shardStats = body.shardStats.indices[id];
+        const shardStats = body.shardStats.indices[indexUuid];
         // check if we need a legacy workaround for Monitoring 2.0 node data
         if (shardStats) {
           body.indexSummary.unassignedShards = shardStats.unassigned.primary + shardStats.unassigned.replica;
@@ -67,7 +69,10 @@ export function indexRoutes(server) {
           body.indexSummary.totalShards = 'N/A';
           body.indexSummary.unassignedShards = 'N/A';
           body.indexSummary.documents = 'N/A';
-          body.indexSummary.dataSize = 'N/A';
+          body.indexSummary.dataSize = {
+            primaries: 'N/A',
+            total: 'N/A'
+          };
         }
         const shardNodes = get(body, 'shardStats.nodes');
         body.nodes = {};

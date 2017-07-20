@@ -1,7 +1,8 @@
 <div class="monitoring-summary-status">
   <div class="monitoring-summary-status__content">
+    <div>Total: <strong>{{ summary.dataSize.total|formatNumber:'0.0 b' }}</strong></div>
+    <div>Primaries: <strong>{{ summary.dataSize.primaries|formatNumber:'0.0 b' }}</strong></div>
     <div>Documents: <strong>{{ summary.documents|formatNumber:'0.[0]a' }}</strong></div>
-    <div>Data: <strong>{{ summary.dataSize|formatNumber:'0.0 b' }}</strong></div>
     <div>Total Shards: <strong>{{ summary.totalShards|formatNumber:'0,0' }}</strong></div>
     <div>Unassigned Shards: <strong>{{ summary.unassignedShards|formatNumber:'0,0' }}</strong></div>
     <div class="monitoring-summary-status__status-indicator">

@@ -39,7 +39,8 @@ describe('format_number', () => {
   });
 
   it('should format integers with commas', () => {
-    expect(formatNumber(3000), 'int_commas').to.be('3,000.0');
+    expect(formatNumber(3000, 'int_commas')).to.be('3,000');
+    expect(formatNumber(4321.1)).to.be('4,321.1');
   });
 
   it('should format bytes', () => {
@@ -48,6 +49,18 @@ describe('format_number', () => {
 
   it('should format ms', () => {
     expect(formatNumber(3000, 'ms')).to.be('3,000.0ms');
+  });
+
+  it('should not format strings', () => {
+    expect(formatNumber('N/A', 'ms')).to.be('N/A');
+  });
+
+  it('should not format undefined', () => {
+    expect(formatNumber(undefined, 'ms')).to.be('0ms');
+  });
+
+  it('should format NaN as 0', () => {
+    expect(formatNumber(Number.NaN, 'ms')).to.be('0ms');
   });
 
 });

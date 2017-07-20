@@ -1816,19 +1816,6 @@ export const expected = {
     'uuidField': 'cluster_uuid',
     'timestampField': 'timestamp'
   },
-  'index_size': {
-    'field': 'index_stats.total.store.size_in_bytes',
-    'label': 'Index Size',
-    'description': 'Size of the index on disk for primary and replica shards.',
-    'type': 'index',
-    'format': '0,0.0 b',
-    'metricAgg': 'avg',
-    'units': 'B',
-    'app': 'elasticsearch',
-    'uuidField': 'cluster_uuid',
-    'timestampField': 'timestamp',
-    'derivative': false
-  },
   'index_refresh_time': {
     'field': 'total.refresh.total_time_in_millis',
     'label': 'Total Refresh Time',

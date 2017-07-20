@@ -6,7 +6,10 @@ describe('get_index_summary', () => {
     const result = handleResponse({});
     expect(result).to.be.eql({
       documents: 0,
-      dataSize: 0
+      dataSize: {
+        primaries: 0,
+        total: 0
+      }
     });
   });
 
@@ -25,6 +28,9 @@ describe('get_index_summary', () => {
                 primaries: {
                   docs: {
                     count: 250
+                  },
+                  store: {
+                    size_in_bytes: 122500
                   }
                 }
               }
@@ -36,7 +42,10 @@ describe('get_index_summary', () => {
 
     expect(result).to.be.eql({
       documents: 250,
-      dataSize: 250000
+      dataSize: {
+        primaries: 122500,
+        total: 250000
+      }
     });
   });
 });

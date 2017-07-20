@@ -2,15 +2,16 @@
    {
       "name" : "tweets-2016.12.13",
       "metrics" : {
-         "index_size" : {
+         "index_store_total_size" : {
             "last" : 6810931,
             "metric" : {
-               "label" : "Index Size",
+               "title" : "Disk",
+               "label" : "Store",
                "units" : "B",
                "field" : "index_stats.total.store.size_in_bytes",
                "app" : "elasticsearch",
                "format" : "0,0.0 b",
-               "description" : "Size of the index on disk for primary and replica shards."
+               "description" : "Size of primary and replica shards on disk."
             }
          },
          "index_document_count" : {
@@ -87,12 +88,13 @@
                "label" : "Document Count"
             }
          },
-         "index_size" : {
+         "index_store_total_size" : {
             "last" : 11286394,
             "metric" : {
-               "label" : "Index Size",
+               "title" : "Disk",
+               "label" : "Store",
                "units" : "B",
-               "description" : "Size of the index on disk for primary and replica shards.",
+               "description" : "Size of primary and replica shards on disk.",
                "field" : "index_stats.total.store.size_in_bytes",
                "format" : "0,0.0 b",
                "app" : "elasticsearch"
@@ -128,12 +130,13 @@
             },
             "last" : 0
          },
-         "index_size" : {
+         "index_store_total_size" : {
             "last" : 4509675,
             "metric" : {
                "units" : "B",
-               "label" : "Index Size",
-               "description" : "Size of the index on disk for primary and replica shards.",
+               "title" : "Disk",
+               "label" : "Store",
+               "description" : "Size of primary and replica shards on disk.",
                "app" : "elasticsearch",
                "format" : "0,0.0 b",
                "field" : "index_stats.total.store.size_in_bytes"
@@ -178,15 +181,16 @@
                "app" : "elasticsearch"
             }
          },
-         "index_size" : {
+         "index_store_total_size" : {
             "last" : 11064468,
             "metric" : {
-               "label" : "Index Size",
+               "title" : "Disk",
+               "label" : "Store",
                "units" : "B",
                "field" : "index_stats.total.store.size_in_bytes",
                "app" : "elasticsearch",
                "format" : "0,0.0 b",
-               "description" : "Size of the index on disk for primary and replica shards."
+               "description" : "Size of primary and replica shards on disk."
             }
          },
          "index_document_count" : {

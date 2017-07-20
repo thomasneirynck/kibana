@@ -3,7 +3,7 @@ import _ from 'lodash';
 import {
   ElasticsearchMetric, RequestRateMetric, KibanaMetric, LatencyMetric,
   QuotaMetric, NodeIndexMemoryMetric, ThreadPoolQueueMetric,
-  ThreadPoolRejectedMetric, IndexAverageStatMetric, SingleIndexMemoryMetric,
+  ThreadPoolRejectedMetric, SingleIndexMemoryMetric,
   IndexMemoryMetric, LogstashMetric, EventsLatencyMetric, LogstashEventsRateMetric,
   EventsLatencyClusterMetric, LogstashEventsRateClusterMetric
 } from './metric_classes';
@@ -883,11 +883,6 @@ const metricInstances = {
     label: 'Merge Rate',
     description: 'Amount in bytes of merged segments. Larger numbers indicate heavier disk activity.',
     type: 'index'
-  }),
-  'index_size': new IndexAverageStatMetric({
-    field: 'index_stats.total.store.size_in_bytes',
-    label: 'Index Size',
-    description: 'Size of the index on disk for primary and replica shards.'
   }),
   'index_refresh_time': new ElasticsearchMetric({
     field: 'total.refresh.total_time_in_millis',

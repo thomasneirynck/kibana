@@ -25,7 +25,7 @@ function getPageData($injector) {
     },
     listingMetrics: [
       'index_document_count',
-      'index_size',
+      'index_store_total_size',
       'index_search_request_rate',
       'index_request_rate_primary'
     ]

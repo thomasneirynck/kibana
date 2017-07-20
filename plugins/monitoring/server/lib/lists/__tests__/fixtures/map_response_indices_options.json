@@ -4,7 +4,7 @@
    "bucketSize" : 30,
    "listingMetrics" : [
       "index_document_count",
-      "index_size",
+      "index_store_total_size",
       "index_search_request_rate",
       "index_request_rate_primary"
    ],
@@ -192,7 +192,7 @@
                }
             ]
          },
-         "index_size" : {
+         "index_store_total_size" : {
             "buckets" : [
                {
                   "metric" : {
@@ -254,7 +254,7 @@
          }
       },
       {
-         "index_size" : {
+         "index_store_total_size" : {
             "buckets" : [
                {
                   "metric" : {
@@ -558,7 +558,7 @@
                }
             ]
          },
-         "index_size" : {
+         "index_store_total_size" : {
             "buckets" : [
                {
                   "key_as_string" : "2016-12-16T23:52:00.000Z",
@@ -864,7 +864,7 @@
          },
          "key" : "tweets-2016.12.16",
          "doc_count" : 12,
-         "index_size" : {
+         "index_store_total_size" : {
             "buckets" : [
                {
                   "metric" : {

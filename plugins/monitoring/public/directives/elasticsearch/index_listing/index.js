@@ -65,7 +65,7 @@ function indexRowFactory(scope, kbnUrl) {
       const metrics = this.props.metrics;
       const status = this.props.status;
       const docCount = numeralize(metrics.index_document_count);
-      const indexSize = numeralize(metrics.index_size);
+      const indexSize = numeralize(metrics.index_store_total_size);
       const requestRate = unitize(metrics.index_request_rate_primary);
       const searchRate = unitize(metrics.index_search_request_rate);
       const unassignedShards = numeralize(metrics.index_unassigned_shards);
@@ -149,8 +149,8 @@ uiModule.directive('monitoringIndexListing', function (kbnUrl) {
         title: 'Document Count'
       },
       {
-        key: 'metrics.index_size',
-        sortKey: 'metrics.index_size.last',
+        key: 'metrics.index_store_total_size',
+        sortKey: 'metrics.index_store_total_size.last',
         title: 'Data'
       },
       {

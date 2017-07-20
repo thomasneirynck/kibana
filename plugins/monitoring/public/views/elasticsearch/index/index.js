@@ -41,7 +41,13 @@ function getPageData($injector) {
           'index_request_rate_primary'
         ]
       },
-      'index_size',
+      {
+        name: 'index_size',
+        keys: [
+          'index_store_total_size',
+          'index_store_primaries_size'
+        ]
+      },
       {
         name: 'index_mem',
         keys: [

@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { MissingRequiredError } from '../error_missing_required';
 import {
-  LARGE_FLOAT, SMALL_FLOAT, LARGE_BYTES, SMALL_BYTES
+  LARGE_FLOAT, SMALL_FLOAT, SMALL_BYTES
 } from '../../../common/formatting';
 
 /**
@@ -198,20 +198,6 @@ export class RequestRateMetric extends ElasticsearchMetric {
       format: LARGE_FLOAT,
       metricAgg: 'max',
       units: '/s'
-    });
-  }
-
-}
-
-export class IndexAverageStatMetric extends ElasticsearchMetric {
-
-  constructor(opts) {
-    super({
-      ...opts,
-      type: 'index',
-      format: LARGE_BYTES,
-      metricAgg: 'avg',
-      units: 'B'
     });
   }
 
