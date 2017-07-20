@@ -69,7 +69,7 @@ function enrichStateWithStatsAggregation(stateDocument, statsAggregation, timePi
   return stateDocument.logstash_state;
 }
 
-export async function getPipeline(req, clusterUuid, pipelineName, pipelineHash, timeRange) {
+export async function getPipeline(req, clusterUuid, pipelineId, pipelineHash, timeRange) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   const config = req.server.config();
   const logstashIndexPattern = config.get('xpack.monitoring.logstash.index_pattern');
@@ -79,12 +79,12 @@ export async function getPipeline(req, clusterUuid, pipelineName, pipelineHash, 
   const timePickerDurationMillis = end - start;
 
   const [ stateDocument, statsAggregation ] = await Promise.all([
-    getPipelineStateDocument(callWithRequest, req, logstashIndexPattern, start, end, pipelineName, pipelineHash),
-    getPipelineStatsAggregation(callWithRequest, req, logstashIndexPattern, start, end, pipelineName, pipelineHash)
+    getPipelineStateDocument(callWithRequest, req, logstashIndexPattern, start, end, pipelineId, pipelineHash),
+    getPipelineStatsAggregation(callWithRequest, req, logstashIndexPattern, start, end, pipelineId, pipelineHash)
   ]);
 
   if (stateDocument === null) {
-    return boom.notFound(`Pipeline [${pipelineName} @ ${pipelineHash}] not found in the selected time range for cluster [${clusterUuid}].`);
+    return boom.notFound(`Pipeline [${pipelineId} @ ${pipelineHash}] not found in the selected time range for cluster [${clusterUuid}].`);
   }
 
   const result = enrichStateWithStatsAggregation(stateDocument, statsAggregation, timePickerDurationMillis);

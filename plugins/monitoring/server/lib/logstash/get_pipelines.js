@@ -14,11 +14,11 @@ function fetchPipelines(req, config, logstashIndexPattern, start, end, clusterUu
     index: logstashIndexPattern,
     ignoreUnavailable: true,
     filterPath: [
-      'aggregations.pipelines.by_pipeline_name.buckets.key',
-      'aggregations.pipelines.by_pipeline_name.buckets.by_pipeline_hash.buckets.key',
-      'aggregations.pipelines.by_pipeline_name.buckets.by_pipeline_hash.buckets.throughput.value',
-      'aggregations.pipelines.by_pipeline_name.buckets.by_pipeline_hash.buckets.duration_in_millis.value',
-      'aggregations.pipelines.by_pipeline_name.buckets.by_pipeline_hash.buckets.path_to_root.last_seen.value'
+      'aggregations.pipelines.by_pipeline_id.buckets.key',
+      'aggregations.pipelines.by_pipeline_id.buckets.by_pipeline_hash.buckets.key',
+      'aggregations.pipelines.by_pipeline_id.buckets.by_pipeline_hash.buckets.throughput.value',
+      'aggregations.pipelines.by_pipeline_id.buckets.by_pipeline_hash.buckets.duration_in_millis.value',
+      'aggregations.pipelines.by_pipeline_id.buckets.by_pipeline_hash.buckets.path_to_root.last_seen.value'
     ],
     body: {
       size: 0,
@@ -36,9 +36,9 @@ function fetchPipelines(req, config, logstashIndexPattern, start, end, clusterUu
             path: 'logstash_stats.pipelines'
           },
           aggs: {
-            by_pipeline_name: {
+            by_pipeline_id: {
               terms: {
-                field: 'logstash_stats.pipelines.name',
+                field: 'logstash_stats.pipelines.id',
                 size: config.get('xpack.monitoring.max_bucket_size')
               },
               aggs: {
@@ -119,14 +119,14 @@ function fetchPipelines(req, config, logstashIndexPattern, start, end, clusterUu
 }
 
 function handleResponse(response, timespanInSeconds) {
-  const pipelinesByName = get(response, 'aggregations.pipelines.by_pipeline_name.buckets', []);
-  const pipelines = pipelinesByName.map(pipelineByName => {
-    const name = pipelineByName.key;
+  const pipelinesById = get(response, 'aggregations.pipelines.by_pipeline_id.buckets', []);
+  const pipelines = pipelinesById.map(pipelineById => {
+    const id = pipelineById.key;
     const pipeline = {
-      name
+      id
     };
 
-    const pipelinesByHash = get(pipelineByName, 'by_pipeline_hash.buckets', []);
+    const pipelinesByHash = get(pipelineById, 'by_pipeline_hash.buckets', []);
     pipeline.hashes = pipelinesByHash.map(pipelineByHash => {
       const hash = pipelineByHash.key;
 

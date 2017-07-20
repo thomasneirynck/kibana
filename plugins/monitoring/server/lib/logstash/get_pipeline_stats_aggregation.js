@@ -65,7 +65,7 @@ function nestedVertices(maxBucketSize) {
   };
 }
 
-function outerAggs(pipelineName, pipelineHash, maxBucketSize) {
+function outerAggs(pipelineId, pipelineHash, maxBucketSize) {
   const filteredAggs = {
     events_duration: {
       stats: {
@@ -89,7 +89,7 @@ function outerAggs(pipelineName, pipelineHash, maxBucketSize) {
           filter: {
             bool: {
               filter: [
-                { term: { 'logstash_stats.pipelines.name': pipelineName } },
+                { term: { 'logstash_stats.pipelines.id': pipelineId } },
                 { term: { 'logstash_stats.pipelines.hash': pipelineHash } }
               ]
             }
@@ -110,7 +110,7 @@ function outerAggs(pipelineName, pipelineHash, maxBucketSize) {
   };
 }
 
-export async function getPipelineStatsAggregation(callWithRequest, req, logstashIndexPattern, start, end, pipelineName, pipelineHash) {
+export async function getPipelineStatsAggregation(callWithRequest, req, logstashIndexPattern, start, end, pipelineId, pipelineHash) {
   const filters = [
     {
       nested: {
@@ -119,7 +119,7 @@ export async function getPipelineStatsAggregation(callWithRequest, req, logstash
           bool: {
             must: [
               { term: { 'logstash_stats.pipelines.hash': pipelineHash } },
-              { term: { 'logstash_stats.pipelines.name': pipelineName } },
+              { term: { 'logstash_stats.pipelines.id': pipelineId } },
             ]
           }
         }
@@ -142,7 +142,7 @@ export async function getPipelineStatsAggregation(callWithRequest, req, logstash
     size: 0,
     body: {
       query: query,
-      aggs: outerAggs(pipelineName, pipelineHash, config.get('xpack.monitoring.max_bucket_size'))
+      aggs: outerAggs(pipelineId, pipelineHash, config.get('xpack.monitoring.max_bucket_size'))
     }
   };
 

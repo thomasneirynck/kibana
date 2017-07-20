@@ -17,12 +17,12 @@ export function logstashPipelineRoute(server) {
    */
   server.route({
     method: 'POST',
-    path: '/api/monitoring/v1/clusters/{clusterUuid}/logstash/pipeline/{pipelineName}/{pipelineHash}',
+    path: '/api/monitoring/v1/clusters/{clusterUuid}/logstash/pipeline/{pipelineId}/{pipelineHash}',
     config: {
       validate: {
         params: Joi.object({
           clusterUuid: Joi.string().required(),
-          pipelineName: Joi.string().required(),
+          pipelineId: Joi.string().required(),
           pipelineHash: Joi.string().required()
         }),
         payload: Joi.object({
@@ -35,11 +35,11 @@ export function logstashPipelineRoute(server) {
     },
     handler: (req, reply) => {
       const clusterUuid = req.params.clusterUuid;
-      const pipelineName = req.params.pipelineName;
+      const pipelineId = req.params.pipelineId;
       const pipelineHash = req.params.pipelineHash;
       const timeRange = req.payload.timeRange;
 
-      return getPipeline(req, clusterUuid, pipelineName, pipelineHash, timeRange)
+      return getPipeline(req, clusterUuid, pipelineId, pipelineHash, timeRange)
       .then(reply)
       .catch(err => reply(handleError(err, req)));
     }

@@ -17,9 +17,9 @@ function getPageData($injector) {
 
   const timeBounds = timefilter.getBounds();
   const clusterUuid = globalState.cluster_uuid;
-  const pipelineName = $route.current.params.name;
+  const pipelineId = $route.current.params.id;
   const pipelineHash = $route.current.params.hash;
-  const url = `../api/monitoring/v1/clusters/${clusterUuid}/logstash/pipeline/${pipelineName}/${pipelineHash}`;
+  const url = `../api/monitoring/v1/clusters/${clusterUuid}/logstash/pipeline/${pipelineId}/${pipelineHash}`;
   return $http.post(url, {
     timeRange: {
       min: timeBounds.min.toISOString(),
@@ -33,7 +33,7 @@ function getPageData($injector) {
   });
 }
 
-uiRoutes.when('/logstash/pipelines/:name/:hash', {
+uiRoutes.when('/logstash/pipelines/:id/:hash', {
   template,
   resolve: {
     clusters(Private) {

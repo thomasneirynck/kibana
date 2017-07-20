@@ -5,7 +5,7 @@ export function PipelineCardGroup({ pipelines, onHashClick }) {
 
   const pipelineCards = pipelines.map(pipeline => (
     <PipelineCard
-      key={ pipeline.name }
+      key={ pipeline.id }
       pipeline={ pipeline }
       onHashClick={ onHashClick }
     />

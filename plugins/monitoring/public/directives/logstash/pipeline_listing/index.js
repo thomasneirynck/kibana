@@ -11,8 +11,8 @@ uiModule.directive('monitoringLogstashPipelineListing', function ($injector) {
     restrict: 'E',
     scope: { pipelines: '=' },
     link(scope, $el) {
-      function onHashClick(name, hash) {
-        const url = `/logstash/pipelines/${name}/${hash}`;
+      function onHashClick(id, hash) {
+        const url = `/logstash/pipelines/${id}/${hash}`;
         scope.$evalAsync(() => kbnUrl.changePath(url));
       }
 

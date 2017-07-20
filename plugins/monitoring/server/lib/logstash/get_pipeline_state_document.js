@@ -2,9 +2,9 @@ import { createQuery } from '../create_query';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 import { get } from 'lodash';
 
-export async function getPipelineStateDocument(callWithRequest, req, logstashIndexPattern, start, end, pipelineName, pipelineHash) {
+export async function getPipelineStateDocument(callWithRequest, req, logstashIndexPattern, start, end, pipelineId, pipelineHash) {
   const filters = [
-    { term: { 'logstash_state.pipeline.name': pipelineName } },
+    { term: { 'logstash_state.pipeline.id': pipelineId } },
     { term: { 'logstash_state.pipeline.hash': pipelineHash } }
   ];
   const query = createQuery({

@@ -105,7 +105,7 @@ export function getLogstashForClusters(req, logstashIndexPattern, clusters) {
             aggs: {
               pipelines: {
                 cardinality: {
-                  field: 'logstash_stats.pipelines.name'
+                  field: 'logstash_stats.pipelines.id'
                 }
               }
             }

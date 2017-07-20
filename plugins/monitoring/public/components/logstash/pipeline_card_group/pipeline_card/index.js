@@ -23,16 +23,16 @@ function renderHashesInfo(pipeline) {
     : `have been ${numHashes} versions`;
 
   return (
-    <span className="kuiSubText">In the selected time range there { hashesStr } of the "{ pipeline.name }" pipeline</span>
+    <span className="kuiSubText">In the selected time range there { hashesStr } of the "{ pipeline.id }" pipeline</span>
   );
 }
 
 export function PipelineCard({ pipeline, onHashClick }) {
-  const name = pipeline.name;
+  const id = pipeline.id;
   const menuItems = pipeline.hashes.map(hashObj => {
     const hash = hashObj.hash;
     const hashShort = hash.substr(0, 6);
-    const onClick = () => onHashClick(name, hash);
+    const onClick = () => onHashClick(id, hash);
     const lastSeen = hashObj.lastSeen;
     const relativeLastSeen = formatTimestampToDuration(lastSeen, CALCULATE_DURATION_SINCE);
 
@@ -63,7 +63,7 @@ export function PipelineCard({ pipeline, onHashClick }) {
         <div className="kuiPanelHeader">
           <div className="kuiPanelHeaderSection">
             <div className="kuiPanelHeader__title">
-              { name }
+              { id }
             </div>
           </div>
         </div>
