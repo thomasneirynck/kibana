@@ -36,7 +36,12 @@ export function calcTimes(data, parentId) {
   let totalTime = 0;
   //First pass to collect total
   for (const child of data) {
-    totalTime += child.time_in_nanos / 1000000;
+    if (child.time_in_nanos) {
+      totalTime += child.time_in_nanos / 1000000;
+    } else {
+      // support for pasted ES responses prior to 5.3
+      totalTime += parseFloat(child.time.replace('ms',''));
+    }
 
     child.id = uuid.v4();
     child.parentId = parentId;
