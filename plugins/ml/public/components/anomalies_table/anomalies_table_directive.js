@@ -44,13 +44,12 @@ import openRowArrow from 'plugins/ml/components/paginated_table/open.html';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, timefilter,
+module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
   mlJobService, mlESMappingService, mlResultsService, mlAnomaliesTableService, formatValueFilter, AppState) {
   return {
     restrict: 'E',
     scope: {
       anomalyRecords: '=',
-      indexPatternId: '=',
       timeFieldName: '=',
       showViewSeriesLink: '=',
       filteringEnabled: '='
@@ -238,6 +237,19 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
             }
           }
 
+        // Find the ID of the index pattern with a title attribute which matches the
+        // index configured in the datafeed. If a Kibana index pattern has not been created
+        // for this index, then the user will see a warning message on the Discover tab advising
+        // them that no matching index pattern has been configured.
+        const indexPatterns = $route.current.locals.indexPatterns;
+        let indexPatternId = indexPattern;
+        for (let i = 0; i < indexPatterns.length; i++) {
+          if (indexPatterns[i].get('title') === indexPattern) {
+            indexPatternId = indexPatterns[i].id;
+            break;
+          }
+        }
+
         // Get the definition of the category and use the terms or regex to view the
         // matching events in the Kibana Discover tab depending on whether the
         // categorization field is of mapping type text (preferred) or keyword.
@@ -269,7 +281,7 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
             });
 
             const _a = rison.encode({
-              index:indexPattern,
+              index:indexPatternId,
               filters: [],
               query: {
                 query_string: {

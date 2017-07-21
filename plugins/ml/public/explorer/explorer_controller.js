@@ -36,6 +36,7 @@ import { notify } from 'ui/notify';
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
+import { getIndexPatterns } from 'plugins/ml/util/index_utils';
 import { refreshIntervalWatcher } from 'plugins/ml/util/refresh_interval_watcher';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 
@@ -44,7 +45,8 @@ uiRoutes
   template: require('./explorer.html'),
   resolve : {
     CheckLicense: checkLicense,
-    privileges: checkGetJobsPrivilege
+    privileges: checkGetJobsPrivilege,
+    indexPatterns: getIndexPatterns
   }
 });
 

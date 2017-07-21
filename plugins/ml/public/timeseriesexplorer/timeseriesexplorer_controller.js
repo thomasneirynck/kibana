@@ -32,6 +32,7 @@ import 'ui/timefilter';
 import { parseInterval } from 'ui/utils/parse_interval';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
+import { getIndexPatterns } from 'plugins/ml/util/index_utils';
 import {
   isTimeSeriesViewJob,
   isTimeSeriesViewDetector,
@@ -44,7 +45,8 @@ uiRoutes
   template: require('./timeseriesexplorer.html'),
   resolve : {
     CheckLicense: checkLicense,
-    privileges: checkGetJobsPrivilege
+    privileges: checkGetJobsPrivilege,
+    indexPatterns: getIndexPatterns
   }
 });
 
