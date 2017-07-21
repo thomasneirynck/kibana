@@ -16,32 +16,22 @@
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('mlDatafeedService', function ($modal, mlJobService) {
-
-  function loadStartEnd(jobId) {
-    return mlJobService.jobDatafeedState(jobId);
-  }
+module.service('mlDatafeedService', function ($modal) {
 
   this.openJobTimepickerWindow = function (job) {
-    function func(obj) {
-      $modal.open({
-        template: require('plugins/ml/jobs/jobs_list/job_timepicker_modal/job_timepicker_modal.html'),
-        controller: 'MlJobTimepickerModal',
-        backdrop: 'static',
-        keyboard: false,
-        resolve: {
-          params: function () {
-            return {
-              job: job,
-              startEnd: obj,
-            };
-          }
+    $modal.open({
+      template: require('plugins/ml/jobs/jobs_list/job_timepicker_modal/job_timepicker_modal.html'),
+      controller: 'MlJobTimepickerModal',
+      backdrop: 'static',
+      keyboard: false,
+      resolve: {
+        params: function () {
+          return {
+            job
+          };
         }
-      });
-    }
-    // before we display the modal, load the datafeed state to see
-    // if an end time was previously set
-    loadStartEnd(job.job_id).then(func).catch(func);
+      }
+    });
   };
 
 });

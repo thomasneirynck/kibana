@@ -45,29 +45,17 @@ module.controller('MlJobTimepickerModal', function (
     lastTime = time.format('YYYY-MM-DD HH:mm:ss');
   }
 
-  let uiEndRadio = '1';
-  let uiTo = moment();
-  $scope.isNew = true;
-  if (job.data_counts && job.data_counts.input_record_count > 0) {
-    $scope.isNew = false;
-
-    // if the job previously had an end time set. default to that.
-    if (params.startEnd.endTimeMillis !== null) {
-      uiEndRadio = '1';
-      uiTo = moment(params.startEnd.endTimeMillis);
-    }
-  }
-
+  $scope.isNew = (job.data_counts && job.data_counts.input_record_count > 0) ? false : true;
 
   $scope.ui = {
     lastTime: lastTime,
     startDateText: '',
     startRadio:    '1',
     endDateText:   '',
-    endRadio:      uiEndRadio,
+    endRadio:      '1',
     timepicker: {
       from: '',
-      to:   uiTo
+      to:   moment()
     },
     setStartRadio: function (i) {
       $scope.ui.startRadio = i;
