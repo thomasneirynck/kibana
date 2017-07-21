@@ -20,7 +20,7 @@ import 'plugins/kibana/visualize/wizard/wizard.less';
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
-import { SavedObjectsClientProvider } from 'ui/saved_objects';
+import { getIndexPatterns } from 'plugins/ml/util/index_utils';
 
 uiRoutes
 .when('/jobs/new_job/simple/multi_metric/step/1', {
@@ -28,15 +28,7 @@ uiRoutes
   resolve: {
     CheckLicense: checkLicense,
     privileges: checkCreateJobsPrivilege,
-    indexPatterns: function (Private) {
-      const savedObjectsClient = Private(SavedObjectsClientProvider);
-
-      return savedObjectsClient.find({
-        type: 'index-pattern',
-        fields: ['title'],
-        perPage: 10000
-      }).then(response => response.savedObjects);
-    }
+    indexPatterns: getIndexPatterns
   }
 });
 
