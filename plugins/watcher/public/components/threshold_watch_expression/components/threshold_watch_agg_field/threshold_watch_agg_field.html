@@ -12,12 +12,14 @@
 >
   <form name="thresholdWatchAggField.form" novalidate>
     <div
+      id="{{thresholdWatchAggField.makeId(['aggField', 'required'])}}'"
       class="kuiInputNote kuiInputNote--danger"
       ng-show="thresholdWatchAggField.isValidationMessageVisible('aggField', 'required')"
     >
       Please select a field.
     </div>
     <select
+      id="{{thresholdWatchAggField.makeId('aggField')}}"
       class="kuiSelect"
       name="aggField"
       required

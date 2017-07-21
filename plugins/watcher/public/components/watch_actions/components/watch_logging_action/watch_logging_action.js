@@ -2,10 +2,13 @@ import { uiModules } from 'ui/modules';
 import { WatchActionControllerBase } from '../lib/watch_action_controller_base';
 import template from './watch_logging_action.html';
 import 'ui/directives/input_focus';
+import 'plugins/watcher/services/html_id_generator';
 
 const app = uiModules.get('xpack/watcher');
 
-app.directive('watchLoggingAction', function () {
+app.directive('watchLoggingAction', function ($injector) {
+  const htmlIdGeneratorFactory = $injector.get('xpackWatcherHtmlIdGeneratorFactory');
+
   return {
     restrict: 'E',
     template: template,
@@ -14,6 +17,8 @@ app.directive('watchLoggingAction', function () {
     controller: class WatchLoggingActionController extends WatchActionControllerBase {
       constructor($scope) {
         super($scope);
+
+        this.makeId = htmlIdGeneratorFactory.create(this.action.id);
 
         $scope.$watch([
           'action.text'

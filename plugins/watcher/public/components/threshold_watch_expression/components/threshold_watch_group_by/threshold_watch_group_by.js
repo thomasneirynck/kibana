@@ -1,10 +1,12 @@
 import { uiModules } from 'ui/modules';
 import template from './threshold_watch_group_by.html';
 import { ThresholdWatchBaseController } from '../threshold_watch_base';
+import 'plugins/watcher/services/html_id_generator';
 
 const app = uiModules.get('xpack/watcher');
 
-app.directive('thresholdWatchGroupBy', function () {
+app.directive('thresholdWatchGroupBy', function ($injector) {
+  const htmlIdGeneratorFactory = $injector.get('xpackWatcherHtmlIdGeneratorFactory');
 
   return {
     restrict: 'E',
@@ -31,6 +33,8 @@ app.directive('thresholdWatchGroupBy', function () {
     controller: class ThresholdWatchGroupByController extends ThresholdWatchBaseController {
       constructor($scope) {
         super($scope);
+
+        this.makeId = htmlIdGeneratorFactory.create();
 
         $scope.$watchMulti([
           'thresholdWatchGroupBy.groupByType',

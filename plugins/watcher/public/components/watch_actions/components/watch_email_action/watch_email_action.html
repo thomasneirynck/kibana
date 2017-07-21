@@ -1,13 +1,13 @@
 <div class="kuiFormSection">
   <label
-    for="to_{{watchEmailAction.action.id}}"
+    for="{{watchEmailAction.makeId('to')}}"
     class="kuiFormLabel"
   >
     To e-mail address
   </label>
   <input
     type="text"
-    id="to_{{watchEmailAction.action.id}}"
+    id="{{watchEmailAction.makeId('to')}}"
     name="to"
     class="kuiTextInput fullWidth"
     ng-model="watchEmailAction.to"
@@ -15,6 +15,7 @@
     input-focus
   >
   <div
+    id="{{watchEmailAction.makeId(['to', 'required'])}}"
     class="kuiInputNote kuiInputNote--danger"
     ng-show="watchEmailAction.isValidationMessageVisible('to', 'required')"
   >
@@ -23,20 +24,21 @@
 </div>
 <div class="kuiFormSection">
   <label
-    for="subject_{{watchEmailAction.action.id}}"
+    for="{{watchEmailAction.makeId('subject')}}"
     class="kuiFormLabel"
   >
     Subject
   </label>
   <input
     type="text"
-    id="subject_{{watchEmailAction.action.id}}"
+    id="{{watchEmailAction.makeId('subject')}}"
     name="subject"
     class="kuiTextInput fullWidth"
     ng-model="watchEmailAction.action.subject"
     required
   >
   <div
+    id="{{watchEmailAction.makeId(['subject', 'required'])}}"
     class="kuiInputNote kuiInputNote--danger"
     ng-show="watchEmailAction.isValidationMessageVisible('subject', 'required')"
   >
@@ -45,19 +47,20 @@
 </div>
 <div class="kuiFormSection">
   <label
-    for="body_{{watchEmailAction.action.id}}"
+    for="{{watchEmailAction.makeId('body')}}"
     class="kuiFormLabel"
   >
     Body
   </label>
   <textarea
-    id="body_{{watchEmailAction.action.id}}"
+    id="{{watchEmailAction.makeId('body')}}"
     name="body"
     class="kuiTextArea fullWidth"
     ng-model="watchEmailAction.action.body"
     required
   ></textarea>
   <div
+    id="{{watchEmailAction.makeId(['body', 'required'])}}"
     class="kuiInputNote kuiInputNote--danger"
     ng-show="watchEmailAction.isValidationMessageVisible('body', 'required')"
   >

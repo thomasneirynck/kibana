@@ -2,8 +2,11 @@ import { uiModules } from 'ui/modules';
 import template from './threshold_watch_threshold_level.html';
 import { ThresholdWatchBaseController } from '../threshold_watch_base';
 const app = uiModules.get('xpack/watcher');
+import 'plugins/watcher/services/html_id_generator';
 
-app.directive('thresholdWatchThresholdLevel', function () {
+app.directive('thresholdWatchThresholdLevel', function ($injector) {
+  const htmlIdGeneratorFactory = $injector.get('xpackWatcherHtmlIdGeneratorFactory');
+
   return {
     restrict: 'E',
     template: template,
@@ -27,6 +30,8 @@ app.directive('thresholdWatchThresholdLevel', function () {
     controller: class ThresholdWatchThresholdLevelController extends ThresholdWatchBaseController {
       constructor($scope) {
         super($scope);
+
+        this.makeId = htmlIdGeneratorFactory.create();
 
         $scope.$watchMulti([
           'thresholdWatchThresholdLevel.thresholdComparator',

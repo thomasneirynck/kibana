@@ -1,13 +1,13 @@
 <div class="kuiFormSection">
   <label
-    for="to_{{watchSlackAction.action.id}}"
+    for="{{watchSlackAction.makeId('to')}}"
     class="kuiFormLabel"
   >
     Recipient
   </label>
   <input
     type="text"
-    id="to_{{watchSlackAction.action.id}}"
+    id="{{watchSlackAction.makeId('to')}}"
     name="to"
     class="kuiTextInput fullWidth"
     ng-model="watchSlackAction.to"
@@ -15,6 +15,7 @@
     input-focus
   >
   <div
+    id="{{watchSlackAction.makeId(['to', 'required'])}}"
     class="kuiInputNote kuiInputNote--danger"
     ng-show="watchSlackAction.isValidationMessageVisible('to', 'required')"
   >
@@ -23,19 +24,20 @@
 </div>
 <div class="kuiFormSection">
   <label
-    for="text_{{watchSlackAction.action.id}}"
+    for="{{watchSlackAction.makeId('text')}}"
     class="kuiFormLabel"
   >
     Message
   </label>
   <textarea
-    id="text_{{watchSlackAction.action.id}}"
+    id="{{watchSlackAction.makeId('text')}}"
     name="text"
     class="kuiTextArea fullWidth"
     ng-model="watchSlackAction.action.text"
     required
   ></textarea>
   <div
+    id="{{watchSlackAction.makeId(['text', 'required'])}}"
     class="kuiInputNote kuiInputNote--danger"
     ng-show="watchSlackAction.isValidationMessageVisible('text', 'required')"
   >

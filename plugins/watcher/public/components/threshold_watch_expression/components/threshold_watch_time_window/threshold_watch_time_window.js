@@ -4,10 +4,13 @@ import { TIME_UNITS } from 'plugins/watcher/../common/constants';
 import { getTimeUnitsLabel } from 'plugins/watcher/lib/get_time_units_label';
 import { ThresholdWatchBaseController } from '../threshold_watch_base';
 import 'plugins/watcher/components/duration_select';
+import 'plugins/watcher/services/html_id_generator';
 
 const app = uiModules.get('xpack/watcher');
 
-app.directive('thresholdWatchTimeWindow', function () {
+app.directive('thresholdWatchTimeWindow', function ($injector) {
+  const htmlIdGeneratorFactory = $injector.get('xpackWatcherHtmlIdGeneratorFactory');
+
   return {
     restrict: 'E',
     template: template,
@@ -31,6 +34,8 @@ app.directive('thresholdWatchTimeWindow', function () {
     controller: class ThresholdWatchTimeWindowController extends ThresholdWatchBaseController {
       constructor($scope) {
         super($scope);
+
+        this.makeId = htmlIdGeneratorFactory.create();
 
         this.timeWindowMinimumUnit = TIME_UNITS.SECOND;
         this.timeWindowMinimumSize = 10;

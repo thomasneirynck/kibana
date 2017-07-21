@@ -1,13 +1,13 @@
 <div class="kuiFormSection">
   <label
-    for="text_{{watchLoggingAction.action.id}}"
+    for="{{watchLoggingAction.makeId('text')}}"
     class="kuiFormLabel"
   >
     Log text
   </label>
   <input
     type="text"
-    id="text_{{watchLoggingAction.action.id}}"
+    id="{{watchLoggingAction.makeId('text')}}"
     name="text"
     class="kuiTextInput fullWidth"
     ng-model="watchLoggingAction.action.text"
@@ -15,6 +15,7 @@
     input-focus
   >
   <div
+    id="{{watchLoggingAction.makeId(['text', 'required'])}}"
     class="kuiInputNote kuiInputNote--danger"
     ng-show="watchLoggingAction.isValidationMessageVisible('text', 'required')"
   >

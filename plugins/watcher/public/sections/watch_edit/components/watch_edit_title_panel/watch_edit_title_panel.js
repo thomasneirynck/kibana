@@ -6,12 +6,15 @@ import './watch_edit_title_panel.less';
 
 import 'plugins/watcher/components/index_select';
 import 'plugins/watcher/components/duration_select';
+import 'plugins/watcher/services/html_id_generator';
 
 const app = uiModules.get('xpack/watcher');
 
 const VALID_NORMALIZED_TYPES = ['date'];
 
-app.directive('watchEditTitlePanel', function () {
+app.directive('watchEditTitlePanel', function ($injector) {
+  const htmlIdGeneratorFactory = $injector.get('xpackWatcherHtmlIdGeneratorFactory');
+
   return {
     restrict: 'E',
     template: template,
@@ -27,6 +30,8 @@ app.directive('watchEditTitlePanel', function () {
     controllerAs: 'watchEditTitlePanel',
     controller: class WatchEditTitlePanelController {
       constructor($scope) {
+        this.makeId = htmlIdGeneratorFactory.create();
+
         this.triggerIntervalSize = this.watch.triggerIntervalSize;
         this.triggerIntervalUnit = this.watch.triggerIntervalUnit;
 
@@ -122,6 +127,10 @@ app.directive('watchEditTitlePanel', function () {
       }
 
       isValidationMessageVisible = (fieldName, errorType, showIfOtherErrors = true) => {
+        if (!this.form[fieldName]) {
+          return false;
+        }
+
         let showMessage = (this.form[fieldName].$touched || this.form[fieldName].$dirty) &&
           this.form[fieldName].$error[errorType];
 

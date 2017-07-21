@@ -12,25 +12,30 @@
 >
   <form name="thresholdWatchThresholdLevel.form" novalidate>
     <div
+      id="{{thresholdWatchThresholdLevel.makeId(['threshold', 'required'])}}"
       class="kuiInputNote kuiInputNote--danger"
       ng-show="thresholdWatchThresholdLevel.isValidationMessageVisible('threshold', 'required')"
     >
       A value is required.
     </div>
     <div
+      id="{{thresholdWatchThresholdLevel.makeId(['threshold', 'number'])}}"
       class="kuiInputNote kuiInputNote--danger"
       ng-show="thresholdWatchThresholdLevel.isValidationMessageVisible('threshold', 'number')"
     >
       Value must be a valid number.
     </div>
     <select
+      id="{{thresholdWatchThresholdLevel.makeId('thresholdComparator')}}"
+      name="thresholdComparator"
       class="kuiSelect"
       ng-model="thresholdWatchThresholdLevel.thresholdComparator"
       ng-options="comparator as comparator.label for comparator in thresholdWatchThresholdLevel.comparators"
     ></select>
     <input
-      type="number"
+      id="{{thresholdWatchThresholdLevel.makeId('threshold')}}"
       name="threshold"
+      type="number"
       required
       class="kuiTextInput watcherNumberInput"
       ng-model="thresholdWatchThresholdLevel.threshold">

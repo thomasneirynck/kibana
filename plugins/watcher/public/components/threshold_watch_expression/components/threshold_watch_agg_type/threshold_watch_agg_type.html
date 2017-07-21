@@ -12,12 +12,14 @@
 >
   <form name="thresholdWatchAggType.form" novalidate>
     <div
+      id="{{thresholdWatchAggType.makeId(['aggType', 'required'])}}'"
       class="kuiInputNote kuiInputNote--danger"
       ng-show="thresholdWatchAggType.isValidationMessageVisible('aggType', 'required')"
     >
       Please select an aggregration type.
     </div>
     <select
+      id="{{thresholdWatchAggType.makeId('aggType')}}"
       class="kuiSelect"
       name="aggType"
       required

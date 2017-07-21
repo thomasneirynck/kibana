@@ -3,10 +3,13 @@ import { TIME_UNITS } from 'plugins/watcher/constants';
 import template from './duration_select.html';
 import './duration_select.less';
 import moment from 'moment';
+import 'plugins/watcher/services/html_id_generator';
 
 const app = uiModules.get('xpack/watcher');
 
-app.directive('durationSelect', function () {
+app.directive('durationSelect', function ($injector) {
+  const htmlIdGeneratorFactory = $injector.get('xpackWatcherHtmlIdGeneratorFactory');
+
   return {
     require: '^form',
     scope: {
@@ -26,6 +29,7 @@ app.directive('durationSelect', function () {
     controller: class DurationSelectController {
       constructor($scope) {
         this.timeUnits = TIME_UNITS;
+        this.makeId = htmlIdGeneratorFactory.create(['durationSelect', this.durationId]);
 
         $scope.$watchMulti([
           'durationSelect.minimumSize',
@@ -46,22 +50,18 @@ app.directive('durationSelect', function () {
 
       checkValidity = () => {
         const isValid = this.duration >= this.minimumDuration;
-        const sizeName = this.sizeName;
-        const unitName = this.unitName;
+        const sizeName = this.makeId('size');
+        const unitName = this.makeId('unit');
 
-        this.form[sizeName].$setTouched(true);
-        this.form[unitName].$setTouched(true);
+        if (this.form[sizeName]) {
+          this.form[sizeName].$setTouched(true);
+          this.form[sizeName].$setValidity('minimumDuration', isValid);
+        }
 
-        this.form[sizeName].$setValidity('minimumDuration', isValid);
-        this.form[unitName].$setValidity('minimumDuration', isValid);
-      }
-
-      get unitName() {
-        return `durationSelect_${this.durationId}_unit`;
-      }
-
-      get sizeName() {
-        return `durationSelect_${this.durationId}_size`;
+        if (this.form[unitName]) {
+          this.form[unitName].$setTouched(true);
+          this.form[unitName].$setValidity('minimumDuration', isValid);
+        }
       }
     }
   };

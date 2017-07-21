@@ -12,37 +12,43 @@
 >
   <form name="thresholdWatchGroupBy.form" novalidate>
     <div
+      id="{{thresholdWatchGroupBy.makeId(['termSize', 'required'])}}"
       class="kuiInputNote kuiInputNote--danger"
-      ng-show="thresholdWatchGroupBy.isValidationMessageVisible('size', 'required')"
+      ng-show="thresholdWatchGroupBy.isValidationMessageVisible('termSize', 'required')"
     >
       A value is required.
     </div>
     <div
+      id="{{thresholdWatchGroupBy.makeId(['termSize', 'number'])}}"
       class="kuiInputNote kuiInputNote--danger"
-      ng-show="thresholdWatchGroupBy.isValidationMessageVisible('size', 'number')"
+      ng-show="thresholdWatchGroupBy.isValidationMessageVisible('termSize', 'number')"
     >
       Value must be a valid number.
     </div>
     <div
+      id="{{thresholdWatchGroupBy.makeId(['termSize', 'min'])}}"
       class="kuiInputNote kuiInputNote--danger"
-      ng-show="thresholdWatchGroupBy.isValidationMessageVisible('size', 'min')"
+      ng-show="thresholdWatchGroupBy.isValidationMessageVisible('termSize', 'min')"
     >
       Value must be greater than 0.
     </div>
     <div
+      id="{{thresholdWatchGroupBy.makeId(['termField', 'required'])}}"
       class="kuiInputNote kuiInputNote--danger"
       ng-show="thresholdWatchGroupBy.isValidationMessageVisible('termField', 'required')"
     >
       Please select a field.
     </div>
     <select
+      id="{{thresholdWatchGroupBy.makeId('groupByType')}}"
       class="kuiSelect"
       ng-model="thresholdWatchGroupBy.groupByType"
       ng-options="groupByType as groupByType.label for groupByType in thresholdWatchGroupBy.groupByTypes"
     ></select>
     <input
+      id="{{thresholdWatchGroupBy.makeId('termSize')}}"
+      name="termSize"
       type="number"
-      name="size"
       min="1"
       required
       class="kuiTextInput watcherNumberInput"
@@ -50,6 +56,7 @@
       ng-if="thresholdWatchGroupBy.groupByType.sizeRequired">
     <select
       class="kuiSelect"
+      id="{{thresholdWatchGroupBy.makeId('termField')}}"
       name="termField"
       required
       ng-model="thresholdWatchGroupBy.termField"
