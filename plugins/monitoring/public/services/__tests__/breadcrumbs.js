@@ -97,4 +97,29 @@ describe('Monitoring Breadcrumbs Service', () => {
       { url: null, label: 'Logstash' }
     ]);
   });
+
+  /**
+   * <monitoring-main product="logstash" page="pipeline">
+   */
+  it('in Logstash Pipeline Viewer', () => {
+    const controller = new MonitoringMainController();
+    controller.setup({
+      clusterName: 'test-cluster-foo',
+      licenseService: {},
+      breadcrumbsService: breadcrumbsProvider(),
+      attributes: {
+        product: 'logstash',
+        page: 'pipeline',
+        pipelineId: 'main',
+        pipelineHash: '42ee890af9...'
+      }
+    });
+    expect(controller.breadcrumbs).to.eql([
+      { url: '#/home', label: 'Clusters' },
+      { url: '#/overview', label: 'test-cluster-foo' },
+      { url: '#/logstash', label: 'Logstash' },
+      { url: '#/logstash/pipelines', label: 'Pipelines' },
+      { url: null, label: 'main' }
+    ]);
+  });
 });

@@ -1,6 +1,7 @@
 import { get } from 'lodash';
 import { uiModules } from 'ui/modules';
 import template from './index.html';
+import { shortenPipelineHash } from 'monitoring-formatting';
 
 /*
  * Manage data and provide helper methods for the "main" directive's template
@@ -38,6 +39,10 @@ export class MonitoringMainController {
       // no breadcrumbs in cluster listing page
       this.breadcrumbs = this._breadcrumbsService(options.clusterName, this);
     }
+
+    if (this.pipelineHash) {
+      this.pipelineHashShort = shortenPipelineHash(this.pipelineHash);
+    }
   }
 
   // check whether to "highlight" a tab
@@ -72,7 +77,9 @@ uiModule.directive('monitoringMain', (breadcrumbs, license) => {
           resolver: attributes.resolver,
           page: attributes.page,
           tabIconClass: attributes.tabIconClass,
-          tabIconLabel: attributes.tabIconLabel
+          tabIconLabel: attributes.tabIconLabel,
+          pipelineId: attributes.pipelineId,
+          pipelineHash: attributes.pipelineHash
         },
         clusterName: get(scope, 'cluster.cluster_name')
       });

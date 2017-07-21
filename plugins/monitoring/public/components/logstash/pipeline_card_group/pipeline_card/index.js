@@ -8,7 +8,7 @@ import {
   KuiEventBodyMetadata,
   KuiKeyboardAccessible
 } from 'ui_framework/components';
-import { formatDateTimeLocal } from 'monitoring-formatting';
+import { formatDateTimeLocal, shortenPipelineHash } from 'monitoring-formatting';
 import { CALCULATE_DURATION_SINCE } from 'monitoring-constants';
 import { formatTimestampToDuration } from 'plugins/monitoring/lib/format_number';
 
@@ -31,7 +31,7 @@ export function PipelineCard({ pipeline, onHashClick }) {
   const id = pipeline.id;
   const menuItems = pipeline.hashes.map(hashObj => {
     const hash = hashObj.hash;
-    const hashShort = hash.substr(0, 6);
+    const hashShort = shortenPipelineHash(hash);
     const onClick = () => onHashClick(id, hash);
     const lastSeen = hashObj.lastSeen;
     const relativeLastSeen = formatTimestampToDuration(lastSeen, CALCULATE_DURATION_SINCE);

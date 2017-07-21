@@ -14,3 +14,12 @@ export const LARGE_ABBREVIATED = '0,0.[0]a';
 export function formatDateTimeLocal(date) {
   return moment.tz(date, moment.tz.guess()).format('LL LTS');
 }
+
+/**
+ * Shorten a Logstash Pipeline's hash for display purposes
+ * @param {string} hash The complete hash
+ * @return {string} The shortened hash
+ */
+export function shortenPipelineHash(hash) {
+  return hash.substr(0, 6);
+}

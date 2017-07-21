@@ -5,6 +5,8 @@
     instance="{{ pageData.nodeSummary.name }}"
     resolver="{{ pageData.nodeSummary.uuid }}"
     page="pipeline"
+    pipeline-id="{{ pageData.pipeline.id }}"
+    pipeline-hash="{{ pageData.pipeline.hash }}"
   >
     <div class="page-row">
       <monitoring-logstash-pipeline-viewer pipeline="pageData.pipeline"></monitoring-logstash-pipeline-viewer>
