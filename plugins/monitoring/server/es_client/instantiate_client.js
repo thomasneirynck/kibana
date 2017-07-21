@@ -1,5 +1,6 @@
 import { bindKey, once } from 'lodash';
 import { monitoringBulk } from '../kibana_monitoring/lib/monitoring_bulk';
+import { LOGGING_TAG } from '../../common/constants';
 
 /* Provide a dedicated Elasticsearch client for Monitoring
  * The connection options can be customized for the Monitoring application
@@ -8,7 +9,6 @@ import { monitoringBulk } from '../kibana_monitoring/lib/monitoring_bulk';
  */
 
 export function exposeClient(server) {
-  const loggingTag = server.config().get('xpack.monitoring.loggingTag');
   const Logger = server.plugins.elasticsearch.ElasticsearchClientLogging;
   const logQueries = Boolean(server.config().get('xpack.monitoring.elasticsearch.logQueries'));
 
@@ -16,7 +16,7 @@ export function exposeClient(server) {
     constructor() {
       super();
 
-      this.tags = [loggingTag];
+      this.tags = [LOGGING_TAG];
       this.logQueries = logQueries;
     }
   }
@@ -36,7 +36,7 @@ export function exposeClient(server) {
   const cluster = esPlugin.createCluster('monitoring', config);
   server.on('close', bindKey(cluster, 'close'));
 
-  server.log([loggingTag, 'es-client'], `config sourced from: ${configSource} cluster (${config.url})`);
+  server.log([LOGGING_TAG, 'es-client'], `config sourced from: ${configSource} cluster (${config.url})`);
 }
 
 

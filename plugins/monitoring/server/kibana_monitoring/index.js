@@ -1,5 +1,6 @@
 import { opsBuffer } from './lib/ops_buffer';
 import { get } from 'lodash';
+import { LOGGING_TAG } from '../../common/constants';
 
 /**
  * Establish a handler of Ops events (from `even-better`)
@@ -9,7 +10,6 @@ import { get } from 'lodash';
  */
 export function initKibanaMonitoring(kbnServer, server) {
   const config = server.config();
-  const monitoringTag = config.get('xpack.monitoring.loggingTag');
 
   const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('admin');
   callWithInternalUser('transport.request', {
@@ -40,7 +40,7 @@ export function initKibanaMonitoring(kbnServer, server) {
 
       // `process` is a NodeJS global, and is always available without using require/import
       process.on('SIGHUP', () => {
-        server.log(['info', monitoringTag], 'Re-initializing Kibana Monitoring due to SIGHUP');
+        server.log(['info', LOGGING_TAG], 'Re-initializing Kibana Monitoring due to SIGHUP');
         /* This timeout is a temporary stop-gap until collecting stats is not bound to even-better
          * and collecting stats is not interfered by logging configuration reloading
          * Related to https://github.com/elastic/x-pack-kibana/issues/1301
@@ -48,12 +48,12 @@ export function initKibanaMonitoring(kbnServer, server) {
         setTimeout(() => {
           cleanup();
           init();
-          server.log(['info', monitoringTag], 'Re-initialized Kibana Monitoring due to SIGHUP');
+          server.log(['info', LOGGING_TAG], 'Re-initialized Kibana Monitoring due to SIGHUP');
         }, 5 * 1000); // wait 5 seconds to avoid race condition with reloading logging configuration
       });
     }
   })
   .catch(() => {
-    server.log(['warning', monitoringTag], 'Unable to retrieve X-Pack info. Kibana monitoring will be disabled.');
+    server.log(['warning', LOGGING_TAG], 'Unable to retrieve X-Pack info. Kibana monitoring will be disabled.');
   });
 }

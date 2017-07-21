@@ -1,6 +1,7 @@
 import { get, set, find } from 'lodash';
 import { checkParam } from '../error_missing_required';
 import { createTypeFilter } from '../create_query';
+import { LOGGING_TAG } from '../../../common/constants';
 
 async function findSupportedBasicLicenseCluster(req, clusters, kbnIndexPattern, kibanaUuid, serverLog) {
   checkParam(kbnIndexPattern, 'kbnIndexPattern in cluster/findSupportedBasicLicenseCluster');
@@ -55,8 +56,7 @@ async function findSupportedBasicLicenseCluster(req, clusters, kbnIndexPattern, 
  */
 export function flagSupportedClusters(req) {
   const config = req.server.config();
-  const monitoringTag = config.get('xpack.monitoring.loggingTag');
-  const serverLog = (msg) => req.server.log(['debug', monitoringTag, 'supported-clusters'], msg);
+  const serverLog = (msg) => req.server.log(['debug', LOGGING_TAG, 'supported-clusters'], msg);
   const flagAllSupported = (clusters) => {
     clusters.forEach(cluster => {
       if (cluster.license) {

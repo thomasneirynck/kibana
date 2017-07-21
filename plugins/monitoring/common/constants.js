@@ -1,4 +1,9 @@
 /**
+ * Helper string to add as a tag in every logging call
+ */
+export const LOGGING_TAG = 'monitoring-ui';
+
+/**
  * The Monitoring API version is the expected API format that we export and expect to import.
  * @type {string}
  */

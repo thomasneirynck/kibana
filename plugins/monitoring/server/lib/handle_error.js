@@ -1,11 +1,10 @@
 import Boom from 'boom';
+import { LOGGING_TAG } from '../../common/constants';
 
 export function handleError(err, req) {
-  const config = req.server.config();
-  const loggingTag = config.get('xpack.monitoring.loggingTag');
   const statusCode = err.isBoom ? err.output.statusCode : err.statusCode;
 
-  req.log([loggingTag, 'error'], err);
+  req.log(['error', LOGGING_TAG], err);
 
   // rewrite auth exceptions
   if (statusCode === 401 || statusCode === 403) {

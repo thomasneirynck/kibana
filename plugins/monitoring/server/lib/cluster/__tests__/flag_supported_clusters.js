@@ -8,7 +8,6 @@ const mockReq = (log, queryResult = {}) => {
       config() {
         return {
           get: sinon.stub()
-            .withArgs('xpack.monitoring.loggingTag').returns('monitoring-test-log-tag')
             .withArgs('server.uuid').returns('kibana-1234')
         };
       },
@@ -53,7 +52,7 @@ describe('Flag Supported Clusters', () => {
         ]);
         sinon.assert.calledWith(
           logStub,
-          ['debug', 'kibana-1234', 'supported-clusters'],
+          ['debug', 'monitoring-ui', 'supported-clusters'],
           'Found all non-basic cluster licenses. All clusters will be supported.'
         );
       });
@@ -89,12 +88,12 @@ describe('Flag Supported Clusters', () => {
         ]);
         sinon.assert.calledWith(
           logStub,
-          ['debug', 'kibana-1234', 'supported-clusters'],
+          ['debug', 'monitoring-ui', 'supported-clusters'],
           'Detected all clusters in monitoring data have basic license. Checking for supported admin cluster UUID for Kibana kibana-1234.'
         );
         sinon.assert.calledWith(
           logStub,
-          ['debug', 'kibana-1234', 'supported-clusters'],
+          ['debug', 'monitoring-ui', 'supported-clusters'],
           'Found basic license admin cluster UUID for Monitoring UI support: supported_cluster_uuid.'
         );
       });
@@ -131,7 +130,7 @@ describe('Flag Supported Clusters', () => {
         ]);
         sinon.assert.calledWith(
           logStub,
-          ['debug', 'kibana-1234', 'supported-clusters'],
+          ['debug', 'monitoring-ui', 'supported-clusters'],
           'Found some basic license clusters in monitoring data. Only non-basic will be supported.'
         );
       });
@@ -153,7 +152,7 @@ describe('Flag Supported Clusters', () => {
         ]);
         sinon.assert.calledWith(
           logStub,
-          ['debug', 'kibana-1234', 'supported-clusters'],
+          ['debug', 'monitoring-ui', 'supported-clusters'],
           'Found single cluster in monitoring data.'
         );
       });
@@ -170,7 +169,7 @@ describe('Flag Supported Clusters', () => {
         ]);
         sinon.assert.calledWith(
           logStub,
-          ['debug', 'kibana-1234', 'supported-clusters'],
+          ['debug', 'monitoring-ui', 'supported-clusters'],
           'Found single cluster in monitoring data.'
         );
       });
@@ -188,7 +187,7 @@ describe('Flag Supported Clusters', () => {
         ]);
         sinon.assert.calledWith(
           logStub,
-          ['debug', 'kibana-1234', 'supported-clusters'],
+          ['debug', 'monitoring-ui', 'supported-clusters'],
           'Found single cluster in monitoring data.'
         );
       });

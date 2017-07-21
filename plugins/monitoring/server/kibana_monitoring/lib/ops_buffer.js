@@ -1,6 +1,10 @@
 import { XPACK_DEFAULT_ADMIN_EMAIL_UI_SETTING } from '../../../../../server/lib/constants';
 import {
-  MONITORING_SYSTEM_API_VERSION, KIBANA_SYSTEM_ID, KIBANA_STATS_TYPE, KIBANA_SETTINGS_TYPE
+  LOGGING_TAG,
+  MONITORING_SYSTEM_API_VERSION,
+  KIBANA_SYSTEM_ID,
+  KIBANA_STATS_TYPE,
+  KIBANA_SETTINGS_TYPE
 } from '../../../common/constants';
 import { rollupEvent } from './map_event';
 import { sourceKibana } from './source_kibana';
@@ -31,8 +35,7 @@ async function getDefaultAdminEmail(config, uiSettings) {
 export function opsBuffer(kbnServer, server) {
   const config = server.config();
   const interval = config.get('xpack.monitoring.kibana.collection.interval') + 'ms';
-  const monitoringTag = config.get('xpack.monitoring.loggingTag');
-  const logDebug = message => server.log(['debug', monitoringTag], message);
+  const logDebug = message => server.log(['debug', LOGGING_TAG], message);
   const client = server.plugins.elasticsearch.getCluster('admin').createClient({ plugins: [monitoringBulk] });
   const { callWithInternalUser } = server.plugins.elasticsearch.getCluster('admin');
   const savedObjectsClient = server.savedObjectsClientFactory({
@@ -134,7 +137,7 @@ export function opsBuffer(kbnServer, server) {
         shouldUseNull = currentEmail !== null;
       })
       .catch((err) => {
-        server.log(['error', monitoringTag], err);
+        server.log(['error', LOGGING_TAG], err);
       });
     }
   };

@@ -7,7 +7,6 @@ function getMockServerFromConnectionUrl(monitoringClusterUrl) {
   const server = {
     xpack: {
       monitoring: {
-        loggingTag: 'monitoring-ui-test',
         elasticsearch: {
           url: monitoringClusterUrl,
           username: 'monitoring-user-internal-test',
@@ -62,7 +61,7 @@ describe('Instantiate Client', () => {
       exposeClient(server);
 
       expect(server.log.getCall(0).args).to.eql([
-        [ 'monitoring-ui-test', 'es-client' ],
+        [ 'monitoring-ui', 'es-client' ],
         'config sourced from: production cluster (http://localhost:9200)'
       ]);
     });
@@ -72,7 +71,7 @@ describe('Instantiate Client', () => {
       exposeClient(server);
 
       expect(server.log.getCall(0).args).to.eql([
-        [ 'monitoring-ui-test', 'es-client' ],
+        [ 'monitoring-ui', 'es-client' ],
         'config sourced from: monitoring cluster (monitoring-cluster.test:9200)'
       ]);
     });
