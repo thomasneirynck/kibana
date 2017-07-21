@@ -170,4 +170,18 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.getNotificationSettings = function () {
+    return http.request({
+      url: `${basePath}/notification_settings`,
+      method: 'GET'
+    });
+  };
+
+  this.getIndices = function () {
+    return http.request({
+      url: `${basePath}/indices`,
+      method: 'GET'
+    });
+  };
+
 });

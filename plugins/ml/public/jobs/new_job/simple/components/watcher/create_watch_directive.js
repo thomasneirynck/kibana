@@ -21,7 +21,7 @@ import template from './create_watch.html';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlCreateWatch', function (es, mlCreateWatchService) {
+module.directive('mlCreateWatch', function (es, ml, mlCreateWatchService) {
   return {
     restrict: 'AE',
     replace: false,
@@ -63,10 +63,7 @@ module.directive('mlCreateWatch', function (es, mlCreateWatchService) {
       }
 
       // load elasticsearch settings to see if email has been configured
-      es.cluster.getSettings({
-        includeDefaults: true,
-        filterPath: '**.xpack.notification'
-      }).then((resp) => {
+      ml.getNotificationSettings().then((resp) => {
         if (_.has(resp, 'defaults.xpack.notification.email')) {
           $scope.ui.emailEnabled = true;
         }

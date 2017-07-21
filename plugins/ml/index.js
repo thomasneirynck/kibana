@@ -20,6 +20,8 @@ import { checkLicense } from './server/lib/check_license';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 import { jobRoutes } from './server/routes/anomaly_detectors';
 import { dataFeedRoutes } from './server/routes/datafeeds';
+import { indicesRoutes } from './server/routes/indices';
+import { notificationRoutes } from './server/routes/notification_settings';
 import { systemRoutes } from './server/routes/system';
 
 export const ml = (kibana) => {
@@ -79,6 +81,8 @@ export const ml = (kibana) => {
 
       jobRoutes(server, commonRouteConfig);
       dataFeedRoutes(server, commonRouteConfig);
+      indicesRoutes(server, commonRouteConfig);
+      notificationRoutes(server, commonRouteConfig);
       systemRoutes(server, commonRouteConfig);
 
       initializationChecks(this, server).start();

@@ -900,7 +900,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     let mappings = {};
 
     // load mappings and aliases
-    es.indices.get({ index: '*', filterPath: '*.mappings,*.aliases' })
+    ml.getIndices()
       .then((resp) => {
         _.each(resp, (index, indexName) => {
           // switch the 'mappings' for 'types' for consistency.
