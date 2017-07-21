@@ -36,8 +36,14 @@ app.directive('indexSelect', ($injector) => {
     },
     controllerAs: 'indexSelect',
     bindToController: true,
+    link: ($scope, $ele) => {
+      const $searchBox = $ele.find('input[type="search"]');
+      $scope.indexSelect.$searchBox = $searchBox;
+
+      $searchBox.attr('id', 'indexSelectSearchBox');
+    },
     controller: class IndexSelectController {
-      constructor($scope, $element) {
+      constructor($scope) {
         this.$scope = $scope;
         this.indexPattern = undefined;
         this.fetchingWithNoIndices = true;
@@ -54,13 +60,12 @@ app.directive('indexSelect', ($injector) => {
 
         if (this.onTouched) {
           $timeout(() => {
-            $element.find('input[type="search"]')
-              .on('blur', () => {
-                $scope.$apply(this.onTouched);
-              });
+            this.$searchBox.on('blur', () => {
+              $scope.$apply(this.onTouched);
+            });
           });
           $scope.$on('$destroy', () => {
-            $element.find('input[type="search"]').off('blur');
+            this.$searchBox.off('blur');
           });
         }
 
