@@ -150,8 +150,10 @@ app.directive('thresholdWatchEdit', function ($injector) {
         const fromExpression = `now-${this.watch.timeWindowSize * VISUALIZE_TIME_WINDOW_MULTIPLIER}${this.watch.timeWindowUnit}`;
         const toExpression = `now`;
 
-        this.visualizeTimeWindowFrom = dateMath.parse(fromExpression).valueOf();
-        this.visualizeTimeWindowTo = dateMath.parse(toExpression).valueOf();
+        const fromMoment = dateMath.parse(fromExpression);
+        const toMoment = dateMath.parse(toExpression);
+        this.visualizeTimeWindowFrom = fromMoment ? fromMoment.valueOf() : undefined;
+        this.visualizeTimeWindowTo = toMoment ? toMoment.valueOf() : undefined;
       }
 
       visualizeWatch = debounce(() => {
