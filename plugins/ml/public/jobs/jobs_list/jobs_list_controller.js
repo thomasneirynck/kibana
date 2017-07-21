@@ -55,7 +55,8 @@ function (
   mlMessageBarService,
   mlClipboardService,
   mlJobService,
-  mlDatafeedService) {
+  mlDatafeedService,
+  mlNotificationService) {
 
   timefilter.enabled = false; // remove time picker from top of page
   const rowScopes = []; // track row scopes, so they can be destroyed as needed
@@ -371,7 +372,7 @@ function (
       }
     }
 
-    return mlJobService.getJobAuditMessages(fromRange, jobId)
+    return mlNotificationService.getJobAuditMessages(fromRange, jobId)
       .then((resp) => {
         const messages = resp.messages;
         _.each(messages, (msg) => {
@@ -423,7 +424,7 @@ function (
       createTimes[job.job_id] = moment(job.create_time).valueOf();
     });
 
-    mlJobService.getAuditMessagesSummary()
+    mlNotificationService.getAuditMessagesSummary()
     .then((resp) => {
       const messagesPerJob = resp.messagesPerJob;
       _.each(messagesPerJob, (job) => {
@@ -472,7 +473,7 @@ function (
         // create the update function,
         // this is called when the messages tab is clicked for this row
         rs.jobAudit.update = function () {
-          // return the promise chain from mlJobService.getJobAuditMessages
+          // return the promise chain from mlNotificationService.getJobAuditMessages
           // so we can scroll to the bottom of the list once it has loaded
           return loadAuditMessages(jobs, [rs], rs.job.job_id);
         };

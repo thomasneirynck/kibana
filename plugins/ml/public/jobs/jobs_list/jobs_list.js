@@ -22,3 +22,4 @@ import './create_watch_modal';
 import './expanded_row';
 import 'ui/directives/confirm_click';
 import 'plugins/ml/components/paginated_table';
+import 'plugins/ml/services/notification_service';

@@ -14,3 +14,4 @@
  */
 
 export const ML_RESULTS_INDEX_PATTERN = '.ml-anomalies-*';
+export const ML_NOTIFICATION_INDEX_PATTERN = '.ml-notifications';

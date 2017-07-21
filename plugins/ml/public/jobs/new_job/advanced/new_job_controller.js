@@ -380,7 +380,7 @@ function (
                       $scope.saveLock = false;
                     })
                     .catch((resp) => {
-                      msgs.error('Could not start datafeed: ', resp);
+                      msgs.error('Could not create datafeed: ', resp);
                       $scope.saveLock = false;
                     });
                   } else {

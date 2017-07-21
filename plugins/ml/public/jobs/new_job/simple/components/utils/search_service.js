@@ -15,7 +15,7 @@
 
 import _ from 'lodash';
 
-import { ML_RESULTS_INDEX_PATTERN } from 'plugins/ml/constants/results_index_pattern';
+import { ML_RESULTS_INDEX_PATTERN } from 'plugins/ml/constants/index_patterns';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');

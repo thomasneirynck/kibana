@@ -1,4 +1,4 @@
-import { ML_RESULTS_INDEX_PATTERN } from 'plugins/ml/constants/results_index_pattern';
+import { ML_RESULTS_INDEX_PATTERN } from 'plugins/ml/constants/index_patterns';
 
 export const watch = {
   trigger: {
