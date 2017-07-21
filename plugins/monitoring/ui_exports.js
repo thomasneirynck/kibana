@@ -15,6 +15,7 @@ export const uiExports = {
     order: 9002,
     description: 'Monitoring for Elastic Stack',
     icon: 'plugins/monitoring/icons/monitoring.svg',
+    linkToLastSubUrl: false,
     main: 'plugins/monitoring/monitoring',
     injectVars(server) {
       const config = server.config();
