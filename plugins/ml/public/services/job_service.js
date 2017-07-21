@@ -727,46 +727,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     return deferred.promise;
   };
 
-  // use elasticsearch to obtain the definition of the category with the
-  // specified ID from the given index and job ID.
-  // Returned response contains four properties - categoryId, regex, examples
-  // and terms (space delimited String of the common tokens matched in values of the category).
-  this.getCategoryDefinition = function (index, jobId, categoryId) {
-    const deferred = $q.defer();
-    const obj = { success: true, categoryId: categoryId, terms: null, regex: null, examples: [] };
-
-
-    es.search({
-      index: index,
-      size: 1,
-      body: {
-        'query': {
-          'bool': {
-            'filter': [
-              { 'term': { 'job_id': jobId } },
-              { 'term': { 'category_id': categoryId } }
-            ]
-          }
-        }
-      }
-    })
-    .then((resp) => {
-      if (resp.hits.total !== 0) {
-        const source = _.first(resp.hits.hits)._source;
-        obj.categoryId = source.category_id;
-        obj.regex = source.regex;
-        obj.terms = source.terms;
-        obj.examples = source.examples;
-      }
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
-    return deferred.promise;
-  };
-
-  // use elastic search to load the datafeed state data
+  // use elasticsearch to load the datafeed state data
   // endTimeMillis is used to prepopulate the datafeed start modal
   // when a job has previously been set up with an end time
   this.jobDatafeedState = function (jobId) {

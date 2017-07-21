@@ -608,6 +608,44 @@ module.service('mlResultsService', function ($q, es) {
   };
 
 
+  // Obtains the definition of the category with the specified ID and job ID.
+  // Returned response contains four properties - categoryId, regex, examples
+  // and terms (space delimited String of the common tokens matched in values of the category).
+  this.getCategoryDefinition = function (jobId, categoryId) {
+    const deferred = $q.defer();
+    const obj = { success: true, categoryId: categoryId, terms: null, regex: null, examples: [] };
+
+    es.search({
+      index: ML_RESULTS_INDEX_PATTERN,
+      size: 1,
+      body: {
+        'query': {
+          'bool': {
+            'filter': [
+              { 'term': { 'job_id': jobId } },
+              { 'term': { 'category_id': categoryId } }
+            ]
+          }
+        }
+      }
+    })
+    .then((resp) => {
+      if (resp.hits.total !== 0) {
+        const source = _.first(resp.hits.hits)._source;
+        obj.categoryId = source.category_id;
+        obj.regex = source.regex;
+        obj.terms = source.terms;
+        obj.examples = source.examples;
+      }
+      deferred.resolve(obj);
+    })
+    .catch((resp) => {
+      deferred.reject(resp);
+    });
+    return deferred.promise;
+  };
+
+
   // Obtains the categorization examples for the categories with the specified IDs
   // from the given index and job ID.
   // Returned response contains two properties - jobId and

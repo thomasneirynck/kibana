@@ -241,7 +241,7 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         // Get the definition of the category and use the terms or regex to view the
         // matching events in the Kibana Discover tab depending on whether the
         // categorization field is of mapping type text (preferred) or keyword.
-        mlJobService.getCategoryDefinition(scope.indexPatternId, record.job_id, categoryId)
+        mlResultsService.getCategoryDefinition(record.job_id, categoryId)
           .then((resp) => {
             let query = `${categorizationFieldName}:`;
             if (categorizationFieldType === 'keyword') {
@@ -332,7 +332,7 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
           // - use first value (will only ever be more than one if influenced by category other than by/partition/over).
           const categoryId = record.mlcategory[0];
 
-          mlJobService.getCategoryDefinition(scope.indexPatternId, jobId, categoryId)
+          mlResultsService.getCategoryDefinition(jobId, categoryId)
           .then((resp) => {
             // Prefix each of the terms with '+' so that the Elasticsearch Query String query
             // run in a drilldown Kibana dashboard has to match on all terms.
@@ -714,7 +714,7 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         rowScope.initRow = function () {
           if (_.has(record, 'entityValue') && record.entityName === 'mlcategory') {
             // Obtain the category definition and display the examples in the expanded row.
-            mlJobService.getCategoryDefinition(scope.indexPatternId, record.jobId, record.entityValue)
+            mlResultsService.getCategoryDefinition(record.jobId, record.entityValue)
             .then((resp) => {
               rowScope.categoryDefinition = {
                 'examples':_.slice(resp.examples, 0, Math.min(resp.examples.length, MAX_NUMBER_CATEGORY_EXAMPLES)) };
@@ -909,7 +909,7 @@ module.directive('mlAnomaliesTable', function ($window, $location, $rootScope, t
         // Load the example events for the specified map of job_ids and categoryIds from Elasticsearch.
         scope.categoryExamplesByJob = {};
         _.each(categoryIdsByJobId, (categoryIds, jobId) => {
-          mlResultsService.getCategoryExamples(scope.indexPatternId, jobId, categoryIds, MAX_NUMBER_CATEGORY_EXAMPLES)
+          mlResultsService.getCategoryExamples(jobId, categoryIds, MAX_NUMBER_CATEGORY_EXAMPLES)
           .then((resp) => {
             scope.categoryExamplesByJob[jobId] = resp.examplesByCategoryId;
           }).catch((resp) => {
