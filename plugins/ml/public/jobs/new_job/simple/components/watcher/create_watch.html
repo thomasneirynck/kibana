@@ -2,8 +2,8 @@
 	<div ng-show='status.watch===null || status.watch===STATUS.SAVING || status.watch===STATUS.SAVE_FAILED'>
 		<div class='form-group'>
 			<div class='sub-form-group'>
-				<label for="selectInterval">Interval</label><br />
-				<input id="selectInterval" ng-model='config.interval' type="text" class="kuiTextInput kuiTextInput--small interval" placeholder="m">
+				<label for="selectInterval">Time range</label><br />
+				Now - <input id="selectInterval" ng-model='config.interval' type="text" class="kuiTextInput kuiTextInput--small interval" placeholder="m">
 			</div>
 
 			<div class='sub-form-group'>
