@@ -1,24 +1,19 @@
 import _ from 'lodash';
 import { SavedWorkspaceProvider } from './saved_workspace';
-import { Scanner } from 'ui/utils/scanner';
 import { uiModules } from 'ui/modules';
 import chrome from 'ui/chrome';
 
 // bring in the factory
 import { SavedObjectRegistryProvider } from 'ui/saved_objects/saved_object_registry';
+import { SavedObjectsClientProvider } from 'ui/saved_objects';
 
 
-export function SavedWorkspacesProvider(es, kbnUrl, Private, Promise, kbnIndex) {
-
+export function SavedWorkspacesProvider(kbnUrl, Private, Promise) {
+  const savedObjectsClient = Private(SavedObjectsClientProvider);
   const SavedWorkspace = Private(SavedWorkspaceProvider);
-  const scanner = new Scanner(es, {
-    index: kbnIndex,
-    type: SavedWorkspace.type
-  });
 
   this.type = SavedWorkspace.type;
   this.Class = SavedWorkspace;
-
 
   this.loaderProperties = {
     name: 'Graph workspace',
@@ -43,17 +38,10 @@ export function SavedWorkspacesProvider(es, kbnUrl, Private, Promise, kbnIndex) 
     });
   };
 
-  this.scanAll = function (queryString, pageSize = 1000) {
-    return scanner.scanAndMap(queryString, {
-      pageSize,
-      docCount: Infinity
-    }, (hit) => this.mapHits(hit));
-  };
-
   this.mapHits = function (hit) {
-    const source = hit._source;
-    source.id = hit._id;
-    source.url = this.urlFor(hit._id);
+    const source = hit.attributes;
+    source.id = hit.id;
+    source.url = this.urlFor(hit.id);
     source.icon = 'fa-share-alt';// looks like a graph
     return source;
   };
@@ -74,16 +62,16 @@ export function SavedWorkspacesProvider(es, kbnUrl, Private, Promise, kbnIndex) 
       body = { query: { match_all: {} } };
     }
 
-    return es.search({
-      index: kbnIndex,
+    return savedObjectsClient.find({
       type: SavedWorkspace.type,
-      body: body,
-      size: size
+      search: searchString ? `${searchString}*` : undefined,
+      perPage: size,
+      searchFields: ['title^3', 'description']
     })
-    .then((resp) => {
+    .then(resp => {
       return {
-        total: resp.hits.total,
-        hits: resp.hits.hits.map((hit) => this.mapHits(hit))
+        total: resp.total,
+        hits: resp.savedObjects.map((hit) => this.mapHits(hit))
       };
     });
   };

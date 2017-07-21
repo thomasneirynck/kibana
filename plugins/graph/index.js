@@ -38,13 +38,16 @@ export const graph = (kibana) => {
         injectVars: function (server, options) {
           const config = server.config();
           return {
-            kbnIndex: config.get('kibana.index'),
             esApiVersion: config.get('elasticsearch.apiVersion'),
             esShardTimeout: config.get('elasticsearch.shardTimeout'),
             graphSavePolicy: config.get('xpack.graph.savePolicy'),
             canEditDrillDownUrls: config.get('xpack.graph.canEditDrillDownUrls')
           };
-        }
+        },
+        uses: [
+          'fieldFormats',
+          'savedObjectTypes',
+        ]
       },
       hacks: ['plugins/graph/hacks/toggle_app_link_in_nav'],
       mappings
