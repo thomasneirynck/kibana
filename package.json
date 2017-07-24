@@ -1,6 +1,6 @@
 {
   "name": "x-pack",
-  "version": "6.0.0-beta1",
+  "version": "7.0.0-alpha1",
   "author": "Elastic",
   "scripts": {
     "start": "gulp dev",
