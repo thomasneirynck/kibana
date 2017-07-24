@@ -3,7 +3,7 @@ import React from 'react';
 import { IndexActionSteps } from './index_action_steps';
 import { INDEX_ACTION } from '../../lib/constants';
 import {
-  isFailed,
+  isResettable,
   isNotStarted,
   isRunning,
 } from '../../lib';
@@ -46,7 +46,7 @@ export function IndexTableRow({
               </button>
               <button
                 className="kuiMenuButton kuiMenuButton--basic"
-                disabled={ !isFailed(index) }
+                disabled={ !isResettable(index) }
                 onClick={ () => resetAction(index.name) }
               >
                 Reset
@@ -90,5 +90,7 @@ IndexTableRow.defaultProps = {
 };
 
 function getActionButtonLabel(action) {
-  return INDEX_ACTION.LABEL[action] || 'Unknown'; //TODO: might want to throw
+  return INDEX_ACTION.LABEL[action];
+  // TODO: might want to throw if assistance API
+  // changes and doesn't give back actions we expect.
 }
