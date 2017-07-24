@@ -211,16 +211,20 @@ export async function deleteTask(indexName, taskId) {
 
 // Reset Index
 // Attempts to set the index state so that its action can be performed again.
-// Tries to delete the existing index.
-// Sets the original index writeable.
-// Deletes any task that might exist.
+// * Tries to delete the existing index. This should
+// only be hit if the create index step succeeded.
+// * Sets the original index writeable.
+// * Deletes any task that might exist. This would be
+// hit if the replace-index step failed but the task
+// succeeded.
 export async function resetIndex(indexName, taskId) {
   try {
     const suffix = getIndexSuffix(indexName);
     await deleteFromApi(`/api/migration/index/${ indexName }${ suffix }`);
   } catch (error) {
     // If delete index fails because index doesn't
-    // exist, continue.
+    // exist, continue. It might have been deleted
+    // manually by the user.
     if (error.code !== ERR_CODES.ERR_DELETE_INDEX_FAILED) {
       throw error;
     }

@@ -3,6 +3,7 @@ export {
   isFailed,
   isNotStarted,
   isRunning,
+  isResettable,
   isStepCompleted,
   isStepFailed,
   isStepNotStarted,

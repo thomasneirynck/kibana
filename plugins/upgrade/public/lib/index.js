@@ -23,6 +23,7 @@ export {
   isStepFailed,
   isStepNotStarted,
   isStepRunning,
+  isResettable,
   getStepMessage,
   wrapErrorMessage,
 } from './reindex';
