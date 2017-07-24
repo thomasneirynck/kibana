@@ -16,15 +16,15 @@ to download and install {xpack}. If your Logstash node doesn’t have
 Internet access, manually download and install {xpack}.
 See {xpack-ref}/installing-xpack.html[Installing {xpack}].
 
-. Configure your Logstash nodes to send metrics to your *production
-Elasticsearch cluster* by setting the `xpack.monitoring.elasticsearch.url`
+. Configure your Logstash nodes to send metrics to your
+Elasticsearch cluster by setting the `xpack.monitoring.elasticsearch.url`
 in `logstash.yml`. If security is enabled, you also need to specify
 the credentials for the built-in `logstash_system` user.
 +
-IMPORTANT: Even if you are using a dedicated monitoring cluster,
-you must configure your Logstash nodes to send metrics to your
-_production cluster_. Metrics cannot be sent directly to the
-monitoring cluster.
+IMPORTANT: To visualize Logstash as part of the Stack (shown below in Step 5), 
+send metrics to your _production_ cluster. 
+Sending metrics to a dedicated monitoring cluster 
+will show the Logstash metrics under the _monitoring_ cluster.
 +
 [source,yaml]
 --------------------------------------------------
