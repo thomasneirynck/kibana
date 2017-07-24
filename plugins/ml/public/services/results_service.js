@@ -1143,7 +1143,9 @@ module.service('mlResultsService', function ($q, es) {
     const mustCriteria = [];
     const shouldCriteria = [];
 
-    mustCriteria.push({ 'terms' : { '_type' : types } });
+    if (types && types.length) {
+      mustCriteria.push({ 'terms' : { '_type' : types } });
+    }
 
     const timeRangeCriteria = { 'range':{} };
     timeRangeCriteria.range[timeFieldName] = {
