@@ -23,7 +23,7 @@ export function MonitoringPageProvider({ getService, getPageObjects }) {
 
 
     async getAccessDeniedMessage() {
-      return testSubjects.find('accessDeniedTitle').getVisibleText();
+      return testSubjects.getVisibleText('accessDeniedTitle');
     }
 }
   return new MonitoringPage();

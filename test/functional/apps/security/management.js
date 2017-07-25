@@ -42,11 +42,11 @@ export default function ({ getService, getPageObjects }) {
         it('Clicking save in create user section brings user back to listing', async () => {
           await PageObjects.security.clickCreateNewUser();
 
-          await testSubjects.find('userFormUserNameInput').type('new-user');
-          await testSubjects.find('passwordInput').type('123456');
-          await testSubjects.find('passwordConfirmationInput').type('123456');
-          await testSubjects.find('userFormFullNameInput').type('Full User Name');
-          await testSubjects.find('userFormEmailInput').type('my@email.com');
+          await testSubjects.setValue('userFormUserNameInput', 'new-user');
+          await testSubjects.setValue('passwordInput', '123456');
+          await testSubjects.setValue('passwordConfirmationInput', '123456');
+          await testSubjects.setValue('userFormFullNameInput', 'Full User Name');
+          await testSubjects.setValue('userFormEmailInput', 'my@email.com');
 
           await PageObjects.security.clickSaveEditUser();
           await PageObjects.header.clickToastOK();
@@ -61,8 +61,9 @@ export default function ({ getService, getPageObjects }) {
           const currentUrl = await remote.getCurrentUrl();
           expect(currentUrl).to.contain(EDIT_USERS_PATH);
 
-          const userNameInput = await testSubjects.find('userFormUserNameInput').getProperty('value');
-          expect(userNameInput).to.equal('new-user');
+          const userNameInput = await testSubjects.find('userFormUserNameInput');
+          const userName = await userNameInput.getProperty('value');
+          expect(userName).to.equal('new-user');
         });
 
         it('Can navigate to roles section', async () => {
@@ -87,7 +88,7 @@ export default function ({ getService, getPageObjects }) {
         it('Clicking save in create role section brings user back to listing', async () => {
           await PageObjects.security.clickCreateNewRole();
 
-          await testSubjects.find('roleFormNameInput').type('my-new-role');
+          await testSubjects.setValue('roleFormNameInput', 'my-new-role');
 
           await PageObjects.security.clickSaveEditRole();
           await PageObjects.header.clickToastOK();
@@ -102,8 +103,9 @@ export default function ({ getService, getPageObjects }) {
           const currentUrl = await remote.getCurrentUrl();
           expect(currentUrl).to.contain(EDIT_ROLES_PATH);
 
-          const userNameInput = await testSubjects.find('roleFormNameInput').getProperty('value');
-          expect(userNameInput).to.equal('my-new-role');
+          const userNameInput = await testSubjects.find('roleFormNameInput');
+          const userName = await userNameInput.getProperty('value');
+          expect(userName).to.equal('my-new-role');
         });
 
         it('Can navigate to edit role section from users page', async () => {

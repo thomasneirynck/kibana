@@ -42,7 +42,7 @@ export default function ({ getService, getPageObjects }) {
         await PageObjects.settings.clickLinkText('Roles');
         await PageObjects.security.clickCreateNewRole();
 
-        await testSubjects.find('roleFormNameInput').type('dash-only-role');
+        await testSubjects.setValue('roleFormNameInput', 'dash-only-role');
         await PageObjects.security.selectDashboardOnlyModeRole();
         await PageObjects.security.addIndexToRole('.kibana');
         await PageObjects.security.addIndexToRole('logstash-*');
@@ -77,11 +77,11 @@ export default function ({ getService, getPageObjects }) {
         await PageObjects.security.clickUsersSection();
         await PageObjects.security.clickCreateNewUser();
 
-        await testSubjects.find('userFormUserNameInput').type('dashuser');
-        await testSubjects.find('passwordInput').type('123456');
-        await testSubjects.find('passwordConfirmationInput').type('123456');
-        await testSubjects.find('userFormFullNameInput').type('dashuser');
-        await testSubjects.find('userFormEmailInput').type('my@email.com');
+        await testSubjects.setValue('userFormUserNameInput', 'dashuser');
+        await testSubjects.setValue('passwordInput', '123456');
+        await testSubjects.setValue('passwordConfirmationInput', '123456');
+        await testSubjects.setValue('userFormFullNameInput', 'dashuser');
+        await testSubjects.setValue('userFormEmailInput', 'my@email.com');
         await PageObjects.security.assignRoleToUser('dash-only-role');
 
         await PageObjects.security.clickSaveEditUser();
@@ -90,11 +90,11 @@ export default function ({ getService, getPageObjects }) {
       before('Create user with mixes roles', async () => {
         await PageObjects.security.clickCreateNewUser();
 
-        await testSubjects.find('userFormUserNameInput').type('mixeduser');
-        await testSubjects.find('passwordInput').type('123456');
-        await testSubjects.find('passwordConfirmationInput').type('123456');
-        await testSubjects.find('userFormFullNameInput').type('mixeduser');
-        await testSubjects.find('userFormEmailInput').type('my@email.com');
+        await testSubjects.setValue('userFormUserNameInput', 'mixeduser');
+        await testSubjects.setValue('passwordInput', '123456');
+        await testSubjects.setValue('passwordConfirmationInput', '123456');
+        await testSubjects.setValue('userFormFullNameInput', 'mixeduser');
+        await testSubjects.setValue('userFormEmailInput', 'my@email.com');
         await PageObjects.security.assignRoleToUser('dash-only-role');
         await PageObjects.security.assignRoleToUser('superuser');
 
