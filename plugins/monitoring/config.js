@@ -41,7 +41,6 @@ export const config = (Joi) => {
       }).default()
     }).default(),
     xpack_api_polling_frequency_millis: number().default(XPACK_INFO_API_DEFAULT_POLL_FREQUENCY_IN_MILLIS),
-    missing_intervals: number().default(12),
     max_bucket_size: number().default(10000),
     min_interval_seconds: number().default(10),
     show_license_expiration: boolean().default(true),
