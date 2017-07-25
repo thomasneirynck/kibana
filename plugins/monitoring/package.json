@@ -7,7 +7,7 @@
     "test": "gulp test"
   },
   "name": "monitoring",
-  "version": "7.0.0-alpha1",
+  "version": "6.0.0-beta1",
   "repository": {
     "type": "git",
     "url": "http://github.com/elasticsearch/x-plugins.git"
