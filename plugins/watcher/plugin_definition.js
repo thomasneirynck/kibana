@@ -2,6 +2,7 @@ import { resolve } from 'path';
 import { registerFieldsRoutes } from './server/routes/api/fields';
 import { registerSettingsRoutes } from './server/routes/api/settings';
 import { registerHistoryRoutes } from './server/routes/api/history';
+import { registerIndicesRoutes } from './server/routes/api/indices';
 import { registerLicenseRoutes } from './server/routes/api/license';
 import { registerWatchesRoutes } from './server/routes/api/watches';
 import { registerWatchRoutes } from './server/routes/api/watch';
@@ -27,6 +28,7 @@ export const pluginDefinition = {
 
     registerFieldsRoutes(server);
     registerHistoryRoutes(server);
+    registerIndicesRoutes(server);
     registerLicenseRoutes(server);
     registerSettingsRoutes(server);
     registerWatchesRoutes(server);

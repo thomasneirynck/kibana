@@ -1,29 +1,30 @@
 import { sortBy, pluck, map, startsWith, endsWith } from 'lodash';
-import 'ui/indices';
+import 'plugins/watcher/services/indices';
 import { uiModules } from 'ui/modules';
 import template from './index_select.html';
 
 import './index_select.less';
 
-function mapIndex(indexName, isFromTemplate = false, isUserEntered = false) {
-  return { indexName, isFromTemplate, isUserEntered };
+function mapIndex(indexName, isFromIndexPattern = false, isUserEntered = false) {
+  return { indexName, isFromIndexPattern, isUserEntered };
 }
 
-function collapseIndices(allIndices, allTemplateIndexPatterns) {
+function collapseIndices(allIndices, allIndexPatterns) {
   const indices = map(allIndices, indexName => mapIndex(indexName, false));
-  const templateIndexPatterns = map(allTemplateIndexPatterns, indexName => mapIndex(indexName, true));
-  indices.push(...templateIndexPatterns);
+  const indexPatterns = map(allIndexPatterns, indexName => mapIndex(indexName, true));
+  indices.push(...indexPatterns);
   return indices;
 }
 
-const INDICES_FROM_TEMPLATES_HEADER_COPY = 'Based on your index templates';
+const INDICES_FROM_INDEX_PATTERNS_HEADER_COPY = 'Based on your index patterns';
 const INDICES_FOR_CREATION_HEADER_COPY = 'Choose...';
-const INDICES_FROM_INDICES_HEADER_COPY = 'Based on your indices';
+const INDICES_FROM_INDICES_HEADER_COPY = 'Based on your indices and aliases';
 
 const app = uiModules.get('xpack/watcher');
 
 app.directive('indexSelect', ($injector) => {
-  const indicesService = $injector.get('indices');
+  const indicesService = $injector.get('xpackWatcherIndicesService');
+  const indexPatternsService = $injector.get('indexPatterns');
   const $timeout = $injector.get('$timeout');
 
   return {
@@ -103,13 +104,13 @@ app.directive('indexSelect', ($injector) => {
 
       /**
        * This method powers the `group-by` within ui-select to group
-       * our indices array by index template indices and regular indices
+       * our indices array based on the souce
        *
        * @param {object} index
        */
       groupIndices(index) {
-        if (index.isFromTemplate) {
-          return INDICES_FROM_TEMPLATES_HEADER_COPY;
+        if (index.isFromIndexPattern) {
+          return INDICES_FROM_INDEX_PATTERNS_HEADER_COPY;
         }
 
         if (index.isUserEntered) {
@@ -179,8 +180,8 @@ app.directive('indexSelect', ($injector) => {
         }
 
         const promises = [
-          indicesService.getIndices(pattern),
-          indicesService.getTemplateIndexPatterns(pattern)
+          indicesService.getMatchingIndices(pattern),
+          indexPatternsService.getTitles()
         ];
 
         if (this.fetchedIndices.length === 0) {
@@ -188,8 +189,8 @@ app.directive('indexSelect', ($injector) => {
         }
 
         Promise.all(promises)
-          .then(([allIndices, allTemplateIndexPatterns]) => {
-            const indices = collapseIndices(allIndices, allTemplateIndexPatterns);
+          .then(([allIndices, allIndexPatterns]) => {
+            const indices = collapseIndices(allIndices, allIndexPatterns);
             this.fetchedIndices = sortBy(indices, 'indexName');
             this.fetchedIndices.push(mapIndex(this.indexPattern, false, true));
             this.fetchingWithNoIndices = false;
