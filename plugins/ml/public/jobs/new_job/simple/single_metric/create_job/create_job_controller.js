@@ -110,7 +110,7 @@ module
   let globalForceStop = false;
 
   let indexPattern = $route.current.locals.indexPattern;
-  let query = {
+  const query = {
     query_string: {
       analyze_wildcard: true,
       query: '*'
@@ -126,8 +126,8 @@ module
     savedSearch.id !== undefined) {
     indexPattern = searchSource.get('index');
     const q = searchSource.get('query');
-    if(q !== undefined) {
-      query = q;
+    if(q !== undefined && q.language === 'lucene' && q.query !== '') {
+      query.query_string.query = q.query;
     }
 
     const fs = searchSource.get('filter');
