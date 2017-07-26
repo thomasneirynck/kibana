@@ -3,6 +3,7 @@ import sinon from 'sinon';
 import { checkForParseErrors } from '../app_util.js';
 
 describe('checkForParseErrors', function () {
+  // eslint-disable-next-line jest/no-disabled-tests
   it.skip('returns false from bad JSON', function () {
     const markers = [];
     const session = {

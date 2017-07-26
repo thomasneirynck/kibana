@@ -51,6 +51,7 @@ describe('getIsUserInDashboardMode', function () {
       });
     });
 
+    // eslint-disable-next-line jest/no-identical-title
     it('when no roles are in dashboard mode', function () {
       const uiSettingsMock = { get: () => [] };
       const userMock = { roles: ['a-role'] };

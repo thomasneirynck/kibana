@@ -55,6 +55,7 @@ gulp.task('lint-staged', () => {
     const whitelist = [
       '\.asciidoc',
       '\.js',
+      '\.js\.snap',
       '\.html',
       '\.less',
       '\.css',

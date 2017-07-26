@@ -7,6 +7,7 @@ import './fixtures/providers';
 
 findTestSubject($);
 
+// eslint-disable-next-line jest/no-disabled-tests
 describe.skip('monitoringKibanaSummary', function () {
   let $element;
   let scope;

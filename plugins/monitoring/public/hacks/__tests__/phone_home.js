@@ -49,6 +49,7 @@ describe('phone home class', () => {
   });
 
   // call the private method
+  // eslint-disable-next-line jest/no-disabled-tests
   describe.skip('should send a report', () => {
     it('never reported before', () => {
       const sender = new PhoneHome(
@@ -99,6 +100,7 @@ describe('phone home class', () => {
       ]));
     });
   });
+  // eslint-disable-next-line jest/no-disabled-tests
   describe.skip('should not send the report', () => {
     it('config does not allow report', () => {
       const sender = new PhoneHome(getMockInjector({ allowReport: false }), mockBasePath);

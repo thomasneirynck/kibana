@@ -5,6 +5,7 @@ extends: '@elastic/kibana'
 
 plugins:
   - '@elastic/kibana-custom'
+  - 'jest'
 
 rules:
   no-extra-semi: off
@@ -15,6 +16,13 @@ rules:
   react/jsx-uses-vars: error
   react/jsx-curly-spacing: [error, always]
   kibana-custom/no-default-export: error
+
+  jest/no-disabled-tests: error
+  jest/no-focused-tests: error
+  jest/no-identical-title: error
+
+env:
+  jest/globals: true
 
 settings:
   import/resolver:

@@ -7,6 +7,7 @@ import 'plugins/monitoring/directives/__tests__/fixtures/providers';
 
 findTestSubject($);
 
+// eslint-disable-next-line jest/no-disabled-tests
 describe.skip('monitoringClusterStatusLogstash', function () {
   let $element;
   let compile;
