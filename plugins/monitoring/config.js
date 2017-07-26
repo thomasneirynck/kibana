@@ -71,8 +71,7 @@ export const config = (Joi) => {
         key: string(),
         keyPassphrase: string()
       }).default(),
-      apiVersion: string().default('master'),
-      engineVersion: string().valid('^6.0.0').default('^6.0.0')
+      apiVersion: string().default('master')
     }).default()
   }).default();
 };
