@@ -7,7 +7,10 @@
   >
     <monitoring-logstash-node-summary logstash="pageData.nodeSummary"></monitoring-logstash-node-summary>
     <div class="page-row">
-      <monitoring-logstash-pipeline-listing pipelines="pageData.pipelines"></monitoring-logstash-pipeline-listing>
+      <monitoring-logstash-pipeline-listing
+        pipelines="pageData.pipelines"
+        upgrade-message="{{ upgradeMessage }}"
+      ></monitoring-logstash-pipeline-listing>
     </div>
   </monitoring-main>
 </div>

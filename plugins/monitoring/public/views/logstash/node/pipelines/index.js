@@ -7,6 +7,7 @@ import uiRoutes from 'ui/routes';
 import { uiModules } from 'ui/modules';
 import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
 import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
+import { isPipelineMonitoringSupportedInVersion } from 'plugins/monitoring/lib/logstash/pipelines';
 import template from './index.html';
 
 const getPageData = ($injector) => {
@@ -33,6 +34,14 @@ const getPageData = ($injector) => {
   });
 };
 
+function makeUpgradeMessage(logstashVersion) {
+  if (isPipelineMonitoringSupportedInVersion(logstashVersion)) {
+    return null;
+  }
+
+  return `Pipeline monitoring is only available in Logstash version 6.0.0 or higher. This node is running version ${logstashVersion}.`;
+}
+
 uiRoutes
 .when('/logstash/node/:uuid/pipelines', {
   template,
@@ -56,6 +65,7 @@ uiModule.controller('logstashNodePipelines', ($injector, $scope) => {
   $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
   $scope.pageData = $route.current.locals.pageData;
 
+  $scope.upgradeMessage = makeUpgradeMessage($scope.pageData.nodeSummary.version);
   timefilter.enabled = true;
 
   title($scope.cluster, `Logstash - ${$scope.pageData.nodeSummary.name} - Pipelines`);

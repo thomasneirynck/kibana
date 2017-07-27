@@ -144,5 +144,9 @@ export const LOGSTASH = {
         DISPLAY_ID_MAX_LENGTH_CHARS: 15
       }
     }
-  }
+  },
+
+  MAJOR_VER_REQD_FOR_PIPELINES: 6
 };
+
+export const DEFAULT_NO_DATA_MESSAGE = 'There are no records that match your query. Try changing the time range selection.';

@@ -52,7 +52,7 @@ export function getKibanasForClusters(req, kbnIndexPattern, clusters) {
                   field: 'kibana_stats.timestamp',
                   size: 1,
                   order: {
-                    '_term': 'desc'
+                    '_key': 'desc'
                   }
                 },
                 aggs: {

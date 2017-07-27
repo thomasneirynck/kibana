@@ -9,7 +9,10 @@ uiModule.directive('monitoringLogstashPipelineListing', function ($injector) {
 
   return {
     restrict: 'E',
-    scope: { pipelines: '=' },
+    scope: {
+      pipelines: '=',
+      upgradeMessage: '@'
+    },
     link(scope, $el) {
       function onHashClick(id, hash) {
         const url = `/logstash/pipelines/${id}/${hash}`;
@@ -21,6 +24,7 @@ uiModule.directive('monitoringLogstashPipelineListing', function ($injector) {
           <PipelineCardGroup
             pipelines={ pipelines }
             onHashClick={ onHashClick }
+            upgradeMessage={ scope.upgradeMessage }
           />
         );
 

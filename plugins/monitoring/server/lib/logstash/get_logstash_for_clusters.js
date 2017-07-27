@@ -50,7 +50,7 @@ export function getLogstashForClusters(req, logstashIndexPattern, clusters) {
                   field: 'logstash_stats.timestamp',
                   size: 1,
                   order: {
-                    '_term' : 'desc'
+                    '_key' : 'desc'
                   }
                 },
                 aggs: {
@@ -96,6 +96,12 @@ export function getLogstashForClusters(req, logstashIndexPattern, clusters) {
                   buckets_path: 'latest_report>events_out_total'
                 }
               }
+            }
+          },
+          logstash_versions: {
+            terms: {
+              field: 'logstash_stats.logstash.version',
+              size: config.get('xpack.monitoring.max_bucket_size')
             }
           },
           pipelines_nested: {
@@ -144,6 +150,7 @@ export function getLogstashForClusters(req, logstashIndexPattern, clusters) {
     .then(result => {
       const aggregations = get(result, 'aggregations', {});
       const logstashUuids =  get(aggregations, 'logstash_uuids.buckets', []);
+      const logstashVersions = get(aggregations, 'logstash_versions.buckets', []);
 
       // everything is initialized such that it won't impact any rollup
       let eventsInTotal = 0;
@@ -170,7 +177,8 @@ export function getLogstashForClusters(req, logstashIndexPattern, clusters) {
           avg_memory: memory,
           avg_memory_used: memoryUsed,
           max_uptime: maxUptime,
-          pipeline_count: get(aggregations, 'pipelines_nested.pipelines.value', 0)
+          pipeline_count: get(aggregations, 'pipelines_nested.pipelines.value', 0),
+          versions: logstashVersions.map(versionBucket => versionBucket.key)
         }
       };
     });
