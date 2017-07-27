@@ -4,6 +4,7 @@ import './export_config.less';
 import template from 'plugins/reporting/directives/export_config/export_config.html';
 import { Notifier } from 'ui/notify/notifier';
 import { uiModules } from 'ui/modules';
+import { stateMonitorFactory } from 'ui/state_management/state_monitor_factory';
 import url from 'url';
 
 const module = uiModules.get('xpack/reporting');
@@ -31,11 +32,26 @@ module.directive('exportConfig', (reportingDocumentControl, reportingExportTypes
       const exportTypeId = $attr.enabledExportType;
       $scope.exportConfig.exportType = reportingExportTypes.getById(exportTypeId);
       $scope.exportConfig.objectType = $attr.objectType;
-      const path = await reportingDocumentControl.getPath($scope.exportConfig.exportType, controller);
-      $scope.exportConfig.relativePath = path;
-      $scope.exportConfig.absoluteUrl = url.resolve($location.absUrl(), path);
+
+      $scope.updateUrls = async () => {
+        const path = await reportingDocumentControl.getPath($scope.exportConfig.exportType, controller);
+        $scope.exportConfig.relativePath = path;
+        $scope.exportConfig.absoluteUrl = url.resolve($location.absUrl(), path);
+      };
+
+      await $scope.updateUrls();
     },
-    controller($document) {
+    controller($scope, $document, globalState) {
+      const stateMonitor = stateMonitorFactory.create(globalState);
+      stateMonitor.onChange(() => {
+        if ($scope.exportConfig.isDirty()) {
+          return;
+        }
+
+        $scope.updateUrls();
+      });
+      $scope.$on('$destroy', () => stateMonitor.destroy());
+
       this.export = (relativePath) => {
         reportingDocumentControl.create(relativePath)
         .then(() => {
