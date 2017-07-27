@@ -6,7 +6,7 @@ import { ErrorPanel } from '../error_panel';
 import { CheckupInfo } from './info';
 import { InfoGroup } from '../info_group';
 import { LOADING_STATUS } from '../../lib/constants';
-import { getFromApi } from '../../lib/request';
+import { getDeprecations } from '../../lib';
 import { withViewState } from '../../lib/util/view_state';
 
 
@@ -42,7 +42,7 @@ export const CheckupView = withViewState({
     });
 
     try {
-      const deprecations = await getFromApi('/api/migration/deprecations');
+      const deprecations = await getDeprecations();
 
       this.setState({
         deprecations,

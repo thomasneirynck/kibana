@@ -1,5 +1,9 @@
 export { timeout } from './util';
 export {
+  getDeprecations,
+} from './checkup';
+
+export {
   getAssistance,
   getMappingsAndSettings,
   createIndex,
