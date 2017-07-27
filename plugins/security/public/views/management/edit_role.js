@@ -15,6 +15,7 @@ import { checkLicenseError } from 'plugins/security/lib/check_license_error';
 import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
 import { EDIT_ROLES_PATH, ROLES_PATH } from './management_urls';
 import { documentationLinks } from '../../documentation_links';
+import { CONFIG_DASHBOARD_ONLY_MODE_ROLES } from '../../../common/constants';
 
 routes.when(`${EDIT_ROLES_PATH}/:name?`, {
   template,
@@ -71,7 +72,7 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
     $scope.privileges = shieldPrivileges;
     $scope.rolesHref = `#${ROLES_PATH}`;
 
-    const currentDashboardOnlyModeRoles = config.get('dashboardOnlyModeRoles', []);
+    const currentDashboardOnlyModeRoles = config.get(CONFIG_DASHBOARD_ONLY_MODE_ROLES, []);
     const DASHBOARD_VIEW_MODE = 'dashboardOnlyMode';
     const ALL_APPS_VIEW_MODE = 'allAppsViewMode';
     $scope.viewMode = {
@@ -108,7 +109,7 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
           newDashboardOnlyModeRoles.filter(roleInDashboardMode => roleInDashboardMode !== $scope.role.name);
       }
 
-      config.set('dashboardOnlyModeRoles', newDashboardOnlyModeRoles)
+      config.set(CONFIG_DASHBOARD_ONLY_MODE_ROLES, newDashboardOnlyModeRoles)
         .then(() => {
           role.indices = role.indices.filter((index) => index.names.length);
           role.indices.forEach((index) => index.query || delete index.query);

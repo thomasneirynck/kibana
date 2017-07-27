@@ -17,6 +17,7 @@ import { createScheme } from './server/lib/login_scheme';
 import { checkLicense } from './server/lib/check_license';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 import { LOGIN_DISABLED_MESSAGE } from './server/lib/login_disabled_message';
+import { CONFIG_DASHBOARD_ONLY_MODE_ROLES } from './common/constants';
 
 export const security = (kibana) => new kibana.Plugin({
   id: 'security',
@@ -35,6 +36,13 @@ export const security = (kibana) => new kibana.Plugin({
   },
 
   uiExports: {
+    uiSettingDefaults: {
+      [CONFIG_DASHBOARD_ONLY_MODE_ROLES]: {
+        description: 'Roles that belong to View Dashboards Only mode',
+        value: [],
+        readonly: true
+      }
+    },
     chromeNavControls: ['plugins/security/views/nav_control'],
     managementSections: ['plugins/security/views/management'],
     apps: [{

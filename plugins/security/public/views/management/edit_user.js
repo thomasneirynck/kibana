@@ -9,6 +9,7 @@ import { checkLicenseError } from 'plugins/security/lib/check_license_error';
 import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
 import { EDIT_USERS_PATH, USERS_PATH } from './management_urls';
 import { documentationLinks } from '../../documentation_links';
+import { CONFIG_DASHBOARD_ONLY_MODE_ROLES } from '../../../common/constants';
 
 routes.when(`${EDIT_USERS_PATH}/:username?`, {
   template,
@@ -101,7 +102,7 @@ routes.when(`${EDIT_USERS_PATH}/:username?`, {
       });
     };
 
-    const dashboardOnlyModeRoles = config.get('dashboardOnlyModeRoles', []);
+    const dashboardOnlyModeRoles = config.get(CONFIG_DASHBOARD_ONLY_MODE_ROLES, []);
     const userBelongsToMixedViewModeRoles = () => (
       $scope.user.roles.length &&
       !$scope.user.roles.every(role => dashboardOnlyModeRoles.includes(role)) &&

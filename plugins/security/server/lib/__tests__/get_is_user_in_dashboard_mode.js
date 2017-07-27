@@ -1,11 +1,12 @@
 import expect from 'expect.js';
 import { getIsUserInDashboardMode } from '../get_is_user_in_dashboard_mode';
+import { CONFIG_DASHBOARD_ONLY_MODE_ROLES } from '../../../common/constants';
 
 describe('getIsUserInDashboardMode', function () {
   function getUiSettingsMock() {
     return {
       get: (mode) => {
-        expect(mode).to.equal('dashboardOnlyModeRoles');
+        expect(mode).to.equal(CONFIG_DASHBOARD_ONLY_MODE_ROLES);
         return Promise.resolve([
           'dash-only-mode',
           'another-limited-mode',
