@@ -1,7 +1,10 @@
-import { get as resolve } from 'lodash';
 import Boom from 'boom';
-import { ERR_CODES } from '../../../common/constants';
 import Joi from 'joi';
+import { get as resolve } from 'lodash';
+
+import { indexNameSchema } from '../schemas';
+import { ERR_CODES } from '../../../common/constants';
+
 
 export function registerRoutes(server) {
   const { callWithRequest } = server.plugins.elasticsearch.getCluster('admin');
@@ -34,6 +37,13 @@ export function registerRoutes(server) {
   server.route({
     path: '/api/migration/upgrade/{indexName}',
     method: 'POST',
+    config: {
+      validate: {
+        params: Joi.object({
+          indexName: indexNameSchema,
+        }),
+      },
+    },
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'transport.request', {
@@ -115,7 +125,7 @@ export function registerRoutes(server) {
     method: 'PUT',
     config: {
       validate: {
-        payload: Joi.object().keys({
+        payload: Joi.object({
           isEnabled: Joi.boolean(),
         }),
       },

@@ -1,4 +1,7 @@
 import Boom from 'boom';
+import Joi from 'joi';
+
+import { indexNameSchema, taskIdSchema } from '../schemas';
 import { ERR_CODES } from '../../../common/constants';
 
 export function registerReindexRoutes(server) {
@@ -7,6 +10,14 @@ export function registerReindexRoutes(server) {
   server.route({
     path: '/api/migration/flat_settings/{indexName}/{filters?}',
     method: 'GET',
+    config: {
+      validate: {
+        params: Joi.object({
+          filters: Joi.string(),
+          indexName: indexNameSchema,
+        }),
+      },
+    },
     handler: async (request, reply) => {
       const path = request.params.filters
         ? `${ encodeURIComponent(request.params.indexName) }/${ encodeURIComponent(request.params.filters) }?flat_settings`
@@ -33,6 +44,13 @@ export function registerReindexRoutes(server) {
   server.route({
     path: '/api/migration/index/{indexName}',
     method: 'DELETE',
+    config: {
+      validate: {
+        params: Joi.object({
+          indexName: indexNameSchema,
+        }),
+      },
+    },
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'indices.delete', {
@@ -64,6 +82,13 @@ export function registerReindexRoutes(server) {
   server.route({
     path: '/api/migration/count/{indexName}',
     method: 'GET',
+    config: {
+      validate: {
+        params: Joi.object({
+          indexName: indexNameSchema,
+        }),
+      },
+    },
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'count', {
@@ -86,6 +111,14 @@ export function registerReindexRoutes(server) {
   server.route({
     path: '/api/migration/settings/{indexName}',
     method: 'PUT',
+    config: {
+      validate: {
+        params: Joi.object({
+          indexName: indexNameSchema,
+        }),
+        payload: Joi.object().required(),
+      },
+    },
     handler: async (request, reply) => {
       const path = `${ encodeURIComponent(request.params.indexName) }/_settings`;
 
@@ -111,6 +144,14 @@ export function registerReindexRoutes(server) {
   server.route({
     path: '/api/migration/{indexName}',
     method: 'PUT',
+    config: {
+      validate: {
+        params: Joi.object({
+          indexName: indexNameSchema,
+        }),
+        payload: Joi.object().required(),
+      },
+    },
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'transport.request', {
@@ -161,6 +202,14 @@ export function registerReindexRoutes(server) {
   server.route({
     path: '/api/migration/reindex/{indexName}',
     method: 'POST',
+    config: {
+      validate: {
+        params: Joi.object({
+          indexName: indexNameSchema,
+        }),
+        payload: Joi.object().required(),
+      },
+    },
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'transport.request', {
@@ -187,6 +236,13 @@ export function registerReindexRoutes(server) {
   server.route({
     path: '/api/migration/task/{taskId}',
     method: 'GET',
+    config: {
+      validate: {
+        params: Joi.object({
+          taskId: taskIdSchema,
+        }),
+      },
+    },
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'transport.request', {
@@ -222,6 +278,13 @@ export function registerReindexRoutes(server) {
   server.route({
     path: '/api/migration/task/{taskId}',
     method: 'DELETE',
+    config: {
+      validate: {
+        params: Joi.object({
+          taskId: taskIdSchema,
+        }),
+      },
+    },
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'transport.request', {
@@ -253,6 +316,13 @@ export function registerReindexRoutes(server) {
   server.route({
     path: '/api/migration/task/{taskId}',
     method: 'POST',
+    config: {
+      validate: {
+        params: Joi.object({
+          taskId: taskIdSchema,
+        }),
+      },
+    },
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'transport.request', {
@@ -275,6 +345,13 @@ export function registerReindexRoutes(server) {
   server.route({
     path: '/api/migration/refresh/{indexName}',
     method: 'POST',
+    config: {
+      validate: {
+        params: Joi.object({
+          indexName: indexNameSchema,
+        }),
+      },
+    },
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'transport.request', {
@@ -297,6 +374,11 @@ export function registerReindexRoutes(server) {
   server.route({
     path: '/api/migration/aliases',
     method: 'POST',
+    config: {
+      validate: {
+        payload: Joi.object().required(),
+      },
+    },
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'transport.request', {
