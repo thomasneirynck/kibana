@@ -40,17 +40,17 @@ export function alertsClusterSearch(req, cluster, checkLicense, options = {}) {
           }
         },
         sort: [
-          'metadata.severity',
-          'timestamp'
+          { 'metadata.severity': { order: 'desc' } },
+          { 'timestamp': { order: 'asc' } }
         ]
       }
     };
 
     const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
     return callWithRequest(req, 'search', params)
-    .then((result) => {
+    .then(result => {
       const hits = get(result, 'hits.hits', []);
-      const alerts = hits.map((alert) => alert._source);
+      const alerts = hits.map(alert => alert._source);
       return alerts;
     });
   }
