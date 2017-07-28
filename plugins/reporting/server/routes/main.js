@@ -52,6 +52,9 @@ export function main(server) {
       path: path,
       method: 'POST',
       handler: async (request, reply) => {
+        const message = `The following URL is deprecated and will stop working in the next major version: ${request.url.path}`;
+        server.log(['warning', 'reporting', 'deprecation'], message);
+
         try {
           const savedObjectId = request.params.savedId;
           const queryString = querystring.stringify(request.query);
