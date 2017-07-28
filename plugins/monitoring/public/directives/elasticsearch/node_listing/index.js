@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { find, isEqual, get } from 'lodash';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { MetricCell } from 'plugins/monitoring/components/elasticsearch/node_listing/metric_cell';
@@ -20,14 +20,14 @@ function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch
 
     constructor(props) {
       super();
-      const rowData = _.find(scope.rows, { resolver: props.resolver });
+      const rowData = find(scope.rows, { resolver: props.resolver });
       this.state = createRow(rowData);
       this.goToNode = this.goToNode.bind(this);
     }
 
     componentWillReceiveProps(newProps) {
-      if (!_.isEqual(newProps, this.props)) {
-        const rowData = _.find(scope.rows, { resolver: newProps.resolver });
+      if (!isEqual(newProps, this.props)) {
+        const rowData = find(scope.rows, { resolver: newProps.resolver });
         this.setState(createRow(rowData));
       }
     }
@@ -44,13 +44,13 @@ function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch
       const cpuComponents = (() => {
         if (showCgroupMetricsElasticsearch) {
           return [
-            <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ this.state.metrics.node_cgroup_quota }></MetricCell>,
-            <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ this.state.metrics.node_cgroup_throttled }></MetricCell>
+            <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ get(this.state, 'metrics.node_cgroup_quota') }></MetricCell>,
+            <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ get(this.state, 'metrics.node_cgroup_throttled') }></MetricCell>
           ];
         }
         return [
-          <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ this.state.metrics.node_cpu_utilization }></MetricCell>,
-          <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ this.state.metrics.node_load_average }></MetricCell>
+          <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ get(this.state, 'metrics.node_cpu_utilization') }></MetricCell>,
+          <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ get(this.state, 'metrics.node_load_average') }></MetricCell>
         ];
       })();
 
@@ -75,8 +75,8 @@ function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch
             </div>
           </td>
           { cpuComponents }
-          <MetricCell isOnline={ isOnline } metric={ this.state.metrics.node_jvm_mem_percent }></MetricCell>
-          <MetricCell isOnline={ isOnline } metric={ this.state.metrics.node_free_space }></MetricCell>
+          <MetricCell isOnline={ isOnline } metric={ get(this.state, 'metrics.node_jvm_mem_percent') }></MetricCell>
+          <MetricCell isOnline={ isOnline } metric={ get(this.state, 'metrics.node_free_space') }></MetricCell>
           { (() => {
             if (isOnline) {
               return (
@@ -177,7 +177,7 @@ uiModule.directive('monitoringNodesListing', ($injector) => {
         }
 
         return {
-          nodeName: _.get(rowData, 'node.name'),
+          nodeName: get(rowData, 'node.name'),
           status: rowData.online ? 'Online' : 'Offline',
           ...rowData
         };

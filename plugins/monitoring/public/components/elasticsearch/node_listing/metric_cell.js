@@ -1,13 +1,20 @@
 import { get } from 'lodash';
 import React from 'react';
-import numeral from 'numeral';
+import { formatNumber } from '../../../lib/format_number';
 import { OfflineCell } from './offline_cell';
 
 function formatMetric(metric, key) {
   const meta = metric.metric;
   const value = get(metric, key);
   if (!meta.format) { return value; }
-  return numeral(value).format(meta.format) + ' ' + meta.units;
+
+  if (!!value || value === 0) {
+    return formatNumber(value, meta.format) + ' ' + meta.units;
+  }
+
+  // N/A would show if the API returned no data at all, since the API filters out null from the data
+  return 'N/A';
+
 }
 
 function slopeArrow(metric) {

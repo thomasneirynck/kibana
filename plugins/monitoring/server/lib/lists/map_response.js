@@ -3,6 +3,11 @@ import { filterPartialBuckets } from '../filter_partial_buckets';
 import { pickMetricFields } from '../pick_metric_fields';
 import { metrics } from '../metrics';
 
+/*
+ * The X/Y data are useful for calculating the slope
+ * Having the Y values in a generic form is useful for calculating min/max/last value
+ * Note this data could be very helpful for scatter-plot chart in the future
+ */
 function createDataObject(x, y) {
   return { x, y };
 }
@@ -61,6 +66,7 @@ function calculateMetrics(type, partialBucketFilter) {
       const results = _.chain(buckets)
       .filter(partialBucketFilter) // buckets with whole start/end time range
       .map(mapChartData(metric)) // calculate metric as X/Y
+      .filter(result => !!result && (!!result.y || result.y === 0)) // take only non-null values
       .value();
 
       minVal = _.min(_.pluck(results, 'y'));

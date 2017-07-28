@@ -52,16 +52,22 @@ export function nodesRoutes(server) {
 
         body.rows.forEach((row) => {
           const resolver = row.name;
-          const shardStats = body.shardStats.nodes[resolver];
-          let node = body.nodes[resolver];
-
-          // Add some extra metrics
-          row.metrics.shard_count = shardStats && shardStats.shardCount || 0;
-          row.metrics.index_count = shardStats && shardStats.indexCount || 0;
+          const isOnline = !isUndefined(clusterState.nodes[resolver]);
+          row.resolver = resolver;
+          row.online = isOnline;
 
           // copy some things over from nodes to row
-          row.resolver = resolver;
-          row.online = !isUndefined(clusterState.nodes[row.resolver]);
+          let node = body.nodes[resolver];
+
+          const shardStats = get(body.shardStats.nodes, resolver);
+          if (isOnline) {
+            row.metrics.shard_count = get(shardStats, 'shardCount');
+            row.metrics.index_count = get(shardStats, 'indexCount');
+          } else {
+            // suppress metrics from coming in for offline nodes, because they will be used in table column sorting
+            delete row.metrics;
+          }
+
           if (!node) {
             // workaround for node indexed with legacy agent
             node = getDefaultNodeFromId(resolver);
