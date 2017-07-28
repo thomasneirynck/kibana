@@ -1,6 +1,6 @@
 export const QUEUE_DOCTYPE = 'esqueue';
 
-export const JOB_COMPLETION_STORAGE_KEY_LAST_CHECK = 'xpack.reporting.jobCompletionLastCheckedOn';
+export const JOB_COMPLETION_NOTIFICATIONS_SESSION_KEY = 'xpack.reporting.jobCompletionNotifications';
 
 export const PHANTOM_MAX_LOAD_TIMEOUT = 30000;
 

@@ -2,33 +2,45 @@ import { notify } from 'ui/notify';
 import chrome from 'ui/chrome';
 import { uiModules } from 'ui/modules';
 import { addSystemApiHeader } from 'ui/system_api';
-import { get, last } from 'lodash';
-import moment from 'moment';
+import { get } from 'lodash';
 import {
-  JOB_COMPLETION_STORAGE_KEY_LAST_CHECK,
   API_BASE_URL
-} from '../../common/constants.js';
+} from '../../common/constants';
 import 'plugins/reporting/services/job_queue';
+import 'plugins/reporting/services/job_completion_notifications';
 import { PathProvider } from 'plugins/xpack_main/services/path';
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import { Poller } from '../../../../common/poller';
 
 uiModules.get('kibana')
-.run(($http, reportingJobQueue, Private, reportingPollConfig) => {
+.run(($http, reportingJobQueue, Private, reportingPollConfig, reportingJobCompletionNotifications) => {
   const { jobCompletionNotifier } = reportingPollConfig;
-  // Intialize lastCheckedOn, if necessary
-  if (!getLastCheckedOn()) {
-    setLastCheckedOn(moment().subtract(jobCompletionNotifier.interval, 'ms').toISOString());
-  }
 
   const xpackInfo = Private(XPackInfoProvider);
   const showLinks = xpackInfo.get('features.reporting.management.showLinks');
   if (Private(PathProvider).isLoginOrLogout() || !showLinks) return;
 
   const poller = new Poller({
-    functionToPoll: () => {
-      return getJobsCompletedSinceLastCheck($http)
-        .then(jobs => jobs.forEach(job => showCompletionNotification(job, reportingJobQueue)));
+    functionToPoll: async () => {
+      const jobIds = reportingJobCompletionNotifications.getAll();
+      if (!jobIds.length) {
+        return;
+      }
+
+      const jobs = await getJobs($http, jobIds);
+      jobIds.forEach(jobId => {
+        const job = jobs.find(j => j._id === jobId);
+        if (!job) {
+          reportingJobCompletionNotifications.remove(job.id);
+          return;
+        }
+
+        if (job._source.status === 'completed' || job._source.status === 'failed') {
+          showCompletionNotification(job, reportingJobQueue);
+          reportingJobCompletionNotifications.remove(job.id);
+          return;
+        }
+      });
     },
     pollFrequencyInMillis: jobCompletionNotifier.interval,
     trailing: true,
@@ -38,32 +50,15 @@ uiModules.get('kibana')
   poller.start();
 });
 
-function getLastCheckedOn() {
-  return window.localStorage.getItem(JOB_COMPLETION_STORAGE_KEY_LAST_CHECK);
-}
-
-function setLastCheckedOn(newValue) {
-  window.localStorage.setItem(JOB_COMPLETION_STORAGE_KEY_LAST_CHECK, newValue);
-}
-
-function getJobsCompletedSinceLastCheck($http) {
-  const lastCheckedOn = getLastCheckedOn();
-
+async function getJobs($http, jobs) {
   // Get all jobs in "completed" status since last check, sorted by completion time
   const apiBaseUrl = chrome.addBasePath(API_BASE_URL);
-  const url = `${apiBaseUrl}/jobs/list_completed_since?since=${lastCheckedOn}`;
-  const headers = addSystemApiHeader({});
-  return $http.get(url, { headers })
-  .then(res => {
-    res = res.data;
-    if (res.length === 0) {
-      return res;
-    }
 
-    const lastJobCompletedAt = last(res)._source.completed_at;
-    setLastCheckedOn(lastJobCompletedAt);
-    return res;
-  });
+  // Only getting the first 10, to prevent URL overflows
+  const url = `${apiBaseUrl}/jobs/list?ids=${jobs.slice(0, 10).join(',')}`;
+  const headers = addSystemApiHeader({});
+  const response = await $http.get(url, { headers });
+  return response.data;
 }
 
 function downloadReport(jobId) {

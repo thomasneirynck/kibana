@@ -32,22 +32,9 @@ export function jobs(server) {
     handler: (request, reply) => {
       const page = parseInt(request.query.page) || 0;
       const size = Math.min(100, parseInt(request.query.size) || 10);
+      const jobIds = request.query.ids ? request.query.ids.split(',') : null;
 
-      const results = jobsQuery.list(request.pre.management.jobTypes, request.pre.user, page, size);
-      reply(results);
-    },
-    config: getRouteConfig(),
-  });
-
-  // list all completed jobs since a specified time
-  server.route({
-    path: `${mainEntry}/list_completed_since`,
-    method: 'GET',
-    handler: (request, reply) => {
-      const size = Math.min(100, parseInt(request.query.size) || 10);
-      const sinceInMs = Date.parse(request.query.since) || null;
-
-      const results = jobsQuery.listCompletedSince(request.pre.management.jobTypes, request.pre.user, size, sinceInMs);
+      const results = jobsQuery.list(request.pre.management.jobTypes, request.pre.user, page, size, jobIds);
       reply(results);
     },
     config: getRouteConfig(),

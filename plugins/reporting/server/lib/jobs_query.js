@@ -45,7 +45,7 @@ function jobsQueryFn(server) {
   }
 
   return {
-    list(jobTypes, user, page = 0, size = defaultSize) {
+    list(jobTypes, user, page = 0, size = defaultSize, jobIds) {
       const username = getUsername(user);
 
       const body = {
@@ -65,29 +65,11 @@ function jobsQueryFn(server) {
         },
       };
 
-      return getHits(execQuery('search', body));
-    },
-
-    listCompletedSince(jobTypes, user, size = defaultSize, sinceInMs) {
-      const username = getUsername(user);
-
-      const body = {
-        size,
-        sort: { completed_at: 'asc' },
-        query: {
-          constant_score: {
-            filter: {
-              bool: {
-                must:  [
-                  { range: { completed_at: { gt: sinceInMs, format: 'epoch_millis' } } },
-                  { terms: { jobtype: jobTypes } },
-                  { term: { created_by: username } },
-                ]
-              }
-            }
-          }
-        },
-      };
+      if (jobIds) {
+        body.query.constant_score.filter.bool.must.push({
+          ids: { type: QUEUE_DOCTYPE, values: jobIds }
+        });
+      }
 
       return getHits(execQuery('search', body));
     },
