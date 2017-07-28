@@ -118,7 +118,7 @@ function fetchPipelines(req, config, logstashIndexPattern, start, end, clusterUu
   return callWithRequest(req, 'search', params);
 }
 
-function handleResponse(response, timespanInSeconds) {
+export function _handleResponse(response, timespanInSeconds) {
   const pipelinesById = get(response, 'aggregations.pipelines.by_pipeline_id.buckets', []);
   const pipelines = pipelinesById.map(pipelineById => {
     const id = pipelineById.key;
@@ -155,5 +155,5 @@ export async function getPipelines(req, config, logstashIndexPattern, start, end
 
   const timespanInSeconds = (end - start) / 1000;
   const response = await fetchPipelines(req, config, logstashIndexPattern, start, end, clusterUuid, logstashUuid);
-  return handleResponse(response, timespanInSeconds);
+  return _handleResponse(response, timespanInSeconds);
 };

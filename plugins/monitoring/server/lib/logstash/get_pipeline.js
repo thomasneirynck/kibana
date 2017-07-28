@@ -1,14 +1,15 @@
 import boom from 'boom';
+import { get } from 'lodash';
 import { getPipelineStateDocument } from './get_pipeline_state_document';
 import { getPipelineStatsAggregation } from './get_pipeline_stats_aggregation';
 
-function vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timePickerDurationMillis) {
+export function _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timePickerDurationMillis) {
 
   const isInput = vertex.plugin_type === 'input';
   const isProcessor = vertex.plugin_type === 'filter' || vertex.plugin_type === 'output';
 
   const eventsInTotal = vertexStatsBucket.events_in_total.value;
-  const eventsOutTotal = vertexStatsBucket.events_out_total.value;
+  const eventsOutTotal = get(vertexStatsBucket, 'events_out_total.value', null);
   const eventsTotal = eventsOutTotal || eventsInTotal;
 
   const durationInMillis = vertexStatsBucket.duration_in_millis_total.value;
@@ -36,7 +37,7 @@ function vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis,
   };
 }
 
-function enrichStateWithStatsAggregation(stateDocument, statsAggregation, timePickerDurationMillis) {
+export function _enrichStateWithStatsAggregation(stateDocument, statsAggregation, timePickerDurationMillis) {
   const vertexStatsByIdBuckets = statsAggregation.aggregations.pipelines.scoped.vertices.vertex_id.buckets;
   const logstashState = stateDocument.logstash_state;
   const vertices = logstashState.pipeline.representation.graph.vertices;
@@ -62,7 +63,7 @@ function enrichStateWithStatsAggregation(stateDocument, statsAggregation, timePi
     const vertex = verticesById[id];
 
     if (vertex !== undefined) {
-      vertex.stats = vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timePickerDurationMillis);
+      vertex.stats = _vertexStats(vertex, vertexStatsBucket, totalProcessorsDurationInMillis, timePickerDurationMillis);
     }
   });
 
@@ -87,6 +88,6 @@ export async function getPipeline(req, clusterUuid, pipelineId, pipelineHash, ti
     return boom.notFound(`Pipeline [${pipelineId} @ ${pipelineHash}] not found in the selected time range for cluster [${clusterUuid}].`);
   }
 
-  const result = enrichStateWithStatsAggregation(stateDocument, statsAggregation, timePickerDurationMillis);
+  const result = _enrichStateWithStatsAggregation(stateDocument, statsAggregation, timePickerDurationMillis);
   return result;
 }
