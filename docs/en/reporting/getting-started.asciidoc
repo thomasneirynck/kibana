@@ -10,7 +10,7 @@ To manually generate a report:
 . Open Kibana in your web browser and log in. If you are running Kibana
 locally, go to `http://localhost:5601`. To access Kibana and generate
 reports, you need the `kibana_user` and `reporting_user` roles. For more
-information, see {xpack-ref}/secure-reporting.html[Reporting and Security].
+information, see <<secure-reporting>>.
 
 . Open the dashboard, visualization, or saved search you want to include
 in the report.
