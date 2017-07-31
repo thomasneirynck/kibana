@@ -25,40 +25,4 @@ communicates with the Kibana server, manages background jobs, and captures
 screenshots. See <<reporting-settings-kb, Reporting Settings>> for the complete
 list of settings.
 
-[[securing-reporting]]
-=== Securing the Reporting Endpoints
-
-In a production environment, you should restrict access to
-the {reporting} endpoints to authorized users. This requires that you:
-
-. Enable {security} on your Elasticsearch cluster. For more information,
-see {xpack-ref}/security-getting-started.html[Getting Started with Security].
-. Configure an SSL certificate for Kibana. For more information, see
-{xpack-ref}/kibana.html[Kibana and Security].
-. Configure {watcher} to trust the Kibana server's certificate by adding it to
-the {watcher} truststore on each node:
-.. Import the Kibana server certificate into the {watcher} truststore using
-Java Keytool:
-+
-[source,shell]
----------------------------------------------------------
-keytool -importcert -keystore watcher-truststore.jks -file server.crt
----------------------------------------------------------
-+
-NOTE: If the truststore doesn't already exist, it is created.
-
-.. Make sure the `xpack.http.ssl.truststore.path` setting in
-`elasticsearch.yml` specifies the location of the {watcher}
-truststore.
-. Add one or more users who have the permissions
-necessary to use Kibana and {reporting}. For more information, see
-{xpack-ref}/secure-reporting.html
-
-Once you've enabled SSL for Kibana, all requests to the {reporting} endpoints
-must include valid credentials. For example, the following watch submits
-requests as the built-in `elastic` user:
-
-include::watch-example.asciidoc[]
-
-For more information about configuring watches, see
-{xpack-ref}/how-watcher-works.html[How Watcher Works].
+include::{docdir}/security/reporting.asciidoc[]
