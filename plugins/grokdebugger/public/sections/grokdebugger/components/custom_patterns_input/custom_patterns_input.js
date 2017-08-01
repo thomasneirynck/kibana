@@ -28,7 +28,9 @@ app.directive('customPatternsInput', function () {
           editor.getSession().setUseWrapMode(true);
           editor.setOptions({
             highlightActiveLine: false,
-            highlightGutterLine: false
+            highlightGutterLine: false,
+            minLines: 3,
+            maxLines: Infinity
           });
           editor.$blockScrolling = Infinity;
         };
