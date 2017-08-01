@@ -25,8 +25,7 @@ app.directive('eventInput', function () {
           editor.getSession().setUseWrapMode(true);
           editor.setOptions({
             highlightActiveLine: false,
-            highlightGutterLine: false,
-            showLineNumbers: false
+            highlightGutterLine: false
           });
           editor.$blockScrolling = Infinity;
         };

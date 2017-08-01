@@ -6,12 +6,25 @@
     on-toggle="customPatternsInput.onSectionToggle"
   >
     <div class="kuiFormSection">
+      <div class="kuiInfoPanel kuiInfoPanel--info kuiVerticalRhythm">
+        <div class="kuiInfoPanelHeader">
+          <span class="kuiInfoPanelHeader__icon kuiIcon kuiIcon--info fa-info"></span>
+          <span class="kuiInfoPanelHeader__title">
+            Enter one custom pattern per line. For example:
+          </span>
+        </div>
+
+        <div class="kuiInfoPanelBody">
+          <div class="kuiInfoPanelBody__message">
+            <pre><code>POSTFIX_QUEUEID [0-9A-F]{10,11}
+MSG message-id=<%{GREEDYDATA}></code></pre>
+          </div>
+        </div>
+      </div>
       <div
-        class="custom-patterns-input-editor grokdebugger-ace-editor"
-        json-input
+        class="custom-patterns-input-editor grokdebugger-ace-editor kuiVerticalRhythm"
         require-keys="true"
         ui-ace="{
-          mode: 'json',
           onLoad: aceLoaded
         }"
         ng-model="customPatternsInput.customPatterns"

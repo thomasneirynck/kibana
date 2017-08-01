@@ -43,8 +43,25 @@ app.directive('grokdebugger', function ($injector) {
         });
       }
 
-      onCustomPatternsChange = (customPatterns) => {
-        this.grokdebuggerRequest.customPatterns = customPatterns;
+      onCustomPatternsChange = (customPatterns = '') => {
+        customPatterns = customPatterns.trim();
+        if (!customPatterns) {
+          return;
+        }
+
+        const customPatternsObj = {};
+        customPatterns.split('\n').forEach(customPattern => {
+          // Patterns are defined like so:
+          // patternName patternDefinition
+          // For example:
+          // POSTGRESQL %{DATESTAMP:timestamp} %{TZ} %{DATA:user_id} %{GREEDYDATA:connection_id} %{POSINT:pid}
+          const [ , patternName, patternDefinition ] = customPattern.match(/(\S+)\s+(.+)/) || [];
+          if (patternName && patternDefinition) {
+            customPatternsObj[patternName] = patternDefinition;
+          }
+        });
+
+        this.grokdebuggerRequest.customPatterns = customPatternsObj;
       }
 
       onRawEventChange = (rawEvent) => {
