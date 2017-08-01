@@ -1,8 +1,10 @@
 import _ from 'lodash';
 import React from 'react';
 
-import { getDisplayName } from '../../lib/util';
 
+function getDisplayName(Component) {
+  return Component.displayName || Component.name || 'Component';
+}
 
 export function withViewState({
   initialState = {},

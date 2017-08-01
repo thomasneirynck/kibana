@@ -12,10 +12,6 @@ export function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function getDisplayName(Component) {
-  return Component.displayName || Component.name || 'Component';
-}
-
 export function getIndexSuffix(indexName) {
   const kibanaIndex = chrome.getInjected('kbnIndex');
   if (indexName === kibanaIndex) {
