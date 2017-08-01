@@ -32,7 +32,7 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
   mlJobService, mlExplorerDashboardService) {
 
   $scope.allSeriesRecords = [];   // Complete list of series.
-  $scope.recordsForSeries = [];   // Series for plotting.
+  $scope.seriesToPlot = [];
 
   const $chartContainer = $('.explorer-charts');
   const FUNCTION_DESCRIPTIONS_TO_PLOT = ['mean', 'min', 'max', 'sum', 'count', 'distinct_count'];

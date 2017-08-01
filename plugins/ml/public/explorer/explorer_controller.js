@@ -59,7 +59,6 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
   $scope.timeFieldName = 'timestamp';
   $scope.loading = true;
   $scope.loadCounter = 0;
-  $scope.showNoSelectionMessage = true;     // User must select a swimlane cell to view anomalies.
   timefilter.enabled = true;
 
   if (globalState.ml === undefined) {
@@ -143,12 +142,6 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
       console.log('Explorer anomaly charts data set:', $scope.anomalyChartRecords);
 
       mlExplorerDashboardService.fireAnomalyDataChange($scope.anomalyChartRecords, earliestMs, latestMs);
-
-      // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
-      // TODO - do we need this as the way to re-render the charts?
-      $timeout(function () {
-        $scope.$broadcast('renderCharts');
-      }, 0);
     });
   };
 
@@ -325,7 +318,6 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
 
       $scope.loadAnomaliesTable(jobIds, influencers, earliestMs, latestMs);
       $scope.loadAnomaliesForCharts(jobIds, influencers, earliestMs, latestMs);
-      $scope.showNoSelectionMessage = false;
     }
   };
 
@@ -610,10 +602,17 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
   }
 
   function clearSelectedAnomalies() {
-    $scope.anomalyChartRecords = {};
+    $scope.anomalyChartRecords = [];
     $scope.anomalyRecords = [];
-    $scope.showNoSelectionMessage = true;
     $scope.viewByLoadedForTimeFormatted = null;
+
+    // With no swimlane selection, display anomalies over all time in the table.
+    const jobIds = $scope.getSelectedJobIds();
+    const bounds = timefilter.getActiveBounds();
+    const earliestMs = bounds.min.valueOf();
+    const latestMs = bounds.max.valueOf();
+    mlExplorerDashboardService.fireAnomalyDataChange($scope.anomalyChartRecords, earliestMs, latestMs);
+    $scope.loadAnomaliesTable(jobIds, [], earliestMs, latestMs);
   }
 
   function calculateSwimlaneBucketInterval() {
