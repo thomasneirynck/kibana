@@ -9,7 +9,7 @@ import { uiModules } from 'ui/modules';
 import { UpgradeSection } from '../../components/section';
 import 'ui/autoload/styles';
 import 'plugins/upgrade/styles/main.less';
-import { VIEWS } from '../../lib/constants';
+import { DEFAULT_VIEW_ID, VIEWS } from '../../lib/constants';
 
 
 const upgradeSectionConfiguration = management
@@ -31,6 +31,7 @@ app.value('upgradeUiViewState', {
 
 routes.when('/management/elasticsearch/upgrade_assistant/:view?', {
   controller: function UpgradeRouteController($routeParams, $scope, $window, upgradeUiViewState) {
+    this.defaultViewId = DEFAULT_VIEW_ID;
     this.routeParams = $routeParams;
     this.views = addAbsoluteLocations(upgradeSectionConfiguration.url, VIEWS);
     this.viewState = upgradeUiViewState;
@@ -55,6 +56,7 @@ routes.when('/management/elasticsearch/upgrade_assistant/:view?', {
   template: `
     <upgrade-section
       current-view-location="upgradeRouteController.routeParams.view"
+      default-view-id="upgradeRouteController.defaultViewId"
       navigate-to="upgradeRouteController.navigateTo"
       register-route-change-listener="upgradeRouteController.registerRouteChangeListener"
       set-view-state="upgradeRouteController.setViewState"

@@ -15,7 +15,7 @@ const VIEW_IDS = [
   'LOGGING',
 ];
 
-export function UpgradeSectionNav({ currentViewLocation, views }) {
+export function UpgradeSectionNavigation({ currentViewLocation, views }) {
   return (
     <KuiLocalNav>
       <KuiLocalNavRow>
@@ -49,12 +49,12 @@ export function UpgradeSectionNav({ currentViewLocation, views }) {
   );
 }
 
-UpgradeSectionNav.propTypes = {
+UpgradeSectionNavigation.propTypes = {
   currentViewLocation: React.PropTypes.string,
   views: React.PropTypes.object,
 };
 
-UpgradeSectionNav.defaultProps = {
+UpgradeSectionNavigation.defaultProps = {
   currentViewLocation: '',
   views: {},
 };

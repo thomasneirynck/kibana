@@ -1,0 +1,135 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UpgradeSectionNavigation renders the view as selected if the currentViewLocation matches 1`] = `
+<div
+  class="kuiLocalNav"
+>
+  <div
+    class="kuiLocalNavRow"
+  >
+    <div
+      class="kuiLocalNavRow__section"
+    >
+      <div
+        class="kuiLocalBreadcrumbs"
+      >
+        <div
+          class="kuiLocalBreadcrumb"
+        >
+          <a
+            class="kuiLocalBreadcrumb__link"
+            href="#/management"
+          >
+            Management
+          </a>
+        </div>
+        <h1
+          class="kuiLocalBreadcrumb"
+          id="kui_local_breadcrumb"
+        >
+          Upgrade Assistant
+        </h1>
+      </div>
+    </div>
+  </div>
+  <div
+    class="kuiLocalNavRow kuiLocalNavRow--secondary"
+  >
+    <div
+      class="kuiLocalTabs"
+    >
+      <a
+        class="kuiLocalTab"
+        href="/absolute/home/location"
+      >
+        home label
+      </a>
+      <a
+        class="kuiLocalTab kuiLocalTab-isSelected"
+        href="/absolute/checkup/location"
+      >
+        checkup label
+      </a>
+      <a
+        class="kuiLocalTab"
+        href="/absolute/reindex/location"
+      >
+        reindex label
+      </a>
+      <a
+        class="kuiLocalTab"
+        href="/absolute/logging/location"
+      >
+        logging label
+      </a>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`UpgradeSectionNavigation renders the views as tabs using their labels and absolute locations 1`] = `
+<div
+  class="kuiLocalNav"
+>
+  <div
+    class="kuiLocalNavRow"
+  >
+    <div
+      class="kuiLocalNavRow__section"
+    >
+      <div
+        class="kuiLocalBreadcrumbs"
+      >
+        <div
+          class="kuiLocalBreadcrumb"
+        >
+          <a
+            class="kuiLocalBreadcrumb__link"
+            href="#/management"
+          >
+            Management
+          </a>
+        </div>
+        <h1
+          class="kuiLocalBreadcrumb"
+          id="kui_local_breadcrumb"
+        >
+          Upgrade Assistant
+        </h1>
+      </div>
+    </div>
+  </div>
+  <div
+    class="kuiLocalNavRow kuiLocalNavRow--secondary"
+  >
+    <div
+      class="kuiLocalTabs"
+    >
+      <a
+        class="kuiLocalTab"
+        href="/absolute/home/location"
+      >
+        home label
+      </a>
+      <a
+        class="kuiLocalTab"
+        href="/absolute/checkup/location"
+      >
+        checkup label
+      </a>
+      <a
+        class="kuiLocalTab"
+        href="/absolute/reindex/location"
+      >
+        reindex label
+      </a>
+      <a
+        class="kuiLocalTab"
+        href="/absolute/logging/location"
+      >
+        logging label
+      </a>
+    </div>
+  </div>
+</div>
+`;

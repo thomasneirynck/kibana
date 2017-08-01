@@ -1,24 +1,25 @@
 import _ from 'lodash';
 import React from 'react';
 
-import { UpgradeSectionNav } from '../nav';
-import { DEFAULT_VIEW_ID } from '../../lib/constants';
+import { UpgradeSectionNavigation } from '../navigation';
 
 
 export function UpgradeSection({
   currentViewLocation,
+  defaultViewId,
   navigateTo,
   registerRouteChangeListener,
   setViewState,
   views,
   viewState,
 }) {
-  const CurrentViewComponent = getCurrentViewComponent(views, currentViewLocation);
+  const currentView = getCurrentView(views, currentViewLocation, defaultViewId);
+  const CurrentViewComponent = currentView.component;
 
   return (
     <div id='upgradePlugin'>
-      <UpgradeSectionNav
-        currentViewLocation={ currentViewLocation }
+      <UpgradeSectionNavigation
+        currentViewLocation={ currentView.location }
         views={ views }
       />
       <CurrentViewComponent
@@ -34,6 +35,7 @@ export function UpgradeSection({
 
 UpgradeSection.propTypes = {
   currentViewLocation: React.PropTypes.string,
+  defaultViewId: React.PropTypes.string,
   navigateTo: React.PropTypes.func,
   registerRouteChangeListener: React.PropTypes.func,
   setViewState: React.PropTypes.func,
@@ -43,6 +45,7 @@ UpgradeSection.propTypes = {
 
 UpgradeSection.defaultProps = {
   currentViewLocation: 'home',
+  defaultViewId: '',
   navigateTo: () => {},
   registerRouteChangeListener: () => {},
   setViewState: () => {},
@@ -50,7 +53,6 @@ UpgradeSection.defaultProps = {
   viewState: {},
 };
 
-function getCurrentViewComponent(views, location) {
-  const currentView = _.find(views, { location }) || views[DEFAULT_VIEW_ID];
-  return currentView.component;
+function getCurrentView(views, location, defaultViewId) {
+  return _.find(views, { location }) || views[defaultViewId];
 }

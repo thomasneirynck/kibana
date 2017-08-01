@@ -1,0 +1,107 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ErrorPanel renders its children 1`] = `
+<div
+  class="kuiInfoPanel kuiInfoPanel--error"
+>
+  <div
+    class="kuiInfoPanelHeader"
+  >
+    <span
+      class="kuiInfoPanelHeader__icon kuiIcon kuiIcon--error fa-warning"
+    />
+    <span
+      class="kuiInfoPanelHeader__title"
+    >
+      An error occurred.
+    </span>
+  </div>
+  <div
+    class="kuiInfoPanelBody"
+  >
+    <div
+      class="kuiInfoPanelBody__message"
+    >
+      Error message
+    </div>
+  </div>
+</div>
+`;
+
+exports[`ErrorPanel renders the className property 1`] = `
+<div
+  class="kuiInfoPanel kuiInfoPanel--error specificErrorPanel"
+>
+  <div
+    class="kuiInfoPanelHeader"
+  >
+    <span
+      class="kuiInfoPanelHeader__icon kuiIcon kuiIcon--error fa-warning"
+    />
+    <span
+      class="kuiInfoPanelHeader__title"
+    >
+      An error occurred.
+    </span>
+  </div>
+  <div
+    class="kuiInfoPanelBody"
+  >
+    <div
+      class="kuiInfoPanelBody__message"
+    />
+  </div>
+</div>
+`;
+
+exports[`ErrorPanel renders the title property 1`] = `
+<div
+  class="kuiInfoPanel kuiInfoPanel--error"
+>
+  <div
+    class="kuiInfoPanelHeader"
+  >
+    <span
+      class="kuiInfoPanelHeader__icon kuiIcon kuiIcon--error fa-warning"
+    />
+    <span
+      class="kuiInfoPanelHeader__title"
+    >
+      A different title
+    </span>
+  </div>
+  <div
+    class="kuiInfoPanelBody"
+  >
+    <div
+      class="kuiInfoPanelBody__message"
+    />
+  </div>
+</div>
+`;
+
+exports[`ErrorPanel renders without properties 1`] = `
+<div
+  class="kuiInfoPanel kuiInfoPanel--error"
+>
+  <div
+    class="kuiInfoPanelHeader"
+  >
+    <span
+      class="kuiInfoPanelHeader__icon kuiIcon kuiIcon--error fa-warning"
+    />
+    <span
+      class="kuiInfoPanelHeader__title"
+    >
+      An error occurred.
+    </span>
+  </div>
+  <div
+    class="kuiInfoPanelBody"
+  >
+    <div
+      class="kuiInfoPanelBody__message"
+    />
+  </div>
+</div>
+`;
