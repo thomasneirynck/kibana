@@ -51,7 +51,7 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
     },
     indexPatterns(Private) {
       const indexPatterns = Private(IndexPatternsProvider);
-      return indexPatterns.getIds();
+      return indexPatterns.getTitles();
     }
   },
   controllerAs: 'editRole',
