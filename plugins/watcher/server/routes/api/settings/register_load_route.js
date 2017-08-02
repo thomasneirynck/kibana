@@ -1,11 +1,11 @@
-import { callWithRequestFactory } from '../../../lib/call_with_request_factory';
+import { callWithInternalUserFactory } from '../../../lib/call_with_internal_user_factory';
 import { isEsErrorFactory } from '../../../lib/is_es_error_factory';
 import { wrapEsError, wrapUnknownError } from '../../../lib/error_wrappers';
 import { licensePreRoutingFactory } from'../../../lib/license_pre_routing_factory';
 import { Settings } from '../../../models/settings';
 
-function fetchClusterSettings(callWithRequest) {
-  return callWithRequest('cluster.getSettings', {
+function fetchClusterSettings(callWithInternalUser) {
+  return callWithInternalUser('cluster.getSettings', {
     includeDefaults: true,
     filterPath: '**.xpack.notification'
   });
@@ -14,14 +14,13 @@ function fetchClusterSettings(callWithRequest) {
 export function registerLoadRoute(server) {
   const isEsError = isEsErrorFactory(server);
   const licensePreRouting = licensePreRoutingFactory(server);
+  const callWithInternalUser = callWithInternalUserFactory(server);
 
   server.route({
     path: '/api/watcher/settings',
     method: 'GET',
     handler: (request, reply) => {
-      const callWithRequest = callWithRequestFactory(server, request);
-
-      return fetchClusterSettings(callWithRequest)
+      return fetchClusterSettings(callWithInternalUser)
       .then((settings) => {
         reply(Settings.fromUpstreamJSON(settings).downstreamJSON);
       })
