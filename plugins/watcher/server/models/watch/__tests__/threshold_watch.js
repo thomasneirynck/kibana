@@ -2,7 +2,7 @@ import { pick } from 'lodash';
 import expect from 'expect.js';
 import sinon from 'sinon';
 import proxyquire from 'proxyquire';
-import { WATCH_TYPES, COMPARATORS, SORT_ORDERS } from '../../../../common/constants';
+import { COMPARATORS, SORT_ORDERS } from '../../../../common/constants';
 
 const constructorMock = sinon.stub();
 const upstreamJSONMock = sinon.stub();
@@ -14,6 +14,7 @@ const buildInputMock = sinon.stub();
 const buildConditionMock = sinon.stub();
 const buildTransformMock = sinon.stub();
 const buildActionsMock = sinon.stub();
+const buildMetadataMock = sinon.stub();
 const buildVisualizeQueryMock = sinon.stub();
 const formatVisualizeDataMock = sinon.stub();
 class BaseWatchStub {
@@ -66,6 +67,12 @@ const { ThresholdWatch } = proxyquire('../threshold_watch/threshold_watch', {
     buildInput: (...args) => {
       buildInputMock(...args);
       return 'buildInputResult';
+    }
+  },
+  './build_metadata': {
+    buildMetadata: (...args) => {
+      buildMetadataMock(...args);
+      return 'buildMetadataResult';
     }
   },
   './build_transform': {
@@ -141,12 +148,6 @@ describe('ThresholdWatch', () => {
       expect(actual).to.eql(expected);
     });
 
-    it('should call the BaseWatch contructor with type of json', () => {
-      props = {};
-      new ThresholdWatch(props);
-      expect(constructorMock.calledWith({ type: WATCH_TYPES.THRESHOLD })).to.be(true);
-    });
-
   });
 
   describe('hasTermAgg getter method', () => {
@@ -191,6 +192,7 @@ describe('ThresholdWatch', () => {
       buildActionsMock.reset();
       buildConditionMock.reset();
       buildInputMock.reset();
+      buildMetadataMock.reset();
       buildTransformMock.reset();
       buildTriggerMock.reset();
     });
@@ -203,13 +205,15 @@ describe('ThresholdWatch', () => {
         input: 'buildInputResult',
         condition: 'buildConditionResult',
         transform: 'buildTransformResult',
-        actions: 'buildActionsResult'
+        actions: 'buildActionsResult',
+        metadata: 'buildMetadataResult'
       };
 
       expect(actual).to.eql(expected);
       expect(buildActionsMock.calledWith(watch)).to.be(true);
       expect(buildConditionMock.calledWith(watch)).to.be(true);
       expect(buildInputMock.calledWith(watch)).to.be(true);
+      expect(buildMetadataMock.calledWith(watch)).to.be(true);
       expect(buildTransformMock.calledWith(watch)).to.be(true);
       expect(buildTriggerMock.calledWith(watch)).to.be(true);
     });
@@ -273,27 +277,7 @@ describe('ThresholdWatch', () => {
     it('should call the getter from WatchBase and return the correct result', () => {
       const watch = new ThresholdWatch(props);
       const actual = watch.upstreamJSON;
-      const expected = {
-        baseCalled: true,
-        watch: {
-          metadata: {
-            watcherui: {
-              index: 'index',
-              timeField: 'timeField',
-              triggerIntervalSize: 'triggerIntervalSize',
-              triggerIntervalUnit: 'triggerIntervalUnit',
-              aggType: 'aggType',
-              aggField: 'aggField',
-              termSize: 'termSize',
-              termField: 'termField',
-              thresholdComparator: 'thresholdComparator',
-              timeWindowSize: 'timeWindowSize',
-              timeWindowUnit: 'timeWindowUnit',
-              threshold: 'threshold'
-            }
-          }
-        }
-      };
+      const expected = { baseCalled: true };
 
       expect(upstreamJSONMock.called).to.be(true);
       expect(actual).to.eql(expected);

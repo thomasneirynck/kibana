@@ -2,7 +2,6 @@ import { pick } from 'lodash';
 import expect from 'expect.js';
 import sinon from 'sinon';
 import proxyquire from 'proxyquire';
-import { WATCH_TYPES } from '../../../../common/constants';
 
 const constructorMock = sinon.stub();
 const downstreamJSONMock = sinon.stub();
@@ -53,12 +52,6 @@ describe('MonitoringWatch', () => {
       };
 
       expect(actual).to.eql(expected);
-    });
-
-    it('should call the BaseWatch contructor with type of json', () => {
-      props = {};
-      new MonitoringWatch(props);
-      expect(constructorMock.calledWith({ type: WATCH_TYPES.MONITORING })).to.be(true);
     });
 
   });

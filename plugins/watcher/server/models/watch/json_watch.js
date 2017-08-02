@@ -1,4 +1,4 @@
-import { isEmpty, cloneDeep, has } from 'lodash';
+import { isEmpty, cloneDeep, has, merge } from 'lodash';
 import { BaseWatch } from './base_watch';
 import { WATCH_TYPES } from '../../../common/constants';
 
@@ -7,7 +7,6 @@ export class JsonWatch extends BaseWatch {
   // JsonWatch objects should be instantiated using the
   // fromUpstreamJson and fromDownstreamJson static methods
   constructor(props) {
-    props.type = WATCH_TYPES.JSON;
     super(props);
 
     this.watch = props.watch;
@@ -15,50 +14,72 @@ export class JsonWatch extends BaseWatch {
   }
 
   get watchJSON() {
-    return this.watch;
+    const result = merge(
+      {},
+      super.watchJSON,
+      this.watch
+    );
+
+    return result;
   }
 
+  // To Elasicsearch
   get upstreamJSON() {
     const result = super.upstreamJSON;
     return result;
   }
 
+  // To Kibana
   get downstreamJSON() {
-    const result = super.downstreamJSON;
-    Object.assign(result, {
-      watch: this.watch
-    });
+    const result = merge(
+      {},
+      super.downstreamJSON,
+      {
+        watch: this.watch
+      }
+    );
 
     return result;
   }
 
+  // From Elasticsearch
   static fromUpstreamJSON(json) {
-    const props = super.getPropsFromUpstreamJSON(json);
-
-    const watch = cloneDeep(props.watchJson);
+    const baseProps = super.getPropsFromUpstreamJSON(json);
+    const watch = cloneDeep(baseProps.watchJson);
 
     if (has(watch, 'metadata.name')) {
       delete watch.metadata.name;
+    }
+    if (has(watch, 'metadata.xpack')) {
+      delete watch.metadata.xpack;
     }
 
     if (isEmpty(watch.metadata)) {
       delete watch.metadata;
     }
 
-    Object.assign(props, {
-      watch
-    });
+    const props = merge(
+      {},
+      baseProps,
+      {
+        type: WATCH_TYPES.JSON,
+        watch
+      }
+    );
 
     return new JsonWatch(props);
   }
 
-  // generate Watch object from kibana response
+  // From Kibana
   static fromDownstreamJSON(json) {
-    const props = super.getPropsFromDownstreamJSON(json);
-
-    Object.assign(props, {
-      watch: json.watch
-    });
+    const props = merge(
+      {},
+      super.getPropsFromDownstreamJSON(json),
+      {
+        type: WATCH_TYPES.JSON,
+        watch: json.watch
+      }
+    );
 
     return new JsonWatch(props);
   }

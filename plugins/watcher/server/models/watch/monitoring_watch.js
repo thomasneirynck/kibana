@@ -1,3 +1,4 @@
+import { merge } from 'lodash';
 import { BaseWatch } from './base_watch';
 import { WATCH_TYPES } from '../../../common/constants';
 
@@ -6,14 +7,18 @@ export class MonitoringWatch extends BaseWatch {
   // JsonWatch objects should be instantiated using the
   // fromUpstreamJson and fromDownstreamJson static methods
   constructor(props) {
-    props.type = WATCH_TYPES.MONITORING;
     super(props);
 
     this.isSystemWatch = true;
   }
 
   get watchJSON() {
-    return {};
+    const result = merge(
+      {},
+      super.watchJSON
+    );
+
+    return result;
   }
 
   getVisualizeQuery() {
@@ -31,13 +36,23 @@ export class MonitoringWatch extends BaseWatch {
 
   // To Kibana
   get downstreamJSON() {
-    const result = super.downstreamJSON;
+    const result = merge(
+      {},
+      super.downstreamJSON
+    );
+
     return result;
   }
 
   // From Elasticsearch
   static fromUpstreamJSON(json) {
-    const props = super.getPropsFromUpstreamJSON(json);
+    const props = merge(
+      {},
+      super.getPropsFromUpstreamJSON(json),
+      {
+        type: WATCH_TYPES.MONITORING
+      }
+    );
 
     return new MonitoringWatch(props);
   }

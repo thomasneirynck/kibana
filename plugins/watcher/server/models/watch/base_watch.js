@@ -1,4 +1,4 @@
-import { get, set, isEmpty, map, pick } from 'lodash';
+import { get, map, pick } from 'lodash';
 import { Action } from '../action';
 import { WatchStatus } from '../watch_status';
 
@@ -17,9 +17,20 @@ export class BaseWatch {
     this.actions = props.actions;
   }
 
-  // Should be overridden by the extended class.
   get watchJSON() {
-    return {};
+    const result = {
+      metadata: {
+        xpack: {
+          type: this.type
+        }
+      }
+    };
+
+    if (this.name) {
+      result.metadata.name = this.name;
+    }
+
+    return result;
   }
 
   getVisualizeQuery() {
@@ -47,11 +58,6 @@ export class BaseWatch {
   // to Elasticsearch
   get upstreamJSON() {
     const watch = this.watchJSON;
-
-    if (!isEmpty(this.name)) {
-      set(watch, 'metadata.name', this.name);
-    }
-    set(watch, 'metadata.xpack.type', this.type);
 
     return {
       id: this.id,

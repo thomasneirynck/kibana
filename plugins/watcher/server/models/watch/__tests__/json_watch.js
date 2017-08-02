@@ -2,7 +2,6 @@ import { pick } from 'lodash';
 import expect from 'expect.js';
 import sinon from 'sinon';
 import proxyquire from 'proxyquire';
-import { WATCH_TYPES } from '../../../../common/constants';
 
 const constructorMock = sinon.stub();
 const upstreamJSONMock = sinon.stub();
@@ -72,12 +71,6 @@ describe('JsonWatch', () => {
       };
 
       expect(actual).to.eql(expected);
-    });
-
-    it('should call the BaseWatch contructor with type of json', () => {
-      props = {};
-      new JsonWatch(props);
-      expect(constructorMock.calledWith({ type: WATCH_TYPES.JSON })).to.be(true);
     });
 
   });
@@ -174,6 +167,18 @@ describe('JsonWatch', () => {
       const jsonWatch = JsonWatch.fromUpstreamJSON(upstreamJson);
 
       expect(jsonWatch.watch.metadata.name).to.be(undefined);
+    });
+
+    it('should remove the metadata.xpack property from the watch property', () => {
+      upstreamJson.watchJson.metadata = {
+        name: 'foobar',
+        xpack: { prop: 'val' },
+        foo: 'bar'
+      };
+
+      const jsonWatch = JsonWatch.fromUpstreamJSON(upstreamJson);
+
+      expect(jsonWatch.watch.metadata.xpack).to.be(undefined);
     });
 
     it('should remove an empty metadata property from the watch property', () => {

@@ -84,10 +84,41 @@ describe('BaseWatch', () => {
 
   describe('watchJson getter method', () => {
 
-    it('should return an empty object', () => {
-      const watch = new BaseWatch({});
+    let props;
+    beforeEach(() => {
+      props = {
+        id: 'my-watch',
+        name: 'foo',
+        type: 'logging'
+      };
+    });
+
+    it('should return the expected object', () => {
+      const watch = new BaseWatch(props);
       const actual = watch.watchJSON;
-      const expected = {};
+      const expected = {
+        metadata: {
+          name: 'foo',
+          xpack: {
+            type: 'logging'
+          }
+        }
+      };
+
+      expect(actual).to.eql(expected);
+    });
+
+    it('should only populate the name metadata if a name is defined', () => {
+      delete props.name;
+      const watch = new BaseWatch(props);
+      const actual = watch.watchJSON;
+      const expected = {
+        metadata: {
+          xpack: {
+            type: props.type
+          }
+        }
+      };
 
       expect(actual).to.eql(expected);
     });
@@ -209,25 +240,6 @@ describe('BaseWatch', () => {
         watch: {
           metadata: {
             name: props.name,
-            xpack: {
-              type: props.type
-            }
-          }
-        }
-      };
-
-      expect(actual).to.eql(expected);
-    });
-
-    it('should only populate the name metadata if a name is defined.', () => {
-      delete props.name;
-      const watch = new BaseWatch(props);
-
-      const actual = watch.upstreamJSON;
-      const expected = {
-        id: props.id,
-        watch: {
-          metadata: {
             xpack: {
               type: props.type
             }
