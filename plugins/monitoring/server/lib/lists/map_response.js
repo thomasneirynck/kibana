@@ -29,12 +29,11 @@ function mapChartData(metric) {
     }
 
     const bucketMetricValue = _.get(bucket, 'metric.value');
-    if (bucketMetricValue) {
+    if (!!bucketMetricValue || bucketMetricValue === 0) {
       return _createDataObject(bucketMetricValue);
     }
 
     return _createDataObject(null);
-
   };
 }
 
