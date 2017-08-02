@@ -27,6 +27,10 @@ function requiresAccountInfo(actionType) {
 }
 
 function getAccounts({ account, default_account: defaultAccount }) {
+  if (!Boolean(account)) {
+    return undefined;
+  }
+
   return Object.keys(account).reduce((accounts, accountName) => {
     accounts[accountName] = {};
 
@@ -62,6 +66,9 @@ function getActionTypesSettings(upstreamJson) {
       // Add account info if applicable
       if (requiresAccountInfo(actionType)) {
         actionTypeData.accounts = getAccounts(upstreamActionTypes[actionType]);
+        if (!Boolean(actionTypeData.accounts)) {
+          actionTypeData.enabled = false;
+        }
       }
     }
 
