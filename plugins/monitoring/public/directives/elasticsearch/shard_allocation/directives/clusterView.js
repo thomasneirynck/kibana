@@ -21,7 +21,7 @@ import { ClusterView } from '../components/clusterView';
 import { uiModules } from 'ui/modules';
 
 const uiModule = uiModules.get('monitoring/directives', []);
-uiModule.directive('clusterView', function (kbnUrl) {
+uiModule.directive('clusterView', kbnUrl => {
   return {
     restrict: 'E',
     scope: {

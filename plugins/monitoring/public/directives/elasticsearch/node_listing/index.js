@@ -1,198 +1,131 @@
-import { find, isEqual, get } from 'lodash';
+import { get } from 'lodash';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { MetricCell } from 'plugins/monitoring/components/elasticsearch/node_listing/metric_cell';
-import { OfflineCell } from 'plugins/monitoring/components/elasticsearch/node_listing/offline_cell';
+import { render } from 'react-dom';
+import { uiModules } from 'ui/modules';
+import {
+  KuiKeyboardAccessible,
+  KuiTableRowCell,
+  KuiTableRow
+} from 'ui_framework/components';
+import { MetricCell, OfflineCell } from 'plugins/monitoring/components/elasticsearch/node_listing/cells';
 import { NodeStatusIcon } from 'plugins/monitoring/components/elasticsearch/node/status_icon';
 import { Tooltip } from 'plugins/monitoring/components/tooltip';
-import { KuiKeyboardAccessible } from 'ui_framework/components';
+import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { extractIp } from 'plugins/monitoring/lib/extract_ip';
-import { Table } from 'plugins/monitoring/components/paginated_table';
 import { SORT_ASCENDING } from 'monitoring-constants';
-import { uiModules } from 'ui/modules';
 
-function nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch) {
-  function checkOnline(status) {
-    return status === 'Online';
+const filterFields = [ 'nodeName', 'status', 'type', 'transport_address' ];
+const getColumns = showCgroupMetricsElasticsearch => {
+  const cols = [];
+  cols.push({ title: 'Name', sortKey: 'nodeName', sortOrder: SORT_ASCENDING });
+  cols.push({ title: 'Status', sortKey: 'online' });
+  if (showCgroupMetricsElasticsearch) {
+    cols.push({ title: 'CPU Usage', sortKey: 'metrics.node_cgroup_quota.last' });
+    cols.push({ title: 'CPU Throttling', sortKey: 'metrics.node_cgroup_throttled.last' });
+  } else {
+    cols.push({ title: 'CPU Usage', sortKey: 'metrics.node_cpu_utilization.last' });
+    cols.push({ title: 'Load Average', sortKey: 'metrics.node_load_average.last' });
   }
-
+  cols.push({ title: 'JVM Memory', sortKey: 'metrics.node_jvm_mem_percent.last' });
+  cols.push({ title: 'Disk Free Space', sortKey: 'metrics.node_free_space.last' });
+  cols.push({ title: 'Shards', sortKey: 'metrics.shard_count' });
+  return cols;
+};
+const nodeRowFactory = (scope, kbnUrl, showCgroupMetricsElasticsearch) => {
   return class NodeRow extends React.Component {
-
     constructor(props) {
-      super();
-      const rowData = find(scope.rows, { resolver: props.resolver });
-      this.state = createRow(rowData);
+      super(props);
       this.goToNode = this.goToNode.bind(this);
     }
-
-    componentWillReceiveProps(newProps) {
-      if (!isEqual(newProps, this.props)) {
-        const rowData = find(scope.rows, { resolver: newProps.resolver });
-        this.setState(createRow(rowData));
-      }
-    }
-
     goToNode() {
       scope.$evalAsync(() => {
-        kbnUrl.changePath(`/elasticsearch/nodes/${this.state.resolver}`);
+        kbnUrl.changePath(`/elasticsearch/nodes/${this.props.resolver}`);
       });
     }
-
-    render() {
-      const isOnline = checkOnline(this.state.status);
-
-      const cpuComponents = (() => {
-        if (showCgroupMetricsElasticsearch) {
-          return [
-            <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ get(this.state, 'metrics.node_cgroup_quota') }></MetricCell>,
-            <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ get(this.state, 'metrics.node_cgroup_throttled') }></MetricCell>
-          ];
-        }
+    isOnline() {
+      return this.props.status === 'Online';
+    }
+    getCpuComponents() {
+      const isOnline = this.isOnline();
+      if (showCgroupMetricsElasticsearch) {
         return [
-          <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ get(this.state, 'metrics.node_cpu_utilization') }></MetricCell>,
-          <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ get(this.state, 'metrics.node_load_average') }></MetricCell>
+          <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_cgroup_quota') }></MetricCell>,
+          <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_cgroup_throttled') }></MetricCell>
         ];
-      })();
-
-      return (
-        <tr className='big'>
-          <td>
-            <Tooltip text={ this.state.node.nodeTypeLabel } trigger='hover' placement='bottom'>
-              <span className={ `fa ${this.state.node.nodeTypeClass}` }></span>
-            </Tooltip>
-            &nbsp;
-            <KuiKeyboardAccessible>
-              <a className='kuiLink' onClick={ this.goToNode }>
-                { this.state.node.name }
-              </a>
-            </KuiKeyboardAccessible>
-            <div className='small'>{ extractIp(this.state.node.transport_address) }</div>
-          </td>
-          <td>
-            <div title={ `Node status: ${this.state.status}` }>
-              <NodeStatusIcon status={ this.state.status } />&nbsp;
-              { this.state.status }
+      }
+      return [
+        <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_cpu_utilization') }></MetricCell>,
+        <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_load_average') }></MetricCell>
+      ];
+    }
+    getShardCount() {
+      if (this.isOnline()) {
+        return (
+          <KuiTableRowCell>
+            <div className='monitoringTableCell__number'>
+              { get(this.props, 'metrics.shard_count') }
             </div>
-          </td>
-          { cpuComponents }
-          <MetricCell isOnline={ isOnline } metric={ get(this.state, 'metrics.node_jvm_mem_percent') }></MetricCell>
-          <MetricCell isOnline={ isOnline } metric={ get(this.state, 'metrics.node_free_space') }></MetricCell>
-          { (() => {
-            if (isOnline) {
-              return (
-                <td>
-                  <div className='big inline'>
-                    { this.state.metrics.shard_count }
-                  </div>
-                </td>
-              );
-            }
-            return <OfflineCell/>;
-          })() }
-        </tr>
+          </KuiTableRowCell>
+        );
+      }
+      return <OfflineCell />;
+    }
+    render() {
+      const isOnline = this.isOnline();
+      return (
+        <KuiTableRow>
+          <KuiTableRowCell>
+            <div className='monitoringTableCell__name'>
+              <Tooltip text={ this.props.node.nodeTypeLabel } trigger='hover' placement='bottom'>
+                <span className={ `fa ${this.props.node.nodeTypeClass}` }></span>
+              </Tooltip>
+              &nbsp;
+              <KuiKeyboardAccessible>
+                <a className='kuiLink' onClick={ this.goToNode }>{ this.props.node.name }</a>
+              </KuiKeyboardAccessible>
+            </div>
+            <div className='monitoringTableCell__transportAddress'>{ extractIp(this.props.node.transport_address) }</div>
+          </KuiTableRowCell>
+          <KuiTableRowCell>
+            <div title={ `Node status: ${this.props.status}` } className='monitoringTableCell__status'>
+              <NodeStatusIcon status={ this.props.status } />&nbsp;
+              { this.props.status }
+            </div>
+          </KuiTableRowCell>
+          { this.getCpuComponents() }
+          <MetricCell isOnline={ isOnline } metric={ get(this.props, 'metrics.node_jvm_mem_percent') }></MetricCell>
+          <MetricCell isOnline={ isOnline } metric={ get(this.props, 'metrics.node_free_space') }></MetricCell>
+          { this.getShardCount() }
+        </KuiTableRow>
       );
     }
-
   };
-}
+};
 
 // change the node to actually display the name
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringNodesListing', ($injector) => {
+  const kbnUrl = $injector.get('kbnUrl');
   const showCgroupMetricsElasticsearch = $injector.get('showCgroupMetricsElasticsearch');
-  const cpuColumns = (() => {
-    if (showCgroupMetricsElasticsearch) {
-      return [
-        {
-          key: 'metrics.node_cgroup_quota',
-          sortKey: 'metrics.node_cgroup_quota.last',
-          title: 'CPU Usage'
-        },
-        {
-          key: 'metrics.node_cgroup_throttled',
-          sortKey: 'metrics.node_cgroup_throttled.last',
-          title: 'CPU Throttling'
-        },
-      ];
-    }
-    return [
-      {
-        key: 'metrics.node_cpu_utilization',
-        sortKey: 'metrics.node_cpu_utilization.last',
-        title: 'CPU Usage'
-      },
-      {
-        key: 'metrics.node_load_average',
-        sortKey: 'metrics.node_load_average.last',
-        title: 'Load Average'
-      },
-    ];
-  })();
-
-  const initialTableOptions = {
-    title: 'Nodes',
-    searchPlaceholder: 'Filter Nodes',
-    filterFields: ['nodeName', 'status', 'type', 'transport_address'],
-    columns: [
-      {
-        key: 'nodeName',
-        sortKey: 'nodeName',
-        sort: SORT_ASCENDING,
-        title: 'Name'
-      },
-      {
-        key: 'status',
-        sortKey: 'online',
-        title: 'Status'
-      },
-      ...cpuColumns,
-      {
-        key: 'metrics.node_jvm_mem_percent',
-        sortKey: 'metrics.node_jvm_mem_percent.last',
-        title: 'JVM Memory'
-      },
-      {
-        key: 'metrics.node_free_space',
-        sortKey: 'metrics.node_free_space.last',
-        title: 'Disk Free Space'
-      },
-      {
-        key: 'metrics.shard_count',
-        title: 'Shards'
-      }
-    ]
-  };
+  const columns = getColumns(showCgroupMetricsElasticsearch);
 
   return {
     restrict: 'E',
-    scope: {
-      cluster: '=',
-      rows: '='
-    },
+    scope: { nodes: '=' },
     link(scope, $el) {
 
-      function createRow(rowData) {
-        if (!rowData) {
-          return null;
-        }
-
-        return {
-          nodeName: get(rowData, 'node.name'),
-          status: rowData.online ? 'Online' : 'Offline',
-          ...rowData
-        };
-      }
-
-      const kbnUrl = $injector.get('kbnUrl');
-      const NodeRow = nodeRowFactory(scope, createRow, kbnUrl, showCgroupMetricsElasticsearch);
-      const $table = React.createElement(Table, {
-        scope,
-        options: initialTableOptions,
-        template: NodeRow
-      });
-      const tableInstance = ReactDOM.render($table, $el[0]);
-      scope.$watch('rows', (rows) => {
-        tableInstance.setData(rows.map((rowData) => createRow(rowData)));
+      scope.$watch('nodes', (nodes = []) => {
+        const nodesTable = (
+          <MonitoringTable
+            className='nodesTable'
+            rows={ nodes }
+            placeholder='Filter Nodes...'
+            filterFields={ filterFields }
+            columns={ columns }
+            rowComponent={ nodeRowFactory(scope, kbnUrl, showCgroupMetricsElasticsearch) }
+          />
+        );
+        render(nodesTable, $el[0]);
       });
 
     }

@@ -31,6 +31,23 @@ function getPageData($injector) {
     ]
   })
   .then(response => response.data)
+  .then(data => {
+    data.rows.forEach(row => {
+      // calculate a numerical field to help sorting by status
+      // this allows default sort to show red, then yellow, then green
+      switch (row.status) {
+        case 'green':
+          row.statusSort = 1;
+          break;
+        case 'yellow':
+          row.statusSort = 2;
+          break;
+        default:
+          row.statusSort = 3;
+      }
+    });
+    return data;
+  })
   .catch((err) => {
     const Private = $injector.get('Private');
     const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);

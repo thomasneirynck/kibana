@@ -1,7 +1,7 @@
 /**
  * Controller for Node Listing
  */
-import { find } from 'lodash';
+import { find, get } from 'lodash';
 import uiRoutes from 'ui/routes';
 import { uiModules } from 'ui/modules';
 import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
@@ -28,6 +28,17 @@ function getPageData($injector) {
       'node_load_average'
     ];
   })();
+  // TODO move to back-end
+  const createRow = rowData => {
+    if (!rowData) {
+      return null;
+    }
+    return {
+      nodeName: get(rowData, 'node.name'),
+      status: rowData.online ? 'Online' : 'Offline',
+      ...rowData
+    };
+  };
 
   return $http.post(url, {
     timeRange: {
@@ -40,7 +51,12 @@ function getPageData($injector) {
       'node_free_space'
     ]
   })
-  .then(response => response.data)
+  .then(response => {
+    return {
+      ...response.data,
+      rows: response.data.rows.map(createRow)
+    };
+  })
   .catch((err) => {
     const Private = $injector.get('Private');
     const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);

@@ -1,199 +1,139 @@
 import numeral from 'numeral';
 import { capitalize } from 'lodash';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Table } from 'plugins/monitoring/components/paginated_table';
-import { SORT_ASCENDING } from 'monitoring-constants';
-import { KuiKeyboardAccessible } from 'ui_framework/components';
-import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
+import { render } from 'react-dom';
+import { SORT_ASCENDING, SORT_DESCENDING } from 'monitoring-constants';
 import { uiModules } from 'ui/modules';
+import {
+  KuiKeyboardAccessible,
+  KuiToolBarSection,
+  KuiToolBarText,
+  KuiTableRowCell,
+  KuiTableRow
+} from 'ui_framework/components';
+import { MonitoringTable } from 'plugins/monitoring/components/table';
+import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
 
-function showSystemIndicesComponentFactory(scope) {
-  return class ShowSystemIndicesComponent extends React.Component {
-
+const showSystemIndicesComponentFactory = scope => {
+  return class ShowSytemIndicesCheckbox extends React.Component {
     constructor(props) {
       super();
       this.state = { showSystemIndices: props.showSystemIndices };
-      // method not automatically bound to the component instance because of using ES6 class syntax
       this.toggleShowSystemIndices = this.toggleShowSystemIndices.bind(this);
     }
-
     // See also directives/shard_allocation/components/tableHead
     toggleShowSystemIndices(e) {
       const isChecked = e.target.checked;
       this.setState({ showSystemIndices: !this.state.showSystemIndices });
       scope.$evalAsync(() => {
         scope.toggleShowSystemIndices(isChecked);
-        scope.resetPaging();
       });
     }
-
     render() {
       return (
-        <div className='pull-left filter-member'>
-          <input type='checkbox'
-            onChange={ this.toggleShowSystemIndices }
-            checked={ this.state.showSystemIndices }/>
-          &nbsp;
-          Show system indices
-        </div>
+        <KuiToolBarSection>
+          <KuiToolBarText>
+            <label className='kuiCheckBoxLabel'>
+              <input
+                className='kuiCheckBox'
+                type='checkbox'
+                onChange={ this.toggleShowSystemIndices }
+                checked={ this.state.showSystemIndices }
+              />
+              <span className='kuiCheckBoxLabel__text'>Show system indices</span>
+            </label>
+          </KuiToolBarText>
+        </KuiToolBarSection>
       );
     }
-
   };
-}
+};
 
-function indexRowFactory(scope, kbnUrl) {
+const filterFields = ['name', 'status'];
+const cols = [
+  { title: 'Name', sortKey: 'name', secondarySortOrder: SORT_ASCENDING },
+  { title: 'Status', sortKey: 'statusSort', sortOrder: SORT_DESCENDING }, // default sort: red, then yellow, then green
+  { title: 'Document Count', sortKey: 'metrics.index_document_count.last' },
+  { title: 'Data', sortKey: 'metrics.index_store_total_size.last' },
+  { title: 'Index Rate', sortKey: 'metrics.index_request_rate_primary.last' },
+  { title: 'Search Rate', sortKey: 'metrics.index_search_request_rate.last' },
+  { title: 'Unassigned Shards', sortKey: 'metrics.index_unassigned_shards.last' }
+];
+const indexRowFactory = (scope, kbnUrl) => {
+  const numeralize = value => numeral(value.last).format(value.metric ? value.metric.format : null);
+  const unitize = value => `${numeralize(value)} ${value.metric.units}`;
   return class IndexRow extends React.Component {
-
-    constructor() {
-      super();
+    constructor(props) {
+      super(props);
       this.changePath = this.changePath.bind(this);
     }
-
     changePath() {
       scope.$evalAsync(() => {
         kbnUrl.changePath(`/elasticsearch/indices/${this.props.name}`);
       });
     }
-
     render() {
-      const numeralize = value => numeral(value.last).format(value.metric ? value.metric.format : null);
-      const unitize = value => `${numeralize(value)} ${value.metric.units}`;
-
-      const name = this.props.name;
       const metrics = this.props.metrics;
       const status = this.props.status;
-      const docCount = numeralize(metrics.index_document_count);
-      const indexSize = numeralize(metrics.index_store_total_size);
-      const requestRate = unitize(metrics.index_request_rate_primary);
-      const searchRate = unitize(metrics.index_search_request_rate);
-      const unassignedShards = numeralize(metrics.index_unassigned_shards);
 
       return (
-        <tr className='big'>
-          <td>
+        <KuiTableRow>
+          <KuiTableRowCell>
             <KuiKeyboardAccessible>
-              <a className='kuiLink' onClick={ this.changePath }>{ name }</a>
+              <a className='kuiLink' onClick={ this.changePath }>{ this.props.name }</a>
             </KuiKeyboardAccessible>
-          </td>
-          <td>
+          </KuiTableRowCell>
+          <KuiTableRowCell>
             <div title={ `Index status: ${status}` }>
               <ElasticsearchStatusIcon status={ status } />&nbsp;
               { capitalize(status) }
             </div>
-          </td>
-          <td>
-            <div className='big inline'>
-              { docCount }
-            </div>
-          </td>
-          <td>
-            <div className='big inline'>
-              { indexSize }
-            </div>
-          </td>
-          <td>
-            <div className='big inline'>
-              { requestRate }
-            </div>
-          </td>
-          <td>
-            <div className='big inline'>
-              { searchRate }
-            </div>
-          </td>
-          <td>
-            <div className='big inline'>
-              { unassignedShards }
-            </div>
-          </td>
-        </tr>
+          </KuiTableRowCell>
+          <KuiTableRowCell>{ numeralize(metrics.index_document_count) }</KuiTableRowCell>
+          <KuiTableRowCell>{ numeralize(metrics.index_store_total_size) }</KuiTableRowCell>
+          <KuiTableRowCell>{ unitize(metrics.index_request_rate_primary) }</KuiTableRowCell>
+          <KuiTableRowCell>{ unitize(metrics.index_search_request_rate) }</KuiTableRowCell>
+          <KuiTableRowCell>{ numeralize(metrics.index_unassigned_shards) }</KuiTableRowCell>
+        </KuiTableRow>
       );
     }
-
   };
-}
+};
+
+const noDataMessage = (
+  <div>
+    <p>There are no indices that match your selections. Try changing the time range selection.</p>
+    <p>If you are looking for system indices (e.g., .kibana), try checking 'Show system indices'.</p>
+  </div>
+);
 
 const uiModule = uiModules.get('monitoring/directives', []);
-uiModule.directive('monitoringIndexListing', function (kbnUrl) {
-  const initialTableOptions = {
-    title: 'Indices',
-    searchPlaceholder: 'Filter Indices',
-    noDataMessage: (
-      <div>
-        <p>There are no indices that match your selections. Try changing the time range selection.</p>
-        <p>If you are looking for system indices (e.g., .kibana), try checking 'Show system indices'.</p>
-      </div>
-    ),
-    filterFields: ['name', 'status'],
-    /* "key" should be an object
-     *   - unless it's the "name" key
-     *   - the key object should have:
-     *      - "metric" object
-     *      - "last" scalar
-     * "sortKey" should be a scalar */
-    columns: [
-      {
-        key: 'name',
-        title: 'Name'
-      },
-      {
-        key: 'status',
-        sort: SORT_ASCENDING,
-        title: 'Status'
-      },
-      {
-        key: 'metrics.index_document_count',
-        sortKey: 'metrics.index_document_count.last',
-        title: 'Document Count'
-      },
-      {
-        key: 'metrics.index_store_total_size',
-        sortKey: 'metrics.index_store_total_size.last',
-        title: 'Data'
-      },
-      {
-        key: 'metrics.index_request_rate_primary',
-        sortKey: 'metrics.index_request_rate_primary.last',
-        title: 'Index Rate'
-      },
-      {
-        key: 'metrics.index_search_request_rate',
-        sortKey: 'metrics.index_search_request_rate.last',
-        title: 'Search Rate'
-      },
-      {
-        key: 'metrics.index_unassigned_shards',
-        sortKey: 'metrics.index_unassigned_shards.last',
-        title: 'Unassigned Shards'
-      }
-    ]
-  };
-
+uiModule.directive('monitoringIndexListing', kbnUrl => {
   return {
     restrict: 'E',
     scope: {
-      data: '=',
+      indices: '=',
       showSystemIndices: '=',
       toggleShowSystemIndices: '='
     },
     link(scope, $el) {
+      const ShowSytemIndicesCheckbox = showSystemIndicesComponentFactory(scope);
+      const toolBarSection = <ShowSytemIndicesCheckbox key='toolbarSection-1' showSystemIndices={ scope.showSystemIndices }/>;
 
-      const ShowSystemIndicesComponent = showSystemIndicesComponentFactory(scope);
-      const IndexRow = indexRowFactory(scope, kbnUrl);
-      const $table = React.createElement(Table, {
-        scope,
-        options: initialTableOptions,
-        filterMembers: [<ShowSystemIndicesComponent showSystemIndices={ scope.showSystemIndices }/>],
-        template: IndexRow
-      });
-      const tableInstance = ReactDOM.render($table, $el[0]);
-      scope.resetPaging = () => {
-        tableInstance.setCurrPage(0);
-      };
-      scope.$watch('data', (data) => {
-        tableInstance.setData(data);
+      scope.$watch('indices', (indices = []) => {
+        const instancesTable = (
+          <MonitoringTable
+            className='indicesTable'
+            rows={ indices }
+            placeholder='Filter Indices...'
+            filterFields={ filterFields }
+            toolBarSections={ [ toolBarSection ] }
+            columns={ cols }
+            rowComponent={ indexRowFactory(scope, kbnUrl) }
+            noDataMessage={ noDataMessage }
+          />
+        );
+        render(instancesTable, $el[0]);
       });
 
     }

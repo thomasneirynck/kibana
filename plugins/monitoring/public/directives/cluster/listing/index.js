@@ -1,96 +1,255 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { Table } from 'plugins/monitoring/components/paginated_table';
-import { SORT_ASCENDING } from 'monitoring-constants';
-import { ClusterRow } from 'plugins/monitoring/components/cluster/listing/cluster_row';
-import { Notifier } from 'ui/notify/notifier';
+import { render } from 'react-dom';
+import { capitalize, get } from 'lodash';
+import moment from 'moment';
+import numeral from 'numeral';
 import { uiModules } from 'ui/modules';
+import {
+  KuiKeyboardAccessible,
+  KuiTableRowCell,
+  KuiTableRow
+} from 'ui_framework/components';
+import { Notifier } from 'ui/notify/notifier';
+import { MonitoringTable } from 'plugins/monitoring/components/table';
+import { Tooltip } from 'plugins/monitoring/components/tooltip';
+import { AlertsIndicator } from 'plugins/monitoring/components/cluster/listing/alerts_indicator';
+import { SORT_ASCENDING } from 'monitoring-constants';
+
+const filterFields = [ 'cluster_name', 'status', 'license.type' ];
+const columns = [
+  { title: 'Name', sortKey: 'cluster_name', sortOrder: SORT_ASCENDING },
+  { title: 'Status', sortKey: 'status' },
+  { title: 'Nodes', sortKey: 'elasticsearch.cluster_stats.nodes.count.total' },
+  { title: 'Indices', sortKey: 'elasticsearch.cluster_stats.indices.count' },
+  { title: 'Data', sortKey: 'elasticsearch.cluster_stats.indices.store.size_in_bytes' },
+  { title: 'Logstash', sortKey: 'logstash.count' },
+  { title: 'Kibana', sortKey: 'kibana.count' },
+  { title: 'License', sortKey: 'license.type' }
+];
+const clusterRowFactory = (scope, globalState, kbnUrl, showLicenseExpiration) => {
+  return class ClusterRow extends React.Component {
+    constructor(props) {
+      super(props);
+      this.notify = new Notifier();
+    }
+
+    changeCluster() {
+      scope.$evalAsync(() => {
+        globalState.cluster_uuid = this.props.cluster_uuid;
+        globalState.save();
+        kbnUrl.changePath('/overview');
+      });
+    }
+
+    licenseWarning(message) {
+      scope.$evalAsync(() => {
+        this.notify.warning(message, {
+          lifetime: 60000
+        });
+      });
+    }
+
+    handleClickIncompatibleLicense() {
+      this.licenseWarning(
+`You can't view the "${this.props.cluster_name}" cluster because the
+Basic license does not support multi-cluster monitoring.
+
+Need to monitor multiple clusters? [Get a license with full functionality](https://www.elastic.co/subscriptions/xpack)
+to enjoy multi-cluster monitoring.`
+      );
+    }
+
+    handleClickInvalidLicense() {
+      this.licenseWarning(
+`You can't view the "${this.props.cluster_name}" cluster because the
+license information is invalid.
+
+Need a license? [Get a free Basic license](https://register.elastic.co/xpack_register)
+or get a license with [full functionality](https://www.elastic.co/subscriptions/xpack)
+to enjoy multi-cluster monitoring.`
+      );
+    }
+
+    getClusterAction() {
+      if (this.props.isSupported) {
+        return (
+          <a className='kuiLink' onClick={ this.changeCluster.bind(this) }>
+            { this.props.cluster_name }
+          </a>
+        );
+      }
+
+      // not supported because license is basic/not compatible with multi-cluster
+      if (this.props.license) {
+        return (
+          <a onClick={ this.handleClickIncompatibleLicense.bind(this) }>
+            { this.props.cluster_name }
+          </a>
+        );
+      }
+
+      // not supported because license is invalid
+      return (
+        <a onClick={ this.handleClickInvalidLicense.bind(this) }>
+          { this.props.cluster_name }
+        </a>
+      );
+    }
+
+    getLicenseInfo() {
+      if (this.props.license) {
+        const licenseExpiry = () => {
+          if (this.props.license.expiry_date_in_millis < moment().valueOf()) {
+            // license is expired
+            return (
+              <span className='monitoringTableCell__ClusterCell__expired'>
+                Expired
+              </span>
+            );
+          }
+
+          // license is fine
+          return (
+            <span>
+              Expires { moment(this.props.license.expiry_date_in_millis).format('D MMM YY') }
+            </span>
+          );
+        };
+
+        return (
+          <div>
+            <div className='monitoringTableCell__ClusterCell__license'>
+              { capitalize(this.props.license.type) }
+            </div>
+            <div className='monitoringTableCell__ClusterCell__expiration'>
+              { showLicenseExpiration ? licenseExpiry() : null }
+            </div>
+          </div>
+        );
+      }
+
+      // there is no license!
+      return (
+        <KuiKeyboardAccessible>
+          <div className='kuiLink' onClick={ this.handleClickInvalidLicense.bind(this) }>
+            N/A
+          </div>
+        </KuiKeyboardAccessible>
+      );
+    }
+
+    render() {
+      const isSupported = this.props.isSupported;
+      const isClusterSupportedFactory = () => {
+        return (props) => {
+          if (isSupported) {
+            return <span>{ props.children }</span>;
+          }
+          return <span>-</span>;
+        };
+      };
+      const IsClusterSupported = isClusterSupportedFactory(isSupported);
+      const classes = [];
+      if (!isSupported) {
+        classes.push('basic');
+      }
+
+      /*
+       * This checks if alerts feature is supported via monitoring cluster
+       * license. If the alerts feature is not supported because the prod cluster
+       * license is basic, IsClusterSupported makes the status col hidden
+       * completely
+       */
+      const IsAlertsSupported = (props) => {
+        if (props.cluster.alerts.alertsMeta.enabled) {
+          return <span>{ props.children }</span>;
+        }
+        return (
+          <Tooltip
+            text={ props.cluster.alerts.alertsMeta.message }
+            placement='bottom'
+            trigger='hover'
+          >
+            <span>N/A</span>
+          </Tooltip>
+        );
+      };
+
+      return (
+        <KuiTableRow>
+          <KuiTableRowCell>
+            <span className='monitoringTableCell__name'>
+              <KuiKeyboardAccessible>
+                { this.getClusterAction() }
+              </KuiKeyboardAccessible>
+            </span>
+          </KuiTableRowCell>
+          <KuiTableRowCell>
+            <IsClusterSupported>
+              <IsAlertsSupported cluster={ this.props }>
+                <AlertsIndicator alerts={ this.props.alerts } />
+              </IsAlertsSupported>
+            </IsClusterSupported>
+          </KuiTableRowCell>
+          <KuiTableRowCell>
+            <IsClusterSupported>
+              { numeral(get(this.props, 'elasticsearch.cluster_stats.nodes.count.total')).format('0,0') }
+            </IsClusterSupported>
+          </KuiTableRowCell>
+          <KuiTableRowCell>
+            <IsClusterSupported>
+              { numeral(get(this.props, 'elasticsearch.cluster_stats.indices.count')).format('0,0') }
+            </IsClusterSupported>
+          </KuiTableRowCell>
+          <KuiTableRowCell>
+            <IsClusterSupported>
+              { numeral(get(this.props, 'elasticsearch.cluster_stats.indices.store.size_in_bytes')).format('0,0[.]0 b') }
+            </IsClusterSupported>
+          </KuiTableRowCell>
+          <KuiTableRowCell>
+            <IsClusterSupported>
+              { numeral(get(this.props, 'logstash.count')).format('0,0') }
+            </IsClusterSupported>
+          </KuiTableRowCell>
+          <KuiTableRowCell>
+            <IsClusterSupported>
+              { numeral(get(this.props, 'kibana.count')).format('0,0') }
+            </IsClusterSupported>
+          </KuiTableRowCell>
+          <KuiTableRowCell>
+            { this.getLicenseInfo() }
+          </KuiTableRowCell>
+        </KuiTableRow>
+      );
+    }
+
+  };
+};
 
 const uiModule = uiModules.get('monitoring/directives', []);
 uiModule.directive('monitoringClusterListing', ($injector) => {
   return {
     restrict: 'E',
     scope: { clusters: '=' },
-    link: function ($scope, $el) {
-
-      const options = {
-        title: null,
-        searchPlaceholder: 'Filter Clusters',
-        filterFields: ['cluster_name', 'status', 'license.type'],
-        // "key" properties are scalars used for sorting
-        columns: [
-          {
-            key: 'cluster_name',
-            sort: SORT_ASCENDING,
-            title: 'Name'
-          },
-          {
-            key: 'status',
-            title: 'Status'
-          },
-          {
-            key: 'elasticsearch.stats.nodes.count.total',
-            title: 'Nodes'
-          },
-          {
-            key: 'elasticsearch.stats.indices.count',
-            title: 'Indices'
-          },
-          {
-            key: 'elasticsearch.stats.indices.store.size_in_bytes',
-            title: 'Data'
-          },
-          {
-            key: 'logstash.count',
-            title: 'Logstash'
-          },
-          {
-            key: 'kibana.count',
-            title: 'Kibana'
-          },
-          {
-            key: 'license.type',
-            title: 'License'
-          }
-        ]
-      };
-
-      const table = ReactDOM.render(<Table
-        scope={ $scope }
-        template={ ClusterRow }
-        options={ options }/>, $el[0]);
-
-      const notify = new Notifier();
-      function licenseWarning(message) {
-        $scope.$evalAsync(function () {
-          notify.warning(message, {
-            lifetime: 60000
-          });
-        });
-      }
-
+    link(scope, $el) {
       const globalState = $injector.get('globalState');
       const kbnUrl = $injector.get('kbnUrl');
-      function changeCluster(uuid) {
-        $scope.$evalAsync(function () {
-          globalState.cluster_uuid = uuid;
-          globalState.save();
-          kbnUrl.changePath('/overview');
-        });
-      }
-
       const showLicenseExpiration = $injector.get('showLicenseExpiration');
-      $scope.$watch('clusters', (data) => {
-        if (data) {
-          data.forEach((cluster) => {
-            // these become props for the cluster row
-            cluster.changeCluster = changeCluster;
-            cluster.licenseWarning = licenseWarning;
-            cluster.showLicenseExpiration = showLicenseExpiration;
-          });
-          table.setData(data);
-        }
+
+      scope.$watch('clusters', (clusters = []) => {
+        const clusterTable = (
+          <MonitoringTable
+            className='clusterTable'
+            rows={ clusters }
+            placeholder='Filter Clusters...'
+            filterFields={ filterFields }
+            columns={ columns }
+            rowComponent={ clusterRowFactory(scope, globalState, kbnUrl, showLicenseExpiration) }
+          />
+        );
+        render(clusterTable, $el[0]);
       });
+
     }
   };
 });

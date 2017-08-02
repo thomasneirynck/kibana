@@ -1,118 +1,101 @@
-import { capitalize, get, find } from 'lodash';
-import numeral from 'numeral';
+import { capitalize, get } from 'lodash';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { KuiKeyboardAccessible } from 'ui_framework/components';
-import { KibanaStatusIcon } from 'plugins/monitoring/components/kibana/status_icon';
-import { Table } from 'plugins/monitoring/components/paginated_table';
-import { SORT_ASCENDING } from 'monitoring-constants';
+import { render } from 'react-dom';
 import { uiModules } from 'ui/modules';
+import {
+  KuiKeyboardAccessible,
+  KuiTableRowCell,
+  KuiTableRow
+} from 'ui_framework/components';
+import { KibanaStatusIcon } from 'plugins/monitoring/components/kibana/status_icon';
+import { MonitoringTable } from 'plugins/monitoring/components/table';
+import { SORT_ASCENDING } from 'monitoring-constants';
+import { formatNumber } from '../../../lib/format_number';
 
-const uiModule = uiModules.get('monitoring/directives', []);
-uiModule.directive('monitoringKibanaListing', function (kbnUrl) {
-  const initialTableOptions = {
-    title: 'Kibana',
-    searchPlaceholder: 'Filter Instances',
-    filterFields: ['kibana.name', 'kibana.host', 'kibana.status', 'kibana.transport_address'],
-    columns: [
-      {
-        key: 'kibana.name',
-        sortKey: 'kibana.name',
-        sort: SORT_ASCENDING,
-        title: 'Name'
-      },
-      {
-        key: 'kibana.status',
-        sortKey: 'kibana.status',
-        title: 'Status'
-      },
-      {
-        key: 'os.load',
-        sortKey: 'os.load.1m',
-        title: 'Load Average'
-      },
-      {
-        key: 'process.memory',
-        sortKey: 'process.memory.resident_set_size_in_bytes',
-        title: 'Memory Size'
-      },
-      {
-        key: 'requests.total',
-        sortKey: 'requests.total',
-        title: 'Requests'
-      },
-      {
-        key: 'response_times',
-        sortKey: 'response_times.average',
-        title: 'Response Times'
-      }
-    ]
+const filterFields = [ 'kibana.name', 'kibana.host', 'kibana.status', 'kibana.transport_address' ];
+const columns = [
+  { title: 'Name', sortKey: 'kibana.name', sortOrder: SORT_ASCENDING },
+  { title: 'Status', sortKey: 'kibana.status' },
+  { title: 'Load Average', sortKey: 'os.load.1m' },
+  { title: 'Memory Size', sortKey: 'process.memory.resident_set_size_in_bytes' },
+  { title: 'Requests', sortKey: 'requests.total' },
+  { title: 'Response Times', sortKey: 'response_times.average' }
+];
+const instanceRowFactory = (scope, kbnUrl) => {
+  const goToInstance = uuid => {
+    scope.$evalAsync(() => {
+      kbnUrl.changePath(`/kibana/instances/${uuid}`);
+    });
   };
 
+  return function KibanaRow(props) {
+    return (
+      <KuiTableRow>
+        <KuiTableRowCell>
+          <div className='monitoringTableCell__name'>
+            <KuiKeyboardAccessible>
+              <a className='kuiLink' onClick={ goToInstance.bind(null, get(props, 'kibana.uuid')) }>
+                { props.kibana.name }
+              </a>
+            </KuiKeyboardAccessible>
+          </div>
+          <div className='monitoringTableCell__transportAddress'>{ get(props, 'kibana.transport_address') }</div>
+        </KuiTableRowCell>
+        <KuiTableRowCell>
+          <div title={ `Instance status: ${props.kibana.status}` } className='monitoringTableCell__status'>
+            <KibanaStatusIcon status={ props.kibana.status } availability={ props.availability } />&nbsp;
+            { !props.availability ? 'Offline' : capitalize(props.kibana.status) }
+          </div>
+        </KuiTableRowCell>
+        <KuiTableRowCell>
+          <div className='monitoringTableCell__number'>
+            { formatNumber(get(props, 'os.load["1m"]'), '0.00') }
+          </div>
+        </KuiTableRowCell>
+        <KuiTableRowCell>
+          <div className='monitoringTableCell__number'>
+            { formatNumber(props.process.memory.resident_set_size_in_bytes, '0.00 b') }
+          </div>
+        </KuiTableRowCell>
+        <KuiTableRowCell>
+          <div className='monitoringTableCell__number'>
+            { formatNumber(props.requests.total, 'int_commas') }
+          </div>
+        </KuiTableRowCell>
+        <KuiTableRowCell>
+          <div className='monitoringTableCell__splitNumber'>
+            { props.response_times.average && (formatNumber(props.response_times.average, 'int_commas') + ' ms avg') }
+          </div>
+          <div className='monitoringTableCell__splitNumber'>
+            { formatNumber(props.response_times.max, 'int_commas') } ms max
+          </div>
+        </KuiTableRowCell>
+      </KuiTableRow>
+    );
+  };
+};
+
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringKibanaListing', kbnUrl => {
   return {
     restrict: 'E',
-    scope: { rows: '=' },
-    link: function (scope, $el) {
-      const tableRowTemplate = React.createClass({
-        getInitialState: function () {
-          return find(scope.rows, { resolver: this.props.resolver }) || null;
-        },
-        componentWillReceiveProps: function (newProps) {
-          this.setState(newProps);
-        },
-        render: function () {
-          return (
-            <tr key={ `row-${this.props.resolver}` } className='big'>
-              <td>
-                <KuiKeyboardAccessible>
-                  <a className='kuiLink' onClick={ () => {
-                    scope.$evalAsync(() => {
-                      kbnUrl.changePath('/kibana/instances/' + get(this.props, 'kibana.uuid'));
-                    });
-                  } }>
-                    <div>{ this.props.kibana.name }</div>
-                  </a>
-                </KuiKeyboardAccessible>
-                <div className='small'>{ get(this.props, 'kibana.transport_address') }</div>
-              </td>
-              <td>
-                <div title={ `Instance status: ${this.props.kibana.status}` }>
-                  <KibanaStatusIcon status={ this.props.kibana.status } availability={ this.props.availability } />&nbsp;
-                  { !this.props.availability ? 'Offline' : capitalize(this.props.kibana.status) }
-                </div>
-              </td>
-              <td>
-                <div className='big'>
-                  { `${numeral(this.props.os.load['1m']).format('0.00')}` }
-                </div>
-              </td>
-              <td>
-                <div className='big'>
-                  { `${numeral(this.props.process.memory.resident_set_size_in_bytes).format('0.00 b')}` }
-                </div>
-              </td>
-              <td>
-                <div className='big'>{ this.props.requests.total }</div>
-              </td>
-              <td>
-                <div>
-                  <div>{ this.props.response_times.average && (numeral(this.props.response_times.average).format('0') + ' ms avg') }</div>
-                  <div>{ numeral(this.props.response_times.max).format('0') } ms max</div>
-                </div>
-              </td>
-            </tr>
-          );
-        }
+    scope: { instances: '=' },
+    link(scope, $el) {
+
+      scope.$watch('instances', (instances = []) => {
+        const kibanasTable = (
+          <MonitoringTable
+            className='kibanaInstancesTable'
+            rows={ instances }
+            placeholder='Filter Instances...'
+            filterFields={ filterFields }
+            columns={ columns }
+            rowComponent={ instanceRowFactory(scope, kbnUrl) }
+          />
+        );
+        render(kibanasTable, $el[0]);
       });
 
-      const $table = React.createElement(Table, {
-        options: initialTableOptions,
-        template: tableRowTemplate
-      });
-      const tableInstance = ReactDOM.render($table, $el[0]);
-      scope.$watch('rows', function (rows) {
-        tableInstance.setData(rows);
-      });
     }
   };
 });

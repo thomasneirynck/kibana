@@ -1,56 +1,9 @@
-@md_size_screen: 980px;
-
-monitoring-main {
-  .navbar {
-    min-height: 0;
-  }
-}
-
 // NOTE: Temporary fix to allow page items to vertically align to the
 // breadcrumbs and tabs. Overrides a UI Framework class
 .page-row {
   padding: 0 10px;
   margin: 10px 0;
 }
-
-//
-// MONITORING TABLE CODE: DEPRECATING THIS SOON
-//
-// shard activity
-.table-condensed,
-.monitoring-view-listing-table {
-  th {
-    font-weight: normal;
-  }
-}
-
-.table-condensed {
-  th,
-  td {
-    border-color: @esLightGray;
-  }
-}
-
-// listing tables
-.monitoring-view-listing-table {
-  border-bottom: 1px solid @esLightGray;
-
-  th {
-    border-bottom: 2px solid @esVeryLightGray;
-  }
-
-  th,
-  td {
-    margin-bottom: 0;
-  }
-
-  .offline {
-    color: @esDarkGray;
-  }
-}
-//
-// END MONITORING TABLE CODE: DEPRECATING THIS SOON
-//
 
 .monitoring-tooltip__trigger,
 .monitoring-tooltip__trigger:hover {

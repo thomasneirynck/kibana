@@ -5,6 +5,7 @@ import { routeInitProvider } from 'plugins/monitoring/lib/route_init';
 import { ajaxErrorHandlersProvider } from 'plugins/monitoring/lib/ajax_error_handler';
 import { formatTimestampToDuration } from 'plugins/monitoring/lib/format_number';
 import { CALCULATE_DURATION_SINCE } from 'monitoring-constants';
+import { mapSeverity } from 'plugins/monitoring/components/alerts/map_severity';
 
 function getAlertData($injector) {
   const globalState = $injector.get('globalState');
@@ -41,7 +42,8 @@ uiRoutes.when('/alerts', {
       this.data = alerts.map(alert => {
         return {
           ...alert,
-          since: formatTimestampToDuration(alert.timestamp, CALCULATE_DURATION_SINCE)
+          since: formatTimestampToDuration(alert.timestamp, CALCULATE_DURATION_SINCE),
+          severity_group: mapSeverity(alert.metadata.severity)
         };
       });
     };

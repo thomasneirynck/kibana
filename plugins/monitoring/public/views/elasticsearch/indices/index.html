@@ -2,8 +2,9 @@
   <monitoring-main product="elasticsearch" name="indices">
     <monitoring-cluster-status-elasticsearch></monitoring-cluster-status-elasticsearch>
     <div class="page-row">
+      <h3 class="kuiScreenReaderOnly">Indices</h3>
       <monitoring-index-listing
-        data="pageData.rows"
+        indices="pageData.rows"
         show-system-indices="showSystemIndices"
         toggle-show-system-indices="toggleShowSystemIndices"
       ></monitoring-index-listing>

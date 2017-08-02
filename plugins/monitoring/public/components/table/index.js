@@ -1,0 +1,1 @@
+export { MonitoringTable } from './table';

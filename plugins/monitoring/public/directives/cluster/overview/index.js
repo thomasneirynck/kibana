@@ -4,7 +4,7 @@ import { Overview } from 'plugins/monitoring/components/cluster/overview';
 import { uiModules } from 'ui/modules';
 
 const uiModule = uiModules.get('monitoring/directives', []);
-uiModule.directive('monitoringClusterOverview', function (kbnUrl, showLicenseExpiration) {
+uiModule.directive('monitoringClusterOverview', (kbnUrl, showLicenseExpiration) => {
   return {
     restrict: 'E',
     scope: { cluster: '=' },

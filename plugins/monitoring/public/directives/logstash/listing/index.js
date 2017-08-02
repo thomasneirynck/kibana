@@ -1,114 +1,98 @@
-import { find, get } from 'lodash';
-import numeral from 'numeral';
+import { get } from 'lodash';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { KuiKeyboardAccessible } from 'ui_framework/components';
-import { Table } from 'plugins/monitoring/components/paginated_table';
-import { SORT_ASCENDING } from 'monitoring-constants';
+import { render } from 'react-dom';
 import { uiModules } from 'ui/modules';
-import { formatNumber } from '../../../lib/format_number';
+import {
+  KuiKeyboardAccessible,
+  KuiTableRowCell,
+  KuiTableRow
+} from 'ui_framework/components';
+import { MonitoringTable } from 'plugins/monitoring/components/table';
+import { SORT_ASCENDING } from 'monitoring-constants';
+import {
+  formatNumber,
+  formatPercentageUsage
+} from '../../../lib/format_number';
 
-const uiModule = uiModules.get('monitoring/directives', []);
-uiModule.directive('monitoringLogstashNodeListing', function (kbnUrl) {
-  const initialTableOptions = {
-    title: 'Nodes',
-    searchPlaceholder: 'Filter Nodes',
-    filterFields: ['logstash.name', 'logstash.host', 'logstash.http_address'],
-    columns: [
-      {
-        key: 'logstash.name',
-        sortKey: 'logstash.name',
-        sort: SORT_ASCENDING,
-        title: 'Name'
-      },
-      {
-        key: 'process.cpu.percent',
-        sortKey: 'process.cpu.percent',
-        title: 'CPU Usage'
-      },
-      {
-        key: 'os.cpu.load_average.1m',
-        sortKey: 'os.cpu.load_average.1m',
-        title: 'Load Average'
-      },
-      {
-        key: 'jvm.mem.heap_used_percent',
-        sortKey: 'jvm.mem.heap_used_percent',
-        title: 'JVM Heap Used'
-      },
-      {
-        key: 'events.out',
-        sortKey: 'events.out',
-        title: 'Events Ingested'
-      },
-      {
-        key: 'reloads',
-        title: 'Config Reloads'
-      }
-    ]
+const filterFields = [ 'logstash.name', 'logstash.host', 'logstash.http_address' ];
+const columns = [
+  { title: 'Name', sortKey: 'logstash.name', sortOrder: SORT_ASCENDING },
+  { title: 'CPU Usage', sortKey: 'process.cpu.percent' },
+  { title: 'Load Average', sortKey: 'os.cpu.load_average.1m', },
+  { title: 'JVM Heap Used', sortKey: 'jvm.mem.heap_used_percent' },
+  { title: 'Events Ingested', sortKey: 'events.out' },
+  { title: 'Config Reloads' }
+];
+const nodeRowFactory = (scope, kbnUrl) => {
+  const goToNode = uuid => {
+    scope.$evalAsync(() => {
+      kbnUrl.changePath(`/logstash/node/${uuid}`);
+    });
   };
 
+  return function NodeRow(props) {
+    return (
+      <KuiTableRow>
+        <KuiTableRowCell>
+          <div className='monitoringTableCell__name'>
+            <KuiKeyboardAccessible>
+              <a className='kuiLink' onClick={ goToNode.bind(null, get(props, 'logstash.uuid')) }>
+                { get(props, 'logstash.name') }
+              </a>
+            </KuiKeyboardAccessible>
+          </div>
+          <div className="monitoringTableCell__transportAddress">{ get(props, 'logstash.http_address') }</div>
+        </KuiTableRowCell>
+        <KuiTableRowCell>
+          <div className='monitoringTableCell__number'>
+            { formatPercentageUsage(props.process.cpu.percent, 100) }
+          </div>
+        </KuiTableRowCell>
+        <KuiTableRowCell>
+          <div className='monitoringTableCell__number'>
+            { formatNumber(get(props, 'os.cpu.load_average["1m"]'), '0.00') }
+          </div>
+        </KuiTableRowCell>
+        <KuiTableRowCell>
+          <div className='monitoringTableCell__number'>
+            { formatPercentageUsage(props.jvm.mem.heap_used_percent, 100) }
+          </div>
+        </KuiTableRowCell>
+        <KuiTableRowCell>
+          <div className='monitoringTableCell__number'>
+            { formatNumber(props.events.out, '0.[0]a') }
+          </div>
+        </KuiTableRowCell>
+        <KuiTableRowCell>
+          <div className='monitoringTableCell__splitNumber'>{ props.reloads.successes } successes</div>
+          <div className='monitoringTableCell__splitNumber'>{ props.reloads.failures } failures</div>
+        </KuiTableRowCell>
+      </KuiTableRow>
+    );
+  };
+};
+
+const uiModule = uiModules.get('monitoring/directives', []);
+uiModule.directive('monitoringLogstashNodeListing', kbnUrl => {
   return {
     restrict: 'E',
-    scope: { rows: '=' },
+    scope: { nodes: '=' },
     link: function (scope, $el) {
-      const tableRowTemplate = React.createClass({
-        getInitialState: function () {
-          return find(scope.rows, { resolver: this.props.resolver }) || null;
-        },
-        componentWillReceiveProps: function (newProps) {
-          this.setState(newProps);
-        },
-        render: function () {
-          return (
-            <tr key={ `row-${this.props.resolver}` } className='big'>
-              <td>
-                <KuiKeyboardAccessible>
-                  <a className='kuiLink' onClick={ () => {
-                    scope.$evalAsync(() => {
-                      kbnUrl.changePath('/logstash/node/' + get(this.props, 'logstash.uuid'));
-                    });
-                  } }>
-                    <div>{ this.props.logstash.name }</div>
-                  </a>
-                </KuiKeyboardAccessible>
-                <div className="small">{ get(this.props, 'logstash.http_address') }</div>
-              </td>
-              <td>
-                <div className='big'>
-                  { `${numeral(this.props.process.cpu.percent)}%` }
-                </div>
-              </td>
-              <td>
-                <div className='big'>
-                  { `${numeral(get(this.props, 'os.cpu.load_average["1m"]', 0)).format('0.00')}` }
-                </div>
-              </td>
-              <td>
-                <div className='big'>
-                  { `${numeral(this.props.jvm.mem.heap_used_percent)}%` }
-                </div>
-              </td>
-              <td>
-                <div className='big'>{ formatNumber(this.props.events.out, '0.[0]a') }</div>
-              </td>
-              <td>
-                <div>{ this.props.reloads.successes } successes</div>
-                <div>{ this.props.reloads.failures } failures</div>
-              </td>
-            </tr>
-          );
-        }
+
+      scope.$watch('nodes', (nodes = []) => {
+        const nodesTable = (
+          <MonitoringTable
+            className='logstashNodesTable'
+            rows={ nodes }
+            placeholder='Filter Nodes...'
+            filterFields={ filterFields }
+            columns={ columns }
+            rowComponent={ nodeRowFactory(scope, kbnUrl) }
+          />
+        );
+        render(nodesTable, $el[0]);
       });
 
-      const $table = React.createElement(Table, {
-        options: initialTableOptions,
-        template: tableRowTemplate
-      });
-      const tableInstance = ReactDOM.render($table, $el[0]);
-      scope.$watch('rows', function (rows) {
-        tableInstance.setData(rows);
-      });
     }
   };
 });
