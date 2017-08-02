@@ -20,6 +20,9 @@
     "!__tests__",
     "!__tests__/**/*",
     "!**/__tests__",
-    "!**/__tests__/**/*"
+    "!**/__tests__/**/*",
+    "!plugins/**/*.test.js",
+    "!plugins/**/__snapshots__",
+    "!plugins/**/__snapshots__/*"
   ]
 }
