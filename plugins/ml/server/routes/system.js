@@ -13,16 +13,16 @@
  * strictly prohibited.
  */
 
-import { getClient } from '../get_client_ml';
+import { callWithRequestFactory } from '../get_client_ml';
 import { wrapError } from '../errors';
 
 export function systemRoutes(server, commonRouteConfig) {
-  const callWithRequest = getClient(server).callWithRequest;
 
   server.route({
     method: 'POST',
     path: '/api/ml/_has_privileges',
     handler(request, reply) {
+      const callWithRequest = callWithRequestFactory(server, request);
       const xpackMainPlugin = server.plugins.xpack_main;
       const xpackInfo = xpackMainPlugin && xpackMainPlugin.info;
       const securityInfo = xpackInfo && xpackInfo.isAvailable() && xpackInfo.feature('security');
@@ -33,7 +33,7 @@ export function systemRoutes(server, commonRouteConfig) {
         reply({ securityDisabled: true });
       } else {
         const body = request.payload;
-        return callWithRequest(request, 'ml.privilegeCheck', { body })
+        return callWithRequest('ml.privilegeCheck', { body })
         .then(resp => reply(resp))
         .catch(resp => reply(wrapError(resp)));
       }

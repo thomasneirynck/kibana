@@ -13,17 +13,17 @@
  * strictly prohibited.
  */
 
-import { getClient } from '../get_client_ml';
+import { callWithRequestFactory } from '../get_client_ml';
 import { wrapError } from '../errors';
 
 export function dataFeedRoutes(server, commonRouteConfig) {
-  const callWithRequest = getClient(server).callWithRequest;
 
   server.route({
     method: 'GET',
     path: '/api/ml/datafeeds',
     handler(request, reply) {
-      return callWithRequest(request, 'ml.datafeeds')
+      const callWithRequest = callWithRequestFactory(server, request);
+      return callWithRequest('ml.datafeeds')
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },
@@ -36,8 +36,9 @@ export function dataFeedRoutes(server, commonRouteConfig) {
     method: 'GET',
     path: '/api/ml/datafeeds/{datafeedId}',
     handler(request, reply) {
+      const callWithRequest = callWithRequestFactory(server, request);
       const datafeedId = request.params.datafeedId;
-      return callWithRequest(request, 'ml.datafeeds', { datafeedId })
+      return callWithRequest('ml.datafeeds', { datafeedId })
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },
@@ -50,7 +51,8 @@ export function dataFeedRoutes(server, commonRouteConfig) {
     method: 'GET',
     path: '/api/ml/datafeeds/_stats',
     handler(request, reply) {
-      return callWithRequest(request, 'ml.datafeedStats')
+      const callWithRequest = callWithRequestFactory(server, request);
+      return callWithRequest('ml.datafeedStats')
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },
@@ -63,8 +65,9 @@ export function dataFeedRoutes(server, commonRouteConfig) {
     method: 'GET',
     path: '/api/ml/datafeeds/{datafeedId}/_stats',
     handler(request, reply) {
+      const callWithRequest = callWithRequestFactory(server, request);
       const datafeedId = request.params.datafeedId;
-      return callWithRequest(request, 'ml.datafeedStats', { datafeedId })
+      return callWithRequest('ml.datafeedStats', { datafeedId })
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },
@@ -77,9 +80,10 @@ export function dataFeedRoutes(server, commonRouteConfig) {
     method: 'PUT',
     path: '/api/ml/datafeeds/{datafeedId}',
     handler(request, reply) {
+      const callWithRequest = callWithRequestFactory(server, request);
       const datafeedId = request.params.datafeedId;
       const body = request.payload;
-      return callWithRequest(request, 'ml.addDatafeed', { datafeedId, body })
+      return callWithRequest('ml.addDatafeed', { datafeedId, body })
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },
@@ -92,9 +96,10 @@ export function dataFeedRoutes(server, commonRouteConfig) {
     method: 'POST',
     path: '/api/ml/datafeeds/{datafeedId}/_update',
     handler(request, reply) {
+      const callWithRequest = callWithRequestFactory(server, request);
       const datafeedId = request.params.datafeedId;
       const body = request.payload;
-      return callWithRequest(request, 'ml.updateDatafeed', { datafeedId, body })
+      return callWithRequest('ml.updateDatafeed', { datafeedId, body })
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },
@@ -107,6 +112,7 @@ export function dataFeedRoutes(server, commonRouteConfig) {
     method: 'DELETE',
     path: '/api/ml/datafeeds/{datafeedId}',
     handler(request, reply) {
+      const callWithRequest = callWithRequestFactory(server, request);
       const options = {
         datafeedId: request.params.datafeedId
       };
@@ -114,7 +120,7 @@ export function dataFeedRoutes(server, commonRouteConfig) {
       if (force !== undefined) {
         options.force = force;
       }
-      return callWithRequest(request, 'ml.deleteDatafeed', options)
+      return callWithRequest('ml.deleteDatafeed', options)
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },
@@ -127,10 +133,11 @@ export function dataFeedRoutes(server, commonRouteConfig) {
     method: 'POST',
     path: '/api/ml/datafeeds/{datafeedId}/_start',
     handler(request, reply) {
+      const callWithRequest = callWithRequestFactory(server, request);
       const datafeedId = request.params.datafeedId;
       const start = request.payload.start;
       const end = request.payload.end;
-      return callWithRequest(request, 'ml.startDatafeed', { datafeedId, start, end })
+      return callWithRequest('ml.startDatafeed', { datafeedId, start, end })
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },
@@ -143,8 +150,9 @@ export function dataFeedRoutes(server, commonRouteConfig) {
     method: 'POST',
     path: '/api/ml/datafeeds/{datafeedId}/_stop',
     handler(request, reply) {
+      const callWithRequest = callWithRequestFactory(server, request);
       const datafeedId = request.params.datafeedId;
-      return callWithRequest(request, 'ml.stopDatafeed', { datafeedId })
+      return callWithRequest('ml.stopDatafeed', { datafeedId })
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },
@@ -157,8 +165,9 @@ export function dataFeedRoutes(server, commonRouteConfig) {
     method: 'GET',
     path: '/api/ml/datafeeds/{datafeedId}/_preview',
     handler(request, reply) {
+      const callWithRequest = callWithRequestFactory(server, request);
       const datafeedId = request.params.datafeedId;
-      return callWithRequest(request, 'ml.datafeedPreview', { datafeedId })
+      return callWithRequest('ml.datafeedPreview', { datafeedId })
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },

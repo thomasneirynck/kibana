@@ -13,18 +13,18 @@
  * strictly prohibited.
  */
 
-import { getClient } from '../get_client_ml';
+import { callWithRequestFactory } from '../get_client_ml';
 import { wrapError } from '../errors';
 
 export function indicesRoutes(server, commonRouteConfig) {
-  const callWithRequest = getClient(server).callWithRequest;
 
   server.route({
     method: 'GET',
     path: '/api/ml/indices',
     handler(request, reply) {
+      const callWithRequest = callWithRequestFactory(server, request);
       const params = { index: '*', filterPath: '*.mappings,*.aliases' };
-      return callWithRequest(request, 'indices.get', params)
+      return callWithRequest('indices.get', params)
       .then(resp => reply(resp))
       .catch(resp => reply(wrapError(resp)));
     },
