@@ -23,6 +23,7 @@ import { dataFeedRoutes } from './server/routes/datafeeds';
 import { indicesRoutes } from './server/routes/indices';
 import { notificationRoutes } from './server/routes/notification_settings';
 import { systemRoutes } from './server/routes/system';
+import { dataRecognizer } from './server/routes/data_recognizer';
 
 export const ml = (kibana) => {
   return new kibana.Plugin({
@@ -84,6 +85,7 @@ export const ml = (kibana) => {
       indicesRoutes(server, commonRouteConfig);
       notificationRoutes(server, commonRouteConfig);
       systemRoutes(server, commonRouteConfig);
+      dataRecognizer(server, commonRouteConfig);
 
       initializationChecks(this, server).start();
     }

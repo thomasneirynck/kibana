@@ -184,4 +184,18 @@ module.service('ml', function (prlHttpService) {
     });
   };
 
+  this.recognizeIndex = function (obj) {
+    return http.request({
+      url: `${basePath}/data_recognizer/recognize/${obj.indexPatternTitle}`,
+      method: 'GET'
+    });
+  };
+
+  this.getRecognizerConfigs = function (obj) {
+    return http.request({
+      url: `${basePath}/data_recognizer/get_configs/${obj.configId}`,
+      method: 'GET'
+    });
+  };
+
 });
