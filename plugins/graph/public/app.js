@@ -4,6 +4,7 @@ import './angular-venn-simple.js';
 import gws from './graphClientWorkspace.js';
 import utils from './utils.js';
 import { IndexPatternsProvider } from 'ui/index_patterns/index_patterns';
+import { SavedObjectsClientProvider } from 'ui/saved_objects';
 
 import 'ui/autoload/all';
 import 'ui/directives/saved_object_finder';
@@ -55,9 +56,16 @@ uiRoutes
   .when('/home', {
     template: appTemplate,
     resolve: {
-      GetIndexPatternIds: function (Private) {
-        const indexPatterns = Private(IndexPatternsProvider);
-        return indexPatterns.getIds();
+      //Copied from example found in wizard.js ( Kibana TODO - can't
+      // IndexPatternsProvider abstract these implementation details better?)
+      indexPatterns: function (Private) {
+        const savedObjectsClient = Private(SavedObjectsClientProvider);
+
+        return savedObjectsClient.find({
+          type: 'index-pattern',
+          fields: ['title'],
+          perPage: 10000
+        }).then(response => response.savedObjects);
       },
       GetIndexPatternProvider: function (Private) {
         return Private(IndexPatternsProvider);
@@ -80,9 +88,16 @@ uiRoutes
       );
 
       },
-      GetIndexPatternIds: function (Private) {
-        const indexPatterns = Private(IndexPatternsProvider);
-        return indexPatterns.getIds();
+      //Copied from example found in wizard.js ( Kibana TODO - can't
+      // IndexPatternsProvider abstract these implementation details better?)
+      indexPatterns: function (Private) {
+        const savedObjectsClient = Private(SavedObjectsClientProvider);
+
+        return savedObjectsClient.find({
+          type: 'index-pattern',
+          fields: ['title'],
+          perPage: 10000
+        }).then(response => response.savedObjects);
       },
       GetIndexPatternProvider: function (Private) {
         return Private(IndexPatternsProvider);
@@ -281,7 +296,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     $scope.selectedIndex = selectedIndex;
     $scope.proposedIndex = selectedIndex;
 
-    const promise = $route.current.locals.GetIndexPatternProvider.get(selectedIndex);
+    const promise = $route.current.locals.GetIndexPatternProvider.get(selectedIndex.id);
     promise
     .then(handleSuccess)
     .then(function (indexPattern) {
@@ -573,7 +588,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       return;
     }
     const options = {
-      indexName: $scope.selectedIndex,
+      indexName: $scope.selectedIndex.attributes.title,
       vertex_fields: $scope.selectedFields,
       // Here we have the opportunity to look up labels for nodes...
       nodeLabeller: function (newNodes) {
@@ -604,7 +619,8 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     }
   }
 
-  $scope.indices = $route.current.locals.GetIndexPatternIds;
+  $scope.indices = $route.current.locals.indexPatterns;
+
 
   $scope.setDetail = function (data) {
     $scope.detail = data;
@@ -758,7 +774,22 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       }
     });
 
-    $scope.indexSelected(wsObj.indexPattern, function () {
+    //Lookup the saved index pattern title
+    let savedObjectIndexPattern = null;
+    $scope.indices.forEach(function (savedObject) {
+      // wsObj.indexPattern is the title string of an indexPattern which
+      // we attempt here to look up in the list of currently saved objects
+      // that contain index pattern definitions
+      if(savedObject.attributes.title === wsObj.indexPattern) {
+        savedObjectIndexPattern = savedObject;
+      }
+    });
+    if(!savedObjectIndexPattern) {
+      notify.error('Missing index pattern:' + wsObj.indexPattern);
+      return;
+    }
+
+    $scope.indexSelected(savedObjectIndexPattern, function () {
       Object.assign($scope.exploreControls, wsObj.exploreControls);
 
       if ($scope.exploreControls.sampleDiversityField) {
@@ -934,7 +965,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     });
 
     $scope.savedWorkspace.wsState = JSON.stringify({
-      'indexPattern': $scope.selectedIndex,
+      'indexPattern': $scope.selectedIndex.attributes.title,
       'selectedFields': $scope.selectedFields.map(function (field) {
         return {
           'name':field.name,

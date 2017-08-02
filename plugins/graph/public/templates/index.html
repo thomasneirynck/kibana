@@ -15,7 +15,7 @@
           name="mySelect"
           ng-change="uiSelectIndex()"
           ng-class="{pulseControl:selectedIndex === null}"
-          ng-options="option for option in indices"
+          ng-options="option.attributes.title for option in indices"
           ng-model="grr.proposedIndex"
         >
           <option value="">Select index pattern...</option>
