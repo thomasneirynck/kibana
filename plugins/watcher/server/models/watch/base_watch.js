@@ -3,19 +3,17 @@ import { Action } from '../action';
 import { WatchStatus } from '../watch_status';
 
 export class BaseWatch {
+  // This constructor should not be used directly.
+  // JsonWatch objects should be instantiated using the
+  // fromUpstreamJson and fromDownstreamJson static methods
   constructor(props) {
     this.id = props.id;
     this.name = props.name;
     this.type = props.type;
+
     this.isSystemWatch = false;
 
-    if (props.watchStatusJson) {
-      this.watchStatus = WatchStatus.fromUpstreamJSON({
-        id: this.id,
-        watchStatusJson: props.watchStatusJson
-      });
-    }
-
+    this.watchStatus = props.watchStatus;
     this.actions = props.actions;
   }
 
@@ -32,22 +30,21 @@ export class BaseWatch {
     return [];
   }
 
-  // generate object to send to kibana
+  // to Kibana
   get downstreamJSON() {
     const json = {
       id: this.id,
       name: this.name,
-      watch: this.watch,
+      type: this.type,
       isSystemWatch: this.isSystemWatch,
       watchStatus: this.watchStatus ? this.watchStatus.downstreamJSON : undefined,
-      actions: map(this.actions, (action) => action.downstreamJSON),
-      type: this.type
+      actions: map(this.actions, (action) => action.downstreamJSON)
     };
 
     return json;
   }
 
-  // generate object to send to elasticsearch
+  // to Elasticsearch
   get upstreamJSON() {
     const watch = this.watchJSON;
 
@@ -62,7 +59,7 @@ export class BaseWatch {
     };
   }
 
-  // generate Watch object from kibana response
+  // from Kibana
   static getPropsFromDownstreamJSON(json) {
     const actions = map(json.actions, action => {
       return Action.fromDownstreamJSON(action);
@@ -71,14 +68,17 @@ export class BaseWatch {
     return {
       id: json.id,
       name: json.name,
-      type: json.type,
       actions
     };
   }
 
+  // from Elasticsearch
   static getPropsFromUpstreamJSON(json) {
     if (!json.id) {
-      throw new Error('json argument must contain a id property');
+      throw new Error('json argument must contain an id property');
+    }
+    if (!json.watchJson) {
+      throw new Error('json argument must contain a watchJson property');
     }
     if (!json.watchStatusJson) {
       throw new Error('json argument must contain a watchStatusJson property');
@@ -103,11 +103,16 @@ export class BaseWatch {
       return Action.fromUpstreamJSON({ id: actionId, actionJson });
     });
 
+    const watchStatus = WatchStatus.fromUpstreamJSON({
+      id,
+      watchStatusJson
+    });
+
     return {
       id,
       name,
       watchJson,
-      watchStatusJson,
+      watchStatus,
       actions
     };
   }

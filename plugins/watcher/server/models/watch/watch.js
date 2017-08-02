@@ -15,6 +15,7 @@ export class Watch {
     return WatchTypes;
   }
 
+  // from Kibana
   static fromDownstreamJSON(json) {
     if (!json.type) {
       throw new Error('json argument must contain an type property');
@@ -28,6 +29,7 @@ export class Watch {
     return WatchType.fromDownstreamJSON(json);
   }
 
+  // from Elasticsearch
   static fromUpstreamJSON(json) {
     if (!json.watchJson) {
       throw new Error('json argument must contain a watchJson property');

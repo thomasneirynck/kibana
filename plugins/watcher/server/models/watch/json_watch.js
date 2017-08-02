@@ -3,6 +3,9 @@ import { BaseWatch } from './base_watch';
 import { WATCH_TYPES } from '../../../common/constants';
 
 export class JsonWatch extends BaseWatch {
+  // This constructor should not be used directly.
+  // JsonWatch objects should be instantiated using the
+  // fromUpstreamJson and fromDownstreamJson static methods
   constructor(props) {
     props.type = WATCH_TYPES.JSON;
     super(props);
@@ -13,6 +16,11 @@ export class JsonWatch extends BaseWatch {
 
   get watchJSON() {
     return this.watch;
+  }
+
+  get upstreamJSON() {
+    const result = super.upstreamJSON;
+    return result;
   }
 
   get downstreamJSON() {

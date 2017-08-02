@@ -10,6 +10,9 @@ import { buildVisualizeQuery } from './build_visualize_query';
 import { formatVisualizeData } from './format_visualize_data';
 
 export class ThresholdWatch extends BaseWatch {
+  // This constructor should not be used directly.
+  // JsonWatch objects should be instantiated using the
+  // fromUpstreamJson and fromDownstreamJson static methods
   constructor(props) {
     props.type = WATCH_TYPES.THRESHOLD;
     super(props);
