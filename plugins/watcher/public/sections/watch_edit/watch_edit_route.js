@@ -17,7 +17,7 @@ routes
   controller: class WatchEditRouteController {
     constructor($injector) {
       const $route = $injector.get('$route');
-      this.watch = $route.current.locals.watch;
+      this.watch = $route.current.locals.xpackWatch;
       this.WATCH_TYPES = WATCH_TYPES;
     }
   },
@@ -28,7 +28,7 @@ routes
       const watchId = $route.current.params.id;
       updateWatchSections(watchId);
     },
-    watch: function ($injector) {
+    xpackWatch: function ($injector) {
       const $route = $injector.get('$route');
       const watchService = $injector.get('xpackWatcherWatchService');
       const licenseService = $injector.get('xpackWatcherLicenseService');
