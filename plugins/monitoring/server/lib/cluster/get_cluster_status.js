@@ -1,15 +1,24 @@
 import { get } from 'lodash';
 
-export function getClusterStatus(cluster) {
+/*
+ * @param cluster {Object} clusterStats from getClusterStatus
+ * @param unassignedShards {Object} (optional) shardStats.indices.totals.unassigned from getShardStats
+ * NOTE unassignedShards is optional only until the calculate_cluster_shards function is removed
+ */
+export function getClusterStatus(cluster, unassignedShards = {}) {
   const clusterStats = get(cluster, 'cluster_stats', {});
   const clusterNodes = get(clusterStats, 'nodes', {});
   const clusterIndices = get(clusterStats, 'indices', {});
+
+  const clusterTotalShards = get(clusterIndices, 'shards.total', 0);
+  const { replica, primary } = unassignedShards;
+  const unassignedShardsTotal = replica + primary || 0; // replica + primary will be NaN if unassignedShards is not passed
+  const totalShards = clusterTotalShards + unassignedShardsTotal;
 
   return {
     status: get(cluster, 'cluster_state.status', 'unknown'),
     // index-based stats
     indicesCount: get(clusterIndices, 'count', 0),
-    totalShards: get(clusterIndices, 'shards.total', 0),
     documentCount: get(clusterIndices, 'docs.count', 0),
     dataSize: get(clusterIndices, 'store.size_in_bytes', 0),
     // node-based stats
@@ -17,6 +26,8 @@ export function getClusterStatus(cluster) {
     upTime: get(clusterNodes, 'jvm.max_uptime_in_millis', 0),
     version: get(clusterNodes, 'versions', null),
     memUsed: get(clusterNodes, 'jvm.mem.heap_used_in_bytes', 0),
-    memMax: get(clusterNodes, 'jvm.mem.heap_max_in_bytes', 0)
+    memMax: get(clusterNodes, 'jvm.mem.heap_max_in_bytes', 0),
+    unassignedShards: unassignedShardsTotal,
+    totalShards
   };
 }
