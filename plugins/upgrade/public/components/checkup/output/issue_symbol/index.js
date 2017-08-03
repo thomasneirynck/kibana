@@ -16,7 +16,7 @@ export function IssueSymbol({ level }) {
 
   return (
     <span className='kuiEventSymbol'>
-      <span className={ iconClasses }></span>
+      <span className={ iconClasses } />
     </span>
   );
 }

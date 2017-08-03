@@ -21,7 +21,7 @@ export function ClusterItemContainer(props) {
     <div className='kuiPanel kuiPanel--withHeader kuiVerticalRhythm'>
       <div className='kuiPanelHeader'>
         <div className="kuiPanelHeaderSection">
-          <div className={ iconClassNames.join(' ') }></div>
+          <div className={ iconClassNames.join(' ') } />
           <div className="kuiPanelHeader__title">
             <h2 className='kuiSubTitle'>
               { props.title }

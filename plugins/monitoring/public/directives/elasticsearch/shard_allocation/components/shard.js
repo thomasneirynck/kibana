@@ -70,9 +70,14 @@ export const Shard = React.createClass({
     if (this.state.tooltip) {
       tooltip = (<div className="shard-tooltip">{ this.props.shard.tooltip_message }</div>);
     }
-    return (<div
+    return (
+      <div
         onMouseEnter={ this.toggle }
         onMouseLeave={ this.toggle }
-        className={ calculateClass(shard, 'shard') }>{ tooltip }{ shard.shard }</div>);
+        className={ calculateClass(shard, 'shard') }
+      >
+        { tooltip }{ shard.shard }
+      </div>
+    );
   }
 });

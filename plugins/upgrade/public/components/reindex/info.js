@@ -16,7 +16,7 @@ export function ReindexInfo({ className }) {
       </ul>
       <div className="kuiVerticalRhythm kuiInfoPanel kuiInfoPanel--error">
         <div className="kuiInfoPanelHeader">
-          <span className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--error fa-exclamation"></span>
+          <span className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--error fa-exclamation" />
           <span className="kuiInfoPanelHeader__title">
             Backup your indices now!
           </span>
@@ -30,23 +30,33 @@ export function ReindexInfo({ className }) {
       </div>
       <div className="kuiInfoPanel kuiInfoPanel--info kuiVerticalRhythm">
         <div className="kuiInfoPanelHeader">
-          <span className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--info fa-info"></span>
+          <span className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--info fa-info" />
           <span className="kuiInfoPanelHeader__title">
             How reindexing works:
           </span>
         </div>
         <div className="kuiInfoPanelBody">
           <ul className="kuiInfoPanelBody__message">
-            <li>Internal indices such as Kibana, Security, and Watcher will be renamed
-              to <code>{'{'}name{'}'}-6</code>, e.g. <code>.kibana-6</code></li>
-            <li>Other indices will be reindexed to a new index called <code>{'{'}name{'}'}-reindexed-v5</code>,
-              e.g. <code>my_index-reindexed-v5</code>.</li>
-            <li>The alias <code>{'{'}name{'}'}</code> will be added to the new index, along with any
-              other aliases that previously pointed to the old index.</li>
-            <li>The old index will be made <strong>read-only</strong> during the reindexing process,
-              after which it will be <strong>deleted</strong>.</li>
-            <li>This tool will only work on <strong>open</strong> indices with status green.
-              The reindex process waits for the new index to turn green before completing.</li>
+            <li>
+              Internal indices such as Kibana, Security, and Watcher will be renamed
+              to <code>{'{'}name{'}'}-6</code>, e.g. <code>.kibana-6</code>
+            </li>
+            <li>
+              Other indices will be reindexed to a new index called <code>{'{'}name{'}'}-reindexed-v5</code>,
+              e.g. <code>my_index-reindexed-v5</code>.
+            </li>
+            <li>
+              The alias <code>{'{'}name{'}'}</code> will be added to the new index, along with any
+              other aliases that previously pointed to the old index.
+            </li>
+            <li>
+              The old index will be made <strong>read-only</strong> during the reindexing process,
+              after which it will be <strong>deleted</strong>.
+            </li>
+            <li>
+              This tool will only work on <strong>open</strong> indices with status green.
+              The reindex process waits for the new index to turn green before completing.
+            </li>
           </ul>
         </div>
       </div>

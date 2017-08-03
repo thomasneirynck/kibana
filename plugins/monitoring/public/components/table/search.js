@@ -12,7 +12,7 @@ export function MonitoringTableSearchBar(props) {
       <KuiToolBarSearchBox
         onFilter={ props.onFilterChange }
         placeholder={ props.placeholder }
-      ></KuiToolBarSearchBox>
+      />
 
       { props.toolBarSections }
 

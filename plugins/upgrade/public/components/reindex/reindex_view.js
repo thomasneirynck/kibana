@@ -43,9 +43,11 @@ export const ReindexView = withViewState({
 
           {
             loadingStatus === LOADING_STATUS.FAILURE
-              ? <ErrorPanel className="kuiVerticalRhythm">
+              ? (
+                <ErrorPanel className="kuiVerticalRhythm">
                   { errorMessage }
                 </ErrorPanel>
+              )
               : null
           }
 

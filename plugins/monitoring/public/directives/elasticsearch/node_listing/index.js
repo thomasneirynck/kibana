@@ -49,13 +49,13 @@ const nodeRowFactory = (scope, kbnUrl, showCgroupMetricsElasticsearch) => {
       const isOnline = this.isOnline();
       if (showCgroupMetricsElasticsearch) {
         return [
-          <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_cgroup_quota') }></MetricCell>,
-          <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_cgroup_throttled') }></MetricCell>
+          <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_cgroup_quota') } />,
+          <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_cgroup_throttled') } />,
         ];
       }
       return [
-        <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_cpu_utilization') }></MetricCell>,
-        <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_load_average') }></MetricCell>
+        <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_cpu_utilization') } />,
+        <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_load_average') } />,
       ];
     }
     getShardCount() {
@@ -77,7 +77,7 @@ const nodeRowFactory = (scope, kbnUrl, showCgroupMetricsElasticsearch) => {
           <KuiTableRowCell>
             <div className='monitoringTableCell__name'>
               <Tooltip text={ this.props.node.nodeTypeLabel } trigger='hover' placement='bottom'>
-                <span className={ `fa ${this.props.node.nodeTypeClass}` }></span>
+                <span className={ `fa ${this.props.node.nodeTypeClass}` } />
               </Tooltip>
               &nbsp;
               <KuiKeyboardAccessible>
@@ -93,8 +93,8 @@ const nodeRowFactory = (scope, kbnUrl, showCgroupMetricsElasticsearch) => {
             </div>
           </KuiTableRowCell>
           { this.getCpuComponents() }
-          <MetricCell isOnline={ isOnline } metric={ get(this.props, 'metrics.node_jvm_mem_percent') }></MetricCell>
-          <MetricCell isOnline={ isOnline } metric={ get(this.props, 'metrics.node_free_space') }></MetricCell>
+          <MetricCell isOnline={ isOnline } metric={ get(this.props, 'metrics.node_jvm_mem_percent') } />
+          <MetricCell isOnline={ isOnline } metric={ get(this.props, 'metrics.node_free_space') } />
           { this.getShardCount() }
         </KuiTableRow>
       );

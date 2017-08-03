@@ -40,7 +40,7 @@ uiModule.directive('clusterView', kbnUrl => {
           kbnUrl={ kbnUrl }
           showSystemIndices={ scope.showSystemIndices }
           toggleShowSystemIndices={ scope.toggleShowSystemIndices }
-        ></ClusterView>,
+        />,
         element[0]
       );
     }

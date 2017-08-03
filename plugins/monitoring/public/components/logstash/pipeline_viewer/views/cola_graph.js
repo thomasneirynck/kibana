@@ -293,7 +293,7 @@ export class ColaGraph extends React.Component {
         preserveAspectRatio="xMinYMin meet"
         viewBox={ viewBox }
         pointerEvents="all"
-      ></svg>
+      />
     );
   }
 

@@ -28,7 +28,7 @@ class ShardRow extends React.Component {
       );
     } else {
       if (this.props.cols === 3) {
-        unassigned = (<td></td>);
+        unassigned = (<td />);
       }
     }
     return (
@@ -86,7 +86,7 @@ export const TableBody = React.createClass({
     return (
       <tbody>
         <tr>
-          <td colSpan={ this.props.cols }></td>
+          <td colSpan={ this.props.cols } />
         </tr>
       </tbody>
     );

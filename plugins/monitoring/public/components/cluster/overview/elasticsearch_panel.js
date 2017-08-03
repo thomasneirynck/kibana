@@ -79,7 +79,8 @@ export class ElasticsearchPanel extends React.Component {
               <dt className='cluster-panel__inner-title'>
                 <KuiKeyboardAccessible>
                   <a className='kuiLink' onClick={ goToNodes } >
-                    Nodes: <span data-test-subj='number_of_elasticsearch_nodes'>
+                    Nodes:&nbsp;
+                    <span data-test-subj='number_of_elasticsearch_nodes'>
                       { formatNumber(get(nodes, 'count.total'), 'int_commas') }
                     </span>
                   </a>

@@ -59,16 +59,17 @@ export function IndexTableRow({
         index.steps.length === 0
         ? null
         : (
-        <tr className="kuiTableRow actionOutput">
-          <td className="kuiTableRowCell kuiTableRowCell--wrap kuiTableRowCell--mergeTop" colSpan="3">
-            <div className="kuiTableRowCell__liner">
-              <IndexActionSteps
-                action={ index.action }
-                indexName={ index.name }
-                steps={ index.steps } />
-            </div>
-          </td>
-        </tr>
+          <tr className="kuiTableRow actionOutput">
+            <td className="kuiTableRowCell kuiTableRowCell--wrap kuiTableRowCell--mergeTop" colSpan="3">
+              <div className="kuiTableRowCell__liner">
+                <IndexActionSteps
+                  action={ index.action }
+                  indexName={ index.name }
+                  steps={ index.steps }
+                />
+              </div>
+            </td>
+          </tr>
         )
       }
     </tbody>

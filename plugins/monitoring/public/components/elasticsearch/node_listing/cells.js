@@ -41,7 +41,7 @@ function MetricCell(props) {
         <div className='monitoringTableCell__MetricCell__metric'>
           { formatMetric(props.metric, 'last') }
         </div>
-        <span className={ `monitoringTableCell__MetricCell__slopeArrow fa fa-long-arrow-${slopeArrow(props.metric)}` }></span>
+        <span className={ `monitoringTableCell__MetricCell__slopeArrow fa fa-long-arrow-${slopeArrow(props.metric)}` } />
         <div className='monitoringTableCell__MetricCell__minMax'>
           <div>
             { formatMetric(props.metric, 'max') } max

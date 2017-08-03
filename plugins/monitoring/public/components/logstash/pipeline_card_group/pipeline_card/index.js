@@ -45,7 +45,10 @@ export function PipelineCard({ pipeline, onHashClick }) {
                 <a
                   className="kuiLink"
                   onClick={ onClick }
-                  title={ hash }>Version { hashShort }</a>
+                  title={ hash }
+                >
+                  Version { hashShort }
+                </a>
               </KuiKeyboardAccessible>
             </KuiEventBodyMessage>
             <KuiEventBodyMetadata>

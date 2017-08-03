@@ -29,7 +29,7 @@ export class ToggleButton extends Component {
 
     return (
       <button className='kuiToggleButton' onClick={ this.toggle }>
-        <span className={ iconClassName }></span>
+        <span className={ iconClassName } />
         { children }
       </button>
     );

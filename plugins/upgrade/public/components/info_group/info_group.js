@@ -22,7 +22,7 @@ export function InfoGroup({
         </div>
         <div className="kuiBarSection">
           <button className="kuiCollapseButton" onClick={ onChangeCollapsed }>
-            <div className={ infoToggleClasses }></div>
+            <div className={ infoToggleClasses } />
           </button>
         </div>
       </div>

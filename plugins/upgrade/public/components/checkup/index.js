@@ -85,12 +85,14 @@ export const CheckupView = withViewState({
 
             {
               loadingStatus === LOADING_STATUS.FAILURE
-                ? <ErrorPanel
+                ? (
+                  <ErrorPanel
                     className="kuiVerticalRhythm"
                     title="Failed to run checkup"
                   >
                     <p className="kuiText">{ lastError.message }</p>
                   </ErrorPanel>
+                )
                 : null
             }
 

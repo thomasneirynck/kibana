@@ -113,7 +113,7 @@ export class MonitoringTable extends React.Component {
 
     const sortDirection = this.state.sortOrder > 0 ? 'up' : 'down'; // ascending = up, descending = down
     return (
-      <span data-sort-icon-ascending className={ `kuiTableSortIcon kuiIcon fa-long-arrow-${sortDirection}` }></span>
+      <span data-sort-icon-ascending className={ `kuiTableSortIcon kuiIcon fa-long-arrow-${sortDirection}` } />
     );
   }
 

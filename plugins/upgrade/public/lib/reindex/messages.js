@@ -20,9 +20,11 @@ messages.REINDEX.FAILED = {
   CREATE_INDEX: (error) => {
     if (error.code === ERR_CODES.ERR_INDEX_EXISTS) {
       return (
-        <span>Index <code>{ error.reindexedIndexName }</code> already exists.
+        <span>
+          Index <code>{ error.reindexedIndexName }</code> already exists.
           There may be an unfinished task reindexing to this index,
-          or this index may have not been cleaned up previously.</span>
+          or this index may have not been cleaned up previously.
+        </span>
       );
     }
 

@@ -6,7 +6,7 @@ export function PipelineViewer(props) {
 
   return (
     <div className="lspvContainer">
-      <ColaGraph graph={ graph }></ColaGraph>
+      <ColaGraph graph={ graph } />
     </div>
   );
 }

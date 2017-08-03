@@ -105,21 +105,25 @@ export const LoggingView = withViewState({
             }
 
             { loadingStatus === LOADING_STATUS.FAILURE
-                ? <ErrorPanel className="kuiVerticalRhythm">
+                ? (
+                  <ErrorPanel className="kuiVerticalRhythm">
                     <p className="kuiText">
                       Failed to access logging settings, please try to <a className="kuiLink" onClick={ this.getLoggingStatus }>reload</a>.
                     </p>
                     <p className="kuiText">{ lastError }</p>
                   </ErrorPanel>
+                )
                 : null
             }
 
             { loadingStatus === LOADING_STATUS.SUCCESS
-                ? <LoggingForm
+                ? (
+                  <LoggingForm
                     className="kuiVerticalRhythm"
                     isLoggingEnabled={ isLoggingEnabled }
                     onToggleLoggingEnabled={ this.toggleLoggingEnabled }
                   />
+                )
                 : null
             }
           </div>

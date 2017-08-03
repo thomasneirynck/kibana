@@ -14,7 +14,7 @@ uiModule.directive('monitoringClusterOverview', (kbnUrl, showLicenseExpiration) 
           scope={ scope }
           kbnUrl={ kbnUrl }
           showLicenseExpiration={ showLicenseExpiration }
-        ></Overview>
+        />
       ), $el[0]);
     }
   };

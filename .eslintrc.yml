@@ -4,7 +4,7 @@ root: true
 extends: '@elastic/kibana'
 
 plugins:
-  - '@elastic/kibana-custom'
+  - '@elastic/eslint-plugin-kibana-custom'
   - 'jest'
 
 rules:

@@ -44,19 +44,19 @@ export class StatusGroup extends Component {
 
     return (
       <div className={ className }>
-          <div className="kuiTogglePanelHeader">
-            <button className="kuiToggleButton" onClick={ this.toggleIsCollapsed }>
-              <span className="upgradePluginPanelHeader">
-                <span>
-                  <span className={ toggleIconClasses }></span>
-                  { title }
-                </span>
-                <span>
-                  { status }
-                </span>
+        <div className="kuiTogglePanelHeader">
+          <button className="kuiToggleButton" onClick={ this.toggleIsCollapsed }>
+            <span className="upgradePluginPanelHeader">
+              <span>
+                <span className={ toggleIconClasses } />
+                { title }
               </span>
-            </button>
-          </div>
+              <span>
+                { status }
+              </span>
+            </span>
+          </button>
+        </div>
         {
           isCollapsed
             ? null
