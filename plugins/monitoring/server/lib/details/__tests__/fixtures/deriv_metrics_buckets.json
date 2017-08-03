@@ -1,10 +1,32 @@
 [
   {
+    "key_as_string": "2017-07-02T03:40:00.000Z",
+    "key": 1498966800000,
+    "doc_count": 1020,
+    "metric": {
+      "value": null
+    }
+  },
+  {
+    "key_as_string": "2017-07-02T03:50:00.000Z",
+    "key": 1498967400000,
+    "doc_count": 1020,
+    "metric": {
+      "value": 368003
+    },
+    "metric_deriv": {
+      "value": null
+    }
+  },
+  {
     "key_as_string": "2017-07-02T04:00:00.000Z",
     "key": 1498968000000,
     "doc_count": 1020,
     "metric": {
-      "value": 369325
+      "value": 370020
+    },
+    "metric_deriv": {
+      "value": 2017
     }
   },
   {
@@ -12,10 +34,10 @@
     "key": 1498968600000,
     "doc_count": 1020,
     "metric": {
-      "value": null
+      "value": 372004
     },
     "metric_deriv": {
-      "value": null
+      "value": 1984
     }
   },
   {
