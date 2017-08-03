@@ -29,7 +29,7 @@ on the top navigation bar.
 +
 image::grokdebugger/images/grok-debugger.png["Grok Debugger UI"]
 
-. Under Input, enter a sample message that is representative of the data you
+. Under Sample Data, enter a sample message that is representative of the data you
 want to parse. For example:
 +
 [source,ruby]
@@ -37,7 +37,7 @@ want to parse. For example:
 55.3.244.1 GET /index.html 15824 0.043
 -------------------------------------------------------------------------------
 
-. Under Pattern, enter the grok pattern that you want to apply to the data.
+. Under Grok Pattern, enter the grok pattern that you want to apply to the data.
 +
 For example, to parse the log line in the example, you use:
 +
@@ -48,7 +48,7 @@ For example, to parse the log line in the example, you use:
 
 . Click the **Simulate** button.
 +
-Under Output, you'll see the simulated event that results from applying the grok
+Under Structured Data, you'll see the simulated event that results from applying the grok
 pattern:
 +
 image::grokdebugger/images/grok-debugger-output.png["Viewing Grok Debugger Output"]
@@ -91,21 +91,23 @@ And this grok pattern:
 +
 [source,ruby]
 -------------------------------------------------------------------------------
-%{SYSLOGBASE} %{POSTFIX_QUEUEID:queue_id}: %{GREEDYDATA:syslog_message}
+%{SYSLOGBASE} %{POSTFIX_QUEUEID:queue_id}: %{MSG:syslog_message}
 -------------------------------------------------------------------------------
 +
-Notice that the grok pattern references a custom pattern called `POSTFIX_QUEUEID`.
+Notice that the grok pattern references custom patterns called `POSTFIX_QUEUEID`
+and `MSG`.
 
 . Expand **Custom Patterns** and enter pattern definitions for any custom
-patterns that you want to use in the grok expression. The pattern definitions
-must be specified within a map.
+patterns that you want to use in the grok expression. Each pattern definition
+must be specified on its own line.
 +
-For the grok pattern in the example, you need to specify a pattern definition
-for `POSTFIX_QUEUEID`:
+For the grok pattern in the example, you need to specify pattern definitions
+for `POSTFIX_QUEUEID` and `MSG`:
 +
 [source,ruby]
 -------------------------------------------------------------------------------
-{"POSTFIX_QUEUEID" : "[0-9A-F]{10,11}"}
+POSTFIX_QUEUEID [0-9A-F]{10,11}
+MSG message-id=<%{GREEDYDATA}>
 -------------------------------------------------------------------------------
 
 . Click the **Simulate** button.
