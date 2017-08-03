@@ -45,7 +45,8 @@ function fetchPipelines(req, config, logstashIndexPattern, start, end, clusterUu
                 by_pipeline_hash: {
                   terms: {
                     field: 'logstash_stats.pipelines.hash',
-                    size: config.get('xpack.monitoring.max_bucket_size')
+                    size: config.get('xpack.monitoring.max_bucket_size'),
+                    order: { 'path_to_root>last_seen': 'desc' }
                   },
                   aggs: {
                     path_to_root: {

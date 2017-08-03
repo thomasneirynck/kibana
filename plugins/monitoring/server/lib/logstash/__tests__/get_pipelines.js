@@ -28,14 +28,14 @@ describe('get_pipelines', () => {
                         throughput: { value: 2400 },
                         duration_in_millis: { value: 600 },
                         path_to_root: {
-                          last_seen: { value: 1500920925471 }
+                          last_seen: { value: 1500920946113 }
                         }
                       },
                       {
                         key: 'abcdef2',
                         duration_in_millis: { value: 90 },
                         path_to_root: {
-                          last_seen: { value: 1500920946113 }
+                          last_seen: { value: 1500920925471 }
                         }
                       }
                     ]
@@ -74,13 +74,13 @@ describe('get_pipelines', () => {
               hash: 'abcdef1',
               eventsPerSecond: 24,
               eventLatencyInMs: 0.25,
-              lastSeen: 1500920925471
+              lastSeen: 1500920946113
             },
             {
               hash: 'abcdef2',
               eventsPerSecond: null,
               eventLatencyInMs: null,
-              lastSeen: 1500920946113
+              lastSeen: 1500920925471
             }
           ]
         },
@@ -96,6 +96,15 @@ describe('get_pipelines', () => {
           ]
         }
       ]);
+    });
+
+    it('sorts config hashes from newest to oldest', () => {
+      const pipeline = responseFromEs.aggregations.pipelines.by_pipeline_id.buckets[0];
+      const configHashes = pipeline.by_pipeline_hash.buckets;
+
+      const firstConfigHashLastSeen  = configHashes[0].path_to_root.last_seen.value;
+      const secondConfigHashLastSeen = configHashes[1].path_to_root.last_seen.value;
+      expect(firstConfigHashLastSeen).to.be.greaterThan(secondConfigHashLastSeen);
     });
   });
 });
