@@ -33,12 +33,12 @@ export function dataRecognizerProvider(ml) {
       // once the mount is complete, call the recognize endpoint to see if the index format is known to us,
       ml.recognizeIndex({ indexPatternTitle: this.indexPatternTitle })
       .then((resp) => {
-        const results = resp.map((r) =>
+        const results = resp.map((r) => (
           <RecognizedResult
             key={ r.id }
             config={ r }
           />
-        );
+        ));
 
         this.setState({
           results
