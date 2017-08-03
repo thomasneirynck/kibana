@@ -1,6 +1,7 @@
 {
   "id": "nginx",
   "type": "Web Access Logs",
+  "logoFile": "logo.json",
   "query": {
     "bool": {
       "filter": [

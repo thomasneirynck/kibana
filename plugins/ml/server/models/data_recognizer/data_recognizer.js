@@ -75,11 +75,21 @@ export class DataRecognizer {
       const config = c.json;
       const match = await this.searchForFields(config, indexPattern);
       if (match) {
+        let logo = null;
+        if (config.logoFile) {
+          try {
+            logo = await this.readFile(`${this.configDir}/${c.dirName}/${config.logoFile}`);
+            logo = JSON.parse(logo);
+          } catch(e) {
+            logo = null;
+          }
+        }
         results.push({
           id: config.id,
           query: config.query,
           jobs: config.jobs,
-          datafeeds: config.datafeeds
+          datafeeds: config.datafeeds,
+          logo
         });
       }
     }));
