@@ -30,7 +30,7 @@ app.directive('customPatternsInput', function () {
             highlightActiveLine: false,
             highlightGutterLine: false,
             minLines: 3,
-            maxLines: Infinity
+            maxLines: 25
           });
           editor.$blockScrolling = Infinity;
         };

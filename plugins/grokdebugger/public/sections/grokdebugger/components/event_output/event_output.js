@@ -23,6 +23,8 @@ app.directive('eventOutput', function () {
             readOnly: true,
             highlightActiveLine: false,
             highlightGutterLine: false,
+            minLines: 20,
+            maxLines: 25
           });
           editor.$blockScrolling = Infinity;
         };
