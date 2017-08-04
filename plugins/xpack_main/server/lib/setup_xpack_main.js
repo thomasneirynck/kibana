@@ -17,20 +17,16 @@ const registerPreResponseHandlerSingleton = once((server, info) => {
  */
 export function setupXPackMain(server, xpackMainPlugin, xpackInfo) {
   return xpackInfo(server)
-  .then(info => {
+  .then(async info => {
+    await info.refreshNow();
     server.expose('info', info);
-    registerPreResponseHandlerSingleton(server, info);
-  })
-  .then(() => xpackMainPlugin.status.green('Ready'))
-  .catch(reason => {
-    let errorMessage = reason;
 
-    if ((reason instanceof Error) && reason.status === 400) {
-      errorMessage = 'X-Pack plugin is not installed on Elasticsearch cluster';
+    if (info.isAvailable()) {
+      xpackMainPlugin.status.green('Ready');
+      registerPreResponseHandlerSingleton(server, info);
+    } else {
+      xpackMainPlugin.status.red(info.unavailableReason());
     }
-
-    server.expose('info', reason.info);
-
-    xpackMainPlugin.status.red(errorMessage);
   });
+
 }

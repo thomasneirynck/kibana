@@ -20,6 +20,7 @@ describe('xpack_info', function () {
     stubResponse(response);
 
     return _xpackInfo(mockServer, pollFrequencyInMillis)
+    .then(info => info.refreshNow())
     .then(info => {
       info.stopPolling();
       return info;
@@ -196,18 +197,20 @@ describe('xpack_info', function () {
       let previousSignature;
       stubResponse({ license: { status: 'active' } });
 
-      return _xpackInfo(mockServer, pollFrequencyInMillis).then(info => {
-        expect(info.license.isActive()).to.be(true);
-        previousSignature = info.getSignature();
+      return _xpackInfo(mockServer, pollFrequencyInMillis)
+        .then(info => info.refreshNow())
+        .then(info => {
+          expect(info.license.isActive()).to.be(true);
+          previousSignature = info.getSignature();
 
-        stubResponse({ license: { status: 'expired' } });
-        return Bluebird.delay(pollFrequencyInMillis * 2, info);
-      }).then((info) => {
-        info.stopPolling();
+          stubResponse({ license: { status: 'expired' } });
+          return Bluebird.delay(pollFrequencyInMillis * 2, info);
+        }).then((info) => {
+          info.stopPolling();
 
-        expect(info.license.isActive()).to.be(false);
-        expect(info.getSignature()).to.not.be(previousSignature);
-      });
+          expect(info.license.isActive()).to.be(false);
+          expect(info.getSignature()).to.not.be(previousSignature);
+        });
     });
   });
 

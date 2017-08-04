@@ -51,10 +51,10 @@ describe('setupXPackMain()', () => {
 
   afterEach(() => mockServer.pluginProperties.info.stopPolling());
 
-  describe('Elasticsearch APIs return successful responses', () => {
+  describe('Elasticsearch APIs return successful responses with license', () => {
 
     beforeEach(() => {
-      mockServer.plugins.elasticsearch.getCluster('data').callWithInternalUser.returns(Promise.resolve());
+      mockServer.plugins.elasticsearch.getCluster('data').callWithInternalUser.returns(Promise.resolve({ license: {} }));
     });
 
     it ('server should have an onPreResponse event handler registered', () => {

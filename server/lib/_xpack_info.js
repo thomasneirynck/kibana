@@ -11,6 +11,7 @@ export async function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 
   }
 
   let _cachedResponseFromElasticsearch;
+  let _cachedErrorFromElasticsearch;
 
   const _licenseCheckResultsGenerators = {};
   const _licenseCheckResults = {};
@@ -71,6 +72,17 @@ export async function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 
     },
     isAvailable: function () {
       return !!_cachedResponseFromElasticsearch && !!get(_cachedResponseFromElasticsearch, 'license');
+    },
+    unavailableReason: function () {
+      if (!_cachedErrorFromElasticsearch) {
+        return;
+      }
+
+      if ((_cachedErrorFromElasticsearch instanceof Error) && _cachedErrorFromElasticsearch.status === 400) {
+        return 'X-Pack plugin is not installed on Elasticsearch cluster';
+      }
+
+      return _cachedErrorFromElasticsearch;
     },
     getSignature: function () {
       return _cachedXPackInfoJSONSignature;
@@ -156,21 +168,17 @@ export async function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 
     }
 
     _cachedResponseFromElasticsearch = response;
+    _cachedErrorFromElasticsearch = null;
     _updateXPackInfoJSON();
   }
 
   function _handleErrorFromElasticsearch(error) {
     server.log([ 'license', 'warning', 'xpack' ], 'License information could not be obtained from Elasticsearch. ' + error);
     _cachedResponseFromElasticsearch = null;
+    _cachedErrorFromElasticsearch = error;
     _updateXPackInfoJSON();
-
-    // allow tests to shutdown
-    error.info = xpackInfoObject;
-
-    throw error;
   }
 
-  await xpackInfoObject.refreshNow();
   poller.start();
   return xpackInfoObject;
 }
