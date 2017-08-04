@@ -80,7 +80,7 @@ export async function getPipeline(req, clusterUuid, pipelineId, pipelineHash, ti
   const timePickerDurationMillis = end - start;
 
   const [ stateDocument, statsAggregation ] = await Promise.all([
-    getPipelineStateDocument(callWithRequest, req, logstashIndexPattern, start, end, pipelineId, pipelineHash),
+    getPipelineStateDocument(callWithRequest, req, logstashIndexPattern, pipelineId, pipelineHash),
     getPipelineStatsAggregation(callWithRequest, req, logstashIndexPattern, start, end, pipelineId, pipelineHash)
   ]);
 
