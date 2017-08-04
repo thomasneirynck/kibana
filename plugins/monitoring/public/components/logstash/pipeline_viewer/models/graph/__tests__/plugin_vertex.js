@@ -17,7 +17,7 @@ describe('PluginVertex', () => {
       ]
     };
     vertexJson = {
-      config_name: 'mygenerator',
+      config_name: 'some-name',
       stats: {
         millis_per_event: 50,
         percent_of_total_processor_duration: 0.3,
@@ -38,7 +38,7 @@ describe('PluginVertex', () => {
 
   it('should have the correct name', () => {
     const pluginVertex = new PluginVertex(graph, vertexJson);
-    expect(pluginVertex.name).to.be('mygenerator');
+    expect(pluginVertex.name).to.be('some-name');
   });
 
   it('should have the correct milliseconds-per-event stat', () => {
