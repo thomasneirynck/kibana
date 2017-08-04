@@ -1,5 +1,7 @@
 import d3 from 'd3';
 import 'ace';
+import rison from 'rison-node';
+
 import './angular-venn-simple.js';
 import gws from './graphClientWorkspace.js';
 import utils from './utils.js';
@@ -12,6 +14,7 @@ import { SavedWorkspacesProvider } from 'plugins/graph/services/saved_workspaces
 import { iconChoices, colorChoices, iconChoicesByClass, drillDownIconChoices,
   drillDownIconChoicesByClass } from 'plugins/graph/style_choices';
 import { outlinkEncoders } from 'plugins/graph/services/outlink_encoders';
+import { KibanaParsedUrl } from 'ui/url/kibana_parsed_url';
 
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import chrome from 'ui/chrome';
@@ -606,13 +609,31 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     $scope.detail = null;
 
     if ($scope.urlTemplates.length === 0) {
-      const discoverUrl = kbnBaseUrl + '#/discover?_g=()&_a=(columns:!(_source),index:\'' +
-              encodeURIComponent($scope.selectedIndex)
-              // addBasePath will escape any {} characters so we use [gquery] and
-              // replace with {{gquery}} after the call
-              + '\',interval:auto,query:[gquery],sort:!(_score,desc))';
+      // url templates specified by users can include the `{{gquery}}` tag and
+      // will have the elasticsearch query for the graph nodes injected there
+      const tag = '{{gquery}}';
+
+      const kUrl = new KibanaParsedUrl({
+        appId: 'kibana',
+        basePath: chrome.getBasePath(),
+        appPath: '/discover'
+      });
+
+      kUrl.addQueryParameter('_a', rison.encode({
+        columns: ['_source'],
+        index: $scope.selectedIndex.id,
+        interval: 'auto',
+        query: tag,
+        sort: ['_score', 'desc']
+      }));
+
+      const discoverUrl = kUrl.getRootRelativePath()
+        // replace the URI encoded version of the tag with the unescaped version
+        // so it can be found with String.replace, regexp, etc.
+        .replace(encodeURIComponent(tag), tag);
+
       $scope.urlTemplates.push({
-        url: chrome.addBasePath(discoverUrl).replace('[gquery]', '{{gquery}}'),
+        url: discoverUrl,
         description: 'Raw documents',
         encoder:$scope.outlinkEncoders[0]
       });
