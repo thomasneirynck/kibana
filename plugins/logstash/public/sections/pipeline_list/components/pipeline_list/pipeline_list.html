@@ -11,13 +11,18 @@
     </div>
   </div>
 
-  <div class="kuiViewContent kuiViewContent--constrainedWidth" ng-show="!pipelineList.isForbidden">
+  <div
+    class="kuiViewContent kuiViewContent--constrainedWidth"
+    ng-show="!pipelineList.isForbidden"
+    data-test-subj="pipelineList"
+  >
     <div class="kuiViewContentItem kuiControlledTable kuiVerticalRhythm">
       <div class="kuiToolBar">
         <div class="kuiToolBarSearch">
           <tool-bar-search-box
             filter="pipelineList.query"
             on-filter="pipelineList.onQueryChange"
+            data-test-subj="filter"
           ></tool-bar-search-box>
         </div>
 
@@ -26,6 +31,7 @@
             class="kuiButton kuiButton--primary"
             ng-click="pipelineList.onNewPipeline()"
             ng-disabled="pipelineList.isReadOnly"
+            data-test-subj="btnAdd"
           >
             Add
           </button>
@@ -33,6 +39,7 @@
             class="kuiButton kuiButton--danger"
             ng-click="pipelineList.onSelectedPipelinesDelete()"
             ng-disabled="pipelineList.isReadOnly || !pipelineList.hasSelectedPipelines"
+            data-test-subj="btnDelete"
           >
             Delete
           </button>

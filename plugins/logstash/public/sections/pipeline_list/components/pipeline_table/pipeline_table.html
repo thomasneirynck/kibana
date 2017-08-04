@@ -1,10 +1,11 @@
-<table class="kuiTable">
+<table class="kuiTable" data-test-subj="pipelineTable">
   <thead>
     <tr>
       <th class="kuiTableHeaderCell kuiTableHeaderCell--checkBox">
         <check-box
           is-selected="pipelineTable.allSelected"
           on-select-change="pipelineTable.onAllSelectedChange"
+          data-test-subj="chkSelectAll"
         ></check-box>
       </th>
       <th class="kuiTableHeaderCell kuiTableHeaderCell--sortable">
@@ -60,11 +61,12 @@
             id="item.pipeline.id"
             is-selected="item.selected"
             on-select-change="pipelineTable.onPipelineSelectedChange"
+            data-test-subj="chkSelectRow"
           ></check-box>
         </div>
       </td>
       <td class="kuiTableRowCell">
-        <div class="kuiTableRowCell__liner">
+        <div class="kuiTableRowCell__liner" data-test-subj="cellId">
           <a
             class="kuiLink"
             ng-href="#/management/logstash/pipelines/pipeline/{{item.pipeline.id}}/edit"
@@ -74,12 +76,12 @@
         </div>
       </td>
       <td class="kuiTableRowCell">
-        <div class="kuiTableRowCell__liner">
+        <div class="kuiTableRowCell__liner" data-test-subj="cellDescription">
           {{item.pipeline.description}}
         </div>
       </td>
       <td class="kuiTableRowCell">
-        <div class="kuiTableRowCell__liner">
+        <div class="kuiTableRowCell__liner" data-test-subj="cellLastModified">
           <span title="{{item.pipeline.lastModified | moment}}">
             {{ item.pipeline.lastModifiedHumanized }}
           </span>
@@ -89,12 +91,12 @@
        class="kuiTableRowCell"
        ng-show="pipelineTable.isSecurityEnabled"
       >
-        <div class="kuiTableRowCell__liner">
+        <div class="kuiTableRowCell__liner" data-test-subj="cellUsername">
           {{item.pipeline.username}}
         </div>
       </td>
       <td class="kuiTableRowCell">
-        <div class="kuiTableRowCell__liner">
+        <div class="kuiTableRowCell__liner" data-test-subj="cellVersion">
           {{item.pipeline.version}}
         </div>
       </td>

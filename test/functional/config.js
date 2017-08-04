@@ -6,8 +6,16 @@ import { resolveKibanaPath } from '@elastic/plugin-helpers';
 import {
   SecurityPageProvider,
   ReportingPageProvider,
-  MonitoringPageProvider
+  MonitoringPageProvider,
+  LogstashPageProvider,
 } from './page_objects';
+
+import {
+  PipelineListProvider,
+  PipelineEditorProvider,
+  RandomProvider,
+  AceEditorProvider,
+} from './services';
 
 // the default export of config files must be a config provider
 // that returns an object with the projects config values
@@ -21,7 +29,8 @@ export default async function ({ readConfigFile }) {
     // list paths to the files that contain your plugins tests
     testFiles: [
       resolve(__dirname, './apps/security'),
-      resolve(__dirname, './apps/reporting.js'),
+      resolve(__dirname, './apps/reporting'),
+      resolve(__dirname, './apps/logstash'),
     ],
 
     // define the name and providers for services that should be
@@ -29,6 +38,10 @@ export default async function ({ readConfigFile }) {
     // only the built-in services will be avaliable
     services: {
       ...kibanaConfig.get('services'),
+      pipelineList: PipelineListProvider,
+      pipelineEditor: PipelineEditorProvider,
+      random: RandomProvider,
+      aceEditor: AceEditorProvider,
     },
 
     // just like services, PageObjects are defined as a map of
@@ -38,6 +51,7 @@ export default async function ({ readConfigFile }) {
       security: SecurityPageProvider,
       reporting: ReportingPageProvider,
       monitoring: MonitoringPageProvider,
+      logstash: LogstashPageProvider,
     },
 
     servers: {
@@ -67,6 +81,10 @@ export default async function ({ readConfigFile }) {
       monitoring: {
         pathname: '/app/monitoring'
       },
+      logstashPipelines: {
+        pathname: '/app/kibana',
+        hash: '/management/logstash/pipelines'
+      }
     },
 
     // choose where esArchiver should load archives from

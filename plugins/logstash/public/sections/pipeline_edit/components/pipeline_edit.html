@@ -2,7 +2,7 @@
   section="logstash/pipelines/pipeline"
   omit-breadcrumb-pages="['pipeline']"
 >
-  <div class="kuiViewContent kuiViewContent--constrainedWidth">
+  <div class="kuiViewContent kuiViewContent--constrainedWidth" data-test-subj="pipelineEdit pipelineEdit-{{pipelineEdit.pipeline.id}}">
     <div class="kuiViewContentItem kuiVerticalRhythm">
       <div class="kuiBar">
         <div class="kuiBarSection">
@@ -55,8 +55,10 @@
             name="id"
             ng-model="pipelineEdit.pipeline.id"
             ng-trim="false"
-            required pattern="[a-zA-Z_][a-zA-Z0-9_@\-\$\.]*"
-            required>
+            pattern="[a-zA-Z_][a-zA-Z0-9_@\-\$\.]*"
+            required
+            data-test-subj="inputId"
+          >
           <div
             class="kuiInputNote kuiInputNote--danger"
             ng-show="pipelineEdit.form.id.$error.pattern"
@@ -85,7 +87,9 @@
             ng-disabled="pipelineEdit.isReadOnly"
             ng-model="pipelineEdit.pipeline.version"
             placeholder="v1.0.0"
-            ng-trim="false">
+            ng-trim="false"
+            data-test-subj="inputVersion"
+          >
         </div>
         <div class="kuiFormSection">
           <label
@@ -100,7 +104,9 @@
             id="description"
             name="description"
             ng-disabled="pipelineEdit.isReadOnly"
-            ng-model="pipelineEdit.pipeline.description">
+            ng-model="pipelineEdit.pipeline.description"
+            data-test-subj="inputDescription"
+          >
         </div>
       </form>
       <form name="pipelineEdit.jsonForm" novalidate>
@@ -117,6 +123,7 @@
               onLoad: aceLoaded
             }"
             ng-model="pipelineEdit.pipeline.pipeline"
+            data-test-subj="acePipeline"
           ></div>
         </div>
       </form>
