@@ -1,4 +1,5 @@
 import { uiModules } from 'ui/modules';
+
 const module = uiModules.get('app/dashboard');
 
 export function SavedWorkspaceProvider(courier) {
@@ -49,10 +50,7 @@ export function SavedWorkspaceProvider(courier) {
 
   SavedWorkspace.searchsource = false;
   return SavedWorkspace;
-
-
 }
-
 
 // Used only by the savedDashboards service, usually no reason to change this
 module.factory('SavedGraphWorkspace', function (Private) {

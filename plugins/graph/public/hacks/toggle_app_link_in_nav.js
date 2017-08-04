@@ -1,6 +1,7 @@
-import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import chrome from 'ui/chrome';
 import { uiModules } from 'ui/modules';
+
+import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 
 uiModules.get('xpack/graph').run((Private) => {
   const xpackInfo = Private(XPackInfoProvider);

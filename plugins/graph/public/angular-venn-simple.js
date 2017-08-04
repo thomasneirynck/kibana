@@ -1,10 +1,11 @@
 //MH TODO - I'm not 100% on managing dependencies. I added these 2 dependencies
 // to the source code and it seems to work.
-const d3 = require('d3');
-const venn = require('venn.js');
+import d3 from 'd3';
+import { venn } from 'venn.js';
 
+import { uiModules } from 'ui/modules';
 
-angular.module('angular-venn-simple', [])
+uiModules.get('app/graph')
 .directive('venn', function () {
   return {
     scope: {
@@ -70,8 +71,6 @@ angular.module('angular-venn-simple', [])
         svg.appendChild(g);
         element.appendChild(svg);
       }, true);
-    },
-    link: function ($scope, elem, attr, ctrl) {
     }
   };
 });

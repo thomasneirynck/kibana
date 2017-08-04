@@ -1,11 +1,11 @@
 import _ from 'lodash';
-import { SavedWorkspaceProvider } from './saved_workspace';
+
 import { uiModules } from 'ui/modules';
 import chrome from 'ui/chrome';
-
-// bring in the factory
 import { SavedObjectRegistryProvider } from 'ui/saved_objects/saved_object_registry';
 import { SavedObjectsClientProvider } from 'ui/saved_objects';
+
+import { SavedWorkspaceProvider } from './saved_workspace';
 
 
 export function SavedWorkspacesProvider(kbnUrl, Private, Promise) {

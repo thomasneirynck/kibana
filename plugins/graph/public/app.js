@@ -2,30 +2,37 @@ import d3 from 'd3';
 import 'ace';
 import rison from 'rison-node';
 
-import './angular-venn-simple.js';
-import gws from './graphClientWorkspace.js';
-import utils from './utils.js';
-import { IndexPatternsProvider } from 'ui/index_patterns/index_patterns';
-import { SavedObjectsClientProvider } from 'ui/saved_objects';
-
 import 'ui/autoload/all';
 import 'ui/directives/saved_object_finder';
-import { SavedWorkspacesProvider } from 'plugins/graph/services/saved_workspaces';
-import { iconChoices, colorChoices, iconChoicesByClass, drillDownIconChoices,
-  drillDownIconChoicesByClass } from 'plugins/graph/style_choices';
-import { outlinkEncoders } from 'plugins/graph/services/outlink_encoders';
+import chrome from 'ui/chrome';
+import { uiModules } from 'ui/modules';
+import uiRoutes from 'ui/routes';
+import { notify, Notifier } from 'ui/notify';
+import { IndexPatternsProvider } from 'ui/index_patterns/index_patterns';
+import { SavedObjectsClientProvider } from 'ui/saved_objects';
 import { KibanaParsedUrl } from 'ui/url/kibana_parsed_url';
 
 import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
-import chrome from 'ui/chrome';
-import 'plugins/graph/less/main.less';
-import { uiModules } from 'ui/modules';
-import uiRoutes from 'ui/routes';
-import { notify } from 'ui/notify';
-import { Notifier } from 'ui/notify/notifier';
-import appTemplate from 'plugins/graph/templates/index.html';
 
-const app = uiModules.get('app/graph', ['angular-venn-simple']);
+import './less/main.less';
+import appTemplate from './templates/index.html';
+
+import './angular-venn-simple.js';
+import gws from './graphClientWorkspace.js';
+import utils from './utils.js';
+import { SavedWorkspacesProvider } from './services/saved_workspaces';
+import {
+  iconChoices,
+  colorChoices,
+  iconChoicesByClass,
+  drillDownIconChoices,
+  drillDownIconChoicesByClass
+} from './style_choices';
+import {
+  outlinkEncoders
+} from './services/outlink_encoders';
+
+const app = uiModules.get('app/graph');
 
 function checkLicense(Private, Promise, kbnBaseUrl) {
   const xpackInfo = Private(XPackInfoProvider);
@@ -44,7 +51,7 @@ function checkLicense(Private, Promise, kbnBaseUrl) {
 
 app.directive('focusOn', function () {
   return function (scope, elem, attr) {
-    scope.$on(attr.focusOn, function (e) {
+    scope.$on(attr.focusOn, function () {
       elem[0].focus();
     });
   };
@@ -465,7 +472,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     return $scope.selectedSelectedVertex === node;
   };
 
-  $scope.filterFieldsKeyDown = function (event) {
+  $scope.filterFieldsKeyDown = function () {
     const lcFilter = $scope.fieldNamesFilterString.toLowerCase();
     $scope.filteredFields = $scope.allFields.filter(function (fieldDef) {
       return !fieldDef.selected && (!lcFilter || lcFilter === ''
@@ -594,7 +601,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       indexName: $scope.selectedIndex.attributes.title,
       vertex_fields: $scope.selectedFields,
       // Here we have the opportunity to look up labels for nodes...
-      nodeLabeller: function (newNodes) {
+      nodeLabeller: function () {
         //   console.log(newNodes);
       },
       changeHandler: function () {
@@ -718,7 +725,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
       description: 'Save Workspace',
       tooltip: 'Save this workspace',
       disableButton: function () {return $scope.selectedFields.length === 0;},
-      template: require('plugins/graph/templates/save_workspace.html')
+      template: require('./templates/save_workspace.html')
     });
   }else {
     $scope.topNavMenu.push({
@@ -732,7 +739,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     key: 'open',
     description: 'Load Saved Workspace',
     tooltip: 'Load a saved workspace',
-    template: require('plugins/graph/templates/load_workspace.html')
+    template: require('./templates/load_workspace.html')
   });
   if (!$scope.allSavingDisabled) {
     $scope.topNavMenu.push({
@@ -768,7 +775,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
     key: 'settings',
     disableButton: function () { return $scope.selectedIndex === null; },
     description: 'Settings',
-    template: require('plugins/graph/templates/settings.html')
+    template: require('./templates/settings.html')
   });
 
 
