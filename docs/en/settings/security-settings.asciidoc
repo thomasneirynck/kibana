@@ -2,14 +2,17 @@
 [[security-settings-kb]]
 === Security Settings
 
-You configure `xpack.security` settings to enable anonymous access
-and perform message authentication, set up document and field level security,
-configure realms, and encrypt communications with SSL. See
-{ref}/security-settings.html[Security Settings].
+You do not need to configure any additional settings to use {security} in {kib}.
+It is enabled by default. 
 
 [float]
 [[general-security-settings]]
 ==== General Security Settings
 `xpack.security.enabled`::
-Set to `false` to disable {security}.
-Configure in both `elasticsearch.yml` and `kibana.yml`.
+Set to `true` (default) to enable {security}. +
++
+If set to `false` in `kibana.yml`, the user and role management options are
+hidden in this {kib} instance. If `xpack.security.enabled` is set to `true` in
+`elasticsearch.yml`, however, you can still use the {security} APIs. To disable
+{security} entirely, see the
+{ref}/security-settings.html[{es} Security Settings].
