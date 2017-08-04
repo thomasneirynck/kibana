@@ -53,7 +53,10 @@ app.directive('thresholdWatchEdit', function ($injector) {
         this.breadcrumb = this.watch.displayName;
 
         dirtyPrompt.register(() => !this.watch.isEqualTo(this.originalWatch));
-        $scope.$on('$destroy', dirtyPrompt.deregister);
+        $scope.$on('$destroy', () => {
+          dirtyPrompt.deregister();
+          this.stopRefreshWatchVisualizationTimer();
+        });
 
         this.loadFields();
       }
