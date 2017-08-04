@@ -42,6 +42,11 @@ export class PluginVertex extends Vertex {
 
   getSlowness() {
     const totalProcessorVertices = this.graph.processorVertices.length;
+
+    if (totalProcessorVertices === 0) {
+      return 0;
+    }
+
     const meanmillisPerEvent = this.graph.processorVertices.reduce((acc,v) => {
       return acc + v.millisPerEvent || 0;
     }, 0) / totalProcessorVertices;
@@ -50,7 +55,7 @@ export class PluginVertex extends Vertex {
       const difference = (v.millisPerEvent || 0) - meanmillisPerEvent;
       const square = difference * difference;
       return acc + square;
-    }, 0) / (totalProcessorVertices - 1);
+    }, 0) / totalProcessorVertices;
 
     const stdDeviation = Math.sqrt(variance);
 

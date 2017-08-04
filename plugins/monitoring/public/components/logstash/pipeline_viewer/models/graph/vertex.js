@@ -37,7 +37,7 @@ export class Vertex {
   get id() {
     // Substitute any non-word characters with an underscore so
     // D3 selections don't interpret them as special selector syntax
-    return this.json.id.replace(/\W/, '_');
+    return this.json.id.replace(/\W/g, '_');
   }
 
   get displayId() {
@@ -150,6 +150,10 @@ export class Vertex {
   }
 
   get eventsPerCurrentPeriod() {
+    if (!this.stats.hasOwnProperty('events.in')) {
+      return null;
+    }
+
     return (this.stats['events.in'].max - this.stats['events.in'].min);
   }
 }
