@@ -103,6 +103,9 @@ module.controller('KbnSomController', function ($scope, $element, Private) {
       console.log('loaded');
     });
 
+
+    somApp.on()
+
     console.log(somApp);
     window._somApp = somApp;
 

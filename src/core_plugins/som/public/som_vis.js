@@ -42,8 +42,15 @@ VisTypesRegistryProvider.register(function SomProvider(Private) {
           group: 'buckets',
           name: 'bucket',
           icon: 'fa fa-map-o',
-          title: 'Tags',
+          title: 'Select feature',
           min: 1,
+          aggFilter: ['terms']
+        },
+        {
+          group: 'buckets',
+          name: 'bucket',
+          icon: 'fa fa-map-o',
+          title: 'Add tags',
           aggFilter: ['terms', 'significant_terms']
         }
       ])
