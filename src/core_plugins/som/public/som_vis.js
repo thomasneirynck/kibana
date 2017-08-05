@@ -1,7 +1,7 @@
 import './som.less';
 import './ponder/ponder.less';
 import './som_controller.js';
-import './som_directive.js';
+// import './som_directive.js';
 
 import image from '../../region_map/public/images/icon-vector-map.svg';
 
