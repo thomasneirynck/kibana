@@ -1,10 +1,9 @@
-import uiModules from 'ui/modules';
+import {uiModules} from 'ui/modules';
 import somDirective from 'plugins/som/som_directive.html';
 import ponderTemplate from 'plugins/som/ponder_template.html';
-import Table from 'plugins/som/Table';
 import TableFromTabified from 'plugins/som/TableFromTabified';
 
-const module = uiModules.get('kibana/tagcloud', ['kibana']);
+const module = uiModules.get('kibana/som', ['kibana']);
 module.directive('kbnSom', function () {
 
   return {
@@ -18,10 +17,12 @@ module.directive('kbnSom', function () {
     link: function (scope, element) {
 
 
+      console.log('som directive....', arguments);
       let somApp;
       scope.$watch('data', function () {
 
 
+        console.log('data change....');
         if (!scope.data){
           return;
         }
@@ -48,6 +49,7 @@ module.directive('kbnSom', function () {
         window.tab = tableFromTab;
 
 
+        console.log('going to create som');
         somApp = ponder.createSOM({
           table: tableFromTab,
           nodes: {
