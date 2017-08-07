@@ -2,6 +2,7 @@ import Joi from 'joi';
 import { getClustersFromRequest } from '../../../../lib/cluster/get_clusters_from_request';
 import { verifyMonitoringAuth } from '../../../../lib/elasticsearch/verify_monitoring_auth';
 import { handleError } from '../../../../lib/handle_error';
+import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
 export function clustersRoutes(server) {
   /*
@@ -29,7 +30,16 @@ export function clustersRoutes(server) {
       // the monitoring data. `try/catch` makes it a little more explicit.
       try {
         await verifyMonitoringAuth(req);
-        clusters = await getClustersFromRequest(req);
+
+        // wildcard means to search _all_ clusters
+        const ccs = '*';
+        const config = server.config();
+        const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
+        const kbnIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.kibana.index_pattern', ccs);
+        const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
+        const alertsIndex = prefixIndexPattern(config, 'xpack.monitoring.cluster_alerts.index', ccs);
+
+        clusters = await getClustersFromRequest(req, esIndexPattern, kbnIndexPattern, lsIndexPattern, alertsIndex);
       } catch (err) {
         return reply(handleError(err, req));
       }

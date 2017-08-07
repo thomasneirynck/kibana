@@ -16,19 +16,24 @@ import { ElasticsearchMetric } from '../metrics/metric_classes';
  *  - requests
  *  - response times
  */
-export function getKibanas(req, kbnIndexPattern) {
+export function getKibanas(req, kbnIndexPattern, { clusterUuid }) {
   checkParam(kbnIndexPattern, 'kbnIndexPattern in getKibanas');
 
   const config = req.server.config();
   const start = moment.utc(req.payload.timeRange.min).valueOf();
   const end = moment.utc(req.payload.timeRange.max).valueOf();
-  const uuid = req.params.clusterUuid;
-  const metric = ElasticsearchMetric.getMetricFields();
+
   const params = {
     index: kbnIndexPattern,
     body: {
       size: config.get('xpack.monitoring.max_bucket_size'),
-      query: createQuery({ type: 'kibana_stats', start, end, uuid, metric }),
+      query: createQuery({
+        type: 'kibana_stats',
+        start,
+        end,
+        uuid: clusterUuid,
+        metric: ElasticsearchMetric.getMetricFields()
+      }),
       collapse: {
         field: 'kibana_stats.kibana.uuid'
       },

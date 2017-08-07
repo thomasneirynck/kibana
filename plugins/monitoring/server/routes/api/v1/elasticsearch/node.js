@@ -12,6 +12,7 @@ import { calculateNodeType } from '../../../../lib/elasticsearch/calculate_node_
 import { getNodeTypeClassLabel } from '../../../../lib/elasticsearch/get_node_type_class_label';
 import { getMetrics } from '../../../../lib/details/get_metrics';
 import { handleError } from '../../../../lib/handle_error';
+import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
 export function nodeRoutes(server) {
   server.route({
@@ -24,6 +25,7 @@ export function nodeRoutes(server) {
           resolver: Joi.string().required()
         }),
         payload: Joi.object({
+          ccs: Joi.string().optional(),
           showSystemIndices: Joi.boolean().default(false), // show/hide system indices in shard allocation table
           timeRange: Joi.object({
             min: Joi.date().required(),
@@ -35,12 +37,13 @@ export function nodeRoutes(server) {
       }
     },
     handler: (req, reply) => {
+      const config = server.config();
+      const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
       const resolver = req.params.resolver;
       const showSystemIndices = req.payload.showSystemIndices;
       const collectShards = req.payload.shards;
-      const config = server.config();
-      const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
+      const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
 
       return getClusterStats(req, esIndexPattern, clusterUuid)
       .then(cluster => {

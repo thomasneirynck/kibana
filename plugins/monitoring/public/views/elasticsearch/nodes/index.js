@@ -41,6 +41,7 @@ function getPageData($injector) {
   };
 
   return $http.post(url, {
+    ccs: globalState.ccs,
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()

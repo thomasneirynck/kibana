@@ -3,6 +3,7 @@ import Promise from 'bluebird';
 import { getClusterStatus } from '../../../../lib/logstash/get_cluster_status';
 import { getMetrics } from '../../../../lib/details/get_metrics';
 import { handleError } from '../../../../lib/handle_error';
+import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
 /*
  * Logstash Overview route.
@@ -27,6 +28,7 @@ export function logstashOverviewRoute(server) {
           clusterUuid: Joi.string().required()
         }),
         payload: Joi.object({
+          ccs: Joi.string().optional(),
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
@@ -37,11 +39,13 @@ export function logstashOverviewRoute(server) {
     },
     handler: (req, reply) => {
       const config = server.config();
-      const logstashIndexPattern = config.get('xpack.monitoring.logstash.index_pattern');
+      const ccs = req.payload.ccs;
+      const clusterUuid = req.params.clusterUuid;
+      const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
 
       return Promise.props({
-        metrics: getMetrics(req, logstashIndexPattern),
-        clusterStatus: getClusterStatus(req, logstashIndexPattern, 'route-logstash-overview')
+        metrics: getMetrics(req, lsIndexPattern),
+        clusterStatus: getClusterStatus(req, lsIndexPattern, { clusterUuid })
       })
       .then (reply)
       .catch(err => reply(handleError(err, req)));

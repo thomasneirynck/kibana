@@ -3,6 +3,7 @@ import Promise from 'bluebird';
 import { getNodeInfo } from '../../../../lib/logstash/get_node_info';
 import { handleError } from '../../../../lib/handle_error';
 import { getMetrics } from '../../../../lib/details/get_metrics';
+import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
 /*
  * Logstash Node route.
@@ -28,6 +29,7 @@ export function logstashNodeRoute(server) {
           logstashUuid: Joi.string().required()
         }),
         payload: Joi.object({
+          ccs: Joi.string().optional(),
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
@@ -38,11 +40,14 @@ export function logstashNodeRoute(server) {
     },
     handler: (req, reply) => {
       const config = server.config();
-      const logstashIndexPattern = config.get('xpack.monitoring.logstash.index_pattern');
+      const ccs = req.payload.ccs;
+      const clusterUuid = req.params.clusterUuid;
+      const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
+      const logstashUuid = req.params.logstashUuid;
 
       return Promise.props({
-        metrics: getMetrics(req, logstashIndexPattern),
-        nodeSummary: getNodeInfo(req, req.params.logstashUuid)
+        metrics: getMetrics(req, lsIndexPattern),
+        nodeSummary: getNodeInfo(req, lsIndexPattern, { clusterUuid, logstashUuid })
       })
       .then(reply)
       .catch(err => reply(handleError(err, req)));

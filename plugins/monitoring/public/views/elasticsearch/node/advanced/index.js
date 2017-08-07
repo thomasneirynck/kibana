@@ -17,6 +17,7 @@ function getPageData($injector) {
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/elasticsearch/nodes/${$route.current.params.node}`;
 
   return $http.post(url, {
+    ccs: globalState.ccs,
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()

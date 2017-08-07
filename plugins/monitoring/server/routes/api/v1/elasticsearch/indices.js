@@ -8,6 +8,7 @@ import { getIndices } from '../../../../lib/elasticsearch/get_indices';
 import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
 import { getUnassignedShards } from '../../../../lib/elasticsearch/get_unassigned_shards';
 import { handleError } from '../../../../lib/handle_error';
+import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
 export function indicesRoutes(server) {
   server.route({
@@ -19,6 +20,7 @@ export function indicesRoutes(server) {
           clusterUuid: Joi.string().required()
         }),
         payload: Joi.object({
+          ccs: Joi.string().optional(),
           showSystemIndices: Joi.boolean().default(false), // show/hide indices in listing
           timeRange: Joi.object({
             min: Joi.date().required(),
@@ -29,10 +31,11 @@ export function indicesRoutes(server) {
       }
     },
     handler: (req, reply) => {
+      const config = server.config();
+      const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
       const showSystemIndices = req.payload.showSystemIndices;
-      const config = req.server.config();
-      const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
+      const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
 
       return getClusterStats(req, esIndexPattern, clusterUuid)
       .then(cluster => {

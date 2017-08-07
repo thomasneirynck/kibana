@@ -2,7 +2,7 @@ import { get, find } from 'lodash';
 import { verifyMonitoringLicense } from './verify_monitoring_license';
 import { INVALID_LICENSE } from '../../common/constants';
 
-export function alertsClustersAggregation(req, clusters, checkLicense) {
+export function alertsClustersAggregation(req, alertsIndex, clusters, checkLicense) {
   const verification = verifyMonitoringLicense(req.server);
 
   if (!verification.enabled) {
@@ -10,9 +10,8 @@ export function alertsClustersAggregation(req, clusters, checkLicense) {
     return Promise.resolve({ alertsMeta: verification });
   }
 
-  const config = req.server.config();
   const params = {
-    index: config.get('xpack.monitoring.cluster_alerts.index'),
+    index: alertsIndex,
     ignoreUnavailable: true,
     filterPath: 'aggregations',
     body: {

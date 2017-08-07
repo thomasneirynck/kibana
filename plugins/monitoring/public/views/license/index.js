@@ -23,7 +23,7 @@ uiModule.controller('licenseView', ($injector, $scope) => {
   const globalState = $injector.get('globalState');
   $scope.cluster = find($route.current.locals.clusters, { cluster_uuid: globalState.cluster_uuid });
 
-  $scope.isExpired = (new Date()).getTime() > get($scope.cluster, 'license.expiry_date_in_millis');
+  $scope.isExpired = Date.now() > get($scope.cluster, 'license.expiry_date_in_millis');
 
   $scope.goBack = function () {
     const $window = $injector.get('$window');

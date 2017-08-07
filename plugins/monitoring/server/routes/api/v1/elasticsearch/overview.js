@@ -7,6 +7,7 @@ import { getLastRecovery } from '../../../../lib/elasticsearch/get_last_recovery
 import { getShardStats } from '../../../../lib/elasticsearch/get_shard_stats';
 import { getMetrics } from '../../../../lib/details/get_metrics';
 import { handleError } from '../../../../lib/handle_error';
+import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
 // manipulate cluster status and license meta data
 export function clustersRoutes(server) {
@@ -22,6 +23,7 @@ export function clustersRoutes(server) {
           clusterUuid: Joi.string().required()
         }),
         payload: Joi.object({
+          ccs: Joi.string().optional(),
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
@@ -31,9 +33,10 @@ export function clustersRoutes(server) {
       }
     },
     handler: (req, reply) => {
-      const clusterUuid = req.params.clusterUuid;
       const config = server.config();
-      const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
+      const ccs = req.payload.ccs;
+      const clusterUuid = req.params.clusterUuid;
+      const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
 
       return getClusterStats(req, esIndexPattern, clusterUuid)
       .then(cluster => {

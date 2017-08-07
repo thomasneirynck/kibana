@@ -3,7 +3,7 @@ import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query';
 import { LogstashClusterMetric } from '../metrics/metric_classes';
 
-function fetchPipelines(req, config, logstashIndexPattern, start, end, clusterUuid, logstashUuid) {
+function fetchPipelines(req, config, lsIndexPattern, start, end, clusterUuid, logstashUuid) {
   const filters = [];
   if (logstashUuid) {
     filters.push({ term: { 'logstash_stats.logstash.uuid': logstashUuid } });
@@ -11,7 +11,7 @@ function fetchPipelines(req, config, logstashIndexPattern, start, end, clusterUu
 
   const metric = LogstashClusterMetric.getMetricFields();
   const params = {
-    index: logstashIndexPattern,
+    index: lsIndexPattern,
     ignoreUnavailable: true,
     filterPath: [
       'aggregations.pipelines.by_pipeline_id.buckets.key',

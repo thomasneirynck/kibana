@@ -35,6 +35,7 @@ export function routeInitProvider(Private, monitoringClusters, globalState, lice
 
       if (cluster && cluster.license) {
         globalState.cluster_uuid = cluster.cluster_uuid;
+        globalState.ccs = cluster.ccs;
         globalState.save();
       } else {
         return kbnUrl.redirect('/no-data');

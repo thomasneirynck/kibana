@@ -1,8 +1,9 @@
 import { get } from 'lodash';
-import { INVALID_LICENSE } from '../../../common/constants';
+import { INVALID_LICENSE, LOGGING_TAG } from '../../../common/constants';
 import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
+import { parseCrossClusterPrefix } from '../ccs_utils';
 import { validateMonitoringLicense } from './validate_monitoring_license';
 import { getClustersState } from './get_clusters_state';
 
@@ -16,6 +17,7 @@ import { getClustersState } from './get_clusters_state';
  */
 export function getClustersStats(req, esIndexPattern, clusterUuid) {
   return fetchClusterStats(req, esIndexPattern, clusterUuid)
+  .then(response => handleClusterStats(response, req.server))
   // augment older documents (e.g., from 2.x - 5.4) with their cluster_state
   .then(clusters => getClustersState(req, esIndexPattern, clusters));
 }
@@ -46,6 +48,7 @@ function fetchClusterStats(req, esIndexPattern, clusterUuid) {
     index: esIndexPattern,
     ignore: [404],
     filterPath: [
+      'hits.hits._index',
       'hits.hits._source.cluster_uuid',
       'hits.hits._source.cluster_name',
       'hits.hits._source.version',
@@ -64,23 +67,43 @@ function fetchClusterStats(req, esIndexPattern, clusterUuid) {
   };
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
-  return callWithRequest(req, 'search', params)
-  .then(response => {
-    const hits = get(response, 'hits.hits', []);
+  return callWithRequest(req, 'search', params);
+}
 
-    return hits
-    .map(hit => {
-      const cluster = get(hit, '_source');
+/**
+ * Handle the {@code response} from {@code fetchClusterStats}.
+ *
+ * @param {Object} response The response from Elasticsearch.
+ * @param {Object} server The server object from the request.
+ * @return {Array} Objects representing each cluster.
+ */
+export function handleClusterStats(response, server) {
+  const hits = get(response, 'hits.hits', []);
 
-      if (cluster) {
-        if (!validateMonitoringLicense(cluster.cluster_uuid, cluster.license)) {
-          // "invalid" license allow deleted/unknown license clusters to show in UI
-          cluster.license = INVALID_LICENSE;
-        }
+  return hits.map(hit => {
+    const cluster = get(hit, '_source');
+
+    if (cluster) {
+      const indexName = get(hit, '_index', '');
+      const ccs = parseCrossClusterPrefix(indexName);
+
+      // use CCS whenever we come across it so that we can avoid talking to other monitoring clusters whenever possible
+      if (ccs) {
+        cluster.ccs = ccs;
       }
 
-      return cluster;
-    })
-    .filter(Boolean);
-  });
+      if (!validateMonitoringLicense(cluster.cluster_uuid, cluster.license)) {
+        server.log(
+          ['warning', LOGGING_TAG],
+          `Cluster [${cluster.cluster_uuid}] has an invalid license (defined: [${!!cluster.license}]).`
+        );
+
+        // "invalid" license allow deleted/unknown license clusters to show in UI
+        cluster.license = INVALID_LICENSE;
+      }
+    }
+
+    return cluster;
+  })
+  .filter(Boolean);
 }

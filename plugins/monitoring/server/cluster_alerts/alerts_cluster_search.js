@@ -5,7 +5,7 @@ import { verifyMonitoringLicense } from './verify_monitoring_license';
  * @param {Object} req Request object from the API route
  * @param {String} cluster The cluster being checked
  */
-export function alertsClusterSearch(req, cluster, checkLicense, options = {}) {
+export function alertsClusterSearch(req, alertsIndex, cluster, checkLicense, options = {}) {
   const verification = verifyMonitoringLicense(req.server);
 
   if (!verification.enabled) {
@@ -20,7 +20,7 @@ export function alertsClusterSearch(req, cluster, checkLicense, options = {}) {
     const size = options.size || config.get('xpack.monitoring.max_bucket_size');
 
     const params = {
-      index: config.get('xpack.monitoring.cluster_alerts.index'),
+      index: alertsIndex,
       ignoreUnavailable: true,
       filterPath: 'hits.hits._source',
       body: {

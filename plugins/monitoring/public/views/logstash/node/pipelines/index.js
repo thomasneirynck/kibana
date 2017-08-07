@@ -22,6 +22,7 @@ const getPageData = ($injector) => {
   const timeBounds = timefilter.getBounds();
 
   return $http.post(url, {
+    ccs: globalState.ccs,
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()

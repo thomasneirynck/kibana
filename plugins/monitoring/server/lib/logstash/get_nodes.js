@@ -16,20 +16,25 @@ import { ElasticsearchMetric } from '../metrics/metric_classes';
  *  - events
  *  - config reloads
  */
-export function getNodes(req, logstashIndexPattern) {
-  checkParam(logstashIndexPattern, 'logstashIndexPattern in getNodes');
+export function getNodes(req, lsIndexPattern, { clusterUuid }) {
+  checkParam(lsIndexPattern, 'lsIndexPattern in getNodes');
 
   const config = req.server.config();
   const start = moment.utc(req.payload.timeRange.min).valueOf();
   const end = moment.utc(req.payload.timeRange.max).valueOf();
-  const uuid = req.params.clusterUuid;
-  const metric = ElasticsearchMetric.getMetricFields();
+
   const params = {
-    index: logstashIndexPattern,
+    index: lsIndexPattern,
     ignoreUnavailable: true,
     body: {
       size: config.get('xpack.monitoring.max_bucket_size'),
-      query: createQuery({ start, end, uuid, metric, type: 'logstash_stats' }),
+      query: createQuery({
+        start,
+        end,
+        uuid: clusterUuid,
+        metric: ElasticsearchMetric.getMetricFields(),
+        type: 'logstash_stats'
+      }),
       collapse: {
         field: 'logstash_stats.logstash.uuid'
       },

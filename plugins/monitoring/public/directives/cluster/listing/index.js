@@ -36,6 +36,7 @@ const clusterRowFactory = (scope, globalState, kbnUrl, showLicenseExpiration) =>
     changeCluster() {
       scope.$evalAsync(() => {
         globalState.cluster_uuid = this.props.cluster_uuid;
+        globalState.ccs = this.props.ccs;
         globalState.save();
         kbnUrl.changePath('/overview');
       });

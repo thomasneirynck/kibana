@@ -24,7 +24,7 @@ describe('Alerts Cluster Search', () => {
 
     it('max hit count option', () => {
       const { mockReq, callWithRequestStub } = createStubs(mockQueryResult, featureStub);
-      return alertsClusterSearch(mockReq, { cluster_uuid: 'cluster-1234' }, checkLicense)
+      return alertsClusterSearch(mockReq, '.monitoring-alerts', { cluster_uuid: 'cluster-1234' }, checkLicense)
       .then(alerts => {
         const result = [ { alertsClusterSearchTest: true } ];
         expect(alerts).to.eql(result);
@@ -34,7 +34,7 @@ describe('Alerts Cluster Search', () => {
 
     it('set hit count option', () => {
       const { mockReq, callWithRequestStub } = createStubs(mockQueryResult, featureStub);
-      return alertsClusterSearch(mockReq, { cluster_uuid: 'cluster-1234' }, checkLicense, { size: 3 })
+      return alertsClusterSearch(mockReq, '.monitoring-alerts', { cluster_uuid: 'cluster-1234' }, checkLicense, { size: 3 })
       .then(alerts => {
         const result = [ { alertsClusterSearchTest: true } ];
         expect(alerts).to.eql(result);
@@ -50,7 +50,7 @@ describe('Alerts Cluster Search', () => {
       });
       const checkLicense = sinon.stub();
       const { mockReq, callWithRequestStub } = createStubs({}, featureStub);
-      return alertsClusterSearch(mockReq, { cluster_uuid: 'cluster-1234' }, checkLicense)
+      return alertsClusterSearch(mockReq, '.monitoring-alerts', { cluster_uuid: 'cluster-1234' }, checkLicense)
       .then(alerts => {
         const result = { message: 'monitoring cluster license check fail' };
         expect(alerts).to.eql(result);
@@ -66,7 +66,7 @@ describe('Alerts Cluster Search', () => {
       });
       const checkLicense = sinon.stub().returns({ clusterAlerts: { enabled: false }, message: 'prod goes boom' });
       const { mockReq, callWithRequestStub } = createStubs({}, featureStub);
-      return alertsClusterSearch(mockReq, { cluster_uuid: 'cluster-1234' }, checkLicense)
+      return alertsClusterSearch(mockReq, '.monitoring-alerts', { cluster_uuid: 'cluster-1234' }, checkLicense)
       .then(alerts => {
         const result = { message: 'prod goes boom' };
         expect(alerts).to.eql(result);

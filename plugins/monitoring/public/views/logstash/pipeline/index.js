@@ -15,12 +15,13 @@ function getPageData($injector) {
   const globalState = $injector.get('globalState');
   const Private = $injector.get('Private');
 
+  const { ccs, cluster_uuid : clusterUuid } = globalState;
   const timeBounds = timefilter.getBounds();
-  const clusterUuid = globalState.cluster_uuid;
   const pipelineId = $route.current.params.id;
   const pipelineHash = $route.current.params.hash;
   const url = `../api/monitoring/v1/clusters/${clusterUuid}/logstash/pipeline/${pipelineId}/${pipelineHash}`;
   return $http.post(url, {
+    ccs,
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()

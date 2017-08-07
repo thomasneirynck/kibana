@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { handleError } from '../../../../lib/handle_error';
 import { getPipeline } from '../../../../lib/logstash/get_pipeline';
+import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
 /*
  * Logstash Pipeline route.
@@ -26,6 +27,7 @@ export function logstashPipelineRoute(server) {
           pipelineHash: Joi.string().required()
         }),
         payload: Joi.object({
+          ccs: Joi.string().optional(),
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
@@ -34,12 +36,16 @@ export function logstashPipelineRoute(server) {
       }
     },
     handler: (req, reply) => {
+      const config = server.config();
+      const ccs = req.payload.ccs;
       const clusterUuid = req.params.clusterUuid;
+      const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
+
       const pipelineId = req.params.pipelineId;
       const pipelineHash = req.params.pipelineHash;
       const timeRange = req.payload.timeRange;
 
-      return getPipeline(req, clusterUuid, pipelineId, pipelineHash, timeRange)
+      return getPipeline(req, lsIndexPattern, clusterUuid, pipelineId, pipelineHash, timeRange)
       .then(reply)
       .catch(err => reply(handleError(err, req)));
     }

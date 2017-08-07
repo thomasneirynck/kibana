@@ -110,7 +110,8 @@ function outerAggs(pipelineId, pipelineHash, maxBucketSize) {
   };
 }
 
-export async function getPipelineStatsAggregation(callWithRequest, req, logstashIndexPattern, start, end, pipelineId, pipelineHash) {
+export async function getPipelineStatsAggregation(callWithRequest, req, logstashIndexPattern,
+                                                  { clusterUuid, start, end, pipelineId, pipelineHash }) {
   const filters = [
     {
       nested: {
@@ -132,6 +133,7 @@ export async function getPipelineStatsAggregation(callWithRequest, req, logstash
     start,
     end,
     metric: ElasticsearchMetric.getMetricFields(),
+    uuid: clusterUuid,
     filters
   });
 

@@ -54,7 +54,9 @@ async function findSupportedBasicLicenseCluster(req, clusters, kbnIndexPattern, 
  * Non-Basic license clusters and any cluster in a single-cluster environment
  * are also flagged as supported in this method.
  */
-export function flagSupportedClusters(req) {
+export function flagSupportedClusters(req, kbnIndexPattern) {
+  checkParam(kbnIndexPattern, 'kbnIndexPattern in cluster/flagSupportedClusters');
+
   const config = req.server.config();
   const serverLog = (msg) => req.server.log(['debug', LOGGING_TAG, 'supported-clusters'], msg);
   const flagAllSupported = (clusters) => {
@@ -85,7 +87,6 @@ export function flagSupportedClusters(req) {
       // if all basic licenses
       if (clusters.length === basicLicenseCount) {
         const kibanaUuid = config.get('server.uuid');
-        const kbnIndexPattern = config.get('xpack.monitoring.kibana.index_pattern');
         return await findSupportedBasicLicenseCluster(req, clusters, kbnIndexPattern, kibanaUuid, serverLog);
       }
 

@@ -13,7 +13,7 @@ function getAlertData($injector) {
   const Private = $injector.get('Private');
   const url = `../api/monitoring/v1/clusters/${globalState.cluster_uuid}/alerts`;
 
-  return $http.post(url)
+  return $http.post(url, { ccs: globalState.ccs })
   .then(response => get(response, 'data', []))
   .catch((err) => {
     const ajaxErrorHandlers = Private(ajaxErrorHandlersProvider);

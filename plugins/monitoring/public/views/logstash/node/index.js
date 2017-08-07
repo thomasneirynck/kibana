@@ -18,6 +18,7 @@ function getPageData($injector) {
   const showCgroupMetricsLogstash = $injector.get('showCgroupMetricsLogstash');
 
   return $http.post(url, {
+    ccs: globalState.ccs,
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()

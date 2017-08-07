@@ -1,4 +1,5 @@
 import { get, merge } from 'lodash';
+import { checkParam } from '../error_missing_required';
 import { calculateAvailability } from './../calculate_availability';
 
 export function handleResponse(resp) {
@@ -17,10 +18,11 @@ export function handleResponse(resp) {
   return info;
 }
 
-export function getNodeInfo(req, uuid) {
-  const config = req.server.config();
+export function getNodeInfo(req, lsIndexPattern, { clusterUuid, logstashUuid }) {
+  checkParam(lsIndexPattern, 'lsIndexPattern in getNodeInfo');
+
   const params = {
-    index: config.get('xpack.monitoring.logstash.index_pattern'),
+    index: lsIndexPattern,
     ignore: [404],
     filterPath: [
       'hits.hits._source.logstash_stats.events',
@@ -33,8 +35,11 @@ export function getNodeInfo(req, uuid) {
     body: {
       size: 1,
       query: {
-        term: {
-          'logstash_stats.logstash.uuid': uuid
+        bool: {
+          filter: [
+            { term: { 'cluster_uuid': clusterUuid } },
+            { term: { 'logstash_stats.logstash.uuid': logstashUuid } }
+          ]
         }
       },
       collapse: { field: 'logstash_stats.logstash.uuid' },

@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import { getClustersFromRequest } from '../../../../lib/cluster/get_clusters_from_request';
 import { handleError } from '../../../../lib/handle_error';
+import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
 export function clusterRoutes(server) {
   /*
@@ -15,6 +16,7 @@ export function clusterRoutes(server) {
           clusterUuid: Joi.string().required()
         }),
         payload: Joi.object({
+          ccs: Joi.string().optional(),
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
@@ -23,7 +25,15 @@ export function clusterRoutes(server) {
       }
     },
     handler: (req, reply) => {
-      return getClustersFromRequest(req)
+      const config = server.config();
+      const ccs = req.payload.ccs;
+      const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
+      const kbnIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.kibana.index_pattern', ccs);
+      const lsIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.logstash.index_pattern', ccs);
+      const alertsIndex = prefixIndexPattern(config, 'xpack.monitoring.cluster_alerts.index', ccs);
+      const clusterUuid = req.params.clusterUuid;
+
+      return getClustersFromRequest(req, esIndexPattern, kbnIndexPattern, lsIndexPattern, alertsIndex, { clusterUuid })
       .then(reply)
       .catch(err => reply(handleError(err, req)));
     }

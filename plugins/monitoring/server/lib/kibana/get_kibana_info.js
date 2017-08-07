@@ -1,4 +1,5 @@
 import { get, merge } from 'lodash';
+import { checkParam } from '../error_missing_required';
 import { calculateAvailability } from '../calculate_availability';
 
 export function handleResponse(resp) {
@@ -14,10 +15,11 @@ export function handleResponse(resp) {
   );
 }
 
-export function getKibanaInfo(req, uuid) {
-  const config = req.server.config();
+export function getKibanaInfo(req, kbnIndexPattern, { clusterUuid, kibanaUuid }) {
+  checkParam(kbnIndexPattern, 'kbnIndexPattern in getKibanaInfo');
+
   const params = {
-    index: config.get('xpack.monitoring.kibana.index_pattern'),
+    index: kbnIndexPattern,
     ignore: [404],
     filterPath: [
       'hits.hits._source.kibana_stats.kibana',
@@ -28,7 +30,12 @@ export function getKibanaInfo(req, uuid) {
     body: {
       size: 1,
       query: {
-        term: { 'kibana_stats.kibana.uuid': uuid }
+        bool: {
+          filter: [
+            { term: { 'cluster_uuid': clusterUuid } },
+            { term: { 'kibana_stats.kibana.uuid': kibanaUuid } }
+          ]
+        }
       },
       collapse: { field: 'kibana_stats.kibana.uuid' },
       sort: [

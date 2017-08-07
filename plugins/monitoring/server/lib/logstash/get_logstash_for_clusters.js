@@ -17,8 +17,8 @@ import { ElasticsearchMetric } from '../metrics/metric_classes';
  *  - number of instances
  *  - combined health
  */
-export function getLogstashForClusters(req, logstashIndexPattern, clusters) {
-  checkParam(logstashIndexPattern, 'logstashIndexPattern in logstash/getLogstashForClusters');
+export function getLogstashForClusters(req, lsIndexPattern, clusters) {
+  checkParam(lsIndexPattern, 'lsIndexPattern in logstash/getLogstashForClusters');
 
   const start = req.payload.timeRange.min;
   const end = req.payload.timeRange.max;
@@ -29,7 +29,7 @@ export function getLogstashForClusters(req, logstashIndexPattern, clusters) {
     const metric = ElasticsearchMetric.getMetricFields();
     const params = {
       size: 0,
-      index: logstashIndexPattern,
+      index: lsIndexPattern,
       ignoreUnavailable: true,
       body: {
         query: createQuery({

@@ -1,11 +1,13 @@
 import { get } from 'lodash';
+import { checkParam } from '../error_missing_required';
 import { createQuery } from '../create_query';
 import { ElasticsearchMetric } from '../metrics/metric_classes';
 
-export function getClusterLicense(req, clusterUuid) {
-  const config = req.server.config();
-  const clusterCheckParams = {
-    index: config.get('xpack.monitoring.elasticsearch.index_pattern'),
+export function getClusterLicense(req, esIndexPattern, clusterUuid) {
+  checkParam(esIndexPattern, 'esIndexPattern in getClusterLicense');
+
+  const params = {
+    index: esIndexPattern,
     filterPath: 'hits.hits._source.license',
     body: {
       size: 1,
@@ -19,7 +21,7 @@ export function getClusterLicense(req, clusterUuid) {
   };
 
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
-  return callWithRequest(req, 'search', clusterCheckParams)
+  return callWithRequest(req, 'search', params)
   .then(response => {
     return get(response, 'hits.hits[0]._source.license', {});
   });

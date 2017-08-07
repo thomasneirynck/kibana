@@ -21,6 +21,7 @@ function getPageData($injector) {
 
   return $http.post(url, {
     showSystemIndices,
+    ccs: globalState.ccs,
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()

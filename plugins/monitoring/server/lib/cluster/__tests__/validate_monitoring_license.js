@@ -1,7 +1,8 @@
 import expect from 'expect.js';
 import { validateMonitoringLicense } from '../validate_monitoring_license';
 
-// valid license
+// valid license pair
+const validId = 12;
 const validLicense = {
   status: 'status',
   uid: '1234',
@@ -11,15 +12,24 @@ const validLicense = {
 };
 
 describe('validate_monitoring_license', () => {
-  it('valid license', () => {
-    const validId = 12;
+  it('returns true for valid id/license pair', () => {
     const result = validateMonitoringLicense(validId, validLicense);
     expect(result).to.be(true);
   });
 
-  it('invalid license', () => {
+  it('returns false for an invalid id/license pair', () => {
     const invalidId = 13;
     const result = validateMonitoringLicense(invalidId, validLicense);
     expect(result).to.be(false);
+  });
+
+  it('returns false for no id', () => {
+    expect(validateMonitoringLicense(undefined, validLicense)).to.be(false);
+    expect(validateMonitoringLicense(null, validLicense)).to.be(false);
+  });
+
+  it('returns false for no license', () => {
+    expect(validateMonitoringLicense(validId)).to.be(false);
+    expect(validateMonitoringLicense(validId, null)).to.be(false);
   });
 });

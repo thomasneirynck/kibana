@@ -1,5 +1,6 @@
 import boom from 'boom';
 import { get } from 'lodash';
+import { checkParam } from '../error_missing_required';
 import { getPipelineStateDocument } from './get_pipeline_state_document';
 import { getPipelineStatsAggregation } from './get_pipeline_stats_aggregation';
 
@@ -70,18 +71,25 @@ export function _enrichStateWithStatsAggregation(stateDocument, statsAggregation
   return stateDocument.logstash_state;
 }
 
-export async function getPipeline(req, clusterUuid, pipelineId, pipelineHash, timeRange) {
+export async function getPipeline(req, lsIndexPattern, clusterUuid, pipelineId, pipelineHash, timeRange) {
+  checkParam(lsIndexPattern, 'lsIndexPattern in getPipeline');
+
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
-  const config = req.server.config();
-  const logstashIndexPattern = config.get('xpack.monitoring.logstash.index_pattern');
 
   const start = timeRange.min;
   const end = timeRange.max;
+  const options = {
+    clusterUuid,
+    start,
+    end,
+    pipelineId,
+    pipelineHash
+  };
   const timePickerDurationMillis = end - start;
 
   const [ stateDocument, statsAggregation ] = await Promise.all([
-    getPipelineStateDocument(callWithRequest, req, logstashIndexPattern, pipelineId, pipelineHash),
-    getPipelineStatsAggregation(callWithRequest, req, logstashIndexPattern, start, end, pipelineId, pipelineHash)
+    getPipelineStateDocument(callWithRequest, req, lsIndexPattern, options),
+    getPipelineStatsAggregation(callWithRequest, req, lsIndexPattern, options)
   ]);
 
   if (stateDocument === null) {

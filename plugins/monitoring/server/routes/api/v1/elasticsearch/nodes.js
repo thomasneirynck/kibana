@@ -8,6 +8,7 @@ import { calculateNodeType } from '../../../../lib/elasticsearch/calculate_node_
 import { getNodeTypeClassLabel } from '../../../../lib/elasticsearch/get_node_type_class_label';
 import { getDefaultNodeFromId } from '../../../../lib/elasticsearch/get_default_node_from_id';
 import { handleError } from '../../../../lib/handle_error';
+import { prefixIndexPattern } from '../../../../lib/ccs_utils';
 
 export function nodesRoutes(server) {
   server.route({
@@ -19,6 +20,7 @@ export function nodesRoutes(server) {
           clusterUuid: Joi.string().required()
         }),
         payload: Joi.object({
+          ccs: Joi.string().optional(),
           timeRange: Joi.object({
             min: Joi.date().required(),
             max: Joi.date().required()
@@ -28,9 +30,10 @@ export function nodesRoutes(server) {
       }
     },
     async handler(req, reply) {
-      const clusterUuid = req.params.clusterUuid;
       const config = server.config();
-      const esIndexPattern = config.get('xpack.monitoring.elasticsearch.index_pattern');
+      const ccs = req.payload.ccs;
+      const clusterUuid = req.params.clusterUuid;
+      const esIndexPattern = prefixIndexPattern(config, 'xpack.monitoring.elasticsearch.index_pattern', ccs);
 
       try {
         const clusterStats = await getClusterStats(req, esIndexPattern, clusterUuid);
@@ -76,7 +79,6 @@ export function nodesRoutes(server) {
       } catch(err) {
         reply(handleError(err, req));
       }
-
     }
   });
 
