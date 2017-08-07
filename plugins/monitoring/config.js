@@ -27,7 +27,7 @@ export const config = (Joi) => {
       index_pattern: string().default('.monitoring-kibana-2-*,.monitoring-kibana-6-*'),
       collection: object({
         enabled: boolean().default(true),
-        interval: number().default(10000)
+        interval: number().default(10000) // op status metrics get buffered at `ops.interval` and flushed to the bulk endpoint at this interval
       }).default()
     }).default(),
     logstash: object({

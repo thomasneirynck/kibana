@@ -48,7 +48,7 @@ export const init = (monitoringPlugin, server) => {
       features.push(esHealthCheck(monitoringPlugin, server).start());
     }
 
-    // Send Kibana server ops to the monitoring bulk api
+    // Send Kibana usage / server ops to the monitoring bulk api
     if (config.get('xpack.monitoring.kibana.collection.enabled')) {
       features.push(initKibanaMonitoring(monitoringPlugin.kbnServer, server));
     }

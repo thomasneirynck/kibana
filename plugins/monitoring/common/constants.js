@@ -2,6 +2,10 @@
  * Helper string to add as a tag in every logging call
  */
 export const LOGGING_TAG = 'monitoring-ui';
+/**
+ * Helper string to add as a tag in every logging call related to Kibana monitoring
+ */
+export const KIBANA_MONITORING_LOGGING_TAG = 'kibana-monitoring';
 
 /**
  * The Monitoring API version is the expected API format that we export and expect to import.
@@ -19,7 +23,7 @@ export const KIBANA_SYSTEM_ID = 'kibana';
  */
 export const LOGSTASH_SYSTEM_ID = 'logstash';
 /**
- * The type name used within the Monitoring index to publish Kibana stats.
+ * The type name used within the Monitoring index to publish Kibana ops stats.
  * @type {string}
  */
 export const KIBANA_STATS_TYPE = 'kibana_stats';
@@ -28,6 +32,11 @@ export const KIBANA_STATS_TYPE = 'kibana_stats';
  * @type {string}
  */
 export const KIBANA_SETTINGS_TYPE = 'kibana_settings';
+/**
+ * The type name used within the Monitoring index to publish Kibana usage stats.
+ * @type {string}
+ */
+export const KIBANA_USAGE_TYPE = 'kibana';
 
 /*
  * Values for column sorting in table options

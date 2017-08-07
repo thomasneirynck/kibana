@@ -1,10 +1,9 @@
+import _ from 'lodash';
+import moment from 'moment';
+import v8 from 'v8';
 import { mapRequests } from './map_requests';
 import { mapResponseTimes } from './map_response_times';
 import { mapConcurrentConnections } from './map_concurrent_connections';
-import moment from 'moment';
-import v8 from 'v8';
-
-import _ from 'lodash';
 
 // rollup functions are for objects with unpredictable keys (e.g., {'200': 1, '201': 2} + {'200':2} = {'200': 3, '201': 2})
 const maxRollup = _.partialRight(_.assign, (latest, prev) => _.max([latest, prev]));
