@@ -16,8 +16,9 @@
   >
   <div
     id="{{watchEmailAction.makeId(['to', 'required'])}}"
+    xpack-aria-describes="{{watchEmailAction.makeId('to')}}"
     class="kuiInputNote kuiInputNote--danger"
-    ng-show="watchEmailAction.isValidationMessageVisible('to', 'required')"
+    ng-if="watchEmailAction.isValidationMessageVisible('to', 'required')"
   >
     To e-mail address is required.
   </div>
@@ -39,8 +40,9 @@
   >
   <div
     id="{{watchEmailAction.makeId(['subject', 'required'])}}"
+    xpack-aria-describes="{{watchEmailAction.makeId('subject')}}"
     class="kuiInputNote kuiInputNote--danger"
-    ng-show="watchEmailAction.isValidationMessageVisible('subject', 'required')"
+    ng-if="watchEmailAction.isValidationMessageVisible('subject', 'required')"
   >
     Subject is required.
   </div>
@@ -61,8 +63,9 @@
   ></textarea>
   <div
     id="{{watchEmailAction.makeId(['body', 'required'])}}"
+    xpack-aria-describes="{{watchEmailAction.makeId('body')}}"
     class="kuiInputNote kuiInputNote--danger"
-    ng-show="watchEmailAction.isValidationMessageVisible('body', 'required')"
+    ng-if="watchEmailAction.isValidationMessageVisible('body', 'required')"
   >
     Body is required.
   </div>

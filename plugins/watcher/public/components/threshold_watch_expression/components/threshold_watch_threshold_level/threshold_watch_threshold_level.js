@@ -3,6 +3,7 @@ import template from './threshold_watch_threshold_level.html';
 import { ThresholdWatchBaseController } from '../threshold_watch_base';
 const app = uiModules.get('xpack/watcher');
 import 'plugins/watcher/services/html_id_generator';
+import 'plugins/watcher/components/xpack_aria_describes';
 
 app.directive('thresholdWatchThresholdLevel', function ($injector) {
   const htmlIdGeneratorFactory = $injector.get('xpackWatcherHtmlIdGeneratorFactory');

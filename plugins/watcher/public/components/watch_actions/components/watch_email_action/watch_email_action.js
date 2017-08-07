@@ -3,6 +3,7 @@ import { WatchActionControllerBase } from '../lib/watch_action_controller_base';
 import template from './watch_email_action.html';
 import 'plugins/watcher/services/html_id_generator';
 import 'ui/directives/input_focus';
+import 'plugins/watcher/components/xpack_aria_describes';
 
 const app = uiModules.get('xpack/watcher');
 

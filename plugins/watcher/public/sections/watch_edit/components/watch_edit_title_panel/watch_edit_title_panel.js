@@ -7,6 +7,7 @@ import './watch_edit_title_panel.less';
 import 'plugins/watcher/components/index_select';
 import 'plugins/watcher/components/duration_select';
 import 'plugins/watcher/services/html_id_generator';
+import 'plugins/watcher/components/xpack_aria_describes';
 
 const app = uiModules.get('xpack/watcher');
 

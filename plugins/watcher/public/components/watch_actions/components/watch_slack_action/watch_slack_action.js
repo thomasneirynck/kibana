@@ -3,6 +3,7 @@ import { WatchActionControllerBase } from '../lib/watch_action_controller_base';
 import template from './watch_slack_action.html';
 import 'ui/directives/input_focus';
 import 'plugins/watcher/services/html_id_generator';
+import 'plugins/watcher/components/xpack_aria_describes';
 
 const app = uiModules.get('xpack/watcher');
 

@@ -13,8 +13,9 @@
   <form name="thresholdWatchAggField.form" novalidate>
     <div
       id="{{thresholdWatchAggField.makeId(['aggField', 'required'])}}'"
+      xpack-aria-describes="{{thresholdWatchAggField.makeId('aggField')}}"
       class="kuiInputNote kuiInputNote--danger"
-      ng-show="thresholdWatchAggField.isValidationMessageVisible('aggField', 'required')"
+      ng-if="thresholdWatchAggField.isValidationMessageVisible('aggField', 'required')"
     >
       Please select a field.
     </div>

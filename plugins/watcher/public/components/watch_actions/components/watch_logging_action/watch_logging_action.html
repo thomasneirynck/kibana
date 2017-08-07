@@ -16,8 +16,9 @@
   >
   <div
     id="{{watchLoggingAction.makeId(['text', 'required'])}}"
+    xpack-aria-describes="{{watchLoggingAction.makeId('text')}}"
     class="kuiInputNote kuiInputNote--danger"
-    ng-show="watchLoggingAction.isValidationMessageVisible('text', 'required')"
+    ng-if="watchLoggingAction.isValidationMessageVisible('text', 'required')"
   >
     Log text is required.
   </div>

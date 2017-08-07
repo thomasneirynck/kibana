@@ -16,8 +16,9 @@
   >
   <div
     id="{{watchSlackAction.makeId(['to', 'required'])}}"
+    xpack-aria-describes="{{watchSlackAction.makeId('to')}}"
     class="kuiInputNote kuiInputNote--danger"
-    ng-show="watchSlackAction.isValidationMessageVisible('to', 'required')"
+    ng-if="watchSlackAction.isValidationMessageVisible('to', 'required')"
   >
     Recipient is required.
   </div>
@@ -38,8 +39,9 @@
   ></textarea>
   <div
     id="{{watchSlackAction.makeId(['text', 'required'])}}"
+    xpack-aria-describes="{{watchSlackAction.makeId('text')}}"
     class="kuiInputNote kuiInputNote--danger"
-    ng-show="watchSlackAction.isValidationMessageVisible('text', 'required')"
+    ng-if="watchSlackAction.isValidationMessageVisible('text', 'required')"
   >
     Message is required.
   </div>

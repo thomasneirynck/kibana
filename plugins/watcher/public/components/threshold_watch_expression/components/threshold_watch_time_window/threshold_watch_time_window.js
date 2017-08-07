@@ -5,6 +5,7 @@ import { getTimeUnitsLabel } from 'plugins/watcher/lib/get_time_units_label';
 import { ThresholdWatchBaseController } from '../threshold_watch_base';
 import 'plugins/watcher/components/duration_select';
 import 'plugins/watcher/services/html_id_generator';
+import 'plugins/watcher/components/xpack_aria_describes';
 
 const app = uiModules.get('xpack/watcher');
 

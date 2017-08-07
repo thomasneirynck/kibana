@@ -13,29 +13,33 @@
   <form name="thresholdWatchGroupBy.form" novalidate>
     <div
       id="{{thresholdWatchGroupBy.makeId(['termSize', 'required'])}}"
+      xpack-aria-describes="{{thresholdWatchGroupBy.makeId('termSize')}}"
       class="kuiInputNote kuiInputNote--danger"
-      ng-show="thresholdWatchGroupBy.isValidationMessageVisible('termSize', 'required')"
+      ng-if="thresholdWatchGroupBy.isValidationMessageVisible('termSize', 'required')"
     >
       A value is required.
     </div>
     <div
       id="{{thresholdWatchGroupBy.makeId(['termSize', 'number'])}}"
+      xpack-aria-describes="{{thresholdWatchGroupBy.makeId('termSize')}}"
       class="kuiInputNote kuiInputNote--danger"
-      ng-show="thresholdWatchGroupBy.isValidationMessageVisible('termSize', 'number')"
+      ng-if="thresholdWatchGroupBy.isValidationMessageVisible('termSize', 'number')"
     >
       Value must be a valid number.
     </div>
     <div
       id="{{thresholdWatchGroupBy.makeId(['termSize', 'min'])}}"
+      xpack-aria-describes="{{thresholdWatchGroupBy.makeId('termSize')}}"
       class="kuiInputNote kuiInputNote--danger"
-      ng-show="thresholdWatchGroupBy.isValidationMessageVisible('termSize', 'min')"
+      ng-if="thresholdWatchGroupBy.isValidationMessageVisible('termSize', 'min')"
     >
       Value must be greater than 0.
     </div>
     <div
       id="{{thresholdWatchGroupBy.makeId(['termField', 'required'])}}"
+      xpack-aria-describes="{{thresholdWatchGroupBy.makeId('termField')}}"
       class="kuiInputNote kuiInputNote--danger"
-      ng-show="thresholdWatchGroupBy.isValidationMessageVisible('termField', 'required')"
+      ng-if="thresholdWatchGroupBy.isValidationMessageVisible('termField', 'required')"
     >
       Please select a field.
     </div>
