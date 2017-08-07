@@ -6,16 +6,16 @@ export function buildMetadata(watch) {
   return {
     watcherui: {
       index: watch.index,
-      timeField: watch.timeField,
-      triggerIntervalSize: watch.triggerIntervalSize,
-      triggerIntervalUnit: watch.triggerIntervalUnit,
-      aggType: watch.aggType,
-      aggField: watch.aggField,
-      termSize: watch.termSize,
-      termField: watch.termField,
-      thresholdComparator: watch.thresholdComparator,
-      timeWindowSize: watch.timeWindowSize,
-      timeWindowUnit: watch.timeWindowUnit,
+      time_field: watch.timeField,
+      trigger_interval_size: watch.triggerIntervalSize,
+      trigger_interval_unit: watch.triggerIntervalUnit,
+      agg_type: watch.aggType,
+      agg_field: watch.aggField,
+      term_size: watch.termSize,
+      term_field: watch.termField,
+      threshold_comparator: watch.thresholdComparator,
+      time_window_size: watch.timeWindowSize,
+      time_window_unit: watch.timeWindowUnit,
       threshold: watch.threshold
     }
   };

@@ -104,16 +104,16 @@ export class ThresholdWatch extends BaseWatch {
       {
         type: WATCH_TYPES.THRESHOLD,
         index: metadata.index,
-        timeField: metadata.timeField,
-        triggerIntervalSize: metadata.triggerIntervalSize,
-        triggerIntervalUnit: metadata.triggerIntervalUnit,
-        aggType: metadata.aggType,
-        aggField: metadata.aggField,
-        termSize: metadata.termSize,
-        termField: metadata.termField,
-        thresholdComparator: metadata.thresholdComparator,
-        timeWindowSize: metadata.timeWindowSize,
-        timeWindowUnit: metadata.timeWindowUnit,
+        timeField: metadata.time_field,
+        triggerIntervalSize: metadata.trigger_interval_size,
+        triggerIntervalUnit: metadata.trigger_interval_unit,
+        aggType: metadata.agg_type,
+        aggField: metadata.agg_field,
+        termSize: metadata.term_size,
+        termField: metadata.term_field,
+        thresholdComparator: metadata.threshold_comparator,
+        timeWindowSize: metadata.time_window_size,
+        timeWindowUnit: metadata.time_window_unit,
         threshold: metadata.threshold
       }
     );
