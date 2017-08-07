@@ -22,7 +22,7 @@ const columns = [
   { title: 'Nodes', sortKey: 'elasticsearch.cluster_stats.nodes.count.total' },
   { title: 'Indices', sortKey: 'elasticsearch.cluster_stats.indices.count' },
   { title: 'Data', sortKey: 'elasticsearch.cluster_stats.indices.store.size_in_bytes' },
-  { title: 'Logstash', sortKey: 'logstash.count' },
+  { title: 'Logstash', sortKey: 'logstash.node_count' },
   { title: 'Kibana', sortKey: 'kibana.count' },
   { title: 'License', sortKey: 'license.type' }
 ];
@@ -208,7 +208,7 @@ to enjoy multi-cluster monitoring.`
           </KuiTableRowCell>
           <KuiTableRowCell>
             <IsClusterSupported>
-              { numeral(get(this.props, 'logstash.count')).format('0,0') }
+              { numeral(get(this.props, 'logstash.node_count')).format('0,0') }
             </IsClusterSupported>
           </KuiTableRowCell>
           <KuiTableRowCell>
