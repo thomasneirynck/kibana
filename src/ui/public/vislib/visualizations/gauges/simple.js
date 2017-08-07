@@ -103,16 +103,10 @@ export function SimpleGaugeProvider() {
 
     placeGaugeInDiv(containerDiv, data, targetWidth, targetHeight) {
 
-
-      //this is missing all the other stuff (labels, etc...)
-      console.log('should put the gauge here in this div', arguments);
-
       const svgGaugeHolder = document.createElement('svg');
       containerDiv.appendChild(svgGaugeHolder);
 
       const fontSize = this. gaugeChart.handler.visConfig.get('gauge.style.fontSize');
-      console.log(fontSize);
-
 
       const textNode = document.createElement('txt');
       textNode.setAttribute('style', `font-size: ${fontSize}pt`);
@@ -121,21 +115,6 @@ export function SimpleGaugeProvider() {
       textNode.textContent = value;
 
       svgGaugeHolder.appendChild(textNode);
-
-      console.log(value, fontSize);
-
-
-
-      // const series = gauges
-      //   .append('rect')
-      //   .attr('x', '-50%')
-      //   .attr('y', '-50%')
-      //   .attr('width', '99%')
-      //   .attr('height', '99%')
-      //   .style('fill', function (d) {
-      //     return bgColor ? self.getColorBucket(d.y) : 'transparent';
-      //   });
-
     }
 
     drawGauge(svg, data, width) {
