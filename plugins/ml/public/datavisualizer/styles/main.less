@@ -1,0 +1,60 @@
+@import (reference) "~ui/styles/variables";
+
+.data-visualizer-container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 10px 20px;
+  background-color: #f5f5f5;
+
+  .fields-container, .searchbar-container {
+    padding: 10px 15px;
+    background-color: #ffffff;
+  }
+
+  .kuiVerticalRhythm + .kuiVerticalRhythm {
+    margin-top: 20px;
+  }
+
+  .field-group-controls {
+    margin: 10px 0px;
+
+    .field-group-input {
+      display: inline;
+      margin-left: 10px;
+    }
+
+    label {
+      display: inline;
+    }
+  }
+
+  .field-count {
+    font-weight: 700;
+  }
+
+  .card-container {
+    display: inline-grid;
+    padding: 0px 10px 10px 0px;
+  }
+
+  .kuiTable {
+    margin-bottom: 30px;
+
+    .kuiTableRowCell {
+      span.topValueItem {
+        display: block;
+      }
+
+      span.infoPercent {
+        font-size: 12px;
+        vertical-align: inherit;
+      }
+    }
+  }
+}
+
+.jqstooltip{
+  box-sizing: content-box;
+  max-width: 100px;
+}

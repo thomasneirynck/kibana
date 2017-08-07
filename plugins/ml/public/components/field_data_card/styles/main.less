@@ -1,0 +1,156 @@
+.ml-field-data-card {
+  width: 360px;
+  height: 425px;
+  overflow: hidden;
+
+  .number {
+    background-color: #008bc4;
+  }
+
+  .keyword {
+    background-color: #009c90;
+  }
+
+  .text {
+    background-color: #810b03;
+  }
+
+  .ip {
+    background-color: #3d0085;
+  }
+
+  .date {
+    background-color: #ef7b07;
+  }
+
+  .title-bar {
+    color: #ffffff;
+    font-size: 18px;
+    text-align: center;
+    border-radius: 5px 5px 0px 0px;
+    padding: 5px 6px;
+
+    .field-type-icon {
+      vertical-align: middle;
+      padding-right: 4px;
+      display: inline-block;
+    }
+
+    .field-name {
+      vertical-align: middle;
+      padding-right: 8px;
+      max-width: 290px;
+      display: inline-block;
+      text-overflow: ellipsis;
+      overflow-x: hidden;
+      white-space: nowrap;
+    }
+  }
+
+  .card-contents {
+    height: 383px;
+    border-color: #d9d9d9;
+    border-style: solid;
+    border-width: 0px 1px 1px 1px;
+    border-radius: 0px 0px 5px 5px;
+  }
+
+  .stats {
+    padding: 10px 10px 0px 10px;
+    text-align: center;
+  }
+
+  .stat {
+    padding-bottom: 6px;
+  }
+
+  .stat.heading {
+    padding-bottom: 0px;
+  }
+
+  .stat.min, .stat.max, .stat.median {
+    width: 30%;
+    display: inline-block;
+  }
+
+  .details-select {
+    text-align: center;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+
+  ml-metric-distribution-chart {
+    padding: 0px 15px 10px 15px;
+  }
+
+  .top-value {
+    .field-label {
+      display: inline-block;
+      width: 100px;
+      text-align: right;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    .count-label {
+      display: inline-block;
+      width: 70px;
+      text-align: left;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      font-size: 13px;
+    }
+
+    .top-value-bar-holder {
+      display: inline-block;
+      width: 160px;
+    }
+
+    .top-value-bar {
+      height: 16px;
+      min-width: 3px;
+    }
+  }
+
+  .distribution-chart {
+
+    svg {
+      font-size: 12px;
+      font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial;
+    }
+
+    .x.axis path, .x.axis line {
+      fill: none;
+      stroke: #cccccc;
+      shape-rendering: crispEdges;
+    }
+
+    .axis text {
+      font-size: 11px;
+      fill: #555555;
+    }
+
+    .area {
+      fill: #008bc4;
+    }
+
+  }
+
+}
+
+.ml-field-data-card-tooltip {
+  position: absolute;
+  border: 2px solid #303030;
+  border-radius: 5px;
+  padding: 7px 5px;
+  color: #ffffff;
+  background-color: #303030;
+  font-family: Roboto, Droid, Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 12px;
+  opacity: 0.9;
+  white-space: nowrap;
+  z-index: 1;
+  text-align: center;
+}
