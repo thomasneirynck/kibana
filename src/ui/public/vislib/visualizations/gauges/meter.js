@@ -146,6 +146,11 @@ export function MeterGaugeProvider() {
     }
 
     drawGauge(svg, data, width, height) {
+
+
+      console.log('draw gaguge', arguments);
+
+
       const marginFactor = 0.95;
       const tooltip = this.gaugeChart.tooltip;
       const isTooltip = this.gaugeChart.handler.visConfig.get('addTooltip');

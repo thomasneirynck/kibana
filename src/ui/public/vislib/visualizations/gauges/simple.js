@@ -100,10 +100,51 @@ export function SimpleGaugeProvider() {
       return this.colorFunc(labels[bucket]);
     }
 
+
+    placeGaugeInDiv(containerDiv, data, targetWidth, targetHeight) {
+
+
+      //this is missing all the other stuff (labels, etc...)
+      console.log('should put the gauge here in this div', arguments);
+
+      const svgGaugeHolder = document.createElement('svg');
+      containerDiv.appendChild(svgGaugeHolder);
+
+      const fontSize = this. gaugeChart.handler.visConfig.get('gauge.style.fontSize');
+      console.log(fontSize);
+
+
+      const textNode = document.createElement('txt');
+      textNode.setAttribute('style', `font-size: ${fontSize}pt`);
+
+      const value = data.values[0].y;
+      textNode.textContent = value;
+
+      svgGaugeHolder.appendChild(textNode);
+
+      console.log(value, fontSize);
+
+
+
+      // const series = gauges
+      //   .append('rect')
+      //   .attr('x', '-50%')
+      //   .attr('y', '-50%')
+      //   .attr('width', '99%')
+      //   .attr('height', '99%')
+      //   .style('fill', function (d) {
+      //     return bgColor ? self.getColorBucket(d.y) : 'transparent';
+      //   });
+
+    }
+
     drawGauge(svg, data, width) {
+
+      console.log('draw guage', arguments);
+
       const tooltip = this.gaugeChart.tooltip;
       const isTooltip = this.gaugeChart.handler.visConfig.get('addTooltip');
-      const fontSize = this.gaugeChart.handler.visConfig.get('gauge.style.fontSize');
+      const fontSize = this. gaugeChart.handler.visConfig.get('gauge.style.fontSize');
 
       const labelColor = this.gaugeConfig.style.labelColor;
       const bgColor = this.gaugeConfig.style.bgColor;
