@@ -344,16 +344,16 @@ describe('ThresholdWatch', () => {
           metadata: {
             watcherui: {
               index: 'index',
-              timeField: 'timeField',
-              triggerIntervalSize: 'triggerIntervalSize',
-              triggerIntervalUnit: 'triggerIntervalUnit',
-              aggType: 'aggType',
-              aggField: 'aggField',
-              termSize: 'termSize',
-              termField: 'termField',
-              thresholdComparator: 'thresholdComparator',
-              timeWindowSize: 'timeWindowSize',
-              timeWindowUnit: 'timeWindowUnit',
+              time_field: 'timeField',
+              trigger_interval_size: 'triggerIntervalSize',
+              trigger_interval_unit: 'triggerIntervalUnit',
+              agg_type: 'aggType',
+              agg_field: 'aggField',
+              term_size: 'termSize',
+              term_field: 'termField',
+              threshold_comparator: 'thresholdComparator',
+              time_window_size: 'timeWindowSize',
+              time_window_unit: 'timeWindowUnit',
               threshold: 'threshold'
             }
           }
