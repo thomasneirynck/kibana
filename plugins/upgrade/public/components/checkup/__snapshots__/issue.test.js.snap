@@ -1,0 +1,108 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Issue renders the details property 1`] = `
+<li
+  className="kuiMenuItem"
+>
+  <div
+    className="kuiEvent"
+  >
+    <IssueSymbol
+      level={null}
+    />
+    <div
+      className="kuiEventBody"
+    >
+      <div
+        className="kuiEventBody__message"
+      >
+        : issue details
+      </div>
+      <div
+        className="kuiEventBody__metadata"
+      />
+    </div>
+  </div>
+</li>
+`;
+
+exports[`Issue renders the level property 1`] = `
+<li
+  className="kuiMenuItem"
+>
+  <div
+    className="kuiEvent"
+  >
+    <IssueSymbol
+      level="info"
+    />
+    <div
+      className="kuiEventBody"
+    >
+      <div
+        className="kuiEventBody__message"
+      />
+      <div
+        className="kuiEventBody__metadata"
+      />
+    </div>
+  </div>
+</li>
+`;
+
+exports[`Issue renders the message property 1`] = `
+<li
+  className="kuiMenuItem"
+>
+  <div
+    className="kuiEvent"
+  >
+    <IssueSymbol
+      level={null}
+    />
+    <div
+      className="kuiEventBody"
+    >
+      <div
+        className="kuiEventBody__message"
+      >
+        a message
+      </div>
+      <div
+        className="kuiEventBody__metadata"
+      />
+    </div>
+  </div>
+</li>
+`;
+
+exports[`Issue renders the url property 1`] = `
+<li
+  className="kuiMenuItem"
+>
+  <div
+    className="kuiEvent"
+  >
+    <IssueSymbol
+      level={null}
+    />
+    <div
+      className="kuiEventBody"
+    >
+      <div
+        className="kuiEventBody__message"
+      />
+      <div
+        className="kuiEventBody__metadata"
+      >
+        <a
+          className="kuiLink"
+          href="/some/url"
+        >
+          View Documentation
+        </a>
+      </div>
+    </div>
+  </div>
+</li>
+`;

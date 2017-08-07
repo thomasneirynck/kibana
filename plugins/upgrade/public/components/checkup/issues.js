@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import { Issue } from '../issue';
+import { Issue } from './issue';
 
 
 export function Issues({ className, issues }) {

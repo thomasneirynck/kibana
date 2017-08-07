@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { DEPRECATION_ISSUE_LEVELS } from '../../../../lib/constants';
+import { DEPRECATION_ISSUE_LEVELS } from '../../lib/constants';
 
 
 const ISSUE_LEVEL_MESSAGES = {

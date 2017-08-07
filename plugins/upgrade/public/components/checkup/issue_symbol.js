@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 import React from 'react';
 
-import { DEPRECATION_ISSUE_LEVELS } from '../../../../lib/constants';
+import { DEPRECATION_ISSUE_LEVELS } from '../../lib/constants';
 
 
 export function IssueSymbol({ level }) {

@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CheckupInfo renders the className property 1`] = `
+<div
+  className="myClass"
+>
+  <p
+    className="kuiText kuiVerticalRhythm"
+  >
+    This tool runs a series of checks against your Elasticsearch cluster, nodes, and indices to determine whether you can upgrade directly to Elasticsearch version 6, or whether you need to make changes to your data before doing so.
+  </p>
+  <p
+    className="kuiText kuiVerticalRhythm"
+  >
+    You will also see deprecated cluster settings and node settings, deprecated plugins, and indices with deprecated mappings currently in use.
+  </p>
+  <p
+    className="kuiText kuiVerticalRhythm"
+  >
+    Each issue found has a degree of severity:
+  </p>
+  <Issues
+    className="kuiVerticalRhythm"
+    issues={
+      Array [
+        Object {
+          "level": "none",
+          "message": "Everything is OK.",
+        },
+        Object {
+          "level": "info",
+          "message": "Info that something has changed. No action required to upgrade.",
+        },
+        Object {
+          "level": "warning",
+          "message": "Action recommended but not required to upgrade. You are using deprecated functionality which will not be available in version 6.0.",
+        },
+        Object {
+          "level": "critical",
+          "message": "Action required. You must fix this problem to upgrade.",
+        },
+      ]
+    }
+  />
+</div>
+`;

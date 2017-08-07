@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Issues renders a list of Issue components 1`] = `
+<ul
+  className="kuiMenu kuiMenu--contained"
+>
+  <Issue
+    details="issue 1 details"
+    level="issue 1 level"
+    message="issue 1 message"
+    url="issue 1 url"
+  />
+  <Issue
+    details="issue 2 details"
+    level="issue 2 level"
+    message="issue 2 message"
+    url="issue 2 url"
+  />
+</ul>
+`;
+
+exports[`Issues renders the className property 1`] = `
+<ul
+  className="kuiMenu kuiMenu--contained myClass"
+/>
+`;

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Issues } from '../output/issues';
+import { Issues } from './issues';
 
 
 const INFO_ISSUES = [

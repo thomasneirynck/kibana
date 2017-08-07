@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { IssueSymbol } from '../issue_symbol';
+import { IssueSymbol } from './issue_symbol';
 
 
 export function Issue({ details, level, message, url }) {

@@ -1,9 +1,9 @@
 import _ from 'lodash';
 import React from 'react';
 
-import { StatusGroup } from '../../../status_group';
-import { Issues } from '../issues';
-import { IssueSummary } from '../issue_summary';
+import { StatusGroup } from '../status_group';
+import { Issues } from './issues';
+import { IssueSummary } from './issue_summary';
 
 
 export function IndexDeprecations({ className, deprecations }) {
