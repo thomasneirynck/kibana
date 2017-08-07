@@ -43,24 +43,24 @@ module.filter('metricChangeDescription', function () {
       const direction = isHigher ? 'higher' : 'lower';
       if (factor > 1.5) {
         if (factor <= 100) {
-          return '<i class="fa ' + iconClass + '"></i> ' + Math.round(factor) + 'x ' + direction;
+          return '<i class="fa ' + iconClass + '" aria-hidden="true"></i> ' + Math.round(factor) + 'x ' + direction;
         } else {
-          return '<i class="fa ' + iconClass + '"></i> More than 100x ' + direction;
+          return '<i class="fa ' + iconClass + '" aria-hidden="true"></i> More than 100x ' + direction;
         }
       }
 
       if (factor >= 1.05) {
-        return '<i class="fa ' + iconClass + '"></i> ' + factor.toPrecision(2) + 'x ' + direction;
+        return '<i class="fa ' + iconClass + '" aria-hidden="true"></i> ' + factor.toPrecision(2) + 'x ' + direction;
       } else {
         const dir = isHigher ? 'high' : 'low';
-        return '<i class="fa ' + iconClass + '"></i> Unusually ' + dir;
+        return '<i class="fa ' + iconClass + '" aria-hidden="true"></i> Unusually ' + dir;
       }
 
     } else {
       if (actual === 0) {
-        return '<i class="fa ' + iconClass + '"></i> Unexpected zero value';
+        return '<i class="fa ' + iconClass + '" aria-hidden="true"></i> Unexpected zero value';
       } else {
-        return '<i class="fa ' + iconClass + '"></i> Unexpected non-zero value';
+        return '<i class="fa ' + iconClass + '" aria-hidden="true"></i> Unexpected non-zero value';
       }
     }
 

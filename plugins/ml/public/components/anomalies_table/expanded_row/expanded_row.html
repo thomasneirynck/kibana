@@ -10,46 +10,52 @@
     <tr ng-if="record.source.partition_field_value">
       <td>{{record.source.partition_field_name}}:</td>
       <td>{{record.source.partition_field_value}}
-        <button ng-if="filteringEnabled" ng-click="filter(record.source.partition_field_name, record.source.partition_field_value, '+')">
-          <i tooltip="Add filter" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        <button ng-if="filteringEnabled" ng-click="filter(record.source.partition_field_name, record.source.partition_field_value, '+')"
+          tooltip="Add filter" tooltip-append-to-body="1" aria-label="Filter for value">
+          <i class="fa fa-search-plus" aria-hidden="true"></i>
         </button>
-        <button ng-if="filteringEnabled" ng-click="filter(record.source.partition_field_name, record.source.partition_field_value, '-')">
-          <i tooltip="Remove filter" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+        <button ng-if="filteringEnabled" ng-click="filter(record.source.partition_field_name, record.source.partition_field_value, '-')"
+          tooltip="Remove filter" tooltip-append-to-body="1" aria-label="Remove filter">
+          <i class="fa fa-search-minus" aria-hidden="true"></i>
         </button>
       </td>
     </tr>
     <tr ng-if="record.source.by_field_value">
       <td>{{record.source.by_field_name}}:</td>
       <td>{{record.source.by_field_value}}
-        <button ng-if="filteringEnabled"
-          ng-click="filter(record.source.by_field_name, record.source.by_field_value, '+')">
-          <i tooltip="Add filter" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        <button ng-if="filteringEnabled" ng-click="filter(record.source.by_field_name, record.source.by_field_value, '+')"
+          tooltip="Add filter" tooltip-append-to-body="1" aria-label="Filter for value">
+          <i class="fa fa-search-plus" aria-hidden="true"></i>
         </button>
-        <button ng-if="filteringEnabled"
-          ng-click="filter(record.source.by_field_name, record.source.by_field_value, '-')">
-          <i tooltip="Remove filter" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+        <button ng-if="filteringEnabled" ng-click="filter(record.source.by_field_name, record.source.by_field_value, '-')"
+          tooltip="Remove filter" tooltip-append-to-body="1" aria-label="Remove filter">
+          <i class="fa fa-search-minus" aria-hidden="true"></i>
         </button>
       </td>
     </tr>
     <tr ng-if="singleCauseByFieldValue">
       <td>{{singleCauseByFieldName}}:</td>
       <td>{{singleCauseByFieldValue}}
-        <button ng-if="filteringEnabled" ng-click="filter(singleCauseByFieldName, singleCauseByFieldValue, '+')">
-          <i tooltip="Add filter" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        <button ng-if="filteringEnabled" ng-click="filter(singleCauseByFieldName, singleCauseByFieldValue, '+')"
+          tooltip="Add filter" tooltip-append-to-body="1" aria-label="Filter for value">
+          <i class="fa fa-search-plus" aria-hidden="true"></i>
         </button>
-        <button ng-if="filteringEnabled" ng-click="filter(singleCauseByFieldName, singleCauseByFieldValue, '-')">
-          <i tooltip="Remove filter" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+        <button ng-if="filteringEnabled" ng-click="filter(singleCauseByFieldName, singleCauseByFieldValue, '-')"
+          tooltip="Remove filter" tooltip-append-to-body="1" aria-label="Remove filter">
+          <i class="fa fa-search-minus" aria-hidden="true"></i>
         </button>
       </td>
     </tr>
     <tr ng-if="record.source.over_field_value">
       <td>{{record.source.over_field_name}}:</td>
       <td>{{record.source.over_field_value}}
-        <button ng-if="filteringEnabled" ng-click="filter(record.source.over_field_name, record.source.over_field_value, '+')">
-          <i tooltip="Add filter" tooltip-append-to-body="1" class="fa fa-search-plus"></i>
+        <button ng-if="filteringEnabled" ng-click="filter(record.source.over_field_name, record.source.over_field_value, '+')"
+          tooltip="Add filter" tooltip-append-to-body="1" aria-label="Filter for value">
+          <i class="fa fa-search-plus" aria-hidden="true"></i>
         </button>
-        <button ng-if="filteringEnabled" ng-click="filter(record.source.over_field_name, record.source.over_field_value, '-')">
-          <i tooltip="Remove filter" tooltip-append-to-body="1" class="fa fa-search-minus"></i>
+        <button ng-if="filteringEnabled" ng-click="filter(record.source.over_field_name, record.source.over_field_value, '-')"
+          tooltip="Remove filter" tooltip-append-to-body="1" aria-label="Remove filter">
+          <i class="fa fa-search-minus" aria-hidden="true"></i>
         </button>
       </td>
     </tr>

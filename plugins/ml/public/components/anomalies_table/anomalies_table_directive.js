@@ -783,9 +783,10 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
           },
           {
             markup: parseInt(record['max severity']) >= 1 ?
-            '<i class="fa fa-exclamation-triangle icon-severity-' + getSeverity(record['max severity']) + '"></i> '
-              + Math.floor(record['max severity']) :
-            '<i class="fa fa-exclamation-triangle icon-severity-' + getSeverity(record['max severity']) + '"></i> &lt; 1',
+              '<i class="fa fa-exclamation-triangle icon-severity-' + getSeverity(record['max severity']) +
+                '" aria-hidden="true"></i> ' + Math.floor(record['max severity']) :
+              '<i class="fa fa-exclamation-triangle icon-severity-' + getSeverity(record['max severity']) +
+                '" aria-hidden="true"></i> &lt; 1',
             value:  record['max severity']
           },
           {
@@ -803,11 +804,13 @@ module.directive('mlAnomaliesTable', function ($window, $route, timefilter,
               tableRow.push({
                 markup: record.entityValue +
                   '<button ng-if="filteringEnabled"' +
-                  `ng-click="filter('${safeEntityName}', '${safeEntityValue}', '+')">` +
-                  '<i tooltip="Add filter" tooltip-append-to-body="1" class="fa fa-search-plus"></i></button>' +
+                  `ng-click="filter('${safeEntityName}', '${safeEntityValue}', '+')" ` +
+                  'tooltip="Add filter" tooltip-append-to-body="1" aria-label="Filter for value">' +
+                  '<i class="fa fa-search-plus" aria-hidden="true"></i></button>' +
                   '<button ng-if="filteringEnabled"' +
-                  `ng-click="filter('${safeEntityName}', '${safeEntityValue}', '-')">` +
-                  '<i tooltip="Remove filter" tooltip-append-to-body="1" class="fa fa-search-minus"></i></button>',
+                  `ng-click="filter('${safeEntityName}', '${safeEntityValue}', '-')" ` +
+                  'tooltip="Remove filter" tooltip-append-to-body="1" aria-label="Remove filter">' +
+                  '<i class="fa fa-search-minus" aria-hidden="true"></i></button>',
                 value:  record.entityValue,
                 scope:  rowScope
               });
