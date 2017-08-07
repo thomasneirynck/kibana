@@ -13,6 +13,7 @@ import 'plugins/watcher/services/license';
 import 'plugins/watcher/services/timezone';
 import 'plugins/watcher/services/watch';
 import 'plugins/watcher/services/interval';
+import 'plugins/watcher/services/action_defaults';
 
 import dateMath from '@elastic/datemath';
 import { Notifier } from 'ui/notify/notifier';
@@ -27,6 +28,7 @@ app.directive('thresholdWatchEdit', function ($injector) {
   const timezoneService = $injector.get('xpackWatcherTimezoneService');
   const licenseService = $injector.get('xpackWatcherLicenseService');
   const intervalService = $injector.get('xpackWatcherIntervalService');
+  const actionDefaultsService = $injector.get('xpackWatcherActionDefaultsService');
   const kbnUrl = $injector.get('kbnUrl');
   const confirmModal = $injector.get('confirmModal');
   const dirtyPrompt = $injector.get('xpackWatcherDirtyPrompt');
@@ -112,8 +114,9 @@ app.directive('thresholdWatchEdit', function ($injector) {
         this.actionsPanelValid = false;
       }
 
-      onActionAdd = (type) => {
-        this.watch.createAction(type);
+      onActionAdd = (actionType) => {
+        const defaults = actionDefaultsService.getDefaults(this.watch.type, actionType);
+        this.watch.createAction(actionType, defaults);
       }
 
       onActionDelete = (action) => {

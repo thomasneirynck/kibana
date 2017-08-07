@@ -1,5 +1,5 @@
 import { getSearchValue } from 'plugins/watcher/lib/get_search_value';
-import { get, isEqual, remove, map } from 'lodash';
+import { get, isEqual, remove, map, merge } from 'lodash';
 import { Action } from '../action';
 import { WatchStatus } from '../watch_status';
 import { createActionId } from './lib/create_action_id';
@@ -33,7 +33,7 @@ export class BaseWatch {
     this.watchStatus = watchStatus;
   }
 
-  createAction = (type) => {
+  createAction = (type, defaults) => {
     const ActionTypes = Action.getActionTypes();
     const ActionType = ActionTypes[type];
 
@@ -42,7 +42,13 @@ export class BaseWatch {
     }
 
     const id = createActionId(this.actions, type);
-    const action = new ActionType({ id, type });
+    const props = merge(
+      {},
+      defaults,
+      { id, type }
+    );
+
+    const action = new ActionType(props);
     this.addAction(action);
   }
 
