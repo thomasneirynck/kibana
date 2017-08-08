@@ -96,6 +96,14 @@ function makeQueueNode(nodes) {
   return queue;
 }
 
+// Line function for drawing paths between nodes
+const lineFunction = d3.svg.line()
+  // Null check that handles a bug in webcola where sometimes these values are null for a tick
+  .x(d => d ? d.x : null)
+  .y(d => d ? d.y : null)
+  // Cardinal interpolation draws curved lines
+  .interpolate('cardinal');
+
 export class ColaGraph extends React.Component {
   constructor() {
     super();
@@ -106,7 +114,7 @@ export class ColaGraph extends React.Component {
   }
 
   renderGraph(svgEl) {
-    const d3cola = webcola.d3adaptor()
+    this.d3cola = webcola.d3adaptor()
       .avoidOverlaps(true)
       .size([this.width, this.height]);
 
@@ -143,7 +151,7 @@ export class ColaGraph extends React.Component {
 
     this.linksLayer = makeGroup(vis);
 
-    d3cola
+    this.d3cola
         .nodes(this.graph.colaVertices)
         .links(this.graph.colaEdges)
         .flowLayout('y', LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.HEIGHT_PX + LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.VERTICAL_DISTANCE_PX)
@@ -151,35 +159,15 @@ export class ColaGraph extends React.Component {
         .jaccardLinkLengths(40)
         .start(30,30,30);
 
-    const link = this.linksLayer.selectAll('.link')
-      .data(this.graph.colaEdges)
-      .enter().append('path')
-      .attr('id', (d) => `lspvEdge-${d.edge.id}`)
-      .attr('class', (d) => d.edge.svgClass);
+    this.makeLinks();
 
-    const lineFunction = d3.svg.line()
-      .x(d => d ? d.x : null)
-      .y(d => d ? d.y : null)
-      .interpolate('cardinal');
-
-    const routeEdges = () => {
-      d3cola.prepareEdgeRouting(1);
-      link.attr('d', (d) => {
-        try {
-          return lineFunction(d3cola.routeEdge(d));
-        } catch (err) {
-          console.error('Could not exec line function!', err);
-        }
-      });
-    };
-
-    const margin = 15;
-
-    d3cola.on('tick', function () {
+    const margin = LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.MARGIN_PX;
+    this.d3cola.on('tick', () => {
       nodes.each((d) => d.innerBounds = d.bounds.inflate(-margin));
 
-      link.attr('d', (d) => {
-        const route = webcola.makeEdgeBetween(d.source.innerBounds, d.target.innerBounds, 5);
+      this.links.attr('d', (d) => {
+        const arrowStart = LOGSTASH.PIPELINE_VIEWER.GRAPH.EDGES.ARROW_START;
+        const route = webcola.makeEdgeBetween(d.source.innerBounds, d.target.innerBounds, arrowStart);
         return lineFunction([route.sourceIntersection, route.arrowStart]);
       });
 
@@ -190,8 +178,67 @@ export class ColaGraph extends React.Component {
         .attr('width', (d) => d.innerBounds.width())
         .attr('height', (d) => d.innerBounds.height());
 
-      routeEdges();
-    }).on('end', routeEdges);
+      this.routeAndLabelEdges();
+    }).on('end', this.routeAndLabelEdges);
+  }
+
+  routeAndLabelEdges = () => {
+    this.routeEdges();
+    this.labelEdges();
+  }
+
+  routeEdges() {
+    this.d3cola.prepareEdgeRouting(LOGSTASH.PIPELINE_VIEWER.GRAPH.EDGES.ROUTING_MARGIN_PX);
+    this.links.select('path').attr('d', (d) => {
+      try {
+        return lineFunction(this.d3cola.routeEdge(d));
+      } catch (err) {
+        console.error('Could not exec line function!', err);
+      }
+    });
+  }
+
+  labelEdges() {
+    // Use a regular function instead of () => since we want the dom element via `this`,
+    // only accessible via d3 setting 'this' AFAIK
+    this.booleanLabels.each(function () {
+      const path = d3.select(this.parentNode).select('path')[0][0];
+      const center = path.getPointAtLength(path.getTotalLength() / 2);
+      const group = d3.select(this);
+      group.select('circle')
+        .attr('cx', center.x)
+        .attr('cy', center.y);
+
+      // Offset by to vertically center the text
+      const textVerticalOffset = 5;
+      group.select('text')
+        .attr('x', center.x)
+        .attr('y', center.y + textVerticalOffset);
+    });
+  }
+
+  makeLinks() {
+    this.links = this.linksLayer.selectAll('.link')
+      .data(this.graph.colaEdges);
+
+    const linkGroup = this.links.enter()
+      .append('g')
+        .attr('id', (d) => `lspvEdge-${d.edge.id}`)
+        .attr('class', (d) => d.edge.svgClass);
+    linkGroup.append('path');
+
+    const booleanLinks = linkGroup.filter('.lspvEdgeBoolean');
+    this.booleanLabels = booleanLinks
+      .append('g')
+      .attr('class', 'lspvBooleanLabel');
+
+    this.booleanLabels
+      .append('circle')
+        .attr('r', LOGSTASH.PIPELINE_VIEWER.GRAPH.EDGES.LABEL_RADIUS);
+    this.booleanLabels
+      .append('text')
+        .attr('text-anchor', 'middle') // Position the text on its vertical
+        .text(d => d.edge.when ? 'T' : 'F');
   }
 
   updateGraph(nextState = {}) {
@@ -218,7 +265,7 @@ export class ColaGraph extends React.Component {
 
       const lineageEdges = lineage.edges;
       const nonLineageEdges = this.graph.edges.filter(e => lineageEdges.indexOf(e) === -1);
-      const grayedEdges = this.linksLayer.selectAll('path.lspvEdge').filter(d => nonLineageEdges.indexOf(d.edge) >= 0);
+      const grayedEdges = this.linksLayer.selectAll('.lspvEdge').filter(d => nonLineageEdges.indexOf(d.edge) >= 0);
       grayedEdges.classed('lspvEdge-grayed', true);
     }
   }

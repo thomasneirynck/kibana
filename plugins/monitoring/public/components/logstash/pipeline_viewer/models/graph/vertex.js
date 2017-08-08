@@ -19,10 +19,12 @@ export class Vertex {
   // There is no reason to have > 1 instance of this!
   // There is really no good reason to add any additional fields here
   _makeCola() {
+    const margin = LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.MARGIN_PX;
     return {
       vertex: this,
-      width: LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.WIDTH_PX,
-      height: LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.HEIGHT_PX
+      // The margin size must be added since this is actually the size of the bounding box
+      width: LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.WIDTH_PX + margin,
+      height: LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.HEIGHT_PX + margin
     };
   }
 

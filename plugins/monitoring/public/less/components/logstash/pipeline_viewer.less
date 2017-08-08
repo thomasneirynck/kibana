@@ -70,13 +70,33 @@
     opacity: 0.1;
   }
 }
+
+.lspvEdgeBoolean {
+  text {
+    font-size: 14px;
+    font-weight: bold;
+    fill: #fff;
+    stroke: none;
+  }
+}
+
+@trueBooleanFill: #1BAFD2;
+@falseBooleanFill: #EE408A;
   
 .lspvEdgeBoolean--true {
-  stroke: #1BAFD2;
+  stroke: @trueBooleanFill;
   marker-end: url(#lspvTrueMarker);
+
+  circle {
+    fill: @trueBooleanFill;
+  }
 }
 
 .lspvEdgeBoolean--false {
-  stroke: #EE408A;
+  stroke: @falseBooleanFill;
   marker-end: url(#lspvFalseMarker);
+
+  circle {
+    fill: @falseBooleanFill;
+  }
 }

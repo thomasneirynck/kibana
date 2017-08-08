@@ -6,6 +6,6 @@ export class BooleanEdge extends Edge {
   }
 
   get svgClass() {
-    return `${super.svgClass} ${super.svgClass}Boolean--${this.when}`;
+    return `${super.svgClass} ${super.svgClass}Boolean ${super.svgClass}Boolean--${this.when}`;
   }
 }
