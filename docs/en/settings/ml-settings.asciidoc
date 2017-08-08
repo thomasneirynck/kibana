@@ -8,7 +8,9 @@ You do not need to configure any settings to use {ml}. It is enabled by default.
 ==== General Machine Learning Settings
 
 `xpack.ml.enabled`::
-Set to `true` (default) to enable {ml}.  If set to `false` in `kibana.yml`, the
-{ml} icon is not visible in {kib}.
-
-//TO-DO: Add link to elasticsearch.yml settings
+Set to `true` (default) to enable {ml}. +
++
+If set to `false` in `kibana.yml`, the {ml} icon is hidden in this {kib}
+instance. If `xpack.ml.enabled` is set to `true` in `elasticsearch.yml`, however,
+you can still use the {ml} APIs. To disable {ml} entirely, see the
+{ref}/ml-settings.html[{es} Machine Learning Settings].
