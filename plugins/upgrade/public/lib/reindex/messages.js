@@ -32,6 +32,10 @@ messages.REINDEX.FAILED = {
       return <span>Edit your mappings for this index before proceeding.</span>;
     }
 
+    if (error.code === ERR_CODES.ERR_REINDEX_IN_PROGRESS) {
+      return <span>Reindex in progress via task <code>{ error.taskId }</code>. You can cancel it with the cancel button.</span>;
+    }
+
     return <span>Failed to create index.</span>;
   },
 
@@ -43,7 +47,7 @@ messages.REINDEX.FAILED = {
 
   REINDEX: (error) => {
     if (error.code === ERR_CODES.ERR_GET_TASK_FAILED) {
-      return <span>Failed to get task details for <code>{ error.taskId }</code>.</span>;
+      return <span>Failed to get task details for <code>{ error.taskId }</code>. The task may have been canceled.</span>;
     }
 
     return <span>Failed to reindex index.</span>;
@@ -74,6 +78,15 @@ messages.REINDEX.RUNNING = {
   REPLACE_INDEX: () => 'Replacing old index with new index',
 };
 
+messages.REINDEX.CANCELED = {
+  CREATE_INDEX:  () => 'Delivered request to cancel task.',
+  SET_READONLY:  () => '',
+  REINDEX:       () => 'Delivered request to cancel task.',
+  REFRESH_INDEX: () => '',
+  VERIFY_DOCS:   () => '',
+  REPLACE_INDEX: () => '',
+};
+
 messages.UPGRADE = {};
 messages.UPGRADE.COMPLETED = {
   UPGRADE: () => 'Upgraded index.',
@@ -93,6 +106,14 @@ messages.UPGRADE.RUNNING = {
   UPGRADE: (extra) => <span>Upgrading index with task <code>{ extra.taskId }</code>.</span>,
 };
 
+messages.UPGRADE.CANCELED = {
+  CREATE_INDEX:  () => 'Delivered request to cancel task.',
+  SET_READONLY:  () => '',
+  REINDEX:       () => 'Delivered request to cancel task.',
+  REFRESH_INDEX: () => '',
+  VERIFY_DOCS:   () => '',
+  REPLACE_INDEX: () => '',
+};
 
 
 export function getStepMessage(actionType, result, stepName, extra) {

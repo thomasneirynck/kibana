@@ -23,12 +23,16 @@ export function isRunning(indexState) {
   return !isFailed(indexState) && _.some(indexState.steps, isStepRunning);
 }
 
+export function isCanceled(indexState) {
+  return _.some(indexState.steps, isStepCanceled);
+}
+
 export function isStepCompleted(step) {
   return step.result === STEP_RESULTS.COMPLETED;
 }
 
 export function isStepFailed(step) {
-  return _.isObject(step.result) && step.result.message;
+  return _.isObject(step.result);
 }
 
 export function isStepNotStarted(step) {
@@ -37,6 +41,10 @@ export function isStepNotStarted(step) {
 
 export function isStepRunning(step) {
   return step.result === STEP_RESULTS.RUNNING;
+}
+
+export function isStepCanceled(step) {
+  return step.result === STEP_RESULTS.CANCELED;
 }
 
 export function isResettable(indexState) {
@@ -53,3 +61,19 @@ export function isResettable(indexState) {
   );
 }
 
+export function isCancelable(indexState) {
+  // The task can be canceled if the reindex
+  // or upgrade step is in RUNNING state, or
+  // if the createIndex step failed because
+  // we already have a task running, in which
+  // case we will have a taskId on the indexState.
+  const createIndexStep = _.find(indexState.steps, { 'name': REINDEX_STEPS.CREATE_INDEX });
+  return (
+    (
+      createIndexStep &&
+      isStepFailed(createIndexStep) &&
+      indexState.taskId
+    ) ||
+    isRunning(indexState)
+  );
+}

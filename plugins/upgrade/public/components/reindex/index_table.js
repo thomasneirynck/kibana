@@ -2,9 +2,7 @@ import { sortBy } from 'lodash';
 import classNames from 'classnames';
 import React from 'react';
 
-// Will implement better button behavior:
-// https://github.com/elastic/x-pack-kibana/issues/1992
-/* import { RefreshButton } from '../refresh_button'; */
+import { RefreshButton } from '../refresh_button';
 import { KuiToolBar } from 'ui_framework/components';
 import { IndexTableRow } from './index_table_row';
 
@@ -13,7 +11,7 @@ export function IndexTable({
   cancelAction,
   className,
   indices,
-  /* loadIndices, */
+  loadIndices,
   processIndex,
   resetAction,
 }) {
@@ -25,13 +23,9 @@ export function IndexTable({
       <KuiToolBar>
         <div className="kuiToolBarSection">
 
-          {/*
-            // Will implement better button behavior:
-            // https://github.com/elastic/x-pack-kibana/issues/1992
-            <RefreshButton
-              buttonLabel="Refresh Indices"
-              onClick={ loadIndices } />
-          */}
+          <RefreshButton
+            buttonLabel="Refresh Indices"
+            onClick={ loadIndices } />
 
         </div>
         <div className="kuiToolBarSection">
@@ -72,7 +66,7 @@ IndexTable.propTypes = {
   cancelAction: React.PropTypes.func,
   className: React.PropTypes.string,
   indices: React.PropTypes.objectOf(React.PropTypes.object),
-  /* loadIndices: React.PropTypes.func, */
+  loadIndices: React.PropTypes.func,
   resetAction: React.PropTypes.func,
   processIndex: React.PropTypes.func,
 };
@@ -81,7 +75,7 @@ IndexTable.defaultProps = {
   cancelAction: () => {},
   className: '',
   indices: {},
-  /* loadIndices: () => {}, */
+  loadIndices: () => {},
   resetAction: () => {},
   processIndex: () => {},
 };

@@ -4,8 +4,8 @@ import { IndexActionSteps } from './index_action_steps';
 import { INDEX_ACTION } from '../../lib/constants';
 import {
   isResettable,
+  isCancelable,
   isNotStarted,
-  isRunning,
 } from '../../lib';
 
 
@@ -39,7 +39,7 @@ export function IndexTableRow({
             <div className="kuiMenuButtonGroup kuiMenuButtonGroup--alignRight">
               <button
                 className="kuiMenuButton kuiMenuButton--danger"
-                disabled={ !isRunning(index) }
+                disabled={ !isCancelable(index) }
                 onClick={ () => cancelAction(index.name) }
               >
                 Cancel

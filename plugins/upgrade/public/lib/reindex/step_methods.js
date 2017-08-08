@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import {
   getIndexSuffix,
   getUpgradedMappings,
@@ -20,7 +21,43 @@ import {
 
 
 export async function getAssistance() {
-  return await getFromApi(`/api/migration/assistance`);
+  const response = await getFromApi(`/api/migration/assistance`);
+  const tasks = await getReindexTasks();
+
+  const indices = _.reduce(response, (acc, value, key) => {
+    const task = findRunningReindexTask(tasks, key);
+    const taskId = task ? `${ task.node }:${ task.id }` : undefined;
+
+    return {
+      ...acc,
+      [key]: {
+        ...value,
+        taskId,
+      },
+    };
+  }, {});
+
+  return indices;
+}
+
+async function getReindexTasks() {
+  return await getFromApi('/api/migration/reindexTasks');
+}
+
+function findRunningReindexTask(tasks, indexName) {
+  return _.find(
+    tasks,
+    (task) => {
+      return (
+        _.startsWith(
+          task.description,
+          `reindex from [${ indexName }]`) &&
+        _.endsWith(
+          task.description,
+          `to [${ indexName }${ getIndexSuffix(indexName) }]`)
+      );
+    }
+  );
 }
 
 export async function getMappingsAndSettings(indexName) {
@@ -59,6 +96,16 @@ export async function createIndex(indexName, definition) {
       error.code = ERR_CODES.ERR_CREATE_INDEX_FAILED;
     }
 
+    if (error.code === ERR_CODES.ERR_INDEX_EXISTS) {
+      const tasks = await getReindexTasks();
+      const task = await findRunningReindexTask(tasks, indexName);
+
+      if (task) {
+        error.code = ERR_CODES.ERR_REINDEX_IN_PROGRESS;
+        error.taskId = `${ task.node }:${ task.id }`;
+      }
+    }
+
     const suffix = getIndexSuffix(indexName);
     error.reindexedIndexName = `${ indexName }${ suffix }`;
     throw error;
@@ -74,6 +121,7 @@ export async function setReadOnly(indexName) {
     if (!error.code) {
       error.code = ERR_CODES.ERR_SET_READONLY_FAILED;
     }
+
     throw error;
   }
 }
@@ -90,6 +138,7 @@ export async function runReindex(indexName) {
     if (!error.code) {
       error.code = ERR_CODES.ERR_POST_REINDEX_FAILED;
     }
+
     throw error;
   }
 }
@@ -130,6 +179,7 @@ export async function refreshIndex(indexName) {
     if (!error.code) {
       error.code = ERR_CODES.ERR_POST_REFRESH_FAILED;
     }
+
     throw error;
   }
 }
@@ -150,6 +200,7 @@ export async function verifyDocs(indexName) {
     if (!error.code) {
       error.code = ERR_CODES.ERR_COUNT_DOCS_FAILED;
     }
+
     throw error;
   }
 }
@@ -162,6 +213,7 @@ export async function getSettingsAndAliases(indexName) {
     if (!error.code) {
       error.code = ERR_CODES.ERR_GET_SETTINGS_ALIASES_FAILED;
     }
+
     throw error;
   }
 }
@@ -177,6 +229,7 @@ export async function updateRefreshInterval(indexName, settings) {
     if (!error.code) {
       error.code = ERR_CODES.ERR_UPDATE_REFRESH_INTERVAL_FAILED;
     }
+
     throw error;
   }
 }
@@ -192,6 +245,7 @@ export async function replaceIndex(indexName, aliases) {
     if (!error.code) {
       error.code = ERR_CODES.ERR_REPLACE_INDEX_FAILED;
     }
+
     throw error;
   }
 }
@@ -261,6 +315,7 @@ export async function runUpgrade(indexName) {
     if (!error.code) {
       error.code = ERR_CODES.ERR_POST_UPGRADE_FAILED;
     }
+
     throw error;
   }
 }

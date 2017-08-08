@@ -18,7 +18,7 @@ export function registerRoutes(server) {
           path: '/_xpack/migration/assistance',
           method: 'GET',
         });
-        return reply(response);
+        return reply(response.indices);
 
       } catch (requestError) {
         const err = Boom.wrap(requestError);

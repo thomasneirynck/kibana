@@ -3,11 +3,14 @@ export {
   isFailed,
   isNotStarted,
   isRunning,
+  isCanceled,
   isResettable,
+  isCancelable,
   isStepCompleted,
   isStepFailed,
   isStepNotStarted,
   isStepRunning,
+  isStepCanceled,
 } from './state';
 
 export {

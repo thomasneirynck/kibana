@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import Boom from 'boom';
 import Joi from 'joi';
 
@@ -20,8 +21,8 @@ export function registerReindexRoutes(server) {
     },
     handler: async (request, reply) => {
       const path = request.params.filters
-        ? `${ encodeURIComponent(request.params.indexName) }/${ encodeURIComponent(request.params.filters) }?flat_settings`
-        : `${ encodeURIComponent(request.params.indexName) }?flat_settings`;
+        ? `/${ encodeURIComponent(request.params.indexName) }/${ encodeURIComponent(request.params.filters) }?flat_settings`
+        : `/${ encodeURIComponent(request.params.indexName) }?flat_settings`;
 
       try {
         const response = await callWithRequest(request, 'transport.request', {
@@ -120,7 +121,7 @@ export function registerReindexRoutes(server) {
       },
     },
     handler: async (request, reply) => {
-      const path = `${ encodeURIComponent(request.params.indexName) }/_settings`;
+      const path = `/${ encodeURIComponent(request.params.indexName) }/_settings`;
 
       try {
         const response = await callWithRequest(request, 'transport.request', {
@@ -155,7 +156,7 @@ export function registerReindexRoutes(server) {
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'transport.request', {
-          path: encodeURIComponent(request.params.indexName),
+          path: `/${ encodeURIComponent(request.params.indexName) }`,
           method: 'PUT',
           body: request.payload,
         });
@@ -213,7 +214,7 @@ export function registerReindexRoutes(server) {
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'transport.request', {
-          path: '_reindex',
+          path: '/_reindex',
           method: 'POST',
           query: {
             wait_for_completion: false,
@@ -233,6 +234,36 @@ export function registerReindexRoutes(server) {
     },
   });
 
+  // Get all reindex tasks
+  server.route({
+    path: '/api/migration/reindexTasks',
+    method: 'GET',
+    handler: async (request, reply) => {
+      try {
+        const response = await callWithRequest(request, 'transport.request', {
+          path: `/_tasks?detailed=true&actions=*reindex`,
+          method: 'GET',
+        });
+
+        const { nodes } = response;
+        const tasksFlat = _.reduce(nodes, (acc, node) => {
+          return acc = { ...acc, ...node.tasks };
+        }, {});
+
+
+        return reply(tasksFlat);
+      } catch (requestError) {
+        const err = Boom.wrap(requestError);
+        err.output.payload = {
+          ...err.output.payload,
+          ...requestError.body.error,
+        };
+        return reply(err);
+      }
+    },
+  });
+
+  // Get task details
   server.route({
     path: '/api/migration/task/{taskId}',
     method: 'GET',
@@ -275,6 +306,7 @@ export function registerReindexRoutes(server) {
     },
   });
 
+  // Delete a completed task
   server.route({
     path: '/api/migration/task/{taskId}',
     method: 'DELETE',
@@ -288,7 +320,7 @@ export function registerReindexRoutes(server) {
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'transport.request', {
-          path: `.tasks/task/${ encodeURIComponent(request.params.taskId) }`,
+          path: `/.tasks/task/${ encodeURIComponent(request.params.taskId) }`,
           method: 'DELETE',
         });
         return reply(response);
@@ -313,6 +345,7 @@ export function registerReindexRoutes(server) {
     },
   });
 
+  // Cancel running task
   server.route({
     path: '/api/migration/task/{taskId}',
     method: 'POST',
@@ -355,7 +388,7 @@ export function registerReindexRoutes(server) {
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'transport.request', {
-          path: `${ encodeURIComponent(request.params.indexName) }/_refresh`,
+          path: `/${ encodeURIComponent(request.params.indexName) }/_refresh`,
           method: 'POST',
         });
         return reply(response);
@@ -382,7 +415,7 @@ export function registerReindexRoutes(server) {
     handler: async (request, reply) => {
       try {
         const response = await callWithRequest(request, 'transport.request', {
-          path: '_aliases',
+          path: '/_aliases',
           method: 'POST',
           body: request.payload,
         });

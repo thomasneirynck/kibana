@@ -33,6 +33,7 @@ export const STEP_RESULTS = {
   FAILED:      'FAILED',
   RUNNING:     'RUNNING',
   NOT_STARTED: 'NOT_STARTED',
+  CANCELED:    'CANCELED',
 };
 
 export const INDEX_ACTION = {

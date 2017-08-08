@@ -5,13 +5,14 @@ import {
   isStepCompleted,
   isStepFailed,
   isStepRunning,
+  isStepCanceled,
   getStepMessage,
 } from '../../lib';
 
 
 export function IndexActionStep({ step, action, indexName }) {
   const iconClasses = classNames('kuiStatusText__icon', 'kuiIcon', {
-    'kuiIcon--success fa-check': isStepCompleted(step),
+    'kuiIcon--success fa-check': isStepCompleted(step) || isStepCanceled(step),
     'kuiIcon--error fa-warning': isStepFailed(step),
     'kuiIcon--basic fa-spinner fa-spin': isStepRunning(step),
   });

@@ -1,6 +1,5 @@
-import _, { get as resolve } from 'lodash';
+import _ from 'lodash';
 import React, { Component } from 'react';
-import { Notifier } from 'ui/notify/notifier';
 import {
   HUMAN_READABLE_DELAY,
   REINDEX_STEPS,
@@ -33,10 +32,10 @@ import {
   isFailed,
   isNotStarted,
   isRunning,
+  isCanceled,
   wrapErrorMessage,
 } from '../../lib';
 
-const notify = new Notifier({ location: 'Upgrade Assistant Reindex Helper' });
 
 export function withReindexOrchestrator() {
   return function wrapComponentWithOrchestrator(WrappedComponent) {
@@ -51,54 +50,41 @@ export function withReindexOrchestrator() {
         this.loadIndices();
       }
 
-      handleSuccess = () => {
-        this.setState({
-          loadingStatus: LOADING_STATUS.SUCCESS,
-        });
-      }
-
-      handleFailure = (error) => {
-        this.setState({
-          errorMessage: wrapErrorMessage(error.message, error),
-          loadingStatus: LOADING_STATUS.FAILURE,
-
-        });
-      }
-
-      callAssistanceAPI = async () => {
+      fetchIndices = async () => {
         try {
           const response = await getAssistance();
-          this.handleSuccess();
+          this.setState({
+            loadingStatus: LOADING_STATUS.SUCCESS,
+          });
           return response;
 
         } catch (error) {
-          this.handleFailure(error);
+          this.setState({
+            errorMessage: wrapErrorMessage(error.message, error),
+            loadingStatus: LOADING_STATUS.FAILURE,
+
+          });
+
           throw error;
         }
       }
 
       loadIndices = async () => {
-        try {
-          const response = await this.callAssistanceAPI();
-          const newIndices = _.reduce(response.indices, ((currentIndices, indexInfo, indexName) => ({
-            ...currentIndices,
-            [indexName]: resolve(currentIndices, indexName, createInitialIndexState(
-              indexName,
-              getActionType(indexInfo.action_required),
-            )),
-          })), this.state.indices);
+        const indices = await this.fetchIndices();
 
-          this.setState((state) => ({
-            ...state,
-            indices: {
-              ...state.indices,
-              ...newIndices,
-            },
-          }));
+        const newIndexStates = _.reduce(indices, ((acc, indexInfo, indexName) => ({
+          ...acc,
+          [indexName]: _.get(acc, indexName, createInitialIndexState(
+            indexName,
+            getActionType(indexInfo.action_required),
+            indexInfo.taskId,
+          )),
+        })), {});
 
-        } catch (error) {
-          notify.error(error);
-        }
+        this.setState((state) => ({
+          ...state,
+          indices: newIndexStates,
+        }));
       }
 
       processIndex = (indexName) => {
@@ -115,24 +101,13 @@ export function withReindexOrchestrator() {
       }
 
       reindexIndex = async (indexName) => {
-        try {
-          await this.stepCreateIndex(indexName);
-          await this.stepSetReadOnly(indexName);
-          await this.stepReindex(indexName);
-          await this.stepRefreshIndex(indexName);
-          await this.stepVerifyDocs(indexName);
-          await this.stepReplaceIndex(indexName);
-          await this.deleteReindexTask(indexName);
-
-        } catch (error) {
-          // throw delete task errors but show success
-          if (error.code === ERR_CODES.ERR_DELETE_TASK_FAILED) {
-            throw error;
-          } else {
-            notify.error(error);
-            throw error;
-          }
-        }
+        await this.stepCreateIndex(indexName);
+        await this.stepSetReadOnly(indexName);
+        await this.stepReindex(indexName);
+        await this.stepRefreshIndex(indexName);
+        await this.stepVerifyDocs(indexName);
+        await this.stepReplaceIndex(indexName);
+        await this.deleteReindexTask(indexName);
       }
 
       stepCreateIndex = async (indexName) => {
@@ -144,13 +119,20 @@ export function withReindexOrchestrator() {
             REINDEX_STEPS.CREATE_INDEX,
             STEP_RESULTS.COMPLETED,
           );
+
         } catch (error) {
+          let stepPayload = {};
+          if (error.code === ERR_CODES.ERR_REINDEX_IN_PROGRESS) {
+            stepPayload = { taskId: error.taskId };
+          }
+
           this.addOrChangeStep(
             indexName,
             REINDEX_STEPS.CREATE_INDEX,
             error,
-            { indexName },
+            stepPayload,
           );
+
           throw error;
         }
       }
@@ -168,8 +150,8 @@ export function withReindexOrchestrator() {
             indexName,
             REINDEX_STEPS.SET_READONLY,
             error,
-            { indexName },
           );
+
           throw error;
         }
       }
@@ -179,12 +161,14 @@ export function withReindexOrchestrator() {
           const { task } = await runReindex(indexName);
           await this.pollTask(indexName, task, REINDEX_STEPS.REINDEX);
         } catch (error) {
-          this.addOrChangeStep(
-            indexName,
-            REINDEX_STEPS.REINDEX,
-            error,
-            { indexName },
-          );
+          if (!isCanceled(this.state.indices[indexName])) {
+            this.addOrChangeStep(
+              indexName,
+              REINDEX_STEPS.REINDEX,
+              error,
+            );
+          }
+
           throw error;
         }
       }
@@ -202,8 +186,8 @@ export function withReindexOrchestrator() {
             indexName,
             REINDEX_STEPS.REFRESH_INDEX,
             error,
-            { indexName },
           );
+
           throw error;
         }
       }
@@ -221,8 +205,8 @@ export function withReindexOrchestrator() {
             indexName,
             REINDEX_STEPS.VERIFY_DOCS,
             error,
-            { indexName },
           );
+
           throw error;
         }
       }
@@ -246,36 +230,20 @@ export function withReindexOrchestrator() {
             indexName,
             REINDEX_STEPS.REPLACE_INDEX,
             error,
-            { indexName },
           );
+
           throw error;
         }
       }
 
       deleteReindexTask = async (indexName) => {
-        const { taskId } = _.find(
-          this.state.indices[indexName].steps,
-          { 'name': REINDEX_STEPS.REINDEX },
-        );
-
+        const taskId = this.findTaskId(indexName);
         await deleteTask(indexName, taskId);
       }
 
       upgradeIndex = async (indexName) => {
-        try {
-          await this.stepUpgrade(indexName);
-          await this.deleteUpgradeTask(indexName);
-
-        } catch (error) {
-          // catch delete task errors and show success
-          if (error.code === ERR_CODES.ERR_DELETE_TASK_FAILED) {
-            error.message += ' Unable to delete completed task, but upgrade successful.';
-            notify.info(error);
-          } else {
-            notify.error(error);
-            throw error;
-          }
-        }
+        await this.stepUpgrade(indexName);
+        await this.deleteUpgradeTask(indexName);
       }
 
       stepUpgrade = async (indexName) => {
@@ -287,59 +255,59 @@ export function withReindexOrchestrator() {
             indexName,
             UPGRADE_STEPS.UPGRADE,
             error,
-            { indexName },
           );
+
           throw error;
         }
       }
 
       deleteUpgradeTask = async (indexName) => {
-        const { taskId } = _.find(
-          this.state.indices[indexName].steps,
-          { 'name': UPGRADE_STEPS.UPGRADE },
-        );
-
+        const taskId = this.findTaskId(indexName);
         await deleteTask(indexName, taskId);
       }
 
       cancelAction = async (indexName) => {
-        try {
-          const taskId = this.findTaskId(indexName);
+        const taskId = this.findTaskId(indexName);
+        await cancelTask(taskId);
+        const lastStepName = _.last(this.state.indices[indexName].steps).name;
 
-          await cancelTask(taskId);
-          await this.resetAction(indexName);
+        this.addOrChangeStep(
+          indexName,
+          lastStepName,
+          STEP_RESULTS.CANCELED,
+          { taskId },
+        );
 
-        } catch (error) {
-          notify.error(error);
-          throw error;
-        }
+        await resetIndex(indexName, taskId);
       }
 
       resetAction = async (indexName) => {
-        try {
-          const taskId = this.findTaskId(indexName);
-
-          await resetIndex(indexName, taskId);
-          this.setState(state => ({
-            ...state,
-            indices: {
-              ...state.indices,
-              [indexName]: {
-                ...state.indices[indexName],
-                steps: [],
-              },
+        const taskId = this.findTaskId(indexName);
+        await resetIndex(indexName, taskId);
+        this.setState(state => ({
+          ...state,
+          indices: {
+            ...state.indices,
+            [indexName]: {
+              ...state.indices[indexName],
+              taskId: undefined,
+              steps: [],
             },
-          }));
-
-        } catch (error) {
-          notify.error(error);
-          throw error;
-        }
+          },
+        }));
       }
 
       pollTask = async (indexName, taskId, stepName) => {
         try {
+          if (isCanceled(this.state.indices[indexName])) {
+            throw new Error('Task canceled, stop polling');
+          }
+
           const details = await getTaskDetails(taskId);
+
+          if (isCanceled(this.state.indices[indexName])) {
+            throw new Error('Task canceled, stop polling');
+          }
 
           if (details.completed) {
             this.addOrChangeStep(
@@ -361,12 +329,14 @@ export function withReindexOrchestrator() {
           }
 
         } catch (error) {
-          this.addOrChangeStep(
-            indexName,
-            stepName,
-            error,
-            { taskId },
-          );
+          if (!isCanceled(this.state.indices[indexName])) {
+            this.addOrChangeStep(
+              indexName,
+              stepName,
+              error,
+              { taskId },
+            );
+          }
 
           throw error;
         }
@@ -392,6 +362,7 @@ export function withReindexOrchestrator() {
             ...state.indices,
             [indexName]: {
               ...state.indices[indexName],
+              ...extra,
               steps: [
                 ...newSteps,
               ],
@@ -401,17 +372,7 @@ export function withReindexOrchestrator() {
       }
 
       findTaskId = (indexName) => {
-        const step =
-          _.find(
-            this.state.indices[indexName].steps,
-            { 'name': REINDEX_STEPS.REINDEX },
-          ) ||
-          _.find(
-            this.state.indices[indexName].steps,
-            { 'name': UPGRADE_STEPS.UPGRADE },
-          );
-
-        return step ? step.taskId : undefined;
+        return this.state.indices[indexName].taskId;
       }
 
       render() {
@@ -435,12 +396,24 @@ export function withReindexOrchestrator() {
   };
 }
 
-function createInitialIndexState(indexName, action) {
+function createInitialIndexState(indexName, action, taskId) {
+  let step;
+
+  if (taskId) {
+    step = {
+      result: {
+        code: ERR_CODES.ERR_REINDEX_IN_PROGRESS,
+        taskId,
+      },
+      name: REINDEX_STEPS.CREATE_INDEX,
+    };
+  }
+
   return {
     name: indexName,
     action,
-    steps: [
-    ],
+    taskId: taskId,
+    steps: taskId ? [ step ] : [],
   };
 }
 
