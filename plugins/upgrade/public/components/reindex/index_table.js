@@ -25,7 +25,8 @@ export function IndexTable({
 
           <RefreshButton
             buttonLabel="Refresh Indices"
-            onClick={ loadIndices } />
+            onClick={ loadIndices }
+          />
 
         </div>
         <div className="kuiToolBarSection">
