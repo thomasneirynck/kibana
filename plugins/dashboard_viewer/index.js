@@ -24,6 +24,7 @@ export function dashboardViewer(kibana) {
           'visRequestHandlers',
           'visEditorTypes',
           'savedObjectTypes',
+          'embeddableHandlers',
           'spyModes',
           'navbarExtensions',
           'docViews',
