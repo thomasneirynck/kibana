@@ -38,11 +38,12 @@ describe('Vertex', () => {
   });
 
   it('should initialize the webcola representation', () => {
+    const margin = LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.MARGIN_PX;
     const vertex = graph.getVertexById('my-queue');
     expect(vertex.cola).to.eql({
       vertex: vertex,
-      width: LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.WIDTH_PX,
-      height: LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.HEIGHT_PX
+      width: LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.WIDTH_PX + margin,
+      height: LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.HEIGHT_PX + margin
     });
   });
 
