@@ -44,7 +44,8 @@ export function nodesRoutes(server) {
 
         const mappedRows = rows.map(({ name, metrics }) => {
           const node = nodes[name] || getDefaultNodeFromId(name);
-          const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(node);
+          const calculatedNodeType = calculateNodeType(node, get(clusterState, 'master_node'));
+          const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(node, calculatedNodeType);
           const isOnline = !isUndefined(clusterState.nodes[name]);
 
           const getMetrics = () => {
@@ -59,7 +60,6 @@ export function nodesRoutes(server) {
             resolver: name,
             online: isOnline,
             metrics: _metrics,
-            type: calculateNodeType(node, get(clusterState, 'master_node')),
             node: {
               ...node,
               type: nodeType,

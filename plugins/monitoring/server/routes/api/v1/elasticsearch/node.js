@@ -70,11 +70,11 @@ export function nodeRoutes(server) {
           // workaround for node indexed with legacy agent
           nodeDetail = getDefaultNodeFromId(resolver);
         }
-        nodeDetail.type = calculateNodeType(nodeDetail, get(clusterState, 'master_node'));
+        const calculatedNodeType = calculateNodeType(nodeDetail, get(clusterState, 'master_node'));
         body.nodes[resolver] = nodeDetail;
 
         // set type for labeling / iconography
-        const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(nodeDetail);
+        const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(nodeDetail, calculatedNodeType);
         nodeDetail.type = nodeType;
         nodeDetail.nodeTypeLabel = nodeTypeLabel;
         nodeDetail.nodeTypeClass = nodeTypeClass;

@@ -13,20 +13,18 @@ describe('Node Type and Label', () => {
       expect(nodeTypeClass).to.be('fa-star');
     });
     it('type is indicated by string', () => {
-      const node = {
-        type: 'master'
-      };
-      const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(node);
+      const node = {};
+      const type = 'master';
+      const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(node, type);
       expect(nodeType).to.be('master');
       expect(nodeTypeLabel).to.be('Master Node');
       expect(nodeTypeClass).to.be('fa-star');
     });
   });
   it('when type is generic node', () => {
-    const node = {
-      type: 'node'
-    };
-    const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(node);
+    const node = {};
+    const type = 'node';
+    const { nodeType, nodeTypeLabel, nodeTypeClass } = getNodeTypeClassLabel(node, type);
     expect(nodeType).to.be('node');
     expect(nodeTypeLabel).to.be('Node');
     expect(nodeTypeClass).to.be('fa-server');
