@@ -17,7 +17,7 @@ import { createScheme } from './server/lib/login_scheme';
 import { checkLicense } from './server/lib/check_license';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 import { LOGIN_DISABLED_MESSAGE } from './server/lib/login_disabled_message';
-import { CONFIG_DASHBOARD_ONLY_MODE_ROLES } from './common/constants';
+import { AuthScopeService } from './server/lib/auth_scope_service';
 
 export const security = (kibana) => new kibana.Plugin({
   id: 'security',
@@ -36,13 +36,6 @@ export const security = (kibana) => new kibana.Plugin({
   },
 
   uiExports: {
-    uiSettingDefaults: {
-      [CONFIG_DASHBOARD_ONLY_MODE_ROLES]: {
-        description: 'Roles that belong to View Dashboards Only mode',
-        value: [],
-        readonly: true
-      }
-    },
     chromeNavControls: ['plugins/security/views/nav_control'],
     managementSections: ['plugins/security/views/management'],
     apps: [{
@@ -113,6 +106,10 @@ export const security = (kibana) => new kibana.Plugin({
     validateConfig(config, message => server.log(['security', 'warning'], message));
 
     const cookieName = config.get('xpack.security.cookieName');
+    const authScope = new AuthScopeService();
+    server.expose('registerAuthScopeGetter', (scopeExtender) => {
+      authScope.registerGetter(scopeExtender);
+    });
 
     const register = Promise.promisify(server.register, { context: server });
     Promise.all([
@@ -120,25 +117,22 @@ export const security = (kibana) => new kibana.Plugin({
       register(hapiAuthCookie)
     ])
     .then(() => {
-      const dashboardViewerApp = kibana.uiExports.getHiddenApp('dashboardViewer');
-
       server.auth.scheme('login', createScheme({
         redirectUrl: (path) => loginUrl(config.get('server.basePath'), path),
         strategies: ['security-cookie', 'security-basic'],
-        dashboardViewerApp
       }));
 
       server.auth.strategy('session', 'login', 'required');
 
       server.auth.strategy('security-basic', 'basic', false, {
-        validateFunc: getBasicValidate(server)
+        validateFunc: getBasicValidate(server, authScope)
       });
 
       server.auth.strategy('security-cookie', 'cookie', false, {
         cookie: cookieName,
         password: config.get('xpack.security.encryptionKey'),
         clearInvalid: true,
-        validateFunc: getCookieValidate(server),
+        validateFunc: getCookieValidate(server, authScope),
         isSecure: config.get('xpack.security.secureCookies'),
         path: config.get('server.basePath') + '/'
       });

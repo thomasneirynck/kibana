@@ -1,5 +1,6 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
+import { AuthScopeService } from '../auth_scope_service';
 import { getCookieValidate, hasSessionExpired } from '../get_cookie_validate';
 
 describe('Cookie validate', function () {
@@ -24,67 +25,68 @@ describe('Cookie validate', function () {
 
   describe('getCookieValidate', () => {
     const sandbox = sinon.sandbox.create();
-    const configMock = { get() {} };
-    const serverMock = {
-      config() {
-        return configMock;
-      },
 
-      plugins: {
-        kibana: {
-          systemApi: { isSystemApiRequest() {} }
+    function createServerMock() {
+      return {
+        config() {
+          return {
+            get: sinon.stub().withArgs('xpack.security.sessionTimeout').returns(100)
+          };
         },
 
-        security: {
-          getUser() {}
-        }
-      }
-    };
+        plugins: {
+          kibana: {
+            systemApi: {
+              isSystemApiRequest() {
+                return false;
+              }
+            }
+          },
 
-    let requestMock;
-    beforeEach(() => {
-      requestMock = {
-        headers: {},
-        cookieAuth: {
-          set() {}
+          security: {
+            async getUser() {
+              return {};
+            }
+          }
         }
       };
+    }
 
-      sandbox.useFakeTimers();
+    function createRequestMock() {
+      return {
+        headers: {},
+        cookieAuth: {
+          set: sinon.stub()
+        },
+      };
+    }
 
-      sandbox.stub(serverMock.plugins.kibana.systemApi, 'isSystemApiRequest');
-      sandbox.stub(serverMock.plugins.security, 'getUser');
-      sandbox.stub(requestMock.cookieAuth, 'set');
-      sandbox.stub(configMock, 'get');
-    });
-
-    afterEach(() => {
-      sandbox.restore();
-    });
+    beforeEach(() => sandbox.useFakeTimers());
+    afterEach(() => sandbox.restore());
 
     it('should provide proper credentials object and set correct cookie.', async function () {
       const username = 'username';
       const password = 'password';
-      const isDashboardOnlyMode = false;
-
-      serverMock.plugins.kibana.systemApi.isSystemApiRequest.returns(false);
-      serverMock.plugins.security.getUser.withArgs(requestMock).returns(
-        Promise.resolve({ isDashboardOnlyMode })
-      );
+      const serverMock = createServerMock();
+      const requestMock = createRequestMock();
+      const authScope = new AuthScopeService();
 
       // Setup value that will be used to calculate cookie expiration time.
-      configMock.get.withArgs('xpack.security.sessionTimeout').returns(100);
       sandbox.clock.tick(1000);
+      sandbox.spy(authScope, 'getForRequestAndUser');
 
       const callback = sinon.stub();
-      await getCookieValidate(serverMock)(requestMock, { username, password }, callback);
+      await getCookieValidate(serverMock, authScope)(requestMock, { username, password }, callback);
 
       sinon.assert.calledWithExactly(requestMock.cookieAuth.set, {
         username,
         password,
         expires: 1100
       });
-      sinon.assert.calledWithExactly(callback, null, true, { username, isDashboardOnlyMode });
+
+      sinon.assert.calledOnce(authScope.getForRequestAndUser);
+      sinon.assert.calledWithExactly(authScope.getForRequestAndUser, requestMock, {});
+      sinon.assert.calledWithExactly(callback, null, true, { username, scope: [] });
     });
   });
 });

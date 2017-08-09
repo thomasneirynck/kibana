@@ -1,30 +1,37 @@
 import { getIsValidUser } from './get_is_valid_user';
 import { getCalculateExpires } from './get_calculate_expires';
 
-export function getCookieValidate(server) {
+export function getCookieValidate(server, authScope) {
   const isValidUser = getIsValidUser(server);
   const calculateExpires = getCalculateExpires(server);
   const { isSystemApiRequest } = server.plugins.kibana.systemApi;
 
-  return function validate(request, session, callback) {
-    if (hasSessionExpired(session)) return callback(new Error('Session has expired'), false);
+  return async function validate(request, session, callback) {
+    try {
+      if (hasSessionExpired(session)) {
+        throw new Error('Session has expired');
+      }
 
-    const { username, password } = session;
-    return isValidUser(request, username, password).then(
-      (user) => {
-        // Extend the session timeout provided this is NOT a system API call
-        if (!isSystemApiRequest(request)) {
-          // Keep the session alive
-          request.cookieAuth.set({
-            username,
-            password,
-            expires: calculateExpires()
-          });
-        }
-        return callback(null, true, { username, isDashboardOnlyMode: user.isDashboardOnlyMode });
-      },
-      (error) => callback(error, false)
-    );
+      const { username, password } = session;
+      const user = await isValidUser(request, username, password);
+
+      // Extend the session timeout provided this is NOT a system API call
+      if (!isSystemApiRequest(request)) {
+        // Keep the session alive
+        request.cookieAuth.set({
+          username,
+          password,
+          expires: calculateExpires()
+        });
+      }
+
+      callback(null, true, {
+        username,
+        scope: await authScope.getForRequestAndUser(request, user)
+      });
+    } catch (error) {
+      callback(error, false);
+    }
   };
 };
 

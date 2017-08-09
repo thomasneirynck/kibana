@@ -64,6 +64,8 @@ gulp.task('lint-staged', () => {
       '\.png',
       '\.svg',
       '\.gz',
+      '\.asciidoc',
+      '\.gradle',
       '\.yml' // rename .yaml to .yml if you run into this; don't add .yaml
     ];
 

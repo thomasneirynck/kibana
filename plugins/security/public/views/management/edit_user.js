@@ -9,7 +9,7 @@ import { checkLicenseError } from 'plugins/security/lib/check_license_error';
 import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
 import { EDIT_USERS_PATH, USERS_PATH } from './management_urls';
 import { documentationLinks } from '../../documentation_links';
-import { CONFIG_DASHBOARD_ONLY_MODE_ROLES } from '../../../common/constants';
+import { CONFIG_DASHBOARD_ONLY_MODE_ROLES } from '../../../../dashboard_mode/common';
 
 routes.when(`${EDIT_USERS_PATH}/:username?`, {
   template,

@@ -1,12 +1,18 @@
 import { getIsValidUser } from './get_is_valid_user';
 
-export function getBasicValidate(server) {
+export function getBasicValidate(server, authScope) {
   const isValidUser = getIsValidUser(server);
 
-  return function validate(request, username, password, callback) {
-    return isValidUser(request, username, password).then(
-      (user) => callback(null, true, { username, password, isDashboardOnlyMode: user.isDashboardOnlyMode }),
-      (error) => callback(error, false)
-    );
+  return async function validate(request, username, password, callback) {
+    try {
+      const user = await isValidUser(request, username, password);
+      callback(null, true, {
+        username,
+        password,
+        scope: await authScope.getForRequestAndUser(request, user)
+      });
+    } catch (error) {
+      callback(error, false);
+    }
   };
 }

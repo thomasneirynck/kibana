@@ -1,23 +1,38 @@
+import { resolve } from 'path';
+
+import {
+  CONFIG_DASHBOARD_ONLY_MODE_ROLES
+} from './common';
+
+import {
+  getDashboardModeAuthScope,
+  createDashboardModeRequestInterceptor,
+} from './server';
+
 // Copied largely from plugins/kibana/index.js. The dashboard viewer includes just the dashboard section of
 // the standard kibana plugin.  We don't want to include code for the other links (visualize, dev tools, etc)
 // since it's view only, but we want the urls to be the same, so we are using largely the same setup.
-
-import { resolve } from 'path';
-
-export function dashboardViewer(kibana) {
+export function dashboardMode(kibana) {
   const kbnBaseUrl = '/app/kibana';
   return new kibana.Plugin({
-    id: 'dashboard_viewer',
+    id: 'dashboard_mode',
     publicDir: resolve(__dirname, 'public'),
-    require: ['kibana', 'elasticsearch', 'xpack_main'],
+    require: ['kibana', 'elasticsearch', 'xpack_main', 'security'],
     uiExports: {
+      uiSettingDefaults: {
+        [CONFIG_DASHBOARD_ONLY_MODE_ROLES]: {
+          description: 'Roles that belong to View Dashboards Only mode',
+          value: [],
+          readonly: true
+        }
+      },
       app: {
         id: 'dashboardViewer',
         title: 'Dashboard Viewer',
         listed: false,
         hidden: true,
         description: 'view dashboards',
-        main: 'plugins/dashboard_viewer/app',
+        main: 'plugins/dashboard_mode/dashboard_viewer',
         uses: [
           'visTypes',
           'visResponseHandlers',
@@ -50,5 +65,14 @@ export function dashboardViewer(kibana) {
         enabled: Joi.boolean().default(true)
       }).default();
     },
+
+    init(server) {
+      // register auth getter with security plugin
+      server.plugins.security.registerAuthScopeGetter(getDashboardModeAuthScope);
+
+      // extend the server to intercept requests
+      const dashboardViewerApp = kibana.uiExports.getHiddenApp('dashboardViewer');
+      server.ext(createDashboardModeRequestInterceptor(dashboardViewerApp));
+    }
   });
 }

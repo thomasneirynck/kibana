@@ -8,7 +8,7 @@ import { ml } from './plugins/ml';
 import { tilemap } from './plugins/tilemap';
 import { watcher } from './plugins/watcher';
 import { grokdebugger } from './plugins/grokdebugger';
-import { dashboardViewer } from './plugins/dashboard_viewer';
+import { dashboardMode } from './plugins/dashboard_mode';
 import { logstash } from './plugins/logstash';
 import { upgrade } from './plugins/upgrade';
 
@@ -24,7 +24,7 @@ module.exports = function (kibana) {
     tilemap(kibana),
     watcher(kibana),
     grokdebugger(kibana),
-    dashboardViewer(kibana),
+    dashboardMode(kibana),
     logstash(kibana),
     upgrade(kibana),
   ];
