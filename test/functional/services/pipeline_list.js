@@ -169,9 +169,11 @@ export function PipelineListProvider({ getService }) {
      *  @return {Promise<undefined>}
      */
     async assertExists() {
-      if (!await testSubjects.exists(SUBJ_CONTAINER)) {
-        throw new Error('Expected to find the pipeline list');
-      }
+      await retry.try(async () => {
+        if (!await testSubjects.exists(SUBJ_CONTAINER)) {
+          throw new Error('Expected to find the pipeline list');
+        }
+      });
     }
 
     /**
