@@ -64,15 +64,15 @@ export class Graph {
       } else {
         const newEdge = edgeFactory(this, eJson);
         this.edgesById[eJson.id] = newEdge;
-        if (this.edgesByFrom[newEdge.from.id] === undefined) {
-          this.edgesByFrom[newEdge.from.id] = [];
+        if (this.edgesByFrom[newEdge.from.json.id] === undefined) {
+          this.edgesByFrom[newEdge.from.json.id] = [];
         }
-        this.edgesByFrom[newEdge.from.id].push(newEdge);
+        this.edgesByFrom[newEdge.from.json.id].push(newEdge);
 
-        if (this.edgesByTo[newEdge.to.id] === undefined) {
-          this.edgesByTo[newEdge.to.id] = [];
+        if (this.edgesByTo[newEdge.to.json.id] === undefined) {
+          this.edgesByTo[newEdge.to.json.id] = [];
         }
-        this.edgesByTo[newEdge.to.id].push(newEdge);
+        this.edgesByTo[newEdge.to.json.id].push(newEdge);
       }
     });
 
@@ -143,6 +143,14 @@ export class Graph {
     return { distances, parents };
   }
 
+  /**
+   * This function returns vertices grouped by rank. Rank indicates the vertical position of a vertex
+   * in the visualization. The higher the rank, the lower the vertex will show up in the visualization.
+   * For a graph containing n vertices, this function will return the bottom (as seen in the
+   * visualization) n-1 vertices, grouped by rank.
+   *
+   * @return Map where keys are ranks and values are arrays of vertices
+   */
   getSeparatedRanks() {
     const bySeparatedRanks = new Map();
 

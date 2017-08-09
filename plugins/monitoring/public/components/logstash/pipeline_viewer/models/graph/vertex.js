@@ -55,7 +55,7 @@ export class Vertex {
   }
 
   get incomingEdges() {
-    return this.graph.edgesByTo[this.id] || [];
+    return this.graph.edgesByTo[this.json.id] || [];
   }
 
   get incomingVertices() {
@@ -63,7 +63,7 @@ export class Vertex {
   }
 
   get outgoingEdges() {
-    return this.graph.edgesByFrom[this.id] || [];
+    return this.graph.edgesByFrom[this.json.id] || [];
   }
 
   get outgoingVertices() {
