@@ -233,18 +233,17 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     return deferred.promise;
   };
 
-  this.getMetricDistributionData = function (index, metricFieldName, percentileSpacing,
+  this.getMetricDistributionData = function (index, metricFieldName,
     timeFieldName, earliestMs, latestMs) {
     const deferred = $q.defer();
-    const obj = { success: true, results: [] };
+    const obj = { success: true, results: { percentiles: [], minPercentile: 0, maxPercentile: 100 } };
 
-    // Build the precents parameter which defines the percentiles to calculate.
-    // Round to nearest integer, for a maximum of 100 percentiles.
-
-    // TODO - add in percentiles from 95 to 100 in case they are suitable for display.
+    // Build the percents parameter which defines the percentiles to calculate.
+    // Use a fixed percentile spacing of 5%.
+    const maxPercent = 100;
+    const percentileSpacing = 5;
     const percents = [];
     let percentToAdd = percentileSpacing;
-    const maxPercent = 95;
 
     while (percentToAdd <= maxPercent) {
       percents.push(percentToAdd);
@@ -295,48 +294,73 @@ module.service('mlFieldDataSearchService', function ($q, es) {
       console.log('getMetricDistributionData resp:', resp);
       if (resp.hits.total > 0) {
         let lowerBound = _.get(resp, ['aggregations', 'min', 'value'], 0);
-        let percentileBuckets = _.get(resp, ['aggregations', 'percentiles', 'values'], []);
+        const allPercentiles = _.get(resp, ['aggregations', 'percentiles', 'values'], []);
+        let percentileBuckets = [];
         if (lowerBound >= 0) {
-          // Process 0 - 90% percentiles.
-          percentileBuckets = _.filter(percentileBuckets, (bucket) => {
-            return bucket.key <= 90;
-          });
+          // By default return results for 0 - 90% percentiles.
+          obj.results.minPercentile = 0;
+          obj.results.maxPercentile = 90;
+          percentileBuckets = allPercentiles.slice(0, allPercentiles.length - 2);
+
+          // Look ahead to the last percentiles and process these too if
+          // they don't add more than 50% to the value range.
+          const lastValue = _.last(percentileBuckets).value;
+          const upperBound = lowerBound + (1.5 * (lastValue - lowerBound));
+          const filteredLength = percentileBuckets.length;
+          for (let i = filteredLength; i < allPercentiles.length; i++) {
+            if (allPercentiles[i].value < upperBound) {
+              percentileBuckets.push(allPercentiles[i]);
+              obj.results.maxPercentile += percentileSpacing;
+            } else {
+              break;
+            }
+          }
+
         } else {
-          // Process 5 - 95% percentiles.
-          lowerBound = percentileBuckets[0].value;
-          percentileBuckets = _.filter(percentileBuckets, (bucket) => {
-            return (bucket.key >= 10 && bucket.key <= 95);
-          });
+          // By default return results for 5 - 95% percentiles.
+          const dataMin = lowerBound;
+          lowerBound = allPercentiles[0].value;
+          obj.results.minPercentile = 5;
+          obj.results.maxPercentile = 95;
+          percentileBuckets = allPercentiles.slice(1, allPercentiles.length - 1);
+
+          // Add in 0-5 and 95-100% if they don't add more
+          // than 25% to the value range at either end.
+          const lastValue = _.last(percentileBuckets).value;
+          const maxDiff = 0.25 * (lastValue - lowerBound);
+          if (lowerBound - dataMin < maxDiff) {
+            percentileBuckets.splice(0, 0, allPercentiles[0]);
+            obj.results.minPercentile = 0;
+            lowerBound = dataMin;
+          }
+
+          if (allPercentiles[allPercentiles.length - 1].value - lastValue < maxDiff) {
+            percentileBuckets.push(allPercentiles[allPercentiles.length - 1]);
+            obj.results.maxPercentile = 100;
+          }
         }
 
         // Combine buckets with the same value.
-        // Note that results from percentiles aggregation can have precision rounding
-        // artifacts e.g returning 200 and 200.000000000123, so equalize scores
-        // when a later bucket has a lower value.
         const totalBuckets = percentileBuckets.length;
         let lastBucketValue = lowerBound;
         let numEqualValueBuckets = 0;
-        // for (let i = 0; i < (totalBuckets - 1); i++) {
-        //   // TODO - look ahead more buckets in case there are more than one
-        //   // buckets with a fractionally lower value.
-        //   percentileBuckets[i].value = Math.min(percentileBuckets[i].value, percentileBuckets[i + 1].value);
-        // }
-
         for (let i = 0; i < totalBuckets; i++) {
           const bucket = percentileBuckets[i];
 
-          //if (bucket.value > lastBucketValue) {
+          // Results from the percentiles aggregation can have precision rounding
+          // artifacts e.g returning 200 and 200.000000000123, so check for equality
+          // around double floating point precision i.e. 15 sig figs.
           if (bucket.value.toPrecision(15) !== lastBucketValue.toPrecision(15)) {
             // Create a bucket for any 'equal value' buckets which had a value <= last bucket
             if (numEqualValueBuckets > 0) {
-              obj.results.push({
+              obj.results.percentiles.push({
                 percent: numEqualValueBuckets * percentileSpacing,
                 minValue: lastBucketValue,
                 maxValue: lastBucketValue
               });
             }
 
-            obj.results.push({
+            obj.results.percentiles.push({
               percent: percentileSpacing,
               minValue: lastBucketValue,
               maxValue: bucket.value
@@ -348,7 +372,7 @@ module.service('mlFieldDataSearchService', function ($q, es) {
             numEqualValueBuckets++;
             if (i === (totalBuckets - 1)) {
               // If at the last bucket, create a final bucket for the equal value buckets.
-              obj.results.push({
+              obj.results.percentiles.push({
                 percent: numEqualValueBuckets * percentileSpacing,
                 minValue: lastBucketValue,
                 maxValue: lastBucketValue
@@ -357,7 +381,7 @@ module.service('mlFieldDataSearchService', function ($q, es) {
           }
         }
 
-        console.log('getMetricDistributionData resuls:', obj.results);
+        console.log('getMetricDistributionData results:', obj.results);
       }
 
       deferred.resolve(obj);

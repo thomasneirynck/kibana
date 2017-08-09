@@ -20,6 +20,10 @@
 
 import _ from 'lodash';
 import d3 from 'd3';
+import $ from 'jquery';
+import angular from 'angular';
+
+import { ordinalSuffix } from 'ui/utils/ordinal_suffix';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -30,18 +34,21 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
     const svgWidth = attrs.width ? +attrs.width : 400;
     const svgHeight = attrs.height ? +attrs.height : 400;
 
-    // Only label x axis so no need for margins.
     // TODO - do we want to label the y axis?
-    const margin = { top: 0, right: 15, bottom: 25, left: 15 };
+    const margin = { top: 0, right: 15, bottom: 20, left: 15 };
+    const infoLabelHeight = 15;
 
     const chartWidth = svgWidth - (margin.left + margin.right);
-    const chartHeight = svgHeight - (margin.top + margin.bottom);
+    const chartHeight = svgHeight - (margin.top + margin.bottom + infoLabelHeight);
 
     let xScale = d3.scale.linear().range([0, chartWidth]);
     let yScale = d3.scale.linear().range([chartHeight, 0]);
     let xAxisMin = 0;
     let xAxisMax = 1;
     let chartGroup;
+
+    let minPercentileDisplay = 0;
+    let maxPercentileDisplay = 100;
 
     const distributionArea = d3.svg.area()
       .x(function (d) { return xScale(d.x); })
@@ -63,18 +70,22 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
     });
 
     function loadDistributionData() {
-      // TODO - show chart loading icons
+      // Show the chart loading indicator.
+      showChartLoader(true);
+
       const config = scope.chartConfig;
       mlFieldDataSearchService.getMetricDistributionData(
         scope.indexPattern.title,
         config.fieldName,
-        5,
         scope.indexPattern.timeFieldName,
         scope.earliest,
         scope.latest)
       .then((resp) => {
-        scope.distributionData = resp.results;
-        scope.chartData = processDistributionData(resp.results);
+        scope.chartData = processDistributionData(resp.results.percentiles);
+        minPercentileDisplay = resp.results.minPercentile;
+        maxPercentileDisplay = resp.results.maxPercentile;
+        showChartLoader(false);
+
         render();
       });
     }
@@ -83,8 +94,7 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
       const chartData = [];
 
       // Process the raw distribution data so it is in a suitable format for plotting:
-      const distributionDataLength = distributionData.length;
-      if (distributionDataLength === 0) {
+      if (distributionData.length === 0) {
         return chartData;
       }
 
@@ -107,15 +117,48 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
       // TODO - make sure last bar isn't cropped at RHS.
       const minBarWidth = (MIN_BAR_WIDTH / chartWidth) * (xAxisMax - xAxisMin);
       const processedData = [];
-      let lastX1 = minX;
-      _.each(distributionData, (data) => {
-        const point = {
-          x0: lastX1,
-          x1: Math.max(lastX1 + minBarWidth, data.maxValue)
-        };
-        point.y = data.percent / (point.x1 - point.x0);
-        processedData.push(point);
-        lastX1 = point.x1;
+      let lastBar = undefined;
+      _.each(distributionData, (data, index) => {
+
+        if (index === 0) {
+          const bar = {
+            x0: data.minValue,
+            x1: Math.max(data.minValue + minBarWidth, data.maxValue),
+            dataMin: data.minValue,
+            dataMax: data.maxValue,
+            percent: data.percent
+          };
+
+          // Scale the height of the bar according to the range of data values in the bar.
+          bar.y = (data.percent / (bar.x1 - bar.x0)) *
+            Math.max(1, (minBarWidth / Math.max((data.maxValue - data.minValue), 0.5 * minBarWidth)));
+          bar.isMinWidth = (data.maxValue <= (data.minValue + minBarWidth));
+          processedData.push(bar);
+          lastBar = bar;
+        } else {
+          if (lastBar.isMinWidth === false || data.maxValue > lastBar.x1) {
+            const bar = {
+              x0: lastBar.x1,
+              x1: Math.max(lastBar.x1 + minBarWidth, data.maxValue),
+              dataMin: data.minValue,
+              dataMax: data.maxValue,
+              percent: data.percent
+            };
+
+            // Scale the height of the bar according to the range of data values in the bar.
+            bar.y = (data.percent / (bar.x1 - bar.x0)) *
+              Math.max(1, (minBarWidth / Math.max((data.maxValue - data.minValue), 0.5 * minBarWidth)));
+            bar.isMinWidth = (data.maxValue <= (lastBar.x1 + minBarWidth));
+            processedData.push(bar);
+            lastBar = bar;
+          } else {
+            // Combine bars which are less than minBarWidth apart.
+            lastBar.percent = lastBar.percent + data.percent;
+            lastBar.y = lastBar.percent / (lastBar.x1 - lastBar.x0);
+            lastBar.dataMax = data.maxValue;
+          }
+        }
+
       });
 
       if (maxX !== minX) {
@@ -128,17 +171,19 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
       barHeights = barHeights.sort((a, b) => a - b);
 
       let maxBarHeight = 0;
-      if (Math.abs(distributionDataLength % 2) === 1) {
-        maxBarHeight = 10 * barHeights[(Math.floor(distributionDataLength / 2))];
+      const processedDataLength = processedData.length;
+      if (Math.abs(processedDataLength % 2) === 1) {
+        maxBarHeight = 20 * barHeights[(Math.floor(processedDataLength / 2))];
       } else {
-        maxBarHeight = 10 * (barHeights[(Math.floor(distributionDataLength / 2)) - 1] +
-          barHeights[(Math.floor(distributionDataLength / 2))]) / 2;
+        maxBarHeight = 20 * (barHeights[(Math.floor(processedDataLength / 2)) - 1] +
+          barHeights[(Math.floor(processedDataLength / 2))]) / 2;
       }
 
       _.each(processedData, (data) => {
         data.y = Math.min(data.y, maxBarHeight);
       });
 
+      scope.processedData = processedData;
 
       chartData.push({ x:minX, y: 0 });
       _.each(processedData, (data) => {
@@ -146,7 +191,6 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
         chartData.push({ x:data.x1, y: data.y });
       });
       chartData.push({ x:processedData[processedData.length - 1].x1, y: 0 });
-
 
       return chartData;
     }
@@ -169,9 +213,20 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
         .attr('width',  svgWidth)
         .attr('height', svgHeight);
 
+      // Add a label above the chart to display percentiles being plotted.
+      const minPercent = ordinalSuffix(minPercentileDisplay);
+      const maxPercent = ordinalSuffix(maxPercentileDisplay);
+      svg.append('text')
+        .attr('x', chartWidth / 2)
+        .attr('y', 10)
+        .attr('class', 'info-text')
+        .attr('transform', `translate(${margin.left}, ${margin.top})`)
+        .text(`Displaying ${minPercent} - ${maxPercent} percentiles`);
+
+      const translateTop = margin.top + infoLabelHeight;
       chartGroup = svg.append('g')
         .attr('class', 'distribution-chart')
-        .attr('transform', `translate(${margin.left}, ${margin.top})`);
+        .attr('transform', `translate(${margin.left}, ${translateTop})`);
 
       const dataLength = data.length;
       if (dataLength > 0) {
@@ -205,7 +260,7 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
       numTicks = Math.min(numTicks, 5);
 
       const xAxis = d3.svg.axis().scale(xScale).orient('bottom')
-        .outerTickSize(1).tickPadding(10).ticks(numTicks);
+        .outerTickSize(0).ticks(numTicks);
       const yAxis = d3.svg.axis().scale(yScale).orient('left')
         .outerTickSize(0).ticks(0);
 
@@ -233,27 +288,23 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
         const yPos = d3.mouse(this)[1];
         const xVal = xScale.invert(xPos);
 
-        let firstIdxGreater = (scope.chartData.length - 1);
-        for (let i = 0; i < scope.chartData.length; i++) {
-          if (scope.chartData[i].x > xVal) {
-            firstIdxGreater = i;
+
+        let processedDataIdx = 0;
+        for (let i = 0; i < scope.processedData.length; i++) {
+          if (xVal < scope.processedData[i].x1) {
+            processedDataIdx = i;
             break;
           }
         }
 
-        const distributionBandIdx = (firstIdxGreater / 2) - 1;
         let contents = `value:${xVal}`;
-        if (distributionBandIdx >= 0 && distributionBandIdx < scope.distributionData.length) {
-          const band = scope.distributionData[distributionBandIdx];
-          const minValue = band.minValue;
-          const maxValue = band.maxValue;
-          const minValFormatted = $filter('number')(minValue);
-          const maxValFormatted = $filter('number')(maxValue);
-          if (maxValue > minValue) {
-            contents = `${band.percent}% of documents have<br>values between ${minValFormatted} and ${maxValFormatted}`;
-          } else {
-            contents = `${band.percent}% of documents have<br>a value of ${minValFormatted}`;
-          }
+        const bar = scope.processedData[processedDataIdx];
+        const minValFormatted = $filter('number')(bar.dataMin);
+        if (bar.dataMax > bar.dataMin) {
+          const maxValFormatted = $filter('number')(bar.dataMax);
+          contents = `${bar.percent}% of documents have<br>values between ${minValFormatted} and ${maxValFormatted}`;
+        } else {
+          contents = `${bar.percent}% of documents have<br>a value of ${minValFormatted}`;
         }
 
         const tooltipDiv = d3.select('.ml-field-data-card-tooltip');
@@ -284,6 +335,16 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
           .duration(500)
           .style('opacity', 0)
           .style('display', 'none');
+      }
+    }
+
+    function showChartLoader(show) {
+      if(show) {
+        const $loader = $('<div class="field-data-card-loader"><h2><i class="fa fa-spinner fa-spin"></i></h2></div>');
+        $loader.css('height', svgHeight);
+        angular.element(element).append($loader);
+      } else {
+        angular.element(element).find('.field-data-card-loader').remove();
       }
     }
 

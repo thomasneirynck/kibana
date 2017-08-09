@@ -79,7 +79,15 @@
     margin-bottom: 5px;
   }
 
+  .field-data-card-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
   ml-metric-distribution-chart {
+    display: block;
     padding: 0px 15px 10px 15px;
   }
 
@@ -114,26 +122,29 @@
     }
   }
 
-  .distribution-chart {
+  svg {
+    font-size: 11px;
+    font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial;
 
-    svg {
-      font-size: 12px;
-      font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial;
-    }
-
-    .x.axis path, .x.axis line {
-      fill: none;
-      stroke: #cccccc;
-      shape-rendering: crispEdges;
-    }
-
-    .axis text {
-      font-size: 11px;
+    text {
       fill: #555555;
     }
 
-    .area {
-      fill: #008bc4;
+    .info-text {
+      text-anchor: middle;
+    }
+
+    .distribution-chart {
+
+      .x.axis path, .x.axis line {
+        fill: none;
+        stroke: #cccccc;
+        shape-rendering: crispEdges;
+      }
+
+      .area {
+        fill: #008bc4;
+      }
     }
 
   }

@@ -101,17 +101,21 @@ module
     if (metricFields.length > 0) {
       //metricFields = metricFields.slice(0, Math.min(metricFields.length, 6));
 
+      const metricConfigs = [];
+
       _.each(metricFields, (field) => {
-        $scope.metricConfigurations.push({
+        metricConfigs.push({
           fieldName: field.displayName,
           type: FIELD_TYPES.NUMBER
         });
       });
 
-      // $scope.metricConfigurations.push({
-      //   fieldName: 'nginx.access.user_agent.os_major',
+      // metricConfigs.push({
+      //   fieldName: 'nginx.access.response_code',
       //   type: FIELD_TYPES.NUMBER
       // });
+
+      $scope.metricConfigurations = metricConfigs;
     }
 
   }
