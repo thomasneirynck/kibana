@@ -1,9 +1,12 @@
+import d3 from 'd3';
+import numeral from 'numeral';
 import inputIcon from 'plugins/monitoring/icons/logstash/input.svg';
 import filterIcon from 'plugins/monitoring/icons/logstash/filter.svg';
 import outputIcon from 'plugins/monitoring/icons/logstash/output.svg';
 import queueIcon from 'plugins/monitoring/icons/logstash/queue.svg';
 import ifIcon from 'plugins/monitoring/icons/logstash/if.svg';
-import numeral from 'numeral';
+import infoIcon from 'plugins/monitoring/icons/alert-blue.svg';
+import { PluginVertex } from '../models/graph/plugin_vertex';
 
 // Each vertex consists of two lines (rows) of text
 // - The first line shows the name and ID of the vertex
@@ -35,13 +38,24 @@ const EVENT_DURATION_BG_RADIUS_PX = 5;
 const EVENTS_PER_SECOND_OFFSET_LEFT_PX = BASE_OFFSET_LEFT_PX + 160;
 const EVENTS_PER_SECOND_OFFSET_TOP_PX = SECOND_LINE_OFFSET_TOP_PX;
 
+const ICON_HEIGHT_PX = 18;
+const ICON_WIDTH_PX = 18;
+
+const NO_ID_ICON_OFFSET_LEFT_PX = 5;
+const NO_ID_ICON_OFFSET_TOP_PX = 5;
+
 const ICON_OFFSET_LEFT_PX = BASE_OFFSET_LEFT_PX + 258;
-const ICON_OFFSET_TOP_PX = FIRST_LINE_OFFSET_TOP_PX + 5;
-const ICON_HEIGHT_PX = 20;
-const ICON_WIDTH_PX = 20;
+const ICON_OFFSET_TOP_PX = FIRST_LINE_OFFSET_TOP_PX + 9;
 
 const SLOWNESS_THRESHOLD_MS = 2;
 const PCT_EXECUTION_THRESHOLD_PCT = 0.3;
+
+function tooltipText(d) {
+  const pluginName = d.vertex.name;
+  return 'This plugin does not have an ID explicitly specified. '
+    + 'Specifying an ID allows you to track differences across pipeline changes. '
+    + `You can explicitly specify an ID for this plugin like so:\n\n${pluginName} {\n  id => mySpecialId\n}`;
+};
 
 function renderHeader(colaObjects, title, subtitle) {
   const pluginHeader = colaObjects
@@ -55,10 +69,39 @@ function renderHeader(colaObjects, title, subtitle) {
     .attr('class', 'lspvVertexTitle')
     .text(title);
 
-  pluginHeader
+  // For plugin vertices, either we have an explicitly-set plugin ID or an
+  // auto-generated plugin ID. For explicitly-set plugin IDs, show the ID.
+  // For auto-generated plugin IDs, show an info icon urging the user to
+  // explicitly set an ID.
+
+  const explicitIdPluginVertexHeader = pluginHeader
+    .filter(d => d.vertex instanceof PluginVertex)
+    .filter(d => d.vertex.hasExplicitId);
+
+  explicitIdPluginVertexHeader
     .append('tspan')
     .attr('class', 'lspvVertexSubtitle')
     .text(d => subtitle ? ` (${subtitle(d)})` : null);
+
+  const autoGenIdPluginVertexGroup = colaObjects
+    .filter(d => d.vertex instanceof PluginVertex)
+    .filter(d => !d.vertex.hasExplicitId);
+
+  autoGenIdPluginVertexGroup
+    .each(function () {
+      const gEl = d3.select(this);
+      const titleEl = gEl.select('.lspvVertexTitle')[0][0];
+
+      gEl
+      .append('image')
+      .attr('xlink:href', infoIcon)
+      .attr('x', titleEl.getBBox().width + (ICON_WIDTH_PX / 2) + NO_ID_ICON_OFFSET_LEFT_PX)
+      .attr('y', NO_ID_ICON_OFFSET_TOP_PX)
+      .attr('height', ICON_HEIGHT_PX)
+      .attr('width', ICON_WIDTH_PX)
+      .append('title')
+        .text(tooltipText);
+    });
 }
 
 function renderIcon(selection, icon) {

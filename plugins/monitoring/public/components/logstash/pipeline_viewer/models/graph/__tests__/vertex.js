@@ -20,11 +20,11 @@ describe('Vertex', () => {
      */
     const graphJson = {
       vertices: [
-        { id: 'my-prefix:my-really-long-named-generator', type: 'plugin' },
+        { id: 'my-prefix:my-really-long-named-generator', type: 'plugin', explicit_id: false },
         { id: 'my-queue', type: 'queue', config_name: 'some-name' },
         { id: 'my-if', type: 'if', config_name: 'some-name' },
         { id: 'my-grok', type: 'plugin', meta: { source_text: 'foobar', source_line: 33, source_column: 4 } },
-        { id: 'my-sleep', type: 'plugin', stats: { mystat1: 100, 'events.in': { min: 100, max: 120 } } }
+        { id: 'my-sleep', type: 'plugin', explicit_id: true, stats: { mystat1: 100, 'events.in': { min: 100, max: 120 } } }
       ],
       edges: [
         { id: 'abcdef', type: 'plain', from: 'my-prefix:my-really-long-named-generator', to: 'my-queue' },
@@ -333,4 +333,13 @@ describe('Vertex', () => {
     const vertex2 = graph.getVertexById('my-grok');
     expect(vertex2.eventsPerCurrentPeriod).to.be(null);
   });
+
+  it('should correctly identify if it has an explicit ID', () => {
+    const vertex1 = graph.getVertexById('my-prefix:my-really-long-named-generator');
+    expect(vertex1.hasExplicitId).to.be(false);
+
+    const vertex2 = graph.getVertexById('my-sleep');
+    expect(vertex2.hasExplicitId).to.be(true);
+  });
+
 });

@@ -158,4 +158,8 @@ export class Vertex {
 
     return (this.stats['events.in'].max - this.stats['events.in'].min);
   }
+
+  get hasExplicitId() {
+    return Boolean(this.json.explicit_id);
+  }
 }
