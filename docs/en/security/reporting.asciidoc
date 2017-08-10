@@ -6,7 +6,7 @@ Reporting operates by creating and updating documents in {es} in response to
 user actions in {kib}.
 
 To use {reporting} with {security} enabled, you need to
-{xpack-ref}/kibana.html[set up {kib} to work with {security}].
+<<using-kibana-with-security,set up {kib} to work with {security}>>.
 If you are automatically generating reports with
 {xpack-ref}/xpack-alerting.html[{watcher}], you also need to configure {watcher}
 to trust the {kib} server's certificate. For more information, see
@@ -56,7 +56,7 @@ the {reporting} endpoints to authorized users. This requires that you:
 . Enable {security} on your {es} cluster. For more information,
 see {xpack-ref}/security-getting-started.html[Getting Started with Security].
 . Configure an SSL certificate for Kibana. For more information, see
-{xpack-ref}/kibana.html[Kibana and Security].
+<<using-kibana-with-security>>.
 . Configure {watcher} to trust the Kibana server's certificate by adding it to
 the {watcher} truststore on each node:
 .. Import the {kib} server certificate into the {watcher} truststore using

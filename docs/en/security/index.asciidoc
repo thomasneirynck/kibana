@@ -6,10 +6,8 @@
 password-protect your data as well as implement more advanced security measures
 such as encrypting communications, role-based access control, IP filtering, and
 auditing. For more information, see
-{xpack-ref}/xpack-security.html[Securing {es} and {kib}].
-
-For information about configuring security in {kib}, see
-{xpack-ref}/kibana.html[{kib} and Security].
+{xpack-ref}/xpack-security.html[Securing {es} and {kib}] and
+<<using-kibana-with-security,Configuring Security in {kib}>>.
 
 [float]
 === Users
