@@ -1,0 +1,8 @@
+{
+  "moduleNameMapper": {
+    "\\.(css|less)$": "<rootDir>/jest.mockCssFiles.js"
+  },
+  "transform": {
+    "^.+\\.js$": "<rootDir>/jest.transform.js"
+  }
+}

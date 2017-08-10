@@ -1,0 +1,82 @@
+import _ from 'lodash';
+import { LOCATION_UPDATE } from './location';
+import { toQuery, legacyDecodeURIComponent } from '../utils/url';
+import {
+  getDefaultTransactionId,
+  getDefaultBucketIndex
+} from './distributions';
+import { getDefaultTransactionType } from './apps';
+
+// ACTION TYPES
+export const TIMEPICKER_UPDATE = 'TIMEPICKER_UPDATE';
+
+// "urlParams" contains path and query parameters from the url, that can be easily consumed from
+// any (container) component with access to the store
+
+// Example:
+// url: /opbeans-backend/Brewing%20Bot?transactionId=1321
+// appName: opbeans-backend (path param)
+// transactionType: Brewing%20Bot (path param)
+// transactionId: 1321 (query param)
+function urlParams(state = {}, action) {
+  switch (action.type) {
+    case LOCATION_UPDATE: {
+      const [appName, transactionType, transactionName] = getPathAsArray(
+        action.location.pathname
+      );
+
+      const { transactionId, transactionTab, traceId, bucket } = toQuery(
+        action.location.search
+      );
+
+      return {
+        ...state,
+
+        // query params
+        transactionId,
+        transactionTab,
+        traceId: toNumber(traceId),
+        bucket: toNumber(bucket),
+
+        // path params
+        appName,
+        transactionType,
+        transactionName: legacyDecodeURIComponent(transactionName)
+      };
+    }
+
+    case TIMEPICKER_UPDATE:
+      return { ...state, start: action.time.min, end: action.time.max };
+
+    default:
+      return state;
+  }
+}
+
+function toNumber(value) {
+  if (value !== undefined && value !== null) {
+    return parseInt(value, 10);
+  }
+}
+
+function getPathAsArray(pathname) {
+  return _.compact(pathname.split('/'));
+}
+
+// ACTION CREATORS
+export function updateTimePicker(time) {
+  return { type: TIMEPICKER_UPDATE, time };
+}
+
+// SELECTORS
+// Note: make sure that none of the default selectors (eg. getDefaultTransactionId) calls getUrlParams,
+// since this would cause an infinite loop
+export function getUrlParams(state) {
+  return _.defaults({}, state.urlParams, {
+    transactionType: getDefaultTransactionType(state),
+    transactionId: getDefaultTransactionId(state),
+    bucket: getDefaultBucketIndex(state)
+  });
+}
+
+export default urlParams;

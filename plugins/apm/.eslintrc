@@ -1,0 +1,15 @@
+{
+  "extends": ["prettier", "prettier/react"],
+  "plugins": ["prettier"],
+  "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true,
+        "semi": true
+      }
+    ],
+    "no-unused-vars": ["error", { "ignoreRestSiblings": true }],
+    "kibana-custom/no-default-export": "off"
+  }
+}

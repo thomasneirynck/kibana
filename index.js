@@ -11,6 +11,7 @@ import { grokdebugger } from './plugins/grokdebugger';
 import { dashboardMode } from './plugins/dashboard_mode';
 import { logstash } from './plugins/logstash';
 import { upgrade } from './plugins/upgrade';
+import { apm } from './plugins/apm';
 
 module.exports = function (kibana) {
   return [
@@ -27,5 +28,6 @@ module.exports = function (kibana) {
     dashboardMode(kibana),
     logstash(kibana),
     upgrade(kibana),
+    apm(kibana)
   ];
 };
