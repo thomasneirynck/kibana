@@ -9,10 +9,10 @@ export class WatchHistoryItem {
     this.watchId = props.watchId;
     this.details = props.details;
     this.startTime = getMoment(props.startTime);
-    this.watchStatus = WatchStatus.fromUpstreamJSON(get(props, 'watchStatus'));
+    this.watchStatus = WatchStatus.fromUpstreamJson(get(props, 'watchStatus'));
   }
 
-  static fromUpstreamJSON(upstreamHistory) {
+  static fromUpstreamJson(upstreamHistory) {
     return new WatchHistoryItem(upstreamHistory);
   }
 }

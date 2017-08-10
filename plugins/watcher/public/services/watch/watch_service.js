@@ -20,7 +20,7 @@ export class WatchService {
   loadWatch(id) {
     return this.$http.get(`${this.basePath}/watch/${id}`)
     .then(response => {
-      return Watch.fromUpstreamJSON(response.data.watch);
+      return Watch.fromUpstreamJson(response.data.watch);
     });
   }
 
@@ -38,13 +38,13 @@ export class WatchService {
 
     return this.$http.get(url)
     .then(response => response.data.watchHistoryItems)
-    .then(watchHistoryItems => watchHistoryItems.map(WatchHistoryItem.fromUpstreamJSON));
+    .then(watchHistoryItems => watchHistoryItems.map(WatchHistoryItem.fromUpstreamJson));
   }
 
   saveWatch(watchModel) {
     const url = `${this.basePath}/watch/${watchModel.id}`;
 
-    return this.$http.put(url, watchModel.upstreamJSON)
+    return this.$http.put(url, watchModel.upstreamJson)
     .catch(e => {
       throw e.data.message;
     });
@@ -69,7 +69,7 @@ export class WatchService {
     const url = `${this.basePath}/watch/${id}/deactivate`;
     return this.$http.put(url)
     .then(response => {
-      return WatchStatus.fromUpstreamJSON(response.data.watchStatus);
+      return WatchStatus.fromUpstreamJson(response.data.watchStatus);
     })
     .catch(e => {
       throw e.data.message;
@@ -84,7 +84,7 @@ export class WatchService {
     const url = `${this.basePath}/watch/${id}/activate`;
     return this.$http.put(url)
     .then(response => {
-      return WatchStatus.fromUpstreamJSON(response.data.watchStatus);
+      return WatchStatus.fromUpstreamJson(response.data.watchStatus);
     })
     .catch(e => {
       throw e.data.message;
@@ -100,7 +100,7 @@ export class WatchService {
     const url = `${this.basePath}/watch/${watchId}/action/${actionId}/acknowledge`;
     return this.$http.put(url)
     .then(response => {
-      return WatchStatus.fromUpstreamJSON(response.data.watchStatus);
+      return WatchStatus.fromUpstreamJson(response.data.watchStatus);
     })
     .catch(e => {
       throw e.data.message;
@@ -114,11 +114,11 @@ export class WatchService {
    */
   executeWatch(executeDetailsModel, watchModel) {
     return this.$http.put(`${this.basePath}/watch/execute`, {
-      executeDetails: executeDetailsModel.upstreamJSON,
-      watch: watchModel.upstreamJSON
+      executeDetails: executeDetailsModel.upstreamJson,
+      watch: watchModel.upstreamJson
     })
     .then(response => {
-      return WatchHistoryItem.fromUpstreamJSON(response.data.watchHistoryItem);
+      return WatchHistoryItem.fromUpstreamJson(response.data.watchHistoryItem);
     })
     .catch(e => {
       throw e.data.message;
@@ -151,8 +151,8 @@ export class WatchService {
 
   visualizeWatch(watchModel, visualizeOptions) {
     return this.$http.post(`${this.basePath}/watch/visualize`, {
-      watch: watchModel.upstreamJSON,
-      options: visualizeOptions.upstreamJSON
+      watch: watchModel.upstreamJson,
+      options: visualizeOptions.upstreamJson
     })
     .then(response => {
       return response.data;

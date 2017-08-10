@@ -63,7 +63,7 @@ export class ActionStatus {
   }
 
   // generate object to send to kibana
-  get downstreamJSON() {
+  get downstreamJson() {
     const json = {
       id: this.id,
       state: this.state,
@@ -80,7 +80,7 @@ export class ActionStatus {
   }
 
   // generate object from elasticsearch response
-  static fromUpstreamJSON(json) {
+  static fromUpstreamJson(json) {
     if (!json.id) {
       throw new Error('json argument must contain an id property');
     }

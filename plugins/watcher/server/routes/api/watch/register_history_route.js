@@ -55,7 +55,7 @@ export function registerHistoryRoute(server) {
           const watchHistoryItemJson = get(hit, '_source');
 
           const opts = { includeDetails: false };
-          return WatchHistoryItem.fromUpstreamJSON({
+          return WatchHistoryItem.fromUpstreamJson({
             id,
             watchId,
             watchHistoryItemJson
@@ -63,7 +63,7 @@ export function registerHistoryRoute(server) {
         });
 
         reply({
-          watchHistoryItems: watchHistoryItems.map(watchHistoryItem => watchHistoryItem.downstreamJSON)
+          watchHistoryItems: watchHistoryItems.map(watchHistoryItem => watchHistoryItem.downstreamJson)
         });
       })
       .catch(err => {

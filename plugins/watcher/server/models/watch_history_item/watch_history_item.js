@@ -13,21 +13,21 @@ export class WatchHistoryItem {
     this.startTime = getMoment(get(this.watchHistoryItemJson, 'result.execution_time'));
 
     const watchStatusJson = get(this.watchHistoryItemJson, 'status');
-    this.watchStatus = WatchStatus.fromUpstreamJSON({ id: this.watchId, watchStatusJson });
+    this.watchStatus = WatchStatus.fromUpstreamJson({ id: this.watchId, watchStatusJson });
   }
 
-  get downstreamJSON() {
+  get downstreamJson() {
     return {
       id: this.id,
       watchId: this.watchId,
       details: this.includeDetails ? this.details : null,
       startTime: this.startTime.toISOString(),
-      watchStatus: this.watchStatus.downstreamJSON
+      watchStatus: this.watchStatus.downstreamJson
     };
   }
 
   // generate object from elasticsearch response
-  static fromUpstreamJSON(json, opts) {
+  static fromUpstreamJson(json, opts) {
     if (!json.id) {
       throw new Error('json argument must contain a id property');
     }

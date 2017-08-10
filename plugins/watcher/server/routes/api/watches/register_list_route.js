@@ -38,7 +38,7 @@ export function registerListRoute(server) {
           const watchJson = get(hit, '_source');
           const watchStatusJson = get(hit, '_source.status');
 
-          return Watch.fromUpstreamJSON({
+          return Watch.fromUpstreamJson({
             id,
             watchJson,
             watchStatusJson
@@ -46,7 +46,7 @@ export function registerListRoute(server) {
         });
 
         reply({
-          watches: watches.map(watch => watch.downstreamJSON)
+          watches: watches.map(watch => watch.downstreamJson)
         });
       })
       .catch(err => {

@@ -5,7 +5,7 @@ describe('execute_details', () => {
 
   describe('ExecuteDetails', () => {
 
-    describe('fromDownstreamJSON factory method', () => {
+    describe('fromDownstreamJson factory method', () => {
 
       let props;
       beforeEach(() => {
@@ -19,7 +19,7 @@ describe('execute_details', () => {
       });
 
       it('returns correct ExecuteDetails instance', () => {
-        const executeDetails = ExecuteDetails.fromDownstreamJSON(props);
+        const executeDetails = ExecuteDetails.fromDownstreamJson(props);
 
         expect(executeDetails.triggerData).to.be(props.triggerData);
         expect(executeDetails.ignoreCondition).to.be(props.ignoreCondition);
@@ -30,7 +30,7 @@ describe('execute_details', () => {
 
     });
 
-    describe('upstreamJSON getter method', () => {
+    describe('upstreamJson getter method', () => {
 
       let props;
       beforeEach(() => {
@@ -48,7 +48,7 @@ describe('execute_details', () => {
 
       it('returns correct JSON for client', () => {
         const executeDetails = new ExecuteDetails(props);
-        const actual = executeDetails.upstreamJSON;
+        const actual = executeDetails.upstreamJson;
         const expected = {
           trigger_data: {
             triggered_time: executeDetails.triggerData.triggeredTime,
@@ -67,7 +67,7 @@ describe('execute_details', () => {
         delete props.triggerData.triggeredTime;
 
         const executeDetails = new ExecuteDetails(props);
-        const actual = executeDetails.upstreamJSON;
+        const actual = executeDetails.upstreamJson;
         const expected = {
           trigger_data: {
             scheduled_time: executeDetails.triggerData.scheduledTime
@@ -85,7 +85,7 @@ describe('execute_details', () => {
         delete props.triggerData.scheduledTime;
 
         const executeDetails = new ExecuteDetails(props);
-        const actual = executeDetails.upstreamJSON;
+        const actual = executeDetails.upstreamJson;
         const expected = {
           trigger_data: {
             triggered_time: executeDetails.triggerData.triggeredTime
@@ -104,7 +104,7 @@ describe('execute_details', () => {
         delete props.triggerData.triggeredTime;
 
         const executeDetails = new ExecuteDetails(props);
-        const actual = executeDetails.upstreamJSON;
+        const actual = executeDetails.upstreamJson;
         const expected = {
           trigger_data: {},
           ignore_condition: executeDetails.ignoreCondition,

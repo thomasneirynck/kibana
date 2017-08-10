@@ -39,9 +39,9 @@ describe('watch_history_item', () => {
       };
     });
 
-    describe('fromUpstreamJSON factory method', () => {
+    describe('fromUpstreamJson factory method', () => {
       it('returns correct WatchHistoryItem instance', () => {
-        const watchHistoryItem = WatchHistoryItem.fromUpstreamJSON(upstreamJson);
+        const watchHistoryItem = WatchHistoryItem.fromUpstreamJson(upstreamJson);
         expect(watchHistoryItem).to.have.property('id');
         expect(watchHistoryItem).to.have.property('watchId');
         expect(watchHistoryItem).to.have.property('watchHistoryItemJson');
@@ -72,10 +72,10 @@ describe('watch_history_item', () => {
 
     });
 
-    describe('downstreamJSON getter method', () => {
+    describe('downstreamJson getter method', () => {
       it('returns correct downstream JSON object', () => {
-        const watchHistoryItem = WatchHistoryItem.fromUpstreamJSON(upstreamJson);
-        const expectedDownstreamJSON = {
+        const watchHistoryItem = WatchHistoryItem.fromUpstreamJson(upstreamJson);
+        const expected = {
           id: upstreamJson.id,
           watchId: upstreamJson.watchId,
           details: null,
@@ -91,7 +91,7 @@ describe('watch_history_item', () => {
             state: 'OK'
           }
         };
-        expect(watchHistoryItem.downstreamJSON).to.eql(expectedDownstreamJSON);
+        expect(watchHistoryItem.downstreamJson).to.eql(expected);
       });
     });
   });

@@ -25,8 +25,8 @@ export function registerAcknowledgeRoute(server) {
           watchStatusJson: watchStatusJson
         };
 
-        const watchStatus = WatchStatus.fromUpstreamJSON(json);
-        reply({ watchStatus: watchStatus.downstreamJSON });
+        const watchStatus = WatchStatus.fromUpstreamJson(json);
+        reply({ watchStatus: watchStatus.downstreamJson });
       })
       .catch(err => {
 

@@ -4,7 +4,7 @@ export class BaseAction {
     this.type = props.type;
   }
 
-  get downstreamJSON() {
+  get downstreamJson() {
     const result = {
       id: this.id,
       type: this.type
@@ -13,18 +13,18 @@ export class BaseAction {
     return result;
   }
 
-  get upstreamJSON() {
+  get upstreamJson() {
     const result = {};
     return result;
   }
 
-  static getPropsFromDownstreamJSON(json) {
+  static getPropsFromDownstreamJson(json) {
     return {
       id: json.id
     };
   }
 
-  static getPropsFromUpstreamJSON(json) {
+  static getPropsFromUpstreamJson(json) {
     if (!json.id) {
       throw new Error('json argument must contain an id property');
     }

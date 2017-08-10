@@ -5,18 +5,18 @@ import { WATCH_TYPES } from '../../../../common/constants';
 
 const watchTypeMocks = {};
 function buildMock(watchType) {
-  const fromDownstreamJSONMock = sinon.stub();
-  const fromUpstreamJSONMock = sinon.stub();
+  const fromDownstreamJsonMock = sinon.stub();
+  const fromUpstreamJsonMock = sinon.stub();
 
   watchTypeMocks[watchType] = {
-    fromDownstreamJSONMock,
-    fromUpstreamJSONMock,
+    fromDownstreamJsonMock,
+    fromUpstreamJsonMock,
     Class: class WatchStub {
-      static fromDownstreamJSON(...args) {
-        fromDownstreamJSONMock(...args);
+      static fromDownstreamJson(...args) {
+        fromDownstreamJsonMock(...args);
       }
-      static fromUpstreamJSON(...args) {
-        fromUpstreamJSONMock(...args);
+      static fromUpstreamJson(...args) {
+        fromUpstreamJsonMock(...args);
       }
     }
   };
@@ -50,73 +50,73 @@ describe('Watch', () => {
 
   });
 
-  describe('fromDownstreamJSON factory method', () => {
+  describe('fromDownstreamJson factory method', () => {
 
     beforeEach(() => {
       Object.keys(watchTypeMocks).forEach(key => {
-        watchTypeMocks[key].fromDownstreamJSONMock.reset();
+        watchTypeMocks[key].fromDownstreamJsonMock.reset();
       });
     });
 
     it(`throws an error if no 'type' property in json`, () => {
-      expect(Watch.fromDownstreamJSON).withArgs({})
+      expect(Watch.fromDownstreamJson).withArgs({})
         .to.throwError(/must contain an type property/i);
     });
 
     it(`throws an error if the type does not correspond to a WATCH_TYPES value`, () => {
-      expect(Watch.fromDownstreamJSON).withArgs({ type: 'foo' })
+      expect(Watch.fromDownstreamJson).withArgs({ type: 'foo' })
         .to.throwError(/Attempted to load unknown type foo/i);
     });
 
-    it('fromDownstreamJSON of JsonWatch to be called when type is WATCH_TYPES.JSON', () => {
-      Watch.fromDownstreamJSON({ type: WATCH_TYPES.JSON });
-      expect(watchTypeMocks[WATCH_TYPES.JSON].fromDownstreamJSONMock.called).to.be(true);
+    it('fromDownstreamJson of JsonWatch to be called when type is WATCH_TYPES.JSON', () => {
+      Watch.fromDownstreamJson({ type: WATCH_TYPES.JSON });
+      expect(watchTypeMocks[WATCH_TYPES.JSON].fromDownstreamJsonMock.called).to.be(true);
     });
 
-    it('fromDownstreamJSON of ThresholdWatch to be called when type is WATCH_TYPES.THRESHOLD', () => {
-      Watch.fromDownstreamJSON({ type: WATCH_TYPES.THRESHOLD });
-      expect(watchTypeMocks[WATCH_TYPES.THRESHOLD].fromDownstreamJSONMock.called).to.be(true);
+    it('fromDownstreamJson of ThresholdWatch to be called when type is WATCH_TYPES.THRESHOLD', () => {
+      Watch.fromDownstreamJson({ type: WATCH_TYPES.THRESHOLD });
+      expect(watchTypeMocks[WATCH_TYPES.THRESHOLD].fromDownstreamJsonMock.called).to.be(true);
     });
 
-    it('fromDownstreamJSON of MonitoringWatch to be called when type is WATCH_TYPES.MONITORING', () => {
-      Watch.fromDownstreamJSON({ type: WATCH_TYPES.MONITORING });
-      expect(watchTypeMocks[WATCH_TYPES.MONITORING].fromDownstreamJSONMock.called).to.be(true);
+    it('fromDownstreamJson of MonitoringWatch to be called when type is WATCH_TYPES.MONITORING', () => {
+      Watch.fromDownstreamJson({ type: WATCH_TYPES.MONITORING });
+      expect(watchTypeMocks[WATCH_TYPES.MONITORING].fromDownstreamJsonMock.called).to.be(true);
     });
 
   });
 
-  describe('fromUpstreamJSON factory method', () => {
+  describe('fromUpstreamJson factory method', () => {
 
     beforeEach(() => {
       Object.keys(watchTypeMocks).forEach(key => {
-        watchTypeMocks[key].fromUpstreamJSONMock.reset();
+        watchTypeMocks[key].fromUpstreamJsonMock.reset();
       });
     });
 
     it(`throws an error if no 'watchJson' property in json`, () => {
-      expect(Watch.fromUpstreamJSON).withArgs({})
+      expect(Watch.fromUpstreamJson).withArgs({})
         .to.throwError(/must contain a watchJson property/i);
     });
 
-    it('fromUpstreamJSON of JsonWatch to be called when type is WATCH_TYPES.JSON', () => {
-      Watch.fromUpstreamJSON({
+    it('fromUpstreamJson of JsonWatch to be called when type is WATCH_TYPES.JSON', () => {
+      Watch.fromUpstreamJson({
         watchJson: { metadata: { xpack: { type: WATCH_TYPES.JSON } } }
       });
-      expect(watchTypeMocks[WATCH_TYPES.JSON].fromUpstreamJSONMock.called).to.be(true);
+      expect(watchTypeMocks[WATCH_TYPES.JSON].fromUpstreamJsonMock.called).to.be(true);
     });
 
-    it('fromUpstreamJSON of ThresholdWatch to be called when type is WATCH_TYPES.THRESHOLD', () => {
-      Watch.fromUpstreamJSON({
+    it('fromUpstreamJson of ThresholdWatch to be called when type is WATCH_TYPES.THRESHOLD', () => {
+      Watch.fromUpstreamJson({
         watchJson: { metadata: { xpack: { type: WATCH_TYPES.THRESHOLD } } }
       });
-      expect(watchTypeMocks[WATCH_TYPES.THRESHOLD].fromUpstreamJSONMock.called).to.be(true);
+      expect(watchTypeMocks[WATCH_TYPES.THRESHOLD].fromUpstreamJsonMock.called).to.be(true);
     });
 
-    it('fromUpstreamJSON of MonitoringWatch to be called when type is WATCH_TYPES.MONITORING', () => {
-      Watch.fromUpstreamJSON({
+    it('fromUpstreamJson of MonitoringWatch to be called when type is WATCH_TYPES.MONITORING', () => {
+      Watch.fromUpstreamJson({
         watchJson: { metadata: { xpack: { type: WATCH_TYPES.MONITORING } } }
       });
-      expect(watchTypeMocks[WATCH_TYPES.MONITORING].fromUpstreamJSONMock.called).to.be(true);
+      expect(watchTypeMocks[WATCH_TYPES.MONITORING].fromUpstreamJsonMock.called).to.be(true);
     });
 
   });

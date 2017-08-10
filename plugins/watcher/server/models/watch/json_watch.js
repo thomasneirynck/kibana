@@ -10,13 +10,12 @@ export class JsonWatch extends BaseWatch {
     super(props);
 
     this.watch = props.watch;
-    this.watchJson = props.watchJson;
   }
 
-  get watchJSON() {
+  get watchJson() {
     const result = merge(
       {},
-      super.watchJSON,
+      super.watchJson,
       this.watch
     );
 
@@ -24,16 +23,16 @@ export class JsonWatch extends BaseWatch {
   }
 
   // To Elasicsearch
-  get upstreamJSON() {
-    const result = super.upstreamJSON;
+  get upstreamJson() {
+    const result = super.upstreamJson;
     return result;
   }
 
   // To Kibana
-  get downstreamJSON() {
+  get downstreamJson() {
     const result = merge(
       {},
-      super.downstreamJSON,
+      super.downstreamJson,
       {
         watch: this.watch
       }
@@ -43,8 +42,8 @@ export class JsonWatch extends BaseWatch {
   }
 
   // From Elasticsearch
-  static fromUpstreamJSON(json) {
-    const baseProps = super.getPropsFromUpstreamJSON(json);
+  static fromUpstreamJson(json) {
+    const baseProps = super.getPropsFromUpstreamJson(json);
     const watch = cloneDeep(baseProps.watchJson);
 
     if (has(watch, 'metadata.name')) {
@@ -71,10 +70,10 @@ export class JsonWatch extends BaseWatch {
   }
 
   // From Kibana
-  static fromDownstreamJSON(json) {
+  static fromDownstreamJson(json) {
     const props = merge(
       {},
-      super.getPropsFromDownstreamJSON(json),
+      super.getPropsFromDownstreamJson(json),
       {
         type: WATCH_TYPES.JSON,
         watch: json.watch

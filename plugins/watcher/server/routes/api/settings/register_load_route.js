@@ -22,7 +22,7 @@ export function registerLoadRoute(server) {
     handler: (request, reply) => {
       return fetchClusterSettings(callWithInternalUser)
       .then((settings) => {
-        reply(Settings.fromUpstreamJSON(settings).downstreamJSON);
+        reply(Settings.fromUpstreamJson(settings).downstreamJson);
       })
       .catch(err => {
 

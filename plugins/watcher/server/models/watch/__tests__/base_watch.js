@@ -6,19 +6,19 @@ const actionFromUpstreamJSONMock = sinon.stub();
 const actionFromDownstreamJSONMock = sinon.stub();
 const watchStatusFromUpstreamJSONMock = sinon.stub();
 class ActionStub {
-  static fromUpstreamJSON(...args) {
+  static fromUpstreamJson(...args) {
     actionFromUpstreamJSONMock(...args);
     return { foo: 'bar' };
   }
 
-  static fromDownstreamJSON(...args) {
+  static fromDownstreamJson(...args) {
     actionFromDownstreamJSONMock(...args);
     return { foo: 'bar' };
   }
 }
 
 class WatchStatusStub {
-  static fromUpstreamJSON(...args) {
+  static fromUpstreamJson(...args) {
     watchStatusFromUpstreamJSONMock(...args);
     return { foo: 'bar' };
   }
@@ -95,7 +95,7 @@ describe('BaseWatch', () => {
 
     it('should return the expected object', () => {
       const watch = new BaseWatch(props);
-      const actual = watch.watchJSON;
+      const actual = watch.watchJson;
       const expected = {
         metadata: {
           name: 'foo',
@@ -111,7 +111,7 @@ describe('BaseWatch', () => {
     it('should only populate the name metadata if a name is defined', () => {
       delete props.name;
       const watch = new BaseWatch(props);
-      const actual = watch.watchJSON;
+      const actual = watch.watchJson;
       const expected = {
         metadata: {
           xpack: {
@@ -149,7 +149,7 @@ describe('BaseWatch', () => {
 
   });
 
-  describe('downstreamJSON getter method', () => {
+  describe('downstreamJson getter method', () => {
 
     let props;
     beforeEach(() => {
@@ -158,13 +158,13 @@ describe('BaseWatch', () => {
         name: 'bar',
         type: 'json',
         watchStatus: {
-          downstreamJSON: {
+          downstreamJson: {
             prop1: 'prop1',
             prop2: 'prop2'
           }
         },
         actions: [{
-          downstreamJSON: {
+          downstreamJson: {
             prop1: 'prop3',
             prop2: 'prop4'
           }
@@ -175,14 +175,14 @@ describe('BaseWatch', () => {
     it('should return a valid object', () => {
       const watch = new BaseWatch(props);
 
-      const actual = watch.downstreamJSON;
+      const actual = watch.downstreamJson;
       const expected = {
         id: props.id,
         name: props.name,
         type: props.type,
         isSystemWatch: false,
-        watchStatus: props.watchStatus.downstreamJSON,
-        actions: props.actions.map(a => a.downstreamJSON)
+        watchStatus: props.watchStatus.downstreamJson,
+        actions: props.actions.map(a => a.downstreamJson)
       };
 
       expect(actual).to.eql(expected);
@@ -192,7 +192,7 @@ describe('BaseWatch', () => {
       delete props.watchStatus;
 
       const watch = new BaseWatch(props);
-      const actual = watch.downstreamJSON;
+      const actual = watch.downstreamJson;
 
       const expected = {
         id: props.id,
@@ -200,7 +200,7 @@ describe('BaseWatch', () => {
         type: props.type,
         isSystemWatch: false,
         watchStatus: undefined,
-        actions: props.actions.map(a => a.downstreamJSON)
+        actions: props.actions.map(a => a.downstreamJson)
       };
 
       expect(actual).to.eql(expected);
@@ -208,7 +208,7 @@ describe('BaseWatch', () => {
 
   });
 
-  describe('upstreamJSON getter method', () => {
+  describe('upstreamJson getter method', () => {
 
     let props;
     beforeEach(() => {
@@ -217,13 +217,13 @@ describe('BaseWatch', () => {
         name: 'bar',
         type: 'json',
         watchStatus: {
-          downstreamJSON: {
+          downstreamJson: {
             prop1: 'prop1',
             prop2: 'prop2'
           }
         },
         actions: [{
-          downstreamJSON: {
+          downstreamJson: {
             prop1: 'prop3',
             prop2: 'prop4'
           }
@@ -234,7 +234,7 @@ describe('BaseWatch', () => {
     it('should return a valid object', () => {
       const watch = new BaseWatch(props);
 
-      const actual = watch.upstreamJSON;
+      const actual = watch.upstreamJson;
       const expected = {
         id: props.id,
         watch: {
@@ -252,7 +252,7 @@ describe('BaseWatch', () => {
 
   });
 
-  describe('getPropsFromDownstreamJSON method', () => {
+  describe('getPropsFromDownstreamJson method', () => {
 
     let downstreamJson;
     beforeEach(() => {
@@ -266,7 +266,7 @@ describe('BaseWatch', () => {
     });
 
     it('should return a valid props object', () => {
-      const props = BaseWatch.getPropsFromDownstreamJSON(downstreamJson);
+      const props = BaseWatch.getPropsFromDownstreamJson(downstreamJson);
       const actual = Object.keys(props);
       const expected = [
         'id',
@@ -278,13 +278,13 @@ describe('BaseWatch', () => {
     });
 
     it('should properly map id and name', () => {
-      const props = BaseWatch.getPropsFromDownstreamJSON(downstreamJson);
+      const props = BaseWatch.getPropsFromDownstreamJson(downstreamJson);
       expect(props.id).to.be('my-watch');
       expect(props.name).to.be('foo');
     });
 
     it('should return an actions property that is an array', () => {
-      const props = BaseWatch.getPropsFromDownstreamJSON(downstreamJson);
+      const props = BaseWatch.getPropsFromDownstreamJson(downstreamJson);
 
       expect(Array.isArray(props.actions)).to.be(true);
       expect(props.actions.length).to.be(0);
@@ -297,7 +297,7 @@ describe('BaseWatch', () => {
       downstreamJson.actions.push(action0);
       downstreamJson.actions.push(action1);
 
-      const props = BaseWatch.getPropsFromDownstreamJSON(downstreamJson);
+      const props = BaseWatch.getPropsFromDownstreamJson(downstreamJson);
 
       expect(props.actions.length).to.be(2);
       expect(actionFromDownstreamJSONMock.calledWith(action0)).to.be(true);
@@ -306,7 +306,7 @@ describe('BaseWatch', () => {
 
   });
 
-  describe('getPropsFromUpstreamJSON method', () => {
+  describe('getPropsFromUpstreamJson method', () => {
 
     let upstreamJson;
     beforeEach(() => {
@@ -335,21 +335,21 @@ describe('BaseWatch', () => {
     it(`throws an error if no 'id' property in json`, () => {
       delete upstreamJson.id;
 
-      expect(BaseWatch.getPropsFromUpstreamJSON).withArgs(upstreamJson)
+      expect(BaseWatch.getPropsFromUpstreamJson).withArgs(upstreamJson)
         .to.throwError(/must contain an id property/i);
     });
 
     it(`throws an error if no 'watchJson' property in json`, () => {
       delete upstreamJson.watchJson;
 
-      expect(BaseWatch.getPropsFromUpstreamJSON).withArgs(upstreamJson)
+      expect(BaseWatch.getPropsFromUpstreamJson).withArgs(upstreamJson)
         .to.throwError(/must contain a watchJson property/i);
     });
 
     it(`throws an error if no 'watchStatusJson' property in json`, () => {
       delete upstreamJson.watchStatusJson;
 
-      expect(BaseWatch.getPropsFromUpstreamJSON).withArgs(upstreamJson)
+      expect(BaseWatch.getPropsFromUpstreamJson).withArgs(upstreamJson)
         .to.throwError(/must contain a watchStatusJson property/i);
     });
 
@@ -367,7 +367,7 @@ describe('BaseWatch', () => {
         throttle_period_in_millis: {}
       };
 
-      const props = BaseWatch.getPropsFromUpstreamJSON(upstreamJson);
+      const props = BaseWatch.getPropsFromUpstreamJson(upstreamJson);
       const actual = Object.keys(props.watchJson);
       const expected = [
         'trigger',
@@ -384,7 +384,7 @@ describe('BaseWatch', () => {
     });
 
     it('should return a valid props object', () => {
-      const props = BaseWatch.getPropsFromUpstreamJSON(upstreamJson);
+      const props = BaseWatch.getPropsFromUpstreamJson(upstreamJson);
       const actual = Object.keys(props);
       const expected = [
         'id',
@@ -398,19 +398,19 @@ describe('BaseWatch', () => {
     });
 
     it('should pull name out of metadata', () => {
-      const props = BaseWatch.getPropsFromUpstreamJSON(upstreamJson);
+      const props = BaseWatch.getPropsFromUpstreamJson(upstreamJson);
 
       expect(props.name).to.be('foo');
     });
 
     it('should return an actions property that is an array', () => {
-      const props = BaseWatch.getPropsFromUpstreamJSON(upstreamJson);
+      const props = BaseWatch.getPropsFromUpstreamJson(upstreamJson);
 
       expect(Array.isArray(props.actions)).to.be(true);
       expect(props.actions.length).to.be(0);
     });
 
-    it('should call Action.fromUpstreamJSON for each action', () => {
+    it('should call Action.fromUpstreamJson for each action', () => {
       upstreamJson.watchJson.actions = {
         'my-logging-action': {
           'logging': {
@@ -422,7 +422,7 @@ describe('BaseWatch', () => {
         }
       };
 
-      const props = BaseWatch.getPropsFromUpstreamJSON(upstreamJson);
+      const props = BaseWatch.getPropsFromUpstreamJson(upstreamJson);
 
       expect(props.actions.length).to.be(2);
       expect(actionFromUpstreamJSONMock.calledWith({
@@ -441,8 +441,8 @@ describe('BaseWatch', () => {
       })).to.be(true);
     });
 
-    it('should call WatchStatus.fromUpstreamJSON for the watch status', () => {
-      BaseWatch.getPropsFromUpstreamJSON(upstreamJson);
+    it('should call WatchStatus.fromUpstreamJson for the watch status', () => {
+      BaseWatch.getPropsFromUpstreamJson(upstreamJson);
 
       expect(watchStatusFromUpstreamJSONMock.calledWith({
         id: 'my-watch',

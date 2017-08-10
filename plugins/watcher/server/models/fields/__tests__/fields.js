@@ -47,22 +47,22 @@ describe('fields', () => {
       };
     });
 
-    describe('fromUpstreamJSON factory method', () => {
+    describe('fromUpstreamJson factory method', () => {
 
       it(`throws an error if no 'fields' property in json`, () => {
         delete upstreamJson.fields;
-        expect(Fields.fromUpstreamJSON).withArgs(upstreamJson)
+        expect(Fields.fromUpstreamJson).withArgs(upstreamJson)
           .to.throwError(/must contain a fields property/i);
       });
 
       it('returns correct Fields instance', () => {
-        const fields = Fields.fromUpstreamJSON(upstreamJson);
+        const fields = Fields.fromUpstreamJson(upstreamJson);
 
         expect(fields.fields).to.be.an('array');
       });
 
       it('uses the first instance of a field if the same field exists in multiple mappings', () => {
-        const fields = Fields.fromUpstreamJSON(upstreamJson);
+        const fields = Fields.fromUpstreamJson(upstreamJson);
         const actual = find(fields.fields, { name: 'field-bar' });
 
         //field-bar is defined as both a boolean and an integer, should default to
@@ -71,21 +71,21 @@ describe('fields', () => {
       });
 
       it('defaults to the type if no normalizedType exists', () => {
-        const fields = Fields.fromUpstreamJSON(upstreamJson);
+        const fields = Fields.fromUpstreamJson(upstreamJson);
         const actual = find(fields.fields, { name: 'field-foo' });
 
         expect(actual.normalizedType).to.be('text');
       });
 
       it('populates normalizedType if one exists', () => {
-        const fields = Fields.fromUpstreamJSON(upstreamJson);
+        const fields = Fields.fromUpstreamJson(upstreamJson);
         const actual = find(fields.fields, { name: 'field-bop' });
 
         expect(actual.normalizedType).to.be('number');
       });
 
       it('populates all properties', () => {
-        const fields = Fields.fromUpstreamJSON(upstreamJson);
+        const fields = Fields.fromUpstreamJson(upstreamJson);
         const actual = find(fields.fields, { name: 'field-foo' });
         const expected = {
           name: 'field-foo',
@@ -100,11 +100,11 @@ describe('fields', () => {
 
     });
 
-    describe('downstreamJSON getter method', () => {
+    describe('downstreamJson getter method', () => {
 
       it('returns correct JSON for client', () => {
-        const fields = Fields.fromUpstreamJSON(upstreamJson);
-        const json = fields.downstreamJSON;
+        const fields = Fields.fromUpstreamJson(upstreamJson);
+        const json = fields.downstreamJson;
 
         expect(json.fields).to.eql(fields.fields);
       });

@@ -8,8 +8,8 @@ export class UnknownAction extends BaseAction {
     this.actionJson = get(props, 'actionJson');
   }
 
-  get upstreamJSON() {
-    const result = super.upstreamJSON;
+  get upstreamJson() {
+    const result = super.upstreamJson;
 
     Object.assign(result, {
       actionJson: this.actionJson
@@ -18,7 +18,7 @@ export class UnknownAction extends BaseAction {
     return result;
   }
 
-  static fromUpstreamJSON(upstreamAction) {
+  static fromUpstreamJson(upstreamAction) {
     return new UnknownAction(upstreamAction);
   }
 };

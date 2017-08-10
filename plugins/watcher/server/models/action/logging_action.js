@@ -10,8 +10,8 @@ export class LoggingAction extends BaseAction {
   }
 
   // To Kibana
-  get downstreamJSON() {
-    const result = super.downstreamJSON;
+  get downstreamJson() {
+    const result = super.downstreamJson;
     Object.assign(result, {
       text: this.text
     });
@@ -20,8 +20,8 @@ export class LoggingAction extends BaseAction {
   }
 
   // From Kibana
-  static fromDownstreamJSON(json) {
-    const props = super.getPropsFromDownstreamJSON(json);
+  static fromDownstreamJson(json) {
+    const props = super.getPropsFromDownstreamJson(json);
 
     Object.assign(props, {
       text: json.text
@@ -31,8 +31,8 @@ export class LoggingAction extends BaseAction {
   }
 
   // To Elasticsearch
-  get upstreamJSON() {
-    const result = super.upstreamJSON;
+  get upstreamJson() {
+    const result = super.upstreamJson;
 
     result[this.id] = {
       logging: {
@@ -44,8 +44,8 @@ export class LoggingAction extends BaseAction {
   }
 
   // From Elasticsearch
-  static fromUpstreamJSON(json) {
-    const props = super.getPropsFromUpstreamJSON(json);
+  static fromUpstreamJson(json) {
+    const props = super.getPropsFromUpstreamJson(json);
 
     if (!json.actionJson.logging) {
       throw new Error('json argument must contain an actionJson.logging property');

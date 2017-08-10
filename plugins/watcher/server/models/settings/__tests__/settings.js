@@ -3,10 +3,10 @@ import { Settings } from '../settings';
 
 describe('settings module', () => {
   describe('Settings class', () => {
-    describe('fromUpstreamJSON factory method', () => {
+    describe('fromUpstreamJson factory method', () => {
       describe('when no upstream JSON is specified', () => {
         it('returns the correct Settings instance', () => {
-          const settings = Settings.fromUpstreamJSON();
+          const settings = Settings.fromUpstreamJson();
 
           const actionTypes = settings.actionTypes;
           expect(actionTypes.email.enabled).to.be(false);
@@ -37,7 +37,7 @@ describe('settings module', () => {
               }
             }
           };
-          const settings = Settings.fromUpstreamJSON(upstreamJson);
+          const settings = Settings.fromUpstreamJson(upstreamJson);
 
           const actionTypes = settings.actionTypes;
           expect(actionTypes.email.enabled).to.be(true);
@@ -47,7 +47,7 @@ describe('settings module', () => {
       });
     });
 
-    describe('downstreamJSON getter method', () => {
+    describe('downstreamJson getter method', () => {
       it('returns correct JSON for client', () => {
         const upstreamJson = {
           defaults: {
@@ -64,8 +64,8 @@ describe('settings module', () => {
             }
           }
         };
-        const settings = Settings.fromUpstreamJSON(upstreamJson);
-        const json = settings.downstreamJSON;
+        const settings = Settings.fromUpstreamJson(upstreamJson);
+        const json = settings.downstreamJson;
 
         expect(json.action_types.email.enabled).to.be(true);
         expect(json.action_types.email.accounts.scooby.default).to.be(true);

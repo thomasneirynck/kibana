@@ -4,38 +4,38 @@ import sinon from 'sinon';
 import proxyquire from 'proxyquire';
 
 const constructorMock = sinon.stub();
-const upstreamJSONMock = sinon.stub();
-const downstreamJSONMock = sinon.stub();
-const getPropsFromUpstreamJSONMock = sinon.stub();
-const getPropsFromDownstreamJSONMock = sinon.stub();
+const upstreamJsonMock = sinon.stub();
+const downstreamJsonMock = sinon.stub();
+const getPropsFromUpstreamJsonMock = sinon.stub();
+const getPropsFromDownstreamJsonMock = sinon.stub();
 class BaseWatchStub {
   constructor(props) {
     constructorMock(props);
   }
 
-  get upstreamJSON() {
-    upstreamJSONMock();
+  get upstreamJson() {
+    upstreamJsonMock();
 
     return {
       baseCalled: true
     };
   }
 
-  get downstreamJSON() {
-    downstreamJSONMock();
+  get downstreamJson() {
+    downstreamJsonMock();
 
     return {
       baseCalled: true
     };
   }
 
-  static getPropsFromUpstreamJSON(json) {
-    getPropsFromUpstreamJSONMock();
+  static getPropsFromUpstreamJson(json) {
+    getPropsFromUpstreamJsonMock();
     return pick(json, 'watchJson');
   }
 
-  static getPropsFromDownstreamJSON(json) {
-    getPropsFromDownstreamJSONMock();
+  static getPropsFromDownstreamJson(json) {
+    getPropsFromDownstreamJsonMock();
     return pick(json, 'watchJson');
   }
 }
@@ -53,8 +53,7 @@ describe('JsonWatch', () => {
       constructorMock.reset();
 
       props = {
-        watch: 'foo',
-        watchJson: 'bar'
+        watch: 'foo'
       };
     });
 
@@ -66,8 +65,7 @@ describe('JsonWatch', () => {
     it('should populate all expected fields', () => {
       const actual = new JsonWatch(props);
       const expected = {
-        watch: 'foo',
-        watchJson: 'bar'
+        watch: 'foo'
       };
 
       expect(actual).to.eql(expected);
@@ -75,7 +73,7 @@ describe('JsonWatch', () => {
 
   });
 
-  describe('watchJSON getter method', () => {
+  describe('watchJson getter method', () => {
 
     let props;
     beforeEach(() => {
@@ -87,35 +85,35 @@ describe('JsonWatch', () => {
     it('should return the correct result', () => {
       const watch = new JsonWatch(props);
 
-      expect(watch.watchJSON).to.eql(props.watch);
+      expect(watch.watchJson).to.eql(props.watch);
     });
 
   });
 
-  describe('upstreamJSON getter method', () => {
+  describe('upstreamJson getter method', () => {
 
     beforeEach(() => {
-      upstreamJSONMock.reset();
+      upstreamJsonMock.reset();
     });
 
     it('should call the getter from WatchBase and return the correct result', () => {
       const watch = new JsonWatch({ watch: 'foo' });
-      const actual = watch.upstreamJSON;
+      const actual = watch.upstreamJson;
       const expected = {
         baseCalled: true
       };
 
-      expect(upstreamJSONMock.called).to.be(true);
+      expect(upstreamJsonMock.called).to.be(true);
       expect(actual).to.eql(expected);
     });
 
   });
 
-  describe('downstreamJSON getter method', () => {
+  describe('downstreamJson getter method', () => {
 
     let props;
     beforeEach(() => {
-      downstreamJSONMock.reset();
+      downstreamJsonMock.reset();
 
       props = {
         watch: 'foo',
@@ -125,37 +123,37 @@ describe('JsonWatch', () => {
 
     it('should call the getter from WatchBase and return the correct result', () => {
       const watch = new JsonWatch(props);
-      const actual = watch.downstreamJSON;
+      const actual = watch.downstreamJson;
       const expected = {
         baseCalled: true,
         watch: 'foo'
       };
 
-      expect(downstreamJSONMock.called).to.be(true);
+      expect(downstreamJsonMock.called).to.be(true);
       expect(actual).to.eql(expected);
     });
 
   });
 
-  describe('fromUpstreamJSON factory method', () => {
+  describe('fromUpstreamJson factory method', () => {
 
     let upstreamJson;
     beforeEach(() => {
-      getPropsFromUpstreamJSONMock.reset();
+      getPropsFromUpstreamJsonMock.reset();
 
       upstreamJson = {
         watchJson: { foo: { bar: 'baz' } }
       };
     });
 
-    it('should call the getPropsFromUpstreamJSON method of BaseWatch', () => {
-      JsonWatch.fromUpstreamJSON(upstreamJson);
+    it('should call the getPropsFromUpstreamJson method of BaseWatch', () => {
+      JsonWatch.fromUpstreamJson(upstreamJson);
 
-      expect(getPropsFromUpstreamJSONMock.called).to.be(true);
+      expect(getPropsFromUpstreamJsonMock.called).to.be(true);
     });
 
     it('should clone the watchJson property into a watch property', () => {
-      const jsonWatch = JsonWatch.fromUpstreamJSON(upstreamJson);
+      const jsonWatch = JsonWatch.fromUpstreamJson(upstreamJson);
 
       expect(jsonWatch.watch).to.eql(upstreamJson.watchJson);
       expect(jsonWatch.watch).to.not.be(upstreamJson.watchJson);
@@ -164,7 +162,7 @@ describe('JsonWatch', () => {
     it('should remove the metadata.name property from the watch property', () => {
       upstreamJson.watchJson.metadata = { name: 'foobar', foo: 'bar' };
 
-      const jsonWatch = JsonWatch.fromUpstreamJSON(upstreamJson);
+      const jsonWatch = JsonWatch.fromUpstreamJson(upstreamJson);
 
       expect(jsonWatch.watch.metadata.name).to.be(undefined);
     });
@@ -176,7 +174,7 @@ describe('JsonWatch', () => {
         foo: 'bar'
       };
 
-      const jsonWatch = JsonWatch.fromUpstreamJSON(upstreamJson);
+      const jsonWatch = JsonWatch.fromUpstreamJson(upstreamJson);
 
       expect(jsonWatch.watch.metadata.xpack).to.be(undefined);
     });
@@ -184,32 +182,32 @@ describe('JsonWatch', () => {
     it('should remove an empty metadata property from the watch property', () => {
       upstreamJson.watchJson.metadata = { name: 'foobar' };
 
-      const jsonWatch = JsonWatch.fromUpstreamJSON(upstreamJson);
+      const jsonWatch = JsonWatch.fromUpstreamJson(upstreamJson);
 
       expect(jsonWatch.watch.metadata).to.be(undefined);
     });
 
   });
 
-  describe('fromDownstreamJSON factory method', () => {
+  describe('fromDownstreamJson factory method', () => {
 
     let downstreamJson;
     beforeEach(() => {
-      getPropsFromDownstreamJSONMock.reset();
+      getPropsFromDownstreamJsonMock.reset();
 
       downstreamJson = {
         watch: { foo: { bar: 'baz' } }
       };
     });
 
-    it('should call the getPropsFromDownstreamJSON method of BaseWatch', () => {
-      JsonWatch.fromDownstreamJSON(downstreamJson);
+    it('should call the getPropsFromDownstreamJson method of BaseWatch', () => {
+      JsonWatch.fromDownstreamJson(downstreamJson);
 
-      expect(getPropsFromDownstreamJSONMock.called).to.be(true);
+      expect(getPropsFromDownstreamJsonMock.called).to.be(true);
     });
 
     it('should copy the watch property', () => {
-      const jsonWatch = JsonWatch.fromDownstreamJSON(downstreamJson);
+      const jsonWatch = JsonWatch.fromDownstreamJson(downstreamJson);
 
       expect(jsonWatch.watch).to.eql(downstreamJson.watch);
     });

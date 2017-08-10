@@ -33,9 +33,9 @@ export function registerListRoute(server) {
              ? { fields: [] }
              : response;
 
-          const fields = Fields.fromUpstreamJSON(json);
+          const fields = Fields.fromUpstreamJson(json);
 
-          reply(fields.downstreamJSON);
+          reply(fields.downstreamJson);
         })
         .catch(err => {
           // Case: Error from Elasticsearch JS client

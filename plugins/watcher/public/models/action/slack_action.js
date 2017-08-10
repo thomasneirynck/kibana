@@ -10,8 +10,8 @@ export class SlackAction extends BaseAction {
     this.text = props.text;
   }
 
-  get upstreamJSON() {
-    const result = super.upstreamJSON;
+  get upstreamJson() {
+    const result = super.upstreamJson;
 
     Object.assign(result, {
       to: this.to,
@@ -36,7 +36,7 @@ export class SlackAction extends BaseAction {
     return `Failed to send sample Slack message to ${toList}.`;
   }
 
-  static fromUpstreamJSON(upstreamAction) {
+  static fromUpstreamJson(upstreamAction) {
     return new SlackAction(upstreamAction);
   }
 

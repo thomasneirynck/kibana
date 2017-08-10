@@ -52,8 +52,8 @@ export function registerLoadRoute(server) {
           includeDetails: true
         };
 
-        const watchHistoryItem = WatchHistoryItem.fromUpstreamJSON(json);
-        reply({ watchHistoryItem: watchHistoryItem.downstreamJSON });
+        const watchHistoryItem = WatchHistoryItem.fromUpstreamJson(json);
+        reply({ watchHistoryItem: watchHistoryItem.downstreamJson });
       })
       .catch(err => {
         // Case: Error from Elasticsearch JS client

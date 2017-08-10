@@ -6,7 +6,7 @@ describe('action', () => {
 
   describe('Action', () => {
 
-    describe('fromUpstreamJSON factory method', () => {
+    describe('fromUpstreamJson factory method', () => {
 
       let upstreamJson;
       beforeEach(() => {
@@ -22,18 +22,18 @@ describe('action', () => {
 
       it(`throws an error if no 'id' property in json`, () => {
         delete upstreamJson.id;
-        expect(Action.fromUpstreamJSON).withArgs(upstreamJson)
+        expect(Action.fromUpstreamJson).withArgs(upstreamJson)
           .to.throwError(/must contain an id property/i);
       });
 
       it(`throws an error if no 'actionJson' property in json`, () => {
         delete upstreamJson.actionJson;
-        expect(Action.fromUpstreamJSON).withArgs(upstreamJson)
+        expect(Action.fromUpstreamJson).withArgs(upstreamJson)
           .to.throwError(/must contain an actionJson property/i);
       });
 
       it('returns correct Action instance', () => {
-        const action = Action.fromUpstreamJSON(upstreamJson);
+        const action = Action.fromUpstreamJson(upstreamJson);
 
         expect(action.id).to.be(upstreamJson.id);
       });
@@ -51,7 +51,7 @@ describe('action', () => {
             }
           }
         };
-        const action = Action.fromUpstreamJSON(upstreamJson);
+        const action = Action.fromUpstreamJson(upstreamJson);
 
         expect(action.type).to.be(ACTION_TYPES.LOGGING);
       });
@@ -65,14 +65,14 @@ describe('action', () => {
             }
           }
         };
-        const action = Action.fromUpstreamJSON(upstreamJson);
+        const action = Action.fromUpstreamJson(upstreamJson);
 
         expect(action.type).to.be(ACTION_TYPES.UNKNOWN);
       });
 
     });
 
-    describe('downstreamJSON getter method', () => {
+    describe('downstreamJson getter method', () => {
 
       let upstreamJson;
       beforeEach(() => {
@@ -87,9 +87,9 @@ describe('action', () => {
       });
 
       it('returns correct JSON for client', () => {
-        const action = Action.fromUpstreamJSON(upstreamJson);
+        const action = Action.fromUpstreamJson(upstreamJson);
 
-        const json = action.downstreamJSON;
+        const json = action.downstreamJson;
 
         expect(json.id).to.be(action.id);
         expect(json.type).to.be(action.type);

@@ -7,7 +7,7 @@ describe('action_status', () => {
 
   describe('ActionStatus', () => {
 
-    describe('fromUpstreamJSON factory method', () => {
+    describe('fromUpstreamJson factory method', () => {
 
       let upstreamJson;
       beforeEach(() => {
@@ -36,18 +36,18 @@ describe('action_status', () => {
 
       it(`throws an error if no 'id' property in json`, () => {
         delete upstreamJson.id;
-        expect(ActionStatus.fromUpstreamJSON).withArgs(upstreamJson)
+        expect(ActionStatus.fromUpstreamJson).withArgs(upstreamJson)
           .to.throwError(/must contain an id property/i);
       });
 
       it(`throws an error if no 'actionStatusJson' property in json`, () => {
         delete upstreamJson.actionStatusJson;
-        expect(ActionStatus.fromUpstreamJSON).withArgs(upstreamJson)
+        expect(ActionStatus.fromUpstreamJson).withArgs(upstreamJson)
           .to.throwError(/must contain an actionStatusJson property/i);
       });
 
       it('returns correct ActionStatus instance', () => {
-        const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+        const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
         expect(actionStatus.id).to.be(upstreamJson.id);
         expect(actionStatus.lastAcknowledged).to
@@ -95,14 +95,14 @@ describe('action_status', () => {
 
       it(`correctly calculates ACTION_STATES.ERROR`, () => {
         upstreamJson.actionStatusJson.last_execution.successful = false;
-        const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+        const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
         expect(actionStatus.state).to.be(ACTION_STATES.ERROR);
       });
 
       it(`correctly calculates ACTION_STATES.OK`, () => {
         upstreamJson.actionStatusJson.ack.state = 'awaits_successful_execution';
-        const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+        const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
         expect(actionStatus.state).to.be(ACTION_STATES.OK);
       });
@@ -113,7 +113,7 @@ describe('action_status', () => {
           upstreamJson.actionStatusJson.ack.state = 'acked';
           upstreamJson.actionStatusJson.ack.timestamp = '2017-03-01T00:00:00.000Z';
           upstreamJson.actionStatusJson.last_execution.timestamp = '2017-03-01T00:00:00.000Z';
-          const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+          const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
           expect(actionStatus.state).to.be(ACTION_STATES.ACKNOWLEDGED);
         });
@@ -122,7 +122,7 @@ describe('action_status', () => {
           upstreamJson.actionStatusJson.ack.state = 'acked';
           upstreamJson.actionStatusJson.ack.timestamp = '2017-03-02T00:00:00.000Z';
           upstreamJson.actionStatusJson.last_execution.timestamp = '2017-03-01T00:00:00.000Z';
-          const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+          const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
           expect(actionStatus.state).to.be(ACTION_STATES.ACKNOWLEDGED);
         });
@@ -135,7 +135,7 @@ describe('action_status', () => {
           upstreamJson.actionStatusJson.ack.state = 'ackable';
           upstreamJson.actionStatusJson.last_throttle.timestamp = '2017-03-01T00:00:00.000Z';
           upstreamJson.actionStatusJson.last_execution.timestamp = '2017-03-01T00:00:00.000Z';
-          const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+          const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
           expect(actionStatus.state).to.be(ACTION_STATES.THROTTLED);
         });
@@ -144,7 +144,7 @@ describe('action_status', () => {
           upstreamJson.actionStatusJson.ack.state = 'ackable';
           upstreamJson.actionStatusJson.last_throttle.timestamp = '2017-03-02T00:00:00.000Z';
           upstreamJson.actionStatusJson.last_execution.timestamp = '2017-03-01T00:00:00.000Z';
-          const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+          const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
           expect(actionStatus.state).to.be(ACTION_STATES.THROTTLED);
         });
@@ -158,7 +158,7 @@ describe('action_status', () => {
           upstreamJson.actionStatusJson.ack.state = 'ackable';
           upstreamJson.actionStatusJson.last_successful_execution.timestamp = '2017-03-01T00:00:00.000Z';
           upstreamJson.actionStatusJson.last_execution.timestamp = '2017-03-01T00:00:00.000Z';
-          const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+          const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
           expect(actionStatus.state).to.be(ACTION_STATES.FIRING);
         });
@@ -168,7 +168,7 @@ describe('action_status', () => {
           upstreamJson.actionStatusJson.ack.state = 'ackable';
           upstreamJson.actionStatusJson.last_successful_execution.timestamp = '2017-03-02T00:00:00.000Z';
           upstreamJson.actionStatusJson.last_execution.timestamp = '2017-03-01T00:00:00.000Z';
-          const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+          const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
           expect(actionStatus.state).to.be(ACTION_STATES.FIRING);
         });
@@ -180,7 +180,7 @@ describe('action_status', () => {
         upstreamJson.actionStatusJson.ack.state = 'ackable';
         upstreamJson.actionStatusJson.last_successful_execution.timestamp = '2017-03-01T00:00:00.000Z';
         upstreamJson.actionStatusJson.last_execution.timestamp = '2017-03-02T00:00:00.000Z';
-        const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+        const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
         expect(actionStatus.state).to.be(ACTION_STATES.ERROR);
       });
@@ -193,7 +193,7 @@ describe('action_status', () => {
             'last_successful_execution': { 'successful': true }
           }
         };
-        const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+        const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
         expect(() => {
           actionStatus.state;
@@ -231,7 +231,7 @@ describe('action_status', () => {
 
       it(`correctly calculated isAckable when in ACTION_STATES.OK`, () => {
         upstreamJson.actionStatusJson.ack.state = 'awaits_successful_execution';
-        const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+        const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
         expect(actionStatus.state).to.be(ACTION_STATES.OK);
         expect(actionStatus.isAckable).to.be(false);
@@ -241,7 +241,7 @@ describe('action_status', () => {
         upstreamJson.actionStatusJson.ack.state = 'acked';
         upstreamJson.actionStatusJson.ack.timestamp = '2017-03-01T00:00:00.000Z';
         upstreamJson.actionStatusJson.last_execution.timestamp = '2017-03-01T00:00:00.000Z';
-        const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+        const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
         expect(actionStatus.state).to.be(ACTION_STATES.ACKNOWLEDGED);
         expect(actionStatus.isAckable).to.be(false);
@@ -251,7 +251,7 @@ describe('action_status', () => {
         upstreamJson.actionStatusJson.ack.state = 'ackable';
         upstreamJson.actionStatusJson.last_throttle.timestamp = '2017-03-01T00:00:00.000Z';
         upstreamJson.actionStatusJson.last_execution.timestamp = '2017-03-01T00:00:00.000Z';
-        const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+        const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
         expect(actionStatus.state).to.be(ACTION_STATES.THROTTLED);
         expect(actionStatus.isAckable).to.be(true);
@@ -262,7 +262,7 @@ describe('action_status', () => {
         upstreamJson.actionStatusJson.ack.state = 'ackable';
         upstreamJson.actionStatusJson.last_successful_execution.timestamp = '2017-03-01T00:00:00.000Z';
         upstreamJson.actionStatusJson.last_execution.timestamp = '2017-03-01T00:00:00.000Z';
-        const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+        const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
         expect(actionStatus.state).to.be(ACTION_STATES.FIRING);
         expect(actionStatus.isAckable).to.be(true);
@@ -273,7 +273,7 @@ describe('action_status', () => {
         upstreamJson.actionStatusJson.ack.state = 'ackable';
         upstreamJson.actionStatusJson.last_successful_execution.timestamp = '2017-03-01T00:00:00.000Z';
         upstreamJson.actionStatusJson.last_execution.timestamp = '2017-03-02T00:00:00.000Z';
-        const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+        const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
         expect(actionStatus.state).to.be(ACTION_STATES.ERROR);
         expect(actionStatus.isAckable).to.be(false);
@@ -281,7 +281,7 @@ describe('action_status', () => {
 
     });
 
-    describe('downstreamJSON getter method', () => {
+    describe('downstreamJson getter method', () => {
 
       let upstreamJson;
       beforeEach(() => {
@@ -309,9 +309,9 @@ describe('action_status', () => {
       });
 
       it('returns correct JSON for client', () => {
-        const actionStatus = ActionStatus.fromUpstreamJSON(upstreamJson);
+        const actionStatus = ActionStatus.fromUpstreamJson(upstreamJson);
 
-        const json = actionStatus.downstreamJSON;
+        const json = actionStatus.downstreamJson;
 
         expect(json.id).to.be(actionStatus.id);
         expect(json.state).to.be(actionStatus.state);

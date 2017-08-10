@@ -7,8 +7,8 @@ export class VisualizeOptions {
   }
 
   // generate ExecuteDetails object from kibana response
-  static fromDownstreamJSON(downstreamJSON) {
-    return new VisualizeOptions(downstreamJSON);
+  static fromDownstreamJson(downstreamJson) {
+    return new VisualizeOptions(downstreamJson);
   }
 };
 

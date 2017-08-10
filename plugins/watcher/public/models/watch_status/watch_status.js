@@ -21,10 +21,10 @@ export class WatchStatus {
     }
 
     const actionStatuses = get(props, 'actionStatuses', []);
-    this.actionStatuses = actionStatuses.map(actionStatus => ActionStatus.fromUpstreamJSON(actionStatus));
+    this.actionStatuses = actionStatuses.map(actionStatus => ActionStatus.fromUpstreamJson(actionStatus));
   }
 
-  static fromUpstreamJSON(upstreamWatchStatus) {
+  static fromUpstreamJson(upstreamWatchStatus) {
     return new WatchStatus(upstreamWatchStatus);
   }
 };

@@ -84,7 +84,7 @@ export class Settings {
     this.actionTypes = props.actionTypes;
   }
 
-  get downstreamJSON() {
+  get downstreamJson() {
     const result = {
       action_types: this.actionTypes
     };
@@ -92,7 +92,7 @@ export class Settings {
     return result;
   }
 
-  static fromUpstreamJSON(json) {
+  static fromUpstreamJson(json) {
     const actionTypes = getActionTypesSettings(json);
     const props = {
       actionTypes

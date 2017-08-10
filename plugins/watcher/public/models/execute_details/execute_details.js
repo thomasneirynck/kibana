@@ -8,7 +8,7 @@ export class ExecuteDetails {
     this.recordExecution = props.recordExecution;
   }
 
-  get upstreamJSON() {
+  get upstreamJson() {
     const triggerData = {
       triggeredTime: this.triggeredTime,
       scheduledTime: this.scheduledTime,

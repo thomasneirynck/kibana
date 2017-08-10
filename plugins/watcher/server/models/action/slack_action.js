@@ -11,8 +11,8 @@ export class SlackAction extends BaseAction {
   }
 
   // To Kibana
-  get downstreamJSON() {
-    const result = super.downstreamJSON;
+  get downstreamJson() {
+    const result = super.downstreamJson;
     Object.assign(result, {
       to: this.to,
       text: this.text
@@ -22,8 +22,8 @@ export class SlackAction extends BaseAction {
   }
 
   // From Kibana
-  static fromDownstreamJSON(json) {
-    const props = super.getPropsFromDownstreamJSON(json);
+  static fromDownstreamJson(json) {
+    const props = super.getPropsFromDownstreamJson(json);
 
     Object.assign(props, {
       to: json.to,
@@ -34,8 +34,8 @@ export class SlackAction extends BaseAction {
   }
 
   // To Elasticsearch
-  get upstreamJSON() {
-    const result = super.upstreamJSON;
+  get upstreamJson() {
+    const result = super.upstreamJson;
 
     result[this.id] = {
       slack: {
@@ -50,8 +50,8 @@ export class SlackAction extends BaseAction {
   }
 
   // From Elasticsearch
-  static fromUpstreamJSON(json) {
-    const props = super.getPropsFromUpstreamJSON(json);
+  static fromUpstreamJson(json) {
+    const props = super.getPropsFromUpstreamJson(json);
 
     if (!json.actionJson.slack) {
       throw new Error('json argument must contain an actionJson.slack property');

@@ -7,7 +7,7 @@ export function buildActions({ actions }) {
   const result = {};
 
   forEach(actions, (action) => {
-    Object.assign(result, action.upstreamJSON);
+    Object.assign(result, action.upstreamJson);
   });
 
   return result;

@@ -3,7 +3,7 @@ export class Settings {
     this.actionTypes = props.actionTypes;
   }
 
-  static fromUpstreamJSON(json) {
+  static fromUpstreamJson(json) {
     const actionTypes = json.action_types;
     const props = {
       actionTypes

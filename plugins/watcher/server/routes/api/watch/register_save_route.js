@@ -22,9 +22,9 @@ export function registerSaveRoute(server) {
     handler: (request, reply) => {
       const callWithRequest = callWithRequestFactory(server, request);
 
-      const watch = Watch.fromDownstreamJSON(request.payload);
+      const watch = Watch.fromDownstreamJson(request.payload);
 
-      return saveWatch(callWithRequest, watch.upstreamJSON)
+      return saveWatch(callWithRequest, watch.upstreamJson)
       .then(reply)
       .catch(err => {
 

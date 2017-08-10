@@ -15,10 +15,10 @@ export class Action {
     return ActionTypes;
   }
 
-  static fromUpstreamJSON(upstreamAction) {
+  static fromUpstreamJson(upstreamAction) {
     const type = get(upstreamAction, 'type');
     const ActionType = ActionTypes[type] || UnknownAction;
 
-    return ActionType.fromUpstreamJSON(upstreamAction);
+    return ActionType.fromUpstreamJson(upstreamAction);
   }
 };

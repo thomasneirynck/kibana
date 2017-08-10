@@ -28,7 +28,7 @@ export class WatchStatus {
     const actionStatusesJson = get(this.watchStatusJson, 'actions', {});
     this.actionStatuses = map(actionStatusesJson, (actionStatusJson, id) => {
       const json = { id, actionStatusJson };
-      return ActionStatus.fromUpstreamJSON(json);
+      return ActionStatus.fromUpstreamJson(json);
     });
   }
 
@@ -99,7 +99,7 @@ export class WatchStatus {
   }
 
   // generate object to send to kibana
-  get downstreamJSON() {
+  get downstreamJson() {
     const json = {
       id: this.id,
       state: this.state,
@@ -108,14 +108,14 @@ export class WatchStatus {
       lastChecked: this.lastChecked,
       lastMetCondition: this.lastMetCondition,
       lastFired: this.lastFired,
-      actionStatuses: map(this.actionStatuses, actionStatus => actionStatus.downstreamJSON)
+      actionStatuses: map(this.actionStatuses, actionStatus => actionStatus.downstreamJson)
     };
 
     return json;
   }
 
   // generate object from elasticsearch response
-  static fromUpstreamJSON(json) {
+  static fromUpstreamJson(json) {
     if (!json.id) {
       throw new Error('json argument must contain an id property');
     }

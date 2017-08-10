@@ -9,7 +9,7 @@ export class ExecuteDetails {
     this.recordExecution = props.recordExecution;
   }
 
-  get upstreamJSON() {
+  get upstreamJson() {
     const triggerData = {
       triggered_time: this.triggerData.triggeredTime,
       scheduled_time: this.triggerData.scheduledTime
@@ -27,8 +27,8 @@ export class ExecuteDetails {
   }
 
   // generate ExecuteDetails object from kibana response
-  static fromDownstreamJSON(downstreamJSON) {
-    return new ExecuteDetails(downstreamJSON);
+  static fromDownstreamJson(downstreamJson) {
+    return new ExecuteDetails(downstreamJson);
   }
 };
 

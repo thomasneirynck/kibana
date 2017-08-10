@@ -33,8 +33,8 @@ export function registerLoadRoute(server) {
           watchStatusJson
         };
 
-        const watch = Watch.fromUpstreamJSON(json);
-        reply({ watch: watch.downstreamJSON });
+        const watch = Watch.fromUpstreamJson(json);
+        reply({ watch: watch.downstreamJson });
       })
       .catch(err => {
 

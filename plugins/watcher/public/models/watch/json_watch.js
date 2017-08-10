@@ -14,8 +14,8 @@ export class JsonWatch extends BaseWatch {
     this.watch = get(props, 'watch', defaultWatchJson);
   }
 
-  get upstreamJSON() {
-    const result = super.upstreamJSON;
+  get upstreamJson() {
+    const result = super.upstreamJson;
     Object.assign(result, {
       watch: this.watch
     });
@@ -23,7 +23,7 @@ export class JsonWatch extends BaseWatch {
     return result;
   }
 
-  static fromUpstreamJSON(upstreamWatch) {
+  static fromUpstreamJson(upstreamWatch) {
     return new JsonWatch(upstreamWatch);
   }
 

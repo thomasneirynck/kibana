@@ -26,8 +26,8 @@ export function registerVisualizeRoute(server) {
     method: 'POST',
     handler: (request, reply) => {
       const callWithRequest = callWithRequestFactory(server, request);
-      const watch = Watch.fromDownstreamJSON(request.payload.watch);
-      const options = VisualizeOptions.fromDownstreamJSON(request.payload.options);
+      const watch = Watch.fromDownstreamJson(request.payload.watch);
+      const options = VisualizeOptions.fromDownstreamJson(request.payload.options);
       const body = watch.getVisualizeQuery(options);
 
       return fetchVisualizeData(callWithRequest, watch.index, body)

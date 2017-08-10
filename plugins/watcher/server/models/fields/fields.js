@@ -35,7 +35,7 @@ export class Fields {
     this.fields = props.fields;
   }
 
-  get downstreamJSON() {
+  get downstreamJson() {
     const result = {
       fields: this.fields
     };
@@ -43,7 +43,7 @@ export class Fields {
     return result;
   }
 
-  static fromUpstreamJSON(json) {
+  static fromUpstreamJson(json) {
     if (!json.fields) {
       throw new Error('json argument must contain a fields property');
     }

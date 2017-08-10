@@ -12,7 +12,7 @@ export class WatchesService {
     return this.$http.get(`${this.basePath}/watches`)
     .then(response => response.data.watches)
     .then(watches => watches.map(watch => {
-      return Watch.fromUpstreamJSON(watch);
+      return Watch.fromUpstreamJson(watch);
     }));
   }
 

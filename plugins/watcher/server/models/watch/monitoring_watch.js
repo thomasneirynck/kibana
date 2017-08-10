@@ -12,10 +12,10 @@ export class MonitoringWatch extends BaseWatch {
     this.isSystemWatch = true;
   }
 
-  get watchJSON() {
+  get watchJson() {
     const result = merge(
       {},
-      super.watchJSON
+      super.watchJson
     );
 
     return result;
@@ -30,25 +30,25 @@ export class MonitoringWatch extends BaseWatch {
   }
 
   // To Elasticsearch
-  get upstreamJSON() {
-    throw new Error('upstreamJSON called for monitoring watch');
+  get upstreamJson() {
+    throw new Error('upstreamJson called for monitoring watch');
   }
 
   // To Kibana
-  get downstreamJSON() {
+  get downstreamJson() {
     const result = merge(
       {},
-      super.downstreamJSON
+      super.downstreamJson
     );
 
     return result;
   }
 
   // From Elasticsearch
-  static fromUpstreamJSON(json) {
+  static fromUpstreamJson(json) {
     const props = merge(
       {},
-      super.getPropsFromUpstreamJSON(json),
+      super.getPropsFromUpstreamJson(json),
       {
         type: WATCH_TYPES.MONITORING
       }
@@ -58,8 +58,8 @@ export class MonitoringWatch extends BaseWatch {
   }
 
   // From Kibana
-  static fromDownstreamJSON() {
-    throw new Error('fromDownstreamJSON called for monitoring watch');
+  static fromDownstreamJson() {
+    throw new Error('fromDownstreamJson called for monitoring watch');
   }
 
 };

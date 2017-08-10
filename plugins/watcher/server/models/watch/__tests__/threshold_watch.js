@@ -5,10 +5,10 @@ import proxyquire from 'proxyquire';
 import { COMPARATORS, SORT_ORDERS } from '../../../../common/constants';
 
 const constructorMock = sinon.stub();
-const upstreamJSONMock = sinon.stub();
-const downstreamJSONMock = sinon.stub();
-const getPropsFromUpstreamJSONMock = sinon.stub();
-const getPropsFromDownstreamJSONMock = sinon.stub();
+const upstreamJsonMock = sinon.stub();
+const downstreamJsonMock = sinon.stub();
+const getPropsFromUpstreamJsonMock = sinon.stub();
+const getPropsFromDownstreamJsonMock = sinon.stub();
 const buildTriggerMock = sinon.stub();
 const buildInputMock = sinon.stub();
 const buildConditionMock = sinon.stub();
@@ -22,29 +22,29 @@ class BaseWatchStub {
     constructorMock(props);
   }
 
-  get upstreamJSON() {
-    upstreamJSONMock();
+  get upstreamJson() {
+    upstreamJsonMock();
 
     return {
       baseCalled: true
     };
   }
 
-  get downstreamJSON() {
-    downstreamJSONMock();
+  get downstreamJson() {
+    downstreamJsonMock();
 
     return {
       baseCalled: true
     };
   }
 
-  static getPropsFromUpstreamJSON(json) {
-    getPropsFromUpstreamJSONMock();
+  static getPropsFromUpstreamJson(json) {
+    getPropsFromUpstreamJsonMock();
     return pick(json, 'watchJson');
   }
 
-  static getPropsFromDownstreamJSON(json) {
-    getPropsFromDownstreamJSONMock();
+  static getPropsFromDownstreamJson(json) {
+    getPropsFromDownstreamJsonMock();
     return pick(json, 'watchJson');
   }
 }
@@ -154,14 +154,14 @@ describe('ThresholdWatch', () => {
 
     it('should return true if termField is defined', () => {
       const downstreamJson = { termField: 'foobar' };
-      const thresholdWatch = ThresholdWatch.fromDownstreamJSON(downstreamJson);
+      const thresholdWatch = ThresholdWatch.fromDownstreamJson(downstreamJson);
 
       expect(thresholdWatch.hasTermsAgg).to.be(true);
     });
 
     it('should return false if termField is undefined', () => {
       const downstreamJson = { termField: undefined };
-      const thresholdWatch = ThresholdWatch.fromDownstreamJSON(downstreamJson);
+      const thresholdWatch = ThresholdWatch.fromDownstreamJson(downstreamJson);
 
       expect(thresholdWatch.hasTermsAgg).to.be(false);
     });
@@ -172,21 +172,21 @@ describe('ThresholdWatch', () => {
 
     it('should return SORT_ORDERS.DESCENDING if thresholdComparator is COMPARATORS.GREATER_THAN', () => {
       const downstreamJson = { thresholdComparator: COMPARATORS.GREATER_THAN };
-      const thresholdWatch = ThresholdWatch.fromDownstreamJSON(downstreamJson);
+      const thresholdWatch = ThresholdWatch.fromDownstreamJson(downstreamJson);
 
       expect(thresholdWatch.termOrder).to.be(SORT_ORDERS.DESCENDING);
     });
 
     it('should return SORT_ORDERS.ASCENDING if thresholdComparator is not COMPARATORS.GREATER_THAN', () => {
       const downstreamJson = { thresholdComparator: 'foo' };
-      const thresholdWatch = ThresholdWatch.fromDownstreamJSON(downstreamJson);
+      const thresholdWatch = ThresholdWatch.fromDownstreamJson(downstreamJson);
 
       expect(thresholdWatch.termOrder).to.be(SORT_ORDERS.ASCENDING);
     });
 
   });
 
-  describe('watchJSON getter method', () => {
+  describe('watchJson getter method', () => {
 
     beforeEach(() => {
       buildActionsMock.reset();
@@ -199,7 +199,7 @@ describe('ThresholdWatch', () => {
 
     it('should return the correct result', () => {
       const watch = new ThresholdWatch({});
-      const actual = watch.watchJSON;
+      const actual = watch.watchJson;
       const expected = {
         trigger: 'buildTriggerResult',
         input: 'buildInputResult',
@@ -252,11 +252,11 @@ describe('ThresholdWatch', () => {
 
   });
 
-  describe('upstreamJSON getter method', () => {
+  describe('upstreamJson getter method', () => {
 
     let props;
     beforeEach(() => {
-      upstreamJSONMock.reset();
+      upstreamJsonMock.reset();
 
       props = {
         index: 'index',
@@ -276,20 +276,20 @@ describe('ThresholdWatch', () => {
 
     it('should call the getter from WatchBase and return the correct result', () => {
       const watch = new ThresholdWatch(props);
-      const actual = watch.upstreamJSON;
+      const actual = watch.upstreamJson;
       const expected = { baseCalled: true };
 
-      expect(upstreamJSONMock.called).to.be(true);
+      expect(upstreamJsonMock.called).to.be(true);
       expect(actual).to.eql(expected);
     });
 
   });
 
-  describe('downstreamJSON getter method', () => {
+  describe('downstreamJson getter method', () => {
 
     let props;
     beforeEach(() => {
-      downstreamJSONMock.reset();
+      downstreamJsonMock.reset();
 
       props = {
         index: 'index',
@@ -309,7 +309,7 @@ describe('ThresholdWatch', () => {
 
     it('should call the getter from WatchBase and return the correct result', () => {
       const watch = new ThresholdWatch(props);
-      const actual = watch.downstreamJSON;
+      const actual = watch.downstreamJson;
       const expected = {
         baseCalled: true,
         index: 'index',
@@ -326,17 +326,17 @@ describe('ThresholdWatch', () => {
         threshold: 'threshold'
       };
 
-      expect(downstreamJSONMock.called).to.be(true);
+      expect(downstreamJsonMock.called).to.be(true);
       expect(actual).to.eql(expected);
     });
 
   });
 
-  describe('fromUpstreamJSON factory method', () => {
+  describe('fromUpstreamJson factory method', () => {
 
     let upstreamJson;
     beforeEach(() => {
-      getPropsFromUpstreamJSONMock.reset();
+      getPropsFromUpstreamJsonMock.reset();
 
       upstreamJson = {
         watchJson: {
@@ -361,14 +361,14 @@ describe('ThresholdWatch', () => {
       };
     });
 
-    it('should call the getPropsFromUpstreamJSON method of BaseWatch', () => {
-      ThresholdWatch.fromUpstreamJSON(upstreamJson);
+    it('should call the getPropsFromUpstreamJson method of BaseWatch', () => {
+      ThresholdWatch.fromUpstreamJson(upstreamJson);
 
-      expect(getPropsFromUpstreamJSONMock.called).to.be(true);
+      expect(getPropsFromUpstreamJsonMock.called).to.be(true);
     });
 
     it('should generate a valid ThresholdWatch object', () => {
-      const actual = ThresholdWatch.fromUpstreamJSON(upstreamJson);
+      const actual = ThresholdWatch.fromUpstreamJson(upstreamJson);
       const expected = {
         index: "index",
         timeField: "timeField",
@@ -389,11 +389,11 @@ describe('ThresholdWatch', () => {
 
   });
 
-  describe('fromDownstreamJSON factory method', () => {
+  describe('fromDownstreamJson factory method', () => {
 
     let downstreamJson;
     beforeEach(() => {
-      getPropsFromDownstreamJSONMock.reset();
+      getPropsFromDownstreamJsonMock.reset();
 
       downstreamJson = {
         index: 'index',
@@ -411,14 +411,14 @@ describe('ThresholdWatch', () => {
       };
     });
 
-    it('should call the getPropsFromDownstreamJSON method of BaseWatch', () => {
-      ThresholdWatch.fromDownstreamJSON(downstreamJson);
+    it('should call the getPropsFromDownstreamJson method of BaseWatch', () => {
+      ThresholdWatch.fromDownstreamJson(downstreamJson);
 
-      expect(getPropsFromDownstreamJSONMock.called).to.be(true);
+      expect(getPropsFromDownstreamJsonMock.called).to.be(true);
     });
 
     it('should generate a valid ThresholdWatch object', () => {
-      const actual = ThresholdWatch.fromDownstreamJSON(downstreamJson);
+      const actual = ThresholdWatch.fromDownstreamJson(downstreamJson);
       const expected = {
         index: "index",
         timeField: "timeField",

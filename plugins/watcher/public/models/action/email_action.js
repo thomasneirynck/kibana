@@ -11,8 +11,8 @@ export class EmailAction extends BaseAction {
     this.body = get(props, 'body', '');
   }
 
-  get upstreamJSON() {
-    const result = super.upstreamJSON;
+  get upstreamJson() {
+    const result = super.upstreamJson;
 
     Object.assign(result, {
       to: this.to,
@@ -39,7 +39,7 @@ export class EmailAction extends BaseAction {
     return `Failed to send e-mail to ${toList}.`;
   }
 
-  static fromUpstreamJSON(upstreamAction) {
+  static fromUpstreamJson(upstreamAction) {
     return new EmailAction(upstreamAction);
   }
 

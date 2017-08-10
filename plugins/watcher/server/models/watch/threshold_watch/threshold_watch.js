@@ -39,10 +39,10 @@ export class ThresholdWatch extends BaseWatch {
     return this.thresholdComparator === COMPARATORS.GREATER_THAN ? SORT_ORDERS.DESCENDING : SORT_ORDERS.ASCENDING;
   }
 
-  get watchJSON() {
+  get watchJson() {
     const result = merge(
       {},
-      super.watchJSON,
+      super.watchJson,
       {
         trigger: buildTrigger(this),
         input: buildInput(this),
@@ -65,16 +65,16 @@ export class ThresholdWatch extends BaseWatch {
   }
 
   // To Elasticsearch
-  get upstreamJSON() {
-    const result = super.upstreamJSON;
+  get upstreamJson() {
+    const result = super.upstreamJson;
     return result;
   }
 
   // To Kibana
-  get downstreamJSON() {
+  get downstreamJson() {
     const result = merge(
       {},
-      super.downstreamJSON,
+      super.downstreamJson,
       {
         index: this.index,
         timeField: this.timeField,
@@ -95,12 +95,12 @@ export class ThresholdWatch extends BaseWatch {
   }
 
   // from Elasticsearch
-  static fromUpstreamJSON(json) {
+  static fromUpstreamJson(json) {
     const metadata = json.watchJson.metadata.watcherui;
 
     const props = merge(
       {},
-      super.getPropsFromUpstreamJSON(json),
+      super.getPropsFromUpstreamJson(json),
       {
         type: WATCH_TYPES.THRESHOLD,
         index: metadata.index,
@@ -122,10 +122,10 @@ export class ThresholdWatch extends BaseWatch {
   }
 
   // from Kibana
-  static fromDownstreamJSON(json) {
+  static fromDownstreamJson(json) {
     const props = merge(
       {},
-      super.getPropsFromDownstreamJSON(json),
+      super.getPropsFromDownstreamJson(json),
       {
         type: WATCH_TYPES.THRESHOLD,
         index: json.index,

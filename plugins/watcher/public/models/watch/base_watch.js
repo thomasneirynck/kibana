@@ -23,10 +23,10 @@ export class BaseWatch {
 
     this.name = get(props, 'name', '');
     this.isSystemWatch = Boolean(get(props, 'isSystemWatch'));
-    this.watchStatus = WatchStatus.fromUpstreamJSON(get(props, 'watchStatus'));
+    this.watchStatus = WatchStatus.fromUpstreamJson(get(props, 'watchStatus'));
 
     const actions = get(props, 'actions', []);
-    this.actions = actions.map(Action.fromUpstreamJSON);
+    this.actions = actions.map(Action.fromUpstreamJson);
   }
 
   updateWatchStatus = watchStatus => {
@@ -94,12 +94,12 @@ export class BaseWatch {
     return this.constructor.selectSortOrder;
   }
 
-  get upstreamJSON() {
+  get upstreamJson() {
     return {
       id: this.id,
       name: this.name,
       type: this.type,
-      actions: map(this.actions, action => action.upstreamJSON)
+      actions: map(this.actions, action => action.upstreamJson)
     };
   }
 

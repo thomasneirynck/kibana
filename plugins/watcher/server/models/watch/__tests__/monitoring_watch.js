@@ -4,23 +4,23 @@ import sinon from 'sinon';
 import proxyquire from 'proxyquire';
 
 const constructorMock = sinon.stub();
-const downstreamJSONMock = sinon.stub();
-const getPropsFromUpstreamJSONMock = sinon.stub();
+const downstreamJsonMock = sinon.stub();
+const getPropsFromUpstreamJsonMock = sinon.stub();
 class BaseWatchStub {
   constructor(props) {
     constructorMock(props);
   }
 
-  get downstreamJSON() {
-    downstreamJSONMock();
+  get downstreamJson() {
+    downstreamJsonMock();
 
     return {
       baseCalled: true
     };
   }
 
-  static getPropsFromUpstreamJSON(json) {
-    getPropsFromUpstreamJSONMock();
+  static getPropsFromUpstreamJson(json) {
+    getPropsFromUpstreamJsonMock();
     return pick(json, 'watchJson');
   }
 }
@@ -60,7 +60,7 @@ describe('MonitoringWatch', () => {
 
     it('should return an empty object', () => {
       const watch = new MonitoringWatch({});
-      const actual = watch.watchJSON;
+      const actual = watch.watchJson;
       const expected = {};
 
       expect(actual).to.eql(expected);
@@ -88,52 +88,52 @@ describe('MonitoringWatch', () => {
 
   });
 
-  describe('upstreamJSON getter method', () => {
+  describe('upstreamJson getter method', () => {
 
     it(`throws an error`, () => {
       const watch = new MonitoringWatch({});
 
-      expect(() => watch.upstreamJSON).to.throwError(/upstreamJSON called for monitoring watch/i);
+      expect(() => watch.upstreamJson).to.throwError(/upstreamJson called for monitoring watch/i);
     });
 
   });
 
-  describe('downstreamJSON getter method', () => {
+  describe('downstreamJson getter method', () => {
 
     let props;
     beforeEach(() => {
-      downstreamJSONMock.reset();
+      downstreamJsonMock.reset();
 
       props = {};
     });
 
     it('should call the getter from WatchBase and return the correct result', () => {
       const watch = new MonitoringWatch(props);
-      const actual = watch.downstreamJSON;
+      const actual = watch.downstreamJson;
       const expected = {
         baseCalled: true
       };
 
-      expect(downstreamJSONMock.called).to.be(true);
+      expect(downstreamJsonMock.called).to.be(true);
       expect(actual).to.eql(expected);
     });
 
   });
 
-  describe('fromUpstreamJSON factory method', () => {
+  describe('fromUpstreamJson factory method', () => {
 
     beforeEach(() => {
-      getPropsFromUpstreamJSONMock.reset();
+      getPropsFromUpstreamJsonMock.reset();
     });
 
-    it('should call the getPropsFromUpstreamJSON method of BaseWatch', () => {
-      MonitoringWatch.fromUpstreamJSON({});
+    it('should call the getPropsFromUpstreamJson method of BaseWatch', () => {
+      MonitoringWatch.fromUpstreamJson({});
 
-      expect(getPropsFromUpstreamJSONMock.called).to.be(true);
+      expect(getPropsFromUpstreamJsonMock.called).to.be(true);
     });
 
     it('should generate a valid MonitoringWatch object', () => {
-      const actual = MonitoringWatch.fromUpstreamJSON({});
+      const actual = MonitoringWatch.fromUpstreamJson({});
       const expected = { isSystemWatch: true };
 
       expect(actual).to.eql(expected);
@@ -141,11 +141,11 @@ describe('MonitoringWatch', () => {
 
   });
 
-  describe('fromDownstreamJSON factory method', () => {
+  describe('fromDownstreamJson factory method', () => {
 
     it(`throws an error`, () => {
-      expect(MonitoringWatch.fromDownstreamJSON).withArgs({})
-        .to.throwError(/fromDownstreamJSON called for monitoring watch/i);
+      expect(MonitoringWatch.fromDownstreamJson).withArgs({})
+        .to.throwError(/fromDownstreamJson called for monitoring watch/i);
     });
 
   });

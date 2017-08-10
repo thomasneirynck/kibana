@@ -8,8 +8,8 @@ export class LoggingAction extends BaseAction {
     this.text = get(props, 'text', '');
   }
 
-  get upstreamJSON() {
-    const result = super.upstreamJSON;
+  get upstreamJson() {
+    const result = super.upstreamJson;
 
     Object.assign(result, {
       text: this.text
@@ -31,7 +31,7 @@ export class LoggingAction extends BaseAction {
     return `Failed to log sample message.`;
   }
 
-  static fromUpstreamJSON(upstreamAction) {
+  static fromUpstreamJson(upstreamAction) {
     return new LoggingAction(upstreamAction);
   }
 

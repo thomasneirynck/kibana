@@ -11,7 +11,7 @@ export class SettingsService {
   getSettings() {
     return this.$http.get(`${this.basePath}/settings`)
     .then(response => {
-      return Settings.fromUpstreamJSON(response.data);
+      return Settings.fromUpstreamJson(response.data);
     });
   }
 }

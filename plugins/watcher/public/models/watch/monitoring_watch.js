@@ -10,8 +10,8 @@ export class MonitoringWatch extends BaseWatch {
     super(props);
   }
 
-  get upstreamJSON() {
-    const result = super.upstreamJSON;
+  get upstreamJson() {
+    const result = super.upstreamJson;
     Object.assign(result, {
       watch: this.watch
     });
@@ -19,7 +19,7 @@ export class MonitoringWatch extends BaseWatch {
     return result;
   }
 
-  static fromUpstreamJSON(upstreamWatch) {
+  static fromUpstreamJson(upstreamWatch) {
     return new MonitoringWatch(upstreamWatch);
   }
 
