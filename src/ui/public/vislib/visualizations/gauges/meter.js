@@ -148,45 +148,56 @@ export function MeterGaugeProvider() {
 
     placeGaugeInDiv(containerDiv, data, targetWidth, targetHeight) {
 
-      const svgGaugeHolder = document.createElement('svg');
-      containerDiv.appendChild(svgGaugeHolder);
+      // const svgGaugeHolder = document.createElement('svg');
+      // const svgGaugeHolder = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      // containerDiv.appendChild(svgGaugeHolder);
+      //
+      // const marginFactor = 0.95;
+      // const maxAngle = this.gaugeConfig.maxAngle;
+      // const minAngle = this.gaugeConfig.minAngle;
+      // const angleFactor = this.gaugeConfig.gaugeType === 'Meter' ? 0.75 : 1;
+      // const maxRadius = (Math.min(targetWidth, targetHeight / angleFactor) / 2) * marginFactor;
+      //
+      // const extendRange = this.gaugeConfig.extendRange;
+      // const maxY = _.max(data.values, 'y').y;
+      // const min = this.gaugeConfig.colorsRange[0].from;
+      // const max = _.last(this.gaugeConfig.colorsRange).to;
+      //
+      // const angle = d3.scale.linear()
+      //   .range([minAngle, maxAngle])
+      //   .domain([min, extendRange && max < maxY ? maxY : max]);
+      //
+      // const radius = d3.scale.linear()
+      //   .range([0, maxRadius])
+      //   .domain([this.gaugeConfig.innerSpace + 1, 0]);
+      //
+      // const totalWidth = Math.abs(radius(0) - radius(1));
+      // const bgPadding = totalWidth * (1 - this.gaugeConfig.style.bgWidth) / 2;
+      /* const gaugePadding = totalWidth * (1 - this.gaugeConfig.style.width) / 2;*/
 
-      const marginFactor = 0.95;
-      const maxAngle = this.gaugeConfig.maxAngle;
-      const minAngle = this.gaugeConfig.minAngle;
-      const angleFactor = this.gaugeConfig.gaugeType === 'Meter' ? 0.75 : 1;
-      const maxRadius = (Math.min(targetWidth, targetHeight / angleFactor) / 2) * marginFactor;
-
-      const extendRange = this.gaugeConfig.extendRange;
-      const maxY = _.max(data.values, 'y').y;
-      const min = this.gaugeConfig.colorsRange[0].from;
-      const max = _.last(this.gaugeConfig.colorsRange).to;
-
-      const angle = d3.scale.linear()
-        .range([minAngle, maxAngle])
-        .domain([min, extendRange && max < maxY ? maxY : max]);
-
-      const radius = d3.scale.linear()
-        .range([0, maxRadius])
-        .domain([this.gaugeConfig.innerSpace + 1, 0]);
-
-      const totalWidth = Math.abs(radius(0) - radius(1));
-      const bgPadding = totalWidth * (1 - this.gaugeConfig.style.bgWidth) / 2;
-      const gaugePadding = totalWidth * (1 - this.gaugeConfig.style.width) / 2;
       const arc = d3.svg.arc()
-        .startAngle(minAngle)
-        .endAngle(function (d) {
-          return Math.max(0, Math.min(maxAngle, angle(data.values[0].y)));
-        })
-        .innerRadius(function (d, i, j) {
-          return Math.max(0, radius(j + 1) + gaugePadding);
-        })
-        .outerRadius(function (d, i, j) {
-          return Math.max(0, radius(j) - gaugePadding);
-        });
+        .innerRadius(50)
+        .outerRadius(70)
+        .startAngle(0)
+        .endAngle(2 * Math.PI);
+
+      d3.select(containerDiv)
+        .append('svg')
+        .attr('width', 200)
+        .attr('height', 200)
+        .append('g')
+        .attr('transform', 'translate(100,100)')
+        .append('path')
+        .attr('class', 'arc')
+        .attr('d', arc);
+
+      // containerDiv.style.width = "200px";
+      // containerDiv.style.height = "200px";
 
 
-      svgGaugeHolder.appendChild(arc);
+      // svgGaugeHolder.appendChild(arc);
+
+
 
 
     }
