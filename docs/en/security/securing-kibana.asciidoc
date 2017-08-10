@@ -68,7 +68,7 @@ PUT /_xpack/security/user/kibana/_password
 --------------------------------------------------------------------------------
 // CONSOLE
 
-For more information, see {ref}security-api-users.html[User Management APIs].
+For more information, see {ref}/security-api-users.html[User Management APIs].
 Once you change the password, you need to specify it with the
 `elasticsearch.password` property in `kibana.yml`:
 
