@@ -47,9 +47,6 @@ const NO_ID_ICON_OFFSET_TOP_PX = 5;
 const ICON_OFFSET_LEFT_PX = BASE_OFFSET_LEFT_PX + 258;
 const ICON_OFFSET_TOP_PX = FIRST_LINE_OFFSET_TOP_PX + 9;
 
-const SLOWNESS_THRESHOLD_MS = 2;
-const PCT_EXECUTION_THRESHOLD_PCT = 0.3;
-
 function tooltipText(d) {
   const pluginName = d.vertex.name;
   return 'This plugin does not have an ID explicitly specified. '
@@ -220,7 +217,7 @@ export function updateProcessorVertex(processors) {
 
   processors.selectAll('[data-lspv-percent-execution-bg]')
     .attr('fill', d => {
-      return d.vertex.timeConsumingness > PCT_EXECUTION_THRESHOLD_PCT ? 'orange' : 'none';
+      return d.vertex.isTimeConsuming() ? 'orange' : 'none';
     });
 
   processors.selectAll('[data-lspv-per-event-duration-in-millis]')
@@ -231,7 +228,7 @@ export function updateProcessorVertex(processors) {
 
   processors.selectAll('[data-lspv-per-event-duration-in-millis-bg]')
     .attr('fill', d => {
-      return d.vertex.getSlowness() > SLOWNESS_THRESHOLD_MS ? 'orange' : 'none';
+      return d.vertex.isSlow() ? 'orange' : 'none';
     });
 
   processors.selectAll('[data-lspv-events-per-second]')

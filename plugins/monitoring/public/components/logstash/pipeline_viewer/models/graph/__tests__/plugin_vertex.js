@@ -1,6 +1,9 @@
 import expect from 'expect.js';
-import { PluginVertex } from '../plugin_vertex';
 import { Vertex } from '../vertex';
+import {
+  PluginVertex,
+  TIME_CONSUMING_PROCESSOR_THRESHOLD_COEFFICIENT
+} from '../plugin_vertex';
 import inputIcon from 'plugins/monitoring/icons/logstash/input.svg';
 import filterIcon from 'plugins/monitoring/icons/logstash/filter.svg';
 import outputIcon from 'plugins/monitoring/icons/logstash/output.svg';
@@ -56,14 +59,43 @@ describe('PluginVertex', () => {
     expect(pluginVertex.eventsPerSecond).to.be(20);
   });
 
-  it('should have the correct time-consumingness stat', () => {
-    const pluginVertex = new PluginVertex(graph, vertexJson);
-    expect(parseFloat(pluginVertex.timeConsumingness.toFixed(2))).to.be(0.05);
+  describe("isTimeConsuming", () => {
+    let percentExecution;
+
+    beforeEach(() => {
+      percentExecution = 1 / graph.processorVertices.length;
+    });
+
+    it('should have a false isTimeConsuming result when the plugin consumes an average amount of execution time', () => {
+      vertexJson.stats.percent_of_total_processor_duration = percentExecution;
+      const pluginVertex = new PluginVertex(graph, vertexJson);
+      expect(pluginVertex.isTimeConsuming()).to.be(false);
+    });
+
+    it("should have a true isTimeConsuming result when the plugin consumes a large amount of execution time", () => {
+      vertexJson.stats.percent_of_total_processor_duration = 0.1 + (percentExecution * (TIME_CONSUMING_PROCESSOR_THRESHOLD_COEFFICIENT));
+      const pluginVertex = new PluginVertex(graph, vertexJson);
+      expect(pluginVertex.isTimeConsuming()).to.be(true);
+    });
   });
 
-  it('should have the correct slowness stat', () => {
-    const pluginVertex = new PluginVertex(graph, vertexJson);
-    expect(parseFloat(pluginVertex.getSlowness().toFixed(3))).to.be(1);
+  describe("isSlow", () => {
+    beforeEach(() => {
+      graph.processorVertices[0].millis_per_event = 1;
+      graph.processorVertices[1].millis_per_event = 999999999999999999;
+    });
+
+    it('should have a true isSlow result when the plugin\'s seconds per event is 2 standard deviations above the mean', () => {
+      vertexJson.stats.millis_per_event = 999999999999999999;
+      const pluginVertex = new PluginVertex(graph, vertexJson);
+      expect(pluginVertex.isSlow()).to.be(true);
+    });
+
+    it('should have a false isSlow result when the plugin\'s seconds per event is 2 standard deviations above the mean', () => {
+      vertexJson.stats.millis_per_event = 1;
+      const pluginVertex = new PluginVertex(graph, vertexJson);
+      expect(pluginVertex.isSlow()).to.be(false);
+    });
   });
 
   describe('input plugin vertex', () => {
