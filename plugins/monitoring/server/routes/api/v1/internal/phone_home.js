@@ -11,11 +11,15 @@ export function phoneHomeRoutes(server) {
     path: '/api/monitoring/v1/phone-home',
     method: 'POST',
     handler: (req, reply) => {
+      const config = req.server.config();
+      const reportStatsTestEnabled = config.get('xpack.monitoring.internal.reportStatsTest');
       const { callWithRequest } = server.plugins.elasticsearch.getCluster('monitoring');
       const callWith = (...args) => callWithRequest(req, ...args);
 
-      // receivePhoneHome defaults to ignoring the payload
-      return receivePhoneHome(callWith, req.payload.data)
+      // receivePhoneHome defaults to a no-op promise resolution
+      // set xpack.monitoring.internal.reportStatsTest to index the payload
+      // NOTE: the logged-in user needs permission to create the "phone-home" index
+      return receivePhoneHome(callWith, req.payload, reportStatsTestEnabled)
       .then(reply)
       .catch (err => reply(handleError(err, req)));
     }

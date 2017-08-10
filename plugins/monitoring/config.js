@@ -72,6 +72,14 @@ export const config = (Joi) => {
         keyPassphrase: string()
       }).default(),
       apiVersion: string().default('master')
+    }).default(),
+    // configurations for dev environment
+    internal: Joi.when('$dev', {
+      is: true,
+      then: object({
+        reportStatsTest: boolean().default(false)
+      }).default(),
+      otherwise: Joi.any().forbidden()
     }).default()
   }).default();
 };
