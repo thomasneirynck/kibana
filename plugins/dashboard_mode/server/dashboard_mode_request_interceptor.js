@@ -21,7 +21,7 @@ export function createDashboardModeRequestInterceptor(dashboardViewerApp) {
       const { auth, url } = request;
       const isAppRequest = url.path.startsWith('/app/');
 
-      if (isAppRequest && auth.credentials.scope.includes(AUTH_SCOPE_DASHBORD_ONLY_MODE)) {
+      if (isAppRequest && auth.credentials.scope && auth.credentials.scope.includes(AUTH_SCOPE_DASHBORD_ONLY_MODE)) {
         if (url.path.startsWith('/app/kibana')) {
           // If the user is in "Dashboard only mode" they should only be allowed to see
           // that app and none others.  Here we are intercepting all other routing and ensuring the viewer

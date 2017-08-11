@@ -17,7 +17,7 @@ export function dashboardMode(kibana) {
   return new kibana.Plugin({
     id: 'dashboard_mode',
     publicDir: resolve(__dirname, 'public'),
-    require: ['kibana', 'elasticsearch', 'xpack_main', 'security'],
+    require: ['kibana', 'elasticsearch', 'xpack_main'],
     uiExports: {
       uiSettingDefaults: {
         [CONFIG_DASHBOARD_ONLY_MODE_ROLES]: {
@@ -67,12 +67,14 @@ export function dashboardMode(kibana) {
     },
 
     init(server) {
-      // register auth getter with security plugin
-      server.plugins.security.registerAuthScopeGetter(getDashboardModeAuthScope);
+      if (server.plugins.security) {
+        // register auth getter with security plugin
+        server.plugins.security.registerAuthScopeGetter(getDashboardModeAuthScope);
 
-      // extend the server to intercept requests
-      const dashboardViewerApp = kibana.uiExports.getHiddenApp('dashboardViewer');
-      server.ext(createDashboardModeRequestInterceptor(dashboardViewerApp));
+        // extend the server to intercept requests
+        const dashboardViewerApp = kibana.uiExports.getHiddenApp('dashboardViewer');
+        server.ext(createDashboardModeRequestInterceptor(dashboardViewerApp));
+      }
     }
   });
 }
