@@ -1,11 +1,13 @@
 [role="xpack"]
 [[monitoring-settings-kb]]
-=== Monitoring Settings
+=== Monitoring Settings in Kibana
+++++
+<titleabbrev>Monitoring Settings</titleabbrev>
+++++
 
 Monitoring is enabled by default when you install {xpack}. You can adjust
 how monitoring data is displayed in the Monitoring UI by configuring
-{kibana-ref}/monitoring-settings-kb.html[`xpack.monitoring` settings] in
-`kibana.yml`.
+`xpack.monitoring` settings in `kibana.yml`.
 
 To control how data is collected from your Elasticsearch nodes, you configure
 {ref}/monitoring-settings.html[`xpack.monitoring.collection`

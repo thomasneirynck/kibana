@@ -1,6 +1,10 @@
 [role="xpack"]
 [[installing-xpack-kb]]
-== Installing X-Pack
+== Installing X-Pack in Kibana
+++++
+<titleabbrev>Installing {xpack}</titleabbrev>
+++++
+
 
 After you install {kib}, you can optionally obtain and install {xpack}.
 For more information about how to obtain {xpack},

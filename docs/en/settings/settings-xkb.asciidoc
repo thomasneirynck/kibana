@@ -1,6 +1,9 @@
 [role="xpack"]
 [[settings-xpack-kb]]
-== Configuring X-Pack
+== Configuring X-Pack in Kibana
+++++
+<titleabbrev>Configuring {xpack}</titleabbrev>
+++++
 
 You can configure {kib} settings for {xpack} features in the `kibana.yml` file.
 

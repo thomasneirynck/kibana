@@ -1,6 +1,9 @@
 [role="xpack"]
 [[reporting-settings-kb]]
-=== Reporting Settings
+=== Reporting Settings in Kibana
+++++
+<titleabbrev>Reporting Settings</titleabbrev>
+++++
 
 You configure `xpack.reporting` settings in `kibana.yml` to
 control how {reporting} <<reporting-kibana-server-settings, communicates

@@ -1,9 +1,12 @@
 [role="xpack"]
 [[security-settings-kb]]
-=== Security Settings
+=== Security Settings in Kibana
+++++
+<titleabbrev>Security Settings</titleabbrev>
+++++
 
 You do not need to configure any additional settings to use {security} in {kib}.
-It is enabled by default. 
+It is enabled by default.
 
 [float]
 [[general-security-settings]]
