@@ -19,6 +19,9 @@ you are running.
 
 To install {xpack} in {kib}:
 
+. If you have not done so already,
+{ref}/installing-xpack-es.html[install {xpack} on {es}].
+
 . Optional: If you want to install {xpack} on a machine that doesn't have internet
 access:
 
@@ -56,6 +59,22 @@ bin/kibana-plugin install file:///path/to/file/x-pack-{version}.zip
 
 --
 
+. Update {kib} to use the new password for the built-in `kibana` user, which you
+set up along with the other built-in users when you installed {xpack} on {es}.
+You must configure the `elasticsearch.password` setting in the `kibana.yml`
+configuration file with the new password for the `kibana` user.
++
+--
+[source,yaml]
+-----------------------------------------------
+elasticsearch.username: "kibana"
+elasticsearch.password: "kibanapassword"
+-----------------------------------------------
+
+For more information,
+see {xpack-ref}/setting-up-authentication.html[Setting Up User Authentication].
+--
+
 . Start {kib}.
 +
 [source,shell]
@@ -63,23 +82,13 @@ bin/kibana-plugin install file:///path/to/file/x-pack-{version}.zip
 bin/kibana
 ----------------------------------------------------------
 
+. To verify {xpack} installation, point your web browser at
+`http://localhost:5601/` to open {kib}. You should be prompted to log in. You
+can use any {es} user that has the `kibana_user` role. The built-in `kibana`
+user, however, should be used only internally by the {kib} server. For more
+information, see {xpack-ref}/built-in-roles.html[Built-in Roles].
 
-To verify {xpack} installation, point your web browser at `http://localhost:5601/`
-to open {kib}. You should be prompted to log in to {kib}. To log in, you can
-use the built-in `elastic` user and the password `changeme`.
-
-[IMPORTANT]
-=============================================================================
-SSL/TLS encryption is disabled by default, which means user credentials are
-passed in the clear. **Do not deploy to production without enabling encryption!**
-For more information, see
-{xpack-ref}/encrypting-communications.html[Encrypting Communications].
-
-You must also change the passwords for the built-in `elastic` user and the
-`kibana` user that enables Kibana to communicate with elasticsearch before
-deploying to production. For  more information, see
-{xpack-ref}/setting-up-authentication.html#built-in-users[Setting Up User Authentication].
-=============================================================================
+. {logstash-ref}/installing-xpack-log.html[Install {xpack} on Logstash].
 
 For more information about installing {xpack} across the Elastic Stack, see
 {xpack-ref}/installing-xpack.html[Installing X-Pack].
