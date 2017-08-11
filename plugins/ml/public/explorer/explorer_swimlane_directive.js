@@ -20,6 +20,7 @@
 import _ from 'lodash';
 import $ from 'jquery';
 import moment from 'moment';
+import d3 from 'd3';
 
 import { getSeverityColor } from 'plugins/ml/util/anomaly_utils';
 
@@ -70,16 +71,15 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
       $swimlanes.empty();
 
       const cellWidth = Math.floor(scope.chartWidth / numBuckets);
-      let cellsPerTick = 1;
-      if (cellWidth < 100) {
-        const numTickLabels = scope.chartWidth / 100;
-        cellsPerTick = Math.max(Math.floor(numBuckets / numTickLabels), 2);
-      }
+      const numTickLabels = scope.chartWidth / 100;
 
-      const timeTickLabels = [];
-      for (let i = 0; i < numBuckets; i += cellsPerTick) {
-        timeTickLabels.push(moment.unix(startTime + (i * stepSecs)).format('MMM DD HH:mm'));
-      }
+      const xAxisWidth = cellWidth * numBuckets;
+      const xAxisScale = d3.time.scale()
+        .domain([new Date(startTime * 1000), new Date(endTime * 1000)])
+        .range([0, xAxisWidth]);
+
+      const xAxisTickFormat = xAxisScale.tickFormat();
+      const xAxisTicks = xAxisScale.ticks(numTickLabels);
 
       // Clear selection if clicking away from a cell.
       $swimlanes.click(function ($event) {
@@ -236,14 +236,20 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
       const $laneTimes = $('<div>', {
         'class': 'time-tick-labels'
       });
-      _.each(timeTickLabels, function (label, i) {
-        $laneTimes.append($('<span>', {
+      _.each(xAxisTicks, function (tick) {
+        const $tickLabel = $('<div>', {
           'class': 'tick-label',
-          'text': label,
+          'text': xAxisTickFormat(tick)
+        });
+        const $tickLabelWrapper = $('<div>', {
+          'class': 'tick-label-wrapper',
           'css': {
-            'margin-left': (i * cellWidth * cellsPerTick) + 'px'
+            'margin-left': (xAxisScale(tick)) + 'px'
           }
-        }));
+        });
+
+        $tickLabelWrapper.append($tickLabel);
+        $laneTimes.append($tickLabelWrapper);
       });
 
       $swimlanes.append($laneTimes);

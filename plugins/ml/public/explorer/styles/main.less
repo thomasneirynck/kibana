@@ -240,14 +240,16 @@
         height: 25px;
         font-size:11px;
         margin-top: 4px;
-        margin-left: 135px;
-        // margin-bottom: 12px;
-        .tick-label {
+        margin-left: 175px;
+        .tick-label-wrapper {
           position: absolute;
+          .tick-label {
+            position: relative;
+            text-align: center;
+            margin-left: -50%;
+            width: 100px;
+          }
         }
-      }
-      .time-tick-labels-inspector {
-        margin-left: 0px;
       }
     }
 
@@ -301,4 +303,3 @@
     border-color: #95a5a6;
   }
 }
-
