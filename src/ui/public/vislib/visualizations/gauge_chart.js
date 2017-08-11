@@ -99,6 +99,9 @@ export function GaugeChartProvider(Private) {
 
         //loop, so we're not creating crufty function on the heap
         // const divContainersForGauge = [];
+
+        const maxPerline = Math.ceil(Math.sqrt(firstData.series.length));
+
         for (let i = 0; i < firstData.series.length; i++) {
           const gaugeContainer = document.createElement('div');
           gaugeContainer.setAttribute('data-gauge-id', `gauge-${i}`);
@@ -106,7 +109,7 @@ export function GaugeChartProvider(Private) {
           allGaugesContainer.appendChild(gaugeContainer);
 
           const dataSeries = firstData.series[i];
-          self.gauge.placeGaugeInDiv(gaugeContainer, dataSeries, allContainerWidth, allContainerHeight);
+          self.gauge.placeGaugeInDiv(gaugeContainer, dataSeries, Math.round(allContainerWidth/maxPerline), Math.round(allContainerHeight/maxPerline));
         }
 
 

@@ -183,16 +183,19 @@ export function MeterGaugeProvider() {
 
       d3.select(containerDiv)
         .append('svg')
-        .attr('width', 200)
-        .attr('height', 200)
+        .attr('viewBox', '0 0 200 200')
+        // .attr('width', 200)
+        // .attr('height', 200)
         .append('g')
         .attr('transform', 'translate(100,100)')
         .append('path')
         .attr('class', 'arc')
         .attr('d', arc);
 
-      // containerDiv.style.width = "200px";
-      // containerDiv.style.height = "200px";
+      containerDiv.style["min-width"] = targetWidth + "px";
+      containerDiv.style["min-height"] = targetHeight + "px";
+      containerDiv.style["max-width"] = targetWidth + "px";
+      containerDiv.style["max-height"] = targetHeight + "px";
 
 
       // svgGaugeHolder.appendChild(arc);
