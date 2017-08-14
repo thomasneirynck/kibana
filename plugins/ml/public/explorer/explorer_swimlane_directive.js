@@ -27,12 +27,12 @@ import { getSeverityColor } from 'plugins/ml/util/anomaly_utils';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardService) {
+module.directive('mlExplorerSwimlane', ($compile, mlExplorerDashboardService) => {
 
   function link(scope, element) {
 
     // Re-render the swimlane whenever the underlying data changes.
-    const swimlaneDataChangeListener = function (swimlaneType) {
+    function swimlaneDataChangeListener(swimlaneType) {
       if (swimlaneType === scope.swimlaneType) {
         render();
         checkForSelection();
@@ -41,7 +41,7 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
 
     mlExplorerDashboardService.addSwimlaneDataChangeListener(swimlaneDataChangeListener);
 
-    element.on('$destroy', function () {
+    element.on('$destroy', () => {
       mlExplorerDashboardService.removeSwimlaneDataChangeListener(swimlaneDataChangeListener);
       scope.$destroy();
     });
@@ -82,7 +82,7 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
       const xAxisTicks = xAxisScale.ticks(numTickLabels);
 
       // Clear selection if clicking away from a cell.
-      $swimlanes.click(function ($event) {
+      $swimlanes.click(($event) => {
         const $target = $($event.target);
         if (!$target.hasClass('sl-cell') && !$target.hasClass('sl-cell-inner') &&
             $('.sl-cell-inner.sl-cell-inner-selected', '.ml-explorer-swimlane').length > 0) {
@@ -124,11 +124,11 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
         const y = $event.pageY;
         const offset = 5;
         $('<div class="ml-explorer-swimlane-tooltip ml-explorer-tooltip">' + contents + '</div>').css({
-          'position': 'absolute',
-          'display': 'none',
+          position: 'absolute',
+          display: 'none',
           'z-index': 1,
-          'top': y + offset,
-          'left': x + offset
+          top: y + offset,
+          left: x + offset
         }).appendTo('body').fadeIn(200);
 
         // Position the tooltip.
@@ -146,21 +146,21 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
         $('.ml-explorer-swimlane-tooltip').remove();
       }
 
-      _.each(lanes, function (lane) {
+      _.each(lanes, (lane) => {
         const rowScope = scope.$new();
         rowScope.cellClick = cellClick;
         rowScope.cellMouseover = cellMouseover;
         rowScope.cellMouseleave = cellMouseleave;
 
         const $lane = $('<div>', {
-          'class': 'lane',
+          class: 'lane',
         });
 
         const label = lane;
         const laneDivProps = {
-          'class': 'lane-label',
-          'css': {
-            'width': laneLabelWidth + 'px'
+          class: 'lane-label',
+          css: {
+            width: laneLabelWidth + 'px'
           },
           html: label
         };
@@ -174,7 +174,7 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
         $lane.append($('<div>', laneDivProps));
 
         const $cellsContainer = $('<div>', {
-          'class': 'cells-container'
+          class: 'cells-container'
         });
         $lane.append($cellsContainer);
 
@@ -182,9 +182,9 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
         let time = startTime;
         for (let i = 0; i < numBuckets; i++) {
           const $cell = $('<div>', {
-            'class': 'sl-cell ',
+            class: 'sl-cell ',
             css: {
-              'width': cellWidth + 'px'
+              width: cellWidth + 'px'
             },
             'data-lane-label': lane,
             'data-time': time,
@@ -199,7 +199,7 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
               bucketScore = points[j].value;
               color = colorScore(bucketScore);
               $cell.append($('<div>', {
-                'class': 'sl-cell-inner',
+                class: 'sl-cell-inner',
                 css: {
                   'background-color': color
                 }
@@ -234,16 +234,16 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
       });
 
       const $laneTimes = $('<div>', {
-        'class': 'time-tick-labels'
+        class: 'time-tick-labels'
       });
-      _.each(xAxisTicks, function (tick) {
+      _.each(xAxisTicks, (tick) => {
         const $tickLabel = $('<div>', {
-          'class': 'tick-label',
-          'text': xAxisTickFormat(tick)
+          class: 'tick-label',
+          text: xAxisTickFormat(tick)
         });
         const $tickLabelWrapper = $('<div>', {
-          'class': 'tick-label-wrapper',
-          'css': {
+          class: 'tick-label-wrapper',
+          css: {
             'margin-left': (xAxisScale(tick)) + 'px'
           }
         });
@@ -329,7 +329,7 @@ module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardSe
       $target.removeClass('sl-cell-inner-masked');
       $target.addClass('sl-cell-inner-selected');
 
-      $('.lane-label').filter(function () {
+      $('.lane-label').filter(() => {
         return $(this).text() === laneLabel;
       }).removeClass('lane-label-masked');
 
