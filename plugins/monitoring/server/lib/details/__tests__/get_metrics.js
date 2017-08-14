@@ -64,7 +64,7 @@ describe('getMetrics and getSeries', () => {
             timeRange: { min, max },
             metric: {
               app: 'elasticsearch',
-              description: 'Percentage of CPU usage reported by the OS (100% is the max).',
+              description: 'Percentage of CPU usage for the Elasticsearch process.',
               field: 'node_stats.process.cpu.percent',
               label: 'CPU Utilization',
               format: '0,0.[00]',

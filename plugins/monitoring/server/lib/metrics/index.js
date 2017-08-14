@@ -440,7 +440,7 @@ const metricInstances = {
   'node_cpu_utilization': new ElasticsearchMetric({
     field: 'node_stats.process.cpu.percent',
     label: 'CPU Utilization',
-    description: 'Percentage of CPU usage reported by the OS (100% is the max).',
+    description: 'Percentage of CPU usage for the Elasticsearch process.',
     type: 'node',
     format: LARGE_FLOAT,
     metricAgg: 'avg',
