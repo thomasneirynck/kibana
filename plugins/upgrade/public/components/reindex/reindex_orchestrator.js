@@ -100,6 +100,27 @@ export function withReindexOrchestrator() {
         }
       }
 
+      attemptStep = ({
+        stepName,
+        performStep,
+        handleSuccess = this.handleStepSuccess,
+        handleError = this.handleStepError,
+      }) => (
+        // Partially apply all of the stuff which makes this step unique.
+        async indexName => {
+          try {
+            await performStep(indexName);
+            if (handleSuccess) {
+              await handleSuccess(indexName, stepName);
+            }
+          } catch (error) {
+            if (handleError) {
+              await handleError(indexName, stepName, error, { indexName });
+            }
+          }
+        }
+      )
+
       reindexIndex = async (indexName) => {
         await this.stepCreateIndex(indexName);
         await this.stepSetReadOnly(indexName);
@@ -110,131 +131,70 @@ export function withReindexOrchestrator() {
         await this.deleteReindexTask(indexName);
       }
 
-      stepCreateIndex = async (indexName) => {
-        try {
+      handleStepSuccess = async (indexName, stepName) => (
+        this.addOrChangeStep(indexName, stepName, STEP_RESULTS.COMPLETED)
+      )
+
+      handleStepError = async (indexName, stepName, error, extra) => {
+        if (!isCanceled(this.state.indices[indexName])) {
+          this.addOrChangeStep(indexName, stepName, error, extra);
+        }
+
+        throw error;
+      }
+
+      stepCreateIndex = this.attemptStep({
+        stepName: REINDEX_STEPS.CREATE_INDEX,
+        performStep: async indexName => {
           const settings = await getMappingsAndSettings(indexName);
           await createIndex(indexName, settings);
-          this.addOrChangeStep(
-            indexName,
-            REINDEX_STEPS.CREATE_INDEX,
-            STEP_RESULTS.COMPLETED,
-          );
+        },
+        handleError: async (indexName, stepName, error, extra) => {
+          await this.handleStepError(indexName, stepName, error, {
+            ...extra,
+            taskId: error.taskId,
+          });
+        },
+      });
 
-        } catch (error) {
-          let stepPayload = {};
-          if (error.code === ERR_CODES.ERR_REINDEX_IN_PROGRESS) {
-            stepPayload = { taskId: error.taskId };
-          }
-
-          this.addOrChangeStep(
-            indexName,
-            REINDEX_STEPS.CREATE_INDEX,
-            error,
-            stepPayload,
-          );
-
-          throw error;
-        }
-      }
-
-      stepSetReadOnly = async (indexName) => {
-        try {
+      stepSetReadOnly = this.attemptStep({
+        stepName: REINDEX_STEPS.SET_READONLY,
+        performStep: async indexName => {
           await setReadOnly(indexName);
-          this.addOrChangeStep(
-            indexName,
-            REINDEX_STEPS.SET_READONLY,
-            STEP_RESULTS.COMPLETED,
-          );
-        } catch (error) {
-          this.addOrChangeStep(
-            indexName,
-            REINDEX_STEPS.SET_READONLY,
-            error,
-          );
-
-          throw error;
         }
-      }
+      });
 
-      stepReindex = async (indexName) => {
-        try {
+      stepReindex = this.attemptStep({
+        stepName: REINDEX_STEPS.REINDEX,
+        performStep: async indexName => {
           const { task } = await runReindex(indexName);
           await this.pollTask(indexName, task, REINDEX_STEPS.REINDEX);
-        } catch (error) {
-          if (!isCanceled(this.state.indices[indexName])) {
-            this.addOrChangeStep(
-              indexName,
-              REINDEX_STEPS.REINDEX,
-              error,
-            );
-          }
+        },
+      });
 
-          throw error;
-        }
-      }
-
-      stepRefreshIndex = async (indexName) => {
-        try {
+      stepRefreshIndex = this.attemptStep({
+        stepName: REINDEX_STEPS.REFRESH_INDEX,
+        performStep: async indexName => {
           await refreshIndex(indexName);
-          this.addOrChangeStep(
-            indexName,
-            REINDEX_STEPS.REFRESH_INDEX,
-            STEP_RESULTS.COMPLETED,
-          );
-        } catch (error) {
-          this.addOrChangeStep(
-            indexName,
-            REINDEX_STEPS.REFRESH_INDEX,
-            error,
-          );
-
-          throw error;
         }
-      }
+      });
 
-      stepVerifyDocs = async (indexName) => {
-        try {
+      stepVerifyDocs = this.attemptStep({
+        stepName: REINDEX_STEPS.VERIFY_DOCS,
+        performStep: async indexName => {
           await verifyDocs(indexName);
-          this.addOrChangeStep(
-            indexName,
-            REINDEX_STEPS.VERIFY_DOCS,
-            STEP_RESULTS.COMPLETED,
-          );
-        } catch (error) {
-          this.addOrChangeStep(
-            indexName,
-            REINDEX_STEPS.VERIFY_DOCS,
-            error,
-          );
-
-          throw error;
         }
-      }
+      });
 
-      stepReplaceIndex = async (indexName) => {
-        try {
+      stepReplaceIndex = this.attemptStep({
+        stepName: REINDEX_STEPS.REPLACE_INDEX,
+        performStep: async indexName => {
           const response = await getSettingsAndAliases(indexName);
           const { settings, aliases } = response[indexName];
-
           await updateRefreshInterval(indexName, settings);
-
           await replaceIndex(indexName, aliases);
-
-          this.addOrChangeStep(
-            indexName,
-            REINDEX_STEPS.REPLACE_INDEX,
-            STEP_RESULTS.COMPLETED,
-          );
-        } catch (error) {
-          this.addOrChangeStep(
-            indexName,
-            REINDEX_STEPS.REPLACE_INDEX,
-            error,
-          );
-
-          throw error;
         }
-      }
+      });
 
       deleteReindexTask = async (indexName) => {
         const taskId = this.findTaskId(indexName);
@@ -246,20 +206,13 @@ export function withReindexOrchestrator() {
         await this.deleteUpgradeTask(indexName);
       }
 
-      stepUpgrade = async (indexName) => {
-        try {
+      stepUpgrade = this.attemptStep({
+        stepName: UPGRADE_STEPS.UPGRADE,
+        performStep: async indexName => {
           const { task } = await runUpgrade(indexName);
           await this.pollTask(indexName, task, UPGRADE_STEPS.UPGRADE);
-        } catch (error) {
-          this.addOrChangeStep(
-            indexName,
-            UPGRADE_STEPS.UPGRADE,
-            error,
-          );
-
-          throw error;
-        }
-      }
+        },
+      });
 
       deleteUpgradeTask = async (indexName) => {
         const taskId = this.findTaskId(indexName);
@@ -298,48 +251,29 @@ export function withReindexOrchestrator() {
       }
 
       pollTask = async (indexName, taskId, stepName) => {
-        try {
-          if (isCanceled(this.state.indices[indexName])) {
-            throw new Error('Task canceled, stop polling');
-          }
-
-          const details = await getTaskDetails(taskId);
-
-          if (isCanceled(this.state.indices[indexName])) {
-            throw new Error('Task canceled, stop polling');
-          }
-
-          if (details.completed) {
-            this.addOrChangeStep(
-              indexName,
-              stepName,
-              STEP_RESULTS.COMPLETED,
-              { taskId },
-            );
-
-          } else {
-            this.addOrChangeStep(
-              indexName,
-              stepName,
-              STEP_RESULTS.RUNNING,
-              { taskId },
-            );
-            await timeout(HUMAN_READABLE_DELAY);
-            await this.pollTask(indexName, taskId, stepName);
-          }
-
-        } catch (error) {
-          if (!isCanceled(this.state.indices[indexName])) {
-            this.addOrChangeStep(
-              indexName,
-              stepName,
-              error,
-              { taskId },
-            );
-          }
-
-          throw error;
+        if (isCanceled(this.state.indices[indexName])) {
+          throw new Error('Task canceled, stop polling');
         }
+
+        this.addOrChangeStep(
+          indexName,
+          stepName,
+          STEP_RESULTS.RUNNING,
+          { taskId },
+        );
+
+        const details = await getTaskDetails(taskId);
+
+        if (isCanceled(this.state.indices[indexName])) {
+          throw new Error('Task canceled, stop polling');
+        }
+
+        if (details.completed) {
+          return;
+        }
+
+        await timeout(HUMAN_READABLE_DELAY);
+        await this.pollTask(indexName, taskId, stepName);
       }
 
       addOrChangeStep = (indexName, name, result, extra) => {
