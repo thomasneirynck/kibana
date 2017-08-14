@@ -12,6 +12,7 @@
                 <div ng-switch-when="averageBucketProcessingTimeMs" class="col-md-9">{{formatMS(value)}}</div>
                 <div ng-switch-when="create_time" class="col-md-9">{{formatDate(value)}}</div>
                 <div ng-switch-when="finished_time" class="col-md-9">{{formatDate(value)}}</div>
+                <div ng-switch-when="groups" class="col-md-9">{{(value.join(', '))}}</div>
                 <div ng-switch-default class="col-md-9">{{value}}</div>
               </div>
             </div>
