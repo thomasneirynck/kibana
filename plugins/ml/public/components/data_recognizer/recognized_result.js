@@ -19,12 +19,13 @@ export class RecognizedResult extends Component {
 
   render() {
     const {
-      config
+      config,
+      indexPattern
     } = this.props;
 
-    const href = `#/jobs/new_job/simple/recognize/create?id=${config.id}`;
+    const href = `#/jobs/new_job/simple/recognize/create?id=${config.id}&index=${indexPattern.id}`;
     let logo = null;
-    // if a logo is avaiable, use that, otherwise display the id
+    // if a logo is available, use that, otherwise display the id
     // the logo should be a base64 encoded image
     if (config.logo && config.logo.src) {
       logo = <div><img src={ config.logo.src }/></div>;
@@ -36,7 +37,7 @@ export class RecognizedResult extends Component {
       <div className='recognizer-result'>
         { logo }
         <div>
-          <a href={ href }>Create {config.id} jobs</a>
+          <a href={ href }>Create {config.title} jobs</a>
         </div>
       </div>
     );
@@ -45,4 +46,5 @@ export class RecognizedResult extends Component {
 
 RecognizedResult.propTypes = {
   config: PropTypes.object,
+  indexPattern: PropTypes.object,
 };

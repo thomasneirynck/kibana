@@ -13,10 +13,4 @@
  * strictly prohibited.
  */
 
-import './styles/main.less';
-import './jobs_list';
-import './new_job/advanced';
-import './new_job/simple/single_metric';
-import './new_job/simple/multi_metric';
-import './new_job/simple/recognize';
-import './new_job/wizard';
+import './create_job';

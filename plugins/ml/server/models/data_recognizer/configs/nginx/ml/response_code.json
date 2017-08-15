@@ -1,4 +1,5 @@
 {
+  "groups": ["nginx"],
   "description": "Nginx Access Logs: Detect unusual response_code rates",
   "analysis_config" : {
     "bucket_span": "15m",

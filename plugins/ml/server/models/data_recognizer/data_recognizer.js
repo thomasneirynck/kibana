@@ -13,7 +13,10 @@
  * strictly prohibited.
  */
 
-const fs = require('fs');
+import fs from 'fs';
+
+const ML_DIR = 'ml';
+const KIBANA_DIR = 'kibana';
 
 export class DataRecognizer {
   constructor(callWithRequest) {
@@ -86,9 +89,8 @@ export class DataRecognizer {
         }
         results.push({
           id: config.id,
+          title: config.title,
           query: config.query,
-          jobs: config.jobs,
-          datafeeds: config.datafeeds,
           logo
         });
       }
@@ -110,13 +112,13 @@ export class DataRecognizer {
 
   // called externally by an endpoint
   async getConfigs(id) {
-    let config = null;
+    let indexJSON = null;
     let dirName = null;
     const configs = await this.loadConfigs();
 
     const results = configs.filter(c => c.json.id === id);
     if (results.length) {
-      config = results[0].json;
+      indexJSON = results[0].json;
       dirName = results[0].dirName;
     }
     else {
@@ -124,22 +126,57 @@ export class DataRecognizer {
       // needs to trigger a 404
       return;
     }
+
     const jobs = [];
     const datafeeds = [];
-    await Promise.all(config.jobs.map(async (job) => {
-      const jobConfig = await this.readFile(`${this.configDir}/${dirName}/${job.file}`);
-      jobs.push(JSON.parse(jobConfig));
+    const kibana = {};
+    // load all of the job configs
+    await Promise.all(indexJSON.jobs.map(async (job) => {
+      const jobConfig = await this.readFile(`${this.configDir}/${dirName}/${ML_DIR}/${job.file}`);
+      // use the file name for the id
+      const jobId = job.file.replace('.json', '');
+      jobs.push({
+        id: jobId,
+        config: JSON.parse(jobConfig)
+      });
     }));
 
-    await Promise.all(config.datafeeds.map(async (datafeed) => {
-      const datafeedConfig = await this.readFile(`${this.configDir}/${dirName}/${datafeed.file}`);
-      // substitute the job_id????
-      datafeeds.push(JSON.parse(datafeedConfig));
+    // load all of the datafeed configs
+    await Promise.all(indexJSON.datafeeds.map(async (datafeed) => {
+      const datafeedConfig = await this.readFile(`${this.configDir}/${dirName}/${ML_DIR}/${datafeed.file}`);
+      const datafeedId = datafeed.file.replace('.json', '');
+      // use the file name, minus "datafeed_" for the id
+      const jobId = datafeedId.replace(/^datafeed_/, '');
+      const config = JSON.parse(datafeedConfig);
+      config.job_id = jobId;
+
+      datafeeds.push({
+        id: datafeedId,
+        config
+      });
+    }));
+
+    // load all of the kibana saved objects
+    const kkeys = Object.keys(indexJSON.kibana);
+    await Promise.all(kkeys.map(async (key) => {
+      kibana[key] = [];
+      await Promise.all(indexJSON.kibana[key].map(async (obj) => {
+        const kConfig = await this.readFile(`${this.configDir}/${dirName}/${KIBANA_DIR}/${key}/${obj.file}`);
+        // use the file name for the id
+        const kId = obj.file.replace('.json', '');
+        const config = JSON.parse(kConfig);
+        kibana[key].push({
+          id: kId,
+          title: config.title,
+          config
+        });
+      }));
     }));
 
     return {
       jobs,
-      datafeeds
+      datafeeds,
+      kibana
     };
   }
 }

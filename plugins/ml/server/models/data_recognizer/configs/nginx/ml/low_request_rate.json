@@ -1,4 +1,5 @@
 {
+  "groups": ["nginx"],
   "description": "Nginx Access Logs: Detect low request rate",
   "analysis_config" : {
     "bucket_span": "15m",

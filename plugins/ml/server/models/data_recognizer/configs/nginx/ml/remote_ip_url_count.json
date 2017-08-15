@@ -1,4 +1,5 @@
 {
+  "groups": ["nginx"],
   "description": "Nginx Access Logs: Detect unusual remote_ips - high distinct count of urls",
   "analysis_config" : {
     "bucket_span": "1h",

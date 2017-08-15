@@ -1,7 +1,7 @@
 /*
  * ELASTICSEARCH CONFIDENTIAL
  *
- * Copyright (c) 2017 Elasticsearch BV. All Rights Reserved.
+ * Copyright © 2017 Elasticsearch BV. All Rights Reserved.
  *
  * Notice: this software, and all information contained
  * therein, is the exclusive property of Elasticsearch BV
@@ -14,9 +14,6 @@
  */
 
 import './styles/main.less';
-import './jobs_list';
-import './new_job/advanced';
-import './new_job/simple/single_metric';
-import './new_job/simple/multi_metric';
-import './new_job/simple/recognize';
-import './new_job/wizard';
+import './create_job_controller';
+import './create_job_service';
+import 'plugins/ml/services/mapping_service';

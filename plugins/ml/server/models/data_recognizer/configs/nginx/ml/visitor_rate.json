@@ -1,4 +1,5 @@
 {
+  "groups": ["nginx"],
   "description": "Nginx Access Logs: Detect unusual visitor rate",
   "analysis_config" : {
     "bucket_span": "15m",
