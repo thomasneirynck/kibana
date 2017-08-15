@@ -8,22 +8,35 @@
       <thead>
         <tr>
           <th
-            ng-repeat="col in columns"
+            ng-repeat-start="col in columns"
+            ng-if="col.title"
             ng-click="mlPaginatedTable.sortColumn($index)"
+            scope="col"
             class="{{ col.class }}">
             <span ng-bind="col.title"></span>
             <kbn-info ng-if="col.info" info="{{ col.info }}" placement="top"></kbn-info>
-            <i
+            <button
               ng-if="col.sortable !== false"
-              class="fa"
+              id="docTableHeaderFieldSort{{col.title}}"
+              tabindex="0"
+              aria-label="Sort {{col.title}} ascending"
+              class="table-header-button fa fa-sort"
               ng-class="{
                 'fa-sort-asc': mlPaginatedTable.sort.columnIndex === $index && mlPaginatedTable.sort.direction === 'asc',
                 'fa-sort-desc': mlPaginatedTable.sort.columnIndex === $index && mlPaginatedTable.sort.direction === 'desc',
                 'fa-sort': mlPaginatedTable.sort.columnIndex !== $index || mlPaginatedTable.sort.direction === null
-              }">
-            </i>
+              }"
+              tooltip="Sort by {{col.title}}"
+              tooltip-append-to-body="1">
+            </button>
+
             <i aria-label="Click on a cell to filter" ng-if="col.filterable" class="fa fa-search" ng-click="$event.stopPropagation()" tooltip="Click on a cell to filter"></i>
           </th>
+          <td
+            ng-repeat-end
+            ng-if="!col.title"
+            class="{{ col.class }}">
+          </td>
         </tr>
       </thead>
       <tbody ml-rows="page" ml-rows-min="perPage"></tbody>

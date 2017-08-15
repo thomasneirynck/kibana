@@ -1,7 +1,19 @@
+@import "~ui/styles/variables";
+
 ml-paginated-table {
 
   .col-expand-arrow {
     width: 10px;
+  }
+
+  .table-header-button {
+    border: none;
+    background: none;
+    padding: 0;
+  }
+
+  table th button.fa-sort {
+    color: @table-sort-color;
   }
 
   tr.row-expand td:hover,
