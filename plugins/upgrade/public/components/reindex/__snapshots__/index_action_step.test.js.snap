@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`IndexActionStep renders a spinner message for a running step 1`] = `
+<div
+  className="kuiText"
+>
+  <div
+    className="kuiStatusText"
+  >
+    <span
+      className="kuiStatusText__icon kuiIcon kuiIcon--basic fa-spinner fa-spin"
+    />
+    Message for RUNNING ACTION step RUNNING STEP for index RUNNING INDEX_NAME with result RUNNING
+  </div>
+</div>
+`;
+
+exports[`IndexActionStep renders a success message for a completed step 1`] = `
+<div
+  className="kuiText"
+>
+  <div
+    className="kuiStatusText"
+  >
+    <span
+      className="kuiStatusText__icon kuiIcon kuiIcon--success fa-check"
+    />
+    Message for COMPLETED ACTION step COMPLETED STEP for index COMPLETED INDEX_NAME with result COMPLETED
+  </div>
+</div>
+`;
+
+exports[`IndexActionStep renders an error message for a failed step 1`] = `
+<div
+  className="kuiText"
+>
+  <div
+    className="kuiStatusText"
+  >
+    <span
+      className="kuiStatusText__icon kuiIcon kuiIcon--error fa-warning"
+    />
+    Message for FAILED ACTION step FAILED STEP for index FAILED INDEX_NAME with result [object Object]
+  </div>
+</div>
+`;

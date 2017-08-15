@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`IndexTableRow renders an IndexActionSteps component when there are steps 1`] = `
+<IndexActionSteps
+  action="UPGRADE"
+  indexName="INDEX"
+  steps={
+    Array [
+      Object {
+        "name": "STEP 1",
+      },
+    ]
+  }
+/>
+`;

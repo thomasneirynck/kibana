@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReindexView renders an ErrorPanel with the errorMessage when the loadingStatus indicates a failure 1`] = `
+<ErrorPanel
+  className="kuiVerticalRhythm"
+  classNames=""
+  title="An error occurred."
+>
+  an error message
+</ErrorPanel>
+`;

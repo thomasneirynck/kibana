@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`IndexActionSteps renders an IndexActionStep for each of the steps 1`] = `
+<div>
+  <IndexActionStep
+    action="ACTION"
+    indexName="INDEX_NAME"
+    step={
+      Object {
+        "name": "STEP 1",
+      }
+    }
+    steps={Object {}}
+  />
+  <IndexActionStep
+    action="ACTION"
+    indexName="INDEX_NAME"
+    step={
+      Object {
+        "name": "STEP 2",
+      }
+    }
+    steps={Object {}}
+  />
+  <IndexActionStep
+    action="ACTION"
+    indexName="INDEX_NAME"
+    step={
+      Object {
+        "name": "STEP 3",
+      }
+    }
+    steps={Object {}}
+  />
+</div>
+`;
