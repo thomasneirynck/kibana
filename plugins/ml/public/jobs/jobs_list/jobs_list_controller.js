@@ -540,7 +540,7 @@ function (
   $scope.applyFilter = function () {
 
     // clear the previous filter timeout
-    clearTimeout(jobFilterTimeout);
+    $timeout.cancel(jobFilterTimeout);
 
     // create a timeout to redraw the jobs list based on the filter
     // a timeout is used as the user may still be in the process of
@@ -548,13 +548,12 @@ function (
     // after a second, if no more keystrokes have happened, redraw the jobs list
     jobFilterTimeout = $timeout(() => {
       displayJobs($scope.jobs);
-      clearTimeout(jobFilterTimeout);
       jobFilterTimeout = undefined;
     }, 1000);
 
     // display the spinner icon after 250ms of typing.
     // the spinner is a nice way of showing that something is
-    // happening as we're stalling for the user to stop tying.
+    // happening as we're stalling for the user to stop typing.
     // const $progress = $('.job-filter-progress-icon');
     $timeout(() => {
       $scope.filterIcon = 1;

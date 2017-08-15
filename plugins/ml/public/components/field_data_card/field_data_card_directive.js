@@ -21,7 +21,7 @@ import _ from 'lodash';
 import $ from 'jquery';
 import 'ui/filters/moment';
 
-import { FIELD_TYPES } from 'plugins/ml/constants/field_types';
+import { DATA_VISUALIZER_FIELD_TYPES } from 'plugins/ml/constants/field_types';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -31,9 +31,9 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
   function link(scope, element) {
     scope.stats = {};
     scope.detailsMode = 'top';
-    scope.FIELD_TYPES = FIELD_TYPES;
+    scope.DATA_VISUALIZER_FIELD_TYPES = DATA_VISUALIZER_FIELD_TYPES;
 
-    if (scope.cardConfig.type === FIELD_TYPES.NUMBER) {
+    if (scope.cardConfig.type === DATA_VISUALIZER_FIELD_TYPES.NUMBER) {
       // Create a div for the chart tooltip.
       $('.ml-field-data-card-tooltip').remove();
       $('body').append('<div class="ml-field-data-card-tooltip" style="opacity:0; display: none;">');

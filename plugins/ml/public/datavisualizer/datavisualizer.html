@@ -1,0 +1,143 @@
+<ml-nav-menu name="datavisualizer"></ml-nav-menu>
+<ml-datavisualizer class="data-visualizer-container">
+  <div ng-controller="MlDataVisualizerViewFields" >
+    <div class="title-container">
+      <h1 class="kuiTitle kuiVerticalRhythm">{{indexPattern.title}}</h1>
+    </div>
+
+    <div class="main-container">
+
+      <div class="kuiPanel kuiVerticalRhythm datavisualizer-panel">
+        <div>
+          <span class="field-emphasis">{{ overallStats.totalCount }}</span>
+          <ng-pluralize count="overallStats.totalCount" when="{'1':'document', 'other':'documents'}">documents</ng-pluralize>
+        </div>
+      </div>
+
+      <div class="kuiPanel kuiVerticalRhythm datavisualizer-panel card-panel">
+      	<div>
+          <h2 class="kuiSubTitle kuiVerticalRhythm">Metrics</h2>
+        </div>
+
+        <div>
+          <div class="field-sort-controls">
+            <div ng-if="showAllMetrics === false" class="field-count-label">
+              <span class="field-emphasis">{{ metricConfigurations.length }}</span>
+              <ng-pluralize count="metricConfigurations.length" when="{'1':'field exists', 'other':'fields exist'}">fields exist</ng-pluralize> in documents
+              (<span class="field-emphasis">{{ totalMetricFieldCount }}</span> in total)
+            </div>
+
+            <div ng-if="showAllMetrics === true" class="field-count-label">
+              <span class="field-emphasis">{{ metricConfigurations.length }}</span>
+              <ng-pluralize count="metricConfigurations.length" when="{'1':'field', 'other':'fields'}">fields</ng-pluralize>
+              (<span class="field-emphasis">{{ populatedMetricFieldCount }}</span>
+              <ng-pluralize count="populatedMetricFieldCount" when="{'1':'exists', 'other':'exist'}">exist</ng-pluralize> in documents)
+            </div>
+
+            <div class="field-group-input" ng-hide="populatedMetricFieldCount === totalMetricFieldCount">
+              <input id="toggleAllMetricsCheckbox" type="checkbox" class="kuiCheckBox" ng-click="toggleAllMetrics()" ng-checked="showAllMetrics === true">
+              <label for="toggleAllMetricsCheckbox" class="kuiCheckBoxLabel">show empty fields</label>
+            </div>
+          </div>
+          <div class="field-filter-controls">
+            <div class="kuiFieldGroupSection">
+              <div class="kuiSearchInput kuiSearchInput--large">
+                <div class="kuiSearchInput__icon kuiIcon fa-search"></div>
+                <input class="kuiSearchInput__input filter-input" type="text" aria-label="Filter" placeholder="Filter"
+                  ng-model="metricFieldFilter" ng-change="metricFieldFilterChanged()">
+                <div class="filter-progress-icon">
+                  <div class="filter-icon" ng-show="metricFilterIcon===1">
+                    <i class='fa fa-spinner fa-spin'></i>
+                  </div>
+                  <div class="filter-icon" ng-show="metricFilterIcon===0">
+                    <a aria-label="Clear filter" ng-click="clearMetricFilter()">
+                      <i class="fa fa-times-circle"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-container" ng-repeat="config in metricConfigurations">
+          <ml-field-data-card
+            index-pattern="indexPattern"
+            earliest="earliest"
+            latest="latest"
+            card-config="config">
+          </ml-field-data-card>
+        </div>
+
+      </div>
+
+      <div class="kuiPanel kuiVerticalRhythm datavisualizer-panel card-panel">
+        <div>
+          <h2 class="kuiSubTitle kuiVerticalRhythm">Fields</h2>
+        </div>
+        <div>
+          <div class="field-sort-controls">
+             <div ng-if="showAllFields === false" class="field-count-label">
+              <span class="field-emphasis">{{ fieldConfigurations.length }}</span>
+              <ng-pluralize count="fieldConfigurations.length" when="{'1':'field exists', 'other':'fields exist'}">fields exist</ng-pluralize> in documents
+              (<span class="field-emphasis">{{ totalNonMetricFieldCount }}</span> in total)
+            </div>
+
+            <div ng-if="showAllFields === true" class="field-count-label">
+              <span class="field-emphasis">{{ fieldConfigurations.length }}</span>
+              <ng-pluralize count="fieldConfigurations.length" when="{'1':'field', 'other':'fields'}">fields</ng-pluralize>
+              (<span class="field-emphasis">{{ populatedNonMetricFieldCount }}</span>
+              <ng-pluralize count="populatedNonMetricFieldCount" when="{'1':'exists', 'other':'exist'}">exist</ng-pluralize> in documents)
+            </div>
+
+            <div class="field-group-input" ng-hide="populatedNonMetricFieldCount === totalNonMetricFieldCount">
+              <input id="toggleAllFieldsCheckbox" type="checkbox" class="kuiCheckBox" ng-click="toggleAllFields()" ng-checked="showAllFields === true">
+              <label for="toggleAllFieldsCheckbox" class="kuiCheckBoxLabel">show empty fields</label>
+            </div>
+          </div>
+          <div class="field-filter-controls">
+            <select class="kuiSelect type-input" ng-model="filterFieldType" ng-change="filterFieldTypeChanged(filterFieldType)">
+              <option value="*">All field types</option>
+              <option value="{{DATA_VISUALIZER_FIELD_TYPES.DATE}}">date types</option>
+              <option value="{{DATA_VISUALIZER_FIELD_TYPES.IP}}">ip types</option>
+              <option value="{{DATA_VISUALIZER_FIELD_TYPES.KEYWORD}}">keyword types</option>
+              <option value="{{DATA_VISUALIZER_FIELD_TYPES.TEXT}}">text types</option>
+            </select>
+
+            <div class="kuiSearchInput kuiSearchInput--large">
+              <div class="kuiSearchInput__icon kuiIcon fa-search"></div>
+              <input class="kuiSearchInput__input filter-input" type="text" aria-label="Filter" placeholder="Filter"
+                ng-model="fieldFilter" ng-change="fieldFilterChanged()">
+              <div class="filter-progress-icon">
+                <div class="filter-icon" ng-show="fieldFilterIcon===1">
+                  <i class='fa fa-spinner fa-spin'></i>
+                </div>
+                <div class="filter-icon" ng-show="fieldFilterIcon===0">
+                  <a aria-label="Clear filter" ng-click="clearFieldFilter()">
+                    <i class="fa fa-times-circle"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-container" ng-repeat="config in fieldConfigurations">
+          <ml-field-data-card
+            index-pattern="indexPattern"
+            earliest="earliest"
+            latest="latest"
+            card-config="config">
+          </ml-field-data-card>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="datavisualizer-sidebar">
+      <ng-include src="urlBasePath+'/plugins/ml/datavisualizer/datavisualizer_sidebar.html'"></ng-include>
+    </div>
+
+  </div>
+</ml-datavisualizer>

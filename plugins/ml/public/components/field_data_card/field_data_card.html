@@ -1,14 +1,14 @@
 <div class="ml-field-data-card">
   <div class="title-bar {{ cardConfig.type }}">
-    <div ng-if="cardConfig.type === FIELD_TYPES.NUMBER" aria-label="Metric field" class="field-type-icon">
+    <div ng-if="cardConfig.type === DATA_VISUALIZER_FIELD_TYPES.NUMBER" aria-label="Metric field" class="field-type-icon">
       <strong aria-hidden="true">#</strong>
     </div>
-    <span ng-if="cardConfig.type === FIELD_TYPES.KEYWORD" aria-label="Aggregatable string field" class="field-type-icon">
+    <span ng-if="cardConfig.type === DATA_VISUALIZER_FIELD_TYPES.KEYWORD" aria-label="Aggregatable string field" class="field-type-icon">
       <strong aria-hidden="true">t</strong>
     </span>
-    <span ng-if="cardConfig.type === FIELD_TYPES.TEXT" aria-label="String field" class="field-type-icon kuiIcon fa-file-text-o"></span>
-    <span ng-if="cardConfig.type === FIELD_TYPES.IP" aria-label="IP address field" class="field-type-icon kuiIcon fa-laptop"></span>
-    <span ng-if="cardConfig.type === FIELD_TYPES.DATE" aria-label="Date field" class="field-type-icon kuiIcon fa-clock-o"></span>
+    <span ng-if="cardConfig.type === DATA_VISUALIZER_FIELD_TYPES.TEXT" aria-label="String field" class="field-type-icon kuiIcon fa-file-text-o"></span>
+    <span ng-if="cardConfig.type === DATA_VISUALIZER_FIELD_TYPES.IP" aria-label="IP address field" class="field-type-icon kuiIcon fa-laptop"></span>
+    <span ng-if="cardConfig.type === DATA_VISUALIZER_FIELD_TYPES.DATE" aria-label="Date field" class="field-type-icon kuiIcon fa-clock-o"></span>
     <div class="field-name">
       {{ cardConfig.fieldName }}
     </div>
@@ -16,7 +16,7 @@
 
   <div class="card-contents">
 
-    <div ng-if="cardConfig.type === FIELD_TYPES.NUMBER">
+    <div ng-if="cardConfig.type === DATA_VISUALIZER_FIELD_TYPES.NUMBER">
       <div class="stats">
         <div class="stat"><i class="fa fa-files-o" aria-hidden="true"></i>
           {{ stats.count }} <ng-pluralize count="stats.count" when="{'1':'document', 'other':'documents'}">documents</ng-pluralize>
@@ -70,7 +70,7 @@
       </div>
     </div>
 
-    <div ng-if="cardConfig.type === FIELD_TYPES.KEYWORD || cardConfig.type === FIELD_TYPES.IP">
+    <div ng-if="cardConfig.type === DATA_VISUALIZER_FIELD_TYPES.KEYWORD || cardConfig.type === DATA_VISUALIZER_FIELD_TYPES.IP">
       <div class="stats">
         <div class="stat"><i class="fa fa-files-o" aria-hidden="true"></i>
         {{ stats.count }} <ng-pluralize count="stats.count" when="{'1':'document', 'other':'documents'}">documents</ng-pluralize>
@@ -103,7 +103,7 @@
       </div>
     </div>
 
-    <div ng-if="cardConfig.type === FIELD_TYPES.DATE">
+    <div ng-if="cardConfig.type === DATA_VISUALIZER_FIELD_TYPES.DATE">
       <div class="stats">
         <div class="stat"><i class="fa fa-files-o" aria-hidden="true"></i>
           {{ stats.count }} <ng-pluralize count="stats.count" when="{'1':'document', 'other':'documents'}">documents</ng-pluralize>
@@ -115,7 +115,7 @@
       </div>
     </div>
 
-    <div ng-if="cardConfig.type === FIELD_TYPES.TEXT">
+    <div ng-if="cardConfig.type === DATA_VISUALIZER_FIELD_TYPES.TEXT">
       <div class="stats">
         <div class="stat"><ng-pluralize count="stats.examples.length" when="{'1':'value', 'other':'examples'}">examples</ng-pluralize></div>
         <div ng-repeat="example in stats.examples">

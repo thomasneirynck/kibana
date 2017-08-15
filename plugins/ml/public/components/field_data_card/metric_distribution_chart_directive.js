@@ -20,7 +20,6 @@
 
 import _ from 'lodash';
 import d3 from 'd3';
-import $ from 'jquery';
 import angular from 'angular';
 
 import { ordinalSuffix } from 'ui/utils/ordinal_suffix';
@@ -340,11 +339,11 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
 
     function showChartLoader(show) {
       if(show) {
-        const $loader = $('<div class="field-data-card-loader"><h2><i class="fa fa-spinner fa-spin"></i></h2></div>');
+        const $loader = angular.element('<div class="field-data-card-loader"><h2><i class="fa fa-spinner fa-spin"></i></h2></div>');
         $loader.css('height', svgHeight);
-        angular.element(element).append($loader);
+        element.append($loader);
       } else {
-        angular.element(element).find('.field-data-card-loader').remove();
+        element.find('.field-data-card-loader').remove();
       }
     }
 

@@ -1,0 +1,25 @@
+<div class="kuiPanel kuiVerticalRhythm datavisualizer-panel">
+  <div>
+      <h2 class="kuiSubTitle kuiVerticalRhythm">Create Job</h2>
+  </div>
+
+  <div class="create-job-content">
+    Select the metrics you want to analyze in a job and
+    optionally a field to split the analysis by.
+
+    <div class="create-job-fields">
+      <div><span class="field-emphasis">Metrics:</span></div>
+      <div><span class="field-emphasis">Split by:</span></div>
+    </div>
+
+    <div class="button-container">
+      <button aria-label="Create job" ng-disabled="true" type="button" class="kuiButton kuiButton--primary">
+        Create job
+      </button>
+    </div>
+  </div>
+
+  <div class="recognized-job-content">
+    <ml-data-recognizer index-pattern='indexPattern'/>
+  </div>
+</div>

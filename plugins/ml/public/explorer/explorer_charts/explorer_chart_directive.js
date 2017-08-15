@@ -19,7 +19,6 @@
  */
 
 import _ from 'lodash';
-import $ from 'jquery';
 import d3 from 'd3';
 import angular from 'angular';
 import moment from 'moment';
@@ -334,10 +333,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
       }
 
       const tooltipDiv = d3.select('.ml-explorer-charts-tooltip');
-      tooltipDiv.transition()
-        .duration(200)
-        .style('opacity', .9)
-        .style('display', 'block');
+      tooltipDiv.style('display', 'block');
       tooltipDiv.html(contents);
 
       // Position the tooltip.
@@ -347,7 +343,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
 
       const y = pos.top + scrollTop;
       const x = pos.left;
-      const parentWidth = $('.ml-explorer').width();
+      const parentWidth = angular.element('.ml-explorer').width();
       const tooltipWidth = tooltipDiv.node().offsetWidth;
       if (x + tooltipWidth + LINE_CHART_ANOMALY_RADIUS + 10 < parentWidth) {
         tooltipDiv.style('left', (x + (LINE_CHART_ANOMALY_RADIUS * 2) + 4) + 'px')
@@ -356,6 +352,10 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
         tooltipDiv.style('left', x - (tooltipWidth + LINE_CHART_ANOMALY_RADIUS) + 'px')
           .style('top', (y - 0) + 'px');
       }
+
+      tooltipDiv.transition()
+        .duration(200)
+        .style('opacity', .9);
     }
 
     function hideLineChartTooltip() {
@@ -464,11 +464,11 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
 
     function showChartLoader(show) {
       if(show) {
-        const $loader = $('<div class="explorer-chart-loader"><h2><i class="fa fa-spinner fa-spin"></i></h2></div>');
+        const $loader = angular.element('<div class="explorer-chart-loader"><h2><i class="fa fa-spinner fa-spin"></i></h2></div>');
         $loader.css('height', svgHeight);
-        angular.element(element).append($loader);
+        element.append($loader);
       } else {
-        angular.element(element).find('.explorer-chart-loader').remove();
+        element.find('.explorer-chart-loader').remove();
       }
     }
 

@@ -26,7 +26,7 @@ export function dataRecognizerProvider(ml) {
         results: []
       };
 
-      this.indexPatternTitle = props.indexPatternTitle;
+      this.indexPatternTitle = props.indexPattern.title;
     }
 
     componentDidMount() {
@@ -62,7 +62,7 @@ export function dataRecognizerProvider(ml) {
   }
 
   DataRecognizer.propTypes = {
-    indexPatternTitle: PropTypes.string,
+    indexPattern: PropTypes.object,
   };
 
   return DataRecognizer;

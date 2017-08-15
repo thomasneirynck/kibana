@@ -15,6 +15,8 @@
 
 import _ from 'lodash';
 
+import { DATA_VISUALIZER_FIELD_TYPES } from 'plugins/ml/constants/field_types';
+
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
@@ -22,12 +24,12 @@ module.service('mlFieldDataSearchService', function ($q, es) {
 
   this.getFieldStats = function (index, field, fieldType, timeFieldName, earliestMs, latestMs) {
     switch (fieldType) {
-      case 'number':
+      case DATA_VISUALIZER_FIELD_TYPES.NUMBER:
         return this.getNumericFieldStats(index, field, timeFieldName, earliestMs, latestMs);
-      case 'keyword':
-      case 'ip':
+      case DATA_VISUALIZER_FIELD_TYPES.KEYWORD:
+      case DATA_VISUALIZER_FIELD_TYPES.IP:
         return this.getStringFieldStats(index, field, timeFieldName, earliestMs, latestMs);
-      case 'date':
+      case DATA_VISUALIZER_FIELD_TYPES.DATE:
         return this.getDateFieldStats(index, field, timeFieldName, earliestMs, latestMs);
       default:
         return $q.defer().promise();
