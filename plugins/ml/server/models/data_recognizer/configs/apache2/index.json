@@ -1,5 +1,6 @@
 {
-  "id": "nginx_fail",
+  "id": "apache2",
+  "title": "Filebeat apache2",
   "type": "Web Access Logs",
   "logoFile": "logo.json",
   "query": {
@@ -7,7 +8,7 @@
       "filter": [
         {
           "term": {
-            "fileset.module": "nginx_wrong"
+            "fileset.module": "apache2"
           }
         },
         {
@@ -17,17 +18,17 @@
         },
         {
           "exists": {
-            "field": "nginx.access.remote_ip"
+            "field": "apache2.access.remote_ip"
           }
         },
         {
           "exists": {
-            "field": "nginx.access.url"
+            "field": "apache2.access.url"
           }
         },
         {
           "exists": {
-            "field": "nginx.access.response_code"
+            "field": "apache2.access.response_code"
           }
         }
       ]
@@ -81,5 +82,49 @@
       "file": "datafeed_low_request_rate.json",
       "job_id": "low_request_rate"
     }
-  ]
+  ],
+  "kibana": {
+    "dashboard": [
+      {
+        "id": "ML-Apache2-Access-Remote-IP-Count-Explorer",
+        "file": "ML-Apache2-Access-Remote-IP-Count-Explorer.json"
+      },
+      {
+        "id": "ML-Apache2-Remote-IP-URL-Explorer",
+        "file": "ML-Apache2-Remote-IP-URL-Explorer.json"
+      }
+    ],
+    "search": [
+      {
+        "id": "ML-Filebeat-Apache2-Access",
+        "file": "ML-Filebeat-Apache2-Access.json"
+      }
+    ],
+    "visualization": [
+      {
+        "id": "ML-Apache2-Access-Map",
+        "file": "ML-Apache2-Access-Map.json"
+      },
+      {
+        "id": "ML-Apache2-Access-Remote-IP-Timechart",
+        "file": "ML-Apache2-Access-Remote-IP-Timechart.json"
+      },
+      {
+        "id": "ML-Apache2-Access-Response-Code-Timechart",
+        "file": "ML-Apache2-Access-Response-Code-Timechart.json"
+      },
+      {
+        "id": "ML-Apache2-Access-Top-Remote-IPs-Table",
+        "file": "ML-Apache2-Access-Top-Remote-IPs-Table.json"
+      },
+      {
+        "id": "ML-Apache2-Access-Top-URLs-Table",
+        "file": "ML-Apache2-Access-Top-URLs-Table.json"
+      },
+      {
+        "id": "ML-Apache2-Access-Unique-Count-URL-Timechart",
+        "file": "ML-Apache2-Access-Unique-Count-URL-Timechart.json"
+      }
+    ]
+  }
 }

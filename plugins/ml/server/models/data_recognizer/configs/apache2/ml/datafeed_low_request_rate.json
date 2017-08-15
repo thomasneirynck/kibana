@@ -8,7 +8,7 @@
     "query": {
       "bool": {
         "filter": [
-          { "term":  { "fileset.module": "nginx" } },
+          { "term":  { "fileset.module": "apache2" } },
           { "term":  { "fileset.name": "access" } }
         ]
       }

@@ -1,14 +1,14 @@
 {
     "job_id": "JOB_ID",
     "query_delay": "60s",
-    "frequency": "450s",
+    "frequency": "600s",
     "indexes": [
       "filebeat-*"
     ],
     "query": {
       "bool": {
         "filter": [  
-          { "term":  { "fileset.module": "nginx" } },
+          { "term":  { "fileset.module": "apache2" } },
           { "term":  { "fileset.name": "access" } }
         ]
       }
