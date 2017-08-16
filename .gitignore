@@ -12,6 +12,7 @@ yarn.lock
 esvm/
 build/
 target/
+test/screenshots/failure/
 
 .phantom/
 coverage
