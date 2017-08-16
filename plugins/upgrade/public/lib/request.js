@@ -39,7 +39,12 @@ function post(url, data) {
         reject(JSON.parse(xhr.response));
       }
     };
-    xhr.send(JSON.stringify(data));
+
+    if (data) {
+      xhr.send(JSON.stringify(data));
+    } else {
+      xhr.send();
+    }
   });
 }
 
@@ -60,7 +65,12 @@ function put(url, data) {
         reject(JSON.parse(xhr.response));
       }
     };
-    xhr.send(JSON.stringify(data));
+
+    if (data) {
+      xhr.send(JSON.stringify(data));
+    } else {
+      xhr.send();
+    }
   });
 }
 
