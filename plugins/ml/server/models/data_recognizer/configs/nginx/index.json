@@ -86,10 +86,6 @@
   "kibana": {
     "dashboard": [
       {
-        "id": "Filebeat-Nginx-Dashboard",
-        "file": "Filebeat-Nginx-Dashboard.json"
-      },
-      {
         "id": "ML-Nginx-Access-Remote-IP-Count-Explorer",
         "file": "ML-Nginx-Access-Remote-IP-Count-Explorer.json"
       },
@@ -100,19 +96,11 @@
     ],
     "search": [
       {
-        "id": "Filebeat-Nginx-module",
-        "file": "Filebeat-Nginx-module.json"
-      },
-      {
         "id": "ML-Filebeat-Nginx-Access",
         "file": "ML-Filebeat-Nginx-Access.json"
       }
     ],
     "visualization": [
-      {
-        "id": "Errors-over-time",
-        "file": "Errors-over-time.json"
-      },
       {
         "id": "ML-Nginx-Access-Map",
         "file": "ML-Nginx-Access-Map.json"
@@ -136,30 +124,6 @@
       {
         "id": "ML-Nginx-Access-Unique-Count-URL-Timechart",
         "file": "ML-Nginx-Access-Unique-Count-URL-Timechart.json"
-      },
-      {
-        "id": "New-Visualization",
-        "file": "New-Visualization.json"
-      },
-      {
-        "id": "Nginx-Access-Browsers",
-        "file": "Nginx-Access-Browsers.json"
-      },
-      {
-        "id": "Nginx-Access-Map",
-        "file": "Nginx-Access-Map.json"
-      },
-      {
-        "id": "Nginx-Access-OSes",
-        "file": "Nginx-Access-OSes.json"
-      },
-      {
-        "id": "Nginx-Access-Response-codes-by-top-URLs",
-        "file": "Nginx-Access-Response-codes-by-top-URLs.json"
-      },
-      {
-        "id": "Sent-sizes",
-        "file": "Sent-sizes.json"
       }
     ]
   }
