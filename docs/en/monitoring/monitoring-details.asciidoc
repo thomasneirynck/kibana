@@ -33,6 +33,19 @@ alerts are automatically dismissed when the condition is resolved.
 include::cluster-alerts-license.asciidoc[]
 
 [float]
+[[cluster-alert-email-notifications]]
+==== Email Notifications
+To receive email notifications for the Cluster Alerts:
+
+1. Configure an email account as described in
+{xpack-ref}/actions-email.html#configuring-email[Configuring Email Accounts].
+2. Navigate to Kibana's Management app.
+3. Go to the "Advanced Settings" page, find the `xpack:defaultAdminEmail`
+setting, and enter your email address.
+
+Email notifications will be sent only when Cluster Alerts are triggered and resolved.
+
+[float]
 [[elasticsearch-metrics]]
 === Elasticsearch Metrics
 
