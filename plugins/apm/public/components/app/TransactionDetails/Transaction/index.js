@@ -5,7 +5,10 @@ import { unit, units, colors } from '../../../../style/variables';
 import WiremockContainer from '../../../shared/WiremockContainer';
 import { RelativeLink } from '../../../../utils/url';
 import Tab from '../../../shared/Tab';
-import TransactionTable from './TransactionTable';
+import {
+  PropertiesTable,
+  getLevelOneProps
+} from '../../../shared/PropertiesTable';
 import Traces from './Traces/container';
 import { get } from 'lodash';
 import { TRANSACTION_DURATION } from '../../../../../common/constants';
@@ -25,6 +28,18 @@ const TabContentContainer = styled.div`
   padding: ${unit}px;
 `;
 
+const DEFAULT_TAB = 'timeline';
+
+// Ensure the selected tab exists or use the default
+function getCurrentTab(tabs = [], transactionTab) {
+  return tabs.includes(transactionTab) ? transactionTab : DEFAULT_TAB;
+}
+
+function getTabs(transaction) {
+  const dynamicProps = Object.keys(transaction.data.context);
+  return getLevelOneProps(dynamicProps);
+}
+
 class Transaction extends Component {
   componentDidMount() {
     loadTransaction(this.props);
@@ -35,17 +50,20 @@ class Transaction extends Component {
   }
 
   render() {
-    const { transactionTab, tabs, transaction } = this.props;
+    const { transaction } = this.props;
     if (transaction.status !== STATUS.SUCCESS) {
       return null;
     }
 
+    const tabs = getTabs(transaction);
+    const currentTab = getCurrentTab(tabs, this.props.urlParams.transactionTab);
+
     return (
       <WiremockContainer>
         <h3>Transaction sample</h3>
-        {tabs.map(key => {
+        {[DEFAULT_TAB, ...tabs].map(key => {
           return (
-            <Tab selected={transactionTab === key} key={key}>
+            <Tab selected={currentTab === key} key={key}>
               <RelativeLink query={{ transactionTab: key }}>
                 {key.toUpperCase()}
               </RelativeLink>
@@ -54,13 +72,13 @@ class Transaction extends Component {
         })}
 
         <TabContentContainer>
-          {transactionTab === 'timeline'
+          {currentTab === DEFAULT_TAB
             ? <Traces
                 totalDuration={get(transaction.data, TRANSACTION_DURATION)}
               />
-            : <TransactionTable
-                tabData={transaction.data.context[transactionTab]}
-                tabKey={transactionTab}
+            : <PropertiesTable
+                propData={transaction.data.context[currentTab]}
+                propKey={currentTab}
               />}
         </TabContentContainer>
       </WiremockContainer>

@@ -1,5 +1,4 @@
 [
-  { "key": "timeline", "required": true },
   {
     "key": "request",
     "required": false,
