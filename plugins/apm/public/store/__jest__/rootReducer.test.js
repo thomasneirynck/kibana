@@ -6,6 +6,7 @@ describe('root reducer', () => {
       appLists: {},
       apps: {},
       distributions: {},
+      license: {},
       location: {},
       traces: {},
       transactionLists: {},

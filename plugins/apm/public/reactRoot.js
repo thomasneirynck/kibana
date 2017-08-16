@@ -2,14 +2,13 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { Router, Route, Switch } from 'react-router-dom';
 import createHistory from 'history/createHashHistory';
-import styled from 'styled-components';
 
 import AppList from './components/app/AppList/container';
 import TransactionsOverview from './components/app/TransactionsOverview/container';
 import TransactionDetails from './components/app/TransactionDetails/container';
 import AppSettings from './components/app/AppSettings';
+import Main from './components/app/Main/container';
 
-import { units, px } from './style/variables';
 import configureStore from './store/config/configureStore';
 import connectTimeFilterToStore from './utils/timepicker/connectToStore';
 import connectHistoryToStore from './utils/connectHistoryToStore';
@@ -21,12 +20,10 @@ function Root({ timefilter }) {
   connectTimeFilterToStore(timefilter, store.dispatch);
   connectHistoryToStore(history, store.dispatch);
 
-  const MainContainer = styled.div`padding: ${px(units.plus)};`;
-
   return (
     <Provider store={store}>
       <Router history={history}>
-        <MainContainer>
+        <Main>
           <Route exact path="/" component={AppList} />
 
           <Switch>
@@ -44,7 +41,7 @@ function Root({ timefilter }) {
             path="/:appName/:transactionType/:transactionName"
             component={TransactionDetails}
           />
-        </MainContainer>
+        </Main>
       </Router>
     </Provider>
   );

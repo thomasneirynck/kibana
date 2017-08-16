@@ -3,20 +3,22 @@ import { combineReducers } from 'redux';
 import appLists from './appLists';
 import apps from './apps';
 import distributions from './distributions';
+import license from './license';
 import location from './location';
 import traces from './traces';
-import transactions from './transactions';
 import transactionLists from './transactionLists';
+import transactions from './transactions';
 import urlParams from './urlParams';
 
 const appReducer = combineReducers({
   appLists,
   apps,
   distributions,
+  license,
   location,
   traces,
-  transactions,
   transactionLists,
+  transactions,
   urlParams
 });
 

@@ -36,6 +36,13 @@ function getAppRootPath(appName) {
   return `../api/apm/apps/${appName}`;
 }
 
+export async function loadLicense() {
+  const response = await callApi({
+    pathname: `../api/xpack/v1/info`
+  });
+  return response.license;
+}
+
 export async function loadAppList({ start, end, query }) {
   return callApi({
     pathname: `../api/apm/apps`,
