@@ -65,14 +65,15 @@ export function isCancelable(indexState) {
   // The task can be canceled if the reindex
   // or upgrade step is in RUNNING state, or
   // if the createIndex step failed because
-  // we already have a task running, in which
-  // case we will have a taskId on the indexState.
+  // we already have a task running
+  // that hasn't been canceled by another instance.
   const createIndexStep = _.find(indexState.steps, { 'name': REINDEX_STEPS.CREATE_INDEX });
   return (
     (
       createIndexStep &&
       isStepFailed(createIndexStep) &&
-      indexState.taskId
+      indexState.taskId &&
+      !isCanceled(indexState)
     ) ||
     isRunning(indexState)
   );
