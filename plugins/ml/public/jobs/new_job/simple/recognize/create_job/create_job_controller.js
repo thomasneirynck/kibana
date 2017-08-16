@@ -103,7 +103,7 @@ module
   $scope.formConfig = {
     indexPattern,
     jobLabel: '',
-    jobGroup: '',
+    jobGroups: [],
     jobs: [],
     kibanaObjects: {
       dashboard: [],
@@ -139,10 +139,10 @@ module
     .then(resp => {
       // populate the jobs and datafeeds
       if (resp.jobs && resp.jobs.length) {
-        $scope.formConfig.jobGroup = resp.jobs[0].config.groups[0];
+
+        const tempGroups = {};
 
         resp.jobs.forEach((job) => {
-
           $scope.formConfig.jobs.push({
             id: job.id,
             jobConfig: job.config,
@@ -153,7 +153,16 @@ module
             runningState :DATAFEED_STATE.NOT_STARTED,
           });
           $scope.ui.numberOfJobs++;
+
+          // read the groups list from each job and create a deduplicated jobGroups list
+          if (job.config.groups && job.config.groups.length) {
+            job.config.groups.forEach((group) => {
+              tempGroups[group] = null;
+            });
+          }
         });
+        $scope.formConfig.jobGroups = Object.keys(tempGroups);
+
         resp.datafeeds.forEach((datafeed) => {
           const job = _.find($scope.formConfig.jobs, { id: datafeed.config.job_id });
           if (job !== undefined) {
@@ -191,7 +200,6 @@ module
 
   $scope.changeJobLabelCase = function () {
     $scope.formConfig.jobLabel = $scope.formConfig.jobLabel.toLowerCase();
-    $scope.formConfig.jobGroup = $scope.formConfig.jobGroup.toLowerCase();
   };
 
   // save everything
@@ -553,5 +561,3 @@ module
   loadJobConfigs();
 
 });
-
-

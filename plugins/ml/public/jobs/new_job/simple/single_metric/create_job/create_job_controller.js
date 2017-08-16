@@ -211,6 +211,7 @@ module
     filters,
     jobId: undefined,
     description: undefined,
+    jobGroups: [],
     mappingTypes: [],
     useDedicatedIndex: false
   };

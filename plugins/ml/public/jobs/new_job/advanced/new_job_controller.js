@@ -90,6 +90,7 @@ function (
   $scope.maximumFileSize;
   $scope.mlElasticDataDescriptionExposedFunctions = {};
   $scope.elasticServerInfo = {};
+  $scope.jobGroupsUpdateFunction = {};
 
   $scope.ui = {
     pageTitle: 'Create a new job',
@@ -458,6 +459,11 @@ function (
       // create the job from the json text.
       $scope.job = JSON.parse(minfiedJson);
       $scope.changeJobIDCase();
+
+      // update the job groups ui component
+      if ($scope.jobGroupsUpdateFunction.update !== undefined) {
+        $scope.jobGroupsUpdateFunction.update($scope.job.groups);
+      }
 
       // in case influencers have been added into the json. treat them as custom if unrecognised
       extractCustomInfluencers();

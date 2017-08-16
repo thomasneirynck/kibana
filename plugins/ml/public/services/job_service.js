@@ -71,6 +71,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
     return {
       job_id: '',
       description: '',
+      groups: [],
       analysis_config: {
         bucket_span: '15m',
         influencers:[],
@@ -1106,5 +1107,26 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       }
     });
   }
+
+  // get the list of job group ids as well as how many jobs are in each group
+  this.getJobGroups = function () {
+    const groups = [];
+    const tempGroups = {};
+    this.jobs.forEach(job => {
+      if (Array.isArray(job.groups)) {
+        job.groups.forEach(group => {
+          if (tempGroups[group] === undefined) {
+            tempGroups[group] = 1;
+          } else {
+            tempGroups[group]++;
+          }
+        });
+      }
+    });
+    _.each(tempGroups, (count, id) => {
+      groups.push({ id, count });
+    });
+    return groups;
+  };
 
 });

@@ -37,6 +37,7 @@ module.service('mlCreateRecognizerJobsService', function (
       const newJob = angular.copy(job.jobConfig);
       const jobId = formConfig.jobLabel + job.id;
       newJob.job_id = jobId;
+      newJob.groups = formConfig.jobGroups;
 
       mlJobService.saveNewJob(newJob)
       .then((resp) => {

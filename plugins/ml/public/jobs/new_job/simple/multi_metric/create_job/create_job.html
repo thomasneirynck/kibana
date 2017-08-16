@@ -169,6 +169,13 @@
                       ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
                       class="form-control" />
                   </div>
+                  <div class="form-group">
+                    <label>Job Groups</label><i ml-info-icon="new_job_group" aria-label="Job group" ></i>
+                      <ml-job-group-select
+                        job-groups='formConfig.jobGroups'
+                        disabled='(jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED)'
+                      ></ml-job-group-select>
+                  </div>
 
                   <div class="form-group">
                     <div ng-click="ui.showAdvanced = (!ui.showAdvanced || formConfig.useDedicatedIndex)" class="advanced-button-container">

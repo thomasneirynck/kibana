@@ -5,6 +5,9 @@
    "new_job_description": {
       "text": "Optional descriptive text."
    },
+   "new_job_group": {
+      "text": "Optional grouping for jobs. New groups can be created or picked from the list of existing groups."
+   },
    "new_job_custom_urls": {
       "text": "Optional drill-through links to source data. Supports string substitution for analyzed fields e.g. $hostname$."
    },

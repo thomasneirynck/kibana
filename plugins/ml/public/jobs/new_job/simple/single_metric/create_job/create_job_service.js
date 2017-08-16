@@ -247,6 +247,7 @@ module.service('mlSingleMetricJobService', function (
 
     job.job_id = formConfig.jobId;
     job.description = formConfig.description;
+    job.groups = formConfig.jobGroups;
 
     job.model_plot_config =  {
       enabled: true

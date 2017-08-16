@@ -284,6 +284,7 @@ module.service('mlMultiMetricJobService', function (
     };
     job.job_id = formConfig.jobId;
     job.description = formConfig.description;
+    job.groups = formConfig.jobGroups;
 
     if (formConfig.useDedicatedIndex) {
       job.results_index_name = job.job_id;
