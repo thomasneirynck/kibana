@@ -53,7 +53,7 @@ function TransactionListItem({ appName, transaction, type }) {
     <TransactionRow>
       <TransactionName>
         <RelativeLink
-          path={`${appName}/${encodeURIComponent(
+          path={`${appName}/transactions/${encodeURIComponent(
             type
           )}/${legacyEncodeURIComponent(transactionName)}`}
         >

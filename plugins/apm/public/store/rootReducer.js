@@ -3,6 +3,8 @@ import { combineReducers } from 'redux';
 import appLists from './appLists';
 import apps from './apps';
 import distributions from './distributions';
+import errorGroupLists from './errorGroupLists';
+import errorGroups from './errorGroups';
 import license from './license';
 import location from './location';
 import traces from './traces';
@@ -14,6 +16,8 @@ const appReducer = combineReducers({
   appLists,
   apps,
   distributions,
+  errorGroupLists,
+  errorGroups,
   license,
   location,
   traces,
@@ -28,6 +32,8 @@ const rootReducer = (state, action) => {
   if (action.type === 'RESET_STATE') {
     newState = {
       ...state,
+      errorGroupLists: undefined,
+      errorGroups: undefined,
       transactionLists: undefined,
       app: undefined,
       apps: undefined

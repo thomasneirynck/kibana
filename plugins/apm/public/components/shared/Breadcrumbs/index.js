@@ -20,9 +20,11 @@ const getPaths = pathname => {
 const routes = {
   '/': 'APM',
   '/:appName/settings': 'Settings',
+  '/:appName/errors': 'Errors',
+  '/:appName/errors/:groupingId': params => params.groupingId,
   '/:appName': params => params.appName,
-  '/:appName/:transactionType': params => params.transactionType,
-  '/:appName/:transactionType/:transactionName': params =>
+  '/:appName/transactions/:transactionType': params => params.transactionType,
+  '/:appName/transactions/:transactionType/:transactionName': params =>
     legacyDecodeURIComponent(params.transactionName)
 };
 
@@ -30,7 +32,7 @@ function getBreadcrumbs({ match, location }) {
   const matchedPaths = getPaths(match.path);
   const urls = getPaths(location.pathname);
 
-  return matchedPaths.map((path, i) => {
+  return matchedPaths.filter(path => routes[path]).map((path, i) => {
     const url = urls[i];
     const name = _.isString(routes[path])
       ? routes[path]

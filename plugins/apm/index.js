@@ -4,6 +4,7 @@ import { initChartApi } from './server/routes/charts';
 import { initDistributionApi } from './server/routes/distribution';
 import { initAppsApi } from './server/routes/apps';
 import { initTracesApi } from './server/routes/traces';
+import { initErrorsApi } from './server/routes/errors';
 
 export function apm(kibana) {
   return new kibana.Plugin({
@@ -36,6 +37,7 @@ export function apm(kibana) {
       initDistributionApi(server);
       initAppsApi(server);
       initTracesApi(server);
+      initErrorsApi(server);
     }
   });
 }

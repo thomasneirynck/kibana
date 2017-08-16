@@ -31,8 +31,8 @@ const TabContentContainer = styled.div`
 const DEFAULT_TAB = 'timeline';
 
 // Ensure the selected tab exists or use the default
-function getCurrentTab(tabs = [], transactionTab) {
-  return tabs.includes(transactionTab) ? transactionTab : DEFAULT_TAB;
+function getCurrentTab(tabs = [], detailTab) {
+  return tabs.includes(detailTab) ? detailTab : DEFAULT_TAB;
 }
 
 function getTabs(transaction) {
@@ -56,7 +56,7 @@ class Transaction extends Component {
     }
 
     const tabs = getTabs(transaction);
-    const currentTab = getCurrentTab(tabs, this.props.urlParams.transactionTab);
+    const currentTab = getCurrentTab(tabs, this.props.urlParams.detailTab);
 
     return (
       <WiremockContainer>
@@ -64,7 +64,7 @@ class Transaction extends Component {
         {[DEFAULT_TAB, ...tabs].map(key => {
           return (
             <Tab selected={currentTab === key} key={key}>
-              <RelativeLink query={{ transactionTab: key }}>
+              <RelativeLink query={{ detailTab: key }}>
                 {key.toUpperCase()}
               </RelativeLink>
             </Tab>

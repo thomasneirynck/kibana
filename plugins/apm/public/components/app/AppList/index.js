@@ -51,7 +51,7 @@ class AppList extends Component {
         <AppsContainer>
           {this.props.appList.data.map(app =>
             <AppContainer key={app.appName}>
-              <AppLink path={app.appName}>
+              <AppLink path={`${app.appName}/transactions`}>
                 {app.appName}
               </AppLink>
               <Button path={`${app.appName}/settings`} label="Settings" />

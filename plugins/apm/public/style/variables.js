@@ -26,6 +26,7 @@ export const borderRadius = '5px';
 
 // Colors
 export const colors = {
+  linkColor: '#0079a5',
   elementBorder: '#dce0e5',
   elementBorderDark: '#bababa',
   elementBackground: '#fff',

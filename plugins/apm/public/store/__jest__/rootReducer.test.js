@@ -10,6 +10,8 @@ describe('root reducer', () => {
       location: {},
       traces: {},
       transactionLists: {},
+      errorGroupLists: {},
+      errorGroups: {},
       transactions: {},
       urlParams: {}
     });

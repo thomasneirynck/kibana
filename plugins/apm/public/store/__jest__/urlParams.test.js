@@ -8,8 +8,9 @@ describe('urlParams', () => {
       {
         type: LOCATION_UPDATE,
         location: {
-          pathname: 'myAppName/myTransactionType/myTransactionName/b/c',
-          search: '?transactionId=25&transactionTab=request&traceId=10'
+          pathname:
+            'myAppName/transactions/myTransactionType/myTransactionName/b/c',
+          search: '?transactionId=25&detailTab=request&traceId=10'
         }
       }
     );
@@ -19,7 +20,7 @@ describe('urlParams', () => {
       traceId: 10,
       transactionId: '25',
       transactionName: 'myTransactionName',
-      transactionTab: 'request',
+      detailTab: 'request',
       transactionType: 'myTransactionType'
     });
   });

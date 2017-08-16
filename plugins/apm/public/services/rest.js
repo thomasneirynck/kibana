@@ -132,3 +132,24 @@ export async function loadCharts({
     }
   });
 }
+
+export async function loadErrorGroupList({ appName, start, end }) {
+  return callApi({
+    pathname: `${getAppRootPath(appName)}/errors`,
+    query: {
+      start,
+      end
+    }
+  });
+}
+
+export async function loadErrorGroup({ appName, errorGroupingId, start, end }) {
+  return callApi({
+    pathname: `${getAppRootPath(appName)}/errors/${errorGroupingId}`,
+    camelcase: false,
+    query: {
+      start,
+      end
+    }
+  });
+}

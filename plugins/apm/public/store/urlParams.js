@@ -21,11 +21,14 @@ export const TIMEPICKER_UPDATE = 'TIMEPICKER_UPDATE';
 function urlParams(state = {}, action) {
   switch (action.type) {
     case LOCATION_UPDATE: {
-      const [appName, transactionType, transactionName] = getPathAsArray(
-        action.location.pathname
-      );
+      const {
+        appName,
+        transactionType,
+        transactionName,
+        errorGroupingId
+      } = getPathParams(action.location.pathname);
 
-      const { transactionId, transactionTab, traceId, bucket } = toQuery(
+      const { transactionId, detailTab, traceId, bucket } = toQuery(
         action.location.search
       );
 
@@ -34,14 +37,15 @@ function urlParams(state = {}, action) {
 
         // query params
         transactionId,
-        transactionTab,
+        detailTab,
         traceId: toNumber(traceId),
         bucket: toNumber(bucket),
 
         // path params
         appName,
         transactionType,
-        transactionName: legacyDecodeURIComponent(transactionName)
+        transactionName: legacyDecodeURIComponent(transactionName),
+        errorGroupingId
       };
     }
 
@@ -61,6 +65,27 @@ function toNumber(value) {
 
 function getPathAsArray(pathname) {
   return _.compact(pathname.split('/'));
+}
+
+function getPathParams(pathname) {
+  const paths = getPathAsArray(pathname);
+  const pageName = paths[1];
+
+  switch (pageName) {
+    case 'transactions':
+      return {
+        appName: paths[0],
+        transactionType: paths[2],
+        transactionName: paths[3]
+      };
+    case 'errors':
+      return {
+        appName: paths[0],
+        errorGroupingId: paths[2]
+      };
+    default:
+      return {};
+  }
 }
 
 // ACTION CREATORS

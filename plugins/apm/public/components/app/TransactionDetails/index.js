@@ -5,7 +5,7 @@ import Transaction from './Transaction/container';
 import Breadcrumbs from '../../shared/Breadcrumbs/container';
 import Distribution from './Distribution/container';
 
-function TransactionDetails(urlParams) {
+function TransactionDetails({ urlParams }) {
   return (
     <div>
       <Breadcrumbs />

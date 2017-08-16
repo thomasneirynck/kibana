@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PageHeader from '../../shared/PageHeader/container';
-import Navigation from './Navigation';
+import TabNavigation from '../../shared/TabNavigation/container';
 import WiremockContainer from '../../shared/WiremockContainer';
 import TransactionList from './TransactionList';
-import withApp from '../../shared/withApp/container';
 import Breadcrumbs from '../../shared/Breadcrumbs/container';
 import withErrorHandler from '../../shared/withErrorHandler';
 
@@ -36,11 +35,7 @@ export class TransactionOverview extends Component {
       <div>
         <Breadcrumbs />
         <PageHeader title={appName} />
-        <Navigation
-          appName={appName}
-          type={transactionType}
-          types={this.props.app.data.types}
-        />
+        <TabNavigation />
         <WiremockContainer />
         <h2>Requests</h2>
         <TransactionList
@@ -53,6 +48,4 @@ export class TransactionOverview extends Component {
   }
 }
 
-export default withApp(
-  withErrorHandler(TransactionOverview, ['app', 'transactionList'])
-);
+export default withErrorHandler(TransactionOverview, ['transactionList']);

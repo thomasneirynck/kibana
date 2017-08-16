@@ -13,3 +13,7 @@ export const TRACE_TYPE = 'trace.type';
 export const TRACE_NAME = 'trace.name';
 export const TRACE_ID = 'trace.id';
 export const TRACE_SQL = 'context.sql';
+
+export const ERROR_GROUPING_ID = 'error.checksum';
+export const ERROR_CULPRIT = 'error.culprit';
+export const ERROR_MESSAGE = 'error.exception.message';
