@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RefreshButton renders the buttonLabel property 1`] = `
+<KuiButton
+  buttonType="primary"
+  className={null}
+  disabled={false}
+  icon={
+    <KuiButtonIcon
+      className="fa-refresh"
+    />
+  }
+  onClick={[Function]}
+>
+  A different label
+</KuiButton>
+`;
+
+exports[`RefreshButton renders the className property 1`] = `
+<KuiButton
+  buttonType="primary"
+  className="specificStatusGroup"
+  disabled={false}
+  icon={
+    <KuiButtonIcon
+      className="fa-refresh"
+    />
+  }
+  onClick={[Function]}
+>
+  Run
+</KuiButton>
+`;
