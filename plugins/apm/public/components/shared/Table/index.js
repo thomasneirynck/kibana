@@ -4,9 +4,24 @@ import {
   units,
   px,
   colors,
-  fontSize,
-  fontFamily
+  fontFamily,
+  fontSize
 } from '../../../style/variables';
+
+export const Table = styled.table`width: 100%;`;
+export const TableHead = styled.th`
+  text-align: right;
+  border-bottom: 1px solid ${colors.elementBorder};
+  border-left: 1px solid ${colors.tableBorder};
+  padding: ${px(units.minus)};
+  position: relative;
+  cursor: pointer;
+
+  &:first-child {
+    border-left: 0;
+    text-align: left;
+  }
+`;
 
 const LoadingContainer = styled.div`
   padding: ${px(units.half)};
@@ -17,17 +32,15 @@ const LoadingContainer = styled.div`
   background: ${colors.elementBackground};
 `;
 
-function ErrorLoader({ status }) {
+export function TableLoader({ status, columns }) {
   if (status === 'SUCCESS') {
     return null;
   }
   return (
     <tr>
-      <td colSpan="5">
+      <td colSpan={columns || 10}>
         <LoadingContainer>Loading...</LoadingContainer>
       </td>
     </tr>
   );
 }
-
-export default ErrorLoader;

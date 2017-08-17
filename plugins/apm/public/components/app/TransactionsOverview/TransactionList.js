@@ -1,8 +1,8 @@
 import React from 'react';
-import TransactionLoader from './TransactionLoader';
-import TransactionListItem from './TransactionListItem';
 import styled from 'styled-components';
-import { units, px, colors, borderRadius } from '../../../style/variables';
+import { Table, TableHead, TableLoader } from '../../shared/Table';
+import TransactionListItem from './TransactionListItem';
+import { colors, borderRadius } from '../../../style/variables';
 import { get } from 'lodash';
 import { TRANSACTION_ID } from '../../../../common/constants';
 
@@ -14,22 +14,6 @@ const TransactionsContainer = styled.div`
   border-radius: ${borderRadius};
 `;
 
-const Table = styled.table`width: 100%;`;
-
-const TableHeading = styled.th`
-  text-align: right;
-  border-bottom: 1px solid ${colors.elementBorder};
-  border-left: 1px solid ${colors.tableBorder};
-  padding: ${px(units.minus)};
-  position: relative;
-  cursor: pointer;
-
-  &:first-child {
-    border-left: 0;
-    text-align: left;
-  }
-`;
-
 function TransactionList({ appName, list, type }) {
   const transactions = list.data || [];
 
@@ -38,16 +22,16 @@ function TransactionList({ appName, list, type }) {
       <Table>
         <thead>
           <tr>
-            <TableHeading>Endpoints</TableHeading>
-            <TableHeading>Avg. resp. time</TableHeading>
-            <TableHeading>95th percentile</TableHeading>
-            <TableHeading>RPM</TableHeading>
-            <TableHeading>Impact</TableHeading>
+            <TableHead>Endpoints</TableHead>
+            <TableHead>Avg. resp. time</TableHead>
+            <TableHead>95th percentile</TableHead>
+            <TableHead>RPM</TableHead>
+            <TableHead>Impact</TableHead>
           </tr>
         </thead>
 
         <tbody>
-          <TransactionLoader status={list.status} />
+          <TableLoader status={list.status} columns={5} />
 
           {transactions.map(transaction => {
             return (

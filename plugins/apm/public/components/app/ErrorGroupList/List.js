@@ -1,8 +1,8 @@
 import React from 'react';
-import Loader from './Loader';
-import ListItem from './ListItem';
 import styled from 'styled-components';
-import { units, px, colors, borderRadius } from '../../../style/variables';
+import { Table, TableHead, TableLoader } from '../../shared/Table';
+import ListItem from './ListItem';
+import { colors, borderRadius } from '../../../style/variables';
 
 const ErrorsContainer = styled.div`
   position: relative;
@@ -12,35 +12,19 @@ const ErrorsContainer = styled.div`
   border-radius: ${borderRadius};
 `;
 
-const Table = styled.table`width: 100%;`;
-
-const TableHeading = styled.th`
-  text-align: right;
-  border-bottom: 1px solid ${colors.elementBorder};
-  border-left: 1px solid ${colors.tableBorder};
-  padding: ${px(units.minus)};
-  position: relative;
-  cursor: pointer;
-
-  &:first-child {
-    border-left: 0;
-    text-align: left;
-  }
-`;
-
 function List({ appName, list }) {
   return (
     <ErrorsContainer>
       <Table>
         <thead>
           <tr>
-            <TableHeading>Error grouping</TableHeading>
-            <TableHeading>Occurrences</TableHeading>
+            <TableHead>Error grouping</TableHead>
+            <TableHead>Occurrences</TableHead>
           </tr>
         </thead>
 
         <tbody>
-          <Loader status={list.status} />
+          <TableLoader status={list.status} columns={2} />
 
           {list.data.map(error => {
             return (
