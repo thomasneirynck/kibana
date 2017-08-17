@@ -25,20 +25,6 @@ const TableCell = styled.td`
   }
 `;
 
-const Title = TableCell.extend`
-  // Position: relative doesn't work on <tr> elements, so adding it here
-  position: relative;
-`;
-
-const LinkExpand = styled.span`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  z-index: 1;
-`;
-
 const Message = styled.div`
   font-family: ${fontFamilyCode};
   font-weight: bold;
@@ -48,7 +34,7 @@ const Message = styled.div`
 
 const Culprit = styled.div`font-family: ${fontFamilyCode};`;
 
-const Occurrences = TableCell.extend`
+const OccurrencesCell = TableCell.extend`
   text-align: right;
   font-weight: bold;
   font-size: ${fontSizes.large};
@@ -60,20 +46,19 @@ function ErrorGroupListItem({ error, appName }) {
 
   return (
     <Row>
-      <Title>
+      <TableCell>
         <RelativeLink path={`${appName}/errors/${groupingId}`}>
-          <LinkExpand />
+          <Message>
+            {message || 'N/A'}
+          </Message>
+          <Culprit>
+            {culprit || 'N/A'}
+          </Culprit>
         </RelativeLink>
-        <Message>
-          {message || 'N/A'}
-        </Message>
-        <Culprit>
-          {culprit || 'N/A'}
-        </Culprit>
-      </Title>
-      <Occurrences>
+      </TableCell>
+      <OccurrencesCell>
         {count || 'N/A'}
-      </Occurrences>
+      </OccurrencesCell>
     </Row>
   );
 }
