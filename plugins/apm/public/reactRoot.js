@@ -4,7 +4,7 @@ import { Router, Route, Redirect } from 'react-router-dom';
 import createHistory from 'history/createHashHistory';
 
 import AppList from './components/app/AppList/container';
-import TransactionsOverview from './components/app/TransactionsOverview/container';
+import TransactionsOverview from './components/app/TransactionsOverview/container'; // TODO: rename to "TransactionOverview"
 import TransactionDetails from './components/app/TransactionDetails/container';
 import AppSettings from './components/app/AppSettings';
 import ErrorGroupList from './components/app/ErrorGroupList/container';

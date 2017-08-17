@@ -5,13 +5,14 @@ describe('root reducer', () => {
     expect(reducer(undefined, {})).toEqual({
       appLists: {},
       apps: {},
+      charts: {},
       distributions: {},
+      errorGroupLists: {},
+      errorGroups: {},
       license: {},
       location: {},
       traces: {},
       transactionLists: {},
-      errorGroupLists: {},
-      errorGroups: {},
       transactions: {},
       urlParams: {}
     });

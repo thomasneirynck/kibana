@@ -10,6 +10,7 @@
 
 const MAX_DISPATCHES = 50;
 const INTERVAL_MS = 2000;
+let IS_THROTTLED = false;
 
 let count = 0;
 setInterval(() => {
@@ -20,7 +21,8 @@ function throttle() {
   return next => action => {
     count += 1;
 
-    if (count > MAX_DISPATCHES) {
+    if (count > MAX_DISPATCHES || IS_THROTTLED) {
+      IS_THROTTLED = true;
       console.error('Action was throttled', action);
       return {};
     }

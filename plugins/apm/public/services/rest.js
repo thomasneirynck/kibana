@@ -2,9 +2,11 @@ import 'isomorphic-fetch';
 import { camelizeKeys } from 'humps';
 import url from 'url';
 import _ from 'lodash';
+import isNil from 'lodash.isnil';
 
 async function callApi(options) {
-  const { pathname, query, camelcase, ...urlOptions } = {
+  const { pathname, query, camelcase, compact, ...urlOptions } = {
+    compact: true, // remove empty query args
     camelcase: true,
     credentials: 'same-origin',
     method: 'GET',
@@ -16,7 +18,7 @@ async function callApi(options) {
 
   const fullUrl = url.format({
     pathname,
-    query
+    query: compact ? _.omit(query, isNil) : query
   });
 
   try {
@@ -120,7 +122,8 @@ export async function loadCharts({
   start,
   end,
   transactionType,
-  transactionName
+  transactionName,
+  transactionId
 }) {
   return callApi({
     pathname: `${getAppRootPath(appName)}/metrics/charts`,
@@ -128,7 +131,8 @@ export async function loadCharts({
       start,
       end,
       transaction_type: transactionType,
-      transaction_name: transactionName
+      transaction_name: transactionName,
+      transaction_id: transactionId
     }
   });
 }

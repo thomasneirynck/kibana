@@ -10,6 +10,7 @@
       }
     ],
     "no-unused-vars": ["error", { "ignoreRestSiblings": true }],
-    "kibana-custom/no-default-export": "off"
+    "kibana-custom/no-default-export": "off",
+    "import/no-named-as-default": "off"
   }
 }

@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 
 import appLists from './appLists';
 import apps from './apps';
+import charts from './charts';
 import distributions from './distributions';
 import errorGroupLists from './errorGroupLists';
 import errorGroups from './errorGroups';
@@ -15,6 +16,7 @@ import urlParams from './urlParams';
 const appReducer = combineReducers({
   appLists,
   apps,
+  charts,
   distributions,
   errorGroupLists,
   errorGroups,
