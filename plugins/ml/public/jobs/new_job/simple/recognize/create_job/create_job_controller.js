@@ -18,6 +18,7 @@ import moment from 'moment';
 import angular from 'angular';
 import 'ui/courier';
 import dateMath from '@elastic/datemath';
+import { isJobIdValid } from 'plugins/ml/util/job_utils';
 
 import 'plugins/kibana/visualize/styles/main.less';
 
@@ -97,7 +98,13 @@ module
       dashboard: 'Dashboards',
       search: 'Searches',
       visualization: 'Visualizations',
-    }
+    },
+    validation: {
+      checks: {
+        jobLabel: { valid: true },
+        groupIds: { valid: true }
+      },
+    },
   };
 
   $scope.formConfig = {
@@ -151,6 +158,7 @@ module
             datafeedConfig: {},
             datafeedState: SAVE_STATE.NOT_SAVED,
             runningState :DATAFEED_STATE.NOT_STARTED,
+            errors: []
           });
           $scope.ui.numberOfJobs++;
 
@@ -204,30 +212,32 @@ module
 
   // save everything
   $scope.save = function () {
-    $scope.overallState = SAVE_STATE.SAVING;
-    angular.element('.results').css('opacity', 1);
-    // wait 500ms for the results section to fade in.
-    window.setTimeout(() => {
-      // save jobs
-      createJobs()
-      .then(() => {
-        // save saved objects
-        createSavedObjects()
+    if (validateJobs()) {
+      $scope.overallState = SAVE_STATE.SAVING;
+      angular.element('.results').css('opacity', 1);
+      // wait 500ms for the results section to fade in.
+      window.setTimeout(() => {
+        // save jobs
+        createJobs()
         .then(() => {
-          $scope.overallState = SAVE_STATE.SAVED;
-          createResultsUrl();
-          $scope.$applyAsync();
+          // save saved objects
+          createSavedObjects()
+          .then(() => {
+            $scope.overallState = SAVE_STATE.SAVED;
+            createResultsUrl();
+            $scope.$applyAsync();
+          })
+          .catch(() => {
+            $scope.overallState = SAVE_STATE.FAILED;
+            $scope.$applyAsync();
+          });
         })
         .catch(() => {
           $scope.overallState = SAVE_STATE.FAILED;
           $scope.$applyAsync();
         });
-      })
-      .catch(() => {
-        $scope.overallState = SAVE_STATE.FAILED;
-        $scope.$applyAsync();
-      });
-    }, 500);
+      }, 500);
+    }
   };
 
   function createJobs() {
@@ -256,6 +266,7 @@ module
 
       $scope.formConfig.jobs.forEach((job) => {
         job.jobState = SAVE_STATE.SAVING;
+        job.errors = [];
         mlCreateRecognizerJobsService.createJob(job, $scope.formConfig)
         .then(() =>{
           job.jobState = SAVE_STATE.SAVED;
@@ -267,6 +278,9 @@ module
           })
           .catch((resp) => {
             job.datafeedState = SAVE_STATE.FAILED;
+            if (resp.resp && resp.resp.message) {
+              job.errors.push(resp.resp.message);
+            }
             console.log('Saving datafeed failed', resp);
             checkFinished();
           });
@@ -274,6 +288,9 @@ module
         .catch((resp) => {
           job.jobState = SAVE_STATE.FAILED;
           job.datafeedState = SAVE_STATE.FAILED;
+          if (resp.resp && resp.resp.message) {
+            job.errors.push(resp.resp.message);
+          }
           console.log('Saving job failed', resp);
           checkFinished();
         });
@@ -329,9 +346,9 @@ module
             incrementAndOpen(job);
             start(job);
           }).catch((err) => {
-            console.log(err);
-            // job.runningState = DATAFEED_STATE.FAILED;
+            console.log('Opening job failed', err);
             start(job);
+            job.errors.push(err.message);
             incrementAndOpen(job);
           });
         }
@@ -346,9 +363,10 @@ module
             }
           })
           .catch((err) => {
-            console.log(err);
+            console.log('Starting datafeed failed', err);
+            job.errors.push(err.message);
             job.runningState = DATAFEED_STATE.FAILED;
-            reject();
+            reject(err);
           });
         }
       });
@@ -556,6 +574,37 @@ module
     path += '))&_a=(filters:!(),query:(query_string:(analyze_wildcard:!t,query:\'*\')))';
 
     $scope.resultsUrl = path;
+  }
+
+  function validateJobs() {
+    let valid = true;
+    const checks = $scope.ui.validation.checks;
+    _.each(checks, (item) => {
+      item.valid = true;
+    });
+
+    // add an extra bit to the job label to avoid hitting the rule which states
+    // you can't have an id ending in a - or _
+    // also to allow an empty label
+    const label = `${$scope.formConfig.jobLabel}extra`;
+
+    if (isJobIdValid(label) === false) {
+      valid = false;
+      checks.jobLabel.valid = false;
+      let msg = 'Job label can contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores; ';
+      msg += 'must start and end with an alphanumeric character';
+      checks.jobLabel.message = msg;
+    }
+    $scope.formConfig.jobGroups.forEach(group => {
+      if (isJobIdValid(group) === false) {
+        valid = false;
+        checks.groupIds.valid = false;
+        let msg = 'Job group names can contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores; ';
+        msg += 'must start and end with an alphanumeric character';
+        checks.groupIds.message = msg;
+      }
+    });
+    return valid;
   }
 
   loadJobConfigs();

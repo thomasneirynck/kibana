@@ -34,12 +34,12 @@ export class RecognizedResult extends Component {
     }
 
     return (
-      <div className='recognizer-result'>
+      <a className='recognizer-result' href={ href }>
         { logo }
         <div>
-          <a href={ href }>Create {config.title} jobs</a>
+          <span >Create {config.title} jobs</span>
         </div>
-      </div>
+      </a>
     );
   }
 }

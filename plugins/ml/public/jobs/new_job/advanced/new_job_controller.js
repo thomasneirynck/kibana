@@ -124,7 +124,7 @@ function (
     ],
     validation: {
       tabs: [
-        { index: 0, valid: true, checks: { jobId: { valid: true } } },
+        { index: 0, valid: true, checks: { jobId: { valid: true }, groupIds: { valid: true } } },
         { index: 1, valid: true, checks: {
           detectors: { valid: true }, influencers: { valid: true }, categorizationFilters: { valid: true }, bucketSpan: { valid: true }
         } },
@@ -826,6 +826,15 @@ function (
         msg += 'must start and end with an alphanumeric character';
         tabs[0].checks.jobId.message = msg;
       }
+
+      job.groups.forEach(group => {
+        if (isJobIdValid(group) === false) {
+          tabs[0].checks.groupIds.valid = false;
+          let msg = 'Job group names can contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores; ';
+          msg += 'must start and end with an alphanumeric character';
+          tabs[0].checks.groupIds.message = msg;
+        }
+      });
 
       // tab 1 - Analysis Configuration
       if (job.analysis_config.categorization_filters) {

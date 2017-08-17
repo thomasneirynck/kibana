@@ -94,8 +94,6 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
     ml.jobs()
       .then((resp) => {
-        console.log('loadJobs query response:', resp);
-
         // make deep copy of jobs
         angular.copy(resp.jobs, jobs);
 
@@ -882,7 +880,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
         deferred.resolve(resp);
 
       }).catch((err) => {
-        console.log('MlJobsList error stoping datafeed:', err);
+        console.log('MlJobsList error stopping datafeed:', err);
         if (err.statusCode === 500) {
           msgs.error('Could not stop datafeed for ' + jobId);
           msgs.error('Request may have timed out and may still be running in the background.');

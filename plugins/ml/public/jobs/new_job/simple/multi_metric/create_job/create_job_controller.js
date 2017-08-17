@@ -195,7 +195,10 @@ module
     showFieldCharts: false,
     showAdvanced: false,
     validation: {
-      checks: { jobId: { valid: true } },
+      checks: {
+        jobId: { valid: true },
+        groupIds: { valid: true }
+      },
     },
     isCountOrSum: false
   };
@@ -800,6 +803,15 @@ module
       msg += 'must start and end with an alphanumeric character';
       checks.jobId.message = msg;
     }
+
+    $scope.formConfig.jobGroups.forEach(group => {
+      if (isJobIdValid(group) === false) {
+        checks.groupIds.valid = false;
+        let msg = 'Job group names can contain lowercase alphanumeric (a-z and 0-9), hyphens or underscores; ';
+        msg += 'must start and end with an alphanumeric character';
+        checks.groupIds.message = msg;
+      }
+    });
 
     _.each(checks, (item) => {
       if (item.valid === false) {
