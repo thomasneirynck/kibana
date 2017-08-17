@@ -1,6 +1,5 @@
 import Joi from 'joi';
-import { getAllStats } from '../../../../lib/phone_home/get_all_stats';
-import { receivePhoneHome } from '../../../../lib/phone_home/receive_phone_home';
+import { getAllStats, receivePhoneHome } from '../../../../lib/phone_home';
 import { handleError } from '../../../../lib/handle_error';
 
 export function phoneHomeRoutes(server) {

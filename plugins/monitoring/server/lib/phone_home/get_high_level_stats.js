@@ -153,6 +153,7 @@ export function fetchHighLevelStats(server, callCluster, clusterUuids, start, en
     filterPath: [
       'hits.hits._source.cluster_uuid',
       `hits.hits._source.${product}_stats.${product}.version`,
+      `hits.hits._source.${product}_stats.usage`,
       // we don't want metadata
       `hits.hits._source.${product}_stats.cloud.name`,
       `hits.hits._source.${product}_stats.cloud.id`,

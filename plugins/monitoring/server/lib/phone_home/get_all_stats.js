@@ -2,6 +2,7 @@ import { get } from 'lodash';
 import { KIBANA_SYSTEM_ID, LOGSTASH_SYSTEM_ID } from '../../../common/constants';
 import { getClusterUuids } from './get_cluster_uuids';
 import { getElasticsearchStats } from './get_es_stats';
+import { getKibanaStats } from './get_kibana_stats';
 import { getHighLevelStats } from './get_high_level_stats';
 
 /**
@@ -53,7 +54,7 @@ function getAllStatsWithCaller(server, callCluster, start, end) {
 
     return Promise.all([
       getElasticsearchStats(server, callCluster, clusterUuids),
-      getHighLevelStats(server, callCluster, clusterUuids, start, end, KIBANA_SYSTEM_ID),
+      getKibanaStats(server, callCluster, clusterUuids, start, end),
       getHighLevelStats(server, callCluster, clusterUuids, start, end, LOGSTASH_SYSTEM_ID)
     ])
     .then(([esClusters, kibana, logstash]) => handleAllStats(esClusters, { kibana, logstash }));
