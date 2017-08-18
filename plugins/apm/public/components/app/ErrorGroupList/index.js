@@ -27,7 +27,7 @@ class ErrorGroupList extends Component {
     return (
       <div>
         <Breadcrumbs />
-        <PageHeader title={'Errors for ' + appName} />
+        <PageHeader title={`Errors for ${appName}`} />
         <TabNavigation />
         <List appName={appName} list={this.props.errorGroupList} />
       </div>

@@ -13,7 +13,7 @@ import { set } from 'lodash';
 let globalTimefilter;
 
 export function initTimepicker(callback) {
-  uiModules.get('kibana').run(function(uiSettings) {
+  uiModules.get('kibana').run(uiSettings => {
     set(
       uiSettings,
       'defaults.timepicker:timeDefaults.value',

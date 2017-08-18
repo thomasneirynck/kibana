@@ -138,7 +138,9 @@ function DetailView({ errorGroup, urlParams }) {
 
       <div>
         {currentTab === DEFAULT_TAB
-          ? <Stacktrace errorGroup={errorGroup.data} />
+          ? <Stacktrace
+              stacktraces={errorGroup.data.error.error.exception.stacktrace}
+            />
           : <PropertiesTable
               propData={errorGroup.data.error.context[currentTab]}
               propKey={currentTab}
