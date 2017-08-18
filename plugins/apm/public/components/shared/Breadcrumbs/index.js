@@ -17,7 +17,7 @@ const getPaths = pathname => {
   return paths;
 };
 
-const routes = {
+const _routes = {
   '/': 'APM',
   '/:appName/settings': 'Settings',
   '/:appName/errors': 'Errors',
@@ -28,22 +28,27 @@ const routes = {
     legacyDecodeURIComponent(params.transactionName)
 };
 
-function getBreadcrumbs({ match, location }) {
-  const matchedPaths = getPaths(match.path);
-  const urls = getPaths(location.pathname);
+export function getBreadcrumbs({ match, routes }) {
+  const patterns = getPaths(match.path);
+  const urls = getPaths(match.url);
 
-  return matchedPaths.filter(path => routes[path]).map((path, i) => {
-    const url = urls[i];
-    const name = _.isString(routes[path])
-      ? routes[path]
-      : routes[path](match.params);
+  return patterns
+    .map((pattern, i) => ({
+      pattern,
+      url: urls[i]
+    }))
+    .filter(item => routes[item.pattern])
+    .map(({ pattern, url }) => {
+      const label = _.isString(routes[pattern])
+        ? routes[pattern]
+        : routes[pattern](match.params);
 
-    return { name, url };
-  });
+      return { label, url };
+    });
 }
 
-function Breadcrumbs({ match, location }) {
-  const breadcrumbs = getBreadcrumbs({ match, location });
+function Breadcrumbs({ match }) {
+  const breadcrumbs = getBreadcrumbs({ match, routes: _routes });
 
   if (_.isEmpty(breadcrumbs)) {
     return null;
@@ -57,7 +62,7 @@ function Breadcrumbs({ match, location }) {
             {breadcrumbs.map(breadcrumb =>
               <div key={breadcrumb.url} className="kuiLocalBreadcrumb">
                 <RelativeLink path={breadcrumb.url}>
-                  {breadcrumb.name}
+                  {breadcrumb.label}
                 </RelativeLink>
               </div>
             )}
