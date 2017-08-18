@@ -8,22 +8,22 @@ export const TRANSACTION_SUCCESS = 'TRANSACTION_SUCCESS';
 export const TRANSACTION_FAILURE = 'TRANSACTION_FAILURE';
 
 // REDUCER
-const initialState = { data: {} };
-function transaction(state = initialState, action) {
+const INITIAL_STATE = { data: {} };
+function transaction(state = INITIAL_STATE, action) {
   switch (action.type) {
     case TRANSACTION_LOADING:
-      return { ...initialState, status: STATUS.LOADING };
+      return { ...INITIAL_STATE, status: STATUS.LOADING };
 
     case TRANSACTION_SUCCESS: {
       return {
-        data: action.response || initialState.data,
+        data: action.response || INITIAL_STATE.data,
         status: STATUS.SUCCESS
       };
     }
 
     case TRANSACTION_FAILURE:
       return {
-        ...initialState,
+        ...INITIAL_STATE,
         error: action.error,
         status: STATUS.FAILURE
       };
@@ -39,7 +39,9 @@ const transactions = (state = {}, action) => {
     case TRANSACTION_FAILURE:
       return {
         ...state,
-        [action.key]: transaction(state[action.key], action)
+        [action.key]: transaction(state[action.key], action),
+        lastSuccess:
+          action.type === TRANSACTION_SUCCESS ? action.key : state.lastSuccess
       };
     default:
       return state;
@@ -75,9 +77,16 @@ export function loadTransaction({ appName, start, end, transactionId }) {
 }
 
 // SELECTOR
-export function getTransaction(state) {
+export function getTransactionNext(state) {
   const { transactionId: key } = getUrlParams(state);
-  return state.transactions[key] || initialState;
+  return state.transactions[key] || INITIAL_STATE;
+}
+
+export function getTransaction(state) {
+  const next = getTransactionNext(state);
+  const key = state.transactions.lastSuccess;
+  const prev = state.transactions[key] || INITIAL_STATE;
+  return next.status === STATUS.SUCCESS ? next : prev;
 }
 
 export default transactions;

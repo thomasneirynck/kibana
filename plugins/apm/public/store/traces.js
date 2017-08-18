@@ -7,7 +7,7 @@ export const TRACES_LOADING = 'TRACES_LOADING';
 export const TRACES_SUCCESS = 'TRACES_SUCCESS';
 export const TRACES_FAILURE = 'TRACES_FAILURE';
 
-const INITIAL_STATE = { data: [] };
+const INITIAL_STATE = { data: {} };
 function traces(state = INITIAL_STATE, action) {
   switch (action.type) {
     case TRACES_LOADING:
@@ -38,7 +38,9 @@ const tracesCollection = (state = {}, action) => {
     case TRACES_FAILURE:
       return {
         ...state,
-        [action.key]: traces(state[action.key], action)
+        [action.key]: traces(state[action.key], action),
+        lastSuccess:
+          action.type === TRACES_SUCCESS ? action.key : state.lastSuccess
       };
     default:
       return state;
@@ -72,9 +74,16 @@ export function loadTraces({ appName, start, end, transactionId }) {
   };
 }
 
-export function getTraces(state) {
+export function getTracesNext(state) {
   const { transactionId: key } = getUrlParams(state);
   return state.traces[key] || INITIAL_STATE;
+}
+
+export function getTraces(state) {
+  const next = getTracesNext(state);
+  const key = state.traces.lastSuccess;
+  const prev = state.traces[key] || INITIAL_STATE;
+  return next.status === STATUS.SUCCESS ? next : prev;
 }
 
 export default tracesCollection;

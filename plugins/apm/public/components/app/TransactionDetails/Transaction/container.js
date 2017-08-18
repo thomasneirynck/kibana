@@ -3,16 +3,15 @@ import Transaction from './index';
 import { getUrlParams } from '../../../../store/urlParams';
 import {
   loadTransaction,
-  getTransaction
+  getTransaction,
+  getTransactionNext
 } from '../../../../store/transactions';
 
 function mapStateToProps(state = {}) {
-  const transaction = getTransaction(state);
-  const urlParams = getUrlParams(state);
-
   return {
-    urlParams,
-    transaction
+    urlParams: getUrlParams(state),
+    transactionNext: getTransactionNext(state),
+    transaction: getTransaction(state)
   };
 }
 

@@ -1,9 +1,9 @@
-import { get } from 'lodash';
 import {
   TRACE_TRANSACTION_ID,
   TRACE_START,
   TRACE_TYPE
 } from '../../../common/constants';
+
 async function getTraces(req) {
   const { start, end, client, config } = req.pre.setup;
   const { transaction_id: transactionId } = req.query;
@@ -24,9 +24,7 @@ async function getTraces(req) {
                 }
               }
             },
-            {
-              term: { [TRACE_TRANSACTION_ID]: transactionId }
-            }
+            { term: { [TRACE_TRANSACTION_ID]: transactionId } }
           ]
         }
       },
@@ -43,12 +41,11 @@ async function getTraces(req) {
   };
 
   const resp = await client('search', params);
-
   return {
-    trace_types: get(resp, 'aggregations.types.buckets', []).map(bucket => {
+    trace_types: resp.aggregations.types.buckets.map(bucket => {
       return { type: bucket.key, count: bucket.doc_count };
     }),
-    traces: get(resp, 'hits.hits').map((doc, i) => ({
+    traces: resp.hits.hits.map((doc, i) => ({
       id: i,
       ...doc._source.trace,
       context: doc._source.context

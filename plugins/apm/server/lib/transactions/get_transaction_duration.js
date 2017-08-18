@@ -1,21 +1,22 @@
-import { TRANSACTION_ID } from '../../../common/constants';
 import { get } from 'lodash';
-async function getTransaction(req) {
-  const { transactionId } = req.params;
+import {
+  TRANSACTION_ID,
+  TRANSACTION_DURATION
+} from '../../../common/constants';
+
+export async function getTransactionDuration(req) {
+  const { transaction_id: transactionId } = req.query;
   const { start, end, client, config } = req.pre.setup;
 
   const params = {
     index: config.get('xpack.apm.indexPattern'),
     body: {
       size: 1,
+      _source: TRANSACTION_DURATION,
       query: {
         bool: {
           must: [
-            {
-              term: {
-                [TRANSACTION_ID]: transactionId
-              }
-            },
+            { term: { [TRANSACTION_ID]: transactionId } },
             {
               range: {
                 '@timestamp': {
@@ -30,8 +31,10 @@ async function getTransaction(req) {
       }
     }
   };
-  const resp = await client('search', params);
-  return get(resp, 'hits.hits[0]._source', {});
-}
 
-export default getTransaction;
+  const resp = await client('search', params);
+  return get(
+    resp.hits.hits.find(doc => doc._source.transaction),
+    `_source[${TRANSACTION_DURATION}]`
+  );
+}

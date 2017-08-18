@@ -10,12 +10,16 @@ import {
   getLevelOneProps
 } from '../../../shared/PropertiesTable';
 import Traces from './Traces/container';
-import { get } from 'lodash';
-import { TRANSACTION_DURATION } from '../../../../../common/constants';
 
 function loadTransaction(props) {
   const { appName, start, end, transactionId } = props.urlParams;
-  if (appName && start && end && transactionId && !props.transaction.status) {
+  if (
+    appName &&
+    start &&
+    end &&
+    transactionId &&
+    !props.transactionNext.status
+  ) {
     props.loadTransaction({ appName, start, end, transactionId });
   }
 }
@@ -73,9 +77,7 @@ class Transaction extends Component {
 
         <TabContentContainer>
           {currentTab === DEFAULT_TAB
-            ? <Traces
-                totalDuration={get(transaction.data, TRANSACTION_DURATION)}
-              />
+            ? <Traces />
             : <PropertiesTable
                 propData={transaction.data.context[currentTab]}
                 propKey={currentTab}

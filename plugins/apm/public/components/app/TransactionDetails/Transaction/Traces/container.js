@@ -1,11 +1,16 @@
 import { connect } from 'react-redux';
 import Traces from './index';
 import { getUrlParams } from '../../../../../store/urlParams';
-import { loadTraces, getTraces } from '../../../../../store/traces';
+import {
+  loadTraces,
+  getTraces,
+  getTracesNext
+} from '../../../../../store/traces';
 
 function mapStateToProps(state = {}) {
   return {
     urlParams: getUrlParams(state),
+    tracesNext: getTracesNext(state),
     traces: getTraces(state)
   };
 }
