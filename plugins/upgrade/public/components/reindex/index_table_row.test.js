@@ -33,7 +33,7 @@ describe('IndexTableRow', () => {
     expect(wrapper.containsMatchingElement('A UNIQUE INDEX NAME')).toBe(true);
   });
 
-  describe('upgrade/reindex button', () => {
+  describe('reindex button', () => {
     test('is enabled for indices that require an upgrade', () => {
       isNotStarted.mockReturnValue(true);
       const component = (
@@ -47,7 +47,7 @@ describe('IndexTableRow', () => {
       );
 
       expect(shallow(component).containsMatchingElement(
-        <button disabled={false} >{ INDEX_ACTION.LABEL.UPGRADE }</button>
+        <button disabled={false} >{ INDEX_ACTION.LABEL.REINDEX }</button>
       )).toBe(true);
     });
 
@@ -64,7 +64,7 @@ describe('IndexTableRow', () => {
       );
 
       expect(shallow(component).containsMatchingElement(
-        <button disabled={true}>{ INDEX_ACTION.LABEL.UPGRADE }</button>
+        <button disabled={true}>{ INDEX_ACTION.LABEL.REINDEX }</button>
       )).toBe(true);
     });
 
@@ -118,7 +118,7 @@ describe('IndexTableRow', () => {
 
       const wrapper = shallow(component);
       wrapper.findWhere((node) => node.matchesElement(
-        <button>{ INDEX_ACTION.LABEL.UPGRADE }</button>
+        <button>{ INDEX_ACTION.LABEL.REINDEX }</button>
       )).simulate('click');
 
       expect(processIndex).toHaveBeenCalledWith('INDEX');

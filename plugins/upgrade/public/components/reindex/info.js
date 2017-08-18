@@ -4,12 +4,12 @@ export function ReindexInfo({ className }) {
   return (
     <div className={className}>
       <p className="kuiText kuiVerticalRhythm">
-        Automatically reindex and upgrade indices here so that they will continue to work when you upgrade to Elasticsearch 6.
+        Automatically reindex indices here so that they will continue to work when you upgrade to Elasticsearch 6.
       </p>
       <ul className="kuiText kuiVerticalRhythm">
-        <li><strong>Reindex:</strong> Indices created before version 5.0 need to be reindexed.</li>
-        <li><strong>Upgrade:</strong> X-Pack internal indices need to be upgraded to a new index format.</li>
-        <li>All Kibana indices need to be reindexed.
+        <li>Indices created before version 5.0 need to be reindexed.</li>
+        <li>X-Pack internal indices need to be upgraded to a new index format.</li>
+        <li>Kibana indices need to be reindexed, each in separate instances.
           You can reindex each one by running this tool in each instance
           of Kibana. You cannot reindex all Kibana indices from this instance.
         </li>

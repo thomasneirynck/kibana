@@ -31,7 +31,7 @@ export function IndexTableRow({
               disabled={!isNotStarted(index)}
               onClick={() => processIndex(index.name)}
             >
-              { getActionButtonLabel(index.action) }
+              { INDEX_ACTION.LABEL.REINDEX }
             </button>
           </div>
         </td>
@@ -91,8 +91,3 @@ IndexTableRow.defaultProps = {
   processIndex: () => {},
 };
 
-function getActionButtonLabel(action) {
-  return INDEX_ACTION.LABEL[action];
-  // TODO: might want to throw if assistance API
-  // changes and doesn't give back actions we expect.
-}

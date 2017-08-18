@@ -43,6 +43,5 @@ export const INDEX_ACTION = {
   },
   LABEL: {
     REINDEX: 'Reindex',
-    UPGRADE: 'Upgrade',
   },
 };
