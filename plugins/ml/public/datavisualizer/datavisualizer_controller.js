@@ -184,9 +184,12 @@ module
       });
     } else {
       allMetricFields = _.filter(indexPattern.fields, (f) => {
-        return (f.type === KBN_FIELD_TYPES.NUMBER && !_.contains(omitFields, f.displayName) && f.displayName.match(metricFieldRegexp));
+        return (f.type === KBN_FIELD_TYPES.NUMBER &&
+          !_.contains(omitFields, f.displayName) &&
+          f.displayName.match(metricFieldRegexp));
       });
     }
+
     const metricExistsFields = _.filter(allMetricFields, (f) => {
       return aggregatableExistsFields.indexOf(f.displayName) > -1;
     });
@@ -197,25 +200,27 @@ module
       $scope.showAllMetrics = true;
     }
 
+    const metricConfigs = [];
+
+    // TODO: Add a config for 'event rate', identified by no field name.
+    // metricConfigs.push({
+    //   type: DATA_VISUALIZER_FIELD_TYPES.NUMBER
+    // });
+
+    const metricFields = $scope.showAllMetrics ? allMetricFields : metricExistsFields;
+    //metricFields = metricFields.slice(0, Math.min(metricFields.length, 6));
+    _.each(metricFields, (field) => {
+      metricConfigs.push({
+        fieldName: field.displayName,
+        type: DATA_VISUALIZER_FIELD_TYPES.NUMBER,
+        existsInDocs: aggregatableExistsFields.indexOf(field.displayName) > -1
+      });
+    });
+
     // Clear the filter spinner if it's running.
     $scope.metricFilterIcon = 0;
 
-    const metricFields = $scope.showAllMetrics ? allMetricFields : metricExistsFields;
-    if (metricFields.length > 0) {
-      //metricFields = metricFields.slice(0, Math.min(metricFields.length, 6));
-
-      const metricConfigs = [];
-
-      _.each(metricFields, (field) => {
-        metricConfigs.push({
-          fieldName: field.displayName,
-          type: DATA_VISUALIZER_FIELD_TYPES.NUMBER
-        });
-      });
-
-      $scope.metricConfigurations = metricConfigs;
-    }
-
+    $scope.metricConfigurations = metricConfigs;
   }
 
   function loadNonMetricFieldList() {
@@ -225,20 +230,14 @@ module
     // TODO - shall we omit all these fields?
     const omitFields = ['_source', '_type', '_index', '_id', '_version'];
 
-    // Get the list of field types to be displayed, and the list of all fields
-    // that have these type(s), whether they occur in any documents or not.
-    let fieldTypes = [];
     let allNonMetricFields = [];
     if ($scope.filterFieldType === '*') {
-      // TODO - extend this list to geo, geo_point, boolean etc.
-      fieldTypes = [KBN_FIELD_TYPES.STRING, KBN_FIELD_TYPES.IP, KBN_FIELD_TYPES.DATE];
       allNonMetricFields = _.filter(indexPattern.fields, (f) => {
-        return (!_.contains(omitFields, f.displayName) && (_.contains(fieldTypes, f.type)));
+        return (f.type !== KBN_FIELD_TYPES.NUMBER && !_.contains(omitFields, f.displayName));
       });
     } else {
       if ($scope.filterFieldType === DATA_VISUALIZER_FIELD_TYPES.TEXT ||
             $scope.filterFieldType === DATA_VISUALIZER_FIELD_TYPES.KEYWORD)  {
-        fieldTypes = [KBN_FIELD_TYPES.STRING];
         const aggregatableCheck = $scope.filterFieldType === DATA_VISUALIZER_FIELD_TYPES.KEYWORD ? true : false;
         allNonMetricFields = _.filter(indexPattern.fields, (f) => {
           return !_.contains(omitFields, f.displayName) &&
@@ -263,10 +262,14 @@ module
 
     // Obtain the list of populated non-metric fields.
     // First add the aggregatable fields which appear in documents.
+    const nonMetricFields = [];
+    const nonMetricExistsFieldNames = [];
     const aggregatableNotExistsFields = $scope.overallStats.aggregatableNotExistsFields || [];
-    const nonMetricFields = _.filter(allNonMetricFields, (f) => {
-      return (f.aggregatable === true &&
-        aggregatableNotExistsFields.indexOf(f.displayName) === -1);
+    _.each(allNonMetricFields, (f) => {
+      if (f.aggregatable === true && aggregatableNotExistsFields.indexOf(f.displayName) === -1) {
+        nonMetricFields.push(f);
+        nonMetricExistsFieldNames.push(f.displayName);
+      }
     });
 
     // Secondly, add in non-aggregatable string fields which appear in documents.
@@ -277,11 +280,12 @@ module
     if (nonAggFields.length > 0) {
       let numWaiting = nonAggFields.length;
       _.each(nonAggFields, (field) => {
-        mlDataVisualizerSearchService.nonAggregatableFieldExists(indexPattern.title, field.displayName,
-          indexPattern.timeFieldName, $scope.earliest, $scope.latest)
+        mlDataVisualizerSearchService.nonAggregatableFieldExists(indexPattern, field.displayName,
+          $scope.earliest, $scope.latest)
         .then((resp) => {
           if (resp.exists) {
             nonMetricFields.push(field);
+            nonMetricExistsFieldNames.push(field.displayName);
           }
           numWaiting--;
         }).catch((resp) => {
@@ -289,11 +293,11 @@ module
           numWaiting--;
         }).then(() => {
           if (numWaiting === 0) {
-            $scope.populatedNonMetricFieldCount = nonMetricFields.length;
+            $scope.populatedNonMetricFieldCount = nonMetricExistsFieldNames.length;
             if ($scope.showAllFields) {
-              createNonMetricFieldConfigurations(allNonMetricFields);
+              createNonMetricFieldConfigurations(allNonMetricFields, nonMetricExistsFieldNames);
             } else {
-              createNonMetricFieldConfigurations(nonMetricFields);
+              createNonMetricFieldConfigurations(nonMetricFields, nonMetricExistsFieldNames);
             }
           }
         });
@@ -304,22 +308,23 @@ module
         $scope.showAllFields = true;
       }
       if ($scope.showAllFields) {
-        createNonMetricFieldConfigurations(allNonMetricFields);
+        createNonMetricFieldConfigurations(allNonMetricFields, nonMetricExistsFieldNames);
       } else {
-        createNonMetricFieldConfigurations(nonMetricFields);
+        createNonMetricFieldConfigurations(nonMetricFields, nonMetricExistsFieldNames);
       }
     }
 
   }
 
-  function createNonMetricFieldConfigurations(nonMetricFields) {
+  function createNonMetricFieldConfigurations(nonMetricFields, nonMetricExistsFieldNames) {
     const fieldConfigs = [];
 
     _.each(nonMetricFields, (field) => {
       const config = {
         fieldName: field.displayName,
         aggregatable: field.aggregatable,
-        scripted: field.scripted
+        scripted: field.scripted,
+        existsInDocs: nonMetricExistsFieldNames.indexOf(field.displayName) > -1
       };
 
       // Map the field type from the Kibana index pattern to the field type
@@ -334,8 +339,17 @@ module
         case KBN_FIELD_TYPES.STRING:
           config.type = field.aggregatable ? DATA_VISUALIZER_FIELD_TYPES.KEYWORD : DATA_VISUALIZER_FIELD_TYPES.TEXT;
           break;
+        case KBN_FIELD_TYPES.BOOLEAN:
+          config.type = DATA_VISUALIZER_FIELD_TYPES.BOOLEAN;
+          break;
+        case KBN_FIELD_TYPES.GEO_POINT:
+          config.type = DATA_VISUALIZER_FIELD_TYPES.GEO_POINT;
+          break;
         default:
+          // Add a flag to indicate that this is one of the 'other' Kibana
+          // field types that do not yet have a specific card type.
           config.type = field.type;
+          config.isUnsupportedType = true;
           break;
       }
 
@@ -345,7 +359,7 @@ module
     // Clear the filter spinner if it's running.
     $scope.fieldFilterIcon = 0;
 
-    $scope.fieldConfigurations = fieldConfigs;
+    $scope.fieldConfigurations = _.sortBy(fieldConfigs, 'fieldName');
   }
 
 

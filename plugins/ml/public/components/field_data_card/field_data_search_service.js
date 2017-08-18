@@ -22,19 +22,20 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlFieldDataSearchService', function ($q, es) {
 
-  this.getFieldStats = function (index, field, fieldType, timeFieldName, earliestMs, latestMs) {
+  this.getAggregatableFieldStats = function (index, field, fieldType, timeFieldName, earliestMs, latestMs) {
     switch (fieldType) {
       case DATA_VISUALIZER_FIELD_TYPES.NUMBER:
         return this.getNumericFieldStats(index, field, timeFieldName, earliestMs, latestMs);
+      case DATA_VISUALIZER_FIELD_TYPES.DATE:
+        return this.getDateFieldStats(index, field, timeFieldName, earliestMs, latestMs);
+      case DATA_VISUALIZER_FIELD_TYPES.BOOLEAN:
+        return this.getBooleanFieldStats(index, field, timeFieldName, earliestMs, latestMs);
       case DATA_VISUALIZER_FIELD_TYPES.KEYWORD:
       case DATA_VISUALIZER_FIELD_TYPES.IP:
         return this.getStringFieldStats(index, field, timeFieldName, earliestMs, latestMs);
-      case DATA_VISUALIZER_FIELD_TYPES.DATE:
-        return this.getDateFieldStats(index, field, timeFieldName, earliestMs, latestMs);
       default:
-        return $q.defer().promise();
+        return this.getDefaultAggregatableFieldStats(index, field, timeFieldName, earliestMs, latestMs);
     }
-
   };
 
   this.getNumericFieldStats = function (index, field, timeFieldName, earliestMs, latestMs) {
@@ -235,6 +236,153 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     return deferred.promise;
   };
 
+  this.getBooleanFieldStats = function (index, field, timeFieldName, earliestMs, latestMs) {
+    const deferred = $q.defer();
+    const obj = {
+      success: true,
+      stats: { 'trueCount': 0, 'falseCount': 0 }
+    };
+
+    // Build the criteria to use in the bool filter part of the request.
+    // Add criteria for the time range plus any additional supplied query.
+    const filterCriteria = [];
+
+    const timeRangeCriteria = { 'range':{} };
+    timeRangeCriteria.range[timeFieldName] = {
+      'gte': earliestMs,
+      'lte': latestMs,
+      'format': 'epoch_millis'
+    };
+    filterCriteria.push(timeRangeCriteria);
+
+    const aggs = {
+      'value_count': {
+        'value_count': { 'field':field }
+      },
+      'values': {
+        'terms': {
+          'field': field,
+          'size': 10,
+          'order': {
+            '_count': 'desc'
+          }
+        }
+      }
+    };
+
+    es.search({
+      index: index,
+      size: 0,
+      body: {
+        'query': {
+          'bool': {
+            'filter': filterCriteria
+          }
+        },
+        'aggs' : aggs
+      }
+    })
+    .then((resp) => {
+      const aggregations = resp.aggregations;
+      obj.stats.totalCount = _.get(resp, ['hits', 'total'], 0);
+      obj.stats.count = _.get(aggregations, ['value_count', 'value'], 0);
+      const valueBuckets = _.get(aggregations, ['values', 'buckets'],[]);
+      _.each(valueBuckets, (bucket) => {
+        obj.stats[`${bucket.key_as_string}Count`] = bucket.doc_count;
+      });
+
+      deferred.resolve(obj);
+    })
+    .catch((resp) => {
+      deferred.reject(resp);
+    });
+
+    return deferred.promise;
+  };
+
+  this.getDefaultAggregatableFieldStats = function (index, field, timeFieldName, earliestMs, latestMs) {
+    // Obtains the 'default' stats for an aggregatable field which is not
+    // one of the types covered in specific functions.
+    const deferred = $q.defer();
+    const obj = {
+      success: true,
+      stats: {},
+      examples: []
+    };
+
+    // Build the criteria to use in the bool filter part of the request.
+    // Add criteria for the time range plus any additional supplied query.
+    const filterCriteria = [];
+
+    const timeRangeCriteria = { 'range':{} };
+    timeRangeCriteria.range[timeFieldName] = {
+      'gte': earliestMs,
+      'lte': latestMs,
+      'format': 'epoch_millis'
+    };
+    filterCriteria.push(timeRangeCriteria);
+
+    // Use an exists filter to return examples of the field.
+    filterCriteria.push({
+      'exists' : { 'field' : field }
+    });
+
+    const aggs = {
+      'value_count': {
+        'value_count': { 'field':field }
+      },
+      'cardinality': {
+        'cardinality': { 'field':field }
+      }
+    };
+
+    // Request 50 docs so that we can return up to 5 examples of the field
+    // as well as some basic statistics.
+    es.search({
+      index: index,
+      size: 50,
+      body: {
+        '_source': field,
+        'query': {
+          'bool': {
+            'filter': filterCriteria
+          }
+        },
+        'aggs' : aggs
+      }
+    })
+    .then((resp) => {
+      const aggregations = resp.aggregations;
+      obj.stats.totalCount = _.get(resp, ['hits', 'total'], 0);
+      obj.stats.count = _.get(aggregations, ['value_count', 'value'], 0);
+      obj.stats.cardinality = _.get(aggregations, ['cardinality', 'value'], 0);
+
+      if (resp.hits.total !== 0) {
+        const hits = resp.hits.hits;
+        for (let i = 0; i < hits.length; i++) {
+          // Look in the _source for the field value.
+          // If the field is not in the _source (as will happen if the
+          // field is populated using copy_to in the index mapping),
+          // there will be no example to add.
+          const example = _.get(hits[i]._source, field);
+          if (example !== undefined && obj.examples.indexOf(example) === -1) {
+            obj.examples.push(example);
+            if (obj.examples.length === 10) {
+              break;
+            }
+          }
+        }
+      }
+
+      deferred.resolve(obj);
+    })
+    .catch((resp) => {
+      deferred.reject(resp);
+    });
+
+    return deferred.promise;
+  };
+
   this.getMetricDistributionData = function (index, metricFieldName,
     timeFieldName, earliestMs, latestMs) {
     const deferred = $q.defer();
@@ -293,7 +441,6 @@ module.service('mlFieldDataSearchService', function ($q, es) {
       }
     })
     .then((resp) => {
-      console.log('getMetricDistributionData resp:', resp);
       if (resp.hits.total > 0) {
         let lowerBound = _.get(resp, ['aggregations', 'min', 'value'], 0);
         const allPercentiles = _.get(resp, ['aggregations', 'percentiles', 'values'], []);
@@ -407,6 +554,7 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     };
     filterCriteria.push(timeRangeCriteria);
 
+    // Use an exists filter to return examples of the field.
     filterCriteria.push({
       'exists' : { 'field' : field }
     });
@@ -427,8 +575,13 @@ module.service('mlFieldDataSearchService', function ($q, es) {
       if (resp.hits.total !== 0) {
         const hits = resp.hits.hits;
         for (let i = 0; i < hits.length; i++) {
-          const example = hits[i]._source[field];
-          if (obj.examples.indexOf(example) === -1) {
+          // Look in the _source for the field value.
+          // If the field is not in the _source (as will happen if the
+          // field is populated using copy_to in the index mapping),
+          // there will be no example to add.
+          // Use lodash _.get() to support field names containing dots.
+          const example = _.get(hits[i]._source, field);
+          if (example !== undefined && obj.examples.indexOf(example) === -1) {
             obj.examples.push(example);
             if (obj.examples.length === maxNumberExamples) {
               break;

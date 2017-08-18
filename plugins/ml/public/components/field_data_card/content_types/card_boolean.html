@@ -1,0 +1,60 @@
+<div class="title-bar boolean">
+  <span aria-label="Boolean field" class="field-type-icon kuiIcon fa-adjust"></span>
+  <div class="field-name">
+    {{ cardConfig.fieldName }}
+  </div>
+</div>
+
+<div ng-if="cardConfig.existsInDocs === false" class="card-contents">
+  <div class="not-exist-message">
+    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+    This field does not appear in any documents for the selected time range
+  </div>
+</div>
+
+<div ng-if="cardConfig.existsInDocs === true" class="card-contents">
+  <div class="stats">
+    <div class="stat"><i class="fa fa-files-o" aria-hidden="true"></i>
+    {{ stats.count }} <ng-pluralize count="stats.count" when="{'1':'document', 'other':'documents'}">documents</ng-pluralize>
+      ({{ 100 * stats.count / stats.totalCount | number:1 }}%)
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">values</div>
+      <div class="top-value">
+        <div class="field-label"
+          tooltip-html-unsafe="true"
+          tooltip-append-to-body="true"
+          tooltip-placement="right">
+          true
+        </div>
+        <div class="top-value-bar-holder">
+          <div class="top-value-bar boolean"
+            ng-attr-style="width: {{stats.count > 0 ? 100 * stats.trueCount/stats.count : 0}}%;"
+            tooltip-html-unsafe="{{ stats.count > 0 ? 100 * stats.trueCount/stats.count : 0 | number:1 }}%"
+            tooltip-placement="right"
+            tooltip-append-to-body="true">
+          </div>
+        </div>
+        <div class="count-label">{{stats.trueCount}}</div>
+      </div>
+      <div class="top-value">
+        <div class="field-label"
+          tooltip-html-unsafe="true"
+          tooltip-append-to-body="true"
+          tooltip-placement="right">
+          false
+        </div>
+        <div class="top-value-bar-holder">
+          <div class="top-value-bar boolean"
+            ng-attr-style="width: {{stats.count > 0 ? 100 * stats.falseCount/stats.count : 0}}%;"
+            tooltip-html-unsafe="{{ stats.count > 0 ? 100 * stats.falseCount/stats.count : 0 | number:1 }}%"
+            tooltip-placement="right"
+            tooltip-append-to-body="true">
+          </div>
+        </div>
+        <div class="count-label">{{stats.falseCount}}</div>
+      </div>
+  </div>
+</div>

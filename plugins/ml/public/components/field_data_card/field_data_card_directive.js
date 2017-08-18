@@ -19,6 +19,7 @@
 
 import _ from 'lodash';
 import $ from 'jquery';
+import chrome from 'ui/chrome';
 import 'ui/filters/moment';
 
 import { DATA_VISUALIZER_FIELD_TYPES } from 'plugins/ml/constants/field_types';
@@ -77,6 +78,34 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
       }
     };
 
+    scope.getCardUrl = function () {
+      const urlBasePath = chrome.getBasePath();
+      const baseCardPath = `${urlBasePath}/plugins/ml/components/field_data_card/content_types`;
+      const cardType = scope.cardConfig.type;
+      switch (cardType) {
+        case DATA_VISUALIZER_FIELD_TYPES.BOOLEAN:
+          return `${baseCardPath}/card_boolean.html`;
+        case DATA_VISUALIZER_FIELD_TYPES.DATE:
+          return `${baseCardPath}/card_date.html`;
+        case DATA_VISUALIZER_FIELD_TYPES.GEO_POINT:
+          return `${baseCardPath}/card_geo_point.html`;
+        case DATA_VISUALIZER_FIELD_TYPES.IP:
+          return `${baseCardPath}/card_ip.html`;
+        case DATA_VISUALIZER_FIELD_TYPES.KEYWORD:
+          return `${baseCardPath}/card_keyword.html`;
+        case DATA_VISUALIZER_FIELD_TYPES.NUMBER:
+          if (scope.cardConfig.fieldName) {
+            return `${baseCardPath}/card_number.html`;
+          } else {
+            return `${baseCardPath}/card_event_rate.html`;
+          }
+        case DATA_VISUALIZER_FIELD_TYPES.TEXT:
+          return `${baseCardPath}/card_text.html`;
+        default:
+          return `${baseCardPath}/card_other.html`;
+      }
+    };
+
     element.on('$destroy', function () {
       scope.$destroy();
     });
@@ -84,8 +113,8 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
     function loadStats() {
       const config = scope.cardConfig;
       switch (config.type) {
-        case 'number':
-          mlFieldDataSearchService.getFieldStats(
+        case DATA_VISUALIZER_FIELD_TYPES.NUMBER:
+          mlFieldDataSearchService.getAggregatableFieldStats(
             scope.indexPattern.title,
             config.fieldName,
             config.type,
@@ -103,10 +132,11 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
             }
           });
           break;
-        case 'keyword':
-        case 'ip':
-        case 'date':
-          mlFieldDataSearchService.getFieldStats(
+        case DATA_VISUALIZER_FIELD_TYPES.BOOLEAN:
+        case DATA_VISUALIZER_FIELD_TYPES.DATE:
+        case DATA_VISUALIZER_FIELD_TYPES.IP:
+        case DATA_VISUALIZER_FIELD_TYPES.KEYWORD:
+          mlFieldDataSearchService.getAggregatableFieldStats(
             scope.indexPattern.title,
             config.fieldName,
             config.type,
@@ -117,8 +147,7 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
             scope.stats = resp.stats;
           });
           break;
-        case 'text':
-        default:
+        case DATA_VISUALIZER_FIELD_TYPES.TEXT:
           mlFieldDataSearchService.getFieldExamples(
             scope.indexPattern.title,
             config.fieldName,
@@ -127,13 +156,42 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
             scope.earliest,
             scope.latest)
           .then((resp) => {
-            scope.stats.examples = resp.examples;
+            scope.examples = resp.examples;
           });
+          break;
+        default:
+          if (config.aggregatable === true) {
+            mlFieldDataSearchService.getAggregatableFieldStats(
+              scope.indexPattern.title,
+              config.fieldName,
+              config.type,
+              scope.indexPattern.timeFieldName,
+              scope.earliest,
+              scope.latest)
+            .then((resp) => {
+              scope.stats = resp.stats;
+              scope.examples = resp.examples;
+            });
+          } else {
+            mlFieldDataSearchService.getFieldExamples(
+              scope.indexPattern.title,
+              config.fieldName,
+              10,
+              scope.indexPattern.timeFieldName,
+              scope.earliest,
+              scope.latest)
+            .then((resp) => {
+              scope.examples = resp.examples;
+            });
+          }
           break;
       }
     }
 
-    loadStats();
+    if (scope.cardConfig.existsInDocs) {
+      loadStats();
+    }
+
   }
 
   return {

@@ -22,6 +22,16 @@ module.service('mlDataVisualizerSearchService', function ($q, es) {
 
   this.getOverallStats = function (indexPattern, earliestMs, latestMs) {
     const deferred = $q.defer();
+
+    const boolCriteria = [];
+    const timeRangeCriteria = { 'range':{} };
+    timeRangeCriteria.range[indexPattern.timeFieldName] = {
+      'gte': earliestMs,
+      'lte': latestMs,
+      'format': 'epoch_millis'
+    };
+    boolCriteria.push(timeRangeCriteria);
+
     const obj = {
       success: true,
       stats: {
@@ -46,17 +56,7 @@ module.service('mlDataVisualizerSearchService', function ($q, es) {
       body: {
         'query': {
           'bool': {
-            'filter': [
-              {
-                'range': {
-                  '@timestamp': {
-                    'gte': earliestMs,
-                    'lte': latestMs,
-                    'format': 'epoch_millis'
-                  }
-                }
-              }
-            ]
+            'filter': boolCriteria
           }
         },
         'aggs' : aggs
@@ -64,7 +64,6 @@ module.service('mlDataVisualizerSearchService', function ($q, es) {
     })
     .then((resp) => {
       obj.stats.totalCount = resp.hits.total;
-
       const aggregations = resp.aggregations;
       _.each(indexPattern.fields, (field) => {
         const fieldName = field.displayName;
@@ -89,13 +88,13 @@ module.service('mlDataVisualizerSearchService', function ($q, es) {
     return deferred.promise;
   };
 
-  this.nonAggregatableFieldExists = function (index, field, timeFieldName, earliestMs, latestMs) {
+  this.nonAggregatableFieldExists = function (indexPattern, field, earliestMs, latestMs) {
     const deferred = $q.defer();
     const obj = { success: true, exists: false };
 
     const boolCriteria = [];
     const timeRangeCriteria = { 'range':{} };
-    timeRangeCriteria.range[timeFieldName] = {
+    timeRangeCriteria.range[indexPattern.timeFieldName] = {
       'gte': earliestMs,
       'lte': latestMs,
       'format': 'epoch_millis'
@@ -107,7 +106,7 @@ module.service('mlDataVisualizerSearchService', function ($q, es) {
     });
 
     es.search({
-      index: index,
+      index: indexPattern.title,
       size: 0,
       body: {
         'query': {

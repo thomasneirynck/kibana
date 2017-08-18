@@ -1,0 +1,41 @@
+<div class="title-bar text">
+  <span aria-label="String field" class="field-type-icon kuiIcon fa-file-text-o"></span>
+  <div class="field-name">
+    {{ cardConfig.fieldName }}
+  </div>
+</div>
+
+<div ng-if="cardConfig.existsInDocs === false" class="card-contents">
+  <div class="not-exist-message">
+    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+    This field does not appear in any documents for the selected time range
+  </div>
+</div>
+
+<div ng-if="cardConfig.existsInDocs === true" class="card-contents">
+  <div ng-if="examples.length > 0" class="stats">
+    <div class="stat"><ng-pluralize count="examples.length" when="{'1':'value', 'other':'examples'}">examples</ng-pluralize></div>
+    <div ng-repeat="example in examples">
+      {{ example }}
+    </div>
+  </div>
+<div ng-if="examples.length === 0" class="not-exist-message">
+  <div>
+    <p>
+      <i class="fa fa-exclamation-triangle" aria-hidden="true"></i> No examples were obtained for this field.
+    </p>
+    <p>
+      This field was not present in the <span class="text-code">_source</span>
+      field of documents queried.
+    </p>
+    <p>
+      It may be populated, for example, using a
+      <span class="text-code">copy_to</span> parameter in the document mapping,
+      or be pruned from the <span class="text-code">_source</span> field afer
+      indexing through the use of <span class="text-code">includes</span> and
+      <span class="text-code">excludes</span> parameters.
+    </p>
+  </div>
+</div>
+
+</div>

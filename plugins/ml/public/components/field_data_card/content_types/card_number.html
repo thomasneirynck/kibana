@@ -1,0 +1,69 @@
+<div class="title-bar {{ cardConfig.type }}">
+  <div aria-label="Metric field" class="field-type-icon">
+    <strong aria-hidden="true">#</strong>
+  </div>
+  <div class="field-name">
+    {{ cardConfig.fieldName }}
+  </div>
+</div>
+
+<div ng-if="cardConfig.existsInDocs === false" class="card-contents">
+  <div class="not-exist-message">
+    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+    This field does not appear in any documents for the selected time range
+  </div>
+</div>
+
+<div ng-if="cardConfig.existsInDocs === true" class="card-contents">
+  <div class="stats">
+    <div class="stat"><i class="fa fa-files-o" aria-hidden="true"></i>
+      {{ stats.count }} <ng-pluralize count="stats.count" when="{'1':'document', 'other':'documents'}">documents</ng-pluralize>
+      ({{ 100 * stats.count / stats.totalCount | number:1 }}%)
+    </div>
+    <div class="stat"><i class="fa fa-cubes" aria-hidden="true"></i> {{ stats.cardinality }} distinct
+      <ng-pluralize count="stats.cardinality" when="{'1':'value', 'other':'values'}">values</ng-pluralize>
+    </div>
+    <div>
+      <div class="stat min heading">min</div>
+      <div class="stat median heading">median</div>
+      <div class="stat max heading">max</div>
+    </div>
+    <div>
+      <div class="stat min">{{ stats.min | number }}</div>
+      <div class="stat median">{{ stats.median | number }}</div>
+      <div class="stat max">{{ stats.max | number }}</div>
+    </div>
+  </div>
+
+  <div class="details-select">
+    <select class="kuiSelect" ng-model="detailsMode" ng-change="detailsModeChanged(detailsMode)">
+      <option value="distribution">distribution of values</option>
+      <option value="top">top values</option>
+    </select>
+  </div>
+  <div class="details-container" ng-switch on="detailsMode">
+    <ml-metric-distribution-chart ng-switch-when="distribution" width="325" height="220"
+      chart-config="cardConfig"
+      index-pattern="indexPattern"
+      earliest="earliest"
+      latest="latest"
+      >
+    </ml-metric-distribution-chart>
+    <div ng-switch-default ng-repeat="value in stats.topValues" class="top-value">
+      <div class="field-label"
+        tooltip-html-unsafe="{{value.key}}"
+        tooltip-placement="right"
+        tooltip-append-to-body="true">
+        {{value.key | number}}
+      </div>
+      <div class="top-value-bar-holder">
+        <div class="top-value-bar {{cardConfig.type}}" ng-attr-style="width: {{100 * value.doc_count/stats.count}}%;"
+          tooltip-html-unsafe="{{ 100 * value.doc_count/stats.count | number:1 }}%"
+          tooltip-append-to-body="true"
+          tooltip-placement="right">
+        </div>
+      </div>
+      <div class="count-label">{{value.doc_count}}</div>
+    </div>
+  </div>
+</div>

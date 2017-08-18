@@ -98,7 +98,9 @@
           <div class="field-filter-controls">
             <select class="kuiSelect type-input" ng-model="filterFieldType" ng-change="filterFieldTypeChanged(filterFieldType)">
               <option value="*">All field types</option>
+              <option value="{{DATA_VISUALIZER_FIELD_TYPES.BOOLEAN}}">boolean types</option>
               <option value="{{DATA_VISUALIZER_FIELD_TYPES.DATE}}">date types</option>
+              <option value="{{DATA_VISUALIZER_FIELD_TYPES.GEO_POINT}}">geo_point types</option>
               <option value="{{DATA_VISUALIZER_FIELD_TYPES.IP}}">ip types</option>
               <option value="{{DATA_VISUALIZER_FIELD_TYPES.KEYWORD}}">keyword types</option>
               <option value="{{DATA_VISUALIZER_FIELD_TYPES.TEXT}}">text types</option>

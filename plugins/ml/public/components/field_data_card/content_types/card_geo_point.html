@@ -1,0 +1,29 @@
+<div class="title-bar geo-point">
+  <span aria-label="Geo-point field" class="field-type-icon kuiIcon fa-globe"></span>
+  <div class="field-name">{{ cardConfig.fieldName }}</div>
+</div>
+
+<div ng-if="cardConfig.existsInDocs === false" class="card-contents">
+  <div class="not-exist-message">
+    <i class="fa fa-exclamation-triangle" aria-hidden="true"></i>
+    This field does not appear in any documents for the selected time range
+  </div>
+</div>
+
+<div ng-if="cardConfig.existsInDocs === true" class="card-contents">
+  <div class="stats">
+    <div ng-if="cardConfig.aggregatable === true" class="stat"><i class="fa fa-files-o" aria-hidden="true"></i>
+      {{ stats.count }} <ng-pluralize count="stats.count" when="{'1':'document', 'other':'documents'}">documents</ng-pluralize>
+      ({{ 100 * stats.count / stats.totalCount | number:1 }}%)
+    </div>
+    <div ng-if="cardConfig.aggregatable === true" class="stat"><i class="fa fa-cubes" aria-hidden="true"></i> {{ stats.cardinality }} distinct
+      <ng-pluralize count="stats.cardinality" when="{'1':'value', 'other':'values'}">values</ng-pluralize>
+    </div>
+  </div>
+  <div ng-if="examples.length > 0" class="stats">
+    <div class="stat"><ng-pluralize count="examples.length" when="{'1':'value', 'other':'examples'}">examples</ng-pluralize></div>
+    <div ng-repeat="example in examples">
+      {{ example }}
+    </div>
+  </div>
+</div>

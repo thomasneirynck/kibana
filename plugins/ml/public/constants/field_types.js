@@ -56,8 +56,9 @@ export const KBN_FIELD_TYPES = {
 export const DATA_VISUALIZER_FIELD_TYPES = {
   BOOLEAN: 'boolean',
   DATE: 'date',
+  GEO_POINT: 'geo_point',
   IP: 'ip',
   KEYWORD: 'keyword',
   NUMBER: 'number',
-  TEXT: 'text',
+  TEXT: 'text'
 };
