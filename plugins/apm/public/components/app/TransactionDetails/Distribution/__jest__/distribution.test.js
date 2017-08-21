@@ -1,4 +1,4 @@
-import { getFormattedBuckets } from '../index';
+import { getFormattedBuckets } from '../view';
 
 describe('Distribution', () => {
   it('getFormattedBuckets', () => {

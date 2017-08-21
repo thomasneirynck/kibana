@@ -1,66 +1,16 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import { unit, units, px, fontSizes, colors } from '../../../style/variables';
-import { RelativeLink } from '../../../utils/url';
-import Button from '../../shared/Button';
-import Breadcrumbs from '../../shared/Breadcrumbs/container';
-import withErrorHandler from '../../shared/withErrorHandler';
+import { connect } from 'react-redux';
+import AppList from './view';
+import { loadAppList, getAppList } from '../../../store/appLists';
+import { getUrlParams } from '../../../store/urlParams';
 
-function fetchData(props) {
-  const { start, end } = props.urlParams;
-  if (start && end && !props.appList.status) {
-    props.loadAppList({ start, end });
-  }
+function mapStateToProps(state = {}) {
+  return {
+    appList: getAppList(state),
+    urlParams: getUrlParams(state)
+  };
 }
 
-const Header = styled.h1`
-  margin: ${px(units.plus)} 0 ${px(units.plus)} 0;
-  font-size: ${fontSizes.xxlarge};
-`;
-
-const AppsContainer = styled.div`margin: ${px(unit)} 0 0 0;`;
-const AppContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  border: 1px solid ${colors.elementBorderDark};
-  border-radius: ${units.quarter}px;
-  font-size: ${px(unit)};
-  padding: ${px(unit)} ${px(units.plus)};
-  margin: 0 0 ${px(unit)} 0;
-`;
-
-const AppLink = styled(RelativeLink)`
-  font-size: ${fontSizes.xlarge};
-  line-height: ${px(units.unit * 2.5)};
-`;
-
-class AppList extends Component {
-  componentDidMount() {
-    fetchData(this.props);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    fetchData(nextProps);
-  }
-
-  render() {
-    return (
-      <div>
-        <Breadcrumbs />
-        <Header>Apps</Header>
-        <AppsContainer>
-          {this.props.appList.data.map(app =>
-            <AppContainer key={app.appName}>
-              <AppLink path={`${app.appName}/transactions`}>
-                {app.appName}
-              </AppLink>
-              <Button path={`${app.appName}/settings`} label="Settings" />
-            </AppContainer>
-          )}
-        </AppsContainer>
-      </div>
-    );
-  }
-}
-
-export default withErrorHandler(AppList, ['appList']);
+const mapDispatchToProps = {
+  loadAppList
+};
+export default connect(mapStateToProps, mapDispatchToProps)(AppList);

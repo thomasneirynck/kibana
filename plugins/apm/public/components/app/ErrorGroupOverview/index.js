@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import ErrorGroupList from './index';
+import ErrorGroupOverview from './view';
 import { getUrlParams } from '../../../store/urlParams';
 import {
   getErrorGroupList,
@@ -17,4 +17,4 @@ const mapDispatchToProps = {
   loadErrorGroupList
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ErrorGroupList);
+export default connect(mapStateToProps, mapDispatchToProps)(ErrorGroupOverview);

@@ -1,4 +1,4 @@
-import { getBreadcrumbs } from '../index';
+import { getBreadcrumbs } from '../view';
 
 describe('Breadcrumbs', () => {
   it('getBreadcrumbs', () => {

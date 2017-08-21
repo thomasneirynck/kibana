@@ -40,7 +40,7 @@ const OccurrencesCell = TableCell.extend`
   font-size: ${fontSizes.large};
 `;
 
-function ErrorGroupListItem({ error, appName }) {
+function ListItem({ error, appName }) {
   const { groupingId, culprit, message, occurrenceCount } = error;
   const count = numeral(occurrenceCount).format('0.[0]a');
 
@@ -63,4 +63,4 @@ function ErrorGroupListItem({ error, appName }) {
   );
 }
 
-export default ErrorGroupListItem;
+export default ListItem;

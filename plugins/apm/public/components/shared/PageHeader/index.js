@@ -1,29 +1,15 @@
-import React from 'react';
-import styled from 'styled-components';
-import { units, px, fontSizes } from '../../../style/variables';
-import Button from '../Button';
+import { connect } from 'react-redux';
+import PageHeader from './view';
 
-const Container = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin: ${px(units.plus)} 0 ${px(units.plus)} 0;
-`;
+import { getUrlParams } from '../../../store/urlParams';
 
-const Title = styled.h1`
-  margin: 0;
-  font-size: ${fontSizes.xxlarge};
-`;
+function mapStateToProps(state = {}) {
+  const { appName } = getUrlParams(state);
 
-function PageHeader({ appName, title, showSettingsButton }) {
-  return (
-    <Container>
-      <Title>
-        {title}
-      </Title>
-      {showSettingsButton !== false &&
-        <Button path={`${appName}/settings`} label="Settings" />}
-    </Container>
-  );
+  return {
+    appName
+  };
 }
 
-export default PageHeader;
+const mapDispatchToProps = {};
+export default connect(mapStateToProps, mapDispatchToProps)(PageHeader);

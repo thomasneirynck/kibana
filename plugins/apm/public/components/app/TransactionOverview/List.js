@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Table, TableHead, TableLoader } from '../../shared/Table';
-import TransactionListItem from './TransactionListItem';
+import ListItem from './ListItem';
 import { colors, borderRadius } from '../../../style/variables';
 import { get } from 'lodash';
 import { TRANSACTION_ID } from '../../../../common/constants';
@@ -35,7 +35,7 @@ function TransactionList({ appName, list, type }) {
 
           {transactions.map(transaction => {
             return (
-              <TransactionListItem
+              <ListItem
                 key={get({ transaction }, TRANSACTION_ID)}
                 appName={appName}
                 type={type}

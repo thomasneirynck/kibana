@@ -1,20 +1,14 @@
-import React from 'react';
-import PageHeader from '../../shared/PageHeader/container';
-import WiremockContainer from '../../shared/WiremockContainer';
-import Transaction from './Transaction/container';
-import Breadcrumbs from '../../shared/Breadcrumbs/container';
-import Distribution from './Distribution/container';
+import { connect } from 'react-redux';
+import TransactionsDetails from './view';
+import { getUrlParams } from '../../../store/urlParams';
 
-function TransactionDetails({ urlParams }) {
-  return (
-    <div>
-      <Breadcrumbs />
-      <PageHeader title={urlParams.transactionName} />
-      <WiremockContainer />
-      <Distribution />
-      <Transaction />
-    </div>
-  );
+function mapStateToProps(state = {}) {
+  return {
+    urlParams: getUrlParams(state)
+  };
 }
 
-export default TransactionDetails;
+const mapDispatchToProps = {};
+export default connect(mapStateToProps, mapDispatchToProps)(
+  TransactionsDetails
+);

@@ -1,32 +1,15 @@
-import React, { Component } from 'react';
-import styled from 'styled-components';
-import { get } from 'lodash';
-import { units, px } from '../../../style/variables';
+import { connect } from 'react-redux';
+import Main from './view';
+import { loadLicense } from '../../../store/license';
 
-const MainContainer = styled.div`padding: ${px(units.plus)};`;
-function fetchLicense(props) {
-  if (!props.license.status) {
-    props.loadLicense();
-  }
+function mapStateToProps(state = {}) {
+  return {
+    license: state.license,
+    location: state.location // Must be passed for the component and router to update correctly. See: https://reacttraining.com/react-router/web/guides/dealing-with-update-blocking
+  };
 }
 
-class Main extends Component {
-  componentDidMount() {
-    fetchLicense(this.props);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    fetchLicense(nextProps);
-  }
-
-  render() {
-    const isActive = get(this.props, 'license.data.isActive');
-    return (
-      <MainContainer>
-        {isActive ? this.props.children : 'No active license was found'}
-      </MainContainer>
-    );
-  }
-}
-
-export default Main;
+const mapDispatchToProps = {
+  loadLicense
+};
+export default connect(mapStateToProps, mapDispatchToProps)(Main);

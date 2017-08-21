@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import TransactionsOverview from './index';
+import TransactionOverview from './view';
 import { getUrlParams } from '../../../store/urlParams';
 import {
   getTransactionList,
@@ -18,5 +18,5 @@ const mapDispatchToProps = {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(
-  TransactionsOverview
+  TransactionOverview
 );

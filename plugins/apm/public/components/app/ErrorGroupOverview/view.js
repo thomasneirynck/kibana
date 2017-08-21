@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import withErrorHandler from '../../shared/withErrorHandler';
-import PageHeader from '../../shared/PageHeader/container';
-import TabNavigation from '../../shared/TabNavigation/container';
-import Breadcrumbs from '../../shared/Breadcrumbs/container';
+import PageHeader from '../../shared/PageHeader';
+import TabNavigation from '../../shared/TabNavigation';
+import Breadcrumbs from '../../shared/Breadcrumbs';
 import List from './List';
 
 function loadErrorGroupList(props) {
@@ -13,7 +13,7 @@ function loadErrorGroupList(props) {
   }
 }
 
-class ErrorGroupList extends Component {
+class ErrorGroupOverview extends Component {
   componentDidMount() {
     loadErrorGroupList(this.props);
   }
@@ -35,4 +35,4 @@ class ErrorGroupList extends Component {
   }
 }
 
-export default withErrorHandler(ErrorGroupList, ['errorGroupList']);
+export default withErrorHandler(ErrorGroupOverview, ['errorGroupList']);

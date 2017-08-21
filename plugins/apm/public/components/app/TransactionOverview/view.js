@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import PageHeader from '../../shared/PageHeader/container';
-import TabNavigation from '../../shared/TabNavigation/container';
+import PageHeader from '../../shared/PageHeader';
+import TabNavigation from '../../shared/TabNavigation';
 import WiremockContainer from '../../shared/WiremockContainer';
-import Charts from './Charts/container';
-import TransactionList from './TransactionList';
-import Breadcrumbs from '../../shared/Breadcrumbs/container';
+import Charts from './Charts';
+import List from './List';
+import Breadcrumbs from '../../shared/Breadcrumbs';
 import withErrorHandler from '../../shared/withErrorHandler';
 
 // TODO: Move this inside TransactionList component
@@ -41,7 +41,7 @@ export class TransactionOverview extends Component {
         <WiremockContainer />
         <Charts />
         <h2>Requests</h2>
-        <TransactionList
+        <List
           appName={appName}
           type={transactionType}
           list={this.props.transactionList}

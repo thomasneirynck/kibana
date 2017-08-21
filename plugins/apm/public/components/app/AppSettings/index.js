@@ -2,9 +2,9 @@ import React from 'react';
 import styled from 'styled-components';
 import { fontSize, fontSizes } from '../../../style/variables';
 import Breadcrumbs from '../../shared/Breadcrumbs';
-import PageHeader from '../../shared/PageHeader/container';
+import PageHeader from '../../shared/PageHeader';
 import Input from '../../shared/Input';
-import withApp from '../../shared/withApp/container';
+import withApp from '../../shared/withApp';
 import withErrorHandler from '../../shared/withErrorHandler';
 
 const SectionTitle = styled.h2`font-size: ${fontSizes.xlarge};`;

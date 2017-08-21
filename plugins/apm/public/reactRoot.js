@@ -3,13 +3,13 @@ import { Provider } from 'react-redux';
 import { Router, Route, Redirect } from 'react-router-dom';
 import createHistory from 'history/createHashHistory';
 
-import AppList from './components/app/AppList/container';
-import TransactionsOverview from './components/app/TransactionsOverview/container'; // TODO: rename to "TransactionOverview"
-import TransactionDetails from './components/app/TransactionDetails/container';
+import AppList from './components/app/AppList';
 import AppSettings from './components/app/AppSettings';
-import ErrorGroupList from './components/app/ErrorGroupList/container';
-import ErrorGroupDetails from './components/app/ErrorGroupDetails/container';
-import Main from './components/app/Main/container';
+import ErrorGroupDetails from './components/app/ErrorGroupDetails';
+import ErrorGroupOverview from './components/app/ErrorGroupOverview';
+import Main from './components/app/Main';
+import TransactionDetails from './components/app/TransactionDetails';
+import TransactionOverview from './components/app/TransactionOverview';
 
 import configureStore from './store/config/configureStore';
 import connectTimeFilterToStore from './utils/timepicker/connectToStore';
@@ -35,7 +35,7 @@ function Root({ timefilter }) {
             path="/:appName/errors/:groupingId"
             component={ErrorGroupDetails}
           />
-          <Route exact path="/:appName/errors" component={ErrorGroupList} />
+          <Route exact path="/:appName/errors" component={ErrorGroupOverview} />
 
           {/* Transactions */}
           <Route
@@ -50,13 +50,13 @@ function Root({ timefilter }) {
           <Route
             exact
             path="/:appName/transactions"
-            component={TransactionsOverview}
+            component={TransactionOverview}
           />
 
           <Route
             exact
             path="/:appName/transactions/:transactionType"
-            component={TransactionsOverview}
+            component={TransactionOverview}
           />
           <Route
             path="/:appName/transactions/:transactionType/:transactionName"

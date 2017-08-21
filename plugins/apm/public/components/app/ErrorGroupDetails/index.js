@@ -1,43 +1,17 @@
-import React, { Component } from 'react';
-import withErrorHandler from '../../shared/withErrorHandler';
-import PageHeader from '../../shared/PageHeader/container';
-import WiremockContainer from '../../shared/WiremockContainer';
-import Breadcrumbs from '../../shared/Breadcrumbs/container';
-import DetailView from './DetailView';
+import { connect } from 'react-redux';
+import ErrorGroupDetails from './view';
+import { getUrlParams } from '../../../store/urlParams';
+import { getErrorGroup, loadErrorGroup } from '../../../store/errorGroups';
 
-function loadErrorGroup(props) {
-  const { appName, errorGroupingId, start, end } = props.urlParams;
-
-  if (appName && errorGroupingId && start && end && !props.errorGroup.status) {
-    props.loadErrorGroup({ appName, errorGroupingId, start, end });
-  }
+function mapStateToProps(state = {}) {
+  return {
+    urlParams: getUrlParams(state),
+    errorGroup: getErrorGroup(state)
+  };
 }
 
-class ErrorGroupDetails extends Component {
-  componentDidMount() {
-    loadErrorGroup(this.props);
-  }
+const mapDispatchToProps = {
+  loadErrorGroup
+};
 
-  componentWillReceiveProps(nextProps) {
-    loadErrorGroup(nextProps);
-  }
-
-  render() {
-    const { errorGroupingId } = this.props.urlParams;
-
-    return (
-      <div>
-        <Breadcrumbs />
-        <PageHeader title={`Error group: ${errorGroupingId}`} />
-        <WiremockContainer>Occurrences</WiremockContainer>
-        <WiremockContainer>Occurrences histogram</WiremockContainer>
-        <DetailView
-          errorGroup={this.props.errorGroup}
-          urlParams={this.props.urlParams}
-        />
-      </div>
-    );
-  }
-}
-
-export default withErrorHandler(ErrorGroupDetails, ['errorGroup']);
+export default connect(mapStateToProps, mapDispatchToProps)(ErrorGroupDetails);

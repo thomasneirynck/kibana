@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import Charts from './index';
+import Charts from './view';
 import { getUrlParams } from '../../../../store/urlParams';
 import { getCharts, loadCharts, getKey } from '../../../../store/charts';
 
