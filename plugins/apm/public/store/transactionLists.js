@@ -52,17 +52,13 @@ export function loadTransactionList({ appName, start, end, transactionType }) {
     const key = `${appName}_${start}_${end}_${transactionType}`;
     dispatch({ type: TRANSACTIONS_LIST_LOADING, key });
 
+    let response;
     try {
-      const response = await rest.loadTransactionList({
+      response = await rest.loadTransactionList({
         appName,
         start,
         end,
         transactionType
-      });
-      return dispatch({
-        response,
-        key,
-        type: TRANSACTIONS_LIST_SUCCESS
       });
     } catch (error) {
       return dispatch({
@@ -71,6 +67,12 @@ export function loadTransactionList({ appName, start, end, transactionType }) {
         type: TRANSACTIONS_LIST_FAILURE
       });
     }
+
+    return dispatch({
+      response,
+      key,
+      type: TRANSACTIONS_LIST_SUCCESS
+    });
   };
 }
 

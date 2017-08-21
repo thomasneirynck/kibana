@@ -52,17 +52,14 @@ export function loadErrorGroup({ appName, errorGroupingId, start, end }) {
   return async dispatch => {
     const key = `${appName}_${errorGroupingId}_${start}_${end}`;
     dispatch({ type: ERROR_GROUP_LOADING, key });
+
+    let response;
     try {
-      const response = await rest.loadErrorGroup({
+      response = await rest.loadErrorGroup({
         appName,
         errorGroupingId,
         start,
         end
-      });
-      return dispatch({
-        key,
-        response,
-        type: ERROR_GROUP_SUCCESS
       });
     } catch (error) {
       return dispatch({
@@ -71,6 +68,12 @@ export function loadErrorGroup({ appName, errorGroupingId, start, end }) {
         type: ERROR_GROUP_FAILURE
       });
     }
+
+    return dispatch({
+      key,
+      response,
+      type: ERROR_GROUP_SUCCESS
+    });
   };
 }
 

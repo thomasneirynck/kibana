@@ -52,16 +52,12 @@ export function loadErrorGroupList({ appName, start, end }) {
     const key = `${appName}_${start}_${end}`;
     dispatch({ type: ERROR_GROUP_LIST_LOADING, key });
 
+    let response;
     try {
-      const response = await rest.loadErrorGroupList({
+      response = await rest.loadErrorGroupList({
         appName,
         start,
         end
-      });
-      return dispatch({
-        response,
-        key,
-        type: ERROR_GROUP_LIST_SUCCESS
       });
     } catch (error) {
       return dispatch({
@@ -70,6 +66,12 @@ export function loadErrorGroupList({ appName, start, end }) {
         type: ERROR_GROUP_LIST_FAILURE
       });
     }
+
+    return dispatch({
+      response,
+      key,
+      type: ERROR_GROUP_LIST_SUCCESS
+    });
   };
 }
 

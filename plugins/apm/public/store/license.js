@@ -22,15 +22,18 @@ function license(state = {}, action) {
 export function loadLicense() {
   return async dispatch => {
     dispatch({ type: LICENSE_LOADING });
+
+    let response;
     try {
-      const newLicense = await rest.loadLicense();
-      dispatch({ type: LICENSE_SUCCESS, license: newLicense });
+      response = await rest.loadLicense();
     } catch (error) {
       return dispatch({
         error: error.error,
         type: LICENSE_FAILURE
       });
     }
+
+    dispatch({ type: LICENSE_SUCCESS, license: response });
   };
 }
 

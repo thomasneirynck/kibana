@@ -52,17 +52,13 @@ export function loadTraces({ appName, start, end, transactionId }) {
     const key = transactionId;
     dispatch({ type: TRACES_LOADING, key });
 
+    let response;
     try {
-      const response = await rest.loadTraces({
+      response = await rest.loadTraces({
         appName,
         start,
         end,
         transactionId
-      });
-      return dispatch({
-        response,
-        key,
-        type: TRACES_SUCCESS
       });
     } catch (error) {
       return dispatch({
@@ -71,6 +67,12 @@ export function loadTraces({ appName, start, end, transactionId }) {
         type: TRACES_FAILURE
       });
     }
+
+    return dispatch({
+      response,
+      key,
+      type: TRACES_SUCCESS
+    });
   };
 }
 

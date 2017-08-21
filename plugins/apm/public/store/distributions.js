@@ -47,17 +47,13 @@ export function loadDistribution({ appName, start, end, transactionName }) {
     const key = `${appName}_${start}_${end}_${transactionName}`;
     dispatch({ type: DISTRIBUTION_LOADING, key });
 
+    let response;
     try {
-      const response = await rest.loadDistribution({
+      response = await rest.loadDistribution({
         appName,
         start,
         end,
         transactionName
-      });
-      return dispatch({
-        response,
-        key,
-        type: DISTRIBUTION_SUCCESS
       });
     } catch (error) {
       return dispatch({
@@ -66,6 +62,12 @@ export function loadDistribution({ appName, start, end, transactionName }) {
         type: DISTRIBUTION_FAILURE
       });
     }
+
+    return dispatch({
+      response,
+      key,
+      type: DISTRIBUTION_SUCCESS
+    });
   };
 }
 

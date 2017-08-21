@@ -54,17 +54,13 @@ export function loadTransaction({ appName, start, end, transactionId }) {
     const key = transactionId;
     dispatch({ type: TRANSACTION_LOADING, key });
 
+    let response;
     try {
-      const response = await rest.loadTransaction({
+      response = await rest.loadTransaction({
         appName,
         start,
         end,
         transactionId
-      });
-      return dispatch({
-        response,
-        key,
-        type: TRANSACTION_SUCCESS
       });
     } catch (error) {
       return dispatch({
@@ -73,6 +69,12 @@ export function loadTransaction({ appName, start, end, transactionId }) {
         type: TRANSACTION_FAILURE
       });
     }
+
+    return dispatch({
+      response,
+      key,
+      type: TRANSACTION_SUCCESS
+    });
   };
 }
 

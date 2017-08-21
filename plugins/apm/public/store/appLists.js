@@ -53,15 +53,12 @@ export function loadAppList({ start, end }) {
   return async dispatch => {
     const key = `${start}_${end}`;
     dispatch({ type: APP_LIST_LOADING, key });
+
+    let response;
     try {
-      const response = await rest.loadAppList({
+      response = await rest.loadAppList({
         start,
         end
-      });
-      return dispatch({
-        key,
-        response,
-        type: APP_LIST_SUCCESS
       });
     } catch (error) {
       return dispatch({
@@ -70,6 +67,12 @@ export function loadAppList({ start, end }) {
         type: APP_LIST_FAILURE
       });
     }
+
+    return dispatch({
+      key,
+      response,
+      type: APP_LIST_SUCCESS
+    });
   };
 }
 

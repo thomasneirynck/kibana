@@ -53,13 +53,10 @@ export function loadApp({ appName, start, end }) {
   return async dispatch => {
     const key = `${appName}_${start}_${end}`;
     dispatch({ type: APP_LOADING, key });
+
+    let response;
     try {
-      const response = await rest.loadApp({ appName, start, end });
-      return dispatch({
-        key,
-        response,
-        type: APP_SUCCESS
-      });
+      response = await rest.loadApp({ appName, start, end });
     } catch (error) {
       return dispatch({
         key,
@@ -67,6 +64,12 @@ export function loadApp({ appName, start, end }) {
         type: APP_FAILURE
       });
     }
+
+    return dispatch({
+      key,
+      response,
+      type: APP_SUCCESS
+    });
   };
 }
 

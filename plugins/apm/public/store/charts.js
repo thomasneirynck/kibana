@@ -10,9 +10,9 @@ export const CHARTS_FAILURE = 'CHARTS_FAILURE';
 
 const INITIAL_STATE = {
   data: {
-    response_times: {},
-    rpm_per_status_class: {},
-    rpm_per_status_class_average: {}
+    responseTimes: {},
+    rpmPerStatusClass: {},
+    rpmPerStatusClassAverage: {}
   }
 };
 
@@ -69,19 +69,15 @@ export function loadCharts({
     );
     dispatch({ type: CHARTS_LOADING, key });
 
+    let response;
     try {
-      const response = await rest.loadCharts({
+      response = await rest.loadCharts({
         appName,
         start,
         end,
         transactionName,
         transactionType,
         transactionId
-      });
-      return dispatch({
-        response,
-        key,
-        type: CHARTS_SUCCESS
       });
     } catch (error) {
       return dispatch({
@@ -90,6 +86,12 @@ export function loadCharts({
         type: CHARTS_FAILURE
       });
     }
+
+    return dispatch({
+      response,
+      key,
+      type: CHARTS_SUCCESS
+    });
   };
 }
 
