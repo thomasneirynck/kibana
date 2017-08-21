@@ -19,7 +19,6 @@ const getPaths = pathname => {
 
 const _routes = {
   '/': 'APM',
-  '/:appName/settings': 'Settings',
   '/:appName/errors': 'Errors',
   '/:appName/errors/:groupingId': params => params.groupingId,
   '/:appName': params => params.appName,

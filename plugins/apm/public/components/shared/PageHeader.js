@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { units, px, fontSizes } from '../../../style/variables';
-import Button from '../Button';
+import { units, px, fontSizes } from '../../style/variables';
 
 const Container = styled.div`
   display: flex;
@@ -14,14 +13,15 @@ const Title = styled.h1`
   font-size: ${fontSizes.xxlarge};
 `;
 
-function PageHeader({ appName, title, showSettingsButton }) {
+function PageHeader({ title }) {
+  if (!title) {
+    return null;
+  }
   return (
     <Container>
       <Title>
         {title}
       </Title>
-      {showSettingsButton !== false &&
-        <Button path={`${appName}/settings`} label="Settings" />}
     </Container>
   );
 }

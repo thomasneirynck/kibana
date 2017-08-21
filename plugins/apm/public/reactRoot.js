@@ -4,7 +4,6 @@ import { Router, Route, Redirect } from 'react-router-dom';
 import createHistory from 'history/createHashHistory';
 
 import AppList from './components/app/AppList';
-import AppSettings from './components/app/AppSettings';
 import ErrorGroupDetails from './components/app/ErrorGroupDetails';
 import ErrorGroupOverview from './components/app/ErrorGroupOverview';
 import Main from './components/app/Main';
@@ -28,7 +27,6 @@ function Root({ timefilter }) {
         <Main>
           {/* App */}
           <Route exact path="/" component={AppList} />
-          <Route exact path="/:appName/settings" component={AppSettings} />
 
           {/* Errors */}
           <Route

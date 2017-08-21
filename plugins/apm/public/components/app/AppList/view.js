@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import styled from 'styled-components';
 import { unit, units, px, fontSizes, colors } from '../../../style/variables';
 import { RelativeLink } from '../../../utils/url';
-import Button from '../../shared/Button';
 import Breadcrumbs from '../../shared/Breadcrumbs';
 import withErrorHandler from '../../shared/withErrorHandler';
 
@@ -54,7 +53,6 @@ class AppList extends Component {
               <AppLink path={`${app.appName}/transactions`}>
                 {app.appName}
               </AppLink>
-              <Button path={`${app.appName}/settings`} label="Settings" />
             </AppContainer>
           )}
         </AppsContainer>
