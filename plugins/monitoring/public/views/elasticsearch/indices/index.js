@@ -23,13 +23,7 @@ function getPageData($injector) {
     timeRange: {
       min: timeBounds.min.toISOString(),
       max: timeBounds.max.toISOString()
-    },
-    listingMetrics: [
-      'index_document_count',
-      'index_store_total_size',
-      'index_search_request_rate',
-      'index_request_rate_primary'
-    ]
+    }
   })
   .then(response => response.data)
   .then(data => {

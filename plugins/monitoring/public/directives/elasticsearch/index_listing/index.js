@@ -1,8 +1,8 @@
-import numeral from 'numeral';
-import { capitalize } from 'lodash';
+import { capitalize, get } from 'lodash';
 import React from 'react';
 import { render } from 'react-dom';
 import { SORT_ASCENDING, SORT_DESCENDING } from 'monitoring-constants';
+import { LARGE_FLOAT, LARGE_BYTES, LARGE_ABBREVIATED } from 'monitoring-formatting';
 import { uiModules } from 'ui/modules';
 import {
   KuiKeyboardAccessible,
@@ -13,6 +13,7 @@ import {
 } from 'ui_framework/components';
 import { MonitoringTable } from 'plugins/monitoring/components/table';
 import { ElasticsearchStatusIcon } from 'plugins/monitoring/components/elasticsearch/status_icon';
+import { formatNumber } from '../../../lib/format_number';
 
 const showSystemIndicesComponentFactory = scope => {
   return class ShowSytemIndicesCheckbox extends React.Component {
@@ -49,19 +50,26 @@ const showSystemIndicesComponentFactory = scope => {
   };
 };
 
+/* TODO refactor other listing APIs to return metrics similar to here
+ * then make this a shared function */
+const formatMetric = (value, format, suffix) => {
+  if (!!value || value === 0) {
+    return formatNumber(value, format) + (suffix ? ' ' + suffix : '');
+  }
+  return 'N/A';
+};
+
 const filterFields = ['name', 'status'];
 const cols = [
   { title: 'Name', sortKey: 'name', secondarySortOrder: SORT_ASCENDING },
   { title: 'Status', sortKey: 'statusSort', sortOrder: SORT_DESCENDING }, // default sort: red, then yellow, then green
-  { title: 'Document Count', sortKey: 'metrics.index_document_count.last' },
-  { title: 'Data', sortKey: 'metrics.index_store_total_size.last' },
-  { title: 'Index Rate', sortKey: 'metrics.index_request_rate_primary.last' },
-  { title: 'Search Rate', sortKey: 'metrics.index_search_request_rate.last' },
-  { title: 'Unassigned Shards', sortKey: 'metrics.index_unassigned_shards.last' }
+  { title: 'Document Count', sortKey: 'doc_count' },
+  { title: 'Data', sortKey: 'data_size' },
+  { title: 'Index Rate', sortKey: 'index_rate' },
+  { title: 'Search Rate', sortKey: 'search_rate' },
+  { title: 'Unassigned Shards', sortKey: 'unassigned_shards' }
 ];
 const indexRowFactory = (scope, kbnUrl) => {
-  const numeralize = value => numeral(value.last).format(value.metric ? value.metric.format : null);
-  const unitize = value => `${numeralize(value)} ${value.metric.units}`;
   return class IndexRow extends React.Component {
     constructor(props) {
       super(props);
@@ -73,7 +81,6 @@ const indexRowFactory = (scope, kbnUrl) => {
       });
     }
     render() {
-      const metrics = this.props.metrics;
       const status = this.props.status;
 
       return (
@@ -89,11 +96,11 @@ const indexRowFactory = (scope, kbnUrl) => {
               { capitalize(status) }
             </div>
           </KuiTableRowCell>
-          <KuiTableRowCell>{ numeralize(metrics.index_document_count) }</KuiTableRowCell>
-          <KuiTableRowCell>{ numeralize(metrics.index_store_total_size) }</KuiTableRowCell>
-          <KuiTableRowCell>{ unitize(metrics.index_request_rate_primary) }</KuiTableRowCell>
-          <KuiTableRowCell>{ unitize(metrics.index_search_request_rate) }</KuiTableRowCell>
-          <KuiTableRowCell>{ numeralize(metrics.index_unassigned_shards) }</KuiTableRowCell>
+          <KuiTableRowCell>{ formatMetric(get(this.props, 'doc_count'), LARGE_ABBREVIATED) }</KuiTableRowCell>
+          <KuiTableRowCell>{ formatMetric(get(this.props, 'data_size'), LARGE_BYTES) }</KuiTableRowCell>
+          <KuiTableRowCell>{ formatMetric(get(this.props, 'index_rate'), LARGE_FLOAT, '/s') }</KuiTableRowCell>
+          <KuiTableRowCell>{ formatMetric(get(this.props, 'search_rate'), LARGE_FLOAT, '/s') }</KuiTableRowCell>
+          <KuiTableRowCell>{ formatMetric(get(this.props, 'unassigned_shards'), '0') }</KuiTableRowCell>
         </KuiTableRow>
       );
     }
