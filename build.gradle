@@ -41,7 +41,7 @@ task jestTests(type: Exec, dependsOn: npmInstall) {
 task functionalTests(type: Exec, dependsOn: npmInstall) {
   group = 'Verification'
   description = 'Run functional tests'
-  commandLine 'xvfb-run', 'node', 'scripts/functional_tests'
+  commandLine 'xvfb-run', 'node', 'scripts/functional_tests', '--bail'
 }
 
 task check(dependsOn: [mochaTests, jestTests, functionalTests]) {
