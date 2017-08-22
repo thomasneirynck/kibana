@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import { set } from 'lodash';
+import moment from 'moment-timezone';
 import { uiModules } from 'ui/modules';
 import uiRoutes from 'ui/routes';
 import 'ui/autoload/all';
@@ -14,13 +15,17 @@ import 'plugins/monitoring/directives';
 import 'plugins/monitoring/views';
 
 const uiModule = uiModules.get('kibana');
-uiModule.run(function (uiSettings) {
-  _.set(uiSettings, 'defaults.timepicker:timeDefaults.value', JSON.stringify({
+uiModule.run((uiSettings, config) => {
+  // Allow UTC times to be entered for Absolute Time range in timepicker
+  moment.tz.setDefault(config.get('dateFormat:tz'));
+
+  set(uiSettings, 'defaults.timepicker:timeDefaults.value', JSON.stringify({
     from: 'now-1h',
     to: 'now',
     mode: 'quick'
   }));
-  _.set(uiSettings, 'defaults.timepicker:refreshIntervalDefaults.value', JSON.stringify({
+
+  set(uiSettings, 'defaults.timepicker:refreshIntervalDefaults.value', JSON.stringify({
     display: '10 seconds',
     pause: false,
     value: 10000

@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 export const LARGE_FLOAT = '0,0.[00]';
 export const SMALL_FLOAT = '0.[00]';
