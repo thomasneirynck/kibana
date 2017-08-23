@@ -42,8 +42,8 @@ describe('Graph', () => {
         edges: [
           { id: 'abcdef', type: 'plain', from: 'my-prefix:my-really-long-named-generator', to: 'my-queue' },
           { id: '123456', type: 'plain', from: 'my-queue', to: 'my-if' },
-          { id: 'if-true', type: 'plain', from: 'my-if', to: 'my-grok' },
-          { id: 'if-false', type: 'plain', from: 'my-if', to: 'my-sleep' }
+          { id: 'if-true', type: 'boolean', when: true, from: 'my-if', to: 'my-grok' },
+          { id: 'if-false', type: 'boolean', when: false, from: 'my-if', to: 'my-sleep' }
         ]
       };
       graph = new Graph();
@@ -194,17 +194,42 @@ describe('Graph', () => {
       expect(graph.maxRank).to.be(3);
     });
 
-    it('separates vertices by rank such that there are no more than 2 vertices per rank', () => {
-      const verticesBySeparatedRank = graph.getSeparatedRanks();
-      expect(verticesBySeparatedRank.size).to.be(3);
+    describe('vertex layout ranking', () => {
+      const expectedRanks = [
+        ['my-prefix:my-really-long-named-generator'],
+        ['my-queue'],
+        ['my-if'],
+        ['my-grok', 'my-sleep']
+      ];
 
-      for (const [, verticesAtCurrentRank: value ] of verticesBySeparatedRank) {
-        expect(verticesAtCurrentRank).to.be.an(Array);
-        expect(verticesAtCurrentRank.length).to.be.within(0, 2);
-        verticesAtCurrentRank.forEach(vertex => {
-          expect(vertex).to.be.a(Vertex);
+      it('should store a 2d array of the vertices in the expected ranks', () => {
+        const result = graph.verticesByLayoutRank;
+        expectedRanks.forEach((expectedVertexIds, rank) => {
+          const resultVertices = result[rank];
+          expectedVertexIds.forEach(expectedVertexId => {
+            const expectedVertex = graph.getVertexById(expectedVertexId);
+            expect(resultVertices).to.contain(expectedVertex);
+          });
         });
-      }
+      });
+
+      it('should add a .layoutRank property to each Vertex', () => {
+        expectedRanks.forEach((expectedVertexIds, rank) => {
+          expectedVertexIds.forEach(expectedVertexId => {
+            const vertex = graph.getVertexById(expectedVertexId);
+            expect(vertex.layoutRank).to.be(rank);
+          });
+        });
+      });
+    });
+
+    it('should classify the if triangle correctly', () => {
+      expect(graph.triangularIfGroups.length).to.be(1);
+      expect(graph.triangularIfGroups[0]).to.eql({
+        ifVertex: graph.getVertexById('my-if'),
+        trueVertex: graph.getVertexById('my-grok'),
+        falseVertex: graph.getVertexById('my-sleep'),
+      });
     });
   });
 });

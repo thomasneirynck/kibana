@@ -12,7 +12,7 @@ import {
   updateProcessorVertex
 } from './vertex_content_renderer';
 import { LOGSTASH } from '../../../../../common/constants';
-import webcola from 'webcola';
+import { makeEdgeBetween, d3adaptor } from 'webcola';
 
 function makeMarker(svgDefs, id, fill) {
   svgDefs.append('marker')
@@ -44,12 +44,12 @@ function makeGroup(parentEl) {
 function makeNodes(nodesLayer, colaVertices) {
   const nodes = nodesLayer
     .selectAll('.lspvVertex')
-    .data(colaVertices, d => d.vertex.id);
+    .data(colaVertices, d => d.vertex.domId);
 
   nodes
     .enter()
     .append('g')
-      .attr('id', d => `nodeg-${d.vertex.id}`)
+      .attr('id', d => `nodeg-${d.vertex.domId}`)
       .attr('class', d => `lspvVertex ${d.vertex.typeString}`)
       .attr('width', LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.WIDTH_PX)
       .attr('height', LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.HEIGHT_PX);
@@ -114,7 +114,7 @@ export class ColaGraph extends React.Component {
   }
 
   renderGraph(svgEl) {
-    this.d3cola = webcola.d3adaptor()
+    this.d3cola = d3adaptor()
       .avoidOverlaps(true)
       .size([this.width, this.height]);
 
@@ -140,49 +140,55 @@ export class ColaGraph extends React.Component {
     background.call(zoom.on('zoom', redraw));
 
     this.nodesLayer = makeGroup(vis);
-    const nodes = makeNodes(this.nodesLayer, this.graph.colaVertices);
+    this.nodes = makeNodes(this.nodesLayer, this.graph.colaVertices);
 
-    this.inputs = makeInputNodes(nodes);
-    this.processors = makeProcessorNodes(nodes);
-    this.ifs = makeIfNodes(nodes);
-    this.queue = makeQueueNode(nodes);
+    this.inputs = makeInputNodes(this.nodes);
+    this.processors = makeProcessorNodes(this.nodes);
+    this.ifs = makeIfNodes(this.nodes);
+    this.queue = makeQueueNode(this.nodes);
 
-    addNodesMouseBehaviors(nodes, this.onMouseover, this.onMouseout);
+    addNodesMouseBehaviors(this.nodes, this.onMouseover, this.onMouseout);
 
     this.linksLayer = makeGroup(vis);
+
+    const ifTriangleColaGroups = this.graph.triangularIfGroups.map(group => {
+      return { leaves: Object.values(group).map(v => v.colaIndex) };
+    });
 
     this.d3cola
         .nodes(this.graph.colaVertices)
         .links(this.graph.colaEdges)
-        .flowLayout('y', LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.HEIGHT_PX + LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.VERTICAL_DISTANCE_PX)
+        .groups(ifTriangleColaGroups)
         .constraints(this._getConstraints())
-        .jaccardLinkLengths(40)
-        .start(30,30,30);
+        // These three numbers control the max number of iterations for the layout iteration to
+        // solve the constraints. Higher numbers usually wind up in a better layout
+        .start(10000,10000,10000);
 
     this.makeLinks();
 
-    const margin = LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.MARGIN_PX;
-    this.d3cola.on('tick', () => {
-      nodes.each((d) => d.innerBounds = d.bounds.inflate(-margin));
+    this.d3cola.on('tick', this.reflow).on('end', this.reflow);
+  }
 
-      this.links.attr('d', (d) => {
-        const arrowStart = LOGSTASH.PIPELINE_VIEWER.GRAPH.EDGES.ARROW_START;
-        const route = webcola.makeEdgeBetween(d.source.innerBounds, d.target.innerBounds, arrowStart);
-        return lineFunction([route.sourceIntersection, route.arrowStart]);
-      });
+  // Actually render the latest webcola state
+  reflow = () => {
+    this.setNodeBounds();
+    this.routeAndLabelEdges();
+  }
 
-      nodes
-        .attr('transform', (d) => `translate(${d.innerBounds.x}, ${d.innerBounds.y})`);
-
-      nodes.select('rect')
-        .attr('width', (d) => d.innerBounds.width())
-        .attr('height', (d) => d.innerBounds.height());
-
-      this.routeAndLabelEdges();
-    }).on('end', this.routeAndLabelEdges);
+  setNodeBounds = () => {
+    this.nodes.each((d) => d.innerBounds = d.bounds.inflate(-LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.MARGIN_PX));
+    this.nodes.attr('transform', (d) => `translate(${d.innerBounds.x}, ${d.innerBounds.y})`);
+    this.nodes.select('rect')
+      .attr('width', (d) => d.innerBounds.width())
+      .attr('height', (d) => d.innerBounds.height());
   }
 
   routeAndLabelEdges = () => {
+    this.links.attr('d', (d) => {
+      const arrowStart = LOGSTASH.PIPELINE_VIEWER.GRAPH.EDGES.ARROW_START;
+      const route = makeEdgeBetween(d.source.innerBounds, d.target.innerBounds, arrowStart);
+      return lineFunction([route.sourceIntersection, route.arrowStart]);
+    });
     this.routeEdges();
     this.labelEdges();
   }
@@ -223,7 +229,7 @@ export class ColaGraph extends React.Component {
 
     const linkGroup = this.links.enter()
       .append('g')
-        .attr('id', (d) => `lspvEdge-${d.edge.id}`)
+        .attr('id', (d) => `lspvEdge-${d.edge.domId}`)
         .attr('class', (d) => d.edge.svgClass);
     linkGroup.append('path');
 
@@ -252,7 +258,7 @@ export class ColaGraph extends React.Component {
     const hoverNode = nextState.hoverNode;
     if (hoverNode) {
       const selection = this.nodesLayer
-        .selectAll('#nodeg-' + hoverNode.vertex.id)
+        .selectAll('#nodeg-' + hoverNode.vertex.domId)
         .selectAll('rect');
       selection.classed('lspvVertexBounding-highlighted', true);
 
@@ -283,48 +289,104 @@ export class ColaGraph extends React.Component {
   }
 
   _getConstraints() {
-    const sepRank = this.graph.getSeparatedRanks();
-    const entries = Array.from(sepRank.entries());
+    // To understand webcola constraints please read:
+    // https://github.com/tgdwyer/WebCola/wiki/Constraints
     const constraints = [];
+    const verticesByRank = this.graph.verticesByLayoutRank;
 
-    entries.forEach((entry) => {
-      const [rank, vertices] = entry;
+    // Lay out triangle groups as... a triangle! That is to say,
+    // with an if in the middle and the true on the left and the false on the right
+    this.graph.triangularIfGroups.forEach(group => {
+      if (group.trueVertex && group.falseVertex) {
+        Object.values(group).forEach(v => v.isInTriangleGroup = true);
+        constraints.push({
+          type: 'alignment',
+          axis: 'x',
+          offsets: [
+            { node: group.ifVertex.colaIndex, offset: 0 },
+            // The offsets here are oddly sensitive. If you use lower values than the width of
+            // the node the layout gets all crazy and overlappy for reasons I don't understand
+            { node: group.trueVertex.colaIndex, offset: -LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.WIDTH_PX },
+            { node: group.falseVertex.colaIndex, offset: LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.WIDTH_PX }
+          ]
+        });
+      }
+    });
 
-      // Ensure that nodes of an equal rank, that is their distance from
-      // the root are aligned on the y axis. Without this you get a longer
-      // less compact graph rendering
-      const rankOffsets = vertices.map(v => {
-        return { node: v.colaIndex, offset: 0 };
-      });
+    for (let rank = 0; rank < verticesByRank.length; rank++) {
+      const vertices = verticesByRank[rank];
+
+      // Ensure that nodes of an equal rank are aligned on the y axis.
       constraints.push(
         {
           type: 'alignment',
           axis: 'y',
-          offsets: rankOffsets
+          offsets: vertices.map(v => {
+            return { node: v.colaIndex, offset: 0 };
+          })
         }
       );
 
       if (rank > 0) {
-        const previousVertices = sepRank.get(rank - 1);
+        const previousVertices = verticesByRank[rank - 1];
 
-        if (vertices.length === 1 &&
-              previousVertices.length === 1 &&
-              previousVertices[0].outgoingVertices.length < 3) {
-
-          // Without this webcola willl generate a graph that drifts diagonally
-          // to the right. This is a waste of space and hard to follow. The code here
-          // keeps things aligned on the x axis
-          constraints.push({
-            type: 'alignment',
-            axis: 'x',
-            offsets: [
-              { node: vertices[0].colaIndex, offset: 0 },
-              { node: previousVertices[0].colaIndex, offset: 0 }
-            ]
+        // Prevent sibling nodes from overlapping
+        vertices.forEach((vertex, index) => {
+          const previousParents = previousVertices.filter(previousVertex => {
+            return previousVertex.outgoingVertices.find(v => v === vertex);
           });
-        }
+
+          const nodeXGap = LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.WIDTH_PX + LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.MARGIN_PX;
+          const rightSibling = vertices[index + 1];
+          // We don't need to add constraints for nodes in triangle groups since they have
+          // a constraint that keeps them separately already
+          if (rightSibling && !rightSibling.isInTriangleGroup && !vertex.isInTriangleGroup) {
+            constraints.push({
+              axis: "x",
+              right: vertex.colaIndex,
+              left: rightSibling.colaIndex,
+              gap: nodeXGap
+            });
+          }
+
+          // Ensure that nodes of rank N that have a single outbound connection to a node of rank N+1
+          // are positioned vertically inline
+          // We start by checking if the current node has exactly one parent in the previous rank
+          // if it has > 1 parent then we don't really know where to put it
+          if (previousParents.length === 1) {
+            const previousParent = previousParents[0];
+            // We further check that the connected parent isn't also connected to other nodes in this rank
+            // otherwise the nodes would have to overlap if we aligned them
+            if (previousParent.outgoingVertices.filter(v => v.layoutRank === rank).length === 1) {
+              constraints.push({
+                axis: 'x',
+                left: previousParent.colaIndex,
+                right: vertex.colaIndex,
+                gap: 0,
+                equality: true
+              });
+            }
+          }
+
+          // Ensure that all nodes of a given rank are at least 1 unit lower than nodes of a lower right
+          // In web cola the terms `left` and `right` are from an expression `left < right`
+          // Note that we need a positive integer to make the right vertex lower since increasing its y
+          // value makes it appear lower on the page.
+          //
+          // Larger values of `gap` do not improve the graph rendering, and sufficiently large values start to break it.
+          // a value of 1 is fine because the alignment constraint above makes sure the nodes are aligned, this one just
+          // defines the constraint that nodes of rank N have a higher Y value than nodes of rank N-1
+          previousVertices.forEach(previousVertex => {
+            constraints.push({
+              axis: 'y',
+              left: previousVertex.colaIndex,
+              right: vertex.colaIndex,
+              gap: LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.HEIGHT_PX
+            });
+          });
+        });
       }
-    });
+    };
 
     return constraints;
   }

@@ -5,6 +5,22 @@ import { LOGSTASH } from '../../../../../../../common/constants';
 describe('Vertex', () => {
   let graph;
 
+  const graphJson = {
+    vertices: [
+      { id: 'my-prefix:my-really-long-named-generator', type: 'plugin', explicit_id: false },
+      { id: 'my-queue', type: 'queue', config_name: 'some-name' },
+      { id: 'my-if', type: 'if', config_name: 'some-name' },
+      { id: 'my-grok', type: 'plugin', meta: { source_text: 'foobar', source_line: 33, source_column: 4 } },
+      { id: 'my-sleep', type: 'plugin', explicit_id: true, stats: { mystat1: 100, 'events.in': { min: 100, max: 120 } } }
+    ],
+    edges: [
+      { id: 'abcdef', type: 'plain', from: 'my-prefix:my-really-long-named-generator', to: 'my-queue' },
+      { id: '123456', type: 'plain', from: 'my-queue', to: 'my-if' },
+      { id: 'if-true', type: 'plain', from: 'my-if', to: 'my-grok' },
+      { id: 'if-false', type: 'plain', from: 'my-if', to: 'my-sleep' }
+    ]
+  };
+
   beforeEach(() => {
     /**
      *       my-prefix:...generator
@@ -18,21 +34,6 @@ describe('Vertex', () => {
      *              v     v
      *         my-grok   my-sleep
      */
-    const graphJson = {
-      vertices: [
-        { id: 'my-prefix:my-really-long-named-generator', type: 'plugin', explicit_id: false },
-        { id: 'my-queue', type: 'queue', config_name: 'some-name' },
-        { id: 'my-if', type: 'if', config_name: 'some-name' },
-        { id: 'my-grok', type: 'plugin', meta: { source_text: 'foobar', source_line: 33, source_column: 4 } },
-        { id: 'my-sleep', type: 'plugin', explicit_id: true, stats: { mystat1: 100, 'events.in': { min: 100, max: 120 } } }
-      ],
-      edges: [
-        { id: 'abcdef', type: 'plain', from: 'my-prefix:my-really-long-named-generator', to: 'my-queue' },
-        { id: '123456', type: 'plain', from: 'my-queue', to: 'my-if' },
-        { id: 'if-true', type: 'plain', from: 'my-if', to: 'my-grok' },
-        { id: 'if-false', type: 'plain', from: 'my-if', to: 'my-sleep' }
-      ]
-    };
     graph = new Graph();
     graph.update(graphJson);
   });
@@ -56,15 +57,16 @@ describe('Vertex', () => {
     expect(vertex.json).to.eql(updatedJson);
   });
 
-  it('should have the correct index for webcola', () => {
-    const vertex1 = graph.getVertexById('my-prefix:my-really-long-named-generator');
-    expect(vertex1.colaIndex).to.be(0);
-
-    const vertex2 = graph.getVertexById('my-queue');
-    expect(vertex2.colaIndex).to.be(4);
-
-    const vertex3 = graph.getVertexById('my-grok');
-    expect(vertex3.colaIndex).to.be(1);
+  it('should not change the webcola index after update', () => {
+    const verticesIds = graph.getVertices().map(v => [v.id, v.colaIndex]);
+    graph.update(graphJson);
+    verticesIds.forEach(idAndIndex => {
+      const [id, colaIndex] = idAndIndex;
+      const v = graph.getVertexById(id);
+      console.log("MATCH", v.id, id);
+      expect(v).not.to.be(undefined);
+      expect(v.colaIndex).to.be(colaIndex);
+    });
   });
 
   it('should have the correct name', () => {
@@ -72,20 +74,25 @@ describe('Vertex', () => {
     expect(vertex.name).to.be('some-name');
   });
 
-  it('should have the correct ID', () => {
+  it('should return the JSON id directly as the id', () => {
     const vertex1 = graph.getVertexById('my-prefix:my-really-long-named-generator');
-    expect(vertex1.id).to.be('my_prefix_my_really_long_named_generator');
+    expect(vertex1.id).to.be(vertex1.json.id);
+  });
+
+  it('should have the correct domID', () => {
+    const vertex1 = graph.getVertexById('my-prefix:my-really-long-named-generator');
+    expect(vertex1.domId).to.be('my_prefix_my_really_long_named_generator');
 
     const vertex2 = graph.getVertexById('my-queue');
-    expect(vertex2.id).to.be('my_queue');
+    expect(vertex2.domId).to.be('my_queue');
   });
 
   it('should have the correct display ID', () => {
     const vertex1 = graph.getVertexById('my-prefix:my-really-long-named-generator');
-    expect(vertex1.displayId).to.be('my_pref…nerator');
+    expect(vertex1.displayId).to.be('my-pref…nerator');
 
     const vertex2 = graph.getVertexById('my-queue');
-    expect(vertex2.displayId).to.be('my_queue');
+    expect(vertex2.displayId).to.be('my-queue');
   });
 
   it('should have the correct number of incoming edges', () => {
@@ -205,23 +212,6 @@ describe('Vertex', () => {
 
     const vertex5 = graph.getVertexById('my-sleep');
     expect(vertex5.rank).to.be(3);
-  });
-
-  it('should have the correct reverse rank', () => {
-    const vertex1 = graph.getVertexById('my-prefix:my-really-long-named-generator');
-    expect(vertex1.reverseRank).to.be(3);
-
-    const vertex2 = graph.getVertexById('my-queue');
-    expect(vertex2.reverseRank).to.be(2);
-
-    const vertex3 = graph.getVertexById('my-if');
-    expect(vertex3.reverseRank).to.be(1);
-
-    const vertex4 = graph.getVertexById('my-grok');
-    expect(vertex4.reverseRank).to.be(0);
-
-    const vertex5 = graph.getVertexById('my-sleep');
-    expect(vertex5.reverseRank).to.be(0);
   });
 
   it('should have the correct source location', () => {

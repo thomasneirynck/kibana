@@ -37,6 +37,10 @@ export class Vertex {
   }
 
   get id() {
+    return this.json.id;
+  }
+
+  get domId() {
     // Substitute any non-word characters with an underscore so
     // D3 selections don't interpret them as special selector syntax
     return this.json.id.replace(/\W/g, '_');
@@ -79,11 +83,7 @@ export class Vertex {
   }
 
   get rank() {
-    return this.graph.vertexRanks[this.id];
-  }
-
-  get reverseRank() {
-    return this.graph.reverseVertexRanks[this.id];
+    return this.graph.vertexRankById[this.id];
   }
 
   get sourceLocation() {
