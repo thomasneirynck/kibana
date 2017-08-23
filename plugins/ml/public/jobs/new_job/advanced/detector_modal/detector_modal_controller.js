@@ -109,7 +109,7 @@ module.controller('MlDetectorModal', function ($scope, $modalInstance, params, m
   $scope.functionChange();
 
   $scope.setDetectorProperty = function (value, field) {
-    if (value === '') {
+    if (value === '' || value === undefined) {
       // remove the property from the detector JSON
       delete $scope.detector[field];
     } else {
