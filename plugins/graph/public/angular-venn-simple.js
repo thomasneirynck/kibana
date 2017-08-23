@@ -1,7 +1,7 @@
 //MH TODO - I'm not 100% on managing dependencies. I added these 2 dependencies
 // to the source code and it seems to work.
 import d3 from 'd3';
-import { venn } from 'venn.js';
+import { distanceFromIntersectArea } from 'venn.js';
 
 import { uiModules } from 'ui/modules';
 
@@ -39,7 +39,7 @@ uiModules.get('app/graph')
         const maxR = Math.max(r1,r2);
         let x1 = r1;
         const y1 = maxR;
-        let x2 = x1 + venn.distanceFromIntersectArea(r1,r2,overlap);
+        let x2 = x1 + distanceFromIntersectArea(r1,r2,overlap);
         const y2 = maxR;
 
         //Shift right to centre image
