@@ -110,28 +110,6 @@ export function SecurityPageProvider({ getService, getPageObjects }) {
       await PageObjects.header.waitUntilLoadingHasFinished();
     }
 
-    async getDashboardOnlyModeOption() {
-      return await retry.try(() => testSubjects.find('dashboardOnlyMode'));
-    }
-
-    async getAllAppsViewModeOption() {
-      return await retry.try(() => testSubjects.find('allAppsViewMode'));
-    }
-
-    async getIsDashboardOnlyMode() {
-      const dashOnlyModeRadio = await this.getDashboardOnlyModeOption();
-      return await dashOnlyModeRadio.getProperty('checked');
-    }
-
-    async selectDashboardOnlyModeRole() {
-      const dashOnlyModeRadio = await this.getDashboardOnlyModeOption();
-      await dashOnlyModeRadio.click();
-    }
-    async selectAllAppsViewModeRole() {
-      const allAppsRadio = await retry.try(() => testSubjects.find('allAppsViewMode'));
-      await allAppsRadio.click();
-    }
-
     async addIndexToRole(index) {
       log.debug(`Adding index ${index} to role`);
       const indexInput = await retry.try(() => find.byCssSelector('[data-test-subj="indicesInput0"] > div > input'));

@@ -110,18 +110,12 @@ export default function ({ getService, getPageObjects }) {
 
         it('Can navigate to edit role section from users page', async () => {
           await PageObjects.settings.clickLinkText('Users');
-          await PageObjects.settings.clickLinkText('superuser');
+          await PageObjects.settings.clickLinkText('kibana_dashboard_only_user');
           const currentUrl = await remote.getCurrentUrl();
           expect(currentUrl).to.contain(EDIT_ROLES_PATH);
         });
 
         it('Reserved roles are not editable', async () => {
-          const dashOnlyModeRadio = await PageObjects.security.getDashboardOnlyModeOption();
-          expect(await dashOnlyModeRadio.getProperty('disabled')).to.be(true);
-
-          const allAppsRadio = await PageObjects.security.getAllAppsViewModeOption();
-          expect(await allAppsRadio.getProperty('disabled')).to.be(true);
-
           const allInputs = await find.allByCssSelector('input');
           for (let i = 0; i < allInputs.length; i++) {
             const input = allInputs[i];

@@ -8,8 +8,6 @@ import 'plugins/security/services/shield_role';
 import { checkLicenseError } from 'plugins/security/lib/check_license_error';
 import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
 import { EDIT_USERS_PATH, USERS_PATH } from './management_urls';
-import { documentationLinks } from '../../documentation_links';
-import { CONFIG_DASHBOARD_ONLY_MODE_ROLES } from '../../../../dashboard_mode/common';
 
 routes.when(`${EDIT_USERS_PATH}/:username?`, {
   template,
@@ -46,12 +44,11 @@ routes.when(`${EDIT_USERS_PATH}/:username?`, {
     }
   },
   controllerAs: 'editUser',
-  controller($scope, $route, kbnUrl, ShieldUser, Notifier, confirmModal, config) {
+  controller($scope, $route, kbnUrl, Notifier, confirmModal) {
     $scope.me = $route.current.locals.me;
     $scope.user = $route.current.locals.user;
     $scope.availableRoles = $route.current.locals.roles;
     $scope.usersHref = `#${USERS_PATH}`;
-    $scope.dashboardViewModeDocLink = documentationLinks.dashboardViewMode;
 
     this.isNewUser = $route.current.params.username == null;
 
@@ -101,13 +98,5 @@ routes.when(`${EDIT_USERS_PATH}/:username?`, {
         else notifier.error(_.get(error, 'data.message'));
       });
     };
-
-    const dashboardOnlyModeRoles = config.get(CONFIG_DASHBOARD_ONLY_MODE_ROLES, []);
-    const userBelongsToMixedViewModeRoles = () => (
-      $scope.user.roles.length &&
-      !$scope.user.roles.every(role => dashboardOnlyModeRoles.includes(role)) &&
-      !$scope.user.roles.every(role => !dashboardOnlyModeRoles.includes(role))
-    );
-    $scope.showMixedViewModeWarning = () => userBelongsToMixedViewModeRoles();
   }
 });

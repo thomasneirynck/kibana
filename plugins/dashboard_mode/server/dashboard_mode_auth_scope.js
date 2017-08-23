@@ -3,6 +3,8 @@ import {
   AUTH_SCOPE_DASHBORD_ONLY_MODE,
 } from '../common';
 
+const superuserRole = 'superuser';
+
 /**
  *  Registered with the security plugin to extend the auth scopes to
  *  include "xpack:dashboardMode" when the request should be in
@@ -21,7 +23,11 @@ export async function getDashboardModeAuthScope(request, user) {
   }
 
   const isDashboardOnlyModeRole = role => dashboardOnlyModeRoles.includes(role);
-  if (user.roles.every(isDashboardOnlyModeRole)) {
+  const isSuperUserRole = role => role === superuserRole;
+
+  const isDashboardOnlyModeUser = user.roles.find(isDashboardOnlyModeRole);
+  const isSuperUser = user.roles.find(isSuperUserRole);
+  if (isDashboardOnlyModeUser && !isSuperUser) {
     return [AUTH_SCOPE_DASHBORD_ONLY_MODE];
   }
 }

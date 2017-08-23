@@ -148,11 +148,6 @@
             <div ng-bind-html="role" data-test-subj="addRoleOption addRoleOption-{{role}}" ></div>
           </ui-select-choices>
         </ui-select>
-        <div class="kuiInputNote kuiInputNote--warning" ng-if="showMixedViewModeWarning()">
-          <span class="kuiIcon fa-exclamation-triangle"></span>
-          This user belongs to roles with different view modes and will be able to access all Kibana apps.
-          <a target="_blank" ng-href="{{dashboardViewModeDocLink}}">Learn more.</a>
-        </div>
       </div>
     </form>
 

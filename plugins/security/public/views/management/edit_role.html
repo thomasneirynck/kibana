@@ -75,129 +75,61 @@
           Name is required.
         </div>
       </div>
+
       <div class="kuiVerticalRhythm">
-        <div class="kuiPanel kuiPanel--withHeader">
-          <div class="kuiPanelHeader">
-            <div class="kuiPanelHeader__title">
-              Kibana view mode
-            </div>
-          </div>
-
-          <div class="kuiPanelBody">
-            <div class="kuiFormSection">
-              <div class="kuiVerticalRhythm kuiInfoPanelBody">
-                <div class="kuiInfoPanelBody__message">
-                  <span class="kuiInfoPanelHeader__icon kuiIcon kuiIcon--info fa-info"></span>
-                  A user assigned to roles with different view modes will see all apps in Kibana. All apps is the default setting for new roles.
-                  <a target="_blank" ng-href="{{dashboardViewModeDocLink}}">Learn more.</a>
-                </div>
-              </div>
-              <div class="kuiVerticalRhythm kuiCardGroup kuiCardGroup--united">
-                <div class="kuiCard">
-                  <div class="kuiCard__description">
-                    <div class="kuiCard__descriptionTitle">
-                      <input type="radio"
-                             ng-disabled="role.metadata._reserved || !isRoleEnabled(role)"
-                             name="viewMode"
-                             ng-model="viewMode.currentSelection"
-                             value="allAppsViewMode"
-                             data-test-subj="allAppsViewMode"/>
-                      All apps
-                    </div>
-
-                    <div class="kuiCard__descriptionText">
-                      All apps will be displayed in Kibana. The user's accessibility for each app will be determined by their elasticsearch permissions.
-                    </div>
-                  </div>
-                </div>
-
-                <div class="kuiCard">
-                  <div class="kuiCard__description">
-                    <div class="kuiCard__descriptionTitle">
-                      <input
-                        type="radio"
-                        ng-disabled="role.metadata._reserved || !isRoleEnabled(role)"
-                        name="viewMode"
-                        value="dashboardOnlyMode"
-                        ng-model="viewMode.currentSelection"
-                        data-test-subj="dashboardOnlyMode"/>
-                      View dashboards only
-                    </div>
-
-                    <div class="kuiCard__descriptionText">
-                      This role can only access the Dashboard app within Kibana, with no editing controls. All other apps will be hidden.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <!-- Cluster privileges -->
+        <div class="kuiFormSection">
+          <label class="kuiFormLabel">
+            Cluster Privileges
+          </label>
+          <div ng-repeat="privilege in privileges.cluster">
+            <label>
+              <input
+                class="kuiCheckBox"
+                type="checkbox"
+                ng-checked="includes(role.cluster, privilege)"
+                ng-click="toggle(role.cluster, privilege)"
+                ng-disabled="role.metadata._reserved || !isRoleEnabled(role)"
+              />
+              <span class="kuiOptionLabel">{{privilege}}</span>
+            </label>
           </div>
         </div>
-      </div>
 
-      <div class="kuiVerticalRhythm">
-        <div class="kuiPanel kuiPanel--withHeader">
-          <div class="kuiPanelHeader">
-            <div class="kuiPanelHeader__title">
-              Elasticsearch permissions
-            </div>
-          </div>
+        <!-- Run-as privileges -->
+        <div class="kuiFormSection">
+          <label class="kuiFormLabel">
+            Run As Privileges
+          </label>
+          <ui-select
+            multiple
+            ng-model="role.run_as"
+            ng-disabled="role.metadata._reserved || !isRoleEnabled(role)"
+          >
+            <ui-select-match placeholder="Add a user...">
+              {{$item}}
+            </ui-select-match>
+            <ui-select-choices repeat="user as user in union([$select.search], users) | filter:$select.search">
+              <div ng-bind-html="user"></div>
+            </ui-select-choices>
+          </ui-select>
+        </div>
 
-          <div class="kuiPanelBody"> <!-- Cluster privileges -->
-            <div class="kuiFormSection">
-              <label class="kuiFormLabel">
-                Cluster Privileges
-              </label>
-              <div ng-repeat="privilege in privileges.cluster">
-                <label>
-                  <input
-                    class="kuiCheckBox"
-                    type="checkbox"
-                    ng-checked="includes(role.cluster, privilege)"
-                    ng-click="toggle(role.cluster, privilege)"
-                    ng-disabled="role.metadata._reserved || !isRoleEnabled(role)"
-                  />
-                  <span class="kuiOptionLabel">{{privilege}}</span>
-                </label>
-              </div>
-            </div>
-
-            <!-- Run-as privileges -->
-            <div class="kuiFormSection">
-              <label class="kuiFormLabel">
-                Run As Privileges
-              </label>
-              <ui-select
-                multiple
-                ng-model="role.run_as"
-                ng-disabled="role.metadata._reserved || !isRoleEnabled(role)"
-              >
-                <ui-select-match placeholder="Add a user...">
-                  {{$item}}
-                </ui-select-match>
-                <ui-select-choices repeat="user as user in union([$select.search], users) | filter:$select.search">
-                  <div ng-bind-html="user"></div>
-                </ui-select-choices>
-              </ui-select>
-            </div>
-
-            <!-- Index privileges -->
-            <div class="kuiFormSection">
-              <kbn-index-privileges-form
-                is-new-role="editRole.isNewRole"
-                indices="role.indices"
-                index-patterns="indexPatterns"
-                privileges="privileges"
-                field-options="editRole.fieldOptions"
-                is-reserved="role.metadata._reserved"
-                is-enabled="isRoleEnabled(role)"
-                allow-document-level-security="allowDocumentLevelSecurity"
-                allow-field-level-security="allowFieldLevelSecurity"
-                add-index="addIndex(indices)"
-                remove-index="toggle(indices, index)"
-              ></kbn-index-privileges-form>
-            </div>
-          </div>
+        <!-- Index privileges -->
+        <div class="kuiFormSection">
+          <kbn-index-privileges-form
+            is-new-role="editRole.isNewRole"
+            indices="role.indices"
+            index-patterns="indexPatterns"
+            privileges="privileges"
+            field-options="editRole.fieldOptions"
+            is-reserved="role.metadata._reserved"
+            is-enabled="isRoleEnabled(role)"
+            allow-document-level-security="allowDocumentLevelSecurity"
+            allow-field-level-security="allowFieldLevelSecurity"
+            add-index="addIndex(indices)"
+            remove-index="toggle(indices, index)"
+          ></kbn-index-privileges-form>
         </div>
       </div>
 

@@ -38,6 +38,14 @@ describe('getDashboardModeAuthScope()', () => {
         expected: [AUTH_SCOPE_DASHBORD_ONLY_MODE]
       });
     });
+
+    it('one role is not in dashboard mode', async () => {
+      await test({
+        userRoles: ['dash-only-role', 'another-limited-role', 'a-super-role'],
+        dashRoles: ['dash-only-role', 'another-limited-role'],
+        expected: [AUTH_SCOPE_DASHBORD_ONLY_MODE]
+      });
+    });
   });
 
   describe('does not return tag when', () => {
@@ -49,9 +57,9 @@ describe('getDashboardModeAuthScope()', () => {
       });
     });
 
-    it('one role is not in dashboard mode', async () => {
+    it('one role is in dashboard mode and the user has superuser privileges', async () => {
       await test({
-        userRoles: ['dash-only-role', 'another-limited-role', 'a-super-role'],
+        userRoles: ['dash-only-role', 'another-limited-role', 'superuser'],
         dashRoles: ['dash-only-role', 'another-limited-role'],
         expected: undefined
       });

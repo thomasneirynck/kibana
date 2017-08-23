@@ -14,8 +14,6 @@ import { XPackInfoProvider } from 'plugins/xpack_main/services/xpack_info';
 import { checkLicenseError } from 'plugins/security/lib/check_license_error';
 import { GateKeeperProvider } from 'plugins/xpack_main/services/gate_keeper';
 import { EDIT_ROLES_PATH, ROLES_PATH } from './management_urls';
-import { documentationLinks } from '../../documentation_links';
-import { CONFIG_DASHBOARD_ONLY_MODE_ROLES } from '../../../../dashboard_mode/common';
 
 routes.when(`${EDIT_ROLES_PATH}/:name?`, {
   template,
@@ -57,7 +55,6 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
   controllerAs: 'editRole',
   controller($injector, $scope) {
     const $route = $injector.get('$route');
-    const config = $injector.get('config');
     const kbnUrl = $injector.get('kbnUrl');
     const shieldPrivileges = $injector.get('shieldPrivileges');
     const Notifier = $injector.get('Notifier');
@@ -65,19 +62,11 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
     const confirmModal = $injector.get('confirmModal');
     const shieldIndices = $injector.get('shieldIndices');
 
-    $scope.dashboardViewModeDocLink = documentationLinks.dashboardViewMode;
     $scope.role = $route.current.locals.role;
     $scope.users = $route.current.locals.users;
     $scope.indexPatterns = $route.current.locals.indexPatterns;
     $scope.privileges = shieldPrivileges;
     $scope.rolesHref = `#${ROLES_PATH}`;
-
-    const currentDashboardOnlyModeRoles = config.get(CONFIG_DASHBOARD_ONLY_MODE_ROLES, []);
-    const DASHBOARD_VIEW_MODE = 'dashboardOnlyMode';
-    const ALL_APPS_VIEW_MODE = 'allAppsViewMode';
-    $scope.viewMode = {
-      currentSelection: currentDashboardOnlyModeRoles.includes($scope.role.name) ? DASHBOARD_VIEW_MODE : ALL_APPS_VIEW_MODE
-    };
 
     this.isNewRole = $route.current.params.name == null;
     this.fieldOptions = {};
@@ -99,22 +88,9 @@ routes.when(`${EDIT_ROLES_PATH}/:name?`, {
     };
 
     $scope.saveRole = (role) => {
-      let newDashboardOnlyModeRoles = [...currentDashboardOnlyModeRoles];
-      if ($scope.viewMode.currentSelection === DASHBOARD_VIEW_MODE &&
-          !currentDashboardOnlyModeRoles.includes($scope.role.name)) {
-        newDashboardOnlyModeRoles.push($scope.role.name);
-      } else if ($scope.viewMode.currentSelection === ALL_APPS_VIEW_MODE &&
-          currentDashboardOnlyModeRoles.includes($scope.role.name)) {
-        newDashboardOnlyModeRoles =
-          newDashboardOnlyModeRoles.filter(roleInDashboardMode => roleInDashboardMode !== $scope.role.name);
-      }
-
-      config.set(CONFIG_DASHBOARD_ONLY_MODE_ROLES, newDashboardOnlyModeRoles)
-        .then(() => {
-          role.indices = role.indices.filter((index) => index.names.length);
-          role.indices.forEach((index) => index.query || delete index.query);
-          return role.$save();
-        })
+      role.indices = role.indices.filter((index) => index.names.length);
+      role.indices.forEach((index) => index.query || delete index.query);
+      return role.$save()
         .then(() => notifier.info('The role has been updated.'))
         .then($scope.goToRoleList)
         .catch(error => notifier.error(_.get(error, 'data.message')));

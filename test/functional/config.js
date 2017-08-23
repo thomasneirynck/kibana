@@ -28,6 +28,7 @@ export default async function ({ readConfigFile }) {
   return {
     // list paths to the files that contain your plugins tests
     testFiles: [
+      resolve(__dirname, './apps/dashboard_mode'),
       resolve(__dirname, './apps/security'),
       resolve(__dirname, './apps/reporting'),
       resolve(__dirname, './apps/logstash'),

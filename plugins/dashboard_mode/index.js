@@ -22,8 +22,7 @@ export function dashboardMode(kibana) {
       uiSettingDefaults: {
         [CONFIG_DASHBOARD_ONLY_MODE_ROLES]: {
           description: 'Roles that belong to View Dashboards Only mode',
-          value: [],
-          readonly: true
+          value: ['kibana_dashboard_only_user'],
         }
       },
       app: {

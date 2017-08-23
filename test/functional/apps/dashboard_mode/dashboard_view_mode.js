@@ -20,12 +20,12 @@ export default function ({ getService, getPageObjects }) {
     before('initialize tests', async () => {
       log.debug('Dashboard View Mode:initTests');
       await esArchiver.loadIfNeeded('logstash_functional');
+      await esArchiver.load('dashboard_view_mode');
       await kibanaServer.uiSettings.replace({
         'dateFormat:tz':'UTC',
         'defaultIndex':'logstash-*'
       });
       await kibanaServer.uiSettings.disableToastAutohide();
-      await esArchiver.load('dashboard_view_mode');
       remote.setWindowSize(1600, 1000);
 
       await PageObjects.common.navigateToApp('dashboard');
@@ -35,45 +35,20 @@ export default function ({ getService, getPageObjects }) {
       await PageObjects.header.clickToastOK();
     });
 
-
-    describe('Management ', async () => {
-      it('can create a dashboard only mode role', async () => {
+    describe('Dashboard viewer', () => {
+      before('Create logstash data role', async () => {
         await PageObjects.settings.navigateTo();
         await PageObjects.settings.clickLinkText('Roles');
         await PageObjects.security.clickCreateNewRole();
 
-        await testSubjects.setValue('roleFormNameInput', 'dash-only-role');
-        await PageObjects.security.selectDashboardOnlyModeRole();
-        await PageObjects.security.addIndexToRole('.kibana');
+        await testSubjects.setValue('roleFormNameInput', 'logstash-data');
         await PageObjects.security.addIndexToRole('logstash-*');
         await PageObjects.security.addPrivilegeToRole('read');
-        await PageObjects.security.addPrivilegeToRole('view_index_metadata');
-
         await PageObjects.security.clickSaveEditRole();
       });
 
-      it('Opening dashboard only mode role preserves the setting', async () => {
-        await PageObjects.settings.clickLinkText('dash-only-role');
-        const isDashMode = await PageObjects.security.getIsDashboardOnlyMode();
-        expect(isDashMode).to.be(true);
-      });
-
-      it('Can uncheck the setting', async () => {
-        await PageObjects.security.selectAllAppsViewModeRole();
-        await PageObjects.security.clickSaveEditRole();
-        await PageObjects.settings.clickLinkText('dash-only-role');
-        const isDashMode = await PageObjects.security.getIsDashboardOnlyMode();
-        expect(isDashMode).to.be(false);
-      });
-
-      after('Put the role back in dashboard only mode for the rest of the tests', async () => {
-        await PageObjects.security.selectDashboardOnlyModeRole();
-        await PageObjects.security.clickSaveEditRole();
-      });
-    });
-
-    describe('Dashboard viewer', () => {
       before('Create dashboard only mode user', async () => {
+        await PageObjects.settings.navigateTo();
         await PageObjects.security.clickUsersSection();
         await PageObjects.security.clickCreateNewUser();
 
@@ -82,7 +57,8 @@ export default function ({ getService, getPageObjects }) {
         await testSubjects.setValue('passwordConfirmationInput', '123456');
         await testSubjects.setValue('userFormFullNameInput', 'dashuser');
         await testSubjects.setValue('userFormEmailInput', 'my@email.com');
-        await PageObjects.security.assignRoleToUser('dash-only-role');
+        await PageObjects.security.assignRoleToUser('kibana_dashboard_only_user');
+        await PageObjects.security.assignRoleToUser('logstash-data');
 
         await PageObjects.security.clickSaveEditUser();
       });
@@ -95,7 +71,22 @@ export default function ({ getService, getPageObjects }) {
         await testSubjects.setValue('passwordConfirmationInput', '123456');
         await testSubjects.setValue('userFormFullNameInput', 'mixeduser');
         await testSubjects.setValue('userFormEmailInput', 'my@email.com');
-        await PageObjects.security.assignRoleToUser('dash-only-role');
+        await PageObjects.security.assignRoleToUser('kibana_dashboard_only_user');
+        await PageObjects.security.assignRoleToUser('kibana_user');
+        await PageObjects.security.assignRoleToUser('logstash-data');
+
+        await PageObjects.security.clickSaveEditUser();
+      });
+
+      before('Create user with dashboard and superuser role', async () => {
+        await PageObjects.security.clickCreateNewUser();
+
+        await testSubjects.setValue('userFormUserNameInput', 'mysuperuser');
+        await testSubjects.setValue('passwordInput', '123456');
+        await testSubjects.setValue('passwordConfirmationInput', '123456');
+        await testSubjects.setValue('userFormFullNameInput', 'mixeduser');
+        await testSubjects.setValue('userFormEmailInput', 'my@email.com');
+        await PageObjects.security.assignRoleToUser('kibana_dashboard_only_user');
         await PageObjects.security.assignRoleToUser('superuser');
 
         await PageObjects.security.clickSaveEditUser();
@@ -186,9 +177,17 @@ export default function ({ getService, getPageObjects }) {
         expect(timePickerExists).to.be(true);
       });
 
-      it('is not loaded for a user who is assigned a non-dashboard mode role', async () => {
+      it('is loaded for a user who is assigned a non-dashboard mode role', async () => {
         await PageObjects.security.logout();
         await PageObjects.security.login('mixeduser', '123456');
+
+        const managementAppExists = await find.existsByLinkText('Management');
+        expect(managementAppExists).to.be(false);
+      });
+
+      it('is not loaded for a user who is assigned a superuser role', async () => {
+        await PageObjects.security.logout();
+        await PageObjects.security.login('mysuperuser', '123456');
 
         const managementAppExists = await find.existsByLinkText('Management');
         expect(managementAppExists).to.be(true);

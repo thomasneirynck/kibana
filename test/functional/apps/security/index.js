@@ -3,7 +3,6 @@ export default function ({ loadTestFile }) {
     loadTestFile(require.resolve('./security'));
     loadTestFile(require.resolve('./management'));
     loadTestFile(require.resolve('./users'));
-    loadTestFile(require.resolve('./dashboard_view_mode'));
     loadTestFile(require.resolve('./secure_roles_perm'));
   });
 }
