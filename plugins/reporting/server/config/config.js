@@ -8,7 +8,7 @@ function cpuCount() {
   } catch (e) {
     return defaultCPUCount;
   }
-};
+}
 
 export const config = {
   concurrency: cpuCount()

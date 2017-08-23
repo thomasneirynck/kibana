@@ -157,4 +157,4 @@ export async function getPipelines(req, config, logstashIndexPattern, start, end
   const timespanInSeconds = (end - start) / 1000;
   const response = await fetchPipelines(req, config, logstashIndexPattern, start, end, clusterUuid, logstashUuid);
   return _handleResponse(response, timespanInSeconds);
-};
+}

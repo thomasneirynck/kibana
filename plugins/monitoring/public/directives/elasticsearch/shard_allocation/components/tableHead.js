@@ -38,13 +38,13 @@ class IndexLabel extends React.Component {
 
   render() {
     return (
-      <div className='pull-left filter-member'>
+      <div className="pull-left filter-member">
         Indices
 
         <label className="kuiCheckBoxLabel">
           <input
-            onChange={ this.toggleShowSystemIndicesState }
-            checked={ this.state.showSystemIndices }
+            onChange={this.toggleShowSystemIndicesState}
+            checked={this.state.showSystemIndices}
             className="kuiCheckBox"
             type="checkbox"
           />
@@ -58,7 +58,7 @@ class IndexLabel extends React.Component {
 
 }
 
-export class TableHead extends React.Component {
+export class TableHead extends React.Component { // eslint-disable-line react/no-multi-comp
 
   constructor(props) {
     super(props);
@@ -66,7 +66,7 @@ export class TableHead extends React.Component {
 
   createColumn({ key, content }) {
     return (
-      <th key={ key } colSpan={ 1 }>{ content }</th>
+      <th key={key} colSpan={1}>{ content }</th>
     );
   }
 
@@ -80,7 +80,7 @@ export class TableHead extends React.Component {
       if (label.showToggleSystemIndicesComponent) {
         // override text label content with a JSX component
         column.content = (
-          <IndexLabel scope={ this.props.scope } toggleShowSystemIndices={ this.props.toggleShowSystemIndices } />
+          <IndexLabel scope={this.props.scope} toggleShowSystemIndices={this.props.toggleShowSystemIndices} />
         );
       } else {
         column.content = label.content;
@@ -98,4 +98,4 @@ export class TableHead extends React.Component {
     );
   }
 
-};
+}

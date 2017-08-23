@@ -95,4 +95,4 @@ export default function (plugin, server) {
     isRunning: () => { return !!timeoutId; },
   };
 
-};
+}

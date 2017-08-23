@@ -146,4 +146,4 @@ export class ThresholdWatch extends BaseWatch {
     return new ThresholdWatch(props);
   }
 
-};
+}

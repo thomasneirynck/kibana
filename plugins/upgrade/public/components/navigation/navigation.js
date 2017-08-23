@@ -37,9 +37,9 @@ export function UpgradeSectionNavigation({ currentViewLocation, views }) {
         <KuiLocalTabs>
           { VIEW_IDS.map((viewId) => (
             <KuiLocalTab
-              href={ views[viewId].absoluteLocation }
-              isSelected={ currentViewLocation === views[viewId].location }
-              key={ viewId }
+              href={views[viewId].absoluteLocation}
+              isSelected={currentViewLocation === views[viewId].location}
+              key={viewId}
             >
               { views[viewId].label }
             </KuiLocalTab>

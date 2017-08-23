@@ -9,4 +9,4 @@ export class GrokdebuggerResponse {
   static fromUpstreamJSON(grokdebuggerResponse) {
     return new GrokdebuggerResponse(grokdebuggerResponse);
   }
-};
+}

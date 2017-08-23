@@ -21,7 +21,7 @@ export function IndexActionStep({ step, action, indexName }) {
   return (
     <div className="kuiText">
       <div className="kuiStatusText">
-        <span className={ iconClasses } />
+        <span className={iconClasses} />
         { getMessage(step, action, indexName) }
       </div>
     </div>

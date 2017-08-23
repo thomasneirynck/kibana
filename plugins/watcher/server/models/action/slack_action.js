@@ -85,4 +85,4 @@ export class SlackAction extends BaseAction {
     }
   }
   */
-};
+}

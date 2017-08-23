@@ -181,7 +181,7 @@ export class ChartTarget extends React.Component {
     };
 
     return (
-      <div ref="target" style={ style } />
+      <div ref="target" style={style} />
     );
   }
 }

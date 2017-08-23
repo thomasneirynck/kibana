@@ -89,4 +89,4 @@ export function indexRoutes(server) {
     }
   });
 
-};
+}

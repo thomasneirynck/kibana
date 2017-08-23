@@ -27,4 +27,4 @@ export class WatchStatus {
   static fromUpstreamJson(upstreamWatchStatus) {
     return new WatchStatus(upstreamWatchStatus);
   }
-};
+}

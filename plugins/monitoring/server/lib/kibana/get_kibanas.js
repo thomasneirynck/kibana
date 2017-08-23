@@ -69,4 +69,4 @@ export function getKibanas(req, kbnIndexPattern, { clusterUuid }) {
       };
     });
   });
-};
+}

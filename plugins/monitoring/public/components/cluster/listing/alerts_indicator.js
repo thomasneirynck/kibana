@@ -14,7 +14,7 @@ export function AlertsIndicator({ alerts }) {
       if (alerts.medium > 0) { return MEDIUM_SEVERITY; }
       return LOW_SEVERITY;
     })();
-    const icon = <SeverityIcon severity={ severity } />;
+    const icon = <SeverityIcon severity={severity} />;
     const tooltipText = (() => {
       switch (severity) {
         case HIGH_SEVERITY:
@@ -28,15 +28,15 @@ export function AlertsIndicator({ alerts }) {
     })();
 
     return (
-      <Tooltip text={ tooltipText } placement='bottom' trigger='hover'>
+      <Tooltip text={tooltipText} placement="bottom" trigger="hover">
         { icon }
       </Tooltip>
     );
   }
 
   return (
-    <Tooltip text='Cluster status is clear!' placement='bottom' trigger='hover'>
-      <SeverityIcon severity={ STATUS_OK } />
+    <Tooltip text="Cluster status is clear!" placement="bottom" trigger="hover">
+      <SeverityIcon severity={STATUS_OK} />
     </Tooltip>
   );
 }

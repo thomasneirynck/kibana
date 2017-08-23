@@ -75,4 +75,4 @@ export class Pipeline {
 
     return new Pipeline(opts);
   }
-};
+}

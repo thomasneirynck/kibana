@@ -30,4 +30,4 @@ export function getMetrics(req, indexPattern, filters = []) {
     });
     return data;
   });
-};
+}

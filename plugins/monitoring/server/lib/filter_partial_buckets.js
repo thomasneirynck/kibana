@@ -32,4 +32,4 @@ export function filterPartialBuckets(min, max, bucketSize, options = {}) {
 
     return true;
   };
-};
+}

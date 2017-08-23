@@ -9,14 +9,14 @@ export function Issues({ className, issues }) {
   const classes = classNames('kuiMenu kuiMenu--contained', className);
 
   return (
-    <ul className={ classes }>
+    <ul className={classes}>
       { issues.map((issue, issueIndex) => (
         <Issue
-          details={ issue.details }
-          key={ issueIndex }
-          level={ issue.level }
-          message={ issue.message }
-          url={ issue.url }
+          details={issue.details}
+          key={issueIndex}
+          level={issue.level}
+          message={issue.message}
+          url={issue.url}
         />
       )) }
     </ul>

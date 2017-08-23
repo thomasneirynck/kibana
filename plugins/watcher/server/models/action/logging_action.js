@@ -71,4 +71,4 @@ export class LoggingAction extends BaseAction {
     }
   }
   */
-};
+}

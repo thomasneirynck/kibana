@@ -58,4 +58,4 @@ export function routeInitProvider(Private, monitoringClusters, globalState, lice
     })
     .catch(ajaxErrorHandlers);
   };
-};
+}

@@ -7,11 +7,11 @@ export function LoggingForm({ className, isLoggingEnabled, onToggleLoggingEnable
   const classes = classNames('kuiCheckBoxLabel', 'kuiVerticalRhythm', className);
 
   return (
-    <label className={ classes }>
+    <label className={classes}>
       <input
-        checked={ isLoggingEnabled }
+        checked={isLoggingEnabled}
         className="kuiCheckBox"
-        onChange={ onToggleLoggingEnabled }
+        onChange={onToggleLoggingEnabled}
         type="checkbox"
       />
       <span className="kuiCheckBoxLabel__text">

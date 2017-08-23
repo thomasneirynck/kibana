@@ -77,7 +77,7 @@ export async function getMappingsAndSettings(indexName) {
 
     throw error;
   }
-};
+}
 
 export async function createIndex(indexName, definition) {
   try {

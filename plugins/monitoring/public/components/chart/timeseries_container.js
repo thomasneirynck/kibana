@@ -10,8 +10,8 @@ export function TimeseriesContainer(props) {
   };
 
   return (
-    <div style={ container }>
-      <ChartTarget { ...props }/>
+    <div style={container}>
+      <ChartTarget {...props}/>
     </div>
   );
 }

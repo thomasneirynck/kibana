@@ -21,8 +21,8 @@ describe('HomeView', () => {
   test('renders view links using the absolute locations', () => {
     const component = (
       <HomeView
-        views={ VIEWS }
-        viewState={ {} }
+        views={VIEWS}
+        viewState={{}}
       />
     );
 
@@ -36,7 +36,7 @@ describe('HomeView', () => {
   test('renders an expanded InfoGroup by default', () => {
     const component = (
       <HomeView
-        viewState={ {} }
+        viewState={{}}
       />
     );
 
@@ -48,11 +48,11 @@ describe('HomeView', () => {
   test('renders a collapsed InfoGroup when the viewState requires it', () => {
     const component = (
       <HomeView
-        viewState={ {
+        viewState={{
           HomeView: {
             isInfoCollapsed: true,
           },
-        } }
+        }}
       />
     );
 
@@ -65,8 +65,8 @@ describe('HomeView', () => {
     const setViewState = sinon.stub();
     const component = (
       <HomeView
-        setViewState={ setViewState }
-        viewState={ {} }
+        setViewState={setViewState}
+        viewState={{}}
       />
     );
 

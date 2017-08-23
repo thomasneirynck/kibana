@@ -45,4 +45,4 @@ export class SlackAction extends BaseAction {
   static template = '<watch-slack-action></watch-slack-action>';
   static selectMessage = 'Send a message to a slack user or channel.';
   static simulatePrompt = 'Send a sample message now';
-};
+}

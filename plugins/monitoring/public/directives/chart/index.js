@@ -31,20 +31,20 @@ uiModule.directive('monitoringChart', (timefilter) => {
       }
 
       ReactDOM.render(
-        <div className='monitoring-chart__container'>
-          <h2 className='monitoring-chart__title'>
+        <div className="monitoring-chart__container">
+          <h2 className="monitoring-chart__title">
             { getTitle(series) }{ units ? ` (${units})` : '' }
             <OverlayTrigger
-              placement='left'
-              trigger='click'
-              overlay={ <Tooltip><InfoTooltip series={ series }/></Tooltip> }
+              placement="left"
+              trigger="click"
+              overlay={<Tooltip><InfoTooltip series={series}/></Tooltip>}
             >
-              <span className='monitoring-chart-tooltip__trigger overlay-trigger'>
+              <span className="monitoring-chart-tooltip__trigger overlay-trigger">
                 <KuiInfoButton />
               </span>
             </OverlayTrigger>
           </h2>
-          <MonitoringTimeseries scope={ scope } onBrush={ onBrush }/>
+          <MonitoringTimeseries scope={scope} onBrush={onBrush}/>
         </div>,
         $elem[0]
       );

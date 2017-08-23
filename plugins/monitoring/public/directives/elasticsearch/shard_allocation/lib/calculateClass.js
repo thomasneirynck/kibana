@@ -31,4 +31,4 @@ export function calculateClass(item, initial) {
     classes.push('master');
   }
   return classes.join(' ');
-};
+}

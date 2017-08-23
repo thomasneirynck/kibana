@@ -53,7 +53,7 @@ export class MonitoringMainController {
   // check whether to show ML tab
   isMlSupported()  {
     return this._licenseService.mlIsSupported();
-  };
+  }
 }
 
 const uiModule = uiModules.get('plugins/monitoring/directives', []);

@@ -105,4 +105,4 @@ export function esHealthCheck(monitoringPlugin, server) {
       startOrRestartChecking();
     }
   };
-};
+}

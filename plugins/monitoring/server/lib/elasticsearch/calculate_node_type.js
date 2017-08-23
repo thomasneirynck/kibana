@@ -24,4 +24,4 @@ export function calculateNodeType(node, masterNodeId) {
   if (mightBe(attrs.data) && isNot(attrs.master)) { return 'data'; }
 
   return 'node';
-};
+}

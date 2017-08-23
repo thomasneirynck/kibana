@@ -23,7 +23,9 @@ function renderHashesInfo(pipeline) {
     : `have been ${numHashes} versions`;
 
   return (
-    <span className="kuiSubText">In the selected time range there { hashesStr } of the "{ pipeline.id }" pipeline</span>
+    <span className="kuiSubText">
+      In the selected time range there { hashesStr } of the &ldquo;{ pipeline.id }&rdquo; pipeline
+    </span>
   );
 }
 
@@ -37,22 +39,22 @@ export function PipelineCard({ pipeline, onHashClick }) {
     const relativeLastSeen = formatTimestampToDuration(lastSeen, CALCULATE_DURATION_SINCE);
 
     return (
-      <KuiMenuItem key={ hash }>
+      <KuiMenuItem key={hash}>
         <KuiEvent>
           <KuiEventBody>
             <KuiEventBodyMessage>
               <KuiKeyboardAccessible>
                 <a
                   className="kuiLink"
-                  onClick={ onClick }
-                  title={ hash }
+                  onClick={onClick}
+                  title={hash}
                 >
                   Version { hashShort }
                 </a>
               </KuiKeyboardAccessible>
             </KuiEventBodyMessage>
             <KuiEventBodyMetadata>
-              Last seen <span title={ formatDateTimeLocal(lastSeen) }>{ relativeLastSeen } ago</span>
+              Last seen <span title={formatDateTimeLocal(lastSeen)}>{ relativeLastSeen } ago</span>
             </KuiEventBodyMetadata>
           </KuiEventBody>
         </KuiEvent>

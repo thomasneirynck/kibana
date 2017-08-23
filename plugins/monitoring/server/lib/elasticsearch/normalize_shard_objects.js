@@ -17,7 +17,7 @@ function createNewMetric() {
       primary: 0
     }
   };
-};
+}
 
 function setStats(bucket, metric, ident) {
   const states = filter(bucket.states.buckets, ident);
@@ -82,4 +82,4 @@ export function normalizeIndexShards(indices) {
     if (metric.unassigned.primary) { metric.status = 'red'; }
     indices[bucket.key] = metric;
   };
-};
+}

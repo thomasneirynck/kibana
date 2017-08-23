@@ -35,8 +35,8 @@ export const ReindexView = withViewState({
         <div className="kuiViewContentItem">
           <InfoGroup
             className="kuiVerticalRhythm"
-            isCollapsed={ isInfoCollapsed }
-            onChangeCollapsed={ toggleInfoCollapsed }
+            isCollapsed={isInfoCollapsed}
+            onChangeCollapsed={toggleInfoCollapsed}
             title="Reindex Helper"
           >
             <ReindexInfo className="kuiVerticalRhythm" />
@@ -53,12 +53,12 @@ export const ReindexView = withViewState({
           }
 
           <IndexTable
-            cancelAction={ cancelAction }
+            cancelAction={cancelAction}
             className="kuiVerticalRhythm"
-            indices={ indices }
-            loadIndices={ loadIndices }
-            processIndex={ processIndex }
-            resetAction={ resetAction }
+            indices={indices}
+            loadIndices={loadIndices}
+            processIndex={processIndex}
+            resetAction={resetAction}
           />
         </div>
       </div>

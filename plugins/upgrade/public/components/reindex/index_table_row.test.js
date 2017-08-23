@@ -20,11 +20,11 @@ describe('IndexTableRow', () => {
   test('renders the index name', () => {
     const component = (
       <IndexTableRow
-        index={ {
+        index={{
           action: INDEX_ACTION.TYPE.UPGRADE,
           name: 'A UNIQUE INDEX NAME',
           steps: [],
-        } }
+        }}
       />
     );
 
@@ -38,16 +38,16 @@ describe('IndexTableRow', () => {
       isNotStarted.mockReturnValue(true);
       const component = (
         <IndexTableRow
-          index={ {
+          index={{
             action: INDEX_ACTION.TYPE.UPGRADE,
             name: 'INDEX NAME',
             steps: [],
-          } }
+          }}
         />
       );
 
       expect(shallow(component).containsMatchingElement(
-        <button disabled={ false } >{ INDEX_ACTION.LABEL.UPGRADE }</button>
+        <button disabled={false} >{ INDEX_ACTION.LABEL.UPGRADE }</button>
       )).toBe(true);
     });
 
@@ -55,16 +55,16 @@ describe('IndexTableRow', () => {
       isNotStarted.mockReturnValue(false);
       const component = (
         <IndexTableRow
-          index={ {
+          index={{
             action: INDEX_ACTION.TYPE.UPGRADE,
             name: 'INDEX NAME',
             steps: [],
-          } }
+          }}
         />
       );
 
       expect(shallow(component).containsMatchingElement(
-        <button disabled={ true }>{ INDEX_ACTION.LABEL.UPGRADE }</button>
+        <button disabled={true}>{ INDEX_ACTION.LABEL.UPGRADE }</button>
       )).toBe(true);
     });
 
@@ -72,16 +72,16 @@ describe('IndexTableRow', () => {
       isNotStarted.mockReturnValue(true);
       const component = (
         <IndexTableRow
-          index={ {
+          index={{
             action: INDEX_ACTION.TYPE.REINDEX,
             name: 'INDEX NAME',
             steps: [],
-          } }
+          }}
         />
       );
 
       expect(shallow(component).containsMatchingElement(
-        <button disabled={ false } >{ INDEX_ACTION.LABEL.REINDEX }</button>
+        <button disabled={false} >{ INDEX_ACTION.LABEL.REINDEX }</button>
       )).toBe(true);
     });
 
@@ -89,16 +89,16 @@ describe('IndexTableRow', () => {
       isNotStarted.mockReturnValue(false);
       const component = (
         <IndexTableRow
-          index={ {
+          index={{
             action: INDEX_ACTION.TYPE.REINDEX,
             name: 'INDEX NAME',
             steps: [],
-          } }
+          }}
         />
       );
 
       expect(shallow(component).containsMatchingElement(
-        <button disabled={ true }>{ INDEX_ACTION.LABEL.REINDEX }</button>
+        <button disabled={true}>{ INDEX_ACTION.LABEL.REINDEX }</button>
       )).toBe(true);
     });
 
@@ -107,12 +107,12 @@ describe('IndexTableRow', () => {
       const processIndex = jest.fn();
       const component = (
         <IndexTableRow
-          index={ {
+          index={{
             action: INDEX_ACTION.TYPE.UPGRADE,
             name: 'INDEX',
             steps: [],
-          } }
-          processIndex={ processIndex }
+          }}
+          processIndex={processIndex}
         />
       );
 
@@ -130,16 +130,16 @@ describe('IndexTableRow', () => {
       isCancelable.mockReturnValue(true);
       const component = (
         <IndexTableRow
-          index={ {
+          index={{
             action: INDEX_ACTION.TYPE.UPGRADE,
             name: 'INDEX NAME',
             steps: [],
-          } }
+          }}
         />
       );
 
       expect(shallow(component).containsMatchingElement(
-        <button disabled={ false } >Cancel</button>
+        <button disabled={false} >Cancel</button>
       )).toBe(true);
     });
 
@@ -147,16 +147,16 @@ describe('IndexTableRow', () => {
       isCancelable.mockReturnValue(false);
       const component = (
         <IndexTableRow
-          index={ {
+          index={{
             action: INDEX_ACTION.TYPE.UPGRADE,
             name: 'INDEX NAME',
             steps: [],
-          } }
+          }}
         />
       );
 
       expect(shallow(component).containsMatchingElement(
-        <button disabled={ true } >Cancel</button>
+        <button disabled={true} >Cancel</button>
       )).toBe(true);
     });
 
@@ -165,12 +165,12 @@ describe('IndexTableRow', () => {
       const cancelAction = jest.fn();
       const component = (
         <IndexTableRow
-          index={ {
+          index={{
             action: INDEX_ACTION.TYPE.UPGRADE,
             name: 'INDEX',
             steps: [],
-          } }
-          cancelAction={ cancelAction }
+          }}
+          cancelAction={cancelAction}
         />
       );
 
@@ -188,16 +188,16 @@ describe('IndexTableRow', () => {
       isResettable.mockReturnValue(true);
       const component = (
         <IndexTableRow
-          index={ {
+          index={{
             action: INDEX_ACTION.TYPE.UPGRADE,
             name: 'INDEX NAME',
             steps: [],
-          } }
+          }}
         />
       );
 
       expect(shallow(component).containsMatchingElement(
-        <button disabled={ false } >Reset</button>
+        <button disabled={false} >Reset</button>
       )).toBe(true);
     });
 
@@ -205,16 +205,16 @@ describe('IndexTableRow', () => {
       isResettable.mockReturnValue(false);
       const component = (
         <IndexTableRow
-          index={ {
+          index={{
             action: INDEX_ACTION.TYPE.UPGRADE,
             name: 'INDEX NAME',
             steps: [],
-          } }
+          }}
         />
       );
 
       expect(shallow(component).containsMatchingElement(
-        <button disabled={ true } >Reset</button>
+        <button disabled={true} >Reset</button>
       )).toBe(true);
     });
 
@@ -223,12 +223,12 @@ describe('IndexTableRow', () => {
       const resetAction = jest.fn();
       const component = (
         <IndexTableRow
-          index={ {
+          index={{
             action: INDEX_ACTION.TYPE.UPGRADE,
             name: 'INDEX',
             steps: [],
-          } }
-          resetAction={ resetAction }
+          }}
+          resetAction={resetAction}
         />
       );
 
@@ -244,11 +244,11 @@ describe('IndexTableRow', () => {
   test('renders no IndexActionSteps component when there are no steps', () => {
     const component = (
       <IndexTableRow
-        index={ {
+        index={{
           action: INDEX_ACTION.TYPE.UPGRADE,
           name: 'INDEX',
           steps: [],
-        } }
+        }}
       />
     );
 
@@ -260,13 +260,13 @@ describe('IndexTableRow', () => {
   test('renders an IndexActionSteps component when there are steps', () => {
     const component = (
       <IndexTableRow
-        index={ {
+        index={{
           action: INDEX_ACTION.TYPE.UPGRADE,
           name: 'INDEX',
           steps: [
             { name: 'STEP 1' },
           ],
-        } }
+        }}
       />
     );
 

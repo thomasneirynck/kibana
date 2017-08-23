@@ -27,24 +27,24 @@ export function IndexDeprecations({ className, deprecations }) {
 
   return (
     <StatusGroup
-      className={ className }
+      className={className}
       isInitiallyCollapsed
-      status={ <IssueSummary issueLevelCounts={ totalLevelCounts } /> }
+      status={<IssueSummary issueLevelCounts={totalLevelCounts} />}
       title="Index Settings"
     >
       { indexNames.length > 0
         ? (
           indexNames.map((indexName) => (
-            <div key={ indexName }>
+            <div key={indexName}>
               <div className="kuiBar">
                 <div className="kuiBarSection">
-                  <p className='kuiTextTitle'>{ indexName }</p>
+                  <p className="kuiTextTitle">{ indexName }</p>
                 </div>
                 <div className="kuiBarSection">
-                  <IssueSummary issueLevelCounts={ levelCountsByIndex[indexName] } />
+                  <IssueSummary issueLevelCounts={levelCountsByIndex[indexName]} />
                 </div>
               </div>
-              <Issues issues={ deprecations[indexName] } />
+              <Issues issues={deprecations[indexName]} />
             </div>
           ))
         )

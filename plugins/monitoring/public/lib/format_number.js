@@ -79,4 +79,4 @@ export function formatNumber(num, which) {
       if (which) { format = which; }
   }
   return numeral(num).format(format) + postfix;
-};
+}

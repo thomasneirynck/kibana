@@ -85,7 +85,7 @@ function loadUrl(phantomInstance, url, elementSelector, itemsCountAttribute, cap
         node.rel = 'stylesheet';
         node.href = cssPath;
         document.getElementsByTagName('head')[0].appendChild(node);
-      };
+      }
 
       injectCSS(basePath + '/plugins/reporting/styles/reporting-overrides.css');
     }, opts.basePath);
@@ -212,7 +212,7 @@ function loadUrl(phantomInstance, url, elementSelector, itemsCountAttribute, cap
 
     return phantomInstance.evaluate(listenForComplete, elementSelector, loadDelay, timeout, settleTime);
   });
-};
+}
 
 function getElementDoesExist(phantomInstance, timefilterSelector) {
   return phantomInstance.evaluate(function (selector) {

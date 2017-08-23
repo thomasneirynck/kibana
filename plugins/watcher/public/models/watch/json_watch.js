@@ -33,4 +33,4 @@ export class JsonWatch extends BaseWatch {
   static selectMessage = 'Set up a custom watch in raw JSON.';
   static isCreatable = true;
   static selectSortOrder = 100;
-};
+}

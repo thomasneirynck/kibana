@@ -18,6 +18,6 @@ export function MachineLearningJobStatusIcon({ status }) {
   })();
 
   return (
-    <StatusIcon type={ type } label={ `Job Status: ${status}` } />
+    <StatusIcon type={type} label={`Job Status: ${status}`} />
   );
 }

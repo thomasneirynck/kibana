@@ -49,4 +49,4 @@ export class Edge {
   get svgClass() {
     return LOGSTASH.PIPELINE_VIEWER.GRAPH.EDGES.SVG_CLASS;
   }
-};
+}

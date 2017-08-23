@@ -52,4 +52,4 @@ export function clustersRoutes(server) {
       .catch(err => reply(handleError(err, req)));
     }
   });
-};
+}

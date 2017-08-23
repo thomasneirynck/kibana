@@ -21,4 +21,4 @@ export class Action {
 
     return ActionType.fromUpstreamJson(upstreamAction);
   }
-};
+}

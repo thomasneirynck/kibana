@@ -23,4 +23,4 @@ export function injectXPackInfoSignature(info, request, reply) {
     const signature = info.getSignature();
     return addSignatureHeader(request.response, signature);
   }
-};
+}

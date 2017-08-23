@@ -12,6 +12,6 @@ export function KibanaStatusIcon({ status, availability = true }) {
   })();
 
   return (
-    <StatusIcon type={ type } label={ `Health: ${status}` } />
+    <StatusIcon type={type} label={`Health: ${status}`} />
   );
 }

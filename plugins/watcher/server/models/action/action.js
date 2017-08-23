@@ -34,4 +34,4 @@ export class Action {
 
     return ActionType.fromDownstreamJson(json);
   }
-};
+}

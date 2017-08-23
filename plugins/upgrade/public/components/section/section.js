@@ -18,17 +18,17 @@ export function UpgradeSection({
   const CurrentViewComponent = currentView.component;
 
   return (
-    <div id='upgradePlugin'>
+    <div id="upgradePlugin">
       <UpgradeSectionNavigation
-        currentViewLocation={ currentView.location }
-        views={ views }
+        currentViewLocation={currentView.location}
+        views={views}
       />
       <CurrentViewComponent
-        navigateTo={ navigateTo }
-        registerRouteChangeListener={ registerRouteChangeListener }
-        setViewState={ setViewState }
-        views={ views }
-        viewState={ viewState }
+        navigateTo={navigateTo}
+        registerRouteChangeListener={registerRouteChangeListener}
+        setViewState={setViewState}
+        views={views}
+        viewState={viewState}
       />
     </div>
   );

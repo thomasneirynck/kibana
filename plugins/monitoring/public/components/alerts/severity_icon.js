@@ -13,6 +13,6 @@ export function SeverityIcon({ severity }) {
   })();
 
   return (
-    <img src={ `../plugins/monitoring/icons/${icon}` } />
+    <img src={`../plugins/monitoring/icons/${icon}`} />
   );
 }

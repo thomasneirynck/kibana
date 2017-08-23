@@ -74,7 +74,7 @@ to enjoy multi-cluster monitoring.`
     getClusterAction() {
       if (this.props.isSupported) {
         return (
-          <a className='kuiLink' onClick={ this.changeCluster.bind(this) }>
+          <a className="kuiLink" onClick={this.changeCluster.bind(this)}>
             { this.props.cluster_name }
           </a>
         );
@@ -83,7 +83,7 @@ to enjoy multi-cluster monitoring.`
       // not supported because license is basic/not compatible with multi-cluster
       if (this.props.license) {
         return (
-          <a onClick={ this.handleClickIncompatibleLicense.bind(this) }>
+          <a onClick={this.handleClickIncompatibleLicense.bind(this)}>
             { this.props.cluster_name }
           </a>
         );
@@ -91,7 +91,7 @@ to enjoy multi-cluster monitoring.`
 
       // not supported because license is invalid
       return (
-        <a onClick={ this.handleClickInvalidLicense.bind(this) }>
+        <a onClick={this.handleClickInvalidLicense.bind(this)}>
           { this.props.cluster_name }
         </a>
       );
@@ -103,7 +103,7 @@ to enjoy multi-cluster monitoring.`
           if (this.props.license.expiry_date_in_millis < moment().valueOf()) {
             // license is expired
             return (
-              <span className='monitoringTableCell__ClusterCell__expired'>
+              <span className="monitoringTableCell__ClusterCell__expired">
                 Expired
               </span>
             );
@@ -119,10 +119,10 @@ to enjoy multi-cluster monitoring.`
 
         return (
           <div>
-            <div className='monitoringTableCell__ClusterCell__license'>
+            <div className="monitoringTableCell__ClusterCell__license">
               { capitalize(this.props.license.type) }
             </div>
-            <div className='monitoringTableCell__ClusterCell__expiration'>
+            <div className="monitoringTableCell__ClusterCell__expiration">
               { showLicenseExpiration ? licenseExpiry() : null }
             </div>
           </div>
@@ -132,7 +132,7 @@ to enjoy multi-cluster monitoring.`
       // there is no license!
       return (
         <KuiKeyboardAccessible>
-          <div className='kuiLink' onClick={ this.handleClickInvalidLicense.bind(this) }>
+          <div className="kuiLink" onClick={this.handleClickInvalidLicense.bind(this)}>
             N/A
           </div>
         </KuiKeyboardAccessible>
@@ -167,9 +167,9 @@ to enjoy multi-cluster monitoring.`
         }
         return (
           <Tooltip
-            text={ props.cluster.alerts.alertsMeta.message }
-            placement='bottom'
-            trigger='hover'
+            text={props.cluster.alerts.alertsMeta.message}
+            placement="bottom"
+            trigger="hover"
           >
             <span>N/A</span>
           </Tooltip>
@@ -179,7 +179,7 @@ to enjoy multi-cluster monitoring.`
       return (
         <KuiTableRow>
           <KuiTableRowCell>
-            <span className='monitoringTableCell__name'>
+            <span className="monitoringTableCell__name">
               <KuiKeyboardAccessible>
                 { this.getClusterAction() }
               </KuiKeyboardAccessible>
@@ -187,8 +187,8 @@ to enjoy multi-cluster monitoring.`
           </KuiTableRowCell>
           <KuiTableRowCell>
             <IsClusterSupported>
-              <IsAlertsSupported cluster={ this.props }>
-                <AlertsIndicator alerts={ this.props.alerts } />
+              <IsAlertsSupported cluster={this.props}>
+                <AlertsIndicator alerts={this.props.alerts} />
               </IsAlertsSupported>
             </IsClusterSupported>
           </KuiTableRowCell>
@@ -240,12 +240,12 @@ uiModule.directive('monitoringClusterListing', ($injector) => {
       scope.$watch('clusters', (clusters = []) => {
         const clusterTable = (
           <MonitoringTable
-            className='clusterTable'
-            rows={ clusters }
-            placeholder='Filter Clusters...'
-            filterFields={ filterFields }
-            columns={ columns }
-            rowComponent={ clusterRowFactory(scope, globalState, kbnUrl, showLicenseExpiration) }
+            className="clusterTable"
+            rows={clusters}
+            placeholder="Filter Clusters..."
+            filterFields={filterFields}
+            columns={columns}
+            rowComponent={clusterRowFactory(scope, globalState, kbnUrl, showLicenseExpiration)}
           />
         );
         render(clusterTable, $el[0]);

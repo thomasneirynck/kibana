@@ -12,4 +12,4 @@ export function getDefaultNodeFromId(nodeId) {
     type: 'node',
     attributes: {}
   };
-};
+}

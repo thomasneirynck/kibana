@@ -7,7 +7,7 @@ export function ErrorPanel({ children, className, title }) {
   const classes = classNames('kuiInfoPanel', 'kuiInfoPanel--error', className);
 
   return (
-    <div className={ classes }>
+    <div className={classes}>
       <div className="kuiInfoPanelHeader">
         <span className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--error fa-warning" />
         <span className="kuiInfoPanelHeader__title">

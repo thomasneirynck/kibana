@@ -16,8 +16,8 @@ export function IssueSymbol({ level }) {
   const iconClasses = classNames('kuiIcon', levelToClassNameMap[level]);
 
   return (
-    <span className='kuiEventSymbol'>
-      <span className={ iconClasses } />
+    <span className="kuiEventSymbol">
+      <span className={iconClasses} />
     </span>
   );
 }

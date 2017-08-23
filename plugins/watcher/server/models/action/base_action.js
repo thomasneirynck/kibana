@@ -33,4 +33,4 @@ export class BaseAction {
       id: json.id
     };
   }
-};
+}

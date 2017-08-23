@@ -124,7 +124,7 @@ function fetchBinaries(dest) {
           // download binary, stream to destination
           request(url).on('error', reject).pipe(ws);
         });
-      };
+      }
 
       return requiredDownloads.reduce((chain, binary) => {
         return chain.then(() => downloadBinary(binary));

@@ -120,4 +120,4 @@ export function mapResponse(options) {
       metrics: getMappedMetrics({ item, ...options })
     };
   });
-};
+}

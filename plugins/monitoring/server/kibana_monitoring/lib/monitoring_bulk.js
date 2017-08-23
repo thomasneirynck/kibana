@@ -47,4 +47,4 @@ export function monitoringBulk(Client, _config, components) {
     method: 'POST'
   });
 
-};
+}

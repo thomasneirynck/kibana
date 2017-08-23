@@ -33,4 +33,4 @@ export function clusterAlertsRoute(server) {
       .then(reply);
     }
   });
-};
+}

@@ -40,4 +40,4 @@ export function getShardAllocation(req, esIndexPattern, filters, lastState, show
       resolver: _.get(doc, `_source.source_node[${config.get('xpack.monitoring.node_resolver')}]`)
     }));
   });
-};
+}

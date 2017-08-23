@@ -12,4 +12,4 @@ export function nsToPretty(ns, precision) {
     ns /= 1000;
   }
   return msToPretty(ns, precision);
-};
+}

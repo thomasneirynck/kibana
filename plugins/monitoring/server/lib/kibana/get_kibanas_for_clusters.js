@@ -197,4 +197,4 @@ export function getKibanasForClusters(req, kbnIndexPattern, clusters) {
       };
     });
   });
-};
+}

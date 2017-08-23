@@ -79,5 +79,5 @@ export async function getKibanaStats(server, callCluster, clusterUuids, start, e
   const stats = combineStats(highLevelStats, usageStats);
 
   return stats;
-};
+}
 

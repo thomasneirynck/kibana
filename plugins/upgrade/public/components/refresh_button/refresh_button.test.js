@@ -40,7 +40,7 @@ describe('RefreshButton', () => {
     const timeoutPromise = new Promise((resolve) => resolveTimeout = resolve);
     timeout.mockReturnValue(timeoutPromise);
     const component = (
-      <RefreshButton onClick={ onClick } />
+      <RefreshButton onClick={onClick} />
     );
 
     const wrapper = shallow(component);
@@ -70,7 +70,7 @@ describe('RefreshButton', () => {
     const onClickPromise = new Promise((resolve, reject) => rejectOnClick = reject);
     const onClick = jest.fn().mockReturnValue(onClickPromise);
     const component = (
-      <RefreshButton onClick={ onClick } />
+      <RefreshButton onClick={onClick} />
     );
 
     const wrapper = shallow(component);

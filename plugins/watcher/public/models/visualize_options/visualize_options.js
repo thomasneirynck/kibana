@@ -14,4 +14,4 @@ export class VisualizeOptions {
       timezone: this.timezone
     };
   }
-};
+}

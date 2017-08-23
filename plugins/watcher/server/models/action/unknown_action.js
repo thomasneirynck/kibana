@@ -64,4 +64,4 @@ export class UnknownAction extends BaseAction {
     }
   }
   */
-};
+}

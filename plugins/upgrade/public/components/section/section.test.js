@@ -41,7 +41,7 @@ describe('UpgradeSection', () => {
     const component = (
       <UpgradeSection
         defaultViewId="HOME"
-        views={ VIEWS }
+        views={VIEWS}
       />
     );
 

@@ -75,7 +75,7 @@ export function withNavigationBlocker({ predicate }) {
 
         return (
           <div>
-            <WrappedComponent { ...this.props } />
+            <WrappedComponent {...this.props} />
             { !showModal ? null : (
               <KuiModalOverlay>
                 <KuiConfirmModal
@@ -83,8 +83,8 @@ export function withNavigationBlocker({ predicate }) {
                   confirmButtonText="Leave"
                   message="Leaving this page would abandon the currently running
                     actions. Are you sure you want to leave?"
-                  onConfirm={ this.overrideNavigationBlock }
-                  onCancel={ this.resetNavigationBlock }
+                  onConfirm={this.overrideNavigationBlock}
+                  onCancel={this.resetNavigationBlock}
                 />
               </KuiModalOverlay>
             ) }

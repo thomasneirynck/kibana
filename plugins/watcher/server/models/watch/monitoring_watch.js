@@ -62,4 +62,4 @@ export class MonitoringWatch extends BaseWatch {
     throw new Error('fromDownstreamJson called for monitoring watch');
   }
 
-};
+}

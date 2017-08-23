@@ -62,4 +62,4 @@ export default function ({ getService, getPageObjects }) {
       expect(roles.transport_client.reserved).to.be(true);
     });
   });
-};
+}

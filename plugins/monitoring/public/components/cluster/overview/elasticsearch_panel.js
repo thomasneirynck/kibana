@@ -48,7 +48,7 @@ export class ElasticsearchPanel extends React.Component {
 
     const statusIndicator = (
       <HealthStatusIndicator>
-        <ElasticsearchStatusIcon status={ clusterStats.status } />&nbsp;
+        <ElasticsearchStatusIcon status={clusterStats.status} />&nbsp;
         { capitalize(clusterStats.status) }
       </HealthStatusIndicator>
     );
@@ -58,13 +58,13 @@ export class ElasticsearchPanel extends React.Component {
     const goToIndices = () => this.props.angularChangeUrl('elasticsearch/indices');
 
     return (
-      <ClusterItemContainer { ...this.props } statusIndicator={ statusIndicator } url='elasticsearch' title='Elasticsearch'>
-        <div className='row'>
-          <div className='col-md-4'>
-            <dl data-test-subj='elasticsearch_overview' data-overview-status={ this.props.status }>
-              <dt className='cluster-panel__inner-title'>
+      <ClusterItemContainer {...this.props} statusIndicator={statusIndicator} url="elasticsearch" title="Elasticsearch">
+        <div className="row">
+          <div className="col-md-4">
+            <dl data-test-subj="elasticsearch_overview" data-overview-status={this.props.status}>
+              <dt className="cluster-panel__inner-title">
                 <KuiKeyboardAccessible>
-                  <a className='kuiLink' onClick={ goToElasticsearch } >
+                  <a className="kuiLink" onClick={goToElasticsearch} >
                     Overview
                   </a>
                 </KuiKeyboardAccessible>
@@ -74,13 +74,13 @@ export class ElasticsearchPanel extends React.Component {
               { this.showMlJobs() }
             </dl>
           </div>
-          <div className='col-md-4'>
+          <div className="col-md-4">
             <dl>
-              <dt className='cluster-panel__inner-title'>
+              <dt className="cluster-panel__inner-title">
                 <KuiKeyboardAccessible>
-                  <a className='kuiLink' onClick={ goToNodes } >
+                  <a className="kuiLink" onClick={goToNodes} >
                     Nodes:&nbsp;
-                    <span data-test-subj='number_of_elasticsearch_nodes'>
+                    <span data-test-subj="number_of_elasticsearch_nodes">
                       { formatNumber(get(nodes, 'count.total'), 'int_commas') }
                     </span>
                   </a>
@@ -88,23 +88,23 @@ export class ElasticsearchPanel extends React.Component {
               </dt>
               <dd>
                 Disk Available: <BytesUsage
-                  usedBytes={ get(nodes, 'fs.available_in_bytes') }
-                  maxBytes={ get(nodes, 'fs.total_in_bytes') }
+                  usedBytes={get(nodes, 'fs.available_in_bytes')}
+                  maxBytes={get(nodes, 'fs.total_in_bytes')}
                 />
               </dd>
               <dd>
                 JVM Heap: <BytesPercentageUsage
-                  usedBytes={ get(nodes, 'jvm.mem.heap_used_in_bytes') }
-                  maxBytes={ get(nodes, 'jvm.mem.heap_max_in_bytes') }
+                  usedBytes={get(nodes, 'jvm.mem.heap_used_in_bytes')}
+                  maxBytes={get(nodes, 'jvm.mem.heap_max_in_bytes')}
                 />
               </dd>
             </dl>
           </div>
-          <div className='col-md-4'>
+          <div className="col-md-4">
             <dl>
-              <dt className='cluster-panel__inner-title'>
+              <dt className="cluster-panel__inner-title">
                 <KuiKeyboardAccessible>
-                  <a className='kuiLink' onClick={ goToIndices  } >
+                  <a className="kuiLink" onClick={goToIndices} >
                     Indices: { formatNumber(get(indices, 'count'), 'int_commas') }
                   </a>
                 </KuiKeyboardAccessible>
@@ -119,4 +119,4 @@ export class ElasticsearchPanel extends React.Component {
       </ClusterItemContainer>
     );
   }
-};
+}

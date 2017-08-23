@@ -13,4 +13,4 @@ export function wrapEsError(err) {
     return Boom.forbidden('Insufficient user permissions for managing Logstash pipelines');
   }
   return Boom.wrap(err, err.statusCode);
-};
+}

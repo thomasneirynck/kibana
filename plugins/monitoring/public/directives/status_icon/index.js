@@ -13,8 +13,8 @@ function linkStatusIconComponent(scope, $el, StatusIconComponent) {
   scope.$watch('status', (status) => {
     ReactDOM.unmountComponentAtNode($el[0]);
     ReactDOM.render((
-      <div title={ scope.title }>
-        <StatusIconComponent status={ status } />
+      <div title={scope.title}>
+        <StatusIconComponent status={status} />
       </div>
     ), $el[0]);
   });

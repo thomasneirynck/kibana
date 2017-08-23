@@ -50,4 +50,4 @@ export function logstashPipelineRoute(server) {
       .catch(err => reply(handleError(err, req)));
     }
   });
-};
+}

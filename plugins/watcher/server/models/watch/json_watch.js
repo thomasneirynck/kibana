@@ -83,4 +83,4 @@ export class JsonWatch extends BaseWatch {
     return new JsonWatch(props);
   }
 
-};
+}

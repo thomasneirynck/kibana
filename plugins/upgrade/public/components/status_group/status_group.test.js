@@ -29,7 +29,7 @@ describe('StatusGroup', () => {
 
   test('renders its children by default when isInitiallyCollapsed is false', () => {
     const component = (
-      <StatusGroup isInitiallyCollapsed={ false }>
+      <StatusGroup isInitiallyCollapsed={false}>
         Info Message
       </StatusGroup>
     );
@@ -39,7 +39,7 @@ describe('StatusGroup', () => {
 
   test('does not render its children by default when isInitiallyCollapsed is true', () => {
     const component = (
-      <StatusGroup isInitiallyCollapsed={ true }>
+      <StatusGroup isInitiallyCollapsed={true}>
         Info Message
       </StatusGroup>
     );
@@ -49,7 +49,7 @@ describe('StatusGroup', () => {
 
   test('renders its children after being expanded via the toggle button', () => {
     const component = (
-      <StatusGroup isInitiallyCollapsed={ true }>
+      <StatusGroup isInitiallyCollapsed={true}>
         Info Message
       </StatusGroup>
     );
@@ -62,7 +62,7 @@ describe('StatusGroup', () => {
 
   test('does not render its children after being collapsed via the toggle button', () => {
     const component = (
-      <StatusGroup isInitiallyCollapsed={ false }>
+      <StatusGroup isInitiallyCollapsed={false}>
         Info Message
       </StatusGroup>
     );

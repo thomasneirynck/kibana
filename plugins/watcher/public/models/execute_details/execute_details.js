@@ -22,4 +22,4 @@ export class ExecuteDetails {
       recordExecution: this.recordExecution
     };
   }
-};
+}

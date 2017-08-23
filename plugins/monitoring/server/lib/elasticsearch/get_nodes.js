@@ -120,4 +120,4 @@ export function getNodes(req, esIndexPattern) {
       })
     };
   });
-};
+}

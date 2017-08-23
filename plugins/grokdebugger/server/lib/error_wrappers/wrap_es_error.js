@@ -9,4 +9,4 @@ import Boom from 'boom';
  */
 export function wrapEsError(err) {
   return Boom.wrap(err, err.statusCode);
-};
+}

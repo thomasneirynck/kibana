@@ -47,10 +47,10 @@ export class MonitoringTimeseries extends React.Component {
   render() {
     return (
       <TimeseriesVisualization
-        series={ this.state.dataset }
-        timeRange={ this.state.timeRange }
-        tickFormatter={ this.formatTicks }
-        onBrush={ this.props.onBrush }
+        series={this.state.dataset}
+        timeRange={this.state.timeRange}
+        tickFormatter={this.formatTicks}
+        onBrush={this.props.onBrush}
       />
     );
   }

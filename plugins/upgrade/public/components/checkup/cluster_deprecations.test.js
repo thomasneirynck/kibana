@@ -20,7 +20,7 @@ describe('ClusterDeprecations', () => {
 
   test('renders a success message when there are no deprecations', () => {
     const component = (
-      <ClusterDeprecations deprecations={ [] }/>
+      <ClusterDeprecations deprecations={[]}/>
     );
 
     expect(shallow(component)).toMatchSnapshot();
@@ -33,7 +33,7 @@ describe('ClusterDeprecations', () => {
       { level: 'critical', },
     ];
     const component = (
-      <ClusterDeprecations deprecations={ deprecations }/>
+      <ClusterDeprecations deprecations={deprecations}/>
     );
 
     expect(shallow(component)).toMatchSnapshot();

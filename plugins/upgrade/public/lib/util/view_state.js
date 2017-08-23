@@ -54,9 +54,9 @@ export function withViewState({
       render() {
         return (
           <WrappedComponent
-            { ...this.props[stateProperty][viewStateKey] }
-            { ...this.cachedUpdaters }
-            { ...this.props }
+            {...this.props[stateProperty][viewStateKey]}
+            {...this.cachedUpdaters}
+            {...this.props}
           />
         );
       }

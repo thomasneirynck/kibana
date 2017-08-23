@@ -15,8 +15,8 @@ describe('ReindexView', () => {
   test('renders an expanded InfoGroup by default', () => {
     const component = (
       <ReindexView
-        setViewState={ _.noop }
-        viewState={ {} }
+        setViewState={_.noop}
+        viewState={{}}
       />
     );
 
@@ -28,12 +28,12 @@ describe('ReindexView', () => {
   test('renders a collapsed InfoGroup when the viewState declares it', () => {
     const component = (
       <ReindexView
-        setViewState={ _.noop }
-        viewState={ {
+        setViewState={_.noop}
+        viewState={{
           ReindexView: {
             isInfoCollapsed: true,
           },
-        } }
+        }}
       />
     );
 
@@ -46,8 +46,8 @@ describe('ReindexView', () => {
     const setViewState = jest.fn();
     const component = (
       <ReindexView
-        setViewState={ setViewState }
-        viewState={ {} }
+        setViewState={setViewState}
+        viewState={{}}
       />
     );
 
@@ -67,13 +67,13 @@ describe('ReindexView', () => {
     const resetAction = () => {};
     const component = (
       <ReindexView
-        cancelAction={ cancelAction }
-        indices={ indices }
-        loadIndices={ loadIndices }
-        processIndex={ processIndex }
-        resetAction={ resetAction }
-        setViewState={ _.noop }
-        viewState={ {} }
+        cancelAction={cancelAction}
+        indices={indices}
+        loadIndices={loadIndices}
+        processIndex={processIndex}
+        resetAction={resetAction}
+        setViewState={_.noop}
+        viewState={{}}
       />
     );
 
@@ -91,9 +91,9 @@ describe('ReindexView', () => {
     const component = (
       <ReindexView
         errorMessage="an error message"
-        loadingStatus={ LOADING_STATUS.FAILURE }
-        setViewState={ _.noop }
-        viewState={ {} }
+        loadingStatus={LOADING_STATUS.FAILURE}
+        setViewState={_.noop}
+        viewState={{}}
       />
     );
 

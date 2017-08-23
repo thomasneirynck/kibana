@@ -7,4 +7,4 @@ export function xpackUsage(client) {
     method: 'GET',
     path: '/_xpack/usage'
   });
-};
+}

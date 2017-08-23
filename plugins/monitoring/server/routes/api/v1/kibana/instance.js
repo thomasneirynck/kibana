@@ -46,4 +46,4 @@ export function kibanaInstanceRoutes(server) {
       .catch(err => reply(handleError(err, req)));
     }
   });
-};
+}

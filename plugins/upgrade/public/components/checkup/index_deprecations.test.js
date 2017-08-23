@@ -20,7 +20,7 @@ describe('IndexDeprecations', () => {
 
   test('renders a success message when there are no deprecations', () => {
     const component = (
-      <IndexDeprecations deprecations={ {} }/>
+      <IndexDeprecations deprecations={{}}/>
     );
 
     expect(shallow(component)).toMatchSnapshot();
@@ -40,7 +40,7 @@ describe('IndexDeprecations', () => {
       ],
     };
     const component = (
-      <IndexDeprecations deprecations={ deprecations }/>
+      <IndexDeprecations deprecations={deprecations}/>
     );
 
     expect(shallow(component)).toMatchSnapshot();

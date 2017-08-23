@@ -13,4 +13,4 @@ export function updateLogstashSections(pipelineId) {
   } else {
     newSection.show();
   }
-};
+}

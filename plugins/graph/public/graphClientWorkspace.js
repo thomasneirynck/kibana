@@ -569,7 +569,7 @@ module.exports = (function () {
             } else {
               hasRollups = true;
             }
-          };
+          }
           if (hasRollups) {
             for (const i in nodeArray) {
               const n = nodeArray[i];

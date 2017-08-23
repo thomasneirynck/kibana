@@ -503,7 +503,7 @@ app.controller('graphuiPlugin', function ($scope, $route, $interval, $http, kbnU
   function detectKibanaUrlPaste(url) {
     $scope.lastPastedURL = url;
     $scope.checkForKibanaUrl();
-  };
+  }
 
   $scope.handleUrlTemplatePaste = function ($event) {
     window.setTimeout(function () {

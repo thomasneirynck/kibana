@@ -9,10 +9,10 @@ export function IndexActionSteps({ steps, action, indexName }) {
     <div>
       { steps.map((step, stepIndex) => (
         <IndexActionStep
-          key={ stepIndex }
-          step={ step }
-          action={ action }
-          indexName={ indexName }
+          key={stepIndex}
+          step={step}
+          action={action}
+          indexName={indexName}
         />
       )) }
     </div>

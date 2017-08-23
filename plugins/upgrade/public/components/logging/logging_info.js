@@ -3,7 +3,7 @@ import React from 'react';
 
 export function LoggingInfo({ className }) {
   return (
-    <div className={ className }>
+    <div className={className}>
       <p className="kuiText kuiVerticalRhythm">
         Deprecation logging is enabled by default, beginning in Elasticsearch 5.
       </p>

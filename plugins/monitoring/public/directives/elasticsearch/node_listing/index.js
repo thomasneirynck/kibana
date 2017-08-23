@@ -49,20 +49,20 @@ const nodeRowFactory = (scope, kbnUrl, showCgroupMetricsElasticsearch) => {
       const isOnline = this.isOnline();
       if (showCgroupMetricsElasticsearch) {
         return [
-          <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_cgroup_quota') } />,
-          <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_cgroup_throttled') } />,
+          <MetricCell key="cpuCol1" isOnline={isOnline} metric={get(this.props, 'metrics.node_cgroup_quota')} />,
+          <MetricCell key="cpuCol2" isOnline={isOnline} metric={get(this.props, 'metrics.node_cgroup_throttled')} />,
         ];
       }
       return [
-        <MetricCell key="cpuCol1" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_cpu_utilization') } />,
-        <MetricCell key="cpuCol2" isOnline={ isOnline } metric={ get(this.props, 'metrics.node_load_average') } />,
+        <MetricCell key="cpuCol1" isOnline={isOnline} metric={get(this.props, 'metrics.node_cpu_utilization')} />,
+        <MetricCell key="cpuCol2" isOnline={isOnline} metric={get(this.props, 'metrics.node_load_average')} />,
       ];
     }
     getShardCount() {
       if (this.isOnline()) {
         return (
           <KuiTableRowCell>
-            <div className='monitoringTableCell__number'>
+            <div className="monitoringTableCell__number">
               { get(this.props, 'metrics.shard_count') }
             </div>
           </KuiTableRowCell>
@@ -75,26 +75,26 @@ const nodeRowFactory = (scope, kbnUrl, showCgroupMetricsElasticsearch) => {
       return (
         <KuiTableRow>
           <KuiTableRowCell>
-            <div className='monitoringTableCell__name'>
-              <Tooltip text={ this.props.node.nodeTypeLabel } trigger='hover' placement='bottom'>
-                <span className={ `fa ${this.props.node.nodeTypeClass}` } />
+            <div className="monitoringTableCell__name">
+              <Tooltip text={this.props.node.nodeTypeLabel} trigger="hover" placement="bottom">
+                <span className={`fa ${this.props.node.nodeTypeClass}`} />
               </Tooltip>
               &nbsp;
               <KuiKeyboardAccessible>
-                <a className='kuiLink' onClick={ this.goToNode }>{ this.props.node.name }</a>
+                <a className="kuiLink" onClick={this.goToNode}>{ this.props.node.name }</a>
               </KuiKeyboardAccessible>
             </div>
-            <div className='monitoringTableCell__transportAddress'>{ extractIp(this.props.node.transport_address) }</div>
+            <div className="monitoringTableCell__transportAddress">{ extractIp(this.props.node.transport_address) }</div>
           </KuiTableRowCell>
           <KuiTableRowCell>
-            <div title={ `Node status: ${this.props.status}` } className='monitoringTableCell__status'>
-              <NodeStatusIcon status={ this.props.status } />&nbsp;
+            <div title={`Node status: ${this.props.status}`} className="monitoringTableCell__status">
+              <NodeStatusIcon status={this.props.status} />&nbsp;
               { this.props.status }
             </div>
           </KuiTableRowCell>
           { this.getCpuComponents() }
-          <MetricCell isOnline={ isOnline } metric={ get(this.props, 'metrics.node_jvm_mem_percent') } />
-          <MetricCell isOnline={ isOnline } metric={ get(this.props, 'metrics.node_free_space') } />
+          <MetricCell isOnline={isOnline} metric={get(this.props, 'metrics.node_jvm_mem_percent')} />
+          <MetricCell isOnline={isOnline} metric={get(this.props, 'metrics.node_free_space')} />
           { this.getShardCount() }
         </KuiTableRow>
       );
@@ -117,12 +117,12 @@ uiModule.directive('monitoringNodesListing', ($injector) => {
       scope.$watch('nodes', (nodes = []) => {
         const nodesTable = (
           <MonitoringTable
-            className='nodesTable'
-            rows={ nodes }
-            placeholder='Filter Nodes...'
-            filterFields={ filterFields }
-            columns={ columns }
-            rowComponent={ nodeRowFactory(scope, kbnUrl, showCgroupMetricsElasticsearch) }
+            className="nodesTable"
+            rows={nodes}
+            placeholder="Filter Nodes..."
+            filterFields={filterFields}
+            columns={columns}
+            rowComponent={nodeRowFactory(scope, kbnUrl, showCgroupMetricsElasticsearch)}
           />
         );
         render(nodesTable, $el[0]);

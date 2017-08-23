@@ -57,7 +57,7 @@ export function IssueSummary({ className, issueLevelCounts }) {
   }, 'none');
 
   return (
-    <span className={ className }>
+    <span className={className}>
       { ISSUE_LEVEL_MESSAGES[highestIssueLevel](issueLevelCounts[highestIssueLevel]) }
     </span>
   );

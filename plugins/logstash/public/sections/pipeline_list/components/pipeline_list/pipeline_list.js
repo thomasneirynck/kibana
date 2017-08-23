@@ -104,7 +104,7 @@ app.directive('pipelineList', function ($injector) {
 
       onNewPipeline() {
         kbnUrl.change('/management/logstash/pipelines/new-pipeline');
-      };
+      }
 
       onQueryChange = (query) => {
         this.query = query;

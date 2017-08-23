@@ -20,13 +20,13 @@ export function IndexTable({
   const sortedIndices = sortBy(indices, 'name');
 
   return (
-    <div className={ classes }>
+    <div className={classes}>
       <KuiToolBar>
         <div className="kuiToolBarSection">
 
           <RefreshButton
             buttonLabel="Refresh Indices"
-            onClick={ loadIndices }
+            onClick={loadIndices}
           />
 
         </div>
@@ -52,11 +52,11 @@ export function IndexTable({
         </thead>
         { sortedIndices.map((index) => (
           <IndexTableRow
-            cancelAction={ cancelAction }
-            index={ index }
-            key={ index.name }
-            resetAction={ resetAction }
-            processIndex={ processIndex }
+            cancelAction={cancelAction}
+            index={index}
+            key={index.name}
+            resetAction={resetAction}
+            processIndex={processIndex}
           />
         )) }
       </table>

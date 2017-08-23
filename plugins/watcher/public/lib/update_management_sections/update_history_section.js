@@ -11,4 +11,4 @@ export function updateHistorySection(display) {
   editSection.hide();
   historySection.show();
   historySection.display = display;
-};
+}

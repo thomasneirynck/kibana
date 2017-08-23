@@ -52,7 +52,7 @@ function tooltipText(d) {
   return 'This plugin does not have an ID explicitly specified. '
     + 'Specifying an ID allows you to track differences across pipeline changes. '
     + `You can explicitly specify an ID for this plugin like so:\n\n${pluginName} {\n  id => mySpecialId\n}`;
-};
+}
 
 function renderHeader(colaObjects, title, subtitle) {
   const pluginHeader = colaObjects

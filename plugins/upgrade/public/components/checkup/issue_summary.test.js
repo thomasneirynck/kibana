@@ -26,7 +26,7 @@ describe('IssueSummary', () => {
       'warning': 0,
     };
     const component = (
-      <IssueSummary issueLevelCounts={ issueLevelCounts } />
+      <IssueSummary issueLevelCounts={issueLevelCounts} />
     );
 
     expect(shallow(component)).toMatchSnapshot();
@@ -40,7 +40,7 @@ describe('IssueSummary', () => {
       'warning': 0,
     };
     const component = (
-      <IssueSummary issueLevelCounts={ issueLevelCounts } />
+      <IssueSummary issueLevelCounts={issueLevelCounts} />
     );
 
     expect(shallow(component)).toMatchSnapshot();
@@ -54,7 +54,7 @@ describe('IssueSummary', () => {
       'warning': 0,
     };
     const component = (
-      <IssueSummary issueLevelCounts={ issueLevelCounts } />
+      <IssueSummary issueLevelCounts={issueLevelCounts} />
     );
 
     expect(shallow(component)).toMatchSnapshot();
@@ -68,7 +68,7 @@ describe('IssueSummary', () => {
       'warning': 2,
     };
     const component = (
-      <IssueSummary issueLevelCounts={ issueLevelCounts } />
+      <IssueSummary issueLevelCounts={issueLevelCounts} />
     );
 
     expect(shallow(component)).toMatchSnapshot();
@@ -82,7 +82,7 @@ describe('IssueSummary', () => {
       'warning': 2,
     };
     const component = (
-      <IssueSummary issueLevelCounts={ issueLevelCounts } />
+      <IssueSummary issueLevelCounts={issueLevelCounts} />
     );
 
     expect(shallow(component)).toMatchSnapshot();

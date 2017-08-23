@@ -29,10 +29,10 @@ export class FieldSelect extends Component {
 
     return (
       <Select
-        placeholder={ placeholder }
-        options={ getOptions() }
-        value={ value }
-        onChange={ change }
+        placeholder={placeholder}
+        options={getOptions()}
+        value={value}
+        onChange={change}
       />
     );
   }

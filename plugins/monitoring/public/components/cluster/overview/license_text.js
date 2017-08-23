@@ -9,11 +9,11 @@ export function LicenseText(props) {
 
   if (props.license && props.showLicenseExpiration) {
     return (
-      <div className='page-row'>
-        <div className='page-row-text'>
+      <div className="page-row">
+        <div className="page-row-text">
           Your { capitalize(props.license.type) } license will expire on {' '}
           <KuiKeyboardAccessible>
-            <a className='kuiLink' onClick={ goToLicense } >
+            <a className="kuiLink" onClick={goToLicense} >
               { formatDateLocal(props.license.expiry_date) }
             </a>
           </KuiKeyboardAccessible>.

@@ -34,7 +34,7 @@ describe('Issues', () => {
       },
     ];
     const component = (
-      <Issues issues={ issues } />
+      <Issues issues={issues} />
     );
 
     expect(shallow(component)).toMatchSnapshot();

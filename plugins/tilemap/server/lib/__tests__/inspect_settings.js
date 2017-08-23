@@ -8,9 +8,9 @@ describe('inspectSettings', function () {
     const mockSettings = {
       isAvailable: () => true,
       license: {
-        getUid: _ => 'foobar',
-        isActive: _ => true,
-        isOneOf: _=> true
+        getUid: () => 'foobar',
+        isActive: () => true,
+        isOneOf: () => true
       }
     };
 

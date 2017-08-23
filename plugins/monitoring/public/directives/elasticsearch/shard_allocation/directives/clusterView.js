@@ -36,10 +36,10 @@ uiModule.directive('clusterView', kbnUrl => {
     link: function (scope, element) {
       ReactDOM.render(
         <ClusterView
-          scope={ scope }
-          kbnUrl={ kbnUrl }
-          showSystemIndices={ scope.showSystemIndices }
-          toggleShowSystemIndices={ scope.toggleShowSystemIndices }
+          scope={scope}
+          kbnUrl={kbnUrl}
+          showSystemIndices={scope.showSystemIndices}
+          toggleShowSystemIndices={scope.toggleShowSystemIndices}
         />,
         element[0]
       );

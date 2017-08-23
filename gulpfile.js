@@ -2,6 +2,7 @@ require('@elastic/plugin-helpers').babelRegister();
 require('dotenv').config({ silent: true });
 
 const gulp = require('gulp');
+const gulpIf = require('gulp-if');
 const g = require('gulp-load-plugins')();
 const path = require('path');
 const del = require('del');
@@ -29,14 +30,25 @@ const coverageDir = path.resolve(__dirname, 'coverage');
 
 const skipTestCoverage = argv['test-coverage'] && argv['test-coverage'] === 'skip';
 
+function isFixed(file) {
+  // Has ESLint fixed the file contents?
+  return file.eslint && file.eslint.fixed;
+}
+
 function lintFiles(filePaths) {
-  return gulp.src(filePaths)
+  const isAutoFix = (argv.fixLint === undefined) ? false : true;
+  return gulp.src(filePaths, {
+    base: __dirname,
+  })
   // eslint() attaches the lint output to the eslint property
   // of the file object so it can be used by other modules.
-  .pipe(g.eslint())
+  .pipe(g.eslint({
+    fix: isAutoFix,
+  }))
   // eslint.format() outputs the lint results to the console.
   // Alternatively use eslint.formatEach() (see Docs).
   .pipe(g.eslint.formatEach())
+  .pipe(gulpIf(isFixed, gulp.dest('./')))
   // To have the process exit with an error code (1) on
   // lint error, return the stream and pipe to failOnError last.
   .pipe(g.eslint.failAfterError());

@@ -10,5 +10,5 @@ export class VisualizeOptions {
   static fromDownstreamJson(downstreamJson) {
     return new VisualizeOptions(downstreamJson);
   }
-};
+}
 

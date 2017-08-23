@@ -12,13 +12,13 @@ export function ClusterDeprecations({ className, deprecations }) {
 
   return (
     <StatusGroup
-      className={ className }
+      className={className}
       isInitiallyCollapsed
-      status={ <IssueSummary issueLevelCounts={ issueLevelCounts } /> }
+      status={<IssueSummary issueLevelCounts={issueLevelCounts} />}
       title="Cluster Settings"
     >
       { deprecations.length > 0
-        ? <Issues issues={ deprecations } />
+        ? <Issues issues={deprecations} />
         : <p className="kuiText kuiSubduedText">No cluster settings deprecations</p>
       }
     </StatusGroup>

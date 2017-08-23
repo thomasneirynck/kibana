@@ -115,20 +115,20 @@ export class TimeseriesVisualization extends React.Component {
     };
 
     return (
-      <div className={ className }>
-        <div style={ style } className='rhythm_chart__content'>
-          <div className='rhythm_chart__visualization'>
+      <div className={className}>
+        <div style={style} className="rhythm_chart__content">
+          <div className="rhythm_chart__visualization">
             <TimeseriesContainer
-              seriesToShow={ this.state.seriesToShow }
-              updateLegend={ this.debouncedUpdateLegend }
-              { ...this.props }
+              seriesToShow={this.state.seriesToShow}
+              updateLegend={this.debouncedUpdateLegend}
+              {...this.props}
             />
           </div>
           <HorizontalLegend
-            seriesFilter={ this.state.seriesToShow }
-            seriesValues={ this.state.values }
-            onToggle={ this.toggleFilter }
-            { ...this.props }
+            seriesFilter={this.state.seriesToShow}
+            seriesValues={this.state.values}
+            onToggle={this.toggleFilter}
+            {...this.props}
           />
         </div>
       </div>

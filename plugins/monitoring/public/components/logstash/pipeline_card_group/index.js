@@ -8,15 +8,15 @@ export function PipelineCardGroup({ pipelines, onHashClick, upgradeMessage }) {
   if (!Array.isArray(pipelines) || (pipelines.length === 0)) {
     const message = upgradeMessage ? upgradeMessage : DEFAULT_NO_DATA_MESSAGE;
     return (
-      <KuiEmptyTablePrompt message={ message } />
+      <KuiEmptyTablePrompt message={message} />
     );
   }
 
   const pipelineCards = pipelines.map(pipeline => (
     <PipelineCard
-      key={ pipeline.id }
-      pipeline={ pipeline }
-      onHashClick={ onHashClick }
+      key={pipeline.id}
+      pipeline={pipeline}
+      onHashClick={onHashClick}
     />
   ));
 

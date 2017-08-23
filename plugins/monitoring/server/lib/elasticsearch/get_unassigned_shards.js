@@ -12,4 +12,4 @@ export function getUnassignedShards(indexShardStats) {
   unassignedShards += get(indexShardStats, 'unassigned.replica');
 
   return unassignedShards;
-};
+}

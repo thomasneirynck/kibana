@@ -41,4 +41,4 @@ export class LoggingAction extends BaseAction {
   static template = '<watch-logging-action></watch-logging-action>';
   static selectMessage = 'Add a new item to the logs.';
   static simulatePrompt = 'Log a sample message now';
-};
+}

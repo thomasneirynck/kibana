@@ -22,4 +22,4 @@ export function getUsageCollector(server, config) {
       return server.getKibanaStats({ callCluster });
     }
   };
-};
+}

@@ -16,14 +16,14 @@ export function InfoGroup({
   });
 
   return (
-    <div className={ className }>
+    <div className={className}>
       <div className="kuiBar kuiVerticalRhythm">
         <div className="kuiBarSection">
-          <h2 className='kuiTitle'>{ title }</h2>
+          <h2 className="kuiTitle">{ title }</h2>
         </div>
         <div className="kuiBarSection">
-          <button className="kuiCollapseButton" onClick={ onChangeCollapsed }>
-            <div className={ infoToggleClasses } />
+          <button className="kuiCollapseButton" onClick={onChangeCollapsed}>
+            <div className={infoToggleClasses} />
           </button>
         </div>
       </div>

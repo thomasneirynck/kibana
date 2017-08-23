@@ -51,7 +51,7 @@ describe('withNavigationBlocker', () => {
 
     const component = (
       <WrappedComponent
-        registerRouteChangeListener={ registerRouteChangeListener }
+        registerRouteChangeListener={registerRouteChangeListener}
       />
     );
 
@@ -74,7 +74,7 @@ describe('withNavigationBlocker', () => {
 
     const component = (
       <WrappedComponent
-        registerRouteChangeListener={ registerRouteChangeListener }
+        registerRouteChangeListener={registerRouteChangeListener}
       />
     );
 
@@ -95,8 +95,8 @@ describe('withNavigationBlocker', () => {
 
     const component = (
       <WrappedComponent
-        navigateTo={ navigateTo }
-        registerRouteChangeListener={ registerRouteChangeListener }
+        navigateTo={navigateTo}
+        registerRouteChangeListener={registerRouteChangeListener}
       />
     );
 
@@ -122,8 +122,8 @@ describe('withNavigationBlocker', () => {
 
     const component = (
       <WrappedComponent
-        navigateTo={ navigateTo }
-        registerRouteChangeListener={ registerRouteChangeListener }
+        navigateTo={navigateTo}
+        registerRouteChangeListener={registerRouteChangeListener}
       />
     );
 
@@ -148,7 +148,7 @@ describe('withNavigationBlocker', () => {
 
     const component = (
       <WrappedComponent
-        registerRouteChangeListener={ registerRouteChangeListener }
+        registerRouteChangeListener={registerRouteChangeListener}
       />
     );
 

@@ -51,4 +51,4 @@ export class Fields {
     const fields = buildFieldList(json.fields);
     return new Fields({ fields });
   }
-};
+}

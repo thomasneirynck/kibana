@@ -110,4 +110,4 @@ export class PhoneHome {
     }, 60000);
   }
 
-}; // end class
+} // end class

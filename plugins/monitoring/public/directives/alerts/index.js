@@ -28,17 +28,17 @@ const alertRowFactory = (scope, kbnUrl) => {
     return (
       <KuiTableRow>
         <KuiTableRowCell>
-          <Tooltip text={ `${capitalize(props.severity_group)} severity alert` } placement='bottom' trigger='hover'>
-            <SeverityIcon severity={ props.metadata.severity } />
+          <Tooltip text={`${capitalize(props.severity_group)} severity alert`} placement="bottom" trigger="hover">
+            <SeverityIcon severity={props.metadata.severity} />
           </Tooltip>
         </KuiTableRowCell>
         <KuiTableRowCell>
           <FormattedMessage
-            prefix={ props.prefix }
-            suffix={ props.suffix }
-            message={ props.message }
-            metadata={ props.metadata }
-            angularChangeUrl={ angularChangeUrl }
+            prefix={props.prefix}
+            suffix={props.suffix}
+            message={props.message}
+            metadata={props.metadata}
+            angularChangeUrl={angularChangeUrl}
           />
         </KuiTableRowCell>
         <KuiTableRowCell>
@@ -62,12 +62,12 @@ uiModule.directive('monitoringClusterAlertsListing', kbnUrl => {
       scope.$watch('alerts', (alerts = []) => {
         const alertsTable = (
           <MonitoringTable
-            className='alertsTable'
-            rows={ alerts }
-            placeholder='Filter Alerts...'
-            filterFields={ filterFields }
-            columns={ columns }
-            rowComponent={ alertRowFactory(scope, kbnUrl) }
+            className="alertsTable"
+            rows={alerts}
+            placeholder="Filter Alerts..."
+            filterFields={filterFields}
+            columns={columns}
+            rowComponent={alertRowFactory(scope, kbnUrl)}
           />
         );
         render(alertsTable, $el[0]);

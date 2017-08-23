@@ -30,5 +30,5 @@ export class ExecuteDetails {
   static fromDownstreamJson(downstreamJson) {
     return new ExecuteDetails(downstreamJson);
   }
-};
+}
 

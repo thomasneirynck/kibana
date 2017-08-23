@@ -19,30 +19,28 @@ import React from 'react';
 import { Unassigned } from './unassigned';
 import { Assigned } from './assigned';
 
-class ShardRow extends React.Component {
-  render() {
-    let unassigned;
-    if (this.props.data.unassigned && this.props.data.unassigned.length) {
-      unassigned = (
-        <Unassigned shards={ this.props.data.unassigned }/>
-      );
-    } else {
-      if (this.props.cols === 3) {
-        unassigned = (<td />);
-      }
-    }
-    return (
-      <tr>
-        { unassigned }
-        <Assigned
-          shardStats={ this.props.shardStats }
-          data={ this.props.data.children }
-          changeUrl={ this.props.changeUrl }
-        />
-      </tr>
+const ShardRow = props => {
+  let unassigned;
+  if (props.data.unassigned && props.data.unassigned.length) {
+    unassigned = (
+      <Unassigned shards={props.data.unassigned}/>
     );
+  } else {
+    if (props.cols === 3) {
+      unassigned = (<td />);
+    }
   }
-}
+  return (
+    <tr>
+      { unassigned }
+      <Assigned
+        shardStats={props.shardStats}
+        data={props.data.children}
+        changeUrl={props.changeUrl}
+      />
+    </tr>
+  );
+};
 
 export class TableBody extends React.Component {
   static displayName = 'TableBody';
@@ -50,10 +48,10 @@ export class TableBody extends React.Component {
   createRow = (data) => {
     return (
       <ShardRow
-        key={ data.name }
-        data={ data }
-        { ...this.props }
-        changeUrl={ this.props.changeUrl }
+        key={data.name}
+        data={data}
+        {...this.props}
+        changeUrl={this.props.changeUrl}
       />
     );
   };
@@ -63,9 +61,9 @@ export class TableBody extends React.Component {
       return (
         <tbody>
           <tr>
-            <td colSpan={ this.props.cols }>
+            <td colSpan={this.props.cols}>
               <div>
-                <p style={ { margin: '10px 0' } } className='text-center lead'>
+                <p style={{ margin: '10px 0' }} className="text-center lead">
                   There are no shards allocated.
                 </p>
               </div>
@@ -88,7 +86,7 @@ export class TableBody extends React.Component {
     return (
       <tbody>
         <tr>
-          <td colSpan={ this.props.cols } />
+          <td colSpan={this.props.cols} />
         </tr>
       </tbody>
     );

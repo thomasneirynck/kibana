@@ -135,7 +135,7 @@ class PdfMaker {
     this._pdfDoc.end();
     return this._pdfDoc;
   }
-};
+}
 
 function getTemplate(title) {
   const pageMarginTop = 40;

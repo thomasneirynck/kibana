@@ -106,4 +106,4 @@ export function getIndices(req, esIndexPattern, showSystemIndices = false) {
   const { callWithRequest } = req.server.plugins.elasticsearch.getCluster('monitoring');
   return callWithRequest(req, 'search', params)
   .then(resp => handleResponse(resp, min, max));
-};
+}

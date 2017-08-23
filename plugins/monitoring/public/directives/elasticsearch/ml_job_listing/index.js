@@ -29,7 +29,7 @@ const jobRowFactory = (scope, kbnUrl) => {
     if (node) {
       return (
         <KuiKeyboardAccessible>
-          <a className='kuiLink' onClick={ goToNode.bind(null, node.id) }>
+          <a className="kuiLink" onClick={goToNode.bind(null, node.id)}>
             { node.name }
           </a>
         </KuiKeyboardAccessible>
@@ -43,7 +43,7 @@ const jobRowFactory = (scope, kbnUrl) => {
       <KuiTableRow>
         <KuiTableRowCell>{ props.job_id }</KuiTableRowCell>
         <KuiTableRowCell>
-          <MachineLearningJobStatusIcon status={ props.state } />&nbsp;
+          <MachineLearningJobStatusIcon status={props.state} />&nbsp;
           { capitalize(props.state) }
         </KuiTableRowCell>
         <KuiTableRowCell>{ numeral(props.data_counts.processed_record_count).format(LARGE_ABBREVIATED) }</KuiTableRowCell>
@@ -66,13 +66,13 @@ uiModule.directive('monitoringMlListing', kbnUrl => {
       scope.$watch('jobs', (jobs = []) => {
         const mlTable = (
           <MonitoringTable
-            className='mlJobsTable'
-            rows={ jobs }
-            placeholder='Filter Jobs...'
-            filterFields={ filterFields }
-            columns={ columns }
-            rowComponent={ jobRowFactory(scope, kbnUrl) }
-            noDataMessage='There are no Machine Learning Jobs that match your filter or time range. Try changing the filter or time range.'
+            className="mlJobsTable"
+            rows={jobs}
+            placeholder="Filter Jobs..."
+            filterFields={filterFields}
+            columns={columns}
+            rowComponent={jobRowFactory(scope, kbnUrl)}
+            noDataMessage="There are no Machine Learning Jobs that match your filter or time range. Try changing the filter or time range."
           />
         );
         render(mlTable, $el[0]);

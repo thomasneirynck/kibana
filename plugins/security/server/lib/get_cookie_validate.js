@@ -33,7 +33,7 @@ export function getCookieValidate(server, authScope) {
       callback(error, false);
     }
   };
-};
+}
 
 export function hasSessionExpired(session) {
   const { expires } = session;

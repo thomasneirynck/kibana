@@ -23,4 +23,4 @@ export function generateQueryAndLink(data) {
     ident = data.id;
   }
   return '/elasticsearch/' + type + '/' + ident;
-};
+}

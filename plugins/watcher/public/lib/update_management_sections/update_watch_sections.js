@@ -20,4 +20,4 @@ export function updateWatchSections(watchId) {
   } else {
     newSection.show();
   }
-};
+}

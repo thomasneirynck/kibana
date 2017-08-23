@@ -12,7 +12,7 @@ export function KibanaPanel(props) {
 
   const statusIndicator = (
     <HealthStatusIndicator>
-      <KibanaStatusIcon status={ props.status } />&nbsp;
+      <KibanaStatusIcon status={props.status} />&nbsp;
       { capitalize(props.status) }
     </HealthStatusIndicator>
   );
@@ -21,13 +21,13 @@ export function KibanaPanel(props) {
   const goToInstances = () => props.angularChangeUrl('kibana/instances');
 
   return (
-    <ClusterItemContainer { ...props } statusIndicator={ statusIndicator } url='kibana' title='Kibana'>
-      <div className='row'>
-        <div className='col-md-4'>
-          <dl data-test-subj='kibana_overview' data-overview-status={ status }>
-            <dt className='cluster-panel__inner-title'>
+    <ClusterItemContainer {...props} statusIndicator={statusIndicator} url="kibana" title="Kibana">
+      <div className="row">
+        <div className="col-md-4">
+          <dl data-test-subj="kibana_overview" data-overview-status={status}>
+            <dt className="cluster-panel__inner-title">
               <KuiKeyboardAccessible>
-                <a className='kuiLink' onClick={ goToKibana } >
+                <a className="kuiLink" onClick={goToKibana} >
                   Overview
                 </a>
               </KuiKeyboardAccessible>
@@ -37,21 +37,21 @@ export function KibanaPanel(props) {
           </dl>
         </div>
 
-        <div className='col-md-4'>
+        <div className="col-md-4">
           <dl>
-            <dt className='cluster-panel__inner-title'>
+            <dt className="cluster-panel__inner-title">
               <KuiKeyboardAccessible>
-                <a className='kuiLink' onClick={ goToInstances } >
-                  Instances: <span data-test-subj='number_of_kibana_instances'>{ props.count }</span>
+                <a className="kuiLink" onClick={goToInstances} >
+                  Instances: <span data-test-subj="number_of_kibana_instances">{ props.count }</span>
                 </a>
               </KuiKeyboardAccessible>
             </dt>
             <dd>Connections: { formatNumber(props.concurrent_connections, 'int_commas') }</dd>
-            <dd>Memory Usage: <BytesPercentageUsage usedBytes={ props.memory_size } maxBytes={ props.memory_limit } />
+            <dd>Memory Usage: <BytesPercentageUsage usedBytes={props.memory_size} maxBytes={props.memory_limit} />
             </dd>
           </dl>
         </div>
       </div>
     </ClusterItemContainer>
   );
-};
+}

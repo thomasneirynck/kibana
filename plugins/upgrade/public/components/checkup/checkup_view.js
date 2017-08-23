@@ -68,11 +68,11 @@ export const CheckupView = withViewState({
     return (
       <div className="kuiView">
         <div className="kuiViewContent kuiViewContent--constrainedWidth">
-          <div className='kuiViewContentItem'>
+          <div className="kuiViewContentItem">
             <InfoGroup
               className="kuiVerticalRhythm"
-              isCollapsed={ isInfoCollapsed }
-              onChangeCollapsed={ toggleInfoCollapsed }
+              isCollapsed={isInfoCollapsed}
+              onChangeCollapsed={toggleInfoCollapsed}
               title="Cluster Checkup"
             >
               <CheckupInfo className="kuiVerticalRhythm" />
@@ -81,7 +81,7 @@ export const CheckupView = withViewState({
             <RefreshButton
               buttonLabel="Rerun Checkup"
               className="kuiVerticalRhythm"
-              onClick={ this.runCheckup }
+              onClick={this.runCheckup}
             />
 
             {
@@ -99,7 +99,7 @@ export const CheckupView = withViewState({
 
             {
               loadingStatus === LOADING_STATUS.SUCCESS
-                ? <CheckupOutput className="kuiVerticalRhythm" output={ deprecations } />
+                ? <CheckupOutput className="kuiVerticalRhythm" output={deprecations} />
                 : null
             }
           </div>

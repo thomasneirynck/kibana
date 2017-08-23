@@ -45,4 +45,4 @@ export function mlJobRoutes(server) {
       .catch(err => reply(handleError(err, req)));
     }
   });
-};
+}

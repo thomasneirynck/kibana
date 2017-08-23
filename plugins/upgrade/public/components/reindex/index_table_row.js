@@ -28,8 +28,8 @@ export function IndexTableRow({
           <div className="kuiTableRowCell__liner">
             <button
               className="kuiMenuButton kuiMenuButton--primary"
-              disabled={ !isNotStarted(index) }
-              onClick={ () => processIndex(index.name) }
+              disabled={!isNotStarted(index)}
+              onClick={() => processIndex(index.name)}
             >
               { getActionButtonLabel(index.action) }
             </button>
@@ -40,15 +40,15 @@ export function IndexTableRow({
             <div className="kuiMenuButtonGroup kuiMenuButtonGroup--alignRight">
               <button
                 className="kuiMenuButton kuiMenuButton--danger"
-                disabled={ !isCancelable(index) }
-                onClick={ () => cancelAction(index.name) }
+                disabled={!isCancelable(index)}
+                onClick={() => cancelAction(index.name)}
               >
                 Cancel
               </button>
               <button
                 className="kuiMenuButton kuiMenuButton--basic"
-                disabled={ !isResettable(index) }
-                onClick={ () => resetAction(index.name) }
+                disabled={!isResettable(index)}
+                onClick={() => resetAction(index.name)}
               >
                 Reset
               </button>
@@ -64,9 +64,9 @@ export function IndexTableRow({
             <td className="kuiTableRowCell kuiTableRowCell--wrap kuiTableRowCell--mergeTop" colSpan="3">
               <div className="kuiTableRowCell__liner">
                 <IndexActionSteps
-                  action={ index.action }
-                  indexName={ index.name }
-                  steps={ index.steps }
+                  action={index.action}
+                  indexName={index.name}
+                  steps={index.steps}
                 />
               </div>
             </td>

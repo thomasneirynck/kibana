@@ -89,4 +89,4 @@ export function jobs(server) {
       tags: [API_TAG],
     },
   });
-};
+}

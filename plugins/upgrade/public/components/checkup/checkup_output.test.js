@@ -35,7 +35,7 @@ describe('CheckupOutput', () => {
       ],
     };
     const component = (
-      <CheckupOutput output={ output }/>
+      <CheckupOutput output={output}/>
     );
 
     expect(shallow(component)).toMatchSnapshot();

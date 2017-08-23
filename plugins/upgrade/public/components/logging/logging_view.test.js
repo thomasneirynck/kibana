@@ -20,8 +20,8 @@ describe('LoggingView', () => {
   test('renders an expanded InfoGroup by default', () => {
     const component = (
       <LoggingView
-        setViewState={ _.noop }
-        viewState={ {} }
+        setViewState={_.noop}
+        viewState={{}}
       />
     );
 
@@ -33,12 +33,12 @@ describe('LoggingView', () => {
   test('renders a collapsed InfoGroup when the viewState declares it', () => {
     const component = (
       <LoggingView
-        setViewState={ _.noop }
-        viewState={ {
+        setViewState={_.noop}
+        viewState={{
           LoggingView: {
             isInfoCollapsed: true,
           },
-        } }
+        }}
       />
     );
 
@@ -51,8 +51,8 @@ describe('LoggingView', () => {
     const setViewState = jest.fn();
     const component = (
       <LoggingView
-        setViewState={ setViewState }
-        viewState={ {} }
+        setViewState={setViewState}
+        viewState={{}}
       />
     );
 
@@ -68,8 +68,8 @@ describe('LoggingView', () => {
 
     const component = (
       <LoggingView
-        setViewState={ _.noop }
-        viewState={ {} }
+        setViewState={_.noop}
+        viewState={{}}
       />
     );
 
@@ -88,8 +88,8 @@ describe('LoggingView', () => {
 
     const component = (
       <LoggingView
-        setViewState={ _.noop }
-        viewState={ {} }
+        setViewState={_.noop}
+        viewState={{}}
       />
     );
 
@@ -109,8 +109,8 @@ describe('LoggingView', () => {
 
     const component = (
       <LoggingView
-        setViewState={ _.noop }
-        viewState={ {} }
+        setViewState={_.noop}
+        viewState={{}}
       />
     );
 

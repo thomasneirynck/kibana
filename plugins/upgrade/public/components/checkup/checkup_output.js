@@ -8,18 +8,18 @@ import { NodeDeprecations } from './node_deprecations';
 
 export function CheckupOutput({ className, output }) {
   return (
-    <div className={ className }>
+    <div className={className}>
       <IndexDeprecations
         className="kuiVerticalRhythm"
-        deprecations={ output.index_settings }
+        deprecations={output.index_settings}
       />
       <NodeDeprecations
         className="kuiVerticalRhythm"
-        deprecations={ output.node_settings }
+        deprecations={output.node_settings}
       />
       <ClusterDeprecations
         className="kuiVerticalRhythm"
-        deprecations={ output.cluster_settings }
+        deprecations={output.cluster_settings}
       />
     </div>
   );

@@ -396,11 +396,11 @@ export class ColaGraph extends React.Component {
     return (
       <svg
         xmlns="http://www.w3.org/2000/svg"
-        ref={ svgEl => this.renderGraph(svgEl) }
+        ref={svgEl => this.renderGraph(svgEl)}
         width="100%"
         height="100%"
         preserveAspectRatio="xMinYMin meet"
-        viewBox={ viewBox }
+        viewBox={viewBox}
         pointerEvents="all"
       />
     );

@@ -28,7 +28,7 @@ const INFO_ISSUES = [
 
 export function CheckupInfo({ className }) {
   return (
-    <div className={ className }>
+    <div className={className}>
       <p className="kuiText kuiVerticalRhythm">
         This tool runs a series of checks against your Elasticsearch cluster, nodes, and indices
         to determine whether you can upgrade directly to Elasticsearch version 6, or whether you
@@ -41,7 +41,7 @@ export function CheckupInfo({ className }) {
       <p className="kuiText kuiVerticalRhythm">
         Each issue found has a degree of severity:
       </p>
-      <Issues className="kuiVerticalRhythm" issues={ INFO_ISSUES } />
+      <Issues className="kuiVerticalRhythm" issues={INFO_ISSUES} />
     </div>
   );
 }

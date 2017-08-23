@@ -7,7 +7,7 @@ export function LoadingIndicator({ className }) {
   const classes = classNames('kuiText', className);
 
   return (
-    <div className={ classes }>
+    <div className={classes}>
       <span className="kuiStatusText">
         <span className="kuiStatusText__icon kuiIcon fa-spinner fa-spin" />
         Loading...

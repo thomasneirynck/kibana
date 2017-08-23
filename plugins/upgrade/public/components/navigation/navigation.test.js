@@ -31,7 +31,7 @@ describe('UpgradeSectionNavigation', () => {
   test('renders the views as tabs using their labels and absolute locations', () => {
     const component = (
       <UpgradeSectionNavigation
-        views={ VIEWS }
+        views={VIEWS}
       />
     );
 
@@ -41,8 +41,8 @@ describe('UpgradeSectionNavigation', () => {
   test('renders the view as selected if the currentViewLocation matches', () => {
     const component = (
       <UpgradeSectionNavigation
-        views={ VIEWS }
-        currentViewLocation='checkup'
+        views={VIEWS}
+        currentViewLocation="checkup"
       />
     );
 

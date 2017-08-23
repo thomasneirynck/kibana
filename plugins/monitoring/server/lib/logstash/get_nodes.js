@@ -70,4 +70,4 @@ export function getNodes(req, lsIndexPattern, { clusterUuid }) {
       };
     });
   });
-};
+}

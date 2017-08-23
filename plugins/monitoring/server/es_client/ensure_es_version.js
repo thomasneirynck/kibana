@@ -96,4 +96,4 @@ export function ensureEsVersion(server, kibanaVersion) {
 
     return true;
   });
-};
+}

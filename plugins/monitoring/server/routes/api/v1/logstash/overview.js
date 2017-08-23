@@ -51,4 +51,4 @@ export function logstashOverviewRoute(server) {
       .catch(err => reply(handleError(err, req)));
     }
   });
-};
+}

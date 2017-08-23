@@ -34,9 +34,9 @@ const nodeRowFactory = (scope, kbnUrl) => {
     return (
       <KuiTableRow>
         <KuiTableRowCell>
-          <div className='monitoringTableCell__name'>
+          <div className="monitoringTableCell__name">
             <KuiKeyboardAccessible>
-              <a className='kuiLink' onClick={ goToNode.bind(null, get(props, 'logstash.uuid')) }>
+              <a className="kuiLink" onClick={goToNode.bind(null, get(props, 'logstash.uuid'))}>
                 { get(props, 'logstash.name') }
               </a>
             </KuiKeyboardAccessible>
@@ -44,28 +44,28 @@ const nodeRowFactory = (scope, kbnUrl) => {
           <div className="monitoringTableCell__transportAddress">{ get(props, 'logstash.http_address') }</div>
         </KuiTableRowCell>
         <KuiTableRowCell>
-          <div className='monitoringTableCell__number'>
+          <div className="monitoringTableCell__number">
             { formatPercentageUsage(props.process.cpu.percent, 100) }
           </div>
         </KuiTableRowCell>
         <KuiTableRowCell>
-          <div className='monitoringTableCell__number'>
+          <div className="monitoringTableCell__number">
             { formatNumber(get(props, 'os.cpu.load_average["1m"]'), '0.00') }
           </div>
         </KuiTableRowCell>
         <KuiTableRowCell>
-          <div className='monitoringTableCell__number'>
+          <div className="monitoringTableCell__number">
             { formatPercentageUsage(props.jvm.mem.heap_used_percent, 100) }
           </div>
         </KuiTableRowCell>
         <KuiTableRowCell>
-          <div className='monitoringTableCell__number'>
+          <div className="monitoringTableCell__number">
             { formatNumber(props.events.out, '0.[0]a') }
           </div>
         </KuiTableRowCell>
         <KuiTableRowCell>
-          <div className='monitoringTableCell__splitNumber'>{ props.reloads.successes } successes</div>
-          <div className='monitoringTableCell__splitNumber'>{ props.reloads.failures } failures</div>
+          <div className="monitoringTableCell__splitNumber">{ props.reloads.successes } successes</div>
+          <div className="monitoringTableCell__splitNumber">{ props.reloads.failures } failures</div>
         </KuiTableRowCell>
       </KuiTableRow>
     );
@@ -82,12 +82,12 @@ uiModule.directive('monitoringLogstashNodeListing', kbnUrl => {
       scope.$watch('nodes', (nodes = []) => {
         const nodesTable = (
           <MonitoringTable
-            className='logstashNodesTable'
-            rows={ nodes }
-            placeholder='Filter Nodes...'
-            filterFields={ filterFields }
-            columns={ columns }
-            rowComponent={ nodeRowFactory(scope, kbnUrl) }
+            className="logstashNodesTable"
+            rows={nodes}
+            placeholder="Filter Nodes..."
+            filterFields={filterFields}
+            columns={columns}
+            rowComponent={nodeRowFactory(scope, kbnUrl)}
           />
         );
         render(nodesTable, $el[0]);

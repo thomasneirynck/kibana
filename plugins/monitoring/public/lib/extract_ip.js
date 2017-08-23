@@ -26,5 +26,5 @@ export function extractIp(transport) {
     return matches[1];
   }
   return transport;
-};
+}
 

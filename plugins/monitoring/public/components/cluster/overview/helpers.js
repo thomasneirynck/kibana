@@ -18,12 +18,12 @@ export function ClusterItemContainer(props) {
   const iconClassNames = [ 'cluster-overview-icon', urlIconMap[props.url] ];
 
   return (
-    <div className='kuiPanel kuiPanel--withHeader kuiVerticalRhythm'>
-      <div className='kuiPanelHeader'>
+    <div className="kuiPanel kuiPanel--withHeader kuiVerticalRhythm">
+      <div className="kuiPanelHeader">
         <div className="kuiPanelHeaderSection">
-          <div className={ iconClassNames.join(' ') } />
+          <div className={iconClassNames.join(' ')} />
           <div className="kuiPanelHeader__title">
-            <h2 className='kuiSubTitle'>
+            <h2 className="kuiSubTitle">
               { props.title }
             </h2>
           </div>
@@ -36,7 +36,7 @@ export function ClusterItemContainer(props) {
         </div>
       </div>
 
-      <div className='kuiPanelBody'>
+      <div className="kuiPanelBody">
         { props.children }
       </div>
     </div>

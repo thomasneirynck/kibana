@@ -40,4 +40,4 @@ export function decorateShards(shards, nodes) {
     shard.tooltip_message = getTooltipMessage(shard);
     return shard;
   });
-};
+}

@@ -26,7 +26,7 @@ export class Unassigned extends React.Component {
     const type = shard.primary ? 'primary' : 'replica';
     const additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
     const key = shard.index + '.' + shard.node + '.' + type + '.' + shard.state + '.' + shard.shard + additionId;
-    return (<Shard shard={ shard } key={ key } />);
+    return (<Shard shard={shard} key={key} />);
   };
 
   render() {

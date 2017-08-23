@@ -20,8 +20,8 @@ describe('CheckupView', () => {
   test('renders an expanded InfoGroup by default', () => {
     const component = (
       <CheckupView
-        setViewState={ _.noop }
-        viewState={ {} }
+        setViewState={_.noop}
+        viewState={{}}
       />
     );
 
@@ -33,12 +33,12 @@ describe('CheckupView', () => {
   test('renders a collapsed InfoGroup when the viewState declares it', () => {
     const component = (
       <CheckupView
-        setViewState={ _.noop }
-        viewState={ {
+        setViewState={_.noop}
+        viewState={{
           CheckupView: {
             isInfoCollapsed: true,
           },
-        } }
+        }}
       />
     );
 
@@ -51,8 +51,8 @@ describe('CheckupView', () => {
     const setViewState = jest.fn();
     const component = (
       <CheckupView
-        setViewState={ setViewState }
-        viewState={ {} }
+        setViewState={setViewState}
+        viewState={{}}
       />
     );
 
@@ -72,8 +72,8 @@ describe('CheckupView', () => {
 
     const component = (
       <CheckupView
-        setViewState={ _.noop }
-        viewState={ {} }
+        setViewState={_.noop}
+        viewState={{}}
       />
     );
 
@@ -96,8 +96,8 @@ describe('CheckupView', () => {
 
     const component = (
       <CheckupView
-        setViewState={ _.noop }
-        viewState={ {} }
+        setViewState={_.noop}
+        viewState={{}}
       />
     );
 
@@ -119,8 +119,8 @@ describe('CheckupView', () => {
 
     const component = (
       <CheckupView
-        setViewState={ _.noop }
-        viewState={ {} }
+        setViewState={_.noop}
+        viewState={{}}
       />
     );
 

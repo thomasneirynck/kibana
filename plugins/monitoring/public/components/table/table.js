@@ -113,7 +113,7 @@ export class MonitoringTable extends React.Component {
 
     const sortDirection = this.state.sortOrder > 0 ? 'up' : 'down'; // ascending = up, descending = down
     return (
-      <span data-sort-icon-ascending className={ `kuiTableSortIcon kuiIcon fa-long-arrow-${sortDirection}` } />
+      <span data-sort-icon-ascending className={`kuiTableSortIcon kuiIcon fa-long-arrow-${sortDirection}`} />
     );
   }
 
@@ -145,10 +145,10 @@ export class MonitoringTable extends React.Component {
 
     return (
       <KuiPagerButtonGroup
-        hasNext={ hasNext }
-        hasPrevious={ hasPrevious }
-        onNext={ onNext }
-        onPrevious={ onPrevious }
+        hasNext={hasNext}
+        hasPrevious={hasPrevious}
+        onNext={onNext}
+        onPrevious={onPrevious}
       />
     );
   }
@@ -165,13 +165,13 @@ export class MonitoringTable extends React.Component {
     const firstRow = this.calculateFirstRow();
     return (
       <MonitoringTableSearchBar
-        pageIndexFirstRow={ numVisibleRows ? firstRow + 1 : 0 }
-        pageIndexLastRow={ numVisibleRows ? numVisibleRows + firstRow : 0 }
-        rowsFiltered={ numAvailableRows }
-        placeholder={ this.props.placeholder }
-        toolBarSections={ this.props.toolBarSections }
-        paginationControls={ this.getPaginationControls(numAvailableRows) }
-        onFilterChange={ this.onFilterChange.bind(this) }
+        pageIndexFirstRow={numVisibleRows ? firstRow + 1 : 0}
+        pageIndexLastRow={numVisibleRows ? numVisibleRows + firstRow : 0}
+        rowsFiltered={numAvailableRows}
+        placeholder={this.props.placeholder}
+        toolBarSections={this.props.toolBarSections}
+        paginationControls={this.getPaginationControls(numAvailableRows)}
+        onFilterChange={this.onFilterChange.bind(this)}
       />
     );
   }
@@ -208,12 +208,12 @@ export class MonitoringTable extends React.Component {
 
       return (
         <KuiTableHeaderCell
-          className='kuiTableHeaderCell--sortable'
-          key={ `kuiTableHeaderCell-${colIndex}` }
-          { ...headerCellProps }
+          className="kuiTableHeaderCell--sortable"
+          key={`kuiTableHeaderCell-${colIndex}`}
+          {...headerCellProps}
         >
           <KuiKeyboardAccessible>
-            <span onClick={ this.setSortColumn.bind(this, col) }>
+            <span onClick={this.setSortColumn.bind(this, col)}>
               { col.title } { this.getColumnSortIcon(col) }
             </span>
           </KuiKeyboardAccessible>
@@ -230,10 +230,10 @@ export class MonitoringTable extends React.Component {
     const firstRow = this.calculateFirstRow();
     return (
       <MonitoringTableFooter
-        pageIndexFirstRow={ numVisibleRows ? firstRow + 1 : 0 }
-        pageIndexLastRow={ numVisibleRows ? numVisibleRows + firstRow : 0 }
-        rowsFiltered={ numAvailableRows }
-        paginationControls={ this.getPaginationControls(numAvailableRows) }
+        pageIndexFirstRow={numVisibleRows ? firstRow + 1 : 0}
+        pageIndexLastRow={numVisibleRows ? numVisibleRows + firstRow : 0}
+        rowsFiltered={numAvailableRows}
+        paginationControls={this.getPaginationControls(numAvailableRows)}
       />
     );
   }
@@ -286,11 +286,11 @@ export class MonitoringTable extends React.Component {
     if (numVisibleRows > 0) {
       const RowComponent = this.props.rowComponent;
       const tBody = visibleRows.map((rowData, rowIndex) => {
-        return <RowComponent { ...rowData } key={ `rowData-${rowIndex}` } />;
+        return <RowComponent {...rowData} key={`rowData-${rowIndex}`} />;
       });
 
       table = (
-        <KuiTable shrinkToContent={ true }>
+        <KuiTable shrinkToContent={true}>
           <thead>
             <tr>
               { this.getTableHeader() }
@@ -302,11 +302,11 @@ export class MonitoringTable extends React.Component {
         </KuiTable>
       );
     } else {
-      table = <MonitoringTableNoData message={ this.props.noDataMessage } />;
+      table = <MonitoringTableNoData message={this.props.noDataMessage} />;
     }
 
     return (
-      <KuiControlledTable className={ classes }>
+      <KuiControlledTable className={classes}>
         { this.getSearchBar(numVisibleRows, numAvailableRows)}
         { table }
         { this.getFooter(numVisibleRows, numAvailableRows) }

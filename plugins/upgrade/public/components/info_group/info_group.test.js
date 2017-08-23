@@ -32,7 +32,7 @@ describe('InfoGroup', () => {
 
   test('does not render its children when isCollapsed is true', () => {
     const component = (
-      <InfoGroup isCollapsed={ true }>
+      <InfoGroup isCollapsed={true}>
         Info Message
       </InfoGroup>
     );
@@ -42,7 +42,7 @@ describe('InfoGroup', () => {
 
   test('renders its children when isCollapsed is false', () => {
     const component = (
-      <InfoGroup isCollapsed={ false }>
+      <InfoGroup isCollapsed={false}>
         Info Message
       </InfoGroup>
     );
@@ -63,7 +63,7 @@ describe('InfoGroup', () => {
   test('calls onChangeCollapsed when the toggle button is clicked', () => {
     const handleChangeCollapsed = sinon.stub();
     const component = (
-      <InfoGroup onChangeCollapsed={ handleChangeCollapsed }/>
+      <InfoGroup onChangeCollapsed={handleChangeCollapsed}/>
     );
 
     const wrapper = shallow(component);

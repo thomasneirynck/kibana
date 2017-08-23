@@ -79,5 +79,5 @@ export function indicesByNodes() {
     .sortBy(index => [ !index.unassignedPrimaries, /^\./.test(index.name), index.name ])
     .value();
   };
-};
+}
 

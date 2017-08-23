@@ -11,4 +11,4 @@ export function pickMetricFields(metric) {
     'format'
   ];
   return _.pick(metric, fields);
-};
+}

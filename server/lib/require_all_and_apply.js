@@ -23,4 +23,4 @@ export function requireAllAndApply(path, server) {
       resolve(modules);
     });
   });
-};
+}

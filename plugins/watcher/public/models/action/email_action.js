@@ -48,4 +48,4 @@ export class EmailAction extends BaseAction {
   static template = '<watch-email-action></watch-email-action>';
   static selectMessage = 'Send out an e-mail from your server.';
   static simulatePrompt = 'Test fire an e-mail now';
-};
+}

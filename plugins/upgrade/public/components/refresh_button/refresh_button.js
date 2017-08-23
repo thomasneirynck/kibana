@@ -32,10 +32,10 @@ export class RefreshButton extends Component {
     return (
       <KuiButton
         buttonType="primary"
-        className={ className }
-        icon={ <KuiButtonIcon className="fa-refresh" /> }
-        disabled={ isRunning }
-        onClick={ this.onClick }
+        className={className}
+        icon={<KuiButtonIcon className="fa-refresh" />}
+        disabled={isRunning}
+        onClick={this.onClick}
       >
         { isRunning ? 'Running...' : buttonLabel }
       </KuiButton>

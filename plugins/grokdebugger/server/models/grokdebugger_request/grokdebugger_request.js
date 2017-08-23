@@ -49,4 +49,4 @@ export class GrokdebuggerRequest {
 
     return new GrokdebuggerRequest(opts);
   }
-};
+}

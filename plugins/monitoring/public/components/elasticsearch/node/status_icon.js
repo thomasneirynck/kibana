@@ -5,6 +5,6 @@ export function NodeStatusIcon({ status }) {
   const type = (status === 'Online') ? StatusIcon.TYPES.GREEN : StatusIcon.TYPES.GRAY;
 
   return (
-    <StatusIcon type={ type } label={ `Health: ${status}` } />
+    <StatusIcon type={type} label={`Health: ${status}`} />
   );
 }

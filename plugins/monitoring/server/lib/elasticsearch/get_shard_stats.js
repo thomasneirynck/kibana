@@ -80,4 +80,4 @@ export function getShardStats(req, esIndexPattern, cluster) {
 
     return data;
   });
-};
+}

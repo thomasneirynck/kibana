@@ -33,4 +33,4 @@ export class Pipeline {
   static fromUpstreamJSON(pipeline) {
     return new Pipeline(pipeline);
   }
-};
+}

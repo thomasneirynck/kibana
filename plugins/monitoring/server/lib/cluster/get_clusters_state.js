@@ -73,4 +73,4 @@ export function getClustersState(req, esIndexPattern, clusters) {
 
   return callWithRequest(req, 'search', params)
   .then(response => handleResponse(response, clusters));
-};
+}

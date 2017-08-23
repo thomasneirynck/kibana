@@ -117,4 +117,4 @@ export class BaseWatch {
   static selectMessage = 'Set up a new watch.';
   static isCreatable = true;
   static selectSortOrder = 0;
-};
+}

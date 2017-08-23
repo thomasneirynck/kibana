@@ -8,14 +8,7 @@ plugins:
   - 'jest'
 
 rules:
-  no-extra-semi: off
   quotes: off
-  no-shadow: error
-  no-unused-vars: [error, {args: 'after-used', argsIgnorePattern: '^_'}]
-  react/jsx-uses-react: error
-  react/jsx-uses-vars: error
-  react/jsx-curly-spacing: [error, always]
-  kibana-custom/no-default-export: error
 
   jest/no-disabled-tests: error
   jest/no-focused-tests: error

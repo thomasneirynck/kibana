@@ -26,10 +26,10 @@ describe('IndexActionStep', () => {
   test('renders a success message for a completed step', () => {
     const component = (
       <IndexActionStep
-        step={ {
+        step={{
           name: "COMPLETED STEP",
           result: STEP_RESULTS.COMPLETED,
-        } }
+        }}
         action="COMPLETED ACTION"
         indexName="COMPLETED INDEX_NAME"
       />
@@ -41,12 +41,12 @@ describe('IndexActionStep', () => {
   test('renders an error message for a failed step', () => {
     const component = (
       <IndexActionStep
-        step={ {
+        step={{
           name: "FAILED STEP",
           result: {
             message: 'FAILED',
           },
-        } }
+        }}
         action="FAILED ACTION"
         indexName="FAILED INDEX_NAME"
       />
@@ -58,10 +58,10 @@ describe('IndexActionStep', () => {
   test('renders a spinner message for a running step', () => {
     const component = (
       <IndexActionStep
-        step={ {
+        step={{
           name: "RUNNING STEP",
           result: STEP_RESULTS.RUNNING,
-        } }
+        }}
         action="RUNNING ACTION"
         indexName="RUNNING INDEX_NAME"
       />

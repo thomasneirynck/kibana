@@ -6,18 +6,18 @@ import { IssueSymbol } from './issue_symbol';
 
 export function Issue({ details, level, message, url }) {
   return (
-    <li className='kuiMenuItem'>
-      <div className='kuiEvent'>
-        <IssueSymbol level={ level } />
+    <li className="kuiMenuItem">
+      <div className="kuiEvent">
+        <IssueSymbol level={level} />
 
-        <div className='kuiEventBody'>
-          <div className='kuiEventBody__message'>
+        <div className="kuiEventBody">
+          <div className="kuiEventBody__message">
             { message }{ details ? `: ${details }` : null}
           </div>
-          <div className='kuiEventBody__metadata'>
+          <div className="kuiEventBody__metadata">
             {
               url
-              ? <a className='kuiLink' href={ url }>View Documentation</a>
+              ? <a className="kuiLink" href={url}>View Documentation</a>
               : null
             }
           </div>

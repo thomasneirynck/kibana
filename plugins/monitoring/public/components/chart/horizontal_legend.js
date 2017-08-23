@@ -35,18 +35,18 @@ export class HorizontalLegend extends React.Component {
     }
     if (!row.label || row.legend === false) {
       return (
-        <div key={ key } style={ { display: 'none' } }/>
+        <div key={key} style={{ display: 'none' }}/>
       );
     }
 
     return (
-      <KuiKeyboardAccessible key={ key } >
-        <div className={ classes.join(' ') } onClick={ event => this.props.onToggle(event, row.id) } >
-          <span className='rhythm_chart__legend-label'>
-            <span className='fa fa-circle rhythm_chart__legend-indicator' style={ { color: row.color } }/>
+      <KuiKeyboardAccessible key={key} >
+        <div className={classes.join(' ')} onClick={event => this.props.onToggle(event, row.id)} >
+          <span className="rhythm_chart__legend-label">
+            <span className="fa fa-circle rhythm_chart__legend-indicator" style={{ color: row.color }}/>
             { row.label }
           </span>
-          <span className='rhythm_chart__legend-value'>{ value }</span>
+          <span className="rhythm_chart__legend-value">{ value }</span>
         </div>
       </KuiKeyboardAccessible>
     );
@@ -56,8 +56,8 @@ export class HorizontalLegend extends React.Component {
     const rows = this.props.series.map(this.createSeries);
 
     return (
-      <div className='rhythm_chart__legend-horizontal'>
-        <div className='row rhythm_chart__legend-series'>
+      <div className="rhythm_chart__legend-horizontal">
+        <div className="row rhythm_chart__legend-series">
           { rows }
         </div>
       </div>

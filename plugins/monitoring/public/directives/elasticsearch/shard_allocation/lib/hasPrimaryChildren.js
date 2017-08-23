@@ -19,4 +19,4 @@ import _ from 'lodash';
 
 export function hasPrimaryChildren(item)  {
   return _.some(item.children, { primary: true });
-};
+}

@@ -32,41 +32,41 @@ const instanceRowFactory = (scope, kbnUrl) => {
     return (
       <KuiTableRow>
         <KuiTableRowCell>
-          <div className='monitoringTableCell__name'>
+          <div className="monitoringTableCell__name">
             <KuiKeyboardAccessible>
-              <a className='kuiLink' onClick={ goToInstance.bind(null, get(props, 'kibana.uuid')) }>
+              <a className="kuiLink" onClick={goToInstance.bind(null, get(props, 'kibana.uuid'))}>
                 { props.kibana.name }
               </a>
             </KuiKeyboardAccessible>
           </div>
-          <div className='monitoringTableCell__transportAddress'>{ get(props, 'kibana.transport_address') }</div>
+          <div className="monitoringTableCell__transportAddress">{ get(props, 'kibana.transport_address') }</div>
         </KuiTableRowCell>
         <KuiTableRowCell>
-          <div title={ `Instance status: ${props.kibana.status}` } className='monitoringTableCell__status'>
-            <KibanaStatusIcon status={ props.kibana.status } availability={ props.availability } />&nbsp;
+          <div title={`Instance status: ${props.kibana.status}`} className="monitoringTableCell__status">
+            <KibanaStatusIcon status={props.kibana.status} availability={props.availability} />&nbsp;
             { !props.availability ? 'Offline' : capitalize(props.kibana.status) }
           </div>
         </KuiTableRowCell>
         <KuiTableRowCell>
-          <div className='monitoringTableCell__number'>
+          <div className="monitoringTableCell__number">
             { formatNumber(get(props, 'os.load["1m"]'), '0.00') }
           </div>
         </KuiTableRowCell>
         <KuiTableRowCell>
-          <div className='monitoringTableCell__number'>
+          <div className="monitoringTableCell__number">
             { formatNumber(props.process.memory.resident_set_size_in_bytes, '0.00 b') }
           </div>
         </KuiTableRowCell>
         <KuiTableRowCell>
-          <div className='monitoringTableCell__number'>
+          <div className="monitoringTableCell__number">
             { formatNumber(props.requests.total, 'int_commas') }
           </div>
         </KuiTableRowCell>
         <KuiTableRowCell>
-          <div className='monitoringTableCell__splitNumber'>
+          <div className="monitoringTableCell__splitNumber">
             { props.response_times.average && (formatNumber(props.response_times.average, 'int_commas') + ' ms avg') }
           </div>
-          <div className='monitoringTableCell__splitNumber'>
+          <div className="monitoringTableCell__splitNumber">
             { formatNumber(props.response_times.max, 'int_commas') } ms max
           </div>
         </KuiTableRowCell>
@@ -85,12 +85,12 @@ uiModule.directive('monitoringKibanaListing', kbnUrl => {
       scope.$watch('instances', (instances = []) => {
         const kibanasTable = (
           <MonitoringTable
-            className='kibanaInstancesTable'
-            rows={ instances }
-            placeholder='Filter Instances...'
-            filterFields={ filterFields }
-            columns={ columns }
-            rowComponent={ instanceRowFactory(scope, kbnUrl) }
+            className="kibanaInstancesTable"
+            rows={instances}
+            placeholder="Filter Instances..."
+            filterFields={filterFields}
+            columns={columns}
+            rowComponent={instanceRowFactory(scope, kbnUrl)}
           />
         );
         render(kibanasTable, $el[0]);

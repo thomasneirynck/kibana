@@ -64,4 +64,4 @@ export function getLastRecovery(req, esIndexPattern) {
     return handleLastRecoveries(resp, start);
   });
 
-};
+}

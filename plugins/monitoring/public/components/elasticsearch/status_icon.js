@@ -8,6 +8,6 @@ export function ElasticsearchStatusIcon({ status }) {
   })();
 
   return (
-    <StatusIcon type={ type } label={ `Health: ${status}` } />
+    <StatusIcon type={type} label={`Health: ${status}`} />
   );
 }

@@ -22,4 +22,4 @@ export class GrokdebuggerResponse {
     const opts = { structuredEvent };
     return new GrokdebuggerResponse(opts);
   }
-};
+}

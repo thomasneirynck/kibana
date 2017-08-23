@@ -26,4 +26,4 @@ export function calculateShardStats(state) {
     _.each(shards, processShards);
   }
   return data;
-};
+}

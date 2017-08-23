@@ -16,7 +16,7 @@ uiModule.directive('monitoringLogstashPipelineViewer', () => {
 
       scope.$watch('pipeline', (updatedPipeline) => {
         pipelineState.update(updatedPipeline);
-        const pipelineViewer = <PipelineViewer pipelineState={ pipelineState } />;
+        const pipelineViewer = <PipelineViewer pipelineState={pipelineState} />;
         render(pipelineViewer, $el[0]);
       });
     }

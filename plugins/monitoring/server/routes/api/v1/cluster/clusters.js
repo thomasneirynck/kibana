@@ -47,4 +47,4 @@ export function clustersRoutes(server) {
       return reply(clusters);
     }
   });
-};
+}

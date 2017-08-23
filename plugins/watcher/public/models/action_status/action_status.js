@@ -27,4 +27,4 @@ export class ActionStatus {
   static fromUpstreamJson(upstreamActionStatus) {
     return new ActionStatus(upstreamActionStatus);
   }
-};
+}

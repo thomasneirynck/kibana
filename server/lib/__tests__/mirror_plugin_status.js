@@ -34,7 +34,7 @@ describe('mirror_plugin_status', () => {
     constructor() {
       this.status = new MockPluginStatus();
     }
-  };
+  }
 
   let upstreamPlugin;
   let downstreamPlugin;

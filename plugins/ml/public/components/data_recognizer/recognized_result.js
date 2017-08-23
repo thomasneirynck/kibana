@@ -13,38 +13,32 @@
  * strictly prohibited.
  */
 
+import React from 'react';
 import PropTypes from 'prop-types';
 
-import React, { Component } from 'react';
-
-export class RecognizedResult extends Component {
-
-  render() {
-    const {
-      config,
-      indexPattern
-    } = this.props;
-
-    const href = `#/jobs/new_job/simple/recognize/create?id=${config.id}&index=${indexPattern.id}`;
-    let logo = null;
-    // if a logo is available, use that, otherwise display the id
-    // the logo should be a base64 encoded image
-    if (config.logo && config.logo.src) {
-      logo = <div><img src={ config.logo.src }/></div>;
-    } else {
-      logo = <h3>{config.id}</h3>;
-    }
-
-    return (
-      <a className='recognizer-result' href={ href }>
-        { logo }
-        <div>
-          <span >Create {config.title} jobs</span>
-        </div>
-      </a>
-    );
+export const RecognizedResult = ({
+  config,
+  indexPattern,
+}) => {
+  const href = `#/jobs/new_job/simple/recognize/create?id=${config.id}&index=${indexPattern.id}`;
+  let logo = null;
+  // if a logo is available, use that, otherwise display the id
+  // the logo should be a base64 encoded image
+  if (config.logo && config.logo.src) {
+    logo = <div><img src={config.logo.src}/></div>;
+  } else {
+    logo = <h3>{config.id}</h3>;
   }
-}
+
+  return (
+    <a className="recognizer-result" href={href}>
+      { logo }
+      <div>
+        <span >Create {config.title} jobs</span>
+      </div>
+    </a>
+  );
+};
 
 RecognizedResult.propTypes = {
   config: PropTypes.object,

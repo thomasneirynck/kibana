@@ -66,7 +66,7 @@ export function checkLicense(xpackLicenseInfo) {
     showLinks = true;
     allowRoleDocumentLevelSecurity = true;
     allowRoleFieldLevelSecurity = true;
-  };
+  }
 
   return {
     showLogin,
@@ -78,4 +78,4 @@ export function checkLicense(xpackLicenseInfo) {
     allowRoleFieldLevelSecurity
   };
 
-};
+}

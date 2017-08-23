@@ -20,5 +20,5 @@ export function checkAccessRoute(server) {
       return reply(response);
     }
   });
-};
+}
 

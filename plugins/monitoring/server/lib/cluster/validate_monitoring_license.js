@@ -11,4 +11,4 @@ export function validateMonitoringLicense(id, license) {
 
   const hash = sha256(`${license.status}${license.uid}${license.type}${license.expiry_date_in_millis}${id}`);
   return hash === license.hkey;
-};
+}

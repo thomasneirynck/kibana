@@ -21,4 +21,4 @@ export class UnknownAction extends BaseAction {
   static fromUpstreamJson(upstreamAction) {
     return new UnknownAction(upstreamAction);
   }
-};
+}

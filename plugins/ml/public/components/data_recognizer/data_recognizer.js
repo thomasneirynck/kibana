@@ -37,9 +37,9 @@ export function dataRecognizerProvider(ml) {
       .then((resp) => {
         const results = resp.map((r) => (
           <RecognizedResult
-            key={ r.id }
-            config={ r }
-            indexPattern={ this.indexPattern }
+            key={r.id}
+            config={r}
+            indexPattern={this.indexPattern}
           />
         ));
 

@@ -18,11 +18,11 @@ export const HomeView = withViewState({
   return (
     <div className="kuiView">
       <div className="kuiViewContent kuiViewContent--constrainedWidth">
-        <div className='kuiViewContentItem'>
+        <div className="kuiViewContentItem">
           <InfoGroup
             className="kuiVerticalRhythm"
-            isCollapsed={ isInfoCollapsed }
-            onChangeCollapsed={ toggleInfoCollapsed }
+            isCollapsed={isInfoCollapsed}
+            onChangeCollapsed={toggleInfoCollapsed}
             title="Overview"
           >
             <p className="kuiText kuiVerticalRhythm">
@@ -39,12 +39,12 @@ export const HomeView = withViewState({
 
               <div className="kuiInfoPanelBody">
                 <div className="kuiInfoPanelBody__message">
-                  Before starting your upgrade and before using these tools, backup your data using the <a className='kuiLink' href='https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-snapshots.html' target='_blank'>snapshot/restore api</a>.
+                  Before starting your upgrade and before using these tools, backup your data using the <a className="kuiLink" href="https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-snapshots.html" target="_blank">snapshot/restore api</a>.
                 </div>
               </div>
             </div>
             <p className="kuiText kuiVerticalRhythm">
-              Read more about important changes in the <a className='kuiLink' href='https://www.elastic.co/guide/en/elasticsearch/reference/6.0/breaking-changes-6.0.html'>Breaking Changes</a> documentation online.
+              Read more about important changes in the <a className="kuiLink" href="https://www.elastic.co/guide/en/elasticsearch/reference/6.0/breaking-changes-6.0.html">Breaking Changes</a> documentation online.
             </p>
           </InfoGroup>
 
@@ -58,7 +58,7 @@ export const HomeView = withViewState({
               before upgrading.
             </p>
             <p className="kuiText kuiVerticalRhythmSmall">
-              <a className="kuiLink" href={ views.CHECKUP.absoluteLocation }>
+              <a className="kuiLink" href={views.CHECKUP.absoluteLocation}>
                 Go to Cluster Checkup.
               </a>
             </p>
@@ -75,7 +75,7 @@ export const HomeView = withViewState({
               automatically reindex and upgrade indices.
             </p>
             <p className="kuiText kuiVerticalRhythmSmall">
-              <a className="kuiLink" href={ views.REINDEX.absoluteLocation }>
+              <a className="kuiLink" href={views.REINDEX.absoluteLocation}>
                 Go to Reindex Helper.
               </a>
             </p>
@@ -92,7 +92,7 @@ export const HomeView = withViewState({
               This is enabled by default, beginning in Elasticsearch 5.
             </p>
             <p className="kuiText kuiVerticalRhythmSmall">
-              <a className="kuiLink" href={ views.LOGGING.absoluteLocation }>
+              <a className="kuiLink" href={views.LOGGING.absoluteLocation}>
                 Go to Toggle Deprecation Logging.
               </a>
             </p>

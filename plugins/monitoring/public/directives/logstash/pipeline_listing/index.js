@@ -22,9 +22,9 @@ uiModule.directive('monitoringLogstashPipelineListing', function ($injector) {
       scope.$watch('pipelines', pipelines => {
         const pipelineCardGroup = (
           <PipelineCardGroup
-            pipelines={ pipelines }
-            onHashClick={ onHashClick }
-            upgradeMessage={ scope.upgradeMessage }
+            pipelines={pipelines}
+            onHashClick={onHashClick}
+            upgradeMessage={scope.upgradeMessage}
           />
         );
 

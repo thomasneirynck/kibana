@@ -10,7 +10,7 @@ export function createClient(options) {
   }
 
   return client;
-};
+}
 
 export function isClient(client) {
   // if there's a transport property, assume it's a client instance

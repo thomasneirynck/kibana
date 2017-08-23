@@ -34,14 +34,14 @@ const showSystemIndicesComponentFactory = scope => {
       return (
         <KuiToolBarSection>
           <KuiToolBarText>
-            <label className='kuiCheckBoxLabel'>
+            <label className="kuiCheckBoxLabel">
               <input
-                className='kuiCheckBox'
-                type='checkbox'
-                onChange={ this.toggleShowSystemIndices }
-                checked={ this.state.showSystemIndices }
+                className="kuiCheckBox"
+                type="checkbox"
+                onChange={this.toggleShowSystemIndices}
+                checked={this.state.showSystemIndices}
               />
-              <span className='kuiCheckBoxLabel__text'>Show system indices</span>
+              <span className="kuiCheckBoxLabel__text">Show system indices</span>
             </label>
           </KuiToolBarText>
         </KuiToolBarSection>
@@ -70,7 +70,7 @@ const cols = [
   { title: 'Unassigned Shards', sortKey: 'unassigned_shards' }
 ];
 const indexRowFactory = (scope, kbnUrl) => {
-  return class IndexRow extends React.Component {
+  return class IndexRow extends React.Component { // eslint-disable-line react/no-multi-comp
     constructor(props) {
       super(props);
       this.changePath = this.changePath.bind(this);
@@ -87,12 +87,12 @@ const indexRowFactory = (scope, kbnUrl) => {
         <KuiTableRow>
           <KuiTableRowCell>
             <KuiKeyboardAccessible>
-              <a className='kuiLink' onClick={ this.changePath }>{ this.props.name }</a>
+              <a className="kuiLink" onClick={this.changePath}>{ this.props.name }</a>
             </KuiKeyboardAccessible>
           </KuiTableRowCell>
           <KuiTableRowCell>
-            <div title={ `Index status: ${status}` }>
-              <ElasticsearchStatusIcon status={ status } />&nbsp;
+            <div title={`Index status: ${status}`}>
+              <ElasticsearchStatusIcon status={status} />&nbsp;
               { capitalize(status) }
             </div>
           </KuiTableRowCell>
@@ -110,7 +110,7 @@ const indexRowFactory = (scope, kbnUrl) => {
 const noDataMessage = (
   <div>
     <p>There are no indices that match your selections. Try changing the time range selection.</p>
-    <p>If you are looking for system indices (e.g., .kibana), try checking 'Show system indices'.</p>
+    <p>If you are looking for system indices (e.g., .kibana), try checking &lsquo;Show system indices&rsquo;.</p>
   </div>
 );
 
@@ -125,19 +125,19 @@ uiModule.directive('monitoringIndexListing', kbnUrl => {
     },
     link(scope, $el) {
       const ShowSytemIndicesCheckbox = showSystemIndicesComponentFactory(scope);
-      const toolBarSection = <ShowSytemIndicesCheckbox key='toolbarSection-1' showSystemIndices={ scope.showSystemIndices }/>;
+      const toolBarSection = <ShowSytemIndicesCheckbox key="toolbarSection-1" showSystemIndices={scope.showSystemIndices}/>;
 
       scope.$watch('indices', (indices = []) => {
         const instancesTable = (
           <MonitoringTable
-            className='indicesTable'
-            rows={ indices }
-            placeholder='Filter Indices...'
-            filterFields={ filterFields }
-            toolBarSections={ [ toolBarSection ] }
-            columns={ cols }
-            rowComponent={ indexRowFactory(scope, kbnUrl) }
-            noDataMessage={ noDataMessage }
+            className="indicesTable"
+            rows={indices}
+            placeholder="Filter Indices..."
+            filterFields={filterFields}
+            toolBarSections={[ toolBarSection ]}
+            columns={cols}
+            rowComponent={indexRowFactory(scope, kbnUrl)}
+            noDataMessage={noDataMessage}
           />
         );
         render(instancesTable, $el[0]);

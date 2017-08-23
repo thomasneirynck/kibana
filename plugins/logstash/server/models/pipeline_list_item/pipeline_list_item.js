@@ -36,4 +36,4 @@ export class PipelineListItem {
 
     return new PipelineListItem(opts);
   }
-};
+}

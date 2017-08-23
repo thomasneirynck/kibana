@@ -20,4 +20,4 @@ export function getLastValue(data) {
 
   // undefined/null return as null to show as N/A
   return null;
-};
+}

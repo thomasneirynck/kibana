@@ -16,7 +16,7 @@ export const licensePreRoutingFactory = once((server) => {
     } else {
       reply();
     }
-  };
+  }
 
   return licensePreRouting;
 });

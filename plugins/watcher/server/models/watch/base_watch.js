@@ -122,4 +122,4 @@ export class BaseWatch {
       actions
     };
   }
-};
+}

@@ -14,11 +14,11 @@ describe('IndexTable', () => {
   test('renders the index count', () => {
     const component = (
       <IndexTable
-        indices={ {
+        indices={{
           index2: { name: 'index1' },
           index1: { name: 'index2' },
           index3: { name: 'index3' },
-        } }
+        }}
       />
     );
 
@@ -30,11 +30,11 @@ describe('IndexTable', () => {
   test('renders an IndexTableRow for every index sorted by name', () => {
     const component = (
       <IndexTable
-        indices={ {
+        indices={{
           index2: { name: 'index1' },
           index1: { name: 'index2' },
           index3: { name: 'index3' },
-        } }
+        }}
       />
     );
 

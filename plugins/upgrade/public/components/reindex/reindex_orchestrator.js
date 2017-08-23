@@ -314,15 +314,15 @@ export function withReindexOrchestrator() {
 
         return (
           <WrappedComponent
-            cancelAction={ this.cancelAction }
-            indices={ indices }
-            loadingStatus={ loadingStatus }
-            errorMessage={ errorMessage }
-            progress={ getProgress(indices) }
-            resetAction={ this.resetAction }
-            processIndex={ this.processIndex }
-            loadIndices={ this.loadIndices }
-            { ...this.props }
+            cancelAction={this.cancelAction}
+            indices={indices}
+            loadingStatus={loadingStatus}
+            errorMessage={errorMessage}
+            progress={getProgress(indices)}
+            resetAction={this.resetAction}
+            processIndex={this.processIndex}
+            loadIndices={this.loadIndices}
+            {...this.props}
           />
         );
       }

@@ -64,17 +64,17 @@ export class ClusterView extends React.Component {
     return (
       <table cellPadding="0" cellSpacing="0" className="table">
         <TableHead
-          hasUnassigned={ this.hasUnassigned() }
-          scope={ this.props.scope }
-          toggleShowSystemIndices={ this.state.toggleShowSystemIndices }
+          hasUnassigned={this.hasUnassigned()}
+          scope={this.props.scope}
+          toggleShowSystemIndices={this.state.toggleShowSystemIndices}
         />
         <TableBody
-          filter={ this.props.scope.filter }
-          totalCount={ this.props.scope.totalCount }
-          rows={ this.state.showing }
-          cols={ this.state.labels.length }
-          shardStats={ this.state.shardStats }
-          changeUrl={ this.state.angularChangeUrl }
+          filter={this.props.scope.filter}
+          totalCount={this.props.scope.totalCount}
+          rows={this.state.showing}
+          cols={this.state.labels.length}
+          shardStats={this.state.shardStats}
+          changeUrl={this.state.angularChangeUrl}
         />
       </table>
     );

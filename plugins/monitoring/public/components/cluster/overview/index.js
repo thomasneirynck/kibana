@@ -46,25 +46,25 @@ export class Overview extends React.Component {
     return (
       <div>
         <LicenseText
-          license={ this.state.license }
-          showLicenseExpiration={ this.props.showLicenseExpiration }
-          angularChangeUrl={ angularChangeUrl }
+          license={this.state.license}
+          showLicenseExpiration={this.props.showLicenseExpiration}
+          angularChangeUrl={angularChangeUrl}
         />
 
-        <div className='page-row'>
-          <AlertsPanel alerts={ this.state.alerts } angularChangeUrl={ angularChangeUrl } />
+        <div className="page-row">
+          <AlertsPanel alerts={this.state.alerts} angularChangeUrl={angularChangeUrl} />
         </div>
 
-        <div className='page-row'>
-          <ElasticsearchPanel { ...this.state.elasticsearch } ml={ this.state.ml } angularChangeUrl={ angularChangeUrl } />
+        <div className="page-row">
+          <ElasticsearchPanel {...this.state.elasticsearch} ml={this.state.ml} angularChangeUrl={angularChangeUrl} />
         </div>
 
-        <div className='page-row'>
-          <KibanaPanel { ...this.state.kibana } angularChangeUrl={ angularChangeUrl } />
+        <div className="page-row">
+          <KibanaPanel {...this.state.kibana} angularChangeUrl={angularChangeUrl} />
         </div>
 
-        <div className='page-row'>
-          <LogstashPanel { ...this.state.logstash } angularChangeUrl={ angularChangeUrl } />
+        <div className="page-row">
+          <LogstashPanel {...this.state.logstash} angularChangeUrl={angularChangeUrl} />
         </div>
       </div>
     );

@@ -111,7 +111,7 @@ export async function _xpackInfo(server, pollFrequencyInMillis, clusterSource = 
       method: 'GET',
       path: '/_xpack'
     });
-  };
+  }
 
   function _updateXPackInfoJSON() {
     const json = {};

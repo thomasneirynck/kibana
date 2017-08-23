@@ -44,4 +44,4 @@ export class BaseAction {
   static template = '';
   static selectMessage = 'Perform an action.';
   static simulatePrompt = 'Simulate this action now';
-};
+}

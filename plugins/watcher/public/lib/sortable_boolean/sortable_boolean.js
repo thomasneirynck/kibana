@@ -5,4 +5,4 @@ export function sortableBoolean(val) {
     value: boolVal,
     sortOrder: boolVal ? -1 : 0
   };
-};
+}

@@ -69,9 +69,9 @@ export class Shard extends React.Component {
     }
     return (
       <div
-        onMouseEnter={ this.toggle }
-        onMouseLeave={ this.toggle }
-        className={ calculateClass(shard, 'shard') }
+        onMouseEnter={this.toggle}
+        onMouseLeave={this.toggle}
+        className={calculateClass(shard, 'shard')}
       >
         { tooltip }{ shard.shard }
       </div>

@@ -40,4 +40,4 @@ export class Watch {
 
     return WatchType.fromUpstreamJson(json);
   }
-};
+}

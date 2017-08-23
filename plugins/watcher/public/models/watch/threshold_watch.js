@@ -92,4 +92,4 @@ export class ThresholdWatch extends BaseWatch {
   static selectMessage = 'Send out an alert on a specific condition.';
   static isCreatable = true;
   static selectSortOrder = 1;
-};
+}

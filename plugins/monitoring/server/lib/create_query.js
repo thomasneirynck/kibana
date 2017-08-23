@@ -82,4 +82,4 @@ export function createQuery(options) {
       filter: _.filter(combinedFilters, (val) => !_.isUndefined(val))
     }
   };
-};
+}

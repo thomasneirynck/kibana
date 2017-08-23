@@ -35,7 +35,7 @@ export class Assigned extends React.Component {
     const additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
     const key = `${shard.index}.${shard.node}.${type}.${shard.state}.${shard.shard}${additionId}-${index}`;
     return (
-      <Shard shard={ shard } key={ key }/>
+      <Shard shard={shard} key={key}/>
     );
   };
 
@@ -56,7 +56,7 @@ export class Assigned extends React.Component {
     // ability to use the kuiLink CSS class (blue link text instead of white link text)
     const name = (
       <KuiKeyboardAccessible>
-        <a onClick={ changeUrl }>
+        <a onClick={changeUrl}>
           <span>{ data.name }</span>
         </a>
       </KuiKeyboardAccessible>
@@ -69,8 +69,8 @@ export class Assigned extends React.Component {
     }
     const shards = sortBy(data.children, 'shard').map(this.createShard);
     return (
-      <div className={ calculateClass(data, classes.join(' ')) } key={ key }>
-        <div className='title'>{ name }{ master }</div>
+      <div className={calculateClass(data, classes.join(' '))} key={key}>
+        <div className="title">{ name }{ master }</div>
         { shards }
       </div>
     );
@@ -80,7 +80,7 @@ export class Assigned extends React.Component {
     const data = sortBy(this.props.data, sortByName).map(this.createChild);
     return (
       <td>
-        <div className='children'>
+        <div className="children">
           { data }
         </div>
       </td>

@@ -89,8 +89,8 @@ export const LoggingView = withViewState({
           <div className="kuiViewContentItem">
             <InfoGroup
               className="kuiVerticalRhythm"
-              isCollapsed={ isInfoCollapsed }
-              onChangeCollapsed={ toggleInfoCollapsed }
+              isCollapsed={isInfoCollapsed}
+              onChangeCollapsed={toggleInfoCollapsed}
               title="Deprecation Logging"
             >
               <LoggingInfo className="kuiVerticalRhythm" />
@@ -109,7 +109,7 @@ export const LoggingView = withViewState({
                 ? (
                   <ErrorPanel className="kuiVerticalRhythm">
                     <p className="kuiText">
-                      Failed to access logging settings, please try to <a className="kuiLink" onClick={ this.getLoggingStatus }>reload</a>.
+                      Failed to access logging settings, please try to <a className="kuiLink" onClick={this.getLoggingStatus}>reload</a>.
                     </p>
                     <p className="kuiText">{ lastError }</p>
                   </ErrorPanel>
@@ -121,8 +121,8 @@ export const LoggingView = withViewState({
                 ? (
                   <LoggingForm
                     className="kuiVerticalRhythm"
-                    isLoggingEnabled={ isLoggingEnabled }
-                    onToggleLoggingEnabled={ this.toggleLoggingEnabled }
+                    isLoggingEnabled={isLoggingEnabled}
+                    onToggleLoggingEnabled={this.toggleLoggingEnabled}
                   />
                 )
                 : null

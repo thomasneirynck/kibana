@@ -9,7 +9,7 @@ function registerUrlChangeHandler(checkDirty) {
       // is that is is not an empty string. I am just using the confirmMessage
       // here for consistency
       event.returnValue = confirmMessage;
-    };
+    }
   };
 
   // When the user navigates to an external url or another app, we must
@@ -77,4 +77,4 @@ export class DirtyPrompt {
     deregisterUrlChangeHandler.call(this);
     deregisterRouteChangeHandler.call(this);
   }
-};
+}

@@ -50,4 +50,4 @@ export function getNodeSummary(req, esIndexPattern) {
     }
     return summary;
   });
-};
+}

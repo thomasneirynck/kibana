@@ -47,4 +47,4 @@ export function graph(kibana) {
       initServer(server);
     },
   });
-};
+}

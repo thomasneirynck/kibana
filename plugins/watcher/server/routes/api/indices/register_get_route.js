@@ -12,7 +12,7 @@ function getIndexNamesFromAliasesResponse(json) {
     }
     return list;
   }, []);
-};
+}
 
 function getIndices(callWithRequest, pattern, limit = 10) {
   return callWithRequest('indices.getAlias', {

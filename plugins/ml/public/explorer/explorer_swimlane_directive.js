@@ -38,7 +38,7 @@ module.directive('mlExplorerSwimlane', ($compile, mlExplorerDashboardService) =>
         render();
         checkForSelection();
       }
-    };
+    }
 
     mlExplorerDashboardService.addSwimlaneDataChangeListener(swimlaneDataChangeListener);
 

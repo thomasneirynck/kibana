@@ -13,11 +13,11 @@ describe('IndexActionSteps', () => {
   test('renders an IndexActionStep for each of the steps', () => {
     const component = (
       <IndexActionSteps
-        steps={ [
+        steps={[
           { name: 'STEP 1' },
           { name: 'STEP 2' },
           { name: 'STEP 3' },
-        ] }
+        ]}
         action="ACTION"
         indexName="INDEX_NAME"
       />

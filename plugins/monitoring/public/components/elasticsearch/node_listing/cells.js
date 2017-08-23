@@ -6,7 +6,7 @@ import { KuiTableRowCell } from 'ui_framework/components';
 function OfflineCell() {
   return (
     <KuiTableRowCell>
-      <div className='monitoringTableCell__number monitoringTableCell__offline'>
+      <div className="monitoringTableCell__number monitoringTableCell__offline">
         N/A
       </div>
     </KuiTableRowCell>
@@ -38,11 +38,11 @@ function MetricCell(props) {
   if (props.isOnline) {
     return (
       <KuiTableRowCell>
-        <div className='monitoringTableCell__MetricCell__metric'>
+        <div className="monitoringTableCell__MetricCell__metric">
           { formatMetric(props.metric, 'last') }
         </div>
-        <span className={ `monitoringTableCell__MetricCell__slopeArrow fa fa-long-arrow-${slopeArrow(props.metric)}` } />
-        <div className='monitoringTableCell__MetricCell__minMax'>
+        <span className={`monitoringTableCell__MetricCell__slopeArrow fa fa-long-arrow-${slopeArrow(props.metric)}`} />
+        <div className="monitoringTableCell__MetricCell__minMax">
           <div>
             { formatMetric(props.metric, 'max') } max
           </div>
@@ -55,7 +55,7 @@ function MetricCell(props) {
   }
 
   return <OfflineCell/>;
-};
+}
 
 export {
   OfflineCell,

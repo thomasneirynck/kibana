@@ -2,7 +2,7 @@ import React from 'react';
 
 export function ReindexInfo({ className }) {
   return (
-    <div className={ className }>
+    <div className={className}>
       <p className="kuiText kuiVerticalRhythm">
         Automatically reindex and upgrade indices here so that they will continue to work when you upgrade to Elasticsearch 6.
       </p>
@@ -24,7 +24,7 @@ export function ReindexInfo({ className }) {
 
         <div className="kuiInfoPanelBody">
           <div className="kuiInfoPanelBody__message">
-            Before going further, backup your data using the <a href='https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-snapshots.html' target='_blank'>snapshot/restore api</a>.
+            Before going further, backup your data using the <a href="https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-snapshots.html" target="_blank">snapshot/restore api</a>.
           </div>
         </div>
       </div>

@@ -183,4 +183,4 @@ export function getLogstashForClusters(req, lsIndexPattern, clusters) {
       };
     });
   });
-};
+}
