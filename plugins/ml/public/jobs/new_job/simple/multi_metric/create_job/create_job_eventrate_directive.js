@@ -22,6 +22,8 @@ import d3 from 'd3';
 import angular from 'angular';
 import 'ui/timefilter';
 
+import { numTicks } from 'plugins/ml/util/chart_utils';
+
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
@@ -141,7 +143,7 @@ module.directive('mlMultiMetricJobEventRateChart', function () {
 
 
       const xAxis = d3.svg.axis().scale(swimlaneXScale).orient('bottom')
-        .innerTickSize(-barChartHeight).outerTickSize(0).tickPadding(10);
+        .innerTickSize(-barChartHeight).outerTickSize(0).tickPadding(10).ticks(numTicks(vizWidth));
       const yAxis = d3.svg.axis().scale(barChartYScale).orient('left')
         .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
 

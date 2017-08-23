@@ -29,6 +29,7 @@ import 'ui/timefilter';
 import { ResizeCheckerProvider } from 'ui/resize_checker';
 
 import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
+import { numTicks } from 'plugins/ml/util/chart_utils';
 import ContextChartMask from 'plugins/ml/timeseriesexplorer/context_chart_mask';
 import 'plugins/ml/filters/format_value';
 
@@ -380,7 +381,7 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         focusYAxis.tickFormat('');
       }
       focusChart.select('.x.axis')
-        .call(focusXAxis);
+        .call(focusXAxis.ticks(numTicks(vizWidth)));
       focusChart.select('.y.axis')
         .call(focusYAxis);
 
@@ -538,7 +539,8 @@ module.directive('mlTimeseriesChart', function ($compile, $timeout, Private, tim
         .orient('top')
         .innerTickSize(-cxtChartHeight)
         .outerTickSize(0)
-        .tickPadding(0);
+        .tickPadding(0)
+        .ticks(numTicks(cxtWidth));
 
       cxtGroup.datum(data);
 

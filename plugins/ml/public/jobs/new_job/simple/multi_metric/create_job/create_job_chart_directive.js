@@ -22,6 +22,8 @@ import d3 from 'd3';
 import angular from 'angular';
 import 'ui/timefilter';
 
+import { numTicks } from 'plugins/ml/util/chart_utils';
+
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
@@ -72,12 +74,6 @@ module.directive('mlMultiMetricJobChart', function () {
 
       lineChartXScale = d3.time.scale().range([0, vizWidth]);
       lineChartYScale = d3.scale.linear().range([lineChartHeight, 0]);
-
-      d3.svg.axis().scale(lineChartXScale).orient('bottom')
-        .innerTickSize(-lineChartHeight).outerTickSize(0).tickPadding(10);
-      d3.svg.axis().scale(lineChartYScale).orient('left')
-        .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
-
 
       lineChartValuesLine = d3.svg.line()
       .x(d => lineChartXScale(d.date))
@@ -143,7 +139,7 @@ module.directive('mlMultiMetricJobChart', function () {
       ]);
 
       const xAxis = d3.svg.axis().scale(lineChartXScale).orient('bottom')
-        .innerTickSize(-lineChartHeight).outerTickSize(0).tickPadding(10);
+        .innerTickSize(-lineChartHeight).outerTickSize(0).tickPadding(10).ticks(numTicks(vizWidth));
       const yAxis = d3.svg.axis().scale(lineChartYScale).orient('left')
         .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
 

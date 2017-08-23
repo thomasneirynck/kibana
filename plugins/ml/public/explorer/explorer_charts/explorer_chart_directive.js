@@ -25,6 +25,7 @@ import moment from 'moment';
 import numeral from 'numeral';
 
 import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
+import { numTicks } from 'plugins/ml/util/chart_utils';
 import 'plugins/ml/filters/format_value';
 import 'plugins/ml/services/results_service';
 
@@ -229,7 +230,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
 
     function drawLineChartAxes() {
       const xAxis = d3.svg.axis().scale(lineChartXScale).orient('bottom')
-        .innerTickSize(-chartHeight).outerTickSize(0).tickPadding(10);
+        .innerTickSize(-chartHeight).outerTickSize(0).tickPadding(10).ticks(numTicks(vizWidth));
       const yAxis = d3.svg.axis().scale(lineChartYScale).orient('left')
         .innerTickSize(-vizWidth).outerTickSize(0).tickPadding(10);
       const axes = lineChartGroup.append('g');

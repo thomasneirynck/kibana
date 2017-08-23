@@ -23,6 +23,7 @@ import moment from 'moment';
 import d3 from 'd3';
 
 import { getSeverityColor } from 'plugins/ml/util/anomaly_utils';
+import { numTicks } from 'plugins/ml/util/chart_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -71,7 +72,6 @@ module.directive('mlExplorerSwimlane', ($compile, mlExplorerDashboardService) =>
       $swimlanes.empty();
 
       const cellWidth = Math.floor(scope.chartWidth / numBuckets);
-      const numTickLabels = scope.chartWidth / 100;
 
       const xAxisWidth = cellWidth * numBuckets;
       const xAxisScale = d3.time.scale()
@@ -79,7 +79,7 @@ module.directive('mlExplorerSwimlane', ($compile, mlExplorerDashboardService) =>
         .range([0, xAxisWidth]);
 
       const xAxisTickFormat = xAxisScale.tickFormat();
-      const xAxisTicks = xAxisScale.ticks(numTickLabels);
+      const xAxisTicks = xAxisScale.ticks(numTicks(scope.chartWidth));
 
       // Clear selection if clicking away from a cell.
       $swimlanes.click(($event) => {
