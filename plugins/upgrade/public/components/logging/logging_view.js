@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import { LoggingForm } from './logging_form';
@@ -21,8 +22,8 @@ export const LoggingView = withViewState({
   },
 })(class LoggingView extends Component {
   static propTypes = {
-    isInfoCollapsed: React.PropTypes.bool,
-    toggleInfoCollapsed: React.PropTypes.func,
+    isInfoCollapsed: PropTypes.bool,
+    toggleInfoCollapsed: PropTypes.func,
   }
 
   static defaultProps = {

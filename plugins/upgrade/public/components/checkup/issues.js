@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { Issue } from './issue';
@@ -23,8 +24,8 @@ export function Issues({ className, issues }) {
 }
 
 Issues.propTypes = {
-  className: React.PropTypes.string,
-  issues: React.PropTypes.array,
+  className: PropTypes.string,
+  issues: PropTypes.array,
 };
 
 Issues.defaultProps = {

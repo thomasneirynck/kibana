@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { StatusGroup } from '../status_group';
@@ -25,8 +26,8 @@ export function NodeDeprecations({ className, deprecations }) {
 }
 
 NodeDeprecations.propTypes = {
-  className: React.PropTypes.string,
-  deprecations: React.PropTypes.array,
+  className: PropTypes.string,
+  deprecations: PropTypes.array,
 };
 
 NodeDeprecations.defaultProps = {

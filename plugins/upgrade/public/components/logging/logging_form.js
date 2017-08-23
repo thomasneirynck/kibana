@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 
@@ -21,9 +22,9 @@ export function LoggingForm({ className, isLoggingEnabled, onToggleLoggingEnable
 }
 
 LoggingForm.propTypes = {
-  className: React.PropTypes.string,
-  isLoggingEnabled: React.PropTypes.bool,
-  onToggleLoggingEnabled: React.PropTypes.func,
+  className: PropTypes.string,
+  isLoggingEnabled: PropTypes.bool,
+  onToggleLoggingEnabled: PropTypes.func,
 };
 
 LoggingForm.defaultProps = {

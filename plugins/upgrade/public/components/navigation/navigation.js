@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import {
@@ -50,8 +51,8 @@ export function UpgradeSectionNavigation({ currentViewLocation, views }) {
 }
 
 UpgradeSectionNavigation.propTypes = {
-  currentViewLocation: React.PropTypes.string,
-  views: React.PropTypes.object,
+  currentViewLocation: PropTypes.string,
+  views: PropTypes.object,
 };
 
 UpgradeSectionNavigation.defaultProps = {

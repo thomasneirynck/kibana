@@ -13,7 +13,9 @@
  * strictly prohibited.
  */
 
-import React, { Component, PropTypes } from 'react';
+import PropTypes from 'prop-types';
+
+import React, { Component } from 'react';
 import { RecognizedResult } from './recognized_result';
 
 export function dataRecognizerProvider(ml) {

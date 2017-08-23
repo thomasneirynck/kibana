@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 
@@ -26,8 +27,8 @@ export function withViewState({
 
       static propTypes = {
         ...(_.omit(WrappedComponent.propTypes, injectedPropNames)),
-        [stateProperty]: React.PropTypes.object.isRequired,
-        [setStateProperty]: React.PropTypes.func.isRequired,
+        [stateProperty]: PropTypes.object.isRequired,
+        [setStateProperty]: PropTypes.func.isRequired,
       }
 
       static defaultProps = _.omit(WrappedComponent.defaultProps, injectedPropNames)

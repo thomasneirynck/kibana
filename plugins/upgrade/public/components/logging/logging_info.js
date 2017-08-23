@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 export function LoggingInfo({ className }) {
@@ -14,7 +15,7 @@ export function LoggingInfo({ className }) {
 }
 
 LoggingInfo.propTypes = {
-  className: React.PropTypes.string,
+  className: PropTypes.string,
 };
 
 LoggingInfo.defaultProps = {

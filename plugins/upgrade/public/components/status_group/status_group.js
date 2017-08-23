@@ -1,14 +1,15 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import classNames from 'classnames';
 
 
 export class StatusGroup extends Component {
   static propTypes = {
-    children: React.PropTypes.node,
-    className: React.PropTypes.string,
-    isInitiallyCollapsed: React.PropTypes.bool,
-    status: React.PropTypes.node,
-    title: React.PropTypes.node,
+    children: PropTypes.node,
+    className: PropTypes.string,
+    isInitiallyCollapsed: PropTypes.bool,
+    status: PropTypes.node,
+    title: PropTypes.node,
   }
 
   static defaultProps = {

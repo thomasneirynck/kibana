@@ -44,9 +44,10 @@ class ShardRow extends React.Component {
   }
 }
 
-export const TableBody = React.createClass({
-  displayName: 'TableBody',
-  createRow: function (data) {
+export class TableBody extends React.Component {
+  static displayName = 'TableBody';
+
+  createRow = (data) => {
     return (
       <ShardRow
         key={ data.name }
@@ -55,8 +56,9 @@ export const TableBody = React.createClass({
         changeUrl={ this.props.changeUrl }
       />
     );
-  },
-  render: function () {
+  };
+
+  render() {
     if (this.props.totalCount === 0) {
       return (
         <tbody>
@@ -92,4 +94,4 @@ export const TableBody = React.createClass({
     );
 
   }
-});
+}

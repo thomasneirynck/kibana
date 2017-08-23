@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
 import {
@@ -11,8 +12,8 @@ export function withNavigationBlocker({ predicate }) {
   return function wrapComponentWithNavigationBlocker(WrappedComponent) {
     return class NavigationBlocker extends Component {
       static propTypes = {
-        navigateTo: React.PropTypes.func,
-        registerRouteChangeListener: React.PropTypes.func,
+        navigateTo: PropTypes.func,
+        registerRouteChangeListener: PropTypes.func,
       }
 
       static defaultProps = {

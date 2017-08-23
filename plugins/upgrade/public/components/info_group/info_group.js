@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 
@@ -33,11 +34,11 @@ export function InfoGroup({
 }
 
 InfoGroup.propTypes = {
-  children: React.PropTypes.node,
-  className: React.PropTypes.string,
-  isCollapsed: React.PropTypes.bool,
-  onChangeCollapsed: React.PropTypes.func,
-  title: React.PropTypes.node,
+  children: PropTypes.node,
+  className: PropTypes.string,
+  isCollapsed: PropTypes.bool,
+  onChangeCollapsed: PropTypes.func,
+  title: PropTypes.node,
 };
 
 InfoGroup.defaultProps = {

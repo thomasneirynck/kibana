@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { IndexDeprecations } from './index_deprecations';
@@ -25,11 +26,11 @@ export function CheckupOutput({ className, output }) {
 }
 
 CheckupOutput.propTypes = {
-  className: React.PropTypes.string,
-  output: React.PropTypes.shape({
-    cluster_settings: React.PropTypes.array,
-    index_settings: React.PropTypes.object,
-    node_settings: React.PropTypes.array,
+  className: PropTypes.string,
+  output: PropTypes.shape({
+    cluster_settings: PropTypes.array,
+    index_settings: PropTypes.object,
+    node_settings: PropTypes.array,
   }),
 };
 

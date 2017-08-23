@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { DEPRECATION_ISSUE_LEVELS } from '../../lib/constants';
@@ -63,8 +64,8 @@ export function IssueSummary({ className, issueLevelCounts }) {
 }
 
 IssueSummary.propTypes = {
-  className: React.PropTypes.string,
-  issueLevelCounts: React.PropTypes.object,
+  className: PropTypes.string,
+  issueLevelCounts: PropTypes.object,
 };
 
 IssueSummary.defaultProps = {

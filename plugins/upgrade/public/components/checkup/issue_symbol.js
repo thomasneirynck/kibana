@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { DEPRECATION_ISSUE_LEVELS } from '../../lib/constants';
@@ -22,7 +23,7 @@ export function IssueSymbol({ level }) {
 }
 
 IssueSymbol.propTypes = {
-  level: React.PropTypes.oneOf(DEPRECATION_ISSUE_LEVELS),
+  level: PropTypes.oneOf(DEPRECATION_ISSUE_LEVELS),
 };
 
 IssueSymbol.defaultProps = {

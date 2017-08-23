@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { Issues } from './issues';
@@ -46,7 +47,7 @@ export function CheckupInfo({ className }) {
 }
 
 CheckupInfo.propTypes = {
-  className: React.PropTypes.string,
+  className: PropTypes.string,
 };
 
 CheckupInfo.defaultProps = {

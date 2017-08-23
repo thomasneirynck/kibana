@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 
@@ -16,7 +17,7 @@ export function LoadingIndicator({ className }) {
 }
 
 LoadingIndicator.propTypes = {
-  classNames: React.PropTypes.string,
+  classNames: PropTypes.string,
 };
 
 LoadingIndicator.defaultProps = {

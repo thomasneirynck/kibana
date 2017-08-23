@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { UpgradeSectionNavigation } from '../navigation';
@@ -31,16 +32,16 @@ export function UpgradeSection({
       />
     </div>
   );
-};
+}
 
 UpgradeSection.propTypes = {
-  currentViewLocation: React.PropTypes.string,
-  defaultViewId: React.PropTypes.string,
-  navigateTo: React.PropTypes.func,
-  registerRouteChangeListener: React.PropTypes.func,
-  setViewState: React.PropTypes.func,
-  views: React.PropTypes.object,
-  viewState: React.PropTypes.object,
+  currentViewLocation: PropTypes.string,
+  defaultViewId: PropTypes.string,
+  navigateTo: PropTypes.func,
+  registerRouteChangeListener: PropTypes.func,
+  setViewState: PropTypes.func,
+  views: PropTypes.object,
+  viewState: PropTypes.object,
 };
 
 UpgradeSection.defaultProps = {

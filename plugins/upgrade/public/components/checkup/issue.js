@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { IssueSymbol } from './issue_symbol';
@@ -27,10 +28,10 @@ export function Issue({ details, level, message, url }) {
 }
 
 Issue.propTypes = {
-  details: React.PropTypes.string,
-  level: React.PropTypes.string,
-  message: React.PropTypes.string,
-  url: React.PropTypes.string,
+  details: PropTypes.string,
+  level: PropTypes.string,
+  message: PropTypes.string,
+  url: PropTypes.string,
 };
 
 Issue.defaultProps = {

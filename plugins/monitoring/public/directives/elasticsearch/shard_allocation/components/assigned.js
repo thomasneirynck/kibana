@@ -29,16 +29,17 @@ function sortByName(item) {
   return [ item.name ];
 }
 
-export const Assigned = React.createClass({
-  createShard: function (shard, index) {
+export class Assigned extends React.Component {
+  createShard = (shard, index) => {
     const type = shard.primary ? 'primary' : 'replica';
     const additionId = shard.state === 'UNASSIGNED' ? Math.random() : '';
     const key = `${shard.index}.${shard.node}.${type}.${shard.state}.${shard.shard}${additionId}-${index}`;
     return (
       <Shard shard={ shard } key={ key }/>
     );
-  },
-  createChild: function (data) {
+  };
+
+  createChild = (data) => {
     const key = data.id;
     const classes = ['child'];
     const shardStats = get(this.props.shardStats.indices, key);
@@ -73,8 +74,9 @@ export const Assigned = React.createClass({
         { shards }
       </div>
     );
-  },
-  render: function () {
+  };
+
+  render() {
     const data = sortBy(this.props.data, sortByName).map(this.createChild);
     return (
       <td>
@@ -84,4 +86,4 @@ export const Assigned = React.createClass({
       </td>
     );
   }
-});
+}

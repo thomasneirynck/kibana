@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { InfoGroup } from '../info_group';
@@ -103,10 +104,10 @@ export const HomeView = withViewState({
 });
 
 HomeView.propTypes = {
-  views: React.PropTypes.shape({
-    CHECKUP: React.PropTypes.object.isRequired,
-    REINDEX: React.PropTypes.object.isRequired,
-    LOGGING: React.PropTypes.object.isRequired,
+  views: PropTypes.shape({
+    CHECKUP: PropTypes.object.isRequired,
+    REINDEX: PropTypes.object.isRequired,
+    LOGGING: PropTypes.object.isRequired,
   }),
 };
 

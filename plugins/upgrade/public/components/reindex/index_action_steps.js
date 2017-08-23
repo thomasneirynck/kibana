@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { IndexActionStep } from './index_action_step';
@@ -19,13 +20,13 @@ export function IndexActionSteps({ steps, action, indexName }) {
 }
 
 IndexActionSteps.propTypes = {
-  steps: React.PropTypes.array,
-  action: React.PropTypes.string,
-  indexName: React.PropTypes.string,
+  steps: PropTypes.array,
+  action: PropTypes.string,
+  indexName: PropTypes.string,
 };
 
 IndexActionSteps.defaultProps = {
   steps: [],
-  action: React.PropTypes.string,
-  indexName: React.PropTypes.string,
+  action: PropTypes.string,
+  indexName: PropTypes.string,
 };

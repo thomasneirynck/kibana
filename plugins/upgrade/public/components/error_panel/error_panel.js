@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 
@@ -24,9 +25,9 @@ export function ErrorPanel({ children, className, title }) {
 }
 
 ErrorPanel.propTypes = {
-  children: React.PropTypes.node,
-  classNames: React.PropTypes.string,
-  title: React.PropTypes.string,
+  children: PropTypes.node,
+  classNames: PropTypes.string,
+  title: PropTypes.string,
 };
 
 ErrorPanel.defaultProps = {

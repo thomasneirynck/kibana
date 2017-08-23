@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { IndexTable } from './index_table';
@@ -66,15 +67,15 @@ export const ReindexView = withViewState({
 });
 
 ReindexView.propTypes = {
-  cancelAction: React.PropTypes.func,
-  indices: React.PropTypes.objectOf(React.PropTypes.object),
-  isInfoCollapsed: React.PropTypes.bool,
-  loadIndices: React.PropTypes.func,
-  resetAction: React.PropTypes.func,
-  processIndex: React.PropTypes.func,
-  toggleInfoCollapsed: React.PropTypes.func,
-  loadingStatus: React.PropTypes.string,
-  errorMessage: React.PropTypes.node,
+  cancelAction: PropTypes.func,
+  indices: PropTypes.objectOf(PropTypes.object),
+  isInfoCollapsed: PropTypes.bool,
+  loadIndices: PropTypes.func,
+  resetAction: PropTypes.func,
+  processIndex: PropTypes.func,
+  toggleInfoCollapsed: PropTypes.func,
+  loadingStatus: PropTypes.string,
+  errorMessage: PropTypes.node,
 };
 
 ReindexView.defaultProps = {

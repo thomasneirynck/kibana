@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { IndexActionSteps } from './index_action_steps';
@@ -77,10 +78,10 @@ export function IndexTableRow({
 }
 
 IndexTableRow.propTypes = {
-  cancelAction: React.PropTypes.func,
-  index: React.PropTypes.object,
-  resetAction: React.PropTypes.func,
-  processIndex: React.PropTypes.func,
+  cancelAction: PropTypes.func,
+  index: PropTypes.object,
+  resetAction: PropTypes.func,
+  processIndex: PropTypes.func,
 };
 
 IndexTableRow.defaultProps = {

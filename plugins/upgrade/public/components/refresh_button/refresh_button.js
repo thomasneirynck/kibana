@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { timeout } from '../../lib';
 import { HUMAN_READABLE_DELAY } from '../../lib/constants';
@@ -43,9 +44,9 @@ export class RefreshButton extends Component {
 }
 
 RefreshButton.propTypes = {
-  buttonLabel: React.PropTypes.string,
-  className: React.PropTypes.string,
-  onClick: React.PropTypes.func,
+  buttonLabel: PropTypes.string,
+  className: PropTypes.string,
+  onClick: PropTypes.func,
 };
 
 RefreshButton.defaultProps = {

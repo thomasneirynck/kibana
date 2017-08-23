@@ -1,4 +1,5 @@
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import {
@@ -28,9 +29,9 @@ export function IndexActionStep({ step, action, indexName }) {
 }
 
 IndexActionStep.propTypes = {
-  step: React.PropTypes.object,
-  action: React.PropTypes.string,
-  indexName: React.PropTypes.string,
+  step: PropTypes.object,
+  action: PropTypes.string,
+  indexName: PropTypes.string,
 };
 
 IndexActionStep.defaultProps = {

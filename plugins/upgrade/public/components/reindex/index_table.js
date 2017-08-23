@@ -1,5 +1,6 @@
 import { sortBy } from 'lodash';
 import classNames from 'classnames';
+import PropTypes from 'prop-types';
 import React from 'react';
 
 import { RefreshButton } from '../refresh_button';
@@ -64,12 +65,12 @@ export function IndexTable({
 }
 
 IndexTable.propTypes = {
-  cancelAction: React.PropTypes.func,
-  className: React.PropTypes.string,
-  indices: React.PropTypes.objectOf(React.PropTypes.object),
-  loadIndices: React.PropTypes.func,
-  resetAction: React.PropTypes.func,
-  processIndex: React.PropTypes.func,
+  cancelAction: PropTypes.func,
+  className: PropTypes.string,
+  indices: PropTypes.objectOf(PropTypes.object),
+  loadIndices: PropTypes.func,
+  resetAction: PropTypes.func,
+  processIndex: PropTypes.func,
 };
 
 IndexTable.defaultProps = {
