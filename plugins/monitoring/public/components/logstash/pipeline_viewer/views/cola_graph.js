@@ -386,7 +386,7 @@ export class ColaGraph extends React.Component {
           });
         });
       }
-    };
+    }
 
     return constraints;
   }

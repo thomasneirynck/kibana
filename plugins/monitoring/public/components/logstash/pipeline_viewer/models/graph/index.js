@@ -151,7 +151,7 @@ export class Graph {
         });
         if (found) {
           return found;
-        };
+        }
 
         return null;
       },
