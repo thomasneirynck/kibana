@@ -2,7 +2,6 @@ import React from 'react';
 import { isEqual, sortByOrder, get, includes } from 'lodash';
 import { DEFAULT_NO_DATA_MESSAGE } from 'monitoring-constants';
 import {
-  KuiKeyboardAccessible,
   KuiControlledTable,
   KuiPagerButtonGroup,
   KuiTable,
@@ -103,21 +102,6 @@ export class MonitoringTable extends React.Component {
   }
 
   /*
-   * Determine if the given column has to do with the current state of sorting. If it does, return an icon element
-   * @param {Object} col - A column configuration object
-   */
-  getColumnSortIcon(col) {
-    if (col.sortKey !== this.state.sortKey) {
-      return;
-    }
-
-    const sortDirection = this.state.sortOrder > 0 ? 'up' : 'down'; // ascending = up, descending = down
-    return (
-      <span data-sort-icon-ascending className={`kuiTableSortIcon kuiIcon fa-long-arrow-${sortDirection}`} />
-    );
-  }
-
-  /*
    * @param {Number} numVisibleRows - number of visible rows in the current page
    * @param {Number} numAvailableRows - total number of rows in the table
    */
@@ -208,15 +192,13 @@ export class MonitoringTable extends React.Component {
 
       return (
         <KuiTableHeaderCell
-          className="kuiTableHeaderCell--sortable"
           key={`kuiTableHeaderCell-${colIndex}`}
+          onSort={this.setSortColumn.bind(this, col)}
+          isSorted={this.state.sortKey === col.sortKey}
+          isSortAscending={this.state.sortKey === col.sortKey ? this.state.sortOrder > 0 : true}
           {...headerCellProps}
         >
-          <KuiKeyboardAccessible>
-            <span onClick={this.setSortColumn.bind(this, col)}>
-              { col.title } { this.getColumnSortIcon(col) }
-            </span>
-          </KuiKeyboardAccessible>
+          { col.title }
         </KuiTableHeaderCell>
       );
     });

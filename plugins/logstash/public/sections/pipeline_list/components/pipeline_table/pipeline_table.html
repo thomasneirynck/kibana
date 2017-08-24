@@ -2,13 +2,15 @@
   <thead>
     <tr>
       <th class="kuiTableHeaderCell kuiTableHeaderCell--checkBox">
-        <check-box
-          is-selected="pipelineTable.allSelected"
-          on-select-change="pipelineTable.onAllSelectedChange"
-          data-test-subj="chkSelectAll"
-        ></check-box>
+        <div class="kuiTableHeaderCell__liner">
+          <check-box
+            is-selected="pipelineTable.allSelected"
+            on-select-change="pipelineTable.onAllSelectedChange"
+            data-test-subj="chkSelectAll"
+          ></check-box>
+        </div>
       </th>
-      <th class="kuiTableHeaderCell kuiTableHeaderCell--sortable">
+      <th class="kuiTableHeaderCell">
         <sortable-column
           field="id"
           on-sort-change="pipelineTable.onSortChange"
@@ -18,10 +20,10 @@
           ID
         </sortable-column>
       </th>
-      <th class="kuiTableHeaderCell kuiTableHeaderCell--sortable">
+      <th class="kuiTableHeaderCell">
         Description
       </th>
-      <th class="kuiTableHeaderCell kuiTableHeaderCell--sortable">
+      <th class="kuiTableHeaderCell">
         <sortable-column
           field="lastModified.sortOrder"
           on-sort-change="pipelineTable.onSortChange"
@@ -32,12 +34,12 @@
         </sortable-column>
       </th>
       <th
-       class="kuiTableHeaderCell kuiTableHeaderCell--sortable"
+       class="kuiTableHeaderCell"
        ng-show="pipelineTable.isSecurityEnabled"
       >
         Last Modified By
       </th>
-      <th class="kuiTableHeaderCell kuiTableHeaderCell--sortable">
+      <th class="kuiTableHeaderCell">
         <sortable-column
           field="version.sortOrder"
           on-sort-change="pipelineTable.onSortChange"

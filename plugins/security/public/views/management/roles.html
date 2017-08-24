@@ -75,33 +75,46 @@
           <thead>
             <tr>
               <th class="kuiTableHeaderCell kuiTableHeaderCell--checkBox">
-                <input
-                  type="checkbox"
-                  class="kuiCheckBox"
-                  ng-checked="allSelected()"
-                  ng-click="toggleAll()"
-                >
+                <div class="kuiTableHeaderCell__liner">
+                  <input
+                    type="checkbox"
+                    class="kuiCheckBox"
+                    ng-checked="allSelected()"
+                    ng-click="toggleAll()"
+                    aria-label="{{allSelected() ? 'Deselect all rows' : 'Select all rows'}}"
+                  >
+                </div>
               </th>
 
               <th
-                class="kuiTableHeaderCell kuiTableHeaderCell--sortable"
-                ng-click="toggleSort(sort, 'name')"
+                class="kuiTableHeaderCell"
               >
-                Role
-                <span
-                  aria-hidden="true"
-                  class="kuiTableSortIcon kuiIcon fa-long-arrow-up"
-                  ng-show="sort.orderBy == 'name'"
-                  ng-class="{'fa-long-arrow-down': sort.reverse, 'fa-long-arrow-up': !sort.reverse}"
-                ></span>
+                <button
+                  class="kuiTableHeaderCellButton"
+                  ng-class="{'kuiTableHeaderCellButton-isSorted': sort.orderBy == 'name'}"
+                  ng-click="toggleSort(sort, 'name')"
+                  aria-label="{{sort.reverse ? 'Sort role ascending' : 'Sort role descending'}}"
+                >
+                  <span class="kuiTableHeaderCell__liner">
+                    Role
+                    <span
+                      aria-hidden="true"
+                      class="kuiTableSortIcon kuiIcon"
+                      ng-class="getSortArrowClass('name')"
+                    ></span>
+                  </span>
+                </button>
               </th>
 
               <th class="kuiTableHeaderCell">
-                Reserved
-                <span
-                  class="kuiIcon fa-question-circle"
-                  tooltip="Reserved roles are built-in and cannot be removed or modified. Only the password may be changed."
-                ></span>
+                <span class="kuiTableHeaderCell__liner">
+                  Reserved
+                  <span
+                    class="kuiIcon fa-question-circle"
+                    tooltip="Reserved roles are built-in and cannot be removed or modified. Only the password may be changed."
+                    aria-label="Reserved roles are built-in and cannot be removed or modified. Only the password may be changed."
+                  ></span>
+                </span>
               </th>
             </tr>
           </thead>
@@ -136,6 +149,7 @@
                       ng-if="!isRoleEnabled(role)"
                       class="kuiBadge kuiBadge--default"
                       tooltip="This role is currently disabled. You may only view or delete it."
+                      aria-label="This role is currently disabled. You may only view or delete it."
                     >
                       <span class="kuiIcon fa-warning"></span>
                       Disabled

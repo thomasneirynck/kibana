@@ -78,59 +78,86 @@
           <thead>
             <tr>
               <th class="kuiTableHeaderCell kuiTableHeaderCell--checkBox">
-                <input
-                  type="checkbox"
-                  class="kuiCheckBox"
-                  ng-checked="allSelected()"
-                  ng-click="toggleAll()"
+                <div class="kuiTableHeaderCell__liner">
+                  <input
+                    type="checkbox"
+                    class="kuiCheckBox"
+                    ng-checked="allSelected()"
+                    ng-click="toggleAll()"
+                    aria-label="{{allSelected() ? 'Deselect all rows' : 'Select all rows'}}"
+                  >
+                </div>
+              </th>
+
+              <th
+                class="kuiTableHeaderCell"
+              >
+                <button
+                  class="kuiTableHeaderCellButton"
+                  ng-class="{'kuiTableHeaderCellButton-isSorted': sort.orderBy == 'full_name'}"
+                  ng-click="toggleSort(sort, 'full_name')"
+                  aria-label="{{sort.reverse ? 'Sort full name ascending' : 'Sort full name descending'}}"
                 >
+                  <span class="kuiTableHeaderCell__liner">
+                    Full Name
+                    <span
+                      aria-hidden="true"
+                      class="kuiTableSortIcon kuiIcon"
+                      ng-class="getSortArrowClass('full_name')"
+                    ></span>
+                  </span>
+                </button>
               </th>
 
               <th
-                class="kuiTableHeaderCell kuiTableHeaderCell--sortable"
-                ng-click="toggleSort(sort, 'full_name')"
+                class="kuiTableHeaderCell"
               >
-                Full Name
-                <span
-                  aria-hidden="true"
-                  class="kuiTableSortIcon kuiIcon fa-long-arrow-up"
-                  ng-show="sort.orderBy == 'full_name'"
-                  ng-class="{'fa-long-arrow-down': sort.reverse, 'fa-long-arrow-up': !sort.reverse}"
-                ></span>
+                <button
+                  class="kuiTableHeaderCellButton"
+                  ng-class="{'kuiTableHeaderCellButton-isSorted': sort.orderBy == 'username'}"
+                  ng-click="toggleSort(sort, 'username')"
+                  aria-label="{{sort.reverse ? 'Sort user name ascending' : 'Sort user name descending'}}"
+                >
+                  <span class="kuiTableHeaderCell__liner">
+                    Username
+                    <span
+                      aria-hidden="true"
+                      class="kuiTableSortIcon kuiIcon"
+                      ng-class="getSortArrowClass('username')"
+                    ></span>
+                  </span>
+                </button>
               </th>
 
               <th
-                class="kuiTableHeaderCell kuiTableHeaderCell--sortable"
-                ng-click="toggleSort(sort, 'username')"
+                class="kuiTableHeaderCell"
               >
-                Username
-                <span
-                  aria-hidden="true"
-                  class="kuiTableSortIcon kuiIcon fa-long-arrow-up"
-                  ng-show="sort.orderBy == 'username'"
-                  ng-class="{'fa-long-arrow-down': sort.reverse, 'fa-long-arrow-up': !sort.reverse}"
-                ></span>
-              </th>
-
-              <th
-                class="kuiTableHeaderCell kuiTableHeaderCell--sortable"
-                ng-click="toggleSort(sort, 'roles')"
-              >
-                Roles
-                <span
-                  aria-hidden="true"
-                  class="kuiTableSortIcon kuiIcon fa-long-arrow-up"
-                  ng-show="sort.orderBy == 'roles'"
-                  ng-class="{'fa-long-arrow-down': sort.reverse, 'fa-long-arrow-up': !sort.reverse}"
-                ></span>
+                <button
+                  class="kuiTableHeaderCellButton"
+                  ng-class="{'kuiTableHeaderCellButton-isSorted': sort.orderBy == 'roles'}"
+                  ng-click="toggleSort(sort, 'roles')"
+                  aria-label="{{sort.reverse ? 'Sort roles ascending' : 'Sort roles descending'}}"
+                >
+                  <span class="kuiTableHeaderCell__liner">
+                    Roles
+                    <span
+                      aria-hidden="true"
+                      class="kuiTableSortIcon kuiIcon"
+                      ng-class="getSortArrowClass('roles')"
+                    ></span>
+                  </span>
+                </button>
               </th>
 
               <th class="kuiTableHeaderCell">
-                Reserved
-                <span
-                  class="kuiIcon fa-question-circle"
-                  tooltip="Reserved users are built-in and cannot be removed or modified. Only the password may be changed."
-                ></span>
+                <span class="kuiTableHeaderCell__liner">
+                  Reserved
+                  <span
+                    class="kuiIcon fa-question-circle"
+                    tooltip="Reserved users are built-in and cannot be removed or modified. Only the password may be changed."
+                    aria-label="Reserved users are built-in and cannot be removed or modified. Only the password may be changed."
+                  ></span>
+                </span>
               </th>
             </tr>
           </thead>

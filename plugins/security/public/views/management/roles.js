@@ -55,6 +55,15 @@ routes.when(ROLES_PATH, {
       );
     };
 
+    $scope.getSortArrowClass = field => {
+      if ($scope.sort.orderBy === field) {
+        return $scope.sort.reverse ? 'fa-long-arrow-down' : 'fa-long-arrow-up';
+      }
+
+      // Sort ascending by default.
+      return 'fa-long-arrow-up';
+    };
+
     $scope.toggleAll = () => {
       if ($scope.allSelected()) {
         $scope.selectedRoles.length = 0;
