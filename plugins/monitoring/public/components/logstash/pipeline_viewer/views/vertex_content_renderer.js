@@ -7,6 +7,7 @@ import queueIcon from 'plugins/monitoring/icons/logstash/queue.svg';
 import ifIcon from 'plugins/monitoring/icons/logstash/if.svg';
 import infoIcon from 'plugins/monitoring/icons/alert-blue.svg';
 import { PluginVertex } from '../models/graph/plugin_vertex';
+import { IfVertex } from '../models/graph/if_vertex';
 
 // Each vertex consists of two lines (rows) of text
 // - The first line shows the name and ID of the vertex
@@ -70,12 +71,12 @@ function renderHeader(colaObjects, title, subtitle) {
   // auto-generated plugin ID. For explicitly-set plugin IDs, show the ID.
   // For auto-generated plugin IDs, show an info icon urging the user to
   // explicitly set an ID.
-
-  const explicitIdPluginVertexHeader = pluginHeader
-    .filter(d => d.vertex instanceof PluginVertex)
-    .filter(d => d.vertex.hasExplicitId);
-
-  explicitIdPluginVertexHeader
+  pluginHeader
+    .filter(d => {
+      const vertex = d.vertex;
+      return (vertex instanceof PluginVertex && vertex.hasExplicitId) ||
+             (vertex instanceof IfVertex);
+    })
     .append('tspan')
     .attr('class', 'lspvVertexSubtitle')
     .text(d => subtitle ? ` (${subtitle(d)})` : null);
