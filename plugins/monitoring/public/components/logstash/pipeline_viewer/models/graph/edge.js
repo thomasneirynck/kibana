@@ -24,7 +24,7 @@ export class Edge {
     return this.json.id;
   }
 
-  get domId() {
+  get htmlAttrId() {
     // Substitute any non-word characters with an underscore so
     // D3 selections don't interpret them as special selector syntax
     return this.json.id.replace(/\W/, '_');

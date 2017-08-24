@@ -31,7 +31,7 @@ describe('Edge', () => {
 
   it('should have a D3-friendly ID', () => {
     const edge = new Edge(graph, edgeJson);
-    expect(edge.domId).to.be('myif_myes');
+    expect(edge.htmlAttrId).to.be('myif_myes');
   });
 
   it('should have the correct from vertex', () => {

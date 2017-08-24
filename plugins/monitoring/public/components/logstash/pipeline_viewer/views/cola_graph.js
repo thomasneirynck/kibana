@@ -44,12 +44,12 @@ function makeGroup(parentEl) {
 function makeNodes(nodesLayer, colaVertices) {
   const nodes = nodesLayer
     .selectAll('.lspvVertex')
-    .data(colaVertices, d => d.vertex.domId);
+    .data(colaVertices, d => d.vertex.htmlAttrId);
 
   nodes
     .enter()
     .append('g')
-      .attr('id', d => `nodeg-${d.vertex.domId}`)
+      .attr('id', d => `nodeg-${d.vertex.htmlAttrId}`)
       .attr('class', d => `lspvVertex ${d.vertex.typeString}`)
       .attr('width', LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.WIDTH_PX)
       .attr('height', LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.HEIGHT_PX);
@@ -229,7 +229,7 @@ export class ColaGraph extends React.Component {
 
     const linkGroup = this.links.enter()
       .append('g')
-        .attr('id', (d) => `lspvEdge-${d.edge.domId}`)
+        .attr('id', (d) => `lspvEdge-${d.edge.htmlAttrId}`)
         .attr('class', (d) => d.edge.svgClass);
     linkGroup.append('path');
 
@@ -258,7 +258,7 @@ export class ColaGraph extends React.Component {
     const hoverNode = nextState.hoverNode;
     if (hoverNode) {
       const selection = this.nodesLayer
-        .selectAll('#nodeg-' + hoverNode.vertex.domId)
+        .selectAll('#nodeg-' + hoverNode.vertex.htmlAttrId)
         .selectAll('rect');
       selection.classed('lspvVertexBounding-highlighted', true);
 

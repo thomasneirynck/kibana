@@ -79,12 +79,12 @@ describe('Vertex', () => {
     expect(vertex1.id).to.be(vertex1.json.id);
   });
 
-  it('should have the correct domID', () => {
+  it('should have the correct htmlAttrId', () => {
     const vertex1 = graph.getVertexById('my-prefix:my-really-long-named-generator');
-    expect(vertex1.domId).to.be('my_prefix_my_really_long_named_generator');
+    expect(vertex1.htmlAttrId).to.be('my_prefix_my_really_long_named_generator');
 
     const vertex2 = graph.getVertexById('my-queue');
-    expect(vertex2.domId).to.be('my_queue');
+    expect(vertex2.htmlAttrId).to.be('my_queue');
   });
 
   it('should have the correct display ID', () => {
