@@ -41,6 +41,9 @@ include::{kib-repo-dir}/index-shared4.asciidoc[]
 include::security/index.asciidoc[]
 
 :edit_url!:
+include::management/watcher-ui/index.asciidoc[]
+
+:edit_url!:
 include::view_modes/index.asciidoc[]
 
 :edit_url!:

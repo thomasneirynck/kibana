@@ -1,0 +1,33 @@
+[[watcher-getting-started]]
+=== Getting Started
+:ref: https://www.elastic.co/guide/en/x-pack/current
+
+Watcher is automatically enabled when you {ref}/installing-xpack.html[install X-Pack] into Elasticsearch and Kibana.
+
+To use the Watcher UI, you need to create users with Watcher specific roles as <<watcher-security,described here>>.
+
+To access Watcher UI within Kibana:
+
+. Open Kibana in your web browser and log in. If you are running Kibana
+locally, go to `http://localhost:5601/`.
+
+. Click **Management** in the side navigation, then select **Watcher** under `Elasticsearch`.
+
+image::management/watcher-ui/images/watches.png["Watch list",link="management/watcher-ui/images/watches.png"]
+
+The watch list page within Watcher UI enables you to view all existing watches including stateful information about each watch. This includes `State`, `Last Fired` and `Last Triggered`.
+
+The possible states for watches are:
+
+* `Firing` - The watch is currently triggered and is actively performing the associated actions.
+* `Error` - The watch is an error state and not properly working.
+* `Ok` - The watch is not actively firing but working properly.
+* `Disabled` - The watch will not fire under any circumstance.
+
+To delete or edit a watch, click on its checkbox in the list and then click the Delete or Edit button. Watches that do not have a checkbox are https://www.elastic.co/guide/en/x-pack/current/monitoring-details.html#cluster-alerts[cluster alerts] created by X-Pack monitoring and are immutable.
+
+This page also allows you to create a <<watcher-create-threshold-alert, threshold alert>> or <<watcher-create-advanced-watch, an advanced watch>>. Let's first look at creating a threshold alert.
+
+include::create-threshold-alert.asciidoc[]
+
+include::security.asciidoc[]
