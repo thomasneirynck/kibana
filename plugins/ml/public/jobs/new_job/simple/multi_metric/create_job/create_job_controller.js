@@ -370,7 +370,9 @@ module
     });
 
     _.each(categoryFields, (field) => {
-      if (field.displayName !== 'type') {
+      if (field.displayName !== 'type' &&
+          field.displayName !== '_id' &&
+          field.displayName !== '_index') {
         $scope.ui.splitFields.push(field.displayName);
       }
     });
