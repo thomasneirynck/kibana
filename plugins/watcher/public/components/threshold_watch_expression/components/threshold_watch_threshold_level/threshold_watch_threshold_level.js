@@ -29,9 +29,7 @@ app.directive('thresholdWatchThresholdLevel', function ($injector) {
     bindToController: true,
     controllerAs: 'thresholdWatchThresholdLevel',
     controller: class ThresholdWatchThresholdLevelController extends ThresholdWatchBaseController {
-      constructor($scope) {
-        super($scope);
-
+      initAfterBindings($scope) {
         this.makeId = htmlIdGeneratorFactory.create();
 
         $scope.$watchMulti([

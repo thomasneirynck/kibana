@@ -1,5 +1,6 @@
 import { sortBy, pluck, map, startsWith, endsWith } from 'lodash';
 import 'plugins/watcher/services/indices';
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 import { uiModules } from 'ui/modules';
 import template from './index_select.html';
 
@@ -43,8 +44,8 @@ app.directive('indexSelect', ($injector) => {
 
       $searchBox.attr('id', 'indexSelectSearchBox');
     },
-    controller: class IndexSelectController {
-      constructor($scope) {
+    controller: class IndexSelectController extends InitAfterBindingsWorkaround {
+      initAfterBindings($scope) {
         this.$scope = $scope;
         this.indexPattern = undefined;
         this.fetchingWithNoIndices = true;

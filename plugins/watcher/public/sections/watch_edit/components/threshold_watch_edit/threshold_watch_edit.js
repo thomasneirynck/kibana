@@ -1,5 +1,6 @@
 import { debounce, isEqual } from 'lodash';
 import { uiModules } from 'ui/modules';
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 import template from './threshold_watch_edit.html';
 import './threshold_watch_edit.less';
 import '../watch_edit_title_panel';
@@ -42,8 +43,8 @@ app.directive('thresholdWatchEdit', function ($injector) {
     },
     bindToController: true,
     controllerAs: 'thresholdWatchEdit',
-    controller: class ThresholdWatchEditController {
-      constructor($scope) {
+    controller: class ThresholdWatchEditController extends InitAfterBindingsWorkaround {
+      initAfterBindings($scope) {
         this.index = undefined;
         this.notifier = new Notifier({ location: 'Watcher' });
         this.originalWatch = Object.assign({}, this.watch);

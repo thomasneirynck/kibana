@@ -4,6 +4,7 @@ import { Notifier } from 'ui/notify/notifier';
 import 'ui/pager_control';
 import 'ui/pager';
 import 'ui/table_info';
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 
 import { PAGINATION } from 'plugins/watcher/../common/constants';
 
@@ -33,8 +34,8 @@ app.directive('watchHistory', function ($injector) {
     },
     bindToController: true,
     controllerAs: 'watchHistory',
-    controller: class WatchHistoryController {
-      constructor($scope) {
+    controller: class WatchHistoryController extends InitAfterBindingsWorkaround {
+      initAfterBindings($scope) {
         this.isLoading = false;
         this.sortField = 'startTime';
         this.sortReverse = true;

@@ -1,5 +1,6 @@
 import { size } from 'lodash';
 import { uiModules } from 'ui/modules';
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 import template from './watch_edit_title_panel.html';
 import { TIME_UNITS } from 'plugins/watcher/../common/constants';
 import './watch_edit_title_panel.less';
@@ -29,8 +30,8 @@ app.directive('watchEditTitlePanel', function ($injector) {
     },
     bindToController: true,
     controllerAs: 'watchEditTitlePanel',
-    controller: class WatchEditTitlePanelController {
-      constructor($scope) {
+    controller: class WatchEditTitlePanelController extends InitAfterBindingsWorkaround {
+      initAfterBindings($scope) {
         this.makeId = htmlIdGeneratorFactory.create();
 
         this.triggerIntervalSize = this.watch.triggerIntervalSize;

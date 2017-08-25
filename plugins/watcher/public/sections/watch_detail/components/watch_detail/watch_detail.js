@@ -1,4 +1,5 @@
 import { uiModules } from 'ui/modules';
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 import moment from 'moment-timezone';
 import { Notifier } from 'ui/notify/notifier';
 import 'ui/config';
@@ -39,8 +40,8 @@ app.directive('watchDetail', function ($injector) {
     },
     bindToController: true,
     controllerAs: 'watchDetail',
-    controller: class WatchDetailController {
-      constructor($scope) {
+    controller: class WatchDetailController extends InitAfterBindingsWorkaround {
+      initAfterBindings($scope) {
         this.notifier = new Notifier({ location: 'Watcher' });
 
         // history settings

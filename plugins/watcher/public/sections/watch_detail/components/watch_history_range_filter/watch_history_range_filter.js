@@ -1,4 +1,5 @@
 import { uiModules } from 'ui/modules';
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 import template from './watch_history_range_filter.html';
 
 const app = uiModules.get('xpack/watcher');
@@ -14,8 +15,8 @@ app.directive('watchHistoryRangeFilter', function () {
     },
     controllerAs: 'watchHistoryRangeFilter',
     bindToController: true,
-    controller: class WatchHistoryRangeFilterController {
-      constructor() {
+    controller: class WatchHistoryRangeFilterController extends InitAfterBindingsWorkaround {
+      initAfterBindings() {
         // avoid parent state mutation, since we have no one-way binding
         this.range = this.historyRange;
       }

@@ -32,9 +32,7 @@ app.directive('thresholdWatchGroupBy', function ($injector) {
     bindToController: true,
     controllerAs: 'thresholdWatchGroupBy',
     controller: class ThresholdWatchGroupByController extends ThresholdWatchBaseController {
-      constructor($scope) {
-        super($scope);
-
+      initAfterBindings($scope) {
         this.makeId = htmlIdGeneratorFactory.create();
 
         $scope.$watchMulti([

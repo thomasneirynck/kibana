@@ -1,6 +1,7 @@
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 import { forEach, size } from 'lodash';
 
-export class ThresholdWatchBaseController {
+export class ThresholdWatchBaseController extends InitAfterBindingsWorkaround {
   checkValidity = () => {
     if (this.isValid()) {
       this.onValid(this.itemId);

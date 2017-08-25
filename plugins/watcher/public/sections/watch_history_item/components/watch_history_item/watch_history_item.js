@@ -1,4 +1,5 @@
 import { uiModules } from 'ui/modules';
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 import template from './watch_history_item.html';
 
 import 'plugins/watcher/components/watch_history_item_detail';
@@ -17,8 +18,8 @@ app.directive('watchHistoryItem', function () {
     },
     bindToController: true,
     controllerAs: 'watchHistoryItem',
-    controller: class WatchHistoryItemController {
-      constructor() {
+    controller: class WatchHistoryItemController extends InitAfterBindingsWorkaround {
+      initAfterBindings() {
         this.omitBreadcrumbPages = [
           'watch',
           'history-item',

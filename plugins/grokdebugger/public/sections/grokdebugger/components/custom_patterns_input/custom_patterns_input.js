@@ -1,4 +1,5 @@
 import { uiModules } from 'ui/modules';
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 import template from './custom_patterns_input.html';
 import './custom_patterns_input.less';
 import 'ui/toggle_panel';
@@ -15,8 +16,8 @@ app.directive('customPatternsInput', function () {
     },
     bindToController: true,
     controllerAs: 'customPatternsInput',
-    controller: class CustomPatternsInputController {
-      constructor($scope) {
+    controller: class CustomPatternsInputController extends InitAfterBindingsWorkaround {
+      initAfterBindings($scope) {
         this.isCollapsed = {
           action: true
         };

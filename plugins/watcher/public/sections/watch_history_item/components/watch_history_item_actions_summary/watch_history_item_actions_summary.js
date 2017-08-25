@@ -1,5 +1,6 @@
 import { find } from 'lodash';
 import { uiModules } from 'ui/modules';
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 import template from './watch_history_item_actions_summary.html';
 import 'plugins/watcher/components/action_state_icon';
 
@@ -16,8 +17,8 @@ app.directive('watchHistoryItemActionsSummary', function () {
     },
     bindToController: true,
     controllerAs: 'watchHistoryItemActionsSummary',
-    controller: class WatchHistoryItemActionsSummaryController {
-      constructor() {
+    controller: class WatchHistoryItemActionsSummaryController extends InitAfterBindingsWorkaround {
+      initAfterBindings() {
         const actions = this.watch.actions;
         const actionStatuses = this.watchHistoryItem.watchStatus.actionStatuses;
 

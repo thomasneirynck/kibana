@@ -33,9 +33,7 @@ app.directive('thresholdWatchTimeWindow', function ($injector) {
     bindToController: true,
     controllerAs: 'thresholdWatchTimeWindow',
     controller: class ThresholdWatchTimeWindowController extends ThresholdWatchBaseController {
-      constructor($scope) {
-        super($scope);
-
+      initAfterBindings($scope) {
         this.makeId = htmlIdGeneratorFactory.create();
 
         this.timeWindowMinimumUnit = TIME_UNITS.SECOND;

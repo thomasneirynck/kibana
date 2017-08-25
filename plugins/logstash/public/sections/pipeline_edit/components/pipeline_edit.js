@@ -1,5 +1,6 @@
 import { isEmpty } from 'lodash';
 import { uiModules } from 'ui/modules';
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 import { Notifier } from 'ui/notify/notifier';
 import template from './pipeline_edit.html';
 import 'plugins/logstash/services/license';
@@ -24,8 +25,8 @@ app.directive('pipelineEdit', function ($injector) {
     },
     bindToController: true,
     controllerAs: 'pipelineEdit',
-    controller: class PipelineEditController {
-      constructor($scope) {
+    controller: class PipelineEditController extends InitAfterBindingsWorkaround {
+      initAfterBindings($scope) {
         this.notifier = new Notifier({ location: 'Logstash' });
         this.isNewPipeline = isEmpty(this.pipeline.id);
         // only if security is enabled and available, we tack on the username.

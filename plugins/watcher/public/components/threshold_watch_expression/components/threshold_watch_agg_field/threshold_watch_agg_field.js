@@ -29,9 +29,7 @@ app.directive('thresholdWatchAggField', function ($injector) {
     bindToController: true,
     controllerAs: 'thresholdWatchAggField',
     controller: class ThresholdWatchAggFieldController extends ThresholdWatchBaseController {
-      constructor($scope) {
-        super($scope);
-
+      initAfterBindings($scope) {
         this.makeId = htmlIdGeneratorFactory.create();
 
         $scope.$watch('thresholdWatchAggField.aggField', this.onChange);

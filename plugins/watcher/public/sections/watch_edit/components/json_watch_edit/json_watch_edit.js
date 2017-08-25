@@ -1,4 +1,5 @@
 import { uiModules } from 'ui/modules';
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 import { Notifier } from 'ui/notify/notifier';
 import 'plugins/watcher/services/dirty_prompt';
 import template from './json_watch_edit.html';
@@ -29,8 +30,8 @@ app.directive('jsonWatchEdit', function ($injector) {
     },
     bindToController: true,
     controllerAs: 'jsonWatchEdit',
-    controller: class JsonWatchEditController {
-      constructor($scope) {
+    controller: class JsonWatchEditController extends InitAfterBindingsWorkaround {
+      initAfterBindings($scope) {
         this.notifier = new Notifier({ location: 'Watcher' });
         this.selectedTabId = 'edit-watch';
         this.simulateResults = null;

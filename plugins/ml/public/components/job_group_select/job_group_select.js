@@ -17,6 +17,7 @@ import _ from 'lodash';
 
 import template from './job_group_select.html';
 
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
@@ -31,8 +32,8 @@ module.directive('mlJobGroupSelect', (es, ml, $timeout, mlJobService) => {
     },
     controllerAs: 'mlGroupSelect',
     bindToController: true,
-    controller: class MlGroupSelectController {
-      constructor($scope) {
+    controller: class MlGroupSelectController extends InitAfterBindingsWorkaround {
+      initAfterBindings($scope) {
         this.$scope = $scope;
         this.selectedGroups = [];
         this.groups = [];

@@ -1,4 +1,5 @@
 import { uiModules } from 'ui/modules';
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 import { TIME_UNITS } from 'plugins/watcher/constants';
 import template from './duration_select.html';
 import './duration_select.less';
@@ -26,8 +27,8 @@ app.directive('durationSelect', function ($injector) {
     link: function ($scope, $element, $attrs, $ctrl) {
       $scope.durationSelect.form = $ctrl;
     },
-    controller: class DurationSelectController {
-      constructor($scope) {
+    controller: class DurationSelectController extends InitAfterBindingsWorkaround {
+      initAfterBindings($scope) {
         this.timeUnits = TIME_UNITS;
         this.makeId = htmlIdGeneratorFactory.create(['durationSelect', this.durationId]);
 

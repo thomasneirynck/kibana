@@ -1,5 +1,6 @@
 import pluralize from 'pluralize';
 import { uiModules } from 'ui/modules';
+import { InitAfterBindingsWorkaround } from 'ui/compat';
 import { Notifier } from 'ui/notify/notifier';
 import template from './watch_list.html';
 import '../watch_table';
@@ -37,8 +38,8 @@ app.directive('watchList', function ($injector) {
     },
     bindToController: true,
     controllerAs: 'watchList',
-    controller: class WatchListController {
-      constructor($scope) {
+    controller: class WatchListController extends InitAfterBindingsWorkaround {
+      initAfterBindings($scope) {
         this.forbidden = false;
 
         //The initial load from watch_list_route will return null on a 403 error
