@@ -9,10 +9,6 @@ export function ReindexInfo({ className }) {
       <ul className="kuiText kuiVerticalRhythm">
         <li>Indices created before version 5.0 need to be reindexed.</li>
         <li>X-Pack internal indices need to be upgraded to a new index format.</li>
-        <li>Kibana indices need to be reindexed, each in separate instances.
-          You can reindex each one by running this tool in each instance
-          of Kibana. You cannot reindex all Kibana indices from this instance.
-        </li>
       </ul>
       <div className="kuiVerticalRhythm kuiInfoPanel kuiInfoPanel--error">
         <div className="kuiInfoPanelHeader">
@@ -38,8 +34,8 @@ export function ReindexInfo({ className }) {
         <div className="kuiInfoPanelBody">
           <ul className="kuiInfoPanelBody__message">
             <li>
-              Internal indices such as Kibana, Security, and Watcher will be renamed
-              to <code>{'{'}name{'}'}-6</code>, e.g. <code>.kibana-6</code>
+              Internal indices such as Security and Watcher will be renamed
+              to <code>{'{'}name{'}'}-6</code>, e.g. <code>.security-6</code>
             </li>
             <li>
               Other indices will be reindexed to a new index called <code>{'{'}name{'}'}-reindexed-v5</code>,

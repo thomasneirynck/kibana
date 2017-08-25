@@ -1,24 +1,11 @@
 import _ from 'lodash';
-import chrome from 'ui/chrome';
 import {
-  KIBANA_INDEX_SUFFIX,
   INDEX_SUFFIX,
 } from '../../../common/constants';
-
-import { kibanaMappings } from '../reindex/kibana';
 
 
 export function timeout(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-export function getIndexSuffix(indexName) {
-  const kibanaIndex = chrome.getInjected('kbnIndex');
-  if (indexName === kibanaIndex) {
-    return KIBANA_INDEX_SUFFIX;
-  } else {
-    return INDEX_SUFFIX;
-  }
 }
 
 function remapStringFields(mappings) {
@@ -51,9 +38,7 @@ function remapStringFields(mappings) {
 }
 
 export function getUpgradedMappings(indexName, mappings) {
-  const kibanaIndex = chrome.getInjected('kbnIndex');
-
-  return (indexName === kibanaIndex) ? kibanaMappings : remapStringFields(mappings);
+  return remapStringFields(mappings);
 }
 
 export function getUpgradedSettings(settings) {
@@ -73,8 +58,7 @@ export function getUpgradedSettings(settings) {
 }
 
 export function getReindexBody(indexName) {
-  const suffix = getIndexSuffix(indexName);
-  const kibanaIndex = chrome.getInjected('kbnIndex');
+  const suffix = INDEX_SUFFIX;
 
   const body = {
     source: {
@@ -85,22 +69,11 @@ export function getReindexBody(indexName) {
     },
   };
 
-  if (indexName === kibanaIndex) {
-    body.script = {
-      inline: `
-        ctx._source = [ ctx._type : ctx._source ];
-        ctx._source.type = ctx._type;
-        ctx._id = ctx._type + ":" + ctx._id;
-        ctx._type = "doc";
-      `
-    };
-  }
-
   return body;
 }
 
 export function getActionsForAliasesBody(oldAliases, indexName) {
-  const suffix = getIndexSuffix(indexName);
+  const suffix = INDEX_SUFFIX;
   const actions = _.transform(oldAliases, (result, aliasSettings, aliasName) => {
     const action = {
       add: {

@@ -1,6 +1,5 @@
 import _ from 'lodash';
 import {
-  getIndexSuffix,
   getUpgradedMappings,
   getUpgradedSettings,
   getReindexBody,
@@ -9,6 +8,7 @@ import {
 
 import {
   ERR_CODES,
+  INDEX_SUFFIX,
 } from '../../../common/constants';
 
 import {
@@ -54,7 +54,7 @@ function findRunningReindexTask(tasks, indexName) {
           `reindex from [${ indexName }]`) &&
         _.endsWith(
           task.description,
-          `to [${ indexName }${ getIndexSuffix(indexName) }]`)
+          `to [${ indexName }${ INDEX_SUFFIX }]`)
       );
     }
   );
@@ -82,10 +82,9 @@ export async function getMappingsAndSettings(indexName) {
 export async function createIndex(indexName, definition) {
   try {
     const { mappings, settings } = definition;
-    const suffix = getIndexSuffix(indexName);
 
     await putToApi(
-      `/api/migration/${ indexName }${ suffix }`,
+      `/api/migration/${ indexName }${ INDEX_SUFFIX }`,
       {
         mappings: getUpgradedMappings(indexName, mappings),
         settings: getUpgradedSettings(settings),
@@ -106,8 +105,7 @@ export async function createIndex(indexName, definition) {
       }
     }
 
-    const suffix = getIndexSuffix(indexName);
-    error.reindexedIndexName = `${ indexName }${ suffix }`;
+    error.reindexedIndexName = `${ indexName }${ INDEX_SUFFIX }`;
     throw error;
   }
 }
@@ -172,8 +170,7 @@ export async function cancelTask(taskId) {
 
 export async function refreshIndex(indexName) {
   try {
-    const suffix = getIndexSuffix(indexName);
-    return await postToApi(`/api/migration/refresh/${ indexName }${ suffix }`);
+    return await postToApi(`/api/migration/refresh/${ indexName }${ INDEX_SUFFIX }`);
 
   } catch (error) {
     if (!error.code) {
@@ -186,8 +183,7 @@ export async function refreshIndex(indexName) {
 
 export async function verifyDocs(indexName) {
   try {
-    const suffix = getIndexSuffix(indexName);
-    const newDocs = await getFromApi(`/api/migration/count/${ indexName }${ suffix }`);
+    const newDocs = await getFromApi(`/api/migration/count/${ indexName }${ INDEX_SUFFIX }`);
     const oldDocs = await getFromApi(`/api/migration/count/${ indexName }`);
 
     if (newDocs.count !== oldDocs.count) {
@@ -221,8 +217,7 @@ export async function getSettingsAndAliases(indexName) {
 export async function updateRefreshInterval(indexName, settings) {
   try {
     const refreshInterval = settings['index.refresh_interval'] || "1s";
-    const suffix = getIndexSuffix(indexName);
-    await putToApi(`/api/migration/settings/${ indexName }${ suffix }`,
+    await putToApi(`/api/migration/settings/${ indexName }${ INDEX_SUFFIX }`,
       { "index.refresh_interval": refreshInterval });
 
   } catch (error) {
@@ -273,8 +268,7 @@ export async function deleteTask(indexName, taskId) {
 // succeeded.
 export async function resetIndex(indexName, taskId) {
   try {
-    const suffix = getIndexSuffix(indexName);
-    await deleteFromApi(`/api/migration/index/${ indexName }${ suffix }`);
+    await deleteFromApi(`/api/migration/index/${ indexName }${ INDEX_SUFFIX }`);
   } catch (error) {
     // If delete index fails because index doesn't
     // exist, continue. It might have been deleted
