@@ -28,6 +28,18 @@ function getToolTip(key) {
   }
 }
 
+export function timeInMilliseconds(data) {
+  if (data.time_in_nanos) {
+    return data.time_in_nanos / 1000000;
+  }
+
+  if (typeof data.time === 'string') {
+    return data.time.replace('ms','');
+  }
+
+  return data.time;
+}
+
 export function calcTimes(data, parentId) {
   if (data == null) {
     return;
@@ -36,12 +48,7 @@ export function calcTimes(data, parentId) {
   let totalTime = 0;
   //First pass to collect total
   for (const child of data) {
-    if (child.time_in_nanos) {
-      totalTime += child.time_in_nanos / 1000000;
-    } else {
-      // support for pasted ES responses prior to 5.3
-      totalTime += parseFloat(child.time.replace('ms',''));
-    }
+    totalTime += timeInMilliseconds(child);
 
     child.id = uuid.v4();
     child.parentId = parentId;
@@ -58,7 +65,7 @@ export function calcTimes(data, parentId) {
         child.childrenIds.push(c.id);
       }
     }
-    child.selfTime = (child.time - childrenTime);
+    child.selfTime = (timeInMilliseconds(child) - childrenTime);
   }
   return totalTime;
 }
@@ -91,7 +98,7 @@ export function normalizeBreakdown(breakdown) {
 export function normalizeTimes(data, totalTime, depth) {
   //Second pass to normalize
   for (const child of data) {
-    child.timePercentage = ((child.time / totalTime) * 100).toFixed(2);
+    child.timePercentage = ((timeInMilliseconds(child) / totalTime) * 100).toFixed(2);
     child.absoluteColor = tinycolor.mix('#F5F5F5', '#FFAFAF', child.timePercentage).toHexString();
     child.depth = depth;
 
@@ -100,7 +107,7 @@ export function normalizeTimes(data, totalTime, depth) {
     }
   }
 
-  data.sort((a, b) => comparator(a.time, b.time));
+  data.sort((a, b) => comparator(timeInMilliseconds(a), timeInMilliseconds(b)));
 }
 
 export function normalizeIndices(indices, visibility, target) {
@@ -165,7 +172,7 @@ export function flattenResults(data, accumulator, depth, visibleMap) {
       parentId: child.parentId,
       childrenIds: child.childrenIds,
       lucene: child.description,
-      time: child.time,
+      time: timeInMilliseconds(child),
       selfTime: child.selfTime,
       timePercentage: child.timePercentage,
       query_type: child.type.split('.').pop(),
