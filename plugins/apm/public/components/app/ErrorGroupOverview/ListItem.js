@@ -48,17 +48,11 @@ function ListItem({ error, appName }) {
     <Row>
       <TableCell>
         <RelativeLink path={`${appName}/errors/${groupingId}`}>
-          <Message>
-            {message || 'N/A'}
-          </Message>
-          <Culprit>
-            {culprit || 'N/A'}
-          </Culprit>
+          <Message>{message || 'N/A'}</Message>
+          <Culprit>{culprit || 'N/A'}</Culprit>
         </RelativeLink>
       </TableCell>
-      <OccurrencesCell>
-        {count || 'N/A'}
-      </OccurrencesCell>
+      <OccurrencesCell>{count || 'N/A'}</OccurrencesCell>
     </Row>
   );
 }

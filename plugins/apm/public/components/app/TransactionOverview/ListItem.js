@@ -66,12 +66,8 @@ function TransactionListItem({ appName, transaction, type }) {
       <TransactionP95>
         {numeral(transaction.p95).format('0,0')} ms
       </TransactionP95>
-      <TableCell>
-        {getTransactionRpm(transaction.rpm)}
-      </TableCell>
-      <TableCell>
-        {transaction.impact}
-      </TableCell>
+      <TableCell>{getTransactionRpm(transaction.rpm)}</TableCell>
+      <TableCell>{transaction.impact}</TableCell>
     </TransactionRow>
   );
 }

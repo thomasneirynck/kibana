@@ -58,13 +58,13 @@ function Breadcrumbs({ match }) {
       <div className="kuiLocalNavRow">
         <div className="kuiLocalNavRow__section">
           <div className="kuiLocalBreadcrumbs">
-            {breadcrumbs.map(breadcrumb =>
+            {breadcrumbs.map(breadcrumb => (
               <div key={breadcrumb.url} className="kuiLocalBreadcrumb">
                 <RelativeLink path={breadcrumb.url}>
                   {breadcrumb.label}
                 </RelativeLink>
               </div>
-            )}
+            ))}
           </div>
         </div>
       </div>

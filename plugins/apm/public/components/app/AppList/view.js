@@ -48,13 +48,13 @@ class AppList extends Component {
         <Breadcrumbs />
         <Header>Apps</Header>
         <AppsContainer>
-          {this.props.appList.data.map(app =>
+          {this.props.appList.data.map(app => (
             <AppContainer key={app.appName}>
               <AppLink path={`${app.appName}/transactions`}>
                 {app.appName}
               </AppLink>
             </AppContainer>
-          )}
+          ))}
         </AppsContainer>
       </div>
     );

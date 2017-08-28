@@ -19,9 +19,7 @@ function PageHeader({ title }) {
   }
   return (
     <Container>
-      <Title>
-        {title}
-      </Title>
+      <Title>{title}</Title>
     </Container>
   );
 }

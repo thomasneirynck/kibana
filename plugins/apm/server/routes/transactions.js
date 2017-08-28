@@ -21,10 +21,12 @@ export function initTransactionsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getTopTransactions(req).then(reply).catch(err => {
-        console.error(err);
-        reply(Boom.wrap(err, 400));
-      });
+      getTopTransactions(req)
+        .then(reply)
+        .catch(err => {
+          console.error(err);
+          reply(Boom.wrap(err, 400));
+        });
     }
   });
 
@@ -41,10 +43,12 @@ export function initTransactionsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getTransaction(req).then(reply).catch(err => {
-        console.error(err);
-        reply(Boom.wrap(err, 400));
-      });
+      getTransaction(req)
+        .then(reply)
+        .catch(err => {
+          console.error(err);
+          reply(Boom.wrap(err, 400));
+        });
     }
   });
 }

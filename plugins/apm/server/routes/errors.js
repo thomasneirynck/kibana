@@ -19,10 +19,12 @@ export function initErrorsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getErrors(req).then(reply).catch(err => {
-        console.error(err);
-        reply(Boom.wrap(err, 400));
-      });
+      getErrors(req)
+        .then(reply)
+        .catch(err => {
+          console.error(err);
+          reply(Boom.wrap(err, 400));
+        });
     }
   });
 
@@ -39,10 +41,12 @@ export function initErrorsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getErrorGroup(req).then(reply).catch(err => {
-        console.error(err);
-        reply(Boom.wrap(err, 400));
-      });
+      getErrorGroup(req)
+        .then(reply)
+        .catch(err => {
+          console.error(err);
+          reply(Boom.wrap(err, 400));
+        });
     }
   });
 }

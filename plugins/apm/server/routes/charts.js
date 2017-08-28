@@ -22,10 +22,12 @@ export function initChartApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getTimeseriesData(req).then(reply).catch(err => {
-        console.error(err.stack);
-        reply(Boom.wrap(err, 400));
-      });
+      getTimeseriesData(req)
+        .then(reply)
+        .catch(err => {
+          console.error(err.stack);
+          reply(Boom.wrap(err, 400));
+        });
     }
   });
 }

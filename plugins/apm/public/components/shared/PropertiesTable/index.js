@@ -43,11 +43,7 @@ function getSortedProps(propData, levelTwoKey, level) {
 
 function formatValue(value) {
   if (_.isObject(value)) {
-    return (
-      <pre>
-        {JSON.stringify(value, null, 4)}
-      </pre>
-    );
+    return <pre>{JSON.stringify(value, null, 4)}</pre>;
   } else if (_.isBoolean(value)) {
     return String(value);
   } else if (!value) {
@@ -59,11 +55,7 @@ function formatValue(value) {
 
 function formatKey(key, value) {
   if (value === undefined || value === null) {
-    return (
-      <EmptyValue>
-        {key}
-      </EmptyValue>
-    );
+    return <EmptyValue>{key}</EmptyValue>;
   }
 
   return key;
@@ -94,13 +86,13 @@ function recursiveSort(propData, levelTwoKey, level) {
         {getSortedProps(propData, levelTwoKey, level).map(({ key, value }) => {
           return (
             <Row key={key}>
+              <Cell>{formatKey(key, value)}</Cell>
               <Cell>
-                {formatKey(key, value)}
-              </Cell>
-              <Cell>
-                {level < 3 && _.isObject(value)
-                  ? recursiveSort(value, levelTwoKey, level + 1)
-                  : formatValue(value)}
+                {level < 3 && _.isObject(value) ? (
+                  recursiveSort(value, levelTwoKey, level + 1)
+                ) : (
+                  formatValue(value)
+                )}
               </Cell>
             </Row>
           );

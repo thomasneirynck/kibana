@@ -18,11 +18,9 @@ const TraceBar = styled.div`
   height: ${unit}px;
 `;
 const TraceName = styled.div`${truncate(px(unit * 15))};`;
-const TraceLink = styled(({ isSelected, children, ...props }) =>
-  <RelativeLink {...props}>
-    {children}
-  </RelativeLink>
-)`
+const TraceLink = styled(({ isSelected, children, ...props }) => (
+  <RelativeLink {...props}>{children}</RelativeLink>
+))`
   border-top: ${({ isSelected }) =>
     isSelected && `1px solid ${colors.elementBorder}`};
   border-bottom: ${({ isSelected }) =>
@@ -53,13 +51,12 @@ function Trace({ totalDuration, trace, isSelected }) {
     <TraceLink query={{ traceId }} isSelected={isSelected}>
       <TraceContainer title={traceName}>
         <TraceBar />
-        <TraceName>
-          {traceName}
-        </TraceName>
+        <TraceName>{traceName}</TraceName>
       </TraceContainer>
 
-      {isSelected &&
-        <TraceDetails trace={trace} totalDuration={totalDuration} />}
+      {isSelected && (
+        <TraceDetails trace={trace} totalDuration={totalDuration} />
+      )}
     </TraceLink>
   );
 }

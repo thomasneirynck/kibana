@@ -86,7 +86,9 @@ class ResponseTime extends PureComponent {
     const x = scaleLinear()
       .domain([xMin, xMax])
       .range([XY_MARGIN.left, XY_WIDTH - XY_MARGIN.right]);
-    const y = scaleLinear().domain([yMin, yMaxRounded]).range([XY_HEIGHT, 0]);
+    const y = scaleLinear()
+      .domain([yMin, yMaxRounded])
+      .range([XY_HEIGHT, 0]);
 
     return (
       <div>
@@ -126,8 +128,9 @@ class ResponseTime extends PureComponent {
           <LineSeries xType="time" curve={'curveMonotoneX'} data={avg} />
 
           {hoveredX !== null &&
-            !this.state.isDrawing &&
-            <MarkSeries data={this.getHoveredPoints(hoveredX)} />}
+          !this.state.isDrawing && (
+            <MarkSeries data={this.getHoveredPoints(hoveredX)} />
+          )}
 
           <MarkSeries
             fill="transparent"
@@ -148,11 +151,12 @@ class ResponseTime extends PureComponent {
           />
 
           {this.state.isDrawing &&
-            this.state.selectionEnd !== null &&
+          this.state.selectionEnd !== null && (
             <DragMarker
               selectionStart={x(this.state.selectionStart)}
               selectionEnd={x(this.state.selectionEnd)}
-            />}
+            />
+          )}
         </XYPlot>
       </div>
     );

@@ -19,10 +19,12 @@ export function initAppsApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getApps(req).then(reply).catch(err => {
-        server.log(['error'], err);
-        reply(Boom.wrap(err, 400));
-      });
+      getApps(req)
+        .then(reply)
+        .catch(err => {
+          server.log(['error'], err);
+          reply(Boom.wrap(err, 400));
+        });
     }
   });
 }

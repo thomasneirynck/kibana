@@ -22,11 +22,14 @@ function Voronoi({
   y
 }) {
   // Create a voronoi with each node center points
-  const voronoiInstance = voronoi().x(x).y(y).extent(extent);
+  const voronoiInstance = voronoi()
+    .x(x)
+    .y(y)
+    .extent(extent);
 
   return (
     <g className={`${className} rv-voronoi`} style={style}>
-      {voronoiInstance.polygons(nodes).map((d, i) =>
+      {voronoiInstance.polygons(nodes).map((d, i) => (
         <path
           className="rv-voronoi__cell"
           d={`M${d.join('L')}Z`}
@@ -42,7 +45,7 @@ function Voronoi({
           }}
           key={i}
         />
-      )}
+      ))}
     </g>
   );
 }

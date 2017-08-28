@@ -80,7 +80,9 @@ class Histogram extends PureComponent {
     const x = scaleLinear()
       .domain([xMin, xMax])
       .range([XY_MARGIN.left, XY_WIDTH - XY_MARGIN.right]);
-    const y = scaleLinear().domain([yMin, yMaxRounded]).range([XY_HEIGHT, 0]);
+    const y = scaleLinear()
+      .domain([yMin, yMaxRounded])
+      .range([XY_HEIGHT, 0]);
 
     return (
       <XYPlot
@@ -105,16 +107,17 @@ class Histogram extends PureComponent {
           tickFormat={value => `${value} reqs.`}
         />
 
-        {this.state.hoveredBucket &&
+        {this.state.hoveredBucket && (
           <SingleRect
             x={x(this.state.hoveredBucket.x0)}
             width={x(bucketSize) - x(0)}
             style={{
               fill: '#dddddd'
             }}
-          />}
+          />
+        )}
 
-        {Number.isInteger(selectedBucket) &&
+        {Number.isInteger(selectedBucket) && (
           <SingleRect
             x={x(selectedBucket * bucketSize)}
             width={x(bucketSize) - x(0)}
@@ -122,7 +125,8 @@ class Histogram extends PureComponent {
               fill: 'transparent',
               stroke: 'rgb(172, 189, 220)'
             }}
-          />}
+          />
+        )}
 
         <VerticalRectSeries
           colorType="literal"

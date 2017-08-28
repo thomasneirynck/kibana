@@ -8,9 +8,7 @@ function LoadingError({ names }) {
   return (
     <ErrorWrap>
       <h1>Error</h1>
-      <p>
-        Failed to load data for: {names.join('\n')}
-      </p>
+      <p>Failed to load data for: {names.join('\n')}</p>
       <p>Please check the console or the server output.</p>
     </ErrorWrap>
   );

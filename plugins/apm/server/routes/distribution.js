@@ -19,10 +19,12 @@ export function initDistributionApi(server) {
     },
     method: 'GET',
     handler: (req, reply) => {
-      getDistribution(req).then(reply).catch(err => {
-        console.error(err.stack);
-        reply(Boom.wrap(err, 400));
-      });
+      getDistribution(req)
+        .then(reply)
+        .catch(err => {
+          console.error(err.stack);
+          reply(Boom.wrap(err, 400));
+        });
     }
   });
 }

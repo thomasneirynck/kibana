@@ -16,9 +16,7 @@ function TraceDetails({ trace, totalDuration }) {
         {numeral(traceDuration / 1000).format('0.00')} ms ({numeral(relativeDuration).format('0.00%')}{' '}
         of total time)
       </p>
-      <p>
-        {sql}
-      </p>
+      <p>{sql}</p>
     </TraceDetailsContainer>
   );
 }

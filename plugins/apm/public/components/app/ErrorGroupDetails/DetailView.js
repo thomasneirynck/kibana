@@ -113,9 +113,7 @@ function DetailView({ errorGroup, urlParams }) {
       <Properties>
         <Property>
           <PropertyLabel>Occurrence recorded</PropertyLabel>
-          <PropertyValue>
-            {timestamp}
-          </PropertyValue>
+          <PropertyValue>{timestamp}</PropertyValue>
         </Property>
         {[1, 2, 3, 4, 5].map(item => {
           return (
@@ -137,14 +135,16 @@ function DetailView({ errorGroup, urlParams }) {
       })}
 
       <div>
-        {currentTab === DEFAULT_TAB
-          ? <Stacktrace
-              stacktraces={errorGroup.data.error.error.exception.stacktrace}
-            />
-          : <PropertiesTable
-              propData={errorGroup.data.error.context[currentTab]}
-              propKey={currentTab}
-            />}
+        {currentTab === DEFAULT_TAB ? (
+          <Stacktrace
+            stacktraces={errorGroup.data.error.error.exception.stacktrace}
+          />
+        ) : (
+          <PropertiesTable
+            propData={errorGroup.data.error.context[currentTab]}
+            propKey={currentTab}
+          />
+        )}
       </div>
     </Container>
   );

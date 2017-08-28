@@ -76,12 +76,14 @@ class Transaction extends Component {
         })}
 
         <TabContentContainer>
-          {currentTab === DEFAULT_TAB
-            ? <Traces />
-            : <PropertiesTable
-                propData={transaction.data.context[currentTab]}
-                propKey={currentTab}
-              />}
+          {currentTab === DEFAULT_TAB ? (
+            <Traces />
+          ) : (
+            <PropertiesTable
+              propData={transaction.data.context[currentTab]}
+              propKey={currentTab}
+            />
+          )}
         </TabContentContainer>
       </WiremockContainer>
     );

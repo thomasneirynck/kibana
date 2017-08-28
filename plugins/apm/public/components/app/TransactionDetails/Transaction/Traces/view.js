@@ -28,7 +28,7 @@ class Traces extends Component {
 
     return (
       <div>
-        {traces.data.traces.map(trace =>
+        {traces.data.traces.map(trace => (
           <Trace
             key={get({ trace }, TRACE_ID)}
             trace={trace}
@@ -37,7 +37,7 @@ class Traces extends Component {
               get({ trace }, TRACE_ID) === this.props.urlParams.traceId
             }
           />
-        )}
+        ))}
       </div>
     );
   }

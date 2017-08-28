@@ -22,7 +22,7 @@ const Button = styled(RelativeLink)`
   background-color: ${colors.elementBackgroundDark};
   cursor: pointer;
 
-  &:hover{
+  &:hover {
     background-color: ${colors.elementBackground};
   }
 `;
@@ -31,9 +31,5 @@ export default function({ label, path }) {
   if (!label) {
     return null;
   }
-  return (
-    <Button path={path}>
-      {label}
-    </Button>
-  );
+  return <Button path={path}>{label}</Button>;
 }
