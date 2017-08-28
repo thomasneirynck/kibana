@@ -105,28 +105,24 @@ class Histogram extends PureComponent {
           tickFormat={value => `${value} reqs.`}
         />
 
-        {this.state.hoveredBucket
-          ? <SingleRect
-              x={x(this.state.hoveredBucket.x0)}
-              width={x(bucketSize) - x(0)}
-              marginTop={XY_MARGIN.top}
-              style={{
-                fill: '#dddddd'
-              }}
-            />
-          : null}
+        {this.state.hoveredBucket &&
+          <SingleRect
+            x={x(this.state.hoveredBucket.x0)}
+            width={x(bucketSize) - x(0)}
+            style={{
+              fill: '#dddddd'
+            }}
+          />}
 
-        {Number.isInteger(selectedBucket)
-          ? <SingleRect
-              x={x(selectedBucket * bucketSize)}
-              width={x(bucketSize) - x(0)}
-              marginTop={XY_MARGIN.top}
-              style={{
-                fill: 'transparent',
-                stroke: 'rgb(172, 189, 220)'
-              }}
-            />
-          : null}
+        {Number.isInteger(selectedBucket) &&
+          <SingleRect
+            x={x(selectedBucket * bucketSize)}
+            width={x(bucketSize) - x(0)}
+            style={{
+              fill: 'transparent',
+              stroke: 'rgb(172, 189, 220)'
+            }}
+          />}
 
         <VerticalRectSeries
           colorType="literal"
