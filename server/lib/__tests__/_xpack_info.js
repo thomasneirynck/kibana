@@ -1,43 +1,51 @@
 import { createHash } from 'crypto';
 const expect = require('expect.js');
-const Bluebird = require('bluebird');
 import moment from 'moment';
 const { _xpackInfo } = require('../_xpack_info');
 import sinon from 'sinon';
 
 describe('xpack_info', function () {
   let mockServer;
+  let mockCluster;
+
   const pollFrequencyInMillis = 10;
+  const sandbox = sinon.sandbox.create();
 
   function stubResponse(response = {}) {
-    const stub = mockServer.plugins.elasticsearch.getCluster('data').callWithInternalUser;
-
-    stub.resetBehavior();
-    stub.returns(Bluebird.resolve(response));
+    mockCluster.callWithInternalUser.resetBehavior();
+    mockCluster.callWithInternalUser.returns(Promise.resolve(response));
   }
 
-  function xpackInfoTest(response = {}) {
+  async function xpackInfoTest(response = {}) {
     stubResponse(response);
 
-    return _xpackInfo(mockServer, pollFrequencyInMillis)
-    .then(info => info.refreshNow())
-    .then(info => {
-      info.stopPolling();
-      return info;
-    });
+    const info = await _xpackInfo(mockServer, pollFrequencyInMillis);
+    await info.refreshNow();
+    info.stopPolling();
+
+    return info;
   }
 
   beforeEach(function () {
+    sandbox.useFakeTimers();
+
+    mockCluster = { callWithInternalUser: sinon.stub() };
+
     mockServer = {
       log: sinon.stub(),
       plugins: {
-        elasticsearch: {
-          getCluster: sinon.stub().withArgs('data').returns({
-            callWithInternalUser: sinon.stub().returns(Bluebird.resolve({}))
-          })
-        }
+        elasticsearch: { getCluster: sinon.stub() }
       }
     };
+
+    mockServer.plugins.elasticsearch.getCluster.withArgs('data').returns(mockCluster);
+  });
+
+  afterEach(() => {
+    sandbox.restore();
+
+    mockServer = null;
+    mockCluster = null;
   });
 
   describe('license', function () {
@@ -46,6 +54,7 @@ describe('xpack_info', function () {
         const info = await xpackInfoTest({ license: { status: 'active' } });
         expect(info.license.isActive()).to.be(true);
       });
+
       it('returns false if the license has expired', async () => {
         const info = await xpackInfoTest({ license: { status: 'expired' } });
         expect(info.license.isActive()).to.be(false);
@@ -56,17 +65,24 @@ describe('xpack_info', function () {
       it('logs clusterSource and status:active if the license is active', async () => {
         const info = await xpackInfoTest({ license: { status: 'active' } });
         expect(info.license.isActive()).to.be(true);
-        expect(mockServer.log.getCall(0).args).to.eql([ ['license', 'debug', 'xpack'], 'Calling Elasticsearch _xpack API' ]);
+        expect(mockServer.log.getCall(0).args).to.eql([
+          ['license', 'debug', 'xpack'],
+          'Calling Elasticsearch _xpack API'
+        ]);
         expect(mockServer.log.getCall(1).args).to.eql([ ['license', 'info', 'xpack'], (
           'Imported license information from Elasticsearch for [data] cluster: mode: undefined ' +
           '| status: active ' +
           '| expiry date: Invalid date'
         ) ]);
       });
+
       it('logs clusterSource and status:expired if the license has expired', async () => {
         const info = await xpackInfoTest({ license: { status: 'expired' } });
         expect(info.license.isActive()).to.be(false);
-        expect(mockServer.log.getCall(0).args).to.eql([ ['license', 'debug', 'xpack'], 'Calling Elasticsearch _xpack API' ]);
+        expect(mockServer.log.getCall(0).args).to.eql([
+          ['license', 'debug', 'xpack'],
+          'Calling Elasticsearch _xpack API'
+        ]);
         expect(mockServer.log.getCall(1).args).to.eql([ ['license', 'info', 'xpack'], (
           'Imported license information from Elasticsearch for [data] cluster: mode: undefined ' +
           '| status: expired ' +
@@ -82,6 +98,7 @@ describe('xpack_info', function () {
 
         expect(info.license.expiresSoon()).to.be(true);
       });
+
       it ('returns false if the license will expire after 30 days', async () => {
         const licenseExpirationDate = moment.utc().add('40', 'days');
         const info = await xpackInfoTest({ license: { expiry_date_in_millis: licenseExpirationDate.valueOf() } });
@@ -183,7 +200,13 @@ describe('xpack_info', function () {
 
   describe('getSignature()', function () {
     it ('returns the correct signature', async () => {
-      const info = await xpackInfoTest({ license: { status: 'active', type: 'basic', expiry_date_in_millis: 1464315131123 } });
+      const info = await xpackInfoTest({
+        license: {
+          status: 'active',
+          type: 'basic',
+          expiry_date_in_millis: 1464315131123
+        }
+      });
       const expectedSignature = createHash('md5')
         .update(JSON.stringify(info.toJSON()))
         .digest('hex');
@@ -193,39 +216,35 @@ describe('xpack_info', function () {
   });
 
   describe('an updated response from the _xpack API', function () {
-    it('causes the info object and signature to be updated', () => {
-      let previousSignature;
+    it('causes the info object and signature to be updated', async () => {
       stubResponse({ license: { status: 'active' } });
+      const info = await _xpackInfo(mockServer, pollFrequencyInMillis);
+      await info.refreshNow();
 
-      return _xpackInfo(mockServer, pollFrequencyInMillis)
-        .then(info => info.refreshNow())
-        .then(info => {
-          expect(info.license.isActive()).to.be(true);
-          previousSignature = info.getSignature();
+      expect(info.license.isActive()).to.be(true);
 
-          stubResponse({ license: { status: 'expired' } });
-          return Bluebird.delay(pollFrequencyInMillis * 2, info);
-        }).then((info) => {
-          info.stopPolling();
+      const previousSignature = info.getSignature();
+      stubResponse({ license: { status: 'expired' } });
+      sandbox.clock.tick(pollFrequencyInMillis * 2);
+      info.stopPolling();
 
-          expect(info.license.isActive()).to.be(false);
-          expect(info.getSignature()).to.not.be(previousSignature);
-        });
+      // Exhaust micro-task queue, to make sure mockCluster has been queried.
+      await Promise.resolve();
+
+      expect(info.license.isActive()).to.be(false);
+      expect(info.getSignature()).to.not.be(previousSignature);
     });
   });
 
   describe('refreshNow()', () => {
-    it('calls the Elasticsearch GET _xpack API immediately', () => {
-      let previousSignature;
-      return xpackInfoTest({ license: { status: 'active' } })
-      .then(info => {
-        previousSignature = info.getSignature();
-        stubResponse({ license: { status: 'expired' } });
-        return info.refreshNow();
-      })
-      .then(newInfo => {
-        expect(newInfo.getSignature()).to.not.be(previousSignature);
-      });
+    it('calls the Elasticsearch GET _xpack API immediately', async () => {
+      const info = await xpackInfoTest({ license: { status: 'active' } });
+      const previousSignature = info.getSignature();
+
+      stubResponse({ license: { status: 'expired' } });
+      await info.refreshNow();
+
+      expect(info.getSignature()).to.not.be(previousSignature);
     });
   });
 });
