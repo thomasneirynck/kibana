@@ -1,5 +1,19 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`ReindexView renders an ErrorPanel when the loadingStatus indicates forbidden access 1`] = `
+<ErrorPanel
+  className="kuiVerticalRhythm"
+  classNames=""
+  title="You do not have permission to use the Upgrade Assistant."
+>
+  <p
+    className="kuiText"
+  >
+    Please contact your administrator.
+  </p>
+</ErrorPanel>
+`;
+
 exports[`ReindexView renders an ErrorPanel with the errorMessage when the loadingStatus indicates a failure 1`] = `
 <ErrorPanel
   className="kuiVerticalRhythm"

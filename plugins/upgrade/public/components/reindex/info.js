@@ -10,9 +10,9 @@ export function ReindexInfo({ className }) {
         <li>Indices created before version 5.0 need to be reindexed.</li>
         <li>X-Pack internal indices need to be upgraded to a new index format.</li>
       </ul>
-      <div className="kuiVerticalRhythm kuiInfoPanel kuiInfoPanel--error">
+      <div className="kuiVerticalRhythm kuiInfoPanel kuiInfoPanel--warning">
         <div className="kuiInfoPanelHeader">
-          <span className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--error fa-exclamation" />
+          <span className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--warning fa-bolt" />
           <span className="kuiInfoPanelHeader__title">
             Backup your indices now!
           </span>

@@ -4,6 +4,7 @@ import React from 'react';
 
 import { CheckupView } from './checkup_view';
 import { getDeprecations } from '../../lib/checkup';
+import { LOADING_STATUS } from '../../lib/constants';
 
 jest.mock('ui/chrome', () => {}, { virtual: true });
 jest.mock('ui/notify/notifier', () => ({
@@ -60,6 +61,19 @@ describe('CheckupView', () => {
     wrapper.find('InfoGroup').prop('onChangeCollapsed')();
 
     expect(setViewState).toHaveBeenCalledTimes(1);
+  });
+
+  test('renders an ErrorPanel when the loadingStatus indicates forbidden access', () => {
+    const component = (
+      <CheckupView
+        loadingStatus={LOADING_STATUS.FORBIDDEN}
+        setViewState={_.noop}
+        viewState={{}}
+      />
+    );
+
+    const wrapper = shallow(component).dive();
+    expect(wrapper.find('ErrorPanel')).toMatchSnapshot();
   });
 
   test('renders the CheckupOutput after successfully loading the deprecations', async () => {

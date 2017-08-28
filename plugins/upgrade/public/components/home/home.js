@@ -33,7 +33,7 @@ export const HomeView = withViewState({
               <div className="kuiInfoPanelHeader">
                 <span className="kuiInfoPanelHeader__icon kuiIcon kuiIcon--warning fa-bolt" />
                 <span className="kuiInfoPanelHeader__title">
-                  Proceed with caution!
+                  Backup your indices now!
                 </span>
               </div>
 

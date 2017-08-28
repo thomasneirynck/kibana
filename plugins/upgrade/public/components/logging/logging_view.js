@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 
-import { LoggingForm } from './logging_form';
+import { RefreshButton } from '../refresh_button';
 import { LoggingInfo } from './logging_info';
 import { ErrorPanel } from '../error_panel';
 import { InfoGroup } from '../info_group';
@@ -52,7 +52,7 @@ export const LoggingView = withViewState({
       );
   }
 
-  toggleLoggingEnabled = () => {
+  toggleLogging = () => {
     this.setState({
       loadingStatus: LOADING_STATUS.LOADING,
     });
@@ -73,10 +73,16 @@ export const LoggingView = withViewState({
   }
 
   handleFailure = (error) => {
-    this.setState({
-      lastError: error.error,
-      loadingStatus: LOADING_STATUS.FAILURE,
-    });
+    if (error.statusCode === 403) {
+      this.setState({
+        loadingStatus: LOADING_STATUS.FORBIDDEN,
+      });
+    } else {
+      this.setState({
+        lastError: error.error,
+        loadingStatus: LOADING_STATUS.FAILURE,
+      });
+    }
   }
 
   render() {
@@ -87,21 +93,39 @@ export const LoggingView = withViewState({
       <div className="kuiView">
         <div className="kuiViewContent kuiViewContent--constrainedWidth">
           <div className="kuiViewContentItem">
-            <InfoGroup
-              className="kuiVerticalRhythm"
-              isCollapsed={isInfoCollapsed}
-              onChangeCollapsed={toggleInfoCollapsed}
-              title="Deprecation Logging"
-            >
-              <LoggingInfo className="kuiVerticalRhythm" />
-            </InfoGroup>
+            { loadingStatus === LOADING_STATUS.FORBIDDEN
+                ? (
+                  <ErrorPanel
+                    className="kuiVerticalRhythm"
+                    title="You do not have permission to use the Upgrade Assistant."
+                  >
+                    <p className="kuiText">Please contact your administrator.</p>
+                  </ErrorPanel>
+                )
+                : (
+                  <div className="kuiVerticalRhythm">
+                    <InfoGroup
+                      className="kuiVerticalRhythm"
+                      isCollapsed={isInfoCollapsed}
+                      onChangeCollapsed={toggleInfoCollapsed}
+                      title="Toggle Deprecation Logging"
+                    >
+                      <LoggingInfo className="kuiVerticalRhythm" />
+                    </InfoGroup>
 
-            <h3 className="kuiSubTitle kuiVerticalRhythm">
-              Cluster-wide settings
-            </h3>
+                    <RefreshButton
+                      buttonLabel="Toggle Deprecation Logging"
+                      className="kuiVerticalRhythm"
+                      onClick={this.toggleLogging}
+                    />
+                  </div>
+                )
+            }
 
             { loadingStatus === LOADING_STATUS.LOADING
-                ? <LoadingIndicator className="kuiVerticalRhythm" />
+                ? (
+                  <LoadingIndicator className="kuiVerticalRhythm" />
+                )
                 : null
             }
 
@@ -109,7 +133,7 @@ export const LoggingView = withViewState({
                 ? (
                   <ErrorPanel className="kuiVerticalRhythm">
                     <p className="kuiText">
-                      Failed to access logging settings, please try to <a className="kuiLink" onClick={this.getLoggingStatus}>reload</a>.
+                      Failed to access logging settings. Please <a className="kuiLink" onClick={this.getLoggingStatus}>reload</a>.
                     </p>
                     <p className="kuiText">{ lastError }</p>
                   </ErrorPanel>
@@ -119,11 +143,20 @@ export const LoggingView = withViewState({
 
             { loadingStatus === LOADING_STATUS.SUCCESS
                 ? (
-                  <LoggingForm
-                    className="kuiVerticalRhythm"
-                    isLoggingEnabled={isLoggingEnabled}
-                    onToggleLoggingEnabled={this.toggleLoggingEnabled}
-                  />
+                  <div className="kuiEvent kuiVerticalRhythm">
+                    <span className="kuiEventSymbol">
+                      { isLoggingEnabled
+                          ? <span className="kuiIcon kuiIcon--success fa-check" />
+                          : <span className="kuiIcon kuiIcon--error fa-warning" />
+                      }
+                    </span>
+                    <div className="kuiEventBody">
+                      <div className="kuiEventBody__message">
+                        Deprecation Logging is&nbsp;
+                        { isLoggingEnabled ? "enabled" : "disabled" }
+                      </div>
+                    </div>
+                  </div>
                 )
                 : null
             }

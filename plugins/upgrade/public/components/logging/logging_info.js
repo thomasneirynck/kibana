@@ -5,10 +5,7 @@ export function LoggingInfo({ className }) {
   return (
     <div className={className}>
       <p className="kuiText kuiVerticalRhythm">
-        Deprecation logging is enabled by default, beginning in Elasticsearch 5.
-      </p>
-      <p className="kuiText kuiVerticalRhythm">
-        You can toggle logging here.
+        Deprecation logging is enabled by default in Elasticsearch 5.0+.
       </p>
     </div>
   );

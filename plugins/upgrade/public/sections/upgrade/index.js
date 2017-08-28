@@ -80,7 +80,7 @@ routes.defaults(/\/management/, {
 
       if (licenseService.enableLinks) {
         upgradeSection.enable();
-        upgradeSection.tooltip = 'Upgrade assistance to version 6';
+        upgradeSection.tooltip = 'Upgrade assistance to next major version';
       } else {
         upgradeSection.disable();
         upgradeSection.tooltip = licenseService.message;

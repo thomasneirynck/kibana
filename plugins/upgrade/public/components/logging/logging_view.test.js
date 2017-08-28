@@ -4,6 +4,7 @@ import React from 'react';
 
 import { LoggingView } from './logging_view';
 import { getFromApi } from '../../lib/request';
+import { LOADING_STATUS } from '../../lib/constants';
 
 jest.mock('ui/chrome', () => {}, { virtual: true });
 jest.mock('ui/notify/notifier', () => ({
@@ -80,25 +81,17 @@ describe('LoggingView', () => {
     expect(wrapper.find('LoadingIndicator').exists()).toBe(true);
   });
 
-  test('renders the LoggingForm after successfully loading the logging status', async () => {
-    const responsePromise = Promise.resolve({
-      isEnabled: true,
-    });
-    getFromApi.mockReturnValue(responsePromise);
-
+  test('renders an ErrorPanel when the loadingStatus indicates forbidden access', () => {
     const component = (
       <LoggingView
+        loadingStatus={LOADING_STATUS.FORBIDDEN}
         setViewState={_.noop}
         viewState={{}}
       />
     );
 
     const wrapper = shallow(component).dive();
-    wrapper.instance().componentDidMount();
-    await responsePromise;
-
-    expect(getFromApi).toHaveBeenCalledWith('/api/migration/deprecation_logging');
-    expect(wrapper.find('LoggingForm').prop('isLoggingEnabled')).toBe(true);
+    expect(wrapper.find('ErrorPanel')).toMatchSnapshot();
   });
 
   test('renders an ErrorPanel after unsuccessfully trying to load the logging status', async () => {

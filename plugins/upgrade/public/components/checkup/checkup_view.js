@@ -50,10 +50,16 @@ export const CheckupView = withViewState({
         loadingStatus: LOADING_STATUS.SUCCESS,
       });
     } catch (error) {
-      this.setState({
-        lastError: error,
-        loadingStatus: LOADING_STATUS.FAILURE,
-      });
+      if (error.statusCode === 403) {
+        this.setState({
+          loadingStatus: LOADING_STATUS.FORBIDDEN,
+        });
+      } else {
+        this.setState({
+          lastError: error,
+          loadingStatus: LOADING_STATUS.FAILURE,
+        });
+      }
     }
   }
 
@@ -69,20 +75,35 @@ export const CheckupView = withViewState({
       <div className="kuiView">
         <div className="kuiViewContent kuiViewContent--constrainedWidth">
           <div className="kuiViewContentItem">
-            <InfoGroup
-              className="kuiVerticalRhythm"
-              isCollapsed={isInfoCollapsed}
-              onChangeCollapsed={toggleInfoCollapsed}
-              title="Cluster Checkup"
-            >
-              <CheckupInfo className="kuiVerticalRhythm" />
-            </InfoGroup>
+            {
+              loadingStatus === LOADING_STATUS.FORBIDDEN
+                ? (
+                  <ErrorPanel
+                    className="kuiVerticalRhythm"
+                    title="You do not have permission to use the Upgrade Assistant."
+                  >
+                    <p className="kuiText">Please contact your administrator.</p>
+                  </ErrorPanel>
+                )
+                : (
+                  <div className="kuiVerticalRhythm">
+                    <InfoGroup
+                      className="kuiVerticalRhythm"
+                      isCollapsed={isInfoCollapsed}
+                      onChangeCollapsed={toggleInfoCollapsed}
+                      title="Cluster Checkup"
+                    >
+                      <CheckupInfo className="kuiVerticalRhythm" />
+                    </InfoGroup>
 
-            <RefreshButton
-              buttonLabel="Rerun Checkup"
-              className="kuiVerticalRhythm"
-              onClick={this.runCheckup}
-            />
+                    <RefreshButton
+                      buttonLabel="Rerun Checkup"
+                      className="kuiVerticalRhythm"
+                      onClick={this.runCheckup}
+                    />
+                  </div>
+                )
+            }
 
             {
               loadingStatus === LOADING_STATUS.FAILURE
@@ -99,7 +120,9 @@ export const CheckupView = withViewState({
 
             {
               loadingStatus === LOADING_STATUS.SUCCESS
-                ? <CheckupOutput className="kuiVerticalRhythm" output={deprecations} />
+                ? (
+                  <CheckupOutput className="kuiVerticalRhythm" output={deprecations} />
+                )
                 : null
             }
           </div>

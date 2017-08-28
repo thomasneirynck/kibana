@@ -21,6 +21,11 @@ export function registerRoutes(server) {
         return reply(response.indices);
 
       } catch (requestError) {
+        if (requestError.status === 403) {
+          const err = Boom.forbidden(requestError.message, requestError.body);
+          return reply(err);
+        }
+
         const err = Boom.wrap(requestError);
         err.output.payload.code = ERR_CODES.ERR_GET_ASSISTANCE_FAILED;
 
@@ -82,6 +87,11 @@ export function registerRoutes(server) {
         return reply(response);
 
       } catch (requestError) {
+        if (requestError.status === 403) {
+          const err = Boom.forbidden(requestError.message, requestError.body);
+          return reply(err);
+        }
+
         const err = Boom.wrap(requestError);
         err.output.payload.code = ERR_CODES.ERR_GET_DEPRECATIONS_FAILED;
         err.output.payload = {
@@ -109,6 +119,11 @@ export function registerRoutes(server) {
         });
 
       } catch (requestError) {
+        if (requestError.status === 403) {
+          const err = Boom.forbidden(requestError.message, requestError.body);
+          return reply(err);
+        }
+
         const err = Boom.wrap(requestError);
         err.output.payload.code = ERR_CODES.ERR_GET_DEPR_LOGGING_FAILED;
         err.output.payload = {

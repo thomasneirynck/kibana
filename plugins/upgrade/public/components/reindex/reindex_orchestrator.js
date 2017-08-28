@@ -59,11 +59,17 @@ export function withReindexOrchestrator() {
           return response;
 
         } catch (error) {
-          this.setState({
-            errorMessage: wrapErrorMessage(error.message, error),
-            loadingStatus: LOADING_STATUS.FAILURE,
+          if (error.statusCode === 403) {
+            this.setState({
+              loadingStatus: LOADING_STATUS.FORBIDDEN,
+            });
+          } else {
+            this.setState({
+              errorMessage: wrapErrorMessage(error.message, error),
+              loadingStatus: LOADING_STATUS.FAILURE,
 
-          });
+            });
+          }
 
           throw error;
         }

@@ -57,7 +57,7 @@ describe('ReindexView', () => {
     expect(setViewState).toHaveBeenCalledTimes(1);
   });
 
-  test('renders an IndexTable', () => {
+  test('renders an IndexTable when loadingStatus indicates success', () => {
     const cancelAction = () => {};
     const indices = {
       index1: {},
@@ -67,6 +67,7 @@ describe('ReindexView', () => {
     const resetAction = () => {};
     const component = (
       <ReindexView
+        loadingStatus={LOADING_STATUS.SUCCESS}
         cancelAction={cancelAction}
         indices={indices}
         loadIndices={loadIndices}
@@ -85,6 +86,19 @@ describe('ReindexView', () => {
       processIndex,
       resetAction,
     });
+  });
+
+  test('renders an ErrorPanel when the loadingStatus indicates forbidden access', () => {
+    const component = (
+      <ReindexView
+        loadingStatus={LOADING_STATUS.FORBIDDEN}
+        setViewState={_.noop}
+        viewState={{}}
+      />
+    );
+
+    const wrapper = shallow(component).dive();
+    expect(wrapper.find('ErrorPanel')).toMatchSnapshot();
   });
 
   test('renders an ErrorPanel with the errorMessage when the loadingStatus indicates a failure', () => {

@@ -33,14 +33,29 @@ export const ReindexView = withViewState({
     <div className="kuiView">
       <div className="kuiViewContent kuiViewContent--constrainedWidth">
         <div className="kuiViewContentItem">
-          <InfoGroup
-            className="kuiVerticalRhythm"
-            isCollapsed={isInfoCollapsed}
-            onChangeCollapsed={toggleInfoCollapsed}
-            title="Reindex Helper"
-          >
-            <ReindexInfo className="kuiVerticalRhythm" />
-          </InfoGroup>
+          {
+            loadingStatus === LOADING_STATUS.FORBIDDEN
+              ? (
+                <ErrorPanel
+                  className="kuiVerticalRhythm"
+                  title="You do not have permission to use the Upgrade Assistant."
+                >
+                  <p className="kuiText">Please contact your administrator.</p>
+                </ErrorPanel>
+              )
+              : (
+                <div className="kuiVerticalRhythm">
+                  <InfoGroup
+                    className="kuiVerticalRhythm"
+                    isCollapsed={isInfoCollapsed}
+                    onChangeCollapsed={toggleInfoCollapsed}
+                    title="Reindex Helper"
+                  >
+                    <ReindexInfo className="kuiVerticalRhythm" />
+                  </InfoGroup>
+                </div>
+              )
+          }
 
           {
             loadingStatus === LOADING_STATUS.FAILURE
@@ -52,14 +67,20 @@ export const ReindexView = withViewState({
               : null
           }
 
-          <IndexTable
-            cancelAction={cancelAction}
-            className="kuiVerticalRhythm"
-            indices={indices}
-            loadIndices={loadIndices}
-            processIndex={processIndex}
-            resetAction={resetAction}
-          />
+          {
+            loadingStatus === LOADING_STATUS.SUCCESS
+              ? (
+                <IndexTable
+                  cancelAction={cancelAction}
+                  className="kuiVerticalRhythm"
+                  indices={indices}
+                  loadIndices={loadIndices}
+                  processIndex={processIndex}
+                  resetAction={resetAction}
+                />
+              )
+              : null
+          }
         </div>
       </div>
     </div>
