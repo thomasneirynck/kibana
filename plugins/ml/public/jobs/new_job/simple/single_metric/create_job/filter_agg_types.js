@@ -21,7 +21,8 @@ export function filterAggTypes(aggTypes) {
   let typeCopy;
   _.each(aggTypes, (type) => {
     type.mlName = type.name;
-    type.mlModelPlotAgg = { max:type.name, min: type.name };
+    type.mlModelPlotAgg = { max: type.name, min: type.name };
+    type.isCountType = false;
 
     _.each(type.params, (p) => {
       if (p.filterFieldTypes && typeof p.filterFieldTypes === 'string') {
@@ -37,15 +38,11 @@ export function filterAggTypes(aggTypes) {
       typeCopy = angular.copy(type);
       typeCopy.title   = 'High count';
       typeCopy.mlName = 'high_count';
-      typeCopy.mlModelPlotAgg = { max: 'max', min: 'min' };
-      type.isCountType = true;
       filteredAggTypes.push(typeCopy);
 
       typeCopy = angular.copy(type);
       typeCopy.title   = 'Low count';
       typeCopy.mlName = 'low_count';
-      typeCopy.mlModelPlotAgg = { max: 'max', min: 'min' };
-      type.isCountType = true;
       filteredAggTypes.push(typeCopy);
 
     } else if (type.name === 'sum') {
@@ -54,38 +51,31 @@ export function filterAggTypes(aggTypes) {
       typeCopy = angular.copy(type);
       typeCopy.title   = 'High sum';
       typeCopy.mlName = 'high_sum';
-      type.isCountType = false;
       filteredAggTypes.push(typeCopy);
 
       typeCopy = angular.copy(type);
       typeCopy.title   = 'Low sum';
       typeCopy.mlName = 'low_sum';
-      type.isCountType = false;
       filteredAggTypes.push(typeCopy);
 
     } else if (type.name === 'avg') {
       type.title   = 'Mean';
       type.mlName = 'mean';
-      type.isCountType = false;
       filteredAggTypes.push(type);
 
       typeCopy = angular.copy(type);
       typeCopy.title   = 'High mean';
       typeCopy.mlName = 'high_mean';
-      type.isCountType = false;
       filteredAggTypes.push(typeCopy);
 
       typeCopy = angular.copy(type);
       typeCopy.title   = 'Low mean';
       typeCopy.mlName = 'low_mean';
-      type.isCountType = false;
       filteredAggTypes.push(typeCopy);
 
     } else if (type.name === 'min') {
-      type.isCountType = false;
       filteredAggTypes.push(type);
     } else if (type.name === 'max') {
-      type.isCountType = false;
       filteredAggTypes.push(type);
     } else if (type.name === 'cardinality') {
       type.title = 'Distinct count';
@@ -98,7 +88,6 @@ export function filterAggTypes(aggTypes) {
         }
       });
 
-      type.isCountType = false;
       filteredAggTypes.push(type);
     }
   });
