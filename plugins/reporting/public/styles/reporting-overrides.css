@@ -94,6 +94,11 @@ visualize .metric-vis {
 *  Dashboard tweaks
 */
 
+dashboard-panel .panel-heading {
+  /* hide the panel heading with the controls in it like expand */
+  display: none !important;
+}
+
 dashboard-app .gridster .gs-w {
   z-index: auto;
 }
