@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {
   unit,
   units,
+  borderRadius,
   px,
   colors,
   fontFamilyCode
@@ -12,31 +13,43 @@ import numeral from '@elastic/numeral';
 import { get } from 'lodash';
 import { TRANSACTION_NAME } from '../../../../common/constants';
 
-export const TransactionRow = styled.tr`
-  &:nth-child(odd) {
-    background: ${colors.elementBackgroundDark};
+const TransactionRow = styled.tr`
+  border-bottom: 1px solid ${colors.tableBorder};
+
+  &:last-of-type {
+    border-bottom: 0;
   }
 `;
 
-const TableCell = styled.td`
-  text-align: right;
-  padding: ${px(units.half)} ${px(units.minus)};
-  border-left: 1px solid ${colors.tableBorder};
+const TableCell = styled.td`padding: ${px(units.half)} ${px(unit)};`;
 
-  &:first-child {
-    text-align: left;
-    border-left: 0;
-  }
-`;
-
-const TransactionName = TableCell.extend`
-  min-width: ${px(unit * 22)};
-  font-family: ${fontFamilyCode};
-  font-weight: bold;
-`;
+const TransactionName = TableCell.extend`font-family: ${fontFamilyCode};`;
 
 const TransactionAvg = TableCell.extend`min-width: ${px(unit * 6)};`;
 const TransactionP95 = TableCell.extend`min-width: ${px(unit * 6)};`;
+
+const ImpactBarBackground = styled.div`
+  height: ${px(units.minus)};
+  border-radius: ${borderRadius};
+  background: ${colors.impactBarBackground};
+`;
+
+const ImpactBar = styled.div`
+  height: ${px(units.minus)};
+  width: ${props => props.barWidth}%;
+  background: ${colors.impactBar};
+  border-radius: ${borderRadius};
+`;
+
+function getTransactionDuration(duration) {
+  if (!duration) {
+    return `N/A`;
+  }
+
+  const durationInMilliseconds = duration / 1000;
+  const formattedDuration = numeral(durationInMilliseconds).format('0,0');
+  return `${formattedDuration} ms`;
+}
 
 function getTransactionRpm(rpm) {
   if (!rpm) {
@@ -47,27 +60,37 @@ function getTransactionRpm(rpm) {
   return `${transactionRpm} rpm`;
 }
 
-function TransactionListItem({ appName, transaction, type }) {
+function ImpactSparkline({ impact }) {
+  if (!impact && impact !== 0) {
+    return <div>N/A</div>;
+  }
+
+  return (
+    <ImpactBarBackground>
+      <ImpactBar barWidth={impact} />
+    </ImpactBarBackground>
+  );
+}
+
+function TransactionListItem({ appName, transaction, type, impact }) {
   const transactionName = get({ transaction }, TRANSACTION_NAME);
+  const transactionUrl = `${appName}/transactions/${encodeURIComponent(
+    type
+  )}/${legacyEncodeURIComponent(transactionName)}`;
+
   return (
     <TransactionRow>
       <TransactionName>
-        <RelativeLink
-          path={`${appName}/transactions/${encodeURIComponent(
-            type
-          )}/${legacyEncodeURIComponent(transactionName)}`}
-        >
+        <RelativeLink path={transactionUrl}>
           {transactionName || 'N/A'}
         </RelativeLink>
       </TransactionName>
-      <TransactionAvg>
-        {numeral(transaction.avg).format('0,0')} ms
-      </TransactionAvg>
-      <TransactionP95>
-        {numeral(transaction.p95).format('0,0')} ms
-      </TransactionP95>
+      <TransactionAvg>{getTransactionDuration(transaction.avg)}</TransactionAvg>
+      <TransactionP95>{getTransactionDuration(transaction.p95)}</TransactionP95>
       <TableCell>{getTransactionRpm(transaction.rpm)}</TableCell>
-      <TableCell>{transaction.impact}</TableCell>
+      <TableCell>
+        <ImpactSparkline impact={impact} />
+      </TableCell>
     </TransactionRow>
   );
 }

@@ -31,7 +31,10 @@ export const colors = {
   elementBorderDark: '#bababa',
   elementBackground: '#fff',
   elementBackgroundDark: '#f5f5f5',
-  tableBorder: '#e9ebef'
+  tableBorder: '#E9E9E9',
+  tableHeaderColor: '#bdbdbd',
+  impactBar: '#0079a5',
+  impactBarBackground: '#d9d9d9'
 };
 
 // Fonts

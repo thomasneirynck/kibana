@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {
+  unit,
   units,
   px,
   colors,
@@ -10,17 +11,12 @@ import {
 
 export const Table = styled.table`width: 100%;`;
 export const TableHead = styled.th`
-  text-align: right;
   border-bottom: 1px solid ${colors.elementBorder};
-  border-left: 1px solid ${colors.tableBorder};
-  padding: ${px(units.minus)};
+  padding: ${px(units.half)} ${px(unit)};
   position: relative;
   cursor: pointer;
-
-  &:first-child {
-    border-left: 0;
-    text-align: left;
-  }
+  font-weight: normal;
+  color: ${colors.tableHeaderColor};
 `;
 
 const LoadingContainer = styled.div`

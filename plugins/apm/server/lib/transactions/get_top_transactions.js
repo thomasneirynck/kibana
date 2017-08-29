@@ -6,7 +6,7 @@ import {
   TRANSACTION_ID,
   TRANSACTION_DURATION
 } from '../../../common/constants';
-import { get } from 'lodash';
+import { get, sortBy } from 'lodash';
 export async function getTopTransactions(req) {
   const { appName } = req.params;
   const { query } = req.query;
@@ -81,7 +81,7 @@ export async function getTopTransactions(req) {
   }
   const resp = await client('search', params);
   const buckets = get(resp, 'aggregations.transactions.buckets', []);
-  return buckets.map(bucket => {
+  const results = buckets.map(bucket => {
     const avg = bucket.avg.value;
     const rpm = bucket.doc_count / minutes;
     const impact = Math.round(avg * rpm);
@@ -95,4 +95,7 @@ export async function getTopTransactions(req) {
       transaction_type: transactionType
     };
   });
+
+  // Sort results by impact - needs to be desc, hence the reverse()
+  return sortBy(results, o => o.impact).reverse();
 }

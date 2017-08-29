@@ -16,7 +16,7 @@ export function apm(kibana) {
     uiExports: {
       app: {
         title: 'APM',
-        description: 'A demo plugin',
+        description: 'APM for the Elastic Stack',
         main: 'plugins/apm/app',
         icon: 'plugins/apm/icon.svg'
       }
