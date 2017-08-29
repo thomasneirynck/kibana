@@ -5,7 +5,9 @@
 node_modules/
 npm-debug.log
 .vscode
+
 yarn.lock
+package-lock.json
 
 .gradle/
 
