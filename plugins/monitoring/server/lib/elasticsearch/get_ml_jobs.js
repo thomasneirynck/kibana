@@ -81,5 +81,5 @@ export function getMlJobsForCluster(req, esIndexPattern, cluster) {
   }
 
   // ML is not supported
-  return Promise.resolve();
+  return Promise.resolve(null);
 }

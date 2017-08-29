@@ -47,8 +47,14 @@ export async function getClustersFromRequest(req, esIndexPattern, kbnIndexPatter
     const cluster = clusters[0];
 
     // add ml jobs and alerts data
-    cluster.ml = { jobs: await getMlJobsForCluster(req, esIndexPattern, cluster) };
-    cluster.alerts = await alertsClusterSearch(req, alertsIndex, cluster, checkLicenseForAlerts, { size: CLUSTER_ALERTS_SEARCH_SIZE });
+    const mlJobs = await getMlJobsForCluster(req, esIndexPattern, cluster);
+    if (mlJobs !== null) {
+      cluster.ml = { jobs: mlJobs };
+    }
+    const alerts = await alertsClusterSearch(req, alertsIndex, cluster, checkLicenseForAlerts, { size: CLUSTER_ALERTS_SEARCH_SIZE });
+    if (alerts) {
+      cluster.alerts = alerts;
+    }
   } else {
     // get all clusters
     if (!clusters || clusters.length === 0) {
