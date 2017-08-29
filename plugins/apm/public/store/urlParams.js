@@ -1,4 +1,5 @@
 import _ from 'lodash';
+import isNil from 'lodash.isnil';
 import { LOCATION_UPDATE } from './location';
 import { toQuery, legacyDecodeURIComponent } from '../utils/url';
 import {
@@ -58,7 +59,7 @@ function urlParams(state = {}, action) {
 }
 
 function toNumber(value) {
-  if (value !== undefined && value !== null) {
+  if (!isNil(value)) {
     return parseInt(value, 10);
   }
 }

@@ -36,7 +36,7 @@ export function getBreadcrumbs({ match, routes }) {
       pattern,
       url: urls[i]
     }))
-    .filter(item => routes[item.pattern])
+    .filter(({ pattern }) => routes[pattern])
     .map(({ pattern, url }) => {
       const label = _.isString(routes[pattern])
         ? routes[pattern]

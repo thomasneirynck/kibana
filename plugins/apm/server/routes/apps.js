@@ -13,7 +13,7 @@ export function initAppsApi(server) {
         query: Joi.object().keys({
           start: dateValidation,
           end: dateValidation,
-          query: Joi.string().allow('')
+          query: Joi.string()
         })
       }
     },

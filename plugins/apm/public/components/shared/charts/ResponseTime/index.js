@@ -1,8 +1,7 @@
 import React, { PureComponent } from 'react';
 import 'react-vis/dist/style.css';
 import PropTypes from 'prop-types';
-import Voronoi from './Voronoi';
-import DragMarker from './DragMarker';
+import SelectionMarker from './SelectionMarker';
 
 import { scaleLinear } from 'd3-scale';
 import {
@@ -14,6 +13,7 @@ import {
   AreaSeries,
   MarkSeries,
   VerticalGridLines,
+  Voronoi,
   makeWidthFlexible
 } from 'react-vis';
 import { getYMax, getYMaxRounded, getXMax, getXMin } from '../utils';
@@ -152,9 +152,9 @@ class ResponseTime extends PureComponent {
 
           {this.state.isDrawing &&
           this.state.selectionEnd !== null && (
-            <DragMarker
-              selectionStart={x(this.state.selectionStart)}
-              selectionEnd={x(this.state.selectionEnd)}
+            <SelectionMarker
+              start={x(this.state.selectionStart)}
+              end={x(this.state.selectionEnd)}
             />
           )}
         </XYPlot>

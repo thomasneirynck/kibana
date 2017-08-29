@@ -1,9 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function DragMarker({ innerHeight, marginTop, selectionStart, selectionEnd }) {
-  const width = Math.abs(selectionEnd - selectionStart);
-  const x = selectionStart < selectionEnd ? selectionStart : selectionEnd;
+function DragMarker({ innerHeight, marginTop, start, end }) {
+  const width = Math.abs(end - start);
+  const x = start < end ? start : end;
   return (
     <rect
       pointerEvents="none"
@@ -19,8 +19,8 @@ function DragMarker({ innerHeight, marginTop, selectionStart, selectionEnd }) {
 
 DragMarker.requiresSVG = true;
 DragMarker.propTypes = {
-  x: PropTypes.number,
-  selectionEnd: PropTypes.number
+  start: PropTypes.number,
+  end: PropTypes.number
 };
 
 export default DragMarker;
