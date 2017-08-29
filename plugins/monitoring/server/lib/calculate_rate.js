@@ -23,17 +23,22 @@ export function calculateRate(
     timeWindowMax
   } = {}
 ) {
+  // check if any params used for calculations are null
+  if (hitTimestamp === null || earliestHitTimestamp === null || latestTotal === null || earliestTotal === null) {
+    return null;
+  }
+
   const hitTimestampMoment = moment(hitTimestamp).valueOf();
   const earliestHitTimestampMoment = moment(earliestHitTimestamp).valueOf();
   const hitsTimeDelta = hitTimestampMoment - earliestHitTimestampMoment;
 
-  const earliestTimeInMillis = moment(timeWindowMin).valueOf();
-  const latestTimeInMillis = moment(timeWindowMax).valueOf();
-  const millisDelta = latestTimeInMillis - earliestTimeInMillis;
-
   if (hitsTimeDelta < 1) {
     return null;
   }
+
+  const earliestTimeInMillis = moment(timeWindowMin).valueOf();
+  const latestTimeInMillis = moment(timeWindowMax).valueOf();
+  const millisDelta = latestTimeInMillis - earliestTimeInMillis;
 
   let rate = null;
   if (millisDelta !== 0) {
