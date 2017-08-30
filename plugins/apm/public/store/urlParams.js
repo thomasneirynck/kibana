@@ -26,7 +26,7 @@ function urlParams(state = {}, action) {
         appName,
         transactionType,
         transactionName,
-        errorGroupingId
+        errorGroupId
       } = getPathParams(action.location.pathname);
 
       const { transactionId, detailTab, traceId, bucket } = toQuery(
@@ -46,7 +46,7 @@ function urlParams(state = {}, action) {
         appName,
         transactionType,
         transactionName: legacyDecodeURIComponent(transactionName),
-        errorGroupingId
+        errorGroupId
       };
     }
 
@@ -82,7 +82,7 @@ function getPathParams(pathname) {
     case 'errors':
       return {
         appName: paths[0],
-        errorGroupingId: paths[2]
+        errorGroupId: paths[2]
       };
     default:
       return {};

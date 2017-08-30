@@ -20,7 +20,7 @@ const getPaths = pathname => {
 const _routes = {
   '/': 'APM',
   '/:appName/errors': 'Errors',
-  '/:appName/errors/:groupingId': params => params.groupingId,
+  '/:appName/errors/:groupId': params => params.groupId,
   '/:appName': params => params.appName,
   '/:appName/transactions/:transactionType': params => params.transactionType,
   '/:appName/transactions/:transactionType/:transactionName': params =>

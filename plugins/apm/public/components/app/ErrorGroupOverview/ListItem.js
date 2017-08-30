@@ -41,13 +41,13 @@ const OccurrencesCell = TableCell.extend`
 `;
 
 function ListItem({ error, appName }) {
-  const { groupingId, culprit, message, occurrenceCount } = error;
+  const { groupId, culprit, message, occurrenceCount } = error;
   const count = numeral(occurrenceCount).format('0.[0]a');
 
   return (
     <Row>
       <TableCell>
-        <RelativeLink path={`${appName}/errors/${groupingId}`}>
+        <RelativeLink path={`${appName}/errors/${groupId}`}>
           <Message>{message || 'N/A'}</Message>
           <Culprit>{culprit || 'N/A'}</Culprit>
         </RelativeLink>

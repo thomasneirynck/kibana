@@ -147,9 +147,9 @@ export async function loadErrorGroupList({ appName, start, end }) {
   });
 }
 
-export async function loadErrorGroup({ appName, errorGroupingId, start, end }) {
+export async function loadErrorGroup({ appName, errorGroupId, start, end }) {
   return callApi({
-    pathname: `${getAppRootPath(appName)}/errors/${errorGroupingId}`,
+    pathname: `${getAppRootPath(appName)}/errors/${errorGroupId}`,
     camelcase: false,
     query: {
       start,

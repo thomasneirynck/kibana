@@ -2,7 +2,7 @@
 
 import {
   APP_NAME,
-  ERROR_GROUPING_ID,
+  ERROR_GROUP_ID,
   ERROR_CULPRIT,
   ERROR_MESSAGE
 } from '../../../common/constants';
@@ -40,7 +40,7 @@ export async function getErrors(req) {
         }
       },
       collapse: {
-        field: ERROR_GROUPING_ID,
+        field: ERROR_GROUP_ID,
         inner_hits: {
           name: 'occurrences',
           size: 0
@@ -61,7 +61,7 @@ export async function getErrors(req) {
     return {
       culprit: get(hit, `_source.${ERROR_CULPRIT}`),
       message: get(hit, `_source.${ERROR_MESSAGE}`),
-      grouping_id: get(hit, `_source.${ERROR_GROUPING_ID}`),
+      group_id: get(hit, `_source.${ERROR_GROUP_ID}`),
       occurrence_count: get(hit, `inner_hits.occurrences.hits.total`)
     };
   });

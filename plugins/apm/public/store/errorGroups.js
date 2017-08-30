@@ -48,16 +48,16 @@ const errorGroups = (state = {}, action) => {
   }
 };
 
-export function loadErrorGroup({ appName, errorGroupingId, start, end }) {
+export function loadErrorGroup({ appName, errorGroupId, start, end }) {
   return async dispatch => {
-    const key = `${appName}_${errorGroupingId}_${start}_${end}`;
+    const key = `${appName}_${errorGroupId}_${start}_${end}`;
     dispatch({ type: ERROR_GROUP_LOADING, key });
 
     let response;
     try {
       response = await rest.loadErrorGroup({
         appName,
-        errorGroupingId,
+        errorGroupId,
         start,
         end
       });
@@ -78,8 +78,8 @@ export function loadErrorGroup({ appName, errorGroupingId, start, end }) {
 }
 
 export function getErrorGroup(state) {
-  const { appName, errorGroupingId, start, end } = state.urlParams;
-  const key = `${appName}_${errorGroupingId}_${start}_${end}`;
+  const { appName, errorGroupId, start, end } = state.urlParams;
+  const key = `${appName}_${errorGroupId}_${start}_${end}`;
   return state.errorGroups[key] || INITIAL_STATE;
 }
 

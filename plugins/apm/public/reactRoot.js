@@ -30,7 +30,7 @@ function Root({ timefilter }) {
 
           {/* Errors */}
           <Route
-            path="/:appName/errors/:groupingId"
+            path="/:appName/errors/:groupId"
             component={ErrorGroupDetails}
           />
           <Route exact path="/:appName/errors" component={ErrorGroupOverview} />

@@ -53,10 +53,10 @@ const PropertyValue = styled.div`
 `;
 
 function AllOccurrencesLink({ errorGroup, appName }) {
-  const groupingId = errorGroup.grouping_id;
+  const groupId = errorGroup.group_id;
   const occurrencesCount = errorGroup.occurrences_count;
 
-  if (!appName || !groupingId) {
+  if (!appName || !groupId) {
     return null;
   }
 
@@ -72,7 +72,7 @@ function AllOccurrencesLink({ errorGroup, appName }) {
     vertical-align: middle;
   `;
 
-  const discoverRoute = `/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-24h,mode:quick,to:now))&_a=(interval:auto,query:(language:lucene,query:'context.app.name:${appName}%20AND%20error.checksum:${groupingId}'),sort:!('@timestamp',desc))`;
+  const discoverRoute = `/app/kibana#/discover?_g=(refreshInterval:(display:Off,pause:!f,value:0),time:(from:now-24h,mode:quick,to:now))&_a=(interval:auto,query:(language:lucene,query:'context.app.name:${appName}%20AND%20error.grouping_key:${groupId}'),sort:!('@timestamp',desc))`;
   return (
     <DiscoverLink href={discoverRoute}>
       <DiscoverIcon src="/plugins/kibana/assets/discover.svg" />

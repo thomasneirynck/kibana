@@ -1,10 +1,10 @@
 /* eslint-disable no-shadow */
 
-import { APP_NAME, ERROR_GROUPING_ID } from '../../../common/constants';
+import { APP_NAME, ERROR_GROUP_ID } from '../../../common/constants';
 import { get } from 'lodash';
 export async function getErrorGroup(req) {
   const { appName } = req.params;
-  const { groupingId } = req.params;
+  const { groupId } = req.params;
   const { start, end, client, config } = req.pre.setup;
 
   const params = {
@@ -21,7 +21,7 @@ export async function getErrorGroup(req) {
             },
             {
               term: {
-                [ERROR_GROUPING_ID]: groupingId
+                [ERROR_GROUP_ID]: groupId
               }
             },
             {
@@ -49,6 +49,6 @@ export async function getErrorGroup(req) {
   return {
     error: get(resp, 'hits.hits[0]._source', {}),
     occurrences_count: get(resp, 'hits.total'),
-    grouping_id: get(resp, `hits.hits[0]._source.${ERROR_GROUPING_ID}`)
+    group_id: get(resp, `hits.hits[0]._source.${ERROR_GROUP_ID}`)
   };
 }

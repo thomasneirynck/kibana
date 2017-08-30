@@ -29,7 +29,7 @@ export function initErrorsApi(server) {
   });
 
   server.route({
-    path: '/api/apm/apps/{appName}/errors/{groupingId}',
+    path: '/api/apm/apps/{appName}/errors/{groupId}',
     config: {
       pre: [{ method: setupRequest, assign: 'setup' }],
       validate: {

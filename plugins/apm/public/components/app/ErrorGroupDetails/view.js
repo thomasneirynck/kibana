@@ -6,10 +6,10 @@ import Breadcrumbs from '../../shared/Breadcrumbs';
 import DetailView from './DetailView';
 
 function loadErrorGroup(props) {
-  const { appName, errorGroupingId, start, end } = props.urlParams;
+  const { appName, errorGroupId, start, end } = props.urlParams;
 
-  if (appName && errorGroupingId && start && end && !props.errorGroup.status) {
-    props.loadErrorGroup({ appName, errorGroupingId, start, end });
+  if (appName && errorGroupId && start && end && !props.errorGroup.status) {
+    props.loadErrorGroup({ appName, errorGroupId, start, end });
   }
 }
 
@@ -23,12 +23,12 @@ class ErrorGroupDetails extends Component {
   }
 
   render() {
-    const { errorGroupingId } = this.props.urlParams;
+    const { errorGroupId } = this.props.urlParams;
 
     return (
       <div>
         <Breadcrumbs />
-        <PageHeader title={`Error group: ${errorGroupingId}`} />
+        <PageHeader title={`Error group: ${errorGroupId}`} />
         <WiremockContainer>Occurrences</WiremockContainer>
         <WiremockContainer>Occurrences histogram</WiremockContainer>
         <DetailView

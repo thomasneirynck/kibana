@@ -18,7 +18,7 @@ function List({ appName, list }) {
       <Table>
         <thead>
           <tr>
-            <TableHead>Error grouping</TableHead>
+            <TableHead>Error groups</TableHead>
             <TableHead>Occurrences</TableHead>
           </tr>
         </thead>
@@ -28,11 +28,7 @@ function List({ appName, list }) {
 
           {list.data.map(error => {
             return (
-              <ListItem
-                key={error.groupingId}
-                appName={appName}
-                error={error}
-              />
+              <ListItem key={error.groupId} appName={appName} error={error} />
             );
           })}
         </tbody>

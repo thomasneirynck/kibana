@@ -26,7 +26,7 @@ describe('urlParams', () => {
     const state = reducer(
       {},
       updateLocation({
-        pathname: 'myAppName/errors/myErrorGroupingId',
+        pathname: 'myAppName/errors/myerrorGroupId',
         search: '?detailTab=request&bucket=4'
       })
     );
@@ -34,7 +34,7 @@ describe('urlParams', () => {
     expect(state).toEqual(
       expect.objectContaining({
         appName: 'myAppName',
-        errorGroupingId: 'myErrorGroupingId',
+        errorGroupId: 'myerrorGroupId',
         detailTab: 'request',
         bucket: 4
       })
