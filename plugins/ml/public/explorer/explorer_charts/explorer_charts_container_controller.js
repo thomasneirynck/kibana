@@ -35,12 +35,11 @@ module.controller('MlExplorerChartsContainerController', function ($scope, timef
   $scope.seriesToPlot = [];
 
   const $chartContainer = $('.explorer-charts');
-  const FUNCTION_DESCRIPTIONS_TO_PLOT = ['mean', 'min', 'max', 'sum', 'count', 'distinct_count'];
+  const FUNCTION_DESCRIPTIONS_TO_PLOT = ['mean', 'min', 'max', 'sum', 'count', 'distinct_count', 'median'];
   const CHART_MAX_POINTS = 500;
 
   const anomalyDataChangeListener = function (anomalyRecords, earliestMs, latestMs) {
     $scope.allSeriesRecords = processRecordsForDisplay(anomalyRecords);
-
     // Calculate the number of charts per row, depending on the width available, to a max of 4.
     const chartsContainerWidth = $chartContainer.width();
     const chartsPerRow = Math.min(Math.max(Math.floor(chartsContainerWidth / 550), 1), 4);

@@ -19,7 +19,7 @@ import 'ui/timefilter';
 
 import { parseInterval } from 'ui/utils/parse_interval';
 
-import { calculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/util/job_utils';
+import { calculateDatafeedFrequencyDefaultSeconds, ML_MEDIAN_PERCENTS } from 'plugins/ml/util/job_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
 
@@ -73,6 +73,11 @@ module.service('mlSingleMetricJobService', function (
       _.each(aggregationsByTime, (dataForTime) => {
         const time = dataForTime.key;
         let value = _.get(dataForTime, ['field_value', 'value']);
+
+        if (value === undefined && formConfig.field !== null) {
+          value = _.get(dataForTime, ['field_value', 'values', ML_MEDIAN_PERCENTS]);
+        }
+
         if (value === undefined && formConfig.field === null) {
           value = dataForTime.doc_count;
         }
@@ -190,7 +195,7 @@ module.service('mlSingleMetricJobService', function (
     if (formConfig.field !== null) {
       json.body.aggs.times.aggs = {
         'field_value':{
-          [formConfig.agg.type.name]: { field: formConfig.field.name }
+          [formConfig.agg.type.dslName]: { field: formConfig.field.name }
         }
       };
     }
@@ -206,9 +211,9 @@ module.service('mlSingleMetricJobService', function (
 
     let func = formConfig.agg.type.mlName;
     if (formConfig.isSparseData) {
-      if (formConfig.agg.type.name === 'count') {
+      if (formConfig.agg.type.dslName === 'count') {
         func = func.replace(/count/, 'non_zero_count');
-      } else if(formConfig.agg.type.name === 'sum') {
+      } else if(formConfig.agg.type.dslName === 'sum') {
         func = func.replace(/sum/, 'non_null_sum');
       }
     }
@@ -259,9 +264,8 @@ module.service('mlSingleMetricJobService', function (
 
     // Use the original es agg type rather than the ML version
     // e.g. count rather than high_count
-    const aggType = formConfig.agg.type.name;
+    const aggType = formConfig.agg.type.dslName;
     const interval = bucketSpanSeconds * 1000;
-
     switch (aggType) {
       case 'count':
         job.analysis_config.summary_count_field_name = 'doc_count';
@@ -283,6 +287,7 @@ module.service('mlSingleMetricJobService', function (
         };
         break;
       case 'avg':
+      case 'median':
       case 'sum':
       case 'min':
       case 'max':

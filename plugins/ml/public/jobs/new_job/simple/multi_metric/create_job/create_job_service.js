@@ -19,7 +19,7 @@ import 'ui/timefilter';
 
 import { parseInterval } from 'ui/utils/parse_interval';
 
-import { calculateDatafeedFrequencyDefaultSeconds } from 'plugins/ml/util/job_utils';
+import { calculateDatafeedFrequencyDefaultSeconds, ML_MEDIAN_PERCENTS } from 'plugins/ml/util/job_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
@@ -125,7 +125,15 @@ module.service('mlMultiMetricJobService', function (
         });
 
         _.each(fieldIds, (fieldId) => {
-          let value = (fieldId === EVENT_RATE_COUNT_FIELD) ? docCount : dataForTime[fieldId].value;
+          let value;
+          if (fieldId === EVENT_RATE_COUNT_FIELD) {
+            value = docCount;
+          } else if (typeof dataForTime[fieldId].value !== 'undefined') {
+            value = dataForTime[fieldId].value;
+          } else if (typeof dataForTime[fieldId].values !== 'undefined') {
+            value = dataForTime[fieldId].values[ML_MEDIAN_PERCENTS];
+          }
+
           if (!isFinite(value)) {
             value = 0;
           }
@@ -212,8 +220,12 @@ module.service('mlMultiMetricJobService', function (
       _.each(formConfig.fields, (field) => {
         if (field.id !== EVENT_RATE_COUNT_FIELD) {
           json.body.aggs.times.aggs[field.id] = {
-            [field.agg.type.name]: { field: field.name }
+            [field.agg.type.dslName]: { field: field.name }
           };
+
+          if (field.agg.type.dslName === 'percentiles') {
+            json.body.aggs.times.aggs[field.id][field.agg.type.dslName].percents = [ML_MEDIAN_PERCENTS];
+          }
         }
       });
     }
@@ -230,9 +242,9 @@ module.service('mlMultiMetricJobService', function (
     _.each(formConfig.fields, (field, key) => {
       let func = field.agg.type.mlName;
       if (formConfig.isSparseData) {
-        if (field.agg.type.name === 'count') {
+        if (field.agg.type.dslName === 'count') {
           func = func.replace(/count/, 'non_zero_count');
-        } else if(field.agg.type.name === 'sum') {
+        } else if(field.agg.type.dslName === 'sum') {
           func = func.replace(/sum/, 'non_null_sum');
         }
       }

@@ -184,6 +184,8 @@ export const aggregationTypeTransform = {
       newAggType = 'avg';
     } else if (newAggType === 'distinct_count') {
       newAggType = 'cardinality';
+    } else if (newAggType === 'median') {
+      newAggType = 'percentiles';
     }
 
     return newAggType;
@@ -195,6 +197,8 @@ export const aggregationTypeTransform = {
       newAggType = 'mean';
     } else if (newAggType === 'cardinality') {
       newAggType = 'distinct_count';
+    } else if (newAggType === 'percentiles') {
+      newAggType = 'median';
     }
 
     return newAggType;

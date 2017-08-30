@@ -225,7 +225,7 @@ module
     $scope.ui.dirty = true;
     mlESMappingService.getMappings();
 
-    $scope.ui.isCountOrSum = ($scope.formConfig.agg.type.name === 'count' || $scope.formConfig.agg.type.name === 'sum');
+    $scope.ui.isCountOrSum = ($scope.formConfig.agg.type.dslName === 'count' || $scope.formConfig.agg.type.dslName === 'sum');
   };
 
   $scope.fieldChange = function () {

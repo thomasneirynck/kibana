@@ -21,7 +21,8 @@ import {
   isTimeSeriesViewFunction,
   isModelPlotEnabled,
   mlFunctionToESAggregation,
-  isJobIdValid
+  isJobIdValid,
+  ML_MEDIAN_PERCENTS
 } from '../job_utils';
 
 describe('ML - job utils', () => {
@@ -165,6 +166,9 @@ describe('ML - job utils', () => {
       expect(isTimeSeriesViewFunction('mean')).to.be(true);
       expect(isTimeSeriesViewFunction('low_mean')).to.be(true);
       expect(isTimeSeriesViewFunction('high_mean')).to.be(true);
+      expect(isTimeSeriesViewFunction('median')).to.be(true);
+      expect(isTimeSeriesViewFunction('low_median')).to.be(true);
+      expect(isTimeSeriesViewFunction('high_median')).to.be(true);
       expect(isTimeSeriesViewFunction('min')).to.be(true);
       expect(isTimeSeriesViewFunction('max')).to.be(true);
       expect(isTimeSeriesViewFunction('sum')).to.be(true);
@@ -181,9 +185,6 @@ describe('ML - job utils', () => {
       expect(isTimeSeriesViewFunction('info_content')).to.be(false);
       expect(isTimeSeriesViewFunction('low_info_content')).to.be(false);
       expect(isTimeSeriesViewFunction('high_info_content')).to.be(false);
-      expect(isTimeSeriesViewFunction('median')).to.be(false);
-      expect(isTimeSeriesViewFunction('low_median')).to.be(false);
-      expect(isTimeSeriesViewFunction('high_median')).to.be(false);
       expect(isTimeSeriesViewFunction('varp')).to.be(false);
       expect(isTimeSeriesViewFunction('low_varp')).to.be(false);
       expect(isTimeSeriesViewFunction('high_varp')).to.be(false);
@@ -290,9 +291,9 @@ describe('ML - job utils', () => {
       expect(mlFunctionToESAggregation('info_content')).to.be(null);
       expect(mlFunctionToESAggregation('low_info_content')).to.be(null);
       expect(mlFunctionToESAggregation('high_info_content')).to.be(null);
-      expect(mlFunctionToESAggregation('median')).to.be(null);
-      expect(mlFunctionToESAggregation('low_median')).to.be(null);
-      expect(mlFunctionToESAggregation('high_median')).to.be(null);
+      expect(mlFunctionToESAggregation('median')).to.be('percentiles');
+      expect(mlFunctionToESAggregation('low_median')).to.be('percentiles');
+      expect(mlFunctionToESAggregation('high_median')).to.be('percentiles');
       expect(mlFunctionToESAggregation('varp')).to.be(null);
       expect(mlFunctionToESAggregation('low_varp')).to.be(null);
       expect(mlFunctionToESAggregation('high_varp')).to.be(null);
@@ -324,4 +325,10 @@ describe('ML - job utils', () => {
     });
   });
 
+  describe('ML_MEDIAN_PERCENTS', () => {
+
+    it('is \'50.0\'', () => {
+      expect(ML_MEDIAN_PERCENTS).to.be('50.0');
+    });
+  });
 });

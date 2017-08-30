@@ -494,7 +494,7 @@ module
   function showSparseDataCheckbox() {
     $scope.ui.isCountOrSum = false;
     _.each($scope.formConfig.fields, (fd) => {
-      if (fd.agg.type.name === 'count' || fd.agg.type.name === 'sum') {
+      if (fd.agg.type.dslName === 'count' || fd.agg.type.dslName === 'sum') {
         $scope.ui.isCountOrSum = true;
       }
     });

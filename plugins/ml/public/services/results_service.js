@@ -17,6 +17,7 @@
 // Ml Results dashboards.
 import _ from 'lodash';
 
+import { ML_MEDIAN_PERCENTS } from 'plugins/ml/util/job_utils';
 import { escapeForElasticsearchQuery } from 'plugins/ml/util/string_utils';
 import { ML_RESULTS_INDEX_PATTERN } from 'plugins/ml/constants/index_patterns';
 
@@ -1231,6 +1232,9 @@ module.service('mlResultsService', function ($q, es) {
 
       const metricAgg = {};
       metricAgg[metricFunction] = { 'field': metricFieldName };
+      if (metricFunction === 'percentiles') {
+        metricAgg[metricFunction].percents = [ML_MEDIAN_PERCENTS];
+      }
       body.aggs.byTime.aggs.metric = metricAgg;
     }
 
@@ -1245,8 +1249,11 @@ module.service('mlResultsService', function ($q, es) {
           obj.results[dataForTime.key] = dataForTime.doc_count;
         } else {
           const value = _.get(dataForTime, ['metric', 'value']);
+          const values = _.get(dataForTime, ['metric', 'values']);
           if (value !== undefined) {
             obj.results[dataForTime.key] = value;
+          } else if (values !== undefined) {
+            obj.results[dataForTime.key] = values[ML_MEDIAN_PERCENTS];
           }
         }
       });

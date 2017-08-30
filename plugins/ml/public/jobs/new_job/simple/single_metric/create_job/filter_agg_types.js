@@ -73,6 +73,21 @@ export function filterAggTypes(aggTypes) {
       typeCopy.mlName = 'low_mean';
       filteredAggTypes.push(typeCopy);
 
+    } else if (type.name === 'median') {
+      type.mlModelPlotAgg = { max: 'max', min: 'min' };
+      filteredAggTypes.push(type);
+
+      typeCopy = angular.copy(type);
+      typeCopy.title   = 'High median';
+      typeCopy.mlName = 'high_median';
+      filteredAggTypes.push(typeCopy);
+
+      typeCopy = angular.copy(type);
+      typeCopy.title   = 'Low median';
+      typeCopy.mlName = 'low_median';
+      filteredAggTypes.push(typeCopy);
+
+
     } else if (type.name === 'min') {
       filteredAggTypes.push(type);
     } else if (type.name === 'max') {

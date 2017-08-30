@@ -151,6 +151,10 @@ export function mlFunctionToESAggregation(functionName) {
     return 'cardinality';
   }
 
+  if (functionName === 'median' || functionName === 'high_median' || functionName === 'low_median') {
+    return 'percentiles';
+  }
+
   if (functionName === 'min' || functionName === 'max') {
     return functionName;
   }
@@ -167,3 +171,8 @@ export function mlFunctionToESAggregation(functionName) {
 export function isJobIdValid(jobId) {
   return (jobId.match(/^[a-z0-9\-\_]{1,64}$/g) && !jobId.match(/^([_-].*)?(.*[_-])?$/g)) ? true : false;
 }
+
+// To get median data for jobs and charts we need to use Elasticsearch's
+// percentiles aggregation. This setting is used with the `percents` field
+// of the percentiles aggregation to get the correct data.
+export const ML_MEDIAN_PERCENTS = '50.0';
