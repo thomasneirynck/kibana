@@ -28,24 +28,30 @@ my $User_Repo  = 'elastic/x-pack-kibana/';
 my $Issue_URL  = "http://github.com/${User_Repo}issues/";
 
 my @Groups = (
-    "breaking", "breaking-java", "deprecation", "feature",
-    "enhancement", "bug", "regression", "upgrade", "non-issue", "build",
-    "docs",        "test"
+    "breaking", "breaking-java", "release_note:breaking", "deprecation",
+    "release_note:deprecation", "feature", "enhancement", "release_note:enhancement",
+    "bug", "release_note:fix", "release_note:roadmap", "regression", "upgrade", "non-issue", "build",
+    "docs", "test"
 );
 my %Group_Labels = (
-    breaking        => 'Breaking changes',
-    'breaking-java' => 'Breaking Java changes',
-    build           => 'Build',
-    deprecation     => 'Deprecations',
-    docs            => 'Docs',
-    feature         => 'New features',
-    enhancement     => 'Enhancements',
-    bug             => 'Bug fixes',
-    regression      => 'Regressions',
-    test            => 'Tests',
-    upgrade         => 'Upgrades',
-    "non-issue"     => 'Non-issue',
-    other           => 'NOT CLASSIFIED',
+    breaking                   => 'Breaking changes',
+    'breaking-java'            => 'Breaking Java changes',
+    'release_note:breaking'    => 'Breaking changes',
+    build                      => 'Build',
+    deprecation                => 'Deprecations',
+    'release_note:deprecation' => 'Deprecations',
+    docs                       => 'Docs',
+    feature                    => 'New features',
+    enhancement                => 'Enhancements',
+    'release_note:enhancement' => 'Enhancements',
+    bug                        => 'Bug fixes',
+    'release_note:fix'         => 'Bug fixes',
+    regression                 => 'Regressions',
+    'release_note:roadmap'     => 'Roadmap',
+    test                       => 'Tests',
+    upgrade                    => 'Upgrades',
+    "non-issue"                => 'Non-issue',
+    other                      => 'NOT CLASSIFIED',
 );
 
 use JSON();
