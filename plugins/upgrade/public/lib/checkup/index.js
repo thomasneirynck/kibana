@@ -1,8 +1,4 @@
-import {
-  getFromApi,
-} from '../request';
+export {
+  getDeprecations,
+} from './deprecations';
 
-
-export async function getDeprecations() {
-  return await getFromApi(`/api/migration/deprecations`);
-}
