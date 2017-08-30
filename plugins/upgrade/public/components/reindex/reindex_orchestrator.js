@@ -50,6 +50,24 @@ export function withReindexOrchestrator() {
         this.loadIndices();
       }
 
+      loadIndices = async () => {
+        const indices = await this.fetchIndices();
+
+        const newIndexStates = _.reduce(indices, ((acc, indexInfo, indexName) => ({
+          ...acc,
+          [indexName]: _.get(acc, indexName, createInitialIndexState(
+            indexName,
+            getActionType(indexInfo.action_required),
+            indexInfo.taskId,
+          )),
+        })), {});
+
+        this.setState((state) => ({
+          ...state,
+          indices: newIndexStates,
+        }));
+      }
+
       fetchIndices = async () => {
         try {
           const response = await getAssistance();
@@ -70,27 +88,7 @@ export function withReindexOrchestrator() {
 
             });
           }
-
-          throw error;
         }
-      }
-
-      loadIndices = async () => {
-        const indices = await this.fetchIndices();
-
-        const newIndexStates = _.reduce(indices, ((acc, indexInfo, indexName) => ({
-          ...acc,
-          [indexName]: _.get(acc, indexName, createInitialIndexState(
-            indexName,
-            getActionType(indexInfo.action_required),
-            indexInfo.taskId,
-          )),
-        })), {});
-
-        this.setState((state) => ({
-          ...state,
-          indices: newIndexStates,
-        }));
       }
 
       processIndex = (indexName) => {
