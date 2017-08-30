@@ -1,11 +1,5 @@
-import hapiAuthBasic from 'hapi-auth-basic';
-import hapiAuthCookie from 'hapi-auth-cookie';
 import { resolve } from 'path';
-import Promise from 'bluebird';
-import { getBasicValidate } from './server/lib/get_basic_validate';
-import { getCookieValidate } from './server/lib/get_cookie_validate';
 import { getUserProvider } from './server/lib/get_user';
-import { isAuthenticatedProvider } from './server/lib/is_authenticated';
 import { initAuthenticateApi } from './server/routes/api/v1/authenticate';
 import { initUsersApi } from './server/routes/api/v1/users';
 import { initRolesApi } from './server/routes/api/v1/roles';
@@ -15,9 +9,9 @@ import { initLogoutView } from './server/routes/views/logout';
 import { validateConfig } from './server/lib/validate_config';
 import { createScheme } from './server/lib/login_scheme';
 import { checkLicense } from './server/lib/check_license';
+import { initAuthenticator } from './server/lib/authentication/authenticator';
 import { mirrorPluginStatus } from '../../server/lib/mirror_plugin_status';
 import { LOGIN_DISABLED_MESSAGE } from './server/lib/login_disabled_message';
-import { AuthScopeService } from './server/lib/auth_scope_service';
 
 export const security = (kibana) => new kibana.Plugin({
   id: 'security',
@@ -27,6 +21,7 @@ export const security = (kibana) => new kibana.Plugin({
 
   config(Joi) {
     return Joi.object({
+      authProviders: Joi.array().items(Joi.string()).default(['basic']),
       enabled: Joi.boolean().default(true),
       cookieName: Joi.string().default('sid'),
       encryptionKey: Joi.string(),
@@ -92,7 +87,7 @@ export const security = (kibana) => new kibana.Plugin({
     }
   },
 
-  init(server) {
+  async init(server) {
     const thisPlugin = this;
     const xpackMainPlugin = server.plugins.xpack_main;
     mirrorPluginStatus(xpackMainPlugin, thisPlugin);
@@ -105,42 +100,17 @@ export const security = (kibana) => new kibana.Plugin({
     const config = server.config();
     validateConfig(config, message => server.log(['security', 'warning'], message));
 
-    const cookieName = config.get('xpack.security.cookieName');
-    const authScope = new AuthScopeService();
-    server.expose('registerAuthScopeGetter', (scopeExtender) => {
-      authScope.registerGetter(scopeExtender);
-    });
+    server.auth.scheme('login', createScheme({
+      redirectUrl: (path) => loginUrl(config.get('server.basePath'), path)
+    }));
 
-    const register = Promise.promisify(server.register, { context: server });
-    Promise.all([
-      register(hapiAuthBasic),
-      register(hapiAuthCookie)
-    ])
-    .then(() => {
-      server.auth.scheme('login', createScheme({
-        redirectUrl: (path) => loginUrl(config.get('server.basePath'), path),
-        strategies: ['security-cookie', 'security-basic'],
-      }));
-
-      server.auth.strategy('session', 'login', 'required');
-
-      server.auth.strategy('security-basic', 'basic', false, {
-        validateFunc: getBasicValidate(server, authScope)
-      });
-
-      server.auth.strategy('security-cookie', 'cookie', false, {
-        cookie: cookieName,
-        password: config.get('xpack.security.encryptionKey'),
-        clearInvalid: true,
-        validateFunc: getCookieValidate(server, authScope),
-        isSecure: config.get('xpack.security.secureCookies'),
-        path: config.get('server.basePath') + '/'
-      });
-    });
+    // The `required` means that the `session` strategy that is based on `login` schema defined above will be
+    // automatically assigned to all routes that don't contain an auth config.
+    server.auth.strategy('session', 'login', 'required');
 
     getUserProvider(server);
-    isAuthenticatedProvider(server);
 
+    await initAuthenticator(server);
     initAuthenticateApi(server);
     initUsersApi(server);
     initRolesApi(server);

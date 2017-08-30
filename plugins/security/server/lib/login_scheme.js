@@ -6,17 +6,15 @@ import { authenticateFactory } from './auth_redirect';
  *
  * @param {object}
  *    redirectUrl: Transform function that request path is passed to before
- *                 redirecting
- *    strategy:    The name of the auth strategy to use for test
+ *                 redirecting.
  * @return {Function}
  */
-export function createScheme({ redirectUrl, strategies }) {
+export function createScheme({ redirectUrl }) {
   return (server) => {
     const authenticate = authenticateFactory({
       redirectUrl,
-      strategies,
-      testRequest: server.auth.test,
       xpackMainPlugin: server.plugins.xpack_main,
+      server
     });
     return { authenticate };
   };

@@ -4,15 +4,11 @@ import Joi from 'joi';
 import { getClient } from '../../../../../../server/lib/get_client_shield';
 import { userSchema } from '../../../lib/user_schema';
 import { wrapError } from '../../../lib/errors';
-import { getCalculateExpires } from '../../../lib/get_calculate_expires';
-import { onChangePassword } from '../../../lib/on_change_password';
-import { getIsValidUser } from '../../../lib/get_is_valid_user';
 import { routePreCheckLicense } from '../../../lib/route_pre_check_license';
+import { BasicCredentials } from '../../../../server/lib/authentication/providers/basic';
 
 export function initUsersApi(server) {
   const callWithRequest = getClient(server).callWithRequest;
-  const calculateExpires = getCalculateExpires(server);
-  const isValidUser = getIsValidUser(server);
   const routePreCheckLicenseFn = routePreCheckLicense(server);
 
   server.route({
@@ -81,20 +77,41 @@ export function initUsersApi(server) {
   server.route({
     method: 'POST',
     path: '/api/security/v1/users/{username}/password',
-    handler(request, reply) {
+    async handler(request, reply) {
       const username = request.params.username;
       const { password, newPassword } = request.payload;
+      const isCurrentUser = username === request.auth.credentials.username;
 
-      let promise = Promise.resolve();
-      if (username === request.auth.credentials.username) promise = isValidUser(request, username, password);
+      // If user tries to change own password, let's check if old password is valid first.
+      if (isCurrentUser) {
+        try {
+          await server.plugins.security.getUser(
+            BasicCredentials.decorateRequest(request, username, password)
+          );
+        } catch(err) {
+          return reply(Boom.unauthorized(err));
+        }
+      }
 
-      return promise.then(() => {
+      try {
         const body = { password: newPassword };
-        return callWithRequest(request, 'shield.changePassword', { username, body })
-        .then(onChangePassword(request, username, newPassword, calculateExpires, reply))
-        .catch(_.flow(wrapError, reply));
-      })
-      .catch((error) => reply(Boom.unauthorized(error)));
+        await callWithRequest(request, 'shield.changePassword', { username, body });
+
+        // Now we authenticate user with the new password again updating current session if any.
+        if (isCurrentUser) {
+          const authenticationResult = await server.plugins.security.authenticate(
+            BasicCredentials.decorateRequest(request, username, newPassword)
+          );
+
+          if (!authenticationResult.succeeded()) {
+            return reply(Boom.unauthorized((authenticationResult.error)));
+          }
+        }
+      } catch(err) {
+        return reply(wrapError(err));
+      }
+
+      return reply().code(204);
     },
     config: {
       validate: {

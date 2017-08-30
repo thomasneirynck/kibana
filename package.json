@@ -91,7 +91,6 @@
     "font-awesome": "4.4.0",
     "get-port": "2.1.0",
     "glob": "6.0.4",
-    "hapi-auth-basic": "4.2.0",
     "hapi-auth-cookie": "6.1.1",
     "history": "^4.6.3",
     "humps": "^2.0.1",

@@ -1,5 +1,4 @@
 import Boom from 'boom';
-import Promise from 'bluebird';
 import { contains, get, has } from 'lodash';
 
 const ROUTE_TAG_API = 'api';
@@ -14,18 +13,16 @@ const KIBANA_VERSION_HEADER = 'kbn-version';
  * it is probably the safest measure we have for determining whether a request
  * should return a 401 or a 302 when authentication fails.
  *
- * @param {object}
- *    onError:     Transform function that error is passed to before deferring
- *                 to standard error handler
- *    redirectUrl: Transform function that request path is passed to before
- *                 redirecting
- *    strategy:    The name of the auth strategy to use for test, or an array of auth strategy names
- *    testRequest: Function to test authentication for a request
+ * @param {Object} options
+ * @property {string} redirectUrl: Transform function that request path is passed to before
+ * redirecting
+ * @property {Object} xpackMainPlugin XPack Main plugin.
+ * @property {Hapi.Server} HapiJS Server instance.
+ *
  * @return {Function}
  */
-export function authenticateFactory({ redirectUrl, strategies, testRequest, xpackMainPlugin }) {
-  const testRequestAsync = Promise.promisify(testRequest);
-  return function authenticate(request, reply) {
+export function authenticateFactory({ redirectUrl, xpackMainPlugin, server }) {
+  return async function authenticate(request, reply) {
     // If security is disabled or license is basic, continue with no user credentials and delete the client cookie as well
     const xpackInfo = xpackMainPlugin && xpackMainPlugin.info;
     if (xpackInfo
@@ -35,18 +32,21 @@ export function authenticateFactory({ redirectUrl, strategies, testRequest, xpac
       return;
     }
 
-    // Test the request against all of the authentication strategies and if any succeed, continue
-    return Promise.any(strategies.map((strategy) => testRequestAsync(strategy, request)))
-    .then(async (credentials) => {
-      reply.continue({ credentials });
-    })
-    .catch(() => {
-      if (shouldRedirect(request)) {
-        reply.redirect(redirectUrl(request.url.path));
-      } else {
-        reply(Boom.unauthorized());
+    try {
+      const authenticationResult = await server.plugins.security.authenticate(request);
+      if (authenticationResult.succeeded()) {
+        reply.continue({ credentials: authenticationResult.user });
+        return;
       }
-    });
+    } catch(err) {
+      server.log(['error', 'authentication'], err);
+    }
+
+    if (shouldRedirect(request)) {
+      reply.redirect(redirectUrl(request.url.path));
+    } else {
+      reply(Boom.unauthorized());
+    }
   };
 }
 

@@ -3,7 +3,9 @@ import sinon from 'sinon';
 
 import { replyFixture } from './__fixtures__/reply';
 import { requestFixture } from './__fixtures__/request';
+import { serverFixture } from './__fixtures__/server';
 
+import { AuthenticationResult } from '../authentication/authentication_result';
 import { authenticateFactory, shouldRedirect } from '../auth_redirect';
 
 describe('lib/auth_redirect', function () {
@@ -15,12 +17,18 @@ describe('lib/auth_redirect', function () {
       let reply;
       let err;
       let credentials;
+      let server;
 
       beforeEach(() => {
+        request = requestFixture();
+        reply = replyFixture();
+        err = new Error();
+        credentials = {};
+        server = serverFixture();
+
         params = {
           redirectUrl: sinon.stub().returns('mock redirect url'),
-          strategies: ['wat', 'huh'],
-          testRequest: sinon.stub(),
+          server,
           xpackMainPlugin: {
             info: {
               license: {
@@ -31,46 +39,81 @@ describe('lib/auth_redirect', function () {
             }
           }
         };
-        request = requestFixture();
-        reply = replyFixture();
-        err = new Error();
-        credentials = {};
+
         authenticate = authenticateFactory(params);
+
+        params.server.plugins.security.authenticate.withArgs(request).returns(
+          Promise.resolve(AuthenticationResult.succeeded(credentials))
+        );
       });
 
-      it('invokes testRequest with strategy and request', () => {
-        params.testRequest.yields(undefined, credentials);
-        return authenticate(request, reply).then(() => {
-          params.strategies.forEach((strategy) => {
-            sinon.assert.calledWith(params.testRequest, strategy, request);
-          });
-        });
-      });
-      it('continues request with credentials on success', () => {
-        params.testRequest.yields(undefined, credentials);
-        return authenticate(request, reply).then(() => {
-          sinon.assert.calledWith(reply.continue, { credentials });
-        });
+      it('invokes `authenticate` with request', async () => {
+        await authenticate(request, reply);
+
+        sinon.assert.calledWithExactly(params.server.plugins.security.authenticate, request);
       });
 
-      describe('when testRequest fails', () => {
-        beforeEach(() => params.testRequest.yields(err));
+      it('continues request with credentials on success', async () => {
+        await authenticate(request, reply);
 
-        it('replies with redirect to redirectUrl() for non-xhr requests', () => {
-          return authenticate(request, reply).then(() => {
-            sinon.assert.calledWith(params.redirectUrl, request.url.path);
-            sinon.assert.calledWith(reply.redirect, 'mock redirect url');
-          });
+        sinon.assert.calledWith(reply.continue, { credentials });
+      });
+
+      describe('when `authenticate` throws unhandled exception', () => {
+        beforeEach(() => {
+          params.server.plugins.security.authenticate
+            .withArgs(request)
+            .returns(Promise.reject(err));
         });
-        it('replies with unauthorized for xhr requests', () => {
+
+        it('replies with redirect to redirectUrl() for non-xhr requests', async () => {
+          await authenticate(request, reply);
+
+          sinon.assert.calledWithExactly(server.log, ['error', 'authentication'], err);
+          sinon.assert.calledWithExactly(params.redirectUrl, request.url.path);
+          sinon.assert.calledWithExactly(reply.redirect, 'mock redirect url');
+        });
+
+        it('replies with unauthorized for xhr requests', async () => {
           request.raw.req.headers['kbn-version'] = 'something';
-          return authenticate(request, reply).then(() => {
-            sinon.assert.called(reply);
-            const error = reply.getCall(0).args[0];
-            expect(error.message).to.be('Unauthorized');
-            expect(error.output.payload.statusCode).to.be(401);
-            sinon.assert.notCalled(reply.continue);
-          });
+          await authenticate(request, reply);
+
+          sinon.assert.calledWithExactly(server.log, ['error', 'authentication'], err);
+          sinon.assert.calledWithExactly(reply, sinon.match({
+            message: 'Unauthorized',
+            output: {
+              payload: { statusCode: 401 }
+            }
+          }));
+          sinon.assert.notCalled(reply.continue);
+        });
+      });
+
+      describe('when `authenticate` fails to authenticate user', () => {
+        beforeEach(() => {
+          params.server.plugins.security.authenticate
+            .withArgs(request)
+            .returns(Promise.resolve(AuthenticationResult.failed(err)));
+        });
+
+        it('replies with redirect to redirectUrl() for non-xhr requests', async () => {
+          await authenticate(request, reply);
+
+          sinon.assert.calledWithExactly(params.redirectUrl, request.url.path);
+          sinon.assert.calledWithExactly(reply.redirect, 'mock redirect url');
+        });
+
+        it('replies with unauthorized for xhr requests', async () => {
+          request.raw.req.headers['kbn-version'] = 'something';
+          await authenticate(request, reply);
+
+          sinon.assert.calledWithExactly(reply, sinon.match({
+            message: 'Unauthorized',
+            output: {
+              payload: { statusCode: 401 }
+            }
+          }));
+          sinon.assert.notCalled(reply.continue);
         });
       });
 

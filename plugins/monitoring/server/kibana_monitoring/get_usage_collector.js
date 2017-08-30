@@ -1,5 +1,5 @@
 import { KIBANA_USAGE_TYPE } from '../../common/constants';
-import { getAuthHeader } from '../../../security/server/lib/basic_auth';
+import { BasicCredentials } from '../../../security/server/lib/authentication/providers/basic';
 
 /*
  * Use HapiJS server.inject to call the Kibana stats API
@@ -9,9 +9,11 @@ import { getAuthHeader } from '../../../security/server/lib/basic_auth';
 export function getUsageCollector(server, config) {
   const username = config.get('elasticsearch.username');
   const password = config.get('elasticsearch.password');
-  const fakeRequest = {
-    headers: getAuthHeader(username, password)
-  };
+  const fakeRequest = BasicCredentials.decorateRequest(
+    { headers: {} },
+    username,
+    password
+  );
 
   const { callWithRequest } = server.plugins.elasticsearch.getCluster('admin');
   const callCluster = (...args) => callWithRequest(fakeRequest, ...args);

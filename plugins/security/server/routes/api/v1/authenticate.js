@@ -1,32 +1,28 @@
-import _ from 'lodash';
 import Boom from 'boom';
 import Joi from 'joi';
-import { getIsValidUser } from '../../../lib/get_is_valid_user';
-import { getCalculateExpires } from '../../../lib/get_calculate_expires';
 import { wrapError } from '../../../lib/errors';
+import { BasicCredentials } from '../../../../server/lib/authentication/providers/basic';
 
 export function initAuthenticateApi(server) {
-  const isValidUser = getIsValidUser(server);
-  const calculateExpires = getCalculateExpires(server);
-
   server.route({
     method: 'POST',
     path: '/api/security/v1/login',
-    handler(request, reply) {
+    async handler(request, reply) {
       const { username, password } = request.payload;
-      return isValidUser(request, username, password).then((response) => {
-        // Initialize the session
-        request.cookieAuth.set({
-          username,
-          password,
-          expires: calculateExpires()
-        });
 
-        return reply(response);
-      }, (error) => {
-        request.cookieAuth.clear();
-        return reply(Boom.unauthorized(error));
-      });
+      try {
+        const authenticationResult = await server.plugins.security.authenticate(
+          BasicCredentials.decorateRequest(request, username, password)
+        );
+
+        if (!authenticationResult.succeeded()) {
+          return reply(Boom.unauthorized(authenticationResult.error));
+        }
+
+        return reply.continue({ credentials: authenticationResult.user });
+      } catch(err) {
+        return reply(wrapError(err));
+      }
     },
     config: {
       auth: false,
@@ -42,8 +38,13 @@ export function initAuthenticateApi(server) {
   server.route({
     method: 'POST',
     path: '/api/security/v1/logout',
-    handler(request, reply) {
-      request.cookieAuth.clear();
+    async handler(request, reply) {
+      try {
+        await server.plugins.security.deauthenticate(request);
+      } catch(err) {
+        return reply(wrapError(err));
+      }
+
       return reply().code(204);
     },
     config: {
@@ -55,7 +56,7 @@ export function initAuthenticateApi(server) {
     method: 'GET',
     path: '/api/security/v1/me',
     handler(request, reply) {
-      server.plugins.security.getUser(request).then(reply, _.flow(wrapError, reply));
+      reply(request.auth.credentials);
     }
   });
 }

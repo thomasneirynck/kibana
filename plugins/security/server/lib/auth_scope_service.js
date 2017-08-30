@@ -28,7 +28,6 @@ export class AuthScopeService {
    *  promise that resolves to an array of tags.
    *
    *  @param {Function} getterFunction
-   *  @param {undefined}
    */
   registerGetter(getterFunction) {
     if (typeof getterFunction !== 'function') {
