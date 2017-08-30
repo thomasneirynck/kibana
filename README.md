@@ -170,8 +170,7 @@ since some of the monitoring settings re-use SSL information from that repositor
 For example:
 
 ```
-docs/build_docs.pl --doc x-pack-kibana/docs/en/index.asciidoc --resource=kibana/docs/ --chunk 1
---resource=elasticsearch-extra/x-pack-elasticsearch/docs/en
+docs/build_docs.pl --doc x-pack-kibana/docs/en/index.asciidoc --resource=kibana/docs/ --chunk 1 --resource=elasticsearch-extra/x-pack-elasticsearch/docs/en
 ```
 
 To build a release notes page for the pull requests in this repository:
