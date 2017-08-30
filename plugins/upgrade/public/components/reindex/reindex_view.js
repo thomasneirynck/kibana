@@ -43,25 +43,23 @@ export const ReindexView = withViewState({
                   <p className="kuiText">Please contact your administrator.</p>
                 </ErrorPanel>
               )
-              : (
-                <div className="kuiVerticalRhythm">
-                  <InfoGroup
-                    className="kuiVerticalRhythm"
-                    isCollapsed={isInfoCollapsed}
-                    onChangeCollapsed={toggleInfoCollapsed}
-                    title="Reindex Helper"
-                  >
-                    <ReindexInfo className="kuiVerticalRhythm" />
-                  </InfoGroup>
-                </div>
-              )
+              : null
           }
+
+          <InfoGroup
+            className="kuiVerticalRhythm"
+            isCollapsed={isInfoCollapsed}
+            onChangeCollapsed={toggleInfoCollapsed}
+            title="Reindex Helper"
+          >
+            <ReindexInfo className="kuiVerticalRhythm" />
+          </InfoGroup>
 
           {
             loadingStatus === LOADING_STATUS.FAILURE
               ? (
                 <ErrorPanel className="kuiVerticalRhythm">
-                  { errorMessage }
+                  {errorMessage}
                 </ErrorPanel>
               )
               : null

@@ -102,24 +102,28 @@ export const LoggingView = withViewState({
                     <p className="kuiText">Please contact your administrator.</p>
                   </ErrorPanel>
                 )
-                : (
-                  <div className="kuiVerticalRhythm">
-                    <InfoGroup
-                      className="kuiVerticalRhythm"
-                      isCollapsed={isInfoCollapsed}
-                      onChangeCollapsed={toggleInfoCollapsed}
-                      title="Toggle Deprecation Logging"
-                    >
-                      <LoggingInfo className="kuiVerticalRhythm" />
-                    </InfoGroup>
+                : null
+            }
 
-                    <RefreshButton
-                      buttonLabel="Toggle Deprecation Logging"
-                      className="kuiVerticalRhythm"
-                      onClick={this.toggleLogging}
-                    />
-                  </div>
+            <InfoGroup
+              className="kuiVerticalRhythm"
+              isCollapsed={isInfoCollapsed}
+              onChangeCollapsed={toggleInfoCollapsed}
+              title="Toggle Deprecation Logging"
+            >
+              <LoggingInfo className="kuiVerticalRhythm" />
+            </InfoGroup>
+
+            {
+              loadingStatus !== LOADING_STATUS.FORBIDDEN
+                ? (
+                  <RefreshButton
+                    buttonLabel="Toggle Deprecation Logging"
+                    className="kuiVerticalRhythm"
+                    onClick={this.toggleLogging}
+                  />
                 )
+                : null
             }
 
             { loadingStatus === LOADING_STATUS.LOADING
@@ -135,7 +139,7 @@ export const LoggingView = withViewState({
                     <p className="kuiText">
                       Failed to access logging settings. Please <a className="kuiLink" onClick={this.getLoggingStatus}>reload</a>.
                     </p>
-                    <p className="kuiText">{ lastError }</p>
+                    <p className="kuiText">{lastError}</p>
                   </ErrorPanel>
                 )
                 : null

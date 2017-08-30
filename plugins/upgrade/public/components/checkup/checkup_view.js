@@ -85,24 +85,28 @@ export const CheckupView = withViewState({
                     <p className="kuiText">Please contact your administrator.</p>
                   </ErrorPanel>
                 )
-                : (
-                  <div className="kuiVerticalRhythm">
-                    <InfoGroup
-                      className="kuiVerticalRhythm"
-                      isCollapsed={isInfoCollapsed}
-                      onChangeCollapsed={toggleInfoCollapsed}
-                      title="Cluster Checkup"
-                    >
-                      <CheckupInfo className="kuiVerticalRhythm" />
-                    </InfoGroup>
+                : null
+            }
 
-                    <RefreshButton
-                      buttonLabel="Rerun Checkup"
-                      className="kuiVerticalRhythm"
-                      onClick={this.runCheckup}
-                    />
-                  </div>
+            <InfoGroup
+              className="kuiVerticalRhythm"
+              isCollapsed={isInfoCollapsed}
+              onChangeCollapsed={toggleInfoCollapsed}
+              title="Cluster Checkup"
+            >
+              <CheckupInfo className="kuiVerticalRhythm" />
+            </InfoGroup>
+
+            {
+              loadingStatus !== LOADING_STATUS.FORBIDDEN
+                ? (
+                  <RefreshButton
+                    buttonLabel="Rerun Checkup"
+                    className="kuiVerticalRhythm"
+                    onClick={this.runCheckup}
+                  />
                 )
+                : null
             }
 
             {
