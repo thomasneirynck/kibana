@@ -12,7 +12,7 @@ exports[`IssueSummary renders a critical message when the critical level count i
     />
     <span>
       1
-       error found
+       error
     </span>
   </span>
 </span>
@@ -28,7 +28,7 @@ exports[`IssueSummary renders a success message when all issue level counts are 
     <span
       className="kuiStatusText__icon kuiIcon fa-check"
     />
-    No problems found
+    No problems
   </span>
 </span>
 `;
@@ -43,7 +43,7 @@ exports[`IssueSummary renders a success message when only the none level count i
     <span
       className="kuiStatusText__icon kuiIcon fa-check"
     />
-    No problems found
+    No problems
   </span>
 </span>
 `;
@@ -60,7 +60,7 @@ exports[`IssueSummary renders a warning message when only none, info and warning
     />
     <span>
       2
-       warnings found
+       warnings
     </span>
   </span>
 </span>
@@ -78,7 +78,7 @@ exports[`IssueSummary renders an info message when only none and info level coun
     />
     <span>
       3
-       notes found
+       notes
     </span>
   </span>
 </span>
@@ -94,7 +94,7 @@ exports[`IssueSummary renders the className property 1`] = `
     <span
       className="kuiStatusText__icon kuiIcon fa-check"
     />
-    No problems found
+    No problems
   </span>
 </span>
 `;

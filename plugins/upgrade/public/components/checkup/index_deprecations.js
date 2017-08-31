@@ -38,7 +38,7 @@ export function IndexDeprecations({ className, deprecations }) {
             <div key={indexName}>
               <div className="kuiBar">
                 <div className="kuiBarSection">
-                  <p className="kuiTextTitle">{ indexName }</p>
+                  <code className="guideCode">{ indexName }</code>
                 </div>
                 <div className="kuiBarSection">
                   <IssueSummary issueLevelCounts={levelCountsByIndex[indexName]} />

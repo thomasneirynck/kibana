@@ -6,12 +6,14 @@ exports[`Issues renders a list of Issue components 1`] = `
 >
   <Issue
     details="issue 1 details"
+    issueInfo={null}
     level="issue 1 level"
     message="issue 1 message"
     url="issue 1 url"
   />
   <Issue
     details="issue 2 details"
+    issueInfo={null}
     level="issue 2 level"
     message="issue 2 message"
     url="issue 2 url"

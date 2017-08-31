@@ -14,13 +14,17 @@ exports[`Issue renders the details property 1`] = `
       className="kuiEventBody"
     >
       <div
+        className="kuiEventBody__message kuiTextTitle"
+      />
+      <div
         className="kuiEventBody__message"
-      >
-        : issue details
-      </div>
+      />
       <div
         className="kuiEventBody__metadata"
-      />
+      >
+        Details: 
+        issue details
+      </div>
     </div>
   </div>
 </li>
@@ -40,10 +44,10 @@ exports[`Issue renders the level property 1`] = `
       className="kuiEventBody"
     >
       <div
-        className="kuiEventBody__message"
+        className="kuiEventBody__message kuiTextTitle"
       />
       <div
-        className="kuiEventBody__metadata"
+        className="kuiEventBody__message"
       />
     </div>
   </div>
@@ -64,12 +68,12 @@ exports[`Issue renders the message property 1`] = `
       className="kuiEventBody"
     >
       <div
-        className="kuiEventBody__message"
+        className="kuiEventBody__message kuiTextTitle"
       >
         a message
       </div>
       <div
-        className="kuiEventBody__metadata"
+        className="kuiEventBody__message"
       />
     </div>
   </div>
@@ -90,16 +94,16 @@ exports[`Issue renders the url property 1`] = `
       className="kuiEventBody"
     >
       <div
-        className="kuiEventBody__message"
+        className="kuiEventBody__message kuiTextTitle"
       />
       <div
-        className="kuiEventBody__metadata"
+        className="kuiEventBody__message"
       >
         <a
           className="kuiLink"
           href="/some/url"
         >
-          View Documentation
+          Read Documentation
         </a>
       </div>
     </div>

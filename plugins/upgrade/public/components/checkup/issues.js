@@ -16,6 +16,7 @@ export function Issues({ className, issues }) {
           key={issueIndex}
           level={issue.level}
           message={issue.message}
+          issueInfo={issue.issueInfo}
           url={issue.url}
         />
       )) }

@@ -10,8 +10,8 @@ const ISSUE_LEVEL_MESSAGES = {
       <span className="kuiStatusText__icon kuiIcon fa-info" />
       {
         count === 1
-        ? <span>{ count } note found</span>
-        : <span>{ count } notes found</span>
+        ? <span>{ count } note</span>
+        : <span>{ count } notes</span>
       }
     </span>
   ),
@@ -20,8 +20,8 @@ const ISSUE_LEVEL_MESSAGES = {
       <span className="kuiStatusText__icon kuiIcon fa-bolt" />
       {
         count === 1
-        ? <span>{ count } warning found</span>
-        : <span>{ count } warnings found</span>
+        ? <span>{ count } warning</span>
+        : <span>{ count } warnings</span>
       }
     </span>
   ),
@@ -30,15 +30,15 @@ const ISSUE_LEVEL_MESSAGES = {
       <span className="kuiStatusText__icon kuiIcon fa-warning" />
       {
         count === 1
-        ? <span>{ count } error found</span>
-        : <span>{ count } errors found</span>
+        ? <span>{ count } error</span>
+        : <span>{ count } errors</span>
       }
     </span>
   ),
   none: () => (
     <span className="kuiStatusText kuiStatusText--success">
       <span className="kuiStatusText__icon kuiIcon fa-check" />
-      No problems found
+      No problems
     </span>
   ),
 };

@@ -26,11 +26,11 @@ exports[`IndexDeprecations renders Issues and IssueSummary components for each i
       <div
         className="kuiBarSection"
       >
-        <p
-          className="kuiTextTitle"
+        <code
+          className="guideCode"
         >
           index1
-        </p>
+        </code>
       </div>
       <div
         className="kuiBarSection"
@@ -70,11 +70,11 @@ exports[`IndexDeprecations renders Issues and IssueSummary components for each i
       <div
         className="kuiBarSection"
       >
-        <p
-          className="kuiTextTitle"
+        <code
+          className="guideCode"
         >
           index2
-        </p>
+        </code>
       </div>
       <div
         className="kuiBarSection"
