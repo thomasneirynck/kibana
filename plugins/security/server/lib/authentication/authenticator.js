@@ -165,7 +165,17 @@ export async function initAuthenticator(server) {
   server.expose('deauthenticate', (request) => authenticator.deauthenticate(request));
   server.expose('registerAuthScopeGetter', (scopeExtender) => authScope.registerGetter(scopeExtender));
 
-  server.expose('isAuthenticated', (request) => {
-    return !!(request.auth.credentials && request.auth.credentials.username);
+  server.expose('isAuthenticated', async (request) => {
+    try {
+      await server.plugins.security.getUser(request);
+      return true;
+    } catch (err) {
+      // Don't swallow server errors.
+      if (!err.isBoom || err.output.statusCode !== 401) {
+        throw err;
+      }
+    }
+
+    return false;
   });
 }

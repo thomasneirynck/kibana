@@ -1,5 +1,6 @@
 import expect from 'expect.js';
 import sinon from 'sinon';
+import Boom from 'boom';
 
 import { serverFixture } from '../../__tests__/__fixtures__/server';
 import { Session } from '../session';
@@ -266,26 +267,53 @@ describe('Authenticator', () => {
       isAuthenticated = server.expose.withArgs('isAuthenticated').firstCall.args[1];
     });
 
-    it('returns `false` if credentials are not presented.', () => {
-      expect(isAuthenticated({
-        auth: {}
-      })).to.be(false);
+    it('returns `true` if `getUser` succeeds.', async () => {
+      const request = {};
+      server.plugins.security.getUser
+        .withArgs(request)
+        .returns(Promise.resolve({}));
+
+      expect(await isAuthenticated(request)).to.be(true);
     });
 
-    it('returns `false` if credentials do not include username.', () => {
-      expect(isAuthenticated({
-        auth: {
-          credentials: {}
-        }
-      })).to.be(false);
+    it('returns `false` when `getUser` throws a 401 boom error.', async () => {
+      const request = {};
+      server.plugins.security.getUser
+        .withArgs(request)
+        .returns(Promise.reject(Boom.unauthorized()));
+
+      expect(await isAuthenticated(request)).to.be(false);
     });
 
-    it('returns `true` if credentials exist and include username.', () => {
-      expect(isAuthenticated({
-        auth: {
-          credentials: { username: 'user' }
-        }
-      })).to.be(true);
+    it('throw non-boom errors.', async () => {
+      const request = {};
+      const nonBoomError = new TypeError();
+      server.plugins.security.getUser
+        .withArgs(request)
+        .returns(Promise.reject(nonBoomError));
+
+      try {
+        await isAuthenticated(request);
+        throw new Error('`isAuthenticated` should throw.');
+      } catch (err) {
+        expect(err).to.be(nonBoomError);
+      }
+    });
+
+
+    it('throw non-401 boom errors.', async () => {
+      const request = {};
+      const non401Error = Boom.wrap(new TypeError());
+      server.plugins.security.getUser
+        .withArgs(request)
+        .returns(Promise.reject(non401Error));
+
+      try {
+        await isAuthenticated(request);
+        throw new Error('`isAuthenticated` should throw.');
+      } catch (err) {
+        expect(err).to.be(non401Error);
+      }
     });
   });
 });
