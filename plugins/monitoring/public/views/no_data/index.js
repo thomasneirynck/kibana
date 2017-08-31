@@ -11,7 +11,7 @@ uiRoutes.when('/no-data', {
 
       return monitoringClusters()
       .then(clusters => {
-        if (clusters.length) {
+        if (clusters && clusters.length) {
           kbnUrl.changePath('/home');
           return Promise.reject();
         }
