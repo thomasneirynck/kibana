@@ -17,35 +17,39 @@ const TransactionsContainer = styled.div`
   border-radius: ${borderRadius};
 `;
 
-function ImpactInfo() {
-  const Wrapper = styled.div`
-    position: relative;
-    display: inline-block;
-    top: 1px;
-    left: ${px(units.half)};
-  `;
+const Wrapper = styled.div`
+  position: relative;
+  display: inline-block;
+  top: 1px;
+  left: ${px(units.half)};
+`;
 
-  return (
-    <Wrapper>
-      <OverlayTrigger
-        placement="top"
-        trigger="click"
-        overlay={
-          <Tooltip>
-            Impact shows the most used and slowest endpoints in your app.
-          </Tooltip>
-        }
-      >
-        <KuiInfoButton />
-      </OverlayTrigger>
-    </Wrapper>
-  );
-}
+const ImpactToolTip = () => (
+  <Wrapper>
+    <OverlayTrigger
+      placement="top"
+      trigger="click"
+      overlay={
+        <Tooltip>
+          Impact shows the most used and slowest endpoints in your app.
+        </Tooltip>
+      }
+    >
+      <KuiInfoButton />
+    </OverlayTrigger>
+  </Wrapper>
+);
 
 const getRelativeImpact = (impact, impactMin, impactMax) =>
   Math.max((impact - impactMin) / Math.max(impactMax - impactMin, 1) * 100, 1);
 
-function TransactionList({ appName, list, type }) {
+function TransactionList({
+  appName,
+  list,
+  type,
+  changeTransactionSorting,
+  transactionSorting
+}) {
   const transactions = list.data || [];
 
   const impacts = transactions.map(({ impact }) => impact);
@@ -57,13 +61,29 @@ function TransactionList({ appName, list, type }) {
       <Table>
         <thead>
           <tr>
-            <TableHead>Name</TableHead>
-            <TableHead>Avg. resp. time</TableHead>
-            <TableHead>95th percentile</TableHead>
-            <TableHead>RPM</TableHead>
-            <TableHead>
+            {[
+              { key: 'name', label: 'Name' },
+              { key: 'avg', label: 'Avg. resp. time' },
+              { key: 'p95', label: '95th percentile' },
+              { key: 'rpm', label: 'RPM' }
+            ].map(({ key, label }) => (
+              <TableHead
+                key={key}
+                onClick={() => changeTransactionSorting(key)}
+                selected={transactionSorting.key === key}
+                descending={transactionSorting.descending}
+              >
+                {label}
+              </TableHead>
+            ))}
+
+            <TableHead
+              onClick={() => changeTransactionSorting('impact')}
+              selected={transactionSorting.key === 'impact'}
+              descending={transactionSorting.descending}
+            >
               Impact
-              <ImpactInfo />
+              <ImpactToolTip />
             </TableHead>
           </tr>
         </thead>

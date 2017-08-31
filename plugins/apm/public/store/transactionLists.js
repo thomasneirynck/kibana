@@ -1,6 +1,7 @@
 import { getUrlParams } from './urlParams';
 import * as rest from '../services/rest';
 import { STATUS } from '../constants';
+import { getSort } from './transactionSorting';
 
 // ACTION TYPES
 export const TRANSACTIONS_LIST_LOADING = 'TRANSACTIONS_LIST_LOADING';
@@ -79,7 +80,15 @@ export function loadTransactionList({ appName, start, end, transactionType }) {
 export function getTransactionList(state) {
   const { appName, start, end, transactionType } = getUrlParams(state);
   const key = `${appName}_${start}_${end}_${transactionType}`;
-  return state.transactionLists[key] || INITIAL_STATE;
+
+  if (!state.transactionLists[key]) {
+    return INITIAL_STATE;
+  }
+
+  return {
+    ...state.transactionLists[key],
+    data: state.transactionLists[key].data.concat().sort(getSort(state))
+  };
 }
 
 export default transactionLists;

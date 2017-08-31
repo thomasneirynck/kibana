@@ -9,10 +9,12 @@ import { uiModules } from 'ui/modules';
 import 'ui/chrome';
 import 'ui/autoload/all';
 import { set } from 'lodash';
+import createHistory from 'history/createHashHistory';
 
 let globalTimefilter;
 
 export function initTimepicker(callback) {
+  const history = createHistory();
   uiModules.get('kibana').run(uiSettings => {
     set(
       uiSettings,
@@ -26,7 +28,8 @@ export function initTimepicker(callback) {
   });
   uiModules
     .get('app/apm', [])
-    .controller('TimePickerController', ($scope, timefilter) => {
+    .controller('TimePickerController', ($scope, timefilter, globalState) => {
+      history.listen(() => globalState.fetch());
       timefilter.setTime = (from, to) => {
         timefilter.time.from = moment(from).toISOString();
         timefilter.time.to = moment(to).toISOString();

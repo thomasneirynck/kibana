@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import TransactionOverview from './view';
 import { getUrlParams } from '../../../store/urlParams';
+import { changeTransactionSorting } from '../../../store/transactionSorting';
 import {
   getTransactionList,
   loadTransactionList
@@ -9,12 +10,14 @@ import {
 function mapStateToProps(state = {}) {
   return {
     urlParams: getUrlParams(state),
-    transactionList: getTransactionList(state)
+    transactionList: getTransactionList(state),
+    transactionSorting: state.transactionSorting
   };
 }
 
 const mapDispatchToProps = {
-  loadTransactionList
+  loadTransactionList,
+  changeTransactionSorting
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(

@@ -33,6 +33,7 @@ export class TransactionOverview extends Component {
 
   render() {
     const { appName, transactionType } = this.props.urlParams;
+    const { changeTransactionSorting, transactionSorting } = this.props;
     return (
       <div>
         <Breadcrumbs />
@@ -45,6 +46,8 @@ export class TransactionOverview extends Component {
           appName={appName}
           type={transactionType}
           list={this.props.transactionList}
+          changeTransactionSorting={changeTransactionSorting}
+          transactionSorting={transactionSorting}
         />
       </div>
     );

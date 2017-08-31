@@ -14,6 +14,10 @@ describe('root reducer', () => {
       traces: {},
       transactionLists: {},
       transactions: {},
+      transactionSorting: {
+        descending: true,
+        key: 'impact'
+      },
       urlParams: {}
     });
   });

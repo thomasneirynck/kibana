@@ -11,6 +11,7 @@ import location from './location';
 import traces from './traces';
 import transactionLists from './transactionLists';
 import transactions from './transactions';
+import transactionSorting from './transactionSorting';
 import urlParams from './urlParams';
 
 const appReducer = combineReducers({
@@ -25,6 +26,7 @@ const appReducer = combineReducers({
   traces,
   transactionLists,
   transactions,
+  transactionSorting,
   urlParams
 });
 

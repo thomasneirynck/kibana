@@ -16,7 +16,9 @@ export const TableHead = styled.th`
   position: relative;
   cursor: pointer;
   font-weight: normal;
-  color: ${colors.tableHeaderColor};
+  color: ${props => (props.selected ? '#666' : colors.tableHeaderColor)};
+  user-select: none;
+  background: ${props => (props.selected ? '#eee' : 'initial')};
 `;
 
 const LoadingContainer = styled.div`
