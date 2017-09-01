@@ -7,7 +7,7 @@ import { dateValidation } from '../lib/helpers/date_validation';
 
 export function initTransactionsApi(server) {
   server.route({
-    path: '/api/apm/apps/{appName}/metrics/transactions',
+    path: '/api/apm/apps/{appName}/transactions',
     config: {
       pre: [{ method: setupRequest, assign: 'setup' }],
       validate: {
@@ -31,7 +31,7 @@ export function initTransactionsApi(server) {
   });
 
   server.route({
-    path: '/api/apm/apps/{appName}/metrics/transactions/{transactionId}',
+    path: '/api/apm/apps/{appName}/transactions/{transactionId}',
     config: {
       pre: [{ method: setupRequest, assign: 'setup' }],
       validate: {

@@ -6,7 +6,7 @@ import { dateValidation } from '../lib/helpers/date_validation';
 
 export function initChartApi(server) {
   server.route({
-    path: '/api/apm/apps/{appName}/metrics/charts',
+    path: '/api/apm/apps/{appName}/transactions/charts',
     config: {
       pre: [{ method: setupRequest, assign: 'setup' }],
       validate: {
@@ -15,7 +15,6 @@ export function initChartApi(server) {
           end: dateValidation,
           transaction_type: Joi.string().default('request'),
           transaction_name: Joi.string(),
-          transaction_id: Joi.string(),
           query: Joi.string()
         })
       }

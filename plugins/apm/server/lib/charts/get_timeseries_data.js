@@ -3,7 +3,6 @@ import {
   TRANSACTION_RESULT,
   APP_NAME,
   TRANSACTION_TYPE,
-  TRANSACTION_ID,
   TRANSACTION_NAME
 } from '../../../common/constants';
 import moment from 'moment';
@@ -12,7 +11,6 @@ export async function getTimeseriesData(req) {
   const { appName } = req.params;
   const transactionType = req.query.transaction_type;
   const transactionName = req.query.transaction_name;
-  const transactionId = req.query.transaction_id;
   const { start, end, client, intervalString, config } = req.pre.setup;
 
   const params = {
@@ -116,12 +114,6 @@ export async function getTimeseriesData(req) {
   if (transactionName) {
     params.body.query.bool.must.push({
       term: { [TRANSACTION_NAME]: transactionName }
-    });
-  }
-
-  if (transactionId) {
-    params.body.query.bool.must.push({
-      term: { [TRANSACTION_ID]: transactionId }
     });
   }
 

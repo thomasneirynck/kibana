@@ -68,7 +68,7 @@ export async function loadTransactionList({
   transactionType
 }) {
   return callApi({
-    pathname: `${getAppRootPath(appName)}/metrics/transactions`,
+    pathname: `${getAppRootPath(appName)}/transactions`,
     query: {
       start,
       end,
@@ -84,7 +84,7 @@ export async function loadDistribution({
   transactionName
 }) {
   return callApi({
-    pathname: `${getAppRootPath(appName)}/metrics/distribution`,
+    pathname: `${getAppRootPath(appName)}/transactions/distribution`,
     query: {
       start,
       end,
@@ -95,11 +95,10 @@ export async function loadDistribution({
 
 export async function loadTraces({ appName, start, end, transactionId }) {
   return callApi({
-    pathname: `${getAppRootPath(appName)}/metrics/traces`,
+    pathname: `${getAppRootPath(appName)}/transactions/${transactionId}/traces`,
     query: {
       start,
-      end,
-      transaction_id: transactionId
+      end
     }
   });
 }
@@ -107,9 +106,7 @@ export async function loadTraces({ appName, start, end, transactionId }) {
 export async function loadTransaction({ appName, start, end, transactionId }) {
   return callApi({
     camelcase: false,
-    pathname: `${getAppRootPath(
-      appName
-    )}/metrics/transactions/${transactionId}`,
+    pathname: `${getAppRootPath(appName)}/transactions/${transactionId}`,
     query: {
       start,
       end
@@ -122,17 +119,15 @@ export async function loadCharts({
   start,
   end,
   transactionType,
-  transactionName,
-  transactionId
+  transactionName
 }) {
   return callApi({
-    pathname: `${getAppRootPath(appName)}/metrics/charts`,
+    pathname: `${getAppRootPath(appName)}/transactions/charts`,
     query: {
       start,
       end,
       transaction_type: transactionType,
-      transaction_name: transactionName,
-      transaction_id: transactionId
+      transaction_name: transactionName
     }
   });
 }

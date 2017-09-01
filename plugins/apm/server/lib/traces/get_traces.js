@@ -6,7 +6,7 @@ import {
 
 async function getTraces(req) {
   const { start, end, client, config } = req.pre.setup;
-  const { transaction_id: transactionId } = req.query;
+  const { transactionId } = req.params;
 
   const params = {
     index: config.get('xpack.apm.indexPattern'),

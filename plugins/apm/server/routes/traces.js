@@ -7,14 +7,13 @@ import { dateValidation } from '../lib/helpers/date_validation';
 
 export function initTracesApi(server) {
   server.route({
-    path: '/api/apm/apps/{appName}/metrics/traces',
+    path: '/api/apm/apps/{appName}/transactions/{transactionId}/traces',
     config: {
       pre: [{ method: setupRequest, assign: 'setup' }],
       validate: {
         query: Joi.object().keys({
           start: dateValidation,
-          end: dateValidation,
-          transaction_id: Joi.string().required()
+          end: dateValidation
         })
       }
     },

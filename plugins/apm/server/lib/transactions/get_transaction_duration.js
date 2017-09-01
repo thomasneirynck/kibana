@@ -5,7 +5,7 @@ import {
 } from '../../../common/constants';
 
 export async function getTransactionDuration(req) {
-  const { transaction_id: transactionId } = req.query;
+  const { transactionId } = req.params;
   const { start, end, client, config } = req.pre.setup;
 
   const params = {

@@ -6,14 +6,14 @@ import { dateValidation } from '../lib/helpers/date_validation';
 
 export function initDistributionApi(server) {
   server.route({
-    path: '/api/apm/apps/{appName}/metrics/distribution',
+    path: '/api/apm/apps/{appName}/transactions/distribution',
     config: {
       pre: [{ method: setupRequest, assign: 'setup' }],
       validate: {
         query: Joi.object().keys({
           start: dateValidation,
           end: dateValidation,
-          transaction_name: Joi.string()
+          transaction_name: Joi.string().required()
         })
       }
     },
