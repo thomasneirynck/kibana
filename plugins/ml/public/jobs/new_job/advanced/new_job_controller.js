@@ -887,7 +887,7 @@ function (
       }
 
       // tab 3 - Datafeed
-      if (job.datafeed_config.types.length > 0) {
+      if (job.datafeed_config && job.datafeed_config.types.length > 0) {
         const loadedTypes = Object.keys($scope.ui.types);
         if (loadedTypes.length === 0) {
           message = 'Could not find index. You may not have the correct permissions';
