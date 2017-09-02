@@ -44,6 +44,9 @@ include::security/index.asciidoc[]
 include::management/watcher-ui/index.asciidoc[]
 
 :edit_url!:
+include::upgrade-assistant/index.asciidoc[]
+
+:edit_url!:
 include::dashboard_only_mode/index.asciidoc[]
 
 :edit_url!:
