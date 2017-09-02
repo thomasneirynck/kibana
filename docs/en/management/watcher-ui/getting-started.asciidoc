@@ -1,8 +1,7 @@
 [[watcher-getting-started]]
 === Getting Started
-:ref: https://www.elastic.co/guide/en/x-pack/current
 
-Watcher is automatically enabled when you {ref}/installing-xpack.html[install X-Pack] into Elasticsearch and Kibana.
+Watcher is automatically enabled when you {xpack-ref}/installing-xpack.html[install X-Pack] into Elasticsearch and Kibana.
 
 To use the Watcher UI, you need to create users with Watcher specific roles as <<watcher-security,described here>>.
 

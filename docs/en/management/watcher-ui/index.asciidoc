@@ -1,9 +1,8 @@
 [role="xpack"]
 [[watcher-ui]]
 == Watcher UI
-:ref: https://www.elastic.co/guide/en/x-pack/current
 
-_Watcher UI_ enables you to monitor, manage, create and simulate {ref}/xpack-alerting.html[watches] for your Elasticsearch
+_Watcher UI_ enables you to monitor, manage, create and simulate {xpack-ref}/xpack-alerting.html[watches] for your Elasticsearch
 indices.
 
 include::getting-started.asciidoc[]
