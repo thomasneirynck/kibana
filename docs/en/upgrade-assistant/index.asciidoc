@@ -36,7 +36,7 @@ indices must be reindexed to upgrade them to the format required in 6.0.
 
 To reindex indices with the Reindex Helper:
 
-. **Back up your indices using {ref}/modules-snapshots.html[Snapshot and Restore].**
+. **Back up your indices using https://www.elastic.co/guide/en/elasticsearch/reference/{branch}/modules-snapshots.html[Snapshot and Restore].**
 . Go to the **Reindex Helper** tab in the Upgrade Assistant.
 . Click the **Reindex** button to reindex an index.
 . Monitor the reindex task that is kicked off.
