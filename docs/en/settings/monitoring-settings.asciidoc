@@ -76,7 +76,7 @@ hostname/IP and port. `name` controls uniqueness based on the node's `node.name`
 Whether or not to send cluster statistics to Elastic. Reporting your cluster statistics
 helps us improve your user experience. Your data is never shared with anyone. Set to
 `false` to disable statistics reporting from any browser connected to the Kibana instance.
-You can also opt-out on a per-browser basis through the Monitoring user interface. Defaults to `true`.
+You can also opt-out through Kibana's Advanced Settings. Defaults to `true`.
 
 `xpack.monitoring.ui.enabled`::
 
