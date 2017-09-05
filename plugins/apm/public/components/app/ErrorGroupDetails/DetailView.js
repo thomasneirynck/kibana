@@ -9,6 +9,7 @@ import {
   borderRadius
 } from '../../../style/variables';
 import { get } from 'lodash';
+import isNil from 'lodash.isnil';
 import { STATUS } from '../../../constants';
 import {
   PropertiesTable,
@@ -81,15 +82,19 @@ function AllOccurrencesLink({ errorGroup, appName }) {
   );
 }
 
-const DEFAULT_TAB = 'stacktrace';
+const STACKTRACE_TAB = 'stacktrace';
 
-// Ensure the selected tab exists or use the default
-function getCurrentTab(tabs = [], detailTab) {
-  return tabs.includes(detailTab) ? detailTab : DEFAULT_TAB;
+// Ensure the selected tab exists or use the first
+function getCurrentTab(tabs = [], urlParamsTab) {
+  return tabs.includes(urlParamsTab) ? urlParamsTab : tabs[0];
 }
 
-function getTabs(errorGroup) {
+function getTabs(errorGroup, hasStacktraces) {
   const dynamicProps = Object.keys(errorGroup.data.error.context);
+  if (hasStacktraces) {
+    return [STACKTRACE_TAB, ...getLevelOneProps(dynamicProps)];
+  }
+
   return getLevelOneProps(dynamicProps);
 }
 
@@ -101,7 +106,9 @@ function DetailView({ errorGroup, urlParams }) {
   const { appName } = urlParams;
   const timestamp = moment(get(errorGroup, 'data.error.@timestamp')).format();
 
-  const tabs = getTabs(errorGroup);
+  const stacktraces = get(errorGroup.data.error.error.exception, 'stacktrace');
+  const hasStacktraces = !isNil(stacktraces);
+  const tabs = getTabs(errorGroup, hasStacktraces);
   const currentTab = getCurrentTab(tabs, urlParams.detailTab);
 
   return (
@@ -124,7 +131,7 @@ function DetailView({ errorGroup, urlParams }) {
           );
         })}
       </Properties>
-      {[DEFAULT_TAB, ...tabs].map(key => {
+      {tabs.map(key => {
         return (
           <Tab selected={currentTab === key} key={key}>
             <RelativeLink query={{ detailTab: key }}>
@@ -135,10 +142,8 @@ function DetailView({ errorGroup, urlParams }) {
       })}
 
       <div>
-        {currentTab === DEFAULT_TAB ? (
-          <Stacktrace
-            stacktraces={errorGroup.data.error.error.exception.stacktrace}
-          />
+        {currentTab === STACKTRACE_TAB ? (
+          <Stacktrace stacktraces={stacktraces} />
         ) : (
           <PropertiesTable
             propData={errorGroup.data.error.context[currentTab]}
