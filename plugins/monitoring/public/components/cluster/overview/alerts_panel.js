@@ -55,7 +55,7 @@ export function AlertsPanel({ alerts, angularChangeUrl }) {
   const topAlertItems = alerts.map((item, index) => <TopAlertItem item={item} key={`top-alert-item-${index}`} index={index} />);
 
   return (
-    <div>
+    <div data-test-subj="clusterAlertsContainer">
       <h2 className="kuiSubTitle kuiVerticalRhythm">
         Top Cluster Alerts
       </h2>

@@ -27,13 +27,13 @@ export function KibanaPanel(props) {
           <dl data-test-subj="kibana_overview" data-overview-status={status}>
             <dt className="cluster-panel__inner-title">
               <KuiKeyboardAccessible>
-                <a className="kuiLink" onClick={goToKibana} >
+                <a className="kuiLink" onClick={goToKibana}>
                   Overview
                 </a>
               </KuiKeyboardAccessible>
             </dt>
-            <dd>Requests: { props.requests_total }</dd>
-            <dd>Max. Response Time: { props.response_time_max } ms</dd>
+            <dd data-test-subj="kbnRequests">Requests: { props.requests_total }</dd>
+            <dd data-test-subj="kbnMaxResponseTime">Max. Response Time: { props.response_time_max } ms</dd>
           </dl>
         </div>
 
@@ -41,13 +41,16 @@ export function KibanaPanel(props) {
           <dl>
             <dt className="cluster-panel__inner-title">
               <KuiKeyboardAccessible>
-                <a className="kuiLink" onClick={goToInstances} >
+                <a className="kuiLink" onClick={goToInstances} data-test-subj="kbnInstances">
                   Instances: <span data-test-subj="number_of_kibana_instances">{ props.count }</span>
                 </a>
               </KuiKeyboardAccessible>
             </dt>
-            <dd>Connections: { formatNumber(props.concurrent_connections, 'int_commas') }</dd>
-            <dd>Memory Usage: <BytesPercentageUsage usedBytes={props.memory_size} maxBytes={props.memory_limit} />
+            <dd data-test-subj="kbnConnections">
+              Connections: { formatNumber(props.concurrent_connections, 'int_commas') }
+            </dd>
+            <dd data-test-subj="kbnMemoryUsage">
+              Memory Usage: <BytesPercentageUsage usedBytes={props.memory_size} maxBytes={props.memory_limit} />
             </dd>
           </dl>
         </div>

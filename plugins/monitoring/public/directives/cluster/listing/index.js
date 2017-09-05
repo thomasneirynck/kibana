@@ -74,7 +74,11 @@ to enjoy multi-cluster monitoring.`
     getClusterAction() {
       if (this.props.isSupported) {
         return (
-          <a className="kuiLink" onClick={this.changeCluster.bind(this)}>
+          <a
+            className="kuiLink"
+            onClick={this.changeCluster.bind(this)}
+            data-test-subj="supportedLicenseCluster"
+          >
             { this.props.cluster_name }
           </a>
         );
@@ -83,7 +87,10 @@ to enjoy multi-cluster monitoring.`
       // not supported because license is basic/not compatible with multi-cluster
       if (this.props.license) {
         return (
-          <a onClick={this.handleClickIncompatibleLicense.bind(this)}>
+          <a
+            onClick={this.handleClickIncompatibleLicense.bind(this)}
+            data-test-subj="unsupportedLicenseCluster"
+          >
             { this.props.cluster_name }
           </a>
         );
@@ -91,7 +98,10 @@ to enjoy multi-cluster monitoring.`
 
       // not supported because license is invalid
       return (
-        <a onClick={this.handleClickInvalidLicense.bind(this)}>
+        <a
+          onClick={this.handleClickInvalidLicense.bind(this)}
+          data-test-subj="invalidLicenseCluster"
+        >
           { this.props.cluster_name }
         </a>
       );

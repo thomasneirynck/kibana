@@ -61,7 +61,8 @@ export async function runEsWithXpack({ tmpDir, procs, ftrConfig }) {
   await procs.run('es', {
     cmd: RELATIVE_ES_BIN,
     args: [
-      '-E', `http.port=${ftrConfig.get('servers.elasticsearch.port')}`
+      '-E', `http.port=${ftrConfig.get('servers.elasticsearch.port')}`,
+      '-E', `xpack.monitoring.enabled=false` // disable monitoring in order to drive the UI just with archived data
     ],
     cwd: esExtractPath,
     wait: /^\[.+?\]\[.+?\]\[.+?\] \[.+?\] started$/

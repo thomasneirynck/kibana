@@ -11,6 +11,8 @@ import {
 } from './page_objects';
 
 import {
+  MonitoringClusterListProvider,
+  MonitoringClusterOverviewProvider,
   PipelineListProvider,
   PipelineEditorProvider,
   RandomProvider,
@@ -28,6 +30,7 @@ export default async function ({ readConfigFile }) {
   return {
     // list paths to the files that contain your plugins tests
     testFiles: [
+      resolve(__dirname, './apps/monitoring'),
       resolve(__dirname, './apps/dashboard_mode'),
       resolve(__dirname, './apps/security'),
       resolve(__dirname, './apps/reporting'),
@@ -39,6 +42,8 @@ export default async function ({ readConfigFile }) {
     // only the built-in services will be avaliable
     services: {
       ...kibanaConfig.get('services'),
+      monitoringClusterList: MonitoringClusterListProvider,
+      monitoringClusterOverview: MonitoringClusterOverviewProvider,
       pipelineList: PipelineListProvider,
       pipelineEditor: PipelineEditorProvider,
       random: RandomProvider,

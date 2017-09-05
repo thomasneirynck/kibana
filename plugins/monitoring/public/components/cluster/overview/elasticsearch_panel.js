@@ -36,7 +36,7 @@ export class ElasticsearchPanel extends React.Component {
   showMlJobs() {
     // if license doesn't support ML, then `ml === null`
     if (this.props.ml) {
-      return <dd>Jobs: { this.props.ml.jobs }</dd>;
+      return <dd data-test-subj="esMlJobs">Jobs: { this.props.ml.jobs }</dd>;
     }
     return null;
   }
@@ -61,16 +61,16 @@ export class ElasticsearchPanel extends React.Component {
       <ClusterItemContainer {...this.props} statusIndicator={statusIndicator} url="elasticsearch" title="Elasticsearch">
         <div className="row">
           <div className="col-md-4">
-            <dl data-test-subj="elasticsearch_overview" data-overview-status={this.props.status}>
+            <dl>
               <dt className="cluster-panel__inner-title">
                 <KuiKeyboardAccessible>
-                  <a className="kuiLink" onClick={goToElasticsearch} >
+                  <a className="kuiLink" onClick={goToElasticsearch}>
                     Overview
                   </a>
                 </KuiKeyboardAccessible>
               </dt>
-              <dd>Version: { get(nodes, 'versions[0]') || 'N/A' }</dd>
-              <dd>Uptime: { formatNumber(get(nodes, 'jvm.max_uptime_in_millis'), 'time_since') }</dd>
+              <dd data-test-subj="esVersion">Version: { get(nodes, 'versions[0]') || 'N/A' }</dd>
+              <dd data-test-subj="esUptime">Uptime: { formatNumber(get(nodes, 'jvm.max_uptime_in_millis'), 'time_since') }</dd>
               { this.showMlJobs() }
             </dl>
           </div>
@@ -78,21 +78,22 @@ export class ElasticsearchPanel extends React.Component {
             <dl>
               <dt className="cluster-panel__inner-title">
                 <KuiKeyboardAccessible>
-                  <a className="kuiLink" onClick={goToNodes} >
-                    Nodes:&nbsp;
-                    <span data-test-subj="number_of_elasticsearch_nodes">
-                      { formatNumber(get(nodes, 'count.total'), 'int_commas') }
-                    </span>
+                  <a
+                    className="kuiLink"
+                    onClick={goToNodes}
+                    data-test-subj="esNumberOfNodes"
+                  >
+                    Nodes: { formatNumber(get(nodes, 'count.total'), 'int_commas') }
                   </a>
                 </KuiKeyboardAccessible>
               </dt>
-              <dd>
+              <dd data-test-subj="esDiskAvailable">
                 Disk Available: <BytesUsage
                   usedBytes={get(nodes, 'fs.available_in_bytes')}
                   maxBytes={get(nodes, 'fs.total_in_bytes')}
                 />
               </dd>
-              <dd>
+              <dd data-test-subj="esJvmHeap">
                 JVM Heap: <BytesPercentageUsage
                   usedBytes={get(nodes, 'jvm.mem.heap_used_in_bytes')}
                   maxBytes={get(nodes, 'jvm.mem.heap_max_in_bytes')}
@@ -104,15 +105,19 @@ export class ElasticsearchPanel extends React.Component {
             <dl>
               <dt className="cluster-panel__inner-title">
                 <KuiKeyboardAccessible>
-                  <a className="kuiLink" onClick={goToIndices} >
+                  <a
+                    className="kuiLink"
+                    onClick={goToIndices}
+                    data-test-subj="esNumberOfIndices"
+                  >
                     Indices: { formatNumber(get(indices, 'count'), 'int_commas') }
                   </a>
                 </KuiKeyboardAccessible>
               </dt>
-              <dd>Documents: { formatNumber(get(indices, 'docs.count'), 'int_commas') }</dd>
-              <dd>Disk Usage: { formatNumber(get(indices, 'store.size_in_bytes'), 'bytes') }</dd>
-              <dd>Primary Shards: { this.state.primaries }</dd>
-              <dd>Replica Shards: { this.state.replicas }</dd>
+              <dd data-test-subj="esDocumentsCount">Documents: { formatNumber(get(indices, 'docs.count'), 'int_commas') }</dd>
+              <dd data-test-subj="esDiskUsage">Disk Usage: { formatNumber(get(indices, 'store.size_in_bytes'), 'bytes') }</dd>
+              <dd data-test-subj="esPrimaryShards">Primary Shards: { this.state.primaries }</dd>
+              <dd data-test-subj="esReplicaShards">Replica Shards: { this.state.replicas }</dd>
             </dl>
           </div>
         </div>

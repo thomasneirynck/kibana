@@ -6,7 +6,7 @@ import {
 
 export function MonitoringTableNoData({ message }) {
   return (
-    <KuiEmptyTablePromptPanel>
+    <KuiEmptyTablePromptPanel data-test-subj="monitoringTableNoData">
       <KuiTableInfo>
         { message }
       </KuiTableInfo>

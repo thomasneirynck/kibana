@@ -12,6 +12,7 @@ export function MonitoringTableSearchBar(props) {
       <KuiToolBarSearchBox
         onFilter={props.onFilterChange}
         placeholder={props.placeholder}
+        data-test-subj="monitoringTableSearchBar"
       />
 
       { props.toolBarSections }

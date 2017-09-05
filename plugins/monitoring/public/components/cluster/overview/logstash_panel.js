@@ -19,26 +19,32 @@ export function LogstashPanel(props) {
           <dl data-test-subj="logstash_overview">
             <dt className="cluster-panel__inner-title">
               <KuiKeyboardAccessible>
-                <a className="kuiLink" onClick={goToLogstash} >
+                <a className="kuiLink" onClick={goToLogstash}>
                   Overview
                 </a>
               </KuiKeyboardAccessible>
             </dt>
-            <dd>Events Received: { formatNumber(props.events_in_total, '0.[0]a') }</dd>
-            <dd>Events Emitted: { formatNumber(props.events_out_total, '0.[0]a') }</dd>
+            <dd data-test-subj="lsEventsReceived">
+              Events Received: { formatNumber(props.events_in_total, '0.[0]a') }
+            </dd>
+            <dd data-test-subj="lsEventsEmitted">
+              Events Emitted: { formatNumber(props.events_out_total, '0.[0]a') }
+            </dd>
           </dl>
         </div>
         <div className="col-md-4">
           <dl>
             <dt className="cluster-panel__inner-title">
               <KuiKeyboardAccessible>
-                <a className="kuiLink" onClick={goToNodes} >
+                <a className="kuiLink" onClick={goToNodes} data-test-subj="lsNodes">
                   Nodes: <span data-test-subj="number_of_logstash_instances">{ props.node_count }</span>
                 </a>
               </KuiKeyboardAccessible>
             </dt>
-            <dd>Uptime: { formatNumber(props.max_uptime, 'time_since') }</dd>
-            <dd>
+            <dd data-test-subj="lsUptime">
+              Uptime: { formatNumber(props.max_uptime, 'time_since') }
+            </dd>
+            <dd data-test-subj="lsJvmHeap">
               JVM Heap: <BytesPercentageUsage usedBytes={props.avg_memory_used} maxBytes={props.avg_memory} />
             </dd>
           </dl>
@@ -47,7 +53,7 @@ export function LogstashPanel(props) {
           <dl>
             <dt className="cluster-panel__inner-title">
               <KuiKeyboardAccessible>
-                <a className="link" onClick={goToPipelines} >
+                <a className="link" onClick={goToPipelines} data-test-subj="lsPipelines">
                   Pipelines: <span data-test-subj="number_of_logstash_pipelines">{ props.pipeline_count }</span>
                 </a>
               </KuiKeyboardAccessible>

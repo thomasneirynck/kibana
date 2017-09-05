@@ -278,7 +278,7 @@ export class MonitoringTable extends React.Component {
               { this.getTableHeader() }
             </tr>
           </thead>
-          <tbody>
+          <tbody data-test-subj={`${this.props.className}Body`}>
             { tBody }
           </tbody>
         </KuiTable>
@@ -288,7 +288,7 @@ export class MonitoringTable extends React.Component {
     }
 
     return (
-      <KuiControlledTable className={classes}>
+      <KuiControlledTable className={classes} data-test-subj={`${this.props.className}Container`}>
         { this.getSearchBar(numVisibleRows, numAvailableRows)}
         { table }
         { this.getFooter(numVisibleRows, numAvailableRows) }

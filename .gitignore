@@ -14,7 +14,7 @@ package-lock.json
 esvm/
 build/
 target/
-test/screenshots/failure/
+test/functional/screenshots/failure/
 
 .phantom/
 coverage
