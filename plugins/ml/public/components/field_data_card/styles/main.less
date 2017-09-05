@@ -10,7 +10,7 @@
     background-color: #f98510;
   }
 
-  .event-rate {
+  .document_count {
     background-color: #db1374;
   }
 
@@ -111,9 +111,54 @@
     justify-content: center;
   }
 
+  svg {
+    font-size: 11px;
+    font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial;
+
+    text {
+      fill: #555555;
+    }
+
+    .info-text {
+      text-anchor: middle;
+    }
+
+    .distribution-chart {
+
+      .x.axis path, .x.axis line {
+        fill: none;
+        stroke: #cccccc;
+        shape-rendering: crispEdges;
+      }
+
+      .area {
+        fill: #3185fc;
+      }
+    }
+
+  }
+
   ml-metric-distribution-chart {
     display: block;
     padding: 0px 15px 10px 15px;
+  }
+
+  ml-document-count-chart {
+    display: block;
+    padding: 18px 15px 10px 15px;
+    rect.bar {
+      fill: #db1374;
+    }
+
+    .bar {
+      stroke: #ffffff;
+    }
+
+    .axis path, .axis line {
+      fill: none;
+      stroke: #cccccc;
+      shape-rendering: crispEdges;
+    }
   }
 
   .top-value {
@@ -145,33 +190,6 @@
       height: 16px;
       min-width: 3px;
     }
-  }
-
-  svg {
-    font-size: 11px;
-    font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial;
-
-    text {
-      fill: #555555;
-    }
-
-    .info-text {
-      text-anchor: middle;
-    }
-
-    .distribution-chart {
-
-      .x.axis path, .x.axis line {
-        fill: none;
-        stroke: #cccccc;
-        shape-rendering: crispEdges;
-      }
-
-      .area {
-        fill: #3185fc;
-      }
-    }
-
   }
 
 }

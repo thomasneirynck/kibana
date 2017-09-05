@@ -194,18 +194,21 @@ module
       return aggregatableExistsFields.indexOf(f.displayName) > -1;
     });
 
-    $scope.totalMetricFieldCount = allMetricFields.length;
-    $scope.populatedMetricFieldCount = metricExistsFields.length;
+    const metricConfigs = [];
+
+    // Add a config for 'event rate', identified by no field name.
+    metricConfigs.push({
+      type: DATA_VISUALIZER_FIELD_TYPES.NUMBER,
+      existsInDocs: true
+    });
+
+    // Add on 1 for the document count card.
+    // TODO - remove the '+1' if document count goes in its own section.
+    $scope.totalMetricFieldCount = allMetricFields.length + 1;
+    $scope.populatedMetricFieldCount = metricExistsFields.length + 1;
     if ($scope.totalMetricFieldCount === $scope.populatedMetricFieldCount) {
       $scope.showAllMetrics = true;
     }
-
-    const metricConfigs = [];
-
-    // TODO: Add a config for 'event rate', identified by no field name.
-    // metricConfigs.push({
-    //   type: DATA_VISUALIZER_FIELD_TYPES.NUMBER
-    // });
 
     const metricFields = $scope.showAllMetrics ? allMetricFields : metricExistsFields;
     //metricFields = metricFields.slice(0, Math.min(metricFields.length, 6));

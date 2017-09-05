@@ -496,13 +496,13 @@ module.service('mlMultiMetricJobService', function (
     const end = formConfig.end;
     const start = formConfig.start;
 
-    mlSimpleJobSearchService.getEventRate(
+    mlResultsService.getEventRateData(
       formConfig.indexPattern.title,
+      query,
+      formConfig.timeField,
       start,
       end,
-      formConfig.timeField,
-      (interval + 'ms'),
-      query)
+      (interval + 'ms'))
     .then((resp) => {
       let highestValue = Math.max(this.chartData.eventRateHighestValue, this.chartData.highestValue);
       this.chartData.job.bars = [];
@@ -527,7 +527,8 @@ module.service('mlMultiMetricJobService', function (
       });
 
       this.chartData.eventRateHighestValue = Math.ceil(highestValue);
-      this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.eventRateHighestValue, true);
+      // Append extra 10px to width of tick label for highest axis value to allow for tick padding.
+      this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.eventRateHighestValue, true) + 10;
 
       deferred.resolve(this.chartData);
     }).catch((resp) => {

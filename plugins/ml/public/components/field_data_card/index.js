@@ -13,6 +13,7 @@
  * strictly prohibited.
  */
 
+import './document_count_chart_directive';
 import './field_data_card_directive';
 import './field_data_search_service';
 import './metric_distribution_chart_directive';

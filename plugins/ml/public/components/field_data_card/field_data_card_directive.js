@@ -55,24 +55,17 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
     // TODO - should the directive listen for changes to the timefilter,
     //        or do by watching cardConfig as above?
     // Refresh the data when the time range is altered.
-    scope.$listen(timefilter, 'fetch', function () {
+    scope.$listen(timefilter, 'fetch', () => {
       scope.earliest = timefilter.getActiveBounds().min.valueOf();
       scope.latest = timefilter.getActiveBounds().max.valueOf();
 
       loadStats();
-
-      // TODO - different actions for different components in the details area.
-      // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
-      // $timeout(function () {
-      //   scope.$broadcast('renderChart');
-      // }, 0);
-
     });
 
     scope.detailsModeChanged = function (mode) {
       scope.detailsMode = mode;
       if (scope.detailsMode === 'distribution') {
-        $timeout(function () {
+        $timeout(() => {
           scope.$broadcast('renderChart');
         }, 0);
       }
@@ -97,7 +90,7 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
           if (scope.cardConfig.fieldName) {
             return `${baseCardPath}/card_number.html`;
           } else {
-            return `${baseCardPath}/card_event_rate.html`;
+            return `${baseCardPath}/card_document_count.html`;
           }
         case DATA_VISUALIZER_FIELD_TYPES.TEXT:
           return `${baseCardPath}/card_text.html`;
@@ -106,7 +99,7 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
       }
     };
 
-    element.on('$destroy', function () {
+    element.on('$destroy', () => {
       scope.$destroy();
     });
 
@@ -114,23 +107,25 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
       const config = scope.cardConfig;
       switch (config.type) {
         case DATA_VISUALIZER_FIELD_TYPES.NUMBER:
-          mlFieldDataSearchService.getAggregatableFieldStats(
-            scope.indexPattern.title,
-            config.fieldName,
-            config.type,
-            scope.indexPattern.timeFieldName,
-            scope.earliest,
-            scope.latest)
-          .then((resp) => {
-            const cardinality = _.get(resp, ['stats', 'cardinality'], 0);
-            scope.detailsMode = cardinality > 100 ? 'distribution' : 'top';
-            scope.stats = resp.stats;
-            if (scope.detailsMode === 'distribution') {
-              $timeout(function () {
-                scope.$broadcast('renderChart');
-              }, 0);
-            }
-          });
+          if (scope.cardConfig.fieldName) {
+            mlFieldDataSearchService.getAggregatableFieldStats(
+              scope.indexPattern.title,
+              config.fieldName,
+              config.type,
+              scope.indexPattern.timeFieldName,
+              scope.earliest,
+              scope.latest)
+            .then((resp) => {
+              const cardinality = _.get(resp, ['stats', 'cardinality'], 0);
+              scope.detailsMode = cardinality > 100 ? 'distribution' : 'top';
+              scope.stats = resp.stats;
+              if (scope.detailsMode === 'distribution') {
+                $timeout(() => {
+                  scope.$broadcast('renderChart');
+                }, 0);
+              }
+            });
+          }
           break;
         case DATA_VISUALIZER_FIELD_TYPES.BOOLEAN:
         case DATA_VISUALIZER_FIELD_TYPES.DATE:

@@ -96,7 +96,8 @@ module.service('mlSingleMetricJobService', function (
       this.chartData.line = processLineChartResults(obj.results);
 
       this.chartData.highestValue = Math.ceil(highestValue);
-      this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.highestValue, true);
+      // Append extra 10px to width of tick label for highest axis value to allow for tick padding.
+      this.chartData.chartTicksMargin.width = calculateTextWidth(this.chartData.highestValue, true) + 10;
 
       deferred.resolve(this.chartData.line);
     })

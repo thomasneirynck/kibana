@@ -343,19 +343,29 @@ export function escapeForElasticsearchQuery(str) {
   return str.replace(/[-[\]{}()+!<>=?:\/\\^"~*&|\s]/g, '\\$&');
 }
 
-export function calculateTextWidth(txt, isNumber) {
+export function calculateTextWidth(txt, isNumber, elementSelection) {
   txt = (isNumber) ? d3.format(',')(txt) : txt;
-  const $body = d3.select('body');
-  const $el = $body.append('div');
-  const svg = $el.append('svg');
+  let svg = elementSelection;
+  let $el;
+  if (elementSelection === undefined) {
+    // Create a temporary selection to append the label to.
+    // Note styling of font will be inherited from CSS of page.
+    const $body = d3.select('body');
+    $el = $body.append('div');
+    svg = $el.append('svg');
+  }
+
   const tempLabelText = svg.append('g')
       .attr('class', 'temp-axis-label tick')
       .selectAll('text.temp.axis').data('a')
       .enter()
       .append('text')
       .text(txt);
-  const width = tempLabelText[0][0].getBBox().width + 10;
-  $el.remove();
+  const width = tempLabelText[0][0].getBBox().width;
+
   d3.select('.temp-axis-label').remove();
+  if ($el !== undefined) {
+    $el.remove();
+  }
   return Math.ceil(width);
 }
