@@ -7,13 +7,13 @@ import { BasicCredentials } from '../../../security/server/lib/authentication/pr
  * stack, and it even avoids creating a new socket connection if possible
  */
 export function getUsageCollector(server, config) {
+  let fakeRequest = { headers: {} };
+
   const username = config.get('elasticsearch.username');
   const password = config.get('elasticsearch.password');
-  const fakeRequest = BasicCredentials.decorateRequest(
-    { headers: {} },
-    username,
-    password
-  );
+  if (username && password) {
+    fakeRequest = BasicCredentials.decorateRequest(fakeRequest, username, password);
+  }
 
   const { callWithRequest } = server.plugins.elasticsearch.getCluster('admin');
   const callCluster = (...args) => callWithRequest(fakeRequest, ...args);
