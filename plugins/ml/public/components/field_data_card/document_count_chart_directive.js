@@ -20,9 +20,9 @@
 
 import _ from 'lodash';
 import d3 from 'd3';
-import angular from 'angular';
 
 import 'plugins/ml/services/results_service';
+import { showChartLoading } from 'plugins/ml/components/chart_loading_indicator';
 import { numTicks } from 'plugins/ml/util/chart_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
@@ -63,7 +63,7 @@ module.directive('mlDocumentCountChart', function (
 
     function loadDocCountData() {
       // Show the chart loading indicator.
-      showChartLoader(true);
+      showChartLoading(true, element, svgHeight);
 
       // Calculate the aggregation interval to use for the chart.
       const barTarget = chartWidth / TARGET_BAR_WIDTH;
@@ -87,7 +87,7 @@ module.directive('mlDocumentCountChart', function (
         chartAggInterval.expression)
       .then((resp) => {
         scope.chartData = processChartData(resp.results);
-        showChartLoader(false);
+        showChartLoading(false, element);
         render();
       }).catch((resp) => {
         console.log('Document count chart - error building document count chart:', resp);
@@ -179,16 +179,6 @@ module.directive('mlDocumentCountChart', function (
         .attr('width', cellWidth)
         .attr('y', (d) => { return yScale(d.value); })
         .attr('height', (d) => { return chartHeight - yScale(d.value); });
-    }
-
-    function showChartLoader(show) {
-      if(show) {
-        const $loader = angular.element('<div class="field-data-card-loader"><h2><i class="fa fa-spinner fa-spin"></i></h2></div>');
-        $loader.css('height', svgHeight);
-        element.append($loader);
-      } else {
-        element.find('.field-data-card-loader').remove();
-      }
     }
 
     // Do the initial load.

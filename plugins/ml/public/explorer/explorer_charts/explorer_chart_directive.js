@@ -24,6 +24,7 @@ import angular from 'angular';
 import moment from 'moment';
 import numeral from 'numeral';
 
+import { showChartLoading } from 'plugins/ml/components/chart_loading_indicator';
 import { getSeverityWithLow } from 'plugins/ml/util/anomaly_utils';
 import { numTicks } from 'plugins/ml/util/chart_utils';
 import 'plugins/ml/filters/format_value';
@@ -60,7 +61,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
     let awaitingCount = 2;
 
     // create a chart loading placeholder
-    showChartLoader(true);
+    showChartLoading(true, element, svgHeight);
 
     // finish() function, called after each data set has been loaded and processed.
     // The last one to call it will trigger the page render.
@@ -69,7 +70,7 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
       if (awaitingCount === 0) {
         scope.chartData = processChartData();
         // charts are ready, hide the chart loading placeholder
-        showChartLoader(false);
+        showChartLoading(false, element);
         init();
         drawLineChart();
       }
@@ -461,16 +462,6 @@ module.directive('mlExplorerChart', function (mlResultsService, formatValueFilte
       });
 
       return chartData;
-    }
-
-    function showChartLoader(show) {
-      if(show) {
-        const $loader = angular.element('<div class="explorer-chart-loader"><h2><i class="fa fa-spinner fa-spin"></i></h2></div>');
-        $loader.css('height', svgHeight);
-        element.append($loader);
-      } else {
-        element.find('.explorer-chart-loader').remove();
-      }
     }
 
   }

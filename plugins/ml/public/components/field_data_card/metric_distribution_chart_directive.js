@@ -20,8 +20,8 @@
 
 import _ from 'lodash';
 import d3 from 'd3';
-import angular from 'angular';
 
+import { showChartLoading } from 'plugins/ml/components/chart_loading_indicator';
 import { ordinalSuffix } from 'ui/utils/ordinal_suffix';
 
 import { uiModules } from 'ui/modules';
@@ -70,7 +70,7 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
 
     function loadDistributionData() {
       // Show the chart loading indicator.
-      showChartLoader(true);
+      showChartLoading(true, element, svgHeight);
 
       const config = scope.chartConfig;
       mlFieldDataSearchService.getMetricDistributionData(
@@ -83,7 +83,7 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
         scope.chartData = processDistributionData(resp.results.percentiles);
         minPercentileDisplay = resp.results.minPercentile;
         maxPercentileDisplay = resp.results.maxPercentile;
-        showChartLoader(false);
+        showChartLoading(false, element);
 
         render();
       });
@@ -334,16 +334,6 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
           .duration(500)
           .style('opacity', 0)
           .style('display', 'none');
-      }
-    }
-
-    function showChartLoader(show) {
-      if(show) {
-        const $loader = angular.element('<div class="field-data-card-loader"><h2><i class="fa fa-spinner fa-spin"></i></h2></div>');
-        $loader.css('height', svgHeight);
-        element.append($loader);
-      } else {
-        element.find('.field-data-card-loader').remove();
       }
     }
 
