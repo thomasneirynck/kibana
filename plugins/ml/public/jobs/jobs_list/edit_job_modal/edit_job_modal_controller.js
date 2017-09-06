@@ -333,6 +333,6 @@ module.controller('MlEditJobModal', function ($scope, $modalInstance, $modal, pa
 
   $scope.cancel = function () {
     msgs.clear();
-    $modalInstance.dismiss('cancel');
+    $modalInstance.close();
   };
 });

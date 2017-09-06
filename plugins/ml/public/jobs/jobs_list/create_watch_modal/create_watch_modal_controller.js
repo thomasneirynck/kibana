@@ -43,6 +43,6 @@ module.controller('MlCreateWatchModal', function ($scope, $modalInstance, params
   };
 
   $scope.close = function () {
-    $modalInstance.dismiss('cancel');
+    $modalInstance.close();
   };
 });

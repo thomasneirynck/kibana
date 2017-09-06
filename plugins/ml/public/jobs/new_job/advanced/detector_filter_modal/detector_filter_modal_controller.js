@@ -239,6 +239,6 @@ module.controller('MlDetectorFilterModal', function ($scope, $modalInstance, par
 
   $scope.cancel = function () {
     msgs.clear();
-    $modalInstance.dismiss('cancel');
+    $modalInstance.close();
   };
 });

@@ -141,7 +141,6 @@ module.controller('MlJobTimepickerModal', function (
   };
 
   $scope.cancel = function () {
-    // msgs.clear();
-    $modalInstance.dismiss('cancel');
+    $modalInstance.close();
   };
 });

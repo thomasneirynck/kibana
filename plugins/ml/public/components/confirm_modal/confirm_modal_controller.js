@@ -36,7 +36,7 @@ module.controller('MlConfirmModal', function ($scope, $modalInstance, params) {
 
   $scope.cancel = function () {
     $scope.cancelFunc();
-    $modalInstance.dismiss('cancel');
+    $modalInstance.close();
   };
 
 });

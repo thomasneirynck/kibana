@@ -143,6 +143,6 @@ module.controller('MlDetectorModal', function ($scope, $modalInstance, params, m
 
   $scope.cancel = function () {
     msgs.clear();
-    $modalInstance.dismiss('cancel');
+    $modalInstance.close();
   };
 });

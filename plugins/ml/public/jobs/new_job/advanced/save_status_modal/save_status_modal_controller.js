@@ -37,7 +37,7 @@ module.controller('MlSaveStatusModal', function ($scope, $location, $modalInstan
     }
 
     $scope.pscope.ui.saveStatus.job = 0;
-    $modalInstance.dismiss('cancel');
+    $modalInstance.close();
   };
 
 });

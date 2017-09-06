@@ -33,7 +33,7 @@ module.controller('MlDeleteJobModal', function ($scope, $modalInstance, params) 
   // once the job is saved and optional upload is complete.
   // close modal and return to jobs list
   $scope.close = function () {
-    $modalInstance.dismiss('cancel');
+    $modalInstance.close();
   };
 
 });
