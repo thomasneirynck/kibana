@@ -27,13 +27,14 @@ module.service('mlCreateRecognizerJobsService', function (
   timefilter,
   Private,
   $http,
+  $q,
   chrome,
   mlJobService) {
 
   const savedObjectsClient = Private(SavedObjectsClientProvider);
 
   this.createJob = function (job, formConfig) {
-    return new Promise((resolve, reject) => {
+    return $q((resolve, reject) => {
       const newJob = angular.copy(job.jobConfig);
       const jobId = formConfig.jobLabel + job.id;
       newJob.job_id = jobId;
@@ -52,7 +53,7 @@ module.service('mlCreateRecognizerJobsService', function (
   };
 
   this.createDatafeed = function (job, formConfig) {
-    return new Promise((resolve, reject) => {
+    return $q((resolve, reject) => {
       const jobId = formConfig.jobLabel + job.id;
 
       mlJobService.saveNewDatafeed(job.datafeedConfig, jobId)
@@ -99,7 +100,7 @@ module.service('mlCreateRecognizerJobsService', function (
   };
 
   this.indexTimeRange = function (indexPattern, formConfig) {
-    return new Promise((resolve, reject) => {
+    return $q((resolve, reject) => {
       const obj = { success: true, start: { epoch:0, string:'' }, end: { epoch:0, string:'' } };
       const query = getQueryFromSavedSearch(formConfig);
 

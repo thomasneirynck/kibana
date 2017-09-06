@@ -29,7 +29,7 @@ module.directive('mlFullTimeRangeSelector', () => {
       disabled: '=',
       query: '='
     },
-    controller: function ($scope, timefilter, Notifier, es) {
+    controller: function ($scope, timefilter, Notifier, es, $q) {
       const notify = new Notifier();
 
       // called on button press
@@ -38,17 +38,15 @@ module.directive('mlFullTimeRangeSelector', () => {
         .then((resp) => {
           timefilter.time.from = moment(resp.start.epoch).toISOString();
           timefilter.time.to = moment(resp.end.epoch).toISOString();
-          $scope.$apply();
         })
         .catch((resp) => {
           notify.error(resp);
-          $scope.$apply();
         });
       };
 
       // load the earliest and latest time stamps for the index
       function indexTimeRange() {
-        return new Promise((resolve, reject) => {
+        return $q((resolve, reject) => {
           const obj = { success: true, start: { epoch:0, string:'' }, end: { epoch:0, string:'' } };
           const query = $scope.query;
 

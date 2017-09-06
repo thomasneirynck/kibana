@@ -25,6 +25,7 @@ const module = uiModules.get('apps/ml');
 module.directive('mlBucketSpanEstimator', function ($injector) {
   const Private = $injector.get('Private');
   const es = $injector.get('es');
+  const $q = $injector.get('$q');
 
   return {
     restrict: 'AE',
@@ -96,7 +97,6 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
             console.log('Bucket span could not be estimated', resp);
             $scope.ui.bucketSpanEstimator.status = STATUS.FAILED;
             $scope.ui.bucketSpanEstimator.message = 'Bucket span could not be estimated';
-            $scope.$applyAsync();
           });
         } else {
           // no partition field selected or we're in the single metric config
@@ -132,23 +132,21 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
           splitField,
           splitFieldValues);
 
-        bss.run()
+        $q.when(bss.run())
         .then((interval) => {
           $scope.formConfig.bucketSpan = interval.name;
-          $scope.$applyAsync();
           $scope.ui.bucketSpanEstimator.status = STATUS.FINISHED;
         })
         .catch((resp) => {
           console.log('Bucket span could not be estimated', resp);
           $scope.ui.bucketSpanEstimator.status = STATUS.FAILED;
           $scope.ui.bucketSpanEstimator.message = 'Bucket span could not be estimated';
-          $scope.$applyAsync();
         });
       }
 
       function getRandomFieldValues(index, field, query) {
         let fieldValues = [];
-        return new Promise((resolve, reject) => {
+        return $q((resolve, reject) => {
           const NUM_PARTITIONS = 10;
           // use a partitioned search to load 10 random fields
           // load ten fields, to test that there are at least 10.
@@ -173,15 +171,15 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
                 }
               }
             })
-            .then((partionResp) => {
-              if(_.has(partionResp, 'aggregations.fields_bucket_counts.buckets')) {
-                const buckets = partionResp.aggregations.fields_bucket_counts.buckets;
+            .then((partitionResp) => {
+              if(_.has(partitionResp, 'aggregations.fields_bucket_counts.buckets')) {
+                const buckets = partitionResp.aggregations.fields_bucket_counts.buckets;
                 fieldValues = _.map(buckets, b => b.key);
               }
               resolve(fieldValues);
             })
-            .catch((partionResp) => {
-              reject(partionResp);
+            .catch((partitionResp) => {
+              reject(partitionResp);
             });
           })
           .catch((resp) => {
@@ -191,7 +189,7 @@ module.directive('mlBucketSpanEstimator', function ($injector) {
       }
 
       function getFieldCardinality(index, field) {
-        return new Promise((resolve, reject) => {
+        return $q((resolve, reject) => {
           es.search({
             index,
             size: 0,

@@ -45,6 +45,7 @@ module
   $scope,
   $window,
   $route,
+  $q,
   ml,
   timefilter,
   Private,
@@ -225,30 +226,26 @@ module
           .then(() => {
             $scope.overallState = SAVE_STATE.SAVED;
             createResultsUrl();
-            $scope.$applyAsync();
           })
           .catch(() => {
             $scope.overallState = SAVE_STATE.FAILED;
-            $scope.$applyAsync();
           });
         })
         .catch(() => {
           $scope.overallState = SAVE_STATE.FAILED;
-          $scope.$applyAsync();
         });
       }, 500);
     }
   };
 
   function createJobs() {
-    return new Promise((resolve, reject) => {
+    return $q((resolve, reject) => {
 
       let jobsCounter = $scope.formConfig.jobs.length;
 
       function checkFinished() {
         jobsCounter--;
         if (jobsCounter === 0) {
-          $scope.$applyAsync();
           startDatafeeds()
           .then(() => {
             resolve();
@@ -300,7 +297,7 @@ module
   }
 
   function startDatafeeds() {
-    return new Promise((resolve, reject) => {
+    return $q((resolve, reject) => {
 
       const jobs = $scope.formConfig.jobs;
       const numberOfJobs = jobs.length;
@@ -329,7 +326,6 @@ module
             if (job.runningState === DATAFEED_STATE.FAILED) {
               reject();
             }
-            $scope.$applyAsync();
           }
         }
 
@@ -378,7 +374,7 @@ module
   }
 
   function saveAllKibanaObjects(kibanaObjects) {
-    return new Promise((resolve) => {
+    return $q((resolve) => {
 
       let numberOfObjects = 0;
       // keep count of the number of saved objects to save
@@ -453,7 +449,7 @@ module
   }
 
   // function saveKibanaObjects(kibanaObjects, type) {
-  //   return new Promise((resolve, reject) => {
+  //   return $q((resolve, reject) => {
   //     let count = 0;
   //     save(kibanaObjects[type][0]);
 
@@ -524,7 +520,7 @@ module
   }
 
   function checkForSavedObject(type, savedObject) {
-    return new Promise((resolve, reject) => {
+    return $q((resolve, reject) => {
       let exists = false;
       mlCreateRecognizerJobsService.loadExistingSavedObjects(type)
       .then((resp) => {
