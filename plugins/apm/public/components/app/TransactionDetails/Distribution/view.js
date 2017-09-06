@@ -21,7 +21,7 @@ export function getFormattedBuckets(buckets, bucketSize) {
   });
 }
 
-function loadDistribution(props) {
+function loadTransactionDistribution(props) {
   const { appName, start, end, transactionName } = props.urlParams;
 
   if (
@@ -31,17 +31,17 @@ function loadDistribution(props) {
     transactionName &&
     !props.distribution.status
   ) {
-    props.loadDistribution({ appName, start, end, transactionName });
+    props.loadTransactionDistribution({ appName, start, end, transactionName });
   }
 }
 
 class Distribution extends Component {
   componentDidMount() {
-    loadDistribution(this.props);
+    loadTransactionDistribution(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
-    loadDistribution(nextProps);
+    loadTransactionDistribution(nextProps);
   }
 
   render() {
@@ -53,6 +53,7 @@ class Distribution extends Component {
     return (
       <div>
         <Histogram
+          formatYValue={value => `${value} reqs.`}
           buckets={buckets}
           bucketSize={distribution.data.bucketSize}
           selectedBucket={this.props.urlParams.bucket}

@@ -22,16 +22,8 @@ export async function getTopTransactions(req) {
       query: {
         bool: {
           must: [
-            {
-              term: {
-                [APP_NAME]: appName
-              }
-            },
-            {
-              term: {
-                [TRANSACTION_TYPE]: transactionType
-              }
-            },
+            { term: { [APP_NAME]: appName } },
+            { term: { [TRANSACTION_TYPE]: transactionType } },
             {
               range: {
                 '@timestamp': {

@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import withErrorHandler from '../../shared/withErrorHandler';
 import PageHeader from '../../shared/PageHeader';
-import WiremockContainer from '../../shared/WiremockContainer';
 import Breadcrumbs from '../../shared/Breadcrumbs';
 import DetailView from './DetailView';
+import Distribution from './Distribution';
 
 function loadErrorGroup(props) {
   const { appName, errorGroupId, start, end } = props.urlParams;
@@ -29,8 +29,7 @@ class ErrorGroupDetails extends Component {
       <div>
         <Breadcrumbs />
         <PageHeader title={`Error group: ${errorGroupId}`} />
-        <WiremockContainer>Occurrences</WiremockContainer>
-        <WiremockContainer>Occurrences histogram</WiremockContainer>
+        <Distribution />
         <DetailView
           errorGroup={this.props.errorGroup}
           urlParams={this.props.urlParams}

@@ -1,19 +1,3 @@
-export function getYMax(items) {
-  return Math.max(...items.map(item => item.y));
-}
-
-export function getYMin(items) {
-  return Math.min(...items.map(item => item.y));
-}
-
-export function getXMax(items) {
-  return Math.max(...items.map(item => item.x));
-}
-
-export function getXMin(items) {
-  return Math.min(...items.map(item => item.x));
-}
-
 export function getYMaxRounded(yMax) {
   if (yMax <= 0) {
     return 0;

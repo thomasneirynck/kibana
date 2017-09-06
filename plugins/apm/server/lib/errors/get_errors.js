@@ -1,5 +1,3 @@
-/* eslint-disable no-shadow */
-
 import {
   APP_NAME,
   ERROR_GROUP_ID,
@@ -17,16 +15,8 @@ export async function getErrors(req) {
       query: {
         bool: {
           must: [
-            {
-              term: {
-                [APP_NAME]: appName
-              }
-            },
-            {
-              term: {
-                'processor.event': 'error'
-              }
-            },
+            { term: { [APP_NAME]: appName } },
+            { term: { 'processor.event': 'error' } },
             {
               range: {
                 '@timestamp': {

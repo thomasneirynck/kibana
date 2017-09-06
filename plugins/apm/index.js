@@ -1,9 +1,6 @@
 import { resolve } from 'path';
 import { initTransactionsApi } from './server/routes/transactions';
-import { initChartApi } from './server/routes/charts';
-import { initDistributionApi } from './server/routes/distribution';
 import { initAppsApi } from './server/routes/apps';
-import { initTracesApi } from './server/routes/traces';
 import { initErrorsApi } from './server/routes/errors';
 
 export function apm(kibana) {
@@ -33,10 +30,7 @@ export function apm(kibana) {
 
     init(server) {
       initTransactionsApi(server);
-      initChartApi(server);
-      initDistributionApi(server);
       initAppsApi(server);
-      initTracesApi(server);
       initErrorsApi(server);
     }
   });

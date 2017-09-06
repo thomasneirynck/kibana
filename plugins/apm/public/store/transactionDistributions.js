@@ -3,11 +3,11 @@ import * as rest from '../services/rest';
 import { STATUS } from '../constants';
 
 // ACTION TYPES
-export const DISTRIBUTION_LOADING = 'DISTRIBUTION_LOADING';
-export const DISTRIBUTION_SUCCESS = 'DISTRIBUTION_SUCCESS';
-export const DISTRIBUTION_FAILURE = 'DISTRIBUTION_FAILURE';
+export const DISTRIBUTION_LOADING = 'TRANSACTION_DISTRIBUTION_LOADING';
+export const DISTRIBUTION_SUCCESS = 'TRANSACTION_DISTRIBUTION_SUCCESS';
+export const DISTRIBUTION_FAILURE = 'TRANSACTION_DISTRIBUTION_FAILURE';
 
-const INITIAL_STATE = { data: [] };
+const INITIAL_STATE = { data: { buckets: [] } };
 function distribution(state = INITIAL_STATE, action) {
   switch (action.type) {
     case DISTRIBUTION_LOADING:
@@ -28,7 +28,7 @@ function distribution(state = INITIAL_STATE, action) {
   }
 }
 
-const distributions = (state = {}, action) => {
+const transactionDistributions = (state = {}, action) => {
   switch (action.type) {
     case DISTRIBUTION_LOADING:
     case DISTRIBUTION_SUCCESS:
@@ -42,14 +42,19 @@ const distributions = (state = {}, action) => {
   }
 };
 
-export function loadDistribution({ appName, start, end, transactionName }) {
+export function loadTransactionDistribution({
+  appName,
+  start,
+  end,
+  transactionName
+}) {
   return async dispatch => {
     const key = `${appName}_${start}_${end}_${transactionName}`;
     dispatch({ type: DISTRIBUTION_LOADING, key });
 
     let response;
     try {
-      response = await rest.loadDistribution({
+      response = await rest.loadTransactionDistribution({
         appName,
         start,
         end,
@@ -71,24 +76,24 @@ export function loadDistribution({ appName, start, end, transactionName }) {
   };
 }
 
-export function getDistribution(state) {
+export function getTransactionDistribution(state) {
   const { appName, start, end, transactionName } = state.urlParams;
   const key = `${appName}_${start}_${end}_${transactionName}`;
-  return state.distributions[key] || INITIAL_STATE;
+  return state.transactionDistributions[key] || INITIAL_STATE;
 }
 
 export function getDefaultBucketIndex(state) {
-  const _distribution = getDistribution(state);
+  const _distribution = getTransactionDistribution(state);
   return _distribution.data.defaultBucketIndex;
 }
 
 export function getDefaultTransactionId(state) {
-  const _distribution = getDistribution(state);
+  const _distribution = getTransactionDistribution(state);
   const bucketIndex =
     state.urlParams.bucket !== undefined
       ? state.urlParams.bucket
       : _distribution.data.defaultBucketIndex;
-  return _.get(_distribution, `data.buckets['${bucketIndex}'].transactionId`);
+  return _.get(_distribution.data.buckets[bucketIndex], 'transactionId');
 }
 
-export default distributions;
+export default transactionDistributions;

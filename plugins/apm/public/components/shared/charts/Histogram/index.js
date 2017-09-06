@@ -1,4 +1,7 @@
 import React, { PureComponent } from 'react';
+import d3 from 'd3';
+import _ from 'lodash';
+import isNil from 'lodash.isnil';
 import PropTypes from 'prop-types';
 import { scaleLinear } from 'd3-scale';
 import SingleRect from './SingleRect';
@@ -12,7 +15,7 @@ import {
   Voronoi,
   makeWidthFlexible
 } from 'react-vis';
-import { getYMax, getXMax, getYMaxRounded } from '../utils';
+import { getYMaxRounded } from '../utils';
 
 const XY_HEIGHT = 120;
 const XY_MARGIN = {
@@ -64,15 +67,15 @@ class Histogram extends PureComponent {
   render() {
     const { buckets, selectedBucket, bucketSize } = this.props;
 
-    if (!buckets) {
+    if (_.isEmpty(buckets)) {
       return null;
     }
 
     const XY_WIDTH = this.props.width; // from makeWidthFlexible HOC
-    const xMin = 0;
-    const xMax = getXMax(buckets);
+    const xMin = d3.min(buckets, d => d.x0);
+    const xMax = d3.max(buckets, d => d.x);
     const yMin = 0;
-    const yMax = getYMax(buckets);
+    const yMax = d3.max(buckets, d => d.y);
     const yMaxRounded = getYMaxRounded(yMax);
     const yTickValues = [yMaxRounded, yMaxRounded / 2];
     const chartData = this.getChartData(buckets, selectedBucket);
@@ -86,6 +89,7 @@ class Histogram extends PureComponent {
 
     return (
       <XYPlot
+        xType={this.props.xType || 'linear'}
         width={XY_WIDTH}
         height={XY_HEIGHT}
         margin={XY_MARGIN}
@@ -104,7 +108,7 @@ class Histogram extends PureComponent {
           tickSize={0}
           hideLine
           tickValues={yTickValues}
-          tickFormat={value => `${value} reqs.`}
+          tickFormat={this.props.formatYValue}
         />
 
         {this.state.hoveredBucket && (
@@ -117,7 +121,7 @@ class Histogram extends PureComponent {
           />
         )}
 
-        {Number.isInteger(selectedBucket) && (
+        {!isNil(selectedBucket) && (
           <SingleRect
             x={x(selectedBucket * bucketSize)}
             width={x(bucketSize) - x(0)}
@@ -138,19 +142,21 @@ class Histogram extends PureComponent {
           }}
         />
 
-        <Voronoi
-          extent={[[XY_MARGIN.left, XY_MARGIN.top], [XY_WIDTH, XY_HEIGHT]]}
-          nodes={this.props.buckets.map(item => ({
-            ...item,
-            x: (item.x0 + item.x) / 2,
-            y: 1
-          }))}
-          onClick={this.onClick}
-          onHover={this.onHover}
-          onBlur={this.onBlur}
-          x={d => x(d.x)}
-          y={d => y(d.y)}
-        />
+        {this.props.onClick && (
+          <Voronoi
+            extent={[[XY_MARGIN.left, XY_MARGIN.top], [XY_WIDTH, XY_HEIGHT]]}
+            nodes={this.props.buckets.map(item => ({
+              ...item,
+              x: (item.x0 + item.x) / 2,
+              y: 1
+            }))}
+            onClick={this.onClick}
+            onHover={this.onHover}
+            onBlur={this.onBlur}
+            x={d => x(d.x)}
+            y={d => y(d.y)}
+          />
+        )}
       </XYPlot>
     );
   }

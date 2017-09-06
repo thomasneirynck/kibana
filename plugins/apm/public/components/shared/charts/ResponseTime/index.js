@@ -1,6 +1,7 @@
 import React, { PureComponent } from 'react';
 import 'react-vis/dist/style.css';
 import PropTypes from 'prop-types';
+import d3 from 'd3';
 import SelectionMarker from './SelectionMarker';
 
 import { scaleLinear } from 'd3-scale';
@@ -16,7 +17,7 @@ import {
   Voronoi,
   makeWidthFlexible
 } from 'react-vis';
-import { getYMax, getYMaxRounded, getXMax, getXMin } from '../utils';
+import { getYMaxRounded } from '../utils';
 
 const XY_HEIGHT = 300;
 const XY_MARGIN = {
@@ -75,10 +76,10 @@ class ResponseTime extends PureComponent {
   render() {
     const { hoveredX, avg, p95, p99, width } = this.props;
 
-    const xMin = getXMin(p99);
-    const xMax = getXMax(p99);
+    const xMin = d3.min(p99, d => d.x);
+    const xMax = d3.max(p99, d => d.x);
     const yMin = 0;
-    const yMax = getYMax(p99);
+    const yMax = d3.max(p99, d => d.y);
     const yMaxRounded = getYMaxRounded(yMax);
     const yTickValues = [yMaxRounded, yMaxRounded / 2];
     const XY_WIDTH = width; // from makeWidthFlexible HOC

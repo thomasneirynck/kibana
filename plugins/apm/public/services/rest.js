@@ -77,7 +77,7 @@ export async function loadTransactionList({
   });
 }
 
-export async function loadDistribution({
+export async function loadTransactionDistribution({
   appName,
   start,
   end,
@@ -146,6 +146,21 @@ export async function loadErrorGroup({ appName, errorGroupId, start, end }) {
   return callApi({
     pathname: `${getAppRootPath(appName)}/errors/${errorGroupId}`,
     camelcase: false,
+    query: {
+      start,
+      end
+    }
+  });
+}
+
+export async function loadErrorDistribution({
+  appName,
+  start,
+  end,
+  errorGroupId
+}) {
+  return callApi({
+    pathname: `${getAppRootPath(appName)}/errors/${errorGroupId}/distribution`,
     query: {
       start,
       end

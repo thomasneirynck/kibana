@@ -5,7 +5,7 @@ import { toQuery, legacyDecodeURIComponent } from '../utils/url';
 import {
   getDefaultTransactionId,
   getDefaultBucketIndex
-} from './distributions';
+} from './transactionDistributions';
 import { getDefaultTransactionType } from './apps';
 
 // ACTION TYPES

@@ -1,9 +1,8 @@
-import { get } from 'lodash';
 import {
   APP_NAME,
   TRANSACTION_NAME,
   TRANSACTION_DURATION
-} from '../../../common/constants';
+} from '../../../../common/constants';
 export async function calculateBucketSize(req, transactionName) {
   const { start, end, client, config } = req.pre.setup;
   const { appName } = req.params;
@@ -23,16 +22,8 @@ export async function calculateBucketSize(req, transactionName) {
                 }
               }
             },
-            {
-              term: {
-                [`${TRANSACTION_NAME}.keyword`]: transactionName
-              }
-            },
-            {
-              term: {
-                [APP_NAME]: appName
-              }
-            }
+            { term: { [`${TRANSACTION_NAME}.keyword`]: transactionName } },
+            { term: { [APP_NAME]: appName } }
           ]
         }
       },
@@ -49,7 +40,7 @@ export async function calculateBucketSize(req, transactionName) {
   const resp = await client('search', params);
   const minBucketSize = config.get('xpack.apm.minimumBucketSize');
   const bucketTargetCount = config.get('xpack.apm.bucketTargetCount');
-  const max = get(resp, 'aggregations.stats.max');
+  const { max } = resp.aggregations.stats;
   const bucketSize = Math.floor(max / bucketTargetCount);
 
   return bucketSize > minBucketSize ? bucketSize : minBucketSize;

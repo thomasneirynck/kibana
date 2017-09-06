@@ -3,12 +3,13 @@ import { combineReducers } from 'redux';
 import appLists from './appLists';
 import apps from './apps';
 import charts from './charts';
-import distributions from './distributions';
+import errorDistributions from './errorDistributions';
 import errorGroupLists from './errorGroupLists';
 import errorGroups from './errorGroups';
 import license from './license';
 import location from './location';
 import traces from './traces';
+import transactionDistributions from './transactionDistributions';
 import transactionLists from './transactionLists';
 import transactions from './transactions';
 import transactionSorting from './transactionSorting';
@@ -18,12 +19,13 @@ const appReducer = combineReducers({
   appLists,
   apps,
   charts,
-  distributions,
+  errorDistributions,
   errorGroupLists,
   errorGroups,
   license,
   location,
   traces,
+  transactionDistributions,
   transactionLists,
   transactions,
   transactionSorting,

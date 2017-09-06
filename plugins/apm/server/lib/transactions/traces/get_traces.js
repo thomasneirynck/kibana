@@ -2,7 +2,7 @@ import {
   TRACE_TRANSACTION_ID,
   TRACE_START,
   TRACE_TYPE
-} from '../../../common/constants';
+} from '../../../../common/constants';
 
 async function getTraces(req) {
   const { start, end, client, config } = req.pre.setup;

@@ -1,5 +1,3 @@
-/* eslint-disable no-shadow */
-
 import {
   APP_NAME,
   TRANSACTION_DURATION,

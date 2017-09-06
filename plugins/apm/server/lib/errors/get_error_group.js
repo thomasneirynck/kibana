@@ -1,10 +1,7 @@
-/* eslint-disable no-shadow */
-
 import { APP_NAME, ERROR_GROUP_ID } from '../../../common/constants';
 import { get } from 'lodash';
 export async function getErrorGroup(req) {
-  const { appName } = req.params;
-  const { groupId } = req.params;
+  const { appName, groupId } = req.params;
   const { start, end, client, config } = req.pre.setup;
 
   const params = {
@@ -14,16 +11,8 @@ export async function getErrorGroup(req) {
       query: {
         bool: {
           must: [
-            {
-              term: {
-                [APP_NAME]: appName
-              }
-            },
-            {
-              term: {
-                [ERROR_GROUP_ID]: groupId
-              }
-            },
+            { term: { [APP_NAME]: appName } },
+            { term: { [ERROR_GROUP_ID]: groupId } },
             {
               range: {
                 '@timestamp': {

@@ -4,7 +4,7 @@ import {
   TRANSACTION_DURATION,
   TRANSACTION_ID,
   TRANSACTION_NAME
-} from '../../../common/constants';
+} from '../../../../common/constants';
 export async function getBuckets(req, transactionName, bucketSize = 100) {
   const { start, end, client, config } = req.pre.setup;
   const { appName } = req.params;
@@ -26,16 +26,8 @@ export async function getBuckets(req, transactionName, bucketSize = 100) {
                 }
               }
             },
-            {
-              term: {
-                [APP_NAME]: appName
-              }
-            },
-            {
-              term: {
-                [`${TRANSACTION_NAME}.keyword`]: transactionName
-              }
-            }
+            { term: { [APP_NAME]: appName } },
+            { term: { [`${TRANSACTION_NAME}.keyword`]: transactionName } }
           ]
         }
       },
@@ -65,7 +57,7 @@ export async function getBuckets(req, transactionName, bucketSize = 100) {
 
   const resp = await client('search', params);
 
-  return get(resp, 'aggregations.distribution.buckets', []).map(bucket => ({
+  return resp.aggregations.distribution.buckets.map(bucket => ({
     key: bucket.key,
     count: bucket.doc_count,
     transaction_id: get(bucket.sample.hits.hits[0], `_source.${TRANSACTION_ID}`)

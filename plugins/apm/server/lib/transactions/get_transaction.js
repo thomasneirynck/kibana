@@ -11,11 +11,7 @@ async function getTransaction(req) {
       query: {
         bool: {
           must: [
-            {
-              term: {
-                [TRANSACTION_ID]: transactionId
-              }
-            },
+            { term: { [TRANSACTION_ID]: transactionId } },
             {
               range: {
                 '@timestamp': {

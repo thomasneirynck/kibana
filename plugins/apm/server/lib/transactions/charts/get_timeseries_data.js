@@ -4,7 +4,7 @@ import {
   APP_NAME,
   TRANSACTION_TYPE,
   TRANSACTION_NAME
-} from '../../../common/constants';
+} from '../../../../common/constants';
 import moment from 'moment';
 import { isNumber, get } from 'lodash';
 export async function getTimeseriesData(req) {
