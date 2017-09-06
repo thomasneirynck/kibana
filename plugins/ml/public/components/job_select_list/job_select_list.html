@@ -63,7 +63,7 @@
                     <input ng-if="singleSelection === true" type="radio"
                       name="job-group"
                       value="{{job.id}}"
-                      ng-model="$parent.$parent.$parent.selectedJobRadio"
+                      ng-model="$parent.$parent.$parent.$parent.selectedJobRadio"
                       ng-disabled='job.disabled' />
                     <span ng-class="{'disabled-job': job.disabled}">{{job.name}}</span>
                   </span>
