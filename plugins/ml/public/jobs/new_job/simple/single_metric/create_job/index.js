@@ -22,3 +22,4 @@ import 'plugins/ml/jobs/new_job/simple/components/utils/search_service';
 import 'plugins/ml/jobs/new_job/simple/components/post_save_options';
 import 'plugins/ml/jobs/new_job/simple/components/bucket_span_estimator';
 import 'plugins/ml/components/job_group_select';
+import 'plugins/ml/components/full_time_range_selector';

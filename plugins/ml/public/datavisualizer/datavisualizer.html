@@ -2,8 +2,16 @@
 <ml-datavisualizer class="data-visualizer-container">
   <div ng-controller="MlDataVisualizerViewFields" >
     <div class="title-container">
-      <h1 class="kuiTitle kuiVerticalRhythm">{{indexPattern.title}}</h1>
+      <h1 class="kuiTitle kuiVerticalRhythm">{{indexPattern.title}}
+        <div class="pull-right">
+          <ml-full-time-range-selector
+            index-pattern='indexPattern'
+            query='query'
+          ></ml-full-time-range-selector>
+        </div>
+      </h1>
     </div>
+
 
     <div class="main-container">
 

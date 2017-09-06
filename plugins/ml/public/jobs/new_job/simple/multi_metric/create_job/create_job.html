@@ -7,14 +7,11 @@
       <div class="col-md-6">
         <div class="pull-right">
           <span style="font-size:10px;" ng-show="formConfig.chartInterval !== undefined">Chart interval: {{formConfig.chartInterval.getInterval().expression}}</span>
-          <button
-            aria-label="Create Job"
-            ng-click="setFullTimeRange()"
-            type="button"
-            ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-            class="kuiButton kuiButton--primary">
-              Use full {{ui.indexPattern.title}} data
-          </button>
+          <ml-full-time-range-selector
+            disabled='(jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED)'
+            index-pattern='ui.indexPattern'
+            query='formConfig.combinedQuery'
+          ></ml-full-time-range-selector>
         </div>
       </div>
     </div>

@@ -22,7 +22,6 @@ import { parseInterval } from 'ui/utils/parse_interval';
 import { calculateDatafeedFrequencyDefaultSeconds, ML_MEDIAN_PERCENTS } from 'plugins/ml/util/job_utils';
 import { calculateTextWidth } from 'plugins/ml/util/string_utils';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
-import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -175,7 +174,8 @@ module.service('mlMultiMetricJobService', function (
 
   function getSearchJsonFromConfig(formConfig) {
     const interval = formConfig.chartInterval.getInterval().asMilliseconds() + 'ms';
-    const query = getQueryFromSavedSearch(formConfig);
+    // clone the query as we're modifying it
+    const query = _.cloneDeep(formConfig.combinedQuery);
 
     const json = {
       'index': formConfig.indexPattern.title,
@@ -274,7 +274,7 @@ module.service('mlMultiMetricJobService', function (
       match_all: {}
     };
     if (formConfig.query.query_string.query !== '*' || formConfig.filters.length) {
-      query = getQueryFromSavedSearch(formConfig);
+      query = formConfig.combinedQuery;
     }
 
     job.analysis_config.bucket_span = formConfig.bucketSpan;
@@ -287,7 +287,7 @@ module.service('mlMultiMetricJobService', function (
     const bucketSpanSeconds = parseInterval(formConfig.bucketSpan).asSeconds();
 
     job.datafeed_config = {
-      query: query,
+      query,
       types: mappingTypes,
       query_delay: '60s',
       frequency: calculateDatafeedFrequencyDefaultSeconds(bucketSpanSeconds) + 's',
@@ -433,49 +433,8 @@ module.service('mlMultiMetricJobService', function (
     return deferred.promise;
   };
 
-  this.indexTimeRange = function (indexPattern, formConfig) {
-    const deferred = $q.defer();
-    const obj = { success: true, start: { epoch:0, string:'' }, end: { epoch:0, string:'' } };
-    const query = getQueryFromSavedSearch(formConfig);
-
-    es.search({
-      index: indexPattern.title,
-      size: 0,
-      body: {
-        query,
-        aggs: {
-          earliest: {
-            min: {
-              field: indexPattern.timeFieldName
-            }
-          },
-          latest: {
-            max: {
-              field: indexPattern.timeFieldName
-            }
-          }
-        }
-      }
-    })
-    .then((resp) => {
-      if (resp.aggregations && resp.aggregations.earliest && resp.aggregations.latest) {
-        obj.start.epoch = resp.aggregations.earliest.value;
-        obj.start.string = resp.aggregations.earliest.value_as_string;
-
-        obj.end.epoch = resp.aggregations.latest.value;
-        obj.end.string = resp.aggregations.latest.value_as_string;
-      }
-      deferred.resolve(obj);
-    })
-    .catch((resp) => {
-      deferred.reject(resp);
-    });
-
-    return deferred.promise;
-  };
-
   this.getSplitFields = function (formConfig, size) {
-    const query = getQueryFromSavedSearch(formConfig);
+    const query = formConfig.combinedQuery;
     return mlSimpleJobSearchService.getCategoryFields(
       formConfig.indexPattern.title,
       formConfig.splitField,
@@ -485,7 +444,7 @@ module.service('mlMultiMetricJobService', function (
 
   this.loadDocCountData = function (formConfig) {
     const deferred = $q.defer();
-    const query = getQueryFromSavedSearch(formConfig);
+    const query = formConfig.combinedQuery;
     const bounds = timefilter.getActiveBounds();
     const buckets = new TimeBuckets();
     buckets.setInterval('auto');

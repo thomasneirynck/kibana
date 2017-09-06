@@ -30,6 +30,7 @@ import { checkCreateJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
 import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/single_metric/create_job/filter_agg_types';
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
+import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
 
 uiRoutes
 .when('/jobs/new_job/simple/multi_metric/create', {
@@ -135,6 +136,7 @@ module
 
     pageTitle = `saved search ${savedSearch.title}`;
   }
+  const combinedQuery = getQueryFromSavedSearch({ query, filters });
 
   $scope.ui = {
     indexPattern,
@@ -221,6 +223,7 @@ module
     indexPattern: indexPattern,
     query,
     filters,
+    combinedQuery,
     jobId: undefined,
     description: undefined,
     jobGroups: [],
@@ -739,17 +742,6 @@ module
     }
     return interval;
   }
-
-  $scope.setFullTimeRange = function () {
-    mlMultiMetricJobService.indexTimeRange(indexPattern, $scope.formConfig)
-    .then((resp) => {
-      timefilter.time.from = moment(resp.start.epoch).toISOString();
-      timefilter.time.to = moment(resp.end.epoch).toISOString();
-    })
-    .catch((resp) => {
-      msgs.error(resp.message);
-    });
-  };
 
   $scope.resetJob = function () {
     $scope.jobState = JOB_STATE.NOT_STARTED;

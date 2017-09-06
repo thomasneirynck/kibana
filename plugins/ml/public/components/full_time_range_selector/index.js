@@ -13,18 +13,5 @@
  * strictly prohibited.
  */
 
-import './styles/main.less';
-import './wizard/wizard';
-import './datavisualizer_controller';
-import './datavisualizer_search_service';
-import 'plugins/ml/components/data_recognizer';
-import 'plugins/ml/components/field_data_card';
-import 'plugins/ml/services/mapping_service';
-import 'plugins/ml/components/full_time_range_selector';
 
-import uiRoutes from 'ui/routes';
-
-uiRoutes
-.when('/datavisualizer', {
-  redirectTo: '/datavisualizer/step/1'
-});
+import './full_time_range_selector_directive';

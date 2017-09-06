@@ -66,6 +66,15 @@ module
   $scope.indexPattern = indexPattern;
   $scope.earliest = timefilter.getActiveBounds().min.valueOf();
   $scope.latest = timefilter.getActiveBounds().max.valueOf();
+  // currently only used for full time range picker button
+  // but if saved searches are added to this page, the query will need
+  // to be created out of the saved search
+  $scope.query = {
+    query_string: {
+      analyze_wildcard: true,
+      query: '*'
+    }
+  };
 
   $scope.metricFilterIcon = 0;
   $scope.metricFieldFilter = '';
