@@ -1,69 +1,157 @@
 <div class='ml-job-selector'>
-  <div class="ml-select-all-controls">
-    <div>
-      <input ng-if="singleSelection !== true" type="checkbox"
-        ng-checked="selections.length === selectableJobs.length"
-        ng-click="toggleAllSelection()" />
-      <input ng-if="singleSelection === true" style="visibility:hidden;" type="checkbox" />
-        Job Id
-    </div>
-    <div>
-      Time Range
-    </div>
+  <div class="header">
+    Job Selection
   </div>
 
   <div ng-show='noJobsCreated===undefined' style='text-align: center;'>
     <div class="loading-jobs"><i class='fa fa-spinner fa-spin'></i></div>
     <div>Loading Jobs</div>
   </div>
-  <div class="ml-select-list">
-    <div class='job-row' ng-repeat="job in jobs">
-      <div class='job-row-inner'>
-      <label>
-        <div>
-          <span>
-            <input ng-if="singleSelection !== true" type="checkbox"
-              value="{{job.id}}"
-              ng-checked="isSelected(job.id)"
-              ng-disabled='job.disabled'
-              ng-click="toggleSelection(job.id)" />
-            <input ng-if="singleSelection === true" type="radio"
-              value="{{job.id}}"
-              ng-model="selections[0]"
-              ng-disabled='job.disabled' />
-            <span ng-class="{'disabled-job': job.disabled}">{{job.id}}</span>
-          </span>
-        </div>
-        <div>
-          <div class='gant-back-edge' >
-            <div ></div>
+  <div class="select-list" ng-show='noJobsCreated!==undefined'>
+    <div ng-if="groups.length">
+      <div class="list-section-title">
+        <input ng-if="singleSelection !== true" type="checkbox"
+          ng-checked="allGroupsSelected"
+          ng-click="toggleAllGroupsSelection()" />
+        Groups
+      </div>
+      <div class="list-section">
+        <div class='group' ng-repeat="group in groups">
+          <div class='group-title job-row'>
+            <div class="job-row-inner">
+              <label>
+                <div >
+                  <a
+                    ng-click="group.expanded = !group.expanded"
+                    aria-label="{{ group.expanded ? 'Hide Group' : 'Show Group' }}"
+                    type="button"
+                    href=''
+                    class="kuiButton kuiButton--small kuiButton--hollow expand-group-button">
+                      <i aria-hidden="true" ng-class="group.expanded ? 'fa-caret-down' : 'fa-caret-right'" class="fa"></i>
+                  </a>
+                  <input
+                    ng-if="singleSelection !== true && group.selectable === true" type="checkbox"
+                    ng-model="group.selected"
+                    ng-click="toggleGroupSelection(group)" />
+                  {{group.id}}
+                </div>
+                <div ng-if="group.selectable !== false">
+                  <div class='gant-back-edge'>
+                    <div></div>
+                  </div>
+                  <div
+                    class='gant-bar'
+                    ng-class="{'disabled-job': job.disabled, 'gant-bar-running': job.running}"
+                    tooltip='{{group.timeRange.label}}'
+                    tooltip-placement="bottom"
+                    tooltip-append-to-body="true"
+                    ng-attr-style='margin-left:{{group.timeRange.fromPx}}px; width: {{group.timeRange.widthPx}}px;'>
+                  </div>
+                </div>
+              </label>
+            </div>
           </div>
-          <div
-            class='gant-bar'
-            ng-class="{'disabled-job': job.disabled, 'gant-bar-running': job.running}"
-            tooltip='{{job.timeRange.label}}'
-            tooltip-placement="bottom"
-            tooltip-append-to-body="true"
-            ng-attr-style='margin-left:{{job.timeRange.fromPx}}px; width: {{job.timeRange.widthPx}}px;'>
+          <div class='job-row' ng-show="group.expanded" ng-repeat="job in group.jobs">
+            <div class='job-row-inner'>
+              <label>
+                <div class="job-in-group">
+                  <span>
+                    <input ng-if="singleSelection !== true" type="checkbox"
+                      ng-model="job.selected"
+                      ng-disabled='job.disabled'
+                      ng-click="toggleSelection(job)" />
+                    <input ng-if="singleSelection === true" type="radio"
+                      name="job-group"
+                      value="{{job.id}}"
+                      ng-model="$parent.$parent.$parent.selectedJobRadio"
+                      ng-disabled='job.disabled' />
+                    <span ng-class="{'disabled-job': job.disabled}">{{job.name}}</span>
+                  </span>
+                </div>
+                <div>
+                  <div class='gant-back-edge' >
+                    <div ></div>
+                  </div>
+                  <div
+                    class='gant-bar'
+                    ng-class="{'disabled-job': job.disabled, 'gant-bar-running': job.running}"
+                    tooltip='{{job.timeRange.label}}'
+                    tooltip-placement="bottom"
+                    tooltip-append-to-body="true"
+                    ng-attr-style='margin-left:{{job.timeRange.fromPx}}px; width: {{job.timeRange.widthPx}}px;'>
 
+                  </div>
+                </div>
+              </label>
+            </div>
           </div>
         </div>
-        </label>
+      </div>
+    </div>
+
+    <div class="list-section-title">
+        <input ng-if="singleSelection !== true" type="checkbox"
+        ng-checked="allJobsSelected"
+        ng-click="toggleAllJobsSelection()" />
+        Jobs
+      </div>
+    <div class="list-section">
+      <div class='job-row' ng-repeat="job in homelessJobs">
+        <div class='job-row-inner'>
+          <label>
+            <div>
+              <span>
+                <input ng-if="singleSelection !== true" type="checkbox"
+                  ng-model="job.selected"
+                  ng-disabled='job.disabled'
+                  ng-click="toggleSelection(job)" />
+                  <input ng-if="singleSelection === true" type="radio"
+                    name="job-group"
+                    value="{{job.id}}"
+                    ng-model="$parent.$parent.selectedJobRadio"
+                    ng-disabled='job.disabled' />
+                <span ng-class="{'disabled-job': job.disabled}">{{job.name}}</span>
+              </span>
+            </div>
+            <div>
+              <div class='gant-back-edge' >
+                <div ></div>
+              </div>
+              <div
+                class='gant-bar'
+                ng-class="{'disabled-job': job.disabled, 'gant-bar-running': job.running}"
+                tooltip='{{job.timeRange.label}}'
+                tooltip-placement="bottom"
+                tooltip-append-to-body="true"
+                ng-attr-style='margin-left:{{job.timeRange.fromPx}}px; width: {{job.timeRange.widthPx}}px;'>
+
+              </div>
+            </div>
+          </label>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class='buttons-container'>
-    <button ng-click="apply()"  class="kuiButton kuiButton--primary" aria-label="Apply">Apply</button>
+
+  <div class='footer'>
+    <button
+      ng-click="apply()"
+      class="kuiButton kuiButton--primary"
+      aria-label="Apply"
+      ng-disabled="selectedCount===0"
+      >
+      Apply
+    </button>
     <button ng-click="closePopover()" class="kuiButton kuiButton--primary" aria-label="Cancel">Cancel</button>
   </div>
 
   <div class='apply-time-range'>
     <label>
-      <input type="checkbox"
-        ng-model="applyTimeRange"/>
-        Also apply time range
-    </label>
+    <input type="checkbox"
+      ng-model="applyTimeRange"/>
+      Also apply time range
+  </label>
   </div>
 
 </div>

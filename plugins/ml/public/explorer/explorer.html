@@ -1,9 +1,7 @@
 <ml-nav-menu name="explorer"></ml-nav-menu>
 <div class="ml-explorer" ng-controller="MlExplorerController">
   <navbar ng-show="jobs.length > 0 && chrome.getVisible()">
-    <job-select-button
-      selected-jobs='selectedJobs'>
-    </job-select-button>
+    <job-select-button></job-select-button>
   </navbar>
 
   <filter-bar state="appState"></filter-bar>

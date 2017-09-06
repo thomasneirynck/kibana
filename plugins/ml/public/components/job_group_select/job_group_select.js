@@ -44,7 +44,7 @@ module.directive('mlJobGroupSelect', (es, ml, $timeout, mlJobService) => {
           .then(() => {
             const groups = mlJobService.getJobGroups();
             this.groups = groups.map(g => {
-              return { id: g.id, count: g.count, isTag: false };
+              return { id: g.id, count: g.jobs.length, isTag: false };
             });
             // if jobGroups hasn't been passed in or it isn't an array, create a new one
             // needed because advanced job configuration page may not have a jobs array. e.g. when cloning

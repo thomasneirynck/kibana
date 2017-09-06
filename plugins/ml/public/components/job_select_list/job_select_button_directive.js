@@ -18,41 +18,36 @@
  * one or more jobs from the list of configured jobs.
  */
 
-import _ from 'lodash';
 import 'ui/accessibility/kbn_accessible_click';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('jobSelectButton', function () {
+module.directive('jobSelectButton', function (mlJobSelectService) {
 
   function link(scope) {
     scope.selectJobBtnJobIdLabel = '';
     scope.unsafeHtml = '';
+    scope.description = scope.singleSelection ? mlJobSelectService.singleJobDescription : mlJobSelectService.description;
 
-    scope.createUnsafeHtml = function () {
-      if (scope.selectedJobs) {
-        let txt = '<ml-job-select-list ';
-        if (scope.timeseriesonly) {
-          txt += 'timeseriesonly="true" ';
-        }
-        if (scope.singleSelection) {
-          txt += 'single-selection="true" ';
-        }
-        txt += 'selected="';
-        txt += _.map(scope.selectedJobs, job => job.id).join(' ');
-        txt += '"></ml-job-select-list>';
-        scope.unsafeHtml = txt;
+    scope.createMenu = function () {
+      let txt = '<ml-job-select-list ';
+      if (scope.timeseriesonly) {
+        txt += 'timeseriesonly="true" ';
       }
+      if (scope.singleSelection) {
+        txt += 'single-selection="true" ';
+      }
+      txt += '></ml-job-select-list>';
+      scope.unsafeHtml = txt;
     };
   }
 
   return {
     scope: {
-      selectedJobs: '=',
       timeseriesonly: '=',
       singleSelection: '='
     },
-    link: link,
+    link,
     replace: true,
     template: require('plugins/ml/components/job_select_list/job_select_button.html')
   };

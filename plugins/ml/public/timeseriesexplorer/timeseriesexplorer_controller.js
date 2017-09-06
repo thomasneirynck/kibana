@@ -62,7 +62,6 @@ module.controller('MlTimeSeriesExplorerController', function (
   $q,
   es,
   timefilter,
-  globalState,
   AppState,
   mlJobService,
   mlResultsService,
@@ -85,11 +84,6 @@ module.controller('MlTimeSeriesExplorerController', function (
   $scope.hasResults = false;
   $scope.modelPlotEnabled = false;
 
-  if (globalState.ml === undefined) {
-    globalState.ml = {};
-    globalState.save();
-  }
-
   $scope.initializeVis = function () {
     // Initialize the AppState in which to store the zoom range.
     const stateDefaults = {
@@ -103,32 +97,17 @@ module.controller('MlTimeSeriesExplorerController', function (
     mlJobService.loadJobs()
     .then((resp) => {
       if (resp.jobs.length > 0) {
-        const timeSeriesJobIds = [];
-        _.each(resp.jobs, (job) => {
-          if (isTimeSeriesViewJob(job) === true) {
-            timeSeriesJobIds.push(job.job_id);
-            const bucketSpan = parseInterval(job.analysis_config.bucket_span);
-            $scope.jobs.push({
-              id:job.job_id, selected: false,
-              bucketSpanSeconds: bucketSpan.asSeconds()
-            });
-          }
+        $scope.jobs = createJobs(resp.jobs);
+
+        const jobIds = $scope.jobs.map(j => j.id);
+
+        // Select any jobs set in the global state (i.e. passed in the URL).
+        let selectedJobIds = mlJobSelectService.getSelectedJobIds(true);
+        selectedJobIds = selectedJobIds.filter(jobId => {
+          return (jobIds.indexOf(jobId) > -1);
         });
 
-        // Select any job set in the global state (i.e. passed in the URL).
-        const stateJobIds = _.get(globalState.ml, 'jobIds', []);
-        const selectedJobIds = _.filter(stateJobIds, (jobId) => {
-          return (timeSeriesJobIds.indexOf(jobId) > -1) && jobId !== '*';
-        });
-
-        const invalidIds = _.difference(stateJobIds, selectedJobIds);
-        if (invalidIds.length > 0 && invalidIds.indexOf('*') === -1) {
-          const warningText = invalidIds.length === 1 ? `Requested job ${invalidIds} cannot be viewed in this dashboard` :
-             `Requested jobs ${invalidIds} cannot be viewed in this dashboard`;
-          notify.warning(warningText, { lifetime: 30000 });
-        }
-
-        if (selectedJobIds.length > 1 || invalidIds.indexOf('*') !== -1) {
+        if (selectedJobIds.length > 1) {
           notify.warning('Only one job may be viewed at a time in this dashboard', { lifetime: 30000 });
         }
 
@@ -147,6 +126,21 @@ module.controller('MlTimeSeriesExplorerController', function (
       console.log('Time series explorer - error getting job info from elasticsearch:', resp);
     });
   };
+
+  // create new job objects based on standard job config objects
+  // new job objects just contain job id, bucket span in seconds and a selected flag.
+  // only time series view jobs are allowed
+  function createJobs(jobs) {
+    const singleTimeSeriesJobs = jobs.filter(isTimeSeriesViewJob);
+    return singleTimeSeriesJobs.map(job => {
+      const bucketSpan = parseInterval(job.analysis_config.bucket_span);
+      return {
+        id: job.job_id,
+        selected: false,
+        bucketSpanSeconds: bucketSpan.asSeconds()
+      };
+    });
+  }
 
   $scope.refresh = function () {
 
@@ -511,10 +505,6 @@ module.controller('MlTimeSeriesExplorerController', function (
     }
 
     $scope.entities = entities;
-
-    globalState.ml.jobIds = [jobId];
-    globalState.save();
-
     $scope.refresh();
   }
 
@@ -529,7 +519,7 @@ module.controller('MlTimeSeriesExplorerController', function (
     const bucketSpanSeconds =  _.find($scope.jobs, { 'id': $scope.selectedJob.job_id }).bucketSpanSeconds;
     $scope.autoZoomDuration = (bucketSpanSeconds * 1000) * (CHARTS_POINT_TARGET - 1);
 
-    // Check for a zoom parameter in the globalState (URL).
+    // Check for a zoom parameter in the appState (URL).
     const zoomState = $scope.appState.mlTimeSeriesExplorer.zoom;
     if (zoomState !== undefined) {
       const zoomFrom = moment(zoomState.from, 'YYYY-MM-DDTHH:mm:ss.SSSZ', true);
@@ -651,22 +641,22 @@ module.controller('MlTimeSeriesExplorerController', function (
       if (chartPoint === undefined) {
         // Find nearest point in time.
         // loop through line items until the date is greater than bucketTime
-        // grab the current and prevous items in the and compare the time differences
+        // grab the current and previous items and compare the time differences
         let foundItem;
         for (let i = 0; i < chartData.length; i++) {
           const itemTime = chartData[i].date.getTime();
           if (itemTime > recordTime) {
             const item = chartData[i];
-            const prevousItem = chartData[i - 1];
+            const previousItem = chartData[i - 1];
 
-            const diff1 = Math.abs(recordTime - prevousItem.date.getTime());
+            const diff1 = Math.abs(recordTime - previousItem.date.getTime());
             const diff2 = Math.abs(recordTime - itemTime);
 
             // foundItem should be the item with a date closest to bucketTime
-            if (prevousItem === undefined || diff1 > diff2) {
+            if (previousItem === undefined || diff1 > diff2) {
               foundItem = item;
             } else {
-              foundItem = prevousItem;
+              foundItem = previousItem;
             }
             break;
           }

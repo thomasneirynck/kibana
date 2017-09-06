@@ -32,7 +32,6 @@ import 'plugins/ml/services/results_service';
 import { FilterBarQueryFilterProvider } from 'ui/filter_bar/query_filter';
 import { parseInterval } from 'ui/utils/parse_interval';
 
-import { notify } from 'ui/notify';
 import uiRoutes from 'ui/routes';
 import { checkLicense } from 'plugins/ml/license/check_license';
 import { checkGetJobsPrivilege } from 'plugins/ml/privilege/check_privilege';
@@ -53,18 +52,21 @@ uiRoutes
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.controller('MlExplorerController', function ($scope, $timeout, AppState, Private, timefilter,
-  globalState, mlJobService, mlResultsService, mlJobSelectService, mlExplorerDashboardService) {
+module.controller('MlExplorerController', function (
+  $scope,
+  $timeout,
+  AppState,
+  Private,
+  timefilter,
+  mlJobService,
+  mlResultsService,
+  mlJobSelectService,
+  mlExplorerDashboardService) {
 
   $scope.timeFieldName = 'timestamp';
   $scope.loading = true;
   $scope.loadCounter = 0;
   timefilter.enabled = true;
-
-  if (globalState.ml === undefined) {
-    globalState.ml = {};
-    globalState.save();
-  }
 
   const TimeBuckets = Private(IntervalHelperProvider);
   const queryFilter = Private(FilterBarQueryFilterProvider);
@@ -76,9 +78,11 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
   const MAX_DISPLAY_FIELD_VALUES = 10;
   const VIEW_BY_JOB_LABEL = 'job ID';
 
+  $scope.selectedJobs = null;
+
   $scope.getSelectedJobIds = function () {
-    const selectedJobs = _.filter($scope.jobs, (job) => { return job.selected; });
-    return _.map(selectedJobs, function (job) {return job.id;});
+    const selectedJobs = _.filter($scope.jobs, job => job.selected);
+    return _.map(selectedJobs, job => job.id);
   };
 
   $scope.viewBySwimlaneOptions = [];
@@ -98,13 +102,10 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     // Calling loadJobs() ensures the full datafeed config is available for building the charts.
     mlJobService.loadJobs().then((resp) => {
       if (resp.jobs.length > 0) {
-        _.each(resp.jobs, (job) => {
-          const bucketSpan = parseInterval(job.analysis_config.bucket_span);
-          $scope.jobs.push({ id:job.job_id, selected: false, bucketSpanSeconds: bucketSpan.asSeconds() });
-        });
+        $scope.jobs = createJobs(resp.jobs);
 
         // Select any jobs set in the global state (i.e. passed in the URL).
-        const selectedJobIds = _.get(globalState.ml, 'jobIds', []);
+        const selectedJobIds = mlJobSelectService.getSelectedJobIds(true);
         $scope.setSelectedJobs(selectedJobIds);
       } else {
         $scope.loading = false;
@@ -117,23 +118,32 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     mlExplorerDashboardService.init();
   };
 
+  // create new job objects based on standard job config objects
+  // new job objects just contain job id, bucket span in seconds and a selected flag.
+  function createJobs(jobs) {
+    return jobs.map(job => {
+      const bucketSpan = parseInterval(job.analysis_config.bucket_span);
+      return { id:job.job_id, selected: false, bucketSpanSeconds: bucketSpan.asSeconds() };
+    });
+  }
+
   $scope.loadAnomaliesTable = function (jobIds, influencers, earliestMs, latestMs) {
     mlResultsService.getRecordsForInfluencer(jobIds, influencers,
       0, earliestMs, latestMs, 500)
     .then((resp) => {
       // Sort in descending time order before storing in scope.
-      $scope.anomalyRecords = _.chain(resp.records).sortBy(function (record) { return record[$scope.timeFieldName]; }).reverse().value();
+      $scope.anomalyRecords = _.chain(resp.records).sortBy(record => record[$scope.timeFieldName]).reverse().value();
       console.log('Explorer anomalies table data set:', $scope.anomalyRecords);
 
       // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
-      $timeout(function () {
+      $timeout(() => {
         $scope.$broadcast('renderTable');
       }, 0);
     });
   };
 
   $scope.loadAnomaliesForCharts = function (jobIds, influencers, earliestMs, latestMs) {
-    // Load the top anomalies (by record_score) which will be diplayed in the charts.
+    // Load the top anomalies (by record_score) which will be displayed in the charts.
     // TODO - combine this with loadAnomaliesTable() if the table is being retained.
     mlResultsService.getRecordsForInfluencer(jobIds, influencers,
       0, earliestMs, latestMs, 500)
@@ -145,60 +155,33 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     });
   };
 
-  $scope.setSelectedJobs = function (selections) {
+  $scope.setSelectedJobs = function (selectedIds) {
     let previousSelected = 0;
-    if ($scope.selectedJobs !== undefined) {
+    if ($scope.selectedJobs !== null) {
       previousSelected = $scope.selectedJobs.length;
     }
 
-    // Validate selections.
     // Check for any new jobs created since the page was first loaded.
-    for (let i = 0; i < selections.length; i++) {
-      if (_.find($scope.jobs, { 'id': selections[i] }) === undefined) {
-        const newJobs = [];
-        _.each(mlJobService.jobs, (job) => {
-          const bucketSpan = parseInterval(job.analysis_config.bucket_span);
-          newJobs.push({ id:job.job_id, selected: false, bucketSpanSeconds: bucketSpan.asSeconds() });
-        });
-        $scope.jobs = newJobs;
+    for (let i = 0; i < selectedIds.length; i++) {
+      if (_.find($scope.jobs, { 'id': selectedIds[i] }) === undefined) {
+        $scope.jobs = createJobs(mlJobService.jobs);
         break;
       }
     }
 
-    // Check and warn for any jobs that do not exist.
-    let validSelections = selections.slice(0);
-    let selectAll = ((selections.length === 1 && selections[0] === '*') || selections.length === 0);
-    if (selectAll === false) {
-      const invalidIds = _.filter(selections, (id) => {
-        return _.find($scope.jobs, { 'id': id }) === undefined;
-      });
-      if (invalidIds.length > 0) {
-        const warningText = invalidIds.length === 1 ? `Requested job ${invalidIds} does not exist` :
-            `Requested jobs ${invalidIds} do not exist`;
-        notify.warning(warningText, { lifetime: 30000 });
-      }
-      validSelections = _.difference(selections, invalidIds);
-    }
-
-    selectAll = ((validSelections.length === 1 && validSelections[0] === '*') || validSelections.length === 0);
-
+    // update the jobs' selected flag
     $scope.selectedJobs = [];
-    const selectedJobIds = [];
     _.each($scope.jobs, (job) => {
-      job.selected = (selectAll || _.indexOf(validSelections, job.id) !== -1);
+      job.selected = (_.indexOf(selectedIds, job.id) !== -1);
       if (job.selected) {
         $scope.selectedJobs.push(job);
-        selectedJobIds.push(job.id);
       }
     });
 
-    globalState.ml.jobIds = validSelections;
-    globalState.save();
-
     // Clear viewBy from the state if we are moving from single
     // to multi selection, or vice-versa.
-    if ((previousSelected <= 1 && selectedJobIds.length > 1) ||
-      (selectedJobIds.length === 1 && previousSelected > 1)) {
+    if ((previousSelected <= 1 && $scope.selectedJobs.length > 1) ||
+      ($scope.selectedJobs.length === 1 && previousSelected > 1)) {
       delete $scope.appState.mlExplorerSwimlane.viewBy;
     }
     $scope.appState.save();
@@ -234,7 +217,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
   });
 
   // Listen for changes to job selection.
-  mlJobSelectService.listenJobSelectionChange($scope, function (event, selections) {
+  mlJobSelectService.listenJobSelectionChange($scope, (event, selections) => {
     // Clear swimlane selection from state.
     delete $scope.appState.mlExplorerSwimlane.selectedType;
     delete $scope.appState.mlExplorerSwimlane.selectedLane;
@@ -255,7 +238,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
 
   const navListener = $scope.$on('globalNav:update', () => {
     // Run in timeout so that content pane has resized after global nav has updated.
-    $timeout(function () {
+    $timeout(() => {
       redrawOnResize();
     }, 300);
   });
@@ -269,7 +252,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
   }
 
   // Refresh the data when the dashboard filters are updated.
-  $scope.$listen(queryFilter, 'update', function () {
+  $scope.$listen(queryFilter, 'update', () => {
     // TODO - add in filtering functionality.
     console.log('explorer_controller queryFilter update, filters:', queryFilter.getFilters());
   });
@@ -369,7 +352,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
     });
 
     $scope.fieldsByJob = fieldsByJob;   // Currently unused but may be used if add in view by detector.
-    viewByOptions = _.chain(viewByOptions).uniq().sortBy((fieldname) => { return fieldname.toLowerCase(); }).value();
+    viewByOptions = _.chain(viewByOptions).uniq().sortBy(fieldName => fieldName.toLowerCase()).value();
     viewByOptions.push(VIEW_BY_JOB_LABEL);
     $scope.viewBySwimlaneOptions = viewByOptions;
 
@@ -435,7 +418,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
   function loadOverallData() {
     // Loads the overall data components i.e. the overall swimlane and influencers list.
 
-    if ($scope.selectedJobs === undefined) {
+    if ($scope.selectedJobs === null) {
       return;
     }
 
@@ -465,7 +448,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
 
         // Tell the result components directives to render.
         // Need to use $timeout to ensure the broadcast happens after the child scope is updated with the new data.
-        $timeout(function () {
+        $timeout(() => {
           $scope.$broadcast('render');
           mlExplorerDashboardService.fireSwimlaneDataChange('overall');
         }, 0);
@@ -519,7 +502,7 @@ module.controller('MlExplorerController', function ($scope, $timeout, AppState, 
       console.log('Explorer view by swimlane data set:', $scope.viewBySwimlaneData);
       // Fire event to indicate swimlane data has changed.
       // Need to use $timeout to ensure this happens after the child scope is updated with the new data.
-      $timeout(function () {
+      $timeout(() => {
         mlExplorerDashboardService.fireSwimlaneDataChange('viewBy');
       }, 0);
     }

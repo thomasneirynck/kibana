@@ -1114,15 +1114,15 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
       if (Array.isArray(job.groups)) {
         job.groups.forEach(group => {
           if (tempGroups[group] === undefined) {
-            tempGroups[group] = 1;
+            tempGroups[group] = [job];
           } else {
-            tempGroups[group]++;
+            tempGroups[group].push(job);
           }
         });
       }
     });
-    _.each(tempGroups, (count, id) => {
-      groups.push({ id, count });
+    _.each(tempGroups, (js, id) => {
+      groups.push({ id, jobs: js });
     });
     return groups;
   };
