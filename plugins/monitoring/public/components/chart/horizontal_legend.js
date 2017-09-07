@@ -24,23 +24,22 @@ export class HorizontalLegend extends React.Component {
     return value;
   }
 
-  createSeries(row) {
+  createSeries(row, rowIdx) {
     const formatter = row.tickFormatter || this.formatter;
     const value = formatter(this.props.seriesValues[row.id]);
     const classes = ['col-md-4 col-xs-6 rhythm_chart__legend-item'];
-    const key = row.id;
 
     if (!includes(this.props.seriesFilter, row.id)) {
       classes.push('disabled');
     }
     if (!row.label || row.legend === false) {
       return (
-        <div key={key} style={{ display: 'none' }}/>
+        <div key={rowIdx} style={{ display: 'none' }}/>
       );
     }
 
     return (
-      <KuiKeyboardAccessible key={key} >
+      <KuiKeyboardAccessible key={rowIdx} >
         <div className={classes.join(' ')} onClick={event => this.props.onToggle(event, row.id)} >
           <span className="rhythm_chart__legend-label">
             <span className="fa fa-circle rhythm_chart__legend-indicator" style={{ color: row.color }}/>

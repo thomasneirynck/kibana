@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 import moment from 'moment';
 import { uiModules } from 'ui/modules';
 import { getTitle } from './get_title';
@@ -30,25 +30,32 @@ uiModule.directive('monitoringChart', (timefilter) => {
         });
       }
 
-      ReactDOM.render(
-        <div className="monitoring-chart__container">
-          <h2 className="monitoring-chart__title">
-            { getTitle(series) }{ units ? ` (${units})` : '' }
-            <OverlayTrigger
-              placement="left"
-              trigger="click"
-              overlay={<Tooltip><InfoTooltip series={series}/></Tooltip>}
-            >
-              <span className="monitoring-chart-tooltip__trigger overlay-trigger">
-                <KuiInfoButton />
-              </span>
-            </OverlayTrigger>
-          </h2>
-          <MonitoringTimeseries scope={scope} onBrush={onBrush}/>
-        </div>,
-        $elem[0]
-      );
+      function renderSeries(series) {
+        render(
+          <div className="monitoring-chart__container">
+            <h2 className="monitoring-chart__title">
+              { getTitle(series) }{ units ? ` (${units})` : '' }
+              <OverlayTrigger
+                placement="left"
+                trigger="click"
+                overlay={<Tooltip><InfoTooltip series={series}/></Tooltip>}
+              >
+                <span className="monitoring-chart-tooltip__trigger overlay-trigger">
+                  <KuiInfoButton />
+                </span>
+              </OverlayTrigger>
+            </h2>
+            <MonitoringTimeseries
+              series={series}
+              onBrush={onBrush}
+            />
+          </div>,
+          $elem[0]
+        );
+      }
 
+      scope.$watch('series', renderSeries);
+      renderSeries(series);
     }
   };
 });

@@ -4,36 +4,11 @@ import numeral from 'numeral';
 import { getColor } from './get_color';
 import { TimeseriesVisualization } from './timeseries_visualization';
 
-export class MonitoringTimeseries extends React.Component {
-  constructor() {
-    super();
+function formatTicksFor(series) {
+  const format = get(series, '.metric.format', '0,0.0');
+  const units = get(series, '.metric.units', '');
 
-    this.formatTicks = this.formatTicks.bind(this);
-
-    this.state = {
-      dataset: []
-    };
-  }
-
-  componentWillMount() {
-    this.props.scope.$watch('series', (series) => {
-      this.setState({
-        dataset: series.map((s, index) => {
-          return {
-            color: getColor(s.metric.app, index),
-            data: s.data,
-            label: s.metric.label
-          };
-        }),
-        timeRange: get(first(series), 'timeRange')
-      });
-    });
-  }
-
-  formatTicks(val) {
-    const series = first(this.props.scope.series);
-    const format = get(series, '.metric.format', '0,0.0');
-    const units = get(series, '.metric.units', '');
+  return function formatTicks(val) {
     let formatted = numeral(val).format(format);
 
     // numeral write 'B' as the actual size (e.g., 'MB')
@@ -42,16 +17,27 @@ export class MonitoringTimeseries extends React.Component {
     }
 
     return formatted;
-  }
+  };
+}
 
-  render() {
-    return (
-      <TimeseriesVisualization
-        series={this.state.dataset}
-        timeRange={this.state.timeRange}
-        tickFormatter={this.formatTicks}
-        onBrush={this.props.onBrush}
-      />
-    );
-  }
+export function MonitoringTimeseries({ series, onBrush }) {
+  const dataset = series.map((s, index) => {
+    return {
+      color: getColor(s.metric.app, index),
+      data: s.data,
+      label: s.metric.label
+    };
+  });
+  const firstSeries = first(series);
+  const timeRange = get(firstSeries, 'timeRange');
+  const formatTicks = formatTicksFor(firstSeries);
+
+  return (
+    <TimeseriesVisualization
+      series={dataset}
+      timeRange={timeRange}
+      tickFormatter={formatTicks}
+      onBrush={onBrush}
+    />
+  );
 }
