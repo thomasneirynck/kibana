@@ -5,32 +5,32 @@ Array [
   <IndexTableRow
     cancelAction={[Function]}
     index={
-        Object {
-            "name": "index1",
-          }
+      Object {
+        "name": "index1",
+      }
     }
     processIndex={[Function]}
     resetAction={[Function]}
-/>,
+  />,
   <IndexTableRow
     cancelAction={[Function]}
     index={
-        Object {
-            "name": "index2",
-          }
+      Object {
+        "name": "index2",
+      }
     }
     processIndex={[Function]}
     resetAction={[Function]}
-/>,
+  />,
   <IndexTableRow
     cancelAction={[Function]}
     index={
-        Object {
-            "name": "index3",
-          }
+      Object {
+        "name": "index3",
+      }
     }
     processIndex={[Function]}
     resetAction={[Function]}
-/>,
+  />,
 ]
 `;
