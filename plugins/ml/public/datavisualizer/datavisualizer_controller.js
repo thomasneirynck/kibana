@@ -25,6 +25,8 @@ import 'plugins/kibana/visualize/styles/main.less';
 
 import chrome from 'ui/chrome';
 import uiRoutes from 'ui/routes';
+import { luceneStringToDsl } from 'ui/courier/data_source/build_query/lucene_string_to_dsl.js';
+import { DecorateQueryProvider } from 'ui/courier/data_source/_decorate_query';
 import { DATA_VISUALIZER_FIELD_TYPES, KBN_FIELD_TYPES } from 'plugins/ml/constants/field_types';
 import { checkLicense } from 'plugins/ml/license/check_license';
 
@@ -45,6 +47,7 @@ module
   $scope,
   $route,
   $timeout,
+  Private,
   timefilter,
   mlDataVisualizerSearchService) {
 
@@ -60,26 +63,21 @@ module
   $scope.populatedNonMetricFieldCount = 0;
   $scope.DATA_VISUALIZER_FIELD_TYPES = DATA_VISUALIZER_FIELD_TYPES;
   $scope.showAllFields = false;
+  $scope.searchQueryText = '';
   $scope.filterFieldType = '*';
   $scope.urlBasePath = chrome.getBasePath();
 
   $scope.indexPattern = indexPattern;
   $scope.earliest = timefilter.getActiveBounds().min.valueOf();
   $scope.latest = timefilter.getActiveBounds().max.valueOf();
-  // currently only used for full time range picker button
-  // but if saved searches are added to this page, the query will need
-  // to be created out of the saved search
-  $scope.query = {
-    query_string: {
-      analyze_wildcard: true,
-      query: '*'
-    }
-  };
 
   $scope.metricFilterIcon = 0;
   $scope.metricFieldFilter = '';
   $scope.fieldFilterIcon = 0;
   $scope.fieldFilter = '';
+
+  const decorateQuery = Private(DecorateQueryProvider);
+  $scope.searchQuery = buildSearchQuery();
 
   let metricFieldRegexp;
   let metricFieldFilterTimeout;
@@ -92,6 +90,11 @@ module
     $scope.latest = timefilter.getActiveBounds().max.valueOf();
     loadOverallStats();
   });
+
+  $scope.submitSearchQuery = function  () {
+    $scope.searchQuery = buildSearchQuery();
+    loadOverallStats();
+  };
 
   $scope.toggleAllMetrics = function () {
     $scope.showAllMetrics = !$scope.showAllMetrics;
@@ -176,6 +179,12 @@ module
     fieldRegexp = undefined;
     loadNonMetricFieldList();
   };
+
+  function buildSearchQuery() {
+    const query = luceneStringToDsl($scope.searchQueryText);
+    decorateQuery(query);
+    return query;
+  }
 
   function createMetricConfigurations() {
     $scope.metricConfigurations.length = 0;
@@ -376,7 +385,11 @@ module
 
 
   function loadOverallStats() {
-    mlDataVisualizerSearchService.getOverallStats(indexPattern, $scope.earliest, $scope.latest)
+    mlDataVisualizerSearchService.getOverallStats(
+      indexPattern,
+      $scope.searchQuery,
+      $scope.earliest,
+      $scope.latest)
     .then((resp) => {
       $scope.overallStats = resp.stats;
       createMetricConfigurations();

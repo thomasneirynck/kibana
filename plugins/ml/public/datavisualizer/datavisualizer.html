@@ -6,12 +6,11 @@
         <div class="pull-right">
           <ml-full-time-range-selector
             index-pattern='indexPattern'
-            query='query'
+            query='searchQuery'
           ></ml-full-time-range-selector>
         </div>
       </h1>
     </div>
-
 
     <div class="main-container">
 
@@ -20,6 +19,32 @@
           <span class="field-emphasis">{{ overallStats.totalCount }}</span>
           <ng-pluralize count="overallStats.totalCount" when="{'1':'document', 'other':'documents'}">documents</ng-pluralize>
         </div>
+
+        <form
+          ng-submit="submitSearchQuery()"
+          name="querybarform"
+          class="flexGroup__filler query-bar-form"
+          style="width: 100%"
+        >
+          <div class="kuiLocalSearch">
+            <input
+              type="text"
+              class="kuiLocalSearchInput"
+              ng-model="searchQueryText"
+              placeholder="Search... (e.g. status:200 AND extension:PHP)"
+              aria-label="Search input"
+              autocomplete="off"
+            >
+            <button
+              class="kuiLocalSearchButton"
+              type="submit"
+              aria-label="Search"
+            >
+              <span aria-hidden="true" class="kuiIcon fa-search"></span>
+            </button>
+          </div>
+        </form>
+
       </div>
 
       <div class="kuiPanel kuiVerticalRhythm datavisualizer-panel card-panel">
@@ -71,6 +96,7 @@
         <div class="card-container" ng-repeat="config in metricConfigurations">
           <ml-field-data-card
             index-pattern="indexPattern"
+            query="searchQuery"
             earliest="earliest"
             latest="latest"
             card-config="config">
@@ -135,6 +161,7 @@
         <div class="card-container" ng-repeat="config in fieldConfigurations">
           <ml-field-data-card
             index-pattern="indexPattern"
+            query="searchQuery"
             earliest="earliest"
             latest="latest"
             card-config="config">

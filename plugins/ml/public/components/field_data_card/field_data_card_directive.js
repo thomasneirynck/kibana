@@ -40,20 +40,6 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
       $('body').append('<div class="ml-field-data-card-tooltip" style="opacity:0; display: none;">');
     }
 
-
-    // scope.$watch('cardConfig', () => {
-    //   console.log('!!! mlFieldDataCard cardConfig watch :');
-    //   if (scope.cardConfig.field !== undefined) {
-    //     loadStats();
-
-    //     // TODO - different actions for different components in the details area.
-    //     scope.$broadcast('renderChart');
-    //   }
-
-    // }, true);
-
-    // TODO - should the directive listen for changes to the timefilter,
-    //        or do by watching cardConfig as above?
     // Refresh the data when the time range is altered.
     scope.$listen(timefilter, 'fetch', () => {
       scope.earliest = timefilter.getActiveBounds().min.valueOf();
@@ -110,6 +96,7 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
           if (scope.cardConfig.fieldName) {
             mlFieldDataSearchService.getAggregatableFieldStats(
               scope.indexPattern.title,
+              scope.query,
               config.fieldName,
               config.type,
               scope.indexPattern.timeFieldName,
@@ -133,6 +120,7 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
         case DATA_VISUALIZER_FIELD_TYPES.KEYWORD:
           mlFieldDataSearchService.getAggregatableFieldStats(
             scope.indexPattern.title,
+            scope.query,
             config.fieldName,
             config.type,
             scope.indexPattern.timeFieldName,
@@ -145,6 +133,7 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
         case DATA_VISUALIZER_FIELD_TYPES.TEXT:
           mlFieldDataSearchService.getFieldExamples(
             scope.indexPattern.title,
+            scope.query,
             config.fieldName,
             10,
             scope.indexPattern.timeFieldName,
@@ -158,6 +147,7 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
           if (config.aggregatable === true) {
             mlFieldDataSearchService.getAggregatableFieldStats(
               scope.indexPattern.title,
+              scope.query,
               config.fieldName,
               config.type,
               scope.indexPattern.timeFieldName,
@@ -170,6 +160,7 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
           } else {
             mlFieldDataSearchService.getFieldExamples(
               scope.indexPattern.title,
+              scope.query,
               config.fieldName,
               10,
               scope.indexPattern.timeFieldName,
@@ -193,6 +184,7 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
     scope: {
       cardConfig: '=',
       indexPattern: '=',
+      query: '=',
       earliest: '=',
       latest: '='
     },

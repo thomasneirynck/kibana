@@ -75,6 +75,7 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
       const config = scope.chartConfig;
       mlFieldDataSearchService.getMetricDistributionData(
         scope.indexPattern.title,
+        scope.query,
         config.fieldName,
         scope.indexPattern.timeFieldName,
         scope.earliest,
@@ -342,6 +343,7 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
   return {
     scope: {
       indexPattern: '=',
+      query: '=',
       earliest: '=',
       latest: '=',
       chartConfig: '='

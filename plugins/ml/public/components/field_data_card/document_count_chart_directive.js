@@ -77,10 +77,10 @@ module.directive('mlDocumentCountChart', function (
       buckets.setMaxBars(maxBars);
       chartAggInterval = buckets.getInterval();
 
-      // TODO - pass in the query from the query bar when that is added to the view.
+      // Load the event rate data.
       mlResultsService.getEventRateData(
         scope.indexPattern.title,
-        null,
+        scope.query,
         scope.indexPattern.timeFieldName,
         bounds.min.valueOf(),
         bounds.max.valueOf(),
@@ -189,6 +189,7 @@ module.directive('mlDocumentCountChart', function (
   return {
     scope: {
       indexPattern: '=',
+      query: '=',
       earliest: '=',
       latest: '=',
       chartConfig: '='

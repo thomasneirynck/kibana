@@ -22,23 +22,24 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlFieldDataSearchService', function ($q, es) {
 
-  this.getAggregatableFieldStats = function (index, field, fieldType, timeFieldName, earliestMs, latestMs) {
+  this.getAggregatableFieldStats = function (index, query, field, fieldType,
+    timeFieldName, earliestMs, latestMs) {
     switch (fieldType) {
       case DATA_VISUALIZER_FIELD_TYPES.NUMBER:
-        return this.getNumericFieldStats(index, field, timeFieldName, earliestMs, latestMs);
+        return this.getNumericFieldStats(index, query, field, timeFieldName, earliestMs, latestMs);
       case DATA_VISUALIZER_FIELD_TYPES.DATE:
-        return this.getDateFieldStats(index, field, timeFieldName, earliestMs, latestMs);
+        return this.getDateFieldStats(index, query, field, timeFieldName, earliestMs, latestMs);
       case DATA_VISUALIZER_FIELD_TYPES.BOOLEAN:
-        return this.getBooleanFieldStats(index, field, timeFieldName, earliestMs, latestMs);
+        return this.getBooleanFieldStats(index, query, field, timeFieldName, earliestMs, latestMs);
       case DATA_VISUALIZER_FIELD_TYPES.KEYWORD:
       case DATA_VISUALIZER_FIELD_TYPES.IP:
-        return this.getStringFieldStats(index, field, timeFieldName, earliestMs, latestMs);
+        return this.getStringFieldStats(index, query, field, timeFieldName, earliestMs, latestMs);
       default:
-        return this.getDefaultAggregatableFieldStats(index, field, timeFieldName, earliestMs, latestMs);
+        return this.getDefaultAggregatableFieldStats(index, query, field, timeFieldName, earliestMs, latestMs);
     }
   };
 
-  this.getNumericFieldStats = function (index, field, timeFieldName, earliestMs, latestMs) {
+  this.getNumericFieldStats = function (index, query, field, timeFieldName, earliestMs, latestMs) {
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -46,16 +47,7 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     };
 
     // Build the criteria to use in the bool filter part of the request.
-    // Add criteria for the time range plus any additional supplied query.
-    const filterCriteria = [];
-
-    const timeRangeCriteria = { 'range':{} };
-    timeRangeCriteria.range[timeFieldName] = {
-      'gte': earliestMs,
-      'lte': latestMs,
-      'format': 'epoch_millis'
-    };
-    filterCriteria.push(timeRangeCriteria);
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
     const aggs = {
       'cardinality': {
@@ -114,7 +106,7 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     return deferred.promise;
   };
 
-  this.getStringFieldStats = function (index, field, timeFieldName, earliestMs, latestMs) {
+  this.getStringFieldStats = function (index, query, field, timeFieldName, earliestMs, latestMs) {
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -122,16 +114,7 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     };
 
     // Build the criteria to use in the bool filter part of the request.
-    // Add criteria for the time range plus any additional supplied query.
-    const filterCriteria = [];
-
-    const timeRangeCriteria = { 'range':{} };
-    timeRangeCriteria.range[timeFieldName] = {
-      'gte': earliestMs,
-      'lte': latestMs,
-      'format': 'epoch_millis'
-    };
-    filterCriteria.push(timeRangeCriteria);
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
     const aggs = {
       'value_count': {
@@ -179,7 +162,7 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     return deferred.promise;
   };
 
-  this.getDateFieldStats = function (index, field, timeFieldName, earliestMs, latestMs) {
+  this.getDateFieldStats = function (index, query, field, timeFieldName, earliestMs, latestMs) {
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -187,16 +170,7 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     };
 
     // Build the criteria to use in the bool filter part of the request.
-    // Add criteria for the time range plus any additional supplied query.
-    const filterCriteria = [];
-
-    const timeRangeCriteria = { 'range':{} };
-    timeRangeCriteria.range[timeFieldName] = {
-      'gte': earliestMs,
-      'lte': latestMs,
-      'format': 'epoch_millis'
-    };
-    filterCriteria.push(timeRangeCriteria);
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
     const aggs = {
       'field_stats': {
@@ -236,7 +210,7 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     return deferred.promise;
   };
 
-  this.getBooleanFieldStats = function (index, field, timeFieldName, earliestMs, latestMs) {
+  this.getBooleanFieldStats = function (index, query, field, timeFieldName, earliestMs, latestMs) {
     const deferred = $q.defer();
     const obj = {
       success: true,
@@ -244,16 +218,7 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     };
 
     // Build the criteria to use in the bool filter part of the request.
-    // Add criteria for the time range plus any additional supplied query.
-    const filterCriteria = [];
-
-    const timeRangeCriteria = { 'range':{} };
-    timeRangeCriteria.range[timeFieldName] = {
-      'gte': earliestMs,
-      'lte': latestMs,
-      'format': 'epoch_millis'
-    };
-    filterCriteria.push(timeRangeCriteria);
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
     const aggs = {
       'value_count': {
@@ -300,7 +265,7 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     return deferred.promise;
   };
 
-  this.getDefaultAggregatableFieldStats = function (index, field, timeFieldName, earliestMs, latestMs) {
+  this.getDefaultAggregatableFieldStats = function (index, query, field, timeFieldName, earliestMs, latestMs) {
     // Obtains the 'default' stats for an aggregatable field which is not
     // one of the types covered in specific functions.
     const deferred = $q.defer();
@@ -311,16 +276,7 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     };
 
     // Build the criteria to use in the bool filter part of the request.
-    // Add criteria for the time range plus any additional supplied query.
-    const filterCriteria = [];
-
-    const timeRangeCriteria = { 'range':{} };
-    timeRangeCriteria.range[timeFieldName] = {
-      'gte': earliestMs,
-      'lte': latestMs,
-      'format': 'epoch_millis'
-    };
-    filterCriteria.push(timeRangeCriteria);
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
     // Use an exists filter to return examples of the field.
     filterCriteria.push({
@@ -383,7 +339,7 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     return deferred.promise;
   };
 
-  this.getMetricDistributionData = function (index, metricFieldName,
+  this.getMetricDistributionData = function (index, query, metricFieldName,
     timeFieldName, earliestMs, latestMs) {
     const deferred = $q.defer();
     const obj = { success: true, results: { percentiles: [], minPercentile: 0, maxPercentile: 100 } };
@@ -401,16 +357,7 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     }
 
     // Build the criteria to use in the bool filter part of the request.
-    // Adds criteria for the time range.
-    const filterCriteria = [];
-
-    const timeRangeCriteria = { 'range':{} };
-    timeRangeCriteria.range[timeFieldName] = {
-      'gte': earliestMs,
-      'lte': latestMs,
-      'format': 'epoch_millis'
-    };
-    filterCriteria.push(timeRangeCriteria);
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
     filterCriteria.push({
       'exists' : { 'field' : metricFieldName }
     });
@@ -541,18 +488,13 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     return deferred.promise;
   };
 
-  this.getFieldExamples = function (index, field, maxNumberExamples, timeFieldName, earliestMs, latestMs) {
+  this.getFieldExamples = function (index, query, field, maxNumberExamples,
+    timeFieldName, earliestMs, latestMs) {
     const deferred = $q.defer();
     const obj = { success: true, examples: [] };
 
-    const filterCriteria = [];
-    const timeRangeCriteria = { 'range':{} };
-    timeRangeCriteria.range[timeFieldName] = {
-      'gte': earliestMs,
-      'lte': latestMs,
-      'format': 'epoch_millis'
-    };
-    filterCriteria.push(timeRangeCriteria);
+    // Build the criteria to use in the bool filter part of the request.
+    const filterCriteria = buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query);
 
     // Use an exists filter to return examples of the field.
     filterCriteria.push({
@@ -596,5 +538,25 @@ module.service('mlFieldDataSearchService', function ($q, es) {
     });
     return deferred.promise;
   };
+
+  // Builds the base filter criteria used in queries,
+  // adding criteria for the time range and an optional query.
+  function buildBaseFilterCriteria(timeFieldName, earliestMs, latestMs, query) {
+    const filterCriteria = [{
+      range: {
+        [timeFieldName]: {
+          gte: earliestMs,
+          lte: latestMs,
+          format: 'epoch_millis'
+        }
+      }
+    }];
+
+    if (query) {
+      filterCriteria.push(query);
+    }
+
+    return filterCriteria;
+  }
 
 });

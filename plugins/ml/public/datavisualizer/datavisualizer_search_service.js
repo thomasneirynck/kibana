@@ -20,7 +20,7 @@ const module = uiModules.get('apps/ml');
 
 module.service('mlDataVisualizerSearchService', function ($q, es) {
 
-  this.getOverallStats = function (indexPattern, earliestMs, latestMs) {
+  this.getOverallStats = function (indexPattern, query, earliestMs, latestMs) {
     const deferred = $q.defer();
 
     const boolCriteria = [];
@@ -31,6 +31,10 @@ module.service('mlDataVisualizerSearchService', function ($q, es) {
       'format': 'epoch_millis'
     };
     boolCriteria.push(timeRangeCriteria);
+
+    if (query) {
+      boolCriteria.push(query);
+    }
 
     const obj = {
       success: true,
