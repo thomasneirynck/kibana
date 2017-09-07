@@ -93,6 +93,22 @@ module
   let fieldRegexp;
   let fieldFilterTimeout;
 
+  // Obtain the list of non metric field types which appear in the index pattern.
+  let indexedFieldTypes = [];
+  _.each(indexPattern.fields, (field) => {
+    if (!field.scripted) {
+      const dataVisualizerType = mapKbnToDataVisualizerFieldType(field);
+      if (dataVisualizerType !== undefined) {
+        indexedFieldTypes.push(dataVisualizerType);
+      }
+    }
+  });
+  indexedFieldTypes = _.chain(indexedFieldTypes)
+      .unique()
+      .without(DATA_VISUALIZER_FIELD_TYPES.NUMBER)
+      .value();
+  $scope.indexedFieldTypes = indexedFieldTypes.sort();
+
   // Refresh the data when the time range is altered.
   $scope.$listen(timefilter, 'fetch', function () {
     $scope.earliest = timefilter.getActiveBounds().min.valueOf();
@@ -100,7 +116,7 @@ module
     loadOverallStats();
   });
 
-  $scope.submitSearchQuery = function  () {
+  $scope.submitSearchQuery = function () {
     $scope.searchQuery = buildSearchQuery();
     saveAppState();
     loadOverallStats();
@@ -368,28 +384,14 @@ module
 
       // Map the field type from the Kibana index pattern to the field type
       // used in the data visualizer.
-      switch (field.type) {
-        case KBN_FIELD_TYPES.DATE:
-          config.type = DATA_VISUALIZER_FIELD_TYPES.DATE;
-          break;
-        case KBN_FIELD_TYPES.IP:
-          config.type = DATA_VISUALIZER_FIELD_TYPES.IP;
-          break;
-        case KBN_FIELD_TYPES.STRING:
-          config.type = field.aggregatable ? DATA_VISUALIZER_FIELD_TYPES.KEYWORD : DATA_VISUALIZER_FIELD_TYPES.TEXT;
-          break;
-        case KBN_FIELD_TYPES.BOOLEAN:
-          config.type = DATA_VISUALIZER_FIELD_TYPES.BOOLEAN;
-          break;
-        case KBN_FIELD_TYPES.GEO_POINT:
-          config.type = DATA_VISUALIZER_FIELD_TYPES.GEO_POINT;
-          break;
-        default:
-          // Add a flag to indicate that this is one of the 'other' Kibana
-          // field types that do not yet have a specific card type.
-          config.type = field.type;
-          config.isUnsupportedType = true;
-          break;
+      const dataVisualizerType = mapKbnToDataVisualizerFieldType(field);
+      if (dataVisualizerType !== undefined) {
+        config.type = dataVisualizerType;
+      } else {
+        // Add a flag to indicate that this is one of the 'other' Kibana
+        // field types that do not yet have a specific card type.
+        config.type = field.type;
+        config.isUnsupportedType = true;
       }
 
       fieldConfigs.push(config);
@@ -399,6 +401,35 @@ module
     $scope.fieldFilterIcon = 0;
 
     $scope.fieldConfigurations = _.sortBy(fieldConfigs, 'fieldName');
+  }
+
+  function mapKbnToDataVisualizerFieldType(field) {
+    // Return undefined if not one of the supported data visualizer field types.
+    let type = undefined;
+    switch (field.type) {
+      case KBN_FIELD_TYPES.STRING:
+        type = field.aggregatable ? DATA_VISUALIZER_FIELD_TYPES.KEYWORD : DATA_VISUALIZER_FIELD_TYPES.TEXT;
+        break;
+      case KBN_FIELD_TYPES.NUMBER:
+        type = DATA_VISUALIZER_FIELD_TYPES.NUMBER;
+        break;
+      case KBN_FIELD_TYPES.DATE:
+        type = DATA_VISUALIZER_FIELD_TYPES.DATE;
+        break;
+      case KBN_FIELD_TYPES.IP:
+        type = DATA_VISUALIZER_FIELD_TYPES.IP;
+        break;
+      case KBN_FIELD_TYPES.BOOLEAN:
+        type = DATA_VISUALIZER_FIELD_TYPES.BOOLEAN;
+        break;
+      case KBN_FIELD_TYPES.GEO_POINT:
+        type = DATA_VISUALIZER_FIELD_TYPES.GEO_POINT;
+        break;
+      default:
+        break;
+    }
+
+    return type;
   }
 
 
