@@ -7,11 +7,11 @@ import {
   px,
   colors,
   fontFamilyCode
-} from '../../../style/variables';
-import { RelativeLink, legacyEncodeURIComponent } from '../../../utils/url';
+} from '../../../../style/variables';
+import { RelativeLink, legacyEncodeURIComponent } from '../../../../utils/url';
 import numeral from '@elastic/numeral';
 import { get } from 'lodash';
-import { TRANSACTION_NAME } from '../../../../common/constants';
+import { TRANSACTION_NAME } from '../../../../../common/constants';
 
 const TransactionRow = styled.tr`
   border-bottom: 1px solid ${colors.tableBorder};

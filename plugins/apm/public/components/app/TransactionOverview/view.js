@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import PageHeader from '../../shared/PageHeader';
 import TabNavigation from '../../shared/TabNavigation';
-import WiremockContainer from '../../shared/WiremockContainer';
 import Charts from './Charts';
 import List from './List';
 import Breadcrumbs from '../../shared/Breadcrumbs';
 import withErrorHandler from '../../shared/withErrorHandler';
 
-// TODO: Move this inside TransactionList component
 function loadTransactionList(props) {
   const { appName, start, end, transactionType } = props.urlParams;
 
@@ -39,7 +37,6 @@ export class TransactionOverview extends Component {
         <Breadcrumbs />
         <PageHeader title={appName} />
         <TabNavigation />
-        <WiremockContainer />
         <Charts />
         <h2>Requests</h2>
         <List

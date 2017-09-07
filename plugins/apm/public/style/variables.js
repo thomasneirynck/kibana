@@ -3,7 +3,7 @@ export const unit = 16;
 
 export const units = {
   unit,
-  eight: unit / 8,
+  eighth: unit / 8,
   quarter: unit / 4,
   half: unit / 2,
   minus: unit * 0.75,

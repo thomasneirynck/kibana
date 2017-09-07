@@ -35,8 +35,7 @@ export function getApp(state) {
 }
 
 export function getDefaultTransactionType(state) {
-  const _app = getApp(state);
-  const types = _app.data.types;
+  const types = getApp(state).data.types;
   return _.first(types);
 }
 

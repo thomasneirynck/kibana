@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Table, TableHead, TableLoader } from '../../shared/Table';
+import { Table, TableHead, TableLoader } from '../../../shared/Table';
 import ListItem from './ListItem';
-import { units, px, colors, borderRadius } from '../../../style/variables';
+
+import { units, px, colors, borderRadius } from '../../../../style/variables';
 import { get } from 'lodash';
-import { TRANSACTION_ID } from '../../../../common/constants';
+import { TRANSACTION_ID } from '../../../../../common/constants';
 import { KuiInfoButton } from 'ui_framework/components';
 import { Tooltip } from 'pui-react-tooltip';
 import { OverlayTrigger } from 'pui-react-overlay-trigger';
