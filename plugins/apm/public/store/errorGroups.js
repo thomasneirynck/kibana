@@ -1,85 +1,39 @@
 import * as rest from '../services/rest';
-import { STATUS } from '../constants';
+import {
+  getKey,
+  createActionTypes,
+  createAction,
+  createReducer
+} from './apiHelpers';
 
-// ACTION TYPES
-export const ERROR_GROUP_LOADING = 'ERROR_GROUP_LOADING';
-export const ERROR_GROUP_SUCCESS = 'ERROR_GROUP_SUCCESS';
-export const ERROR_GROUP_FAILURE = 'ERROR_GROUP_FAILURE';
+const actionTypes = createActionTypes('ERROR_GROUP');
+export const [
+  ERROR_GROUP_LOADING,
+  ERROR_GROUP_SUCCESS,
+  ERROR_GROUP_FAILURE
+] = actionTypes;
 
-// REDUCER
 const INITIAL_STATE = {
   data: {}
 };
 
-function errorGroup(state = INITIAL_STATE, action) {
-  switch (action.type) {
-    case ERROR_GROUP_LOADING:
-      return { ...INITIAL_STATE, status: STATUS.LOADING };
-
-    case ERROR_GROUP_SUCCESS: {
-      return {
-        data: action.response || INITIAL_STATE.data,
-        status: STATUS.SUCCESS
-      };
-    }
-
-    case ERROR_GROUP_FAILURE:
-      return {
-        ...INITIAL_STATE,
-        error: action.error,
-        status: STATUS.FAILURE
-      };
-    default:
-      return state;
-  }
-}
-
+const errorGroup = createReducer(actionTypes, INITIAL_STATE);
 const errorGroups = (state = {}, action) => {
-  switch (action.type) {
-    case ERROR_GROUP_LOADING:
-    case ERROR_GROUP_SUCCESS:
-    case ERROR_GROUP_FAILURE:
-      return {
-        ...state,
-        [action.key]: errorGroup(state[action.key], action)
-      };
-    default:
-      return state;
+  if (!actionTypes.includes(action.type)) {
+    return state;
   }
+
+  return {
+    ...state,
+    [action.key]: errorGroup(state[action.key], action)
+  };
 };
 
-export function loadErrorGroup({ appName, errorGroupId, start, end }) {
-  return async dispatch => {
-    const key = `${appName}_${errorGroupId}_${start}_${end}`;
-    dispatch({ type: ERROR_GROUP_LOADING, key });
-
-    let response;
-    try {
-      response = await rest.loadErrorGroup({
-        appName,
-        errorGroupId,
-        start,
-        end
-      });
-    } catch (error) {
-      return dispatch({
-        key,
-        error: error.error,
-        type: ERROR_GROUP_FAILURE
-      });
-    }
-
-    return dispatch({
-      key,
-      response,
-      type: ERROR_GROUP_SUCCESS
-    });
-  };
-}
+export const loadErrorGroup = createAction(actionTypes, rest.loadErrorGroup);
 
 export function getErrorGroup(state) {
   const { appName, errorGroupId, start, end } = state.urlParams;
-  const key = `${appName}_${errorGroupId}_${start}_${end}`;
+  const key = getKey({ appName, errorGroupId, start, end });
   return state.errorGroups[key] || INITIAL_STATE;
 }
 

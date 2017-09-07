@@ -1,9 +1,10 @@
 import { loadAppList, APP_LIST_LOADING, APP_LIST_SUCCESS } from '../appLists';
+import { getKey } from '../apiHelpers';
 import fetchMock from 'fetch-mock';
 import response from './apps-response.json';
 
 describe('loadAppList', () => {
-  const key = 'myStart_myEnd';
+  const key = getKey({ start: 'myStart', end: 'myEnd' });
   const dispatch = jest.fn();
   const matcherName = /\/api\/apm\/apps/;
 

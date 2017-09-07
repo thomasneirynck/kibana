@@ -1,3 +1,4 @@
+import orderBy from 'lodash.orderby';
 export const TRANSACTION_SORTING_CHANGE = 'TRANSACTION_SORTING_CHANGE';
 
 const INITIAL_STATE = {
@@ -22,11 +23,7 @@ export function changeTransactionSorting(key) {
   return { type: TRANSACTION_SORTING_CHANGE, key };
 }
 
-export const getSort = state => {
+export const getSortedList = (collection, state) => {
   const { key, descending } = state.transactionSorting;
-  return (a, b) => {
-    if (a[key] < b[key]) return descending ? 1 : -1;
-    if (a[key] > b[key]) return descending ? -1 : 1;
-    return 0;
-  };
+  return orderBy(collection, key, descending ? 'desc' : 'asc');
 };

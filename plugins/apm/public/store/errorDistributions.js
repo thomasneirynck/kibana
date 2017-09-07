@@ -1,78 +1,40 @@
 import * as rest from '../services/rest';
-import { STATUS } from '../constants';
+import {
+  getKey,
+  createActionTypes,
+  createAction,
+  createReducer
+} from './apiHelpers';
 
-// ACTION TYPES
-export const DISTRIBUTION_LOADING = 'ERROR_DISTRIBUTION_LOADING';
-export const DISTRIBUTION_SUCCESS = 'ERROR_DISTRIBUTION_SUCCESS';
-export const DISTRIBUTION_FAILURE = 'ERROR_DISTRIBUTION_FAILURE';
+const actionTypes = createActionTypes('ERROR_DISTRIBUTION');
+export const [
+  ERROR_DISTRIBUTION_LOADING,
+  ERROR_DISTRIBUTION_SUCCESS,
+  ERROR_DISTRIBUTION_FAILURE
+] = actionTypes;
 
 const INITIAL_STATE = { data: { buckets: [] } };
-function distribution(state = INITIAL_STATE, action) {
-  switch (action.type) {
-    case DISTRIBUTION_LOADING:
-      return { ...INITIAL_STATE, status: STATUS.LOADING };
-
-    case DISTRIBUTION_SUCCESS: {
-      return { data: action.response, status: STATUS.SUCCESS };
-    }
-
-    case DISTRIBUTION_FAILURE:
-      return {
-        ...INITIAL_STATE,
-        error: action.error,
-        status: STATUS.FAILURE
-      };
-    default:
-      return state;
-  }
-}
+const distribution = createReducer(actionTypes, INITIAL_STATE);
 
 const errorDistributions = (state = {}, action) => {
-  switch (action.type) {
-    case DISTRIBUTION_LOADING:
-    case DISTRIBUTION_SUCCESS:
-    case DISTRIBUTION_FAILURE:
-      return {
-        ...state,
-        [action.key]: distribution(state[action.key], action)
-      };
-    default:
-      return state;
+  if (!actionTypes.includes(action.type)) {
+    return state;
   }
+
+  return {
+    ...state,
+    [action.key]: distribution(state[action.key], action)
+  };
 };
 
-export function loadErrorDistribution({ appName, start, end, errorGroupId }) {
-  return async dispatch => {
-    const key = `${appName}_${start}_${end}_${errorGroupId}`;
-    dispatch({ type: DISTRIBUTION_LOADING, key });
-
-    let response;
-    try {
-      response = await rest.loadErrorDistribution({
-        appName,
-        start,
-        end,
-        errorGroupId
-      });
-    } catch (error) {
-      return dispatch({
-        error: error.error,
-        key,
-        type: DISTRIBUTION_FAILURE
-      });
-    }
-
-    return dispatch({
-      response,
-      key,
-      type: DISTRIBUTION_SUCCESS
-    });
-  };
-}
+export const loadErrorDistribution = createAction(
+  actionTypes,
+  rest.loadErrorDistribution
+);
 
 export function getErrorDistribution(state) {
   const { appName, start, end, errorGroupId } = state.urlParams;
-  const key = `${appName}_${start}_${end}_${errorGroupId}`;
+  const key = getKey({ appName, start, end, errorGroupId });
   return state.errorDistributions[key] || INITIAL_STATE;
 }
 

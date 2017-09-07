@@ -1,84 +1,41 @@
 import _ from 'lodash';
 import * as rest from '../services/rest';
-import { STATUS } from '../constants';
+import {
+  getKey,
+  createActionTypes,
+  createAction,
+  createReducer
+} from './apiHelpers';
 
-// ACTION TYPES
-export const DISTRIBUTION_LOADING = 'TRANSACTION_DISTRIBUTION_LOADING';
-export const DISTRIBUTION_SUCCESS = 'TRANSACTION_DISTRIBUTION_SUCCESS';
-export const DISTRIBUTION_FAILURE = 'TRANSACTION_DISTRIBUTION_FAILURE';
+const actionTypes = createActionTypes('TRANSACTION_DISTRIBUTION');
+export const [
+  TRANSACTION_DISTRIBUTION_LOADING,
+  TRANSACTION_DISTRIBUTION_SUCCESS,
+  TRANSACTION_DISTRIBUTION_FAILURE
+] = actionTypes;
 
 const INITIAL_STATE = { data: { buckets: [] } };
-function distribution(state = INITIAL_STATE, action) {
-  switch (action.type) {
-    case DISTRIBUTION_LOADING:
-      return { ...INITIAL_STATE, status: STATUS.LOADING };
-
-    case DISTRIBUTION_SUCCESS: {
-      return { data: action.response, status: STATUS.SUCCESS };
-    }
-
-    case DISTRIBUTION_FAILURE:
-      return {
-        ...INITIAL_STATE,
-        error: action.error,
-        status: STATUS.FAILURE
-      };
-    default:
-      return state;
-  }
-}
+const distribution = createReducer(actionTypes, INITIAL_STATE);
 
 const transactionDistributions = (state = {}, action) => {
-  switch (action.type) {
-    case DISTRIBUTION_LOADING:
-    case DISTRIBUTION_SUCCESS:
-    case DISTRIBUTION_FAILURE:
-      return {
-        ...state,
-        [action.key]: distribution(state[action.key], action)
-      };
-    default:
-      return state;
+  if (!actionTypes.includes(action.type)) {
+    return state;
   }
+
+  return {
+    ...state,
+    [action.key]: distribution(state[action.key], action)
+  };
 };
 
-export function loadTransactionDistribution({
-  appName,
-  start,
-  end,
-  transactionName
-}) {
-  return async dispatch => {
-    const key = `${appName}_${start}_${end}_${transactionName}`;
-    dispatch({ type: DISTRIBUTION_LOADING, key });
-
-    let response;
-    try {
-      response = await rest.loadTransactionDistribution({
-        appName,
-        start,
-        end,
-        transactionName
-      });
-    } catch (error) {
-      return dispatch({
-        error: error.error,
-        key,
-        type: DISTRIBUTION_FAILURE
-      });
-    }
-
-    return dispatch({
-      response,
-      key,
-      type: DISTRIBUTION_SUCCESS
-    });
-  };
-}
+export const loadTransactionDistribution = createAction(
+  actionTypes,
+  rest.loadTransactionDistribution
+);
 
 export function getTransactionDistribution(state) {
   const { appName, start, end, transactionName } = state.urlParams;
-  const key = `${appName}_${start}_${end}_${transactionName}`;
+  const key = getKey({ appName, start, end, transactionName });
   return state.transactionDistributions[key] || INITIAL_STATE;
 }
 

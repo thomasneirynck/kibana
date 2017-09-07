@@ -1,81 +1,36 @@
 import _ from 'lodash';
 import * as rest from '../services/rest';
-import { STATUS } from '../constants';
+import {
+  getKey,
+  createActionTypes,
+  createAction,
+  createReducer
+} from './apiHelpers';
 
-// ACTION TYPES
-export const APP_LOADING = 'APP_LOADING';
-export const APP_SUCCESS = 'APP_SUCCESS';
-export const APP_FAILURE = 'APP_FAILURE';
+const actionTypes = createActionTypes('APP');
+export const [APP_LOADING, APP_SUCCESS, APP_FAILURE] = actionTypes;
 
-// REDUCER
 const INITIAL_STATE = {
   data: {}
 };
 
-function app(state = INITIAL_STATE, action) {
-  switch (action.type) {
-    case APP_LOADING:
-      return { ...INITIAL_STATE, status: STATUS.LOADING };
-
-    case APP_SUCCESS: {
-      return {
-        data: action.response || INITIAL_STATE.data,
-        status: STATUS.SUCCESS
-      };
-    }
-
-    case APP_FAILURE:
-      return {
-        ...INITIAL_STATE,
-        error: action.error,
-        status: STATUS.FAILURE
-      };
-    default:
-      return state;
-  }
-}
-
+const app = createReducer(actionTypes, INITIAL_STATE);
 const apps = (state = {}, action) => {
-  switch (action.type) {
-    case APP_LOADING:
-    case APP_SUCCESS:
-    case APP_FAILURE:
-      return {
-        ...state,
-        [action.key]: app(state[action.key], action)
-      };
-    default:
-      return state;
+  if (!actionTypes.includes(action.type)) {
+    return state;
   }
+
+  return {
+    ...state,
+    [action.key]: app(state[action.key], action)
+  };
 };
 
-export function loadApp({ appName, start, end }) {
-  return async dispatch => {
-    const key = `${appName}_${start}_${end}`;
-    dispatch({ type: APP_LOADING, key });
-
-    let response;
-    try {
-      response = await rest.loadApp({ appName, start, end });
-    } catch (error) {
-      return dispatch({
-        key,
-        error: error.error,
-        type: APP_FAILURE
-      });
-    }
-
-    return dispatch({
-      key,
-      response,
-      type: APP_SUCCESS
-    });
-  };
-}
+export const loadApp = createAction(actionTypes, rest.loadApp);
 
 export function getApp(state) {
   const { appName, start, end } = state.urlParams;
-  const key = `${appName}_${start}_${end}`;
+  const key = getKey({ appName, start, end });
   return state.apps[key] || INITIAL_STATE;
 }
 

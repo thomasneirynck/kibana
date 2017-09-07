@@ -2,85 +2,42 @@ import { getUrlParams } from './urlParams';
 import * as rest from '../services/rest';
 import { STATUS } from '../constants';
 
-// ACTION TYPES
-export const TRANSACTION_LOADING = 'TRANSACTION_LOADING';
-export const TRANSACTION_SUCCESS = 'TRANSACTION_SUCCESS';
-export const TRANSACTION_FAILURE = 'TRANSACTION_FAILURE';
+import {
+  getKey,
+  createActionTypes,
+  createAction,
+  createReducer
+} from './apiHelpers';
+
+const actionTypes = createActionTypes('TRANSACTION');
+export const [
+  TRANSACTION_LOADING,
+  TRANSACTION_SUCCESS,
+  TRANSACTION_FAILURE
+] = actionTypes;
 
 // REDUCER
 const INITIAL_STATE = { data: {} };
-function transaction(state = INITIAL_STATE, action) {
-  switch (action.type) {
-    case TRANSACTION_LOADING:
-      return { ...INITIAL_STATE, status: STATUS.LOADING };
-
-    case TRANSACTION_SUCCESS: {
-      return {
-        data: action.response || INITIAL_STATE.data,
-        status: STATUS.SUCCESS
-      };
-    }
-
-    case TRANSACTION_FAILURE:
-      return {
-        ...INITIAL_STATE,
-        error: action.error,
-        status: STATUS.FAILURE
-      };
-    default:
-      return state;
-  }
-}
+const transaction = createReducer(actionTypes, INITIAL_STATE);
 
 const transactions = (state = {}, action) => {
-  switch (action.type) {
-    case TRANSACTION_LOADING:
-    case TRANSACTION_SUCCESS:
-    case TRANSACTION_FAILURE:
-      return {
-        ...state,
-        [action.key]: transaction(state[action.key], action),
-        lastSuccess:
-          action.type === TRANSACTION_SUCCESS ? action.key : state.lastSuccess
-      };
-    default:
-      return state;
+  if (!actionTypes.includes(action.type)) {
+    return state;
   }
+
+  return {
+    ...state,
+    [action.key]: transaction(state[action.key], action),
+    lastSuccess:
+      action.type === TRANSACTION_SUCCESS ? action.key : state.lastSuccess
+  };
 };
 
-// ACTION CREATOR
-export function loadTransaction({ appName, start, end, transactionId }) {
-  return async dispatch => {
-    const key = transactionId;
-    dispatch({ type: TRANSACTION_LOADING, key });
+export const loadTransaction = createAction(actionTypes, rest.loadTransaction);
 
-    let response;
-    try {
-      response = await rest.loadTransaction({
-        appName,
-        start,
-        end,
-        transactionId
-      });
-    } catch (error) {
-      return dispatch({
-        error: error.error,
-        key,
-        type: TRANSACTION_FAILURE
-      });
-    }
-
-    return dispatch({
-      response,
-      key,
-      type: TRANSACTION_SUCCESS
-    });
-  };
-}
-
-// SELECTOR
 export function getTransactionNext(state) {
-  const { transactionId: key } = getUrlParams(state);
+  const { appName, start, end, transactionId } = getUrlParams(state);
+  const key = getKey({ appName, start, end, transactionId });
   return state.transactions[key] || INITIAL_STATE;
 }
 

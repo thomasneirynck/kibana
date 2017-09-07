@@ -1,85 +1,41 @@
 import { getUrlParams } from './urlParams';
 import * as rest from '../services/rest';
-import { STATUS } from '../constants';
-import { getSort } from './transactionSorting';
+import { getSortedList } from './transactionSorting';
+import {
+  getKey,
+  createActionTypes,
+  createAction,
+  createReducer
+} from './apiHelpers';
 
-// ACTION TYPES
-export const TRANSACTIONS_LIST_LOADING = 'TRANSACTIONS_LIST_LOADING';
-export const TRANSACTIONS_LIST_SUCCESS = 'TRANSACTIONS_LIST_SUCCESS';
-export const TRANSACTIONS_LIST_FAILURE = 'TRANSACTIONS_LIST_FAILURE';
+const actionTypes = createActionTypes('TRANSACTIONS_LIST');
+export const [
+  TRANSACTIONS_LIST_LOADING,
+  TRANSACTIONS_LIST_SUCCESS,
+  TRANSACTIONS_LIST_FAILURE
+] = actionTypes;
 
-// A single transaction list
 const INITIAL_STATE = { data: [] };
-function list(state = INITIAL_STATE, action) {
-  switch (action.type) {
-    case TRANSACTIONS_LIST_LOADING:
-      return { ...INITIAL_STATE, status: STATUS.LOADING };
-
-    case TRANSACTIONS_LIST_SUCCESS: {
-      return {
-        data: action.response || INITIAL_STATE.data,
-        status: STATUS.SUCCESS
-      };
-    }
-
-    case TRANSACTIONS_LIST_FAILURE:
-      return {
-        ...INITIAL_STATE,
-        error: action.error,
-        status: STATUS.FAILURE
-      };
-    default:
-      return state;
-  }
-}
-
-// An collection of transaction lists
+const list = createReducer(actionTypes, INITIAL_STATE);
 const transactionLists = (state = {}, action) => {
-  switch (action.type) {
-    case TRANSACTIONS_LIST_LOADING:
-    case TRANSACTIONS_LIST_SUCCESS:
-    case TRANSACTIONS_LIST_FAILURE:
-      return {
-        ...state,
-        [action.key]: list(state[action.key], action)
-      };
-    default:
-      return state;
+  if (!actionTypes.includes(action.type)) {
+    return state;
   }
+
+  return {
+    ...state,
+    [action.key]: list(state[action.key], action)
+  };
 };
 
-export function loadTransactionList({ appName, start, end, transactionType }) {
-  return async dispatch => {
-    const key = `${appName}_${start}_${end}_${transactionType}`;
-    dispatch({ type: TRANSACTIONS_LIST_LOADING, key });
-
-    let response;
-    try {
-      response = await rest.loadTransactionList({
-        appName,
-        start,
-        end,
-        transactionType
-      });
-    } catch (error) {
-      return dispatch({
-        error: error.error,
-        key,
-        type: TRANSACTIONS_LIST_FAILURE
-      });
-    }
-
-    return dispatch({
-      response,
-      key,
-      type: TRANSACTIONS_LIST_SUCCESS
-    });
-  };
-}
+export const loadTransactionList = createAction(
+  actionTypes,
+  rest.loadTransactionList
+);
 
 export function getTransactionList(state) {
   const { appName, start, end, transactionType } = getUrlParams(state);
-  const key = `${appName}_${start}_${end}_${transactionType}`;
+  const key = getKey({ appName, start, end, transactionType });
 
   if (!state.transactionLists[key]) {
     return INITIAL_STATE;
@@ -87,7 +43,7 @@ export function getTransactionList(state) {
 
   return {
     ...state.transactionLists[key],
-    data: state.transactionLists[key].data.concat().sort(getSort(state))
+    data: getSortedList(state.transactionLists[key].data, state)
   };
 }
 

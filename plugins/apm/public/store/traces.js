@@ -1,83 +1,35 @@
 import { getUrlParams } from './urlParams';
 import * as rest from '../services/rest';
 import { STATUS } from '../constants';
+import {
+  getKey,
+  createActionTypes,
+  createAction,
+  createReducer
+} from './apiHelpers';
 
-// ACTION TYPES
-export const TRACES_LOADING = 'TRACES_LOADING';
-export const TRACES_SUCCESS = 'TRACES_SUCCESS';
-export const TRACES_FAILURE = 'TRACES_FAILURE';
+const actionTypes = createActionTypes('TRACES');
+export const [TRACES_LOADING, TRACES_SUCCESS, TRACES_FAILURE] = actionTypes;
 
 const INITIAL_STATE = { data: {} };
-function traces(state = INITIAL_STATE, action) {
-  switch (action.type) {
-    case TRACES_LOADING:
-      return { ...INITIAL_STATE, status: STATUS.LOADING };
-
-    case TRACES_SUCCESS: {
-      return {
-        data: action.response || INITIAL_STATE.data,
-        status: STATUS.SUCCESS
-      };
-    }
-
-    case TRACES_FAILURE:
-      return {
-        ...INITIAL_STATE,
-        error: action.error,
-        status: STATUS.FAILURE
-      };
-    default:
-      return state;
-  }
-}
-
+const traces = createReducer(actionTypes, INITIAL_STATE);
 const tracesCollection = (state = {}, action) => {
-  switch (action.type) {
-    case TRACES_LOADING:
-    case TRACES_SUCCESS:
-    case TRACES_FAILURE:
-      return {
-        ...state,
-        [action.key]: traces(state[action.key], action),
-        lastSuccess:
-          action.type === TRACES_SUCCESS ? action.key : state.lastSuccess
-      };
-    default:
-      return state;
+  if (!actionTypes.includes(action.type)) {
+    return state;
   }
+
+  return {
+    ...state,
+    [action.key]: traces(state[action.key], action),
+    lastSuccess: action.type === TRACES_SUCCESS ? action.key : state.lastSuccess
+  };
 };
 
-export function loadTraces({ appName, start, end, transactionId }) {
-  return async dispatch => {
-    const key = transactionId;
-    dispatch({ type: TRACES_LOADING, key });
-
-    let response;
-    try {
-      response = await rest.loadTraces({
-        appName,
-        start,
-        end,
-        transactionId
-      });
-    } catch (error) {
-      return dispatch({
-        error: error.error,
-        key,
-        type: TRACES_FAILURE
-      });
-    }
-
-    return dispatch({
-      response,
-      key,
-      type: TRACES_SUCCESS
-    });
-  };
-}
+export const loadTraces = createAction(actionTypes, rest.loadTraces);
 
 export function getTracesNext(state) {
-  const { transactionId: key } = getUrlParams(state);
+  const { appName, start, end, transactionId } = getUrlParams(state);
+  const key = getKey({ appName, start, end, transactionId });
   return state.traces[key] || INITIAL_STATE;
 }
 
