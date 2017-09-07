@@ -71,13 +71,19 @@ describe('apiHelpers', () => {
       MY_ACTION_TYPE_SUCCESS,
       MY_ACTION_TYPE_FAILURE
     ] = actionTypes;
-    const args = { a: 'aa', b: 'bb' };
-    const key = getKey(args);
 
     describe('succesful request', () => {
-      const dispatchMock = jest.fn();
-      const apiMock = jest.fn(() => Promise.resolve('foo'));
-      createAction(actionTypes, apiMock)(args)(dispatchMock);
+      let key;
+      let dispatchMock;
+      let apiMock;
+      let args;
+      beforeEach(async () => {
+        dispatchMock = jest.fn();
+        apiMock = jest.fn(() => Promise.resolve('foo'));
+        args = { a: 'aa', b: 'bb' };
+        key = getKey(args);
+        await createAction(actionTypes, apiMock)(args)(dispatchMock);
+      });
 
       it('should dispatch loading action', () => {
         expect(dispatchMock).toHaveBeenCalledWith({
@@ -100,15 +106,35 @@ describe('apiHelpers', () => {
     });
 
     describe('unsuccesful request', () => {
-      const dispatchMock = jest.fn();
-      const apiMock = jest.fn(() => Promise.reject('bar'));
-      createAction(actionTypes, apiMock)(args)(dispatchMock);
+      it('should dispatch error action', async () => {
+        const dispatchMock = jest.fn();
+        const apiMock = jest.fn(() =>
+          Promise.reject(new Error('an error occured :('))
+        );
+        const args = { a: 'aa', b: 'bb' };
+        const key = getKey(args);
+        await createAction(actionTypes, apiMock)(args)(dispatchMock);
 
-      it('should dispatch error action', () => {
         expect(dispatchMock).toHaveBeenCalledWith({
           key,
-          error: 'bar',
+          error: expect.any(Error),
           type: MY_ACTION_TYPE_FAILURE
+        });
+      });
+    });
+
+    describe('without arguments', () => {
+      it('should dispatch success action', async () => {
+        const dispatchMock = jest.fn();
+        const apiMock = jest.fn(() => Promise.resolve('foobar'));
+        const args = undefined;
+        const key = getKey(args);
+        await createAction(actionTypes, apiMock)(args)(dispatchMock);
+
+        expect(dispatchMock).toHaveBeenCalledWith({
+          key,
+          response: 'foobar',
+          type: MY_ACTION_TYPE_SUCCESS
         });
       });
     });

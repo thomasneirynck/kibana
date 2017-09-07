@@ -39,7 +39,7 @@ export function createReducer(actionTypes, initialState) {
 export function createAction(actionTypes, callApi) {
   const [LOADING, SUCCESS, FAILURE] = actionTypes;
 
-  return args => {
+  return (args = {}) => {
     return async dispatch => {
       const key = hash(args);
       dispatch({ type: LOADING, key });
@@ -65,4 +65,4 @@ export function createAction(actionTypes, callApi) {
   };
 }
 
-export const getKey = obj => hash(obj);
+export const getKey = (obj = {}) => hash(obj);
