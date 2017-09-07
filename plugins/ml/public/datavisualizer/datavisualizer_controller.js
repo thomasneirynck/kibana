@@ -49,6 +49,7 @@ module
   $timeout,
   Private,
   timefilter,
+  AppState,
   mlDataVisualizerSearchService) {
 
   timefilter.enabled = true;
@@ -63,9 +64,9 @@ module
   $scope.populatedNonMetricFieldCount = 0;
   $scope.DATA_VISUALIZER_FIELD_TYPES = DATA_VISUALIZER_FIELD_TYPES;
   $scope.showAllFields = false;
-  $scope.searchQueryText = '';
   $scope.filterFieldType = '*';
   $scope.urlBasePath = chrome.getBasePath();
+  $scope.appState = new AppState();
 
   $scope.indexPattern = indexPattern;
   $scope.earliest = timefilter.getActiveBounds().min.valueOf();
@@ -76,6 +77,14 @@ module
   $scope.fieldFilterIcon = 0;
   $scope.fieldFilter = '';
 
+  // Check for a saved query in the AppState.
+  $scope.searchQueryText = '';
+  if (_.has($scope.appState, 'query')) {
+    // Currently only support lucene syntax.
+    if (_.get($scope.appState, 'query.language') === 'lucene') {
+      $scope.searchQueryText = _.get($scope.appState, 'query.query', '');
+    }
+  }
   const decorateQuery = Private(DecorateQueryProvider);
   $scope.searchQuery = buildSearchQuery();
 
@@ -93,6 +102,7 @@ module
 
   $scope.submitSearchQuery = function  () {
     $scope.searchQuery = buildSearchQuery();
+    saveAppState();
     loadOverallStats();
   };
 
@@ -184,6 +194,14 @@ module
     const query = luceneStringToDsl($scope.searchQueryText);
     decorateQuery(query);
     return query;
+  }
+
+  function saveAppState() {
+    $scope.appState.query = {
+      language:'lucene',
+      query: $scope.searchQueryText
+    };
+    $scope.appState.save();
   }
 
   function createMetricConfigurations() {
