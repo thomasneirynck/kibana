@@ -26,6 +26,13 @@ describe('saved_objects', function () {
 
   const mockRequest = (clientResponse) => {
     return {
+      getUiSettingsService() {
+        return {
+          get() {
+            return 'UTC';
+          }
+        };
+      },
       getSavedObjectsClient() {
         return {
           get() {

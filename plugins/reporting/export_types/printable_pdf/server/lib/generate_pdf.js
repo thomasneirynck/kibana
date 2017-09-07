@@ -24,7 +24,7 @@ function generatePdfFn(server) {
     });
   }
 
-  return function generatePdf(title, savedObjects, query, headers) {
+  return function generatePdf(title, savedObjects, query, headers, browserTimezone) {
     const pdfOutput = pdf.create();
 
     return Promise.all(savedObjects.map((savedObj) => {
@@ -42,7 +42,7 @@ function generatePdfFn(server) {
       const cleanupPaths = [];
 
       if (title) {
-        const timeRange = some(objects, { isTimepickerEnabled: true }) ? getTimeFilterRange(query) : null;
+        const timeRange = some(objects, { isTimepickerEnabled: true }) ? getTimeFilterRange(browserTimezone, query) : null;
         title += (timeRange) ? ` — ${timeRange.from} to ${timeRange.to}` : '';
         pdfOutput.setTitle(title);
       }

@@ -108,7 +108,6 @@ function getSavedObjectFn(server) {
       return { searchSource, uiState };
     }
 
-
     const savedObjectsClient = request.getSavedObjectsClient();
 
     let attributes;

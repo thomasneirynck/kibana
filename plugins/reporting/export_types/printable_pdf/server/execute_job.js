@@ -15,7 +15,7 @@ function executeJobFn(server) {
   const crypto = cryptoFactory(server);
 
   return async function executeJob(job) {
-    const { title, objects, query, headers:serializedEncryptedHeaders } = job;
+    const { title, objects, query, headers:serializedEncryptedHeaders, browserTimezone } = job;
     let decryptedHeaders;
 
     try {
@@ -25,7 +25,7 @@ function executeJobFn(server) {
     }
 
     const headers = omit(decryptedHeaders, KBN_SCREENSHOT_HEADER_BLACKLIST);
-    const pdf = await generatePdf(title, objects, query, headers);
+    const pdf = await generatePdf(title, objects, query, headers, browserTimezone);
     const buffer = await pdf.getBuffer();
 
     return {

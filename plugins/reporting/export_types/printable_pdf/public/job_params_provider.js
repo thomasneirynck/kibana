@@ -3,8 +3,9 @@ import {
   getUnhashableStatesProvider,
   unhashUrl,
 } from 'ui/state_management/state_hashing';
+import moment from 'moment-timezone';
 
-export function JobParamsProvider(Private) {
+export function JobParamsProvider(Private, config) {
   const getUnhashableStates = Private(getUnhashableStatesProvider);
 
   const appTypes = {
@@ -45,11 +46,14 @@ export function JobParamsProvider(Private) {
     }
 
     const objectId = params[1];
+    const browserTimezone = config.get('dateFormat:tz') === 'Browser' ? moment.tz.guess() : config.get('dateFormat:tz');
+
 
     return {
       savedObjectId: objectId,
       objectType: appType.objectType,
-      queryString: encodeURIComponent(query)
+      queryString: encodeURIComponent(query),
+      browserTimezone: encodeURIComponent(browserTimezone)
     };
   }
 
