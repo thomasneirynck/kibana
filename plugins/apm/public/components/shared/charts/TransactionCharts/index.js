@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import CustomPlot from '../../../shared/charts/CustomPlot';
+import CustomPlot from '../CustomPlot';
 import { STATUS } from '../../../../constants';
 import { getTimefilter } from '../../../../utils/timepicker';
 import {
   getFormattedResponseTime,
   getFormattedRequestsPerMinute
-} from '../../../shared/charts/utils';
+} from '../utils';
 import styled from 'styled-components';
 import { units, px } from '../../../../style/variables';
 
@@ -23,11 +23,11 @@ export class Charts extends Component {
   };
 
   componentDidMount() {
-    loadCharts(this.props);
+    this.props.loadCharts(this.props);
   }
 
   componentWillReceiveProps(nextProps) {
-    loadCharts(nextProps);
+    nextProps.loadCharts(nextProps);
   }
 
   onHover = hoverIndex => this.setState({ hoverIndex });
@@ -72,16 +72,6 @@ export class Charts extends Component {
         </Chart>
       </ChartsWrapper>
     );
-  }
-}
-
-function loadCharts(props) {
-  const { appName, start, end, transactionType } = props.urlParams;
-  const shouldLoad =
-    appName && start && end && transactionType && !props.status;
-
-  if (shouldLoad) {
-    props.loadCharts({ appName, start, end, transactionType });
   }
 }
 

@@ -113,7 +113,7 @@ export async function getTimeseriesData(req) {
 
   if (transactionName) {
     params.body.query.bool.must.push({
-      term: { [TRANSACTION_NAME]: transactionName }
+      term: { [`${TRANSACTION_NAME}.keyword`]: transactionName }
     });
   }
 

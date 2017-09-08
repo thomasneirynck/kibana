@@ -53,14 +53,6 @@ class CustomPlot extends PureComponent {
     disabledSeries: []
   };
 
-  componentWillReceiveProps(nextProps) {
-    if (_.isEmpty(this.state.disabledSeries) && !_.isEmpty(nextProps.series)) {
-      this.setState(() => ({
-        disabledSeries: nextProps.series.map(() => false)
-      }));
-    }
-  }
-
   onMouseLeave = (...args) => {
     if (this.state.isDrawing) {
       this.setState({ isDrawing: false });
@@ -98,13 +90,14 @@ class CustomPlot extends PureComponent {
 
   clickLegend = i => {
     this.setState(({ disabledSeries }) => {
-      const value = disabledSeries[i];
+      const disabledSeriesOrDefault = _.isEmpty(disabledSeries)
+        ? this.props.series.map(() => false)
+        : disabledSeries;
+
       return {
-        disabledSeries: [
-          ...disabledSeries.slice(0, i),
-          !value,
-          ...disabledSeries.slice(i + 1)
-        ]
+        disabledSeries: disabledSeriesOrDefault.map(
+          (value, _i) => (i === _i ? !value : value)
+        )
       };
     });
   };
