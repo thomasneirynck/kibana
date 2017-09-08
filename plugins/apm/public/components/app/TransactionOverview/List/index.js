@@ -51,7 +51,7 @@ function TransactionList({
   changeTransactionSorting,
   transactionSorting
 }) {
-  const transactions = list.data || [];
+  const transactions = list.data;
 
   const impacts = transactions.map(({ impact }) => impact);
   const impactMin = Math.min(...impacts);

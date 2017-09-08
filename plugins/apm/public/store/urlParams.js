@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import isNil from 'lodash.isnil';
+import { createSelector } from 'reselect';
 import { LOCATION_UPDATE } from './location';
 import { toQuery, legacyDecodeURIComponent } from '../utils/url';
 import {
@@ -94,15 +95,18 @@ export function updateTimePicker(time) {
   return { type: TIMEPICKER_UPDATE, time };
 }
 
-// SELECTORS
-// Note: make sure that none of the default selectors (eg. getDefaultTransactionId) calls getUrlParams,
-// since this would cause an infinite loop
-export function getUrlParams(state) {
-  return _.defaults({}, state.urlParams, {
-    transactionType: getDefaultTransactionType(state),
-    transactionId: getDefaultTransactionId(state),
-    bucket: getDefaultBucketIndex(state)
-  });
-}
+export const getUrlParams = createSelector(
+  state => state.urlParams,
+  getDefaultTransactionType,
+  getDefaultTransactionId,
+  getDefaultBucketIndex,
+  (urlParams, transactionType, transactionId, bucket) => {
+    return _.defaults({}, urlParams, {
+      transactionType,
+      transactionId,
+      bucket
+    });
+  }
+);
 
 export default urlParams;

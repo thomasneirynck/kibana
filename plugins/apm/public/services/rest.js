@@ -25,11 +25,17 @@ async function callApi(options) {
     const response = await fetch(fullUrl, urlOptions);
     const json = await response.json();
     if (!response.ok) {
-      throw new Error(json);
+      throw new Error(JSON.stringify(json, null, 4));
     }
     return camelcase ? camelizeKeys(json) : json;
   } catch (err) {
-    console.error('Rest request error', options, err);
+    console.error(
+      'Rest request error with options:\n',
+      JSON.stringify(options, null, 4),
+      '\n',
+      err.message,
+      err.stack
+    );
     throw err;
   }
 }

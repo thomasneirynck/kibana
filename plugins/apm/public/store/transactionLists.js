@@ -1,6 +1,7 @@
+import orderBy from 'lodash.orderby';
+import { createSelector } from 'reselect';
 import { getUrlParams } from './urlParams';
 import * as rest from '../services/rest';
-import { getSortedList } from './transactionSorting';
 import {
   getKey,
   createActionTypes,
@@ -33,18 +34,29 @@ export const loadTransactionList = createAction(
   rest.loadTransactionList
 );
 
-export function getTransactionList(state) {
-  const { appName, start, end, transactionType } = getUrlParams(state);
-  const key = getKey({ appName, start, end, transactionType });
+export const getTransactionList = createSelector(
+  state => state.transactionLists,
+  state => state.transactionSorting,
+  getUrlParams,
+  (transactionLists, transactionSorting, urlParams) => {
+    const { appName, start, end, transactionType } = urlParams;
+    const key = getKey({ appName, start, end, transactionType });
 
-  if (!state.transactionLists[key]) {
-    return INITIAL_STATE;
+    if (!transactionLists[key]) {
+      return INITIAL_STATE;
+    }
+
+    const { key: sortKey, descending } = transactionSorting;
+
+    return {
+      ...transactionLists[key],
+      data: orderBy(
+        transactionLists[key].data,
+        sortKey,
+        descending ? 'desc' : 'asc'
+      )
+    };
   }
-
-  return {
-    ...state.transactionLists[key],
-    data: getSortedList(state.transactionLists[key].data, state)
-  };
-}
+);
 
 export default transactionLists;
