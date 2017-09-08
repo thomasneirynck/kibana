@@ -5,6 +5,18 @@ import { LOGSTASH } from '../../../../../../../common/constants';
 describe('Vertex', () => {
   let graph;
 
+  /**
+   *       my-prefix:...generator
+   *                 |
+   *                 v
+   *             my-queue
+   *                 |
+   *                 v
+   *               my-if
+   *           (T) /   \ (F)
+   *              v     v
+   *         my-grok   my-sleep
+   */
   const graphJson = {
     vertices: [
       { id: 'my-prefix:my-really-long-named-generator', type: 'plugin', explicit_id: false },
@@ -22,18 +34,6 @@ describe('Vertex', () => {
   };
 
   beforeEach(() => {
-    /**
-     *       my-prefix:...generator
-     *                 |
-     *                 v
-     *             my-queue
-     *                 |
-     *                 v
-     *               my-if
-     *           (T) /   \ (F)
-     *              v     v
-     *         my-grok   my-sleep
-     */
     graph = new Graph();
     graph.update(graphJson);
   });
@@ -253,67 +253,126 @@ describe('Vertex', () => {
     expect(vertex2.customStats).to.eql({});
   });
 
-  it('should have the correct ancestors', () => {
-    const vertex1 = graph.getVertexById('my-prefix:my-really-long-named-generator');
-    expect(vertex1.ancestors).to.eql({ vertices: [], edges: [] });
+  describe('lineage', () => {
+    it('should have the correct ancestors', () => {
+      const vertex1 = graph.getVertexById('my-prefix:my-really-long-named-generator');
+      expect(vertex1.ancestors()).to.eql({ vertices: [], edges: [] });
 
-    const vertex2 = graph.getVertexById('my-queue');
-    expect(vertex2.ancestors.vertices.length).to.be(1);
-    expect(vertex2.ancestors.edges.length).to.be(1);
+      const vertex2 = graph.getVertexById('my-queue');
+      expect(vertex2.ancestors().vertices.length).to.be(1);
+      expect(vertex2.ancestors().edges.length).to.be(1);
 
-    const vertex3 = graph.getVertexById('my-if');
-    expect(vertex3.ancestors.vertices.length).to.be(2);
-    expect(vertex3.ancestors.edges.length).to.be(2);
+      const vertex3 = graph.getVertexById('my-if');
+      expect(vertex3.ancestors().vertices.length).to.be(2);
+      expect(vertex3.ancestors().edges.length).to.be(2);
 
-    const vertex4 = graph.getVertexById('my-grok');
-    expect(vertex4.ancestors.vertices.length).to.be(3);
-    expect(vertex4.ancestors.edges.length).to.be(3);
+      const vertex4 = graph.getVertexById('my-grok');
+      expect(vertex4.ancestors().vertices.length).to.be(3);
+      expect(vertex4.ancestors().edges.length).to.be(3);
 
-    const vertex5 = graph.getVertexById('my-sleep');
-    expect(vertex5.ancestors.vertices.length).to.be(3);
-    expect(vertex5.ancestors.edges.length).to.be(3);
-  });
+      const vertex5 = graph.getVertexById('my-sleep');
+      expect(vertex5.ancestors().vertices.length).to.be(3);
+      expect(vertex5.ancestors().edges.length).to.be(3);
+    });
 
-  it('should have the correct descendants', () => {
-    const vertex1 = graph.getVertexById('my-prefix:my-really-long-named-generator');
-    expect(vertex1.descendants.vertices.length).to.be(4);
-    expect(vertex1.descendants.edges.length).to.be(4);
+    it('should have the correct descendants', () => {
+      const vertex1 = graph.getVertexById('my-prefix:my-really-long-named-generator');
+      expect(vertex1.descendants().vertices.length).to.be(4);
+      expect(vertex1.descendants().edges.length).to.be(4);
 
-    const vertex2 = graph.getVertexById('my-queue');
-    expect(vertex2.descendants.vertices.length).to.be(3);
-    expect(vertex2.descendants.edges.length).to.be(3);
+      const vertex2 = graph.getVertexById('my-queue');
+      expect(vertex2.descendants().vertices.length).to.be(3);
+      expect(vertex2.descendants().edges.length).to.be(3);
 
-    const vertex3 = graph.getVertexById('my-if');
-    expect(vertex3.descendants.vertices.length).to.be(2);
-    expect(vertex3.descendants.edges.length).to.be(2);
+      const vertex3 = graph.getVertexById('my-if');
+      expect(vertex3.descendants().vertices.length).to.be(2);
+      expect(vertex3.descendants().edges.length).to.be(2);
 
-    const vertex4 = graph.getVertexById('my-grok');
-    expect(vertex4.descendants).to.eql({ vertices: [], edges: [] });
+      const vertex4 = graph.getVertexById('my-grok');
+      expect(vertex4.descendants()).to.eql({ vertices: [], edges: [] });
 
-    const vertex5 = graph.getVertexById('my-sleep');
-    expect(vertex5.descendants).to.eql({ vertices: [], edges: [] });
-  });
+      const vertex5 = graph.getVertexById('my-sleep');
+      expect(vertex5.descendants()).to.eql({ vertices: [], edges: [] });
+    });
 
-  it('should have the correct lineage', () => {
-    const vertex1 = graph.getVertexById('my-prefix:my-really-long-named-generator');
-    expect(vertex1.lineage.vertices.length).to.be(5);
-    expect(vertex1.lineage.edges.length).to.be(4);
+    it('should have the correct lineage', () => {
+      const vertex1 = graph.getVertexById('my-prefix:my-really-long-named-generator');
+      expect(vertex1.lineage().vertices.length).to.be(5);
+      expect(vertex1.lineage().edges.length).to.be(4);
 
-    const vertex2 = graph.getVertexById('my-queue');
-    expect(vertex2.lineage.vertices.length).to.be(5);
-    expect(vertex2.lineage.edges.length).to.be(4);
+      const vertex2 = graph.getVertexById('my-queue');
+      expect(vertex2.lineage().vertices.length).to.be(5);
+      expect(vertex2.lineage().edges.length).to.be(4);
 
-    const vertex3 = graph.getVertexById('my-if');
-    expect(vertex3.lineage.vertices.length).to.be(5);
-    expect(vertex3.lineage.edges.length).to.be(4);
+      const vertex3 = graph.getVertexById('my-if');
+      expect(vertex3.lineage().vertices.length).to.be(5);
+      expect(vertex3.lineage().edges.length).to.be(4);
 
-    const vertex4 = graph.getVertexById('my-grok');
-    expect(vertex4.lineage.vertices.length).to.be(4);
-    expect(vertex4.lineage.edges.length).to.be(3);
+      const vertex4 = graph.getVertexById('my-grok');
+      expect(vertex4.lineage().vertices.length).to.be(4);
+      expect(vertex4.lineage().edges.length).to.be(3);
 
-    const vertex5 = graph.getVertexById('my-sleep');
-    expect(vertex5.lineage.vertices.length).to.be(4);
-    expect(vertex5.lineage.edges.length).to.be(3);
+      const vertex5 = graph.getVertexById('my-sleep');
+      expect(vertex5.lineage().vertices.length).to.be(4);
+      expect(vertex5.lineage().edges.length).to.be(3);
+    });
+
+    describe('it should handle complex topologies correctly', () => {
+      /**
+       *                 I1
+       *                 |
+       *                 v
+       *             my-queue
+       *                 |
+       *                 v
+       *                IF1
+       *           (T) /   \ (F)
+       *              v     v
+       *             IF2     F1
+       *        (T) /  \(F)   |
+       *          v     v    v
+       *         F2     F3   F4
+       *          \      \  /
+       *            \---- v
+       *                  F5
+       */
+      const graphJson = {
+        vertices: [
+          { id: 'I1', type: 'plugin', explicit_id: false },
+          { id: 'my-queue', type: 'queue', config_name: 'some-name' },
+          { id: 'IF1', type: 'if', config_name: 'some-name' },
+          { id: 'IF2', type: 'plugin', meta: { source_text: 'foobar', source_line: 33, source_column: 4 } },
+          { id: 'F1', type: 'plugin', explicit_id: true },
+          { id: 'F2', type: 'plugin', explicit_id: true },
+          { id: 'F3', type: 'plugin', explicit_id: true },
+          { id: 'F4', type: 'plugin', explicit_id: true },
+          { id: 'F5', type: 'plugin', explicit_id: true }
+        ],
+        edges: [
+          { id: '1', type: 'plain', from: 'I1', to: 'my-queue' },
+          { id: '2', type: 'plain', from: 'my-queue', to: 'IF1' },
+          { id: '3', type: 'boolean', when: true, from: 'IF1', to: 'IF2' },
+          { id: '4', type: 'boolean', when: false, from: 'IF1', to: 'F1' },
+          { id: '5', type: 'boolean', when: true, from: 'IF2', to: 'F2' },
+          { id: '6', type: 'boolean', when: false, from: 'IF2', to: 'F3' },
+          { id: '7', type: 'plain', from: 'F2', to: 'F5' },
+          { id: '8', type: 'plain', from: 'F3', to: 'F5' },
+          { id: '9', type: 'plain', from: 'F1', to: 'F4' },
+          { id: '10', type: 'plain', from: 'F4', to: 'F5' },
+        ]
+      };
+
+      beforeEach(() => {
+        graph = new Graph();
+        graph.update(graphJson);
+      });
+
+      it('should calculate the lineage correctly', () => {
+        const vertex1 = graph.getVertexById('F5');
+        expect(vertex1.lineage().vertices.length).to.be(9);
+        expect(vertex1.lineage().edges.length).to.be(10);
+      });
+    });
   });
 
   it('should have the correct events per current period', () => {

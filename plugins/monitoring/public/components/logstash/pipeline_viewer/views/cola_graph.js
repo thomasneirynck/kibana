@@ -100,9 +100,7 @@ function makeQueueNode(nodes) {
 const lineFunction = d3.svg.line()
   // Null check that handles a bug in webcola where sometimes these values are null for a tick
   .x(d => d ? d.x : null)
-  .y(d => d ? d.y : null)
-  // Cardinal interpolation draws curved lines
-  .interpolate('cardinal');
+  .y(d => d ? d.y : null);
 
 export class ColaGraph extends React.Component {
   constructor() {
@@ -160,13 +158,45 @@ export class ColaGraph extends React.Component {
         .links(this.graph.colaEdges)
         .groups(ifTriangleColaGroups)
         .constraints(this._getConstraints())
-        // These three numbers control the max number of iterations for the layout iteration to
+        // This number controls the max number of iterations for the layout iteration to
         // solve the constraints. Higher numbers usually wind up in a better layout
-        .start(10000,10000,10000);
+        .start(10000);
 
     this.makeLinks();
 
-    this.d3cola.on('tick', this.reflow).on('end', this.reflow);
+    let tickStart;
+    let ticks = 0;
+
+    // Minimum amount of time between reflows
+    // We want a value that looks interactive but doesn't waste CPU time rendering intermediate results
+    const reflowEvery = 1000; // 1s
+    // Amount of time to allow the solver to run
+    // We want a value that isn't so long that the user gets irritated using the graph due to the CPU being monopolized
+    // by the constraint solver
+    const maxDuration = 10000; // 10s
+    let lastReflow = new Date();
+    this.d3cola
+      .on('tick', () => {
+        const now = new Date();
+
+        ticks++;
+        if (ticks === 1) {
+          tickStart = now;
+        }
+
+        const elapsedSinceLastReflow = now - lastReflow;
+        if (ticks === 1 || elapsedSinceLastReflow >= reflowEvery) {
+          this.reflow();
+          lastReflow = now;
+        }
+        const totalElapsed = now - tickStart;
+        if (totalElapsed >= maxDuration) {
+          this.d3cola.stop();
+          this.reflow();
+          console.log("Logstash graph visualizer constraint timeout! Rendering will stop here.");
+        }
+      })
+      .on('end', this.reflow);
   }
 
   // Actually render the latest webcola state
@@ -262,7 +292,7 @@ export class ColaGraph extends React.Component {
         .selectAll('rect');
       selection.classed('lspvVertexBounding-highlighted', true);
 
-      const lineage = hoverNode.vertex.lineage;
+      const lineage = hoverNode.vertex.lineage();
 
       const lineageVertices = lineage.vertices;
       const nonLineageVertices = this.graph.getVertices().filter(v => lineageVertices.indexOf(v) === -1);
@@ -368,20 +398,15 @@ export class ColaGraph extends React.Component {
             }
           }
 
-          // Ensure that all nodes of a given rank are at least 1 unit lower than nodes of a lower right
-          // In web cola the terms `left` and `right` are from an expression `left < right`
-          // Note that we need a positive integer to make the right vertex lower since increasing its y
-          // value makes it appear lower on the page.
-          //
-          // Larger values of `gap` do not improve the graph rendering, and sufficiently large values start to break it.
-          // a value of 1 is fine because the alignment constraint above makes sure the nodes are aligned, this one just
-          // defines the constraint that nodes of rank N have a higher Y value than nodes of rank N-1
+          // Ensure that all nodes of a given rank are at the same exact distance below others
           previousVertices.forEach(previousVertex => {
             constraints.push({
               axis: 'y',
               left: previousVertex.colaIndex,
               right: vertex.colaIndex,
-              gap: LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.HEIGHT_PX
+              // Multiplying the gap by two works much better for large graphs giving more space to route edges
+              gap: LOGSTASH.PIPELINE_VIEWER.GRAPH.VERTICES.HEIGHT_PX * 2,
+              equality: true
             });
           });
         });

@@ -29,7 +29,10 @@ export class Vertex {
   }
 
   get colaIndex() {
-    return this.graph.getVertices().indexOf(this);
+    if (!this._colaIndex) {
+      this._colaIndex = this.graph.getVertices().indexOf(this);
+    }
+    return this._colaIndex;
   }
 
   get name() {
@@ -105,7 +108,6 @@ export class Vertex {
   get hasCustomStats() {
     return Object.keys(this.customStats).length > 0;
   }
-
   get customStats() {
     return Object.keys(this.stats)
           .filter(k => !(k.match(/^events\./)))
@@ -116,39 +118,58 @@ export class Vertex {
           }, {});
   }
 
-  get ancestors() {
-    let vertices = [];
-    let edges = [];
-    vertices = vertices.concat(this.incomingVertices);
-    edges = edges.concat(this.incomingEdges);
-    this.incomingVertices.forEach(vertex => {
-      const res = vertex.ancestors;
-      vertices = vertices.concat(res.vertices);
-      edges = edges.concat(res.edges);
-    });
+  lineage() {
+    const ancestors = this.ancestors();
+    const descendants = this.descendants();
+
+    const vertices = [];
+    vertices.push.apply(vertices, ancestors.vertices);
+    vertices.push(this);
+    vertices.push.apply(vertices, descendants.vertices);
+
+    const edges = ancestors.edges.concat(descendants.edges);
+
     return { vertices, edges };
   }
 
-  get descendants() {
-    let vertices = [];
-    let edges = [];
-    vertices = vertices.concat(this.outgoingVertices);
-    edges = edges.concat(this.outgoingEdges);
-    this.outgoingVertices.forEach(vertex => {
-      const res = vertex.descendants;
-      vertices = vertices.concat(res.vertices);
-      edges = edges.concat(res.edges);
-    });
+  ancestors() {
+    const vertices = [];
+    const edges = [];
+    const pending = [this];
+    const seen = {};
+    while (pending.length > 0) {
+      const vertex = pending.pop();
+      vertex.incomingEdges.forEach(edge => {
+        edges.push(edge);
+        const from = edge.from;
+        if (seen[from.id] !== true) {
+          vertices.push(from);
+          pending.push(from);
+          seen[from.id] = true;
+        }
+      });
+    }
     return { vertices, edges };
   }
 
-  get lineage() {
-    const ancestorsRes = this.ancestors;
-    const descendantsRes = this.descendants;
-    return {
-      vertices: ancestorsRes.vertices.concat([this]).concat(descendantsRes.vertices),
-      edges: ancestorsRes.edges.concat(descendantsRes.edges)
-    };
+  descendants() {
+    const vertices = [];
+    const edges = [];
+    const pending = [this];
+    const seen = {};
+    while (pending.length > 0) {
+      const vertex = pending.pop();
+      vertex.outgoingEdges.forEach(edge => {
+        edges.push(edge);
+        const to = edge.to;
+        if (seen[to.id] !== true) {
+          vertices.push(to);
+          seen[to.id] = true;
+          pending.push(to);
+        }
+      });
+    }
+    return { vertices, edges };
   }
 
   get eventsPerCurrentPeriod() {
