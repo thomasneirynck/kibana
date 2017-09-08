@@ -31,6 +31,7 @@ import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/single_metric/create_job/filter_agg_types';
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
 import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
+import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
 
 uiRoutes
 .when('/jobs/new_job/simple/multi_metric/create', {
@@ -78,20 +79,6 @@ module
   const MAX_BUCKET_DIFF = 3;
   const METRIC_AGG_TYPE = 'metrics';
   const EVENT_RATE_COUNT_FIELD = '__ml_event_rate_count__';
-
-  const CHART_STATE = {
-    NOT_STARTED: 0,
-    LOADING: 1,
-    LOADED: 2,
-    NO_RESULTS: 3
-  };
-
-  const JOB_STATE = {
-    NOT_STARTED: 0,
-    RUNNING: 1,
-    FINISHED: 2,
-    STOPPING: 3
-  };
 
   let refreshCounter = 0;
 
@@ -238,12 +225,6 @@ module
     $scope.loadVis();
   };
 
-  $scope.bucketSpanFieldChange = function () {
-    $scope.ui.bucketSpanEstimator.status = 0;
-    $scope.ui.bucketSpanEstimator.message = '';
-    $scope.formChange();
-  };
-
   $scope.splitChange = function () {
     const splitField = $scope.formConfig.splitField;
     $scope.formConfig.firstSplitFieldValue = undefined;
@@ -384,28 +365,6 @@ module
       $scope.formConfig.field = $scope.ui.fields[0];
     }
   }
-
-  $scope.toggleFields = function (field) {
-    const key = field.id;
-
-    const f = $scope.formConfig.fields[key];
-    if (f === undefined) {
-      $scope.formConfig.fields[key] = field;
-      $scope.chartStates.fields[key] = CHART_STATE.LOADING;
-    } else {
-      delete $scope.formConfig.fields[key];
-      delete $scope.chartStates.fields[key];
-    }
-  };
-
-  $scope.toggleKeyFields = function (key) {
-    const f = $scope.formConfig.keyFields[key];
-    if (f === undefined) {
-      $scope.formConfig.keyFields[key] = key;
-    } else {
-      delete $scope.formConfig.keyFields[key];
-    }
-  };
 
   function getIndexedFields(param, fieldTypes) {
     let fields = _.filter(indexPattern.fields.raw, 'aggregatable');
@@ -579,13 +538,6 @@ module
     $frontCard.find('.card-title').text('');
     $frontCard.css('margin-top', 0);
   }
-
-  // force job ids to be lowercase
-  $scope.changeJobIDCase = function () {
-    if ($scope.formConfig.jobId) {
-      $scope.formConfig.jobId = $scope.formConfig.jobId.toLowerCase();
-    }
-  };
 
   let refreshInterval = REFRESH_INTERVAL_MS;
   // function for creating a new job.

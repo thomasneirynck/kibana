@@ -1,0 +1,27 @@
+<div class='bucket-span-selection'>
+  <h4>Bucket span</h4><i ml-info-icon="new_job_bucketspan" ></i>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group">
+        <div>
+          <input
+          ng-model="formConfig.bucketSpan"
+          required
+          placeholder={{formConfig-bucketSpan}}
+          ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED || ui.bucketSpanEstimator.status===1"
+          ng-change="bucketSpanFieldChange()"
+          ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
+          class="form-control lowercase bucket-span-input" />
+
+          <ml-bucket-span-estimator form-config='formConfig' job-state-wrapper='{jobState:jobState}' job-state='JOB_STATE' ui='ui'></ml-bucket-span-estimator>
+
+        </div>
+        <div ng-hide="ui.bucketSpanValid" class="validation-error">Invalid interval format</div>
+        <div ng-show="ui.bucketSpanEstimator.status===-1" class="validation-error">{{ui.bucketSpanEstimator.message}}</div>
+      </div>
+    </div>
+
+    <div class="col-md-0">
+    </div>
+  </div>
+</div>

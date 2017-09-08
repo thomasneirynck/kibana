@@ -28,7 +28,7 @@ import { numTicks } from 'plugins/ml/util/chart_utils';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlExplorerSwimlane', ($compile, mlExplorerDashboardService) => {
+module.directive('mlExplorerSwimlane', function ($compile, mlExplorerDashboardService) {
 
   function link(scope, element) {
 

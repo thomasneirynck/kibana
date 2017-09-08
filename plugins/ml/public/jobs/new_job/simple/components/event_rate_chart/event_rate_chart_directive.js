@@ -27,7 +27,7 @@ import { numTicks } from 'plugins/ml/util/chart_utils';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlMultiMetricJobEventRateChart', function () {
+module.directive('mlEventRateChart', function () {
 
   function link(scope, element) {
 

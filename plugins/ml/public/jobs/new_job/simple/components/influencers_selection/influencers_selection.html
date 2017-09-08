@@ -1,0 +1,23 @@
+<div class="influencers-selection">
+  <h4 >Key Fields (Influencers)</h4>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="form-group">
+        <div class='selection-list-container'>
+          <div class="checkbox field-row" ng-repeat="field in ui.splitFields" >
+            <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
+              <input type="checkbox"
+                class='kuiCheckBox'
+                ng-checked="formConfig.keyFields[field] !== undefined"
+                ng-click="toggleKeyFields(field)"
+                ng-disabled='formConfig.splitField===field || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED'
+              />
+              <span class="kuiCheckBoxLabel__text">{{field}}</span>
+            </label>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>

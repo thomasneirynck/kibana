@@ -22,54 +22,7 @@
           <h4 >Job settings</h4>
           <div>
             <div class='form-section'>
-              <h4 >Fields</h4>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group">
-
-                    <div class='selection-list-container fields-list'>
-                      <div class="checkbox field-row" ng-repeat="field in ui.fields" >
-                        <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
-                          <input type="checkbox"
-                            class='kuiCheckBox'
-                            ng-checked="formConfig.fields[field.id] !== undefined"
-                            ng-click="toggleFields(field); formChange()"
-                            ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                            />
-                          <span
-                            class='kuiCheckBoxLabel__text'
-                            tooltip='{{field.tooltip}}'
-                            tooltip-append-to-body="true">
-                            {{field.name}}
-                          </span>
-                        </label>
-                        <div>
-                          <select
-                            ng-model="field.agg.type"
-                            ng-options="agg as agg.title for agg in ui.aggTypeOptions | filterAggTypes:field"
-                            ng-change="formChange()"
-                            ng-disabled="formConfig.fields[field.id] === undefined || jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                            class="form-control agg-type">
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="row form-controls" ng-show='ui.isCountOrSum'>
-                <span class="col-md-12">
-                  <label class='kuiCheckBoxLabel kuiVerticalRhythm sparse-data'>
-                    <input type="checkbox"
-                      class='kuiCheckBox'
-                      ng-disabled="ui.formValid === false || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                      ng-model  ="formConfig.isSparseData" />
-                      <span class='kuiCheckBoxLabel__text'>
-                        Sparse data <i ml-info-icon="new_job_sparsedata" tooltip-append-to-body="true"></i>
-                      </span>
-                  </label>
-                </span>
-              </div>
+              <ml-fields-selection></ml-fields-selection>
             </div>
 
             <div class='form-section' >
@@ -91,112 +44,18 @@
             </div>
 
             <div class='form-section' >
-              <h4 >Key Fields (Influencers)</h4>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group">
-                    <div class='selection-list-container'>
-                      <div class="checkbox field-row" ng-repeat="field in ui.splitFields" >
-                        <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
-                          <input type="checkbox"
-                            class='kuiCheckBox'
-                            ng-checked="formConfig.keyFields[field] !== undefined"
-                            ng-click="toggleKeyFields(field)"
-                            ng-disabled='formConfig.splitField===field || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED'
-                          />
-                          <span class="kuiCheckBoxLabel__text">{{field}}</span>
-                        </label>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
+              <ml-influencers-selection></ml-influencers-selection>
             </div>
 
             <div class='form-section' >
-              <h4>Bucket span</h4><i ml-info-icon="new_job_bucketspan" ></i>
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="form-group">
-                    <div>
-                      <input
-                        ng-model="formConfig.bucketSpan"
-                        required
-                        placeholder={{formConfig-bucketSpan}}
-                        ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED || ui.bucketSpanEstimator.status===1"
-                        ng-change="bucketSpanFieldChange()"
-                        ng-class='{"ng-invalid": (!ui.bucketSpanValid)}'
-                        class="form-control lowercase bucket-span-input" />
-
-                      <ml-bucket-span-estimator form-config='formConfig' job-state-wrapper='{jobState:jobState}' job-state='JOB_STATE' ui='ui'></ml-bucket-span-estimator>
-
-                    </div>
-                    <div ng-hide="ui.bucketSpanValid" class="validation-error">Invalid interval format</div>
-                    <div ng-show="ui.bucketSpanEstimator.status===-1" class="validation-error">{{ui.bucketSpanEstimator.message}}</div>
-                  </div>
-                </div>
-
-                <div class="col-md-0">
-                </div>
-              </div>
+              <ml-bucket-span-selection></ml-bucket-span-selection>
             </div>
 
             <div class='form-section' >
               <h4 >Job Details</h4>
               <div class="form-group">
                 <div ng-show="ui.showJobInput && (jobState === JOB_STATE.NOT_STARTED || jobState === JOB_STATE.RUNNING || jobState === JOB_STATE.STOPPING)">
-                  <div class="form-group">
-                    <label>Name</label><i ml-info-icon="new_job_id" ></i>
-                    <input
-                      ng-model="formConfig.jobId"
-                      required
-                      placeholder="Job ID"
-                      ng-change="changeJobIDCase()"
-                      ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                      class="form-control lowercase" />
-                      <div ng-hide="ui.validation.checks.jobId.valid" class="validation-error">{{ ( ui.validation.checks.jobId.message || "Enter a name for the job" ) }}</div>
-                  </div>
-
-                  <div class="form-group">
-                    <label>Description</label><i ml-info-icon="new_job_description" ></i>
-                    <input
-                      ng-model="formConfig.description"
-                      placeholder="Job description"
-                      ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
-                      class="form-control" />
-                  </div>
-                  <div class="form-group">
-                    <label>Job Groups</label><i ml-info-icon="new_job_group" aria-label="Job group" ></i>
-                      <ml-job-group-select
-                        job-groups='formConfig.jobGroups'
-                        disabled='(jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED)'
-                      ></ml-job-group-select>
-                      <div ng-hide="ui.validation.checks.groupIds.valid" class="validation-error">{{ ui.validation.checks.groupIds.message }}</div>
-                  </div>
-
-                  <div class="form-group">
-                    <div ng-click="ui.showAdvanced = (!ui.showAdvanced || formConfig.useDedicatedIndex)" class="advanced-button-container">
-                      <button
-                        aria-label="{{ ui.showAdvanced ? 'Hide Advanced' : 'Show Advanced' }}"
-                        ng-disabled="formConfig.useDedicatedIndex"
-                        type="button"
-                        class="kuiButton kuiButton--small kuiButton--hollow advanced-button">
-                        <i aria-hidden="true" ng-class="{ 'fa-caret-down': ui.showAdvanced, 'fa-caret-right': !ui.showAdvanced }" class="fa"></i>
-                      </button>
-                      <label>Advanced</label><i ml-info-icon="new_job_advanced_settings" ></i>
-                    </div>
-                    <div class='advanced-group' ng-show="ui.showAdvanced">
-                      <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
-                        <input type="checkbox"
-                          class='kuiCheckBox'
-                          ng-model  ="formConfig.useDedicatedIndex" />
-                          <span class='kuiCheckBoxLabel__text'>
-                            Use dedicated index <i ml-info-icon="new_job_dedicated_index" ></i>
-                          </span>
-                      </label>
-                    </div>
-                  </div>
+                  <ml-general-job-details></ml-general-job-details>
 
                   <button
                     aria-label="Create Job"
@@ -269,11 +128,11 @@
 
               <div class='chart-container'>
                 <div style='height: {{ui.eventRateChartHeight + 25}}px;'>
-                  <ml-multi-metric-job-event-rate-chart
+                  <ml-event-rate-chart
                     chart-data="chartData.job"
                     event-rate-chart-height='ui.eventRateChartHeight'
                     chart-ticks-margin="chartData.chartTicksMargin">
-                  </ml-multi-metric-job-event-rate-chart>
+                  </ml-event-rate-chart>
                 </div>
 
                 <div ng-show="chartStates.eventRate === CHART_STATE.NOT_STARTED || chartStates.eventRate === CHART_STATE.LOADING || chartStates.eventRate === CHART_STATE.NO_RESULTS"

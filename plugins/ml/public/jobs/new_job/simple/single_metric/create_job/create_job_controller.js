@@ -31,6 +31,8 @@ import { IntervalHelperProvider } from 'plugins/ml/util/ml_time_buckets';
 import { filterAggTypes } from 'plugins/ml/jobs/new_job/simple/single_metric/create_job/filter_agg_types';
 import { isJobIdValid } from 'plugins/ml/util/job_utils';
 import { getQueryFromSavedSearch } from 'plugins/ml/jobs/new_job/simple/components/utils/simple_job_utils';
+import { changeJobIDCase } from 'plugins/ml/jobs/new_job/simple/components/general_job_details/change_job_id_case';
+import { CHART_STATE, JOB_STATE } from 'plugins/ml/jobs/new_job/simple/components/constants/states';
 
 uiRoutes
 .when('/jobs/new_job/simple/single_metric/create', {
@@ -71,6 +73,7 @@ module
 
   $scope.index = $route.current.params.index;
   $scope.chartData = mlSingleMetricJobService.chartData;
+  $scope.changeJobIDCase = changeJobIDCase;
 
   const PAGE_WIDTH = angular.element('.single-metric-job-container').width();
   const BAR_TARGET = (PAGE_WIDTH > 2000) ? 1000 : (PAGE_WIDTH / 2);
@@ -83,20 +86,6 @@ module
     25: false,
     50: false,
     75: false,
-  };
-
-  const CHART_STATE = {
-    NOT_STARTED: 0,
-    LOADING: 1,
-    LOADED: 2,
-    NO_RESULTS: 3
-  };
-
-  const JOB_STATE = {
-    NOT_STARTED: 0,
-    RUNNING: 1,
-    FINISHED: 2,
-    STOPPING: 3
   };
 
   let refreshCounter = 0;
@@ -378,13 +367,6 @@ module
       .finally(() => {
         $scope.$broadcast('render');
       });
-    }
-  };
-
-  // force job ids to be lowercase
-  $scope.changeJobIDCase = function () {
-    if ($scope.formConfig.jobId) {
-      $scope.formConfig.jobId = $scope.formConfig.jobId.toLowerCase();
     }
   };
 

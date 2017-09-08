@@ -21,7 +21,7 @@ import { InitAfterBindingsWorkaround } from 'ui/compat';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlJobGroupSelect', (es, ml, $timeout, mlJobService) => {
+module.directive('mlJobGroupSelect', function (es, ml, $timeout, mlJobService) {
   return {
     restrict: 'E',
     template,

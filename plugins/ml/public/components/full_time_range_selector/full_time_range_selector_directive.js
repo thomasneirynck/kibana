@@ -19,7 +19,7 @@ import template from './full_time_range_selector.html';
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.directive('mlFullTimeRangeSelector', () => {
+module.directive('mlFullTimeRangeSelector', function () {
   return {
     restrict: 'E',
     replace: true,

@@ -108,7 +108,7 @@
           ng-model="formConfig.jobId"
           required
           placeholder="Job ID"
-          ng-change="changeJobIDCase()"
+          ng-change="changeJobIDCase(formConfig)"
           ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
           input-focus
           class="form-control lowercase" />

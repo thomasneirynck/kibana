@@ -1,0 +1,35 @@
+.influencers-selection {
+  .selection-list-container {
+    max-height: 250px;
+    overflow: auto;
+    padding: 5px 8px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #444444;
+    background-color: #ffffff;
+    background-image: none;
+    border: 2px solid #ecf0f1;
+    border-radius: 4px;
+
+    .field-row {
+      display: flex;
+      flex-direction: row;
+
+      label {
+        padding-left: 2px;
+        flex: auto;
+        white-space: nowrap;
+        overflow: hidden;
+        input {
+          min-width: 13px !important;
+        }
+        span {
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          overflow: hidden;
+          margin-left: 4px;
+        }
+      }
+    }
+  }
+}

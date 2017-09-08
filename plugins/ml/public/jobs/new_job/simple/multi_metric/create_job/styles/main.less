@@ -33,27 +33,6 @@
       border-radius: 4px !important;
       margin-top: -2px;
     }
-
-    .bucket-span-input {
-      float: left;
-    }
-  }
-
-  .advanced-button {
-    min-width: 23px;
-  }
-  .advanced-button-container {
-    label {
-      cursor: pointer;
-    }
-  }
-  .advanced-group {
-    padding: 10px;
-    background-color: #F9F9F9;
-    label {
-      font-weight: normal;
-      margin-bottom: 0px;
-    }
   }
 
   .charts-container {
@@ -66,7 +45,7 @@
     padding: 10px;
     overflow: hidden;
 
-    & > h4, & > h5 {
+     h4, h5 {
       margin-top: 0px;
       display: inline-block;
     }
@@ -80,63 +59,6 @@
       background-color: #f1f1f1;
       border-radius: 3px;
       font-size: 12px;
-    }
-    .selection-list-container {
-      max-height: 250px;
-      overflow: auto;
-      padding: 5px 8px;
-      font-size: 13px;
-      line-height: 1.42857143;
-      color: #444444;
-      background-color: #ffffff;
-      background-image: none;
-      border: 2px solid #ecf0f1;
-      border-radius: 4px;
-
-      .field-row {
-        display: flex;
-        flex-direction: row;
-
-        label {
-          padding-left: 2px;
-          flex: auto;
-          white-space: nowrap;
-          overflow: hidden;
-          input {
-            min-width: 13px !important;
-          }
-          span {
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-            margin-left: 4px;
-          }
-        }
-
-        .agg-type {
-          float: right;
-          width: 120px;
-          flex-grow: 0;
-        }
-      }
-    }
-    .sparse-data {
-      font-size: 13px;
-      font-weight: normal;
-      margin-left: -13px;
-      margin-top: 10px;
-    }
-
-    .selection-list-container.fields-list {
-      .field-row:first-child {
-        border-bottom: 1px dashed #CCCCCC;
-        padding-bottom: 5px;
-        margin-top: 5px;
-        span {
-          font-style: italic;
-          padding-right: 5px;
-        }
-      }
     }
   }
 
@@ -240,7 +162,7 @@
   }
 }
 
-ml-multi-metric-job-chart, ml-multi-metric-job-event-rate-chart {
+ml-multi-metric-job-chart {
   svg {
     font-size: 12px;
     font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial;

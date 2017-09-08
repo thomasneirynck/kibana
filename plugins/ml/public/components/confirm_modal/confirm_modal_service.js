@@ -18,7 +18,7 @@
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
 
-module.service('mlConfirmModalService', ['$modal', '$q',  function ($modal, $q) {
+module.service('mlConfirmModalService', function ($modal, $q) {
 
   this.open = function (options) {
     const deferred = $q.defer();
@@ -44,5 +44,5 @@ module.service('mlConfirmModalService', ['$modal', '$q',  function ($modal, $q) 
     });
     return deferred.promise;
   };
-}]);
+});
 

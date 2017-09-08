@@ -1,0 +1,54 @@
+<div class="general-job-details">
+  <div class="form-group">
+    <label>Name</label><i ml-info-icon="new_job_id" ></i>
+    <input
+    ng-model="formConfig.jobId"
+    required
+    placeholder="Job ID"
+    ng-change="changeJobIDCase(formConfig)"
+    ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+    class="form-control lowercase" />
+    <div ng-hide="ui.validation.checks.jobId.valid" class="validation-error">{{ ( ui.validation.checks.jobId.message || "Enter a name for the job" ) }}</div>
+  </div>
+
+  <div class="form-group">
+    <label>Description</label><i ml-info-icon="new_job_description" ></i>
+    <input
+    ng-model="formConfig.description"
+    placeholder="Job description"
+    ng-disabled="jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED"
+    class="form-control" />
+  </div>
+  <div class="form-group">
+    <label>Job Groups</label><i ml-info-icon="new_job_group" aria-label="Job group" ></i>
+    <ml-job-group-select
+    job-groups='formConfig.jobGroups'
+    disabled='(jobState === JOB_STATE.RUNNING  || jobState === JOB_STATE.STOPPING || jobState === JOB_STATE.FINISHED)'
+    ></ml-job-group-select>
+    <div ng-hide="ui.validation.checks.groupIds.valid" class="validation-error">{{ ui.validation.checks.groupIds.message }}</div>
+  </div>
+
+  <div class="form-group">
+    <div ng-click="ui.showAdvanced = (!ui.showAdvanced || formConfig.useDedicatedIndex)" class="advanced-button-container">
+      <button
+      aria-label="{{ ui.showAdvanced ? 'Hide Advanced' : 'Show Advanced' }}"
+      ng-disabled="formConfig.useDedicatedIndex"
+      type="button"
+      class="kuiButton kuiButton--small kuiButton--hollow advanced-button">
+        <i aria-hidden="true" ng-class="{ 'fa-caret-down': ui.showAdvanced, 'fa-caret-right': !ui.showAdvanced }" class="fa"></i>
+      </button>
+      <label>Advanced</label><i ml-info-icon="new_job_advanced_settings" ></i>
+    </div>
+    <div class='advanced-group' ng-show="ui.showAdvanced">
+      <label class='kuiCheckBoxLabel kuiVerticalRhythm'>
+        <input type="checkbox"
+        class='kuiCheckBox'
+        ng-model  ="formConfig.useDedicatedIndex" />
+        <span class='kuiCheckBoxLabel__text'>
+          Use dedicated index <i ml-info-icon="new_job_dedicated_index" ></i>
+        </span>
+      </label>
+    </div>
+  </div>
+  <div class="form-group"></div>
+</div>
