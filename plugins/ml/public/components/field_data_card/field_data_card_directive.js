@@ -191,4 +191,11 @@ module.directive('mlFieldDataCard', function ($timeout, mlFieldDataSearchService
     template: require('plugins/ml/components/field_data_card/field_data_card.html'),
     link: link
   };
+})
+.filter('formatField', function () {
+  // Filter to format the value of a field according to the defined format
+  // of the field in the index pattern.
+  return function (value, fieldFormat) {
+    return fieldFormat.convert(value, 'text');
+  };
 });

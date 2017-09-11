@@ -22,6 +22,7 @@ import _ from 'lodash';
 import d3 from 'd3';
 
 import { showChartLoading } from 'plugins/ml/components/chart_loading_indicator';
+import { numTicks } from 'plugins/ml/util/chart_utils';
 import { ordinalSuffix } from 'ui/utils/ordinal_suffix';
 
 import { uiModules } from 'ui/modules';
@@ -241,26 +242,17 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
       const axes = chartGroup.append('g')
         .attr('class', 'axes');
 
-      // Calculate the number of ticks for the x axis, according to the
-      // maximum label width. Note that d3 doesn't guarantee that the
-      // axis will end up with this exact number of ticks.
-      let maxXAxisLabelWidth = 0;
-      const tempLabelText = axes.append('g')
-        .attr('class', 'temp-axis-label tick');
-      tempLabelText.selectAll('text.temp.axis').data(xScale.ticks())
-        .enter()
-        .append('text')
-        .text(d => xScale.tickFormat()(d))
-        .each(function () {
-          maxXAxisLabelWidth = Math.max(this.getBBox().width, maxXAxisLabelWidth);
-        })
-      .remove();
-      d3.select('.temp-axis-label').remove();
-      let numTicks = Math.max(Math.floor(chartWidth / maxXAxisLabelWidth), 2);
-      numTicks = Math.min(numTicks, 5);
-
+      // Use the numTicks util function to aalculate the number of ticks
+      // for the x axis, according to the width of the chart.
+      // Note that d3 doesn't guarantee that the axis will end up with
+      // this exact number of ticks.
       const xAxis = d3.svg.axis().scale(xScale).orient('bottom')
-        .outerTickSize(0).ticks(numTicks);
+        .outerTickSize(0).ticks(numTicks(chartWidth))
+        .tickFormat((d) => {
+          // Format the tick label according to the format of the index pattern field.
+          return scope.chartConfig.fieldFormat.convert(d, 'text');
+        });
+
       const yAxis = d3.svg.axis().scale(yScale).orient('left')
         .outerTickSize(0).ticks(0);
 
@@ -288,7 +280,6 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
         const yPos = d3.mouse(this)[1];
         const xVal = xScale.invert(xPos);
 
-
         let processedDataIdx = 0;
         for (let i = 0; i < scope.processedData.length; i++) {
           if (xVal < scope.processedData[i].x1) {
@@ -299,9 +290,9 @@ module.directive('mlMetricDistributionChart', function ($filter, mlFieldDataSear
 
         let contents = `value:${xVal}`;
         const bar = scope.processedData[processedDataIdx];
-        const minValFormatted = $filter('number')(bar.dataMin);
+        const minValFormatted =  scope.chartConfig.fieldFormat.convert(bar.dataMin, 'text');
         if (bar.dataMax > bar.dataMin) {
-          const maxValFormatted = $filter('number')(bar.dataMax);
+          const maxValFormatted =  scope.chartConfig.fieldFormat.convert(bar.dataMax, 'text');
           contents = `${bar.percent}% of documents have<br>values between ${minValFormatted} and ${maxValFormatted}`;
         } else {
           contents = `${bar.percent}% of documents have<br>a value of ${minValFormatted}`;

@@ -263,10 +263,10 @@ module
     }
 
     const metricFields = $scope.showAllMetrics ? allMetricFields : metricExistsFields;
-    //metricFields = metricFields.slice(0, Math.min(metricFields.length, 6));
     _.each(metricFields, (field) => {
       metricConfigs.push({
         fieldName: field.displayName,
+        fieldFormat: field.format,
         type: DATA_VISUALIZER_FIELD_TYPES.NUMBER,
         existsInDocs: aggregatableExistsFields.indexOf(field.displayName) > -1
       });
@@ -377,6 +377,7 @@ module
     _.each(nonMetricFields, (field) => {
       const config = {
         fieldName: field.displayName,
+        fieldFormat: field.format,
         aggregatable: field.aggregatable,
         scripted: field.scripted,
         existsInDocs: nonMetricExistsFieldNames.indexOf(field.displayName) > -1
