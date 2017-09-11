@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom';
 import { RelativeLink, legacyDecodeURIComponent } from '../../../utils/url';
 import _ from 'lodash';
 
-const getPaths = pathname => {
+const getTokenized = pathname => {
   const paths = ['/'];
 
   if (pathname === '/') return paths;
@@ -17,30 +17,42 @@ const getPaths = pathname => {
   return paths;
 };
 
-const _routes = {
+export const _routes = {
   '/': 'APM',
   '/:appName/errors': 'Errors',
   '/:appName/errors/:groupId': params => params.groupId,
-  '/:appName': params => params.appName,
+  '/:appName': {
+    url: params => `/${params.appName}/transactions`,
+    label: params => params.appName
+  },
   '/:appName/transactions/:transactionType': params => params.transactionType,
   '/:appName/transactions/:transactionType/:transactionName': params =>
     legacyDecodeURIComponent(params.transactionName)
 };
 
 export function getBreadcrumbs({ match, routes }) {
-  const patterns = getPaths(match.path);
-  const urls = getPaths(match.url);
+  const patterns = getTokenized(match.path);
+  const urlTokens = getTokenized(match.url);
 
   return patterns
     .map((pattern, i) => ({
       pattern,
-      url: urls[i]
+      urlToken: urlTokens[i]
     }))
-    .filter(({ pattern }) => routes[pattern])
-    .map(({ pattern, url }) => {
-      const label = _.isString(routes[pattern])
-        ? routes[pattern]
-        : routes[pattern](match.params);
+    .filter(({ pattern }) => {
+      return routes[pattern];
+    })
+    .map(({ pattern, urlToken }) => {
+      const routePattern = routes[pattern];
+      const labelOrHandler = _.get(routePattern, 'label') || routePattern;
+      const label = _.isString(labelOrHandler)
+        ? labelOrHandler
+        : labelOrHandler(match.params);
+
+      const urlOrHandler = _.get(routePattern, 'url') || urlToken;
+      const url = _.isString(urlOrHandler)
+        ? urlOrHandler
+        : urlOrHandler(match.params);
 
       return { label, url };
     });

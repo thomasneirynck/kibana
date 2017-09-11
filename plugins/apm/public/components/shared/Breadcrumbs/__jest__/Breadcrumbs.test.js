@@ -1,7 +1,7 @@
-import { getBreadcrumbs } from '../view';
+import { getBreadcrumbs, _routes as routes } from '../view';
 
 describe('Breadcrumbs', () => {
-  it('getBreadcrumbs', () => {
+  it('should return breadcrumps for transaction section', () => {
     const match = {
       path: '/:appName/transactions/:transactionType/:transactionName',
       url: '/opbeans-backend/transactions/request/my-transaction-name',
@@ -12,22 +12,34 @@ describe('Breadcrumbs', () => {
       }
     };
 
-    const routes = {
-      '/': 'APM',
-      '/:appName': params => params.appName,
-      '/:appName/transactions/:transactionType': params =>
-        params.transactionType,
-      '/:appName/transactions/:transactionType/:transactionName': params =>
-        params.transactionName
-    };
-
     expect(getBreadcrumbs({ match, routes })).toEqual([
       { label: 'APM', url: '/' },
-      { label: 'opbeans-backend', url: '/opbeans-backend' },
+      { label: 'opbeans-backend', url: '/opbeans-backend/transactions' },
       { label: 'request', url: '/opbeans-backend/transactions/request' },
       {
         label: 'my-transaction-name',
         url: '/opbeans-backend/transactions/request/my-transaction-name'
+      }
+    ]);
+  });
+
+  it('should return breadcrumps for error section', () => {
+    const match = {
+      path: '/:appName/errors/:groupId',
+      url: '/opbeans-backend/errors/my-group-id',
+      params: {
+        appName: 'opbeans-backend',
+        groupId: 'my-group-id'
+      }
+    };
+
+    expect(getBreadcrumbs({ match, routes })).toEqual([
+      { label: 'APM', url: '/' },
+      { label: 'opbeans-backend', url: '/opbeans-backend/transactions' },
+      { label: 'Errors', url: '/opbeans-backend/errors' },
+      {
+        label: 'my-group-id',
+        url: '/opbeans-backend/errors/my-group-id'
       }
     ]);
   });
