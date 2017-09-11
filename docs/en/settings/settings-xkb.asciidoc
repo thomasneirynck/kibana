@@ -8,11 +8,11 @@
 You can configure {kib} settings for {xpack} features in the `kibana.yml` file.
 
 There are also settings in the `elasticsearch.yml` file. See
-{xpack-ref}/xpack-settings.html[X-Pack Settings].
-//TODO: Update link to Configuring XPack URL in Elasticsearch Reference.
+{ref}/settings-xpack.html[Configuring {xpack}].
 
 The following settings pertain to specific {xpack} features:
 
+* <<dev-settings-kb,Development Tools Settings>>
 * <<graph-settings-kb,Graph Settings>>
 * <<ml-settings-kb,Machine Learning Settings>>
 * <<monitoring-settings-kb,Monitoring Settings>>
@@ -21,6 +21,7 @@ The following settings pertain to specific {xpack} features:
 
 For more {kib} configuration settings, see <<settings>>.
 
+include::dev-settings.asciidoc[]
 include::graph-settings.asciidoc[]
 include::ml-settings.asciidoc[]
 include::monitoring-settings.asciidoc[]
