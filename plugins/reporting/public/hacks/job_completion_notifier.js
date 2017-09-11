@@ -86,6 +86,7 @@ async function showCompletionNotification(job, reportingJobQueue) {
   if (isJobSuccessful) {
     actions.push({
       text: 'Download',
+      dataTestSubj: 'downloadCompletedReportButton',
       callback: downloadReport(job._id)
     });
 

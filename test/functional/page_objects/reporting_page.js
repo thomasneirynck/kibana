@@ -1,7 +1,10 @@
+import { parse } from 'url';
+import http from 'http';
 
 export function ReportingPageProvider({ getService, getPageObjects }) {
   const retry = getService('retry');
   const log = getService('log');
+  const config = getService('config');
   const testSubjects = getService('testSubjects');
   const esArchiver = getService('esArchiver');
   const remote = getService('remote');
@@ -13,12 +16,13 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
       log.debug('ReportingPage:initTests');
       await PageObjects.settings.navigateTo();
       await esArchiver.loadIfNeeded('logstash_functional');
+      await esArchiver.load('reporting');
+      await kibanaServer.waitForStabilization();
       await kibanaServer.uiSettings.replace({
         'dateFormat:tz':'UTC',
         'defaultIndex':'logstash-*'
       });
-      await esArchiver.load('reporting');
-      remote.setWindowSize(1600,800);
+      remote.setWindowSize(1600, 850);
     }
 
     async clickTopNavReportingLink() {
@@ -31,6 +35,54 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
       const isOpen = generateReportButtonExists || unsavedChangesWarningExists;
       log.debug('isReportingPanelOpen: ' + isOpen);
       return isOpen;
+    }
+
+    async getUrlOfTab(tabIndex) {
+      return await retry.try(async () => {
+        log.debug(`reportingPage.getUrlOfTab(${tabIndex}`);
+        const handles = await remote.getAllWindowHandles();
+        log.debug(`Switching to window ${handles[tabIndex]}`);
+        await remote.switchToWindow(handles[tabIndex]);
+
+        const url = await remote.getCurrentUrl();
+        if (!url || url === 'about:blank') {
+          throw new Error('url is blank');
+        }
+
+        await remote.switchToWindow(handles[0]);
+        return url;
+      });
+    }
+
+    getRawPdfReportData(url) {
+      log.debug(`getRawPdfReportData for ${url}`);
+      let data = []; // List of Buffer objects
+      const auth = config.get('servers.elasticsearch.auth');
+      const headers = {
+        Authorization: `Basic ${Buffer.from(auth).toString('base64')}`
+      };
+      const parsedUrl = parse(url);
+      return new Promise((resolve, reject) => {
+        http.get(
+          {
+            hostname: parsedUrl.hostname,
+            path: parsedUrl.path,
+            port: parsedUrl.port,
+            responseType: 'arraybuffer',
+            headers
+          },
+          res => {
+            res.on('data', function (chunk) {
+              data.push(chunk);
+            });
+            res.on('end', function () {
+              data = Buffer.concat(data);
+              resolve(data);
+            });
+          }).on('error', (e) => {
+            reject(e);
+          });
+      });
     }
 
     async openReportingPanel() {
@@ -47,6 +99,10 @@ export function ReportingPageProvider({ getService, getPageObjects }) {
           throw new Error('Reporting panel was not opened successfully');
         }
       });
+    }
+
+    async clickDownloadReportButton() {
+      await testSubjects.click('downloadCompletedReportButton');
     }
 
     async getUnsavedChangesWarningExists() {
