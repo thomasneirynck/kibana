@@ -336,7 +336,7 @@ describe('Vertex', () => {
        *            \---- v
        *                  F5
        */
-      const graphJson = {
+      const complexGraphJson = {
         vertices: [
           { id: 'I1', type: 'plugin', explicit_id: false },
           { id: 'my-queue', type: 'queue', config_name: 'some-name' },
@@ -364,7 +364,7 @@ describe('Vertex', () => {
 
       beforeEach(() => {
         graph = new Graph();
-        graph.update(graphJson);
+        graph.update(complexGraphJson);
       });
 
       it('should calculate the lineage correctly', () => {
