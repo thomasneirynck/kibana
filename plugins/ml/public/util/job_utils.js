@@ -176,3 +176,7 @@ export function isJobIdValid(jobId) {
 // percentiles aggregation. This setting is used with the `percents` field
 // of the percentiles aggregation to get the correct data.
 export const ML_MEDIAN_PERCENTS = '50.0';
+
+// The number of preview items to show up in
+// the Advanced Job Configuration data/datafeed preview tab
+export const ML_DATA_PREVIEW_COUNT = 10;

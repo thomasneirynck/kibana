@@ -16,6 +16,7 @@
 import _ from 'lodash';
 import moment from 'moment';
 import { toLocaleString, detectorToString } from 'plugins/ml/util/string_utils';
+import { ML_DATA_PREVIEW_COUNT } from 'plugins/ml/util/job_utils';
 import numeral from 'numeral';
 import chrome from 'ui/chrome';
 import angular from 'angular';
@@ -107,7 +108,11 @@ module.directive('mlJobListExpandedRow', function ($location, mlMessageBarServic
         $scope.datafeedPreview.json = '';
         mlJobService.getDatafeedPreview($scope.job.job_id)
         .then((resp) => {
-          $scope.datafeedPreview.json = angular.toJson(resp, true);
+          if (Array.isArray(resp)) {
+            $scope.datafeedPreview.json = angular.toJson(resp.slice(0, ML_DATA_PREVIEW_COUNT), true);
+          } else {
+            msgs.error('Datefeed preview could not be loaded', resp);
+          }
         })
         .catch((resp) => {
           msgs.error('Datefeed preview could not be loaded', resp);

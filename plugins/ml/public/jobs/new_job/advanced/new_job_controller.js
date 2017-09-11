@@ -44,7 +44,8 @@ uiRoutes
 import { sortByKey } from 'plugins/ml/util/string_utils';
 import {
   isJobIdValid,
-  calculateDatafeedFrequencyDefaultSeconds as juCalculateDatafeedFrequencyDefaultSeconds
+  calculateDatafeedFrequencyDefaultSeconds as juCalculateDatafeedFrequencyDefaultSeconds,
+  ML_DATA_PREVIEW_COUNT
 } from 'plugins/ml/util/job_utils';
 
 import { uiModules } from 'ui/modules';
@@ -950,7 +951,15 @@ function (
     if (indices.length) {
       mlJobService.searchPreview(indices, types, job)
       .then(function (resp) {
-        $scope.ui.wizard.dataPreview = angular.toJson(resp, true);
+        let data;
+
+        if (resp.aggregations) {
+          data = resp.aggregations.buckets.buckets.slice(0, ML_DATA_PREVIEW_COUNT);
+        } else {
+          data = resp.hits.hits;
+        }
+
+        $scope.ui.wizard.dataPreview = angular.toJson(data, true);
       })
       .catch(function (resp) {
         $scope.ui.wizard.dataPreview = angular.toJson(resp, true);

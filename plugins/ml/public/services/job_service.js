@@ -20,6 +20,7 @@ import moment from 'moment';
 import { parseInterval } from 'ui/utils/parse_interval';
 
 import { labelDuplicateDetectorDescriptions } from 'plugins/ml/util/anomaly_utils';
+import { ML_DATA_PREVIEW_COUNT } from 'plugins/ml/util/job_utils';
 
 import { uiModules } from 'ui/modules';
 const module = uiModules.get('apps/ml');
@@ -735,7 +736,7 @@ module.service('mlJobService', function ($rootScope, $http, $q, es, ml, mlMessag
 
       } else {
         // if aggregations is not set and retrieveWholeSource is not set, add all of the fields from the job
-        body.size = 10;
+        body.size = ML_DATA_PREVIEW_COUNT;
 
         // add script_fields if present
         const scriptFields = job.datafeed_config.script_fields;
