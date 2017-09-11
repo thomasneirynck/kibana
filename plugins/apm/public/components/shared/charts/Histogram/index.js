@@ -15,7 +15,6 @@ import {
   Voronoi,
   makeWidthFlexible
 } from 'react-vis';
-import { getYMaxRounded } from '../utils';
 
 const XY_HEIGHT = 120;
 const XY_MARGIN = {
@@ -76,16 +75,18 @@ class Histogram extends PureComponent {
     const xMax = d3.max(buckets, d => d.x);
     const yMin = 0;
     const yMax = d3.max(buckets, d => d.y);
-    const yMaxRounded = getYMaxRounded(yMax);
-    const yTickValues = [yMaxRounded, yMaxRounded / 2];
     const chartData = this.getChartData(buckets, selectedBucket);
 
     const x = scaleLinear()
       .domain([xMin, xMax])
       .range([XY_MARGIN.left, XY_WIDTH - XY_MARGIN.right]);
     const y = scaleLinear()
-      .domain([yMin, yMaxRounded])
-      .range([XY_HEIGHT, 0]);
+      .domain([yMin, yMax])
+      .range([XY_HEIGHT, 0])
+      .nice();
+
+    const yDomainNice = y.domain();
+    const yTickValues = [0, yDomainNice[1] / 2, yDomainNice[1]];
 
     return (
       <XYPlot

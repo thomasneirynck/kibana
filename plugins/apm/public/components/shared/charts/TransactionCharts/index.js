@@ -5,7 +5,7 @@ import { getTimefilter } from '../../../../utils/timepicker';
 import {
   getFormattedResponseTime,
   getFormattedRequestsPerMinute
-} from '../utils';
+} from './utils';
 import styled from 'styled-components';
 import { units, px } from '../../../../style/variables';
 

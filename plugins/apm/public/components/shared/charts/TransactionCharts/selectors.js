@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { getFormattedRequestsPerMinute } from '../../../shared/charts/utils';
+import { getFormattedRequestsPerMinute } from './utils';
 
 export const getResponseTimeSeries = createSelector(
   responseTimes => responseTimes.dates,

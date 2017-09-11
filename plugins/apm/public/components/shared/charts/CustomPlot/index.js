@@ -17,7 +17,6 @@ import {
   VerticalGridLines,
   makeWidthFlexible
 } from 'react-vis';
-import { getYMaxRounded } from '../utils';
 import { CustomHint } from './CustomHint';
 import { Legend } from './Legend';
 import styled from 'styled-components';
@@ -166,8 +165,6 @@ class CustomPlot extends PureComponent {
     const xMax = d3.max(allCoordinates, d => d.x);
     const yMin = 0;
     const yMax = d3.max(allCoordinates, d => d.y);
-    const yMaxRounded = getYMaxRounded(yMax);
-    const yTickValues = [0, yMaxRounded, yMaxRounded / 2];
     const XY_WIDTH = width; // from makeWidthFlexible HOC
 
     const hoveredPoints = this.getHoveredPoints(hoverIndex);
@@ -176,8 +173,12 @@ class CustomPlot extends PureComponent {
       .domain([xMin, xMax])
       .range([XY_MARGIN.left, XY_WIDTH - XY_MARGIN.right]);
     const y = scaleLinear()
-      .domain([yMin, yMaxRounded])
-      .range([XY_HEIGHT, 0]);
+      .domain([yMin, yMax])
+      .range([XY_HEIGHT, 0])
+      .nice();
+
+    const yDomainNice = y.domain();
+    const yTickValues = [0, yDomainNice[1] / 2, yDomainNice[1]];
 
     return (
       <ChartWrapper>
@@ -219,7 +220,7 @@ class CustomPlot extends PureComponent {
               hoveredPoints={hoveredPoints}
               series={series}
               valueFormatter={formatYAxisValue}
-              y={yTickValues[1]}
+              y={0}
             />
           )}
 
