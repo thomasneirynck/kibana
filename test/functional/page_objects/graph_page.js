@@ -1,0 +1,163 @@
+export function GraphPageProvider({ getService, getPageObjects }) {
+  const remote = getService('remote');
+  const config = getService('config');
+  // const retry = getService('retry');
+  const log = getService('log');
+  const kibanaServer = getService('kibanaServer');
+  const testSubjects = getService('testSubjects');
+  const defaultFindTimeout = config.get('timeouts.find');
+  const PageObjects = getPageObjects(['common', 'header', 'settings']);
+
+
+  class GraphPage {
+
+    async selectIndexPattern(pattern) {
+      await remote.setFindTimeout(defaultFindTimeout).findDisplayedByCssSelector('.indexDropDown').click();
+      await remote.setFindTimeout(defaultFindTimeout).findByCssSelector('.indexDropDown > option[label="' + pattern + '"]').click();
+      await kibanaServer.waitForStabilization();
+    }
+
+    async clickAddField() {
+      await remote.setFindTimeout(defaultFindTimeout).findById('addVertexFieldButton')
+      .click();
+    }
+
+    async selectField(field) {
+      await remote.setFindTimeout(defaultFindTimeout).findDisplayedByCssSelector('select[id="fieldList"] > option[label="' + field + '"]')
+      .click();
+      await remote.setFindTimeout(defaultFindTimeout).findDisplayedByCssSelector('button[ng-click="addFieldToSelection()"]').click();
+      await kibanaServer.waitForStabilization();
+    }
+
+    async addField(field) {
+      await this.clickAddField();
+      await this.selectField(field);
+    }
+
+    async query(str) {
+      await remote.setFindTimeout(defaultFindTimeout).findByCssSelector('input.kuiLocalSearchInput').type(str);
+      await remote.setFindTimeout(defaultFindTimeout).findByCssSelector('button.kuiLocalSearchButton').click();
+      await kibanaServer.waitForStabilization();
+    }
+
+
+    async getGraphCircleText() {
+      const chartTypes = await remote.setFindTimeout(defaultFindTimeout)
+      .findAllByCssSelector('text.nodeSvgText');
+
+      async function getCircleText(circle) {
+        return circle.getVisibleText();
+      }
+
+      const getChartTypesPromises = chartTypes.map(getCircleText);
+      return Promise.all(getChartTypesPromises);
+    }
+
+    async getGraphConnectingLines() {
+      const chartTypes = await remote.setFindTimeout(defaultFindTimeout)
+      .findAllByCssSelector('line.edge');
+
+      async function getLineStyle(line) {
+        return line.getAttribute('style');
+      }
+
+      const getChartTypesPromises = chartTypes.map(getLineStyle);
+      return Promise.all(getChartTypesPromises);
+    }
+
+  // click the line which matches the style
+    async clickGraphConnectingLine(style) {
+      await remote.setFindTimeout(defaultFindTimeout)
+      .findByCssSelector('line.edge[style="' + style + '"]').click();
+    }
+
+    async newGraph() {
+      log.debug('Click New Workspace');
+      await remote.setFindTimeout(defaultFindTimeout)
+      .findByCssSelector('[aria-label="New Workspace"]').click();
+      await kibanaServer.waitForStabilization();
+      const modal = await remote.setFindTimeout(defaultFindTimeout).findByCssSelector('#kibana-body');
+      const page = await modal.getVisibleText();
+      if (page.includes('This will clear the workspace - are you sure?')) {
+        return testSubjects.click('confirmModalConfirmButton');
+      }
+    }
+
+
+    async saveGraph(name) {
+      await remote.setFindTimeout(defaultFindTimeout)
+      .findByCssSelector('[aria-label="Save Workspace"]').click();
+      await remote.setFindTimeout(defaultFindTimeout)
+      .findById('workspaceTitle').type(name);
+      await remote.setFindTimeout(defaultFindTimeout)
+      .findByCssSelector('button[aria-label="Save workspace"]').click();
+      return PageObjects.header.getToastMessage();
+    }
+
+    async openGraph(name) {
+      await remote.setFindTimeout(defaultFindTimeout)
+      .findByCssSelector('[aria-label="Load Saved Workspace"]').click();
+      await kibanaServer.waitForStabilization();
+      await remote.setFindTimeout(defaultFindTimeout)
+      .findByCssSelector('input[name="filter"]').type(name);
+      await kibanaServer.waitForStabilization();
+      await PageObjects.common.sleep(1000);
+      await remote.setFindTimeout(defaultFindTimeout)
+      .findByLinkText(name).click();
+      await kibanaServer.waitForStabilization();
+      await PageObjects.common.sleep(5000);
+    }
+
+    async deleteGraph() {
+      await remote.setFindTimeout(defaultFindTimeout)
+      .findByCssSelector('[aria-label="Delete Saved Workspace"]').click();
+      await kibanaServer.waitForStabilization();
+      await testSubjects.click('confirmModalConfirmButton');
+    }
+
+
+    getVennTerm1() {
+      return remote.setFindTimeout(defaultFindTimeout)
+      .findByCssSelector('span.vennTerm1').getVisibleText();
+    }
+
+    getVennTerm2() {
+      return remote.setFindTimeout(defaultFindTimeout)
+      .findByCssSelector('span.vennTerm2').getVisibleText();
+    }
+
+    getSmallVennTerm1() {
+      return remote.setFindTimeout(defaultFindTimeout)
+    .findByCssSelector('small.vennTerm1').getVisibleText();
+    }
+
+    getSmallVennTerm12() {
+      return remote.setFindTimeout(defaultFindTimeout)
+    .findByCssSelector('small.vennTerm12').getVisibleText();
+    }
+
+    getSmallVennTerm2() {
+      return remote.setFindTimeout(defaultFindTimeout)
+        .findByCssSelector('small.vennTerm2').getVisibleText();
+    }
+
+    async getVennEllipse1() {
+      const el = await remote.setFindTimeout(defaultFindTimeout).findByCssSelector('ellipse.venn1');
+      const cx = await el.getAttribute('cx');
+      const cy = await el.getAttribute('cy');
+      const rx = await el.getAttribute('rx');
+      return { cx: cx, cy: cy, rx: rx };
+    }
+
+    async getVennEllipse2() {
+      const el = await remote.setFindTimeout(defaultFindTimeout).findByCssSelector('ellipse.venn2');
+      const cx = await el.getAttribute('cx');
+      const cy = await el.getAttribute('cy');
+      const rx = await el.getAttribute('rx');
+      return { cx: cx, cy: cy, rx: rx };
+    }
+
+
+  }
+  return new GraphPage();
+}

@@ -8,6 +8,7 @@ import {
   ReportingPageProvider,
   MonitoringPageProvider,
   LogstashPageProvider,
+  GraphPageProvider,
 } from './page_objects';
 
 import {
@@ -30,6 +31,7 @@ export default async function ({ readConfigFile }) {
   return {
     // list paths to the files that contain your plugins tests
     testFiles: [
+      resolve(__dirname, './apps/graph'),
       resolve(__dirname, './apps/monitoring'),
       resolve(__dirname, './apps/dashboard_mode'),
       resolve(__dirname, './apps/security'),
@@ -58,6 +60,7 @@ export default async function ({ readConfigFile }) {
       reporting: ReportingPageProvider,
       monitoring: MonitoringPageProvider,
       logstash: LogstashPageProvider,
+      graph: GraphPageProvider,
     },
 
     servers: {
@@ -90,6 +93,9 @@ export default async function ({ readConfigFile }) {
       logstashPipelines: {
         pathname: '/app/kibana',
         hash: '/management/logstash/pipelines'
+      },
+      graph: {
+        pathname: '/app/graph',
       }
     },
 
