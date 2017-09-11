@@ -12,7 +12,7 @@ const issueSeverity = {
 
 const issueInfoForSeverity = {
   'critical': 'This issue must be resolved to upgrade.',
-  'warning': 'It is advised to resolve this issue, but it is not required to upgrade.',
+  'warning': 'Resolving this issue is advised but not required to upgrade.',
   'info': 'No action required, but it is advised to read about the change.',
   'none': '',
 };
@@ -21,8 +21,7 @@ export async function getDeprecations() {
   const deprecations = await getFromApi(`/api/migration/deprecations`);
   const { index_settings } = deprecations;
 
-  const assistanceResponse = await getFromApi(`/api/migration/assistance`);
-  const assistanceIndices = Object.keys(assistanceResponse);
+  const assistanceIndices = await getFromApi(`/api/migration/assistance`);
 
   const indexDeprecations = ensureReindexDeprecations(index_settings, assistanceIndices);
   const sortedIndexDeprecations = _.mapValues(indexDeprecations, sortDeprecations);
@@ -47,12 +46,12 @@ function ensureReindexDeprecations(deprecationsByIndex, indicesToAppend) {
   ));
 
   // append reindex deprecations for all indices in indicesToAppend
-  return _.reduce(indicesToAppend, (acc, indexName) => {
+  return _.reduce(indicesToAppend, (acc, { action_required }, indexName) => {
     return {
       ...acc,
       [indexName]: [
         ...(acc[indexName] || []),
-        createReindexDeprecation(),
+        createReindexDeprecation(action_required),
       ],
     };
   }, filteredDeprecationsByIndex);
@@ -69,13 +68,15 @@ function sortDeprecations(deprs) {
   return _.sortBy(deprs, d => issueSeverity[d.level]);
 }
 
-function createReindexDeprecation() {
+function createReindexDeprecation(actionRequired) {
   return {
     details: '',
     level: 'critical',
     message: `This index must be reindexed in order to upgrade the Elastic stack. You may use the Reindex Helper in the next tab to \
       perform the reindex. Reindexing is irreversible, so always back up your index before proceeding.`,
-    url: 'https://www.elastic.co/guide/en/elasticsearch/reference/6.0/breaking-changes-6.0.html#_indices_created_before_6_0',
+    url: actionRequired === 'upgrade'
+      ? 'https://www.elastic.co/guide/en/elastic-stack/6.0/upgrading-elastic-stack.html#upgrade-internal-indices'
+      : 'https://www.elastic.co/guide/en/elasticsearch/reference/6.0/breaking-changes-6.0.html#_indices_created_before_6_0',
   };
 }
 
