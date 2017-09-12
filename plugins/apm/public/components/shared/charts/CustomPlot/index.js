@@ -149,12 +149,12 @@ class CustomPlot extends PureComponent {
       chartTitle,
       hoverIndex,
       series,
-      width,
+      width: XY_WIDTH,
       formatYAxisValue
     } = this.props;
     const { isDrawing, selectionStart, selectionEnd } = this.state;
 
-    if (_.isEmpty(series)) {
+    if (_.isEmpty(series) || XY_WIDTH === 0) {
       return null;
     }
 
@@ -165,7 +165,6 @@ class CustomPlot extends PureComponent {
     const xMax = d3.max(allCoordinates, d => d.x);
     const yMin = 0;
     const yMax = d3.max(allCoordinates, d => d.y);
-    const XY_WIDTH = width; // from makeWidthFlexible HOC
 
     const hoveredPoints = this.getHoveredPoints(hoverIndex);
 

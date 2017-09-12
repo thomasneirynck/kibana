@@ -64,13 +64,11 @@ class Histogram extends PureComponent {
   }
 
   render() {
-    const { buckets, selectedBucket, bucketSize } = this.props;
-
-    if (_.isEmpty(buckets)) {
+    const { buckets, selectedBucket, bucketSize, width: XY_WIDTH } = this.props;
+    if (_.isEmpty(buckets) || XY_WIDTH === 0) {
       return null;
     }
 
-    const XY_WIDTH = this.props.width; // from makeWidthFlexible HOC
     const xMin = d3.min(buckets, d => d.x0);
     const xMax = d3.max(buckets, d => d.x);
     const yMin = 0;
