@@ -172,12 +172,18 @@ to enjoy multi-cluster monitoring.`
        * completely
        */
       const IsAlertsSupported = (props) => {
-        if (props.cluster.alerts.alertsMeta.enabled) {
+        const {
+          alertsMeta = { enabled: true },
+          clusterMeta = { enabled: true }
+        } = props.cluster.alerts;
+        if (alertsMeta.enabled && clusterMeta.enabled) {
           return <span>{ props.children }</span>;
         }
+
+        const message = alertsMeta.message || clusterMeta.message;
         return (
           <Tooltip
-            text={props.cluster.alerts.alertsMeta.message}
+            text={message}
             placement="bottom"
             trigger="hover"
           >
