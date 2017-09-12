@@ -256,7 +256,6 @@ module
       }
 
       msgs.clear();
-      $scope.formConfig.mappingTypes = mlESMappingService.getTypesFromMapping($scope.formConfig.indexPattern.title);
 
       // change the custom urls in each job to use the indexpattern id rather than title
       updateJobUrls();

@@ -56,7 +56,9 @@ module.service('mlESMappingService', function ($q, mlJobService) {
       });
       types = Object.keys(tempTypes);
     } else {
-      types = Object.keys(this.indices[index].types);
+      if (this.indices[index] !== undefined) {
+        types = Object.keys(this.indices[index].types);
+      }
     }
 
     return types;
