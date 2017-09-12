@@ -1906,7 +1906,7 @@ export const expected = {
     'app': 'kibana',
     'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
-    'derivative': false
+    'derivative': true
   },
   'kibana_average_response_times': {
     'title': 'Client Response Time',
@@ -1944,19 +1944,19 @@ export const expected = {
     'app': 'kibana',
     'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
-    'derivative': false
+    'derivative': true
   },
   'kibana_requests': {
     'field': 'kibana_stats.requests.total',
     'label': 'Client Requests',
     'description': 'Total number of client requests received by the Kibana instance.',
     'format': '0.[00]',
-    'metricAgg': 'sum',
+    'metricAgg': 'max',
     'units': '',
     'app': 'kibana',
     'uuidField': 'kibana_stats.kibana.uuid',
     'timestampField': 'kibana_stats.timestamp',
-    'derivative': false
+    'derivative': true
   },
   'logstash_cluster_events_input_rate': {
     'field': 'logstash_stats.events.in',

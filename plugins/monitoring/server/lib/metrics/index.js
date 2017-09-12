@@ -945,6 +945,7 @@ const metricInstances = {
     description: 'Delay in Kibana server event loops. Longer delays may indicate blocking events in server thread, such as synchronous functions taking large amount of CPU time.', // eslint-disable-line max-len
     format: SMALL_FLOAT,
     metricAgg: 'max',
+    derivative: true,
     units: 'ms'
   }),
   'kibana_average_response_times': new KibanaMetric({
@@ -971,6 +972,7 @@ const metricInstances = {
     description: 'Total number of open socket connections to the Kibana instance.',
     format: SMALL_FLOAT,
     metricAgg: 'max',
+    derivative: true,
     units: ''
   }),
   'kibana_requests': new KibanaMetric({
@@ -978,7 +980,8 @@ const metricInstances = {
     label: 'Client Requests',
     description: 'Total number of client requests received by the Kibana instance.',
     format: SMALL_FLOAT,
-    metricAgg: 'sum',
+    metricAgg: 'max',
+    derivative: true,
     units: ''
   }),
   'logstash_cluster_events_input_rate': new LogstashEventsRateClusterMetric({
