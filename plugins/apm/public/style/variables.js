@@ -25,16 +25,22 @@ export function pct(value) {
 export const borderRadius = '5px';
 
 // Colors
+const colorBlue = '#005472';
 export const colors = {
-  linkColor: '#0079a5',
-  elementBorder: '#dce0e5',
-  elementBorderDark: '#bababa',
-  elementBackground: '#fff',
-  elementBackgroundDark: '#f5f5f5',
-  tableBorder: '#E9E9E9',
-  tableHeaderColor: '#bdbdbd',
-  impactBar: '#0079a5',
-  impactBarBackground: '#d9d9d9'
+  black: '#000000',
+  black2: '#2d2d2d',
+  gray1: '#3f3f3f',
+  gray2: '#666666',
+  gray3: '#999999',
+  gray4: '#d9d9d9',
+  gray5: '#f5f5f5',
+  white: '#ffffff',
+  teal: '#00a69b',
+  red: '#a30000',
+  blue: colorBlue,
+
+  // Semantic colors
+  link: colorBlue
 };
 
 // Fonts

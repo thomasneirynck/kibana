@@ -23,7 +23,7 @@ import Stacktrace from './Stacktrace';
 
 const Container = styled.div`
   position: relative;
-  border: 1px solid ${colors.elementBorder};
+  border: 1px solid ${colors.gray4};
   border-radius: ${borderRadius};
   padding: ${px(units.plus)};
 `;
@@ -67,7 +67,7 @@ function AllOccurrencesLink({ errorGroup, appName }) {
     height: 18px;
     margin-top: -3px;
     margin-right: 6px;
-    background: #005571;
+    background: ${colors.blue};
     padding: 2px;
     border-radius: 4px;
     vertical-align: middle;

@@ -17,13 +17,13 @@ const Button = styled(RelativeLink)`
   margin: 0;
   padding: ${px(units.half)} ${px(unit * 2)};
   text-align: center;
-  border: 1px solid ${colors.elementBorderDark};
+  border: 1px solid ${colors.gray2};
   border-radius: ${borderRadius};
-  background-color: ${colors.elementBackgroundDark};
+  background-color: ${colors.gray5};
   cursor: pointer;
 
   &:hover {
-    background-color: ${colors.elementBackground};
+    background-color: ${colors.white};
   }
 `;
 

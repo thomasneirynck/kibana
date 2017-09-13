@@ -6,7 +6,7 @@ import withApp from '../withApp';
 import { unit, units, colors } from '../../../style/variables';
 
 const Divider = styled.div`
-  border-left: 1px solid ${colors.elementBorder};
+  border-left: 1px solid ${colors.gray4};
   height: ${units.double}px;
   margin: 0 ${unit}px;
   display: inline-block;

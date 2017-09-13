@@ -21,7 +21,7 @@ const AppsContainer = styled.div`margin: ${px(unit)} 0 0 0;`;
 const AppContainer = styled.div`
   display: flex;
   justify-content: space-between;
-  border: 1px solid ${colors.elementBorderDark};
+  border: 1px solid ${colors.gray2};
   border-radius: ${units.quarter}px;
   font-size: ${px(unit)};
   padding: ${px(unit)} ${px(units.plus)};

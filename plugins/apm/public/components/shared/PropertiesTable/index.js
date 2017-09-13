@@ -10,7 +10,7 @@ const Table = styled.table`
   width: 100%;
 `;
 const Row = styled.tr`
-  border-bottom: 1px solid ${colors.elementBorder};
+  border-bottom: 1px solid ${colors.gray4};
   &:last-child {
     border: 0;
   }
@@ -32,7 +32,7 @@ const Cell = styled.td`
     font-weight: bold;
   }
 `;
-const EmptyValue = styled.span`color: #ccc;`;
+const EmptyValue = styled.span`color: ${colors.gray4};`;
 
 function getSortedProps(propData, levelTwoKey, level) {
   if (level === 2) {

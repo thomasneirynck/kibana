@@ -14,7 +14,7 @@ const TransactionsContainer = styled.div`
   position: relative;
   overflow: hidden;
   padding: 0;
-  border: 1px solid ${colors.elementBorder};
+  border: 1px solid ${colors.gray4};
   border-radius: ${borderRadius};
 `;
 

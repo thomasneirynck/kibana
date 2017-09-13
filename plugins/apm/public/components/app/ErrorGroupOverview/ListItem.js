@@ -12,13 +12,13 @@ import numeral from 'numeral';
 
 export const Row = styled.tr`
   &:nth-child(even) {
-    background: ${colors.elementBackgroundDark};
+    background: ${colors.gray5};
   }
 `;
 
 const TableCell = styled.td`
   padding: ${px(units.half)} ${px(units.minus)};
-  border-left: 1px solid ${colors.tableBorder};
+  border-left: 1px solid ${colors.gray4};
 
   &:first-child {
     border-left: 0;
@@ -29,7 +29,7 @@ const Message = styled.div`
   font-family: ${fontFamilyCode};
   font-weight: bold;
   font-size: ${fontSizes.large};
-  color: ${colors.linkColor};
+  color: ${colors.link};
 `;
 
 const Culprit = styled.div`font-family: ${fontFamilyCode};`;

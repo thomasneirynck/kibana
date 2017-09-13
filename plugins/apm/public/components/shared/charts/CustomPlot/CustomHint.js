@@ -4,6 +4,7 @@ import moment from 'moment';
 import { Hint } from 'react-vis';
 import styled from 'styled-components';
 import {
+  colors,
   unit,
   units,
   px,
@@ -13,28 +14,22 @@ import {
 } from '../../../../style/variables';
 import { LegendElm, Indicator } from './Legend';
 
-const customHintBorderColor = '#d9d9d9';
-const customHintBgColor = '#fff';
-const customHintTitleBgColor = '#f5f5f5';
-const customHintFontColor = '#404040';
-const legendValueFontColor = '#000000';
-
 const CustomHintElm = styled.div`
   margin: 0 ${px(unit)};
   transform: translateY(-50%);
-  border: 1px solid ${customHintBorderColor};
-  background: ${customHintBgColor};
+  border: 1px solid ${colors.gray4};
+  background: ${colors.white};
   border-radius: ${borderRadius};
   font-size: ${fontSize};
-  color: ${legendValueFontColor};
+  color: ${colors.black};
 `;
 
 const Header = styled.div`
-  background: ${customHintTitleBgColor};
-  border-bottom: 1px solid ${customHintBorderColor};
+  background: ${colors.gray5};
+  border-bottom: 1px solid ${colors.gray4};
   border-radius: ${borderRadius} ${borderRadius} 0 0;
   padding: ${px(units.half)};
-  color: ${customHintFontColor};
+  color: ${colors.black2};
 `;
 
 const Legends = styled.div`
@@ -54,7 +49,7 @@ const SmallIndicator = Indicator.extend`
 `;
 
 const Value = styled.div`
-  color: ${legendValueFontColor};
+  color: ${colors.black};
   font-size: ${fontSize};
 `;
 

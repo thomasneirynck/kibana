@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { unit, units, px, fontSize } from '../../style/variables';
+import { unit, units, px, fontSize, colors } from '../../style/variables';
 
 const Tab = styled.span`
   display: inline-block;
@@ -15,7 +15,7 @@ const Tab = styled.span`
 
   opacity: ${props => (props.selected ? 1 : 0.7)};
   border-bottom: ${props =>
-    props.selected && `${units.quarter / 2}px solid #005472`};
+    props.selected && `${units.quarter / 2}px solid ${colors.blue}`};
   pointer-events: ${props => props.selected && 'none'};
 `;
 

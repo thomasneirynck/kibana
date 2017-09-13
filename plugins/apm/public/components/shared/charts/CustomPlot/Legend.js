@@ -1,9 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { units, px, fontSizes } from '../../../../style/variables';
-
-const legendFontColor = '#666666';
-const legendValueFontColor = '#000000';
+import { units, px, fontSizes, colors } from '../../../../style/variables';
 
 export const LegendElm = styled.div`
   display: flex;
@@ -11,7 +8,7 @@ export const LegendElm = styled.div`
   flex-wrap: wrap;
   margin-right: ${px(units.half)};
   font-size: ${fontSizes.small};
-  color: ${legendFontColor};
+  color: ${colors.gray2};
   cursor: pointer;
   opacity: ${props => (props.isDisabled ? '0.4' : '1')};
 
@@ -32,7 +29,7 @@ export const Indicator = styled.span`
 
 export const Value = styled.div`
   margin-left: ${px(units.quarter)};
-  color: ${legendValueFontColor};
+  color: ${colors.black};
 `;
 
 export function Legend({ serie, i, isDisabled, onClick }) {

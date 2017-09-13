@@ -14,20 +14,19 @@ import {
 import { get } from 'lodash';
 
 const TraceBar = styled.div`
-  background: ${colors.elementBorder};
+  background: ${colors.gray4};
   height: ${unit}px;
 `;
 const TraceName = styled.div`${truncate(px(unit * 15))};`;
 const TraceLink = styled(({ isSelected, children, ...props }) => (
   <RelativeLink {...props}>{children}</RelativeLink>
 ))`
-  border-top: ${({ isSelected }) =>
-    isSelected && `1px solid ${colors.elementBorder}`};
+  border-top: ${({ isSelected }) => isSelected && `1px solid ${colors.gray4}`};
   border-bottom: ${({ isSelected }) =>
-    isSelected && `1px solid ${colors.elementBorder}`};
+    isSelected && `1px solid ${colors.gray4}`};
   display: block;
   &:hover {
-    background-color: ${colors.elementBackgroundDark};
+    background-color: ${colors.gray5};
   }
   &:focus {
     box-shadow: none;

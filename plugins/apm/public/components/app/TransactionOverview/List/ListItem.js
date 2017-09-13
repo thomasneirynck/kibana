@@ -14,7 +14,7 @@ import { get } from 'lodash';
 import { TRANSACTION_NAME } from '../../../../../common/constants';
 
 const TransactionRow = styled.tr`
-  border-bottom: 1px solid ${colors.tableBorder};
+  border-bottom: 1px solid ${colors.gray4};
 
   &:last-of-type {
     border-bottom: 0;
@@ -31,13 +31,13 @@ const TransactionP95 = TableCell.extend`min-width: ${px(unit * 6)};`;
 const ImpactBarBackground = styled.div`
   height: ${px(units.minus)};
   border-radius: ${borderRadius};
-  background: ${colors.impactBarBackground};
+  background: ${colors.gray4};
 `;
 
 const ImpactBar = styled.div`
   height: ${px(units.minus)};
   width: ${props => props.barWidth}%;
-  background: ${colors.impactBar};
+  background: ${colors.blue};
   border-radius: ${borderRadius};
 `;
 

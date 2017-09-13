@@ -25,9 +25,9 @@ function loadTransaction(props) {
 }
 
 const TabContentContainer = styled.div`
-  border: 1px solid ${colors.elementBorder};
+  border: 1px solid ${colors.gray4};
   border-radius: ${units.quarter}px;
-  background-color: ${colors.elementBackground};
+  background-color: ${colors.white};
   overflow: hidden;
   padding: ${unit}px;
 `;

@@ -15,6 +15,7 @@ import {
   Voronoi,
   makeWidthFlexible
 } from 'react-vis';
+import { colors } from '../../../../style/variables';
 
 const XY_HEIGHT = 120;
 const XY_MARGIN = {
@@ -55,7 +56,7 @@ class Histogram extends PureComponent {
     return items
       .map((item, i) => ({
         ...item,
-        color: i === selected ? '#3360a3' : undefined
+        color: i === selected ? colors.blue : undefined
       }))
       .map(item => {
         const padding = (item.x - item.x0) / 20;
@@ -115,7 +116,7 @@ class Histogram extends PureComponent {
             x={x(this.state.hoveredBucket.x0)}
             width={x(bucketSize) - x(0)}
             style={{
-              fill: '#dddddd'
+              fill: colors.gray4
             }}
           />
         )}

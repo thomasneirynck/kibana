@@ -11,14 +11,14 @@ import {
 
 export const Table = styled.table`width: 100%;`;
 export const TableHead = styled.th`
-  border-bottom: 1px solid ${colors.elementBorder};
+  border-bottom: 1px solid ${colors.gray4};
   padding: ${px(units.half)} ${px(unit)};
   position: relative;
   cursor: pointer;
   font-weight: normal;
-  color: ${props => (props.selected ? '#666' : colors.tableHeaderColor)};
+  color: ${props => (props.selected ? colors.gray2 : colors.gray3)};
   user-select: none;
-  background: ${props => (props.selected ? '#eee' : 'initial')};
+  background: ${props => (props.selected ? colors.gray5 : 'initial')};
 `;
 
 const LoadingContainer = styled.div`
@@ -27,7 +27,7 @@ const LoadingContainer = styled.div`
   font-family: ${fontFamily};
   font-size: ${fontSize};
   font-weight: bold;
-  background: ${colors.elementBackground};
+  background: ${colors.white};
 `;
 
 export function TableLoader({ status, columns }) {
