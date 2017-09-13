@@ -101,10 +101,3 @@ Utilization. Defaults to `false`.
 +
 image::settings/images/monitoring-es-cgroup-true.png["Elasticsearch Inside a Container",link="images/monitoring-es-cgroup-true.png"]
 
-[[ssl-monitoring-settings]]
-:ssl-prefix:             xpack.monitoring.exporters.$NAME
-:component:              {monitoring}
-:verifies:
-:server!:
-
-include::{xes-repo-dir}/settings/ssl-settings.asciidoc[]
