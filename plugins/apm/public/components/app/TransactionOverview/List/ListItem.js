@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+
+import { KuiTableRow, KuiTableRowCell } from 'ui_framework/components';
 import {
   unit,
   units,
@@ -9,24 +11,19 @@ import {
   fontFamilyCode
 } from '../../../../style/variables';
 import { RelativeLink, legacyEncodeURIComponent } from '../../../../utils/url';
-import numeral from '@elastic/numeral';
+
 import { get } from 'lodash';
 import { TRANSACTION_NAME } from '../../../../../common/constants';
 
-const TransactionRow = styled.tr`
-  border-bottom: 1px solid ${colors.gray4};
+import {
+  getFormattedResponseTime,
+  getFormattedRequestsPerMinute
+} from '../../../shared/charts/TransactionCharts/utils';
 
-  &:last-of-type {
-    border-bottom: 0;
-  }
+const TransactionNameCell = styled(KuiTableRowCell)`
+  font-family: ${fontFamilyCode};
+  max-width: ${px(unit * 4)};
 `;
-
-const TableCell = styled.td`padding: ${px(units.half)} ${px(unit)};`;
-
-const TransactionName = TableCell.extend`font-family: ${fontFamilyCode};`;
-
-const TransactionAvg = TableCell.extend`min-width: ${px(unit * 6)};`;
-const TransactionP95 = TableCell.extend`min-width: ${px(unit * 6)};`;
 
 const ImpactBarBackground = styled.div`
   height: ${px(units.minus)};
@@ -40,25 +37,6 @@ const ImpactBar = styled.div`
   background: ${colors.blue};
   border-radius: ${borderRadius};
 `;
-
-function getTransactionDuration(duration) {
-  if (!duration) {
-    return `N/A`;
-  }
-
-  const durationInMilliseconds = duration / 1000;
-  const formattedDuration = numeral(durationInMilliseconds).format('0,0');
-  return `${formattedDuration} ms`;
-}
-
-function getTransactionRpm(rpm) {
-  if (!rpm) {
-    return `N/A`;
-  }
-
-  const transactionRpm = rpm > 0.1 ? numeral(rpm).format('0.0') : '< 0.1';
-  return `${transactionRpm} rpm`;
-}
 
 function ImpactSparkline({ impact }) {
   if (!impact && impact !== 0) {
@@ -79,19 +57,25 @@ function TransactionListItem({ appName, transaction, type, impact }) {
   )}/${legacyEncodeURIComponent(transactionName)}`;
 
   return (
-    <TransactionRow>
-      <TransactionName>
+    <KuiTableRow>
+      <TransactionNameCell>
         <RelativeLink path={transactionUrl}>
           {transactionName || 'N/A'}
         </RelativeLink>
-      </TransactionName>
-      <TransactionAvg>{getTransactionDuration(transaction.avg)}</TransactionAvg>
-      <TransactionP95>{getTransactionDuration(transaction.p95)}</TransactionP95>
-      <TableCell>{getTransactionRpm(transaction.rpm)}</TableCell>
-      <TableCell>
+      </TransactionNameCell>
+      <KuiTableRowCell>
+        {getFormattedResponseTime(transaction.avg / 1000)}
+      </KuiTableRowCell>
+      <KuiTableRowCell>
+        {getFormattedResponseTime(transaction.p95 / 1000)}
+      </KuiTableRowCell>
+      <KuiTableRowCell>
+        {getFormattedRequestsPerMinute(transaction.rpm)}
+      </KuiTableRowCell>
+      <KuiTableRowCell>
         <ImpactSparkline impact={impact} />
-      </TableCell>
-    </TransactionRow>
+      </KuiTableRowCell>
+    </KuiTableRow>
   );
 }
 
