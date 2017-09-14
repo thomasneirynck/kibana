@@ -17,7 +17,7 @@ export default function ({ getService, getPageObjects }) {
 
   describe('dls', function () {
     before('initialize tests', async () => {
-      await esArchiver.loadIfNeeded('dlstest');
+      await esArchiver.loadIfNeeded('security/dlstest');
       await kibanaServer.waitForStabilization();
       remote.setWindowSize(1600, 1000);
 

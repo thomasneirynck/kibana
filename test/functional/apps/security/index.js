@@ -5,5 +5,6 @@ export default function ({ loadTestFile }) {
     loadTestFile(require.resolve('./management'));
     loadTestFile(require.resolve('./users'));
     loadTestFile(require.resolve('./secure_roles_perm'));
+    loadTestFile(require.resolve('./field_level_security'));
   });
 }
