@@ -1,21 +1,22 @@
-import { get } from 'lodash';
 import { wrapEsError } from '../../../lib/error_wrappers';
 import { callWithRequestFactory } from '../../../lib/call_with_request_factory';
-import { INDEX_NAMES } from '../../../../common/constants';
+import { fetchAllFromScroll } from '../../../lib/fetch_all_from_scroll';
+import { INDEX_NAMES, ES_SCROLL_SETTINGS } from '../../../../common/constants';
 import { PipelineListItem } from '../../../models/pipeline_list_item';
 import { licensePreRoutingFactory } from'../../../lib/license_pre_routing_factory';
 
 function fetchPipelines(callWithRequest) {
-  return callWithRequest('search', {
+  const params = {
     index: INDEX_NAMES.PIPELINES,
-    ignore: [404],
-    _source: [
-      'description',
-      'last_modified',
-      'version',
-      'username'
-    ]
-  });
+    scroll: ES_SCROLL_SETTINGS.KEEPALIVE,
+    body: {
+      size: ES_SCROLL_SETTINGS.PAGE_SIZE,
+    },
+    ignore: [404]
+  };
+
+  return callWithRequest('search', params)
+  .then(response => fetchAllFromScroll(response, callWithRequest));
 }
 
 export function registerListRoute(server) {
@@ -28,9 +29,8 @@ export function registerListRoute(server) {
       const callWithRequest = callWithRequestFactory(server, request);
 
       return fetchPipelines(callWithRequest)
-      .then((pipelinesResponseFromES) => {
+      .then((pipelinesHits = []) => {
 
-        const pipelinesHits = get(pipelinesResponseFromES, 'hits.hits', []);
         const pipelines = pipelinesHits.map(pipeline => {
           return PipelineListItem.fromUpstreamJSON(pipeline).downstreamJSON;
         });

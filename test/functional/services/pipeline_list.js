@@ -29,6 +29,7 @@ export function PipelineListProvider({ getService }) {
   const SUBJ_CELL_LAST_MODIFIED = `pipelineList pipelineTable cellLastModified`;
   const SUBJ_CELL_USERNAME = `pipelineList pipelineTable cellUsername`;
   const SUBJ_CELL_VERSION = `pipelineList pipelineTable cellVersion`;
+  const SUBJ_BTN_NEXT_PAGE = `pipelineList btnNextPage`;
 
   return new class PipelineList {
     /**
@@ -190,6 +191,30 @@ export function PipelineListProvider({ getService }) {
       const actual = await testSubjects.isEnabled(SUBJ_BTN_DELETE);
       if (enabled !== actual) {
         throw new Error(`Expected delete button to be ${enabled ? 'enabled' : 'disabled'}`);
+      }
+    }
+
+    /**
+     * Click the next page button
+     */
+    async clickNextPage() {
+      await testSubjects.click(SUBJ_BTN_NEXT_PAGE);
+    }
+
+    /**
+     *  Check if the next page button is enabled or disabled and
+     *  throw the appropriate error if it is not
+     *  @param  {boolean} expected
+     *  @return {Promise}
+     */
+    async assertNextPageButton({ enabled }) {
+      if (typeof enabled !== 'boolean') {
+        throw new Error('you must specify the expected enabled state of the next page button');
+      }
+
+      const actual = await testSubjects.isEnabled(SUBJ_BTN_NEXT_PAGE);
+      if (enabled !== actual) {
+        throw new Error(`Expected next page button to be ${enabled ? 'enabled' : 'disabled'}`);
       }
     }
   };

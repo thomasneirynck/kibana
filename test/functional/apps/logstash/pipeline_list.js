@@ -28,22 +28,25 @@ export default function ({ getService, getPageObjects }) {
         expect(time).to.be.a('string').match(/ ago$/);
       }
 
-      expect(rowsWithoutTime).to.eql([
-        {
+      const expectedRows = [{
+        selected: false,
+        id: 'tweets_and_beats',
+        description: 'ingest tweets and beats',
+        username: 'elastic',
+        version: ''
+      }];
+
+      for (let emptyPipelineId = 1; emptyPipelineId <= 19; ++emptyPipelineId) {
+        expectedRows.push({
           selected: false,
-          id: 'empty_pipeline',
+          id: `empty_pipeline_${emptyPipelineId}`,
           description: 'an empty pipeline',
           username: 'elastic',
           version: ''
-        },
-        {
-          selected: false,
-          id: 'tweets_and_beats',
-          description: 'ingest tweets and beats',
-          username: 'elastic',
-          version: ''
-        }
-      ]);
+        });
+      }
+
+      expect(rowsWithoutTime).to.eql(expectedRows);
     });
 
     describe('select all checkbox', () => {
@@ -110,6 +113,44 @@ export default function ({ getService, getPageObjects }) {
         await pipelineList.clickFirstRowId();
         await pipelineEditor.assertExists();
         await pipelineEditor.assertEditorId('tweets_and_beats');
+      });
+
+      after(async () => {
+        await PageObjects.logstash.gotoPipelineList();
+      });
+    });
+
+    describe('next page button', () => {
+      it('is enabled', async () => {
+        await pipelineList.assertNextPageButton({ enabled: true });
+      });
+
+      it('takes user to the second page', async () => {
+        await pipelineList.clickNextPage();
+        const rows = await pipelineList.getRowsFromTable();
+        const rowsWithoutTime = rows.map(row => omit(row, 'lastModified'));
+
+        for (const time of rows.map(row => row.lastModified)) {
+          // last modified is a relative time string. Check for 'ago' suffix
+          expect(time).to.be.a('string').match(/ ago$/);
+        }
+
+        expect(rowsWithoutTime).to.eql([
+          {
+            selected: false,
+            id: 'empty_pipeline_20',
+            description: 'an empty pipeline',
+            username: 'elastic',
+            version: ''
+          },
+          {
+            selected: false,
+            id: 'empty_pipeline_21',
+            description: 'an empty pipeline',
+            username: 'elastic',
+            version: ''
+          }
+        ]);
       });
     });
   });
