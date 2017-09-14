@@ -93,7 +93,7 @@ function renderHeader(colaObjects, title, subtitle) {
       gEl
       .append('image')
       .attr('xlink:href', infoIcon)
-      .attr('x', titleEl.getBBox().width + (ICON_WIDTH_PX / 2) + NO_ID_ICON_OFFSET_LEFT_PX)
+      .attr('x', titleEl.getComputedTextLength() + (ICON_WIDTH_PX / 2) + NO_ID_ICON_OFFSET_LEFT_PX)
       .attr('y', NO_ID_ICON_OFFSET_TOP_PX)
       .attr('height', ICON_HEIGHT_PX)
       .attr('width', ICON_WIDTH_PX)
