@@ -6,6 +6,7 @@ import charts from './charts';
 import errorDistributions from './errorDistributions';
 import errorGroupLists from './errorGroupLists';
 import errorGroups from './errorGroups';
+import errorGroupSorting from './errorGroupSorting';
 import license from './license';
 import location from './location';
 import traces from './traces';
@@ -22,6 +23,7 @@ const appReducer = combineReducers({
   errorDistributions,
   errorGroupLists,
   errorGroups,
+  errorGroupSorting,
   license,
   location,
   traces,

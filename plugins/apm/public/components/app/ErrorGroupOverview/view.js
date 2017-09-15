@@ -24,12 +24,18 @@ class ErrorGroupOverview extends Component {
 
   render() {
     const { appName } = this.props.urlParams;
+    const { changeErrorGroupSorting, errorGroupSorting } = this.props;
     return (
       <div>
         <Breadcrumbs />
         <PageHeader title={`Errors for ${appName}`} />
         <TabNavigation />
-        <List appName={appName} list={this.props.errorGroupList} />
+        <List
+          appName={appName}
+          list={this.props.errorGroupList}
+          changeErrorGroupSorting={changeErrorGroupSorting}
+          errorGroupSorting={errorGroupSorting}
+        />
       </div>
     );
   }

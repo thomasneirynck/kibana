@@ -52,7 +52,8 @@ export async function getErrors(req) {
       culprit: get(hit, `_source.${ERROR_CULPRIT}`),
       message: get(hit, `_source.${ERROR_MESSAGE}`),
       group_id: get(hit, `_source.${ERROR_GROUP_ID}`),
-      occurrence_count: get(hit, `inner_hits.occurrences.hits.total`)
+      occurrence_count: get(hit, `inner_hits.occurrences.hits.total`),
+      latest_occurrence_at: get(hit, `_source.@timestamp`)
     };
   });
 }

@@ -9,6 +9,10 @@ describe('root reducer', () => {
       errorDistributions: {},
       errorGroupLists: {},
       errorGroups: {},
+      errorGroupSorting: {
+        descending: true,
+        key: 'latestOccurrenceAt'
+      },
       license: {},
       location: {},
       traces: {},

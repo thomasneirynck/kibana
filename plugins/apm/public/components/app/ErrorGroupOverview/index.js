@@ -5,16 +5,19 @@ import {
   getErrorGroupList,
   loadErrorGroupList
 } from '../../../store/errorGroupLists';
+import { changeErrorGroupSorting } from '../../../store/errorGroupSorting';
 
 function mapStateToProps(state = {}) {
   return {
     urlParams: getUrlParams(state),
-    errorGroupList: getErrorGroupList(state)
+    errorGroupList: getErrorGroupList(state),
+    errorGroupSorting: state.errorGroupSorting
   };
 }
 
 const mapDispatchToProps = {
-  loadErrorGroupList
+  loadErrorGroupList,
+  changeErrorGroupSorting
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ErrorGroupOverview);
