@@ -1,5 +1,11 @@
 // Helper for making objects to use in a link element
-const createCrumb = (url, label) => ({ url, label });
+const createCrumb = (url, label, testSubj) => {
+  const crumb = { url, label };
+  if (testSubj) {
+    crumb.testSubj = testSubj;
+  }
+  return crumb;
+};
 
 // generate Elasticsearch breadcrumbs
 function getElasticsearchBreadcrumbs(mainInstance) {
@@ -58,7 +64,7 @@ function getLogstashBreadcrumbs(mainInstance) {
 
 export function breadcrumbsProvider() {
   return function createBreadcrumbs(clusterName, mainInstance) {
-    let breadcrumbs = [ createCrumb('#/home', 'Clusters') ];
+    let breadcrumbs = [ createCrumb('#/home', 'Clusters', 'breadcrumbClusters') ];
 
     if (!mainInstance.inOverview && clusterName) {
       breadcrumbs.push(createCrumb('#/overview', clusterName));

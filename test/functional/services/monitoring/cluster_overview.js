@@ -7,6 +7,9 @@ export function MonitoringClusterOverviewProvider({ getService }) {
 
   const SUBJ_CLUSTER_ALERTS       = `clusterAlertsContainer`; // NOTE: for more in-depth cluster alerts tests, refer to the alerts test suite
 
+  const SUBJ_CLUSTER_OVERVIEW      = 'clusterOverviewContainer';
+  const SUBJ_CLUSTER_NAME          = `${SUBJ_CLUSTER_OVERVIEW} clusterName`;
+
   const SUBJ_ES_PANEL             = `clusterItemContainerElasticsearch`;
   const SUBJ_ES_STATUS            = `${SUBJ_ES_PANEL} statusIcon`;
   const SUBJ_ES_VERSION           = `${SUBJ_ES_PANEL} esVersion`;
@@ -38,6 +41,13 @@ export function MonitoringClusterOverviewProvider({ getService }) {
   const SUBJ_LS_PIPELINES       = `${SUBJ_LS_PANEL} lsPipelines`;
 
   return new class ClusterOverview {
+
+    async isOnClusterOverview() {
+      return testSubjects.exists(SUBJ_CLUSTER_OVERVIEW);
+    }
+    async getClusterName() {
+      return getVisibleTextForSubj(SUBJ_CLUSTER_NAME);
+    }
 
     async doesClusterAlertsExist() {
       return testSubjects.exists(SUBJ_CLUSTER_ALERTS);

@@ -14,7 +14,7 @@ describe('Monitoring Breadcrumbs Service', () => {
       }
     });
     expect(controller.breadcrumbs).to.eql([
-      { url: '#/home', label: 'Clusters' },
+      { url: '#/home', label: 'Clusters', testSubj: 'breadcrumbClusters' },
       { url: '#/overview', label: 'test-cluster-foo' }
     ]);
   });
@@ -30,7 +30,7 @@ describe('Monitoring Breadcrumbs Service', () => {
       }
     });
     expect(controller.breadcrumbs).to.eql([
-      { url: '#/home', label: 'Clusters' }
+      { url: '#/home', label: 'Clusters', testSubj: 'breadcrumbClusters' }
     ]);
   });
 
@@ -51,7 +51,7 @@ describe('Monitoring Breadcrumbs Service', () => {
       }
     });
     expect(controller.breadcrumbs).to.eql([
-      { url: '#/home', label: 'Clusters' },
+      { url: '#/home', label: 'Clusters', testSubj: 'breadcrumbClusters' },
       { url: '#/overview', label: 'test-cluster-foo' },
       { url: '#/elasticsearch', label: 'Elasticsearch' },
       { url: '#/elasticsearch/nodes', label: 'Nodes' },
@@ -71,7 +71,7 @@ describe('Monitoring Breadcrumbs Service', () => {
       }
     });
     expect(controller.breadcrumbs).to.eql([
-      { url: '#/home', label: 'Clusters' },
+      { url: '#/home', label: 'Clusters', testSubj: 'breadcrumbClusters' },
       { url: '#/overview', label: 'test-cluster-foo' },
       { url: null, label: 'Kibana' }
     ]);
@@ -92,7 +92,7 @@ describe('Monitoring Breadcrumbs Service', () => {
       }
     });
     expect(controller.breadcrumbs).to.eql([
-      { url: '#/home', label: 'Clusters' },
+      { url: '#/home', label: 'Clusters', testSubj: 'breadcrumbClusters' },
       { url: '#/overview', label: 'test-cluster-foo' },
       { url: null, label: 'Logstash' }
     ]);
@@ -115,7 +115,7 @@ describe('Monitoring Breadcrumbs Service', () => {
       }
     });
     expect(controller.breadcrumbs).to.eql([
-      { url: '#/home', label: 'Clusters' },
+      { url: '#/home', label: 'Clusters', testSubj: 'breadcrumbClusters' },
       { url: '#/overview', label: 'test-cluster-foo' },
       { url: '#/logstash', label: 'Logstash' },
       { url: '#/logstash/pipelines', label: 'Pipelines' },

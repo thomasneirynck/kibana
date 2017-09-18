@@ -77,7 +77,7 @@ to enjoy multi-cluster monitoring.`
           <a
             className="kuiLink"
             onClick={this.changeCluster.bind(this)}
-            data-test-subj="supportedLicenseCluster"
+            data-test-subj="clusterLink"
           >
             { this.props.cluster_name }
           </a>
@@ -89,7 +89,7 @@ to enjoy multi-cluster monitoring.`
         return (
           <a
             onClick={this.handleClickIncompatibleLicense.bind(this)}
-            data-test-subj="unsupportedLicenseCluster"
+            data-test-subj="clusterLink"
           >
             { this.props.cluster_name }
           </a>
@@ -100,7 +100,7 @@ to enjoy multi-cluster monitoring.`
       return (
         <a
           onClick={this.handleClickInvalidLicense.bind(this)}
-          data-test-subj="invalidLicenseCluster"
+          data-test-subj="clusterLink"
         >
           { this.props.cluster_name }
         </a>
@@ -193,7 +193,7 @@ to enjoy multi-cluster monitoring.`
       };
 
       return (
-        <KuiTableRow>
+        <KuiTableRow data-test-subj={`clusterRow_${this.props.cluster_uuid}`}>
           <KuiTableRowCell>
             <span className="monitoringTableCell__name">
               <KuiKeyboardAccessible>
@@ -201,39 +201,39 @@ to enjoy multi-cluster monitoring.`
               </KuiKeyboardAccessible>
             </span>
           </KuiTableRowCell>
-          <KuiTableRowCell>
+          <KuiTableRowCell data-test-subj="alertsStatus">
             <IsClusterSupported>
               <IsAlertsSupported cluster={this.props}>
                 <AlertsIndicator alerts={this.props.alerts} />
               </IsAlertsSupported>
             </IsClusterSupported>
           </KuiTableRowCell>
-          <KuiTableRowCell>
+          <KuiTableRowCell data-test-subj="nodesCount">
             <IsClusterSupported>
               { numeral(get(this.props, 'elasticsearch.cluster_stats.nodes.count.total')).format('0,0') }
             </IsClusterSupported>
           </KuiTableRowCell>
-          <KuiTableRowCell>
+          <KuiTableRowCell data-test-subj="indicesCount">
             <IsClusterSupported>
               { numeral(get(this.props, 'elasticsearch.cluster_stats.indices.count')).format('0,0') }
             </IsClusterSupported>
           </KuiTableRowCell>
-          <KuiTableRowCell>
+          <KuiTableRowCell data-test-subj="dataSize">
             <IsClusterSupported>
               { numeral(get(this.props, 'elasticsearch.cluster_stats.indices.store.size_in_bytes')).format('0,0[.]0 b') }
             </IsClusterSupported>
           </KuiTableRowCell>
-          <KuiTableRowCell>
+          <KuiTableRowCell data-test-subj="logstashCount">
             <IsClusterSupported>
               { numeral(get(this.props, 'logstash.node_count')).format('0,0') }
             </IsClusterSupported>
           </KuiTableRowCell>
-          <KuiTableRowCell>
+          <KuiTableRowCell data-test-subj="kibanaCount">
             <IsClusterSupported>
               { numeral(get(this.props, 'kibana.count')).format('0,0') }
             </IsClusterSupported>
           </KuiTableRowCell>
-          <KuiTableRowCell>
+          <KuiTableRowCell data-test-subj="clusterLicense">
             { this.getLicenseInfo() }
           </KuiTableRowCell>
         </KuiTableRow>

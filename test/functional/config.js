@@ -77,6 +77,13 @@ export default async function ({ readConfigFile }) {
         password: 'changeme',
       },
     },
+    env: {
+      kibana: {
+        server: {
+          uuid: '5b2de169-2785-441b-ae8c-186a1936b17d', // Kibana UUID for "primary" cluster in monitoring data
+        }
+      }
+    },
 
     // the apps section defines the urls that
     // `PageObjects.common.navigateTo(appKey)` will use.

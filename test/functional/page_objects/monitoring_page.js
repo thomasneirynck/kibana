@@ -20,6 +20,11 @@ export function MonitoringPageProvider({ getPageObjects, getService }) {
       });
     }
 
+    async clickBreadcrumb(subj) {
+      const clustersBreadcrumb = await testSubjects.find(subj);
+      await clustersBreadcrumb.click();
+    }
+
     async assertTableNoData(subj) {
       await retry.try(async () => {
         if (!await testSubjects.exists(subj)) {
