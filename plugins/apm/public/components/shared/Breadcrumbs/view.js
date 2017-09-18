@@ -1,6 +1,10 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
-import { RelativeLink, legacyDecodeURIComponent } from '../../../utils/url';
+import { withRouter, Link } from 'react-router-dom';
+import {
+  legacyDecodeURIComponent,
+  toQuery,
+  fromQuery
+} from '../../../utils/url';
 import _ from 'lodash';
 
 const getTokenized = pathname => {
@@ -58,12 +62,15 @@ export function getBreadcrumbs({ match, routes }) {
     });
 }
 
-function Breadcrumbs({ match }) {
+function Breadcrumbs({ match, location }) {
   const breadcrumbs = getBreadcrumbs({ match, routes: _routes });
 
   if (_.isEmpty(breadcrumbs)) {
     return null;
   }
+
+  const { _g } = toQuery(location.search);
+  const search = fromQuery({ _g });
 
   return (
     <div className="Breadcrumbs">
@@ -72,9 +79,9 @@ function Breadcrumbs({ match }) {
           <div className="kuiLocalBreadcrumbs">
             {breadcrumbs.map(breadcrumb => (
               <div key={breadcrumb.url} className="kuiLocalBreadcrumb">
-                <RelativeLink path={breadcrumb.url}>
+                <Link to={{ pathname: breadcrumb.url, search }}>
                   {breadcrumb.label}
-                </RelativeLink>
+                </Link>
               </div>
             ))}
           </div>
